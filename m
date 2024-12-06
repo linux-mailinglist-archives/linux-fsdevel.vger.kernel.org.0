@@ -1,62 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-36674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1D99E79D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 21:07:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84369E79DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 21:12:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CBB2876AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 20:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4FC18818D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 20:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D4120101E;
-	Fri,  6 Dec 2024 20:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C351D90BD;
+	Fri,  6 Dec 2024 20:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/8aWGD6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVHzHYVG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D6145B07
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 20:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBED1C5490
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 20:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733515616; cv=none; b=Iv3mpF/pwXmMLoxoA9Aivpg/lJH3o7qUc6cIuH117EMOkrBdoA158J2FJwLaY/tozl4meSln0EoQx8DdrpMZw/FplzYSpTXYpj2+g7+N1iI0ZPPJYSodk4lIS40XivE26pSKDz1gY5eHD0CQddkSkLfentimf0JkRCcMDAXQ7dc=
+	t=1733515947; cv=none; b=V9I8ftXhc6S5OjPE5WdgIIxgqEn0yLz4RMj+KvJ3xO+0C1Eh50tSCi7K3YWKWTo++bVQowEHDuwUmniiQ5PR+VoGXbcbEJGvQUK79KuHPLEyGIgxSvj3zHSKMSfPbV1isSH6zDdxDVXoiOprPbXRk4eL3HZgOax3LbJ9yw9VIr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733515616; c=relaxed/simple;
-	bh=ol776ih/lHThqgeFGIVsKbZJyzKBBJQ9LYFnzh6MYVU=;
+	s=arc-20240116; t=1733515947; c=relaxed/simple;
+	bh=0C52Sn5Gxq/tr6ghaONRhyjaKJ5kVGpO8URfZgv0FDM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t8XhVivI3h8hJE0TqBL9fmYashBtvljIqeeD498e7a5L94eups852GZBFSULXRHLf/FXCsSKuEnfrpjYpPk9y4TwpuC/XhvqsgOpKCLqWKaYJ+ZT9g5TPWXl0BPIfOGC/fpbaX7E8Z8QAAfqZGDhx//GNTkjwqLjJ7qprxl/434=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/8aWGD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77091C4CED1;
-	Fri,  6 Dec 2024 20:06:55 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Uv/o3buOBAiZnWmw3DIdXMEiplNwwPi4YUAfCYO99TPPOKlf9M8WK3hx9u//cWiF1bvqbtHKQuA+964oipGu00L2xdW14ohRHM4a11DhbHytbIGm3k+K82Na8w9KVG98I2Mqqkz/DdhLtqaoyItvba9K/Xra+8S+COL3MNpgLfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVHzHYVG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C1B3C4CED1;
+	Fri,  6 Dec 2024 20:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733515616;
-	bh=ol776ih/lHThqgeFGIVsKbZJyzKBBJQ9LYFnzh6MYVU=;
+	s=k20201202; t=1733515947;
+	bh=0C52Sn5Gxq/tr6ghaONRhyjaKJ5kVGpO8URfZgv0FDM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=j/8aWGD6U15rbDgrD1ccm89z64OTAQKcZrZ5VpBjIbEXQJKx2oMV7mrf9Bi9Qkkis
-	 iq1ZKWm2iI7Xezy8s48vSSL4ZgPZY86IYSWActjZYClG6/zd3xQl1J4vBCzba4VbQD
-	 iyfvSqFf59CRF+uDkIi8gVT0crJb4xdpUXL3xoHTzYtG3ZCLybV1kmedXOX4CVhvlq
-	 3+TQCEfHcLNAG6DEVNmJTlE3vqum6R6CLtirPGpg4UmM5hqLxX7ucJACXZU+OprANp
-	 EwT5FzpLhbtt6VlFyWtGU/V+GSfKYaEw2ltS0vqZT5gu12hyJbJwmKcrjYwZKT/JA8
-	 qoN+Q8yFuHMhA==
-Message-ID: <442dcd2eb085b06bd1de5271b2b1c9a3d94a4f05.camel@kernel.org>
+	b=hVHzHYVGJnzFnC26UiEKyYLYDThrHoWbdgjyguMmjRogW1Ss2jZtpvDL3UEnmIeik
+	 PAH2CP5N15XJ9iI7TGvj0uA3TNhJ+JgTTwxnwIrmIMZko5rumjZAf1AdWTGaHX5n7Q
+	 AsKWhVYgsOel5g01dUcrY4ZA/M39IRclR76fQW04wHo1zhJrkWuHJBRzWUWNXvpC66
+	 1t2+I5+9AjHFZqpeCPX/GWdwuZN/A+jkHha4951Q6aBm0y0jblL70cicHa2dcYF/TI
+	 defxmbt/+OM3MzLFW+rAB+HrqEckR5ADIVASiv7gOJ4DDjISKC+QM5aeeBh74FRCcx
+	 ynZ9Ai05ZyiuA==
+Message-ID: <4321a4aca4f67226165004b7096b417f88c11e7e.camel@kernel.org>
 Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced
  timeout for requests
 From: Jeff Layton <jlayton@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, Sergey Senozhatsky
- <senozhatsky@chromium.org>, josef@toxicpanda.com,
- bernd.schubert@fastmail.fm,  jefflexu@linux.alibaba.com,
- laoar.shao@gmail.com, kernel-team@meta.com, Bernd Schubert
- <bschubert@ddn.com>
-Date: Fri, 06 Dec 2024 15:06:54 -0500
-In-Reply-To: <CAJnrk1ZOQOVwcV+ee+MhBrXx-ORQtpm7-++yqMS=SmOx6VOjNw@mail.gmail.com>
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, 
+	linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
+ jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com,
+ Bernd Schubert <bschubert@ddn.com>
+Date: Fri, 06 Dec 2024 15:12:25 -0500
+In-Reply-To: <20241114191332.669127-3-joannelkoong@gmail.com>
 References: <20241114191332.669127-1-joannelkoong@gmail.com>
 	 <20241114191332.669127-3-joannelkoong@gmail.com>
-	 <9741573f2fe44f9aae6de25842db288ddc7d38c3.camel@kernel.org>
-	 <CAJnrk1ZOQOVwcV+ee+MhBrXx-ORQtpm7-++yqMS=SmOx6VOjNw@mail.gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -141,76 +138,286 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2024-12-06 at 11:19 -0800, Joanne Koong wrote:
-> On Thu, Dec 5, 2024 at 4:37=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> >=20
-> > On Thu, 2024-11-14 at 11:13 -0800, Joanne Koong wrote:
-> > > There are situations where fuse servers can become unresponsive or
-> > > stuck, for example if the server is deadlocked. Currently, there's no
-> > > good way to detect if a server is stuck and needs to be killed manual=
-ly.
-> > >=20
-> > > This commit adds an option for enforcing a timeout (in minutes) for
-> > > requests where if the timeout elapses without the server responding t=
-o
-> > > the request, the connection will be automatically aborted.
-> > >=20
-> >=20
-> > I haven't been keeping up with the earlier series, but I think I agree
-> > with Sergey that this timeout would be better expressed in seconds.
-> >=20
-> > Most filesystems that deal with timeouts (NFS, CIFS, etc.) specify them
-> > as a number of seconds, and expressing this in minutes goes against
-> > that convention. It also seems rather coarse-grained. I could easily
-> > see a situation where 5 minutes is too short, but 6 minutes is too
-> > long.
+On Thu, 2024-11-14 at 11:13 -0800, Joanne Koong wrote:
+> There are situations where fuse servers can become unresponsive or
+> stuck, for example if the server is deadlocked. Currently, there's no
+> good way to detect if a server is stuck and needs to be killed manually.
 >=20
-> Sounds good, I'll change the timeout to seconds. The reason it was set
-> in minutes is because the timeouts have an upper margin of error
-> (right now, up to 1 minute) and I didn't want to give a misleading
-> illusion of precision.
+> This commit adds an option for enforcing a timeout (in minutes) for
+> requests where if the timeout elapses without the server responding to
+> the request, the connection will be automatically aborted.
 >=20
-
-Understood. That is a concern, but I think you can mitigate it by
-documenting that the timeout just makes it eligible to be reaped,
-rather than a hard timeout guarantee. That would also allow you to
-change the implementation in the future to reap more (or less)
-aggressively, without breaking the interface.
-
-> It sounds like it'd be useful if the timer is run more frequently (eg
-> instead of every 1 minute, maybe running this every 15 or 30 secs) as
-> well. I'll make this change in the next version.
+> Please note that these timeouts are not 100% precise. The request may
+> take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the requested max
+> timeout due to how it's internally implemented.
 >=20
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  fs/fuse/dev.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/fuse/fuse_i.h | 21 +++++++++++++
+>  fs/fuse/inode.c  | 21 +++++++++++++
+>  3 files changed, 122 insertions(+)
+>=20
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 29fc61a072ba..536aa4525e8f 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -45,6 +45,82 @@ static struct fuse_dev *fuse_get_dev(struct file *file=
+)
+>  	return READ_ONCE(file->private_data);
+>  }
+> =20
+> +static bool request_expired(struct fuse_conn *fc, struct fuse_req *req)
+> +{
+> +	return jiffies > req->create_time + fc->timeout.req_timeout;
+> +}
+> +
+> +/*
+> + * Check if any requests aren't being completed by the specified request
+> + * timeout. To do so, we:
+> + * - check the fiq pending list
+> + * - check the bg queue
+> + * - check the fpq io and processing lists
+> + *
+> + * To make this fast, we only check against the head request on each lis=
+t since
+> + * these are generally queued in order of creation time (eg newer reques=
+ts get
+> + * queued to the tail). We might miss a few edge cases (eg requests tran=
+sitioning
+> + * between lists, re-sent requests at the head of the pending list havin=
+g a
+> + * later creation time than other requests on that list, etc.) but that =
+is fine
+> + * since if the request never gets fulfilled, it will eventually be caug=
+ht.
+> + */
+> +void fuse_check_timeout(struct timer_list *timer)
+> +{
+> +	struct fuse_conn *fc =3D container_of(timer, struct fuse_conn, timeout.=
+timer);
+> +	struct fuse_iqueue *fiq =3D &fc->iq;
+> +	struct fuse_req *req;
+> +	struct fuse_dev *fud;
+> +	struct fuse_pqueue *fpq;
+> +	bool expired =3D false;
+> +	int i;
+> +
+> +	spin_lock(&fiq->lock);
+> +	req =3D list_first_entry_or_null(&fiq->pending, struct fuse_req, list);
+> +	if (req)
+> +		expired =3D request_expired(fc, req);
+> +	spin_unlock(&fiq->lock);
+> +	if (expired)
+> +		goto abort_conn;
+> +
+> +	spin_lock(&fc->bg_lock);
+> +	req =3D list_first_entry_or_null(&fc->bg_queue, struct fuse_req, list);
+> +	if (req)
+> +		expired =3D request_expired(fc, req);
+> +	spin_unlock(&fc->bg_lock);
+> +	if (expired)
+> +		goto abort_conn;
+> +
+> +	spin_lock(&fc->lock);
+> +	if (!fc->connected) {
+> +		spin_unlock(&fc->lock);
+> +		return;
+> +	}
+> +	list_for_each_entry(fud, &fc->devices, entry) {
+> +		fpq =3D &fud->pq;
+> +		spin_lock(&fpq->lock);
+> +		req =3D list_first_entry_or_null(&fpq->io, struct fuse_req, list);
+> +		if (req && request_expired(fc, req))
+> +			goto fpq_abort;
+> +
+> +		for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++) {
+> +			req =3D list_first_entry_or_null(&fpq->processing[i], struct fuse_req=
+, list);
+> +			if (req && request_expired(fc, req))
+> +				goto fpq_abort;
+> +		}
+> +		spin_unlock(&fpq->lock);
+> +	}
+> +	spin_unlock(&fc->lock);
+> +
+> +	mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
+> +	return;
+> +
+> +fpq_abort:
+> +	spin_unlock(&fpq->lock);
+> +	spin_unlock(&fc->lock);
+> +abort_conn:
+> +	fuse_abort_conn(fc);
+> +}
+> +
+>  static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *re=
+q)
+>  {
+>  	INIT_LIST_HEAD(&req->list);
+> @@ -53,6 +129,7 @@ static void fuse_request_init(struct fuse_mount *fm, s=
+truct fuse_req *req)
+>  	refcount_set(&req->count, 1);
+>  	__set_bit(FR_PENDING, &req->flags);
+>  	req->fm =3D fm;
+> +	req->create_time =3D jiffies;
+>  }
+> =20
+>  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_t =
+flags)
+> @@ -2308,6 +2385,9 @@ void fuse_abort_conn(struct fuse_conn *fc)
+>  		spin_unlock(&fc->lock);
+> =20
+>  		end_requests(&to_end);
+> +
+> +		if (fc->timeout.req_timeout)
+> +			timer_delete(&fc->timeout.timer);
+>  	} else {
+>  		spin_unlock(&fc->lock);
+>  	}
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index d35c37ccf9b5..9092201c4e0b 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -438,6 +438,9 @@ struct fuse_req {
+> =20
+>  	/** fuse_mount this request belongs to */
+>  	struct fuse_mount *fm;
+> +
+> +	/** When (in jiffies) the request was created */
+> +	unsigned long create_time;
+>  };
+> =20
+>  struct fuse_iqueue;
+> @@ -528,6 +531,16 @@ struct fuse_pqueue {
+>  	struct list_head io;
+>  };
+> =20
+> +/* Frequency (in seconds) of request timeout checks, if opted into */
+> +#define FUSE_TIMEOUT_TIMER_FREQ 60 * HZ
+> +
+> +struct fuse_timeout {
+> +	struct timer_list timer;
+> +
+> +	/* Request timeout (in jiffies). 0 =3D no timeout */
+> +	unsigned long req_timeout;
+> +};
+> +
+>  /**
+>   * Fuse device instance
+>   */
+> @@ -574,6 +587,8 @@ struct fuse_fs_context {
+>  	enum fuse_dax_mode dax_mode;
+>  	unsigned int max_read;
+>  	unsigned int blksize;
+> +	/*  Request timeout (in minutes). 0 =3D no timeout (infinite wait) */
+> +	unsigned int req_timeout;
+>  	const char *subtype;
+> =20
+>  	/* DAX device, may be NULL */
+> @@ -920,6 +935,9 @@ struct fuse_conn {
+>  	/** IDR for backing files ids */
+>  	struct idr backing_files_map;
+>  #endif
+> +
+> +	/** Only used if the connection enforces request timeouts */
+> +	struct fuse_timeout timeout;
+>  };
+> =20
+>  /*
+> @@ -1181,6 +1199,9 @@ void fuse_request_end(struct fuse_req *req);
+>  void fuse_abort_conn(struct fuse_conn *fc);
+>  void fuse_wait_aborted(struct fuse_conn *fc);
+> =20
+> +/* Check if any requests timed out */
+> +void fuse_check_timeout(struct timer_list *timer);
+> +
+>  /**
+>   * Invalidate inode attributes
+>   */
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index f1779ff3f8d1..ee006f09cd04 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -735,6 +735,7 @@ enum {
+>  	OPT_ALLOW_OTHER,
+>  	OPT_MAX_READ,
+>  	OPT_BLKSIZE,
+> +	OPT_REQUEST_TIMEOUT,
+>  	OPT_ERR
+>  };
+> =20
+> @@ -749,6 +750,7 @@ static const struct fs_parameter_spec fuse_fs_paramet=
+ers[] =3D {
+>  	fsparam_u32	("max_read",		OPT_MAX_READ),
+>  	fsparam_u32	("blksize",		OPT_BLKSIZE),
+>  	fsparam_string	("subtype",		OPT_SUBTYPE),
+> +	fsparam_u16	("request_timeout",	OPT_REQUEST_TIMEOUT),
+>  	{}
+>  };
+> =20
+> @@ -844,6 +846,10 @@ static int fuse_parse_param(struct fs_context *fsc, =
+struct fs_parameter *param)
+>  		ctx->blksize =3D result.uint_32;
+>  		break;
+> =20
+> +	case OPT_REQUEST_TIMEOUT:
+> +		ctx->req_timeout =3D result.uint_16;
+> +		break;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -973,6 +979,8 @@ void fuse_conn_put(struct fuse_conn *fc)
+> =20
+>  		if (IS_ENABLED(CONFIG_FUSE_DAX))
+>  			fuse_dax_conn_free(fc);
+> +		if (fc->timeout.req_timeout)
+> +			timer_shutdown_sync(&fc->timeout.timer);
+>  		if (fiq->ops->release)
+>  			fiq->ops->release(fiq);
+>  		put_pid_ns(fc->pid_ns);
+> @@ -1691,6 +1699,18 @@ int fuse_init_fs_context_submount(struct fs_contex=
+t *fsc)
+>  }
+>  EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
+> =20
+> +static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_co=
+ntext *ctx)
+> +{
+> +	if (ctx->req_timeout) {
+> +		if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->timeout.req_tim=
+eout))
+> +			fc->timeout.req_timeout =3D ULONG_MAX;
+> +		timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
+> +		mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
+> +	} else {
+> +		fc->timeout.req_timeout =3D 0;
+> +	}
+> +}
+> +
 
-Yeah, 1 minute seems like quite a long time. I don't know FUSE well
-enough to get a feel for how heavyweight fuse_check_timeout() is, but
-it might be good to check more often, especially if you don't expect it
-to take long in the common case.
+
+Does fuse_check_timeout need to run in IRQ context? It doesn't seem
+like it does. Have you considered setting up a recurring delayed
+workqueue job instead? That would run in process context, which might
+make the locking in that function less hairy.
 
 
-> >=20
-> > With that too, you probably wouldn't need patch #1. You could treat it
-> > as a 32-bit integer and just clamp the value as necessary.
-> >=20
-> > > Please note that these timeouts are not 100% precise. The request may
-> > > take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the requested ma=
-x
-> > > timeout due to how it's internally implemented.
-> > >=20
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-> > > ---
-> > >  fs/fuse/dev.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++++=
-++
-> > >  fs/fuse/fuse_i.h | 21 +++++++++++++
-> > >  fs/fuse/inode.c  | 21 +++++++++++++
-> > >  3 files changed, 122 insertions(+)
-> > >=20
-> ...
-> >=20
-> > --
-> > Jeff Layton <jlayton@kernel.org>
+>  int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_contex=
+t *ctx)
+>  {
+>  	struct fuse_dev *fud =3D NULL;
+> @@ -1753,6 +1773,7 @@ int fuse_fill_super_common(struct super_block *sb, =
+struct fuse_fs_context *ctx)
+>  	fc->destroy =3D ctx->destroy;
+>  	fc->no_control =3D ctx->no_control;
+>  	fc->no_force_umount =3D ctx->no_force_umount;
+> +	fuse_init_fc_timeout(fc, ctx);
+> =20
+>  	err =3D -ENOMEM;
+>  	root =3D fuse_get_root_inode(sb, ctx->rootmode);
 
 --=20
 Jeff Layton <jlayton@kernel.org>
