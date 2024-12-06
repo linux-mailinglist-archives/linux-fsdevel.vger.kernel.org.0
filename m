@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-36681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3769E7B2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 22:52:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65E09E7B31
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 22:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38AF1169A83
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 21:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1D91885EA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 21:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FFC1C5495;
-	Fri,  6 Dec 2024 21:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25B21DA0E0;
+	Fri,  6 Dec 2024 21:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Okswx+Q3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmUVS8yi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A810C22C6C3
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 21:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D699522C6C3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 21:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733521946; cv=none; b=dXZOASekYkVj/RUJycYLSamhxFC1lpyaYaZJiYhjzOuK1tXO+eGm3g2tuFkH5sZKAB/3O2TgclhCOWfmtneQ79ZYwJaqTxD1EEjHzm1agcl1Lky3TVpv4fubtU8zJLxlZg6uJPaod/4zQEOrj6PbeWZzL2xb7oeV2PGZQL2H5mg=
+	t=1733522093; cv=none; b=aZv16htwxyEVwfrclaEEKgVfCbJ7iJ2DEKllqakqy3t5b2IefgdYnJSORzlxubO21hnHhJ76nHV8ctDzKeLqWYrXB9VtKffg+8lhj3gI/R52UHzm+V2jKvCbJn0vEZHmyod+UamaiSyasvx1vPOH1Aztr0pbaKufk/pOXmRu0aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733521946; c=relaxed/simple;
-	bh=0tyieHhUWiZuMxSZaGFMYpsjGwkchYd4WsOtXjTW/6U=;
+	s=arc-20240116; t=1733522093; c=relaxed/simple;
+	bh=AVhD0jOwwxyuUHk3rHvL1MBATeSIeNz7ZRT3127m7m8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PPzMuBm/OF5O0eScAta9x247iBVlGky7Sd20SrudWNIKpg3+T038+W0Bo4u6myvFJIT05YFFAattBwg5BVIJ7vKglepmPSjqmXT9Nmihw8i7P48g0e4vv0eNXRLA3B1E0PbC9vcR9NrKVFzGv1+H6ysRdAojxNagRbAhEfi2G+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Okswx+Q3; arc=none smtp.client-ip=209.85.160.176
+	 To:Cc:Content-Type; b=W2xIfV9w7B0NcmdNfPSMxCEd/RL3dmpbIEWvzZ7ybPtv+ZCoYSBy8FcHeMfOBm3NSWHauWquqTYByB8ug04QeUxiEepyTTfpQSd/SyqJ4KvQqZPshQ2tgqY15V4BRbsHZ0JTvroxpz1HYP5sCNeIZN7EXp4GcZ2qakmNbIGad4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmUVS8yi; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4668f208f10so24304201cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2024 13:52:24 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46684744070so24346941cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2024 13:54:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733521943; x=1734126743; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733522091; x=1734126891; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bwJKcBgQvi5ECd/YLMryMnYiLcRCCw4F+MGKUKrSxUs=;
-        b=Okswx+Q3v6yPnnfthy6Sf8K2U5QNAxpUvxCbMfOnWLn4LrS0k8O8HvIX6tuYxgMXfO
-         +qMzRFGb+BloDaykamh4hq8yOENXj2o8L+2x8fP88iTGfx4NGadS9wWqj2mU2oSOyUln
-         Z4K3rEBh4dF4P1GN/EgtNF7CY9crU3rKdBE80OuUcqIfca9Z/j2CZ4ERKqGV763MmTnV
-         aA0ywPn7c7s+AB9J/8CgeKOdb2dhaUpyqcY6j3s05XT1osu0Oh4Zd2XOXR3tFl6HU6AK
-         hFvgE7haI+mn7HFhlwMkAYvV6lPbcfHkhSjtWX5gN4pbxV+wk+wDSrt91rbPQrpP3sCF
-         g9nQ==
+        bh=2LzRx70pIL40ruIIkPnVXmeZC/TQH14Qi4H1XuKgtQ0=;
+        b=LmUVS8yi4bLhVJCdavbzJkezqd/RiboNvTPtEy/dVGwqrTu83CLRFP0dzddxAv69Dw
+         mutanENRgHtutItB//8L3IFK4ekXg5tLynPB5KWTssr9d1W0Co6DXh2bzY/8sIvTVGHG
+         H/lJ+mNlz28ht+j2E7/pi7EHuihv+TCKpJ4LD0p8iVMxenVKoPRsboFushgtGaW+/SKR
+         BdSNgk4hTV928Ulop+K5S4aRivjYseoDxwjqO0ShFKRECsrnaD6oNTdkCi5Hgyi04WEn
+         l5N+8Eo4hXVmcSZnq/cBzCm9YbL9OidnBV6+OmuOFuC74GJxcI8lF3OSU0n/Gtrr2y8u
+         j61w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733521943; x=1734126743;
+        d=1e100.net; s=20230601; t=1733522091; x=1734126891;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bwJKcBgQvi5ECd/YLMryMnYiLcRCCw4F+MGKUKrSxUs=;
-        b=ViO2A+AIkue3fW9HEDMD7HF9gDe6KYoC/Wi4OyZNjg9ePEAeRIoAvw5obvwBRwwQ9C
-         OWKWrOHhLQsBlVQK7OIVPQMm0ZyTBqsJ4lkcpCtzkyqEakYl1/7CGOOzmFaFQxKNKe4j
-         xc9knE32xRNdIth1BSOKWgivTCnJmSnFZ3i7AJp0k0UA0gTJ/MkDNV9bKKs8SRhaSxY0
-         fSIx3IXt5o4nuJRoYThEiy46goW1aT5/8d7HymcFrE64VUmHD1F/ZATfNFjvI0hQx/FS
-         E1pXFTwdkG9NineFKzS77i82t8LmF0/uDP7GzwahEXALdvy9GTKKEYAe2MzFNOigQdCN
-         2MVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzVgLtc3hxLfsSLwyk1nvS/SetSuzowjOX+N8pqTqfZYiWF7F3Vn62qiq17xPxdDzE77XBCzSHeQsFvIoI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBIaNffpKGkslLF7qHhKJoIRnl5SdPkXo27uGhEiomO5w7f+op
-	oMZ+3m42Ebv76hri9pNfmveO0tCfvwqycCtaGhziy8usBsWUXRO9JaLxOwZloRJAx2OexQ2cMt4
-	/VPO+DrryDIJFHyIHgT1W2be97+I=
-X-Gm-Gg: ASbGncsCI2F8eQU7JrbEUPpmJZMtSsdE6F/X0JWu1nn4D5m40xc9ZJXDPnjbTKr0XPn
-	pq7TSHTiWV/KRPcW6Ndx+/+OAcwfb8bNECyHU0gsopXjPrCE=
-X-Google-Smtp-Source: AGHT+IF7ICzroEAZgSU67dIqP3oY9uoDZeC9FOgWaehxDpyBSWj+tpqLDU7FVg8z5u+ia1gFXCO+VzoTSIuG0nxptm4=
-X-Received: by 2002:ac8:57cb:0:b0:467:1f3c:4d22 with SMTP id
- d75a77b69052e-46734e26188mr110540341cf.52.1733521943478; Fri, 06 Dec 2024
- 13:52:23 -0800 (PST)
+        bh=2LzRx70pIL40ruIIkPnVXmeZC/TQH14Qi4H1XuKgtQ0=;
+        b=vwrrH5+CzOg3WjgDKPjC7RLEe1V/q0QJO9XaGpkODaReoXG0ud5UGFSWHQHTHnAYVD
+         GN9o3ZF4VRMViWMPR4cAtJkIuv107Y5oM6kYPI/kTzpWzEs512gNeR8KN6C9yQPhXICN
+         ksvlZjwgDkbS/CfVZUlB+Zex0lakStrwraJ/QrPnHz5QpfiQk26/J+FpvDtiOW+I+ZJ8
+         +Sfl2BZBgKl1MoQoPckyI5PMGcy881Q9wNmC0ZG5xb7mV5tPdDKbl5zvXTF6W8ntdJMb
+         4yNLhENsZGhP3nAPJ+48l0lJvvSA6Bef7/uiOPmQqHRun+YVNH4zhl6gkATWZLHX9I20
+         fZ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUeBU/KLXYLB1LQBKgj5zoARBJ8YxQkFAWvYXPVA76QUobyhwbJ6ds1vLa7yKnon29QKM1xy/o9SIg74GZt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFCDpmM+7dq3ZlY5rqif4lNlGVY6PG8QC17ASbj7ZN89mBfq4n
+	gr+VBux5dcO2OvBGIYb9cvupYIj5kxd+UQ7VN4RGk0eHKYWT/tEwAJ1Blv/6YqSsE1Uye0FvW7J
+	0bI7nAseLGFOdTqEBRHYQIC/c7ms=
+X-Gm-Gg: ASbGncuCrnYmSH+hT0OfaXUteMf2VoRpYEf10xiGE/GOAF6B9ctEDZxH9wDfE0j93I7
+	x9wbZ+oeLe8oVEsgdD3JPP3QSXnFv/Mi6MY0kkF2UoMzJuh0=
+X-Google-Smtp-Source: AGHT+IG6goAMP3BvgOldp5AD0gw7MLV16hmkoZUKPyg+nJh6aNXHkpz6oMMnOe1h7pDUrElMSuQgCo181XOMS/b0RL8=
+X-Received: by 2002:a05:622a:4c13:b0:466:a4f4:8950 with SMTP id
+ d75a77b69052e-46734cac06dmr88863431cf.14.1733522090644; Fri, 06 Dec 2024
+ 13:54:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,66 +74,109 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241114191332.669127-1-joannelkoong@gmail.com>
- <20241114191332.669127-3-joannelkoong@gmail.com> <CAJnrk1Yc2VN-NZb4NfDNrvMmhP3AdioRoHOB0HxmyR_8aBNXRQ@mail.gmail.com>
- <CAMHPp_Rk4ai0psCtodxb7pNsRQ5r1p7i2y635QzmRcVSxd3eBw@mail.gmail.com>
-In-Reply-To: <CAMHPp_Rk4ai0psCtodxb7pNsRQ5r1p7i2y635QzmRcVSxd3eBw@mail.gmail.com>
+ <20241114191332.669127-3-joannelkoong@gmail.com> <4321a4aca4f67226165004b7096b417f88c11e7e.camel@kernel.org>
+In-Reply-To: <4321a4aca4f67226165004b7096b417f88c11e7e.camel@kernel.org>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 6 Dec 2024 13:52:12 -0800
-Message-ID: <CAJnrk1bA+uRzSiTVeJ_t+jp+X7ixj3MEk8nBe7nO29tG0+Ld3w@mail.gmail.com>
+Date: Fri, 6 Dec 2024 13:54:39 -0800
+Message-ID: <CAJnrk1ZdPH5+gMqUEXFLJZ7fd9H7A_YsdU5jcM6kjp0WK_L4Aw@mail.gmail.com>
 Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
  for requests
-To: Etienne <etmartin4313@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	bernd.schubert@fastmail.fm, bschubert@ddn.com, jefflexu@linux.alibaba.com, 
-	josef@toxicpanda.com, kernel-team@meta.com, laoar.shao@gmail.com
+To: Jeff Layton <jlayton@kernel.org>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 11:56=E2=80=AFAM Etienne <etmartin4313@gmail.com> wr=
+On Fri, Dec 6, 2024 at 12:12=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
 ote:
 >
-> > > I tried this V9 patchset and realized that upon max_request_timeout t=
-he connection will be dropped irrespectively if the task is in D state or n=
-ot. I guess this is expected behavior.
+> On Thu, 2024-11-14 at 11:13 -0800, Joanne Koong wrote:
+> > There are situations where fuse servers can become unresponsive or
+> > stuck, for example if the server is deadlocked. Currently, there's no
+> > good way to detect if a server is stuck and needs to be killed manually=
+.
 > >
-> > Yes, the connection will be dropped regardless of what state the task i=
-s in.
-> Thanks for confirmation
+> > This commit adds an option for enforcing a timeout (in minutes) for
+> > requests where if the timeout elapses without the server responding to
+> > the request, the connection will be automatically aborted.
+> >
+> > Please note that these timeouts are not 100% precise. The request may
+> > take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the requested max
+> > timeout due to how it's internally implemented.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+> > ---
+> >  fs/fuse/dev.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/fuse_i.h | 21 +++++++++++++
+> >  fs/fuse/inode.c  | 21 +++++++++++++
+> >  3 files changed, 122 insertions(+)
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 29fc61a072ba..536aa4525e8f 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> >               return -EINVAL;
+> >       }
+> > @@ -973,6 +979,8 @@ void fuse_conn_put(struct fuse_conn *fc)
+> >
+> >               if (IS_ENABLED(CONFIG_FUSE_DAX))
+> >                       fuse_dax_conn_free(fc);
+> > +             if (fc->timeout.req_timeout)
+> > +                     timer_shutdown_sync(&fc->timeout.timer);
+> >               if (fiq->ops->release)
+> >                       fiq->ops->release(fiq);
+> >               put_pid_ns(fc->pid_ns);
+> > @@ -1691,6 +1699,18 @@ int fuse_init_fs_context_submount(struct fs_cont=
+ext *fsc)
+> >  }
+> >  EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
+> >
+> > +static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_=
+context *ctx)
+> > +{
+> > +     if (ctx->req_timeout) {
+> > +             if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->ti=
+meout.req_timeout))
+> > +                     fc->timeout.req_timeout =3D ULONG_MAX;
+> > +             timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
+> > +             mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIME=
+R_FREQ);
+> > +     } else {
+> > +             fc->timeout.req_timeout =3D 0;
+> > +     }
+> > +}
+> > +
 >
-> >
-> > > To me the concerning aspect is when tasks are going in D state becaus=
-e of the consequence when running with hung_task_timeout_secs and hung_task=
-_panic=3D1.
-> >
-> > Could you elaborate on this a bit more? When running with
-> > hung_task_timeout_secs and hung_task_panic=3D1, how does it cause the
-> > task to go into D state?
 >
-> Sorry for the confusion. It doesn't cause tasks to go in D state.
-> What I meant is that I've been looking for a way to terminate tasks
-> stuck in D state because we have hung_task_panic=3D1 and this is causing
-> bad consequences when they trigger the hung task timer.
+> Does fuse_check_timeout need to run in IRQ context? It doesn't seem
+> like it does. Have you considered setting up a recurring delayed
+> workqueue job instead? That would run in process context, which might
+> make the locking in that function less hairy.
+>
 
-Gotcha, thanks for clarifying!
+Great idea, I'll use a recurring delayed workqueue job instead of a
+kthread, since it's more lightweight.
+
+
+Thanks,
+Joanne
 >
-> > > Here this timer may get queued and if echo 1 > /sys/fs/fuse/connectio=
-ns/'nn'/abort is done at more or less the same time over the same connectio=
-n I'm wondering what will happen?
-> > > At least I think we may need timer_delete_sync() instead of timer_del=
-ete() in fuse_abort_conn() and potentially call it from the top of fuse_abo=
-rt_conn() instead.
+> >  int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_cont=
+ext *ctx)
+> >  {
+> >       struct fuse_dev *fud =3D NULL;
+> > @@ -1753,6 +1773,7 @@ int fuse_fill_super_common(struct super_block *sb=
+, struct fuse_fs_context *ctx)
+> >       fc->destroy =3D ctx->destroy;
+> >       fc->no_control =3D ctx->no_control;
+> >       fc->no_force_umount =3D ctx->no_force_umount;
+> > +     fuse_init_fc_timeout(fc, ctx);
 > >
-> > I don't think this is an issue because there's still a reference on
-> > the "struct fuse_conn" when fuse_abort_conn() is called. The fuse_conn
-> > struct is freed in fuse_conn_put() when the last refcount is dropped,
-> > and in fuse_conn_put() there's this line
-> >
-> > if (fc->timeout.req_timeout)
-> >   timer_shutdown_sync(&fc->timeout.timer);
-> >
-> > that guarantees the timer is not queued / callback of timer is not
-> > running / cannot be rearmed.
+> >       err =3D -ENOMEM;
+> >       root =3D fuse_get_root_inode(sb, ctx->rootmode);
 >
-> Got it. I missed that last part in fuse_conn_put()
-> Thanks
+> --
+> Jeff Layton <jlayton@kernel.org>
 
