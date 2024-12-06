@@ -1,154 +1,429 @@
-Return-Path: <linux-fsdevel+bounces-36582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58DC9E6239
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 01:31:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1329E6251
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 01:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 807BF1695CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 00:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E46188298C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 00:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0311DDF5;
-	Fri,  6 Dec 2024 00:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA50A1DFED;
+	Fri,  6 Dec 2024 00:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdOoa8zC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+tiWEyz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5606C2BCFF;
-	Fri,  6 Dec 2024 00:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F10256E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 00:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733445061; cv=none; b=qbDPy6W2EhZ2vgH+MKefvbspH4lkmBudw9cFESsgTzOmoJj8i3JEorwSqU/bAMRfIhjpmM1fl6NiX5FBfh1nRKiZLVEIo3uoNgJh88lagX2GK8Q13/zJFECthubY9kDYurkvGn2/IT+qHefLEmcH70m7yaF62r1JJZ3a34ftwiI=
+	t=1733445428; cv=none; b=qjuIsRZIbAQPDFxc3TEWsFIjDe9BX+NnAJlQVTdB41WuVdngjSdtPrwRetEq0nsLIhS7E9ENO3/c+GkLwcgyfxvMc7eRuFnC2SCKPIbtRAO53NWUGvr7L3igbpJMrU3QZw1snYKb3eVspH+mzzwQKQGYZSdM9/MlNHIegY2cVf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733445061; c=relaxed/simple;
-	bh=T5XsiHaeA6gX7H3TG0AwK/Z1GuvCOEYpveaCBKvj2iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOy31GmLy3HHSL1EAj6jjzjrLfmbW2e+am3Bh1hxh1Qpwfly8asVIQQj3YRCiTjjhoRifnCiooP1+elf2eYOrCfwEYTC/y7ziqe3Vxv/sE1IqUF8TfmWaC0fytnFPahDzmcaTwJY5ucfqKK7akrv+h6fsYpk9IeuScHT7JSIx5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdOoa8zC; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa549f2fa32so292117866b.0;
-        Thu, 05 Dec 2024 16:30:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733445058; x=1734049858; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CuJ7vWjq9N4bf180yHzi7XHCXBBIt3hkByBmhQQJFDA=;
-        b=LdOoa8zCdgGwG0vyIsjaUvxeGi+ZMoIH2ZFUCx7CEMu53mMfV5tIXiWYXYZqDdDyj+
-         iPpc0WLh2TRf8tRDib92PlfuoPD6xqfQeIFAJwlXqd03XWglsMBkX6tGhgHUg4o1Im8m
-         HsdtS485U52WkTQAOXW08O6tVTkRGWKentlg1mqhgBDfsCv43fMd0n8O6vuGzr6Y9tEO
-         5mCMZw+5lQyT09nHEDpMyISeHno72yc/MMYeoSCiJr9zps2I4H4/mc7qnLA+BTZ8OEZT
-         ZDMomtTH5F6uQgA/4uokpA+mjaTEi7tFem4ZblhctmcPVdmMztevQY+a5Wh7CwvzBbDy
-         qhXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733445058; x=1734049858;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CuJ7vWjq9N4bf180yHzi7XHCXBBIt3hkByBmhQQJFDA=;
-        b=QsUeC7wtrwozZTJV0nn02uQWpLasYFVbgeC8qXgsL44pYnDJwnNQaZ5QVByVvXVxN9
-         NVqt8yasx/yHnpcGkqWtHaoSey/tw8rncjHP4dp7o2PQ/qzqD93FRVDIn22eFEbFiKJL
-         pTlDGytDVfJyzQpGVFMcwBw3PzIRbJbuojGqH8ur7xIotaJA0q4e46HntaCS1Cdq5RQj
-         AEIznMAe8lUrChIg8/wKoZ/IQ/QsJ/fWqQgk8o2Cf6UKPwcScZ7lKciQThyuhIIGY8Gs
-         iuvadlCJM3QjSywPMk0jCmPLzuJ/uKfs6QpnTw01ehjOQlRySELZGq077YTpZJC5Ti6M
-         mAXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYNUbw5fxBvou199nefXmhZpKHsj0/Q4UorJ0pU55eB8zjhsLSB4gjriKCq9HQbJKg8uNwQTf3xfBAqst1@vger.kernel.org, AJvYcCVmBafAIwIg9QGZwU/zPuygLRHOmduumiNO+P2IZAKPVFMFBek0qo2kTYEY+aGZuEhanmXi7z6U3QKiUR2w@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUsrxQr/0yBGi14OTC9kabpK/nFd55x4rDVivsU+GEYivw476m
-	cIgLsjydX2drJZKP0EyBV+ZgJ1lXlC74ZkFd4S/OLZhi7K8k3RZU
-X-Gm-Gg: ASbGncvkIAEDmdwcSiCbVw102kDXeEK8XyFTQo9BfoNMnUC4t6/+PtCvfpBB2X8cRk5
-	aUXbVnkQN8zTVMeyL3FNS35Gvktn3Vvv4Ck+lXE31YzVgfLtmu03DjvBzSn3bBKyxKAvPUxU7wk
-	TZoC2+9vwZt5tfwNJzE0ikhSpH02W9TUWniveWIawgjOsC39+lwZr8RveA2A+LhuZqz48F0heDc
-	pZuYh86s6twRYzg65KTjp5CyR3DM3QPB6Ja65bj6aIbppadbH+c/Q==
-X-Google-Smtp-Source: AGHT+IGdYCzXiyn+212FHw2lMBug+v2LYRIEy3va52yhzA+1vwvzueHuUr0mlkyKkF4A+lap/DWwIw==
-X-Received: by 2002:a17:906:3155:b0:a99:6791:5449 with SMTP id a640c23a62f3a-aa63a264d25mr68373866b.52.1733445057370;
-        Thu, 05 Dec 2024 16:30:57 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62601b5f3sm160564766b.120.2024.12.05.16.30.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Dec 2024 16:30:56 -0800 (PST)
-Date: Fri, 6 Dec 2024 00:30:54 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] mm/vma: make more mmap logic userland testable
-Message-ID: <20241206003054.cj767w67kydv3rms@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
- <20241204235632.e44hokoy7izmrdtx@master>
- <68dd91e4-b9c3-413c-b284-f43636e7ffba@lucifer.local>
+	s=arc-20240116; t=1733445428; c=relaxed/simple;
+	bh=UZCG5zcijXb6dLBjVYhjwUqC39ZwU0bQp8WNu9Nj7XY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l2dGLyO7UpiL16MatGbwFYXf+sYVJt1SmYURWQEowqIQSKZHNZDiL38pM488WQLIjfrw4EOyPuBDQeyn0+AyJOaZ3/2AFvsylzyJ46aDW/MHsb9l78xOvETY5+ubjFe0sJiXn3SF15/k4eEIKqJWc6XwRrjRMZEqzuH2sfBLLlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+tiWEyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772EAC4CED1;
+	Fri,  6 Dec 2024 00:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733445427;
+	bh=UZCG5zcijXb6dLBjVYhjwUqC39ZwU0bQp8WNu9Nj7XY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=r+tiWEyzeQodCm8Ac6QfAaj7Tj3TtIoY+UiQY6iLdt4kzVvI4/NEb8uZopuwhwCgX
+	 w2NnuMWFK32buU2+Q4ZZki25qO9Iv+bn9r1mIsPznUEN3oHi0XbeIXlu87hnoUmvfX
+	 nf5r4SoAGqD96m8uruzhvF7CzYYrQaJMo3iWNctZrEjvqCDUzmOz5YLUXeMDsTe4ZB
+	 PYO8eqAtZbpKKGgD1QIux9nftTkzW8Cfk4O+uE88U2NuT71MPUlrFs6ApJNNQzBdK7
+	 BMM7yOUl1iwOlr9Ne0vn2NCiPs/2CeufVOQA5mETWE7EbHR9MW7iGeo1nmwAKNuAd6
+	 LASQdhqDPrumA==
+Message-ID: <9741573f2fe44f9aae6de25842db288ddc7d38c3.camel@kernel.org>
+Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced
+ timeout for requests
+From: Jeff Layton <jlayton@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, 
+ linux-fsdevel@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
+ jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com,
+ Bernd Schubert <bschubert@ddn.com>
+Date: Thu, 05 Dec 2024 16:37:06 -0800
+In-Reply-To: <20241114191332.669127-3-joannelkoong@gmail.com>
+References: <20241114191332.669127-1-joannelkoong@gmail.com>
+	 <20241114191332.669127-3-joannelkoong@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68dd91e4-b9c3-413c-b284-f43636e7ffba@lucifer.local>
-User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Dec 05, 2024 at 07:03:08AM +0000, Lorenzo Stoakes wrote:
->On Wed, Dec 04, 2024 at 11:56:32PM +0000, Wei Yang wrote:
->> On Tue, Dec 03, 2024 at 06:05:07PM +0000, Lorenzo Stoakes wrote:
->> >This series carries on the work the work started in previous series and
->>                         ^^^      ^^^
->>
->> Duplicated?
->
->Thanks yes, but trivial enough that I'm not sure it's worth a
->correction. Will fix if need to respin.
->
->>
->> >continued in commit 52956b0d7fb9 ("mm: isolate mmap internal logic to
->> >mm/vma.c"), moving the remainder of memory mapping implementation details
->> >logic into mm/vma.c allowing the bulk of the mapping logic to be unit
->> >tested.
->> >
->> >It is highly useful to do so, as this means we can both fundamentally test
->> >this core logic, and introduce regression tests to ensure any issues
->> >previously resolved do not recur.
->> >
->> >Vitally, this includes the do_brk_flags() function, meaning we have both
->> >core means of userland mapping memory now testable.
->> >
->> >Performance testing was performed after this change given the brk() system
->> >call's sensitivity to change, and no performance regression was observed.
->>
->> May I ask what performance test is done?
->
->mmtests brk1, brk2 (will-it-scale)
+On Thu, 2024-11-14 at 11:13 -0800, Joanne Koong wrote:
+> There are situations where fuse servers can become unresponsive or
+> stuck, for example if the server is deadlocked. Currently, there's no
+> good way to detect if a server is stuck and needs to be killed manually.
+>=20
+> This commit adds an option for enforcing a timeout (in minutes) for
+> requests where if the timeout elapses without the server responding to
+> the request, the connection will be automatically aborted.
+>=20
 
-The one from here ?
+I haven't been keeping up with the earlier series, but I think I agree
+with Sergey that this timeout would be better expressed in seconds.
 
-https://github.com/gormanm/mmtests
+Most filesystems that deal with timeouts (NFS, CIFS, etc.) specify them
+as a number of seconds, and expressing this in minutes goes against
+that convention. It also seems rather coarse-grained. I could easily
+see a situation where 5 minutes is too short, but 6 minutes is too
+long.
 
->
->You'd not really expect an impact based on relocation of this code, but
->with brk it's always worth checking...
->
+With that too, you probably wouldn't need patch #1. You could treat it
+as a 32-bit integer and just clamp the value as necessary.
 
-Yes, I am trying to know usually what perform test we would use.
+> Please note that these timeouts are not 100% precise. The request may
+> take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the requested max
+> timeout due to how it's internally implemented.
+>=20
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  fs/fuse/dev.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/fuse/fuse_i.h | 21 +++++++++++++
+>  fs/fuse/inode.c  | 21 +++++++++++++
+>  3 files changed, 122 insertions(+)
+>=20
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 29fc61a072ba..536aa4525e8f 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -45,6 +45,82 @@ static struct fuse_dev *fuse_get_dev(struct file *file=
+)
+>  	return READ_ONCE(file->private_data);
+>  }
+> =20
+> +static bool request_expired(struct fuse_conn *fc, struct fuse_req *req)
+> +{
+> +	return jiffies > req->create_time + fc->timeout.req_timeout;
+> +}
+> +
+> +/*
+> + * Check if any requests aren't being completed by the specified request
+> + * timeout. To do so, we:
+> + * - check the fiq pending list
+> + * - check the bg queue
+> + * - check the fpq io and processing lists
+> + *
+> + * To make this fast, we only check against the head request on each lis=
+t since
+> + * these are generally queued in order of creation time (eg newer reques=
+ts get
+> + * queued to the tail). We might miss a few edge cases (eg requests tran=
+sitioning
+> + * between lists, re-sent requests at the head of the pending list havin=
+g a
+> + * later creation time than other requests on that list, etc.) but that =
+is fine
+> + * since if the request never gets fulfilled, it will eventually be caug=
+ht.
+> + */
+> +void fuse_check_timeout(struct timer_list *timer)
+> +{
+> +	struct fuse_conn *fc =3D container_of(timer, struct fuse_conn, timeout.=
+timer);
+> +	struct fuse_iqueue *fiq =3D &fc->iq;
+> +	struct fuse_req *req;
+> +	struct fuse_dev *fud;
+> +	struct fuse_pqueue *fpq;
+> +	bool expired =3D false;
+> +	int i;
+> +
+> +	spin_lock(&fiq->lock);
+> +	req =3D list_first_entry_or_null(&fiq->pending, struct fuse_req, list);
+> +	if (req)
+> +		expired =3D request_expired(fc, req);
+> +	spin_unlock(&fiq->lock);
+> +	if (expired)
+> +		goto abort_conn;
+> +
+> +	spin_lock(&fc->bg_lock);
+> +	req =3D list_first_entry_or_null(&fc->bg_queue, struct fuse_req, list);
+> +	if (req)
+> +		expired =3D request_expired(fc, req);
+> +	spin_unlock(&fc->bg_lock);
+> +	if (expired)
+> +		goto abort_conn;
+> +
+> +	spin_lock(&fc->lock);
+> +	if (!fc->connected) {
+> +		spin_unlock(&fc->lock);
+> +		return;
+> +	}
+> +	list_for_each_entry(fud, &fc->devices, entry) {
+> +		fpq =3D &fud->pq;
+> +		spin_lock(&fpq->lock);
+> +		req =3D list_first_entry_or_null(&fpq->io, struct fuse_req, list);
+> +		if (req && request_expired(fc, req))
+> +			goto fpq_abort;
+> +
+> +		for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++) {
+> +			req =3D list_first_entry_or_null(&fpq->processing[i], struct fuse_req=
+, list);
+> +			if (req && request_expired(fc, req))
+> +				goto fpq_abort;
+> +		}
+> +		spin_unlock(&fpq->lock);
+> +	}
+> +	spin_unlock(&fc->lock);
+> +
+> +	mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
+> +	return;
+> +
+> +fpq_abort:
+> +	spin_unlock(&fpq->lock);
+> +	spin_unlock(&fc->lock);
+> +abort_conn:
+> +	fuse_abort_conn(fc);
+> +}
+> +
+>  static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *re=
+q)
+>  {
+>  	INIT_LIST_HEAD(&req->list);
+> @@ -53,6 +129,7 @@ static void fuse_request_init(struct fuse_mount *fm, s=
+truct fuse_req *req)
+>  	refcount_set(&req->count, 1);
+>  	__set_bit(FR_PENDING, &req->flags);
+>  	req->fm =3D fm;
+> +	req->create_time =3D jiffies;
+>  }
+> =20
+>  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_t =
+flags)
+> @@ -2308,6 +2385,9 @@ void fuse_abort_conn(struct fuse_conn *fc)
+>  		spin_unlock(&fc->lock);
+> =20
+>  		end_requests(&to_end);
+> +
+> +		if (fc->timeout.req_timeout)
+> +			timer_delete(&fc->timeout.timer);
+>  	} else {
+>  		spin_unlock(&fc->lock);
+>  	}
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index d35c37ccf9b5..9092201c4e0b 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -438,6 +438,9 @@ struct fuse_req {
+> =20
+>  	/** fuse_mount this request belongs to */
+>  	struct fuse_mount *fm;
+> +
+> +	/** When (in jiffies) the request was created */
+> +	unsigned long create_time;
+>  };
+> =20
+>  struct fuse_iqueue;
+> @@ -528,6 +531,16 @@ struct fuse_pqueue {
+>  	struct list_head io;
+>  };
+> =20
+> +/* Frequency (in seconds) of request timeout checks, if opted into */
+> +#define FUSE_TIMEOUT_TIMER_FREQ 60 * HZ
+> +
+> +struct fuse_timeout {
+> +	struct timer_list timer;
+> +
+> +	/* Request timeout (in jiffies). 0 =3D no timeout */
+> +	unsigned long req_timeout;
+> +};
+> +
+>  /**
+>   * Fuse device instance
+>   */
+> @@ -574,6 +587,8 @@ struct fuse_fs_context {
+>  	enum fuse_dax_mode dax_mode;
+>  	unsigned int max_read;
+>  	unsigned int blksize;
+> +	/*  Request timeout (in minutes). 0 =3D no timeout (infinite wait) */
+> +	unsigned int req_timeout;
+>  	const char *subtype;
+> =20
+>  	/* DAX device, may be NULL */
+> @@ -920,6 +935,9 @@ struct fuse_conn {
+>  	/** IDR for backing files ids */
+>  	struct idr backing_files_map;
+>  #endif
+> +
+> +	/** Only used if the connection enforces request timeouts */
+> +	struct fuse_timeout timeout;
+>  };
+> =20
+>  /*
+> @@ -1181,6 +1199,9 @@ void fuse_request_end(struct fuse_req *req);
+>  void fuse_abort_conn(struct fuse_conn *fc);
+>  void fuse_wait_aborted(struct fuse_conn *fc);
+> =20
+> +/* Check if any requests timed out */
+> +void fuse_check_timeout(struct timer_list *timer);
+> +
+>  /**
+>   * Invalidate inode attributes
+>   */
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index f1779ff3f8d1..ee006f09cd04 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -735,6 +735,7 @@ enum {
+>  	OPT_ALLOW_OTHER,
+>  	OPT_MAX_READ,
+>  	OPT_BLKSIZE,
+> +	OPT_REQUEST_TIMEOUT,
+>  	OPT_ERR
+>  };
+> =20
+> @@ -749,6 +750,7 @@ static const struct fs_parameter_spec fuse_fs_paramet=
+ers[] =3D {
+>  	fsparam_u32	("max_read",		OPT_MAX_READ),
+>  	fsparam_u32	("blksize",		OPT_BLKSIZE),
+>  	fsparam_string	("subtype",		OPT_SUBTYPE),
+> +	fsparam_u16	("request_timeout",	OPT_REQUEST_TIMEOUT),
+>  	{}
+>  };
+> =20
+> @@ -844,6 +846,10 @@ static int fuse_parse_param(struct fs_context *fsc, =
+struct fs_parameter *param)
+>  		ctx->blksize =3D result.uint_32;
+>  		break;
+> =20
+> +	case OPT_REQUEST_TIMEOUT:
+> +		ctx->req_timeout =3D result.uint_16;
+> +		break;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -973,6 +979,8 @@ void fuse_conn_put(struct fuse_conn *fc)
+> =20
+>  		if (IS_ENABLED(CONFIG_FUSE_DAX))
+>  			fuse_dax_conn_free(fc);
+> +		if (fc->timeout.req_timeout)
+> +			timer_shutdown_sync(&fc->timeout.timer);
+>  		if (fiq->ops->release)
+>  			fiq->ops->release(fiq);
+>  		put_pid_ns(fc->pid_ns);
+> @@ -1691,6 +1699,18 @@ int fuse_init_fs_context_submount(struct fs_contex=
+t *fsc)
+>  }
+>  EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
+> =20
+> +static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_co=
+ntext *ctx)
+> +{
+> +	if (ctx->req_timeout) {
+> +		if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->timeout.req_tim=
+eout))
+> +			fc->timeout.req_timeout =3D ULONG_MAX;
+> +		timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
+> +		mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
+> +	} else {
+> +		fc->timeout.req_timeout =3D 0;
+> +	}
+> +}
+> +
+>  int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_contex=
+t *ctx)
+>  {
+>  	struct fuse_dev *fud =3D NULL;
+> @@ -1753,6 +1773,7 @@ int fuse_fill_super_common(struct super_block *sb, =
+struct fuse_fs_context *ctx)
+>  	fc->destroy =3D ctx->destroy;
+>  	fc->no_control =3D ctx->no_control;
+>  	fc->no_force_umount =3D ctx->no_force_umount;
+> +	fuse_init_fc_timeout(fc, ctx);
+> =20
+>  	err =3D -ENOMEM;
+>  	root =3D fuse_get_root_inode(sb, ctx->rootmode);
 
->>
->>
->> --
->> Wei Yang
->> Help you, Help me
-
--- 
-Wei Yang
-Help you, Help me
+--=20
+Jeff Layton <jlayton@kernel.org>
 
