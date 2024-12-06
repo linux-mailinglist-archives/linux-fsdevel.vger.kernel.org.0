@@ -1,167 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-36614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78ADE9E68F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 09:33:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3989E6961
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 09:55:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9A01886D7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 08:32:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4F1167A07
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 08:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937CC1E1A31;
-	Fri,  6 Dec 2024 08:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7xy+32A"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA0E1E0E00;
+	Fri,  6 Dec 2024 08:55:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFA41DF985;
-	Fri,  6 Dec 2024 08:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251051D9A48;
+	Fri,  6 Dec 2024 08:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733473904; cv=none; b=ParK7yKqxxuKcepEk3YZMI+6dqkal4U4cIz18PHKpTrKBivbV/iJll+MEFjmtggRKrjDrfvtvR1IyAvLXV1fRqgD87epWbfL6gflhWpmkrQEiTsxG33zdWzSXmmXrO8YzK6X2mPB+KKQeSy+l0SUf9lNQEoHdL0cG6D7/GxJ/DM=
+	t=1733475312; cv=none; b=HTHXQFkkIUayAulQI/01zelu1QwxXDDXKcXK7zES0FAo9YQhlD1HGO9Ev9EncPz6y7dFeITLi61qH9hK+zpqTn9qAI7dgxR45jJpDt074JrXM08DPlxmAA9EN2sKFg2nJ+FuOPccjuyHqy5IODG/S4i9uT5F3Rd7yp6btjsfk6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733473904; c=relaxed/simple;
-	bh=JqJYyNs+EZIorojWZ80JEwxFDXIe0wdVEqTThkDqp/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QwaU7FLOjKc/wIlPNfvriqS7dWiRmtjFXp2mrFldEh05Wb3y1bEOek3s8uTzyrsOPjWaDxAcuSAxkYEtxQYYiPIrUmZXKKI9aesvj2BHVVYr2WwZDas/5FmGiyCxt1anVA8ACZnM6/B5Ptsbev/Jz5kygCU0H15vdKutfdV5Z1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7xy+32A; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fd24730dadso607305a12.1;
-        Fri, 06 Dec 2024 00:31:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733473901; x=1734078701; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaIpQvkdoMLTjaf/6msdYPERNNt0XKX/eslq4dA70x8=;
-        b=P7xy+32AVCx1DIBrbLOY5mux49WxVK1eaFvluvQal7EiXJRRZlw+JpwfjTbEEr1K2J
-         iRZff2yU6oNG0KU5V0P70DVvIP4POe159VO2qb1nTLGnIHVB8FbEOgC7g8lPR2C0Ek0P
-         raN2WsVbfJUwWD/oRHuzLKn5VfMQSrd1FKLvYX3zA9t3trxkJ63j8RBSED2UiFr6z+Oh
-         Rqmk04ISkruNlBIaCs9LlWvsDMKUJ/WkVEyUd12lfTZihrmE5xbTMIOhBcFC7MBL+9kQ
-         71BJ9osLoHRzysvbtEcr9b73cvE+6ctSRenZBbc+LS7/Sb9FJpIB4GGMYSaCPP+EJyg1
-         Hk0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733473901; x=1734078701;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gaIpQvkdoMLTjaf/6msdYPERNNt0XKX/eslq4dA70x8=;
-        b=nvT8XuY/xlebapwVwdiaOlAHm+ezIA/HmUXXUOlfvVPe744u0AnNEhaeMbo/208RdO
-         N0/ahrGVw/q3fCWlBj5nEnpu/FJz0hnz4IfihlbkoH1pOWlOeEgoy0D6G6UrcQekDrAy
-         fyN4EwcdcHujlY5EiCulTaA9UF9OrMqS5iLJeMqXg15ukkvKuD+yIW8CcyX/zVno7+M3
-         dvAhx7CWVkHfcF0wuE0LIHiBT2F+OwAXL4GL0NyE39TKeiCPbFz/uUelbyuGoQ05fikV
-         pJOimPA46pLxuNjjeGUnojvIRVcY9wyJO3bscgWakA88WqMdSluWIAclCItK2l1JpVSB
-         rQWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVp49PACHJLW7VgYVb2RrZsRoCV73P93SU4vscekwCWDhgkdnlFwZNpJXPO+soTyFJH3olmxkaL@vger.kernel.org, AJvYcCWLduZSO21N3xEUqXr28x6rTsdF5Mdd3p2nxxLJkosHc5CrZ/L3Yfj3e+1tMrgoda0wn0r2bwZShEtu6XQ8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/SFvw1NjbVg8J24AqSxAy2Z3Marbr/TmW8DseNllfSJcbI5OO
-	FYd0u5N2QrrTjogVR+jpkhExWbQA8A+1UcC1lbQpGKwkZwlx8TXT
-X-Gm-Gg: ASbGncspQHGDh9JGxkv79mxRXEhjJSBZyD7aFs1wKuwu6jJBsrpawlsliiXi6X86JY2
-	9EwiI/sF58KYO/TEJGERwduwz9J2qr+PQ20ENdB7MBelQD3aJAcyRM/Ll6YdUxc1e/ke82VJx3M
-	4upkD+Z6Qg+8dNm5iFqwX5+s0ChuM94UuDsmxcK2Sz+E7C2qjVbr13qCxD4YcqYJUDMH/FW4Xxi
-	2rFMGyIbqQSmaY6fIEQ+OBd
-X-Google-Smtp-Source: AGHT+IEvLMZ3ZxPJciJz3ObXqoij4WO4W4Oiw708kBft81mgnEsWCEQn/YsBCCJOK3kpW/swgyQmpg==
-X-Received: by 2002:a05:6a20:7fa6:b0:1d9:1a77:3875 with SMTP id adf61e73a8af0-1e18715fceemr2397434637.42.1733473900638;
-        Fri, 06 Dec 2024 00:31:40 -0800 (PST)
-Received: from localhost.localdomain ([39.144.106.32])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd1568f29esm2550866a12.15.2024.12.06.00.31.37
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 06 Dec 2024 00:31:40 -0800 (PST)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org,
-	david@redhat.com,
-	oliver.sang@intel.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] mm/readahead: fix large folio support in async readahead
-Date: Fri,  6 Dec 2024 16:30:25 +0800
-Message-Id: <20241206083025.3478-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+	s=arc-20240116; t=1733475312; c=relaxed/simple;
+	bh=6amPin9F3atmc7mQBPJ6QiqmXojPFyeez5KUoWEI5FM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C5/0Lkwzk57PZ+PvIjCCNsL2JmzK7kZw1R+By0ZKaMqLw/NPyhlgazkXh0dMUMMLJ/uWGNLfDoBcItVjKmd5aCqOwBz0WbYWpz8jYAxmB+haoBiwXBoOr0RPfEyAH7PORw4GHtYmkaVo4WCEnuqrqg6BH4n1jiTm/SWxKkL+kfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4Q772vSsz4f3lVL;
+	Fri,  6 Dec 2024 16:54:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7611F1A07B6;
+	Fri,  6 Dec 2024 16:55:03 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCnzoLlu1Jn6clADw--.11146S3;
+	Fri, 06 Dec 2024 16:55:03 +0800 (CST)
+Message-ID: <c831732e-38c5-4a82-ab30-de17cff29584@huaweicloud.com>
+Date: Fri, 6 Dec 2024 16:55:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/27] ext4: introduce seq counter for the extent status
+ entry
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-13-yi.zhang@huaweicloud.com>
+ <20241204124221.aix7qxjl2n4ya3b7@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20241204124221.aix7qxjl2n4ya3b7@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCnzoLlu1Jn6clADw--.11146S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFy7ZryrWF1kXw4rCr18AFb_yoWrGFyfpF
+	ZIk3Z8tFs8J3WFkryIva17Zr1rGa48GrW7GF9Igw4vka98WFyfKF1UKFWjvF18WrWvqw1j
+	vF4Fk347C3Wjva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-When testing large folio support with XFS on our servers, we observed that
-only a few large folios are mapped when reading large files via mmap.
-After a thorough analysis, I identified it was caused by the
-`/sys/block/*/queue/read_ahead_kb` setting.  On our test servers, this
-parameter is set to 128KB.  After I tune it to 2MB, the large folio can
-work as expected.  However, I believe the large folio behavior should not
-be dependent on the value of read_ahead_kb.  It would be more robust if
-the kernel can automatically adopt to it.
+On 2024/12/4 20:42, Jan Kara wrote:
+> On Tue 22-10-24 19:10:43, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> In the iomap_write_iter(), the iomap buffered write frame does not hold
+>> any locks between querying the inode extent mapping info and performing
+>> page cache writes. As a result, the extent mapping can be changed due to
+>> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
+>> write-back process faces a similar problem: concurrent changes can
+>> invalidate the extent mapping before the I/O is submitted.
+>>
+>> Therefore, both of these processes must recheck the mapping info after
+>> acquiring the folio lock. To address this, similar to XFS, we propose
+>> introducing an extent sequence number to serve as a validity cookie for
+>> the extent. We will increment this number whenever the extent status
+>> tree changes, thereby preparing for the buffered write iomap conversion.
+>> Besides, it also changes the trace code style to make checkpatch.pl
+>> happy.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Overall using some sequence counter makes sense.
+> 
+>> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+>> index c786691dabd3..bea4f87db502 100644
+>> --- a/fs/ext4/extents_status.c
+>> +++ b/fs/ext4/extents_status.c
+>> @@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
+>>  	return es->es_lblk + es->es_len - 1;
+>>  }
+>>  
+>> +static inline void ext4_es_inc_seq(struct inode *inode)
+>> +{
+>> +	struct ext4_inode_info *ei = EXT4_I(inode);
+>> +
+>> +	WRITE_ONCE(ei->i_es_seq, READ_ONCE(ei->i_es_seq) + 1);
+>> +}
+> 
+> This looks potentially dangerous because we can loose i_es_seq updates this
+> way. Like
+> 
+> CPU1					CPU2
+> x = READ_ONCE(ei->i_es_seq)
+> 					x = READ_ONCE(ei->i_es_seq)
+> 					WRITE_ONCE(ei->i_es_seq, x + 1)
+> 					...
+> 					potentially many times
+> WRITE_ONCE(ei->i_es_seq, x + 1)
+>   -> the counter goes back leading to possibly false equality checks
+> 
 
-With /sys/block/*/queue/read_ahead_kb set to 128KB and performing a
-sequential read on a 1GB file using MADV_HUGEPAGE, the differences in
-/proc/meminfo are as follows:
+In my current implementation, I don't think this race condition can
+happen since all ext4_es_inc_seq() invocations are under
+EXT4_I(inode)->i_es_lock. So I think it works fine now, or was I
+missed something?
 
-- before this patch
-  FileHugePages:     18432 kB
-  FilePmdMapped:      4096 kB
+> I think you'll need to use atomic_t and appropriate functions here.
+> 
+>> @@ -872,6 +879,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>>  	BUG_ON(end < lblk);
+>>  	WARN_ON_ONCE(status & EXTENT_STATUS_DELAYED);
+>>  
+>> +	ext4_es_inc_seq(inode);
+> 
+> I'm somewhat wondering: Are extent status tree modifications the right
+> place to advance the sequence counter? The counter needs to advance
+> whenever the mapping information changes. This means that we'd be
+> needlessly advancing the counter (and thus possibly forcing retries) when
+> we are just adding new information from ordinary extent tree into cache.
+> Also someone can be doing extent tree manipulations without touching extent
+> status tree (if the information was already pruned from there). 
 
-- after this patch
-  FileHugePages:   1067008 kB
-  FilePmdMapped:   1048576 kB
+Sorry, I don't quite understand here. IIUC, we can't modify the extent
+tree without also touching extent status tree; otherwise, the extent
+status tree will become stale, potentially leading to undesirable and
+unexpected outcomes later on, as the extent lookup paths rely on and
+always trust the status tree. If this situation happens, would it be
+considered a bug? Additionally, I have checked the code but didn't find
+any concrete cases where this could happen. Was I overlooked something?
 
-This shows that after applying the patch, the entire 1GB file is mapped to
-huge pages.  The stable list is CCed, as without this patch, large folios
-don't function optimally in the readahead path.
+> So I think
+> needs some very good documentation what are the expectations from the
+> sequence counter and explanations why they are satisfied so that we don't
+> break this in the future.
+> 
 
-It's worth noting that if read_ahead_kb is set to a larger value that
-isn't aligned with huge page sizes (e.g., 4MB + 128KB), it may still fail
-to map to hugepages.
+Yeah, it's a good suggestion, where do you suggest putting this
+documentation, how about in the front of extents_status.c?
 
-Link: https://lkml.kernel.org/r/20241108141710.9721-1-laoar.shao@gmail.com
-Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Tested-by: kernel test robot <oliver.sang@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: <stable@vger.kernel.org>
----
- mm/readahead.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-Changes:
-v2->v3:
-- Fix the softlockup reported by kernel test robot
-  https://lore.kernel.org/linux-fsdevel/202411292300.61edbd37-lkp@intel.com/
-
-v1->v2: https://lore.kernel.org/linux-mm/20241108141710.9721-1-laoar.shao@gmail.com/
-- Drop the alignment (Matthew)
-- Improve commit log (Andrew)
-
-RFC->v1: https://lore.kernel.org/linux-mm/20241106092114.8408-1-laoar.shao@gmail.com/
-- Simplify the code as suggested by Matthew
-
-RFC: https://lore.kernel.org/linux-mm/20241104143015.34684-1-laoar.shao@gmail.com/
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 3dc6c7a128dd..1dc3cffd4843 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -642,7 +642,11 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 			1UL << order);
- 	if (index == expected) {
- 		ra->start += ra->size;
--		ra->size = get_next_ra_size(ra, max_pages);
-+		/*
-+		 * In the case of MADV_HUGEPAGE, the actual size might exceed
-+		 * the readahead window.
-+		 */
-+		ra->size = max(ra->size, get_next_ra_size(ra, max_pages));
- 		ra->async_size = ra->size;
- 		goto readit;
- 	}
--- 
-2.43.5
+Thanks,
+Yi.
 
 
