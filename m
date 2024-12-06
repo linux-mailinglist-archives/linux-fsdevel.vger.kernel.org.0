@@ -1,321 +1,355 @@
-Return-Path: <linux-fsdevel+bounces-36666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC81D9E77EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 19:16:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D709E7800
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 19:20:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B906D16460C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 18:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106A9285978
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 18:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11821FFC4B;
-	Fri,  6 Dec 2024 18:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E84202F9C;
+	Fri,  6 Dec 2024 18:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcA+sWFV"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j8fVbEzs";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="USg32rZg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF48256E
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 18:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733508991; cv=none; b=UPhFequ2pQtGIDW7y+/tOP1Tb7tKGqUpQoqZpGACMWTMJdqePf34hJGja0RQRPoYnPM8MM4/EkootfAI0l3XUeY1UeXR/mnmZ+xkZ/sF791p+ppLfpogWZzwz17QmGSpjxo3o+E8OLgrBSsL87KX6DyooVFu3+vkKomu2VtEp8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733508991; c=relaxed/simple;
-	bh=G3oYq20PCk2mDsDBSmgRi4otpeMDoRNwx6FCgtpstB4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PokQA3hCJfu93kzy2q/7No33aQragHNR4K66wnnNV9qZLoLsyX2F/mvRrdhIQpGHA6RdTfKxeb8cy5bhSuOn7Sf7rEormOaWSWnXvaJAuVLUegGyZaZsjHvNGjXAW5Gvdzz32DAQGQhnG2Y2T2NP4HI+ty0Ylb67Fg6iq8xNlzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcA+sWFV; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-46684744173so39701711cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2024 10:16:29 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550521F3D46;
+	Fri,  6 Dec 2024 18:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733509212; cv=fail; b=HmMLoK/ydGB1tzOs1ivZJ/SAcGkaO7rq6mxm2GhSo6tkGXqA3DYGQOzRIFDx9TMW6mr2O0j/f44QoE5PcFIgq4SCJfUc0zDn8hQyP/pOxUQ5Z7jSpIOxyrBlK+3NFQCHeELEGINaEsw3C2jjZJVN3b4wnG5j/DshwtqaIc/bgM8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733509212; c=relaxed/simple;
+	bh=qE97LNoo5jvcvOu526mno9mDJ0/5wTTs4ZfzvzsSRBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XmLP0840YUyouQYz/r/v5Cgk2hfdxyDV+b7HuuFJ9kNUw2aeyfh49d670y7v3golYDt7ZDoDh92p6aqrQtmq823Grcf/v1y730gqvHvUc3drTmVjQR4Px/zCiHtYCz1v0NnTqrm700chuyPszlQZBjs47zPMKkeQyGEHZZZrKas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=j8fVbEzs; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=USg32rZg; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6Htsuf016502;
+	Fri, 6 Dec 2024 18:19:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=DDndv4L0OGAOyJgUXJ
+	Wh1dmoSlqq0TVXRvkYq+VsvNA=; b=j8fVbEzsDp97qgdz5lUAJvMav7XdxPy9OD
+	9F1x5f9MBBlYCRP8qjcGOhOLR2wMGIoPShK6LlelaSSt0MRDmhME8+bGD4ycIvlR
+	SS5jPb+3syWdWGl/7txTSMPUC8DE1HLurkTIYvPVQGArJR6Db5NwL6cibIg3dNzc
+	50Dm6g9vS/4iwwkduHq/rt5ffm6w2sTCwbrBVd7y1WxUbK8kKARB6LkV+ZEnvfIz
+	khFIJIkgStWbvyyxt/vOYlZkbcmvZGnF/+zCYLDDBgu1sMybFVOLzENmKBISYHnt
+	GDClYptA/pdrpDePdljFNz72L/F7Xx8USqToDT0g8fjmE+TOMbUQ==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437trbx4f5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 06 Dec 2024 18:19:56 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6HNC3H040008;
+	Fri, 6 Dec 2024 18:19:55 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2040.outbound.protection.outlook.com [104.47.56.40])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43836yh3rr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 06 Dec 2024 18:19:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UREZZpEZAWLZMGt6g1/B503mKMl1Ewd1Poz+C2CuhIyCU647WzesMxNNpGiOgdiNaJibMjVF9C0NhSAdbTT976yN76c6m0XJxBELm/KYtxTursWZ3uloEOM0bSRxYqEm7rLXAymxXTfZt0dmFvUNu1GuAAQLTTxA0QtWFEhP98ZxyzASa0v2iWKJQqjypSUFbxFvk6hQEaubhSTZkAV/Zob0ixHMonbih5HaugLjmsdRbG4vpJoN5liPSff2kYTuGCOlUa6WLegOOcnE7cxHrT93FYsSH+9WROmLxGEK88JwovTjfIARVG8ay8H/oeTrfhsF6tefuUnQ5v3C+A6c7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DDndv4L0OGAOyJgUXJWh1dmoSlqq0TVXRvkYq+VsvNA=;
+ b=inforzJaP9ghq6naK/ILuasB19GNzNdp2RkYrhUsBCNwH3lw/cPhCaY3dKCJv9Y36/wU/B3JUTKOIDngVSsNtvwA3iCZH+H1oGA4L/5o57jALwZzAlOo4kfVtm3nenbmupXnONxKNqnwFQMsEiFZusGZX3/ma7NQ7zUCBtnn59/VG4zBWA4WEOU2aASHcdvwuxib9Nabmdv9LzztkNRb87NdG1QIUEi+uVe46wg/UIwbX5iKGnIE6Yxxnzw8WY8md204fVa19oe35BtV2eKeaS0TQK5QvBzzrX3LqFwZ7QR+40bLfssrVeUUEH9yKvKWs3mXJUVFkBn9Mtw3zZExBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733508988; x=1734113788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YSGoofVsvvAOtfMcUS/5tDeWlEiedBqxdhWjldPLYl0=;
-        b=EcA+sWFVwX4I2xycFlfc2pCVeYNcbCdRBzQiprHn8E4+C6r5hjLS5K3CVXYGyoe/jM
-         +zGpbtPYOgzEtRXm8YTgF31XAPEyMrwWa18UDa2P5kfmvAb4UUu6KScNxk8vUfAJCB8D
-         YKtk4v19GrDdltKqlex8cy8+JtIzRhOmsuRZyJMHDZGJFPTvN4lcURn7yUH5qZKhr1LH
-         kxRVk+LwSm8+YRGUhYKnfBC80DFz4y+w4WLjoGpDZLo9VEiP51OFiqcYLj2nv5s+qQCq
-         Z1Oi0dLM6qqD2GuR3s6PM/Y49HIgkHccW3scV7J1hDiJCXiiIBbonKmgGu9d3iMqsb2F
-         ecfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733508988; x=1734113788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YSGoofVsvvAOtfMcUS/5tDeWlEiedBqxdhWjldPLYl0=;
-        b=XfQb8Hu/o8SV+SBZGzcxT7YpIoHG0VTECajmiHhH6kPcf1aSpEpM8kSOTk0kvFu4Qh
-         QXp0y+6FmIYzUhmUkBD/SLEaBzIbdplRYJs5tb1ZyykWUsO9GwyS7kZHWan3CCG48svx
-         k7Zv3oKuIxO0TD6eWN0F2ceb8lssmelhvviN3jLgIqm2rh2dUzvMVZqDEIq0B0aQaqhc
-         DXuLrYYNZNOImDRpy9Brm3dzE/TWz91mgHfXLavyO/5ofFUBZoDZONxe6F+xsDc3vchx
-         0c9Cl4HcMZrPYU6Z7ZPZdK7siA1/akuF4+KjYqghtW0lmXU2vCe0Z9wxZNLDhbDDMFqj
-         Nq3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUWGALP5ko34L05wP88iKgQmiGVDyxMDxt9POz5Ii++gXHoHnFuu7ub7vU3t1p5I7g7NL6LiTVjvxc7UA0+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7JS9BnioaBmEodZOKIKdq2xjBccAkANKVxwT493kMzAil+y1n
-	T2NTt+JjI/Nf2EYVOEG2vHD/c6XpBEWV8XyeJzTZx5tIxZ96+ArjK20jv3AdSyNX4lkjxbNwzHX
-	AbNEQKZHrspsY4SREKgUkIWWhTkc2zQ==
-X-Gm-Gg: ASbGncsOIDfpbhyNkvVBfn776fgJluHisKRE4CFw8ozSFF9noR8mBJEBzjlVDWRanAI
-	di8fA0nYDy7ot3FlaftzQA1S7dJyRZsAXjffYQmkUE6nAIVU=
-X-Google-Smtp-Source: AGHT+IHQTwe71tmqifI60NmsqlhTYpK/5g79iuNnWLs4kf3nUaNxC7NCsmgY3RFfO0K03L8Rck97htndPNd1XnOfCOA=
-X-Received: by 2002:a05:622a:4a:b0:466:98e1:cc70 with SMTP id
- d75a77b69052e-46734cbba2emr60494671cf.14.1733508988266; Fri, 06 Dec 2024
- 10:16:28 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DDndv4L0OGAOyJgUXJWh1dmoSlqq0TVXRvkYq+VsvNA=;
+ b=USg32rZgWeWseRNOOz5/73eey29SxqBpig6Pyt7DB5huzeKUUSpf13c8eQR/lex7+IzLKmu+7vu8uPKkdAwWj33v6pgs4LLuxw8mDkC465iEJT+uE06CjcQWvZw1qegQ+49aGfXrLE47+ES1inBIIEMGR3Hb/0154wPyqbWc2Mc=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by DS7PR10MB5166.namprd10.prod.outlook.com (2603:10b6:5:3a4::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
+ 2024 18:19:52 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
+ 18:19:52 +0000
+Date: Fri, 6 Dec 2024 18:19:49 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Shuah Khan <shuah@kernel.org>, kernel-team@android.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        John Stultz <jstultz@google.com>
+Subject: Re: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC
+ to memfd
+Message-ID: <0ff1c9d9-85f0-489e-a3f7-fa4cef5bb7e5@lucifer.local>
+References: <20241206010930.3871336-1-isaacmanjarres@google.com>
+ <20241206010930.3871336-2-isaacmanjarres@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206010930.3871336-2-isaacmanjarres@google.com>
+X-ClientProxiedBy: LNXP265CA0056.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5d::20) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114191332.669127-1-joannelkoong@gmail.com>
- <20241114191332.669127-4-joannelkoong@gmail.com> <d626ecff2108849b896dc93b3baa860127589f52.camel@poochiereds.net>
-In-Reply-To: <d626ecff2108849b896dc93b3baa860127589f52.camel@poochiereds.net>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 6 Dec 2024 10:16:17 -0800
-Message-ID: <CAJnrk1Y38eKLqzWaPUf64ATU4boG+R+qo+sH3arsZ2xNXSGiVQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v9 3/3] fuse: add default_request_timeout and
- max_request_timeout sysctls
-To: Jeff Layton <jlayton@poochiereds.net>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
-	kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|DS7PR10MB5166:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3d38534-226d-4d1e-5b62-08dd162293c0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HRfyUsuHNUXsYdVN9VlSA5GwJl4W7dDNssANqkAxkQoFezc27OKFyXFqQdJR?=
+ =?us-ascii?Q?VVuM7AgziN2UydFe3JFFtJp6qIhfrEvqCgcj/fLfb35+QOrcWzkDWCNsOabZ?=
+ =?us-ascii?Q?5qkhEmA6rU12S3/omu1Yw8LZPWCAII/6jWX+4FnrmWvlFFoIZDY8ExzqPKF3?=
+ =?us-ascii?Q?IxAsf71UrZvAQjnMsa2z/7XxvcYLgLHGfMwNYfb2RxkJLiqRqCFZMXfJMOh/?=
+ =?us-ascii?Q?2+2hWPM4Je+SC1YFAwdi3c4YgrjyS8wVUggz+xHpx1epJKfyxUpVSXmuzZCE?=
+ =?us-ascii?Q?xT6qjJwabd4vt1VxV/TP55ojkcbcuJRusLkUVl+36SdHc2xuiiQzCCDeGqi6?=
+ =?us-ascii?Q?LAmTzRkG+HDFWIN91kgvtP4zXpwVW3bsO16JJv7TInRuxrXcQda54qAiJv5u?=
+ =?us-ascii?Q?XgQkbRtTudpDsPybQB0NdQ6TCpR+lvQ79IM+20xpT2JSwbWi+ChSIsHNy5kX?=
+ =?us-ascii?Q?y6Pclx2JHE81y1rpc8Il8agJZL3Feq45DiFL+HYjEiLen+xUkN+CH/nXQltX?=
+ =?us-ascii?Q?qtzdJJqK6t1bgVOljrSGcI+nFi4whNuGhXrLWGNg9vOhESIJywWS2xCcZfLy?=
+ =?us-ascii?Q?N3swOBDm5OxoIoKxeBX+M7K7lV8KHz6pMBLpWcUKuxnEDWZ2Ye+WuhcojNkB?=
+ =?us-ascii?Q?rULjK6Ct5VGe3nvKDq/y3cNxIlmvdOGmFrTU1UGqe0jFhwAYVyF4JyxgLn+R?=
+ =?us-ascii?Q?GzDAN2r/qpjAKX5JEru0SrBxzbsR4OoH4dd+3hcGpqPIVlhlkps9DlFLcuv6?=
+ =?us-ascii?Q?LaF8RXyiyUquSQIod7zJ31TBlHi1ykeAJyM2L/ChC0de2uJ3/kwppsr/bWmh?=
+ =?us-ascii?Q?8qQoVg9A7aGpn2YrGvJosaamP9bW8igF548Qa/66lWizXIAxYSPFvw3puVr8?=
+ =?us-ascii?Q?2usB40kEx2bLSUFkLfkm9Hsl2qzxuO0/78nGU1v3kPYaeKxD790jEEEMR7dj?=
+ =?us-ascii?Q?3M5jomenqjg4jKHxmQOdHp29A8e6sp34VtxXQgngQNown8k3pCWUdzDKr3Ca?=
+ =?us-ascii?Q?qX8aEQvoRLwHf7Vtu0agPRKY5UcDUgcQX7xGDM1ILQLtZcdHk1QR0QMzQvKT?=
+ =?us-ascii?Q?odl3FR9ACpD5EGpvSaPIUD6+M0YTiIL3qPSNgAikvoI09TOH7DWPrEhL2Th+?=
+ =?us-ascii?Q?7trQEnpYY3UlEjVgYnNUS2vUsCO6b2wLuLJ5KNTD6eVCxcnZqbzxo/U8SzXS?=
+ =?us-ascii?Q?Pa2AEtE6BXCcBWJIRYEHfABuH76T3WqAwBf6J3Tdy4pDJUZTb0jNVGzpupGr?=
+ =?us-ascii?Q?L96r9/xT1RcxH8tKqHnFLntos8WlmA4TbAmzZ/3+8Pue2loBsq/gMkjlLZry?=
+ =?us-ascii?Q?rTQ3SGYl1eln5YFXe1g8Qb/qaYmlGIXUfNr1Q1ukuRtGgDflOrY3396Lr12T?=
+ =?us-ascii?Q?Vv/PLFk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hB6bZSvxWDE5+8Trh7zjexhqAO3roeV/xRpfS1e2J1JWA2oAU6BRH+PoIRxY?=
+ =?us-ascii?Q?HaprRFZh77PGLbc220o5FkVrKU0h4/OOWi73y2J4vLiRcK+6f5Z+Y+ILzohz?=
+ =?us-ascii?Q?48hoUmHh3LPc3Y93bDQKhNRQqjoSQLYO1HA/YxlEhjyTMcgc95pmIwNorDfg?=
+ =?us-ascii?Q?RFMz5OK7812wXqu9Y7e3PrYRDqBqKYl5eN5Tc7PddnAqpzxnfSeMFpS1XVQ6?=
+ =?us-ascii?Q?pgcWWLu3d8PtDzwk4V1evkPHJI23MKbPoiAU2Sntof1dL97FPJMa/iFDEuuz?=
+ =?us-ascii?Q?hOBmuoX30J1ACJ0W1b1OgyOYxCzsw2XAFBMhGHxvurRnv09jHToRu9vqSNl8?=
+ =?us-ascii?Q?swGkUHDk0HB4l9uw25YhDS3hLUq3ihbJ9MEJL8Dpf5BHap3QXQgmjKB7ICCl?=
+ =?us-ascii?Q?dYFlOCFUpHcxCrKEMnZe8Zg83OUsVAypOx6fz6uSMBb2JNZT1VHyI/bazS+z?=
+ =?us-ascii?Q?KhmDH+e/weiLjmPmc9d5Vep37zm24fTcDtxrqrE9QK4omEWFF+PwI9M/2eHu?=
+ =?us-ascii?Q?yXd3ct52zryHf70lg9X06yyOT8NP2ZnekBrLkS2a7FmZqqhfSdCf+nr7Ta4F?=
+ =?us-ascii?Q?ecX1J1yw6RcVKxEBlGWqme0Tij8YAOdZKDiGc+QQuVwfqGJnb+er/PsZwDKX?=
+ =?us-ascii?Q?T68cMqvAF8yZeWcMspZC7Iy2jK76tmdBZoLU1bHnOga4/h2J+6V7rWW3kpl6?=
+ =?us-ascii?Q?JX/EMfiypoj+Yu8K8rHhhMciqC1IKK/9bFM4ZWWbduZuPAUCH5Phkh4zs/ak?=
+ =?us-ascii?Q?OiyI9CBkMxdom432PQE1LjmnEdMuPGl2nh/8N8SvzqssxeXU0s5MB1kx/+Hi?=
+ =?us-ascii?Q?wCDoxNYNc7JCy79bfCr1Ns5XYvaqReepVY50s0Gl76o5HF7MaoT4ZxJTiUl/?=
+ =?us-ascii?Q?4bZ1yB0hmq4vZAGnjs/mcs7lA+8MH7mEiPMmAethUxEBUGTlDHNhw9I1Rl0R?=
+ =?us-ascii?Q?7vqFWbX4RHQCXzAs/+oNaasYixJX0dbAknLbBWb3qDdtPkHx2e37xNrM6EUp?=
+ =?us-ascii?Q?1vEC71IC3Pp6QA7RMU5sP0a+l9KE2mqeUnqbFuHbjuDxHbuM1W5i+H7PJ1Fe?=
+ =?us-ascii?Q?0sdsUyQKF4+rtZU4N1mF3YBU+1G/cJ8Sygs6DEMVKWp7i153iBu7NQzNYNvD?=
+ =?us-ascii?Q?5NaqRAqy3AZNtJikwD2+Oz2I/5LN/bnNdtb9HdxjkZAFxr5qGWRYCBGizutF?=
+ =?us-ascii?Q?Mo1jL2t85fFWgrgZwJEa93QPCEXFDyPbZhAS2WsD1Ay0IozEQE/VkLyCyeUD?=
+ =?us-ascii?Q?4XwLtTnb+TNz/D2xRPYwybNMdrtRFzWDKaBwCQ1fjLKegWTIGcQSg2H14oon?=
+ =?us-ascii?Q?mYVEmQF8wtpmzD2Hf66G/0TQ3Aeb/SHHoAxztFLHMQ3UyA/F4zysQ9RFCRzp?=
+ =?us-ascii?Q?I8Ox3OxujNa40iONLRZIZMRi8EQoHfPSa+cVZyECPn1HHn6yOunAd1sjJGr0?=
+ =?us-ascii?Q?ktyL/DaNBqW2YJ1PSmrodjlHzs6v54kcMY5qI6nGEYJNvMHO8wg2HkVRi7pE?=
+ =?us-ascii?Q?3nm+kvd30MaxIJUn73wumlI1Ose4rD1ZRjGoDAEhngZbxhFMaOC6LSIFMJ7k?=
+ =?us-ascii?Q?oa9zoPkeS1HiY+tb8tgkd3R9o5EHDoMRSw7WURo3ui/LJGsWdacNuiDsml+C?=
+ =?us-ascii?Q?SA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Ipr7QXuQ45z5I/wlmqWxKk3hRGI4lLGooiJ+l4Y26WvwsBj97Rl6DSJzTigD3XfM4hJMSbI6ioC2rhCxjS/CECPYb+envQ+tJtZSonqqTV/WL2EP7qrW1nwZjyDzogQ92gqvVQ6rVrjsyXmeO7pCKFBjcytZczc01xZE+Gqz86iRGIKKhTjO+lVSBY5hdVfVfta874nIrfSbOewCn2IILXc/QNc9gnmLUnTiyeZ0okF4VzAfaQw1V0JfR9+pp3PqcEkf1sg4RutIA3Iq4O78r3sKHLX7neB114DS46QMjJ8vY0MiwhGt1YhKNbx6buwZke8RQiD5hYII86lYPl8z0wlU7ltwROWhvY6jk+5nHGC9/Q/7gWmJbYkEMRhSX8f7twQLTUAGtiocuC7/5E1ZsqPsq/9POQJjkDEZ4tGTvJcdsO+a/hGoy76ZEYna//dj6xNMlrLJuR8SB4ebGFi3eWkKCBIMVjQtYGWRCNCuJmTQf94V5oLQF+LMuU1eFNclN1Kf2l49ioN7rUEuECI0yMY9Op6UqAnZyAtdR11iiJkc9R0q9IhrbGxtLG+yHjPJ+Joh+CfNsIMnHRxwcsTI8B5n2l0+rRovUwLjIa59ub0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3d38534-226d-4d1e-5b62-08dd162293c0
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 18:19:52.2894
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: goeihIPDJKNDpi2cAUzjSh42je5Xd8bTlbglMVw7mEsxO2Y5ISDNCsc4QyZCZ/ZSAHzV5C+zkjhK2rnA+Kgjseb+PVEn18KFhjn12wms8qU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5166
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-06_12,2024-12-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 suspectscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412060138
+X-Proofpoint-GUID: KW294RZ5cDoXepx_wJLLgfHCwCVMd34r
+X-Proofpoint-ORIG-GUID: KW294RZ5cDoXepx_wJLLgfHCwCVMd34r
 
-On Thu, Dec 5, 2024 at 4:43=E2=80=AFPM Jeff Layton <jlayton@poochiereds.net=
-> wrote:
+On Thu, Dec 05, 2024 at 05:09:22PM -0800, Isaac J. Manjarres wrote:
+> Android currently uses the ashmem driver [1] for creating shared memory
+> regions between processes. Ashmem buffers can initially be mapped with
+> PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
+> ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
+> permissions that the buffer can be mapped with.
 >
-> On Thu, 2024-11-14 at 11:13 -0800, Joanne Koong wrote:
-> > Introduce two new sysctls, "default_request_timeout" and
-> > "max_request_timeout". These control how long (in minutes) a server can
-> > take to reply to a request. If the server does not reply by the timeout=
-,
-> > then the connection will be aborted.
-> >
+> Processes can remove the ability to map ashmem buffers as executable to
+> ensure that those buffers cannot be exploited to run unintended code.
+> We are currently trying to replace ashmem with memfd. However, memfd
+> does not have a provision to permanently remove the ability to map a
+> buffer as executable. Although, this should be something that can be
+> achieved via a new file seal.
 >
-> Is this patch really needed? You have a per-mount limit already, do we
-> need a global default and max?
+> There are known usecases (e.g. CursorWindow [2]) where a process
+> maps a buffer with read/write permissions before restricting the buffer
+> to being mapped as read-only for future mappings.
+>
+> The resulting VMA from the writable mapping has VM_MAYEXEC set, meaning
+> that mprotect() can change the mapping to be executable. Therefore,
+> implementing the seal similar to F_SEAL_WRITE would not be appropriate,
+> since it would not work with the CursorWindow usecase. This is because
+> the CursorWindow process restricts the mapping permissions to read-only
+> after the writable mapping is created. So, adding a file seal for
+> executable mappings that operates like F_SEAL_WRITE would fail.
+>
+> Therefore, add support for F_SEAL_FUTURE_EXEC, which is handled
+> similarly to F_SEAL_FUTURE_WRITE. This ensures that CursorWindow can
+> continue to create a writable mapping initially, and then restrict the
+> permissions on the buffer to be mappable as read-only by using both
+> F_SEAL_FUTURE_WRITE and F_SEAL_FUTURE_EXEC. After the seal is
+> applied, any calls to mmap() with PROT_EXEC will fail.
+>
+> [1] https://cs.android.com/android/kernel/superproject/+/common-android-mainline:common/drivers/staging/android/ashmem.c
+> [2] https://developer.android.com/reference/android/database/CursorWindow
+>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kalesh Singh <kaleshsingh@google.com>
+> Cc: John Stultz <jstultz@google.com>
+> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+> ---
+>  include/linux/mm.h         |  5 +++++
+>  include/uapi/linux/fcntl.h |  1 +
+>  mm/memfd.c                 |  1 +
+>  mm/mmap.c                  | 11 +++++++++++
+>  4 files changed, 18 insertions(+)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 4eb8e62d5c67..40c03a491e45 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4096,6 +4096,11 @@ static inline bool is_write_sealed(int seals)
+>  	return seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE);
+>  }
+>
+> +static inline bool is_exec_sealed(int seals)
+> +{
+> +	return seals & F_SEAL_FUTURE_EXEC;
+> +}
+> +
+>  /**
+>   * is_readonly_sealed - Checks whether write-sealed but mapped read-only,
+>   *                      in which case writes should be disallowing moving
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 6e6907e63bfc..ef066e524777 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -49,6 +49,7 @@
+>  #define F_SEAL_WRITE	0x0008	/* prevent writes */
+>  #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+>  #define F_SEAL_EXEC	0x0020  /* prevent chmod modifying exec bits */
+> +#define F_SEAL_FUTURE_EXEC	0x0040 /* prevent future executable mappings */
+>  /* (1U << 31) is reserved for signed error codes */
+>
+>  /*
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 35a370d75c9a..77b49995a044 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -184,6 +184,7 @@ unsigned int *memfd_file_seals_ptr(struct file *file)
+>  }
+>
+>  #define F_ALL_SEALS (F_SEAL_SEAL | \
+> +		     F_SEAL_FUTURE_EXEC |\
+>  		     F_SEAL_EXEC | \
+>  		     F_SEAL_SHRINK | \
+>  		     F_SEAL_GROW | \
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index b1b2a24ef82e..c7b96b057fda 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -375,6 +375,17 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+>  		if (!file_mmap_ok(file, inode, pgoff, len))
+>  			return -EOVERFLOW;
+>
 
-Yes, I do think this patch would be useful. Since fuse servers can run
-unprivileged, I think giving system admins some way to enforce a
-default and max limit that applies automatically to all fuse servers
-would help protect against malicious or buggy servers on the system.
+Not maybe in favour of _where_ in the logic we check this and definitely
+not in expanding this do_mmap() stuff much further.
 
->
-> Also, ditto here wrt seconds vs. minutes. If these *are* needed, then
-> having them expressed in seconds would be more intuitive for most
-> admins.
+See comment at bottom though... I have a cunning plan :)
 
-Noted. I'll change this to seconds in the next iteration of this patchset.
->
->
-> > "default_request_timeout" sets the default timeout if no timeout is
-> > specified by the fuse server on mount. 0 (default) indicates no default
-> > timeout should be enforced. If the server did specify a timeout, then
-> > default_request_timeout will be ignored.
-> >
-> > "max_request_timeout" sets the max amount of time the server may take t=
-o
-> > reply to a request. 0 (default) indicates no maximum timeout. If
-> > max_request_timeout is set and the fuse server attempts to set a
-> > timeout greater than max_request_timeout, the system will use
-> > max_request_timeout as the timeout. Similarly, if default_request_timeo=
-ut
-> > is greater than max_request_timeout, the system will use
-> > max_request_timeout as the timeout. If the server does not request a
-> > timeout and default_request_timeout is set to 0 but max_request_timeout
-> > is set, then the timeout will be max_request_timeout.
-> >
-> > Please note that these timeouts are not 100% precise. The request may
-> > take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max timeou=
-t
-> > due to how it's internally implemented.
-> >
-> > $ sysctl -a | grep fuse.default_request_timeout
-> > fs.fuse.default_request_timeout =3D 0
-> >
-> > $ echo 65536 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> > tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
-> >
-> > $ echo 65535 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> > 65535
-> >
-> > $ sysctl -a | grep fuse.default_request_timeout
-> > fs.fuse.default_request_timeout =3D 65535
-> >
-> > $ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> > 0
-> >
-> > $ sysctl -a | grep fuse.default_request_timeout
-> > fs.fuse.default_request_timeout =3D 0
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-> > ---
-> >  Documentation/admin-guide/sysctl/fs.rst | 27 +++++++++++++++++++++++++
-> >  fs/fuse/fuse_i.h                        | 10 +++++++++
-> >  fs/fuse/inode.c                         | 16 +++++++++++++--
-> >  fs/fuse/sysctl.c                        | 20 ++++++++++++++++++
-> >  4 files changed, 71 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/ad=
-min-guide/sysctl/fs.rst
-> > index fa25d7e718b3..790a34291467 100644
-> > --- a/Documentation/admin-guide/sysctl/fs.rst
-> > +++ b/Documentation/admin-guide/sysctl/fs.rst
-> > @@ -342,3 +342,30 @@ filesystems:
-> >  ``/proc/sys/fs/fuse/max_pages_limit`` is a read/write file for
-> >  setting/getting the maximum number of pages that can be used for servi=
-cing
-> >  requests in FUSE.
-> > +
-> > +``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
-> > +setting/getting the default timeout (in minutes) for a fuse server to
-> > +reply to a kernel-issued request in the event where the server did not
-> > +specify a timeout at mount. If the server set a timeout,
-> > +then default_request_timeout will be ignored.  The default
-> > +"default_request_timeout" is set to 0. 0 indicates a no-op (eg
-> > +requests will not have a default request timeout set if no timeout was
-> > +specified by the server).
-> > +
-> > +``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-> > +setting/getting the maximum timeout (in minutes) for a fuse server to
-> > +reply to a kernel-issued request. A value greater than 0 automatically=
- opts
-> > +the server into a timeout that will be at most "max_request_timeout", =
-even if
-> > +the server did not specify a timeout and default_request_timeout is se=
-t to 0.
-> > +If max_request_timeout is greater than 0 and the server set a timeout =
-greater
-> > +than max_request_timeout or default_request_timeout is set to a value =
-greater
-> > +than max_request_timeout, the system will use max_request_timeout as t=
-he
-> > +timeout. 0 indicates a no-op (eg requests will not have an upper bound=
- on the
-> > +timeout and if the server did not request a timeout and default_reques=
-t_timeout
-> > +was not set, there will be no timeout).
-> > +
-> > +Please note that for the timeout options, if the server does not respo=
-nd to
-> > +the request by the time the timeout elapses, then the connection to th=
-e fuse
-> > +server will be aborted. Please also note that the timeouts are not 100=
-%
-> > +precise (eg you may set 10 minutes but the timeout may kick in after 1=
-1
-> > +minutes).
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 9092201c4e0b..e82ddff8d752 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -46,6 +46,16 @@
-> >
-> >  /** Maximum of max_pages received in init_out */
-> >  extern unsigned int fuse_max_pages_limit;
-> > +/*
-> > + * Default timeout (in minutes) for the server to reply to a request
-> > + * before the connection is aborted, if no timeout was specified on mo=
-unt.
-> > + */
-> > +extern unsigned int fuse_default_req_timeout;
-> > +/*
-> > + * Max timeout (in minutes) for the server to reply to a request befor=
-e
-> > + * the connection is aborted.
-> > + */
-> > +extern unsigned int fuse_max_req_timeout;
-> >
-> >  /** List of active connections */
-> >  extern struct list_head fuse_conn_list;
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index ee006f09cd04..1e7cc6509e42 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -36,6 +36,9 @@ DEFINE_MUTEX(fuse_mutex);
-> >  static int set_global_limit(const char *val, const struct kernel_param=
- *kp);
-> >
-> >  unsigned int fuse_max_pages_limit =3D 256;
-> > +/* default is no timeout */
-> > +unsigned int fuse_default_req_timeout =3D 0;
-> > +unsigned int fuse_max_req_timeout =3D 0;
-> >
-> >  unsigned max_user_bgreq;
-> >  module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
-> > @@ -1701,8 +1704,17 @@ EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount)=
-;
-> >
-> >  static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_=
-context *ctx)
-> >  {
-> > -     if (ctx->req_timeout) {
-> > -             if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->ti=
-meout.req_timeout))
-> > +     unsigned int timeout =3D ctx->req_timeout ?: fuse_default_req_tim=
-eout;
-> > +
-> > +     if (fuse_max_req_timeout) {
-> > +             if (!timeout)
-> > +                     timeout =3D fuse_max_req_timeout;
-> > +             else
-> > +                     timeout =3D min(timeout, fuse_max_req_timeout);
-> > +     }
-> > +
-> > +     if (timeout) {
-> > +             if (check_mul_overflow(timeout * 60, HZ, &fc->timeout.req=
-_timeout))
-> >                       fc->timeout.req_timeout =3D ULONG_MAX;
-> >               timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
-> >               mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIME=
-R_FREQ);
-> > diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
-> > index b272bb333005..6a9094e17950 100644
-> > --- a/fs/fuse/sysctl.c
-> > +++ b/fs/fuse/sysctl.c
-> > @@ -13,6 +13,8 @@ static struct ctl_table_header *fuse_table_header;
-> >  /* Bound by fuse_init_out max_pages, which is a u16 */
-> >  static unsigned int sysctl_fuse_max_pages_limit =3D 65535;
-> >
-> > +static unsigned int sysctl_fuse_max_req_timeout_limit =3D U16_MAX;
-> > +
-> >  static struct ctl_table fuse_sysctl_table[] =3D {
-> >       {
-> >               .procname       =3D "max_pages_limit",
-> > @@ -23,6 +25,24 @@ static struct ctl_table fuse_sysctl_table[] =3D {
-> >               .extra1         =3D SYSCTL_ONE,
-> >               .extra2         =3D &sysctl_fuse_max_pages_limit,
-> >       },
-> > +     {
-> > +             .procname       =3D "default_request_timeout",
-> > +             .data           =3D &fuse_default_req_timeout,
-> > +             .maxlen         =3D sizeof(fuse_default_req_timeout),
-> > +             .mode           =3D 0644,
-> > +             .proc_handler   =3D proc_douintvec_minmax,
-> > +             .extra1         =3D SYSCTL_ZERO,
-> > +             .extra2         =3D &sysctl_fuse_max_req_timeout_limit,
-> > +     },
-> > +     {
-> > +             .procname       =3D "max_request_timeout",
-> > +             .data           =3D &fuse_max_req_timeout,
-> > +             .maxlen         =3D sizeof(fuse_max_req_timeout),
-> > +             .mode           =3D 0644,
-> > +             .proc_handler   =3D proc_douintvec_minmax,
-> > +             .extra1         =3D SYSCTL_ZERO,
-> > +             .extra2         =3D &sysctl_fuse_max_req_timeout_limit,
-> > +     },
-> >  };
-> >
-> >  int fuse_sysctl_register(void)
->
+> +		if (is_exec_sealed(seals)) {
+
+Are we intentionally disallowing a MAP_PRIVATE memfd's mapping's execution?
+I've not tested this scenario so don't know if we somehow disallow this in
+another way but note on write checks we only care about shared mappings.
+
+I mean one could argue that a MAP_PRIVATE situation is the same as copying
+the data into an anon buffer and doing what you want with it, here you
+could argue the same...
+
+So probably we should only care about VM_SHARED?
+
+> +			/* No new executable mappings if the file is exec sealed. */
+> +			if (prot & PROT_EXEC)
+
+Seems strange to reference a prot flag rather than vma flag, we should have
+that set up by now.
+
+> +				return -EACCES;
+> +			/*
+> +			 * Prevent an initially non-executable mapping from
+> +			 * later becoming executable via mprotect().
+> +			 */
+> +			vm_flags &= ~VM_MAYEXEC;
+> +		}
+> +
+
+You know, I'm in two minds about this... I explicitly moved logic to
+do_mmap() in [0] to workaround a chicken-and-egg scenario with having
+accidentally undone the ability to mmap() read-only F_WRITE_SEALed
+mappings, which meant I 'may as well' move the 'future proofing' clearing
+of VM_MAYWRITE for F_SEAL_FUTURE_WRITE too.
+
+But now I feel that the use of shmem_mmap() and hugetlbfs_file_mmap() to do
+_any_ of this is pretty odious in general, we may as well do it all
+upfront.
+
+[0]:https://lore.kernel.org/all/cover.1732804776.git.lorenzo.stoakes@oracle.com/
+
+>  		flags_mask = LEGACY_MAP_MASK;
+>  		if (file->f_op->fop_flags & FOP_MMAP_SYNC)
+>  			flags_mask |= MAP_SYNC;
 > --
-> Jeff Layton <jlayton@poochiereds.net>
+> 2.47.0.338.g60cca15819-goog
+>
+
+So actually - overall - could you hold off a bit on this until I've had a
+think and can perhaps send a patch that refactors this?
+
+Then your patch can build on top of that one and we can handle this all in
+one place and sanely :)
+
+Sorry you've kicked off thought processes here and that's often a dangerous
+thing :P
 
