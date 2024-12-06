@@ -1,54 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-36644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5599E741D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:31:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7E518854BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 15:31:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5B1207641;
-	Fri,  6 Dec 2024 15:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxfJ9K3K"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFF79E7422
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:32:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BC91EC01B
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 15:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1A7281833
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 15:32:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEE7207E17;
+	Fri,  6 Dec 2024 15:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AkxJrcKa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rYKTUp0D";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AkxJrcKa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rYKTUp0D"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8204462171;
+	Fri,  6 Dec 2024 15:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733499086; cv=none; b=HFI8Iw1EszkDlpiREpjTA+y234nLM/LmssDV1DIwG+uGHgxoc8w9Tsfborz4UHTJTx53o8KTKGPMZHaGw7KGl20quzdgVKnbM5s1c/PpSumjGu+dnibN0+Z/spSMq65LMTpLpQuCRSMBxYRTsI6IpiYp/u8ZyDfYjPrTsizLXEk=
+	t=1733499154; cv=none; b=dNTaSCg/Hgv1JviYFWplJwjHwqf9iADOGA8OZnE5EEdIb2kBo2CTSmGNbsULNvoHErI8MJkJav7r0c8PvnVjvq1iAbL6gvH0Poisd0d8bVrRjSi1Vsa09C+FaHFj15YFGzmyrhhPx/eZvvJj7EFwJMeuK8UujonV1FAYabzSfZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733499086; c=relaxed/simple;
-	bh=6PuycSo5ZRWX3Uv1RektvYH+6ammy/u9tKxKZy3S/Ec=;
+	s=arc-20240116; t=1733499154; c=relaxed/simple;
+	bh=tzczW2NaBtH/TqyTYWpEi1peWqluiHajhsHRLcDS+Lw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smOmh+fDLYAjmMGzY+6WSMWgeci1wxQtAAL2cKZun6kDqExrIZJV3WOetR6gQbapOkhqsz3uoHJGM6+vcoRCPX+9xv4e5HRn/bmWrIkdw/EgsiL4YajpXLqvIy6K1NKPNrL6r/fDL+vcVb1bP0+4KtYNzJ5ryJiYS1oOtpg7ME0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxfJ9K3K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D58EC4CEDC;
-	Fri,  6 Dec 2024 15:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733499085;
-	bh=6PuycSo5ZRWX3Uv1RektvYH+6ammy/u9tKxKZy3S/Ec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FxfJ9K3KtSlly5zKddI9gmRBjiKt80FhFhXlJkpb+WjrM7OV5znE7KUw5+iQodfE4
-	 /GSTFSV8hPnO9EuIEFAZ32PwfsgnA9yH8Qr5TgKl0bJgvMjifSufdmwuYTacsDk/Kv
-	 3B/orNr/eHeal/YWBcBtuYqog7Ti6H/s6GLKibVh+jGIVSawwZ9B4Xwgs5Qryx6aMZ
-	 38rN9jp523AxicCzHf3GRa0yExLhZIYplZH7hiR0DmJS+fxRmXtriTVzMIOQik8q0d
-	 7UDmy2irM18AqR8pnYyPCYs8GHI/3E2tzeBHQ+3ACT7QdZEYpOPUxyU/7oZqsbEujU
-	 JzgK84rrnDXDg==
-Date: Fri, 6 Dec 2024 16:31:21 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	maple-tree@lists.infradead.org
-Subject: Re: [PATCH RFC] pidfs: use maple tree
-Message-ID: <20241206-kernlos-kopfhaar-2e260b637925@brauner>
-References: <20241206-work-pidfs-maple_tree-v1-1-1cca6731b67f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tet+DoSb6Q/qfNqK7jrfIwLtuPzY1cmXmJ9Dy/QBme7vLwzOkhWFJ0XZfCR35yixaP/MLAv9HSLV9CuL/fMrpyZEc07AV+TedJKsOIfTnuoE2ueFUS+L/Ay8Knxihr3LRg9GsTXGIN/EW3jUAx38UL0WM0jQK4nZ49Wra9fWTrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AkxJrcKa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rYKTUp0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AkxJrcKa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rYKTUp0D; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A78C01F37E;
+	Fri,  6 Dec 2024 15:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733499150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
+	b=AkxJrcKaRWSRTUyebc4BNqsWEqRLVml3zw17Ebdd7bsDwZXT/LDfQMtV3XJ6GPLwCmGyuX
+	6qlJt3IJVwZ5Uqsig9tBqKnmntbu4WUgwKkbkTB4gE+i23VVvqK3ojKoL5PaSuVP9qoBSO
+	tS95ep1fcVrNMavWO/YNgQxYGkDC5ww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733499150;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
+	b=rYKTUp0D/fxGj4yRqY8/V4BmmllSxdrJ09Z1msMPhS9CYnC+y8MEYaxJzIVEYHF0Ylr9ni
+	BS5YhsWB4wy6bUBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733499150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
+	b=AkxJrcKaRWSRTUyebc4BNqsWEqRLVml3zw17Ebdd7bsDwZXT/LDfQMtV3XJ6GPLwCmGyuX
+	6qlJt3IJVwZ5Uqsig9tBqKnmntbu4WUgwKkbkTB4gE+i23VVvqK3ojKoL5PaSuVP9qoBSO
+	tS95ep1fcVrNMavWO/YNgQxYGkDC5ww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733499150;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
+	b=rYKTUp0D/fxGj4yRqY8/V4BmmllSxdrJ09Z1msMPhS9CYnC+y8MEYaxJzIVEYHF0Ylr9ni
+	BS5YhsWB4wy6bUBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9213713647;
+	Fri,  6 Dec 2024 15:32:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y/ugIw4ZU2cZfAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:32:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4C868A08CD; Fri,  6 Dec 2024 16:32:30 +0100 (CET)
+Date: Fri, 6 Dec 2024 16:32:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, paulmck@kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org, edumazet@google.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <20241206153230.6o37z5raxvohbqqm@quack3>
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
+ <20241205144645.bv2q6nqua66sql3j@quack3>
+ <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com>
+ <20241205152937.v2uf65wcmnkutiqz@quack3>
+ <CAGudoHGyFVCjSTjenyO8Y+uPHyhkOCwZrvBW=FyQRDundntFdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,71 +113,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241206-work-pidfs-maple_tree-v1-1-1cca6731b67f@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGyFVCjSTjenyO8Y+uPHyhkOCwZrvBW=FyQRDundntFdw@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Fri, Dec 06, 2024 at 04:25:13PM +0100, Christian Brauner wrote:
-> So far we've been using an idr to track pidfs inodes. For some time now
-> each struct pid has a unique 64bit value that is used as the inode
-> number on 64 bit. That unique inode couldn't be used for looking up a
-> specific struct pid though.
-> 
-> Now that we support file handles we need this ability while avoiding to
-> leak actual pid identifiers into userspace which can be problematic in
-> containers.
-> 
-> So far I had used an idr-based mechanism where the idr is used to
-> generate a 32 bit number and each time it wraps we increment an upper
-> bit value and generate a unique 64 bit value. The lower 32 bits are used
-> to lookup the pid.
-> 
-> I've been looking at the maple tree because it now has
-> mas_alloc_cyclic(). Since it uses unsigned long it would simplify the
-> 64bit implementation and its dense node mode supposedly also helps to
-> mitigate fragmentation.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> Hey Liam,
-> 
-> Could you look this over and tell me whether my port makes any sense and
-> is safe? This is the first time I've been playing with the maple tree.
-> 
-> I've also considerd preallocating the node during pid allocation outside
-> of the spinlock using mas_preallocate() similar to how idr_preload()
-> works but I'm unclear how the mas_preallocate() api is supposed to
-> work in this case.
-> 
-> For the pidfs inode maple tree we use an external lock for add and
-> remove. While looking at the maple_tree code I saw that mas_nomem()
-> is called in mas_alloc_cyclic(). And mas_nomem() has a
-> __must_hold(mas->tree->ma_lock) annotation. But then the code checks
-> mt_external_lock() which is placed in a union with ma_lock iirc. So that
-> annotation seems wrong?
-> 
-> bool mas_nomem(struct ma_state *mas, gfp_t gfp)
->         __must_hold(mas->tree->ma_lock)
-> {
->         if (likely(mas->node != MA_ERROR(-ENOMEM)))
->                 return false;
-> 
->         if (gfpflags_allow_blocking(gfp) && !mt_external_lock(mas->tree)) {
->                 mtree_unlock(mas->tree);
->                 mas_alloc_nodes(mas, gfp);
->                 mtree_lock(mas->tree);
->         } else {
->                 mas_alloc_nodes(mas, gfp);
->         }
-> 
->         if (!mas_allocated(mas))
->                 return false;
-> 
->         mas->status = ma_start;
->         return true;
-> }
-> 
-> If you want to look at this in context I would please ask you to pull:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.14.pidfs
+On Thu 05-12-24 16:36:40, Mateusz Guzik wrote:
+> On Thu, Dec 5, 2024 at 4:29 PM Jan Kara <jack@suse.cz> wrote:
+> > On Thu 05-12-24 16:01:07, Mateusz Guzik wrote:
+> > > Suppose the CPU reordered loads of the flag and the fd table. There is
+> > > no ordering in which it can see both the old table and the unset flag.
+> >
+> > But I disagree here. If the reads are reordered, then the fd table read can
+> > happen during the "flag is true and the fd table is old" state and the flag
+> > read can happen later in "flag is false and the fd table is new" state.
+> > Just as I outlined above...
 
-Sorry, I meant work.pidfs.maple_tree.
+Ugh, I might be missing something obvious so please bear with me.
+
+> In your example all the work happens *after* synchronize_rcu().
+
+Correct.
+
+> The thread resizing the table already published the result even before
+> calling into it.
+
+Really? You proposed expand_table() does:
+
+       BUG_ON(files->resize_in_progress);
+       files->resize_in_progress = true;
+       spin_unlock(&files->file_lock);
+       new_fdt = alloc_fdtable(nr + 1);
+       if (atomic_read(&files->count) > 1)
+               synchronize_rcu();
+
+       spin_lock(&files->file_lock);
+       if (IS_ERR(new_fdt)) {
+               err = PTR_ERR(new_fdt);
+               goto out;
+       }
+       cur_fdt = files_fdtable(files);
+       BUG_ON(nr < cur_fdt->max_fds);
+       copy_fdtable(new_fdt, cur_fdt);
+       rcu_assign_pointer(files->fdt, new_fdt);
+       if (cur_fdt != &files->fdtab)
+               call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
+       smp_wmb();
+out:
+       files->resize_in_progress = false;
+       return err;
+
+So synchronize_rcu() is called very early AFAICT. At that point we have
+allocated the new table but copy & store in files->fdt happens *after*
+synchronize_rcu() has finished. So the copy & store can be racing with
+fd_install() calling rcu_read_lock_sched() and prefetching files->fdt (but
+not files->resize_in_progress!) into a local CPU cache.
+
+> Furthermore by the time synchronize_rcu returns
+> everyone is guaranteed to have issued a full fence. Meaning nobody can
+> see the flag as unset.
+
+Well, nobody can see the flag unset only until expand_fdtable() reaches:
+
+       smp_wmb();
+out:
+       files->resize_in_progress = false;
+ 
+And smp_wmb() doesn't give you much unless the reads of
+files->resize_in_progress and files->fdt are ordered somehow on the other
+side (i.e., in fd_install()).
+
+But I'm looking forward to the Litmus test to resolve our discussion :)
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
