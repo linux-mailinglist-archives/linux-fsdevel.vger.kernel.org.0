@@ -1,189 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-36605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496E79E66D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 06:28:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CF59E66F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 06:39:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01817284A64
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 05:28:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4408D1884D18
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 05:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF4F198E8C;
-	Fri,  6 Dec 2024 05:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5A3198A39;
+	Fri,  6 Dec 2024 05:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="by6NMBS3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gu5aOwi8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC83196C67;
-	Fri,  6 Dec 2024 05:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE09196C6C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 05:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733462873; cv=none; b=HGhUcl1R6jGWljjBEvaogx7+eHbHgkWaUXDRf7Crr1KAk8dGprOspB7ok/EynQV0c/7uv58t+RyCLnI/M3KalAOwHADjeZgESEirXwQh8f89P/EVL0Y2eGEyD7V2Qh41ay13Ap0tp3h/yJu9SZDuEGo9Vn/e2PJa7IAxJrh87To=
+	t=1733463573; cv=none; b=rQP3lvFPX9WGgJ9v5Icn5z5Ig5KKjsFaq9eEhN2D4j8F4eUeF2OqKI4sXRtEP8E4zhRztuLgSQHLLOGAkETbDKQxC8FwRDUKgq8fXj85oUKE3cHA7w5q12NFXcPtR/KkwYrWMjjLKDyUHVeUiLDQWM2ENOWR8E4xieEGD+FoaFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733462873; c=relaxed/simple;
-	bh=X9VFMKr7/fJOGLXPS8atTYCy0j+P7k6TXaVhXB6yhIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n8M9YefnSIBv4yb2KtLI/SHHF31X8WJWEboCl3TcmQmSWFGuwarLUKqwP6ACXGStxaF3cS2gadtWxKnRcR/fDm8n0EIw+YLXsDme9Zo2lgoqw1uU6YdYyP7kIg5Lx1QJ+hGrlADDYoh4Zah+KxhPPFbuZ9/7gU+wQkasWtzVcpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=by6NMBS3; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733462871; x=1764998871;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X9VFMKr7/fJOGLXPS8atTYCy0j+P7k6TXaVhXB6yhIM=;
-  b=by6NMBS3uuoSS7jABjt9Zm3SNEQdWKKljeRvA2gA5evSGQVa+tuRN77R
-   E+FmhGtvHfLck/XXpnliXxwOep7ut6Oti0NmIF2zrSn3BFofTrHro9Hy9
-   b3M6oeU2hXU/JRV5yuutDkrlRavEEppee1yGMbqz1ymoEPmJWTGmk+W0n
-   DmN2OeIc0Ct6h4LLss1B8zmCbe1mkqxaBsV0LwZnir1md/5xJcf2Xb4XH
-   9ywufUdn6dwbQusn1Ukfo79lzwSf8SFUur/h1xG4NZHLwlYhEqXHlyLUi
-   S2F4fd0xg/+oTAfYuW4YkI/cVDIz6N1KCiyQaBMgSoGPC3Lh9//r7RDn4
-   g==;
-X-CSE-ConnectionGUID: c1q1MMzBTMSHzEULQZ/MOQ==
-X-CSE-MsgGUID: G1cJ9ZENSpGms5A9Jyq/pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="56299061"
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="56299061"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 21:27:50 -0800
-X-CSE-ConnectionGUID: 46M0KqbPSFGW7xrYdXXJNA==
-X-CSE-MsgGUID: DsKRuo40THuu3yk9bYd+6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="131724228"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 05 Dec 2024 21:27:48 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJQsT-0000jD-1x;
-	Fri, 06 Dec 2024 05:27:45 +0000
-Date: Fri, 6 Dec 2024 13:26:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, sagi@grimberg.me,
-	asml.silence@gmail.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv11 09/10] nvme: register fdp queue limits
-Message-ID: <202412061328.YMG9MZn5-lkp@intel.com>
-References: <20241206015308.3342386-10-kbusch@meta.com>
+	s=arc-20240116; t=1733463573; c=relaxed/simple;
+	bh=yh8QahYVf+iuYpEWfLmJQpp6cLg8k/jJ7I00d8UqlV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nkIgwX+7hJjVw4WCJ215bSu22Jr10c24/WmsX6KGT6NqS5c4LTsEH6883XdZaVggaCYRdpzrSdGkln1EL8SfwzwJ6dLJgzpd9ChSuyHghxGdqqVuv6rVpOhLKKAYYQJRxcxlvnlMnceumve2osrxv2Q5lh35crvGGtLxvj37CIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gu5aOwi8; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d8a3e99e32so15023006d6.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 21:39:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733463569; x=1734068369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D1UVn7wGFmECPF2lNGZ84JYvzvAH/5Lwkzha/A+P6gc=;
+        b=Gu5aOwi830kPjXDxR8/L/DhDtQWqgR7dFyVTiDnK5KJcZpAxd9pZ/SyeDff1XLvtnK
+         HQBFMcVZ7tfWCRdSbwxP7MtUbZD5PDBmCC/YLMMSuU7Mb5Y4fLm5ZosKHMJCc/0wIkBc
+         leZejDxhvHdqr7/shln5iQDWW1pxhAFpvg/ZGT8E8Q/azSdRz1JwQO7NZmDUARrpReIH
+         bWLS4ieHIKElCj2WhXAWdo3hhiD90CWYYzcwBlnO4MIGReNfMIHwqPg6/DihUmthr4kj
+         gNHpI1naQivecgVOfDcS1YtQNrG3mwJfcYhPxlNdcTdz8Z9GQ0HGxnBQs3Aep/y51uEz
+         slNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733463569; x=1734068369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D1UVn7wGFmECPF2lNGZ84JYvzvAH/5Lwkzha/A+P6gc=;
+        b=GNVQvkw11Z9cjLe4pDDK1EzqPSl4WMEzJLf7TUC7vfSx+pvoiRcM6ixET0vLmG+rSk
+         oWTqChvBpuMDxbuoIk6hao5fKZzbjL7c/Kicwi4nrlyy0kk2gg+MffIkiLLFLnu4ZPxv
+         TXhxKOwq/AA8M95/tMX1cTnlswtzSDETWlbwcSw8J9yLt+x230OHKSXmSe6bk4cBJiNy
+         TjiXt5kmhkxnlb075rswXlnJsMBZpML1hxXqYQGlOSr6x6ttSO10kZeYTgrJ6e3lKhdV
+         txO+xqacJbnVG68NWGATBP9BBSZcf5sFzbQ5NqtoFAn5vxbxQwBhRIeslgkMzkXkSL1B
+         Mzuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW4UEq8m45SsXdMAIB9l2gVYVrfHDYuTfvRCnrqfqxUZMLDR1Dzj4onlKTHN+QQ5uHIyUQOkZJbhe+dbuu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+0LGC3J1miV8TBNA7xJYijptrXvH+5RHi7640qCcHeAMjD9Dw
+	2FSXM3Y0N4dUNu1NIgCuHeaR8qvonfrufiv/r+SMoZ8ni1yjouo7fKFP0XNod5v6gg8VRhepscB
+	8/tWm0CywMg/3n3etFVrekP9gWTo=
+X-Gm-Gg: ASbGnctOMxs+p0fgeLP33H7ohDZjHX8HvWF/la9sFRe0D3CNzK3/AmsGIv3qF3aM+Lc
+	kzGGjBMqoBCdi9GDhA5aw7idu3ZiAj3LpQA==
+X-Google-Smtp-Source: AGHT+IEspmmFXD1CBuAp6TP0iqvhJQ+EhlurQHA2WeBZbn3qlyvkG1cL6PVLnrmpXxWRK3cuL+Gp946nsTWoaQP8rSQ=
+X-Received: by 2002:a05:6214:4003:b0:6d8:97ea:4362 with SMTP id
+ 6a1803df08f44-6d8e71fefe5mr24912836d6.38.1733463569030; Thu, 05 Dec 2024
+ 21:39:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206015308.3342386-10-kbusch@meta.com>
+References: <202411292300.61edbd37-lkp@intel.com> <CALOAHbABe2DFLWboZ7KF-=d643keJYBx0Es=+aF-J=GxqLXHAA@mail.gmail.com>
+ <Z051LzN/qkrHrAMh@xsang-OptiPlex-9020> <CALOAHbDq8yBuCEMsoL=Xr+_QHQ39-=XHK+PEN5KxncxmL=nhYw@mail.gmail.com>
+ <Z1Jg+vcpFKGSfx25@xsang-OptiPlex-9020>
+In-Reply-To: <Z1Jg+vcpFKGSfx25@xsang-OptiPlex-9020>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Fri, 6 Dec 2024 13:38:53 +0800
+Message-ID: <CALOAHbCXx_sQqpVMS0Z1B+dkGMHL3vAPBT_1udRRy-0ivy3FKw@mail.gmail.com>
+Subject: Re: [linux-next:master] [mm/readahead] 13da30d6f9: BUG:soft_lockup-CPU##stuck_for#s![usemem:#]
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Keith,
+On Fri, Dec 6, 2024 at 10:27=E2=80=AFAM Oliver Sang <oliver.sang@intel.com>=
+ wrote:
+>
+> hi, Yafang,
+>
+> On Tue, Dec 03, 2024 at 05:33:16PM +0800, Yafang Shao wrote:
+> > On Tue, Dec 3, 2024 at 11:04=E2=80=AFAM Oliver Sang <oliver.sang@intel.=
+com> wrote:
+> > >
+> > > hi, Yafang,
+> > >
+> > > On Tue, Dec 03, 2024 at 10:14:50AM +0800, Yafang Shao wrote:
+> > > > On Fri, Nov 29, 2024 at 11:19=E2=80=AFPM kernel test robot
+> > > > <oliver.sang@intel.com> wrote:
+> > > > >
+> > > > >
+> > > > >
+> > > > > Hello,
+> > > > >
+> > > > > kernel test robot noticed "BUG:soft_lockup-CPU##stuck_for#s![usem=
+em:#]" on:
+> > > > >
+> > > > > commit: 13da30d6f9150dff876f94a3f32d555e484ad04f ("mm/readahead: =
+fix large folio support in async readahead")
+> > > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git =
+master
+> > > > >
+> > > > > [test failed on linux-next/master cfba9f07a1d6aeca38f47f1f472cfb0=
+ba133d341]
+> > > > >
+> > > > > in testcase: vm-scalability
+> > > > > version: vm-scalability-x86_64-6f4ef16-0_20241103
+> > > > > with following parameters:
+> > > > >
+> > > > >         runtime: 300s
+> > > > >         test: mmap-xread-seq-mt
+> > > > >         cpufreq_governor: performance
+> > > > >
+> > > > >
+> > > > >
+> > > > > config: x86_64-rhel-9.4
+> > > > > compiler: gcc-12
+> > > > > test machine: 224 threads 4 sockets Intel(R) Xeon(R) Platinum 838=
+0H CPU @ 2.90GHz (Cooper Lake) with 192G memory
+> > > > >
+> > > > > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> > > > >
+> > > > >
+> > > > >
+> > > > > If you fix the issue in a separate patch/commit (i.e. not just a =
+new version of
+> > > > > the same patch/commit), kindly add following tags
+> > > > > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > > > | Closes: https://lore.kernel.org/oe-lkp/202411292300.61edbd37-lk=
+p@intel.com
+> > > > >
+> > > > >
+> > >
+> > > [...]
+> > >
+> > > >
+> > > > Is this issue consistently reproducible?
+> > > > I attempted to reproduce it using the mmap-xread-seq-mt test case b=
+ut
+> > > > was unsuccessful.
+> > >
+> > > in our tests, the issue is quite persistent. as below, 100% reproduce=
+d in all
+> > > 8 runs, keeps clean on parent.
+> > >
+> > > d1aa0c04294e2988 13da30d6f9150dff876f94a3f32
+> > > ---------------- ---------------------------
+> > >        fail:runs  %reproduction    fail:runs
+> > >            |             |             |
+> > >            :8          100%           8:8     dmesg.BUG:soft_lockup-C=
+PU##stuck_for#s![usemem:#]
+> > >            :8          100%           8:8     dmesg.Kernel_panic-not_=
+syncing:softlockup:hung_tasks
+> > >
+> > > to avoid any env issue, we rebuild kernel and rerun more to check. if=
+ still
+> > > consistently reproduced, we will follow your further requests. thanks
+> >
+> > Although I=E2=80=99ve made extensive attempts, I haven=E2=80=99t been a=
+ble to
+> > reproduce the issue. My best guess is that, in the non-MADV_HUGEPAGE
+> > case, ra->size might be increasing to an unexpectedly large value. If
+> > that=E2=80=99s the case, I believe the issue can be resolved with the
+> > following additional change:
+> >
+> > diff --git a/mm/readahead.c b/mm/readahead.c
+> > index 9b8a48e736c6..e30132bc2593 100644
+> > --- a/mm/readahead.c
+> > +++ b/mm/readahead.c
+> > @@ -385,8 +385,6 @@ static unsigned long get_next_ra_size(struct
+> > file_ra_state *ra,
+> >                 return 4 * cur;
+> >         if (cur <=3D max / 2)
+> >                 return 2 * cur;
+> > -       if (cur > max)
+> > -               return cur;
+> >         return max;
+> >  }
+> >
+> > @@ -644,7 +642,11 @@ void page_cache_async_ra(struct readahead_control =
+*ractl,
+> >                         1UL << order);
+> >         if (index =3D=3D expected) {
+> >                 ra->start +=3D ra->size;
+> > -               ra->size =3D get_next_ra_size(ra, max_pages);
+> > +               /*
+> > +                * For the MADV_HUGEPAGE case, the ra->size might be la=
+rger than
+> > +                * the max_pages.
+> > +                */
+> > +               ra->size =3D max(ra->size, get_next_ra_size(ra, max_pag=
+es));
+> >                 ra->async_size =3D ra->size;
+> >                 goto readit;
+> >         }
+> >
+> > Could you please test this if you can consistently reproduce the bug?
+>
+> by this patch, we confirmed the issue gone on both platforms.
+>
+> Tested-by: kernel test robot <oliver.sang@intel.com>
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on axboe-block/for-next]
-[also build test WARNING on next-20241205]
-[cannot apply to brauner-vfs/vfs.all hch-configfs/for-next linus/master v6.13-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Keith-Busch/fs-add-a-write-stream-field-to-the-kiocb/20241206-095707
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20241206015308.3342386-10-kbusch%40meta.com
-patch subject: [PATCHv11 09/10] nvme: register fdp queue limits
-config: i386-buildonly-randconfig-003 (https://download.01.org/0day-ci/archive/20241206/202412061328.YMG9MZn5-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061328.YMG9MZn5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412061328.YMG9MZn5-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/nvme/host/core.c:8:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/x86/include/asm/cacheflush.h:5:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/nvme/host/core.c:2178:18: warning: variable 'h' is uninitialized when used here [-Wuninitialized]
-    2178 |         n = le16_to_cpu(h->numfdpc) + 1;
-         |                         ^
-   include/linux/byteorder/generic.h:91:21: note: expanded from macro 'le16_to_cpu'
-      91 | #define le16_to_cpu __le16_to_cpu
-         |                     ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   drivers/nvme/host/core.c:2157:36: note: initialize the variable 'h' to silence this warning
-    2157 |         struct nvme_fdp_config_log hdr, *h;
-         |                                           ^
-         |                                            = NULL
-   2 warnings generated.
+Great! Thanks for your work. I'll send a new version.
 
 
-vim +/h +2178 drivers/nvme/host/core.c
-
-  2153	
-  2154	static int nvme_check_fdp(struct nvme_ns *ns, struct nvme_ns_info *info,
-  2155				  u8 fdp_idx)
-  2156	{
-  2157		struct nvme_fdp_config_log hdr, *h;
-  2158		size_t size = sizeof(hdr);
-  2159		int i, n, ret;
-  2160		void *log;
-  2161	
-  2162		info->runs = 0;
-  2163		ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIG, 0, NVME_CSI_NVM,
-  2164				   (void *)&hdr, size, 0, info->endgid);
-  2165		if (ret)
-  2166			return ret;
-  2167	
-  2168		size = le32_to_cpu(hdr.sze);
-  2169		log = kzalloc(size, GFP_KERNEL);
-  2170		if (!log)
-  2171			return 0;
-  2172	
-  2173		ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIG, 0, NVME_CSI_NVM,
-  2174				   log, size, 0, info->endgid);
-  2175		if (ret)
-  2176			goto out;
-  2177	
-> 2178		n = le16_to_cpu(h->numfdpc) + 1;
-  2179		if (fdp_idx > n)
-  2180			goto out;
-  2181	
-  2182		h = log;
-  2183		log = h->configs;
-  2184		for (i = 0; i < n; i++) {
-  2185			struct nvme_fdp_config_desc *config = log;
-  2186	
-  2187			if (i == fdp_idx) {
-  2188				info->runs = le64_to_cpu(config->runs);
-  2189				break;
-  2190			}
-  2191			log += le16_to_cpu(config->size);
-  2192		}
-  2193	out:
-  2194		kfree(h);
-  2195		return ret;
-  2196	}
-  2197	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Regards
+Yafang
 
