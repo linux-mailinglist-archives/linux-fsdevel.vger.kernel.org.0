@@ -1,214 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-36587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036179E6305
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 02:10:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBF59E6391
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 02:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72011883612
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 01:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F31162ED5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 01:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4E12EBE7;
-	Fri,  6 Dec 2024 01:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CD61EB2F;
+	Fri,  6 Dec 2024 01:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="opUyGa9U"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jL9gnZT1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BCA13C906
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 01:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465CD10957
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 01:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733447385; cv=none; b=rxhPCVLTNkpetZICOMcLzivIevzGfiz83HoRWTXUpulJnd0L43rk1bzVyFS/oIyqWr361D4f3B/FpdPCDGtLaTlRzZOoOnOIBi99UI/ftZiGk01MOeVvMFnF4dpKsur5p1ezaXdOQWyLb0Hb70zD6LLV9PpwTmDD82OVX9IwCxA=
+	t=1733449642; cv=none; b=YqrqvNo1+BEIuMlMrZJqZ9DhSqUYgNEAUJKHkL+8gnJwRnckUtEv6s6DbHOlNY0woPTRTSWIwXrEe6Kwb7JcKHYvqgZPurglfz0dV+a1Z5qyUnRXIA9G6yNP1okk+MOdimZvxwq0deNPCtH398LpkWjqBgSszH+M9Fiscvs2Wzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733447385; c=relaxed/simple;
-	bh=J3nKYrj9AmggMWJ3J7t0rcXTlVHBgBWJCCL07vPZGIU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KxhfBJnxWWzs+3hbDVDOBO1tZjBeneFcwLdNpSCHUkDmKMGXVkaxjAqOjhOkZN5GiExRHZoHSyKfqj9bb1JeMqCERW4V6mxlmg5/jlpg4jP0RQB+BFJ7TSvVRmf3nEVlCB6oxsfIBzlnhLiU9bFj3tal+q3/OXiDITu1JiWSnPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=opUyGa9U; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7259a7fd145so1121210b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 17:09:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733447383; x=1734052183; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0EsM99SG3hihzaaNKgE6hFc9Vf2sd6rRNj6I2ZBeAU=;
-        b=opUyGa9UNFLUEhngwCweZI5C4PC14gOHkRBuKX68/v3MRNnm8t/zRGL/Q2mYBxmy1w
-         fAmCXwjqlRZHC+Qgfp/7NMUp8RxMXygRE7Od95zxFYGEkq47WIpe9+wenmFzeETO1S8Z
-         L6i/Eus+XZPsgH6dpeU4N6AYZQpw75ZJpsTzFY6b5lHvEFZYjHm/WRs42WSQakmLNLtM
-         h6fW51VpG25/wWwTvMIhRcVzjN6lgmpgcGI+wq09SRMLufqF9PcebW9Q2F0etGsarFd5
-         5YImShfcxTp6X89ef9ZFym81aRa6IQFmjC8dDwjRdqr7xZZQxwd7SkbkoPXHEO5lycfW
-         oCAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733447383; x=1734052183;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0EsM99SG3hihzaaNKgE6hFc9Vf2sd6rRNj6I2ZBeAU=;
-        b=AyQQRzs/SJQ3jFT85Ec0SFsVtz7luwfHrzahw1YOXPcX/unvLmjFx0vKFGKq2BFfbW
-         ab+ot7GpfhhLbfpQm5HsiR2d/YVFWJtvtXYE0Ri6BlGXjQXqp+EV4vCPnShaw5GxBvKK
-         fM3o5w6S8NzBTbIS2iEZwGRyFK4LJwzKZBgUrED3zHxRZwp50p43PIvcC7OqEgVpdg6t
-         cAkB+ZannL3eqZ1kclP5WfelPhUrr1J1B//OF4+NrKQvMWj52AOxZfQjb1OWqSet/JgD
-         lQFe0wb2dQDimhm2d1XFepglpxryAsrIBOOX/ItRTjpcdi/M90Ie0TYtBNDqxmYBzb7r
-         mUDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXey5psq8776VARiBX3XCLePV0Sf6VUOjrqxoPNfXFJRlz4FZkE0wSYhBI4K9Gx8Ttvkvx8M1O5iGZjvAdm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPBsIYoMLUiWesnLZbveG4k69hLHYYqimLgE87i3LUH8/YSdFS
-	odizKgfY5hnr+M90QAxW/prJPHOgMMWAwTCC1UL9a63BtvIMguJJPaAVCOi3RtGqlraMHK/XBwd
-	LEAikl5ZwoyTFKYz7BU0N0MrV6Q1I9AofIA==
-X-Google-Smtp-Source: AGHT+IE+lZFMJ73v6jAW7BqzJ/0k/ho2hBMCiLFRGaWMMqnKpTaEahh/l5AmKSSMZElIcLOMWDH9HUGgB92p8rghNCEnXw==
-X-Received: from pfbca23.prod.google.com ([2002:a05:6a00:4197:b0:725:20c8:96dc])
- (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:140d:b0:720:9a03:b6dc with SMTP id d2e1a72fcca58-725b81f2d4cmr2040786b3a.18.1733447383706;
- Thu, 05 Dec 2024 17:09:43 -0800 (PST)
-Date: Thu,  5 Dec 2024 17:09:23 -0800
-In-Reply-To: <20241206010930.3871336-1-isaacmanjarres@google.com>
+	s=arc-20240116; t=1733449642; c=relaxed/simple;
+	bh=nSuSOCLY5kcpBwONWO3FW0tsFHj3LZinSbpp5CoHrTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PqFG1lZTk8zgOhEJKFvG2VE1fRXeRXYEXSg3NmZJ1v/vbQwiXo8cGPrHYTfs0Hr1kqIkPvQaRPODKazydwj57JTxF+vPlQF0zxyX4sWpRddlNbDbcG3acroo4Y54qsBJpPf4gxRINbF09qwDCDjGayp3NajOO6VnUH2ib8rKsls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jL9gnZT1; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733449631; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=edn/tWY5NfPv16tKhWY1VSgNmrG1u9fXdJulDeY1qK8=;
+	b=jL9gnZT1FPs0g+tuVBYA8oL4Uk9zcFz44DI5V+HwkguUeXoEw66DXaAiR8+X5YWAPrD5Onvt9rLMV5Cz7eqhUDyaP9KmseJW/InHFEHubzH8hszURvtSAArt+kgQaayDBvfR3odq3jPeBCi2OGZyrFXdQVhJK+1Wlc9aes9WQpY=
+Received: from 30.221.145.242(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WKugndf_1733449630 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 06 Dec 2024 09:47:10 +0800
+Message-ID: <80ee53a6-085a-4aff-b528-0e32b4780c03@linux.alibaba.com>
+Date: Fri, 6 Dec 2024 09:47:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241206010930.3871336-1-isaacmanjarres@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241206010930.3871336-3-isaacmanjarres@google.com>
-Subject: [RFC PATCH v1 2/2] selftests/memfd: Add tests for F_SEAL_FUTURE_EXEC
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>
-Cc: "Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, John Stultz <jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: Prevent hung task warning if FUSE server gets stuck
+To: Etienne <etmartin4313@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, etmartin@cisco.com
+References: <20241204164316.219105-1-etmartin4313@gmail.com>
+ <15ff89fd-f1b1-4dc2-9837-467de7ee2ba4@linux.alibaba.com>
+ <CAMHPp_SwH_sq9vCHMyev6QJbtGFkNL5fpX3ZXSHLF4zz0T3_+w@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAMHPp_SwH_sq9vCHMyev6QJbtGFkNL5fpX3ZXSHLF4zz0T3_+w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add tests to ensure that F_SEAL_FUTURE_EXEC behaves as expected.
 
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>
-Cc: John Stultz <jstultz@google.com>
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- tools/testing/selftests/memfd/memfd_test.c | 79 ++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
 
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 46027c889e74..12c82af406b3 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -30,6 +30,7 @@
- #define STACK_SIZE 65536
- 
- #define F_SEAL_EXEC	0x0020
-+#define F_SEAL_FUTURE_EXEC	0x0040
- 
- #define F_WX_SEALS (F_SEAL_SHRINK | \
- 		    F_SEAL_GROW | \
-@@ -317,6 +318,37 @@ static void *mfd_assert_mmap_private(int fd)
- 	return p;
- }
- 
-+static void *mfd_fail_mmap_exec(int fd)
-+{
-+	void *p;
-+
-+	p = mmap(NULL,
-+		 mfd_def_size,
-+		 PROT_EXEC,
-+		 MAP_SHARED,
-+		 fd,
-+		 0);
-+	if (p != MAP_FAILED) {
-+		printf("mmap() didn't fail as expected\n");
-+		abort();
-+	}
-+
-+	return p;
-+}
-+
-+static void mfd_fail_mprotect_exec(void *p)
-+{
-+	int ret;
-+
-+	ret = mprotect(p,
-+		       mfd_def_size,
-+		       PROT_EXEC);
-+	if (!ret) {
-+		printf("mprotect didn't fail as expected\n");
-+		abort();
-+	}
-+}
-+
- static int mfd_assert_open(int fd, int flags, mode_t mode)
- {
- 	char buf[512];
-@@ -997,6 +1029,52 @@ static void test_seal_future_write(void)
- 	close(fd);
- }
- 
-+/*
-+ * Test SEAL_FUTURE_EXEC_MAPPING
-+ * Test whether SEAL_FUTURE_EXEC_MAPPING actually prevents executable mappings.
-+ */
-+static void test_seal_future_exec_mapping(void)
-+{
-+	int fd;
-+	void *p;
-+
-+
-+	printf("%s SEAL-FUTURE-EXEC-MAPPING\n", memfd_str);
-+
-+	fd = mfd_assert_new("kern_memfd_seal_future_exec_mapping",
-+			    mfd_def_size,
-+			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
-+
-+	/*
-+	 * PROT_READ | PROT_WRITE mappings create VMAs with VM_MAYEXEC set.
-+	 * However, F_SEAL_FUTURE_EXEC applies to subsequent mappings,
-+	 * so it should still succeed even if this mapping is active when the
-+	 * seal is applied.
-+	 */
-+	p = mfd_assert_mmap_shared(fd);
-+
-+	mfd_assert_has_seals(fd, 0);
-+
-+	mfd_assert_add_seals(fd, F_SEAL_FUTURE_EXEC);
-+	mfd_assert_has_seals(fd, F_SEAL_FUTURE_EXEC);
-+
-+	mfd_fail_mmap_exec(fd);
-+
-+	munmap(p, mfd_def_size);
-+
-+	/* Ensure that new mappings without PROT_EXEC work. */
-+	p = mfd_assert_mmap_shared(fd);
-+
-+	/*
-+	 * Ensure that mappings created after the seal was applied cannot be
-+	 * made executable via mprotect().
-+	 */
-+	mfd_fail_mprotect_exec(p);
-+
-+	munmap(p, mfd_def_size);
-+	close(fd);
-+}
-+
- static void test_seal_write_map_read_shared(void)
- {
- 	int fd;
-@@ -1633,6 +1711,7 @@ int main(int argc, char **argv)
- 	test_seal_shrink();
- 	test_seal_grow();
- 	test_seal_resize();
-+	test_seal_future_exec_mapping();
- 
- 	test_sysctl_simple();
- 	test_sysctl_nested();
+On 12/6/24 1:09 AM, Etienne wrote:
+> On Wed, Dec 4, 2024 at 8:51 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 12/5/24 12:43 AM, etmartin4313@gmail.com wrote:
+>>> From: Etienne Martineau <etmartin4313@gmail.com>
+>>>
+>>> If hung task checking is enabled and FUSE server stops responding for a
+>>> long period of time, the hung task timer may fire towards the FUSE clients
+>>> and trigger stack dumps that unnecessarily alarm the user.
+>>
+>> Isn't that expected that users shall be notified that there's something
+>> wrong with the FUSE service (because of either buggy implementation or
+>> malicious purpose)?  Or is it expected that the normal latency of
+>> handling a FUSE request is more than 30 seconds?
+> 
+> In one way you're right because seeing those stack dumps tells you
+> right away that something is wrong with a FUSE service.
+> Having said that, with many FUSE services running, those stack dumps
+> are not helpful at pointing out which of the FUSE services is having
+> issues.
+> 
+> Maybe we should instead have proper debug in place to dump the FUSE
+> connection so that user can abort via
+> /sys/fs/fuse/connections/'nn'/abort
+> Something like "pr_warn("Fuse connection %u not responding\n", fc->dev);" maybe?
+
+If the goal is to identifying which fuse connection is problematic, then
+yes, it is not that easy to do that as the hung task has no concept of
+underlying filesystem.  It is not what the hung task mechanism needs to do.
+
+To do that, at least you should record the per-request timestamp when
+the request is submitted, or a complete timeout mechanism in FUSE as
+pointed by Joanne [1].
+
+[1]
+https://lore.kernel.org/linux-fsdevel/20241114191332.669127-1-joannelkoong@gmail.com/
+
+
+> 
+> Also, now that you are pointing out a malicious implementation, I
+> realized that on a system with 'hung_task_panic' set, a non-privileged
+> user can easily trip the hung task timer and force a panic.
+> 
+> I just tried the following sequence using FUSE sshfs and without this
+> patch my system went down.
+> 
+>  sudo bash -c 'echo 30 > /proc/sys/kernel/hung_task_timeout_secs'
+>  sudo bash -c 'echo 1 > /proc/sys/kernel/hung_task_panic'
+>  sshfs -o allow_other,default_permissions you@localhost:/home/you/test ./mnt
+>  kill -STOP `pidof /usr/lib/openssh/sftp-server`
+>  ls ./mnt/
+>  ^C
+
+IMHO hung_task_panic shall not be enabled in productive environment.
+
+
+
 -- 
-2.47.0.338.g60cca15819-goog
-
+Thanks,
+Jingbo
 
