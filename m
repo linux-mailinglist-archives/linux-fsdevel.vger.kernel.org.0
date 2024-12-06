@@ -1,166 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-36624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFCF9E6D2D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 12:19:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317329E6D78
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 12:36:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9672216947A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 11:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0AA71884677
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 11:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19908200B91;
-	Fri,  6 Dec 2024 11:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655011FDE0C;
+	Fri,  6 Dec 2024 11:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlK+b2Ys"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="DQsGfhK0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="enWew1AT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D298F1FC106;
-	Fri,  6 Dec 2024 11:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E05217E4;
+	Fri,  6 Dec 2024 11:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733483784; cv=none; b=Qy3HZYxC4J1hGUBhG6yaXzQCchypmx4cDWBvHpGmJWzHnzvvXduSOjXx273S9uW7j/A1145e9AnNmaSiCGa6ag35MA6BXLDfmYCWPxUj/NcBUQthgRaSUUoBBGgItdahAG8cUG3QjwyGqavjOuSZ3gv9IsbcHGmrmV7ori01TAA=
+	t=1733484986; cv=none; b=EIDDfgx59a0Nri+CZahCEI1NiJImsEzRc/Y1cHLKCAk2PdRErRZJbHKEkGD0UUwNw1kz+/vlClkbYxR7Zy1Q7LgvU23wF9oZl58WO/GTUhuUOieC0bwRoxvqcxQkjAvlAmqe8kIQ38x02BN/MoGIWW2WFyRMq3dV61zogNh5XXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733483784; c=relaxed/simple;
-	bh=fskPcBqtOVolwEsuvzakiQ+6uWu/WS13IBpJFDOITQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kTCBOQ9Tt4C1VYFXqN0fPBGFdnyQ6zYBLV+I7Xwgo+UEk3bOjQoytVwp7UvkEht0ZO5UVjzMcqjGBvplhoYJxDWJXNtGA//tlL3lAtc+i/mzd7NWvi8yUzqk2duBiKIIPPmIdm6kFsBQAUWIOHMH4yQhCWVcXeVnOvGTNcUNAeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlK+b2Ys; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d87fffeb13so12359366d6.1;
-        Fri, 06 Dec 2024 03:16:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733483782; x=1734088582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XvyPZyZiKHfml9ebU5hvb2t0OAsao3tiC9iqjsvXzGc=;
-        b=IlK+b2YsFqtRzY1Gif39k0bI6s2DDzJo7TrlPdw2z4dcwVU6DdwHbnaama2igEzUsi
-         1grvOikrtwvokCbxxstFjCGK4BaNjzYM2tzy20VO072F4kJShKvChlkxdEX8anCqXPD0
-         2bxV3SxuAGfYfIvqzkkX+8Buz8OMQsdBPQzijU1RCCHNhhJDH92fOSnIxe7HaD8xVifL
-         HfI/n/FrRYlsmWH6WkhJoWxYmPr5ielvbC1eShEN4mFKBSQcNISFQxsbhk4YmDqq5RF8
-         SNnFGOY7oRX0Lc23qUrLwP0RoAeZZveCADVj6/nLsTeAlPIvyAqfry/9OzP+uycQVQ9e
-         gj/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733483782; x=1734088582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XvyPZyZiKHfml9ebU5hvb2t0OAsao3tiC9iqjsvXzGc=;
-        b=I/b8cw4nA71IBVIr+7bg1fpXKZx0Rjaahk5JAnwKuaa1DEmAmjySL/uiResXqgRkal
-         zSBwXe91nJ8B1p0V0fqyME057NfPcd0Uabyvduo+S0iuaxwY0mWBcRAUrwhJKkMYiZs2
-         JeAOCiX8IMn6xIfJKqgRGc7jO7OpOx3lv1nJ+cDMlyQyuZ08qiHAIPsQrBO5CpHwpNTa
-         fsehzItUy3+29VTv6hjv497Yw64zYguvUCig8Ol95NA1iaqpPpPN/iWcXvT3HCJr7lpO
-         vlwtFspdse/XEnX3eXZYiYjbnVQWrqiOyNS087QeHxL5PEXM265MF7tPkVsA5mGkQP6O
-         G/+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbrrfi1NDUJGY1dUZKPAcPQyn/GrQwPotFg767B12JtKMgZg1W/vjzmhxwovY3i29sYqXf7FWqJb20beGf@vger.kernel.org, AJvYcCWuHZZUaSm9atzOqHRsW56RHfBAg+Gkra1/4LeMQUqZTN8QcLhRwVpzYrhAeUwzgiY7a0GxKqagKOsCYB/H@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrTJcQHeHzwnoDjUBtDeSB+pPcSUKO7N2QDYihjwgHLyYCKbH8
-	nOVuQaSKWwx8fZ0By/dK6hKhXfVPCybu913v9a9AuIYk0VF+npoWtxNzBFi7A0ClqCsCMcxsgD0
-	qvm7JLg73PZrzJjLkt5gKZKGSQIo=
-X-Gm-Gg: ASbGncshE4yuHA9ffsbhcNIbInZJCriTCbPZofQ97ZyMNOKFcexxERHwKDlQDzJW79V
-	NFOlpTZNzzBDrGCLBfEcpSr4YTesB03A2XQ==
-X-Google-Smtp-Source: AGHT+IGsXVbNpFZBkJf2UfAWclnLN+x7aGDS6QbjUzZ5a5PpSl3Ynr76UxRsxeHnS0Ewh0aDWgn/CumvPOK9iWA45VE=
-X-Received: by 2002:a05:6214:2484:b0:6d8:ab3c:5c8 with SMTP id
- 6a1803df08f44-6d8e741e87fmr28324596d6.49.1733483781653; Fri, 06 Dec 2024
- 03:16:21 -0800 (PST)
+	s=arc-20240116; t=1733484986; c=relaxed/simple;
+	bh=NGfrCPaC9Jl2RnXNtgjXIHb4CtjJRorjKlYtUg+8SsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R1pr2+dhjvh0eDm7m4hvzRac4l2R3d2Fr+Evu8PV5wvvDqRui/BCFDPcfHBvV/mItcZWkKQQuUmI8vHnXDKsGdwhgxCXdi8yw85YYPxrcVG++bOt+9kGwCth29pUlN3TA1DXjFwfZSjOYExmsS6WPwMSkYGsMGOJ9ZjaLx7xGPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=DQsGfhK0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=enWew1AT; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 60F6411400CA;
+	Fri,  6 Dec 2024 06:36:22 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 06 Dec 2024 06:36:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733484982;
+	 x=1733571382; bh=KHGl+PMlY7Mdi8VDO8QB3BgfcXM9VYqd5RWD4B9OyYA=; b=
+	DQsGfhK0LRBRlygLI/uwhoTi9BbNQ10d7l+rNH6Y3rfxbIhGvPHjyVLEn7an/Dvl
+	xqpKCTLwRucu+IuEO4Rdt8jAsNXjScCVRgP7pGpfdbPHXjbLSUApG9atq4X/mXwA
+	CBiehubr7LRrCUX9rtj2uwYqht+l5iSJo3uSysM4fnWWtM7E25IWEkf/lVrV0Sno
+	x3LS3Ha+d6HEb6NSsXGHIY1lGz7qp38lwAZQbEkcisN/NNkn5b3nd9E5kMEzjdaj
+	6HAXX4DS9o0pe0Nx8Zrcuzi8nGpxhk5VvFtNTBRH8oUAfHtD4c26r+ZtAnwkfpCv
+	zTIqVdipQ3gK5zW1VcqYAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733484982; x=
+	1733571382; bh=KHGl+PMlY7Mdi8VDO8QB3BgfcXM9VYqd5RWD4B9OyYA=; b=e
+	nWew1ATB6qLDCEvgf528+iQPD7JVHxsYmV/ejIqj7LmqXCyeOmHxfcLN5UEixrJH
+	JNwmOO/WWI1mQ5K32Z/zQRentHDRFAyndhxfvpn37kqCuECVpohHVvZfwj/nuT7K
+	UZN9vWkk41jrwdjOj7NFrWTWGbrZyruchTJKVeSjH4GmDD+t2qNFGWVCIEERgtme
+	nmFOxQhon2FmvOmU0ob+edXPjzCtXty47c3mDYtlFig8OFBH1SIQn4OC6mSVPCAt
+	DR6A8qgT0klDMZP22qSLiFtwCQF6rOhCqHO8jOaJEB1SjsMS5OKIZ1AagPHcR2Ik
+	Ox9xcX7Q7RsHyyR6Go1Uw==
+X-ME-Sender: <xms:teFSZ4fftWHGVGzJKeny7wKNhdPv1xk7AwrmQ5xCWpRELnooeObqMA>
+    <xme:teFSZ6OSrWsmo1bmn5i5dRHZsAav5Q4M77J9iKxq_tHcZR99FQWMp0BBXKArr_9Jp
+    fzHfSShaXdzQqYF>
+X-ME-Received: <xmr:teFSZ5g5Skr0kyEiIjpV9OtueSHCeXy8ORE1EnIs3J3hPVW_gJ7kSi93vp2oMtmfleB7cRJkVeTOBSTx4qXobO8_Z2a_YukQRLrZ9CYDqt-yjjRYSyZx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgddvkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
+    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
+    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdt
+    gfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthes
+    fhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgt
+    phhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhloh
+    hssehsiigvrhgvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughk
+    pdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtth
+    hopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopegrmhhirhej
+    fehilhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:teFSZ9-BXH5OL4T_fAfXcJbCVHqsekCRdxJOZrzfR_N6DooK3IUzXg>
+    <xmx:teFSZ0tq6UHmaWDIJ5ZdwA8hBtq0p_vfgpdczJCh_tsVHp9WqUYC_w>
+    <xmx:teFSZ0FA7E3I3TuMPQ94zroggknOZQ1MqWKKp8GbhbLzPuBSeXDNEA>
+    <xmx:teFSZzNT23vDhfR1toyGkvGHQxuiJIl4jJ0hETVAAvFV0YacLAd9OA>
+    <xmx:tuFSZ1GGHqPg31D2VQpZaNe1ff8ODUrPyQqwPOzreQmaT3n2IVZ79cDc>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Dec 2024 06:36:19 -0500 (EST)
+Message-ID: <eadccc5d-79f8-4c26-a60c-2b5bf9061734@fastmail.fm>
+Date: Fri, 6 Dec 2024 12:36:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203134949.2588947-1-haowenchao22@gmail.com> <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
-In-Reply-To: <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Fri, 6 Dec 2024 19:16:10 +0800
-Message-ID: <CABzRoyZOJJKWyx4Aj0CQ17Om3wZPixJYMgZ24VSVQ5BRh2EdJw@mail.gmail.com>
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to anonymous_thp
-To: David Hildenbrand <david@redhat.com>
-Cc: Wenchao Hao <haowenchao22@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>, Barry Song <21cnbao@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v7 00/16] fuse: fuse-over-io-uring
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <57546d3d-1f62-4776-ba0c-f6a8271ee612@gmail.com>
+ <a7b291db-90eb-4b16-a1a4-3bf31d251174@fastmail.fm>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <a7b291db-90eb-4b16-a1a4-3bf31d251174@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 3, 2024 at 10:17=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 03.12.24 14:49, Wenchao Hao wrote:
-> > Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
-> > each VMA, but it does not include large pages smaller than PMD size.
-> >
-> > This patch adds the statistics of anonymous huge pages allocated by
-> > mTHP which is smaller than PMD size to AnonHugePages field in smaps.
-> >
-> > Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
-> > ---
-> >   fs/proc/task_mmu.c | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> >
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > index 38a5a3e9cba2..b655011627d8 100644
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *m=
-ss, struct page *page,
-> >               if (!folio_test_swapbacked(folio) && !dirty &&
-> >                   !folio_test_dirty(folio))
-> >                       mss->lazyfree +=3D size;
-> > +
-> > +             /*
-> > +              * Count large pages smaller than PMD size to anonymous_t=
-hp
-> > +              */
-> > +             if (!compound && PageHead(page) && folio_order(folio))
-> > +                     mss->anonymous_thp +=3D folio_size(folio);
-> >       }
-> >
-> >       if (folio_test_ksm(folio))
->
->
-> I think we decided to leave this (and /proc/meminfo) be one of the last
-> interfaces where this is only concerned with PMD-sized ones:
->
-> Documentation/admin-guide/mm/transhuge.rst:
->
-> The number of PMD-sized anonymous transparent huge pages currently used b=
-y the
-> system is available by reading the AnonHugePages field in ``/proc/meminfo=
-``.
-> To identify what applications are using PMD-sized anonymous transparent h=
-uge
-> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHuge=
-Pages
-> fields for each mapping. (Note that AnonHugePages only applies to traditi=
-onal
-> PMD-sized THP for historical reasons and should have been called
-> AnonHugePmdMapped).
 
-Yeah, I think we need to keep AnonHugePages unchanged within these interfac=
-es
-due to historical reasons ;)
 
-Perhaps, there might be another way to count all THP allocated for each pro=
-cess.
+On 12/3/24 15:32, Bernd Schubert wrote:
+> 
+> 
+> On 12/3/24 15:24, Pavel Begunkov wrote:
+>> On 11/27/24 13:40, Bernd Schubert wrote:
+>>> [I removed RFC status as the design should be in place now
+>>> and as xfstests pass. I still reviewing patches myself, though
+>>> and also repeatings tests with different queue sizes.]
+>>
+>> I left a few comments, but it looks sane. At least on the io_uring
+>> side nothing weird caught my eye. Cancellations might be a bit
+>> worrisome as usual, so would be nice to give it a good run with
+>> sanitizers.
+> 
+> Thanks a lot for your reviews, new series is in preparation, will 
+> send it out tomorrow to give a test run over night. I'm 
+> running xfstests on a kernel that has lockdep and ASAN enabled, which
+> is why it takes around 15 hours (with/without FOPEN_DIRECT_IO).
+
+I found a few issues myself and somehow xfstests take more 
+than twice as long right with 6.13 *and a slightly different kernel 
+config. Still waiting for test completion.
+
+
+I have a question actually regarding patch 15 that handles
+IO_URING_F_CANCEL. I think there there is a race in v7 and before,
+as the fuse entry state FRRS_WAIT might not have been reached _yet_ 
+and then io_uring_cmd_done() would not be called.
+Can I do it like this in fuse_uring_cancel()
+
+
+if (need_cmd_done) {
+	io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
+} else {
+	/*
+	 * We don't check for the actual state, but let io-uring
+	 * layer handle if re-sending the IO_URING_F_CANCEL SQE is still
+	 * needed.
+	 */
+	ret = -EAGAIN;
+}
+
+I.e. lets assume umount races with IO_URING_F_CANCEL (for example umount
+triggers a daemon crash). The umount process/task could now already do
+or start to do io_uring_cmd_done and just around the same time and
+IO_URING_F_CANCEL comes in.
+
+My question is if io-uring knows that re-sending the
+IO_URING_F_CANCEL is still needed or will it avoid re-sending if
+io_uring_cmd_done() was already done?
+I could also add state checking in the fuse_uring_cancel function.
+
 
 Thanks,
-Lance
+Bernd
 
 
->
->
->
-> --
-> Cheers,
->
-> David / dhildenb
->
->
+
+
 
