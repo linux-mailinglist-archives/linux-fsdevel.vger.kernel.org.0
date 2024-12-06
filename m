@@ -1,99 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-36620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD0D9E6C63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 11:37:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FA29E6C8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 11:51:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CCA16CB0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 10:35:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70762818B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 10:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EBA1F6678;
-	Fri,  6 Dec 2024 10:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA3F1FA261;
+	Fri,  6 Dec 2024 10:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNXvgUoW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6yHh4bX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C47A1547E8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 10:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F31B641
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 10:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733481307; cv=none; b=ei1aVjSZWkwaMZ/u9uMIyUvurdWYEEtcmkJSYkwwIBjkUHYuaWNR/q65yDmtxP4p4pQX8g+xGfb5TA2hod0bqElLxK1HCUD9mzPHaTGre1okoO+IVzlMdoMRGWF7GUZkNS3ocsBnZIms5UIgBCWZ9kYfrmQFDQJv4D+h5BWRI1U=
+	t=1733482286; cv=none; b=ZoTeY170FpG2t6b8ZISq4/C+WmBxJg763ifLGwVx/SU75ydtvsOOmatKYo3ufSruxTttN+qE6lrjFbnI19jHilWwBZf5eRYmLdxofn5nhsbFrlgFAqWgDTOe/y/kMP1hT5Qd5VzVQ+1hz+0KkcxvnVWvhje+kzTe89uDdIGnsiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733481307; c=relaxed/simple;
-	bh=0XDQJcv7iFgLJ1eWmwMJVBYilr5vQAJLf+vmjZPp3b8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4HyOS7N64t4R3/a4hfoRlVIRgtz52TerhKh3dfGSRA7tZp7loxKytyAElBsQ4flxEVyvqbo70JouO+7fKQZLnqavqSFt+OzHasg8CoriLFHh4jnaxBSXsdgObJS0Y/N5D+3pXwtgsze4RDnWcNDs74W4emNJJQhwQ59O0uMW6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNXvgUoW; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so17648071fa.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2024 02:35:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733481304; x=1734086104; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XDQJcv7iFgLJ1eWmwMJVBYilr5vQAJLf+vmjZPp3b8=;
-        b=PNXvgUoWe83vzQS+yEVCehmTUWq+qgKcMW0MruIIuqmqn25ucr4Wj6bZlK/esZ7SzN
-         g417KQGIKGC6FhnHk6kxqjrVXB+yj6vH51JmGsfXLLfURPuEbQdT35aKq+zWdVbAIIRb
-         TKY0SSoOCXtNGAX4SSZaIxp7KUHdjzyL7oyNN5yOIUA1G0yrG2nbJ7CZmze2CTX3UKDs
-         ZHQBrHLvxGCBe2B21Yr53fO9HoI+AOYHqw60mgdhO7FzzfRWooosvBEncUnn5Dzaap7W
-         hS0y7Ibb6WY8EA9jUrFDM5DXsJ5rzU5YA7aWnO37qmWpnaaUXphazGVUE2UqsF2IbWPf
-         FXwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733481304; x=1734086104;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0XDQJcv7iFgLJ1eWmwMJVBYilr5vQAJLf+vmjZPp3b8=;
-        b=c0b7tVU9BQ0DsGZOmaPNHQ339UsYC3YeFJCE/Rx2ElQ4W9DQcktJHaEVMgP8/agagn
-         sdT6bNM1Oqzgtvvq3lAEMjeN6/HkNe52Getn8oNv0ibso6YTwB6L1u/FJSczAwWuSKMH
-         4b4MNZa6KExE3Yz3FB91DuL+fwjilM17E1dGuvuNSY4exVqIquOCOsLimDFCR5V4WPZv
-         y0n/dBq8d7nsmk4CIkbDmePcRb91qQlTqaH4SHvUz0V5F0yWOa4i3T/EQbP/aoyAhpYO
-         KlMd/vkzD2O9J7XvXtX0orfSiIH0aKTLpEgEwIDX6DGUCFDOYKRvstSmYCVvdbiPp4E5
-         l8RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5C4GwWdvc5OQ26H1EkoI+vYxrMUq2qkToZuNNis8AFhK4+a5fxElWMUPjs8ZwJZixp2ykYlox8NtjBepB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsfX+M4w1qp8iEgEAWJaP+G3qenF5h8OGI+HN5sh5Qxd5UVwBh
-	/QVG3UD4ylnHF50/PeS9GkKk3ZWtWNdp+fj/bBGMRkpsMFcrQgG3E3ZY6TGqbmmVQojqsQcGYZK
-	e+ac29RyXRkXLU/XYDcK7kOg15gc=
-X-Gm-Gg: ASbGnctZGpZHTZG/yUDkDZHcxaC7Ggo0XGlKtUblAW8em1+9KTB2caXluYdfTUHhQLy
-	ttfd6IpQaTWPemtKF2NFYEyWfcMhQhfPqzPHPaDkZh/syYqESmiK+nvNZcy2tS7ZyIg==
-X-Google-Smtp-Source: AGHT+IHE+blOmNejIbE2J9tXQkOJ62/o0JX6wKdzlYgRdn3batbpbCG8UAnrCp0EcL4veN1WJdz5TGNsKRD4QUCNwDE=
-X-Received: by 2002:a2e:ab0f:0:b0:2ff:c242:29c8 with SMTP id
- 38308e7fff4ca-3002fc6695fmr7209701fa.35.1733481303841; Fri, 06 Dec 2024
- 02:35:03 -0800 (PST)
+	s=arc-20240116; t=1733482286; c=relaxed/simple;
+	bh=oTsPUDgDN6bcnZ0E8n6dRKgzyMJp9vgjIScGMRZsCxE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=QG5JJ4/4BG+9PQUPfIP+U5fRspL6LY0u9oNMTdps4C+nOTzw9Mh3EsIEZYBfZa2CaUxm7AdtwRS1B2SZARuvqUVigOzGFY89MVyHm2W9yU2qQ1vgUEZ4scLyGI7kgDg27Z1WZrRnwlUeP/QVR644VqEzl3augRGwoklQy8zF0f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6yHh4bX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733482283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NST6jts8YNbGPQLwjh+xfRvv0/reS6QmYyob3J81Hkg=;
+	b=M6yHh4bXzNGZop8ydvWG1bnFzxSOS65UNhY6A1/FDQlwkQmipaMSOMVrPoPW55iLmbQGdH
+	kEVZaUIN5Kygl2bt8kerOiBuCJxhMMzFdLZ8qOgKTckH1t5IhE9aCrTHDuNY/TNO0aW5d6
+	qqOStCYExaRpRXJrbKxCBH9YyGxJ+R0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-265-j4uGIcJqOo-pktNsHs93Kw-1; Fri,
+ 06 Dec 2024 05:51:20 -0500
+X-MC-Unique: j4uGIcJqOo-pktNsHs93Kw-1
+X-Mimecast-MFC-AGG-ID: j4uGIcJqOo-pktNsHs93Kw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 323EE1955F38;
+	Fri,  6 Dec 2024 10:51:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AE0991955F3F;
+	Fri,  6 Dec 2024 10:51:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20241206071315.2958512-1-zilin@seu.edu.cn>
+References: <20241206071315.2958512-1-zilin@seu.edu.cn> <ulg54pf2qnlzqfj247fypypzun2yvwepqrcwaqzlr6sn3ukuab@rov7btfppktc>
+To: Zilin Guan <zilin@seu.edu.cn>
+Cc: dhowells@redhat.com, mjguzik@gmail.com, jlayton@kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    netfs@lists.linux.dev, xujianhao01@gmail.com
+Subject: Re: [QUESTION] inconsistent use of smp_mb()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <SJ1PR11MB6129DFD4D1E8805D9EC930BDB9312@SJ1PR11MB6129.namprd11.prod.outlook.com>
-In-Reply-To: <SJ1PR11MB6129DFD4D1E8805D9EC930BDB9312@SJ1PR11MB6129.namprd11.prod.outlook.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 6 Dec 2024 05:34:27 -0500
-Message-ID: <CAJ-ks9nHr2fCJCbS=wx92Bba1qdmOg8hJvmenjKgEgvgfWL=9Q@mail.gmail.com>
-Subject: Re: Regression on linux-next (next-20241203)
-To: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
-Cc: "Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>, 
-	"Saarinen, Jani" <jani.saarinen@intel.com>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1977685.1733482274.1@warthog.procyon.org.uk>
+Date: Fri, 06 Dec 2024 10:51:14 +0000
+Message-ID: <1977686.1733482274@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hello Chaitanya, my apologies for the breakage and the time spent
-tracking it down.
+Zilin Guan <zilin@seu.edu.cn> wrote:
 
-This was found by automation and reported in
-https://lore.kernel.org/all/a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk/
-and the fix picked up by mm in
-https://lore.kernel.org/all/20241206012431.4B593C4CED1@smtp.kernel.org/.
+> Since the code does not need the fence, should I send a patch to 
+> remove it? Commit 2df8654 introduced this fence during the transition 
+> to a new writeback implementation. However, the author added this fence 
+> as part of the changes and did not intend to address a specific CPU 
+> reordering issue.
 
-Best.
-Tamir
+Sure.
+
+Thanks,
+David
+
 
