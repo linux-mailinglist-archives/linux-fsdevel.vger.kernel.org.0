@@ -1,140 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-36692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A80B9E7FD0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 13:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0530B9E8089
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 17:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861C8281FCF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 12:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14D0282300
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 16:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64582146A71;
-	Sat,  7 Dec 2024 12:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7FF14C5A1;
+	Sat,  7 Dec 2024 16:12:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C60A10E0;
-	Sat,  7 Dec 2024 12:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEEA12C7FD
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Dec 2024 16:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733573867; cv=none; b=QW3BdxPV7VCkBfGFpWoGwGACrtDSCmBmTbouyMchKMIYOPIalH7F0R/O1deZeLKN6Q/gqqrTC8pFXCvC2imBZgJcW9PRJfnvE1naapByZf90N9IensbqwxxqxvPdBCvUDOC41wB7z8YBUHqDErD461NSycWfdRNjvOiFSPjVMk8=
+	t=1733587948; cv=none; b=q1GaxBjVxVJL5yJ7gfCtLH+ZNwNnmeaSoZoOw339CEfYd/3bGUYopdfsYnZatv5gExseLDSXeluxFME/qkLVngwrtXtEVcFUze9mfe/PsdEOStJur/pEAMhuzEo+sQ9dGAlY7DrSGHOCTCjsqQ94faT1mAmPviyUGWDimhycmaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733573867; c=relaxed/simple;
-	bh=GH7HC58QseC4em9A+U4vEUvrdptTywLuZbfwFW3y17g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e/kn41FMDCp+waUAfs4/tF0HZjos3A3umeYpZNRHcZvrSWIPnBefIxVuUY8BVOOTpItG+fV2exIp/t7Ay51RNTlN7S77wJQ7/3/NOP2GCgqjDpbK3Ne81UMaERnIoBb6jGeNFeDZwMdXP2j/ba+CJzuBt3ZS4FWfwHN5bDVvf8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	by air.basealt.ru (Postfix) with ESMTPSA id 6C7B423386;
-	Sat,  7 Dec 2024 15:17:33 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kovalev@altlinux.org,
-	lvc-project@linuxtesting.org,
-	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Date: Sat,  7 Dec 2024 15:17:26 +0300
-Message-Id: <20241207121726.1058037-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1733587948; c=relaxed/simple;
+	bh=ouwXvSe1knh7wv47Qc6XJmHyUS4VxHpHthoSndAt28g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t+zQ/A88dRzNbKfAbBoAzHVOU3TjsWys8HuiedTCdFoRG9Xyob6Cm6muryD1Nigt62mF83mcAh3TXj+OEnDnCt3pBrFr5I0+bp0XKn524KgbqCdG4srvx6/DelZOT2QkuVMdn552wmMWuSJVgOJRz56F1rfeVsVmdFLsEGj1a1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7bdd00353so32245405ab.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Dec 2024 08:12:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733587946; x=1734192746;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D+JG4qnBLpllsmCaEwFhhtqecdIWaTzL64jr3+YLTZI=;
+        b=o45t1DmjOWX099LsbXSQ9GzaezmKP5trhZN/Uzwq6P1b7QWwRK1bcojWr0XzblSVmA
+         Kb9brBGXl9nGAo82IksPFknPrRfUmuqHziInBwWDqHjRjqn1agCKv685zLObRGRjHyTp
+         1u0NzeZo+q94SNmK8J6VShJtwvYUK5JECdxTP3/PBhoCri2UI8RCnB0GTM/WzfUKH0ML
+         laCul7H7VvbFbIJwPwsWGmhXsaSmLafooZoMQnYg9dst/NHVjSLiw5CG4Jtzb8ZaYEhL
+         SypV1ReWTzRkPU0dGPZq4MHgxVi++8xA5tfTJM4zX0nUNPYeal7RjYYSh7/hnJP8N3dp
+         soCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSVaje+b0bYSdY+k6Gl6O+P2wxEWiVNV+tZpacAvLOls529EftfZxKeJ94YautfH5B7pkIx8b5gXFu9lQE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx52L7+OqQbFQWD4dpjBNqceJTiURXhyoRXQgc/NzVp3owgLFO
+	7mCvPvdycwr11XbvtgU9VKHpufTF6RSm7LnI6PQu8c9LmwKasgwC99ZjOeNkwc9Z0CYEEeC9nHP
+	ecxo9uUQk4B4LeqxiM5IpLKwoCXd2hImjgUZFo6Nfxjqc7pCtdBJXu7w=
+X-Google-Smtp-Source: AGHT+IEb8qWA7F1OFfn/rTZXkPcErKK3GOUrm2bVUFfqD2TjViVTNYIBdH6488kwbngRgUEBbVtWyGy4o5ywx+cY8o3fK/43vSq+
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d8b:b0:3a7:6e59:33ad with SMTP id
+ e9e14a558f8ab-3a811e0879emr70609855ab.17.1733587946408; Sat, 07 Dec 2024
+ 08:12:26 -0800 (PST)
+Date: Sat, 07 Dec 2024 08:12:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675473ea.050a0220.a30f1.0159.GAE@google.com>
+Subject: [syzbot] Monthly exfat report (Dec 2024)
+From: syzbot <syzbot+list4af3b8ed9549444d90bf@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Syzbot reported an issue in hfs subsystem:
+Hello exfat maintainers/developers,
 
-BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+This is a 31-day syzbot report for the exfat subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/exfat
 
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
- memcpy_from_page include/linux/highmem.h:423 [inline]
- hfs_bnode_read fs/hfs/bnode.c:35 [inline]
- hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
- hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
- hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
- hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdir fs/namei.c:4300 [inline]
- __se_sys_mkdir fs/namei.c:4298 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbdd6057a99
+During the period, 3 new issues were detected and 1 were fixed.
+In total, 12 issues are still open and 19 have already been fixed.
 
-Add validation for key length in hfs_bnode_read_key to prevent
-out-of-bounds memory access. Invalid key lengths, likely caused
-by corrupted file system images (potentially due to malformed
-data during image generation), now result in clearing the key
-buffer, enhancing stability and reliability.
+Some of the still happening issues:
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
-Cc: stable@vger.kernel.org
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+Ref Crashes Repro Title
+<1> 3225    Yes   INFO: task hung in exfat_write_inode
+                  https://syzkaller.appspot.com/bug?extid=2f73ed585f115e98aee8
+<2> 1854    No    INFO: task hung in exfat_sync_fs
+                  https://syzkaller.appspot.com/bug?extid=205c2644abdff9d3f9fc
+<3> 394     Yes   WARNING in __brelse (3)
+                  https://syzkaller.appspot.com/bug?extid=ce3af36144a13b018cc7
+<4> 36      Yes   KMSAN: uninit-value in iov_iter_alignment_iovec
+                  https://syzkaller.appspot.com/bug?extid=f2a9c06bfaa027217ebb
+<5> 8       Yes   KMSAN: kernel-infoleak in pipe_read
+                  https://syzkaller.appspot.com/bug?extid=41ebd857f013384237a9
+<6> 2       No    possible deadlock in __generic_file_fsync (2)
+                  https://syzkaller.appspot.com/bug?extid=625941ecc67c107ef2bd
+
 ---
-v2: add more information to the commit message regarding the purpose of the patch.
----
- fs/hfs/bnode.c     | 6 ++++++
- fs/hfsplus/bnode.c | 6 ++++++
- 2 files changed, 12 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-index 6add6ebfef8967..cb823a8a6ba960 100644
---- a/fs/hfs/bnode.c
-+++ b/fs/hfs/bnode.c
-@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
- 	else
- 		key_len = tree->max_key_len + 1;
- 
-+	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
-+		memset(key, 0, sizeof(hfs_btree_key));
-+		pr_err("hfs: Invalid key length: %d\n", key_len);
-+		return;
-+	}
-+
- 	hfs_bnode_read(node, key, off, key_len);
- }
- 
-diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
-index 87974d5e679156..079ea80534f7de 100644
---- a/fs/hfsplus/bnode.c
-+++ b/fs/hfsplus/bnode.c
-@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
- 	else
- 		key_len = tree->max_key_len + 2;
- 
-+	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
-+		memset(key, 0, sizeof(hfsplus_btree_key));
-+		pr_err("hfsplus: Invalid key length: %d\n", key_len);
-+		return;
-+	}
-+
- 	hfs_bnode_read(node, key, off, key_len);
- }
- 
--- 
-2.33.8
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
