@@ -1,83 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-36686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A329E7BD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 23:34:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2A29E7E3C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 05:42:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5508916C7AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 22:34:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C761887179
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 04:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D21EE014;
-	Fri,  6 Dec 2024 22:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E9B7DA9F;
+	Sat,  7 Dec 2024 04:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QiYYNh5b"
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="cIQJPrMw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mail-m60100.netease.com (mail-m60100.netease.com [210.79.60.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8936222C6D9
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 22:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAEC4594A;
+	Sat,  7 Dec 2024 04:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.79.60.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733524443; cv=none; b=WnQfPajpg5XrzrNQe56alYwztiPgsgB1ou1THUzzMQb3gXAmXBwI6E8SpYg4H+ZkAj5F+h5Oek99682Eh5AbZIUAbZK8Lc1vqfAsSYEUYqN7fC9Zv9gTNq963h+CJfshL2YhfWSUbPLJJizHgf5TYRpgddjzAIrzNVaAHG37RTI=
+	t=1733546564; cv=none; b=Eb9Zd4Wq+7iF/m6x7GwS8AfnjZRLJ/jw6Br1JNqZxVKiAdZXTnRuouLo32ggPOCEfKuzb/pwZd37yssc+H0vLX98+/zvZNF27fllEPAAdvt8SEMicIJKrR5rkiD8wA0ZSBvcE45TqfXuOR40rh4i5d58pp67mvPI6vjliiQip/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733524443; c=relaxed/simple;
-	bh=ODAwEGKODz2xw4URm2ZO6oZmSWV8hC3FI3pP3buLL5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvI9BjO2lcRSqZgDzU4+jYKSWrU0LYVYCjWzXb+wGqId/Q5inpBvAHBPGEbPi0Q7DQO7VQoIIbmFE5h1taUrJJ1Zf8UwFeqgdUpJZn/R9xjxDk7kudlZFsUiPMcQOcGI1UuuFTLZWF7kgzHLeClqwMUpZO9CfChFQo9fB/UuuTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QiYYNh5b; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/rjGpD+k9YWGImQOvoS0TB18MkVWD4Yf3GNVMcT1eKc=; b=QiYYNh5bEfu9snHKV49OykliSD
-	Dxk6y0ep4jKLydm1xzqmQFNx+8CU9lfHQtxK0woO5XkQBsjOEf2n0213h5+SU7MAyztNNdPQS31G7
-	vWOiQd+2OIL2lQm9fDdT7MtLdOjf8TkfkqPf9NF7ANCfKDN+ONk0Zxac2KsijYgzErRbtm3XYDhap
-	bKaIceaEqmYxby+e86BtkcuYfHjyysJ64ZyhrY4VCJUBHKoqSbM5PW2zTqx/Ym8WzmsIdBw6grKF4
-	20tNfoQ786H29OmNyd4SEP6eHxBpALhNYcmqmYRGl8OUbbMy6MS0iywqnQC/QaPHBKvn4Yq3RrL56
-	6e3mnLsQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tJgtY-0000000F5Dc-3wFG;
-	Fri, 06 Dec 2024 22:33:56 +0000
-Date: Fri, 6 Dec 2024 22:33:56 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Joanne Koong <joannelkoong@gmail.com>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>, miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Subject: Re: [PATCH v2 00/12] fuse: support large folios
-Message-ID: <Z1N71FJYYIqF0P8_@casper.infradead.org>
-References: <20241125220537.3663725-1-joannelkoong@gmail.com>
- <f9b63a41-ced7-4176-8f40-6cba8fce7a4c@linux.alibaba.com>
- <CAJnrk1bwat_r4+pmhaWH-ThAi+zoAJFwmJG65ANj1Zv0O0s4_A@mail.gmail.com>
- <spdqvmxyzzbb6rajv6lvsztbf5xojtxfwu343jlihnq466u7ah@znmv7b6aj44x>
- <CAJnrk1ZLHwAcbTO-1W=Uvb25w9+4y+1RFXCQTxw_SQYv=+Q6vA@mail.gmail.com>
- <k5r4wheqx4bwbtnorrzath2n6pg22ginkyha4vuw342tvn4uah@tjy5j2kvbuxk>
+	s=arc-20240116; t=1733546564; c=relaxed/simple;
+	bh=HMdtTUtzSIja3JEp9rNY5FRMru0ceZs02c4Mf8/k/rc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W4RFZlC45T0p2FgtbVLD4IireHdwFiszKLArf3E2KP0+/GLSa9oTAOp+K0GtFjZuWgD28lj32y+GkAxUzBXAiDszHG/8xMzCOinqnvKXpACC7VOcaUvaW7HAQ7SXQ1Y2jpck5PHOLueM32DPRQuhtpGS67OD6Db2zJw4kWOBnKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=cIQJPrMw; arc=none smtp.client-ip=210.79.60.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from localhost.localdomain (unknown [202.119.23.198])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4f744e4c;
+	Sat, 7 Dec 2024 10:20:09 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: dhowells@redhat.com
+Cc: jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	jianhao.xu@seu.edu.cn,
+	zilin@seu.edu.cn
+Subject: [PATCH] fs/netfs: Remove redundant use of smp_rmb()
+Date: Sat,  7 Dec 2024 02:19:52 +0000
+Message-Id: <20241207021952.2978530-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <k5r4wheqx4bwbtnorrzath2n6pg22ginkyha4vuw342tvn4uah@tjy5j2kvbuxk>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCH0xNVkhJTh9JShgfTk5JSVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJS0lVSkpCVUlIVUpCQ1lXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a939eead27803a1kunm4f744e4c
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NDo6DBw5GjIqDUkcQzdJEDw9
+	CkoKFA9VSlVKTEhITkhDS0pLTUhIVTMWGhIXVQESFxIVOwgeDlUeHw5VGBVFWVdZEgtZQVlJS0lV
+	SkpCVUlIVUpCQ1lXWQgBWUFKSktKNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=cIQJPrMwojB2L3Zlqa1Mi/B2gGf58Z9rR7yrdTWOHJceIPBZ7z9u3aHvHCu4GBjT4YjySglaiFNOPCzI+99LeQRFfw/TqoV2/7VVkjQHwyoLUTtiVSmSDMWN6IKLwE5VXxKO6NgIeGw9zKO1kxK1gfKZyysImfoaF3sJ59CgrOo=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
+	bh=EQzIrNnIyG5tXCGdHLpf6HtjgxuDF7I3HH2v48y6u2Y=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Dec 06, 2024 at 02:27:36PM -0800, Shakeel Butt wrote:
-> For anon memory or specifically THPs allocation, we can tune though
-> sysctls to be less aggressive but there is infrastructure like
-> khugepaged which in background converts small pages into THPs. I can
-> imagine that we might want something similar for filesystem as well.
+The function netfs_unbuffered_write_iter_locked() in
+fs/netfs/direct_write.c contains an unnecessary smp_rmb() call after
+wait_on_bit(). Since wait_on_bit() already incorporates a memory barrier
+that ensures the flag update is visible before the function returns, the
+smp_rmb() provides no additional benefit and incurs unnecessary overhead.
 
-khugepaged also works on files.  Where Somebody Needs To Do Something
-is that right now it gives up if it sees large folios (because it was
-written when there were two sizes of folio -- order 0 and PMD_ORDER).
-Nobody has yet taken on making it turn order-N folios into PMD_ORDER
-folios.  Perhaps you'd like to do that?
+This patch removes the redundant barrier to simplify and optimize the code.
+
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ fs/netfs/direct_write.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+index 88f2adfab75e..173e8b5e6a93 100644
+--- a/fs/netfs/direct_write.c
++++ b/fs/netfs/direct_write.c
+@@ -104,7 +104,6 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
+ 		trace_netfs_rreq(wreq, netfs_rreq_trace_wait_ip);
+ 		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
+ 			    TASK_UNINTERRUPTIBLE);
+-		smp_rmb(); /* Read error/transferred after RIP flag */
+ 		ret = wreq->error;
+ 		if (ret == 0) {
+ 			ret = wreq->transferred;
+-- 
+2.34.1
+
 
