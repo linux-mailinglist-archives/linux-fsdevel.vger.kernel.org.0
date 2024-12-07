@@ -1,144 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-36691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25669E7F7A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 11:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A80B9E7FD0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 13:18:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2AAF281FFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 10:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861C8281FCF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2024 12:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6421428F1;
-	Sat,  7 Dec 2024 10:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFvsItv3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64582146A71;
+	Sat,  7 Dec 2024 12:17:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9B136331;
-	Sat,  7 Dec 2024 10:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C60A10E0;
+	Sat,  7 Dec 2024 12:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733566203; cv=none; b=CHCx9KU2RYfmkvoBg2kngF2NLwNk/NynayNw5TZpJSyRzjyvd7uZQACMwXZig3kjUaQ/yo6gJZrjmAs/6HYcSamD0UPfTTz9odupSz3E3gU0sNu2Zt0jknVlV+uhudJmj8ilzq4lT5S12La1y00mXfoLIBQi9rnKQXVBe5PNcrg=
+	t=1733573867; cv=none; b=QW3BdxPV7VCkBfGFpWoGwGACrtDSCmBmTbouyMchKMIYOPIalH7F0R/O1deZeLKN6Q/gqqrTC8pFXCvC2imBZgJcW9PRJfnvE1naapByZf90N9IensbqwxxqxvPdBCvUDOC41wB7z8YBUHqDErD461NSycWfdRNjvOiFSPjVMk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733566203; c=relaxed/simple;
-	bh=p2edH10DS2izFB/jzZz2W+zP4whcYevquQhC4IC/v/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4EdbMf0PmzfkiFEk+zaKTD9wBDyVGhfzhXJERVqMeddndV5xtEowpB9eSH22A14fraiIZ3SS0kBK1tIDvldpAQkggQOI1Uw1AGT7xtxMU0SPxdJJUOO3gsTr/SUHeCfcvMJBUE+Nl/wFdHld+J5CmR+u9fNowL3Uf6Z9MjvnmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFvsItv3; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725dc290c00so38150b3a.0;
-        Sat, 07 Dec 2024 02:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733566201; x=1734171001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6BHlvc2h6RbQcsZ4MoZvKFrwrzmCNN8+Ik8anzK5kag=;
-        b=eFvsItv3h+jzoerK6lx0qGiH3yGQpmRfJQUH1YdkcysdEp8UMn/olIrIuz7lW7K4z1
-         PqHcVFgo17wpFJ5sTQu2sXqjsvozs5CQKvJZAickDvxh46X57wVIfjQq5R/hQ9oNdt7K
-         Nm7Vl5UNrJkvgCdj/AtSaGQzjsOtrdDbf1y/exxQF344dwKXR4THTIRx44d2GIO5/rBi
-         FE5pJZkQEy3N/SKjE1/CWJNCZN/meAK349JbEEXJQLxaRJJR94eW5mikJ/8ARosyvH7A
-         PbQQNekME90pHo/xLVnEDwmSDRAJlycCUqxCoz3fZul2rKZ+RPgACqa6MMRwlgmYWArl
-         4iyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733566201; x=1734171001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BHlvc2h6RbQcsZ4MoZvKFrwrzmCNN8+Ik8anzK5kag=;
-        b=f5inPlWpZBKd5Gy5Qp0LKmdvTuBaeHhroApE0+u3hk1pC3vZgIlqF13/pHtIOd1Wqy
-         I6G9lTVwT1Wk7ucLo3wJat6z943noqJhHCdgVpID3nL5esQnSLi/C2kw964slA8UTaHk
-         JG6pM4+q3kSIqD9oznOMRyzhF5SYmhFLAFG05ayCPt/pxRkICpTW4sk1ovf4h6KygW9F
-         dJSBKdVNV0WB7dEEl3nSxleOyPU5f0rPciaOZ5/uq9r98v3RVrmWNYePcU/nH4teEL/C
-         GBpC585RFJ+H3kdVXb35T2aRdq1RY+myowPRTojF7PlmohWpCh5Gdt4Dn54Gq4ty/D5C
-         Mz7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUk5MAQYZIwTLzArN+acRmhVHjc5WymHA+nCUAc8f9+tTAv1gaRC8qsvx8DCPzNImvn752SbsWC5tg/V8Qv@vger.kernel.org, AJvYcCVIbPyJa5y44QP01IXoYGp3aIeJV/Q/vp/UT4qlU4x5rmv++wYbtz/c8oK9041yBOmSIj8j0WRfCbN6qm4l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDscnCfj0/ZGbVFmTC5+Jl5ov0Bx3/Vhhj4s482KChJX6iPEo0
-	NLMdIecQ8xh9Tqqw9pWPUaYhujpDKlAvx+LNlwtN50JAlgb9rTi7
-X-Gm-Gg: ASbGncsu0HKkbB2NmeJUObJJBzfI+MB+Iru25468tNQ8ecG7bEbWE39y96NBA1r69IJ
-	/7iCTAc5yWJTHZ7ZJrfbVEjIACw8rzbbaXmcvnXc2PoJMMceoDrCzovt8yRUA87DX7hrjoEJip/
-	qjK7kGqyzUZYXSaaxLeX4KdgaYiRIt8JvlZwRC3YTdApOok+LBG7sstdUtmWfZD0uGPrH9XJFb/
-	O7GqRtXQhAJ3mwaHiiRNs8OKu5GF1G7ZG5ZuwD82/FhfxSiTUINJ+3yJ51/a4S9C6xmEN5ZrXFj
-	EjXkLpbaUt4zklyD
-X-Google-Smtp-Source: AGHT+IEwKHhlxGzah4NtZ1B9CRa8dut1jgF5vSw0cszYeuNUODXBUIVq9msGMlK35IELUgHoTm1KAw==
-X-Received: by 2002:a05:6a21:168d:b0:1e0:c166:18ba with SMTP id adf61e73a8af0-1e186c1dd91mr8250378637.12.1733566201479;
-        Sat, 07 Dec 2024 02:10:01 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29ef5b6sm4218484b3a.71.2024.12.07.02.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 02:10:01 -0800 (PST)
-Message-ID: <9cc62b69-7cfb-477b-bec1-3bbcc49a310e@gmail.com>
-Date: Sat, 7 Dec 2024 19:09:59 +0900
+	s=arc-20240116; t=1733573867; c=relaxed/simple;
+	bh=GH7HC58QseC4em9A+U4vEUvrdptTywLuZbfwFW3y17g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e/kn41FMDCp+waUAfs4/tF0HZjos3A3umeYpZNRHcZvrSWIPnBefIxVuUY8BVOOTpItG+fV2exIp/t7Ay51RNTlN7S77wJQ7/3/NOP2GCgqjDpbK3Ne81UMaERnIoBb6jGeNFeDZwMdXP2j/ba+CJzuBt3ZS4FWfwHN5bDVvf8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
+	by air.basealt.ru (Postfix) with ESMTPSA id 6C7B423386;
+	Sat,  7 Dec 2024 15:17:33 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kovalev@altlinux.org,
+	lvc-project@linuxtesting.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Date: Sat,  7 Dec 2024 15:17:26 +0300
+Message-Id: <20241207121726.1058037-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/netfs: Remove redundant use of smp_rmb()
-To: David Howells <dhowells@redhat.com>
-Cc: zilin@seu.edu.cn, jianhao.xu@seu.edu.cn, jlayton@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, mjguzik@gmail.com
-References: <69667b21-9491-458d-9523-6c2b29e1a7e6@gmail.com>
- <20241207021952.2978530-1-zilin@seu.edu.cn>
- <2011011.1733558696@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <2011011.1733558696@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+Syzbot reported an issue in hfs subsystem:
 
-On Sat, 07 Dec 2024 08:04:56 +0000, David Howells wrote:
-> Akira Yokosawa <akiyks@gmail.com> wrote:
-> 
->> Are you sure removing the smp_rmb() is realy the right thing to do?
-> 
-> The wait_on_bit*() class functions, e.g.:
-> 
-> 	wait_on_bit(unsigned long *word, int bit, unsigned mode)
-> 	{
-> 		might_sleep();
-> 		if (!test_bit_acquire(bit, word))
-> 			return 0;
-> 		return out_of_line_wait_on_bit(word, bit,
-> 					       bit_wait,
-> 					       mode);
-> 	}
-> 
-> now unconditionally includes an appropriate barrier on the test_bit(), so the
-> smp_rmb() should be unnecessary, though netfslib should probably be using
-> clear_and_wake_up_bit().
-> 
+BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
 
-Thank you for clarifying.
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ memcpy_from_page include/linux/highmem.h:423 [inline]
+ hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+ hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+ hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+ hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+ hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+ __do_sys_mkdir fs/namei.c:4300 [inline]
+ __se_sys_mkdir fs/namei.c:4298 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbdd6057a99
 
-> Probably we need to update the doc to reflect this.
+Add validation for key length in hfs_bnode_read_key to prevent
+out-of-bounds memory access. Invalid key lengths, likely caused
+by corrupted file system images (potentially due to malformed
+data during image generation), now result in clearing the key
+buffer, enhancing stability and reliability.
 
-Agreed.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+v2: add more information to the commit message regarding the purpose of the patch.
+---
+ fs/hfs/bnode.c     | 6 ++++++
+ fs/hfsplus/bnode.c | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
-I see that wait_on_bit()'s kernel-doc comment mentions implicit ACQUIRE
-semantics on success, and that of wake_up_bit() mentions the need of care
-for memory ordering before calling it.
-
-Unfortunately, neither of those comments is included into kernel
-documentation build (Sphinx) at the moment.
-
-I'm going to prepare a patch for including them somewhere under the
-core-api doc.
-
-WRT memory-barriers.txt, I'm not sure I can update it properly.
-
-David, may I ask you doing that part?
-
-Thanks, Akira
+diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+index 6add6ebfef8967..cb823a8a6ba960 100644
+--- a/fs/hfs/bnode.c
++++ b/fs/hfs/bnode.c
+@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+ 	else
+ 		key_len = tree->max_key_len + 1;
+ 
++	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
++		memset(key, 0, sizeof(hfs_btree_key));
++		pr_err("hfs: Invalid key length: %d\n", key_len);
++		return;
++	}
++
+ 	hfs_bnode_read(node, key, off, key_len);
+ }
+ 
+diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+index 87974d5e679156..079ea80534f7de 100644
+--- a/fs/hfsplus/bnode.c
++++ b/fs/hfsplus/bnode.c
+@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+ 	else
+ 		key_len = tree->max_key_len + 2;
+ 
++	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
++		memset(key, 0, sizeof(hfsplus_btree_key));
++		pr_err("hfsplus: Invalid key length: %d\n", key_len);
++		return;
++	}
++
+ 	hfs_bnode_read(node, key, off, key_len);
+ }
+ 
+-- 
+2.33.8
 
 
