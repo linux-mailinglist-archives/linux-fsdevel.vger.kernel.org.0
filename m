@@ -1,199 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-36703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7609E847F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 11:16:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C77D9E8484
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 11:20:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1431C165253
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 10:16:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3E8281723
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 10:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C93139566;
-	Sun,  8 Dec 2024 10:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9990B1420DD;
+	Sun,  8 Dec 2024 10:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZHLOzbD"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="hagFVAcv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076E438DD1
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Dec 2024 10:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235BE45BEC
+	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Dec 2024 10:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733652957; cv=none; b=AZyRY3eCdVwmlJsUwJUmNrDRUwHNa1IWR4oVb1SdiXz+QW1lJ2zkVD4GkwSitAyawc2tApPpI44QUnB/UJd7xyOtFVskSAzf36IeGm2oNFElpX2ahmD9fXHm0NGNgpq+1hMSdHA0CArkO72JXwpqKm/5XxJi1ve1QSrTx26kkBU=
+	t=1733653251; cv=none; b=JZqigyuc0qLZJNJj3z5wvFcJjIMqpijVTujRMsBuJVuqJL2ZGbln3z+GkR0m8kjoEDZEe7KgRAuDbr7KwS/xJoT4U4dc8NcXIyqj48uW2HPYN+fKDEk5VLVZCmD8WZu2jFBFFv9THmlgHYlJFJXKUXL9oA/6xG3tEpDQAqQHKjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733652957; c=relaxed/simple;
-	bh=eKuDDNh7argPDDE0EcWPSszJu+ljYscU6oqO0moeG8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UzGzpCyRHnYRDzpiwIWKFgQtBx0//8szc1v8a4shyyKVo5uN0b8lVPPsrCAUS2sf0Fd4toOFUzNH4q2FiR1TJ5Eb97rgPmCe02Bawx544JTo8abtrb9IXFTMcnuIgV/udNXGJhiYaYYMWuufJSkypphnL41bsaXLzH5+EkZSVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZHLOzbD; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-215ac560292so33568915ad.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2024 02:15:55 -0800 (PST)
+	s=arc-20240116; t=1733653251; c=relaxed/simple;
+	bh=3AslVg5GZai63noZK1hbCUABgi6fZFg3OgTktJsgI4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CNo6MeeqjmX13+AZchigtGuiHLXf3NSzw7ZEJcGwRH6GB00sTxG7LrZiIo3f2Ihyd6noNity1wD4OEGO0rS9n3dJ4rkB255pLXps7eKHMzPriG4iMHYDxnG/yxMRIBdwF1jw/21VZKp+Bs39R1BOANI09S2+Ncor6hJB0Yd7pzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=hagFVAcv; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso463114766b.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2024 02:20:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733652955; x=1734257755; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1733653247; x=1734258047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=imtbBrBEkPVKtbCA/xxwe0ZEaWgNsfGZobwNJy/U71E=;
-        b=QZHLOzbD4ZcLVCcBRpcAqJke+WedEok4n6A90hYsyRb40jrI5eZZxXsg8xG1L/Eu7+
-         u+79pgtjzbGi0V5fwSPL0QX8sulsLEqNyJA3Y9gOeOydVyQRxk5WWv0kGnV47Hscu0/H
-         GOQXtwoJLH8BvT45u3JJ6kVHlXVivfTh0O2H/I0XL8NolR3FcMpHO1/RXCKq/asR52SF
-         FkvNZSl0bAGrqNn0guQGoJrFN8ZZfJ2mqD4c1qRBJCZxK7oLcmxDjFi5jem02I74lXqj
-         uxdwBQU+VeL95jo2+aXaIUhCtV2ta14hBihU16MvTtsPu5n/f01YKOoGboeDw5xQBBBG
-         J1Mw==
+        bh=3AslVg5GZai63noZK1hbCUABgi6fZFg3OgTktJsgI4U=;
+        b=hagFVAcvlbOeZ+9wVigGAAC6ChsShJHi1HrXZ9ZTPn1hhUjWgNuox+qvj8eEeyybHg
+         35OYnEvgYVQ/jCNnlks6Cv8JpJF5wpeqpqjt3m0rDjWspZrujIkQLD+qzSDYbHuiVWu5
+         9YH/EflQBqot9Oyb4j3U7r/C6vaShaBGGEPE1w4NWrgqnE2PTLVPgIXPDgNtDxGk8G5S
+         X41+l1UZ9yv/BAuJignKohlQl1kG8NNbhpuGSjDV1MxrVWAsrixELp9mwVBo+nvhI4zj
+         1rYMC4CU3bjs0wUOknwmd4BjTOoQq/5AvNErJ1hrvaftKXHSiL84H2/qpiAu76jZ4okL
+         qEsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733652955; x=1734257755;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733653247; x=1734258047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=imtbBrBEkPVKtbCA/xxwe0ZEaWgNsfGZobwNJy/U71E=;
-        b=qAvCJ2jmT7yLOMNCRT2byM7eqz46XhOMrzi4csYLOF8C40kdOqzArwJk27SGZctvfQ
-         J3OrY52BRsJed/Dv09ElcV6gmoU2oKnUat8+fK2nG369ORobZj/4YM4nsLwTQR04W4dk
-         r7pusk8jmkg/cBcShenZ9lJLt6MOpuZ71ZGr/7wYVCONvxerBhsc2ontIab819ZNaKRF
-         2xh7o8VmA+A4jCmesfqa0lPpJda6kgDYaZiz1FfXylHKaZ20bcJw//7V0VjXSTLesHRy
-         DJNdERJbiRvcQdRiYzSiBCiBFvjZXgY6UonJ27dEY9wjB0ljm3tJ74rD5nZjWdGpd6sJ
-         TNQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVd9eUGtTQNT8D+IU/o/4Za8CNCMWNmgUO86jFW+rYNs12UVqyAM2JsRWJ1sgeuP1Nq5WEAZPMfB8OMRblL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGmupW5O4TbHUHgSUYnKR5nv8lTOIYQzQcxscYWxSsiRx2d5Nj
-	/epWrbdY7ul+t2dBVe7a010h2Sm9Z6lpd7VFnpFfy9LWktPkgycA
-X-Gm-Gg: ASbGncsGWWyLsWqgVXzYo9BkRR69ZqbgA9iv5BphdOKV3yGzJICKaqS8z3OqNl9PC+E
-	nNLihlezktLazvPgb74IK/y27393aBY0tcYcH9NZ7jrz5nRpmKkfzjGw5wbv7It9S9pRuAls1DJ
-	+6gzmnqxnKjrLl2A+TMYieWDQCIBtWMRJINZU3sNB+e5ZfsHmJRFDjgc0kyV5YOIWRIEqFKA5lY
-	xPn2xpZ9TSr/dmedBVhzZe5PpGfjpy+qRctv+0NOOcl7YsobVEehyslpQ2AWkWtm2jNGYvh6f+x
-	xQB3XJfvwBTwzQi/wtWz
-X-Google-Smtp-Source: AGHT+IFQct9SApUaLux90fR0aNxlzm2wMoioHTPd27lhStCGrHuRbObEG0AcO2vIjjIL4fIUoZbNUg==
-X-Received: by 2002:a17:902:f54d:b0:215:5bd8:9f7b with SMTP id d9443c01a7336-21614d456b1mr116100605ad.15.1733652955174;
-        Sun, 08 Dec 2024 02:15:55 -0800 (PST)
-Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9ee4sm54638735ad.161.2024.12.08.02.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 02:15:54 -0800 (PST)
-Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 17ADBDDB022; Sun,  8 Dec 2024 19:15:53 +0900 (JST)
-From: Hajime Tazaki <thehajime@gmail.com>
-To: linux-um@lists.infradead.org
-Cc: thehajime@gmail.com,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 02/13] x86/um: nommu: elf loader for fdpic
-Date: Sun,  8 Dec 2024 19:15:29 +0900
-Message-ID: <d387e58f08b929357a2651e82d2ee18bcf681e40.1733652929.git.thehajime@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1733652929.git.thehajime@gmail.com>
-References: <cover.1733652929.git.thehajime@gmail.com>
+        bh=3AslVg5GZai63noZK1hbCUABgi6fZFg3OgTktJsgI4U=;
+        b=ouloR/SxkTfN2Xj78I4mo2+HxrHqov3Xs/YMIzp1dli3NLUSqghFwXCjbJW4WJkIAe
+         K9m3NiUwSBIufVds6EPnkGG+PhFEH8TxifA74h8g80/4tpSLQB7OwWRUmoJzyOR9cq/2
+         E5rKlxUu10Ga5WeiwGmAi/7wuJfZLuAmwuZI/nX9PhwRx8u+tlkp38OUuh2eyZvKEMUm
+         bTG/TMISDOt/xBa/TIk+gV7XWEG8erRE/D6ShJ5hOycat5Iqm4Xarsg5npf4Iv309Doc
+         MTU8w/wRlkqGAfUZd8X0d0saZsdXYZ2ro+G5GQ9TJ8+Zbb9vQfiaXLNTrMxObDiO2rV0
+         yXhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVlPxZGzb1KqAadRc9l1pjMzTVrN4xlDGhlgmt+JsL5hDbqtCJIlS+ANsTLawcdG9IVEx2tW9j4MdC1LPA@vger.kernel.org
+X-Gm-Message-State: AOJu0YylRkhPJ5YS4JrtX9g+34q8kwTj9C/FDeIj+tLIVTQSbEFpznXu
+	bWPbbfl3eeBJ8a5T01kvFb9jI9XKZgi4Z0qsechnYUQm8afKSNPykgP/qoMgHmHyN1tyKxff1em
+	b8ZTpzJp2Tfh2NgeJWkwFSWwb8p5vP9yb+uO3rXHeCa7VXoN5z5chKQ==
+X-Gm-Gg: ASbGncvFWrkgjZ4JbeUTbKGsPIibtxpG9HAX5WtWR9erfBzmEeF21ivePrR+bq4Vwyj
+	WEELRYAIu6Gnm2XJn+EjhJ5Y8Nhy196IDiNMJlJB+szq3/I0wdr+ii07bn+97
+X-Google-Smtp-Source: AGHT+IHhsFb/p+bUKWhNb26BKnfksM/ayxxLkaw2zAoftdh79YIZEReweI5txI3aE/Mh13JN6jNXf17waG7w8+NuFdE=
+X-Received: by 2002:a17:907:3455:b0:aa6:3b8e:e07c with SMTP id
+ a640c23a62f3a-aa63b8fbfa6mr604208266b.54.1733653247478; Sun, 08 Dec 2024
+ 02:20:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
+ <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
+ <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+ <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com>
+ <1995560.1733519609@warthog.procyon.org.uk> <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com>
+In-Reply-To: <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Sun, 8 Dec 2024 11:20:36 +0100
+Message-ID: <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com>
+Subject: Re: 6.12 WARNING in netfs_consume_read_data()
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As UML supports CONFIG_MMU=n case, it has to use an alternate ELF
-loader, FDPIC ELF loader.  In this commit, we added necessary
-definitions in the arch, as UML has not been used so far.  It also
-updates Kconfig file to use BINFMT_ELF_FDPIC under !MMU environment.
+On Sat, Dec 7, 2024 at 7:39=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
+.com> wrote:
+> Here's a Brotli-compressed trace (of 6.12.3 +
+> dhowells/netfs-writeback). I can reproduce it this way:
+>
+> 1. log in via SSH (cm4all-lukko is our SSH server)
+> 2. "cp" a file on the Ceph home directory
+> 3. log out - bash hangs inside write():
 
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-Signed-off-by: Ricardo Koller <ricarkol@google.com>
----
- arch/um/include/asm/mmu.h            | 5 +++++
- arch/um/include/asm/ptrace-generic.h | 6 ++++++
- arch/x86/um/asm/elf.h                | 8 ++++++--
- fs/Kconfig.binfmt                    | 2 +-
- 4 files changed, 18 insertions(+), 3 deletions(-)
-
-diff --git a/arch/um/include/asm/mmu.h b/arch/um/include/asm/mmu.h
-index a3eaca41ff61..01422b761aa0 100644
---- a/arch/um/include/asm/mmu.h
-+++ b/arch/um/include/asm/mmu.h
-@@ -14,6 +14,11 @@ typedef struct mm_context {
- 	/* Address range in need of a TLB sync */
- 	unsigned long sync_tlb_range_from;
- 	unsigned long sync_tlb_range_to;
-+
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+	unsigned long   exec_fdpic_loadmap;
-+	unsigned long   interp_fdpic_loadmap;
-+#endif
- } mm_context_t;
- 
- #endif
-diff --git a/arch/um/include/asm/ptrace-generic.h b/arch/um/include/asm/ptrace-generic.h
-index 4696f24d1492..4ff844bcb1cd 100644
---- a/arch/um/include/asm/ptrace-generic.h
-+++ b/arch/um/include/asm/ptrace-generic.h
-@@ -29,6 +29,12 @@ struct pt_regs {
- 
- #define PTRACE_OLDSETOPTIONS 21
- 
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+#define PTRACE_GETFDPIC		31
-+#define PTRACE_GETFDPIC_EXEC	0
-+#define PTRACE_GETFDPIC_INTERP	1
-+#endif
-+
- struct task_struct;
- 
- extern long subarch_ptrace(struct task_struct *child, long request,
-diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
-index 62ed5d68a978..33f69f1eac10 100644
---- a/arch/x86/um/asm/elf.h
-+++ b/arch/x86/um/asm/elf.h
-@@ -9,6 +9,7 @@
- #include <skas.h>
- 
- #define CORE_DUMP_USE_REGSET
-+#define ELF_FDPIC_CORE_EFLAGS  0
- 
- #ifdef CONFIG_X86_32
- 
-@@ -190,8 +191,11 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
- 
- extern unsigned long um_vdso_addr;
- #define AT_SYSINFO_EHDR 33
--#define ARCH_DLINFO	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr)
--
-+#define ARCH_DLINFO						\
-+do {								\
-+	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr);		\
-+	NEW_AUX_ENT(AT_MINSIGSTKSZ, 0);			\
-+} while (0)
- #endif
- 
- typedef unsigned long elf_greg_t;
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index bd2f530e5740..419ba0282806 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -58,7 +58,7 @@ config ARCH_USE_GNU_PROPERTY
- config BINFMT_ELF_FDPIC
- 	bool "Kernel support for FDPIC ELF binaries"
- 	default y if !BINFMT_ELF
--	depends on ARM || ((M68K || RISCV || SUPERH || XTENSA) && !MMU)
-+	depends on ARM || ((M68K || RISCV || SUPERH || UML || XTENSA) && !MMU)
- 	select ELFCORE
- 	help
- 	  ELF FDPIC binaries are based on ELF, but allow the individual load
--- 
-2.43.0
-
+Today, I took the time to bisect it, and the bisect arrived at
+first-bad commit 796a4049640b54cb1daf9e7fe543292c5ca02c74 ("netfs: In
+readahead, put the folio refs as soon extracted").
 
