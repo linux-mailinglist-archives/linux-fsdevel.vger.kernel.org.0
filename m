@@ -1,131 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-36714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0A89E883A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 23:32:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C051216387C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 22:32:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE0718453E;
-	Sun,  8 Dec 2024 22:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="dEH7H7bb";
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="ltA0ekiH";
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="qluQJvNW";
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="N6VaiPZF"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A72D9E8887
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 00:01:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BE51DA23
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Dec 2024 22:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B4128117D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 23:01:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5721D193079;
+	Sun,  8 Dec 2024 23:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jz6PVCv4"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102223E47B;
+	Sun,  8 Dec 2024 23:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733697143; cv=none; b=CiuPS0k1vO88c1KSwkRabq8CY+rtgDH+OmMvaQn/8OPw/AEvhwb/9SpU8LYuKlHHW8cADmpkgpLes32INuIWO/u3MWC86Z+A1et/bj6aTi+5Fn9CcMoGhYPFL320DJPqVrAkW5OuJ/vGNZiLhXHklelcKXlmKG5EORvxYAKzXmc=
+	t=1733698901; cv=none; b=n+3kn6HAc2Y1FhGjTLKg5IwLWdY6bISn0DLRUZjXouScJUh8+iXMrIphgn/e0FuY+5dUbHQZNsjzxZfUSnX0qcU4HPPmrraaLSEzv/ePH+GdsY2SuDoQyNArWXbtGBE90qbsXVlCvG09pgw1VHnbaGaYXy93VoKO8sLte68YA20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733697143; c=relaxed/simple;
-	bh=wx71ZcuBrQXuKP8KxiiM68kr5T/W7LdEZHrkIbjsaI0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bOXIgaAmMJwXdWlRZYL8kruwtoyxBE8f9hMxJKAp8nGc4LdyQB0T7Gy4U22jgWS6qMC+VeIY2XlvLvFEXs/6HaKee4Segp5h5wZi+ERAjD/vU8Fj1OSR4h/01HHDTuqIQnn0m4uAfsQgXKnmBWK70wzTgVnJ2GLsQ1dGsj4C7rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=dEH7H7bb; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=ltA0ekiH; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=qluQJvNW; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=N6VaiPZF; arc=none smtp.client-ip=49.12.77.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
-Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:808e:8168:83e7:b10])
-	by mail.tnxip.de (Postfix) with ESMTPS id D493B208CF;
-	Sun,  8 Dec 2024 23:32:16 +0100 (CET)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-vps-ed; t=1733697136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttwo0awN7SSVixNX02knxUNLQtEhIIs1K1K18/qUJEc=;
-	b=dEH7H7bbbOvRc6grLrc/W2mvGAwFT+tMIUGX/D+IdHTkGsSyq129zC/Fa24l/6m4QtPlIM
-	0UBQW2yasbU5CNBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
-	t=1733697136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttwo0awN7SSVixNX02knxUNLQtEhIIs1K1K18/qUJEc=;
-	b=ltA0ekiHMVsU9vS1xqLh6fZmOppy5SKfEZU6bQbPimXjmLmdiISH6eKjR/fonJYzov7XKA
-	7VoJmqFBlSocPBErVIqfWaZgT64g5/2ShzWpCCv5T88/+A6RRLh49LELAc9OK2EAAR3w7v
-	zmqS40SVJUgYv3TTDqBzOqVFQWALyd4=
-Received: from [IPV6:2a04:4540:8c05:f700:b769:775:6562:48b8] (highlander.local [IPv6:2a04:4540:8c05:f700:b769:775:6562:48b8])
-	by gw.tnxip.de (Postfix) with ESMTPSA id 34CFE780FEA1F;
-	Sun, 08 Dec 2024 23:32:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
-	t=1733697136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttwo0awN7SSVixNX02knxUNLQtEhIIs1K1K18/qUJEc=;
-	b=qluQJvNWER1VlL8oEDRV8ReDTBHhDplAgwrmKN/Gb3yhkh0DtXYsR5YGiBkzsuVWKkON6+
-	9M+Td0nS2Ww1x8hctoxhzwVPP76G//fc+psDOhanvj5KMjX0qcoJ2NbXWF9/SW9uLaY7XW
-	/jQvqbAmV9noLpMz2SC0aLXyWQcwows=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-gw-ed; t=1733697136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttwo0awN7SSVixNX02knxUNLQtEhIIs1K1K18/qUJEc=;
-	b=N6VaiPZFpjKtRlXW/6LQwj9G/nP0Lxzh5HBSN/2HkJPfowFNLTjACdGM0FO7u8QC5IFQGt
-	5fvApv3sZVadIHAg==
-Message-ID: <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
-Date: Sun, 8 Dec 2024 23:32:16 +0100
+	s=arc-20240116; t=1733698901; c=relaxed/simple;
+	bh=pRSew8ldoZx/D99IdRzn1/vkfDdMrL1DzAZxkm/FVpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CenPd3cyOajUQIgNjvZS8qcWJzc9iXn4jISqwWgiTQX+mrBfCeIEUqFrd6MDVIuNGXfCkLw1djXwucGUJo+/BnG72mz9BOfOFrIgj65KnXMOBukhdjg648+0GFCUXQQn/lZoxYA5zpkthczkbp3GLdVx76uZ8pp++DdLtWQE+nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jz6PVCv4; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a766b475so37030845e9.1;
+        Sun, 08 Dec 2024 15:01:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733698898; x=1734303698; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xh/bXe1Vc0rOdhZWhLPWkB8OfSUsx5Drgeinzv4BMNI=;
+        b=jz6PVCv4rdquWd8ydQWOhxzzdSRuRrPDPRCnP63MbWDN1hqYDtx+ItqB3cxAUZZEUX
+         R8e/mtLb9MVMKbplyhiOo9MtKDEGZxT662l2GJGNKLOg+q7cF+Mup4f+Y5b/a4gH04Wc
+         OYgUpWMMUoAXE9mbpg91/AIUd2r3zi+cwf+RmViZcuSD/zpO1Gc7HCwzwqE3llVPqNhm
+         CPJHUmwJ+Cfo/1lwnxGmw92iBCPKGx3dDuQWUEY2kPoMSZih+HWEhlWat9Jsl92KoKmF
+         nCCFDUpaniiXHtH+44jn57+2XecNwgcXNlHUHnqj3AIyV6gQ39KEzsH/8XjuYtLdIdyK
+         msVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733698898; x=1734303698;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xh/bXe1Vc0rOdhZWhLPWkB8OfSUsx5Drgeinzv4BMNI=;
+        b=mQsHdD1cgpcEcGV6pAETs4kEbWu176PIhnNj2OWcRppRC4++wiG0C0Nwc8dOzG7Sao
+         B3XfhJpLc6cc8XcHBuwVjrEBW6b9QH+mgSl+WScJrfaUURN4NDmNCDaKuap7UQyxF7QP
+         f+yjdAtr3xT7ObZ/D5uvua9LUpYFo/3fg6NX9+1thrbqmaKFIIlfTdjvXPmdZ7vZ89t4
+         mOxXXS2k9SZ/LI9CDrGOAvkR0k1JgiJwDo0GeilEHJdouzueroLLSbvh5+BwLJJ9P344
+         6F003AQmsS1wVOsNXXoGpoCixSEZJAf3ETKVDF9zLm4RugmaJ/k2APA9GPPKgG4744y9
+         PfQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRfASe+0UKhYQmAnNZk4cFegxaxbI7Rs/SZSt+PcDPZCR6k9ctDeIAQJf8A89560+2ILR7J+kRod4TXBZ0nw==@vger.kernel.org, AJvYcCXYdmQLcf59vXAY4Q0ZA0lCNOVNSv9FLjo/DzRKWN29Eu0HLiDZcu6AXaLpWNRGkXB3vbprtZwagw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVrzgaWwz67D6rXwh9xolHtAFqZ3thJKyMEDk9OYJScvXrSSJq
+	9/444PA4s/376KKqlU/sHJ03VNPvWnnUwzvuCCz2/LsTxr7H9i86
+X-Gm-Gg: ASbGncs1mYlkIADPKYd0qvrOlF0lbS4tk2IJDvo5Farnqn88MAjgNtATLEhh4iPj3qY
+	SjnYYnqNE3arv2OI9K8ZLasASbrhJIQ5+fU3LEToqQzvlfDPWnOTyP+s4gXX+/7AjI+s3JeHuSW
+	liUD0B+0DFmqPZSuLNnDglc4Qf5DsmDJkRAZOzjsCLMKFh+Sb+Pc3xp/XLYil7d4OnI16wUW8fO
+	cQw871Zm1MKfr8XAStfV2LuvCOAw7pjCPqoMZz/g83HKaIny7xtW61ovPRB
+X-Google-Smtp-Source: AGHT+IFAyt0wmMH4s9Gbe/djteRJfvFEoO1Dao/RIidu7UAW58FhR5lvZj/wh95zw7kEOVQizxTA7Q==
+X-Received: by 2002:a05:600c:4f02:b0:431:5f1c:8359 with SMTP id 5b1f17b1804b1-434ddeb7f8emr92333635e9.15.1733698898075;
+        Sun, 08 Dec 2024 15:01:38 -0800 (PST)
+Received: from [192.168.42.233] ([85.255.235.149])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbd42sm170454285e9.38.2024.12.08.15.01.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2024 15:01:37 -0800 (PST)
+Message-ID: <e19b9e3b-5723-41fd-ac4d-26247369ec13@gmail.com>
+Date: Sun, 8 Dec 2024 23:02:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
-Subject: Re: silent data corruption in fuse in rc1
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Miklos Szeredi <mszeredi@redhat.com>, Josef Bacik <josef@toxicpanda.com>,
- Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org
-References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
- <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
- <Z1T09X8l3H5Wnxbv@casper.infradead.org>
- <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
-Content-Language: en-US, de-DE
-In-Reply-To: <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v7 11/16] fuse: {uring} Allow to queue fg requests
+ through io-uring
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <20241127-fuse-uring-for-6-10-rfc4-v7-11-934b3a69baca@ddn.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-11-934b3a69baca@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 08/12/2024 21:02, Malte Schröder wrote:
-> On 08/12/2024 02:23, Matthew Wilcox wrote:
->> On Sun, Dec 08, 2024 at 12:01:11AM +0100, Malte Schröder wrote:
->>> Reverting fb527fc1f36e252cd1f62a26be4906949e7708ff fixes the issue for
->>> me.     
->> That's a merge commit ... does the problem reproduce if you run
->> d1dfb5f52ffc?  And if it does, can you bisect the problem any further
->> back?  I'd recommend also testing v6.12-rc1; if that's good, bisect
->> between those two.
->>
->> If the problem doesn't show up with d1dfb5f52ffc? then we have a dilly
->> of an interaction to debug ;-(
-> I spent half a day compiling kernels, but bisect was non-conclusive.
-> There are some steps where the failure mode changes slightly, so this is
-> hard. It ended up at 445d9f05fa149556422f7fdd52dacf487cc8e7be which is
-> the nfsd-6.13 merge ...
->
-> d1dfb5f52ffc also shows the issue. I will try to narrow down from there.
->
-> /Malte
->
-Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
-with 3b97c3652d91 as the culprit.
+On 11/27/24 13:40, Bernd Schubert wrote:
+> This prepares queueing and sending foreground requests through
+> io-uring.
+> 
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+...
+> @@ -945,3 +988,119 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+>   
+>   	return -EIOCBQUEUED;
+>   }
+> +
+> +/*
+> + * This prepares and sends the ring request in fuse-uring task context.
+> + * User buffers are not mapped yet - the application does not have permission
+> + * to write to it - this has to be executed in ring task context.
+> + */
+> +static void
+> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+> +			    unsigned int issue_flags)
+> +{
+> +	struct fuse_uring_cmd_pdu *pdu = (struct fuse_uring_cmd_pdu *)cmd->pdu;
 
-/Malte
+Please use io_uring_cmd_to_pdu()
+
+-- 
+Pavel Begunkov
 
 
