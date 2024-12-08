@@ -1,195 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-36702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457C69E83C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 07:07:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7609E847F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 11:16:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00212281621
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 06:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1431C165253
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 10:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9026B84D3E;
-	Sun,  8 Dec 2024 06:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C93139566;
+	Sun,  8 Dec 2024 10:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+xH1lBD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZHLOzbD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664226EB7C;
-	Sun,  8 Dec 2024 06:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076E438DD1
+	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Dec 2024 10:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733638031; cv=none; b=oWsLREBRvpuR4XDdriFOV/wDsRWDYWv7hMqwrT6UkFMvtNSaysb9UMayCOvoJroiJlL284H1DOOvJNb6rgbyGSfl7JRomq3gRayKPjHpIT6XbxyRFLx4S+s9/LzgGtXrdjja5zJQAlqnI6qxrKPB2bFeaNAhzJAtDfkDZfiqzhI=
+	t=1733652957; cv=none; b=AZyRY3eCdVwmlJsUwJUmNrDRUwHNa1IWR4oVb1SdiXz+QW1lJ2zkVD4GkwSitAyawc2tApPpI44QUnB/UJd7xyOtFVskSAzf36IeGm2oNFElpX2ahmD9fXHm0NGNgpq+1hMSdHA0CArkO72JXwpqKm/5XxJi1ve1QSrTx26kkBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733638031; c=relaxed/simple;
-	bh=7cijtxLpsvFEZq0aUHVwe+cC1Eo2C7mONGy/jm6Ss94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q2g1kEue0HolHWhL6eYFFnA+H5T5VsHK6gKuXD9zwV1GTKHWT9jz2iKnsw8Am6kemTj0LTOgYL3W9bXA14+Aj27Nlv+gJ9v+tcDV3uEEpbVYPgxR2z5qrCVa8cY3ntPU3ZmVgFU2dWXE8dQYC6Vey+p0o3NpcJiUqsb7SZx8FdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+xH1lBD; arc=none smtp.client-ip=209.85.221.176
+	s=arc-20240116; t=1733652957; c=relaxed/simple;
+	bh=eKuDDNh7argPDDE0EcWPSszJu+ljYscU6oqO0moeG8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UzGzpCyRHnYRDzpiwIWKFgQtBx0//8szc1v8a4shyyKVo5uN0b8lVPPsrCAUS2sf0Fd4toOFUzNH4q2FiR1TJ5Eb97rgPmCe02Bawx544JTo8abtrb9IXFTMcnuIgV/udNXGJhiYaYYMWuufJSkypphnL41bsaXLzH5+EkZSVdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZHLOzbD; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5174f9c0e63so36592e0c.1;
-        Sat, 07 Dec 2024 22:07:09 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-215ac560292so33568915ad.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2024 02:15:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733638028; x=1734242828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733652955; x=1734257755; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nSPTXbUKfNMinNGM5rUhYOdHvCQ+TR4BofaMXjdRcsM=;
-        b=R+xH1lBDC/DdN0P8TdVAa4Pd+hGOQUIyGcryfFFAQiTaNsmbcsIwyTclbAQPoEvA7R
-         tu88ee6JGs3VOUB4y5bClVuJpvr64CYFiIXQA9//VKwn0aZiEIlq91SmPT2rWQNtS84V
-         Q68fqayb2A/WL16JRR2Aa+mQDBdItxQp+zeXlYvbrg64X3Q5G9on5nqz+MGUpTDAvHFz
-         sBSbQh6yoQFr8xaVD3/sq1MpISH5rasI9VCXsvHS64adtekqA6fqRDbF9wrSowcNHUns
-         5bjjGIUll3oIH67z1VPa8xj3rzc/KKMPlNEmwVgJtyU2TXOEeXyiQVTsbWSfoPtLJk3u
-         jqQA==
+        bh=imtbBrBEkPVKtbCA/xxwe0ZEaWgNsfGZobwNJy/U71E=;
+        b=QZHLOzbD4ZcLVCcBRpcAqJke+WedEok4n6A90hYsyRb40jrI5eZZxXsg8xG1L/Eu7+
+         u+79pgtjzbGi0V5fwSPL0QX8sulsLEqNyJA3Y9gOeOydVyQRxk5WWv0kGnV47Hscu0/H
+         GOQXtwoJLH8BvT45u3JJ6kVHlXVivfTh0O2H/I0XL8NolR3FcMpHO1/RXCKq/asR52SF
+         FkvNZSl0bAGrqNn0guQGoJrFN8ZZfJ2mqD4c1qRBJCZxK7oLcmxDjFi5jem02I74lXqj
+         uxdwBQU+VeL95jo2+aXaIUhCtV2ta14hBihU16MvTtsPu5n/f01YKOoGboeDw5xQBBBG
+         J1Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733638028; x=1734242828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733652955; x=1734257755;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nSPTXbUKfNMinNGM5rUhYOdHvCQ+TR4BofaMXjdRcsM=;
-        b=MopQ35bntCqCSEYH0lSy/Nf0k6PlyKzYjex8L3eostaDma+yx5fa10N7lI8YA3rw1C
-         QIXmhAj1JLevdQ2B5A2h/vn7IB6EVCaAaf3uohmH46nNOF33TFudlp+aasXeGDtTvXJW
-         23HlI8RgMk8EZpfYB6rDYLZRo2hxYtNE+aoKQfpT/l+d3l1NlwYQWq7CosZ1CiikGa7s
-         lbRxZXmZPJ+rEB6cokiFJwp6OgioJmYGi01hLclmKm8KGTx8BWsp+6+l2iDHnK3QwHgw
-         CM9PJVjXfS9WSpMi4LB3+2xi1qavshrWOFOuBKebJd3rP9NKsLcUZ7MjIw2yQtkDWqpr
-         9A/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUOPic+RUfrM12FI8G8M9bOZ5bCkSS31dCp1h/Ow8oyGM6CkDiHwRZlZVS043jIJjRJEz2dFLXwDp2t6kgr@vger.kernel.org, AJvYcCXQw10OWaMIbXlDM3/kb/P8YTQiBghhdBxVbv8Q9ieI4I9PS+c8Jv/DLWDFNkD7eKZUKZZvRWIdvcCtieom@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ3uLsWCu6BO/ZGrs1CMBaljtf8zgOIRFsw19N4iNfFoO5FeX0
-	yGbEBXUAubMvXwX1oWHhw1cKTe4qbEkyuN5RtNVDl+UYw7rhmwtVsGXsXGDH0qVsPwSUMqAm3Yr
-	dx0Si2qrw5Qm98/9J6XHsxYfAfZM=
-X-Gm-Gg: ASbGncuYT8J2DSEKo9sdJWHAcWu/+KuSYy8mTwZoFf6nkMJ9esy99LPDaR3RWuMpr30
-	AwOhg2vX7/dZXqaaCAFFigh9F3kvM0j+7DW6SeQyNnKw9IC1LJkFppQf7rluh2kIlKA==
-X-Google-Smtp-Source: AGHT+IFaPx1ArJ8bw8oS0nlBiWKl9Rx/s/UMqsFt9vtSHnk58MZH85TiZg9/plcZYTWgcXJcRIVj0qn+rK9ooAje8HM=
-X-Received: by 2002:a05:6122:829d:b0:516:1582:f72e with SMTP id
- 71dfb90a1353d-5161582f8e1mr3615505e0c.2.1733638028187; Sat, 07 Dec 2024
- 22:07:08 -0800 (PST)
+        bh=imtbBrBEkPVKtbCA/xxwe0ZEaWgNsfGZobwNJy/U71E=;
+        b=qAvCJ2jmT7yLOMNCRT2byM7eqz46XhOMrzi4csYLOF8C40kdOqzArwJk27SGZctvfQ
+         J3OrY52BRsJed/Dv09ElcV6gmoU2oKnUat8+fK2nG369ORobZj/4YM4nsLwTQR04W4dk
+         r7pusk8jmkg/cBcShenZ9lJLt6MOpuZ71ZGr/7wYVCONvxerBhsc2ontIab819ZNaKRF
+         2xh7o8VmA+A4jCmesfqa0lPpJda6kgDYaZiz1FfXylHKaZ20bcJw//7V0VjXSTLesHRy
+         DJNdERJbiRvcQdRiYzSiBCiBFvjZXgY6UonJ27dEY9wjB0ljm3tJ74rD5nZjWdGpd6sJ
+         TNQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVd9eUGtTQNT8D+IU/o/4Za8CNCMWNmgUO86jFW+rYNs12UVqyAM2JsRWJ1sgeuP1Nq5WEAZPMfB8OMRblL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGmupW5O4TbHUHgSUYnKR5nv8lTOIYQzQcxscYWxSsiRx2d5Nj
+	/epWrbdY7ul+t2dBVe7a010h2Sm9Z6lpd7VFnpFfy9LWktPkgycA
+X-Gm-Gg: ASbGncsGWWyLsWqgVXzYo9BkRR69ZqbgA9iv5BphdOKV3yGzJICKaqS8z3OqNl9PC+E
+	nNLihlezktLazvPgb74IK/y27393aBY0tcYcH9NZ7jrz5nRpmKkfzjGw5wbv7It9S9pRuAls1DJ
+	+6gzmnqxnKjrLl2A+TMYieWDQCIBtWMRJINZU3sNB+e5ZfsHmJRFDjgc0kyV5YOIWRIEqFKA5lY
+	xPn2xpZ9TSr/dmedBVhzZe5PpGfjpy+qRctv+0NOOcl7YsobVEehyslpQ2AWkWtm2jNGYvh6f+x
+	xQB3XJfvwBTwzQi/wtWz
+X-Google-Smtp-Source: AGHT+IFQct9SApUaLux90fR0aNxlzm2wMoioHTPd27lhStCGrHuRbObEG0AcO2vIjjIL4fIUoZbNUg==
+X-Received: by 2002:a17:902:f54d:b0:215:5bd8:9f7b with SMTP id d9443c01a7336-21614d456b1mr116100605ad.15.1733652955174;
+        Sun, 08 Dec 2024 02:15:55 -0800 (PST)
+Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9ee4sm54638735ad.161.2024.12.08.02.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 02:15:54 -0800 (PST)
+Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
+	id 17ADBDDB022; Sun,  8 Dec 2024 19:15:53 +0900 (JST)
+From: Hajime Tazaki <thehajime@gmail.com>
+To: linux-um@lists.infradead.org
+Cc: thehajime@gmail.com,
+	ricarkol@google.com,
+	Liam.Howlett@oracle.com,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 02/13] x86/um: nommu: elf loader for fdpic
+Date: Sun,  8 Dec 2024 19:15:29 +0900
+Message-ID: <d387e58f08b929357a2651e82d2ee18bcf681e40.1733652929.git.thehajime@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1733652929.git.thehajime@gmail.com>
+References: <cover.1733652929.git.thehajime@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203134949.2588947-1-haowenchao22@gmail.com>
- <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com> <CABzRoyZOJJKWyx4Aj0CQ17Om3wZPixJYMgZ24VSVQ5BRh2EdJw@mail.gmail.com>
-In-Reply-To: <CABzRoyZOJJKWyx4Aj0CQ17Om3wZPixJYMgZ24VSVQ5BRh2EdJw@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sun, 8 Dec 2024 14:06:57 +0800
-Message-ID: <CAGsJ_4z_nQXrnjWFODhhNPW4Q0KjeF+p+bXL5D0=CxskWo1_Jg@mail.gmail.com>
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to anonymous_thp
-To: Lance Yang <ioworker0@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, Wenchao Hao <haowenchao22@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Oscar Salvador <osalvador@suse.de>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 6, 2024 at 7:16=E2=80=AFPM Lance Yang <ioworker0@gmail.com> wro=
-te:
->
-> On Tue, Dec 3, 2024 at 10:17=E2=80=AFPM David Hildenbrand <david@redhat.c=
-om> wrote:
-> >
-> > On 03.12.24 14:49, Wenchao Hao wrote:
-> > > Currently, /proc/xxx/smaps reports the size of anonymous huge pages f=
-or
-> > > each VMA, but it does not include large pages smaller than PMD size.
-> > >
-> > > This patch adds the statistics of anonymous huge pages allocated by
-> > > mTHP which is smaller than PMD size to AnonHugePages field in smaps.
-> > >
-> > > Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
-> > > ---
-> > >   fs/proc/task_mmu.c | 6 ++++++
-> > >   1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > index 38a5a3e9cba2..b655011627d8 100644
-> > > --- a/fs/proc/task_mmu.c
-> > > +++ b/fs/proc/task_mmu.c
-> > > @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats =
-*mss, struct page *page,
-> > >               if (!folio_test_swapbacked(folio) && !dirty &&
-> > >                   !folio_test_dirty(folio))
-> > >                       mss->lazyfree +=3D size;
-> > > +
-> > > +             /*
-> > > +              * Count large pages smaller than PMD size to anonymous=
-_thp
-> > > +              */
-> > > +             if (!compound && PageHead(page) && folio_order(folio))
-> > > +                     mss->anonymous_thp +=3D folio_size(folio);
-> > >       }
-> > >
-> > >       if (folio_test_ksm(folio))
-> >
-> >
-> > I think we decided to leave this (and /proc/meminfo) be one of the last
-> > interfaces where this is only concerned with PMD-sized ones:
-> >
-> > Documentation/admin-guide/mm/transhuge.rst:
-> >
-> > The number of PMD-sized anonymous transparent huge pages currently used=
- by the
-> > system is available by reading the AnonHugePages field in ``/proc/memin=
-fo``.
-> > To identify what applications are using PMD-sized anonymous transparent=
- huge
-> > pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHu=
-gePages
-> > fields for each mapping. (Note that AnonHugePages only applies to tradi=
-tional
-> > PMD-sized THP for historical reasons and should have been called
-> > AnonHugePmdMapped).
->
-> Yeah, I think we need to keep AnonHugePages unchanged within these interf=
-aces
-> due to historical reasons ;)
->
-> Perhaps, there might be another way to count all THP allocated for each p=
-rocess.
+As UML supports CONFIG_MMU=n case, it has to use an alternate ELF
+loader, FDPIC ELF loader.  In this commit, we added necessary
+definitions in the arch, as UML has not been used so far.  It also
+updates Kconfig file to use BINFMT_ELF_FDPIC under !MMU environment.
 
-My point is that counting the THP allocations per process doesn't seem
-as important
-when compared to the overall system's status. We already have
-interfaces to track
-the following:
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
+Signed-off-by: Ricardo Koller <ricarkol@google.com>
+---
+ arch/um/include/asm/mmu.h            | 5 +++++
+ arch/um/include/asm/ptrace-generic.h | 6 ++++++
+ arch/x86/um/asm/elf.h                | 8 ++++++--
+ fs/Kconfig.binfmt                    | 2 +-
+ 4 files changed, 18 insertions(+), 3 deletions(-)
 
-* The number of mTHPs allocated or fallback events;
-* The total number of anonymous mTHP folios in the system.
-* The total number of partially unmapped mTHP folios in the system.
+diff --git a/arch/um/include/asm/mmu.h b/arch/um/include/asm/mmu.h
+index a3eaca41ff61..01422b761aa0 100644
+--- a/arch/um/include/asm/mmu.h
++++ b/arch/um/include/asm/mmu.h
+@@ -14,6 +14,11 @@ typedef struct mm_context {
+ 	/* Address range in need of a TLB sync */
+ 	unsigned long sync_tlb_range_from;
+ 	unsigned long sync_tlb_range_to;
++
++#ifdef CONFIG_BINFMT_ELF_FDPIC
++	unsigned long   exec_fdpic_loadmap;
++	unsigned long   interp_fdpic_loadmap;
++#endif
+ } mm_context_t;
+ 
+ #endif
+diff --git a/arch/um/include/asm/ptrace-generic.h b/arch/um/include/asm/ptrace-generic.h
+index 4696f24d1492..4ff844bcb1cd 100644
+--- a/arch/um/include/asm/ptrace-generic.h
++++ b/arch/um/include/asm/ptrace-generic.h
+@@ -29,6 +29,12 @@ struct pt_regs {
+ 
+ #define PTRACE_OLDSETOPTIONS 21
+ 
++#ifdef CONFIG_BINFMT_ELF_FDPIC
++#define PTRACE_GETFDPIC		31
++#define PTRACE_GETFDPIC_EXEC	0
++#define PTRACE_GETFDPIC_INTERP	1
++#endif
++
+ struct task_struct;
+ 
+ extern long subarch_ptrace(struct task_struct *child, long request,
+diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
+index 62ed5d68a978..33f69f1eac10 100644
+--- a/arch/x86/um/asm/elf.h
++++ b/arch/x86/um/asm/elf.h
+@@ -9,6 +9,7 @@
+ #include <skas.h>
+ 
+ #define CORE_DUMP_USE_REGSET
++#define ELF_FDPIC_CORE_EFLAGS  0
+ 
+ #ifdef CONFIG_X86_32
+ 
+@@ -190,8 +191,11 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 
+ extern unsigned long um_vdso_addr;
+ #define AT_SYSINFO_EHDR 33
+-#define ARCH_DLINFO	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr)
+-
++#define ARCH_DLINFO						\
++do {								\
++	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr);		\
++	NEW_AUX_ENT(AT_MINSIGSTKSZ, 0);			\
++} while (0)
+ #endif
+ 
+ typedef unsigned long elf_greg_t;
+diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+index bd2f530e5740..419ba0282806 100644
+--- a/fs/Kconfig.binfmt
++++ b/fs/Kconfig.binfmt
+@@ -58,7 +58,7 @@ config ARCH_USE_GNU_PROPERTY
+ config BINFMT_ELF_FDPIC
+ 	bool "Kernel support for FDPIC ELF binaries"
+ 	default y if !BINFMT_ELF
+-	depends on ARM || ((M68K || RISCV || SUPERH || XTENSA) && !MMU)
++	depends on ARM || ((M68K || RISCV || SUPERH || UML || XTENSA) && !MMU)
+ 	select ELFCORE
+ 	help
+ 	  ELF FDPIC binaries are based on ELF, but allow the individual load
+-- 
+2.43.0
 
-To me, knowing the details for each process doesn=E2=80=99t seem particular=
-ly
-critical for
-profiling.  To be honest, I don't see a need for this at all, except perhap=
-s for
-debugging to verify if mTHP is present.
-
-If feasible, we could explore converting Ryan's Python script into a native
-C program. I believe this would be more than sufficient for embedded system=
-s
-and Android.
-
->
-> Thanks,
-> Lance
->
->
-> >
-> >
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
-
-Thanks
-Barry
 
