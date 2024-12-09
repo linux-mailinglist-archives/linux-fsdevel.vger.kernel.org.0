@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-36794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4359E96EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:31:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA72161D5E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:27:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9F01B043C;
-	Mon,  9 Dec 2024 13:26:07 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93EA9E96AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:27:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC34233152;
-	Mon,  9 Dec 2024 13:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E103283D7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:27:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CD823314F;
+	Mon,  9 Dec 2024 13:26:02 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392BD233153;
+	Mon,  9 Dec 2024 13:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750766; cv=none; b=rMoqjCGg4mdRAncC0XJ/L2CjowYYUw5eQ+trC2yuWJCYfzH//EogHldzN7SSdWZpU+Q0BCJj8kBqKsUtf0mJ901NFtp2o92amyssMs5Mb6KfAbxhW6N5IlnzuL+xgq5o8aN8Lbdb8BmtI8+97d+wUttPXCoQ3LB2UNWUUpDAqxg=
+	t=1733750761; cv=none; b=VfeEkQR+Ms3bRwetGUtUKn1UnEhsvtzl3JEniYfTsVuDBpz/+8j/n5ibviZseLb3OGPPlQHoLTEFvu2Nff6DRr0QIPZjt7qbyoudQ1sawXeHQUFWMlltHAOkmmy/eTTenlnpcDULSH29MyPKXOhXNH3Nmd/Y88QPEpGrZBcnYNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750766; c=relaxed/simple;
-	bh=MfX2re32uvOZKZSpSy/UU/o+nsTuburhQAIl8Bo9thc=;
+	s=arc-20240116; t=1733750761; c=relaxed/simple;
+	bh=q5iRf9+iTy7eh/uc4yTUvIHuvCdako30zLorEZSu/tM=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J1lVxAlUxSYtVQKFLJ9CaSzEjss5MrxnotwoI9QtKKJUADEMcBBxxoKHbW6GLRsk6hpKeC8YAI29xLwguTAyIjkO5rk+C2XjB+s9AiYLt4vG1OS9Z4MeJn/1qmJXQI8Gh2ZlHbpNfvpOxlsQuTkBQ06Ms3VUS60NSqnhBbmjfmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	 MIME-Version:Content-Type; b=HTPwmbFKIvPyDm4DB07hXnGzaxR7L0Srv9HO3m6rPsE72FhpQa3JpeKH/DAL0TrjjoTkZrku70KgyuzUHIo8iYfXYo2qdiL36oypD79RMv9/DXSXe+ojuNg/NsVpfQy4N26s90nmm2rv5720EsaDub6wWTqTuT5erp/HVv2YMJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y6MxM4KTbzgZ7S;
-	Mon,  9 Dec 2024 21:23:03 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y6N0R2QZwz1JDvw;
+	Mon,  9 Dec 2024 21:25:43 +0800 (CST)
 Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id CC659180102;
-	Mon,  9 Dec 2024 21:25:55 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 6AC0A14011D;
+	Mon,  9 Dec 2024 21:25:56 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
  (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Dec
@@ -46,9 +46,9 @@ To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
 	<aarcange@redhat.com>, <ruanjinjie@huawei.com>, <Jason@zx2c4.com>,
 	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-mm@kvack.org>
-Subject: [PATCH 1/2] userfaultfd: handle dup_userfaultfd() NULL check inline
-Date: Mon, 9 Dec 2024 21:25:48 +0800
-Message-ID: <20241209132549.2878604-2-ruanjinjie@huawei.com>
+Subject: [PATCH 2/2] mm, rmap: handle anon_vma_fork() NULL check inline
+Date: Mon, 9 Dec 2024 21:25:49 +0800
+Message-ID: <20241209132549.2878604-3-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241209132549.2878604-1-ruanjinjie@huawei.com>
 References: <20241209132549.2878604-1-ruanjinjie@huawei.com>
@@ -63,57 +63,59 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemg200008.china.huawei.com (7.202.181.35)
 
-Make the NULL check for vma's userfaultfd ctx inline, so we can
-avoid the function call overhead if the ctx is NULL.
+Check the anon_vma of pvma inline so we can avoid the function call
+overhead if the anon_vma is NULL.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- fs/userfaultfd.c              |  5 +----
- include/linux/userfaultfd_k.h | 11 ++++++++++-
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ include/linux/rmap.h | 12 +++++++++++-
+ mm/rmap.c            |  6 +-----
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 7c0bd0b55f88..7e551c234832 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -615,15 +615,12 @@ static void userfaultfd_event_complete(struct userfaultfd_ctx *ctx,
- 	__remove_wait_queue(&ctx->event_wqh, &ewq->wq);
- }
- 
--int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
-+int __dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
- {
- 	struct userfaultfd_ctx *ctx = NULL, *octx;
- 	struct userfaultfd_fork_ctx *fctx;
- 
- 	octx = vma->vm_userfaultfd_ctx.ctx;
--	if (!octx)
--		return 0;
--
- 	if (!(octx->features & UFFD_FEATURE_EVENT_FORK)) {
- 		userfaultfd_reset_ctx(vma);
- 		return 0;
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index cb40f1a1d081..06b47104aa1a 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -247,7 +247,16 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
- 	    vma_is_shmem(vma);
- }
- 
--extern int dup_userfaultfd(struct vm_area_struct *, struct list_head *);
-+int __dup_userfaultfd(struct vm_area_struct *, struct list_head *);
-+static inline int dup_userfaultfd(struct vm_area_struct *vma,
-+				  struct list_head *fcs)
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 683a04088f3f..9ddba9b23a1c 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -154,7 +154,17 @@ void anon_vma_init(void);	/* create anon_vma_cachep */
+ int  __anon_vma_prepare(struct vm_area_struct *);
+ void unlink_anon_vmas(struct vm_area_struct *);
+ int anon_vma_clone(struct vm_area_struct *, struct vm_area_struct *);
+-int anon_vma_fork(struct vm_area_struct *, struct vm_area_struct *);
++
++int __anon_vma_fork(struct vm_area_struct *, struct vm_area_struct *);
++static inline int anon_vma_fork(struct vm_area_struct *vma,
++				struct vm_area_struct *pvma)
 +{
-+	if (likely(!vma->vm_userfaultfd_ctx.ctx))
++	/* Don't bother if the parent process has no anon_vma here. */
++	if (!pvma->anon_vma)
 +		return 0;
 +
-+	return __dup_userfaultfd(vma, fcs);
++	return __anon_vma_fork(vma, pvma);
 +}
-+
- extern void dup_userfaultfd_complete(struct list_head *);
- void dup_userfaultfd_fail(struct list_head *);
+ 
+ static inline int anon_vma_prepare(struct vm_area_struct *vma)
+ {
+diff --git a/mm/rmap.c b/mm/rmap.c
+index c6c4d4ea29a7..06e9b68447c2 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -331,16 +331,12 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+  * the corresponding VMA in the parent process is attached to.
+  * Returns 0 on success, non-zero on failure.
+  */
+-int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
++int __anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
+ {
+ 	struct anon_vma_chain *avc;
+ 	struct anon_vma *anon_vma;
+ 	int error;
+ 
+-	/* Don't bother if the parent process has no anon_vma here. */
+-	if (!pvma->anon_vma)
+-		return 0;
+-
+ 	/* Drop inherited anon_vma, we'll reuse existing or allocate new. */
+ 	vma->anon_vma = NULL;
  
 -- 
 2.34.1
