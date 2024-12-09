@@ -1,90 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-36837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D509E9B3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:07:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA5F9E9B7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B445D166551
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 16:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DBB1886C75
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 16:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8095A13A3F2;
-	Mon,  9 Dec 2024 16:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B079B1474A2;
+	Mon,  9 Dec 2024 16:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6gHRaGT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gS5zSVGU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA20233139;
-	Mon,  9 Dec 2024 16:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5214A0AA;
+	Mon,  9 Dec 2024 16:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733760459; cv=none; b=n6WlsA0IjQwwMfaOR86J2w0AysERCCc4l/p6x/FNDvaUdbQtc/LHJu0mVDuuVkUS67cAmc6XhYn6G+GE80wetfO3vyHNwA+VMzabR0erQ5IeTMN6xNIwb6DDG40FcFtETg1ZP6W9NDy1/ABmjRxqnmPTx2It+QBw+FDubq19ODM=
+	t=1733761420; cv=none; b=KrR2jhNCe4zmSKVyf9W7lNSMUmqnu5xjxO45ZHQ4VYwqCAcXa1Um4/jF2cstvCVQQZ0GmQ/24z5Ba74LAA3A9U5mL0yMYaLbJbEaFh1uaYiBXQ8z4Zwv4q1rXAvGWsM2rBX9gEbydnjCV0i9IF9K0Fb5OULRfaSMNZV2tOgredc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733760459; c=relaxed/simple;
-	bh=OnU+8GBt5pKp2SZ7nwC0/d71cQLLpJdR1aRrsY3v1GQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LjfKsVI8ztkMXGvcmUXq3p1DIykxhTVAt/2HYKJ6GeKQ8WxDNYPipiC5HTOK7DvsYcONWs6bABDRdysSyuDo7ceskSXPwwkF8dtX9G0Rg5fFT4C45ze0eNsssxGqyNWFB0ZaJbMqB/JRH/OjcHbAjptA7wzsc4BM9FgN18+lcZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6gHRaGT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DDEC4CEDE;
-	Mon,  9 Dec 2024 16:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733760458;
-	bh=OnU+8GBt5pKp2SZ7nwC0/d71cQLLpJdR1aRrsY3v1GQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K6gHRaGTrCmeg3ha+s2ZhK6C2A8Z8dvwEMmkvjx/LHbPlbhWuo7FQtV1RoJR8Ttdv
-	 3hWMOOdVMDoe5cBnpC/S0ZqtVTZrlV5+AnDyO9Tn/WCBQ0EOGyos5ENuZ5K0rk6gJ2
-	 6HzSnE5hSyLhZVCiHqBuJ+aExCMULICr8WtwDwkGsg77EtIY5RzwrOa1+5GUo7L0zp
-	 2MEht1epHewFktReXkDKyPKO/3lQNcZV/t0B4ZjhiJcpL8Jmbri0Gke6P8g78A6Th5
-	 kqM2BQ7mqI0B5OX6yKKFrcW2z6wEsACS/rQqml8GsYg2X8tS2gB9EROPKUnjaAbv6n
-	 E9YvQSCAwngMg==
-Date: Mon, 9 Dec 2024 09:07:35 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@meta.com>, axboe@kernel.dk,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com
-Subject: Re: [PATCHv12 00/12] block write streams with nvme fdp
-Message-ID: <Z1cVx-EmaTgdFgVN@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241206221801.790690-1-kbusch@meta.com>
- <20241209125511.GB14316@lst.de>
+	s=arc-20240116; t=1733761420; c=relaxed/simple;
+	bh=J7WTWNZjTNU6Inc8M05Ida9EHcfcexe793ivbpD1Zls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aIfIdomPrq5Dn8QrPGfvzrFQf6GHzl8014hK73zHlo5b7fOGuftHW0zFnwJc2WVeYNgeWc+0j8mXbMPEkPLReYAirMCD8PW9viIUy+0QVj2O/SYjrwCaCuqizjK95SdN2BABk+VXOzKy5kmEDvkP0h+otYw3BEd1eA8oh4Cl3iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gS5zSVGU; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3d2a30afcso4558614a12.3;
+        Mon, 09 Dec 2024 08:23:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733761416; x=1734366216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0K8ZP2F40I1V9oEBcZ5JHDlz8ReIw6B0xGg0te9jF0k=;
+        b=gS5zSVGUicqjDYMYUITd6cV9y5tTk34DvbL/jjIcc5EDQIfag5cRlnlpBnF9qUpjiv
+         BXW8SU4RIApxMe2fjbMTYSgZvto6U0RTLnKqAMa+luj3g5RCtBTAihRloblYD1oNigaH
+         QRLYrXNVY13A22b0wZIuAttOj/iws13X4tIz4QZlVP0/RnebuSww0RkF0mP0qf0yqCMZ
+         w0V7TCrE1RnnHIE/U4tSGB1+yKTGWX3IgIRso1pwDn8HZ6i0W35ALzYqJEagPOMBp7fj
+         xuvVOJtuPF/QecOoo1619N01LZemGRu2cYiSmsYf0/FdmNHjnHHSaKWdqXZsna/okVj7
+         /Mzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733761416; x=1734366216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0K8ZP2F40I1V9oEBcZ5JHDlz8ReIw6B0xGg0te9jF0k=;
+        b=jHMtFLfN7wpqipMR+6IoWpc8vgkeMGRidpqS5zbghWebwFkYyHoVTAZ+zsRoXwTT9f
+         qQUwIC2B8/8uKwcwx8z2K++kBVEnkim1OhmV+38BrmMmxmBjfak2d5x6MPHO/SHgLdPX
+         RParkq0D2vaitV15+rPnps41D1agEQQrthUeETNHg5u7owQSfaOAtIBqzMOn4vVMtIi+
+         R1++xrnsW1FrK9/mmU/b/xTzPPlCRlMb+z9FWANPgaxYf9VY4C+FPefONIgD0dpn9KGq
+         k8OvZVUeH6B+t3/+T1SHgP6hhNf2shaMaTpYCu2Cx7HjHMgUta3XAfytcwU3sFykl54J
+         4A1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUbC1XPSGSI9j3iluFSw2EEWc65esD2t9Y43JMjVR+KqIA4BTbOKQo4Jtq1unJYkFxwdskb1XJLczwj/Q==@vger.kernel.org, AJvYcCUf+qcuuIvyCikd/BzOqOv1CSd5iR409MAwUK2xvMxatHf33AWdzSVjrU166S9aLyFqelLvn49t1yQDBq15@vger.kernel.org, AJvYcCVA2bQ/OcdkPEIrWGnMyxRZpeSpZeYQ/BJfHKg7pgT2CJIQkurQMoZqe3b1xaRLyzGQ3LsZ95yLq3k+@vger.kernel.org, AJvYcCVEMnqh+u6y2c2ThyWZEEnndagmckBpVUTnB4P2jdXxyEyKPaZ2SYTHVElAEJqxj7DCqnw5dH3B92quXfoUnQ==@vger.kernel.org, AJvYcCWSawgqBdKfdA/v1BAH/i7Vi9qCVeigT+EUcyo9YD0wmb3wm0JdR7/rxS1oHx88dyOHtKWscgchQHuNZw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZEhhDNq9xKBiXEaTqBPiwlAa0KEb+rxGCjL4TRdJxhmrmIiEK
+	JH9OR2T1OW3iY4tFQPoUcOgHi1SvE9WbTgLQDbSE9Vm3CgthxjKivO+QxXrbSmvw7/bXi/4U/gF
+	MQhRcp4tTC3RPB80mnHQPlk+yr2E=
+X-Gm-Gg: ASbGncvgtw+2R3P8bHCzdojMkYlNBx6qMFxCy47jroR9DIF3nLmdX5ihTmFvJ2rbOMg
+	xLgTQdecV/gAnhGK1fUnX0BzUb4IL/dAUUQY=
+X-Google-Smtp-Source: AGHT+IHmex2O3oPEmcdzQYRDxskxCLJEzFe9sxDiHkQR1oioeUncNUJNUrhnRyG2dNZ7LdMyL3H2jyVIZBJBfxS9GRo=
+X-Received: by 2002:a05:6402:3906:b0:5cf:924f:9968 with SMTP id
+ 4fb4d7f45d1cf-5d3be661c03mr13750415a12.2.1733761415276; Mon, 09 Dec 2024
+ 08:23:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209125511.GB14316@lst.de>
+References: <20241208152520.3559-1-spasswolf@web.de> <20241209121104.j6zttbqod3sh3qhr@quack3>
+ <20241209122648.dpptugrol4p6ikmm@quack3>
+In-Reply-To: <20241209122648.dpptugrol4p6ikmm@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 9 Dec 2024 17:23:24 +0100
+Message-ID: <CAOQ4uxgVNGmLqURdO0wf3vo=K-a2C--ZLKFzXw-22PJdkBjEdA@mail.gmail.com>
+Subject: Re: commit 0790303ec869 leads to cpu stall without CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+To: Jan Kara <jack@suse.cz>
+Cc: Bert Karwatzki <spasswolf@web.de>, Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org, 
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 01:55:11PM +0100, Christoph Hellwig wrote:
-> I just compared this to a crude rebase of what I last sent out, and
-> AFAICS the differences are:
-> 
->  1) basically all new io_uring handling due to the integrity stuff that
->    went in
->  2) fixes for the NVMe FDP log page parsing
->  3) drop the support for the remapping of per-partition streams
+On Mon, Dec 9, 2024 at 1:26=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 09-12-24 13:11:04, Jan Kara wrote:
+> > > Then I took a closer look at the function called in the problematic c=
+ode
+> > > and noticed that fsnotify_file_area_perm(), is a NOOP when
+> > > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in =
+my
+> > > .config). This also explains why this was not found before, as
+> > > distributional .config file have this option enabled.  Setting the op=
+tion
+> > > to y solves the issue, too
+> >
+> > Well, I agree with you on all the points but the real question is, how =
+come
+> > the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when y=
+ou
+> > clearly don't run HSM software, even more so with
+> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of t=
+his
+> > problem. Something fishy is going on here... checking...
+> >
+> > Ah, because I've botched out file_set_fsnotify_mode() in case
+> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
+> > problem:
+> >
+> > index 1a9ef8f6784d..778a88fcfddc 100644
+> > --- a/include/linux/fsnotify.h
+> > +++ b/include/linux/fsnotify.h
+> > @@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *f=
+ile)
+> >  #else
+> >  static inline void file_set_fsnotify_mode(struct file *file)
+> >  {
+> > +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
+> >  }
+> >
+> > I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled=
+ and
+> > push out a fixed version. Thanks again for the report and analysis!
+>
+> So this was not enough, What we need is:
+> index 1a9ef8f6784d..778a88fcfddc 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -215,6 +215,10 @@ static inline int fsnotify_open_perm(struct file *fi=
+le)
+>  #else
+>  static inline void file_set_fsnotify_mode(struct file *file)
+>  {
+> +       /* Is it a file opened by fanotify? */
+> +       if (FMODE_FSNOTIFY_NONE(file->f_mode))
+> +               return;
+> +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
+>  }
+>
+> This passes testing for me so I've pushed it out and the next linux-next
+> build should have this fix.
 
-Yep, pretty much. I will revisit the partition mapping. I just haven't
-heard any use cases for divvying the streams up this way, so it's not
-clear to me what the interface needs to provide.
+This fix is not obvious to the code reviewer (especially when that is
+reviewer Linus...)
+Perhaps it would be safer and less hidden to do:
 
-> One thing that came I was pondering for a new version is if statx
-> really is the right vehicle for this as it is a very common fast-path
-> information.  If we had a separate streaminfo ioctl or fcntl it might
-> be easier to leave a bit spare space for extensibility.  I can try to
-> prototype that or we can leave it as-is because everyone is tired of
-> the series.
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -211,11 +211,16 @@ typedef int (dio_iodone_t)(struct kiocb *iocb,
+loff_t offset,
 
-Oh sure. I can live without the statx parts from this series if you
-prefer we take additional time to consider other approaches. We have the
-sysfs block attributes reporting the same information, and that is okay
-for now.
+ #define FMODE_FSNOTIFY_NONE(mode) \
+        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D FMODE_NONOTIFY)
++#ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+ #define FMODE_FSNOTIFY_PERM(mode) \
+        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0 || \
+         (mode & FMODE_FSNOTIFY_MASK) =3D=3D (FMODE_NONOTIFY | FMODE_NONOTI=
+FY_PERM))
+ #define FMODE_FSNOTIFY_HSM(mode) \
+        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0)
++#else
++#define FMODE_FSNOTIFY_PERM(mode)      0
++#define FMODE_FSNOTIFY_HSM(mode)       0
++#endif
+
+Similar to IS_POSIXACL()
+
+Thanks,
+Amir.
 
