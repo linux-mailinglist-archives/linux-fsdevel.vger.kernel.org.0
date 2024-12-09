@@ -1,60 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-36733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3E59E8C6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:42:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6879E8C99
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB98418863B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:42:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92981881BBF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCD721505D;
-	Mon,  9 Dec 2024 07:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8D9215068;
+	Mon,  9 Dec 2024 07:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kgXc4nCZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kFdV293R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DFC215046
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 07:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E800214A64;
+	Mon,  9 Dec 2024 07:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733730122; cv=none; b=qzYs0q4qQDpgsbr03t6ew87qbqtBPJifdW/GC659u554XT1I8ec41wIwFS+jrqDP5affozlVj9mPueo5Rae2Vb9kvZ51F9UpOtVvJbXwcgud/vOzncsOnwzg2P/2ptrEQ65fMOxXmmt/CRp6rgN0mqGaDKuw53KUfxOOtVfZspI=
+	t=1733730596; cv=none; b=DAUwyotUOX2b99dFGiIC9M3trF/Gr4qV9qMs/UAQ8ZD1W5Xq+MjuxryS38dCQeNXi9SEAsnXU9EPlIC9zRNz00mM+p2QPzGwi3KNIRGi7V3yC1hR/Cqm36fGE2jGH6BKpTCvMox9tEJWwuNX0+X/RCS6BGi3qaeMbLRsj89Ukhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733730122; c=relaxed/simple;
-	bh=hx3BhPJ4U1TtscFU+6yPo9/8AH9GSFLEiIgcOcP/22Q=;
+	s=arc-20240116; t=1733730596; c=relaxed/simple;
+	bh=5EFS2InPg2t3NJWSEh6nQPiSR6HZgWxCXmJAgXABqHs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7EMFkaZGY7p8spa6ClErFLYL5H68gjkEmeNDOI5ma7u8+XInZhQQ/4broeErFaKa5k34VpWM95Dp3Id33hsfns6OP5r9i52qc7qI1/jD4ZFHfyGOWx3L4BiewoT63IVC8RaA3ohOjQXt2M2OPbblCD8TglvMuqRFJx4dodfcnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kgXc4nCZ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=khurs/AJwDcter3w/t164ocuRJxp15nFof7a/veymZYPg09i714dTrvzIN0gxdR7EAyk5Rt3M2wzxZe+1zBC8FzfwDydXUvJDyuZ+jXiAMI9HHxm/BqRCrAcLCA6QeMeSapmRhvGCpCI1b4rX9gGhK0AmdswWigkOcDfK8Xfw44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kFdV293R; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5Rs1try2G9iifMPQmjSzmZru1XPwcH+0c/Rv02cvaV0=; b=kgXc4nCZwApy4aTjx385C/zGy2
-	CTJKMGmra8CsNw4x98+GqBPQ1+zH4tvZttpOYPKJrpIE5d8zxFVZhQkExAo/CFsZpi69RwGO9ECP9
-	MS58hgxcTNwpcsth1Zi6edlJOUfbLZkjc+MYb3fVGSnXrdRfHhqv+l9ePG69N1CoTzOB/foOJy/4I
-	fD3aVbT3Ts+2CeapV8bgx3wkao9qg567zqpt2W2AsU20uPEGMwZpAUdxOj7HjIiq+4fMDxDDuGtQO
-	gig/RdSgDS/Egm7Z3sm8vvoR9MbN0nSUB+Tcyz+5Cu28gq+zbfhefov67LEtWL0tX5TSvskHFoYgr
-	RsyU1wMw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKYP0-00000006Tyz-0RRT;
-	Mon, 09 Dec 2024 07:41:58 +0000
-Date: Mon, 9 Dec 2024 07:41:58 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
-Message-ID: <20241209074158.GX3387508@ZenIV>
-References: <20241209035251.GV3387508@ZenIV>
- <gopibqjep5lcxs2zdwdenw4ynd4dd5jyhok7cpxdinu6h6c53n@zalbyoznwzfb>
- <20241209065859.GW3387508@ZenIV>
- <CAGudoHHAxDpQb9TVTPuBc-NnJkuu3hJJ8iB2Z5QRdSCPiVDLRA@mail.gmail.com>
+	bh=OmWUSu3bZ9nMiHmrTjQz9XT/WaHo0p18xXNKxBDgGoo=; b=kFdV293Ri3XsiETHw6qp1L/ven
+	tu0zlgZxqg2itd3JpxhPBppLYWVfJk0TptPfu3jDrslxYrX7ElP1ehMdRlSkXKDyHu3mG2JWIudTo
+	N6s8D81wUhcbMVjHZOq9fIwVGQy5+BiMoD4oGPcV6b5ucHWiq59GqHanTXjkm6+Znbt0/7lW6qcyF
+	zgS/fjXH5vc+yJD3N21jr3/LkbDilbaRlKjG3rrYK+Yl5vJJOe4uKHJDb4fkK7ftlJyqnZbgGX+nu
+	CCGWmEnwd4M5KOryK5MgMLiX3nAQWd7TSum6MI02vEfT+9hfhlx5qChqPb9PDknw9Ox45r5zTH5e6
+	69XYPHxg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKYWV-00000006mEI-2tYU;
+	Mon, 09 Dec 2024 07:49:43 +0000
+Date: Sun, 8 Dec 2024 23:49:43 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Erin Shepherd <erin.shepherd@e43.eu>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	stable <stable@kernel.org>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
+ operations as only supporting file handles
+Message-ID: <Z1ahFxFtksuThilS@infradead.org>
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+ <Z1D2BE2S6FLJ0tTk@infradead.org>
+ <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
+ <20241206160358.GC7820@frogsfrogsfrogs>
+ <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,16 +71,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHHAxDpQb9TVTPuBc-NnJkuu3hJJ8iB2Z5QRdSCPiVDLRA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Dec 09, 2024 at 08:18:35AM +0100, Mateusz Guzik wrote:
+On Sat, Dec 07, 2024 at 09:49:02AM +0100, Amir Goldstein wrote:
+> > /* file handles can be used by a process on another node */
+> > #define EXPORT_OP_ALLOW_REMOTE_NODES    (...)
+> 
+> This has a sound of security which is incorrect IMO.
+> The fact that we block nfsd export of cgroups does not prevent
+> any type of userland file server from exporting cgroup file handles.
 
-> I'm not caught up on the lists, I presume this came up with grabbing
-> the name on execve?
+So what is the purpose of the flag?  Asking for a coherent name and
+description was the other bigger ask for me.
 
-Not at all.  fexecve() nonsense can use either variant (or go fuck itself,
-for all I care) - it's not worth optimizing for.
+> Maybe opt-out of nfsd export is a little less safer than opt-in, but
+> 1. opt-out is and will remain the rare exception for export_operations
+> 2. at least the flag name EXPORT_OP_LOCAL_FILE_HANDLE
+>     is pretty clear IMO
 
-No, the problem is in the things like ceph_mdsc_build_path()...
+Even after this thread I have absolutely no idea what problem it tries
+to solve.  Maybe that's not just the flag names fault, and not of opt-in
+vs out, but both certainly don't help.
+
+> Plus, as I wrote in another email, the fact that pidfs is SB_NOUSER,
+> so userspace is not allowed to mount it into the namespace and
+> userland file servers cannot export the filesystem itself.
+> That property itself (SB_NOUSER), is therefore a good enough indication
+> to deny nfsd export of this fs.
+
+So check SB_NOUSER in nfsd and be done with it?
+
 
