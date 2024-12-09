@@ -1,200 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-36861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0039E9FDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 20:52:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD189E9FEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 20:56:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45B2165544
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 19:56:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFC5199230;
+	Mon,  9 Dec 2024 19:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kIdPsrFi"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D042B282152
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 19:52:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906B41991CA;
-	Mon,  9 Dec 2024 19:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6HkNDBs"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41FD1991AA
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 19:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F1E1552E4;
+	Mon,  9 Dec 2024 19:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733773939; cv=none; b=H0BhqUkyS47vbNewcJkBLaQ8zf9VT/Cqosc4RWAK2titdgbbqJW/iabDVQcH4kCMkj2I248t1vJ9fXAibnzJCdy9nbosYyrT1nTgvBB94qxTV+qB5/tzy6LuAQ+JcX8lpHcG8zCB+Ql+LzHwkIf97Gjm9OwihuEcUBfv44MZ2hc=
+	t=1733774202; cv=none; b=VzlTXmrXBFQfBtFI3kCeV50by2rQJ76k9LS0pSAfcQFU1/hJRn+Sj+25/uLwrTuMvAy06yHTptxoAjtO8Ta37AZht9ttboX66pl/A/gH75ks2MsE9fNGK+DCKh9Z3qfX/tkkhz2dSS/0MFguR65t9MMCQa11nhfjqPEoE4O1hQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733773939; c=relaxed/simple;
-	bh=YaZDSLDI2oVCWgZrIUosAjGfHbAoO0V3dEuIjI/cCSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ah1fdJM9bc3mUT31Ml27aQ8UAL3gG7Lv7+Oitox6OUvgRfIFufUHrRO/FCSifcRsRg1l/HiJi0UuQZR1YbD01edx4BBXXdGMynJFg6mdE1DMIzeSb3KH7368wTDLqYntDTVa+3TV+a/CHhA8YA9jRmgAooAQ1xpyloYcwlZBQC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6HkNDBs; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4675ae3dcf9so15593511cf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 11:52:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733773935; x=1734378735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rCOM2ni8fkyD8MPlilBuWQShjaAJBcn+pAWQjviDykI=;
-        b=V6HkNDBs1QlFgapEHmQwyluy0vSKeZQybgAepDblCH1ItBd3Eiq7yzzb+MJlb1c0eD
-         ZNyx4INaIkKY9TOyfqXNm56bEeQdUPRlHK/1p8j6RmRxEQQKVz5RmZn6yTEv267wFMR1
-         0g4cFONlmkIffmnoPMrVu9y2QyxCJX+MvF4d+7Yk1UfL6ckd5+LtAqfkD5er6NsS9FG3
-         aLUH7KY5Z8ixZqULNZp7MU7uS0Jr9MfIPUz0LUpDiib642efbS/KXI72mSCm0180s2A1
-         +TjeYynWX5nXNmw4bHxtmjDQsdM0g0bxIVS9EpIAiMsu/0nAd3lp+MMHMQj404HKQ+Rx
-         3PWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733773935; x=1734378735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rCOM2ni8fkyD8MPlilBuWQShjaAJBcn+pAWQjviDykI=;
-        b=jSDNmZ3PNaD3zoQIEPjo/FjhJm18q/N/UySDEQo3kRzuO0Q2KPB1NFJAYp18v8dgbV
-         iewSdzpwu4juDATgUTRrk9doKOw8H4BnSs3AFEUdVaLxvg2bgoK50i3jNfmhDo0sKfpx
-         p1Q6hbzAl7Uul7SJwDeFoQDZS7AO2Q0CmowqccxFCPe0kSWlyRt6a7lG8rWIqjSsJvpN
-         1/SiipObNTTLLY19glZ3edImDS0DoZHEupNKkU1H6seicDIq3p7d3P/8ulWdNrSA3tSW
-         LsBpYFOrv/GV4br6jn+AeGsY+tg3U2qp0UTdKWtDt3/toLKm5I78Ap4TJKD/QBgo1Xqi
-         TUHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXspPh8pqUBeiAePi8Vze4U0VUap6yDoJs5Z6rpdxFBdQniCiWR9x5k51vhAHG1LB0L3PiuZiL7gYQz3c/K@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoXODbnduH61E8Fn64UZ8TYk+86bRLGYkUvq/GOtHoXwwa0vBz
-	eAeZI0Ku7PKjM8n1h4DPuhBiK/k7D6ym6GeVjAsKFG9tlxqAp7iGcyY+D0dh6HbOKOcgw3R2oNq
-	HXvtTa2CdEG/sV04ac+Z+aj/UiMs=
-X-Gm-Gg: ASbGncsiAuYoUX3tfbIOaGfn0grw1L+abIPOrqTqtsrTYwMdVDTeBYQgYboKM37fej5
-	DUbXJ0XF3yQC//a69BK81KJlsij0xb4qzcphR/LYRiwXi7aE=
-X-Google-Smtp-Source: AGHT+IGIvS+Ljps0QH6oCQrSHZtwm6Rcj+IxxTp0sCqKhC5OzrJW9j1tURe0ilg0hSW/YTaGkyteig1oWHIy0AhiHaU=
-X-Received: by 2002:a05:622a:188c:b0:466:9507:624d with SMTP id
- d75a77b69052e-46771efb8acmr31571561cf.27.1733773935603; Mon, 09 Dec 2024
- 11:52:15 -0800 (PST)
+	s=arc-20240116; t=1733774202; c=relaxed/simple;
+	bh=R8oT5/RBe/wGe4d9aepKKZEr60n62HCsVtBcYcwxP0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCZ4vpzQ8k8WmN1UwuhcZ2YDuIyoNUM5nujdxUY3tDFyS4nUQUVw5OJ55kyTINDYpA5k1dn5axQv/Cc1TCzoUaEOtRk3a5w4lq5YwcMgsTG27oLm66MHxu2y18Vw6ALH6wgKp41E9UiIeSU03xkItBXqhWDEkPcwqEC0sm8p42k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kIdPsrFi; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZjvZs7dj406mh7omju5X70Eo3QS2/S2c66o2uscyJnY=; b=kIdPsrFis90oAW2SlPZ501BneH
+	Ld3rTq3hD0odXCj2pybEUpzglwySkK03D3WyDrYzPFTd8ZcvVXLExTC9I8Ll/7Z8/QzbFuxZcUmbE
+	NcQaJIoDZzUpRGsDLOIDiUnM7BKPU/S8pM3dNJR8W2222Bg64DRSEvRIZKHDaB+/gj7OmBkn5Q46N
+	5eBSuHhVrbBeHIjai2SyUoyyK764LiN+l9N/FAz/PxfLhS+D1sXonIHWvwBgK2mKueZ/GpNVMRPM5
+	6iDFpivoVsOLoGoaUMdrcOtDvGfNi0Y3BlaloojqrVuXHCUfAlaidBp/+Vk00xzJ0OsYp72dEnMag
+	223jAlJA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKjrx-00000006esg-33oV;
+	Mon, 09 Dec 2024 19:56:37 +0000
+Date: Mon, 9 Dec 2024 19:56:37 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [MEH PATCH] fs: sort out a stale comment about races between fd
+ alloc and dup2
+Message-ID: <20241209195637.GY3387508@ZenIV>
+References: <20241205154743.1586584-1-mjguzik@gmail.com>
+ <20241206-inszenieren-anpflanzen-317317fd0e6d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
- <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de> <Z1T09X8l3H5Wnxbv@casper.infradead.org>
- <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de> <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
- <20241209144948.GE2840216@perftesting> <Z1cMjlWfehN6ssRb@casper.infradead.org>
- <20241209154850.GA2843669@perftesting> <4707aea6-addb-4dc3-96f7-691d2e94ab25@tnxip.de>
- <CAJnrk1apXjQw7LEgSTmjt1xywzjp=+QMfYva4k1x=H0q2S6mag@mail.gmail.com>
-In-Reply-To: <CAJnrk1apXjQw7LEgSTmjt1xywzjp=+QMfYva4k1x=H0q2S6mag@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 9 Dec 2024 11:52:04 -0800
-Message-ID: <CAJnrk1YfeNNpt2puwaMRcpDefMVg1AhjYNY4ZsKNqr85=WLXDg@mail.gmail.com>
-Subject: Re: silent data corruption in fuse in rc1
-To: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
-Cc: Josef Bacik <josef@toxicpanda.com>, Matthew Wilcox <willy@infradead.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206-inszenieren-anpflanzen-317317fd0e6d@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Dec 9, 2024 at 10:47=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Mon, Dec 9, 2024 at 9:07=E2=80=AFAM Malte Schr=C3=B6der <malte.schroed=
-er@tnxip.de> wrote:
-> >
-> > On 09/12/2024 16:48, Josef Bacik wrote:
-> > > On Mon, Dec 09, 2024 at 03:28:14PM +0000, Matthew Wilcox wrote:
-> > >> On Mon, Dec 09, 2024 at 09:49:48AM -0500, Josef Bacik wrote:
-> > >>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ende=
-d up
-> > >>>> with 3b97c3652d91 as the culprit.
-> > >>> Willy, I've looked at this code and it does indeed look like a 1:1 =
-conversion,
-> > >>> EXCEPT I'm fuzzy about how how this works with large folios.  Previ=
-ously, if we
-> > >>> got a hugepage in, we'd get each individual struct page back for th=
-e whole range
-> > >>> of the hugepage, so if for example we had a 2M hugepage, we'd fill =
-in the
-> > >>> ->offset for each "middle" struct page as 0, since obviously we're =
-consuming
-> > >>> PAGE_SIZE chunks at a time.
-> > >>>
-> > >>> But now we're doing this
-> > >>>
-> > >>>     for (i =3D 0; i < nfolios; i++)
-> > >>>             ap->folios[i + ap->num_folios] =3D page_folio(pages[i])=
-;
-> > >>>
-> > >>> So if userspace handed us a 2M hugepage, page_folio() on each of th=
-e
-> > >>> intermediary struct page's would return the same folio, correct?  S=
-o we'd end up
-> > >>> with the wrong offsets for our fuse request, because they should be=
- based from
-> > >>> the start of the folio, correct?
-> > >> I think you're 100% right.  We could put in some nice asserts to che=
-ck
-> > >> this is what's happening, but it does seem like a rather incautious
-> > >> conversion.  Yes, all folios _in the page cache_ for fuse are small,=
- but
-> > >> that's not guaranteed to be the case for folios found in userspace f=
-or
-> > >> directio.  At least the comment is wrong, and I'd suggest the code i=
-s too.
-> > > Ok cool, Malte can you try the attached only compile tested patch and=
- see if the
-> > > problem goes away?  Thanks,
-> > >
-> > > Josef
-> > >
-> > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > > index 88d0946b5bc9..c4b93ead99a5 100644
-> > > --- a/fs/fuse/file.c
-> > > +++ b/fs/fuse/file.c
-> > > @@ -1562,9 +1562,19 @@ static int fuse_get_user_pages(struct fuse_arg=
-s_pages *ap, struct iov_iter *ii,
-> > >               nfolios =3D DIV_ROUND_UP(ret, PAGE_SIZE);
-> > >
-> > >               ap->descs[ap->num_folios].offset =3D start;
-> > > -             fuse_folio_descs_length_init(ap->descs, ap->num_folios,=
- nfolios);
-> > > -             for (i =3D 0; i < nfolios; i++)
-> > > -                     ap->folios[i + ap->num_folios] =3D page_folio(p=
-ages[i]);
-> > > +             for (i =3D 0; i < nfolios; i++) {
-> > > +                     struct folio *folio =3D page_folio(pages[i]);
-> > > +                     unsigned int offset =3D start +
-> > > +                             (folio_page_idx(folio, pages[i]) << PAG=
-E_SHIFT);
-> > > +                     unsigned int len =3D min_t(unsigned int, ret, f=
-olio_size(folio) - offset);
-> > > +
-> > > +                     len =3D min_t(unsigned int, len, PAGE_SIZE);
-> > > +
-> > > +                     ap->descs[ap->num_folios + i].offset =3D offset=
-;
-> > > +                     ap->descs[ap->num_folios + i].length =3D len;
-> > > +                     ap->folios[i + ap->num_folios] =3D folio;
-> > > +                     start =3D 0;
-> > > +             }
-> > >
-> > >               ap->num_folios +=3D nfolios;
-> > >               ap->descs[ap->num_folios - 1].length -=3D
-> >
-> > The problem persists with this patch.
-> >
+On Fri, Dec 06, 2024 at 01:13:47PM +0100, Christian Brauner wrote:
+> On Thu, 05 Dec 2024 16:47:43 +0100, Mateusz Guzik wrote:
+> > It claims the issue is only relevant for shared descriptor tables which
+> > is of no concern for POSIX (but then is POSIX of concern to anyone
+> > today?), which I presume predates standarized threading.
+> > 
+> > The comment also mentions the following systems:
+> > - OpenBSD installing a larval file -- this remains accurate
+> > - FreeBSD returning EBADF -- not accurate, the system uses the same
+> >   idea as OpenBSD
+> > - NetBSD "deadlocks in amusing ways" -- their solution looks
+> >   Solaris-inspired (not a compliment) and I would not be particularly
+> >   surprised if it indeed deadlocked, in amusing ways or otherwise
 
-Malte, could you try Josef's patch except with that last line
-"ap->descs[ap->num_pages - 1].length  -=3D (PAGE_SIZE - ret) &
-(PAGE_SIZE - 1);" also removed? I think we need that line removed as
-well since that does a "-=3D" instead of a "=3D" and
-ap->descs[ap->num_folios - 1].length gets set inside the for loop.
+FWIW, the note about OpenBSD approach is potentially still interesting,
+but probably not in that place...
 
-In the meantime, I'll try to get a local repro running on fsx so that
-you don't have to keep testing out repos for us.
+These days "not an embryo" indicator would probably map to FMODE_OPENED,
+so fget side would be fairly easy (especially if we invert that bit -
+then the same logics we have for "don't accept FMODE_PATH" would apply
+verbatim).
 
-Thanks,
-Joanne
->
-> Catching up on this thread now. I'll investigate this today.
->
-> >
-> > /Malte
-> >
+IIRC, the last time I looked into it the main obstacle to untangle had
+boiled down to "how do we guarantee that do_dentry_open() failing with
+-ESTALE will leave struct file in pristine state" and _that_ got boggled
+down in S&M shite - ->file_open() is not idempotent and has no reverse
+operation - ->file_free_security() takes care of everything.
+
+If that gets solved, we could lift alloc_empty_file() out of path_openat()
+into do_filp_open()/do_file_open_root() - it would require a non-trivial
+amount of massage, but a couple of years ago that appeared to have been
+plausible; would need to recheck that...  It would reduce the amount of
+free/reallocate cycles for struct file in those, which might make it
+worthwhile on its own.
+
+Lifting it further would require some massage in the callers, but that
+would be on per-caller basis; used to look plausible...
+
+Hell knows - right now I'm ears-deep in ->d_revalidate() crap, but once
+that settles down a bit...  Might be worth looking into that again.
+
+LSM ->file_open() behaviour changes would need to be discussed with LSM
+crowd, obviously.  Ideally we want it idempotent, so that calling it
+twice in a row would have the second call work in the same way as if
+the first one hadn't happened.  In-tree instances seem to be trivial
+to massage to that (in the worst case you'd need to clear some fields
+if the first call hadn't taken a fast path out, but the second one
+had), but that really needs a buy-in from maintainers.
 
