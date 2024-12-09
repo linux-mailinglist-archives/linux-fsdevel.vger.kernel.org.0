@@ -1,97 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-36799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733E09E9792
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:45:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4009E97B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:49:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E852830D4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:45:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3741658F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5621ACEA2;
-	Mon,  9 Dec 2024 13:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269781ACEDB;
+	Mon,  9 Dec 2024 13:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jwBxK1Rs"
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="FaqG34c3";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="aqJwxI57";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="IMKixPO9";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="J2d5c4as"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D80935953;
-	Mon,  9 Dec 2024 13:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F0D1F0E21
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 13:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733751912; cv=none; b=O1OHzva6HkeK4oXCiN6dN5BpcO6FdUeFfZjLcDEu97OtYmned24ANVk8Azv1ha4geUnyw2werveeXc7d41nnFibSBsnw46N5w8twdsRf4nBF99+gjm509tTkV0ROz+DrkHO2WELTR9KcuDmAjF8OAKFnV3iBGXc/TQ23++j9nnw=
+	t=1733751976; cv=none; b=MSyy7eR4qe2RT5wPHr/tXw51UVC4f2t3JcBezDuvPETF0LJxAd2MjcT7eewmT1z+QKsz4+8y+uEFFAWqjJ+NwTxo6CDNVzWJJ1QjPa2A/l/cxp+BFYbfAVb496rjEVBGV/zynFde3k87T48SFTmGql5W2LL4zAdKwYEgrXGDAoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733751912; c=relaxed/simple;
-	bh=1a6G46JfjtTX9I6SjXR1A7pNkXwaTOdnMXH2In3vczQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAlRvXjih7ppEFi6Xf8b4jqIyh8X/t4r2ssG6C1GJzaRWOJfCFJnGIrTF9a2oozTi6y13AVK6qfBLuy4U/fxpazuWLuakwB/8qjBZVf1IXmHh518qZ3jQaeLmMS+Jv5hg3IVtogNA8NVL0AKszF4GQ1HZcrQwN2oYuy/Z4666zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jwBxK1Rs; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FVpmPI05TSIP+K81Kd1Fzbdes5yFYSHh6V7vfJ86r/4=; b=jwBxK1RsoDnn1OE6ohrOqQJnCq
-	aeU2BNeJzd8PaAMbkVibitfScV8PpDhw2C5qqk/SNj6rmGAs7N6lDReltM2egjeIQTEXw6TlSji47
-	ZbDGZFds0RfIne5sQ3dXPi4yp6bfUAYqTuCRjsSGz/KGIciDN8oGyx1Fh0qyQCagb0S3dq4dqhIW6
-	PF/Lquz8G+boUHRdnf7n9JbV67TEXc/EvFJJCJc7ShZ/88gvxvHiUSkLfWxvxQe//5qscocXBWAUb
-	F9qEUVAlI6tpwDXW5KlLl4tc3LxcPqAWVut9H0Vq2ouiA4iSzWf4bEaL/0cEL0M49/3OgcgF4DZD5
-	0MaCOxPg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKe4T-000000083PB-3joO;
-	Mon, 09 Dec 2024 13:45:09 +0000
-Date: Mon, 9 Dec 2024 05:45:09 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	stable <stable@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Shaohua Li <shli@fb.com>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <Z1b0ZQAstSIf-ZMo@infradead.org>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org>
- <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
- <20241206160358.GC7820@frogsfrogsfrogs>
- <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
- <Z1ahFxFtksuThilS@infradead.org>
- <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
- <2024120942-skincare-flanking-ab83@gregkh>
+	s=arc-20240116; t=1733751976; c=relaxed/simple;
+	bh=Q7OeVaq8fPsS2cnXoVYh17B7MOxtyBwaJAtsUEf6n3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RhMiC8ByvJ0pNQEa0xuDItIpE9ALQUk78PEetaI9wQmZjCxchC5oaU90x3dEzfHe+ZMvjvQ5gh5/TP/s9+TXGXAbMeDbPCozVxwYb9CDw4tXx59QotICf5Gxd1KX/BPU7hnmG6HZJiLjRrw0l7KAPBVJxBWoAtCe1b4nCVB8HvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=FaqG34c3; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=aqJwxI57; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=IMKixPO9; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=J2d5c4as; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:ac35:d9bc:6ccc:da57])
+	by mail.tnxip.de (Postfix) with ESMTPS id 07C68208CC;
+	Mon,  9 Dec 2024 14:46:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1733751963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QnlLzmzyFUbgEtSoqUtK4h/uKLvunG6yc8EmWJJ4+k=;
+	b=FaqG34c3I2raknQa68q2KCoGiFO/kaxoAw7QhryJbl72FebJdtputjatJGPxA7Majscbwb
+	DLKlsLhckUPoFtbUcrPWnqN7x3a5ZKgu/BdKufKaRNnWWfEJBWQVxBzQMIIpWldyEi1akU
+	wLcCvmjb4GaN6tD7YDzBLwkeBsI5dL8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1733751963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QnlLzmzyFUbgEtSoqUtK4h/uKLvunG6yc8EmWJJ4+k=;
+	b=aqJwxI57SULpWS4U5f/rGnXBzHqx2lvHrsqcc2LCrAd9M58iG5QshPVfmzpKKDuAij8uwu
+	us/YsZJCXYOtqyAg==
+Received: from [192.168.1.99] (_gateway [192.168.1.10])
+	by gw.tnxip.de (Postfix) with ESMTPSA id 76AFC500FFC7C;
+	Mon, 09 Dec 2024 14:45:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1733751957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QnlLzmzyFUbgEtSoqUtK4h/uKLvunG6yc8EmWJJ4+k=;
+	b=IMKixPO9hYwkVI75REhonEUnorEPi7VNvyXqJJDw9yYen7l5kFMqJJ9d7kgauiqkamSZnJ
+	wrpGT17EapQYRKQg0xj9X0QaE1eNLRJGuOwwGBm+MiMRBQfq4xLnPfucsQVh5x30BzoBwS
+	HVHeFguJXpVSI61Hl6w4+2S5bPpuBmw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1733751957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QnlLzmzyFUbgEtSoqUtK4h/uKLvunG6yc8EmWJJ4+k=;
+	b=J2d5c4asncc2dGLPw2h9OXqXRkzyzXPHDLCjyA4LvtHwhIwObSOBmq+2NpOn+ECjlSg/fL
+	IeAFgLG7QvoNWeDA==
+Message-ID: <5feec55c-c7a0-4d4c-8634-0d99810aec6b@tnxip.de>
+Date: Mon, 9 Dec 2024 14:45:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024120942-skincare-flanking-ab83@gregkh>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Betterbird (Linux)
+Subject: Re: silent data corruption in fuse in rc1
+To: Bernd Schubert <bschubert@ddn.com>, Bernd Schubert <bernd@bsbernd.com>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Miklos Szeredi <mszeredi@redhat.com>, Josef Bacik <josef@toxicpanda.com>,
+ Joanne Koong <joannelkoong@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
+ <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
+ <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <0d5ac910-97c1-44a8-aee7-56500a710b9e@linux.alibaba.com>
+ <804c06e3-4318-4b78-b108-12e0843c2855@tnxip.de>
+ <0c7205c3-f2f2-4400-8b1c-3adda48fdeab@bsbernd.com>
+ <77b6c012-8779-4bf8-a034-11b9ee93d1fb@tnxip.de>
+ <29ce110b-aa47-4524-a038-8fd2c8e2978a@ddn.com>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+In-Reply-To: <29ce110b-aa47-4524-a038-8fd2c8e2978a@ddn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 10:16:36AM +0100, Greg KH wrote:
-> > Maybe we were wrong about the assumption that cgroupfs should be treated
-> > specially and deny export cgroups over nfs??
-> 
-> Please don't export any of the "fake" kernel filesystems (configfs,
-> cgroups, sysfs, debugfs, proc, etc) over nfs please.  That way lies
-> madness and makes no sense.
+On 09/12/2024 14:06, Bernd Schubert wrote:
+> On 12/9/24 10:07, Malte Schröder wrote:
+>> [You don't often get email from malte.schroeder@tnxip.de. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> On 09/12/2024 09:06, Bernd Schubert wrote:
+>>> Hi Malte,
+>>>
+>>> On 12/9/24 07:42, Malte Schröder wrote:
+>>>> On 09/12/2024 02:57, Jingbo Xu wrote:
+>>>>> Hi, Malte
+>>>>>
+>>>>> On 12/9/24 6:32 AM, Malte Schröder wrote:
+>>>>>> On 08/12/2024 21:02, Malte Schröder wrote:
+>>>>>>> On 08/12/2024 02:23, Matthew Wilcox wrote:
+>>>>>>>> On Sun, Dec 08, 2024 at 12:01:11AM +0100, Malte Schröder wrote:
+>>>>>>>>> Reverting fb527fc1f36e252cd1f62a26be4906949e7708ff fixes the issue for
+>>>>>>>>> me.
+>>>>>>>> That's a merge commit ... does the problem reproduce if you run
+>>>>>>>> d1dfb5f52ffc?  And if it does, can you bisect the problem any further
+>>>>>>>> back?  I'd recommend also testing v6.12-rc1; if that's good, bisect
+>>>>>>>> between those two.
+>>>>>>>>
+>>>>>>>> If the problem doesn't show up with d1dfb5f52ffc? then we have a dilly
+>>>>>>>> of an interaction to debug ;-(
+>>>>>>> I spent half a day compiling kernels, but bisect was non-conclusive.
+>>>>>>> There are some steps where the failure mode changes slightly, so this is
+>>>>>>> hard. It ended up at 445d9f05fa149556422f7fdd52dacf487cc8e7be which is
+>>>>>>> the nfsd-6.13 merge ...
+>>>>>>>
+>>>>>>> d1dfb5f52ffc also shows the issue. I will try to narrow down from there.
+>>>>>>>
+>>>>>>> /Malte
+>>>>>>>
+>>>>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+>>>>>> with 3b97c3652d91 as the culprit.
+>>>>> Would you mind checking if [1] fixes the issue?  It is a fix for
+>>>>> 3b97c3652d91, though the initial report shows 3b97c3652d91 will cause
+>>>>> null-ptr-deref.
+>>>>>
+>>>>>
+>>>>> [1]
+>>>>> https://lore.kernel.org/all/20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com/
+>>>> It does not fix the issue, still behaves the same.
+>>>>
+>>> could you give instructions how to get the issue? Maybe we can script it and I let
+>>> it run in a loop on one my systems?
+>>>
+>>>
+>>> Thanks,
+>>> Bernd
+>> Sure. To reproduce I set up a VM running Arch and bcachefs as rootfs
+>> (Works out of the box on current Arch). Build -rc kernel using
+>> pacman-pkg build target. Try to install FreeCAD, "flatpak install
+>> flathub org.freecad.FreeCAD". Usually it fails to download some
+>> dependencies. It's a pretty wonky test, but I didn't find a more
+>> specific way to reproduce this.
+>>
+> What is the relation to fuse here? pacmang-pkg or 'flatpak' are using
+> fuse internally?
+>
+>
+> Thanks,
+> Bernd
 
-Umm, yes: it sounds like a pretty useless idea.  But you can do that
-today with a userland nfs server, so why explicitly forbid it for
-the kernel nfs server.  In either case you absolutely have to want it,
-you're not going to accidentally NFS export a file system.
+Flatpak is using fuse when downloading/installing packages
 
-I'm still trying to understand what problem we're trying to solve here.
+/Malte
 
 
