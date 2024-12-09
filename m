@@ -1,141 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-36806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA409E97F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:56:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7CC9E9837
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:05:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6AE1889DD8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:04:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB561ACECA;
+	Mon,  9 Dec 2024 14:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HCtJqc7x"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B06D283BAD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:56:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676161ACED8;
-	Mon,  9 Dec 2024 13:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="t7qAZx8O"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F521A23B3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 13:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FCE233157
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 14:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752595; cv=none; b=rbSyhFD0FQaiFX/SR/I5megvQG8va+B6Y2JbpK+Pfr8yDyzE+hJczkSUpcM7Xw5GVcBhNaWzW+BRzC7fqNR6+3/Eo50H15HyiQKK/24dlfSbySu11PRVOGWK+njP2bqMYKj3qG1tlsOFpwtJfWaiNPyhIuAh/+fqYEW5Itc2tSA=
+	t=1733753078; cv=none; b=WjxkLRpbZ80PAaDa/o1Z6fxJJVnLfuQKcfqFDhhARmZ5S24OikCLVSJTGK4i2Mj+AFILc5lslbKHlxMQkiJ9Jrmzh/zCJtzwjOuNR+SJqL63OuipUpOVcggmroBkwG5yPM4VynOmSVQwPtfiZNZT+FllyL6Du5zb7LPA2qVV5/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752595; c=relaxed/simple;
-	bh=J9jxOUbKeDVRIEAOg1/n3B3WJk4NSvAISEJnw0CnrDw=;
+	s=arc-20240116; t=1733753078; c=relaxed/simple;
+	bh=EETWwtGMW843cx+h8se9MTXC9HJRpMpakXA3a82GbP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D/lL13mdtZmtFJiqw737ZSLq/uUYzAI1BcJJE9zz6Ku+hwWnSs97EvFa1lcpKrG/QMLACcgv81YF3IKfamIWPzEiUeoB7YTHzEJ/WjTajWfYY0NOGxdf3FIT45zv6CtGIVR2oytp0dAhHPjIFC2txWtWr/1KUFtRCJV9lLFusAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=t7qAZx8O; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b15d7b7a32so285648285a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 05:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1733752592; x=1734357392; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IJFBpbu7HncFVbgy8VnoHa7EGDC6RKL4IX6ntGytemg=;
-        b=t7qAZx8O3gSeoKTRfEG3rUqYX0I3eTcjZctqSGsFm2ELwm/EzPC4l30b1InzezBYby
-         UzHX9gnCdxM/KjX6AinROfwr426IU6iiz2hc8xoaBbFp4yjh7yynNu6z5+CBMIoa5vT/
-         WEGlJeLtKMIGCqjoVwI4eYMrzUt7Mp/+VN+HYN8CdjrBu4F3dxx7nCQ068PQNg4cplOM
-         iDDwL0x8BHh+1+MNbDznYGWLwy2l6vLGfgiLW2o2+w33CTufPK5Nz0dS/qJhOL3piY/D
-         RxvIPdkohA1Bmq8pjln5OFgismqlPQMwfJA83D1Wx151M8BKEKsyI8Z1xKhWMYU8XoCv
-         5tTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733752592; x=1734357392;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IJFBpbu7HncFVbgy8VnoHa7EGDC6RKL4IX6ntGytemg=;
-        b=k4EpQMYnhqIFMlpSReZvasZyV3ImfttQQ0Gf9a225zKBTv8u1m18M/bpmGwdNzVET8
-         0C04l5+7hYG8dvtb/ec2DoxktlvJH5Hz1TJg3z9YoTFtImiKFMF9+uT1gZ8DKQBYvWFc
-         za8TBwe9lgBOHzfmNakqCTq1a228mVtgYSlvO4qROddXAOETqaguLPzICplODnP7OU3p
-         6tFaDjOlUttt1A/uU2nTYYwWJJ+f4hGbEiF0VlEOiPXJxu1L2w2+DkOheYj6rEV4J+0L
-         ni4ncK9oQSysmYcQIxiU0CnXHMIymj/T9nVw27wyymWhLx7yzHUezkdZVQpG4V8oz6Sq
-         qCvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUS/u4QNyAEM/a7rN4VSu5lgS7ksWId561TRK9fOHT4nxvqtImR9Ab3ROtNKUqV1jZLyAeTW+iZAf5FQstZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh7xJiwbiOj0RSsnocOizZOupFNSKPD657iFqGhVeTaoCOISl9
-	ZURdUZVYF9pOhNnnSoxhhydil7mk0H+wLybwKff4UB68dDpkq4nYuYWmlnF4UPw=
-X-Gm-Gg: ASbGncvvF13El0GT19478TvDkjFqNYGlJ41twlsh+hpg7bMboOKcxxrqOcwqGvxUDJi
-	MlQcfeOytpbgWcjjfI4sPde9+WJICZMPh4ACk5r3cGyVe9yM2KlqZiqXa9VK0GFooh/y7wSMNyU
-	hI0Jvy2qm+8JTQGZQAPVp/51FN8IFm1/kbvrD6KSGeU1R9oJmtTy2qP3Q6qZHFEnURun9c6tI9X
-	H8i2LDhpcSsXYxBo7cqP6gIZO41IHjIhuIgA049t+3N5jRbqfYXA49ztedpGKHd+dzvPpesrnuV
-	81rqWX/gWEw=
-X-Google-Smtp-Source: AGHT+IEXq4VSWgAaOp5tDtVpx3ILtyO4wq8VMa/ktn63RpJmsoehGalGKqDzqoRPDw9NFi8Wec+A8w==
-X-Received: by 2002:a05:620a:4150:b0:7b6:d2bb:25c4 with SMTP id af79cd13be357-7b6d2bb275cmr649788685a.62.1733752592567;
-        Mon, 09 Dec 2024 05:56:32 -0800 (PST)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d907713550sm18084956d6.6.2024.12.09.05.56.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 05:56:31 -0800 (PST)
-Date: Mon, 9 Dec 2024 08:56:30 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: don't block write during exec on pre-content watched
- files
-Message-ID: <20241209135630.GA2840216@perftesting>
-References: <20241128142532.465176-1-amir73il@gmail.com>
- <20241205125543.gxqjzyeakwbugqwk@quack3>
- <CAOQ4uxjyFOy0JCPJ2y4Sm-goRK9xtf_6jkWEEq_vzxPO-FmnCA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aq2kB/IkvgRTp+hVUpwnMA4DJWJyOTtq5mDTepvnqZ59TPEQ8vrohkhChKxdg1gzp3H+xwTCvvKzuJSNSZIQ52eoS8C64RuDF8A1fu5TuVXR/xHTUaI56MzSu7pGfYBVfxQb44ae+LvZZH+gCWCv6ZBp37H0nV41acsTwSopdz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HCtJqc7x; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733753075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8b04ySc1izHsLQP45Zj6xUGbG44WDlhvltUUt2lQf+s=;
+	b=HCtJqc7xHqYAk1ZwdQ/4KqbXF5KKO7euLgtL45K/YAiOKv1VqfQmO9zI/8KfZme/UVcDwJ
+	wBuFnb6AM4Lqs+s9Bvkhjg2hFclxSWAuMb4w46qySm8wBQUR1HzoyNSRWI6XpcIRdmMROy
+	zjL1eL/Gl6Y8WLfcepOROl3P0bapAwk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-LugejaIPORS3iRNaXgRvqg-1; Mon,
+ 09 Dec 2024 09:04:33 -0500
+X-MC-Unique: LugejaIPORS3iRNaXgRvqg-1
+X-Mimecast-MFC-AGG-ID: LugejaIPORS3iRNaXgRvqg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10B271955E99;
+	Mon,  9 Dec 2024 14:04:31 +0000 (UTC)
+Received: from bfoster (unknown [10.22.90.12])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB985195608A;
+	Mon,  9 Dec 2024 14:04:28 +0000 (UTC)
+Date: Mon, 9 Dec 2024 09:06:14 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Long Li <leo.lilong@huawei.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v6 1/3] iomap: pass byte granular end position to
+ iomap_add_to_ioend
+Message-ID: <Z1b5Vr96Aysa_JCG@bfoster>
+References: <20241209114241.3725722-1-leo.lilong@huawei.com>
+ <20241209114241.3725722-2-leo.lilong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjyFOy0JCPJ2y4Sm-goRK9xtf_6jkWEEq_vzxPO-FmnCA@mail.gmail.com>
+In-Reply-To: <20241209114241.3725722-2-leo.lilong@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Dec 05, 2024 at 02:28:25PM +0100, Amir Goldstein wrote:
-> On Thu, Dec 5, 2024 at 1:55 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 28-11-24 15:25:32, Amir Goldstein wrote:
-> > > Commit 2a010c412853 ("fs: don't block i_writecount during exec") removed
-> > > the legacy behavior of getting ETXTBSY on attempt to open and executable
-> > > file for write while it is being executed.
-> > >
-> > > This commit was reverted because an application that depends on this
-> > > legacy behavior was broken by the change.
-> > >
-> > > We need to allow HSM writing into executable files while executed to
-> > > fill their content on-the-fly.
-> > >
-> > > To that end, disable the ETXTBSY legacy behavior for files that are
-> > > watched by pre-content events.
-> > >
-> > > This change is not expected to cause regressions with existing systems
-> > > which do not have any pre-content event listeners.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > OK, I've picked up the patch to fsnotify_hsm branch with Christian's ack
-> > and updated comments from Amir. Still waiting for Josef to give this a
-> > final testing from their side but I've pulled the branch into for_next so
-> > that it gets some exposure in linux-next as well.
+On Mon, Dec 09, 2024 at 07:42:39PM +0800, Long Li wrote:
+> This is a preparatory patch for fixing zero padding issues in concurrent
+> append write scenarios. In the following patches, we need to obtain
+> byte-granular writeback end position for io_size trimming after EOF
+> handling.
 > 
-> Cool. I just pushed a test to my LTP fan_hsm branch for ETXTBSY.
+> Due to concurrent writeback and truncate operations, inode size may
+> shrink. Resampling inode size would force writeback code to handle the
+> newly appeared post-EOF blocks, which is undesirable. As Dave
+> explained in [1]:
 > 
-> It checks for the expected ETXTBSY with yes or no pre-content watchers,
-> but it checks failure to execute a file open for write, not actually to open
-> a file for write in the context of PRE_ACCESS event during execution.
+> "Really, the issue is that writeback mappings have to be able to
+> handle the range being mapped suddenly appear to be beyond EOF.
+> This behaviour is a longstanding writeback constraint, and is what
+> iomap_writepage_handle_eof() is attempting to handle.
 > 
-> So yeh, a test of the actual use case of large lazy populated
-> executables from Josef
-> is required, but at least we have basic sanity test coverage and now we will get
-> some extra linux-next testing coverage which is great.
+> We handle this by only sampling i_size_read() whilst we have the
+> folio locked and can determine the action we should take with that
+> folio (i.e. nothing, partial zeroing, or skip altogether). Once
+> we've made the decision that the folio is within EOF and taken
+> action on it (i.e. moved the folio to writeback state), we cannot
+> then resample the inode size because a truncate may have started
+> and changed the inode size."
+> 
+> To avoid resampling inode size after EOF handling, we convert end_pos
+> to byte-granular writeback position and return it from EOF handling
+> function.
+> 
+> Since iomap_set_range_dirty() can handle unaligned lengths, this
+> conversion has no impact on it. However, iomap_find_dirty_range()
+> requires aligned start and end range to find dirty blocks within the
+> given range, so the end position needs to be rounded up when passed
+> to it.
+> 
+> LINK [1]: https://lore.kernel.org/linux-xfs/Z1Gg0pAa54MoeYME@localhost.localdomain/
+> Signed-off-by: Long Li <leo.lilong@huawei.com>
+> ---
+>  fs/iomap/buffered-io.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 955f19e27e47..bcc7831d03af 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+...
+> @@ -1914,6 +1915,7 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  	struct inode *inode = folio->mapping->host;
+>  	u64 pos = folio_pos(folio);
+>  	u64 end_pos = pos + folio_size(folio);
+> +	u64 end_aligned = 0;
+>  	unsigned count = 0;
+>  	int error = 0;
+>  	u32 rlen;
+> @@ -1955,9 +1957,10 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  	/*
+>  	 * Walk through the folio to find dirty areas to write back.
+>  	 */
+> -	while ((rlen = iomap_find_dirty_range(folio, &pos, end_pos))) {
+> +	end_aligned = round_up(end_pos, i_blocksize(inode));
 
-Sorry guys, holidays and then some PTO and other things conspired against me
-being useful.  I just built and tested Jan's branch as of 10 minutes ago and
-everything works.  Thanks for picking up my slack, I'll be actually responsive
-for the next two weeks and then I'll disappear again until Jan 6th,
+So do I follow correctly that the set_range_dirty() path doesn't need
+the alignment because it uses inclusive first_blk/last_blk logic,
+whereas this find_dirty_range() path does the opposite and thus does
+require the round_up? If so, presumably that means if we fixed up the
+find path we wouldn't need end_aligned at all anymore?
 
-Josef
+If I follow the reasoning correctly, then this looks Ok to me:
+
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+
+... but as a followup exercise it might be nice to clean up the
+iomap_find_dirty_range() path to either do the rounding itself or be
+more consistent with set_range_dirty().
+
+Brian
+
+> +	while ((rlen = iomap_find_dirty_range(folio, &pos, end_aligned))) {
+>  		error = iomap_writepage_map_blocks(wpc, wbc, folio, inode,
+> -				pos, rlen, &count);
+> +				pos, end_pos, rlen, &count);
+>  		if (error)
+>  			break;
+>  		pos += rlen;
+> -- 
+> 2.39.2
+> 
+> 
+
 
