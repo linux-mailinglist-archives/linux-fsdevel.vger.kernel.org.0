@@ -1,99 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-36801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63819E97B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:49:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB7C9E97BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B285188287F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEF61669A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E4F1B041C;
-	Mon,  9 Dec 2024 13:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC121B0429;
+	Mon,  9 Dec 2024 13:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wKzci/M0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEHg4nfp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1E01A238E;
-	Mon,  9 Dec 2024 13:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA341B0434
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 13:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752019; cv=none; b=B/0WHGxxcMY3KYCxQOlIdXIU/VlQ6FLVtwq5wDbIPkTkTmQXD9qS1m0ruRpcJb4f19N9exHhAcpZPcGm/4teJ3OGyyN52DwLL+ykIi1gjt5CcxEJTQQDIUIcBqHUV47sj0Mcl9bxrTMXdw/FXr5cqZjXt7X5BSKLseP4gmcKqF8=
+	t=1733752028; cv=none; b=lEd73oqaFeZJHnAwnuEPjOZ05HF2nyah8qErCDIa0qKdLgIH5835rp7jRJPM+x/GpB7121HFMyKZhr9UyiHxEQMNRwpo20k1NYrssEEVjSp74hruJCdZQzAT+ts9ZxbvVitW1SZYRLXXVDEOlwOeGDpdKGa9lYlogw3mcKmxrXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752019; c=relaxed/simple;
-	bh=7YMcql3307lL7mtzM9GeKeg6x8rr1woEKBhM4L9q1YY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJOhfmibDoOYeUuuF4eINXd5JtZZ2mkDKSMoN+l1pG1sszoH733hAjTH9oGSUqZVN2ILkcDTvxK9qaP8Tdjy0HLgFnREhycUcB0u+eVgsUhxdxQDnxVii6DBDpmWRex/H9H0XQz+fjVayk08gwDJeJo/26GqGpkftzsiZh/2IJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wKzci/M0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=w43T1I6/sKwJscxNGbfJG/M/ns6oG3NjgCwcsgsn5ec=; b=wKzci/M0+tJjPJMVBnZLPgTW6a
-	gQ0H2/IbEZgQ212cFKxiI67Ey3pi4lT7duv3vIwB2y04YsEr92pdfx0aWKdU/4yVmOaqIFcpGH9Is
-	EjIxHi64qjRFHLWwuCN5auy0pEWLWC+owNk1M+sCEg6d9tN3+CBnkshw+Q1lW6L/tHv/5SGJqXS4e
-	zLwswz4JzBakMqKXAutVpypips45STjMrkTaTHpSmMVPuenOe3ZPca/u3u/7sFNvRY0Kf1TzRli1q
-	cYqXnnOJBFkt8sAKVhLMp9H3ygZCfGRLtHe25KSjCx+n4dBlAajd1XZDTR7sBaSTOOq2hFU8Q6GRS
-	nnV26qqA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKe6C-000000083to-3T6r;
-	Mon, 09 Dec 2024 13:46:56 +0000
-Date: Mon, 9 Dec 2024 05:46:56 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <Z1b00KG2O6YMuh_r@infradead.org>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org>
- <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
- <20241206160358.GC7820@frogsfrogsfrogs>
- <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
- <Z1ahFxFtksuThilS@infradead.org>
- <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
+	s=arc-20240116; t=1733752028; c=relaxed/simple;
+	bh=/2zpMRmPsrQSzbSEf2C2nZojHi5wr7s19M4sieAUDEA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JxGPAz7xVF8nvbyrPugxixLZMJW0GDd2/3adkzdXseWpYOvpfuO+1pU7lZDLcD+YjaqOjTNL6nFV1bhg9Tas+OQJXAAneuhK1WyrMjeACuyQecvGWGmvLcCA7DVEx8N5cXN/ar8b7OvVuPms9iejAze5FSaqSg+5twsrHGzLF0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEHg4nfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D905EC4CEE0;
+	Mon,  9 Dec 2024 13:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733752028;
+	bh=/2zpMRmPsrQSzbSEf2C2nZojHi5wr7s19M4sieAUDEA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=UEHg4nfpj5lwCuG2Qi9/Ep/ZW8I1AflBJaQA2CgcIjGGCf2l5MH1LEKneS/HJD0ra
+	 tOJV2ze+DeutVFxsZzeYeYIZX7FvPpVQ8fNMabOKZoOeyBBm5/OH/th1J6R/Zt2vtA
+	 DdohznuEBgzq8oU9c8R8/90SYzPyjOmj4V5NYX5wh7vY4N/tRsGMd2JQA6uSPj3DrL
+	 1T456rEE2h/Mzz9cR7iWRrSvKKIOFTE7C0uCNZiA8UP3InDq2w1etIM9mJwj8VAas6
+	 WOvDAXutWRdPD+sYdjUWtGYD9MKl7Oeolk2MZj6mqjyfEj6y7ZOA0da52fjb6qw+yA
+	 p7e+2k5JUHUbw==
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 09 Dec 2024 14:46:57 +0100
+Subject: [PATCH RFC v2 1/2] maple_tree: make MT_FLAGS_LOCK_IRQ do something
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241209-work-pidfs-maple_tree-v2-1-003dbf3bd96b@kernel.org>
+References: <20241209-work-pidfs-maple_tree-v2-0-003dbf3bd96b@kernel.org>
+In-Reply-To: <20241209-work-pidfs-maple_tree-v2-0-003dbf3bd96b@kernel.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, maple-tree@lists.infradead.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1513; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=/2zpMRmPsrQSzbSEf2C2nZojHi5wr7s19M4sieAUDEA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSHfbkx19WH69myioKe/xUC4stuXLXQvmSfdkH62GSd0
+ Pscb+fzdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExk1ReG36zJQmVXF/7+Y54a
+ VNUerb1urkPGvln89iw6WzkrYm7/ecbwP9hGbq9y17V7fB6rfI2WiMYsuby84YD3viCfTj6O7fa
+ K/AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, Dec 09, 2024 at 09:58:58AM +0100, Amir Goldstein wrote:
-> To be clear, exporting pidfs or internal shmem via an anonymous fd is
-> probably not possible with existing userspace tools, but with all the new
-> mount_fd and magic link apis, I can never be sure what can be made possible
-> to achieve when the user holds an anonymous fd.
-> 
-> The thinking behind adding the EXPORT_OP_LOCAL_FILE_HANDLE flag
-> was that when kernfs/cgroups was added exportfs support with commit
-> aa8188253474 ("kernfs: add exportfs operations"), there was no intention
-> to export cgroupfs over nfs, only local to uses, but that was never enforced,
-> so we thought it would be good to add this restriction and backport it to
-> stable kernels.
+I'm not sure what the original intention was but I take it that it wsas
+to indicate that the lock to be taken must be irq safe. I need this for
+pidfs as it's called from alloc_pid() which expects irq safe locking.
+Make mtree_{un}lock() check MT_FLAGS_LOCK_IRQ and if present call
+spin_{un}lock_irq().
 
-Can you please explain what the problem with exporting these file
-systems over NFS is?  Yes, it's not going to be very useful.  But what
-is actually problematic about it?  Any why is it not problematic with
-a userland nfs server?  We really need to settle that argumet before
-deciding a flag name or polarity.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ include/linux/maple_tree.h | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+index cbbcd18d418684c36a61a1439c3eb04cd17480b0..5cb9a48731f97e56b2fe43228808043e2f7e98bc 100644
+--- a/include/linux/maple_tree.h
++++ b/include/linux/maple_tree.h
+@@ -268,10 +268,22 @@ struct maple_tree {
+ #define DEFINE_MTREE(name)						\
+ 	struct maple_tree name = MTREE_INIT(name, 0)
+ 
+-#define mtree_lock(mt)		spin_lock((&(mt)->ma_lock))
++static __always_inline void mtree_lock(struct maple_tree *mt)
++{
++	if (mt->ma_flags & MT_FLAGS_LOCK_IRQ)
++		spin_lock_irq(&mt->ma_lock);
++	else
++		spin_lock(&mt->ma_lock);
++}
++static __always_inline void mtree_unlock(struct maple_tree *mt)
++{
++	if (mt->ma_flags & MT_FLAGS_LOCK_IRQ)
++		spin_unlock_irq(&mt->ma_lock);
++	else
++		spin_unlock(&mt->ma_lock);
++}
+ #define mtree_lock_nested(mas, subclass) \
+ 		spin_lock_nested((&(mt)->ma_lock), subclass)
+-#define mtree_unlock(mt)	spin_unlock((&(mt)->ma_lock))
+ 
+ /*
+  * The Maple Tree squeezes various bits in at various points which aren't
+
+-- 
+2.45.2
 
 
