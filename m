@@ -1,117 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-36865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958099EA11E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 22:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 755C89EA1AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 23:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4614A282519
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 21:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0797628417D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 22:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C9019C56D;
-	Mon,  9 Dec 2024 21:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F2C19E7D0;
+	Mon,  9 Dec 2024 22:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lPh6b/iv"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jDq10gFK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6133C19DF75
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 21:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91E19D090;
+	Mon,  9 Dec 2024 22:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733779033; cv=none; b=LbkfM6u2llqsp63PuYZrmOMbNg+/Y/d1TMHtmtX+L21OF3PjnmS/fIb8XSFvXWeKKa33ecSA7nfL3RX1gSSn8nbrJac10ZMsAXC3JXixeJ5Su6EGFkrOjIOC53zp2MyBhHLu7mGdy1XxFUIbmRWn5CmqkQkmHEB1jQdavx0EDpE=
+	t=1733782437; cv=none; b=dvE8rGeVIMBRW/NDws6dugIfz8cekkhWvYopguqlrJWAOm8hnGoOF9h/hJSgD2ZLoZwIUr4ir91bwAR2rNbgm5yz0h8T+nL2LTSgrDpzUPiIiHkdTDz66V75Sl+boteLc/iLRODMRY09wdlX2z7xB0karAuN3uUYdcewnPzF2wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733779033; c=relaxed/simple;
-	bh=Ozg+RskCCpNP65ObVuKX/lN+hsQQuu7MqcjYE/G8aFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FrZk25aSAEetwreQDe6dLNE0BxHyM4JkAEnHu6uI/yRA99DmP/ScWFqOObuTZ3CaVV5tNFcK98LsG6DBDLdFb7ZLnfbSjRnZmBYwH+9n/Ta9VZx7Pl4WHZaOk7enGDTiPmaeohLIUJOzzwIdQW66iRXnkwo0t4xoNIqasGB/6ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lPh6b/iv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XOWZSmwzAXy9w2ZMUqF2uH+WA8nIvQgOKOq2p+T3Tmc=; b=lPh6b/ivcukvyH5B9Qak7CNui5
-	+/DeabaLs7B8wE2lBNZf+Giroi8GRnN4Bo4Wt9e/afbY5RqnytMoWB8u9rBr3SkTuw66TpG/tpjrv
-	ezM7LS0KdFaEojDMVpQ053jPxV4HNTMTZXBbRsCiVOyo4BnFH7gpocaXQ1TbTYyNy1U9bAFYdd1Th
-	ZIUAF/zpdl8FjZ0TSf+wvrxeQYKBBrYQ176thHzheSbcERuGoi9jZMqlGqGqv4yXip1ZD/5gEHLO+
-	puTMzJFcEmC4vxE/9uvYi9Ten9O5RmY+u6NBWzMDA8lLN00rKor77pT3oxRyFj6L1Sc/QaRGuz9eH
-	ENehBuHQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKl7s-00000006fmm-0uYb;
-	Mon, 09 Dec 2024 21:17:08 +0000
-Date: Mon, 9 Dec 2024 21:17:08 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
-Message-ID: <20241209211708.GA3387508@ZenIV>
-References: <20241209035251.GV3387508@ZenIV>
- <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
+	s=arc-20240116; t=1733782437; c=relaxed/simple;
+	bh=Zoicv6FCB+iFzMQfrU4Z9XfeuHWSrSqyKjxadK6Xa+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLDV5Aw7cIbs5lup6f/Mgy5Jxd5JWGkxqGRVre65B9kh0wTyQvtm5wYiOvahzkI3eG6nC+vTFQ+SUuvypmZNXuqY6zx24kpDg1NGWvAc9eM4936HevFtt0fI+UnYJYH0xWUcN4Zb2XbgOQSDKjR0K6KAJULQ2zvhtxFJSUhh7BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jDq10gFK; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y6bjv2dDszlfflB;
+	Mon,  9 Dec 2024 22:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1733782429; x=1736374430; bh=IQKVDEMj0TrHltVURdtOup6I
+	IRHQAQ4lIbXGduLnT6I=; b=jDq10gFK/44haFYNLdurY4fNR+uBNg0nU4knZqPa
+	ibGTnIO0Rl5EA+MPlZ4I5pCwvbTrPvQCB0DiYqmkZrE3zzRRmiECLY4uOJmZeKv7
+	OvGmexAE5Z2hai0js6fM7Rxwg9PbyphTBqFEKalOQQwR3nhHwRigEY0paW1OxGug
+	M4l/G846p7QRGdNb/z3j99331bgyzQ4FIDPiarmykDUolWZSB4WwgRcPCZmftVms
+	Djmn6GlTt3+3AMAUhRq8HUJHiFM0NdmTdZ3XvlxPqfEGKY9Aqo41s+CwgyysZ5v1
+	fcIIUCBF06cRgzg2HVDqMe/aiIe8MCu1CPv879TXpzViqQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id jToVKEuMeHKC; Mon,  9 Dec 2024 22:13:49 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6bjf55d1zlfflY;
+	Mon,  9 Dec 2024 22:13:41 +0000 (UTC)
+Message-ID: <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
+Date: Mon, 9 Dec 2024 14:13:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: Nitesh Shetty <nj.shetty@samsung.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Javier Gonzalez <javier.gonz@samsung.com>,
+ Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+ <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
+ <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
+ <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+ <20241112135233.2iwgwe443rnuivyb@ubuntu>
+ <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+ <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+ <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+ <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+ <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+ <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
+ <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 10:27:04AM -0800, Linus Torvalds wrote:
+On 12/5/24 12:03 AM, Nitesh Shetty wrote:
+> But where do we store the read sector info before sending write.
+> I see 2 approaches here,
+> 1. Should it be part of a payload along with write ?
+>  =C2=A0=C2=A0=C2=A0=C2=A0We did something similar in previous series wh=
+ich was not liked
+>  =C2=A0=C2=A0=C2=A0=C2=A0by Christoph and Bart.
+> 2. Or driver should store it as part of an internal list inside
+> namespace/ctrl data structure ?
+>  =C2=A0=C2=A0=C2=A0=C2=A0As Bart pointed out, here we might need to sen=
+d one more fail
+>  =C2=A0=C2=A0=C2=A0=C2=A0request later if copy_write fails to land in s=
+ame driver.
 
-> The name consistency issue is really annoying. Do we really need it
-> here? Because honestly, what you actually *really* care about here is
-> whether it's inline or not, and you do that test right afterwards:
-> 
-> > +       // ->name and ->len are at least consistent with each other, so if
-> > +       // ->name points to dentry->d_iname, ->len is below DNAME_INLINE_LEN
-> > +       if (likely(name->name.name == dentry->d_iname)) {
-> > +               memcpy(name->inline_name, dentry->d_iname, name->name.len + 1);
-> 
-> and here it would actually be more efficient to just use a
-> constant-sized memcpy with DNAME_INLINE_LEN, and never care about
-> 'len' at all.
+Hi Nitesh,
 
-Actually, taking a look at what's generated for that memcpy()...  *ow*
-amd64 is fine, but anything that doesn't like unaligned accesses is
-ending up with really awful code.
+Consider the following example: dm-linear is used to concatenate two
+block devices. An NVMe device (LBA 0..999) and a SCSI device (LBA
+1000..1999). Suppose that a copy operation is submitted to the dm-linear
+device to copy LBAs 1..998 to LBAs 2..1998. If the copy operation is
+submitted as two separate operations (REQ_OP_COPY_SRC and
+REQ_OP_COPY_DST) then the NVMe device will receive the REQ_OP_COPY_SRC
+operation and the SCSI device will receive the REQ_OP_COPY_DST
+operation. The NVMe and SCSI device drivers should fail the copy=20
+operations after a timeout because they only received half of the copy
+operation. After the timeout the block layer core can switch from
+offloading to emulating a copy operation. Waiting for a timeout is
+necessary because requests may be reordered.
 
-gcc does not realize that pointers are word-aligned.  What's more,
-even
+I think this is a strong argument in favor of representing copy
+operations as a single operation. This will allow stacking drivers
+as dm-linear to deal in an elegant way with copy offload requests
+where source and destination LBA ranges map onto different block
+devices and potentially different block drivers.
 
-unsigned long v[5];
+Thanks,
 
-void f(unsigned long *w)
-{
-	memcpu(v, w, sizeof(v));
-}
-
-is not enough to convince the damn thing - try it for e.g. alpha and you'll
-see arseloads of extq/insq/mskq, all inlined.  
-
-And yes, they are aligned - d_iname follows a pointer, inline_name follows
-struct qstr, i.e. u64 + pointer.  How about we add struct inlined_name {
-unsigned char name[DNAME_INLINE_LEN];}; and turn d_iname and inline_name
-into anon unions with that?  Hell, might even make it an array of unsigned
-long and use that to deal with this
-                } else {
-                        /*
-                         * Both are internal.
-                         */
-                        unsigned int i;
-                        BUILD_BUG_ON(!IS_ALIGNED(DNAME_INLINE_LEN, sizeof(long)));
-                        for (i = 0; i < DNAME_INLINE_LEN / sizeof(long); i++) {
-                                swap(((long *) &dentry->d_iname)[i],
-                                     ((long *) &target->d_iname)[i]);
-                        }
-                }
-in swap_names().  With struct assignment in the corresponding case in
-copy_name() and in take_dentry_name_snapshot() - that does generate sane
-code...
+Bart.
 
