@@ -1,97 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-36735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259699E8CF7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 09:03:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5B49E8D09
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 09:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162E818868CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:03:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343911881777
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA50C215700;
-	Mon,  9 Dec 2024 08:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FD5215075;
+	Mon,  9 Dec 2024 08:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="aXrKLfYJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EjKSgLh1"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="gO+gGVAN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MMvzIvd3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41448215163;
-	Mon,  9 Dec 2024 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D82C189B85
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 08:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731338; cv=none; b=eg2yXXAj6YZhYtx20SCWTo+DO8iy0rvPHTL0dVHBc6aIvfBWzAZI8jcIMbig+PXOCv9uUesioM51cuJxyfB6Qbsn57TGQH978nIv29C7LaTOzB6HWM8oG6EJjZQ/7CCjHIpf2yA00C7o2TDS1HhC2OaQqtFraTxBz4dz+TJW0u4=
+	t=1733731611; cv=none; b=B+yOKLXcTq/dK/rMRhoiTdxNHojlkyU2eev4rPwh1mKrC4T904EtfdJWHaoUc/URwC7++X7wt5C16uS9NZKjxckx0QYjZivGO3qvCtd640LK/pXqXYwXLzHHn+yL/4thgoEN+bafZhLgjr/OdOiGFLHJ/9RT5QtaB1C+qPLLk+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731338; c=relaxed/simple;
-	bh=GlILRVtCUgPv60lF0m60GMmC5sHH96Oxu3ALnNgIEhE=;
+	s=arc-20240116; t=1733731611; c=relaxed/simple;
+	bh=brlwBf89Z4BwzynDzicXQhcKnmNktGILS9164g5okzg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lpcwgEPTbZ9kP22VLkRv2GRMyPOpL1zo71P7Yuhs9BjoDZgxl/lejnC11iKoc1TF2+olGmhs9NjZhntoKuLgJgyBR00oMSoCN8pEZ51VZQaqgRZ0N4lBoKxjCgTFOaGerAUgFwSSX3KiRCp+b6VlaKthOjYs4dtC1LmZRcc9fOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=aXrKLfYJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EjKSgLh1; arc=none smtp.client-ip=202.12.124.153
+	 In-Reply-To:Content-Type; b=le0qRXdeXS+q8hcXVElqifWIJasrgbBBW7uQewuqs9d4hsNcF7rHrMmy7Oe+kVrhB/7Y5pHot1y9Hp+kQKM4SMhdQ9AP9s1P/cliGFz929K7/mwFZ4O6XbwdLT/ERaREg5qkbjE1qNbaq/1tT9hi8iTTXTX9oPhO2KcpWq9MGzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=gO+gGVAN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MMvzIvd3; arc=none smtp.client-ip=202.12.124.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EC40A254011B;
-	Mon,  9 Dec 2024 03:02:13 -0500 (EST)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 157F7114012A;
+	Mon,  9 Dec 2024 03:06:48 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 09 Dec 2024 03:02:14 -0500
+  by phl-compute-07.internal (MEProxy); Mon, 09 Dec 2024 03:06:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733731333;
-	 x=1733817733; bh=uYnTf+urMkAuBTorx2BTqGiCMWrBS4cNzY/BkhxJ8vk=; b=
-	aXrKLfYJqkNkYz1HPiJXpk793SrId/5DH3sHkK/g1fn2l4+BJvCg3vxO+Aaeyn91
-	iNZUHOlLRR3PGWzbOW19kyfBxLS1pJ9qtI5jxqIeFj7wtwivMNltg81R/eRHebDZ
-	2BzzHgtc8z9rWNzq2tqmRm9axxGuvcVBBb5CjZF7XBCYOztLCk0PJBPdPT7ERYT7
-	RjgUqLfqn3j1rpSCC/6ot0VJL3orfiFxUKX5ik7l3pyUkcsBxwW6ZxzSkBE3p0uR
-	uWmmoDDq+Pl4hRAWMZng0K/8zke4EKAFKlMzLhq3QB4iHTErHh3szrPqDaNU+fU5
-	VkYUiO77xwOLyHA0aFFBFw==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733731607;
+	 x=1733818007; bh=nJ2TfVg6myUkiNygNGPlyFOd8lthy9lDT4fL1AZENhQ=; b=
+	gO+gGVANO+99z8SIX34XkdpmsPw2bmm1T7+QbPpKFSpEWWDERGgDY0N5/hRH1x1x
+	inEl+jg22XV35UFNUXs72UfI/XHorl5zXy9MFJimazjRdmYutX8YwbVlJiWpDWO2
+	ZsI2JlSVuhRq/3RWiyyQ1PZy9OsT9uAftWFIgu5dTdFpEvihLgHhc/UL3c86e0B5
+	MuSNjhiVgNh9fzDCfKiYW9rDfBVcGVI6frKjGId22x7QIJB9wU1CVucnCynDeVYV
+	dnDFatVUjkg+KvPG9rJJo/M5vHciaywKJ9eCtENK7QYskuAoj7Q8f/omgJrPG8m5
+	p3y+U6WQLD4VHe9eb4FxvA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733731333; x=
-	1733817733; bh=uYnTf+urMkAuBTorx2BTqGiCMWrBS4cNzY/BkhxJ8vk=; b=E
-	jKSgLh1FuTYxLDTSALhxsDF1ybQmgZWznbYFnoHxH2xyKPk1D+6AfXdGMLxOKaF6
-	MKakg/2gVrd+J3X/YEW8dPWdTADh8zNVOflhU2TI8xDFffImcaLcYX29WnYwFkMZ
-	kQjYRy+ktItssD7CV5mzOvONBPcZxx4ZfK20k3NdUBMb3K05V1knbovud0YAefO4
-	afGVQa/5J+UpLqY5M8tz2aO4fNNdRjAZwhzTDIa4yM4gggarRoSrlF4GGd2omCZh
-	xOTNiW2TDKEsa40O0y3FH2pG6g34qztaU32+eyiV/gHo/OlfoYaK2J54S1eJvgyx
-	raiiW9hwJx+WdeD5WJpgw==
-X-ME-Sender: <xms:BKRWZ5c_cZVSXPJyyvmpVhlgB8BXq-xuRxbfrBsUX_FoDM44cCsJ2Q>
-    <xme:BKRWZ3PZgzlUmqXeAKkVkaaqNrhUE7EtZArw2xLTqKTJ1aQgzs5atojFeJnM3zH7w
-    yZOwq3c9XWJZdhx>
-X-ME-Received: <xmr:BKRWZyhA5RmjXh-btpXFX83J6tBplMOFtODWqTs1tqQe9qY7Yj7GYUTW6mm_sEnZHs69nLq4mkOglKseRt7IJKGtesMl-AtkpKlv80g3JSKlyKLOu_Tn>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733731607; x=
+	1733818007; bh=nJ2TfVg6myUkiNygNGPlyFOd8lthy9lDT4fL1AZENhQ=; b=M
+	MvzIvd36Fgg4mLRPQeaI0XlW6iVBZLAWZ/4y2uO3aZwoBEODeTNCqHHvh3IIA6TB
+	fI9xlJ4yN748AK1QjRuNoB98EsaOTWsQd9ruoz2gVtncGAuto8ojYGGpcn9Yf5Xz
+	sKIitZXYliDmrQcRgZgDbwnQ4AE8LMVGzhS9I5tqcyNxp73qPi7w20o/6KAdYHad
+	JwL6inn2Q1nU5uEuwJ7MP6ERIsBJkSFQWHR6D4+sP599BtLWMfAZzzzCBuYBGGF/
+	jWskFhcc9C39cCOQPNOkPSXC82tMxIfiOYaWVtiDnhKnGu9kqu/yZP9jAp9mUNMP
+	a9l5bEbK+i/iY7em35w9g==
+X-ME-Sender: <xms:FqVWZ3hnN7wEaMwyek7ZX_6_8P_kaQytZpjF7Q8nb9JCNKbtES-o3A>
+    <xme:FqVWZ0D6IqWUwlYWruYv4Tfy_AZWQvWoej7XKurIwW5YakMnfMrpAeMIlrAQdmBTl
+    xiU8XGH6FZYbNqZ>
+X-ME-Received: <xmr:FqVWZ3FlGueUxsX25QuBbOX_7MOjVLmuMhR-v71BgZ_vtgUyanZPhTceNA1pLbKFs0BkyHR52dz9HZELC8i_NL-nLBN3x7aTSlPaiUziNRgZ_sZ1b4op>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeeggdduudeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
     necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnh
-    gurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeu
-    udejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgt
-    phhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghsmhhlrdhsih
-    hlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhrtghpthhtohepsghstghhuhgsvghrthesuggunh
-    drtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthht
-    oheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhfshguvg
-    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhoqdhurhhinhhg
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonh
-    hgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggr
-    rdgtohhm
-X-ME-Proxy: <xmx:BKRWZy-tAxjRtw_vBZNDr_S5dgFiauFW8eFnKUQxwNokk5tJmpeK7Q>
-    <xmx:BaRWZ1u7wCxabMcUiFaTXz_UTAxBu2-BruDBMqBcgAg27C5s-0gpag>
-    <xmx:BaRWZxEkLlm3zbnNOdJWi9HP6Q8Nts0gAdjF2szaLKYSDeBKAc3mlg>
-    <xmx:BaRWZ8MyVt0pNCF6opBdBMJCMs8bvQo_6JN0mI_hLL9XK6LdvVbgAw>
-    <xmx:BaRWZ-FpUKbG_xVUsnBMLRB1vg8FOYkeCgF_7BFtRDtXK1gb_Tv8Gxxd>
+    gurdgtohhmqeenucggtffrrghtthgvrhhnpedtuedvueduledtudekhfeuleduudeijedv
+    veevveetuddvfeeuvdekffejleeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhn
+    ugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepmhgrlhhtvgdrshgthhhrohgvuggvrhesthhngihiphdruggv
+    pdhrtghpthhtohepjhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgtohhmpd
+    hrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehk
+    vghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtohepmhhsii
+    gvrhgvughisehrvgguhhgrthdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgt
+    phgrnhgurgdrtghomhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilh
+    drtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomh
+X-ME-Proxy: <xmx:FqVWZ0QjcOQucFc5orcnzLPyoarq_iBttW73j29uHhdP_Mt1QT9uhg>
+    <xmx:FqVWZ0zgYbpoIlSebD-NWZ8ImhLPlwy3DPSqOAuaU7XAcHghF6Jg2w>
+    <xmx:FqVWZ65kJ3qqYEwL7jARYu5caHqKF9wuGljaks_OFYWGNS3-4pMl1w>
+    <xmx:FqVWZ5zDP47M1UhlKoWq3qPE341ZrnZ0UkmnrPvY6StcuroRY3kcig>
+    <xmx:F6VWZwedpHiRv5HK2OzXYTUyhUFp3zOuJWbo9VKUsWChhODLjkXqiw-1>
 Feedback-ID: i5c2e48a5:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 9 Dec 2024 03:02:11 -0500 (EST)
-Message-ID: <f31ac1c4-b37a-4adc-b379-3d9273aec4c1@bsbernd.com>
-Date: Mon, 9 Dec 2024 09:02:10 +0100
+ 9 Dec 2024 03:06:45 -0500 (EST)
+Message-ID: <0c7205c3-f2f2-4400-8b1c-3adda48fdeab@bsbernd.com>
+Date: Mon, 9 Dec 2024 09:06:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,62 +99,70 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 00/16] fuse: fuse-over-io-uring
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
-References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
- <57546d3d-1f62-4776-ba0c-f6a8271ee612@gmail.com>
- <a7b291db-90eb-4b16-a1a4-3bf31d251174@fastmail.fm>
- <eadccc5d-79f8-4c26-a60c-2b5bf9061734@fastmail.fm>
- <96af56e8-921d-4d64-8991-9b0e53c782b3@gmail.com>
+Subject: Re: silent data corruption in fuse in rc1
+To: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Miklos Szeredi <mszeredi@redhat.com>, Josef Bacik <josef@toxicpanda.com>,
+ Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Bernd Schubert <bschubert@ddn.com>
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
+ <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
+ <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <0d5ac910-97c1-44a8-aee7-56500a710b9e@linux.alibaba.com>
+ <804c06e3-4318-4b78-b108-12e0843c2855@tnxip.de>
 From: Bernd Schubert <bernd@bsbernd.com>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <96af56e8-921d-4d64-8991-9b0e53c782b3@gmail.com>
+In-Reply-To: <804c06e3-4318-4b78-b108-12e0843c2855@tnxip.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hi Malte,
 
-
-On 12/9/24 00:16, Pavel Begunkov wrote:
-> On 12/6/24 11:36, Bernd Schubert wrote:
->> On 12/3/24 15:32, Bernd Schubert wrote:
->>> On 12/3/24 15:24, Pavel Begunkov wrote:
->>>> On 11/27/24 13:40, Bernd Schubert wrote:
->>>>> [I removed RFC status as the design should be in place now
->>>>> and as xfstests pass. I still reviewing patches myself, though
->>>>> and also repeatings tests with different queue sizes.]
+On 12/9/24 07:42, Malte Schröder wrote:
+> On 09/12/2024 02:57, Jingbo Xu wrote:
+>> Hi, Malte
+>>
+>> On 12/9/24 6:32 AM, Malte Schröder wrote:
+>>> On 08/12/2024 21:02, Malte Schröder wrote:
+>>>> On 08/12/2024 02:23, Matthew Wilcox wrote:
+>>>>> On Sun, Dec 08, 2024 at 12:01:11AM +0100, Malte Schröder wrote:
+>>>>>> Reverting fb527fc1f36e252cd1f62a26be4906949e7708ff fixes the issue for
+>>>>>> me.     
+>>>>> That's a merge commit ... does the problem reproduce if you run
+>>>>> d1dfb5f52ffc?  And if it does, can you bisect the problem any further
+>>>>> back?  I'd recommend also testing v6.12-rc1; if that's good, bisect
+>>>>> between those two.
+>>>>>
+>>>>> If the problem doesn't show up with d1dfb5f52ffc? then we have a dilly
+>>>>> of an interaction to debug ;-(
+>>>> I spent half a day compiling kernels, but bisect was non-conclusive.
+>>>> There are some steps where the failure mode changes slightly, so this is
+>>>> hard. It ended up at 445d9f05fa149556422f7fdd52dacf487cc8e7be which is
+>>>> the nfsd-6.13 merge ...
 >>>>
->>>> I left a few comments, but it looks sane. At least on the io_uring
->>>> side nothing weird caught my eye. Cancellations might be a bit
->>>> worrisome as usual, so would be nice to give it a good run with
->>>> sanitizers.
->>>
->>> Thanks a lot for your reviews, new series is in preparation, will
->>> send it out tomorrow to give a test run over night. I'm
->>> running xfstests on a kernel that has lockdep and ASAN enabled, which
->>> is why it takes around 15 hours (with/without FOPEN_DIRECT_IO).
->>
->> I found a few issues myself and somehow xfstests take more
->> than twice as long right with 6.13 *and a slightly different kernel
->> config. Still waiting for test completion.
+>>>> d1dfb5f52ffc also shows the issue. I will try to narrow down from there.
+>>>>
+>>>> /Malte
+>>>>
+>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+>>> with 3b97c3652d91 as the culprit.
+>> Would you mind checking if [1] fixes the issue?  It is a fix for
+>> 3b97c3652d91, though the initial report shows 3b97c3652d91 will cause
+>> null-ptr-deref.
 >>
 >>
->> I have a question actually regarding patch 15 that handles
->> IO_URING_F_CANCEL. I think there there is a race in v7 and before,
->> as the fuse entry state FRRS_WAIT might not have been reached _yet_
->> and then io_uring_cmd_done() would not be called.
->> Can I do it like this in fuse_uring_cancel()
+>> [1]
+>> https://lore.kernel.org/all/20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com/
+> It does not fix the issue, still behaves the same.
 > 
-> A IO_URING_F_CANCEL doesn't cancel a request nor removes it
-> from io_uring's cancellation list, io_uring_cmd_done() does.
-> You might also be getting multiple IO_URING_F_CANCEL calls for
-> a request until the request is released.
 
-Perfect, thank you!
+could you give instructions how to get the issue? Maybe we can script it and I let 
+it run in a loop on one my systems?
 
+
+Thanks,
+Bernd
 
