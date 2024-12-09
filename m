@@ -1,105 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-36802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6289E97BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A63819E97B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74515188736E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B285188287F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846A91B0437;
-	Mon,  9 Dec 2024 13:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E4F1B041C;
+	Mon,  9 Dec 2024 13:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mg8eXtA2"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wKzci/M0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E419E1B0429
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 13:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1E01A238E;
+	Mon,  9 Dec 2024 13:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752028; cv=none; b=Hy/qCPF+h2ToXkqvcHzCdEmwr4KJ/rcpwQ42z4LOSxtJmQWCDx7bbMj1PZVhAauGHq067GMcz/9Ebg+0RlA/UkoSSzn77d+RsJSEB3l5GPA5JyAcb3IUF4+Bfy0T6uvBttvWsD7wfY/EkGp/HDSNIBQG9MRvoVQ+fvfBQFrb75k=
+	t=1733752019; cv=none; b=B/0WHGxxcMY3KYCxQOlIdXIU/VlQ6FLVtwq5wDbIPkTkTmQXD9qS1m0ruRpcJb4f19N9exHhAcpZPcGm/4teJ3OGyyN52DwLL+ykIi1gjt5CcxEJTQQDIUIcBqHUV47sj0Mcl9bxrTMXdw/FXr5cqZjXt7X5BSKLseP4gmcKqF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752028; c=relaxed/simple;
-	bh=PvLS6LmxlvyfDwzLueQmA4xs3kzwfsMeZR5YoqJ067U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NHHujIPsPwoGHyHMBQeMl59BnMi2c9zFFcH6x0GuwXKPFsVnK8lUJn9PAkeqVBGMG8ViCd5LsSxZ1yUH45lWlPKwJ1AbwbmX76ZAvAcCAmHcTDE29L+hUOlAJXD7feNtKwqwVEskGnhIm1WYvUFGJ5PR04sLoAZ2sTyyebVeNGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mg8eXtA2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7E9C4CEDE;
-	Mon,  9 Dec 2024 13:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733752026;
-	bh=PvLS6LmxlvyfDwzLueQmA4xs3kzwfsMeZR5YoqJ067U=;
-	h=From:Subject:Date:To:Cc:From;
-	b=Mg8eXtA2oVeXWMfcIafWyrXqoTZbbsAW42L81CMVnKpqY+UvlwBjhlj6elumTlNl4
-	 ZloDjKEllU8PzXZqQtUjODRDUj0lhcXOcq08RdwEXCllERlYUojqwU2s6DJsVkUOP4
-	 Zh4obNZaM5OcKJpIkvzZ5PqbPw2DokiH30fTG1Et5f9qtUBTh8aUAAfA3iLSeVnYvj
-	 Me5k/7CnflFO/kfQSLpWjAX7NyTEBs2tjeCOE3mGfXz4fh47fP2gqJzKPX/V+gMWNl
-	 SgeVijL5fZJW/molLAr2iLv9yvWEyXZcEFn5JEhrJDHBra/8T9oGrxGTpHhSEB2hFe
-	 nvtJR5B8YUFjw==
-From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH RFC v2 0/2] pidfs: use maple tree
-Date: Mon, 09 Dec 2024 14:46:56 +0100
-Message-Id: <20241209-work-pidfs-maple_tree-v2-0-003dbf3bd96b@kernel.org>
+	s=arc-20240116; t=1733752019; c=relaxed/simple;
+	bh=7YMcql3307lL7mtzM9GeKeg6x8rr1woEKBhM4L9q1YY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJOhfmibDoOYeUuuF4eINXd5JtZZ2mkDKSMoN+l1pG1sszoH733hAjTH9oGSUqZVN2ILkcDTvxK9qaP8Tdjy0HLgFnREhycUcB0u+eVgsUhxdxQDnxVii6DBDpmWRex/H9H0XQz+fjVayk08gwDJeJo/26GqGpkftzsiZh/2IJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wKzci/M0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=w43T1I6/sKwJscxNGbfJG/M/ns6oG3NjgCwcsgsn5ec=; b=wKzci/M0+tJjPJMVBnZLPgTW6a
+	gQ0H2/IbEZgQ212cFKxiI67Ey3pi4lT7duv3vIwB2y04YsEr92pdfx0aWKdU/4yVmOaqIFcpGH9Is
+	EjIxHi64qjRFHLWwuCN5auy0pEWLWC+owNk1M+sCEg6d9tN3+CBnkshw+Q1lW6L/tHv/5SGJqXS4e
+	zLwswz4JzBakMqKXAutVpypips45STjMrkTaTHpSmMVPuenOe3ZPca/u3u/7sFNvRY0Kf1TzRli1q
+	cYqXnnOJBFkt8sAKVhLMp9H3ygZCfGRLtHe25KSjCx+n4dBlAajd1XZDTR7sBaSTOOq2hFU8Q6GRS
+	nnV26qqA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKe6C-000000083to-3T6r;
+	Mon, 09 Dec 2024 13:46:56 +0000
+Date: Mon, 9 Dec 2024 05:46:56 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Erin Shepherd <erin.shepherd@e43.eu>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
+ operations as only supporting file handles
+Message-ID: <Z1b00KG2O6YMuh_r@infradead.org>
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+ <Z1D2BE2S6FLJ0tTk@infradead.org>
+ <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
+ <20241206160358.GC7820@frogsfrogsfrogs>
+ <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+ <Z1ahFxFtksuThilS@infradead.org>
+ <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAND0VmcC/4WOQQqDMBBFr1Jm3YiJNmJXhUIP0G2RkuhEgzbKR
- NIW8e6NXqDM6g/z3vwFPJJFD+fDAoTBeju6GMTxAHWnXIvMNjGDSEXORSrZe6SeTbYxnr3UNOB
- zJkSmMyGMOWVlqQuI7ERo7Gf3PuB+u0IVl1r5eEnK1d2mDFEhE54nu22jOuvnkb57mcB39s/fw
- FmculayyLiWhbn0SA6HZKQWqnVdf3/7RMnhAAAA
-X-Change-ID: 20241206-work-pidfs-maple_tree-b322ff5399b7
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, maple-tree@lists.infradead.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1030; i=brauner@kernel.org;
- h=from:subject:message-id; bh=PvLS6LmxlvyfDwzLueQmA4xs3kzwfsMeZR5YoqJ067U=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSHfbnxp+7o1v7XOdq1n5OdGYK+q5bHZR4N6k7293vEc
- GTZ2q3lHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZ9pnhf+0PDafq+bxbGRQf
- PCle+kpzx83kRV/kHm6reByzMVSg7BXDH+5/+g5h3DOYZht5qrz9fnUOS9MszdrArzExL5dVuv4
- x5QAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hey,
+On Mon, Dec 09, 2024 at 09:58:58AM +0100, Amir Goldstein wrote:
+> To be clear, exporting pidfs or internal shmem via an anonymous fd is
+> probably not possible with existing userspace tools, but with all the new
+> mount_fd and magic link apis, I can never be sure what can be made possible
+> to achieve when the user holds an anonymous fd.
+> 
+> The thinking behind adding the EXPORT_OP_LOCAL_FILE_HANDLE flag
+> was that when kernfs/cgroups was added exportfs support with commit
+> aa8188253474 ("kernfs: add exportfs operations"), there was no intention
+> to export cgroupfs over nfs, only local to uses, but that was never enforced,
+> so we thought it would be good to add this restriction and backport it to
+> stable kernels.
 
-Ok, I wanted to give this another try as I'd really like to rely on the
-maple tree supporting ULONG_MAX when BITS_PER_LONG is 64 as it makes
-things a lot simpler overall.
-
-As Willy didn't want additional users relying on an external lock I made
-it so that we don't have to and can just use the mtree lock.
-
-However, I need an irq safe variant which is why I added support for
-this into the maple tree.
-
-This is pullable from
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git work.pidfs.maple_tree
-
-Thanks!
-Christian
-
----
-Christian Brauner (2):
-      maple_tree: make MT_FLAGS_LOCK_IRQ do something
-      pidfs: use maple tree
-
- fs/pidfs.c                 | 52 +++++++++++++++++++++++++++-------------------
- include/linux/maple_tree.h | 16 ++++++++++++--
- kernel/pid.c               | 34 +++++++++++++++---------------
- 3 files changed, 62 insertions(+), 40 deletions(-)
----
-base-commit: 963c8e506c6d4769d04fcb64d4bf783e4ef6093e
-change-id: 20241206-work-pidfs-maple_tree-b322ff5399b7
+Can you please explain what the problem with exporting these file
+systems over NFS is?  Yes, it's not going to be very useful.  But what
+is actually problematic about it?  Any why is it not problematic with
+a userland nfs server?  We really need to settle that argumet before
+deciding a flag name or polarity.
 
 
