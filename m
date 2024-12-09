@@ -1,105 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-36734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6879E8C99
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 259699E8CF7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 09:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92981881BBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162E818868CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8D9215068;
-	Mon,  9 Dec 2024 07:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA50C215700;
+	Mon,  9 Dec 2024 08:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kFdV293R"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="aXrKLfYJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EjKSgLh1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E800214A64;
-	Mon,  9 Dec 2024 07:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41448215163;
+	Mon,  9 Dec 2024 08:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733730596; cv=none; b=DAUwyotUOX2b99dFGiIC9M3trF/Gr4qV9qMs/UAQ8ZD1W5Xq+MjuxryS38dCQeNXi9SEAsnXU9EPlIC9zRNz00mM+p2QPzGwi3KNIRGi7V3yC1hR/Cqm36fGE2jGH6BKpTCvMox9tEJWwuNX0+X/RCS6BGi3qaeMbLRsj89Ukhg=
+	t=1733731338; cv=none; b=eg2yXXAj6YZhYtx20SCWTo+DO8iy0rvPHTL0dVHBc6aIvfBWzAZI8jcIMbig+PXOCv9uUesioM51cuJxyfB6Qbsn57TGQH978nIv29C7LaTOzB6HWM8oG6EJjZQ/7CCjHIpf2yA00C7o2TDS1HhC2OaQqtFraTxBz4dz+TJW0u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733730596; c=relaxed/simple;
-	bh=5EFS2InPg2t3NJWSEh6nQPiSR6HZgWxCXmJAgXABqHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khurs/AJwDcter3w/t164ocuRJxp15nFof7a/veymZYPg09i714dTrvzIN0gxdR7EAyk5Rt3M2wzxZe+1zBC8FzfwDydXUvJDyuZ+jXiAMI9HHxm/BqRCrAcLCA6QeMeSapmRhvGCpCI1b4rX9gGhK0AmdswWigkOcDfK8Xfw44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kFdV293R; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OmWUSu3bZ9nMiHmrTjQz9XT/WaHo0p18xXNKxBDgGoo=; b=kFdV293Ri3XsiETHw6qp1L/ven
-	tu0zlgZxqg2itd3JpxhPBppLYWVfJk0TptPfu3jDrslxYrX7ElP1ehMdRlSkXKDyHu3mG2JWIudTo
-	N6s8D81wUhcbMVjHZOq9fIwVGQy5+BiMoD4oGPcV6b5ucHWiq59GqHanTXjkm6+Znbt0/7lW6qcyF
-	zgS/fjXH5vc+yJD3N21jr3/LkbDilbaRlKjG3rrYK+Yl5vJJOe4uKHJDb4fkK7ftlJyqnZbgGX+nu
-	CCGWmEnwd4M5KOryK5MgMLiX3nAQWd7TSum6MI02vEfT+9hfhlx5qChqPb9PDknw9Ox45r5zTH5e6
-	69XYPHxg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKYWV-00000006mEI-2tYU;
-	Mon, 09 Dec 2024 07:49:43 +0000
-Date: Sun, 8 Dec 2024 23:49:43 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	stable <stable@kernel.org>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <Z1ahFxFtksuThilS@infradead.org>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org>
- <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
- <20241206160358.GC7820@frogsfrogsfrogs>
- <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+	s=arc-20240116; t=1733731338; c=relaxed/simple;
+	bh=GlILRVtCUgPv60lF0m60GMmC5sHH96Oxu3ALnNgIEhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lpcwgEPTbZ9kP22VLkRv2GRMyPOpL1zo71P7Yuhs9BjoDZgxl/lejnC11iKoc1TF2+olGmhs9NjZhntoKuLgJgyBR00oMSoCN8pEZ51VZQaqgRZ0N4lBoKxjCgTFOaGerAUgFwSSX3KiRCp+b6VlaKthOjYs4dtC1LmZRcc9fOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=aXrKLfYJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EjKSgLh1; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id EC40A254011B;
+	Mon,  9 Dec 2024 03:02:13 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Mon, 09 Dec 2024 03:02:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733731333;
+	 x=1733817733; bh=uYnTf+urMkAuBTorx2BTqGiCMWrBS4cNzY/BkhxJ8vk=; b=
+	aXrKLfYJqkNkYz1HPiJXpk793SrId/5DH3sHkK/g1fn2l4+BJvCg3vxO+Aaeyn91
+	iNZUHOlLRR3PGWzbOW19kyfBxLS1pJ9qtI5jxqIeFj7wtwivMNltg81R/eRHebDZ
+	2BzzHgtc8z9rWNzq2tqmRm9axxGuvcVBBb5CjZF7XBCYOztLCk0PJBPdPT7ERYT7
+	RjgUqLfqn3j1rpSCC/6ot0VJL3orfiFxUKX5ik7l3pyUkcsBxwW6ZxzSkBE3p0uR
+	uWmmoDDq+Pl4hRAWMZng0K/8zke4EKAFKlMzLhq3QB4iHTErHh3szrPqDaNU+fU5
+	VkYUiO77xwOLyHA0aFFBFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733731333; x=
+	1733817733; bh=uYnTf+urMkAuBTorx2BTqGiCMWrBS4cNzY/BkhxJ8vk=; b=E
+	jKSgLh1FuTYxLDTSALhxsDF1ybQmgZWznbYFnoHxH2xyKPk1D+6AfXdGMLxOKaF6
+	MKakg/2gVrd+J3X/YEW8dPWdTADh8zNVOflhU2TI8xDFffImcaLcYX29WnYwFkMZ
+	kQjYRy+ktItssD7CV5mzOvONBPcZxx4ZfK20k3NdUBMb3K05V1knbovud0YAefO4
+	afGVQa/5J+UpLqY5M8tz2aO4fNNdRjAZwhzTDIa4yM4gggarRoSrlF4GGd2omCZh
+	xOTNiW2TDKEsa40O0y3FH2pG6g34qztaU32+eyiV/gHo/OlfoYaK2J54S1eJvgyx
+	raiiW9hwJx+WdeD5WJpgw==
+X-ME-Sender: <xms:BKRWZ5c_cZVSXPJyyvmpVhlgB8BXq-xuRxbfrBsUX_FoDM44cCsJ2Q>
+    <xme:BKRWZ3PZgzlUmqXeAKkVkaaqNrhUE7EtZArw2xLTqKTJ1aQgzs5atojFeJnM3zH7w
+    yZOwq3c9XWJZdhx>
+X-ME-Received: <xmr:BKRWZyhA5RmjXh-btpXFX83J6tBplMOFtODWqTs1tqQe9qY7Yj7GYUTW6mm_sEnZHs69nLq4mkOglKseRt7IJKGtesMl-AtkpKlv80g3JSKlyKLOu_Tn>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeeggdduudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnh
+    gurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeu
+    udejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgt
+    phhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghsmhhlrdhsih
+    hlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggvrhhnugdrshgthhhusggv
+    rhhtsehfrghsthhmrghilhdrfhhmpdhrtghpthhtohepsghstghhuhgsvghrthesuggunh
+    drtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthht
+    oheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhfshguvg
+    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhoqdhurhhinhhg
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonh
+    hgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggr
+    rdgtohhm
+X-ME-Proxy: <xmx:BKRWZy-tAxjRtw_vBZNDr_S5dgFiauFW8eFnKUQxwNokk5tJmpeK7Q>
+    <xmx:BaRWZ1u7wCxabMcUiFaTXz_UTAxBu2-BruDBMqBcgAg27C5s-0gpag>
+    <xmx:BaRWZxEkLlm3zbnNOdJWi9HP6Q8Nts0gAdjF2szaLKYSDeBKAc3mlg>
+    <xmx:BaRWZ8MyVt0pNCF6opBdBMJCMs8bvQo_6JN0mI_hLL9XK6LdvVbgAw>
+    <xmx:BaRWZ-FpUKbG_xVUsnBMLRB1vg8FOYkeCgF_7BFtRDtXK1gb_Tv8Gxxd>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Dec 2024 03:02:11 -0500 (EST)
+Message-ID: <f31ac1c4-b37a-4adc-b379-3d9273aec4c1@bsbernd.com>
+Date: Mon, 9 Dec 2024 09:02:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v7 00/16] fuse: fuse-over-io-uring
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <57546d3d-1f62-4776-ba0c-f6a8271ee612@gmail.com>
+ <a7b291db-90eb-4b16-a1a4-3bf31d251174@fastmail.fm>
+ <eadccc5d-79f8-4c26-a60c-2b5bf9061734@fastmail.fm>
+ <96af56e8-921d-4d64-8991-9b0e53c782b3@gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <96af56e8-921d-4d64-8991-9b0e53c782b3@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Dec 07, 2024 at 09:49:02AM +0100, Amir Goldstein wrote:
-> > /* file handles can be used by a process on another node */
-> > #define EXPORT_OP_ALLOW_REMOTE_NODES    (...)
+
+
+On 12/9/24 00:16, Pavel Begunkov wrote:
+> On 12/6/24 11:36, Bernd Schubert wrote:
+>> On 12/3/24 15:32, Bernd Schubert wrote:
+>>> On 12/3/24 15:24, Pavel Begunkov wrote:
+>>>> On 11/27/24 13:40, Bernd Schubert wrote:
+>>>>> [I removed RFC status as the design should be in place now
+>>>>> and as xfstests pass. I still reviewing patches myself, though
+>>>>> and also repeatings tests with different queue sizes.]
+>>>>
+>>>> I left a few comments, but it looks sane. At least on the io_uring
+>>>> side nothing weird caught my eye. Cancellations might be a bit
+>>>> worrisome as usual, so would be nice to give it a good run with
+>>>> sanitizers.
+>>>
+>>> Thanks a lot for your reviews, new series is in preparation, will
+>>> send it out tomorrow to give a test run over night. I'm
+>>> running xfstests on a kernel that has lockdep and ASAN enabled, which
+>>> is why it takes around 15 hours (with/without FOPEN_DIRECT_IO).
+>>
+>> I found a few issues myself and somehow xfstests take more
+>> than twice as long right with 6.13 *and a slightly different kernel
+>> config. Still waiting for test completion.
+>>
+>>
+>> I have a question actually regarding patch 15 that handles
+>> IO_URING_F_CANCEL. I think there there is a race in v7 and before,
+>> as the fuse entry state FRRS_WAIT might not have been reached _yet_
+>> and then io_uring_cmd_done() would not be called.
+>> Can I do it like this in fuse_uring_cancel()
 > 
-> This has a sound of security which is incorrect IMO.
-> The fact that we block nfsd export of cgroups does not prevent
-> any type of userland file server from exporting cgroup file handles.
+> A IO_URING_F_CANCEL doesn't cancel a request nor removes it
+> from io_uring's cancellation list, io_uring_cmd_done() does.
+> You might also be getting multiple IO_URING_F_CANCEL calls for
+> a request until the request is released.
 
-So what is the purpose of the flag?  Asking for a coherent name and
-description was the other bigger ask for me.
-
-> Maybe opt-out of nfsd export is a little less safer than opt-in, but
-> 1. opt-out is and will remain the rare exception for export_operations
-> 2. at least the flag name EXPORT_OP_LOCAL_FILE_HANDLE
->     is pretty clear IMO
-
-Even after this thread I have absolutely no idea what problem it tries
-to solve.  Maybe that's not just the flag names fault, and not of opt-in
-vs out, but both certainly don't help.
-
-> Plus, as I wrote in another email, the fact that pidfs is SB_NOUSER,
-> so userspace is not allowed to mount it into the namespace and
-> userland file servers cannot export the filesystem itself.
-> That property itself (SB_NOUSER), is therefore a good enough indication
-> to deny nfsd export of this fs.
-
-So check SB_NOUSER in nfsd and be done with it?
+Perfect, thank you!
 
 
