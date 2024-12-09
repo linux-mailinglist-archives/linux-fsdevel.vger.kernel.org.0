@@ -1,48 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-36717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50D69E8891
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 00:17:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EBC9E8918
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 03:02:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864502810AF
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2024 23:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5C01657F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 02:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735E2192D95;
-	Sun,  8 Dec 2024 23:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CA725777;
+	Mon,  9 Dec 2024 02:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBOuYUYH"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IhpvrTqd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFCF46B8;
-	Sun,  8 Dec 2024 23:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B17C219ED
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 02:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733699860; cv=none; b=ssFMLjWQ8UDx0MkEZ5xO3jo7UQpECRKBt5rxU1O0l2fFVgsmKQKks19FMU4mDE8FkdCf76ze+pFkNHT39kRTBuxsWN/A6mIh89jzkmIwTAqDvwh4FX9rMUwxr/yexU1J1JqiuOshvnCE4lBZKjosx+uxduvl+Z8qvdLeiOx1tEE=
+	t=1733709758; cv=none; b=XEiOT1bybY9XFcgE6fEILHD7Au2EaQngridXK+pVr1ETqPLe5Bv6g6Xa7nIODXbG5oV3+M9VYTu2RgNx74eDJ7Df8qUKe9IK00UKQqncHIu3+z7biShZqSn5IYjuAZLQUUYt1j1rKKQxVbGfLvexCL9pF8RJPdFED2U3JNtsywg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733699860; c=relaxed/simple;
-	bh=/L8g8tO4RPOphjeNT9uNxulIqwN2aVNs0eV1HPY/3Fg=;
+	s=arc-20240116; t=1733709758; c=relaxed/simple;
+	bh=ILNotJMB5YXF7BvbO9G9CHDrqrG8VL0cPmNloAezf0Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D60nfcIPupxjs0/7NgXlIMAB1dtreOB8Mk+ediURHB1XQLGT9tTd3VDPQ6Y953MLZB5ibwdC1gkB7qVetsEhwXy45ReJsPb8Im0hH0FV8M5VlMF1YRmCs7vCIOZq8GLWCPqRfmXZn78JKSRhHYplXFUoyl+9cQXHDA7PFtg+bVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBOuYUYH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC3EC4CED2;
-	Sun,  8 Dec 2024 23:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733699860;
-	bh=/L8g8tO4RPOphjeNT9uNxulIqwN2aVNs0eV1HPY/3Fg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mBOuYUYHh56oiJKTO96bGTJDqewWDia+lKa3+i7rxhJq+CRppjaFQZyMCE/TV0zzp
-	 uuU0GzPAQkF1w2luvafc+CsRAJGVVRySde2P0Q1lHK0VHY8huoRDrbFZsPCVm/uyoa
-	 8z/eiH42e/iceRxmHQvAtERqEbOFcGHfkhCaj0iiBr+d7A6xOxSqlvOPsdnFrz/be2
-	 8DqysO753xmLC5MKafyAhaICqfypfsJreRVyAqWClE17QDkKFTLwYIEJ2vmrCxOXUn
-	 feUFwWvg8eLHdTTIuVW1G6VWrbfRZwlCBh1ZyrsyZ5Cxcf68REicYLccqI3mBr+Bv6
-	 xWyJogunZGr/g==
-Message-ID: <901d37b0-d4c3-4ad2-b768-fc87d28c5a20@kernel.org>
-Date: Mon, 9 Dec 2024 08:17:38 +0900
+	 In-Reply-To:Content-Type; b=QvDYe4mD5nnk5W7f5elIy82eLjmyXY8rQE1Pd2zyNcEOM4kzQgvwJLSNe54ehRAxpjef/1k5MstdACxzlK/F7SSDCUEJH0sHCUJIkf1PQgRtCc1MznixtVul7zI0P/ev2pzPYPE3D6ZjTGo5DvR7eyTakQEo0lzD3nsdprfOzTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IhpvrTqd; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733709747; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=/cczKR0K4MpPpeDeA8HU2PnWHfInvz1P3gQ3ALA6BNU=;
+	b=IhpvrTqdL+ohUEOR0v9foMc6r7Ul/q4Fes4sVy40PhoRWjzA+BrIv0c2rgXB7XCrMEsBQoodeEq9JMnTueGnFlAZ9/oQqt6YPGosuKH7ZuehnhCVw+f8yuxF73/SQrFEyNLUx654BgYLkmGmW7XMvBKz0BrmcqVkz9O4KIai1eQ=
+Received: from 30.221.147.247(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WL1X9wA_1733709428 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Dec 2024 09:57:09 +0800
+Message-ID: <0d5ac910-97c1-44a8-aee7-56500a710b9e@linux.alibaba.com>
+Date: Mon, 9 Dec 2024 09:57:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,52 +48,60 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] zonefs: Fix the wrong format specifier
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: naohiro.aota@wdc.com, jth@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241111054126.2929-1-zhujun2@cmss.chinamobile.com>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: silent data corruption in fuse in rc1
+To: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Miklos Szeredi <mszeredi@redhat.com>, Josef Bacik <josef@toxicpanda.com>,
+ Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Bernd Schubert <bschubert@ddn.com>
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
+ <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
+ <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241111054126.2929-1-zhujun2@cmss.chinamobile.com>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/11/24 14:41, Zhu Jun wrote:
-> The format specifier of "signed int" in snprintf() should be "%d", not
-> "%u".
+Hi, Malte
 
-My apologies for the late reply.
+On 12/9/24 6:32 AM, Malte Schröder wrote:
+> On 08/12/2024 21:02, Malte Schröder wrote:
+>> On 08/12/2024 02:23, Matthew Wilcox wrote:
+>>> On Sun, Dec 08, 2024 at 12:01:11AM +0100, Malte Schröder wrote:
+>>>> Reverting fb527fc1f36e252cd1f62a26be4906949e7708ff fixes the issue for
+>>>> me.     
+>>> That's a merge commit ... does the problem reproduce if you run
+>>> d1dfb5f52ffc?  And if it does, can you bisect the problem any further
+>>> back?  I'd recommend also testing v6.12-rc1; if that's good, bisect
+>>> between those two.
+>>>
+>>> If the problem doesn't show up with d1dfb5f52ffc? then we have a dilly
+>>> of an interaction to debug ;-(
+>> I spent half a day compiling kernels, but bisect was non-conclusive.
+>> There are some steps where the failure mode changes slightly, so this is
+>> hard. It ended up at 445d9f05fa149556422f7fdd52dacf487cc8e7be which is
+>> the nfsd-6.13 merge ...
+>>
+>> d1dfb5f52ffc also shows the issue. I will try to narrow down from there.
+>>
+>> /Malte
+>>
+> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+> with 3b97c3652d91 as the culprit.
 
-A better fix is to make f "unsigned int" as that is consistent with
-g_nr_zones and the fact that up to "unsigned int" total number of zones are
-allowed for a zoned device.
+Would you mind checking if [1] fixes the issue?  It is a fix for
+3b97c3652d91, though the initial report shows 3b97c3652d91 will cause
+null-ptr-deref.
 
-Can you send a v2 ? Also please add a Fixes tag.
 
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> ---
->  fs/zonefs/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index faf1eb87895d..43c2f4a59b50 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -811,7 +811,7 @@ static int zonefs_readdir_zgroup(struct file *file,
->  	for (f = ctx->pos - 2; f < zgroup->g_nr_zones; f++) {
->  		z = &zgroup->g_zones[f];
->  		ino = z->z_sector >> sbi->s_zone_sectors_shift;
-> -		fname_len = snprintf(fname, ZONEFS_NAME_MAX - 1, "%u", f);
-> +		fname_len = snprintf(fname, ZONEFS_NAME_MAX - 1, "%d", f);
->  		if (!dir_emit(ctx, fname, fname_len, ino, DT_REG))
->  			break;
->  		ctx->pos++;
-
+[1]
+https://lore.kernel.org/all/20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com/
 
 -- 
-Damien Le Moal
-Western Digital Research
+Thanks,
+Jingbo
 
