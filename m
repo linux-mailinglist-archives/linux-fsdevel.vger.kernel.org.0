@@ -1,120 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-36791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF1B9E96B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:27:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31D616B1F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:23:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229381BEF65;
-	Mon,  9 Dec 2024 13:18:27 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838B09E96AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:27:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715921A238B;
-	Mon,  9 Dec 2024 13:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC75283DFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:27:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4681A23A9;
+	Mon,  9 Dec 2024 13:26:02 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F104233152;
+	Mon,  9 Dec 2024 13:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750306; cv=none; b=g8TyduTjwRNfYhEDwAj4ZVCYLQ0sjYNWwWXvNrXQTvIDd2Bufhe+XLCpbF/ixM0e5WRcgPGRDoT0c1Eks+p6BLcLYMtaMbhJhAmlzLpiplwbGNsdd2hLmcUigR/sDvuN4sB3yh5ofxN9QTZHlYszcLGEObr0QYLen7T+yEsc+us=
+	t=1733750761; cv=none; b=JKjyYySKaPEqsba9esCeWLFdSmIhMLjKE0C5v7/KIPfdv1Ilo4NkK+J65f1pXDq0iqOkMD28Zq0ZXDqjf6ubw7EVuoSOp/Ml3XeLCYKXon5l5syCBOOIbrtkNyBeykKsLfCc+LFxDhalcFf03HDmzD+GQpkvNLClHKmhVMkrZto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750306; c=relaxed/simple;
-	bh=Hdemvw6Baj4yVB7LxBoVj/o9obmxvG3nn5l0hCBx/OU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqmowgGh7O78Vifxa7B2m2gM4zWo7wBNFnfHPmDRr6rIMf1VSZLVHKMvlmbrnwUa6kHzRujteMGL8pxKhke9+iVGza47rf8Vegud/AFEZLoOxgagNXaESQbgPOCIu/Kv0p2Xzy312bPYbBrLuKn/guOCEBMiMSAKGE50mNJ0Ie8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AF3DA68D09; Mon,  9 Dec 2024 14:18:19 +0100 (CET)
-Date: Mon, 9 Dec 2024 14:18:19 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@meta.com>
-Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
-	anuj20.g@samsung.com, joshi.k@samsung.com,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv12 11/12] nvme: register fdp parameters with the block
- layer
-Message-ID: <20241209131819.GA16038@lst.de>
-References: <20241206221801.790690-1-kbusch@meta.com> <20241206221801.790690-12-kbusch@meta.com>
+	s=arc-20240116; t=1733750761; c=relaxed/simple;
+	bh=U7WT2680bhjBwC4CY3sluauSMaxZkMQj3tjTpWWnu0k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k28nXVFffvM8rTGx912IdswOpJ1KT4R8uf7ht2ie3GI88MsOHbtCouuFRXoQXznXWiQp09ujDHje95LuJPI0p+I0jLYAnZ8UdIHAXN2+7kdH3D9WDflf9sSM/ytdwStiqJ1/ho0jYXM6vq2IAwOpRnuSvk856sCUKdGHY+glcF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y6Mx80YRbz1V5xd;
+	Mon,  9 Dec 2024 21:22:52 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3AF9C140FEC;
+	Mon,  9 Dec 2024 21:25:55 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Dec
+ 2024 21:25:51 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<akpm@linux-foundation.org>, <Liam.Howlett@Oracle.com>,
+	<lokeshgidra@google.com>, <lorenzo.stoakes@oracle.com>, <rppt@kernel.org>,
+	<aarcange@redhat.com>, <ruanjinjie@huawei.com>, <Jason@zx2c4.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>
+Subject: [PATCH 0/2] userfaultfd: handle few NULL check inline
+Date: Mon, 9 Dec 2024 21:25:47 +0800
+Message-ID: <20241209132549.2878604-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206221801.790690-12-kbusch@meta.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-> +static int nvme_check_fdp(struct nvme_ns *ns, struct nvme_ns_info *info,
-> +			  u8 fdp_idx)
+Handle dup_userfaultfd() and anon_vma_fork() NULL check inline to
+save some function call overhead. The Unixbench single core process
+create has 1% improve with these patches.
 
-Maybe nvme_query_fdp_runs or something else that makes it clear this
-is trying to find the runs field might make sense to name this a little
-bit more descriptively.
+Jinjie Ruan (2):
+  userfaultfd: handle dup_userfaultfd() NULL check inline
+  mm, rmap: handle anon_vma_fork() NULL check inline
 
+ fs/userfaultfd.c              |  5 +----
+ include/linux/rmap.h          | 12 +++++++++++-
+ include/linux/userfaultfd_k.h | 11 ++++++++++-
+ mm/rmap.c                     |  6 +-----
+ 4 files changed, 23 insertions(+), 11 deletions(-)
 
-
-> +{
-> +	struct nvme_fdp_config_log hdr, *h;
-> +	struct nvme_fdp_config_desc *desc;
-> +	size_t size = sizeof(hdr);
-> +	int i, n, ret;
-> +	void *log;
-> +
-> +	info->runs = 0;
-> +	ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIGS, 0, NVME_CSI_NVM,
-
-Overly long line here, and same for the second call below.
-
-> +			   (void *)&hdr, size, 0, info->endgid);
-
-And this cast isn't actually needed.
-
-> +	n = le16_to_cpu(h->numfdpc) + 1;
-> +	if (fdp_idx > n)
-> +		goto out;
-> +
-> +	log = h + 1;
-> +	do {
-> +		desc = log;
-> +		log += le16_to_cpu(desc->dsze);
-> +	} while (i++ < fdp_idx);
-
-Maybe a for loop makes it easier to avoid the uninitialized variable,
-e.g.
-
-	for (i = 0; i < fdp_index; i++) {
-		..
-
-> +	if (ns->ctrl->ctratt & NVME_CTRL_ATTR_FDPS) {
-> +		ret = nvme_query_fdp_info(ns, info);
-> +		if (ret)
-> +			dev_warn(ns->ctrl->device,
-> +				"FDP failure status:0x%x\n", ret);
-> +		if (ret < 0)
-> +			goto out;
-> +	}
-
-Looking at the full series with the next patch applied I'm a bit
-confused about the handling when rescanning.  AFAIK the code now always
-goes into nvme_query_fdp_info when NVME_CTRL_ATTR_FDPS even if
-head->plids/head->nr_plids is already set, and that will then simply
-override them, even if they were already set.
-
-Also the old freeing of head->plids in nvme_free_ns_head seems gone in
-this version.
-
-Last not but least "FDP failure" is probably not a very helpful message
-when it could come from about half a dozen different commands sent to
-the device.
+-- 
+2.34.1
 
 
