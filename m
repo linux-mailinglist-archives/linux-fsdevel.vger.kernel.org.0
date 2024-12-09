@@ -1,173 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-36845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8A89E9C9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:08:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4296D9E9CB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E4C281B83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0795282B3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E8B14BF92;
-	Mon,  9 Dec 2024 17:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18242143871;
+	Mon,  9 Dec 2024 17:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="rYleOkj8";
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="nMwDLmF1";
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="hUaKNxnO";
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="ovB5jcug"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="g2G2BVnp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7DD288CC
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 17:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8196813C83D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 17:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764077; cv=none; b=kxm6l5R3BTp3X0aAg6V+Cxv+uXPcHuwmYWiTJRlUvRXS2f981AeUd397lI3SQDsUwuApvEuneRZhFScH0lHhjAavFUkwXrDu+YzOHZwi816kXE0ZwczihYYOq2V3Ipb7zomUo7L9TUbYOezCupsRF6aROLsktBU+h5XwkaMbk0o=
+	t=1733764351; cv=none; b=MDAl1+NOMoKK0XC0LgRu2mpf5+ebaB20GBz7E8t3yeuOWhhilbv/2XK3qz0PHf9Sb/81/+Mv0uDtRZTJg4Go0W+QP7ttp7FN8NIqI+ET7N+LRtgexhZPT92LMh1RW6iGNTBmvMnz8xF1lorS4V40M+W0Y+N2YVPjbfczZ+Mix8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764077; c=relaxed/simple;
-	bh=NsAqgVZzvLpNkeyFCLY10pz5/VgllcfxTZSPP66t5fY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+9RYQ4qAI6Bh8qMvInmg6OXHFwEqg6eoSxqzVmV977rzkQzIyUp8NZFeqCaIwGbeRQJW4AWmZOixm6DU60f4y6RHB/l62RibBvJBj1/+HXIqmiqBW2q/USMZnvyzUh2udISmbvlPnVcp56IsbjGn8xdKJqvb2DQ5khDuB791cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=rYleOkj8; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=nMwDLmF1; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=hUaKNxnO; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=ovB5jcug; arc=none smtp.client-ip=49.12.77.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
-Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:3730:8d9c:b2ab:6810])
-	by mail.tnxip.de (Postfix) with ESMTPS id D7A17208CC;
-	Mon,  9 Dec 2024 18:07:49 +0100 (CET)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-vps-ed; t=1733764069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
-	b=rYleOkj8MJ6XRxdGPr5ocawU3p5SLlfkBlNByHbtz0gAjr0minvH6mJPr4SdO/MXvsiEcT
-	wU56Slq1jE/JDLAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
-	t=1733764069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
-	b=nMwDLmF1RMgawEupi0iW1yZFlz62wTgSx7UIbyavgWlkDySvsiisxX3CajxGMDM+PsCpeb
-	mt0DQnexl4iifAJXOgArvHZ/M+orvbkJLDqvEELQYYMwwf2k5crjndHBrypspYHDozc4ZE
-	ag4da1bFEVhwr5UDFRlkFqp1uhTptwc=
-Received: from [IPV6:2a04:4540:8c0e:b000:7a6a:1cd6:6bc8:cdd] (highlander.local [IPv6:2a04:4540:8c0e:b000:7a6a:1cd6:6bc8:cdd])
-	by gw.tnxip.de (Postfix) with ESMTPSA id 94B5B400490D7;
-	Mon, 09 Dec 2024 18:07:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
-	t=1733764069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
-	b=hUaKNxnO/0oOY3KUE6OjDzw3N8b31jLtgVW6BDHf5YJFKFp3CagnIasXpOgNabzhWkAeI+
-	gMS74VMPeFvSIXCIIMmLn9voTq8/IpL1e/Kd7sfIMxTXmKhMrKiaj0oOoVKp78foSzYkqm
-	C5WQoGGbGavmMeSjW5OS1D7FsutzKlU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-gw-ed; t=1733764069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
-	b=ovB5jcugFZ9QtuUAJr1zid8SZFwSQkdlWcLfyVBc6khsfotXhjlI7zA3Zyp1SnfciiDp3V
-	CAdRMfFCktPE+CBA==
-Message-ID: <4707aea6-addb-4dc3-96f7-691d2e94ab25@tnxip.de>
-Date: Mon, 9 Dec 2024 18:07:49 +0100
+	s=arc-20240116; t=1733764351; c=relaxed/simple;
+	bh=cOzd8+7H/GN0o1zps3NAZOOuJnioPUq6sgRKP597Lz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZMHTjDdZIGFwuVL+vfsq8Vc2Be5qBV59k3VxNWbnesCVzjdl0A0ul0OWpxJYxyoVLyb8W3DEofBR7tYwgvxE+izd95PdXD+e6aJhtbKYk5ypVma1B2gUt2DPDKrRdjZuiCxduO2lInxJJ0fKFAF5Z6516dSCtMLfWvv/bjO/xE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=g2G2BVnp; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso841987466b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 09:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733764347; x=1734369147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vaWyuI+1zfgRvLafZXYRvDDVpYcT2uiI1jU4yIWvFaI=;
+        b=g2G2BVnp/ZCX9zQOKJVBL4UQ7g1WMuWzYTZ3VIC8OvHT/E8XJpCT2fzbglAUes1nAj
+         3MuC2xtpwLl1IE1SzKEs+P+jK5vbpsfeVQSL+xso9TJ5mUAAUh8A6GKEp82jshbFLwVZ
+         WC6vr3X/wcrBQU85U2ah/SE6z6UrXhh6Mas7LaEnpGJWvflQ6N9I8dK0pSSsXN2r7pBd
+         0KvrPzgX0mAtbSmaNtL2YN4yUeeFfUFs6fRlFnPQhOeQ0JIS02nz2XbZuxvT3zq1J3RN
+         aOUioIf+DuYgpW8J5WkSgg0foDmx4ZvClvILOLG3encu5W97MVTXHgRv/iLWif3J5yjB
+         oYMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733764347; x=1734369147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vaWyuI+1zfgRvLafZXYRvDDVpYcT2uiI1jU4yIWvFaI=;
+        b=UjldH4pGMs7q+UYmgSValgIr+Xil4Bq3nkMZlCwN5bNpYERT2pLrvPncyrxwVQ/ZMU
+         IyXCT/G0B/W2j6AlCSCs/QWEvrnyZkYbOaVwRE77o61Kk0f3z6GMNioJryMXC7IN9/PI
+         oe5vv9mTIYSPVdMppbwkuOaK/hHSz2BWCKHsR/lY55/65KiQutiYTdEcqxQ3tUXlOva8
+         lncrpv5z5GZg8vf4IunXXLWF1F++bUMrW74pNaPRJv6ZP1DRt9ghUdD6M54CmvSN36ex
+         By81qr9CbBhCmUOujmAHuW2WFeDh2bbQ+dvg6389NyWvcvIO5lJ2HWpbGxcm6pcIG98B
+         ZluA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMrJNKwi6UMtnRDWIbXtuGY5N+r5FLvcLzJ5s/RIpXq8cKsrOqRQDDeyhK76UTVclVAKGO8RT6JLRv9EW8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3MenwS1rI8a6MUFBFfT0q4sltBo4nqusv5wS01b4PbHAnTaZy
+	R7m0EOM1HeZddJiL847DMB7gtp7wvK8CYHuHlC7B9Jkcf8qdUERsdU8jwTxLo2CUbmJCphv4Yhs
+	C/uYKPRm3kGCMJtbBs8DK4ehZ8WqE/fQX5thqKw==
+X-Gm-Gg: ASbGncsgVgLDZCCoEuH1McbiM5ocm+oc5zBrLu5H3pwlzsAX3l620cd85LXMHZo6Wvv
+	t4BPieXVIFKiXts6f611w47GJWBgZg+PO3STDqokiAci+7Wz1skYMNTJRQAOx
+X-Google-Smtp-Source: AGHT+IGjhgia80GwIq5GYW/J/My9MoNCTxyL/+qNp0qo2eVT8TVjbjcgPbng+OjrTZMWEUN4ktGPt5mr5dUK2s5wNHQ=
+X-Received: by 2002:a17:906:c38b:b0:aa6:7b34:c1a8 with SMTP id
+ a640c23a62f3a-aa69ce8deddmr107306866b.55.1733764346946; Mon, 09 Dec 2024
+ 09:12:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: silent data corruption in fuse in rc1
-To: Josef Bacik <josef@toxicpanda.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Miklos Szeredi <mszeredi@redhat.com>, Joanne Koong <joannelkoong@gmail.com>,
- linux-fsdevel@vger.kernel.org
-References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
- <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
- <Z1T09X8l3H5Wnxbv@casper.infradead.org>
- <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
- <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
- <20241209144948.GE2840216@perftesting>
- <Z1cMjlWfehN6ssRb@casper.infradead.org>
- <20241209154850.GA2843669@perftesting>
-Content-Language: en-US, de-DE
-From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
-In-Reply-To: <20241209154850.GA2843669@perftesting>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-99EL_s0rhz_A@mail.gmail.com>
+ <2128544.1733755560@warthog.procyon.org.uk>
+In-Reply-To: <2128544.1733755560@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 9 Dec 2024 18:12:15 +0100
+Message-ID: <CAKPOu+8LSKtGmtjwRpY9tMnt=1Y7RvrhDxVsfSRQW02_g5-6XA@mail.gmail.com>
+Subject: Re: [PATCH] nfs: Fix oops in nfs_netfs_init_request() when copying to cache
+To: David Howells <dhowells@redhat.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Dave Wysochanski <dwysocha@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/12/2024 16:48, Josef Bacik wrote:
-> On Mon, Dec 09, 2024 at 03:28:14PM +0000, Matthew Wilcox wrote:
->> On Mon, Dec 09, 2024 at 09:49:48AM -0500, Josef Bacik wrote:
->>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
->>>> with 3b97c3652d91 as the culprit.
->>> Willy, I've looked at this code and it does indeed look like a 1:1 conversion,
->>> EXCEPT I'm fuzzy about how how this works with large folios.  Previously, if we
->>> got a hugepage in, we'd get each individual struct page back for the whole range
->>> of the hugepage, so if for example we had a 2M hugepage, we'd fill in the
->>> ->offset for each "middle" struct page as 0, since obviously we're consuming
->>> PAGE_SIZE chunks at a time.
->>>
->>> But now we're doing this
->>>
->>> 	for (i = 0; i < nfolios; i++)
->>> 		ap->folios[i + ap->num_folios] = page_folio(pages[i]);
->>>
->>> So if userspace handed us a 2M hugepage, page_folio() on each of the
->>> intermediary struct page's would return the same folio, correct?  So we'd end up
->>> with the wrong offsets for our fuse request, because they should be based from
->>> the start of the folio, correct?
->> I think you're 100% right.  We could put in some nice asserts to check
->> this is what's happening, but it does seem like a rather incautious
->> conversion.  Yes, all folios _in the page cache_ for fuse are small, but
->> that's not guaranteed to be the case for folios found in userspace for
->> directio.  At least the comment is wrong, and I'd suggest the code is too.
-> Ok cool, Malte can you try the attached only compile tested patch and see if the
-> problem goes away?  Thanks,
+On Mon, Dec 9, 2024 at 3:46=E2=80=AFPM David Howells <dhowells@redhat.com> =
+wrote:
+> Does this fix the issue?
+
+The issue is with 6.11, but this patch fails to build with 6.11 and
+I'm not sure how to backport that part:
+
+ fs/nfs/fscache.c: In function =E2=80=98nfs_netfs_init_request=E2=80=99:
+ fs/nfs/fscache.c:267:50: error: =E2=80=98NETFS_PGPRIV2_COPY_TO_CACHE=E2=80=
+=99
+undeclared (first use in this function); did you mean
+=E2=80=98NETFS_RREQ_COPY_TO_CACHE=E2=80=99?
+   267 |                 if (WARN_ON_ONCE(rreq->origin !=3D
+NETFS_PGPRIV2_COPY_TO_CACHE))
+       |
+^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Our production machines are all 6.11, because 6.12 has that other
+netfs regression that freezes all transfers immediately
+(https://lore.kernel.org/netfs/CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=3Dgcmkz=
+wYSY4syqw@mail.gmail.com/).
+I guess this other bug only affects Ceph and not NFS, but after
+experiencing so many kernel regressions recently, I had to become more
+cautious with kernel updates (the past 2 months had more
+netfs/NFS/Ceph regression than the last 20 years combined).
+
+
 >
-> Josef
+> David
+> ---
+> nfs: Fix oops in nfs_netfs_init_request() when copying to cache
 >
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 88d0946b5bc9..c4b93ead99a5 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1562,9 +1562,19 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
->  		nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
->  
->  		ap->descs[ap->num_folios].offset = start;
-> -		fuse_folio_descs_length_init(ap->descs, ap->num_folios, nfolios);
-> -		for (i = 0; i < nfolios; i++)
-> -			ap->folios[i + ap->num_folios] = page_folio(pages[i]);
-> +		for (i = 0; i < nfolios; i++) {
-> +			struct folio *folio = page_folio(pages[i]);
-> +			unsigned int offset = start +
-> +				(folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
-> +			unsigned int len = min_t(unsigned int, ret, folio_size(folio) - offset);
+> When netfslib wants to copy some data that has just been read on behalf o=
+f
+> nfs, it creates a new write request and calls nfs_netfs_init_request() to
+> initialise it, but with a NULL file pointer.  This causes
+> nfs_file_open_context() to oops - however, we don't actually need the nfs
+> context as we're only going to write to the cache.
+>
+> Fix this by just returning if we aren't given a file pointer and emit a
+> warning if the request was for something other than copy-to-cache.
+>
+> Further, fix nfs_netfs_free_request() so that it doesn't try to free the
+> context if the pointer is NULL.
+>
+> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+> Reported-by: Max Kellermann <max.kellermann@ionos.com>
+> Closes: https://lore.kernel.org/r/CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-=
+99EL_s0rhz_A@mail.gmail.com/
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Trond Myklebust <trondmy@kernel.org>
+> cc: Anna Schumaker <anna@kernel.org>
+> cc: Dave Wysochanski <dwysocha@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: linux-nfs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/nfs/fscache.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+> index 810269ee0a50..d49e4ce27999 100644
+> --- a/fs/nfs/fscache.c
+> +++ b/fs/nfs/fscache.c
+> @@ -263,6 +263,12 @@ int nfs_netfs_readahead(struct readahead_control *ra=
+ctl)
+>  static atomic_t nfs_netfs_debug_id;
+>  static int nfs_netfs_init_request(struct netfs_io_request *rreq, struct =
+file *file)
+>  {
+> +       if (!file) {
+> +               if (WARN_ON_ONCE(rreq->origin !=3D NETFS_PGPRIV2_COPY_TO_=
+CACHE))
+> +                       return -EIO;
+> +               return 0;
+> +       }
 > +
-> +			len = min_t(unsigned int, len, PAGE_SIZE);
-> +
-> +			ap->descs[ap->num_folios + i].offset = offset;
-> +			ap->descs[ap->num_folios + i].length = len;
-> +			ap->folios[i + ap->num_folios] = folio;
-> +			start = 0;
-> +		}
->  
->  		ap->num_folios += nfolios;
->  		ap->descs[ap->num_folios - 1].length -=
-
-The problem persists with this patch.
-
-
-/Malte
-
+>         rreq->netfs_priv =3D get_nfs_open_context(nfs_file_open_context(f=
+ile));
+>         rreq->debug_id =3D atomic_inc_return(&nfs_netfs_debug_id);
+>         /* [DEPRECATED] Use PG_private_2 to mark folio being written to t=
+he cache. */
+> @@ -274,7 +280,8 @@ static int nfs_netfs_init_request(struct netfs_io_req=
+uest *rreq, struct file *fi
+>
+>  static void nfs_netfs_free_request(struct netfs_io_request *rreq)
+>  {
+> -       put_nfs_open_context(rreq->netfs_priv);
+> +       if (rreq->netfs_priv)
+> +               put_nfs_open_context(rreq->netfs_priv);
+>  }
+>
+>  static struct nfs_netfs_io_data *nfs_netfs_alloc(struct netfs_io_subrequ=
+est *sreq)
+>
 
