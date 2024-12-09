@@ -1,160 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-36810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94AF49E994A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:46:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C2F9E9973
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0CA1888E21
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47997167B7B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A091C5CB4;
-	Mon,  9 Dec 2024 14:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C21B424F;
+	Mon,  9 Dec 2024 14:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJpHo+HS"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="OoSJJJOE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861841B0430
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 14:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B2B35962
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 14:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755572; cv=none; b=fj3AtzsEWq4J0krGGYa1hRL7lG7ajcTLU/HBpJWkB7+Ug8oJ4bFfLTPh88gn+SMLXjUgh11fGdjYYmv9r3HRO8dHaVaG0feK8PM1zM22wXWk9zfsZJy2qRG1na/2cLawRWuJyvcWlpnT6YfIgJuLgQlcozuzXqM/Pz0nzJBKMHk=
+	t=1733755799; cv=none; b=lJ+PRF3In5k4gFxQnos1Kt84rekvYWsJr1nzjnDQhlaXKJ6YklGQlVveM0d5Co7qV7lmCJ0Ugr853jlbVl7b/NkAU3sD6t/L/T0OJMyWIxTGOKsbIBb0DlJihbXXKH9gZOISOI5YO/2r0lh9tSccRU9CkWfwtlO0j0s7JTQmaL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755572; c=relaxed/simple;
-	bh=gxoqf3V6MNwR8Jxtgxg0q1RTCN9bxCAoFnFNdWxak4w=;
-	h=From:In-Reply-To:References:To:cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=m2xgYaIYArzY6zB8bqRLrJvNF6XEQQ79i4mzzpFSr+x0Xo3NJo9FxQq4EtTIdgKv8V9R0jc8tc3Qt5aCB7DGC8dVfHvpl4p19rkqRrs+SpUQJmiBHPA0b+kz3kxQX4gC8wg8rjAO6uE4hFMEWRRCKaegZClzUjbZGHOTRvpkXIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJpHo+HS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733755569;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3G/ATOlFkQtH54MeWdYZh8GPQakhI+3TwZChdXPPqtI=;
-	b=DJpHo+HS1Da3ft4P8wiBHtWAuSVbf1LGbc4dRIy/VFdqHkzYHh2Y54e8gQ0Vi1kT+sX37n
-	S/1nu8NwPata9H9S6YkbAsh3prpxDTnb9lBv7xVpfW7eWpYv4ZOI2fE53IRPKEEFTbwv2w
-	ZkB5Zp57bWY+WOMNId7HaqxJgtNo5ig=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-171-THTru4SJMFGT1J6xnwPHdQ-1; Mon,
- 09 Dec 2024 09:46:06 -0500
-X-MC-Unique: THTru4SJMFGT1J6xnwPHdQ-1
-X-Mimecast-MFC-AGG-ID: THTru4SJMFGT1J6xnwPHdQ
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC9B2195607D;
-	Mon,  9 Dec 2024 14:46:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EE361195605A;
-	Mon,  9 Dec 2024 14:46:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-99EL_s0rhz_A@mail.gmail.com>
-References: <CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-99EL_s0rhz_A@mail.gmail.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-cc: dhowells@redhat.com, Trond Myklebust <trondmy@kernel.org>,
-    Anna Schumaker <anna@kernel.org>,
-    Dave Wysochanski <dwysocha@redhat.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] nfs: Fix oops in nfs_netfs_init_request() when copying to cache
+	s=arc-20240116; t=1733755799; c=relaxed/simple;
+	bh=1DD/VPS3YedT9wXVboebKxspdQ2Cly2cWtlepqqpCW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKwQ4gjvZtChuO8guW45xQt6kZWsdkhLbL7EIwM/hKJMgVcLU0Ozs56CbBYRyopSey/XfGNXKjHE4u2Pnf0RHYxXLPjD7JjaO796K43xkI8MqJ+0XzmptAhSVXzrgPOXo9ySOLnji9+93DE6ptUYWBmcZHG3CL3UwmVwFAcYdyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=OoSJJJOE; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b6c375b4f0so141114885a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 06:49:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1733755791; x=1734360591; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qbBQTxluzab7W0cWRxjXbWPKnKnd8xWDnNL0CWJ9Vls=;
+        b=OoSJJJOEmEBCKnAoDbXA4ycZwm3Jtzk6Tqns9DOjBfQgff1Xy72mOjmtqD6CNVoHXK
+         /umcqfZZFHwFNQiEPRxl3KGxnSvFgQAPsPz1U2IHleutV2IAh9lR2ZyINFow76q/DSw9
+         vKJzF/A0Na41RYwCnamrlIMbQ8Mujv1JzJmbWoGIgALZfkh4/mLO2EeD9FXc5jG89VU/
+         tii2picVBcZk7l1wY4fsZIbDczNhprD/WvETaNzLLv0afqUDf6UuCU+WgCPZGjxvkDb/
+         FRmvc51IwTMKLexfgagrxI7193fqG/qypDXH51gzQ5MHpXiPcGX6nEUkoVUD7eEYKZCy
+         jpMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733755791; x=1734360591;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbBQTxluzab7W0cWRxjXbWPKnKnd8xWDnNL0CWJ9Vls=;
+        b=jARZ8s/a0COgTs/mh/ZnvIfuwx0mOSieMTs/2a6jQy+bXiN4eeggKxZtrJYSAqZoKi
+         QFe5KZnRk5sAGXrAF8S6Ky5ph8JdZROXhR2greluwiqJxH4TBeNfRuA9piiT0FEQAF3P
+         x1HlQf63avdjCZ/8I7zJfDK9rQDIS4AcKEBz1lTkAFtc9zbflANH6qQHce+2BQew5P0H
+         7WQR1Nd+67m/LGZRNEKk50qetvWTlI55F6/3/XrLPuqE0efGF1GKqy251g+bUPpmhdrC
+         4/o760p+AAVpOxL4rt0jZyq1YgeWDsjFX5SyY7ixvc+VkeoLvC97Pli5of261LDxjRKb
+         NaGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxbe1K9gKzaqSv1g9nSDcaZACpGO9/NBxBJSkJ9MdzSwk1+zFviyXKkzBDGAfxz3KZvWICkoNc4bU9mYRO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjMdL5pc5vj1CGGBgDX0MAN3BgvCsQxF4YRkFqb30oFwFg7Sla
+	GvwjLJIxMXJdjcXv8bd6VpwdLu5YLUhw0oxmZ284+DH/0ViCyxQU7Zxk55koADc=
+X-Gm-Gg: ASbGncsRO4MDt6fBJWh6NczC7osd3ATx2f+Y/ssWiwv67aj8s5Lzaz5PmR9tNRKtjne
+	SXEdz3zMUI0TcOmgEmfHtmGQyjVduAh49pDpQR8avkGl6f0dDWLJ7Rfqw3rcnkHScOqdi0jJaqU
+	7UgLjl+uBQgHn39FulLzGq94Unx08ROyKlyL5b2ZNn5aJBnN0CpkYl4b4lGBKJ7ee+c9RAet8HV
+	GbFKYALbQBem1FyYvg2IAO2tn0hmgx/cBjI5TmxgXCyk0dtmP9l02N13tOZDS8WIAwyrmMyGMkH
+	5aX5wk2rfwE=
+X-Google-Smtp-Source: AGHT+IGY/LUBEPwYTnWytZrcN8aK4xcmbyphOlMfZwdxdihARYqzRenfKzrn+S7M8PfSrrYob6aW3g==
+X-Received: by 2002:a05:620a:294b:b0:7b1:168f:52f5 with SMTP id af79cd13be357-7b6bcbb2e1bmr1959046885a.57.1733755790872;
+        Mon, 09 Dec 2024 06:49:50 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a9e5ffsm446382985a.111.2024.12.09.06.49.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 06:49:50 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:49:48 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: silent data corruption in fuse in rc1
+Message-ID: <20241209144948.GE2840216@perftesting>
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
+ <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
+ <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2128543.1733755560.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 09 Dec 2024 14:46:00 +0000
-Message-ID: <2128544.1733755560@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
 
-Hi Max,
+On Sun, Dec 08, 2024 at 11:32:16PM +0100, Malte Schröder wrote:
+> On 08/12/2024 21:02, Malte Schröder wrote:
+> > On 08/12/2024 02:23, Matthew Wilcox wrote:
+> >> On Sun, Dec 08, 2024 at 12:01:11AM +0100, Malte Schröder wrote:
+> >>> Reverting fb527fc1f36e252cd1f62a26be4906949e7708ff fixes the issue for
+> >>> me.     
+> >> That's a merge commit ... does the problem reproduce if you run
+> >> d1dfb5f52ffc?  And if it does, can you bisect the problem any further
+> >> back?  I'd recommend also testing v6.12-rc1; if that's good, bisect
+> >> between those two.
+> >>
+> >> If the problem doesn't show up with d1dfb5f52ffc? then we have a dilly
+> >> of an interaction to debug ;-(
+> > I spent half a day compiling kernels, but bisect was non-conclusive.
+> > There are some steps where the failure mode changes slightly, so this is
+> > hard. It ended up at 445d9f05fa149556422f7fdd52dacf487cc8e7be which is
+> > the nfsd-6.13 merge ...
+> >
+> > d1dfb5f52ffc also shows the issue. I will try to narrow down from there.
+> >
+> > /Malte
+> >
+> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+> with 3b97c3652d91 as the culprit.
+> 
 
-Does this fix the issue?
+Willy, I've looked at this code and it does indeed look like a 1:1 conversion,
+EXCEPT I'm fuzzy about how how this works with large folios.  Previously, if we
+got a hugepage in, we'd get each individual struct page back for the whole range
+of the hugepage, so if for example we had a 2M hugepage, we'd fill in the
+->offset for each "middle" struct page as 0, since obviously we're consuming
+PAGE_SIZE chunks at a time.
 
-David
----
-nfs: Fix oops in nfs_netfs_init_request() when copying to cache
+But now we're doing this
 
-When netfslib wants to copy some data that has just been read on behalf of
-nfs, it creates a new write request and calls nfs_netfs_init_request() to
-initialise it, but with a NULL file pointer.  This causes
-nfs_file_open_context() to oops - however, we don't actually need the nfs
-context as we're only going to write to the cache.
+	for (i = 0; i < nfolios; i++)
+		ap->folios[i + ap->num_folios] = page_folio(pages[i]);
 
-Fix this by just returning if we aren't given a file pointer and emit a
-warning if the request was for something other than copy-to-cache.
+So if userspace handed us a 2M hugepage, page_folio() on each of the
+intermediary struct page's would return the same folio, correct?  So we'd end up
+with the wrong offsets for our fuse request, because they should be based from
+the start of the folio, correct?
 
-Further, fix nfs_netfs_free_request() so that it doesn't try to free the
-context if the pointer is NULL.
+I'm coming off of vacation so my brain isn't fully engaged yet, feel free to
+point and laugh at me if I'm wrong.  Thanks,
 
-Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Reported-by: Max Kellermann <max.kellermann@ionos.com>
-Closes: https://lore.kernel.org/r/CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-9=
-9EL_s0rhz_A@mail.gmail.com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Trond Myklebust <trondmy@kernel.org>
-cc: Anna Schumaker <anna@kernel.org>
-cc: Dave Wysochanski <dwysocha@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-nfs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/nfs/fscache.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-index 810269ee0a50..d49e4ce27999 100644
---- a/fs/nfs/fscache.c
-+++ b/fs/nfs/fscache.c
-@@ -263,6 +263,12 @@ int nfs_netfs_readahead(struct readahead_control *rac=
-tl)
- static atomic_t nfs_netfs_debug_id;
- static int nfs_netfs_init_request(struct netfs_io_request *rreq, struct f=
-ile *file)
- {
-+	if (!file) {
-+		if (WARN_ON_ONCE(rreq->origin !=3D NETFS_PGPRIV2_COPY_TO_CACHE))
-+			return -EIO;
-+		return 0;
-+	}
-+
- 	rreq->netfs_priv =3D get_nfs_open_context(nfs_file_open_context(file));
- 	rreq->debug_id =3D atomic_inc_return(&nfs_netfs_debug_id);
- 	/* [DEPRECATED] Use PG_private_2 to mark folio being written to the cach=
-e. */
-@@ -274,7 +280,8 @@ static int nfs_netfs_init_request(struct netfs_io_requ=
-est *rreq, struct file *fi
- =
-
- static void nfs_netfs_free_request(struct netfs_io_request *rreq)
- {
--	put_nfs_open_context(rreq->netfs_priv);
-+	if (rreq->netfs_priv)
-+		put_nfs_open_context(rreq->netfs_priv);
- }
- =
-
- static struct nfs_netfs_io_data *nfs_netfs_alloc(struct netfs_io_subreque=
-st *sreq)
-
+Josef
 
