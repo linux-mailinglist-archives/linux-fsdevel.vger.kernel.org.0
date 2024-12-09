@@ -1,165 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-36726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C00E9E8B89
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:33:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD9C9E8B9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DDFB2818EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 06:33:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574DA281697
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 06:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A6D171652;
-	Mon,  9 Dec 2024 06:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD952147FF;
+	Mon,  9 Dec 2024 06:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KD5Q8BpB"
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="GGhoYZKv";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="Z5KtUWBm";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="yLHIY8QZ";
+	dkim=neutral (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="TMHLkG1j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC5F14E2CF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 06:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136ED20FA9A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 06:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733725995; cv=none; b=flDOYxcN02vmkr7foDbMSTV7kaRZbtfA1HlHFmKBa/TTPWRV5dBrFKXIpxyjOz2pZAF9DK+l/7dhIe7ZPH3TFszjHJdOZJ6QmV7fF+bqV1bWIZtkc7/MWmnAHY2X+UiDSZoMT0HWsO8NOm/I3uz6hvz+bIjBIV74xzkMrJ0xMF0=
+	t=1733726602; cv=none; b=deSgZW1T6wBLr64Hoh3ViEe9wlz3AUuGL8yYw7guBZCYhP0+eBn/HZWcD90vXYXsYAX1FinuKkjbeENiFhWTsIhoBWM8U+imZtPxwrFG6xrHhodxijzCEMg5L7NUKFKHI8EVb2fFMOB+x+B7agYpz7tKZXJIyXGPNV1YaYqHruM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733725995; c=relaxed/simple;
-	bh=v5lqSpaik8NNl/iCzLIGkpDML++bCHAXy3UgahCcrEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfpPAwUp1xM+Z5hlkschvP9FE3omn8tZgLCFT0gg03Ho75mSppUpayvOtYrsfebXREUnWWdT6nrPU5TBMAvgn0LAOlS6URdNFeRLYriVtMgZ9eHKc8bc5T37yHrR2Yd1MGMLv7Iritl6Eq3Hk+D3ln+kzcybX5CarqIucnybyFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KD5Q8BpB; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a68480164so531859966b.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2024 22:33:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733725991; x=1734330791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VOk+oIrlKS7EPSal9AooL3XoldFT+tr0Q8LxBWhuiKg=;
-        b=KD5Q8BpBrW572RWLWlxuSgUfx9EtsB+lvbKb2Zh4nfAVMj+HMNSzagQW30Cbcn3DkF
-         xh7hfyWLF7CFFO60dDqyXef3RSeYQH8HvjeRgFgnOwhqDGYWtVO0lc+mFK7ZYO1BQT1+
-         RItN3Xt8QNEGjM6r+CaC+w0K0kfyhvLyOulshAYPpVJaW8KzriRqeceKsfMBXCnRZrEN
-         OjoRGR+XfbZ7wG6NiTjQAFRucXStHlTtTgq/b1JEgojzuraawwb6owjzArXMEZ50CXIf
-         V4z++TqwQ7D7atRaL9izchlkvFK/jJ81TGn8XWY9h+vgIdQPAv4fUk17QWTaLYFQe1Fk
-         1Lrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733725991; x=1734330791;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VOk+oIrlKS7EPSal9AooL3XoldFT+tr0Q8LxBWhuiKg=;
-        b=Tf5cC4unLSzP3Z+qpEE4fifwfxmPCcL8CqGCmwsbF692TcpAw9uG/I1saGeiOjQs4O
-         il950KHU8bwgowDte0/hZfeeOgcvf9V1FSQNaZfPSipSw6i7rSXhiWsKbu8Qtwa7Fp8N
-         8lEoAjcDo8I+Dw+zDtm0NSKoa+0eXDqQRlV8vdNBF3FBpXsCPkY5t0Q/K1i/6W2IxJ9Q
-         Xx4Or21aLvmIJlLMFUOBSddguVhvD/L8jjpPx4Q6kj3KsO3lTNBvYX+1HogFiY24qXFF
-         5aMzV9rnsAeElEmzj73emH2aNxDuTTD458oVYAvUV/ALl60EzNrMjMkT77OXsA6xPt1F
-         6+nw==
-X-Gm-Message-State: AOJu0Ywy3VQ44/4XaTZRDpXB/iJpFKb2Z+sEyUT+jXb+m2dK/yIBRgsU
-	DcdI4saaaG1lRGslo7SOj7ibRraxZXD6kf227871/GYHD1zt8b4W
-X-Gm-Gg: ASbGncsTwf5KjZGvr/YvZVbTkDWRQSTgDQEIuQkqh2ld7xZ5M1fY+oeV32mLZuidSsG
-	BSfw4+R3epv3FVl10reSTyIH0WljSFt6THPQL3CvKcoIMcQVW0nqIj1FPN7PqyRLQC5WVZ0I7yy
-	EKxtk9FiAAtHoxYHtAtlZAXY60XKVh+zjbFU58pH7kM9+oMlgR9+O+6Q1sYWldVe/nRw809BX+8
-	ENOISL/5z2oEjw6JPODjASUyLcnn33RSmvVQ6iIWbjF/3GP7vYsFXiAUM2/tCEKrw==
-X-Google-Smtp-Source: AGHT+IEREtB790RTuKm4qw/wGq328tdKHyj6YFrN2iB4XxoAWMJGb9uKtBmbSt73AxOubWs7qjzZ/A==
-X-Received: by 2002:a17:907:784e:b0:aa6:800a:1294 with SMTP id a640c23a62f3a-aa6800a1b9cmr334462666b.11.1733725991300;
-        Sun, 08 Dec 2024 22:33:11 -0800 (PST)
-Received: from f (cst-prg-82-171.cust.vodafone.cz. [46.135.82.171])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6701b08c2sm241537766b.124.2024.12.08.22.33.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:33:10 -0800 (PST)
-Date: Mon, 9 Dec 2024 07:33:00 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
-Message-ID: <gopibqjep5lcxs2zdwdenw4ynd4dd5jyhok7cpxdinu6h6c53n@zalbyoznwzfb>
-References: <20241209035251.GV3387508@ZenIV>
+	s=arc-20240116; t=1733726602; c=relaxed/simple;
+	bh=VLl24JjwUJIISsY5ZHirFSo4Tjf+de30AU9E/AZFcn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZqLHrYnr3hBtm4I2P1WVPUqqkYEcBbliDTmD51qQvCyu/nU0OZM3ax1ebVUNK3608YFgghyT44ZI5DKNXvs7AVErHfDpQybXpK6/mnOsJT4UiwH7atn2bjGeg1VY1LwyERQ3hkDxCZoQ6DHnN5RLrcY6BIGbznzNvewyP0N6LmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=GGhoYZKv; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=Z5KtUWBm; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=yLHIY8QZ; dkim=neutral (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=TMHLkG1j; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:808e:8168:83e7:b10])
+	by mail.tnxip.de (Postfix) with ESMTPS id 3FA98208CF;
+	Mon,  9 Dec 2024 07:43:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1733726586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WPaby7d1KNGnXuhnAhoPzjpDWoAOEwxOOxWLYqZGA24=;
+	b=GGhoYZKvm2H7Z03rbU4MNjWSg74qR5TsmfEW9GwU87+XlhQmYfhKZ1B13xZ4qmi/EnppF9
+	Ku31l5mx1FGWb/6x8p/QBYhO+SePnqTnbj5YyuJSYKEKq7AfsvKQ3RZHbqsnpV4dW0fCzU
+	5FtQeoNLOHoYgctQTpwvIyEQkl0cXys=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1733726586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WPaby7d1KNGnXuhnAhoPzjpDWoAOEwxOOxWLYqZGA24=;
+	b=Z5KtUWBmzgbwYGX4etrRfSYOz4U2FLlu4PKmDdD7R4iLT7ykXQCmqJ2GWNPa+Wm8LUvwHb
+	/wbqGLcPuJfP+eBw==
+Received: from [IPV6:2a04:4540:8c0e:b000:78f6:dfc8:70c7:7ba] (unknown [IPv6:2a04:4540:8c0e:b000:78f6:dfc8:70c7:7ba])
+	by gw.tnxip.de (Postfix) with ESMTPSA id EDFF4380EA9F4;
+	Mon, 09 Dec 2024 07:42:59 +0100 (CET)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1733726586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WPaby7d1KNGnXuhnAhoPzjpDWoAOEwxOOxWLYqZGA24=;
+	b=yLHIY8QZa7m/Qs6xE952f07QBp3vM7CTih7fD7YIiIAo64Q9EPaae9cYPfYTIYVCHsV0D5
+	OCOhObedgJvlspDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1733726586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WPaby7d1KNGnXuhnAhoPzjpDWoAOEwxOOxWLYqZGA24=;
+	b=TMHLkG1j/WvlZ4aCjqrgIfceadVvrK5a1K70fL/SK49XrrwGCPFo5syfGLZOKky/oC21UU
+	BqE+Y7eYcAyklIBxn2VwxfsUcDZC6/9501r7/WYbuH7vgPMNGervXGLNwRP1oJGIFAvW1w
+	2TlHhKcH8+uO51xbrzhLK9eV7jU4DBw=
+Message-ID: <804c06e3-4318-4b78-b108-12e0843c2855@tnxip.de>
+Date: Mon, 9 Dec 2024 07:42:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241209035251.GV3387508@ZenIV>
+User-Agent: Betterbird (Linux)
+Subject: Re: silent data corruption in fuse in rc1
+To: Jingbo Xu <jefflexu@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Miklos Szeredi <mszeredi@redhat.com>, Josef Bacik <josef@toxicpanda.com>,
+ Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Bernd Schubert <bschubert@ddn.com>
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
+ <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
+ <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <0d5ac910-97c1-44a8-aee7-56500a710b9e@linux.alibaba.com>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+In-Reply-To: <0d5ac910-97c1-44a8-aee7-56500a710b9e@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 03:52:51AM +0000, Al Viro wrote:
-> There's a bunch of places where we are accessing dentry names without
-> sufficient protection and where locking environment is not predictable
-> enough to fix the things that way; take_dentry_name_snapshot() is
-> one variant of solution.  It does, however, have a problem - copying
-> is cheap, but bouncing ->d_lock may be nasty on seriously shared dentries.
-> 
-> How about the following (completely untested)?
-> 
-> Use ->d_seq instead of grabbing ->d_lock; in case of shortname dentries
-> that avoids any stores to shared data objects and in case of long names
-> we are down to (unavoidable) atomic_inc on the external_name refcount.
->     
-> Makes the thing safer as well - the areas where ->d_seq is held odd are
-> all nested inside the areas where ->d_lock is held, and the latter are
-> much more numerous.
-
-Is there a problem retaining the lock acquire if things fail?
-
-As in maybe loop 2-3 times, but eventually take the lock to guarantee forward
-progress.
-
-I don't think there is a *real* workload where this would be a problem,
-but with core counts seen today one may be able to purposefuly introduce
-stalls when running this.
-
->     
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index b4d5e9e1e43d..78fd7e2a3011 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -329,16 +329,34 @@ static inline int dname_external(const struct dentry *dentry)
->  
->  void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry)
->  {
-> -	spin_lock(&dentry->d_lock);
-> +	unsigned seq;
-> +
-> +	rcu_read_lock();
-> +retry:
-> +	seq = read_seqcount_begin(&dentry->d_seq);
->  	name->name = dentry->d_name;
-> -	if (unlikely(dname_external(dentry))) {
-> -		atomic_inc(&external_name(dentry)->u.count);
-> -	} else {
-> -		memcpy(name->inline_name, dentry->d_iname,
-> -		       dentry->d_name.len + 1);
-> +	if (read_seqcount_retry(&dentry->d_seq, seq))
-> +		goto retry;
-> +	// ->name and ->len are at least consistent with each other, so if
-> +	// ->name points to dentry->d_iname, ->len is below DNAME_INLINE_LEN
-> +	if (likely(name->name.name == dentry->d_iname)) {
-> +		memcpy(name->inline_name, dentry->d_iname, name->name.len + 1);
->  		name->name.name = name->inline_name;
-> +		if (read_seqcount_retry(&dentry->d_seq, seq))
-> +			goto retry;
-> +	} else {
-> +		struct external_name *p;
-> +		p = container_of(name->name.name, struct external_name, name[0]);
-> +		// get a valid reference
-> +		if (unlikely(!atomic_inc_not_zero(&p->u.count)))
-> +			goto retry;
-> +		if (read_seqcount_retry(&dentry->d_seq, seq)) {
-> +			if (unlikely(atomic_dec_and_test(&p->u.count)))
-> +				kfree_rcu(p, u.head);
-> +			goto retry;
-> +		}
->  	}
-> -	spin_unlock(&dentry->d_lock);
-> +	rcu_read_unlock();
->  }
->  EXPORT_SYMBOL(take_dentry_name_snapshot);
->  
+On 09/12/2024 02:57, Jingbo Xu wrote:
+> Hi, Malte
+>
+> On 12/9/24 6:32 AM, Malte Schröder wrote:
+>> On 08/12/2024 21:02, Malte Schröder wrote:
+>>> On 08/12/2024 02:23, Matthew Wilcox wrote:
+>>>> On Sun, Dec 08, 2024 at 12:01:11AM +0100, Malte Schröder wrote:
+>>>>> Reverting fb527fc1f36e252cd1f62a26be4906949e7708ff fixes the issue for
+>>>>> me.     
+>>>> That's a merge commit ... does the problem reproduce if you run
+>>>> d1dfb5f52ffc?  And if it does, can you bisect the problem any further
+>>>> back?  I'd recommend also testing v6.12-rc1; if that's good, bisect
+>>>> between those two.
+>>>>
+>>>> If the problem doesn't show up with d1dfb5f52ffc? then we have a dilly
+>>>> of an interaction to debug ;-(
+>>> I spent half a day compiling kernels, but bisect was non-conclusive.
+>>> There are some steps where the failure mode changes slightly, so this is
+>>> hard. It ended up at 445d9f05fa149556422f7fdd52dacf487cc8e7be which is
+>>> the nfsd-6.13 merge ...
+>>>
+>>> d1dfb5f52ffc also shows the issue. I will try to narrow down from there.
+>>>
+>>> /Malte
+>>>
+>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+>> with 3b97c3652d91 as the culprit.
+> Would you mind checking if [1] fixes the issue?  It is a fix for
+> 3b97c3652d91, though the initial report shows 3b97c3652d91 will cause
+> null-ptr-deref.
+>
+>
+> [1]
+> https://lore.kernel.org/all/20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com/
+It does not fix the issue, still behaves the same.
 
