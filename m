@@ -1,237 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-36827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71719E99DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 16:03:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDCD9E99E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 16:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F41188953A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3A316875E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2161B0431;
-	Mon,  9 Dec 2024 15:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544BC1BEF88;
+	Mon,  9 Dec 2024 15:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VXf1vVWc";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YhOCYP5o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRbzKdkC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F77A233132
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 15:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756482; cv=fail; b=NA3NxPwb4YyrSTgnGXlAe9gopXACt74un+YAZ6iCYhJajoVa8oeiC5t2BPP7nhUE+mgGVEsUuTxdeMnkj3YmmMM9afHQBEUNJyH+INsGoIAvluCEuK4NFhcKbBuI0uZfBNEhYlADg6s8FlBd75Nor1Q3VgDD7hDBeaddEO165lg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756482; c=relaxed/simple;
-	bh=5yiAvvj2GIcz2/OQgmGbPTrgT77VLU700Be8ZY0AIPA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hZEQsQw7rs0jSRcckt5vKsnpMKIsj7tvRsKLuTaRtzvmlvXOBh9BDPU3h1hb7AhVkYJWpc8KQkcfR3H7xnIlh3SogXGZh0tNXKvXvWC9ay/ckp7cP54nB/fTfRzi7gAvzbaO/Y3p/G5FZnAwIDu+o1w2eqCtpkZ/673DMbISypU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VXf1vVWc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YhOCYP5o; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B99hEBQ004465;
-	Mon, 9 Dec 2024 15:01:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=2uqPcAAoFalxiamziUHsP82bb1jc8IkxAdlR/F9wZtE=; b=
-	VXf1vVWcv3bZqYYz/BiS/K8CRxv5/Z/Z1/h7Iaticw3JEcl+xHtIX7N+PxeVgrXd
-	/ud5d4yRtCPGaMQrTrEYMET0U/OEWR6hauFeUtuBx9rTSRq+lHGT2fLlJgO18o64
-	42kBCPqa/4BZiIFaT3MSfZ2oTsXEPyZyZbc9VqRIUq56iGMpRLCQFM6G9mGhsdYA
-	jlYJiXLBckdCJ+tntWMRd1tJUtCL6FcU4QUZQYkAGru4+CY/VyAoqAZMlrlyl75n
-	AZIII97rZ+rBhm6nioal21/hbPl5ErngfIX8lWpqVJYXlIQkg7xFArKGQmhtOTag
-	dzufC++lpHtFO9z0mWaARA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43dx5s0k7k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Dec 2024 15:01:04 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9DtkLN008679;
-	Mon, 9 Dec 2024 15:01:03 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43cct74h8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Dec 2024 15:01:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F+HNhGLwFKpFO9hkh5VzKWP7XThXRRpCl3GIysohGKDh5bH9dd88r068RTmxUVbr9C2YTrJ3DadC//AuBSza4h1QuP83R1l77rLbZQE1sjGPu5jMTEKRpU5BgDulj6WMLijPFYf0/aw9cHuNd8BoHfH1twAdiIoFm3UNWW5K1CJxaTwM1kuamWNvTYmSnTCkNR4TUfu+SiFRbHHvNVjAsO0m+elI+2pp8oDRkBTY6wp0B1VMLBmMJwS1/gL8t7VfV3nqXaqs3IZ9y+R9gaHAQDDpirbOktXTGC44tYT6YiMzbIXEGfqw3M3MMz0eicGo7VSSEJ4+yp6D6hcOEl2BKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2uqPcAAoFalxiamziUHsP82bb1jc8IkxAdlR/F9wZtE=;
- b=dSJ0yQhLbyCe1IY/RhiGOJDCRtsCe3U6F7cvxSnHJqHLt6GsOw6S/0592UQ0JsRlpsE1ZG1b8EcJRZYkRf0SaXUX/oQY3L1McDr4clfJmYXScEMjSs7PBwaByXmV0aqocSHM+JaKdXnUA7ndJIHGO+dzgzr9e2XBMew+RRGPxvXQQQsrs7MTbaDN3UYMFpepeghltekhipPP3yVsgFTFTp6eRXsGBQVr7v55looreTj1r3Q1WY2gOaNVjw5X0Zo/X8oBFvQPudOG/uT6B6Q/dKxcfVZ3Y5WJZfSYDQ6Vmb6Sc038PmTJj9UAL0Vgmd/kXgIiiOVIqvwRTmxh8SrsFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2uqPcAAoFalxiamziUHsP82bb1jc8IkxAdlR/F9wZtE=;
- b=YhOCYP5oVM2aeViBqhZjsw9CcsmVbMSzhSOzbrKLC50HD+J0hZfWYxXfKWJicia4PRzmshjwpU3ui6YuA6EPc5qtGbywVZek1e3Fg7bUP7cgwqSoj0dKrN8a32dQ7d6hZB1POrpKEM+yPqkF7hC67LK8xj3vVkUX6fW4dDaki/g=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by CO1PR10MB4433.namprd10.prod.outlook.com (2603:10b6:303:6e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
- 2024 15:01:00 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%7]) with mapi id 15.20.8230.016; Mon, 9 Dec 2024
- 15:01:00 +0000
-Message-ID: <6dc5c09f-e1a2-4296-93d7-b2cda471a73f@oracle.com>
-Date: Mon, 9 Dec 2024 10:00:58 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fstests: disable generic duperemove tests for NFS and
- others
-To: Christoph Hellwig <hch@infradead.org>, cel@kernel.org
-Cc: Zorro Lang <zlang@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20241208180718.930987-1-cel@kernel.org>
- <Z1b1d3AXTxNhunYj@infradead.org>
-Content-Language: en-US
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <Z1b1d3AXTxNhunYj@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH2PR18CA0059.namprd18.prod.outlook.com
- (2603:10b6:610:55::39) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CD412FB1B;
+	Mon,  9 Dec 2024 15:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733756511; cv=none; b=oCHZayK1BdzNwt/Uvm6BabqWxc8V0/FT23QCw/dKpRpRKoMVIenf021jHcrzKT8jq34b8l1+fE3n/2MmL/Zk85f6B4kTX9yFDDaJDhmUXlt6Wi++3IhaqUKtK9alIrMbEVxe8biasuy16+vpPUtujFpFovSXcNFaC6v9Enrurhw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733756511; c=relaxed/simple;
+	bh=mfvcDe7N+Ar77QJ+nGuU68km7qiz3Sp+f7HMKwLDSWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YjWfP36ABNGFB4ETYThXnXBPYGMw8kZQdQovNn48pPP53ozQ/V1zG5WQ3kLLV10HwmifXkudnqioy2TXHkXjkD85POrh4p18qqUHS0fz8HyRNcbT4suXtctsj3m0hnvGc+oP/ymDqrUNvtjpm4FilYr3W+1hCItpNf7ToPi8I0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRbzKdkC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D8DC4CED1;
+	Mon,  9 Dec 2024 15:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733756511;
+	bh=mfvcDe7N+Ar77QJ+nGuU68km7qiz3Sp+f7HMKwLDSWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JRbzKdkCTdys7dbWYvTn5AxORvWIMxPcIuw6C0u5pvYeVMmQed91KySsvPd9SHBjD
+	 gwNky0/5crEMFA4kxrrSQGvOkS20vqDTc71rqD9AU7gmTgK0VSwKZdxfQur/0W60Pe
+	 dkUBP0y2K7Rfobvj0rqJaJ6wCp+uOiAxNvsKZ7N/PWzLr2hT0Gb1n6frEssuTy6w9v
+	 xio4QJp6q58uoPWPOGbUMTaOL/w8dTkl8BJZxqBxCvILHfICF6AqMvvPMuM962bB8a
+	 Wc9NHywUUfwDP9tRh0GB/s3MI2uNYLyeM2xlg9PEnZ0oSnw3lMXY8AF5tmVIiPdFrh
+	 F0wVEJ/3jdXFw==
+Date: Mon, 9 Dec 2024 16:01:44 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+Message-ID: <Z1cGWBFm0uVA07WN@pollux.localdomain>
+References: <2024120925-express-unmasked-76b4@gregkh>
+ <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
+ <2024120954-boring-skeptic-ad16@gregkh>
+ <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
+ <2024120908-anemic-previous-3db9@gregkh>
+ <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
+ <2024120939-aide-epidermal-076e@gregkh>
+ <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
+ <2024120951-botanist-exhale-4845@gregkh>
+ <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|CO1PR10MB4433:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a0cc759-f413-468a-ad4b-08dd18624aef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzV0Zjh0RkhnOHFQcWVqV3NGQ2h1Q0pmcXF2L0xuVmhtcURiZ296U0pLTGEy?=
- =?utf-8?B?b0FLSUNjNUY2amo5aHkvYkxJRXhBQ3gvek1xMEtPQm1HOEhwUUs5VHVjOU4y?=
- =?utf-8?B?cVc1RDlWNFlJVzlXREVMSENYbmpHOXl5bXEyeWliajFScXMxb0xIZHhIeTRR?=
- =?utf-8?B?ZlJTdzRzdGZzODdacHEvVEpJaFpjaUtoT0hPZWl3MENkTXJLRGFnWWoyUEZz?=
- =?utf-8?B?dW5oQmJ6QVdpUEIwUWw2NGFGVUNHdTdTN0NyWTVGS21ScW1qdmk0dlNjbWNi?=
- =?utf-8?B?bHFHazhCZnloaERiQ2puUkxGSUJHWjllUXdjREVwR0JLYlkrcEYwQlRNSlRl?=
- =?utf-8?B?anpxbHVPZ0JkWjVXcUhRWUFBTFJ4cVd2MTdYRkpXWVFGY1dBSVlDaE9nVk8r?=
- =?utf-8?B?bHhUMHU3YjhvTVlxbmdhMENLaGd0NzZyVGpHYzdSLytLakVkS0lnNEpIZDlx?=
- =?utf-8?B?cXNoSmRWdnprTlVGSWhYbk8ybVdRYUFFdDVHWnFlV0tMK3ZXSUs5cUQyc3ps?=
- =?utf-8?B?a0VsK0ZkMVZHYlhwOFo3UllBeHEybVRBdnJEanFPZ0hmUnBiRDFPTHphM1BW?=
- =?utf-8?B?WThORTFvTExQY3poaEx1YTlmcVdmUjhUdzJ3aUdvUE92OWNUbCtlbThtb0ZG?=
- =?utf-8?B?T0ZXSW10MURIWFZ6dUoraUtMQ3VCL3NOM1RPcmNyZyswK0UxU1gvcm9COXBi?=
- =?utf-8?B?TzBqSEZ6M3oyYlVWaHhkdjk1a0Q4OTFxT2N1U3RIMkRiWGdxdDlMU3JlRFI0?=
- =?utf-8?B?TVBxWWxmVitXNnkrdUtYVTMyOXhkaU1UMFltQ0pkSDdhMkNvTk5kZGN0bk1J?=
- =?utf-8?B?S2FZenBRN0VRQ1dzV3V4VkUxZ3ZlbzViNG1ZNnpuclZxSXJpdi9GWjFGNm1W?=
- =?utf-8?B?TmtZSkorZmpSVVY2NE93QTk4emdzZWk0akFsWlQ5bVJlYURkU09uZlh0cWsr?=
- =?utf-8?B?WUgvSkNuL0k5RGp6NWR4TXFpZSsvc0lQQVA5U3BibXAyeHJQVnpYS3U4VnBR?=
- =?utf-8?B?eHA0dHJRZ1pNbkVvMFI2UjlxL0tHOTVFS1FpVjVsM2RvcVJyd2ljRENKbVV3?=
- =?utf-8?B?Mm1NL0lDVkkzWVVSY00vd2hMYi80M2xNZWVtWGVxRWk1MFlwdkh6cE8xQVUx?=
- =?utf-8?B?bDF2Z1pDeWt5WkNMajF6dG9PVEVHMHlUNUk0WjZkUk5mSVB3SVlBb0dNMnBM?=
- =?utf-8?B?MVAxeHJyM1FqSGZTQmZVQ3BxZ3licWdPenBlbHVCRzI2UjhnU0Y5MnpHTTlO?=
- =?utf-8?B?bEhsUDFXRThIT25xQ1RMYWlYSW1iT01JUWdnM0JleUNBb1RDRjR3bmhybERO?=
- =?utf-8?B?ZlZ6NGoxM3pmamhqaVViYXI0OVNTRnUyano1SVpYbjJ0RVVWT05yRkNEQUlT?=
- =?utf-8?B?dlF5Rm9sWXh3MUNUY2ZoQ1B1dmhMY01LbUUvTU1UUFV4bS9aNTZ3TVM4aDdt?=
- =?utf-8?B?dEhZbGRYRkQ0aFFWK3BlUjhSNk05bkNlelJTM3hNcnc2bEQ5YjM5YkdrQ2Fo?=
- =?utf-8?B?UW5xY0U4QTNpa2F0ZG9GUGN4RXVZaktyZm9KaUs3Q2xtZDU2YnBibWQvMlM4?=
- =?utf-8?B?eTNUUkd1aUtXc2c3alp5U2VvRVFwZ082eUpHSm9kZzNqOXJvd3dJRXpwT2c1?=
- =?utf-8?B?SXNtZXdvVyt2Rm1lVmZmb3AwY3RZQ21GWnFGd3NkUzRZdXdWejB3NzRkd0k3?=
- =?utf-8?B?elY0Zk9pckEyRTBkUUNGbzRRRGlqbU5RRTlldE5CUXpIZlB2cm4zdUdMejA3?=
- =?utf-8?B?OGE0WnVBait4TU0zK3AwWitiYndhL0M1YTdCT1h1bnREV2p1QmI1dklvWDA5?=
- =?utf-8?B?eHB4bDVaM3ByQzZKb2hkdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eHIwRUJJRUZqM1o4WXBPYmhUWkloRlM2QWd5L0hoN3BHbjVnUGpGSy8yREZW?=
- =?utf-8?B?ejQ3Sk10UktsNUt2VkhLU2dFbWxnTGxvTmJ5d3RvdDR4Y3dwV2xhRU95bHFz?=
- =?utf-8?B?WmZmSmhjQU43TkRXdGRhUXVzUmNYQzRCMW9TUFgzVlN6cll3aFhSK2puVWR5?=
- =?utf-8?B?S1gxbUNnVGYwR3FEa1JvTmtmYitINmx5SEtHZGdtSWk0eHg1TWFtM2RFZkNB?=
- =?utf-8?B?Sm9oU3dQOUhyNVRyNFRSRVBnWnBjUFZrdUd1R0llK1ZEOW81WXkwZDVvU2Zm?=
- =?utf-8?B?WXhzTzF4c3A0TnMyK1lRKzFwRElZUGhWV2h6Z2g0RkloamJlbCtXVTVJc1Bn?=
- =?utf-8?B?UTFWQWJXMDBkNmxFSGdrVHh0Q054RWxyak1oMTZZb1FwWFpDRGhIRHh5bmE2?=
- =?utf-8?B?MnVLS0JLU2hKU3d2WG45QndmOVhNeXo2UWZ2TWIwd2FFaHhpVVl4Y3gycTBO?=
- =?utf-8?B?WXl0RFNROUp0clNlUDZ3Y2FzTCtkc3VqWmVtUVJ1MW9xMUpGa1BLdjJWelpE?=
- =?utf-8?B?QVQ0TDZaODJlNXNXdGRMWk5pMm9FOFVwYUlXTHd3NGJjZjNJTk1xTUJEblBK?=
- =?utf-8?B?OERveS9najZ4QzVRVnpmYzBleWxMMktYTW91MWNOOGtIcVVKeDlSSjFVb01W?=
- =?utf-8?B?dUZEMjFGSjJCWTE4V0h1NUZxLzZmb2EvbU1UbVdwTllUblVvd3lRSGlPbXJ2?=
- =?utf-8?B?STJ3ZlVDSytPb2ZPTjhUcHExRGVaaHAyODlranZFc2pxT1JCMGU0cGVPV0hu?=
- =?utf-8?B?WnRSeGN4WFZneEpHZnBoOE1zN2VZb3d6ak03enMvTVdVNE00OHBUOGZPZ2R3?=
- =?utf-8?B?eTNYZSsrU3ppTmZHUFZxV0F2TXQ5dUk2czdDSFduVkh5U2pVczVjR003cFNi?=
- =?utf-8?B?MEgvaEdTeWE1UUVtWU5zc3k1ZVNYOUdnWkY0NUJLWSszNkNFSzk4WU43L3Mr?=
- =?utf-8?B?Yy8rTnI3d1JHQ3FFNnR1S1VsWG95RkN3aHJHOUxTcVh1ZStnU3U1VjhYK0M4?=
- =?utf-8?B?ZUNjVmRiemZweGJTejhMaFB4WXZZYUVhRWJPQlFGc1lpcm5sODFZWDdzSnY4?=
- =?utf-8?B?ZExQSlZuQkFUTFYrTEZzbWNzVENTMEM0RGZwd2JRR0FFeElRK3JSSlBtMGVJ?=
- =?utf-8?B?ekEvQWRMTS9uRXkxd1p6bUlYZC9EL1NXcnVYVHFiVERlSlluOHlDejJvdmZ1?=
- =?utf-8?B?c1ZGeDBnbzc4Z3lFcUVESjFLa1hJMjlWdHFLNndCSFJmay9PdzBmNzcrbTFu?=
- =?utf-8?B?NFJYWUxFZkF3bllIaU51bTRQam9aYnUybUtUN2hwbDF4OVB4aGtKRDFZbHV4?=
- =?utf-8?B?dHY4ekpoSCtUMnZhNWFRUGM3M0JCSlphU1R3RXhQVVZBM3Z5VkowNEJZVTJD?=
- =?utf-8?B?Qlpnb0FJS3kvbXhiODMyRHJ6eGUzU0lVdkJIUTB1WFZ2S0JHQnI3amdWSFpo?=
- =?utf-8?B?TVZ4T2NiOGxiRkx3MkZKYTdWZEVGanJEMGxiYkZEWUFmdXdXZTk0UmQyenFt?=
- =?utf-8?B?L1BMNGRPbU43SkVWSC8ycmpsVnc0M2FIU01MaStYRm1mWXlhaVhtek9VMXJq?=
- =?utf-8?B?QTJYL2doVFhaUDZWNWgvMGpkdWg0Z1plMkQ4V3VHWlJTRjQ5eUEwODR1cyt0?=
- =?utf-8?B?YW8wTHUweUVhZlRKeU14RWlmTUlxNmsrY3ZKTXJsa0prSWV5aFBVUzUraXc1?=
- =?utf-8?B?MkxIYzF3TGU0blhHQXhqOHNZYU55YVM1cC9xT2twdHZ2dE5BOVMzanlLQ1VQ?=
- =?utf-8?B?UVBpZzFYMHI2SFdqbzBFTkZDWTRoSHRXbCt2Wk5WNFk4UldBRXBMUDZZY0RN?=
- =?utf-8?B?T0M0MlNzbk9tSTZqZHNHUi9iby8vRDZlYnNZaDQ2STBCbW53cmt0QUFCSW8w?=
- =?utf-8?B?VHZHeGFGeWxKNlpzZjFKMDQrclkvZ3pCV2pkTVp2VjQzK3N4bVNrNlJUUFBT?=
- =?utf-8?B?d05seWMzZCtJODBxcHZBUWJmTFNremQyT1ZCdGh0Lzh0Wjg5VDRNc2E0Uysv?=
- =?utf-8?B?Lzl4LzNjb2Fuam5OekYrYTRmaTdjNHY3cVozbC8vcTdxREVDMU9oVmdGbGVs?=
- =?utf-8?B?MjlaNXdva2FXQXgyU3pnZmFKeU5XRGZCcTRINE4rb2VxY0liN0I4ZWlnNFE4?=
- =?utf-8?Q?P4SzfiH5t1CeWztRrfqfOA6fl?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	aiIlEw31ibjEn9sWE7siXB5VpuPfbW4N3EnZL3+rahORkYWKDlXbnwGN6iqOg49GrMH80bdkpUodA4TDddIYmew8MPqWD1jnjKVZdsCR5BgWZFu2Ki6iwpKNdNKQlApBWnpXwtKN3Y/xd2tnrDglFWPqLz/EWfH+4XthAIXXDfdDo4wrAKqT5Gy+iC7xjFJLXBAg4KIk8CKv9iYVJS4vF6ivnWAvtl17+xaNZRg2AfV0TcRvkMeFCWrC1o7tv8iS3OOZU448a33mZ734Rk1K3WASx+k9Xb+tfUqn0vMSDVwn+OcbGmB+p7nABXInjrrzlAGrTTFyyAIpavotEE9V+NWMHjqObqLoKDoc7EdMDKnrRTN4czVeb1hMyJq13kiCiQo1GssOYD954kj66wmee0vmoze7cELIFxmb1x8noKiWqqjuZB8mN9iSBwgp0CZx1bqdPAQFlmGexZFB1cb8QaAxO7wfVtA9QFDWhy7oKZ1AFv1ekf8UAXpzv0rCC7d3FFziNcvMQ4bf8J7hplVEbyiwrPnioDrsqrLOPeWJnXS63Y4517+QVEi1Tfw5i1/Rrua3jCuILuj+TnG2KtcP8rdMtyyH+650pwnLGEYwkss=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a0cc759-f413-468a-ad4b-08dd18624aef
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 15:01:00.1030
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DWtKe0hhFD/9+GqxV7APrBEIbaI474+Hm37EI5gfX6LiX6ygFbcRnj8LqqykvgyyLk17cDaZSNCmMdw4L9wuDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4433
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_11,2024-12-09_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
- malwarescore=0 mlxlogscore=935 bulkscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412090117
-X-Proofpoint-ORIG-GUID: QaIyrV7O7rGav9hmQNjzw5bPWbJnNgYx
-X-Proofpoint-GUID: QaIyrV7O7rGav9hmQNjzw5bPWbJnNgYx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
 
-On 12/9/24 8:49 AM, Christoph Hellwig wrote:
->> +_supported_fs btrfs xfs
+On Mon, Dec 09, 2024 at 02:36:31PM +0100, Alice Ryhl wrote:
+> On Mon, Dec 9, 2024 at 2:13 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Dec 09, 2024 at 01:53:42PM +0100, Alice Ryhl wrote:
+> > > On Mon, Dec 9, 2024 at 1:08 PM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
+> > > > > On Mon, Dec 9, 2024 at 12:53 PM Greg Kroah-Hartman
+> > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > >
+> > > > > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
+> > > > > > > On Mon, Dec 9, 2024 at 12:10 PM Greg Kroah-Hartman
+> > > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
+> > > > > > > > > On Mon, Dec 9, 2024 at 9:48 AM Greg Kroah-Hartman
+> > > > > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
+> > > > > > > > > > > Providing access to the underlying `struct miscdevice` is useful for
+> > > > > > > > > > > various reasons. For example, this allows you access the miscdevice's
+> > > > > > > > > > > internal `struct device` for use with the `dev_*` printing macros.
+> > > > > > > > > > >
+> > > > > > > > > > > Note that since the underlying `struct miscdevice` could get freed at
+> > > > > > > > > > > any point after the fops->open() call, only the open call is given
+> > > > > > > > > > > access to it. To print from other calls, they should take a refcount on
+> > > > > > > > > > > the device to keep it alive.
+> > > > > > > > > >
+> > > > > > > > > > The lifespan of the miscdevice is at least from open until close, so
+> > > > > > > > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
+> > > > > > > > >
+> > > > > > > > > How is that enforced? What happens if I call misc_deregister while
+> > > > > > > > > there are open fds?
+> > > > > > > >
+> > > > > > > > You shouldn't be able to do that as the code that would be calling
+> > > > > > > > misc_deregister() (i.e. in a module unload path) would not work because
+> > > > > > > > the module reference count is incremented at this point in time due to
+> > > > > > > > the file operation module reference.
+> > > > > > >
+> > > > > > > Oh .. so misc_deregister must only be called when the module is being unloaded?
+> > > > > >
+> > > > > > Traditionally yes, that's when it is called.  Do you see it happening in
+> > > > > > any other place in the kernel today?
+> > > > >
+> > > > > I had not looked, but I know that Binder allows dynamically creating
+> > > > > and removing its devices at runtime. It happens to be the case that
+> > > > > this is only supported when binderfs is used, which is when it doesn't
+> > > > > use miscdevice, so technically Binder does not call misc_deregister()
+> > > > > outside of module unload, but following its example it's not hard to
+> > > > > imagine that such removals could happen.
+> > > >
+> > > > That's why those are files and not misc devices :)
+> > >
+> > > I grepped for misc_deregister and the first driver I looked at is
+> > > drivers/misc/bcm-vk which seems to allow dynamic deregistration if the
+> > > pci device is removed.
+> >
+> > Ah, yeah, that's going to get messy and will be a problem if someone has
+> > the file open then.
+> >
+> > > Another tricky path is error cleanup in its probe function.
+> > > Technically, if probe fails after registering the misc device, there's
+> > > a brief moment where you could open the miscdevice before it gets
+> > > removed in the cleanup path, which seems to me that it could lead to
+> > > UAF?
+> > >
+> > > Or is there something I'm missing?
+> >
+> > Nope, that too is a window of a problem, luckily you "should" only
+> > register the misc device after you know the device is safe to use as
+> > once it is registered, it could be used so it "should" be the last thing
+> > you do in probe.
+> >
+> > So yes, you are right, and we do know about these issues (again see the
+> > talk I mentioned and some previous ones for many years at plumbers
+> > conferences by different people.)  It's just up to someone to do the
+> > work to fix them.
+> >
+> > If you think we can prevent the race in the rust side, wonderful, I'm
+> > all for that being a valid fix.
 > 
-> This is not how generic tests works.   They need a helper in common
-> to check if a feature is present or not, which then probes for the
-> feature.
+> The current patch prevents the race by only allowing access to the
+> `struct miscdevice` in fops->open(). That's safe since
+> `file->f_op->open` runs with `misc_mtx` held. Do we really need the
+> miscdevice to stay alive for longer? You can already take a refcount
+> on `this_device` if you want to keep the device alive for longer for
+> dev_* printing purposes, but it seems like that is the only field you
+> really need from the `struct miscdevice` past fops->open()?
 
-Someone who has knowledge of the interfaces and facilities that
-duperemove depends on will need to construct such a helper. I can
-only guess.
+Good point, I also can't really see anything within struct miscdevice that a
+driver could need other than `this_device`.
 
+How would you provide the `device::Device` within the `MiscDevice` trait
+functions?
 
-> We should figure out what the issue is here first before
-> doing hacks like that as well.
+If we don't guarantee that the `struct miscdevice` is still alive past open() we
+need to take a reference on `this_device` in open().
 
-To be clear, there are two issues:
+I guess the idea would be to let `MiscDeviceRegistration` provide a function to
+obtain an `ARef<device::Device>`?
 
-1. Dave's report of unreliability on filesystems where it still makes
-sense to use duperemove, and
-
-2. How to disable this test on filesystems (like NFS) where duperemove
-is not supported or where the test is not meaningful. The current check
-for the presence of the duperemove executable is IMO inadequate.
-
-For now I've expunged these three tests from the NFSD CI workflow.
-
-
--- 
-Chuck Lever
+> 
+> Alice
+> 
 
