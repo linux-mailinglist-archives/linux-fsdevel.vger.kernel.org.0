@@ -1,123 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-36792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93EA9E96AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:27:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DBE9E9732
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:35:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E103283D7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:27:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFCD1883434
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CD823314F;
-	Mon,  9 Dec 2024 13:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4F71A238F;
+	Mon,  9 Dec 2024 13:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eav4163b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392BD233153;
-	Mon,  9 Dec 2024 13:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED933597C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 13:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750761; cv=none; b=VfeEkQR+Ms3bRwetGUtUKn1UnEhsvtzl3JEniYfTsVuDBpz/+8j/n5ibviZseLb3OGPPlQHoLTEFvu2Nff6DRr0QIPZjt7qbyoudQ1sawXeHQUFWMlltHAOkmmy/eTTenlnpcDULSH29MyPKXOhXNH3Nmd/Y88QPEpGrZBcnYNg=
+	t=1733751090; cv=none; b=ARlOncYo1LHZF5r2sd600Ih6r6FEaAHpcmEJ7+G2YivgR02n2NSwkXVtvdr/Jt+b/rpNhh5Lxe3NIYM/p3okTXqT5IanKa6hHTFO7NGtvZq/A6x7PlA2pRqsB+LowmvLoLpy8BfzdfvXnFtPI9RxFa7aEplBiLNzuqR9/fYnnLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750761; c=relaxed/simple;
-	bh=q5iRf9+iTy7eh/uc4yTUvIHuvCdako30zLorEZSu/tM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HTPwmbFKIvPyDm4DB07hXnGzaxR7L0Srv9HO3m6rPsE72FhpQa3JpeKH/DAL0TrjjoTkZrku70KgyuzUHIo8iYfXYo2qdiL36oypD79RMv9/DXSXe+ojuNg/NsVpfQy4N26s90nmm2rv5720EsaDub6wWTqTuT5erp/HVv2YMJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y6N0R2QZwz1JDvw;
-	Mon,  9 Dec 2024 21:25:43 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6AC0A14011D;
-	Mon,  9 Dec 2024 21:25:56 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Dec
- 2024 21:25:55 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<akpm@linux-foundation.org>, <Liam.Howlett@Oracle.com>,
-	<lokeshgidra@google.com>, <lorenzo.stoakes@oracle.com>, <rppt@kernel.org>,
-	<aarcange@redhat.com>, <ruanjinjie@huawei.com>, <Jason@zx2c4.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>
-Subject: [PATCH 2/2] mm, rmap: handle anon_vma_fork() NULL check inline
-Date: Mon, 9 Dec 2024 21:25:49 +0800
-Message-ID: <20241209132549.2878604-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241209132549.2878604-1-ruanjinjie@huawei.com>
-References: <20241209132549.2878604-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1733751090; c=relaxed/simple;
+	bh=ftTBkUoM2LcsGeAp9168BTi0yYIu6Ei50+DC8gomF3g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fO/PlmDBy0oJNAaXD1IUBF2TTMFV2sVPV95la1z/4tR/A1PUzoYKD6WcZgnND1muaZ4Qo+F9rlojWNbdh466IkrGpf22AGQR2wOanzDH3iDjvDsU65xVdpVYbG3wqhyWWuVJixqcXUE3+8WxcCHbEIxqzEH+IuXWLx+RsA+kcbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eav4163b; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa69251292dso127053766b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 05:31:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733751085; x=1734355885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftTBkUoM2LcsGeAp9168BTi0yYIu6Ei50+DC8gomF3g=;
+        b=eav4163bKLVCrPUzdJn2t6pP0npxxYcNFWQ7XABtjftU9OfbNpiJ7k4k2omG0DajVi
+         v3vXyRwCsvblR8EyhnRHYJtIWVxageQiA3dTIp4R53NAqeNI/9ZU02OqCiw9ax31t5pM
+         KkzOHe/gBvOVcUiAaViftb9Wbj9yuU4LpykbyKrveKQcsmxhZafVPgcg0Scs+ZxCNSeS
+         Ski9zY/rTdN/SCBYG1Upoz9gb8jzL802cQmEGHH7jocRpIC2MR1FKufjXigVdovmb6EB
+         gNScHhiCnQdKP/juqshHE74bwNpunczm2W4sjy6HRSJX/Ebv8OOBdog1NmxyYckRENfz
+         u7NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733751085; x=1734355885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ftTBkUoM2LcsGeAp9168BTi0yYIu6Ei50+DC8gomF3g=;
+        b=UKKADKmJd+JljRMhb7ojM5ZdpVr1+RpvWf0u0CSLpUy15d+E7Kw3w1QoJC/Fn0EpHR
+         GBsmzxN63P8ZNhA6T7+5tvNG8HNzHUEKgXOt5C2WVHmoMmIysFDV2bWLnAI/3zjlfxtj
+         Rnkf2Uu9jvJRhcIZEfGS72EO6R5Dz6rEh24lPu9hUlWyIQIDc2Ox64AFBFsFPapPwXFQ
+         FrRRXOmLZFNOUPJt0d+O+sK95OgiI7BZ8Shi01JvZj6113GsOAP9wVNKeZo5+9sJk0jH
+         LDJkT2m0t0hdTRGERCUhQCPuWlrvFHUBZxMEFe+vePK9s2zD0jh4HmeAkzkD3GvJEzMB
+         3hsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhN+h69xmQpt5MaY1VUOaRKs/hhWZNLQittTDXVm7MO5wEYspePXXHYs/LJU/oXd1972qC/aDo5KgXYlKm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkXwmtDUSGk+mGLhjM7b5b4rKzV6I7J8CcokdyGR/vv9HhWvin
+	k4lm0X1HULILHL1mLInco+AM7Ze07VHqLtefz2wHV4sWr7CIPkpCm7FG7K5qQt10+geUPRwLWU/
+	V+Hpg8863SPkNwIf3VTE3BiCIP+jJVjSn9r9uUQ==
+X-Gm-Gg: ASbGncvdnVBgWY/zotrcMkF/OI0G9pgPdgXSOLRomP5UqcCGKE94F9L9T6LIsOb4i3x
+	RlRB4bkhIrXpjpvXzCegNoHwtSlUMLMU5P9D9GWRMoDuuQC9RIS3eQMhV3MRl
+X-Google-Smtp-Source: AGHT+IEmztFz48a0t6/WSmXctJ2wrGWImd2oFKYKo2f4N5KU2N5Ux6YRxIOaj/ZsHQRzkCXMX15Wbqnx3MAscmomOG4=
+X-Received: by 2002:a17:907:9518:b0:aa6:7662:c56e with SMTP id
+ a640c23a62f3a-aa67662d783mr557411466b.55.1733751085028; Mon, 09 Dec 2024
+ 05:31:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
+ <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
+ <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+ <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com>
+ <1995560.1733519609@warthog.procyon.org.uk> <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com>
+ <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com> <2117977.1733750054@warthog.procyon.org.uk>
+In-Reply-To: <2117977.1733750054@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 9 Dec 2024 14:31:14 +0100
+Message-ID: <CAKPOu+-Bpds7-Ocb-tBMs1==YzVhhx01+FaiokiGR3A-W9t_gQ@mail.gmail.com>
+Subject: Re: [PATCH] netfs: Fix ceph copy to cache on write-begin
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Check the anon_vma of pvma inline so we can avoid the function call
-overhead if the anon_vma is NULL.
+On Mon, Dec 9, 2024 at 2:14=E2=80=AFPM David Howells <dhowells@redhat.com> =
+wrote:
+> Could you try this?
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- include/linux/rmap.h | 12 +++++++++++-
- mm/rmap.c            |  6 +-----
- 2 files changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 683a04088f3f..9ddba9b23a1c 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -154,7 +154,17 @@ void anon_vma_init(void);	/* create anon_vma_cachep */
- int  __anon_vma_prepare(struct vm_area_struct *);
- void unlink_anon_vmas(struct vm_area_struct *);
- int anon_vma_clone(struct vm_area_struct *, struct vm_area_struct *);
--int anon_vma_fork(struct vm_area_struct *, struct vm_area_struct *);
-+
-+int __anon_vma_fork(struct vm_area_struct *, struct vm_area_struct *);
-+static inline int anon_vma_fork(struct vm_area_struct *vma,
-+				struct vm_area_struct *pvma)
-+{
-+	/* Don't bother if the parent process has no anon_vma here. */
-+	if (!pvma->anon_vma)
-+		return 0;
-+
-+	return __anon_vma_fork(vma, pvma);
-+}
- 
- static inline int anon_vma_prepare(struct vm_area_struct *vma)
- {
-diff --git a/mm/rmap.c b/mm/rmap.c
-index c6c4d4ea29a7..06e9b68447c2 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -331,16 +331,12 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
-  * the corresponding VMA in the parent process is attached to.
-  * Returns 0 on success, non-zero on failure.
-  */
--int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
-+int __anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
- {
- 	struct anon_vma_chain *avc;
- 	struct anon_vma *anon_vma;
- 	int error;
- 
--	/* Don't bother if the parent process has no anon_vma here. */
--	if (!pvma->anon_vma)
--		return 0;
--
- 	/* Drop inherited anon_vma, we'll reuse existing or allocate new. */
- 	vma->anon_vma = NULL;
- 
--- 
-2.34.1
-
+No change, still hangs immediately on the first try.
 
