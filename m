@@ -1,161 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-36789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBF79E9675
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F71F9E9677
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE7A281339
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1E12834B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 13:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7541ACEAA;
-	Mon,  9 Dec 2024 13:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847D522616A;
+	Mon,  9 Dec 2024 13:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tX4f0JYM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XhPK5Ens"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334BD1ACEBC;
-	Mon,  9 Dec 2024 13:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D19D1B0409
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 13:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750035; cv=none; b=jRxaPPFoBALZnbXziNEqgcB/9cxZMpCn4J+L86zcxAoZfKWtCiGRiSqXacrDr6uNKSc8T7FZh4/DswAnRwyZw3uPf2oqH38q3URAJLD7FE6ox9MK+M2ZAf/8Dn53B7uVKE/xF5lC50RjLfJw7xI8do0ub7RaDF4UzoEZjlva94U=
+	t=1733750066; cv=none; b=BnQSjrPsXHb2T3QTopz7j+TQTfug1dOYRq8e3INoRTgJqw9rkeyjjdjq77nSgl1vQVCo4Tzbptfhh0nWynSFgaCFQrAXDsjzIdxpXfqb6Me2psTQzPNdmIkc1IPE1zAezf1aPv6rmif+R2ZAmHMSL+6g0JqYKY6eMFq82DfmLPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750035; c=relaxed/simple;
-	bh=/pLbobhPgRwpQTExS0Co3JYQTpmYSbS0pBR+Oa1Jik0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gcjmR+vzylEpp/AZ+ICAcGClTBJ3kI364mHi4+xDCHtu6N523I+wnHXdJS4CB/NDAsCcwFjPPdheRq6gR6EMw/rqfFqW64CXuTFN7ionyx6s8LFgOZ6tTuM497YIYnbzOA78Lh+k9sUlk7FawDf3JDm/7E4U7GvZSWTRdIhLwtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tX4f0JYM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D741C4CED1;
-	Mon,  9 Dec 2024 13:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733750034;
-	bh=/pLbobhPgRwpQTExS0Co3JYQTpmYSbS0pBR+Oa1Jik0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tX4f0JYMWMcAfg+5Xf5gSfL4U6D1sHmBhuBxPkK0F8kz4gs7x1K/GTRf9TnrtKmuu
-	 k1pV6if/LPH+lM2XeicnniPHMJCYnyf3CgjZ+Cfhy+2ZqBSSd/hMt8Z/8HyQYjmgf4
-	 2nJKQf1i5jMQNlRmVWkG1TbHf4wMC4iflHcZ0sZ0=
-Date: Mon, 9 Dec 2024 14:13:50 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <2024120951-botanist-exhale-4845@gregkh>
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
- <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
- <2024120925-express-unmasked-76b4@gregkh>
- <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
- <2024120954-boring-skeptic-ad16@gregkh>
- <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
- <2024120908-anemic-previous-3db9@gregkh>
- <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
- <2024120939-aide-epidermal-076e@gregkh>
- <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
+	s=arc-20240116; t=1733750066; c=relaxed/simple;
+	bh=h6QARE/caL5bX1/fTS/81RmE6jFI7Wcw5PJZSDe8wRU=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=IMGUe9o1MFCU+vydkQNTxEhIDY2s4cO9lBfrw0d38IARqH/M5vvOUA9yoCK+SN8CE24CpALX7Bmp1RyJsfKZF73YYLKthaV8ZBd/mF8Pi/2/v1bnQLpuadekBWAQkoZmquCLvgNxsLvp987shFFKpcUTTlXqw3lE0L527uFa0o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XhPK5Ens; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733750063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PZ4m5E5/bsh+47B5T+BAoMFzf3uOEkW9Xl/M2Y5SYQI=;
+	b=XhPK5EnshLhMGql1oaA85sd2Vq4YBz+x/Al2P6lj+JQLeXehcBHUJriEMR34HqfFoV2Tbv
+	50GE12UgoruMtjt+xAmIccRX2wjxzgf1EGIwoU1HTOvHCn4sqr/zuCi0Xdw2ndP2E/6rjb
+	77o5YdiDPyEJL0XyaebH8lQ2nfKgw00=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-G_8VxTJJNoilOLMDj3UWqg-1; Mon,
+ 09 Dec 2024 08:14:18 -0500
+X-MC-Unique: G_8VxTJJNoilOLMDj3UWqg-1
+X-Mimecast-MFC-AGG-ID: G_8VxTJJNoilOLMDj3UWqg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B8D91954215;
+	Mon,  9 Dec 2024 13:14:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D3D8B1956089;
+	Mon,  9 Dec 2024 13:14:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com>
+References: <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com> <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com> <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com> <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com> <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com> <1995560.1733519609@warthog.procyon.org.uk> <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix ceph copy to cache on write-begin
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2117976.1733750054.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Dec 2024 13:14:14 +0000
+Message-ID: <2117977.1733750054@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Dec 09, 2024 at 01:53:42PM +0100, Alice Ryhl wrote:
-> On Mon, Dec 9, 2024 at 1:08 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
-> > > On Mon, Dec 9, 2024 at 12:53 PM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
-> > > > > On Mon, Dec 9, 2024 at 12:10 PM Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
-> > > > > > > On Mon, Dec 9, 2024 at 9:48 AM Greg Kroah-Hartman
-> > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> > > > > > > > > Providing access to the underlying `struct miscdevice` is useful for
-> > > > > > > > > various reasons. For example, this allows you access the miscdevice's
-> > > > > > > > > internal `struct device` for use with the `dev_*` printing macros.
-> > > > > > > > >
-> > > > > > > > > Note that since the underlying `struct miscdevice` could get freed at
-> > > > > > > > > any point after the fops->open() call, only the open call is given
-> > > > > > > > > access to it. To print from other calls, they should take a refcount on
-> > > > > > > > > the device to keep it alive.
-> > > > > > > >
-> > > > > > > > The lifespan of the miscdevice is at least from open until close, so
-> > > > > > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
-> > > > > > >
-> > > > > > > How is that enforced? What happens if I call misc_deregister while
-> > > > > > > there are open fds?
-> > > > > >
-> > > > > > You shouldn't be able to do that as the code that would be calling
-> > > > > > misc_deregister() (i.e. in a module unload path) would not work because
-> > > > > > the module reference count is incremented at this point in time due to
-> > > > > > the file operation module reference.
-> > > > >
-> > > > > Oh .. so misc_deregister must only be called when the module is being unloaded?
-> > > >
-> > > > Traditionally yes, that's when it is called.  Do you see it happening in
-> > > > any other place in the kernel today?
-> > >
-> > > I had not looked, but I know that Binder allows dynamically creating
-> > > and removing its devices at runtime. It happens to be the case that
-> > > this is only supported when binderfs is used, which is when it doesn't
-> > > use miscdevice, so technically Binder does not call misc_deregister()
-> > > outside of module unload, but following its example it's not hard to
-> > > imagine that such removals could happen.
-> >
-> > That's why those are files and not misc devices :)
-> 
-> I grepped for misc_deregister and the first driver I looked at is
-> drivers/misc/bcm-vk which seems to allow dynamic deregistration if the
-> pci device is removed.
+Hi Max,
 
-Ah, yeah, that's going to get messy and will be a problem if someone has
-the file open then.
+Could you try this?
 
-> Another tricky path is error cleanup in its probe function.
-> Technically, if probe fails after registering the misc device, there's
-> a brief moment where you could open the miscdevice before it gets
-> removed in the cleanup path, which seems to me that it could lead to
-> UAF?
-> 
-> Or is there something I'm missing?
+David
+---
+netfs: Fix ceph copy to cache on write-begin
 
-Nope, that too is a window of a problem, luckily you "should" only
-register the misc device after you know the device is safe to use as
-once it is registered, it could be used so it "should" be the last thing
-you do in probe.
+At the end of netfs_unlock_read_folio() in which folios are marked
+appropriately for copying to the cache (either with by being marked dirty
+and having their private data set or by having PG_private_2 set) and then
+unlocked, the folio_queue struct has the entry pointing to the folio
+cleared.  This presents a problem for netfs_pgpriv2_write_to_the_cache(),
+which is used to write folios marked with PG_private_2 to the cache as it
+expects to be able to trawl the folio_queue list thereafter to find the
+relevant folios, leading to a hang.
 
-So yes, you are right, and we do know about these issues (again see the
-talk I mentioned and some previous ones for many years at plumbers
-conferences by different people.)  It's just up to someone to do the
-work to fix them.
+Fix this by not clearing the folio_queue entry if we're going to do the
+deprecated copy-to-cache.  The clearance will be done instead as the folio=
+s
+are written to the cache.
 
-If you think we can prevent the race in the rust side, wonderful, I'm
-all for that being a valid fix.
+This can be reproduced by starting cachefiles, mounting a ceph filesystem
+with "-o fsc" and writing to it.
 
-thanks,
+Reported-by: Max Kellermann <max.kellermann@ionos.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: netfs@lists.linux.dev
+cc: ceph-devel@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/read_collect.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index 849f40f64443..72a16222b63b 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -62,10 +62,14 @@ static void netfs_unlock_read_folio(struct netfs_io_su=
+brequest *subreq,
+ 		} else {
+ 			trace_netfs_folio(folio, netfs_folio_trace_read_done);
+ 		}
++
++		folioq_clear(folioq, slot);
+ 	} else {
+ 		// TODO: Use of PG_private_2 is deprecated.
+ 		if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags))
+ 			netfs_pgpriv2_mark_copy_to_cache(subreq, rreq, folioq, slot);
++		else
++			folioq_clear(folioq, slot);
+ 	}
+ =
+
+ 	if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
+@@ -77,8 +81,6 @@ static void netfs_unlock_read_folio(struct netfs_io_subr=
+equest *subreq,
+ 			folio_unlock(folio);
+ 		}
+ 	}
+-
+-	folioq_clear(folioq, slot);
+ }
+ =
+
+ /*
+
 
