@@ -1,143 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-36855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601519E9E0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 19:27:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287169E9E46
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 19:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8B3162952
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:27:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDA31663A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE40171E7C;
-	Mon,  9 Dec 2024 18:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5469167DAC;
+	Mon,  9 Dec 2024 18:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R6Oj2dz0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFmrVi7U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B39155345
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 18:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E39F13B59A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 18:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733768845; cv=none; b=a+JBM5xMlhi7jF+6v3s9d/xbZEuwYVWe/NISzRuSpad9RGskypziwy+ir1+8qsky2mHe2GQZRg4Yq6q1JGg1/zmMxowuCamg7Gr6MkJ1JePdkaaWYyJVXUHl+gux+pjyfKy5P2PGsYlluxvDp2kQKiLAE13z31JTwGUQdY9SLnk=
+	t=1733769966; cv=none; b=EONlZjTqn+pOcdyM6lRN+gSNj6BxcN+LCrQgFdofkB02p7Ij2tPGvXJmLKHa3H8C7b4mk13riRs2PfWqiulBz5IcGdOW7Brw69lXdVzQhvExPQA+W0tvP3tgsBxu6OynpdvZKlcPfTsCXVepHSWolaGTsROZMexfWQNvR6gww4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733768845; c=relaxed/simple;
-	bh=EpO0mHNsxoTIrIlepAq/s8cJm27FUN87hDBBQIahs1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PWx4z0hmUf6hIOb60niFWFBbxxFVk2WYxUGSXGyuEeZl1loLzpXzrMyOO1uhynblNEOtODHPg0Rg3Moooq+6vUXJRzuy47RMYS3RCBDBn9nzD0HjPQ63wVtV4o7BLGAYnuUyyfDlceJCf6LFIKC6jxabmfWRR0fEBmdIlrHdYw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R6Oj2dz0; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa66ead88b3so359972966b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 10:27:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733768842; x=1734373642; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5MmDGlwefJc6M1TjdzyEa30t5fwiMC4TrQsoohf+AOg=;
-        b=R6Oj2dz02zNQ74RKJeh3T7iO/6cguhD5lg5eLnkqN0EKhYkUZFl2fQuc6xEFvLxtcl
-         s3Q3AtC+YLwzwSl4Dnvt3+dDknr8e6iD2waSWq/G01Brv29IpPDY/1b1ho6h+eQpFT5N
-         0bHG1yn0EniFBcAln+w6V3m/j74Xv2BMLwp20=
+	s=arc-20240116; t=1733769966; c=relaxed/simple;
+	bh=b6sAOgVc6XhUH8O1WeVukfF3AjvChlH4xGokjSvJlxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLiiOMZ1pUPUowFweCm/W/f46owuU7GvxfxMQ5knfEf9r65B0wx+djD8OsJVAPt2IMYUR3/XYoOIEJI0XPy/nGtdql/tz9zyMv16/sFV5ZsJmM40Zcj8nWhecjroCUk14q3keXtu+A4ZpVQgrEb3l3t4K7+sQUK64UQ1vM02f4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFmrVi7U; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733769963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XN1if8VUaEaZtxWglqVX1D2ri22+xURqhhedvWXwDlk=;
+	b=RFmrVi7UYiMIbQBI6cPp+FcBUKFR/YOdM/UsEjxlhhgt7jSwKz7By2w6ip7hcl2LV1fzan
+	OjvXoZQbVVb1lC/I/9uCPHh7zKx10a2lyLFStVILF0iI86P5VFZ209I9R4lIryq37k9kJ5
+	9OnL8MQ+s0D2qUbF70lScj3qdAkWfdw=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-gxKu4W91OVmjCJWI1LmUCg-1; Mon, 09 Dec 2024 13:46:02 -0500
+X-MC-Unique: gxKu4W91OVmjCJWI1LmUCg-1
+X-Mimecast-MFC-AGG-ID: gxKu4W91OVmjCJWI1LmUCg
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-215ce620278so40253195ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 10:46:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733768842; x=1734373642;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5MmDGlwefJc6M1TjdzyEa30t5fwiMC4TrQsoohf+AOg=;
-        b=BR64Q9Y6Ds1QoZyoVBb/gGnFmdsgU4L71CmoQ65sM+55ZpF14bHptjE2CYgiR+bY1N
-         uEv7HR/nKVbeh8dhlf83iu+o2SNewTXDA+qVfODMSEocGeBDNPd7+4NkmXCbVrdbqXk9
-         /OFEOUgbGQiCJ4HTqaytLOEVelHFUh+kyfLPZ7dxdXFIeeaHsrKfXdoD0i31Ra6srrWA
-         uPGB7xVW6OwaheQbqt7HZKByLXybXH4KnIDz4vzJZmZ5xPgrIwzTmx+i6VFWDAEHXgwF
-         LJLdMevY9kP1h0rUD8r3VsryBXHwJwRdTbIw9XcE6w5p2rV13rVzA2t5YgamM+SVJceh
-         NIjQ==
-X-Gm-Message-State: AOJu0Yw0eiyMvP8rF7G/S08yWk66CP5+HkGyZUPLfcyOePmh0OJRcJ7V
-	Q/aE8DtLpxoWE/Z3we68U227UchmxwCwbcKO9P6VkxOvM6trl792Wk8ZizjHTnNrnFKIUhwiZ7L
-	eTYQ=
-X-Gm-Gg: ASbGncsP1saPiIF+8IonTmy4kMUJHtngalGv9OkNSDYxNjJmHPyWLneRii6MAu/89sc
-	3M7de3yNGvGUrBES+XXnC0VP26pFt6VCB7MrIkS7uVw4VlGgXvGwH+i4j9Rs4QSoc/j1kIirCY0
-	cWFV8NBXS2tkJ7i2R6s31Q2LApC9uFjEKO2AynBLHR8IX3xehTazvKDHtGCuYdhlF1PRuBxy80x
-	8kh75aLb8TPWR6RS0SNo+lqNrm2OLym8Dp0Mzjhwdv9peLnQksBLR73/Fo2NfnHLzGWhRkwmA/5
-	ukcM+b4IppnFGGlwyo5K0qpg
-X-Google-Smtp-Source: AGHT+IHCWNwNOAG12CCz2xeOdBxIun1SYS5NCmrYuRsieZ/cy0xM0L4osAf0nwuDoQZ/Y2Ugqd72qw==
-X-Received: by 2002:a17:907:cc24:b0:aa6:88c6:9449 with SMTP id a640c23a62f3a-aa69cd5c8afmr161719866b.19.1733768841559;
-        Mon, 09 Dec 2024 10:27:21 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa695c3ac07sm112062766b.66.2024.12.09.10.27.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 10:27:20 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9ec267b879so905214866b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 10:27:20 -0800 (PST)
-X-Received: by 2002:a17:907:8327:b0:aa6:6ab1:37ff with SMTP id
- a640c23a62f3a-aa69cd592bdmr156488966b.17.1733768840317; Mon, 09 Dec 2024
- 10:27:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733769961; x=1734374761;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XN1if8VUaEaZtxWglqVX1D2ri22+xURqhhedvWXwDlk=;
+        b=hwB8HnPE3QFMVqCKvlPW6KkpS3uhDo/cid5A1uEoLRrI3E90FM0jzw5mOwEeWnFr5T
+         dq0NzXk/yYZQAb66nG6cZCqGKlUbYUsSg8hfDnwSsgZExjNofagpTf05isajOnlTJ5kM
+         TKt+LaeePUBSI0XhsQu8i/y6qprJFym65OQVcSV1QMxS1fK8FtciSdR0rOtbGECr7qLV
+         rY2083NW5NxfIRmLCZAFeNAx5KP10PXGKM2MUBDrZhPAvAPs0cFNlJtAUrudraHV6TkN
+         dODbjWV71VlcGpWE35DfYl4Wxf1MhlkaAqbrfPlNc+xTYFhd0JYq1t2GTh31wEGK5wkY
+         h5bQ==
+X-Gm-Message-State: AOJu0YwwgRZmVnABhkoF3G+rbQB8a4PJBDwOdL2LrU6hVz/TqbOUrfjw
+	ON1esI8mp72UpmdaxfHT1U74wKGYWSO9A5PViod92KCHvas4+eJ/CCpY2Qw1tTCgGXdhSPO56lC
+	KiF14BRnKAjX/uwrcnEQ6PuGKYvE31o4fjxCs69RoLrugKN5xEWeaZktnJvDy4OA=
+X-Gm-Gg: ASbGncu3bl2inM6S+WX89DMCsocdBAHQSYPQPJJfELrH3ntRcxHTVPWFOCwY4o+957+
+	SRnu0ignAzOsbGolqT31AE0VZdiF5zV4xfBuujOyhJfCli6bMdVdUpngxvHpMLUZFGZcwMl2pIf
+	75Zcn3kOJo9qq/oYuLz22H0Rz3cpZ09VemO1qMSywHfXyOHzVX6PPrPUf/hMgRkcLaS7UfIrzpH
+	ZEV8keTOmvcoKujkJ+MjpdzDa8fw59xoxJaIQe6PV7TmQdGQz2/hC6dv28JMlx4bhXJ5UqWgVjw
+	GEQf94g+K/I2cJo=
+X-Received: by 2002:a17:902:c945:b0:216:5561:70d7 with SMTP id d9443c01a7336-2165561726emr59392785ad.52.1733769961360;
+        Mon, 09 Dec 2024 10:46:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGtPZrL+jf31r7lS+IMCReCs9bklyHsgEUUHk+/LWbmoRbHdorkli5v11l74XVyxd8Z+x/Aiw==
+X-Received: by 2002:a17:902:c945:b0:216:5561:70d7 with SMTP id d9443c01a7336-2165561726emr59392525ad.52.1733769961086;
+        Mon, 09 Dec 2024 10:46:01 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8efa162sm73949865ad.125.2024.12.09.10.45.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 10:46:00 -0800 (PST)
+Date: Tue, 10 Dec 2024 02:45:57 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: cel@kernel.org, fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH] fstests: disable generic duperemove tests for NFS and
+ others
+Message-ID: <20241209184557.i7nck5myrw3qtzkd@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20241208180718.930987-1-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209035251.GV3387508@ZenIV>
-In-Reply-To: <20241209035251.GV3387508@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 9 Dec 2024 10:27:04 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
-Message-ID: <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
-Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208180718.930987-1-cel@kernel.org>
 
-On Sun, 8 Dec 2024 at 19:52, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->  void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry)
+On Sun, Dec 08, 2024 at 01:07:18PM -0500, cel@kernel.org wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
+> 
+> On NFS mounts, at least, generic/559, 560, and 561 run for a very
+> long time, and usually fail.
+> 
+> The above tests already gate on whether duperemove is installed on
+> the test system, but when fstests is installed as part of an
+> automated workflow designed to handle many filesystem types,
+> duperemove is installed by default.
+> 
+> duperemove(8) states:
+> 
+>   Deduplication is currently only supported by the btrfs and xfs
+>   filesystem.
 
-Editing the patch down so that you just see the end result (ie all the
-"-" lines are gone):
+If so, I'm good to limit this test on btrfs and xfs. It might be better to
+add this comment to "_supported_fs btrfs xfs". Anyway,
 
->  {
-> +       unsigned seq;
-> +
-> +       rcu_read_lock();
-> +retry:
-> +       seq = read_seqcount_begin(&dentry->d_seq);
->         name->name = dentry->d_name;
-> +       if (read_seqcount_retry(&dentry->d_seq, seq))
-> +               goto retry;
+Reviewed-by: Zorro Lang <zlang@redhat.com>
 
-Ugh. This early retry is cheap on x86, but on a lot of architectures
-it will be a fairly expensive read barrier.
+(This's a fstests patch, send to fstests@vger.kernel.org.)
 
-I see why you do it, sinc you want 'name.len' and 'name.name' to be
-consistent, but I do hate it.
+Thanks,
+Zorro
 
-The name consistency issue is really annoying. Do we really need it
-here? Because honestly, what you actually *really* care about here is
-whether it's inline or not, and you do that test right afterwards:
+> 
+> Ensure that the generic dedupe tests are run on only filesystems
+> where duperemove is known to work.
+> 
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> ---
+>  tests/generic/559 | 1 +
+>  tests/generic/560 | 1 +
+>  tests/generic/561 | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> diff --git a/tests/generic/559 b/tests/generic/559
+> index 28cf2e1a32c2..cf80be92142d 100755
+> --- a/tests/generic/559
+> +++ b/tests/generic/559
+> @@ -13,6 +13,7 @@ _begin_fstest auto stress dedupe
+>  . ./common/filter
+>  . ./common/reflink
+>  
+> +_supported_fs btrfs xfs
+>  _require_scratch_duperemove
+>  
+>  fssize=$((2 * 1024 * 1024 * 1024))
+> diff --git a/tests/generic/560 b/tests/generic/560
+> index 067d3ec0049e..a94b512efda1 100755
+> --- a/tests/generic/560
+> +++ b/tests/generic/560
+> @@ -15,6 +15,7 @@ _begin_fstest auto stress dedupe
+>  . ./common/filter
+>  . ./common/reflink
+>  
+> +_supported_fs btrfs xfs
+>  _require_scratch_duperemove
+>  
+>  _scratch_mkfs > $seqres.full 2>&1
+> diff --git a/tests/generic/561 b/tests/generic/561
+> index afe727ac56cb..da5f111c5b23 100755
+> --- a/tests/generic/561
+> +++ b/tests/generic/561
+> @@ -28,6 +28,7 @@ _cleanup()
+>  . ./common/filter
+>  . ./common/reflink
+>  
+> +_supported_fs btrfs xfs
+>  _require_scratch_duperemove
+>  
+>  _scratch_mkfs > $seqres.full 2>&1
+> -- 
+> 2.47.0
+> 
+> 
 
-> +       // ->name and ->len are at least consistent with each other, so if
-> +       // ->name points to dentry->d_iname, ->len is below DNAME_INLINE_LEN
-> +       if (likely(name->name.name == dentry->d_iname)) {
-> +               memcpy(name->inline_name, dentry->d_iname, name->name.len + 1);
-
-and here it would actually be more efficient to just use a
-constant-sized memcpy with DNAME_INLINE_LEN, and never care about
-'len' at all.
-
-And if the length in name.len isn't right (we'll return it to the
-user), the *final* seqcount check will catch it.
-
-And in the other case, all you care about is the ref-count.
-
-End result: I think your early retry is pointless and should just be
-avoided. Instead, you should make sure to just read
-dentry->d_name.name with a READ_ONCE() (and read the len any way you
-want).
-
-Hmm?
-
-            Linus
 
