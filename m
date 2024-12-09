@@ -1,138 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-36729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9923A9E8BFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:18:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C769B9E8C21
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 08:28:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE4F188585B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8371A28301F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 07:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B4921481E;
-	Mon,  9 Dec 2024 07:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558BB21504E;
+	Mon,  9 Dec 2024 07:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRBEKbYf"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SvSD9kOP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C6622C6E8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 07:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D7221481E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 07:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733728730; cv=none; b=lmOZy2Wsu/fEWX+FW/5VgMDTORti466gvDoTsmODSM/XlQr2o92PvYyRoeynpUvlrteIQK+fxJeIxdMskx4kK2evE2vpJidfAKEFmHVYIX/gHXYiF35EUfGxBxu4yjYjSO8ZR37yBr4mg3tRmwREoomR6/1EzipP8MIyYVjl97E=
+	t=1733729272; cv=none; b=QlatYyyssSp5M8r07DFUgTGAMp4H0Ld3Mhv/ZCsNuFIKmN4xsJ3bO05z70s8QUqAJs3zgKgsmMFGvEOeQSyvfz6N2coXDzHnR/KHFActvmVkrpRCuGNlHFI7nuWowz/rIfFgvn/V96Q6e71jMTtWjtTIJU6oadH0pfCIZwAY9bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733728730; c=relaxed/simple;
-	bh=uMn3PEHtxa9mb1g4Zrdm+25LLNfT6zaEb6HQxkupA3s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ufa5ed2GmZ5Zip5sxFrGmWdo4Djup4eOwO+0fVp3iBRg2GMO3/4gHm94K0/5cpFReIE06MF5uE/FbzrVjiUkAl/9pqExsc1SNI2tzeiPL29pOmKFzro0LzJlwEdX6dD1awu/V+ni54bYa4JLrhf9to1k6bGfjwMYD0zulwRgMes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRBEKbYf; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa5ec8d6f64so469076066b.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2024 23:18:49 -0800 (PST)
+	s=arc-20240116; t=1733729272; c=relaxed/simple;
+	bh=CzG4LCYCgy1J7KvD3L4+YV8+zVCLxj5TTFerWUZmz3Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sjdkJuMCDSKyVYASD/IffnkgpuC+Z5Ll2CQHGBq7OeNsSJoBz7VVaouurPdRVCV3fd3Fr6a3q6ztJxVMbkR0K3XOtXp9B978STuq7Qrxrpe65HkK+EiPArypUQkfvbz6IwKbZktxUu8cFQqKBGP51CplYMzHXD6pU3GQ9+3XMSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SvSD9kOP; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-434fb9646efso2781835e9.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2024 23:27:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733728728; x=1734333528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C2AIvHwbByi+O/Bt+ROIrm3G2sCcmKMr1QnxtzfrTOE=;
-        b=hRBEKbYfalklAT5rmOBc28dBh7mp6JDRdp01pH4gitI6XXakEH0+VlAcvPNcfsz4U2
-         GJ/BTLpYD/pKAdb6bzdyJWqr1tiyhA75UxQcMvgg1Sl80/izXfzvZzBOdDSl/3r7kvUV
-         fX/vk1OeIpTMrgto2qC04rFnmKhwe9/7MBYVGJ50f5eU785755DeYKA6v4fEDqRjkGUU
-         h9xAAsyBGxEo8hooIyoqKajfS1XRx+UmnYnzDaTcMEv8Ov/iLixD7bGL16l9uaLwSVWq
-         58SFtYMSeva3dl0AqsmFZPkXsAcPRQUvMgcd8qyjQqfhf/2NuPwMZ8iNLLkvYmE+yCAv
-         Ricg==
+        d=google.com; s=20230601; t=1733729270; x=1734334070; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lYqKVBlUL80Zd9rsetNolMG8mIV6iaS5axJEolGX4hc=;
+        b=SvSD9kOPcmlTS90LXEujnRZXRlcUNsLj3w8/mw9sblwx508qbrNs3djECXM4HtlE4T
+         rkPb9NEVkuoTlXUj9TdLCwotRt1akONaJMdeJHJc7Bnt0u3Dy5zhH41Eb3QQjSodEERN
+         fDwhz+/4FQPDhm++qHu/GbKm8z1qiB69SjcyF6OkwoHt9BXaUu8I7kkQ2ekIzhdKkw6j
+         RFuh8sgKMUMlQNkBiKtonPnEzKqMqbDQrD6EtVr8uvEND7dxFtRQO6r79gpYAmo0kmpI
+         UgxsF2l2iriOOKupUWr4dKqUD7m1jyQg6LhsQz+Wq+xQNjfbG+Q87IFRzR7/fs8wMPFV
+         WrFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733728728; x=1734333528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C2AIvHwbByi+O/Bt+ROIrm3G2sCcmKMr1QnxtzfrTOE=;
-        b=si7q4ayKW1Z6HSE24xq8Sal2Jt/nTcvXQ+l7uy18IRkOSG9rWmsAAZugzjqVrb3TEG
-         iCl3GOAkgHhlrifqPibJJpkVUx7moBeXRTAJXcKn7aOSmjuiaDiUV/exy1Mvvr5Tk6aV
-         FfkSAwzwTTUiSKYWR/wdI+NWpJPoptYuvyHVUV/4/mhgS3s3UWwJAygwMpWlCGVFRh70
-         54+ER84dC1/49A8Xf6YNJrC4HglvXAWkejUKgZEKrkis6jPNBMpwWTnBQOnL4qYDE7jP
-         ZZDSz9feg4eb3G4/q8k2vPu3FAoxPqz/5a6Bf25gMcXOh02xKaiCKl+saxSoRY6D5RM1
-         BBxw==
-X-Gm-Message-State: AOJu0YysMldfHB+p9sFwDYVTK5WcpPqjaRfbv5pnzQ0qSidcKhbyX6hV
-	pL4SWe9wNEKWam+UhwbUjBsryT1RuljqsgVgsM1XCw5QJdkBNkrf7iFFnThQINoIwCf5GOyDshg
-	IslUmQeC8kdeSaai0aBYUBzgpaeg=
-X-Gm-Gg: ASbGncteMMRrRwhqN4R6EYEvhCjJQQ8LKtBRVuZn7knrk2Xlxqxpez+kUWKPNoxVC1u
-	Uc12j+GS+x/F2BdjG+guqOpTpwROvlRk=
-X-Google-Smtp-Source: AGHT+IF60dtPGzyWx+ApyOuAvepkX4II9gRLRX/dEx0KAVLzrSqpevc1qOMbCDIAuUKtGnEfCh419NWbAtVqJEULLUc=
-X-Received: by 2002:a05:6402:1913:b0:5d1:1064:326a with SMTP id
- 4fb4d7f45d1cf-5d3be69a19amr30598243a12.15.1733728727505; Sun, 08 Dec 2024
- 23:18:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733729270; x=1734334070;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lYqKVBlUL80Zd9rsetNolMG8mIV6iaS5axJEolGX4hc=;
+        b=EVQiuvnYy0zKMdJdnfIr2LDEZ7j/12aUscLmBLGtZxBCOjlHGpklKJEwkLfplTvB98
+         sONMmgypA4+d5kvIlGS8SgegX+ZlO6TXjhCfmuTPOSbNVQ1cjx8B+OLt03EKZpiRi8Sk
+         PvOoIDVFrQYdDOK/VfKWzng6fbUf8MrDQBdk55zucE4gKfslraZfpLp4cvBmGOSg3y6y
+         RmRkGy+BNqjnVvcD6ds+gCQ5aJVKdooFW72dNqNV6uoB0kxyG0qusZ1tRGzh+gp+kf/d
+         kT8h4Tgqz3F8B8xx8KYRrtzs3Y9/BxA8vwPl7pgtaOWYnsX1ixKFGh6QwERBGDWQ5kFv
+         wYAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVy1g3wAJ5qaTsO1utoc3FKwnw5PjRWa860plJOg2/x4L0QYduoq2exApdxjSB7ts093MGGKu7jqMNWP/KN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCJBDqY3PnIoS6fLk21bFOIBHZdiQQmhPPbvbIR8OBQIcYzxuO
+	lTmCjKq8QAlZrKLnMmHqJBTRC/f/Cwkhg4mkQyJWhUolexArpeuf2c0jplQyHWjIjEvvI+jUYQe
+	Dazy1OKUS7jU4Qg==
+X-Google-Smtp-Source: AGHT+IHLip+cWClqTDmOvhFKsS3OnDFtSGJSQAvn2hFaHftIrUei/OnvvkIwlZEReQn9AZ3pcDHXxEmZC+fEB7E=
+X-Received: from wmbg8.prod.google.com ([2002:a05:600c:a408:b0:434:e665:11a3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3544:b0:434:a386:6cf with SMTP id 5b1f17b1804b1-434ddeaceebmr95173205e9.2.1733729269824;
+ Sun, 08 Dec 2024 23:27:49 -0800 (PST)
+Date: Mon, 09 Dec 2024 07:27:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241209035251.GV3387508@ZenIV> <gopibqjep5lcxs2zdwdenw4ynd4dd5jyhok7cpxdinu6h6c53n@zalbyoznwzfb>
- <20241209065859.GW3387508@ZenIV>
-In-Reply-To: <20241209065859.GW3387508@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 9 Dec 2024 08:18:35 +0100
-Message-ID: <CAGudoHHAxDpQb9TVTPuBc-NnJkuu3hJJ8iB2Z5QRdSCPiVDLRA@mail.gmail.com>
-Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAPGbVmcC/4WNSwrDIBRFtxLeuBa1+diMuo+SgejTPEhi0CItw
+ b3XZgPljs7lfg5IGAkTjM0BETMlClsFeWnAzHrzyMhWBsllKyS/sZWSsTVokDlakO066pV11g1
+ u6FQvrIba3SM6ep+7z6nyTOkV4ue8yeLn/lvMglXZvpfyPqhW8YcPwS94NWGFqZTyBaXYGhy7A AAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=765; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=CzG4LCYCgy1J7KvD3L4+YV8+zVCLxj5TTFerWUZmz3Y=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnVpvyxYWPC/5hiHYX4LjZWZlV9uJlUfDGKM9Ix
+ hFy8ZcDj8uJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1ab8gAKCRAEWL7uWMY5
+ RqfCD/96mpl99n+3ADLxOsLLjsqfGfh+No8JbR1DG3S0Au+2tmR3fKhTObeJduXi8+oGhA07xAX
+ bSLgLSOpXdCev0kOHCI2pFeE1oqQdOKZdUuFyc2o9+7DmoroSpSmbg9qMeSTQ3xelGjY9Orqc29
+ +fVWgY3b1QhZ/4yVUxqbgxQw1QLGZPAVq2Zoosu/FSxAU4lc7zfDlj/NLw+HJFcG6nJUqdDfOzj
+ ZvLKO/LVwWRd4rA7GfnCFjrwN9wJbafe/iTHfb8lyKphyLmh+fv6RMy4XbHAfUYZixDf4mYF64P
+ ohXlRu56/+EHQUT6sSyic1hvfUZlTedt+sp0YWb/Icu6qNXxepBcy2nygv4Ki5gf6Xa9s9zpdxP
+ ZieyDyoBmxCbu7byUM1+hhxaO3rtAByvRxHMQL0gVOHtHRlPfVY9vOMhV2wOmZUaTscVszoY6nd
+ 0YXoTaa54+QF6AgDBgpPQIEXxtFqMFeyw9vdYwH5UnXihtFVo3GcO5me3BDOGGtEmIEEn1l8SBN
+ s21NKcDSThZBDDcaPja31Brb/mM/dKzenZUrb7wgXzfZMag/0yA7/NiD6IHbRblqCCl6slPjV1U
+ /syVR69xSlZEENd4G1gLDkKwcnLxaLbGbyfgXkSbF+MeEdu53pOA/4zaLqoDP7vJbrFvWxc0NZa C6Ow/qMx4zn4q3Q==
+X-Mailer: b4 0.13.0
+Message-ID: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
+Subject: [PATCH v2 0/2] Additional miscdevice fops parameters
+From: Alice Ryhl <aliceryhl@google.com>
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Dec 9, 2024 at 7:59=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Mon, Dec 09, 2024 at 07:33:00AM +0100, Mateusz Guzik wrote:
-> > Is there a problem retaining the lock acquire if things fail?
-> >
-> > As in maybe loop 2-3 times, but eventually take the lock to guarantee f=
-orward
-> > progress.
-> >
-> > I don't think there is a *real* workload where this would be a problem,
-> > but with core counts seen today one may be able to purposefuly introduc=
-e
-> > stalls when running this.
->
-> By renaming the poor sucker back and forth in a tight loop?  Would be har=
-d
-> to trigger on anything short of ramfs...
->
-> Hell knows - if anything, I was thinking about a variant that would
-> *not* loop at all, but take seq as an argument and return whether it
-> had been successful.  That could be adapted to build such thing -
-> with "pass ->d_seq sampled value (always even) *or* call it with
-> the name stabilized in some other way (e.g. ->d_lock, rename_lock or
-> ->s_vfs_rename_mutex held) and pass 1 as argument to suppress checks"
-> for calling conventions.
->
-> The thing is, when its done to a chain of ancestors of some dentry,
-> with rename_lock retries around the entire thing, running into ->d_seq
-> change pretty much guarantees that you'll need to retry the whole thing
-> anyway.
+This could not land with the base miscdevice abstractions due to the
+dependency on File.
 
-I'm not caught up on the lists, I presume this came up with grabbing
-the name on execve?
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Access the `struct miscdevice` from fops->open().
+- Link to v1: https://lore.kernel.org/r/20241203-miscdevice-file-param-v1-1-1d6622978480@google.com
 
-Indeed a variant which grabs a seq argument would work nice here,
-possibly with a dedicated wrapper handling the locking for standalone
-consumers.
+---
+Alice Ryhl (2):
+      rust: miscdevice: access file in fops
+      rust: miscdevice: access the `struct miscdevice` from fops->open()
 
-The VFS layer is rather inconsistent on the locking front -- as in
-some places try a seq-protected op once and resort to locking/erroring
-out, others keep looping not having forward progress guarantee at
-least in principle.
+ rust/kernel/miscdevice.rs | 44 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 38 insertions(+), 6 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241203-miscdevice-file-param-5df7f75861da
 
-How much of a problem it is nor is not presumably depends on the
-particular case. But my point is if the indefinite looping (however
-realistic or hypothetical) can be trivially avoided, it should be.
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
