@@ -1,187 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-36844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C19C9E9C83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:05:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8A89E9C9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:08:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762861888E5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E4C281B83
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DC614F9EE;
-	Mon,  9 Dec 2024 17:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E8B14BF92;
+	Mon,  9 Dec 2024 17:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EcgIjACh"
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="rYleOkj8";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="nMwDLmF1";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="hUaKNxnO";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="ovB5jcug"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B3414F121
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 17:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7DD288CC
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 17:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733763741; cv=none; b=Z+oCqo9cNUzvDdum00KkCQKvXBQK3s3N/VnFKHGjBJPWENiPf3wNYEilP0MKU+pmqj9SfYxEKNBiSVZixj9BAhbdOYVhVYs5NZszgO8hdN+/IElty4xolPRmO+d5aZmhz+Xgt7s+NmvuiPM1NdA4HryfRFJ96Y6SserLRjpjX1I=
+	t=1733764077; cv=none; b=kxm6l5R3BTp3X0aAg6V+Cxv+uXPcHuwmYWiTJRlUvRXS2f981AeUd397lI3SQDsUwuApvEuneRZhFScH0lHhjAavFUkwXrDu+YzOHZwi816kXE0ZwczihYYOq2V3Ipb7zomUo7L9TUbYOezCupsRF6aROLsktBU+h5XwkaMbk0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733763741; c=relaxed/simple;
-	bh=GeFHkLfAgP3ElS53iID8it/8M3ukGxedur1sttkud94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d3mtwH35hkozS8fvOB1/8uDehVWvyLNjVd0c+QQrIB4IGW0GqdQAEX9Ey60LleOzIORx0IpoGZao+VzBw2HfFZMWJgxb2sfnbdp/8VbkVBvsErSr9gmrmuV7M2vhknK3fwz1RNTwr0/fMgv4QvmC0XPYqLzDOK63puDyz21FUjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EcgIjACh; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-467631f3ae3so7661011cf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 09:02:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1733763737; x=1734368537; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NPJ5X+nvJru6KQSIO0EekHOkp263+8acp1+Ic7dTJnQ=;
-        b=EcgIjAChCRwlhSIOjOaaHtJJsZy1JExyQyRPwhxHxzNcZrVAQ1/OgFuRu5ofxX6vRj
-         +Bkar+I/Rc3/f7FXGUKUsoyq6r9IUW+fri4LT9bdF0Grf/7PwxasawHgKcdaMD1jbSg3
-         YwW6Kw8aGNI33xWXl6EV+3330izeM/csI19YM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733763737; x=1734368537;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NPJ5X+nvJru6KQSIO0EekHOkp263+8acp1+Ic7dTJnQ=;
-        b=Ib8796L0x5JXWr00E9bPTDDIXu9r1RbrymTyv8W+Gl3zleUESArnDaK1V8iYWpiDS7
-         Tsfop9cmZnqQEaNV4BsPNhgdr67rtb5se73iYjVCJqpOxviUjLvFolAdDJD+0H8Ev+M9
-         c9oVRsUqQ1deUBZI2mlYmmzZ1GnsfdWk/2BIJ4IWyVG5GMqK6qUTZrEVryRx0YOBbXFL
-         GDOYScLnPa/XQIXM5Q/SQUAvgSa5pCZQQVysObFlU0ruS/Vg9ESDX/mHVF6ydte04uTZ
-         YJa89KQqsIEcR5vFLB7HfKG6lCPfaueTRHT2HvjEpKw05gMc/o1/+yzSq1luoKpwwipu
-         hhZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgEpmZoRruPXr1x6RoyzAzjfaYBX3lIH+k9epEF944gJ3OvSYLc0Iq2aM0T6fbhb/uQ2u3QRor8LzJfaIw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyga94pVtWPaEX/80d2zMfOvlABPGp0BEVmM8GIuYuCubG/2CPW
-	04HhX4Z7BmUOqoOMrw8OJKm8WIog4NBXZN1xR/PIxESCTFBXNQkAE8Cqu5i0RZwdf5Ic8sgJMua
-	eKKB1El0+CplEMdfFgIthhVPeFFsDAwknxZDQHQ==
-X-Gm-Gg: ASbGncu5ut0UHewO3w1A+6nHmMvPgeWvPfh4/M/HiyoPqLh2Quli14+vbsTaEh5dNWd
-	ZaTxYWEIh7CUurOVsyXjnrzlvpTJhXgA=
-X-Google-Smtp-Source: AGHT+IFQttTNm5nr9ZNhhPKyN6E92TFInxmqnzSuuxa46e5GI7BZGolQWCKpkgYQgzmbBejLzNYpwQfP0sa2hzFP038=
-X-Received: by 2002:a05:622a:205:b0:462:b36a:73b8 with SMTP id
- d75a77b69052e-46734f76d8amr220489621cf.43.1733763737081; Mon, 09 Dec 2024
- 09:02:17 -0800 (PST)
+	s=arc-20240116; t=1733764077; c=relaxed/simple;
+	bh=NsAqgVZzvLpNkeyFCLY10pz5/VgllcfxTZSPP66t5fY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d+9RYQ4qAI6Bh8qMvInmg6OXHFwEqg6eoSxqzVmV977rzkQzIyUp8NZFeqCaIwGbeRQJW4AWmZOixm6DU60f4y6RHB/l62RibBvJBj1/+HXIqmiqBW2q/USMZnvyzUh2udISmbvlPnVcp56IsbjGn8xdKJqvb2DQ5khDuB791cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=rYleOkj8; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=nMwDLmF1; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=hUaKNxnO; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=ovB5jcug; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:3730:8d9c:b2ab:6810])
+	by mail.tnxip.de (Postfix) with ESMTPS id D7A17208CC;
+	Mon,  9 Dec 2024 18:07:49 +0100 (CET)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1733764069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
+	b=rYleOkj8MJ6XRxdGPr5ocawU3p5SLlfkBlNByHbtz0gAjr0minvH6mJPr4SdO/MXvsiEcT
+	wU56Slq1jE/JDLAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1733764069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
+	b=nMwDLmF1RMgawEupi0iW1yZFlz62wTgSx7UIbyavgWlkDySvsiisxX3CajxGMDM+PsCpeb
+	mt0DQnexl4iifAJXOgArvHZ/M+orvbkJLDqvEELQYYMwwf2k5crjndHBrypspYHDozc4ZE
+	ag4da1bFEVhwr5UDFRlkFqp1uhTptwc=
+Received: from [IPV6:2a04:4540:8c0e:b000:7a6a:1cd6:6bc8:cdd] (highlander.local [IPv6:2a04:4540:8c0e:b000:7a6a:1cd6:6bc8:cdd])
+	by gw.tnxip.de (Postfix) with ESMTPSA id 94B5B400490D7;
+	Mon, 09 Dec 2024 18:07:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1733764069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
+	b=hUaKNxnO/0oOY3KUE6OjDzw3N8b31jLtgVW6BDHf5YJFKFp3CagnIasXpOgNabzhWkAeI+
+	gMS74VMPeFvSIXCIIMmLn9voTq8/IpL1e/Kd7sfIMxTXmKhMrKiaj0oOoVKp78foSzYkqm
+	C5WQoGGbGavmMeSjW5OS1D7FsutzKlU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1733764069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDXCkGUbcqZ4IeZ3qD4Pl2xcfvMpVff+VnLUYxwiw/Q=;
+	b=ovB5jcugFZ9QtuUAJr1zid8SZFwSQkdlWcLfyVBc6khsfotXhjlI7zA3Zyp1SnfciiDp3V
+	CAdRMfFCktPE+CBA==
+Message-ID: <4707aea6-addb-4dc3-96f7-691d2e94ab25@tnxip.de>
+Date: Mon, 9 Dec 2024 18:07:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206151154.60538-1-mszeredi@redhat.com> <20241207-zucken-bogen-7a3d015af168@brauner>
-In-Reply-To: <20241207-zucken-bogen-7a3d015af168@brauner>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 9 Dec 2024 18:02:06 +0100
-Message-ID: <CAJfpegtdtKgA+JQY7q-bj0YkCaROQ7BRrJr+4ro16RWbcuD7Gg@mail.gmail.com>
-Subject: Re: [PATCH v2] fanotify: notify on mount attach and detach
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Linux)
+Subject: Re: silent data corruption in fuse in rc1
+To: Josef Bacik <josef@toxicpanda.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Miklos Szeredi <mszeredi@redhat.com>, Joanne Koong <joannelkoong@gmail.com>,
+ linux-fsdevel@vger.kernel.org
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de>
+ <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de>
+ <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <20241209144948.GE2840216@perftesting>
+ <Z1cMjlWfehN6ssRb@casper.infradead.org>
+ <20241209154850.GA2843669@perftesting>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+In-Reply-To: <20241209154850.GA2843669@perftesting>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, 8 Dec 2024 at 22:26, Christian Brauner <brauner@kernel.org> wrote:
+On 09/12/2024 16:48, Josef Bacik wrote:
+> On Mon, Dec 09, 2024 at 03:28:14PM +0000, Matthew Wilcox wrote:
+>> On Mon, Dec 09, 2024 at 09:49:48AM -0500, Josef Bacik wrote:
+>>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+>>>> with 3b97c3652d91 as the culprit.
+>>> Willy, I've looked at this code and it does indeed look like a 1:1 conversion,
+>>> EXCEPT I'm fuzzy about how how this works with large folios.  Previously, if we
+>>> got a hugepage in, we'd get each individual struct page back for the whole range
+>>> of the hugepage, so if for example we had a 2M hugepage, we'd fill in the
+>>> ->offset for each "middle" struct page as 0, since obviously we're consuming
+>>> PAGE_SIZE chunks at a time.
+>>>
+>>> But now we're doing this
+>>>
+>>> 	for (i = 0; i < nfolios; i++)
+>>> 		ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+>>>
+>>> So if userspace handed us a 2M hugepage, page_folio() on each of the
+>>> intermediary struct page's would return the same folio, correct?  So we'd end up
+>>> with the wrong offsets for our fuse request, because they should be based from
+>>> the start of the folio, correct?
+>> I think you're 100% right.  We could put in some nice asserts to check
+>> this is what's happening, but it does seem like a rather incautious
+>> conversion.  Yes, all folios _in the page cache_ for fuse are small, but
+>> that's not guaranteed to be the case for folios found in userspace for
+>> directio.  At least the comment is wrong, and I'd suggest the code is too.
+> Ok cool, Malte can you try the attached only compile tested patch and see if the
+> problem goes away?  Thanks,
 >
-> On Fri, Dec 06, 2024 at 04:11:52PM +0100, Miklos Szeredi wrote:
-
-> I wanted to see how feasible this would be and so I've added my changes
-> on top of your patch. Please see the appended UNTESTED DIFF.
-
-Why a separate list for connected unmounts and for mounts?  Can't the
-same list be used for both?
-
-> > +static void mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt, struct list_head *notif)
-> > +{
-> > +     __mnt_add_to_ns(ns, mnt);
-> > +     queue_notify(ns, mnt, notif);
+> Josef
 >
-> All but one call to mnt_add_to_ns() passes NULL. I would just add a
-> mnt_add_to_ns_notify() helper and leave all the other callers as is.
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 88d0946b5bc9..c4b93ead99a5 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1562,9 +1562,19 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>  		nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
+>  
+>  		ap->descs[ap->num_folios].offset = start;
+> -		fuse_folio_descs_length_init(ap->descs, ap->num_folios, nfolios);
+> -		for (i = 0; i < nfolios; i++)
+> -			ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+> +		for (i = 0; i < nfolios; i++) {
+> +			struct folio *folio = page_folio(pages[i]);
+> +			unsigned int offset = start +
+> +				(folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
+> +			unsigned int len = min_t(unsigned int, ret, folio_size(folio) - offset);
+> +
+> +			len = min_t(unsigned int, len, PAGE_SIZE);
+> +
+> +			ap->descs[ap->num_folios + i].offset = offset;
+> +			ap->descs[ap->num_folios + i].length = len;
+> +			ap->folios[i + ap->num_folios] = folio;
+> +			start = 0;
+> +		}
+>  
+>  		ap->num_folios += nfolios;
+>  		ap->descs[ap->num_folios - 1].length -=
 
-Still need the else branch from queue_notify() otherwise the prev_ns
-logic breaks.
+The problem persists with this patch.
 
->
-> >  void dissolve_on_fput(struct vfsmount *mnt)
-> >  {
-> >       struct mnt_namespace *ns;
-> > +     LIST_HEAD(notif);
-> > +
-> >       namespace_lock();
-> >       lock_mount_hash();
-> >       ns = real_mount(mnt)->mnt_ns;
-> >       if (ns) {
-> >               if (is_anon_ns(ns))
-> > -                     umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
-> > +                     umount_tree(real_mount(mnt), &notif, UMOUNT_CONNECTED);
->
-> This shouldn't notify as it's currently impossible to place mark on an
-> anonymous mount.
 
-Yeah, I was first undecided whether to allow notification on anon
-namespaces, but then opted not to for simplicity.
+/Malte
 
-> > @@ -1855,8 +1906,18 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
-> >               mnt = path.mnt;
-> >               if (mark_type == FAN_MARK_MOUNT)
-> >                       obj = mnt;
-> > -             else
-> > +             else if (mark_type == FAN_MARK_FILESYSTEM)
-> >                       obj = mnt->mnt_sb;
-> > +             else /* if (mark_type == FAN_MARK_MNTNS) */ {
-> > +                     mntns = get_ns_from_mnt(mnt);
->
-> I would prefer to be strict here and require that an actual mount
-> namespace file descriptor is passed instead of allowing the mount
-> namespace to be derived from any file descriptor.
-
-Okay.
-
->
-> > +                     ret = -EINVAL;
-> > +                     if (!mntns)
-> > +                             goto path_put_and_out;
-> > +                     /* don't allow anon ns yet */
-> > +                     if (is_anon_ns(mntns))
-> > +                             goto path_put_and_out;
->
-> Watching an anoymous mount namespace doesn't yet make sense because you
-> currently cannot add or remove mounts in them apart from closing the
-> file descriptor and destroying the whole mount namespace. I just
-> remember that I have a pending patch series related to this comment. I
-> haven't had the time to finish it with tests yet though maybe I can find
-> a few days in December to finish the tests...
-
-Okay.
-
->
-> > @@ -549,8 +549,10 @@ static void restore_mounts(struct list_head *to_restore)
-> >                       mp = parent->mnt_mp;
-> >                       parent = parent->mnt_parent;
-> >               }
-> > -             if (parent != mnt->mnt_parent)
-> > +             if (parent != mnt->mnt_parent) {
-> > +                     /* FIXME: does this need to trigger a MOVE fsnotify event */
-> >                       mnt_change_mountpoint(parent, mp, mnt);
->
-> This is what I mentally always referred to as "rug-pulling umount
-> propagation". So basically for the case where we have a locked mount
-> (stuff that was overmounted when the mntns was created) or a mount with
-> children that aren't going/can't be unmounted. In both cases it's
-> necessary to reparent the mount.
->
-> The watcher will see a umount event for the parent of that mount but
-> that's not enough information because the watcher could end up infering
-> that all child mounts of the mount have vanished as well which is
-> obviously not the case.
->
-> So I think that we need to generate a FS_MNT_MOVE event for mounts that
-> got reparented.
-
-Yep.
-
-Thanks,
-Miklos
 
