@@ -1,108 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-36808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B73B9E988F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:16:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5320D9E9935
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64F2162B0E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:16:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795EB16777C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 14:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051CF1B042A;
-	Mon,  9 Dec 2024 14:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225201B4243;
+	Mon,  9 Dec 2024 14:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dr0GGrD4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="02tE/xNQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dr0GGrD4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="02tE/xNQ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OJBADEKf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805B935946;
-	Mon,  9 Dec 2024 14:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B751B043D;
+	Mon,  9 Dec 2024 14:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753776; cv=none; b=oBoynU8tGpKDd2WLIQAZDkQfW4oxq+ruhunvuCBuHCwlD8l0NgQKJdV01Lcp4PExjy8t8tRBAKbMxUT/SXiLhiSqMBErf4+pgQwzcnGr0v4yxXkuCZ1dm89OXM5ZNfvfWixD310W/PN2nvFpkUv+2yXbUHf6mnsRNbX6x5YMPEY=
+	t=1733755429; cv=none; b=Ko3sAs+Nap7chyHp9OAUOckU7wDISYFgNaBXM5korXhw10eQpxVeCeu2n68IV6tbJk4Mwl0zFGDnHw9t5sDlz6tOr3w8Padkf8lDjy6W2M6lMhMdosBRR5kS6clmethcF2pxDtjkvmjG8fVda/D/ndfUNFCm0jkJM/ZDFXJqYo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753776; c=relaxed/simple;
-	bh=BM0q7NbSDtClP/DFiqvzvOyp0DiW2makmqbS/Ayr7KU=;
+	s=arc-20240116; t=1733755429; c=relaxed/simple;
+	bh=0HAPuOO8MalcKud6f/kbs/l+xIbPS+Al7Xt8OGAWeP0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nkyikvsJP7gQ+BPD7NCWFVtQIUztjHv4fF6V1btIkPaCKzb62NjncHZpraC6bbVGd3GnCFuEVYi14geRKbQ3N6i0cdl744vMh8iqbTQ3oUwYufbiBYszxA24QLtcl8z7de2QxEo3re9bNlVz6Whe38SMnp1v1LGOXedv3juai6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dr0GGrD4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=02tE/xNQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dr0GGrD4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=02tE/xNQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BFD7C211D3;
-	Mon,  9 Dec 2024 14:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733753772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X21WmVeRotOreOUDuaW7CWWm46V9QKf04q+yG+mPlF4=;
-	b=dr0GGrD45D25MNefPhUdHe7n8ICbL0JpYJqkYMSJeR3PC0XDVb2hdy9QJxkRUj2wNh9XIm
-	dBWmce7tOw4u+uMeOTNQylOZWmlVWYqoZqc6LSUUiXiEGwVNFSc35hxC0CbyXo3qrcpcIN
-	cBuy7YHWyuELtl1yBOfCo4Jurgbr96k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733753772;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X21WmVeRotOreOUDuaW7CWWm46V9QKf04q+yG+mPlF4=;
-	b=02tE/xNQzzKHBSiwiNBefAPFE05K38AoRmMzMOuz1tPcD1kuWTlHHx4KGZgdqLGDhwuUwB
-	A9Rb3MWeiH5o7GBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733753772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X21WmVeRotOreOUDuaW7CWWm46V9QKf04q+yG+mPlF4=;
-	b=dr0GGrD45D25MNefPhUdHe7n8ICbL0JpYJqkYMSJeR3PC0XDVb2hdy9QJxkRUj2wNh9XIm
-	dBWmce7tOw4u+uMeOTNQylOZWmlVWYqoZqc6LSUUiXiEGwVNFSc35hxC0CbyXo3qrcpcIN
-	cBuy7YHWyuELtl1yBOfCo4Jurgbr96k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733753772;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X21WmVeRotOreOUDuaW7CWWm46V9QKf04q+yG+mPlF4=;
-	b=02tE/xNQzzKHBSiwiNBefAPFE05K38AoRmMzMOuz1tPcD1kuWTlHHx4KGZgdqLGDhwuUwB
-	A9Rb3MWeiH5o7GBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AEB6F13A41;
-	Mon,  9 Dec 2024 14:16:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oj+QKqz7VmfzegAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Dec 2024 14:16:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 63CDFA0B0C; Mon,  9 Dec 2024 15:16:12 +0100 (CET)
-Date: Mon, 9 Dec 2024 15:16:12 +0100
-From: Jan Kara <jack@suse.cz>
-To: Klara Modin <klarasmodin@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-	amir73il@gmail.com, brauner@kernel.org,
-	torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org, sraithal@amd.com
-Subject: Re: [PATCH v8 16/19] fsnotify: generate pre-content permission event
- on page fault
-Message-ID: <20241209141612.wtst3obur3xxbtiq@quack3>
-References: <cover.1731684329.git.josef@toxicpanda.com>
- <aa56c50ce81b1fd18d7f5d71dd2dfced5eba9687.1731684329.git.josef@toxicpanda.com>
- <5d0cd660-251c-423a-8828-5b836a5130f9@gmail.com>
- <20241209123137.o6bzwr35kumi2ksv@quack3>
- <604c3501-f134-4a6e-ad41-ace84c2fd902@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dACAJqZxnRdR3ogPUSGZejjR7CJ+QoYaW2H2OjF/S+BPVkHuakaT7p8toEYC6e+UhUyepmg5+un/I41918GpMQaiOrnV7w/ykMFhwALev2pbpomY2QaD0l4ysDwvGyr0FLNhqAEk3JUs1gTOw9ZjOysoA+9ul4JekNn+JnHJxYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OJBADEKf; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733755427; x=1765291427;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0HAPuOO8MalcKud6f/kbs/l+xIbPS+Al7Xt8OGAWeP0=;
+  b=OJBADEKfeM1q+8SjtmYVUdeTiUY6d9FVS9tNdDRtpcjUR+R4+QLwr5Ow
+   8Ag6+AdaXE9FI9xVY7VtBmzEQs3UkAyzgGepVhEYrGxNH0oGIFjLE58Ox
+   NWu0NAd5txBIqd3HGn7jpbv4kEGh4Ds97zSINM8riyoRzr7+kTGp/yodn
+   WUxwpXVqtb/1nbsn+Y9XoYEoQyLjQvAIlgHPm1lsZBCYDc8BtZr+zjfT+
+   7PwWHQfOBYTRH7panTdNsdfOq0V+ucDSfocwQVMkVeyToin4TdcdfpJD3
+   Trrwt7oAJEt9t3bX0waO/Eh9VcmehTTxoF5bWuqfmG0F6yii07b8X6HBO
+   A==;
+X-CSE-ConnectionGUID: G1Rim8zGTJmlc8NurBIV4A==
+X-CSE-MsgGUID: JKtIlhciRIOpLDUwQpEagw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34182557"
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="34182557"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 06:43:46 -0800
+X-CSE-ConnectionGUID: TQZ+7GCGR4WylI8cc3kfoA==
+X-CSE-MsgGUID: vvrb9beIR8eRoB/r0s+zgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="94790455"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 09 Dec 2024 06:43:41 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKez5-0004Sn-0p;
+	Mon, 09 Dec 2024 14:43:39 +0000
+Date: Mon, 9 Dec 2024 22:42:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alice Ryhl <aliceryhl@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+Message-ID: <202412092214.P4acQ6Rn-lkp@intel.com>
+References: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -111,83 +90,132 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <604c3501-f134-4a6e-ad41-ace84c2fd902@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,toxicpanda.com,fb.com,vger.kernel.org,gmail.com,kernel.org,linux-foundation.org,zeniv.linux.org.uk,kvack.org,amd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+In-Reply-To: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
 
-On Mon 09-12-24 13:56:47, Klara Modin wrote:
-> Hi,
-> 
-> On 2024-12-09 13:31, Jan Kara wrote:
-> > Hello!
-> > 
-> > On Sun 08-12-24 17:58:42, Klara Modin wrote:
-> > > On 2024-11-15 16:30, Josef Bacik wrote:
-> > > > FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depending
-> > > > on the faulting method.
-> > > > 
-> > > > This pre-content event is meant to be used by hierarchical storage
-> > > > managers that want to fill in the file content on first read access.
-> > > > 
-> > > > Export a simple helper that file systems that have their own ->fault()
-> > > > will use, and have a more complicated helper to be do fancy things with
-> > > > in filemap_fault.
-> > > > 
-> > > 
-> > > This patch (0790303ec869d0fd658a548551972b51ced7390c in next-20241206)
-> > > interacts poorly with some programs which hang and are stuck at 100 % sys
-> > > cpu usage (examples of programs are logrotate and atop with root
-> > > privileges).
-> > > 
-> > > I also retested the new version on Jan Kara's for_next branch and it behaves
-> > > the same way.
-> > 
-> > Thanks for report! What is your kernel config please? I've just fixed a
-> > bug reported by [1] which manifested in the same way with
-> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS=n.
-> > 
-> > Can you perhaps test with my for_next branch I've just pushed out? Thanks!
-> > 
-> > 								Honza
-> 
-> My config was attached, but yes, I have
+Hi Alice,
 
-Ah, sorry, somehow I've missed that.
+kernel test robot noticed the following build errors:
 
-> CONFIG_FANOTIFY_ACCESS_PERMISSIONS=n. I tried the tip by Srikanth Aithal to
-> enable it and that resolved the issue.
-> 
-> Your new for_next branch resolved the CONFIG_FANOTIFY_ACCESS_PERMISSIONS=n
-> case for me.
+[auto build test ERROR on 40384c840ea1944d7c5a392e8975ed088ecf0b37]
 
-Thanks for testing! Glad to hear the problem is solved.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/rust-miscdevice-access-file-in-fops/20241209-153054
+base:   40384c840ea1944d7c5a392e8975ed088ecf0b37
+patch link:    https://lore.kernel.org/r/20241209-miscdevice-file-param-v2-2-83ece27e9ff6%40google.com
+patch subject: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice` from fops->open()
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20241209/202412092214.P4acQ6Rn-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241209/202412092214.P4acQ6Rn-lkp@intel.com/reproduce)
 
-								Honza
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412092214.P4acQ6Rn-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/x86/kernel/asm-offsets.c:14:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+   505 |                            item];
+   |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+   512 |                            NR_VM_NUMA_EVENT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+   |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+   525 |                            NR_VM_NUMA_EVENT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~~
+   4 warnings generated.
+   ***
+   *** Rust bindings generator 'bindgen' < 0.69.5 together with libclang >= 19.1
+   *** may not work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/2824),
+   *** unless patched (like Debian's).
+   ***   Your bindgen version:  0.65.1
+   ***   Your libclang version: 19.1.3
+   ***
+   ***
+   *** Please see Documentation/rust/quick-start.rst for details
+   *** on how to set up the Rust support.
+   ***
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+   505 |                            item];
+   |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+   512 |                            NR_VM_NUMA_EVENT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+   |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+   525 |                            NR_VM_NUMA_EVENT_ITEMS +
+   |                            ~~~~~~~~~~~~~~~~~~~~~~
+   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   4 warnings generated.
+   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>> error[E0277]: the size for values of type `Self` cannot be known at compilation time
+   --> rust/kernel/miscdevice.rs:107:35
+   |
+   107 |     fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
+   |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ doesn't have a size known at compile-time
+   |
+   note: required by an implicit `Sized` bound in `MiscDeviceRegistration`
+   --> rust/kernel/miscdevice.rs:52:35
+   |
+   52  | pub struct MiscDeviceRegistration<T> {
+   |                                   ^ required by the implicit `Sized` requirement on this type parameter in `MiscDeviceRegistration`
+   help: consider further restricting `Self`
+   |
+   107 |     fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr> where Self: Sized;
+   |                                                                                      +++++++++++++++++
+   help: consider relaxing the implicit `Sized` restriction
+   |
+   52  | pub struct MiscDeviceRegistration<T: ?Sized> {
+   |                                    ++++++++
+--
+>> error[E0609]: no field `private_data` on type `File`
+   --> rust/kernel/miscdevice.rs:215:22
+   |
+   215 |     unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
+   |                      ^^^^^^^^^^^^ unknown field
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
