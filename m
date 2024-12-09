@@ -1,136 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-36866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755C89EA1AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 23:14:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 175489EA1D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 23:30:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0797628417D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 22:14:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8087A16694E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 22:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F2C19E7D0;
-	Mon,  9 Dec 2024 22:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46631A0BC5;
+	Mon,  9 Dec 2024 22:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jDq10gFK"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XTkgrBGF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91E19D090;
-	Mon,  9 Dec 2024 22:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38651A072A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 22:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733782437; cv=none; b=dvE8rGeVIMBRW/NDws6dugIfz8cekkhWvYopguqlrJWAOm8hnGoOF9h/hJSgD2ZLoZwIUr4ir91bwAR2rNbgm5yz0h8T+nL2LTSgrDpzUPiIiHkdTDz66V75Sl+boteLc/iLRODMRY09wdlX2z7xB0karAuN3uUYdcewnPzF2wY=
+	t=1733783343; cv=none; b=WdgZL5pcowkRpRFZyFhfQvv27brE2rGKUWvMiXx4jqq3M392AJVIvUGFilY5fk1fseFPLMlbnn8AZ/xv3cCBwsQnPtCCxAmkyL+vZ+lX+wgg6bvsogCNyoVVTPXpxwC5zgcF/eVzFh7BGFHeW9DkjsET9/Rj9xBuck/I0VnL9GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733782437; c=relaxed/simple;
-	bh=Zoicv6FCB+iFzMQfrU4Z9XfeuHWSrSqyKjxadK6Xa+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MLDV5Aw7cIbs5lup6f/Mgy5Jxd5JWGkxqGRVre65B9kh0wTyQvtm5wYiOvahzkI3eG6nC+vTFQ+SUuvypmZNXuqY6zx24kpDg1NGWvAc9eM4936HevFtt0fI+UnYJYH0xWUcN4Zb2XbgOQSDKjR0K6KAJULQ2zvhtxFJSUhh7BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jDq10gFK; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y6bjv2dDszlfflB;
-	Mon,  9 Dec 2024 22:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733782429; x=1736374430; bh=IQKVDEMj0TrHltVURdtOup6I
-	IRHQAQ4lIbXGduLnT6I=; b=jDq10gFK/44haFYNLdurY4fNR+uBNg0nU4knZqPa
-	ibGTnIO0Rl5EA+MPlZ4I5pCwvbTrPvQCB0DiYqmkZrE3zzRRmiECLY4uOJmZeKv7
-	OvGmexAE5Z2hai0js6fM7Rxwg9PbyphTBqFEKalOQQwR3nhHwRigEY0paW1OxGug
-	M4l/G846p7QRGdNb/z3j99331bgyzQ4FIDPiarmykDUolWZSB4WwgRcPCZmftVms
-	Djmn6GlTt3+3AMAUhRq8HUJHiFM0NdmTdZ3XvlxPqfEGKY9Aqo41s+CwgyysZ5v1
-	fcIIUCBF06cRgzg2HVDqMe/aiIe8MCu1CPv879TXpzViqQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id jToVKEuMeHKC; Mon,  9 Dec 2024 22:13:49 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6bjf55d1zlfflY;
-	Mon,  9 Dec 2024 22:13:41 +0000 (UTC)
-Message-ID: <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
-Date: Mon, 9 Dec 2024 14:13:40 -0800
+	s=arc-20240116; t=1733783343; c=relaxed/simple;
+	bh=eElBynqFggbIthSo8w8fimML+Sp1oz0vtgMC1mdDdb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyMGeOKAz8smy15hsf2AizNZHELZtA6Ab4PDcU7QyJsfckjKaoy1QdRtvns22Ed8tuSndZpKvQ+i0Lc5AKPTTtVuCNIxHzz0ZZhoB2NCNW4QGmnWxBlDrcHYu4ffPPrCCxrjVKOF2PLOXELXL/YAi67WLr+yLkD5mUd5f8S8Kp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XTkgrBGF; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BZY5hm6vwtREonWoJSeWPhxjTiAhIBoqwDlg3IDc9Go=; b=XTkgrBGFMwsIrh86DR7ISllJIe
+	00/sqQJFrQGbDmGe4g6dC+Kj7kivOBhFAzXbzTcUiWeKRoLRZDUmG1D7JQShQNGvvGNrg2mmleuYv
+	cSK7KdayXJ0BhMJ6jeJASmWXf0/jj8AO0OrcvyfZLcm23Oi63uPecEpniofYbg6nB1Sn923Rhb+ZI
+	3bYWACcpT3GxJlp+Qj7rA6/7zJO5xGhAfgfBhYclMs/BTuVQ+ey1VqT7bKLxJiZWzw8O+EesdDqha
+	tWbGd0TchsRqZxRFWak7yIW8KTuU+IWF9/njFSrA06m398tzNfKlWcqZGUrsWrI45xqRD9bxrbOgr
+	ae6Rr/lQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKmFK-00000006h04-1JLd;
+	Mon, 09 Dec 2024 22:28:54 +0000
+Date: Mon, 9 Dec 2024 22:28:54 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
+Message-ID: <20241209222854.GB3387508@ZenIV>
+References: <20241209035251.GV3387508@ZenIV>
+ <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
+ <20241209211708.GA3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: Nitesh Shetty <nj.shetty@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
- <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
- <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
- <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
- <20241112135233.2iwgwe443rnuivyb@ubuntu>
- <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
- <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
- <20241205080342.7gccjmyqydt2hb7z@ubuntu>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241205080342.7gccjmyqydt2hb7z@ubuntu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209211708.GA3387508@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 12/5/24 12:03 AM, Nitesh Shetty wrote:
-> But where do we store the read sector info before sending write.
-> I see 2 approaches here,
-> 1. Should it be part of a payload along with write ?
->  =C2=A0=C2=A0=C2=A0=C2=A0We did something similar in previous series wh=
-ich was not liked
->  =C2=A0=C2=A0=C2=A0=C2=A0by Christoph and Bart.
-> 2. Or driver should store it as part of an internal list inside
-> namespace/ctrl data structure ?
->  =C2=A0=C2=A0=C2=A0=C2=A0As Bart pointed out, here we might need to sen=
-d one more fail
->  =C2=A0=C2=A0=C2=A0=C2=A0request later if copy_write fails to land in s=
-ame driver.
+On Mon, Dec 09, 2024 at 09:17:08PM +0000, Al Viro wrote:
 
-Hi Nitesh,
+> And yes, they are aligned - d_iname follows a pointer, inline_name follows
+> struct qstr, i.e. u64 + pointer.  How about we add struct inlined_name {
+> unsigned char name[DNAME_INLINE_LEN];}; and turn d_iname and inline_name
+> into anon unions with that?  Hell, might even make it an array of unsigned
+> long and use that to deal with this
+>                 } else {
+>                         /*
+>                          * Both are internal.
+>                          */
+>                         unsigned int i;
+>                         BUILD_BUG_ON(!IS_ALIGNED(DNAME_INLINE_LEN, sizeof(long)));
+>                         for (i = 0; i < DNAME_INLINE_LEN / sizeof(long); i++) {
+>                                 swap(((long *) &dentry->d_iname)[i],
+>                                      ((long *) &target->d_iname)[i]);
+>                         }
+>                 }
+> in swap_names().  With struct assignment in the corresponding case in
+> copy_name() and in take_dentry_name_snapshot() - that does generate sane
+> code...
 
-Consider the following example: dm-linear is used to concatenate two
-block devices. An NVMe device (LBA 0..999) and a SCSI device (LBA
-1000..1999). Suppose that a copy operation is submitted to the dm-linear
-device to copy LBAs 1..998 to LBAs 2..1998. If the copy operation is
-submitted as two separate operations (REQ_OP_COPY_SRC and
-REQ_OP_COPY_DST) then the NVMe device will receive the REQ_OP_COPY_SRC
-operation and the SCSI device will receive the REQ_OP_COPY_DST
-operation. The NVMe and SCSI device drivers should fail the copy=20
-operations after a timeout because they only received half of the copy
-operation. After the timeout the block layer core can switch from
-offloading to emulating a copy operation. Waiting for a timeout is
-necessary because requests may be reordered.
+Do you have any objections to the diff below?  Completely untested and needs
+to be split in two...  It does seem to generate decent code; it obviously
+will need to be profiled - copy_name() in the common (short-to-short) case
+copies the entire thing, all 5 words of it on 64bit, instead of memcpy()
+of just the amount that needs to be copied.  That thing may cross the
+cacheline boundary, but both cachelines had been freshly brought into
+cache and dirtied, so...
 
-I think this is a strong argument in favor of representing copy
-operations as a single operation. This will allow stacking drivers
-as dm-linear to deal in an elegant way with copy offload requests
-where source and destination LBA ranges map onto different block
-devices and potentially different block drivers.
-
-Thanks,
-
-Bart.
+diff --git a/fs/dcache.c b/fs/dcache.c
+index b4d5e9e1e43d..687558622acf 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -296,10 +296,8 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
+ }
+ 
+ struct external_name {
+-	union {
+-		atomic_t count;
+-		struct rcu_head head;
+-	} u;
++	atomic_t count;		// ->count and ->head can't be combined
++	struct rcu_head head;	// see take_dentry_name_snapshot()
+ 	unsigned char name[];
+ };
+ 
+@@ -329,16 +327,33 @@ static inline int dname_external(const struct dentry *dentry)
+ 
+ void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry)
+ {
+-	spin_lock(&dentry->d_lock);
+-	name->name = dentry->d_name;
+-	if (unlikely(dname_external(dentry))) {
+-		atomic_inc(&external_name(dentry)->u.count);
+-	} else {
+-		memcpy(name->inline_name, dentry->d_iname,
+-		       dentry->d_name.len + 1);
++	unsigned seq;
++	const unsigned char *s;
++
++	rcu_read_lock();
++retry:
++	seq = read_seqcount_begin(&dentry->d_seq);
++	s = READ_ONCE(dentry->d_name.name);
++	name->name.hash_len = dentry->d_name.hash_len;
++	if (likely(s == dentry->d_iname)) {
+ 		name->name.name = name->inline_name;
++		name->__inline_name = dentry->__d_iname;
++		if (read_seqcount_retry(&dentry->d_seq, seq))
++			goto retry;
++	} else {
++		struct external_name *p;
++		p = container_of(s, struct external_name, name[0]);
++		name->name.name = s;
++		// get a valid reference
++		if (unlikely(!atomic_inc_not_zero(&p->count)))
++			goto retry;
++		if (read_seqcount_retry(&dentry->d_seq, seq)) {
++			if (unlikely(atomic_dec_and_test(&p->count)))
++				kfree_rcu(p, head);
++			goto retry;
++		}
+ 	}
+-	spin_unlock(&dentry->d_lock);
++	rcu_read_unlock();
+ }
+ EXPORT_SYMBOL(take_dentry_name_snapshot);
+ 
+@@ -347,8 +362,8 @@ void release_dentry_name_snapshot(struct name_snapshot *name)
+ 	if (unlikely(name->name.name != name->inline_name)) {
+ 		struct external_name *p;
+ 		p = container_of(name->name.name, struct external_name, name[0]);
+-		if (unlikely(atomic_dec_and_test(&p->u.count)))
+-			kfree_rcu(p, u.head);
++		if (unlikely(atomic_dec_and_test(&p->count)))
++			kfree_rcu(p, head);
+ 	}
+ }
+ EXPORT_SYMBOL(release_dentry_name_snapshot);
+@@ -386,7 +401,7 @@ static void dentry_free(struct dentry *dentry)
+ 	WARN_ON(!hlist_unhashed(&dentry->d_u.d_alias));
+ 	if (unlikely(dname_external(dentry))) {
+ 		struct external_name *p = external_name(dentry);
+-		if (likely(atomic_dec_and_test(&p->u.count))) {
++		if (likely(atomic_dec_and_test(&p->count))) {
+ 			call_rcu(&dentry->d_u.d_rcu, __d_free_external);
+ 			return;
+ 		}
+@@ -1667,7 +1682,7 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 			kmem_cache_free(dentry_cache, dentry); 
+ 			return NULL;
+ 		}
+-		atomic_set(&p->u.count, 1);
++		atomic_set(&p->count, 1);
+ 		dname = p->name;
+ 	} else  {
+ 		dname = dentry->d_iname;
+@@ -2749,11 +2764,9 @@ static void swap_names(struct dentry *dentry, struct dentry *target)
+ 			 * Both are internal.
+ 			 */
+ 			unsigned int i;
+-			BUILD_BUG_ON(!IS_ALIGNED(DNAME_INLINE_LEN, sizeof(long)));
+-			for (i = 0; i < DNAME_INLINE_LEN / sizeof(long); i++) {
+-				swap(((long *) &dentry->d_iname)[i],
+-				     ((long *) &target->d_iname)[i]);
+-			}
++			for (i = 0; i < DNAME_INLINE_LEN / sizeof(long); i++)
++				swap(dentry->__d_iname.name[i],
++				     target->__d_iname.name[i]);
+ 		}
+ 	}
+ 	swap(dentry->d_name.hash_len, target->d_name.hash_len);
+@@ -2765,16 +2778,15 @@ static void copy_name(struct dentry *dentry, struct dentry *target)
+ 	if (unlikely(dname_external(dentry)))
+ 		old_name = external_name(dentry);
+ 	if (unlikely(dname_external(target))) {
+-		atomic_inc(&external_name(target)->u.count);
++		atomic_inc(&external_name(target)->count);
+ 		dentry->d_name = target->d_name;
+ 	} else {
+-		memcpy(dentry->d_iname, target->d_name.name,
+-				target->d_name.len + 1);
++		dentry->__d_iname = target->__d_iname;
+ 		dentry->d_name.name = dentry->d_iname;
+ 		dentry->d_name.hash_len = target->d_name.hash_len;
+ 	}
+-	if (old_name && likely(atomic_dec_and_test(&old_name->u.count)))
+-		kfree_rcu(old_name, u.head);
++	if (old_name && likely(atomic_dec_and_test(&old_name->count)))
++		kfree_rcu(old_name, head);
+ }
+ 
+ /*
+@@ -3189,6 +3201,7 @@ static void __init dcache_init_early(void)
+ 
+ static void __init dcache_init(void)
+ {
++	BUILD_BUG_ON(DNAME_INLINE_LEN != sizeof(struct short_name_store));
+ 	/*
+ 	 * A constructor could be added for stable state like the lists,
+ 	 * but it is probably not worth it because of the cache nature
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 1f28f56fd406..d604a4826765 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -77,6 +77,10 @@ extern const struct qstr dotdot_name;
+ # endif
+ #endif
+ 
++struct short_name_store {
++	unsigned long name[DNAME_INLINE_LEN / sizeof(unsigned long)];
++};
++
+ #define d_lock	d_lockref.lock
+ 
+ struct dentry {
+@@ -88,7 +92,10 @@ struct dentry {
+ 	struct qstr d_name;
+ 	struct inode *d_inode;		/* Where the name belongs to - NULL is
+ 					 * negative */
+-	unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
++	union {
++		unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
++		struct short_name_store __d_iname;
++	};
+ 	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+ 
+ 	/* Ref lookup also touches following */
+@@ -590,7 +597,10 @@ static inline struct inode *d_real_inode(const struct dentry *dentry)
+ 
+ struct name_snapshot {
+ 	struct qstr name;
+-	unsigned char inline_name[DNAME_INLINE_LEN];
++	union {
++		unsigned char inline_name[DNAME_INLINE_LEN];
++		struct short_name_store __inline_name;
++	};
+ };
+ void take_dentry_name_snapshot(struct name_snapshot *, struct dentry *);
+ void release_dentry_name_snapshot(struct name_snapshot *);
 
