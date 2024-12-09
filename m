@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-36721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686719E8A21
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 05:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 764B89E8A22
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 05:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C951644CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 04:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F02163393
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 04:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221EE15746F;
-	Mon,  9 Dec 2024 04:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D3F15625A;
+	Mon,  9 Dec 2024 04:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIlV67hi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nIqHzorF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB9915574E;
-	Mon,  9 Dec 2024 04:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2511D3DBB6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 04:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733717170; cv=none; b=dQKLXGkQarS8I6GG6LUoHgf/iv2GKreYPi/QjtWY0kEhQTlAjqg9l4/b3tvY3OJhyK1dpPbT2EWzg+gML1O0SeZiYWJCW7n7IX9/A32n/TEcfeohVK9m+1Z0XUm4zkGUbPtQbT6BYHB9JAW9vYXACBSDftDRtKaRK9UkypHDI2E=
+	t=1733717230; cv=none; b=FD4EwgsgJ4NFH2yWZcnBSCN7ltPubUBFr8YAQOaZF6AShohznsJUfDuTAcKXuufkkYUNqVwNKIcAYE1cA5PbsF82ZgyNN15FFzLkiqJI7QVp3RExLXyyAP1M/1wU7A66l1E9HeFICy0+KgetqU9Spp9Q7TAuZVHMH7f1O4lSvN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733717170; c=relaxed/simple;
-	bh=9BZ3Vp8ClbzYwVR5+MOqxWZF2tgpKKxLlNgbbyHpqPA=;
+	s=arc-20240116; t=1733717230; c=relaxed/simple;
+	bh=VeCCLjKhwMe3TBWX5T0F3Cido5RakX4k2QP+YRN0km8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAlxklNZ217BCeCcYYaorbPtXOJChx7UXRefVnuYWo1Ur3kd+LLjwupT4snFUpHO41lDQD+/zXneX/KkOax7A4pV8DNFbYnVOUaul1viEYfvah5/cDMASmI9H9WJaNG/hNnjYPUaUZv/tFzNpzsz8PoSAYgUQL1mgX7bIiLEphg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIlV67hi; arc=none smtp.client-ip=192.198.163.7
+	 Content-Type:Content-Disposition:In-Reply-To; b=rooCHnp5Z8FZZ8T2wmoH2Fk7oZrnvm199JSv4QiO32xX1FkQyPSfsLuQxPVz33O4BdwHC3kBH4AEtzB1Zp/exG4SyZeeQItDJ7MrVrS8vYoQowcyngw/mdH5tKJKTeyc4LuavSOSxdU5k5xsWGZprXfVa8YOca48Ysc0suFRqgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nIqHzorF; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733717169; x=1765253169;
+  t=1733717229; x=1765253229;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=9BZ3Vp8ClbzYwVR5+MOqxWZF2tgpKKxLlNgbbyHpqPA=;
-  b=KIlV67hi4vDPp9ni0omCPcxDQpXydCqQnbVcOyUlaB3KS9O0ZPlJlY+q
-   xbO3Wrtjpr0Tp4QyFwE7IAk4ykKvwPasb0zub2MJJeZLYea5jOjd6QuqE
-   CcEFgRr7tnaj1oTYy5EfTuUprs3y/x53NPF2clUICMQErzHYLiZtpnO7t
-   eLkzZ1wlD9dretD+3PBFJqWMCzXSv/8Fkd/5HVh0bM1RQ199r1kI2EKcH
-   ywDYka2nHLL3CaUJqBv08bWD9xC+f0Tu1mWRFk+0FZX70avASQS3y8Kep
-   bqsSxn32nqDv1dHabQKfdFJWLA00pQKmKk6EFe2Qg5vD+P84JbhJXS3G9
+  bh=VeCCLjKhwMe3TBWX5T0F3Cido5RakX4k2QP+YRN0km8=;
+  b=nIqHzorFYrY4lGyIGAKwIIFeQ+Z1tu1K5fJqEVlKL24zXeSVCtspNNNW
+   9Dz8d60lUUEhbSMS+djer9TkKwbZhqhewkbTHejUoWmqde7Eh3UG2WsEf
+   CgX3e/S2FbRHxT8tPoMinLxHyX5sIfQbbGIJq4cAYs3FaQRp8zCtxpuj1
+   1wI2AveJfCnow7HPyaxgzHlAK0k0bs3bcDP3154mJna53QLSEULQEgq4k
+   Sr2F8+0DUz1nlu/GxwJl85TIt3t+7t/nigI+rVpCNAzlprepTJ1HZUyS6
+   DvLsBiY3YxTxDx0kZtETZuuRlsOMw2jYSwrhT7Fx5rQtHRDfMYFt1qYpy
    w==;
-X-CSE-ConnectionGUID: tqSPOhdRR2CwP2DZA3IU2Q==
-X-CSE-MsgGUID: GgvHEhi4R1yFala2WivsTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="59402294"
+X-CSE-ConnectionGUID: MnLMyQ/eQ1ym+xbOmzPwNA==
+X-CSE-MsgGUID: mLDaths3RrWdIHAuqw7pdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="33347012"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="59402294"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:06:08 -0800
-X-CSE-ConnectionGUID: 5VScRe/8TWaEic8tbsZI0A==
-X-CSE-MsgGUID: 0aG8DFmkSZ6aaWljP+LPYg==
+   d="scan'208";a="33347012"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:07:08 -0800
+X-CSE-ConnectionGUID: WFQ9HID4RUmhoCXJk7f2iw==
+X-CSE-MsgGUID: XKTDHwwFSqGO3eXoXJUjEw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="100003027"
+   d="scan'208";a="125793753"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Dec 2024 20:06:05 -0800
+  by orviesa002.jf.intel.com with ESMTP; 08 Dec 2024 20:07:06 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKV22-0003mr-0s;
-	Mon, 09 Dec 2024 04:06:02 +0000
-Date: Mon, 9 Dec 2024 12:05:27 +0800
+	id 1tKV30-0003n3-2r;
+	Mon, 09 Dec 2024 04:07:02 +0000
+Date: Mon, 9 Dec 2024 12:06:57 +0800
 From: kernel test robot <lkp@intel.com>
-To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, sagi@grimberg.me,
-	asml.silence@gmail.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv12 11/12] nvme: register fdp parameters with the block
- layer
-Message-ID: <202412071144.9uXFLnls-lkp@intel.com>
-References: <20241206221801.790690-12-kbusch@meta.com>
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Ian Kent <raven@themaw.net>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2] fanotify: notify on mount attach and detach
+Message-ID: <202412071154.l5pE0H0S-lkp@intel.com>
+References: <20241206151154.60538-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,99 +82,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206221801.790690-12-kbusch@meta.com>
+In-Reply-To: <20241206151154.60538-1-mszeredi@redhat.com>
 
-Hi Keith,
+Hi Miklos,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on axboe-block/for-next]
-[also build test WARNING on next-20241206]
-[cannot apply to brauner-vfs/vfs.all hch-configfs/for-next linus/master v6.13-rc1]
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.13-rc1]
+[cannot apply to jack-fs/fsnotify pcmoore-selinux/next next-20241206]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Keith-Busch/fs-add-write-stream-information-to-statx/20241207-063826
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20241206221801.790690-12-kbusch%40meta.com
-patch subject: [PATCHv12 11/12] nvme: register fdp parameters with the block layer
-config: i386-buildonly-randconfig-001-20241207 (https://download.01.org/0day-ci/archive/20241207/202412071144.9uXFLnls-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412071144.9uXFLnls-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Miklos-Szeredi/fanotify-notify-on-mount-attach-and-detach/20241206-231407
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20241206151154.60538-1-mszeredi%40redhat.com
+patch subject: [PATCH v2] fanotify: notify on mount attach and detach
+config: m68k-allnoconfig (https://download.01.org/0day-ci/archive/20241207/202412071154.l5pE0H0S-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412071154.l5pE0H0S-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412071144.9uXFLnls-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412071154.l5pE0H0S-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   In file included from drivers/nvme/host/core.c:8:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/x86/include/asm/cacheflush.h:5:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/nvme/host/core.c:2187:11: warning: variable 'i' is uninitialized when used here [-Wuninitialized]
-    2187 |         } while (i++ < fdp_idx);
-         |                  ^
-   drivers/nvme/host/core.c:2160:7: note: initialize the variable 'i' to silence this warning
-    2160 |         int i, n, ret;
-         |              ^
-         |               = 0
-   2 warnings generated.
+   In file included from fs/open.c:12:
+>> include/linux/fsnotify.h:258:20: error: redefinition of 'fsnotify_mntns_delete'
+     258 | static inline void fsnotify_mntns_delete(struct mnt_namespace *mntns)
+         |                    ^~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/fsnotify.h:15:
+   include/linux/fsnotify_backend.h:914:20: note: previous definition of 'fsnotify_mntns_delete' with type 'void(struct mnt_namespace *)'
+     914 | static inline void fsnotify_mntns_delete(struct mnt_namespace *mntns)
+         |                    ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/fsnotify.h: In function 'fsnotify_mntns_delete':
+>> include/linux/fsnotify.h:260:9: error: implicit declaration of function '__fsnotify_mntns_delete'; did you mean 'fsnotify_mntns_delete'? [-Wimplicit-function-declaration]
+     260 |         __fsnotify_mntns_delete(mntns);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~
+         |         fsnotify_mntns_delete
+--
+   In file included from fs/namespace.c:22:
+>> include/linux/fsnotify.h:258:20: error: redefinition of 'fsnotify_mntns_delete'
+     258 | static inline void fsnotify_mntns_delete(struct mnt_namespace *mntns)
+         |                    ^~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/fsnotify.h:15:
+   include/linux/fsnotify_backend.h:914:20: note: previous definition of 'fsnotify_mntns_delete' with type 'void(struct mnt_namespace *)'
+     914 | static inline void fsnotify_mntns_delete(struct mnt_namespace *mntns)
+         |                    ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/fsnotify.h: In function 'fsnotify_mntns_delete':
+>> include/linux/fsnotify.h:260:9: error: implicit declaration of function '__fsnotify_mntns_delete'; did you mean 'fsnotify_mntns_delete'? [-Wimplicit-function-declaration]
+     260 |         __fsnotify_mntns_delete(mntns);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~
+         |         fsnotify_mntns_delete
+   fs/namespace.c: In function 'queue_notify':
+>> fs/namespace.c:1126:15: error: 'struct mnt_namespace' has no member named 'n_fsnotify_marks'
+    1126 |         if (ns->n_fsnotify_marks)
+         |               ^~
 
 
-vim +/i +2187 drivers/nvme/host/core.c
+vim +/fsnotify_mntns_delete +258 include/linux/fsnotify.h
 
-  2153	
-  2154	static int nvme_check_fdp(struct nvme_ns *ns, struct nvme_ns_info *info,
-  2155				  u8 fdp_idx)
-  2156	{
-  2157		struct nvme_fdp_config_log hdr, *h;
-  2158		struct nvme_fdp_config_desc *desc;
-  2159		size_t size = sizeof(hdr);
-  2160		int i, n, ret;
-  2161		void *log;
-  2162	
-  2163		info->runs = 0;
-  2164		ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIGS, 0, NVME_CSI_NVM,
-  2165				   (void *)&hdr, size, 0, info->endgid);
-  2166		if (ret)
-  2167			return ret;
-  2168	
-  2169		size = le32_to_cpu(hdr.sze);
-  2170		h = kzalloc(size, GFP_KERNEL);
-  2171		if (!h)
-  2172			return 0;
-  2173	
-  2174		ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIGS, 0, NVME_CSI_NVM,
-  2175				   h, size, 0, info->endgid);
-  2176		if (ret)
-  2177			goto out;
-  2178	
-  2179		n = le16_to_cpu(h->numfdpc) + 1;
-  2180		if (fdp_idx > n)
-  2181			goto out;
-  2182	
-  2183		log = h + 1;
-  2184		do {
-  2185			desc = log;
-  2186			log += le16_to_cpu(desc->dsze);
-> 2187		} while (i++ < fdp_idx);
-  2188	
-  2189		info->runs = le64_to_cpu(desc->runs);
-  2190	out:
-  2191		kfree(h);
-  2192		return ret;
-  2193	}
-  2194	
+   257	
+ > 258	static inline void fsnotify_mntns_delete(struct mnt_namespace *mntns)
+   259	{
+ > 260		__fsnotify_mntns_delete(mntns);
+   261	}
+   262	
 
 -- 
 0-DAY CI Kernel Test Service
