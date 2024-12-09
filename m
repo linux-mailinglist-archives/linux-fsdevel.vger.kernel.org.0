@@ -1,179 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-36854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CC49E9D29
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:36:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601519E9E0A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 19:27:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D71028177A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8B3162952
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 18:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304321552E0;
-	Mon,  9 Dec 2024 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE40171E7C;
+	Mon,  9 Dec 2024 18:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GTU+clBP"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R6Oj2dz0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4194233151;
-	Mon,  9 Dec 2024 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B39155345
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 18:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733765791; cv=none; b=HtIY8+5d62ibIf4hvHviUBItUV9+LXuMHJkX4J4TaOuSe+57zMalkzWju942lDPOQqs85Adq7jbsu4iFqSmugNGdx5bNcrv+R4bIbzmsqUfSUdQPCKBmcaYngpbT/fpg3UfIprvKuJfFpKf1G/3PJ0T+9u6+oKrbvZ89ixBSvGY=
+	t=1733768845; cv=none; b=a+JBM5xMlhi7jF+6v3s9d/xbZEuwYVWe/NISzRuSpad9RGskypziwy+ir1+8qsky2mHe2GQZRg4Yq6q1JGg1/zmMxowuCamg7Gr6MkJ1JePdkaaWYyJVXUHl+gux+pjyfKy5P2PGsYlluxvDp2kQKiLAE13z31JTwGUQdY9SLnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733765791; c=relaxed/simple;
-	bh=Hq5rnsJB/aKu9z8c1l+psZm54aIsx4j7G7c5ol1WoVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CURFXsixhmAtwt4zu0rjcq6WRNPq7FfaMocERoEzk7y9BrQ117groEhWs3wTGSPtiq7LV+2L20Yu1SmPLed32OS1o2guUt6eyS02CMn6W1DYqEW6uq1AWALI8HQSfIn4QCIJIOh+myQXvcWtZ3a9R1UBFjet4QLCVfnGiTnnExs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GTU+clBP; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9CNZvm030669;
-	Mon, 9 Dec 2024 17:36:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=TvXjD5
-	sYjVjwVQKUFAm5ajrLGlsD4EPwD6ySYHNV9y0=; b=GTU+clBPgWoKiThNubTyx9
-	6OsyBvbc0LvJtUJ94ybICM8GbhTAvKJlsAS6ST91rcozg9O+PAsHndvx10R5cH97
-	gD9HfBItn/hIsCOpKq7Nqt0mGP4JJb6gNMV2O8ygJwXWvmcBCWSMXT3tB1LksUNd
-	2FzVWgD0Ls0ByT5Ig5Kj526FYsBOIVqt6ZTvcFwhzt13IxoHh/O3PuoTQj3rMnHx
-	bbLFClMX5wVnh5ZpnnVOp1PBvzHPAVEpzfAEv0o2v8yB4Tyxi5U3EfBYnoa1g9hD
-	k5+DwbdsVdKMS8dyL4bj2ESP6GKyr0pBA7in4bHt3l8Tb9v/UvPvnljcIPL0oMMw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsj9w16-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 17:36:15 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9FbdWI023018;
-	Mon, 9 Dec 2024 17:36:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wjqdrb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 17:36:14 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9HaDfg22872490
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 17:36:13 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 58F6D20043;
-	Mon,  9 Dec 2024 17:36:13 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E31620040;
-	Mon,  9 Dec 2024 17:36:13 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Dec 2024 17:36:13 +0000 (GMT)
-Date: Mon, 9 Dec 2024 18:36:11 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-s390@vger.kernel.org
-Subject: Re: Removing page->index
-Message-ID: <20241209183611.1f15595f@p-imbrenda>
-In-Reply-To: <cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
-References: <Z09hOy-UY9KC8WMb@casper.infradead.org>
-	<cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733768845; c=relaxed/simple;
+	bh=EpO0mHNsxoTIrIlepAq/s8cJm27FUN87hDBBQIahs1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PWx4z0hmUf6hIOb60niFWFBbxxFVk2WYxUGSXGyuEeZl1loLzpXzrMyOO1uhynblNEOtODHPg0Rg3Moooq+6vUXJRzuy47RMYS3RCBDBn9nzD0HjPQ63wVtV4o7BLGAYnuUyyfDlceJCf6LFIKC6jxabmfWRR0fEBmdIlrHdYw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R6Oj2dz0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa66ead88b3so359972966b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 10:27:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1733768842; x=1734373642; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5MmDGlwefJc6M1TjdzyEa30t5fwiMC4TrQsoohf+AOg=;
+        b=R6Oj2dz02zNQ74RKJeh3T7iO/6cguhD5lg5eLnkqN0EKhYkUZFl2fQuc6xEFvLxtcl
+         s3Q3AtC+YLwzwSl4Dnvt3+dDknr8e6iD2waSWq/G01Brv29IpPDY/1b1ho6h+eQpFT5N
+         0bHG1yn0EniFBcAln+w6V3m/j74Xv2BMLwp20=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733768842; x=1734373642;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5MmDGlwefJc6M1TjdzyEa30t5fwiMC4TrQsoohf+AOg=;
+        b=BR64Q9Y6Ds1QoZyoVBb/gGnFmdsgU4L71CmoQ65sM+55ZpF14bHptjE2CYgiR+bY1N
+         uEv7HR/nKVbeh8dhlf83iu+o2SNewTXDA+qVfODMSEocGeBDNPd7+4NkmXCbVrdbqXk9
+         /OFEOUgbGQiCJ4HTqaytLOEVelHFUh+kyfLPZ7dxdXFIeeaHsrKfXdoD0i31Ra6srrWA
+         uPGB7xVW6OwaheQbqt7HZKByLXybXH4KnIDz4vzJZmZ5xPgrIwzTmx+i6VFWDAEHXgwF
+         LJLdMevY9kP1h0rUD8r3VsryBXHwJwRdTbIw9XcE6w5p2rV13rVzA2t5YgamM+SVJceh
+         NIjQ==
+X-Gm-Message-State: AOJu0Yw0eiyMvP8rF7G/S08yWk66CP5+HkGyZUPLfcyOePmh0OJRcJ7V
+	Q/aE8DtLpxoWE/Z3we68U227UchmxwCwbcKO9P6VkxOvM6trl792Wk8ZizjHTnNrnFKIUhwiZ7L
+	eTYQ=
+X-Gm-Gg: ASbGncsP1saPiIF+8IonTmy4kMUJHtngalGv9OkNSDYxNjJmHPyWLneRii6MAu/89sc
+	3M7de3yNGvGUrBES+XXnC0VP26pFt6VCB7MrIkS7uVw4VlGgXvGwH+i4j9Rs4QSoc/j1kIirCY0
+	cWFV8NBXS2tkJ7i2R6s31Q2LApC9uFjEKO2AynBLHR8IX3xehTazvKDHtGCuYdhlF1PRuBxy80x
+	8kh75aLb8TPWR6RS0SNo+lqNrm2OLym8Dp0Mzjhwdv9peLnQksBLR73/Fo2NfnHLzGWhRkwmA/5
+	ukcM+b4IppnFGGlwyo5K0qpg
+X-Google-Smtp-Source: AGHT+IHCWNwNOAG12CCz2xeOdBxIun1SYS5NCmrYuRsieZ/cy0xM0L4osAf0nwuDoQZ/Y2Ugqd72qw==
+X-Received: by 2002:a17:907:cc24:b0:aa6:88c6:9449 with SMTP id a640c23a62f3a-aa69cd5c8afmr161719866b.19.1733768841559;
+        Mon, 09 Dec 2024 10:27:21 -0800 (PST)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa695c3ac07sm112062766b.66.2024.12.09.10.27.20
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 10:27:20 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9ec267b879so905214866b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 10:27:20 -0800 (PST)
+X-Received: by 2002:a17:907:8327:b0:aa6:6ab1:37ff with SMTP id
+ a640c23a62f3a-aa69cd592bdmr156488966b.17.1733768840317; Mon, 09 Dec 2024
+ 10:27:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HBnYQoZuWsDnCU7JE8hIozGZoBz_2fKN
-X-Proofpoint-ORIG-GUID: HBnYQoZuWsDnCU7JE8hIozGZoBz_2fKN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=890
- mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090136
+References: <20241209035251.GV3387508@ZenIV>
+In-Reply-To: <20241209035251.GV3387508@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 9 Dec 2024 10:27:04 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
+Message-ID: <CAHk-=wh4=95ainkHyi5n3nFCToNWhLcfQtziSp3jSFSQGzQUAw@mail.gmail.com>
+Subject: Re: [PATCH][RFC] make take_dentry_name_snapshot() lockless
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 4 Dec 2024 16:58:52 +0100
-David Hildenbrand <david@redhat.com> wrote:
+On Sun, 8 Dec 2024 at 19:52, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>  void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry)
 
-> On 03.12.24 20:51, Matthew Wilcox wrote:
-> > I've pushed out a new tree to
-> > git://git.infradead.org/users/willy/pagecache.git shrunk-page
-> > aka
-> > http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/shrunk-page
-> > 
-> > The observant will notice that it doesn't actually shrink struct page
-> > yet.  However, we're getting close.  What it does do is rename
-> > page->index to page->__folio_index to prevent new users of page->index
-> > from showing up.  
-> 
-> BTW, I was wondering how often we convert a page to a folio to then 
-> access folio->index / folio->mapping and not actually having a folio (in 
-> the future).
-> 
-> I suspect this will need quite some changes to get it right, and I would 
-> count that as "less obvious".
-> 
-> Calling PageAnon() on anything mapped into user space page tables might 
-> be one such case, for example.
-> 
-> > 
-> > There are (I believe) three build failures in that tree:
-> > 
-> >   - fb_defio
-> >   - fbtft
-> >   - s390's gmap (and vsie?  is that the same thing?)  
-> 
-> Not completely (vsie (nested VMs) uses shadow gmap, ordinary VMs use 
-> ordinary gmap) , but they are very related (-> KVM implementation on s390x).
-> 
-> I know that Claudio is working on some changes, but not sure how that 
-> would affect gmap's usage of page->index.
+Editing the patch down so that you just see the end result (ie all the
+"-" lines are gone):
 
-After I'm done, we won't use page->index anymore.
+>  {
+> +       unsigned seq;
+> +
+> +       rcu_read_lock();
+> +retry:
+> +       seq = read_seqcount_begin(&dentry->d_seq);
+>         name->name = dentry->d_name;
+> +       if (read_seqcount_retry(&dentry->d_seq, seq))
+> +               goto retry;
 
-The changes I'm working on are massive, it's very impractical to push
-everything at once, so I'm refactoring and splitting smaller and more
-manageable (and reviewable) series.
+Ugh. This early retry is cheap on x86, but on a lot of architectures
+it will be a fairly expensive read barrier.
 
-This means that it will take some time before I'm done (I'm *hoping*
-to be done for 6.15)
+I see why you do it, sinc you want 'name.len' and 'name.name' to be
+consistent, but I do hate it.
 
-> 
-> s390x gmap is 64bit only, so we have to store stuff in 8byte. gmap page 
-> tables are
-> 
-> Maybew e could simply switch from page->index to page->private? But I 
-> lost track if that will also be gone in the near future :)
-> 
-> > 
-> > Other than that, allmodconfig builds on x86 and I'm convinced the build
-> > bots will tell me about anything else I missed.
-> > 
-> > Lorenzo is working on fb_defio and fbtft will come along for the ride
-> > (it's a debug printk, so could just be deleted).
-> > 
-> > s390 is complicated.  I'd really appreciate some help.
-> > 
-> > The next step is to feed most of the patches through the appropriate
-> > subsystems.  Some have already gone into various maintainer trees
-> > (thanks!)
-> > 
-> > 
-> > There are still many more steps to go after this; eliminating memcg_data
-> > is closest to complete, and after that will come (in some order)
-> > eliminating ->lru, ->mapping, ->refcount and ->mapcount.   
-> 
-> Will continue working on the latter ;)
-> 
+The name consistency issue is really annoying. Do we really need it
+here? Because honestly, what you actually *really* care about here is
+whether it's inline or not, and you do that test right afterwards:
 
+> +       // ->name and ->len are at least consistent with each other, so if
+> +       // ->name points to dentry->d_iname, ->len is below DNAME_INLINE_LEN
+> +       if (likely(name->name.name == dentry->d_iname)) {
+> +               memcpy(name->inline_name, dentry->d_iname, name->name.len + 1);
+
+and here it would actually be more efficient to just use a
+constant-sized memcpy with DNAME_INLINE_LEN, and never care about
+'len' at all.
+
+And if the length in name.len isn't right (we'll return it to the
+user), the *final* seqcount check will catch it.
+
+And in the other case, all you care about is the ref-count.
+
+End result: I think your early retry is pointless and should just be
+avoided. Instead, you should make sure to just read
+dentry->d_name.name with a READ_ONCE() (and read the len any way you
+want).
+
+Hmm?
+
+            Linus
 
