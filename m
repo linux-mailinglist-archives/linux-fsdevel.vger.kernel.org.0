@@ -1,243 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-36829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F3E9E9A04
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 16:07:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB259E9BB0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 17:30:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957D0188696E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 15:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB4A2819B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2024 16:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A251BEF64;
-	Mon,  9 Dec 2024 15:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B64F14F9EE;
+	Mon,  9 Dec 2024 16:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OEUiRvS1"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="1+uMXEtu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outbound-ip168a.ess.barracuda.com (outbound-ip168a.ess.barracuda.com [209.222.82.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE481A23B8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2024 15:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756704; cv=none; b=M8SV7hJu/VFSZmdsiFK+kD2sGvmHIavxxZ1Xq6t9GpMEVxLV0+3gk8qVmDhJ/dUoSHZq1Rlu/HRbEj91eNq6x49eNmwTK0axs7vtIPTAo7JshbPVDL/xnUsTLVNDT5vnpaOKF1tX3yh2ELckTGs8719HWy2TLXAYo3eXu4o2qzM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756704; c=relaxed/simple;
-	bh=GOOKCiRNospXnF+RV+ncUhx7aYYZcIfAvAE0jNhSHKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QObceW5dS1nbTOdV0KSbZ93vTjyaV2Qit3Xkdw9RPHCIwcVMgt1ZI7Ita2u0Du6nQksgS7AcTJ3snKcV7aLBC8rsxbzuNbJxYja3vwEIf5P5s4zuWe/SXAEAzUk7/4ibDxgPVywk86Ws54GP477CbmWP9c4iLcUpuizsL5dCZPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OEUiRvS1; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a2033562so42777035e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 07:05:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733756701; x=1734361501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezn89nmMHt3a4Gk2YmXU8FyBpaEaviUGfCoPxT8X+qU=;
-        b=OEUiRvS1g13/DgQNKbb5N9cF0nIcuBPX5O4qcIbz8jX45MhJ9otTn1BukRb39KIH5q
-         JEejevWllgTrfrx31zGMlBwIDVneEt34G9K9MyO+9ZwMCcssHMMjKz70FVaRvIO9Y+3K
-         d8fmNz95DJCtvHYWDi6BtgPkL/lru6RGQcvX7OtEOOaY3ZyX5AI4NA+mMwwjQuZfWPDd
-         Wpdiss/hMQ4XDviuTPKjyqSUc1joj3y631Cv5ql3sgZhmFYwscNBHsMP47Kgt5bu514i
-         QsLWIrTRihv2i1P8QpoRRbsH0pAtsgfRsgBRUetkfvL8NVC1pVcWt+cvHFkKBD1En1H/
-         ggBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733756701; x=1734361501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezn89nmMHt3a4Gk2YmXU8FyBpaEaviUGfCoPxT8X+qU=;
-        b=K/hRzyYGxc0iA+bFmJenws3xebvcOZ+8Yp47aGQ6/u14cJiLczaFYYv4coYyhu0inA
-         C2Qxabj/708qzUclAR1T6HpSyFoXsb4beWLO4LdDYpTXuq5z9Bmh17lYmCp2rOmtm/sn
-         sOP7dbfd6bqm/iAwYEgWoqrrPvinPh4nr/OUZ4jNCdEpGzKss2P92c7pvAHxSb4qvnIC
-         oUHt1xNEGwn+1T4xSihaVzY4MyNkDbtBWP+vZKIpz0mOfMgs4+Nc1mwspVuWJGDLTWa4
-         fsgHdr7qUbeyr3za19w9ZlCrj8tkGj9v9NVoqBBhSilNs6WF9x7PXNnXLhuDMJY4PUxQ
-         aWeA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+NQ5xcNTlNmQ+1vI9ctwzsoll9LS2c7QGbRy7rjko1eS+oyoKhvhMXUBn8j0P1R3EGyRFRb3QxmHhx2B2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ7xEMMRq4cS3N425OYyMJpTw1ZgyKXBmkrOGsgICaJ3qgJpxZ
-	IV6dP3VdROfR7t2KYAsW8q7cemSoyYXyW0S0JSUctoNGYQMqD0AW6q+nAqPpLWKKwxxX1gNmmIh
-	Ebo2/JBj6/ckmt1v5ptvpnt/hi0RAck+iDrRc
-X-Gm-Gg: ASbGncvvbeMiW5ZrZgdxYH+fFzNqWorYgBQ+QKTnNSbV49aicIayHc4VJUxSPjtx0io
-	rr73HwKEIKg0QLgQbXQAj6yG3TFykz9ptcFXFDVmbQC5WrthU/dRL2XyfQJTmvA==
-X-Google-Smtp-Source: AGHT+IHARy2pp+mkARCLjvba0y2x8gM4wwzt9yhM7UBN8pF5mt6au3buMyrotXz1sOrdemtnJyYsbglTDwW+Xa2zG04=
-X-Received: by 2002:a05:600c:a48:b0:434:9fac:b158 with SMTP id
- 5b1f17b1804b1-434ddeae4d6mr91859435e9.1.1733756700704; Mon, 09 Dec 2024
- 07:05:00 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DF914A60F;
+	Mon,  9 Dec 2024 16:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733761810; cv=fail; b=mwydej+AcMKItub81dUXta4FQAprasvxRQACDPu4Zk60fnR/VxI0paNs2ImGz33Kfwg8QsJiM2Krm7AQJKCwh+7IECPDT9XdWvMK2+2O7TW81ZBMo2mRt0JQ27YSifEeeOb7IHYucKLejtebcIBOUDWXUSMq5rWZjla/MDSmT6c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733761810; c=relaxed/simple;
+	bh=wxYO2fuIGkvqmeC9PNGhH5rOX2Wls8HlW08RzezL2Zw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YY6omuL2B+XxsFG6zpRSndhtYD63+7RM1yWIZ4OU+JCYi5r9rtCpoloX2zPOVZ4z57QaT7kHx/ilkf5ZzpX1sAYJkpfO/m6FSri1/4I/icZuf3Std1tzoX+mcbJ64llCLqyWRTaSJ+VXO697vWZjYONXrTWeLuDdyUoPTDebWuA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=1+uMXEtu; arc=fail smtp.client-ip=209.222.82.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171]) by mx-outbound44-160.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 09 Dec 2024 16:29:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t+mfuPLhiJXyzfTKPegl5biTc8ilnvu5evVqdwltY5SpWw1GOPqq9TdDoIJQ67TMx3Ir0fXdUShbRIPxGEPkQUkSs5K5ROI2gK9CErRaih1a0LJ/ipumu3RRvITPg/4pPWwrYrh3laDbUGxdCv1MVqIVmXPS6U120J4jYHCQcsNWW5kjbaELxd2+xwZNwROLzkKfeltXY3Pjwvh4gjWzoNFHweowrs5VLd4Na7Kt79ucZAzHDiJ4SEdcyLB2AEOWwNXUlH1oDYh6cm6Cr3gG67/esuWcHijXi31YFoCfT9TNzmDaUa7RxtdoyqlpIuC2c55gyG+JPhCLDUPwD5fJSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hAgBjLWkV7oHdA35f4ET93Ocl3k2rLGZEn+8xfR4iOY=;
+ b=AAS5I29pmtmLd0KhqXHg6SBq2ULu8j0VWPzblKRlhdESHMVoa/hAEQwQ/px6VLrJHFr+NW700UVsHasdXg9IheKzi9pH+SH+/+HLK/Tan4NSXcleytJkwk6zPs2G0oU/54iM6gePVL5Ob4YZw5ub5gGtv6itHm0fOfIKzUvXKI3lJQ9MV1JUCR/uMuMlQ+lzjXV+jRXsd1YTT7AuCNcYujDMRs8pu9jPYOu/i1T7QhWWyqwKNjU7NMwd1kMIea1zd4TsAccz7KlXd47D9TXtQfJFZxsXf9Ka/W7GM9pBliNUFvlWPYHc5XvAv/Ud7M/BV3q4cM+spCF5zhZ/sNefsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=bsbernd.com smtp.mailfrom=ddn.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ddn.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hAgBjLWkV7oHdA35f4ET93Ocl3k2rLGZEn+8xfR4iOY=;
+ b=1+uMXEtuZVVdcogFl200bBWsqjVGbDUwVYCFIEAsBv/RNGY9JKGt+kEqb6Ai3YYwjyWv3cKdWp3/UqOtmQDdIC9RT9y1jikCbu3EDc504QIIrm7HS7951fpyP8eUZf/G1BQsscuelm/mLOEmtjnTBFXeK/fNOF0Y3wVGl6XLXcg=
+Received: from SA1P222CA0122.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c5::17)
+ by CY5PR19MB6315.namprd19.prod.outlook.com (2603:10b6:930:21::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Mon, 9 Dec
+ 2024 14:56:42 +0000
+Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
+ (2603:10b6:806:3c5:cafe::b8) by SA1P222CA0122.outlook.office365.com
+ (2603:10b6:806:3c5::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.14 via Frontend Transport; Mon,
+ 9 Dec 2024 14:56:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.7
+ via Frontend Transport; Mon, 9 Dec 2024 14:56:42 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id B3A614A;
+	Mon,  9 Dec 2024 14:56:41 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Date: Mon, 09 Dec 2024 15:56:24 +0100
+Subject: [PATCH v8 02/16] fuse: Move fuse_get_dev to header file
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2024120925-express-unmasked-76b4@gregkh> <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
- <2024120954-boring-skeptic-ad16@gregkh> <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
- <2024120908-anemic-previous-3db9@gregkh> <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
- <2024120939-aide-epidermal-076e@gregkh> <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
- <2024120951-botanist-exhale-4845@gregkh> <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
- <Z1cGWBFm0uVA07WN@pollux.localdomain>
-In-Reply-To: <Z1cGWBFm0uVA07WN@pollux.localdomain>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 9 Dec 2024 16:04:48 +0100
-Message-ID: <CAH5fLgisVC15muFB0eThiMveFBoauB4jUVwW9Zez3cKT0Q=_iA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241209-fuse-uring-for-6-10-rfc4-v8-2-d9f9f2642be3@ddn.com>
+References: <20241209-fuse-uring-for-6-10-rfc4-v8-0-d9f9f2642be3@ddn.com>
+In-Reply-To: <20241209-fuse-uring-for-6-10-rfc4-v8-0-d9f9f2642be3@ddn.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, 
+ David Wei <dw@davidwei.uk>, bernd@bsbernd.com, 
+ Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733756199; l=1631;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=wxYO2fuIGkvqmeC9PNGhH5rOX2Wls8HlW08RzezL2Zw=;
+ b=9uW6gXbFsrlSgqIdVdK482oscWmymG61cmXoOKElukWYJvuRPLegJItWjP0yTIyn/Q1kvIGOi
+ saavk6itiChDSVlyJInU+XRF3IFyxMI+XLrdgHT2egnclCReyKhct6j
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|CY5PR19MB6315:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71ee50db-0222-41ff-9eb8-08dd1861b178
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cjdrbTBQQmxDQlVTVDEzdkJVOTlucXFrOVc2TnA5eXhDL3haTUNUS3AwUzYx?=
+ =?utf-8?B?RTNOelNVWXRTUitJV3JOMElWMkp4NVJZWUdQUDRwZGh2TTBXMHFjbktLWm5C?=
+ =?utf-8?B?QUtKWCtxRENXaXJ2Sys1ZTd1L2ptdlBSWUpMdHA4dTFRblBxVUtnMDV4Y2lH?=
+ =?utf-8?B?aUxYRlcwcHVIYjFaQnNSUkZHOVNpaVgwRjRXVmJkWVp0NVFmbXlsUkg3M3Jp?=
+ =?utf-8?B?d3RMNVBFcTlHVzZiRkNhNUpCYkdKanpxRjFGVU9FQzRseXhFeEFaUFJsWXh2?=
+ =?utf-8?B?VXZpa1BTU3ZLdzJOdExNUVVSUnF1TE9WOVczc2M4SmYrWUxUZ1VzdUhLQnQv?=
+ =?utf-8?B?NEg1TFBFVUQwblhtWmdjYUdlNGZVZnFXelJiNWR4T0pqRnlhZzJBWEFqZTZo?=
+ =?utf-8?B?N1craXdLeE1vZGlMaklYanFQc25PUGNsbk9VaXNoTUlIZG1qWUg1bE84eWc3?=
+ =?utf-8?B?MjBrQ09wRnprbzVKQWQvYk53MzNvTUJsNCtFL3ROejE0STNWRWlKNUF4ZXE2?=
+ =?utf-8?B?Wm1GMmVlaUxmL3NodFRTTkwzaUNPaEUzQmE5ZVdkMnE5WEUzTVBWMVA0eDhq?=
+ =?utf-8?B?UXl2Y1BCUG1qeFV1Y2hBM2RmelpPamZKclErbUtmR3dZRGE2dlhGdW80a280?=
+ =?utf-8?B?RTl2RFVYbE1xaHlSWlZYeWVEUmtCc2JDS3MvcUZNa1FiUGRHYk0xSUp4Tkdx?=
+ =?utf-8?B?dW5TNzBRQlk0bG94WDJhcHcwU2N2RFJzaVFXM3dpZEVKR3lTa01ZWmpkZytr?=
+ =?utf-8?B?T2hGTmluK0Y4WUtyOXA4WWhwZUZwaVdTR0kxbjIrMnBBK2JVWlNNcExXNjl3?=
+ =?utf-8?B?TmlNcit3V1JsZEtjZEZCMWx3emQzeGE3Z0lkd29LSlljT3Qxd3lxaW9hZ0JP?=
+ =?utf-8?B?NU84Y20vc0FtZWRsMGtXa01wamFLYlMzQ1VjaSsvdFVVN3pmR05OOGtyRjJm?=
+ =?utf-8?B?RlQ0VGRsS3AxTDFCbGFGRWFXQXhyQzBJdFpHeHFnbkEyTCtCNmRHMzI3S2h3?=
+ =?utf-8?B?Z3Vpc0lHSXZWeUcxQ3ZkVkNkMGZmc1ZQUk45Y3gyVTBUWFBSYmlwckwydFFt?=
+ =?utf-8?B?SmwxeEtSa0F5c1dmZ1VycEJmbysrL3hQbHVoeVNnU1J4cGl5VXR5dzhKdzg1?=
+ =?utf-8?B?MGtKOWY5REhzTGJKNHlyNzluWVpoRTBwOTVvTmZCa1ludEVDa2dacXhpS0tS?=
+ =?utf-8?B?Um9VT3BiZHlJNFBJWS9Ya0g2bDN6cU5tK1JTS040ajVXK0dKZmRLNitGVDZ3?=
+ =?utf-8?B?SmtXSVJCM1lmY1BMazJkTHFMTFFodEFIc212dG1UeXdvRUU3QlYzRXhhOUFB?=
+ =?utf-8?B?b2xOY21nWFk4U3g4cmx6TDdaUGZNRENiNkt0T0lWWWhUTGtLUGRiZDRKaStV?=
+ =?utf-8?B?NXczcndsL3NuUmpyNDB4Q1FPZzQxM2dLczlYbWE0UGZkL3hKQU9rVUljNGR2?=
+ =?utf-8?B?aERmL2ZCeEZaUmM0Zm41QlBZeDZmaDR0WlBYTmpUL0R2UXY0NDVZMUVhbHU3?=
+ =?utf-8?B?aERQWHhkbXpsb1VBSjhsa0pkMXlOQW83TFcxN2JPRjdkbllqWlIrWlZRck9x?=
+ =?utf-8?B?RUVxVzZPSkMwNDR0Z21Jc2JiMVNFMnlRYVBEWklPUURINVhFUDJSMGdxUDFt?=
+ =?utf-8?B?VVdWbUR4Y2w3elNOWnNCUitwbmN2NUNFZXdJZEoxWXJLRHVlQ2UyWE5uYVg2?=
+ =?utf-8?B?RjB6VHJqT2hHVnFaM1o2NjZoNGEzdWplZGlQTnZLajlydG94SE9neE95R0xw?=
+ =?utf-8?B?d3BGZi9tNlFweFhaN3YvaFY0ZjNPeTFoUGZyNWh4WTFHSlBsSjM1VnhvdFpx?=
+ =?utf-8?B?cXFpREF6U3JSWWY4SDl5bXNOVVZDYzRQY29kU3FXVWc5ZW0wYmlRdmpUVlgr?=
+ =?utf-8?B?Y2hBa1BuVlliRXhpbnRWcmdrOGJ0NHQ1MitwV21ha3VBaTZOalBlTW9LUUxV?=
+ =?utf-8?Q?TJhmQndMb8C02W3RmmGGOx18DQh5I6iX?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	H0AqP/MXvArzOI104W/dzLpHBycurJkrykePxBDQ/gKXwbkT2ORc9Ey/7m0/zPlcVxL+v8EMBHpDzY56keT8LgpjTGSKlM8yUrtWpnpw3Bxoz+l63nwi4BmeNvL/tQqTWXhE+ztv9kKjTwUU39p4yTSSKKwiEV6YN4aPDpSPPDzSNFMqHR/Xg70rJ0/SOGdn7kBfkqFPuh2MT/Gj+rkA85/FmWl+U1fa4RUHmOxiQgkklHXpXaqDbwLkBC49M7NDThPl/EGwsbpVJDL9EtZRo2hDoiPOHTeVIz27Ls64o3yFv/u3C0WVCIiGZHuKsbKRLgfje5fEPKUt2+52DANOgHmAweHa3NYRq+JnusH62VK5Zkq2DN50QmahiMpEPnFPuy8KRkWCVp2gJJmqPHC3cT9DNiAWIGd4cRXyuc3cwoZi9N3e51GpT01kn4NzuF3ts2y80L2502YS7vU/ZhLCGpuO1Zfdr/OrLoZsP9YDB/gBw6oJJbOzLRr+9XhNi6kvXa/Ud1WadglUYy5zz/damu6zCcUqkGKVrpna9LQUKXtc20OiFy9IXast+Espww5hZMKhbX0kcmrgOXmydRN35oJi/vV1pct+WdWoJkCU0rTa7pZYc8xzrueakWn+340w8ZtGGRKHY7SzZVUylYkx8A==
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 14:56:42.3907
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71ee50db-0222-41ff-9eb8-08dd1861b178
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F68.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR19MB6315
+X-OriginatorOrg: ddn.com
+X-BESS-ID: 1733761799-111424-13386-7866-1
+X-BESS-VER: 2019.1_20241126.2220
+X-BESS-Apparent-Source-IP: 104.47.55.171
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoam5hZAVgZQMDXNwsDEwMg0KT
+	k5zcw81dDQxNgi2SLZ3CjVwsQw0chAqTYWAMycoyBBAAAA
+X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.260998 [from 
+	cloudscan8-210.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.50 BSF_RULE7568M          META: Custom Rule 7568M 
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-On Mon, Dec 9, 2024 at 4:01=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> On Mon, Dec 09, 2024 at 02:36:31PM +0100, Alice Ryhl wrote:
-> > On Mon, Dec 9, 2024 at 2:13=E2=80=AFPM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Mon, Dec 09, 2024 at 01:53:42PM +0100, Alice Ryhl wrote:
-> > > > On Mon, Dec 9, 2024 at 1:08=E2=80=AFPM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
-> > > > > > On Mon, Dec 9, 2024 at 12:53=E2=80=AFPM Greg Kroah-Hartman
-> > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > >
-> > > > > > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
-> > > > > > > > On Mon, Dec 9, 2024 at 12:10=E2=80=AFPM Greg Kroah-Hartman
-> > > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > >
-> > > > > > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrot=
-e:
-> > > > > > > > > > On Mon, Dec 9, 2024 at 9:48=E2=80=AFAM Greg Kroah-Hartm=
-an
-> > > > > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl =
-wrote:
-> > > > > > > > > > > > Providing access to the underlying `struct miscdevi=
-ce` is useful for
-> > > > > > > > > > > > various reasons. For example, this allows you acces=
-s the miscdevice's
-> > > > > > > > > > > > internal `struct device` for use with the `dev_*` p=
-rinting macros.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Note that since the underlying `struct miscdevice` =
-could get freed at
-> > > > > > > > > > > > any point after the fops->open() call, only the ope=
-n call is given
-> > > > > > > > > > > > access to it. To print from other calls, they shoul=
-d take a refcount on
-> > > > > > > > > > > > the device to keep it alive.
-> > > > > > > > > > >
-> > > > > > > > > > > The lifespan of the miscdevice is at least from open =
-until close, so
-> > > > > > > > > > > it's safe for at least then (i.e. read/write/ioctl/et=
-c.)
-> > > > > > > > > >
-> > > > > > > > > > How is that enforced? What happens if I call misc_dereg=
-ister while
-> > > > > > > > > > there are open fds?
-> > > > > > > > >
-> > > > > > > > > You shouldn't be able to do that as the code that would b=
-e calling
-> > > > > > > > > misc_deregister() (i.e. in a module unload path) would no=
-t work because
-> > > > > > > > > the module reference count is incremented at this point i=
-n time due to
-> > > > > > > > > the file operation module reference.
-> > > > > > > >
-> > > > > > > > Oh .. so misc_deregister must only be called when the modul=
-e is being unloaded?
-> > > > > > >
-> > > > > > > Traditionally yes, that's when it is called.  Do you see it h=
-appening in
-> > > > > > > any other place in the kernel today?
-> > > > > >
-> > > > > > I had not looked, but I know that Binder allows dynamically cre=
-ating
-> > > > > > and removing its devices at runtime. It happens to be the case =
-that
-> > > > > > this is only supported when binderfs is used, which is when it =
-doesn't
-> > > > > > use miscdevice, so technically Binder does not call misc_deregi=
-ster()
-> > > > > > outside of module unload, but following its example it's not ha=
-rd to
-> > > > > > imagine that such removals could happen.
-> > > > >
-> > > > > That's why those are files and not misc devices :)
-> > > >
-> > > > I grepped for misc_deregister and the first driver I looked at is
-> > > > drivers/misc/bcm-vk which seems to allow dynamic deregistration if =
-the
-> > > > pci device is removed.
-> > >
-> > > Ah, yeah, that's going to get messy and will be a problem if someone =
-has
-> > > the file open then.
-> > >
-> > > > Another tricky path is error cleanup in its probe function.
-> > > > Technically, if probe fails after registering the misc device, ther=
-e's
-> > > > a brief moment where you could open the miscdevice before it gets
-> > > > removed in the cleanup path, which seems to me that it could lead t=
-o
-> > > > UAF?
-> > > >
-> > > > Or is there something I'm missing?
-> > >
-> > > Nope, that too is a window of a problem, luckily you "should" only
-> > > register the misc device after you know the device is safe to use as
-> > > once it is registered, it could be used so it "should" be the last th=
-ing
-> > > you do in probe.
-> > >
-> > > So yes, you are right, and we do know about these issues (again see t=
-he
-> > > talk I mentioned and some previous ones for many years at plumbers
-> > > conferences by different people.)  It's just up to someone to do the
-> > > work to fix them.
-> > >
-> > > If you think we can prevent the race in the rust side, wonderful, I'm
-> > > all for that being a valid fix.
-> >
-> > The current patch prevents the race by only allowing access to the
-> > `struct miscdevice` in fops->open(). That's safe since
-> > `file->f_op->open` runs with `misc_mtx` held. Do we really need the
-> > miscdevice to stay alive for longer? You can already take a refcount
-> > on `this_device` if you want to keep the device alive for longer for
-> > dev_* printing purposes, but it seems like that is the only field you
-> > really need from the `struct miscdevice` past fops->open()?
->
-> Good point, I also can't really see anything within struct miscdevice tha=
-t a
-> driver could need other than `this_device`.
->
-> How would you provide the `device::Device` within the `MiscDevice` trait
-> functions?
->
-> If we don't guarantee that the `struct miscdevice` is still alive past op=
-en() we
-> need to take a reference on `this_device` in open().
->
-> I guess the idea would be to let `MiscDeviceRegistration` provide a funct=
-ion to
-> obtain an `ARef<device::Device>`?
+Another preparation patch, as this function will be needed by
+fuse/dev.c and fuse/dev_uring.c.
 
-Yes, you take a refcount on the device and store an
-ARef<device::Device> in your own struct. You would need Lee's accessor
-to obtain the device refcount:
-https://lore.kernel.org/all/20241206090515.752267-3-lee@kernel.org/
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ fs/fuse/dev.c        | 9 ---------
+ fs/fuse/fuse_dev_i.h | 9 +++++++++
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Alice
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 757f2c797d68aa217c0e120f6f16e4a24808ecae..3db3282bdac4613788ec8d6d29bfc56241086609 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -35,15 +35,6 @@ MODULE_ALIAS("devname:fuse");
+ 
+ static struct kmem_cache *fuse_req_cachep;
+ 
+-static struct fuse_dev *fuse_get_dev(struct file *file)
+-{
+-	/*
+-	 * Lockless access is OK, because file->private data is set
+-	 * once during mount and is valid until the file is released.
+-	 */
+-	return READ_ONCE(file->private_data);
+-}
+-
+ static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *req)
+ {
+ 	INIT_LIST_HEAD(&req->list);
+diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+index 4fcff2223fa60fbfb844a3f8e1252a523c4c01af..e7ea1b21c18204335c52406de5291f0c47d654f5 100644
+--- a/fs/fuse/fuse_dev_i.h
++++ b/fs/fuse/fuse_dev_i.h
+@@ -8,6 +8,15 @@
+ 
+ #include <linux/types.h>
+ 
++static inline struct fuse_dev *fuse_get_dev(struct file *file)
++{
++	/*
++	 * Lockless access is OK, because file->private data is set
++	 * once during mount and is valid until the file is released.
++	 */
++	return READ_ONCE(file->private_data);
++}
++
+ void fuse_dev_end_requests(struct list_head *head);
+ 
+ #endif
+
+-- 
+2.43.0
+
 
