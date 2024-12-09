@@ -1,165 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-36886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF679EA750
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 05:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C39EA8A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 07:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07141672CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 04:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679F3163A08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 06:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7452A19F436;
-	Tue, 10 Dec 2024 04:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F0622B8A5;
+	Tue, 10 Dec 2024 06:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWqDUp6T"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sPjGZioq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBE413A865;
-	Tue, 10 Dec 2024 04:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B7E22619E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 06:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733806135; cv=none; b=bF+IOHCTMrkHSWxNa6NvBNE1dxM8SZOfuQ81dP1d7GQcbl8c2A9GXd8NbW0JxPOS1o3N8ufXM9THrpZSMdV1VLgM1moKZUlbKYwCVP2W5+AQnUDOMegCuOllkkgc3Vy+/WNAZ82XbWl5X4CLlTaKnTzJVmuoy0po+mvavit3YG8=
+	t=1733811413; cv=none; b=NcBGqi0liRYvttT6Ned3g3WJU7a7wq5GC1x3+JOWuJ1aC/J/jOuIL93oiVzWns6572lEG0XoNKdiT+MZ22A0oZfPJW+y0qpsWTxPOxD0aIIMCtTaxxqhLVHgoipomSAFgWpTb5MysG33r4D6QTR6wozzZ+FGh6buc+HsMKYy6c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733806135; c=relaxed/simple;
-	bh=fmuHub6i/UU89iJ3zmI8M0zPA8LOY2hfDA7Kp09iC4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=At5NYm294cGa7qdCJmCkJLgkhzdqOsWIKOG7DSizj6xLcWxPlIOfYUGfhc41PLoTkgHTMSIhAihQE+LaUMbru5/AD0r7rzy8YlIKUiSa7yPrFkhARvGZmIIYICRwnox+WGMFXGsTzSMfg3lbydpWo0x+AiPQ4f5HW+iwprpOOaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWqDUp6T; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3ea065b79so3474915a12.3;
-        Mon, 09 Dec 2024 20:48:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733806132; x=1734410932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SRhudRntXMdMCmvTCWHy+R0vrWQamPgM9djZeqqOOGk=;
-        b=JWqDUp6T0+SBmHbjjRV18IYsuMP1fR184k/jhfMJ8SCAa5rlCqlJiQutajFr7HngxA
-         V8TAEHFcDeMTcLr6KUcEwvVYPZ4U7JJB4fFn1aRrsOjS3N/+PYlEBTfHIbeJFOSpVgf6
-         EwBABaiGcZqa0SSVDWyo9BciDNKPDQAJ79KLNIpDEsKcgDCQjSJIQouh529U186I2aHg
-         RsPzj3ZJIPjKJZdtpMtXBVrnftAePSqd2hwg2y1tJo+isncQgS8b/WU2QvpsS583e5Ql
-         3WuphfQhU3xT8Ym/Fauvnax9rudST0Sou2XhcHiZeLbPhVxfQULyRJKMlS9RtgEdTYPl
-         +HJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733806132; x=1734410932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SRhudRntXMdMCmvTCWHy+R0vrWQamPgM9djZeqqOOGk=;
-        b=L2n+a/96yv3nV1WYj7do+bR53K1kiWxMzCAe4y4PneEg7MMfrJiYediMc37g6GenRc
-         9YF6MzLfs/uZgB7V1zZVVemRYNXtaxt7jhuEGQuFmv4Lk75PYJrQnOxapx9suUCpC0be
-         vBBtQsbzOzvkSIZcyIgk9w/+1ttW/i9CSXcjSzLmbe9hmHIg9Z7rqie6zU+IUz5HcRnv
-         8rn1lA1iY9nRTqfpuLUuvtdaIUCXglHIfEspb72Kh7qnE/+R7d5cEO2OpDjWHLpIyrMX
-         P1MfWzSBfn+FboQ6D4+v2mRHdW/KYIVD4i/ushgLxuTjQBq2IhZqm3mivJ58UDeA+itw
-         VqRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8XG678TKO7TZcBFxpzjbDQ0DwXKHdgCjLav3A8iF9HD7z2b33VH/YrTk2kpn3eoHKHEE9THnJgsuJvFQC@vger.kernel.org, AJvYcCXeJEaPOqKSPdjO3Gftdk18si29tBMHMDDxuxCQ8YClWUt9Ba8JnT5KOdM6qOYEoC0/Vxg6hZwOft+QHNGp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEKYix9k8q9cwoqg/5UyBFukdb5G5diHQUtXypv2FNmZwDXIL8
-	fTDYo2T1FkEdjMU70R+zRpsM7EhcX2huOLufn1QneLPQDLCndFP4aTa67RedfurbM/FVYtKDayB
-	vdiFe14CSMOHmkqRiz6PMlUFuPAo=
-X-Gm-Gg: ASbGncsGCzzrjjH+reWtcaCIwEpCuECxuxwOeMUR3ByO9kwDKd9nii4lps/jTeknvob
-	HzgChwKOS7LPj/6EAlCEbzP9LA90V3FT1E2c=
-X-Google-Smtp-Source: AGHT+IGBiffJ5X2iaWC0nwpDNkAHhlszy1HhQEUv64YxBZjY2IAnPM4N3S8MjfXyUDtvLqL91fcR3OhcyBd47zZ6puU=
-X-Received: by 2002:a05:6402:1e90:b0:5d0:bcdd:ff9c with SMTP id
- 4fb4d7f45d1cf-5d418502c73mr3460582a12.2.1733806132161; Mon, 09 Dec 2024
- 20:48:52 -0800 (PST)
+	s=arc-20240116; t=1733811413; c=relaxed/simple;
+	bh=VS5AgK+cHumRrzq48vKvRtsV7k/hWSfwmjl2fWxAy/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=G/8ku3MDPjPHLK5l/YyVZp/dpWk5usxHWvBBGqhqYoUkcB5ZHLtMOaScKHeHxKdey+r0qnvm+HgSAB5KhAxBIOztB5axvLvFj3qXWZbfVXafjZCOgXwBMkAG0UUMCtdiiKR5jN8voSiplmyC2q6qaoufEjP1J1Ebs/RhnGj9iHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sPjGZioq; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241210061648epoutp0436555b3ab5143f2216b8b4d86d834410~PvEpITl5B2970929709epoutp04e
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 06:16:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241210061648epoutp0436555b3ab5143f2216b8b4d86d834410~PvEpITl5B2970929709epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733811408;
+	bh=E0Ds7is/PRD15Mta+Na2E4igKDBZuHKLd0eyDKuyE6c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sPjGZioqV1em46uM0YFjZKmLIeaxTQervp8bWkviudxOneYXCqXGUZocJL0JyoZuk
+	 DzEeifkHdla54mVc2ybhqmjMwIPaqaKVRn6XhCXUvfQszQLR+BVO6QkIsvMBY49Y7R
+	 DgDKY2YPqBCf6kRAP2VlXGe1dQVVIstv4tyeyc7Y=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241210061648epcas5p18e93e2747f53434c1ae5d54c4d241dd9~PvEond7fF2959829598epcas5p1_;
+	Tue, 10 Dec 2024 06:16:48 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y6pR23mN7z4x9Q8; Tue, 10 Dec
+	2024 06:16:46 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.D5.19710.ECCD7576; Tue, 10 Dec 2024 15:16:46 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20241209110649epcas5p41df7db0f7ea58f250da647106d25134b~PfYkGHV-L1052810528epcas5p4U;
+	Mon,  9 Dec 2024 11:06:49 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241209110649epsmtrp2cf7b5119e46635b3d3157059bff59c36~PfYkFKM8Q1974719747epsmtrp2b;
+	Mon,  9 Dec 2024 11:06:49 +0000 (GMT)
+X-AuditID: b6c32a44-36bdd70000004cfe-a8-6757dcceb44a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	84.03.18949.84FC6576; Mon,  9 Dec 2024 20:06:48 +0900 (KST)
+Received: from ubuntu (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241209110647epsmtip22855f77258d46586d09929b1447a8cd8~PfYiZTKgG1603516035epsmtip2J;
+	Mon,  9 Dec 2024 11:06:47 +0000 (GMT)
+Date: Mon, 9 Dec 2024 16:28:53 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv12 06/12] block: expose write streams for block device
+ nodes
+Message-ID: <20241209105844.boc4k6oshthruyep@ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205154743.1586584-1-mjguzik@gmail.com> <20241206-inszenieren-anpflanzen-317317fd0e6d@brauner>
- <20241209195637.GY3387508@ZenIV>
-In-Reply-To: <20241209195637.GY3387508@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 10 Dec 2024 05:48:40 +0100
-Message-ID: <CAGudoHH76NYH2O-TQw6ZPjZF5ht76HgiKtsG=owYdLZarGRwcA@mail.gmail.com>
-Subject: Re: [MEH PATCH] fs: sort out a stale comment about races between fd
- alloc and dup2
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241206221801.790690-7-kbusch@meta.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmpu65O+HpBpseSVo0TfjLbDFn1TZG
+	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
+	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZ1S2TUZqYkpq
+	kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
+	YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IzutY9YCvYK
+	VRzd8JqlgfEcfxcjB4eEgInE/xbfLkYuDiGB3YwSi7+3skA4nxgl7r3czQrhfGOU6F+xEMjh
+	BOu48Go+VGIvo8S6Jy1MEM4TRomzDXfZQKpYBFQkvq74ygSyg01AW+L0fw6QsIiAosR5YEiA
+	1DMLTGSS+H2oiR0kISwQJNF99isLiM0LtOHq5p1MELagxMmZT8DinAJmEoc/tYE1Swis5JDY
+	P/kC1EkuEreO3WCEsIUlXh3fwg5hS0l8freXDcIul1g5ZQVUcwujxKzrs6Aa7CVaT/Uzg9jM
+	AhkSL3o2QTXLSkw9tY4JIs4n0fv7CRNEnFdixzwYW1lizfoFUAskJa59b4SyPSTWX1gBDaOt
+	jBKtbXtZJjDKzULy0Swk+yBsK4nOD02ss4AhxiwgLbH8HweEqSmxfpf+AkbWVYySqQXFuemp
+	yaYFhnmp5fBoTs7P3cQITsRaLjsYb8z/p3eIkYmD8RCjBAezkggvh3douhBvSmJlVWpRfnxR
+	aU5q8SFGU2AMTWSWEk3OB+aCvJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg
+	+pg4OKUamHYwTY4R+q+1RaRh1czdB7mDpCXEHbZ1Bia5bJtXvHTLzwnC6adYy/0mK5c+mtie
+	41DN3tr7KXHu8t+Z/9lit+/K+SbZ9T3wKX+kwYlmjsgD7IwLzO4zHntpsWb+hCSbb+V+a97U
+	3nA5w2Bh/OvIIs29LeJPpHfpsu39bXtwU0fcWYlC09M/ApWPHjPVlPWee2yz+KT7drIsGzyf
+	rZBh43w8I/OiqPD9OQbXX7qITJnkPuHdqjc6893Mr++Y1y90uTI96dQHW+XjWaFatRM+znnI
+	JzVpZqVTuanvbv6C9w+2CngJlF5ly10bwpI8h3/9+tRlJgXd15vqJyf7d5mELHi/o7d9glGO
+	Vn/azGlKq5VYijMSDbWYi4oTAf+3R7tNBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSvK7H+bB0g++LLCyaJvxltpizahuj
+	xeq7/WwWK1cfZbJ413qOxeLo/7dsFpMOXWO0OHN1IYvF3lvaFnv2nmSxmL/sKbvFutfvWRx4
+	PHbOusvucf7eRhaPy2dLPTat6mTz2Lyk3mP3zQY2j3MXKzz6tqxi9Pi8SS6AM4rLJiU1J7Ms
+	tUjfLoEr4+OZI2wF7/kr5vxaxtbAOIu3i5GTQ0LAROLCq/msXYxcHEICuxklfh+5ywKRkJRY
+	9vcIM4QtLLHy33N2iKJHjBLH1p9hB0mwCKhIfF3xlamLkYODTUBb4vR/DpCwiICixHmgc0Dq
+	mQUmM0k8n3kMbKiwQJBE99mvYDYv0Oarm3cygdhCAokSh1q3Q8UFJU7OfAJmMwuYSczb/JAZ
+	ZD6zgLTE8n9g8zmBwoc/tbFNYBSYhaRjFpKOWQgdCxiZVzFKphYU56bnFhsWGOWllusVJ+YW
+	l+al6yXn525iBEePltYOxj2rPugdYmTiYDzEKMHBrCTCy+Edmi7Em5JYWZValB9fVJqTWnyI
+	UZqDRUmc99vr3hQhgfTEktTs1NSC1CKYLBMHp1QDk+lNCd2O/vnf5jDdleXL4fi85mzeTo/5
+	IsH3bNvPZN9beZoh7btVRc686rBuLqvPl9W8lv3ckii3vVvAWGXDQ8ZdC+M07bb2lx1QXcOg
+	/jFc5dmXNUsy9/Rdkk/+l2u8ooSbITbgjTvPPtdThRKc91YcPRf+5bZ/YobQg0Mmsx1VrLqK
+	byhs/vbe4kW6s3Lr8d3/jropPfavMzndsMjf0cfQ9lXuh7vbuxazKD3Rf1+f9EH3BesBnnXb
+	v2pNdE9q6tg3r9xfmqUsesHPeSUi2/e/+5MQpfxPc8FWz6MtPOd6Hre4rm05pPqwXqR3VXuI
+	m01J58qEVhGtXXtaDi5t3V9/ddrcrW9vrPWv37YjXYmlOCPRUIu5qDgRAM7C0f8NAwAA
+X-CMS-MailID: 20241209110649epcas5p41df7db0f7ea58f250da647106d25134b
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241209110649epcas5p41df7db0f7ea58f250da647106d25134b
+References: <20241206221801.790690-1-kbusch@meta.com>
+	<20241206221801.790690-7-kbusch@meta.com>
+	<CGME20241209110649epcas5p41df7db0f7ea58f250da647106d25134b@epcas5p4.samsung.com>
 
-On Mon, Dec 9, 2024 at 8:56=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On 06/12/24 02:17PM, Keith Busch wrote:
+>From: Christoph Hellwig <hch@lst.de>
 >
-> On Fri, Dec 06, 2024 at 01:13:47PM +0100, Christian Brauner wrote:
-> > On Thu, 05 Dec 2024 16:47:43 +0100, Mateusz Guzik wrote:
-> > > It claims the issue is only relevant for shared descriptor tables whi=
-ch
-> > > is of no concern for POSIX (but then is POSIX of concern to anyone
-> > > today?), which I presume predates standarized threading.
-> > >
-> > > The comment also mentions the following systems:
-> > > - OpenBSD installing a larval file -- this remains accurate
-> > > - FreeBSD returning EBADF -- not accurate, the system uses the same
-> > >   idea as OpenBSD
-> > > - NetBSD "deadlocks in amusing ways" -- their solution looks
-> > >   Solaris-inspired (not a compliment) and I would not be particularly
-> > >   surprised if it indeed deadlocked, in amusing ways or otherwise
+>Export statx information about the number and granularity of write
+>streams, use the per-kiocb write hint and map temperature hints
+>to write streams (which is a bit questionable, but this shows how it is
+>done).
 >
-> FWIW, the note about OpenBSD approach is potentially still interesting,
-> but probably not in that place...
+>Signed-off-by: Christoph Hellwig <hch@lst.de>
+>Signed-off-by: Keith Busch <kbusch@kernel.org>
+>---
+> block/bdev.c |  6 ++++++
+> block/fops.c | 23 +++++++++++++++++++++++
+> 2 files changed, 29 insertions(+)
 >
-> These days "not an embryo" indicator would probably map to FMODE_OPENED,
-> so fget side would be fairly easy (especially if we invert that bit -
-> then the same logics we have for "don't accept FMODE_PATH" would apply
-> verbatim).
+>diff --git a/block/bdev.c b/block/bdev.c
+>index 738e3c8457e7f..c23245f1fdfe3 100644
+>--- a/block/bdev.c
+>+++ b/block/bdev.c
+>@@ -1296,6 +1296,12 @@ void bdev_statx(struct path *path, struct kstat *stat,
+> 		stat->result_mask |= STATX_DIOALIGN;
+> 	}
 >
-> IIRC, the last time I looked into it the main obstacle to untangle had
-> boiled down to "how do we guarantee that do_dentry_open() failing with
-> -ESTALE will leave struct file in pristine state" and _that_ got boggled
-> down in S&M shite - ->file_open() is not idempotent and has no reverse
-> operation - ->file_free_security() takes care of everything.
->
-> If that gets solved, we could lift alloc_empty_file() out of path_openat(=
-)
-> into do_filp_open()/do_file_open_root() - it would require a non-trivial
-> amount of massage, but a couple of years ago that appeared to have been
-> plausible; would need to recheck that...  It would reduce the amount of
-> free/reallocate cycles for struct file in those, which might make it
-> worthwhile on its own.
+>+	if ((request_mask & STATX_WRITE_STREAM) &&
+We may not reach this point, if user application doesn't set either of
+STATX_DIOALIGN or STATX_WRITE_ATOMIC.
 
-Oh huh. I had seen that code before, did not mentally register there
-may be repeat file alloc/free calls due to repeat path_openat.
+>+	    bdev_max_write_streams(bdev)) {
+>+		stat->write_stream_max = bdev_max_write_streams(bdev);
+>+		stat->result_mask |= STATX_WRITE_STREAM;
+statx will show value of 0 for write_stream_granularity.
 
-Indeed it would be nice if someone(tm) sorted it out, but I don't see
-how this has any relation to installing the file early and thus having
-fget worry about it.
+Below is the fix which might help you,
 
-Suppose the "embryo"/"larval" file pointer is to be installed early
-and populated later. I don't see a benefit but do see a downside: this
-requires protection against close() on the fd (on top of dup2 needed
-now).
-The options that I see are:
-- install the file with a refcount of 2, let dup2/close whack it, do a
-fput in open to bring back to 1 or get rid of it if it raced (yuck)
-(freebsd is doing this)
-- dup2 is already special casing to not mess with it, add that to
-close as well (also yuck imo)
+diff --git a/block/bdev.c b/block/bdev.c
+index c23245f1fdfe..290577e20457 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -1275,7 +1275,8 @@ void bdev_statx(struct path *path, struct kstat *stat,
+  	struct inode *backing_inode;
+  	struct block_device *bdev;
+  
+-	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC)))
++	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC |
++		STATX_WRITE_STREAM)))
+  		return;
+  
+  	backing_inode = d_backing_inode(path->dentry);
+@@ -1299,6 +1300,7 @@ void bdev_statx(struct path *path, struct kstat *stat,
+  	if ((request_mask & STATX_WRITE_STREAM) &&
+  	    bdev_max_write_streams(bdev)) {
+  		stat->write_stream_max = bdev_max_write_streams(bdev);
++		stat->write_stream_granularity = bdev_write_stream_granularity(bdev);
+  		stat->result_mask |= STATX_WRITE_STREAM;
+  	}
 
-From userspace side the only programs which can ever see EBUSY are
-buggy or trying to screw the kernel, so not a concern on that front.
 
-Now something amusing, I did not realize I had a super stale copy of
-the OpenBSD source code hanging around -- they stopped pre-installing
-files in 2018! Instead they install late and do the in dup2 returning
-EBUSY, i.e. the same thing as Linux. I do have up to date FreeBSD and
-NetBSD though. :)
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_
+Content-Type: text/plain; charset="utf-8"
 
-Christian, would you mind massaging the OS entries in the commit
-message (or should i send a v2?):
-- OpenBSD installing a larval file -- they moved away from it, file is
-installed late and EBUSY is returned on conflict
-- FreeBSD returning EBADF -- reworked to install the file early like
-OpenBSD used to do
---=20
-Mateusz Guzik <mjguzik gmail.com>
+
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_--
 
