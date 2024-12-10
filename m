@@ -1,141 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-36923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2239EB068
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 13:05:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8B3169004
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 12:05:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4D91A4F2D;
-	Tue, 10 Dec 2024 12:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oA0m6Cgy"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912709EB0CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 13:31:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9C1A3A94;
-	Tue, 10 Dec 2024 12:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1325B2823B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 12:30:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35D31A08A3;
+	Tue, 10 Dec 2024 12:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JiUHcfm6"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F325A197A92
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 12:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733832275; cv=none; b=UKMixQzrR90TlkzGeOgoOO5iFDXvn3DUsgOPDJNoJao9zDojZ5CZJJl8OYrdtSvG/4UkCxzrU4GfEbIw1n/m7VhHot9XdM6LLytJJnTGRMlT+v55GzHAtVRlVeJpncija7rzBZaR1Of13iPC9EyYsEkl9wdaLG7y2iiSl1QIxZs=
+	t=1733833852; cv=none; b=Gm3szN0eLq38ORsWONq8xfM6IcLsSQrzyD3fEzNE9FA1gnPL4sXolNJSmDL1WLO3v8aF92NnsvlNaBxJE0IwLTBsNpF1QIOiwAs0hO2Se3MMzt+/qDSP25EpOFb+s34COwW4tqLHm4FVthPdzn5hwRYun/mLKRfcQn7utGTR+Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733832275; c=relaxed/simple;
-	bh=hezpDc+AUcdmYVJPKOASpHJDutPa15Atoqov8smISWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rftCOnHxWdWcN0t9AwJtwDLmeqfHahDdvUXvLZAVrRIgHGMfDPtOW+pYRw+dGIeS7Oc5euBBsAHf46FTsMEPluFYxYgMhddkgoI+B50S2mT3VqHRvcwVmAYPKaK8ESRXwV/rdv+1lwgOIngDmpRfeUgu1ISeIXODYR4P6Da+nqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oA0m6Cgy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA9kEH9001905;
-	Tue, 10 Dec 2024 12:04:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vA75UP
-	03QsurDGssRpWZcSqFusQkpZzOyF8/hFKVgXg=; b=oA0m6Cgy9j2oxfWXBcvGt4
-	PR0YVzpvh6e7ZWu6Qn69v8MRmIFkKHbRNDOZBzljtkhzXUIZEPZay0A2Xtlu0wXP
-	LvcVgwh79bsLmUAy/KS0bS7vbBtVz9Xqsgasc767WcnCQ9J3j1A711/akjbUagbq
-	eadN3om5/Zgju3Z9DW2zt363tyvDpSMD6RNMswDChvGAmdfxX8fW33HpYscOPEmL
-	0//qbjOzUcc5iTSumkQvAXpbCLTEf9azvII6R+AYrs3EbghS+bKGKPRu2ZIE8sGh
-	KDVwseaNuywkIo6LzHRrdNIK6GbGnHqvj0kugr5gFhA4nFPS3xbUlM1p1q+Ma22Q
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xdrv6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 12:04:25 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA95Goj023062;
-	Tue, 10 Dec 2024 12:04:24 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wju6sf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 12:04:24 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAC4MaN50463210
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 12:04:22 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A4E62004B;
-	Tue, 10 Dec 2024 12:04:22 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 715D220040;
-	Tue, 10 Dec 2024 12:04:22 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 12:04:22 +0000 (GMT)
-Date: Tue, 10 Dec 2024 13:04:20 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-s390@vger.kernel.org
-Subject: Re: Removing page->index
-Message-ID: <20241210130420.534a6512@p-imbrenda>
-In-Reply-To: <023d1c53-783e-4d6d-a5e9-d15b9e068986@redhat.com>
-References: <Z09hOy-UY9KC8WMb@casper.infradead.org>
-	<cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
-	<20241209183611.1f15595f@p-imbrenda>
-	<023d1c53-783e-4d6d-a5e9-d15b9e068986@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733833852; c=relaxed/simple;
+	bh=u6euVx7vB6UmjxKFgsFc62s6Pt7QeiU7Bc7MMNEOO9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=WzWYOAbH88F09lkLUk9QiD5CFEyjpOF+YDIjvuaREnrkB+blI6Bd5kQli1qlcbB+bX+z2Jj1AJcW6WD9Wu2Cr/S8sC++dZkp7NtO3qWk/fC7UR2BJOa2kba36Rkjiit4nM016nCnFGCDrh/8gYBGhsZlPETQIByMv7ywwe9X5PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JiUHcfm6; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241210123048epoutp01628995c4d476ea2460f90f83edc8b717~P0LLYB7fj2550225502epoutp01a
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 12:30:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241210123048epoutp01628995c4d476ea2460f90f83edc8b717~P0LLYB7fj2550225502epoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733833848;
+	bh=u6euVx7vB6UmjxKFgsFc62s6Pt7QeiU7Bc7MMNEOO9o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JiUHcfm6/T4aXTrtUmsBVq9uNYjD3zS/t5DHsTtTgxhDjWVdcQmoSQhcieg7zGf4P
+	 jZ3pTnZvOfw3E7Wmv+I26H9Y42sb9VkdWzXMshU22nG8HYdGA6jrMVsoW+de2FdWzd
+	 wgwYiKpdrn15nZ2+P6e70gEovN1jU9ksZTNYZ2u4=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241210123047epcas5p2c142659570a44ec78add52d53f56c64c~P0LKlDGnj2586425864epcas5p2g;
+	Tue, 10 Dec 2024 12:30:47 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y6ykY4pP3z4x9Pv; Tue, 10 Dec
+	2024 12:30:45 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	95.35.19710.57438576; Tue, 10 Dec 2024 21:30:45 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241210121958epcas5p27d14abfca66757a2c42ec71895b008b1~P0BuiJSh11588015880epcas5p2a;
+	Tue, 10 Dec 2024 12:19:58 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241210121958epsmtrp14297f20fa55d83293190eb5d01e17e2e~P0BuhfvOO0358403584epsmtrp13;
+	Tue, 10 Dec 2024 12:19:58 +0000 (GMT)
+X-AuditID: b6c32a44-36bdd70000004cfe-3a-675834755089
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	19.60.33707.EE138576; Tue, 10 Dec 2024 21:19:58 +0900 (KST)
+Received: from ubuntu (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241210121956epsmtip28c69a82e7d5d92d1fe1f370c43920ca0~P0BsxQ5-22915829158epsmtip2f;
+	Tue, 10 Dec 2024 12:19:56 +0000 (GMT)
+Date: Tue, 10 Dec 2024 17:42:03 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv12 08/12] nvme: add a nvme_get_log_lsi helper
+Message-ID: <20241210121203.52hmvesybxmwkg2l@ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PTMiC_JsSh-uP8nX3mrxpQjELbvawpTI
-X-Proofpoint-ORIG-GUID: PTMiC_JsSh-uP8nX3mrxpQjELbvawpTI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100089
+In-Reply-To: <20241206221801.790690-9-kbusch@meta.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmhm6pSUS6wfOjChZNE/4yW8xZtY3R
+	YvXdfjaLlauPMlm8az3HYnH0/1s2i0mHrjFanLm6kMVi7y1tiz17T7JYzF/2lN1i3ev3LA48
+	Hjtn3WX3OH9vI4vH5bOlHptWdbJ5bF5S77H7ZgObx7mLFR59W1YxenzeJBfAGZVtk5GamJJa
+	pJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0r5JCWWJOKVAoILG4
+	WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10vL7XEytDAwMgUqDAhO2Pmm5iCA6wV
+	ny+/ZWlgfMXSxcjJISFgIrH8XxNTFyMXh5DAbkaJPedmM0I4nxglFrZfY4Jznh3bB9dyeeM6
+	NojETkaJkwtfQrU8YZR41DGNHaSKRUBVYuOGl0BVHBxsAtoSp/9zgIRFBBQlzgNDAqSeWWAi
+	k8TvQ01g9cICjhK9H3tZQOp5gTa8fSgOEuYVEJQ4OfMJ2GJOATOJRc83MYP0Sggs5JD49XUl
+	E8RFLhJXl7+Guk5Y4tXxLewQtpTEy/42KLtcYuWUFWwQzS2MErOuz2KESNhLtJ7qZwaxmQUy
+	JDZsPQsVl5WYemodE0ScT6L39xOoZbwSO+bB2MoSa9YvYIOwJSWufW+Esj0kZh/8Bw2VrYwS
+	Pw6+YJrAKDcLyUezkOyDsK0kOj80sc4CBgCzgDQwVjggTE2J9bv0FzCyrmKUTC0ozk1PTTYt
+	MMxLLYfHcnJ+7iZGcBrWctnBeGP+P71DjEwcjIcYJTiYlUR4ObxD04V4UxIrq1KL8uOLSnNS
+	iw8xmgIjaCKzlGhyPjAT5JXEG5pYGpiYmZmZWBqbGSqJ875unZsiJJCeWJKanZpakFoE08fE
+	wSnVwCQTqnSKRz3a+p/n4q0GydM60rRDYvf6LPzs6PuIaaPxt/RLmzbcrXpy+dOX+hVvvp+X
+	K1swJez07H77yj7N0ISSVWdiTxco+vaGTMrYfOfL62OTXoVc95XYd1Zrecu1BQaM0WpKP4pC
+	XvJcdNl1I4Xz66FLWyxtu6d9PPuE4UtH22TWrp0nXZ1spnU73ntn59vq+mAC3wqpHXcC16w9
+	oDf9TBYX16vFvz5vCXov7nHuCKP9smjHfgnHhl0Rdz7J8v5pPp/Qf+yzvtOBrd5T3ZJYtG5P
+	Mmyt60gwOd3Z9cLYqV5Sqex1op3a5lVOyQvmBF2/q/xxqsYGnxybC++1lOY284vzGryce53v
+	m87Xu0lKLMUZiYZazEXFiQD9DxZ1TAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSvO47w4h0g4s3VCyaJvxltpizahuj
+	xeq7/WwWK1cfZbJ413qOxeLo/7dsFpMOXWO0OHN1IYvF3lvaFnv2nmSxmL/sKbvFutfvWRx4
+	PHbOusvucf7eRhaPy2dLPTat6mTz2Lyk3mP3zQY2j3MXKzz6tqxi9Pi8SS6AM4rLJiU1J7Ms
+	tUjfLoEr48zfO2wFn5gqDnZvZ25g3MbUxcjJISFgInF54zo2EFtIYDujxLLp8hBxSYllf48w
+	Q9jCEiv/PWeHqHnEKPHikRyIzSKgKrFxw0ugXg4ONgFtidP/OUDCIgKKEueBjuli5OJgFpjM
+	JPF85jEWkISwgKNE78deFpB6XqC9bx+KQ4xMlFi9/j4jiM0rIChxcuYTsHJmATOJeZsfMoOU
+	MwtISyz/BzaeEyi86Pkm5gmMArOQdMxC0jELoWMBI/MqRtHUguLc9NzkAkO94sTc4tK8dL3k
+	/NxNjOB40Qrawbhs/V+9Q4xMHIyHGCU4mJVEeDm8Q9OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ
+	8yrndKYICaQnlqRmp6YWpBbBZJk4OKUamKZ35b2IYSldqrVtTVKzscnrdvOtBsu9L5zmfnXl
+	wKvwttVnFbPfXVD8xzNj/7fUyRs3RH9kXMLmy2vqtfW4P0+uQtOq2Vc47b6KTXo9Od0jZOd6
+	YwG5nhPcF1fWnJnz5tnjBdfu+xx5vnNF0pnf1sG9E1KnHDbsWbpsxvpToieUFkzR/BYqWNWz
+	I0TUXse0rN36UhVTqEa2qgC7N/O5FB2HlsWr9K6k/25fYPb4t8VbDTEVdvbXZmYhamGJpxsu
+	NW3+IXL/jnCfT0Gg5METzNmbVjjrpffpV0b23HrDGXBOo2Xpso+zyn5x2Fuud74iflpervXV
+	RVU7Uxu3N3fXML5az1+qahTlO7eG9U/5HSWW4oxEQy3mouJEAMZNV3kGAwAA
+X-CMS-MailID: 20241210121958epcas5p27d14abfca66757a2c42ec71895b008b1
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----gzWopnPZ_Ctz0vx8ivNX8AC.S.UWijgAUb-gyMezoI7qaEzu=_726b8_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241210121958epcas5p27d14abfca66757a2c42ec71895b008b1
+References: <20241206221801.790690-1-kbusch@meta.com>
+	<20241206221801.790690-9-kbusch@meta.com>
+	<CGME20241210121958epcas5p27d14abfca66757a2c42ec71895b008b1@epcas5p2.samsung.com>
 
-On Tue, 10 Dec 2024 12:05:25 +0100
-David Hildenbrand <david@redhat.com> wrote:
+------gzWopnPZ_Ctz0vx8ivNX8AC.S.UWijgAUb-gyMezoI7qaEzu=_726b8_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-> On 09.12.24 18:36, Claudio Imbrenda wrote:
-> > On Wed, 4 Dec 2024 16:58:52 +0100
-> > David Hildenbrand <david@redhat.com> wrote:
+On 06/12/24 02:17PM, Keith Busch wrote:
+>From: Christoph Hellwig <hch@lst.de>
+>
+>For log pages that need to pass in a LSI value, while at the same time
+>not touching all the existing nvme_get_log callers.
+>
+>Signed-off-by: Christoph Hellwig <hch@lst.de>
+>Signed-off-by: Keith Busch <kbusch@kernel.org>
+>---
 
-[...]
+Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
 
-> >> I know that Claudio is working on some changes, but not sure how that
-> >> would affect gmap's usage of page->index.  
-> > 
-> > After I'm done, we won't use page->index anymore.
-> > 
-> > The changes I'm working on are massive, it's very impractical to push
-> > everything at once, so I'm refactoring and splitting smaller and more
-> > manageable (and reviewable) series.
-> > 
-> > This means that it will take some time before I'm done (I'm *hoping*
-> > to be done for 6.15)  
-> 
-> Thanks for the information. So for the time being, we could likely 
-> switch to page->private.
-> 
-> One question may be whether these (not-user-space) page tables should at 
-> some point deserve a dedicated memdesc. But likely the question is what 
+------gzWopnPZ_Ctz0vx8ivNX8AC.S.UWijgAUb-gyMezoI7qaEzu=_726b8_
+Content-Type: text/plain; charset="utf-8"
 
-maybe? but given that everything is changing all the time, I'm avoiding
-any magic logic in struct page / struct folio.
 
-> it will all look like after your rework.
-
-but now that you put my attention on it, I'll try to get rid of
-page->index rather sooner than later.
+------gzWopnPZ_Ctz0vx8ivNX8AC.S.UWijgAUb-gyMezoI7qaEzu=_726b8_--
 
