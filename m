@@ -1,200 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-36888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C39EA8A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 07:17:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679F3163A08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 06:16:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F0622B8A5;
-	Tue, 10 Dec 2024 06:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sPjGZioq"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D3C9EA796
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 06:14:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B7E22619E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 06:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6941C282C5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 05:14:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7132221DB9;
+	Tue, 10 Dec 2024 05:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UMP9qpqw"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52109168BE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 05:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733811413; cv=none; b=NcBGqi0liRYvttT6Ned3g3WJU7a7wq5GC1x3+JOWuJ1aC/J/jOuIL93oiVzWns6572lEG0XoNKdiT+MZ22A0oZfPJW+y0qpsWTxPOxD0aIIMCtTaxxqhLVHgoipomSAFgWpTb5MysG33r4D6QTR6wozzZ+FGh6buc+HsMKYy6c8=
+	t=1733807687; cv=none; b=e6pKEwJGrCHb9FsGORkZzGzikknpQSwk7qfSCQv/VpzKNAnn1NWDICsbMhs1CdH2Ze3hJ2XIIeNTVV4U4hZaFLwQpeQMu6lAAYkX7LF0hE44kCILK+EaC0ZEI4c+4oCLZp7NOWPTv6/AhNXRe/QVH+VhfkH1d6fxeMKZZ+hjU34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733811413; c=relaxed/simple;
-	bh=VS5AgK+cHumRrzq48vKvRtsV7k/hWSfwmjl2fWxAy/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=G/8ku3MDPjPHLK5l/YyVZp/dpWk5usxHWvBBGqhqYoUkcB5ZHLtMOaScKHeHxKdey+r0qnvm+HgSAB5KhAxBIOztB5axvLvFj3qXWZbfVXafjZCOgXwBMkAG0UUMCtdiiKR5jN8voSiplmyC2q6qaoufEjP1J1Ebs/RhnGj9iHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sPjGZioq; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241210061648epoutp0436555b3ab5143f2216b8b4d86d834410~PvEpITl5B2970929709epoutp04e
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 06:16:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241210061648epoutp0436555b3ab5143f2216b8b4d86d834410~PvEpITl5B2970929709epoutp04e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733811408;
-	bh=E0Ds7is/PRD15Mta+Na2E4igKDBZuHKLd0eyDKuyE6c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sPjGZioqV1em46uM0YFjZKmLIeaxTQervp8bWkviudxOneYXCqXGUZocJL0JyoZuk
-	 DzEeifkHdla54mVc2ybhqmjMwIPaqaKVRn6XhCXUvfQszQLR+BVO6QkIsvMBY49Y7R
-	 DgDKY2YPqBCf6kRAP2VlXGe1dQVVIstv4tyeyc7Y=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241210061648epcas5p18e93e2747f53434c1ae5d54c4d241dd9~PvEond7fF2959829598epcas5p1_;
-	Tue, 10 Dec 2024 06:16:48 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y6pR23mN7z4x9Q8; Tue, 10 Dec
-	2024 06:16:46 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	67.D5.19710.ECCD7576; Tue, 10 Dec 2024 15:16:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241209110649epcas5p41df7db0f7ea58f250da647106d25134b~PfYkGHV-L1052810528epcas5p4U;
-	Mon,  9 Dec 2024 11:06:49 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241209110649epsmtrp2cf7b5119e46635b3d3157059bff59c36~PfYkFKM8Q1974719747epsmtrp2b;
-	Mon,  9 Dec 2024 11:06:49 +0000 (GMT)
-X-AuditID: b6c32a44-36bdd70000004cfe-a8-6757dcceb44a
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	84.03.18949.84FC6576; Mon,  9 Dec 2024 20:06:48 +0900 (KST)
-Received: from ubuntu (unknown [107.99.41.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241209110647epsmtip22855f77258d46586d09929b1447a8cd8~PfYiZTKgG1603516035epsmtip2J;
-	Mon,  9 Dec 2024 11:06:47 +0000 (GMT)
-Date: Mon, 9 Dec 2024 16:28:53 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Keith Busch <kbusch@meta.com>
-Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
-	anuj20.g@samsung.com, joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv12 06/12] block: expose write streams for block device
- nodes
-Message-ID: <20241209105844.boc4k6oshthruyep@ubuntu>
+	s=arc-20240116; t=1733807687; c=relaxed/simple;
+	bh=z59J8wQ2PwaogEQp7QG/JbDFe9mJg4lcH0DfP37yzHs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dZqNXhLzSMS2aZe7Fd1U/RpK2wmTpyWJTy620CrTmFv/6o223ddAALM2LOXOupRxzT+lWQZKuHZvwLk/OmeasO/X5MbvXXRYiGbHTXdf5+o9EwjrhT9HMiOoyKSSKG1988zfmWatqjLwPRGiTqBPScptPBPuYg/xSjE+KoNBBqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UMP9qpqw; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46769b34cbfso20900911cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 21:14:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733807684; x=1734412484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E1l1vsu6BgPpACJc3XjdJq3ESVl6fF0TL1KBSvIbWzo=;
+        b=UMP9qpqw1+t/EKchLbPORX/a2wor0SFe7hb/ZOlglsW5TrJzCO0s4vXdzvKKSddVIq
+         x+b7rRLiPaF1MhFoQiuSDXP1fOIovHalMcglOrjaOoFFL5gWvIiLPMYLVSPCCyNXeJhc
+         MB+m0UESmlLAMIFkSK3uKERKle0eWDy7VaA6T3emDah8qM2eKoHf1JJEZp//EB9vKJy0
+         48w5H+Yv4LHW7f1UiqGrvX/kLzZN0ejEmKCn6i6DSkbvMUYh+pMNuI1TNJBa47YMaqvo
+         E1euOtozZqVvVbFYnJ4dUeJuxVFe1oxriXSZfStI1HHFPQcDG9b//jP0QcI1UmVywZkz
+         HmBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733807684; x=1734412484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E1l1vsu6BgPpACJc3XjdJq3ESVl6fF0TL1KBSvIbWzo=;
+        b=i30I+sQkf5Vjslt/06gcirfxF8qrSugfc30/2a6SICsYDS6IXsvy5KQI2kyqIJ+1VF
+         +82YZillr9cKyAgLRcciZLFraaBbjBM1/gSRRWG10IpNVqB0eUS11TAfDf5VYmk0lrfw
+         a1VOYnciFp/JGC5h3v0FUQmIa8qdd75jNy0+jFXRI+OjjH4y0SqZr5bfcqe4pVXjj6kA
+         puRbIrOZ/Lcl92wBDDIxXOdjgUqNn2luqD98pjvu3s4sfhxRCk1SWAdIElO2ZivGy5eY
+         ebPcPcVL3Xx7iqHqQvIqU4rgomWZmLh3Ebf2WEa5jV2+yakZEmRqg4gMVyanOiKpA98f
+         eXpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0M4iYh6M3WZqcLJBfGM4tdyThSO1b2Olcub3St70aJr8Me3tiS//vknip1I/pay3vIFdOJRRKzsSXhb1h@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKDzxnNxRgJ409EVAqpI3XS0C/N+biRzmRL8cPjEkRWy7gQVFS
+	dVr9LetcDbNW+kGDJzO/QjCAPA8IsbYIdCO2qkZ+ZfKjMUsK2Ht+hnA0lxV6O7H5TM1jPrCcBFC
+	CQEyJC9RB2MVNavWgSXoCN8omPoA=
+X-Gm-Gg: ASbGncthzO08h89i7QbV9vxaovYxcsO+3f9xoJnvgwEVlhna/jP0N+K16BSBOCcmsSO
+	8sKj16HBzV68HSlM/adTHPJOSzIMGJSBRUU1TPip2HaP1L8UkbcQ=
+X-Google-Smtp-Source: AGHT+IF97o58M1fIgKbWqslR2VyXrecX1eL5DPHya0OoPobaV33MmdIX07GKGV30Jlw/o/QLCVdXmgowTBG76G3g66M=
+X-Received: by 2002:ac8:5d4c:0:b0:467:6486:beea with SMTP id
+ d75a77b69052e-4677200995cmr55772531cf.38.1733807684071; Mon, 09 Dec 2024
+ 21:14:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241206221801.790690-7-kbusch@meta.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmpu65O+HpBpseSVo0TfjLbDFn1TZG
-	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
-	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZ1S2TUZqYkpq
-	kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
-	YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IzutY9YCvYK
-	VRzd8JqlgfEcfxcjB4eEgInE/xbfLkYuDiGB3YwSi7+3skA4nxgl7r3czQrhfGOU6F+xEMjh
-	BOu48Go+VGIvo8S6Jy1MEM4TRomzDXfZQKpYBFQkvq74ygSyg01AW+L0fw6QsIiAosR5YEiA
-	1DMLTGSS+H2oiR0kISwQJNF99isLiM0LtOHq5p1MELagxMmZT8DinAJmEoc/tYE1Swis5JDY
-	P/kC1EkuEreO3WCEsIUlXh3fwg5hS0l8freXDcIul1g5ZQVUcwujxKzrs6Aa7CVaT/Uzg9jM
-	AhkSL3o2QTXLSkw9tY4JIs4n0fv7CRNEnFdixzwYW1lizfoFUAskJa59b4SyPSTWX1gBDaOt
-	jBKtbXtZJjDKzULy0Swk+yBsK4nOD02ss4AhxiwgLbH8HweEqSmxfpf+AkbWVYySqQXFuemp
-	yaYFhnmp5fBoTs7P3cQITsRaLjsYb8z/p3eIkYmD8RCjBAezkggvh3douhBvSmJlVWpRfnxR
-	aU5q8SFGU2AMTWSWEk3OB+aCvJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg
-	+pg4OKUamHYwTY4R+q+1RaRh1czdB7mDpCXEHbZ1Bia5bJtXvHTLzwnC6adYy/0mK5c+mtie
-	41DN3tr7KXHu8t+Z/9lit+/K+SbZ9T3wKX+kwYlmjsgD7IwLzO4zHntpsWb+hCSbb+V+a97U
-	3nA5w2Bh/OvIIs29LeJPpHfpsu39bXtwU0fcWYlC09M/ApWPHjPVlPWee2yz+KT7drIsGzyf
-	rZBh43w8I/OiqPD9OQbXX7qITJnkPuHdqjc6893Mr++Y1y90uTI96dQHW+XjWaFatRM+znnI
-	JzVpZqVTuanvbv6C9w+2CngJlF5ly10bwpI8h3/9+tRlJgXd15vqJyf7d5mELHi/o7d9glGO
-	Vn/azGlKq5VYijMSDbWYi4oTAf+3R7tNBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSvK7H+bB0g++LLCyaJvxltpizahuj
-	xeq7/WwWK1cfZbJ413qOxeLo/7dsFpMOXWO0OHN1IYvF3lvaFnv2nmSxmL/sKbvFutfvWRx4
-	PHbOusvucf7eRhaPy2dLPTat6mTz2Lyk3mP3zQY2j3MXKzz6tqxi9Pi8SS6AM4rLJiU1J7Ms
-	tUjfLoEr4+OZI2wF7/kr5vxaxtbAOIu3i5GTQ0LAROLCq/msXYxcHEICuxklfh+5ywKRkJRY
-	9vcIM4QtLLHy33N2iKJHjBLH1p9hB0mwCKhIfF3xlamLkYODTUBb4vR/DpCwiICixHmgc0Dq
-	mQUmM0k8n3kMbKiwQJBE99mvYDYv0Oarm3cygdhCAokSh1q3Q8UFJU7OfAJmMwuYSczb/JAZ
-	ZD6zgLTE8n9g8zmBwoc/tbFNYBSYhaRjFpKOWQgdCxiZVzFKphYU56bnFhsWGOWllusVJ+YW
-	l+al6yXn525iBEePltYOxj2rPugdYmTiYDzEKMHBrCTCy+Edmi7Em5JYWZValB9fVJqTWnyI
-	UZqDRUmc99vr3hQhgfTEktTs1NSC1CKYLBMHp1QDk+lNCd2O/vnf5jDdleXL4fi85mzeTo/5
-	IsH3bNvPZN9beZoh7btVRc686rBuLqvPl9W8lv3ckii3vVvAWGXDQ8ZdC+M07bb2lx1QXcOg
-	/jFc5dmXNUsy9/Rdkk/+l2u8ooSbITbgjTvPPtdThRKc91YcPRf+5bZ/YobQg0Mmsx1VrLqK
-	byhs/vbe4kW6s3Lr8d3/jropPfavMzndsMjf0cfQ9lXuh7vbuxazKD3Rf1+f9EH3BesBnnXb
-	v2pNdE9q6tg3r9xfmqUsesHPeSUi2/e/+5MQpfxPc8FWz6MtPOd6Hre4rm05pPqwXqR3VXuI
-	m01J58qEVhGtXXtaDi5t3V9/ddrcrW9vrPWv37YjXYmlOCPRUIu5qDgRAM7C0f8NAwAA
-X-CMS-MailID: 20241209110649epcas5p41df7db0f7ea58f250da647106d25134b
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241209110649epcas5p41df7db0f7ea58f250da647106d25134b
-References: <20241206221801.790690-1-kbusch@meta.com>
-	<20241206221801.790690-7-kbusch@meta.com>
-	<CGME20241209110649epcas5p41df7db0f7ea58f250da647106d25134b@epcas5p4.samsung.com>
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de> <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de> <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <20241209144948.GE2840216@perftesting> <Z1cMjlWfehN6ssRb@casper.infradead.org>
+ <20241209154850.GA2843669@perftesting> <4707aea6-addb-4dc3-96f7-691d2e94ab25@tnxip.de>
+ <CAJnrk1apXjQw7LEgSTmjt1xywzjp=+QMfYva4k1x=H0q2S6mag@mail.gmail.com> <CAJnrk1YfeNNpt2puwaMRcpDefMVg1AhjYNY4ZsKNqr85=WLXDg@mail.gmail.com>
+In-Reply-To: <CAJnrk1YfeNNpt2puwaMRcpDefMVg1AhjYNY4ZsKNqr85=WLXDg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 9 Dec 2024 21:14:33 -0800
+Message-ID: <CAJnrk1aF-_N6aBHbuWz0e+z=B4cH3GjZZ60yHRPbctMMG6Ukxw@mail.gmail.com>
+Subject: Re: silent data corruption in fuse in rc1
+To: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+Cc: Josef Bacik <josef@toxicpanda.com>, Matthew Wilcox <willy@infradead.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 06/12/24 02:17PM, Keith Busch wrote:
->From: Christoph Hellwig <hch@lst.de>
+On Mon, Dec 9, 2024 at 11:52=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
->Export statx information about the number and granularity of write
->streams, use the per-kiocb write hint and map temperature hints
->to write streams (which is a bit questionable, but this shows how it is
->done).
+> On Mon, Dec 9, 2024 at 10:47=E2=80=AFAM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+> >
+> > On Mon, Dec 9, 2024 at 9:07=E2=80=AFAM Malte Schr=C3=B6der <malte.schro=
+eder@tnxip.de> wrote:
+> > >
+> > > On 09/12/2024 16:48, Josef Bacik wrote:
+> > > > On Mon, Dec 09, 2024 at 03:28:14PM +0000, Matthew Wilcox wrote:
+> > > >> On Mon, Dec 09, 2024 at 09:49:48AM -0500, Josef Bacik wrote:
+> > > >>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I en=
+ded up
+> > > >>>> with 3b97c3652d91 as the culprit.
+> > > >>> Willy, I've looked at this code and it does indeed look like a 1:=
+1 conversion,
+> > > >>> EXCEPT I'm fuzzy about how how this works with large folios.  Pre=
+viously, if we
+> > > >>> got a hugepage in, we'd get each individual struct page back for =
+the whole range
+> > > >>> of the hugepage, so if for example we had a 2M hugepage, we'd fil=
+l in the
+> > > >>> ->offset for each "middle" struct page as 0, since obviously we'r=
+e consuming
+> > > >>> PAGE_SIZE chunks at a time.
+> > > >>>
+> > > >>> But now we're doing this
+> > > >>>
+> > > >>>     for (i =3D 0; i < nfolios; i++)
+> > > >>>             ap->folios[i + ap->num_folios] =3D page_folio(pages[i=
+]);
+> > > >>>
+> > > >>> So if userspace handed us a 2M hugepage, page_folio() on each of =
+the
+> > > >>> intermediary struct page's would return the same folio, correct? =
+ So we'd end up
+> > > >>> with the wrong offsets for our fuse request, because they should =
+be based from
+> > > >>> the start of the folio, correct?
+> > > >> I think you're 100% right.  We could put in some nice asserts to c=
+heck
+> > > >> this is what's happening, but it does seem like a rather incautiou=
+s
+> > > >> conversion.  Yes, all folios _in the page cache_ for fuse are smal=
+l, but
+> > > >> that's not guaranteed to be the case for folios found in userspace=
+ for
+> > > >> directio.  At least the comment is wrong, and I'd suggest the code=
+ is too.
+> > > > Ok cool, Malte can you try the attached only compile tested patch a=
+nd see if the
+> > > > problem goes away?  Thanks,
+> > > >
+> > > > Josef
+> > > >
+> > > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > > > index 88d0946b5bc9..c4b93ead99a5 100644
+> > > > --- a/fs/fuse/file.c
+> > > > +++ b/fs/fuse/file.c
+> > > > @@ -1562,9 +1562,19 @@ static int fuse_get_user_pages(struct fuse_a=
+rgs_pages *ap, struct iov_iter *ii,
+> > > >               nfolios =3D DIV_ROUND_UP(ret, PAGE_SIZE);
+> > > >
+> > > >               ap->descs[ap->num_folios].offset =3D start;
+> > > > -             fuse_folio_descs_length_init(ap->descs, ap->num_folio=
+s, nfolios);
+> > > > -             for (i =3D 0; i < nfolios; i++)
+> > > > -                     ap->folios[i + ap->num_folios] =3D page_folio=
+(pages[i]);
+> > > > +             for (i =3D 0; i < nfolios; i++) {
+> > > > +                     struct folio *folio =3D page_folio(pages[i]);
+> > > > +                     unsigned int offset =3D start +
+> > > > +                             (folio_page_idx(folio, pages[i]) << P=
+AGE_SHIFT);
+> > > > +                     unsigned int len =3D min_t(unsigned int, ret,=
+ folio_size(folio) - offset);
+> > > > +
+> > > > +                     len =3D min_t(unsigned int, len, PAGE_SIZE);
+> > > > +
+> > > > +                     ap->descs[ap->num_folios + i].offset =3D offs=
+et;
+> > > > +                     ap->descs[ap->num_folios + i].length =3D len;
+> > > > +                     ap->folios[i + ap->num_folios] =3D folio;
+> > > > +                     start =3D 0;
+> > > > +             }
+> > > >
+> > > >               ap->num_folios +=3D nfolios;
+> > > >               ap->descs[ap->num_folios - 1].length -=3D
+> > >
+> > > The problem persists with this patch.
+> > >
 >
->Signed-off-by: Christoph Hellwig <hch@lst.de>
->Signed-off-by: Keith Busch <kbusch@kernel.org>
->---
-> block/bdev.c |  6 ++++++
-> block/fops.c | 23 +++++++++++++++++++++++
-> 2 files changed, 29 insertions(+)
+> Malte, could you try Josef's patch except with that last line
+> "ap->descs[ap->num_pages - 1].length  -=3D (PAGE_SIZE - ret) &
+> (PAGE_SIZE - 1);" also removed? I think we need that line removed as
+> well since that does a "-=3D" instead of a "=3D" and
+> ap->descs[ap->num_folios - 1].length gets set inside the for loop.
 >
->diff --git a/block/bdev.c b/block/bdev.c
->index 738e3c8457e7f..c23245f1fdfe3 100644
->--- a/block/bdev.c
->+++ b/block/bdev.c
->@@ -1296,6 +1296,12 @@ void bdev_statx(struct path *path, struct kstat *stat,
-> 		stat->result_mask |= STATX_DIOALIGN;
-> 	}
+> In the meantime, I'll try to get a local repro running on fsx so that
+> you don't have to keep testing out repos for us.
+
+I was able to repro this locally by doing:
+
+-- start libfuse server --
+sudo ./libfuse/build/example/passthrough_hp --direct-io ~/src ~/fuse_mount
+
+-- patch + compile this (rough / ugly-for-now) code snippet --
+diff --git a/ltp/fsx.c b/ltp/fsx.c
+index 777ba0de..9f040bc4 100644
+--- a/ltp/fsx.c
++++ b/ltp/fsx.c
+@@ -1049,7 +1049,8 @@ dowrite(unsigned offset, unsigned size)
+        }
+ }
+
+-
++#define TWO_MIB (1 << 21)  // 2 MiB in bytes
+
+ void
+ domapwrite(unsigned offset, unsigned size)
+ {
+@@ -1057,6 +1058,8 @@ domapwrite(unsigned offset, unsigned size)
+        unsigned map_size;
+        off_t    cur_filesize;
+        char    *p;
++       int ret;
++       unsigned size_2mib_aligned;
+
+        offset -=3D offset % writebdy;
+        if (size =3D=3D 0) {
+@@ -1101,6 +1104,41 @@ domapwrite(unsigned offset, unsigned size)
+        pg_offset =3D offset & PAGE_MASK;
+        map_size  =3D pg_offset + size;
+
++       size_2mib_aligned =3D (size + TWO_MIB - 1) & ~(TWO_MIB - 1);
++       void *placeholder_map =3D mmap(NULL, size_2mib_aligned * 2, PROT_NO=
+NE,
++                            MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++       if (!placeholder_map) {
++               prterr("domapwrite: placeholder map");
++               exit(202);
++       }
++
++       /* align address to nearest 2 MiB */
++       void *aligned_address =3D
++               (void *)(((uintptr_t)placeholder_map + TWO_MIB - 1) &
+~(TWO_MIB - 1));
++
++       void *map =3D mmap(aligned_address, size_2mib_aligned, PROT_READ
+| PROT_WRITE,
++                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED |
+MAP_POPULATE, -1, 0);
++
++       ret =3D madvise(map, size_2mib_aligned, MADV_COLLAPSE);
++       if (ret) {
++               prterr("domapwrite: madvise collapse");
++               exit(203);
++       }
++
++       memcpy(map, good_buf + offset, size);
++
++       if (lseek(fd, offset, SEEK_SET) =3D=3D -1) {
++               prterr("domapwrite: lseek");
++               exit(204);
++       }
++
++       ret =3D write(fd, map, size);
++       if (ret =3D=3D -1) {
++               prterr("domapwrite: write");
++               exit(205);
++       }
++
++       /*
+        if ((p =3D (char *)mmap(0, map_size, PROT_READ | PROT_WRITE,
+                              MAP_FILE | MAP_SHARED, fd,
+                              (off_t)(offset - pg_offset))) =3D=3D (char *)=
+-1) {
+@@ -1119,6 +1157,15 @@ domapwrite(unsigned offset, unsigned size)
+                prterr("domapwrite: munmap");
+                report_failure(204);
+        }
++       */
++       if (munmap(map, size_2mib_aligned) !=3D 0) {
++               prterr("domapwrite: munmap map");
++               report_failure(206);
++       }
++       if (munmap(placeholder_map, size_2mib_aligned * 2) !=3D 0) {
++               prterr("domapwrite: munmap placeholder_map");
++               report_failure(207);
++       }
+ }
+
+-- run fsx test --
+sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+
+On the offending commit 3b97c3652, I'm seeing:
+[user]$ sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+Will begin at operation 3
+Seed set to 1
+...
+READ BAD DATA: offset =3D 0x1925f, size =3D 0xf7a3, fname =3D
+/home/user/fuse_mount/example.txt
+OFFSET      GOOD    BAD     RANGE
+0x1e43f     0x4b4a  0x114a  0x0
+operation# (mod 256) for the bad data may be 74
+0x1e441     0xa64a  0xeb4a  0x1
+operation# (mod 256) for the bad data may be 74
+0x1e443     0x264a  0xe44a  0x2
+operation# (mod 256) for the bad data may be 74
+0x1e445     0x254a  0x9e4a  0x3
+...
+Correct content saved for comparison
+(maybe hexdump "/home/user/fuse_mount/example.txt" vs
+"/home/user/fuse_mount/example.txt.fsxgood")
+
+
+I tested Josef's patch with the "ap->descs[ap->num_pages - 1].length
+-=3D (PAGE_SIZE - ret) & (PAGE_SIZE - 1);" line removed and it fixed the
+issue:
+
+[user]$ sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+Will begin at operation 3
+Seed set to 1
+...
+copying to largest ever: 0x3e19b
+copying to largest ever: 0x3e343
+fallocating to largest ever: 0x40000
+All 5000 operations completed A-OK!
+
+
+Malte, would you mind double-checking whether this fixes the issue
+you're seeing on your end?
+
+
+Thanks,
+Joanne
+
 >
->+	if ((request_mask & STATX_WRITE_STREAM) &&
-We may not reach this point, if user application doesn't set either of
-STATX_DIOALIGN or STATX_WRITE_ATOMIC.
-
->+	    bdev_max_write_streams(bdev)) {
->+		stat->write_stream_max = bdev_max_write_streams(bdev);
->+		stat->result_mask |= STATX_WRITE_STREAM;
-statx will show value of 0 for write_stream_granularity.
-
-Below is the fix which might help you,
-
-diff --git a/block/bdev.c b/block/bdev.c
-index c23245f1fdfe..290577e20457 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -1275,7 +1275,8 @@ void bdev_statx(struct path *path, struct kstat *stat,
-  	struct inode *backing_inode;
-  	struct block_device *bdev;
-  
--	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC)))
-+	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC |
-+		STATX_WRITE_STREAM)))
-  		return;
-  
-  	backing_inode = d_backing_inode(path->dentry);
-@@ -1299,6 +1300,7 @@ void bdev_statx(struct path *path, struct kstat *stat,
-  	if ((request_mask & STATX_WRITE_STREAM) &&
-  	    bdev_max_write_streams(bdev)) {
-  		stat->write_stream_max = bdev_max_write_streams(bdev);
-+		stat->write_stream_granularity = bdev_write_stream_granularity(bdev);
-  		stat->result_mask |= STATX_WRITE_STREAM;
-  	}
-
-
-------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_
-Content-Type: text/plain; charset="utf-8"
-
-
-------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_--
+> Thanks,
+> Joanne
+> >
+> > Catching up on this thread now. I'll investigate this today.
+> >
+> > >
+> > > /Malte
+> > >
 
