@@ -1,96 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-36989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840B99EBB83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 22:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 557C99EBBA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 22:12:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927451886ADA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 21:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3A91887A89
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 21:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFA8230268;
-	Tue, 10 Dec 2024 21:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3378223027E;
+	Tue, 10 Dec 2024 21:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="GROLPSc8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hwd8Cny9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ks6wF4WD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BBB23025D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 21:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D55A153BF6;
+	Tue, 10 Dec 2024 21:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733864839; cv=none; b=gWE8KDY4Hl0ifc9ZfAvFqlFyWk/sIDa5AgfKiZSDVpu9PvFphtWquNDysyXpb3+FzE1aTwOHjCyAehMQVydJHE6ezb3tkE0Fv+siQQHuxHeGZWKoHjuSmg7CTeqZMn5JIXEoZ3CWiYeIV3IYyW0K+DQbkPHRxyT03CzZCtX1m0A=
+	t=1733865135; cv=none; b=nwGJJ7xiqZYddqyGlqeOB7LfdguCv9K4fF8BkOWl4sJdVC6N6OgqmeHVCWv8U0am7rR0p0OiwZjQzViNFSAuSN8ZQEPumze8x2FhHV8DWUY98JC7UDooibD9FzE9GGBJHRCFh8Gf7KLjJQ+QSVdvPqj2kxWKQ3SUlXmZhjlQZbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733864839; c=relaxed/simple;
-	bh=j7rSrmHi6FegCueQJjZ5w0gsyiAtIHR7CGuUgS9rnq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p8tDWx7jm9KXyZ6YRADcfyK0vHDBweOvwuSBaJQPj84sTsKI5SGchKGF8cSPE6gyvaEFR4mkPToIqv+SAH/9Q975v9A/nh7ZRM+5JIJDCajLhJLTCtUhKpkV/iQKmtTvTOMZIH71DXzuEP0DSMMrXu2AV9nQeN4Ksu6nbQjyMzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=GROLPSc8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hwd8Cny9; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2B0701384162;
-	Tue, 10 Dec 2024 16:07:16 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Tue, 10 Dec 2024 16:07:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733864836;
-	 x=1733951236; bh=maM8VcKcBcgyaEBNSUKqG+1xCg8Ks7oTDeKmI5zAa+Q=; b=
-	GROLPSc8vTQlCTKXyB9RM999pAFo4W5uPCowrOuZGGXEaO4QMfbq6188p+ffN4kK
-	Glkefx+9fUShnAg7UqpW4fC2BzGqyICHcYo3mRjbd4V7URodN1xYVHcMWg76GJFn
-	JLZIdJsiuewLqJOr20NvAUpaHJha+88fY/+tfvGEihYduGXFe15YYnzjsfTTZLAO
-	vgQbXU9XLKhANTwYJH8K75H4Gw6S6e9JFU+38FCwxcJhdNqAgnvyy3RFPEtz0c6u
-	PU9qYImVm3DdGg66T6HiRZk4LOnYoHhv2VPffA/x+WGS+h0W8ByqnXT6+5RanJL4
-	IYxb29hjagL0A7JdPUtVlw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733864836; x=
-	1733951236; bh=maM8VcKcBcgyaEBNSUKqG+1xCg8Ks7oTDeKmI5zAa+Q=; b=h
-	wd8Cny9pvfaDkKi2yEU/ofqnMAfhBbYDForHPZOvVslSj8ql4ZsSLHCBzo3brf/e
-	vbMDVSp48N5b9sbWme2Uj8XR1UMjmIZCtXUCJJJxpb0moXh4wfM4NT0KJRJbpp1T
-	gP4/AwkEGq1Vah59SlNdAyAvfHjsfXm5kGpmfYBPZqJ9Nbq87216LTy1viXl93Pl
-	4lQ1duEO1DZd4fD2n1/n8kzhZC2z21JRSKe0kWzS7LBEDVOEKFMBOiiNhaevwi4+
-	3nPddjFW3CYECbFoyKZ7hChBTbA5YkkVP2yBbFktpOnchRE9Oz5rHVUKg/3qujeM
-	GEPmH15mmMaDcyUug7uxA==
-X-ME-Sender: <xms:gq1YZ4F9DmtG99PYH7vNWz3SrC9wPuh875xMQCthzUaNAazbOJiHyw>
-    <xme:gq1YZxVyz3KKhpHy9JVgP2hcBOMQ3gXUQS5g1ZUiuD14FaejKAtxaYsCABGNCMFWC
-    aHRediLlZraZq9g>
-X-ME-Received: <xmr:gq1YZyLJjptiMNT9ACNZWAMErUoYfdpYpmLr_jXatAoF1Ew2prPRy6H2a9pIZ03TLM_Ch2s-v25WE8SehyU9NnkeOK_KOmS0Wam9sxb3Gff5NEL_SCEv>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeekgddugeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefkffggfg
-    fuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcuufgthhhusggv
-    rhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtf
-    frrghtthgvrhhnpeevhffgvdeltddugfdtgfegleefvdehfeeiveejieefveeiteeggffg
-    gfeulefgjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghp
-    thhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvghtmhgrrhhtihhnge
-    efudefsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvg
-    guihdrhhhupdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepjhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgtohhmpd
-    hrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtohep
-    lhgrohgrrhdrshhhrghosehgmhgrihhlrdgtohhmpdhrtghpthhtohepvghtmhgrrhhtih
-    hnsegtihhstghordgtohhm
-X-ME-Proxy: <xmx:gq1YZ6Gbu7DuDbZyJCrLlYP6fA1-nYcSU92cD2Sy37yuud2hVIOb9g>
-    <xmx:gq1YZ-WtYyCKJa-ELnx-32_o_RiY8e_ZcLe6OF5sdHKBknxnm16Gkg>
-    <xmx:gq1YZ9Nkr752-2pkGLYjuFx7xngsQuKM8YaE_-D5TOzwC-oBbuAtzQ>
-    <xmx:gq1YZ10RZSQWMTzqLeZ7tLer6kXw89axK6CUxfmwUdMmCMUYdiakVA>
-    <xmx:hK1YZyo-6rdtkDdgcu4_sJoFHWVOAj79sSuS8j0Xvse0isRw5-FXhTQa>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Dec 2024 16:07:13 -0500 (EST)
-Message-ID: <4f524025-e64e-4d67-a0f3-20f0fa21ca1a@fastmail.fm>
-Date: Tue, 10 Dec 2024 22:07:12 +0100
+	s=arc-20240116; t=1733865135; c=relaxed/simple;
+	bh=dyZtB26aExN1AXnqAq5HefDzn3mHyrfChTdtCAd/lK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=d/Qr01vo7zcxIbPiyRH3cqIDOroCYbGGZ4kxxEeJOL0oR5ZhIdvzsYwG0oOchextjqEuQIsENS54SQO5GrkNVUZ9L2qTfWooTkPpI1ul3syt/T8uPIylCfdNZKdDWsT5k4P0zn5I4qn+OjjEP+n4ZgN1/PpnG5+bvkuYEwj+uoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ks6wF4WD; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description;
+	bh=pWl+DoLp0B19v+ccbH7KTwZvEdcgO1RiPrIKqvG36yw=; b=Ks6wF4WDIa88ZrBviT77i64QEP
+	z0/eIDYnsI/5C9SnKcBLOIaEsQptBDTNSppYZBTHejy7xYSX3Ko/R/9Rdyyog2GMaAXjJKFi1ih3t
+	Bx1OW6DQKGu5atLQyau93Jk8XFWygjeYMJ1jd3nT3qvQOAAf//2ylD4vCJZkBGQqQiqHE5sXCBDCt
+	9MWkT609GGtB8kgRbGx6eg4MEQLvimXloVYVdwAsW1NwRrUj0pFc8P/MKty0M/tafxIC5ZXt3/6Bp
+	9KgR+NKrouP6tI8wSUpeEvw+fYF+R1lmH79NgQ3hO/jr6r5G6PXKSJsGhQy+ZYOB/6/eKtdsD8P/q
+	kx7tzKdg==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tL7WZ-00000003jG4-3hSc;
+	Tue, 10 Dec 2024 21:12:08 +0000
+Message-ID: <391b9d5f-ec3a-4c90-8345-5dab929917f7@infradead.org>
+Date: Tue, 10 Dec 2024 13:12:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,74 +54,51 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: Abort connection if FUSE server get stuck
-To: etmartin4313@gmail.com, linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Cc: joannelkoong@gmail.com, jefflexu@linux.alibaba.com, josef@toxicpanda.com,
- laoar.shao@gmail.com, etmartin@cisco.com
-References: <20241210171621.64645-1-etmartin4313@gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20241210171621.64645-1-etmartin4313@gmail.com>
+Subject: Re: [PATCH v8 16/19] fsnotify: generate pre-content permission event
+ on page fault
+To: Klara Modin <klarasmodin@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+ amir73il@gmail.com, brauner@kernel.org, torvalds@linux-foundation.org,
+ viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
+References: <cover.1731684329.git.josef@toxicpanda.com>
+ <aa56c50ce81b1fd18d7f5d71dd2dfced5eba9687.1731684329.git.josef@toxicpanda.com>
+ <5d0cd660-251c-423a-8828-5b836a5130f9@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <5d0cd660-251c-423a-8828-5b836a5130f9@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 12/10/24 18:16, etmartin4313@gmail.com wrote:
-> From: Etienne Martineau <etmartin4313@gmail.com>
+On 12/8/24 8:58 AM, Klara Modin wrote:
+>> +/**
+>> + * filemap_fsnotify_fault - maybe emit a pre-content event.
+>> + * @vmf:    struct vm_fault containing details of the fault.
+>> + * @folio:    the folio we're faulting in.
+>> + *
+>> + * If we have a pre-content watch on this file we will emit an event for this
+>> + * range.  If we return anything the fault caller should return immediately, we
+>> + * will return VM_FAULT_RETRY if we had to emit an event, which will trigger the
+>> + * fault again and then the fault handler will run the second time through.
+>> + *
+>> + * This is meant to be called with the folio that we will be filling in to make
+>> + * sure the event is emitted for the correct range.
+>> + *
+>> + * Return: a bitwise-OR of %VM_FAULT_ codes, 0 if nothing happened.
+>> + */
+>> +vm_fault_t filemap_fsnotify_fault(struct vm_fault *vmf)
 > 
-> This patch abort connection if HUNG_TASK_PANIC is set and a FUSE server
-> is getting stuck for too long.
-> 
-> Without this patch, an unresponsive / buggy / malicious FUSE server can
-> leave the clients in D state for a long period of time and on system where
-> HUNG_TASK_PANIC is set, trigger a catastrophic reload.
-> 
-> So, if HUNG_TASK_PANIC checking is enabled, we should wake up periodically
-> to abort connections that exceed the timeout value which is define to be
-> half the HUNG_TASK_TIMEOUT period, which keeps overhead low.
-> 
-> This patch introduce a list of request waiting for answer that is time
-> sorted to minimize the overhead.
-> 
-> When HUNG_TASK_PANIC is enable there is a timeout check per connection
-> that is running at low frequency only if there are active FUSE request
-> pending.
-> 
-> A FUSE client can get into D state as such ( see below Scenario #1 / #2 )
->  1) request_wait_answer() -> wait_event() is UNINTERRUPTIBLE
->     OR
->  2) request_wait_answer() -> wait_event_(interruptible / killable) is head
->     of line blocking for subsequent clients accessing the same file
+> The parameters mentioned above do not seem to match with the function.
 
 
-I don't think that will help you for fuse background requests.
+which causes a warning:
 
-[422820.431981] INFO: task dd:1590644 blocked for more than 120 seconds.
-[422820.436556]       Not tainted 6.13.0-rc1+ #92
-[422820.439189] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[422820.446822] task:dd              state:D stack:27440 pid:1590644 tgid:1590644 ppid:1590478 flags:0x00000002
-[422820.456782] Call Trace:
-[422820.459467]  <TASK>
-[422820.461667]  __schedule+0x1b42/0x25b0
-[422820.465312]  schedule+0xb5/0x260
-[422820.468568]  schedule_preempt_disabled+0x19/0x30
-[422820.473033]  rwsem_down_write_slowpath+0x8a6/0x12b0
-[422820.477644]  ? generic_file_write_iter+0x82/0x240
-[422820.481774]  down_write+0x16f/0x1a0
-[422820.486756]  generic_file_write_iter+0x82/0x240
-[422820.490412]  ? fuse_file_read_iter+0x490/0x490 [fuse]
-[422820.493021]  vfs_write+0x7c8/0xb70
-[422820.494389]  ? fuse_file_read_iter+0x490/0x490 [fuse]
-[422820.497003]  ksys_write+0xce/0x170
-[422820.500110]  do_syscall_64+0x81/0x120
-[422820.502941]  ? irqentry_exit_to_user_mode+0x133/0x180
-[422820.505504]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+mm/filemap.c:3289: warning: Excess function parameter 'folio' description in 'filemap_fsnotify_fault'
 
 
-Joannes timeout patches are more generic and handle these as well.
+-- 
+~Randy
 
-
-Thanks,
-Bernd
 
