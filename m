@@ -1,201 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-36968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2F19EB7FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 18:18:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB9F99EB802
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 18:18:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D47A161C6A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 17:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454BC18882A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 17:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F73023ED73;
-	Tue, 10 Dec 2024 17:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8D4230267;
+	Tue, 10 Dec 2024 17:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F2q6Z3eE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NFD7ep9t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C1B23ED6F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 17:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08D622FAE0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 17:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850867; cv=none; b=S82cDCA/fwjDzUyRO1ORLQWv2mBAY7KQTcsAOsGQa83YL+OjzSJV3O0bv/53vbqs5vHlQsE9tfTgS+r2Taa5jlkR9cr5gyN7/ppHDDD068QJ3tRlBu5Q8fSWcZxJse7fZX8IoKDHXQaczC3E6ZufesYUoOKuuOyk0TXmiRMTgk8=
+	t=1733850933; cv=none; b=DOujWBBfSE7SHB3N4qqQO3aVDeLmLTLgYnDUh19Eib10zJJqD8L9t3yezeww1y1tpYCkip2MM2qIg+VAOG3FVl4EBGnohAdIAujjXxCvJF27niXdzMtLKoKASiPDsDkCS5jfgOnB2gcG7BLoEAAMSwgrOuLAZEePkXV4liJ9Ibk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850867; c=relaxed/simple;
-	bh=pg6PCkAQESYCuXYSd+fcow4PqFanbzQovGB2rPsyh2A=;
+	s=arc-20240116; t=1733850933; c=relaxed/simple;
+	bh=65mBZ/F+s9YxlRJpWUAHAJJBKcnRjWV2qFXtSeoqb0k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0ukWR5mgWQABnedW988ZU3rKfyd703VjUjpJF9sXen6pOG9jz8q3kggOkYoAJbzILdLYOroWEqJoLxf+i1iLzsUAZQw0fwEVhM78+yvYJgGl4XYmbBD8HcGdBaZ3eC5FcG68wXCPSROoVm9YgmiKthXrLJYmJdsGyon5S45V9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F2q6Z3eE; arc=none smtp.client-ip=209.85.218.53
+	 To:Cc:Content-Type; b=EGFmxVe47pvhg7ozxDkTzv6gsAUmG1EAk3S9IY5RJSGLEej0HIObmlLzTT/k96BLqeCnDNCzUwwh2+JdPbqud8rNsC0uOYVegP/WEI6i0ZI9tPm0St/6ZlKWX7s1enNJnQdbx7rSWrGAYkZOj4ByN3KFgrIs9uzCfJNAhBR7NUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NFD7ep9t; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ec267b879so1122112266b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 09:14:25 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d3c2135f61so9017a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 09:15:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733850864; x=1734455664; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733850930; x=1734455730; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LLa40PH/Tbq3M6b/+V/XDch1i2DV24C5EIkLCdmLkko=;
-        b=F2q6Z3eEmyICCp600eBBpKyuHwREEjFb+fHMg5cq07gvM6PNZ0x5/C398Q2LPztCnh
-         v15U62dg8L1DWcexAeXR/QlE61x+P4qHOjgvV8Y3HOeTjNNBl/LBfyz9lXWoy6JGdN2S
-         ovWEKBgZE0Kd/4JXkN/B+r7S7CSCFNJ8WMkECfDVas31pRRjMgRd/E3YMD7SqAorLcaB
-         s8UB/PFmVeWK3lrWKGed1sBgJPEjLVNRmYkvWuIAJ8sOTTlzLY9t4A7P1T4zK/2q5McH
-         N5zGmL9cwMffRZFM1E2ALKm6/OgA9KR0dReFBf2W3W1/X9W6DZRNZNjicC1tHypCNOUJ
-         M5Lw==
+        bh=1j7LZ3gidxJvgG/m4KFvrvy2HeW92l/T3DtHZWGqx18=;
+        b=NFD7ep9tvsrHgVkX98Kww8FPNLaOjvkZdFdr05Ksd9+2uuZv10WZ3pMhZVhr632qLt
+         84Pvrn1+t6cMLKfwqyE4A15DwFg/pMaHi5NGKA0AOgZ+UY9tNuqKkjxiX3tGT4+i/Npj
+         He1dm4J/HYFFqTb4lqOKcfICe0EOuIwNdOnLswRjrdmNoH2h9Qol09XZT939PslnLcOl
+         t0YKoLGKxdec2Zt/kCdw6nAg1dM1yzQE17KfcxJNug4GLL3qLzyBVL/U3+jykx3TNm15
+         I9qNoigQrSTGornXNgGirys84N4imGjXJSP7PBlO/b8cBQoWqQO4u2yzLiiNp9Qr19/Y
+         byNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850864; x=1734455664;
+        d=1e100.net; s=20230601; t=1733850930; x=1734455730;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LLa40PH/Tbq3M6b/+V/XDch1i2DV24C5EIkLCdmLkko=;
-        b=CYRbhrRKNrylmCZiCydV0cLV7AQVkm07c07Uf6B7EyeUfYOjNe14fdSSxf9KckYsu9
-         xwNuVoAf+0wPYuFtc3eOPoAnpXz9FKmf7GoalL/P8XwJssxgfiXuQByZ0WYeYHrXD/KO
-         OKkgdFwhm3aT4yLxqMkyFt2NS9OiEaZTfm+V4xdClBrC1/Fl07mf0ypOVo20LgvzomKN
-         bxrqoMj2bqk2h1DgE0LH7W5/zEngnYRCF85uHypGFpdebZyxwQHXJFemygj5/5HaWA6t
-         QlTEILWLr2GuOMmSJ9DxgMmkLGtEgHWgXVf97hXfGe/bFdNNgQoD/6+/3H1Z7GrJOndr
-         RGTA==
-X-Gm-Message-State: AOJu0YzGLQ67GRyKNlZxEmpr3pIrqExsgTr1wwzHqlwc+yBI+TdEPiU6
-	AEsox+7jWqQ11W4aXEk3qwMuyBcOfQbjf5ntlE3eXBIgQ1jdT0aMslbpao43WJ5P/qYbKu4ptve
-	JMQ5/a7fe3V21jazgdL46WBkGB8KdFk51gdkDZDTk1TPd1Xp/VRtOjSw=
-X-Gm-Gg: ASbGncsaMZ5Fi+oK/mIP6jRW5YhZExNENhclyQhOnA2OObvtZ1NIUwjJ2tQbE/vvAoT
-	e7mmMnpwOMvIqtjK9dTT9vbg/C8q+ouuIPSU=
-X-Google-Smtp-Source: AGHT+IFXWYL2SzbDBfEJlksb8gpNuE+GkJfSEULi1cVyKKhpiP54QWCzdhSMm4iaNZTNIwwZy45pMnSRj/8AmdFYZOs=
-X-Received: by 2002:a17:907:1dee:b0:aa6:7027:7b01 with SMTP id
- a640c23a62f3a-aa69cd5d757mr579212466b.20.1733850863442; Tue, 10 Dec 2024
- 09:14:23 -0800 (PST)
+        bh=1j7LZ3gidxJvgG/m4KFvrvy2HeW92l/T3DtHZWGqx18=;
+        b=KxIUul98CXgo3kv/goQGkXZqsgItqq9k3C7/NsJUBVqwc9Up2N1g9CiTgR/JoHl1lk
+         V+iNmv7v5txRACXwE+OhyfLjeXXV0XKG2H4kdNdxBzXTVqSjF4lSd6f45xHgpjwbv+Ny
+         eWCDN1Xh47S2GoN9APaCoITG5/cgO1Nwb2TGQFKVPo3ExIMmC7kQ8CObxuuC4SikK6mi
+         amD/Aoq8qNkLrSB5AwmokespnBE5yOo3oy2P1zGyoRArOkKaSY7aFO8XGJ7KP+W1XldS
+         vUrhEScFWBw2BoV3lJShxq7kQODQy024bpP80uzgN9FpHEVPI0dovCNmchxtv3peV2an
+         rqGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGA0Rwi9N7zmm2lgx1HDvxsjz+DpBluvvMpI9HfwP6WszLPufP+6fpwBi/JS2MxwTX54su7xmL2XFxSNGe@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb+9s89P6LtAS/qJiMUMmrMJZTbVroNSsXcwPe/ScAZmnRpZ/+
+	6eoKUxtplTi0QbK21rv7eFPLGGonMqHEPG8Tlhtcb1SjJTktGl6Rb1x/icSt/AQd1WeySNXM5K1
+	3Bcki5CCA6C8D26SOKUwu1INHKD+awjSLlIZ2
+X-Gm-Gg: ASbGncvBCmezM54mJg/HT+gPlC7ZKIaJFdfnUXGT+M5bbBGRfa3pPicJ3nE++csYH0S
+	7M4tq36dwuNLIUYH6t40JO2LSJ2xjIcJjcWqI3bFlXlypFruLK4Wg7ixfpcTrxoA=
+X-Google-Smtp-Source: AGHT+IHT16w6MB/cAWIgtFbiSkDVdo7XP1VoYlvCUhWiCeYhHyzKjFoNyCYw0JcgMIyZtC6modyN7XVZ+Xm+NXJ7OGE=
+X-Received: by 2002:a50:c2d1:0:b0:5d0:d935:457b with SMTP id
+ 4fb4d7f45d1cf-5d41ed02050mr123811a12.0.1733850929585; Tue, 10 Dec 2024
+ 09:15:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com> <20241210170224.19159-4-James.Bottomley@HansenPartnership.com>
-In-Reply-To: <20241210170224.19159-4-James.Bottomley@HansenPartnership.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Tue, 10 Dec 2024 09:14:11 -0800
-X-Gm-Features: AZHOrDmJc5KDd4w3kl_yozhs3fB0y-MMK8wkfhEaJhBB4hWqpacedF8XnBUWxbw
-Message-ID: <CAAH4kHaDnzY_KWkRy+fGzxOh5b9oViSfSWZ4CcQSa8n3dF2v2A@mail.gmail.com>
-Subject: Re: [PATCH 3/6] efivarfs: make variable_is_present use dcache lookup
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>
+References: <cover.1733248985.git.lorenzo.stoakes@oracle.com> <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 10 Dec 2024 18:14:53 +0100
+Message-ID: <CAG48ez12K25yNWaAXqMnC8tfpTQFOwzvPsyE7r8N1NM9wqfzzw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
+ read lock
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 9:03=E2=80=AFAM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
-
->  extern const struct file_operations efivarfs_file_operations;
->  extern const struct inode_operations efivarfs_dir_inode_operations;
-> @@ -64,4 +66,6 @@ extern struct inode *efivarfs_get_inode(struct super_bl=
-ock *sb,
->                         const struct inode *dir, int mode, dev_t dev,
->                         bool is_removable);
+On Tue, Dec 3, 2024 at 7:05=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> Right now fs/exec.c invokes expand_downwards(), an otherwise internal
+> implementation detail of the VMA logic in order to ensure that an arg pag=
+e
+> can be obtained by get_user_pages_remote().
 >
-> +
-> +
-
-Unnecessary
->  #endif /* EFIVAR_FS_INTERNAL_H */
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index b22441f7f7c6..dc3870ae784b 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -181,6 +181,26 @@ static struct dentry *efivarfs_alloc_dentry(struct d=
-entry *parent, char *name)
->         return ERR_PTR(-ENOMEM);
->  }
+> In order to be able to move the stack expansion logic into mm/vma.c in
+> order to make it available to userland testing we need to find an
+> alternative approach here.
 >
-> +bool efivarfs_variable_is_present(efi_char16_t *variable_name,
-> +                                 efi_guid_t *vendor, void *data)
-> +{
-> +       char *name =3D efivar_get_utf8name(variable_name, vendor);
-> +       struct super_block *sb =3D data;
-> +       struct dentry *dentry;
-> +       struct qstr qstr;
-> +
-> +       if (!name)
-> +               return true;
-
-Why is this true? I understand the previous implementation would have
-hit a null dereference trying to calculate strsize1 on null, so this
-isn't worse, but if we considered its length to be 0, it would not be
-found.
-
-> +
-> +       qstr.name =3D name;
-> +       qstr.len =3D strlen(name);
-> +       dentry =3D d_hash_and_lookup(sb->s_root, &qstr);
-> +       kfree(name);
-> +       if (dentry)
-> +               dput(dentry);
-> +       return dentry !=3D NULL;
-> +}
-> +
->  static int efivarfs_callback(efi_char16_t *name16, efi_guid_t vendor,
->                              unsigned long name_size, void *data,
->                              struct list_head *list)
-> diff --git a/fs/efivarfs/vars.c b/fs/efivarfs/vars.c
-> index 7a07b767e2cc..f6380fdbe173 100644
-> --- a/fs/efivarfs/vars.c
-> +++ b/fs/efivarfs/vars.c
-> @@ -313,28 +313,6 @@ efivar_variable_is_removable(efi_guid_t vendor, cons=
-t char *var_name,
->         return found;
->  }
+> We do so by providing the mmap_read_lock_maybe_expand() function which al=
+so
+> helpfully documents what get_arg_page() is doing here and adds an
+> additional check against VM_GROWSDOWN to make explicit that the stack
+> expansion logic is only invoked when the VMA is indeed a downward-growing
+> stack.
 >
-> -static bool variable_is_present(efi_char16_t *variable_name, efi_guid_t =
-*vendor,
-> -                               struct list_head *head)
-> -{
-> -       struct efivar_entry *entry, *n;
-> -       unsigned long strsize1, strsize2;
-> -       bool found =3D false;
-> -
-> -       strsize1 =3D ucs2_strsize(variable_name, EFI_VAR_NAME_LEN);
-> -       list_for_each_entry_safe(entry, n, head, list) {
-> -               strsize2 =3D ucs2_strsize(entry->var.VariableName, EFI_VA=
-R_NAME_LEN);
-> -               if (strsize1 =3D=3D strsize2 &&
-> -                       !memcmp(variable_name, &(entry->var.VariableName)=
-,
-> -                               strsize2) &&
-> -                       !efi_guidcmp(entry->var.VendorGuid,
-> -                               *vendor)) {
-> -                       found =3D true;
-> -                       break;
+> This allows expand_downwards() to become a static function.
+>
+> Importantly, the VMA referenced by mmap_read_maybe_expand() must NOT be
+> currently user-visible in any way, that is place within an rmap or VMA
+> tree. It must be a newly allocated VMA.
+>
+> This is the case when exec invokes this function.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  fs/exec.c          | 14 +++---------
+>  include/linux/mm.h |  5 ++---
+>  mm/mmap.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 58 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 98cb7ba9983c..1e1f79c514de 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -205,18 +205,10 @@ static struct page *get_arg_page(struct linux_binpr=
+m *bprm, unsigned long pos,
+>         /*
+>          * Avoid relying on expanding the stack down in GUP (which
+>          * does not work for STACK_GROWSUP anyway), and just do it
+> -        * by hand ahead of time.
+> +        * ahead of time.
+>          */
+> -       if (write && pos < vma->vm_start) {
+> -               mmap_write_lock(mm);
+> -               ret =3D expand_downwards(vma, pos);
+> -               if (unlikely(ret < 0)) {
+> -                       mmap_write_unlock(mm);
+> -                       return NULL;
 > -               }
-> -       }
-> -       return found;
-> -}
-> -
->  /*
->   * Returns the size of variable_name, in bytes, including the
->   * terminating NULL character, or variable_name_size if no NULL
-> @@ -439,8 +417,8 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_=
-t, unsigned long, void *,
->                          * we'll ever see a different variable name,
->                          * and may end up looping here forever.
->                          */
-> -                       if (variable_is_present(variable_name, &vendor_gu=
-id,
-> -                                               head)) {
-> +                       if (efivarfs_variable_is_present(variable_name,
-> +                                                        &vendor_guid, da=
-ta)) {
->                                 dup_variable_bug(variable_name, &vendor_g=
-uid,
->                                                  variable_name_size);
->                                 status =3D EFI_NOT_FOUND;
-> --
-> 2.35.3
->
->
+> -               mmap_write_downgrade(mm);
+> -       } else
+> -               mmap_read_lock(mm);
+> +       if (!mmap_read_lock_maybe_expand(mm, vma, pos, write))
+> +               return NULL;
+[...]
+> +/*
+> + * Obtain a read lock on mm->mmap_lock, if the specified address is belo=
+w the
+> + * start of the VMA, the intent is to perform a write, and it is a
+> + * downward-growing stack, then attempt to expand the stack to contain i=
+t.
+> + *
+> + * This function is intended only for obtaining an argument page from an=
+ ELF
+> + * image, and is almost certainly NOT what you want to use for any other
+> + * purpose.
+> + *
+> + * IMPORTANT - VMA fields are accessed without an mmap lock being held, =
+so the
+> + * VMA referenced must not be linked in any user-visible tree, i.e. it m=
+ust be a
+> + * new VMA being mapped.
+> + *
+> + * The function assumes that addr is either contained within the VMA or =
+below
+> + * it, and makes no attempt to validate this value beyond that.
+> + *
+> + * Returns true if the read lock was obtained and a stack was perhaps ex=
+panded,
+> + * false if the stack expansion failed.
+> + *
+> + * On stack expansion the function temporarily acquires an mmap write lo=
+ck
+> + * before downgrading it.
+> + */
+> +bool mmap_read_lock_maybe_expand(struct mm_struct *mm,
+> +                                struct vm_area_struct *new_vma,
+> +                                unsigned long addr, bool write)
+> +{
+> +       if (!write || addr >=3D new_vma->vm_start) {
+> +               mmap_read_lock(mm);
+> +               return true;
+> +       }
+> +
+> +       if (!(new_vma->vm_flags & VM_GROWSDOWN))
+> +               return false;
+> +
+> +       mmap_write_lock(mm);
+> +       if (expand_downwards(new_vma, addr)) {
+> +               mmap_write_unlock(mm);
+> +               return false;
+> +       }
+> +
+> +       mmap_write_downgrade(mm);
+> +       return true;
+> +}
 
-
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+Random thought: For write=3D=3D1, this looks a bit like
+lock_mm_and_find_vma(mm, addr, NULL), which needs similar stack
+expansion logic for handling userspace faults. But it's for a
+sufficiently different situation that maybe it makes sense to keep it
+like you did it, as a separate function...
 
