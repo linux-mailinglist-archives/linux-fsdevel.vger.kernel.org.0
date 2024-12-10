@@ -1,92 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-36943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA10D9EB2C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 15:10:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EA99EB2F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 15:18:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CA0284322
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 14:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95FD169B38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 14:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4194C1AAE1A;
-	Tue, 10 Dec 2024 14:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E811AB6E6;
+	Tue, 10 Dec 2024 14:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="QqPp+g/O"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Gnd2TpUd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02olkn2046.outbound.protection.outlook.com [40.92.48.46])
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02olkn2021.outbound.protection.outlook.com [40.92.49.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6541AA1D4;
-	Tue, 10 Dec 2024 14:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.48.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA8317580;
+	Tue, 10 Dec 2024 14:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.49.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839844; cv=fail; b=Azvlg5kDRzzRh/WUhWinAopDNnGfOGjXKSXyiWxPppjl8bmf6sFVD+AlrUllKKw96fWZ4Ln3VumFQsBkx/FTBM8raOEwvRnSMWcacHQ4gIb08bVxaBfxugdYnUAiLFQZs66FMwgBpvqy//IhFdvQFZaYhnwzbZIO8rEdSFcuoow=
+	t=1733840265; cv=fail; b=NqfQkTg8pAKDDPC/oTqp+wPo8M/HW0sO/JpebrvJSUv8AtQW6/JTkd3DuGcn/DxyaeeEzXISZh9l0jSlZNcmRG8U98jTwn4yWbaEqnq5B0dky0AjQrFXZbFsvFSDTIMGPRyEbg/q0YSeYz54X0xAu4TwUJQ65EsGWcf44teDMdo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839844; c=relaxed/simple;
-	bh=wK3FzXuQpDXmaSzr0vURQaYKg0fxON8Sw/uCWWRLeiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GQD9ntqAk1J07f5TQMuDH+K6ougE7KQSG27OuWRNW5XXR9F+P8WCbj3stALQZvq5EoGwgFtKrGTv3xAgpxgamxhfbyMkz6XfTTgQLm9NADG1hfuvkua/4Zq/3QtyWl2qZ26kliTZVQCyZF3DrMiH994EySopVCyXMVet7hdWOv0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=QqPp+g/O; arc=fail smtp.client-ip=40.92.48.46
+	s=arc-20240116; t=1733840265; c=relaxed/simple;
+	bh=i5gnChQNBJD1lqybqbsRhInWGOox3POF800q7Bb5pfc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KWhNMBsoC8aWWfFF9pdqA9q6paxMtlDuxiG8Fw5b3Wg9PgB8UdKUYjZikkrmrvbVUMSmsE0aHRqPoxrB7iaqgFmHSfc7EDyy84VVz1qNmZXkJwaSEjZMXSQTlMwD4qslszagBKBYncsaqZDC6nmXj/2RGFeipIfgJ2rY63rlnK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Gnd2TpUd; arc=fail smtp.client-ip=40.92.49.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TsqZHyGXECfXuuFOOnP+ChnLSh7ZTYsdawWV5Y07LnWf6p06sI/nMtkDChlbHLnHzsa6u4ir3u469E4EixGCXuaeOT+VD+ZZcT3247yyWPhSwQdjOt+kU6c/JeY+lszItCiTjM4LefhdvWvfr77dKXdYwYtWJUPE7P6alC/AEU/yATNbVYWNawteNbEoT1bUhKMAB6qu3+6ACvJwVguJnUrQZJ0DkUoXFwhalQQzz+cqFjS24NT9NBS6NC2bKfwSIkDDz7yGpDZEez/3yYJkuz6f99RfaXU/RU3DCAZwB+HZfXr0a8gMdMGfDzxo2uNOxcZValhLJOIbW5+oF8yDIA==
+ b=eSUSJ66EGeUfMSjyaJymBKQ4dkfa6rwcaa5lqkfZF6jP3De6UDtuGgdzqQUDBTCoGymew1hwojIXDoec23W4ctDh0uONA4lAR4OeD6/PhJZRa89pYPXZPIRe1qeQgvjYMZclzV3JUJiLogiVYJjYvwFiPd+O6YA2qw+e0yT40BYnnRKwgcZar2ZNg9B9X6znwOjoiJMWGJMZUBYaXPckXAsg7Q/RWG7bCmblXqZJHqLvSF9x1WnKuL5tL3a3RuhuHph+3ZYLU51nKOht0lqgE3A9loBZ+z4Y1B80b/0DVH+BLzCkbwkdALTbV2mUw3D/RpW6CBqrxrWt2iiUDuMotA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yaoaGdtKnNqICPXFl5gVmGgFsml4c7tLCw2b/4JCy3k=;
- b=LgtfbxzYQu7uAQNbSTFWlhzht014qNv+Oj/7Ne1IMWUcVmdci80HVsfg/ocZ6SPSVlB1ddw+B646U00Yq7Jkdps95JgJ+UkA96BUL+WAIDe3ANg/MpaMIO0VGiE5wuvIjugvlKjCH2ndS2sKL5DQ95rxNWyHhe1X+rs34vS20NHkoHa1InxBkx9iBsE7agGcM7KcdXrd3T0XPrSW3Z9EcjNIPZI3eDtS54ZekAZ4P372S7y43e51I6FqFlC20eVJQPRGAAdJ/EybnyT2B9f2I7beBqp3bJynesdtwB/V0FpAn6CRdRhRD3nxpSXQXmKz2AMoyA4dqXlxnlefdtkMAw==
+ bh=JRxFR6OMTzugkgzgy8ueHB6o8raqKYcG82ZeMxkvtNo=;
+ b=mRGbASyzdvigXHeFEY+KPnEF3xMxfDtXl7VepTsUC/QaVlQ35Cuhd/Ul+RHCbidlJV9cIQbJDM+zbNpxlfNBSON0O6j/0JCETEMRy+eoeOyIoS6/lgg4db6bP7DjL2OKl9wdOSKjIo9w0CwYU+E9Cq10Jh7WfNiJONIVd2b7EsRWLQGAX2iTvpaCr7IJPssqZKj4dO8ZaSHJZ6mcGhMrd65XV7qJkhQSQXpfxDMA/sjmbO2+Xn1FcFCWi5pBwmjuCDRl0iB8ns8wMC4TxCpFl7QMhdvTICfXmpSz6/xc4DSmAr31gxatuuk0iu7iiTCl2v06v2It0JwNwMdG5TG9fQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yaoaGdtKnNqICPXFl5gVmGgFsml4c7tLCw2b/4JCy3k=;
- b=QqPp+g/OWgALC+xThaw7AF33at9VScd9yGzTAUdH7EMlJGhSuu7AxuUK7PZKi3aB5O+B6klgeCRlUBai2iEoaJahyL4Fy3U6KtkHGguW9e/ZLRy69W7j9NOwyZu3XUI/9O0RF7WlZpCYnM1j1e3kbZduMyIUj7gSgXnC2lUOeqUNAWdCT1nzYB9Awndpq5F2WsKU2S0Brsh3Dxqdn9eGK/S2Pxiu0oFtRi2jZUdt85nGJos2yon/2yvAw4KDiX6rhsH2B9sffAEeisfTr8uqhxdzRGIi6EKLeUFZ1fDZ9/IhAkko/6aXlo+/gL4Nq+ADyOvjfGsyB7y77CQ1F9PBEQ==
+ bh=JRxFR6OMTzugkgzgy8ueHB6o8raqKYcG82ZeMxkvtNo=;
+ b=Gnd2TpUdDEabvjkAGjrH+jC8uMI8YBIyRI0uzmtf3FETLkwdlm0T4rzTZftu3Xf+xFZpN63McmwUKTY0/D4lrx9Ct7CtE6pqN3KXE6cn+5oNFLekuR2WWk/MP9iQNVpU1GdBvi211QKINaf4Zs9hszhy76BziPxQPFxAQWcdXjlFVbyAQEOHFjGfDI+guF0P7wxHButfIkcIq/aM80Uvz0syoUF2JJBI3yavjS5X1Itz0BhulVtaOMXge2EzdlkwBTYeuKkJru2TfDqyMbTIIgjRDhBaPJZtJIdG9MfWK7c5qOHzkK7taAXeF8iN4Ybd6G3k8dkd4hmGdoCwz4PYWw==
 Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by AS8PR03MB7704.eurprd03.prod.outlook.com (2603:10a6:20b:403::20) with
+ by AM9PR03MB7849.eurprd03.prod.outlook.com (2603:10a6:20b:430::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Tue, 10 Dec
- 2024 14:10:39 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
+ 2024 14:17:40 +0000
 Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
  ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
  ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
- 14:10:39 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com,
-	brauner@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v5 5/5] selftests/bpf: Add tests for bpf_fget_task() kfunc
-Date: Tue, 10 Dec 2024 14:03:54 +0000
+ 14:17:40 +0000
 Message-ID:
- <AM6PR03MB5080FD8ECBC1430F38BFD3C7993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO6P265CA0010.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:339::7) To AM6PR03MB5080.eurprd03.prod.outlook.com
+ <AM6PR03MB5080EB3C342F9114ABB5B4FA993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+Date: Tue, 10 Dec 2024 14:17:39 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v4 2/5] selftests/bpf: Add tests for open-coded
+ style process file iterator
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, memxor@gmail.com, snorcht@gmail.com, brauner@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50809E5CD1B8DE0225A85B6B99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Zz3HjT24glXY-8AF@krava>
+ <AM6PR03MB5080FB540DD0BBFA48C20325992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Z0cAz3uOGRcl36Eu@krava>
+Content-Language: en-US
+From: Juntong Deng <juntong.deng@outlook.com>
+In-Reply-To: <Z0cAz3uOGRcl36Eu@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0140.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::32) To AM6PR03MB5080.eurprd03.prod.outlook.com
  (2603:10a6:20b:90::20)
 X-Microsoft-Original-Message-ID:
- <20241210140354.25560-5-juntong.deng@outlook.com>
+ <9c530a9d-b4d5-4afa-85df-0c260c14fc79@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,280 +90,160 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|AS8PR03MB7704:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5740ffb6-73c3-496a-dd16-08dd19246cdd
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|AM9PR03MB7849:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60821349-a1d1-4322-2b79-08dd192567bb
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|19110799003|15080799006|5072599009|8060799006|3412199025|440099028;
+	BCL:0;ARA:14566002|15080799006|19110799003|461199028|5072599009|6090799003|8060799006|3412199025|440099028;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RyVWd0305g+G3J0rK4hQl9DSObi4eZwr2vi7ET3OPeefI1pBujmdUSl7MeAr?=
- =?us-ascii?Q?a4MYJ4bJOg0CknOH48STWlH54feua57hdlgtUhUt+SIRjn5dL1tufw6jvnmc?=
- =?us-ascii?Q?ikZFmaROxTxvX8akUQ444LUvnLNmCc0YqhOL6rHe7tcg/wLboWUmP2Z4kWEv?=
- =?us-ascii?Q?XE1gAWhd4XbMVINJaodO4l44mSoP82U+A/Rp8oe7PI0KkUTKeUrroF/CFogT?=
- =?us-ascii?Q?WEc8EvEzesfmSQrcBHHD1MygzktbzoVm96tTSu+3Sh9C54VHpPh75PFeQw+l?=
- =?us-ascii?Q?5L65rEA+Qgy587E7f844CWp686moXHzE26lgD8dTEAdiX63dOcYQdmmadhyY?=
- =?us-ascii?Q?1M6Bg6tPTkS/2wwZ35rznyYnaORanCJtej6llwH6J8LCvjXfbNuSwYgLKTlh?=
- =?us-ascii?Q?uF7AjAbszdLqFyOhQjZlj92tF8nqcM6TFlrfHZdSH4WacTWZhOpwWq3OfO3o?=
- =?us-ascii?Q?p80KZGKAcvedq+08sAv6TvNbfYASzrm3HPmOmn0aMWR1iPZrQ42CtgzQOYZN?=
- =?us-ascii?Q?u99UWg4/4sUufMEYEycZCbNpZ4FRe1Zj1JBZAvrWfw8ZHoczQvM5oT/yUR5p?=
- =?us-ascii?Q?Ct1PNh1gAgnWzo5e4F6KtXJEeFLCdwWStsgoJxIDt/tSdhFrULBugCOubUv3?=
- =?us-ascii?Q?3Rh+IN+MOEHfPpaPeyJyFs75FAoj/Yj7HJlZmZdl5X7gsB6g6AQ/3ws/wjzP?=
- =?us-ascii?Q?0TqVmVymOr40psVD6xbzzovUa3V7QBwjGedj4/oEpcJGIWL6wWHxSMiCuqJv?=
- =?us-ascii?Q?jaAfIlP+lYgSkmB/67adKMlDqEgbXDcBdRGmcOliFikU2Xm9j4LyOUG63+yI?=
- =?us-ascii?Q?Ok2TFdkrjrdjz8zVjNlEklfzXH+rQO8rV100I+UiFSNwLCoySeNTuG/Ipcta?=
- =?us-ascii?Q?nraPr6hLeO+eQGGcOutz9mfAWAGvhOiEfyu2L1noC880srUlojt/Bm8Q7nLL?=
- =?us-ascii?Q?6g7rb43CY58jVIV8akkKWuMbgn6L9zD8dTvPuGb/YaJGHkteHtiwoCh5g15x?=
- =?us-ascii?Q?dHta?=
+	=?utf-8?B?LzZZUzhQc21tODI0Zk0yWXpldVlNa0htSWR4b1p1N2o4ai9ib2hSODl4VDZt?=
+ =?utf-8?B?UllFRlVMRFhWZFRlbEl0NThFeEkxUGJ0YjhLN01FbURtckNNV09MTDVzR0RB?=
+ =?utf-8?B?dTcyVFJMQVJxdEpFMTVaOGpvUURsdVh5N2xGaUo2UEg5NWdIcnF1Q2FhYkhj?=
+ =?utf-8?B?OHRQVElXRGg3ZWhtSEt1eVVJVXN6d0JKZmdnMVdNbDQwOEhnNy9lZDNBZWFR?=
+ =?utf-8?B?NTA2OXRacDlpMkNKNW53MmpDc2F6cm5qdi9zTnBseEtOcW9kUzJEMjlTeWJZ?=
+ =?utf-8?B?eXEvbUtXYWZCbUkwdTRheVBXdzA5NGlUOG9OL09SV2d4RzFsYkV2M2dmYmlS?=
+ =?utf-8?B?b0lnZEw5QUVhOFlEaGlYYi9DS25SSndaVHJoWld2NmNsejJFaW5NemhsSmVs?=
+ =?utf-8?B?bm9nVzlrRmI4ZjIyVmdEeXRKZ29CZ1k1N0htc1VsSWxUQ2pDVTM5TWJvRUhC?=
+ =?utf-8?B?cnFoSCs5VHJLSXdOZlNoRERTdWFwUmdYYmppK3FPQ1RzS1pPUXdxcEhlQ1BY?=
+ =?utf-8?B?TkhwdVBDTDBtV28xanhGclBaSTU2Q2VYbWdpVlF1RVQ0OGJZWS9RQkg4ZktD?=
+ =?utf-8?B?aEQ3U01MVDhEVWF2U2JtT0I0cHRJSUJjN2YxMnNrK3padmc4T1N5dW9UTUI5?=
+ =?utf-8?B?bXN0N1c1b2lrWU1RbGNJOCthMFp0Z3g4b0dRemRRVS9MT2JHbGh2YVJpTUdQ?=
+ =?utf-8?B?azVaWTlJU3FyUTlESW5oRVgxcDNYeWFBOWh5dzBjYXdjU3RjR2tUYzBOSS9i?=
+ =?utf-8?B?R2ZHdjIrVmlvNUdyWEsvYXpYZHo0aS90UGwrYktQd3hSNm1hMVdiNTRRU2NB?=
+ =?utf-8?B?eklVSmtQSGNiYmFtWGQwTGZTWERsMU81Nk9iUWVpUzBwSVZNSXp0a1NrOVVi?=
+ =?utf-8?B?ZVlKN0wrVXpNUTc2cGtGTlhidlkzSXlRRkUrNlAxVjRIcEJzUjNxcEhPOEZn?=
+ =?utf-8?B?d2duM3RVVDZLbkxvMUNrVmlFUFhscFB4MzBkdGZUTmdIdXNWWWhHb2NUMWxv?=
+ =?utf-8?B?b1VsSlRwN3BIVFJhM015a1VTVTNSUEF1NW5mSEx6eDIvNXRmTGhNRDUxV01G?=
+ =?utf-8?B?NFZRVXBRSmRBa0p1ZXRsV0ZzUTZKd3JWQ3o4SjI4dFk1WHFKaWNyUVdIMW1I?=
+ =?utf-8?B?MlFaYzJuUE44Y1pTaWt4L3RIaEREWUtnakY3SnFqbDYzMEVGdnVHNk5Vb09n?=
+ =?utf-8?B?T29ndnd2RFptVmx5TmxJTlhYN1JsSEVrT3JIUENyNkNtOWt0NVdCbC82NStE?=
+ =?utf-8?B?bG8vRENKeUZ4b3QxL0E0YmhuQXM5dW44UGR5aTBsSWwrQkNrUjhBK1JQTzVl?=
+ =?utf-8?B?THZ6RG8wcnVuZDBxNEw5d2NHRm1tUjU4ZHREdnpyMjRZdjd3NDhVZ01GRTFG?=
+ =?utf-8?Q?cr9PTL3D48G1WIbNxbuSWRd/u7fQLZAg=3D?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?36xPAWi/0bSwCdrExjlY9Wk2v3GA4m5AzFOJF1eo0tyOyDSpket1itzQR0DQ?=
- =?us-ascii?Q?YsYXWZ6hQsMKs6hmwce1OmGniIbQbjq7Vi5uybmiwdfZV2Z5wQNy8G01O8dG?=
- =?us-ascii?Q?jcSLY4YnV89yn30euid/lSUNl5GWYmwQgrT+t76Vczdqm7IRchvZxl6SyFOf?=
- =?us-ascii?Q?GYXKabCMiDFeu/vSmJ0JWfGj71L2+H54mBv2o7+O93/9k6/n+hE+WtcsEkhQ?=
- =?us-ascii?Q?eNFqwD42acc4zJGzcDGKdviVdWCmJBJ25McGMb47+yYry8gsC4fjiSSPOrBV?=
- =?us-ascii?Q?X8XYFPdZJE+IdV3uDp5IVYDtD9qWJmNdzR960sJ12xM8oj4tEdG+76bounMO?=
- =?us-ascii?Q?ESQWABoDBer9JxYvFNl+4dhyOz31wkWm9OoeR9BpTksZgOmUi15PdGjATLic?=
- =?us-ascii?Q?0ycCqWUei0VPVGI0Nj3vkevG/j2pgucq8BUJzyUcTL5Lo1QAB3GpQnfEdPGB?=
- =?us-ascii?Q?Ffet6tX1wVZLMFt+09L8b6+kOlgZxad1RDZkYKCLJiBpTqvELPR6gnaEnxFR?=
- =?us-ascii?Q?Pybea837cdSrCFpZhwD0nqA8yLn9MdDvA5GdyL0koRa1ZhyEG/lnRvjHviH+?=
- =?us-ascii?Q?hgi2xYURnZEAXpjJWsroRxO78jYm/ThbZZBo3kPLpbeSlsz7zbRqYd77E5iS?=
- =?us-ascii?Q?FwgJDgzx91PK5RRTtJFBMwRPxKzhmnHePnMDINP+5jIrZj9ZC1xGQHCDewl1?=
- =?us-ascii?Q?9ySjEGflEYTYW7BNr2IAb2l4f5EXLDmFYfSnfe8CRszmgzQqxCzK8zb5bNnQ?=
- =?us-ascii?Q?Yr37dQzmKlZ2rIO5XJ6n+7jmn8TmqWWehHBkW2oxm4uFkYulAc77G6koC2Nz?=
- =?us-ascii?Q?d5DGlhqKxXhbizjZDfM2EP5m+7z6ZPa4JJB2/L6COKkQsHWpwMqVkRQTNoD0?=
- =?us-ascii?Q?+KGA4LyKnHdcd49nfi9/ctpiL/XUW6bUjB2nhXTclywJM8tQGVNopqs66I8f?=
- =?us-ascii?Q?oRW7tB5rdedy7QpX4UT4kB/UnkOHJFbI6Bu7BNJGKEqXeYzHzdMp6LVcdkld?=
- =?us-ascii?Q?1dapobjyZmqf/eZJKsxsUdlkondg9xLzmLyA9kp2wCLvSPCS/RpHVB3zK1IQ?=
- =?us-ascii?Q?0TczKerGd2kRxREkiqKocTIlvmlZiLo5c1KVMDASmhTCm9DNDy+u/qXRY8dX?=
- =?us-ascii?Q?0rO8dS20uOejQkzO8i5qXDo8BYhxFuK4EBrMPCYxoqeqOAqZXoMCHPr3q9Am?=
- =?us-ascii?Q?F77nI3y4qvdwIT9HP7KuF3JY+8TOSgq9m/gQ2z1DYRBWWGQn19Lrof4wSz4q?=
- =?us-ascii?Q?H7qjKnj/A0OebT+6cSlb?=
+	=?utf-8?B?UUlaYnliczk3dVVQcWVMZHFxM21SV0dIZmFqS0FLWHB3Q0REVjdlNTJLajBt?=
+ =?utf-8?B?d05KZG0wS3ZNZzdGZlc2NlRHeUpGaWc1N1ovYVRERGw4NEJVTGs0aGx0NWh0?=
+ =?utf-8?B?QTB3dXoxVWFHMisvcEhxU0QzMHBnZERMamVkblJFdFJUM2F4aGNsV2ZJNFFO?=
+ =?utf-8?B?b25NSTFBWEQzTzdZdTlUSHdFaCszeW9ncVROcWw1SWdCMGFYQzFZTFg5c0s1?=
+ =?utf-8?B?K2ExMDVXZmtOeXA4MTBSUlRSeW5ZT0Vka0FwN3VTU0wwTllNSkduZlZ3c240?=
+ =?utf-8?B?Y1FNSzBOODM3NEdZd1pMMUVzdWNmcldONW5tdUJvUUFqZzE3dk9ycjkwVFJ3?=
+ =?utf-8?B?bUVINGVmbENwWmIwSUo1YUZ0L2JheWxPMDRYMXNqOTAvcFRhYXhZYWgvTjJQ?=
+ =?utf-8?B?Y1V4NDR6eUd3MUpiYktwWFlHbUtGRTg3SExzaHkrQzFaWGg1c2s3d25LVUhG?=
+ =?utf-8?B?M2Qwdk1ac2lqMFA1M1BGd1A0UWNOTVlkSVNrZFkvMkVDd0pUTXU2Q21OWlQw?=
+ =?utf-8?B?alA0cjRPYy9paTJKa003b0plMmVZRHdONlMwMC9MUjZkTzlpNDlxbXp5blVK?=
+ =?utf-8?B?Y01qZEd6MjFiendwRlpuWHh6dnZ0a0k3MXdnZzYwVW50WjRLTG9MY0FIQ2lS?=
+ =?utf-8?B?a2VzVkFwUGFPNUc3VjBtV3NNMWVHSmZ0UldPMDBHRkxjQk1kVHRmVG1GTGFU?=
+ =?utf-8?B?S3pOTnJ6Nm4yK2xqc05pOVlKZVJrblFmWTB1NGZETzF3c0JiSGFGQ080Mzhq?=
+ =?utf-8?B?aVR0YXU1STBYbDNnMEFnQWF4ZWI4YksrU09CZGtyWFhSTUV0YmNmWXRHVHRm?=
+ =?utf-8?B?L3gwaFFJblZ0ZjJhUHl6aFpjOTk4VGtmZDh4SFNxV1haMEdLbldGeDJPKzQy?=
+ =?utf-8?B?bmlQMFpPUDZITjFheFArVUJLWXRnZVZidmNHRlhzOUw1TTZsY1dzZUxrUDU4?=
+ =?utf-8?B?d1hZcngzQXpvL0JVMXNHREROSm9NOWZ5RCtzRkJJNnpQaXBSMFJWUjdjUGhO?=
+ =?utf-8?B?a1N0VjZxTi93cFptOUVVZkVMMXgwSURFazVsQW9SeHpNcmVZYXZXSkdmaXZE?=
+ =?utf-8?B?SDJSTFgzZy9tVFpHVlREZlJSNUFQL2xsOUh2VHl3UzV0SGdVYkg5QUFZRGFC?=
+ =?utf-8?B?c0ZFTDlaUDQ1b2RKMU1Tb0lWcUEyN25lYzFkM2RjaVprcHB1bld6bHV6UmlF?=
+ =?utf-8?B?NXl4UG5VazZ1R00zTkNGVTFkczgvZ3ptUGJHYnNVbnRjY2Q2YkdoMGxRNWJV?=
+ =?utf-8?B?SzIwS0MySi9Dd1FwTGRTWDZNT2hvUUhDdWtoWnp6c0FGQkcyaEdnTDBCaStP?=
+ =?utf-8?B?ZmZiSVBja3h4VXNRUk1WdHBDelZWelA3cnJvNTFNZGp6dkkvd2UzV3NLc3hj?=
+ =?utf-8?B?STZ0dndCRTlSQnI3WGVnRGhJNEgyL2RxMStJZGYzdSsvZk0xTC9sV3BScU5I?=
+ =?utf-8?B?T0prTzZEQjR5c3BwZDF5K1ZpOGJFV0Nnd0haYmg4Vlp6WlM1bmJ5ck1Bek5X?=
+ =?utf-8?B?NzVMdU9FTXlPaFR2YXE0RjhkZkl6NUx0a3ZpTUxab0xPQjRWRmVIVkpSQ3Qw?=
+ =?utf-8?B?T1dRMER5YTVtVU5oZkpmY1dyb04yZk9mT1VJRFFPckZTSjY0UVJjYWc0VWRZ?=
+ =?utf-8?B?Zkt0VDhqUGtnL1lsbWF1bHNCaU93LzRlcFJiaHF5Z1Jib0tZbk5ZUklYWXJY?=
+ =?utf-8?Q?TXedW+qInB6HAcLJlmon?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5740ffb6-73c3-496a-dd16-08dd19246cdd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60821349-a1d1-4322-2b79-08dd192567bb
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 14:10:39.4951
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 14:17:40.5354
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7704
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7849
 
-This patch adds test cases for bpf_fget_task() kfunc.
+On 2024/11/27 11:21, Jiri Olsa wrote:
+> On Tue, Nov 26, 2024 at 10:24:07PM +0000, Juntong Deng wrote:
+>> On 2024/11/20 11:27, Jiri Olsa wrote:
+>>> On Tue, Nov 19, 2024 at 05:53:59PM +0000, Juntong Deng wrote:
+>>>
+>>> SNIP
+>>>
+>>>> +static void subtest_task_file_iters(void)
+>>>> +{
+>>>> +	int prog_fd, child_pid, wstatus, err = 0;
+>>>> +	const int stack_size = 1024 * 1024;
+>>>> +	struct iters_task_file *skel;
+>>>> +	struct files_test_args args;
+>>>> +	struct bpf_program *prog;
+>>>> +	bool setup_end, test_end;
+>>>> +	char *stack;
+>>>> +
+>>>> +	skel = iters_task_file__open_and_load();
+>>>> +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
+>>>> +		return;
+>>>> +
+>>>> +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
+>>>> +		goto cleanup_skel;
+>>>> +
+>>>> +	prog = bpf_object__find_program_by_name(skel->obj, "test_bpf_iter_task_file");
+>>>> +	if (!ASSERT_OK_PTR(prog, "find_program_by_name"))
+>>>> +		goto cleanup_skel;
+>>>> +
+>>>> +	prog_fd = bpf_program__fd(prog);
+>>>> +	if (!ASSERT_GT(prog_fd, -1, "bpf_program__fd"))
+>>>> +		goto cleanup_skel;
+>>>
+>>> I don't think you need to check on this once we did iters_task_file__open_and_load
+>>>
+>>>> +
+>>>> +	stack = (char *)malloc(stack_size);
+>>>> +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
+>>>> +		goto cleanup_skel;
+>>>> +
+>>>> +	setup_end = false;
+>>>> +	test_end = false;
+>>>> +
+>>>> +	args.setup_end = &setup_end;
+>>>> +	args.test_end = &test_end;
+>>>> +
+>>>> +	/* Note that there is no CLONE_FILES */
+>>>> +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, &args);
+>>>> +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
+>>>> +		goto cleanup_stack;
+>>>> +
+>>>> +	while (!setup_end)
+>>>> +		;
+>>>
+>>> I thin kthe preferred way is to synchronize through pipe,
+>>> you can check prog_tests/uprobe_multi_test.c
+>>>
+>>
+>> Thanks for your reply.
+>>
+>> Do we really need to use pipe? Currently this test is very simple.
+>>
+>> In this test, all files opened by the test process will be closed first
+>> so that there is an empty file description table, and then open the
+>> test files.
+>>
+>> This way the test process has only 3 newly opened files and the file
+>> descriptors are always 0, 1, 2.
+>>
+>> Although using pipe is feasible, this test will become more complicated
+>> than it is now.
+> 
+> I see, I missed the close_range call.. anyway I'd still prefer pipe to busy waiting
+> 
+> perhaps you could use fentry probe triggered by the task_file_test_process
+> and do the fd/file iteration in there? that way there'be no need for the sync
+> 
+> jirka
 
-test_bpf_fget_task is used to test obtaining struct file based on
-the file descriptor in the current process.
+Sorry for the delay, I have been a bit busy recently.
 
-bpf_fget_task_null_task and bpf_fget_task_untrusted_task are used to
-test the failure cases of passing NULL or untrusted pointer as argument.
+Thanks for letting me know, fentry is a good approach.
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
- .../testing/selftests/bpf/bpf_experimental.h  |  8 +++
- .../selftests/bpf/prog_tests/fs_kfuncs.c      | 46 ++++++++++++++
- .../selftests/bpf/progs/fs_kfuncs_failure.c   | 33 ++++++++++
- .../selftests/bpf/progs/test_fget_task.c      | 63 +++++++++++++++++++
- 4 files changed, 150 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_fget_task.c
-
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index ce1520c56b55..e0c9e7d9ba0a 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -221,6 +221,14 @@ extern void bpf_put_file(struct file *file) __ksym;
-  */
- extern int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz) __ksym;
- 
-+/* Description
-+ *	Get a pointer to the struct file corresponding to the task file descriptor
-+ *	Note that this function acquires a reference to struct file.
-+ * Returns
-+ *	The corresponding struct file pointer if found, otherwise returns NULL
-+ */
-+extern struct file *bpf_fget_task(struct task_struct *task, unsigned int fd) __ksym;
-+
- /* This macro must be used to mark the exception callback corresponding to the
-  * main program. For example:
-  *
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 5a0b51157451..89f5e09672b3 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -9,6 +9,8 @@
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
- #include "test_fsverity.skel.h"
-+#include "test_fget_task.skel.h"
-+#include "fs_kfuncs_failure.skel.h"
- 
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
- 
-@@ -139,6 +141,45 @@ static void test_fsverity(void)
- 	remove(testfile);
- }
- 
-+static void test_fget_task(void)
-+{
-+	int pipefd[2], prog_fd, err;
-+	struct test_fget_task *skel;
-+	struct bpf_program *prog;
-+
-+	skel = test_fget_task__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-+		return;
-+
-+	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
-+		goto cleanup_skel;
-+
-+	prog = bpf_object__find_program_by_name(skel->obj, "test_bpf_fget_task");
-+	if (!ASSERT_OK_PTR(prog, "find_program_by_name"))
-+		goto cleanup_skel;
-+
-+	prog_fd = bpf_program__fd(prog);
-+	if (!ASSERT_GT(prog_fd, -1, "bpf_program__fd"))
-+		goto cleanup_skel;
-+
-+	if (pipe(pipefd) < 0)
-+		goto cleanup_skel;
-+
-+	skel->bss->test_fd1 = pipefd[0];
-+	skel->bss->test_fd2 = pipefd[1];
-+
-+	err = bpf_prog_test_run_opts(prog_fd, NULL);
-+	if (!ASSERT_OK(err, "prog_test_run"))
-+		goto cleanup_pipe;
-+
-+	ASSERT_OK(skel->bss->err, "run_bpf_fget_task_test_failure");
-+cleanup_pipe:
-+	close(pipefd[0]);
-+	close(pipefd[1]);
-+cleanup_skel:
-+	test_fget_task__destroy(skel);
-+}
-+
- void test_fs_kfuncs(void)
- {
- 	if (test__start_subtest("xattr"))
-@@ -146,4 +187,9 @@ void test_fs_kfuncs(void)
- 
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
-+
-+	if (test__start_subtest("fget_task"))
-+		test_fget_task();
-+
-+	RUN_TESTS(fs_kfuncs_failure);
- }
-diff --git a/tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c b/tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
-new file mode 100644
-index 000000000000..57aa6d2787ac
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+SEC("syscall")
-+__failure __msg("Possibly NULL pointer passed to trusted arg0")
-+int bpf_fget_task_null_task(void *ctx)
-+{
-+	struct task_struct *task = NULL;
-+
-+	bpf_fget_task(task, 1);
-+
-+	return 0;
-+}
-+
-+SEC("syscall")
-+__failure __msg("R1 must be referenced or trusted")
-+int bpf_fget_task_untrusted_task(void *ctx)
-+{
-+	struct task_struct *task;
-+
-+	task = bpf_get_current_task_btf()->parent;
-+
-+	bpf_fget_task(task, 1);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_fget_task.c b/tools/testing/selftests/bpf/progs/test_fget_task.c
-new file mode 100644
-index 000000000000..fee5d5e1244a
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_fget_task.c
-@@ -0,0 +1,63 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+#include "task_kfunc_common.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+int err, test_fd1, test_fd2;
-+
-+extern const void pipefifo_fops __ksym;
-+
-+SEC("syscall")
-+int test_bpf_fget_task(void *ctx)
-+{
-+	struct task_struct *task;
-+	struct file *file;
-+
-+	task = bpf_get_current_task_btf();
-+	if (task == NULL) {
-+		err = 1;
-+		return 0;
-+	}
-+
-+	file = bpf_fget_task(task, test_fd1);
-+	if (file == NULL) {
-+		err = 2;
-+		return 0;
-+	}
-+
-+	if (file->f_op != &pipefifo_fops) {
-+		err = 3;
-+		bpf_put_file(file);
-+		return 0;
-+	}
-+
-+	bpf_put_file(file);
-+
-+	file = bpf_fget_task(task, test_fd2);
-+	if (file == NULL) {
-+		err = 4;
-+		return 0;
-+	}
-+
-+	if (file->f_op != &pipefifo_fops) {
-+		err = 5;
-+		bpf_put_file(file);
-+		return 0;
-+	}
-+
-+	bpf_put_file(file);
-+
-+	file = bpf_fget_task(task, 9999);
-+	if (file != NULL) {
-+		err = 6;
-+		bpf_put_file(file);
-+	}
-+
-+	return 0;
-+}
--- 
-2.39.5
+I used fentry in patch series v5.
 
 
