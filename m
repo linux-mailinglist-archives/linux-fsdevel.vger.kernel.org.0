@@ -1,120 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-36979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1159EB9B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 19:59:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C959EBA09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 20:21:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803D8167754
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 19:21:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D022619A;
+	Tue, 10 Dec 2024 19:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="H8w++Jtt"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B002834D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 18:59:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8031F214207;
-	Tue, 10 Dec 2024 18:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nwn7KQLM"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E0886321;
-	Tue, 10 Dec 2024 18:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976BE23ED63;
+	Tue, 10 Dec 2024 19:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733857146; cv=none; b=u5L9dACzGj71+qlLxriiFWRCO+ROeCVqkjNEQDQSkjWDgqNxDcJSmwGIx+UWlp4GeAxRevU6Ty6unD72JArYmHSq+F5beHktqJGOyeLupm7Hx6JgH0CQ48cUz+hMuN9jWUjKnQ9FwwfCF/WCZHK5plygTPc/JBaAbcMi8zX1r0o=
+	t=1733858497; cv=none; b=s97EW7qXxH2GUyl80A7nsFlwY2jgIjxFzZ8ccovBjS0TsCeOw3o9WpVElEpvf6QXYuBIsRNtsiL98uh9f2LC7xKQGjmiJVxPvUWnEezIvLVjZODuEo3SuSpLJVhqtM+DpOJyRVRrfL9RiCOAB++w1SIkk1C1Yd5uipi4PX6nV4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733857146; c=relaxed/simple;
-	bh=6GDkXPNSXjUHcYvqBEdRjcYpKp1W111gqk3lUxV6vCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CzAV/mB28o2f/aJ+AbLducP+N2rei72XP0cLvZe7bz7b7CwBJmuTHBpYiYsz2VWIvRnvYfMSy/Avaav4lXjZeXEiy8iOZ0F6AV8RKqj6BZJLQojOmYrUm3mDzn7dAZ76QnAt/oHy1tirxnpjna5N6JOHGp4kBqc9dpSPn/aVMOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nwn7KQLM; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-386329da1d9so2017868f8f.1;
-        Tue, 10 Dec 2024 10:59:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733857143; x=1734461943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GDkXPNSXjUHcYvqBEdRjcYpKp1W111gqk3lUxV6vCc=;
-        b=Nwn7KQLMJ3fAWDbKMOtOHagEXhpcAC7wosnwOmu6CuvTFKl4vDtdoSW4RWqYjaXM09
-         zrVgEmMf8VHyP2gsuINqbLOE+bubcgYgduHzPLFsrfoIbG+XLsEjsNZy6zUlXqcyhyz/
-         iRzGelajQDuRGrt8n2/IONeINr+GF3cfJFipfIqtbHMAdPUnDuNrAHFIDL+oQWLpdxVv
-         8fjK7R8z0H4HkPCMuynILoVF3yhK8W3l9MrHPSuo07efPKLCf/WbBTTj6ms3yEEl4hCo
-         8nuTQjOVoPiZvGhwODoPNiVXzhxnFvq7BGnpA4d+cHxZn9NPTr6nJFNplf1jDBF8/jwI
-         8ccw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733857143; x=1734461943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6GDkXPNSXjUHcYvqBEdRjcYpKp1W111gqk3lUxV6vCc=;
-        b=vN7oB9LL0GEHbaKuiNjI4m5lTGewwl8OTcrr/1WSLmdFesuwtUe7pLvo1dIClPPq2F
-         yhISuB+mA7/ZPlLT4lMcXT3D6zlBDRvz3DoZuSINGpdDxHxwyCMIxM/Wg09UdC3oP3oj
-         I2PxIYlHeWFBWH9ZX7Kg0ZwBwDj8R5DWhPhYHcSzJXyMFPGJ+XG+hkDfJr8WrQflb15t
-         EHw/1f/0IMEVI687yqcQ2suqS7ulS7fVSPbC3ySRIJiuj8EKI6qd8MeI13HW/ePPpXnK
-         Ymx0L8lAM+lW0SX2hdHlWno1IJirFAkTgyISlyjO6Lw75SGubm2t04P6lLNXF+dGitu9
-         WYcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDcIBwwfdEOMp8bWDFMycqH0Y3PtFgBZDpq64OvAnAJoZudk4Q92FDt6B94K3CLeWc6yIIIyDJOML5A+YF@vger.kernel.org, AJvYcCUe1HoJ1kiich+P2I8qLWosvWFSouOiKXI/PCGlrCqBfzuigx62ThNbYovPB8VScd74Bdw=@vger.kernel.org, AJvYcCVJrqt8DhI7+5jrcYKbS9pkUw5enegw8ucNero8mHyFzSj9Exanb2T4tGHpDKXMPwjv2VRPlLMRIlQUurJQsQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZqRyxUC7hvzEMAifkr9EjR3hfUZ4jtOdMuupOjao4h8rFX2ou
-	zdkLPSFxOWICIEi272g29CUTMVLwg5sAHU57d20B14sMbFn1AeQnZILHmR3eayVqAcSRCWyy98z
-	BqCe/x6mIz/JJVaWl3NPfBK38kL8=
-X-Gm-Gg: ASbGncuuyrxkZLwcItPjKZsUyZxg0VlvcibdA8RuauUtuetFXWBZgs+2kNWphgisGm7
-	3+6/czdi5JKbxqDpDv5JvCxoQpDD755AiF3ZqjzYdkHlFZzT3hBg=
-X-Google-Smtp-Source: AGHT+IFnNHuIpD8rR77vf+oW8W5FNiYiAGRWby5lFgTpK2HxN2hD4FuiT9cxsYlQAbJq6RjI08PCypuGH4LCQzHLAC4=
-X-Received: by 2002:a05:6000:2d06:b0:386:36e7:f44f with SMTP id
- ffacd0b85a97d-3864ce54e99mr110651f8f.18.1733857143335; Tue, 10 Dec 2024
- 10:59:03 -0800 (PST)
+	s=arc-20240116; t=1733858497; c=relaxed/simple;
+	bh=3IuxfdZlkeKKdy0z0s/LC0FJPtMGyWmWmj3MdGBivHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=syE+4FP6t588ImF4/YcY5SQZS94HhcemK+n1OIDLJFiPXv4SmtAbEQJzMBvN30mInR4iI3mzsuJ5Utb28h363K8Az8TrfnLcdjiuEOQyKsvF5FukOpEzh5LrwRVJ8YtiHZgVPo7lf3QwKTN0NyP6b6RVE1hACKUvG4iUjnFYpMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=H8w++Jtt; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y77rT0hT9zlfl5W;
+	Tue, 10 Dec 2024 19:21:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1733858483; x=1736450484; bh=kGRxI4MvkczRgURGuKE/NkzS
+	kR8ERW6zUvwscihee5Y=; b=H8w++JttLWyRmupBTpStBzQYxt04HXVU8MKEQp/A
+	QDh5jwvvB7s/UP9el/mzXENVIjN+SNQL050OLkUB5F4NIzwf7R6EUjlXHqRPlKov
+	1u51rm2LezO45wdEDr6Uid0qCWKiscKLy5sfj5krUU0B9bTVdq9P6jO0WzAjshJ8
+	0vnnMakugglrPj/CaTcLAVyWNSFkva6ccpFCmNr+hFUfHByiRhjCwfWjBss37wjc
+	+Qb2yUvJDvJvNGJsIGh/Avom64luqQdXa/qRFoRiehYjX0xMZaZfTmgJFP16eCI+
+	93n+QYDTSoYErgf2t0pn9JC36n/iVCi5CnmzCkklf/KarA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id v14CjmZSqQuW; Tue, 10 Dec 2024 19:21:23 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y77rJ3qwkzlgd6J;
+	Tue, 10 Dec 2024 19:21:20 +0000 (UTC)
+Message-ID: <a10da3f8-9a71-4794-9473-95385ac4e59f@acm.org>
+Date: Tue, 10 Dec 2024 11:21:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB50804FA149F08D34A095BA28993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <20241210-eckig-april-9ffc098f193b@brauner>
-In-Reply-To: <20241210-eckig-april-9ffc098f193b@brauner>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 10 Dec 2024 10:58:52 -0800
-Message-ID: <CAADnVQKdBrX6pSJrgBY0SvFZQLpu+CMSshwD=21NdFaoAwW_eg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 4/5] bpf: Make fs kfuncs available for SYSCALL
- and TRACING program types
-To: Christian Brauner <brauner@kernel.org>
-Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: hch <hch@lst.de>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nitesh Shetty <nj.shetty@samsung.com>,
+ Javier Gonzalez <javier.gonz@samsung.com>,
+ Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+ Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+ <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+ <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+ <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+ <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+ <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
+ <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+ <yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com> <20241210071253.GA19956@lst.de>
+ <2a272dbe-a90a-4531-b6a2-ee7c4c536233@wdc.com> <20241210105822.GA3123@lst.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241210105822.GA3123@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 6:43=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Dec 10, 2024 at 02:03:53PM +0000, Juntong Deng wrote:
-> > Currently fs kfuncs are only available for LSM program type, but fs
-> > kfuncs are generic and useful for scenarios other than LSM.
-> >
-> > This patch makes fs kfuncs available for SYSCALL and TRACING
-> > program types.
->
-> I would like a detailed explanation from the maintainers what it means
-> to make this available to SYSCALL program types, please.
+On 12/10/24 2:58 AM, hch wrote:
+> On Tue, Dec 10, 2024 at 08:05:31AM +0000, Johannes Thumshirn wrote:
+>>> Generally agreeing with all you said, but do we actually have any
+>>> serious use case for cross-LU copies?  They just seem incredibly
+>>> complex any not all that useful.
+>>
+>> One use case I can think of is (again) btrfs balance (GC, convert, etc=
+)
+>> on a multi drive filesystem. BUT this use case is something that can
+>> just use the fallback read-write path as it is doing now.
+>=20
+> Who uses multi-device file systems on multiple LUs of the same SCSI
+> target =C6=A1r multiple namespaces on the same nvme subsystem?
 
-Sigh.
-This is obviously not safe from tracing progs.
+On Android systems F2FS combines a small conventional logical unit and a
+large zoned logical unit into a single filesystem. This use case will
+benefit from copy offloading between different logical units on the same
+SCSI device. While there may be disagreement about how desirable this
+setup is from a technical point of view, there is a real use case today
+for offloading data copying between different logical units.
 
-From BPF_PROG_TYPE_SYSCALL these kfuncs should be safe to use,
-since those progs are not attached to anything.
-Such progs can only be executed via sys_bpf syscall prog_run command.
-They're sleepable, preemptable, faultable, in task ctx.
-
-But I'm not sure what's the value of enabling these kfuncs for
-BPF_PROG_TYPE_SYSCALL.
+Bart.
 
