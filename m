@@ -1,135 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-36873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1369EA397
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 01:22:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AF59EA3B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 01:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2A2165B16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 00:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669A7165A6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 00:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9D4E552;
-	Tue, 10 Dec 2024 00:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1985518E3F;
+	Tue, 10 Dec 2024 00:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="rPJYrBog"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XC9OZJ2j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C1F380;
-	Tue, 10 Dec 2024 00:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C4B4C98
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 00:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733790166; cv=none; b=gDuRDyXR4cpkd07aREpx28ojxTs/XPS3PcH5SvN+Sl30ShkdSQSmatCmZT5969ki88JfATyrunlSPRNBItdtKR2nDOk0a5ai3dT6VQ7T23M2Ugj8LOKjI+LxrIDZCxyEOI8sCqa+fJF3wrF3cAo4aq2FtPcLwXGg1LNsMmr7irc=
+	t=1733790681; cv=none; b=H3KOw2onuo/37wu3WxcCBLpDarpyz7eQQX++UHds8aYM7mo4mSTtcdJ1yP5cq7P9ra7KEJ+35fFVTTKcztjkTfGWyzuGCLGU0VNY/K3399rxT7o2EdUnOdp9zPto4BcessAYY4X7Z8o1mzNBBxN/jSEhe7v6oKiLioURJp+5Mqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733790166; c=relaxed/simple;
-	bh=xG648u7NabNoT9l1RnDhFkcp9e9ZHmhgWkAuJwCeqVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Im6GLzOVyo+vyIEUwUBeyVw2t3om2cRSq9hvZ4qYq2JrVSTy06eL4XWGKOOAG81A5CyR/Cz+sLul1cZSBHpq6SpAMThAd3ldybRgDti/IIGynoJcVNlaiJVr1c8+hMJP2A1rQeshE8b4L81EZzmGWOGTY/4mi8M07DO8ekB8y/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=rPJYrBog; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Y6fZX0YSDz6ClY8q;
-	Tue, 10 Dec 2024 00:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733790156; x=1736382157; bh=QQ76MNsFLRb0EE0rvSOt9g2F
-	jwM0I0ZKaeF9BRmS5j0=; b=rPJYrBogSCqi+UC1qqPF+fPQLmD+D4x29PRYDWKk
-	2z0zPY8OvP3+Aws0jdIk/FBnmhiGCJzA5bRHBuJpJYfARKeHtzX3dkGpYB4V+0ev
-	z/SUYM5DlwgWvAXz0B8DRg2FupLbd0q23ScpNuuXRabwGKwir5mVYXZ0KVltluel
-	furT9Q3o2xpKIdnskOkViWS5rhspJuFj4iFh1EV2JagH35rvHkzXFsbIUflw6yt2
-	H72/n0GZv8HS5dPC1b/H/78BwGBr+SM1IpBHup9Ghl3Pjwyybo8Mfug9ABaAsqS5
-	yD881NKI39O4cY4+75RYmqq27AmMcdGMQ5gt9pMLa01zvQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id xUfLJokapvMy; Tue, 10 Dec 2024 00:22:36 +0000 (UTC)
-Received: from [192.168.3.219] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6fZK0GTsz6CmM6d;
-	Tue, 10 Dec 2024 00:22:32 +0000 (UTC)
-Message-ID: <8b1f8abc-b567-4927-a8dc-2214d79f8b42@acm.org>
-Date: Mon, 9 Dec 2024 16:22:31 -0800
+	s=arc-20240116; t=1733790681; c=relaxed/simple;
+	bh=1pnI20Smtw4D1zuIwoV/mrna1N7AgKybLzRgoore8OU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oeJR/w967A49hL2DfNmwNQgM4md23LtZ9MpHADPBe7yZrzzP9LHXtGvBTs+7oyVx1Mg0GBAV0zyRnnR+fbkWzqp6BLUM4gGp/Z/3D+HBGyHqDFXIln0GlWSjI/PV7PxPqBATzDv59OtrSZIgUrMOwkw5sJRGpEDNKrw23Ehni+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XC9OZJ2j; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467777d7c83so1309141cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2024 16:31:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733790679; x=1734395479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ikPbgYxO0t0c9ZcDpHeL8nnuCsazWiAHyamVVDUkbtg=;
+        b=XC9OZJ2jg5wureZhnTa5+71iAEpzC9ifFwIFBwU4OcMUOoXBVtjBITPpzxY/tOAEAb
+         ohuSPeihplZTwK+BqDxtgvd/NPC24yM5C3TjCEvj7PH1RrEOfuztcB5U2q1wQUXFLE6l
+         +Vn+PVvj0IcC5LzQlGDAXwig6c9fao4uHtSH5xTnvCt1++CWvYoAbkyBqMHTtxkGS8sQ
+         67RY0ICWrz/EUSZpl2jJpZijO5Y3XsJH66PO6UxSk9c2Wbg595EYE77cs6CUXLyNbUSi
+         zkn5Qmswuba0M6WbZ2NSvhTGb7qYTl9DqwA/GHNpREesJ1kB9wlUcWBKd4nSXb35ZBOV
+         IhDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733790679; x=1734395479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ikPbgYxO0t0c9ZcDpHeL8nnuCsazWiAHyamVVDUkbtg=;
+        b=fM0fC3BbaWdqyU1lozQ4hLhNegrnvkJNh+3z7PSPkD8/8pV+d55mpbRBR9AIo8JuNK
+         p58BNHr4i8/oa/OZk9eCn6q7iCofBOORO7KshJGXQVnA+N1F+jWrtXjyEJ/ISk02x7O2
+         +vk/T8SAnovIEx55n+3whbxhpDkHktTEewIiR4Ki3I0ctqYZ/Klmoa2dXlDbSJRy++Sv
+         mNiTg0anrot8Mrx2HXtBhhS36KxR74ysbAdNKclRH8/w7jskDjjQ8kKooyYRUu11L9PO
+         1srvxe8kfP3zkc/2WRosGB7XH5SK9y1WM9KbaNv+SO+ekOePurc2fyxwUO3l28bp5lj6
+         A1xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXcw8JdAIpoWF6rjH/KXb/tnBkXJ00h1FyaZx70FsmQJAE7wr32MjfXNFKtZgigMrNlCMyLGtmH4KdcWz3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4HBw370zeDcVpLj5PpfhJ46bjoKuf2dsoVzZNYOprzY5j8KPz
+	L/h80xiT5j/WkMvzNRc+5yifjopTlQU6o5eBODos1+WV9WIBAAi4IRXE/J20623iKL+1MKwo+fl
+	6YtXjY/NxHHYLPEVpCS5kIaTf7qk=
+X-Gm-Gg: ASbGncvWZkuyO+29p0NoqHr03FPuM6+W0GPGiuRKNWOt72vifNmgbWs4NZ7f6op4FPS
+	6n7nxDO3VmJKotJD4sn4XT2OoLyhhsBv8aTCJPg8VPjtdWIoq0YU=
+X-Google-Smtp-Source: AGHT+IFKVupt/8RP0TpwFtu2yKchZyV/3Ye+yuIDvbh0PfaDOessZ63jRHmOZeHuOIvWIJ1H41c76lnXjnW/HI1F+vU=
+X-Received: by 2002:ac8:5956:0:b0:460:8e3b:6790 with SMTP id
+ d75a77b69052e-46734f95ab4mr237237431cf.48.1733790678924; Mon, 09 Dec 2024
+ 16:31:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+References: <20241125220537.3663725-1-joannelkoong@gmail.com>
+ <f9b63a41-ced7-4176-8f40-6cba8fce7a4c@linux.alibaba.com> <CAJnrk1bwat_r4+pmhaWH-ThAi+zoAJFwmJG65ANj1Zv0O0s4_A@mail.gmail.com>
+ <Z1N505RCcH1dXlLZ@casper.infradead.org>
+In-Reply-To: <Z1N505RCcH1dXlLZ@casper.infradead.org>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 9 Dec 2024 16:31:08 -0800
+Message-ID: <CAJnrk1Yi-DgFqUprhMYGKJG8eygEK=HmVmZiUCat2KrjP+a=Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] fuse: support large folios
 To: Matthew Wilcox <willy@infradead.org>
-Cc: Nitesh Shetty <nj.shetty@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Javier Gonzalez <javier.gonz@samsung.com>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
- <20241112135233.2iwgwe443rnuivyb@ubuntu>
- <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
- <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
- <20241205080342.7gccjmyqydt2hb7z@ubuntu>
- <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
- <Z1d9xfBwp0e8jxf4@casper.infradead.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <Z1d9xfBwp0e8jxf4@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, miklos@szeredi.hu, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, shakeel.butt@linux.dev, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/9/24 3:31 PM, Matthew Wilcox wrote:
-> On Mon, Dec 09, 2024 at 02:13:40PM -0800, Bart Van Assche wrote:
->> Consider the following example: dm-linear is used to concatenate two
->> block devices. An NVMe device (LBA 0..999) and a SCSI device (LBA
->> 1000..1999). Suppose that a copy operation is submitted to the dm-linear
->> device to copy LBAs 1..998 to LBAs 2..1998. If the copy operation is
-> 
-> Sorry, I don't think that's a valid operation -- 1998 - 2 = 1996 and 998
-> - 1 is 997, so these ranges are of different lengths.
+On Fri, Dec 6, 2024 at 2:25=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Fri, Dec 06, 2024 at 09:41:25AM -0800, Joanne Koong wrote:
+> > On Fri, Dec 6, 2024 at 1:50=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibab=
+a.com> wrote:
+> > > -       folio =3D __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> > > +       folio =3D __filemap_get_folio(mapping, index, FGP_WRITEBEGIN =
+|
+> > > fgf_set_order(len),
+> > >
+> > > Otherwise the large folio is not enabled on the buffer write path.
+> > >
+> > >
+> > > Besides, when applying the above diff, the large folio is indeed enab=
+led
+> > > but it suffers severe performance regression:
+> > >
+> > > fio 1 job buffer write:
+> > > 2GB/s BW w/o large folio, and 200MB/s BW w/ large folio
+> >
+> > This is the behavior I noticed as well when running some benchmarks on
+> > v1 [1]. I think it's because when we call into __filemap_get_folio(),
+> > we hit the FGP_CREAT path and if the order we set is too high, the
+> > internal call to filemap_alloc_folio() will repeatedly fail until it
+> > finds an order it's able to allocate (eg the do { ... } while (order--
+> > > min_order) loop).
+>
+> But this is very different frrom what other filesystems have measured
+> when allocating large folios during writes.  eg:
+>
+> https://lore.kernel.org/linux-fsdevel/20240527163616.1135968-1-hch@lst.de=
+/
 
-Agreed that the ranges should have the same length. I have been
-traveling and I'm under jet lag, hence the range length mismatch. I 
-wanted to construct a copy operation from the first to the second block
-device: 1..998 to 1001..1998.
+Ok, this seems like something particular to FUSE then, if all the
+other filesystems are seeing 2x throughput improvements for buffered
+writes. If someone doesn't get to this before me, I'll look deeper
+into this.
 
->> submitted as two separate operations (REQ_OP_COPY_SRC and
->> REQ_OP_COPY_DST) then the NVMe device will receive the REQ_OP_COPY_SRC
->> operation and the SCSI device will receive the REQ_OP_COPY_DST
->> operation. The NVMe and SCSI device drivers should fail the copy operations
->> after a timeout because they only received half of the copy
->> operation.
-> 
-> ... no?  The SRC operation succeeds, but then the DM driver gets the DST
-> operation and sees that it crosses the boundary and fails the DST op.
-> Then the pair of ops can be retried using an in-memory buffer.
-
-Since the second range can be mapped onto the second block device, the
-dm-linear driver can only fail the REQ_OP_COPY_DST operation if it keeps
-track of the source LBA regions of pending copy operations. Which would
-be an unnecessary complexity.
-
-A possible alternative is to specify the source and destination range
-information in every REQ_OP_COPY_SRC and in every REQ_OP_COPY_DST
-operation (see also Damien's email).
 
 Thanks,
-
-Bart.
+Joanne
+>
+> So we need to understand what's different about fuse.  My suspicion is
+> that it's disabling some other optimisation that is only done on
+> order 0 folios, but that's just wild speculation.  Needs someone to
+> dig into it and look at profiles to see what's really going on.
 
