@@ -1,203 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-36949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C395E9EB3BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 15:44:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A747B9EB41D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 15:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02C1C284196
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 14:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71773281F9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 14:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6AA1B6544;
-	Tue, 10 Dec 2024 14:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DBC1B86DC;
+	Tue, 10 Dec 2024 14:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dko6LHmG"
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="oXlDs6r1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88321B2195;
-	Tue, 10 Dec 2024 14:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80251AE01D;
+	Tue, 10 Dec 2024 14:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841882; cv=none; b=ONww7PadaafP5QDat766YEXl/4fP77nEJchTRLPJ+fw3MbF/lezhk6uGdYthLtNgXq59wh48LdQ5v2d/kgcS1Gh5lDnmNggoFgyCun6OK3xNXXfrKAaMQpi2eevnV7HE9bQVjOnwvfGiNmtD1W6GhHyr15afHbo4G+ICVtv1DCo=
+	t=1733842736; cv=none; b=Hgatr1FpQcr2sxLUB/L8RxX+2taKbJc68vfEKKcCxicRUhWPyToZqDweuhCmlfKywUUjYbacEqvL0RytzN9pe74GYpQNiZiqfeanfoKSG9zuyFMWKTmg3y83k9v4r6TVphcC1J8aFTH9kCQa7xa4AbBwhpCms4cAqNKHrKUoZy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841882; c=relaxed/simple;
-	bh=p92MSmrg16W+AvmipmOqXkEVwVKuNWKW3EymIxk3aYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ugFVeVI5HH4L2fMjYos0dMhONHe/vKxli8qX24aD5lEvLaM8aIysiYueGGt8MzQ/8aF6KvSMcjzBqd+fJkv29l5iX4Jjjpbm330YMpVJTZZn9KD/fcvkjF/fRjbIdTV2WlJT58WiXjA4+LN2IIMxi6RgWv4Y2xbHpp1yaSieKZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dko6LHmG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4006EC4CED6;
-	Tue, 10 Dec 2024 14:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733841882;
-	bh=p92MSmrg16W+AvmipmOqXkEVwVKuNWKW3EymIxk3aYA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dko6LHmGKFs3oBZQ4HJ3a6GbYW3z7hfjfLQRNqS0+yJWfNCQHgyvuTgpqHV6JSYRZ
-	 cxwCAfpzvZ1Vx5ClH+tc0Mkxeh0UGFoCCu81tDhcfpKoyo6/Qgsjz7/DQoVFJb2JR3
-	 hR+H0d7z0BXhOEEwv7SdOPbxAiY1bH1bE3t4EXHcIYVrMtPhtXj4IxoT4r6SlLW03+
-	 RJYwPdJ+Hg5JZ7WfkmLso4WLqhjDOY7ezgmkHn6wLQ396sNLtb+5HoHuMCvZ2VYQI/
-	 iFOiImcEPB7wrskOfym5Yub/YOAaoXUwqh0rh5Y0EBAF3wHEWtHTtYj5D/IRw4fWV4
-	 qaoB1U5qROEpA==
-Date: Tue, 10 Dec 2024 15:44:35 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
-	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v5 0/5] bpf: Add open-coded style process file
- iterator and bpf_fget_task() kfunc
-Message-ID: <20241210-geholfen-aufheben-b4b57524c00f@brauner>
-References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+	s=arc-20240116; t=1733842736; c=relaxed/simple;
+	bh=hDw7FBC5IO4sAeB4JTfWIbLu6rTXTcS6KrWiZLaOcO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZjj2ftFXWfdM7VM0ht464oBkKyqU4+WPxht70pttdWp2NeA+Y+wAxwj6gRqUHqKfUX8CtYDEMD8AFgR5Bg4etoD2Qj4sLHuYnOyqDhS0J6KCu/2uuVU/X/2vKR7HbEKZzs6EYNcHUked7BLGcpUJdXY04mg5FnwKlqLAzYCGpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=oXlDs6r1; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D22FA1BF206;
+	Tue, 10 Dec 2024 14:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1733842725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/gb/aFXJz3nmCeqMOwXgNVxlqxmAWHfvgPVB0L32PQ=;
+	b=oXlDs6r1u0Ik33AJQzEDQS8HctZuNfqL2EW7HaplSAanWrSoUlm2vJL0rG1GPEsZjvkZCb
+	SCvXMH9F7NOcY65xqHSNUv5X5TpTowlXInFl76BD8EFbBzzZh6dlRt5ELzMwsBpo8jXkAb
+	BAgUa7/EyZp3QbM+RIhSVaXjj7yq4W0wMrpMnUT8RYJTx0B3pJBvcCQ5QCih/KU0FwgUHo
+	0N3HzJV3LqX27vroTEos3DSOUj8GPKEod3Yqdq6ZnFrOxA8ySDSrG8744DaQttf5/tKl9i
+	qazR7H4W9WEkq+nWq5ngdsQPlb/HqMIxh9LPUUrk0PCLUasfGbB1lm51SC9ymQ==
+Message-ID: <2d5447b7-c185-4ce9-852e-b56a28b0306a@clip-os.org>
+Date: Tue, 10 Dec 2024 15:58:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] sysctl: Fix underflow value setting risk in
+ vm_table
+To: Joel Granados <joel.granados@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Joel Granados <j.granados@samsung.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Neil Horman <nhorman@tuxdriver.com>, Lin Feng <linf@wangsu.com>,
+ Theodore Ts'o <tytso@mit.edu>
+References: <20241114162638.57392-1-nicolas.bouchinet@clip-os.org>
+ <20241114162638.57392-3-nicolas.bouchinet@clip-os.org>
+ <4ietaibtqwl4xfqluvy6ua6cr3nkymmyzzmoo3a62lf65wtltq@s6imawclrht6>
+Content-Language: en-US
+From: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+In-Reply-To: <4ietaibtqwl4xfqluvy6ua6cr3nkymmyzzmoo3a62lf65wtltq@s6imawclrht6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-On Tue, Dec 10, 2024 at 02:01:53PM +0000, Juntong Deng wrote:
-> This patch series adds open-coded style process file iterator
-> bpf_iter_task_file and bpf_fget_task() kfunc, and corresponding
-> selftests test cases.
-> 
-> In addition, since fs kfuncs is generic and useful for scenarios
-> other than LSM, this patch makes fs kfuncs available for SYSCALL
-> and TRACING program types [0].
-> 
-> [0]: https://lore.kernel.org/bpf/CAPhsuW6ud21v2xz8iSXf=CiDL+R_zpQ+p8isSTMTw=EiJQtRSw@mail.gmail.com/
-> 
-> Although iter/task_file already exists, for CRIB we still need the
+Hi Joel,
 
-What is CRIB?
 
-> open-coded iterator style process file iterator, and the same is true
-> for other bpf iterators such as iter/tcp, iter/udp, etc.
-> 
-> The traditional bpf iterator is more like a bpf version of procfs, but
-> similar to procfs, it is not suitable for CRIB scenarios that need to
-> obtain large amounts of complex, multi-level in-kernel information.
-> 
-> The following is from previous discussions [2].
-> 
-> [2]: https://lore.kernel.org/bpf/AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
-> 
-> This is because the context of bpf iterators is fixed and bpf iterators
-> cannot be nested. This means that a bpf iterator program can only
-> complete a specific small iterative dump task, and cannot dump
-> multi-level data.
-> 
-> An example, when we need to dump all the sockets of a process, we need
-> to iterate over all the files (sockets) of the process, and iterate over
-> the all packets in the queue of each socket, and iterate over all data
-> in each packet.
-> 
-> If we use bpf iterator, since the iterator can not be nested, we need to
-> use socket iterator program to get all the basic information of all
-> sockets (pass pid as filter), and then use packet iterator program to
-> get the basic information of all packets of a specific socket (pass pid,
-> fd as filter), and then use packet data iterator program to get all the
-> data of a specific packet (pass pid, fd, packet index as filter).
-> 
-> This would be complicated and require a lot of (each iteration)
-> bpf program startup and exit (leading to poor performance).
-> 
-> By comparison, open coded iterator is much more flexible, we can iterate
-> in any context, at any time, and iteration can be nested, so we can
-> achieve more flexible and more elegant dumping through open coded
-> iterators.
-> 
-> With open coded iterators, all of the above can be done in a single
-> bpf program, and with nested iterators, everything becomes compact
-> and simple.
-> 
-> Also, bpf iterators transmit data to user space through seq_file,
-> which involves a lot of open (bpf_iter_create), read, close syscalls,
-> context switching, memory copying, and cannot achieve the performance
-> of using ringbuf.
-> 
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
-> v4 -> v5:
-> * Add file type checks in test cases for process file iterator
->   and bpf_fget_task().
-> 
-> * Use fentry to synchronize tests instead of waiting in a loop.
-> 
-> * Remove path_d_path_kfunc_non_lsm test case.
-> 
-> * Replace task_lookup_next_fdget_rcu() with fget_task_next().
-> 
-> * Remove future merge conflict section in cover letter (resolved).
-> 
-> v3 -> v4:
-> * Make all kfuncs generic, not CRIB specific.
-> 
-> * Move bpf_fget_task to fs/bpf_fs_kfuncs.c.
-> 
-> * Remove bpf_iter_task_file_get_fd and bpf_get_file_ops_type.
-> 
-> * Use struct bpf_iter_task_file_item * as the return value of
->   bpf_iter_task_file_next.
-> 
-> * Change fd to unsigned int type and add next_fd.
-> 
-> * Add KF_RCU_PROTECTED to bpf_iter_task_file_new.
-> 
-> * Make fs kfuncs available to SYSCALL and TRACING program types.
-> 
-> * Update all relevant test cases.
-> 
-> * Remove the discussion section from cover letter.
-> 
-> v2 -> v3:
-> * Move task_file open-coded iterator to kernel/bpf/helpers.c.
-> 
-> * Fix duplicate error code 7 in test_bpf_iter_task_file().
-> 
-> * Add comment for case when bpf_iter_task_file_get_fd() returns -1.
-> 
-> * Add future plans in commit message of "Add struct file related
->   CRIB kfuncs".
-> 
-> * Add Discussion section to cover letter.
-> 
-> v1 -> v2:
-> * Fix a type definition error in the fd parameter of
->   bpf_fget_task() at crib_common.h.
-> 
-> Juntong Deng (5):
->   bpf: Introduce task_file open-coded iterator kfuncs
->   selftests/bpf: Add tests for open-coded style process file iterator
->   bpf: Add bpf_fget_task() kfunc
->   bpf: Make fs kfuncs available for SYSCALL and TRACING program types
->   selftests/bpf: Add tests for bpf_fget_task() kfunc
-> 
->  fs/bpf_fs_kfuncs.c                            |  42 ++++---
->  kernel/bpf/helpers.c                          |   3 +
->  kernel/bpf/task_iter.c                        |  92 ++++++++++++++
->  .../testing/selftests/bpf/bpf_experimental.h  |  15 +++
->  .../selftests/bpf/prog_tests/fs_kfuncs.c      |  46 +++++++
->  .../testing/selftests/bpf/prog_tests/iters.c  |  79 ++++++++++++
->  .../selftests/bpf/progs/fs_kfuncs_failure.c   |  33 +++++
->  .../selftests/bpf/progs/iters_task_file.c     |  88 ++++++++++++++
->  .../bpf/progs/iters_task_file_failure.c       | 114 ++++++++++++++++++
->  .../selftests/bpf/progs/test_fget_task.c      |  63 ++++++++++
->  .../selftests/bpf/progs/verifier_vfs_reject.c |  10 --
->  11 files changed, 559 insertions(+), 26 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
->  create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file.c
->  create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file_failure.c
->  create mode 100644 tools/testing/selftests/bpf/progs/test_fget_task.c
-> 
-> -- 
-> 2.39.5
-> 
+Thank's for your reply.
+
+I apologize for the reply delay, I wasn't available late weeks.
+
+On 11/20/24 1:53 PM, Joel Granados wrote:
+> On Thu, Nov 14, 2024 at 05:25:51PM +0100, nicolas.bouchinet@clip-os.org wrote:
+>> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>>
+>> Commit 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in
+>> vm_table") fixes underflow value setting risk in vm_table but misses
+>> vdso_enabled sysctl.
+>>
+>> vdso_enabled sysctl is initialized with .extra1 value as SYSCTL_ZERO to
+>> avoid negative value writes but the proc_handler is proc_dointvec and not
+>> proc_dointvec_minmax and thus do not uses .extra1 and .extra2.
+>>
+>> The following command thus works :
+>>
+>> `# echo -1 > /proc/sys/vm/vdso_enabled`
+> It would be interesting to know what happens when you do a
+> # echo (INT_MAX + 1) > /proc/sys/vm/vdso_enabled
+
+Great question, I'll check that.
+
+>
+> This is the reasons why I'm interested in such a test:
+>
+> 1. Both proc_dointvec and proc_dointvec_minmax (calls proc_dointvec) have a
+>     overflow check where they will return -EINVAL if what is given by the user is
+>     greater than (unsiged long)INT_MAX; this will evaluate can evaluate to true
+>     or false depending on the architecture where we are running.
+
+Indeed, I'll run tests to avouch behaviors of proc handlers bound checks 
+with
+different architectures.
+
+>
+> 2. I noticed that vdso_enabled is an unsigned long. And so the expectation is
+>     that the range is 0 to ULONG_MAX, which in some cases (depending on the arch)
+>     would not be the case.
+Yep, it is. As I've tried to explain in the cover letter
+(https://lore.kernel.org/all/20241112131357.49582-1-nicolas.bouchinet@clip-os.org/),
+there are numerous places where sysctl data type differs from the proc 
+handler
+return type.
+
+AFAIK, for proc_dointvec there is more than 10 different sysctl where it
+happens. The three I've patched represents three common mistakes using
+proc_handlers.
+
+>
+> So my question is: What is the expected range for this value? Because you might
+> not be getting the whole range in the cases where int is 32 bit and long is 64
+> bit.
+>
+>> This patch properly sets the proc_handler to proc_dointvec_minmax.
+>>
+>> Fixes: 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
+>> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>> ---
+>>   kernel/sysctl.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index 79e6cb1d5c48f..37b1c1a760985 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -2194,7 +2194,7 @@ static struct ctl_table vm_table[] = {
+>>   		.maxlen		= sizeof(vdso_enabled),
+>>   #endif
+>>   		.mode		= 0644,
+>> -		.proc_handler	= proc_dointvec,
+>> +		.proc_handler	= proc_dointvec_minmax,
+>>   		.extra1		= SYSCTL_ZERO,
+> Any reason why extra2 is not defined. I know that it was not defined before, but
+> this does not mean that it will not have an upper limit. The way that I read the
+> situation is that this will be bounded by the overflow check done in
+> proc_dointvec and will have an upper limit of INT_MAX.
+
+Yes, it is bounded by the overflow checks done in proc_dointvec, I've not
+changed the current sysctl behavior but we should bound it between 0
+and 1 since it seems vdso compat is not supported anymore since
+Commit b0b49f2673f011cad ("x86, vdso: Remove compat vdso support").
+
+This is the behavior of vdso32_enabled exposed under the abi sysctl
+node.
+
+>
+> Please correct me if I have read the situation incorrectly.
+You perfectly understood the problematic of it, thanks a lot for your 
+review.
+
+I'll reply to above questions after I've run more tests.
+
+I saw GKH already merged the third commit of this patchset and 
+backported it to stable branches.
+Should I evict it from future version of this patchset ?
+
+Thanks,
+
+Nicolas
+
+>
+> Best
+>
 
