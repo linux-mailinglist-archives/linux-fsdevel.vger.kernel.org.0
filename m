@@ -1,112 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-36992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C43E9EBC60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 22:59:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D52516055A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 21:59:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3488D23A563;
-	Tue, 10 Dec 2024 21:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="tMCA32fv"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69569EBD82
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 23:15:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90E5232373;
-	Tue, 10 Dec 2024 21:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733867937; cv=none; b=DJ3z29B7gXqLKN84tAbMpRC15UUm29N2jq0UzC820vUBdAG/8Lu25I+PI9pPekU01+E8J8b95dLVAicVGYeNUMgeuYD3qUCMdZw086wrMyrIC2650r1Gv0xg1BBp83KY7s3NUrUABtVEEbl66d5KoTG8yIN+TLmMGfHpOvp+tO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733867937; c=relaxed/simple;
-	bh=UMPKRvLE/QQ5urEMkscdu5mz7RjqxapRnt91HnvSfRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WYC8BSCs5vVpWqHC4VuKlYdRw2k/pXq4Gwta7clHBkiW55glnL7f5w40emxYOHsJyT0TGtBmA4/bAa96la4YyKJN0ksygmaxxjDphBTJzRY+IA2TmeU1ibmwaCbF8uKGPaQNaPuG5o4sPk0WkjtuG1hMzTSzuk+Uaiv5tJ9Min0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=tMCA32fv; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Y7CL7128Qz6Cl4Ph;
-	Tue, 10 Dec 2024 21:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733867915; x=1736459916; bh=UMPKRvLE/QQ5urEMkscdu5mz
-	7RjqxapRnt91HnvSfRk=; b=tMCA32fv2C7drEaWNjV7OlmjiTUE1Jwpz1HdJrFT
-	DM0W9B1dfiXNGJxiycfCASwnzZaeUDrqagCcJWI8nxwp1EOG0batI29+/QZo9VDM
-	LyNaOGM7xTwKNqaUK6PZ06lrIt4Q3yH5lK68FuUl1kz3x56n1/+1laEEN/ZMsSNX
-	tbJ8lJY6/NDCYfrlmkZAuqimyIa+kGovBvI3hUJPiIWQssGG9lwkOVGSpcB1mLHj
-	fxdNAfwESyPELGpMs85DAsyD/ineFXbI2U3TAPnHhBURBgOFRMFHL0arK8Dvq57Q
-	xOPOqlyEyRUhE5CtyKGYC+iG0kCBY/I7cD7ErE5b/8qN1A==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id KSORL8SM_ZVp; Tue, 10 Dec 2024 21:58:35 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62AC8286F65
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2024 22:15:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9168F24036D;
+	Tue, 10 Dec 2024 22:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBMW6pNB"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Y7CKg6tF3z6ClH0D;
-	Tue, 10 Dec 2024 21:58:31 +0000 (UTC)
-Message-ID: <6d65d744-abed-405b-8116-b291b33796b0@acm.org>
-Date: Tue, 10 Dec 2024 13:58:30 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB0C1EE7B4;
+	Tue, 10 Dec 2024 22:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733868408; cv=none; b=E1hpbE6lfye6xj+HvJiq7iDmJauCUhu369cpBoYiQqKPmKph3+sAw620w821rR06uyeGRWdwmlXN4Jt/HpP9xCPGN+fLIA00cC5lkSXVjok1gLAQyclr4xZP+TWuD6OOOM6N5IXoTa3HW97NXr0HpyotQkag+KudDNz+qLQ9ipY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733868408; c=relaxed/simple;
+	bh=T8llLC6PFC/Gc9fbpZBPsYWsfacHNK3mptA3yecDcSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XKozSx65yEnvTP+Hymv/bet2J9rEPROCKkhKkXBIM0FUVzxYFu/ET+oolISa2cvCSv4/UJoAC3wVM5rqpzDvPu+jA0n+WvL0vOOqeqPnJEVm0wCvnDFPONGsYqWVIGuJm36S5JRjV1pe1Kxmi9JsJhLc8uVWDni4G9YL+pjSQ04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBMW6pNB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86682C4CED6;
+	Tue, 10 Dec 2024 22:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733868407;
+	bh=T8llLC6PFC/Gc9fbpZBPsYWsfacHNK3mptA3yecDcSc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OBMW6pNBMyFRqq9VSw2kQewuWnunpEQEu+0Yjttg5goXs1KSKFgSc8hJClyGTGRqy
+	 dyhDLQXFWVFlMoRgqJjQHSDLgTv3+n+nIZILCZZhVp3nhd2XygfmWbtewC2uJQngp6
+	 JuX9mM5/qvD0nLIrDozgkKcoMgMwkkLuc0AJvfZ0oaz3O6EvcwEh++PjrcYeF1Ct06
+	 YehqzIup8JTiLFdlwskLkWonQiIFQdoh682xRGj7mKM310ExlWAqXe5LzLmkCA7kud
+	 BNgVJmxWQtTHWoLlmKDJyGQio4kRFY4CEuITSj2XSaOSIwvNdQjZVnHGnoveBVLwsk
+	 At3PzI5QW9j2Q==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	liamwisehart@meta.com,
+	shankaran@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v3 bpf-next 0/6] Enable writing xattr from BPF programs
+Date: Tue, 10 Dec 2024 14:06:21 -0800
+Message-ID: <20241210220627.2800362-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: Nitesh Shetty <nj.shetty@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
- <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
- <20241205080342.7gccjmyqydt2hb7z@ubuntu>
- <yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com>
- <d9cc57b5-d998-4896-b5ec-efa5fa06d5a5@acm.org>
- <yq1frmwl1zf.fsf@ca-mkp.ca.oracle.com>
- <20241210095333.7qcnuwvnowterity@ubuntu>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241210095333.7qcnuwvnowterity@ubuntu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/10/24 1:53 AM, Nitesh Shetty wrote:
-> We did implement payload based approach in the past[1] which aligns
-> with this. Since we wait till the REQ_OP_COPY_SRC completes, there won't
-> be issue with async type of dm IOs.
-> Since this would be an internal kernel plumbing, we can optimize/change
-> the approach moving forward.
-> If you are okay with the approach, I can give a respin to that version.
+Add support to set and remove xattr from BPF program. Also add
+security.bpf. xattr name prefix.
 
-Yes, I remember this. Let's wait with respinning/reposting until there
-is agreement about the approach for copy offloading.
+kfuncs are added to set and remove xattrs with security.bpf. name
+prefix. Update kfuncs bpf_get_[file|dentry]_xattr to read xattrs
+with security.bpf. name prefix. Note that BPF programs can read
+user. xattrs, but not write and remove them.
 
-Thanks,
+Cover letter of v1 and v2:
 
-Bart.
+Follow up discussion in LPC 2024 [1], that we need security.bpf xattr
+prefix. This set adds "security.bpf." xattr name prefix, and allows
+bpf kfuncs bpf_get_[file|dentry]_xattr() to read these xattrs.
 
+[1] https://lpc.events/event/18/contributions/1940/
+
+Changes v2 => v3
+1. Add kfuncs to set and remove xattr from BPF programs.
+
+v2: https://lore.kernel.org/bpf/20241016070955.375923-1-song@kernel.org/
+
+Changes v1 => v2
+1. Update comment of bpf_get_[file|dentry]_xattr. (Jiri Olsa)
+2. Fix comment for return value of bpf_get_[file|dentry]_xattr.
+
+v1: https://lore.kernel.org/bpf/20241002214637.3625277-1-song@kernel.org/
+
+Song Liu (6):
+  fs/xattr: bpf: Introduce security.bpf. xattr name prefix
+  selftests/bpf: Extend test fs_kfuncs to cover security.bpf. xattr
+    names
+  bpf: lsm: Add two more sleepable hooks
+  bpf: fs/xattr: Add BPF kfuncs to set and remove xattrs
+  selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
+  selftests/bpf: Add __failure tests for set/remove xattr kfuncs
+
+ fs/bpf_fs_kfuncs.c                            | 258 +++++++++++++++++-
+ include/uapi/linux/xattr.h                    |   4 +
+ kernel/bpf/bpf_lsm.c                          |   2 +
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  10 +
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 165 ++++++++++-
+ .../selftests/bpf/progs/test_get_xattr.c      |  28 +-
+ .../bpf/progs/test_set_remove_xattr.c         | 129 +++++++++
+ .../bpf/progs/test_set_remove_xattr_failure.c |  56 ++++
+ 8 files changed, 632 insertions(+), 20 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr_failure.c
+
+--
+2.43.5
 
