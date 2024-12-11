@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-37080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1FC9ED3D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 18:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AD89ED47E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 19:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE58188A0AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 17:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AADD4188AB99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 18:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61776209F4B;
-	Wed, 11 Dec 2024 17:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4306A201264;
+	Wed, 11 Dec 2024 18:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VT+sjqve"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcUFqsS0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F30207A1B;
-	Wed, 11 Dec 2024 17:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E091246344;
+	Wed, 11 Dec 2024 18:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938830; cv=none; b=C2YqWeUmqrV70YBFEzFS/lmniYxfzuT/tsCBqVqOZxLsQTx9iaDXt08z6SVLhiS670eDokQPsaTUAx5huaxllvPcmlGjrMhv4P1nIVwVPxB31VcidamYtInb68A2KsJVnd9C0WlKP0vy5EynMmXVAk8PUbvpkhgmM6MrD8JuNA0=
+	t=1733940543; cv=none; b=bxd2Jk1XUnV9//M230xinsyIhQXpM2AFgGVwDDG2avHcKkij3A2F2PA7lpz1tqp+YItfDqs15enKX7VMYiHnmVlj+W6hseQBqxUas+DrYWd59Ubwr9IAB5qDc8JGH2wRlRudVQVkaRzMLXrXFKlvsDUAnGK8ihhaTG8NbHGhctY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938830; c=relaxed/simple;
-	bh=2+F/X1bbGIHQ/mssm4ic+1dPk7ifq8G4W/p2zLLRRpU=;
+	s=arc-20240116; t=1733940543; c=relaxed/simple;
+	bh=zPEuBaFJs0hO+pYKyZErs+pnHfMb5a1H6fIgZhfiuJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sn36fNkdfYrYf00u8uWPhy7j0NAiWUdhtOkTtXKYrkYnX1CjA1I4KwL1sJlCEQxo7Xc4EjOon8WZTTtZRGhido+DiA0b+D2/5HuEfGg17bMp34SLtTtvrmd98r+WT5s6bqJG41Wg1Pej7QZYBUFH2VHt8WV9Toq+pSGiV/LUM90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VT+sjqve; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 265AAC4CED4;
-	Wed, 11 Dec 2024 17:40:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPU63PPp3H3PdyPsXNm8al244cJ/d7GZxJq3VD/G2hAJqEJsgjZbW/klzXe9voPH9AzMfBrEec+xBesJf0DA8aaKZJJ9j2aaSQ79x9URHDWrpPa+OMavgd5MEmPYAymeHSXq1xVYbbclZS4aMp9SkFdIns3Pk4aHV59IJ/e8yfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcUFqsS0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C3AC4CED2;
+	Wed, 11 Dec 2024 18:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733938830;
-	bh=2+F/X1bbGIHQ/mssm4ic+1dPk7ifq8G4W/p2zLLRRpU=;
+	s=k20201202; t=1733940543;
+	bh=zPEuBaFJs0hO+pYKyZErs+pnHfMb5a1H6fIgZhfiuJI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VT+sjqveVKdK/NfGq4n5cyb2pqWjeE9nbhy4BqvoVAvd3BJ+S+Y7ekVeIz++JHo3H
-	 9gk0J3lAkoB2xAlkUVp6X39V+/6170gRQNWynBhSltC/k0XBRY7X42pcIXnk4o5Gdr
-	 Kxx9swpTtNz1/oIHcsX7+9VbE84QO6yqt8a1z7i39VsQnYBnzjpuzXWIgjJE8aieDK
-	 z8mi+1JZanjpIeTKsyfU5JpKb/Ns0si0VbxtdBBZvcogq34A905nR77sH+/93gZNge
-	 p2+EmWU6FIwxnykdMOxvlacAUCpz+wfbv56G6Pw9jYsk41IYJBJG8o/nFg83zyfShK
-	 5qj57TQhY4ZSg==
-Date: Wed, 11 Dec 2024 09:40:29 -0800
+	b=mcUFqsS0snssUsYzkB8vQnGYSY1ln6dzw6FYi9YphMxqFHnxSyR9BruYZ7cNf6YeK
+	 SwkZiSxBMT+w+lPhH5CJLZg45OUzgTzy8c+iCJ80iGk7gygXOdaj/Wty7WFC80tFwp
+	 HXx5+TDan456VqBTf+eALKDqU3RTN+tiOTiRwjKgsGx/6uJ9KlTBeJWpjCRM2CGVTl
+	 LrkfcyrvC5k+nfhF7J3F+K5TeNUOpOJE/9nOWcU6bvETWZ3xpddZoJ6C8qzEaR0aIg
+	 CsYWqK435b3EESXGlPn5F4cYspDw6D3PBXLt/Li+ijQoveouAuPKTB3zkPl0PztW+6
+	 IEPGabXxDWR5A==
+Date: Wed, 11 Dec 2024 10:09:02 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bingwu Zhang <xtex@envs.net>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bingwu Zhang <xtex@aosc.io>, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	~xtex/staging@lists.sr.ht
-Subject: Re: [PATCH] Documentation: filesystems: fix two misspells
-Message-ID: <20241211174029.GC6698@frogsfrogsfrogs>
-References: <20241208035447.162465-2-xtex@envs.net>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 1/3] include/linux.h: Factor out generic
+ platform_test_fs_fd() helper
+Message-ID: <20241211180902.GA6678@frogsfrogsfrogs>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <5996d6854a16852daca5977063af6f2af2f0f4ca.1733902742.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,56 +62,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241208035447.162465-2-xtex@envs.net>
+In-Reply-To: <5996d6854a16852daca5977063af6f2af2f0f4ca.1733902742.git.ojaswin@linux.ibm.com>
 
-On Sun, Dec 08, 2024 at 11:54:47AM +0800, Bingwu Zhang wrote:
-> From: Bingwu Zhang <xtex@aosc.io>
+On Wed, Dec 11, 2024 at 01:24:02PM +0530, Ojaswin Mujoo wrote:
+> Factor our the generic code to detect the FS type out of
+> platform_test_fs_fd(). This can then be used to detect different file
+> systems types based on magic number.
 > 
-> This fixes two small misspells in the filesystems documentation.
+> Also, add a helper to detect if the fd is from an ext4 filesystem.
 > 
-> Signed-off-by: Bingwu Zhang <xtex@aosc.io>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
+>  include/linux.h | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux.h b/include/linux.h
+> index e9eb7bfb26a1..52c64014c57f 100644
+> --- a/include/linux.h
+> +++ b/include/linux.h
+> @@ -43,13 +43,7 @@ static __inline__ int xfsctl(const char *path, int fd, int cmd, void *p)
+>  	return ioctl(fd, cmd, p);
+>  }
+>  
+> -/*
+> - * platform_test_xfs_*() implies that xfsctl will succeed on the file;
+> - * on Linux, at least, special files don't get xfs file ops,
+> - * so return 0 for those
+> - */
+> -
+> -static __inline__ int platform_test_xfs_fd(int fd)
+> +static __inline__ int platform_test_fs_fd(int fd, long type)
+>  {
+>  	struct statfs statfsbuf;
+>  	struct stat statbuf;
+> @@ -60,7 +54,22 @@ static __inline__ int platform_test_xfs_fd(int fd)
+>  		return 0;
+>  	if (!S_ISREG(statbuf.st_mode) && !S_ISDIR(statbuf.st_mode))
+>  		return 0;
+> -	return (statfsbuf.f_type == 0x58465342);	/* XFSB */
+> +	return (statfsbuf.f_type == type);
+> +}
+> +
+> +/*
+> + * platform_test_xfs_*() implies that xfsctl will succeed on the file;
+> + * on Linux, at least, special files don't get xfs file ops,
+> + * so return 0 for those
+> + */
+> +static __inline__ int platform_test_xfs_fd(int fd)
+> +{
+> +	return platform_test_fs_fd(fd, 0x58465342); /* XFSB */
+> +}
+> +
+> +static __inline__ int platform_test_ext4_fd(int fd)
+> +{
+> +	return platform_test_fs_fd(fd, 0xef53); /* EXT4 magic number */
 
-Yep, typoes happun, thanks for the patch.
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Should this be pulling EXT4_SUPER_MAGIC from linux/magic.h?
 
 --D
 
-> ---
-> I found these typos when learning about OverlayFS recently.
-> ---
->  Documentation/filesystems/iomap/operations.rst | 2 +-
->  Documentation/filesystems/overlayfs.rst        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-> index ef082e5a4e0c..2c7f5df9d8b0 100644
-> --- a/Documentation/filesystems/iomap/operations.rst
-> +++ b/Documentation/filesystems/iomap/operations.rst
-> @@ -104,7 +104,7 @@ iomap calls these functions:
+>  }
 >  
->      For the pagecache, races can happen if writeback doesn't take
->      ``i_rwsem`` or ``invalidate_lock`` and updates mapping information.
-> -    Races can also happen if the filesytem allows concurrent writes.
-> +    Races can also happen if the filesystem allows concurrent writes.
->      For such files, the mapping *must* be revalidated after the folio
->      lock has been taken so that iomap can manage the folio correctly.
->  
-> diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-> index 4c8387e1c880..d2a277e3976e 100644
-> --- a/Documentation/filesystems/overlayfs.rst
-> +++ b/Documentation/filesystems/overlayfs.rst
-> @@ -156,7 +156,7 @@ A directory is made opaque by setting the xattr "trusted.overlay.opaque"
->  to "y".  Where the upper filesystem contains an opaque directory, any
->  directory in the lower filesystem with the same name is ignored.
->  
-> -An opaque directory should not conntain any whiteouts, because they do not
-> +An opaque directory should not contain any whiteouts, because they do not
->  serve any purpose.  A merge directory containing regular files with the xattr
->  "trusted.overlay.whiteout", should be additionally marked by setting the xattr
->  "trusted.overlay.opaque" to "x" on the merge directory itself.
-> 
-> base-commit: 7503345ac5f5e82fd9a36d6e6b447c016376403a
+>  static __inline__ int platform_test_xfs_path(const char *path)
 > -- 
-> 2.47.1
+> 2.43.5
+> 
 > 
 
