@@ -1,92 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B63B9EC618
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 08:55:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EB09EC62B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 08:58:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88FD71646A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 07:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2758282051
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 07:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994161DBB38;
-	Wed, 11 Dec 2024 07:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC321CCB40;
+	Wed, 11 Dec 2024 07:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TYy2zpvA"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N4Q8Urke"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785511D7E57;
-	Wed, 11 Dec 2024 07:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C686D1C726D;
+	Wed, 11 Dec 2024 07:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733903668; cv=none; b=rmQ9Bg8SewLCpuThz4KBf2Co4XqK82zp5/v6BkdeMCEOufHKiNbYfUtscBKKUaATeYMM3AJ9K3tROJtxTBVlFgFlOaKBkQrkhXmRbOx42uaw7fQpWFVXIvRT79DlShgoCdTgG6+CIA9q1XJhHeHbvhPiidAac6bp/VcDivDLhRU=
+	t=1733903890; cv=none; b=PGvtTlAQLmFRGgvwiTvyRj6gLe25HMPx5Y7t/wrX3qZSegPpSPGwuvT0a1d77gzZ0tQLHrvHUJYYAdvQnX0u+8BhLh39A8p6kAqa0mLdhJ5M0i/JNgPwxGovhLjq9lf9zacHB9gcCkTlN5+qDKzD0k9ArNUUoPpm3jSeON983Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733903668; c=relaxed/simple;
-	bh=pfGkfSRbBeBZe2pfv8FMlZ/K7pb4YLUhiD7uHI13nsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iZ7eqraqpz3tLxCplFx3r7+CMNbRx/oCFqtG8umN7Uwz+ND00mNBg2JRWPjZxgGBS2e7ki9cTtIQYiVTroDPCW2QZsijqfdPejYke4Pv27vWFS6hx+G0ofDcsg4F/05APo10DKWERuk+mt2HuLrYO7K9pXVz8ofXW5rt1tUCuy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TYy2zpvA; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1733903890; c=relaxed/simple;
+	bh=n8zCjiDsfiS//FqtctNEGW1zxuO3fu5pAeaCg5jeZ8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJxlqRjBvYorpjD4QamK/HWsnUm+aW/PpGEzOgfIadvzFMHTQopkL1fWaOYkiDn4JqIdzNEdBxAOcRRplYefJD634umad6pjdLnZfiCP1mW3W/ynEjndFIA4K9E8Apnml8Zf42V4ZTb43P0uUaupsZqIzEU1k2AF9V9R4MMulHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N4Q8Urke; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB0QRQH003998;
-	Wed, 11 Dec 2024 07:54:22 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BANODjQ025855;
+	Wed, 11 Dec 2024 07:58:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=56iEWu45x5ZogUIJ3
-	B7E3Njw8FYRxDwCN46dpTp1gNM=; b=TYy2zpvAaLe+j65ZSKM9ilCNfobngMCBQ
-	6cnqrWBKxKxPE95N3thMlapaZEahiTXvefvH5gzG7yxzTEAUekEnEfTLklA0xRds
-	uGgc4Jlu78XErlpt0/h1sto1rIwZl15OEW52cEHZpsjDbpemP1UfJ/py6PohHv0L
-	paaz3MQwstbQrwn8e4ds3SAXCg5KOy018Ffd5sPNqsakqRZ0Nly57ahDKIEdjybQ
-	M4wOf0adGABOizcqCvOMx1sqSNtUUPLdJHnv8YuI/uzGXFkRU5vPWqD2q1irmHNL
-	NPwstQcIP4+/h8a35SBi1ALlcZxh0jxdzvdTFnHW8Dvr481ji2l2Q==
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=OFoUqZ/J95ZNxIxu6/8FRWrZlwXn2VwUvqiep8eIC
+	ug=; b=N4Q8UrkeFnruPYf2H4m3YF41A+g+nhkBM8shQ0VNw4mfw1ilo2y4LBftr
+	lgKhA6sdLWBEC7hD0CccsnAYR4pPE86bxtr5PL2x+qtlwify2bY2DbOEoh+0a82U
+	Dft6NAciSweLGWnbkcgYt/iN8EkVYkgHdh/s/oKNj5ySFUWgk9yZtMkosU0k168F
+	OOF3yBUMThBUx8Mm/69Kf9eA8Dur51jY22Ho+jee3Rn1NpLuPxVblYlaK+8pM56l
+	YFyEqsLi6p5mVTFl08FXDyLEOxXwHfl0Vhft3q5Eff8YsuGzML6nfdcdzFatDVNc
+	cJfs3/1hhoD+tEmLUxKXOBj4GO96A==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xjpw8-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqb3wm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 07:54:22 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BB7sL4T027263;
-	Wed, 11 Dec 2024 07:54:21 GMT
+	Wed, 11 Dec 2024 07:58:00 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BB7sHo4002061;
+	Wed, 11 Dec 2024 07:58:00 GMT
 Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xjpw4-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqb3wh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 07:54:21 +0000 (GMT)
+	Wed, 11 Dec 2024 07:58:00 +0000 (GMT)
 Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5RaBS032724;
-	Wed, 11 Dec 2024 07:54:20 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psges1-1
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5CLk3032727;
+	Wed, 11 Dec 2024 07:57:59 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psgf6m-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 07:54:20 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BB7sJXc56754476
+	Wed, 11 Dec 2024 07:57:59 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BB7vwr530736894
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 07:54:19 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2E37020043;
-	Wed, 11 Dec 2024 07:54:19 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EE4BF2004B;
-	Wed, 11 Dec 2024 07:54:16 +0000 (GMT)
+	Wed, 11 Dec 2024 07:57:58 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5ADC20043;
+	Wed, 11 Dec 2024 07:57:57 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 47C7C2004D;
+	Wed, 11 Dec 2024 07:57:56 +0000 (GMT)
 Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.39.30.217])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 11 Dec 2024 07:54:16 +0000 (GMT)
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Dec 2024 07:57:56 +0000 (GMT)
 From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
 Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrey Albershteyn <aalbersh@kernel.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        John Garry <john.g.garry@oracle.com>
-Subject: [RFC 3/3] xfs_io: add extsize command support
-Date: Wed, 11 Dec 2024 13:24:04 +0530
-Message-ID: <6448e3adc13eff8b152f7954c838eb9315c91574.1733902742.git.ojaswin@linux.ibm.com>
+        "Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+        John Garry <john.g.garry@oracle.com>, dchinner@redhat.com,
+        Nirjhar Roy <nirjhar@linux.ibm.com>
+Subject: [RFC v2 0/6] ext4: Implement support for extsize hints
+Date: Wed, 11 Dec 2024 13:27:49 +0530
+Message-ID: <cover.1733901374.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1733902742.git.ojaswin@linux.ibm.com>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,38 +91,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zPgKlWGDTEiC5BBEweJUQkS2-JFkl0GQ
-X-Proofpoint-ORIG-GUID: gGOaBbh5aCzP7gqrkh6LrX6uO8hz8naR
+X-Proofpoint-ORIG-GUID: ptlQF1DH1KmiKi9soGJ5W4sr5n5A0NZf
+X-Proofpoint-GUID: YPfVYoE84Ga92X9MseYjPKbvOcRjj2ir
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=839 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412110056
 
-extsize command is currently only supported with XFS filesystem.
-Lift this restriction now that ext4 is also supporting extsize hints.
+** Changes since rfc v1 [1] **
 
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- io/open.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+1. Allocations beyond EOF also respect extsize hint however we 
+   unlink XFS, we don't trim the blocks allocated beyond EOF due
+   to extsize hints. The reasoning behind this is explained in 
+   patch 6/6.
 
-diff --git a/io/open.c b/io/open.c
-index a30dd89a1fd5..2582ff9b862e 100644
---- a/io/open.c
-+++ b/io/open.c
-@@ -997,7 +997,7 @@ open_init(void)
- 	extsize_cmd.args = _("[-D | -R] [extsize]");
- 	extsize_cmd.argmin = 0;
- 	extsize_cmd.argmax = -1;
--	extsize_cmd.flags = CMD_NOMAP_OK;
-+	extsize_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
- 	extsize_cmd.oneline =
- 		_("get/set preferred extent size (in bytes) for the open file");
- 	extsize_cmd.help = extsize_help;
+2. Minor fixes in extsize ioctl handling logic.
+
+Rest of the design detials can be in individual patches as well as
+the original cover leter which can be found here:
+
+[1]
+https://lore.kernel.org/linux-ext4/cover.1726034272.git.ojaswin@linux.ibm.com/
+
+Further, xfsprogs changes to enable extsize get/set for ext4 can be
+found here:
+https://lore.kernel.org/linux-ext4/cover.1733902742.git.ojaswin@linux.ibm.com/T/#t
+
+Comments and suggestions are welcome!
+
+Regards,
+ojaswin
+
+Ojaswin Mujoo (6):
+  ext4: add aligned allocation hint in mballoc
+  ext4: allow inode preallocation for aligned alloc
+  ext4: support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+  ext4: pass lblk and len explicitly to ext4_split_extent*()
+  ext4: add extsize hint support
+  ext4: make extsize work with EOF allocations
+
+ fs/ext4/ext4.h              |  12 +-
+ fs/ext4/ext4_jbd2.h         |  15 ++
+ fs/ext4/extents.c           | 224 +++++++++++++++----
+ fs/ext4/inode.c             | 435 ++++++++++++++++++++++++++++++++----
+ fs/ext4/ioctl.c             | 122 ++++++++++
+ fs/ext4/mballoc.c           | 126 +++++++++--
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |   2 +
+ 8 files changed, 836 insertions(+), 101 deletions(-)
+
 -- 
 2.43.5
 
