@@ -1,72 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-37073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9358C9ED1C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 17:30:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6132916486C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 16:30:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011021DDC13;
-	Wed, 11 Dec 2024 16:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="f2A3wR7L"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587E09ED20D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 17:34:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBBA1DDA39;
-	Wed, 11 Dec 2024 16:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D159A282604
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 16:34:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7391DDC09;
+	Wed, 11 Dec 2024 16:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSoWiScB"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E0119FA93
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 16:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733934612; cv=none; b=OQSW9shCUUooktXGFFZX4SBewl0gCKjb5swR/btRQgVeoqjtr2GzozpCO0v9NVdvmT634hWCLGrbsNeeYgv4IyLFL1Yvu295GYdi4IANbUvbnEPvxsrVYonvqA30csiAucgo1qaIjrSVJTv0lcHJ8UEceTH4ezRR8jt6px78Ors=
+	t=1733934871; cv=none; b=sEDQiBBYKqCiM0lkWsuLPiF1kVKbx0GT1ZvBXoTW/Gx44CA4GuKSzqLzPBxurW2KIyKUYiHcScAyi8FS00AUdzSxXFg6wgtI9VLOvDTT/XVKPdqIy4+OlMMLNiz2oWngJkT+MNChEoaGIZGkcmzMN11R4Vg6YvHx4qdWrLwIqOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733934612; c=relaxed/simple;
-	bh=m1Xd2Ttjwv8Ql6ASwyFJCC3LyTAaBmtGm4EwDWWwSPk=;
+	s=arc-20240116; t=1733934871; c=relaxed/simple;
+	bh=yBxhaTjfOizIhOczBCvRSt8i8RfB5LwMMeLFbd3UysI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPq019KBZZHtqBCbgpoQS4TEgdv2PSJaT+1cXY6AqPKEKe+EW7KBBuQ143YDGq6mzkojfCKyYIjjB+Jt9mxgcFbRtycHfjEtiI8Cwd9SX9sQP9gjmjFQZF3Y6szP6MGx1y0875t/9uEti03d7CPINCM8gdCjEFiKK+6cBmmW9bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=f2A3wR7L; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=m1Xd2Ttjwv8Ql6ASwyFJCC3LyTAaBmtGm4EwDWWwSPk=; b=f2A3wR7L4U9IhsRbVEYP/wsR4r
-	ZURPs1NEhz1PjyWpjAFpCSDulJ7ricFHjDdg9gBZG99MlLWIdY9EMZzemVYV7ucgd4tWMiYBpL0a7
-	B8L4a2lCG2fAGay53XqOWJDqIQ5zZi901yxiJNNhyC2qNgmm/cCRy4+NCQ8uSAdk041P0xDs5Kyg0
-	zLvI4tFAGcEQLfepiHjgCGEEhzsR5JvPq3IfWD2lCjp53dXorBrrgPGx8250ftVp53ZdU8dFN4iBL
-	tyAB+K7ynOymnYSlE+/kn59VITQtFFcQi1x3nbBXQ5YRlK4D7TbFVd9eETRQX7b6UFO9VWjLx87fO
-	9EqrkCxw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLPbD-00000007HJq-3Mgu;
-	Wed, 11 Dec 2024 16:30:07 +0000
-Date: Wed, 11 Dec 2024 16:30:07 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] fs: fix is_mnt_ns_file()
-Message-ID: <20241211163007.GG3387508@ZenIV>
-References: <20241211121118.85268-1-mszeredi@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rAdNKhQNzU0jJwPoQ2EO0cy2zmG7IxaYaEhV0P//UjrXUJpYnkqbddlcPO/QCt8Yk+rs1Obt2gMzoRcWJYu7z6zC9bi3+skNiLV3TQjB+yhEgm1c8LQerX2QNzNuw+kTLYpCuEt6pk4i5ZaDZa+h0xBMteYKC82woqOBUmSuxBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSoWiScB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6F0C4CEDE;
+	Wed, 11 Dec 2024 16:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733934870;
+	bh=yBxhaTjfOizIhOczBCvRSt8i8RfB5LwMMeLFbd3UysI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dSoWiScBUlCsToFXFuXL3LSMYazRBp+tcfmfCWJIPJnP+olYjZ+rDyEkpIaLt23H7
+	 4mYaySe1iZi556hXu8HlOGHFrYyBjC7kd2zNhfHaUbrf1gENqsbYq1ro540e7zuFxi
+	 Qdp50omglB60PKm3EYgakvDLOFLBpJejzfPqrX3ORDVjN9KtoCuWIbyhMUAxzCiDX+
+	 ncbuUpqqA8+fnXv3KJZYQyw1WB9zguyxy2XNRfcNKvyGXRABqeuaYNp0KFjXPwoIDI
+	 ctIAd5lgyGOyTW4WzgUJrtjTYAIlxuDlRUt5ZgDNpPutYnH8CY44/Vn3RLvITuQCIX
+	 L8V/Mad8zzQEA==
+Date: Wed, 11 Dec 2024 17:34:26 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] samples: add test-list-all-mounts
+Message-ID: <20241211-angekauft-abluft-12f84e6db731@brauner>
+References: <20241210-work-mount-rbtree-lockless-v1-0-338366b9bbe4@kernel.org>
+ <20241210-work-mount-rbtree-lockless-v1-5-338366b9bbe4@kernel.org>
+ <50ea8aea7eff7ec8680564c10c54f6d1e4dee20b.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241211121118.85268-1-mszeredi@redhat.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <50ea8aea7eff7ec8680564c10c54f6d1e4dee20b.camel@kernel.org>
 
-On Wed, Dec 11, 2024 at 01:11:17PM +0100, Miklos Szeredi wrote:
-> Commit 1fa08aece425 ("nsfs: convert to path_from_stashed() helper") reused
-> nsfs dentry's d_fsdata, which no longer contains a pointer to
-> proc_ns_operations.
+> Note that this replicates a lot of the functionality of the "mountinfo"
+> program. You could also extend that program with a different output
+> format instead of adding a new one.
 
-Acked-by: Al Viro <viro@zeniv.linux.org.uk>
+Fair. I'll see what I can do.
 
