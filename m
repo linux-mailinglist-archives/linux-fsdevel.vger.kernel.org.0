@@ -1,394 +1,523 @@
-Return-Path: <linux-fsdevel+bounces-37008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA289EC49D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 07:12:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF1B9EC4F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 07:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815D216845B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 06:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A141886D48
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 06:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0501C3F06;
-	Wed, 11 Dec 2024 06:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B0C1C07E4;
+	Wed, 11 Dec 2024 06:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FwE/iTqV"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gt4kQT9Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A63B5661
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 06:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096E76DCE1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 06:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733897566; cv=none; b=XixteN/RzodKqD/KW9bJbKq9Tyw1yY/dAr4PMNavRVzWsmGm7FyugTkUDzPTdNHVEL1rU7CeyKwL34ZhGxWDbTBGo9yKmprugsSYjl2ETIi3ECbLijVZh062x48AS3b0mNb5/P6YN5bdoFCiHr5DOcecTX+kfPkEYFA/xpKRtRo=
+	t=1733899410; cv=none; b=pYrkB3hDYl7P2uPOe/7kuEp1NfSQ4zdgUY2tsl6c4HnGc5gjs2wOYyxj6/0/q0a883JxoJGzJjIOqT9vBeBp2ZYJjxdXBfu91NfP0cgumtpsGjmSYoM/S2x3G437LZKbZCHU/OeWUnbVF/S0WYe7k8ixJkIpM0LICapkupVUDno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733897566; c=relaxed/simple;
-	bh=UywFhfkXLAXUj2HRhrsNnTpgx+D9BSDIsqMGabD+kmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VSMxF7MLQtGab2Fy7j9J4wL51jeSGhv6ZqinWJGbz2XpjABVvT1ipcFT5te0l1uZe6b3sLU2U5BymzpWtaVbY1GWeE63z9Mu9Ux22M+iClf8u7B/XI4unrPPOKLeki+gwuTaACvRccuKMR+TAdlPZi8yQm6VK6SaFOVPHvxV/Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FwE/iTqV; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-71deb3be3f1so284686a34.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2024 22:12:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733897563; x=1734502363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LrstZ9FI7oDoywTSDKrx13VheyHzF0xgj4Fa7hmhx4k=;
-        b=FwE/iTqVR2wByuC+n2xY1XwwJp79ApyuwTNsrhqXvXY6ZhDodZ8dPXcb7IxN++GsTP
-         PIgM9eU2NWgXL+hY8ztPBRcmHYebzjuaICTNcXp7wu8MMoy8lQMHUaHByiGXyMIcN19G
-         xNBX3O/e08Zxhz1+cUaNXDGjmv7rGZcP9ghzE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733897563; x=1734502363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LrstZ9FI7oDoywTSDKrx13VheyHzF0xgj4Fa7hmhx4k=;
-        b=cjtPraX+gpB1TSV8l888ynVh94lFESRz9cyS0VKMWFiJbjelLrG89hir84WnP6gv0z
-         Q5JgJrlVk4Umuwebc6FKVv5l861tCrK8ATOW+KL3X8y9hAO8LphtnOzu9/utvyBsQ3Gi
-         z/l1IiK77KCVXZ5+OncUf9PgMK3Z63rDkxd1xZjRjxgduLnPFuxggvzPNhmVl8fBY/xA
-         NAUPNq7il/NjwIoSPE4UB4xCtRTQ+WoDhFZ63ovdb3HC17svGb1Crs9RkYZ+bj/9Hxwc
-         fxbu91iM1mRbn1E0WGbBBBTJ6BOyfZtiYogR8+unkm0Ve/BG4BI+mgufmnxSpvzkhRn0
-         0cQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzxNoYvLa32x5A19kFKgiaN9hSwKD5bck5j4+TxYqucJQGx+nQE73ZknXUL+Aqr4zPR9YB5izJBuIlEiLv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1YPg8H+14XsH2tqfTHOzYAnfqv6ACLOh8M2+s3mY5Ua7saF6v
-	2tK4Nm++8kx1QFU3n7kZ1QxnnvJXTdT9omi2J7G+4MZKrkd0ph/0ugk56MeCtSqvPXQSxJ0T7MU
-	FF6rmyzxGxKPCUWxadR9GKKFm2/HoBMq/opee
-X-Gm-Gg: ASbGncv6BbP+fvkTwcak4jCJfpgNlAYqtGSDfs+miAEsAGU8Gta1E+facA177YceEq9
-	avhkcYnBQpkKvY2Db63P+WoIxsR7YJ2sk7iacmjHh/dDVj3yVBUr6Q98NPjkGWVN3
-X-Google-Smtp-Source: AGHT+IFjzapg7E7fLM9DyXss2TEsc/ZVX4eep97+cVt6UEkJnt1fbUvoixTfgps7XXEw1DxxiLeKZ98SLq3qa7Gdo5I=
-X-Received: by 2002:a05:6870:c153:b0:295:f266:8aee with SMTP id
- 586e51a60fabf-2a012db100emr341140fac.5.1733897562659; Tue, 10 Dec 2024
- 22:12:42 -0800 (PST)
+	s=arc-20240116; t=1733899410; c=relaxed/simple;
+	bh=E0Zjcyf1XlfUY4GoLP+zqSXyCC/+3G7rnhtdfbS0PR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uD8zKv4nHMRpAIRmWnDpsLWsEWinusiAns06kJW9aZHpWZZIepYjNwtOlDFcsXhIPBKFTwywApCbcHjFy1P/NbxCnM+3DnWx8IDywdnNTQX8ysahKBt2ug/ymTFqMMFQvQ5Tj2UuCu8R7Gnl6FF96YHOX5qB9Mnu5nBn2ID6IF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gt4kQT9Q; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 11 Dec 2024 01:43:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733899403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kLZoZ6n8W31NDqwQf68JRWlhpJKQbvjd03zPTRaMY6k=;
+	b=gt4kQT9QIL2hIBoZZ+EFic4Fylg52l5IMzbG5O5OQPu2wmpJNj7aF+y9wbe/ycLoNwsWJq
+	2XGdfBTHygocknG4UDocmRxP6oqduBn5lCbj0y/7vkZp9SfQux5rmGdJLN9IZARDuPIvoH
+	SMlZ0w101yvhJoYnphmbR7SMxCMho8A=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, 
+	Josef Bacik <josef@toxicpanda.com>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: silent data corruption in fuse in rc1
+Message-ID: <pdvbj2nuofgmb3orah6xrale7s47pqz3owrh7ak4flzofd2u7j@cwgbgnwayqnt>
+References: <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <20241209144948.GE2840216@perftesting>
+ <Z1cMjlWfehN6ssRb@casper.infradead.org>
+ <20241209154850.GA2843669@perftesting>
+ <4707aea6-addb-4dc3-96f7-691d2e94ab25@tnxip.de>
+ <CAJnrk1apXjQw7LEgSTmjt1xywzjp=+QMfYva4k1x=H0q2S6mag@mail.gmail.com>
+ <CAJnrk1YfeNNpt2puwaMRcpDefMVg1AhjYNY4ZsKNqr85=WLXDg@mail.gmail.com>
+ <CAJnrk1aF-_N6aBHbuWz0e+z=B4cH3GjZZ60yHRPbctMMG6Ukxw@mail.gmail.com>
+ <0f09af0f-2524-42a5-bdfa-d241c3a19329@tnxip.de>
+ <CAJnrk1ZaAGNmVYVSFieJ-02mcX4N15zKF-yyjEPeEFotMpLYBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205160925.230119-1-mic@digikod.net> <20241205160925.230119-3-mic@digikod.net>
- <20241210.FahfahPu5dae@digikod.net>
-In-Reply-To: <20241210.FahfahPu5dae@digikod.net>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 10 Dec 2024 22:12:31 -0800
-Message-ID: <CABi2SkXMKtD-_3s-HK6W2Qp2-+GaQfckVbXwsaX5FRJGnD_irQ@mail.gmail.com>
-Subject: Re: [PATCH v22 2/8] security: Add EXEC_RESTRICT_FILE and
- EXEC_DENY_INTERACTIVE securebits
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZaAGNmVYVSFieJ-02mcX4N15zKF-yyjEPeEFotMpLYBA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Dec 10, 2024 at 8:48=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Thu, Dec 05, 2024 at 05:09:19PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> > The new SECBIT_EXEC_RESTRICT_FILE, SECBIT_EXEC_DENY_INTERACTIVE, and
-> > their *_LOCKED counterparts are designed to be set by processes setting
-> > up an execution environment, such as a user session, a container, or a
-> > security sandbox.  Unlike other securebits, these ones can be set by
-> > unprivileged processes.  Like seccomp filters or Landlock domains, the
-> > securebits are inherited across processes.
+On Tue, Dec 10, 2024 at 06:57:41PM -0800, Joanne Koong wrote:
+> On Tue, Dec 10, 2024 at 9:53 AM Malte Schröder <malte.schroeder@tnxip.de> wrote:
 > >
-> > When SECBIT_EXEC_RESTRICT_FILE is set, programs interpreting code shoul=
-d
-> > control executable resources according to execveat(2) + AT_EXECVE_CHECK
-> > (see previous commit).
+> > On 10/12/2024 06:14, Joanne Koong wrote:
+> > > On Mon, Dec 9, 2024 at 11:52 AM Joanne Koong <joannelkoong@gmail.com> wrote:
+> > >> On Mon, Dec 9, 2024 at 10:47 AM Joanne Koong <joannelkoong@gmail.com> wrote:
+> > >>> On Mon, Dec 9, 2024 at 9:07 AM Malte Schröder <malte.schroeder@tnxip.de> wrote:
+> > >>>> On 09/12/2024 16:48, Josef Bacik wrote:
+> > >>>>> On Mon, Dec 09, 2024 at 03:28:14PM +0000, Matthew Wilcox wrote:
+> > >>>>>> On Mon, Dec 09, 2024 at 09:49:48AM -0500, Josef Bacik wrote:
+> > >>>>>>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I ended up
+> > >>>>>>>> with 3b97c3652d91 as the culprit.
+> > >>>>>>> Willy, I've looked at this code and it does indeed look like a 1:1 conversion,
+> > >>>>>>> EXCEPT I'm fuzzy about how how this works with large folios.  Previously, if we
+> > >>>>>>> got a hugepage in, we'd get each individual struct page back for the whole range
+> > >>>>>>> of the hugepage, so if for example we had a 2M hugepage, we'd fill in the
+> > >>>>>>> ->offset for each "middle" struct page as 0, since obviously we're consuming
+> > >>>>>>> PAGE_SIZE chunks at a time.
+> > >>>>>>>
+> > >>>>>>> But now we're doing this
+> > >>>>>>>
+> > >>>>>>>     for (i = 0; i < nfolios; i++)
+> > >>>>>>>             ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+> > >>>>>>>
+> > >>>>>>> So if userspace handed us a 2M hugepage, page_folio() on each of the
+> > >>>>>>> intermediary struct page's would return the same folio, correct?  So we'd end up
+> > >>>>>>> with the wrong offsets for our fuse request, because they should be based from
+> > >>>>>>> the start of the folio, correct?
+> > >>>>>> I think you're 100% right.  We could put in some nice asserts to check
+> > >>>>>> this is what's happening, but it does seem like a rather incautious
+> > >>>>>> conversion.  Yes, all folios _in the page cache_ for fuse are small, but
+> > >>>>>> that's not guaranteed to be the case for folios found in userspace for
+> > >>>>>> directio.  At least the comment is wrong, and I'd suggest the code is too.
+> > >>>>> Ok cool, Malte can you try the attached only compile tested patch and see if the
+> > >>>>> problem goes away?  Thanks,
+> > >>>>>
+> > >>>>> Josef
+> > >>>>>
+> > >>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > >>>>> index 88d0946b5bc9..c4b93ead99a5 100644
+> > >>>>> --- a/fs/fuse/file.c
+> > >>>>> +++ b/fs/fuse/file.c
+> > >>>>> @@ -1562,9 +1562,19 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+> > >>>>>               nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
+> > >>>>>
+> > >>>>>               ap->descs[ap->num_folios].offset = start;
+> > >>>>> -             fuse_folio_descs_length_init(ap->descs, ap->num_folios, nfolios);
+> > >>>>> -             for (i = 0; i < nfolios; i++)
+> > >>>>> -                     ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+> > >>>>> +             for (i = 0; i < nfolios; i++) {
+> > >>>>> +                     struct folio *folio = page_folio(pages[i]);
+> > >>>>> +                     unsigned int offset = start +
+> > >>>>> +                             (folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
+> > >>>>> +                     unsigned int len = min_t(unsigned int, ret, folio_size(folio) - offset);
+> > >>>>> +
+> > >>>>> +                     len = min_t(unsigned int, len, PAGE_SIZE);
+> > >>>>> +
+> > >>>>> +                     ap->descs[ap->num_folios + i].offset = offset;
+> > >>>>> +                     ap->descs[ap->num_folios + i].length = len;
+> > >>>>> +                     ap->folios[i + ap->num_folios] = folio;
+> > >>>>> +                     start = 0;
+> > >>>>> +             }
+> > >>>>>
+> > >>>>>               ap->num_folios += nfolios;
+> > >>>>>               ap->descs[ap->num_folios - 1].length -=
+> > >>>> The problem persists with this patch.
+> > >>>>
+> > >> Malte, could you try Josef's patch except with that last line
+> > >> "ap->descs[ap->num_pages - 1].length  -= (PAGE_SIZE - ret) &
+> > >> (PAGE_SIZE - 1);" also removed? I think we need that line removed as
+> > >> well since that does a "-=" instead of a "=" and
+> > >> ap->descs[ap->num_folios - 1].length gets set inside the for loop.
+> > >>
+> > >> In the meantime, I'll try to get a local repro running on fsx so that
+> > >> you don't have to keep testing out repos for us.
+> > > I was able to repro this locally by doing:
+> > >
+> > > -- start libfuse server --
+> > > sudo ./libfuse/build/example/passthrough_hp --direct-io ~/src ~/fuse_mount
+> > >
+> > > -- patch + compile this (rough / ugly-for-now) code snippet --
+> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > index 777ba0de..9f040bc4 100644
+> > > --- a/ltp/fsx.c
+> > > +++ b/ltp/fsx.c
+> > > @@ -1049,7 +1049,8 @@ dowrite(unsigned offset, unsigned size)
+> > >         }
+> > >  }
+> > >
+> > > -
+> > > +#define TWO_MIB (1 << 21)  // 2 MiB in bytes
+> > >
+> > >  void
+> > >  domapwrite(unsigned offset, unsigned size)
+> > >  {
+> > > @@ -1057,6 +1058,8 @@ domapwrite(unsigned offset, unsigned size)
+> > >         unsigned map_size;
+> > >         off_t    cur_filesize;
+> > >         char    *p;
+> > > +       int ret;
+> > > +       unsigned size_2mib_aligned;
+> > >
+> > >         offset -= offset % writebdy;
+> > >         if (size == 0) {
+> > > @@ -1101,6 +1104,41 @@ domapwrite(unsigned offset, unsigned size)
+> > >         pg_offset = offset & PAGE_MASK;
+> > >         map_size  = pg_offset + size;
+> > >
+> > > +       size_2mib_aligned = (size + TWO_MIB - 1) & ~(TWO_MIB - 1);
+> > > +       void *placeholder_map = mmap(NULL, size_2mib_aligned * 2, PROT_NONE,
+> > > +                            MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> > > +       if (!placeholder_map) {
+> > > +               prterr("domapwrite: placeholder map");
+> > > +               exit(202);
+> > > +       }
+> > > +
+> > > +       /* align address to nearest 2 MiB */
+> > > +       void *aligned_address =
+> > > +               (void *)(((uintptr_t)placeholder_map + TWO_MIB - 1) &
+> > > ~(TWO_MIB - 1));
+> > > +
+> > > +       void *map = mmap(aligned_address, size_2mib_aligned, PROT_READ
+> > > | PROT_WRITE,
+> > > +                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED |
+> > > MAP_POPULATE, -1, 0);
+> > > +
+> > > +       ret = madvise(map, size_2mib_aligned, MADV_COLLAPSE);
+> > > +       if (ret) {
+> > > +               prterr("domapwrite: madvise collapse");
+> > > +               exit(203);
+> > > +       }
+> > > +
+> > > +       memcpy(map, good_buf + offset, size);
+> > > +
+> > > +       if (lseek(fd, offset, SEEK_SET) == -1) {
+> > > +               prterr("domapwrite: lseek");
+> > > +               exit(204);
+> > > +       }
+> > > +
+> > > +       ret = write(fd, map, size);
+> > > +       if (ret == -1) {
+> > > +               prterr("domapwrite: write");
+> > > +               exit(205);
+> > > +       }
+> > > +
+> > > +       /*
+> > >         if ((p = (char *)mmap(0, map_size, PROT_READ | PROT_WRITE,
+> > >                               MAP_FILE | MAP_SHARED, fd,
+> > >                               (off_t)(offset - pg_offset))) == (char *)-1) {
+> > > @@ -1119,6 +1157,15 @@ domapwrite(unsigned offset, unsigned size)
+> > >                 prterr("domapwrite: munmap");
+> > >                 report_failure(204);
+> > >         }
+> > > +       */
+> > > +       if (munmap(map, size_2mib_aligned) != 0) {
+> > > +               prterr("domapwrite: munmap map");
+> > > +               report_failure(206);
+> > > +       }
+> > > +       if (munmap(placeholder_map, size_2mib_aligned * 2) != 0) {
+> > > +               prterr("domapwrite: munmap placeholder_map");
+> > > +               report_failure(207);
+> > > +       }
+> > >  }
+> > >
+> > > -- run fsx test --
+> > > sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+> > >
+> > > On the offending commit 3b97c3652, I'm seeing:
+> > > [user]$ sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+> > > Will begin at operation 3
+> > > Seed set to 1
+> > > ...
+> > > READ BAD DATA: offset = 0x1925f, size = 0xf7a3, fname =
+> > > /home/user/fuse_mount/example.txt
+> > > OFFSET      GOOD    BAD     RANGE
+> > > 0x1e43f     0x4b4a  0x114a  0x0
+> > > operation# (mod 256) for the bad data may be 74
+> > > 0x1e441     0xa64a  0xeb4a  0x1
+> > > operation# (mod 256) for the bad data may be 74
+> > > 0x1e443     0x264a  0xe44a  0x2
+> > > operation# (mod 256) for the bad data may be 74
+> > > 0x1e445     0x254a  0x9e4a  0x3
+> > > ...
+> > > Correct content saved for comparison
+> > > (maybe hexdump "/home/user/fuse_mount/example.txt" vs
+> > > "/home/user/fuse_mount/example.txt.fsxgood")
+> > >
+> > >
+> > > I tested Josef's patch with the "ap->descs[ap->num_pages - 1].length
+> > > -= (PAGE_SIZE - ret) & (PAGE_SIZE - 1);" line removed and it fixed the
+> > > issue:
+> > >
+> > > [user]$ sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+> > > Will begin at operation 3
+> > > Seed set to 1
+> > > ...
+> > > copying to largest ever: 0x3e19b
+> > > copying to largest ever: 0x3e343
+> > > fallocating to largest ever: 0x40000
+> > > All 5000 operations completed A-OK!
+> > >
+> > >
+> > > Malte, would you mind double-checking whether this fixes the issue
+> > > you're seeing on your end?
 > >
-> > When SECBIT_EXEC_DENY_INTERACTIVE is set, a process should deny
-> > execution of user interactive commands (which excludes executable
-> > regular files).
-> >
-> > Being able to configure each of these securebits enables system
-> > administrators or owner of image containers to gradually validate the
-> > related changes and to identify potential issues (e.g. with interpreter
-> > or audit logs).
-> >
-> > It should be noted that unlike other security bits, the
-> > SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE bits are
-> > dedicated to user space willing to restrict itself.  Because of that,
-> > they only make sense in the context of a trusted environment (e.g.
-> > sandbox, container, user session, full system) where the process
-> > changing its behavior (according to these bits) and all its parent
-> > processes are trusted.  Otherwise, any parent process could just execut=
-e
-> > its own malicious code (interpreting a script or not), or even enforce =
-a
-> > seccomp filter to mask these bits.
-> >
-> > Such a secure environment can be achieved with an appropriate access
-> > control (e.g. mount's noexec option, file access rights, LSM policy) an=
-d
-> > an enlighten ld.so checking that libraries are allowed for execution
-> > e.g., to protect against illegitimate use of LD_PRELOAD.
-> >
-> > Ptrace restrictions according to these securebits would not make sense
-> > because of the processes' trust assumption.
-> >
-> > Scripts may need some changes to deal with untrusted data (e.g. stdin,
-> > environment variables), but that is outside the scope of the kernel.
-> >
-> > See chromeOS's documentation about script execution control and the
-> > related threat model:
-> > https://www.chromium.org/chromium-os/developer-library/guides/security/=
-noexec-shell-scripts/
-> >
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Andy Lutomirski <luto@amacapital.net>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241205160925.230119-3-mic@digikod.net
-> > ---
-> >
-> > Changes since v21:
-> > * Extend user documentation with exception regarding tailored execution
-> >   environments (e.g. chromeOS's libc) as discussed with Jeff.
-> >
-> > Changes since v20:
-> > * Move UAPI documentation to a dedicated RST file and format it.
-> >
-> > Changes since v19:
-> > * Replace SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT with
-> >   SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE:
-> >   https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
-> > * Remove the ptrace restrictions, suggested by Andy.
-> > * Improve documentation according to the discussion with Jeff.
-> >
-> > New design since v18:
-> > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
-> > ---
-> >  Documentation/userspace-api/check_exec.rst | 107 +++++++++++++++++++++
-> >  include/uapi/linux/securebits.h            |  24 ++++-
-> >  security/commoncap.c                       |  29 ++++--
-> >  3 files changed, 153 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/Documentation/userspace-api/check_exec.rst b/Documentation=
-/userspace-api/check_exec.rst
-> > index 393dd7ca19c4..05dfe3b56f71 100644
-> > --- a/Documentation/userspace-api/check_exec.rst
-> > +++ b/Documentation/userspace-api/check_exec.rst
-> > @@ -5,6 +5,31 @@
-> >  Executability check
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > +The ``AT_EXECVE_CHECK`` :manpage:`execveat(2)` flag, and the
-> > +``SECBIT_EXEC_RESTRICT_FILE`` and ``SECBIT_EXEC_DENY_INTERACTIVE`` sec=
-urebits
-> > +are intended for script interpreters and dynamic linkers to enforce a
-> > +consistent execution security policy handled by the kernel.  See the
-> > +`samples/check-exec/inc.c`_ example.
-> > +
-> > +Whether an interpreter should check these securebits or not depends on=
- the
-> > +security risk of running malicious scripts with respect to the executi=
-on
-> > +environment, and whether the kernel can check if a script is trustwort=
-hy or
-> > +not.  For instance, Python scripts running on a server can use arbitra=
-ry
-> > +syscalls and access arbitrary files.  Such interpreters should then be
-> > +enlighten to use these securebits and let users define their security =
-policy.
-> > +However, a JavaScript engine running in a web browser should already b=
-e
-> > +sandboxed and then should not be able to harm the user's environment.
-> > +
-> > +Script interpreters or dynamic linkers built for tailored execution en=
-vironments
-> > +(e.g. hardened Linux distributions or hermetic container images) could=
- use
-> > +``AT_EXECVE_CHECK`` without checking the related securebits if backwar=
-d
-> > +compatibility is handled by something else (e.g. atomic update ensurin=
-g that
-> > +all legitimate libraries are allowed to be executed).  It is then reco=
-mmended
-> > +for script interpreters and dynamic linkers to check the securebits at=
- run time
-> > +by default, but also to provide the ability for custom builds to behav=
-e like if
-> > +``SECBIT_EXEC_RESTRICT_FILE`` or ``SECBIT_EXEC_DENY_INTERACTIVE`` were=
- always
-> > +set to 1 (i.e. always enforce restrictions).
->
-> Jeff, does this work for you?
->
-Yes. Thanks for updating this section.
+> > My test still fails.
+> 
+> Hi Malte,
+> 
+> I simulated your repro with installing bcachefs as the root filesystem
+> on a VM running Arch, then running "sudo pacman -S flatpak" and then
+> installing FreeCAD with "flatpak install flathub org.freecad.FreeCAD".
+> 
+> On base commit 3b97c3652, I see the same corruption you noted:
+> 
+> error: Failed to install org.kde.Platform: Error pulling from repo:
+> While pulling runtime/org.kde.Platform/x86_64/6.7 from remote flathub:
+> fsck content object
+> 886fd60617b81e81475db5e62beda5846d3e85fe77562eae536d2dd2a7af5b33:
+> Corrupted file object; checksum
+> expected='886fd60617b81e81475db5e62beda5846d3e85fe77562eae536d2dd2a7af5b33'
+> actual='67f5a60d19f7a65e1ee272d455fed138b864be73399816ad18fa71319614a418'
+> 
+> 
+> i tried this patch on top of commit 3b97c3652 and it fixed it for me:
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 14af8c41fc83..0d213a22972b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1560,18 +1560,24 @@ static int fuse_get_user_pages(struct
+> fuse_args_pages *ap, struct iov_iter *ii,
+> 
+>                 nbytes += ret;
+> 
+> -               ret += start;
+> -               /* Currently, all folios in FUSE are one page */
+> -               nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
+> -
+> -               ap->folio_descs[ap->num_folios].offset = start;
+> -               fuse_folio_descs_length_init(ap->folio_descs,
+> ap->num_folios, nfolios);
+> -               for (i = 0; i < nfolios; i++)
+> -                       ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+> -
+> -               ap->num_folios += nfolios;
+> -               ap->folio_descs[ap->num_folios - 1].length -=
+> -                       (PAGE_SIZE - ret) & (PAGE_SIZE - 1);
+> +               nfolios = DIV_ROUND_UP(ret + start, PAGE_SIZE);
+> +
+> +               for (i = 0; i < nfolios; i++) {
+> +                       struct folio *folio = page_folio(pages[i]);
+> +                       unsigned int offset = start +
+> +                               (folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
+> +                       unsigned int len = min_t(unsigned int, ret,
+> folio_size(folio) - offset);
+> +
+> +                       len = min_t(unsigned int, len, PAGE_SIZE - start);
+> +
+> +                       ap->descs[ap->num_folios].offset = offset;
+> +                       ap->descs[ap->num_folios].length = len;
+> +                       ap->folios[ap->num_folios] = folio;
+> +                       start = 0;
+> +                       ret -= len;
+> +                       ap->num_folios++;
+> +               }
+> +
+>                 nr_pages += nfolios;
+>         }
+>         kfree(pages);
+> 
+> I ran this multiple times and don't see the corruption issues.
+> 
+> However, I do see another issue crop up on some of my VMs, which is
+> flatpak hanging with this corresponding stack trace:
+> 
+> [  368.520976] INFO: task pool-/usr/lib/f:582 blocked for more than 122 seconds.
+> [  368.521509]       Not tainted 6.12.0-rc1-g86b74eb5a11e #734
+> [  368.521905] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [  368.522483] task:pool-/usr/lib/f state:D stack:0     pid:582
+> tgid:405   ppid:1      flags:0x00000002
+> [  368.523238] Call Trace:
+> [  368.523411]  <TASK>
+> [  368.523548]  __schedule+0xaf0/0x27f0
+> [  368.523773]  ? __pfx___schedule+0x10/0x10
+> [  368.524024]  schedule+0x7e/0x300
+> [  368.524233]  __wait_on_freeing_inode+0xda/0x120
+> [  368.524527]  ? __pfx___wait_on_freeing_inode+0x10/0x10
+> [  368.524830]  ? _raw_spin_unlock_irqrestore+0xe/0x30
+> [  368.525124]  ? __pfx_wake_bit_function+0x10/0x10
+> [  368.525411]  bch2_inode_hash_find+0x372/0x580
+> [  368.525700]  ? __pfx_bch2_dirent_read_target+0x10/0x10
+> [  368.526023]  ? bch2_dirent_hash+0x23d/0x370
+> [  368.526286]  ? __pfx_bch2_inode_hash_find+0x10/0x10
+> [  368.526583]  ? __pfx_dirent_cmp_key+0x10/0x10
+> [  368.526972]  bch2_lookup_trans+0x61a/0x990
+> [  368.527247]  ? __pfx_bch2_lookup_trans+0x10/0x10
+> [  368.527559]  ? __do_sys_newfstatat+0x75/0xd0
+> [  368.527850]  ? do_syscall_64+0x4b/0x110
+> [  368.528088]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  368.528411]  ? __pfx_bch2_hash_info_init+0x10/0x10
+> [  368.528720]  ? __mod_memcg_state+0x102/0x390
+> [  368.529134]  ? obj_cgroup_charge+0x1b4/0x4c0
+> [  368.529500]  ? __memcg_slab_post_alloc_hook+0x536/0xba0
+> [  368.529913]  ? kvm_sched_clock_read+0x11/0x20
+> [  368.530265]  ? _raw_spin_lock+0x85/0xe0
+> [  368.530553]  ? bch2_lookup_trans+0x323/0x990
+> [  368.530909]  ? __asan_memset+0x24/0x50
+> [  368.531204]  ? __bch2_trans_get+0x735/0xdd0
+> [  368.531525]  ? bch2_lookup+0x18a/0x350
+> [  368.531859]  bch2_lookup+0x18a/0x350
+> [  368.532145]  ? __pfx_bch2_lookup+0x10/0x10
+> [  368.532466]  ? __pfx_lockref_get_not_dead+0x10/0x10
+> [  368.532860]  __lookup_slow+0x182/0x350
+> [  368.533159]  ? __pfx___lookup_slow+0x10/0x10
+> [  368.533513]  walk_component+0x2ab/0x4f0
+> [  368.533816]  path_lookupat+0x120/0x660
+> [  368.534110]  ? vfs_fstatat+0x53/0xb0
+> [  368.534413]  filename_lookup+0x1aa/0x520
+> [  368.534718]  ? __pfx_filename_lookup+0x10/0x10
+> [  368.535052]  ? __wake_up_common+0xf2/0x170
+> [  368.535385]  ? _raw_spin_unlock_irq+0xe/0x30
+> [  368.535683]  ? __pfx_eventfd_write+0x10/0x10
+> [  368.536019]  ? kasan_save_stack+0x24/0x50
+> [  368.536313]  ? __kasan_record_aux_stack+0xad/0xc0
+> [  368.536651]  ? kmem_cache_free+0x353/0x550
+> [  368.536919]  ? do_syscall_64+0x4b/0x110
+> [  368.537179]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  368.537528]  vfs_statx+0xbf/0x140
+> [  368.537745]  ? kmem_cache_alloc_noprof+0x12d/0x340
+> [  368.538057]  ? __pfx_vfs_statx+0x10/0x10
+> [  368.538322]  ? getname_flags.part.0+0xaf/0x4a0
+> [  368.538627]  vfs_fstatat+0x6c/0xb0
+> [  368.538840]  __do_sys_newfstatat+0x75/0xd0
+> [  368.539100]  ? __pfx___do_sys_newfstatat+0x10/0x10
+> [  368.539415]  ? kasan_unpoison+0x27/0x60
+> [  368.539675]  ? __pfx_slab_free_after_rcu_debug+0x10/0x10
+> [  368.540081]  ? fdget_pos+0x366/0x5d0
+> [  368.540355]  ? fput+0x1b/0x2d0
+> [  368.540602]  ? ksys_write+0x18c/0x1c0
+> [  368.540934]  ? __pfx_ksys_write+0x10/0x10
+> [  368.541252]  ? fpregs_assert_state_consistent+0x20/0xa0
+> [  368.541657]  ? clear_bhb_loop+0x45/0xa0
+> [  368.541948]  do_syscall_64+0x4b/0x110
+> [  368.542270]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  368.542711] RIP: 0033:0x7fef789bb94e
+> [  368.543001] RSP: 002b:00007fef713fe468 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000106
+> [  368.543605] RAX: ffffffffffffffda RBX: 00007fef713fe5d0 RCX: 00007fef789bb94e
+> [  368.544129] RDX: 00007fef713fe540 RSI: 00007fef713fe5d0 RDI: 000000000000001f
+> [  368.544636] RBP: 00007fef713ff710 R08: 0000000000000073 R09: 0000000000000000
+> [  368.545130] R10: 0000000000000100 R11: 0000000000000246 R12: 000000000000001f
+> [  368.545640] R13: 00007fef713fe540 R14: 00007fef5802dc00 R15: 00007fef713ff780
+> [  368.546177]  </TASK>
+> 
+> I'm seeing this happen on commit 86b74eb5 as well, which is the commit
+> that's before any of my or Josef's folio changes, and this persists
+> across reboots. I've seen this happen for a couple other tasks too,
+> "task:flatpak" and "task:pool-flatpak" with similar stack traces eg
+> 
+> [  368.505270] task:pool-flatpak in state:D stack:0     pid:568
+> tgid:538   ppid:537    flags:0x00000002
+> [  368.505872] Call Trace:
+> [  368.506042]  <TASK>
+> [  368.506191]  __schedule+0xaf0/0x27f0
+> [  368.506430]  ? __pfx___schedule+0x10/0x10
+> [  368.506715]  schedule+0x7e/0x300
+> [  368.506940]  __wait_on_freeing_inode+0xda/0x120
+> [  368.507490]  ? __pfx___wait_on_freeing_inode+0x10/0x10
+> [  368.507965]  ? _raw_spin_unlock_irqrestore+0xe/0x30
+> [  368.508312]  ? __pfx_wake_bit_function+0x10/0x10
+> [  368.508650]  bch2_inode_hash_find+0x372/0x580
+> [  368.508969]  ? __pfx_bch2_dirent_read_target+0x10/0x10
+> [  368.509332]  ? bch2_dirent_hash+0x23d/0x370
+> [  368.509637]  ? __pfx_bch2_inode_hash_find+0x10/0x10
+> [  368.509991]  ? __pfx_dirent_cmp_key+0x10/0x10
+> [  368.510309]  bch2_lookup_trans+0x61a/0x990
+> [  368.510662]  ? __pfx_bch2_lookup_trans+0x10/0x10
+> [  368.511155]  ? vfs_statx+0xbf/0x140
+> [  368.511429]  ? vfs_fstatat+0x6c/0xb0
+> [  368.511731]  ? do_syscall_64+0x4b/0x110
+> [  368.512014]  ? __d_alloc+0x5cc/0x8f0
+> [  368.512283]  ? memcg_list_lru_alloc+0x184/0x8a0
+> [  368.512612]  ? __pfx_bch2_hash_info_init+0x10/0x10
+> [  368.512943]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  368.513327]  ? __memcg_slab_post_alloc_hook+0x536/0xba0
+> [  368.513753]  ? kvm_sched_clock_read+0x11/0x20
+> [  368.514133]  ? _raw_spin_lock+0x85/0xe0
+> [  368.515095]  ? bch2_lookup_trans+0x323/0x990
+> [  368.516994]  ? __asan_memset+0x24/0x50
+> [  368.517294]  ? __bch2_trans_get+0x735/0xdd0
+> [  368.517675]  ? bch2_lookup+0x18a/0x350
+> [  368.517987]  bch2_lookup+0x18a/0x350
+> [  368.518271]  ? __pfx_bch2_lookup+0x10/0x10
+> [  368.518568]  ? __pfx_lockref_get_not_dead+0x10/0x10
+> [  368.518933]  __lookup_slow+0x182/0x350
+> [  368.519264]  ? __pfx___lookup_slow+0x10/0x10
+> [  368.519633]  walk_component+0x2ab/0x4f0
+> [  368.519934]  ? fput+0x1b/0x2d0
+> [  368.520206]  link_path_walk.part.0.constprop.0+0x4ad/0xac0
+> [  368.520657]  path_lookupat+0x72/0x660
+> [  368.521022]  ? vfs_fstatat+0x53/0xb0
+> [  368.521343]  filename_lookup+0x1aa/0x520
+> [  368.521664]  ? __pfx_filename_lookup+0x10/0x10
+> [  368.522021]  ? __pfx_xa_load+0x10/0x10
+> [  368.522319]  ? ___slab_alloc+0x128/0x9d0
+> [  368.522683]  ? mntput_no_expire+0xcf/0x760
+> [  368.523018]  ? lockref_put_return+0xc7/0x140
+> [  368.523357]  ? kmem_cache_free+0x19e/0x550
+> [  368.523686]  ? __pfx_mutex_unlock+0x10/0x10
+> [  368.524035]  ? do_renameat2+0x1f4/0xa50
+> [  368.524404]  ? do_renameat2+0x1f4/0xa50
+> [  368.524716]  vfs_statx+0xbf/0x140
+> [  368.524980]  ? kmem_cache_alloc_noprof+0x12d/0x340
+> [  368.525355]  ? __pfx_vfs_statx+0x10/0x10
+> [  368.525702]  ? getname_flags.part.0+0xaf/0x4a0
+> [  368.526080]  vfs_fstatat+0x6c/0xb0
+> [  368.526391]  __do_sys_newfstatat+0x75/0xd0
+> [  368.526745]  ? __pfx___do_sys_newfstatat+0x10/0x10
+> [  368.527206]  ? do_symlinkat+0x15d/0x260
+> [  368.527509]  ? do_mkdirat+0x19d/0x2c0
+> [  368.527807]  ? kasan_save_track+0x14/0x30
+> [  368.528132]  ? getname_flags.part.0+0xaf/0x4a0
+> [  368.528509]  ? fpregs_assert_state_consistent+0x20/0xa0
+> [  368.529198]  ? clear_bhb_loop+0x45/0xa0
+> [  368.529536]  do_syscall_64+0x4b/0x110
+> [  368.529856]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  368.530279] RIP: 0033:0x7f592256194e
+> [  368.530610] RSP: 002b:00007f5915bfe548 EFLAGS: 00000217 ORIG_RAX:
+> 0000000000000106
+> [  368.531350] RAX: ffffffffffffffda RBX: 0000000000000013 RCX: 00007f592256194e
+> [  368.531943] RDX: 00007f5915bfe570 RSI: 00007f5915bfe600 RDI: 0000000000000013
+> [  368.532491] RBP: 00007f5915bfe740 R08: 0000000000000073 R09: 0000000000000000
+> [  368.533048] R10: 0000000000000100 R11: 0000000000000217 R12: 00007f5915bfe570
+> [  368.533597] R13: 00007f5915bfe600 R14: 00007f5915bfe56c R15: 00007f5915bfe780
+> [  368.534236]  </TASK>
+> [  368.534419] INFO: task pool-flatpak in:571 blocked for more than 122 seconds.
+> 
+> This seems like something we should investigate as well. I'm happy to
+> help repro this if needed. I'm able to hit this pretty consistently.
+> 
+> Malte, would you mind applying the patch above and confirming if this
+> fixes it for you on your VM? And while you've been running flatpak,
+> have you also been seeing some flatpak tasks hanging on some of your
+> VMs?
 
-
-> I'll update the IMA patch with a last version but otherwise it should be
-> good: https://lore.kernel.org/all/20241210.Wie6ion7Aich@digikod.net/
->
-> > +
-> >  AT_EXECVE_CHECK
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > @@ -35,3 +60,85 @@ be executable, which also requires integrity guarant=
-ees.
-> >  To avoid race conditions leading to time-of-check to time-of-use issue=
-s,
-> >  ``AT_EXECVE_CHECK`` should be used with ``AT_EMPTY_PATH`` to check aga=
-inst a
-> >  file descriptor instead of a path.
-> > +
-> > +SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +When ``SECBIT_EXEC_RESTRICT_FILE`` is set, a process should only inter=
-pret or
-> > +execute a file if a call to :manpage:`execveat(2)` with the related fi=
-le
-> > +descriptor and the ``AT_EXECVE_CHECK`` flag succeed.
-> > +
-> > +This secure bit may be set by user session managers, service managers,
-> > +container runtimes, sandboxer tools...  Except for test environments, =
-the
-> > +related ``SECBIT_EXEC_RESTRICT_FILE_LOCKED`` bit should also be set.
-> > +
-> > +Programs should only enforce consistent restrictions according to the
-> > +securebits but without relying on any other user-controlled configurat=
-ion.
-> > +Indeed, the use case for these securebits is to only trust executable =
-code
-> > +vetted by the system configuration (through the kernel), so we should =
-be
-> > +careful to not let untrusted users control this configuration.
-> > +
-> > +However, script interpreters may still use user configuration such as
-> > +environment variables as long as it is not a way to disable the secure=
-bits
-> > +checks.  For instance, the ``PATH`` and ``LD_PRELOAD`` variables can b=
-e set by
-> > +a script's caller.  Changing these variables may lead to unintended co=
-de
-> > +executions, but only from vetted executable programs, which is OK.  Fo=
-r this to
-> > +make sense, the system should provide a consistent security policy to =
-avoid
-> > +arbitrary code execution e.g., by enforcing a write xor execute policy=
-.
-> > +
-> > +When ``SECBIT_EXEC_DENY_INTERACTIVE`` is set, a process should never i=
-nterpret
-> > +interactive user commands (e.g. scripts).  However, if such commands a=
-re passed
-> > +through a file descriptor (e.g. stdin), its content should be interpre=
-ted if a
-> > +call to :manpage:`execveat(2)` with the related file descriptor and th=
-e
-> > +``AT_EXECVE_CHECK`` flag succeed.
-> > +
-> > +For instance, script interpreters called with a script snippet as argu=
-ment
-> > +should always deny such execution if ``SECBIT_EXEC_DENY_INTERACTIVE`` =
-is set.
-> > +
-> > +This secure bit may be set by user session managers, service managers,
-> > +container runtimes, sandboxer tools...  Except for test environments, =
-the
-> > +related ``SECBIT_EXEC_DENY_INTERACTIVE_LOCKED`` bit should also be set=
-.
-> > +
-> > +Here is the expected behavior for a script interpreter according to co=
-mbination
-> > +of any exec securebits:
-> > +
-> > +1. ``SECBIT_EXEC_RESTRICT_FILE=3D0`` and ``SECBIT_EXEC_DENY_INTERACTIV=
-E=3D0``
-> > +
-> > +   Always interpret scripts, and allow arbitrary user commands (defaul=
-t).
-> > +
-> > +   No threat, everyone and everything is trusted, but we can get ahead=
- of
-> > +   potential issues thanks to the call to :manpage:`execveat(2)` with
-> > +   ``AT_EXECVE_CHECK`` which should always be performed but ignored by=
- the
-> > +   script interpreter.  Indeed, this check is still important to enabl=
-e systems
-> > +   administrators to verify requests (e.g. with audit) and prepare for
-> > +   migration to a secure mode.
-> > +
-> > +2. ``SECBIT_EXEC_RESTRICT_FILE=3D1`` and ``SECBIT_EXEC_DENY_INTERACTIV=
-E=3D0``
-> > +
-> > +   Deny script interpretation if they are not executable, but allow
-> > +   arbitrary user commands.
-> > +
-> > +   The threat is (potential) malicious scripts run by trusted (and not=
- fooled)
-> > +   users.  That can protect against unintended script executions (e.g.=
- ``sh
-> > +   /tmp/*.sh``).  This makes sense for (semi-restricted) user sessions=
-.
-> > +
-> > +3. ``SECBIT_EXEC_RESTRICT_FILE=3D0`` and ``SECBIT_EXEC_DENY_INTERACTIV=
-E=3D1``
-> > +
-> > +   Always interpret scripts, but deny arbitrary user commands.
-> > +
-> > +   This use case may be useful for secure services (i.e. without inter=
-active
-> > +   user session) where scripts' integrity is verified (e.g.  with IMA/=
-EVM or
-> > +   dm-verity/IPE) but where access rights might not be ready yet.  Ind=
-eed,
-> > +   arbitrary interactive commands would be much more difficult to chec=
-k.
-> > +
-> > +4. ``SECBIT_EXEC_RESTRICT_FILE=3D1`` and ``SECBIT_EXEC_DENY_INTERACTIV=
-E=3D1``
-> > +
-> > +   Deny script interpretation if they are not executable, and also den=
-y
-> > +   any arbitrary user commands.
-> > +
-> > +   The threat is malicious scripts run by untrusted users (but trusted=
- code).
-> > +   This makes sense for system services that may only execute trusted =
-scripts.
-> > +
-> > +.. Links
-> > +.. _samples/check-exec/inc.c:
-> > +   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/samples/check-exec/inc.c
->
-Reviewed-by: Jeff Xu < jeffxu@chromium.org>
-Tested-by: Jeff Xu <jeffxu@chromium.org>
+You're testing with snapshots? That one is fixed in my master branch.
 
