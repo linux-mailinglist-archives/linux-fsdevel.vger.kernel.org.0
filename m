@@ -1,64 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-37045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B319D9ECA46
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:24:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D47689ECA67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B317188BB88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 10:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63F97188CFCD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 10:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34582210C0;
-	Wed, 11 Dec 2024 10:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379831EC4FF;
+	Wed, 11 Dec 2024 10:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHZtto9l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bu9+cciU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3432101B8;
-	Wed, 11 Dec 2024 10:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96767187872
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 10:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733912632; cv=none; b=Uv6V3Xt0Izw24aMMItO+3mUv4BCDJE8108vIcClz/3g6p3AXaMab+bgp2Wao+fAu/wE0sLklBFJRsZmsKza+wN+JsIlYLXVlvXoqB+PffqfEaf/SSqKso3H4dID1k4VQ2KgL93Spvi6g4YqiANDaChLR63+PkWTv3+Lb8Mwa+G0=
+	t=1733913280; cv=none; b=iIODLYIbroVdxVCx679zOGbx/X5vFuRupz7/aoPv/ZdzEV/cB6T+z5gdKpiPdPAoRi2RoAz91EHR6nHQNafwsqYBff3QfDINVhoZWI6ZZz/VuJYIOUO9Mo96ZBqU3kINbuw6BaDKCWJR08tbUi+kCSJtnPGdQSDXQrIEZCFVzlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733912632; c=relaxed/simple;
-	bh=qqqXOv/RjcZrs4T7tVuZ+X03T1XAPT1JxkdxrPXPDr8=;
+	s=arc-20240116; t=1733913280; c=relaxed/simple;
+	bh=LszskfERr22cTTni6wtDZMCQsRQlp2Ntjxa4MSYEYrQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCXQiDB/2mA8nhmrWuqK5JQSCVXFvrK3faLU8/JqH6Z78Xsv7wDsgco/fZwAcAHkV+L836zWwCVuOMJekxAIcZZ2JsgK1PfV8+8//z0UPhUEkATnjjMaWgNp3YGDMK33Q85hixDzP19GC2Ck5xnBRpRp7aOBp7MvLS6chDvD+8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHZtto9l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE8EC4CED2;
-	Wed, 11 Dec 2024 10:23:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4FNwjmatNRB+I1pWfMpIevCmaTrvQ/Hr4hMlY8VDdR5qzt1+0mVJ+g3HNgY3wK2ZrKxtnrBhLk/5CrfW13IGpj+dh7rheqXeD3aBlvuskgQTMiJIACxYgPjqZYJDckwkTXGIrdApuZkZdIUUnuPD7uKSn8Gu2UAwcckj+eXL4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bu9+cciU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD00EC4CED2;
+	Wed, 11 Dec 2024 10:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733912631;
-	bh=qqqXOv/RjcZrs4T7tVuZ+X03T1XAPT1JxkdxrPXPDr8=;
+	s=k20201202; t=1733913280;
+	bh=LszskfERr22cTTni6wtDZMCQsRQlp2Ntjxa4MSYEYrQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pHZtto9lS6MacDzeDayzGJlJswaNGRfYfCsycwjp8+OZqjq+9OFXosM0zNKhWjB0o
-	 8yL1UH8JmYll1s40biRGrQAbAiaac/pGywKLTbdhWCOR4uKyg9zf2ts7LwiruwI6dU
-	 UwdLST631KKkUjdn3YaEFA/uKyl0obKfDYfHudh40oavb8Fn8JJQi+60InjvTZp5oZ
-	 INnxrhqTk+F4CRoq2rVOF0VViGgx/wsNopYbiR6+/2Qh0vm4e71W6olcXExgYcvO+c
-	 JDmIo3UJafgbIjie042E5Ll43N5l9/TzaEIvg4we1AekgDXfuBi8qVksfrBRT/qbVf
-	 4BlBjcwSfM3GQ==
-Date: Wed, 11 Dec 2024 11:23:43 +0100
+	b=bu9+cciUPO8hOIxbI+NabTwk8FRDADvrfz/phA3PLjKJ8Yl8MmdRbxFhyzSrc8bHc
+	 LICko342DBLJWmWVd7ZvHQgg3DnjCrFcVS/Yg+edIv+Pc5wwJMIufFi44ZLjBuyLmJ
+	 l1O+62/PAZ5UM2RwJwzh5TQbAWJoNhJ9z9PrTN+wiXk1bSZdqKmv5FaXj3mtIATqYp
+	 v7NZdWzMiWoOdKR/uVCCAKm5WEYGtQg4gLbhkDQgWdXADGnAfVkBXw2Tz/pDxIj6eq
+	 3CzYa/blXFoidNgDl/7buivaXpvJR2Qe7h6/yh26EKs0VEn+qAWDBeiOjx3/mLDvi7
+	 vbh+AvgYy4jzg==
+Date: Wed, 11 Dec 2024 11:34:35 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Florian Weimer <fweimer@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, libc-alpha@sourceware.org
-Subject: Re: [PATCH RFC v3 02/10] sched_getattr: port to copy_struct_to_user
-Message-ID: <20241211-gemsen-zuarbeiten-ae8d062ec251@brauner>
-References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
- <20241010-extensible-structs-check_fields-v3-2-d2833dfe6edd@cyphar.com>
- <87y10nz9qo.fsf@oldenburg.str.redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] fanotify: notify on mount attach and detach
+Message-ID: <20241211-boiler-akribisch-9d6972d0f620@brauner>
+References: <20241206151154.60538-1-mszeredi@redhat.com>
+ <20241206-aneinander-riefen-a9cc5e26d6ac@brauner>
+ <20241207-weihnachten-hackordnung-258e3b795512@brauner>
+ <CAJfpegsFV6CNC0OKeiOYnTZ+MjE2Xiyd0yJaMwvUBHfmfvWz4w@mail.gmail.com>
+ <20241211-mitnichten-verfolgen-3b1f3d731951@brauner>
+ <CAJfpegttXVqfjTDVSXyVmN-6kqKPuZg-6EgdBnMCGudnd6Nang@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,51 +64,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87y10nz9qo.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <CAJfpegttXVqfjTDVSXyVmN-6kqKPuZg-6EgdBnMCGudnd6Nang@mail.gmail.com>
 
-On Tue, Dec 10, 2024 at 07:14:07PM +0100, Florian Weimer wrote:
-> * Aleksa Sarai:
+On Wed, Dec 11, 2024 at 11:21:08AM +0100, Miklos Szeredi wrote:
+> On Wed, 11 Dec 2024 at 11:00, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Tue, Dec 10, 2024 at 04:10:45PM +0100, Miklos Szeredi wrote:
+> > > On Sat, 7 Dec 2024 at 22:17, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > > I took another look at f{a,s}notify. There's no copy_to_user() happening
+> > > > when adding events via fsnotify(). It happens when the caller retrieves
+> > > > events via read() from the relevant notify file descriptor. We should
+> > > > still move calls to notify_mounts() out of the namespace semaphore
+> > > > whenever we can though.
+> > >
+> > > Doesn't work.  After unlocking namespace_sem deref of mnt->prev_ns
+> > > might lead to UAF.
+> >
+> > Hm, a UAF could only be triggered by mounts that were unmounted due to
+> > umount propagation into another mount namespaces. The caller's mount
+> > namespace in mnt_ns->prev_ns cannot go away until all mounts are put.
 > 
-> > sched_getattr(2) doesn't care about trailing non-zero bytes in the
-> > (ksize > usize) case, so just use copy_struct_to_user() without checking
-> > ignored_trailing.
+> Why?   E.g. one does umount -l on a subtree in a private namespace,
+> then destroys the namespace immediately.  There's no serialization
+> between the two other than namespace_sem, so if the former releases
+> namespace_sem the namespace destruction can run to completion while
+> the detached subtree's mounts are still being processed.
+
+For that the caller has to exit or switch to another mount namespace.
+But that can only happen when all notifications have been registered.
+I may misunderstand what you mean though.
+
+> > The simple fix is to take a passive reference count. But I'm not sure
+> > what would be more expensive (holding the lock or the reference counts).
 > 
-> I think this is what causes glibc's misc/tst-sched_setattr test to fail
-> on recent kernels.  The previous non-modifying behavior was documented
-> in the manual page:
-> 
->        If the caller-provided attr buffer is larger than the kernel's
->        sched_attr structure, the additional bytes in the user-space
->        structure are not touched.
-> 
-> I can just drop this part of the test if the kernel deems both behaviors
-> valid.
+> Right, that would work, but I think holding namespace_sem for read
+> while calling fsnotify() is both simpler and more efficient.
 
-I think in general both behaviors are valid but I would consider zeroing
-the unknown parts of the provided buffer to be the safer option. And all
-newer extensible struct system calls do that.
-
-But if sched_getattr(2) wants to keep its old behavior it wouldn't be a
-problem to just handle this case:
-
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 0d71fcbaf1e3..46140ec449ba 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -1126,6 +1126,15 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
-        }
-
-        kattr.size = min(usize, sizeof(kattr));
-+       /*
-+        * If userspace passed a larger structure than the kernel knows
-+        * we historically didn't zero the unknown bits but
-+        * copy_struct_to_user() will. Retain the old behavior by
-+        * limiting the copy_to_user() to the size the kernel knows
-+        * about.
-+        */
-+       if (usize > sizeof(kattr))
-+               usize = sizeof(kattr);
-        return copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
- }
-
+Probably, although I'm still not too happy about it. Especially since
+umount propagation can generate a lot more events then mount propagation
+as it tries to be exhaustive. I guess we have to see. Would be nice to
+have proper test for this.
 
