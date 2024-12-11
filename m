@@ -1,160 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-37108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDA59EDA36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 23:40:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CC69EDA58
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 23:46:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE57D167A27
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 22:46:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB41EC4F0;
+	Wed, 11 Dec 2024 22:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="B3hCmr13";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bC+0q8om"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2BC280A0D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 22:40:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA7E20E706;
-	Wed, 11 Dec 2024 22:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="j/ejm0YH"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47AA1F4E39
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 22:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550701BC085
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 22:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956418; cv=none; b=okI89EKuju0rJvO9UM2NogDzQO5BZqzRaLxdB4/XrV/1bjI0NZQdSStwW+6WdXN4n8Pq6288sHF9R9ly1oZigHASH1lEPr7Rx7jxpy32Oica7HDQDApIcNELEA9IebirlJndBiZU53jflsxJu0csa4RRiCZEayLmpFh+wQXYdRI=
+	t=1733957205; cv=none; b=Ped9i2ufBD1rBBAQK5wPB0IeL7XN/GghgP+PqLFHD4pOGQXJ31db/JaztK72YtkOgv9u7aOHBaewCE+8pei4+nMN5UyZH1LgslfuLg8dOQV3VmKx246IupRokTLxBE/W09DCeo9QdXuB8MQ3LcOav+1RIhZZrzcAFpQyTVicKMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956418; c=relaxed/simple;
-	bh=VOGzIGGSxqcC7jyFVRhHAo+5MH48iBCMJkB64VO7HdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TL7HGY6g5U7ee4DptESI8qp9VlcIoSkgB6aik/WQkoUZIe3Djy6q8bldx4UXIalo9eErHJH5kzh80tLi+MNvBPiuUjU+QYLqyIiA/YSO6XPNwhgANz+VhUv9eha2DSSFJ+DLVja55p0RBcaGQ4m9Cy26FwOj1D5WC+9QQp6L33c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=j/ejm0YH; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2efa856e4a4so2870627a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 14:33:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733956414; x=1734561214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngWPL7F+k5wxiISlgKbwW4fjhxxXTEP4BljwhbzST3s=;
-        b=j/ejm0YH6vC3JTn6aSaULZwKVb89iCsaOgno1knpGPttaxzaexerLkwhwtTgTAYe3i
-         6Q2kT/jo7vdHRRcLmk+qxinVMGJWI/wgVjkal81UtOU3esAlKVxiJ12O1QhU1uWvvI8X
-         ZSxrcig/cUDx+ROYR1l0ciOET5DvuSjfDeuONsH1i0wqXUmYDuhm/KUq3Uh5iBa/a/rC
-         Up0NzYZQezfMvegZ6nMR4LICpIUHTEBLpt6+bS47f98Ush3v5BkEHaPPlZSMSOOExoo5
-         8dnh69STWKdciRv4FW8E2707xhq9LVyjTJLasZ7EUpFsj0J6eGhtGRoKO2RIsoebYdg/
-         NMNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733956414; x=1734561214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngWPL7F+k5wxiISlgKbwW4fjhxxXTEP4BljwhbzST3s=;
-        b=i6y7PO50/IgceSyqCDSgphEWsH3TTXrNW1tR4D7FuUqt2oKTgFY0AdhG3YOUKF+qjj
-         W0ZOmQfSrA8L3PQmjtqiOKEQSLNlBoySDoYPZ15DNiZL9m7GKMhVMdxvLtHvYnFscfEe
-         HtWREgXCnFt+IglAag4Qyqx5eXDGU+5etPKBsgNltMlbTdiVpcYe0eQIXC3GCDXRet+x
-         lxk7og9xLwZPas5uUv5g+HphdCG7gM5LldzdLQQcJi23IWGwtSM3zIu2dL/ykY2OCNev
-         eVUbdHdu8rYAygCE33Y6I/mX/kmdL1uUXsUa64HggsG+ivECAfs854DJ26fKwbgxNzpO
-         CLLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUfgW1xuEb6Y6ApU0xGhW0qB1gH0CU2ybbm7elgM9qdiPwt/AB4e3IiHIssZB7OzfGhS+KCYhVn1Ql8KI9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyikypde2ze8ssFgH3zwrvq4bsz/3da+hCzVh4S36G3NtB7JIKC
-	C/isxwAVBPuadSeRZDZujSVHJjB3kxEaCiRkt9UqDWEb8gyKRW2maK/wNoJAsDg=
-X-Gm-Gg: ASbGncuyalFOFagtgcn5n6a1foGuRinA0R1DhFtLZH69h2/oUA8K7NWhjVgd+/lo2us
-	NOMsvUkTIDJZcnzb8Y3QxfGvOGKiPgoBae41dX5bx0jtuWVsceMT6TkAwvvtmdfKMNJ15VRYrNH
-	uXRsNRHWOLshdLE8I62prNyqBWj8CeEUHDlOZMGnoo2N130C6Wfuf/TV1BTni8pnGCfqVZkTN8H
-	PGumTGaaZfNfHIBolQMbXDD/e3sDyipVJ0sUkxVDGeszB5mUPd0RPC7lYjIbmd/LLixks7i6Dyw
-	EvrRTQee4wHvnGJPnbHNqWKI24c=
-X-Google-Smtp-Source: AGHT+IEVKuZamiHIkIRgt4sKWSN/CxUsh7q1Rtn5YMJ8loDhLinrZmWvhpreTWA49/k9SjEkFUp/vQ==
-X-Received: by 2002:a17:90b:358b:b0:2ee:c457:bf83 with SMTP id 98e67ed59e1d1-2f1392b7518mr2309164a91.19.1733956413993;
-        Wed, 11 Dec 2024 14:33:33 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45ff77b9sm12072842a91.36.2024.12.11.14.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 14:33:33 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tLVGr-00000009ZKP-40OP;
-	Thu, 12 Dec 2024 09:33:29 +1100
-Date: Thu, 12 Dec 2024 09:33:29 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>,
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
- details
-Message-ID: <Z1oTOUCui9vTgNoM@dread.disaster.area>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
- <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
- <20241211181706.GB6678@frogsfrogsfrogs>
+	s=arc-20240116; t=1733957205; c=relaxed/simple;
+	bh=QS+Hzl4vZNXt6AiBHJbjqrSqKlWiWM6ysfpl6x92Cd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZFkp2fo7BV1GWFPaqh6rW8Emg7we7d/2ADtX1YjI/ZF3zJcCkvIni3SMyTIh37Xs2RUMGNTfMbkhA9mXI5N1iy4xUQUt7NXFX9fZHkMr0G3PWNNlAFi5X4B4vdGD3Yu7YyWFONiiKRlAQH/NpQXLoIL38JS8J+4yGia/jXxwBLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=B3hCmr13; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bC+0q8om; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 08B6925402E4;
+	Wed, 11 Dec 2024 17:46:40 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Wed, 11 Dec 2024 17:46:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733957199;
+	 x=1734043599; bh=933xueeaJY3SDcgeC3b3mO6U30b4Yg/8kpa0Lats4AY=; b=
+	B3hCmr13YllWf8G2a91DI6ldnpRHmvnvsybShoIGBVUmPfHZMsE8NL+EgCDWK036
+	7why0uFCHPTMY67eXotT0eZHjwIajYhvCZN7LHaS7GZwGQE7Z3hEECJHmok/+Y9T
+	UvzsM9QJYUDeVV8OeVIMj5DapmuA1PDI7LctGnO8Nc1QWh2iLmnQE4ngITXdQUfb
+	Z2n3txwDX+81ExZgmRD5Z5NhWifredlC0848OQS/hgrLrgg0Iu9KhMLgbN07a/H+
+	eEcYuU/I3wz1iUHMVKPkaArsKiHfA1XNxVzjros1wa67LGDxd1ZRklOVat2aBoam
+	j/wiiS19VP/Zohbwhxx+Xg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733957199; x=
+	1734043599; bh=933xueeaJY3SDcgeC3b3mO6U30b4Yg/8kpa0Lats4AY=; b=b
+	C+0q8omXTcNIji7ISeu7mH3Fp1BkSlNcR3voNGbPAga53Q2Vi70J9UGUXBji+ubh
+	kAyX8EMEeDVte7t9Szksd4/YTgDMHMp9N5dxm+nfb79ZrFaqz81gD25Ly1SzqySG
+	FNEPg+9U9iEoxLHtsNTewZ1tuwtKIh+x+REfSZfImZfEB5fy43UK+dOFszbzr8Cq
+	AoZz5CTJAJl9WO/+GYm5rI+pzP+03P161A6CxvEf+bM2QdyMrzAiZB8PJxOVFgKs
+	b15TOXsUqRbzUi6ZAP/6U3RWpgNGpx4uhpzOGYR6z7wP8F+sjV7BMavmk4wzLHvX
+	AOtq4+a6PaQRZx9eFl7vg==
+X-ME-Sender: <xms:TRZaZ1ORuP-GpjtylmM6yupIE4IKLB14hoHHp0wMaFK4B1-LmuH9rg>
+    <xme:TRZaZ3-OoO5cYgupNX94MGWFK4A6szll86Q95vFNmL0QR2FpmLuksO0AkmlA6W9M4
+    XbOpJGRBadYrGeH>
+X-ME-Received: <xmr:TRZaZ0Qe11Aoqn1ic2AL5-HdorbtEOI_pNi5_xH86W-sIgHWWSp-fO7HgPR9edPLBfDgx-oLdOBiQE-0AJfVOqvSQXGuTyXQbWYRG6smyGpIm3BCgBPw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkedugddtvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
+    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
+    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdt
+    gfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthes
+    fhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqd
+    hfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhoshgv
+    fhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtohepmhgrlhhtvgdrshgthhhroh
+    gvuggvrhesthhngihiphdruggvpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggr
+    ugdrohhrghdprhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrd
+    guvghvpdhrtghpthhtohepjhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgt
+    ohhmpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
+X-ME-Proxy: <xmx:TRZaZxtnXNQJ5yEoxlAbU7I15NAIW1-lUlbLdRngWESgdidzRZRAIA>
+    <xmx:TRZaZ9fsISN46ohRlFd3Q4XqKDUW-WBym7bVwrtYMQ86_TSuZjEqUg>
+    <xmx:TRZaZ92dVbn2Qp4GOGzCqorOueXxzbgHALHV9UBNOstM-jdzSidJBQ>
+    <xmx:TRZaZ59WonXlFeYFoLe3EufRFjL4Cr94LK0b5E1P8nheD_6Crtwl2g>
+    <xmx:TxZaZ56ElZliiq7OeUrABL0hNuSz3HuVBSWXyMfRy1QVinLMYW8dXa9n>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Dec 2024 17:46:36 -0500 (EST)
+Message-ID: <47c356bd-98ef-4c24-826f-cf1f6c6690d0@fastmail.fm>
+Date: Wed, 11 Dec 2024 23:46:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211181706.GB6678@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] fuse: fix direct io folio offset and length
+ calculation
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, malte.schroeder@tnxip.de, willy@infradead.org,
+ kent.overstreet@linux.dev, jefflexu@linux.alibaba.com, kernel-team@meta.com
+References: <20241211205556.1754646-1-joannelkoong@gmail.com>
+ <20241211205556.1754646-2-joannelkoong@gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20241211205556.1754646-2-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
-> On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
-> > Currently with stat we only show FS_IOC_FSGETXATTR details
-> > if the filesystem is XFS. With extsize support also coming
-> > to ext4 make sure to show these details when -c "stat" or "statx"
-> > is used.
-> > 
-> > No functional changes for filesystems other than ext4.
-> > 
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  io/stat.c | 38 +++++++++++++++++++++-----------------
-> >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/io/stat.c b/io/stat.c
-> > index 326f2822e276..d06c2186cde4 100644
-> > --- a/io/stat.c
-> > +++ b/io/stat.c
-> > @@ -97,14 +97,14 @@ print_file_info(void)
-> >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
-> >  }
-> >  
-> > -static void
-> > -print_xfs_info(int verbose)
-> > +static void print_extended_info(int verbose)
-> >  {
-> > -	struct dioattr	dio;
-> > -	struct fsxattr	fsx, fsxa;
-> > +	struct dioattr dio;
-> > +	struct fsxattr fsx, fsxa;
-> > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
-> >  
-> > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
+
+
+On 12/11/24 21:55, Joanne Koong wrote:
+> For the direct io case, the pages from userspace may be part of a huge
+> folio, even if all folios in the page cache for fuse are small.
 > 
-> Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
-> print whatever is returned, no matter what filesystem we think is
-> feeding us information?
-
-Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
-some time, we should treat it the same way for all filesystems.
-
-> e.g.
+> Fix the logic for calculating the offset and length of the folio for
+> the direct io case, which currently incorrectly assumes that all folios
+> encountered are one page size.
 > 
-> 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
-> 				  errno != ENOTTY))
-> 			perror("FS_IOC_GETXATTR");
+> Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/fuse/file.c | 28 ++++++++++++++++------------
+>  1 file changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 88d0946b5bc9..15b08d6a5739 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1557,18 +1557,22 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>  
+>  		nbytes += ret;
+>  
+> -		ret += start;
+> -		/* Currently, all folios in FUSE are one page */
+> -		nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
+> -
+> -		ap->descs[ap->num_folios].offset = start;
+> -		fuse_folio_descs_length_init(ap->descs, ap->num_folios, nfolios);
+> -		for (i = 0; i < nfolios; i++)
+> -			ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+> -
+> -		ap->num_folios += nfolios;
+> -		ap->descs[ap->num_folios - 1].length -=
+> -			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
+> +		nfolios = DIV_ROUND_UP(ret + start, PAGE_SIZE);
+> +
+> +		for (i = 0; i < nfolios; i++) {
+> +			struct folio *folio = page_folio(pages[i]);
+> +			unsigned int offset = start +
+> +				(folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
+> +			unsigned int len = min_t(unsigned int, ret, PAGE_SIZE - start);
+> +
+> +			ap->descs[ap->num_folios].offset = offset;
+> +			ap->descs[ap->num_folios].length = len;
+> +			ap->folios[ap->num_folios] = folio;
+> +			start = 0;
+> +			ret -= len;
+> +			ap->num_folios++;
+> +		}
+> +
+>  		nr_pages += nfolios;
+>  	}
+>  	kfree(pages);
 
-Why do we even need "is_xfs_fd" there? XFS will never give a
-EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I had already looked at that yesterday. Had even created a
+6.12 branch to remove the rather confusing 
+ap->descs[ap->num_pages - 1].length
+line and replaced it with
+
+-               ap->descs[ap->num_pages - 1].length -=
+-                       (PAGE_SIZE - ret) & (PAGE_SIZE - 1);
++               ap->descs[ap->num_pages - 1].length = offset_in_page(ret);
+
+
+Anyway, thanks for the quick fix! Looks good to me. 
+
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
