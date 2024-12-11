@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-37064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164239ECF3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 16:02:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5349ECFE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 16:36:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71EF280DD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 15:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B490C188A6BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 15:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA4A24635D;
-	Wed, 11 Dec 2024 15:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FBF1C07D2;
+	Wed, 11 Dec 2024 15:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9w2RHFN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPtmvTVq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38667246343
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 15:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DEC1A4E9E;
+	Wed, 11 Dec 2024 15:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733929350; cv=none; b=l6FTav9Kdr6LOXiSe03hX0wyrPDaQyk7JwoHn+sbbXrlUrcZrunlFqr8p0qAo5BdaHuZfPsDBhz25M1Jt7oJAD8gtBIQ40dUN607Dl0bWzgFBFESvgbD+1WqD/BwdMWraGhn0uOpsPy2UAjjvH/l1Y2LBsX2pxuIpp0/VXS0yYQ=
+	t=1733931368; cv=none; b=cQr/2Oe4V74mEmYOtgZs+KW4HW9oWXfDQ/KBhYes2O/TYoxZ+pSovje6L/EHJ54M7i6rwGc95VLRclZvh1rPzKGhsss45vj8bpMPGgzexT8tUlkzN4HTKSECMNPMOpwJKFZKg7rNseLfuP297XqhwGn+15jTF9RzBbBZrZQamss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733929350; c=relaxed/simple;
-	bh=T9m+YUuCdQMNou9n4IEkFkNry7ShFNh6tm6RK+w1FmU=;
+	s=arc-20240116; t=1733931368; c=relaxed/simple;
+	bh=3JBsxq96TCbk07QZArpYYO/U6R8a3IUt9tHMTuqALp4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R1MlBsqogJaJO1rSDOgA7haGzse0qsL3+/zpG2uunR3lk0AAiJOLPtYIR75fIZiiMqOP887nr2I70XtfdF/jrYNd8xB7Up2eVpnYspd0Qc4OHd/seZ7lXs6/0ET+FCg2sjBihwQjNKwlycmIPqm4cZK6azChE7Mg6qnHBLCoHVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9w2RHFN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB93C4CED2;
-	Wed, 11 Dec 2024 15:02:29 +0000 (UTC)
+	 Content-Type:MIME-Version; b=bD922IEY8bpyEYUZF2QJZUaM4UeRCrdUrDUatQxhwai202IAIqOYDsX64u1tmiinIObjKLzSckwLOxMQYhu/ZZKyguSvBlYmrsxcYLGeQ7lobY6D+a4zbbdN6UvfFHsFgSR88bSRM7WX9pUxzMmzl/ZNazSUeMSjsQqxltsk06M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPtmvTVq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BADBC4CED2;
+	Wed, 11 Dec 2024 15:36:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733929349;
-	bh=T9m+YUuCdQMNou9n4IEkFkNry7ShFNh6tm6RK+w1FmU=;
+	s=k20201202; t=1733931367;
+	bh=3JBsxq96TCbk07QZArpYYO/U6R8a3IUt9tHMTuqALp4=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=H9w2RHFNNxievE1PA5eRDIah6NBtAJsAjayKVY87I1dyKvbnrbpUl/jKu+dlmnX1J
-	 0oXKNhUXqkZ3jq6/P1egoEDut46oBIfitNvxWeikGF10my1a+u6ctkBLxYCV7+QJjV
-	 CiV7T9jrgoG26NgK8vgKref1i6R/kpnybMdUVEjfheRhF9Vpa3PvZ9HpvfmEqRAemZ
-	 x/tzX++zMNbGm5kcB9/48lPWDgmgmalgZSs5Ko8npIRQSMacS+9r1QmfjBjehYL/KG
-	 p8Lm3ONIjTLuegBQqOJ6EzmhfzF2itRi6DJheTuO+5UmM1+BJdSM95z1+I6VnuGMnn
-	 VoLd0Aq76U4EQ==
-Message-ID: <b967a924e076b89c9a201412a9754a9ae873a0d4.camel@kernel.org>
-Subject: Re: [PATCH 0/5] fs: lockless mntns rbtree lookup
+	b=FPtmvTVq6g72/L69vFAx7YvZwxaYVVVpQxwIMHxxJF9ywkVtCV8k44W6prX1nQ3dk
+	 bnpaN/uQ+/3y7UPmSbyvUsIjGiG43Disz7yN23SiSIDROkaUJ+MP3LZiMTomT8fbiI
+	 R9a3NdY7TxXPfaUEcNK3p28aFKooIsd4+N3Rzom85jKUmVJteo7f1KtR+cxH2LB1hb
+	 LAzT2hYCDBQN9YlwgL+eDFMEE0HKij5DJLDORHAcefzFWEFkUtxuSc6U5MpIr6R4HM
+	 2OQkCbHhvQAxKXxMXRsIe37PzClX/RVMT4XnHBcj+g3fcVO+ZUWbgZqiJHw9hJWKUG
+	 OvrYGQxu3Jw6Q==
+Message-ID: <8e5ceeb5b3e006e0ef720edcde44c477606a87b1.camel@kernel.org>
+Subject: Re: [PATCH] fs: fix is_mnt_ns_file()
 From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Josef Bacik
- <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org
-Date: Wed, 11 Dec 2024 10:02:28 -0500
-In-Reply-To: <20241210-work-mount-rbtree-lockless-v1-0-338366b9bbe4@kernel.org>
-References: 
-	<20241210-work-mount-rbtree-lockless-v1-0-338366b9bbe4@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>, Christian Brauner
+	 <christian@brauner.io>
+Cc: linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Date: Wed, 11 Dec 2024 10:36:06 -0500
+In-Reply-To: <20241211121118.85268-1-mszeredi@redhat.com>
+References: <20241211121118.85268-1-mszeredi@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -135,44 +134,50 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2024-12-10 at 21:57 +0100, Christian Brauner wrote:
-> Hey,
+On Wed, 2024-12-11 at 13:11 +0100, Miklos Szeredi wrote:
+> Commit 1fa08aece425 ("nsfs: convert to path_from_stashed() helper") reuse=
+d
+> nsfs dentry's d_fsdata, which no longer contains a pointer to
+> proc_ns_operations.
+>
+> Fix the remaining use in is_mnt_ns_file().
 >=20
-> Currently we take the read lock when looking for a mount namespace to
-> list mounts in. We can make this lockless at least for the simple search
-> case. I'm less certain about stuff like rb_prev() and rb_next() that we
-> use when listing mount namespaces via nsfs.
->=20
-> Creating a new mount namespace is a rather rare event compared with
-> querying mounts in a foreign mount namespace. Once this is picked up by
-> e.g., systemd to list mounts in another mount in isolated services and
-> containers this will be used a lot so this seems worthwhile doing.
->=20
-> Thanks!
-> Christian
->=20
+> Fixes: 1fa08aece425 ("nsfs: convert to path_from_stashed() helper")
+> Cc: <stable@vger.kernel.org> # v6.9
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
-> Christian Brauner (5):
->       mount: remove inlude/nospec.h include
->       fs: add mount namespace to rbtree late
->       fs: lockless mntns rbtree lookup
->       selftests: remove unneeded include
->       samples: add test-list-all-mounts
 >=20
->  fs/mount.h                            |   5 +-
->  fs/namespace.c                        | 102 ++++++++++-----
->  samples/vfs/.gitignore                |   1 +
->  samples/vfs/Makefile                  |   2 +-
->  samples/vfs/test-list-all-mounts.c    | 235 ++++++++++++++++++++++++++++=
-++++++
->  tools/testing/selftests/pidfd/pidfd.h |   1 -
->  6 files changed, 311 insertions(+), 35 deletions(-)
-> ---
-> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-> change-id: 20241207-work-mount-rbtree-lockless-7d4071b74f18
+> Came across this while getting the mnt_ns in fsnotify_mark(), tested the
+> fix in that context.  I don't have a test for mainline, though.
 >=20
+>  fs/namespace.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 23e81c2a1e3f..6eec7794f707 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2055,9 +2055,15 @@ SYSCALL_DEFINE1(oldumount, char __user *, name)
+> =20
+>  static bool is_mnt_ns_file(struct dentry *dentry)
+>  {
+> +	struct ns_common *ns;
+> +
+>  	/* Is this a proxy for a mount namespace? */
+> -	return dentry->d_op =3D=3D &ns_dentry_operations &&
+> -	       dentry->d_fsdata =3D=3D &mntns_operations;
+> +	if (dentry->d_op !=3D &ns_dentry_operations)
+> +		return false;
+> +
+> +	ns =3D d_inode(dentry)->i_private;
+> +
+> +	return ns->ops =3D=3D &mntns_operations;
+>  }
+> =20
+>  struct ns_common *from_mnt_ns(struct mnt_namespace *mnt)
 
-This does seem like a good candidate for lockless access.
+Took me a min to figure out how i_private gets set, but this looks
+correct.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
