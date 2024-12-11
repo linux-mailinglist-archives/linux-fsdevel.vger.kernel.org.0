@@ -1,268 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-37052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413499ECB00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 12:23:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 820309ECB1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 12:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6D4286928
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AEC286984
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1E7233683;
-	Wed, 11 Dec 2024 11:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4344238E01;
+	Wed, 11 Dec 2024 11:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WAvYLrox";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xs02xlGX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WAvYLrox";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xs02xlGX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5QPRR7J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F392210ED;
-	Wed, 11 Dec 2024 11:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05690238E0F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 11:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733916189; cv=none; b=TXf5xHyDjT8SDKH2AdSI6Jng70hDiYVk/t5ZVscuR26iiim/C6lfjb5Ih7UyVEal1nmvMCi4wsx+LrMAgU5wiYkqqS3UepQEgS/Ytr72ZKrXczmUiJLAY1lyghdFl71JrF9X6C2+4JZi8ZbBJcl6dznaKKja7paJyeZ2s6JMN6Q=
+	t=1733916249; cv=none; b=pjZIvT4TcjJruSanybRjDMFUkcv1Z4Xmf7jsFWGUAPLq1BmRbzn5bwBpa+p6xYK7zVkX1OGwCJ7/rhEpDL2AQnmr6dQX3gpRAoDmf1zJLUqvs3Csuwmshi2TzSN5XJ6ZAHqcFSSyd2j1CVCGVG+mUOi+RABpvV994E8iU/1ktrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733916189; c=relaxed/simple;
-	bh=z2kEI0HDsxMJ8XaK1/cC8nVrYlPqpszVI84IQA3bx4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oYuVzw/6pBQR6MCtf7Ltchmi8zs+yQgYUCjJTIkCmHBUUPdJehBw7ndaxqdxNUB03+sfGKihN63Oyv286y3DE5PFkDfZ8EQeS9CIv55NWXV3NkT6K7qe5fXFxh35T/3eg7CLZ2sZU5HQvCTX99XvnFLIsNywb59TGY4cXAT+jk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WAvYLrox; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xs02xlGX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WAvYLrox; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xs02xlGX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 17C8521108;
-	Wed, 11 Dec 2024 11:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733916186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
-	b=WAvYLrox8P0MVvhgbYZZg6iVtYLBMUx8Pmah8cwn3kICukGX8pQoXKy5+tbyLnN6XJUE2Q
-	P3Zl1VoJXz3W14HU622GK72pQ42M5ArbdgcWlQiwJn1mplzp5NehL9aSYdRq7bCJ7PVYxZ
-	B6DuBPkQ7UI78HSlvy6Fen+Mh88z8oI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733916186;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
-	b=Xs02xlGXHITVQbEuO25tJwBR8p2Jl8osy2PAXaUp1uDZbGqgIEG8ac6QCcxRYIh+y+XY3P
-	e6CL1QrcHVlGXFBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WAvYLrox;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Xs02xlGX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733916186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
-	b=WAvYLrox8P0MVvhgbYZZg6iVtYLBMUx8Pmah8cwn3kICukGX8pQoXKy5+tbyLnN6XJUE2Q
-	P3Zl1VoJXz3W14HU622GK72pQ42M5ArbdgcWlQiwJn1mplzp5NehL9aSYdRq7bCJ7PVYxZ
-	B6DuBPkQ7UI78HSlvy6Fen+Mh88z8oI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733916186;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
-	b=Xs02xlGXHITVQbEuO25tJwBR8p2Jl8osy2PAXaUp1uDZbGqgIEG8ac6QCcxRYIh+y+XY3P
-	e6CL1QrcHVlGXFBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E01AB13983;
-	Wed, 11 Dec 2024 11:23:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id T89GNhl2WWdRbwAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 11 Dec 2024 11:23:05 +0000
-Message-ID: <0ad3587f-8b3d-438c-b542-0daf48b04633@suse.de>
-Date: Wed, 11 Dec 2024 12:23:05 +0100
+	s=arc-20240116; t=1733916249; c=relaxed/simple;
+	bh=+nsVqHPb/W171mY0+/up7Otw02A2ORLB9J3dnLNdgwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/feZozxMYZ0LVKiTdfVEm9X2UDMKo2DwLOpkbJKylzGvchVm+Dwak7JWA4KEa177KtMGO/QdTn7fRQTQcbqBPS/MtUXCJlPTbzOrkeCZ8YwdAOocGfbIctSuOtfhr9jyonl6MO2+ITcapkcp76WYx2baCWvzo2XeTzOrj7yZCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5QPRR7J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D994C4CED2;
+	Wed, 11 Dec 2024 11:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733916248;
+	bh=+nsVqHPb/W171mY0+/up7Otw02A2ORLB9J3dnLNdgwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C5QPRR7J1+udESlbG1LymTo2lBTlOpLHB/iNyViFpAYeTiYLq7FY42e5o5Rr0qKJK
+	 6BwvuvnMPDSku83H7DZGjSWQI3pqCHgZ9N9F9wQ/ExtYD3vpb7ZDh0F2OkvMZY4Qui
+	 vmvlIRaEkT7ZkxScVg9Y4ZYu6Dfz9q1hA1BSRLd5aMqI5AlZe4tHyxVNMNYFK6VCdY
+	 xBtp+T8JvqD8KluHwpInY5ZPOYMVRStp7UDkiibuBfL2VNYj1j+31tNUT+1GtXkHZa
+	 M9041NDpMrVtXIWdLmmyYUSRhP2aazbSdlMept9rjPdMVM0RTRFcRTjc0wi7oJbzaI
+	 11sVwqAcKMIFA==
+Date: Wed, 11 Dec 2024 12:24:03 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] fanotify: notify on mount attach and detach
+Message-ID: <20241211-wachleute-sumpf-81627ef94a90@brauner>
+References: <20241206151154.60538-1-mszeredi@redhat.com>
+ <20241206-aneinander-riefen-a9cc5e26d6ac@brauner>
+ <20241207-weihnachten-hackordnung-258e3b795512@brauner>
+ <CAJfpegsFV6CNC0OKeiOYnTZ+MjE2Xiyd0yJaMwvUBHfmfvWz4w@mail.gmail.com>
+ <20241211-mitnichten-verfolgen-3b1f3d731951@brauner>
+ <CAJfpegttXVqfjTDVSXyVmN-6kqKPuZg-6EgdBnMCGudnd6Nang@mail.gmail.com>
+ <20241211-boiler-akribisch-9d6972d0f620@brauner>
+ <CAJfpegscVUhCLBdj9y+VQHqhTnXrR_DaZZ6LndL3Cavi3Appwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv13 10/11] nvme: register fdp parameters with the block
- layer
-To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com,
- joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
-References: <20241210194722.1905732-1-kbusch@meta.com>
- <20241210194722.1905732-11-kbusch@meta.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241210194722.1905732-11-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 17C8521108
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[grimberg.me,gmail.com,samsung.com,kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegscVUhCLBdj9y+VQHqhTnXrR_DaZZ6LndL3Cavi3Appwg@mail.gmail.com>
 
-On 12/10/24 20:47, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On Wed, Dec 11, 2024 at 11:55:37AM +0100, Miklos Szeredi wrote:
+> On Wed, 11 Dec 2024 at 11:34, Christian Brauner <brauner@kernel.org> wrote:
 > 
-> Register the device data placement limits if supported. This is just
-> registering the limits with the block layer. Nothing beyond reporting
-> these attributes is happening in this patch.
+> > For that the caller has to exit or switch to another mount namespace.
+> > But that can only happen when all notifications have been registered.
+> > I may misunderstand what you mean though.
 > 
-> Merges parts from a patch by Christoph Hellwig <hch@lst.de>
-> Link: https://lore.kernel.org/linux-nvme/20241119121632.1225556-15-hch@lst.de/
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->   drivers/nvme/host/core.c | 139 +++++++++++++++++++++++++++++++++++++++
->   drivers/nvme/host/nvme.h |   2 +
->   2 files changed, 141 insertions(+)
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index c2a3585a3fa59..f7aeda601fcd6 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -38,6 +38,8 @@ struct nvme_ns_info {
->   	u32 nsid;
->   	__le32 anagrpid;
->   	u8 pi_offset;
-> +	u16 endgid;
-> +	u64 runs;
->   	bool is_shared;
->   	bool is_readonly;
->   	bool is_ready;
-> @@ -1613,6 +1615,7 @@ static int nvme_ns_info_from_identify(struct nvme_ctrl *ctrl,
->   	info->is_shared = id->nmic & NVME_NS_NMIC_SHARED;
->   	info->is_readonly = id->nsattr & NVME_NS_ATTR_RO;
->   	info->is_ready = true;
-> +	info->endgid = le16_to_cpu(id->endgid);
->   	if (ctrl->quirks & NVME_QUIRK_BOGUS_NID) {
->   		dev_info(ctrl->device,
->   			 "Ignoring bogus Namespace Identifiers\n");
-> @@ -1653,6 +1656,7 @@ static int nvme_ns_info_from_id_cs_indep(struct nvme_ctrl *ctrl,
->   		info->is_ready = id->nstat & NVME_NSTAT_NRDY;
->   		info->is_rotational = id->nsfeat & NVME_NS_ROTATIONAL;
->   		info->no_vwc = id->nsfeat & NVME_NS_VWC_NOT_PRESENT;
-> +		info->endgid = le16_to_cpu(id->endgid);
->   	}
->   	kfree(id);
->   	return ret;
-> @@ -2147,6 +2151,127 @@ static int nvme_update_ns_info_generic(struct nvme_ns *ns,
->   	return ret;
->   }
->   
-> +static int nvme_query_fdp_granularity(struct nvme_ctrl *ctrl,
-> +				      struct nvme_ns_info *info, u8 fdp_idx)
-> +{
-> +	struct nvme_fdp_config_log hdr, *h;
-> +	struct nvme_fdp_config_desc *desc;
-> +	size_t size = sizeof(hdr);
-> +	int i, n, ret;
-> +	void *log;
-> +
-> +	ret = nvme_get_log_lsi(ctrl, 0, NVME_LOG_FDP_CONFIGS, 0,
-> +			       NVME_CSI_NVM, &hdr, size, 0, info->endgid);
-> +	if (ret) {
-> +		dev_warn(ctrl->device,
-> +			 "FDP configs log header status:0x%x endgid:%x\n", ret,
-> +			 info->endgid);
-> +		return ret;
-> +	}
-> +
-> +	size = le32_to_cpu(hdr.sze);
+> Ah, umount can only be done by a task that is in the namespace of the
+> mount.  I cannot find a hole in that logic, but it does seem rather
 
-size should be bounded to avoid overly large memory allocations when the 
-header is garbled.
-
-> +	h = kzalloc(size, GFP_KERNEL);
-> +	if (!h) {
-> +		dev_warn(ctrl->device,
-> +			 "failed to allocate %lu bytes for FDP config log\n",
-> +			 size);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret = nvme_get_log_lsi(ctrl, 0, NVME_LOG_FDP_CONFIGS, 0,
-> +			       NVME_CSI_NVM, h, size, 0, info->endgid);
-> +	if (ret) {
-> +		dev_warn(ctrl->device,
-> +			 "FDP configs log status:0x%x endgid:%x\n", ret,
-> +			 info->endgid);
-> +		goto out;
-> +	}
-> +
-> +	n = le16_to_cpu(h->numfdpc) + 1;
-> +	if (fdp_idx > n) {
-> +		dev_warn(ctrl->device, "FDP index:%d out of range:%d\n",
-> +			 fdp_idx, n);
-> +		/* Proceed without registering FDP streams */
-> +		ret = 0;
-> +		goto out;
-> +	}
-> +
-> +	log = h + 1;
-> +	desc = log;
-> +	for (i = 0; i < fdp_idx; i++) {
-> +		log += le16_to_cpu(desc->dsze);
-> +		desc = log;
-
-Check for the size of 'h' to ensure that you are not
-falling over the end ...
-
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Currently... I have a finished patch series that allows unmounting by
+mount id including support for unmounting mounts in other namespaces
+without requiring setns(). That's sitting in my tree since v6.11-rc1. I
+should get that out.
 
