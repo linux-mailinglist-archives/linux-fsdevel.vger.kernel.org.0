@@ -1,101 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-37100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DC89ED836
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 22:12:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E20F9ED879
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 22:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B208160FFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 21:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704E7168411
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 21:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B1C1DA0FE;
-	Wed, 11 Dec 2024 21:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDCB1F0E38;
+	Wed, 11 Dec 2024 21:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eQugjS6r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M36mERpS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C669259498
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 21:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259531DA0FE;
+	Wed, 11 Dec 2024 21:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951514; cv=none; b=Yt9+c0woxDcbUobV8Ij2NE/fC00kDwzOjc2ZNCuwy0gnEB08IU8q6Sq8QdZewMUn8ItBkGWINuZbhHJ2uGLOq4W4+7bXn4KDSMte8v6FaUqcsijArJ9OcZdFXWjWNYyFBawbAeppwtT18Dre2ms2PJnuib1YgLAn1XlreBmjiIo=
+	t=1733952108; cv=none; b=m/R7pVuk/8WefpJXKgN2XHJQzP9oEFgVwjbK/Fya98P+sQlPhqI7LCirGprPjjKyEXEtIHCc7SWsPn4h38mLvE7zQS1ZXnYluxuqToVI46qCQNuUzzb0GOQtV91o/Tq5s93A6e9S/dm+Y8EpRqti0xALwruJyOEyF8cVrOUrDq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951514; c=relaxed/simple;
-	bh=56a0hxf/sbPW9GEMYGG9e1eZ7XI/XpMK6FkrLkuZZzo=;
+	s=arc-20240116; t=1733952108; c=relaxed/simple;
+	bh=IaVdboK9++5RQ3hFpt89sE9pHIWJBLcZbpQWyCDkaME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Km4GLPgVIIvw+sFayTxZBBuoE41RRAaJasTKEy3go+6O8tKBLVwaVg2nXWJbYbPneFFEu7k3wLTJoZFw4ozsvQA92g7z2wms2gPtVnJy9azaxuvXXugbI34o1wRq78oe8LmqXc6YRHMEhIk8FS8uvTy5uT3XmVyjxRUr9eqVB7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eQugjS6r; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=gdsPTCupbgOEWLACzNfCxSkC4dLmLrOQ7de/78UB66k=; b=eQugjS6r9kMIolNkbQJmWUTFwt
-	tsPoKWnYX1Zv7EehbNstRUd5ZcNpQJXuovzwUZrnUAxpcsxjmHh34knQGTHkgT7qlcoMwc8PPLcnk
-	zlLrhwCJ4KxQfgd9AgNVMhwQbja5Y7IMyMijYHcUXIFz2rUMJ3I9lXbgrYwjsXHFXD18KMtCmJJt0
-	UuYYVlvhhcsg0s3kt/80TwVEELf/6Mlx0mK7h/PmdhoCVesed6yPBVCbK9CTQk8s3yDj9k5cl6KSq
-	+AiYL6C427ckbA4KmZI1Zv1pMCVmZ4dL/IsM5mNG2SBX0G6s8XygdJX627mz0AZKkS4LqBe7txJIH
-	0zv1RqfQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLTzm-00000000wLU-3cpp;
-	Wed, 11 Dec 2024 21:11:46 +0000
-Date: Wed, 11 Dec 2024 21:11:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com, shakeel.butt@linux.dev,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 10/12] fuse: support large folios for direct io
-Message-ID: <Z1oAEr6WFh6cSerU@casper.infradead.org>
-References: <20241125220537.3663725-1-joannelkoong@gmail.com>
- <20241125220537.3663725-11-joannelkoong@gmail.com>
- <20241209155042.GB2843669@perftesting>
- <Z1cSy1OUxPZ2kzYT@casper.infradead.org>
- <CAJnrk1YYeYcUxwrojuDFKsYKG5yK-p_Z9MkYBuHTavNrRfR-PQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JpCwbA1QfvXPzN6dfGRd7tNrzT4AhJAGz+vh06BnS1dPz5v68hUA5Iae2IvZZl8AKykrMfaJqoug2VGPfGOQY2tD8WEr+fEBlbI6ROgwYQAij+csyNnKFcgBfOH0YQQqfz7K8SFj5mWBlJIjuhE9UryLLiTcCqL5CtlrnEU21ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M36mERpS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C98C4CEDD;
+	Wed, 11 Dec 2024 21:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733952107;
+	bh=IaVdboK9++5RQ3hFpt89sE9pHIWJBLcZbpQWyCDkaME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M36mERpSl2KG6yGOKVFPVUFiFJoJmnzxAr9I9L0WRvuAX9uAMuEwLz0+1j5JVZivX
+	 980NduCXsymeKnFsx+atJRTapwFUrOe9lfsH9y+ryYZYSPAUAwBlbFpTsw70lRABVN
+	 CrlfulJbyhNZ+n0BHHUZiftbqrf+PqCwsbRHR00oOynDbcF76Xy+PW9tvdG9iWUWO7
+	 dsAcCE2tmN3aKOWA4w2MaDqy7C/O3UyRXScbhCnxNAhncze022rUqPFlfFmp6wTfUI
+	 ATi05tkiy0cSiSAw7rPPjseZuS1empUiTdZdTuNNZ/GyLEhodhPC7IdjVwWH9sIgRF
+	 pzOluCzKOlsoA==
+Date: Wed, 11 Dec 2024 21:21:44 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, hch <hch@lst.de>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Javier Gonzalez <javier.gonz@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Keith Busch <kbusch@kernel.org>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"joshi.k@samsung.com" <joshi.k@samsung.com>
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+Message-ID: <Z1oCaLF8-xclgFB_@google.com>
+References: <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+ <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
+ <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+ <yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com>
+ <20241210071253.GA19956@lst.de>
+ <2a272dbe-a90a-4531-b6a2-ee7c4c536233@wdc.com>
+ <20241210105822.GA3123@lst.de>
+ <a10da3f8-9a71-4794-9473-95385ac4e59f@acm.org>
+ <6ff84297-d133-48d4-b847-807a75cab0f6@kernel.org>
+ <97ed9def-7dfd-4170-9e60-6c081da409bc@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YYeYcUxwrojuDFKsYKG5yK-p_Z9MkYBuHTavNrRfR-PQ@mail.gmail.com>
+In-Reply-To: <97ed9def-7dfd-4170-9e60-6c081da409bc@acm.org>
 
-On Wed, Dec 11, 2024 at 01:04:45PM -0800, Joanne Koong wrote:
-> On Mon, Dec 9, 2024 at 7:54 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 10:50:42AM -0500, Josef Bacik wrote:
-> > > As we've noticed in the upstream bug report for your initial work here, this
-> > > isn't quite correct, as we could have gotten a large folio in from userspace.  I
-> > > think the better thing here is to do the page extraction, and then keep track of
-> > > the last folio we saw, and simply skip any folios that are the same for the
-> > > pages we have.  This way we can handle large folios correctly.  Thanks,
-> >
-> > Some people have in the past thought that they could skip subsequent
-> > page lookup if the folio they get back is large.  This is an incorrect
-> > optimisation.  Userspace may mmap() a file PROT_WRITE, MAP_PRIVATE.
-> > If they store to the middle of a large folio (the file that is mmaped
-> > may be on a filesystem that does support large folios, rather than
-> > fuse), then we'll have, eg:
-> >
-> > folio A page 0
-> > folio A page 1
-> > folio B page 0
-> > folio A page 3
-> >
-> > where folio A belongs to the file and folio B is an anonymous COW page.
+On 12/11, Bart Van Assche wrote:
+> On 12/10/24 8:07 PM, Damien Le Moal wrote:
+> > But for F2FS, the conventional unit is used for metadata and the other zoned LU
+> > for data. How come copying from one to the other can be useful ?
 > 
-> Sounds good, I'll fix this up in v3. Thanks.
+> Hi Damien,
+> 
+> What you wrote is correct in general. If a conventional and zoned LU are
+> combined, data is only written to the conventional LU once the zoned LU
+> is full. The data on the conventional LU may be migrated to the zoned LU
+> during garbage collection. This is why copying from the conventional LU
+> to the zoned LU is useful.
+> 
+> Jaegeuk, please correct me if I got this wrong.
 
-Hm?  I didn't notice this bug in your code, just mentioning something
-I've seen other people do and wanted to make suree you didn't.  Did I
-miss a bug in your code?
+Bart is correct. It doesn't make sense forcing to use conventional LU for
+metadata only, but shows the remaining conventional LU space to user as well.
+In order to do that, we exploited the multi-partition support in F2FS by
+aligning the section to zoned partition offset simply.
+
+> 
+> Bart.
 
