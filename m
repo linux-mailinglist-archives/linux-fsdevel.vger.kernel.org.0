@@ -1,119 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-37044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE5E9ECA35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:21:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B319D9ECA46
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:24:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B317188BB88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 10:24:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34582210C0;
+	Wed, 11 Dec 2024 10:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHZtto9l"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF2B286237
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 10:21:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4521EC4E6;
-	Wed, 11 Dec 2024 10:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="iYjgrhCl"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267EB236FA9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 10:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3432101B8;
+	Wed, 11 Dec 2024 10:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733912482; cv=none; b=N/MefSHNEcS8t2sbx3mB9d+lIFaSxswru5xRJkTNmyEzcUiwdzXFPtAUk10c1gl6E6gGLv8cBJK0MrMdiLBagDKIhJ9n3OL3zTR4xL7UWAvExV6Vmmy+6dJgs8Z65FQNDL+VMWzEBrG3QjwLLd8DBhKIrTOjzW+Qum/dzMvURo4=
+	t=1733912632; cv=none; b=Uv6V3Xt0Izw24aMMItO+3mUv4BCDJE8108vIcClz/3g6p3AXaMab+bgp2Wao+fAu/wE0sLklBFJRsZmsKza+wN+JsIlYLXVlvXoqB+PffqfEaf/SSqKso3H4dID1k4VQ2KgL93Spvi6g4YqiANDaChLR63+PkWTv3+Lb8Mwa+G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733912482; c=relaxed/simple;
-	bh=lazSOoiG50KhGUO8Dae3vA/8vIpiS+4lQ/N9/uI4fV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N0FPTlEnm4g3vDFcXhj/8TanUsYWFFBiM6M/6c7G22GG51ZCCsJbA8IijMs5tYDaeTNzjSRSgz9Py+3aBb1AzcJ+Imm95usVBAgwFb7WHSwiECqiCXTVostmcdN/4tCAee+LEoqrYCGrOMpJH5jwuHDFR1YWBcYhwl8wxzIEn6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=iYjgrhCl; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-46788c32a69so8162661cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 02:21:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1733912479; x=1734517279; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9Vb3vfWdhyKiMA4qB9J46g1gDJnHNfz6tkx6cBadTY=;
-        b=iYjgrhClUzKnjCwpp6nIu+3RG59ecpdWUbcxAexwSUHDJcD6j6FP4gDI+T3hRzSR+S
-         61E4wE0pSB+ebTI1E7gx9br9ET4X1i+PlLsCOlr8GYeLjatyrdarKaOTOSVZnBuyAcxR
-         /AVFkBjyJkh6y7E7ZmaWQ9WLVnmYiubb+F5rc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733912479; x=1734517279;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L9Vb3vfWdhyKiMA4qB9J46g1gDJnHNfz6tkx6cBadTY=;
-        b=UEq+/+R457syhmRKbgAebdbybzDHfaYrkO1LAK3TqgQGO6ZX6uXsFOU8L9TGvlNwPp
-         uChi4n0H6ZHVETJwzzzVTtkbiD+R+4apfThpjd3+isYX9hHxxZOpuTtdB/MhPOjwwOT/
-         /yUnS/RnyTr+u4lb+QtTZUhvXxhYUTdRxY0KOfJGL+otDRxDRxNyyZYgHgDlSFFdfZ90
-         Rx15fbow+4tTUxyv0ECqYOMNUJ56p6zUeS3rcBVOPcvkC1zzbX4WR9+0KJjcA7dr1OZI
-         UdxUHNGxbDRTEik/ZiZgMbZy5CmjQpX1LwU5olT6ywrwSmKgVwOtl/UDsOM2C+G1scPR
-         jWJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXV7x7soea853wOnmJPqlx0/VXeIzrQUf+LyjApT68JPKZBkDiN7wS1Zs2UN5Tz3qZn5vIIYU19INKbCWX/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJvxfEXrLibxCb+a0f92kNhNjMyGjdQ6JMHx0lT8aM2+RXY+rM
-	OtO40NG4iGfA4A943bdddCqacnNx3hYi7DyZBrEXCy4oUO9TVyY7R7kcite44VHC87L9jSmAjPr
-	CcPflgst7MXSVuUFiE4rShdNpiEQZDthGcpZaLA==
-X-Gm-Gg: ASbGnctjy4Y82/MyNVeldJq7M9AwVVHRODx40US5+Jsyk+Sl0J+mKi/6CxqR3pFRy1q
-	9U1cqJc6/5G3ri5yCYtwyy7TfIs/kFGqopf8=
-X-Google-Smtp-Source: AGHT+IHqGHPIKLAUmoBu39GBwjAlUysOMQd/Jknm9UgmfrUm6fK6CGW1BTNdGfu4TnBpgGrdQu5xabrrKi1fwFBusxs=
-X-Received: by 2002:a05:622a:180e:b0:467:5444:caac with SMTP id
- d75a77b69052e-4678939f0c0mr46696061cf.55.1733912478881; Wed, 11 Dec 2024
- 02:21:18 -0800 (PST)
+	s=arc-20240116; t=1733912632; c=relaxed/simple;
+	bh=qqqXOv/RjcZrs4T7tVuZ+X03T1XAPT1JxkdxrPXPDr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCXQiDB/2mA8nhmrWuqK5JQSCVXFvrK3faLU8/JqH6Z78Xsv7wDsgco/fZwAcAHkV+L836zWwCVuOMJekxAIcZZ2JsgK1PfV8+8//z0UPhUEkATnjjMaWgNp3YGDMK33Q85hixDzP19GC2Ck5xnBRpRp7aOBp7MvLS6chDvD+8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHZtto9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE8EC4CED2;
+	Wed, 11 Dec 2024 10:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733912631;
+	bh=qqqXOv/RjcZrs4T7tVuZ+X03T1XAPT1JxkdxrPXPDr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pHZtto9lS6MacDzeDayzGJlJswaNGRfYfCsycwjp8+OZqjq+9OFXosM0zNKhWjB0o
+	 8yL1UH8JmYll1s40biRGrQAbAiaac/pGywKLTbdhWCOR4uKyg9zf2ts7LwiruwI6dU
+	 UwdLST631KKkUjdn3YaEFA/uKyl0obKfDYfHudh40oavb8Fn8JJQi+60InjvTZp5oZ
+	 INnxrhqTk+F4CRoq2rVOF0VViGgx/wsNopYbiR6+/2Qh0vm4e71W6olcXExgYcvO+c
+	 JDmIo3UJafgbIjie042E5Ll43N5l9/TzaEIvg4we1AekgDXfuBi8qVksfrBRT/qbVf
+	 4BlBjcwSfM3GQ==
+Date: Wed, 11 Dec 2024 11:23:43 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Florian Weimer <fweimer@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, libc-alpha@sourceware.org
+Subject: Re: [PATCH RFC v3 02/10] sched_getattr: port to copy_struct_to_user
+Message-ID: <20241211-gemsen-zuarbeiten-ae8d062ec251@brauner>
+References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
+ <20241010-extensible-structs-check_fields-v3-2-d2833dfe6edd@cyphar.com>
+ <87y10nz9qo.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206151154.60538-1-mszeredi@redhat.com> <20241206-aneinander-riefen-a9cc5e26d6ac@brauner>
- <20241207-weihnachten-hackordnung-258e3b795512@brauner> <CAJfpegsFV6CNC0OKeiOYnTZ+MjE2Xiyd0yJaMwvUBHfmfvWz4w@mail.gmail.com>
- <20241211-mitnichten-verfolgen-3b1f3d731951@brauner>
-In-Reply-To: <20241211-mitnichten-verfolgen-3b1f3d731951@brauner>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 11 Dec 2024 11:21:08 +0100
-Message-ID: <CAJfpegttXVqfjTDVSXyVmN-6kqKPuZg-6EgdBnMCGudnd6Nang@mail.gmail.com>
-Subject: Re: [PATCH v2] fanotify: notify on mount attach and detach
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87y10nz9qo.fsf@oldenburg.str.redhat.com>
 
-On Wed, 11 Dec 2024 at 11:00, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Tue, Dec 10, 2024 at 04:10:45PM +0100, Miklos Szeredi wrote:
-> > On Sat, 7 Dec 2024 at 22:17, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > I took another look at f{a,s}notify. There's no copy_to_user() happening
-> > > when adding events via fsnotify(). It happens when the caller retrieves
-> > > events via read() from the relevant notify file descriptor. We should
-> > > still move calls to notify_mounts() out of the namespace semaphore
-> > > whenever we can though.
-> >
-> > Doesn't work.  After unlocking namespace_sem deref of mnt->prev_ns
-> > might lead to UAF.
->
-> Hm, a UAF could only be triggered by mounts that were unmounted due to
-> umount propagation into another mount namespaces. The caller's mount
-> namespace in mnt_ns->prev_ns cannot go away until all mounts are put.
+On Tue, Dec 10, 2024 at 07:14:07PM +0100, Florian Weimer wrote:
+> * Aleksa Sarai:
+> 
+> > sched_getattr(2) doesn't care about trailing non-zero bytes in the
+> > (ksize > usize) case, so just use copy_struct_to_user() without checking
+> > ignored_trailing.
+> 
+> I think this is what causes glibc's misc/tst-sched_setattr test to fail
+> on recent kernels.  The previous non-modifying behavior was documented
+> in the manual page:
+> 
+>        If the caller-provided attr buffer is larger than the kernel's
+>        sched_attr structure, the additional bytes in the user-space
+>        structure are not touched.
+> 
+> I can just drop this part of the test if the kernel deems both behaviors
+> valid.
 
-Why?   E.g. one does umount -l on a subtree in a private namespace,
-then destroys the namespace immediately.  There's no serialization
-between the two other than namespace_sem, so if the former releases
-namespace_sem the namespace destruction can run to completion while
-the detached subtree's mounts are still being processed.
+I think in general both behaviors are valid but I would consider zeroing
+the unknown parts of the provided buffer to be the safer option. And all
+newer extensible struct system calls do that.
 
-> The simple fix is to take a passive reference count. But I'm not sure
-> what would be more expensive (holding the lock or the reference counts).
+But if sched_getattr(2) wants to keep its old behavior it wouldn't be a
+problem to just handle this case:
 
-Right, that would work, but I think holding namespace_sem for read
-while calling fsnotify() is both simpler and more efficient.
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 0d71fcbaf1e3..46140ec449ba 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -1126,6 +1126,15 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+        }
 
-Thanks,
-Miklos
+        kattr.size = min(usize, sizeof(kattr));
++       /*
++        * If userspace passed a larger structure than the kernel knows
++        * we historically didn't zero the unknown bits but
++        * copy_struct_to_user() will. Retain the old behavior by
++        * limiting the copy_to_user() to the size the kernel knows
++        * about.
++        */
++       if (usize > sizeof(kattr))
++               usize = sizeof(kattr);
+        return copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
+ }
+
 
