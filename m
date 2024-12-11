@@ -1,204 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-37051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9D29ECAF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 12:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 413499ECB00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 12:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897BD285523
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6D4286928
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 11:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8894C204F86;
-	Wed, 11 Dec 2024 11:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1E7233683;
+	Wed, 11 Dec 2024 11:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/AIR7OD"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WAvYLrox";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xs02xlGX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WAvYLrox";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xs02xlGX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6F239BBE;
-	Wed, 11 Dec 2024 11:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F392210ED;
+	Wed, 11 Dec 2024 11:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733915977; cv=none; b=U1+d/rLNRgslifnUVL4Zowdwe1NqFpIPW/WzolN8o2HXfUYbpCY5IOM5xfYDYQ6N0j1dbV5Vf/aNDCB063/BqN7HMUHKD9TGSXlrdvYXT2fisILm3LIp424NLqBt0GDabIKSwjbOw8yQBnBGmqzNgLFKbOVZQqqU65hlI7L3HKI=
+	t=1733916189; cv=none; b=TXf5xHyDjT8SDKH2AdSI6Jng70hDiYVk/t5ZVscuR26iiim/C6lfjb5Ih7UyVEal1nmvMCi4wsx+LrMAgU5wiYkqqS3UepQEgS/Ytr72ZKrXczmUiJLAY1lyghdFl71JrF9X6C2+4JZi8ZbBJcl6dznaKKja7paJyeZ2s6JMN6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733915977; c=relaxed/simple;
-	bh=EVb57XMlb/Lgk1t3Q0klEV1VUb7ld/Y5xaHnDAGpgcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PHK43QXKVt7EyRV9kZmEHUy9Bc+cfAwefcdiz6UqNP9snlYuFhJ6LYKSR34sFr3xGAHGweJdNFwmORVIlp6k4556icFa+jdMm7UBIfObF3Z1d36U/KAdRjR2xGg15qCDV8wjWnWc1SwTzPk80X4S3t9LDzVLEBR0WFYtUf+IpKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/AIR7OD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B2DC4CED2;
-	Wed, 11 Dec 2024 11:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733915976;
-	bh=EVb57XMlb/Lgk1t3Q0klEV1VUb7ld/Y5xaHnDAGpgcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g/AIR7ODR+UsV7bk/Ej+MYMnZhZhGB1zNexy0qNcqB1CisbrZcVmDax6LRs4gXqhE
-	 IN/ezE0jKcwFNJrtMw8WJu5kYMkRuwuOqisYTfZz5ZPUSRwgdC9bg0CWHbsuxBSod2
-	 VK5XbTLyzKqbPE9FYyltISD1iQsxzhckkDOT0eAMjKHtQ7QxAhNG3Yu4avQw/0Onpm
-	 F1BNUQczyjKDDazqlv6TGtLGAbGUn8Csz3e/0pgcDJpNxgmM2j1ykvn7DEMI4DhNKm
-	 7WR3N/pH2FXpEg+8G7FM+OvmK/eNPOZUZBS8SO6j+KxwG5inwbAoAUgwRGR7E1MoJp
-	 EOFQUBlN4qYfg==
-Date: Wed, 11 Dec 2024 12:19:32 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>
-Subject: Re: [PATCH 4/6] efivarfs: move freeing of variable entry into
- evict_inode
-Message-ID: <20241211-mitmensch-worte-fda3fe1d7760@brauner>
-References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com>
- <20241210170224.19159-5-James.Bottomley@HansenPartnership.com>
+	s=arc-20240116; t=1733916189; c=relaxed/simple;
+	bh=z2kEI0HDsxMJ8XaK1/cC8nVrYlPqpszVI84IQA3bx4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oYuVzw/6pBQR6MCtf7Ltchmi8zs+yQgYUCjJTIkCmHBUUPdJehBw7ndaxqdxNUB03+sfGKihN63Oyv286y3DE5PFkDfZ8EQeS9CIv55NWXV3NkT6K7qe5fXFxh35T/3eg7CLZ2sZU5HQvCTX99XvnFLIsNywb59TGY4cXAT+jk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WAvYLrox; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xs02xlGX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WAvYLrox; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xs02xlGX; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 17C8521108;
+	Wed, 11 Dec 2024 11:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733916186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
+	b=WAvYLrox8P0MVvhgbYZZg6iVtYLBMUx8Pmah8cwn3kICukGX8pQoXKy5+tbyLnN6XJUE2Q
+	P3Zl1VoJXz3W14HU622GK72pQ42M5ArbdgcWlQiwJn1mplzp5NehL9aSYdRq7bCJ7PVYxZ
+	B6DuBPkQ7UI78HSlvy6Fen+Mh88z8oI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733916186;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
+	b=Xs02xlGXHITVQbEuO25tJwBR8p2Jl8osy2PAXaUp1uDZbGqgIEG8ac6QCcxRYIh+y+XY3P
+	e6CL1QrcHVlGXFBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WAvYLrox;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Xs02xlGX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733916186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
+	b=WAvYLrox8P0MVvhgbYZZg6iVtYLBMUx8Pmah8cwn3kICukGX8pQoXKy5+tbyLnN6XJUE2Q
+	P3Zl1VoJXz3W14HU622GK72pQ42M5ArbdgcWlQiwJn1mplzp5NehL9aSYdRq7bCJ7PVYxZ
+	B6DuBPkQ7UI78HSlvy6Fen+Mh88z8oI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733916186;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UnyySqDaqsMNdy15Z6UepiWBpe3bOImyGNWYxOLlQzE=;
+	b=Xs02xlGXHITVQbEuO25tJwBR8p2Jl8osy2PAXaUp1uDZbGqgIEG8ac6QCcxRYIh+y+XY3P
+	e6CL1QrcHVlGXFBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E01AB13983;
+	Wed, 11 Dec 2024 11:23:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id T89GNhl2WWdRbwAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 11 Dec 2024 11:23:05 +0000
+Message-ID: <0ad3587f-8b3d-438c-b542-0daf48b04633@suse.de>
+Date: Wed, 11 Dec 2024 12:23:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241210170224.19159-5-James.Bottomley@HansenPartnership.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv13 10/11] nvme: register fdp parameters with the block
+ layer
+To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+References: <20241210194722.1905732-1-kbusch@meta.com>
+ <20241210194722.1905732-11-kbusch@meta.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241210194722.1905732-11-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 17C8521108
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[grimberg.me,gmail.com,samsung.com,kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Dec 10, 2024 at 12:02:22PM -0500, James Bottomley wrote:
-> Make the inodes the default management vehicle for struct
-> efivar_entry, so they are now all freed automatically if the file is
-> removed and on unmount in kill_litter_super().  Remove the now
-> superfluous iterator to free the entries after kill_litter_super().
+On 12/10/24 20:47, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> Also fixes a bug where some entry freeing was missing causing efivarfs
-> to leak memory.
+> Register the device data placement limits if supported. This is just
+> registering the limits with the block layer. Nothing beyond reporting
+> these attributes is happening in this patch.
 > 
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Merges parts from a patch by Christoph Hellwig <hch@lst.de>
+> Link: https://lore.kernel.org/linux-nvme/20241119121632.1225556-15-hch@lst.de/
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
 > ---
-
-This looks like a good idea to me.
-
->  fs/efivarfs/internal.h |  1 -
->  fs/efivarfs/super.c    | 15 +++++++--------
->  fs/efivarfs/vars.c     | 39 +++------------------------------------
->  3 files changed, 10 insertions(+), 45 deletions(-)
+>   drivers/nvme/host/core.c | 139 +++++++++++++++++++++++++++++++++++++++
+>   drivers/nvme/host/nvme.h |   2 +
+>   2 files changed, 141 insertions(+)
 > 
-> diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
-> index 84a36e6fb653..d768bfa7f12b 100644
-> --- a/fs/efivarfs/internal.h
-> +++ b/fs/efivarfs/internal.h
-> @@ -37,7 +37,6 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *,
->  
->  int efivar_entry_add(struct efivar_entry *entry, struct list_head *head);
->  void __efivar_entry_add(struct efivar_entry *entry, struct list_head *head);
-> -void efivar_entry_remove(struct efivar_entry *entry);
->  int efivar_entry_delete(struct efivar_entry *entry);
->  
->  int efivar_entry_size(struct efivar_entry *entry, unsigned long *size);
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index dc3870ae784b..70b99f58c906 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -41,6 +41,12 @@ static int efivarfs_ops_notifier(struct notifier_block *nb, unsigned long event,
->  
->  static void efivarfs_evict_inode(struct inode *inode)
->  {
-> +	struct efivar_entry *entry = inode->i_private;
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index c2a3585a3fa59..f7aeda601fcd6 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -38,6 +38,8 @@ struct nvme_ns_info {
+>   	u32 nsid;
+>   	__le32 anagrpid;
+>   	u8 pi_offset;
+> +	u16 endgid;
+> +	u64 runs;
+>   	bool is_shared;
+>   	bool is_readonly;
+>   	bool is_ready;
+> @@ -1613,6 +1615,7 @@ static int nvme_ns_info_from_identify(struct nvme_ctrl *ctrl,
+>   	info->is_shared = id->nmic & NVME_NS_NMIC_SHARED;
+>   	info->is_readonly = id->nsattr & NVME_NS_ATTR_RO;
+>   	info->is_ready = true;
+> +	info->endgid = le16_to_cpu(id->endgid);
+>   	if (ctrl->quirks & NVME_QUIRK_BOGUS_NID) {
+>   		dev_info(ctrl->device,
+>   			 "Ignoring bogus Namespace Identifiers\n");
+> @@ -1653,6 +1656,7 @@ static int nvme_ns_info_from_id_cs_indep(struct nvme_ctrl *ctrl,
+>   		info->is_ready = id->nstat & NVME_NSTAT_NRDY;
+>   		info->is_rotational = id->nsfeat & NVME_NS_ROTATIONAL;
+>   		info->no_vwc = id->nsfeat & NVME_NS_VWC_NOT_PRESENT;
+> +		info->endgid = le16_to_cpu(id->endgid);
+>   	}
+>   	kfree(id);
+>   	return ret;
+> @@ -2147,6 +2151,127 @@ static int nvme_update_ns_info_generic(struct nvme_ns *ns,
+>   	return ret;
+>   }
+>   
+> +static int nvme_query_fdp_granularity(struct nvme_ctrl *ctrl,
+> +				      struct nvme_ns_info *info, u8 fdp_idx)
+> +{
+> +	struct nvme_fdp_config_log hdr, *h;
+> +	struct nvme_fdp_config_desc *desc;
+> +	size_t size = sizeof(hdr);
+> +	int i, n, ret;
+> +	void *log;
 > +
-> +	if (entry)  {
-> +		list_del(&entry->list);
-> +		kfree(entry);
+> +	ret = nvme_get_log_lsi(ctrl, 0, NVME_LOG_FDP_CONFIGS, 0,
+> +			       NVME_CSI_NVM, &hdr, size, 0, info->endgid);
+> +	if (ret) {
+> +		dev_warn(ctrl->device,
+> +			 "FDP configs log header status:0x%x endgid:%x\n", ret,
+> +			 info->endgid);
+> +		return ret;
 > +	}
->  	clear_inode(inode);
->  }
->  
-> @@ -269,13 +275,6 @@ static int efivarfs_callback(efi_char16_t *name16, efi_guid_t vendor,
->  	return err;
->  }
->  
-> -static int efivarfs_destroy(struct efivar_entry *entry, void *data)
-> -{
-> -	efivar_entry_remove(entry);
-> -	kfree(entry);
-> -	return 0;
-> -}
-> -
->  enum {
->  	Opt_uid, Opt_gid,
->  };
-> @@ -398,7 +397,7 @@ static void efivarfs_kill_sb(struct super_block *sb)
->  	kill_litter_super(sb);
->  
->  	/* Remove all entries and destroy */
-> -	efivar_entry_iter(efivarfs_destroy, &sfi->efivarfs_list, NULL);
-> +	WARN_ON(!list_empty(&sfi->efivarfs_list));
->  	kfree(sfi);
->  }
->  
-> diff --git a/fs/efivarfs/vars.c b/fs/efivarfs/vars.c
-> index f6380fdbe173..bda8e8b869e8 100644
-> --- a/fs/efivarfs/vars.c
-> +++ b/fs/efivarfs/vars.c
-> @@ -485,34 +485,6 @@ void __efivar_entry_add(struct efivar_entry *entry, struct list_head *head)
->  	list_add(&entry->list, head);
->  }
->  
-> -/**
-> - * efivar_entry_remove - remove entry from variable list
-> - * @entry: entry to remove from list
-> - *
-> - * Returns 0 on success, or a kernel error code on failure.
-> - */
-> -void efivar_entry_remove(struct efivar_entry *entry)
-> -{
-> -	list_del(&entry->list);
-> -}
-> -
-> -/*
-> - * efivar_entry_list_del_unlock - remove entry from variable list
-> - * @entry: entry to remove
-> - *
-> - * Remove @entry from the variable list and release the list lock.
-> - *
-> - * NOTE: slightly weird locking semantics here - we expect to be
-> - * called with the efivars lock already held, and we release it before
-> - * returning. This is because this function is usually called after
-> - * set_variable() while the lock is still held.
-> - */
-> -static void efivar_entry_list_del_unlock(struct efivar_entry *entry)
-> -{
-> -	list_del(&entry->list);
-> -	efivar_unlock();
-> -}
-> -
->  /**
->   * efivar_entry_delete - delete variable and remove entry from list
->   * @entry: entry containing variable to delete
-> @@ -536,12 +508,10 @@ int efivar_entry_delete(struct efivar_entry *entry)
->  	status = efivar_set_variable_locked(entry->var.VariableName,
->  					    &entry->var.VendorGuid,
->  					    0, 0, NULL, false);
-> -	if (!(status == EFI_SUCCESS || status == EFI_NOT_FOUND)) {
-> -		efivar_unlock();
-> +	efivar_unlock();
-> +	if (!(status == EFI_SUCCESS || status == EFI_NOT_FOUND))
->  		return efi_status_to_err(status);
-> -	}
->  
-> -	efivar_entry_list_del_unlock(entry);
->  	return 0;
->  }
->  
-> @@ -679,10 +649,7 @@ int efivar_entry_set_get_size(struct efivar_entry *entry, u32 attributes,
->  				    &entry->var.VendorGuid,
->  				    NULL, size, NULL);
->  
-> -	if (status == EFI_NOT_FOUND)
-> -		efivar_entry_list_del_unlock(entry);
-> -	else
-> -		efivar_unlock();
-> +	efivar_unlock();
->  
->  	if (status && status != EFI_BUFFER_TOO_SMALL)
->  		return efi_status_to_err(status);
-> -- 
-> 2.35.3
-> 
+> +
+> +	size = le32_to_cpu(hdr.sze);
+
+size should be bounded to avoid overly large memory allocations when the 
+header is garbled.
+
+> +	h = kzalloc(size, GFP_KERNEL);
+> +	if (!h) {
+> +		dev_warn(ctrl->device,
+> +			 "failed to allocate %lu bytes for FDP config log\n",
+> +			 size);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret = nvme_get_log_lsi(ctrl, 0, NVME_LOG_FDP_CONFIGS, 0,
+> +			       NVME_CSI_NVM, h, size, 0, info->endgid);
+> +	if (ret) {
+> +		dev_warn(ctrl->device,
+> +			 "FDP configs log status:0x%x endgid:%x\n", ret,
+> +			 info->endgid);
+> +		goto out;
+> +	}
+> +
+> +	n = le16_to_cpu(h->numfdpc) + 1;
+> +	if (fdp_idx > n) {
+> +		dev_warn(ctrl->device, "FDP index:%d out of range:%d\n",
+> +			 fdp_idx, n);
+> +		/* Proceed without registering FDP streams */
+> +		ret = 0;
+> +		goto out;
+> +	}
+> +
+> +	log = h + 1;
+> +	desc = log;
+> +	for (i = 0; i < fdp_idx; i++) {
+> +		log += le16_to_cpu(desc->dsze);
+> +		desc = log;
+
+Check for the size of 'h' to ensure that you are not
+falling over the end ...
+
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
