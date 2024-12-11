@@ -1,129 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-37035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884A19EC7DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 09:55:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FA89EC82F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 10:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FD1287D27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 08:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2570E287558
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 09:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B031EC4C2;
-	Wed, 11 Dec 2024 08:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CBE23EA90;
+	Wed, 11 Dec 2024 09:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ySnra2zJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fAb1uwWy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEEE1C5CD7;
-	Wed, 11 Dec 2024 08:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F51C23DE95
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 09:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907289; cv=none; b=rJUlT6XtTmjCTclQkeW7p/RDTJEcDXtXVwI7SH/HM9O5YhbAT9mY/xSautmuTGvMpZduQLO0lR8YUgUQngFt1+51L1Ad0UoF1WPBEZZ/+IYvK3h/kZEWvbDq9XuadhYpoBsRTUd7fQludBTs9uIIkdMr/Y/0BLa4hWJsnnIhmaA=
+	t=1733907737; cv=none; b=hvz5xFV/C3WbPNsJXyVgo3CjFVwDhNVhDDoCTH1uVgLEtAL7+aeu/XnDb8FkxAmGhH6IeeWR1Nxq+9nkowGJfghtQmExtpk0gnj878IFyrOLncuJa6AS0I/V9C2SKF1qLlHGJK6hlT108z8/4G97x3B2Jsxd1+XUXtu0jtJVY1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907289; c=relaxed/simple;
-	bh=8VLpqizoUvWvxf1BvNJAOAxNEVLFx37ki2R3Jsl6HiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o4hXgE2FpsfgiqqqpkweB9YKHX/cGBork9opz5leuFEJtdAsiw0IehzhfM2gBDZFvIGAnICLo1gEPxhiClUEtKGG1+XD2pzCS8md0TZc2rZfxFSKAXewzWuQDk121tkQSxSd4Lx9PFFQdPIz7Z4J4cP5Mipnjw3DG4X9pzK8oas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ySnra2zJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1733907737; c=relaxed/simple;
+	bh=uRdWfHiBDNOQd8/h8XOO1yHeIn4U/2f0r4FrR926ns4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUokJJn2zeCS6e6RQ11fpK8c5s0l0z0RlD98VnqsPMxUfKshj4EQntFev8E8O4LUMTYjammRRgLQljnIhY1r1Q2ZIecesSYpUQk7siIBV6zvDD3WkCI8LKK6w6huYuGs3aexfLvXhm6GO9J+EyCpfV3gluqw/8MelHEKHveY2wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fAb1uwWy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=75y2ZSAGBa241zuLn5Fzwnn53t/HVcUkpucSJles2ZE=; b=ySnra2zJaKjyfLgm7JaHFhO2eR
-	qfN13t6Fa3EV1YEy6l1xVDCb9v9v+F6lyR3jN9wPXTh737skGWKEldrRXGZPcyTZyJPYiHjDjyth3
-	Wi+Z5lVQUitCvDrEGAC3QO3ybdxo2zsynuPAdglzNf3Cu9rGOX0xTqMZzyT0m2m5oBalZoOqv54mY
-	b8K41LDFvnFBGJ1aMjr4VXivh2IJ7SqT+8UmgO3OISephZTZtzWtejQMd9lVXPLya2Q+zHcb38ewk
-	EpFOSrS/jAeYWcEpQmwV7Ovm6/Tzpm6xLewugm3p6ldPB2e4ihxBtkFWJw/G3P1qZHOQ9ytfyR5vz
-	TyA6YZeA==;
-Received: from [2001:4bb8:2ae:8817:935:3eb8:759c:c417] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLIUZ-0000000EITd-22Vz;
-	Wed, 11 Dec 2024 08:54:47 +0000
-From: Christoph Hellwig <hch@lst.de>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rmYfVcxXWxyu+jjolTzsI3+jDJaJBwG1y5mAmQwHu6Y=; b=fAb1uwWyNrZxXlpx4N7IYkcVVY
+	U84GbwHAsBdoyiDnwX5vuAn9H1WBOIK+qxpyt65rBitNX8n5M5J0lZkzA3VXQQgQXtiT68Z6PHlbA
+	VrZ3NCyHxpujJg3Znijb5Wtp3C1Bb/0HtyJLfrkrqlcV4ar+5Dds8T9dJ5wyZHKi4I16Z2EUdl44i
+	XS1k0QQ/D52ctyZP8wpdsBh8ffaUp9fBMgZ8QvlJx8/CEF4GEM0PISA/WERwVxKX1bOypuEQD84Xn
+	Uc9m3wvNGhnu5v1nU4SJSmypWFQWU9nZah3rGtCfE53KoeFQS1K0hJQ4n0xv/HR0BdWmeJVjXwt3h
+	E5U4+gVg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLIbk-0000000F8Ch-2mVM;
+	Wed, 11 Dec 2024 09:02:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0A4A030035F; Wed, 11 Dec 2024 10:02:12 +0100 (CET)
+Date: Wed, 11 Dec 2024 10:02:12 +0100
+From: Peter Zijlstra <peterz@infradead.org>
 To: Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	linux-xfs@vger.kernel.org,
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 8/8] iomap: pass private data to iomap_truncate_page
-Date: Wed, 11 Dec 2024 09:53:48 +0100
-Message-ID: <20241211085420.1380396-9-hch@lst.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241211085420.1380396-1-hch@lst.de>
-References: <20241211085420.1380396-1-hch@lst.de>
+Subject: Re: [PATCH 3/5] fs: lockless mntns rbtree lookup
+Message-ID: <20241211090212.GR21636@noisy.programming.kicks-ass.net>
+References: <20241210-work-mount-rbtree-lockless-v1-0-338366b9bbe4@kernel.org>
+ <20241210-work-mount-rbtree-lockless-v1-3-338366b9bbe4@kernel.org>
+ <20241211-agieren-leiblich-3b6f866f27bf@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211-agieren-leiblich-3b6f866f27bf@brauner>
 
-Allow the file system to pass private data which can be used by the
-iomap_begin and iomap_end methods through the private pointer in the
-iomap_iter structure.
+On Wed, Dec 11, 2024 at 09:13:16AM +0100, Christian Brauner wrote:
+> Hey Peter,
+> 
+> I had a question for you and meant to Cc you but forgot. This makes one
+> of our rbtree uses lockless using the seqlock pattern. See below.
+> 
+> I saw that in 50a38035ed5c ("rbtree: provide rb_find_rcu() /
+> rb_find_add_rcu()") you added new _rcu() variants.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 4 ++--
- fs/xfs/xfs_iomap.c     | 2 +-
- include/linux/iomap.h  | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+The original patches are much older, see:
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6bfee1c7aedb..ccb2c6cbb18e 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1464,7 +1464,7 @@ EXPORT_SYMBOL_GPL(iomap_zero_range);
- 
- int
- iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
--		const struct iomap_ops *ops)
-+		const struct iomap_ops *ops, void *private)
- {
- 	unsigned int blocksize = i_blocksize(inode);
- 	unsigned int off = pos & (blocksize - 1);
-@@ -1473,7 +1473,7 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
- 	if (!off)
- 		return 0;
- 	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops,
--			NULL);
-+			private);
- }
- EXPORT_SYMBOL_GPL(iomap_truncate_page);
- 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 3410c55f544a..5dd0922fe2d1 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1512,5 +1512,5 @@ xfs_truncate_page(
- 		return dax_truncate_page(inode, pos, did_zero,
- 					&xfs_dax_write_iomap_ops);
- 	return iomap_truncate_page(inode, pos, did_zero,
--				   &xfs_buffered_write_iomap_ops);
-+				   &xfs_buffered_write_iomap_ops, NULL);
- }
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 2a88dfa6ec55..19a2554622e6 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -315,7 +315,7 @@ int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
- int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
- 		bool *did_zero, const struct iomap_ops *ops, void *private);
- int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
--		const struct iomap_ops *ops);
-+		const struct iomap_ops *ops, void *private);
- vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops,
- 		void *private);
- typedef void (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length,
--- 
-2.45.2
+  d72da4a4d973 ("rbtree: Make lockless searches non-fatal")
+  ade3f510f93a ("rbtree: Implement generic latch_tree")
+
+(aw gawd, almost 10 years)
+
+> We're using another search function that allows us to walk the tree in
+> either direction:
+> 
+>         guard(read_lock)(&mnt_ns_tree_lock);
+>         for (;;) {
+>                 struct rb_node *node;
+> 
+>                 if (previous)
+>                         node = rb_prev(&mntns->mnt_ns_tree_node);
+>                 else
+>                         node = rb_next(&mntns->mnt_ns_tree_node);
+>                 if (!node)
+>                         return ERR_PTR(-ENOENT);
+> 
+>                 mntns = node_to_mnt_ns(node);
+>                 node = &mntns->mnt_ns_tree_node;
+> 
+> But afaict neither rb_prev() nor rb_next() are rcu safe. Have you ever
+> considered adding rcu safe variants for those two as well?
+
+Urgh, those are hard :-(
+
+So back when I did the lockless lookups, I only ensured the child
+pointers were 'stable'. I did not deal with the parent (and colour)
+pointer.
+
+The next/prev iterators very much rely on the parent pointer.
+
+Someone would have to go through the tree rotations again and see if it
+is possible to also update the parent pointers in such a way as to not
+create temporary loops.
+
+Notably, the thing you want to avoid is an interrupt doing a tree
+traversal on the CPU that's doing the tree rotation getting stuck.
+
+The other, possibly even harder option would be to (finally) implement
+threaded RB trees, where the current NULL child pointers become a 'list'
+pointer to the next (in-order) element. But that too makes rotations
+'interesting' and must avoid creating loops.
+
+But in all those cases you have to also consider the ramifications of
+rb_next/prev hitting a modification, I suspect like with the simple
+lookup, you can miss entire subtrees. So depending on the requirements,
+this might not be suitable for you.
+
+The far easier option might be to simply add a list_head along with the
+rb_node and iterate that -- normally the problem with this is that you
+can't easily move elements around in an RCU-list, but luck will have it
+you don't move elements around. Your tree location is very static
+afaict.
 
 
