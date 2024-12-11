@@ -1,221 +1,628 @@
-Return-Path: <linux-fsdevel+bounces-37085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D402D9ED6B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 20:42:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427F79ED6B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 20:43:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C19281992
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 19:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC16165D75
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 19:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B1020371B;
-	Wed, 11 Dec 2024 19:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF591DB933;
+	Wed, 11 Dec 2024 19:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KCZ8fvBV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TqGyTAFW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XckTt9wg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D97259491;
-	Wed, 11 Dec 2024 19:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733946140; cv=fail; b=MS2AUVBtO0Zp8Vi/d59/716LZu50zgsB8dEHmoErJRC2j6wH6n7YcZCPUL9kRt+mxoycnoNKueDLWVoT9N2WjcHI6z3f53vMOKks6MgaTLZ18ftKi4LWiOJd50UD6BdlqRQH35CzMQthsJVX2tOJv0kCAH0hJuA3wul4/ZtHUF8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733946140; c=relaxed/simple;
-	bh=Vm9r6LDSiarP3xiqZR1WOUAgjC70m2Sf9fZq7s2CaUE=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=Z7+HL5XZRhqw37/jFQSgOTps+8PTDSwNikSvBc10j7VsLM5ao7uBphAX2znz+rjhD0VKXVLNFBbHV0rTMSudpsILvGcgehtj2+qW3o3PqbYwYxrGt+nbVxH0eze6WyzpVHKO0t8icXI2EK+LjRs4oZAWaaoGwCiHJ8r2oS0Ql5g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KCZ8fvBV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TqGyTAFW; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBEMvs1022051;
-	Wed, 11 Dec 2024 19:41:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=7eRxp+oQ7A04zTuohB
-	840T+jmznNNpd3WrFKOHloDKQ=; b=KCZ8fvBVQbVvJrQFwWeBB0LpsLcXKXTYLg
-	pc4GiDu3pbWavOsZhV2LSMDoQF+7EIS5XqRvZWl9OT50Iybgof7o9mCPbuICc4xj
-	hW0w9kOB6CPlVG7/nbzhac0UuVP11JtvUkuIf1i8tTY09QTieW1YxdFdDHpA1yMN
-	y6WRSwlflA2Irf2cz3aQ84NzePqufW/iXZ2JauC9a1w2NuFqMlQNggPe/Fj8HEoE
-	iZFuTIcZPLjRTKfbl36VXOVxakaHlsZ6M4++ElhBeGx86xtpQAABqRa/GglL0M/Z
-	c7i1anN5XE9icNXi53rs3uSU3LHO4HroNgtX4W8dEcrkKLCXtOdg==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43dx5s6n2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 19:41:53 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBJMxWE019357;
-	Wed, 11 Dec 2024 19:41:52 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43cctad4ws-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 19:41:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KOeB+KqUaxObXgIF5pN2iM7HW/DRlqXruIIlVEHcQ/M+NHO62bxA2vzpmrG+Z/jOJRkjTMxv8IgdzOSTyMI4fX02luIPhuq4fjXeWZ/8DttfCqn60/yQl0BD8gtqlcBIMatfbrLVICmtczcD0KPcMSRTeOpNqNaZiR7sv9R33iqS5gODJM80zQ42xg9cFVY5qwd1eiOdAY1LqCZRs5f3+++vesOYi82L2dEpMKi/IepxD/7B9yiDy8t7M9BilUrr7/SDhmOCTTXG4mblBcVagytW30u9sGFTpOXwkOh3EIA0Suj33rRArVCOGUpa9JRa7gOvuO3By2mE7LrU+C65Kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7eRxp+oQ7A04zTuohB840T+jmznNNpd3WrFKOHloDKQ=;
- b=l/8GRgy9Qhpq3aO48jepqJKl7whFcE0rr044suGhAOwkfy3rAibi3hQR35G63Mii2nqHZHAaS4hQnEevpf7RSD280ExcSC9/PplnZBv7ZE9SCqkKV0B4X3JCw5uXf6fjY34l7GVZABnM0zM2/1yN0xvWm2Scrc15v/Y5KqrJaRUdbYttjWOileATDG75NMV0nPs3CT6EED0Wzsn1RvrxCj+MsflZpdivi6zDYtmY2woEWaRZPdBMGQF5xXihcY5ve7Z+OyX7MsYOuaHibVvQPanC2cZkIN7n2ecAE6X5wLwfFwT+x5f1jK7w36SkS1D7zR/u8P7SHe3jmrmchUoSNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D93B259491
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 19:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733946223; cv=none; b=X5G1E3vReKC5fgOK6lMPyyn8ffW3hXg2Gve36E2+yJ4Nu3DynpEb7UQWEo3LigBe9nkLYRAov8ixvBdqOODfXV16ylJnlYWx5Wubl7FG+kAM1ha6u3Wo80T5MwRBBaPKOVKsNWqGcp5Me9av1FTj5LNDt9Cg56f5cwIpC1QZqxQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733946223; c=relaxed/simple;
+	bh=XB68KPNgETC0IevQpDJQVaLSUXbByXcsV/tyRjNilQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p3YxbB+FvNP2TJVmSfpF5sHpgfMKZqnq6ZsNCWrmPWlp0/oVtTUWjNz3dleRgZFnhVo3WG68tsJfmpjyIC3ern1hJG66c49fxbXYx7bsKi3cnTZgsvWloziUtNCkeXB908+m1VhM0KlAZqnGZ911sS9LFi43kwdQ0rMT2gd+cXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XckTt9wg; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4676e708aeaso28377241cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 11:43:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7eRxp+oQ7A04zTuohB840T+jmznNNpd3WrFKOHloDKQ=;
- b=TqGyTAFWVbcV/1PVdIjHwwURXHJgWdR7teLm0569iD012IOvD5az12c6kdX268H+PKjP4/3zWJycVUDPCqWRgjKDOmSlYdMrOkwo7S+4i/dEr5t5fEz58dG25jB2xNSP5ZNuUEgrPv8WN01T+n4GZcK2QTZ1J/9g37gnR3BOBYs=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by CO1PR10MB4516.namprd10.prod.outlook.com (2603:10b6:303:6e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 19:41:46 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%5]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 19:41:46 +0000
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Nitesh Shetty
- <nj.shetty@samsung.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Javier
- Gonzalez <javier.gonz@samsung.com>,
-        Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
-        Keith Busch <kbusch@meta.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "joshi.k@samsung.com" <joshi.k@samsung.com>
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20241210071253.GA19956@lst.de> (Christoph Hellwig's message of
-	"Tue, 10 Dec 2024 08:12:53 +0100")
-Organization: Oracle Corporation
-Message-ID: <yq14j3agg9f.fsf@ca-mkp.ca.oracle.com>
-References: <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
-	<20241112135233.2iwgwe443rnuivyb@ubuntu>
-	<yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
-	<9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
-	<yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
-	<8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
-	<yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
-	<CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
-	<20241205080342.7gccjmyqydt2hb7z@ubuntu>
-	<yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com> <20241210071253.GA19956@lst.de>
-Date: Wed, 11 Dec 2024 14:41:44 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR07CA0028.namprd07.prod.outlook.com
- (2603:10b6:208:1a0::38) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+        d=gmail.com; s=20230601; t=1733946220; x=1734551020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afyZ78JNgn5J9enzlJYUygHvv9asIwJ6ViVDeqQ6yTY=;
+        b=XckTt9wgDJ8UZHF/qarrSJ16U9OSriT9zfN2sZ+oDgHBTN6/6FW3LwoMYYjrSkaTDY
+         ZQobuBUwJ5F5Q+TiL4aO6oN6BAU3H8t8eBS63z8tYO29lcHxmjnQu/G2/AOZOShSNWdo
+         E92Y21Wg/nJOqRH/Q7eE7eEfGDJyaKfzMwefZWweVVytSjyNYgIyX88HAKV+dBVNp7IX
+         SJdRHrjhwuaq6rakLEVj4HsZmWRRPeVXMb7pecuU2MRplplOVR67LiCQECnF0q6KyMdl
+         wa8X8CHsHdWVPozdNMTP6fgxMXloHvaSJL4yNzpA3S10IDi8I6G8Kk7vlJYdjmo1Uz91
+         j+cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733946220; x=1734551020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=afyZ78JNgn5J9enzlJYUygHvv9asIwJ6ViVDeqQ6yTY=;
+        b=PZP4xDIZbLkdVpUNxVSr/T2yhD95zdHIetsTVVskvj4o56JncDhwlE4lrTtBLvNLlP
+         YI7hzMOEVw3cl6RWoUJ0ClW1P5yXehqIhgvM7el2NEg4OrdSzOjUm70OVcceprnVgc2o
+         W5eyjq7W9W4oWEur3sumu979RXN7fVluggSPA6utSHNs4fLlhma4uS7/PKFGujxCcePJ
+         aBTNiFYWix8nSuIw/QhwJ/7/Ep+fjV0Pz6JfdUnvIYUy0+Be9afTTOJMWxx7vQ7LMzJd
+         T4f7iG7taJcN8KVQ4Xc4fkmk4cBXX4T/TIYZFrsxGjwzPeRkZ1AOK4dFhzDiIZ9CpnPi
+         OsaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUMhBpKJbj7bIwEhNzifQgXxpVt4d76xBr1xdUZArrwvt3h5biRTU0rU6imNOpbtzXfyHk9Sh29dHhSBHn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKGKOOxqhIab5t60ymQ1BRU2Pf6oc8GcI6NE5vG25VeK+1vcUI
+	UdfrC21EimF4Vvb13TIkZerHAelc4Y+sTDmz93ozXAY8dofPvSAeroEVdxWmHS6ryrbqQTWQvw9
+	NUhKY16+4OSTx9G+uPKIMCX80kU+ElQ==
+X-Gm-Gg: ASbGncsJHZYGK5rExnt//Lk6HcaBbN4FF+JMDRihAYGyvuTs4hfCmkif2b1bE/Y1fWo
+	W5tHUuwQ5bE2YJrwRGxdpvQO3Wl2wpzMoGo7lzURUEN6VTMLt+t8=
+X-Google-Smtp-Source: AGHT+IFTKZMxH2vNnv5zTste+2InUxqrO7WsR7udUTOAoWo2wIy3F83xp/IFdF3nhbz8Qto8Ay0EmYoGNDl3Hfxxo2M=
+X-Received: by 2002:a05:622a:488e:b0:467:774b:f04b with SMTP id
+ d75a77b69052e-467961af8cbmr9583351cf.22.1733946220025; Wed, 11 Dec 2024
+ 11:43:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|CO1PR10MB4516:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e415f02-076c-40d5-8ea7-08dd1a1bd8b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?l6tEAK6B/lYvlJEtQ8eLkM4OG5/RnXd0SlI1P2YrfE8mW1pFQGWUTiiT3H/D?=
- =?us-ascii?Q?zUMwTUcenV7vp1KAkJQICFPIOGkQWy/puKfxvUpblNLrWgABnBEm2rbl2fg5?=
- =?us-ascii?Q?jvY8r829cNENRC5+D1ZcJMBDM2Oa+BLiQDR9cwH2QyPt1PfdI9BGNUg/dhVQ?=
- =?us-ascii?Q?ISCICepMqeuJ6ILOsR+fT5p3ghybO5epTTY/OeSAoK7vYPf+AkKaSRybI7uC?=
- =?us-ascii?Q?Fcw+wmXPlhNbiIU4RalsV0mF6rfz0dYFe9LzKern6eY6/t+5/PjXTCcgKSc2?=
- =?us-ascii?Q?PqxMPInqHTp6F63r3hdl2OMjoZRR4t2Dit9dFjmeK+bbaFdplBUtGEOJ+DAs?=
- =?us-ascii?Q?9AvJFZMJSATiTgu3VNfBSgZA7bT16bw40wIBFyukHZ6NTXLgAszDbu3ifZtK?=
- =?us-ascii?Q?XmZRZRfwIJNZ0n1KqRDm7mDfSnewYRu38yLIUGSWC3M1kY4YwRm/ZAlCEWOY?=
- =?us-ascii?Q?Ii70vzwyYEqWrU9zi9yfU6c6EZm5E2FgnmKCQDtniTZQee4wRRvK7s2pAS8N?=
- =?us-ascii?Q?kMTDNRI9A072puiIHworeVhAI56KDHy6sfIpM2EKtwHF7OlJmMEoNAooa0f4?=
- =?us-ascii?Q?5FiPd0FvdgCmlWjwGlor63MiAkMu74sWhP5qXyHzdFStgmBPYnmiqRBh7k8X?=
- =?us-ascii?Q?wkdE1jBGgzIi5Yif206FYmfYknjDMRoIRh0Tt0yniMhcOzd6O7j0kUxW5PkW?=
- =?us-ascii?Q?WdQJT40kM5ncIclEffQvkO3oJF0HIkdyjLmoXHCcN2nYF5eMwHf9oDZcqLPX?=
- =?us-ascii?Q?VSCLy6GW2Kr8moXP/jh+Q7KD2zSNwDCPOAthq+Ewci+xUTrvuh1v/x6XrdCj?=
- =?us-ascii?Q?KBCEF3hDWJeXkh6Qr+odrCe3Jb5i6lo48ZxS4MQVh4A1vsBMvOgSCWRgtD9j?=
- =?us-ascii?Q?eJVoLEty4jTdZJsriTY5XJYZxNe2W3OTkln31QbHPDaVbbX6+65HBePVgtEJ?=
- =?us-ascii?Q?+nh/ghdRRPAy/pVE2c48hREcjeRVJXOKWSZXYTzMv7Sh76tp5o4pOeGj3hpw?=
- =?us-ascii?Q?7epX/jUqHBm5VDXHSHN/uzLflLgDn1sXf1y8CM5tmA0QCCsEmjkGKTvTkYj3?=
- =?us-ascii?Q?88PeCK+XCNQMFfV+HbQ0GghcMlkEBoE72MwNKlDgDKM1GFFgmeaCaXUYVGE2?=
- =?us-ascii?Q?z322IqfcYwWN7mYU24ObTYB6h/JYxBKin8PkFwcvcrvO5gTeC61xb/vu9FCo?=
- =?us-ascii?Q?heQBhZyBveg9YcfRhMXLywbmCA434re1mFRnNdUHBnvqdWK3Kt7XMV3Mha2Y?=
- =?us-ascii?Q?aPuLMpV4prDPmmSowxxlhNFniN0ZPyZPTAzCSLXI2TcU0yiSxIdY9y7qvIbF?=
- =?us-ascii?Q?DDuCVqlDFiJBakojHBGf1jabAakApODCLtgdjHGlpUIrzQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?A8d4A2aX8setjkx+mCuIvdPtwvxAlH5gvDy2M+6JJmoNeEbiAhXRpxARJ+aW?=
- =?us-ascii?Q?gfV532uOyMvH4vj5R44ZFS3HotV6G1K62/SF6/AM3fE59HYuG8EpJKplC5t1?=
- =?us-ascii?Q?L7Xc21MmVpmVai77XpOqviGxJinpUJtR7JSDuMClzhueKEszc/rinVxCwmeZ?=
- =?us-ascii?Q?NLMteq6OVQrzT4QIln0Wx3JQ86viZZJUiK3QQc02CauE35Ad3QWcqA0s74q4?=
- =?us-ascii?Q?YuhDOtiOUYRLQhr38lZkkTsw4FETM29h3LJFkuApvW2ujfZGShm0ATI4a6Gz?=
- =?us-ascii?Q?ptHu35bNtB57aT83L5BQ7iJmgHNP21hRnLowe/NI4+QUZfQu9DQol4FSWJQ4?=
- =?us-ascii?Q?FlcvYALe9429RQXVytoL+1d1foQoiTXZ6NZLCSpIKClf/R44k3/lgCaj3RAr?=
- =?us-ascii?Q?msSeVCQHVqqUix3rnzb8CD+C4i/xoyd1wjqT+qb/eWhyk4t0MKziYvEh7kVf?=
- =?us-ascii?Q?aBDVavW5wWPhNl4YijBBoxrU2/rmyGyIGY3YpiVT4B1tzwOT9osffsAu7ev3?=
- =?us-ascii?Q?tvb/UG6tKeuH8pZF8D2tmqX9wJjUaX4AP8EqJASxPZRMDvU+CE/YxUTcHo14?=
- =?us-ascii?Q?9pJAqaxQWprwa+3a23YcOcKnD3+W0P2zf0bYgC80omG8LO2W9unPx9x7eEgn?=
- =?us-ascii?Q?lZqfLMvMAmOB7e2cK6a5msyyjZ/QvHeXNGimVR11co9L+CIr7qayxAU/WtKx?=
- =?us-ascii?Q?MzNSR3DAA7FQGRg4yoqb81F6JlT+XP2O9ICSbCpZPvAivlr4I37MpbmE5Gol?=
- =?us-ascii?Q?jvYI0exZXxwU0fA603HjdICNuEIShlGATFldF51pX87aOX4ygFwcv/JgeLl2?=
- =?us-ascii?Q?zuN157pwhx4aRIW7gYU4lnzxCzP44Fy680QLZDARmvD5wbOCQ8I0Crh/2AIa?=
- =?us-ascii?Q?tvu6oPx6/l7W2ezQnT3UgX/YmmaWAxU0nOD7N3RvTx4z+6bIi3Urje0r50+w?=
- =?us-ascii?Q?2fZy3wsfvbrNmmcmhu5iSJm9yWat1iM4l4G8ul1oCP+o/TeEduko7swvHkhO?=
- =?us-ascii?Q?83YLFnb30LajaiF3MSsoXneiGalsTTVMEXKppc+atxojcqRJGNkcuc9c6Sff?=
- =?us-ascii?Q?PH0uJY69GW4sN8uvwodaxt8HSabqgtzHzBgsrYTHLfoxMxOspFC5bgM85O8a?=
- =?us-ascii?Q?eq6Fw+6XKrUpZgSKlxG17x/MXPvvOsekIUKwoNFhmR7A5Jn5I3Hr+KBokvKN?=
- =?us-ascii?Q?rgfUoRNoiUMRleJwOIvug57DEys+rEtU+DbAm4vxkg6AI49GMcZMP6lwvbvg?=
- =?us-ascii?Q?qnWd7Lgxqtuz60l1eHp9Dqr58T4ZpqP/y2t7nw7ZNEJvOMlm8iIceHHLMzZp?=
- =?us-ascii?Q?7FAapYoLsQ3MkWcWXmawnOh2fbppTRm0ZYmo6nsiWsvzfN+7T098jMz0Q2+x?=
- =?us-ascii?Q?PTmlt3b7PXjfB3YQE07m4UK7hmw1P5FWySayug0l7zIxAweyXe3AVDSmS1pQ?=
- =?us-ascii?Q?I6AGqOwujIjL9+PJmYQVc8jmxH3jBctanWr5hUwGRleWHrHnkJm0Kr68E3r2?=
- =?us-ascii?Q?C5kGTNgutFqB/3sakljUJA9eWVAQqjkZ/wtLnUYICkjZe7b9lDVPzM1LxEa7?=
- =?us-ascii?Q?xBug85s2fNnmQzSyPKXqlZKuqxkuXILJdrPL6wTSO7v05Tcw53dIOj0bu3O8?=
- =?us-ascii?Q?sg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ruPasJdURZC3z2PiMimuZWe4DjA6FHTL+Bly760PDwrKCkdKdbaTDxXoepkPHL73sBdPl5/e0RTOdxDU612d/jHw1FndS5CYY55wL4D94J9ugCZHdaJv7SiLxx4bpjapvqIxKQ2xszsiXjPgPtXv7qTW8OC37s4TU3n1f2TLdj5V3VCoBynYaGSmdQDNN/hMHFH2+HKailmYayvxvxzH9lquyYJCc6A7c+HqbRjNSGwRCd7TZVZIyiBh5m39LAAE7BOzwjL4ClaFkza9qEWOHlEvELOQsmNEP9MIEO7mCKm3y8LNU+zGRVUKGbjrqgcGPj17AZ+ZWkNwzPzEl6TJWSZcfZYdVMR1+3mv42bvupr57oj3Fdy8RaR8AE0HTUx8fQaXp16Vl8/IvY1gZZIIGASEdxr+aCfkKvinGL6i5xsDnkB8Lvy92cnu6ASFR5yipRpEc5TzBOrNsm2kya+gbfnE2bCp2jw/6Voxn9otoDYUc1Y8QPSRl0mR2cZFjZ1jx0AEjG6ETwqLPCq5tJti9nxquTSrY2iedcNnI2l89fG4jcsBkxoT6vP9FGqHeVME+rWTURNiwcux+Hpha+dhy8N9xBnbZurDiuPbraQyKaE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e415f02-076c-40d5-8ea7-08dd1a1bd8b6
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 19:41:46.0688
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 332ABC5bYIjkD6phbJbQR7/5aijUEp+//OlxIzveFJaR5qk83iDGIl1Cmmlp2K6Fscm6FPkNJmqyvkQlSpXfjFJ+ypJyAF11rhuvIazv5t8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4516
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_11,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- adultscore=0 spamscore=0 suspectscore=0 mlxlogscore=764 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412110139
-X-Proofpoint-ORIG-GUID: uQYWrYZyvjVsqpuoQ40YXDvnV4eRaWNp
-X-Proofpoint-GUID: uQYWrYZyvjVsqpuoQ40YXDvnV4eRaWNp
+References: <p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw>
+ <cb2ceebc-529e-4ed1-89fa-208c263f24fd@tnxip.de> <Z1T09X8l3H5Wnxbv@casper.infradead.org>
+ <68a165ea-e58a-40ef-923b-43dfd85ccd68@tnxip.de> <2143b747-f4af-4f61-9c3e-a950ab9020cf@tnxip.de>
+ <20241209144948.GE2840216@perftesting> <Z1cMjlWfehN6ssRb@casper.infradead.org>
+ <20241209154850.GA2843669@perftesting> <4707aea6-addb-4dc3-96f7-691d2e94ab25@tnxip.de>
+ <CAJnrk1apXjQw7LEgSTmjt1xywzjp=+QMfYva4k1x=H0q2S6mag@mail.gmail.com>
+ <CAJnrk1YfeNNpt2puwaMRcpDefMVg1AhjYNY4ZsKNqr85=WLXDg@mail.gmail.com>
+ <CAJnrk1aF-_N6aBHbuWz0e+z=B4cH3GjZZ60yHRPbctMMG6Ukxw@mail.gmail.com>
+ <0f09af0f-2524-42a5-bdfa-d241c3a19329@tnxip.de> <CAJnrk1ZaAGNmVYVSFieJ-02mcX4N15zKF-yyjEPeEFotMpLYBA@mail.gmail.com>
+ <cb096d18-cb2f-40af-8bf8-8fe27e69f5d3@tnxip.de>
+In-Reply-To: <cb096d18-cb2f-40af-8bf8-8fe27e69f5d3@tnxip.de>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 11 Dec 2024 11:43:29 -0800
+Message-ID: <CAJnrk1Zy2=GSXT028bvU50cKsHRwFFj27hP5yhOYiBgfRbNLtw@mail.gmail.com>
+Subject: Re: silent data corruption in fuse in rc1
+To: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+Cc: Josef Bacik <josef@toxicpanda.com>, Matthew Wilcox <willy@infradead.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 11, 2024 at 6:01=E2=80=AFAM Malte Schr=C3=B6der <malte.schroede=
+r@tnxip.de> wrote:
+>
+> On 11/12/2024 03:57, Joanne Koong wrote:
+> > On Tue, Dec 10, 2024 at 9:53=E2=80=AFAM Malte Schr=C3=B6der <malte.schr=
+oeder@tnxip.de> wrote:
+> >> On 10/12/2024 06:14, Joanne Koong wrote:
+> >>> On Mon, Dec 9, 2024 at 11:52=E2=80=AFAM Joanne Koong <joannelkoong@gm=
+ail.com> wrote:
+> >>>> On Mon, Dec 9, 2024 at 10:47=E2=80=AFAM Joanne Koong <joannelkoong@g=
+mail.com> wrote:
+> >>>>> On Mon, Dec 9, 2024 at 9:07=E2=80=AFAM Malte Schr=C3=B6der <malte.s=
+chroeder@tnxip.de> wrote:
+> >>>>>> On 09/12/2024 16:48, Josef Bacik wrote:
+> >>>>>>> On Mon, Dec 09, 2024 at 03:28:14PM +0000, Matthew Wilcox wrote:
+> >>>>>>>> On Mon, Dec 09, 2024 at 09:49:48AM -0500, Josef Bacik wrote:
+> >>>>>>>>>> Ha! This time I bisected from f03b296e8b51 to d1dfb5f52ffc. I =
+ended up
+> >>>>>>>>>> with 3b97c3652d91 as the culprit.
+> >>>>>>>>> Willy, I've looked at this code and it does indeed look like a =
+1:1 conversion,
+> >>>>>>>>> EXCEPT I'm fuzzy about how how this works with large folios.  P=
+reviously, if we
+> >>>>>>>>> got a hugepage in, we'd get each individual struct page back fo=
+r the whole range
+> >>>>>>>>> of the hugepage, so if for example we had a 2M hugepage, we'd f=
+ill in the
+> >>>>>>>>> ->offset for each "middle" struct page as 0, since obviously we=
+'re consuming
+> >>>>>>>>> PAGE_SIZE chunks at a time.
+> >>>>>>>>>
+> >>>>>>>>> But now we're doing this
+> >>>>>>>>>
+> >>>>>>>>>     for (i =3D 0; i < nfolios; i++)
+> >>>>>>>>>             ap->folios[i + ap->num_folios] =3D page_folio(pages=
+[i]);
+> >>>>>>>>>
+> >>>>>>>>> So if userspace handed us a 2M hugepage, page_folio() on each o=
+f the
+> >>>>>>>>> intermediary struct page's would return the same folio, correct=
+?  So we'd end up
+> >>>>>>>>> with the wrong offsets for our fuse request, because they shoul=
+d be based from
+> >>>>>>>>> the start of the folio, correct?
+> >>>>>>>> I think you're 100% right.  We could put in some nice asserts to=
+ check
+> >>>>>>>> this is what's happening, but it does seem like a rather incauti=
+ous
+> >>>>>>>> conversion.  Yes, all folios _in the page cache_ for fuse are sm=
+all, but
+> >>>>>>>> that's not guaranteed to be the case for folios found in userspa=
+ce for
+> >>>>>>>> directio.  At least the comment is wrong, and I'd suggest the co=
+de is too.
+> >>>>>>> Ok cool, Malte can you try the attached only compile tested patch=
+ and see if the
+> >>>>>>> problem goes away?  Thanks,
+> >>>>>>>
+> >>>>>>> Josef
+> >>>>>>>
+> >>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> >>>>>>> index 88d0946b5bc9..c4b93ead99a5 100644
+> >>>>>>> --- a/fs/fuse/file.c
+> >>>>>>> +++ b/fs/fuse/file.c
+> >>>>>>> @@ -1562,9 +1562,19 @@ static int fuse_get_user_pages(struct fuse=
+_args_pages *ap, struct iov_iter *ii,
+> >>>>>>>               nfolios =3D DIV_ROUND_UP(ret, PAGE_SIZE);
+> >>>>>>>
+> >>>>>>>               ap->descs[ap->num_folios].offset =3D start;
+> >>>>>>> -             fuse_folio_descs_length_init(ap->descs, ap->num_fol=
+ios, nfolios);
+> >>>>>>> -             for (i =3D 0; i < nfolios; i++)
+> >>>>>>> -                     ap->folios[i + ap->num_folios] =3D page_fol=
+io(pages[i]);
+> >>>>>>> +             for (i =3D 0; i < nfolios; i++) {
+> >>>>>>> +                     struct folio *folio =3D page_folio(pages[i]=
+);
+> >>>>>>> +                     unsigned int offset =3D start +
+> >>>>>>> +                             (folio_page_idx(folio, pages[i]) <<=
+ PAGE_SHIFT);
+> >>>>>>> +                     unsigned int len =3D min_t(unsigned int, re=
+t, folio_size(folio) - offset);
+> >>>>>>> +
+> >>>>>>> +                     len =3D min_t(unsigned int, len, PAGE_SIZE)=
+;
+> >>>>>>> +
+> >>>>>>> +                     ap->descs[ap->num_folios + i].offset =3D of=
+fset;
+> >>>>>>> +                     ap->descs[ap->num_folios + i].length =3D le=
+n;
+> >>>>>>> +                     ap->folios[i + ap->num_folios] =3D folio;
+> >>>>>>> +                     start =3D 0;
+> >>>>>>> +             }
+> >>>>>>>
+> >>>>>>>               ap->num_folios +=3D nfolios;
+> >>>>>>>               ap->descs[ap->num_folios - 1].length -=3D
+> >>>>>> The problem persists with this patch.
+> >>>>>>
+> >>>> Malte, could you try Josef's patch except with that last line
+> >>>> "ap->descs[ap->num_pages - 1].length  -=3D (PAGE_SIZE - ret) &
+> >>>> (PAGE_SIZE - 1);" also removed? I think we need that line removed as
+> >>>> well since that does a "-=3D" instead of a "=3D" and
+> >>>> ap->descs[ap->num_folios - 1].length gets set inside the for loop.
+> >>>>
+> >>>> In the meantime, I'll try to get a local repro running on fsx so tha=
+t
+> >>>> you don't have to keep testing out repos for us.
+> >>> I was able to repro this locally by doing:
+> >>>
+> >>> -- start libfuse server --
+> >>> sudo ./libfuse/build/example/passthrough_hp --direct-io ~/src ~/fuse_=
+mount
+> >>>
+> >>> -- patch + compile this (rough / ugly-for-now) code snippet --
+> >>> diff --git a/ltp/fsx.c b/ltp/fsx.c
+> >>> index 777ba0de..9f040bc4 100644
+> >>> --- a/ltp/fsx.c
+> >>> +++ b/ltp/fsx.c
+> >>> @@ -1049,7 +1049,8 @@ dowrite(unsigned offset, unsigned size)
+> >>>         }
+> >>>  }
+> >>>
+> >>> -
+> >>> +#define TWO_MIB (1 << 21)  // 2 MiB in bytes
+> >>>
+> >>>  void
+> >>>  domapwrite(unsigned offset, unsigned size)
+> >>>  {
+> >>> @@ -1057,6 +1058,8 @@ domapwrite(unsigned offset, unsigned size)
+> >>>         unsigned map_size;
+> >>>         off_t    cur_filesize;
+> >>>         char    *p;
+> >>> +       int ret;
+> >>> +       unsigned size_2mib_aligned;
+> >>>
+> >>>         offset -=3D offset % writebdy;
+> >>>         if (size =3D=3D 0) {
+> >>> @@ -1101,6 +1104,41 @@ domapwrite(unsigned offset, unsigned size)
+> >>>         pg_offset =3D offset & PAGE_MASK;
+> >>>         map_size  =3D pg_offset + size;
+> >>>
+> >>> +       size_2mib_aligned =3D (size + TWO_MIB - 1) & ~(TWO_MIB - 1);
+> >>> +       void *placeholder_map =3D mmap(NULL, size_2mib_aligned * 2, P=
+ROT_NONE,
+> >>> +                            MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> >>> +       if (!placeholder_map) {
+> >>> +               prterr("domapwrite: placeholder map");
+> >>> +               exit(202);
+> >>> +       }
+> >>> +
+> >>> +       /* align address to nearest 2 MiB */
+> >>> +       void *aligned_address =3D
+> >>> +               (void *)(((uintptr_t)placeholder_map + TWO_MIB - 1) &
+> >>> ~(TWO_MIB - 1));
+> >>> +
+> >>> +       void *map =3D mmap(aligned_address, size_2mib_aligned, PROT_R=
+EAD
+> >>> | PROT_WRITE,
+> >>> +                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED |
+> >>> MAP_POPULATE, -1, 0);
+> >>> +
+> >>> +       ret =3D madvise(map, size_2mib_aligned, MADV_COLLAPSE);
+> >>> +       if (ret) {
+> >>> +               prterr("domapwrite: madvise collapse");
+> >>> +               exit(203);
+> >>> +       }
+> >>> +
+> >>> +       memcpy(map, good_buf + offset, size);
+> >>> +
+> >>> +       if (lseek(fd, offset, SEEK_SET) =3D=3D -1) {
+> >>> +               prterr("domapwrite: lseek");
+> >>> +               exit(204);
+> >>> +       }
+> >>> +
+> >>> +       ret =3D write(fd, map, size);
+> >>> +       if (ret =3D=3D -1) {
+> >>> +               prterr("domapwrite: write");
+> >>> +               exit(205);
+> >>> +       }
+> >>> +
+> >>> +       /*
+> >>>         if ((p =3D (char *)mmap(0, map_size, PROT_READ | PROT_WRITE,
+> >>>                               MAP_FILE | MAP_SHARED, fd,
+> >>>                               (off_t)(offset - pg_offset))) =3D=3D (c=
+har *)-1) {
+> >>> @@ -1119,6 +1157,15 @@ domapwrite(unsigned offset, unsigned size)
+> >>>                 prterr("domapwrite: munmap");
+> >>>                 report_failure(204);
+> >>>         }
+> >>> +       */
+> >>> +       if (munmap(map, size_2mib_aligned) !=3D 0) {
+> >>> +               prterr("domapwrite: munmap map");
+> >>> +               report_failure(206);
+> >>> +       }
+> >>> +       if (munmap(placeholder_map, size_2mib_aligned * 2) !=3D 0) {
+> >>> +               prterr("domapwrite: munmap placeholder_map");
+> >>> +               report_failure(207);
+> >>> +       }
+> >>>  }
+> >>>
+> >>> -- run fsx test --
+> >>> sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+> >>>
+> >>> On the offending commit 3b97c3652, I'm seeing:
+> >>> [user]$ sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+> >>> Will begin at operation 3
+> >>> Seed set to 1
+> >>> ...
+> >>> READ BAD DATA: offset =3D 0x1925f, size =3D 0xf7a3, fname =3D
+> >>> /home/user/fuse_mount/example.txt
+> >>> OFFSET      GOOD    BAD     RANGE
+> >>> 0x1e43f     0x4b4a  0x114a  0x0
+> >>> operation# (mod 256) for the bad data may be 74
+> >>> 0x1e441     0xa64a  0xeb4a  0x1
+> >>> operation# (mod 256) for the bad data may be 74
+> >>> 0x1e443     0x264a  0xe44a  0x2
+> >>> operation# (mod 256) for the bad data may be 74
+> >>> 0x1e445     0x254a  0x9e4a  0x3
+> >>> ...
+> >>> Correct content saved for comparison
+> >>> (maybe hexdump "/home/user/fuse_mount/example.txt" vs
+> >>> "/home/user/fuse_mount/example.txt.fsxgood")
+> >>>
+> >>>
+> >>> I tested Josef's patch with the "ap->descs[ap->num_pages - 1].length
+> >>> -=3D (PAGE_SIZE - ret) & (PAGE_SIZE - 1);" line removed and it fixed =
+the
+> >>> issue:
+> >>>
+> >>> [user]$ sudo ./fsx -b 3 ~/fuse_mount/example.txt -N 5000
+> >>> Will begin at operation 3
+> >>> Seed set to 1
+> >>> ...
+> >>> copying to largest ever: 0x3e19b
+> >>> copying to largest ever: 0x3e343
+> >>> fallocating to largest ever: 0x40000
+> >>> All 5000 operations completed A-OK!
+> >>>
+> >>>
+> >>> Malte, would you mind double-checking whether this fixes the issue
+> >>> you're seeing on your end?
+> >> My test still fails.
+> > Hi Malte,
+> >
+> > I simulated your repro with installing bcachefs as the root filesystem
+> > on a VM running Arch, then running "sudo pacman -S flatpak" and then
+> > installing FreeCAD with "flatpak install flathub org.freecad.FreeCAD".
+> >
+> > On base commit 3b97c3652, I see the same corruption you noted:
+> >
+> > error: Failed to install org.kde.Platform: Error pulling from repo:
+> > While pulling runtime/org.kde.Platform/x86_64/6.7 from remote flathub:
+> > fsck content object
+> > 886fd60617b81e81475db5e62beda5846d3e85fe77562eae536d2dd2a7af5b33:
+> > Corrupted file object; checksum
+> > expected=3D'886fd60617b81e81475db5e62beda5846d3e85fe77562eae536d2dd2a7a=
+f5b33'
+> > actual=3D'67f5a60d19f7a65e1ee272d455fed138b864be73399816ad18fa71319614a=
+418'
+> >
+> >
+> > i tried this patch on top of commit 3b97c3652 and it fixed it for me:
+> >
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index 14af8c41fc83..0d213a22972b 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -1560,18 +1560,24 @@ static int fuse_get_user_pages(struct
+> > fuse_args_pages *ap, struct iov_iter *ii,
+> >
+> >                 nbytes +=3D ret;
+> >
+> > -               ret +=3D start;
+> > -               /* Currently, all folios in FUSE are one page */
+> > -               nfolios =3D DIV_ROUND_UP(ret, PAGE_SIZE);
+> > -
+> > -               ap->folio_descs[ap->num_folios].offset =3D start;
+> > -               fuse_folio_descs_length_init(ap->folio_descs,
+> > ap->num_folios, nfolios);
+> > -               for (i =3D 0; i < nfolios; i++)
+> > -                       ap->folios[i + ap->num_folios] =3D page_folio(p=
+ages[i]);
+> > -
+> > -               ap->num_folios +=3D nfolios;
+> > -               ap->folio_descs[ap->num_folios - 1].length -=3D
+> > -                       (PAGE_SIZE - ret) & (PAGE_SIZE - 1);
+> > +               nfolios =3D DIV_ROUND_UP(ret + start, PAGE_SIZE);
+> > +
+> > +               for (i =3D 0; i < nfolios; i++) {
+> > +                       struct folio *folio =3D page_folio(pages[i]);
+> > +                       unsigned int offset =3D start +
+> > +                               (folio_page_idx(folio, pages[i]) << PAG=
+E_SHIFT);
+> > +                       unsigned int len =3D min_t(unsigned int, ret,
+> > folio_size(folio) - offset);
+> > +
+> > +                       len =3D min_t(unsigned int, len, PAGE_SIZE - st=
+art);
+> > +
+> > +                       ap->descs[ap->num_folios].offset =3D offset;
+> > +                       ap->descs[ap->num_folios].length =3D len;
+> > +                       ap->folios[ap->num_folios] =3D folio;
+> > +                       start =3D 0;
+> > +                       ret -=3D len;
+> > +                       ap->num_folios++;
+> > +               }
+> > +
+> >                 nr_pages +=3D nfolios;
+> >         }
+> >         kfree(pages);
+> >
+> > I ran this multiple times and don't see the corruption issues.
+> >
+> > However, I do see another issue crop up on some of my VMs, which is
+> > flatpak hanging with this corresponding stack trace:
+> >
+> > [  368.520976] INFO: task pool-/usr/lib/f:582 blocked for more than 122=
+ seconds.
+> > [  368.521509]       Not tainted 6.12.0-rc1-g86b74eb5a11e #734
+> > [  368.521905] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> > disables this message.
+> > [  368.522483] task:pool-/usr/lib/f state:D stack:0     pid:582
+> > tgid:405   ppid:1      flags:0x00000002
+> > [  368.523238] Call Trace:
+> > [  368.523411]  <TASK>
+> > [  368.523548]  __schedule+0xaf0/0x27f0
+> > [  368.523773]  ? __pfx___schedule+0x10/0x10
+> > [  368.524024]  schedule+0x7e/0x300
+> > [  368.524233]  __wait_on_freeing_inode+0xda/0x120
+> > [  368.524527]  ? __pfx___wait_on_freeing_inode+0x10/0x10
+> > [  368.524830]  ? _raw_spin_unlock_irqrestore+0xe/0x30
+> > [  368.525124]  ? __pfx_wake_bit_function+0x10/0x10
+> > [  368.525411]  bch2_inode_hash_find+0x372/0x580
+> > [  368.525700]  ? __pfx_bch2_dirent_read_target+0x10/0x10
+> > [  368.526023]  ? bch2_dirent_hash+0x23d/0x370
+> > [  368.526286]  ? __pfx_bch2_inode_hash_find+0x10/0x10
+> > [  368.526583]  ? __pfx_dirent_cmp_key+0x10/0x10
+> > [  368.526972]  bch2_lookup_trans+0x61a/0x990
+> > [  368.527247]  ? __pfx_bch2_lookup_trans+0x10/0x10
+> > [  368.527559]  ? __do_sys_newfstatat+0x75/0xd0
+> > [  368.527850]  ? do_syscall_64+0x4b/0x110
+> > [  368.528088]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  368.528411]  ? __pfx_bch2_hash_info_init+0x10/0x10
+> > [  368.528720]  ? __mod_memcg_state+0x102/0x390
+> > [  368.529134]  ? obj_cgroup_charge+0x1b4/0x4c0
+> > [  368.529500]  ? __memcg_slab_post_alloc_hook+0x536/0xba0
+> > [  368.529913]  ? kvm_sched_clock_read+0x11/0x20
+> > [  368.530265]  ? _raw_spin_lock+0x85/0xe0
+> > [  368.530553]  ? bch2_lookup_trans+0x323/0x990
+> > [  368.530909]  ? __asan_memset+0x24/0x50
+> > [  368.531204]  ? __bch2_trans_get+0x735/0xdd0
+> > [  368.531525]  ? bch2_lookup+0x18a/0x350
+> > [  368.531859]  bch2_lookup+0x18a/0x350
+> > [  368.532145]  ? __pfx_bch2_lookup+0x10/0x10
+> > [  368.532466]  ? __pfx_lockref_get_not_dead+0x10/0x10
+> > [  368.532860]  __lookup_slow+0x182/0x350
+> > [  368.533159]  ? __pfx___lookup_slow+0x10/0x10
+> > [  368.533513]  walk_component+0x2ab/0x4f0
+> > [  368.533816]  path_lookupat+0x120/0x660
+> > [  368.534110]  ? vfs_fstatat+0x53/0xb0
+> > [  368.534413]  filename_lookup+0x1aa/0x520
+> > [  368.534718]  ? __pfx_filename_lookup+0x10/0x10
+> > [  368.535052]  ? __wake_up_common+0xf2/0x170
+> > [  368.535385]  ? _raw_spin_unlock_irq+0xe/0x30
+> > [  368.535683]  ? __pfx_eventfd_write+0x10/0x10
+> > [  368.536019]  ? kasan_save_stack+0x24/0x50
+> > [  368.536313]  ? __kasan_record_aux_stack+0xad/0xc0
+> > [  368.536651]  ? kmem_cache_free+0x353/0x550
+> > [  368.536919]  ? do_syscall_64+0x4b/0x110
+> > [  368.537179]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  368.537528]  vfs_statx+0xbf/0x140
+> > [  368.537745]  ? kmem_cache_alloc_noprof+0x12d/0x340
+> > [  368.538057]  ? __pfx_vfs_statx+0x10/0x10
+> > [  368.538322]  ? getname_flags.part.0+0xaf/0x4a0
+> > [  368.538627]  vfs_fstatat+0x6c/0xb0
+> > [  368.538840]  __do_sys_newfstatat+0x75/0xd0
+> > [  368.539100]  ? __pfx___do_sys_newfstatat+0x10/0x10
+> > [  368.539415]  ? kasan_unpoison+0x27/0x60
+> > [  368.539675]  ? __pfx_slab_free_after_rcu_debug+0x10/0x10
+> > [  368.540081]  ? fdget_pos+0x366/0x5d0
+> > [  368.540355]  ? fput+0x1b/0x2d0
+> > [  368.540602]  ? ksys_write+0x18c/0x1c0
+> > [  368.540934]  ? __pfx_ksys_write+0x10/0x10
+> > [  368.541252]  ? fpregs_assert_state_consistent+0x20/0xa0
+> > [  368.541657]  ? clear_bhb_loop+0x45/0xa0
+> > [  368.541948]  do_syscall_64+0x4b/0x110
+> > [  368.542270]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  368.542711] RIP: 0033:0x7fef789bb94e
+> > [  368.543001] RSP: 002b:00007fef713fe468 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000106
+> > [  368.543605] RAX: ffffffffffffffda RBX: 00007fef713fe5d0 RCX: 00007fe=
+f789bb94e
+> > [  368.544129] RDX: 00007fef713fe540 RSI: 00007fef713fe5d0 RDI: 0000000=
+00000001f
+> > [  368.544636] RBP: 00007fef713ff710 R08: 0000000000000073 R09: 0000000=
+000000000
+> > [  368.545130] R10: 0000000000000100 R11: 0000000000000246 R12: 0000000=
+00000001f
+> > [  368.545640] R13: 00007fef713fe540 R14: 00007fef5802dc00 R15: 00007fe=
+f713ff780
+> > [  368.546177]  </TASK>
+> >
+> > I'm seeing this happen on commit 86b74eb5 as well, which is the commit
+> > that's before any of my or Josef's folio changes, and this persists
+> > across reboots. I've seen this happen for a couple other tasks too,
+> > "task:flatpak" and "task:pool-flatpak" with similar stack traces eg
+> >
+> > [  368.505270] task:pool-flatpak in state:D stack:0     pid:568
+> > tgid:538   ppid:537    flags:0x00000002
+> > [  368.505872] Call Trace:
+> > [  368.506042]  <TASK>
+> > [  368.506191]  __schedule+0xaf0/0x27f0
+> > [  368.506430]  ? __pfx___schedule+0x10/0x10
+> > [  368.506715]  schedule+0x7e/0x300
+> > [  368.506940]  __wait_on_freeing_inode+0xda/0x120
+> > [  368.507490]  ? __pfx___wait_on_freeing_inode+0x10/0x10
+> > [  368.507965]  ? _raw_spin_unlock_irqrestore+0xe/0x30
+> > [  368.508312]  ? __pfx_wake_bit_function+0x10/0x10
+> > [  368.508650]  bch2_inode_hash_find+0x372/0x580
+> > [  368.508969]  ? __pfx_bch2_dirent_read_target+0x10/0x10
+> > [  368.509332]  ? bch2_dirent_hash+0x23d/0x370
+> > [  368.509637]  ? __pfx_bch2_inode_hash_find+0x10/0x10
+> > [  368.509991]  ? __pfx_dirent_cmp_key+0x10/0x10
+> > [  368.510309]  bch2_lookup_trans+0x61a/0x990
+> > [  368.510662]  ? __pfx_bch2_lookup_trans+0x10/0x10
+> > [  368.511155]  ? vfs_statx+0xbf/0x140
+> > [  368.511429]  ? vfs_fstatat+0x6c/0xb0
+> > [  368.511731]  ? do_syscall_64+0x4b/0x110
+> > [  368.512014]  ? __d_alloc+0x5cc/0x8f0
+> > [  368.512283]  ? memcg_list_lru_alloc+0x184/0x8a0
+> > [  368.512612]  ? __pfx_bch2_hash_info_init+0x10/0x10
+> > [  368.512943]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  368.513327]  ? __memcg_slab_post_alloc_hook+0x536/0xba0
+> > [  368.513753]  ? kvm_sched_clock_read+0x11/0x20
+> > [  368.514133]  ? _raw_spin_lock+0x85/0xe0
+> > [  368.515095]  ? bch2_lookup_trans+0x323/0x990
+> > [  368.516994]  ? __asan_memset+0x24/0x50
+> > [  368.517294]  ? __bch2_trans_get+0x735/0xdd0
+> > [  368.517675]  ? bch2_lookup+0x18a/0x350
+> > [  368.517987]  bch2_lookup+0x18a/0x350
+> > [  368.518271]  ? __pfx_bch2_lookup+0x10/0x10
+> > [  368.518568]  ? __pfx_lockref_get_not_dead+0x10/0x10
+> > [  368.518933]  __lookup_slow+0x182/0x350
+> > [  368.519264]  ? __pfx___lookup_slow+0x10/0x10
+> > [  368.519633]  walk_component+0x2ab/0x4f0
+> > [  368.519934]  ? fput+0x1b/0x2d0
+> > [  368.520206]  link_path_walk.part.0.constprop.0+0x4ad/0xac0
+> > [  368.520657]  path_lookupat+0x72/0x660
+> > [  368.521022]  ? vfs_fstatat+0x53/0xb0
+> > [  368.521343]  filename_lookup+0x1aa/0x520
+> > [  368.521664]  ? __pfx_filename_lookup+0x10/0x10
+> > [  368.522021]  ? __pfx_xa_load+0x10/0x10
+> > [  368.522319]  ? ___slab_alloc+0x128/0x9d0
+> > [  368.522683]  ? mntput_no_expire+0xcf/0x760
+> > [  368.523018]  ? lockref_put_return+0xc7/0x140
+> > [  368.523357]  ? kmem_cache_free+0x19e/0x550
+> > [  368.523686]  ? __pfx_mutex_unlock+0x10/0x10
+> > [  368.524035]  ? do_renameat2+0x1f4/0xa50
+> > [  368.524404]  ? do_renameat2+0x1f4/0xa50
+> > [  368.524716]  vfs_statx+0xbf/0x140
+> > [  368.524980]  ? kmem_cache_alloc_noprof+0x12d/0x340
+> > [  368.525355]  ? __pfx_vfs_statx+0x10/0x10
+> > [  368.525702]  ? getname_flags.part.0+0xaf/0x4a0
+> > [  368.526080]  vfs_fstatat+0x6c/0xb0
+> > [  368.526391]  __do_sys_newfstatat+0x75/0xd0
+> > [  368.526745]  ? __pfx___do_sys_newfstatat+0x10/0x10
+> > [  368.527206]  ? do_symlinkat+0x15d/0x260
+> > [  368.527509]  ? do_mkdirat+0x19d/0x2c0
+> > [  368.527807]  ? kasan_save_track+0x14/0x30
+> > [  368.528132]  ? getname_flags.part.0+0xaf/0x4a0
+> > [  368.528509]  ? fpregs_assert_state_consistent+0x20/0xa0
+> > [  368.529198]  ? clear_bhb_loop+0x45/0xa0
+> > [  368.529536]  do_syscall_64+0x4b/0x110
+> > [  368.529856]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  368.530279] RIP: 0033:0x7f592256194e
+> > [  368.530610] RSP: 002b:00007f5915bfe548 EFLAGS: 00000217 ORIG_RAX:
+> > 0000000000000106
+> > [  368.531350] RAX: ffffffffffffffda RBX: 0000000000000013 RCX: 00007f5=
+92256194e
+> > [  368.531943] RDX: 00007f5915bfe570 RSI: 00007f5915bfe600 RDI: 0000000=
+000000013
+> > [  368.532491] RBP: 00007f5915bfe740 R08: 0000000000000073 R09: 0000000=
+000000000
+> > [  368.533048] R10: 0000000000000100 R11: 0000000000000217 R12: 00007f5=
+915bfe570
+> > [  368.533597] R13: 00007f5915bfe600 R14: 00007f5915bfe56c R15: 00007f5=
+915bfe780
+> > [  368.534236]  </TASK>
+> > [  368.534419] INFO: task pool-flatpak in:571 blocked for more than 122=
+ seconds.
+> >
+> > This seems like something we should investigate as well. I'm happy to
+> > help repro this if needed. I'm able to hit this pretty consistently.
+> >
+> > Malte, would you mind applying the patch above and confirming if this
+> > fixes it for you on your VM? And while you've been running flatpak,
+> > have you also been seeing some flatpak tasks hanging on some of your
+> > VMs?
+>
+> This patch also passes my test :) I did not notice any hanging installs.
+>
+> I think I will try it in addition with Kent's current code on my
+> workstation later. I will come back to you if I encounter further
+> issues, thanks :)
+>
 
-Christoph,
+Great, thanks for checking and for surfacing this bug. I'll submit the
+fix upstream today (will cc you and the others on this thread).
 
-> Generally agreeing with all you said, but do we actually have any
-> serious use case for cross-LU copies?  They just seem incredibly
-> complex any not all that useful.
+I'll add a case for this in the fstests as well so that hopefully this
+kind of issue can be caught earlier.
 
-It's still widely used to populate a new LUN from a golden image.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>
+> /Malte
+>
+> >
+> > Thanks,
+> > Joanne
+> >
+> >>
+> >>>
+> >>> Thanks,
+> >>> Joanne
+> >>>
+> >>>> Thanks,
+> >>>> Joanne
+> >>>>> Catching up on this thread now. I'll investigate this today.
+> >>>>>
+> >>>>>> /Malte
+> >>>>>>
 
