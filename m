@@ -1,75 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-37095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C9F9ED803
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 22:03:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34ECA9ED7FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 22:02:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A81188B770
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 21:02:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C567A283F42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 21:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B8423A18D;
-	Wed, 11 Dec 2024 20:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB311242F02;
+	Wed, 11 Dec 2024 20:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+9avloG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhUZOq1e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FB223FD3C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 20:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5EE242EEB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 20:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950700; cv=none; b=E6j7MZFLAYltK3+amA5CXZnKSuzG7XoVCCneF0DPfX7/W4zbLWIXDq+4tm8LHcya8JjvL8sLxPEmfCWMzmJ+RUa/C3H7mBRx6wFbw//ECrRliFZ6nDn/JfI5SaBeE1/T4v8/skoXl9tjHv9rAeTXDIKRjt61R1j33qnTaVTJ+m0=
+	t=1733950702; cv=none; b=NtKXV9bJ1D83iy6bHnvfiXe9ZteL3yqgjajShLfA92cOqyCBSskNt5xVsgJSbiAFIZebJ1S/mpsTqd0z5RwV2ckYkb/nUCwPHxU3xSqORPdz0hlrKVpw2T+0Np1JbpBuYXFuyZvasRIhxPGEUx1vFeGdkR3W3DBAbDvUziGgMpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950700; c=relaxed/simple;
-	bh=lj8bMC2/TXRkS7vAbjVC7CB24U+zcoBk+O2aILjo13Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SVhuuIv0S92JC2RRchKq6oQ4tBIuWGQ8hu0dJPLz5ItlZVbHn66GqHdoWRlpKh+ZYyR7+zUKnaAzNPhoChrzVlJuM6VG7wMTiqPFrf8Crqy5dCg3lFC97BQp3SzonW0WwEdSxSEo6z+/sEHHaxkkP4Hpfgzrtf2EEthhkEhHx9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+9avloG; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1733950702; c=relaxed/simple;
+	bh=nq6Tmz4iQeGsJ1FObzOmjafA+mVWXec3vamkaxwHAJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aNKLHyqUVTgTlAjeMU6KiIWe3kF94E2cO+vqoluT/wRHHKlcM/zerC4rZbeYV6bNC/tykkOG87c3iq7dBiJHqeIxCbWe4MKaCYTEoJKIC0uSsA6dBNZ74HN+D9U7jboqfW99c2x4tPKsUd4MubJQrDwP1NmlcYtK7S+NWjD3u10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhUZOq1e; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ef7640e484so85024017b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 12:58:17 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e396c98af22so5715263276.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2024 12:58:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733950696; x=1734555496; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1y3Be+ng9RK/e7qRABoT+Vl4eStRlPxQTCcl/meiG8s=;
-        b=g+9avloGP1m/dgDXuhy1B0IwQMF0DAphwmbkqF4mH8Nw6dczpYYV2OXxFuqmOAWt/T
-         uCXU7wTVmtkv5F9g9l0F/Bb8ZC162UtX8XlTUqdatRwgWD6lXcKRRkwhHQLPIxTPiA6Q
-         lWqp/6kzg69xpNtLbGfFteYu8oEsfz46nLf1guu45L6CmvJByhII9f+ym6vT8Sv01q7f
-         1duMfhhvp7tJV0JAC1+QV7s7QAfO8tFdqPvVVD+97LxeYpvE0U0EVSWNGJT0WErd1i40
-         iCSDktzBQdGIR9zNO1WVWG+8BU/j4PBdnQyanYlyaBPES9Ggz3PzhTLuQhWUVRfC5cKr
-         co5A==
+        d=gmail.com; s=20230601; t=1733950698; x=1734555498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZN3ZvQogFCDbgispW4MpKyZwnROw0NhPwHACNZ95MfU=;
+        b=DhUZOq1eaO9y8KJ9hBNb03mJMPHg5shB01I3mI17YYHmvM19gPW7mfgwrV4E93FvLw
+         qWqEJ6YnyYlyFgHDCobz3MeJI1dNiQoqbzLUz89KDmMZ2MQyjrn0lXSZDGMw9tdSIztH
+         6wp/HUAVTvvB41T9b87DY2yGE8etr5UJO4/WXXzJP9P7r8W+zK/hMzHw4WqtoOAIp0E9
+         YjU7j4TsWgjcqI0YeqUR8R7dezUj8FmlWyjjvXODmVT0Z/2dlBiPisEG+qlssdDLXm3h
+         aAaWyFDJOyjbGJH00j7ptyvK/l0hnyxhO/Vkaav2/An2wdDguvAk3jNHJcdfrtJR4w7t
+         JswQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733950696; x=1734555496;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1y3Be+ng9RK/e7qRABoT+Vl4eStRlPxQTCcl/meiG8s=;
-        b=Oo21g/t2XmvKjUKEqiybOjlfqKhlDIfrNMZHlXC7pWWZLSd5hxwcuhFFfYQGyO7fY7
-         O+98SSHdtWN4PfJNg8lh6oMAUIcstJxijMN2LUfPL02tXpQgZ6NVd0XwCi9+shcLN/mn
-         S9OzuUbggrBuizuWwoDrp8FLgw1Ed42d+DkWjEyh6poNd+qvr9pE8p4vVWXkccDR4tjo
-         nO66USBw5mT9yXGEU4b2I/Eh1KfpdS5ddFLK1ob0BnRWUF+/poqHR/hMG308e1UcXbRD
-         2SK07Fd00wGoWhfuK1cnLKEJlyMoQGdddxcZCqi835Th7iW+wisUoThpHLN8WkNw4Ya3
-         MaGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQJiMeLt5uDybeerRJ/1WCcQIPbWRWgOa12aLM1ezJVB6Wv5WfKK1AbeyhfWJXzCbqwZ0rNAU2kA8y88r+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLVYLLHFH0AC0jNalVCfEvheDI5tnzBo2vjZ1ZwLajEb1YbTDK
-	gZ3HhygtXWA4BVENuC2TOiySWqc+sXsVhwnuBbzBWAwklMQkBRns
-X-Gm-Gg: ASbGncusj4yX6LMeZOxZa6jTbEUfnLvigULmjov0tCdsvElcEF2qs2+CbWfyVKkijji
-	/s0yDJfG+OXJ4PieiYUIyqqDDVmqWM/tYWB1nGruW4VIDeISwq/K8KdokUID45gPQc7uB21JP6k
-	IG8ImIFQue8tS5c9j3uHIyEgzbBM7zu1fnViL5TTL74ZhsSAvNqr5YYf/Xy8xZ8QnvDvieQVufK
-	v0PvhYSgQ3QxU3vSdq/zO7GAokpEkZrGzgQ7zgbxZ7fiS9ND60nSVahZ6IM+FOEPd9CdedOQECT
-	2y3L6HwZLkc6
-X-Google-Smtp-Source: AGHT+IFefAdIrUx/dGbLZWrwnWDmXE1CAy3REkeLJWYjJN9+3MMvI/z/kASbdyglU/lG0fc6jfML0Q==
-X-Received: by 2002:a05:690c:6189:b0:6ef:5097:5daa with SMTP id 00721157ae682-6f19e85e0ddmr10454587b3.34.1733950696622;
-        Wed, 11 Dec 2024 12:58:16 -0800 (PST)
-Received: from localhost (fwdproxy-nha-001.fbsv.net. [2a03:2880:25ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f14cc84261sm4164347b3.20.2024.12.11.12.58.16
+        d=1e100.net; s=20230601; t=1733950698; x=1734555498;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZN3ZvQogFCDbgispW4MpKyZwnROw0NhPwHACNZ95MfU=;
+        b=lNnFCSHbXdK4sOHMCRDKbBCN1LKgqEA+Xu6Mrf4ZUAi04dQjF6HZ4Xcyn47dYoepOt
+         WAYGpgCic6ipRLz5hk+0x7kg/oKQQnIw/MXwBkLPBvmo9B2SIkWFaT3JI7sihJvh5BqC
+         Ld+DDlyah881VzZECm4i7+QwWHJ2RIYB4uc1bNU7hTXefIQlYbkl8zRAl7+uJ6VrPXsj
+         /q4UAEyih5SW3PZ6iQe/TFhmHoF60XjRiyLT4Db4GG9chkUCRV7ORhGSx0HMeMlpHZHB
+         hs8bV/YxCVopVwu5xJRLWYPDc5bJsnJaDrNsJfwN7/T3au3YgaGsZAXBMBciR4hNypSe
+         RXzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvphdTdBXhJJjWBfsLYoUMzJ1Fet5+R6+E2M7e6G/Tll7qCxX9z2D4DZNE3gjMyjPsX53ii+BCke/zFohE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlo07oRiVJoPBzw9b4bAyLEdDRUrt4P1Pn5A10PrHWJRQfIVWI
+	ffnDJRKxt12qWL0bLR0+Ef1uLY5cIsgy1BzuTyZkoIyQ6RfcZTrE
+X-Gm-Gg: ASbGnctXX9bqDTTDC/omt8y8b1kqm7ddF7WWUOIcFMULvuDCzSVMN7N315g49avr5Xy
+	SQkyTxvRIWfCN94+yH7V6Sr1xc67/ZSvaXBWOg3SxOZQHAgGfLwkQeoyGjumnAyQhpqmT6z/mhT
+	E3likDKAH9EexERR7T3LnlNTta6kTPod1KjgCz7vvKV4ML0W43HdCWxYa0W+W2o46OSCmpWDji3
+	IlScXG146DaSxqzAuNgaZJKv4PVi1JTI2eBAPiWaIL6iQtqbIGuIP3ItB46KWRkPUzCofLy19td
+	L0bxsHpkCbOH
+X-Google-Smtp-Source: AGHT+IE6mM8Iub3K2m2sG88VVJX+tslXkvGuAQHLOeKPmcRpuVnjbXPy9K8i9RXf34oAsviDwYY21g==
+X-Received: by 2002:a05:6902:cc6:b0:e3a:19da:160e with SMTP id 3f1490d57ef6-e3da0d5e86amr696964276.30.1733950698471;
+        Wed, 11 Dec 2024 12:58:18 -0800 (PST)
+Received: from localhost (fwdproxy-nha-005.fbsv.net. [2a03:2880:25ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e3c94a12fbcsm467934276.35.2024.12.11.12.58.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:58:16 -0800 (PST)
+        Wed, 11 Dec 2024 12:58:18 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -80,10 +82,12 @@ Cc: josef@toxicpanda.com,
 	kent.overstreet@linux.dev,
 	jefflexu@linux.alibaba.com,
 	kernel-team@meta.com
-Subject: [PATCH 0/1] fuse: fix direct io folio offset and length calculation
-Date: Wed, 11 Dec 2024 12:55:55 -0800
-Message-ID: <20241211205556.1754646-1-joannelkoong@gmail.com>
+Subject: [PATCH 1/1] fuse: fix direct io folio offset and length calculation
+Date: Wed, 11 Dec 2024 12:55:56 -0800
+Message-ID: <20241211205556.1754646-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20241211205556.1754646-1-joannelkoong@gmail.com>
+References: <20241211205556.1754646-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,36 +96,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As Malte noted in [1], there is an issue with commit 3b97c3652d91 ("fuse:
-convert direct io to use folios"). This commit mistakenly assumed that all
-folios encountered in fuse are one page size, but this is not true for the
-direct io case.
+For the direct io case, the pages from userspace may be part of a huge
+folio, even if all folios in the page cache for fuse are small.
 
-This problem was found when running bcachefs as the rootfs on an Arch VM, and
-installing FreeCAD with "flatpak install flathub org.freecad.FreeCAD".
+Fix the logic for calculating the offset and length of the folio for
+the direct io case, which currently incorrectly assumes that all folios
+encountered are one page size.
 
-Before this fix, the checksum was corrupted and installation fails:
- error: Failed to install org.kde.Platform: Error pulling from repo:
- While pulling runtime/org.kde.Platform/x86_64/6.7 from remote flathub:
- fsck content object
- 886fd60617b81e81475db5e62beda5846d3e85fe77562eae536d2dd2a7af5b33:
- Corrupted file object; checksum
- expected='886fd60617b81e81475db5e62beda5846d3e85fe77562eae536d2dd2a7af5b33'
- actual='67f5a60d19f7a65e1ee272d455fed138b864be73399816ad18fa71319614a418'
-
-After this fix, the installation succeeds.
-
-A test case will be added for this (eg userspace opting into huge pages and
-using O_DIRECT) as well, in a separate patchset.
-
-[1] https://lore.kernel.org/linux-fsdevel/p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw/
-
-Joanne Koong (1):
-  fuse: fix direct io folio offset and length calculation
-
+Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+---
  fs/fuse/file.c | 28 ++++++++++++++++------------
  1 file changed, 16 insertions(+), 12 deletions(-)
 
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 88d0946b5bc9..15b08d6a5739 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1557,18 +1557,22 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 
+ 		nbytes += ret;
+ 
+-		ret += start;
+-		/* Currently, all folios in FUSE are one page */
+-		nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
+-
+-		ap->descs[ap->num_folios].offset = start;
+-		fuse_folio_descs_length_init(ap->descs, ap->num_folios, nfolios);
+-		for (i = 0; i < nfolios; i++)
+-			ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+-
+-		ap->num_folios += nfolios;
+-		ap->descs[ap->num_folios - 1].length -=
+-			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
++		nfolios = DIV_ROUND_UP(ret + start, PAGE_SIZE);
++
++		for (i = 0; i < nfolios; i++) {
++			struct folio *folio = page_folio(pages[i]);
++			unsigned int offset = start +
++				(folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
++			unsigned int len = min_t(unsigned int, ret, PAGE_SIZE - start);
++
++			ap->descs[ap->num_folios].offset = offset;
++			ap->descs[ap->num_folios].length = len;
++			ap->folios[ap->num_folios] = folio;
++			start = 0;
++			ret -= len;
++			ap->num_folios++;
++		}
++
+ 		nr_pages += nfolios;
+ 	}
+ 	kfree(pages);
 -- 
 2.43.5
 
