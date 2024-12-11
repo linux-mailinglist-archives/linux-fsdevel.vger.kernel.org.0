@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-37031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBE39EC7D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 09:55:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE589EC7D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 09:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921D2287A02
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 08:54:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAE8287B6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2024 08:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D6B1EC4EF;
-	Wed, 11 Dec 2024 08:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04DC1EC4DC;
+	Wed, 11 Dec 2024 08:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0sNvMLMK"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NLuCmfgT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C680E1EC4D0;
-	Wed, 11 Dec 2024 08:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D518C1EC4C9;
+	Wed, 11 Dec 2024 08:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907277; cv=none; b=GFN2wvBULy422WOvSV8SThaJlHXnkG4jFDQ1TXDiM7wFNR49sGzb9FylPFnKMj0m2Alh5aPYLmMuDcO+PQK4L1lUqUR9t8aHr3AwROxZYBt+jEomz66ihqybS4urwzMyIFbwadicXJ6sYqdPjfWH4NBdsjclG9WkWoeTXac0SWQ=
+	t=1733907280; cv=none; b=qO55R2TyRUSzuWE2eKYqkk5ua1DjXafxO6atbJV9IP24uQ38GVzjlZ0py3H6vZ2mEcHC7URl7RzVbxqCR7E82yyWQvWWvGp2D2ixGAcGaYIj7RoYa3ygla+u30aYC1lTpkhB6Ev8xdj7dtc6dZdd4CnecnvkkwDN/IYiPT6TFlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907277; c=relaxed/simple;
-	bh=tDMi9acZJuydKj3o+EuM/XY/f1cJyPp78HddkgC5Hx8=;
+	s=arc-20240116; t=1733907280; c=relaxed/simple;
+	bh=vatJ0uv/6b69REbCyF8I/dMRd8pe8Ka9EgXNo8rePB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WMCuwMqve3R2MK6AnOyngKJO8NyAjuiZ3T/aZCHwtXfwDX+oae0EJWhNLk3J5/0ZRQcOnsVQypcQDaxxOSrwPa0lriK6XWuPaBCfI8NrPg5pp7VFsgmCraNycYxvHnQsWH2KQiqZvX4Qoi5beR9EZmDht14Bs9LmeXk2qnva5/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0sNvMLMK; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=NL0JogaaHMZWkXgPtz8qZ0FJsduOuMh+cn49Kw+TSVejzVU6myaxybCcJ8DK0+F0rPMFlbo2bb4pNiZkdgzAmcGjfoPLhE5xU1PS1WctbOfeMfHzGyh6UQmK/OAhzkcatmWBRCfExj54nC4TGKuKP/rayJYvLvxLOGmYx+XB5Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NLuCmfgT; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=a7xq0ofv7En5O7Y7W8mBY/vDQmdUPvqHXn9DrXkIGM4=; b=0sNvMLMK9+799N7liMzs0GORUI
-	I9hjaensnOqpjuwwoBpks61c/mQZ/OTExCCBq7JPxKHLZ6x8f4lmIaIrwJE68/vNRd6Vx+F9rpBOv
-	+UfJl8MEQwtGavEjfA0Nyo11oNNrqEw8NMAwsWNA/Eu9+hcYpOPMKpRnz7whlqFSyL5WpcWPe6L8Q
-	zOTD4tqJmjmi7Gk/2NSuDxnHD29fteGTcqdMy+Pjyd85Yv4DPgsutMd8pKJMWYjnt23CRQPnSeOeC
-	1OAEV9p6RN1GfYybJvxXp0REGu0lMAzSe8WHkZ/e5QdiHYs8icAtCnOdvkfgCg3JMJMCNIGE11/5T
-	4G9or6aw==;
+	bh=DMEc82QdH/cjdaQ5H5FzEDQHRIgmSKGOptpYBAnEp4U=; b=NLuCmfgTN8SCM/w7OOARlWdsZu
+	uuqJ0wnztnyrFdiog2LLkbY1uU60M53f/YyjnZ4hPBalGUrUiMaHSmTJZxyOfqpk+9AwPM8/s5pyF
+	2GEibOEMRsmJ/HKrrx2xwld9de/luNkJND8TLeVCj3mXedtouW7j/f8js4amgSdRfl0LnUnpemw8h
+	lOzRJA8mTQguwY+TFnQd59F/m2J1M6CiXaV9lF/UtON6rfpyxPhY93X+tJDnsgy10COM0cVbD+3w5
+	5wa3Ae2ogS3MYUtndxmntFtVqOjgPL0wqFjaUUVz8ncFsIbG7C96a2ru1mpE8tvMDlEkiX10CWnhn
+	eQOT/4dw==;
 Received: from [2001:4bb8:2ae:8817:935:3eb8:759c:c417] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLIUM-0000000EINq-3psx;
-	Wed, 11 Dec 2024 08:54:35 +0000
+	id 1tLIUP-0000000EIOu-3dda;
+	Wed, 11 Dec 2024 08:54:38 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	Carlos Maiolino <cem@kernel.org>,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/8] iomap: split bios to zone append limits in the submission handlers
-Date: Wed, 11 Dec 2024 09:53:44 +0100
-Message-ID: <20241211085420.1380396-5-hch@lst.de>
+Subject: [PATCH 5/8] iomap: optionally use ioends for direct I/O
+Date: Wed, 11 Dec 2024 09:53:45 +0100
+Message-ID: <20241211085420.1380396-6-hch@lst.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241211085420.1380396-1-hch@lst.de>
 References: <20241211085420.1380396-1-hch@lst.de>
@@ -66,235 +66,158 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Provide helpers for file systems to split bios in the direct I/O and
-writeback I/O submission handlers.
+struct iomap_ioend currently tracks outstanding buffered writes and has
+some really nice code in core iomap and XFS to merge contiguous I/Os
+an defer them to userspace for completion in a very efficient way.
 
-This Follows btrfs' lead and don't try to build bios to hardware limits
-for zone append commands, but instead build them as normal unconstrained
-bios and split them to the hardware limits in the I/O submission handler.
+For zoned writes we'll also need a per-bio user context completion to
+record the written blocks, and the infrastructure for that would look
+basically like the ioend handling for buffered I/O.
+
+So instead of reinventing the wheel, reuse the existing infrastructure.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/Makefile      |  1 +
- fs/iomap/buffered-io.c | 43 ++++++++++++++-----------
- fs/iomap/ioend.c       | 73 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/iomap.h  |  9 ++++++
- 4 files changed, 108 insertions(+), 18 deletions(-)
- create mode 100644 fs/iomap/ioend.c
+ fs/iomap/buffered-io.c |  3 +++
+ fs/iomap/direct-io.c   | 50 +++++++++++++++++++++++++++++++++++++++++-
+ fs/iomap/internal.h    |  7 ++++++
+ include/linux/iomap.h  |  4 +++-
+ 4 files changed, 62 insertions(+), 2 deletions(-)
+ create mode 100644 fs/iomap/internal.h
 
-diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
-index 381d76c5c232..69e8ebb41302 100644
---- a/fs/iomap/Makefile
-+++ b/fs/iomap/Makefile
-@@ -12,6 +12,7 @@ iomap-y				+= trace.o \
- 				   iter.o
- iomap-$(CONFIG_BLOCK)		+= buffered-io.o \
- 				   direct-io.o \
-+				   ioend.o \
- 				   fiemap.o \
- 				   seek.o
- iomap-$(CONFIG_SWAP)		+= swapfile.o
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 129cd96c6c96..8125f758a99d 100644
+index 8125f758a99d..ceca9473a09c 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -40,7 +40,8 @@ struct iomap_folio_state {
- 	unsigned long		state[];
- };
+@@ -17,6 +17,7 @@
+ #include <linux/bio.h>
+ #include <linux/sched/signal.h>
+ #include <linux/migrate.h>
++#include "internal.h"
+ #include "trace.h"
  
--static struct bio_set iomap_ioend_bioset;
-+struct bio_set iomap_ioend_bioset;
-+EXPORT_SYMBOL_GPL(iomap_ioend_bioset);
+ #include "../internal.h"
+@@ -1582,6 +1583,8 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
  
- static inline bool ifs_is_fully_uptodate(struct folio *folio,
- 		struct iomap_folio_state *ifs)
-@@ -1539,15 +1540,15 @@ static void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
-  * ioend after this.
+ 	if (!atomic_dec_and_test(&ioend->io_remaining))
+ 		return 0;
++	if (ioend->io_flags & IOMAP_IOEND_DIRECT)
++		return iomap_finish_ioend_direct(ioend);
+ 	return iomap_finish_ioend_buffered(ioend);
+ }
+ 
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index b521eb15759e..b5466361cafe 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -12,6 +12,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/uio.h>
+ #include <linux/task_io_accounting_ops.h>
++#include "internal.h"
+ #include "trace.h"
+ 
+ #include "../internal.h"
+@@ -20,6 +21,7 @@
+  * Private flags for iomap_dio, must not overlap with the public ones in
+  * iomap.h:
   */
- static u32
--iomap_finish_ioend(struct iomap_ioend *ioend, int error)
-+iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
- {
- 	struct inode *inode = ioend->io_inode;
- 	struct bio *bio = &ioend->io_bio;
- 	struct folio_iter fi;
- 	u32 folio_count = 0;
++#define IOMAP_DIO_NO_INVALIDATE	(1U << 25)
+ #define IOMAP_DIO_CALLER_COMP	(1U << 26)
+ #define IOMAP_DIO_INLINE_COMP	(1U << 27)
+ #define IOMAP_DIO_WRITE_THROUGH	(1U << 28)
+@@ -117,7 +119,8 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 	 * ->end_io() when necessary, otherwise a racing buffer read would cache
+ 	 * zeros from unwritten extents.
+ 	 */
+-	if (!dio->error && dio->size && (dio->flags & IOMAP_DIO_WRITE))
++	if (!dio->error && dio->size && (dio->flags & IOMAP_DIO_WRITE) &&
++	    !(dio->flags & IOMAP_DIO_NO_INVALIDATE))
+ 		kiocb_invalidate_post_direct_write(iocb, dio->size);
  
--	if (error) {
--		mapping_set_error(inode->i_mapping, error);
-+	if (ioend->io_error) {
-+		mapping_set_error(inode->i_mapping, ioend->io_error);
- 		if (!bio_flagged(bio, BIO_QUIET)) {
- 			pr_err_ratelimited(
- "%s: writeback error on inode %lu, offset %lld, sector %llu",
-@@ -1566,6 +1567,24 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
- 	return folio_count;
+ 	inode_dio_end(file_inode(iocb->ki_filp));
+@@ -163,6 +166,51 @@ static inline void iomap_dio_set_error(struct iomap_dio *dio, int ret)
+ 	cmpxchg(&dio->error, 0, ret);
  }
  
-+static u32
-+iomap_finish_ioend(struct iomap_ioend *ioend, int error)
++u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend)
 +{
-+	if (ioend->io_parent) {
-+		struct bio *bio = &ioend->io_bio;
++	struct iomap_dio *dio = ioend->io_bio.bi_private;
++	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
++	struct kiocb *iocb = dio->iocb;
++	u32 vec_count = ioend->io_bio.bi_vcnt;
 +
-+		ioend = ioend->io_parent;
-+		bio_put(bio);
++	if (ioend->io_error)
++		iomap_dio_set_error(dio, ioend->io_error);
++
++	if (atomic_dec_and_test(&dio->ref)) {
++		struct inode *inode = file_inode(iocb->ki_filp);
++
++		if (dio->wait_for_completion) {
++			struct task_struct *waiter = dio->submit.waiter;
++
++			WRITE_ONCE(dio->submit.waiter, NULL);
++			blk_wake_io_task(waiter);
++		} else if (!inode->i_mapping->nrpages) {
++			WRITE_ONCE(iocb->private, NULL);
++
++			/*
++			 * We must never invalidate pages from this thread to
++			 * avoid deadlocks with buffered I/O completions.
++			 * Tough luck if you hit the tiny race with someone
++			 * dirtying the range now.
++			 */
++			dio->flags |= IOMAP_DIO_NO_INVALIDATE;
++			iomap_dio_complete_work(&dio->aio.work);
++		} else {
++			INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
++			queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
++		}
 +	}
 +
-+	if (error)
-+		cmpxchg(&ioend->io_error, 0, error);
-+
-+	if (!atomic_dec_and_test(&ioend->io_remaining))
-+		return 0;
-+	return iomap_finish_ioend_buffered(ioend);
-+}
-+
- /*
-  * Ioend completion routine for merged bios. This can only be called from task
-  * contexts as merged ioends can be of unbound length. Hence we have to break up
-@@ -1709,7 +1728,6 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode, loff_t pos,
- 		u16 ioend_flags)
- {
--	struct iomap_ioend *ioend;
- 	struct bio *bio;
- 
- 	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
-@@ -1717,21 +1735,10 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 			       GFP_NOFS, &iomap_ioend_bioset);
- 	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
- 	bio->bi_end_io = iomap_writepage_end_bio;
--	wbc_init_bio(wbc, bio);
- 	bio->bi_write_hint = inode->i_write_hint;
--
--	ioend = iomap_ioend_from_bio(bio);
--	INIT_LIST_HEAD(&ioend->io_list);
--	ioend->io_flags = ioend_flags;
--	if (pos > wpc->iomap.offset)
--		wpc->iomap.flags &= ~IOMAP_F_BOUNDARY;
--	ioend->io_inode = inode;
--	ioend->io_size = 0;
--	ioend->io_offset = pos;
--	ioend->io_sector = bio->bi_iter.bi_sector;
--
-+	wbc_init_bio(wbc, bio);
- 	wpc->nr_folios = 0;
--	return ioend;
-+	return iomap_init_ioend(inode, bio, pos, ioend_flags);
- }
- 
- static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
-diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
-new file mode 100644
-index 000000000000..f3d98121c593
---- /dev/null
-+++ b/fs/iomap/ioend.c
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2024 Christoph Hellwig.
-+ */
-+#include <linux/iomap.h>
-+
-+struct iomap_ioend *iomap_init_ioend(struct inode *inode,
-+		struct bio *bio, loff_t file_offset, u16 flags)
-+{
-+	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
-+
-+	atomic_set(&ioend->io_remaining, 1);
-+	ioend->io_error = 0;
-+	ioend->io_parent = NULL;
-+	INIT_LIST_HEAD(&ioend->io_list);
-+	ioend->io_flags = flags;
-+	ioend->io_inode = inode;
-+	ioend->io_offset = file_offset;
-+	ioend->io_size = bio->bi_iter.bi_size;
-+	ioend->io_sector = bio->bi_iter.bi_sector;
-+	return ioend;
-+}
-+EXPORT_SYMBOL_GPL(iomap_init_ioend);
-+
-+struct iomap_ioend *iomap_split_ioend(struct iomap_ioend *ioend, bool is_append,
-+		unsigned int *alloc_len)
-+{
-+	struct bio *bio = &ioend->io_bio;
-+	struct iomap_ioend *split_ioend;
-+	struct bio *split;
-+	int sector_offset;
-+	unsigned int nr_segs;
-+
-+	if (is_append) {
-+		struct queue_limits *lim = bdev_limits(bio->bi_bdev);
-+
-+		sector_offset = bio_split_rw_at(bio, lim, &nr_segs,
-+			min(lim->max_zone_append_sectors << SECTOR_SHIFT,
-+			    *alloc_len));
-+		if (!sector_offset)
-+			return NULL;
++	if (should_dirty) {
++		bio_check_pages_dirty(&ioend->io_bio);
 +	} else {
-+		if (bio->bi_iter.bi_size <= *alloc_len)
-+			return NULL;
-+		sector_offset = *alloc_len >> SECTOR_SHIFT;
++		bio_release_pages(&ioend->io_bio, false);
++		bio_put(&ioend->io_bio);
 +	}
 +
-+	/* ensure the split ioend is still block size aligned */
-+	sector_offset = ALIGN_DOWN(sector_offset << SECTOR_SHIFT,
-+			i_blocksize(ioend->io_inode)) >> SECTOR_SHIFT;
-+
-+	split = bio_split(bio, sector_offset, GFP_NOFS, &iomap_ioend_bioset);
-+	if (!split)
-+		return NULL;
-+	split->bi_private = bio->bi_private;
-+	split->bi_end_io = bio->bi_end_io;
-+
-+	split_ioend = iomap_init_ioend(ioend->io_inode, split, ioend->io_offset,
-+			ioend->io_flags);
-+	split_ioend->io_parent = ioend;
-+
-+	atomic_inc(&ioend->io_remaining);
-+	ioend->io_offset += split_ioend->io_size;
-+	ioend->io_size -= split_ioend->io_size;
-+
-+	split_ioend->io_sector = ioend->io_sector;
-+	if (!is_append)
-+		ioend->io_sector += (split_ioend->io_size >> SECTOR_SHIFT);
-+
-+	*alloc_len -= split->bi_iter.bi_size;
-+	return split_ioend;
++	return vec_count;
 +}
-+EXPORT_SYMBOL_GPL(iomap_split_ioend);
++
+ void iomap_dio_bio_end_io(struct bio *bio)
+ {
+ 	struct iomap_dio *dio = bio->bi_private;
+diff --git a/fs/iomap/internal.h b/fs/iomap/internal.h
+new file mode 100644
+index 000000000000..20cccfc3bb13
+--- /dev/null
++++ b/fs/iomap/internal.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _IOMAP_INTERNAL_H
++#define _IOMAP_INTERNAL_H 1
++
++u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend);
++
++#endif /* _IOMAP_INTERNAL_H */
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 173d490c20ba..eaa8cb9083eb 100644
+index eaa8cb9083eb..f6943c80e5fd 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -354,6 +354,9 @@ struct iomap_ioend {
- 	struct list_head	io_list;	/* next ioend in chain */
- 	u16			io_flags;	/* IOMAP_IOEND_* */
- 	struct inode		*io_inode;	/* file being written to */
-+	atomic_t		io_remaining;	/* completetion defer count */
-+	int			io_error;	/* stashed away status */
-+	struct iomap_ioend	*io_parent;	/* parent for completions */
- 	size_t			io_size;	/* size of the extent */
- 	loff_t			io_offset;	/* offset in the file */
- 	sector_t		io_sector;	/* start sector of ioend */
-@@ -404,6 +407,10 @@ struct iomap_writepage_ctx {
- 	u32			nr_folios;	/* folios added to the ioend */
- };
+@@ -343,9 +343,11 @@ sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+ #define IOMAP_IOEND_UNWRITTEN		(1U << 1)
+ /* don't merge into previous ioend */
+ #define IOMAP_IOEND_BOUNDARY		(1U << 2)
++/* is direct I/O */
++#define IOMAP_IOEND_DIRECT		(1U << 3)
  
-+struct iomap_ioend *iomap_init_ioend(struct inode *inode, struct bio *bio,
-+		loff_t file_offset, u16 flags);
-+struct iomap_ioend *iomap_split_ioend(struct iomap_ioend *ioend, bool is_append,
-+		unsigned int *alloc_len);
- void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
- void iomap_ioend_try_merge(struct iomap_ioend *ioend,
- 		struct list_head *more_ioends);
-@@ -475,4 +482,6 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- # define iomap_swapfile_activate(sis, swapfile, pagespan, ops)	(-EIO)
- #endif /* CONFIG_SWAP */
+ #define IOMAP_IOEND_NOMERGE_FLAGS \
+-	(IOMAP_IOEND_SHARED | IOMAP_IOEND_UNWRITTEN)
++	(IOMAP_IOEND_SHARED | IOMAP_IOEND_UNWRITTEN | IOMAP_IOEND_DIRECT)
  
-+extern struct bio_set iomap_ioend_bioset;
-+
- #endif /* LINUX_IOMAP_H */
+ /*
+  * Structure for writeback I/O completions.
 -- 
 2.45.2
 
