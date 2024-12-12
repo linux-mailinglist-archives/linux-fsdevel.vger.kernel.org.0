@@ -1,265 +1,288 @@
-Return-Path: <linux-fsdevel+bounces-37193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37059EF585
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:17:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7070D9EF488
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:09:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B341194095E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 135E1283331
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31298223E60;
-	Thu, 12 Dec 2024 16:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746E422967E;
+	Thu, 12 Dec 2024 17:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bo+gA/zs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiA8ViTt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A944A13792B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 16:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B64225A21;
+	Thu, 12 Dec 2024 17:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734022665; cv=none; b=JFo+RDGa/CTJaKSBUJV867A50ijQrCCo3TuMewmXrlyH5K04IwNWmoKic5PTf76zkOLaB4gLl8BgoDi5v/6yUghnVPbMh2HSH5HBD+gfcs3CLbQIdcNP9cgiOa134gMq7FbWcJViC3KFwd3A1cm0sjwJW6CjUseTs/7yKkuA460=
+	t=1734023232; cv=none; b=jzRdvx0CZ+zxgFcNWmtFqFTXADY6fz38VopiB8L9HJeBExYL323D6Q+rQQ2/anvzQu92F+uKXEparKLXz1tLR9vJAg91QkUwi+j94zx3dJHzPKHW46SqHH45stSbTfajnedXtfxo4IMIx0ekmTl/LQdTiaIBhHiJPG7PI+l3ATU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734022665; c=relaxed/simple;
-	bh=lSG8AFhJYnyW0d18t+fc9TVHqSlpjhpDMBhdOpWSRRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sAWoOY/y0JHNbpiKvilM58iPKEpudQmVUrSqcGEvbfTxWy+K6mOtRtE8v2+7qYRoT+Y/x4Q2MAhcgQlgoskLOYaFvB87Lu9GpOEh6dbYB+O9hDmRS7OzSjw6nuZxaLnF7TXzQ7pqR7GTYrNSePM2eqSXnpaPBaeEY0H8OMdOblQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bo+gA/zs; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1734023232; c=relaxed/simple;
+	bh=0vHE1w5O4zkSsS7UAGj/6U5b2nhWxF+ZfRvjGWZpNWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X91ZyC74PVosN47UQhJ1mYC1hhq1HwEGwdkZ2IxtoSueNDKmOYIaAbdVAen1GtXY35Jd0lQiGdeJR7YMy4eD55SjkyQPzP3Qsmgt1fUIeBjRaFhG6ELq2nrYIoAxrNcYqF2AR3MwgxoAtxpbc9iT3Lhiu7KGjCKBpEuByoRYO2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiA8ViTt; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so1115111a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 08:57:43 -0800 (PST)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d932b5081eso7707656d6.1;
+        Thu, 12 Dec 2024 09:07:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734022662; x=1734627462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ATzC1MkuaDB7JYqNIVEAvRvf/gRz/pnc0JpJOc1LuRE=;
-        b=bo+gA/zsrlut8/FRIJn4dAts4ZG3gimgR/umY7N9yhOi6l+mAgTvPOjvDFETFSjupZ
-         kuHYMCXyk5ncPikmLxwiU0QUBixCP4xkitngg/Jf5SnOgQlMstwELHZ1eyBBhDoRAxz2
-         Xtq+EZfTSL9ATLJiieqJq6JtZGjx9phTLniE0SN1snWN6DnOPabkfc5znu2AyUyMEzrX
-         GqhJPnpTzE+B1PJQHoWGfM8uLC7HgiJ58YEP/n/AjBFkPeOcDhQBc43p1cgjHl1dbems
-         MAFt8ynKfEGoj4tk38W/U6wgxd2tTzt89gEqYPyvmPJzsek4N4nTQen26l/GEoio5vH9
-         S7Hg==
+        d=gmail.com; s=20230601; t=1734023230; x=1734628030; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ydWT1UsTHYhWkkUUpo46STYyAYlSEKPTYHT7UawS7ks=;
+        b=NiA8ViTtOFsTFYeLKtVUM42RzV85SRpPEvmGsry0DX35KyepEjqGwx1PQLBd2V1B49
+         SyBkY99WoNpYeymC/VgIYmyt2nPKIGxB2Vi+dVP8ibr7UCMjJ5X3TMYn6NihbvWUreHc
+         LyR9Jq0QWdZnN3oQo+7gOYQfItoB2iOZPJ4dw1PfqwtpzWbaRLER12EpZIMhT0V1So0c
+         OBt5tWn/lOFCuJbkVkvIy+Db8Bv3lFg6HiSA3+WYy02t0p8pm3HSQgyT48dtKuMw3vms
+         gfAeqqPHDQohsTgUHyKPJ/JR4u6HChvCW+1TnqzYeopztaG1YihIGVpWnQcTu/I8/LuE
+         ZPcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734022662; x=1734627462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ATzC1MkuaDB7JYqNIVEAvRvf/gRz/pnc0JpJOc1LuRE=;
-        b=gK34l4YM5VtfeVkvGq3bHYCFZ18rLcfHdZGI2oNtrUUNFRWl5uiiEfqor1xyUgJXx9
-         AvcV3yqqlZS7Xf3OQce7K68IbMmk4KHyJ/zqD7ru7e3Ign4RvxQn+ixWdAvmPP9SNZgy
-         Ze6RAXP6hF1MXtycIo1vraIxeQBSwlbFWDqyc0fsBPY9DwgEFJFpvQ8zCzksXEKgwGoK
-         Fp0gbyggHcz7KaPySzFVL/mY+lN58Mj4X3fdkxGnoxL+8cW8OOibdY4rqVeKsIKJQpwi
-         5ZhJXz1YyfQyr5CjziRayJI9pulTzwf/3Klwl5xife80E/Lk/ZCPAElquXtV967CK7z9
-         WUAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1uBgtoTpLWv6VI8B0iHn2OIJ8nX1oqceIWDm9SVI28ajyDptnDpTpvpo+hXTG8CEkyNnimCKuLgPNfiJU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6Xnia08LK2pQLv9JX6B635YATMwv1YgRCt6D5hEWHjzcLfHaB
-	eAFQwpA2GcGJQZbU5kb8yqxLGuWyhbBokYvN6dIeNQHDLw+k1Sm0/wI2n9Ngqtc0LUG2uECWRZH
-	HQ1WtZpBnI6G3zXrAfYFQSbuQvug=
-X-Gm-Gg: ASbGnctHB04xTHF++KYiQihd7EqJ8SPbT6D3G1YCOHtABL1oM/dmx0cBht5JQfzAJli
-	BbDhmgA5q1JHB4ADlg5jYDA7eBjsuGJxYrOTckQ==
-X-Google-Smtp-Source: AGHT+IFn6D5rj0NF5vhUvrN31NsU2Uf2Yu42r1XVq72eKtcympGIgALUBboOAPelMwcAddzq4hsuyyUQo/FQAT45D8g=
-X-Received: by 2002:a05:6402:35ca:b0:5d0:e877:764e with SMTP id
- 4fb4d7f45d1cf-5d6334f69a2mr1083493a12.24.1734022661492; Thu, 12 Dec 2024
- 08:57:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734023230; x=1734628030;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ydWT1UsTHYhWkkUUpo46STYyAYlSEKPTYHT7UawS7ks=;
+        b=IQvnJ43pfmEZxeU2PurFB5hGIXgfstn3d6V/Fe3U7SayV9qUQKAnFwUs0Gd4QJw6pU
+         uVZOytlShQSG1FNjrNcEQA+7i4k8pvy1jZ1h3G/rRsVljT4wWxV2t83srskWpWcH4I1b
+         JkWikbd0IRfJ5XPAUZ0AhttKeMVsgWYRSrrkzA43VVlmDrTO6LL2TfHwSqk3Zt0+1G0d
+         R5+Me3QbCQoemxyEoFVF7nhy+ELQLUMpNfvyv2lDdLS2v0xU9A3P3sEUnuM7zI0bW61G
+         sVbAwmtopifKsmwPSzIoI6dY1jgsiITPB8YVayC+5/vL426EaXhN3vSV4Cp7uF8CbTKm
+         HAGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8/qEwKMrdYNi8SzcWfnuRddW8bfsvcjpgKHwUJhUM/qMAi/tI/9R3MHkp2QSwvGmcrw7UoOUZH0WD2VEkSg==@vger.kernel.org, AJvYcCUAnTklY9mI+bRHC7d9l4Aef9q3OLF+h7FRpIel+K1Wfz09gzEhN+XkY8MDLFQd/ki/pJQX@vger.kernel.org, AJvYcCUDi5t3GNVwqxGaPs4WVPcSx2dikwQ/cM6NTRPV+gwk5YC6U/wR8NHI+8lWXnOf99e0H4dTMzBEniidn4Ac@vger.kernel.org, AJvYcCXSkn9PYKMz/IP0G5lnIo9kugjASgOFoZWbtvNHQcrkIhcTaNIGwi69Z3x25SwDKLOvVXpe/KChrTbY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7qLJVOgFajfbkuE+S9iMiQo5qksYo7mH+SLUGtISHymCPH4XH
+	rkKCC8iVlKIwOmbizTXJvOMmJi9qM8io8Xzf9mw9X+P9c9WZMswE
+X-Gm-Gg: ASbGnctUHpIkl/yg36hRPmQH8diKBThiPMo8gtoIIElkeOgQguso4cGQz8WdZ4U7p0E
+	i2Lcx8ywhAyHzyr2gMxDnQAyhklXtjb9EOIXKLnFz2K3PX/343XiBWcLrOaL1doVyCY6SVmpAnd
+	Ulnb+7djfaa0jpXQUM/thxc4sUVigMXmZymXk9HbX8MTVZ+2gMw5ihZnv9FO6IUukWDmFGl0o0y
+	j8h4O0bGWcFs1vtQveYoFO4rohHElhmh6+aroJKi8qTAv6X9Oj1eXBqsgve1zL5n86tywc5nSkf
+	aUiDTX+WRADuDO3pev5uHOUtFlb72xdvAXv6bKTe4VJiYy4=
+X-Google-Smtp-Source: AGHT+IE/GItMMPblFQfoWOS9p3WGWxqt+Dw6vxc/7QhfYnPKM6o9vZDfD5bjzG4xiPoNE/l5NgGouw==
+X-Received: by 2002:ad4:5aea:0:b0:6d8:8289:26ac with SMTP id 6a1803df08f44-6db0f860595mr18963176d6.45.1734023229749;
+        Thu, 12 Dec 2024 09:07:09 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da696993sm83743806d6.34.2024.12.12.09.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 09:07:08 -0800 (PST)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6D25F1200066;
+	Thu, 12 Dec 2024 12:07:08 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Dec 2024 12:07:08 -0500
+X-ME-Sender: <xms:PBhbZ3cQLAN_Jwg2nfFOrMDCfGaWRrRFbXQYziRhDf3g7DcjsoxX0A>
+    <xme:PBhbZ9MIOJjMK5Ci1Rx0U8drurfX5Z8vfCJ5hl7jTwxUEoI9Ax-i4QvrOS5GldGIS
+    FDYFAU9Gp3sTL-SeA>
+X-ME-Received: <xmr:PBhbZwisrTsmLp3KgtNCrMDg-4rt-GJSjviToXQq0H1yhXeXsULCxvGmzI4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgdelhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeegkeegtedtleffkeeftdevleeuieduveejgeei
+    kedvgeekudefteefieeivdeuleenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopeehjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    eprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhhushhtqdhf
+    ohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgtuh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehllhhvmheslhhishhtshdr
+    lhhinhhugidruggvvhdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhugidrug
+    gvvhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegr
+    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:PBhbZ4_bxD1EdvvG1pcQ0R28qVCKk5b1Ij5sJnCIkw0wthcCOTXQcw>
+    <xmx:PBhbZzu6K9CAjXTJEmCre--Q3suO2c4QNTjNGWbz_PoA_d_m3CkCqQ>
+    <xmx:PBhbZ3HpOUUjR6jpHda2k5BsqDusYqLfOENcb4YvFpvKyqqICyKNQA>
+    <xmx:PBhbZ6N8LSYi4w1v6G2BzN1MBMLjz8Ug032w7mdTrpEt5IG0elKaqA>
+    <xmx:PBhbZ0NQTWjbv0n97eX1zsur6i2Rspp3fpybEeEVwF91xUUBuqTz31Wa>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Dec 2024 12:07:06 -0500 (EST)
+Date: Thu, 12 Dec 2024 09:07:00 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, lkmm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com,
+ Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,	Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org
+Subject: Re: [RFC v2 02/13] rust: sync: Add basic atomic operation mapping
+ framework
+Message-ID: <Z1sYNOYJPzQmJXn6@boqun-archlinux>
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+ <20241101060237.1185533-3-boqun.feng@gmail.com>
+ <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211153709.149603-1-mszeredi@redhat.com> <20241212112707.6ueqp5fwgk64bry2@quack3>
- <CAJfpeguN6bfPa1rBWHFcA4HhCCkHN_CatGB4cC-z6mKa_dckWA@mail.gmail.com>
- <CAOQ4uxhNCg53mcNpzDyos3BV5dmL=2FVAipb4YKYmK3bvEzaBQ@mail.gmail.com> <20241212160411.xzdp64o3v2ilxsf5@quack3>
-In-Reply-To: <20241212160411.xzdp64o3v2ilxsf5@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 12 Dec 2024 17:57:29 +0100
-Message-ID: <CAOQ4uxgOpJx23bXWPitF3X11hsuQr8GvA1zvP1KA1ved6+O2jA@mail.gmail.com>
-Subject: Re: [PATCH v3] fanotify: notify on mount attach and detach
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Karel Zak <kzak@redhat.com>, Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
 
-On Thu, Dec 12, 2024 at 5:04=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 12-12-24 16:02:16, Amir Goldstein wrote:
-> > On Thu, Dec 12, 2024 at 1:45=E2=80=AFPM Miklos Szeredi <miklos@szeredi.=
-hu> wrote:
-> > >
-> > > On Thu, 12 Dec 2024 at 12:27, Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > > Why not:
-> > > >         if (p->prev_ns =3D=3D p->mnt_ns) {
-> > > >                 fsnotify_mnt_move(p->mnt_ns, &p->mnt);
-> > > >                 return;
-> > > >         }
-> > >
-> > > I don't really care, but I think this fails both as an optimization
-> > > (zero chance of actually making a difference) and as a readability
-> > > improvement.
->
-> I was just staring at the code trying to understand why you special-case
-> the situations with non-existent prev / current ns until I understood
-> there's no real reason. But I agree it's a matter of a taste so I'm fine
-> with keeping things as you have them.
->
-> > > > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/f=
-anotify.c
-> > > > > index 24c7c5df4998..a9dc004291bf 100644
-> > > > > --- a/fs/notify/fanotify/fanotify.c
-> > > > > +++ b/fs/notify/fanotify/fanotify.c
-> > > > > @@ -166,6 +166,8 @@ static bool fanotify_should_merge(struct fano=
-tify_event *old,
-> > > > >       case FANOTIFY_EVENT_TYPE_FS_ERROR:
-> > > > >               return fanotify_error_event_equal(FANOTIFY_EE(old),
-> > > > >                                                 FANOTIFY_EE(new))=
-;
-> > > > > +     case FANOTIFY_EVENT_TYPE_MNT:
-> > > > > +             return false;
-> > > >
-> > > > Perhaps instead of handling this in fanotify_should_merge(), we cou=
-ld
-> > > > modify fanotify_merge() directly to don't even try if the event is =
-of type
-> > > > FANOTIFY_EVENT_TYPE_MNT? Similarly as we do it there for permission=
- events.
-> > >
-> > > Okay.
+On Thu, Dec 12, 2024 at 11:51:23AM +0100, Alice Ryhl wrote:
+> On Fri, Nov 1, 2024 at 7:03 AM Boqun Feng <boqun.feng@gmail.com> wrote:
 > >
-> > Actually, I disagree.
-> > For permission events there is a conceptual reason not to merge,
-> > but this is not true for mount events.
+> > Preparation for generic atomic implementation. To unify the
+> > ipmlementation of a generic method over `i32` and `i64`, the C side
+> > atomic methods need to be grouped so that in a generic method, they can
+> > be referred as <type>::<method>, otherwise their parameters and return
+> > value are different between `i32` and `i64`, which would require using
+> > `transmute()` to unify the type into a `T`.
 > >
-> > Miklos said that he is going to add a FAN_MOUNT_MODIFY event
-> > for changing mount properties and we should very much merge multiple
-> > mount modify events.
-> >
-> > Furthermore, I wrote my comment about not merging mount events
-> > back when the mount event info included the parent mntid.
-> > Now that the mount event includes only the mount's mntid itself,
-> > multiple mount moves *could* actually be merged to a single move
-> > and a detach + attach could be merged to a move.
-> > Do we want to merge mount move events? that is a different question
-> > I guess we don't, but any case this means that the check should remain
-> > where it is now, so that we can check for specific mount events in the
-> > mask to decide whether or not to merge them.
->
-> Ok, fair enough. What triggered this request was that currently we just
-> look at each event in the queue, ask for each one "can we merge" only to
-> get "cannot" answer back. Which seemed dumb. But if we are going to add
-> events that can be merged, this reason obviously doesn't hold anymore. So
-> I'm retracting my objection :)
->
-> > > > > @@ -303,7 +305,11 @@ static u32 fanotify_group_event_mask(struct =
-fsnotify_group *group,
-> > > > >       pr_debug("%s: report_mask=3D%x mask=3D%x data=3D%p data_typ=
-e=3D%d\n",
-> > > > >                __func__, iter_info->report_mask, event_mask, data=
-, data_type);
-> > > > >
-> > > > > -     if (!fid_mode) {
-> > > > > +     if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT))
-> > > > > +     {
-> > > >
-> > > > Unusual style here..
-> > >
-> > > Yeah, fixed.
-> > >
-> > > > Now if we expect these mount notification groups will not have more=
- than
-> > > > these two events, then probably it isn't worth the hassle. If we ex=
-pect
-> > > > more event types may eventually materialize, it may be worth it. Wh=
-at do
-> > > > people think?
-> > >
-> > > I have a bad feeling about just overloading mask values.  How about
-> > > reserving a single mask bit for all mount events?  I.e.
-> > >
-> > > #define FAN_MNT_ATTACH 0x00100001
-> > > #define FAN_MNT_DETACH 0x00100002
-> >
-> > This is problematic.
-> > Because the bits reported in event->mask are often masked
-> > using this model makes assumptions that are not less risky
-> > that the risk of overloading 0x1 0x2 IMO.
-> >
-> > I was contemplating deferring the decision about overloading for a whil=
-e
-> > by using high bits for mount events.
-> > fanotify_mark() mask is already 64bit with high bits reserved
-> > and fanotify_event_metadata->mask is also 64bit.
->
-> Oh, right, fanotify API actually has a plenty of bits. I forgot that the
-> type is different from the generic one in fsnotify. Thanks for reminding
-> me!
->
-> > The challenge is that all internal fsnotify code uses __u32 masks
-> > and so do {i,sb,mnt}_fsnotify_mask.
->
-> Yeah, including struct fanotify_event.
->
-> > However, as I have already claimed, maintaining the mount event bits
-> > in the calculated object mask is not very helpful IMO.
-> >
-> > Attached demo patch that sends all mount events to group IFF
-> > group has a mount mark.
-> >
-> > This is quite simple, but could also be extended later with a little
-> > more work to allow sb/mount mark to actually subscribe to mount events
-> > or to ignore mount events for a specific sb/mount, if we think this is =
-useful.
->
-> So I like the prospect of internal event type eventually becoming 64-bit
-> but I don't think we should tie it to this patch set given we still have =
-7
-> bits left in the internal mask. Also if we do the conversion, I'd like to
-> go full 64-bit except for the very few places that have a good reason so
-> stay 32-bit. Because otherwise it's very easy to loose the upper bits
-> somewhere. So what we could do is to allocate the new FAN_MNT_ constants
-> from the upper 32 bits, for now leave FS_MNT_ in the lower 32 bits, and d=
-o
-> the conversions as I've mentioned. When we really start running out of
-> internal mask bits, we can implement the 64-bit event constant handling i=
-n
-> fsnotify core and move FS_MNT_ constants in the upper bits.
->
+> > Introduce `AtomicIpml` to represent a basic type in Rust that has the
+> > direct mapping to an atomic implementation from C. This trait is sealed,
+> > and currently only `i32` and `i64` ipml this.
+> 
+> There seems to be quite a few instances of "impl" spelled as "ipml" here.
+> 
 
-Fair enough.
-As long as I get to call dibs on the planned HSM event bits ;)
+Will fix!
 
-So please shift the FS_MNT_ event bits one nibble left, so we can have this=
-:
+> > Further, different methods are put into different `*Ops` trait groups,
+> > and this is for the future when smaller types like `i8`/`i16` are
+> > supported but only with a limited set of API (e.g. only set(), load(),
+> > xchg() and cmpxchg(), no add() or sub() etc).
+> >
+> > While the atomic mod is introduced, documentation is also added for
+> > memory models and data races.
+> >
+> > Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
+> > my responsiblity on the Rust atomic mod.
+> >
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  MAINTAINERS                    |   4 +-
+> >  rust/kernel/sync.rs            |   1 +
+> >  rust/kernel/sync/atomic.rs     |  19 ++++
+> >  rust/kernel/sync/atomic/ops.rs | 199 +++++++++++++++++++++++++++++++++
+> >  4 files changed, 222 insertions(+), 1 deletion(-)
+> >  create mode 100644 rust/kernel/sync/atomic.rs
+> >  create mode 100644 rust/kernel/sync/atomic/ops.rs
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index b77f4495dcf4..e09471027a63 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -3635,7 +3635,7 @@ F:        drivers/input/touchscreen/atmel_mxt_ts.c
+> >  ATOMIC INFRASTRUCTURE
+> >  M:     Will Deacon <will@kernel.org>
+> >  M:     Peter Zijlstra <peterz@infradead.org>
+> > -R:     Boqun Feng <boqun.feng@gmail.com>
+> > +M:     Boqun Feng <boqun.feng@gmail.com>
+> >  R:     Mark Rutland <mark.rutland@arm.com>
+> >  L:     linux-kernel@vger.kernel.org
+> >  S:     Maintained
+> > @@ -3644,6 +3644,8 @@ F:        arch/*/include/asm/atomic*.h
+> >  F:     include/*/atomic*.h
+> >  F:     include/linux/refcount.h
+> >  F:     scripts/atomic/
+> > +F:     rust/kernel/sync/atomic.rs
+> > +F:     rust/kernel/sync/atomic/
+> 
+> This is why mod.rs files are superior :)
+> 
 
- #define FS_OPEN_PERM           0x00010000      /* open event in an
-permission hook */
- #define FS_ACCESS_PERM         0x00020000      /* access event in a
-permissions hook */
- #define FS_OPEN_EXEC_PERM      0x00040000      /* open/exec event in
-a permission hook */
+;-) Not going to do anything right now, but let me think about this.
 
-#define FS_PATH_MODIFY         0x00080000      /* Path pre-modify HSM hook =
-*/
-#define FS_PRE_ACCESS          0x00100000      /* File pre-access HSM hook =
-*/
-#define FS_PRE_MODIFY          0x00200000      /* File pre-modify HSM hook =
-*/
-#define FS_PATH_ACCESS         0x00400000      /* Path pre-lookup HSM hook =
-*/
+> > @@ -0,0 +1,19 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Atomic primitives.
+> > +//!
+> > +//! These primitives have the same semantics as their C counterparts: and the precise definitions of
+> > +//! semantics can be found at [`LKMM`]. Note that Linux Kernel Memory (Consistency) Model is the
+> > +//! only model for Rust code in kernel, and Rust's own atomics should be avoided.
+> > +//!
+> > +//! # Data races
+> > +//!
+> > +//! [`LKMM`] atomics have different rules regarding data races:
+> > +//!
+> > +//! - A normal read doesn't data-race with an atomic read.
+> 
+> This was fixed:
+> https://github.com/rust-lang/rust/pull/128778
+> 
 
-#define FS_MNT_ATTACH          0x01000000      /* Mount was attached */
-#define FS_MNT_DETACH          0x02000000      /* Mount was detached */
-#define FS_MNT_MODIFY          0x04000000      /* Mount was modified */
+Yeah, I was aware of that effort, and good to know it's finally merged.
+Thanks!
 
-Thanks,
-Amir.
+This will be in 1.83, right? If so, we will still need the above until
+we bump up the minimal rustc version to 1.83 or beyond. I will handle
+this properly with the minimal rustc 1.83 (i.e. if this goes in first,
+will send a follow up patch). I will also mention in the above that this
+has been changed in 1.83.
+
+This also reminds that I should add that LKMM allows mixed-size atomic
+accesses (as non data race), I will add that in the version.
+
+> > +mod private {
+> > +    /// Sealed trait marker to disable customized impls on atomic implementation traits.
+> > +    pub trait Sealed {}
+> > +}
+> 
+> Just make the trait unsafe?
+> 
+
+And make the safety requirement of `AtomicImpl` something like:
+
+    The type must have the implementation for atomic operations.
+
+? Hmm.. I don't think that's a good safety requirement TBH. Actually the
+reason that we need to restrict `AtomicImpl` types is more of an
+iplementation issue (the implementation need to be done if we want to
+support i8 or i16) rather than safety issue. So a sealed trait is proper
+here. Does this make sense? Or am I missing something?
+
+Regards,
+Boqun
+
+> Alice
 
