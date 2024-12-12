@@ -1,196 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-37192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD26C9EF4C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F37059EF585
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CD91888503
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B341194095E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2733236F94;
-	Thu, 12 Dec 2024 16:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31298223E60;
+	Thu, 12 Dec 2024 16:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VagGSOPS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bo+gA/zs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8910B23695A;
-	Thu, 12 Dec 2024 16:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A944A13792B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021964; cv=none; b=SxOwduQe7U3gTiijInju0PjntYkEh5ins9lwX8E852wvlTZyuTHXCMHV71xyGNpYJeZt5dnxl4rBHYAGKOj4etzV8FvajFiX2tASx9dmuQrE7srAMrGcWXATWxfgBlyCdVBbL3lfAPItqsVj/vbtVsEDbhYdBrDarVPhK+ipAl8=
+	t=1734022665; cv=none; b=JFo+RDGa/CTJaKSBUJV867A50ijQrCCo3TuMewmXrlyH5K04IwNWmoKic5PTf76zkOLaB4gLl8BgoDi5v/6yUghnVPbMh2HSH5HBD+gfcs3CLbQIdcNP9cgiOa134gMq7FbWcJViC3KFwd3A1cm0sjwJW6CjUseTs/7yKkuA460=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021964; c=relaxed/simple;
-	bh=HlADCKvaOAXcxb8w0ypEdR1v7JeaSkex81KKxMkz1MA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tNZAT/SSOac4f9iPpHjccn0dFl3EC0K+HH5cvTp5+dHbWgFDNP6PVTLpGM/RfwJNLCYji7SWGqn6fgOGQJhZUxC7yPZEy9S2v0jrEv9YCag6hPvkyh4+FCRe4sfrw8xVYKa95mbk0Gpdl1W/yPBXbLcopqWT9M+8rXUBuqWPbTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VagGSOPS; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1734022665; c=relaxed/simple;
+	bh=lSG8AFhJYnyW0d18t+fc9TVHqSlpjhpDMBhdOpWSRRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sAWoOY/y0JHNbpiKvilM58iPKEpudQmVUrSqcGEvbfTxWy+K6mOtRtE8v2+7qYRoT+Y/x4Q2MAhcgQlgoskLOYaFvB87Lu9GpOEh6dbYB+O9hDmRS7OzSjw6nuZxaLnF7TXzQ7pqR7GTYrNSePM2eqSXnpaPBaeEY0H8OMdOblQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bo+gA/zs; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso543054a91.2;
-        Thu, 12 Dec 2024 08:46:02 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so1115111a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 08:57:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734021962; x=1734626762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+SQ7TaX7WZ+52UKYXtXpaGJPN7h5YcD1VfWnOtMP8Zo=;
-        b=VagGSOPS8W0MauAQHeeIh0ItFbQ1QPSNnKlrKICRJsh+AH8JCVvITLibAWMXkOpu2B
-         xatY99+NMYKskANsoCNFCJsFrnuhxG7hSToze26GGDZI7z0JV0lGBPBX9lhPhd3kg9qZ
-         YnFz0GXbaakrg7XPsQ9f2eR0SNvQDalEJUZ45+3YCO8uJbMrJoXIKNBi/+YdSTunTf8b
-         iD30dXzg4Ec+sE6NrsSu7Nbxdogm5zSiZHXaT5Osz8B0rygwyHsED1HN0roylu137ECN
-         4+nVpG0CrUXwOqZdxmLCKEftTrp7p2wsKYShInFKWaG4KOVJ6qeJ9RXiCK9uAbffXT/m
-         T2mg==
+        d=gmail.com; s=20230601; t=1734022662; x=1734627462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ATzC1MkuaDB7JYqNIVEAvRvf/gRz/pnc0JpJOc1LuRE=;
+        b=bo+gA/zsrlut8/FRIJn4dAts4ZG3gimgR/umY7N9yhOi6l+mAgTvPOjvDFETFSjupZ
+         kuHYMCXyk5ncPikmLxwiU0QUBixCP4xkitngg/Jf5SnOgQlMstwELHZ1eyBBhDoRAxz2
+         Xtq+EZfTSL9ATLJiieqJq6JtZGjx9phTLniE0SN1snWN6DnOPabkfc5znu2AyUyMEzrX
+         GqhJPnpTzE+B1PJQHoWGfM8uLC7HgiJ58YEP/n/AjBFkPeOcDhQBc43p1cgjHl1dbems
+         MAFt8ynKfEGoj4tk38W/U6wgxd2tTzt89gEqYPyvmPJzsek4N4nTQen26l/GEoio5vH9
+         S7Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734021962; x=1734626762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+SQ7TaX7WZ+52UKYXtXpaGJPN7h5YcD1VfWnOtMP8Zo=;
-        b=uRI/PokoHkvWqGLZt0syElNlLPC+zinv9Mzj6pkDb/9zTAk/tEMfn0vsdHm1ARPZIm
-         i0EZEy7R3VsofxRTxfsgP9xbJfZRstWiVa5OYhjY5izpURaylLuZ2qCdAlUXmvkpX9CT
-         k6Uo0gl8mM8x8h585Wrl1M3ULabCh9aCtSTQPunyJOIrnYVyh2n8CLGgoPgPWB+T9w7h
-         ymRPsRugpeckMHg27bER0LIJSTTLKf/WpMn5ifI11s9Nv0DmMXrs7HOwtUFE71vhSrm3
-         Xd5aA5+BRz0xR0/ZCv/NM6J/OKrQDcm0r1XmmSkrlD5QxJX1fB0H4/b9hPrBxDq4TfyQ
-         +h6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVisIC+Ur58chMLFtz2IGYlxDLefZAIuSC19ph0CIud7OhtuqjqupkHUjoLXr8yk3yMoySg75xEKXCvsMRg@vger.kernel.org, AJvYcCWdbNzSlitDq9V4h9E+tlfcM7OdqiIydxoyhyUyUkg/lpiIh0mwjDBigvw0TxeEbrMsist9nvMPPZ0xKJFF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSULPNXUf4k5vgEDhKAiq6FOeJ4NqkdRe27MeLkh3PvbZsQjJN
-	5jPd9zefRW6Ka2BCC+XTDM4kyl38JTUh6SSl4bT3DaqRnHfxkzmnrZHQNQ==
-X-Gm-Gg: ASbGncuclxMDhrV3ufAlbU42OPqPlDqFHRSn40Aj3yhTtyZWHVixCPROXq5uPkXCjvh
-	VpkT+vxw/AsXf/6TZaXB6snA8rwJGNhdq/tUpALokluJrsjIsWELXEOaLbT3trbO7G7B5TS7baT
-	3H6wsVPyzfk+V5ODdPFFVLs3aM5anmfT78wL58jEuZpt5sQBsvyYAHTJEYRWKEH1veTwmQhiT8q
-	Mbed34hC8KR/Z/w5DsNnjFAg+aOPcWdN1nq7jHk0yEek/V+nx76Z+Sgp9VQ/EEVT8Hr1eQ0iGUR
-	QJGVaQ+bmrCmCnCTPOJIfTGkKcz1c/E=
-X-Google-Smtp-Source: AGHT+IHun+rE/vu4gLOWafc+nPtZg39cy9jheqPZvW3TNo8G/wyamWMCBu8H6NUTUxBjpYJXQtvXFQ==
-X-Received: by 2002:a17:90b:4c43:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-2f1392940e9mr8435801a91.12.1734021961529;
-        Thu, 12 Dec 2024 08:46:01 -0800 (PST)
-Received: from carrot.. (i114-186-166-114.s41.a014.ap.plala.or.jp. [114.186.166.114])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142de78d7sm1488917a91.31.2024.12.12.08.45.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 08:46:00 -0800 (PST)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] nilfs2: fix buffer head leaks in calls to truncate_inode_pages()
-Date: Fri, 13 Dec 2024 01:43:28 +0900
-Message-ID: <20241212164556.21338-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1734022662; x=1734627462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ATzC1MkuaDB7JYqNIVEAvRvf/gRz/pnc0JpJOc1LuRE=;
+        b=gK34l4YM5VtfeVkvGq3bHYCFZ18rLcfHdZGI2oNtrUUNFRWl5uiiEfqor1xyUgJXx9
+         AvcV3yqqlZS7Xf3OQce7K68IbMmk4KHyJ/zqD7ru7e3Ign4RvxQn+ixWdAvmPP9SNZgy
+         Ze6RAXP6hF1MXtycIo1vraIxeQBSwlbFWDqyc0fsBPY9DwgEFJFpvQ8zCzksXEKgwGoK
+         Fp0gbyggHcz7KaPySzFVL/mY+lN58Mj4X3fdkxGnoxL+8cW8OOibdY4rqVeKsIKJQpwi
+         5ZhJXz1YyfQyr5CjziRayJI9pulTzwf/3Klwl5xife80E/Lk/ZCPAElquXtV967CK7z9
+         WUAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1uBgtoTpLWv6VI8B0iHn2OIJ8nX1oqceIWDm9SVI28ajyDptnDpTpvpo+hXTG8CEkyNnimCKuLgPNfiJU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Xnia08LK2pQLv9JX6B635YATMwv1YgRCt6D5hEWHjzcLfHaB
+	eAFQwpA2GcGJQZbU5kb8yqxLGuWyhbBokYvN6dIeNQHDLw+k1Sm0/wI2n9Ngqtc0LUG2uECWRZH
+	HQ1WtZpBnI6G3zXrAfYFQSbuQvug=
+X-Gm-Gg: ASbGnctHB04xTHF++KYiQihd7EqJ8SPbT6D3G1YCOHtABL1oM/dmx0cBht5JQfzAJli
+	BbDhmgA5q1JHB4ADlg5jYDA7eBjsuGJxYrOTckQ==
+X-Google-Smtp-Source: AGHT+IFn6D5rj0NF5vhUvrN31NsU2Uf2Yu42r1XVq72eKtcympGIgALUBboOAPelMwcAddzq4hsuyyUQo/FQAT45D8g=
+X-Received: by 2002:a05:6402:35ca:b0:5d0:e877:764e with SMTP id
+ 4fb4d7f45d1cf-5d6334f69a2mr1083493a12.24.1734022661492; Thu, 12 Dec 2024
+ 08:57:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241211153709.149603-1-mszeredi@redhat.com> <20241212112707.6ueqp5fwgk64bry2@quack3>
+ <CAJfpeguN6bfPa1rBWHFcA4HhCCkHN_CatGB4cC-z6mKa_dckWA@mail.gmail.com>
+ <CAOQ4uxhNCg53mcNpzDyos3BV5dmL=2FVAipb4YKYmK3bvEzaBQ@mail.gmail.com> <20241212160411.xzdp64o3v2ilxsf5@quack3>
+In-Reply-To: <20241212160411.xzdp64o3v2ilxsf5@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 12 Dec 2024 17:57:29 +0100
+Message-ID: <CAOQ4uxgOpJx23bXWPitF3X11hsuQr8GvA1zvP1KA1ved6+O2jA@mail.gmail.com>
+Subject: Re: [PATCH v3] fanotify: notify on mount attach and detach
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Karel Zak <kzak@redhat.com>, Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When block_invalidatepage was converted to block_invalidate_folio,
-the fallback to block_invalidatepage in folio_invalidate() if the
-address_space_operations method invalidatepage (currently
-invalidate_folio) was not set, was removed.
+On Thu, Dec 12, 2024 at 5:04=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 12-12-24 16:02:16, Amir Goldstein wrote:
+> > On Thu, Dec 12, 2024 at 1:45=E2=80=AFPM Miklos Szeredi <miklos@szeredi.=
+hu> wrote:
+> > >
+> > > On Thu, 12 Dec 2024 at 12:27, Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > > Why not:
+> > > >         if (p->prev_ns =3D=3D p->mnt_ns) {
+> > > >                 fsnotify_mnt_move(p->mnt_ns, &p->mnt);
+> > > >                 return;
+> > > >         }
+> > >
+> > > I don't really care, but I think this fails both as an optimization
+> > > (zero chance of actually making a difference) and as a readability
+> > > improvement.
+>
+> I was just staring at the code trying to understand why you special-case
+> the situations with non-existent prev / current ns until I understood
+> there's no real reason. But I agree it's a matter of a taste so I'm fine
+> with keeping things as you have them.
+>
+> > > > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/f=
+anotify.c
+> > > > > index 24c7c5df4998..a9dc004291bf 100644
+> > > > > --- a/fs/notify/fanotify/fanotify.c
+> > > > > +++ b/fs/notify/fanotify/fanotify.c
+> > > > > @@ -166,6 +166,8 @@ static bool fanotify_should_merge(struct fano=
+tify_event *old,
+> > > > >       case FANOTIFY_EVENT_TYPE_FS_ERROR:
+> > > > >               return fanotify_error_event_equal(FANOTIFY_EE(old),
+> > > > >                                                 FANOTIFY_EE(new))=
+;
+> > > > > +     case FANOTIFY_EVENT_TYPE_MNT:
+> > > > > +             return false;
+> > > >
+> > > > Perhaps instead of handling this in fanotify_should_merge(), we cou=
+ld
+> > > > modify fanotify_merge() directly to don't even try if the event is =
+of type
+> > > > FANOTIFY_EVENT_TYPE_MNT? Similarly as we do it there for permission=
+ events.
+> > >
+> > > Okay.
+> >
+> > Actually, I disagree.
+> > For permission events there is a conceptual reason not to merge,
+> > but this is not true for mount events.
+> >
+> > Miklos said that he is going to add a FAN_MOUNT_MODIFY event
+> > for changing mount properties and we should very much merge multiple
+> > mount modify events.
+> >
+> > Furthermore, I wrote my comment about not merging mount events
+> > back when the mount event info included the parent mntid.
+> > Now that the mount event includes only the mount's mntid itself,
+> > multiple mount moves *could* actually be merged to a single move
+> > and a detach + attach could be merged to a move.
+> > Do we want to merge mount move events? that is a different question
+> > I guess we don't, but any case this means that the check should remain
+> > where it is now, so that we can check for specific mount events in the
+> > mask to decide whether or not to merge them.
+>
+> Ok, fair enough. What triggered this request was that currently we just
+> look at each event in the queue, ask for each one "can we merge" only to
+> get "cannot" answer back. Which seemed dumb. But if we are going to add
+> events that can be merged, this reason obviously doesn't hold anymore. So
+> I'm retracting my objection :)
+>
+> > > > > @@ -303,7 +305,11 @@ static u32 fanotify_group_event_mask(struct =
+fsnotify_group *group,
+> > > > >       pr_debug("%s: report_mask=3D%x mask=3D%x data=3D%p data_typ=
+e=3D%d\n",
+> > > > >                __func__, iter_info->report_mask, event_mask, data=
+, data_type);
+> > > > >
+> > > > > -     if (!fid_mode) {
+> > > > > +     if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT))
+> > > > > +     {
+> > > >
+> > > > Unusual style here..
+> > >
+> > > Yeah, fixed.
+> > >
+> > > > Now if we expect these mount notification groups will not have more=
+ than
+> > > > these two events, then probably it isn't worth the hassle. If we ex=
+pect
+> > > > more event types may eventually materialize, it may be worth it. Wh=
+at do
+> > > > people think?
+> > >
+> > > I have a bad feeling about just overloading mask values.  How about
+> > > reserving a single mask bit for all mount events?  I.e.
+> > >
+> > > #define FAN_MNT_ATTACH 0x00100001
+> > > #define FAN_MNT_DETACH 0x00100002
+> >
+> > This is problematic.
+> > Because the bits reported in event->mask are often masked
+> > using this model makes assumptions that are not less risky
+> > that the risk of overloading 0x1 0x2 IMO.
+> >
+> > I was contemplating deferring the decision about overloading for a whil=
+e
+> > by using high bits for mount events.
+> > fanotify_mark() mask is already 64bit with high bits reserved
+> > and fanotify_event_metadata->mask is also 64bit.
+>
+> Oh, right, fanotify API actually has a plenty of bits. I forgot that the
+> type is different from the generic one in fsnotify. Thanks for reminding
+> me!
+>
+> > The challenge is that all internal fsnotify code uses __u32 masks
+> > and so do {i,sb,mnt}_fsnotify_mask.
+>
+> Yeah, including struct fanotify_event.
+>
+> > However, as I have already claimed, maintaining the mount event bits
+> > in the calculated object mask is not very helpful IMO.
+> >
+> > Attached demo patch that sends all mount events to group IFF
+> > group has a mount mark.
+> >
+> > This is quite simple, but could also be extended later with a little
+> > more work to allow sb/mount mark to actually subscribe to mount events
+> > or to ignore mount events for a specific sb/mount, if we think this is =
+useful.
+>
+> So I like the prospect of internal event type eventually becoming 64-bit
+> but I don't think we should tie it to this patch set given we still have =
+7
+> bits left in the internal mask. Also if we do the conversion, I'd like to
+> go full 64-bit except for the very few places that have a good reason so
+> stay 32-bit. Because otherwise it's very easy to loose the upper bits
+> somewhere. So what we could do is to allocate the new FAN_MNT_ constants
+> from the upper 32 bits, for now leave FS_MNT_ in the lower 32 bits, and d=
+o
+> the conversions as I've mentioned. When we really start running out of
+> internal mask bits, we can implement the 64-bit event constant handling i=
+n
+> fsnotify core and move FS_MNT_ constants in the upper bits.
+>
 
-Unfortunately, some pseudo-inodes in nilfs2 use empty_aops set by
-inode_init_always_gfp() as is, or explicitly set it to
-address_space_operations.  Therefore, with this change,
-block_invalidatepage() is no longer called from folio_invalidate(), and
-as a result, the buffer_head structures attached to these pages/folios
-are no longer freed via try_to_free_buffers().
+Fair enough.
+As long as I get to call dibs on the planned HSM event bits ;)
 
-Thus, these buffer heads are now leaked by truncate_inode_pages(), which
-cleans up the page cache from inode evict(), etc.
+So please shift the FS_MNT_ event bits one nibble left, so we can have this=
+:
 
-Three types of caches use empty_aops: gc inode caches and the DAT shadow
-inode used by GC, and b-tree node caches.  Of these, b-tree node caches
-explicitly call invalidate_mapping_pages() during cleanup, which involves
-calling try_to_free_buffers(), so the leak was not visible during normal
-operation but worsened when GC was performed.
+ #define FS_OPEN_PERM           0x00010000      /* open event in an
+permission hook */
+ #define FS_ACCESS_PERM         0x00020000      /* access event in a
+permissions hook */
+ #define FS_OPEN_EXEC_PERM      0x00040000      /* open/exec event in
+a permission hook */
 
-Fix this issue by using address_space_operations with invalidate_folio
-set to block_invalidate_folio instead of empty_aops, which will ensure
-the same behavior as before.
+#define FS_PATH_MODIFY         0x00080000      /* Path pre-modify HSM hook =
+*/
+#define FS_PRE_ACCESS          0x00100000      /* File pre-access HSM hook =
+*/
+#define FS_PRE_MODIFY          0x00200000      /* File pre-modify HSM hook =
+*/
+#define FS_PATH_ACCESS         0x00400000      /* Path pre-lookup HSM hook =
+*/
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Fixes: 7ba13abbd31e ("fs: Turn block_invalidatepage into block_invalidate_folio")
-Cc: stable@vger.kernel.org # v5.18+
----
-Hi Andrew, please apply this as a bug fix.
-
-This fixes buffer head memory leaks (seen by slabinfo and runtime
-function call checks) that gets worse during GC.
+#define FS_MNT_ATTACH          0x01000000      /* Mount was attached */
+#define FS_MNT_DETACH          0x02000000      /* Mount was detached */
+#define FS_MNT_MODIFY          0x04000000      /* Mount was modified */
 
 Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/btnode.c  | 1 +
- fs/nilfs2/gcinode.c | 2 +-
- fs/nilfs2/inode.c   | 5 +++++
- fs/nilfs2/nilfs.h   | 1 +
- 4 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
-index 501ad7be5174..54a3fa0cf67e 100644
---- a/fs/nilfs2/btnode.c
-+++ b/fs/nilfs2/btnode.c
-@@ -35,6 +35,7 @@ void nilfs_init_btnc_inode(struct inode *btnc_inode)
- 	ii->i_flags = 0;
- 	memset(&ii->i_bmap_data, 0, sizeof(struct nilfs_bmap));
- 	mapping_set_gfp_mask(btnc_inode->i_mapping, GFP_NOFS);
-+	btnc_inode->i_mapping->a_ops = &nilfs_buffer_cache_aops;
- }
- 
- void nilfs_btnode_cache_clear(struct address_space *btnc)
-diff --git a/fs/nilfs2/gcinode.c b/fs/nilfs2/gcinode.c
-index ace22253fed0..2dbb15767df1 100644
---- a/fs/nilfs2/gcinode.c
-+++ b/fs/nilfs2/gcinode.c
-@@ -163,7 +163,7 @@ int nilfs_init_gcinode(struct inode *inode)
- 
- 	inode->i_mode = S_IFREG;
- 	mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
--	inode->i_mapping->a_ops = &empty_aops;
-+	inode->i_mapping->a_ops = &nilfs_buffer_cache_aops;
- 
- 	ii->i_flags = 0;
- 	nilfs_bmap_init_gc(ii->i_bmap);
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index b7d4105f37bf..23f3a75edd50 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -276,6 +276,10 @@ const struct address_space_operations nilfs_aops = {
- 	.is_partially_uptodate  = block_is_partially_uptodate,
- };
- 
-+const struct address_space_operations nilfs_buffer_cache_aops = {
-+	.invalidate_folio	= block_invalidate_folio,
-+};
-+
- static int nilfs_insert_inode_locked(struct inode *inode,
- 				     struct nilfs_root *root,
- 				     unsigned long ino)
-@@ -681,6 +685,7 @@ struct inode *nilfs_iget_for_shadow(struct inode *inode)
- 	NILFS_I(s_inode)->i_flags = 0;
- 	memset(NILFS_I(s_inode)->i_bmap, 0, sizeof(struct nilfs_bmap));
- 	mapping_set_gfp_mask(s_inode->i_mapping, GFP_NOFS);
-+	s_inode->i_mapping->a_ops = &nilfs_buffer_cache_aops;
- 
- 	err = nilfs_attach_btree_node_cache(s_inode);
- 	if (unlikely(err)) {
-diff --git a/fs/nilfs2/nilfs.h b/fs/nilfs2/nilfs.h
-index 45d03826eaf1..dff241c53fc5 100644
---- a/fs/nilfs2/nilfs.h
-+++ b/fs/nilfs2/nilfs.h
-@@ -401,6 +401,7 @@ extern const struct file_operations nilfs_dir_operations;
- extern const struct inode_operations nilfs_file_inode_operations;
- extern const struct file_operations nilfs_file_operations;
- extern const struct address_space_operations nilfs_aops;
-+extern const struct address_space_operations nilfs_buffer_cache_aops;
- extern const struct inode_operations nilfs_dir_inode_operations;
- extern const struct inode_operations nilfs_special_inode_operations;
- extern const struct inode_operations nilfs_symlink_inode_operations;
--- 
-2.43.0
-
+Amir.
 
