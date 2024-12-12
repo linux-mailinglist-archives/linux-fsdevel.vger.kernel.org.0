@@ -1,46 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-37180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0A19EEAB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:17:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE33166EEC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 15:12:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18867217F28;
-	Thu, 12 Dec 2024 15:12:27 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D239EEAE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:18:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74721171A;
-	Thu, 12 Dec 2024 15:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F52282A36
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 15:18:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2C9212B0F;
+	Thu, 12 Dec 2024 15:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W285tYPw"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355DF13CA93
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 15:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734016346; cv=none; b=OcQMPi0dslPsf2qpOyBtB3ZbjmT8d6ZwuwDeZuga1QtKL4zFaiTYNLqzsRUWaAFByhQyIIsJBlscMXoZLb06LYI5qjcArsJmMWpzwvYw9BEYe5RzvXtu3rMsO3HkOyzLrn1ibY3ALFsZp64tFz95wmmHLfI+1Swm6IZkLGPN70w=
+	t=1734016725; cv=none; b=O85DDvj759gI41lpWxkpe2oa/93lPXmlHfX0vttbcK/ehS0sZhQuv0Wq+S2mATRSoQTZw3Jw9itNjpLY6gs6H9r0VKB2zWH/Rg4ooprCsco/JPt1zu+vwsDiHPbGHtuWMpr4lzCcER9afxm2DDZyrQcRD3aLWdzue6iMiyAQQ4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734016346; c=relaxed/simple;
-	bh=F1l/Appo45L4GxTayGWCuu+y2jPlO4BKBhy0/EheVdM=;
+	s=arc-20240116; t=1734016725; c=relaxed/simple;
+	bh=rHINzLdXFQZzPlYGq81tmNJ0UvlUQkgg4U7V86ZnVI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1zBPqxmiqpnWt3zPlAk5Y1uLPkO3khtyvdn88oPkeQfElZNOxQC03RWMN9H/5jiI2ruJYyqwPpxV1h3aU3mKU/iL3j83vdJk+/wa+67fdhU0/0DwWCGno5k2vD7hXFMfSLW5BELuupIhzMItz5L1DANjWxh+euZvsq6JBpULHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id A945368D34; Thu, 12 Dec 2024 16:12:19 +0100 (CET)
-Date: Thu, 12 Dec 2024 16:12:19 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=rLEEsFEKFOGy2T4bzPt4C0Y7bNXn1E9YSdkF95m52moxF7MDfsVfHNdAIGrXXYmCPGunZmanrFpAn8fL+TmwLwIITm3azPuIdkO85TWGbdfFwfvaeo5LyBZMo9/w/ViAJR/Rhpi6GVT8Ci9mtNqkF5VDSeOzsiwOSoyp7C63Aeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W285tYPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DEDC4CECE;
+	Thu, 12 Dec 2024 15:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734016724;
+	bh=rHINzLdXFQZzPlYGq81tmNJ0UvlUQkgg4U7V86ZnVI8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=W285tYPwhHbFlFLUqWjXo2431LtF050KmMs41VfOwtEwOWHVwnM7CpBDXlwlbMWdk
+	 Hp+wtdZvB8C40uqhoQv/8RlhYcxn3X1vOh7a2JP9//5wI0pFNiM83vKkbv9ZzstpUX
+	 FbMXb/5xlVmnef6hV+FFLW/H+YCqIqiIg2SU6C8GApRxFv+46xsdvYCGd1EjgEBkf0
+	 0Wo+CGiL69fFQI/bsIYf5w55CI/VGx8PRHR3se+xStzMVRQ15Yo2z9mOITc6oSyY5N
+	 hlBzNF2/UUiQuasASsuw5CbRqTTpEy8Wrgn3ggsgdmrwOckcOSOSvO07V9i3smRZDH
+	 mJmXQwrXEY/ug==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 83886CE0808; Thu, 12 Dec 2024 07:18:44 -0800 (PST)
+Date: Thu, 12 Dec 2024 07:18:44 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
+	Peter Ziljstra <peterz@infradead.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/8] iomap: optionally use ioends for direct I/O
-Message-ID: <20241212151219.GC6840@lst.de>
-References: <20241211085420.1380396-1-hch@lst.de> <20241211085420.1380396-6-hch@lst.de> <Z1rlQA6N8tCfRlLi@bfoster>
+Subject: Re: [PATCH v2 4/8] rculist: add list_bidir_{del,prev}_rcu()
+Message-ID: <a1ca5d04-2bbf-4f2c-8099-02b1e7e400cb@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241212-work-mount-rbtree-lockless-v2-0-4fe6cef02534@kernel.org>
+ <20241212-work-mount-rbtree-lockless-v2-4-4fe6cef02534@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,65 +62,144 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1rlQA6N8tCfRlLi@bfoster>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241212-work-mount-rbtree-lockless-v2-4-4fe6cef02534@kernel.org>
 
-On Thu, Dec 12, 2024 at 08:29:36AM -0500, Brian Foster wrote:
-> > +	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
-> > +	struct kiocb *iocb = dio->iocb;
-> > +	u32 vec_count = ioend->io_bio.bi_vcnt;
-> > +
-> > +	if (ioend->io_error)
-> > +		iomap_dio_set_error(dio, ioend->io_error);
-> > +
-> > +	if (atomic_dec_and_test(&dio->ref)) {
-> > +		struct inode *inode = file_inode(iocb->ki_filp);
-> > +
-> > +		if (dio->wait_for_completion) {
-> > +			struct task_struct *waiter = dio->submit.waiter;
-> > +
-> > +			WRITE_ONCE(dio->submit.waiter, NULL);
-> > +			blk_wake_io_task(waiter);
-> > +		} else if (!inode->i_mapping->nrpages) {
-> > +			WRITE_ONCE(iocb->private, NULL);
-> > +
-> > +			/*
-> > +			 * We must never invalidate pages from this thread to
-> > +			 * avoid deadlocks with buffered I/O completions.
-> > +			 * Tough luck if you hit the tiny race with someone
-> > +			 * dirtying the range now.
-> > +			 */
-> > +			dio->flags |= IOMAP_DIO_NO_INVALIDATE;
-> > +			iomap_dio_complete_work(&dio->aio.work);
-> > +		} else {
-> > +			INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
-> > +			queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
-> > +		}
-> > +	}
-> > +
-> > +	if (should_dirty) {
-> > +		bio_check_pages_dirty(&ioend->io_bio);
-> > +	} else {
-> > +		bio_release_pages(&ioend->io_bio, false);
-> > +		bio_put(&ioend->io_bio);
-> > +	}
-> > +
+On Thu, Dec 12, 2024 at 12:56:03PM +0100, Christian Brauner wrote:
+> Currently there is no primite for retrieving the previous list member.
+
+s/primite/primitive/g
+
+To my surprise, there is an English word "primite".  According to Merriam
+Webster, this is "the anterior member of a pair of gregarines in syzygy".
+I fervently hope not to have much opportunity to use this word, especially
+in reference to myself.  But I cannot escape the suspicion that Merriam
+Webster might be engaging in a little trolling.  ;-)
+
+> To do this we need a new deletion primite that doesn't poison the prev
+> pointer and a corresponding retrieval helper. Note that it is not valid
+> to ues both list_del_rcu() and list_bidir_del_rcu() on the same list.
 > 
-> Not that it matters all that much, but I'm a little curious about the
-> reasoning for using vec_count here. AFAICS this correlates to per-folio
-> writeback completions for buffered I/O, but that doesn't seem to apply
-> to direct I/O. Is there a reason to have the caller throttle based on
-> vec_counts, or are we just pulling some non-zero value for consistency
-> sake?
+> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-So direct I/O also iterates over all folios for the bio, to unpin,
-and in case of reads dirty all of them.
+Looks good!  I have a few suggestions below, mostly grammar nits.
 
-I wanted to plug something useful into cond_resched condition in the
-caller.  Now number of bvecs isn't the number of folios as we can
-physically merge outside the folio context, but I think this is about
-as goot as it gets without changing the block code to return the
-number of folios processed from __bio_release_pages and
-bio_check_pages_dirty.
+							Thanx, Paul
 
+> ---
+>  include/linux/rculist.h | 43 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> index 14dfa6008467e803d57f98cfa0275569f1c6a181..c81f9e5a789928ae6825c89325396d638b3e48c5 100644
+> --- a/include/linux/rculist.h
+> +++ b/include/linux/rculist.h
+> @@ -30,6 +30,14 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
+>   * way, we must not access it directly
+>   */
+>  #define list_next_rcu(list)	(*((struct list_head __rcu **)(&(list)->next)))
+> +/*
+> + * Return the ->prev pointer of a list_head in an rcu safe way. Don't
+> + * access it directly.
+> + *
+> + * In order to use list_bidir_prev_rcu() deletions must only be done via
+> + * list_bidir_del() to avoid poisoning the ->prev pointer.
+
+This should be list_bidir_del_rcu(), right?  If so, I suggest wording
+this as follows or similar:
+
+ * Any list traversed with list_bidir_prev_rcu() must never use
+ * list_del_rcu().  Doing so will poison the ->prev pointer that
+ * list_bidir_prev_rcu() relies on, which will result in segfaults.
+ * To prevent these segfaults, use list_bidir_del_rcu() instead
+ * of list_del_rcu().
+
+> + */
+> +#define list_bidir_prev_rcu(list) (*((struct list_head __rcu **)(&(list)->prev)))
+
+We need a rcu_dereference() in there somewhere, otherwise the compiler
+might ruin your day.
+
+Huh.  You (quite reasonably) copy-pasta'd list_next_rcu().  So the
+restriction is the same, the caller must use rcu_dereference.  Unless,
+like seq_list_next_rcu(), you are never dereferencing it.  That said,
+I am not so sure about the callers of unloaded_tainted_modules_seq_next()
+and rxrpc_call_seq_next(), which inherit the same restriction.
+
+If those two are used properly with rcu_dereference(), we have empirical
+evidence indicating that things might be OK.  Otherwise, both need at
+least an upgrade of their header comments.  ;-)
+
+>  /**
+>   * list_tail_rcu - returns the prev pointer of the head of the list
+> @@ -158,6 +166,41 @@ static inline void list_del_rcu(struct list_head *entry)
+>  	entry->prev = LIST_POISON2;
+>  }
+>  
+> +/**
+> + * list_bidir_del_rcu - deletes entry from list without re-initialization
+> + * @entry: the element to delete from the list.
+> + *
+> + * In contrat to list_del_rcu() doesn't poison the previous pointer thus
+
+Looks good, but while I am here, I might as well nitpick...
+
+"In constrast".
+
+> + * allowing to go backwards via list_prev_bidir_rcu().
+
+"allowing backwards traversal via"
+
+> + * Note: list_empty() on entry does not return true after this,
+> + * the entry is in an undefined state. It is useful for RCU based
+
+"because the entry is in a special undefined state that permits
+RCU-based lockfree reverse traversal."
+
+> + * lockfree traversal.
+
+At which point, you don't need this paragraph break.
+
+> + * In particular, it means that we can not poison the forward
+
+"this means that ... forward and backwards"
+
+> + * pointers that may still be used for walking the list.
+> + *
+> + * The caller must take whatever precautions are necessary
+> + * (such as holding appropriate locks) to avoid racing
+> + * with another list-mutation primitive, such as list_bidir_del_rcu()
+> + * or list_add_rcu(), running on this same list.
+> + * However, it is perfectly legal to run concurrently with
+> + * the _rcu list-traversal primitives, such as
+> + * list_for_each_entry_rcu().
+> + *
+> + * Noe that the it is not allowed to use list_del_rcu() and
+
+"Note that list_del_rcu() and list_bidir_del_rcu() must not be used on
+the same list at the same time."
+
+If you want to leave off the "at the same time", I am good.  One could
+argue that we should not call attention to the possibility of adding
+this sort of complexity.  Let them need it badly first.  ;-)
+
+> + * list_bidir_del_rcu() on the same list.
+> + *
+> + * Note that the caller is not permitted to immediately free
+> + * the newly deleted entry.  Instead, either synchronize_rcu()
+> + * or call_rcu() must be used to defer freeing until an RCU
+> + * grace period has elapsed.
+> + */
+> +static inline void list_bidir_del_rcu(struct list_head *entry)
+> +{
+> +	__list_del_entry(entry);
+> +}
+> +
+>  /**
+>   * hlist_del_init_rcu - deletes entry from hash list with re-initialization
+>   * @n: the element to delete from the hash list.
+> 
+> -- 
+> 2.45.2
+> 
 
