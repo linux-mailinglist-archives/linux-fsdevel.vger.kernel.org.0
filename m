@@ -1,473 +1,262 @@
-Return-Path: <linux-fsdevel+bounces-37187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4399EF005
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:23:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17839EF08E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786F9189745F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:17:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E79A178C18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40BF20969B;
-	Thu, 12 Dec 2024 16:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C4A236940;
+	Thu, 12 Dec 2024 16:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ozy8hxYS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zSB+brn2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ozy8hxYS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zSB+brn2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nE6oXffU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DAB22F381
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 16:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019457; cv=none; b=CMOvv6Acn9kqFWVYIcDwGvVqnCnbnnJSLfkNX2iTCyYRq7BwC09SF8oZ9WBWFew3l3tSY7O19V5yAczH8VFZVLJJZfwjEADIxvajm5hXe5sxgZR8NBfAqnleIX49R7aKJ9s6XbAe+UWF08Q+QpvAJgdjuCKzxu5K5KirPibCxTo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019457; c=relaxed/simple;
-	bh=n1r701hjvnJiWF1Wy2T257A/uhEz7OjTO5Xf5DscDwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QP9SwTFmF2qSofWIQjF0IpOeac3xPqeJk+3hbyQACxGGYtST9DW+F2XZ8jyzH1LR6w8POnv7w7HbY6cS//gAHcW7y4L4piBDsZdAqHA7JlxNEIfsZPNtVqPOXEbRmtBYxBXAzoBCz2lzcssVuU5L2T7B/m50jOP+VAjJiOTfrdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ozy8hxYS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zSB+brn2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ozy8hxYS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zSB+brn2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BB52321167;
-	Thu, 12 Dec 2024 16:04:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734019451; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcXtKjRptCfVgEY3is8UgfpjJCs5PQGls8jkfKnhVps=;
-	b=ozy8hxYSc1M2FxzPXoelBlXtqqlqeC2BB646XjQkpfACrrNs7vCWY2dEzAgSXuYsTuPFVQ
-	yhfurXZ5Ux/D5LsTJOIElDps1bg+u6WR8C6Vcu2d/VdvJbkJC+fL8RpEV+ZjRn8rxcLEXU
-	eT4T3T4EEXN9q63WDkjW1cyFwo/MXb0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734019451;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcXtKjRptCfVgEY3is8UgfpjJCs5PQGls8jkfKnhVps=;
-	b=zSB+brn2YVR2Vg3U5wrfsBD5B69T0SPoRXehGBXwX6CLErrN3MKYZ9HcNPxCihsy3811fp
-	3aHNw4kX4UMYTzAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734019451; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcXtKjRptCfVgEY3is8UgfpjJCs5PQGls8jkfKnhVps=;
-	b=ozy8hxYSc1M2FxzPXoelBlXtqqlqeC2BB646XjQkpfACrrNs7vCWY2dEzAgSXuYsTuPFVQ
-	yhfurXZ5Ux/D5LsTJOIElDps1bg+u6WR8C6Vcu2d/VdvJbkJC+fL8RpEV+ZjRn8rxcLEXU
-	eT4T3T4EEXN9q63WDkjW1cyFwo/MXb0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734019451;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcXtKjRptCfVgEY3is8UgfpjJCs5PQGls8jkfKnhVps=;
-	b=zSB+brn2YVR2Vg3U5wrfsBD5B69T0SPoRXehGBXwX6CLErrN3MKYZ9HcNPxCihsy3811fp
-	3aHNw4kX4UMYTzAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA43F13939;
-	Thu, 12 Dec 2024 16:04:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 86eLKXsJW2eqDwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Dec 2024 16:04:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 52184A0894; Thu, 12 Dec 2024 17:04:11 +0100 (CET)
-Date: Thu, 12 Dec 2024 17:04:11 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Karel Zak <kzak@redhat.com>,
-	Lennart Poettering <lennart@poettering.net>,
-	Ian Kent <raven@themaw.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v3] fanotify: notify on mount attach and detach
-Message-ID: <20241212160411.xzdp64o3v2ilxsf5@quack3>
-References: <20241211153709.149603-1-mszeredi@redhat.com>
- <20241212112707.6ueqp5fwgk64bry2@quack3>
- <CAJfpeguN6bfPa1rBWHFcA4HhCCkHN_CatGB4cC-z6mKa_dckWA@mail.gmail.com>
- <CAOQ4uxhNCg53mcNpzDyos3BV5dmL=2FVAipb4YKYmK3bvEzaBQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D0A225407;
+	Thu, 12 Dec 2024 16:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734019783; cv=fail; b=aAur8TOCa5cgqVr1hWuNt9wzFgdwHcyzofuXKEC3iXlJGBmSZNbMogu0/CiMKwTcA0qR4xX0KVX+VD0xStXsN91SkYBj4Lf+onBWnu0GBN7gKBtVDDSJ5lJtjsfZfcfFromtaJi9Rh773c6CJWWQw+MYS1BTfIzuv8NXjBGBylw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734019783; c=relaxed/simple;
+	bh=/CB12MFytRL6UbNIFCIYrZbB9pDZmfETM7gPY+qP5k8=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=MnPzh5Y/n+82W14rFsGUqzhvPSfPEvQTQeAC84/A5g3agVwuqH2nMjauuEVTH61iCCkRHSa/1viouakDPpQAczBw6BENsW9WIYsMX+rc6sLZ4P1cTeKUiZWEwDRYEv8SdbLx40MqT6WWWHaM0uhxNEuVrYHMhphnu0ZUOtLDZSU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nE6oXffU; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734019782; x=1765555782;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/CB12MFytRL6UbNIFCIYrZbB9pDZmfETM7gPY+qP5k8=;
+  b=nE6oXffUqHw0lMl+lWZvVQYdbeHgMzkRvCIbrtMEEjqDUp+2gmnFzg26
+   CiaxzMXyKMQOJ6FztYo0NKqutjjElIjm8oscjsEtOszFNVsIP+XcAtqS/
+   2y6JYTWVWdOa+CjzduUInlKZStBG7SxVVgX65BUtrexC1NPPnbaMR49kU
+   ORC5Yc6UWtkZetiWhGQ110DMIq9MBXkm2yxN0dP1rZWUYvtezwBp/euyx
+   27XuS2rbCwQKWYyfM6vgyk3XJKGfPARzm5yFJ9FZQmSne8wdZO1joA7Zg
+   gKBST+bcskRZe5uUbXU1APnL7NnF39mlMgnlz1AEo8anZgow59IagSt23
+   Q==;
+X-CSE-ConnectionGUID: o8+tC13SRwS3l7yFmo8YgQ==
+X-CSE-MsgGUID: +ByFNWgrT1246ayJXyXYpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34317744"
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="34317744"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:09:41 -0800
+X-CSE-ConnectionGUID: aLlEXYnvQayKDez4RG9Qtw==
+X-CSE-MsgGUID: ofb9lMUqSQS8fVsLtEXUQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119517218"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Dec 2024 08:09:40 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 12 Dec 2024 08:09:39 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 12 Dec 2024 08:09:39 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 12 Dec 2024 08:09:37 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uHK9tsHCa7D8RaKonec4dQNhChFGrkLHW33UaUjtWwCUr3q7BZxkLL0DvJyzYI31I1a8yt9LjdgDbP/4Y0vrOw7DpyacsSb8hJJYIiRny/B0CnPhTOzs2FnqEFYnNvlCjDcJh/4VaEhUfbB6VVFy0Rzcnrp+9RBc5XLBHS5VhuJfNzSF9SSGxT3g/dyHnxojpuJIZil7pfpYFeJttSMypGkW1ud6nsWaqbKZ+19vM8ym5DU+osi6P1YcmSy3mXjPq5mXUNOVDczUFLRFUfA4+VhvOZ4mJyGKUXVcAgK930W2Y4ww+BbV8UMFIS7QJjl/Y2H+rG1+y4RSS+5LE/t36Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W7ZGkKTHk9T4VqtnhMx7Wri1TEdHiZvlenP5y1C9KRU=;
+ b=r84egbNGvsyO4T5hXG1StAHk5zP7imxb5o9f3c4slFc/atBEvB4FqfoOJ/kbgotDihCY8SEBKCbOG+O4f9SNdVXgjM4L3C7VsYiKODpKFawAPmpgK2GTadYJM205t5d3F0+euNbpdDVISaxaQbmd4JokXn7J6HTpKYbeCOQ7L8U2L05JofL9tJG47u9L/Wrkp8P3+gzMxmP51KepEnDFjhTpbakkRX3GYuZwx9xXVbBZr/PNZ5akPK03Oe+T39uYYcPZxrAMZSCIN269ltiCyYQOsaDB151J3vmN96XGDpTkkmPh0d4XEKwRd+R1ZHPNlDqDbPA52SPkBcVzig77sA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH8PR11MB6660.namprd11.prod.outlook.com (2603:10b6:510:1c3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 16:09:05 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
+ 16:09:05 +0000
+Date: Fri, 13 Dec 2024 00:08:56 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Christian Brauner <brauner@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Amir Goldstein
+	<amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	<linux-fsdevel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+	<oliver.sang@intel.com>
+Subject: [linux-next:master] [exportfs]  7fc737d188: xfstests.generic.477.fail
+Message-ID: <202412122317.43dfe501-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR03CA0094.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::22) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhNCg53mcNpzDyos3BV5dmL=2FVAipb4YKYmK3bvEzaBQ@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH8PR11MB6660:EE_
+X-MS-Office365-Filtering-Correlation-Id: d22e278e-7858-4e54-0248-08dd1ac74d6d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?pUA6cE9XPX8KHlNtMLy0wSDe+B6Nnlhd5xhP+id1cKUlj7bmXE3eT1/0VQQ4?=
+ =?us-ascii?Q?7oJzamQt3P8sjQ2arD51innmayYgYHY3AJ4tnO03NcukFkk858ilf3ZDDGP+?=
+ =?us-ascii?Q?HdY6Ekk+ES4iYY+JnwUyUFn0uYivgEQ+9Dpbgu+5S+2b5ESySd+j9cjGIlFl?=
+ =?us-ascii?Q?cfyVfDBU1vgPSbNVqEqJfnkbpZCAYVzslnDxmkw1j8A2iT/k9u/nK521vQNk?=
+ =?us-ascii?Q?FAg3S4P9728W+ZFkTB+NwX2wXLfS7dxXciTZcdxtcGe+8sUosTlFVBWlp1bW?=
+ =?us-ascii?Q?ZLbwldQfvt+XmT4/NcAklg1Qbp9QY6TNz7HzpyJ98z5Jcm6540UC2e10NiP6?=
+ =?us-ascii?Q?IeOG/ZkOjIxEjSF1dheYWYCG8SH9sERypKvBJiOWo3byQlhpkdHLC3kH5n8Q?=
+ =?us-ascii?Q?yrPS+2ejCZvULlCIHY2Uuf2/JrSHjl/gt0RRQPNWIXt6hYujIBKqnMBUSWeY?=
+ =?us-ascii?Q?oGn5oIVXGKihDsaKCqlZgOPtMd5+JBkFX9BInBk9YMzUo2/nm9JQI4+HwvmO?=
+ =?us-ascii?Q?+a0TH95OTodI109CcEai7tixW1RJYd6RNzJ93k9BdcA8bUHlZ9/HAqYh0xFm?=
+ =?us-ascii?Q?m6bPjDzOcxIAEYHsKARd+Gj5+i4NKSM87jNU6ong2orSfvLHLw1OHWE3jGkn?=
+ =?us-ascii?Q?lIdyTQTKmZybEJOu5hCCAQlErwlF44oq6YE8NKYz8/txLY4mei/cwYtyJ4rQ?=
+ =?us-ascii?Q?RAwveF8Pg7rNwEcK7qr3DDHT6KmR3Cq+GU+WZYTbtQX6L16t3VkRiHiXqwG6?=
+ =?us-ascii?Q?2WtgQuIGvFC81p6fJvWHmz0vqnGSZfkMU74QtXswoXdqAtSFKtQOkSEQVNiB?=
+ =?us-ascii?Q?VuNMHrHIA/TeDd6KRXsSccN8uBtcYnaRrBvP13R2KN8JZOrly9ehKnsptK7t?=
+ =?us-ascii?Q?hp8FiquMl3EVr0Fhp2LEkHyckehNArUmA+b/2u/0eZMFC5jCQh5jQoseKajT?=
+ =?us-ascii?Q?LVKWnHXTvM6Wc1GwRAYOxZl1Ev9s+c/KF4d5BHGRjuEmTI3WV95khy+YbbqQ?=
+ =?us-ascii?Q?MFAmenAdbpeGFbVyRBGmlZTSVhN9P0ujqubswQiWoolxqbARyu2egYlWHyC7?=
+ =?us-ascii?Q?yRQgSeEvNwzBQDkm1GAF8oMgACCXfez/zxwG8ZralK3/o3uGc37+xHbCpeXg?=
+ =?us-ascii?Q?E8KLdweRQuq+kTvQ6qGsoH9k5/yxdMKe2YZhZ4wblRsQ+mpJW5MZv9Q00KEd?=
+ =?us-ascii?Q?UQiIXeEm+b/MpDjkgHKjnEgTSo8nC0adrjExW0kuvP+hw4/2ZSsn8bwuY6km?=
+ =?us-ascii?Q?IlcqzyJsp0coVspRizEGPS9KkYNOZJaInXgn/H2/FiBF8HZea8eQkERrKjJf?=
+ =?us-ascii?Q?CXGBBSOgKgwNly4VBlTnZR8F?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ysnjVzT7wDIiNRG/L6DSpHp/U5Z+P8CBS0f+ypUGldfXyH8UcDcaz3mMLygH?=
+ =?us-ascii?Q?NJvhdIvYJs6gILr/x2C7lfcrbG2QhmKOvmyh0zGrUmKMETZJXTSBRPvlhf7I?=
+ =?us-ascii?Q?gLWSaa5JZOnJuC+YbG7+G1EAYvUwOyY58yCG27JhFBe3Y8INj5loh7pSRdME?=
+ =?us-ascii?Q?5hytiEoCgNXY0ak2NIUIEHJzXzwqFveVaffOpbANAjeIRrhlUdGqkNY8apDL?=
+ =?us-ascii?Q?8WMCaSnol/f+XJP/niDETR33NXnB8I+Lk5Y70V+PM/1/sVJtNxpqegJvWLAb?=
+ =?us-ascii?Q?otpGVKgJy5WT8agen67J7toQvZoKMEp84ES5Cb2gwLuqHb7hW5zgRSQVM0a9?=
+ =?us-ascii?Q?JVDDrhoVJuJDG84aIJ7XCDG737ZCWy0Q4Shgt/nVRKrCYhLV8r/hkzz2OOgz?=
+ =?us-ascii?Q?luemQ/mBKolNjbt+iaOvOxjRWsL9GNwNDR/UOyEopT0t68Cqj0Rl7p1jjzl/?=
+ =?us-ascii?Q?pZ7/EREHWVM0hoIgYD23Krp1L5fHWhY3lcb9RtxojwrubD/FC3LNFWu3ozJ5?=
+ =?us-ascii?Q?xvepPIw4TJxwlLUvgAwr+Q25uiFvRGdDT/6Z7kZkAuWDdosyfMBc1Hm87iaD?=
+ =?us-ascii?Q?NmzSspufzFmJaIsu8jgZDDnh6U6+XdSRtL6Lo6zAQmvOw33SrTTBBc4O5GCJ?=
+ =?us-ascii?Q?vjg5W47byKQhw4lPJNRUrF0+Qmk37YR/e/JgIMPgAvKEIx41pbWTiK22BLE4?=
+ =?us-ascii?Q?fNC6NA4z/jHjL5LUVq+Tv27hy6opUQzoG6ICR3Cwe6uMzApQfW/O6l0GiIuW?=
+ =?us-ascii?Q?vVDI1oIUUeVM+UPhFynMFZR2wjg1TiJIcEy3q0DSSKNQx51brHQsR5GvGmfv?=
+ =?us-ascii?Q?WCLsLEo/vblKj03QkJmBpsu2FESSRJwaBTgyiUahvKRlHkgkAmqiAVBxcUxW?=
+ =?us-ascii?Q?MKOW8p0Vk7tdkx+DUlOnz/6YzXQA9ovnYxMN43DwuaJvvMZuwpyjWIaq5tyR?=
+ =?us-ascii?Q?iH+xiFRUll6fgjjJbB1O7kz9E7yqh0QkzvetDAehsS7473qpg7o2jBFHaIb9?=
+ =?us-ascii?Q?jPEamB62pUq51fh+n8hIAgMbtMxaDoaLUJzIttU/XV9YHI2+dhQqKw0XJojM?=
+ =?us-ascii?Q?Cxbim78oIi5CORGCLY0QQSk2dJJ8vZ0YXwhg1Zzi/sk0iLBeFViMrjbJE8je?=
+ =?us-ascii?Q?r0+P8MSDtfpm2R7pHmpvypuOgcpx7lD84SilyKboSlUFoKiECvZaASIFHsTe?=
+ =?us-ascii?Q?pMz6Cpyc7da3vV1p3BJ3RvI9Kitdu0fQlzLIH1gxtkvdZe+1c+KAviYncuPU?=
+ =?us-ascii?Q?IeYQCzBV9h06hQ+DL73n4M6p8sBQMC89pHUVPwPNomK1hY1CIAkvV4btOkjd?=
+ =?us-ascii?Q?hs3N4oJga3KAN16iyRX88nr7hAqq0jNq8SCm7glW3NskS9onPwUrhiKs/8oL?=
+ =?us-ascii?Q?+xgJjmkho4JKFnqiou2hr6TzbglTnUWwS8dUJPUSEPwSN9Gy8/QmiTPbF/g7?=
+ =?us-ascii?Q?7GNEglkNDn8QLeSb106F4ChECmLVfUbZd4AbWgyMBbXoYY//sPeW5mZ9ZIEl?=
+ =?us-ascii?Q?+93CCvPKeK+vSHf2+8i9pQ/E+Cx6nRCLB0UB5Q96QlLHw/oBNuvIbpb92l9/?=
+ =?us-ascii?Q?knzMw8gsUxvw1GlPg6P+i47kPDzvplLArjCHJY++OfUF/4kQZD5MCPPOdl8g?=
+ =?us-ascii?Q?Ug=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d22e278e-7858-4e54-0248-08dd1ac74d6d
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 16:09:05.7537
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ci5nhCSb/AvEcKM+5cfnt+ZRlu9NHGEGvN6nMvF+2HYoVF9S0Fa6nqswoYAQHmfjF8LhKqnAqEGETjoGnV01CA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6660
+X-OriginatorOrg: intel.com
 
-On Thu 12-12-24 16:02:16, Amir Goldstein wrote:
-> On Thu, Dec 12, 2024 at 1:45 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Thu, 12 Dec 2024 at 12:27, Jan Kara <jack@suse.cz> wrote:
-> >
-> > > Why not:
-> > >         if (p->prev_ns == p->mnt_ns) {
-> > >                 fsnotify_mnt_move(p->mnt_ns, &p->mnt);
-> > >                 return;
-> > >         }
-> >
-> > I don't really care, but I think this fails both as an optimization
-> > (zero chance of actually making a difference) and as a readability
-> > improvement.
 
-I was just staring at the code trying to understand why you special-case
-the situations with non-existent prev / current ns until I understood
-there's no real reason. But I agree it's a matter of a taste so I'm fine
-with keeping things as you have them.
 
-> > > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > > > index 24c7c5df4998..a9dc004291bf 100644
-> > > > --- a/fs/notify/fanotify/fanotify.c
-> > > > +++ b/fs/notify/fanotify/fanotify.c
-> > > > @@ -166,6 +166,8 @@ static bool fanotify_should_merge(struct fanotify_event *old,
-> > > >       case FANOTIFY_EVENT_TYPE_FS_ERROR:
-> > > >               return fanotify_error_event_equal(FANOTIFY_EE(old),
-> > > >                                                 FANOTIFY_EE(new));
-> > > > +     case FANOTIFY_EVENT_TYPE_MNT:
-> > > > +             return false;
-> > >
-> > > Perhaps instead of handling this in fanotify_should_merge(), we could
-> > > modify fanotify_merge() directly to don't even try if the event is of type
-> > > FANOTIFY_EVENT_TYPE_MNT? Similarly as we do it there for permission events.
-> >
-> > Okay.
-> 
-> Actually, I disagree.
-> For permission events there is a conceptual reason not to merge,
-> but this is not true for mount events.
-> 
-> Miklos said that he is going to add a FAN_MOUNT_MODIFY event
-> for changing mount properties and we should very much merge multiple
-> mount modify events.
->
-> Furthermore, I wrote my comment about not merging mount events
-> back when the mount event info included the parent mntid.
-> Now that the mount event includes only the mount's mntid itself,
-> multiple mount moves *could* actually be merged to a single move
-> and a detach + attach could be merged to a move.
-> Do we want to merge mount move events? that is a different question
-> I guess we don't, but any case this means that the check should remain
-> where it is now, so that we can check for specific mount events in the
-> mask to decide whether or not to merge them.
+Hello,
 
-Ok, fair enough. What triggered this request was that currently we just
-look at each event in the queue, ask for each one "can we merge" only to
-get "cannot" answer back. Which seemed dumb. But if we are going to add
-events that can be merged, this reason obviously doesn't hold anymore. So
-I'm retracting my objection :)
+kernel test robot noticed "xfstests.generic.477.fail" on:
 
-> > > > @@ -303,7 +305,11 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
-> > > >       pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
-> > > >                __func__, iter_info->report_mask, event_mask, data, data_type);
-> > > >
-> > > > -     if (!fid_mode) {
-> > > > +     if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT))
-> > > > +     {
-> > >
-> > > Unusual style here..
-> >
-> > Yeah, fixed.
-> >
-> > > Now if we expect these mount notification groups will not have more than
-> > > these two events, then probably it isn't worth the hassle. If we expect
-> > > more event types may eventually materialize, it may be worth it. What do
-> > > people think?
-> >
-> > I have a bad feeling about just overloading mask values.  How about
-> > reserving a single mask bit for all mount events?  I.e.
-> >
-> > #define FAN_MNT_ATTACH 0x00100001
-> > #define FAN_MNT_DETACH 0x00100002
-> 
-> This is problematic.
-> Because the bits reported in event->mask are often masked
-> using this model makes assumptions that are not less risky
-> that the risk of overloading 0x1 0x2 IMO.
-> 
-> I was contemplating deferring the decision about overloading for a while
-> by using high bits for mount events.
-> fanotify_mark() mask is already 64bit with high bits reserved
-> and fanotify_event_metadata->mask is also 64bit.
+commit: 7fc737d1883200e6189579a0fc82f592fbc09e9c ("exportfs: add permission method")
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
-Oh, right, fanotify API actually has a plenty of bits. I forgot that the
-type is different from the generic one in fsnotify. Thanks for reminding
-me!
+[test failed on linux-next/master 3e42dc9229c5950e84b1ed705f94ed75ed208228]
 
-> The challenge is that all internal fsnotify code uses __u32 masks
-> and so do {i,sb,mnt}_fsnotify_mask.
+in testcase: xfstests
+version: xfstests-x86_64-88be6071-1_20241208
+with following parameters:
 
-Yeah, including struct fanotify_event.
- 
-> However, as I have already claimed, maintaining the mount event bits
-> in the calculated object mask is not very helpful IMO.
-> 
-> Attached demo patch that sends all mount events to group IFF
-> group has a mount mark.
-> 
-> This is quite simple, but could also be extended later with a little
-> more work to allow sb/mount mark to actually subscribe to mount events
-> or to ignore mount events for a specific sb/mount, if we think this is useful.
+	disk: 4HDD
+	fs: xfs
+	test: generic-477
 
-So I like the prospect of internal event type eventually becoming 64-bit
-but I don't think we should tie it to this patch set given we still have 7
-bits left in the internal mask. Also if we do the conversion, I'd like to
-go full 64-bit except for the very few places that have a good reason so
-stay 32-bit. Because otherwise it's very easy to loose the upper bits
-somewhere. So what we could do is to allocate the new FAN_MNT_ constants
-from the upper 32 bits, for now leave FS_MNT_ in the lower 32 bits, and do
-the conversions as I've mentioned. When we really start running out of
-internal mask bits, we can implement the 64-bit event constant handling in
-fsnotify core and move FS_MNT_ constants in the upper bits.
 
-								Honza
 
-> From 01295be4df1053b83a33c80fda138ec5734ac858 Mon Sep 17 00:00:00 2001
-> From: Amir Goldstein <amir73il@gmail.com>
-> Date: Thu, 12 Dec 2024 15:11:28 +0100
-> Subject: [PATCH] fsnotify: demo send all mount events to mount watchers
-> 
-> Should be changed to send mount event to all groups with mntns
-> marks on the respective mntns.
-> ---
->  fs/notify/fanotify/fanotify.c    | 23 +++++++++++++++++------
->  fs/notify/fsnotify.c             | 16 +++++++++-------
->  include/linux/fsnotify_backend.h |  8 +++++---
->  3 files changed, 31 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 95646f7c46ca..d1c05e2a12da 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -296,7 +296,7 @@ static int fanotify_get_response(struct fsnotify_group *group,
->   */
->  static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  				     struct fsnotify_iter_info *iter_info,
-> -				     u32 *match_mask, u32 event_mask,
-> +				     u32 *match_mask, u64 event_mask,
->  				     const void *data, int data_type,
->  				     struct inode *dir)
->  {
-> @@ -309,10 +309,14 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  	bool ondir = event_mask & FAN_ONDIR;
->  	int type;
->  
-> -	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
-> +	pr_debug("%s: report_mask=%x mask=%llx data=%p data_type=%d\n",
->  		 __func__, iter_info->report_mask, event_mask, data, data_type);
->  
-> -	if (!fid_mode) {
-> +	if (event_mask & FS_MOUNT_EVENTS) {
-> +		/* Mount events are not about a specific path */
-> +		if (path)
-> +			return 0;
-> +	} else if (!fid_mode) {
->  		/* Do we have path to open a file descriptor? */
->  		if (!path)
->  			return 0;
-> @@ -326,6 +330,8 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  	}
->  
->  	fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
-> +		if (type == FSNOTIFY_ITER_TYPE_VFSMOUNT)
-> +			marks_mask |= FS_MOUNT_EVENTS;
->  		/*
->  		 * Apply ignore mask depending on event flags in ignore mask.
->  		 */
-> @@ -720,7 +726,7 @@ static struct fanotify_event *fanotify_alloc_error_event(
->  
->  static struct fanotify_event *fanotify_alloc_event(
->  				struct fsnotify_group *group,
-> -				u32 mask, const void *data, int data_type,
-> +				u64 mask, const void *data, int data_type,
->  				struct inode *dir, const struct qstr *file_name,
->  				__kernel_fsid_t *fsid, u32 match_mask)
->  {
-> @@ -826,6 +832,11 @@ static struct fanotify_event *fanotify_alloc_event(
->  						  moved, &hash, gfp);
->  	} else if (fid_mode) {
->  		event = fanotify_alloc_fid_event(id, fsid, &hash, gfp);
-> +	} else if (mask & FS_MOUNT_EVENTS) {
-> +		mask <<= 32;
-> +		struct path null_path = {};
-> +		/* XXX: allocate mount event */
-> +		event = fanotify_alloc_path_event(&null_path, &hash, gfp);
->  	} else {
->  		event = fanotify_alloc_path_event(path, &hash, gfp);
->  	}
-> @@ -892,7 +903,7 @@ static void fanotify_insert_event(struct fsnotify_group *group,
->  	hlist_add_head(&event->merge_list, hlist);
->  }
->  
-> -static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
-> +static int fanotify_handle_event(struct fsnotify_group *group, u64 mask,
->  				 const void *data, int data_type,
->  				 struct inode *dir,
->  				 const struct qstr *file_name, u32 cookie,
-> @@ -934,7 +945,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  	if (!mask)
->  		return 0;
->  
-> -	pr_debug("%s: group=%p mask=%x report_mask=%x\n", __func__,
-> +	pr_debug("%s: group=%p mask=%llx report_mask=%x\n", __func__,
->  		 group, mask, match_mask);
->  
->  	if (fanotify_is_perm_event(mask)) {
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 8ee495a58d0a..e1833d7b9b3c 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -372,13 +372,13 @@ static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
->  					   dir, name, cookie);
->  }
->  
-> -static int send_to_group(__u32 mask, const void *data, int data_type,
-> +static int send_to_group(__u64 mask, const void *data, int data_type,
->  			 struct inode *dir, const struct qstr *file_name,
->  			 u32 cookie, struct fsnotify_iter_info *iter_info)
->  {
->  	struct fsnotify_group *group = NULL;
-> -	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-> -	__u32 marks_mask = 0;
-> +	__u64 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-> +	__u64 marks_mask = 0;
->  	__u32 marks_ignore_mask = 0;
->  	bool is_dir = mask & FS_ISDIR;
->  	struct fsnotify_mark *mark;
-> @@ -398,13 +398,15 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
->  
->  	/* Are any of the group marks interested in this event? */
->  	fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
-> +		if (type == FSNOTIFY_ITER_TYPE_VFSMOUNT)
-> +			marks_mask |= FS_MOUNT_EVENTS;
->  		group = mark->group;
->  		marks_mask |= mark->mask;
->  		marks_ignore_mask |=
->  			fsnotify_effective_ignore_mask(mark, is_dir, type);
->  	}
->  
-> -	pr_debug("%s: group=%p mask=%x marks_mask=%x marks_ignore_mask=%x data=%p data_type=%d dir=%p cookie=%d\n",
-> +	pr_debug("%s: group=%p mask=%llx marks_mask=%llx marks_ignore_mask=%x data=%p data_type=%d dir=%p cookie=%d\n",
->  		 __func__, group, mask, marks_mask, marks_ignore_mask,
->  		 data, data_type, dir, cookie);
->  
-> @@ -533,7 +535,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
->   *		reported to both.
->   * @cookie:	inotify rename cookie
->   */
-> -int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
-> +int fsnotify(__u64 mask, const void *data, int data_type, struct inode *dir,
->  	     const struct qstr *file_name, struct inode *inode, u32 cookie)
->  {
->  	const struct path *path = fsnotify_data_path(data, data_type);
-> @@ -545,7 +547,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
->  	struct dentry *moved;
->  	int inode2_type;
->  	int ret = 0;
-> -	__u32 test_mask, marks_mask;
-> +	__u64 test_mask, marks_mask;
->  
->  	if (path)
->  		mnt = real_mount(path->mnt);
-> @@ -583,7 +585,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
->  
->  	marks_mask = READ_ONCE(sb->s_fsnotify_mask);
->  	if (mnt)
-> -		marks_mask |= READ_ONCE(mnt->mnt_fsnotify_mask);
-> +		marks_mask |= READ_ONCE(mnt->mnt_fsnotify_mask) | FS_MOUNT_EVENTS;
->  	if (inode)
->  		marks_mask |= READ_ONCE(inode->i_fsnotify_mask);
->  	if (inode2)
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 0d24a21a8e60..58b5ac75f5f4 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -106,6 +106,8 @@
->   */
->  #define FS_EVENTS_POSS_TO_PARENT (FS_EVENTS_POSS_ON_CHILD)
->  
-> +#define FS_MOUNT_EVENTS (0xfUL << 32)
-> +
->  /* Events that can be reported to backends */
->  #define ALL_FSNOTIFY_EVENTS (ALL_FSNOTIFY_DIRENT_EVENTS | \
->  			     FS_EVENTS_POSS_ON_CHILD | \
-> @@ -162,7 +164,7 @@ struct mem_cgroup;
->   *		userspace messages that marks have been removed.
->   */
->  struct fsnotify_ops {
-> -	int (*handle_event)(struct fsnotify_group *group, u32 mask,
-> +	int (*handle_event)(struct fsnotify_group *group, u64 mask,
->  			    const void *data, int data_type, struct inode *dir,
->  			    const struct qstr *file_name, u32 cookie,
->  			    struct fsnotify_iter_info *iter_info);
-> @@ -605,7 +607,7 @@ struct fsnotify_mark {
->  /* called from the vfs helpers */
->  
->  /* main fsnotify call to send events */
-> -extern int fsnotify(__u32 mask, const void *data, int data_type,
-> +extern int fsnotify(__u64 mask, const void *data, int data_type,
->  		    struct inode *dir, const struct qstr *name,
->  		    struct inode *inode, u32 cookie);
->  extern int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-> @@ -906,7 +908,7 @@ static inline int fsnotify_pre_content(const struct path *path,
->  	return 0;
->  }
->  
-> -static inline int fsnotify(__u32 mask, const void *data, int data_type,
-> +static inline int fsnotify(__u64 mask, const void *data, int data_type,
->  			   struct inode *dir, const struct qstr *name,
->  			   struct inode *inode, u32 cookie)
->  {
-> -- 
-> 2.34.1
-> 
+config: x86_64-rhel-9.4-func
+compiler: gcc-12
+test machine: 8 threads Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz (Skylake) with 16G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202412122317.43dfe501-lkp@intel.com
+
+2024-12-11 10:24:27 export TEST_DIR=/fs/sdb1
+2024-12-11 10:24:27 export TEST_DEV=/dev/sdb1
+2024-12-11 10:24:27 export FSTYP=xfs
+2024-12-11 10:24:27 export SCRATCH_MNT=/fs/scratch
+2024-12-11 10:24:27 mkdir /fs/scratch -p
+2024-12-11 10:24:27 export SCRATCH_DEV=/dev/sdb4
+2024-12-11 10:24:27 export SCRATCH_LOGDEV=/dev/sdb2
+2024-12-11 10:24:27 echo generic/477
+2024-12-11 10:24:27 ./check generic/477
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 lkp-skl-d07 6.13.0-rc1-00013-g7fc737d18832 #1 SMP PREEMPT_DYNAMIC Wed Dec 11 18:12:26 CST 2024
+MKFS_OPTIONS  -- -f /dev/sdb4
+MOUNT_OPTIONS -- /dev/sdb4 /fs/scratch
+
+generic/477       - output mismatch (see /lkp/benchmarks/xfstests/results//generic/477.out.bad)
+    --- tests/generic/477.out	2024-12-08 03:24:45.000000000 +0000
+    +++ /lkp/benchmarks/xfstests/results//generic/477.out.bad	2024-12-11 10:24:33.005175715 +0000
+    @@ -1,5 +1,9 @@
+     QA output created by 477
+     test_file_handles after cycle mount
+    +/fs/sdb1/file000009: read: Bad file descriptor
+     test_file_handles after rename parent
+    +/fs/sdb1/file000009: read: Bad file descriptor
+     test_file_handles after rename grandparent
+    +/fs/sdb1/file000009: read: Bad file descriptor
+    ...
+    (Run 'diff -u /lkp/benchmarks/xfstests/tests/generic/477.out /lkp/benchmarks/xfstests/results//generic/477.out.bad'  to see the entire diff)
+Ran: generic/477
+Failures: generic/477
+Failed 1 of 1 tests
+
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20241212/202412122317.43dfe501-lkp@intel.com
+
+
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
