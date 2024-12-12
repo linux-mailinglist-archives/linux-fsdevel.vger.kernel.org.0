@@ -1,107 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-37139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775359EE469
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:44:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E224B9EE40B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC29281B63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 10:44:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B919281C11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 10:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD9B21149C;
-	Thu, 12 Dec 2024 10:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EA2211299;
+	Thu, 12 Dec 2024 10:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="a7PFC7o6"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT5hy2eT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0LOOB0s";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT5hy2eT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0LOOB0s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049C9204C28;
-	Thu, 12 Dec 2024 10:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2BD18B467;
+	Thu, 12 Dec 2024 10:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734000254; cv=none; b=oozGotT67tbUWf62dw8rNX3E7hMZLNZVQQgtM3WEDnZNInDAjLC6bjqghO7FNyTLz22MGZRzU99naw0k7oWP5TPd0mfHuByROj8OSNWHsGGnag8TTHVAuGDCEEmf2P6aYZOcNwzyHkzkbRGk0r7eAPDG7mIcCBZ2hyiIl8op9Kc=
+	t=1733999091; cv=none; b=UcwgH8HBlwmQRwKNNOy/NXUEh/AXg4c3XOOT3NwWjq6lfd19R0x9AeNsSAxHN7ddMtSGp1g2YYxXZ9XERkq974TmDcUDcmCKWGREXqXx2t0KH2u275cOkHnvvxFHeb7ePko6NPYknwfUtYL5Kn+Sw/hO+Q5B30J4W7mdN3NNP+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734000254; c=relaxed/simple;
-	bh=CFrVkfQT2FWtC5+zZrjCm6/H5WOJhaB5szdgEdMyzz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JnjNFwcYR8/jZbpw8/pq9QCGR1+KtZyD9Fe9P0WvNV8ImKonk6ReAtMjadq3nOuu0RWz71XpBJLjMnfSd0pT86jfbE+8FZsRdyV/eA67eEMdUlNmHcqFyQn5iw2foEXGW3J8k7+V7wjRYuFSc1clU4wxP9nMx8OefbpOtcnXFoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=a7PFC7o6; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=0pBBMlpWw78z8gxF0nm1mH/ofBxxUMEFQEaNd51NMN4=; b=a7PFC7o6hws+u+0cwhcXO7kR/b
-	tB/tueVrn4mjzB3aGr1q9FSamGxeUK6RIOdsi2HA7Dd98sm6k2Cpum7T75L9f8Aon4G0TAKxytxyV
-	CrfbZL4faKL4J0nzy2FNbTH9Dp3dknvDdtmQJX1xI1mVLvSr7ZqlzsWE05CxMweSppT7YcNpUW75e
-	YGImZMCzoTS3oQfotCodbLml6ziYXbVI5fLgZZMWqTLwX82GaZqb70a7Gn5GkGI6CABYP2i3o4gqL
-	bt1TUDkLIZF+E74BUAhGof7YHaFlTpmpm1PgqHL0Ne1Ph5bRzNnr63xOB1KEtRtpFyeZOa+PhgBll
-	XXT9G7f2kGgaXNV+iIJMH5F4RmH+MRjQQj15HPcEbhgo7XtE2LG/8MXmc3vyRcog+irz3zkWVBAG6
-	B6H8x4ISBFuoFNhH8biyMkGQBhufQtrWTZnGBd3q/Hpbg1wlyeUCciJ+btzobPqUSJdY7bI4igTbP
-	1vrGxLLDvUZrnRDDA3t4xzeFebhjIh2KhLxiihULMlG/HfJIZfzga8YbqlLstsO2rQEvq1AQKRT8D
-	/f8G7ObtJXAaSHiXVJ/MdjZMSoiK+AQL7LU9//TGSbRkieXX7pzHdef2XIFBE0MrkN4yQmvoit9AU
-	VcBrSOpDNplbYcaOspPsDTnlqM7Zzm8gxee/DJVwc=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: asmadeus@codewreck.org, Leo Stone <leocstone@gmail.com>,
- syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com, ericvh@gmail.com,
- ericvh@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, lucho@ionkov.net,
- syzkaller-bugs@googlegroups.com, v9fs-developer@lists.sourceforge.net,
- v9fs@lists.linux.dev, Fedor Pchelkin <pchelkin@ispras.ru>,
- Seth Forshee <sforshee@kernel.org>, Christian Brauner <brauner@kernel.org>
-Subject:
- Re: Alloc cap limit for 9p xattrs (Was: WARNING in
- __alloc_frozen_pages_noprof)
-Date: Thu, 12 Dec 2024 11:17:06 +0100
-Message-ID: <2475109.TFnaqUCzQF@silver>
-In-Reply-To: <20241211225500.GH3387508@ZenIV>
-References:
- <675963eb.050a0220.17f54a.0038.GAE@google.com>
- <CAHk-=wiH+FmLBGKk86ung9Qbrwd0S-7iAnEAbV9QDvX5vAjL7A@mail.gmail.com>
- <20241211225500.GH3387508@ZenIV>
+	s=arc-20240116; t=1733999091; c=relaxed/simple;
+	bh=elSn5EMKBSJAe1t5atIhWgNvGF8K+SoHvOCXEqaepOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4rYGGhvwrgDmaxFTK11kYlubTLlxhljsHXfqXKnGkCfr4zfBFPxfBihUsyScWU4xiidpVE237zVzlvpdyChnN2h5VVkx9FYl9Ptv7PRR4/WpByyKmJJee4D+X6mYaZy/MAOIYD7wJCjrpX7SQO4U73slffAPCdfAOVYqRlA7Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT5hy2eT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0LOOB0s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT5hy2eT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0LOOB0s; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 997F61F445;
+	Thu, 12 Dec 2024 10:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733999087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=QT5hy2eTFO0raA091ld/V4Xtv5Xize9dcNyYNy3kMeXhbsHswPFHLQfX/J8+FS1IWRVAK9
+	nDQlkW9APRuqOa6mMnJjEZ79VBuKqKgz4mKvvxAAmgDG8XIlWWHpXfIgd4rQSjI7p8sgkF
+	Ld848Owpi1CJJHLUSNRCwZo22w2eNpQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733999087;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=R0LOOB0skr8gVNQv2sbsKWpwVO8Vt8TWroYwZiNOGiOUvdC3xvM9MCJs/ZKMFthK9PsyS8
+	EL7fG7bXbE781HBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QT5hy2eT;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=R0LOOB0s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733999087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=QT5hy2eTFO0raA091ld/V4Xtv5Xize9dcNyYNy3kMeXhbsHswPFHLQfX/J8+FS1IWRVAK9
+	nDQlkW9APRuqOa6mMnJjEZ79VBuKqKgz4mKvvxAAmgDG8XIlWWHpXfIgd4rQSjI7p8sgkF
+	Ld848Owpi1CJJHLUSNRCwZo22w2eNpQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733999087;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=R0LOOB0skr8gVNQv2sbsKWpwVO8Vt8TWroYwZiNOGiOUvdC3xvM9MCJs/ZKMFthK9PsyS8
+	EL7fG7bXbE781HBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84CAA13939;
+	Thu, 12 Dec 2024 10:24:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MfEoIO+5WmdOIQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 12 Dec 2024 10:24:47 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1A52FA0894; Thu, 12 Dec 2024 11:24:43 +0100 (CET)
+Date: Thu, 12 Dec 2024 11:24:43 +0100
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kpsingh@kernel.org, mattbobrowski@google.com, liamwisehart@meta.com,
+	shankaran@meta.com
+Subject: Re: [PATCH v3 bpf-next 4/6] bpf: fs/xattr: Add BPF kfuncs to set and
+ remove xattrs
+Message-ID: <20241212102443.umqdrvthsi6r4ioy@quack3>
+References: <20241210220627.2800362-1-song@kernel.org>
+ <20241210220627.2800362-5-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210220627.2800362-5-song@kernel.org>
+X-Rspamd-Queue-Id: 997F61F445
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wednesday, December 11, 2024 11:55:00 PM CET Al Viro wrote:
-> On Wed, Dec 11, 2024 at 01:32:26PM -0800, Linus Torvalds wrote:
-> > On Wed, 11 Dec 2024 at 13:04, <asmadeus@codewreck.org> wrote:
-> > >
-> > > Christian Schoenebeck's suggestion was something like this -- I guess
-> > > that's good enough for now and won't break anything (e.g. ACLs bigger
-> > > than XATTR_SIZE_MAX), so shall we go with that instead?
-> > 
-> > Please use XATTR_SIZE_MAX. The KMALLOC_MAX_SIZE limit seems to make no
-> > sense in this context.
-> > 
-> > Afaik the VFS layer doesn't allow getting an xattr bigger than
-> > XATTR_SIZE_MAX anyway, and would return E2BIG for them later
-> > regardless, so returning anything bigger wouldn't work anyway, even if
-> > p9 tried to return such a thing up to some bigger limit.
+On Tue 10-12-24 14:06:25, Song Liu wrote:
+> Add the following kfuncs to set and remove xattrs from BPF programs:
 > 
-> E2BIG on attempt to set, quiet cap to XATTR_SIZE_MAX on attempt to get
-> (i.e. never asking more than that from fs) and if filesystem complains
-> about XATTR_SIZE_MAX not being enough, E2BIG it is (instead of ERANGE
-> normally expected on "your buffer is too small for that").
+>   bpf_set_dentry_xattr
+>   bpf_remove_dentry_xattr
+>   bpf_set_dentry_xattr_locked
+>   bpf_remove_dentry_xattr_locked
+> 
+> The _locked version of these kfuncs are called from hooks where
+> dentry->d_inode is already locked.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
 
-So that cap is effective even if that xattr does not go out to user space?
+A few comments below.
 
-I mean the concern I had was about ACLs on guest, which are often mapped with 
-9p to xattr on host and can become pretty big. So these were xattr not 
-directly exposed to guest's user space.
+> @@ -161,6 +162,160 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
+>  	return bpf_get_dentry_xattr(dentry, name__str, value_p);
+>  }
+>  
+> +static int bpf_xattr_write_permission(const char *name, struct inode *inode)
+> +{
+> +	if (WARN_ON(!inode))
+> +		return -EINVAL;
+> +
+> +	/* Only allow setting and removing security.bpf. xattrs */
+> +	if (!match_security_bpf_prefix(name))
+> +		return -EPERM;
+> +
+> +	return inode_permission(&nop_mnt_idmap, inode, MAY_WRITE);
+> +}
+> +
+> +static int __bpf_set_dentry_xattr(struct dentry *dentry, const char *name,
+> +				  const struct bpf_dynptr *value_p, int flags, bool lock_inode)
+> +{
+> +	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
+> +	struct inode *inode = d_inode(dentry);
+> +	const void *value;
+> +	u32 value_len;
+> +	int ret;
+> +
+> +	ret = bpf_xattr_write_permission(name, inode);
+> +	if (ret)
+> +		return ret;
 
-/Christian
+The permission checking should already happen under inode lock. Otherwise
+you'll have TTCTTU races.
 
+> +
+> +	value_len = __bpf_dynptr_size(value_ptr);
+> +	value = __bpf_dynptr_data(value_ptr, value_len);
+> +	if (!value)
+> +		return -EINVAL;
+> +
+> +	if (lock_inode)
+> +		inode_lock(inode);
+> +	ret = __vfs_setxattr(&nop_mnt_idmap, dentry, inode, name,
+> +			     value, value_len, flags);
+> +	if (!ret) {
+> +		fsnotify_xattr(dentry);
 
+Do we really want to generate fsnotify event for this? I expect
+security.bpf is an internal bookkeeping of a BPF security module and
+generating fsnotify event for it seems a bit like generating it for
+filesystem metadata modifications. On the other hand as I'm checking IMA
+generates fsnotify events when modifying its xattrs as well. So probably
+this fine. OK.
+
+...
+
+> +static int __bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str,
+> +				     bool lock_inode)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +	int ret;
+> +
+> +	ret = bpf_xattr_write_permission(name__str, inode);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (lock_inode)
+ +		inode_lock(inode);
+
+The same comment WRT inode lock as above.
+
+> +	ret = __vfs_removexattr(&nop_mnt_idmap, dentry, name__str);
+> +	if (!ret) {
+> +		fsnotify_xattr(dentry);
+> +
+> +		/* This xattr is removed by BPF LSM, so we do not call
+> +		 * security_inode_post_removexattr.
+> +		 */
+> +	}
+> +	if (lock_inode)
+> +		inode_unlock(inode);
+> +	return ret;
+> +}
+
+									Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
