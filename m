@@ -1,263 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-37144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AC09EE4FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:27:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5569F9EE540
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:40:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41DF1663F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1703282505
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5217E211706;
-	Thu, 12 Dec 2024 11:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D19B211A15;
+	Thu, 12 Dec 2024 11:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzktQ8Rz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RoYtOi2e";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzktQ8Rz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RoYtOi2e"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AZExY53S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4C8211475
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741701F0E57
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734002831; cv=none; b=qzq5vAvri2AMkF555QmdsnxxKlwSwI+zDZXbxg/4F3juO0wLchAtghNQhJMX/0rblHot/XDA97cqGRa7R2PBCa/164kpWnIgvdcU6g4KI9ZqsIb44PA5nhU9P/+BKYM3ymBGbVdDbT/oUr18BLoKdS7uLHKyE3SAMhylIAn25iQ=
+	t=1734003605; cv=none; b=SfA/vymOb52TW9jhxBxnQ+R3Gu+Viqkt9weR8B0Jp7n8IYTHdpvKORplGjivCcofTabCElrvJV+7F4EaUf9RKCbA/Sy+cPa9K74/jSH/veQtboYs01vdiZqL5Yr2w41qmGZ0V17MOJ9f+miMr1aM+tnGlWkAEBUAeyVQ/vSwjKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734002831; c=relaxed/simple;
-	bh=fy3TDksTrR88yVPlcZgDoiggqzN6bCvOB/MJZYQPlPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qyyw/XQOCIPj+s/YHOh/5BN4j8xqtjISbjj8As0ZpeE31BFcMG1jO9xKpkoug09duhs554tyFnAczUVXo59nzMqmUrH0NjzpnuxwsGL6NsG5Uyo1HQGPE0/GUW5L1oWPLO5fSANnWDvv4KaR/BftSyH5tM9TIPzwaDTCHfr0R3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzktQ8Rz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RoYtOi2e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzktQ8Rz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RoYtOi2e; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C82CE1F37C;
-	Thu, 12 Dec 2024 11:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734002827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
-	b=CzktQ8RzXQE6TzPOx51NF2sRV9/SSUHN0NYPDlVrcc02B361bWKryWywVbkCVg8mTxas9i
-	0OclA5vViYm3f4xKfBzrQrDKtQ/JPzzMMEXs0JmJKqS6KEjus7N5BeZK1XDM7SvuAwDlUm
-	40W/YJ/7e7vplgfxHmBUPjY7kpK3dvs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734002827;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
-	b=RoYtOi2eOsVhjjAoJvG9MSW6iTToNjCIol3biGafRMBeiKavk39tkr/15mKKWjAETMleT7
-	Lme+7bVLcrDd+2CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734002827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
-	b=CzktQ8RzXQE6TzPOx51NF2sRV9/SSUHN0NYPDlVrcc02B361bWKryWywVbkCVg8mTxas9i
-	0OclA5vViYm3f4xKfBzrQrDKtQ/JPzzMMEXs0JmJKqS6KEjus7N5BeZK1XDM7SvuAwDlUm
-	40W/YJ/7e7vplgfxHmBUPjY7kpK3dvs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734002827;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
-	b=RoYtOi2eOsVhjjAoJvG9MSW6iTToNjCIol3biGafRMBeiKavk39tkr/15mKKWjAETMleT7
-	Lme+7bVLcrDd+2CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC14813508;
-	Thu, 12 Dec 2024 11:27:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P03lLYvIWmekNQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Dec 2024 11:27:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 598CFA0894; Thu, 12 Dec 2024 12:27:07 +0100 (CET)
-Date: Thu, 12 Dec 2024 12:27:07 +0100
-From: Jan Kara <jack@suse.cz>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	Karel Zak <kzak@redhat.com>,
-	Lennart Poettering <lennart@poettering.net>,
-	Ian Kent <raven@themaw.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v3] fanotify: notify on mount attach and detach
-Message-ID: <20241212112707.6ueqp5fwgk64bry2@quack3>
-References: <20241211153709.149603-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1734003605; c=relaxed/simple;
+	bh=gq5HIoLOaRrwWTFMhl4akmkUagye1PVMUPy8Br/WayU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=L9wMn4OuV1OiFRt6QTvBDI2wzYrl+TyCv2aq52LHGliazW829TK9BRsO/ynvjtreUzDH5BBaxyNHo+Ps6IwVcToWCuMwsoX0TI4XXWV3n41CfXn2GRtgen96JUWlhAQ6YulzWPgJetT5KAFCCEgnHO2H8k3zJH/GYn+1/H6X2qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AZExY53S; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241212113956epoutp028d7846e94b255e546b9f3a884aabfe6e~QaxVk5kbL1771017710epoutp02E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:39:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241212113956epoutp028d7846e94b255e546b9f3a884aabfe6e~QaxVk5kbL1771017710epoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1734003596;
+	bh=gq5HIoLOaRrwWTFMhl4akmkUagye1PVMUPy8Br/WayU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=AZExY53StDExVRIy9il+SoWJcySMFVIAGu+MKUFU/uC87U4rv/5XfTFtzBxcnBaj3
+	 qsQ4Tm7liNMXmXO1jyMfcrlqyLWprW0+RytxoY9RulaUCYpRjejNhLdrQt5eByflks
+	 tXdA2DACaj9nPBf6yiG/nIZFisttvtdoS6heK/yc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20241212113955epcas5p4ba3542ee4c4267058ee4f5bdc727415b~QaxUt9OAM2487724877epcas5p4l;
+	Thu, 12 Dec 2024 11:39:55 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y89Vy0JxZz4x9Pt; Thu, 12 Dec
+	2024 11:39:54 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B6.3B.19933.98BCA576; Thu, 12 Dec 2024 20:39:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20241212113953epcas5p42a9eb3b5e449b08d18402016f6657ea8~QaxTPVz2S2487624876epcas5p4f;
+	Thu, 12 Dec 2024 11:39:53 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241212113953epsmtrp2f2b12fd0c7e22158831e27899ce2d073~QaxTOa7wi2144721447epsmtrp2c;
+	Thu, 12 Dec 2024 11:39:53 +0000 (GMT)
+X-AuditID: b6c32a4a-c1fda70000004ddd-51-675acb897929
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5F.F2.33707.98BCA576; Thu, 12 Dec 2024 20:39:53 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241212113951epsmtip1dbc895aaaa00061ddf03ca96691ec892~QaxRqadna2973429734epsmtip1i;
+	Thu, 12 Dec 2024 11:39:51 +0000 (GMT)
+Message-ID: <6cf38922-2dfc-4788-8cea-304f16d3abfc@samsung.com>
+Date: Thu, 12 Dec 2024 17:09:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211153709.149603-1-mszeredi@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,gmail.com,redhat.com,poettering.net,themaw.net,zeniv.linux.org.uk];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv14 00/11] block write streams with nvme fdp
+To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com, Keith
+	Busch <kbusch@kernel.org>
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20241211183514.64070-1-kbusch@meta.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmpm7n6ah0g7f3rS2aJvxltpizahuj
+	xeq7/WwWK1cfZbJ413qOxWLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW3WPf6PYsDt8fOWXfZ
+	Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5nHuYoVH35ZVjB6fN8kFcEZl22SkJqakFimk5iXn
+	p2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAnaqkUJaYUwoUCkgsLlbSt7Mp
+	yi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM5o+f2RuaCg4uXSi0wN
+	jHFdjJwcEgImEmdP9bJ2MXJxCAnsZpT4tPgzM4TziVHi5uwpjHDOlXnzmWFadhyfxApiCwns
+	ZJQ4ci8Eougto8TTTQdYQBK8AnYS3bs+MYHYLAKqEt3P3rJCxAUlTs58AlYjKiAvcf/WDHYQ
+	W1jAXuL38xksIINEBHYwSnS+fArWzCyQKjHh53FmCFtc4taT+UBxDg42AU2JC5NLQcKcAqYS
+	Xx7chyqRl9j+dg7YCxICezgkDn3oY4G42kXizvmLbBC2sMSr41vYIWwpic/v9kLFsyUePHoA
+	VV8jsWNzHyuEbS/R8OcGK8heZqC963fpQ+zik+j9/QTsHAkBXomONiGIakWJe5OeQnWKSzyc
+	sYQVosRDYuFNN0hQdTBK/DnSwDyBUWEWUqjMQvLkLCTfzEJYvICRZRWjZGpBcW56arFpgVFe
+	ajk8tpPzczcxgpOxltcOxocPPugdYmTiYDzEKMHBrCTCe8M+Ml2INyWxsiq1KD++qDQntfgQ
+	oykweiYyS4km5wPzQV5JvKGJpYGJmZmZiaWxmaGSOO/r1rkpQgLpiSWp2ampBalFMH1MHJxS
+	DUyWTfcnuHQ+dkhM2uQr3/1/4UzLnu3J0cUnytb4PnsQU9LH9usf021Nk0k6hv7c1tH1rtdj
+	t/c8+van9+7BS7s1Fukm72N5+Tcjd1KBwPSU6n8hE488i+XKCJ1YvEJ96xZBmeYHWzecuH9a
+	uGGW95rVYbLLSpeELGJR3VJlI3Y4cPt8wZBKdX0fvjeFkn+fakl1xW39e0pp6Sz9WBe1h57m
+	U/7N5LYJucrgtk3jSzenXMSCIobwnU+3a5ys7Tr3xa6Z79aVf5vL7hxd2tZUu+u0C5/W0wUz
+	xD+qJp6QX7rCrFgm6ubpVpm0nkl2M8Sl/NRf3JPeNy3j8+ONn/Ofmep3SPcdjgrd9n2Lp8hT
+	PTklluKMREMt5qLiRADFMo4TTwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCSnG7n6ah0g6fTVCyaJvxltpizahuj
+	xeq7/WwWK1cfZbJ413qOxWLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW3WPf6PYsDt8fOWXfZ
+	Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5nHuYoVH35ZVjB6fN8kFcEZx2aSk5mSWpRbp2yVw
+	ZbT8/shcUFDxculFpgbGuC5GTg4JAROJHccnsXYxcnEICWxnlNjwdDsbREJcovnaD3YIW1hi
+	5b/n7BBFrxklXl+czQiS4BWwk+je9YkJxGYRUJXofvaWFSIuKHFy5hMWEFtUQF7i/q0ZYIOE
+	Bewlfj+fwQIySERgB6PE/3U7wbYxC6RKzP64kA1iQwejxIFn09ghEuISt57MB9rAwcEmoClx
+	YXIpSJhTwFTiy4P7zBAlZhJdW7sYIWx5ie1v5zBPYBSaheSOWUgmzULSMgtJywJGllWMoqkF
+	xbnpuckFhnrFibnFpXnpesn5uZsYwVGnFbSDcdn6v3qHGJk4GA8xSnAwK4nw3rCPTBfiTUms
+	rEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgSTZeLglGpgYlfe9aJPdbeh9/rr
+	11JX/lE6lr3sd9rmy74JOpuqftjniugdDZQWLbMvblb0dK++Oc+k8/z+yT8t7J2mLnJbYH69
+	+KXd31ldQkGsqxteLb/O9ebEAil2IS6FzyYfjAzKp7w7+GX7ibhfBdNMjfe9uu0d5PfYfeI1
+	/rkLzseY5Hg4Rh4qTGyY+zt2y4/nTMZa1dU3n6e72SfPCSp5F8s0R7ar5/mafaXexvuMn/Kd
+	b8ts+DtDfvrpBTfajj5KbcqP/ii4g2XBzur4suKNd7ligucraX14/kayjIF/r7PrP6mzPFJB
+	H9Onfj0wIU+LYa7bkhnGJf+Fow4pLt+1puzdpDuHRNzfR9Wvrd/gsen3VCWW4oxEQy3mouJE
+	AI0/9NApAwAA
+X-CMS-MailID: 20241212113953epcas5p42a9eb3b5e449b08d18402016f6657ea8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241211190851epcas5p2a359c12000fc73df8920e4801563504c
+References: <CGME20241211190851epcas5p2a359c12000fc73df8920e4801563504c@epcas5p2.samsung.com>
+	<20241211183514.64070-1-kbusch@meta.com>
 
-On Wed 11-12-24 16:37:08, Miklos Szeredi wrote:
-> Add notifications for attaching and detaching mounts.  The following new
-> event masks are added:
-> 
->   FAN_MNT_ATTACH  - Mount was attached
->   FAN_MNT_DETACH  - Mount was detached
-> 
-> If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
-> FAN_MNT_DETACH).
-> 
-> These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containing
-> these fields identifying the affected mounts:
-> 
->   __u64 mnt_id    - the ID of the mount (see statmount(2))
-> 
-> FAN_REPORT_MNT must be supplied to fanotify_init() to receive these events
-> and no other type of event can be received with this report type.
-> 
-> Marks are added with FAN_MARK_MNTNS, which records the mount namespace
-> belonging to the supplied path.
-> 
-> Prior to this patch mount namespace changes could be monitored by polling
-> /proc/self/mountinfo, which did not convey any information about what
-> changed.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+For
+> 16 files changed, 341 insertions(+), 6 deletions(-)
 
-...
-
-> @@ -1683,17 +1687,53 @@ int may_umount(struct vfsmount *mnt)
->  
->  EXPORT_SYMBOL(may_umount);
->  
-> +static void notify_mount(struct mount *p)
-> +{
-> +	if (!p->prev_ns && p->mnt_ns) {
-> +		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
-> +	} else if (p->prev_ns && !p->mnt_ns) {
-> +		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
-> +	} else if (p->prev_ns == p->mnt_ns) {
-> +		fsnotify_mnt_move(p->mnt_ns, &p->mnt);
-> +	} else {
-> +		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
-> +		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
-> +	}
-
-Why not:
-	if (p->prev_ns == p->mnt_ns) {
-		fsnotify_mnt_move(p->mnt_ns, &p->mnt);
-		return;
-	}
-	if (p->prev_ns)
-		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
-	if (p->mnt_ns)
-		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
-	p->prev_ns = p->mnt_ns;
-
-> +	p->prev_ns = p->mnt_ns;
-> +}
-> +
-
-...
-
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 24c7c5df4998..a9dc004291bf 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -166,6 +166,8 @@ static bool fanotify_should_merge(struct fanotify_event *old,
->  	case FANOTIFY_EVENT_TYPE_FS_ERROR:
->  		return fanotify_error_event_equal(FANOTIFY_EE(old),
->  						  FANOTIFY_EE(new));
-> +	case FANOTIFY_EVENT_TYPE_MNT:
-> +		return false;
-
-Perhaps instead of handling this in fanotify_should_merge(), we could
-modify fanotify_merge() directly to don't even try if the event is of type
-FANOTIFY_EVENT_TYPE_MNT? Similarly as we do it there for permission events.
-
-> @@ -303,7 +305,11 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
->  		 __func__, iter_info->report_mask, event_mask, data, data_type);
->  
-> -	if (!fid_mode) {
-> +	if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT))
-> +	{
-
-Unusual style here..
-
-> +		if (data_type != FSNOTIFY_EVENT_MNT)
-> +			return 0;
-> +	} else if (!fid_mode) {
->  		/* Do we have path to open a file descriptor? */
->  		if (!path)
->  			return 0;
-
-...
-
-> @@ -910,7 +933,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
->  	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
->  
-> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 21);
-> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 23);
->  
->  	mask = fanotify_group_event_mask(group, iter_info, &match_mask,
->  					 mask, data, data_type, dir);
-
-So we have 9 bits left for fanotify events. I want throw in one idea for
-discussion: Since these notification groups that can receive mount
-notification events are special (they cannot receive anything else), we
-could consider event value spaces separate as well (i.e., have say
-FAN_MNT_ATTACH 0x1, FAN_MNT_DETACH 0x2). The internal FS_MNT_ATTACH,
-FS_MNT_DETACH event bits would still stay separate for simplicity but those
-are much easier to change if we ever start running out of internal fsnotify
-event bits since we don't expose them to userspace. What this would mean is
-to convert bits from FAN_MNT_* to FS_MNT_* in fanotify_mark() and then back
-when copying event to userspace.
-
-Now if we expect these mount notification groups will not have more than
-these two events, then probably it isn't worth the hassle. If we expect
-more event types may eventually materialize, it may be worth it. What do
-people think?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
 
