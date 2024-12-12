@@ -1,94 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-37211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC16F9EF98F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:52:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BD79EF9EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3721758F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DB7188FD5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A928922A801;
-	Thu, 12 Dec 2024 17:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8752E225409;
+	Thu, 12 Dec 2024 17:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bjo/Ecdf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6EE22A7ED
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 17:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E098522370C;
+	Thu, 12 Dec 2024 17:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734025508; cv=none; b=tw0MXf0OgRD9BI+JBErw6vfH9e1e8oFp+Ley/mljIIDNhr88PYKliVYx3aXCFv0gPH4aUZbQrUTJ33DHB+g6bslwwjSc3BfO14wgdHNYg0dWQILh27QP5zz3ofKmKbBbD/O1K+Vd5zeG55cxejxe3DdbAFgZ6PxwWvVTCOra8R0=
+	t=1734025728; cv=none; b=E50uWEOKR3+wo3RiCG4ref73qQLmXOAU4S8x7agOSZtfqXRva16pgUv+gyBo57+wucJvNUabciylxDuoszyvmJ5QgE9p8X3mVORXluFcOWz5tCBWvJalMDp1l249gbdn0UGsrd0Rle7zcJT22baBdlRdomV5niQbj3IvEJPjjEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734025508; c=relaxed/simple;
-	bh=x1ebds0A4ITC/sm+Dhq6yB36jb9JvMNqJd8QRz/f0UA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AqOu1nxOOCeqdln5swQQggkatZs/TkLCBoKq9bD0iI1R+pAhHZud9Tle/ElKZR4hhWZ6DqbNyFU9eBHEcrYEwwkHBcME6GE1MlI4CYAc6slCVzSV5WfVFCNiNA6m71QJLCeeoaDnV78+zQ6lYzdDHqtseAMSwWPzVtdLaj8aTgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a817be161bso8031465ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 09:45:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734025506; x=1734630306;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c9t3S6ZRkXGObRSWAZmUeXYAxsnGMHk+WsD4ydDf2ek=;
-        b=G2ktzL+FoTituRqva101i5HUQyxBtGmaYyMnARN1v+1mFNEmfMaXS+NwVjqDAkWaRL
-         Ne+5MGAP2nYt/6yxaJ5WHSfVLXCRtaEVRFAtNbj2cVhijizhrthGoXmVY3W9s68vVqrz
-         JMGtfPFVMKE6tO20MH+JNwup/CjEavge5xO8PiOLCnAe6UgxNnuRolYXlaq5/cykkTKf
-         zmbwMS/lSvPpRJs2aJAsbaWOoVscOA+6d2yWEQSs23xMVZum6o7VqzCyrCEAaDHozoSE
-         /5e9U8fsQ4qcVmoZoLqmwaaYzt4YUuY0E1lKlikd3QYUepdQ90UaF5smMNU496Umeb2P
-         H4Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCV//PJ0P8OBGq2vVtz3SWVOoLQF55b5AejBNJVRSCHhqi03OM7OjCWaKChKrs/MXUQGXrwoZT/cZJLyc2iM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxIn8Pg+bBucQxF6HKVHK8FRmehvjLBPJK0otd0BKGoDYb1h5I
-	YC7IJ9mSZESKimo9bUfn6l6+tHugJeOPBa6UoOLYuRGXIJGf0J4RUfk6auRTpO2XiiMtmNM1yJL
-	PbhtfglZnIK8Dpq3qnybdrW48WdxsRIZ6eJQpJtDz4usjsOj993oCKWw=
-X-Google-Smtp-Source: AGHT+IFyhqpCEOPaBtPLeyRhCBLjPnw/q0ZWAxsE8A0uMBNj8BNOxBHZWHwKTp3EUDpHiFfCRczfjGZ7TqiHyu2YzErDFUsi3/e3
+	s=arc-20240116; t=1734025728; c=relaxed/simple;
+	bh=q2YICqpppTqdDJf64AAhY+bAjgqPYCSV1BdyiWmJNu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEXyGiNUmzvHWjxS6WaigbU9Sbn7r0VPAoVWbW8NT+yoWtU/4XMgvWRLAENfoOPWV0XxNfvQUlTBFskNxJNjAJbzbj+x/Z9TLv1BacOD4i2u23Chs+sB1f7b3yMPV+C+M6mEfmPFuxXX67g5I6gXNLIIB/LzMVm6ocWgj0TDOg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bjo/Ecdf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21A2C4CED0;
+	Thu, 12 Dec 2024 17:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734025727;
+	bh=q2YICqpppTqdDJf64AAhY+bAjgqPYCSV1BdyiWmJNu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bjo/EcdfWRYD0es85vfW8YLTYJKSP5OqCSxWMNyaHuyiPKEIliQiK9p+kvzUYmLR2
+	 EZ6ws9v+e/pGpYJ+Ju4rDdA45LtRAVQ7N6utilu/X6dcXpkYI25KBk2jlgpj7AkpaF
+	 J+erQB2XjeupXJBwEPPRah2ay8tC2A111tStHx72/S6a/4t2UtV8+ldzvtSJ310oEd
+	 YcFCA3Gn3+ToMsXuf8kYDIapYDRgh+1Qcv2H3wZtWaAWm5lbhQcEVrfExXdRFTRmEQ
+	 8y/d1377pYzFtXx9sB4HuzbXT0Mg/vrgiNHsnOO3HZd+Oh+Zy+WYFqPxY3BWKfzXNq
+	 dxi8VkZH1+rJA==
+Date: Thu, 12 Dec 2024 09:48:47 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/8] iomap: allow the file system to submit the writeback
+ bios
+Message-ID: <20241212174847.GE6678@frogsfrogsfrogs>
+References: <20241211085420.1380396-1-hch@lst.de>
+ <20241211085420.1380396-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152c:b0:3a7:e786:afb4 with SMTP id
- e9e14a558f8ab-3ae6f50f3eamr11184075ab.2.1734025505568; Thu, 12 Dec 2024
- 09:45:05 -0800 (PST)
-Date: Thu, 12 Dec 2024 09:45:05 -0800
-In-Reply-To: <674f4e43.050a0220.17bd51.004e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675b2121.050a0220.599f4.00b6.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] general protection fault in exfat_get_dentry_cached
-From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
-To: Yuezhang.Mo@sony.com, daniel.palmer@sony.com, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	wataru.aoyama@sony.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211085420.1380396-2-hch@lst.de>
 
-syzbot has bisected this issue to:
+On Wed, Dec 11, 2024 at 09:53:41AM +0100, Christoph Hellwig wrote:
+> Change ->prepare_ioend to ->submit_ioend and require file systems that
+> implement it to submit the bio.  This is needed for file systems that
+> do their own work on the bios before submitting them to the block layer
+> like btrfs or zoned xfs.  To make this easier also pass the writeback
+> context to the method.
 
-commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
-Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Date:   Thu Sep 12 08:57:06 2024 +0000
+The code changes here are pretty straightforward, but please update
+Documentation/filesystems/iomap/operations.rst to reflect the new name
+and the new "submit the bio yourself" behavior expected of the
+implementation.
 
-    exfat: reduce FAT chain traversal
+--D
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17851be8580000
-start commit:   f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14451be8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10451be8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df9504e360281ee5
-dashboard link: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10bfbb30580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124e7544580000
-
-Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
-Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 10 +++++-----
+>  fs/xfs/xfs_aops.c      | 13 +++++++++----
+>  include/linux/iomap.h  | 12 +++++++-----
+>  3 files changed, 21 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 955f19e27e47..cdccf11bb3be 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1675,7 +1675,7 @@ static void iomap_writepage_end_bio(struct bio *bio)
+>  }
+>  
+>  /*
+> - * Submit the final bio for an ioend.
+> + * Submit an ioend.
+>   *
+>   * If @error is non-zero, it means that we have a situation where some part of
+>   * the submission process has failed after we've marked pages for writeback.
+> @@ -1694,14 +1694,14 @@ static int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
+>  	 * failure happened so that the file system end I/O handler gets called
+>  	 * to clean up.
+>  	 */
+> -	if (wpc->ops->prepare_ioend)
+> -		error = wpc->ops->prepare_ioend(wpc->ioend, error);
+> +	if (wpc->ops->submit_ioend)
+> +		error = wpc->ops->submit_ioend(wpc, error);
+> +	else if (!error)
+> +		submit_bio(&wpc->ioend->io_bio);
+>  
+>  	if (error) {
+>  		wpc->ioend->io_bio.bi_status = errno_to_blk_status(error);
+>  		bio_endio(&wpc->ioend->io_bio);
+> -	} else {
+> -		submit_bio(&wpc->ioend->io_bio);
+>  	}
+>  
+>  	wpc->ioend = NULL;
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 559a3a577097..d175853da5ae 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -395,10 +395,11 @@ xfs_map_blocks(
+>  }
+>  
+>  static int
+> -xfs_prepare_ioend(
+> -	struct iomap_ioend	*ioend,
+> +xfs_submit_ioend(
+> +	struct iomap_writepage_ctx *wpc,
+>  	int			status)
+>  {
+> +	struct iomap_ioend	*ioend = wpc->ioend;
+>  	unsigned int		nofs_flag;
+>  
+>  	/*
+> @@ -420,7 +421,11 @@ xfs_prepare_ioend(
+>  	if (xfs_ioend_is_append(ioend) || ioend->io_type == IOMAP_UNWRITTEN ||
+>  	    (ioend->io_flags & IOMAP_F_SHARED))
+>  		ioend->io_bio.bi_end_io = xfs_end_bio;
+> -	return status;
+> +
+> +	if (status)
+> +		return status;
+> +	submit_bio(&ioend->io_bio);
+> +	return 0;
+>  }
+>  
+>  /*
+> @@ -462,7 +467,7 @@ xfs_discard_folio(
+>  
+>  static const struct iomap_writeback_ops xfs_writeback_ops = {
+>  	.map_blocks		= xfs_map_blocks,
+> -	.prepare_ioend		= xfs_prepare_ioend,
+> +	.submit_ioend		= xfs_submit_ioend,
+>  	.discard_folio		= xfs_discard_folio,
+>  };
+>  
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 5675af6b740c..c0339678d798 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -362,12 +362,14 @@ struct iomap_writeback_ops {
+>  			  loff_t offset, unsigned len);
+>  
+>  	/*
+> -	 * Optional, allows the file systems to perform actions just before
+> -	 * submitting the bio and/or override the bio end_io handler for complex
+> -	 * operations like copy on write extent manipulation or unwritten extent
+> -	 * conversions.
+> +	 * Optional, allows the file systems to hook into bio submission,
+> +	 * including overriding the bi_end_io handler.
+> +	 *
+> +	 * Returns 0 if the bio was successfully submitted, or a negative
+> +	 * error code if status was non-zero or another error happened and
+> +	 * the bio could not be submitted.
+>  	 */
+> -	int (*prepare_ioend)(struct iomap_ioend *ioend, int status);
+> +	int (*submit_ioend)(struct iomap_writepage_ctx *wpc, int status);
+>  
+>  	/*
+>  	 * Optional, allows the file system to discard state on a page where
+> -- 
+> 2.45.2
+> 
+> 
 
