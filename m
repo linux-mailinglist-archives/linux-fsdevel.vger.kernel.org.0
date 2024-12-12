@@ -1,121 +1,263 @@
-Return-Path: <linux-fsdevel+bounces-37143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB79EE4EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:22:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AC09EE4FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:27:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D11B2819FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:22:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41DF1663F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2EE211707;
-	Thu, 12 Dec 2024 11:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5217E211706;
+	Thu, 12 Dec 2024 11:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="WhGTaMzZ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzktQ8Rz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RoYtOi2e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CzktQ8Rz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RoYtOi2e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6295B1C5497;
-	Thu, 12 Dec 2024 11:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4C8211475
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734002552; cv=none; b=i4qZmqRzj2EOOuDw/8zSLg//AAVbK9jzJu+blz3ABV669LBAa7lexFO2ow4qHVL2s+WidiNIMfElsCqchU2lN2/Si1pgh3zfskYJOZEY+Z0eaek6Wsk0ovUrAlg9Xjr41+7q+0rnhUOSZ+wcKbWS7XIeL0zbPWB0G/OrOiXmIDg=
+	t=1734002831; cv=none; b=qzq5vAvri2AMkF555QmdsnxxKlwSwI+zDZXbxg/4F3juO0wLchAtghNQhJMX/0rblHot/XDA97cqGRa7R2PBCa/164kpWnIgvdcU6g4KI9ZqsIb44PA5nhU9P/+BKYM3ymBGbVdDbT/oUr18BLoKdS7uLHKyE3SAMhylIAn25iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734002552; c=relaxed/simple;
-	bh=DojvQfVDDKCCCmhS0betbHxzY47+lyZQNhOH90MEtPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ekqp4AIesWekcHdqSqA2uBIkVqyXE1Mp83gFqHMo1r8o+kQE63MP1yxqge4jitHZlU0lwissV9nneCo5lUbDiyxeN1utKV1w1WJnT8PxzwNKvpm1wwyHpc/3Y2GM1TmUBDu+nZ0nv7Q+VXdMCJNhU10hVYtCM+gs4eAq9DFilVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=WhGTaMzZ; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=nncaMgD9Zf1hOTs2IIZuBWXTffTYXbgQRYKcNJadq9E=; b=WhGTaMzZzo/3Rtf0KgkzYItp7t
-	m5o8K+ds0J4GaguPKCF6eXNQpho568IKhcyN+PeJ4vUi89inx0QKO+rqz9yXyIyg3jI/GHWti3rJz
-	crl3E58EmefyDRzT6QtCeGItYe1GuyzPN0k5l6B4debDjVTUc/CPmBhF1fiHi6EgZ6D1Qq2gyHQYW
-	E/bE41t0o15oqT2r90XCpfwtQWnG8/xv1EvOwVILtqKgwOXGDbhyl1JDtK/6sOM/NJn2b9dE0q5ag
-	ya845l834vRxfWsoh4nNtgrEutvdGyqcrPbhILy01FjNkFuGIZ89/bC0pGtg1m+raZgYEe3ntWDoS
-	PMXsCw7A+vucPMW4dSOeU27yKjl1Y65QdCUuIFgMLO+gjOAWmK6IVuhGgk5m1cbIW04FYCjXZu3Rj
-	wcg+fr8DnquZMzbRHd272FiiGgyHKQ/tuMaVcOoSwDePWz31HoJYvXQgyt4tErjJuHqFhoeRSazin
-	KTkAscAsMaHH/knFsnJ5cPuZhgWqm1L53x6/W7svNbuA8x9QgR2agBTZzMB6bx5FLFdaoGHWwRaCS
-	06Uz/+xDG0iJR3NTQZOfAA1GLQMF1F0GO5ce4nZvO1GqGNTBkHtjLBHLADh7YlAWr/bFDakdwkIxf
-	demMSiNoX6aKnjLdvvm0WakguKvC0aTfDFZyul2fs=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: asmadeus@codewreck.org, Leo Stone <leocstone@gmail.com>,
- syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com, ericvh@gmail.com,
- ericvh@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, lucho@ionkov.net,
- syzkaller-bugs@googlegroups.com, v9fs-developer@lists.sourceforge.net,
- v9fs@lists.linux.dev, Fedor Pchelkin <pchelkin@ispras.ru>,
- Seth Forshee <sforshee@kernel.org>, Christian Brauner <brauner@kernel.org>
-Subject:
- Re: Alloc cap limit for 9p xattrs (Was: WARNING in
- __alloc_frozen_pages_noprof)
-Date: Thu, 12 Dec 2024 12:22:21 +0100
-Message-ID: <6965367.ZqKit0hgWb@silver>
-In-Reply-To: <2475109.TFnaqUCzQF@silver>
-References:
- <675963eb.050a0220.17f54a.0038.GAE@google.com>
- <20241211225500.GH3387508@ZenIV> <2475109.TFnaqUCzQF@silver>
+	s=arc-20240116; t=1734002831; c=relaxed/simple;
+	bh=fy3TDksTrR88yVPlcZgDoiggqzN6bCvOB/MJZYQPlPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qyyw/XQOCIPj+s/YHOh/5BN4j8xqtjISbjj8As0ZpeE31BFcMG1jO9xKpkoug09duhs554tyFnAczUVXo59nzMqmUrH0NjzpnuxwsGL6NsG5Uyo1HQGPE0/GUW5L1oWPLO5fSANnWDvv4KaR/BftSyH5tM9TIPzwaDTCHfr0R3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzktQ8Rz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RoYtOi2e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CzktQ8Rz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RoYtOi2e; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C82CE1F37C;
+	Thu, 12 Dec 2024 11:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734002827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
+	b=CzktQ8RzXQE6TzPOx51NF2sRV9/SSUHN0NYPDlVrcc02B361bWKryWywVbkCVg8mTxas9i
+	0OclA5vViYm3f4xKfBzrQrDKtQ/JPzzMMEXs0JmJKqS6KEjus7N5BeZK1XDM7SvuAwDlUm
+	40W/YJ/7e7vplgfxHmBUPjY7kpK3dvs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734002827;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
+	b=RoYtOi2eOsVhjjAoJvG9MSW6iTToNjCIol3biGafRMBeiKavk39tkr/15mKKWjAETMleT7
+	Lme+7bVLcrDd+2CQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734002827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
+	b=CzktQ8RzXQE6TzPOx51NF2sRV9/SSUHN0NYPDlVrcc02B361bWKryWywVbkCVg8mTxas9i
+	0OclA5vViYm3f4xKfBzrQrDKtQ/JPzzMMEXs0JmJKqS6KEjus7N5BeZK1XDM7SvuAwDlUm
+	40W/YJ/7e7vplgfxHmBUPjY7kpK3dvs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734002827;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=omab/VWa17Kp3X+YHCWhrKXNIqJoY8Bl8T60rqgKZ+0=;
+	b=RoYtOi2eOsVhjjAoJvG9MSW6iTToNjCIol3biGafRMBeiKavk39tkr/15mKKWjAETMleT7
+	Lme+7bVLcrDd+2CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC14813508;
+	Thu, 12 Dec 2024 11:27:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P03lLYvIWmekNQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 12 Dec 2024 11:27:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 598CFA0894; Thu, 12 Dec 2024 12:27:07 +0100 (CET)
+Date: Thu, 12 Dec 2024 12:27:07 +0100
+From: Jan Kara <jack@suse.cz>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+	Karel Zak <kzak@redhat.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Ian Kent <raven@themaw.net>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v3] fanotify: notify on mount attach and detach
+Message-ID: <20241212112707.6ueqp5fwgk64bry2@quack3>
+References: <20241211153709.149603-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211153709.149603-1-mszeredi@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,gmail.com,redhat.com,poettering.net,themaw.net,zeniv.linux.org.uk];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Thursday, December 12, 2024 11:17:06 AM CET Christian Schoenebeck wrote:
-> On Wednesday, December 11, 2024 11:55:00 PM CET Al Viro wrote:
-> > On Wed, Dec 11, 2024 at 01:32:26PM -0800, Linus Torvalds wrote:
-> > > On Wed, 11 Dec 2024 at 13:04, <asmadeus@codewreck.org> wrote:
-> > > >
-> > > > Christian Schoenebeck's suggestion was something like this -- I guess
-> > > > that's good enough for now and won't break anything (e.g. ACLs bigger
-> > > > than XATTR_SIZE_MAX), so shall we go with that instead?
-> > > 
-> > > Please use XATTR_SIZE_MAX. The KMALLOC_MAX_SIZE limit seems to make no
-> > > sense in this context.
-> > > 
-> > > Afaik the VFS layer doesn't allow getting an xattr bigger than
-> > > XATTR_SIZE_MAX anyway, and would return E2BIG for them later
-> > > regardless, so returning anything bigger wouldn't work anyway, even if
-> > > p9 tried to return such a thing up to some bigger limit.
-> > 
-> > E2BIG on attempt to set, quiet cap to XATTR_SIZE_MAX on attempt to get
-> > (i.e. never asking more than that from fs) and if filesystem complains
-> > about XATTR_SIZE_MAX not being enough, E2BIG it is (instead of ERANGE
-> > normally expected on "your buffer is too small for that").
+On Wed 11-12-24 16:37:08, Miklos Szeredi wrote:
+> Add notifications for attaching and detaching mounts.  The following new
+> event masks are added:
 > 
-> So that cap is effective even if that xattr does not go out to user space?
+>   FAN_MNT_ATTACH  - Mount was attached
+>   FAN_MNT_DETACH  - Mount was detached
 > 
-> I mean the concern I had was about ACLs on guest, which are often mapped with 
-> 9p to xattr on host and can become pretty big. So these were xattr not 
-> directly exposed to guest's user space.
+> If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
+> FAN_MNT_DETACH).
+> 
+> These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containing
+> these fields identifying the affected mounts:
+> 
+>   __u64 mnt_id    - the ID of the mount (see statmount(2))
+> 
+> FAN_REPORT_MNT must be supplied to fanotify_init() to receive these events
+> and no other type of event can be received with this report type.
+> 
+> Marks are added with FAN_MARK_MNTNS, which records the mount namespace
+> belonging to the supplied path.
+> 
+> Prior to this patch mount namespace changes could be monitored by polling
+> /proc/self/mountinfo, which did not convey any information about what
+> changed.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-AFAICS it is not capped in this particular case: v9fs_fid_get_acl() calls
-v9fs_fid_xattr_get() for getting the xattr, which in turn calls p9 client
-functions to retrieve the xattr directly from 9p server (host). So the regular
-Linux VFS layers are not involved here.
+...
 
-I also see no limit applied in fs/posix_acl.c when encoding/decoding ACLs.
+> @@ -1683,17 +1687,53 @@ int may_umount(struct vfsmount *mnt)
+>  
+>  EXPORT_SYMBOL(may_umount);
+>  
+> +static void notify_mount(struct mount *p)
+> +{
+> +	if (!p->prev_ns && p->mnt_ns) {
+> +		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
+> +	} else if (p->prev_ns && !p->mnt_ns) {
+> +		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
+> +	} else if (p->prev_ns == p->mnt_ns) {
+> +		fsnotify_mnt_move(p->mnt_ns, &p->mnt);
+> +	} else {
+> +		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
+> +		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
+> +	}
 
-And 9p server is not necessarily a Linux host, hence Linux's limit for xattr
-do not necessarily apply.
+Why not:
+	if (p->prev_ns == p->mnt_ns) {
+		fsnotify_mnt_move(p->mnt_ns, &p->mnt);
+		return;
+	}
+	if (p->prev_ns)
+		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
+	if (p->mnt_ns)
+		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
+	p->prev_ns = p->mnt_ns;
 
-So to me KMALLOC_MAX_SIZE (or better: 9p client's msize - header) still looks
-right here, no?
+> +	p->prev_ns = p->mnt_ns;
+> +}
+> +
 
-/Christian
+...
 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 24c7c5df4998..a9dc004291bf 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -166,6 +166,8 @@ static bool fanotify_should_merge(struct fanotify_event *old,
+>  	case FANOTIFY_EVENT_TYPE_FS_ERROR:
+>  		return fanotify_error_event_equal(FANOTIFY_EE(old),
+>  						  FANOTIFY_EE(new));
+> +	case FANOTIFY_EVENT_TYPE_MNT:
+> +		return false;
 
+Perhaps instead of handling this in fanotify_should_merge(), we could
+modify fanotify_merge() directly to don't even try if the event is of type
+FANOTIFY_EVENT_TYPE_MNT? Similarly as we do it there for permission events.
 
+> @@ -303,7 +305,11 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
+>  		 __func__, iter_info->report_mask, event_mask, data, data_type);
+>  
+> -	if (!fid_mode) {
+> +	if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT))
+> +	{
+
+Unusual style here..
+
+> +		if (data_type != FSNOTIFY_EVENT_MNT)
+> +			return 0;
+> +	} else if (!fid_mode) {
+>  		/* Do we have path to open a file descriptor? */
+>  		if (!path)
+>  			return 0;
+
+...
+
+> @@ -910,7 +933,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+>  	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
+>  	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
+>  
+> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 21);
+> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 23);
+>  
+>  	mask = fanotify_group_event_mask(group, iter_info, &match_mask,
+>  					 mask, data, data_type, dir);
+
+So we have 9 bits left for fanotify events. I want throw in one idea for
+discussion: Since these notification groups that can receive mount
+notification events are special (they cannot receive anything else), we
+could consider event value spaces separate as well (i.e., have say
+FAN_MNT_ATTACH 0x1, FAN_MNT_DETACH 0x2). The internal FS_MNT_ATTACH,
+FS_MNT_DETACH event bits would still stay separate for simplicity but those
+are much easier to change if we ever start running out of internal fsnotify
+event bits since we don't expose them to userspace. What this would mean is
+to convert bits from FAN_MNT_* to FS_MNT_* in fanotify_mark() and then back
+when copying event to userspace.
+
+Now if we expect these mount notification groups will not have more than
+these two events, then probably it isn't worth the hassle. If we expect
+more event types may eventually materialize, it may be worth it. What do
+people think?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
