@@ -1,143 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-37161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066C19EE6D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 13:35:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E931C1885C63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:34:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22AC213251;
-	Thu, 12 Dec 2024 12:34:18 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C18F9EE6FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 13:45:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D25211493;
-	Thu, 12 Dec 2024 12:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2BA283344
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:45:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B3F20ADC8;
+	Thu, 12 Dec 2024 12:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="TlaK4lHX"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3ED20A5D6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 12:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734006858; cv=none; b=gvIe1MK0iEqx46V+hRsPLSIyy4/shqTWBPUUz5I8zGLt8g6KohIcNVSDdwieLOqiD/wNk1STDxQNdgbLHbPa2gUMqtj5fi/URSJtnuMMSTxXqTw3IGJeKihw6F/2GBeOA3RldXNcC5GeBdN7UCKH6cSSFyvc3vCreMGWhPfrvEw=
+	t=1734007523; cv=none; b=oLXdDVZS/Rs6HnAgeL7b0Ia+djzUw7Vs4Nfk+hvx1LBbpinfNx2IeJYHHDX18n+d6Ng699CkHPcLGX4L+ZhB8IV5a1Y4bCYXHgF5B2ad9fxQM0Bwm3YqNVmijc55PxII98lXOvkp6BQz+LvNJRGKsO+0Qo9shLavdYtatYYnqPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734006858; c=relaxed/simple;
-	bh=kuGc7LUr4NoH6Qx7IXS8GWBwCDQd5WS+8hnrdDTH1fs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=H4Ni7aLhl4yWFIhKKlhoTm/BhlDngZUUWm3qZTV9T3zzwfMR5sa856/hl6KLbofj2YRZorrkvskBIwpyD8UBraP40lssyWT31T2mz+CEelZCYmLY/A8rp20Tj4zg0FyE1KIVc7s1vH30bnpe+SfI2N4+rwAEJyGJHyAU7uytm8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8Bj93ZYJz4f3lDh;
-	Thu, 12 Dec 2024 20:33:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C770B1A0359;
-	Thu, 12 Dec 2024 20:34:09 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP4 (Coremail) with SMTP id gCh0CgDHoYVB2FpnoESPEQ--.40606S2;
-	Thu, 12 Dec 2024 20:34:09 +0800 (CST)
-Subject: Re: [PATCH 2/2] jbd2: flush filesystem device before updating tail
- sequence
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
- <20241203014407.805916-3-yi.zhang@huaweicloud.com>
- <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
- <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <027261aa-9d57-861a-fd78-0acd2d7836ec@huaweicloud.com>
-Date: Thu, 12 Dec 2024 20:34:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1734007523; c=relaxed/simple;
+	bh=wlo/POjQRnQiS2uENR8x8H1yKcsgLV9I/DX1yth+ckk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YwsIcqIYbwoH/+RHGgy1gbraGgie0hOohiliUiu/ppYuy3Z0UAP2IKKV8jn1yFOueOtlVYO7wtA50Hf/Rk5bOlKZH+ERMbxR7/3ylV+A/iTCA6t1xysNs+kJX6k4vlvyJuBWxuglrjGPCH+ueWmGCTPNua9XB328Qt8qBnQixjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=TlaK4lHX; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4679d366adeso3121301cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 04:45:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1734007520; x=1734612320; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NOqgOns+9Th8/mCh+q6zNc++wgLFuxG4hucNbERK4hw=;
+        b=TlaK4lHXCY0S3Hj5g8sPBm5LAsTOhDezQYDJALwjdweRYWcQmAiNdPIuZ6h9aLXEoC
+         Ln/0nwgS+FF1EgACt5lQcVADKuuSeO2W08xwBKfwdp9sJ83Yn9MVgXePb5/HWBcJRxfB
+         9lr9TiAQKv74/rg4IAKnjIRfjqGiVzYYqICoA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734007520; x=1734612320;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NOqgOns+9Th8/mCh+q6zNc++wgLFuxG4hucNbERK4hw=;
+        b=jrSK8BqtKZSPLnjhsDRVcNEfPZh44C2yRfslVqzSP3FNu/zjw8YjhxZD1PfU7BWVIY
+         lg4FAp5O7+sZEdLQJINNA2AXp3vJ/qxBek5buUbqw3tYyKmg9jd3JfabUW2DjQ3WxPz5
+         Alx3MFYRnyaUnpvGVPRArWX8mIbvcKUlhMXiqI5Kp3URZDmu6Md7rLUDgFDS1GsYCMVx
+         KdKKaXi/u4lA/EvvPUmwReHYbCfTQSImU7cbc/uk4zbcT2/vjyU81ByEvDjqvueKPAjZ
+         ymbxf5Y8fNUZsrPdL2SbE41NT1O7/rnetBtKqZ+JU2p1uYrMCUjA0cIBfOEVCcAw/SCZ
+         7YHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfSOJMNQrSq1EDS/s02v16pnSCWshJqGAtW7OHqv4kqFyqKCOF0WDJq7ic2radCXov0bmxzSTZHvOgWO+F@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDMxW0CUhzltYdKLI04+fay4SZYCZoMz7EIrmGEa7PoDysqAZl
+	QphjvQaTbTuQWjMoZxXUIY8tUpB1avSG9QpRaphs4wSQyPa8mb43s4fPlEDN5BRt+bk61Xomz/q
+	5UKlX2aDMicyF5LCcXsvDqBeBjrokr3voajK/jg==
+X-Gm-Gg: ASbGncuWKw7poOLcojFUgikhPJVpZikp2EnI4yPl8oUc/4ZAh6yCBMK8Id7MbyKsNy+
+	SC4lGugUu7wHFhdkAjceLo0Jf/1Gfidn8ViOGiA==
+X-Google-Smtp-Source: AGHT+IETYBrgkdxb7AmXv36RI29VfiRaQOddEqV1DjHbmID77E3xEDNYxKdztewDYmfo3ufvNoD80lfxEsCExE5bLEw=
+X-Received: by 2002:a05:622a:106:b0:462:ea1d:9e2 with SMTP id
+ d75a77b69052e-467a14cf96cmr2295451cf.16.1734007519836; Thu, 12 Dec 2024
+ 04:45:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDHoYVB2FpnoESPEQ--.40606S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4fGrWfKw48JFyxXry8Grg_yoW8tF4fpF
-	y8Ca4jkrWkZF4UCFn7tF4kXFW2qrWqyFyUWFyDurnagw4qqwn3KFW7trySgF1qyr1S9w48
-	Xr1Igas2g34jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+References: <20241211153709.149603-1-mszeredi@redhat.com> <20241212112707.6ueqp5fwgk64bry2@quack3>
+In-Reply-To: <20241212112707.6ueqp5fwgk64bry2@quack3>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 12 Dec 2024 13:45:09 +0100
+Message-ID: <CAJfpeguN6bfPa1rBWHFcA4HhCCkHN_CatGB4cC-z6mKa_dckWA@mail.gmail.com>
+Subject: Re: [PATCH v3] fanotify: notify on mount attach and detach
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 12 Dec 2024 at 12:27, Jan Kara <jack@suse.cz> wrote:
 
+> Why not:
+>         if (p->prev_ns == p->mnt_ns) {
+>                 fsnotify_mnt_move(p->mnt_ns, &p->mnt);
+>                 return;
+>         }
 
-on 12/3/2024 3:24 PM, Zhang Yi wrote:
-> On 2024/12/3 14:53, Kemeng Shi wrote:
->>
->>
->> on 12/3/2024 9:44 AM, Zhang Yi wrote:
->>> From: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> When committing transaction in jbd2_journal_commit_transaction(), the
->>> disk caches for the filesystem device should be flushed before updating
->>> the journal tail sequence. However, this step is missed if the journal
->>> is not located on the filesystem device. As a result, the filesystem may
->>> become inconsistent following a power failure or system crash. Fix it by
->>> ensuring that the filesystem device is flushed appropriately.
->>>
->>> Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
->>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>> ---
->>>  fs/jbd2/commit.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
->>> index 4305a1ac808a..f95cf272a1b5 100644
->>> --- a/fs/jbd2/commit.c
->>> +++ b/fs/jbd2/commit.c
->>> @@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->>>  	/*
->>>  	 * If the journal is not located on the file system device,
->>>  	 * then we must flush the file system device before we issue
->>> -	 * the commit record
->>> +	 * the commit record and update the journal tail sequence.
->>>  	 */
->>> -	if (commit_transaction->t_need_data_flush &&
->>> +	if ((commit_transaction->t_need_data_flush || update_tail) &&
->>>  	    (journal->j_fs_dev != journal->j_dev) &&
->>>  	    (journal->j_flags & JBD2_BARRIER))
->>>  		blkdev_issue_flush(journal->j_fs_dev);
->>>
->> In journal_submit_commit_record(), we will submit commit block with REQ_PREFLUSH
->> which is supposed to ensure disk cache is flushed before writing commit block.
->> So I think the current code is fine.
->> Please correct me if I miss anything.
->>
-> 
-> The commit I/O with REQ_PREFLUSH only flushes 'journal->j_dev', not
-> 'journal->j_fs_dev'. We need to flush journal->j_fs_dev to ensure that all
-> written metadata has been persisted to the filesystem disk, Until then, we
-> cannot update the tail sequence.
-My bad...
-Look good to me. Feel free to add:
+I don't really care, but I think this fails both as an optimization
+(zero chance of actually making a difference) and as a readability
+improvement.
 
-Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> 
-> Thanks,
-> Yi.
-> 
-> 
+> > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> > index 24c7c5df4998..a9dc004291bf 100644
+> > --- a/fs/notify/fanotify/fanotify.c
+> > +++ b/fs/notify/fanotify/fanotify.c
+> > @@ -166,6 +166,8 @@ static bool fanotify_should_merge(struct fanotify_event *old,
+> >       case FANOTIFY_EVENT_TYPE_FS_ERROR:
+> >               return fanotify_error_event_equal(FANOTIFY_EE(old),
+> >                                                 FANOTIFY_EE(new));
+> > +     case FANOTIFY_EVENT_TYPE_MNT:
+> > +             return false;
+>
+> Perhaps instead of handling this in fanotify_should_merge(), we could
+> modify fanotify_merge() directly to don't even try if the event is of type
+> FANOTIFY_EVENT_TYPE_MNT? Similarly as we do it there for permission events.
 
+Okay.
+
+>
+> > @@ -303,7 +305,11 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+> >       pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
+> >                __func__, iter_info->report_mask, event_mask, data, data_type);
+> >
+> > -     if (!fid_mode) {
+> > +     if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT))
+> > +     {
+>
+> Unusual style here..
+
+Yeah, fixed.
+
+> Now if we expect these mount notification groups will not have more than
+> these two events, then probably it isn't worth the hassle. If we expect
+> more event types may eventually materialize, it may be worth it. What do
+> people think?
+
+I have a bad feeling about just overloading mask values.  How about
+reserving a single mask bit for all mount events?  I.e.
+
+#define FAN_MNT_ATTACH 0x00100001
+#define FAN_MNT_DETACH 0x00100002
+...
+
+Thanks,
+Miklos
 
