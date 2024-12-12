@@ -1,138 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-37145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5569F9EE540
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:40:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE9B9EE618
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 13:03:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1703282505
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F88167C35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 12:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D19B211A15;
-	Thu, 12 Dec 2024 11:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259C214A7D;
+	Thu, 12 Dec 2024 11:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AZExY53S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShQpLjPc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741701F0E57
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFFD212B0E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734003605; cv=none; b=SfA/vymOb52TW9jhxBxnQ+R3Gu+Viqkt9weR8B0Jp7n8IYTHdpvKORplGjivCcofTabCElrvJV+7F4EaUf9RKCbA/Sy+cPa9K74/jSH/veQtboYs01vdiZqL5Yr2w41qmGZ0V17MOJ9f+miMr1aM+tnGlWkAEBUAeyVQ/vSwjKI=
+	t=1734004575; cv=none; b=X8KsCuyf5ZRs9Xcw8VDjcOWUC5LWsbtad5LSQGkt/76MYoOwk9NJH4YEhSVKIPAY3A7HSoAI+LYaqcM0MA/y4fsTQf6TyAAs7/OwfyqjIb2liSuXczhTTRauUzY3sjwCuOLZ2vJg0/I/l5VEW/UHR8fINQabZiXvaEnN1d69lQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734003605; c=relaxed/simple;
-	bh=gq5HIoLOaRrwWTFMhl4akmkUagye1PVMUPy8Br/WayU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=L9wMn4OuV1OiFRt6QTvBDI2wzYrl+TyCv2aq52LHGliazW829TK9BRsO/ynvjtreUzDH5BBaxyNHo+Ps6IwVcToWCuMwsoX0TI4XXWV3n41CfXn2GRtgen96JUWlhAQ6YulzWPgJetT5KAFCCEgnHO2H8k3zJH/GYn+1/H6X2qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AZExY53S; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241212113956epoutp028d7846e94b255e546b9f3a884aabfe6e~QaxVk5kbL1771017710epoutp02E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:39:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241212113956epoutp028d7846e94b255e546b9f3a884aabfe6e~QaxVk5kbL1771017710epoutp02E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1734003596;
-	bh=gq5HIoLOaRrwWTFMhl4akmkUagye1PVMUPy8Br/WayU=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AZExY53StDExVRIy9il+SoWJcySMFVIAGu+MKUFU/uC87U4rv/5XfTFtzBxcnBaj3
-	 qsQ4Tm7liNMXmXO1jyMfcrlqyLWprW0+RytxoY9RulaUCYpRjejNhLdrQt5eByflks
-	 tXdA2DACaj9nPBf6yiG/nIZFisttvtdoS6heK/yc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241212113955epcas5p4ba3542ee4c4267058ee4f5bdc727415b~QaxUt9OAM2487724877epcas5p4l;
-	Thu, 12 Dec 2024 11:39:55 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y89Vy0JxZz4x9Pt; Thu, 12 Dec
-	2024 11:39:54 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B6.3B.19933.98BCA576; Thu, 12 Dec 2024 20:39:53 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241212113953epcas5p42a9eb3b5e449b08d18402016f6657ea8~QaxTPVz2S2487624876epcas5p4f;
-	Thu, 12 Dec 2024 11:39:53 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241212113953epsmtrp2f2b12fd0c7e22158831e27899ce2d073~QaxTOa7wi2144721447epsmtrp2c;
-	Thu, 12 Dec 2024 11:39:53 +0000 (GMT)
-X-AuditID: b6c32a4a-c1fda70000004ddd-51-675acb897929
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5F.F2.33707.98BCA576; Thu, 12 Dec 2024 20:39:53 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241212113951epsmtip1dbc895aaaa00061ddf03ca96691ec892~QaxRqadna2973429734epsmtip1i;
-	Thu, 12 Dec 2024 11:39:51 +0000 (GMT)
-Message-ID: <6cf38922-2dfc-4788-8cea-304f16d3abfc@samsung.com>
-Date: Thu, 12 Dec 2024 17:09:50 +0530
+	s=arc-20240116; t=1734004575; c=relaxed/simple;
+	bh=hKrc0+NpOJXguyEhzpSgTPb+aFRilAdZGS8IEyz+sfM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VuKqgk9SYChQn4g2NCFtnFFeppTQBlxe2aw32iO+T8pGSJ7uBGnetod9CP4A1f8ls8bnS//G/Qcf04BQkUYQ8XlWlTVMz4/jb885xFGiPA/KgbgcVBbgbts6ajYfxx1bKKENh1utTwaGUNqwV1A9MmbAMCx2qGAX+Y3w0ZMj4zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShQpLjPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BABAC4CECE;
+	Thu, 12 Dec 2024 11:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734004574;
+	bh=hKrc0+NpOJXguyEhzpSgTPb+aFRilAdZGS8IEyz+sfM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ShQpLjPchqY5gIHLFTaWBsj2GZA66xw9PjOF5HBVzzJwEyLIsRlqBhaM0Dh+UALxI
+	 uEe19u2z7T3Ye6ayPGvnKJLiGcXLvA1jnzY53wM6u8LVob/S5WK1sPe13xaIc9GcYn
+	 5zSjjn84nyv+GsvY4EPRDya3feP3K4OHQt8OeP9DWEl5ru8rjv4i+STYP12EVEL9f0
+	 M67NvUPYrV+uzOaa5RNMTAys7ZuwiRqswpzu/lj2lLdwzUCxyRZdcLmL7F4ZQuYysZ
+	 yztTeyHx2vBW6mCgi5jTr816jl9sl/WHPJWxmsbKGw1VF6sklcroTA+ZT6vT+55P2c
+	 piPgVqkjWdlrw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/8] fs: lockless mntns lookup
+Date: Thu, 12 Dec 2024 12:55:59 +0100
+Message-Id: <20241212-work-mount-rbtree-lockless-v2-0-4fe6cef02534@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv14 00/11] block write streams with nvme fdp
-To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com, Keith
-	Busch <kbusch@kernel.org>
-Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20241211183514.64070-1-kbusch@meta.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmpm7n6ah0g7f3rS2aJvxltpizahuj
-	xeq7/WwWK1cfZbJ413qOxWLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW3WPf6PYsDt8fOWXfZ
-	Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5nHuYoVH35ZVjB6fN8kFcEZl22SkJqakFimk5iXn
-	p2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAnaqkUJaYUwoUCkgsLlbSt7Mp
-	yi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM5o+f2RuaCg4uXSi0wN
-	jHFdjJwcEgImEmdP9bJ2MXJxCAnsZpT4tPgzM4TziVHi5uwpjHDOlXnzmWFadhyfxApiCwns
-	ZJQ4ci8Eougto8TTTQdYQBK8AnYS3bs+MYHYLAKqEt3P3rJCxAUlTs58AlYjKiAvcf/WDHYQ
-	W1jAXuL38xksIINEBHYwSnS+fArWzCyQKjHh53FmCFtc4taT+UBxDg42AU2JC5NLQcKcAqYS
-	Xx7chyqRl9j+dg7YCxICezgkDn3oY4G42kXizvmLbBC2sMSr41vYIWwpic/v9kLFsyUePHoA
-	VV8jsWNzHyuEbS/R8OcGK8heZqC963fpQ+zik+j9/QTsHAkBXomONiGIakWJe5OeQnWKSzyc
-	sYQVosRDYuFNN0hQdTBK/DnSwDyBUWEWUqjMQvLkLCTfzEJYvICRZRWjZGpBcW56arFpgVFe
-	ajk8tpPzczcxgpOxltcOxocPPugdYmTiYDzEKMHBrCTCe8M+Ml2INyWxsiq1KD++qDQntfgQ
-	oykweiYyS4km5wPzQV5JvKGJpYGJmZmZiaWxmaGSOO/r1rkpQgLpiSWp2ampBalFMH1MHJxS
-	DUyWTfcnuHQ+dkhM2uQr3/1/4UzLnu3J0cUnytb4PnsQU9LH9usf021Nk0k6hv7c1tH1rtdj
-	t/c8+van9+7BS7s1Fukm72N5+Tcjd1KBwPSU6n8hE488i+XKCJ1YvEJ96xZBmeYHWzecuH9a
-	uGGW95rVYbLLSpeELGJR3VJlI3Y4cPt8wZBKdX0fvjeFkn+fakl1xW39e0pp6Sz9WBe1h57m
-	U/7N5LYJucrgtk3jSzenXMSCIobwnU+3a5ys7Tr3xa6Z79aVf5vL7hxd2tZUu+u0C5/W0wUz
-	xD+qJp6QX7rCrFgm6ubpVpm0nkl2M8Sl/NRf3JPeNy3j8+ONn/Ofmep3SPcdjgrd9n2Lp8hT
-	PTklluKMREMt5qLiRADFMo4TTwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCSnG7n6ah0g6fTVCyaJvxltpizahuj
-	xeq7/WwWK1cfZbJ413qOxWLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW3WPf6PYsDt8fOWXfZ
-	Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5nHuYoVH35ZVjB6fN8kFcEZx2aSk5mSWpRbp2yVw
-	ZbT8/shcUFDxculFpgbGuC5GTg4JAROJHccnsXYxcnEICWxnlNjwdDsbREJcovnaD3YIW1hi
-	5b/n7BBFrxklXl+czQiS4BWwk+je9YkJxGYRUJXofvaWFSIuKHFy5hMWEFtUQF7i/q0ZYIOE
-	Bewlfj+fwQIySERgB6PE/3U7wbYxC6RKzP64kA1iQwejxIFn09ghEuISt57MB9rAwcEmoClx
-	YXIpSJhTwFTiy4P7zBAlZhJdW7sYIWx5ie1v5zBPYBSaheSOWUgmzULSMgtJywJGllWMoqkF
-	xbnpuckFhnrFibnFpXnpesn5uZsYwVGnFbSDcdn6v3qHGJk4GA8xSnAwK4nw3rCPTBfiTUms
-	rEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgSTZeLglGpgYlfe9aJPdbeh9/rr
-	11JX/lE6lr3sd9rmy74JOpuqftjniugdDZQWLbMvblb0dK++Oc+k8/z+yT8t7J2mLnJbYH69
-	+KXd31ldQkGsqxteLb/O9ebEAil2IS6FzyYfjAzKp7w7+GX7ibhfBdNMjfe9uu0d5PfYfeI1
-	/rkLzseY5Hg4Rh4qTGyY+zt2y4/nTMZa1dU3n6e72SfPCSp5F8s0R7ar5/mafaXexvuMn/Kd
-	b8ts+DtDfvrpBTfajj5KbcqP/ii4g2XBzur4suKNd7ligucraX14/kayjIF/r7PrP6mzPFJB
-	H9Onfj0wIU+LYa7bkhnGJf+Fow4pLt+1puzdpDuHRNzfR9Wvrd/gsen3VCWW4oxEQy3mouJE
-	AI0/9NApAwAA
-X-CMS-MailID: 20241212113953epcas5p42a9eb3b5e449b08d18402016f6657ea8
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241211190851epcas5p2a359c12000fc73df8920e4801563504c
-References: <CGME20241211190851epcas5p2a359c12000fc73df8920e4801563504c@epcas5p2.samsung.com>
-	<20241211183514.64070-1-kbusch@meta.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE/PWmcC/32OwQ6CMBAFf4X07JK2EIqe/A/DgcICDdiaba0aw
+ r9biGePc3gzb2UeyaBnl2xlhNF442wCecpYN7V2RDB9Yia5LIXkCl6OZri7pw1AOhAiLK6bF/Q
+ eVF9yJbQqB1GzJHgQDuZ9yG9NYt16BE2t7aZdeW99QMpjlYsCqBP7ZDI+OPocd6LYh7+y4P/KU
+ QCHoqiLqtJnrbG8zkgWl9zRyJpt275rj9II6AAAAA==
+X-Change-ID: 20241207-work-mount-rbtree-lockless-7d4071b74f18
+To: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, 
+ Peter Ziljstra <peterz@infradead.org>, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1926; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=hKrc0+NpOJXguyEhzpSgTPb+aFRilAdZGS8IEyz+sfM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRHnY+ZF/3L4fHb3WtmS1j77rqZ4s8UsuQ4o+LVBnVH+
+ Td3GPcs7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI2HaGv6LWX4WChCyspjZv
+ Yfl+axf7spkHH8j5MUn0Tvjsc3XT82iGv+JNkdOVi48z8VTNMv+y8KXuLIsSJqm1bkt6t4adm/H
+ nCSMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-For
-> 16 files changed, 341 insertions(+), 6 deletions(-)
+Hey,
 
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+Currently we take the read lock when looking for a mount namespace to
+list mounts in. We can make this lockless. The simple search case can
+just use a sequence counter to detect concurrent changes to the rbtree.
+
+For walking the list of mount namespaces sequentially via nsfs we keep a
+separate rcu list as rb_prev() and rb_next() aren't usable safely with
+rcu.
+
+Since creating mount namespaces is a relatively rare event compared with
+querying mounts in a foreign mount namespace this is worth it. Once
+libmount and systemd pick up this mechanism to list mounts in foreign
+mount namespaces this will be used very frequently.
+doing.
+
+Thanks!
+Christian
+
+---
+Changes in v2:
+- Remove mnt_ns_find_it_at() by switching to rb_find_rcu().
+- Add separate list to lookup sequential mount namespaces.
+- Link to v1: https://lore.kernel.org/r/20241210-work-mount-rbtree-lockless-v1-0-338366b9bbe4@kernel.org
+
+---
+Christian Brauner (8):
+      mount: remove inlude/nospec.h include
+      fs: add mount namespace to rbtree late
+      fs: lockless mntns rbtree lookup
+      rculist: add list_bidir_{del,prev}_rcu()
+      fs: lockless mntns lookup for nsfs
+      fs: simplify rwlock to spinlock
+      selftests: remove unneeded include
+      samples: add test-list-all-mounts
+
+ fs/mount.h                            |  20 +--
+ fs/namespace.c                        | 158 ++++++++++++++---------
+ fs/nsfs.c                             |   5 +-
+ include/linux/rculist.h               |  43 +++++++
+ samples/vfs/.gitignore                |   1 +
+ samples/vfs/Makefile                  |   2 +-
+ samples/vfs/test-list-all-mounts.c    | 235 ++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/pidfd/pidfd.h |   1 -
+ 8 files changed, 387 insertions(+), 78 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241207-work-mount-rbtree-lockless-7d4071b74f18
+
 
