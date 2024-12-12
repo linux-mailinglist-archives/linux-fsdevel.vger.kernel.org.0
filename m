@@ -1,145 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-37185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCDF9EEDE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FDD9EEF4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CEFD286450
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 15:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77117294ECF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 16:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CF022145E;
-	Thu, 12 Dec 2024 15:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DA2222D45;
+	Thu, 12 Dec 2024 16:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="z13txCqD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GBmJHt4p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAEC4F218
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 15:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6BC6F2FE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 16:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018681; cv=none; b=TngfGLmuYaA8M1H0I4kMdYV9WO099lqI61XtSwsP2/4V+ltamv9wRaAc6VCIyaSKkgVfk03cTjxfXNYBJbd5uesDm5LdY9Drscl779UW4b93qI/Tfc92mpXBfSqfM5foNsA3aWOa0vL350f8sF5zdCjW/sZERfQxDrhQM7Jxt80=
+	t=1734019243; cv=none; b=KnDuASbYcBn10qSl6PP935QmQrXBgD7/lokNWODnLnLWb8zZ6bQcq3TEWxXXRYkN1qc6Kf4P73xigJXR5kbdAVNPRvDjTv8UCmEVMGpo/DiAuDoPNg2zzxwzrG/47XCztM/ingMvMpOZDRzR4TOGyaf6teT7qZ1KLz2lYuVPNHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018681; c=relaxed/simple;
-	bh=9J8jgbGZLhDCNXQIcS/IOQVlyOG+dfCc22YlvHx/Cmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSBhAaCFfPaI9OWATfZyIophyFniQ0CeA30+UaIshGEdtMXU9w1FN0T1VPD02jROc3yVOEtPrOXtsJsoL7H8YELk93vm0g5H6PZ+YsSWt646hJQR6s/3iNQuBVypNBB8KX4+UtcCPZYVoXIIzOsJwwh+jvada7x15YI+TWl5fPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=z13txCqD; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-844c165bb04so26949139f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 07:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734018679; x=1734623479; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uvdjuc+ov0Ox3XKRZz9jrd61LllD+9QFwqPFhdFIKF0=;
-        b=z13txCqD/dsUWtKVnp9uSCwCfn5RDFufQTCYpZftcNldL+O+JKcoeX0HswelpBcS35
-         1h2KJtyV5SqH9nV9N7WX7Cr9uh6A9iAveeOMvlj7Niuxk8CZRJDxSik3yivx4iXTMBEI
-         tsfxblcl614/znEPPyFTvUlNT1D/EOrSgN9PObq02Y0vFc3CAmnp/vUGdTerc/65hPry
-         W2Erp8kCZeenyIcKUDGbIoLCxGfErpqFKHYaYrkSj+5VBsPdU3TVdeON9JuUnR+Dq+kM
-         JbUNrYWK4hfuxEimpBTN3T54BuwYW++N7SFclhAcW+Czf5SI5uOKKs0EpJPem6CFGZ9M
-         DL1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734018679; x=1734623479;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uvdjuc+ov0Ox3XKRZz9jrd61LllD+9QFwqPFhdFIKF0=;
-        b=bhJ1Zj5QYyKnzc0XKyEnFTLuTBIdXza4n5D2LUrpl7v+LMc+h2U14f9kUxRO7haGhn
-         krYNcqvrjW7DgMhem/GMsbkf5Bpuk0CyerKRx83nLO+9XsZHYJ1lz++4rG86lhb7cT+0
-         xWENYbHKCXIq+3T82CbAVwQsxJAecyv0K/xUf+mDuj0AWg8qqtyoU1mKztODd6vkHS7R
-         4Oy1N+u6kTS8ckciesTnfmLtAga7zR4YI7gpJO7KBJBZzUbZ6XVsb1QStPSE+HHxahL1
-         ucgSeJkPHmudOkPrOkeL6f9xL3YynHU/VQySMdCCjm/YrJ1mNQA1S4T9dZO+akCIizKO
-         PKeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXnWdRCW+fG2q9pTju7sDQFr8k79GWe6nxX10Vbt4Oklhy9Pp3MbOAbGD6W7ZxsXzIwuMISDA1jDNsBR+9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1armcWtuO6ZSu6qeRad5WzgNDVoBhKrM57AF1/epl6QI0JUB6
-	zuUC3WPmevejR5UJzV4nFnZAMNujDXa2ltZwdap0qoMi3ey5NJfNQ4XVrCtNr70=
-X-Gm-Gg: ASbGncuO5QDVWHZ1asxBDJJRJUfA04pBdtUubFShwY5vpTY7fYtO+o4B74hgwb1NGWF
-	R4n0VGXbtqPA3Tjux1CYcSYiW4eESjm3YMA3ylxR2npfWxqszsYA6JQS1AQhO9/otXdC5FOt8MB
-	lfLWRPyhCBXjJOyVKXVjKCKl5ay0/k4mxV8xiT/DZRB42H7oxcuy8k1BCCI+0RnA3QVDGBXFVST
-	eYxO8MdswT8X2qiL9rTrfyeFx/rXN7YFHpRaVgrpeD9Pluvm1jI
-X-Google-Smtp-Source: AGHT+IGuinfFR09bO8lUOpxQ1zSi+sA0KfqYwuqKm9s7gPVryn5wyMJJDgrJmONT7vL8CQbH+cZ8kQ==
-X-Received: by 2002:a05:6602:6d0c:b0:843:e008:95b7 with SMTP id ca18e2360f4ac-844e552b920mr79385139f.0.1734018679383;
-        Thu, 12 Dec 2024 07:51:19 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e286222d9dsm3865412173.148.2024.12.12.07.51.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 07:51:18 -0800 (PST)
-Message-ID: <e492e934-c162-430a-94b6-32d1ec29a782@kernel.dk>
-Date: Thu, 12 Dec 2024 08:51:18 -0700
+	s=arc-20240116; t=1734019243; c=relaxed/simple;
+	bh=rc/A+zfoLgMcw4oFtpNwtbEKHPWwHyKWpzGQCrZqPtg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=btDnxbM3HH6MR/6PqeS3Gp0palGKVc586/BjIYQvB9K7+YcntuZ1MZxFVjRWzM/65f5M0tPViA01GebM7Va/Pk/P0OxeFQxQ9jcQ/P1Ylx2pbP6S3a98pN5rd3Vhdn6PjOIi95WqyIVP1cloSE3IKojr4OxN7SHGlrtI5B5FCjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GBmJHt4p; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734019240;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CGHoUas+hoBNTIO/X3iEVw0m4f2DhD0T8Dmi/UxHTe8=;
+	b=GBmJHt4pEOmi9lBB/0PRS0tKbkrgCO2rDHWHWvL1R6Pqwr6pYXMAu+QvE8Mc0dpchMC8Ym
+	xZlr5bkyIgqLzKQk3D92eIQxPlu+e75IF4siSYEBN204FOid3QYgwOcnhUAxITZICUv4Cd
+	Heo5SDcqWOqCoCyL2y527+cvB/5OsKM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-220-dnGvJIAhO0uUkB_inXMfxA-1; Thu,
+ 12 Dec 2024 11:00:37 -0500
+X-MC-Unique: dnGvJIAhO0uUkB_inXMfxA-1
+X-Mimecast-MFC-AGG-ID: dnGvJIAhO0uUkB_inXMfxA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0F1C119560BA;
+	Thu, 12 Dec 2024 16:00:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8FF461955F43;
+	Thu, 12 Dec 2024 16:00:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAKPOu+-Bpds7-Ocb-tBMs1==YzVhhx01+FaiokiGR3A-W9t_gQ@mail.gmail.com>
+References: <CAKPOu+-Bpds7-Ocb-tBMs1==YzVhhx01+FaiokiGR3A-W9t_gQ@mail.gmail.com> <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com> <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com> <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com> <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com> <1995560.1733519609@warthog.procyon.org.uk> <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com> <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com> <2117977.1733750054@warthog.procyon.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix ceph copy to cache on write-begin
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <20241203153232.92224-13-axboe@kernel.dk>
- <20241206171740.GD7820@frogsfrogsfrogs>
- <39033717-2f6b-47ca-8288-3e9375d957cb@kernel.dk>
- <Z1gmk_X9RrG7O0Fi@infradead.org>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <Z1gmk_X9RrG7O0Fi@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2787699.1734019232.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Dec 2024 16:00:32 +0000
+Message-ID: <2787700.1734019232@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 12/10/24 4:31 AM, Christoph Hellwig wrote:
-> On Fri, Dec 06, 2024 at 11:22:55AM -0700, Jens Axboe wrote:
->>> Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
->>
->> It definitely is what I would elegantly refer to as somewhat of a
->> hack... But it's not _that_ bad imho.
-> 
-> It's pretty horrible actually.
+How about if you add the attached?
 
-Tell us how you really feel :-)
+For convenience, I've put the outstanding fix patches I have here:
 
->>> I think these two macros are only used for ext4 (or really, !iomap)
->>> support, right?  And that's only to avoid messing with ->write_begin?
->>
->> Indeed, ideally we'd change ->write_begin() instead. And that probably
->> should still be done, I just did not want to deal with that nightmare in
->> terms of managing the patchset. And honestly I think it'd be OK to defer
->> that part until ->write_begin() needs to be changed for other reasons,
->> it's a lot of churn just for this particular thing and dealing with the
->> magic pointer value (at least to me) is liveable.
-> 
-> ->write_begin() really should just go away, it is a horrible interface.
-> Note that in that past it actually had a flags argument, but that got
-> killed a while ago.
-> 
->>> What if you dropped ext4 support instead? :D
->>
->> Hah, yes obviously that'd be a solution, then I'd need to drop btrfs as
->> well. And I would kind of prefer not doing that ;-)
-> 
-> Btrfs doesn't need it.  In fact the code would be cleaner and do less
-> work with out, see the patch below.  And for ext4 there already is an
-> iomap conversion patch series on the list that just needs more review,
-> so skipping it here and growing the uncached support through that sounds
-> sensible.
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
+/?h=3Dnetfs-fixes
 
-I can certainly defer the ext4 series if the below sorts out btrfs, if
-that iomap conversion series is making progress. Don't have an issue
-slotting behind that.
+David
+---
+commit d0bc2ecca996105f55da22e8867905ca1dad7c8f
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Dec 12 15:26:24 2024 +0000
 
-I'll check and test your btrfs tweak, thanks!
+    netfs: Fix the (non-)cancellation of copy when cache is temporarily di=
+sabled
+    =
 
--- 
-Jens Axboe
+    When the caching for a cookie is temporarily disabled (e.g. due to a D=
+IO
+    write on that file), future copying to the cache for that file is disa=
+bled
+    until all fds open on that file are closed.  However, if netfslib is u=
+sing
+    the deprecated PG_private_2 method (such as is currently used by ceph)=
+, and
+    decides it wants to copy to the cache, netfs_advance_write() will just=
+ bail
+    at the first check seeing that the cache stream is unavailable, and
+    indicate that it dealt with all the content.
+    =
+
+    This means that we have no subrequests to provide notifications to dri=
+ve
+    the state machine or even to pin the request and the request just gets
+    discarded, leaving the folios with PG_private_2 set.
+    =
+
+    Fix this by jumping directly to cancel the request if the cache is not
+    available.  That way, we don't remove mark3 from the folio_queue list =
+and
+    netfs_pgpriv2_cancel() will clean up the folios.
+    =
+
+    This was found by running the generic/013 xfstest against ceph with an=
+ active
+    cache and the "-o fsc" option passed to ceph.  That would usually hang
+    =
+
+    Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+    Reported-by: Max Kellermann <max.kellermann@ionos.com>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Jeff Layton <jlayton@kernel.org>
+    cc: Ilya Dryomov <idryomov@gmail.com>
+    cc: Xiubo Li <xiubli@redhat.com>
+    cc: netfs@lists.linux.dev
+    cc: ceph-devel@vger.kernel.org
+    cc: linux-fsdevel@vger.kernel.org
+
+diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
+index ba5af89d37fa..54d5004fec18 100644
+--- a/fs/netfs/read_pgpriv2.c
++++ b/fs/netfs/read_pgpriv2.c
+@@ -170,6 +170,10 @@ void netfs_pgpriv2_write_to_the_cache(struct netfs_io=
+_request *rreq)
+ =
+
+ 	trace_netfs_write(wreq, netfs_write_trace_copy_to_cache);
+ 	netfs_stat(&netfs_n_wh_copy_to_cache);
++	if (!wreq->io_streams[1].avail) {
++		netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
++		goto couldnt_start;
++	}
+ =
+
+ 	for (;;) {
+ 		error =3D netfs_pgpriv2_copy_folio(wreq, folio);
+
 
