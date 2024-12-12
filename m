@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-37200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994AA9EF798
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 905489EF7A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A83F28DFEC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513D8283C7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D496223313;
-	Thu, 12 Dec 2024 17:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1715223C58;
+	Thu, 12 Dec 2024 17:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0ti2l9g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJBrhGYe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEBA222D67
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 17:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEB4213E6F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 17:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734024904; cv=none; b=pQmb20lFwBUjT5ryIBqPIcUVEjIAfSVvy0DYZu6gIZ1QKnQA4V1usGZgiQwAMNlC4TDVSsHRtxUIcYpVkqrOB8QYMq3FKchZkwP/kTDeI14ureHwmr2srAa3qE5JWvTUfwdnzVVE+1w0BQbJ9fV/1DT2OzDPp3LM/zF0e76aj+I=
+	t=1734024929; cv=none; b=M5RBgioooB1ThxG6D7Vo8OjTp5H1nCx/0n00Qju3NHMW8cAqxq0lQv1+DKWWukk6vSwtLyxFgNc/P24vN3P1QNGTpK1XeqdBMBHSsXT14VFBenrPyLvjXdKHltBsF1z7v6w7wum6DH05vTi+CphXkLc1ciP1s8qkCa/tt35CKro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734024904; c=relaxed/simple;
-	bh=Wy6qwQTD5jMjw0HYKs6S7D9RHfE/r0n5Z+VUonQxvB8=;
+	s=arc-20240116; t=1734024929; c=relaxed/simple;
+	bh=tiLgbfyR2cfECo/zs6bV0I54cASZm5k04NlFBgQ46MM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QJUnU7utsNdAvf3B+qj+md3mcoNN9C6xXrKSOgKG9cdUbRoeTexMbzOhF2ra0u6IUvG6+CN3YVejX34PKA37oV6IT6bRBHRYYSnCa3yvotPnqcaXlmjjF+Aa23m3S6vneLok8m86soZHhUQ7q2t0tjizc4p17dy1ssfn2VJwBok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0ti2l9g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5921C4CED0;
-	Thu, 12 Dec 2024 17:35:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sPFP6ELMwz4e2lgIy2sEhGQ9JHfQMUuHj7b2keZ8Wn2NohiZiIqmBmEJUWb4Gssxp1pfH5aOqfbZAkkV5RqY7nJ14sc15OsxI0h+FxZ+8ZOg5k/K3pEaOOJ209C+DsiJD42RwyhBLOnExZF4hld0AAbbBTbplWCt4tK4obJoDVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJBrhGYe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 365B6C4CECE;
+	Thu, 12 Dec 2024 17:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734024904;
-	bh=Wy6qwQTD5jMjw0HYKs6S7D9RHfE/r0n5Z+VUonQxvB8=;
+	s=k20201202; t=1734024927;
+	bh=tiLgbfyR2cfECo/zs6bV0I54cASZm5k04NlFBgQ46MM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S0ti2l9gfdUWZTNt/egFe8kBTrCQcvY1MNWvN9cgODPXT9q//Y9Lv/rScM85+9zCL
-	 ZJRT8PRuXibIzW8oZNW8Fjs62j+oNK27bUr2WaZyAY9d7wtW4dPBLnqRIiVwfUjA77
-	 aZVXDzYYKIuSW/pBl+1+5TpFcV6TSdJdrbstArtU6OHsfT3s58JlnhSERE1+addd6c
-	 Z7OHCVn67mXHvSY3CsAr8De1srcKuVxoVdg/gSKuGovKht29JRAvWkmY8Pb57EYuoI
-	 /+iu8Xtm9cPPjoHrQBS0Gmth6WjD6wEMGkyjU664dLHAkfynUSK6mHOCLa6q3H1IRC
-	 7tRbvFzBGnvZQ==
-Date: Thu, 12 Dec 2024 18:34:59 +0100
+	b=oJBrhGYeIK7lGN2OfXfKWpZN+AN36Guof3Y8Zd7eE7sR1gVMTtS5RVuUq3yQK30nh
+	 8fvmL2OSWQgqm9qcaYhoGZzUFK1gmw+s+4bdAK1KG9sFsKhCNODUFBjVm2sM3rnITd
+	 cLX/gU8rOoEUpoQLPZ56T4v5/EGDVmo+HVb0ZTRaDn5jmlrZ6Vc71vAz0JPDwf4rxU
+	 +/VKN/8q1yN0VWnM07rLZIi5JrUbmoyyJiOxMfDuUN2qY//YpZy03NygwVMbHOkD3F
+	 Getw8N2HlKjGN+z52dWo49xiWZIcZhap5wZ1nA/xK+p9MySaI+fnJv9m19Ovtuk3NL
+	 q6ZPV6bUBZ3+w==
+Date: Thu, 12 Dec 2024 18:35:23 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Ziljstra <peterz@infradead.org>, 
-	linux-fsdevel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v2 3/8] fs: lockless mntns rbtree lookup
-Message-ID: <20241212-blinken-diavortrag-22c66c644365@brauner>
+Message-ID: <20241212-getobt-liege-1546c6a854b3@brauner>
 References: <20241212-work-mount-rbtree-lockless-v2-0-4fe6cef02534@kernel.org>
  <20241212-work-mount-rbtree-lockless-v2-3-4fe6cef02534@kernel.org>
- <01b7d0df19957da6d628dbe4390e086c51bf5a12.camel@kernel.org>
+ <20241212120929.GY21636@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,25 +59,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <01b7d0df19957da6d628dbe4390e086c51bf5a12.camel@kernel.org>
+In-Reply-To: <20241212120929.GY21636@noisy.programming.kicks-ass.net>
 
-> > +	guard(rcu)();
-> > +	do {
-> > +		seq = read_seqcount_begin(&mnt_ns_tree_seqcount);
-> > +		node = rb_find_rcu(&mnt_ns_id, &mnt_ns_tree, mnt_ns_find);
-> > +		if (node)
-> > +			break;
-> > +	} while (read_seqcount_retry(&mnt_ns_tree_seqcount, seq));
+On Thu, Dec 12, 2024 at 01:09:29PM +0100, Peter Zijlstra wrote:
+> On Thu, Dec 12, 2024 at 12:56:02PM +0100, Christian Brauner wrote:
 > 
-> I don't really get the need for a seqcount here. Typically we use those
-> when you could potentially find an object that's in some sort of
-> inconsistent state.
 > 
-> Is that the case here? It seems like you'd either find the object or
-> not. It seems like either outcome is OK without the need to retry the
-> search?
+> > @@ -16,7 +16,10 @@ struct mnt_namespace {
+> >  	u64 event;
+> >  	unsigned int		nr_mounts; /* # of mounts in the namespace */
+> >  	unsigned int		pending_mounts;
+> > -	struct rb_node		mnt_ns_tree_node; /* node in the mnt_ns_tree */
+> > +	union {
+> > +		struct rb_node	mnt_ns_tree_node; /* node in the mnt_ns_tree */
+> > +		struct rcu_head mnt_ns_rcu;
+> > +	};
+> >  	refcount_t		passive; /* number references not pinning @mounts */
+> >  } __randomize_layout;
+> 
+> >  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+> >  {
+> >  	/* remove from global mount namespace list */
+> >  	if (!is_anon_ns(ns)) {
+> > -		guard(write_lock)(&mnt_ns_tree_lock);
+> > +		mnt_ns_tree_write_lock();
+> >  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+> > +		mnt_ns_tree_write_unlock();
+> >  	}
+> >  
+> > -	mnt_ns_release(ns);
+> > +	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
+> >  }
+> 
+> I'm not sure that union is sane; the above means you're overwriting the
+> tree node while a concurrent lookup might still see the node and want to
+> decent from it.
 
-The sequence count is to detect concurrent changes to the rbtree. As a
-change to the rbtree might cause us to miss whole subtrees as it could
-be rotated. So it's not about the object but about the rbtree.
+Though, you're right. I'll fix this up. Thanks for the reviews!
 
