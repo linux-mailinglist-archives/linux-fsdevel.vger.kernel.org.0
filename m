@@ -1,123 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-37223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A136E9EFC94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 20:36:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE879EFC9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 20:39:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58F1C28C0B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 19:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFD2188412A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 19:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB18192B9A;
-	Thu, 12 Dec 2024 19:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B96019D089;
+	Thu, 12 Dec 2024 19:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mDLSo9B4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CH1hSBan"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F1183CD9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 19:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7427E183CD9;
+	Thu, 12 Dec 2024 19:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734032213; cv=none; b=eMMZaV37IrYJi6XDf3bfPeaZ2Nx0Kled1Fh6l9amY51HITPPqan9fqc6b7MkpCDOKsKtu+WFqQAT98nRCyuuqv+Qqk+V1qOe3Xxpqs1hX3+nOOOkd+93IxMORQbQhfQxHB8O2r5yqVhGc/wE35/CqCyIXm5NjJ2lcUu3LieqHWQ=
+	t=1734032358; cv=none; b=GVERikrTfpsCAy23Ch3GBJbUD4JKoD74o4xTnPypuZXwaqwDH1guqYh4xeciD4YLj2daDEDUyiM5Aq1ggzQYTDEgtuqT066APzKV0tZD39vWAFuQicxQUTBQWRI+KuENACijNG12PtEfbA9pl2n4Fh5gv+xdMcJWz8jjtyJSUz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734032213; c=relaxed/simple;
-	bh=hN40wVujLck1OPcPBoMWv5wRDTLaKdwuOj5RSFQsQxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pAwniXKURCA+5zVL4icGCq10+mIOjmigT0k75I3BNG9M1Xd8+F3goJvo27KazA3HlXc3McCrCb1QS8lb6+5ApOrtRclQC/e00lZBwFe3Ev1nouaKRTv23R2eRbc2hJnAq5fcEF3zct2ILOAmXAbuPVwdX8sQhOeGblsldhFF5wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mDLSo9B4; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-844d555491eso36328539f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 11:36:50 -0800 (PST)
+	s=arc-20240116; t=1734032358; c=relaxed/simple;
+	bh=Kz3lTnnPV47L/qHM5RGdDtOdAl3uMd0bW/EbShUkRYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RgNtoipkaI7xbEMXry2FjXYiK+F+b1FQ6HZkfo8DT1T0XAmYOzgAabx3eV6WGH1JOgChTK6QNh+me7ZGwdHUsdRNwWZGEySIMDZ6kIzeonc0TRLN8dItURzwfLXyt6wNbLlRv9j1tiOeKTXtLmAW6TbiiHkyrrGNlCOplNz+mE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CH1hSBan; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so753239a12.1;
+        Thu, 12 Dec 2024 11:39:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734032210; x=1734637010; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l9NetkofdTc3tauCZ/TmBHJ2OFlOWg9pJutokK1isp4=;
-        b=mDLSo9B4UGopirAQy13jM2sHlQUc+XCYB4YKRLTcFKkRwQ1ycvWofqQnQ/FIVD+GJR
-         BCVM1jFxp1zn4LAbdUXDqvH7voRDZWciNY/YMwHmDTZBlWE56bmG4cDtlcprRwoWaP43
-         YURZvlV+Fs0u1fAQbZJha1zDIwu/hC7WhFqBppA3iidBidms3BuA+2SHx1NupYUaZWln
-         wWS6yjRLLs+TDKUHhu0dviB+z/FPJfMBWhT5fMm+X48MTqH/L8XC91nd8Owobhg4IRnQ
-         Uk9UGi3UTMuJk4JFI5fRmC07JGk4i7gDGBYX1L5RMXVQ5k7OiQ+LLjk96eHGGLQYy3A6
-         65Zg==
+        d=gmail.com; s=20230601; t=1734032357; x=1734637157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SXUTpPssHcay1QdWG1rkSODw/xMx016p0D9tmsgF2Zo=;
+        b=CH1hSBanYRGfs2Veje3rKGMWfWrazmN0NzvTBQbHDd/u0pk5NRBMXXHCBhDKj60E1a
+         vp5mDRPcY52pAP+ZG+MqPlSzKwbcGzOCvwdrnS+XJMg+4quPQuqN7BAbRZNZoLy7F0pA
+         pPET9rryCGCtcI8oxnbRK+oCEr/MxwnCPzXgR9pbLemeDEnSxSByL8BWocHd7H++htxP
+         Bw0knmPJBNjbm2eXJCHQR6TwhwhynMm4kSqjE/fI5TgrIbwpe3U/BqIlB5UV5yFT+KpE
+         af8ytuvu1sUHPAiuMCIrQaTynJrjnGJA5LSggwcF5AYV2hs/HU11k//8MMLulbmNvt4X
+         AtcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734032210; x=1734637010;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9NetkofdTc3tauCZ/TmBHJ2OFlOWg9pJutokK1isp4=;
-        b=oYDvTDMz0xeVfKDJemxHbCmaaqba4ZZtmcjUs7wWus4B8sHoQKwKlUG1mot5tkBU8Z
-         K30vdn1jmh1e9R9LoSUZeJJ8TBADRXVMPxWFEMou8NsQvuo93BJ30EmCSaatzkC5M4QX
-         +fEOR/5aWj3J8xG7ogIFybFJ72MBfG8PXzeEyhtTrE+iHknP1QuaiJsy9x6psYsCq0zS
-         GHPeSlgphvvJS9JqO2jlTar/rD2yRU2DZJZTe8hNsu2reNQG18LvIDgMS5YAJpvZwjMD
-         O8tSaF6yj7upsAfV45Og+ZDxxmExbTs/TA40wjS/RbobLhg5fZELNLRNumdD0VqcIMbY
-         JP4g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5ke60mG0pKpXizJxrDleDpH0PJ9sWaG60ybQ8xPwl4ocXoZUu8fqAaMwxMBNq0B3dcz9aaj+1tRHy4NqQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM74GqmG+J4h5ORrFr7qMjkJnpePJV5/aAtRDMGdJTBC4gd5mL
-	yfdRItIqAsqPTaY4NY+NWT6TCYG53JJ8c3ho9gZaZzY946mAmgD9Y9S5YByFRvI=
-X-Gm-Gg: ASbGncvJ87qslIAa7I81h3uMG+517lViIoqC+KjdCgntAfsfxZzedaJHHcLrTr+YQrV
-	FmHL9CpB9hrQBOnyJmBEvGEBpRV9ZPoA37VUO6s1nxZNvn9VPId06bjx2Ur2jKS+U0KpwMPb7d3
-	HeE6Xe/+32ZjoFa97azyj0Jj3AhmcbR+FkAdR+uOrObfwJgQZn01xiqYrC0kd3bRSokL2lbvj1e
-	U8eR5YL+j9Fu3rpUpus9lb1qEQEhxxX81bBLTaRB74Gsl762PBQ
-X-Google-Smtp-Source: AGHT+IGYXaH6gW0H4DnJ9sYH8avclTqtNpIW4Ov9pR/4ZeyaZ0uX5YVu7ZLP35uMyaDy9lriE0bidw==
-X-Received: by 2002:a05:6e02:1a2d:b0:3a7:8720:9deb with SMTP id e9e14a558f8ab-3aff5b520damr412565ab.11.1734032209886;
-        Thu, 12 Dec 2024 11:36:49 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2be15f178sm2311129173.142.2024.12.12.11.36.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 11:36:49 -0800 (PST)
-Message-ID: <64b0c304-221d-4d8e-9bc7-dfeaa49872f7@kernel.dk>
-Date: Thu, 12 Dec 2024 12:36:48 -0700
+        d=1e100.net; s=20230601; t=1734032357; x=1734637157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SXUTpPssHcay1QdWG1rkSODw/xMx016p0D9tmsgF2Zo=;
+        b=ctLcURXsKCs3nYJJR64loPmeOmGm+P/t9Vhz2bbEViu+EsYSCPh36gLz0j7hM8g9sl
+         +Ri360y2OwGmqLtHq3IcwQ+uYiju7S7v4KgkXjWurKWz2lqv2/OmlC3kZt91Cd1pdw7Q
+         d8AuX1EPW4zk82e9hHBybNhrTE+VwoUKwZ2UD8ESr1d/TpTjpjRg67hN9W2T2lVAUgRT
+         s+rzg7PW6r2zkXLAsxwOGw8pyx73WBwCAL1r4WwcMYSXaw+nNBSJkT8d9Pdv1orK7T6T
+         wTY1prb8bNSUFiA7nKsTqCAQOPaenFgmUEPqeUt02OvO7XIEfSvlKmKBDGZuTqofo/K+
+         +czw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZVZ03WxiP9u2OluZGaeF4pVIGMfhdgIGfsvKjVZ8mWGR8vNg+KfQhdgC9GE1j9Cf4qvvv2zf1OGSaT3k38A==@vger.kernel.org, AJvYcCUxq6zKYYOj26u+M03R7MOd6bxTpRXnJe82TPiZEk/qwKgsF2MnjeaYnRF1Qz40OMYCMPYMXd6ACaIv3yqmGFV1PaacImvL@vger.kernel.org, AJvYcCVcPgibmXpb1RzBYF2zQptI2NpTETlG9FbBM/PWOLEUoKQuSy+I45Zb8Q/9EqfPrtvbL6Vsf3GdF4QlI+rO@vger.kernel.org, AJvYcCXhMbTWf/evcLvIdYMZHuxX05s/Hkn2CYrmoJ2qnasRDvXV19CbwwdIzLU599yrJjMIWp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV4zddmxTLWvvJYlqx7eEMEVpGHL2OKOGvdqDqTGkvXzlHMck3
+	UvjOHpADLD3N3jxXndXQFrhkVhDvBwORT8/WuWdFZUH2uUAjF4Dik4gi/W58pkgpJE0kCeqXnIM
+	Oem7kGLE364EoAd1gxtW6dTfM45E=
+X-Gm-Gg: ASbGncvbqwqruBOG1s183q7yewKPaSPxZPXb46BPgfdW/ZrADBj0kAbq/PSboCfC7ug
+	APtUAcWggbvEV+ZEFzqQ0L/50P2GgIWGYLSwSGyEDBMwwjDbMgThcVA==
+X-Google-Smtp-Source: AGHT+IEuE6sRVYHDo79XRdWminxIlKw78Xt6GJKIrhH1SKjsZYwk9bCf6Z2d8KVqCCTtTxsUwPflkjjForcaRWkBvtk=
+X-Received: by 2002:a17:90a:de98:b0:2ee:b4d4:69 with SMTP id
+ 98e67ed59e1d1-2f128048ef7mr12274134a91.35.1734032356691; Thu, 12 Dec 2024
+ 11:39:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
- Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org,
- kirill@shutemov.name, bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
- <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
- <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org>
- <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
- <2f79ff03-48ee-54bf-b928-e9519b3edfc7@gentwo.org>
- <383d3adc-e939-44b2-9110-4db9b4477401@kernel.dk>
- <Z1s7AGxZKhK1V4qv@casper.infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z1s7AGxZKhK1V4qv@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241210220627.2800362-1-song@kernel.org> <20241211131804.GA1912640@mit.edu>
+In-Reply-To: <20241211131804.GA1912640@mit.edu>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Dec 2024 11:39:04 -0800
+Message-ID: <CAEf4BzakJcZr-Kt+09PF-2jQRAHtzaw+YLibof5z=wvfqddq-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 0/6] Enable writing xattr from BPF programs
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, liamwisehart@meta.com, shankaran@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/24 12:35 PM, Matthew Wilcox wrote:
-> On Thu, Dec 12, 2024 at 12:14:23PM -0700, Jens Axboe wrote:
->> Like I mentioned earlier, the fact that it's cached for the duration of
->> the operation is more of an implementation detail that developers need
->> not worry about. What's important is that it's not cached AFTER. I still
->> feel UNCACHED is the best description, but I'll change it to DONTCACHE
->> for the next version just to avoid the overlap with other in-kernel
->> uses.
-> 
-> Regardless of the user API name, I like PG_streaming for the folio
-> flag name.
+On Wed, Dec 11, 2024 at 5:18=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+>
+> On Tue, Dec 10, 2024 at 02:06:21PM -0800, Song Liu wrote:
+> > Add support to set and remove xattr from BPF program. Also add
+> > security.bpf. xattr name prefix.
+>
+> If the system allows for the execution of unprivileged BPF programs
+> (e.g., ones where a random user can load their own BPF programs), will
+> they have hte ability to set and remove security.bpf.* xattrs?  If the
+> answer is yes, should this be disallowed?
 
-Sure, I can make that change.
+It's not 100% clear from Song's reply, but the answer is "no". You
+can't use this from unprivileged BPF programs (BPF LSM is privileged
+and requires root, effectively).
 
--- 
-Jens Axboe
-
+>
+> I note that one of the use cases seems to be BPF-based LSM's, so we
+> may want to have something even more restrictive since otherwise any
+> BPF program could potentially have the same power as the LSM?
+>
+>                                             - Ted
 
