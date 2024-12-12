@@ -1,499 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-37234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3E09EFEA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 22:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCB39EFECD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 22:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03AEC18889B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 21:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C20188C240
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 21:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0ED1D88DB;
-	Thu, 12 Dec 2024 21:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F04C2F2F;
+	Thu, 12 Dec 2024 21:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSjnmc3N"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="yECfGxm2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241572F2F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 21:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734040104; cv=none; b=lCGhbtpGXt0G9nlEtpTQH3Nm9yuQKBiOGRM3K+nZw4s5r3Ndttaffp114dyz6KLLC8rbv5+WE9rD+fw1CYSU8DSAtU+eBwDxcE3MxPjFWrO0xMSe/UTOFNzOHiItPGki80N1mb7TsL0YWB7tZxXNQ7i8llAC7f87akTcJMD+smw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734040104; c=relaxed/simple;
-	bh=a61xizf5kUFTDSTbnE7HMREuwejbzge3IYzLDL8KFX0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IeUpS/PgqQGmD10zk0szo/+qz4ejUTRAL4lwluR/ElLjx0Jnf3L4q8pW/pqd2bLuCj/LZFCHmmDuYCVbDwb4nUE7lMsvksU3haZDBsxHqyvRG/LkR4BmGIG9h+mc+MzXqR7h1CSRTh+SGW6HNT6AvoQ1ItXTEV8BMJDB3cyKTu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSjnmc3N; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46761d91f7aso11813521cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 13:48:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734040101; x=1734644901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J20skqicAhQM+TVE9jEuCM9T8dBJK361igxj2itDWHI=;
-        b=GSjnmc3NrWkD4DKL97Ng5KiapUGM1nM5Z1WCUCeDwiS3+WesMvXf+YQzomgcjZ/LQM
-         76qidQv5EYX9Ma26KrFIepf9/kkSSwqu0CxSfTosWlV4lw4J/x9+S90KcXmm4bWxuGaG
-         dBdfBomVNhnjWuzX9cHRyRwwXX1uYTRcAG6m8T9ky/my/eEP1SM1d+AukwDHrgkZpVnb
-         hyRy7uwA3FwPb+b2kbP7oW+C3NtCbWFXgM4xw47aEdbFr3YPBtQO6qlT46Z/lWjmz2z8
-         umnTeAIm/g1ZxvBRDHheOpglK0ML6urNYHypbFqkuc5Padm1slR7xBeJq3HGCH0VMLN4
-         mgCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734040101; x=1734644901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J20skqicAhQM+TVE9jEuCM9T8dBJK361igxj2itDWHI=;
-        b=ZecxGH2LSmlSpu/dCdqQiZXFtAp0QQwacCA/tiOrHlv5AzOuL42Gr75EwMsFavu4Js
-         CSc+JYmGMx0AeNO46ugHvg8R6p84SgvhqnaqdD2VvUwCzAwyb/3lvFDbO/6IjzPanZ+h
-         CmqzEgfb9KrCEckYWmR0cjGN7iT4FSuW2dEbvO4/BNH/mpwPhLlvuqUdUDNRy+qpJUvv
-         16Qp4GanxKGTJpbWvQjIO+vonRtxKxUG5Df45E2wesKZIZ7qhkfJvmzpOznGSYDA/mXq
-         chnYqiWL5QOg3MrZs4ztWwIGFHWbJ2Qfgo9fjidkrufVIsnFzD0KhVRImEO6LjRxRzEu
-         fl2g==
-X-Gm-Message-State: AOJu0YxbBxPuzzxfLhI3eHBiud2jRXiE03mV/zb3vXYmvlQ8f0POkvnF
-	W0JaLcyQokyTcbQEQRdFa0XjvlOStAnmbdz30/I7hOSqICzo+1RZIdhu3BQeCGglEq77njT3GJ1
-	61A1z8zpbS0jg21SYDoOiV0EdLJ8=
-X-Gm-Gg: ASbGncuBeNLTGCL5ocvvH9Wdn9ZSCpyPudJTuu14cIRcNZ5rqBBDtqB6baoRd8F1nNo
-	5k/RA7c5iVzu9vb1jLnXy0zEBH3oAAogxx48hMNBUDN3nRzfz5EHk
-X-Google-Smtp-Source: AGHT+IGHZwU8YHMn0tQO6FEgPDLI4DTXjSDRtGx/igA6fsiliytX/sZCyPsMdedd1lcppTfzfTPkb9MmC6u6n60Y4v0=
-X-Received: by 2002:a05:622a:1986:b0:466:94d8:926c with SMTP id
- d75a77b69052e-467a57569f3mr2363511cf.13.1734040100801; Thu, 12 Dec 2024
- 13:48:20 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2875B1B21AA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 21:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734040248; cv=fail; b=Pi2fIbxLftZBZ38g2aHfZrL/HQTnObdhwjbPKPiKJhe5abzgMg2sRWAB8snJQQ/HcYKzf/D5s2a7HO/5FVO7MQLsT/Ng/DVJbbIq+h92fM6EUm1gmc0jVtxibFZ3PtT0b/FprlBhIfLqbpiz+9Fwf+X4JZijeoCvIdFLm8q5UrI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734040248; c=relaxed/simple;
+	bh=LR9VAGLFIwTIs+/PGMnieIGhcAaIr26pi+xCkivRTUo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CIwZQpSBAkO+dc/FYqeAl0JuAnVuM136RJ30UuO7sq7J9RWIop3aZT3kNvw9P8Js6Xhcn7tZ8Rg+pJwNv5EaMwEvxiYigW21pprMQOI8/8OSAulGjqYozXAjdeSFLxaR78cH/Tujqpbwrv/gcyiZAf4UUVOY4iFHf1J8PJHT+w8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=yECfGxm2; arc=fail smtp.client-ip=209.222.82.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169]) by mx-outbound21-170.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 12 Dec 2024 21:50:38 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kdk3KPGHAGXrZ04ImBUH6TEsB+tO8mnwzBowMP8EUTKaxxZb8srZnBRldFmHN5ZYs0mbSuXcirjYsFz0Y5h+hEX3DCQLfiURNh3eubif+bG1PzfKpufGd5oscv3yKl6S+xECtkXYORvlv4y2xBd6wrV3AAnS/qoQL2oL3PdDYNbPevczKJ9syfjrg6VkVjNeVa8dT6JW2DzXkULFpxb5FdYzCH1li+NXU6/AFbxUWS7n49npUCQZUY4VlcAeraEsl3U2UZjY2PuVvSkYlV38x3L/Mh+hI2TzkNtxdZDLhmADU3lBW1aLBu/QBTj82NhGmpFmYh3g/2sERHI7ZKLS9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3CKefZ+90LbzlKD4UUD9Df1iu8ZRSBebRFeIQ5kLx+c=;
+ b=qtT9ONKwR3QB7WZZAtArx4WgJzt55QHDPV65HTYc+MIn9xUqcANVzFi/SKF8D/sBzV8WpSuPt0lffyZy1lmVxZ6E5jSzOHk/nfeJsnSSE0bN8575jrfsERPZ1mYrWm3YOBRk5mr7CinLojkqgPHQ5YkJhwa7AJDFhaqIl5uw8m7cGB4sWE53JdcjS2b1Xj46AcaskJs0Wvil5X+MFDM9Qoj9AiTtw023YhOyO6cGq+znB9VdiNPYDX2m7Prq4Iz9P7pBgV6t2GT7jn9TrVLeopdslSiSygzzuaj/QEuiQZyMK6eaqV2f8BVtBmlteL/Y4H7681TLjh6NsrSX1OHrWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3CKefZ+90LbzlKD4UUD9Df1iu8ZRSBebRFeIQ5kLx+c=;
+ b=yECfGxm2lTdhE0oMGpyeZG0zRpjr88ln+566l+Nsnt/EIl1/cYES/8ybLWYS/KSg/PI4Aql1kMMl68Vz5KGE6p/2p2DAL6DdgxpOnkUgEgQzSqCdJSJhHwJLA3S+j0o050eKxebBJpqg3Htjk20u+07FGRRDynoXl9QcjsQuSSE=
+Received: from BL1PR13CA0129.namprd13.prod.outlook.com (2603:10b6:208:2bb::14)
+ by SJ2PR19MB7594.namprd19.prod.outlook.com (2603:10b6:a03:4c7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 21:50:35 +0000
+Received: from BN3PEPF0000B06C.namprd21.prod.outlook.com
+ (2603:10b6:208:2bb:cafe::30) by BL1PR13CA0129.outlook.office365.com
+ (2603:10b6:208:2bb::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.13 via Frontend Transport; Thu,
+ 12 Dec 2024 21:50:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ BN3PEPF0000B06C.mail.protection.outlook.com (10.167.243.71) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8272.0
+ via Frontend Transport; Thu, 12 Dec 2024 21:50:34 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id C7AE54A;
+	Thu, 12 Dec 2024 21:50:33 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Subject: [PATCH 0/2] fuse: Increase FUSE_NAME_MAX limit
+Date: Thu, 12 Dec 2024 22:50:32 +0100
+Message-Id: <20241212-fuse_name_max-limit-6-13-v1-0-92be52f01eca@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211194522.31977-1-etmartin4313@gmail.com>
- <20241211194522.31977-2-etmartin4313@gmail.com> <CAJnrk1bE5UxUC1R1+FpPBt_BTPcO_E9A6n6684rEpGOC4xBvNw@mail.gmail.com>
- <CAMHPp_SqSRRpZO8j6TTskrCCjoRNcco+3mceUHwUxQ0aG_0G-A@mail.gmail.com>
-In-Reply-To: <CAMHPp_SqSRRpZO8j6TTskrCCjoRNcco+3mceUHwUxQ0aG_0G-A@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 12 Dec 2024 13:48:10 -0800
-Message-ID: <CAJnrk1bBFGA8SQ+LvhENVb5n+MOgg=X3Ft-9g=T_3JN4aot7Mg@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: Abort connection if FUSE server get stuck
-To: Etienne Martineau <etmartin4313@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, josef@toxicpanda.com, 
-	laoar.shao@gmail.com, senozhatsky@chromium.org, etmartin@cisco.com, 
-	"ioworker0@gmail.com" <ioworker0@gmail.com>, joel.granados@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKhaW2cC/x3MQQqDMBBA0avIrB3ojLaoVxEJ0YztgImS2CKId
+ zd0+Rb/n5AkqiToihOi/DTpGjKoLGD62PAWVJcN/OCamBjnbxITrBfj7YGLet3xhVQhNc+GR1e
+ 1ztWQ8y3KrMd/3Q/XdQOhQo94agAAAA==
+X-Change-ID: 20241212-fuse_name_max-limit-6-13-18582bd39dd4
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734040233; l=705;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=LR9VAGLFIwTIs+/PGMnieIGhcAaIr26pi+xCkivRTUo=;
+ b=F11MQ67nae4yShZbh61Wo4vD0rIVvJaKj5IYJGGjs/u0j/M8Dh4BtZk03WkATZAiGfILvmyUO
+ +Zshdqsrhi8ACrkfxmCmVJkIMvV2YK56amVMbQPeUHvjgbt1De4pDxd
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06C:EE_|SJ2PR19MB7594:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e7249e8-861a-45e6-6d9f-08dd1af701ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WXgvbUN0R2EvNzh5emplenp1ZjJvVE5OVG5RWnNHaktEVnQzVW4va2NTb2tB?=
+ =?utf-8?B?Y0l2WmxvNE9MUEYyY2ozcW9HcThSSGJYdFMxVFQra2wzUnEweXY5bHBOSU1K?=
+ =?utf-8?B?QTQ1Yy91TGFJWUs3djJqbTJEbXhhQTdZcXkzVVpwWXBsV00vNHVWaXZOaUVm?=
+ =?utf-8?B?bk83TS9ES0U1MnFyMmRoc3NZR1JlVmEvUGhrRnhTNlFhZmU1ejJaWE10MmVo?=
+ =?utf-8?B?TlpBWDQ1RVJaUmdPOUtPdjZDR0l3WkJTZ3c3N0RwdjY4M0ZNL0dXeTJZUTh4?=
+ =?utf-8?B?T2NNZEFkL1Z3SjJJRDUrZFRxdms2NEhmWkxSbGlCUnJjdFBqb0VDYWJKVk8z?=
+ =?utf-8?B?UlFibzRYUThjOHRNd2lDWlJoWnNJUWJvcFk1NnpLeG50NUZnWHlrQUphYXRN?=
+ =?utf-8?B?ZWRjU21KRnV3S1JEY1JiWlFiL3pGTER0VlBqRVc5THJoUDUzYmFNRVBmZ1ox?=
+ =?utf-8?B?Ym5vdSs0b2pwdExUQXAxTDhMNzBLQk5EeURRSlQxdjBkUWVSdGZvNlVzVU5G?=
+ =?utf-8?B?Vld4VW1MSk1QQmhDZG80UHAvcHRsSWZQM1lOalo5Q3RaK2hBOGl0dnNPR0JU?=
+ =?utf-8?B?emZjd0FHRW1UUmVTNlRwYXJGOUJHZEh5ZmRaRmM5Ti82WEUwc0dzUjdJYmlp?=
+ =?utf-8?B?OXc0M0pOSjdWSE1ieVlMM1dRQnVBUUpmQUErUUVTWkVQYjFzaEJ0SkVKdWM5?=
+ =?utf-8?B?Z1FQaG1iMGw0cXR5Umh1OXBlcmg5SjUyWTF1ZlR3VkZxWlI5ZnIxU1pHYUdU?=
+ =?utf-8?B?MGNFWWFxT1Y2ckZYYUVWcW1KKzhiUG5xcUJIcE9YL0Z4VUZnNnIxbGZPUk5L?=
+ =?utf-8?B?cWlRdXZGUjU0WVhlRUo1cG9GZ2pEVkZKd0xkU0lhSUxIYXlDUXlQbnpKbWtK?=
+ =?utf-8?B?Z3orSW1ua2hiNDMyVGxjdkdpanR1N2JqanRPVjREdUtkNTlBUFdwd3MrMWdq?=
+ =?utf-8?B?cE12VnI5T281Vi81MmpGQStJcWxOU1R3MU1iUEhxZ09uYnRTeWV6QkVOeVJD?=
+ =?utf-8?B?L3p4Y05rUEltdXluSk5KT0kyV3VTRWNqK29pL25zTUVXd2o5SS9sQVRNa1Fs?=
+ =?utf-8?B?RzhseWZpdmtHQVl1a0tDM3UvM1FiV3hucnM3dUtBSURmbnVVejVPRXM2NElE?=
+ =?utf-8?B?N21WMzhFaE5FalIwWDJQT3lNVyt6bWE5MTJpUmVsOGxUK1oyOU5IS09SWjFo?=
+ =?utf-8?B?bGE4U3E0bmdEdE9EVXVlRGxnNWJMa1hFU0t1YThOVUZlKzJQZ3NqR21Cek1y?=
+ =?utf-8?B?bjlnMWFrRzQ3dzV6SzdyR1EvUHptODJ5UnZGeXhVSGk5M2FFaWFkRjZMNTNW?=
+ =?utf-8?B?TWFUTzB5SlEzUyt5NUh1SldpSmJrVnBmZUp3UmdIT2tuWTB3U1U1Q0p3T3Fl?=
+ =?utf-8?B?THpyUUwwYXZFcW9zTHNTZnlnbGR0QTEyTXRYSkE4YVJYei9BdUVuN0Q1bVM3?=
+ =?utf-8?B?amNmTHRsU0l4N3drSi9DMVlTcEQwUnJJVlJWYmNLNGpkd21RbkhiNVdRL0cz?=
+ =?utf-8?B?NWNYTjg4S05rZGJMb1gzYjBIZE1qU21HeHg0clFkNDl2YTlPNktNY1BHWXJG?=
+ =?utf-8?B?bjhJM253cnRtekg0WGtkMmptWkVPMHhqWjMzVENDOWxSUWlmRWtIVW9sT0ti?=
+ =?utf-8?B?RXBJOWNxVktta2h4RVdYQ2pLdHBzbXQyNWdiY2dvUEhNTjZpNGhBWmFVQlNz?=
+ =?utf-8?B?dTdCK0x4cjlzQ0FIVVlWVWsxU0ROeURiUmM0czRhODU1V2RkUy9aRmp5Q0Mz?=
+ =?utf-8?B?VGo2eGRKcGEyek9JS01XVmpSMHdNUVdHcDY0ekhaOEhObDd1Mk5qc3JCUVdZ?=
+ =?utf-8?B?YUhhTGRmOWJRczIxMm9IMStyNFVYenVOMzJvYXhNWkFPS3N6R3VQajZjTTgz?=
+ =?utf-8?B?LzEwSTVqano4RWhBR2pMbWM0czJnclVyNHBFS1F3dXA1clhXTjBZTkFqQ2ZT?=
+ =?utf-8?Q?rUmgmvxblYs9UvDXExPMOXqYtn+zHOG1?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Lzt9XxzY8EA4C/0PrnMYDb5ItOo1LVg0owzJ2jFabpf/aBmgwZl+K9SNKp9T/44WWtU3UrBh1dzNc9W/+zQ2y06ecodLve5+BD9Y9GUJhFc/oyC8hMgqn6Q2OBZYp1mCP6c4n9GpMDY8nLxlK8XMsHt+/B1614igBYZUgVITqlMM0Tiarjm0KHpKlUb6yY8a/cD46Mi0COWUx1xnH8/2A2s3U5BAfPUKV+737UDaHDTx+6vwnhZg/j//IcvvWMTUYaQKj2gJV5KujeoFD9RIfB6nhflU0hWEXHh2rT/w8n1NzStkTzFfGM7fqmTCWqmSfk6rmGAmYqBmJtEd26jQIFyjG1jxoXDWKIFnx0NolDf5iE89V0x5S5VGH2dVN/QAbNUfbis4EMWnBDC6Zxb3PO4GjPqZ3VzxxC3NkGG9WmqZOH+lwurPrzQoQXu09IQCYia/innxMKbJZotHrr84oORFL4mEp7IQC+pekoGykVboust3u0Ts7jYOlMPyyjg6EW0S7UQHND7qrOe3sTulw8RQzxExfCgajFYDMP6CGyHAhk0BZpCpRwQ++94p5iOgLiZtbT7YjvG2QR6yzBvqvy7lXqVD1o+tj1ETUSYGFJGCdT7aTtB8ZIBiZqU8jtGjUo0dTUhICa2pomFEJmvaKQ==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 21:50:34.6875
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e7249e8-861a-45e6-6d9f-08dd1af701ee
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06C.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR19MB7594
+X-BESS-ID: 1734040238-105546-13393-62371-1
+X-BESS-VER: 2019.1_20241205.2350
+X-BESS-Apparent-Source-IP: 104.47.58.169
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVmYWpkBGBlDM0DDJ0CjFOCkx0c
+	DCxDwxxcLU1DzN0NTIPNnMJDnZJFmpNhYAiaZEZEAAAAA=
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261069 [from 
+	cloudscan21-33.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-On Wed, Dec 11, 2024 at 3:04=E2=80=AFPM Etienne Martineau
-<etmartin4313@gmail.com> wrote:
->
-> On Wed, Dec 11, 2024 at 5:04=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
-> >
-> > On Wed, Dec 11, 2024 at 11:45=E2=80=AFAM <etmartin4313@gmail.com> wrote=
-:
-> > >
-> > > From: Etienne Martineau <etmartin4313@gmail.com>
-> > >
-> > > This patch abort connection if HUNG_TASK_PANIC is set and a FUSE serv=
-er
-> > > is getting stuck for too long. A slow FUSE server may tripped the
-> > > hang check timer for legitimate reasons hence consider disabling
-> > > HUNG_TASK_PANIC in that scenario.
-> > >
-> > > Without this patch, an unresponsive / buggy / malicious FUSE server c=
-an
-> > > leave the clients in D state for a long period of time and on system =
-where
-> > > HUNG_TASK_PANIC is set, trigger a catastrophic reload.
-> > >
-> > > So, if HUNG_TASK_PANIC checking is enabled, we should wake up periodi=
-cally
-> > > to abort connections that exceed the timeout value which is define to=
- be
-> > > half the HUNG_TASK_TIMEOUT period, which keeps overhead low. The time=
-r
-> > > is per connection and runs only if there are active FUSE request pend=
-ing.
-> >
-> > Hi Etienne,
-> >
-> > For your use case, does the generic request timeouts logic and
-> > max_request_timeout systemctl implemented in [1] and [2] not suffice?
-> > IMO I don't think we should have logic specifically checking for hung
-> > task timeouts in fuse, if the generic solution can be used.
-> >
-> > Thanks,
-> > Joanne
->
-> We need a way to avoid catastrophic reloads on systems where HUNG_TASK_PA=
-NIC
-> is set while a buggy / malicious FUSE server stops responding.
-> I would argue that this is much needed in stable branches as well...
->
-> For that reason, I believe we need to keep things simple for step #1
-> e.g. there is no
-> need to introduce another knob as we already have HUNG_TASK_TIMEOUT which
-> holds the source of truth.
->
-> IMO introducing those new knobs will put an unnecessary burden on sysadmi=
-ns into
-> something that is error prone because unlike
->   CONFIG_DETECT_HUNG_TASK=3Dy
->   CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D120
-> which is built-in, the "default_request_timeout" /
-> "max_request_timeout" needs to be
-> set appropriately after every reboot and failure to do so may have
-> nasty consequences.
+First patch switches fuse_notify_inval_entry and fuse_notify_delete
+to allocate name buffers to the actual file name size and not
+FUSE_NAME_MAX anymore. 
+Second patch increases the FUSE_NAME_MAX limit.
 
-imo, it is not important to directly defend against the hung task case
-inside the fuse code itself. imo, the generic timeout should be used
-instead. As I understand it, hung task panic is mostly enabled for
-debug purposes and is enabled through a sysctl. imo, if the system
-admin enables the hung task panic sysctl value, then it is not too
-much of a burden for them to also set the fuse max request timeout
-sysctl.
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+---
+Bernd Schubert (2):
+      fuse: Allocate only namelen buf memory in fuse_notify_
+      fuse: Increase FUSE_NAME_MAX to PATH_MAX
 
+ fs/fuse/dev.c    | 26 ++++++++++++++------------
+ fs/fuse/fuse_i.h |  2 +-
+ 2 files changed, 15 insertions(+), 13 deletions(-)
+---
+base-commit: f92f4749861b06fed908d336b4dee1326003291b
+change-id: 20241212-fuse_name_max-limit-6-13-18582bd39dd4
 
-Thanks,
-Joanne
+Best regards,
+-- 
+Bernd Schubert <bschubert@ddn.com>
 
->
-> For the more generic cases then yes those timeouts make sense to me.
->
-> Thanks,
-> Etienne
->
-> >
-> > [1] https://lore.kernel.org/linux-fsdevel/20241114191332.669127-1-joann=
-elkoong@gmail.com/
-> > [2] https://lore.kernel.org/linux-fsdevel/20241114191332.669127-4-joann=
-elkoong@gmail.com/
-> >
-> > >
-> > > A FUSE client can get into D state as such ( see below scenario #1 / =
-#2 )
-> > >  1) request_wait_answer() -> wait_event() is UNINTERRUPTIBLE
-> > >     OR
-> > >  2) request_wait_answer() -> wait_event_(interruptible / killable) is=
- head
-> > >     of line blocking for subsequent clients accessing the same file
-> > >
-> > >         scenario #1:
-> > >         2716 pts/2    D+     0:00 cat
-> > >         $ cat /proc/2716/stack
-> > >                 [<0>] request_wait_answer+0x22e/0x340
-> > >                 [<0>] __fuse_simple_request+0xd8/0x2c0
-> > >                 [<0>] fuse_perform_write+0x3ec/0x760
-> > >                 [<0>] fuse_file_write_iter+0x3d5/0x3f0
-> > >                 [<0>] vfs_write+0x313/0x430
-> > >                 [<0>] ksys_write+0x6a/0xf0
-> > >                 [<0>] __x64_sys_write+0x19/0x30
-> > >                 [<0>] x64_sys_call+0x18ab/0x26f0
-> > >                 [<0>] do_syscall_64+0x7c/0x170
-> > >                 [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > >
-> > >         scenario #2:
-> > >         2962 pts/2    S+     0:00 cat
-> > >         2963 pts/3    D+     0:00 cat
-> > >         $ cat /proc/2962/stack
-> > >                 [<0>] request_wait_answer+0x140/0x340
-> > >                 [<0>] __fuse_simple_request+0xd8/0x2c0
-> > >                 [<0>] fuse_perform_write+0x3ec/0x760
-> > >                 [<0>] fuse_file_write_iter+0x3d5/0x3f0
-> > >                 [<0>] vfs_write+0x313/0x430
-> > >                 [<0>] ksys_write+0x6a/0xf0
-> > >                 [<0>] __x64_sys_write+0x19/0x30
-> > >                 [<0>] x64_sys_call+0x18ab/0x26f0
-> > >                 [<0>] do_syscall_64+0x7c/0x170
-> > >                 [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > >         $ cat /proc/2963/stack
-> > >                 [<0>] fuse_file_write_iter+0x252/0x3f0
-> > >                 [<0>] vfs_write+0x313/0x430
-> > >                 [<0>] ksys_write+0x6a/0xf0
-> > >                 [<0>] __x64_sys_write+0x19/0x30
-> > >                 [<0>] x64_sys_call+0x18ab/0x26f0
-> > >                 [<0>] do_syscall_64+0x7c/0x170
-> > >                 [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > >
-> > > Please note that this patch doesn't prevent the HUNG_TASK_WARNING.
-> > >
-> > > Signed-off-by: Etienne Martineau <etmartin4313@gmail.com>
-> > > ---
-> > >  fs/fuse/dev.c                | 100 +++++++++++++++++++++++++++++++++=
-++
-> > >  fs/fuse/fuse_i.h             |   8 +++
-> > >  fs/fuse/inode.c              |   3 ++
-> > >  include/linux/sched/sysctl.h |   8 ++-
-> > >  kernel/hung_task.c           |   3 +-
-> > >  5 files changed, 119 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > index 27ccae63495d..73d19de14e51 100644
-> > > --- a/fs/fuse/dev.c
-> > > +++ b/fs/fuse/dev.c
-> > > @@ -21,6 +21,8 @@
-> > >  #include <linux/swap.h>
-> > >  #include <linux/splice.h>
-> > >  #include <linux/sched.h>
-> > > +#include <linux/completion.h>
-> > > +#include <linux/sched/sysctl.h>
-> > >
-> > >  #define CREATE_TRACE_POINTS
-> > >  #include "fuse_trace.h"
-> > > @@ -45,14 +47,104 @@ static struct fuse_dev *fuse_get_dev(struct file=
- *file)
-> > >         return READ_ONCE(file->private_data);
-> > >  }
-> > >
-> > > +static bool request_expired(struct fuse_conn *fc, struct fuse_req *r=
-eq,
-> > > +               int timeout)
-> > > +{
-> > > +       return time_after(jiffies, req->create_time + timeout);
-> > > +}
-> > > +
-> > > +/*
-> > > + * Prevent hung task timer from firing at us
-> > > + * Check if any requests aren't being completed by the specified req=
-uest
-> > > + * timeout. To do so, we:
-> > > + * - check the fiq pending list
-> > > + * - check the bg queue
-> > > + * - check the fpq io and processing lists
-> > > + *
-> > > + * To make this fast, we only check against the head request on each=
- list since
-> > > + * these are generally queued in order of creation time (eg newer re=
-quests get
-> > > + * queued to the tail). We might miss a few edge cases (eg requests =
-transitioning
-> > > + * between lists, re-sent requests at the head of the pending list h=
-aving a
-> > > + * later creation time than other requests on that list, etc.) but t=
-hat is fine
-> > > + * since if the request never gets fulfilled, it will eventually be =
-caught.
-> > > + */
-> > > +void fuse_check_timeout(struct work_struct *wk)
-> > > +{
-> > > +       unsigned long hang_check_timer =3D sysctl_hung_task_timeout_s=
-ecs * (HZ / 2);
-> > > +       struct fuse_conn *fc =3D container_of(wk, struct fuse_conn, w=
-ork.work);
-> > > +       struct fuse_iqueue *fiq =3D &fc->iq;
-> > > +       struct fuse_req *req;
-> > > +       struct fuse_dev *fud;
-> > > +       struct fuse_pqueue *fpq;
-> > > +       bool expired =3D false;
-> > > +       int i;
-> > > +
-> > > +       spin_lock(&fiq->lock);
-> > > +       req =3D list_first_entry_or_null(&fiq->pending, struct fuse_r=
-eq, list);
-> > > +       if (req)
-> > > +               expired =3D request_expired(fc, req, hang_check_timer=
-);
-> > > +       spin_unlock(&fiq->lock);
-> > > +       if (expired)
-> > > +               goto abort_conn;
-> > > +
-> > > +       spin_lock(&fc->bg_lock);
-> > > +       req =3D list_first_entry_or_null(&fc->bg_queue, struct fuse_r=
-eq, list);
-> > > +       if (req)
-> > > +               expired =3D request_expired(fc, req, hang_check_timer=
-);
-> > > +       spin_unlock(&fc->bg_lock);
-> > > +       if (expired)
-> > > +               goto abort_conn;
-> > > +
-> > > +       spin_lock(&fc->lock);
-> > > +       if (!fc->connected) {
-> > > +               spin_unlock(&fc->lock);
-> > > +               return;
-> > > +       }
-> > > +       list_for_each_entry(fud, &fc->devices, entry) {
-> > > +               fpq =3D &fud->pq;
-> > > +               spin_lock(&fpq->lock);
-> > > +               req =3D list_first_entry_or_null(&fpq->io, struct fus=
-e_req, list);
-> > > +               if (req && request_expired(fc, req, hang_check_timer)=
-)
-> > > +                       goto fpq_abort;
-> > > +
-> > > +               for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++) {
-> > > +                       req =3D list_first_entry_or_null(&fpq->proces=
-sing[i], struct fuse_req, list);
-> > > +                       if (req && request_expired(fc, req, hang_chec=
-k_timer))
-> > > +                               goto fpq_abort;
-> > > +               }
-> > > +               spin_unlock(&fpq->lock);
-> > > +       }
-> > > +       /* Keep the ball rolling */
-> > > +       if (atomic_read(&fc->num_waiting) !=3D 0)
-> > > +               queue_delayed_work(system_wq, &fc->work, hang_check_t=
-imer);
-> > > +       spin_unlock(&fc->lock);
-> > > +       return;
-> > > +
-> > > +fpq_abort:
-> > > +       spin_unlock(&fpq->lock);
-> > > +       spin_unlock(&fc->lock);
-> > > +abort_conn:
-> > > +       fuse_abort_conn(fc);
-> > > +}
-> > > +
-> > >  static void fuse_request_init(struct fuse_mount *fm, struct fuse_req=
- *req)
-> > >  {
-> > > +       struct fuse_conn *fc =3D fm->fc;
-> > >         INIT_LIST_HEAD(&req->list);
-> > >         INIT_LIST_HEAD(&req->intr_entry);
-> > >         init_waitqueue_head(&req->waitq);
-> > >         refcount_set(&req->count, 1);
-> > >         __set_bit(FR_PENDING, &req->flags);
-> > >         req->fm =3D fm;
-> > > +       req->create_time =3D jiffies;
-> > > +
-> > > +       if (sysctl_hung_task_panic) {
-> > > +               spin_lock(&fc->lock);
-> > > +               /* Get the ball rolling */
-> > > +               queue_delayed_work(system_wq, &fc->work,
-> > > +                               sysctl_hung_task_timeout_secs * (HZ /=
- 2));
-> > > +               spin_unlock(&fc->lock);
-> > > +       }
-> > >  }
-> > >
-> > >  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gf=
-p_t flags)
-> > > @@ -200,6 +292,14 @@ static void fuse_put_request(struct fuse_req *re=
-q)
-> > >                         fuse_drop_waiting(fc);
-> > >                 }
-> > >
-> > > +               if (sysctl_hung_task_panic) {
-> > > +                       spin_lock(&fc->lock);
-> > > +                       /* Stop the timeout check if we are the last =
-request */
-> > > +                       if (atomic_read(&fc->num_waiting) =3D=3D 0)
-> > > +                               cancel_delayed_work_sync(&fc->work);
-> > > +                       spin_unlock(&fc->lock);
-> > > +               }
-> > > +
-> > >                 fuse_request_free(req);
-> > >         }
-> > >  }
-> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > index 74744c6f2860..aba3ffd0fb67 100644
-> > > --- a/fs/fuse/fuse_i.h
-> > > +++ b/fs/fuse/fuse_i.h
-> > > @@ -438,6 +438,9 @@ struct fuse_req {
-> > >
-> > >         /** fuse_mount this request belongs to */
-> > >         struct fuse_mount *fm;
-> > > +
-> > > +       /** When (in jiffies) the request was created */
-> > > +       unsigned long create_time;
-> > >  };
-> > >
-> > >  struct fuse_iqueue;
-> > > @@ -923,6 +926,9 @@ struct fuse_conn {
-> > >         /** IDR for backing files ids */
-> > >         struct idr backing_files_map;
-> > >  #endif
-> > > +
-> > > +       /** Request wait timeout check */
-> > > +       struct delayed_work work;
-> > >  };
-> > >
-> > >  /*
-> > > @@ -1190,6 +1196,8 @@ void fuse_request_end(struct fuse_req *req);
-> > >  /* Abort all requests */
-> > >  void fuse_abort_conn(struct fuse_conn *fc);
-> > >  void fuse_wait_aborted(struct fuse_conn *fc);
-> > > +/* Connection timeout */
-> > > +void fuse_check_timeout(struct work_struct *wk);
-> > >
-> > >  /**
-> > >   * Invalidate inode attributes
-> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > index 3ce4f4e81d09..ed96154df0fd 100644
-> > > --- a/fs/fuse/inode.c
-> > > +++ b/fs/fuse/inode.c
-> > > @@ -23,6 +23,7 @@
-> > >  #include <linux/exportfs.h>
-> > >  #include <linux/posix_acl.h>
-> > >  #include <linux/pid_namespace.h>
-> > > +#include <linux/completion.h>
-> > >  #include <uapi/linux/magic.h>
-> > >
-> > >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
-> > > @@ -964,6 +965,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct =
-fuse_mount *fm,
-> > >         INIT_LIST_HEAD(&fc->entry);
-> > >         INIT_LIST_HEAD(&fc->devices);
-> > >         atomic_set(&fc->num_waiting, 0);
-> > > +       INIT_DELAYED_WORK(&fc->work, fuse_check_timeout);
-> > >         fc->max_background =3D FUSE_DEFAULT_MAX_BACKGROUND;
-> > >         fc->congestion_threshold =3D FUSE_DEFAULT_CONGESTION_THRESHOL=
-D;
-> > >         atomic64_set(&fc->khctr, 0);
-> > > @@ -1015,6 +1017,7 @@ void fuse_conn_put(struct fuse_conn *fc)
-> > >                 if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
-> > >                         fuse_backing_files_free(fc);
-> > >                 call_rcu(&fc->rcu, delayed_release);
-> > > +               cancel_delayed_work_sync(&fc->work);
-> > >         }
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(fuse_conn_put);
-> > > diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysct=
-l.h
-> > > index 5a64582b086b..1ed3a511060d 100644
-> > > --- a/include/linux/sched/sysctl.h
-> > > +++ b/include/linux/sched/sysctl.h
-> > > @@ -5,11 +5,15 @@
-> > >  #include <linux/types.h>
-> > >
-> > >  #ifdef CONFIG_DETECT_HUNG_TASK
-> > > -/* used for hung_task and block/ */
-> > > +/* used for hung_task, block/ and fuse */
-> > >  extern unsigned long sysctl_hung_task_timeout_secs;
-> > > +extern unsigned int sysctl_hung_task_panic;
-> > >  #else
-> > >  /* Avoid need for ifdefs elsewhere in the code */
-> > > -enum { sysctl_hung_task_timeout_secs =3D 0 };
-> > > +enum {
-> > > +       sysctl_hung_task_timeout_secs =3D 0,
-> > > +       sysctl_hung_task_panic =3D 0,
-> > > +};
-> > >  #endif
-> > >
-> > >  enum sched_tunable_scaling {
-> > > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> > > index c18717189f32..16602d3754b1 100644
-> > > --- a/kernel/hung_task.c
-> > > +++ b/kernel/hung_task.c
-> > > @@ -78,8 +78,9 @@ static unsigned int __read_mostly sysctl_hung_task_=
-all_cpu_backtrace;
-> > >   * Should we panic (and reboot, if panic_timeout=3D is set) when a
-> > >   * hung task is detected:
-> > >   */
-> > > -static unsigned int __read_mostly sysctl_hung_task_panic =3D
-> > > +unsigned int __read_mostly sysctl_hung_task_panic =3D
-> > >         IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
-> > > +EXPORT_SYMBOL_GPL(sysctl_hung_task_panic);
-> > >
-> > >  static int
-> > >  hung_task_panic(struct notifier_block *this, unsigned long event, vo=
-id *ptr)
-> > > --
-> > > 2.34.1
-> > >
 
