@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-37210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E6B9EF8BA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:44:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7BD9EF88B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 18:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D746D296484
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E655295E99
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 17:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D359722A80A;
-	Thu, 12 Dec 2024 17:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADAD2253F8;
+	Thu, 12 Dec 2024 17:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="G7AgHd0M"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dOuvs+/G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E568E22333B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 17:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEA2223C56
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 17:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734025377; cv=none; b=E7Rqjuypf4/l8kplFLqYIh62Rtw/090R+PbO+IbxAknYudeH9Chg4THQwPFJgWgzCRAQKc2LISJJ7cqT4vPvghk9pCKeXiztVate9u6mvjceMld3uPwehoJLWBy0qrZ/Z7eERniXC5bimvtZ17oR70nUWQ3D99932zG/GOfH0K0=
+	t=1734025370; cv=none; b=YDl7q0rBwH0g3r28i+HAnCK59siwSOB83nvR7c30XdERQgy6EIv/sfIIu/Qg8daWriiR1fduoyMC/tTaifzXE+svTN7tdBjm0xR0YCsVyu8wuDZk+pvIyGIoCRTJjFUtJBxwikLeA3gVbn0jBUHNuTxFej0ZAvvaGTzBlZ26Tbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734025377; c=relaxed/simple;
-	bh=JRWYVcMH5s897bnNdcaAdJ2sQRGzDoHCkFj5fUhC+NE=;
+	s=arc-20240116; t=1734025370; c=relaxed/simple;
+	bh=QDdGJ4b6TLjTo21kiQPE8vi0Kz9+yyMPOFlHYQDPk4I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eTCfqoDbGrIk7yf44HVzhu9neiFIzQ7wCr837RjMc3VvRUcl0o+7lfhydPwQh/Ze5uWN0FuI4A9USvtpKyE94nx1j36eT7hm2PMfVyvPEOEqCsMBP+8/UY3EsZ1KoLI14CD7oFnAin5h0zO5yBPsdVVtlvhpB7pfL9KNIyqk52A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=G7AgHd0M; arc=none smtp.client-ip=185.125.25.8
+	 MIME-Version:Content-Type; b=UhKGkzUSjOppGj2vGlubQ0Gd806G5/yUUGZxQh9p6WKAZv3n9cKMPFtOsYaQyKOJQSFqjCYaLGRYhsJ4LymtYTZlWTcEph3RpAm1cpWACcPHjX7Jnmfi73dLdPQrJGKvfdkux4DYA2MYxKCYj6FSnlIRCVWarW4F/kcgKotl0B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dOuvs+/G; arc=none smtp.client-ip=84.16.66.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y8KYc6fDdz78r;
-	Thu, 12 Dec 2024 18:42:44 +0100 (CET)
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y8KYf342Bz8TD;
+	Thu, 12 Dec 2024 18:42:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1734025364;
-	bh=6ybjqrej/Df/o67JLMrP/Nkc9gTh6BXP3ChFpaKk0Lc=;
+	s=20191114; t=1734025366;
+	bh=GBc+grD+RTjGsWmnoQitfhm9MAWUGCvE9QwlCnHtBJg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G7AgHd0MArq1o4ES0c2/ByE0dSKPLvk0l3QkqlKnlqsi9fg4acLYqBEw8ZSi0qbpF
-	 ddw9PARiJH4jJ0rGtKK5BY6QL3x+Phg0VimgvNaEXxcWLcfgL9iJhtDYMzVSNqYjZp
-	 1G7rajDpTNMs0C1JqXg3L/rYayU1NXVbPRCVwqMM=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y8KYb4QnTz59W;
-	Thu, 12 Dec 2024 18:42:43 +0100 (CET)
+	b=dOuvs+/GOiJZnkIqzAe9hDVhAAzSyKjYNXNf8eRrZHrE+QA/h5foEWQBiQCkkBGwz
+	 cxTkVvuhNpyY5zcpb6yDwQe/WCLyeIlHBG8uGKOpTPQR5LUxauE1xm/iHK9MUp6pyd
+	 mDYmra3RxEETQdE1yxbYaira6PB9r7H64isGnUkA=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y8KYd2X6lz4dd;
+	Thu, 12 Dec 2024 18:42:45 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -98,10 +98,12 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-fsdevel@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v23 5/8] samples/check-exec: Add set-exec
-Date: Thu, 12 Dec 2024 18:42:20 +0100
-Message-ID: <20241212174223.389435-6-mic@digikod.net>
+	linux-security-module@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v23 6/8] selftests: ktap_helpers: Fix uninitialized variable
+Date: Thu, 12 Dec 2024 18:42:21 +0100
+Message-ID: <20241212174223.389435-7-mic@digikod.net>
 In-Reply-To: <20241212174223.389435-1-mic@digikod.net>
 References: <20241212174223.389435-1-mic@digikod.net>
 Precedence: bulk
@@ -114,182 +116,43 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add a simple tool to set SECBIT_EXEC_RESTRICT_FILE or
-SECBIT_EXEC_DENY_INTERACTIVE before executing a command.  This is useful
-to easily test against enlighten script interpreters.
+__ktap_test() may be called without the optional third argument which is
+an issue for scripts using `set -u` to detect uninitialized variables
+and potential bugs.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
+Fix this optional "directive" argument by either using the third
+argument or an empty string.
+
+This is required for the next commit to properly test script execution
+control.
+
+Cc: Kees Cook <kees@kernel.org>
+Cc: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Fixes: 14571ab1ad21 ("kselftest: Add new test for detecting unprobed Devicetree devices")
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241212174223.389435-6-mic@digikod.net
+Link: https://lore.kernel.org/r/20241212174223.389435-7-mic@digikod.net
 ---
 
-Changes since v19:
-* Rename file and directory.
-* Update securebits and related arguments.
-* Remove useless call to prctl() when securebits are unchanged.
+Also sent as a standalone patch:
+https://lore.kernel.org/r/20241127160342.31472-1-mic@digikod.net
 ---
- samples/Kconfig               |  7 +++
- samples/Makefile              |  1 +
- samples/check-exec/.gitignore |  1 +
- samples/check-exec/Makefile   | 14 ++++++
- samples/check-exec/set-exec.c | 85 +++++++++++++++++++++++++++++++++++
- 5 files changed, 108 insertions(+)
- create mode 100644 samples/check-exec/.gitignore
- create mode 100644 samples/check-exec/Makefile
- create mode 100644 samples/check-exec/set-exec.c
+ tools/testing/selftests/kselftest/ktap_helpers.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..efa28ceadc42 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -291,6 +291,13 @@ config SAMPLE_CGROUP
- 	help
- 	  Build samples that demonstrate the usage of the cgroup API.
+diff --git a/tools/testing/selftests/kselftest/ktap_helpers.sh b/tools/testing/selftests/kselftest/ktap_helpers.sh
+index 79a125eb24c2..14e7f3ec3f84 100644
+--- a/tools/testing/selftests/kselftest/ktap_helpers.sh
++++ b/tools/testing/selftests/kselftest/ktap_helpers.sh
+@@ -40,7 +40,7 @@ ktap_skip_all() {
+ __ktap_test() {
+ 	result="$1"
+ 	description="$2"
+-	directive="$3" # optional
++	directive="${3:-}" # optional
  
-+config SAMPLE_CHECK_EXEC
-+	bool "Exec secure bits examples"
-+	depends on CC_CAN_LINK && HEADERS_INSTALL
-+	help
-+	  Build a tool to easily configure SECBIT_EXEC_RESTRICT_FILE and
-+	  SECBIT_EXEC_DENY_INTERACTIVE.
-+
- source "samples/rust/Kconfig"
- 
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..f988202f3a30 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,6 +3,7 @@
- 
- subdir-$(CONFIG_SAMPLE_AUXDISPLAY)	+= auxdisplay
- subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
-+subdir-$(CONFIG_SAMPLE_CHECK_EXEC)	+= check-exec
- subdir-$(CONFIG_SAMPLE_CGROUP) += cgroup
- obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
- obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
-diff --git a/samples/check-exec/.gitignore b/samples/check-exec/.gitignore
-new file mode 100644
-index 000000000000..3f8119112ccf
---- /dev/null
-+++ b/samples/check-exec/.gitignore
-@@ -0,0 +1 @@
-+/set-exec
-diff --git a/samples/check-exec/Makefile b/samples/check-exec/Makefile
-new file mode 100644
-index 000000000000..d9f976e3ff98
---- /dev/null
-+++ b/samples/check-exec/Makefile
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+
-+userprogs-always-y := \
-+	set-exec
-+
-+userccflags += -I usr/include
-+
-+.PHONY: all clean
-+
-+all:
-+	$(MAKE) -C ../.. samples/check-exec/
-+
-+clean:
-+	$(MAKE) -C ../.. M=samples/check-exec/ clean
-diff --git a/samples/check-exec/set-exec.c b/samples/check-exec/set-exec.c
-new file mode 100644
-index 000000000000..ba86a60a20dd
---- /dev/null
-+++ b/samples/check-exec/set-exec.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Simple tool to set SECBIT_EXEC_RESTRICT_FILE, SECBIT_EXEC_DENY_INTERACTIVE,
-+ * before executing a command.
-+ *
-+ * Copyright © 2024 Microsoft Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#define __SANE_USERSPACE_TYPES__
-+#include <errno.h>
-+#include <linux/prctl.h>
-+#include <linux/securebits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
-+
-+static void print_usage(const char *argv0)
-+{
-+	fprintf(stderr, "usage: %s -f|-i -- <cmd> [args]...\n\n", argv0);
-+	fprintf(stderr, "Execute a command with\n");
-+	fprintf(stderr, "- SECBIT_EXEC_RESTRICT_FILE set: -f\n");
-+	fprintf(stderr, "- SECBIT_EXEC_DENY_INTERACTIVE set: -i\n");
-+}
-+
-+int main(const int argc, char *const argv[], char *const *const envp)
-+{
-+	const char *cmd_path;
-+	char *const *cmd_argv;
-+	int opt, secbits_cur, secbits_new;
-+	bool has_policy = false;
-+
-+	secbits_cur = prctl(PR_GET_SECUREBITS);
-+	if (secbits_cur == -1) {
-+		/*
-+		 * This should never happen, except with a buggy seccomp
-+		 * filter.
-+		 */
-+		perror("ERROR: Failed to get securebits");
-+		return 1;
-+	}
-+
-+	secbits_new = secbits_cur;
-+	while ((opt = getopt(argc, argv, "fi")) != -1) {
-+		switch (opt) {
-+		case 'f':
-+			secbits_new |= SECBIT_EXEC_RESTRICT_FILE |
-+				       SECBIT_EXEC_RESTRICT_FILE_LOCKED;
-+			has_policy = true;
-+			break;
-+		case 'i':
-+			secbits_new |= SECBIT_EXEC_DENY_INTERACTIVE |
-+				       SECBIT_EXEC_DENY_INTERACTIVE_LOCKED;
-+			has_policy = true;
-+			break;
-+		default:
-+			print_usage(argv[0]);
-+			return 1;
-+		}
-+	}
-+
-+	if (!argv[optind] || !has_policy) {
-+		print_usage(argv[0]);
-+		return 1;
-+	}
-+
-+	if (secbits_cur != secbits_new &&
-+	    prctl(PR_SET_SECUREBITS, secbits_new)) {
-+		perror("Failed to set secure bit(s).");
-+		fprintf(stderr,
-+			"Hint: The running kernel may not support this feature.\n");
-+		return 1;
-+	}
-+
-+	cmd_path = argv[optind];
-+	cmd_argv = argv + optind;
-+	fprintf(stderr, "Executing command...\n");
-+	execvpe(cmd_path, cmd_argv, envp);
-+	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
-+		strerror(errno));
-+	return 1;
-+}
+ 	local directive_str=
+ 	[ ! -z "$directive" ] && directive_str="# $directive"
 -- 
 2.47.1
 
