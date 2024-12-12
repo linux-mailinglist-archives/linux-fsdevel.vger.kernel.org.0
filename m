@@ -1,199 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-37136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF87C9EE3DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:14:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775359EE469
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 11:44:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B0E188A71C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 10:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC29281B63
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 10:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30802101AF;
-	Thu, 12 Dec 2024 10:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD9B21149C;
+	Thu, 12 Dec 2024 10:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l06NHYWZ"
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="a7PFC7o6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4A91F949
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049C9204C28;
+	Thu, 12 Dec 2024 10:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998457; cv=none; b=h4ZsnJs/3mgsLmb/9BhK6k6H78d5hFkulZ0S2DM07/xHYMaJpvz8OAQ0ufJ5iV0ZjDeHuKkCyQSgD8LEczz60nIL9uK0WE6EcBl61z65p18ntPibxm/z6Pd58ns+kVutnoNhhnU9+XVf8ysI7NQ+G9+qxnVr1LLuWVDDo6i/cZ4=
+	t=1734000254; cv=none; b=oozGotT67tbUWf62dw8rNX3E7hMZLNZVQQgtM3WEDnZNInDAjLC6bjqghO7FNyTLz22MGZRzU99naw0k7oWP5TPd0mfHuByROj8OSNWHsGGnag8TTHVAuGDCEEmf2P6aYZOcNwzyHkzkbRGk0r7eAPDG7mIcCBZ2hyiIl8op9Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998457; c=relaxed/simple;
-	bh=eKuDDNh7argPDDE0EcWPSszJu+ljYscU6oqO0moeG8Y=;
+	s=arc-20240116; t=1734000254; c=relaxed/simple;
+	bh=CFrVkfQT2FWtC5+zZrjCm6/H5WOJhaB5szdgEdMyzz4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VeqeN7KVBD9qRgjGoz6rRzzXeCPRWrcvQc/E2Mdmo/dejwcZdX8bL5koiPvqSD/aSDKGtcBszgGiy2WSTge4YYu9lyKlQVHxQc5QMmoGMkLbZtxemu3O1lobF71JkjMt6U8UOxX2AM+TXn3IXoulF/si4QsBojtttccO7OPF2dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l06NHYWZ; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7f71f2b1370so281274a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 02:14:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733998455; x=1734603255; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=imtbBrBEkPVKtbCA/xxwe0ZEaWgNsfGZobwNJy/U71E=;
-        b=l06NHYWZaG1l897PP4CJ1CQE+j2RdZoVwo9aNvxU9WWxTXwrnNQDGellnfk+wAI5Wz
-         udcaIYauzTIhQ+ZwnziC4cYNS+ihHnQ9X9FCGUX1AP2QGn/Re3B0A5pJFsp1b74uTi/U
-         /lf5Xitu8m5exEbev5UyE+CMp1zmRKTjHIreXLyl7EfnGVIjQblLrFdfMKnwCvWfc5XX
-         gba9C2c/ncc1rEEAHnHieAb2vqmE5QDWV0nEA5tC17VVD+Sk52idd1oZYVpsjIela4ce
-         aRbcUAlvxAp5CY1TY156UTPde+7yXwo1jTPDQ7Uzas+26aKkJ0CgVStY2h8ivNoQ0lLS
-         VUyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733998455; x=1734603255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=imtbBrBEkPVKtbCA/xxwe0ZEaWgNsfGZobwNJy/U71E=;
-        b=SBrucqYVjH4BGwI7fCULTKvYQfwooRcWfUX93v69/Y1o6Ism5pHXScx3L6VSOURhyu
-         mBmrFXm8kwIY4J3aCKcn8g1aSyc1D/LvYzVZjpUWlKw9xdkLX9WaHDfyl568hlwtm4O0
-         UAs3QPIeMYHXLhIn8bJ8y+FRoxdzBHn7ssYqEMhjVd9h05/ZpbfPdQeJhUgUry2FDmUE
-         3bRfC0yGg/bgcyESnFjRPCroCGAVeaURZco/vHN+YKQVJX/apcXQpoNtbHR7rMnr1yqa
-         kS8CbfB4UAgMaWX3WRPNCJwDPYnTE2A703nXj5kDp/6NGa/StZUw+ie8FPFCfLCU3DDl
-         omfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxu9jdiPhJxDZUW3t8/Kn3e9hJPS8jsOChiAg4zT+BYVbhRPCDHDHllRd6lXGHLMHm/ZHCdJC/sNnX8nhN@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp1m7xFNfw5pzxPo2kqIA5E55KCU908SgrPPc3QaZyRw/U18Ma
-	daAZM8GXrJKezxeMgIJerU3bYrU+P1mb374Yb8SlbckoDR0AsQTK
-X-Gm-Gg: ASbGncvi2AgbfEUgPi4g1kvBLKDBQmnilAm5MbXDOQDgScnz+KoN98kpvnPjFMI9B+m
-	zhThy+vdhd6ypfUamQ1e3t78cTq8SpZkEN1M+b6rT5YkGkbx1j0V5h675acU1DSWSFJS+SxAgDo
-	HO5FuduF6w/HDKyyy3T9cxs7ePztsTWBEcVSax4sjQWMXwfY1h5mdiGFvRgeVTO0LLum2tDurCk
-	UtPZl/h2dg/8iNaKRWnxhi2rSkXGQWXLnjECl+jh532CMf+KgHglU3HgetoZNa0w761vCnk6cvm
-	b8jzzGthkNoL43n5G9hLeyuRD10=
-X-Google-Smtp-Source: AGHT+IFVhbe01ozM68JjhYH4Ulu2767FV6uMDBATKo9A5IIcvIgwdzomTiXfbfiCL1mxVboFbfpF4Q==
-X-Received: by 2002:a05:6a21:398f:b0:1e1:b12e:edb8 with SMTP id adf61e73a8af0-1e1cebb7f15mr4365029637.30.1733998454879;
-        Thu, 12 Dec 2024 02:14:14 -0800 (PST)
-Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd3e2d63fbsm8473250a12.6.2024.12.12.02.14.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 02:14:14 -0800 (PST)
-Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 2DA5FDDEEC0; Thu, 12 Dec 2024 19:14:12 +0900 (JST)
-From: Hajime Tazaki <thehajime@gmail.com>
-To: linux-um@lists.infradead.org
-Cc: thehajime@gmail.com,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v5 02/13] x86/um: nommu: elf loader for fdpic
-Date: Thu, 12 Dec 2024 19:12:09 +0900
-Message-ID: <d387e58f08b929357a2651e82d2ee18bcf681e40.1733998168.git.thehajime@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1733998168.git.thehajime@gmail.com>
-References: <cover.1733998168.git.thehajime@gmail.com>
+	 MIME-Version:Content-Type; b=JnjNFwcYR8/jZbpw8/pq9QCGR1+KtZyD9Fe9P0WvNV8ImKonk6ReAtMjadq3nOuu0RWz71XpBJLjMnfSd0pT86jfbE+8FZsRdyV/eA67eEMdUlNmHcqFyQn5iw2foEXGW3J8k7+V7wjRYuFSc1clU4wxP9nMx8OefbpOtcnXFoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=a7PFC7o6; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=0pBBMlpWw78z8gxF0nm1mH/ofBxxUMEFQEaNd51NMN4=; b=a7PFC7o6hws+u+0cwhcXO7kR/b
+	tB/tueVrn4mjzB3aGr1q9FSamGxeUK6RIOdsi2HA7Dd98sm6k2Cpum7T75L9f8Aon4G0TAKxytxyV
+	CrfbZL4faKL4J0nzy2FNbTH9Dp3dknvDdtmQJX1xI1mVLvSr7ZqlzsWE05CxMweSppT7YcNpUW75e
+	YGImZMCzoTS3oQfotCodbLml6ziYXbVI5fLgZZMWqTLwX82GaZqb70a7Gn5GkGI6CABYP2i3o4gqL
+	bt1TUDkLIZF+E74BUAhGof7YHaFlTpmpm1PgqHL0Ne1Ph5bRzNnr63xOB1KEtRtpFyeZOa+PhgBll
+	XXT9G7f2kGgaXNV+iIJMH5F4RmH+MRjQQj15HPcEbhgo7XtE2LG/8MXmc3vyRcog+irz3zkWVBAG6
+	B6H8x4ISBFuoFNhH8biyMkGQBhufQtrWTZnGBd3q/Hpbg1wlyeUCciJ+btzobPqUSJdY7bI4igTbP
+	1vrGxLLDvUZrnRDDA3t4xzeFebhjIh2KhLxiihULMlG/HfJIZfzga8YbqlLstsO2rQEvq1AQKRT8D
+	/f8G7ObtJXAaSHiXVJ/MdjZMSoiK+AQL7LU9//TGSbRkieXX7pzHdef2XIFBE0MrkN4yQmvoit9AU
+	VcBrSOpDNplbYcaOspPsDTnlqM7Zzm8gxee/DJVwc=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: asmadeus@codewreck.org, Leo Stone <leocstone@gmail.com>,
+ syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com, ericvh@gmail.com,
+ ericvh@kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lucho@ionkov.net,
+ syzkaller-bugs@googlegroups.com, v9fs-developer@lists.sourceforge.net,
+ v9fs@lists.linux.dev, Fedor Pchelkin <pchelkin@ispras.ru>,
+ Seth Forshee <sforshee@kernel.org>, Christian Brauner <brauner@kernel.org>
+Subject:
+ Re: Alloc cap limit for 9p xattrs (Was: WARNING in
+ __alloc_frozen_pages_noprof)
+Date: Thu, 12 Dec 2024 11:17:06 +0100
+Message-ID: <2475109.TFnaqUCzQF@silver>
+In-Reply-To: <20241211225500.GH3387508@ZenIV>
+References:
+ <675963eb.050a0220.17f54a.0038.GAE@google.com>
+ <CAHk-=wiH+FmLBGKk86ung9Qbrwd0S-7iAnEAbV9QDvX5vAjL7A@mail.gmail.com>
+ <20241211225500.GH3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-As UML supports CONFIG_MMU=n case, it has to use an alternate ELF
-loader, FDPIC ELF loader.  In this commit, we added necessary
-definitions in the arch, as UML has not been used so far.  It also
-updates Kconfig file to use BINFMT_ELF_FDPIC under !MMU environment.
+On Wednesday, December 11, 2024 11:55:00 PM CET Al Viro wrote:
+> On Wed, Dec 11, 2024 at 01:32:26PM -0800, Linus Torvalds wrote:
+> > On Wed, 11 Dec 2024 at 13:04, <asmadeus@codewreck.org> wrote:
+> > >
+> > > Christian Schoenebeck's suggestion was something like this -- I guess
+> > > that's good enough for now and won't break anything (e.g. ACLs bigger
+> > > than XATTR_SIZE_MAX), so shall we go with that instead?
+> > 
+> > Please use XATTR_SIZE_MAX. The KMALLOC_MAX_SIZE limit seems to make no
+> > sense in this context.
+> > 
+> > Afaik the VFS layer doesn't allow getting an xattr bigger than
+> > XATTR_SIZE_MAX anyway, and would return E2BIG for them later
+> > regardless, so returning anything bigger wouldn't work anyway, even if
+> > p9 tried to return such a thing up to some bigger limit.
+> 
+> E2BIG on attempt to set, quiet cap to XATTR_SIZE_MAX on attempt to get
+> (i.e. never asking more than that from fs) and if filesystem complains
+> about XATTR_SIZE_MAX not being enough, E2BIG it is (instead of ERANGE
+> normally expected on "your buffer is too small for that").
 
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-Signed-off-by: Ricardo Koller <ricarkol@google.com>
----
- arch/um/include/asm/mmu.h            | 5 +++++
- arch/um/include/asm/ptrace-generic.h | 6 ++++++
- arch/x86/um/asm/elf.h                | 8 ++++++--
- fs/Kconfig.binfmt                    | 2 +-
- 4 files changed, 18 insertions(+), 3 deletions(-)
+So that cap is effective even if that xattr does not go out to user space?
 
-diff --git a/arch/um/include/asm/mmu.h b/arch/um/include/asm/mmu.h
-index a3eaca41ff61..01422b761aa0 100644
---- a/arch/um/include/asm/mmu.h
-+++ b/arch/um/include/asm/mmu.h
-@@ -14,6 +14,11 @@ typedef struct mm_context {
- 	/* Address range in need of a TLB sync */
- 	unsigned long sync_tlb_range_from;
- 	unsigned long sync_tlb_range_to;
-+
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+	unsigned long   exec_fdpic_loadmap;
-+	unsigned long   interp_fdpic_loadmap;
-+#endif
- } mm_context_t;
- 
- #endif
-diff --git a/arch/um/include/asm/ptrace-generic.h b/arch/um/include/asm/ptrace-generic.h
-index 4696f24d1492..4ff844bcb1cd 100644
---- a/arch/um/include/asm/ptrace-generic.h
-+++ b/arch/um/include/asm/ptrace-generic.h
-@@ -29,6 +29,12 @@ struct pt_regs {
- 
- #define PTRACE_OLDSETOPTIONS 21
- 
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+#define PTRACE_GETFDPIC		31
-+#define PTRACE_GETFDPIC_EXEC	0
-+#define PTRACE_GETFDPIC_INTERP	1
-+#endif
-+
- struct task_struct;
- 
- extern long subarch_ptrace(struct task_struct *child, long request,
-diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
-index 62ed5d68a978..33f69f1eac10 100644
---- a/arch/x86/um/asm/elf.h
-+++ b/arch/x86/um/asm/elf.h
-@@ -9,6 +9,7 @@
- #include <skas.h>
- 
- #define CORE_DUMP_USE_REGSET
-+#define ELF_FDPIC_CORE_EFLAGS  0
- 
- #ifdef CONFIG_X86_32
- 
-@@ -190,8 +191,11 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
- 
- extern unsigned long um_vdso_addr;
- #define AT_SYSINFO_EHDR 33
--#define ARCH_DLINFO	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr)
--
-+#define ARCH_DLINFO						\
-+do {								\
-+	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr);		\
-+	NEW_AUX_ENT(AT_MINSIGSTKSZ, 0);			\
-+} while (0)
- #endif
- 
- typedef unsigned long elf_greg_t;
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index bd2f530e5740..419ba0282806 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -58,7 +58,7 @@ config ARCH_USE_GNU_PROPERTY
- config BINFMT_ELF_FDPIC
- 	bool "Kernel support for FDPIC ELF binaries"
- 	default y if !BINFMT_ELF
--	depends on ARM || ((M68K || RISCV || SUPERH || XTENSA) && !MMU)
-+	depends on ARM || ((M68K || RISCV || SUPERH || UML || XTENSA) && !MMU)
- 	select ELFCORE
- 	help
- 	  ELF FDPIC binaries are based on ELF, but allow the individual load
--- 
-2.43.0
+I mean the concern I had was about ACLs on guest, which are often mapped with 
+9p to xattr on host and can become pretty big. So these were xattr not 
+directly exposed to guest's user space.
+
+/Christian
+
 
 
