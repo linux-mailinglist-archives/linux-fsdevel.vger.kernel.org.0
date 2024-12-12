@@ -1,128 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-37230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB1D9EFD55
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 21:22:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390DC9EFD8C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 21:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8667A1891396
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 20:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D000188E70A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2024 20:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCAA1DE2A9;
-	Thu, 12 Dec 2024 20:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901461AD41F;
+	Thu, 12 Dec 2024 20:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FTtJkKzc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+tfm9Hw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8241C1F2F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 20:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FB41422D4;
+	Thu, 12 Dec 2024 20:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734034776; cv=none; b=nZ/JjuwXKJf+IdRw6qIGiy+s6EQx3ZV5d1zS/RbwFHad4k0m6ojSmuSaVQazQt7rS5oB5fjiztNTVHol972xwfHEegp11hT+D3Ti27WECqkBooMdojNogwY3BzQLvcLEdkvPaufu+uj7kXGw5hrzB/HrlG57/a5HstDiU96+tKg=
+	t=1734036010; cv=none; b=rfNLE/kWA7xyu0xyYQQEW/1cA5hWuyQ/7M37ppbzsNzWEbWNI86jWjYRMMrKJ4+z4nJm+uliO4mIyI5Vq2KgYvhzxXbtbYhI52P/zhFAAWZ8NiHzuXtRyoBnjuJo2rsAz5nfzK2Dwi0DIMw4xNWamGN35XVe2y9v0RUlhJygYqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734034776; c=relaxed/simple;
-	bh=bxNToVr/eEUZvLdB9CPyWXMAoqLRgngI0FOKeD8wqT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pW3CELFXiqEvB1xzuAzNHaBTil3DoxaJnM6HEwiWwvDC7ztECW/VLVIyqfq7j4dKoUQjCWyjCrHjvKn+t5zyDeznomyaFZyGQOP5tQkQhvt/WV0mJqiuWCYqDWuyAeTfzLm5MhsYNTUNfhnaWkoLhFK1wSooAOXieq39jEZW+lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FTtJkKzc; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-844e39439abso20287239f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2024 12:19:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734034773; x=1734639573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=amQilKkF88h59kyKbvwGPPw4Lr0cJFGcTEeJ1cmutA0=;
-        b=FTtJkKzcDmaDlX65b0uV6iIotPhOKVWWNgKLqlcbJ3YC6LJfWlfcaR1cnJJd7FR7AY
-         qf5i8g5N2Gb2vqKWG6IoZR11HT3J1oj68Jh6Idtq13vaFkNULlHHGEddKc7CLjpAV26l
-         5OlrPJU8l1wxmkyHq/KCjfmdJ6Qkgcl1eFPpXmipkU7dG8P6pI4gb9xS48JtfMscVpQo
-         Ru8oVSl22vBOSKAvI4CMLNhGzRrdL1Z6xWHgGVn3imXIkDeqQCh0si4yuO3Gl4zcUje4
-         kdWn0/dYCa6fPTG4LegIQNW3IBIfY70vCF71fLRVtRkLdRACvY4i3rPLxTukvigCTaQ6
-         dv1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734034773; x=1734639573;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=amQilKkF88h59kyKbvwGPPw4Lr0cJFGcTEeJ1cmutA0=;
-        b=oocRmlmhDgQM5faXS/10gZzZd4eLmHi1yQXfABWGWN43JB3ZyToSY8htLrHGpfgcMP
-         fhY8kY5JrsDFFrqpS4eujhbla0tQeHBRNlXDvHvTbx/+MNJqRJ4NmfNDTeYsEOe42Nxz
-         xnOQsivkf5ELjChqXMwFEkXn2WAoohMOnIpltQ+SKLbASdWEaHoLbj4UDi05esQgYNOg
-         pMg6Gb3Ux04+dVpJJQhKEaJN0JWXaDr0+/62zKtRs+2rKRZesMZGPVPd/sgM0eljfK3v
-         M2MoywjyKgCK8Hbko0RwVgx2lpIi5bqz2XE93dT8r+H1LiDGV5NBnR9vesEWIti26Pnh
-         +MUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAV6MZljRz1oarnt9E9QhLGkR6HhKcAY26xGH9bc1DmnkmHKFi+Yhr6hOkxgbe8D09ZH0UdGl4QKYvInNm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8V35tdbHU7asNR7wD1BiyrCpvRAw0Bn0D3HJUUGHnp8Y4EoRR
-	PEDCkN4Hq+NOKh/EdiCFL12HV6TbZ3h3rmGsWbah2xlA9+5WiN7gw2Rzquvwq0M=
-X-Gm-Gg: ASbGncs0PwKxWHpooAenDQykiD4AhmCqiDPTnM4121jCNOPFihCyr+3xHPe4POkvwNR
-	t66ydmG3867OQ/gmm28gFgk/28Lgr2cKEX4kooTou+i+HcjgSt/elchhG0E+5F9SCANn4VRYdMP
-	AWqC6vAoeW2nkmmtFoFE3MrRyTO4ua3/7CjoUtNO2+kE7xn/xSGheXqgyDGVCWe5G5XdYu3+jGy
-	KmuqdPafok2hrrF3ncGRXdlsnezKNxjeLDCMAnA5jqFusaxaZw2
-X-Google-Smtp-Source: AGHT+IFYch7UbRH6nqpKWr2p6Fzhmge00pAqGBgdIHbczzkzMGdbctA/OntbbR3AfoqtbufuALu+LA==
-X-Received: by 2002:a05:6e02:1d03:b0:3a7:c3aa:a82b with SMTP id e9e14a558f8ab-3aff62132bcmr2335035ab.1.1734034773169;
-        Thu, 12 Dec 2024 12:19:33 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a9ca03ae11sm31018885ab.41.2024.12.12.12.19.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 12:19:32 -0800 (PST)
-Message-ID: <c0fe9c00-f9da-44ce-a339-c36dbab25c46@kernel.dk>
-Date: Thu, 12 Dec 2024 13:19:31 -0700
+	s=arc-20240116; t=1734036010; c=relaxed/simple;
+	bh=3JXAd2s9J/3wCUOsK66MJBoOzwvpB3DcCJAiBMH3CJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4U1rtJrcR02zzzWho2AEn522hSp83FhUFI1bGdxAh6dCwXvmwhyDaP8oSmiZxgx06sEPMvUhXlPICtFbwHkRaue1BCprc+vOZRviemwF3gaTcGMXhYTVo5T9mqZaD11f3luyf9veSr3oOLkHeqL78fuWAPwkOiXKGoGDoagimo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+tfm9Hw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D1FC4CED0;
+	Thu, 12 Dec 2024 20:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734036008;
+	bh=3JXAd2s9J/3wCUOsK66MJBoOzwvpB3DcCJAiBMH3CJM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p+tfm9HwbRWaOK+2GWvAqvFXLDq/nmlnhjcfzJcYgkyTgY2MNgD4Dlk4kSScaO6fi
+	 6IhJ+1ICiDmp2eBDjbFtnR6IxuxWztOdRVU8A8BNLzW82Gt66WbwiEARWXNaULIN41
+	 uIDDkWuhzipmo04OFyKlp4qHw4o4FWvUrg6zObQHGKEAYIUzr60C7qiIP5Z6g1qk9/
+	 apGLkpi+XlzaivrT+iedAxaikKSR8pSDG74SIPrb/gmQNZ5QdoFNEQgYLwzDAXdi7r
+	 26HNv3krClaXyRdJuz+5ZzyDF0qoZFotaTWg1Qb6i15Du6Tare8d2Fk00x56cpTlAu
+	 VuGfzxcISL4AA==
+Date: Thu, 12 Dec 2024 12:40:07 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v2 2/7] iomap: Add zero unwritten mappings dio support
+Message-ID: <20241212204007.GL6678@frogsfrogsfrogs>
+References: <20241210125737.786928-1-john.g.garry@oracle.com>
+ <20241210125737.786928-3-john.g.garry@oracle.com>
+ <20241211234748.GB6678@frogsfrogsfrogs>
+ <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] mm/truncate: add folio_unmap_invalidate() helper
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <20241203153232.92224-8-axboe@kernel.dk> <Z1gkNiD2wJbAdOfr@infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z1gkNiD2wJbAdOfr@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com>
 
-On 12/10/24 4:21 AM, Christoph Hellwig wrote:
-> On Tue, Dec 03, 2024 at 08:31:42AM -0700, Jens Axboe wrote:
->> Add a folio_unmap_invalidate() helper, which unmaps and invalidates a
->> given folio. The caller must already have locked the folio. Use this
->> new helper in invalidate_inode_pages2_range(), rather than duplicate
->> the code there.
+On Thu, Dec 12, 2024 at 10:40:15AM +0000, John Garry wrote:
+> On 11/12/2024 23:47, Darrick J. Wong wrote:
+> > On Tue, Dec 10, 2024 at 12:57:32PM +0000, John Garry wrote:
+> > > For atomic writes support, it is required to only ever submit a single bio
+> > > (for an atomic write).
+> > > 
+> > > Furthermore, currently the atomic write unit min and max limit is fixed at
+> > > the FS block size.
+> > > 
+> > > For lifting the atomic write unit max limit, it may occur that an atomic
+> > > write spans mixed unwritten and mapped extents. For this case, due to the
+> > > iterative nature of iomap, multiple bios would be produced, which is
+> > > intolerable.
+> > > 
+> > > Add a function to zero unwritten extents in a certain range, which may be
+> > > used to ensure that unwritten extents are zeroed prior to issuing of an
+> > > atomic write.
+> > 
+> > I still dislike this.  IMO block untorn writes _is_ a niche feature for
+> > programs that perform IO in large blocks.  Any program that wants a
+> > general "apply all these updates or none of them" interface should use
+> > XFS_IOC_EXCHANGE_RANGE since it has no awu_max restrictions, can handle
+> > discontiguous update ranges, doesn't require block alignment, etc.
 > 
-> This new helper ends up the only caller of invalidate_complete_folio2,
-> so you might as well merge the two instead of having yet another
-> invalidate/unmap helper, which are getting impossible to track of.
+> That is not a problem which I am trying to solve. Indeed atomic writes are
+> for fixed blocks of data and not atomic file updates.
 
-Sure, missed that it's the only caller now.
+Agreed.
 
-> Also it is only used in mm/, so add the prototype to mm/internal.h
-> insead of the public pagemap.h.  And a little comment what the function
-> does would be pretty useful as well.
+> However, I still think that we should be able to atomic write mixed extents,
+> even though it is a pain to implement. To that end, I could be convinced
+> again that we don't require it...
 
-Good point, moved to internal.h instead.
+Well... if you /did/ add a few entries to include/uapi/linux/fs.h for
+ways that an untorn write can fail, then we could define the programming
+interface as so:
 
->> In preparation for using this elsewhere as well, have it take a gfp_t
->> mask rather than assume GFP_KERNEL is the right choice. This bubbles
->> back to invalidate_complete_folio2() as well.
+"If you receive -EBADMAP, then call fallocate(FALLOC_FL_MAKE_OVERWRITE)
+to force all the mappings to pure overwrites."
+
+...since there have been a few people who have asked about that ability
+so that they can write+fdatasync without so much overhead from file
+metadata updates.
+
+> > 
+> > Instead here we are adding a bunch of complexity, and not even all that
+> > well:
+> > 
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   fs/iomap/direct-io.c  | 76 +++++++++++++++++++++++++++++++++++++++++++
+> > >   include/linux/iomap.h |  3 ++
+> > >   2 files changed, 79 insertions(+)
+> > > 
+> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > index 23fdad16e6a8..18c888f0c11f 100644
+> > > --- a/fs/iomap/direct-io.c
+> > > +++ b/fs/iomap/direct-io.c
+> > > @@ -805,6 +805,82 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(iomap_dio_rw);
+> > > +static loff_t
+> > > +iomap_dio_zero_unwritten_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+> > > +{
+> > > +	const struct iomap *iomap = &iter->iomap;
+> > > +	loff_t length = iomap_length(iter);
+> > > +	loff_t pos = iter->pos;
+> > > +
+> > > +	if (iomap->type == IOMAP_UNWRITTEN) {
+> > > +		int ret;
+> > > +
+> > > +		dio->flags |= IOMAP_DIO_UNWRITTEN;
+> > > +		ret = iomap_dio_zero(iter, dio, pos, length);
+> > 
+> > Shouldn't this be detecting the particular case that the mapping for the
+> > kiocb is in mixed state and only zeroing in that case?  This just
+> > targets every unwritten extent, even if the unwritten extent covered the
+> > entire range that is being written.
 > 
-> Looking at the callers the gfp_t looks a bit odd to me, as it is
-> either GFP_KERNEL or 0 which is a valid but rather unusuable gfp_t
-> value, but I guess this comes form filemap_release_folio which
-> works similarly.
+> Right, so I did touch on this in the final comment in patch 4/7 commit log.
+> 
+> Why I did it this way? I did not think that it made much difference, since
+> this zeroing would be generally a one-off and did not merit even more
+> complexity to implement.
 
-Indeed
+The trouble is, if you fallocate the whole file and then write an
+aligned 64k block, this will write zeroes to the block, update the
+mapping, and only then issue the untorn write.  Sure that's a one time
+performance hit, but probably not a welcome one.
 
--- 
-Jens Axboe
+> > It doesn't handle COW, it doesn't
+> 
+> Do we want to atomic write COW?
+
+I don't see why not -- if there's a single COW mapping for the whole
+untorn write, then the data gets written to the media in an untorn
+fashion, and the remap is a single transaction.
+
+> > handle holes, etc.
+> 
+> I did test hole, and it seemed to work. However I noticed that for a hole
+> region we get IOMAP_UNWRITTEN type, like:
+
+Oh right, that's ->iomap_begin allocating an unwritten extent into the
+hole, because you're not allowed to specify a hole for the destination
+of a write.  I withdraw that part of the comment.
+
+> # xfs_bmap -vvp /root/mnt/file
+> /root/mnt/file:
+>  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+>    0: [0..127]:        192..319          0 (192..319)         128 000000
+>    1: [128..255]:      hole                                   128
+>    2: [256..383]:      448..575          0 (448..575)         128 000000
+>  FLAG Values:
+>     0100000 Shared extent
+>     0010000 Unwritten preallocated extent
+>     0001000 Doesn't begin on stripe unit
+>     0000100 Doesn't end   on stripe unit
+>     0000010 Doesn't begin on stripe width
+>     0000001 Doesn't end   on stripe width
+> #
+> #
+> 
+> For an atomic wrote of length 65536 @ offset 65536.
+> 
+> Any hint on how to create a iomap->type == IOMAP_HOLE?
+> 
+> > Also, can you make a version of blkdev_issue_zeroout that returns the
+> > bio so the caller can issue them asynchronously instead of opencoding
+> > the bio_alloc loop in iomap_dev_zero?
+> 
+> ok, fine
+> 
+> > 
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	dio->size += length;
+> > > +
+> > > +	return length;
+> > > +}
+> > > +
+> > > +ssize_t
+> > > +iomap_dio_zero_unwritten(struct kiocb *iocb, struct iov_iter *iter,
+> > > +		const struct iomap_ops *ops, const struct iomap_dio_ops *dops)
+> > > +{
+> > > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > > +	struct iomap_dio *dio;
+> > > +	ssize_t ret;
+> > > +	struct iomap_iter iomi = {
+> > > +		.inode		= inode,
+> > > +		.pos		= iocb->ki_pos,
+> > > +		.len		= iov_iter_count(iter),
+> > > +		.flags		= IOMAP_WRITE,
+> > 
+> > IOMAP_WRITE | IOMAP_DIRECT, no?
+> 
+> yes, I'll fix that.
+> 
+> And I should also set IOMAP_DIO_WRITE for dio->flags.
+
+<nod>
+
+--D
+
+> Thanks,
+> John
+> 
 
