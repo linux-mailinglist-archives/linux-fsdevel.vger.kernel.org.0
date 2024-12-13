@@ -1,206 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-37307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E4D9F0F26
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:33:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18DF9F0F41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8543E1884E8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 14:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853221882F9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 14:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4FF1E22E8;
-	Fri, 13 Dec 2024 14:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359401E2031;
+	Fri, 13 Dec 2024 14:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F3+g0qIz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QxOVPV0p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0331E0DD1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 14:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4421D53BE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 14:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734100384; cv=none; b=SoajccK7mGOcbFoVwPWkAMoCvYFljS6RA812l8+sW+EACzeQ8e/ot/t0c2ForGWUlSDVVgQup5uxDjvSEz4xJB2RUbB/roWkvgEPB+Uf0tYHtbDPM2hRk+YvF45ZNi9UYdJCJExcQJioCuzq6tMMceOEIeHfesGo/utgmDu1xjw=
+	t=1734100471; cv=none; b=q2J2x3SyAqqTHqI0Cjyi/ZeKcg9hblxCzpRWgrFXM5X9n2ikOaVfOzmdmi2snGnTfjSaDhr1FXEN7PTacUVr2hnZWwFyD1t6el0tjdh7/7/zXYHPPkSoynDH8LcKgrMgVuONZ0y/8VfWiyvgLm6T/g+JFT3aDP1UEa8cx8zQlA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734100384; c=relaxed/simple;
-	bh=EuJufx1aFMmSDDvNPI6DU4SHOlqB0i/fifV9p+FF0lU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9P5nQa2ZV3BWZDiZ3vW+N66ez0kiAzqyD8iiRbkuNYsrIpf600DoLbPjA6qWkb+I2mnpDwde2fQBlvDzdH4AS+qfaFzSIQ5aKpYjaU4BP+KQCJ6sincMwzs1K/HZpShbiBsCXBI6fPQYL5ff4sygK6ecrBN4zPWDfkrEwJOr/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F3+g0qIz; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e06af753so983359f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 06:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734100381; x=1734705181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YS9LGudJur7kGbLspdnTQuWDC+hZFSTpArars9lBeLQ=;
-        b=F3+g0qIz6g2WVi4c4BYQ3Jf/lMTVkukAyhHWqRCsKwlrIwR7vNKvprOJWrbob9UXsy
-         7gaT8nGk93GuvfLctjKTMEd5N23oCuAxYCHh9bAZEe7OQTnl0QdEExFJ50e0tVKR9fit
-         fVpKi0P78zCTPAPMXPLS6ULTkfJbchVZrbZRDNehNG4Vn2k16bLugou0GLYeFSYDeBxA
-         C62UQwbpRrf3PYMAWpx3pEvduNZ2YcnySy/UmRVTFQLJ76RDIX3N92iPZ2nNyQh4q+j2
-         Ew9Q6RsSLTLq9lFU7prhz02Ej9yfDVS5jAYKTA4cl7lvlVdYbxHiRmInQFjXKwToH82v
-         eZdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734100381; x=1734705181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YS9LGudJur7kGbLspdnTQuWDC+hZFSTpArars9lBeLQ=;
-        b=v+lFBk7TrgP+0njnL2gj1xgsQAtptkLn3Lv1bul0Yv0b98gy07YL22tUxifQLA5Tel
-         cdWQg12P2Ci1JlKHOz+FuW6AbZxVBOMsN9+3WM7NqCH1NbFKLpSgYH5lJF6muK5dPzlb
-         WKYd6jjDo8HzCWnMbV2JFTB3sVFOWvNC0lghhFDifrtX3GW6lQUy/6JCASurkMSnQ+xT
-         cqeHFsHNRhLkVkbxF6IAIG65jpZRqvfFXc+3qxGj/YNswnN3s8yhaCdieT2KPw23yWcI
-         0OX3pqnFe7U4WKFydPMUbf0SXFALuJVqYhql3K+pkpsjWQCIpWuGgeYJH0FbMkEKgmq0
-         Vowg==
-X-Forwarded-Encrypted: i=1; AJvYcCUirf67q5ClI8x14ZaIxcKVvcyfBI1QjAW/n9P+e3OlKx++SiweHoiyA5pKTUejOuVKk0Mnz60iz5lQTZKI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV17OaLilvt0VjyCx+4+0pAWo6oscUuoHk/8R0ZGFUdrLU+uPU
-	mo3mzxLBg9/3qF3TBeG2Q6CxlIXceUfd7HfgvhIg2CQaFvTFxYl4xlA6fTZ5ZlEdRDc3mXVxsPA
-	CGV5V7U5nwo/xmr6KH5o7YVHS9P+pL7qlNClr
-X-Gm-Gg: ASbGnctjtw9wtbzFEoWRAPrxcIKFeutujMe2VKZhJg75E+hTLymfDpJQ7D3lZ9405O/
-	rogNpNZXV4fSlHwszuNo2xb0SSRx8Ho5CEloTOKk=
-X-Google-Smtp-Source: AGHT+IGvvc8SEIVkqPspUBW11+fwBIw/V0dhqL0RuVU+1lBeUhFdbOVUzhj6j5lBdtbpP2FKdq6ekBfVUhokO3//J1Y=
-X-Received: by 2002:a05:6000:2ad:b0:385:ee59:44eb with SMTP id
- ffacd0b85a97d-3888e0bd28amr2583040f8f.33.1734100380695; Fri, 13 Dec 2024
- 06:33:00 -0800 (PST)
+	s=arc-20240116; t=1734100471; c=relaxed/simple;
+	bh=yFtZD+UPM1ePkp0Yq4a3wIk67MwG6zsMYHtpmOjHkJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hS//T6DyvJxIMGuzpMdtPBF55lLOkGhBANTnqAu3HkZdBmArjTGhWHAUMIkZFpkdvmSUd9dUXOCrYGA0IAXUlsC2Y3SOQ2F09TVwUNpWP7R1Khl8H/gw2R6ttKt3IadfNs/5g5jyTsq8hQYHz9QRZydzCHXZKDBI3lXSkb8GbUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QxOVPV0p; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734100468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P6N8JzZaMC3z4vaLYtDoojUwf2WJU58QmHrWCSEOujQ=;
+	b=QxOVPV0pvwbcSVAUt/AXtCNW8paNXnsuqpF3QCpSCyZx+iuYIPb3OC6BwxsS4ogYu5J1sS
+	pXZmAHU72VLqTP9mRDWq3m1u0VxeiBCwv6/jwmn0uqaBbAq/7HSQeZvI1XFw9vqUFOSjKs
+	umTHKN3F93NHiI72JBDFrsJ8WXTP5Qo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-Mdk_dJWPN46BYSD4GBosEQ-1; Fri,
+ 13 Dec 2024 09:34:24 -0500
+X-MC-Unique: Mdk_dJWPN46BYSD4GBosEQ-1
+X-Mimecast-MFC-AGG-ID: Mdk_dJWPN46BYSD4GBosEQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 65B7619560AF;
+	Fri, 13 Dec 2024 14:34:23 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.90.12])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9FA21195605A;
+	Fri, 13 Dec 2024 14:34:22 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Subject: [PATCH 0/6] iomap: incremental per-operation iter advance
+Date: Fri, 13 Dec 2024 09:36:04 -0500
+Message-ID: <20241213143610.1002526-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101060237.1185533-1-boqun.feng@gmail.com>
- <20241101060237.1185533-5-boqun.feng@gmail.com> <CAH5fLgjhQouU=kqVx7LET2yeWt6sKt-VO5PR5SnQ8doaG4ihuQ@mail.gmail.com>
- <Z1seogLmy5H8-hXn@boqun-archlinux>
-In-Reply-To: <Z1seogLmy5H8-hXn@boqun-archlinux>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 13 Dec 2024 15:32:47 +0100
-Message-ID: <CAH5fLgjGg8_s8imOkmPb0yLAMwD1sF1aoBZWkAy-YLNh41zCuw@mail.gmail.com>
-Subject: Re: [RFC v2 04/13] rust: sync: atomic: Add generic atomics
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	llvm@lists.linux.dev, lkmm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, 
-	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, 
-	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, 
-	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
-	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Dec 12, 2024 at 6:34=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Thu, Dec 12, 2024 at 11:57:07AM +0100, Alice Ryhl wrote:
-> [...]
-> > > diff --git a/rust/kernel/sync/atomic/generic.rs b/rust/kernel/sync/at=
-omic/generic.rs
-> > > new file mode 100644
-> > > index 000000000000..204da38e2691
-> > > --- /dev/null
-> > > +++ b/rust/kernel/sync/atomic/generic.rs
-> > > @@ -0,0 +1,253 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +//! Generic atomic primitives.
-> > > +
-> > > +use super::ops::*;
-> > > +use super::ordering::*;
-> > > +use crate::types::Opaque;
-> > > +
-> > > +/// A generic atomic variable.
-> > > +///
-> > > +/// `T` must impl [`AllowAtomic`], that is, an [`AtomicImpl`] has to=
- be chosen.
-> > > +///
-> > > +/// # Invariants
-> > > +///
-> > > +/// Doing an atomic operation while holding a reference of [`Self`] =
-won't cause a data race, this
-> > > +/// is guaranteed by the safety requirement of [`Self::from_ptr`] an=
-d the extra safety requirement
-> > > +/// of the usage on pointers returned by [`Self::as_ptr`].
-> > > +#[repr(transparent)]
-> > > +pub struct Atomic<T: AllowAtomic>(Opaque<T>);
-> > > +
-> > > +// SAFETY: `Atomic<T>` is safe to share among execution contexts bec=
-ause all accesses are atomic.
-> > > +unsafe impl<T: AllowAtomic> Sync for Atomic<T> {}
-> >
-> > Surely it should also be Send?
-> >
->
-> It's `Send` here because `Opaque<T>` is `Send` when `T` is `Send`. And
-> in patch #9, I changed the definition of `AllowAtomic`, which is not a
-> subtrait of `Send` anymore, and an `impl Send` block was added there.
->
-> > > +/// Atomics that support basic atomic operations.
-> > > +///
-> > > +/// TODO: Unless the `impl` is a `#[repr(transparet)]` new type of a=
-n existing [`AllowAtomic`], the
-> > > +/// impl block should be only done in atomic mod. And currently only=
- basic integer types can
-> > > +/// implement this trait in atomic mod.
-> >
-> > What's up with this TODO? Can't you just write an appropriate safety
-> > requirement?
-> >
->
-> Because the limited scope of types that allows atomic is an artificial
-> choice, i.e. we want to start with a limited number of types and make
-> forward progress, and the types that we don't want to support atomics
-> for now are not because of safety reasons, but more of a lack of
-> users/motivations. So I don't think this is something we should use
-> safety requirement to describe.
+Hi all,
 
-I found the wording very confusing. Could you reword it to say
-something about future possibilities?
+This is a first pass at supporting more incremental, per-operation
+iomap_iter advancement. The motivation for this is folio_batch support
+for zero range [1], where the fs provides a batch of folios to process
+in certain situations. Since the batch may not be logically contiguous,
+processing loops require a bit more flexibility than the typical offset
+based iteration.
 
-> > > +/// # Safety
-> > > +///
-> > > +/// [`Self`] must have the same size and alignment as [`Self::Repr`]=
-.
-> > > +pub unsafe trait AllowAtomic: Sized + Send + Copy {
-> > > +    /// The backing atomic implementation type.
-> > > +    type Repr: AtomicImpl;
-> > > +
-> > > +    /// Converts into a [`Self::Repr`].
-> > > +    fn into_repr(self) -> Self::Repr;
-> > > +
-> > > +    /// Converts from a [`Self::Repr`].
-> > > +    fn from_repr(repr: Self::Repr) -> Self;
-> >
-> > What do you need these methods for?
-> >
->
-> Converting a `AtomicImpl` value (currently only `i32` and `i64`) to a
-> `AllowAtomic` value without using transmute in `impl` block of
-> `Atomic<T>`. Any better idea?
+The current iteration model basically has the operation _iter() handler
+lift the pos/length wrt to the current iomap out of the iomap_iter,
+process it locally, then return the result to be stored in
+iter.processed. The latter is overloaded with error status, so the
+handler must decide whether to return error or a partial completion
+(i.e. consider a short write). iomap_iter() then uses the result to
+advance the iter and look up the next iomap.
 
-You could use transmute?
+The updated model proposed in this series is to allow an operation to
+advance the iter itself as subranges are processed and then return
+success or failure in iter.processed. Note that at least initially, this
+is implemented as an optional mode to minimize churn. This series
+converts operations that use iomap_write_begin(): buffered write,
+unshare, and zero range.
 
-Alice
+The main advantage of this is that the future folio_batch work can be
+plumbed down into the folio get path more naturally, and the
+associated codepath can advance the iter itself when appropriate rather
+than require each operation to manage the gaps in the range being
+processed. Some secondary advantages are a little less boilerplate code
+for walking ranges and more clear semantics for partial completions in
+the event of errors, etc.
+
+I'll post an RFC of the folio_batch work shortly after this to give an
+example of how this is intended to be used. Otherwise, the changes here
+actually aren't all that substantial. Patches 1-2 are prep work, patch 3
+enables incremental advances, and patches 4-6 switch over a few
+operations. Thoughts, reviews, flames appreciated.
+
+Brian
+
+v1:
+- Reworked and fixed a bunch of functional issues.
+RFC: https://lore.kernel.org/linux-fsdevel/20241125140623.20633-1-bfoster@redhat.com/
+
+[1] https://lore.kernel.org/linux-fsdevel/20241119154656.774395-1-bfoster@redhat.com/
+
+Brian Foster (6):
+  iomap: split out iomap check and reset logic from iter advance
+  iomap: factor out iomap length helper
+  iomap: support incremental iomap_iter advances
+  iomap: advance the iter directly on buffered writes
+  iomap: advance the iter directly on unshare range
+  iomap: advance the iter directly on zero range
+
+ fs/iomap/buffered-io.c | 46 ++++++++++-----------------
+ fs/iomap/iter.c        | 72 ++++++++++++++++++++++++++----------------
+ include/linux/iomap.h  | 14 ++++++--
+ 3 files changed, 73 insertions(+), 59 deletions(-)
+
+-- 
+2.47.0
+
 
