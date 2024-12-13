@@ -1,327 +1,263 @@
-Return-Path: <linux-fsdevel+bounces-37355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB95C9F1528
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 19:44:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1F39F1545
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 19:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D6E188ADC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 18:44:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37E1A7A1351
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 18:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5EE1EC006;
-	Fri, 13 Dec 2024 18:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681DB1F03D9;
+	Fri, 13 Dec 2024 18:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uo7ddSDc"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ofd7sReD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2075.outbound.protection.outlook.com [40.92.90.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22831E8855
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 18:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734115455; cv=none; b=lE0xguCksOOYO0NYuvpwYgYnaLfXcTbl8CGFbrhfr1tS8vMRmHQNMs31dc13HUYFe5UkVGN5jCjeSr4pJyturZMfWlPIHH789/hf1sLIkOHuhCkniziNdnFsIAVHMyWzSN4gLbh5iwFf9tovSYMI/Nyw/D0iPv7ra9aCYRu+Wvg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734115455; c=relaxed/simple;
-	bh=PrWUrwY7qHzY0B+KSQIoccE5/ciDSAF6bVJg//w/has=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrNSywDXsXjSrZSsxUT8bL4dZ9t45Z6pmvs3SiGIe3GrFStCro/QjJ06ZCZ0xdwKSVJ1tIXSRQgZJdb0s5umaQ+rSKXOW1B4t6il8AhZ0UwuXqd3xGYNsqckJX7SZ79MBw8eYp8dr1QcwanUwrY+crgYDe3sMuoE/V8qPo3ymGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uo7ddSDc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26AE1C4CED1;
-	Fri, 13 Dec 2024 18:44:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734115453;
-	bh=PrWUrwY7qHzY0B+KSQIoccE5/ciDSAF6bVJg//w/has=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uo7ddSDcszLidVmfoDPaz31X3jozrkOZ6TAza4qmtxenxFVVLvPiYYXxhDPr9TuBF
-	 kzXiatXzBEhG93beaLWSbikknGgzZF7ok9dHVAT88BydY1WvJJA7zXx4TycHHHdgIn
-	 iX79OnpSv8QoE6qStRgwemwcnz7VCbty2w/pOcAIbEnXa6Tu+rrXqPv5jLRTod1cqG
-	 vHbZ3lT/NqiKKH0ft20lMaXfW00kEhSZrSKiA5vPP9tEN1nJ+klwtThjoKsKi8eQ22
-	 WBkI7hMNMK5ix/sa9DxBjzDRb7jpGiOsQIIHIUVPWlzL8ScZ1vZm7Kn678a8583Tqw
-	 hl45IuAO7Fk8A==
-Date: Fri, 13 Dec 2024 19:44:09 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Ziljstra <peterz@infradead.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] fs: lockless mntns rbtree lookup
-Message-ID: <20241213-vielfach-belaufen-793f8f8d9b58@brauner>
-References: <20241213-work-mount-rbtree-lockless-v3-0-6e3cdaf9b280@kernel.org>
- <20241213-work-mount-rbtree-lockless-v3-3-6e3cdaf9b280@kernel.org>
- <df8360132897826abd1690a860ffbdc4b16cc49b.camel@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E53E1E6DDD;
+	Fri, 13 Dec 2024 18:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734115901; cv=fail; b=B0eA6OGHu0k9ZeRyimwM5NfmZ5iZj+a3npotZjz7yJu+kNkQ1nBaMX8F5lZsiW8WasEAePZksgK4cwZhD1ToySP1kmrzi8xRHhei26mp8iRFkQ3VKUMB+8GOQF1jzowKD2V9BTxtgMK0NVQIXsmHadffuQwVpGweFtsCXLzxkCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734115901; c=relaxed/simple;
+	bh=k0rRgZ16Fd6U7XMIPa17D99Do1h0PZEaf/j0A2AQ14M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AaYJb45bX8YOswrwG4dqxlc+KoDMOFdooOrTIas+Levoi2OFJF8ilJBiGSjWcN0W/q0ELqnmrHMvr5qC0fVoItN5rXOhFeI3xVQ2/peWDIWYsW3ZLlNJezKMnaKUrXHg4DTVTeGM/FSSQQnZTqyHX30D+PCIT+67lvFcRKjkl3s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ofd7sReD; arc=fail smtp.client-ip=40.92.90.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MV9L6Htq3o9r/iEByqFiT6xOJaQVie8L1dowQKuf+5GGq04sg+fNW52pJcgRTVyzRUJaSPCpVPu5pwqSNP0vrJ2beYljxk6f1/zy4OCcqRV3VBMLM9loYCT8pH/03Q8OTr6E0u7HNi6mz+OmzDGtBgE28cYKWUZjSPuf6OE7hu21TveMZQkkutU07AlSn+8xFX80Mdq39U/UpDNFVkhuSD9mZ63r0CjSqD163DB6+hv5nkN+z9FQeWPLh0HUa0ONH0wxRgsQ273eNLqtLNlzQt7N2Ivz0Wr15iLJ7zCiL6vKKKuS5GS5wyZyUDliat2RKXfdvbTwlBF0QSdbDVsNMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+UG8+wY7d5xU4r3YYWWnhhLuF+jgdRJvz40jLXTijnc=;
+ b=uVqw5CU+irO6ZErB72J0u3jzlYkSMvR05dCbDewJjQm/Z0gEgJ8GpFK2X8XjXf2gvoy9OEl+U3H+NlOQtuUYDiHIRilNMwgvegy5/1mrecFRO/H1dYn5OWK+0mcjEBIoLlQnrr8z28OpuB9IArEjgu2YRVri1yd63+6K/m824iMNx65kHETNbC/v2gfenGaOn3sLHG7ZJVXTa+co579RaGChbNoRqqtAgelG3rNmLTfJ+N79SxsGv3Defk/xLAriKxQW6ER700fRuDyNz5/OcnYLLN8/CzmxRcolRCcU82TEKBQi+QKM0tVZE1/X0ZiRhnIvAJIUGCS08vIKq8CIJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+UG8+wY7d5xU4r3YYWWnhhLuF+jgdRJvz40jLXTijnc=;
+ b=ofd7sReDJKgDPt8aAAxzAo1pKeIrkDHe3DVtD0A1eqI005OVR4twnmzAZNN0IIM8XFppVHXHGUqWp0iROgb9P1HGgTU+YpKM57OO/rnopTssx3Oe+IKfuaJ/YIacsBmwy7GIbA/JRvQfPYJf1cTLHaogdCcGE32Ci+3N82EE4GsjJaTsWIcpHfBR59Hsac8sEbhJ7KfkbSkWxAfZ4HfBWdiWxSfyzvnpx7eRY3boZ63keNh3YKZVTz/okC4TH6TaZxRxqBLd8LabeHv46gAOGeNyGVfkFDebyV/IQrLbvq44gO1Yb2D0NIJs30V2d6atFJy9TI3FlJYsdeGQ1BUzlg==
+Received: from DB7PR03MB5081.eurprd03.prod.outlook.com (2603:10a6:10:7f::32)
+ by PAWPR03MB10133.eurprd03.prod.outlook.com (2603:10a6:102:330::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Fri, 13 Dec
+ 2024 18:51:36 +0000
+Received: from DB7PR03MB5081.eurprd03.prod.outlook.com
+ ([fe80::7b9e:44ca:540a:be55]) by DB7PR03MB5081.eurprd03.prod.outlook.com
+ ([fe80::7b9e:44ca:540a:be55%4]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 18:51:36 +0000
+Message-ID:
+ <DB7PR03MB508153EF2FECDC66FC5325BF99382@DB7PR03MB5081.eurprd03.prod.outlook.com>
+Date: Fri, 13 Dec 2024 18:51:35 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v5 4/5] bpf: Make fs kfuncs available for SYSCALL
+ and TRACING program types
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50804FA149F08D34A095BA28993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <20241210-eckig-april-9ffc098f193b@brauner>
+ <CAADnVQKdBrX6pSJrgBY0SvFZQLpu+CMSshwD=21NdFaoAwW_eg@mail.gmail.com>
+ <AM6PR03MB508072B5D29C8BD433AD186E993E2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQK3toLsVLVYjGVXEuQGWUKF98OG9ogAQbJ4UeER42ZyGg@mail.gmail.com>
+Content-Language: en-US
+From: Juntong Deng <juntong.deng@outlook.com>
+In-Reply-To: <CAADnVQK3toLsVLVYjGVXEuQGWUKF98OG9ogAQbJ4UeER42ZyGg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO6P265CA0004.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:339::20) To DB7PR03MB5081.eurprd03.prod.outlook.com
+ (2603:10a6:10:7f::32)
+X-Microsoft-Original-Message-ID:
+ <efa8397a-d142-46b7-9d72-750bd3928344@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <df8360132897826abd1690a860ffbdc4b16cc49b.camel@kernel.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB7PR03MB5081:EE_|PAWPR03MB10133:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb7477bb-ed92-47eb-40e5-08dd1ba72ba1
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|19110799003|461199028|5072599009|8060799006|6090799003|10035399004|4302099013|3412199025|440099028|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?emVVeDlockZVZXYvMC83UkhTdlcxdVZzNU9tSU84cXFQK1N3cFhsSlliSmo5?=
+ =?utf-8?B?QWVFVVl5ZVBudnVidDU1Y1hJcldRT0Z1ZDlIdDVHSEpDTVN0S1ArL2Fvam53?=
+ =?utf-8?B?MVUxdmUwb3M3UjJkaERMWFBpUEZsWTNoQitqaHdNcVJQY2pleDFpRG1adTZv?=
+ =?utf-8?B?K0tPSFpDTk1pMFdWeTNxcTFmSmRQZHM5MTkrcE9iNUdOKzE2ZFNJcmxQUGJ6?=
+ =?utf-8?B?VmZ2bHNMTnJsdmtrbENKeWFScU93a3pBZ0NmZHBGR1NxL2NHT3lWUEZDVXZq?=
+ =?utf-8?B?N3lTSXZLTm0za01VVHdxRDBaekVPeFFSRmxpMEk0eDF6VEUxOUF2YktkeWhF?=
+ =?utf-8?B?SXRQL0VlY3RCRkhDdHh4Q2x6Z0RYMUd4aHdNZyt1bUwzaDdyOUpUcEZWck44?=
+ =?utf-8?B?aC9RMW16cnlxWFFDdkd2VXMrNU05SkJXSUdjRk1FbHpjUzd0RDkzbnBtK3VR?=
+ =?utf-8?B?bm5xZDhBYlNUTEc4UjgyKzRVbGQ1eWdsakdCdXdZSmgyR0hLbHN2KzRBVmx3?=
+ =?utf-8?B?d3JDK1NHQUJ6WTlPRlJIOUYzdUpzOXYvRGZVdDNnck1LYUhTcGIwL3JIODNL?=
+ =?utf-8?B?TXNWYVFYa2ZPZWlsNWYwRTZ1STNVRW56V1cxc0Vhc0tqaHlWRDBPT0tzam1w?=
+ =?utf-8?B?Mk9NaSt5SmwrWDZoaS9rM0J4VnFhU25ITHVmZ3Z3RkZJcXZHZUUrS2hOcCtp?=
+ =?utf-8?B?ZUNkaklPRFVGV1FzKzRJc0YreDdvaGZheFRCWjlvYU9hZ3NSQVBXYWZxYmlp?=
+ =?utf-8?B?SmFiUHdDSEF1c0NvODNEU0s0WlRBalp6dURzZnRUNlhGM0czcnBlY1FCRnhn?=
+ =?utf-8?B?WGo2MjdxdTc5b2d6Z041VVFBY3Z3Z05tanYrTERId0xwZGFRMzl1dkxxV0s0?=
+ =?utf-8?B?MnNQbHhCdEJRWGpCQWtLcFdSVEdWdkx5UjhUdVZzZVZMNjFoOXBkWm5UTXBP?=
+ =?utf-8?B?MjVXbWRWYkNhbmQ1My9DQ3F3YlRnakV0MXBxK3pNV2dWNGVzeEtxRWNPeW9o?=
+ =?utf-8?B?MG1VeDMwS2tYYXVSakQxemZFcnBGR3pkdWs3Mzlrb0NYSmZFaTJXTGYrTHhM?=
+ =?utf-8?B?dDZSMkVQSGRWZ28yT28rVTlNYmJ5WVg0WmhTS1hMZ1ZUQXdJOXBEc2k1ajJK?=
+ =?utf-8?B?WGNKalZBT3lIajRGSWxwNVI2QVluMXl2Wmhma2FkMVV3Y0ROUkNsaVo4ZGZq?=
+ =?utf-8?B?RWdlcFBmODN6RUV5RTNPZFRFKy80Q2p0dnRROEgxdnZUcXc2ZFJGQlp6OEc5?=
+ =?utf-8?B?STFsYTh4YXlkOVI2RFJWZ3p0Um1ObVdHeGtIK3JNbTdLQ0xzb0FxQ0pmSUR2?=
+ =?utf-8?B?RWdvWWlOOEIzdzhUMTcraWE3UDBrcGk3WGZnVXRCTmtsUlR0d1Zkd0ZTTnY0?=
+ =?utf-8?B?UE1ZbUJnQ1F5N2lrbEVOMFZsYThwNGNrZ09vSnk1Nk5SRFVpR2FEVFA4ZjFL?=
+ =?utf-8?B?OUVROFI4TEtMb2lDTWlTVlJEMEV5dmNVVm1kb0Qra1lMeWFlMU14TEExZlpF?=
+ =?utf-8?B?UVM2WlE1c3hnVFJYa2NKUHZNQlBlQ1Z4Tmpad2hQSlZqRHZXVExOYWlhaU1S?=
+ =?utf-8?Q?D13Q4gur37tf49HXgrygtvidw=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NWFVcWpxUmhvN1FrRWJ6Y2V3VWFEVFhGK2FmV0tUNUFETnA5TU1XN1dsdVdF?=
+ =?utf-8?B?N2UxdXZRLytURUZCM2NNc0RhT0htM0xvK3NoSkcwUjFEN3ZSdFl0eEZocytJ?=
+ =?utf-8?B?WUZZdWk0SUlsdXZQNVZFbTIyMVNYeHpDTk1tUVdSbWszRDdzYWF6TTVqQmx4?=
+ =?utf-8?B?blJ6VEFZdXhNNWZHYkJxL1ZQZGRYM1orM0ZjMC9LQ05JZW9xUUFGZ1NxU1cz?=
+ =?utf-8?B?VVd2TE5yNXNPTExPK1RJbis2LzZ3cFFlb1FsUXd3RjZid3BETHdwQnpvSFpU?=
+ =?utf-8?B?SWNZWVAyMXNWYWswYXJNamI4OHdvWEtQVDZjWlJuUFBXTXhXazlYYTFvSTV6?=
+ =?utf-8?B?NjBWQXBkcTA2eU5vczVJN21Bd0FpUGNBd0R5MkZqYWkrSGhqbWthSVRRcnpj?=
+ =?utf-8?B?Uzl6NzlVMVlaVnpXMjAyYVVtYi9wN294YVBIaVllQk4ySTV2OGR3RHZtYnV2?=
+ =?utf-8?B?S3UrS3VtUHZRWVNyVExLaVRqMjcrZ2JkUDJPUy9qazhBY1dkNnQzaFJ5MG95?=
+ =?utf-8?B?aEtmUUxIWEF5cVkzU2VDcithU0hTYzVxaE1Kak85OTV6Uk9GZG1SQkpBdTJH?=
+ =?utf-8?B?bE9WSUt5QWlXdUdpc1JIMU9lbUJBb0ZzVXN2SDZlMS9EVjRlcTVZZG0vNnAz?=
+ =?utf-8?B?NkJabjlWeGdmTXFDbC8ydTFRemJwck9Fb3ZQNjIwbG1YMDdVZFBIUW5FZXpQ?=
+ =?utf-8?B?Y3RFbVVabjJvWmFBQW9FZnhTSTFQbFd6QnNOOHc0TFFQbVErK1RkbHNYWUIy?=
+ =?utf-8?B?VmgyME9TVkZ4MjdVdmxUdncxZzhSb25CbHZ5cFFUVmZnSFdIazR4T1VjdDBj?=
+ =?utf-8?B?SzVhZndRV0h1WGc4MmJJTC9NeThCVlB5VlAyTStGUFYzV3RDN2xSZCs5TlRP?=
+ =?utf-8?B?ZFBncFN5RWZsNjFBYlJ2aFp2THM2UDlqQTNFU0dGUFdINzBJRFY1aFBiMUhl?=
+ =?utf-8?B?L1dVUzM0WnZ5T0lTdjZxVHFCbjFiQ0t4MkJzaTFGcjlLMnU3T0U1R3FPNGMz?=
+ =?utf-8?B?eEVWSFZoeUQvVmUway9NT1NlQU1yRElBZ3F1WjcxSDlVVTlES1FGamNiNkMx?=
+ =?utf-8?B?dUV5OElHQ0FYcXFmNlpUWkhPdzMxNktMTENrVk5tTE92N1dVVEszWDFZNVpt?=
+ =?utf-8?B?WkFhenUzaWxTK3hQaHRLUFNTU1ZLMHI2TTJ6T0p4QTljS1JjR3lJZ2xaemZ4?=
+ =?utf-8?B?Q0NXUm9TK0pZYWY5aDlKWjR0V2ZnSnBIZFh5TXFZTWEyRDZDdnBVaVJXM3BQ?=
+ =?utf-8?B?YmhLYnc1VDNHeThOYStFQUtFVWh0MjlpeGVEd0lhaEJKSUNnZUFRSzZkUUdk?=
+ =?utf-8?B?QTdxdlBhaEg5bXVWTGxJTHNDY0NFUHFCME8xc09ydzVET2xRNjlxN0piQXRk?=
+ =?utf-8?B?WjJJNkU3cVFkbVJIL3hrak9nNG1rNUJvbGNZZGJNVnk2UHRqT1RjOWlNNFpJ?=
+ =?utf-8?B?Z2wrVXB0SWFJdTAzVzFoREswcFBQMjhkWnFwQ3lsdXBzRWcvYnkwQVVkbFBW?=
+ =?utf-8?B?Wk9pZWVpVDBNVkNrRzhSQUlNRkgzcFBoc1dJVElubyswNSt0dnBQQ2N4bXJJ?=
+ =?utf-8?B?UlZwOE1lRzJIRW9NRE5xMVZxNjVjQldMM2ZYQkgxdHZUZC9sa0M1YXJIdjBi?=
+ =?utf-8?B?blZYRVVCWFNGNG01N1hqYWEyeWQ0T0R4QXVjVHRQOE9nWmo1d2QvNEQvd1RR?=
+ =?utf-8?Q?9wZFlfD8kVFGzudLUtCk?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb7477bb-ed92-47eb-40e5-08dd1ba72ba1
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB5081.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 18:51:36.4215
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR03MB10133
 
-On Fri, Dec 13, 2024 at 09:11:41AM -0500, Jeff Layton wrote:
-> On Fri, 2024-12-13 at 00:03 +0100, Christian Brauner wrote:
-> > Currently we use a read-write lock but for the simple search case we can
-> > make this lockless. Creating a new mount namespace is a rather rare
-> > event compared with querying mounts in a foreign mount namespace. Once
-> > this is picked up by e.g., systemd to list mounts in another mount in
-> > it's isolated services or in containers this will be used a lot so this
-> > seems worthwhile doing.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/mount.h     |   5 ++-
-> >  fs/namespace.c | 119 +++++++++++++++++++++++++++++++++++----------------------
-> >  2 files changed, 77 insertions(+), 47 deletions(-)
-> > 
-> > diff --git a/fs/mount.h b/fs/mount.h
-> > index 185fc56afc13338f8185fe818051444d540cbd5b..36ead0e45e8aa7614c00001102563a711d9dae6e 100644
-> > --- a/fs/mount.h
-> > +++ b/fs/mount.h
-> > @@ -12,7 +12,10 @@ struct mnt_namespace {
-> >  	struct user_namespace	*user_ns;
-> >  	struct ucounts		*ucounts;
-> >  	u64			seq;	/* Sequence number to prevent loops */
-> > -	wait_queue_head_t poll;
-> > +	union {
-> > +		wait_queue_head_t	poll;
-> > +		struct rcu_head		mnt_ns_rcu;
-> > +	};
-> >  	u64 event;
-> >  	unsigned int		nr_mounts; /* # of mounts in the namespace */
-> >  	unsigned int		pending_mounts;
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 10fa18dd66018fadfdc9d18c59a851eed7bd55ad..52adee787eb1b6ee8831705b2b121854c3370fb3 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -79,6 +79,8 @@ static DECLARE_RWSEM(namespace_sem);
-> >  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> >  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> >  static DEFINE_RWLOCK(mnt_ns_tree_lock);
-> > +static seqcount_rwlock_t mnt_ns_tree_seqcount = SEQCNT_RWLOCK_ZERO(mnt_ns_tree_seqcount, &mnt_ns_tree_lock);
-> > +
-> >  static struct rb_root mnt_ns_tree = RB_ROOT; /* protected by mnt_ns_tree_lock */
-> >  
-> >  struct mount_kattr {
-> > @@ -105,17 +107,6 @@ EXPORT_SYMBOL_GPL(fs_kobj);
-> >   */
-> >  __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
-> >  
-> > -static int mnt_ns_cmp(u64 seq, const struct mnt_namespace *ns)
-> > -{
-> > -	u64 seq_b = ns->seq;
-> > -
-> > -	if (seq < seq_b)
-> > -		return -1;
-> > -	if (seq > seq_b)
-> > -		return 1;
-> > -	return 0;
-> > -}
-> > -
-> >  static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
-> >  {
-> >  	if (!node)
-> > @@ -123,19 +114,41 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
-> >  	return rb_entry(node, struct mnt_namespace, mnt_ns_tree_node);
-> >  }
-> >  
-> > -static bool mnt_ns_less(struct rb_node *a, const struct rb_node *b)
-> > +static int mnt_ns_cmp(struct rb_node *a, const struct rb_node *b)
-> >  {
-> >  	struct mnt_namespace *ns_a = node_to_mnt_ns(a);
-> >  	struct mnt_namespace *ns_b = node_to_mnt_ns(b);
-> >  	u64 seq_a = ns_a->seq;
-> > +	u64 seq_b = ns_b->seq;
-> > +
-> > +	if (seq_a < seq_b)
-> > +		return -1;
-> > +	if (seq_a > seq_b)
-> > +		return 1;
-> > +	return 0;
-> > +}
-> >  
-> > -	return mnt_ns_cmp(seq_a, ns_b) < 0;
-> > +static inline void mnt_ns_tree_write_lock(void)
-> > +{
-> > +	write_lock(&mnt_ns_tree_lock);
-> > +	write_seqcount_begin(&mnt_ns_tree_seqcount);
-> > +}
-> > +
-> > +static inline void mnt_ns_tree_write_unlock(void)
-> > +{
-> > +	write_seqcount_end(&mnt_ns_tree_seqcount);
-> > +	write_unlock(&mnt_ns_tree_lock);
-> >  }
-> >  
-> >  static void mnt_ns_tree_add(struct mnt_namespace *ns)
-> >  {
-> > -	guard(write_lock)(&mnt_ns_tree_lock);
-> > -	rb_add(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_less);
-> > +	struct rb_node *node;
-> > +
-> > +	mnt_ns_tree_write_lock();
-> > +	node = rb_find_add_rcu(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_cmp);
-> > +	mnt_ns_tree_write_unlock();
-> > +
-> > +	WARN_ON_ONCE(node);
-> >  }
-> >  
-> >  static void mnt_ns_release(struct mnt_namespace *ns)
-> > @@ -150,41 +163,36 @@ static void mnt_ns_release(struct mnt_namespace *ns)
-> >  }
-> >  DEFINE_FREE(mnt_ns_release, struct mnt_namespace *, if (_T) mnt_ns_release(_T))
-> >  
-> > +static void mnt_ns_release_rcu(struct rcu_head *rcu)
-> > +{
-> > +	struct mnt_namespace *mnt_ns;
-> > +
-> > +	mnt_ns = container_of(rcu, struct mnt_namespace, mnt_ns_rcu);
-> > +	mnt_ns_release(mnt_ns);
-> > +}
-> > +
-> >  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
-> >  {
-> >  	/* remove from global mount namespace list */
-> >  	if (!is_anon_ns(ns)) {
-> > -		guard(write_lock)(&mnt_ns_tree_lock);
-> > +		mnt_ns_tree_write_lock();
-> >  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
-> > +		mnt_ns_tree_write_unlock();
-> >  	}
-> >  
-> > -	mnt_ns_release(ns);
-> > +	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
-> >  }
-> >  
-> > -/*
-> > - * Returns the mount namespace which either has the specified id, or has the
-> > - * next smallest id afer the specified one.
-> > - */
-> > -static struct mnt_namespace *mnt_ns_find_id_at(u64 mnt_ns_id)
-> > +static int mnt_ns_find(const void *key, const struct rb_node *node)
-> >  {
-> > -	struct rb_node *node = mnt_ns_tree.rb_node;
-> > -	struct mnt_namespace *ret = NULL;
-> > -
-> > -	lockdep_assert_held(&mnt_ns_tree_lock);
-> > -
-> > -	while (node) {
-> > -		struct mnt_namespace *n = node_to_mnt_ns(node);
-> > +	const u64 mnt_ns_id = *(u64 *)key;
-> > +	const struct mnt_namespace *ns = node_to_mnt_ns(node);
-> >  
-> > -		if (mnt_ns_id <= n->seq) {
-> > -			ret = node_to_mnt_ns(node);
-> > -			if (mnt_ns_id == n->seq)
-> > -				break;
-> > -			node = node->rb_left;
-> > -		} else {
-> > -			node = node->rb_right;
-> > -		}
-> > -	}
-> > -	return ret;
-> > +	if (mnt_ns_id < ns->seq)
-> > +		return -1;
-> > +	if (mnt_ns_id > ns->seq)
-> > +		return 1;
-> > +	return 0;
-> >  }
-> >  
-> >  /*
-> > @@ -194,18 +202,37 @@ static struct mnt_namespace *mnt_ns_find_id_at(u64 mnt_ns_id)
-> >   * namespace the @namespace_sem must first be acquired. If the namespace has
-> >   * already shut down before acquiring @namespace_sem, {list,stat}mount() will
-> >   * see that the mount rbtree of the namespace is empty.
-> > + *
-> > + * Note the lookup is lockless protected by a sequence counter. We only
-> > + * need to guard against false negatives as false positives aren't
-> > + * possible. So if we didn't find a mount namespace and the sequence
-> > + * counter has changed we need to retry. If the sequence counter is
-> > + * still the same we know the search actually failed.
-> >   */
-> >  static struct mnt_namespace *lookup_mnt_ns(u64 mnt_ns_id)
-> >  {
-> > -       struct mnt_namespace *ns;
-> > +	struct mnt_namespace *ns;
-> > +	struct rb_node *node;
-> > +	unsigned int seq;
-> > +
-> > +	guard(rcu)();
-> > +	do {
-> > +		seq = read_seqcount_begin(&mnt_ns_tree_seqcount);
-> > +		node = rb_find_rcu(&mnt_ns_id, &mnt_ns_tree, mnt_ns_find);
-> > +		if (node)
-> > +			break;
-> > +	} while (read_seqcount_retry(&mnt_ns_tree_seqcount, seq));
-> >  
-> > -       guard(read_lock)(&mnt_ns_tree_lock);
-> > -       ns = mnt_ns_find_id_at(mnt_ns_id);
-> > -       if (!ns || ns->seq != mnt_ns_id)
-> > -               return NULL;
-> > +	if (!node)
-> > +		return NULL;
-> >  
-> > -       refcount_inc(&ns->passive);
-> > -       return ns;
-> > +	/*
-> > +	 * The last reference count is put with RCU delay so we can
-> > +	 * unconditonally acquire a reference here.
-> > +	 */
-> > +	ns = node_to_mnt_ns(node);
-> > +	refcount_inc(&ns->passive);
+On 2024/12/12 00:53, Alexei Starovoitov wrote:
+> On Wed, Dec 11, 2024 at 1:29 PM Juntong Deng <juntong.deng@outlook.com> wrote:
+>>
+>> On 2024/12/10 18:58, Alexei Starovoitov wrote:
+>>> On Tue, Dec 10, 2024 at 6:43 AM Christian Brauner <brauner@kernel.org> wrote:
+>>>>
+>>>> On Tue, Dec 10, 2024 at 02:03:53PM +0000, Juntong Deng wrote:
+>>>>> Currently fs kfuncs are only available for LSM program type, but fs
+>>>>> kfuncs are generic and useful for scenarios other than LSM.
+>>>>>
+>>>>> This patch makes fs kfuncs available for SYSCALL and TRACING
+>>>>> program types.
+>>>>
+>>>> I would like a detailed explanation from the maintainers what it means
+>>>> to make this available to SYSCALL program types, please.
+>>>
+>>> Sigh.
+>>> This is obviously not safe from tracing progs.
+>>>
+>>>   From BPF_PROG_TYPE_SYSCALL these kfuncs should be safe to use,
+>>> since those progs are not attached to anything.
+>>> Such progs can only be executed via sys_bpf syscall prog_run command.
+>>> They're sleepable, preemptable, faultable, in task ctx.
+>>>
+>>> But I'm not sure what's the value of enabling these kfuncs for
+>>> BPF_PROG_TYPE_SYSCALL.
+>>
+>> Thanks for your reply.
+>>
+>> Song said here that we need some of these kfuncs to be available for
+>> tracing functions [0].
+>>
+>> If Song saw this email, could you please join the discussion?
+>>
+>> [0]:
+>> https://lore.kernel.org/bpf/CAPhsuW6ud21v2xz8iSXf=CiDL+R_zpQ+p8isSTMTw=EiJQtRSw@mail.gmail.com/
+>>
+>> For BPF_PROG_TYPE_SYSCALL, I think BPF_PROG_TYPE_SYSCALL has now
+>> exceeded its original designed purpose and has become a more general
+>> program type.
+>>
+>> Currently BPF_PROG_TYPE_SYSCALL is widely used in HID drivers, and there
+>> are some use cases in sched-ext (CRIB is also a use case, although still
+>> in infancy).
 > 
-> I'm a little uneasy with the unconditional refcount_inc() here. It
-> seems quite possible that this could to a 0->1 transition here. You may
-> be right that that technically won't cause a problem with the rcu lock
-> held, but at the very least, that will cause a refcount warning to pop.
+> hid switched to use struct_ops prog type.
+> I believe syscall prog type in hid is a legacy code.
+> Those still present might be leftovers for older kernels.
 > 
-> Maybe this should be a refcount_inc_not_zero() and then you just return
-> NULL if the increment doesn't occur?
-
-So this shouldn't be possible (and Paul is on the thread and can tell me
-if I'm wrong) because:
-
-call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
--> mnt_ns_release_rcu()
-   -> mnt_ns_release()
-      -> refcount_dec_and_test()
-
-Which means that decrements are RCU delayed. Any reader must walk the
-list holding the RCU lock. If they find the mount namespace still on the
-list then mnt_ns_release() will be deferred until they are done.
-
-In order for what you describe to happen a reader must find that mount
-namespace still in the list or rbtree and mnt_ns_release() is called
-directly.
-
-But afaict that doesn't happen. mnt_ns_release() is only called directly
-when the mount namespace has never been on any of the lists.
-
-refcount_inc() will already WARN() if the previous value was 0 and
-splat. If we use refcount_inc_not_zero() we're adding additional memory
-barriers when we simply don't need them.
-
-But if that's important to you though than I'd rather switch the passive
-count to atomic_t and use atomic_dec_and_test() in mnt_ns_release() and
-then use similar logic as I used for file_ref_inc(): 
-
-unsigned long prior = atomic_fetch_inc_relaxed(&ns->passive);
-WARN_ONCE(!prior, "increment from zero UAF condition present");
-
-This would give us the opportunity to catch a "shouldn't happen
-condition". But using refcount_inc_not_zero() would e.g., confuse me a
-few months down the line (Yes, we could probably add a comment.).
-
+> sched-ext is struct_ops only. No syscall progs there.
 > 
-> > +	return ns;
-> >  }
-> >  
-> >  static inline void lock_mount_hash(void)
-> > 
+
+I saw some on Github [0], sorry, yes they are not in the Linux tree.
+
+[0]: 
+https://github.com/search?q=repo%3Asched-ext%2Fscx%20SEC(%22syscall%22)&type=code
+
+>> As BPF_PROG_TYPE_SYSCALL becomes more general, it would be valuable to
+>> make more kfuncs available for BPF_PROG_TYPE_SYSCALL.
 > 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+> Maybe. I still don't understand how it helps CRIB goal.
+
+For CRIB goals, the program type is not important. What is important is
+that CRIB bpf programs are able to call the required kfuncs, and that
+CRIB ebpf programs can be executed from userspace.
+
+In our previous discussion, the conclusion was that we do not need a
+separate CRIB program type [1].
+
+BPF_PROG_TYPE_SYSCALL can be executed from userspace via prog_run, which
+fits the CRIB use case of calling the ebpf program from userspace to get
+process information.
+
+So BPF_PROG_TYPE_SYSCALL becomes an option.
+
+[1]: 
+https://lore.kernel.org/bpf/etzm4h5qm2jhgi6d4pevooy2sebrvgb3lsa67ym4x7zbh5bgnj@feoli4hj22so/
+
+In fs/bpf_fs_kfuncs.c, CRIB currently needs bpf_fget_task (dump files
+opened by the process), bpf_put_file, and bpf_get_task_exe_file.
+
+So I would like these kfuncs to be available for BPF_PROG_TYPE_SYSCALL.
+
+bpf_get_dentry_xattr, bpf_get_file_xattr, and bpf_path_d_path have
+nothing to do with CRIB, but they are all in bpf_fs_kfunc_set_ids.
+
+Should we make bpf_fs_kfunc_set_ids available to BPF_PROG_TYPE_SYSCALL
+as a whole? Or create a separate set? Maybe we can discuss.
+
 
