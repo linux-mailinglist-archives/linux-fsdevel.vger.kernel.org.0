@@ -1,134 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-37343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603579F11E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 17:18:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DB79F12BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 17:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D2A188B7FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D2B16AB16
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F261E22FC;
-	Fri, 13 Dec 2024 16:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF4D1EB9EF;
+	Fri, 13 Dec 2024 16:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="vNC8EzyC"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EsiplEy7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [178.154.239.148])
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B877F139587
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 16:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECFC1E47B7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 16:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734106704; cv=none; b=iDe0LqFK0D/2Mz7Ep9DhXpNgmvxoz6AQ2nbbUQE6t1ASam/DcFmM9/iA3d5QWfl39fjKlmcM3xPA4CWeXPlXQPF7uINi5M9ejAHBFZC5BVvScaZHEoDgONGTQ/g9Xjd/jgfJY5fzZK9najEdleS8EGMbVg1P7q7hUm/S3QoAwqM=
+	t=1734108470; cv=none; b=HbIyCDydjwFlPsVlLjYdT1e+cWp9bPKVFl7/giyl9OAtpsNrn03a1N0JSjee9zoT8cXTCo89hPcgVtGRvvbFoNXWJ/0bDr0IDFJhtEXeL8vu8DIB4J8raB57fIfeFhOJ3kRbVpI562gKuG32zSE3Rgg5rD3x8CA6c2VD+kPsl4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734106704; c=relaxed/simple;
-	bh=kicQe2L5Q8NeE2fQw+OVzFPOXZrsKZ1DsXdynfG9FyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FNlC9SudbePVsu5riDC5fNph+XDTvaPyQLDbDz47SQFTB/iAisukT6FnHNdlz+bULnVeuOwSQ+LM8MDY0IFhDFXGFwulh/Y8rLOEhTxJ7WyqxblLlR8PZBm27Fyq8B5CHUrBQH0lNie8rMmTpROMAcj4RYRyA20jMR82tteC6kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=vNC8EzyC; arc=none smtp.client-ip=178.154.239.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2d9f:0:640:f6ce:0])
-	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 1042F60CFC;
-	Fri, 13 Dec 2024 19:18:12 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 9IPUCn2OqGk0-tOJDaYDu;
-	Fri, 13 Dec 2024 19:18:11 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1734106691; bh=HAbuCWYNac8PsFY8xupWydLBNTlMKG7cPREROmn5G7k=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=vNC8EzyCU8xUMcVn63ndTQatA/8OeuPsXX+fmff3qseNy9T9ZogxO4C6CpknTq6Xs
-	 UQNdsvTwLdcRTj1crND/g0Ax17W3bM3sZUVbR/wjjcxwaVP3pcu0onHfEWPK7Mnxhd
-	 R0phpYN6NJfStg+UvRTInAChxgXYlN2w6Wf2RiXk=
-Authentication-Results: mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>
-Cc: Yuezhang Mo <yuezhang.mo@sony.com>,
-	linux-fsdevel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
-Subject: [PATCH] exfat: bail out on -EIO in exfat_find_empty_entry()
-Date: Fri, 13 Dec 2024 19:17:57 +0300
-Message-ID: <20241213161757.1928209-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734108470; c=relaxed/simple;
+	bh=8Ztqm8jQeFwcJNXZSmEnGI4VLWCTSJ8GsmHsO24wx7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=moWvcWjipMURK++nwFKFu64QyvK28PTHKWK+ywWhPNSeiWLncxzmNofOk5QHjMXvjIcG4xyQUT7W7FkIrQqOswX9TRPdQz3M5prDJ5iMTAQ3YZcCPP7LShK9T5oxzKYyK9aJvFc3Z1LoTUntWiwPFzficZ/jYYrPVHRf0RKw/Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EsiplEy7; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 13 Dec 2024 08:47:38 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734108464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LKbanjR8vOBdA+hsZLiBqN3TO/TNUVm/rbUUnKN4CJU=;
+	b=EsiplEy7RPANZWqFzt3WlFaXcQl1ND/87bm5CDu1XqRLANcT/h9VVEaG20RY17p3ac5v0/
+	yHR1hP+rVuo1kWzfLwFQWbuLlmhg/Ixkc0XERtNU6tFxHnALH1zqv4g0eBFeRus4fNTwRO
+	vt0cO/CY4qi612HFpDSa0MdrZ/8V3co=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Miklos Szeredi <miklos@szeredi.hu>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
+	linux-mm@kvack.org, kernel-team@meta.com
+Subject: Re: [PATCH v6 0/5] fuse: remove temp page copies in writeback
+Message-ID: <qbbwxtqrlxhdkesrruwgfnu3qyzi6b6jhahxhbvn56kpiw5i4v@dhvdhlslbhcc>
+References: <20241122232359.429647-1-joannelkoong@gmail.com>
+ <CAJfpegtSif7e=OrREJeVb_azg6+tRpuOPRQNMvQ9jLuXaTtxHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtSif7e=OrREJeVb_azg6+tRpuOPRQNMvQ9jLuXaTtxHw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Syzbot has reported the following KASAN splat:
++Andrew
 
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-...
-Call Trace:
- <TASK>
- ...
- ? exfat_get_dentry_cached+0xb6/0x1b0
- ? exfat_get_dentry_cached+0x11a/0x1b0
- ? exfat_get_dentry_cached+0xb6/0x1b0
- exfat_init_ext_entry+0x1b6/0x3b0
- exfat_add_entry+0x321/0x7a0
- ? __pfx_exfat_add_entry+0x10/0x10
- ? __lock_acquire+0x15a9/0x3c40
- ? __pfx___lock_acquire+0x10/0x10
- ? _raw_spin_unlock_irqrestore+0x52/0x80
- ? do_raw_spin_unlock+0x53/0x230
- ? _raw_spin_unlock+0x28/0x50
- ? exfat_set_vol_flags+0x23f/0x2f0
- exfat_create+0x1cf/0x5c0
- ...
- path_openat+0x904/0x2d60
- ? __pfx_path_openat+0x10/0x10
- ? __pfx___lock_acquire+0x10/0x10
- ? lock_acquire.part.0+0x11b/0x380
- ? find_held_lock+0x2d/0x110
- do_filp_open+0x20c/0x470
- ? __pfx_do_filp_open+0x10/0x10
- ? find_held_lock+0x2d/0x110
- ? _raw_spin_unlock+0x28/0x50
- ? alloc_fd+0x41f/0x760
- do_sys_openat2+0x17a/0x1e0
- ? __pfx_do_sys_openat2+0x10/0x10
- ? __pfx_sigprocmask+0x10/0x10
- __x64_sys_creat+0xcd/0x120
- ...
-</TASK>
+On Fri, Dec 13, 2024 at 12:52:44PM +0100, Miklos Szeredi wrote:
+> On Sat, 23 Nov 2024 at 00:24, Joanne Koong <joannelkoong@gmail.com> wrote:
+> >
+> > The purpose of this patchset is to help make writeback-cache write
+> > performance in FUSE filesystems as fast as possible.
+> >
+> > In the current FUSE writeback design (see commit 3be5a52b30aa
+> > ("fuse: support writable mmap"))), a temp page is allocated for every dirty
+> > page to be written back, the contents of the dirty page are copied over to the
+> > temp page, and the temp page gets handed to the server to write back. This is
+> > done so that writeback may be immediately cleared on the dirty page, and this
+> > in turn is done for two reasons:
+> > a) in order to mitigate the following deadlock scenario that may arise if
+> > reclaim waits on writeback on the dirty page to complete (more details can be
+> > found in this thread [1]):
+> > * single-threaded FUSE server is in the middle of handling a request
+> >   that needs a memory allocation
+> > * memory allocation triggers direct reclaim
+> > * direct reclaim waits on a folio under writeback
+> > * the FUSE server can't write back the folio since it's stuck in
+> >   direct reclaim
+> > b) in order to unblock internal (eg sync, page compaction) waits on writeback
+> > without needing the server to complete writing back to disk, which may take
+> > an indeterminate amount of time.
+> >
+> > Allocating and copying dirty pages to temp pages is the biggest performance
+> > bottleneck for FUSE writeback. This patchset aims to get rid of the temp page
+> > altogether (which will also allow us to get rid of the internal FUSE rb tree
+> > that is needed to keep track of writeback status on the temp pages).
+> > Benchmarks show approximately a 20% improvement in throughput for 4k
+> > block-size writes and a 45% improvement for 1M block-size writes.
+> >
+> > With removing the temp page, writeback state is now only cleared on the dirty
+> > page after the server has written it back to disk. This may take an
+> > indeterminate amount of time. As well, there is also the possibility of
+> > malicious or well-intentioned but buggy servers where writeback may in the
+> > worst case scenario, never complete. This means that any
+> > folio_wait_writeback() on a dirty page belonging to a FUSE filesystem needs to
+> > be carefully audited.
+> >
+> > In particular, these are the cases that need to be accounted for:
+> > * potentially deadlocking in reclaim, as mentioned above
+> > * potentially stalling sync(2)
+> > * potentially stalling page migration / compaction
+> >
+> > This patchset adds a new mapping flag, AS_WRITEBACK_INDETERMINATE, which
+> > filesystems may set on its inode mappings to indicate that writeback
+> > operations may take an indeterminate amount of time to complete. FUSE will set
+> > this flag on its mappings. This patchset adds checks to the critical parts of
+> > reclaim, sync, and page migration logic where writeback may be waited on.
+> >
+> > Please note the following:
+> > * For sync(2), waiting on writeback will be skipped for FUSE, but this has no
+> >   effect on existing behavior. Dirty FUSE pages are already not guaranteed to
+> >   be written to disk by the time sync(2) returns (eg writeback is cleared on
+> >   the dirty page but the server may not have written out the temp page to disk
+> >   yet). If the caller wishes to ensure the data has actually been synced to
+> >   disk, they should use fsync(2)/fdatasync(2) instead.
+> > * AS_WRITEBACK_INDETERMINATE does not indicate that the folios should never be
+> >   waited on when in writeback. There are some cases where the wait is
+> >   desirable. For example, for the sync_file_range() syscall, it is fine to
+> >   wait on the writeback since the caller passes in a fd for the operation.
+> 
+> Looks good, thanks.
+> 
+> Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+> 
+> I think this should go via the mm tree.
 
-On exFAT with damaged directory structure, 'exfat_search_empty_slot()'
-may issue an attempt to access beyond end of device and return -EIO.
-So catch this error in 'exfat_find_empty_entry()', do not create an
-invalid in-memory directory structure and do not confuse the rest
-of the filesystem code further.
+Andrew, can you please pick this series up or Joanne can send an updated
+version with all Acks/Review tag collected? Let us know what you prefer.
 
-Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
-Fixes: 5f2aa075070c ("exfat: add inode operations")
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
----
- fs/exfat/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 97d2774760fe..73dbc5cdf388 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -331,7 +331,7 @@ static int exfat_find_empty_entry(struct inode *inode,
- 	while ((dentry = exfat_search_empty_slot(sb, &hint_femp, p_dir,
- 					num_entries, es)) < 0) {
- 		if (dentry == -EIO)
--			break;
-+			return -EIO;
- 
- 		if (exfat_check_max_dentries(inode))
- 			return -ENOSPC;
--- 
-2.47.1
-
+Thanks,
+Shakeel
 
