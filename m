@@ -1,220 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-37325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BA49F1034
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:05:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666D79F103D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:05:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46C0416CE36
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:04:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BFE1E2847;
+	Fri, 13 Dec 2024 15:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hFZT8HoO"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7392815B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:05:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22DD1E2613;
-	Fri, 13 Dec 2024 15:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bq85RUsv"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D4A1E25E8;
-	Fri, 13 Dec 2024 15:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877371E22EF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 15:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734102275; cv=none; b=MSysxI2qCi+r5Vpo4+eG9nOiYjzcxHiYi2R/VYNPLWYSmZ1Xjjt3yH5R2ioju6ndXNLjo7xt/9vmQX+N7MhVGxkf5h76L5R5iorYbM209c9/DqL8pm0NoiYtl+w2iaMzfj6SG32pW4sz2OPS+iZ18uP1dCF4lZFkk1YUoWK+C74=
+	t=1734102229; cv=none; b=X7AoPBm8RqT1F4VhrmZj55jzufKbv9aJiHw/YZigoI4DqVqmEPW1i18e4dJO0Mc7VSxSCfaMQBFwd3dGhvMLJkIOQmJ4amZLQ8p9dQ74SEzazZKDAni8CzaTRe2FoHsP0fAJ+VtiXxjkqK8uWf107H+zRPa2Wy/DVJaGtqBaxWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734102275; c=relaxed/simple;
-	bh=yMlrH29miE1wyo6/4IW6nFiwZP5tbE0MMnG5AaauYJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TkiFk6W3yaTxbZAAC63xao1ZUPLxMtmXC2ZEhVrlNR5npdsYemaU9lgqH0lxgYYt2pathlHi2kgITgjMmFjjmdA1XBy74RSBNIEfeHXASLGh2FOedDAseAZywALMYgFXmMitQLF3Ub8Oa6HIGevo4b+lsKffdXxAHzgupWha5e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bq85RUsv; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa66ead88b3so349221066b.0;
-        Fri, 13 Dec 2024 07:04:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734102272; x=1734707072; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pJMWaXTxiiTBFXLhsso9+ETfwCzvm5PKqO/a4uxPLXI=;
-        b=bq85RUsvn+BoEfk1uD8yyUtlSGAZtDwflgmtubu3XJEs58phQZP0GsXcRSYFdLtNc3
-         VsUjVjXdQlcUkuLAPTg2RXp0w01QC4M7H9yAFmmJBOO4863zLV97L3DJoOemhWfTlEJX
-         We9Bv/Jw1d9ogZnK3Ts9wgRgbw6J3pEoyMXfpUzcvnHWAC2Ix/N6eY77VwRcqc/EVQhP
-         v1JNNirQTXEA1G10YDRcWW1+/dzm9vr+4L01vdrP4Xoap23EwcOAT5t8dmxnRvqUH+ys
-         n3JqGhtu3GEtLSNhXNXBD6jgXBihWg9ZqGF77R7ZclGirsFzHsYcjxongvRE4vLWMBEj
-         fMZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734102272; x=1734707072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJMWaXTxiiTBFXLhsso9+ETfwCzvm5PKqO/a4uxPLXI=;
-        b=e9q8gP2ZtPBmOzTj/mDwybDtFlcyAKwFj+6fw990xrjsI+E+DHFkCZ/J2A6T1zOfvm
-         gIm0F2j4JV4kDCzlkV3onPuzrwNaJ0EFy1V3UGRTm+JvULfmUuKJ+AJjQa9qZu2AGFhF
-         w21ih0KL5AP+2EQeV6H8Pp0QhpuJUxO/DtX+8gI2ZTJb0wXfSomKm3NtxO9R50SuXHqI
-         XSGYgPlnWtNEIS3lwdps/b7ZHkjanCGtVfVvw+aD0fjnihqDzVVcbtJdTgpskxTZ0jJD
-         jHon3155WyDTyTuGMPhLrDhvWOg+JYP5RotScFYHb7RN4ekWGgHsCMmab9RjEgE4A1GT
-         lXIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9STf/FbfrpzTo+vU+InZuaQcnEeveK1TUvYpJhDefvwZRs3IBZdIlo522DOnGYnmOSawjL6RRYBZ1Zr/i7g==@vger.kernel.org, AJvYcCXU3JGRWhG8/lTiRmWApGiPtgi+gdjCuNOf+hx3mch/oBlDKgTiTZgd4656HLJx/gs9z5uiZ/czNw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqArhGGTyNK2QBiv3dhbTaBKUXZPi9nEL0pnO1QdLHvqefW+/b
-	kvSp+CRFEGKEeJr0aOk+9fibYImp6DLtag8YeNQu7JMzyiiNLpCF5nHb5g==
-X-Gm-Gg: ASbGncujvmdfZLYqHUavSFmIbWR/15YmMTpbwd2NOTj95R+yzKFrKJpmtqCEk+oIoGG
-	sBaPFjZzr2uxINT5V5BPzs8I62fGFYSb+mFfBvMFmbKDrZFIWHwpugjrx2S480/KqSywNsXwaJb
-	/KOzI4eBj60OMLhCy440zPunFjTeCzcYCQWbAhbFB5Lwcmr5JV5mAGbNI2gqlb0YLkrq52lhUvw
-	5YxaoX30tInx8KVFRWviPmCcCjz6xcqipdC/CGU3BHX9dzj/hsM91qJKDxYjWVS+kU=
-X-Google-Smtp-Source: AGHT+IFS5KzpanP8903sVa7dDVSrc/ZQmlpmZ9SmaObU3lK0uw9P8Iiaps68dZ0/sLmLwUqYX3bHdQ==
-X-Received: by 2002:a17:906:4ad6:b0:aa6:aedb:6030 with SMTP id a640c23a62f3a-aab77eaf351mr272126866b.52.1734102270989;
-        Fri, 13 Dec 2024 07:04:30 -0800 (PST)
-Received: from [192.168.42.94] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa650ea7369sm943877466b.74.2024.12.13.07.04.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 07:04:30 -0800 (PST)
-Message-ID: <3adcb83a-96f6-415f-9b70-b961bbd8344d@gmail.com>
-Date: Fri, 13 Dec 2024 15:05:17 +0000
+	s=arc-20240116; t=1734102229; c=relaxed/simple;
+	bh=wO8MsH8wW8HeO5rEWgH4hLiGH9SlcLU8tkBsSy0Ewwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F8EPu0Sj19lafBbrRol9DC6BGu4A4pn/atPyDqoM2pn0LfvrPZ4ynvDJSbKYFj4XwFz48PRAfmqqy/p0/CzCOx8/TzPSEWhiU6XTJQ/tx/rfHFpnvPsV1GwmaxDMJ5+XOdrLiwVp50DCuhlVsd96KfN91OsXmfhAPrymlsKTZ70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hFZT8HoO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734102226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AMFKCNoILSyERHx67uxUGjkl1noKKgcNWkzVsHJ2FZY=;
+	b=hFZT8HoOwZm/U04ofuvRxLYBOPtY6GF33ThHQt6YIDOfn0DFAehmAT74yIFvPrOGincXyQ
+	GiC1Ly50lV2BkKj/sZbKZQ3qj0KFt264dTpqlD9r4eF/Los7YGctmvRO2dI+4GdG0z4AQU
+	Aqf985AQrKYV7XLjYg3UI8GAwTdMGgE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-410-lhoj4b33NSCFGVhwom6_hw-1; Fri,
+ 13 Dec 2024 10:03:42 -0500
+X-MC-Unique: lhoj4b33NSCFGVhwom6_hw-1
+X-Mimecast-MFC-AGG-ID: lhoj4b33NSCFGVhwom6_hw
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC5DB195608C;
+	Fri, 13 Dec 2024 15:03:41 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.90.12])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 242FA195394B;
+	Fri, 13 Dec 2024 15:03:41 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Subject: [PATCH RFCv2 0/4] iomap: zero range folio batch processing prototype
+Date: Fri, 13 Dec 2024 10:05:24 -0500
+Message-ID: <20241213150528.1003662-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 15/16] fuse: {io-uring} Prevent mount point hang on
- fuse-server termination
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
- bernd@bsbernd.com
-References: <20241209-fuse-uring-for-6-10-rfc4-v8-0-d9f9f2642be3@ddn.com>
- <20241209-fuse-uring-for-6-10-rfc4-v8-15-d9f9f2642be3@ddn.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241209-fuse-uring-for-6-10-rfc4-v8-15-d9f9f2642be3@ddn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 12/9/24 14:56, Bernd Schubert wrote:
-> When the fuse-server terminates while the fuse-client or kernel
-> still has queued URING_CMDs, these commands retain references
-> to the struct file used by the fuse connection. This prevents
-> fuse_dev_release() from being invoked, resulting in a hung mount
-> point.
-> 
-> This patch addresses the issue by making queued URING_CMDs
-> cancelable, allowing fuse_dev_release() to proceed as expected
-> and preventing the mount point from hanging.
+Hi all,
 
-io_uring bits look good
+This is an update of the folio_batch prototype for zero range. The idea
+here is first to provide a mechanism to correctly handle dirty folios
+over unwritten extents on zero range without needing to flush, and
+second to add it in a way such that it can be extended to other
+operations in the future. For example, seek data over unwritten extents
+could use similar treatment as zero range, and multiple people have
+brought up the idea of using this for buffered writes in the future.
 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->   fs/fuse/dev_uring.c   | 87 ++++++++++++++++++++++++++++++++++++++++++---------
->   fs/fuse/dev_uring_i.h | 12 +++++++
->   2 files changed, 85 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 8bdfb6fcfa51976cd121bee7f2e8dec1ff9aa916..be7eaf7cc569ff77f8ebdff323634b84ea0a3f63 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-...
-> @@ -294,24 +302,27 @@ static void fuse_uring_stop_fuse_req_end(struct fuse_ring_ent *ent)
->   /*
->    * Release a request/entry on connection tear down
->    */
-> -static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent,
-> -					 bool need_cmd_done)
-> +static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
->   {
-> -	/*
-> -	 * fuse_request_end() might take other locks like fi->lock and
-> -	 * can lead to lock ordering issues
-> -	 */
-> -	lockdep_assert_not_held(&ent->queue->lock);
-> +	struct fuse_ring_queue *queue = ent->queue;
->   
-> -	if (need_cmd_done)
-> +	if (ent->need_cmd_done)
->   		io_uring_cmd_done(ent->cmd, -ENOTCONN, 0,
->   				  IO_URING_F_UNLOCKED);
+The primary change in RFCv2 is this is now ported on top of the
+incremental iter advance patches, which eliminates the need for patch 1
+in RFCv1 and allows plumbing into the normal folio get path.
 
-nit: might be better to pair all io_uring_cmd_done() with
+This is still a WIP and I'm posting mainly as a reference for the
+incremental advance patches. Patch 1 is a squash of 7 or 8 prep patches
+that aren't all that interesting, patch 2 implements batch support,
+patch 3 is a prep patch for XFS, and patch 4 updates XFS to use the iter
+batch on zero range.
 
-ent->cmd = NULL;
+Thoughts, reviews, flames appreciated.
 
-since after the call the request is released and can't be used
-by fuse anymore.
+Brian
 
->   
->   	if (ent->fuse_req)
->   		fuse_uring_stop_fuse_req_end(ent);
->   
-> -	list_del_init(&ent->list);
-> -	kfree(ent);
-> +	/*
-> +	 * The entry must not be freed immediately, due to access of direct
-> +	 * pointer access of entries through IO_URING_F_CANCEL - there is a risk
-> +	 * of race between daemon termination (which triggers IO_URING_F_CANCEL
-> +	 * and accesses entries without checking the list state first
-> +	 */
-> +	spin_lock(&queue->lock);
-> +	list_move(&ent->list, &queue->ent_released);
-> +	ent->state = FRRS_RELEASED;
-> +	spin_unlock(&queue->lock);
-...
-> + * Handle IO_URING_F_CANCEL, typically should come on daemon termination.
-> + *
-> + * Releasing the last entry should trigger fuse_dev_release() if
-> + * the daemon was terminated
-> + */
-> +static int fuse_uring_cancel(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> +{
-> +	struct fuse_ring_ent *ent = fuse_uring_cmd_to_ring_ent(cmd);
-> +	struct fuse_ring_queue *queue;
-> +	bool need_cmd_done = false;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * direct access on ent - it must not be destructed as long as
-> +	 * IO_URING_F_CANCEL might come up
-> +	 */
-> +	queue = ent->queue;
-> +	spin_lock(&queue->lock);
-> +	if (ent->state == FRRS_WAIT) {
-> +		ent->state = FRRS_USERSPACE;
-> +		list_move(&ent->list, &queue->ent_in_userspace);
-> +		need_cmd_done = true;
-> +	}
-> +	spin_unlock(&queue->lock);
-> +
-> +	if (need_cmd_done) {
-> +		io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
-> +	} else {
-> +		/* io-uring handles resending */
-> +		ret = -EAGAIN;
+RFCv2:
+- Port onto incremental advance, drop patch 1 from RFCv1.
+- Moved batch into iomap_iter, dynamically allocate and drop flag.
+- Tweak XFS patch to always trim zero range on EOF boundary.
+RFCv1: https://lore.kernel.org/linux-fsdevel/20241119154656.774395-1-bfoster@redhat.com/
 
-FWIW, apparently io_uring ignores error codes returned from here.
-It only cares if the request is removed from a list via
-io_uring_cmd_done() or not.
+Brian Foster (4):
+  iomap: prep work for folio_batch support
+  iomap: optional zero range dirty folio processing
+  xfs: always trim mapping to requested range for zero range
+  xfs: fill dirty folios on zero range of unwritten mappings
 
-
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void fuse_uring_prepare_cancel(struct io_uring_cmd *cmd, int issue_flags,
-> +				      struct fuse_ring_ent *ring_ent)
-> +{
-> +	fuse_uring_cmd_set_ring_ent(cmd, ring_ent);
-> +	io_uring_cmd_mark_cancelable(cmd, issue_flags);
-> +}
-> +
-
+ fs/iomap/buffered-io.c | 177 ++++++++++++++++++++++++++++++-----------
+ fs/iomap/iter.c        |   6 ++
+ fs/xfs/xfs_iomap.c     |  25 ++++--
+ include/linux/iomap.h  |   4 +
+ 4 files changed, 158 insertions(+), 54 deletions(-)
 
 -- 
-Pavel Begunkov
+2.47.0
 
 
