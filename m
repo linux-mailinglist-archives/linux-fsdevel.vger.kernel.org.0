@@ -1,177 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-37306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653939F0EF8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:19:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E4D9F0F26
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180A3189059C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 14:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8543E1884E8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 14:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833C61E0DE5;
-	Fri, 13 Dec 2024 14:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4FF1E22E8;
+	Fri, 13 Dec 2024 14:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P5BYZq0V"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F3+g0qIz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759C3383
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 14:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0331E0DD1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 14:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734099426; cv=none; b=AKv9Q1xaOFLfBdrdB+JLVEP4Z8fFPCx/fEmI4BSso/UkGyIa4ndNVv+knMyDiwmcx5w0GWCoBvZYQbKQ+VLCdupT7VBR30AiOBT1tGcLPeUNVZISIuMqhinrOkfAFmKgfvLDm8NekuLSm8uPrtvLaPFteA+VjYLoGQg3b0yefxY=
+	t=1734100384; cv=none; b=SoajccK7mGOcbFoVwPWkAMoCvYFljS6RA812l8+sW+EACzeQ8e/ot/t0c2ForGWUlSDVVgQup5uxDjvSEz4xJB2RUbB/roWkvgEPB+Uf0tYHtbDPM2hRk+YvF45ZNi9UYdJCJExcQJioCuzq6tMMceOEIeHfesGo/utgmDu1xjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734099426; c=relaxed/simple;
-	bh=Hjnps881gvjk3qTL1yTDzis5ufh+vMoQ48cUME4GNJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=AYsctvdVU92uyTPdx60Qr2IYhaPlslN3o7o21tLr/rAyIC9zJxHWAZU9mmktZrfJUpxlbMF2jo3yxRpeJjcZUQODVuEmFvZuHYW76Z21Xc/UnzCI/QnNmRuxi2cUU3IwPgguHjxBv+CaLdlsq1SWuVzf3yl0VKGneWOMmSNik2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=P5BYZq0V; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241213141656euoutp02ef3cafd0696b461639e1028ebd985dc5~Qwjs9o5JK0870508705euoutp020
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 14:16:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241213141656euoutp02ef3cafd0696b461639e1028ebd985dc5~Qwjs9o5JK0870508705euoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1734099416;
-	bh=uGP21Q2NDdvtdVw5VtQSnPV2rG4nyxiYGjThMFWTypk=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=P5BYZq0VXlHpMe/M8sbhifCoCabtxuiOHyY1Pt6AHZ7qT4xrj1HdZu5X8l8WZSZut
-	 A/2ewxfam3y5jrK12hjqJyqusqEiCFqNN/FR9WPNtU1uQMX1IF0iWdMl2cTv7GFotz
-	 Xc040R1DgYECZjArowy2aKfbTTJSzn084YBbuM9U=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241213141656eucas1p2c0acf501b6cac22d439be9d4be54d6c4~QwjsxVz3i3072930729eucas1p2K;
-	Fri, 13 Dec 2024 14:16:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 7F.B5.20409.7D14C576; Fri, 13
-	Dec 2024 14:16:55 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241213141655eucas1p22da0e3b4379e27059f7e71e8bd644bcd~Qwjsbf-AD3070030700eucas1p2J;
-	Fri, 13 Dec 2024 14:16:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241213141655eusmtrp22fb517eeab642dbc9d9b7ff19d4503e3~QwjsbAp0o0922309223eusmtrp2c;
-	Fri, 13 Dec 2024 14:16:55 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-d2-675c41d79db9
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id BD.BE.19920.7D14C576; Fri, 13
-	Dec 2024 14:16:55 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241213141654eusmtip29970661c3fbc561ce6ee2968e634b35d~QwjrmzjU80593905939eusmtip2u;
-	Fri, 13 Dec 2024 14:16:54 +0000 (GMT)
-Message-ID: <fb8a52ae-8366-4122-b2ad-2d0fbc669be8@samsung.com>
-Date: Fri, 13 Dec 2024 15:16:54 +0100
+	s=arc-20240116; t=1734100384; c=relaxed/simple;
+	bh=EuJufx1aFMmSDDvNPI6DU4SHOlqB0i/fifV9p+FF0lU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9P5nQa2ZV3BWZDiZ3vW+N66ez0kiAzqyD8iiRbkuNYsrIpf600DoLbPjA6qWkb+I2mnpDwde2fQBlvDzdH4AS+qfaFzSIQ5aKpYjaU4BP+KQCJ6sincMwzs1K/HZpShbiBsCXBI6fPQYL5ff4sygK6ecrBN4zPWDfkrEwJOr/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F3+g0qIz; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e06af753so983359f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 06:33:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734100381; x=1734705181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YS9LGudJur7kGbLspdnTQuWDC+hZFSTpArars9lBeLQ=;
+        b=F3+g0qIz6g2WVi4c4BYQ3Jf/lMTVkukAyhHWqRCsKwlrIwR7vNKvprOJWrbob9UXsy
+         7gaT8nGk93GuvfLctjKTMEd5N23oCuAxYCHh9bAZEe7OQTnl0QdEExFJ50e0tVKR9fit
+         fVpKi0P78zCTPAPMXPLS6ULTkfJbchVZrbZRDNehNG4Vn2k16bLugou0GLYeFSYDeBxA
+         C62UQwbpRrf3PYMAWpx3pEvduNZ2YcnySy/UmRVTFQLJ76RDIX3N92iPZ2nNyQh4q+j2
+         Ew9Q6RsSLTLq9lFU7prhz02Ej9yfDVS5jAYKTA4cl7lvlVdYbxHiRmInQFjXKwToH82v
+         eZdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734100381; x=1734705181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YS9LGudJur7kGbLspdnTQuWDC+hZFSTpArars9lBeLQ=;
+        b=v+lFBk7TrgP+0njnL2gj1xgsQAtptkLn3Lv1bul0Yv0b98gy07YL22tUxifQLA5Tel
+         cdWQg12P2Ci1JlKHOz+FuW6AbZxVBOMsN9+3WM7NqCH1NbFKLpSgYH5lJF6muK5dPzlb
+         WKYd6jjDo8HzCWnMbV2JFTB3sVFOWvNC0lghhFDifrtX3GW6lQUy/6JCASurkMSnQ+xT
+         cqeHFsHNRhLkVkbxF6IAIG65jpZRqvfFXc+3qxGj/YNswnN3s8yhaCdieT2KPw23yWcI
+         0OX3pqnFe7U4WKFydPMUbf0SXFALuJVqYhql3K+pkpsjWQCIpWuGgeYJH0FbMkEKgmq0
+         Vowg==
+X-Forwarded-Encrypted: i=1; AJvYcCUirf67q5ClI8x14ZaIxcKVvcyfBI1QjAW/n9P+e3OlKx++SiweHoiyA5pKTUejOuVKk0Mnz60iz5lQTZKI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV17OaLilvt0VjyCx+4+0pAWo6oscUuoHk/8R0ZGFUdrLU+uPU
+	mo3mzxLBg9/3qF3TBeG2Q6CxlIXceUfd7HfgvhIg2CQaFvTFxYl4xlA6fTZ5ZlEdRDc3mXVxsPA
+	CGV5V7U5nwo/xmr6KH5o7YVHS9P+pL7qlNClr
+X-Gm-Gg: ASbGnctjtw9wtbzFEoWRAPrxcIKFeutujMe2VKZhJg75E+hTLymfDpJQ7D3lZ9405O/
+	rogNpNZXV4fSlHwszuNo2xb0SSRx8Ho5CEloTOKk=
+X-Google-Smtp-Source: AGHT+IGvvc8SEIVkqPspUBW11+fwBIw/V0dhqL0RuVU+1lBeUhFdbOVUzhj6j5lBdtbpP2FKdq6ekBfVUhokO3//J1Y=
+X-Received: by 2002:a05:6000:2ad:b0:385:ee59:44eb with SMTP id
+ ffacd0b85a97d-3888e0bd28amr2583040f8f.33.1734100380695; Fri, 13 Dec 2024
+ 06:33:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/2] pidfs: use maple tree
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox
-	<willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	maple-tree@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20241213-untypisch-bildmaterial-413504dd3a53@brauner>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7djPc7rXHWPSDXZcs7J4ffgTo8X2hgfs
-	Fnv2nmSx2LCygcni9485bA6sHptXaHlsWtXJ5rF5Sb3Hx6e3WDw+b5ILYI3isklJzcksSy3S
-	t0vgytg0Yxd7wRb+igMPJBoYj/N0MXJySAiYSLydfZuxi5GLQ0hgBaNEy6+z7BDOF0aJTzP+
-	sIFUCQl8ZpT4eygVpuPE84PMEEXLGSUmbbvOCFH0kVFiwgrfLkYODl4BO4ldR2VBwiwCqhJ3
-	Vu1iAbF5BQQlTs58AmaLCshL3L81gx3EFhYwlbhy5SQriC0ioCXRtOgjE8h8ZoEZjBLvvzwG
-	K2IWEJe49WQ+E4jNJmAo0fW2C+w4TgFniQd797JA1MhLbH87B+w4CYErHBJfTjcxQ1ztIjHl
-	2092CFtY4tXxLVC2jMT/nfOZIBraGSUW/L4P5UxglGh4fosRospa4s65X2wgrzELaEqs36UP
-	EXaUeHS3mxkkLCHAJ3HjrSDEEXzAQJkOFeaV6GgTgqhWk5h1fB3c2oMXLjFPYFSahRQus5C8
-	OQvJO7MQ9i5gZFnFKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kRmGhO/zv+ZQfj8lcf9Q4x
-	MnEwHmKU4GBWEuG9YR+ZLsSbklhZlVqUH19UmpNafIhRmoNFSZxXNUU+VUggPbEkNTs1tSC1
-	CCbLxMEp1cAkLKOo+zvUYZF8RWG0xyye1ecv3cqa8faS8xTNbG39Vo/znFOSr63IPjlFTPh1
-	qldpxrfodIEr9rNZtj5uy+10Vz13LCh97uIU9x3KfqpbJq67ky+keEbyl8OKl2Wzp/L/OPbm
-	KUfa4t6uWLYEyTNbdaQMvs+uXLyQb0r6ba2GL+5Xw/7efvQlzfhK8CHmlvJzFox6CosfP1xs
-	XT6V5c772OKZzNYHc/YHlR+/+cJRJflQrPXt52srzWPfHS5tWbDM1nWNU4uZwqX+jfO/cHKE
-	r3bu0xO4LCGxbdFeridVPv8fzlGZaG1zLIHvqfamOpfA+Vefer1k7j/9ymtlX9XUsqC9Cy5u
-	nnjB5rLJ9UvGSizFGYmGWsxFxYkAPRx1/aMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsVy+t/xe7rXHWPSDY7elrd4ffgTo8X2hgfs
-	Fnv2nmSx2LCygcni9485bA6sHptXaHlsWtXJ5rF5Sb3Hx6e3WDw+b5ILYI3SsynKLy1JVcjI
-	Ly6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy9g0Yxd7wRb+igMPJBoY
-	j/N0MXJySAiYSJx4fpC5i5GLQ0hgKaPEh0Wz2CESMhInpzWwQtjCEn+udbGB2EIC7xkljp70
-	62Lk4OAVsJPYdVQWJMwioCpxZ9UuFhCbV0BQ4uTMJ2C2qIC8xP1bM8BGCguYSly5chJspIiA
-	lkTToo9MIHuZBWYwSvxc0swEccRpJolj3ceYQaqYBcQlbj2ZzwRiswkYSnS9hTiCU8BZ4sHe
-	vSwQNWYSXVu7GCFseYntb+cwT2AUmoXkkFlIRs1C0jILScsCRpZVjCKppcW56bnFhnrFibnF
-	pXnpesn5uZsYgbG17djPzTsY5736qHeIkYmD8RCjBAezkgjvDfvIdCHelMTKqtSi/Pii0pzU
-	4kOMpsDQmMgsJZqcD4zuvJJ4QzMDU0MTM0sDU0szYyVxXrfL59OEBNITS1KzU1MLUotg+pg4
-	OKUamDLjHX7naSZ+tOB67P0n+09rjWZxE9PJA+o39qbH7a+ZN2tt7XM9k/4zFydd4tdR3nOT
-	Z5bz8fdzO16U/PnA9TDNtoQhRn5VNOvuPx1r1j6w+bWJZ9VC5p7ZyyuSQvOucIhdkihfWBGo
-	fsxM7U/AjkYR86z9dyxmWO9wNYm5MuV94P5H4X77Ty7KOPrr/CtFuYyAlz6Lv3goZj/Nej9x
-	yrT0wl12517eubk6boOd+HfnnezWRxkaLh0Sef9xZ2vmhVcHXrvxx16dfPaHL5dbOZvmq9kL
-	X95nLHp4umaKzNyc1J8Nnxv092rc3XZw1y0tk97TLH+CRW44Vbx8NvnRi4WftBMNhd5UOr7/
-	+Wi7SZuiEktxRqKhFnNRcSIABzNNeTYDAAA=
-X-CMS-MailID: 20241213141655eucas1p22da0e3b4379e27059f7e71e8bd644bcd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241213103551eucas1p1f97e0ca298e6a9edfc75b287b4c2079e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241213103551eucas1p1f97e0ca298e6a9edfc75b287b4c2079e
-References: <20241209-work-pidfs-maple_tree-v2-0-003dbf3bd96b@kernel.org>
-	<20241209-work-pidfs-maple_tree-v2-2-003dbf3bd96b@kernel.org>
-	<CGME20241213103551eucas1p1f97e0ca298e6a9edfc75b287b4c2079e@eucas1p1.samsung.com>
-	<e3b555c5-4aff-4f0d-b45b-9c46240a02da@samsung.com>
-	<20241213-untypisch-bildmaterial-413504dd3a53@brauner>
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+ <20241101060237.1185533-5-boqun.feng@gmail.com> <CAH5fLgjhQouU=kqVx7LET2yeWt6sKt-VO5PR5SnQ8doaG4ihuQ@mail.gmail.com>
+ <Z1seogLmy5H8-hXn@boqun-archlinux>
+In-Reply-To: <Z1seogLmy5H8-hXn@boqun-archlinux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 13 Dec 2024 15:32:47 +0100
+Message-ID: <CAH5fLgjGg8_s8imOkmPb0yLAMwD1sF1aoBZWkAy-YLNh41zCuw@mail.gmail.com>
+Subject: Re: [RFC v2 04/13] rust: sync: atomic: Add generic atomics
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	llvm@lists.linux.dev, lkmm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, 
+	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, 
+	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, 
+	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13.12.2024 14:07, Christian Brauner wrote:
-> On Fri, Dec 13, 2024 at 11:35:48AM +0100, Marek Szyprowski wrote:
->> On 09.12.2024 14:46, Christian Brauner wrote:
->>> So far we've been using an idr to track pidfs inodes. For some time now
->>> each struct pid has a unique 64bit value that is used as the inode
->>> number on 64 bit. That unique inode couldn't be used for looking up a
->>> specific struct pid though.
->>>
->>> Now that we support file handles we need this ability while avoiding to
->>> leak actual pid identifiers into userspace which can be problematic in
->>> containers.
->>>
->>> So far I had used an idr-based mechanism where the idr is used to
->>> generate a 32 bit number and each time it wraps we increment an upper
->>> bit value and generate a unique 64 bit value. The lower 32 bits are used
->>> to lookup the pid.
->>>
->>> I've been looking at the maple tree because it now has
->>> mas_alloc_cyclic(). Since it uses unsigned long it would simplify the
->>> 64bit implementation and its dense node mode supposedly also helps to
->>> mitigate fragmentation.
->>>
->>> Signed-off-by: Christian Brauner <brauner@kernel.org>
->> This patch landed in today's linux-next as commit a2c8e88a30f7 ("pidfs:
->> use maple tree"). In my tests I found that it triggers the following
->> lockdep warning, what probably means that something has not been
->> properly initialized:
-> Ah, no, I think the issue that it didn't use irq{save,restore} spin lock
-> variants in that codepath as this is free_pid() which needs it.
+On Thu, Dec 12, 2024 at 6:34=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
 >
-> I pushed a fix. Please yell if this issue persists.
+> On Thu, Dec 12, 2024 at 11:57:07AM +0100, Alice Ryhl wrote:
+> [...]
+> > > diff --git a/rust/kernel/sync/atomic/generic.rs b/rust/kernel/sync/at=
+omic/generic.rs
+> > > new file mode 100644
+> > > index 000000000000..204da38e2691
+> > > --- /dev/null
+> > > +++ b/rust/kernel/sync/atomic/generic.rs
+> > > @@ -0,0 +1,253 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Generic atomic primitives.
+> > > +
+> > > +use super::ops::*;
+> > > +use super::ordering::*;
+> > > +use crate::types::Opaque;
+> > > +
+> > > +/// A generic atomic variable.
+> > > +///
+> > > +/// `T` must impl [`AllowAtomic`], that is, an [`AtomicImpl`] has to=
+ be chosen.
+> > > +///
+> > > +/// # Invariants
+> > > +///
+> > > +/// Doing an atomic operation while holding a reference of [`Self`] =
+won't cause a data race, this
+> > > +/// is guaranteed by the safety requirement of [`Self::from_ptr`] an=
+d the extra safety requirement
+> > > +/// of the usage on pointers returned by [`Self::as_ptr`].
+> > > +#[repr(transparent)]
+> > > +pub struct Atomic<T: AllowAtomic>(Opaque<T>);
+> > > +
+> > > +// SAFETY: `Atomic<T>` is safe to share among execution contexts bec=
+ause all accesses are atomic.
+> > > +unsafe impl<T: AllowAtomic> Sync for Atomic<T> {}
+> >
+> > Surely it should also be Send?
+> >
+>
+> It's `Send` here because `Opaque<T>` is `Send` when `T` is `Send`. And
+> in patch #9, I changed the definition of `AllowAtomic`, which is not a
+> subtrait of `Send` anymore, and an `impl Send` block was added there.
+>
+> > > +/// Atomics that support basic atomic operations.
+> > > +///
+> > > +/// TODO: Unless the `impl` is a `#[repr(transparet)]` new type of a=
+n existing [`AllowAtomic`], the
+> > > +/// impl block should be only done in atomic mod. And currently only=
+ basic integer types can
+> > > +/// implement this trait in atomic mod.
+> >
+> > What's up with this TODO? Can't you just write an appropriate safety
+> > requirement?
+> >
+>
+> Because the limited scope of types that allows atomic is an artificial
+> choice, i.e. we want to start with a limited number of types and make
+> forward progress, and the types that we don't want to support atomics
+> for now are not because of safety reasons, but more of a lack of
+> users/motivations. So I don't think this is something we should use
+> safety requirement to describe.
 
-I've applied this patch:
+I found the wording very confusing. Could you reword it to say
+something about future possibilities?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.14.pidfs&id=34a0a75fd0887b599d68088b1dd40b3e48cfdc42
+> > > +/// # Safety
+> > > +///
+> > > +/// [`Self`] must have the same size and alignment as [`Self::Repr`]=
+.
+> > > +pub unsafe trait AllowAtomic: Sized + Send + Copy {
+> > > +    /// The backing atomic implementation type.
+> > > +    type Repr: AtomicImpl;
+> > > +
+> > > +    /// Converts into a [`Self::Repr`].
+> > > +    fn into_repr(self) -> Self::Repr;
+> > > +
+> > > +    /// Converts from a [`Self::Repr`].
+> > > +    fn from_repr(repr: Self::Repr) -> Self;
+> >
+> > What do you need these methods for?
+> >
+>
+> Converting a `AtomicImpl` value (currently only `i32` and `i64`) to a
+> `AllowAtomic` value without using transmute in `impl` block of
+> `Atomic<T>`. Any better idea?
 
-onto next-20241213 and it fixed my issue. Thanks!
+You could use transmute?
 
-Feel free to add:
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Alice
 
