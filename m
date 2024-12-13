@@ -1,114 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-37393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0E99F19D7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 00:23:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4945C9F1B29
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 01:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7D61881502
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 23:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD6E16B518
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 00:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631C61E500C;
-	Fri, 13 Dec 2024 23:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC041F03E9;
+	Fri, 13 Dec 2024 23:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3PYQe+1"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QpYy9Wi+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA2A1C3C1D;
-	Fri, 13 Dec 2024 23:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13E21DED70;
+	Fri, 13 Dec 2024 23:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734132179; cv=none; b=lW8UvPhhSlK2kjvbs7qNURqS33J+FrLx7SmUXWIZtuCn/0S1r57UIbYCkNzA6UuTXxLoR7l9rNQhsAiaaTf3yYM/S1y/yT2Gs9zblV4C3WYyQ/PRGUZHqfiiuK2zRbF46uDZR4U9lw7eRCjjUDC5tyJoFUeem8M5VvrOp0J2ncU=
+	t=1734134244; cv=none; b=kLFwg7gNFe6cKx6RReubQZhpKOL6vMxhW/qmNQE59rzbs/oDRoFAZL4c6oNfRv12Awb5n7u4FNvg76k52m+hUcA0z1FVgVWjE4d8GdyovtwaQeXrHydWyj3n2ZnMoHXH1St/7YivWWWgt6QAYgi0cKXbPitW8Kg9ORIbh2UKsnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734132179; c=relaxed/simple;
-	bh=V6nLkJ+6VLZgE10ewA3liyVk+k3+WLQV8J7Rp4RqhFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T/BpWCre1AB4KmnbRQVWp6KaogGT19yBC0lxT0uz4m+T8bq8FUP1IQD0Zi+/XsvRcVSSj0QUUbC9EJGQ7FncK24EnkS78eq7E7wW6e4tN2IvX4DggZBTh0dU45UagDxYylmVF2GWBnHOZXyl9xmO73I5d6ILdJEoO9I/Nldww/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3PYQe+1; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso21751191fa.0;
-        Fri, 13 Dec 2024 15:22:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734132176; x=1734736976; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V6nLkJ+6VLZgE10ewA3liyVk+k3+WLQV8J7Rp4RqhFM=;
-        b=g3PYQe+1Rugf6f3Dk75wGz7ECU8CEhWuKiKj/P/necg10GhTlUuGiRT53gEtfwqhCD
-         OkoyDm8DGXmNsoGUgMWYc3GE3CZV+nfNtGFea6ZvXpQXBBLv0CcjjP+x9anooBqKZxgR
-         s1XJmDRJAOQYhrNL045sg1rsbjIDOUcDSVW/yJGF6mZFkMd2tRQC1DZ7TDje9uxMKn/c
-         1u9dhTSUfaAi9POQCmy1ZqgLFyPkAh7W02MTPFoJ/sfnQc0mVdaT8WQxqr6FlQUJaqmj
-         EqdLSE2AgWuwLUagBimMdTHOdvn7ETNGF8XaX5XMMgj1cddORepBscFzsJ9X18/qTQO7
-         3KZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734132176; x=1734736976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V6nLkJ+6VLZgE10ewA3liyVk+k3+WLQV8J7Rp4RqhFM=;
-        b=KiBpTnJqGdx/5DCiMXc0K00KSrDA4/Kefnkud9dKJmC1XF9q02WubD5L/HSNX84CQf
-         Ozg0MTrkCerUwSfeoIg2vE1RM2rqLQnm44YQa06ZwkvX3yiNoEJzRqhfkOQsI3ZSwXFB
-         9OG2h6JlxTddCa6PehuhtcNE4ALpZB26AFDo/V/gD4fp8ieacUMfuIjG9DPUiGks3fE5
-         pVM4FAW92YGmdMi+xW4+f/namF5L86XMU/t360Ml9IStOO1VUb7esNftzTctgfmczDCe
-         TNGL9XGU0H4y6cD7T76/pb0TmBZ3Fy0uJefqFia/pZdAxxD1WGbLx7e2ahXM8uc+JIE3
-         QWuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCcw6nUl8q3gkG3tY47D8iIv5pSH6ZhF+qGt9Dxf7LfJmUJ+1c3CphJiDDJ0YX/wI51raAR4ZANKZDZtoSv2c=@vger.kernel.org, AJvYcCUCn2BQmXpmy5jJX0fae0cet5ZjggBkdsTZHB2Xaf9Ia2hs1n7A3XOCV7yoiOYlYoxgx0FHf40CY5sV44+i@vger.kernel.org, AJvYcCUt2kc8JeTqKtnBaBrVeO4erejV4seaV4+c1ApiPsgm6Vm2nKxN8ZD5KPABkE10ocpNxXA3jp2+NCGLFq2c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+RHYn2eHhSb60LrnbmZe26fmIH5vhrr6S+ccoSWFNrtvv9+yi
-	QWhF9/HEcSytDkeQpoPROlpvsz+ly92rJLa9Nvi+9/lzZR/lru0XLVlObH+o/Vu4mOHEL9LqKf5
-	X+7MlEAryk5/D44mDL2NLvxs+bpk=
-X-Gm-Gg: ASbGncu7CQhNvgfbO07iXalVj5ArEoy1typnMeTBGYR670p0LOYb5arTlWwBuCBDsgl
-	ODmRIi8eIopkKos1D6AfxshoVOHpoUzlK8PaDJdIWlj53PSHbSg8j7tnch35ei3LweNreI0qQ
-X-Google-Smtp-Source: AGHT+IFmY1TQVEvLWSJ44CGLliUIslxwkoSHnsNknATRCm7EAtso74d0C01/m7J1p1lYFVNhIQmLcOp/vl+O02BqnY4=
-X-Received: by 2002:a05:651c:1582:b0:2fb:54d7:71b5 with SMTP id
- 38308e7fff4ca-30254462636mr16865741fa.22.1734132176158; Fri, 13 Dec 2024
- 15:22:56 -0800 (PST)
+	s=arc-20240116; t=1734134244; c=relaxed/simple;
+	bh=1YYTaVqGIazxOCO5qZ8bTy5t+fwoP7FXeMFgkaaU1f0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cmygvxs1hByK0CIa8rf5ySqdF9oGYu2oK0mUJmEzaN7zstdtqy5cDLVg5cksbZsVSoXg18uSbdIrdpF3w+B2jkn9GxdpXyrTMTwKwWmin8jg+Wal+17rGeD481czjSk0MWy21eBlhQhYuwWlf2jRQzb/jmudBJftLqy49LNGC5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QpYy9Wi+; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDKBoaT015471;
+	Fri, 13 Dec 2024 23:57:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=yt7M4uZ2L/ft+OJbYnX0YlOwwKxkG
+	uYZ1Cixgs9PFnk=; b=QpYy9Wi+kBgDdyRJ8ItmAq1hefTBOzF/Q4FgC4bAdh4ac
+	TstYrnBI+ypNdQfuOEi7BcydbmoA+LP9aLkUaPbixF4iKdThIiT0etKugWPbzlYD
+	NTqkSsrUrflaJVv7b5XMhQDmBMmhE4ulRiLQW/8aClHaoyn8biud73V0yM2Zbp06
+	vFvoh3abnWOiIOFscw49WvZzSeau5ji3oDCvvhzl2JGvtjUpxOTXM6Nv77Juc/HH
+	nlXW1paFb0hq3lV6YjBIppBFRGIlfxFJvpwCNlmvw9iJXwHCvJ1RXeKojKVKbVrq
+	5NHHdpAsK+Fg2Gbr7vPfoD+COK83jt+EhL0SSyryw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cedcejsv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 23:57:13 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDNlx06020564;
+	Fri, 13 Dec 2024 23:57:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cctd4nub-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 23:57:12 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BDNvBFI006513;
+	Fri, 13 Dec 2024 23:57:11 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 43cctd4nrj-1;
+	Fri, 13 Dec 2024 23:57:11 +0000
+From: Sherry Yang <sherry.yang@oracle.com>
+To: stable@vger.kernel.org, sashal@kernel.org, gregkh@linuxfoundation.org
+Cc: sherry.yang@oracle.com, linkinjeon@kernel.org, sj1557.seo@samsung.com,
+        wataru.aoyama@sony.com, Andy.Wu@sony.com, Yuezhang.Mo@sony.com,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 5.15.y, 5.10.y] exfat: fix potential deadlock on __exfat_get_dentry_set
+Date: Fri, 13 Dec 2024 15:57:05 -0800
+Message-ID: <20241213235705.2201714-1-sherry.yang@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213-rust-xarray-bindings-v13-0-8655164e624f@gmail.com> <CANiq72mUoDFZuJZsfEbodXtXsVoHAXRDO27gBES3=uAOGZ6kfw@mail.gmail.com>
-In-Reply-To: <CANiq72mUoDFZuJZsfEbodXtXsVoHAXRDO27gBES3=uAOGZ6kfw@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 13 Dec 2024 18:22:20 -0500
-Message-ID: <CAJ-ks9kSWw+txqFOrh4fGUfPb2zQ8rDSgUo0HLMGMUG=EThO-Q@mail.gmail.com>
-Subject: Re: [PATCH v13 0/2] rust: xarray: Add a minimal abstraction for XArray
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Matthew Wilcox <willy@infradead.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-13_11,2024-12-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412130170
+X-Proofpoint-ORIG-GUID: AQuBSZG9LllaOzN6H40-WJCWIgZElyXQ
+X-Proofpoint-GUID: AQuBSZG9LllaOzN6H40-WJCWIgZElyXQ
 
-On Fri, Dec 13, 2024 at 4:31=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Dec 13, 2024 at 9:02=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > Changes in v13:
-> > - Replace `bool::then` with `if`. (Miguel Ojeda)
-> > - Replace `match` with `let` + `if`. (Miguel Ojeda)
->
-> Personally, I would also use the early return style in both of these,
-> like in C.
+From: Sungjong Seo <sj1557.seo@samsung.com>
 
-My personal preference is to leave it as-is as the return keyword
-isn't used anywhere in this file at the moment. I don't mind you
-changing it if/when applying, though.
+commit 89fc548767a2155231128cb98726d6d2ea1256c9 upstream.
 
-> I think you may also omit the parenthesis in the first one.
+When accessing a file with more entries than ES_MAX_ENTRY_NUM, the bh-array
+is allocated in __exfat_get_entry_set. The problem is that the bh-array is
+allocated with GFP_KERNEL. It does not make sense. In the following cases,
+a deadlock for sbi->s_lock between the two processes may occur.
 
-Oops, you're right.
+       CPU0                CPU1
+       ----                ----
+  kswapd
+   balance_pgdat
+    lock(fs_reclaim)
+                      exfat_iterate
+                       lock(&sbi->s_lock)
+                       exfat_readdir
+                        exfat_get_uniname_from_ext_entry
+                         exfat_get_dentry_set
+                          __exfat_get_dentry_set
+                           kmalloc_array
+                            ...
+                            lock(fs_reclaim)
+    ...
+    evict
+     exfat_evict_inode
+      lock(&sbi->s_lock)
+
+To fix this, let's allocate bh-array with GFP_NOFS.
+
+Fixes: a3ff29a95fde ("exfat: support dynamic allocate bh for exfat_entry_set_cache")
+Cc: stable@vger.kernel.org # v6.2+
+Reported-by: syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/000000000000fef47e0618c0327f@google.com
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[Sherry: The problematic commit was backported to 5.15.y and 5.10.y,
+thus backport this fix]
+Signed-off-by: Sherry Yang <sherry.yang@oracle.com>
+---
+ fs/exfat/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index be7570d01ae1..0a1b1de032ef 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -878,7 +878,7 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+ 
+ 	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
+ 	if (num_bh > ARRAY_SIZE(es->__bh)) {
+-		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
++		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_NOFS);
+ 		if (!es->bh) {
+ 			brelse(bh);
+ 			kfree(es);
+-- 
+2.46.0
+
 
