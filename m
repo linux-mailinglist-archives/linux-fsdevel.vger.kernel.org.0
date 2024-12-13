@@ -1,153 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-37284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331049F0BAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 12:53:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F089F0C16
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 13:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D8B16443A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 11:53:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0584E188B246
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 12:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B171DE8BF;
-	Fri, 13 Dec 2024 11:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52D61DFD8D;
+	Fri, 13 Dec 2024 12:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="raWqUJ71"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZI/cWOQS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1051C3C16
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 11:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3A11DE882
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 12:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734090779; cv=none; b=R4XwEVPu8HfDLIassFG/21A5XeqLpbY9Sx5BEmt3TggNjkY2hg4xxIBjLShGUrZ80UXPPVjCf6xXeYRjmTqANcH4gydqb0gC2NXoPY8K6CisE8VNhvKGcwa+dnv6zvmZhvKsZLZVBHuQo04L8PDKA5TsAbvUgkoeVBk73ndeLY4=
+	t=1734092356; cv=none; b=ezac+zWd4FnBI8fCwkRx3Aw8moEO30Wk3PSWwQ0Z5QjzLetFW+N2ZPdVISHK6jN43aBu0bAuvBxGbXFzbbuLTz1TuWFca85EKPxzr3yKtpSMW1yHda14CPfu6+/8V9aU7IZv4kzE+QTaJhAP15RcMNpNI61nNqg3+eFw9buziXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734090779; c=relaxed/simple;
-	bh=IuyO9UmeO6Xi3zEqcw2K2v8KP/IGrYUcYTzQKSGxXVg=;
+	s=arc-20240116; t=1734092356; c=relaxed/simple;
+	bh=+agX/hxnK7PsbXVWPwKhiB1V054xuEENK8nIoWK3fi0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lIIw58ImbJNqORFC5NKIC0Ykn3+zgqj8dtlVXaoIQeubdnFpGzCCpJsoWtK2A0watWT/DdytlgxTt4JVwwBszGLp+eby3T9HtL6MO890ZFT1InzCDIG1yfBKKpqTpdp/hdlO1uwQIeBmuMW9T/K4udbPX6pIjWIR+1EElNogn/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=raWqUJ71; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4677675abd5so9158891cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 03:52:56 -0800 (PST)
+	 To:Cc:Content-Type; b=I/mNVk2yJexUwx2ST3nPpbUXbcwqef8Q21Q43J1jygyOw4VKncJJXaEQ+CV6PcQGj7fL4juNMpGyy9rfhdqGBp9b+7Ksb4E9dCcg41t8lbiGjzvVuS6wpXnjPVBU9i3R4W3lUlm60j+E4nyg/dnWH3wsanIzLz3CFDDKyuDEaiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZI/cWOQS; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d0f6fa6f8bso2527057a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 04:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1734090775; x=1734695575; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+NGPcY3l/EZhVhhJTmICKQCQuQuwzjLgNykHYWpY1Hk=;
-        b=raWqUJ718tk3lbSZlHjFWresVkA+qYyQMCr8rpT53GrOHl98Hh9ELNVArvtT3MoPfm
-         kJXO6VH8AufwP+2k9j5+ha+JX2KnClV4HiV1tjMgLJnLT2ZsOGqTFko9TbS+KCu3qBFV
-         K+RWabqOC4RX7XZ0Qa29B88vpN2EUSX5ITjUI=
+        d=google.com; s=20230601; t=1734092353; x=1734697153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rswNLiWFuDKiW42rbnE3/FFvogIGFwro7QX3xwapVa8=;
+        b=ZI/cWOQSTK7j4jTHtoeuwX9Lb+TTFgPctFxAljDqcqJJdejmoMXhJrrdZHRmEGK9x+
+         F4dQZxd3p2sLGblz6ghca40YOLqTyK3h15sJaOQ6ii0zZMQm4c4ShqymyH6RH4ri6eKl
+         kOZNPGAfnRFZEXJjuxUzKr1E90D9Ki0qaMTiDYN1nqfq9Fjjlxd2ddSaUbiyYsU0z10C
+         Ij8a/AvyprryOGojNbPzulITQGxaUUOii5FEoUSsHoHFPsCvH8h6QVHj92tu+TZYS9Yw
+         0epvuWXhOpJIpzQttx/C8mnurNpx2oGBUH2JrpIkYcBaAoHvu3aLbmbtRdL0Le4aQBBo
+         lG9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734090775; x=1734695575;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+NGPcY3l/EZhVhhJTmICKQCQuQuwzjLgNykHYWpY1Hk=;
-        b=uaPiq+LWCIcdIaPy5OTCbK+p+cN9Tsm89cx8KbMfV4v5E1Gq9Qa1F21W747WQRoQD+
-         94KI/mM9AMrp0rZLIzsOI/72L9f/+cRINCrdJnmhk2FOignE/610XVlaPCv+Cxp6S8C5
-         NVSJ+uq7Txe0bklB8jpMZojONc0gUei/dMdH/b3bPRsJGRAEpCwu0kVKPzXEF74D9GVa
-         KaJWT2P38KTtW/6ygmn69/YbVJ9Cdspjf+Dx5HsdxPtPCD92cMuA0s1Yx0//5l5ZHEuk
-         r86/1NebWnJJd2IHbxnBhvC5vo7U7DboG8s/Sn/3y2rYsfkg5/txVCVhqy4iupjvwvvh
-         dXZg==
-X-Gm-Message-State: AOJu0YxRio+4VFlEVtxSzRZ4A8nI9+YXTQN+ghufg968h2sTj7/yDxNY
-	F9IHgUUCKrGwuE80o1gjw8asJbwPLML/VZuUjMZQEJq1vJehennIPEuuyyetJZNRivdiAwjsDGi
-	bEehbLWB5EyqAak8K5Pqkx8tKox/I+jM+J3cPvQ==
-X-Gm-Gg: ASbGncvPNxmjxQzvi6sGXCzaB6tCazr3Q7ZPcOcQvSZZNczDQAu7cRv6186rRxpx+vi
-	7q8zWpqOF0rlIPz5hqZnzqoaeKMjjT9GANjw=
-X-Google-Smtp-Source: AGHT+IHQ5iKsRm70cezL/Fapc8X/4zOvwPT2o0pnkVRtQOL+nnzFvte3TJb9Lo3rtEwSs+SIsbmqp3YdxP3rEhAknrE=
-X-Received: by 2002:ac8:59d2:0:b0:467:65d4:7e07 with SMTP id
- d75a77b69052e-467a585b61emr32037931cf.53.1734090775425; Fri, 13 Dec 2024
- 03:52:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734092353; x=1734697153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rswNLiWFuDKiW42rbnE3/FFvogIGFwro7QX3xwapVa8=;
+        b=n+0Pt6ljmG1ziab4guJ7aNQd0jLt8fzWIifjUtAShhNvnlscqk7asrLkTJbCZcf+kg
+         Z59B2k7ijBjnNIokzdjNExq2PLtJuKf/LUf48Xlade9mgdwPiBXS6O+Sos6LbL6KO7dd
+         AxzO1hx2V8eg6YtfgVUZxxY/83r9J5SwlrIo+GH3IQwd76t7GmKOIAoYB40xxa/2Jl1p
+         psjDNPVmCrkAQpgOm+sPmhnrlneZPHhj/reyWlR5Pwdrni5eyszFn9iBitwWmG0rjy1D
+         o6Z/vgP7F5coMrACGSD2GEsgrKfh1yQatMzWhs1nByKD953fERESwfoQ2kW1zivLwF6A
+         183g==
+X-Forwarded-Encrypted: i=1; AJvYcCWFERGCpQTG+tg2brFT6SS0AZHo/NfJF6f64MV8OMHi6g+JNCHDskCZVbLTbLwo5tdFAvWkZjVdF81fppun@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKnxmWkLldCeKaas/Sc1J0mZEhhztS2FjberlUTLRVjfzOKh1v
+	96pzX20xsOngJo/2LQ0g9egaQdwXK3JDakItL76RJOtseE+oioft7Sctm+R7doPbyRIyAJNsDXR
+	0kh60CtfM1H7wgJjtY+q9T2mXsOE4Dlbn5B3r
+X-Gm-Gg: ASbGncttaar+tBmG9WgbGtFwqsoFkDGFLpTIEfDx4tuDxGN+CWV/5xq7VPAESzV3wZJ
+	D50gP6pPvfjXlyO6rD34fwZT5IuGiTAp2Ps8u3g==
+X-Google-Smtp-Source: AGHT+IGRpkdDBASQbA4W9W4t1BgK2dSzLTzvJG9Vc9UhANfCeYe2U4Z/qo2tMOoP0ps7OytKBednRAPV6i81BAZBwaE=
+X-Received: by 2002:a05:6402:2790:b0:5d0:b51c:8478 with SMTP id
+ 4fb4d7f45d1cf-5d63c3158c3mr1721305a12.12.1734092352701; Fri, 13 Dec 2024
+ 04:19:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122232359.429647-1-joannelkoong@gmail.com>
-In-Reply-To: <20241122232359.429647-1-joannelkoong@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 13 Dec 2024 12:52:44 +0100
-Message-ID: <CAJfpegtSif7e=OrREJeVb_azg6+tRpuOPRQNMvQ9jLuXaTtxHw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] fuse: remove temp page copies in writeback
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev, 
-	jefflexu@linux.alibaba.com, josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
-	linux-mm@kvack.org, kernel-team@meta.com
+References: <675b61aa.050a0220.599f4.00bb.GAE@google.com> <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+In-Reply-To: <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Dec 2024 13:19:01 +0100
+Message-ID: <CANn89i+Zm_0a5jqtsL5m-S4=E06mdQXA8RLaFEF75Y6umFWxpQ@mail.gmail.com>
+Subject: Re: [syzbot] [tipc?] kernel BUG in __pskb_pull_tail
+To: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
+Cc: alsa-devel@alsa-project.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	clm@fb.com, davem@davemloft.net, dennis.dalessandro@cornelisnetworks.com, 
+	dsterba@suse.com, eric.dumazet@gmail.com, horms@kernel.org, 
+	io-uring@vger.kernel.org, jasowang@redhat.com, jdamato@fastly.com, 
+	jgg@ziepe.ca, jmaloy@redhat.com, josef@toxicpanda.com, kuba@kernel.org, 
+	kvm@vger.kernel.org, leon@kernel.org, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, miklos@szeredi.hu, 
+	mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	pbonzini@redhat.com, perex@perex.cz, stable@vger.kernel.org, 
+	stefanha@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tipc-discussion@lists.sourceforge.net, tiwai@suse.com, 
+	viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org, 
+	ying.xue@windriver.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 23 Nov 2024 at 00:24, Joanne Koong <joannelkoong@gmail.com> wrote:
+On Fri, Dec 13, 2024 at 12:43=E2=80=AFPM syzbot
+<syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com> wrote:
 >
-> The purpose of this patchset is to help make writeback-cache write
-> performance in FUSE filesystems as fast as possible.
+> syzbot has bisected this issue to:
 >
-> In the current FUSE writeback design (see commit 3be5a52b30aa
-> ("fuse: support writable mmap"))), a temp page is allocated for every dirty
-> page to be written back, the contents of the dirty page are copied over to the
-> temp page, and the temp page gets handed to the server to write back. This is
-> done so that writeback may be immediately cleared on the dirty page, and this
-> in turn is done for two reasons:
-> a) in order to mitigate the following deadlock scenario that may arise if
-> reclaim waits on writeback on the dirty page to complete (more details can be
-> found in this thread [1]):
-> * single-threaded FUSE server is in the middle of handling a request
->   that needs a memory allocation
-> * memory allocation triggers direct reclaim
-> * direct reclaim waits on a folio under writeback
-> * the FUSE server can't write back the folio since it's stuck in
->   direct reclaim
-> b) in order to unblock internal (eg sync, page compaction) waits on writeback
-> without needing the server to complete writing back to disk, which may take
-> an indeterminate amount of time.
+> commit de4f5fed3f231a8ff4790bf52975f847b95b85ea
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed Mar 29 14:52:15 2023 +0000
 >
-> Allocating and copying dirty pages to temp pages is the biggest performance
-> bottleneck for FUSE writeback. This patchset aims to get rid of the temp page
-> altogether (which will also allow us to get rid of the internal FUSE rb tree
-> that is needed to keep track of writeback status on the temp pages).
-> Benchmarks show approximately a 20% improvement in throughput for 4k
-> block-size writes and a 45% improvement for 1M block-size writes.
+>     iov_iter: add iter_iovec() helper
 >
-> With removing the temp page, writeback state is now only cleared on the dirty
-> page after the server has written it back to disk. This may take an
-> indeterminate amount of time. As well, there is also the possibility of
-> malicious or well-intentioned but buggy servers where writeback may in the
-> worst case scenario, never complete. This means that any
-> folio_wait_writeback() on a dirty page belonging to a FUSE filesystem needs to
-> be carefully audited.
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1742473058=
+0000
+> start commit:   96b6fcc0ee41 Merge branch 'net-dsa-cleanup-eee-part-1'
+> git tree:       net-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D14c2473058=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10c2473058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1362a5aee630f=
+f34
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D4f66250f6663c0c=
+1d67e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D166944f8580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1287ecdf98000=
+0
 >
-> In particular, these are the cases that need to be accounted for:
-> * potentially deadlocking in reclaim, as mentioned above
-> * potentially stalling sync(2)
-> * potentially stalling page migration / compaction
+> Reported-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
+> Fixes: de4f5fed3f23 ("iov_iter: add iter_iovec() helper")
 >
-> This patchset adds a new mapping flag, AS_WRITEBACK_INDETERMINATE, which
-> filesystems may set on its inode mappings to indicate that writeback
-> operations may take an indeterminate amount of time to complete. FUSE will set
-> this flag on its mappings. This patchset adds checks to the critical parts of
-> reclaim, sync, and page migration logic where writeback may be waited on.
->
-> Please note the following:
-> * For sync(2), waiting on writeback will be skipped for FUSE, but this has no
->   effect on existing behavior. Dirty FUSE pages are already not guaranteed to
->   be written to disk by the time sync(2) returns (eg writeback is cleared on
->   the dirty page but the server may not have written out the temp page to disk
->   yet). If the caller wishes to ensure the data has actually been synced to
->   disk, they should use fsync(2)/fdatasync(2) instead.
-> * AS_WRITEBACK_INDETERMINATE does not indicate that the folios should never be
->   waited on when in writeback. There are some cases where the wait is
->   desirable. For example, for the sync_file_range() syscall, it is fine to
->   wait on the writeback since the caller passes in a fd for the operation.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
 
-Looks good, thanks.
+Great, thanks syzbot.
 
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+Patch is under review :
 
-I think this should go via the mm tree.
-
-Thanks,
-Miklos
+https://patchwork.kernel.org/project/netdevbpf/patch/20241212222247.724674-=
+1-edumazet@google.com/
 
