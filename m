@@ -1,70 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-37324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CBB9F104D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:07:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411359F114B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417B918847BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E727F188408A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292651E231D;
-	Fri, 13 Dec 2024 15:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E7F1E379B;
+	Fri, 13 Dec 2024 15:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTMb4BZO"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qW05oXrP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C811E231F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 15:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1D32F24;
+	Fri, 13 Dec 2024 15:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734102230; cv=none; b=OQ/nOjzfkdDcOEJG/eIvQhzlY5CLyZOJePwoPSEMnQ/NRrHEKF+Wk3If9JUTYgEkyyxizJjmw5mdE2zTdROKGPhjgvjOu+G0jgWwAbadkCAvberSW+lAQw1MAtKalu2CXdc7N26rG68Pg1B1UUN+q4MznDlQ8zerJe2WKfpjDUA=
+	t=1734104856; cv=none; b=CfJf+x/UKPRdpgmbgwAsob+rwlAyichR+/NQyuVABlxHYR1zL8pQ9gru/7+vG1N22/1kdRbPAgZYtZObfpK2Dz1yeFciXVSsBASdG20Lx5qR6QsYiqlmHkOoyMGdXpBcLyjX0Gtu4An5WFRwTGNONIiBWHpUmroydvErtcez5jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734102230; c=relaxed/simple;
-	bh=YRJkWpVrsK5tWAkj3h7O0KKz9hSJzbc1riBkCq6zkRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CT4EbJ6ZExweyRxkvPGL6I0qVHYFfDvfnzk7qOoftX/BQpvnrY2unKcXIv9SNOi9xsb9xOdRhQs+zrvNvi1a+MWLkEomJ3DGhA2KsjuRLUi18GQuK4zdRoZooL9PMCxPY4RbonpHHEnr0pix8YpqvEEJs1DkkYWkpsHAyOm1R3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTMb4BZO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734102227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gtlfk7brtiOHWfKLJSeT8G4FA2trYaZJpMkIqijZqRc=;
-	b=GTMb4BZO3ALfxnI3WM3qVrbgU+8/V36xKmkcPhfBF2nZripcMgZ572CxFef69BB2IsxYor
-	6p3BSI0hevrZdRMZnALCCYK0ExCI9/Zxy3q94yerYsoRiDFnBhr+6jIl/F4Le7wFtHEtYv
-	2gZ4KBzD2GUZmGKn39AKCXES1lSaxt8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-RbX2NjB4MFWGeghGE-D9EA-1; Fri,
- 13 Dec 2024 10:03:46 -0500
-X-MC-Unique: RbX2NjB4MFWGeghGE-D9EA-1
-X-Mimecast-MFC-AGG-ID: RbX2NjB4MFWGeghGE-D9EA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1734104856; c=relaxed/simple;
+	bh=6AU0Zu+j6lv5AWqSiZZfR6LsWkv1Sx+N4RSy8n0eNJo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NqBgzQnJTrCsLIpu3n0/wvcV0RxPGPfC+ewk8TZtuzAJr/sYVTRAPRuxBSW/3Hnfo00erbPmVd+79AsHxVPa3Y3PkVgl2bWI0/XPP+T+dsbEQmptH4Vc7wlm4S9SFpDks6KsqdhOd40bu6zP1O2XJGGI3CU1v+Gx0gObZoD3kmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qW05oXrP; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E7FDF403FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1734104854; bh=ROXOtd9jlx1s9lnUPcYMykHOvSU6CO3Ce2o1MCZInzU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qW05oXrPfr4MHyggksWiC5+0x6hSTh7F4hh+wnhCasjJHT7uX1zoy8vGMKlHO6rwX
+	 ZSiv+7hASz//0wsmuVfYNRMxUv3noTROUNoa2WN3QBN0OkTS7xuO0XYnuqqLSuVOzc
+	 KByqKt48wXhBVUfA+i3GH2So/v2OQTwhH3qWLCpMAMQ4MOrYy168tE01dic+dxhn00
+	 ZTYmNQ1+X1JszxC9Je2FqN5jSzzAs7Mw7zcnpIUWglZpNwgDSfFicky9BuX4J3FCwn
+	 3S7Fn3ZyIchxnM4glVi6t3gzu4c95KEFEM6xBFEiP2oMDfkQn//7HvwqF1bAqkKw+y
+	 lazFcxCLKAJPg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F95919560A3;
-	Fri, 13 Dec 2024 15:03:45 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.90.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ADEA9195394B;
-	Fri, 13 Dec 2024 15:03:44 +0000 (UTC)
-From: Brian Foster <bfoster@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Subject: [PATCH RFCv2 4/4] xfs: fill dirty folios on zero range of unwritten mappings
-Date: Fri, 13 Dec 2024 10:05:28 -0500
-Message-ID: <20241213150528.1003662-5-bfoster@redhat.com>
-In-Reply-To: <20241213150528.1003662-1-bfoster@redhat.com>
-References: <20241213150528.1003662-1-bfoster@redhat.com>
+	by ms.lwn.net (Postfix) with ESMTPSA id E7FDF403FA;
+	Fri, 13 Dec 2024 15:47:33 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bingwu Zhang <xtex@envs.net>, Miklos Szeredi <miklos@szeredi.hu>,
+ "Darrick J. Wong" <djwong@kernel.org>
+Cc: Bingwu Zhang <xtex@aosc.io>, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ ~xtex/staging@lists.sr.ht
+Subject: Re: [PATCH] Documentation: filesystems: fix two misspells
+In-Reply-To: <20241208035447.162465-2-xtex@envs.net>
+References: <20241208035447.162465-2-xtex@envs.net>
+Date: Fri, 13 Dec 2024 08:47:33 -0700
+Message-ID: <87zfkzwpnu.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,54 +66,22 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Use the iomap folio batch mechanism to identify which folios to zero
-on zero range of unwritten mappings. Trim the resulting mapping if
-the batch is filled (unlikely) and set the HAS_FOLIOS flag to inform
-iomap that pagecache has been checked for dirty folios.
+Bingwu Zhang <xtex@envs.net> writes:
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/xfs/xfs_iomap.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> From: Bingwu Zhang <xtex@aosc.io>
+>
+> This fixes two small misspells in the filesystems documentation.
+>
+> Signed-off-by: Bingwu Zhang <xtex@aosc.io>
+> ---
+> I found these typos when learning about OverlayFS recently.
+> ---
+>  Documentation/filesystems/iomap/operations.rst | 2 +-
+>  Documentation/filesystems/overlayfs.rst        | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 97fa860a6401..b7dbd34fc02f 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -998,6 +998,7 @@ xfs_buffered_write_iomap_begin(
- 	struct iomap		*iomap,
- 	struct iomap		*srcmap)
- {
-+	struct iomap_iter	*iter = container_of(iomap, struct iomap_iter, iomap);
- 	struct xfs_inode	*ip = XFS_I(inode);
- 	struct xfs_mount	*mp = ip->i_mount;
- 	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-@@ -1065,12 +1066,21 @@ xfs_buffered_write_iomap_begin(
- 	 */
- 	if (flags & IOMAP_ZERO) {
- 		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-+		u64 end;
- 
- 		if (isnullstartblock(imap.br_startblock) &&
- 		    offset_fsb >= eof_fsb)
- 			goto convert_delay;
- 		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
- 			end_fsb = eof_fsb;
-+		if (imap.br_state == XFS_EXT_UNWRITTEN &&
-+		    offset_fsb < eof_fsb) {
-+			xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
-+			end = iomap_fill_dirty_folios(iter,
-+					XFS_FSB_TO_B(mp, imap.br_startoff),
-+					XFS_FSB_TO_B(mp, imap.br_blockcount));
-+			end_fsb = min_t(xfs_fileoff_t, end_fsb, XFS_B_TO_FSB(mp, end));
-+		}
- 
- 		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
- 	}
--- 
-2.47.0
+Applied, thanks.  Welcome to the kernel community!
 
+jon
 
