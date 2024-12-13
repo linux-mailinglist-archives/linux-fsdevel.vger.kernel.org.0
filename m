@@ -1,155 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-37271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060009F0480
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 07:01:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB879F0473
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 06:57:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC167282945
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 06:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024A11695D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 05:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48601822F8;
-	Fri, 13 Dec 2024 06:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1C718BBAC;
+	Fri, 13 Dec 2024 05:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="agigrxIn"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JWGjaxXm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8E74A21
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 06:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A446F30F;
+	Fri, 13 Dec 2024 05:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734069694; cv=none; b=pnkzxeLxPz2k2qRsYjmQmZUi9HU6d9PWExWMNjvxudE3te6m9TwIz5MvFeAo3M6HscmbwKJSxT6pjm97Hx2pZacc3j76x5rhBkhFO6DDU2AYcVjg0oARmipVwvdAUnq7911D6oW2reSRycj2tAnyWyh3nb/ckbHrmnYfi5xFsnk=
+	t=1734069424; cv=none; b=TUQohdbEkrmkkPAoc5w1nB0JrgBwgbzu6NM+5/o2xfrSQRwvT9YNmu/NLHTHrnMwtsdO52azeYtDwY4S+dHR9PIZoLsK7LjYW3EgYDTGGExZBtJXkAInvtjX9N7nXUqejoVOPPRYIUUAwAcyd5lOx3WK7FSrHGWAchggLONDCvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734069694; c=relaxed/simple;
-	bh=Gc3Jt8blBw7jT0/gisSOyP9+e9/2TScJtmc2wxbTh64=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=IDc128XpN4wtx1TfY+/PEB43DJJRABaaXcijG68tPyDV5D1sG2OX/bmHDPvpP0K68uLvfqSzvxDdGfCGNUvxweVrpD5RdjkvCTOgHZ573TIyjk9NuxpTh/hiQf/76koxHyzAVCNEOdUJHOb23PTQtkjfkeeXS5Mt9fzWkyu9FGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=agigrxIn; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241213060129epoutp01e5a33b5e3b676c5f21a85e234a216f10~QpzHbNpjy0391503915epoutp01M
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 06:01:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241213060129epoutp01e5a33b5e3b676c5f21a85e234a216f10~QpzHbNpjy0391503915epoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1734069689;
-	bh=Gc3Jt8blBw7jT0/gisSOyP9+e9/2TScJtmc2wxbTh64=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=agigrxInquIQZrTdhkRMRkqOGXx/4s/QFzpHTRsh7kS7CqbhB7hdEbJGAkjFf6A3u
-	 0boOSjWgPD8ApQ+3v+IZfV0DbT8P1Gh/WGHGxuDGSPkBibRwpdaP2k4GaPFDtl1jHQ
-	 swEfaLTEOnb9V26Z2gcSQ29lfXaUCK56nXykN9Eg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241213060128epcas5p14ff115b9b8eb9a4ad609393dabc21f08~QpzHIUKrT1879718797epcas5p1J;
-	Fri, 13 Dec 2024 06:01:28 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y8dxz08p9z4x9QB; Fri, 13 Dec
-	2024 06:01:27 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D6.8F.19933.5BDCB576; Fri, 13 Dec 2024 15:01:25 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf~Qpy871bXn1217912179epcas5p3q;
-	Fri, 13 Dec 2024 06:01:17 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241213060117epsmtrp16131439c5b74bccf83c6d6a2b4a078b4~Qpy84dGvw1127611276epsmtrp1l;
-	Fri, 13 Dec 2024 06:01:17 +0000 (GMT)
-X-AuditID: b6c32a4a-b87c770000004ddd-80-675bcdb5a785
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	ED.91.18729.DADCB576; Fri, 13 Dec 2024 15:01:17 +0900 (KST)
-Received: from ubuntu (unknown [107.99.41.245]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241213060115epsmtip1db0b0c6b8b3b9dd4cfe4ed6ce87873c1~Qpy7HlTGq1086010860epsmtip1m;
-	Fri, 13 Dec 2024 06:01:15 +0000 (GMT)
-Date: Fri, 13 Dec 2024 11:23:21 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Keith Busch <kbusch@meta.com>
-Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
-	anuj20.g@samsung.com, joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv14 10/11] nvme: register fdp parameters with the block
- layer
-Message-ID: <20241213055321.rh6qdkru53ao5wr4@ubuntu>
+	s=arc-20240116; t=1734069424; c=relaxed/simple;
+	bh=fRwSZFuKlVEwX8oDyo8IvsgFnf2SLOzzaiX84qKJvFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qU6rXw4aMymZJS+P+Zt6K24hnCn5jRrlq9Wx3cGR39SQplPtrCWzqWeo1kco7YkIKJTdBSKp3QQhQRSxBPjE4T/pArRQJLh0/HvoSIPP2Qp3TF7WEmPOrlC8zVReRNPpAAcX2aF5K2GcEefyRugZGXHkRl2r5DchcuW877q/4rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JWGjaxXm; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VtYK1Jcfu1QDnzrzvT1193eWum7ll3HtEhe/SLwyPBk=; b=JWGjaxXmLWf+ysB/Vls5WDllNB
+	tCn8uwzNJWbt8i4S4ez6Incd/C08f704FwkKi7U2mNEtbLYsAUXv6aKhmVmOlZXvSs3hrsmoQeTDR
+	hjZsAhOYZEK6DG+8Mh+Pwyte+0EO2SEN2DVY1EqlX/JeEo1VooJ8CN2G4Bzjy6RCpXvQGSO+4x0A3
+	3pc+yTa1FE4U1CmrjoWVp743vuAbZq7mCXSlGrwlksoxKQx9EiOKOKr45/nTxEAmWlgFMckTPeK1U
+	cuyLUtU6ARCEr8NSVuQ7sdn2knC5tRtN0QS72E2npOqKbD8VRANkrCqfQVSmlMHcHyJpCoN3GwVZ0
+	jdgyJYZQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLyfd-00000002ocI-0sDb;
+	Fri, 13 Dec 2024 05:57:01 +0000
+Date: Thu, 12 Dec 2024 21:57:01 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 1/3] include/linux.h: Factor out generic
+ platform_test_fs_fd() helper
+Message-ID: <Z1vMrUqBWcarQ6_s@infradead.org>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <5996d6854a16852daca5977063af6f2af2f0f4ca.1733902742.git.ojaswin@linux.ibm.com>
+ <20241211180902.GA6678@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241211183514.64070-11-kbusch@meta.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmuu7Ws9HpBse36Fk0TfjLbDFn1TZG
-	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
-	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZ1S2TUZqYkpq
-	kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
-	YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IxJezrYCi6w
-	Vsy8OpetgfEnSxcjB4eEgInEzkflXYycHEICuxklZv5y6mLkArI/MUo8W93IDpH4xiixfzU/
-	TP2Pw4IQNXsZJebfuMUI4TwBqrl6nhmkgUVAVeLk7yZmkAY2AW2J0/85QMIiAooS54HBAFLP
-	LDCRSeL3oSawBcICQRJ/JjwC6+UFWnB293E2CFtQ4uTMJywgNqeAmURT22owW0JgKYfEqTXR
-	EAe5SPRfk4YIC0u8Or6FHcKWknjZ3wZll0usnLICbK+EQAujxKzrsxghEvYSraf6wfYyC2RI
-	XLh/CqpBVmLqqXVMEHE+id7fT5gg4rwSO+bB2MoSa9YvYIOwJSWufW+Esj0k5kxdwgoJuC2M
-	EodOq09glJuF5J1ZSNZB2FYSnR+aWGcBvcMsIC2x/B8HhKkpsX6X/gJG1lWMkqkFxbnpqcWm
-	BUZ5qeXwCE7Oz93ECE6+Wl47GB8++KB3iJGJg/EQowQHs5II7w37yHQh3pTEyqrUovz4otKc
-	1OJDjKbA6JnILCWanA9M/3kl8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQx
-	cXBKNTD1Hcx598B0zdEfz5XqZ8i/3DbD7LvY/nXqTbMKUxwOt+2bEtX/2cI+zebCgShVjagn
-	L9+J3FxiK/zAWqK6oWa++3sju//lRTk2OxdpVq750rrU5Ns7+cuOf35Om//X4tndLxPuBB2S
-	jM9ZUj45tcu+eqnDLKXahggO5xdnA59vcTjx9WGh8azPjFc23HN61cW9Y45xefC+x7v7zYK1
-	m+5xte6+IFC868H3+ZcqA/YbejtMP/fIvWT2P+UQRrEsLj/BWOkN/7/tEBGPlXXNlmlvVwp8
-	NDc/NoTF4XrmDaZqs9kz+LgKfeqCPe6r9ic4+s6JqCrrtL6gc0x50vte1w3/zE5MiakIP7p7
-	l1SZiIcSS3FGoqEWc1FxIgD7RCtcRwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnO7as9HpBk/W6lg0TfjLbDFn1TZG
-	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
-	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZxSXTUpqTmZZ
-	apG+XQJXxoeVZxgLmpgrml/FNTAeZepi5OCQEDCR+HFYsIuRi0NIYDejxO3DFxm7GDmB4pIS
-	y/4eYYawhSVW/nvODlH0iFFi9oMFLCAJFgFViZO/m5hBBrEJaEuc/s8BEhYRUJQ4D3QMSD2z
-	wGQmieczj4HVCwsESfyZ8AhsKC/Q4rO7j7OB2EICCRId156wQcQFJU7OfAJWzyxgJjFv80Ow
-	+cwC0hLL/4HN5wQKN7WtZpnAKDALSccsJB2zEDoWMDKvYpRMLSjOTc8tNiwwzEst1ytOzC0u
-	zUvXS87P3cQIjhwtzR2M21d90DvEyMTBeIhRgoNZSYT3hn1kuhBvSmJlVWpRfnxRaU5q8SFG
-	aQ4WJXFe8Re9KUIC6YklqdmpqQWpRTBZJg5OqQam3eL9GxkyHAu4XNMnr19eYFzwc+aG6tml
-	bw5PnGTH8F75Z6rc84UeiXYie180d62eYqfccviXsDmDpLdY+ddV18QVJ3e5cQoXHy92jlKy
-	Sl/+QSdykVNjwVq1sE4trj0pF+s4n1RO/el2tXVXTUZBm95jkbe5c52OpFU2V+++9KBuhxDL
-	vbYEOYOzFX5FTGeM3y9ec13Wz7vznUG/oVD9MTPOXuerx/T3xAQeXvx6W1PKa4P6k1/Ny3uL
-	8p5PmtH6uTA7OsP7xtpZy552MW+rO6sv5xNbt0V7Vn4Oz/mQy17Fq231UlTL/jyX//3hzBbH
-	NTscJO67Vfud2Hew4uXTRsOEhwZfC936bgETlhJLcUaioRZzUXEiACUZdmcLAwAA
-X-CMS-MailID: 20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf
-References: <20241211183514.64070-1-kbusch@meta.com>
-	<20241211183514.64070-11-kbusch@meta.com>
-	<CGME20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf@epcas5p3.samsung.com>
-
-------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241211180902.GA6678@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 11/12/24 10:35AM, Keith Busch wrote:
->From: Keith Busch <kbusch@kernel.org>
->
->Register the device data placement limits if supported. This is just
->registering the limits with the block layer. Nothing beyond reporting
->these attributes is happening in this patch.
->
->Signed-off-by: Keith Busch <kbusch@kernel.org>
->---
+On Wed, Dec 11, 2024 at 10:09:02AM -0800, Darrick J. Wong wrote:
+> > +
+> > +static __inline__ int platform_test_ext4_fd(int fd)
+> > +{
+> > +	return platform_test_fs_fd(fd, 0xef53); /* EXT4 magic number */
+> 
+> Should this be pulling EXT4_SUPER_MAGIC from linux/magic.h?
 
-Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
+I think we can just drop adding platform_test_ext4_fd with the
+suggested patches later in the series?  Having ext4-specific code
+in xfsprogs would seem pretty odd in xfsprogs anyway over our previous
+categories of xfs only or generic.
 
-------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_
-Content-Type: text/plain; charset="utf-8"
-
-
-------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_--
 
