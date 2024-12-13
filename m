@@ -1,100 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-37342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBD29F11D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 17:13:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603579F11E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 17:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A5D169E32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D2A188B7FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6061E3791;
-	Fri, 13 Dec 2024 16:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F261E22FC;
+	Fri, 13 Dec 2024 16:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="TKeTgPg/"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="vNC8EzyC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [178.154.239.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E39F1E3776
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 16:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B877F139587
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 16:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734106424; cv=none; b=rIFCs9AHx08VTBENOPZExoqKcXsmkx1oKWKxdNEjFz40BW/czQvLmvZ2Sd5+9SGDmAN0aeoMJsmRvpBdpuAgmTsyzRhUNHPXM/EWPi/oLgp7w98JAWJNXoHLNcj+q8sRb7s2xihziWnuQLttobI4ax0o6XPjslG5Jo3VFYqfwP8=
+	t=1734106704; cv=none; b=iDe0LqFK0D/2Mz7Ep9DhXpNgmvxoz6AQ2nbbUQE6t1ASam/DcFmM9/iA3d5QWfl39fjKlmcM3xPA4CWeXPlXQPF7uINi5M9ejAHBFZC5BVvScaZHEoDgONGTQ/g9Xjd/jgfJY5fzZK9najEdleS8EGMbVg1P7q7hUm/S3QoAwqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734106424; c=relaxed/simple;
-	bh=JeYzecM4Ws6DAx8d1eYSSaAR9Hxv7aMjtxrtoNso9js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SmNF9A3qY+Wv8WFZXrdXn4DtSTpd+EFFdbiW511cKJdXinlgXGGS6unOrgK1sAm3yvjV4n0sYmUzHMr8LuuLBk7LkiHw/gdfEr1lY9l4GLXJbiGuP0akyQwzovtW3vv/PehsGuy2n6liopzRbZgCLziWhlv+LYvnJXPLr2wt5hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=TKeTgPg/; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467a8d2d7f1so5679431cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 08:13:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1734106422; x=1734711222; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VTgK8vtVJlVpnYOvWfFrTdJyV8eieOKxBt4m4Ra+gVk=;
-        b=TKeTgPg/8oX2Y8pKOxSAhgWEVJyaC7KXrxjWYmWXcl3JKMZANV/WjvW4NKHmRYLidr
-         HASKJutne3XwWfzPDHpjnol7Yh38IYPnXunHlrkBL9yqf96DSF5lKh8zdX7xqJPbFEEd
-         5Brt7I+JN7Dd3sZ7fce9mnPYFpvAhT0N7ad/0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734106422; x=1734711222;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VTgK8vtVJlVpnYOvWfFrTdJyV8eieOKxBt4m4Ra+gVk=;
-        b=d/mWzla2wW3ljzoxWzhndplX3GN0seXoQM7L+uZ9RiBNOY8AoMvLxRSPriyK9hIcjt
-         Oq9XgnehxmShgn7swgwytazbqSKXRkErTvOFKoVfTXRbZH1GwPEufBYUQwSLnddxb6ON
-         tUlhh9+vSQqFsVJXQ+XN+7j86DtwnNf/PInD/9RMvoVhsZBQ+jjVDZiORP0lubpcGssm
-         vfCQhmFyOADYfMtrqXoakf7q2/OuKN4Hn19bs4ti8LChVfH3XEcAWrgouUlwEAPOd4K1
-         9ZeZDwZ2paXtxZFyUIRJA5qFdgAudYc98xSWM8VcoH6GO5lRKTqHvdCvfeFeKzpfDiSd
-         19dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtUTvlDKxFvAtfm9AfvqQi9arUXbY6ri181LvNAiq38LxDTKWP1f7aHwPksHKL1gChGss5OT1NExQdX55W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4m9R+K3R2JhA/5pNZ+OciGgNLG1ZBL6snc1VBHHD/Cgpau9J7
-	MuKRwcCMOJlyOMfgFaI2Aswp6fhkU7id3hsQgAf5Xpq9YlQW/s52prhKIl8CwGRZ8t/ZdAGHGyL
-	ASwYeMBZyJuSwbBSGd1+2u05X/Htf5Qz2BxB5jQ==
-X-Gm-Gg: ASbGncvH/majwBYlW4xcpKP8MImUPQT4IOPrUlzqnwstDFwEeqA0BdL6GEFyypxZvNe
-	Tzsf9xiuPPb+GCsJ24dkql2074INyrxRIYV8QyA==
-X-Google-Smtp-Source: AGHT+IEK7cPvoYZztp8WXRex5AggE+7kQWRBIjyrSu0/57plBJrXdZPJ6JJi38gMdr7TZFixPLtwoFF69xUnqROniPs=
-X-Received: by 2002:a05:622a:58d:b0:466:a584:69f8 with SMTP id
- d75a77b69052e-467a582f1famr58994161cf.43.1734106421923; Fri, 13 Dec 2024
- 08:13:41 -0800 (PST)
+	s=arc-20240116; t=1734106704; c=relaxed/simple;
+	bh=kicQe2L5Q8NeE2fQw+OVzFPOXZrsKZ1DsXdynfG9FyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FNlC9SudbePVsu5riDC5fNph+XDTvaPyQLDbDz47SQFTB/iAisukT6FnHNdlz+bULnVeuOwSQ+LM8MDY0IFhDFXGFwulh/Y8rLOEhTxJ7WyqxblLlR8PZBm27Fyq8B5CHUrBQH0lNie8rMmTpROMAcj4RYRyA20jMR82tteC6kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=vNC8EzyC; arc=none smtp.client-ip=178.154.239.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2d9f:0:640:f6ce:0])
+	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 1042F60CFC;
+	Fri, 13 Dec 2024 19:18:12 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 9IPUCn2OqGk0-tOJDaYDu;
+	Fri, 13 Dec 2024 19:18:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1734106691; bh=HAbuCWYNac8PsFY8xupWydLBNTlMKG7cPREROmn5G7k=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=vNC8EzyCU8xUMcVn63ndTQatA/8OeuPsXX+fmff3qseNy9T9ZogxO4C6CpknTq6Xs
+	 UQNdsvTwLdcRTj1crND/g0Ax17W3bM3sZUVbR/wjjcxwaVP3pcu0onHfEWPK7Mnxhd
+	 R0phpYN6NJfStg+UvRTInAChxgXYlN2w6Wf2RiXk=
+Authentication-Results: mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>
+Cc: Yuezhang Mo <yuezhang.mo@sony.com>,
+	linux-fsdevel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
+Subject: [PATCH] exfat: bail out on -EIO in exfat_find_empty_entry()
+Date: Fri, 13 Dec 2024 19:17:57 +0300
+Message-ID: <20241213161757.1928209-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202093943.227786-1-dmantipov@yandex.ru> <1100513.1733306199@warthog.procyon.org.uk>
- <CAJfpeguAw2_3waLEGhPK-LZ_dFfOXO6bHGE=6Yo2xpyet6SYrA@mail.gmail.com> <4b9f34f5-7cfc-40e2-b2a7-ad69d1d81437@fastmail.fm>
-In-Reply-To: <4b9f34f5-7cfc-40e2-b2a7-ad69d1d81437@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 13 Dec 2024 17:13:31 +0100
-Message-ID: <CAJfpegtvJr7zKShpFGtFUT66+2gz8H6Js9srhpaqUhXA6061BQ@mail.gmail.com>
-Subject: Re: syzbot program that crashes netfslib can also crash fuse
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: David Howells <dhowells@redhat.com>, Dmitry Antipov <dmantipov@yandex.ru>, 
-	Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, lvc-project@linuxtesting.org, 
-	syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 6 Dec 2024 at 13:41, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+Syzbot has reported the following KASAN splat:
 
-> I had already posted a patch on Monday.
->
-> https://lore.kernel.org/r/20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+...
+Call Trace:
+ <TASK>
+ ...
+ ? exfat_get_dentry_cached+0xb6/0x1b0
+ ? exfat_get_dentry_cached+0x11a/0x1b0
+ ? exfat_get_dentry_cached+0xb6/0x1b0
+ exfat_init_ext_entry+0x1b6/0x3b0
+ exfat_add_entry+0x321/0x7a0
+ ? __pfx_exfat_add_entry+0x10/0x10
+ ? __lock_acquire+0x15a9/0x3c40
+ ? __pfx___lock_acquire+0x10/0x10
+ ? _raw_spin_unlock_irqrestore+0x52/0x80
+ ? do_raw_spin_unlock+0x53/0x230
+ ? _raw_spin_unlock+0x28/0x50
+ ? exfat_set_vol_flags+0x23f/0x2f0
+ exfat_create+0x1cf/0x5c0
+ ...
+ path_openat+0x904/0x2d60
+ ? __pfx_path_openat+0x10/0x10
+ ? __pfx___lock_acquire+0x10/0x10
+ ? lock_acquire.part.0+0x11b/0x380
+ ? find_held_lock+0x2d/0x110
+ do_filp_open+0x20c/0x470
+ ? __pfx_do_filp_open+0x10/0x10
+ ? find_held_lock+0x2d/0x110
+ ? _raw_spin_unlock+0x28/0x50
+ ? alloc_fd+0x41f/0x760
+ do_sys_openat2+0x17a/0x1e0
+ ? __pfx_do_sys_openat2+0x10/0x10
+ ? __pfx_sigprocmask+0x10/0x10
+ __x64_sys_creat+0xcd/0x120
+ ...
+</TASK>
 
-Sorry, missed that.  Applied your version with the above test-by's added.
+On exFAT with damaged directory structure, 'exfat_search_empty_slot()'
+may issue an attempt to access beyond end of device and return -EIO.
+So catch this error in 'exfat_find_empty_entry()', do not create an
+invalid in-memory directory structure and do not confuse the rest
+of the filesystem code further.
 
-> @David, is that the same sysbot report or another one?
+Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
+Fixes: 5f2aa075070c ("exfat: add inode operations")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ fs/exfat/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's a different one, assigned to netfs, not fuse.
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 97d2774760fe..73dbc5cdf388 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -331,7 +331,7 @@ static int exfat_find_empty_entry(struct inode *inode,
+ 	while ((dentry = exfat_search_empty_slot(sb, &hint_femp, p_dir,
+ 					num_entries, es)) < 0) {
+ 		if (dentry == -EIO)
+-			break;
++			return -EIO;
+ 
+ 		if (exfat_check_max_dentries(inode))
+ 			return -ENOSPC;
+-- 
+2.47.1
 
-Thanks,
-Miklos
 
