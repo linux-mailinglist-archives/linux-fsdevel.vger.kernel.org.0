@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-37263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFE59F0317
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 04:28:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D519F030D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 04:27:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2C228575C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 03:28:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4063169644
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 03:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394B918785B;
-	Fri, 13 Dec 2024 03:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1794F15573F;
+	Fri, 13 Dec 2024 03:27:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A4A18660F;
-	Fri, 13 Dec 2024 03:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1F241C85;
+	Fri, 13 Dec 2024 03:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734060440; cv=none; b=T+epbuYRDufWKIWZTN6O3m05Beii7ok3DZKgehT6KFdr3ghrjEywFx32mnVFNezNcbbyWLKq+ggFzRBUoTUnIYKQrspAzY7lwqxVQW4RbSZhPbKZpcJTVglsU4ieTgu601UAixE8DnycuoIizLXBMOHIV+k4axUMPOaIcfDb95w=
+	t=1734060435; cv=none; b=K9YOVk5nVvQL2ymONSrMA39lyCupxgx+7ZHIFAfXsA7tUEzPTEPd5Qj2jsH5lnElCb383vGXR8uvouCRpIs0BbpXQT5kLdEHJ2G32n/aXcYP9WZRZzdZafto2tZ9sqBXEL3CJsveEBCu1xarv8oQppKuZ5GSTdd7I4Oswm7mKHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734060440; c=relaxed/simple;
-	bh=gZg9AaSBKuhbiYiSdlwcny91/4iuqVBuhZMsgswIRDw=;
+	s=arc-20240116; t=1734060435; c=relaxed/simple;
+	bh=zdZBNspTvRi8E6yLFupvWXoyriecBilryOejiKh9q3c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C0MWu4Hwgopg2B08oGjudfzc5nNeTfPKUtN+QNcm24F+CCOKyQuV9ZGWTgL/srYfhuGKp/ECOlo93Y1yAGobl86iA7iOs1MXIhpNQDaTW9McLAgbu68TlneitLkZdmNbKUQriJwJwSv+j3OZp0LK6FU3xtz4FEpCjWKpvyF2Q6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=crtbTaVdHkY74uHSS5Ig6q1krmrLAznoIvJ/q52FYljxERpRqilUVtxr3pB0uKCYKCa9iD0LFDBndIWYNcwPWkRijLcFi7QOqUmP/2rBndNDYjFf0zWo03NXp7jO8OADmciu2ozoKkdF/d1O21vsEO38uH0UBGoNDgaz3nt+bzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8ZWY6ZH1z4f3lCm;
-	Fri, 13 Dec 2024 11:26:49 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y8ZWb1rSBz4f3jXv;
+	Fri, 13 Dec 2024 11:26:51 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 44F721A0359;
+	by mail.maildlp.com (Postfix) with ESMTP id 8F6E31A0359;
 	Fri, 13 Dec 2024 11:27:10 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgBHcISMqVtnfJ3KEQ--.55430S4;
+	by APP4 (Coremail) with SMTP id gCh0CgBHcISMqVtnfJ3KEQ--.55430S5;
 	Fri, 13 Dec 2024 11:27:10 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: akpm@linux-foundation.org,
@@ -44,9 +44,9 @@ To: akpm@linux-foundation.org,
 Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH v3 2/5] Xarray: move forward index correctly in xas_pause()
-Date: Fri, 13 Dec 2024 20:25:20 +0800
-Message-Id: <20241213122523.12764-3-shikemeng@huaweicloud.com>
+Subject: [PATCH v3 3/5] Xarray: distinguish large entries correctly in xas_split_alloc()
+Date: Fri, 13 Dec 2024 20:25:21 +0800
+Message-Id: <20241213122523.12764-4-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20241213122523.12764-1-shikemeng@huaweicloud.com>
 References: <20241213122523.12764-1-shikemeng@huaweicloud.com>
@@ -57,113 +57,52 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHcISMqVtnfJ3KEQ--.55430S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFyUWFWxCF4fJF4DAw43Jrb_yoW5Xr1DpF
-	WDKryFyw18Jr4I9rnIqa109w1Fg3WrKa1aqrWfGr1ftrZxGryqy3WjkrZ8ZF9xGa18Za47
-	CF48Wr1DGa1DJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUXwA2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK
-	0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4
-	x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28E
-	F7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F4
-	0EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_
-	Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r
-	126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0K2NtUU
-	UUU==
+X-CM-TRANSID:gCh0CgBHcISMqVtnfJ3KEQ--.55430S5
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF1rGr4kJF1DCr4DJw1fZwb_yoWDurg_ur
+	4FgF4kZr45GF4kXwnxCF4rt340kFn0kF9ruFWUJr9xW34UJrsrtr1kWrsrXa4rAFyjyFy7
+	AFs5Jry093yUKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbDxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
+	xGYIkIc2x26280x7IE14v26r1rM28IrcIa0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kI
+	II0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7
+	xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84AC
+	jcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrV
+	ACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWU
+	JVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF
+	0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
+	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUaTKuUUUU
+	U
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-After xas_load(), xas->index could point to mid of found multi-index entry
-and xas->index's bits under node->shift maybe non-zero. The afterward
-xas_pause() will move forward xas->index with xa->node->shift with bits
-under node->shift un-masked and thus skip some index unexpectedly.
+We don't support large entries which expand two more level xa_node in
+split. For case "xas->xa_shift + 2 * XA_CHUNK_SHIFT == order", we also
+need two level of xa_node to expand. Distinguish entry as large entry in
+case "xas->xa_shift + 2 * XA_CHUNK_SHIFT == order".
 
-Consider following case:
-Assume XA_CHUNK_SHIFT is 4.
-xa_store_range(xa, 16, 31, ...)
-xa_store(xa, 32, ...)
-XA_STATE(xas, xa, 17);
-xas_for_each(&xas,...)
-xas_load(&xas)
-/* xas->index = 17, xas->xa_offset = 1, xas->xa_node->xa_shift = 4 */
-xas_pause()
-/* xas->index = 33, xas->xa_offset = 2, xas->xa_node->xa_shift = 4 */
-As we can see, index of 32 is skipped unexpectedly.
-
-Fix this by mask bit under node->xa_shift when move forward index in
-xas_pause().
-
-For now, this will not cause serious problems. Only minor problem
-like cachestat return less number of page status could happen.
+As max order of folio in pagecache (MAX_PAGECACHE_ORDER) is <=
+(XA_CHUNK_SHIFT * 2 - 1), this change is more likely a cleanup...
 
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 ---
- lib/test_xarray.c | 35 +++++++++++++++++++++++++++++++++++
- lib/xarray.c      |  1 +
- 2 files changed, 36 insertions(+)
+ lib/xarray.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index d5c5cbba33ed..6932a26f4927 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1448,6 +1448,41 @@ static noinline void check_pause(struct xarray *xa)
- 	XA_BUG_ON(xa, count != order_limit);
- 
- 	xa_destroy(xa);
-+
-+	index = 0;
-+	for (order = XA_CHUNK_SHIFT; order > 0; order--) {
-+		XA_BUG_ON(xa, xa_store_order(xa, index, order,
-+					xa_mk_index(index), GFP_KERNEL));
-+		index += 1UL << order;
-+	}
-+
-+	index = 0;
-+	count = 0;
-+	xas_set(&xas, 0);
-+	rcu_read_lock();
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		XA_BUG_ON(xa, entry != xa_mk_index(index));
-+		index += 1UL << (XA_CHUNK_SHIFT - count);
-+		count++;
-+	}
-+	rcu_read_unlock();
-+	XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
-+
-+	index = 0;
-+	count = 0;
-+	xas_set(&xas, XA_CHUNK_SIZE / 2 + 1);
-+	rcu_read_lock();
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		XA_BUG_ON(xa, entry != xa_mk_index(index));
-+		index += 1UL << (XA_CHUNK_SHIFT - count);
-+		count++;
-+		xas_pause(&xas);
-+	}
-+	rcu_read_unlock();
-+	XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
-+
-+	xa_destroy(xa);
-+
- }
- 
- static noinline void check_move_tiny(struct xarray *xa)
 diff --git a/lib/xarray.c b/lib/xarray.c
-index fa87949719a0..d0732c5b8403 100644
+index d0732c5b8403..3fac3f2cea9d 100644
 --- a/lib/xarray.c
 +++ b/lib/xarray.c
-@@ -1147,6 +1147,7 @@ void xas_pause(struct xa_state *xas)
- 			if (!xa_is_sibling(xa_entry(xas->xa, node, offset)))
- 				break;
- 		}
-+		xas->xa_index &= ~0UL << node->shift;
- 		xas->xa_index += (offset - xas->xa_offset) << node->shift;
- 		if (xas->xa_index == 0)
- 			xas->xa_node = XAS_BOUNDS;
+@@ -1022,7 +1022,7 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
+ 	unsigned int mask = xas->xa_sibs;
+ 
+ 	/* XXX: no support for splitting really large entries yet */
+-	if (WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT < order))
++	if (WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT <= order))
+ 		goto nomem;
+ 	if (xas->xa_shift + XA_CHUNK_SHIFT > order)
+ 		return;
 -- 
 2.30.0
 
