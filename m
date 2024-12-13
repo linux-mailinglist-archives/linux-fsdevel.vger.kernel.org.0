@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-37319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4059F0F82
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:50:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BA49F1034
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 16:05:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25AF4283659
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 14:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7392815B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2024 15:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172368F5E;
-	Fri, 13 Dec 2024 14:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22DD1E2613;
+	Fri, 13 Dec 2024 15:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kDvcqnxz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bq85RUsv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3671E00BF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D4A1E25E8;
+	Fri, 13 Dec 2024 15:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101401; cv=none; b=OzTYkUAP4KTnqgcxJNeV1y3BUsN/02i6hICrUslbU665T8IDu1ZspmGl0bJpdYv4XpxoQ6xmDl94fSk/LVSfj49MOecvlHXhaZc24HBmGl4tMMNUEzD78nbaVntdTA/9pHEvELon9gM3xzQdFIQHOpXjGBgDseJtkLizkDRWcuY=
+	t=1734102275; cv=none; b=MSysxI2qCi+r5Vpo4+eG9nOiYjzcxHiYi2R/VYNPLWYSmZ1Xjjt3yH5R2ioju6ndXNLjo7xt/9vmQX+N7MhVGxkf5h76L5R5iorYbM209c9/DqL8pm0NoiYtl+w2iaMzfj6SG32pW4sz2OPS+iZ18uP1dCF4lZFkk1YUoWK+C74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101401; c=relaxed/simple;
-	bh=5bPp8E+MpuFVxKboQhNt6/M7Z4iZDMHxwXj86tG/o2o=;
+	s=arc-20240116; t=1734102275; c=relaxed/simple;
+	bh=yMlrH29miE1wyo6/4IW6nFiwZP5tbE0MMnG5AaauYJ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulAr3PwJAfCUGqTG66pP59dEbq5n0pmyaqNVDKVOE14yzE32JlinwxoLD4CkyJ/ToLIFl3kwC+MxTqLGFONe1917umNTyzX7b+RHBoPs2M4bmWHU8oP4+WLN1FPXANqzEn8BUiZuhTIYv8o41PHwvrMpy6up9ORAb+FsYDQeqPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kDvcqnxz; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-844ce6d0716so138923839f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:59 -0800 (PST)
+	 In-Reply-To:Content-Type; b=TkiFk6W3yaTxbZAAC63xao1ZUPLxMtmXC2ZEhVrlNR5npdsYemaU9lgqH0lxgYYt2pathlHi2kgITgjMmFjjmdA1XBy74RSBNIEfeHXASLGh2FOedDAseAZywALMYgFXmMitQLF3Ub8Oa6HIGevo4b+lsKffdXxAHzgupWha5e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bq85RUsv; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa66ead88b3so349221066b.0;
+        Fri, 13 Dec 2024 07:04:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734101398; x=1734706198; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734102272; x=1734707072; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gOWXs7WdzCpqTexnYKxKuVH/hJEpRnVT9ooHNt2C+JE=;
-        b=kDvcqnxzdkJsgsK8mKEIz+2trfYuorJuxsVF+3028F4/MKSzbw2ojj6RAbix4nuapO
-         5mZtXLK8gAxBC2nI5DwA4Rx/g8SmX6lGZrgA/GcbeYoR11kJcwJczS7SBF8xJzqPvKlG
-         YTwXI4+1leAlZoMYwXxh6ijsE43lXKxkdBUe/v9eGEaDYQgxHMHQmI+/arTnLZE6g0R3
-         M4SicChY3FDGIQ1y2pGOQXc59AUPEy96JQcLiM2JZDY8RuiRT5vVHhhQ2wcuuvqG/h8p
-         SAxL/ofquxNyIQezn8fsMuwbYn1nQVPhkJ+zbPpLyeiRdH4khSDfe2RBNyvjRQ/QB/1h
-         rkgg==
+        bh=pJMWaXTxiiTBFXLhsso9+ETfwCzvm5PKqO/a4uxPLXI=;
+        b=bq85RUsvn+BoEfk1uD8yyUtlSGAZtDwflgmtubu3XJEs58phQZP0GsXcRSYFdLtNc3
+         VsUjVjXdQlcUkuLAPTg2RXp0w01QC4M7H9yAFmmJBOO4863zLV97L3DJoOemhWfTlEJX
+         We9Bv/Jw1d9ogZnK3Ts9wgRgbw6J3pEoyMXfpUzcvnHWAC2Ix/N6eY77VwRcqc/EVQhP
+         v1JNNirQTXEA1G10YDRcWW1+/dzm9vr+4L01vdrP4Xoap23EwcOAT5t8dmxnRvqUH+ys
+         n3JqGhtu3GEtLSNhXNXBD6jgXBihWg9ZqGF77R7ZclGirsFzHsYcjxongvRE4vLWMBEj
+         fMZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101398; x=1734706198;
+        d=1e100.net; s=20230601; t=1734102272; x=1734707072;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOWXs7WdzCpqTexnYKxKuVH/hJEpRnVT9ooHNt2C+JE=;
-        b=g80NkiXMDUbdi2AKD1xw+QwdUtwZVdlbJ1GFtYFk9JKSQfHYQtr0WmNGVTnkw2l8SF
-         YE0YKQIe6lTIngB3/BIzTrlJTgyG9TjaNg82/nQWKETNicMqxM2bdzo9vHcg33IZ6Mpk
-         kLhdwBZBTmysffAuC6fXe2bkwNmLhx3FXNYcWjth2+RwSpr2oyOf+zHR13sbntnPPqkv
-         +r9RwzmfkF3/+M2tZIujxradYiF9sGSbc2eZYNySmP75a/kmJXrH6bgSz6DelLtve+6f
-         GwaZZS9UeGTE2OrDbzwTu38UgAKJF9swhcRzwpOPgklSMnLnZsY3KZUFBoAvShngVGNP
-         pOsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqtLbnPsWROrOC92j9cs55hgVv7cJLWSuXTjYTFmUOQxpnkui+t/l4/eydr3yF7RUC8dwgQ24Your2TCHC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX8e+fOG/sxP03XSzinZK7s2O8pQMhpPPhohODhw+R1WUpYTBw
-	7Yn+Mml6LYmNR3UslQz2/eiE+2qf8b/C8JaQMJ+BTGM+Zbm1tJ/q58YiQrO5P7M=
-X-Gm-Gg: ASbGncsGMi8Hqi681gCuN1eBwgykuV3y3sh0Xu57V2Fj38kXcCm6eB5oejlxjB0Tnic
-	iMD6pw2vdJN2XXIJm8U7AAvkDu2mj6Y7YoEwBw6w/jUIqGreQZ4LbP9lCC61sYQl8eP5E7NN/gK
-	pQon8+MDq9dUNAKlx8btSrzva6ZWXI13y/os+sLeymYhwiXk2q9iAS74VeEsA0i7wcY//Z8UeTo
-	pztMvvbWCIZlxC1uazWW7JLl8/5zgpz+G+nZxxse9g3fhsUFFxm
-X-Google-Smtp-Source: AGHT+IGsjDcO7D5hn5oYhsVNjMXWk3wpIBqgOl1uenYRJsHT0MAGmNQD50mPAs2+sstojpGB6TLDNA==
-X-Received: by 2002:a05:6602:15ca:b0:841:a9d3:3b39 with SMTP id ca18e2360f4ac-844e87ed998mr438455939f.5.1734101398302;
-        Fri, 13 Dec 2024 06:49:58 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2ca9c3f89sm2154129173.0.2024.12.13.06.49.57
+        bh=pJMWaXTxiiTBFXLhsso9+ETfwCzvm5PKqO/a4uxPLXI=;
+        b=e9q8gP2ZtPBmOzTj/mDwybDtFlcyAKwFj+6fw990xrjsI+E+DHFkCZ/J2A6T1zOfvm
+         gIm0F2j4JV4kDCzlkV3onPuzrwNaJ0EFy1V3UGRTm+JvULfmUuKJ+AJjQa9qZu2AGFhF
+         w21ih0KL5AP+2EQeV6H8Pp0QhpuJUxO/DtX+8gI2ZTJb0wXfSomKm3NtxO9R50SuXHqI
+         XSGYgPlnWtNEIS3lwdps/b7ZHkjanCGtVfVvw+aD0fjnihqDzVVcbtJdTgpskxTZ0jJD
+         jHon3155WyDTyTuGMPhLrDhvWOg+JYP5RotScFYHb7RN4ekWGgHsCMmab9RjEgE4A1GT
+         lXIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9STf/FbfrpzTo+vU+InZuaQcnEeveK1TUvYpJhDefvwZRs3IBZdIlo522DOnGYnmOSawjL6RRYBZ1Zr/i7g==@vger.kernel.org, AJvYcCXU3JGRWhG8/lTiRmWApGiPtgi+gdjCuNOf+hx3mch/oBlDKgTiTZgd4656HLJx/gs9z5uiZ/czNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqArhGGTyNK2QBiv3dhbTaBKUXZPi9nEL0pnO1QdLHvqefW+/b
+	kvSp+CRFEGKEeJr0aOk+9fibYImp6DLtag8YeNQu7JMzyiiNLpCF5nHb5g==
+X-Gm-Gg: ASbGncujvmdfZLYqHUavSFmIbWR/15YmMTpbwd2NOTj95R+yzKFrKJpmtqCEk+oIoGG
+	sBaPFjZzr2uxINT5V5BPzs8I62fGFYSb+mFfBvMFmbKDrZFIWHwpugjrx2S480/KqSywNsXwaJb
+	/KOzI4eBj60OMLhCy440zPunFjTeCzcYCQWbAhbFB5Lwcmr5JV5mAGbNI2gqlb0YLkrq52lhUvw
+	5YxaoX30tInx8KVFRWviPmCcCjz6xcqipdC/CGU3BHX9dzj/hsM91qJKDxYjWVS+kU=
+X-Google-Smtp-Source: AGHT+IFS5KzpanP8903sVa7dDVSrc/ZQmlpmZ9SmaObU3lK0uw9P8Iiaps68dZ0/sLmLwUqYX3bHdQ==
+X-Received: by 2002:a17:906:4ad6:b0:aa6:aedb:6030 with SMTP id a640c23a62f3a-aab77eaf351mr272126866b.52.1734102270989;
+        Fri, 13 Dec 2024 07:04:30 -0800 (PST)
+Received: from [192.168.42.94] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa650ea7369sm943877466b.74.2024.12.13.07.04.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 06:49:57 -0800 (PST)
-Message-ID: <3c85accb-69cd-46c2-bfb5-1074cedfeccd@kernel.dk>
-Date: Fri, 13 Dec 2024 07:49:56 -0700
+        Fri, 13 Dec 2024 07:04:30 -0800 (PST)
+Message-ID: <3adcb83a-96f6-415f-9b70-b961bbd8344d@gmail.com>
+Date: Fri, 13 Dec 2024 15:05:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,67 +80,141 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
- Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- clm@meta.com, linux-kernel@vger.kernel.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
- <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
- <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org>
- <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
- <2f79ff03-48ee-54bf-b928-e9519b3edfc7@gentwo.org>
- <383d3adc-e939-44b2-9110-4db9b4477401@kernel.dk>
- <Z1s7AGxZKhK1V4qv@casper.infradead.org> <20241213050410.GA7054@cmpxchg.org>
+Subject: Re: [PATCH v8 15/16] fuse: {io-uring} Prevent mount point hang on
+ fuse-server termination
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241209-fuse-uring-for-6-10-rfc4-v8-0-d9f9f2642be3@ddn.com>
+ <20241209-fuse-uring-for-6-10-rfc4-v8-15-d9f9f2642be3@ddn.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241213050410.GA7054@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241209-fuse-uring-for-6-10-rfc4-v8-15-d9f9f2642be3@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/12/24 10:04 PM, Johannes Weiner wrote:
-> On Thu, Dec 12, 2024 at 07:35:28PM +0000, Matthew Wilcox wrote:
->> On Thu, Dec 12, 2024 at 12:14:23PM -0700, Jens Axboe wrote:
->>> Like I mentioned earlier, the fact that it's cached for the duration of
->>> the operation is more of an implementation detail that developers need
->>> not worry about. What's important is that it's not cached AFTER. I still
->>> feel UNCACHED is the best description, but I'll change it to DONTCACHE
->>> for the next version just to avoid the overlap with other in-kernel
->>> uses.
->>
->> Regardless of the user API name, I like PG_streaming for the folio
->> flag name.
+On 12/9/24 14:56, Bernd Schubert wrote:
+> When the fuse-server terminates while the fuse-client or kernel
+> still has queued URING_CMDs, these commands retain references
+> to the struct file used by the fuse connection. This prevents
+> fuse_dev_release() from being invoked, resulting in a hung mount
+> point.
 > 
-> If we're throwing names in the ring, I'm partial to PG_dropbehind.
+> This patch addresses the issue by making queued URING_CMDs
+> cancelable, allowing fuse_dev_release() to proceed as expected
+> and preventing the mount point from hanging.
+
+io_uring bits look good
+
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>   fs/fuse/dev_uring.c   | 87 ++++++++++++++++++++++++++++++++++++++++++---------
+>   fs/fuse/dev_uring_i.h | 12 +++++++
+>   2 files changed, 85 insertions(+), 14 deletions(-)
 > 
-> It's a term I think has been used to describe this type of behavior
-> before; it juxtaposes nicely with readahead; it plainly names the
-> action of what will happen to the page after the current IO operation
-> against it has completed (i.e. pairs up with PG_reclaim).
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 8bdfb6fcfa51976cd121bee7f2e8dec1ff9aa916..be7eaf7cc569ff77f8ebdff323634b84ea0a3f63 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+...
+> @@ -294,24 +302,27 @@ static void fuse_uring_stop_fuse_req_end(struct fuse_ring_ent *ent)
+>   /*
+>    * Release a request/entry on connection tear down
+>    */
+> -static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent,
+> -					 bool need_cmd_done)
+> +static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
+>   {
+> -	/*
+> -	 * fuse_request_end() might take other locks like fi->lock and
+> -	 * can lead to lock ordering issues
+> -	 */
+> -	lockdep_assert_not_held(&ent->queue->lock);
+> +	struct fuse_ring_queue *queue = ent->queue;
+>   
+> -	if (need_cmd_done)
+> +	if (ent->need_cmd_done)
+>   		io_uring_cmd_done(ent->cmd, -ENOTCONN, 0,
+>   				  IO_URING_F_UNLOCKED);
 
-True, I do think that's a good name for the folio flag. streaming isn't
-bad, but it's not fully descriptive as the IO may not be streaming at
-all, depending on the use case. I do remember when we used dropbehind
-naming in the vm, probably 20 some years ago?
+nit: might be better to pair all io_uring_cmd_done() with
 
-If there are no objections to this, I'll change the folio flag to
-dropbehind. Also looks nicer with the bit operations on the folio, when
-you have:
+ent->cmd = NULL;
 
-if (flags & RWF_DONTCACHE)
-	folio_set_dropbehind(folio);
+since after the call the request is released and can't be used
+by fuse anymore.
 
-rather than:
+>   
+>   	if (ent->fuse_req)
+>   		fuse_uring_stop_fuse_req_end(ent);
+>   
+> -	list_del_init(&ent->list);
+> -	kfree(ent);
+> +	/*
+> +	 * The entry must not be freed immediately, due to access of direct
+> +	 * pointer access of entries through IO_URING_F_CANCEL - there is a risk
+> +	 * of race between daemon termination (which triggers IO_URING_F_CANCEL
+> +	 * and accesses entries without checking the list state first
+> +	 */
+> +	spin_lock(&queue->lock);
+> +	list_move(&ent->list, &queue->ent_released);
+> +	ent->state = FRRS_RELEASED;
+> +	spin_unlock(&queue->lock);
+...
+> + * Handle IO_URING_F_CANCEL, typically should come on daemon termination.
+> + *
+> + * Releasing the last entry should trigger fuse_dev_release() if
+> + * the daemon was terminated
+> + */
+> +static int fuse_uring_cancel(struct io_uring_cmd *cmd, unsigned int issue_flags)
+> +{
+> +	struct fuse_ring_ent *ent = fuse_uring_cmd_to_ring_ent(cmd);
+> +	struct fuse_ring_queue *queue;
+> +	bool need_cmd_done = false;
+> +	int ret = 0;
+> +
+> +	/*
+> +	 * direct access on ent - it must not be destructed as long as
+> +	 * IO_URING_F_CANCEL might come up
+> +	 */
+> +	queue = ent->queue;
+> +	spin_lock(&queue->lock);
+> +	if (ent->state == FRRS_WAIT) {
+> +		ent->state = FRRS_USERSPACE;
+> +		list_move(&ent->list, &queue->ent_in_userspace);
+> +		need_cmd_done = true;
+> +	}
+> +	spin_unlock(&queue->lock);
+> +
+> +	if (need_cmd_done) {
+> +		io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
+> +	} else {
+> +		/* io-uring handles resending */
+> +		ret = -EAGAIN;
 
-if (flags & RWF_DONTCACHE)
-	folio_set_streaming(folio);
+FWIW, apparently io_uring ignores error codes returned from here.
+It only cares if the request is removed from a list via
+io_uring_cmd_done() or not.
 
-and so forth, as the former just intuitively makes sense.
+
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void fuse_uring_prepare_cancel(struct io_uring_cmd *cmd, int issue_flags,
+> +				      struct fuse_ring_ent *ring_ent)
+> +{
+> +	fuse_uring_cmd_set_ring_ent(cmd, ring_ent);
+> +	io_uring_cmd_mark_cancelable(cmd, issue_flags);
+> +}
+> +
+
 
 -- 
-Jens Axboe
+Pavel Begunkov
+
 
