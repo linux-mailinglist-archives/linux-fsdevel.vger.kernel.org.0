@@ -1,148 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-37394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4945C9F1B29
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 01:09:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750F59F1B65
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 01:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD6E16B518
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 00:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55A1616B200
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 00:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC041F03E9;
-	Fri, 13 Dec 2024 23:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277ABD2FF;
+	Sat, 14 Dec 2024 00:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QpYy9Wi+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSJwYglD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13E21DED70;
-	Fri, 13 Dec 2024 23:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C44D268;
+	Sat, 14 Dec 2024 00:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734134244; cv=none; b=kLFwg7gNFe6cKx6RReubQZhpKOL6vMxhW/qmNQE59rzbs/oDRoFAZL4c6oNfRv12Awb5n7u4FNvg76k52m+hUcA0z1FVgVWjE4d8GdyovtwaQeXrHydWyj3n2ZnMoHXH1St/7YivWWWgt6QAYgi0cKXbPitW8Kg9ORIbh2UKsnQ=
+	t=1734136922; cv=none; b=TfvzZj2avMnI25hbjmWetOUKnqgXw8HF8hj+MV1qagDNtKsZcUMJlbC/sF9PAtq+AH07w9zjITw45mCeWbsuj2rRjcDfbTO4hLxgbn25zSoD9UAWTN0+urKBKCKdRBavLydPEVVl02Hrnkiacls25vg+qoWUHYpPE/JlCorLdHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734134244; c=relaxed/simple;
-	bh=1YYTaVqGIazxOCO5qZ8bTy5t+fwoP7FXeMFgkaaU1f0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cmygvxs1hByK0CIa8rf5ySqdF9oGYu2oK0mUJmEzaN7zstdtqy5cDLVg5cksbZsVSoXg18uSbdIrdpF3w+B2jkn9GxdpXyrTMTwKwWmin8jg+Wal+17rGeD481czjSk0MWy21eBlhQhYuwWlf2jRQzb/jmudBJftLqy49LNGC5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QpYy9Wi+; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDKBoaT015471;
-	Fri, 13 Dec 2024 23:57:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=yt7M4uZ2L/ft+OJbYnX0YlOwwKxkG
-	uYZ1Cixgs9PFnk=; b=QpYy9Wi+kBgDdyRJ8ItmAq1hefTBOzF/Q4FgC4bAdh4ac
-	TstYrnBI+ypNdQfuOEi7BcydbmoA+LP9aLkUaPbixF4iKdThIiT0etKugWPbzlYD
-	NTqkSsrUrflaJVv7b5XMhQDmBMmhE4ulRiLQW/8aClHaoyn8biud73V0yM2Zbp06
-	vFvoh3abnWOiIOFscw49WvZzSeau5ji3oDCvvhzl2JGvtjUpxOTXM6Nv77Juc/HH
-	nlXW1paFb0hq3lV6YjBIppBFRGIlfxFJvpwCNlmvw9iJXwHCvJ1RXeKojKVKbVrq
-	5NHHdpAsK+Fg2Gbr7vPfoD+COK83jt+EhL0SSyryw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cedcejsv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 23:57:13 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDNlx06020564;
-	Fri, 13 Dec 2024 23:57:12 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cctd4nub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 23:57:12 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BDNvBFI006513;
-	Fri, 13 Dec 2024 23:57:11 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 43cctd4nrj-1;
-	Fri, 13 Dec 2024 23:57:11 +0000
-From: Sherry Yang <sherry.yang@oracle.com>
-To: stable@vger.kernel.org, sashal@kernel.org, gregkh@linuxfoundation.org
-Cc: sherry.yang@oracle.com, linkinjeon@kernel.org, sj1557.seo@samsung.com,
-        wataru.aoyama@sony.com, Andy.Wu@sony.com, Yuezhang.Mo@sony.com,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5.15.y, 5.10.y] exfat: fix potential deadlock on __exfat_get_dentry_set
-Date: Fri, 13 Dec 2024 15:57:05 -0800
-Message-ID: <20241213235705.2201714-1-sherry.yang@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1734136922; c=relaxed/simple;
+	bh=df5/NF1DUIdtxL0yuFGJSGKlxifxc3b7lbEXT66nzJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGfEj/lafG8lsDV1WNng7i+oo2F619jmXb0HlXLuyEBlgYvfjstkq+gpgxq6+2YY9eEstPJlojTIpnucu8fCa82fwyOKGLUoa4A77x07WUAxVgdsOmPOgICaTSWWZayJOemx6rVvwxF3X47D5pTQkNEtTXAwXu6O5HKheoeIBvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSJwYglD; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385eed29d17so1214753f8f.0;
+        Fri, 13 Dec 2024 16:42:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734136919; x=1734741719; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=df5/NF1DUIdtxL0yuFGJSGKlxifxc3b7lbEXT66nzJQ=;
+        b=SSJwYglD0V+cbKlko4oMjGuDTWUWMVoIKu+WTxE9NTvJPUweYca7aEZVBCcVivmWTy
+         6DmcRT1aPvQ8tPOKnTqCbeBhPwc2mla6HvymjB3rxdfnqHE1vPAkNA1iu6bMfWjE6p7g
+         cKjeFc+g4vqPj65AC5K/DNIXTrS5TW78SlWNwYERpUexvsgLpGpZ2ALePmwxChcY1CAx
+         YZfDVuAqi5IC9RuVaiQrxQX5xbaC4U924wStrb0g/jU8PvPmf7NKdOATHUxKULIBlp2v
+         p+d/wpxlVDBO3aZzIoPi6+OzZgZzrh0FwQwLS3BWcUV4/6jLUYmAVMYJ3wi/tD3L6WSK
+         r+bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734136919; x=1734741719;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=df5/NF1DUIdtxL0yuFGJSGKlxifxc3b7lbEXT66nzJQ=;
+        b=u9Fo3lEZVNn+s2f7tr3Ktu2mqPDw6bvBkMJ0KykPoDNwd2N3L86ZjQVrg4+8AC7iFu
+         IEL4IEh0u+ZfrpREbCbhlewWm3Q7XGWofMMRLbtL7AhGN78lcJun9uiEp6CH8U30LZUZ
+         WHt4BIIlO8x8SSWOxde+JEC0kXki77x0FZfg93cq/f/Q2kvUw0eKVxUSvJMDPe33YT4p
+         7KT21hyanEt4KC6+8bKL/gg+MZJ0PLmPDoiwz8R5TEoA/BC0TdjeQexJ/6uUaL2kYY4m
+         auS0wLoX+N8PZacirhdhP0Mgd3mmun4EB0qYpuSlvS8JgMDeATxfGNJEvKcu6TagEDYd
+         IC0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlXTmvh00VP9/x1WZPuF2JXRcmcIT3MO2n4lxnThrneEIgwX4MjXEkNqE0vmIxgioDV8kvSDYOdTwRcPgngA==@vger.kernel.org, AJvYcCWmt+01SUOU3fV5FvYS1Vk5vVCy4YaaDba43G2Z+FMobtejiKopmxZ3lTPtoVlai07lh3c=@vger.kernel.org, AJvYcCXy4L/x4ACPgbZ7c6c+2MBKFT1iqlpmASzyYQGcMMUOZM2wcMzorsJMW73T5yOFy7SXrRTWP9EV/nYndu5H@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSKLAJwVR/hWtxC9G3J7XI/OegjlG5hWsjwzNNUfWmmxkhhoDE
+	vZ7cUQeiqUmtIvy0O/9dKXXPtRm/yWpADKPy0i4y+TGA2Bm1qpqmQAJ5PshZ7XBXBEELTfjRexb
+	xDT3jCw98Z4fU77rJ70KaVQD7c04=
+X-Gm-Gg: ASbGnct+K0fj9hjQEVByqzICovh5RoC/M7NYGAkTfXHysSLiEyOGWjVzPKvuvejG42L
+	9LVpLuv7grmbu70wiRtJ20PA6+izHwAC+0FONnuwmU+FvlUalajeL1W5ek5GeAUxydS6D/g==
+X-Google-Smtp-Source: AGHT+IFeH/BTkMeNqByZXMAshWl9z6JVM6prz9wmrS6pANVhcDH76wh15xHsC+6N4utFoXupZMRdIxcjcBWnwA4R4LA=
+X-Received: by 2002:a05:6000:1f8b:b0:385:fb59:8358 with SMTP id
+ ffacd0b85a97d-3888e0c0801mr4079232f8f.53.1734136918805; Fri, 13 Dec 2024
+ 16:41:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-13_11,2024-12-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412130170
-X-Proofpoint-ORIG-GUID: AQuBSZG9LllaOzN6H40-WJCWIgZElyXQ
-X-Proofpoint-GUID: AQuBSZG9LllaOzN6H40-WJCWIgZElyXQ
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50804FA149F08D34A095BA28993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <20241210-eckig-april-9ffc098f193b@brauner> <CAADnVQKdBrX6pSJrgBY0SvFZQLpu+CMSshwD=21NdFaoAwW_eg@mail.gmail.com>
+ <AM6PR03MB508072B5D29C8BD433AD186E993E2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQK3toLsVLVYjGVXEuQGWUKF98OG9ogAQbJ4UeER42ZyGg@mail.gmail.com> <DB7PR03MB508153EF2FECDC66FC5325BF99382@DB7PR03MB5081.eurprd03.prod.outlook.com>
+In-Reply-To: <DB7PR03MB508153EF2FECDC66FC5325BF99382@DB7PR03MB5081.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 13 Dec 2024 16:41:47 -0800
+Message-ID: <CAADnVQKyXV8jHv2_0Sj2TcmWXwUsv+2Mm00pdCveRmNbWF5mXA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 4/5] bpf: Make fs kfuncs available for SYSCALL
+ and TRACING program types
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Sungjong Seo <sj1557.seo@samsung.com>
+On Fri, Dec 13, 2024 at 10:51=E2=80=AFAM Juntong Deng <juntong.deng@outlook=
+.com> wrote:
+>
+> >
+> > sched-ext is struct_ops only. No syscall progs there.
+> >
+>
+> I saw some on Github [0], sorry, yes they are not in the Linux tree.
+>
+> [0]:
+> https://github.com/search?q=3Drepo%3Asched-ext%2Fscx%20SEC(%22syscall%22)=
+&type=3Dcode
 
-commit 89fc548767a2155231128cb98726d6d2ea1256c9 upstream.
+Ahh. I see. Those are executed from user space via prog_run.
+https://github.com/sched-ext/scx/blob/e8e68e8ee80f65f62a6e900d457306217b764=
+e58/scheds/rust/scx_lavd/src/main.rs#L794
 
-When accessing a file with more entries than ES_MAX_ENTRY_NUM, the bh-array
-is allocated in __exfat_get_entry_set. The problem is that the bh-array is
-allocated with GFP_KERNEL. It does not make sense. In the following cases,
-a deadlock for sbi->s_lock between the two processes may occur.
+These progs are not executed by sched-ext core,
+so not really sched-ext progs.
+They're auxiliary progs that populate configs and knobs in bpf maps
+that sched-ext progs use later.
 
-       CPU0                CPU1
-       ----                ----
-  kswapd
-   balance_pgdat
-    lock(fs_reclaim)
-                      exfat_iterate
-                       lock(&sbi->s_lock)
-                       exfat_readdir
-                        exfat_get_uniname_from_ext_entry
-                         exfat_get_dentry_set
-                          __exfat_get_dentry_set
-                           kmalloc_array
-                            ...
-                            lock(fs_reclaim)
-    ...
-    evict
-     exfat_evict_inode
-      lock(&sbi->s_lock)
+>
+> >> As BPF_PROG_TYPE_SYSCALL becomes more general, it would be valuable to
+> >> make more kfuncs available for BPF_PROG_TYPE_SYSCALL.
+> >
+> > Maybe. I still don't understand how it helps CRIB goal.
+>
+> For CRIB goals, the program type is not important. What is important is
+> that CRIB bpf programs are able to call the required kfuncs, and that
+> CRIB ebpf programs can be executed from userspace.
+>
+> In our previous discussion, the conclusion was that we do not need a
+> separate CRIB program type [1].
+>
+> BPF_PROG_TYPE_SYSCALL can be executed from userspace via prog_run, which
+> fits the CRIB use case of calling the ebpf program from userspace to get
+> process information.
+>
+> So BPF_PROG_TYPE_SYSCALL becomes an option.
+>
+> [1]:
+> https://lore.kernel.org/bpf/etzm4h5qm2jhgi6d4pevooy2sebrvgb3lsa67ym4x7zbh=
+5bgnj@feoli4hj22so/
+>
+> In fs/bpf_fs_kfuncs.c, CRIB currently needs bpf_fget_task (dump files
+> opened by the process), bpf_put_file, and bpf_get_task_exe_file.
+>
+> So I would like these kfuncs to be available for BPF_PROG_TYPE_SYSCALL.
+>
+> bpf_get_dentry_xattr, bpf_get_file_xattr, and bpf_path_d_path have
+> nothing to do with CRIB, but they are all in bpf_fs_kfunc_set_ids.
+>
+> Should we make bpf_fs_kfunc_set_ids available to BPF_PROG_TYPE_SYSCALL
+> as a whole? Or create a separate set? Maybe we can discuss.
 
-To fix this, let's allocate bh-array with GFP_NOFS.
+I don't think it's necessary to slide and dice that match.
+Since they're all safe from syscall prog it's cleaner to enable them all.
 
-Fixes: a3ff29a95fde ("exfat: support dynamic allocate bh for exfat_entry_set_cache")
-Cc: stable@vger.kernel.org # v6.2+
-Reported-by: syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/lkml/000000000000fef47e0618c0327f@google.com
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[Sherry: The problematic commit was backported to 5.15.y and 5.10.y,
-thus backport this fix]
-Signed-off-by: Sherry Yang <sherry.yang@oracle.com>
----
- fs/exfat/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+When I said:
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index be7570d01ae1..0a1b1de032ef 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -878,7 +878,7 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
- 
- 	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
- 	if (num_bh > ARRAY_SIZE(es->__bh)) {
--		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
-+		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_NOFS);
- 		if (!es->bh) {
- 			brelse(bh);
- 			kfree(es);
--- 
-2.46.0
+> I still don't understand how it helps CRIB goal.
 
+I meant how are you going to use them from CRIB ?
+
+Patch 5 selftest does:
+
++ file =3D bpf_fget_task(task, test_fd1);
++ if (file =3D=3D NULL) {
++ err =3D 2;
++ return 0;
++ }
++
++ if (file->f_op !=3D &pipefifo_fops) {
++ err =3D 3;
++ bpf_put_file(file);
++ return 0;
++ }
++
++ bpf_put_file(file);
+
+
+It's ok for selftest, but not enough to explain the motivation and
+end-to-end operation of CRIB.
+
+Patch 2 selftest is also weak.
+It's not using bpf_iter_task_file_next() like iterators are
+normally used.
+
+When selftests are basic sanity tests, it begs the question: what's next?
+How are they going to be used for real?
 
