@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80179F1FAD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 16:23:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6789F1FBA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 16:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5393164800
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 15:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D00188660D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 15:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E246199EA2;
-	Sat, 14 Dec 2024 15:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA57119A2B0;
+	Sat, 14 Dec 2024 15:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PVxNFLLI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQdmOI29"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324B3194AC7
-	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 15:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D117C19005F
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 15:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734189789; cv=none; b=frIUZradu7XRDzCACV3LeT5412NRgybMqZ8pNRCWcvgU5zXOlutLRy02hjfwJU1r2L1+DKZ1QI5tiK7c0wqzDP0AFHGiOcLbnwNhzdDXH9lgQILTKzUotfkvEebsbEBsjjTWeNBIWLGpSUQhCYwRNhqLKWek+xjj4YExw0P8Oms=
+	t=1734190329; cv=none; b=GH6CP3kh68XVzelKPabgn2KalpFHzo8h1I5PTf559OV93SHbWp0hyLxjK4fUqUWbORWG7ibtSRCcFrfeLHLof5OWspmgckf5NaNXgYf8kXFtyWtDdWkXtC9t2xM3Tc+XMxeBzxGbWaPzJJkhuzKzldbJxufNNN2YFUgT3v54NKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734189789; c=relaxed/simple;
-	bh=jkdG9VVa/wTY2yy0geXHQ0O4Psz84VzAmqde2au0yKQ=;
+	s=arc-20240116; t=1734190329; c=relaxed/simple;
+	bh=y6kTT7dJ0Cc65e8AFqV3nF0RvOwhxu5jTy0nO+NKfB0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tJUkyWst5Qz1XerSe2aQhGZM3qHFMVYE2ZHdpKHo92r8Dh0B/u///X9XdCV89/BGI7UEo0E4E6DmWKMfAYrSQO28jGpZ0VBLK0HDosFukFQVGPR229Uyn35i2rJU+VClqODG8VVxgz8gGWmI3/PVEIMoq4AToXx3HPFR5yccDd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PVxNFLLI; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=Q7HnQBO0pHyur2ULiML1MwCBwXualcQY5cqflrRGueiHACCWuMlvDvCXBzdWwc8hwUvV18IVdjxKrOphQtYuKDCPpZuulYDYM5pzVJMf4U2p7VrJnBfA+rlntlLeVtut0SaYEpgGyImoaW8fL71gwMql8ntDaND2vcz04ZkDWss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NQdmOI29; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734189787;
+	s=mimecast20190719; t=1734190326;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WzJW0Dxa8i83uf13tdPe4mY1mNQ+O1FvKqm+giPK/c8=;
-	b=PVxNFLLIZ8ckeORn0BbM0TPZLvWvhCSoFEHpsg2oeJCM0mnZp+S5qC20NvJq8FSAruPqW6
-	/vny9JsamR3m0vJA07TTkks5E+LWM3GI9UuLrxwShP/FWK9DzJ4c2k/X5j+QJkzyFvrHQ2
-	COAysVGHZz9FZ8FQzIWcsl0tSnNyQ50=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=03N6Z6LVTWl2BXm3uGhmS6liuy/PRc0F/lQH4ag9wfQ=;
+	b=NQdmOI29k4VzgE6FvkFv9l5K23SWw4tcMoxTcElILiK4nS+1urVQItGv7u1WlMSfUv+8TK
+	2o4ZIMD3Jq0sUdE9wOg3oTrdgbTQ5clC9l1dkASyLj2YLZ9rrWQE0jf8jxRlPX+kWyokZg
+	Iv689c8xnbSpU4MEnuXjAwlZ2EgwTx8=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-0KZtWnwAOKCzAUfFU6GVag-1; Sat, 14 Dec 2024 10:23:04 -0500
-X-MC-Unique: 0KZtWnwAOKCzAUfFU6GVag-1
-X-Mimecast-MFC-AGG-ID: 0KZtWnwAOKCzAUfFU6GVag
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4361ecebc5bso15438395e9.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 07:23:04 -0800 (PST)
+ us-mta-5-UHTP8ZrTNpqX86W0BPLrSA-1; Sat, 14 Dec 2024 10:32:05 -0500
+X-MC-Unique: UHTP8ZrTNpqX86W0BPLrSA-1
+X-Mimecast-MFC-AGG-ID: UHTP8ZrTNpqX86W0BPLrSA
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-385dc37cb3eso1546482f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 07:32:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734189783; x=1734794583;
+        d=1e100.net; s=20230601; t=1734190324; x=1734795124;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=WzJW0Dxa8i83uf13tdPe4mY1mNQ+O1FvKqm+giPK/c8=;
-        b=YCDwJd32jU4RY7sbfN/BhUvxFhBBjO540+vcOC3V8/s1ePqZmoD2QMgA0LCZ/Xddc4
-         T8ojO9GzIz40tvqsLlVbE4zHzc+Wi6UvqKWEIqgP1QTK1jv4uhAY2VfG6eDTDlw96nwA
-         oSmtT016rivUnhaGD8tt/UyOat0SE9CyZ2LF4yHGA+2kVQ9K3zCneesNJHkR69VV6W4O
-         ak4LqcJOEbUybhhWmp3D48mWsYlfAyeYw8YBELqPEEDzkAp9GCgAls12l1xqCC6MNPGF
-         MwKM5uzpn1h2b2ZSoGuY9RbJB5EwaQY9vyJHQKbZ9dSpH5WX9ekpj+dNmCoUTaSSt6pK
-         tcnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/TmkHNeskEGQkya92b+ddmy0Z1oXz8IkAQI4pl7X2rIbOCES3bTl0hVYvtuRWzl+eGhbjIa/eS0crsq8f@vger.kernel.org
-X-Gm-Message-State: AOJu0YyskaqAihuL1RvBSJUU829+qApQmBtLlskD7uVEi1GGqJ/uAHhQ
-	PxqaXBO38Jc5zhFJzKVZDeuduZKlzjoJU34BCzocElnX1NJhj3Ditfh7PnRvbL7hqGkis/IDS2g
-	OcNJVU3gM3zBc2EgXOqVTt4fPK3JTvdZdsOZmj3s3E85tVTrHwbdjrmcuNSCRLG0=
-X-Gm-Gg: ASbGncvIEPAqa85Zg2y0GwOQYmmP29TsCSSIcXwVVp/MVAecr6DjFjKFQ4r43NRbwH9
-	/tp5k6gQlloNi4UxtTLA805jl4Oyjf/IZg8XlIRVPGolacW45/pzYLra1emXHIEEbA633cRG/Zt
-	iQ+T86/bhQYT0+wAz7kGLI+erB7vt3yoYcakBmkF6kPbRyl/pQxOjshUaOXE94c78Ve0l2dRxQr
-	vZhNjtnmnWJjRUS3ftopM5AOy26VVNBX5rmwjg2lNLwRzZPN7MnAjl18xnbm1bO2mDyf8bAeFyr
-	QE/ioM2SQkYHAUKANnvXcpYkw3B7o8HcK5Ts6Hin48y/gPP2EpdB2xOvYAfqrerR2jAnPh581+Y
-	nnmO3gA72
-X-Received: by 2002:a05:600c:1c07:b0:434:a968:89a3 with SMTP id 5b1f17b1804b1-4362aa2e544mr63038055e9.9.1734189783534;
-        Sat, 14 Dec 2024 07:23:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFroEMk6tFJ9Cy5+aMYXPulXjntj5yFN5KYCR5CVhsKcoZETtTRpp5EY+z8zXmRnRx7Xb1Kzg==
-X-Received: by 2002:a05:600c:1c07:b0:434:a968:89a3 with SMTP id 5b1f17b1804b1-4362aa2e544mr63037545e9.9.1734189783051;
-        Sat, 14 Dec 2024 07:23:03 -0800 (PST)
+        bh=03N6Z6LVTWl2BXm3uGhmS6liuy/PRc0F/lQH4ag9wfQ=;
+        b=I/+GNV0rbx3jPLAvs19i5NIkvgqcg+D2HiEhtakpKJiOZFNlwhGEZv8SHrjQY+MAqs
+         ZELNtFcCyGBcNmuKWbpY+3SlL5UukJ/0wQGKpjuUbzT2GKjn6OW2N4CkYo/KV0DtZI/U
+         fMnIX+MmfNemKGkYPZXRXs9OeWiZOmSW97yB9B0pBM61FzHlWyyVi/BbiZD5JO9ow2nD
+         WhRAD5Z77qLsWCE3L1PEE/ci99BI9K1hxNoQq4Slcl1pXPP3ZnG9xXiNt33ny4OTPefG
+         IGpE60PzavSbsVTs3Y7s7BQ/DDBweKgS3PPvXOBkCoSuudcHsglTmVXIjTWtXfnKxZuB
+         Efcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPcZd5rpnMNfc1h4FSeY2Emdfa2P+nsZMV3Jcn5U9+KrHsVOu0vt3qqzzYnq5Pmggwai5ohvctiHmanc03@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy54UkzeZXjptp1a9nk+Cmg+TpvB20tpzdpkKkjw1inuC3C8B2s
+	JMxY6iiLq3KQ/uu/Cxyjj4KLnaHaznIzZIc1LRmG23jrTWsBGMTVwBiyk7adM5O28filbMJjt7n
+	RlFsvkJaY4UntGnWldjp/Im1NwQ2NtxVcHIBfmeaXcY/UJi9GpcrYJOb7je80r1Y=
+X-Gm-Gg: ASbGnctxatJK+D/8jyyeRzeFz2vTChGmyoGs1h5xgp0N22M/MaUsju/kG+7wihz6BY0
+	57a1tlIt1gthzsKbD3ZGbhd7hCP2qE8/SCozil5FpWSEGd+fJWfsGlFiOrNMTs6vBWV5bPa5x2n
+	gr3JOEF9gOyeMaq8KWM23/DVg4ZDhHZ6Kgn5cbyC1EN5HlLJO8OwjQwEGQHZa/sh2hvNrafkZTX
+	y3daxnXlySf0Tv8ZFmFb6NgXzNf4pknvrBKWpVjIGza4FTmgd5RB48s+C3JoqOgNgnOUL1VYvAY
+	JUVHuNxBN8CaPX2VZnJTfd7DJeg6juN2VaBNgO27UUS5Se8Vsh9IAgw1MqYyoira2CB93l93ea7
+	rVkv1ZJke
+X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr5273143f8f.1.1734190323882;
+        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGCAoXGEeWaw7IcCbVrauVtoSu57S5/3Q7OA9u+ckTPTWUXqMKHzSJmCciXfEjs+C07Qo9JLg==
+X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr5273103f8f.1.1734190323507;
+        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
 Received: from ?IPV6:2003:cb:c711:6400:d1b9:21c5:b517:5f4e? (p200300cbc7116400d1b921c5b5175f4e.dip0.t-ipconnect.de. [2003:cb:c711:6400:d1b9:21c5:b517:5f4e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550518sm82347835e9.5.2024.12.14.07.22.59
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801211dsm2844150f8f.17.2024.12.14.07.32.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 07:23:01 -0800 (PST)
-Message-ID: <45555f72-e82a-4196-94af-22d05d6ac947@redhat.com>
-Date: Sat, 14 Dec 2024 16:22:58 +0100
+        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
+Message-ID: <fc83a855-bb3f-4374-8896-579420732b25@redhat.com>
+Date: Sat, 14 Dec 2024 16:32:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,9 +90,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/25] fs/dax: Fix ZONE_DEVICE page reference counts
-To: Dan Williams <dan.j.williams@intel.com>,
- Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v3 14/25] huge_memory: Allow mappings of PUD sized pages
+To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
+ linux-mm@kvack.org
 Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
  vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
  bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
@@ -104,9 +104,9 @@ Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
  nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com, akpm@linux-foundation.org, sfr@canb.auug.org.au
+ david@fromorbit.com
 References: <cover.e1ebdd6cab9bde0d232c1810deacf0bae25e6707.1732239628.git-series.apopple@nvidia.com>
- <675ce1e5a3d68_fad0294d0@dwillia2-xfh.jf.intel.com.notmuch>
+ <dd86249dee026991b1a996a8ab551b1b1fdd32a4.1732239628.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -154,88 +154,77 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <675ce1e5a3d68_fad0294d0@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <dd86249dee026991b1a996a8ab551b1b1fdd32a4.1732239628.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 14.12.24 02:39, Dan Williams wrote:
-> [ add akpm and sfr for next steps ]
+On 22.11.24 02:40, Alistair Popple wrote:
+> Currently DAX folio/page reference counts are managed differently to
+> normal pages. To allow these to be managed the same as normal pages
+> introduce vmf_insert_folio_pud. This will map the entire PUD-sized folio
+> and take references as it would for a normally mapped page.
 > 
-> Alistair Popple wrote:
->> Main updates since v2:
->>
->>   - Rename the DAX specific dax_insert_XXX functions to vmf_insert_XXX
->>     and have them pass the vmf struct.
->>
->>   - Seperate out the device DAX changes.
->>
->>   - Restore the page share mapping counting and associated warnings.
->>
->>   - Rework truncate to require file-systems to have previously called
->>     dax_break_layout() to remove the address space mapping for a
->>     page. This found several bugs which are fixed by the first half of
->>     the series. The motivation for this was initially to allow the FS
->>     DAX page-cache mappings to hold a reference on the page.
->>
->>     However that turned out to be a dead-end (see the comments on patch
->>     21), but it found several bugs and I think overall it is an
->>     improvement so I have left it here.
->>
->> Device and FS DAX pages have always maintained their own page
->> reference counts without following the normal rules for page reference
->> counting. In particular pages are considered free when the refcount
->> hits one rather than zero and refcounts are not added when mapping the
->> page.
->>
->> Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
->> mechanism for allowing GUP to hold references on the page (see
->> get_dev_pagemap). However there doesn't seem to be any reason why FS
->> DAX pages need their own reference counting scheme.
->>
->> By treating the refcounts on these pages the same way as normal pages
->> we can remove a lot of special checks. In particular pXd_trans_huge()
->> becomes the same as pXd_leaf(), although I haven't made that change
->> here. It also frees up a valuable SW define PTE bit on architectures
->> that have devmap PTE bits defined.
->>
->> It also almost certainly allows further clean-up of the devmap managed
->> functions, but I have left that as a future improvment. It also
->> enables support for compound ZONE_DEVICE pages which is one of my
->> primary motivators for doing this work.
+> This is distinct from the current mechanism, vmf_insert_pfn_pud, which
+> simply inserts a special devmap PUD entry into the page table without
+> holding a reference to the page for the mapping.
 > 
-> So this is feeling ready for -next exposure, and ideally merged for v6.14. I
-> see the comments from John and Bjorn and that you were going to respin for
-> that, but if it's just those details things they can probably be handled
-> incrementally.
-> 
-> Alistair, are you ready for this to hit -next?
-> 
-> As for which tree...
-> 
-> Andrew, we could take this through -mm, but my first instinct would be to try
-> to take it through nvdimm.git mainly to offload any conflict wrangling work and
-> small fixups which are likely to be an ongoing trickle.
-> 
-> However, I am not going to put up much of a fight if others prefer this go
-> through -mm.
-> 
-> Thoughts?
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
 
-I'm in the process of preparing v2 of [1] that will result in conflicts 
-with this series in the rmap code (in particular [PATCH v3 14/25] 
-huge_memory: Allow mappings of PUD sized pages).
+Hi,
 
-I'll be away for 2 weeks over Christmas, but I assume I'll manage to 
-post v2 shortly.
+The patch subject of this (and especially the next patch) is misleading. 
+Likely you meant to have it as:
 
-Which reminds me that I still have to take a closer look at some things 
-in this series :) Especially also #14 regarding accounting.
+"mm/huge_memory: add vmf_insert_folio_pud() for mapping PUD sized pages"
 
-I wonder if we could split out the rmap changes in #14, and have that 
-patch simply in two trees? No idea.
+>   	for (i = 0; i < nr_pages; i++) {
+> @@ -1523,6 +1531,26 @@ void folio_add_file_rmap_pmd(struct folio *folio, struct page *page,
+>   #endif
+>   }
+>   
+> +/**
+> + * folio_add_file_rmap_pud - add a PUD mapping to a page range of a folio
+> + * @folio:	The folio to add the mapping to
+> + * @page:	The first page to add
+> + * @vma:	The vm area in which the mapping is added
+> + *
+> + * The page range of the folio is defined by [page, page + HPAGE_PUD_NR)
+> + *
+> + * The caller needs to hold the page table lock.
+> + */
+> +void folio_add_file_rmap_pud(struct folio *folio, struct page *page,
+> +		struct vm_area_struct *vma)
+> +{
+> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+> +	__folio_add_file_rmap(folio, page, HPAGE_PUD_NR, vma, RMAP_LEVEL_PUD);
+> +#else
+> +	WARN_ON_ONCE(true);
+> +#endif
+> +}
+> +
+>   static __always_inline void __folio_remove_rmap(struct folio *folio,
+>   		struct page *page, int nr_pages, struct vm_area_struct *vma,
+>   		enum rmap_level level)
+> @@ -1552,6 +1580,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>   		partially_mapped = nr && atomic_read(mapped);
+>   		break;
+>   	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>   		atomic_dec(&folio->_large_mapcount);
+>   		last = atomic_add_negative(-1, &folio->_entire_mapcount);
+>   		if (last) {
 
-[1] 
-https://lore.kernel.org/all/20240829165627.2256514-1-david@redhat.com/T/#u
+If you simply reuse that code (here and on the adding path), you will 
+end up effectively setting nr_pmdmapped to a very large value and 
+passing that into __folio_mod_stat().
+
+There, we will adjust NR_SHMEM_PMDMAPPED/NR_FILE_PMDMAPPED, which is 
+wrong (it's PUD mapped ;) ).
+
+It's probably best to split out the rmap changes from the other things 
+in this patch.
+
 
 -- 
 Cheers,
