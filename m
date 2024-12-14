@@ -1,234 +1,417 @@
-Return-Path: <linux-fsdevel+bounces-37424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6789F1FBA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 16:32:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9959E9F2007
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 18:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D00188660D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 15:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017F81887E75
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2024 17:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA57119A2B0;
-	Sat, 14 Dec 2024 15:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51B77B3E1;
+	Sat, 14 Dec 2024 17:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQdmOI29"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Z0gFjshD";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="BU6dMTRC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D117C19005F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 15:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734190329; cv=none; b=GH6CP3kh68XVzelKPabgn2KalpFHzo8h1I5PTf559OV93SHbWp0hyLxjK4fUqUWbORWG7ibtSRCcFrfeLHLof5OWspmgckf5NaNXgYf8kXFtyWtDdWkXtC9t2xM3Tc+XMxeBzxGbWaPzJJkhuzKzldbJxufNNN2YFUgT3v54NKI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734190329; c=relaxed/simple;
-	bh=y6kTT7dJ0Cc65e8AFqV3nF0RvOwhxu5jTy0nO+NKfB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q7HnQBO0pHyur2ULiML1MwCBwXualcQY5cqflrRGueiHACCWuMlvDvCXBzdWwc8hwUvV18IVdjxKrOphQtYuKDCPpZuulYDYM5pzVJMf4U2p7VrJnBfA+rlntlLeVtut0SaYEpgGyImoaW8fL71gwMql8ntDaND2vcz04ZkDWss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NQdmOI29; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734190326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=03N6Z6LVTWl2BXm3uGhmS6liuy/PRc0F/lQH4ag9wfQ=;
-	b=NQdmOI29k4VzgE6FvkFv9l5K23SWw4tcMoxTcElILiK4nS+1urVQItGv7u1WlMSfUv+8TK
-	2o4ZIMD3Jq0sUdE9wOg3oTrdgbTQ5clC9l1dkASyLj2YLZ9rrWQE0jf8jxRlPX+kWyokZg
-	Iv689c8xnbSpU4MEnuXjAwlZ2EgwTx8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-UHTP8ZrTNpqX86W0BPLrSA-1; Sat, 14 Dec 2024 10:32:05 -0500
-X-MC-Unique: UHTP8ZrTNpqX86W0BPLrSA-1
-X-Mimecast-MFC-AGG-ID: UHTP8ZrTNpqX86W0BPLrSA
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-385dc37cb3eso1546482f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 07:32:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734190324; x=1734795124;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=03N6Z6LVTWl2BXm3uGhmS6liuy/PRc0F/lQH4ag9wfQ=;
-        b=I/+GNV0rbx3jPLAvs19i5NIkvgqcg+D2HiEhtakpKJiOZFNlwhGEZv8SHrjQY+MAqs
-         ZELNtFcCyGBcNmuKWbpY+3SlL5UukJ/0wQGKpjuUbzT2GKjn6OW2N4CkYo/KV0DtZI/U
-         fMnIX+MmfNemKGkYPZXRXs9OeWiZOmSW97yB9B0pBM61FzHlWyyVi/BbiZD5JO9ow2nD
-         WhRAD5Z77qLsWCE3L1PEE/ci99BI9K1hxNoQq4Slcl1pXPP3ZnG9xXiNt33ny4OTPefG
-         IGpE60PzavSbsVTs3Y7s7BQ/DDBweKgS3PPvXOBkCoSuudcHsglTmVXIjTWtXfnKxZuB
-         Efcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPcZd5rpnMNfc1h4FSeY2Emdfa2P+nsZMV3Jcn5U9+KrHsVOu0vt3qqzzYnq5Pmggwai5ohvctiHmanc03@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy54UkzeZXjptp1a9nk+Cmg+TpvB20tpzdpkKkjw1inuC3C8B2s
-	JMxY6iiLq3KQ/uu/Cxyjj4KLnaHaznIzZIc1LRmG23jrTWsBGMTVwBiyk7adM5O28filbMJjt7n
-	RlFsvkJaY4UntGnWldjp/Im1NwQ2NtxVcHIBfmeaXcY/UJi9GpcrYJOb7je80r1Y=
-X-Gm-Gg: ASbGnctxatJK+D/8jyyeRzeFz2vTChGmyoGs1h5xgp0N22M/MaUsju/kG+7wihz6BY0
-	57a1tlIt1gthzsKbD3ZGbhd7hCP2qE8/SCozil5FpWSEGd+fJWfsGlFiOrNMTs6vBWV5bPa5x2n
-	gr3JOEF9gOyeMaq8KWM23/DVg4ZDhHZ6Kgn5cbyC1EN5HlLJO8OwjQwEGQHZa/sh2hvNrafkZTX
-	y3daxnXlySf0Tv8ZFmFb6NgXzNf4pknvrBKWpVjIGza4FTmgd5RB48s+C3JoqOgNgnOUL1VYvAY
-	JUVHuNxBN8CaPX2VZnJTfd7DJeg6juN2VaBNgO27UUS5Se8Vsh9IAgw1MqYyoira2CB93l93ea7
-	rVkv1ZJke
-X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr5273143f8f.1.1734190323882;
-        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGCAoXGEeWaw7IcCbVrauVtoSu57S5/3Q7OA9u+ckTPTWUXqMKHzSJmCciXfEjs+C07Qo9JLg==
-X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr5273103f8f.1.1734190323507;
-        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
-Received: from ?IPV6:2003:cb:c711:6400:d1b9:21c5:b517:5f4e? (p200300cbc7116400d1b921c5b5175f4e.dip0.t-ipconnect.de. [2003:cb:c711:6400:d1b9:21c5:b517:5f4e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801211dsm2844150f8f.17.2024.12.14.07.32.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
-Message-ID: <fc83a855-bb3f-4374-8896-579420732b25@redhat.com>
-Date: Sat, 14 Dec 2024 16:32:00 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408862940D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Dec 2024 17:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734196440; cv=fail; b=QBRbrnIGodSupWEtZZZF5jgFdXi5Ug/xIRaKGjth/FB/AIg4zhBkoLAZHlXTLGxbn929vOPtPyNYnZ61x9KXQDQkb8aFXOeENzZIUpPk5YxfwFk73Ly9+bJBgXCBTr5XoYCe7s9p/XaE+RoXVGm9xiO6afuoSQ1HSRC0W9ruTA4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734196440; c=relaxed/simple;
+	bh=8k7IlrJYSsmltMf+a2o1YzJIVnPpMvObLb+cqvmn/vc=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bTyXs2ZPal4wBV0I50VLt5ixpG1XJzf1tRjGWl7AKMbg7Cyq2xCta6+/9XZYvOJTtZ/d2B6EK366T5KMjzf2S8+25TwoZl321TX/Dt4wKCpDaydeypOBcZ+D1Zn3yyqlZ0J96DTgJYkYoJowvJRCbYdZqcu0g8jQJBvob2NDVps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Z0gFjshD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=BU6dMTRC; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BEBU3tg022539;
+	Sat, 14 Dec 2024 17:13:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=ZvdKxih/8X3u8joXFJPqX3WLTTceds6+rPOfmihwuWE=; b=
+	Z0gFjshDl2aY6LZ2yv67ad2C0YWEqsbgipwDP+sEAIwWUZGLLOBmANn7Q7W30ze7
+	xY39nsSoJndA2s/bvmnw2y0DK5Kf5S9+07Wt2Wpx9rUTmDRBYx6ad3bFT05SP70I
+	vM6JkcESHORzZUGCSOEGDthNJAQ+SgMc599IBpUOLYitEEowrPOyRxAAXmFJiRPt
+	NWXUcWHJl1QaeTcMYwjMT2y2iZ5S0O+dwJ+y7qZwaPi4jTyH/fUzMhl6ZHYHmrFc
+	uX+pENCnGcohuGG82ZAFsjzbRlXJ3uYYIqZvxTD6To73WoWl/Nx8b6hj0eIPwUbL
+	R1virtrbElJLceiBzEq5MA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43h22cghx8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 14 Dec 2024 17:13:35 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BEEAAxQ000776;
+	Sat, 14 Dec 2024 17:13:34 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2049.outbound.protection.outlook.com [104.47.66.49])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43h0f5wjy3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 14 Dec 2024 17:13:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mPTCbxOSbQbEWPDP3q27s+HA6cf1BSRYTTR++UJYpgTXaO3fjLgoUUp/xS92gUJTzt6UWhOHD5gYKKzduWaJxzEEUbev+xPYhPJodPGZgCk8L9d7URKNEgsT/wfA3VLaYtzL9au967yInjQX4zDA7JZPfcKf+cE11zgvfGGR7LnvIBS40NiuIc+Otjr7Pz+3DlH6KZonOU5BQOyT+LWaAa8k/y4WeX698f/U26OC3ejwS56Z5ERsYSWJiqO8ENA/LJ9hIowHBE3p2rETzX4WVyAIzcYcaLX/gSfKv08QVn8sVlxO4I1uWojnRvjpdqof1UcYSpBhQYJidsZg1uAsLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZvdKxih/8X3u8joXFJPqX3WLTTceds6+rPOfmihwuWE=;
+ b=yVIWXuSSqLnoQEn1CHmgCNV8RJzk+qguOdejIoPEY7vfE/YAPrp4KnAIiqI5LLp6L6nn9QiT8Z48XvsLOpBSw/f6e4VtUItETZ2goh9SZA6YZhf6Nu+ekYN7MLwjg6lrN3YgXG6X4zYtGLrdF4Q4J//NLpK34T5/f5gegh2FuckMzUfYeCuse36y0hHOWX2BQf0G1g956HrlnKTFh8RPBHaMqDANUANDCPVSXQz/z/QVPopiSRrk/IFLuqG5fg+NqIkVcBpaP2lcvpgHdkvsWnG9XcZeqEefcyxwOY/woNPaZXrJ0Ps14oXy3fjsE+1NKU4cjJu8RyTxo9nR1FoK6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZvdKxih/8X3u8joXFJPqX3WLTTceds6+rPOfmihwuWE=;
+ b=BU6dMTRCDbCo7apePny6ch6VIYbNHi4tEj0BBrtgNiFfOkNnX72kxZfiUH7bo24JOJVmfL1vi/Yc930+ju6cAknCRVTD1PU4a8twN/TIgaAMzeBvrWXcCUNhVtaAUZysthQsAOxVZ/glgkSZhFXdojSuF3lCECh5ZKbJa+pzRdY=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by MW4PR10MB6438.namprd10.prod.outlook.com (2603:10b6:303:218::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.18; Sat, 14 Dec
+ 2024 17:13:33 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%7]) with mapi id 15.20.8251.008; Sat, 14 Dec 2024
+ 17:13:32 +0000
+Message-ID: <8c716ca1-84f9-4644-95cf-9965e8a30284@oracle.com>
+Date: Sat, 14 Dec 2024 12:13:30 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] libfs: Use d_children list to iterate
+ simple_offset directories
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Hugh Dickens <hughd@google.com>, Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, yukuai3@huawei.com,
+        yangerkun@huaweicloud.com
+References: <20241204155257.1110338-1-cel@kernel.org>
+ <20241204155257.1110338-6-cel@kernel.org>
+ <5eb7bbdb-0928-4c80-bf03-9de27d6f3f89@oracle.com>
+Content-Language: en-US
+In-Reply-To: <5eb7bbdb-0928-4c80-bf03-9de27d6f3f89@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CH0P221CA0010.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:610:11c::15) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/25] huge_memory: Allow mappings of PUD sized pages
-To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
- linux-mm@kvack.org
-Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
- bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
- will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
- dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
- djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com
-References: <cover.e1ebdd6cab9bde0d232c1810deacf0bae25e6707.1732239628.git-series.apopple@nvidia.com>
- <dd86249dee026991b1a996a8ab551b1b1fdd32a4.1732239628.git-series.apopple@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <dd86249dee026991b1a996a8ab551b1b1fdd32a4.1732239628.git-series.apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|MW4PR10MB6438:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2dba09f4-1f47-435c-bbab-08dd1c62a336
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ejR6dDJXUHVidkRWU2FwQ3pvUE1XbEtWbkRLbDVOT3MwZ2ZpdlFRWmpYZDRR?=
+ =?utf-8?B?TVk1RXFCWFZWam40T0FRejVHS21hTzR2TTl4bnJBMlZLQ24vUTlmbmk3RHJX?=
+ =?utf-8?B?RmROTWU1Y25OclZTQ3JmcEh1bXUvRUZ2eU1NTHE5T0xzdmtkbUV6VExLTGRS?=
+ =?utf-8?B?NHE2NU1TL3JEbVdDQ1h1VThKQS9LS3ZJdFYxZVRNbEpVNlVhWEZFQW9GMFlW?=
+ =?utf-8?B?cnFGRTluUHNEbTA5emxhWnh4akw4L2pVcXZOUFVkUExvdnRzN2RhTzBLdnVr?=
+ =?utf-8?B?N3J1ZWNHZUh2dGpaemtydXNieEdON1VqVHYrY0JRakRxRUVlVmMwcFZuaVhs?=
+ =?utf-8?B?TFN4VWRvcHhOVFNkSjRzaDloVWtZcE9YWW45N3pYc0ZXa0hJOFR3K0g5MXZL?=
+ =?utf-8?B?eCtxYVNDRGdJVHc3OU1vaDJ1dGcwWTg0YjFQd1Q2anF3aWIyZ2cybVcya1cz?=
+ =?utf-8?B?WGxocGJDL3E0UXo4V1M1THBNUHJ2ZWp2NHd2N0J1QmU1UWVhMWNscU12ZnBx?=
+ =?utf-8?B?OEd4SUo1VUUwTFh0V1hlcHc4ZVpaTE1MMmVjbjd1R0drWE1ycTZkN0VCclQ0?=
+ =?utf-8?B?dW04TUpBd0hLOG56T2ZzaTN6WUd5SG5qTzJkaUNlZTh6eGovcDc1ZWFjUXJv?=
+ =?utf-8?B?OWwrMENUUHhVemlTRzhCQ1ZDU2loeTVLMkwxbW05V0tPVFA2dkQ4STJlK1Nv?=
+ =?utf-8?B?Y2ZPTGF0SnR0aVZOejF2TFhQVWQ4TkNpdWVkRmxTME9yZ1FKZFUxcE50SUUw?=
+ =?utf-8?B?VXhyNllneHRaSUNBTUhmanh5cFFLR3B6ZHpKUnhxTURUTjhsRzQzOHRHTHQr?=
+ =?utf-8?B?UHUyY0ZlQlltUlg1cHliVnpkbGJjNVZLQjYxcjFzdXpNZ1ZrRHJLOXFlU09Z?=
+ =?utf-8?B?YWhaaEY4SW9yYVR5ZWpQaUpUdEJhQ1hxb3RWOXpIaXhDUkVCWnJscDRxQ2Ri?=
+ =?utf-8?B?N3hrcmVQNmpRYnpZVmd0U25zM3VWd2pUTFZXWm1wQmQ5SG1jcG5wem5TRFJz?=
+ =?utf-8?B?UFZnYVlCVHlyU1RSOVR0SVdrUHFRNXVLanJieE0zZnVPa1huR2lnSjFmbEh0?=
+ =?utf-8?B?NXVwZ0xGSytFNGNHRTZqMU52SkJhUGVYalhXRGE2L0F1U2tMVW85Wng1SWlC?=
+ =?utf-8?B?UmM5YzV5eGxKMStDejQ4Zk1qbGgrVFUrK09SRFY0VTNTZmltZFlMM1VDemRE?=
+ =?utf-8?B?Tkkwb0ltRDBMcFJNOTlmanBqaDVOVEp2OEkrOUp6SkNFT3ovYURpVjNIbytt?=
+ =?utf-8?B?cGRHelc1TmVJalBEWmZNcGY4UnVoeVNGdDAzd25TSXl6V2htWVFLK0REOE9D?=
+ =?utf-8?B?djd5VTNPeWhLZjRSdTZuQTNZN0tML1UyQ0wyOTYxTTRpTHZiRktzaG1wQVpW?=
+ =?utf-8?B?R2N1R0hZQXlka0JZc2hTMXBTTTVLbkxZN1FiWHAxZU5YckVtazVCaWlmUTRs?=
+ =?utf-8?B?OEdBV1RxUWhYcy9Kdkt3M0w1OEFzU1Vka2ZQdFEyVFlvWXdIU0lvMTEwbUw4?=
+ =?utf-8?B?SWVNZmh0OVNtUFRhdjJSQmFxamYxNVlKTE9QN3hBc3drZWQyNFd6MjF1Tmpy?=
+ =?utf-8?B?OUtWaDMzRnQ3eitDTW5kMlJ0aTdqV3hVWXBhOGVINDE2a21FcGZuQWJ2aTVZ?=
+ =?utf-8?B?ME9vWUxQMTA5TDkvRm5nRklGZjFQQlZ4L0NsOE1xT2tvRHdwellZMCs0YUZ1?=
+ =?utf-8?B?S3B1TG4zWFU3QlhWZHB5OVJhTHptRTJoRU9ocFI5c2JxK0pjS2c2SzU1WkY4?=
+ =?utf-8?B?WWZsQmt3S3M2ZWdydkFFaGJDZW5TbklCVmJYcVdUa0xRV1pobDJ3QTU4ejdh?=
+ =?utf-8?B?T080c2NBYlZYU1dtNlhvQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Wm5UcFZ4MzVKWEVqMGxqSkJsc0kwUXh3Y2xVaHN5M2UxK21qNXJndXhuMTJX?=
+ =?utf-8?B?Y1ZSUEdzbmUyOXJZSXFQRWVkYVh3VXVnQkVWUERMUGNaZ1dkYW0xdVNkYXdh?=
+ =?utf-8?B?aHJGT1hyOWJLamF6cXRGMTdRWm00TEtWc3NvaDNTTHVWTm9RYlh4cDBXN25K?=
+ =?utf-8?B?MVdMaTRYaUorLzFoVm8xZW9sQStwK0c2Rmx3Q3hlemk4VTV0L3dyR1VIejV6?=
+ =?utf-8?B?RzFjcUFkSXdRbGR2UmxHbTdVVngzdWgzUnFwMmtrY0lmRjlVMFJTK3RCU1Ux?=
+ =?utf-8?B?eFdhU1JGa3VLdUt3aktDcXByRFVRbXBIY0YveG8vemFvalBuVmhvQzVIVjhX?=
+ =?utf-8?B?UGxDbmtJS0dzb294TWhUZzZ5M3JyMzVMMjdNSzJYYlhGYjNaNDZ4a2NuVDlh?=
+ =?utf-8?B?KzkrY0phZUdhUjlXaHVVR1JKY3M4VlB0bmFlMlN1TzQzcjU5Q1NmNFhid2to?=
+ =?utf-8?B?NWtVc0grRWhMakdMTnJVSDRPc1VNRHZ4OUl2dm5LeVFuS0xpQkJnL0RqVkFB?=
+ =?utf-8?B?aVVzSmZtQm0zc3hmRkZ1dGdIMGFPYjB1QlZxYVgyanBnRjVycFdkRzlDV1Jn?=
+ =?utf-8?B?SXhSNGpvd0VKYzZQSktIVDAvUWZFdndaaHhUOXVncFBJMmlIaFdYbVlFTUli?=
+ =?utf-8?B?ZW95anhGcWlLcVh2Q2Rka01OWXNZbWxnZERqQWxneDZNRmphY1NkUkVwZ1Ir?=
+ =?utf-8?B?bkx1LzlhQWRnWDR1NDZIQTFjdWN5ZWU3SjBOSmdLWG8wYlZEa3c2R2ErV2J6?=
+ =?utf-8?B?QlpiMHhQWG0rRW42d1hsMkdNQ2hBOVZJSGpoQitZSDRxREQ4K2ZkcnkycVN2?=
+ =?utf-8?B?R1h6NWVTbEc2empMb2VxU3ArTFI3a3Bkd3F3bjArZFRYTFc4cW13Q3lUUG5o?=
+ =?utf-8?B?TEg2dHRVKzBVZDlFLzY3YkQ2MXhmUEpUUGVETjVJazR4WnFaYkh0S0xlbnFF?=
+ =?utf-8?B?UmxEblJKZnYvUlVzSjltcW5FZGFwYnpyK3hvSi92dWhkK2g3bjl4UDdDS2pJ?=
+ =?utf-8?B?TFc3bjdqK0lNYlhyY09FWE9iN2Z5VU9FSUFreEdTWlVxbHpiZVQ5empJODM2?=
+ =?utf-8?B?Qk1FMjg5Q0xZY014RjhXeHdRMUkvWmI2WllsQjBzYzBxdnlyQ2dGNG1JMlJZ?=
+ =?utf-8?B?bXZ4eXEyYnRSVitzeDdzYWMzdHlTR0d4ZVhaZGxZMk1kaDJWVkI1R0FSMkZw?=
+ =?utf-8?B?YnFyMjFrcVZZTGp0NWhTWFpVVXVkQzl0U3pLYWx2RTZicDJBR2pabUlpMi9I?=
+ =?utf-8?B?akV2QnVBWndTZTZLYmNSQnM0ZE84RkJiRm5HQW94emRoRlMxb2gzMndrMjhx?=
+ =?utf-8?B?dEN0dk1KRVBZZXp6a1pMV1ptd0JQK29MZnF2MjBRQUdlZHl6WWZDQ0FrRGNs?=
+ =?utf-8?B?S0k5dWRkVkxFSndzOXJ0Skd4Z0Z5cFlLZDJ0UWlEdmNMWFlIb0RoRTFmU2oz?=
+ =?utf-8?B?NDVnVzcxSUlDYmNDUVZYNWNmQTNQL3grak9xbG4rQnBZQUsrVGpGUnBBNlhz?=
+ =?utf-8?B?ZFpQRlJxMnZMMGFLU2FHSFFXckQybDhvR1pRRnh5bGRXdnYyRk1IWGZvVmxl?=
+ =?utf-8?B?U21OdGdjZUowVUZ3b2R3NUdrcnRYV1JpaGpBdlRvanlkNU5oUnBnWStCTk5p?=
+ =?utf-8?B?TThmaHYzZkJ2MDNnampIMzl6eS8xTks3YW0wbkJqQ0hJcTdua0p4L3pSTUtu?=
+ =?utf-8?B?QithS3RJMjhCdnpBS3MwVlZ2S1kvTCtoQ0o1cGE0SS9mSVhwMUo0czA4Rmpx?=
+ =?utf-8?B?c0Rab01NdmNSMUZRL2Q4Zno5SEs0RjVSQnUvdjNpcWdHVm5YREZ0Z0xmNkY4?=
+ =?utf-8?B?amlpMnd5TW5WbkpHeDg1MXBoV3Rqd1JkbW9SQU9VRXM4SWNvdDM0YXR0cERN?=
+ =?utf-8?B?ZWorbzFiUG9YRWR1UzhEV1cvVEVDazE5b0hzN3MvVWxPK1NqWTVtTko1TkZM?=
+ =?utf-8?B?SUVFZ2dzV3dtUmZRelNQbzJKTVJxdEJzOU9IVWtCNFJyV2w2bzZtalU4Yk9H?=
+ =?utf-8?B?UDdPL0hhbEdqNitlcXBmemNLcmN1ZnpDeUtKT2RidUxLbytWZExsMXhEQk1a?=
+ =?utf-8?B?eG9Fa2NwblJGZzhHeDFBZXEvNjZ0czV3Z2M3Wjd0WUcrOEVsV1VLYVpQcnVT?=
+ =?utf-8?B?RnhxRy9Wcmp3VGpiMGRoOFd1aDRKblNjZFJBTlFVV0RyYW9mMkUyL0dKNkky?=
+ =?utf-8?B?T1E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	wZZyPPeZFsG4WpL8Sz+uFoKda82hevFISO4n26D73Tt0wu00XfqOGjTsinHGNSRjV07a+fZ3vbht5FEXSXEErzg7jcS+byjbjT7swmaKdKs+N8dRhNYLSrybzbCkokngsv6j5QMVUhfnn/K6TUIXc5Ym9v3n7UbHHPpvDJKkuOXff4wmRJe9o8mXCpJDBZ5YslIaVeG1PSNZsiYZJLd7QApMg5oRr7Go3IQY7twwF/Z5smW4dbOcP9G/p5/rxU+aegI7E1+GqQv20ulT8w6JykXLsD1mnpG87mQPI6wwB7ZpqiUiUZG1jlftd1DBpzRJb7T8bwQpsqhs6kshUiqQRqTfyg6sW/oUpU3RYYT9Iva6M6pb/JcfLEO3OtAIbgKNrWvf425JQX6q7IanSLuyln+VY9+jiYuSVXxhu0nLpBkBf/EkcYi8pyyU/1W9kqLp0CrU5vea+nkGNXtzX8JI/UxdN2DiNIe0/oYpS6Zw6NVn3aYm8dwnCI88+mhEV38mJyMZLJ9kLkgGIBrqCL8p0WWf4gQuAL6T/Ihg4TkIacitAph1f2Xilh81hBX5SFbAWAhnH7R9Tqw8XbFrCkyQ4xUKu5xK6xvNLW84xLXFMoU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dba09f4-1f47-435c-bbab-08dd1c62a336
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2024 17:13:32.8722
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u5gDLM507RfuVnXa1UptByuJxJYsxbXBZfkxTboEYzCPtfChUpRCq9oz3mXVy3ECqZT28eYQvfbz3NPOVQ/KSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6438
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-14_07,2024-12-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412140142
+X-Proofpoint-GUID: haesIuJyBc_w8Wdn3fFUHEJDkVNhSkfO
+X-Proofpoint-ORIG-GUID: haesIuJyBc_w8Wdn3fFUHEJDkVNhSkfO
 
-On 22.11.24 02:40, Alistair Popple wrote:
-> Currently DAX folio/page reference counts are managed differently to
-> normal pages. To allow these to be managed the same as normal pages
-> introduce vmf_insert_folio_pud. This will map the entire PUD-sized folio
-> and take references as it would for a normally mapped page.
+On 12/8/24 12:11 PM, Chuck Lever wrote:
+> On 12/4/24 10:52 AM, cel@kernel.org wrote:
+>> From: Chuck Lever <chuck.lever@oracle.com>
+>>
+>> The mtree mechanism has been effective at creating directory offsets
+>> that are stable over multiple opendir instances. However, it has not
+>> been able to handle the subtleties of renames that are concurrent
+>> with readdir.
+>>
+>> Instead of using the mtree to emit entries in the order of their
+>> offset values, use it only to map incoming ctx->pos to a starting
+>> entry. Then use the directory's d_children list, which is already
+>> maintained properly by the dcache, to find the next child to emit.
+>>
+>> One of the sneaky things about this is that when the mtree-allocated
+>> offset value wraps (which is very rare), looking up ctx->pos++ is
+>> not going to find the next entry; it will return NULL. Instead, by
+>> following the d_children list, the offset values can appear in any
+>> order but all of the entries in the directory will be visited
+>> eventually.
+>>
+>> Note also that the readdir() is guaranteed to reach the tail of this
+>> list. Entries are added only at the head of d_children, and readdir
+>> walks from its current position in that list towards its tail.
+>>
+>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>> ---
+>>   fs/libfs.c | 77 ++++++++++++++++++++++++++++++++++++++++--------------
+>>   1 file changed, 57 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/fs/libfs.c b/fs/libfs.c
+>> index fcb2cdf6e3f3..398eac385094 100644
+>> --- a/fs/libfs.c
+>> +++ b/fs/libfs.c
+>> @@ -243,12 +243,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
+>>   /* simple_offset_add() allocation range */
+>>   enum {
+>> -    DIR_OFFSET_MIN        = 2,
+>> +    DIR_OFFSET_MIN        = 3,
+>>       DIR_OFFSET_MAX        = LONG_MAX - 1,
+>>   };
+>>   /* simple_offset_add() never assigns these to a dentry */
+>>   enum {
+>> +    DIR_OFFSET_FIRST    = 2,        /* Find first real entry */
+>>       DIR_OFFSET_EOD        = LONG_MAX,    /* Marks EOD */
+>>   };
+>> @@ -456,19 +457,43 @@ static loff_t offset_dir_llseek(struct file 
+>> *file, loff_t offset, int whence)
+>>       return vfs_setpos(file, offset, LONG_MAX);
+>>   }
+>> -static struct dentry *offset_find_next(struct offset_ctx *octx, 
+>> loff_t offset)
+>> +/* Cf. find_next_child() */
+>> +static struct dentry *find_next_sibling_locked(struct dentry *parent,
+>> +                           struct dentry *dentry)
 > 
-> This is distinct from the current mechanism, vmf_insert_pfn_pud, which
-> simply inserts a special devmap PUD entry into the page table without
-> holding a reference to the page for the mapping.
+> There might be a better name for this function.
 > 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
+> It looks a lot like find_next_child(), but it acts more like
+> scan_positives(). It starts looking for positive dentries starting
+> at @dentry, thus it can return the dentry that was passed in @dentry.
+> 
+> find_positive_from_locked()  ??
+> 
+> 
+>>   {
+>> -    MA_STATE(mas, &octx->mt, offset, offset);
+>> +    struct dentry *found = NULL;
+>> +
+>> +    hlist_for_each_entry_from(dentry, d_sib) {
+>> +        if (!simple_positive(dentry))
+>> +            continue;
+>> +        spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+>> +        if (simple_positive(dentry))
+>> +            found = dget_dlock(dentry);
+>> +        spin_unlock(&dentry->d_lock);
+>> +        if (likely(found))
+>> +            break;
+>> +    }
+>> +    return found;
+>> +}
+>> +
+>> +static noinline_for_stack struct dentry *
+>> +offset_dir_lookup(struct file *file, loff_t offset)
+>> +{
+>> +    struct dentry *parent = file->f_path.dentry;
+>>       struct dentry *child, *found = NULL;
+>> +    struct inode *inode = d_inode(parent);
+>> +    struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+>> +
+>> +    MA_STATE(mas, &octx->mt, offset, offset);
+>>       rcu_read_lock();
+>>       child = mas_find(&mas, DIR_OFFSET_MAX);
+>>       if (!child)
+>>           goto out;
+>> -    spin_lock(&child->d_lock);
+>> -    if (simple_positive(child))
+>> -        found = dget_dlock(child);
+>> -    spin_unlock(&child->d_lock);
+>> +
+>> +    spin_lock(&parent->d_lock);
+>> +    found = find_next_sibling_locked(parent, child);
+>> +    spin_unlock(&parent->d_lock);
+>>   out:
+>>       rcu_read_unlock();
+>>       return found;
+>> @@ -477,30 +502,42 @@ static struct dentry *offset_find_next(struct 
+>> offset_ctx *octx, loff_t offset)
+>>   static bool offset_dir_emit(struct dir_context *ctx, struct dentry 
+>> *dentry)
+>>   {
+>>       struct inode *inode = d_inode(dentry);
+>> -    long offset = dentry2offset(dentry);
+>> -    return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, 
+>> offset,
+>> -              inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>> +    return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
+>> +            inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>   }
+>> -static void offset_iterate_dir(struct inode *inode, struct 
+>> dir_context *ctx)
+>> +static void offset_iterate_dir(struct file *file, struct dir_context 
+>> *ctx)
+>>   {
+>> -    struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+>> +    struct dentry *dir = file->f_path.dentry;
+>>       struct dentry *dentry;
+>> +    if (ctx->pos == DIR_OFFSET_FIRST) {
+>> +        spin_lock(&dir->d_lock);
+>> +        dentry = find_next_sibling_locked(dir, d_first_child(dir));
+>> +        spin_unlock(&dir->d_lock);
+>> +    } else
+>> +        dentry = offset_dir_lookup(file, ctx->pos);
+>> +    if (!dentry)
+>> +        goto out_eod;
+>> +
+>>       while (true) {
+>> -        dentry = offset_find_next(octx, ctx->pos);
+>> -        if (!dentry)
+>> -            goto out_eod;
+>> +        struct dentry *next;
+>> -        if (!offset_dir_emit(ctx, dentry)) {
+>> -            dput(dentry);
+>> +        ctx->pos = dentry2offset(dentry);
+>> +        if (!offset_dir_emit(ctx, dentry))
+>>               break;
+>> -        }
+>> -        ctx->pos = dentry2offset(dentry) + 1;
+>> +        spin_lock(&dir->d_lock);
+>> +        next = find_next_sibling_locked(dir, d_next_sibling(dentry));
+>> +        spin_unlock(&dir->d_lock);
 
-Hi,
+Recent coverity report:
 
-The patch subject of this (and especially the next patch) is misleading. 
-Likely you meant to have it as:
+*** CID 1602474:  Concurrent data access violations  (ATOMICITY)
+/fs/libfs.c: 536 in offset_iterate_dir()
+530
+531     		ctx->pos = dentry2offset(dentry);
+532     		if (!offset_dir_emit(ctx, dentry))
+533     			break;
+534
+535     		spin_lock(&dir->d_lock);
+ >>>     CID 1602474:  Concurrent data access violations  (ATOMICITY)
+ >>>     Using an unreliable value of "dentry" inside the second locked 
+section. If the data that "dentry" depends on was changed by another 
+thread, this use might be incorrect.
+536     		next = find_next_sibling_locked(dir, d_next_sibling(dentry));
+537     		spin_unlock(&dir->d_lock);
+538     		dput(dentry);
+539
+540     		if (!next)
+541     			goto out_eod;
 
-"mm/huge_memory: add vmf_insert_folio_pud() for mapping PUD sized pages"
+As far as I can tell, @dentry's list fields, which are the only fields
+accessed in find_next_sibling_locked(), are protected by dir->d_lock. We
+don't care about the other fields.
 
->   	for (i = 0; i < nr_pages; i++) {
-> @@ -1523,6 +1531,26 @@ void folio_add_file_rmap_pmd(struct folio *folio, struct page *page,
->   #endif
->   }
->   
-> +/**
-> + * folio_add_file_rmap_pud - add a PUD mapping to a page range of a folio
-> + * @folio:	The folio to add the mapping to
-> + * @page:	The first page to add
-> + * @vma:	The vm area in which the mapping is added
-> + *
-> + * The page range of the folio is defined by [page, page + HPAGE_PUD_NR)
-> + *
-> + * The caller needs to hold the page table lock.
-> + */
-> +void folio_add_file_rmap_pud(struct folio *folio, struct page *page,
-> +		struct vm_area_struct *vma)
-> +{
-> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-> +	__folio_add_file_rmap(folio, page, HPAGE_PUD_NR, vma, RMAP_LEVEL_PUD);
-> +#else
-> +	WARN_ON_ONCE(true);
-> +#endif
-> +}
-> +
->   static __always_inline void __folio_remove_rmap(struct folio *folio,
->   		struct page *page, int nr_pages, struct vm_area_struct *vma,
->   		enum rmap_level level)
-> @@ -1552,6 +1580,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->   		partially_mapped = nr && atomic_read(mapped);
->   		break;
->   	case RMAP_LEVEL_PMD:
-> +	case RMAP_LEVEL_PUD:
->   		atomic_dec(&folio->_large_mapcount);
->   		last = atomic_add_negative(-1, &folio->_entire_mapcount);
->   		if (last) {
+Not sure if this is a false positive. Is there an annotation that will
+help clarify this situation?
 
-If you simply reuse that code (here and on the adding path), you will 
-end up effectively setting nr_pmdmapped to a very large value and 
-passing that into __folio_mod_stat().
 
-There, we will adjust NR_SHMEM_PMDMAPPED/NR_FILE_PMDMAPPED, which is 
-wrong (it's PUD mapped ;) ).
-
-It's probably best to split out the rmap changes from the other things 
-in this patch.
+>>           dput(dentry);
+>> +
+>> +        if (!next)
+>> +            goto out_eod;
+>> +        dentry = next;
+>>       }
+>> +    dput(dentry);
+>>       return;
+>>   out_eod:
+>> @@ -539,7 +576,7 @@ static int offset_readdir(struct file *file, 
+>> struct dir_context *ctx)
+>>       if (!dir_emit_dots(file, ctx))
+>>           return 0;
+>>       if (ctx->pos != DIR_OFFSET_EOD)
+>> -        offset_iterate_dir(d_inode(dir), ctx);
+>> +        offset_iterate_dir(file, ctx);
+>>       return 0;
+>>   }
+> 
+> 
 
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Chuck Lever
 
