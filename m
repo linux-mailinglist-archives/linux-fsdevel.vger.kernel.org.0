@@ -1,233 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-37445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321559F2578
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Dec 2024 19:58:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1C09F25E9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Dec 2024 20:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51A5F164840
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Dec 2024 18:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01ECA1887879
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Dec 2024 19:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64651BD4F7;
-	Sun, 15 Dec 2024 18:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKIYgvaS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03871BD519;
+	Sun, 15 Dec 2024 19:37:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432F81BD00C
-	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Dec 2024 18:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A550149C69
+	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Dec 2024 19:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734289105; cv=none; b=R8wNzCZY4CcCzloNm827tmoSV9jIihMi/Y+iX3wpn2uJHsXQQAol3HoeCfutx+9CIjmdbYMvz7vx3H/cpL5g/mvjMQMyQtW+Hy7RMyMeJVPT/DwGI0NUZPxumqLQxHPKJWfURwi5Ozi8j3mZB1J3XE87XFCUVzy/UxCa/wZE3xU=
+	t=1734291423; cv=none; b=UnYbs3H/XKp9zgjWfTcIbTwhmSX2J46syz3j1wVL+/Q/n1nwly2tdcd4fRHaqbKnM7Hh8ifpFGPzlFs+IUSG5EjCNGqYYDblvLQL+V3cnbB45jqW5SXW1uXAlPW83EzfGrcsM7ih03AYkPyo5CyNgPqvSGZhY+G5e8ZxDx2nHd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734289105; c=relaxed/simple;
-	bh=gZ/vdeUfX1ITmM/5YeE1NO9zxKDtaZH7Hh+ponD2bvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z47UMA0ucS2gSUVHA7RMcYAByLAy5Yyjd6yfXTiimqiJxriEORs9D8x+hKgFG6qKhjZSs0dwZlc7XDuyAQQcF/Hm7yKbyb4x6DLIh3O5bkaOd5UUe72MV3dL5Lvoj3hR6d6O+66IIGlOhxF6QsShi33lzoKl2b6U3RoDnsTBmS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKIYgvaS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66157C4CED3;
-	Sun, 15 Dec 2024 18:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734289105;
-	bh=gZ/vdeUfX1ITmM/5YeE1NO9zxKDtaZH7Hh+ponD2bvw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qKIYgvaSi1t/oFLOXTgmCAA8i1OvGy7hYuHOv13rDisURe4v4Eead6cymYUM9azb8
-	 /ah1eOWYif1CAwSPtaCdAN3cGd9RZnUvurbb7Q5+TYX8BsVpouyEn7oQOTXviC5XDw
-	 zRT2sVdssLVu1legtdpzpFRiSHSuc5dyyjxxwb+1r1nWVyexbZmfwAwPcPpkIsOM9l
-	 F+wY7tjf0BZ19JZvuSHaQdLY9cgfLg5z3HCAdxoqiaft/znHQ0vbzQT21KpBAZeHlT
-	 TOIvYqjKzZ7+e1/RzCgFHBwX16/+WZ0pOlrRBbgjYmbrgIhbtlSLR8Jza5Qv43u+UP
-	 MMPF45m82iuaQ==
-From: cel@kernel.org
-To: Hugh Dickins <hughd@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>,
-	yukuai3@huawei.com,
-	yangerkun@huaweicloud.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v5 5/5] libfs: Use d_children list to iterate simple_offset directories
-Date: Sun, 15 Dec 2024 13:58:16 -0500
-Message-ID: <20241215185816.1826975-6-cel@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241215185816.1826975-1-cel@kernel.org>
+	s=arc-20240116; t=1734291423; c=relaxed/simple;
+	bh=7scpWpF3e22w7STxMY14fk094q7SxCDnPoV8LgkKYq4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=bC6QUkgWa5Hcm769jslaxUerp8PrToLastKbQm4aJN40TgPwYcIdAFLinD8YH9V3YOj5C+f4FFbP/30YvsoTpe827QGq8xTl0mcbIb/0eXlJVWeQzUAKWmloyW3TSLall1V6Teh+oLL0hthXI35WfwKHo2sT9z35f4V2HicdCxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-78-UIVQJ175NaeBrXPJaEsg5A-1; Sun, 15 Dec 2024 19:36:58 +0000
+X-MC-Unique: UIVQJ175NaeBrXPJaEsg5A-1
+X-Mimecast-MFC-AGG-ID: UIVQJ175NaeBrXPJaEsg5A
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 15 Dec
+ 2024 19:35:57 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 15 Dec 2024 19:35:57 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'cel@kernel.org'" <cel@kernel.org>, Hugh Dickins <hughd@google.com>,
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "yukuai3@huawei.com"
+	<yukuai3@huawei.com>, "yangerkun@huaweicloud.com"
+	<yangerkun@huaweicloud.com>, Chuck Lever <chuck.lever@oracle.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, Jeff Layton
+	<jlayton@kernel.org>, Yang Erkun <yangerkun@huawei.com>
+Subject: RE: [PATCH v5 1/5] libfs: Return ENOSPC when the directory offset
+ range is exhausted
+Thread-Topic: [PATCH v5 1/5] libfs: Return ENOSPC when the directory offset
+ range is exhausted
+Thread-Index: AQHbTyMyhyLVsk/YOU2ozqtU7VdGFrLnsn/g
+Date: Sun, 15 Dec 2024 19:35:57 +0000
+Message-ID: <95d0b9296e3f48ffb79a1de0b95f4726@AcuMS.aculab.com>
 References: <20241215185816.1826975-1-cel@kernel.org>
+ <20241215185816.1826975-2-cel@kernel.org>
+In-Reply-To: <20241215185816.1826975-2-cel@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: jI0qtBEAyNE_8PUKYucdibGulZRO47wCP-MnJrS5Dmo_1734291418
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: cel@kernel.org
+> Sent: 15 December 2024 18:58
+>=20
+> From: Chuck Lever <chuck.lever@oracle.com>
+>=20
+> Testing shows that the EBUSY error return from mtree_alloc_cyclic()
+> leaks into user space. The ERRORS section of "man creat(2)" says:
+>=20
+> >=09EBUSY=09O_EXCL was specified in flags and pathname refers
+> >=09=09to a block device that is in use by the system
+> >=09=09(e.g., it is mounted).
+>=20
+> ENOSPC is closer to what applications expect in this situation.
+>=20
+> Note that the normal range of simple directory offset values is
+> 2..2^63, so hitting this error is going to be rare to impossible.
+>=20
+> Fixes: 6faddda69f62 ("libfs: Add directory operations for stable offsets"=
+)
+> Cc: <stable@vger.kernel.org> # v6.9+
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Yang Erkun <yangerkun@huawei.com>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> ---
+>  fs/libfs.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 748ac5923154..f6d04c69f195 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -292,7 +292,9 @@ int simple_offset_add(struct offset_ctx *octx, struct=
+ dentry *dentry)
+>=20
+>  =09ret =3D mtree_alloc_cyclic(&octx->mt, &offset, dentry, DIR_OFFSET_MIN=
+,
+>  =09=09=09=09 LONG_MAX, &octx->next_offset, GFP_KERNEL);
+> -=09if (ret < 0)
+> +=09if (unlikely(ret =3D=3D -EBUSY))
+> +=09=09return -ENOSPC;
+> +=09if (unlikely(ret < 0))
+>  =09=09return ret;
 
-The mtree mechanism has been effective at creating directory offsets
-that are stable over multiple opendir instances. However, it has not
-been able to handle the subtleties of renames that are concurrent
-with readdir.
+You've just added an extra comparison to a hot path.
+Doing:
+=09if (ret < 0)
+=09=09return ret =3D=3D -EBUSY ? -ENOSPC : ret;
+would be better.
 
-Instead of using the mtree to emit entries in the order of their
-offset values, use it only to map incoming ctx->pos to a starting
-entry. Then use the directory's d_children list, which is already
-maintained properly by the dcache, to find the next child to emit.
+=09David
 
-One of the sneaky things about this is that when the mtree-allocated
-offset value wraps (which is very rare), looking up ctx->pos++ is
-not going to find the next entry; it will return NULL. Instead, by
-following the d_children list, the offset values can appear in any
-order but all of the entries in the directory will be visited
-eventually.
+>=20
+>  =09offset_set(dentry, offset);
+> --
+> 2.47.0
+>=20
 
-Note also that the readdir() is guaranteed to reach the tail of this
-list. Entries are added only at the head of d_children, and readdir
-walks from its current position in that list towards its tail.
-
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/libfs.c | 84 +++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 58 insertions(+), 26 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 00dfcfa97edf..cc1226bf2b56 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -247,12 +247,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
- 
- /* simple_offset_add() allocation range */
- enum {
--	DIR_OFFSET_MIN		= 2,
-+	DIR_OFFSET_MIN		= 3,
- 	DIR_OFFSET_MAX		= LONG_MAX - 1,
- };
- 
- /* simple_offset_add() never assigns these to a dentry */
- enum {
-+	DIR_OFFSET_FIRST	= 2,		/* Find first real entry */
- 	DIR_OFFSET_EOD		= LONG_MAX,	/* Marks EOD */
- 
- };
-@@ -460,51 +461,82 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 	return vfs_setpos(file, offset, LONG_MAX);
- }
- 
--static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
-+static struct dentry *find_positive_dentry(struct dentry *parent,
-+					   struct dentry *dentry,
-+					   bool next)
- {
--	MA_STATE(mas, &octx->mt, offset, offset);
-+	struct dentry *found = NULL;
-+
-+	spin_lock(&parent->d_lock);
-+	if (next)
-+		dentry = d_next_sibling(dentry);
-+	else if (!dentry)
-+		dentry = d_first_child(parent);
-+	hlist_for_each_entry_from(dentry, d_sib) {
-+		if (!simple_positive(dentry))
-+			continue;
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+		if (simple_positive(dentry))
-+			found = dget_dlock(dentry);
-+		spin_unlock(&dentry->d_lock);
-+		if (likely(found))
-+			break;
-+	}
-+	spin_unlock(&parent->d_lock);
-+	return found;
-+}
-+
-+static noinline_for_stack struct dentry *
-+offset_dir_lookup(struct dentry *parent, loff_t offset)
-+{
-+	struct inode *inode = d_inode(parent);
-+	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
- 	struct dentry *child, *found = NULL;
- 
--	rcu_read_lock();
--	child = mas_find(&mas, DIR_OFFSET_MAX);
--	if (!child)
--		goto out;
--	spin_lock(&child->d_lock);
--	if (simple_positive(child))
--		found = dget_dlock(child);
--	spin_unlock(&child->d_lock);
--out:
--	rcu_read_unlock();
-+	MA_STATE(mas, &octx->mt, offset, offset);
-+
-+	if (offset == DIR_OFFSET_FIRST)
-+		found = find_positive_dentry(parent, NULL, false);
-+	else {
-+		rcu_read_lock();
-+		child = mas_find(&mas, DIR_OFFSET_MAX);
-+		found = find_positive_dentry(parent, child, false);
-+		rcu_read_unlock();
-+	}
- 	return found;
- }
- 
- static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- {
- 	struct inode *inode = d_inode(dentry);
--	long offset = dentry2offset(dentry);
- 
--	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
--			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-+	return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
-+			inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void offset_iterate_dir(struct file *file, struct dir_context *ctx)
- {
--	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+	struct dentry *dir = file->f_path.dentry;
- 	struct dentry *dentry;
- 
-+	dentry = offset_dir_lookup(dir, ctx->pos);
-+	if (!dentry)
-+		goto out_eod;
- 	while (true) {
--		dentry = offset_find_next(octx, ctx->pos);
--		if (!dentry)
--			goto out_eod;
-+		struct dentry *next;
- 
--		if (!offset_dir_emit(ctx, dentry)) {
--			dput(dentry);
-+		ctx->pos = dentry2offset(dentry);
-+		if (!offset_dir_emit(ctx, dentry))
- 			break;
--		}
- 
--		ctx->pos = dentry2offset(dentry) + 1;
-+		next = find_positive_dentry(dir, dentry, true);
- 		dput(dentry);
-+
-+		if (!next)
-+			goto out_eod;
-+		dentry = next;
- 	}
-+	dput(dentry);
- 	return;
- 
- out_eod:
-@@ -543,7 +575,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 	if (ctx->pos != DIR_OFFSET_EOD)
--		offset_iterate_dir(d_inode(dir), ctx);
-+		offset_iterate_dir(file, ctx);
- 	return 0;
- }
- 
--- 
-2.47.0
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
