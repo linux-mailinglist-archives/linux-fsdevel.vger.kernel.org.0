@@ -1,103 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-37512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052BA9F363F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 17:40:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E509F379A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 18:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43BBB1650FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 16:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4471889BD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 17:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D791C4A3D;
-	Mon, 16 Dec 2024 16:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD302066C5;
+	Mon, 16 Dec 2024 17:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XS4uG8O4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZZ+0I4H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307EB14B086
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CF4203D5E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 17:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367222; cv=none; b=K8VIMR9oL+BBn1tH2wJWOjJ3qP9xfQAtkYh65Q/HcMYYY4lYgYl4Z38IMPb9nKpLDx0AFtK41OuSW86Nj2DOKeeHGDm6YGHYYz5geNnl2fdnGF3ztfBkEB/rBDTBOYw4QT88k1DeF1oMc35+tOWBKAlLQUqscx92NwmeeqxP4PM=
+	t=1734370345; cv=none; b=eqFQc05EpnlBTFq9pEM2zJlPDF/79gVFZU5WMNSSOa6N5sidigcy1IfZFsQy/6Z+SVNjTJPgKCzG0pd/EYfBQToI+uwjMOIzZ2XJ2WDHvX6YcGBAsjyOP38HKQWPzeV5c151p6+42sXUN5jGZwzN3JYTZJYrm+rLJQEiVE2C6dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367222; c=relaxed/simple;
-	bh=XSMGgsdv+y5WcMVcf7eiqLkRr4rAybqXS0N+f/k9ZnI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ChjDYd13Xsqta3YajD15X/8VBRLnl/LZxRFVCcPN0B7pQZ71/H7iXzq7GeQ9gjD0o5d8QYSpPVzOuAXjPB+cymdleB4TV1tUzguvVWSy8+MnxRRaJp9yQr78uQO1KX5IuaU0o6AEnbod/9+FMH07kXF8Ktzwl4XRP4qh6W9CDBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XS4uG8O4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD3EC4CED0;
-	Mon, 16 Dec 2024 16:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734367221;
-	bh=XSMGgsdv+y5WcMVcf7eiqLkRr4rAybqXS0N+f/k9ZnI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XS4uG8O4s7IJHqrXwK3nBROBYJYA/lWrjwx7LQWsg/zzqywMOAv+r7hlY8mbbAg5T
-	 pUi8G5yOywY1jft5pk9eCEAAtDx8BdF9HC/97dMoXdmPUysBTTVr+6k94fTS3RQd3J
-	 QBfWR34eV0fRbb0I1NLrChtnFuh8fALAbgCVDGkn8f4P5U3c2fS/6zONd/6ajvaWCx
-	 afwMj5zl5MhrU4QxYe9hboFPA0ADUicT5tQA/idrZ8/lMb+F9TzlvNCjVoTT01MaE1
-	 l4iKulblNyzKz9n3APrJ4S9dUsj54UsOwWxtsteNeMA8Gma0XmYR4sr+BI+ly9gBjn
-	 B0B/h/JF39xiw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6D93806656;
-	Mon, 16 Dec 2024 16:40:39 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1734370345; c=relaxed/simple;
+	bh=FAa5Wiqlalb/Z2dzWYjkfYOTJI7gLlkUtp0zFGfC0Yk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XPeS8gfJBc/4NvzSUJyQ07gtpX4j+PsX39wBBuy2231kXKX02dNDzDF2sIjothF3z/8sde10DL65MmU+Cb4jhQ+ZmQv4D60qBzyVz+t5OXwbiOH1RYKGbq7eElbNbPSb3bLQ0KPaYMvBQCvv7St7OMaf69PPJSWfYVRQ4gBMh5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZZ+0I4H; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-467725245a2so43946441cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 09:32:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734370342; x=1734975142; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kTWUbyNxq/mwwPmdFguLeTq9ih2dSKb55GUx3Ec4AgU=;
+        b=UZZ+0I4HoxRfh6QpQFQWN36hovI8HFPfIOnAXz3O3wQnL9Kf/FKhTlVSAskx5o+r/z
+         yBT4jnMhlws9vDPMmdjRY4Pb6OIb56x/jNV341Ly/yzIk7SBuPetfGtQYkrmfxEIxlsr
+         OKgc6e5Ie/OuRhlGl73DkmFu9rsrTrbfVZaanwgVucAABgNF17Ft9D71mVNENb0IIhg4
+         wjFdgOwZRHHD/x0CtTdcAFXKWoHeDfHL15pp40sCsLpOw4UrAV9QSRwLfMwhY2Uyqtid
+         RIj08EZekscZsqZ9bJBcibKWrenvIsZGo7IxUQV6oboRdxP7pQTvpUHvdzLEB3F6XURA
+         JWUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734370342; x=1734975142;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kTWUbyNxq/mwwPmdFguLeTq9ih2dSKb55GUx3Ec4AgU=;
+        b=qaNR0+pW8vE13wTyI4naQdwSngS4/sWLuK/9rEu+lOGJW6Sazo9EFU/N/NyCL04AOw
+         ZMIVeuNJFhmcQehddq2VE8Jm7UWfgVhRip3nV9GcjL92CfJ8CTS6RzpNSFf9ukjrMlm5
+         KFlYyD+l2+WHJdH2awGJ7LJpgYanhGten0KYJsBotHs4e0KMCVlfaRLNozGChKEHFJ/C
+         D6qYK32FFD3YGs2/RalyMO5KTtnjBNA+2Bay8cy0ocR6TesUlb/N1rytkGDu7ZPBIBH9
+         L7a1wBpaCUaOE+yxsS8P+RyYd7UzfyW4A5Utowakvja8Lh1L0LLJ9NdSvo2vl++1dlXz
+         W8ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUfcYtTglb6pglL+xhH0R1rVEasnOMySc2tdHyjx9gkNxhNF5KvmVFavDr/z36yctA1amtSsTtzfCtufYbH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJSpmonB0SvorQij8WRYdMiVgdFYcJy/8qzQ40Rw8qOWsRR3zQ
+	URbGDc0S/wMRGYUHivklaAfQ/d2mopKVpExpcLvTe9QK7yuVlC+rpYe4qKJkbes/kfkewWN4dpR
+	rosm57bY9zCFzW6sNlujqv0Ehw8abtg==
+X-Gm-Gg: ASbGncvbfZ/dV5M0Bn1SQGKwnJXGreaCXphiUx2ZIzi6cEjBR5bciXZdvaISljn5Il7
+	iyOq9f2mskjWELvqQ+L13wn5goU4E8803/SEZl1wuYfm2JDel6JZk5A==
+X-Google-Smtp-Source: AGHT+IG2ZQx93HJxQYl/owz75J+GpVL+zY1Yl1bzM/6J89Ln1CTyQQVtTn3lava4JwfAWy2xCgVdt2NHUvIvuF07km4=
+X-Received: by 2002:a05:622a:1a29:b0:467:7fbf:d121 with SMTP id
+ d75a77b69052e-467a574e78fmr244408971cf.12.1734370342405; Mon, 16 Dec 2024
+ 09:32:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: ensure that node info flags are always
- initialized
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <173436723874.272389.6295491443575015321.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Dec 2024 16:40:38 +0000
-References: <20241212175748.1750854-1-dmantipov@yandex.ru>
-In-Reply-To: <20241212175748.1750854-1-dmantipov@yandex.ru>
-To: Dmitry Antipov <dmantipov@yandex.ru>
-Cc: chao@kernel.org, lvc-project@linuxtesting.org,
- linux-f2fs-devel@lists.sourceforge.net,
- syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com,
- linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
+References: <20241214022827.1773071-1-joannelkoong@gmail.com>
+ <20241214022827.1773071-2-joannelkoong@gmail.com> <8d0e50812e0141e24855f99b63c3e6d7cb57e7f8.camel@kernel.org>
+In-Reply-To: <8d0e50812e0141e24855f99b63c3e6d7cb57e7f8.camel@kernel.org>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 16 Dec 2024 09:32:11 -0800
+Message-ID: <CAJnrk1a+hxtv5kiaEJu-m-C35E8Bbg-ehd8yRjc1fBd2Amm8Ug@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] fuse: add kernel-enforced timeout option for requests
+To: Jeff Layton <jlayton@kernel.org>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	senozhatsky@chromium.org, tfiga@chromium.org, bgeffon@google.com, 
+	etmartin4313@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sat, Dec 14, 2024 at 4:10=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Fri, 2024-12-13 at 18:28 -0800, Joanne Koong wrote:
+> > There are situations where fuse servers can become unresponsive or
+> > stuck, for example if the server is deadlocked. Currently, there's no
+> > good way to detect if a server is stuck and needs to be killed manually=
+.
+> >
+> > This commit adds an option for enforcing a timeout (in seconds) for
+> > requests where if the timeout elapses without the server responding to
+> > the request, the connection will be automatically aborted.
+> >
+> > Please note that these timeouts are not 100% precise. For example, the
+> > request may take roughly an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyon=
+d
+> > the requested timeout due to internal implementation, in order to
+> > mitigate overhead.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev.c    | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/fuse_i.h | 22 +++++++++++++
+> >  fs/fuse/inode.c  | 23 ++++++++++++++
+> >  3 files changed, 128 insertions(+)
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 27ccae63495d..e97ba860ffcd 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> >
+> >  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_=
+t flags)
+> > @@ -2308,6 +2388,9 @@ void fuse_abort_conn(struct fuse_conn *fc)
+> >               spin_unlock(&fc->lock);
+> >
+> >               end_requests(&to_end);
+> > +
+> > +             if (fc->timeout.req_timeout)
+> > +                     cancel_delayed_work(&fc->timeout.work);
+>
+> As Sergey pointed out, this should be a cancel_delayed_work_sync(). The
+> workqueue job can still be running after cancel_delayed_work(), and
+> since it requeues itself, this might not be enough to kill it
+> completely.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+I don't think we need to synchronously cancel it when a connection is
+aborted. The fuse_check_timeout() workqueue job can be simultaneously
+running when cancel_delayed_work() is called and can requeue itself,
+but then on the next trigger of the job, it will check whether the
+connection was aborted (eg the if (!fc->connected)... return; lines in
+fuse_check_timeout()) and will not requeue itself if the connection
+was aborted. This seemed like the simplest / cleanest approach to me.
 
-On Thu, 12 Dec 2024 20:57:48 +0300 you wrote:
-> Syzbot has reported the following KMSAN splat:
-> 
-> BUG: KMSAN: uninit-value in f2fs_new_node_page+0x1494/0x1630
->  f2fs_new_node_page+0x1494/0x1630
->  f2fs_new_inode_page+0xb9/0x100
->  f2fs_init_inode_metadata+0x176/0x1e90
->  f2fs_add_inline_entry+0x723/0xc90
->  f2fs_do_add_link+0x48f/0xa70
->  f2fs_symlink+0x6af/0xfc0
->  vfs_symlink+0x1f1/0x470
->  do_symlinkat+0x471/0xbc0
->  __x64_sys_symlink+0xcf/0x140
->  x64_sys_call+0x2fcc/0x3d90
->  do_syscall_64+0xd9/0x1b0
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> [...]
+>
+> Also, I'd probably do this at the start of fuse_abort_conn() instead of
+> waiting until the end. By the time you're in that function, you're
+> killing the connection anyway, and you probably don't want the
+> workqueue job running at the same time. They'll just end up competing
+> for the same locks.
 
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: ensure that node info flags are always initialized
-    https://git.kernel.org/jaegeuk/f2fs/c/76f01376df39
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Sounds good, I'll move this to be called right after the "if
+(fc->connected)" line.
 
 
+Thanks,
+Joanne
+>
+> >       } else {
+> >               spin_unlock(&fc->lock);
+> >       }
+
+> --
+> Jeff Layton <jlayton@kernel.org>
 
