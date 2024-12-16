@@ -1,429 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-37463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3379F2822
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 02:49:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C139F2860
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 03:07:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31DFA16727C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 01:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8411A1885073
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 02:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F1D1D5166;
-	Mon, 16 Dec 2024 01:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB90A17C64;
+	Mon, 16 Dec 2024 02:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLKdy3Kl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3ED11C3F36;
-	Mon, 16 Dec 2024 01:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D4C8BE8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 02:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734313370; cv=none; b=ZpB93bGauYlbFZD+IBBYtD+3gtW7nhnj8FmwQ1rw/37fH26Ld8mimGKpXQDth7EVJjXcnQUM9QwGKm/xQPqYjUswHORNRs7i0bfoWZ6fpAbbmGm6ztQO0YUvvJippJsRZpMedas4wFxkEkZa9oAsylC2WIUslJlpZ7cHk9+RIfA=
+	t=1734314846; cv=none; b=raw6HHHgPHxYe/YKnqntNkBlsDJ8AGGCF0tWwpC/VKefdH41/O8rMzJEr4khPwrbl5XAaMcRcgQ8HyPcnBZb95XxbYsXdJ59MV7zrj8md6+kwpMeXoxg7xF6vFzsVfbtUT3m0GaJjrA6F5XQPXUihndtUsY2NJKGnxsd92SPe3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734313370; c=relaxed/simple;
-	bh=wjzCN8egFjuKl/ME4ywSBay39UK3FaT+q7TnG88DHH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hkPgXEfC60FRy7e+hzu0l+juC+w6eMMG2kLbMO5SflBW9Cj8fUY+DVNGyod7f0fzZZ4XZ3dhnhGj2ZBg5PhVFDiigCZIDIlH5KfHiPkRiZQd69gX1Gw5KwOvBjzZjbgrZGOfFC8hX4T+1R8dmLHKA5zHfmz8KO1/aPRzi3Mfi2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YBN3Z1lqnz4f3kFG;
-	Mon, 16 Dec 2024 09:42:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A38B21A0E9B;
-	Mon, 16 Dec 2024 09:42:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4d5hV9nYi3kEg--.4387S14;
-	Mon, 16 Dec 2024 09:42:37 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v4 10/10] ext4: move out common parts into ext4_fallocate()
-Date: Mon, 16 Dec 2024 09:39:15 +0800
-Message-ID: <20241216013915.3392419-11-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
-References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1734314846; c=relaxed/simple;
+	bh=t2kONODElXTF7fzOZdarCbTjwaqRs4Q8nMs3mV9hLMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILu2rVH+xOKSbHnJodvEP2pHzE/rI+7tl2EEV255AT0dpLjfe3x814+l2WkXkxNRWwq3U5b7/24hDzASzvwGrxMSwdUCEH+0E881qMAtBkCq2FfuyM5pSqnUJ4DOhp9Dh6dWtnsglwP7WMMKUpiS6GJ2WPIyjRplTjffpgYHHtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bLKdy3Kl; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d918f066c1so18855816d6.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Dec 2024 18:07:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734314844; x=1734919644; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2kONODElXTF7fzOZdarCbTjwaqRs4Q8nMs3mV9hLMY=;
+        b=bLKdy3KlbUXBeDjZ04kUfF6vaHd2HvWEZldynLKB5ynQ1Hq3cbyJN/mvmqMM7pGb/l
+         u4LB5m0SJt3Oms8VR61ASLnYXrv056XR0u86qbGqnA8XGSbxDywgirn4KopMa63UBe4K
+         Vp82WCQuKqm8sbzK26AjZJWTt4s6c7/7ctkcZ29dXz+mHYb43AL6/ZasSfuTVvK6Aomw
+         fGW3mkuYQsF2fAoIDF/Nn+ehUZUe67u43TF74GZJhyCqgmAFxpV5HKemQycYjkK0sImW
+         SbEeFaJ8fKvgzPhaYYqBF0iAQThiky4JFVK1YyqDjVhANC09P4EXOz6f5K375qhu7FvH
+         S7Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734314844; x=1734919644;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t2kONODElXTF7fzOZdarCbTjwaqRs4Q8nMs3mV9hLMY=;
+        b=vrN1qUyicEMA8ximcLxI7r1WurOP+U5v58TO50+xLwQueAvoYXBc14LDa06iZ0FTHY
+         1f9Dcvx0B9TmmkhE793AE4haO8jMXirzvnMLa9deVLVrs1bBxumGhvykSgRphBDZeXB0
+         Fa6PrjOoc26zeJ6Z7eH+p/EjZayZseLBwmhwW/h5B1POoWcD9JzjeVr30wFcspfKVEVC
+         kzWRtl3VMbvBpoZpkMDi8QPvdFWbGl9SwAggU3JhPQeGK1875nh0KvsMb3s4EKVD/T9q
+         W63ZZVX/TzXiVL8uSm7eXS+bGyoMPWMTKqXNj9tP7TZzo/PA7xwRgVFreSC2edCWXL02
+         OPUw==
+X-Gm-Message-State: AOJu0YyyKbvAGIM5JdbjxnylbGB5v5sPQWabIBXAOyWjXYNLLB46RhQE
+	BCGQKJ4dC+7ShOxcTqJNFEQMTKBUY2/tiyFR+WiYTfKKLpKJVEyOU9ayN32VdYNKJxaBNI1JFsK
+	56BG793ti1fYDxD3bBsdQwPyWgxDb0w==
+X-Gm-Gg: ASbGnctj417NwLHJS4WR9/g4eAF1prCJ8FDkWyWxdDwR5Om0BC2MqvoyxqIBYKx7yN9
+	q77FMqsq2/cDSx5cGIsSHPj1GDDaqu3gxtckp2HE=
+X-Google-Smtp-Source: AGHT+IF/JNqespJNG0dfyGH9NfZkdw9P62P6kyJ8K8mVP1tp49Yau19qbS/2psIivmStR4PU87GHkC1NDTG9M5m9WUA=
+X-Received: by 2002:a05:6214:20a3:b0:6d8:899e:c3bf with SMTP id
+ 6a1803df08f44-6dc9032067bmr195958016d6.34.1734314843592; Sun, 15 Dec 2024
+ 18:07:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4d5hV9nYi3kEg--.4387S14
-X-Coremail-Antispam: 1UD129KBjvJXoW3Zw4rKF4xKr1UXr4rJF4rAFb_yoWDAFy3pF
-	W5JrW5trWxWFykWF4FyanrZF1aywsFgrW8WrWxu3sYvas0ywnrKa1YkFyFvFW5trW8Ar4j
-	vF4jvry7GFW7u3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20241211194522.31977-1-etmartin4313@gmail.com>
+ <20241211194522.31977-2-etmartin4313@gmail.com> <CAJnrk1bE5UxUC1R1+FpPBt_BTPcO_E9A6n6684rEpGOC4xBvNw@mail.gmail.com>
+ <CAMHPp_SqSRRpZO8j6TTskrCCjoRNcco+3mceUHwUxQ0aG_0G-A@mail.gmail.com>
+ <CAJnrk1bBFGA8SQ+LvhENVb5n+MOgg=X3Ft-9g=T_3JN4aot7Mg@mail.gmail.com>
+ <CAMHPp_SkzQ6pzoiFh9YFp1vC+2JvJ1NDdXtor2uN-JzLeicVwg@mail.gmail.com> <CAJnrk1azDwJ0BFm7Y40XHqqHmDvsfPpw2WR9LeZTzZ6M5uarXg@mail.gmail.com>
+In-Reply-To: <CAJnrk1azDwJ0BFm7Y40XHqqHmDvsfPpw2WR9LeZTzZ6M5uarXg@mail.gmail.com>
+From: Etienne Martineau <etmartin4313@gmail.com>
+Date: Sun, 15 Dec 2024 21:07:12 -0500
+Message-ID: <CAMHPp_TvXdWNk-g9e5kVQKS7VwThnMT13kfGbhdJY9EkGWPFtw@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Abort connection if FUSE server get stuck
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, josef@toxicpanda.com, 
+	laoar.shao@gmail.com, senozhatsky@chromium.org, etmartin@cisco.com, 
+	"ioworker0@gmail.com" <ioworker0@gmail.com>, joel.granados@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
-
-Currently, all zeroing ranges, punch holes, collapse ranges, and insert
-ranges first wait for all existing direct I/O workers to complete, and
-then they acquire the mapping's invalidate lock before performing the
-actual work. These common components are nearly identical, so we can
-simplify the code by factoring them out into the ext4_fallocate().
-
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/extents.c | 124 ++++++++++++++++------------------------------
- fs/ext4/inode.c   |  25 ++--------
- 2 files changed, 45 insertions(+), 104 deletions(-)
-
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 85f0de1abe78..1b028be19193 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4568,7 +4568,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 			    loff_t len, int mode)
- {
- 	struct inode *inode = file_inode(file);
--	struct address_space *mapping = file->f_mapping;
- 	handle_t *handle = NULL;
- 	loff_t new_size = 0;
- 	loff_t end = offset + len;
-@@ -4592,23 +4591,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 			return ret;
- 	}
- 
--	/* Wait all existing dio workers, newcomers will block on i_rwsem */
--	inode_dio_wait(inode);
--
--	ret = file_modified(file);
--	if (ret)
--		return ret;
--
--	/*
--	 * Prevent page faults from reinstantiating pages we have released
--	 * from page cache.
--	 */
--	filemap_invalidate_lock(mapping);
--
--	ret = ext4_break_layouts(inode);
--	if (ret)
--		goto out_invalidate_lock;
--
- 	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
- 	/* Preallocate the range including the unaligned edges */
- 	if (!IS_ALIGNED(offset | end, blocksize)) {
-@@ -4618,17 +4600,17 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 		ret = ext4_alloc_file_blocks(file, alloc_lblk, len_lblk,
- 					     new_size, flags);
- 		if (ret)
--			goto out_invalidate_lock;
-+			return ret;
- 	}
- 
- 	ret = ext4_update_disksize_before_punch(inode, offset, len);
- 	if (ret)
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	/* Now release the pages and zero block aligned part of pages */
- 	ret = ext4_truncate_page_cache_block_range(inode, offset, end);
- 	if (ret)
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	/* Zero range excluding the unaligned edges */
- 	start_lblk = EXT4_B_TO_LBLK(inode, offset);
-@@ -4640,11 +4622,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
- 					     new_size, flags);
- 		if (ret)
--			goto out_invalidate_lock;
-+			return ret;
- 	}
- 	/* Finish zeroing out if it doesn't contain partial block */
- 	if (IS_ALIGNED(offset | end, blocksize))
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	/*
- 	 * In worst case we have to writeout two nonadjacent unwritten
-@@ -4657,7 +4639,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
- 		ext4_std_error(inode->i_sb, ret);
--		goto out_invalidate_lock;
-+		return ret;
- 	}
- 
- 	/* Zero out partial block at the edges of the range */
-@@ -4677,8 +4659,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 
- out_handle:
- 	ext4_journal_stop(handle);
--out_invalidate_lock:
--	filemap_invalidate_unlock(mapping);
- 	return ret;
- }
- 
-@@ -4711,13 +4691,6 @@ static long ext4_do_fallocate(struct file *file, loff_t offset,
- 			goto out;
- 	}
- 
--	/* Wait all existing dio workers, newcomers will block on i_rwsem */
--	inode_dio_wait(inode);
--
--	ret = file_modified(file);
--	if (ret)
--		goto out;
--
- 	ret = ext4_alloc_file_blocks(file, start_lblk, len_lblk, new_size,
- 				     EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT);
- 	if (ret)
-@@ -4742,6 +4715,7 @@ static long ext4_do_fallocate(struct file *file, loff_t offset,
- long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- {
- 	struct inode *inode = file_inode(file);
-+	struct address_space *mapping = file->f_mapping;
- 	int ret;
- 
- 	/*
-@@ -4765,6 +4739,29 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	if (ret)
- 		goto out_inode_lock;
- 
-+	/* Wait all existing dio workers, newcomers will block on i_rwsem */
-+	inode_dio_wait(inode);
-+
-+	ret = file_modified(file);
-+	if (ret)
-+		return ret;
-+
-+	if ((mode & FALLOC_FL_MODE_MASK) == FALLOC_FL_ALLOCATE_RANGE) {
-+		ret = ext4_do_fallocate(file, offset, len, mode);
-+		goto out_inode_lock;
-+	}
-+
-+	/*
-+	 * Follow-up operations will drop page cache, hold invalidate lock
-+	 * to prevent page faults from reinstantiating pages we have
-+	 * released from page cache.
-+	 */
-+	filemap_invalidate_lock(mapping);
-+
-+	ret = ext4_break_layouts(inode);
-+	if (ret)
-+		goto out_invalidate_lock;
-+
- 	if (mode & FALLOC_FL_PUNCH_HOLE)
- 		ret = ext4_punch_hole(file, offset, len);
- 	else if (mode & FALLOC_FL_COLLAPSE_RANGE)
-@@ -4774,7 +4771,10 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	else if (mode & FALLOC_FL_ZERO_RANGE)
- 		ret = ext4_zero_range(file, offset, len, mode);
- 	else
--		ret = ext4_do_fallocate(file, offset, len, mode);
-+		ret = -EOPNOTSUPP;
-+
-+out_invalidate_lock:
-+	filemap_invalidate_unlock(mapping);
- out_inode_lock:
- 	inode_unlock(inode);
- 	return ret;
-@@ -5301,23 +5301,6 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
- 	if (end >= inode->i_size)
- 		return -EINVAL;
- 
--	/* Wait for existing dio to complete */
--	inode_dio_wait(inode);
--
--	ret = file_modified(file);
--	if (ret)
--		return ret;
--
--	/*
--	 * Prevent page faults from reinstantiating pages we have released from
--	 * page cache.
--	 */
--	filemap_invalidate_lock(mapping);
--
--	ret = ext4_break_layouts(inode);
--	if (ret)
--		goto out_invalidate_lock;
--
- 	/*
- 	 * Write tail of the last page before removed range and data that
- 	 * will be shifted since they will get removed from the page cache
-@@ -5331,16 +5314,15 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
- 	if (!ret)
- 		ret = filemap_write_and_wait_range(mapping, end, LLONG_MAX);
- 	if (ret)
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	truncate_pagecache(inode, start);
- 
- 	credits = ext4_writepage_trans_blocks(inode);
- 	handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE, credits);
--	if (IS_ERR(handle)) {
--		ret = PTR_ERR(handle);
--		goto out_invalidate_lock;
--	}
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
-+
- 	ext4_fc_mark_ineligible(sb, EXT4_FC_REASON_FALLOC_RANGE, handle);
- 
- 	start_lblk = offset >> inode->i_blkbits;
-@@ -5379,8 +5361,6 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
- 
- out_handle:
- 	ext4_journal_stop(handle);
--out_invalidate_lock:
--	filemap_invalidate_unlock(mapping);
- 	return ret;
- }
- 
-@@ -5421,23 +5401,6 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
- 	if (len > inode->i_sb->s_maxbytes - inode->i_size)
- 		return -EFBIG;
- 
--	/* Wait for existing dio to complete */
--	inode_dio_wait(inode);
--
--	ret = file_modified(file);
--	if (ret)
--		return ret;
--
--	/*
--	 * Prevent page faults from reinstantiating pages we have released from
--	 * page cache.
--	 */
--	filemap_invalidate_lock(mapping);
--
--	ret = ext4_break_layouts(inode);
--	if (ret)
--		goto out_invalidate_lock;
--
- 	/*
- 	 * Write out all dirty pages. Need to round down to align start offset
- 	 * to page size boundary for page size > block size.
-@@ -5445,16 +5408,15 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
- 	start = round_down(offset, PAGE_SIZE);
- 	ret = filemap_write_and_wait_range(mapping, start, LLONG_MAX);
- 	if (ret)
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	truncate_pagecache(inode, start);
- 
- 	credits = ext4_writepage_trans_blocks(inode);
- 	handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE, credits);
--	if (IS_ERR(handle)) {
--		ret = PTR_ERR(handle);
--		goto out_invalidate_lock;
--	}
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
-+
- 	ext4_fc_mark_ineligible(sb, EXT4_FC_REASON_FALLOC_RANGE, handle);
- 
- 	/* Expand file to avoid data loss if there is error while shifting */
-@@ -5525,8 +5487,6 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
- 
- out_handle:
- 	ext4_journal_stop(handle);
--out_invalidate_lock:
--	filemap_invalidate_unlock(mapping);
- 	return ret;
- }
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 2e1f070ab449..2677a2cace58 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4009,7 +4009,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 	struct inode *inode = file_inode(file);
- 	struct super_block *sb = inode->i_sb;
- 	ext4_lblk_t start_lblk, end_lblk;
--	struct address_space *mapping = inode->i_mapping;
- 	loff_t max_end = EXT4_SB(sb)->s_bitmap_maxbytes - sb->s_blocksize;
- 	loff_t end = offset + length;
- 	handle_t *handle;
-@@ -4044,31 +4043,15 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 			return ret;
- 	}
- 
--	/* Wait all existing dio workers, newcomers will block on i_rwsem */
--	inode_dio_wait(inode);
--
--	ret = file_modified(file);
--	if (ret)
--		return ret;
--
--	/*
--	 * Prevent page faults from reinstantiating pages we have released from
--	 * page cache.
--	 */
--	filemap_invalidate_lock(mapping);
--
--	ret = ext4_break_layouts(inode);
--	if (ret)
--		goto out_invalidate_lock;
- 
- 	ret = ext4_update_disksize_before_punch(inode, offset, length);
- 	if (ret)
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	/* Now release the pages and zero block aligned part of pages*/
- 	ret = ext4_truncate_page_cache_block_range(inode, offset, end);
- 	if (ret)
--		goto out_invalidate_lock;
-+		return ret;
- 
- 	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
- 		credits = ext4_writepage_trans_blocks(inode);
-@@ -4078,7 +4061,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
- 		ext4_std_error(sb, ret);
--		goto out_invalidate_lock;
-+		return ret;
- 	}
- 
- 	ret = ext4_zero_partial_blocks(handle, inode, offset, length);
-@@ -4123,8 +4106,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 		ext4_handle_sync(handle);
- out_handle:
- 	ext4_journal_stop(handle);
--out_invalidate_lock:
--	filemap_invalidate_unlock(mapping);
- 	return ret;
- }
- 
--- 
-2.46.1
-
+On Thu, Dec 12, 2024 at 6:30=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> > Yes, based on the comments received so far I agree that generic timeout=
+ is the
+> > prefered approach. Looks like we are amongst the few that run productio=
+n
+> > systems with hung task panic set. So yeah, I will match fuse max reques=
+t
+> > timeout with hung task timeout to get the equivalent behavior.
+>
+> Sounds great. Just FYI, the timeouts in fuse won't be 100% precise -
+> they'll have an upper margin of error associated with it (this is
+> included in the documentation for the sysctl, since it's very
+> non-obvious). For example, if the max request timeout is set to 600
+> seconds, it may fire off a little after 600 seconds. So it'd be best
+> if you set the fuse max request timeout to be below the hung task
+> timeout to be sure. IIRC, Sergey is doing the same thing [1].
+>
+Understood yes.
+>
+> [1] https://lore.kernel.org/linux-fsdevel/20241128115455.GG10431@google.c=
+om/
+>
+> >
+> > On a slightly different matter, I realized that in some scenarios
+> > there is no benefit
+> > in stopping the timer when reaching the last request because another
+> > request can come
+> > right after and then we have to start the timer once again which keeps =
+bouncing
+> > between cancel_delayed_work_sync() and queue_delayed_work().
+> >
+> > So I think it's best to stick with your approach of starting the timer
+> > when the connection
+> > is initially established. I can re-work this patch if needed?
+>
+> Thanks for testing out the timeout functionality. I'm planning to
+> submit v10 of the generic timeout patch to use workqueues early next
+> week. The time granularity will also be changed to work in seconds
+> instead of minutes, as noted for Sergey's and your use case. I'll make
+> sure you get cc'ed on that patchset.
+Thank you very much. I'll take a look
+thanks
+Etienne
 
