@@ -1,131 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-37487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA4D9F30D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 13:48:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCBE9F3120
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 14:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F5218867C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 12:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F67A1672A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 13:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2727F204C3A;
-	Mon, 16 Dec 2024 12:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790B22054E6;
+	Mon, 16 Dec 2024 13:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVkt5FA4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBjH+BKT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83734381B9;
-	Mon, 16 Dec 2024 12:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6DD148FF2;
+	Mon, 16 Dec 2024 13:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734353273; cv=none; b=Lu6UGa61EY75Hp8aFn15vGgD0TmzLnufjC3D3Fe/46hF9fePkct15Tt7F3e9s97ywNEIwwV5D7+GhgiR/dU0/1xldBR/sY87VaLNvZqiQkWrAD4pLTJKqOe/Y5pH8F+FpyR85lukZi6it4HKcmF4ebox415zNvZCr/t3extDuOA=
+	t=1734354373; cv=none; b=MaFBcj7k5bJeQKne9Uz6atOyr05GMUOl7AwkPZV4ARXydKqmmw88ACjEGYrO4IjeOMVKK7DgDzQh+gGhe/peHbzFL5JvgiWViiyMSC1B+2qF9QkixH6RtND3UOINeqVvaFfEH7vysi+7eZn3/8wnfd+VsXad2HvEEg/vVF+Zaec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734353273; c=relaxed/simple;
-	bh=+dkja2gk76NlzuPJ+81Q1pBvJyzK4Ay2zqIp/1+uqqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ee8esLbLPZOTnsarJkWfQfxgpM653JmjylbjeIfJDJEVP8JwMzK1bpjajX2wWpCcVC5hSshIgOtu5XTypbAxDwlcUgJ2ZzQmnIIUOVT6Ck2lx5k5Y7D6l5p4oiMq3CoHZQjjt4AYAnozaoQWlTEAgmXhAgN8cjyrtSThI0LVzAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVkt5FA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4185C4CED0;
-	Mon, 16 Dec 2024 12:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734353273;
-	bh=+dkja2gk76NlzuPJ+81Q1pBvJyzK4Ay2zqIp/1+uqqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TVkt5FA4ur0+4MXie0JrYvbbXvl8MnHJ8FDuG9l5LGryEtSwmJ67cUFdSOiAkquKo
-	 cD76DNV+IABRhRqrd7V49x8sSQsVlof4FqzBGlZ6Q6kNjTuTDBl2aXBQ0N/b+o9JS/
-	 YupX9reeHCwIXk/neaAQSCvZFeK0pe5zYfBbaZBRezKraqAM6HASPeu8rNFVazh1kN
-	 XCIDA261rZPdm+0f1IuXn8Da+3Cp0xqoB8htpyWJ01HXOLh8oTEJFfGbi9YOlvMuyN
-	 w+16VnDJSbwliF1QC0IH5nV6pXYNpbNdKlxPJZLllQv9ZJ93VSUHmWwIHJ07F4/mMm
-	 L62ZBfmrm8CEQ==
-Date: Mon, 16 Dec 2024 13:47:49 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: "G. Branden Robinson" <g.branden.robinson@gmail.com>
-Cc: John Garry <john.g.garry@oracle.com>, linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH] statx.2: Update STATX_WRITE_ATOMIC filesystem support
-Message-ID: <20241216124749.nvve7b4q3r2wjud2@devuan>
-References: <20241203145359.2691972-1-john.g.garry@oracle.com>
- <20241204204553.j7e3nzcbkqzeikou@devuan>
- <430694cf-9e34-41d4-9839-9d11db8515fb@oracle.com>
- <20241205100210.vm6gmigeq3acuoen@devuan>
- <ba9bbcbd-a43e-465e-ba17-8982d8adf475@oracle.com>
- <20241216123853.g43jqafi7avnntpg@illithid>
+	s=arc-20240116; t=1734354373; c=relaxed/simple;
+	bh=G/EQEYbUfUgX/9g/yHsd/XHy/gtv4Foso0ip+uBh+w0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LYmngaRBkmJ+qaOLyRl56fYnWEBwbVHgae/qpZMFl0ykS441XcG3Sh14FlWut2i+YxBAJEqOSR8JzGheNe2jLx5ulXw0Uh2arXMCAHJeOvGj0nLU7rp5VM5bEdl9p375Z46wyrXr0/SNUrlafcS63v6bOEc8Qhm+y4vd7IyG/zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBjH+BKT; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-728f1e66418so3368827b3a.2;
+        Mon, 16 Dec 2024 05:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734354371; x=1734959171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1SX+7nbs2g55Edy9flsjRts3hUfytEg5mqt0hNP8CQw=;
+        b=DBjH+BKTj4cJCTcr4+PYy8+BUB0eVbdKA28MLk4V8Fxhe6HL+0shyy5KZUWIZlbD0N
+         XwsIBWemaOcLeXAGaGdxYbb6sa+9iy69GPvRY8Cq6OudNeovbod3coM5aY0lL379NRbp
+         djZL5E3wWRNn41Z8NH5rk2S20Jptn2kGr8fLSAYKUc/uipTAmogaYxA2TklEyTd2o6rl
+         UDLyBM7LLBk4ALYpnIfX4Y9wz/nFsNsV3DEVnkmdNmkfcyKPVZj+rYvCZ4RlbMueZSnq
+         s6yfKY4PPf8gyDx9okKdMzmi+uKiYTkwv+AeQAzLJCxltJEdJSQ7eOJ5WadL1ECg718I
+         di7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734354371; x=1734959171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1SX+7nbs2g55Edy9flsjRts3hUfytEg5mqt0hNP8CQw=;
+        b=BXpmrDof8SRculMPbRb8cb1YN000GuBEQNPUI5LF1TjMwf9NxJaGr71i1wV4mFG9xn
+         LbuSgkuXpYETthVMokgFYhQFzcOYyqroz0Xaz4cBN7r5hDk32qc9ybQKgeyd5RFO7zPe
+         lbBAnd3EEwM65DsBZ/CvU32fhMYF2hmnFPwvQOTnyK2YJIK8B9i1LrZJ0r67uuWXgDsK
+         sV0oANcaJA6kIZTu1iwN8MXIFtjhl+pS5wqTWsLHO0oRcSIB6UzxvQs9Ex5Ry8zdj+5H
+         j+hk/mtHK53AtFtzfqHXuy37HAer0PilQi1garikGdyHLFAjtbSCBO8aQBOf0WA7ZcZV
+         PxFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhrClCt1pEB+tYh9a2WMtaZ6/qOF6p64xmzfL5IQ+IqmnrPDKNjyDW4EWIt5NrEmLPpHHyrdOPdIe3@vger.kernel.org, AJvYcCWzXGimmHs+ZbzZOgvPoDoJN37Cf62q5jyBcqk0LQjaPgB3JRrKqX35+rTXiGWTAgRjBo2iH9NgQ6U5wGju@vger.kernel.org, AJvYcCXfLyRmT7jZeox+N4H0TnUYXcnJpk1Eicu/5wJk1weKEeSFWWFenR9Qzm1LpgrmPph5nwJ77UdZgNfDdrM8@vger.kernel.org
+X-Gm-Message-State: AOJu0YylwYjSwEP38sqVGfrCCZyrkU08l1YiNUXDQ9XkqhFwUTDvOJys
+	05aGwo0BFS6K6TXP3r0FMeiS6/eD1EFmtQCBNvzf1mRRVuNWUJZR
+X-Gm-Gg: ASbGncut8u2F7s8/qZJyZjFECQKsE82a6TiwFs/aALpa72ASzPiVl8/UubaKnzoC+y8
+	0TvCwYEgl+D5MGZNHhjRyBLYqvlKlQfk7Bop1iGqQiGlmnSrUg48gVqDGNcRIpWzHLCQta9MDPt
+	/03eoidSQoAZj1X/W4RLAa1/D3TRFvPl39Tf0J/RecsrbA1nirUp4T+7f9TSj+kJep7BAtOOEER
+	iUDU8SdzNqUxo8pg07spsFn9nDp2FEkyhZ+6i6ynjswGiL5ut4y+MkWc/xXuhyx7iWHllHJzYkQ
+	Y4U5pQQoivBbrlE=
+X-Google-Smtp-Source: AGHT+IH+pBcjAJH0pqyQxgHVWhxXpenm4h4zuwazwELyxvBmztTQq6aG1CctSDjXMJu15RpcJqatHg==
+X-Received: by 2002:a05:6a20:1591:b0:1db:ebf4:2cb8 with SMTP id adf61e73a8af0-1e1dfe30c95mr16521282637.38.1734354371141;
+        Mon, 16 Dec 2024 05:06:11 -0800 (PST)
+Received: from localhost.localdomain ([180.101.244.64])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5ad0sm4651803b3a.56.2024.12.16.05.06.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 05:06:10 -0800 (PST)
+From: Tianxiang Peng <luminosity1999@gmail.com>
+X-Google-Original-From: Tianxiang Peng <txpeng@tencent.com>
+To: chandan.babu@oracle.com,
+	djwong@kernel.org,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	brauner@kernel.org,
+	dchinner@redhat.com
+Cc: Tianxiang Peng <txpeng@tencent.com>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	allexjlzheng@tencent.com,
+	flyingpeng@tencent.com
+Subject: [PATCH 0/2] xfs: make cluster size tunnable for sparse allocation
+Date: Mon, 16 Dec 2024 21:05:47 +0800
+Message-ID: <20241216130551.811305-1-txpeng@tencent.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lyg3yhz2y7mj7n7v"
-Content-Disposition: inline
-In-Reply-To: <20241216123853.g43jqafi7avnntpg@illithid>
+Content-Transfer-Encoding: 8bit
 
+This patch series makes inode cluster size a tunnable parameter in
+mkfs.xfs when sparse allocation is enabled, and also makes xfs use
+inode cluster size directly from the superblock read in rather than
+recalculate itself and verify.
 
---lyg3yhz2y7mj7n7v
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] statx.2: Update STATX_WRITE_ATOMIC filesystem support
-MIME-Version: 1.0
+Under extreme fragmentation situations, even inode sparse allocation
+may fail with current default inode cluster size i.e. 8192 bytes. Such
+situations may come from the PUNCH_HOLE fallocation which is used by
+some applications, for example MySQL innodb page compression. With xfs
+of 4K blocksize, MySQL may write out 16K buffer with direct I/O(which
+immediately triggers block allocation) then try to compress the 16K
+buffer to <4K. If the compression succeeds, MySQL will punch out the
+latter 12K, leave only the first 4K allocated:
+	after write 16k buffer: OOOO
+	after punch latter 12K: OXXX
+where O means page with block allocated, X means page without.
 
-Hi Branden, John,
+Such feature saves disk space(the 12K freed by punching can be used
+by others), but also makes the filesystem much more fragmented.
+Considering xfs has no automatic defragmentation mechanism, in the
+most extreme cases, there will be only 1-3 physically continuous
+blocks finally avaliable.
 
-On Mon, Dec 16, 2024 at 06:38:53AM -0600, G. Branden Robinson wrote:
-> Hi John,
->=20
-> At 2024-12-16T10:35:42+0000, John Garry wrote:
-> > On 05/12/2024 10:02, Alejandro Colomar wrote:
-> > > On Thu, Dec 05, 2024 at 09:33:18AM +0000, John Garry wrote:
-> > > Nah, we can apply it already.  Just let me know if anything changes
-> > > before the release.
-> >=20
-> > I'd suggest that it is ok to merge this now, but Branden seems to have
-> > comments...
->=20
-> I don't generally intend my review comments to be gating, and this is no
-> exception.  (I should try harder to state that explicitly more often.)
+For data block allocation, such fragmentation is not a problem, as
+physical continuation is not always required. But inode chunk
+allocation requires so. Even for sparse allocation, physical
+continuation has also to be guaranteed in a way. Currently this
+value is calculated from a scaled inode cluster size. In xfs, inodes
+are manipulated(e.g. read in, logged, written back) in cluster, and
+the size of that cluster is just the inode cluster size. Sparse
+allocation unit currently is calculated from that:
+	(inode size / MIN_INODE_SIZE) * inode cluster size
+		-> sparse allocation aligmnet
+			-> sparse allocation unit
+For example, under default mkfs configuration(i.e. crc and sparse
+allocation enabled, 4K blocksize), inode size is 512 bytes(2 times
+of MIN_INODE_SIZE=256 bytes), then sparse allocation unit will be
+2 * current inode cluster size(8192 bytes) = 16384 bytes, that is
+4 blocks. As we mentioned above, under extreme fragmentation, the
+filesystem may be full of 1-3 physically continuous blocks but can
+never find one of 4, so even sparese allocation will also fail. If
+we know application will easily create such fragmentation, then we
+had better have a way to loose sparse allocation requirement manually.
 
-Nah, I just forgot about this patch.  Thanks for the ping; I'll apply it
-later today (if I don't forget again).  :)
+This patch series achieves that by making the source of sparse
+allocation unit, inode cluster size a tunnable parameter. When
+sparse allocation enabled, make that size tunnable in mkfs. As xfs
+itself currently recalculate and verify related value, change xfs
+behavior to directly using the value provided by superblock read in.
 
-Cheers,
-Alex
+Tianxiang Peng (2):
+  xfs: calculate cluster_size_raw from sb when sparse alloc enabled
+  mkfs: make cluster size tunnable when sparse alloc enabled
 
-> Please don't delay on my account.  :)
->=20
-> Regards,
-> Branden
+ fs/xfs/libxfs/xfs_ialloc.c | 35 ++++++++++++++++++++++-------------
+ fs/xfs/xfs_mount.c         | 12 ++++++------
+ mkfs/xfs_mkfs.c            | 34 +++++++++++++++++++++++++++++-----
+ 3 files changed, 57 insertions(+), 24 deletions(-)
 
+-- 
+2.43.5
 
-
---=20
-<https://www.alejandro-colomar.es/>
-
---lyg3yhz2y7mj7n7v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmdgIXUACgkQnowa+77/
-2zKODg/+Jo4NV06VbX2Bp0DyL8X/uXFjlaCB4Ut+vFZsKLjlXNP1dMnPn0NQ+7+L
-O61qUSXDDl2+LRhPro0uBJdXWQlQ/P5BcIS8IARIeTgvmPC3JrXWoq0Y3zUOvnPH
-snZccBsqAiLo8m1zEN3efEfT+EGvywytdQCc50Eoo28/J5g0e+//es5SLYhwEOPI
-8hKXBWapXKvoEdXPy8qdCJGH/sGKwAOfUGAgWBSdceVdV475YpbChrumhoaZODOz
-xp3JS3/yCUStK9/BxKf8zQI+l/6kfdoP/Vici3GLokmENb0gt7BmaOfPSzoBDWeW
-UUO5B2IslwcVABM+K5VP0FU2brc+peqN2qt8PTnXcteATRuL75rLjv6WCBT1Q7yz
-NoXGQI862/w0KXKFYyYzDQRWf0jHSZr7hgFUEMVRKvyN8g6i0v9QyK/ogUL4fJtS
-FrQwCNsP9BGp3rrVa0z/zO73hZFqN3+3RewxRTiPdRDZ3QjxEZdIXKOU7RG0OD/5
-D5Gy6+8FS9iZScPew03QfejJdAeCL/pK7Vc9n79Pf87pZs1n5jw8pFZmkbAi4x8V
-xacGZS1ordLgRDFfBTtGe407BYVaSebJqykneImEftX4uESJNWcFHtorECznj7yp
-IqkGd7pLRH6+Shv81KJvMoGgaL+b3Ki3Sd8EdwRWNHwBro6UGDQ=
-=13Dj
------END PGP SIGNATURE-----
-
---lyg3yhz2y7mj7n7v--
 
