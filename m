@@ -1,61 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-37508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25329F35F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 17:27:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052BA9F363F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 17:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC2A67A12BE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 16:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43BBB1650FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 16:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED91920127A;
-	Mon, 16 Dec 2024 16:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D791C4A3D;
+	Mon, 16 Dec 2024 16:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lc3tibBp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XS4uG8O4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442977E59A;
-	Mon, 16 Dec 2024 16:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307EB14B086
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734366428; cv=none; b=sjDv7/M6PcNtkMtBszXZjh8SGlYDPe4OY1ErQlQ6Y/yG3OkHX72jM2nsSx99jFMtEMnI0RpT5/G2cUrNuT4HpFfsfgNaVaAjMxFPoL39COKChiBR2fiGco1w46Ht6dad1zJcQXbmfNFRYIr1Y3mirlBDPw40C6WrSrxLaQJDxo8=
+	t=1734367222; cv=none; b=K8VIMR9oL+BBn1tH2wJWOjJ3qP9xfQAtkYh65Q/HcMYYY4lYgYl4Z38IMPb9nKpLDx0AFtK41OuSW86Nj2DOKeeHGDm6YGHYYz5geNnl2fdnGF3ztfBkEB/rBDTBOYw4QT88k1DeF1oMc35+tOWBKAlLQUqscx92NwmeeqxP4PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734366428; c=relaxed/simple;
-	bh=AGkB8W8DLcSs6Ao95S1Eu/OTLNLQiDpinLiAz2rZCQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mtwcdRkXcrt29HLFech/W4jKX9BDfKEYy2B+q1CA/KbVdhWZsW96yafISIpn2WUjRBUnbqNgKx6otmO3NtWup+fz/zKojUTxUXdh1p7SMQK/tp/5a4AC2gK52Su2yU0UyAXnss1xaX7De84AaHDVAX/ynGiQiwJXToAjHLDxCuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lc3tibBp; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=VPTyDxUHivha6vOfKSiWFl06XFZgbVdwCU6/eNtqKN4=; b=Lc3tibBpW1UW49d2XMpimwGnes
-	CannalWtmj3JSZXr2sQajB4R+Oq5xsxzUkSxGNkNprVh/y3Qx4pHgypZiakr9Q0IWWXxF6c/sXjKh
-	n14H967WfKO4PistaRZk1ctE2vq773Sv8q7NAnIFGsryfoMel6XY7flrL2ZR04tUBBi41/ZHEML1Y
-	GxaPLcNVpV8JdiIu+KydK67ztam7lirenDvLf8fr4H3lUNl8JJIyMLJxooWluYFHU9W+GcskjaOBd
-	CyCTRE/wJpjApy5fVUDgFlqyXi/pdkrZN2mQs1lynMwuPV8smd10nS3TjjgVlHEPnzZOB32N0JwKC
-	PYACMDqQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNDw0-00000000EzA-29FW;
-	Mon, 16 Dec 2024 16:27:04 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 5/5] squashfs: Convert squashfs_fill_page() to take a folio
-Date: Mon, 16 Dec 2024 16:26:59 +0000
-Message-ID: <20241216162701.57549-5-willy@infradead.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241216162701.57549-1-willy@infradead.org>
-References: <20241216162701.57549-1-willy@infradead.org>
+	s=arc-20240116; t=1734367222; c=relaxed/simple;
+	bh=XSMGgsdv+y5WcMVcf7eiqLkRr4rAybqXS0N+f/k9ZnI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ChjDYd13Xsqta3YajD15X/8VBRLnl/LZxRFVCcPN0B7pQZ71/H7iXzq7GeQ9gjD0o5d8QYSpPVzOuAXjPB+cymdleB4TV1tUzguvVWSy8+MnxRRaJp9yQr78uQO1KX5IuaU0o6AEnbod/9+FMH07kXF8Ktzwl4XRP4qh6W9CDBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XS4uG8O4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD3EC4CED0;
+	Mon, 16 Dec 2024 16:40:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734367221;
+	bh=XSMGgsdv+y5WcMVcf7eiqLkRr4rAybqXS0N+f/k9ZnI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=XS4uG8O4s7IJHqrXwK3nBROBYJYA/lWrjwx7LQWsg/zzqywMOAv+r7hlY8mbbAg5T
+	 pUi8G5yOywY1jft5pk9eCEAAtDx8BdF9HC/97dMoXdmPUysBTTVr+6k94fTS3RQd3J
+	 QBfWR34eV0fRbb0I1NLrChtnFuh8fALAbgCVDGkn8f4P5U3c2fS/6zONd/6ajvaWCx
+	 afwMj5zl5MhrU4QxYe9hboFPA0ADUicT5tQA/idrZ8/lMb+F9TzlvNCjVoTT01MaE1
+	 l4iKulblNyzKz9n3APrJ4S9dUsj54UsOwWxtsteNeMA8Gma0XmYR4sr+BI+ly9gBjn
+	 B0B/h/JF39xiw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6D93806656;
+	Mon, 16 Dec 2024 16:40:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,84 +52,52 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: ensure that node info flags are always
+ initialized
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <173436723874.272389.6295491443575015321.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Dec 2024 16:40:38 +0000
+References: <20241212175748.1750854-1-dmantipov@yandex.ru>
+In-Reply-To: <20241212175748.1750854-1-dmantipov@yandex.ru>
+To: Dmitry Antipov <dmantipov@yandex.ru>
+Cc: chao@kernel.org, lvc-project@linuxtesting.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com,
+ linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
 
-squashfs_fill_page is only used in this file, so make it static.
-Use kmap_local instead of kmap_atomic, and return a bool so that
-the caller can use folio_end_read() which saves an atomic operation
-over calling folio_mark_uptodate() followed by folio_unlock().
+Hello:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/squashfs/file.c     | 21 ++++++++++++---------
- fs/squashfs/squashfs.h |  1 -
- 2 files changed, 12 insertions(+), 10 deletions(-)
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-index 1f27e8161319..d363fb26c2c8 100644
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -362,19 +362,21 @@ static int read_blocklist(struct inode *inode, int index, u64 *block)
- 	return squashfs_block_size(size);
- }
- 
--void squashfs_fill_page(struct page *page, struct squashfs_cache_entry *buffer, int offset, int avail)
-+static bool squashfs_fill_page(struct folio *folio,
-+		struct squashfs_cache_entry *buffer, size_t offset,
-+		size_t avail)
- {
--	int copied;
-+	size_t copied;
- 	void *pageaddr;
- 
--	pageaddr = kmap_atomic(page);
-+	pageaddr = kmap_local_folio(folio, 0);
- 	copied = squashfs_copy_data(pageaddr, buffer, offset, avail);
- 	memset(pageaddr + copied, 0, PAGE_SIZE - copied);
--	kunmap_atomic(pageaddr);
-+	kunmap_local(pageaddr);
- 
--	flush_dcache_page(page);
--	if (copied == avail)
--		SetPageUptodate(page);
-+	flush_dcache_folio(folio);
-+
-+	return copied == avail;
- }
- 
- /* Copy data into page cache  */
-@@ -398,6 +400,7 @@ void squashfs_copy_cache(struct folio *folio,
- 			bytes -= PAGE_SIZE, offset += PAGE_SIZE) {
- 		struct folio *push_folio;
- 		size_t avail = buffer ? min(bytes, PAGE_SIZE) : 0;
-+		bool filled = false;
- 
- 		TRACE("bytes %zu, i %d, available_bytes %zu\n", bytes, i, avail);
- 
-@@ -412,9 +415,9 @@ void squashfs_copy_cache(struct folio *folio,
- 		if (folio_test_uptodate(push_folio))
- 			goto skip_folio;
- 
--		squashfs_fill_page(&push_folio->page, buffer, offset, avail);
-+		filled = squashfs_fill_page(push_folio, buffer, offset, avail);
- skip_folio:
--		folio_unlock(push_folio);
-+		folio_end_read(folio, filled);
- 		if (i != folio->index)
- 			folio_put(push_folio);
- 	}
-diff --git a/fs/squashfs/squashfs.h b/fs/squashfs/squashfs.h
-index 9295556ecfd0..37f3518a804a 100644
---- a/fs/squashfs/squashfs.h
-+++ b/fs/squashfs/squashfs.h
-@@ -67,7 +67,6 @@ extern __le64 *squashfs_read_fragment_index_table(struct super_block *,
- 				u64, u64, unsigned int);
- 
- /* file.c */
--void squashfs_fill_page(struct page *, struct squashfs_cache_entry *, int, int);
- void squashfs_copy_cache(struct folio *, struct squashfs_cache_entry *,
- 		size_t bytes, size_t offset);
- 
+On Thu, 12 Dec 2024 20:57:48 +0300 you wrote:
+> Syzbot has reported the following KMSAN splat:
+> 
+> BUG: KMSAN: uninit-value in f2fs_new_node_page+0x1494/0x1630
+>  f2fs_new_node_page+0x1494/0x1630
+>  f2fs_new_inode_page+0xb9/0x100
+>  f2fs_init_inode_metadata+0x176/0x1e90
+>  f2fs_add_inline_entry+0x723/0xc90
+>  f2fs_do_add_link+0x48f/0xa70
+>  f2fs_symlink+0x6af/0xfc0
+>  vfs_symlink+0x1f1/0x470
+>  do_symlinkat+0x471/0xbc0
+>  __x64_sys_symlink+0xcf/0x140
+>  x64_sys_call+0x2fcc/0x3d90
+>  do_syscall_64+0xd9/0x1b0
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,v2] f2fs: ensure that node info flags are always initialized
+    https://git.kernel.org/jaegeuk/f2fs/c/76f01376df39
+
+You are awesome, thank you!
 -- 
-2.45.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
