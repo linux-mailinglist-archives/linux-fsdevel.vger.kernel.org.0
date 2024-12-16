@@ -1,191 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-37555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524349F3C09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 22:03:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5FC9F3C77
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 22:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86155163F4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 21:03:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CAC47A758A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 21:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BFF1FA16E;
-	Mon, 16 Dec 2024 20:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F7F1D5AA8;
+	Mon, 16 Dec 2024 21:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1oCTB97"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="Y+57wHh8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764291DDA10
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 20:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381939; cv=none; b=IFneQrn7ZX71607IAFLlkk7FPjLykKYoGkqnIuXdoa9f81HXmLokvQvv+PeLRPF74342flyCGVgI6eD6eEQaG6KRdN78lF29eLp24ihGt/2OOxKI4ga4Jux3/5CNZaZe6FriZaSox23tE88xC7SP+hIFFpFyvSdMBZ1aagFvtaE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381939; c=relaxed/simple;
-	bh=wMJoA5AMnEpKevidbj50XhKJhvcyxrAG0ZcvzVHwzdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T2wsCMkAyeVjiHFo9MdQdcQXQ0ccDtk+HEteY7F4WzO6V6QcarWRuwErFsXmEorNn5PG2FD4uSleY7pxys/+Wr+StUuTpp9woNjR8AqPQn1P0rp/FzW3isqhvkCGUpO8KdWvhJdjHG4Y2JWu41UVnQCCejOYRLs9m6LXa2HPl2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1oCTB97; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734381936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oo1wq8deJtNt2OQQxJVQAHf3OBjfRH+YniUEyQHkJfs=;
-	b=e1oCTB97zJy005p0+iCg5GVDu0L9/Wsic7r2WMOxSW0HjLc0zTcU+wwUAkFzFxQitWJRG7
-	rDBS/yR41MfM97QrD2OH3/Rq/nljy7/kj0Dt3RgO34jbEyhF/S8VhP736ubbRBYZPymsa7
-	rVTerTnkW0ZnBR468O2mUyQ9HhpI+KU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-465-XuzHjsQvNUyN5PcUdS5A8w-1; Mon,
- 16 Dec 2024 15:45:31 -0500
-X-MC-Unique: XuzHjsQvNUyN5PcUdS5A8w-1
-X-Mimecast-MFC-AGG-ID: XuzHjsQvNUyN5PcUdS5A8w
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8C74195608E;
-	Mon, 16 Dec 2024 20:45:28 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.48])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9BF4B19560A2;
-	Mon, 16 Dec 2024 20:45:22 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com,
-	Chang Yu <marcus.yu.56@gmail.com>
-Subject: [PATCH v5 32/32] netfs: Report on NULL folioq in netfs_writeback_unlock_folios()
-Date: Mon, 16 Dec 2024 20:41:22 +0000
-Message-ID: <20241216204124.3752367-33-dhowells@redhat.com>
-In-Reply-To: <20241216204124.3752367-1-dhowells@redhat.com>
-References: <20241216204124.3752367-1-dhowells@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80C04437
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 21:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734383671; cv=fail; b=FTntfilJ2sVIo6CBeAVxp8WMIoy3pr9NTz5VofFuJGZTlN8F+gW7WNYcIIGs/RjrZGX1YnpOu3f1Mnyc6vwlXQI95IG+oqvxAjqjCm9GyNcl+mE6UgeoCIrmDg1wgHc4ReCg5Wr5rhnrnwUDb/xMR/mYDLLsEi9EHWopAZuFZDY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734383671; c=relaxed/simple;
+	bh=TEqkVJpwiN6TKszgsfKn1PmnS2FKZ+qsBW2fDGv5LwA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rPDP90viTwM2PGdUfIK2ktC7aIkwiGWw+UuRCSZNLfOb7x9Hmsv0WmhxXgTlZMyfTsZiu0G0+HJInYfIlkS5Fe4dpnBtjYFSANdBHgtXjQIcjfQqoJOaGcLFiH1ld3liuVkomCEkT5hE+SditMlM2rSinFLUYVdJW0soPQCq9Ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=Y+57wHh8; arc=fail smtp.client-ip=209.222.82.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2047.outbound.protection.outlook.com [104.47.58.47]) by mx-outbound20-17.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 16 Dec 2024 21:14:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sOPiToey0ksR1RLjxX5auND96uP1ZRyFPyA01KKumD7Vx4IDCjyvxaz7izlN38X71US9T8rj174EzqnGbXaavC8eTvBRJ4W4zfPGARgcC5DCTsmC5feTKWC+WV/TuPzRG8OKhZJMbOs9O9NUeG1LQK0/l2wNVIM9yTCnZ2c9Y1CRuq1xuH/eiUSJfLSBANBIPJzM1Wfb3fW9h7cxqXGbr2C2eeAZp0gDtqh9tFItX1YeL7RXg4f0jqhPBUZoaeG2c6YxBtRjAhw/3V44pfb7ZAc9cnvPnQZSHWPXvSMsqjh0TALnGzBSRHFSPY62ZReLQkpEBTvNpACkSVF1aoT1PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EPVEcSUBUCyRQeY7PUKfUs/mVzhUvuRGq+cGtv9I7Ds=;
+ b=QdSCudgPnWv0nBKcA5jo7qwHbwkVwk7T+y1ATZSdZbQ2b+pExCQholB7EYdJz6wGVa57WIYdD4speoAC2p67av/HVyTBle5BMsm45oqSVZjK3IlK50dVdc3+Ei9jmVtMX2xyj0AllgqS2+aBiUJKODXq1+KkmDgeVWRs42f3S0+cokMXh/qobuMDi0wkhlvFa0KOAMLUeyWHX93h/DEL+9YbdIv/xg+7stuAqhfP7AHv8I0Zw5NxwYN9RfSSoStrIf2iyFIIsZac4xw6i8nW9bOaGk3RevmyUpzS+HGVS/JU3C/vCNC+xV6Iu6FBpr8+lLFochYMuGMvbbJdujumFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EPVEcSUBUCyRQeY7PUKfUs/mVzhUvuRGq+cGtv9I7Ds=;
+ b=Y+57wHh8g8EkqHnlGTSwtnronwFIhNWdhdqztaUal416XYHOfQWTJUIlrVFFYnVsDUmShvKjYUsCOerNDAw3UOodc/cmStOTnQ8J91dpFT68i2W/cqy0NokOar67O+07YVYLmaSPFHoQgTJ20sVM9qRGfVkUlT1pommTDEnu3vk=
+Received: from BN9PR03CA0570.namprd03.prod.outlook.com (2603:10b6:408:138::35)
+ by PH8PR19MB6973.namprd19.prod.outlook.com (2603:10b6:510:22b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Mon, 16 Dec
+ 2024 21:14:12 +0000
+Received: from BN1PEPF0000468A.namprd05.prod.outlook.com
+ (2603:10b6:408:138:cafe::33) by BN9PR03CA0570.outlook.office365.com
+ (2603:10b6:408:138::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.20 via Frontend Transport; Mon,
+ 16 Dec 2024 21:14:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ BN1PEPF0000468A.mail.protection.outlook.com (10.167.243.135) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.15
+ via Frontend Transport; Mon, 16 Dec 2024 21:14:11 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 95DEA101;
+	Mon, 16 Dec 2024 21:14:10 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Subject: [PATCH v3 0/2] fuse: Increase FUSE_NAME_MAX limit
+Date: Mon, 16 Dec 2024 22:14:05 +0100
+Message-Id: <20241216-fuse_name_max-limit-6-13-v3-0-b4b04966ecea@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB2YYGcC/43N0Q6CIBTG8VdxXEeTgzjtqvdozSEcki2wgTGb8
+ 91Db+qqdfn/tvM7C4kYLEZyKhYSMNloR5+DHwqiBulvSK3OTaCEigEDap4ROy8ddk7O9G6dnWh
+ NGaesEQ30mrdaVySfPwIaO+/05Zp7sHEaw2v/lNi2/oEmRkvaQo8CTMlQybPW/qhGRzYywTfDf
+ zCQGd4aVAIErzl8mHVd31rupNkFAQAA
+X-Change-ID: 20241212-fuse_name_max-limit-6-13-18582bd39dd4
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, Shachar Sharon <synarete@gmail.com>, 
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734383650; l=1279;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=TEqkVJpwiN6TKszgsfKn1PmnS2FKZ+qsBW2fDGv5LwA=;
+ b=cjwhM8vGDY0Mx7l/ewu2dFohGEInYcfI7WVFMHV3+RP5BNm+lljkpQPAfra93yM7XxPpV32zS
+ xo/K9FYOKQRCb/zNwYRET7x1sGtXs3izCSMtuu/iSTjzhgU12UfLdi4
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468A:EE_|PH8PR19MB6973:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b4fad36-4b43-4a39-86bc-08dd1e16966f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Yi96Wng1MlRrTUs0dzJ4OWhiKzVVcVpDbndaNmZhREgvdTBnbDRzYVlETmRD?=
+ =?utf-8?B?dVZWeG1BaFRkSzhzdWdLYnpycFZLQjhHNEpZZzhEcG1EandUMXlXeERNRDNu?=
+ =?utf-8?B?MzBXWW13Z3Q5Zkx4QzdtZjRNdFhzWitRSnAxMTNwV1IrbjA4ZnZOM3RFMTNT?=
+ =?utf-8?B?ekdDTTZOUjZpVm1tWGlqNzg5V05IckRQZHVGQUlpS3VLVzBmUW5TeWhMOCt4?=
+ =?utf-8?B?L284YjBLci9XbEpML3RkVXEwR0p6bjU5RTA1N09pOTlQY3dXUE01bDJWd21C?=
+ =?utf-8?B?VGRhTEpUZkt0U1ZtWksvWHA4MGN3a0V5VWF3MmhRb0pjK3Rrei9mSzBUYjNH?=
+ =?utf-8?B?RjZlMGVQZXhWTjJLRm84aVMyOXNlYUdOQWRDY0JITGY2UDkzNVIwMVp6VEQw?=
+ =?utf-8?B?alhZdzVFN2JMTmhLSzh4RVhyemNJWFpETUhZRHozZ21FZDVjdzhTVG9TUVIr?=
+ =?utf-8?B?OCtFL2EzaHNsZlVWbUUrTmowbzM2eU9kUUw4TW1oMWZnN2licG9zT090d0lK?=
+ =?utf-8?B?aHpRaXNQMng5WEd0OUpMd216TWJ0TzJETmlVL1ZUZzdPSHBqMVZ5K3Rxa0th?=
+ =?utf-8?B?MzE3cXlnekdlMGlQSlFNQU1LK1BkVmVOS0VZd25DMG1TUG5aRWJsYTA1N3A5?=
+ =?utf-8?B?R3Q4eFNpYk5ObWRSOFkxeXVOZFdFdWZObWZIcXptZm92WEVoTjZicFB2akgz?=
+ =?utf-8?B?ejQ1U2h5ZHdQcXcxa0dzeGpQVFlDMHpmUDNnN3l4T0VxTGVsOEcrSEs0VVJY?=
+ =?utf-8?B?cmxDWVdpWW1HRnI2a3RBZ2Y3ZFpKNHJENkk4ekdvN1h6S1dmcFAwK2twM1VK?=
+ =?utf-8?B?NUNMdnljMVZxVHVoR3N6MTlGMkZEWm41OStwaHpuUTkrWjN5OTlPeml0OWU2?=
+ =?utf-8?B?cTIzN3RLZU9WOFZCbzZsOWE3TGppYUJzdmM5bmRCb2Z1eFU5TzBjbVR4bmRD?=
+ =?utf-8?B?QllSRkFOdXk4R0IwcTlpWnhreEdsRktJZUw5SW1yaUNGQVRtK216eGxxcm5Y?=
+ =?utf-8?B?OGllU1lWVUpWVm1heHQzOTlja3EvUUR0YXdxTmFqWDhxaUtlNC9KYlpSOHp6?=
+ =?utf-8?B?R1E1SjNyUnBTOUZtaEhpZFpSdVBUWlRvSEtQSEdJUExsSmNab1BLdU56WWkz?=
+ =?utf-8?B?VTBIVFdFbGlVUnVFTDhmRDB1YXphNUFXYyswSXBLVEtuQWFwNkRQdVI2Qm51?=
+ =?utf-8?B?WW4wdkdwTFRNbmRqQnIzYjJMd3ZZUnQ5U2IrUm9FcEJXVXhZenlKT3p4Nys3?=
+ =?utf-8?B?Q1ptSGtkSXRPZzRsaS9YOW16aWlEQmpIM2tJRjdkd3Q2dTFIYk1yalFlNFlB?=
+ =?utf-8?B?ZkN3T2FHMFpnTmpaek1vQlErVFB3M0J0SXJHcjk1NGdQZFZpbGVNZEtDNlpX?=
+ =?utf-8?B?OGREWkFDRXpaN1p6cklseGYrSFBrOW9YczBjS2VSaEVNVS84eXFWNXVRbmlz?=
+ =?utf-8?B?YXBjbXYwTVdmL005NlZDM2R3RVVHYjdxUU4vNUJ1eldSK0g1dnJpL01VRmhq?=
+ =?utf-8?B?cVY1WHpzTmZqWlV1R09NQXZCQk1HSFNKbVNaWG1GVWViSHFIYzdEUkFJUUFM?=
+ =?utf-8?B?N1lCRngzelZoR2RHUktFdlYrU2dMMnhLbFZqeFRwdXQwM093M21LL1JoYWRJ?=
+ =?utf-8?B?QXJXV3FTc0o4Vi9BZ2pmdHVkeU5GaHR1Mi9MYnJEejMyN1d3MjNldjlmd2F1?=
+ =?utf-8?B?bzJXMDVGTFNYMjNQR21zSWQ4aEthSjVjbngxbEJ2Wng2SHl0VE1QN1UxQjZW?=
+ =?utf-8?B?VUtsK0FOSTN2T1U2VTRvdytHSWh2TWx6eUJIdFB3NUFXYlpvUkllV2s3MUJS?=
+ =?utf-8?B?bEdWZjFZZWNYMUdMaW9MNFFjVjZEWnl5Zy8xRlpuTkd1VENRVyszWkpObmtN?=
+ =?utf-8?B?NkFpYTdTMVdPZHErRHFJUUFiMWQ4T1hDcldQMG9hdDhtKzVKaHpQeDQ2dDJt?=
+ =?utf-8?B?WFN4UzBHc3R1d1RDMTF1SGk0L0tORU95SUJISE56b3FjMVA1SkQ4UXJKR2VU?=
+ =?utf-8?Q?GvKUndKskNmdT+aoGSWkicrt2EfOy4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Ly4u9SrehBqsjymZyrZZuq+FgO3LAwj3AlBy8jdH+K+hdtxARWIUczDKvAHGfOFfk/hli8lI8ULKBRBWduHGkeggFU6rvDnIyU7urr0Ou792GqRugdTH5eyX1TLzn3MRg/nWSCS00/Vwz9Q4WAPgsVLt5CycI7DT4s2FR/6jlqjBf+3qMMJtABZBpJCTFc+fePGQqzyZCCE7tWaZVZWJUSU1LH71rSMsyRTbeTsL+UmNuUEZjvHdAAWEXxMaaEM0SlHm0hw2j5bV8WD38uhkhhvOBrg0xAC7l26pvV0+Sn8IckaV3Bs8TIARHedXa+/EJDFxHPKpHK55bbsz6TGYPq3wn1QHcjhqrLrPoIvdvmUBtGfKHj1iihvmLdD+VewbWfOFbJCn6Aa3uzzEMJfCQ7bGCZEnk2+h6nlIjcUyooG3/fkiV+J6SmNrBWhlY786rtwfpUnB5CgktSHImsCDLx2Eu2BO/7u0/lKgxOmC+Jn2RcOiGejdLjw3Bsm3CuNjJlEQnjBTPvpml8cSyAdIHTkjUH6bzg3kn41i0eWSCT22xvfXJo0g2qOmIEbhnNdSMXtsAnzKr8NzORnmQ/RI8q8YzB5dWHjmJw2gNZNTBtAdp7mEMok3fuIbMzMVJgBV4jWysyExKAv/p31Jh+9MNw==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 21:14:11.7077
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b4fad36-4b43-4a39-86bc-08dd1e16966f
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000468A.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR19MB6973
+X-BESS-ID: 1734383655-105137-22272-3733-1
+X-BESS-VER: 2019.1_20241212.2019
+X-BESS-Apparent-Source-IP: 104.47.58.47
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGJqZAVgZQ0MzALMXcONHAKN
+	U00dwkycgiMcnQ0iglzdLc2CQ1OclUqTYWABSSIBFBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261160 [from 
+	cloudscan18-176.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-It seems that it's possible to get to netfs_writeback_unlock_folios() with
-an empty rolling buffer during buffered writes.  This should not be
-possible as the rolling buffer is initialised as the write request is set
-up and thereafter maintains at least one folio_queue struct therein until
-it gets destroyed.  This allows lockless addition and removal of
-folio_queue structs in the buffer because, unlike with a ring buffer, the
-producer and consumer each only need to look at and alter one pointer into
-the buffer.
+First patch switches fuse_notify_inval_entry and fuse_notify_delete
+to allocate name buffers to the actual file name size and not
+FUSE_NAME_MAX anymore. 
+Second patch increases the FUSE_NAME_MAX limit.
 
-Now, the rolling buffer is only used for buffered I/O operations as
-netfs_collect_write_results() should only call
-netfs_writeback_unlock_folios() if the request is of origin type
-NETFS_WRITEBACK, NETFS_WRITETHROUGH or NETFS_PGPRIV2_COPY_TO_CACHE.
-
-So it would seem that one of the following occurred: (1) I/O started before
-the request was fully initialised, (2) the origin got switched mid-flow or
-(3) the request has already been freed and this is a UAF error.  I think
-the last is the most likely.
-
-Make netfs_writeback_unlock_folios() report information about the request
-and subrequests if folioq is seen to be NULL to try and help debug this,
-throw a warning and return.
-
-Note that this does not try to fix the problem.
-
-Reported-by: syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=af5c06208fa71bf31b16
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Chang Yu <marcus.yu.56@gmail.com>
-Link: https://lore.kernel.org/r/ZxshMEW4U7MTgQYa@gmail.com/
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/netfs/write_collect.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Changes in v3:
+- New variable fc->name_max that is initialized to FUSE_NAME_LOW_MAX
+  (1024B). The FUSE_NAME_MAX (PATH_MAX - 1) is only used when
+  fuse server set max_pages > 1 in FUSE_INIT reply.
+- Link to v2: https://lore.kernel.org/r/20241213-fuse_name_max-limit-6-13-v2-0-39fec5253632@ddn.com
 
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 1b7f53d01b8d..294f67795f79 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -21,6 +21,34 @@
- #define NEED_RETRY		0x10	/* A front op requests retrying */
- #define SAW_FAILURE		0x20	/* One stream or hit a permanent failure */
- 
-+static void netfs_dump_request(const struct netfs_io_request *rreq)
-+{
-+	pr_err("Request R=%08x r=%d fl=%lx or=%x e=%ld\n",
-+	       rreq->debug_id, refcount_read(&rreq->ref), rreq->flags,
-+	       rreq->origin, rreq->error);
-+	pr_err("  st=%llx tsl=%zx/%llx/%llx\n",
-+	       rreq->start, rreq->transferred, rreq->submitted, rreq->len);
-+	pr_err("  cci=%llx/%llx/%llx\n",
-+	       rreq->cleaned_to, rreq->collected_to, atomic64_read(&rreq->issued_to));
-+	pr_err("  iw=%pSR\n", rreq->netfs_ops->issue_write);
-+	for (int i = 0; i < NR_IO_STREAMS; i++) {
-+		const struct netfs_io_subrequest *sreq;
-+		const struct netfs_io_stream *s = &rreq->io_streams[i];
-+
-+		pr_err("  str[%x] s=%x e=%d acnf=%u,%u,%u,%u\n",
-+		       s->stream_nr, s->source, s->error,
-+		       s->avail, s->active, s->need_retry, s->failed);
-+		pr_err("  str[%x] ct=%llx t=%zx\n",
-+		       s->stream_nr, s->collected_to, s->transferred);
-+		list_for_each_entry(sreq, &s->subrequests, rreq_link) {
-+			pr_err("  sreq[%x:%x] sc=%u s=%llx t=%zx/%zx r=%d f=%lx\n",
-+			       sreq->stream_nr, sreq->debug_index, sreq->source,
-+			       sreq->start, sreq->transferred, sreq->len,
-+			       refcount_read(&sreq->ref), sreq->flags);
-+		}
-+	}
-+}
-+
- /*
-  * Successful completion of write of a folio to the server and/or cache.  Note
-  * that we are not allowed to lock the folio here on pain of deadlocking with
-@@ -87,6 +115,12 @@ static void netfs_writeback_unlock_folios(struct netfs_io_request *wreq,
- 	unsigned long long collected_to = wreq->collected_to;
- 	unsigned int slot = wreq->buffer.first_tail_slot;
- 
-+	if (WARN_ON_ONCE(!folioq)) {
-+		pr_err("[!] Writeback unlock found empty rolling buffer!\n");
-+		netfs_dump_request(wreq);
-+		return;
-+	}
-+
- 	if (wreq->origin == NETFS_PGPRIV2_COPY_TO_CACHE) {
- 		if (netfs_pgpriv2_unlock_copied_folios(wreq))
- 			*notes |= MADE_PROGRESS;
+Changes in v2:
+- Switch to PATH_MAX (Jingbo)
+- Add -1 to handle the terminating null
+- Link to v1: https://lore.kernel.org/r/20241212-fuse_name_max-limit-6-13-v1-0-92be52f01eca@ddn.com
+
+---
+Bernd Schubert (2):
+      fuse: Allocate only namelen buf memory in fuse_notify_
+      fuse: Increase FUSE_NAME_MAX to PATH_MAX
+
+ fs/fuse/dev.c    | 30 ++++++++++++++++--------------
+ fs/fuse/dir.c    |  2 +-
+ fs/fuse/fuse_i.h | 11 +++++++++--
+ fs/fuse/inode.c  |  8 ++++++++
+ 4 files changed, 34 insertions(+), 17 deletions(-)
+---
+base-commit: f92f4749861b06fed908d336b4dee1326003291b
+change-id: 20241212-fuse_name_max-limit-6-13-18582bd39dd4
+
+Best regards,
+-- 
+Bernd Schubert <bschubert@ddn.com>
 
 
