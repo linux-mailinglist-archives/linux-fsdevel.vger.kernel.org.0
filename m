@@ -1,88 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-37505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B989F35A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 17:18:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0723F9F359B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 17:17:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8FB1885281
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 16:16:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43C6D7A32D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 16:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7944A1531F9;
-	Mon, 16 Dec 2024 16:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PtVxuleJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A7420628F;
+	Mon, 16 Dec 2024 16:13:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F9714D6EB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 16:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2808202C50;
+	Mon, 16 Dec 2024 16:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734365578; cv=none; b=C4nZrSAfhKZnyVvzswObsRsy7q0NHDFI5Z0Lida5wQoLVEKxxkttxsV7Lwv+m0/YxhcLL+nVT/1RFzvSLxwxp6qZ+oJEfLmhdSs1HkxK7JmLumCAL/LGZeTYu8rXElK/7d4RxhFwWaLkLfBhxQlr+z7EIpGmdj0TWVI/4H8W2Ok=
+	t=1734365582; cv=none; b=fBTAn3swTgdPA+5lXgiVi0Tyk7TSyciwMUzCmiSYFwfHkN1Qs252HiDLpJHJRbQx/owOXXDA7Jr+Bt/TpNsad3TaWvKAu81phzHuGPlkV1Z06cKFtAyEdsGp2QIQNH1fSCme/2agNPQy3YpsECFXu8m2MZuunGY+Ckf1DLBdmSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734365578; c=relaxed/simple;
-	bh=XOAF2lEv3qdRbW0QxiyiB6A9nYjWu14cqTYC238yvh0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tYdU1dRd4DAKOrUHlZRI4voKHoVAMNA/Iny6HoIZhdh6sCJK6xBPn5Kft4znJmNrO9kWZexiCuF1kE/so//IUC2OFXM/HV3cDiHYoewiXyRQNdUuMYwD48TlxIDeI29wYCx8zGKQruFZjDjhnsrqcn9qRabO/M+CXIFxIgrjK1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PtVxuleJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=k/Aikfa9qgkLbilqbJTekFzoNO7qFSXxxQWLfy6xpXk=; b=PtVxuleJ6rp1rMQGfqDVmcqz+k
-	gQMKozdCOS9VDdQ2vtIB09uBqqJiCqSLfCH0iD/fkCkXhdnNa/BtFb5i9YXBbNXGBt5EKP3DHb+WN
-	OXZcyJuaM0QDGL5exG/xpomzumJr61FERAFi+CqNOxxxrIiilEUhDSx6p/AK/W1zz6lbGAuc0zOGu
-	dM5UZmxFY/6qiXQGfmuREPgEE/23isCMv8INXILRgFLO3j4L1g+BvGFnSBSWyiTm9r/4Gt8xyqHws
-	UPgV5EAoNKqOjjn9/gf9iM0w9yUaRNI22DEr16VYHGres0kauRlCrjo6zSV+Q5qRjZGwhxRi/J/Ub
-	3QInib0A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNDiI-000000009of-1wco;
-	Mon, 16 Dec 2024 16:12:54 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Howells <dhowells@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] iov_iter: Remove setting of page->index
-Date: Mon, 16 Dec 2024 16:12:50 +0000
-Message-ID: <20241216161253.37687-1-willy@infradead.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734365582; c=relaxed/simple;
+	bh=ai1q4KaKsZ11pODmxNKJDhxqW5fr1AH0gwbTKkWMQEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbpE+i21WhY+hsHYMFJcvDVFEIFt+J2MCQlJXHCItKgBt/rYIYAymGJe91h0oOl7dsHW7iNqvE+UOGn+H11U4ToXZh5eof4WNfCPNu7OhypPDByGZ0qo0mSM6IgTBYc4PRYg2HvzbsNVxilxLRWw9DjUHibZtFGgxmDQoM4IXuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C523968C4E; Mon, 16 Dec 2024 17:12:55 +0100 (CET)
+Date: Mon, 16 Dec 2024 17:12:55 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv14 10/11] nvme: register fdp parameters with the block
+ layer
+Message-ID: <20241216161255.GC24735@lst.de>
+References: <20241211183514.64070-1-kbusch@meta.com> <20241211183514.64070-11-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211183514.64070-11-kbusch@meta.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Nothing actually checks page->index, so just remove it.
+On Wed, Dec 11, 2024 at 10:35:13AM -0800, Keith Busch wrote:
+> +	size = le32_to_cpu(hdr.sze);
+> +	if (size > PAGE_SIZE * MAX_ORDER_NR_PAGES) {
+> +		dev_warn(ctrl->device, "FDP config size too large:%zu\n",
+> +			 size);
+> +		return 0;
+> +	h = vmalloc(size);
+> +	if (!h)
+> +		return -ENOMEM;
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- lib/kunit_iov_iter.c | 3 ---
- 1 file changed, 3 deletions(-)
+Isn't an unconditional vmalloc here for something that usually should
+have less than a handful of descriptors a little aggressive?  I'd use
+kvmalloc here to get the best of both worlds, and the free path seems
+to already use kvfree anyway.
 
-diff --git a/lib/kunit_iov_iter.c b/lib/kunit_iov_iter.c
-index 13e15687675a..497d86e039f6 100644
---- a/lib/kunit_iov_iter.c
-+++ b/lib/kunit_iov_iter.c
-@@ -63,9 +63,6 @@ static void *__init iov_kunit_create_buffer(struct kunit *test,
- 		KUNIT_ASSERT_EQ(test, got, npages);
- 	}
- 
--	for (int i = 0; i < npages; i++)
--		pages[i]->index = i;
--
- 	buffer = vmap(pages, npages, VM_MAP | VM_MAP_PUT_PAGES, PAGE_KERNEL);
-         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buffer);
- 
--- 
-2.45.2
-
+Otherwise the incremental changes vs the previous version for the entire
+series look good to me.
 
