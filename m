@@ -1,191 +1,272 @@
-Return-Path: <linux-fsdevel+bounces-37559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2E59F3CBA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 22:24:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1989F9F3CBB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 22:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBE81886D49
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 21:21:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DDF4161B39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 21:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C621D9A51;
-	Mon, 16 Dec 2024 21:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CCF1D416E;
+	Mon, 16 Dec 2024 21:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="E/iRc5EN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WD2k4VSj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DB21D88DB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 21:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7157D1CEADD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 21:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383966; cv=none; b=Q/jzzDVb8MxGkV6Xtn7v9w3DlJdAU9PYi4v7Pea31R3Lo7t34fqIVB0dAtUxGLBS7QmqKZr9izd9q1J9LjemSzqbZ//+yfcGyMF7worKmiQ9y3sQFO2Sgiczd7UjVHI092ALau+1Y+wqI4zU7S74EIGIt29dqpGlwdiEYD0a/8w=
+	t=1734384286; cv=none; b=svSu5czTXB31kD2b69rRBR3uffeyuT05pDobbq5N0/Dp3QV4US6dcO46CWdCSyBqatm/NAPxGovqikytI4am30CisdUsjiDMiM0pkFJpbyX68l2EyoeKl4VKlR8hCXyZMnM/fgkI9tPer7ZVBN+zKyPz3G8D2jOk8ETmKCIowwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383966; c=relaxed/simple;
-	bh=UgpGZxTf5UQdIYmtdIP8NZxHh5R9BQB6qq3HWNcsdqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzJ7zqUWe47CSz3HEzWmyvO0JeY/vjIVgpzO5uPYIlB78G+SQtG2LCrtiToQp1rP4gTcRLxv9srLvie/UXL1if4CWl0fO5sgpupKqFOomMh6jjV1EcdqJrI/mlZprW+er74ydODXnrxfxhzPMaBuEayKcNwBfoo5uJZebABusCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=E/iRc5EN; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21636268e43so56222785ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 13:19:24 -0800 (PST)
+	s=arc-20240116; t=1734384286; c=relaxed/simple;
+	bh=hWdY+04EN6EW/QdqGgAHckunYNPVTuTB2FuaGZxVCqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=peSBN35vWHXlJwGpCwGtO/tEbNnJn3MxCZ1iLA0iq/fv4iIhWQcCJ/H3ZP5onzCTY4O1sMmgRRv6EflBKon3cBQB6wSx9BGN5AXhn49IzRuwgGSo4odN548JahtVo99JA8DB27T4pjXNM064utM9c0DZdtZNvHLrVzSrHX/CAis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WD2k4VSj; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4679d366adeso43713491cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2024 13:24:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734383964; x=1734988764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wohT2F7jYZ35oimi/vbojDnE+U2A1uWaD+2RnW9eqbI=;
-        b=E/iRc5ENQeKdHaUOHgdk6VoeKQHDbFgG7ajE/JYKq5GOOYThc2R7jpOOvlDPKKQ6Sn
-         WoWPlhBCnbCDm0pqh0n/T0jGA8KngtvylIF2sKB1ruMz8fvDUZ8polovGumPwKNxFqOn
-         QUVY3/lULGALVM9s0rsOtn4UWk+oZnRxGQc08wbCDhAdz8Dtd43R5PSk5tsUFmI28HXu
-         LxZRBxmFxSYDEDGuQdHV6/oDGp/cyQJ1jmnA5gojrNgS6dXgd+LJ6tl+h0lwrzo1yqHP
-         FYZLZqbu416c9/66QyUPL+V9B/aIdb0H9uOnQ0KoMna7XxRhfvMGiXtPcJlnIGakEwBB
-         jO+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734383964; x=1734988764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734384283; x=1734989083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wohT2F7jYZ35oimi/vbojDnE+U2A1uWaD+2RnW9eqbI=;
-        b=cxKcz31DixLgrenWLErx/H4twMGWCSS2zP60x0oc8t++MBuCVJ+kvHiWC0SDgD+Xkl
-         UkDhTkckADQEX6YDpNqRir2YhD1hdRbcQjQPUrrZMAUg//b3JD9EPqZhTXp+zYArIZG7
-         w0b0P7ZErhKvhsGhzCM80TMUAIY4Y6t6hQd2Badw/ta13Qu6vceQEn4XNROoLr7AU3L/
-         1vcTHaKRPZUiMUEslJefm94TLl+69M40f1HJIiGHfJkWqTLmh2eFmzjj5dXVAgToCqp9
-         KNCp1PnwXuKnOizgar14UXFGEpxRlP3oL9vGshKmRw87XQ5jWieZ5rBJfJaCoq3gWwcb
-         a3Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoehe7CevWSGH1eDPsUzYHLyJYrfWpKoq8HEhFHnx6CVVeEG0Z8aMhMy5dalfVbkO2CZQBCyajwYD8lvyZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ed1NpOUfpxhBdbANZqdUEePmHt+axy6D+UAog9ANyEo6bWlC
-	Mz4DTT7t41qwxhI5WxPLG0nhxwzvaPp/Z52psaK8MR0h/Fy5oR0kftNBGeHlLm4=
-X-Gm-Gg: ASbGncvd5HDWpN/sVIGxgyXA6lc7Enzos41R2005XwLS9Ci8Yw90KhcT6c/511LrJZX
-	dVHoqkXR0ZcEJvvZmdGD77R66xvookclzPhyrvIaLd26eXI+suclx/JZSGpefn3u33vQnN4Fik7
-	K2xf4o2NdITQY1Fu65W9xOrnl6c3IO97VHf4+/lvahpZn8Cf81rDkVcuFnIRj2wYew9UqURcJ2i
-	QB+9hMTuBjpp1ER58lm89ImnWrZZ0jZVcArAoUzBk4pihL2ASi3DDlLXHREmViDu7Tcd8/0KjBH
-	htZOAsmrGBIKy6TV4qOiDk/18FgAvg==
-X-Google-Smtp-Source: AGHT+IHEsdhbCDgka5o47U5eofFnUtG2e7lMRgiPnk+cFgQez8mk5mBf/lRikZSBGI3uUJ0PbA0HZQ==
-X-Received: by 2002:a17:902:ea0e:b0:216:5e6e:68cb with SMTP id d9443c01a7336-218929a1ec5mr162916225ad.16.1734383963721;
-        Mon, 16 Dec 2024 13:19:23 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dccb88sm47461665ad.95.2024.12.16.13.19.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 13:19:23 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tNIUq-0000000BafX-1DYM;
-	Tue, 17 Dec 2024 08:19:20 +1100
-Date: Tue, 17 Dec 2024 08:19:20 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Tianxiang Peng <luminosity1999@gmail.com>
-Cc: chandan.babu@oracle.com, djwong@kernel.org, p.raghav@samsung.com,
-	mcgrof@kernel.org, brauner@kernel.org, dchinner@redhat.com,
-	Tianxiang Peng <txpeng@tencent.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	allexjlzheng@tencent.com, flyingpeng@tencent.com
-Subject: Re: [PATCH 0/2] xfs: make cluster size tunnable for sparse allocation
-Message-ID: <Z2CZWNT_SLeoBNJi@dread.disaster.area>
-References: <20241216130551.811305-1-txpeng@tencent.com>
+        bh=FNlFC2HVAmjZD0Y5Gvs5UCZsd7nBIiQl3mnb5w3LaL8=;
+        b=WD2k4VSj6td/MD51V2d/+kfqCIo360ucNQvLo5x52zqon4gcPtVtLSTNAvMC0v0Oh0
+         Sszbz1ZGZn4WKd2GflKkbQiZeTHFvTkc6wFruoAJB7TBC79aF80GEPmtEBEJ8x7tsMRj
+         OSZEcJOdlUQJUoDpRfwGo68VDSc2lwWObOIJ3D4DHttDN5WkEQMveP4J2+2FAGsSeIU/
+         475HdBlOwu4bLUGtUTblJjIfEudA1x86Yg05ePvXE366R5jawW1U/oLkEuOhRFEcDv36
+         ve3l1fNsHzF02PjiOOYVq7YOXc4wUVlywQrBhNhXe+pKAXD5kaLFOT6AMIADT+6Lvm+0
+         p5ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734384283; x=1734989083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FNlFC2HVAmjZD0Y5Gvs5UCZsd7nBIiQl3mnb5w3LaL8=;
+        b=PvmVZxWpNN8jSelZHPOWAqfjYvRRT1vPnipqScggNzYXTZHqvoq09hMGWIWI2suUpT
+         s10P/BErqUDbd6B6al0ncBdANcA+kmM8oaj9STpeyNTcu0ZQgwmLk62PIq8knYbhybXg
+         wyxlf2Mz9DYJuiJ3EYeGPO9m3olI30IfHZ9kP5pBx5GLDCwhxgSwxvvJwXYVLSQj3dQP
+         8lhpebyUiRETL64rXIOtx97b7lkR0nqlkQxdJyuDDu+pKuzJyEbtfDRLXETnBDhntCOW
+         qljrE1EKHjEDzl0APsfDpjYINStTUDVUmrcMWyEH+zRbNk8WVg/nYL4u9khQUh+biP4+
+         gOfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhJvxueLZHtix9hqltJFUikvCnBAYP5KN3224U0t5limwCioj87SBnSrEH8drEihqGGPxkxMhj99ML8e1P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ydwBrcddvDDDqJ/rLa7rcaEeCrOC+EizY0YBZYTWDeWj47YE
+	7kw10HAEnXKmccWa5ymmjmkHq22LctYZtZPGgGTn3g97hnQ6vdfTcx+lR+Wl76L8ksdIUNyuC7I
+	NvLdNuKOeJpylJLkqnAuosAuVZH4=
+X-Gm-Gg: ASbGncsCWOLkHdlLPwg4re1XtRMtMlHewX2EuHqQeA/TQknD4YtCIsXHOT5qkF+KHY8
+	PgDAZZJiTZpibvMJZJRnpucU7ao4ZMUiv5Rjsffk=
+X-Google-Smtp-Source: AGHT+IGPPfFmWo/R2YGTOAkEarSARb3neRJ0qpFO4BFE/ag8dUtQ/IkFd8kHND9ImIrtdbnQ4BOHxDW5gTl7HSdMOx8=
+X-Received: by 2002:ac8:7f0c:0:b0:467:85f9:2a6c with SMTP id
+ d75a77b69052e-468f8d486a3mr17747361cf.10.1734384283240; Mon, 16 Dec 2024
+ 13:24:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216130551.811305-1-txpeng@tencent.com>
+References: <20241214022827.1773071-1-joannelkoong@gmail.com>
+ <20241214022827.1773071-2-joannelkoong@gmail.com> <CAMHPp_TVTvKC4xcuSy=kHB+5r8pTa-72bAaJF+dCp8PnrK=m7A@mail.gmail.com>
+ <CAJnrk1YK7V04cifqDXfVHBZvUhJqXrpiXUETJQ1NDvgKY4+9iQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1YK7V04cifqDXfVHBZvUhJqXrpiXUETJQ1NDvgKY4+9iQ@mail.gmail.com>
+From: Etienne Martineau <etmartin4313@gmail.com>
+Date: Mon, 16 Dec 2024 16:24:32 -0500
+Message-ID: <CAMHPp_S2ANAguT6fYfNcXjTZxU14nh2Zv=5=8dG8qUnD3F8e7A@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] fuse: add kernel-enforced timeout option for requests
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	jlayton@kernel.org, senozhatsky@chromium.org, tfiga@chromium.org, 
+	bgeffon@google.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 09:05:47PM +0800, Tianxiang Peng wrote:
-> This patch series makes inode cluster size a tunnable parameter in
-> mkfs.xfs when sparse allocation is enabled, and also makes xfs use
-> inode cluster size directly from the superblock read in rather than
-> recalculate itself and verify.
-> 
-> Under extreme fragmentation situations, even inode sparse allocation
-> may fail with current default inode cluster size i.e. 8192 bytes. Such
-> situations may come from the PUNCH_HOLE fallocation which is used by
-> some applications, for example MySQL innodb page compression. With xfs
-> of 4K blocksize, MySQL may write out 16K buffer with direct I/O(which
-> immediately triggers block allocation) then try to compress the 16K
-> buffer to <4K. If the compression succeeds, MySQL will punch out the
-> latter 12K, leave only the first 4K allocated:
-> 	after write 16k buffer: OOOO
-> 	after punch latter 12K: OXXX
-> where O means page with block allocated, X means page without.
-> 
-> Such feature saves disk space(the 12K freed by punching can be used
-> by others), but also makes the filesystem much more fragmented.
-> Considering xfs has no automatic defragmentation mechanism, in the
-> most extreme cases, there will be only 1-3 physically continuous
-> blocks finally avaliable.
-> 
-> For data block allocation, such fragmentation is not a problem, as
-> physical continuation is not always required. But inode chunk
-> allocation requires so. Even for sparse allocation, physical
-> continuation has also to be guaranteed in a way. Currently this
-> value is calculated from a scaled inode cluster size. In xfs, inodes
-> are manipulated(e.g. read in, logged, written back) in cluster, and
-> the size of that cluster is just the inode cluster size. Sparse
-> allocation unit currently is calculated from that:
-> 	(inode size / MIN_INODE_SIZE) * inode cluster size
-> 		-> sparse allocation aligmnet
-> 			-> sparse allocation unit
-> For example, under default mkfs configuration(i.e. crc and sparse
-> allocation enabled, 4K blocksize), inode size is 512 bytes(2 times
-> of MIN_INODE_SIZE=256 bytes), then sparse allocation unit will be
-> 2 * current inode cluster size(8192 bytes) = 16384 bytes, that is
-> 4 blocks. As we mentioned above, under extreme fragmentation, the
-> filesystem may be full of 1-3 physically continuous blocks but can
-> never find one of 4, so even sparese allocation will also fail. If
-> we know application will easily create such fragmentation, then we
-> had better have a way to loose sparse allocation requirement manually.
+On Mon, Dec 16, 2024 at 1:15=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> On Sun, Dec 15, 2024 at 6:35=E2=80=AFPM Etienne Martineau
+> <etmartin4313@gmail.com> wrote:
+> >
+> > On Fri, Dec 13, 2024 at 9:29=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > There are situations where fuse servers can become unresponsive or
+> > > stuck, for example if the server is deadlocked. Currently, there's no
+> > > good way to detect if a server is stuck and needs to be killed manual=
+ly.
+> > >
+> > > This commit adds an option for enforcing a timeout (in seconds) for
+> > > requests where if the timeout elapses without the server responding t=
+o
+> > > the request, the connection will be automatically aborted.
+> > >
+> > > Please note that these timeouts are not 100% precise. For example, th=
+e
+> > > request may take roughly an extra FUSE_TIMEOUT_TIMER_FREQ seconds bey=
+ond
+> > > the requested timeout due to internal implementation, in order to
+> > > mitigate overhead.
+> > >
+> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > ---
+> > >  fs/fuse/dev.c    | 83 ++++++++++++++++++++++++++++++++++++++++++++++=
+++
+> > >  fs/fuse/fuse_i.h | 22 +++++++++++++
+> > >  fs/fuse/inode.c  | 23 ++++++++++++++
+> > >  3 files changed, 128 insertions(+)
+> > >
+> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > index 27ccae63495d..e97ba860ffcd 100644
+> > > --- a/fs/fuse/dev.c
+> > > +++ b/fs/fuse/dev.c
+> > > @@ -45,6 +45,85 @@ static struct fuse_dev *fuse_get_dev(struct file *=
+file)
+> > >         return READ_ONCE(file->private_data);
+> > >  }
+> > >
+> > > +static bool request_expired(struct fuse_conn *fc, struct fuse_req *r=
+eq)
+> > > +{
+> > > +       return time_is_before_jiffies(req->create_time + fc->timeout.=
+req_timeout);
+> > > +}
+> > > +
+> > > +/*
+> > > + * Check if any requests aren't being completed by the time the requ=
+est timeout
+> > > + * elapses. To do so, we:
+> > > + * - check the fiq pending list
+> > > + * - check the bg queue
+> > > + * - check the fpq io and processing lists
+> > > + *
+> > > + * To make this fast, we only check against the head request on each=
+ list since
+> > > + * these are generally queued in order of creation time (eg newer re=
+quests get
+> > > + * queued to the tail). We might miss a few edge cases (eg requests =
+transitioning
+> > > + * between lists, re-sent requests at the head of the pending list h=
+aving a
+> > > + * later creation time than other requests on that list, etc.) but t=
+hat is fine
+> > > + * since if the request never gets fulfilled, it will eventually be =
+caught.
+> > > + */
+> > > +void fuse_check_timeout(struct work_struct *work)
+> > > +{
+> > > +       struct delayed_work *dwork =3D to_delayed_work(work);
+> > > +       struct fuse_conn *fc =3D container_of(dwork, struct fuse_conn=
+,
+> > > +                                           timeout.work);
+> > > +       struct fuse_iqueue *fiq =3D &fc->iq;
+> > > +       struct fuse_req *req;
+> > > +       struct fuse_dev *fud;
+> > > +       struct fuse_pqueue *fpq;
+> > > +       bool expired =3D false;
+> > > +       int i;
+> > > +
+> > > +       spin_lock(&fiq->lock);
+> > > +       req =3D list_first_entry_or_null(&fiq->pending, struct fuse_r=
+eq, list);
+> > > +       if (req)
+> > > +               expired =3D request_expired(fc, req);
+> > > +       spin_unlock(&fiq->lock);
+> > > +       if (expired)
+> > > +               goto abort_conn;
+> > > +
+> > > +       spin_lock(&fc->bg_lock);
+> > > +       req =3D list_first_entry_or_null(&fc->bg_queue, struct fuse_r=
+eq, list);
+> > > +       if (req)
+> > > +               expired =3D request_expired(fc, req);
+> > > +       spin_unlock(&fc->bg_lock);
+> > > +       if (expired)
+> > > +               goto abort_conn;
+> > > +
+> > > +       spin_lock(&fc->lock);
+> > > +       if (!fc->connected) {
+> > > +               spin_unlock(&fc->lock);
+> > > +               return;
+> > > +       }
+> > > +       list_for_each_entry(fud, &fc->devices, entry) {
+> > > +               fpq =3D &fud->pq;
+> > > +               spin_lock(&fpq->lock);
+> >
+> > Can fuse_dev_release() run concurrently to this path here?
+> > If yes say fuse_dev_release() comes in first, grab the fpq->lock and
+> > splice the
+> > fpq->processing[i] list into &to_end and release the fpq->lock which
+> > unblock this
+> > path.
+> >
+> > Then here we start checking req off the fpq->processing[i] list which i=
+s
+> > getting evicted on the other side by fuse_dev_release->end_requests(&to=
+_end);
+> >
+> > Maybe we need a cancel_delayed_work_sync() at the beginning of
+> > fuse_dev_release ?
+>
+> Yes, fuse_dev_release() can run concurrently to this path here. If
+> fuse_dev_release() comes in first, grabs the fpq->lock and splices the
+> fpq->processing[i] lists into &to_end, then releases the fpq->lock,
+> and then this fuse_check_timeout() grabs the fpq->lock, it'll see no
+> requests on the fpq->processing[i] lists. When the requests are
+> spliced onto the to_end list in fuse_dev_release(), they are removed
+> from the &fpq->processing[i] list.
+Yes, good point about list splice. After all, I realized that the same
+locking sequence is present in fuse_abort_conn() which is proven to
+work. ( otherwise we would have heard about race issues coming from
+fuse_dev_release() against concurrent fuse_conn_abort_write() )
 
-Please go an study mkfs.xfs -i align=1 does, how it affects
-sb->s_inoalignmnt, and how that then affects sparse inode cluster
-size and alignment. i.e.  Sparse inode clusters must be correctly
-aligned and they have a fixed minimum size, so we can't just
-arbitrarily select a sparse cluster size like these patches enable a
-user to do.
+> For that reason I don't think we need a cancel_delayed_work_sync() at
+> the beginning of fuse_dev_release(), but also a connection can have
+> multiple devs associated with it and the workqueue job is
+> per-connection and not per-device.
+Ok got it.
+Thanks,
+Etienne
 
-> This patch series achieves that by making the source of sparse
-> allocation unit, inode cluster size a tunnable parameter.
-
-Fundamentally, I think this is the wrong way to solve the
-problem because it requires the system admin to know ahead of time
-that this specific database configuration is going to cause
-fragmentation and inode allocation issues.
-
-Once the problem manifests, it is too late to run mkfs to change the
-geometry for the fs, so we really need to change the runtime
-allocation policy code to minimise the impact of the data
-fragmentation as much as possible.
-
-As to that policy change, it has been discussed here:
-
-https://lore.kernel.org/linux-xfs/20241104014439.3786609-1-zhangshida@kylinos.cn/
-
-and my preferred generic solution to the problem is to define the
-high AG space as metadata preferred, thereby preventing data
-allocation from occurring in it until all other AGs are full of
-data.
-
-I'm still waiting to hear back as to whether the inode32 algorithm
-behaves as expected (which uses metadata preferred AGs to direct
-data to fill high AGs first) before we move forward with a
-allocation policy based fix for this workload issue. If you can
-reproduce the issue on demand, then perhaps you could also run the
-same experiement - build a 2TB filesystem with ~300 AGs mounted
-with inode32 and demonstrate that the upper AGs are filled to near
-full before data spills to the lower AGs.
-
-If inode32 behaves as it should under the mysql workload, then it
-seems like a relatively trival tweak to the AG setup at mount time
-to always reserve some space in the high AG(s) for inode allocation
-and hence largely mitigate this problem for everyone....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>
+>
+> Thanks,
+> Joanne
+>
+> > Thanks
+> > Etienne
+> >
+> > > +               req =3D list_first_entry_or_null(&fpq->io, struct fus=
+e_req, list);
+> > > +               if (req && request_expired(fc, req))
+> > > +                       goto fpq_abort;
+> > > +
+> > > +               for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++) {
+> > > +                       req =3D list_first_entry_or_null(&fpq->proces=
+sing[i], struct fuse_req, list);
+> > > +                       if (req && request_expired(fc, req))
+> > > +                               goto fpq_abort;
+> > > +               }
+> > > +               spin_unlock(&fpq->lock);
+> > > +       }
+> > > +       spin_unlock(&fc->lock);
+> > > +
+> > > +       queue_delayed_work(system_wq, &fc->timeout.work,
+> > > +                          secs_to_jiffies(FUSE_TIMEOUT_TIMER_FREQ));
+> > > +       return;
+> > > +
+> > > +fpq_abort:
+> > > +       spin_unlock(&fpq->lock);
+> > > +       spin_unlock(&fc->lock);
+> > > +abort_conn:
+> > > +       fuse_abort_conn(fc);
+> > > +}
+> > > +
 
