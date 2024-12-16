@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-37489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E6D9F3139
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 14:08:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A58A9F313B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 14:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA26162517
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 13:08:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CACEB162A62
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2024 13:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3890D2063EA;
-	Mon, 16 Dec 2024 13:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E293205AAD;
+	Mon, 16 Dec 2024 13:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYkkTbJ6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dN4l+szc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC182063CC;
-	Mon, 16 Dec 2024 13:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517C6148FF2;
+	Mon, 16 Dec 2024 13:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734354398; cv=none; b=pvnVF34eosOmmrhpwJBhvReu0ocL06B9L4cAe1F6kTyCJwrivtXkdOVsOoANx4d/Ywz7zCzqpU+gM6GCpZDGv4DJyO/0/t5gMW9UguzNAv9zupsIX2eCoeEf1StiJG8oVwjyOSh9yDVj5MRZ9s6Co1he7XWzpuPRySyp8RoIRdA=
+	t=1734354409; cv=none; b=hX9UQkIGoK1oGj3ohhfqGfLb/lp53n2zevb5NLu62Ys8/G9ksiK/64M2HHpZ4jvKPk22x3wTaPdqbilxhHyV+mGzqDVIJNnE8HrwysU/I3oIMIMJwiBLrBVlnC1gNOz9eNczSqSdBMx+WAG/Kf6JGliA6c6qZTXZBl2DfI4gJDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734354398; c=relaxed/simple;
-	bh=wRsSvFVPRfgGY4acKGvTQiKD6OTAlmB+uyzhTrY0/pI=;
+	s=arc-20240116; t=1734354409; c=relaxed/simple;
+	bh=kEaMspLIRrrFhRiFyKDmcVMmgoYWb1T3m2H/SlJmZj0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rbwt1LOhug1RapLzQvvtndEXQrRz7jSzfUFhLOHTU10QRMZS/VCE8QDza0TQVdhxEVTCF4jT4ECxSftESQv3KonaCtOlaB+1ynF4Zq9e3+F2w6SS/peV+plYKUFcLBO+C6C/gu9yfgDh6RVj9SiIaABkHOJjmp8LM5AnpgQLJLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYkkTbJ6; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=CQeP8PMM7QDI1tanWg7pyygJIFiZhUiPKp+aIz2GZUqDu8EYLGEtg+KOTyqR2IS5+ohoRGym8mCfHTITSpkIjcINhsPuupbooQVGeWNKy8jRCiSDNNpofXA07q5QQZsGE/Sh9XJztINb17Xz5S8c4wp2n7hiAKOhboIbAFdqsKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dN4l+szc; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-725f2f79ed9so3082067b3a.2;
-        Mon, 16 Dec 2024 05:06:36 -0800 (PST)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725ee27e905so5243742b3a.2;
+        Mon, 16 Dec 2024 05:06:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734354396; x=1734959196; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734354407; x=1734959207; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z5r2AI1rSTk78vMUPnfBS3x9c1y/UZLB1l4KtYcBGR0=;
-        b=jYkkTbJ6eOb5j7lFXafVP8mU4/auNvBVI7+XRkTtWJIZA66/nmzYayKBq5vaMwMS4u
-         RjEk62/pNCpZ6RFJmpaSkk077pZOcHJF6Gc6WYo+evHplzZYvFAvw+5JpGMv/xpzq++9
-         PHegdu+qPISTHrJWb8ExPM3Ax1nz6NoXUIhv7uEtbUyuKWVWzxYRJe7AphIC5S3L/soQ
-         u8UTK/jPDuPHlLyoRo1z8nVi0S4n+3tduOQoEHDnj4e8WxOpF1lH37ZMLGYbEneWnuQe
-         3ABladQKkRk6axVUkOMXEudtB9C6wCd+7UrO/QlZT6yVQ0YlurfwwkcDgQ9ezC4RjUIe
-         3M/g==
+        bh=r+JzeXaCBZ8Q0UvE6DTJsJh3vIeyP4Z/j9o/+bvB6LY=;
+        b=dN4l+szcfj5/lEbT91nzKGR1FeHCIPPHeyO5ZxHCyCZpUP1IQve+rBcaIkOzaPNWBS
+         H7+5KCfvUcNjGEJwcL+iFKRLL4uTTItulgVKE1Z6pZOkhOoYK9DsxBZyy+CmYao/Fhwb
+         rwQ/5dJyGIl8L73oY9hPedzFL88jvKSuONjvMLoIco2w+aFkqCC/0PxSt5eQCcipAfQZ
+         nf+YEW8smOiBuz3oZOntaC5ofBzuIyiKJyLl35+P4iwuigcP/Sy0wjJNB9LzEczTt2Lt
+         cCGT8MpKGN2Gm5qtLoRupE2G3pNx6RZEOQGFYL4eKcARSJldZYz5yQj0uYQ3LRAfCn52
+         /lww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734354396; x=1734959196;
+        d=1e100.net; s=20230601; t=1734354407; x=1734959207;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z5r2AI1rSTk78vMUPnfBS3x9c1y/UZLB1l4KtYcBGR0=;
-        b=GzKeIitYE3tRrSX7cnj6RRPOeiQCROOuVOwBMB9wVtE7raMg3WYSQeiHKcmEO7CarB
-         dXY4CkrnKwzCjEEW9ZWR/H8dcbhh8R9A9a3LQCfz91jVnd0+vHz4wbHRbXF+xXxGh9xX
-         k9Ha3JukKUJdakzKRTXvnOzGNNUEI4IlaGoPRDGRZgg6wuw8k8bdJI97orCOJaz3a+BV
-         pEJEZIl6Wh4vD7TpOMDuNGYhQEsHMXMRq9PMKGQQbOZxJaZE+bQGIOGKVxvs4phv/jcL
-         CIjtvJ+PMMideRO5Kac5OYDJMrBZoPE0I4ka83zrjAtu4OOQ20b0iblxAy9S2N/gAPE5
-         rfIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEiTl1nfT7QGVaB6OJoHe98W32Vq3qYtftqWB3WHh6mgafj1WvB1rcYgvE+1Jf7PmiLNMli3tmiwU+BKHi@vger.kernel.org, AJvYcCWFE6r3PjT0C5rVjQtl2fQX3fbG2vXdsXVIBEh2ZOJp60xCg81kMzfXX9hn+31dILV2hcJzISZ+yH4Uj6c6@vger.kernel.org, AJvYcCXBkrJykqADn8oaPniR8W1w4MCE+vFtrt4OSgcdyvo6u9KUuL4EYqwB1/JBbV53LZ695wohO5zRkHwg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKe4TXnrRd26cp7nAR1UHNPV2L2zUnkRhJJ0PgzNv62+dsc9+B
-	vsS0nJtn9NQO83pPJlYODZMV1QZm8IJod7+GOHHK6Imh4UhhnuLr
-X-Gm-Gg: ASbGncuIwhKAYhFpTCJsVMMsfyrV9TSjBUwL++pRmCr4FRppY9RYGziZrcc/HhFsKEa
-	Ijmj4bn3iXWKHpu/Lp4X/57DzB/x6PHP8R9ACC+YWVMh4G+46en+oGdl5cjgEsll9G3YqMSL4K6
-	QdKEAuDqr3UROMVHgM4CFabXo7co8swzvvuGl9kJq/V8Gnsc3LlPoHySuyi12IpLn6VWSHcsuIs
-	T/RsnQG+dleZzUgVP14w+IDFebQaMK3YCUCwmEJ/Q+RHkm4ucLalPmheUO69Z2f7JUd9VMwtznl
-	z/0hImYkCnLz3h4=
-X-Google-Smtp-Source: AGHT+IEAJxSqcyMUNnCpMLo186xhSDWzWUuvAjMBJVZ3xE04BduVQdyFNrBSLeQFSFU1Gg/zWvAbWA==
-X-Received: by 2002:aa7:8b4e:0:b0:729:c7b:9385 with SMTP id d2e1a72fcca58-7290c7b9577mr14855357b3a.6.1734354396252;
-        Mon, 16 Dec 2024 05:06:36 -0800 (PST)
+        bh=r+JzeXaCBZ8Q0UvE6DTJsJh3vIeyP4Z/j9o/+bvB6LY=;
+        b=tczU0P6coS3RmgE/jLnsaImbdoxncrZaGgdusa6nS0tK85HXAXp8FtKkDTrXRQEwkO
+         fi5uZSa/RikRLTXqh53j+HUis2XdvsXk6u+mTrdG0aVjv65dGWqfiRU3y6oh5sB0yVz7
+         1u7P/xgYg5ge3lrqZvsJJpbIzTEUy2tuUeX94hAmZ/yipKrBlFzBDk3/r2HtdgOEHugM
+         fGOi0uxfed07YFkbh22Qe7m9ON3sn7akIhKYU3SWqZgTjLTEB2jGrcBMm2dv/DBXzS0h
+         pIhi9SXtitEmtVaVXSjTc36E8wr0CR/UMzzbwRoUuw/v9GR7QMOxwP9FWvkbym1y6PJJ
+         qC8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVy0j+cMi6/XZGHVqjtk1igBSoYU5rUMDkUainqkfPq1HkjeOekjNAnOcV0c1QIIVx62V+bJbY+Tkx+UJyv@vger.kernel.org, AJvYcCXMcbNkgQdiqW66nzo7Nw0/+BZv0gZKu3QaMQRSA2qP4lqAfyXUMI7r0kwGz7Xg9EjBFF1M4zJ0BW/6@vger.kernel.org, AJvYcCXiY8jHq8MxwyrTjp/zH7GtAMoApU2jfcZTy6sXR1F4vqO5Gm0W9ABQH/jfXn4f0Nn60EghkzguLHEm6yp+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6g8ttZM2/CWgTHbnO7y8PIZ9cHH0UNKbcSUHHwtrkfqq8w2Gr
+	KWklG0IihjSGtWdwSRlXhu+kUOk4alSvWTEubOj3NYWUQ6+BXhOI
+X-Gm-Gg: ASbGncv5hPVIWtv1Hml3skX0nhH/oVsE4EWnrY2980l6554GThoiQM8vSECTK1LrZ9N
+	PbWrItkzwtH3bc5Bz42ZTDG67Nm61TsxltlEZVjFC5iG+SuQRXWiLtz8DiPOkefoIvF4bCu+Eol
+	x0QvYvxhp9noEwyuE09e0Av8jG9mksyTkVtN1x0z6C86yEUtEV+X8drbYlllmefeibEV8v8a+hT
+	BXZUIaARQl3F5yheO/cRAdBtLsuWrxXrpZGqLVeBCBz4LouA30sj3HFTZA+ke+9XP3km2titcOP
+	BAXBoWUZzysdaBM=
+X-Google-Smtp-Source: AGHT+IH0es7NhMLXx74mVVyAti+SehWLoqo9cBImyHUIQ5+dUc6ZqcHnuPAZNQ0Njgwj+5RsawsQug==
+X-Received: by 2002:a05:6a20:db0a:b0:1e1:a885:3e21 with SMTP id adf61e73a8af0-1e1dfc18486mr18496775637.7.1734354407304;
+        Mon, 16 Dec 2024 05:06:47 -0800 (PST)
 Received: from localhost.localdomain ([180.101.244.64])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5ad0sm4651803b3a.56.2024.12.16.05.06.31
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5ad0sm4651803b3a.56.2024.12.16.05.06.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 05:06:35 -0800 (PST)
+        Mon, 16 Dec 2024 05:06:46 -0800 (PST)
 From: Tianxiang Peng <luminosity1999@gmail.com>
 X-Google-Original-From: Tianxiang Peng <txpeng@tencent.com>
 To: chandan.babu@oracle.com,
@@ -86,9 +86,9 @@ Cc: Tianxiang Peng <txpeng@tencent.com>,
 	linux-kernel@vger.kernel.org,
 	allexjlzheng@tencent.com,
 	flyingpeng@tencent.com
-Subject: [PATCH 1/2] xfs: calculate cluster_size_raw from sb when sparse alloc enabled
-Date: Mon, 16 Dec 2024 21:05:48 +0800
-Message-ID: <20241216130551.811305-2-txpeng@tencent.com>
+Subject: [PATCH 2/2] mkfs: make cluster size tunnable when sparse alloc enabled
+Date: Mon, 16 Dec 2024 21:05:49 +0800
+Message-ID: <20241216130551.811305-3-txpeng@tencent.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241216130551.811305-1-txpeng@tencent.com>
 References: <20241216130551.811305-1-txpeng@tencent.com>
@@ -100,91 +100,127 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When sparse inode allocation enabled, use sb_spino_align read from
-sb to calculate inode_cluster_size_raw. As now
-inode_cluster_size_raw is not a fixed value, remove the validation
-in mount code, subtitute it with some value checks.
+Add clustersize parameter for -i(inode size) switch. When sparse
+inode allocation is enabled, use clustersize from cmdline if it's
+provided and fallback to XFS_INODE_BIG_CLUSTER_SIZE if not.
 
 Signed-off-by: Tianxiang Peng <txpeng@tencent.com>
 Reviewed-by: Jinliang Zheng <allexjlzheng@tencent.com>
 Reviewed-by: Hao Peng <flyingpeng@tencent.com>
 ---
- fs/xfs/libxfs/xfs_ialloc.c | 35 ++++++++++++++++++++++-------------
- fs/xfs/xfs_mount.c         | 12 ++++++------
- 2 files changed, 28 insertions(+), 19 deletions(-)
+ mkfs/xfs_mkfs.c | 34 +++++++++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-index 271855227514..f276ccbe9d6f 100644
---- a/fs/xfs/libxfs/xfs_ialloc.c
-+++ b/fs/xfs/libxfs/xfs_ialloc.c
-@@ -2989,22 +2989,31 @@ xfs_ialloc_setup_geometry(
+diff --git a/mkfs/xfs_mkfs.c b/mkfs/xfs_mkfs.c
+index bbd0dbb6..b8a597d4 100644
+--- a/mkfs/xfs_mkfs.c
++++ b/mkfs/xfs_mkfs.c
+@@ -92,6 +92,7 @@ enum {
+ 	I_SPINODES,
+ 	I_NREXT64,
+ 	I_EXCHANGE,
++	I_CLUSTERSIZE,
+ 	I_MAX_OPTS,
+ };
+ 
+@@ -474,6 +475,7 @@ static struct opt_params iopts = {
+ 		[I_SPINODES] = "sparse",
+ 		[I_NREXT64] = "nrext64",
+ 		[I_EXCHANGE] = "exchange",
++		[I_CLUSTERSIZE] = "clustersize",
+ 		[I_MAX_OPTS] = NULL,
+ 	},
+ 	.subopt_params = {
+@@ -535,6 +537,13 @@ static struct opt_params iopts = {
+ 		  .maxval = 1,
+ 		  .defaultval = 1,
+ 		},
++		{ .index = I_CLUSTERSIZE,
++		  .conflicts = { { NULL, LAST_CONFLICT } },
++		  .is_power_2 = true,
++		  .minval = XFS_DINODE_MIN_SIZE,
++		  .maxval = XFS_DINODE_MIN_SIZE << XFS_INODES_PER_CHUNK_LOG,
++		  .defaultval = XFS_INODE_BIG_CLUSTER_SIZE,
++		},
+ 	},
+ };
+ 
+@@ -956,6 +965,7 @@ struct cli_params {
+ 	int	inopblock;
+ 	int	imaxpct;
+ 	int	lsectorsize;
++	int	clustersize;
+ 	uuid_t	uuid;
+ 
+ 	/* feature flags that are set */
+@@ -993,6 +1003,7 @@ struct mkfs_params {
+ 	int		inodesize;
+ 	int		inodelog;
+ 	int		inopblock;
++	int		clustersize;
+ 
+ 	uint64_t	dblocks;
+ 	uint64_t	logblocks;
+@@ -1055,7 +1066,7 @@ usage( void )
+ /* force overwrite */	[-f]\n\
+ /* inode size */	[-i perblock=n|size=num,maxpct=n,attr=0|1|2,\n\
+ 			    projid32bit=0|1,sparse=0|1,nrext64=0|1,\n\
+-			    exchange=0|1]\n\
++			    exchange=0|1,clustersize=num]\n\
+ /* no discard */	[-K]\n\
+ /* log subvol */	[-l agnum=n,internal,size=num,logdev=xxx,version=n\n\
+ 			    sunit=value|su=num,sectsize=num,lazy-count=0|1,\n\
+@@ -1756,6 +1767,9 @@ inode_opts_parser(
+ 	case I_EXCHANGE:
+ 		cli->sb_feat.exchrange = getnum(value, opts, subopt);
+ 		break;
++	case I_CLUSTERSIZE:
++		cli->clustersize = getnum(value, opts, subopt);
++		break;
+ 	default:
+ 		return -EINVAL;
  	}
+@@ -2594,6 +2608,17 @@ validate_inodesize(
+ 	}
+ }
+ 
++static void
++validate_clustersize(
++	struct mkfs_params	*cfg,
++	struct cli_params	*cli)
++{
++	if (cli->sb_feat.spinodes && cli->clustersize)
++		cfg->clustersize = cli->clustersize;
++	else
++		cfg->clustersize = XFS_INODE_BIG_CLUSTER_SIZE;
++}
++
+ static xfs_rfsblock_t
+ calc_dev_size(
+ 	char			*size,
+@@ -3517,12 +3542,10 @@ sb_set_features(
+ 		sbp->sb_versionnum |= XFS_SB_VERSION_4;
+ 
+ 	if (fp->inode_align) {
+-		int     cluster_size = XFS_INODE_BIG_CLUSTER_SIZE;
+-
+ 		sbp->sb_versionnum |= XFS_SB_VERSION_ALIGNBIT;
+ 		if (cfg->sb_feat.crcs_enabled)
+-			cluster_size *= cfg->inodesize / XFS_DINODE_MIN_SIZE;
+-		sbp->sb_inoalignmt = cluster_size >> cfg->blocklog;
++			cfg->clustersize *= cfg->inodesize / XFS_DINODE_MIN_SIZE;
++		sbp->sb_inoalignmt = cfg->clustersize >> cfg->blocklog;
+ 	} else
+ 		sbp->sb_inoalignmt = 0;
+ 
+@@ -4634,6 +4657,7 @@ main(
+ 	 */
+ 	validate_dirblocksize(&cfg, &cli);
+ 	validate_inodesize(&cfg, &cli);
++	validate_clustersize(&cfg, &cli);
  
  	/*
--	 * Compute the desired size of an inode cluster buffer size, which
--	 * starts at 8K and (on v5 filesystems) scales up with larger inode
--	 * sizes.
-+	 * If sparse inode is enabled, take its alignment as cluster size, as
-+	 * mkfs may change cluster size to deal with extreme fragmentation
-+	 * situations. For that case, sparse inode alignment will be set to
-+	 * actual block count of cluster size.
- 	 *
--	 * Preserve the desired inode cluster size because the sparse inodes
--	 * feature uses that desired size (not the actual size) to compute the
--	 * sparse inode alignment.  The mount code validates this value, so we
--	 * cannot change the behavior.
-+	 * Otherwise, compute the desired size of an inode cluster buffer size,
-+	 * which starts at 8K and (on v5 filesystems) scales up with larger inode
-+	 * sizes.
- 	 */
--	igeo->inode_cluster_size_raw = XFS_INODE_BIG_CLUSTER_SIZE;
--	if (xfs_has_v3inodes(mp)) {
--		int	new_size = igeo->inode_cluster_size_raw;
-+	if (xfs_has_sparseinodes(mp)) {
-+		igeo->inode_cluster_size_raw = mp->m_sb.sb_blocksize;
-+		if (mp->m_sb.sb_spino_align)
-+			igeo->inode_cluster_size_raw *= mp->m_sb.sb_spino_align;
-+		xfs_info(mp,
-+			"Calculate cluster_size_raw from sb: %u. sb_inoalignment: %u",
-+			igeo->inode_cluster_size_raw, mp->m_sb.sb_inoalignmt);
-+	} else {
-+		igeo->inode_cluster_size_raw = XFS_INODE_BIG_CLUSTER_SIZE;
-+		if (xfs_has_v3inodes(mp)) {
-+			int	new_size = igeo->inode_cluster_size_raw;
- 
--		new_size *= mp->m_sb.sb_inodesize / XFS_DINODE_MIN_SIZE;
--		if (mp->m_sb.sb_inoalignmt >= XFS_B_TO_FSBT(mp, new_size))
--			igeo->inode_cluster_size_raw = new_size;
-+			new_size *= mp->m_sb.sb_inodesize / XFS_DINODE_MIN_SIZE;
-+			if (mp->m_sb.sb_inoalignmt >= XFS_B_TO_FSBT(mp, new_size))
-+				igeo->inode_cluster_size_raw = new_size;
-+		}
- 	}
- 
- 	/* Calculate inode cluster ratios. */
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 1fdd79c5bfa0..47260d9c5033 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -761,12 +761,12 @@ xfs_mountfs(
- 	 * but that is checked on sb read verification...
- 	 */
- 	if (xfs_has_sparseinodes(mp) &&
--	    mp->m_sb.sb_spino_align !=
--			XFS_B_TO_FSBT(mp, igeo->inode_cluster_size_raw)) {
--		xfs_warn(mp,
--	"Sparse inode block alignment (%u) must match cluster size (%llu).",
--			 mp->m_sb.sb_spino_align,
--			 XFS_B_TO_FSBT(mp, igeo->inode_cluster_size_raw));
-+		(!is_power_of_2(igeo->inode_cluster_size_raw)
-+		|| igeo->inode_cluster_size_raw < mp->m_sb.sb_inodesize
-+		|| igeo->inode_cluster_size_raw >
-+			XFS_INODES_PER_CHUNK * mp->m_sb.sb_inodesize)) {
-+		xfs_warn(mp, "Invalid sparse inode cluster size(%u).",
-+			igeo->inode_cluster_size_raw);
- 		error = -EINVAL;
- 		goto out_remove_uuid;
- 	}
+ 	 * if the device size was specified convert it to a block count
 -- 
 2.43.5
 
