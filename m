@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-37631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791D69F4C79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 14:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5B39F4C77
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 14:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642CE170A99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A363B17428D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2F41F4715;
-	Tue, 17 Dec 2024 13:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BDD1F4E38;
+	Tue, 17 Dec 2024 13:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="G8yu90Zz"
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="CkAEg4in"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F8416ABC6;
-	Tue, 17 Dec 2024 13:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17641F4734;
+	Tue, 17 Dec 2024 13:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442270; cv=none; b=uEcKJNJ11UfGYBuBu/5EwRo/012pSBe30iUPW7Txth4GZ2VuGj8owX55RKNrFWYIzZAaAOGBraWC8CzidyR17l2Rusk6kJ7ZMjs93YD8clYTN+9kiNw1SHYUCoXcLN1z5CCq63boVuBd0TJFw9ofufVzIMNbZfa0yY6axHdnqYs=
+	t=1734442273; cv=none; b=olJeCJY/8pyIPjfUfluLls1IXWBUCXhK1tYlzYNk8pvYhFYUAFJOtQduGrAnRACyYbOWlWPjoxjBAiDB3fmOr8Lt3LyDezO7PnHwxnqWi0j7zpf+mmoMEanBKaYeRqCZHojJqZLqB2S1wPQEJOhQ6VV6H01801xBo98Yl+XqIQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442270; c=relaxed/simple;
-	bh=e6SbwgJYSQ9CJ0SBN51OGQlynKS9oYHjF7MzTzuVEzI=;
+	s=arc-20240116; t=1734442273; c=relaxed/simple;
+	bh=Y1cpj11DsAb1u83h2drZNa4ZJSTouUH0rHR750qW+98=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fJaWNtE0CTjVGyZPTMviFK/zkeIWngKuzHna3plV3PkGQ79CBAhoeQ0cSHUnI+wtx0XNRsjlsHMr/8nJORgcHRFTGAL9ADSAfcY4fTJtoKYq/CGw6QG4wqlcIf/zd6ny4zkzQAkfwscyjEp0N4mc9gyOkiPIF64mm23eBruQI6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=G8yu90Zz; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=ByVz3zcRrNdpBJUGWsJjU2XkuU2wUFcOzulDV7+AG8CF4x6jPSboZqLe3e+kuAUXtq+nKGK6djWEkNg4JN78qbeJr6IdBEGJFdc8gEK3KOnm+2f/7Hgwe3Kf8+9GplAYc9o3aPzvRtDyiCwQXjlGNwB8ddQ+1XN4mZmzW9q6d2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=CkAEg4in; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 00DE7C000C;
-	Tue, 17 Dec 2024 13:31:04 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C3A5AC0006;
+	Tue, 17 Dec 2024 13:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1734442266;
+	t=1734442270;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UWxfRKScvsoqp1CSGAFmke7D2A2VQHOyiGrAXtvWMPA=;
-	b=G8yu90Zzzg1+RM4aSogL7TPjyQH34mA6/C7U0BPpWYduOKGCDpjvrm0XIiAc6StXiRgj/c
-	dhwfWw67iiaZW17lHmWSJNMQ7/3RRuNiu+aqP9CCCL6DjIHwE8C+rVpfizQHarGR8gyT6h
-	zEu4Tx1KeUhxU1OMquWZ2uJz47qZl4JalPUo6n0Lf/Hb9qHfDevZtMQ3eMkbhzL9wZfMzt
-	FjMRkXYcYoJbk8i5kVnySwQavJv/Lr4mtO2vEnsyNTbkowbGdiacDbqr8O5+Tal5TuFaLt
-	lXykkmn06YyIHAVKtGe7Ltjf4yHPGGqJ7NJ7Kr5LjD5eREpJIDY+4T7I8GlZ3A==
+	bh=vIuLqH8rMsMHoCnSRb3wBLspzx/H/nMJsGAsARGV+jw=;
+	b=CkAEg4in2GlxQxqzv0Kj6mc9VNtskouF0R82e/Jye4WllK8+L57dr7Ni2qyI5uVFIbxcqb
+	2f3pM+0Okd97GanJiatDeoHqsm3g5lalSXMqKqS6HC9b0wL5uiy/oQaM+sZiQ12U7auNMo
+	DuAOPiXxrTSVctU9cyAc5vUsy7KjC7QLaCtNXI5QUq9CcRKrRSYlTylLNoOUunfPqk9AjD
+	NIly0SXwYurEFRkiOZvFKblv+gBe9cw/yrucayjakx606vkOeOjPs4fTVGB9taBTCaQRMK
+	MblhqHl2sED71SSWGoo1Ahc5yRhqluX9RRBjQHDdqrsnjeLeJM3xEIaOw9KPKQ==
 From: nicolas.bouchinet@clip-os.org
 To: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -61,9 +61,9 @@ Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
 	Neil Horman <nhorman@tuxdriver.com>,
 	Lin Feng <linf@wangsu.com>,
 	"Theodore Ts'o" <tytso@mit.edu>
-Subject: [PATCH v3 1/2] coredump: Fixes core_pipe_limit sysctl proc_handler
-Date: Tue, 17 Dec 2024 14:29:06 +0100
-Message-ID: <20241217132908.38096-2-nicolas.bouchinet@clip-os.org>
+Subject: [PATCH v3 2/2] sysctl: Fix underflow value setting risk in vm_table
+Date: Tue, 17 Dec 2024 14:29:07 +0100
+Message-ID: <20241217132908.38096-3-nicolas.bouchinet@clip-os.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241217132908.38096-1-nicolas.bouchinet@clip-os.org>
 References: <20241217132908.38096-1-nicolas.bouchinet@clip-os.org>
@@ -78,45 +78,41 @@ X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
 From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-proc_dointvec converts a string to a vector of signed int, which is
-stored in the unsigned int .data core_pipe_limit.
-It was thus authorized to write a negative value to core_pipe_limit
-sysctl which once stored in core_pipe_limit, leads to the signed int
-dump_count check against core_pipe_limit never be true. The same can be
-achieved with core_pipe_limit set to INT_MAX.
+Commit 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
+fixes underflow value setting risk in vm_table but misses vdso_enabled
+sysctl.
 
-Any negative write or >= to INT_MAX in core_pipe_limit sysctl would
-hypothetically allow a user to create very high load on the system by
-running processes that produces a coredump in case the core_pattern
-sysctl is configured to pipe core files to user space helper.
-Memory or PID exhaustion should happen before but it anyway breaks the
-core_pipe_limit semantic.
+vdso_enabled sysctl is initialized with .extra1 value as SYSCTL_ZERO to
+avoid negative value writes but the proc_handler is proc_dointvec and
+not proc_dointvec_minmax and thus do not uses .extra1 and .extra2.
 
-This commit fixes this by changing core_pipe_limit sysctl's proc_handler
-to proc_dointvec_minmax and bound checking between SYSCTL_ZERO and
-SYSCTL_INT_MAX.
+The following command thus works :
 
-Fixes: a293980c2e26 ("exec: let do_coredump() limit the number of concurrent dumps to pipes")
+`# echo -1 > /proc/sys/vm/vdso_enabled`
+
+This patch properly sets the proc_handler to proc_dointvec_minmax.
+
+Fixes: 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
 Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 ---
- fs/coredump.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/sysctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 7f12ff6ad1d3e..c3a74dd194e69 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -1024,7 +1024,9 @@ static struct ctl_table coredump_sysctls[] = {
- 		.data		= &core_pipe_limit,
- 		.maxlen		= sizeof(unsigned int),
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 79e6cb1d5c48f..6d8a4fceb79aa 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2194,8 +2194,9 @@ static struct ctl_table vm_table[] = {
+ 		.maxlen		= sizeof(vdso_enabled),
+ #endif
  		.mode		= 0644,
 -		.proc_handler	= proc_dointvec,
 +		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_INT_MAX,
+ 		.extra1		= SYSCTL_ZERO,
++		.extra1		= SYSCTL_ONE,
  	},
+ #endif
  	{
- 		.procname       = "core_file_note_size_limit",
 -- 
 2.47.1
 
