@@ -1,96 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-37638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F179F4DEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 15:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AC09F4DEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 15:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653011894548
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 14:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6048818917DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 14:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE991F543D;
-	Tue, 17 Dec 2024 14:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142081F5402;
+	Tue, 17 Dec 2024 14:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kBh1Ct1U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D451F4E36
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 14:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DA22AEE0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 14:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446104; cv=none; b=Y1T5iHeNMXSZnzvQTXDrMF03XBz2eKz9UkJ1AatCfCMK8nULE7I2D3tOaOgb5wi4uOIS56jWnnJYDgU8Cv3K3Rx6OeSx/DN0yvkBTqJb9jPaP0cE+CMO6qNfextcVppnUktkWdnmi4c7bmD1t5g4x92mmWVVJ4HP0tcj3148Xh0=
+	t=1734446175; cv=none; b=eKeLbdtN982fcCWzbFtyh+BKfunx1S9ft9FwxxSdpcBWXMASbLHAwEaQRpKRQuQafnbD4lWrFkGsR7tCnNesMNyfFednqvMtuACgZfboHKSxF7xkt2wu1l1xckyzxA53xslXfdyjH+XKvUVv2qal1tQHPR+teFnXLhQ0L3IHiTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446104; c=relaxed/simple;
-	bh=pJKKRQMMk6n5IDXs4b/KINw9ATda0wHsIoznO/vkOaw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=APO5sX49zh0rQMGyWLRHe5bgCYJfmJv87noanAPssTpSifF4D2ewfaH9b1hHhRd/7l0pO4hLTq+lYcaRQ/ramFRQACsjWRiKoN+yX/bc9NKnhBoYbphLzqjAYqUHX/uw4lAhWpBxGkamGOdRhnOlpmjawrUjxvsIyC57fng4AXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so50628395ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 06:35:02 -0800 (PST)
+	s=arc-20240116; t=1734446175; c=relaxed/simple;
+	bh=mNN4jwwOSEVrcbdPxCtxzgpwFbcuBCdAfH2BmGb/xXo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PUMUEObi+ZACmf46hfaX/+gVeo4noZD5lXeegImTehesKj73BQNXmbfJOk1RLME9BCAPXWo4hriHF/jnpJ0cTHcoVM7py+IcbuQkKZt7+iyJEe06mKdWbGczRD5wOm1p2F+ByTHGk6HM1ESz//v1T/Ly6Ot2j4V7XwrFPzWhEts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=kBh1Ct1U; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46677ef6920so44307131cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 06:36:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1734446171; x=1735050971; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNN4jwwOSEVrcbdPxCtxzgpwFbcuBCdAfH2BmGb/xXo=;
+        b=kBh1Ct1U8FVyAlnYcLAQNkJDKBSz5HGrVbjDXVtqaJPSpzXLboOmcDk3GvKwsypxDV
+         FqDLowEao0uDrTqmWxNDHqOPtAXd86oReeI+F5qHxDSAEE/Q5xt51E5B6NQ32D7/5oPd
+         DGoArmjJ7STc7kqLOR4g/X2zn+RfDGoEw8L/0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734446102; x=1735050902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIeMy+hsZP73590GRiY4sQU2LODFp6EkvQJk4gt6eQM=;
-        b=Q9HV67CAh64w656lSXSHmasX753VdZN5FlV9uUoT1kZBGwHxye/KQGd0ZHxkML65zD
-         kqNqxIGiWBsGDZmApJqhALE9lsOZR7Gf+uiTzXl8Z2vLtiViJ0H6soroJL4jZuMDP3RP
-         MLtSo8kUfbQc06L7cpuWf4IiFud3c2JqhK28kT+JdxVpSL+JsptMJvyUtdTk/phjckO8
-         YETytYk2ndmGmRsBvlYiYDsIolSXVYn2T2AL7rf2YgPIsmHv+BCNMU0r4HRLmG6wSoTZ
-         I4GInZAkv8fyutpYFIqDSrcdjkH2ER9WR1dYA1D5SxHTACHInWeqHXgY6YfLKwATK/72
-         qdhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXm+gyRwPwsZJvFJqBvNtF3P+g2KU294jVAANeFlL40Brp73wrJk5ur5nYHYir+Em7LdoMqnOyU1PzM0P+9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGdKM6x7M7CaYNaQruNVRnYhUWmcyTjEwcsNGKk4DK+87Qvg4m
-	KShoCjnoY3Icv3RW2Sz/KZgv2JhKpQKY3K+poF9Y1OvgRHHUWdxshCQV4M2QZz0SRXmsF1vpTXX
-	fmoS+moKJA1bbGOWQ3StDExXLDRsTsV6IHTCjEmP17LT9s+U3SnUUrgU=
-X-Google-Smtp-Source: AGHT+IHAEgscXePXWN79iyq6tD6Me7CrUi11jctcqyyCc1dUiPvYRvkB2f+WBDX0ToNEQXQblXMZ/o9M0zvckfQwqrSjgMsnRbcF
+        d=1e100.net; s=20230601; t=1734446171; x=1735050971;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mNN4jwwOSEVrcbdPxCtxzgpwFbcuBCdAfH2BmGb/xXo=;
+        b=HHpYStI+MS4q/Z2Rb8SZfRFpiGUN8IP4zzQI4uhaI+rQ+Bf6aTR3d3/UL1cBZHHu9S
+         oW78IDzF0BlWHBVFSL3d+mgmVkMCik/oTO0bDk6zTP6SEUwyVGzYJoUkNtLZN7G61ZhE
+         h1GqU49QYNV7gW/NX6ZEDaEhaM0V8DiavXPzKX77xiD2wyQShUBSe3ap8qHXmkIaFiW6
+         MxlGudRwHttW/4MiSU8PJ0X48u6x4nkmm4ybFDBxioriMNSX1ElgaZpvzFbcDiW9n2fY
+         dnA8oLMUS+Gvj5ginsrxtfJbz2CczhIzsyL9tq9B4jBB3yEQ1mB2sPHXlpwiPhi9Qx04
+         3rkQ==
+X-Gm-Message-State: AOJu0Yx0VNle9SN/U0kGH2NiHQB4Awox9R59uiTpNLwn3HzWCVzoDuuk
+	eqM7vuDQJIbi448pDA7ml7ccRiwsxLwJee7C5Ijdw3u2gS9Q3YFHD2ArRK/B6xHSBhZHXQ3k7kY
+	gpLcUDz5kodKj2U9MrZKJOpe+2e+WynP/vvLYfg==
+X-Gm-Gg: ASbGncuyGkl0qLxPyURNSYoqowg/xY+Zk+q6r2iphEKk7DR7OT1BJ9cuXxupNiTFXhF
+	D6OoHk7GImt3EQaxJ4FdrAMfn6pGnEc1bOtWyq/U=
+X-Google-Smtp-Source: AGHT+IG7ob/krk3VSKgX2ZFbnnJAHNGtXmOBbv9yAKHwh6bte/nEHrBcvvPrckuUU9LgtFcScAjnBgW0vCBLFQNGtYY=
+X-Received: by 2002:a05:622a:15d0:b0:467:5cfb:bd40 with SMTP id
+ d75a77b69052e-468f8dbed13mr55283791cf.19.1734446171567; Tue, 17 Dec 2024
+ 06:36:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4d:b0:3a7:7a68:44e2 with SMTP id
- e9e14a558f8ab-3aff243f5acmr153137225ab.15.1734446102117; Tue, 17 Dec 2024
- 06:35:02 -0800 (PST)
-Date: Tue, 17 Dec 2024 06:35:02 -0800
-In-Reply-To: <6741d52e.050a0220.1cc393.0010.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67618c16.050a0220.37aaf.019c.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in __find_get_block (2)
-From: syzbot <syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com>
-To: Yuezhang.Mo@sony.com, brauner@kernel.org, daniel.palmer@sony.com, 
-	hirofumi@mail.parknet.co.jp, jack@suse.com, jack@suse.cz, 
-	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	viro@zeniv.linux.org.uk, wataru.aoyama@sony.com, yuezhang.mo@sony.com
+References: <20241217-erhielten-regung-44bb1604ca8f@brauner>
+ <CAJfpegsn+anx7nHQbD7HCf301DyvaWqg-pAi6FUAgfhGLiZurA@mail.gmail.com> <20241217-tippen-medium-cae7a909222c@brauner>
+In-Reply-To: <20241217-tippen-medium-cae7a909222c@brauner>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 17 Dec 2024 15:36:00 +0100
+Message-ID: <CAJfpegs9YZsrmRfea1pOL2T-r4RznrrogbQOoj2+3v2TQumDYQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: use xarray for old mount id
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+On Tue, 17 Dec 2024 at 14:52, Christian Brauner <brauner@kernel.org> wrote:
 
-commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
-Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Date:   Thu Sep 12 08:57:06 2024 +0000
+> Right now, if I mount and unmount immediately afterwards and no one
+> managed to get their mount in between I get the same id assigned. That's
+> true of xa_alloc() as well from my testing. So I think we can just risk
 
-    exfat: reduce FAT chain traversal
+Okay.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=156b5730580000
-start commit:   f44d154d6e3d Merge tag 'soc-fixes-6.13' of git://git.kerne..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=176b5730580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=136b5730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1234f097ee657d8b
-dashboard link: https://syzkaller.appspot.com/bug?extid=3c9f079f8fb1d7d331be
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e302df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1265b4f8580000
+Maybe worth a mention in the patch header.
 
-Reported-by: syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com
-Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks,
+Miklos
 
