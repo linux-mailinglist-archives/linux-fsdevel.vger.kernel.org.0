@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2399F596F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 23:15:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E749F5980
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 23:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B0D67A34CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 22:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9184E169F0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 22:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7B41D9A63;
-	Tue, 17 Dec 2024 22:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE2D1F9F6D;
+	Tue, 17 Dec 2024 22:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HcLI10rf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AIt9gr5v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93201D5159
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 22:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701261D5AAC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 22:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734473692; cv=none; b=e/CoJocC7tzcsLzLYWDiI59l9e3GBBDG/LYYrGQ22yM96RtRkbUUoSzniMs76cMtYKG+m96XkXsVXQB02AlPlxtstQGwoi/KaJSg2t9tV6bCKnIkAmDicoM6iR7+4uWei6gUoG3AB5LW4+Ka1XZnROw2Au31xJHD9yCjfpNJ5nw=
+	t=1734474443; cv=none; b=oFyYuFD2ayLSCang6hMRn7AzdGX3P5EvfpVRZyLGD/ypCtaNSRTouK74hpTdGJcBryBuk8gRFpVMUM+38tYUQqj+CQiprnqD1j1kvjqMMxAsBmsbemzWgNVnNdsaCUV86G1wmsStlF33QHyQxNXRZ8GpEiMUksY+cdO4NWqZVHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734473692; c=relaxed/simple;
-	bh=C7WNlVEmJjhlFNyxh743Po7U6Z0u5qHtj09VBt/yqeY=;
+	s=arc-20240116; t=1734474443; c=relaxed/simple;
+	bh=06H2slDRygKzCmfmRsSPr7vcLYgfuymJUB01BSzf1yg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=csGbKeRJ0JApmqb4zEKXYOXYhyLOsaSptOa2ibZa5AC6TBuYDq9ggkrvDF1b9HTFVT+7RuU8oCzDw0hF52EILrhf0iKECXknIGiHaKlzBYdfbbBxLDMUvRDHviqmHuyXrf5UBmsuvRZLEn0qRHFNvtEcBs9080hdZuoSg6cMdKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HcLI10rf; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=mHmuoIkc+vchhlnPI9af3eN4DbxFjRCIcio+RfnnreS4t41lQK1BOMdiLaqUl51aNriz5lIjaxy7IH3k2U3gbemg4oplzxbHpyBZQDLEzNfXqYO9qulzRrY65EW8huvZQ5GARM78pSaETHBpOMOdtPrTb7METTSvmZNbVc+q3k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AIt9gr5v; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734473688;
+	s=mimecast20190719; t=1734474440;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4W/q1KrGX8XGQ17XCg/MjjkKWOXUGMRUZUVOWrHU3No=;
-	b=HcLI10rfdBbKQqidwhGKJZGVTB84ODZAh1gjceM76ogb6VTWjdkZwSLF92rLW3iIvbzeOT
-	HNA3Bq+s6mOCs/vmKcSgJ0ZaXH8SAXfh3zaQn2qt95Y3nIZYMrn4Q58tvKgme5QhqUuRc6
-	vQeRmbN6wPAJG1hErbhB6v70f8EXL24=
+	bh=4/O76bQ9DP7a5739+a84uc4ET8V42KerklZL0T+JTZM=;
+	b=AIt9gr5vCwXoB+yFGFqtQPZo4jsLV0RKFfV6eG22j3nVMSMpaIiQ+zjCPtXM8ytOe/bV9X
+	wK5MysxToXluTOLQyZGUhIn3T6vc+gXuaagqk8UXyimSgcs8X7dfudWgMsg6pW+dVS7APu
+	52yi+l8lVQDwu8SqGS6Z6jZJ8OsfBVU=
 Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
  [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-fgdji8QtOpmxOzgqr6DVmg-1; Tue, 17 Dec 2024 17:14:46 -0500
-X-MC-Unique: fgdji8QtOpmxOzgqr6DVmg-1
-X-Mimecast-MFC-AGG-ID: fgdji8QtOpmxOzgqr6DVmg
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-436379713baso19249095e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 14:14:46 -0800 (PST)
+ us-mta-601-2nkzR9AxNfqeEqxeigj-zw-1; Tue, 17 Dec 2024 17:27:19 -0500
+X-MC-Unique: 2nkzR9AxNfqeEqxeigj-zw-1
+X-Mimecast-MFC-AGG-ID: 2nkzR9AxNfqeEqxeigj-zw
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43651b1ba8aso3985685e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 14:27:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734473685; x=1735078485;
+        d=1e100.net; s=20230601; t=1734474438; x=1735079238;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=4W/q1KrGX8XGQ17XCg/MjjkKWOXUGMRUZUVOWrHU3No=;
-        b=EJGSzsN5d6+FcTiX+pUhuzNWNkOyRhoxf0a57dj5WD1iIpLUewCN+dKBkv0LhA1xXb
-         dl5YhS41WBfvyFLUtov7zE+2Ok4DLe+ViYJzihQP45RR8onKFejtUkWYCcWSHPWqKNvi
-         ZtFx0rPo572h0PBL4gSlZbc1RJS8DgJ4S3QB0zkn3F2h+nC5Z4aY9MYyUvgMSDvNiFQd
-         wZrKh35zNB6zkQP/uqLlgvKZ0jPN7N3gLfS0UHAw6dYXz+X6dhJZY2GfQZJBKSx0wc+U
-         HClIH1EzYNU/xNBkcpj2OIhMC3P4xSp+AQFJsaICUmbWLI71WvkZ6ikGWPMByFHTUaSk
-         w3kA==
-X-Forwarded-Encrypted: i=1; AJvYcCVY+cQq9mrHMr7yOeo03cjt/WCEzWvIiFVUo1l55e//T2r1MxooVan9EQjolDdyJP0ekzVSa8naHGqPUxA6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ4e1IkmyOaF1O44KQ+H8voAwOf5sPLtOIfCgGVkfIUChXzi2r
-	uZkvK7G4ntcYBmOQI7+UuwuAdZXCpxdrkjGYchMQsgdS6rLefj3IMdgf2NMyEMe6uzU6OxJOVt8
-	EZXGA3J8s/b6gFZ9gzljFv3/ctDjb/E+z3JhAYmrAESNwM3GCP3CYNKFTOsOFy9I=
-X-Gm-Gg: ASbGnctG9DNJkA+PBIgOyRwG7QdiJ3hyvFR/KRAfTBG8sdhYJlemgiDwOHBe5MYEcXm
-	YX+fGcFna5HI0vgBBSuDtM1Tg1n84uo5mPFZR8LsBJyPvIzdW5JqDSPWH4WbbmaI7yc9Zronw2B
-	2dzPvdsJr7u4UyfM0CQvpLFl5e76sevFgJFA5sjzZOjmqvqQbCuxBdJBHgnAuo9XOqxz8XE5oW4
-	cmUa3BEdyATiPfN1Y0Wn+zqgCvIvUWkBlqeq94AEzILP8Xz+gIZGQYsTAIa+j/B3KAoYdoGrIJH
-	6fhjD1O1qQfwoB8wXT/PPXtgeNkjGh3F5MitzJz8bbDxETB3SKl42jBizhf+1iYKEHp1aQFTuXz
-	mt3ZX0znJ
-X-Received: by 2002:a05:600c:3c9f:b0:434:f5c0:32b1 with SMTP id 5b1f17b1804b1-4365537150fmr3537725e9.15.1734473685480;
-        Tue, 17 Dec 2024 14:14:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGTA6KpAji94rWVq0XTa+DJffBW/rQwG7DLaTq8FXlBm90uKsIvAH/DN3eMrFmLxXFdurudeQ==
-X-Received: by 2002:a05:600c:3c9f:b0:434:f5c0:32b1 with SMTP id 5b1f17b1804b1-4365537150fmr3537595e9.15.1734473685027;
-        Tue, 17 Dec 2024 14:14:45 -0800 (PST)
+        bh=4/O76bQ9DP7a5739+a84uc4ET8V42KerklZL0T+JTZM=;
+        b=ak+uMaKGmQoZjsbyDaW3/brZHwlca+vF/US/q8L/8w7LYMw13pftbXmD3nCWIDdpmW
+         Dg4309gWJqAtZIfjJpN5aSw272wEtnszHqO6n00hupncAAA+tQnN3K1zz7y/IZpbMf0Y
+         5/4bEc5sDsIiWQQvK+ZGUVf2xAYHN1BJLKyrWu8nZx9e+Z8Zf3Dkx6Xd52fFHoRMwHIs
+         My0XQKz8sb7dGJPP2dkXrpoWEneA4pX6bTOSZ9UQkxMJoxuo1oAxNZ5f+kzC0A8Klr1D
+         ejmaOkFhwKhL468KTVRohN7wV7q7rAcxcIsLjhmbd1D3LKD6wL2cS6nxf9BsKdYCjm2y
+         zcfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEKpSNso5NeLQDmT1yl10OdqWnRJ8bFsZE7JIb8ArrvKwB3CpRfCdQ3yolbAcn4drEj5R9xZcrziWNZsb9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVn2NXQE3VpLk4prShR+qVGocjlp0OYJ/4vUkdohk84P5g1Q93
+	ncWa83ptIplZNYUeb5Jhs7JKrU7eW7jjRMR/aoJWx6u3CrIhfoy5usbzBSRBWU+ODDzZnLeaQNQ
+	5CVSbUowsfu0EAiid6ZBxtcL/2aYKaXfcVkU0bd8yI7kd7SG4IbN7XJxRaLia1PE=
+X-Gm-Gg: ASbGnctJGFAxH9QPzADfQPN0mD5FLTf0kOJDhvw6AWevVJcwJ60HHkjHmwUAOtBObFI
+	Zub2JBtJ/RBZlk/BvhTuGsPc7nNnfWPNXbmNECbHkc4iv/bzU9l042KVh4d7Xa4eNbls8k0vIlR
+	r1aIzb64ajMGBmLBKQx7iLsuoikVOu8t9Q904hJncUOP24SxBMxAwf41W6VHCjFOpSbJkwzA4Ad
+	PexocOAWXQR/Rdwo47juNfkTaaVkbUkHpTaJykw6xNhA7lbAv8WE4gCf7MndELGBqF4Cd/b2H1S
+	suMcgqRuWeOyXwv52xPnuqqkYMCqJ4Yv4JBTtevg1Z6VCjwE1ijr5WopJAJsIdjJmdBV+5UsvR1
+	AI7eCw0wY
+X-Received: by 2002:a05:6000:1867:b0:385:fd07:85f4 with SMTP id ffacd0b85a97d-388e4d64711mr382494f8f.31.1734474437978;
+        Tue, 17 Dec 2024 14:27:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHXkMWceKB4Pft4A5vtCS2fSCh+immbhibtyL2+AscRjp+IT+w8chlwsiKadTxAFDThwCk24Q==
+X-Received: by 2002:a05:6000:1867:b0:385:fd07:85f4 with SMTP id ffacd0b85a97d-388e4d64711mr382442f8f.31.1734474437093;
+        Tue, 17 Dec 2024 14:27:17 -0800 (PST)
 Received: from ?IPV6:2003:cb:c73b:5600:c716:d8e0:609d:ae92? (p200300cbc73b5600c716d8e0609dae92.dip0.t-ipconnect.de. [2003:cb:c73b:5600:c716:d8e0:609d:ae92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8046da0sm12634055f8f.74.2024.12.17.14.14.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8060905sm12357212f8f.99.2024.12.17.14.27.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 14:14:44 -0800 (PST)
-Message-ID: <359a1cf2-c5b0-4682-ba3c-980d77c4cfdb@redhat.com>
-Date: Tue, 17 Dec 2024 23:14:42 +0100
+        Tue, 17 Dec 2024 14:27:15 -0800 (PST)
+Message-ID: <4b5768b7-96e0-4864-9dbe-88fd1f0e87b8@redhat.com>
+Date: Tue, 17 Dec 2024 23:27:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,8 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 10/25] mm/mm_init: Move p2pdma page refcount
- initialisation to p2pdma
+Subject: Re: [PATCH v4 14/25] rmap: Add support for PUD sized mappings to rmap
 To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
  dan.j.williams@intel.com, linux-mm@kvack.org
 Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
@@ -107,7 +106,7 @@ Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
  linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
  david@fromorbit.com
 References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
- <aaa23e6f315a2d9b30a422c3769100cdfa42e85a.1734407924.git-series.apopple@nvidia.com>
+ <7f739c9e9f0a25cafb76a482e31e632c8f72102e.1734407924.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -155,172 +154,146 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <aaa23e6f315a2d9b30a422c3769100cdfa42e85a.1734407924.git-series.apopple@nvidia.com>
+In-Reply-To: <7f739c9e9f0a25cafb76a482e31e632c8f72102e.1734407924.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 17.12.24 06:12, Alistair Popple wrote:
-> Currently ZONE_DEVICE page reference counts are initialised by core
-> memory management code in __init_zone_device_page() as part of the
-> memremap() call which driver modules make to obtain ZONE_DEVICE
-> pages. This initialises page refcounts to 1 before returning them to
-> the driver.
-> 
-> This was presumably done because it drivers had a reference of sorts
-> on the page. It also ensured the page could always be mapped with
-> vm_insert_page() for example and would never get freed (ie. have a
-> zero refcount), freeing drivers of manipulating page reference counts.
-
-It probably dates back to copying that code from other zone-init code 
-where we
-(a) Treat all available-at-boot memory as allocated before we release it 
-to the buddy
-(b) Treat all hotplugged memory as allocated until we release it to the 
-buddy
-
-As a side note, I'm working on converting (b) -- PageOffline pages -- to 
-have a refcount of 0 ("frozen").
-
-> 
-> However it complicates figuring out whether or not a page is free from
-> the mm perspective because it is no longer possible to just look at
-> the refcount. Instead the page type must be known and if GUP is used a
-> secondary pgmap reference is also sometimes needed.
-> 
-> To simplify this it is desirable to remove the page reference count
-> for the driver, so core mm can just use the refcount without having to
-> account for page type or do other types of tracking. This is possible
-> because drivers can always assume the page is valid as core kernel
-> will never offline or remove the struct page.
-> 
-> This means it is now up to drivers to initialise the page refcount as
-> required. P2PDMA uses vm_insert_page() to map the page, and that
-> requires a non-zero reference count when initialising the page so set
-> that when the page is first mapped.
+> The rmap doesn't currently support adding a PUD mapping of a
+> folio. This patch adds support for entire PUD mappings of folios,
+> primarily to allow for more standard refcounting of device DAX
+> folios. Currently DAX is the only user of this and it doesn't require
+> support for partially mapped PUD-sized folios so we don't support for
+> that for now.
 > 
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 > 
 > ---
 > 
-> Changes since v2:
+> David - Thanks for your previous comments, I'm less familiar with the
+> rmap code so I would appreciate you taking another look. In particular
+> I haven't added a stat for PUD mapped folios as it seemed like
+> overkill for just the device DAX case but let me know if you think
+> otherwise.
 > 
->   - Initialise the page refcount for all pages covered by the kaddr
+> Changes for v4:
+> 
+>   - New for v4, split out rmap changes as suggested by David.
 > ---
->   drivers/pci/p2pdma.c | 13 +++++++++++--
->   mm/memremap.c        | 17 +++++++++++++----
->   mm/mm_init.c         | 22 ++++++++++++++++++----
->   3 files changed, 42 insertions(+), 10 deletions(-)
+>   include/linux/rmap.h | 15 ++++++++++++-
+>   mm/rmap.c            | 56 +++++++++++++++++++++++++++++++++++++++++++++-
+>   2 files changed, 71 insertions(+)
 > 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 0cb7e0a..04773a8 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -140,13 +140,22 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
->   	rcu_read_unlock();
+> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> index 683a040..7043914 100644
+> --- a/include/linux/rmap.h
+> +++ b/include/linux/rmap.h
+> @@ -192,6 +192,7 @@ typedef int __bitwise rmap_t;
+>   enum rmap_level {
+>   	RMAP_LEVEL_PTE = 0,
+>   	RMAP_LEVEL_PMD,
+> +	RMAP_LEVEL_PUD,
+>   };
 >   
->   	for (vaddr = vma->vm_start; vaddr < vma->vm_end; vaddr += PAGE_SIZE) {
-> -		ret = vm_insert_page(vma, vaddr, virt_to_page(kaddr));
-> +		struct page *page = virt_to_page(kaddr);
-> +
+>   static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+> @@ -228,6 +229,14 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+>   		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PMD_NR, folio);
+>   		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PMD_NR, folio);
+>   		break;
+> +	case RMAP_LEVEL_PUD:
 > +		/*
-> +		 * Initialise the refcount for the freshly allocated page. As
-> +		 * we have just allocated the page no one else should be
-> +		 * using it.
+> +		 * Assume that we are creating * a single "entire" mapping of the
+> +		 * folio.
 > +		 */
-> +		VM_WARN_ON_ONCE_PAGE(!page_ref_count(page), page);
-> +		set_page_count(page, 1);
-> +		ret = vm_insert_page(vma, vaddr, page);
->   		if (ret) {
->   			gen_pool_free(p2pdma->pool, (uintptr_t)kaddr, len);
->   			return ret;
+> +		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PUD_NR, folio);
+> +		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PUD_NR, folio);
+> +		break;
+>   	default:
+>   		VM_WARN_ON_ONCE(true);
+>   	}
+> @@ -251,12 +260,16 @@ void folio_add_file_rmap_ptes(struct folio *, struct page *, int nr_pages,
+>   	folio_add_file_rmap_ptes(folio, page, 1, vma)
+>   void folio_add_file_rmap_pmd(struct folio *, struct page *,
+>   		struct vm_area_struct *);
+> +void folio_add_file_rmap_pud(struct folio *, struct page *,
+> +		struct vm_area_struct *);
+>   void folio_remove_rmap_ptes(struct folio *, struct page *, int nr_pages,
+>   		struct vm_area_struct *);
+>   #define folio_remove_rmap_pte(folio, page, vma) \
+>   	folio_remove_rmap_ptes(folio, page, 1, vma)
+>   void folio_remove_rmap_pmd(struct folio *, struct page *,
+>   		struct vm_area_struct *);
+> +void folio_remove_rmap_pud(struct folio *, struct page *,
+> +		struct vm_area_struct *);
+>   
+>   void hugetlb_add_anon_rmap(struct folio *, struct vm_area_struct *,
+>   		unsigned long address, rmap_t flags);
+> @@ -341,6 +354,7 @@ static __always_inline void __folio_dup_file_rmap(struct folio *folio,
+>   		atomic_add(orig_nr_pages, &folio->_large_mapcount);
+>   		break;
+>   	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>   		atomic_inc(&folio->_entire_mapcount);
+>   		atomic_inc(&folio->_large_mapcount);
+>   		break;
+> @@ -437,6 +451,7 @@ static __always_inline int __folio_try_dup_anon_rmap(struct folio *folio,
+>   		atomic_add(orig_nr_pages, &folio->_large_mapcount);
+>   		break;
+>   	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>   		if (PageAnonExclusive(page)) {
+>   			if (unlikely(maybe_pinned))
+>   				return -EBUSY;
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index c6c4d4e..39d0439 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1203,6 +1203,11 @@ static __always_inline unsigned int __folio_add_rmap(struct folio *folio,
 >   		}
->   		percpu_ref_get(ref);
-> -		put_page(virt_to_page(kaddr));
-> +		put_page(page);
->   		kaddr += PAGE_SIZE;
->   		len -= PAGE_SIZE;
->   	}
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 40d4547..07bbe0e 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -488,15 +488,24 @@ void free_zone_device_folio(struct folio *folio)
->   	folio->mapping = NULL;
->   	folio->page.pgmap->ops->page_free(folio_page(folio, 0));
->   
-> -	if (folio->page.pgmap->type != MEMORY_DEVICE_PRIVATE &&
-> -	    folio->page.pgmap->type != MEMORY_DEVICE_COHERENT)
-> +	switch (folio->page.pgmap->type) {
-> +	case MEMORY_DEVICE_PRIVATE:
-> +	case MEMORY_DEVICE_COHERENT:
-> +		put_dev_pagemap(folio->page.pgmap);
+>   		atomic_inc(&folio->_large_mapcount);
+>   		break;
+> +	case RMAP_LEVEL_PUD:
+> +		/* We only support entire mappings of PUD sized folios in rmap */
+> +		atomic_inc(&folio->_entire_mapcount);
+> +		atomic_inc(&folio->_large_mapcount);
 > +		break;
-> +
-> +	case MEMORY_DEVICE_FS_DAX:
-> +	case MEMORY_DEVICE_GENERIC:
->   		/*
->   		 * Reset the refcount to 1 to prepare for handing out the page
->   		 * again.
->   		 */
->   		folio_set_count(folio, 1);
-> -	else
-> -		put_dev_pagemap(folio->page.pgmap);
-> +		break;
-> +
-> +	case MEMORY_DEVICE_PCI_P2PDMA:
-> +		break;
-> +	}
->   }
->   
->   void zone_device_page_init(struct page *page)
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 24b68b4..f021e63 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -1017,12 +1017,26 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
->   	}
->   
->   	/*
-> -	 * ZONE_DEVICE pages are released directly to the driver page allocator
-> -	 * which will set the page count to 1 when allocating the page.
-> +	 * ZONE_DEVICE pages other than MEMORY_TYPE_GENERIC and
-> +	 * MEMORY_TYPE_FS_DAX pages are released directly to the driver page
-> +	 * allocator which will set the page count to 1 when allocating the
-> +	 * page.
-> +	 *
-> +	 * MEMORY_TYPE_GENERIC and MEMORY_TYPE_FS_DAX pages automatically have
-> +	 * their refcount reset to one whenever they are freed (ie. after
-> +	 * their refcount drops to 0).
->   	 */
-> -	if (pgmap->type == MEMORY_DEVICE_PRIVATE ||
-> -	    pgmap->type == MEMORY_DEVICE_COHERENT)
-> +	switch (pgmap->type) {
-> +	case MEMORY_DEVICE_PRIVATE:
-> +	case MEMORY_DEVICE_COHERENT:
-> +	case MEMORY_DEVICE_PCI_P2PDMA:
->   		set_page_count(page, 0);
-> +		break;
-> +
-> +	case MEMORY_DEVICE_FS_DAX:
-> +	case MEMORY_DEVICE_GENERIC:
-> +		break;
-> +	}
->   }
->   
->   /*
 
 
-But that's a bit weird: we call __init_single_page()->init_page_count() 
-to initialize it to 1, to then set it back to 0.
+This way you don't account the pages at all as mapped, whereby PTE-mapping it
+would? And IIRC, these PUD-sized pages can be either mapped using PTEs or
+using a single PUD.
 
+I suspect what you want is to
 
-Maybe we can just pass to __init_single_page() the refcount we want to 
-have directly? Can be a patch on top of course.
+diff --git a/mm/rmap.c b/mm/rmap.c
+index c6c4d4ea29a7e..1477028d3a176 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1187,12 +1187,19 @@ static __always_inline unsigned int __folio_add_rmap(struct folio *folio,
+                 atomic_add(orig_nr_pages, &folio->_large_mapcount);
+                 break;
+         case RMAP_LEVEL_PMD:
++       case RMAP_LEVEL_PUD:
+                 first = atomic_inc_and_test(&folio->_entire_mapcount);
+                 if (first) {
+                         nr = atomic_add_return_relaxed(ENTIRELY_MAPPED, mapped);
+                         if (likely(nr < ENTIRELY_MAPPED + ENTIRELY_MAPPED)) {
+-                               *nr_pmdmapped = folio_nr_pages(folio);
+-                               nr = *nr_pmdmapped - (nr & FOLIO_PAGES_MAPPED);
++                               nr_pages = folio_nr_pages(folio);
++                               /*
++                                * We only track PMD mappings of PMD-sized
++                                * folios separately.
++                                */
++                               if (level == RMAP_LEVEL_PMD)
++                                       *nr_pmdmapped = nr_pages;
++                               nr = nr_pages - (nr & FOLIO_PAGES_MAPPED);
+                                 /* Raced ahead of a remove and another add? */
+                                 if (unlikely(nr < 0))
+                                         nr = 0;
 
-Apart from that
+Similar on the removal path.
 
-Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
