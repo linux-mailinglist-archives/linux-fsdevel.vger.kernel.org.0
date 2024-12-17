@@ -1,92 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-37615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514839F4583
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 08:52:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0809F4599
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 08:59:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10CC1188C886
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 07:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C7616CA10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 07:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD701D5CFE;
-	Tue, 17 Dec 2024 07:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A497E1D5CFE;
+	Tue, 17 Dec 2024 07:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nawwXJN5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iia/LHYo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD6515624D;
-	Tue, 17 Dec 2024 07:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08986A29
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 07:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421916; cv=none; b=AMTEEwugeaiMc7ytkGfGozgWHCuneSGLlhfhHpjhMyguOKjwXsgiMrwfnIrXB/aQ1n72dfCA8Tl/TYjzAEfwIVnIFcytXLI95RgScVROZ9A9aojr7556BaWwPJQB6rQFWpPokvkg2ifqvWYkV0zgOBpNvch9+RkH9zRz/yZyTC0=
+	t=1734422365; cv=none; b=s0YM4cOA0BYFKtpAXnAs/Ux02bdip8Uy4GuJ7wd528aXvW25VY9Asx9WUy2kKPPcmojf4AwRakKaPX+SZSZPxdLYri2LD0IZbrhXoQjqPTBAmkUTH1VVG/C6LxDdV4GLUuzxp94VLfqxCAUrJkqPwUb/HGTTgjgRxBSlH53v7+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421916; c=relaxed/simple;
-	bh=W7u7NrNIt6wEF6JH3dnaSIkQytYOxlYwLmxwNTHF0XU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=MqqPyicKYjMO/QVCECi4/7ZVOqD2Y11qLNAegduNp2XnQfgc7NfRPnFuQ4IQlYNpr9b//TOjl5iU8WqJgXxG+AKdYb8RPMkyVANQMpkinaP3GSIJoz9TepYPino2RHvRzlQdUM5ctQWB/Ku2rPdZUbLJLp11AS4coNFR2aAcIeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nawwXJN5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6378C4CED3;
-	Tue, 17 Dec 2024 07:51:55 +0000 (UTC)
+	s=arc-20240116; t=1734422365; c=relaxed/simple;
+	bh=l0ixlBpfwnrUpyWzHvznw3mlye/aDEeyyEP5BZhg5bA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJGEW1p+BAUqucxXp+f04CQseH81FTqUI5b1G+15UmpZ2OIpagTHNhpa+2yKiNSpOIl5RPPKlmi2/++z4IZ8P6bsVbHNFduUBxLk4CglUeEhAdUjz4V262mFcBZMrFWSzWN3EeFBbhjvHnigwYqlk+puQsyMgDrOic5pJdrKNUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iia/LHYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D65B2C4CED3;
+	Tue, 17 Dec 2024 07:59:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421916;
-	bh=W7u7NrNIt6wEF6JH3dnaSIkQytYOxlYwLmxwNTHF0XU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=nawwXJN5SgUl99Yi6ymd3rloqO97qd3jMRK6koep+pMWnljWNfFpbm89bmKUC+fHW
-	 Zpw06/nxYEXMUX4ZRtFWeSLDx8tzpBynIINdK/Un7erHvqeQwX5dVBw3HSa1tQRwQv
-	 AwJa8FLXRvD3hbRhGYNC5HeS0xIzz3+5IusZ44xydG6Qydl3ZJ1MmcTqwMzLSqhAxw
-	 45M5YU+99EgaVeqMocSCfwfJsCoo11sxDJWBOi/oI0pTrFc7WesVGsDissWRQozNUT
-	 F7SM0z7nGDlxhulMXaJibTgH1PTOOkKZ1bxro4CRxGYj1okSJ8CdU2gC4kKL5/L3ZY
-	 nem64fEonWgbw==
-Date: Mon, 16 Dec 2024 23:51:52 -0800
-From: Kees Cook <kees@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-CC: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] inotify: Use strscpy() for event->name copies
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Z2D6FzPgomC442vW@casper.infradead.org>
-References: <20241216224507.work.859-kees@kernel.org> <Z2D6FzPgomC442vW@casper.infradead.org>
-Message-ID: <41850E19-F71C-4D69-91E6-7B095A9FFD5C@kernel.org>
+	s=k20201202; t=1734422364;
+	bh=l0ixlBpfwnrUpyWzHvznw3mlye/aDEeyyEP5BZhg5bA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iia/LHYoWnQlt6pn4x0hyA5rYJnA1wAq4FPOeUmd29tFOaA/erZwtlzzEkAtMJ7Zi
+	 WvteQbKrzfU0gIw1ccvpNryaBvCL8CPWJ7HdIyNkaLOMrX8CUnSYGBOxHnYKqqY05/
+	 XqI3KoUQ8ZgYClNbbnGi5CXtkvmI4XQ5e6upbppBFakgH4pfDKriQZhdvc/VO1EFnS
+	 cFlDO1G9YaHh03FiB1X4uzTjjXhzw3j9pmVJJIgG0eT/2XAYNJPjx1hG7hgCiR3eoc
+	 hOGeGFtn7hVr5DFOOj8s78OVkkAY3eRc+/9DZm/+OYRY/terqUc2VqOi/38MZFmL02
+	 a0vfWRbLrR2lw==
+Date: Tue, 17 Dec 2024 08:59:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>
+Subject: Re: [REGRESSION] generic/{467,477} in linux-next
+Message-ID: <20241217-ansturm-hallt-2b62fa6739de@brauner>
+References: <20241217060432.GA594052@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241217060432.GA594052@mit.edu>
 
+On Tue, Dec 17, 2024 at 01:04:32AM -0500, Theodore Ts'o wrote:
+> For at least the last two days, I've been noticing xfstest failures
+> for generic/467 and generic/477 for all file systems.  It can be
+> reproduced by "install-kconfig; kbuild ; kvm-xfstests -c
+> ext4/4k,xfs/4k generic/467 generic/477".
+> 
+> I tried doing a bisection, which fingered commit 3660c5fd9482
+> ("exportfs: add permission method").  When I tried reverting this
+> commit, and then fixing up a compile failure in fs/pidfs.c by the most
+> obvious way, the test stopped failing.
+> 
+> Christian, could you take a look?   Many thanks!!
 
-
-On December 16, 2024 8:12:07 PM PST, Matthew Wilcox <willy@infradead=2Eorg=
-> wrote:
->On Mon, Dec 16, 2024 at 02:45:15PM -0800, Kees Cook wrote:
->> Since we have already allocated "len + 1" space for event->name, make s=
-ure
->> that name->name cannot ever accidentally cause a copy overflow by calli=
-ng
->> strscpy() instead of the unbounded strcpy() routine=2E This assists in
->> the ongoing efforts to remove the unsafe strcpy() API[1] from the kerne=
-l=2E
->
->Since a qstr can't contain a NUL before the length, why not just use
->memcpy()?
->
->>  	event->name_len =3D len;
->>  	if (len)
->> -		strcpy(event->name, name->name);
->> +		strscpy(event->name, name->name, event->name_len + 1);
-
-So that the destination is guaranteed to be NUL terminated no matter what'=
-s in the source=2E :) (i=2Ee=2E try to limit unlikely conditions from expan=
-ding=2E)
-
---=20
-Kees Cook
+On it!
 
