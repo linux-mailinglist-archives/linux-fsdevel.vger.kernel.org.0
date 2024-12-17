@@ -1,121 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-37665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D369F5910
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 22:52:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C44F9F5964
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 23:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A6457A3801
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 21:49:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236521883254
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 22:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFD11F9AAC;
-	Tue, 17 Dec 2024 21:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98081FAC34;
+	Tue, 17 Dec 2024 22:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="N4D7zIa5"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Dt3B9Gv7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic303-28.consmr.mail.ne1.yahoo.com (sonic303-28.consmr.mail.ne1.yahoo.com [66.163.188.154])
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BC514A0A3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 21:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FC61FA8DB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 22:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472177; cv=none; b=NyrD0vAqOZ6oIubw4SOuFH5Os1LojMLOev+XpX80/MiT5Ehh1E+Si1etZ9OStdoFcB47nkNjowMOvTCJgOp9jAIhspwgfU/+dQcvU96II8AsM1XBun/gbBQvOhLQ9X24Hx5x7K38Ybo3uuIAMaO/59FsT761fzBqCu56lJgu3aY=
+	t=1734472805; cv=none; b=qi8Ihb7zXTsR80a63ohhii3IhSPDMHCLqkXrjItsyitrFQN4EELJRI5uhCpuliDkB7fzaNgm1bCDCTaIBIYXlvWtclefu9vy4/SgxvjZMUkOWH3hpVtEVMVyoe7kttVFPXFWunxdWIpHASx4R5WfdxzOaP63Q0kUDEzvsj1GJgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472177; c=relaxed/simple;
-	bh=EpJAESYstREUkUwzWHiD+ccRjjVprfi+ihxLTuTqk3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYWf9eOA3lRs4vjmTl8Lk9E7eYm4TCbF+RGKE7hGPLlPd0tpS6YCxSG0ysJR0nrVSw2re0ts9NcGgbR7zT0sRxAWWnnfFMQ06YpaOhDTGn8yjsmwenrzRNpTYp2UMMGe/p5hMyO7CHoBBPUruJ650c3xwJU2qdtgTFkhTcur3xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=N4D7zIa5; arc=none smtp.client-ip=66.163.188.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734472174; bh=MFZnnZvpOi5fa2Z3TyuZYvU1E7VYj06cS2HrX4jXJ4s=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=N4D7zIa5XFSgE0PW2MvMZcah1+iZtHV0dbLJMnwfsiX+6JDbBEgkOVF/DAtiTxQuqKGVJLj4WplSr+ZmsjJWOZhbnv+z1i9r+G41dXCE2B+LYXDWjkWA2nMhH6iNOLbibErz0wwK6EWIOr3VcVlH6EPRs9V6edEZsWXzFz7tARj8Y9pbzIEA4jZL5Ce2yNW6yE5U4hRpzAd/oL0laOtfRvHfM7M4mM4CiCQAeAtM5QxiA4T6K3+dHQ44H76J63zXnt7Ru+VdspEHeMuDC4dZ5IWkpdJdnwfptkiOJT/2hsErtBniE7gaygoZwWqv7WdjUJtwPmw+oF0vgVydjtvrwg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734472174; bh=eIw+tf1Q7HnCZT6euRahzMN768QkpMlzFzRYqZKpwdO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rHmnUp7hLkvvPEJpptNivT4a0vodtW/SWblU9PsNXD6me74hrTZqYNOyAeVCFftFTHmC3VOU/GXtCZ9OsD6gRs3Y3pNcmdDCBCRicLA1iTDUrPLM/uKYgcnmPmuS7l5ZZPD3WN3DMZsmUXJHHCj05HJ6FN1AhWf1mY/aNMzgRHp2QupNhhBCBnNc1e3SjobL/z+fJNLUJIQLUNb0Zs3iaL2AfyXNlIIZz59WU/HC2JoWhgyddRBm+KengXZs216YqPdmiQyZVIv4+uwuFNI6eHfSflaz5ps7Xx1pe2nzBL8bS8TiGVwxybwZdk6BPifyAWEZuwDO4sYnmwzgmGmoFQ==
-X-YMail-OSG: QViyLlAVM1lqRfNBRuqD07fIT8i75AiBHNyy9FcnQQCpVFz06OPPYNWXIe_G.7x
- p6CB371qA2g4xtGVOF7tAMSnFL4Jb1STwdp7HX7NEjqS1MciGwg.ZSZsqBAeHLigPPhPdq5QEFyy
- Qkls.lpdRfouSH_xy9_.z2AuMJUxb6ncK7S1dPuWyMr6jFrmvXqjtccKSQfe0laDWbFeAadPzhmK
- VArGGxWIXpd35cYl60NPjxmJhcJ3l67TLJZZ_0ueR4NnVItA0U3GqOsFkooirayg7xVhRxhy50HZ
- RHK7i8FFO_RWITDopFsiKlv2lV7WEyi6MB7zHsJ5TlNa3wFWF_jiqOFtPAmpOv8E3gxnWTWmPBPI
- Vp7FzMGMVDs3JDvZVS0BfLCnAYKXcppf7yWxBNrVyJv4ZCMJGl0nEUvZryly._YZ8KELz7LrLF87
- rNrjpJ4aS.HevsykZ0zNoLBNBUvMRIGuX.x.2cPc4i08xajKuvcxUV8emhSRAacLtaD8sldKDokA
- tZ_pgG7hCdbPW2t8nwnP8xhHsf6f.WjyjUJgt6wr2lDeGNeS2XUuEgqyr0DEevb3GXfPFRDq8Y1c
- DDMEEB.F3HUEKHciTsLMF0D_VsyPG2obMHvmY6rsi7Om3hh3.1t9dqu1yLKIbiz0oU3dmzvvDNmf
- .diAzTbtGqeL5NTwUr7rePTXmUQ8NSAcq_naO7U8ievh49Uv26Fv6Bhki.8Ltum7kl4kwig5F5XC
- FLrXzagAOOq5VUpP1wvQJNBOv2WGSny.Mn0DS2NYBdNUA5NcvGefgAYQMH6jdpzYnpvSVkLfDV3C
- byz5xVnInBA72JMzyEsfigFMCh4vVs3v4BDZL3lvVb2vobBIb73cRKBMe6o6Wt7FFaSjx6LpRP9z
- XzOs3IYBvqm41_ebO5jgrXwHAJPYkcBtpfDUTpwd3apOYKQrrvikrZ86_UDQJGOfLwsZjeENQVF9
- VQCXJlCyJVUfZ8htUL8B5aDZItS8tmeLhVzWzUkrMqrtu2po3vNSHceepqSqCTxqTs9po.PmU4LO
- axee3KxuXR9vfPWL1SdZHt6DC.rl5qU4tTG1zOPBWhZrDAlZVugXgFVPdmnMpjLP0wGbt8492uTd
- H1STJby_Sbm2.qGYykC.FJkMbp6lQi_..aLfdYNMH.sWnzV1aoQRTcwJgveLal5XxES0y3HnGUYS
- RWIpbKYCtSk82OkDLMKAYI3JBmzHYYpvm.JYbzr2mtJ3rtFG_DrAOaqwW5EWKz4damNKRj01nf22
- RvgH9UuqzUUzYH4.CEnCUy3WQk2TYAhF5.Z3FfTS75YvRU4j3j.3LbFi4n.M_CJ6nnWSWYDN9WTw
- 2MrSzbgU1lKJ3AXzFEs2UXtd6InzfHtsjtkY5rO3ZNVu5qSaJyPqWrqKLASuNLp8540ZKnK.79QV
- Sr6gUMcKqIPi8YSNOIhLnO5Dj1NlZ4bH4pvBxpNSAts6FZD0EDtgY6tRCrwy4TUiofD_Vvf8NHA3
- xjV8CMEzmYldEfL2TaVxRQ2bmCMzL9qU_g6Os41Dyiek5bXDlhSvvPZIoZxPclmxRZXXsZap.NET
- jZOHJJpk8D_nSvacYWyhw1gSfR3kykbygFJl6by76jQkpZR7hIiDPPiWV0zf2KeSbHoGlaPDnOBK
- ep6Bo2rnnDAyjdGOLaLawVp0U2IHbDdwh5PiXUZHrgKQ0gw576S4.ICA9gjXzaRjobweipFouQqp
- VKOlxILgPRauXeU8Kl0mcuwsNL1nzoyuwSF1HqpRrThos4pvSEUL1h0M7qIVNLTAAxj6rMlKakor
- 2dCOalysWJRCF9jI9x8o0flw6zAr9sfyGh0aeL16e_c.UwXs6RSfdbq5z13WRVplFvbcmmBT2AMg
- beteEiamPHFB08geRuzCFDU6Guw9NBm1VqSY4A7wMZVbjwlggaC_N3UB70uy8xIDXBjp.Xqh1DRT
- cPptzRUU3gJupoygdhm7BY64GjxW8H80znYV9HDJ2WiBV1ftkFGKosoAJtmYcKl41ybgZlxmmz0U
- hRurcqBebQtmmnKzKISBz5k_jfpbb7aPYV0E744XQtgjATZl_etMQwnNs.B1SgGBEcsfm51Vsg..
- Tx._eAxwsFALqxPh6YlfVrMKxJW5BCBs.99gdoJWwOoOGd0eX16Wa0XjtD.S173kLu6yHORyjvDM
- .E900in7mtHnKDdEQFk7rEmPq_yGtYLWW7V3PCSTwx5AatUjIJccwVDquhu5TBOAL6uTml9FhAJ2
- J8PrrDJTO2QeZ3jvhJWHVp.P_VrCz9XryZYIMEp.9ZGuuhA4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 40b94c5c-efe7-4bb5-8b7f-63e1369507de
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Dec 2024 21:49:34 +0000
-Received: by hermes--production-gq1-5dd4b47f46-wrqn7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 82894e06ce5306d6207d6522cf15808a;
-          Tue, 17 Dec 2024 21:29:17 +0000 (UTC)
-Message-ID: <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-Date: Tue, 17 Dec 2024 13:29:15 -0800
+	s=arc-20240116; t=1734472805; c=relaxed/simple;
+	bh=RX/zhaiq0L9l8ly9a3z2OFOaSe+5bBHH/nUVnvYlvXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HU7CWL1YMmrlgtvGTBGl2b4gJQbu87C1aoK3ipmnp2ogbNXBTAMD5nzEzfpHWlEMAHsfeqJGxtZvfLyAAnkviaylfua5mQ+UZZgbZx2pjgmny6yZzm9uN28YL/NPO/vZdQquL0eaLO8sVT5DxWxwz3lG01bPffhaFvZ5LqNow50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Dt3B9Gv7; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e479e529ebcso2676695276.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 14:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1734472802; x=1735077602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftdzShgtX/tEAx6aAhp++i3l0eubtYOM8tBAmWgBMfE=;
+        b=Dt3B9Gv7TgfxnTpwvvWDpvMtVKgCNSQXIdGn2cDp+WAZiKRU1+Sl/btlbAFtGJkDUO
+         7ftqo0GX7GV56dIB5CAnJpTKDklKfL+QMPnD9LTGlnSegpXwB/SCiJTFFrGEfBUV40Z7
+         DdaTSkT0YtYdhuzZrNmdGfw5C+JSoxdJNeaXdP/Et2vZENVZBahV+7cllhWFoupSHCPn
+         aibJhEsPsPcWRs4yMiS060XWLD25cfNreE9Y4eU46v9cCgKS1inNqsjwXYkSIrMrCUt7
+         TFOzRLfz5qVudqD4DUme7zAI96PPs1eTO5ZFOn/mwyaUzitABONMhcZyvqkOt4A4SEvP
+         afBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734472802; x=1735077602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ftdzShgtX/tEAx6aAhp++i3l0eubtYOM8tBAmWgBMfE=;
+        b=KQrLm+FHGfFKJZS3bmtr+rdfGuw1sTw6mxEaSV3o5QjuTqS87Hr5O4NGUdOCq+KmvD
+         Ms4fLMtB2kawdsj2C63uGFo80CvEYBjAqkUqTwe35H3xHtpSo7FbtgOToaykrNFx5oqx
+         /6j/+4pSPTBNBpexGEXaAJ8j1Mvp3pWGIIRmYjmiy4vJ4RizikCLrvXVBbArCj5juQnZ
+         yW8SFS2jOrAgg8oaO9QmGt+Gb4vvVnjGqypF5Fn/KxefrfdO3S2AxMSvysTN55kF9tGC
+         cPbi+h+Bb/Bdm4LkOxH5rJnwEHQLjN9IRAHLI2D9OXTzg6leVXRFjrMzJ0RZI/xQ6adp
+         PB7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ3QlmVL9bZT88Qvpk9Q4gIZrkJOvAfWMShFvdxDGa9m7g7x5WGfO3C2fb6pKCuNfQaYMYGk0LDZhj9/mH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0BRsIAHUaz4dhPCmLlD5TKYxRTPVD/lMYBkaQMMQ5wadlJQih
+	Mw8QreaI3hq3WESAadYXBv31CF9/tYGG3jyRqYfWUEfs8i1erTD2a5liTLMKkG/ZrcrnD7D0oAZ
+	pgo0BpTFr13Q/9y9Ko26Av5mkhD03OhsAOqKJ5u9jfzNjZ0G0cA==
+X-Gm-Gg: ASbGncvWqIcGCITvyyYK/mgMUBlhBqQ0DwfNXAA8x2Y1KiFB/L8TWQC1n1puxwW9CT0
+	Hmx3qGGc0sxRb8L4YFjFdKufvpmzuMBl92ZEs
+X-Google-Smtp-Source: AGHT+IEU7ZqkpQLdLUs+NmpFyHzcV/krv50XAmUj5bf5ADbtRq+UVr88p+tUmkW66IRG+xuXXznG0o19SeGqPqHFkkQ=
+X-Received: by 2002:a05:6902:2204:b0:e2e:440e:d29f with SMTP id
+ 3f1490d57ef6-e5362122e49mr679348276.20.1734472802619; Tue, 17 Dec 2024
+ 14:00:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20241217202525.1802109-1-song@kernel.org> <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
+In-Reply-To: <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Dec 2024 16:59:51 -0500
+Message-ID: <CAHC9VhTAJQJ1zh0EZY6aj2Pv=eMWJgTHm20sh_j9Z4NkX_ga=g@mail.gmail.com>
 Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
-To: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, kernel-team@meta.com, brauner@kernel.org, jack@suse.cz,
- viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241217202525.1802109-1-song@kernel.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20241217202525.1802109-1-song@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, roberto.sassu@huawei.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	serge@hallyn.com, kernel-team@meta.com, brauner@kernel.org, jack@suse.cz, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/17/2024 12:25 PM, Song Liu wrote:
-> While reading and testing LSM code, I found IMA/EVM consume per inode
-> storage even when they are not in use. Add options to diable them in
-> kernel command line. The logic and syntax is mostly borrowed from an
-> old serious [1].
+On Tue, Dec 17, 2024 at 4:29=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 12/17/2024 12:25 PM, Song Liu wrote:
+> > While reading and testing LSM code, I found IMA/EVM consume per inode
+> > storage even when they are not in use. Add options to diable them in
+> > kernel command line. The logic and syntax is mostly borrowed from an
+> > old serious [1].
+>
+> Why not omit ima and evm from the lsm=3D parameter?
 
-Why not omit ima and evm from the lsm= parameter?
+Exactly.  Here is a link to the kernel documentation if anyone is
+interested (search for "lsm"):
 
->
-> [1] https://lore.kernel.org/lkml/cover.1398259638.git.d.kasatkin@samsung.com/
->
-> Song Liu (2):
->   ima: Add kernel parameter to disable IMA
->   evm: Add kernel parameter to disable EVM
->
->  security/integrity/evm/evm.h       |  6 ++++++
->  security/integrity/evm/evm_main.c  | 22 ++++++++++++++--------
->  security/integrity/evm/evm_secfs.c |  3 ++-
->  security/integrity/ima/ima_main.c  | 13 +++++++++++++
->  4 files changed, 35 insertions(+), 9 deletions(-)
->
-> --
-> 2.43.5
->
+https://docs.kernel.org/admin-guide/kernel-parameters.html
+
+It is worth mentioning that this works for all the LSMs.
+
+> > [1] https://lore.kernel.org/lkml/cover.1398259638.git.d.kasatkin@samsun=
+g.com/
+> >
+> > Song Liu (2):
+> >   ima: Add kernel parameter to disable IMA
+> >   evm: Add kernel parameter to disable EVM
+> >
+> >  security/integrity/evm/evm.h       |  6 ++++++
+> >  security/integrity/evm/evm_main.c  | 22 ++++++++++++++--------
+> >  security/integrity/evm/evm_secfs.c |  3 ++-
+> >  security/integrity/ima/ima_main.c  | 13 +++++++++++++
+> >  4 files changed, 35 insertions(+), 9 deletions(-)
+> >
+> > --
+> > 2.43.5
+
+--=20
+paul-moore.com
 
