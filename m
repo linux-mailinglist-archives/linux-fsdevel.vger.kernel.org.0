@@ -1,111 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-37629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B799F4B41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:51:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911349F4C74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 14:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC5FE7A2873
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 12:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E4C1897F60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727651F3D3D;
-	Tue, 17 Dec 2024 12:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0361F3D57;
+	Tue, 17 Dec 2024 13:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ROTbsHut";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UII679xc"
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="CQBVNZH5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ECA1F03DE;
-	Tue, 17 Dec 2024 12:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD6620311;
+	Tue, 17 Dec 2024 13:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734439858; cv=none; b=rQ3I2xuYSB7suZHbPVXdlzT3I+ZklyqSUbdZ2s3woxR104j//QtgxBXOj6wSzUzOm9IdVZUwKRZNF3RRur96qEB7jZeBJf/SAXNrH7s8aT7pC4fsWEqLq4bYeiRXRYRhoXcIsLdNKU1rDNvrq9oMQqoFlIqeYSvBgQiSdTqAGOM=
+	t=1734442268; cv=none; b=A7/Oz7QobXevwzk2yCesV7KDeExYdkF1COyWoGYNHbHV1SRYUEAM67e1IEeVmyH8yzKfCkVcFRzaTkm51HzAQd3O06B8m9zs1waVKgCz9JvSpGetdeGHar/AhxmTiAyDKcJUO3ZQGRxVV8OqeO8lzzwGSwNHqF5mBPKHwdDI8lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734439858; c=relaxed/simple;
-	bh=bJ7gV9ZTsNMLg72djeBgvkiG+fSzkNAJOAfn7NKUhoo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=COcvoJszWh715j3xs930G0RFbUFgLwBdhOU0ckPpZ4gyBnUcnptV7mptgSIu+ipYn6Xa0bmzVX6Ng08Egi71vx7a7E6ysFLtOSKRWzE4bgFZf9+pL6f391AhtnVwHk5W7Nwbv6HfIEAUrTJwJwFI6Fp+2ydRrCw8XQvCY/CKQS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ROTbsHut; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UII679xc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734439855;
+	s=arc-20240116; t=1734442268; c=relaxed/simple;
+	bh=B614uid6ySomuNZOD01U+chfK6joROqy0wsx5sPN75I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UhkeXOoF6i+tGef8pUb90z7pASWl7Gcb7bCmFE61ZJyrG5kAQF6ukEeM5bYH4I3l9z96iFYzC4e7tuS8V3Y924oHyPpkTh1o+0hC6bGvrmnG7J5Y8T48Ad/kH1lLtxmFg9nUvSvWi8gUAR7Ht2qCG/bvM0p/H9WkCpH1KdsBEK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=CQBVNZH5; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E6364C0002;
+	Tue, 17 Dec 2024 13:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1734442260;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kUQK/2cgQvJUh9azohhqCQ3JLsguJVsMctqPqKzroTM=;
-	b=ROTbsHutu1rdCy3pVLTO7Kj7iQshqnqDuTWuHGo5x4LqDjsYHwuW2j8VKd4eqxfLYDvQaO
-	VJZUM93MxfeK0si0fXmDu++Hxhh9LFHswzmi1mhLKsmOVZM80R7Ya3KXGsZ7MTf9YczhuJ
-	SYi1dCammp2IIuoQPX/d86OdN0SgYvah/AamW8+DTlf04wcrXI4HvXyKKTMalytoxtQdmx
-	ax6jJMyylhMh9Hy3qJxx9UvHRiq0l9ls8HDupu5U327Q7wOT1G+RimqT3XxKbStSJAGqqD
-	8S5fqr1Ob0cX7ACjA/MV31QqLZgJiNLF11lcWMBVgYQY1/3BN8o4Xo48K4o2wA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734439855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kUQK/2cgQvJUh9azohhqCQ3JLsguJVsMctqPqKzroTM=;
-	b=UII679xc6aTw1hNve01KMUBsOp1JwDduSPPP2uXkvPWkwR5JHhaIIDIGkd0QLAndlKaUdl
-	xlvzMFfDO2JpGvDg==
-To: Nam Cao <namcao@linutronix.de>, Shuah Khan <shuah@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, Dylan
- Hatch <dylanbhatch@google.com>, "Eric W . Biederman"
- <ebiederm@xmission.com>, John Ogness <john.ogness@linutronix.de>, Kees
- Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, Christian
- Brauner <brauner@kernel.org>
-Cc: Nam Cao <namcao@linutronix.de>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/proc: do_task_stat: Fix ESP not readable during
- coredump
-In-Reply-To: <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
-References: <cover.1730883229.git.namcao@linutronix.de>
- <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
-Date: Tue, 17 Dec 2024 13:50:54 +0100
-Message-ID: <87pllq79sh.ffs@tglx>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VsCJ2oWyZtMrmVXTJ7VpPyY6o3qZiccUyJI/oEMSJcw=;
+	b=CQBVNZH5yvO1L5CenPMzpe6d/M9c1M1H+zizhiNRKcGIXX1PvuP6/WOUfeFuyY89ModFjF
+	vb0oFk7Nc5lWRQFs3U/N0BNqqffEtM2efl/K1la80KgdJYHr9IePS/keClXy7kpMxt+k1m
+	+OHmD8CEDIgSA2ObyPGLouXoViI/ZXF56QhWkbwzJgeoZ3XaBoX3Yv0cBs/uegOvG2nRKa
+	ETs2apzAtY/50pWtS7l5w/owPx1Fm/1OGLbVG1rDl6QskK4miX5+ny1IYOVgZDWtk75zIy
+	FGePul25PrtSqfCZLuA9j3sreXDvKzGruo7MSg9EGrpD+ZBtwoFbe86Z/YDT+Q==
+From: nicolas.bouchinet@clip-os.org
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	Lin Feng <linf@wangsu.com>,
+	"Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH v3 0/2]  Fixes multiple sysctl proc_handler usage error
+Date: Tue, 17 Dec 2024 14:29:05 +0100
+Message-ID: <20241217132908.38096-1-nicolas.bouchinet@clip-os.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-On Wed, Nov 06 2024 at 10:22, Nam Cao wrote:
-> Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
-> /proc/PID/stat") disabled stack pointer reading, because it is generally
-> dangerous to do so.
->
-> Commit fd7d56270b52 ("fs/proc: Report eip/esp in /prod/PID/stat for
-> coredumping") made an exception for coredumping thread, because for this
-> case it is safe.
->
-> The exception was later extended to all threads in a coredumping process by
-> commit cb8f381f1613 ("fs/proc/array.c: allow reporting eip/esp for all
-> coredumping threads").
->
-> The above two commits determine if a task is core dumping by checking the
-> PF_EXITING and PF_DUMPCORE flags.
->
-> However, commit 92307383082d ("coredump:  Don't perform any cleanups before
-> dumping core") moved coredump to happen earlier and before PF_EXITING is
-> set. Thus, the check of the PF_EXITING flag no longer works.
->
-> Instead, use task->signal->core_state to determine if coredump is
-> happening. This pointer is set at the beginning of coredump and is cleared
-> once coredump is done. Thus, while this pointer is not NULL, it is safe to
-> read ESP.
->
-> Fixes: 92307383082d ("coredump:  Don't perform any cleanups before dumping core")
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-Can we please make progress with that? It's a user space visible change
-which causes a regression in core dumper tools.
+Hi, while reading sysctl code I encountered two sysctl proc_handler
+parameters common errors.
 
-Thanks,
+The first one is to declare .data as a different type thant the return of
+the used .proc_handler, i.e. using proch_dointvec, thats convert a char
+string to signed integers, and storing the result in a .data that is backed
+by an unsigned int. User can then write "-1" string, which results in a
+different value stored in the .data variable. This can lead to type
+conversion errors in branches and thus to potential security issues.
 
-        tglx
+From a quick search using regex and only for proc_dointvec, this seems to
+be a pretty common mistake.
+
+The second one is to declare .extra1 or .extra2 values with a .proc_handler
+that don't uses them. i.e, declaring .extra1 or .extra2 using proc_dointvec
+in order to declare conversion bounds do not work as do_proc_dointvec don't
+uses those variables if not explicitly asked.
+
+This patchset corrects three sysctl declaration that are buggy as an
+example and is not exhaustive.
+
+Nicolas
+
+---
+
+Changes since v2:
+https://lore.kernel.org/all/20241114162638.57392-1-nicolas.bouchinet@clip-os.org/
+
+* Bound vdso_enabled to 0 and 1 as suggested by Joel Granados.
+* Remove patch 3/3 since Greg Kroah-Hartman merged it.
+
+Changes since v1:
+https://lore.kernel.org/all/20241112131357.49582-1-nicolas.bouchinet@clip-os.org/
+
+* Take Lin Feng review into account.
+
+---
+
+Nicolas Bouchinet (2):
+  coredump: Fixes core_pipe_limit sysctl proc_handler
+  sysctl: Fix underflow value setting risk in vm_table
+
+ fs/coredump.c   | 4 +++-
+ kernel/sysctl.c | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.47.1
+
 
