@@ -1,95 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-37628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529A09F4B13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:39:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B799F4B41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2B7188814E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 12:39:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC5FE7A2873
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 12:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895B11F2C49;
-	Tue, 17 Dec 2024 12:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727651F3D3D;
+	Tue, 17 Dec 2024 12:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duKXW5FU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ROTbsHut";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UII679xc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F3B1D47D9;
-	Tue, 17 Dec 2024 12:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ECA1F03DE;
+	Tue, 17 Dec 2024 12:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734439154; cv=none; b=barMDd6zIpHIvDBqqVIY63mnonIACbYmC73rN7yivAReBajvDbGO0cO9vNeYyJUK3JTlT2gwHBir6RFhBG4bXhcmWLFzXfkk0HjChgzbva8ANYPGAmbzhwq1YsiSSradt8gZdN+mf1qXTpn9okQtJh/dEgi20f7YkeT/hETdXog=
+	t=1734439858; cv=none; b=rQ3I2xuYSB7suZHbPVXdlzT3I+ZklyqSUbdZ2s3woxR104j//QtgxBXOj6wSzUzOm9IdVZUwKRZNF3RRur96qEB7jZeBJf/SAXNrH7s8aT7pC4fsWEqLq4bYeiRXRYRhoXcIsLdNKU1rDNvrq9oMQqoFlIqeYSvBgQiSdTqAGOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734439154; c=relaxed/simple;
-	bh=pvWqkIfN2XLnjfn9EiXUYtFcUHTfB9bKvq+z57nIOXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q+kkZQ1RF1mHufhXFuAiLvoqnNfXQ9tyzJ36TCcp+mIDs603upnVkh4q+Gix569fFb7QWypcgmL1QvUMtoYpLng5IvkM1rU0cAJFbO5Hp8A0mcA45ifi89nT+FzvrK2ehNF+itkhtt9NJET4nvUd628mof/wjmNeXNvSnbviXLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duKXW5FU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEF5C4CED4;
-	Tue, 17 Dec 2024 12:39:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734439153;
-	bh=pvWqkIfN2XLnjfn9EiXUYtFcUHTfB9bKvq+z57nIOXg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=duKXW5FU8fhKbZvu5BuwLN6N6dCKo/H8mpFXQ8ia0gm6C0mX2QHe0sRKprkzZxHDI
-	 qtJQgE6KHNHe9EKnjzZPAmoZ5XeSYzakyeYErg0EI5/+y3zJe8/KbmnHoUJFKuA/EX
-	 QrCC87vrELWgP/WcD+rGZ4DUQC5/YWjzXVLeJFfbPBKB9OWuu7/EenlNeape/z2j1Q
-	 z/7rYHGDtVqcURcZtTqMRJ2HhxMfKeL8x9L1zHF70wWkXvxkKCqWFONNGe2ihyhjQT
-	 HRoECy9i9zhjZAiyIrpROM/mKBT8kYLtAUQru0yGFMQTeOG90Aft7KG1A4mmq6GdrV
-	 A+ZhKRIyLa2cg==
-From: Christian Brauner <brauner@kernel.org>
-To: Zhang Kunbo <zhangkunbo@huawei.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chris.zjh@huawei.com,
-	liaochang1@huawei.com,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: [PATCH -next] fs: fix missing declaration of init_files
-Date: Tue, 17 Dec 2024 13:38:57 +0100
-Message-ID: <20241217-pseudologie-niedlich-a726a2d75782@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241217071836.2634868-1-zhangkunbo@huawei.com>
-References: <20241217071836.2634868-1-zhangkunbo@huawei.com>
+	s=arc-20240116; t=1734439858; c=relaxed/simple;
+	bh=bJ7gV9ZTsNMLg72djeBgvkiG+fSzkNAJOAfn7NKUhoo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=COcvoJszWh715j3xs930G0RFbUFgLwBdhOU0ckPpZ4gyBnUcnptV7mptgSIu+ipYn6Xa0bmzVX6Ng08Egi71vx7a7E6ysFLtOSKRWzE4bgFZf9+pL6f391AhtnVwHk5W7Nwbv6HfIEAUrTJwJwFI6Fp+2ydRrCw8XQvCY/CKQS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ROTbsHut; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UII679xc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734439855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kUQK/2cgQvJUh9azohhqCQ3JLsguJVsMctqPqKzroTM=;
+	b=ROTbsHutu1rdCy3pVLTO7Kj7iQshqnqDuTWuHGo5x4LqDjsYHwuW2j8VKd4eqxfLYDvQaO
+	VJZUM93MxfeK0si0fXmDu++Hxhh9LFHswzmi1mhLKsmOVZM80R7Ya3KXGsZ7MTf9YczhuJ
+	SYi1dCammp2IIuoQPX/d86OdN0SgYvah/AamW8+DTlf04wcrXI4HvXyKKTMalytoxtQdmx
+	ax6jJMyylhMh9Hy3qJxx9UvHRiq0l9ls8HDupu5U327Q7wOT1G+RimqT3XxKbStSJAGqqD
+	8S5fqr1Ob0cX7ACjA/MV31QqLZgJiNLF11lcWMBVgYQY1/3BN8o4Xo48K4o2wA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734439855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kUQK/2cgQvJUh9azohhqCQ3JLsguJVsMctqPqKzroTM=;
+	b=UII679xc6aTw1hNve01KMUBsOp1JwDduSPPP2uXkvPWkwR5JHhaIIDIGkd0QLAndlKaUdl
+	xlvzMFfDO2JpGvDg==
+To: Nam Cao <namcao@linutronix.de>, Shuah Khan <shuah@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, Dylan
+ Hatch <dylanbhatch@google.com>, "Eric W . Biederman"
+ <ebiederm@xmission.com>, John Ogness <john.ogness@linutronix.de>, Kees
+ Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, Christian
+ Brauner <brauner@kernel.org>
+Cc: Nam Cao <namcao@linutronix.de>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs/proc: do_task_stat: Fix ESP not readable during
+ coredump
+In-Reply-To: <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
+References: <cover.1730883229.git.namcao@linutronix.de>
+ <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
+Date: Tue, 17 Dec 2024 13:50:54 +0100
+Message-ID: <87pllq79sh.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1034; i=brauner@kernel.org; h=from:subject:message-id; bh=pvWqkIfN2XLnjfn9EiXUYtFcUHTfB9bKvq+z57nIOXg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQnFryKvWws7TWD+XZUmu/KJU1R2ic2bAn9FTLBb7eDa eGC/Pn/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZS9pbhv0/eJ8/wP+5pIb6b A++Vz9yrNFeJw5m1dNLhvf+5o09PW8zIsF5601XRCyx28tOmdJ3d+qyw8x2jqo1sPt9uywB1Lq+ d/AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, 17 Dec 2024 07:18:36 +0000, Zhang Kunbo wrote:
-> fs/file.c should include include/linux/init_task.h  for
->  declaration of init_files. This fixes the sparse warning:
-> 
-> fs/file.c:501:21: warning: symbol 'init_files' was not declared. Should it be static?
-> 
-> 
+On Wed, Nov 06 2024 at 10:22, Nam Cao wrote:
+> Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
+> /proc/PID/stat") disabled stack pointer reading, because it is generally
+> dangerous to do so.
+>
+> Commit fd7d56270b52 ("fs/proc: Report eip/esp in /prod/PID/stat for
+> coredumping") made an exception for coredumping thread, because for this
+> case it is safe.
+>
+> The exception was later extended to all threads in a coredumping process by
+> commit cb8f381f1613 ("fs/proc/array.c: allow reporting eip/esp for all
+> coredumping threads").
+>
+> The above two commits determine if a task is core dumping by checking the
+> PF_EXITING and PF_DUMPCORE flags.
+>
+> However, commit 92307383082d ("coredump:  Don't perform any cleanups before
+> dumping core") moved coredump to happen earlier and before PF_EXITING is
+> set. Thus, the check of the PF_EXITING flag no longer works.
+>
+> Instead, use task->signal->core_state to determine if coredump is
+> happening. This pointer is set at the beginning of coredump and is cleared
+> once coredump is done. Thus, while this pointer is not NULL, it is safe to
+> read ESP.
+>
+> Fixes: 92307383082d ("coredump:  Don't perform any cleanups before dumping core")
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Can we please make progress with that? It's a user space visible change
+which causes a regression in core dumper tools.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Thanks,
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs: fix missing declaration of init_files
-      https://git.kernel.org/vfs/vfs/c/2b2fc0be98a8
+        tglx
 
