@@ -1,177 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-37657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3179A9F565D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 19:34:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B209F5750
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 21:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219947A42A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 18:34:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF1A67A3ADC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 20:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525751F9EB3;
-	Tue, 17 Dec 2024 18:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BCB1D89EC;
+	Tue, 17 Dec 2024 20:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHyz0DEU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxEoLZFn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBF01F867D;
-	Tue, 17 Dec 2024 18:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF45013AA41
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 20:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734460382; cv=none; b=RFRuR9Gk0N7zdcCvtnIPZw2xUqLs4NK6sX02FuHAsETWlAk1aRtBvZZzzDexZKdDckESbnuM3qiIvzFOUTZsTd681WmBrRxPyR1jqU+Aw7JPFhbtFBHwQY8iEPuaofmIsWeNHeYDT9YhEnI6+G5kPB/FC1e+HZ8r0FeUkBbwMb8=
+	t=1734465748; cv=none; b=StZ4NYZaBZSCkVxVMOMxWC4NNw4JzAC/bWtStERGqUyufFKSoa6ZaqIZ7dd9KP4Kea51vV5u22ZPkgFEVQLaOh1HV6bqo+wwMrUAbhW6NOUjEWBnhYMWKF5BFDJtovy51iFNpYWz6mRh9mpUpGNnJl9ufK14pdgIdMePLeBSmUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734460382; c=relaxed/simple;
-	bh=w9pYrgnaWj1ewcUC5uehoE4l2crEY1uOPkQ5NXBYUN0=;
+	s=arc-20240116; t=1734465748; c=relaxed/simple;
+	bh=leeSLealap7on7tt8vm1sDvJeVjUkHyN3E0WXpuF0f4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XAS6OTedEaWOHFzgJ+1JMqYUZe2XNwCM5hVSeMfxEBDrGWfbwRyWyfPTO0Ygmg0J3xrw4LnHxUw+GrwL6x43vn2ETb/TXAJBT1LSnxPkjjsDuSaXuvJ8MjHWvbIdieSNfv8CxhzsGseFwccHnpneVeBJSIoqVSz3grzne/Y0OPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHyz0DEU; arc=none smtp.client-ip=209.85.218.67
+	 To:Cc:Content-Type; b=LUnn+9b0qJZ/NyNNm/CpaXqDN2ByvniK17WB8rqH/dIpIhmSkSf1cfa/nQg8b87Wf/NyTyURwEvsdBxAnaxgNp5piJHRxqsvDy2wmgdjTYvcBGTfP/3GY3anxu80/Qkq8SPwt9YUWzsxn7Cf7R8/MtjOKEFs4hnPjC+MPw9dIp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxEoLZFn; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso777680866b.2;
-        Tue, 17 Dec 2024 10:32:59 -0800 (PST)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-468f6b3a439so15582701cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 12:02:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734460378; x=1735065178; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734465744; x=1735070544; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KyLfj9GHrrqzTUNE0LK7GJy5olirvva9Gvx5K9CGs5s=;
-        b=OHyz0DEUbcnQfj5lZk6OqzcpPnXCEt0BIcVHt+doDVf5AkqbpOdhpe/fpKQPTajjnx
-         KEjfKH8Nwsuit5GUhfcD6bF78T59IUZeiLcmTF39XyuF/FA2Xc0gz7a33sQhfTOJgm6B
-         k9JY+nlKM54ZIrnKEAo2Kpz8yGiz6geN8c8yHheZaZdYCif0dW10TprWPRwSqpChtrWC
-         MMdNlS9e/Gl0LRSp6lAu4s0I5bjBrDaD2HIILl1UpbbwmFp6TZMwfqW3E0Ycb6ln3sWJ
-         WUxQlJDuhOGoINu4Becr11+6zAGLtpZx97AfVJNalKylRptuV8Ti2JR7vi/+hA+CCTEe
-         5lXg==
+        bh=xgESMm3xkoHM1FCzU0kdD07/Lz2uFKmg8o9hRS+pLwM=;
+        b=RxEoLZFndz3BfGXBxmIld3SItiS6F/zk+lW92Dg3YlRUl7oK6+0u51UgUS6HpzcodJ
+         S5AvC9Nxh5Gf4tyXKFuWf9LxVNs5RbVYPIoOKr+kevcvItM4WRCk+YlZQEdQZG2b8zm7
+         8p7zXkf4EBlBMuJcxCvDkhBZ8p4OHi4J/+Z5OhQ7/9/fuVP0prDlop5/IU4zTzpcCieP
+         B31OmipZzMT0pJ+4o9NDFpBHhC1KxHb+LhZQSB5M5pgu1FIrXzqbnDzYy88GtKZgPyz3
+         miNXFtoGlnJZ4UrXTzHvCLO6t6Ffbg1RvMK09zRS+q1mmZReOCAMHHZJvSovKrPfKBau
+         aq1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734460378; x=1735065178;
+        d=1e100.net; s=20230601; t=1734465744; x=1735070544;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KyLfj9GHrrqzTUNE0LK7GJy5olirvva9Gvx5K9CGs5s=;
-        b=BtrasCvp6UO5WcuoRsvukEwD0gWYcT26BWbT+8XxmqtvYT12LF+PqcPZNgyxdVAYS1
-         44cqNQ+OtL9Rl/erZdyC6awonazApTs5Tq8KytdAUxtiU74FJj8cefHaDnHXT9ploGOW
-         d+bbUJt0TYAQUXo7ib0T3o/adnfrm6MQ1yAjviic8/s08Sxh0XGKzQonta/U08heb78l
-         BAHTVU9yNJK5iupTZuMsBc3YW9TvvNAEMVCvBelcKQfbxMY4HCR34jKW/yXFLf4SqtYq
-         H5Zc0hcKt9Qke036tzQyRlDzAuH3eAvXIDXSZIiFr9AXznIDk7BFWZCUCfl/Ik19pswN
-         tjqA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5msdfgM5ftN+06RN15NpoTRO8ljGo8/d4MnyzGlfhDzlnLRyWend1SqX8V/cHvsjXhOoI+utH4mUUiV6/8w==@vger.kernel.org, AJvYcCWKEWDBF5Wg/MG1b6lc9iap9iZ5EAhwns84v2pvxJIDF5rTPTSfQ5kxaIzrdTy7ZeLMDsaRH/Gkuh5YH9iy@vger.kernel.org, AJvYcCX/aicK/z53ULR0Zs3kcVWenCERMvTMSLo/Zef5m1HXMyn86NVvrnuHiOL0RqxmJVEC80E=@vger.kernel.org, AJvYcCX9+FLGQLIRkZA2+TwVnyh7ral4ypBYFZMbK0i1xYWBb52AFpZMG7Mab5Lklroh7ZXd6is0CYnfiR3ksNT0hPo1cN/oNx6P@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZyXphE2xxUI0r/hU5AMijoyfVQ5fyuOGSXy+fg+VBere5LsGn
-	tcT/A/bRP+IJ1a7f4uCslZWt//cYvLYiHhgIkQ5a5rtDxFL8k3cM3RoLIq0/CBgZMMN5Q99e/rw
-	68AgSFP3Qg1U4IgQKBuqHZHJ9bn8=
-X-Gm-Gg: ASbGnct7zDx/ScHZDdbBfx7bbwDtuRV7cDagsMtmYTKUPGXDij2iwmTJpDE4uR/IKWp
-	CPexEdAfrT5dll6BTO3Go3OnQBeomUEVMrhzeJUsnvi9spuX0a+/6VMGZSGs=
-X-Google-Smtp-Source: AGHT+IE0D/9Vd3yi0S/mmNzZKU8P1GTbXnQCQ7s25+McRC8HupAM0mu1u0pwKZUxm/xxqzbOI7IqDHNoKS5+GIDw2W4=
-X-Received: by 2002:a05:6402:35c6:b0:5d1:2377:5af3 with SMTP id
- 4fb4d7f45d1cf-5d7ee3772f8mr356233a12.5.1734460378086; Tue, 17 Dec 2024
- 10:32:58 -0800 (PST)
+        bh=xgESMm3xkoHM1FCzU0kdD07/Lz2uFKmg8o9hRS+pLwM=;
+        b=a5AhbpKCWtxD8y8LjWm5CjM2O+BS0MriOx0mE5Zi5E+rg2LG58SsiltJWpZQQGYQOq
+         74VsQv1r6MB6iNIsNxhaqEth+NAddHHW7XQKQZE4Hbe1w6d1XiHnhCP6ahQIE8h+Lq0e
+         vOZWnNJCxfJbSixYPCC2OI1CCaJDWKQs+mQCazbyMD3rfbHG6+kAWYmYAB55O9sPpSVM
+         uo4pMWf0KUzV5EPNkYMqWFznXQo92bBcKBw2bHqMVjreGdbn0+VbNtTZhHKu7tPuk/Q9
+         ecDEiID+U2FLLindjSjMwLYIAUUAkPTW1XeOMenIcg7YAYovXWyVu12ChulY1EURSs2H
+         rHkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXTIo0hqGHLNsTIAIv81BTLDyBcT3JhkPNkrhl0dz3BWzkElGmltTd9tixBGGxoKInSDHO1nCG2TZBf8vI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0toBh2q6K24ImJzM9lR9XkEPtXuR75Y/J9+5rFpDQZ0wMYJPI
+	19RyS4TH7sNG7FJB5vis2v/EYdLcrRs2mbR/DrdFk66yYCuCc+IZYJDPoGStRmlzqtuCtgGPbtr
+	k/ngdW8uaB2EmUt87OoSUoSIQF/8=
+X-Gm-Gg: ASbGncu0RTcI3CdEfOgkfrVU4NgJo1MyhL8ACqGUGKS6cMrIXuJaXQ8r8VVUNKnrTg4
+	cMHOYPJfvt5Bcsm/YFZBCLEC+MORmNHEWbuPBVqo=
+X-Google-Smtp-Source: AGHT+IHh9Uca6UxvmIKqMIePkB4JZMJsxUOsS5rLW+JrPYOTTnUZMSrm41W7zlQDBo7SueCcTqHmkwYRYMAK/guqBXE=
+X-Received: by 2002:ac8:57d1:0:b0:467:73f3:887d with SMTP id
+ d75a77b69052e-46908e2089dmr2021341cf.33.1734465744620; Tue, 17 Dec 2024
+ 12:02:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217063821.482857-1-song@kernel.org> <20241217063821.482857-5-song@kernel.org>
- <CAADnVQKnscWKZHbWt9cgTm7NZ4ZWQkHQ+41Hz=NWoEhUjCAbaw@mail.gmail.com> <7A7A74A6-ED23-455E-A963-8FE7E250C9AA@fb.com>
-In-Reply-To: <7A7A74A6-ED23-455E-A963-8FE7E250C9AA@fb.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Tue, 17 Dec 2024 19:32:21 +0100
-Message-ID: <CAP01T76SVQ=TJgkTgkvSLY3DFTDUswj_aypAWmQhwKWFBEk_yw@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 4/6] bpf: fs/xattr: Add BPF kfuncs to set and
- remove xattrs
-To: Song Liu <songliubraving@meta.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Song Liu <song@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Liam Wisehart <liamwisehart@meta.com>, 
-	Shankaran Gnanashanmugam <shankaran@meta.com>
+References: <20241214022827.1773071-1-joannelkoong@gmail.com>
+ <20241214022827.1773071-2-joannelkoong@gmail.com> <8d0e50812e0141e24855f99b63c3e6d7cb57e7f8.camel@kernel.org>
+ <CAJnrk1a+hxtv5kiaEJu-m-C35E8Bbg-ehd8yRjc1fBd2Amm8Ug@mail.gmail.com>
+ <CAMHPp_Srx+u9XN9SLNe58weMKnUoq9XbN9sNHBJAn9eiA0kYnw@mail.gmail.com>
+ <CAJnrk1YBYYV=wazzTfMEQcd8vaSkYAGraHz2fHoJJaVibybxaQ@mail.gmail.com>
+ <CAMHPp_TkRV_izpSqzboz7YnWVijxTwJyQao6iZ5cczDXHXmN8g@mail.gmail.com> <CAJnrk1abKAr=V+JOSpHSQGrjYE7b_LDCLoBkCJLnF6-Egp+kXg@mail.gmail.com>
+In-Reply-To: <CAJnrk1abKAr=V+JOSpHSQGrjYE7b_LDCLoBkCJLnF6-Egp+kXg@mail.gmail.com>
+From: Etienne Martineau <etmartin4313@gmail.com>
+Date: Tue, 17 Dec 2024 15:02:13 -0500
+Message-ID: <CAMHPp_RO_Bqe9mvtMntJsAb+JjwDercPT8NsT5W3e=_gqa_4AQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] fuse: add kernel-enforced timeout option for requests
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	josef@toxicpanda.com, bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, 
+	laoar.shao@gmail.com, senozhatsky@chromium.org, tfiga@chromium.org, 
+	bgeffon@google.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 17 Dec 2024 at 19:25, Song Liu <songliubraving@meta.com> wrote:
+On Mon, Dec 16, 2024 at 8:26=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
-> Hi Alexei,
+> On Mon, Dec 16, 2024 at 2:09=E2=80=AFPM Etienne Martineau
+> <etmartin4313@gmail.com> wrote:
+> >
+> > On Mon, Dec 16, 2024 at 1:21=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > On Mon, Dec 16, 2024 at 9:51=E2=80=AFAM Etienne Martineau
+> > > <etmartin4313@gmail.com> wrote:
+> > > >
+> > > > On Mon, Dec 16, 2024 at 12:32=E2=80=AFPM Joanne Koong <joannelkoong=
+@gmail.com> wrote:
+> > > > >
+> > > > > On Sat, Dec 14, 2024 at 4:10=E2=80=AFAM Jeff Layton <jlayton@kern=
+el.org> wrote:
+> > > > > >
+> > > > > > On Fri, 2024-12-13 at 18:28 -0800, Joanne Koong wrote:
+> > > > > > > There are situations where fuse servers can become unresponsi=
+ve or
+> > > > > > > stuck, for example if the server is deadlocked. Currently, th=
+ere's no
+> > > > > > > good way to detect if a server is stuck and needs to be kille=
+d manually.
+> > > > > > >
+> > > > > > > This commit adds an option for enforcing a timeout (in second=
+s) for
+> > > > > > > requests where if the timeout elapses without the server resp=
+onding to
+> > > > > > > the request, the connection will be automatically aborted.
+> > > > > > >
+> > > > > > > Please note that these timeouts are not 100% precise. For exa=
+mple, the
+> > > > > > > request may take roughly an extra FUSE_TIMEOUT_TIMER_FREQ sec=
+onds beyond
+> > > > > > > the requested timeout due to internal implementation, in orde=
+r to
+> > > > > > > mitigate overhead.
+> > > > > > >
+> > > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > > > ---
+> > > > > > >  fs/fuse/dev.c    | 83 ++++++++++++++++++++++++++++++++++++++=
+++++++++++
+> > > > > > >  fs/fuse/fuse_i.h | 22 +++++++++++++
+> > > > > > >  fs/fuse/inode.c  | 23 ++++++++++++++
+> > > > > > >  3 files changed, 128 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > > > > > index 27ccae63495d..e97ba860ffcd 100644
+> > > > > > > --- a/fs/fuse/dev.c
+> > > > > > > +++ b/fs/fuse/dev.c
+> > > > > > >
+> > > > > > >  static struct fuse_req *fuse_request_alloc(struct fuse_mount=
+ *fm, gfp_t flags)
+> > > > > > > @@ -2308,6 +2388,9 @@ void fuse_abort_conn(struct fuse_conn *=
+fc)
+> > > > > > >               spin_unlock(&fc->lock);
+> > > > > > >
+> > > > > > >               end_requests(&to_end);
+> > > > > > > +
+> > > > > > > +             if (fc->timeout.req_timeout)
+> > > > > > > +                     cancel_delayed_work(&fc->timeout.work);
+> > > > > >
+> > > > > > As Sergey pointed out, this should be a cancel_delayed_work_syn=
+c(). The
+> > > > > > workqueue job can still be running after cancel_delayed_work(),=
+ and
+> > > > > > since it requeues itself, this might not be enough to kill it
+> > > > > > completely.
+> > > > >
+> > > > > I don't think we need to synchronously cancel it when a connectio=
+n is
+> > > > > aborted. The fuse_check_timeout() workqueue job can be simultaneo=
+usly
+> > > > > running when cancel_delayed_work() is called and can requeue itse=
+lf,
+> > > > > but then on the next trigger of the job, it will check whether th=
+e
+> > > > > connection was aborted (eg the if (!fc->connected)... return; lin=
+es in
+> > > > > fuse_check_timeout()) and will not requeue itself if the connecti=
+on
+> > > > > was aborted. This seemed like the simplest / cleanest approach to=
+ me.
+> > > > >
+> > > > Is there a scenario where the next trigger of the job dereference
+> > > > struct fuse_conn *fc which already got freed because say the FUSE
+> > > > server has terminated?
+> > >
+> > > This isn't possible because the struct fuse_conn *fc gets freed only
+> > > after the call to "cancel_delayed_work_sync(&fc->timeout.work);" that
+> > > synchronously cancels the workqueue job. This happens in the
+> > > fuse_conn_put() function.
+> > >
+> > cancel_delayed_work_sync() won't prevent the work from re-queuing
+> > itself if it's already running.
+> > I think we need some flag like Sergey pointed out here
+> >   https://lore.kernel.org/linux-fsdevel/CAMHPp_S2ANAguT6fYfNcXjTZxU14nh=
+2Zv=3D5=3D8dG8qUnD3F8e7A@mail.gmail.com/T/#m543550031f31a9210996ccf815d5bc2=
+a4290f540
+> > Maybe we don't requeue when fc->count becomes 0?
 >
-> Thanks for the review!
+> The connection will have been aborted when cancel_delayed_work_sync()
+> is called (otherwise we will have a lot of memory crashes/leaks). If
+> the fuse_check_timeout() workqueue job is running while
+> cancel_delayed_work_sync() is called, there's the "if (!fc->connected)
+> { ... return; }" path that returns and avoids requeueing.
 >
-> > On Dec 17, 2024, at 8:50=E2=80=AFAM, Alexei Starovoitov <alexei.starovo=
-itov@gmail.com> wrote:
-> >
-> > On Mon, Dec 16, 2024 at 10:38=E2=80=AFPM Song Liu <song@kernel.org> wro=
-te:
-> >>
-> >> Add the following kfuncs to set and remove xattrs from BPF programs:
-> >>
-> >>  bpf_set_dentry_xattr
-> >>  bpf_remove_dentry_xattr
-> >>  bpf_set_dentry_xattr_locked
-> >>  bpf_remove_dentry_xattr_locked
-> >>
-> >> The _locked version of these kfuncs are called from hooks where
-> >> dentry->d_inode is already locked.
-> >
-> > ...
-> >
-> >> + *
-> >> + * Setting and removing xattr requires exclusive lock on dentry->d_in=
-ode.
-> >> + * Some hooks already locked d_inode, while some hooks have not locke=
-d
-> >> + * d_inode. Therefore, we need different kfuncs for different hooks.
-> >> + * Specifically, hooks in the following list (d_inode_locked_hooks)
-> >> + * should call bpf_[set|remove]_dentry_xattr_locked; while other hook=
-s
-> >> + * should call bpf_[set|remove]_dentry_xattr.
-> >> + */
-> >
-> > the inode locking rules might change, so let's hide this
-> > implementation detail from the bpf progs by making kfunc polymorphic.
-> >
-> > To struct bpf_prog_aux add:
-> > bool use_locked_kfunc:1;
-> > and set it in bpf_check_attach_target() if it's attaching
-> > to one of d_inode_locked_hooks
-> >
-> > Then in fixup_kfunc_call() call some helper that
-> > if (prog->aux->use_locked_kfunc &&
-> >    insn->imm =3D=3D special_kfunc_list[KF_bpf_remove_dentry_xattr])
-> >     insn->imm =3D special_kfunc_list[KF_bpf_remove_dentry_xattr_locked]=
-;
-> >
-> > The progs will be simpler and will suffer less churn
-> > when the kernel side changes.
->
-> I was thinking about something in similar direction.
->
-> If we do this, shall we somehow hide the _locked version of the
-> kfuncs, so that the user cannot use it? If so, what's the best
-> way to do it?
-
-Just don't add BTF_ID_FLAGS entries for them.
-You'd also need to make an extra call to add_kfunc_call to add its
-details before you can do the fixup.
-That allows find_kfunc_desc to work.
-I did something similar in earlier versions of resilient locks.
-In add_kfunc_call's end (instead of directly returning):
-func_id =3D get_shadow_kfunc_id(func_id, offset);
-if (!func_id)
-  return err;
-return add_kfunc_call(env, func_id, offset);
-
-Then check in fixup_kfunc_call to find shadow kfunc id and substitute imm.
-Can use some other naming instead of "shadow".
-Probably need to take a prog pointer to make a decision to find the
-underlying kfunc id in your case.
+I ran some tests and from what I see, calling
+cancel_delayed_work_sync() on a workqueue that is currently running
+and re-queueing itself is enough to kill it completely. For that
+reason I believe we don't even need the cancel_delayed_work() in
+fuse_abort_conn() because everything is taken care of by
+fuse_conn_put();
+thanks,
+Etienne
 
 >
 > Thanks,
-> Song
->
+> Joanne
 
