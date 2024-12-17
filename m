@@ -1,109 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-37627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6468C9F4B06
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:35:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529A09F4B13
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 13:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1B216E11C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 12:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2B7188814E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2024 12:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C581D90AD;
-	Tue, 17 Dec 2024 12:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895B11F2C49;
+	Tue, 17 Dec 2024 12:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BOulncX+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duKXW5FU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1341F130D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 12:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F3B1D47D9;
+	Tue, 17 Dec 2024 12:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734438924; cv=none; b=uCeW6nZg9a5jdf2D7Rwc/3+vtK8iVcgpv+vnR+sngqDvSKyO4TbaQARxP+O3o1YYSjA88alSvNsdPybLz86AQ10XxBy3sNgckpJcUR5saQpS1ixBxML7Yz5QyCA1Z+lZ0J4/7NgPkeqIE3wnu8jyLQLf+mdQlYttX35n6GD3ew0=
+	t=1734439154; cv=none; b=barMDd6zIpHIvDBqqVIY63mnonIACbYmC73rN7yivAReBajvDbGO0cO9vNeYyJUK3JTlT2gwHBir6RFhBG4bXhcmWLFzXfkk0HjChgzbva8ANYPGAmbzhwq1YsiSSradt8gZdN+mf1qXTpn9okQtJh/dEgi20f7YkeT/hETdXog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734438924; c=relaxed/simple;
-	bh=imt9bBeNwylTSw2gSi9BpqSMhj/Gy9xxD1aQayahjCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=haQ7DpmUTIC/UTV2Y+RDkYbKZyOu0licUSDqtMDRR6XFAhmExhaCaOtI9o0IqKRiZXHVkVl5cAtvIm2hfdp5yriFlbu4OKszvD46oqarX+tkbLW+8yXfN2HdNauTjWbOw4qYcF+dY5INi8x4OZyOq7oVQyO9LXraS3upW94hLPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BOulncX+; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d8a3e99e32so45591976d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2024 04:35:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1734438920; x=1735043720; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDenadz4dGJTZLbTVld1SlFL1r9JcjdB0paJyJvOt44=;
-        b=BOulncX+sWiTiAKVdFD1tenUZUUwjZz8GgpXX7zdkUsI9r6UuSWIFDwR3ceDQ6OmoJ
-         URIrKm4mLRDi3tKqFIi2L6jfZw4i9nkHVw6y5r5A7aI36IhEMyRY4Shdm1bNna6IGGwA
-         E5Z001YbE/9C4aYGVr2G4rA8aPyu/Dd+yT96U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734438920; x=1735043720;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rDenadz4dGJTZLbTVld1SlFL1r9JcjdB0paJyJvOt44=;
-        b=XEyiJ5Ky4iQ8MU1qVfa2hxjHf+o8vux70hfxXAkJ8CDgJadwmQorA4hgT4BmLwPqX+
-         5xt/bVnuqaLTf4Mjv0YbuK0q6d13avJs21iGyN/wLX15vPgr2qmxxPv3q8mDTnJ4ySCf
-         iqki5V0W/Bzk+LOdzocr4tDpGlj7QSIWM/a62CKwvTF6ue/rctJWhFb6DAEJMptO2F6M
-         pn+R6ss7DKOBdw+KFJP7ErT3XbGmVdAXW0eI/Cuhy+cO2yScwkfuBtKNpltnPH/YDOBL
-         eh4Obkrt1gqPRYRLq3W5DyEpKDthUJXwHu0myU+eE9PkRd+PQOgdnl1j9xBF7hnDrbpC
-         xI7w==
-X-Gm-Message-State: AOJu0YxtBh2pEfD48I3zZkbMlSxTiFgkSTmmWD70ZYKIxRoGKHmxNX7g
-	XuJZkcahDSiENxVSTJdaxBNFW5SYsnj8zQKiUFbBiDA6ZO2R2Ny3FjV7UHTavhPcgBkWOa0B8RH
-	gfFZdarLqdRiSf3fAAI5Rzw8zYp3cyYVmF0pn9Clo3RfNKJ4G
-X-Gm-Gg: ASbGncup5m7/3e5wj1N6wv/RtGh0Pquz4HMO+TPeCYMFtkt1DrTmO8ZGRHiCWl64YJ8
-	Qd8w9wdtOQRfui+AEPgyw9kUAC541gFBhI/i92jI=
-X-Google-Smtp-Source: AGHT+IHN9CpreNQPXb+yElTVbdtmiekyKHlTVli9FOQfJWq7rQTXG4WM2GJE1+BW6AcMQqBA89V3sMZbJk1e/bS/xEY=
-X-Received: by 2002:ad4:5f8a:0:b0:6d8:a48e:a027 with SMTP id
- 6a1803df08f44-6dc8ca3c5d0mr320280446d6.2.1734438920531; Tue, 17 Dec 2024
- 04:35:20 -0800 (PST)
+	s=arc-20240116; t=1734439154; c=relaxed/simple;
+	bh=pvWqkIfN2XLnjfn9EiXUYtFcUHTfB9bKvq+z57nIOXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q+kkZQ1RF1mHufhXFuAiLvoqnNfXQ9tyzJ36TCcp+mIDs603upnVkh4q+Gix569fFb7QWypcgmL1QvUMtoYpLng5IvkM1rU0cAJFbO5Hp8A0mcA45ifi89nT+FzvrK2ehNF+itkhtt9NJET4nvUd628mof/wjmNeXNvSnbviXLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duKXW5FU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEF5C4CED4;
+	Tue, 17 Dec 2024 12:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734439153;
+	bh=pvWqkIfN2XLnjfn9EiXUYtFcUHTfB9bKvq+z57nIOXg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=duKXW5FU8fhKbZvu5BuwLN6N6dCKo/H8mpFXQ8ia0gm6C0mX2QHe0sRKprkzZxHDI
+	 qtJQgE6KHNHe9EKnjzZPAmoZ5XeSYzakyeYErg0EI5/+y3zJe8/KbmnHoUJFKuA/EX
+	 QrCC87vrELWgP/WcD+rGZ4DUQC5/YWjzXVLeJFfbPBKB9OWuu7/EenlNeape/z2j1Q
+	 z/7rYHGDtVqcURcZtTqMRJ2HhxMfKeL8x9L1zHF70wWkXvxkKCqWFONNGe2ihyhjQT
+	 HRoECy9i9zhjZAiyIrpROM/mKBT8kYLtAUQru0yGFMQTeOG90Aft7KG1A4mmq6GdrV
+	 A+ZhKRIyLa2cg==
+From: Christian Brauner <brauner@kernel.org>
+To: Zhang Kunbo <zhangkunbo@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chris.zjh@huawei.com,
+	liaochang1@huawei.com,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: Re: [PATCH -next] fs: fix missing declaration of init_files
+Date: Tue, 17 Dec 2024 13:38:57 +0100
+Message-ID: <20241217-pseudologie-niedlich-a726a2d75782@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241217071836.2634868-1-zhangkunbo@huawei.com>
+References: <20241217071836.2634868-1-zhangkunbo@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217-erhielten-regung-44bb1604ca8f@brauner>
-In-Reply-To: <20241217-erhielten-regung-44bb1604ca8f@brauner>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 17 Dec 2024 13:35:09 +0100
-Message-ID: <CAJfpegsn+anx7nHQbD7HCf301DyvaWqg-pAi6FUAgfhGLiZurA@mail.gmail.com>
-Subject: Re: [PATCH] fs: use xarray for old mount id
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1034; i=brauner@kernel.org; h=from:subject:message-id; bh=pvWqkIfN2XLnjfn9EiXUYtFcUHTfB9bKvq+z57nIOXg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQnFryKvWws7TWD+XZUmu/KJU1R2ic2bAn9FTLBb7eDa eGC/Pn/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZS9pbhv0/eJ8/wP+5pIb6b A++Vz9yrNFeJw5m1dNLhvf+5o09PW8zIsF5601XRCyx28tOmdJ3d+qyw8x2jqo1sPt9uywB1Lq+ d/AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, 17 Dec 2024 at 13:23, Christian Brauner <brauner@kernel.org> wrote:
+On Tue, 17 Dec 2024 07:18:36 +0000, Zhang Kunbo wrote:
+> fs/file.c should include include/linux/init_task.h  for
+>  declaration of init_files. This fixes the sparse warning:
+> 
+> fs/file.c:501:21: warning: symbol 'init_files' was not declared. Should it be static?
+> 
+> 
 
-> @@ -270,18 +270,19 @@ static inline struct hlist_head *mp_hash(struct dentry *dentry)
->
->  static int mnt_alloc_id(struct mount *mnt)
->  {
-> -       int res = ida_alloc(&mnt_id_ida, GFP_KERNEL);
-> +       int res;
->
-> -       if (res < 0)
-> -               return res;
-> -       mnt->mnt_id = res;
-> -       mnt->mnt_id_unique = atomic64_inc_return(&mnt_id_ctr);
-> +       xa_lock(&mnt_id_xa);
-> +       res = __xa_alloc(&mnt_id_xa, &mnt->mnt_id, mnt, XA_LIMIT(1, INT_MAX), GFP_KERNEL);
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-This uses a different allocation strategy, right?  That would be a
-user visible change, which is somewhat risky.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +       if (!res)
-> +               mnt->mnt_id_unique = ++mnt_id_ctr;
-> +       xa_unlock(&mnt_id_xa);
->         return 0;
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-        return res;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Thanks,
-Miklos
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: fix missing declaration of init_files
+      https://git.kernel.org/vfs/vfs/c/2b2fc0be98a8
 
