@@ -1,107 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-37727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0769F6512
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 12:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAEF9F6550
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 12:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A9B18939DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 11:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED591883D76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 11:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074191A23A3;
-	Wed, 18 Dec 2024 11:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C5519F42C;
+	Wed, 18 Dec 2024 11:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rPNkHz7m";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jMNKP+rb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nQYTIOAQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZr0jquw"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gqjoDTOm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c1v+eBde";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gqjoDTOm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c1v+eBde"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B272161310;
-	Wed, 18 Dec 2024 11:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FE7193079;
+	Wed, 18 Dec 2024 11:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734522101; cv=none; b=nTW4g86X9JvMj3ZLycjnmgrI0qq98Sm7dd4zkGFIZrF/Z9lvbAUeJA4uGHmpce+TtyZ4+12dqPW8Eb7sdObrE/WLSLayWgFkO0R/4L9Q3VpjAOPrZlRqtypIfEJGOB+olEiss4jhh045LoceBYc2RYcP71b8qBbzfzQohjai9YA=
+	t=1734522677; cv=none; b=YuARY6+CtMxEKbEO2AYpuZqM4b8YP6VwFCzgrLkDB36tE9xofTQrXoww3ixUtKTkdIKjJBYNV1bOuTYxmVBfRkgGRQ/Pe+MRPDP6A2sOo+4TYQAkYEluSWJl0a54HSjZLpH+p0tCesjEFKWjZda5vD9sdTC7dWPnnWGyJjfGu4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734522101; c=relaxed/simple;
-	bh=jIhlk8uvy6HrKArYDPzubzRzDPP6RkTF814/9kYXh+E=;
+	s=arc-20240116; t=1734522677; c=relaxed/simple;
+	bh=dOc6ynsGrNXlFjP3UqkLc3zkRio+vMtQxovi1q/sDgE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O53Nfnuc2vFg1wvw53QHmektVdHOICUMbJeGloI9np22Lm4vM0nogPQfzVB5Riu+MOn8qNkotWF9JMhWqJHMFgNWABFBX7t8Zs8iEmFOIbiI1Wi1XZFgKwlCNL92oIKIh2pqjloq4uxSqxzWWrFQ/4c3T8v5/DQ4OTNco12LdnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rPNkHz7m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jMNKP+rb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nQYTIOAQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZr0jquw; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=E5dsifUMHZjPBGrCOHMCwUWddPhIvY6P5UyjDP7+ZKLyg+QklFGaTBsdqE4XJmhnKp9byYnzEjXOkAvLd+vfpPHgXH7BYZVEiSHnmwIWFWnFUXNFu2/Dw+LQPs8YEqSHQbBrAWUXqby34xzT9XyMofvQGYyOt6uqzQFFWDe4Xdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gqjoDTOm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c1v+eBde; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gqjoDTOm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c1v+eBde; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C28241F396;
-	Wed, 18 Dec 2024 11:41:36 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8DB8F2116F;
+	Wed, 18 Dec 2024 11:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734522097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734522672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=rPNkHz7mh5tm/yBxyLPVMz/oDfMy2/m6FLt7L6u6oiRFSwq0pqVB5fzA4WhfhhONwaNPEg
-	3QSO5oEay5phlYtPy+qHKgGGY+u/qPX+n6fIsQfZjf/YUyieQ8WhWneKF3YwtCGiS8iBF7
-	9p16PkMqhxCmpzRE+Njr4DfXscTxxm4=
+	bh=VoNEmgPK/5aE75gQC52NkYriqOzJTtQfnYVxCB4es6o=;
+	b=gqjoDTOmTAw6yKPi6QiBnx8Xb2mTBdVqazNTsbZIggL/fi38sfisLDscIghBGmTZU5C9Zi
+	kLeIVOXzAgZ1X8GeBYDSk/WJ17+5GNJ/5LpSYYcYRBslEeuzGpqHjPx+aHiE09J332VDJc
+	Y3QzEhYBwyC/JhzE61iPfxiEI7NYNiI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734522097;
+	s=susede2_ed25519; t=1734522672;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=jMNKP+rbXsv9Os6STJ3H6aJjT2x0Or2P8kjfKLykWa5QN7XyA4ahE4rha1/ZCaOdQa5lfL
-	1NTSXWS+979N5rCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nQYTIOAQ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QZr0jquw
+	bh=VoNEmgPK/5aE75gQC52NkYriqOzJTtQfnYVxCB4es6o=;
+	b=c1v+eBdeM/vwL9eLqeVqdhL9bUaxdxQxTK27bsY/tkLIKI7lDgk+fBQYzGln2FdlbRichQ
+	1jMOuJ7kHZnd6TDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734522096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734522672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=nQYTIOAQixSNvw2OolFlEfanj+fwVUYREdRHydDmUCJu/3m3h1r9t/hK4ivKK6S2e9RQ9D
-	jbDpSeEix1uoHETdwlkxwGVkVSvgkBqq5I7rhLfR1IIhHqSKJcSF8d57TZzGOtlXhfOMgY
-	GbPRpZ9PmgWdlkFEP2Uvyb9QDgfEri0=
+	bh=VoNEmgPK/5aE75gQC52NkYriqOzJTtQfnYVxCB4es6o=;
+	b=gqjoDTOmTAw6yKPi6QiBnx8Xb2mTBdVqazNTsbZIggL/fi38sfisLDscIghBGmTZU5C9Zi
+	kLeIVOXzAgZ1X8GeBYDSk/WJ17+5GNJ/5LpSYYcYRBslEeuzGpqHjPx+aHiE09J332VDJc
+	Y3QzEhYBwyC/JhzE61iPfxiEI7NYNiI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734522096;
+	s=susede2_ed25519; t=1734522672;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=QZr0jquw3JeLNlobmwBVz5PS1G+d0crQf5dr6nRlN3pfyNg4LkPo/MNFdKeAU1Rbo3VqTX
-	n8qwNI0B23gqHuBA==
+	bh=VoNEmgPK/5aE75gQC52NkYriqOzJTtQfnYVxCB4es6o=;
+	b=c1v+eBdeM/vwL9eLqeVqdhL9bUaxdxQxTK27bsY/tkLIKI7lDgk+fBQYzGln2FdlbRichQ
+	1jMOuJ7kHZnd6TDQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACC1A132EA;
-	Wed, 18 Dec 2024 11:41:36 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79A63132EA;
+	Wed, 18 Dec 2024 11:51:12 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8fHKKfC0Ymc6cAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 18 Dec 2024 11:41:36 +0000
+	id UuqpHTC3YmcccwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 18 Dec 2024 11:51:12 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 62EBEA0935; Wed, 18 Dec 2024 12:41:32 +0100 (CET)
-Date: Wed, 18 Dec 2024 12:41:32 +0100
+	id 27B8CA0935; Wed, 18 Dec 2024 12:51:12 +0100 (CET)
+Date: Wed, 18 Dec 2024 12:51:12 +0100
 From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	kpsingh@kernel.org, mattbobrowski@google.com, liamwisehart@meta.com,
-	shankaran@meta.com
-Subject: Re: [PATCH v4 bpf-next 1/6] fs/xattr: bpf: Introduce security.bpf.
- xattr name prefix
-Message-ID: <20241218114132.xfmavorzcpwo6nwg@quack3>
-References: <20241217063821.482857-1-song@kernel.org>
- <20241217063821.482857-2-song@kernel.org>
+To: nicolas.bouchinet@clip-os.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Neil Horman <nhorman@tuxdriver.com>, Lin Feng <linf@wangsu.com>,
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v3 1/2] coredump: Fixes core_pipe_limit sysctl
+ proc_handler
+Message-ID: <20241218115112.su4gdcdwcbaoz5y2@quack3>
+References: <20241217132908.38096-1-nicolas.bouchinet@clip-os.org>
+ <20241217132908.38096-2-nicolas.bouchinet@clip-os.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,134 +113,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241217063821.482857-2-song@kernel.org>
-X-Rspamd-Queue-Id: C28241F396
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+In-Reply-To: <20241217132908.38096-2-nicolas.bouchinet@clip-os.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon 16-12-24 22:38:16, Song Liu wrote:
-> Introduct new xattr name prefix security.bpf., and enable reading these
-> xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
+On Tue 17-12-24 14:29:06, nicolas.bouchinet@clip-os.org wrote:
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 > 
-> As we are on it, correct the comments for return value of
-> bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
-> success.
+> proc_dointvec converts a string to a vector of signed int, which is
+> stored in the unsigned int .data core_pipe_limit.
+> It was thus authorized to write a negative value to core_pipe_limit
+> sysctl which once stored in core_pipe_limit, leads to the signed int
+> dump_count check against core_pipe_limit never be true. The same can be
+> achieved with core_pipe_limit set to INT_MAX.
 > 
-> Signed-off-by: Song Liu <song@kernel.org>
-> Acked-by: Christian Brauner <brauner@kernel.org>
+> Any negative write or >= to INT_MAX in core_pipe_limit sysctl would
+> hypothetically allow a user to create very high load on the system by
+> running processes that produces a coredump in case the core_pattern
+> sysctl is configured to pipe core files to user space helper.
+> Memory or PID exhaustion should happen before but it anyway breaks the
+> core_pipe_limit semantic.
+> 
+> This commit fixes this by changing core_pipe_limit sysctl's proc_handler
+> to proc_dointvec_minmax and bound checking between SYSCTL_ZERO and
+> SYSCTL_INT_MAX.
+> 
+> Fixes: a293980c2e26 ("exec: let do_coredump() limit the number of concurrent dumps to pipes")
+> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-Looks good to me. Feel free to add:
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
->  include/uapi/linux/xattr.h |  4 ++++
->  2 files changed, 18 insertions(+), 5 deletions(-)
+>  fs/coredump.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 3fe9f59ef867..8a65184c8c2c 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
->  	return len;
->  }
->  
-> +static bool match_security_bpf_prefix(const char *name__str)
-> +{
-> +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
-> +}
-> +
->  /**
->   * bpf_get_dentry_xattr - get xattr of a dentry
->   * @dentry: dentry to get xattr from
-> @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
->   *
->   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
->   *
-> - * For security reasons, only *name__str* with prefix "user." is allowed.
-> + * For security reasons, only *name__str* with prefix "user." or
-> + * "security.bpf." is allowed.
->   *
-> - * Return: 0 on success, a negative value on error.
-> + * Return: length of the xattr value on success, a negative value on error.
->   */
->  __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__str,
->  				     struct bpf_dynptr *value_p)
-> @@ -117,7 +123,9 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
->  	if (WARN_ON(!inode))
->  		return -EINVAL;
->  
-> -	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-> +	/* Allow reading xattr with user. and security.bpf. prefix */
-> +	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN) &&
-> +	    !match_security_bpf_prefix(name__str))
->  		return -EPERM;
->  
->  	value_len = __bpf_dynptr_size(value_ptr);
-> @@ -139,9 +147,10 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
->   *
->   * Get xattr *name__str* of *file* and store the output in *value_ptr*.
->   *
-> - * For security reasons, only *name__str* with prefix "user." is allowed.
-> + * For security reasons, only *name__str* with prefix "user." or
-> + * "security.bpf." is allowed.
->   *
-> - * Return: 0 on success, a negative value on error.
-> + * Return: length of the xattr value on success, a negative value on error.
->   */
->  __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
->  				   struct bpf_dynptr *value_p)
-> diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
-> index 9854f9cff3c6..c7c85bb504ba 100644
-> --- a/include/uapi/linux/xattr.h
-> +++ b/include/uapi/linux/xattr.h
-> @@ -83,6 +83,10 @@ struct xattr_args {
->  #define XATTR_CAPS_SUFFIX "capability"
->  #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
->  
-> +#define XATTR_BPF_LSM_SUFFIX "bpf."
-> +#define XATTR_NAME_BPF_LSM (XATTR_SECURITY_PREFIX XATTR_BPF_LSM_SUFFIX)
-> +#define XATTR_NAME_BPF_LSM_LEN (sizeof(XATTR_NAME_BPF_LSM) - 1)
-> +
->  #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
->  #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
->  #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 7f12ff6ad1d3e..c3a74dd194e69 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -1024,7 +1024,9 @@ static struct ctl_table coredump_sysctls[] = {
+>  		.data		= &core_pipe_limit,
+>  		.maxlen		= sizeof(unsigned int),
+>  		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_INT_MAX,
+>  	},
+>  	{
+>  		.procname       = "core_file_note_size_limit",
 > -- 
-> 2.43.5
+> 2.47.1
 > 
 -- 
 Jan Kara <jack@suse.com>
