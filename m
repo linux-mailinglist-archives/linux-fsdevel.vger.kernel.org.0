@@ -1,368 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-37762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED399F6F57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 22:17:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA389F6FB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 22:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C26166E45
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 21:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D350F16A953
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 21:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3847E1FCD0C;
-	Wed, 18 Dec 2024 21:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721021FCCFB;
+	Wed, 18 Dec 2024 21:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg1tbOH4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJyTk+hd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753B01922EE;
-	Wed, 18 Dec 2024 21:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227371FC7E3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 21:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734556598; cv=none; b=ktuY+P+Gf4RoISJRXbZZL49DoDb9TPWlSPiIzLjP8bakFDQO6jUTboghtvmQ6a8WIw8Xedr+1jP7eFxG5kD8qard4tuUk/0rIFQXoxQ/TciIoIf29+qzxtHRg4/5SWfjENQw0TDm+KgsZJImSANs6pk7W9pKfvoRVb6kckhfISg=
+	t=1734558335; cv=none; b=SaEgIohhVhhydOirMWL9qZQkEOyfIWhaaD9lk2SnILk5Vs/1r3opX04Oh3oX+0C6iaUptcjnQ69VI+YpLo7tUdyMS1gBxFojmKa2hRVHMFjn1tcApszEun0Og74DdHO8RtzvQxb+5iPqis6+3uLHyBtgSsqJhDF+7qveDQ58v+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734556598; c=relaxed/simple;
-	bh=BzP8UTSDo5oitwO7ghy7d6m6Rl07PvzBU5guVa6Dy50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YvryJ8Fbrsy8kAOoCA53chuaw5bg1P5T21a4UjwavvKO7Gk+Np5rvqy+r4EtVoFDj6dfn2zIGyU7bmqLAhnwbRCByPSzIwTcSmiov3yuIgvReUe27+Qiu5hbDVzFgUISq306oE3Iw4pPlz1goKI1zDo6Mh8jONF5P7v+QxQjS3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg1tbOH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CD1C4CECD;
-	Wed, 18 Dec 2024 21:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734556598;
-	bh=BzP8UTSDo5oitwO7ghy7d6m6Rl07PvzBU5guVa6Dy50=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Bg1tbOH40ROGrk3Uq0Flni+/gJucA12nM0oTfZpiwTkmsbAMx0aJCrtjAv9apbXeg
-	 4UkejTo19kGWVQitUrDAf/yoeNbPfyfcBjSkEGsPwY/ZPR9D7Fr6R8hFChxd8a2g79
-	 8AzPEUATSPYM5V8ZdJU32vr1171JPfSLJuDiMNQzb03zdNy2M3TLyAUbBU5V3PWPgU
-	 R9IzYDmu1bTbMObM/ry4KF3l3o9UPS96laRC2dNELzIW4tRSlhVjNRECqEvFDZfTcx
-	 yLB92nCZOVS+JoIwkMidnJjhVkBg5UMBzJqwYU8TagNkyLmvqc2UAlYNpABUvR+hGh
-	 js5MBRA4yyodg==
-From: Song Liu <song@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: willy@infradead.org,
-	corbet@lwn.net,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	brauner@kernel.org,
-	jack@suse.cz,
-	cem@kernel.org,
-	djwong@kernel.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	fdmanana@suse.com,
-	song@kernel.org,
-	johannes.thumshirn@wdc.com,
-	kernel-team@meta.com
-Subject: [RFC v2] lsm: fs: Use inode_free_callback to free i_security in RCU callback
-Date: Wed, 18 Dec 2024 13:16:15 -0800
-Message-ID: <20241218211615.506095-1-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1734558335; c=relaxed/simple;
+	bh=ePjvbAPz+tJLrK41s9dSALyOk6Aw/Ct4oISvTNJqTlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Npt0H45Fw1UaGwGzyg3iJDQoO1gnoHsNpHcfA8NwImO6dZk4wZgBLJgjXa6PcsWmp4Vu7zmh0WdKOyowqL3pRnEVURUKv6kPEOkjG+RW9Bfm75I+xmOPfF97Pbk4GCAjeKyJQBkiup5+r3QmcakzDymQZF/h02VM/SrEANUMCrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJyTk+hd; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-468f6b3a439so626681cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 13:45:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734558333; x=1735163133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZT3JHOuUd7B1xibCTrYTfKHmuyc34acvdFPk6qiylAM=;
+        b=iJyTk+hd7vDRO+NDcYSXzI5ctZo2VnMkEcsT4QfKjdBAQACbS2zkRw1eBjAnGg4Lnj
+         hZ0fPr+CKd5WtSqqYepFczM3TvwMmgOc9SwPRi8kWvbb7NBrUoL2BxG1i8D7xKu8Cfcd
+         /K5T9Ub63HB7aa3PfKCMQSK3ZbdBdEtDuBRvsTTuLtspYvDFIKlut40KWOSRJWPs62ho
+         7N+5eqz7sEUTqovywQtx1U+Z6Cmx8RbfybsZW5MeCBEc9NI7hNMlIrJtsbFQLWJQ9pNN
+         YlBwOYvH4sKAiYkZsSFWtc4kqfplAgIMVO3TIX3UF0a0rgfVzJibDFxVrKpYWmRjzJTy
+         xECw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734558333; x=1735163133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZT3JHOuUd7B1xibCTrYTfKHmuyc34acvdFPk6qiylAM=;
+        b=J9lNEES+QEfZBN2mW8UuZ20RjKuhVDptv0Y1ymdMgGzoOTeVO7Qv3A5rWuMDDHJYhc
+         LmR0TKmKbh9feCJ10KbEInRhr8C5FktuapWUPaejIVusHgOu4bVdad0RI5yQQlmpZEHu
+         4L247K7MTO6juWyhRpfj3eyWl68Z10++FAQ7fjVvGQ6S5DvDak78zLrBpemzmstj7PKp
+         h9LpLmmbhqC7bvepPuA5OubwKM/yERR31e8IUOIbWNg1P+3Hx9LIeah1fhfBIEb73Yep
+         p5nAbiNNZB4/K0WNuGftOqV5Bkpe1UvbyKbO5COtVSVbtc3KYTPC1ZEEzcR+Vgd54ZZe
+         YvkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNeLIBTUKfvpUkPUkU0uayWgpcdi7A3QGW0I1gEUdvCa7QUaamg5pTuDdeNU/LMg62xwukUsXhDcX7M1OB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiZjmDWp3ydrEplcxcOr9Mwq/U21W327UdappbeI7YdxUXdHU5
+	BY3cbgo5CZ/xtOdI5K8hnpr2kwbaGRShpHtptLoNJc8XghdRyVs0fNHixJDqHYdfhxaUh2VTtsa
+	QptHssZP0iuyXmT675SPhYfNfpHo=
+X-Gm-Gg: ASbGncuV4D2CM4aSmaq79gV63ghyivCf7CCT2I7xkVNGSFnXzhECTHCrT4Ab+gmqwg+
+	i86Ui2moqL4z79VSJBv3lChNjVJYUdjM3zeoaLTQebIpkED3u6Ns2+g==
+X-Google-Smtp-Source: AGHT+IEp8rbfv+bg4CrUxMusAZIIweo3JYrB2waMidgxROo2nDu+6zDPzmWzRYI3ThGi2xArqX6DS10/NNvlG7sVmQw=
+X-Received: by 2002:a05:622a:18a7:b0:466:9f89:3d72 with SMTP id
+ d75a77b69052e-46908e7ca4fmr75908231cf.36.1734558333070; Wed, 18 Dec 2024
+ 13:45:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241214022827.1773071-1-joannelkoong@gmail.com>
+ <20241214022827.1773071-2-joannelkoong@gmail.com> <8d0e50812e0141e24855f99b63c3e6d7cb57e7f8.camel@kernel.org>
+ <CAJnrk1a+hxtv5kiaEJu-m-C35E8Bbg-ehd8yRjc1fBd2Amm8Ug@mail.gmail.com>
+ <CAMHPp_Srx+u9XN9SLNe58weMKnUoq9XbN9sNHBJAn9eiA0kYnw@mail.gmail.com>
+ <CAJnrk1YBYYV=wazzTfMEQcd8vaSkYAGraHz2fHoJJaVibybxaQ@mail.gmail.com> <CAMHPp_TkRV_izpSqzboz7YnWVijxTwJyQao6iZ5cczDXHXmN8g@mail.gmail.com>
+In-Reply-To: <CAMHPp_TkRV_izpSqzboz7YnWVijxTwJyQao6iZ5cczDXHXmN8g@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 18 Dec 2024 13:45:22 -0800
+Message-ID: <CAJnrk1bXJ0dOx4CZFGR-ZGEmTXnoa8Pee1Cd7Zcdky5yW25LmQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] fuse: add kernel-enforced timeout option for requests
+To: Etienne Martineau <etmartin4313@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	josef@toxicpanda.com, bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, 
+	laoar.shao@gmail.com, senozhatsky@chromium.org, tfiga@chromium.org, 
+	bgeffon@google.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-inode->i_security needes to be freed from RCU callback. A rcu_head was
-added to i_security to call the RCU callback. However, since struct inode
-already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
-LSM uses i_security, a rcu_head (two pointers) is allocated for each
-inode.
+On Mon, Dec 16, 2024 at 2:09=E2=80=AFPM Etienne Martineau
+<etmartin4313@gmail.com> wrote:
+>
+> On Mon, Dec 16, 2024 at 1:21=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+> >
+> > On Mon, Dec 16, 2024 at 9:51=E2=80=AFAM Etienne Martineau
+> > <etmartin4313@gmail.com> wrote:
+> > >
+> > > On Mon, Dec 16, 2024 at 12:32=E2=80=AFPM Joanne Koong <joannelkoong@g=
+mail.com> wrote:
+> > > >
+> > > > On Sat, Dec 14, 2024 at 4:10=E2=80=AFAM Jeff Layton <jlayton@kernel=
+.org> wrote:
+> > > > >
+> > > > > On Fri, 2024-12-13 at 18:28 -0800, Joanne Koong wrote:
+> > > > > > There are situations where fuse servers can become unresponsive=
+ or
+> > > > > > stuck, for example if the server is deadlocked. Currently, ther=
+e's no
+> > > > > > good way to detect if a server is stuck and needs to be killed =
+manually.
+> > > > > >
+> > > > > > This commit adds an option for enforcing a timeout (in seconds)=
+ for
+> > > > > > requests where if the timeout elapses without the server respon=
+ding to
+> > > > > > the request, the connection will be automatically aborted.
+> > > > > >
+> > > > > > Please note that these timeouts are not 100% precise. For examp=
+le, the
+> > > > > > request may take roughly an extra FUSE_TIMEOUT_TIMER_FREQ secon=
+ds beyond
+> > > > > > the requested timeout due to internal implementation, in order =
+to
+> > > > > > mitigate overhead.
+> > > > > >
+> > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > > ---
+> > > > > >  fs/fuse/dev.c    | 83 ++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> > > > > >  fs/fuse/fuse_i.h | 22 +++++++++++++
+> > > > > >  fs/fuse/inode.c  | 23 ++++++++++++++
+> > > > > >  3 files changed, 128 insertions(+)
+> > > > > >
+> > > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > > > > index 27ccae63495d..e97ba860ffcd 100644
+> > > > > > --- a/fs/fuse/dev.c
+> > > > > > +++ b/fs/fuse/dev.c
+> > > > > >
+> > > > > >  static struct fuse_req *fuse_request_alloc(struct fuse_mount *=
+fm, gfp_t flags)
+> > > > > > @@ -2308,6 +2388,9 @@ void fuse_abort_conn(struct fuse_conn *fc=
+)
+> > > > > >               spin_unlock(&fc->lock);
+> > > > > >
+> > > > > >               end_requests(&to_end);
+> > > > > > +
+> > > > > > +             if (fc->timeout.req_timeout)
+> > > > > > +                     cancel_delayed_work(&fc->timeout.work);
+> > > > >
+> > > > > As Sergey pointed out, this should be a cancel_delayed_work_sync(=
+). The
+> > > > > workqueue job can still be running after cancel_delayed_work(), a=
+nd
+> > > > > since it requeues itself, this might not be enough to kill it
+> > > > > completely.
+> > > >
+> > > > I don't think we need to synchronously cancel it when a connection =
+is
+> > > > aborted. The fuse_check_timeout() workqueue job can be simultaneous=
+ly
+> > > > running when cancel_delayed_work() is called and can requeue itself=
+,
+> > > > but then on the next trigger of the job, it will check whether the
+> > > > connection was aborted (eg the if (!fc->connected)... return; lines=
+ in
+> > > > fuse_check_timeout()) and will not requeue itself if the connection
+> > > > was aborted. This seemed like the simplest / cleanest approach to m=
+e.
+> > > >
+> > > Is there a scenario where the next trigger of the job dereference
+> > > struct fuse_conn *fc which already got freed because say the FUSE
+> > > server has terminated?
+> >
+> > This isn't possible because the struct fuse_conn *fc gets freed only
+> > after the call to "cancel_delayed_work_sync(&fc->timeout.work);" that
+> > synchronously cancels the workqueue job. This happens in the
+> > fuse_conn_put() function.
+> >
+> cancel_delayed_work_sync() won't prevent the work from re-queuing
+> itself if it's already running.
 
-Rename i_callback to inode_free_callback and call security_inode_free_rcu
-from it to free i_security so that a rcu_head is saved for each inode.
-Special care are needed for file systems that provide a destroy_inode()
-callback, but not a free_inode() callback. Specifically, the following
-logic are added to handle such cases:
+Also btw, I think cancel_delayed_work_sync() does actually prevent the
+work from re-queuing itself if it's already running. The api comment
+(in kernel/workqueue.c) says:
 
- - XFS recycles inode after destroy_inode. The inodes are freed from
-   recycle logic. Let xfs_inode_free_callback() call inode_free_callback.
- - Let pipe free inode from a RCU callback.
- - Let btrfs-test free inode from a RCU callback.
+* Cancel @work and wait for its execution to finish. This function can be u=
+sed
+* even if the work re-queues itself or migrates to another workqueue. On re=
+turn
+* from this function, @work is guaranteed to be not pending or executing on=
+ any
+* CPU as long as there aren't racing enqueues.
 
-Signed-off-by: Song Liu <song@kernel.org>
 
----
-
-Changes v1 => v2:
-1. Wrap security_inode_free_rcu inside inode_free_callback so that
-   the interface is cleaner.
-
-RFC v1: https://lore.kernel.org/linux-fsdevel/20241216234308.1326841-1-song@kernel.org/
----
- Documentation/filesystems/vfs.rst |  5 +++-
- fs/btrfs/fs.h                     |  1 +
- fs/btrfs/inode.c                  |  4 +++
- fs/btrfs/tests/btrfs-tests.c      |  1 +
- fs/inode.c                        | 20 +++++++++----
- fs/pipe.c                         |  1 -
- fs/xfs/xfs_icache.c               |  1 +
- include/linux/fs.h                |  2 ++
- include/linux/security.h          |  4 +++
- security/security.c               | 48 +++++++++++++++++++------------
- 10 files changed, 60 insertions(+), 27 deletions(-)
-
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 0b18af3f954e..93d6f59fd2c0 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -306,7 +306,10 @@ or bottom half).
- ``free_inode``
- 	this method is called from RCU callback. If you use call_rcu()
- 	in ->destroy_inode to free 'struct inode' memory, then it's
--	better to release memory in this method.
-+	better to release memory in this method. Some filesystems may
-+	decide not to provide a free_inode() method, but to free the
-+	inode through a different code path. In this case, the filesystem
-+	should call inode_free_callback() before freeing the inode.
- 
- ``dirty_inode``
- 	this method is called by the VFS when an inode is marked dirty.
-diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-index 79a1a3d6f04d..f606ea2a14ab 100644
---- a/fs/btrfs/fs.h
-+++ b/fs/btrfs/fs.h
-@@ -1068,6 +1068,7 @@ static inline int btrfs_is_testing(const struct btrfs_fs_info *fs_info)
- }
- 
- void btrfs_test_destroy_inode(struct inode *inode);
-+void btrfs_test_free_inode(struct inode *inode);
- 
- #else
- 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 03fe0de2cd0d..62ee8394cf6c 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7707,6 +7707,10 @@ void btrfs_test_destroy_inode(struct inode *inode)
- {
- 	btrfs_drop_extent_map_range(BTRFS_I(inode), 0, (u64)-1, false);
- 	kfree(BTRFS_I(inode)->file_extent_tree);
-+}
-+
-+void btrfs_test_free_inode(struct inode *inode)
-+{
- 	kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
- }
- #endif
-diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
-index e607b5d52fb1..581b518b99b7 100644
---- a/fs/btrfs/tests/btrfs-tests.c
-+++ b/fs/btrfs/tests/btrfs-tests.c
-@@ -35,6 +35,7 @@ const char *test_error[] = {
- static const struct super_operations btrfs_test_super_ops = {
- 	.alloc_inode	= btrfs_alloc_inode,
- 	.destroy_inode	= btrfs_test_destroy_inode,
-+	.free_inode	= btrfs_test_free_inode,
- };
- 
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 6b4c77268fc0..e5dbf59e7297 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -318,13 +318,13 @@ void free_inode_nonrcu(struct inode *inode)
- }
- EXPORT_SYMBOL(free_inode_nonrcu);
- 
--static void i_callback(struct rcu_head *head)
-+void inode_free_callback(struct rcu_head *head)
- {
- 	struct inode *inode = container_of(head, struct inode, i_rcu);
-+
-+	security_inode_free_rcu(inode);
- 	if (inode->free_inode)
- 		inode->free_inode(inode);
--	else
--		free_inode_nonrcu(inode);
- }
- 
- static struct inode *alloc_inode(struct super_block *sb)
-@@ -346,8 +346,11 @@ static struct inode *alloc_inode(struct super_block *sb)
- 			if (!ops->free_inode)
- 				return NULL;
- 		}
--		inode->free_inode = ops->free_inode;
--		i_callback(&inode->i_rcu);
-+		if (ops->free_inode)
-+			inode->free_inode = ops->free_inode;
-+		else
-+			inode->free_inode = free_inode_nonrcu;
-+		inode_free_callback(&inode->i_rcu);
- 		return NULL;
- 	}
- 
-@@ -387,8 +390,13 @@ static void destroy_inode(struct inode *inode)
- 		if (!ops->free_inode)
- 			return;
- 	}
-+	if (ops->free_inode)
-+		inode->free_inode = ops->free_inode;
-+	else
-+		inode->free_inode = free_inode_nonrcu;
-+
- 	inode->free_inode = ops->free_inode;
--	call_rcu(&inode->i_rcu, i_callback);
-+	call_rcu(&inode->i_rcu, inode_free_callback);
- }
- 
- /**
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 12b22c2723b7..eb9c75ef5d80 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -1422,7 +1422,6 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
- }
- 
- static const struct super_operations pipefs_ops = {
--	.destroy_inode = free_inode_nonrcu,
- 	.statfs = simple_statfs,
- };
- 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 7b6c026d01a1..7c72a6199f15 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -162,6 +162,7 @@ xfs_inode_free_callback(
- 		ip->i_itemp = NULL;
- 	}
- 
-+	inode_free_callback(&inode->i_rcu);
- 	kmem_cache_free(xfs_inode_cache, ip);
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7e29433c5ecc..dab8f1cd1b72 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3810,4 +3810,6 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
- 
- int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
- 
-+void inode_free_callback(struct rcu_head *head);
-+
- #endif /* _LINUX_FS_H */
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..4983d6a3ccb3 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -400,6 +400,7 @@ int security_path_notify(const struct path *path, u64 mask,
- 					unsigned int obj_type);
- int security_inode_alloc(struct inode *inode, gfp_t gfp);
- void security_inode_free(struct inode *inode);
-+void security_inode_free_rcu(struct inode *inode);
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 initxattrs initxattrs, void *fs_data);
-@@ -860,6 +861,9 @@ static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
- static inline void security_inode_free(struct inode *inode)
- { }
- 
-+static inline void security_inode_free_rcu(struct inode *inode)
-+{ }
-+
- static inline int security_dentry_init_security(struct dentry *dentry,
- 						 int mode,
- 						 const struct qstr *name,
-diff --git a/security/security.c b/security/security.c
-index 7523d14f31fb..b9a515d881f6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -265,12 +265,6 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
- 	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
- 	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
--	/*
--	 * The inode blob gets an rcu_head in addition to
--	 * what the modules might need.
--	 */
--	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
--		blob_sizes.lbs_inode = sizeof(struct rcu_head);
- 	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
- 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
- 	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
-@@ -747,10 +741,15 @@ static int lsm_file_alloc(struct file *file)
-  */
- static int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
- {
--	if (!lsm_inode_cache) {
--		inode->i_security = NULL;
-+	/*
-+	 * If the filesystem recycles inode, i_security may be already
-+	 * allocated. Just return in this case.
-+	 */
-+	if (inode->i_security)
-+		return 0;
-+
-+	if (!lsm_inode_cache)
- 		return 0;
--	}
- 
- 	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
- 	if (inode->i_security == NULL)
-@@ -1693,18 +1692,13 @@ int security_inode_alloc(struct inode *inode, gfp_t gfp)
- 	if (unlikely(rc))
- 		return rc;
- 	rc = call_int_hook(inode_alloc_security, inode);
--	if (unlikely(rc))
-+	if (unlikely(rc)) {
- 		security_inode_free(inode);
-+		security_inode_free_rcu(inode);
-+	}
- 	return rc;
- }
- 
--static void inode_free_by_rcu(struct rcu_head *head)
--{
--	/* The rcu head is at the start of the inode blob */
--	call_void_hook(inode_free_security_rcu, head);
--	kmem_cache_free(lsm_inode_cache, head);
--}
--
- /**
-  * security_inode_free() - Free an inode's LSM blob
-  * @inode: the inode
-@@ -1724,9 +1718,25 @@ static void inode_free_by_rcu(struct rcu_head *head)
- void security_inode_free(struct inode *inode)
- {
- 	call_void_hook(inode_free_security, inode);
--	if (!inode->i_security)
-+}
-+
-+/**
-+ * security_inode_free_rcu() - Free an inode's LSM blob from i_callback
-+ * @inode: the inode
-+ *
-+ * Release any LSM resources associated with @inode. This is called from
-+ * i_callback after a RCU grace period. Therefore, it is safe to free
-+ * everything now.
-+ */
-+void security_inode_free_rcu(struct inode *inode)
-+{
-+	void *inode_security = inode->i_security;
-+
-+	if (!inode_security)
- 		return;
--	call_rcu((struct rcu_head *)inode->i_security, inode_free_by_rcu);
-+	inode->i_security = NULL;
-+	call_void_hook(inode_free_security_rcu, inode_security);
-+	kmem_cache_free(lsm_inode_cache, inode_security);
- }
- 
- /**
--- 
-2.43.5
-
+> I think we need some flag like Sergey pointed out here
+>   https://lore.kernel.org/linux-fsdevel/CAMHPp_S2ANAguT6fYfNcXjTZxU14nh2Z=
+v=3D5=3D8dG8qUnD3F8e7A@mail.gmail.com/T/#m543550031f31a9210996ccf815d5bc2a4=
+290f540
+> Maybe we don't requeue when fc->count becomes 0?
+> Thanks,
+> Etienne
+> >
+> > Thanks,
+> > Joanne
+> >
 
