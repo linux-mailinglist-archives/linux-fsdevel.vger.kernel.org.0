@@ -1,190 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-37739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917689F6B10
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 17:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1960B9F6BC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 18:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA8B163D33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 16:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B959169692
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 17:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049C31F5402;
-	Wed, 18 Dec 2024 16:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2B21F5426;
+	Wed, 18 Dec 2024 17:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSIS9Vx9"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="d36KUMYQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21F019D072;
-	Wed, 18 Dec 2024 16:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79121DED77
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 17:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734539190; cv=none; b=dIxnczX6kLKh3of1Pnda/Kyiw3aV69ghI3lrAGpWHQVQYZtB/fDUd8mOLlXuoGByYoQNMCYya1SnUJ7MW//yEVay9QUhsNJqa4Z5U9s0jgaRgcIphHjJRumGT2sYbApSULSqJzaQgDszdZoVJZCirnaRdcVuhsFJFrXLg6mAZKo=
+	t=1734541384; cv=none; b=UngnSenoipKLdrQ7BPwufNt9G7cLvtaGMZA5mnrc687gQQpq/9TlH6Pr1Z26VE/MpD4CTSbFrioYVtFgnhh+Rk5JmVYCdyT6rjjuPFLsq0rIQWqAiYLLEcVacjE5MOzKy/sEHULW66KEjwO/W0V1ET2XjSTkidFftnpiTKGg/m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734539190; c=relaxed/simple;
-	bh=CH7HnXa+fuTs69+yycFd560LN3YLcatymBkxHovHDzg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OUy12wP/Jebz+pJTYGRjJtx3x8o1iXuWcwoxWXKZx8WJIvQM1WW+ZcwLHAPj0ykfpnNmgiJ9Soe/qslLzcxT9a6yD2XurJZEkP4VXb/fT0uAH7Gf1gte87BQTP+UD2kJfDCq/OVGRuQOTFj5rkJcSkWiMFpJ1/o1rc8ydP1dGSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSIS9Vx9; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d647d5df90so8367303a12.2;
-        Wed, 18 Dec 2024 08:26:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734539187; x=1735143987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pmkt9XDQJzvMw0Pxsg6vMsTVZCgPm6T/hzLgsnUP44E=;
-        b=jSIS9Vx9OEAgkRbSaqCHSCfGovbfsQnNb0bFbryS8dezlziHrt1ybZdhixJlspEuTF
-         a3ND2PZFNLlQ2rXo1fs/xQD0mBeIafu1xjl7HzgHnY/rVgOJT799L9I2mLhQyYFdbazt
-         hXcr/Nrlg3HCpj+e2e07UkVW6P3ZQVXw0Q304e/OTHRxbLdDnDLifMeNhAPfHi9DYopI
-         S8RDfR7JUIXGmQFDttsQqJO8hmGXFI1y3X+o43D3ILJ3wX5kfmS/+n8OvMzaLfRXJraW
-         DuWHelF8Aawn9l0nIxVzujLtNBHPd7grYa5SsFYR7+2s3K/bubBeE/t+zq4xOvkefu36
-         FoHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734539187; x=1735143987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pmkt9XDQJzvMw0Pxsg6vMsTVZCgPm6T/hzLgsnUP44E=;
-        b=Wo4YPipODgWXnxrSrkQyYasAvEmCgnWHJU0cIf/TlNtfZ1adqzYsyEp0g5afEeq/93
-         qyHrdfnEFCM3YliodOxgRrvipLUnOySIOCS57iKPm/oyvhbEmvzZQ1c6F6vFjxa+nW4M
-         zBT2E+HijKtc0C6XSR4oUy8jT8RQHOgBbOpJlRm2z2iNcpM4f2QsIO/QUTzD61ZOHTtN
-         UzH1jx7BLLIq908xH9Gz3kHkss57ljS7RMVp/eL+sf9Uoo4ShUXGSy/enVQ9mVJoGdQH
-         zeMFzHfwrDLfanSvjbTsy6c74cDeUGzCMsJdmbM9O3sJj6S71EjR1wh30iYt8bMHqNNj
-         8L+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVd6N2hYqsUVPqvtAH70scQH0yZVt0WBlLooQ5/GHzsiVbSGG40PVqcV6InGlRTHliLiJ9YiCalqeY+e2AL@vger.kernel.org, AJvYcCWudrbgk/JJ2llZ3C+3yjUZfaZpAvFtlOIdcXL0rVph2BjkTnJR8WAhRHh4LhHWjGsvX+1ep1y98FVPCIoI@vger.kernel.org, AJvYcCXBj+u+jpn1iXAKUo7f4ZqdGDQbJnnPwKyfyz8y0JaSaK7dm+/YzotPiqUp+pdLXBvBBfREMaXExAj7HpgTNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQfMxZ/KDcYsOgrEwLX+IeeSM1eoKJgE38CeK5pWNwPIwVHo/R
-	M7z+49Q0d8emmtgjStmhaMI9ZSGxM3PkBBbw8Z9dJzsLvcozFzjVbmyN7lgGt8Ql8+iwpfDIs87
-	W3y9cdHaZmMjAZC/nneyQW6gshElb0WG6ncw=
-X-Gm-Gg: ASbGncvhWmsV5lHKAvzbFKPfxYvjVZcCIslMjQf64zv6s6h1Lc7fUO3ffFM1VUtQJxR
-	V7GLTYzuGc/YZ22/EqgHhpYNwrjvIL98vn/8FDQ==
-X-Google-Smtp-Source: AGHT+IESnxrG6R404Jw5OAKvVosjGdfsoo4IrN4TWS4lh187CtuM2wH4crULNRmul7lyoU5qQnfFbG2HzlF4afI/DMU=
-X-Received: by 2002:a05:6402:530e:b0:5d3:cdb3:a60 with SMTP id
- 4fb4d7f45d1cf-5d7ee4269d2mr3350074a12.34.1734539186587; Wed, 18 Dec 2024
- 08:26:26 -0800 (PST)
+	s=arc-20240116; t=1734541384; c=relaxed/simple;
+	bh=P49RzAa9SdEPdNelbe0LpGG/WOml4l7jM/0SZCDOf3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VO0lQhZpiABLH3CX+7AisRvFBGUmolhxxAST+9SVIXlYRv4TZDojSbbre6/RO0XCsDi8yN2bysiVAnY62UfuZXPumElEJ3Az6wtNiqn+fSMzh8xuDKqDTOREHNkKK5+t5WpZSdJKbz26v34k1ATdD1NUaI7PmbBI9IiN5cZ4uTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=d36KUMYQ; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734541381; bh=U2Be5nyqR9PTDwMjbIWe2Cyum/Tkak+nQevNA+8z8kA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=d36KUMYQBmbO2XobQ5P4oJ8TqaD0g91FPdoy9F+Vf7zIQcIQQwVt7liUTCer4QW/rL30bXyqZN0ovBaZ7UrVkgc7/FHBQjTIRn5EUUIb0OuKu7CbO868jtNxBTaWTsnt8GxvdGhskpkQ5Y0endD5NJUdpl8J1IDoU1nHjdQ+g9Aj+FD71JhHH6T+UdFxpCg6NsJvSbLjII3pJkPNE25vgfNoDYrWD+EX3YOyh87G11Rx8stodFp7+f4lrwYVQN6dIdJlLk8CKS0Z6k62R2ThenbKAZi7SAXtiLjfRKKoK1m3lJWtPa/54I/4xWaEyZZ/aOo5iav52YzSEyZNdWUgLA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734541381; bh=uof6lVjQypTum2OJF4xBQNI+h/bWVhCXSvQ4fKch/k5=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=eUcPPk1Fy/68efZGtGQO/xMJISHQjFDrs0pqrfjRv9ctxevYVkUR5hmQNyMUPx328UDs0IkQR3Isin7wEF6eEaRpYN+1w8enDVZq+sazXa7ktMuMgaKfZ0ENsaPYFHjzFv/sZ6y89FOmUw6NgsAAM3w/RcnWgX5ICC6ltCSrmYo8JeShWhXEv/9Q7KjXyJiqC99cmyPYHgu0JWvnZIXLhdFfter3b+VnysG7S3gnQzPxk4o4hIpuUzAd7yBb527gNXlZzjOmM/hF1VvwcERleG0FEHzAZxCNCtoTG/8dmqM72B5OXmUWxQBcozRAAMfS0hhWz5Wzb3wzOl68+waLUQ==
+X-YMail-OSG: yEUtj4gVM1n2m0tiudg5nFroB78rsxi2kr4MBuj_mY.MrvOYob4jZK4tEjNXhih
+ EevAx7bCH9yf9Evfk0uuz8DU7IJihVwp_30hacgJ6VGobyGR_pAwqq6RaUEyn3a6Qu4wCAeoHfzP
+ yqCBHbfHiT0YrXlB_ejvG3HVIKrMYGIxy163jPXax1JDzOLLdvVZCELKEJHIqM6rz0rCYWpDq21r
+ pSctZLGxq.gosmWf7as8C1VhwRZGsZ_ye3SxnxnASursL_GzKxxwjH3x.GNjg.x0.1v3LkAWGaoW
+ GtRHrxUAqBFIU33qQvZSAAdK5.u3JlasZOZcL8.86dEqIOtrsHmRfTrY88ig9OBsCTtncAIygvQy
+ dSzZo5tov_EAG84O8oFUQd6fE6NpkTX80rDS6IOjwLCBAkUX9ZZxtDzAmOx6i22Rvbw6mXPjbpWg
+ ebALhJ8_ppu1g_fz5H1uZtbH189bvvcT6A8Cd1cUPN4N5jq3jkHY8FO3ClaI21t6Mhjc.Tl5TmZZ
+ VmWATeUJ6_iRprIXI3zM2S4unR2etoGr.NFVmJlW5EqZ5b_3wGUPMYPXQekELqXwvWFk2u1Y_4NS
+ nL7Y3OHZm3WfnNPVEUKTm0WPSDBsLuuySMao5C5SeVUuhhMgF__JeVI4Ugycmkd5LoMmGwtvl5m_
+ V43I4fH031gjZ0JVNnLMy_FHGAEYU2fpmMN.IBYwanRDoQ8lcQSh3WNcGlP7Z5D2B1TkSgLdE5AF
+ Wcbapbzt_IbIj0Md25R1Mnk8h1vBzAzjDVsjsz8uHdVq15wT_YsSr0fQUue3M10glJqqe681aFp.
+ nbniAGckjsSOv1iIWnFfpmxnZD2fRUOUzmracVejRYRoF7z761EmfIQ95Xn2craQGY8WZepnclL7
+ EUg9WO7F1kr1BMIf9FznxfWL7NbXX3JRgSnsGuvq2laWqanDvZO4Dal8zpB1UrlPAYyrAE2LcHZo
+ LCNeFPblfR.tQXhWB1YvUbYCUKQTtfglvsS8v9cjr1VWAY7C.nY6BLyN3c2ayCfTkdW_hirBG0j.
+ JI_OhNrQPplgYZzyyfHxtrzRwHX45kyDdkee8aWL8ZmhgkZgEv8rZNUP.EoqhpJkfnijTeWMfhKQ
+ CrUe.Sl68KiRVx9OuwfaWp82xYi9P5VQ9wzNsQCO102BQGf.XVWhJymtLxdHAMpXgfELyS1N1.RO
+ G7qYYRVOtLRcCiINze2ZVAUNCB5GECbRirYzHhlyJTg2NaCf0ZzOnYTuBH4kV4foaHHYSSiTyK0W
+ zUZd.OsC61oqTWj5B3oxWb7gT_RiKwpSnw5XBt1EjdLO6A.gONryYkFrPrLF8Ndd5mH.eDfwbz2n
+ F2hSw5rTIvEdg7eSXmzhG.j3CRygbymGlDHW1wRmDSu7xKyhTWj1tigHiCL6OSf91T0KJzxMbJEL
+ 7g2FTpIr8uzyKxrBZwiIUUsNhYuL5JWzXjvpSuvGcNmq.K2a7L9Ky2cSRGKzVE7XmjHWBIeKP2R0
+ w.etOs1IFhfwEAk4t9ch68rkUEuo8RnhRKd3Jl5ACu3DrFqXYnkhNthhUJxBNn_uFqHa1JJG3CJK
+ Li_gkgBri1vTxGNsnS3iw55lYnOC6WNKWJQkwDAj0bY9NuCyDGuet9EYLXyZwMUjkwMiZXN_ftJS
+ X4JFgTyq32Z5bb0PdBJ84LmuJdJU__mOtAxW3krqzQAeru__5W8wmUCQS4.i_IeYNNgcpqwZoOkK
+ _SASdPE_JxiRy9VNp9Fn5hlhXCZUWg8l4ed00Xw1Ze4Yyq_mepgQ6rH0Jlx8DYPACNijhAFHhBRX
+ k0_m1u_cglWN65XjWaT05C1B1JAOQg8vOEsdimaq1BgXZ1aowhOz9RqQ3nnSzz5L.UWONGi3ifCl
+ CppLTpl3DDLsCCraEKerkLsEZkIcDLcxYa8ynA6HpEX79e4kS3cdQoXS9t1BiS_8zRZ7LrV3irtZ
+ xatmCvTyNzC7pKJbg14mTuqVt.yuzZYsmeLZ271ZJjz_byaLVGrpT7wnReXZ4.W53nDnPrI4vezW
+ HyJKUu_5eaT6OJoXA7WItKCy0NRaAxXcmfo1TGz5AgRBjxvCowWGy9U88oojPz34kVLGAM2Pyuwv
+ wB8868D8nb.enbQ2HYbdeLmzjX0.4gRiw1kpyuDI_IokK1ketHScO7QIqB2uFhpbJLkhfljmMx0w
+ oux2TDLWkT0WPN9aVpvVUvWAq1oUh.m3i1mxMRyzndLb6QqQo6yE8e68SPjREQ9BJL1mzehWKVYS
+ s2Mvn_DOzTGg_LHbjp6gxLL58FT9s9jLdy_KLEubrC_yRuvJJKsEMS5lq8sJICdud4mmEHGDzGOy
+ .dsyPT5C0JQYVTWbEXVveag_p9_6r9ILXyqZcYMx5efeZlqdMzw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: abe0c9a1-c56a-45eb-8240-8692074d8de5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 18 Dec 2024 17:03:01 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5xsmt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 12f7b58890c13094f67761df9a4a1cf5;
+          Wed, 18 Dec 2024 16:42:41 +0000 (UTC)
+Message-ID: <518fdb73-8daf-4181-a8e6-528e4824d955@schaufler-ca.com>
+Date: Wed, 18 Dec 2024 08:42:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGrbwDTLt6drB9eaUagnQVgdPBmhLfqqxAf3F+Juqy_o6oP8uw@mail.gmail.com>
- <CAOQ4uxibFVCGBEORDHjUuB_b6ELq8NdGaNv+Srz9rzQAdh=4OQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxibFVCGBEORDHjUuB_b6ELq8NdGaNv+Srz9rzQAdh=4OQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 18 Dec 2024 17:26:14 +0100
-Message-ID: <CAOQ4uxiie81voLZZi2zXS1BziXZCM24nXqPAxbu8kxXCUWdwOg@mail.gmail.com>
-Subject: Re: overlayfs: WARN_ONCE(Can't encode file handler for inotify: 255)
-To: Dmitry Safonov <dima@arista.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Dmitry Safonov <0x7f454c46@gmail.com>, 
-	Sahil Gupta <s.gupta@arista.com>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
+To: Song Liu <songliubraving@meta.com>,
+ "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
+Cc: Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+ "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+ "jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com"
+ <serge@hallyn.com>, Kernel Team <kernel-team@meta.com>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241217202525.1802109-1-song@kernel.org>
+ <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
+ <CAHC9VhTAJQJ1zh0EZY6aj2Pv=eMWJgTHm20sh_j9Z4NkX_ga=g@mail.gmail.com>
+ <8FCA52F6-F9AB-473F-AC9E-73D2F74AA02E@fb.com>
+ <B1D93B7E-7595-4B84-BC41-298067EAC8DC@fb.com>
+ <CAHC9VhRWhbFbeM0aNhatFTxZ+q0qKVKgPGUUKq4GuZMOzR2aJw@mail.gmail.com>
+ <6E598674-720E-40CE-B3F2-B480323C1926@fb.com>
+ <191ABC6C-1F0C-4B12-8785-C0548251ADDD@fb.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <191ABC6C-1F0C-4B12-8785-C0548251ADDD@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Dec 18, 2024 at 1:10=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On 12/17/2024 10:41 PM, Song Liu wrote:
+>> On Dec 17, 2024, at 3:33 PM, Song Liu <songliubraving@meta.com> wrote:
+> [...]
 >
-> On Wed, Dec 18, 2024 at 1:23=E2=80=AFAM Dmitry Safonov <dima@arista.com> =
-wrote:
-> >
-> > Hi Amir and Miklos, linux-unionfs,
-> >
-> > On v6.9.0 kernel we stepped over the WARN_ON() in show_mark_fhandle():
-> >
-> > > ------------[ cut here ]------------
-> > > Can't encode file handler for inotify: 255
-> > > WARNING: CPU: 0 PID: 11136 at fs/notify/fdinfo.c:55 show_mark_fhandle=
-+0xfa/0x110
-> > > CPU: 0 PID: 11136 Comm: lsof Kdump: loaded Tainted: P        W  O    =
-   6.9.0 #1
-> > > RIP: 0010:show_mark_fhandle+0xfa/0x110
-> > > Code: 00 00 00 5b 41 5c 5d e9 44 21 97 00 80 3d 0d af 99 01 00 75 d8 =
-89 ce 48 c7 c7 68 ad 4a 82 c6 05 fb ae 99 01 01 e8 f6 98 cc ff <0f> 0b eb b=
-f e8 4d        29 96 00 66 66 2e 0f 1f 84 00 00 00 00 00 66 90
-> > ...
-> > > Call Trace:
-> > >  <TASK>
-> > >  inotify_show_fdinfo+0x124/0x170
-> > >  seq_show+0x188/0x1f0
-> > >  seq_read_iter+0x115/0x4a0
-> > >  seq_read+0xf9/0x130
-> > >  vfs_read+0xb6/0x330
-> > >  ksys_read+0x6b/0xf0
-> > >  __do_fast_syscall_32+0x80/0x110
-> > >  do_fast_syscall_32+0x37/0x80
-> > >  entry_SYSCALL_compat_after_hwframe+0x75/0x75
-> > > RIP: 0023:0xf7f93569
-> >
-> > it later reproduced on v6.12.0. With some debug, it was narrowed down
-> > to the way overlayfs encodes file handlers in ovl_encode_fh(). It
-> > seems that currently it calculates them with the help of dentries.
-> > Straight away from that, the reproducer becomes an easy drop_caches +
-> > lsof (which parses procfs and finds some pid(s) that utilize inotify,
-> > reading their correspondent fdinfo(s)).
-> >
-> > So, my questions are: is a dentry actually needed for
-> > ovl_dentry_to_fid()? Can't it just encode fh based on an inode? It
-> > seems that the only reason it "needs" a dentry is to find the origin
-> > layer in ovl_check_encode_origin(), is it so?
+>>>> +
+>>>>                               found = true;
+>>>>                       }
+>>>>               }
+>>>> @@ -386,7 +389,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+>>>>
+>>>>       /* LSM_ORDER_LAST is always last. */
+>>>>       for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+>>>> -               if (lsm->order == LSM_ORDER_LAST)
+>>>> +               if (lsm->order == LSM_ORDER_LAST && is_enabled(lsm))
+>>>>                       append_ordered_lsm(lsm, "   last");
+>> Before this change, lsm with order==LSM_ORDER_LAST is always considered
+>> enabled, which is a bug (if I understand you and Casey correctly).
+> According to commit 42994ee3cd7298b27698daa6848ed7168e72d056, LSMs with 
+> order LSM_ORDER_LAST is expected to be always enabled:
 >
-...
-
-> However, I am concerned about the possibility of exportfs_encode_fid()
-> failing in fanotify_encode_fh().
+> "Similarly to LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled
+> and put at the end of the LSM list, if selected in the kernel
+> configuration. "
 >
-> Most fsnotify events are generated with a reference on the dentry, but
-> fsnotify_inoderemove() is called from dentry_unlink_inode() after removin=
-g
-> the dentry from the inode aliases list, so does that mean that FAN_DELETE=
-_SELF
-> events from overlayfs are never reported with fid info and that we will
-> always print pr_warn_ratelimited("fanotify: failed to encode fid ("...?
+> Roberto, it feels weird to have two "last and always on" LSMs (ima and evm)
+> I guess this is not the expected behavior? At least, it appears to be a
+> surprise for Paul and Casey.
+
+I can't speak for Paul, but having multiple "first" and "last" entries
+comes as no surprise to me. We should probably have used LSM_ORDER_EARLY
+and LSM_ORDER_LATE instead of LSM_ORDER_FIRST and LSM_ORDER_LAST. As for
+"always on", I recall that being an artifact of compatibility for the
+security= boot option.
+
+> I will send patch that allow enable/disable ima and evm with lsm= cmdline.
+> We can further discuss the topic with the patch. 
 >
-> I see that the LTP test to cover overlayfs fid events reporting (fanotify=
-13)
-> does not cover FAN_DELETE_SELF events, so I need to go check.
-
-As predicted, I added a test case for FAN_DELETE_SELF over overlayfs
-and it fails
-to get the file handle of the deleted inode:
-
-https://github.com/amir73il/ltp/commits/ovl_encode_fid/
-
-fanotify13.c:174: TINFO: Test #6.4: FAN_REPORT_FID of delete events
-with mark type FAN_MARK_INODE
-[ 2967.311260] fanotify_encode_fh: 23 callbacks suppressed
-[ 2967.311276] fanotify: failed to encode fid (type=3D0, len=3D0, err=3D-2)
-[ 2967.317410] fanotify: failed to encode fid (type=3D0, len=3D0, err=3D-2)
-[ 2967.320933] fanotify: failed to encode fid (type=3D0, len=3D0, err=3D-2)
-fanotify13.c:268: TFAIL: handle_bytes (0) returned in event does not
-equal to handle_bytes (24) returned in name_to_handle_at(2)
-fanotify13.c:268: TFAIL: handle_bytes (0) returned in event does not
-equal to handle_bytes (24) returned in name_to_handle_at(2)
-fanotify13.c:268: TFAIL: handle_bytes (180003) returned in event does
-not equal to handle_bytes (24) returned in name_to_handle_at(2)
-
-Note that this is not a regression, because FAN_REPORT_FID was not supporte=
-d on
-overlayfs before 16aac5ad1fa9 ("ovl: support encoding non-decodable
-file handles"),
-so I do plan to fix ovl_dentry_to_fid(), but with the holidays coming
-up, it could take
-more time than usual.
-
-If you have an urgency to fix the reported WARN_ONCE(), then do feel free
-to post a patch to remove this assertion, because my fix to ovl_dentry_to_f=
-id()
-may be simplified to deal only with unlinked inodes, so it may not be enoug=
-h
-fix the use case that you reported.
-
-Thanks,
-Amir.
+> Thanks,
+> Song
+>
+>
 
