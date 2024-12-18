@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-37691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B0B9F5CD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 03:27:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05DC9F5CDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 03:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCCA37A24F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 02:27:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F1707A2CE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 02:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360ED13C3C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3A113D619;
 	Wed, 18 Dec 2024 02:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3qaC05k7"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YF8qki9A"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429AA4642D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2C2487A5;
 	Wed, 18 Dec 2024 02:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734488792; cv=none; b=AQ27NSaXKayOeU/JzgSYFj7IqeVbMgLKEWXXgGHLksnt98clY6OvDH0HUakkkEnuMFRZDaFLovY5hiwHtwBGsCIicn4O7xXwdA0khTB7vU2U2sP6McjIdE+FGlKH1rmgJtqdw5FyaVJSYzf1gt+xxKQmvqhwjWUVM2o7g5GKjr4=
+	t=1734488792; cv=none; b=VTtwon77Ig3wECHNw+aM5hUXreZxe7lJetjJcAS5LmvN80xE8r9EUuq9tNwiK6jE9EaNpHROT8rMctz33HmlyHrxovVcN8WeIPnuFwWoKi46SqhuPHquld885lPmJ6p3+Sy/l61hii1nkKO6FYs0Fgpx8zkfSZpCTJbCBR5r3NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734488792; c=relaxed/simple;
-	bh=22eXPXm/5BoUDqAxOXUyQl9RxqIqzFk5NXYU3k/1j4g=;
+	bh=NIV9/pYL4zSBZEdju4ZrrpKy6bRxTm4c8YMNGicjqoU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wlp+9l10bTQlp4hitMDxXd90qQdkDQCT4BFSB2Av1CrUcf5/sEgYgmQ+hXxcF3LCj2m2imLNVGiOdu7jhpoHTIzYtaCA5zfLaNilU2kBARt61PgUcweDoEH8O3rJEM0WeWBSDd2G9wtGbdnl+eEKgulJyT+TuxsQBe6TnRJ1Ab8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3qaC05k7; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=tnZGk3L0Awa1JvxPr+j36cswPVYKbArGl2+F3YGy27GNUci06SZgf9LCB64cylDfjROb2i3ojaypW4JiY5SW9ONE05ZBVdus7cAi58EW88qmTyNQM4VkcZpNdyUnDl2kLu+vumx9uG/qqWBapUID04JlmNu2Lchj7KE0S/mSWNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YF8qki9A; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=KAcXP1LLN9RIr4LUuyxBmqGvK7FM1npzcMSwryY+7ME=; b=3qaC05k7YgxBzQwXc9ZAOl7DAT
-	k61pID00MJyziEMK2a/rV9rNOMTAiDPENc2QdtSsXU1PRi68fxGTFDy8dAn848eYwuVU4g6SzLUFN
-	vwenXhO4VWLRUjJOHA3Z7Qyf6Yy6knyLtBAB/LupK9s0sdcSjpz8D53qvxjRTzgIcHp/10eV1u5jO
-	lrh0jIW2l6IJq0zzB1AqB3idKyQzCI2cWnmBL4YFePKdAnGbpv/fMBW6odvahgNV7DTzfDcS2NF8b
-	dghX2PPebP4c53s6nR+FcNy2avvEOLCpIjKRipbwyxpSMp2nQsdx43cWKgWU/lxo2IP9GVtm1W1/m
-	BHnGwU/A==;
+	bh=/TZr4nFjkp9nWadpjSdHplXgIdajpwwrN5XnPc56j5k=; b=YF8qki9ApWj9O9QPiw4UQveFJ3
+	NQfKB26z4bEkBtNfWRijXe1dUgTBw9CxUwpzJfYVsCd7Rq3m0PVX5FbT0zu4spnX3P2bTOWTbHIjs
+	BBAKfLiuJkXTrFwI1eODbWULVvv7LXNdVU2+HPaC/SoEa6MMKjk6+1fI6cFnczLZBrKbdhlAH3uDF
+	C9+9eaa4KZovy/GjDgqOnOaKmip06d+jjsyFjML7RHJ3Hdb+H55jjeq0uLDA47ZG/ZvAyfapr3C1p
+	o6Hs0K+5NPo/jujeuy6EEI7JzJXKcEytrh6LDi/AUNYX0/j6taWl5O/Me4vjhI5OGY20dAqBWLowM
+	qmN/oplQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNjlc-0000000FOFU-168x;
+	id 1tNjlc-0000000FOFW-1EJE;
 	Wed, 18 Dec 2024 02:26:28 +0000
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: hare@suse.de,
@@ -63,9 +63,9 @@ Cc: john.g.garry@oracle.com,
 	da.gomez@samsung.com,
 	kernel@pankajraghav.com,
 	mcgrof@kernel.org
-Subject: [PATCH 2/5] fs/buffer: simplify block_read_full_folio() with bh_offset()
-Date: Tue, 17 Dec 2024 18:26:23 -0800
-Message-ID: <20241218022626.3668119-3-mcgrof@kernel.org>
+Subject: [PATCH 3/5] fs/buffer: add a for_each_bh() for block_read_full_folio()
+Date: Tue, 17 Dec 2024 18:26:24 -0800
+Message-ID: <20241218022626.3668119-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241218022626.3668119-1-mcgrof@kernel.org>
 References: <20241218022626.3668119-1-mcgrof@kernel.org>
@@ -78,51 +78,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-Remove the temporary variable i on the iteration of all buffer heads
-on a folio and just use bh_offset(bh) to simplify the loop.
+We want to be able to work through all buffer heads on a folio
+for an async read, but in the future we want to support the option
+to stop before we've processed all linked buffer heads. To make
+code easier to read and follow adopt a for_each_bh(tmp, head) loop
+instead of using a do { ... } while () to make the code easier to
+read and later be expanded in subsequent patches.
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
+This introduces no functional changes.
+
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/buffer.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/buffer.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 diff --git a/fs/buffer.c b/fs/buffer.c
-index 7c6aac0742a6..8baf87db110d 100644
+index 8baf87db110d..1aeef7dd2281 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -2410,7 +2410,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 	sector_t iblock, lblock;
- 	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
- 	size_t blocksize;
--	int nr, i;
-+	int nr;
- 	int fully_mapped = 1;
- 	bool page_error = false;
- 	loff_t limit = i_size_read(inode);
-@@ -2428,7 +2428,6 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+@@ -2397,6 +2397,17 @@ static void bh_read_batch_async(struct folio *folio,
+ 	}
+ }
+ 
++#define bh_is_last(__bh, __head) ((__bh)->b_this_page == (__head))
++
++#define bh_next(__bh, __head) \
++    (bh_is_last(__bh, __head) ? NULL : (__bh)->b_this_page)
++
++/* Starts from the provided head */
++#define for_each_bh(__tmp, __head)			\
++    for ((__tmp) = (__head);				\
++         (__tmp);					\
++         (__tmp) = bh_next(__tmp, __head))
++
+ /*
+  * Generic "read_folio" function for block devices that have the normal
+  * get_block functionality. This is most of the block device filesystems.
+@@ -2426,13 +2437,14 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+ 
+ 	iblock = div_u64(folio_pos(folio), blocksize);
  	lblock = div_u64(limit + blocksize - 1, blocksize);
- 	bh = head;
+-	bh = head;
  	nr = 0;
--	i = 0;
  
  	/* Stage one - collect buffer heads we need issue a read for */
- 	do {
-@@ -2446,7 +2445,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 					page_error = true;
- 			}
- 			if (!buffer_mapped(bh)) {
--				folio_zero_range(folio, i * blocksize,
-+				folio_zero_range(folio, bh_offset(bh),
+-	do {
+-		if (buffer_uptodate(bh))
++	for_each_bh(bh, head) {
++		if (buffer_uptodate(bh)) {
++			iblock++;
+ 			continue;
++		}
+ 
+ 		if (!buffer_mapped(bh)) {
+ 			int err = 0;
+@@ -2449,17 +2461,21 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
  						blocksize);
  				if (!err)
  					set_buffer_uptodate(bh);
-@@ -2460,7 +2459,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
++				iblock++;
  				continue;
+ 			}
+ 			/*
+ 			 * get_block() might have updated the buffer
+ 			 * synchronously
+ 			 */
+-			if (buffer_uptodate(bh))
++			if (buffer_uptodate(bh)) {
++				iblock++;
+ 				continue;
++			}
  		}
  		arr[nr++] = bh;
--	} while (i++, iblock++, (bh = bh->b_this_page) != head);
-+	} while (iblock++, (bh = bh->b_this_page) != head);
+-	} while (iblock++, (bh = bh->b_this_page) != head);
++		iblock++;
++	}
  
  	bh_read_batch_async(folio, nr, arr, fully_mapped, nr == 0, page_error);
  
