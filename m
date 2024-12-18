@@ -1,200 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-37743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83C69F6C1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 18:14:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99A99F6C21
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 18:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0051882354
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 17:14:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81993188A02C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 17:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC4C1F8F0B;
-	Wed, 18 Dec 2024 17:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FF81F8AF6;
+	Wed, 18 Dec 2024 17:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HSWgVayx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaRZII0X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2055.outbound.protection.outlook.com [40.107.94.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA0C1F76A2;
-	Wed, 18 Dec 2024 17:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734542055; cv=fail; b=dNUaDzRNVt3dDCasDt7NEMnfe9zcjhd8GkpB+GS8Hl/B5gXJhIONeMGFE/aws/8NrVLiskMfyVF3qnB8b5hLKHJ0ItW76bu5BO2/VAmU6Xwuz9vDhZ9INRR0ZE95Uve+pEQK2QnaGxqQ2zW0geZcx6bMO6/e2wyl5vR1y6oM458=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734542055; c=relaxed/simple;
-	bh=T37FHLuglsbp/Nr1lNe8WGCK8od/5OmUcQBSj1T6f14=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QM5Q3YwnjvbPKRgsWAVppPQrJYukTG8KAB7bYjRx48/IvbPZAe1JKJtMtLs/2pQwfp8yQZTZwjQfEAKV3ULtSh896sAi4ZgdfTigK8a7u5tY+S1lgSMVc4T1W9fk3XNi981Vi+rGSifc2piC1of4TOLf7gg1LCr78xlOOx+m44Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HSWgVayx; arc=fail smtp.client-ip=40.107.94.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DfmOXsANi7oDlGqJPS2CYnlTSe18vtZL9iWcTKCjFOwqxVnl8a9v2vMCzUV7k0IwWWMam20rn7M4N7OK/h2kF0k5JVHniuG/oNhs+YJ28Ik1hfsEtVzHLS/+RoGUHt6JVceJW+bqrK0+GFrrqyRu1ul3hEyClQ6eiycfCa3YkNl/v+VIE+7Coa5hXMggIEVNR81KjaNuLx+ddKnZ+stUK+1N3qoOPDUWUxM7HaOZKDF8l8Nch+4t95Pu1RHxtohT/CbU6vaNskOd0wEWQycyf849WYQntEbbXqmohHOycJlXI2PzS3TpzU/GqeTr8Rt+cm3ul5HomgK0gfET4/OJmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mLuK7BzHrFZ0+91yiycrQHu3KNhCCzYO2Aoc5js9mGY=;
- b=i/xxAKM+TJyVnpduj8Emdn13JYu6G+SwRtxXfAFlAoTBYgSmfuIOo9TK0WIG1EVyV/HHc9yz8EQpxpGsnR8Enz9i6pi4whapi5eza5cxggFesHmNvKOLApWKjJ4Dn4WSz7tfv2kX0k0O8eh/A59y2Xa56ZBnyt8WTLO166tQWIZCV4Mp+aCMHhRaL2TaylFbVLMZgXob6GastUcQOqvygqnoLPGUNLbdua/PoIX0V0slukeyqniqr0BEDAQ5glRkQZFUJwqeTda9rBfTSMBEWUo0S4LklAi85OL1n8GoEXk/P3kaqEY4GEFivwe/H9Z1BxTXriFeTDp1Q3k9SbewoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mLuK7BzHrFZ0+91yiycrQHu3KNhCCzYO2Aoc5js9mGY=;
- b=HSWgVayxkz1sPmijv/m+OUsK1eipGQ8yC62KmEnnPSZHeykUmmSD6BpfiRi2WBwNPtHQQx1FCttXQCxi8pb2wcchvRzqH6kJOJ89y7Nnlry+a+XSj79aPm/302CdCqtv9kmvCvkmeqYkWZePQkByuSrXahv0eD2Q/bUrV1IGraJGFLSTl8aus+zxIDh77eqkQLdds6wGfOb7jje7Nh6PtcHZ1b12ymmim/qzzcfHI6BpFV90rbwOGvDzDygmFQaNe39npYCxwItIGRwDr1/2l4GTDwJyz6EwHavcvweq5fGdS/0pbpeZOJjfkVLo+h4OMhHY+4Re95RtHfynRc8MUw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
- by SA3PR12MB9157.namprd12.prod.outlook.com (2603:10b6:806:39a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.24; Wed, 18 Dec
- 2024 17:14:12 +0000
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6%3]) with mapi id 15.20.8272.005; Wed, 18 Dec 2024
- 17:14:12 +0000
-Message-ID: <d6abe503-10d5-4e7c-9831-d64f010aab7e@nvidia.com>
-Date: Wed, 18 Dec 2024 19:14:02 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] block size limit cleanups
-To: Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk, hch@lst.de,
- hare@suse.de, kbusch@kernel.org, sagi@grimberg.me,
- linux-nvme@lists.infradead.org, willy@infradead.org, dave@stgolabs.net,
- david@fromorbit.com, djwong@kernel.org
-Cc: john.g.garry@oracle.com, ritesh.list@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, linux-block@vger.kernel.org, gost.dev@samsung.com,
- p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
-References: <20241218020212.3657139-1-mcgrof@kernel.org>
-Content-Language: en-US
-From: Max Gurtovoy <mgurtovoy@nvidia.com>
-In-Reply-To: <20241218020212.3657139-1-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0128.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:97::10) To CY5PR12MB6369.namprd12.prod.outlook.com
- (2603:10b6:930:21::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A0E4A1D;
+	Wed, 18 Dec 2024 17:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734542206; cv=none; b=TQA6sTH7J8ov4upAwqJNR5Ni244yxuLdOsFRl7XpGcEDHwBn7sndpwiyhOlR45lpTRpCGFluvIkFhtYHBEMW7RCbE7c6pZAd5bA1RycRq84RBzKgtwDrfkJ+IBh5m4ovrlluhE8sRSbObMN+1T2aFiFB+VNPlCJCl/RGyl3K4Rw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734542206; c=relaxed/simple;
+	bh=vByKvfBxoRz2Ew61HCzPzSOCqlcnxTOUTykzOp1/1ME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ntcXmMJf6taDtf68cQ0Ge3yfF+Yb8PJKG07mHl0i6FJuguopRQJZNLpFtOWmpVnVntdaqxSsV9It88JhQu31JclaY9WEFP/dsRpOlw3Hja21/mlsdrKeZ+/SiIVxQKAgK1HEilJR4ZlhNBp5ut9oOZY9HdWGaJKgpsiO7l4Y3u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaRZII0X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C71C4CECD;
+	Wed, 18 Dec 2024 17:16:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734542206;
+	bh=vByKvfBxoRz2Ew61HCzPzSOCqlcnxTOUTykzOp1/1ME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LaRZII0XV6az6sQ50USic51NDQt/fhWVoYaA0YSNVF8wUYpBxoJhSrjQCGTK6ajMD
+	 z44k3r2auvUrUCAQ2utziWzufJqHMxWXuyjupFw2hQDT4GtknGMBDIwv/yAYqbujzO
+	 30CCkreSlXnX7bEvuNiMcv3X/KgZCvjfJ92T2tLmULVlTdo4UJ4eE8TL+mLSttbx8p
+	 9mc3PfIVjxlmEs4uz9KMwzQaubt0ZtM0FbNMIwtm4XvZDZ0iIKywCsSTvbpiYkh8K8
+	 ZMAkejSDmtJ60gpcz3HHFd7QMoSicq1hWSYwaIKB9HXHte41/NmPr73vJCAMZ5698y
+	 t9dJEp6sKqvDg==
+Date: Wed, 18 Dec 2024 12:16:44 -0500
+From: Mike Snitzer <snitzer@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, bfoster@redhat.com, linux-nfs@vger.kernel.org
+Subject: [PATCH] nfs: flag as supporting FOP_DONTCACHE
+Message-ID: <Z2MDfBWULaV7n9Pb@kernel.org>
+References: <20241213155557.105419-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|SA3PR12MB9157:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbfd4a4f-e8c9-4ac5-4833-08dd1f876417
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WTVxZm82ekFSV0ppMVRESVNwaWFrNTFOUGtBdk5KYnNHZUtWcmsxMWtieVV2?=
- =?utf-8?B?SFdoc2NUdEYxZGlNYVMyNzZoaHNsV09rU0lNU3o2anp5dDhMSjNKRjFGaWha?=
- =?utf-8?B?RWJFTmY2TkhqckM4Vm1Id3RUUG5Tblkwckt4WW9jeXZvNkNMWE1OR2NHVXZq?=
- =?utf-8?B?ZWRuOHUyTkpJUjlqc2dXOW4xcDNqeG10QXl6NnJRTFpxcE84SDRhSzhkb25L?=
- =?utf-8?B?dVhxMzk1d2I4SFVvTCt0MFhLdndvSjY3SzdMSmxiOHhGcXA3MjZHQmxIQ1hv?=
- =?utf-8?B?ODZaYXBkVFl5ZHFpbC8wbHZTMjlqbXlZZUtpbm9rYW41Q1hzOFJZTDNFcnVU?=
- =?utf-8?B?aEdtTXdyMENzTlVYZXdUK1dnZjNiVWJUWnpKaFF4cHNJUjFHOXNRQzNVNGJs?=
- =?utf-8?B?ZEQ0OE9XckQyRmhFdUFhUEMxRUJiMzBXVFdJRmZISzhCUGJZSmFEQm94NFVG?=
- =?utf-8?B?QnFvOGJ6K1pDSklwZW5Fakk4VHgrS0tkSFBib1ptM0tKSnN1WDRIeVJVdFVC?=
- =?utf-8?B?czhSUnZOV2dJcnplUFpPN3FBSFdWNFRaeEhudThidjBkdTVJeXFaellqVjQ1?=
- =?utf-8?B?aURpT3dhNjlNbmJ4Ymh1WVdFSTdNV21OeGhidVNQUmZZVjlJbVJ6MEhkeFBt?=
- =?utf-8?B?OUpCaE0vaDRxOWc2aThuVUZuZ281K0ZjeEc3MGNiNk9QeUpKc2lZT1Q1Q0Yw?=
- =?utf-8?B?Q055MjZScTNVYlk4NW83MGxUMWErVTVxYUp3TFUvd2J2ektDamExWjZIenhS?=
- =?utf-8?B?SHl0aW9OSG0vMStMeS9MeGw2YjNsbVVJRXhSWlNOVFdodWM0ak9CWm9iZi9T?=
- =?utf-8?B?QytyN0c3ZUhsRXd1L2NCWlh1cDUxUzU3TmM3a2kxeGV2bUxVaFFTUWhGUlRW?=
- =?utf-8?B?ZDVFQUc1ZXd2SWEzWUFvcVU1aXdqVDZrbklxYkpRdmIzOC85UFAwVi9qZWdR?=
- =?utf-8?B?TTV6eTJmUjBWMlNqS1h1R3JqM3cxSDZrSnkyN2V3ekdJTFM3NUhqQWxkTENF?=
- =?utf-8?B?ZUcybjRSdWk0RTd2bXkvaEJxVUUxRnRNcGk0cGJlcklzVHZRRUNUS1dEN0NF?=
- =?utf-8?B?U3ZYZW5kYVBXK3MrbVd2MUFSekxiQnVWbHFJRDFCWE5LRGpTQkV5cU9NbDd3?=
- =?utf-8?B?cnpNN25pd05pL3RCR3N0YWx0N1pyTS9sb0cyQzVOZUdPWWdSZ3VpK2NoMHJH?=
- =?utf-8?B?UnAzcngzN094cHdvWUtrRENPOUdwL3ZudmZIWmRLc09lYnNGTE8xVmN1dDc5?=
- =?utf-8?B?KzY4b0xzbjljZGM5YnI0alU4cG8xMlFsbWl1c0Z3UmFUODNmQ3dFVlNSQTNx?=
- =?utf-8?B?WXNSNGVVdjJZZ3hPU09YOE1DMVFndElNdEJMWDYyVGg2NVJCMGhYcVNqcDIr?=
- =?utf-8?B?aHgvOExBSkUyRHh3VG1maWE3UloxVjBWVExNTTJCcDlHMVlBcG55Sjh6V2VF?=
- =?utf-8?B?MG0yK0FXMDRmNzdsS3NURHZiME5kdTNOcC9xUTQzc1NMdTNDa3QycVp0b2NG?=
- =?utf-8?B?a0RIa0Z6QVJDZHkwU3B1QUpQNVZaK2lCb0tzcFlmZXpXM1JualRncHJET3Ur?=
- =?utf-8?B?Q3diYm01S1EwOWNIQk5UZmgrOWNjNUZMb1IvT0p4L1hZT0FJbkZrTFo0MXpj?=
- =?utf-8?B?S2ZsYUljMVpwazRidStTWUNjVURTTmYrSjFqcFdEOHFjdnRCRjhUUldhcTcw?=
- =?utf-8?B?azJtUDlxSUFkd3g1U1VvYzkyVXhGYTJJRFEyV1lkdmFUVkxXamg1YU91WXJv?=
- =?utf-8?B?NXphcXpia3BTMTVYQWpMclJ5VDY1RUxqQ0JreEFkVExwcXNRbnlUWi9rTXhJ?=
- =?utf-8?B?VmwwcTg1WDNIZ3NFcVRad1RwNExnZE83N0NzYWFTaGdsU0p5K0o0bmRtUWJP?=
- =?utf-8?B?aDY1OWhhRnNLK1drem90ZXlFNFYyeE1BVlZ4eHFwN2FIcUh2Q1ZJZXg3cHd5?=
- =?utf-8?Q?EAnLAxzrXzc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UTVhNGM4YmVOdWNVNEJZbVNzQ1BxNzNPYVU0WkR2dG5NMzJ4MXd2cWF2RWZo?=
- =?utf-8?B?RlI1ZGxETzhBSUtQWS9oMG56cVlRZ2FsSGIzZHlicFM4cy92ZDd4MVZUK1dP?=
- =?utf-8?B?UUV6S3dLSUJzRG4zYnd6NW5PMmZxNXZCNWhUOUNyY0t4NGdrU3AwZG1jWXph?=
- =?utf-8?B?U1hsb0NTOENPMjRNU2NxNXo5a0hIN1pXQ3BXcE8xS0tUcVkrM1hUaWJmS1Z0?=
- =?utf-8?B?K1hZdDNBcTJQSE9kZlFVL296N09PeTFlNFcxQldiaWY1MUN2Vk56RUNZcDBB?=
- =?utf-8?B?UVRLSVJMb2g3cndaZXhnZlRBQUF4NEVKcGJHeWlsb3NTd05BTTFHcWFPSHNN?=
- =?utf-8?B?RzBFMExjWDkwWE5jMGxpWktFNFN4WmJzS0NpWS9sQm9lTUNyc3BqMFNwMThZ?=
- =?utf-8?B?NWdPNWN6U3ZyNEZoYnJGVzJ0YzlsRGh0dEdEc3Z6RGUyUWFqNTVMOWQ0Z2xN?=
- =?utf-8?B?WDFYTDg1MWZaSVNCdDhjZ1JYSHNZYjROV0MrQ285WnRRZVNLNWNUcEhVdVhu?=
- =?utf-8?B?R2RQa3J3WmU2NStzTGNXdWUrcFVMUDdrMll4alp2NGhXU0tDR1FyL1kvTENJ?=
- =?utf-8?B?UlRraGUwMG11dHppbFlIdG9HYis1QkNWa2RFbTl4RGJ6dXMrejYyR3llSFR0?=
- =?utf-8?B?QXN2QUlrUjJ6bUtYaXBqWnQ2TFA4VlFrZGVoMTBTOXRiUmNXWG9XYnRoWUR3?=
- =?utf-8?B?UVFudEs0elpOR3VqSEgrMXZGaVhKU1dPNmZWYUdjRHl6dmZ3L1o1WjRtTDJ3?=
- =?utf-8?B?a0hFMnVMUk5rR0RHTWVDVGxRVDZNZ0NDVUlaWmw2YVpaN3Urai9IOHhlMWxQ?=
- =?utf-8?B?ZVRvN0N4eEY1OGpOeUdmVjVXTXdkbU1MZkVEYy9BaVRxVXpvN2c3QmkwUHBB?=
- =?utf-8?B?SEdzZ3RHc1NOWEdVdmxyblkxUjI5NUlWWHVCN045SVJJYW5QR1E5SHEvbklw?=
- =?utf-8?B?NVBFbFRLaWhORk9NcDUvV21WSDdjUHRLbHVWTDVQTWFLN01YdjJvTG1NMFA0?=
- =?utf-8?B?RTI2SDlXV0lXdTJTUHMxZWtodlNVcXFOVGxiWVNyemtObXYwbjhyeU1VTUh3?=
- =?utf-8?B?OEMrNUlzMVBQY3A1S1pSZlo4YThNYWlSOFo2ckhTZmN2YkRTTElBSmFOZmEy?=
- =?utf-8?B?c0VOVS92Rjd2WVBDaWN3b0NOTVh4cEs3UnVDSkwrT29HS3pRZFM1Y3crVm1G?=
- =?utf-8?B?dlJicmtxY0tCV0txWWJoVGZBTzFSbTduY29YUXp3L0pCV1hFZytaQnJaVUdl?=
- =?utf-8?B?MUZPeVZrNFhZYlVjQzYwYlU4bU5CbjY4WkNnN1MxeHpDVEQ4R3NCaTJTNXo5?=
- =?utf-8?B?SGdiMlVjNXgrTHJSK1I2SnFoZUhFdElSekc2TW0xdWxkdVRQaURLY0J0WVAy?=
- =?utf-8?B?TXpkeVNGd3FkUE03SC9PcytkUUxIWE9nOXJJSkpIUnNaNDNYTWZ5UHdpSk12?=
- =?utf-8?B?czgvRVcxTUpnTTBQdHpETzBhNERlYWR3NU1EZFFPWXlWT2I1N2lpTEtLaHJj?=
- =?utf-8?B?VG9MSGk2SndtbHRhd08rS3ppQ09sNEhtaWI0MGdtem9WZzlUTU9UaG44SGpa?=
- =?utf-8?B?OVJCa1JhL2Y3eHc1Y1RZMHhmaE1NWnZHUW16bUpGcUtBMEVuMXZQdDB2Ynpp?=
- =?utf-8?B?OG9oK2xZWDB0citvSFdzTXlydDVMK1hsZFJjN3JXaWd3RzlJRkU0Vm54V3dW?=
- =?utf-8?B?S21IcnZiNkdjTStOdklpNWhBSzlrRlZTSUU3Z1hXS2F4V2RSTlc3cUhhdzQz?=
- =?utf-8?B?RktQWnFlSUFGL04wTDMyaUJTQURqM212bGd1dyt3ODIrOFF6dE5ybGJIbjZV?=
- =?utf-8?B?WklQMWRtczl5WG5mdmF5NHM2a2psbS9pM1FmSWJwOGZWQkJHd2IxTWVJV0hU?=
- =?utf-8?B?ejJnT241NHdFaVp5ZlpCYWRXUHVMczlnS0phS3pJQVdPTmtCTUUxbUdBVGNN?=
- =?utf-8?B?U1RySHA3U200VytEVXpnakhiM0cwenhnRFRSZkFkSzNYWGc0eFI2ZzU2eFlY?=
- =?utf-8?B?QktydEdUZnVVYXpqdUJGbGpNVHhybFVQc0NoMUhVcnNjRlllK1pzWTVWMXNv?=
- =?utf-8?B?SDJvQXpSNXBJQnNjankrRi83aWVodEFuODRSTHptZzhJSmszTFVGRU9VQ0VI?=
- =?utf-8?Q?TczGlrhLD+EwgZtTSfdqCjYHN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbfd4a4f-e8c9-4ac5-4833-08dd1f876417
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2024 17:14:11.9500
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CJb4mDLw3QggZGM+zH/cUD1e0/b1IiHGe+ejBwklhyTw7V+y4ckRRB4MHGOYRSS7PUiQ6axDqQtNgJqcbief0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213155557.105419-1-axboe@kernel.dk>
+
+On Fri, Dec 13, 2024 at 08:55:14AM -0700, Jens Axboe wrote:
+> Hi,
+> 
+> 5 years ago I posted patches adding support for RWF_UNCACHED, as a way
+> to do buffered IO that isn't page cache persistent. The approach back
+> then was to have private pages for IO, and then get rid of them once IO
+> was done. But that then runs into all the issues that O_DIRECT has, in
+> terms of synchronizing with the page cache.
+> 
+> So here's a new approach to the same concent, but using the page cache
+> as synchronization. Due to excessive bike shedding on the naming, this
+> is now named RWF_DONTCACHE, and is less special in that it's just page
+> cache IO, except it prunes the ranges once IO is completed.
+> 
+> Why do this, you may ask? The tldr is that device speeds are only
+> getting faster, while reclaim is not. Doing normal buffered IO can be
+> very unpredictable, and suck up a lot of resources on the reclaim side.
+> This leads people to use O_DIRECT as a work-around, which has its own
+> set of restrictions in terms of size, offset, and length of IO. It's
+> also inherently synchronous, and now you need async IO as well. While
+> the latter isn't necessarily a big problem as we have good options
+> available there, it also should not be a requirement when all you want
+> to do is read or write some data without caching.
+> 
+> Even on desktop type systems, a normal NVMe device can fill the entire
+> page cache in seconds. On the big system I used for testing, there's a
+> lot more RAM, but also a lot more devices. As can be seen in some of the
+> results in the following patches, you can still fill RAM in seconds even
+> when there's 1TB of it. Hence this problem isn't solely a "big
+> hyperscaler system" issue, it's common across the board.
+> 
+> Common for both reads and writes with RWF_DONTCACHE is that they use the
+> page cache for IO. Reads work just like a normal buffered read would,
+> with the only exception being that the touched ranges will get pruned
+> after data has been copied. For writes, the ranges will get writeback
+> kicked off before the syscall returns, and then writeback completion
+> will prune the range. Hence writes aren't synchronous, and it's easy to
+> pipeline writes using RWF_DONTCACHE. Folios that aren't instantiated by
+> RWF_DONTCACHE IO are left untouched. This means you that uncached IO
+> will take advantage of the page cache for uptodate data, but not leave
+> anything it instantiated/created in cache.
+> 
+> File systems need to support this. This patchset adds support for the
+> generic read path, which covers file systems like ext4. Patches exist to
+> add support for iomap/XFS and btrfs as well, which sit on top of this
+> series. If RWF_DONTCACHE IO is attempted on a file system that doesn't
+> support it, -EOPNOTSUPP is returned. Hence the user can rely on it
+> either working as designed, or flagging and error if that's not the
+> case. The intent here is to give the application a sensible fallback
+> path - eg, it may fall back to O_DIRECT if appropriate, or just live
+> with the fact that uncached IO isn't available and do normal buffered
+> IO.
+> 
+> Adding "support" to other file systems should be trivial, most of the
+> time just a one-liner adding FOP_DONTCACHE to the fop_flags in the
+> file_operations struct.
+> 
+> Performance results are in patch 8 for reads, and you can find the write
+> side results in the XFS patch adding support for DONTCACHE writes for
+> XFS:
+> 
+> ://git.kernel.dk/cgit/linux/commit/?h=buffered-uncached.9&id=edd7b1c910c5251941c6ba179f44b4c81a089019
+> 
+> with the tldr being that I see about a 65% improvement in performance
+> for both, with fully predictable IO times. CPU reduction is substantial
+> as well, with no kswapd activity at all for reclaim when using
+> uncached IO.
+> 
+> Using it from applications is trivial - just set RWF_DONTCACHE for the
+> read or write, using pwritev2(2) or preadv2(2). For io_uring, same
+> thing, just set RWF_DONTCACHE in sqe->rw_flags for a buffered read/write
+> operation. And that's it.
+> 
+> Patches 1..7 are just prep patches, and should have no functional
+> changes at all. Patch 8 adds support for the filemap path for
+> RWF_DONTCACHE reads, and patches 9..11 are just prep patches for
+> supporting the write side of uncached writes. In the below mentioned
+> branch, there are then patches to adopt uncached reads and writes for
+> xfs, btrfs, and ext4. The latter currently relies on bit of a hack for
+> passing whether this is an uncached write or not through
+> ->write_begin(), which can hopefully go away once ext4 adopts iomap for
+> buffered writes. I say this is a hack as it's not the prettiest way to
+> do it, however it is fully solid and will work just fine.
+> 
+> Passes full xfstests and fsx overnight runs, no issues observed. That
+> includes the vm running the testing also using RWF_DONTCACHE on the
+> host. I'll post fsstress and fsx patches for RWF_DONTCACHE separately.
+> As far as I'm concerned, no further work needs doing here.
+> 
+> And git tree for the patches is here:
+> 
+> https://git.kernel.dk/cgit/linux/log/?h=buffered-uncached.9
+> 
+>  include/linux/fs.h             | 21 +++++++-
+>  include/linux/page-flags.h     |  5 ++
+>  include/linux/pagemap.h        |  1 +
+>  include/trace/events/mmflags.h |  3 +-
+>  include/uapi/linux/fs.h        |  6 ++-
+>  mm/filemap.c                   | 97 +++++++++++++++++++++++++++++-----
+>  mm/internal.h                  |  2 +
+>  mm/readahead.c                 | 22 ++++++--
+>  mm/swap.c                      |  2 +
+>  mm/truncate.c                  | 54 ++++++++++---------
+>  10 files changed, 166 insertions(+), 47 deletions(-)
+> 
+> Since v6
+> - Rename the PG_uncached flag to PG_dropbehind
+> - Shuffle patches around a bit, most notably so the foliop_uncached
+>   patch goes with the ext4 support
+> - Get rid of foliop_uncached hack for btrfs (Christoph)
+> - Get rid of passing in struct address_space to filemap_create_folio()
+> - Inline invalidate_complete_folio2() in folio_unmap_invalidate() rather
+>   than keep it as a separate helper
+> - Rebase on top of current master
+> 
+> -- 
+> Jens Axboe
+> 
+> 
 
 
-On 18/12/2024 4:02, Luis Chamberlain wrote:
-> This spins off two change which introduces no functional changes from the
-> bs > ps block device patch series [0]. These are just cleanups.
->
-> [0] https://lkml.kernel.org/r/20241214031050.1337920-1-mcgrof@kernel.org
->
-> Luis Chamberlain (2):
->    block/bdev: use helper for max block size check
->    nvme: use blk_validate_block_size() for max LBA check
->
->   block/bdev.c             | 3 +--
->   drivers/nvme/host/core.c | 2 +-
->   2 files changed, 2 insertions(+), 3 deletions(-)
+Hi Jens,
 
-Looks good,
+You may recall I tested NFS to work with UNCACHED (now DONTCACHE).
+I've rebased the required small changes, feel free to append this to
+your series if you like.
 
-Reviewed-by: Max Gurtovoy <mgurtovoy@nvidia.com>
+More work is needed to inform knfsd to selectively use DONTCACHE, but
+that will require more effort and coordination amongst the NFS kernel
+team.
 
+From: Mike Snitzer <snitzer@kernel.org>
+Date: Thu, 14 Nov 2024 22:09:01 +0000
+Subject: [PATCH] nfs: flag as supporting FOP_DONTCACHE
+
+Jens says: "nfs just uses generic_file_read_iter(), so read side is
+fine with the flag added and generic_perform_write() for the write
+side, wrapped in some nfs jazz. So you can probably just set the flag
+and be done with it."
+
+Must also update nfs_write_begin() to set FGP_DONTCACHE in fgp flags
+passed to __filemap_get_folio().
+
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+---
+ fs/nfs/file.c     | 3 +++
+ fs/nfs/nfs4file.c | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 1bb646752e466..ff5d4c97df494 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -354,6 +354,8 @@ static int nfs_write_begin(struct file *file, struct address_space *mapping,
+ 		file, mapping->host->i_ino, len, (long long) pos);
+ 
+ 	fgp |= fgf_set_order(len);
++	if (foliop_is_dropbehind(foliop))
++		fgp |= FGP_DONTCACHE;
+ start:
+ 	folio = __filemap_get_folio(mapping, pos >> PAGE_SHIFT, fgp,
+ 				    mapping_gfp_mask(mapping));
+@@ -909,5 +911,6 @@ const struct file_operations nfs_file_operations = {
+ 	.splice_write	= iter_file_splice_write,
+ 	.check_flags	= nfs_check_flags,
+ 	.setlease	= simple_nosetlease,
++	.fop_flags	= FOP_DONTCACHE,
+ };
+ EXPORT_SYMBOL_GPL(nfs_file_operations);
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 1cd9652f3c280..83e2467b7c66f 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -467,4 +467,5 @@ const struct file_operations nfs4_file_operations = {
+ #else
+ 	.llseek		= nfs_file_llseek,
+ #endif
++	.fop_flags	= FOP_DONTCACHE,
+ };
+-- 
+2.44.0
 
 
