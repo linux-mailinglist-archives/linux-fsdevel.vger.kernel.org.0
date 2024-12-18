@@ -1,85 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-37760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863289F6F27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 22:01:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED399F6F57
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 22:17:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434B8189088F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 21:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C26166E45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 21:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851731FC7DF;
-	Wed, 18 Dec 2024 21:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3847E1FCD0C;
+	Wed, 18 Dec 2024 21:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U06emEIZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg1tbOH4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB751FC0E3;
-	Wed, 18 Dec 2024 21:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753B01922EE;
+	Wed, 18 Dec 2024 21:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734555708; cv=none; b=C91SjG0qQ6lBep9KLcBkCXtWEwzBwunfNM4neOQIDJkLrSZxuUdJoCBS37F/zvW0quZl62qBI9ITmG/yuF3rz4LzCzOPYDAKzUqJhquQ4CjsJ8tH7z5FZxGRqK0HHZvWB4TqYZCPysdotdsz8MR/Ltdz/Jc9Oi186RLfUKxc2tc=
+	t=1734556598; cv=none; b=ktuY+P+Gf4RoISJRXbZZL49DoDb9TPWlSPiIzLjP8bakFDQO6jUTboghtvmQ6a8WIw8Xedr+1jP7eFxG5kD8qard4tuUk/0rIFQXoxQ/TciIoIf29+qzxtHRg4/5SWfjENQw0TDm+KgsZJImSANs6pk7W9pKfvoRVb6kckhfISg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734555708; c=relaxed/simple;
-	bh=oHX8g+2ihpxwTrK041BqNedpS6IlTwzwvwCuJno8/NE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S9b0JZbgCtfVss7oWSYGE7eJGtU1NJWhz9UbbOMAkJYjx7o8z10iWMtmH8JkCpMUwfpHmcsZc6DRVVRdFdVOwrskdt50IdawHSaDP2xHpt74PJbk1+qzqqjlnnoaVcXj9agaN7/EfLCX51ZL9NDAz4Yh52+yt0fGwdJdskVGc2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U06emEIZ; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3fd6cd9ef7so1075873276.1;
-        Wed, 18 Dec 2024 13:01:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734555705; x=1735160505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tvYqTuGIf+upof8GIbZFvu/MmffRm+hDcwiYX6WvDfc=;
-        b=U06emEIZTaHsSNck++ePl2bE+EQyoxn4SxsZr4vFaasqq95G5ET2+y9QyTtV8FmIgt
-         SBmiVvJm5AvYeoIrmZQUur6fQC+XB+RaNE4kjdB7IG+WE76sFhbsOM2eofnSd2Ed1owA
-         blyyuM4Wn+4Qkt5eT0bN/eQg0dAWbBJK67+fhqzVbvYdvZiv/yrYBltSVNewTiW0j7QM
-         MNBKaykL92BawpKeJ4AICB0wTIb3axsTTxviJ1Nf3AsdvIP/WTa7L6YA+d4iFOM43i5E
-         2gDQ5OdEv3NGDphbcOWcXrFdW6Xo9dGBvJoHPt3fTUfEcpULHsrea5IcUxjuXySIQ1r/
-         J4TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734555705; x=1735160505;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tvYqTuGIf+upof8GIbZFvu/MmffRm+hDcwiYX6WvDfc=;
-        b=BXbyxtjHkIDICSrpNUQjXs6GKLqjQ0WxIZB1IoraC8M2rqiqoB1DyUyl/m01NiyB6c
-         qrr9QplgvHi4qFHy7hJPxov3BAufw4dAM+UyXEj/JV8P6Oub9+lB/U8PZrm8ysEHVHfb
-         LSNIn6nD4ML9D4AUh6cfnzuXj/ZhxfXeoDC8Q94j+XN7VAkbQvyP5QaRGIuliCJeaFK0
-         Oy39ZAOO33793gyjXhTJxNJexytNK71xYw2+GwOMHtJNGCgDT3/1SYpj+POT2fjrkApH
-         84zNe8glrss2s8Ep39YiHk8hxItJrb2yHgYLiPabNze/qS/q+V+EdFb6zLc7vxqd9AXY
-         3Waw==
-X-Gm-Message-State: AOJu0Yw0GDDvbIAWK6+tYMKFCKveWmxBsBfyIX+hPsiRDt2dvrrAspsy
-	rbn+0VOfB4RDoaNzBlWRHKT4y3zAMiHckucNvMQNVpv/AvAJ6eQ/JwgD0A==
-X-Gm-Gg: ASbGncvEniuDf/KcsWAWMEUMdzgjZu34QVgAuqQZmFDGpTviiSB05bYjehjIhFujmeZ
-	UQejRj7lsXUfAMQhGUlK75vB6Os3W6oBkCgk8KChPb0OLHkbhT74R1RSN+pbzSzx+kGu2JelvgF
-	EmHWGQBxv0lT/PXwNNYETkwnZCwtpuTnBijqP34k6oyleFLYYKFNADOiSDEhrVs9JKxFVaWo0wt
-	ofskyLnD7UAI6uhxWTYv8K4k3QA4ZWf/wSipi89cu/nDtQ/j4BnEao=
-X-Google-Smtp-Source: AGHT+IHyKxeuut12QZgBEbwguNN7FiQkO9LFs+0DGUkwKEJI0I/G7ylMOyfzoVFkoCfLcvzQdAuAow==
-X-Received: by 2002:a05:690c:6:b0:6e2:fcb5:52fa with SMTP id 00721157ae682-6f3e2ad85f1mr8345377b3.9.1734555705304;
-        Wed, 18 Dec 2024 13:01:45 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:73::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f288fc5111sm25545047b3.4.2024.12.18.13.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 13:01:45 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1734556598; c=relaxed/simple;
+	bh=BzP8UTSDo5oitwO7ghy7d6m6Rl07PvzBU5guVa6Dy50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YvryJ8Fbrsy8kAOoCA53chuaw5bg1P5T21a4UjwavvKO7Gk+Np5rvqy+r4EtVoFDj6dfn2zIGyU7bmqLAhnwbRCByPSzIwTcSmiov3yuIgvReUe27+Qiu5hbDVzFgUISq306oE3Iw4pPlz1goKI1zDo6Mh8jONF5P7v+QxQjS3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg1tbOH4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CD1C4CECD;
+	Wed, 18 Dec 2024 21:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734556598;
+	bh=BzP8UTSDo5oitwO7ghy7d6m6Rl07PvzBU5guVa6Dy50=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Bg1tbOH40ROGrk3Uq0Flni+/gJucA12nM0oTfZpiwTkmsbAMx0aJCrtjAv9apbXeg
+	 4UkejTo19kGWVQitUrDAf/yoeNbPfyfcBjSkEGsPwY/ZPR9D7Fr6R8hFChxd8a2g79
+	 8AzPEUATSPYM5V8ZdJU32vr1171JPfSLJuDiMNQzb03zdNy2M3TLyAUbBU5V3PWPgU
+	 R9IzYDmu1bTbMObM/ry4KF3l3o9UPS96laRC2dNELzIW4tRSlhVjNRECqEvFDZfTcx
+	 yLB92nCZOVS+JoIwkMidnJjhVkBg5UMBzJqwYU8TagNkyLmvqc2UAlYNpABUvR+hGh
+	 js5MBRA4yyodg==
+From: Song Liu <song@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: willy@infradead.org,
+	corbet@lwn.net,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	cem@kernel.org,
+	djwong@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	fdmanana@suse.com,
+	song@kernel.org,
+	johannes.thumshirn@wdc.com,
 	kernel-team@meta.com
-Subject: [PATCH 2/2] generic: add tests for read/writes from hugepages-backed buffers
-Date: Wed, 18 Dec 2024 13:01:22 -0800
-Message-ID: <20241218210122.3809198-3-joannelkoong@gmail.com>
+Subject: [RFC v2] lsm: fs: Use inode_free_callback to free i_security in RCU callback
+Date: Wed, 18 Dec 2024 13:16:15 -0800
+Message-ID: <20241218211615.506095-1-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241218210122.3809198-1-joannelkoong@gmail.com>
-References: <20241218210122.3809198-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,123 +75,294 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add generic tests 758 and 759 for testing reads/writes from buffers
-backed by hugepages.
+inode->i_security needes to be freed from RCU callback. A rcu_head was
+added to i_security to call the RCU callback. However, since struct inode
+already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
+LSM uses i_security, a rcu_head (two pointers) is allocated for each
+inode.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Rename i_callback to inode_free_callback and call security_inode_free_rcu
+from it to free i_security so that a rcu_head is saved for each inode.
+Special care are needed for file systems that provide a destroy_inode()
+callback, but not a free_inode() callback. Specifically, the following
+logic are added to handle such cases:
+
+ - XFS recycles inode after destroy_inode. The inodes are freed from
+   recycle logic. Let xfs_inode_free_callback() call inode_free_callback.
+ - Let pipe free inode from a RCU callback.
+ - Let btrfs-test free inode from a RCU callback.
+
+Signed-off-by: Song Liu <song@kernel.org>
+
 ---
- common/rc             | 10 ++++++++++
- tests/generic/758     | 23 +++++++++++++++++++++++
- tests/generic/758.out |  4 ++++
- tests/generic/759     | 24 ++++++++++++++++++++++++
- tests/generic/759.out |  4 ++++
- 5 files changed, 65 insertions(+)
- create mode 100755 tests/generic/758
- create mode 100644 tests/generic/758.out
- create mode 100755 tests/generic/759
- create mode 100644 tests/generic/759.out
 
-diff --git a/common/rc b/common/rc
-index 1b2e4508..33af7fa7 100644
---- a/common/rc
-+++ b/common/rc
-@@ -3016,6 +3016,16 @@ _require_xfs_io_command()
- 	fi
+Changes v1 => v2:
+1. Wrap security_inode_free_rcu inside inode_free_callback so that
+   the interface is cleaner.
+
+RFC v1: https://lore.kernel.org/linux-fsdevel/20241216234308.1326841-1-song@kernel.org/
+---
+ Documentation/filesystems/vfs.rst |  5 +++-
+ fs/btrfs/fs.h                     |  1 +
+ fs/btrfs/inode.c                  |  4 +++
+ fs/btrfs/tests/btrfs-tests.c      |  1 +
+ fs/inode.c                        | 20 +++++++++----
+ fs/pipe.c                         |  1 -
+ fs/xfs/xfs_icache.c               |  1 +
+ include/linux/fs.h                |  2 ++
+ include/linux/security.h          |  4 +++
+ security/security.c               | 48 +++++++++++++++++++------------
+ 10 files changed, 60 insertions(+), 27 deletions(-)
+
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 0b18af3f954e..93d6f59fd2c0 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -306,7 +306,10 @@ or bottom half).
+ ``free_inode``
+ 	this method is called from RCU callback. If you use call_rcu()
+ 	in ->destroy_inode to free 'struct inode' memory, then it's
+-	better to release memory in this method.
++	better to release memory in this method. Some filesystems may
++	decide not to provide a free_inode() method, but to free the
++	inode through a different code path. In this case, the filesystem
++	should call inode_free_callback() before freeing the inode.
+ 
+ ``dirty_inode``
+ 	this method is called by the VFS when an inode is marked dirty.
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index 79a1a3d6f04d..f606ea2a14ab 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -1068,6 +1068,7 @@ static inline int btrfs_is_testing(const struct btrfs_fs_info *fs_info)
  }
  
-+# check that the kernel and system supports huge pages
-+_require_thp()
-+{
-+    thp_status=$(cat /sys/kernel/mm/transparent_hugepage/enabled)
-+    if [[ $thp_status == *"[never]"* ]]; then
-+	    _notrun "system doesn't support transparent hugepages"
-+    fi
-+    _require_kernel_config CONFIG_TRANSPARENT_HUGEPAGE
+ void btrfs_test_destroy_inode(struct inode *inode);
++void btrfs_test_free_inode(struct inode *inode);
+ 
+ #else
+ 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 03fe0de2cd0d..62ee8394cf6c 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -7707,6 +7707,10 @@ void btrfs_test_destroy_inode(struct inode *inode)
+ {
+ 	btrfs_drop_extent_map_range(BTRFS_I(inode), 0, (u64)-1, false);
+ 	kfree(BTRFS_I(inode)->file_extent_tree);
 +}
 +
- # check that kernel and filesystem support direct I/O, and check if "$1" size
- # aligned (optional) is supported
- _require_odirect()
-diff --git a/tests/generic/758 b/tests/generic/758
-new file mode 100755
-index 00000000..b3bd6e5b
---- /dev/null
-+++ b/tests/generic/758
-@@ -0,0 +1,23 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# FS QA Test No. 758
-+#
-+# fsx exercising reads/writes from userspace buffers
-+# backed by hugepages
-+#
-+. ./common/preamble
-+_begin_fstest rw auto quick
++void btrfs_test_free_inode(struct inode *inode)
++{
+ 	kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
+ }
+ #endif
+diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+index e607b5d52fb1..581b518b99b7 100644
+--- a/fs/btrfs/tests/btrfs-tests.c
++++ b/fs/btrfs/tests/btrfs-tests.c
+@@ -35,6 +35,7 @@ const char *test_error[] = {
+ static const struct super_operations btrfs_test_super_ops = {
+ 	.alloc_inode	= btrfs_alloc_inode,
+ 	.destroy_inode	= btrfs_test_destroy_inode,
++	.free_inode	= btrfs_test_free_inode,
+ };
+ 
+ 
+diff --git a/fs/inode.c b/fs/inode.c
+index 6b4c77268fc0..e5dbf59e7297 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -318,13 +318,13 @@ void free_inode_nonrcu(struct inode *inode)
+ }
+ EXPORT_SYMBOL(free_inode_nonrcu);
+ 
+-static void i_callback(struct rcu_head *head)
++void inode_free_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
 +
-+# Import common functions.
-+. ./common/filter
++	security_inode_free_rcu(inode);
+ 	if (inode->free_inode)
+ 		inode->free_inode(inode);
+-	else
+-		free_inode_nonrcu(inode);
+ }
+ 
+ static struct inode *alloc_inode(struct super_block *sb)
+@@ -346,8 +346,11 @@ static struct inode *alloc_inode(struct super_block *sb)
+ 			if (!ops->free_inode)
+ 				return NULL;
+ 		}
+-		inode->free_inode = ops->free_inode;
+-		i_callback(&inode->i_rcu);
++		if (ops->free_inode)
++			inode->free_inode = ops->free_inode;
++		else
++			inode->free_inode = free_inode_nonrcu;
++		inode_free_callback(&inode->i_rcu);
+ 		return NULL;
+ 	}
+ 
+@@ -387,8 +390,13 @@ static void destroy_inode(struct inode *inode)
+ 		if (!ops->free_inode)
+ 			return;
+ 	}
++	if (ops->free_inode)
++		inode->free_inode = ops->free_inode;
++	else
++		inode->free_inode = free_inode_nonrcu;
 +
-+_require_test
-+_require_thp
+ 	inode->free_inode = ops->free_inode;
+-	call_rcu(&inode->i_rcu, i_callback);
++	call_rcu(&inode->i_rcu, inode_free_callback);
+ }
+ 
+ /**
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 12b22c2723b7..eb9c75ef5d80 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -1422,7 +1422,6 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
+ }
+ 
+ static const struct super_operations pipefs_ops = {
+-	.destroy_inode = free_inode_nonrcu,
+ 	.statfs = simple_statfs,
+ };
+ 
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 7b6c026d01a1..7c72a6199f15 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -162,6 +162,7 @@ xfs_inode_free_callback(
+ 		ip->i_itemp = NULL;
+ 	}
+ 
++	inode_free_callback(&inode->i_rcu);
+ 	kmem_cache_free(xfs_inode_cache, ip);
+ }
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7e29433c5ecc..dab8f1cd1b72 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3810,4 +3810,6 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
+ 
+ int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
+ 
++void inode_free_callback(struct rcu_head *head);
 +
-+run_fsx -N 10000   	    -l 500000 -h
-+run_fsx -N 10000  -o 8192   -l 500000 -h
-+run_fsx -N 10000  -o 128000 -l 500000 -h
+ #endif /* _LINUX_FS_H */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 980b6c207cad..4983d6a3ccb3 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -400,6 +400,7 @@ int security_path_notify(const struct path *path, u64 mask,
+ 					unsigned int obj_type);
+ int security_inode_alloc(struct inode *inode, gfp_t gfp);
+ void security_inode_free(struct inode *inode);
++void security_inode_free_rcu(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
+@@ -860,6 +861,9 @@ static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
+ static inline void security_inode_free(struct inode *inode)
+ { }
+ 
++static inline void security_inode_free_rcu(struct inode *inode)
++{ }
 +
-+status=0
-+exit
-diff --git a/tests/generic/758.out b/tests/generic/758.out
-new file mode 100644
-index 00000000..af04bb14
---- /dev/null
-+++ b/tests/generic/758.out
-@@ -0,0 +1,4 @@
-+QA output created by 758
-+fsx -N 10000 -l 500000 -h
-+fsx -N 10000 -o 8192 -l 500000 -h
-+fsx -N 10000 -o 128000 -l 500000 -h
-diff --git a/tests/generic/759 b/tests/generic/759
-new file mode 100755
-index 00000000..6dfe2b86
---- /dev/null
-+++ b/tests/generic/759
-@@ -0,0 +1,24 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# FS QA Test No. 759
-+#
-+# fsx exercising direct IO reads/writes from userspace buffers
-+# backed by hugepages
-+#
-+. ./common/preamble
-+_begin_fstest rw auto quick
+ static inline int security_dentry_init_security(struct dentry *dentry,
+ 						 int mode,
+ 						 const struct qstr *name,
+diff --git a/security/security.c b/security/security.c
+index 7523d14f31fb..b9a515d881f6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -265,12 +265,6 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+ 	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
+ 	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
+-	/*
+-	 * The inode blob gets an rcu_head in addition to
+-	 * what the modules might need.
+-	 */
+-	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
+-		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+ 	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
+ 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+ 	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
+@@ -747,10 +741,15 @@ static int lsm_file_alloc(struct file *file)
+  */
+ static int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
+ {
+-	if (!lsm_inode_cache) {
+-		inode->i_security = NULL;
++	/*
++	 * If the filesystem recycles inode, i_security may be already
++	 * allocated. Just return in this case.
++	 */
++	if (inode->i_security)
++		return 0;
 +
-+# Import common functions.
-+. ./common/filter
++	if (!lsm_inode_cache)
+ 		return 0;
+-	}
+ 
+ 	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
+ 	if (inode->i_security == NULL)
+@@ -1693,18 +1692,13 @@ int security_inode_alloc(struct inode *inode, gfp_t gfp)
+ 	if (unlikely(rc))
+ 		return rc;
+ 	rc = call_int_hook(inode_alloc_security, inode);
+-	if (unlikely(rc))
++	if (unlikely(rc)) {
+ 		security_inode_free(inode);
++		security_inode_free_rcu(inode);
++	}
+ 	return rc;
+ }
+ 
+-static void inode_free_by_rcu(struct rcu_head *head)
+-{
+-	/* The rcu head is at the start of the inode blob */
+-	call_void_hook(inode_free_security_rcu, head);
+-	kmem_cache_free(lsm_inode_cache, head);
+-}
+-
+ /**
+  * security_inode_free() - Free an inode's LSM blob
+  * @inode: the inode
+@@ -1724,9 +1718,25 @@ static void inode_free_by_rcu(struct rcu_head *head)
+ void security_inode_free(struct inode *inode)
+ {
+ 	call_void_hook(inode_free_security, inode);
+-	if (!inode->i_security)
++}
 +
-+_require_test
-+_require_odirect
-+_require_thp
++/**
++ * security_inode_free_rcu() - Free an inode's LSM blob from i_callback
++ * @inode: the inode
++ *
++ * Release any LSM resources associated with @inode. This is called from
++ * i_callback after a RCU grace period. Therefore, it is safe to free
++ * everything now.
++ */
++void security_inode_free_rcu(struct inode *inode)
++{
++	void *inode_security = inode->i_security;
 +
-+run_fsx -N 10000            -l 500000 -Z -R -W -h
-+run_fsx -N 10000  -o 8192   -l 500000 -Z -R -W -h
-+run_fsx -N 10000  -o 128000 -l 500000 -Z -R -W -h
-+
-+status=0
-+exit
-diff --git a/tests/generic/759.out b/tests/generic/759.out
-new file mode 100644
-index 00000000..18d21229
---- /dev/null
-+++ b/tests/generic/759.out
-@@ -0,0 +1,4 @@
-+QA output created by 759
-+fsx -N 10000 -l 500000 -Z -R -W -h
-+fsx -N 10000 -o 8192 -l 500000 -Z -R -W -h
-+fsx -N 10000 -o 128000 -l 500000 -Z -R -W -h
++	if (!inode_security)
+ 		return;
+-	call_rcu((struct rcu_head *)inode->i_security, inode_free_by_rcu);
++	inode->i_security = NULL;
++	call_void_hook(inode_free_security_rcu, inode_security);
++	kmem_cache_free(lsm_inode_cache, inode_security);
+ }
+ 
+ /**
 -- 
-2.47.1
+2.43.5
 
 
