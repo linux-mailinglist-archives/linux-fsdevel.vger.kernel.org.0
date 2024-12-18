@@ -1,159 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-37758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED119F6EB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 21:06:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AEE9F6F26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 22:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB54189409A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 20:06:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BDF17A44F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 21:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3311FC7E6;
-	Wed, 18 Dec 2024 20:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59FD1FAC5F;
+	Wed, 18 Dec 2024 21:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R7NGvB9n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNvycLmP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67F61FC7D5;
-	Wed, 18 Dec 2024 20:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF471154BE2;
+	Wed, 18 Dec 2024 21:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734552340; cv=none; b=mRXgMpKaXE/S2y5YydgTitzlKCq4j/sfNi8YObUMHeKX95u5A8dyKHLFSmbrFlRkRMBhJdHqVl1pyEAWBCCIOTfvU9R4mOI0Is4R5HlVTk43JmB4jiSygczHIccit54/lF0IC0FXOH6B3iEW3aYX9LhRoAEDfl6PUhLvFin3STU=
+	t=1734555704; cv=none; b=Du/MPQ9bchmm3BBx14m1i8yBOBfTYqBoEaTsa3rlOgFE5OCOE8qTzj6+RF/J6BKOtYwK1b6t7ANamzFufKBB+wuRHE9jmEvZGvVRxl5riNDZeUJIUdSg9OF29tEC6buD+l+Shfx3T1H3KEaC+kwrsZgUtAxi1xE3UW4a3V7bqKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734552340; c=relaxed/simple;
-	bh=jwr7VoI8xrDln1LW7FhiygWtBOHRdqVr/6fBs6mNLXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dM/nDFTEN713U6syflnTzvHMzPGf+5g/6ohKOlBsUYCEFoSvQNktqMZxRdT9Tw4Q+ytbIkqp66wmnqPBz4FWe6FEVybQZVUBnAfciTtOU9I53tecpHZm1t9Bab4TfCjMG5FOwNQR5dozWubLbOKUL5wfVGpX6YWg+G0JwCPy11Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R7NGvB9n; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EbdwqBnCPnMA30/eAen6jZBripOiH8JSBeZk3CDGHT0=; b=R7NGvB9nGB2rbrdZXVCuILMXRe
-	6fmvKr1WgwvzkZhMhJW1PJzMTyEuJsnWTFwEK82TXW4t5hUGJW7Nexip8W/K1+F1Q12BIglQCnyLF
-	SDx+wVu5qUHUgTrgTQ3/tpdPfrIJwQfnAs6JA8eaPfbn+wXalYMY7TLJYsX/0+C6Xc9wMc1dear2s
-	7qLxZ9KeymLgW3g3D3K53JGnUkcByEVsfIwGZI/BKzd72GsLBSC+/mVU3RFnOp7NYUUaJqqnJ+4Cr
-	Ut9cfQZtp12r2GmgXhlExf2I0wmGOetu+44l4rJptA1C0p/kKg0nEKarItbjCDFvxbUpLQexaLluF
-	il4EFXSg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tO0IT-00000000ZPU-10Y0;
-	Wed, 18 Dec 2024 20:05:29 +0000
-Date: Wed, 18 Dec 2024 20:05:29 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: hare@suse.de, dave@stgolabs.net, david@fromorbit.com, djwong@kernel.org,
-	kbusch@kernel.org, john.g.garry@oracle.com, hch@lst.de,
-	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
-Subject: Re: [PATCH 0/5] fs/buffer: strack reduction on async read
-Message-ID: <Z2MrCey3RIBJz9_E@casper.infradead.org>
-References: <20241218022626.3668119-1-mcgrof@kernel.org>
+	s=arc-20240116; t=1734555704; c=relaxed/simple;
+	bh=1xjpSBxi3kNZg7RwapyHF30o2RKo5JZlGFsvyV8EVys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QjkOBBsd8lEChdP9EmedVAvJk6YM/jN/qrIoIqXgcrzF8ASJmVnJorKg99w1p+GUKOmtUMqXZTulXvdz5iyWQ+xOVcIXHV5BoJZVX2K6YBudxZURfQjvCgoYjouGe+LTcu5EH/4P1+3TgHOFB5EFsUYQOvfrbVsXnHKE36i8lck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNvycLmP; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f2896ecdafso919587b3.1;
+        Wed, 18 Dec 2024 13:01:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734555701; x=1735160501; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DWw5wVPT+yj2lMwqK7Emk7iKazto2lPJM/4qc1aAqwA=;
+        b=lNvycLmP54oZpy0rGVO1bgHgRDTOP3tlhZKm+0+r9BVB+W4OAFmfAccIu8e/Ctl4M8
+         OMeLJ+ktFbMDnxlBXZekb/aVJVHhLXN8Gl2UEn82gL/2sLJSSg+FCfTeiPZF7Q2YwMEm
+         K+WfybF+1pRKg5xeTQgDtB/PREvS/p9UZcSc5s/JNZWJgSVB9s7diGkdNmvHQVygvjhr
+         MCYyuNCpg6Zf3bkh8FvCkqNVbWOHyxYpdJhH5buC9RIhFjPSQjmGQ8T8+PXPRlX1GPlU
+         UOA82PfS8PeifC08mllgfmnux0F0FUW9npoJPr0aoVjqKjW8SJns5N+9CFNNMa/kT2T/
+         K09A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734555701; x=1735160501;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DWw5wVPT+yj2lMwqK7Emk7iKazto2lPJM/4qc1aAqwA=;
+        b=a/IuholBnKhJPE7E6XEBwVRlQt3ZK1Yn2BRDFLCxKHdRDU4NeY/stlELnkqXEZhPZq
+         fm8c97OJZZeyiU6LReM8Id2/fNXpHH8WB0UTApDYb20H6BdWXX1o2Nd4sZtRZjRtS8W+
+         XlOoIo5afKvR389DIrVhpkKyYb9PdPxR/w7C5xSSu18gupxjyrIA4P0jTow9i5ozjF4m
+         LxePqWONOkfivN5LdiWdgduyLpQvYW/QGFsEEJOosIywzzIuoWl339M4iGXJywmq+92i
+         kj7bimcDpkKawaGkVE+EkwXkT2jlFbe5pBYKIRt/BZimycDSzIp5IsmlfTTmiZ3IMewm
+         o9ZA==
+X-Gm-Message-State: AOJu0Yxz5vyYtJHgajWSadEM1ZMygHcJn/rT4vuwI8oIXIzKo5FeCWGK
+	80zg+N4zPn59iPB0v2OayEJcvAbfb2PmAFqZvxwQ4kJ9hC7hwql+ckoC3Q==
+X-Gm-Gg: ASbGncspjrdI1sYykx/OWUR4lQJob0nmlsNMdY3MPN0MHT6sjcZL+9ANONu5oYSZFjV
+	LcUZMVaV86xD3nZu8evq+TqQPowKU4M+O1t2x/REh51KlC/fmTQQqJDzWCNimCbvvXWNefOpy0p
+	YuYkTkOGjep52yHEfy8NY7YEWJ4Wu1zcaz9gMn2IK9b9Aou5hHhnd/HU1gvDpjha5BDyBkox4Tx
+	8etwx4cbTDhfPT+QN/T81QUnT2VNHUWhcyRRkhri5jGO0SYs4n7UiNl91AGY0SxkHx1p0XUZI+1
+	p6qEdM+JTT/vjI8=
+X-Google-Smtp-Source: AGHT+IHRqBK9Pl12C5lQNeZYUplq9CR+4j6ZM04lvN1cJQh4U2z72iEuoMFuatnoX+O5gkRAQer20Q==
+X-Received: by 2002:a05:690c:3:b0:6ef:63cb:61d0 with SMTP id 00721157ae682-6f3d0e0fec9mr36800207b3.10.1734555701274;
+        Wed, 18 Dec 2024 13:01:41 -0800 (PST)
+Received: from localhost (fwdproxy-nha-002.fbsv.net. [2a03:2880:25ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f288fc50fasm26124227b3.25.2024.12.18.13.01.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2024 13:01:41 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH 0/2] fstests: test reads/writes from hugepages-backed buffers
+Date: Wed, 18 Dec 2024 13:01:20 -0800
+Message-ID: <20241218210122.3809198-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241218022626.3668119-1-mcgrof@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 17, 2024 at 06:26:21PM -0800, Luis Chamberlain wrote:
-> This splits up a minor enhancement from the bs > ps device support
-> series into its own series for better review / focus / testing.
-> This series just addresses the reducing the array size used and cleaning
-> up the async read to be easier to read and maintain.
+There was a recent bug in rc1 [1] that was due to faulty handling for
+userspace buffers backed by hugepages.
 
-How about this approach instead -- get rid of the batch entirely?
+This patchset adds generic tests for reads/writes from buffers backed by
+hugepages.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index cc8452f60251..f50ebbc1f518 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2361,9 +2361,9 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- {
- 	struct inode *inode = folio->mapping->host;
- 	sector_t iblock, lblock;
--	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
-+	struct buffer_head *bh, *head;
- 	size_t blocksize;
--	int nr, i;
-+	int i, submitted = 0;
- 	int fully_mapped = 1;
- 	bool page_error = false;
- 	loff_t limit = i_size_read(inode);
-@@ -2380,7 +2380,6 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 	iblock = div_u64(folio_pos(folio), blocksize);
- 	lblock = div_u64(limit + blocksize - 1, blocksize);
- 	bh = head;
--	nr = 0;
- 	i = 0;
- 
- 	do {
-@@ -2411,40 +2410,30 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 			if (buffer_uptodate(bh))
- 				continue;
- 		}
--		arr[nr++] = bh;
-+
-+		lock_buffer(bh);
-+		if (buffer_uptodate(bh)) {
-+			unlock_buffer(bh);
-+			continue;
-+		}
-+
-+		mark_buffer_async_read(bh);
-+		submit_bh(REQ_OP_READ, bh);
-+		submitted++;
- 	} while (i++, iblock++, (bh = bh->b_this_page) != head);
- 
- 	if (fully_mapped)
- 		folio_set_mappedtodisk(folio);
- 
--	if (!nr) {
--		/*
--		 * All buffers are uptodate or get_block() returned an
--		 * error when trying to map them - we can finish the read.
--		 */
--		folio_end_read(folio, !page_error);
--		return 0;
--	}
--
--	/* Stage two: lock the buffers */
--	for (i = 0; i < nr; i++) {
--		bh = arr[i];
--		lock_buffer(bh);
--		mark_buffer_async_read(bh);
--	}
--
- 	/*
--	 * Stage 3: start the IO.  Check for uptodateness
--	 * inside the buffer lock in case another process reading
--	 * the underlying blockdev brought it uptodate (the sct fix).
-+	 * All buffers are uptodate or get_block() returned an error
-+	 * when trying to map them - we must finish the read because
-+	 * end_buffer_async_read() will never be called on any buffer
-+	 * in this folio.
- 	 */
--	for (i = 0; i < nr; i++) {
--		bh = arr[i];
--		if (buffer_uptodate(bh))
--			end_buffer_async_read(bh, 1);
--		else
--			submit_bh(REQ_OP_READ, bh);
--	}
-+	if (!submitted)
-+		folio_end_read(folio, !page_error);
-+
- 	return 0;
- }
- EXPORT_SYMBOL(block_read_full_folio);
+[1] https://lore.kernel.org/linux-fsdevel/p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw/
+
+Joanne Koong (2):
+  fsx: support reads/writes from buffers backed by hugepages
+  generic: add tests for read/writes from hugepages-backed buffers
+
+ common/rc             |  10 +++++
+ ltp/fsx.c             | 100 ++++++++++++++++++++++++++++++++++++++----
+ tests/generic/758     |  23 ++++++++++
+ tests/generic/758.out |   4 ++
+ tests/generic/759     |  24 ++++++++++
+ tests/generic/759.out |   4 ++
+ 6 files changed, 157 insertions(+), 8 deletions(-)
+ create mode 100755 tests/generic/758
+ create mode 100644 tests/generic/758.out
+ create mode 100755 tests/generic/759
+ create mode 100644 tests/generic/759.out
+
+-- 
+2.47.1
+
 
