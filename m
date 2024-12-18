@@ -1,111 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-37730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC11A9F661F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 13:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B16F9F663B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 13:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3DF1890CFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 12:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB71D189203F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 12:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3851AA1DA;
-	Wed, 18 Dec 2024 12:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25661ACEBB;
+	Wed, 18 Dec 2024 12:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D1kMHtJJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="US1gSQwQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D1kMHtJJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="US1gSQwQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tm7Y6fw2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P5i2lU7u";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tm7Y6fw2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P5i2lU7u"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E679199FC5;
-	Wed, 18 Dec 2024 12:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7921791F4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 12:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734525703; cv=none; b=Zo0Cu55n4J+V+5LBzYLy8zQ3JsaAch3+ytlSalcifRfKRV6b5yDnTi2b4FRHJ2nywHp3jr2YUuoZ6LVyyha7ZqTrNdXjjsSiFxJ+RJI8HxHPSoVWHV42NuAuZNGRrzpgGK8vXcJncG8niGmNJs0AzTYpLps03ZPXxReQ9w3fxCo=
+	t=1734526392; cv=none; b=JO9+soKeEwOaTP5YuhNBIViJtw6sme7Y8hPSZFLbT0HkFwXhIfETdwDec5ZTDcCPpMCf7xrVJc7zU6CXpYbajojX1M16eE6tzcGYTv9aWtANOkyYyOsZ3/4g8VaI7pHH0m3M+mHuK+OT3V7ZSdA2kF74jLr/vxUsAl6qf5pscvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734525703; c=relaxed/simple;
-	bh=ZEbfjjlEWNZwJUFPktpb4OEGxovy1yFldtWeefbqQ+I=;
+	s=arc-20240116; t=1734526392; c=relaxed/simple;
+	bh=Eaa8k7GJKd3fijNTugNBAyz+rIWrqhdsvgxjj2G3tR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/ORHtg4opmKC7uUlstst2nkIYUKTdpql8T5YJG8cjgLWj8IJ5mrlicEI77tnV2XLYHE2MMxrIlxkTs8t+mIpz7CwT7YGjSuphxzvD4Z354c3sS5gAg6CshVnTtbv2Fyf57rcaBpFpbPkmT2XPGEvI2n9Czyu5aCBUA/Bwm6sKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D1kMHtJJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=US1gSQwQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D1kMHtJJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=US1gSQwQ; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=FB9mMgPVcmTxLcSRBui2dPGT7mVyK7eEB4ooAklJ72fahOpRSOdbYsX9HutoSZcX8BYAVt3HCjSQlQT8c2VfGV/nnP+0ukjTUE9pM9p0Imzl4lQBPgugXE9laSd2mkRx4YYTIgHRVOsxUGrKo4P/6miXOs8qFtOEE2xCLD5yCSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tm7Y6fw2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P5i2lU7u; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tm7Y6fw2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P5i2lU7u; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 201E6210F8;
-	Wed, 18 Dec 2024 12:41:39 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3FF4321108;
+	Wed, 18 Dec 2024 12:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734525699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734526388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5hqnptq+HirQ1DDJTxskxC9f1v49wCxaXFL73Rd8Fbs=;
-	b=D1kMHtJJpCG8xYuyXSfu4AedD6TSCdgICeZ1rW8dpLWLtsl0z1d7+AB6gcA92eCZXA9Edi
-	uHHAuD29uQ5NkO3jhcH1tbwzRVN4ROB0mtYWgmvMOuopFXYEOc9tkCKCmYEMJYwmf//POM
-	dmnsl+Ky5ojugv5O9WL4/Afkil5cweU=
+	bh=BZllN5rzKG5elox5aloXeD4tCZHIpVKyOVz3Qryi2Pw=;
+	b=tm7Y6fw2nzFNgdTwppmcaruGd+VXKiOlAj25T3vDOEGHFDmAkiUMWy6YJfXIb6ukTmvoqV
+	BGfyPF5vWnNoXQBo02obdsE5uztvZdXpEGR7TXgJ+xajBCbwyE4B5uGJ4E0C6Gpp8MYtmA
+	mkIUiF0cwI0wxykVDCCrEM+VZfcPCGk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734525699;
+	s=susede2_ed25519; t=1734526388;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5hqnptq+HirQ1DDJTxskxC9f1v49wCxaXFL73Rd8Fbs=;
-	b=US1gSQwQQTiM2Rr/jcC1/EOF6EGuhYzTV8de0Ed/Umw6OrWVGSV8cl208wTtUP67dEVoa/
-	+yQEIVOrrcqcKjDw==
+	bh=BZllN5rzKG5elox5aloXeD4tCZHIpVKyOVz3Qryi2Pw=;
+	b=P5i2lU7u+JW3D376j47McbqZvsrMoZvA8EtMeT3Ocuji6x0+mFifCLrzIuRZF5m0B2QX3P
+	5OEy0q0/zpTJ7VBQ==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=D1kMHtJJ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=US1gSQwQ
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tm7Y6fw2;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=P5i2lU7u
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734525699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734526388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5hqnptq+HirQ1DDJTxskxC9f1v49wCxaXFL73Rd8Fbs=;
-	b=D1kMHtJJpCG8xYuyXSfu4AedD6TSCdgICeZ1rW8dpLWLtsl0z1d7+AB6gcA92eCZXA9Edi
-	uHHAuD29uQ5NkO3jhcH1tbwzRVN4ROB0mtYWgmvMOuopFXYEOc9tkCKCmYEMJYwmf//POM
-	dmnsl+Ky5ojugv5O9WL4/Afkil5cweU=
+	bh=BZllN5rzKG5elox5aloXeD4tCZHIpVKyOVz3Qryi2Pw=;
+	b=tm7Y6fw2nzFNgdTwppmcaruGd+VXKiOlAj25T3vDOEGHFDmAkiUMWy6YJfXIb6ukTmvoqV
+	BGfyPF5vWnNoXQBo02obdsE5uztvZdXpEGR7TXgJ+xajBCbwyE4B5uGJ4E0C6Gpp8MYtmA
+	mkIUiF0cwI0wxykVDCCrEM+VZfcPCGk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734525699;
+	s=susede2_ed25519; t=1734526388;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5hqnptq+HirQ1DDJTxskxC9f1v49wCxaXFL73Rd8Fbs=;
-	b=US1gSQwQQTiM2Rr/jcC1/EOF6EGuhYzTV8de0Ed/Umw6OrWVGSV8cl208wTtUP67dEVoa/
-	+yQEIVOrrcqcKjDw==
+	bh=BZllN5rzKG5elox5aloXeD4tCZHIpVKyOVz3Qryi2Pw=;
+	b=P5i2lU7u+JW3D376j47McbqZvsrMoZvA8EtMeT3Ocuji6x0+mFifCLrzIuRZF5m0B2QX3P
+	5OEy0q0/zpTJ7VBQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11915137CF;
-	Wed, 18 Dec 2024 12:41:39 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B917137CF;
+	Wed, 18 Dec 2024 12:53:08 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hCoABAPDYme2AwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 18 Dec 2024 12:41:39 +0000
+	id MBKhCrTFYmeZBwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 18 Dec 2024 12:53:08 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B652EA0935; Wed, 18 Dec 2024 13:41:38 +0100 (CET)
-Date: Wed, 18 Dec 2024 13:41:38 +0100
+	id DAE68A0935; Wed, 18 Dec 2024 13:53:03 +0100 (CET)
+Date: Wed, 18 Dec 2024 13:53:03 +0100
 From: Jan Kara <jack@suse.cz>
-To: nicolas.bouchinet@clip-os.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Neil Horman <nhorman@tuxdriver.com>, Lin Feng <linf@wangsu.com>,
-	Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 2/2] sysctl: Fix underflow value setting risk in
- vm_table
-Message-ID: <20241218124138.lxelrc6z6lc6cin5@quack3>
-References: <20241217132908.38096-1-nicolas.bouchinet@clip-os.org>
- <20241217132908.38096-3-nicolas.bouchinet@clip-os.org>
+To: wangjianjian0 <wangjianjian0@foxmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: Does sync_bdevs need to issue a PREFLUSH ?
+Message-ID: <20241218125303.d2n5hvlzwhpntsvk@quack3>
+References: <tencent_44B6652AB436C56D310927AA9EDE3D2F9007@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -114,89 +102,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241217132908.38096-3-nicolas.bouchinet@clip-os.org>
-X-Rspamd-Queue-Id: 201E6210F8
+In-Reply-To: <tencent_44B6652AB436C56D310927AA9EDE3D2F9007@qq.com>
+X-Rspamd-Queue-Id: 3FF4321108
 X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
+X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
+	SUBJECT_ENDS_QUESTION(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_TO(0.00)[foxmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[foxmail.com];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+X-Spam-Score: -3.01
 X-Spam-Flag: NO
 
-On Tue 17-12-24 14:29:07, nicolas.bouchinet@clip-os.org wrote:
-> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> 
-> Commit 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
-> fixes underflow value setting risk in vm_table but misses vdso_enabled
-> sysctl.
-> 
-> vdso_enabled sysctl is initialized with .extra1 value as SYSCTL_ZERO to
-> avoid negative value writes but the proc_handler is proc_dointvec and
-> not proc_dointvec_minmax and thus do not uses .extra1 and .extra2.
-> 
-> The following command thus works :
-> 
-> `# echo -1 > /proc/sys/vm/vdso_enabled`
-> 
-> This patch properly sets the proc_handler to proc_dointvec_minmax.
-> 
-> Fixes: 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+On Wed 18-12-24 00:32:24, wangjianjian0 wrote:
+> This may be a stupid question,&nbsp; ; -)
+> ksys_sync call sync_bdevs to write all block device mapping but it seems it&nbsp; doesn't issue a PREFLUSH request.&nbsp;
+> Without it, is it possible to lost data after a poweroff even though we have call sync() ?
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
+Generally, it is the responsibility of individual filesystems to issue
+cache flush requests as appropriate in their ->sync_fs() methods. Now if
+there's no filesystem on given block device (i.e., the block device is used
+directly), then I agree we fail to flush disk caches as a result of
+sync(2). On the other hand issuing cache flush unconditionally in
+sync_bdevs() will cause a lot of unnecessary cache flushing for mounted
+devices or if there were in fact no dirty data. So fixing this in a way
+that does not regress common case will be a bit tricky.
 
 								Honza
-
-> ---
->  kernel/sysctl.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 79e6cb1d5c48f..6d8a4fceb79aa 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2194,8 +2194,9 @@ static struct ctl_table vm_table[] = {
->  		.maxlen		= sizeof(vdso_enabled),
->  #endif
->  		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec,
-> +		.proc_handler	= proc_dointvec_minmax,
->  		.extra1		= SYSCTL_ZERO,
-> +		.extra1		= SYSCTL_ONE,
->  	},
->  #endif
->  	{
-> -- 
-> 2.47.1
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
