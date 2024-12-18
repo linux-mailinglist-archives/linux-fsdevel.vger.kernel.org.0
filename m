@@ -1,265 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-37711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7869D9F5FEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 09:09:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D39D9F612D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 10:15:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6FDB16DD23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 08:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27591188DBDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 09:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E2316DC3C;
-	Wed, 18 Dec 2024 08:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A111991AF;
+	Wed, 18 Dec 2024 09:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GMQmfQCM";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="B7xPQHKc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQa+zb8W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA58CDDBB;
-	Wed, 18 Dec 2024 08:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734509345; cv=fail; b=RYGHK3fkPMmlgunwGd8ZtlrJ5oNzDnCz6lIwQT/YT0/5uFjksnWadCq0Cvpjz3ZOkc1iJilZf/6sVdIzCsiheUIow0mQpi2P5pFL6dgddjlHzCIX+jm7sbDUNtvAqrrdPC54CW4Dm8AVEhzqIY8BSQlljAqKtiug3mBtn/kDIIY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734509345; c=relaxed/simple;
-	bh=BPJHILkkHPpTyEciXUc5j3HwzNh70JxwGpm712iwZjw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FeeESj1iZS5+Dzj+gqdwOCDn0C3qZnr5A/ZYXk8Px6mbzz5LgK/NL2hCeSlkGzcpGVFv5gZPLTVov7aNkuROyuCKh8u/jwM7Sffhd6I5pKEu/GmqaB6E6ihLSDN5Tnyl+UD03FkM7toBJkxF/IR10WFJJyH34Aw9Nj+sxKm9MJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GMQmfQCM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=B7xPQHKc; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BI6OkTL023869;
-	Wed, 18 Dec 2024 08:08:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=QacVGiTPhbK+oBm3S/k3D6syvp88uOZJ/Ho9RaxKsmg=; b=
-	GMQmfQCMK/eYMfZzzifXFC17F7CqfjACMfzaCi/LzFtZNfuufcIaAKFJxIETZh0v
-	O4xKtsgWyF9z3sbWo6QwVdk3iVFusD/TUzFHbBVSU/wC3qZcalJVH/zq7ChGnO6W
-	0DO/NcvSc03fSp/9XESFHxD852DaNV+E1P9BOPPMO9LB4d+hYin5EaJvM9ebuP97
-	+2bukvBWmJJ+rxEp6ApnHtu0tEIvpEj9urh8/bBwW0YIuCA4m8oO5lsBElL1YRmX
-	HEnObH+ecWIPsQT65yVccxxKg7ccCuE3PAp9v4hGxsMlqR54deiFQ9eErrJrLJSc
-	1RViF3YgZh3ZiDRbbg6LPw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43h0ec84t5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Dec 2024 08:08:27 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BI7osun018324;
-	Wed, 18 Dec 2024 08:08:26 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43h0f9rd3n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Dec 2024 08:08:26 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PKIPCoxNqFXxCEAhPz5bdyLdFYnXm8LL/kvGryXe3lwqKxP6B7reZiLbAnD5g+54sfLWJzuJX41tghO6NR6Hh9FCmxWwfw6O6MsQX6NVdh6idQNxKIRrdbdbdDaWWiyWSuPrztNO1LaTdBXw93bg4RW4+h3KE0ZuEIVoEPNLIYOKXEnKinfXLMhcEgBA7CDIwpGwpAsPz1AGCvVbCv57CRyIltNFFEDLR69//RMuDoGqJ0n/MhmugN+PdLQwL7QHWX+fJ/zijwaoa3g3YcX31phfcDGkpfUjyxhQs6v9TzOHqkhynei9+oj9GIofwCQuHUTJ6FaLXpu0XlbdE42CsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QacVGiTPhbK+oBm3S/k3D6syvp88uOZJ/Ho9RaxKsmg=;
- b=da4kr06cN5vVBi8+zZqzq4UrfajgSeh4Wrfk/2nka3GxJhPzBCoN42YsV1PEiiinLzaUONfpNkgDcANEeP7PVvyizGuEgIFKQy3WaVx/FqkxJRxqp4aEzNgYkMSGtUQRaz/+Shv0o1msEX2bqV8ky5VNrz0RdLv+sMeJr/UhozL+xalODVRlu43e+/gq1CN3Uve2QtqKPEAmY4LGIwmpQVuXcEOSbXjhqZwlR4aqrUXBmPddKha0IRDSYciop40lLcvOAwRd4LqfPYZiR2qZoqndputjDamwafARGvkn6/wOkL/+uzOwWa+OEpcRfOLfAELY+df+mhwLiZxJBD+NAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE7919885F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 09:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734513320; cv=none; b=qC7dW7ODcZCaW5uHhJ1rPg9O+2+8AOsquTt2fonDrR155pBQ7wa0SOcPY9s/DUtEkp0+PLDRJq1FM8693U7lkLws84zyxGlF75QhY/Si3UEDZcylpc7ysTb8J9Igw6TitYpGJVDmm+oleVsBRetkEDd9i4WafkUQ1DEZCwme8H0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734513320; c=relaxed/simple;
+	bh=JktWVxl+2h5d2LggqFbD4JRF4M9mzR27cq362xXJ4xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VDqCy6veq02lZoUtOtOnxHD+hj/BXEYTbKHa6MY3Xb3feDSuZpFU8qq8cfdYDjcGVlWPSpYY8bo1v2mkHsoycH4zvS3FEqYXYyJBW7en+Vuv2XUgFFYuazoLFUkLq9+2R5iqbamwPEbA0yaErKDRj3a77jy7QRWMvQcvSsPQeWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQa+zb8W; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6eeca49d8baso5347747b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 01:15:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QacVGiTPhbK+oBm3S/k3D6syvp88uOZJ/Ho9RaxKsmg=;
- b=B7xPQHKcJEBMKKmBnWsJLbGcHhopZ3jBlLLeNJVWK6ctW2kozz5S+WnC4ENHfOuYzEm5kliP9WWsoRZnVCTDAS/JTOQ3lA28P+r7JJXFlmtjj5onb6N65I/ZHYlFzxuAXBClXoQs8AIOGawjL5sQxLMgx9iqXdwIA0/RV90ehEo=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by BY5PR10MB4132.namprd10.prod.outlook.com (2603:10b6:a03:20b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.13; Wed, 18 Dec
- 2024 08:08:24 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%4]) with mapi id 15.20.8272.005; Wed, 18 Dec 2024
- 08:08:23 +0000
-Message-ID: <eb556e80-f7f7-44f7-b015-11ae50d5484b@oracle.com>
-Date: Wed, 18 Dec 2024 08:08:19 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] nvme: use blk_validate_block_size() for max LBA check
-To: Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk, hch@lst.de,
-        hare@suse.de, kbusch@kernel.org, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, willy@infradead.org, dave@stgolabs.net,
-        david@fromorbit.com, djwong@kernel.org
-Cc: ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
-References: <20241218020212.3657139-1-mcgrof@kernel.org>
- <20241218020212.3657139-3-mcgrof@kernel.org>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20241218020212.3657139-3-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0018.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:313::11) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=gmail.com; s=20230601; t=1734513317; x=1735118117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQBxCGJW96yXX72WABDRKpr97cAX5kqZrzMAzGwxwRA=;
+        b=cQa+zb8W47zSTixqyLe1BOABoLG9ZqqLAsMCPK4ihPr+xUecmOCE0RJLo34D5Odgy7
+         qaBWeGtY27fNfinMAli4c2tkHYNLdiz+M8obGHlMpEUf9oLxRXBPx4MK1kvM9zY8WTur
+         1aob11SchXyP0NbXH+ZrDauBfIWcaDZEd/QeeCyQ/vvygP6WTE+4J/thB/TOzfWX8Cl/
+         k4o35ByMO4sFwzw6niuyhBYcQkxLHLcq6L8w9xa0tWt6s1L9Rhvxkvo+6rS92puwDI/X
+         IqAN50QghjxljhVrVwNy0kPjC8bQAeGnSVsYPPj7m7yuYdZPs1WP8BqeDvKqrQfFP7hM
+         GdCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734513317; x=1735118117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZQBxCGJW96yXX72WABDRKpr97cAX5kqZrzMAzGwxwRA=;
+        b=Ram6N2RRCwXY8WMI0r6EmNWFzB0/nj5rJbE2DNoZa8kxYM3OykjVAu49ZFuB6wfLV9
+         4c7Y1l4TatbiZcmp/c3kC+8zpc0E6SSNtj45cu3L9zEUHhkDVIgcGD+63R6fJZW+7SQO
+         99bAV/dNGRh91rSai9b+ug8o4tAMfC/ZGuYM4Ib7Eg+5jlakteIm+jKetrVZS8d8UadR
+         RzI3vTU0vhG1zKh7TPaMEmAgGlxsvbRxoFqWvuLm4f+TubPEsGB8uJXhj07EvL0zbFSu
+         17G7XQr/s0OTz+ZbpMISc5yuIe26obpjvM97LRwYtB7YYtSbpuEJJUEa5ReiQJxM8snl
+         Mmjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5kPEXccC3z6QZp9zBO+AkymMJEvVbUFxWMjcwH08zitBQpKGu5vahouWob9yNkdFPOQBoNKrHoPnr/tKj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw09lhZ2ZGuFjnDVNVWN1Z8IW34trDZSfjkX3iVZBf8IpCm3R4/
+	9CTLsIT2N1do0zcYdksubixhl4BIVhQmb618n1qui60ARKZd2JcPi1QPxfdV+TDuI2/jcbMOz+x
+	6Y0WKqJ0RXBGk39JA9xVBnbSFZKk=
+X-Gm-Gg: ASbGnctgA9D80ACl0DIu7fafX8/ofUcO6kIA96XPevmlpiS7lhXVoell8EDNRaYo6zh
+	DPaE3ZU/fswaygsTctMpzgdp+Gx3eNBTc1gmXxy83OwoFGUvhCWw3IuOYE2SmoTVyBqY=
+X-Google-Smtp-Source: AGHT+IHs5aOQZUaaAeECjQ9sfp053EKUzIxvyHCW0W7xUoMZ1pi2vvomRLsXfkDSD5YQwK5y1h4WbnXQ4PzXZh7TYGc=
+X-Received: by 2002:a05:690c:9b03:b0:6ee:8515:6730 with SMTP id
+ 00721157ae682-6f3b590ba5bmr14061277b3.17.1734513317469; Wed, 18 Dec 2024
+ 01:15:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|BY5PR10MB4132:EE_
-X-MS-Office365-Filtering-Correlation-Id: 567e1b51-d422-4847-3fc5-08dd1f3b24b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L0FFS0J6cDl3eUJ3VjlNK3NHRGtsdThndWM4YjlXd0tMNlJBTVJjeHc1Tng3?=
- =?utf-8?B?azV3eTBLKzZKUUpGTEw2L0pOMXNrZDU1WW15ZkVSOFdpdWhvV0l6VktUaHBH?=
- =?utf-8?B?eUwvRVIyRVlTWWEvRUJpdUhmNmZTYzF2eXBtaE0yYTZkYkZ4ck50Z0ZRU3Zr?=
- =?utf-8?B?YzBQbVNMTldCUUpUR2ZVR1RObmhqc245NU9QeG9DOURDaFhlOUFSOFdVbTBW?=
- =?utf-8?B?SHFCWStpMXJnaTJPT3FzWEVkUGUvbEdrcG9JQjR4VUloOXJUMDEyZW5Ja2F0?=
- =?utf-8?B?Tk9kVkR2cnFORUZpeTNnTHlEMzJBWnBtRjdyb2R1YS9nNWpNUDN5OWtoUnRL?=
- =?utf-8?B?MVRhZ3hpK3FvcUVMUkNya3kxUUVuUTl0cVh0TU5reWhQTjdUbjRjMEpJczQ0?=
- =?utf-8?B?OWswQXRuYTAvUkZhUVpKRXRNeFZETFdwbXllaGorMFZ4WjJSTXNzb1JrY0FO?=
- =?utf-8?B?cThzdEdyU3hRQ3VLYmxHeUhadTY4Z25oK29rV3Z0QUlxVG1oY3UxTExxR3hv?=
- =?utf-8?B?RDFJSDRmMGVJbVJQQ3VGd3RlRktSTmRwTHhmdmRCSmFGTGorbXdXQllBUTgz?=
- =?utf-8?B?WjNFQVJoMVRaUTBNUEdodUwyeFlrY1hhRVpORzNkeTgrblRZS3ExTUxDL1Vy?=
- =?utf-8?B?Qk52a2txYW02d0s4WnJ2aEROT1JzSzFwOFlOSFNyNFJyVm1TOHgwdVdOeThq?=
- =?utf-8?B?T1B6MEVlM1NJaitvVWJpVzVTWkNuaFBkQkZGQjBxZ3IxQmlsNGh2ajRucnk3?=
- =?utf-8?B?LzkwTisybzl3V2JWYllzZG9BWCtvOVJEWUFnSnkvN1lUS3JDME9tQWR5bkpr?=
- =?utf-8?B?aExNSTE4bmNVTVJxV2lIR1hlMmRQOEtqOU00NHpIbk1TUnFjYlBpdFg1SVRi?=
- =?utf-8?B?UW1Ra0hJS2FKUStxNGlIRE9mTXlZN040OTZaOTh0MEZXcGcyRFRWd0pLMmF2?=
- =?utf-8?B?NnE3OFlpZ3ZQc20vbFRIVy9uNmFzSHc5c0I2Vi9DTWVWU1NuVlprRVpwQ2Qx?=
- =?utf-8?B?U1NLaVVhVU5WWVBRWWdteFVSMkNVS29BOXBzSGxBWlpXYlNYbkFrV3p2VlhM?=
- =?utf-8?B?N1RUcDdEY0kxdWZ0Yy84a1AvT25ieW4xZU11a0pER2dFZ0grUXBIaS9ESldN?=
- =?utf-8?B?TFk5eXJwdHAvbHExTFBxMFZaSzVTVU0vckQzTjFVd29jaUhHY2ZpL1MyYkpV?=
- =?utf-8?B?VTZtVCtzMmpRbVNhYUxqeDM1eEVMNlpuUnJlVmdQcVJGbGVTbHN5a1hodkNI?=
- =?utf-8?B?akllamsraHgwWTdOVVhMY3djeTlVeDJOeVorbnMxUmdFeS9DcXhHU0JYNjh6?=
- =?utf-8?B?NDViNUsxNDl2U0I1bXlWdm9VeG03dloxWS92NmxPRUxFSTN2SHZrd3Evb3dk?=
- =?utf-8?B?cHBScDF0NHAxN243SjZNLzN6Wkd4YzMvVUt0UGlYSk5sNXhpS1l1cDhGVXdV?=
- =?utf-8?B?bnhmWGpwUUZ5eE5JQWF1VnY0Z01UREcxaFYyZ1p2U09ERGlKM0tSR1Qwck1o?=
- =?utf-8?B?ZDdiVCtnM3B1M2FDU044M3lFRWRqb1pYQ1lZdmhWekRwWWNqOUcrYkRLMFIy?=
- =?utf-8?B?K1YzdEdGOUJhY3o3VFNPWmhXWUlGbVVkWUJiYnNNY2VNbWd3ZEZqTVc4Zk5E?=
- =?utf-8?B?djY4ajJ1WlRKSXNnMS9XOS9uR2lvZEo5MURYOGZaNHNYMXVBM1YrZjJ1TW5s?=
- =?utf-8?B?ZnRvTzFzMThnN2VNczZOTWpQMjBwTW1ZWm9wU0pmK21XRmxVUjFETDBMK2hR?=
- =?utf-8?B?Zk85RU1GTjBEaTF0eW85WFJiSERhRm1reDlibktRdUJLNXJOdmN1dGNlYU56?=
- =?utf-8?B?U1B2OTFDVXdNYXFTQk1XcWNqLy9YayswUzJtU0JTL3lzSndKWCtUaS9Ucnoy?=
- =?utf-8?B?cm9FVjc3Wk9RZkdSanJRaEFlYkgrZWtEYmNObDYxbFpITG5sZnpHUmo3cEhE?=
- =?utf-8?Q?D0MDQAJ2IGA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZFZ4M2VpMW5RdGNEbUR5bno3RjdITllycGptSmc0QkJSa3A4MnFqckt4NU91?=
- =?utf-8?B?RW5tNEQvUzdWSWphMEtjV2pNSlFiWWZGTGhNaGo2U01GTWZkMVhwWDgwSGY2?=
- =?utf-8?B?enNGSFRIaGlCbHJHZ3VRL09wS3lkRE5ydnVtL0wyR1p1UnNhL3lkdWpTaGxE?=
- =?utf-8?B?aUIrY2ppOEx6NzdzMXBMbUQxRFBmS0loTVlESk5OM1duZWtHQzZvUk1BUDNv?=
- =?utf-8?B?cm5VTit3MGd6QXNwQ0RkN2NQQkRpeVZHUGs1WVRaN1pZTDZzemxRbHN4WEtl?=
- =?utf-8?B?akJSWitXaWNocjVFT2pJL1o5dUt1WFJETTAxVEpCOGZLcjBuMHRwbTZPQ3pp?=
- =?utf-8?B?dGhKbG1sOTJRSU9vYkNzRkJGVkZVbGtIZjgxSGNVY1o1L0p2NWlHSE1lRU9j?=
- =?utf-8?B?cU9UOG9pVmNYVnBqM3ZhWHlTQ2EvOHhMWFZQYThYV1UxbEZZTEwrRXowVkpn?=
- =?utf-8?B?QnJjeFlUOXR1OE8yQTkzSFEzZ0d0TmU4L0ZFTjhoUEM4RE9ReG1meWRRVmQw?=
- =?utf-8?B?bVQzU2lkdk1PUng5ekVRdm55RXFrbG4zTndQUm1TTFJIR1RsWVlsbE01Znl2?=
- =?utf-8?B?Y1JuUTRsV3lWc2EvRE1vRHkvVUZJazJ0c0pHYytTa3cvaDVyU1pOSWwyaFNk?=
- =?utf-8?B?MDdqYitqM0NvZ1hrMEFuY01YVUdWVWxCNDduTk9LOGIyUVRRaUxqenV6eFR6?=
- =?utf-8?B?dlQ2bjB6L1R1aEpoWE1hQWZxYVVnKzlyRGFmaFZlZlFiUWpIYlB0S09TR3Rm?=
- =?utf-8?B?NWRNUUc2d2FYd2tuU3JFR0ZKVEgrSHJJT3NrcVAzeFQwOS9QTVdNeG52VEFV?=
- =?utf-8?B?VzdOK1YwNXZVU2ZiS3ZXcnYrUTJSekRJM1BiOS92VFNqV2xUdEwrUGNwbHZ0?=
- =?utf-8?B?T1QyeWxFZms1Q2pPeGk5SUFqK0dQTkNNZG5KNVhsU2tiNEZqeVJrdVZCb09k?=
- =?utf-8?B?LzNwdnpneW91QXZCcTJWNnpvOG9FMWJkTEgxMndUSzk5ZVRkaXhnUnYxTWJT?=
- =?utf-8?B?UVZaUXF0d2tJOVFMcmdsR0hQcnA5b3h4RE9hNzhmTDlpNlNCeWg4WDBHaWd6?=
- =?utf-8?B?Q3I1N0RsVUtNTXQxOUM5N1pWRndoUVF5R1dYTXlQSWJZbG13MnoyQzJDK0FD?=
- =?utf-8?B?TWh3NVdNKzhaTk9NL2N1aUNqdHFSak16cjI1QzVucFo3WHFBT2w2R0JaMzF1?=
- =?utf-8?B?Ykg1Q25EdGw4UVFMRVZXNTFqcERiWFRhcGxZSWUxamZxem91SGRROG44V2hO?=
- =?utf-8?B?THd3VGtGNENUY09OTGNnejVRUFI5LzFVSi9nQ1A1Sk55Njltem1rRFZEcVJ0?=
- =?utf-8?B?NVd0QW1sU0JTMDU5Nm5zS3V4VmJpbWptVkJscEFoU0xCWklwS3MyUW5WNTVj?=
- =?utf-8?B?NDBXR3JETldncXRpcklpUnhiNG82M2ozZXdMVkNEYUNYZzFRYVlTWnZDWDBt?=
- =?utf-8?B?T3RoendSMUNNOENtNUFPU2RkYTV0dWdJSVdyb1BJVjNENWswYkw2RzgrNjY3?=
- =?utf-8?B?RDg1U3FocjI0Ky8xZU9POVJINU40cldNUndCcnV0S0g4YkZONlk0VFgzQVVT?=
- =?utf-8?B?WUhsQUNwZWUrdDFYWlE3TVRobXhzbFh6clNrMHpQR1UrSmxVbEtJRjRwR0N0?=
- =?utf-8?B?cnJveWtOOW1jSlVSdExUMERBQnpwcFpFYkQ1REt1SDhTbmhUUnhBZ0YrWXZL?=
- =?utf-8?B?dGxOWXhERWlyMUpLb1h1YVV1Y3N3enJiMjh5Z2l0cUg4Q1NSdlEyeEVmS0ZS?=
- =?utf-8?B?MWxUZWw0aHJCTTBrQWVEempsQ25UZ0YvK2pIYTVodWwzVTUzT005a1ZvQ0d1?=
- =?utf-8?B?RWVZUkczT0tJRlpVQW1Ub0Eyc0dLRlU2ODFMTHFEMGYrNFRpcE9lYjlobTE3?=
- =?utf-8?B?RWpPL3R2aUZsTG1nR0VEbEFobUpDamRCSGJwVzVoMEZzUzZBZ1ZmTk9YMnM4?=
- =?utf-8?B?Smx6TEN6d2QrVVZURjBkTkY1U2U2MXJaSnUrcHZRemhNMWxWZ0RUU29nQWNl?=
- =?utf-8?B?aFpnU1ZPbDhLZ1l2MURJRUphZ1VtQjlKYVRod1JsWFh3bW8vUExPS3Y0UDcv?=
- =?utf-8?B?NURjTUo2L1VpRVYvWDNwOW9zZWJlNzROdWRtODFYOHUrcHA2MHdCTnF3bm9a?=
- =?utf-8?B?YlpuWVVGYXUvTWF5UHVoRGdhbnF1aThQcHdOcFpuS0syKys1ZG9Uc3FMSDk3?=
- =?utf-8?B?NXc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	VzXAwNW2FZI4bkTnH7s3mhjbw+7+PftG/2v2oNolspdpqI6gL97uNeHxIXUWqdmRtJ2BOc5e5mqGn0ckw54yUGfQiPdpCVw1O39FXFPWADbt98HAhQx1r1DmW76Wv4+27/gQs12zzsR3eyOeJSatJ/5wfgj6l4HbAkWnNKrGk3QhGYkl28Bl7wlnhdoZ6w7+K5YrSNLiGuk/RY3VN/51qAdF+u9Kol/dZ7uvSFH4TTIz5e17D2VOeknEOKpvf/gC/LGsjd4AZ3sg/m6602/sDv4MFW5uuvk3qUS6acBXaZ4+IMKIr7OPrHjJwpqLkpghwWbTBhA+YxAJxSrT7tKuIIOQ+8AYYgYTe0Vru4GvHNGMi/eAR2Xx7CW7Ocx/egsma7soW7E03T6RlAyLLu4HLqAtrCU1LrY3Oq40fmjKEaR4srFB4y6MsKfJ5Oga8+4bb/jY6tdT7HaCk21n+SAZyY3VccD0K5QX+fnBmSS+87b2WziVudNajEAbULk3FcbrmFje5JTgDEIfiURAxnQAdS4UM1rffzpUSvFEOhCoLw6hQf/rxhIiuYz7kr6WZNS1dtTh42de2xRDvkh6wVoyQroYu7tG1vBFnnOhbNecj78=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 567e1b51-d422-4847-3fc5-08dd1f3b24b7
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2024 08:08:23.8299
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q5GpHoN7/ttaszweVQ8deKfthoTsaQY0kOeeAAidlMFqugsvV4ABYipiMpT4kWiq7k0KRice59I63H1+EVbmKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4132
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-18_01,2024-12-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412180064
-X-Proofpoint-GUID: c1ZUjFKY3UQ2ZEguwfBs5OblMOz5rGVI
-X-Proofpoint-ORIG-GUID: c1ZUjFKY3UQ2ZEguwfBs5OblMOz5rGVI
+References: <20241216-fuse_name_max-limit-6-13-v3-0-b4b04966ecea@ddn.com> <20241216-fuse_name_max-limit-6-13-v3-2-b4b04966ecea@ddn.com>
+In-Reply-To: <20241216-fuse_name_max-limit-6-13-v3-2-b4b04966ecea@ddn.com>
+From: Shachar Sharon <synarete@gmail.com>
+Date: Wed, 18 Dec 2024 11:15:06 +0200
+Message-ID: <CAL_uBtcXdULyu7AK6T0+GKn5mbY2tLtE=uUG0P3CwM9YHyjOmg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] fuse: Increase FUSE_NAME_MAX to PATH_MAX
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	Jingbo Xu <jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/12/2024 02:02, Luis Chamberlain wrote:
-
-nit: is this really an LBA check?
-
-> The block layer already has support to validates proper block sizes
-> with blk_validate_block_size(), we can leverage that as well.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-
-Most of my comments are minor/off topic, so:
-
-Reviewed-by: John Garry <john.g.garry@oracle.com>
-
+On Mon, Dec 16, 2024 at 11:14=E2=80=AFPM Bernd Schubert <bschubert@ddn.com>=
+ wrote:
+>
+> Our file system has a translation capability for S3-to-posix.
+> The current value of 1kiB is enough to cover S3 keys, but
+> does not allow encoding of %xx escape characters.
+> The limit is increased to (PATH_MAX - 1), as we need
+> 3 x 1024 and that is close to PATH_MAX (4kB) already.
+> -1 is used as the terminating null is not included in the
+> length calculation.
+>
+> Testing large file names was hard with libfuse/example file systems,
+> so I created a new memfs that does not have a 255 file name length
+> limitation.
+> https://github.com/libfuse/libfuse/pull/1077
+>
+> The connection is initialized with FUSE_NAME_LOW_MAX, which
+> is set to the previous value of FUSE_NAME_MAX of 1024. With
+> FUSE_MIN_READ_BUFFER of 8192 that is enough for two file names
+> + fuse headers.
+> When FUSE_INIT reply sets max_pages to a value > 1 we know
+> that fuse daemon supports request buffers of at least 2 pages
+> (+ header) and can therefore hold 2 x PATH_MAX file names - operations
+> like rename or link that need two file names are no issue then.
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 > ---
->   drivers/nvme/host/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index d169a30eb935..a970168a3014 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -2034,7 +2034,7 @@ static bool nvme_update_disk_info(struct nvme_ns *ns, struct nvme_id_ns *id,
->   	 * or smaller than a sector size yet, so catch this early and don't
->   	 * allow block I/O.
+>  fs/fuse/dev.c    |  4 ++--
+>  fs/fuse/dir.c    |  2 +-
+>  fs/fuse/fuse_i.h | 11 +++++++++--
+>  fs/fuse/inode.c  |  8 ++++++++
+>  4 files changed, 20 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index c979ce93685f8338301a094ac513c607f44ba572..3b4bdff84e534be8b1ce4a970=
+e841b6a362ef176 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1538,7 +1538,7 @@ static int fuse_notify_inval_entry(struct fuse_conn=
+ *fc, unsigned int size,
+>                 goto err;
+>
+>         err =3D -ENAMETOOLONG;
+> -       if (outarg.namelen > FUSE_NAME_MAX)
+> +       if (outarg.namelen > fc->name_max)
+>                 goto err;
+>
+>         err =3D -EINVAL;
+> @@ -1587,7 +1587,7 @@ static int fuse_notify_delete(struct fuse_conn *fc,=
+ unsigned int size,
+>                 goto err;
+>
+>         err =3D -ENAMETOOLONG;
+> -       if (outarg.namelen > FUSE_NAME_MAX)
+> +       if (outarg.namelen > fc->name_max)
+>                 goto err;
+>
+>         err =3D -EINVAL;
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 494ac372ace07ab4ea06c13a404ecc1d2ccb4f23..42db112e052f0c26d1ba9973b=
+033b1c7cd822359 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -371,7 +371,7 @@ int fuse_lookup_name(struct super_block *sb, u64 node=
+id, const struct qstr *name
+>
+>         *inode =3D NULL;
+>         err =3D -ENAMETOOLONG;
+> -       if (name->len > FUSE_NAME_MAX)
+> +       if (name->len > fm->fc->name_max)
+>                 goto out;
+>
+>
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 74744c6f286003251564d1235f4d2ca8654d661b..5ce19bc6871291eeaa4c4af4e=
+a935d4de80e8a00 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -38,8 +38,12 @@
+>  /** Bias for fi->writectr, meaning new writepages must not be sent */
+>  #define FUSE_NOWRITE INT_MIN
+>
+> -/** It could be as large as PATH_MAX, but would that have any uses? */
+> -#define FUSE_NAME_MAX 1024
+> +/** Maximum length of a filename, not including terminating null */
+> +
+> +/* maximum, small enough for FUSE_MIN_READ_BUFFER*/
+> +#define FUSE_NAME_LOW_MAX 1024
+> +/* maximum, but needs a request buffer > FUSE_MIN_READ_BUFFER */
+> +#define FUSE_NAME_MAX (PATH_MAX - 1)
+>
+>  /** Number of dentries for each connection in the control filesystem */
+>  #define FUSE_CTL_NUM_DENTRIES 5
+> @@ -893,6 +897,9 @@ struct fuse_conn {
+>         /** Version counter for evict inode */
+>         atomic64_t evict_ctr;
+>
+> +       /* maximum file name length */
+> +       u32 name_max;
+> +
+>         /** Called on final put */
+>         void (*release)(struct fuse_conn *);
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 3ce4f4e81d09e867c3a7db7b1dbb819f88ed34ef..4d61dacedf6a1684eb5dc39a6=
+f56ded0ca4c1fe4 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -978,6 +978,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse=
+_mount *fm,
+>         fc->user_ns =3D get_user_ns(user_ns);
+>         fc->max_pages =3D FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+>         fc->max_pages_limit =3D fuse_max_pages_limit;
+> +       fc->name_max =3D FUSE_NAME_LOW_MAX;
+>
+>         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>                 fuse_backing_files_init(fc);
+> @@ -1335,6 +1336,13 @@ static void process_init_reply(struct fuse_mount *=
+fm, struct fuse_args *args,
+>                                 fc->max_pages =3D
+>                                         min_t(unsigned int, fc->max_pages=
+_limit,
+>                                         max_t(unsigned int, arg->max_page=
+s, 1));
+> +
+> +                               /*
+> +                                * PATH_MAX file names might need two pag=
+es for
+> +                                * ops like rename
+> +                                */
+> +                               if (fc->max_pages > 1)
+> +                                       fc->name_max =3D FUSE_NAME_MAX;
 
-I'm not sure if this comment is really still of value or can be reduced
+For the case of FUSE_REANME (and FUSE_RENAME2, FUSE_SYMLINK) with
+large file-names (4095) you would need 3 pages (PAGE_SIZE=3D4096):
+fuse_in_header (40) + fuse_rename_in (8) + names (2 * 4095).
 
->   	 */
-> -	if (head->lba_shift > PAGE_SHIFT || head->lba_shift < SECTOR_SHIFT) {
-> +	if (blk_validate_block_size(bs)) {
 
-There was only a single user of this outside the block layer, and I was 
-hoping that this function could eventually be internalized - not any longer.
-
->   		bs = (1 << 9);
-
-comment on original code:
-
-		bs = SECTOR_SIZE
-
-seems more obvious
-
->   		valid = false;
->   	}
-
+>                         }
+>                         if (IS_ENABLED(CONFIG_FUSE_DAX)) {
+>                                 if (flags & FUSE_MAP_ALIGNMENT &&
+>
+> --
+> 2.43.0
+>
 
