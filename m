@@ -1,274 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-37738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3592F9F6A1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 16:34:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917689F6B10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 17:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C8A7A3704
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 15:33:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA8B163D33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2024 16:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0265139579;
-	Wed, 18 Dec 2024 15:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049C31F5402;
+	Wed, 18 Dec 2024 16:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2RZmPxX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSIS9Vx9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFC983CD2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 15:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21F019D072;
+	Wed, 18 Dec 2024 16:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734535957; cv=none; b=WgftWf8pTYpPQOUMTs+D5fdxWfN2wF1FNlPHG+IB3sVHdTHrBJzpXf/Cmi3lRd1GYaBk2FmPKNU8bX0bluWrH9tNADn8AUj9QnDCAgKaNrjGGtRcRrBNRBSAObfIbAoc7DiJdw6CVsnV/xqldwk580C+GSIM64kZxxEZX0ogh48=
+	t=1734539190; cv=none; b=dIxnczX6kLKh3of1Pnda/Kyiw3aV69ghI3lrAGpWHQVQYZtB/fDUd8mOLlXuoGByYoQNMCYya1SnUJ7MW//yEVay9QUhsNJqa4Z5U9s0jgaRgcIphHjJRumGT2sYbApSULSqJzaQgDszdZoVJZCirnaRdcVuhsFJFrXLg6mAZKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734535957; c=relaxed/simple;
-	bh=0EGMseKQ9kx8vVueDFKuCrNxD0SMS7ens3WJVVlctIU=;
+	s=arc-20240116; t=1734539190; c=relaxed/simple;
+	bh=CH7HnXa+fuTs69+yycFd560LN3YLcatymBkxHovHDzg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mKWkq7kRji8iUo/CpYeaweTBuaeuqdH64HoC39vtsZqnjm6R+AGM81GaT3q0w9PaneLRww61Z5zWsOdN69a4NEuyIcoR1KLImj938J0WVVTXIxwS6B+03Fqtc6TF3WeVdpBUbr+idWzHOO8X5qGw2pAGRRRvivb8riAYbjpna/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2RZmPxX; arc=none smtp.client-ip=209.85.160.179
+	 To:Cc:Content-Type; b=OUy12wP/Jebz+pJTYGRjJtx3x8o1iXuWcwoxWXKZx8WJIvQM1WW+ZcwLHAPj0ykfpnNmgiJ9Soe/qslLzcxT9a6yD2XurJZEkP4VXb/fT0uAH7Gf1gte87BQTP+UD2kJfDCq/OVGRuQOTFj5rkJcSkWiMFpJ1/o1rc8ydP1dGSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSIS9Vx9; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4678cd314b6so64901001cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2024 07:32:35 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d647d5df90so8367303a12.2;
+        Wed, 18 Dec 2024 08:26:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734535954; x=1735140754; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734539187; x=1735143987; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wWsiw9I5pv4FapkM3jVZP2M6Eu9YyFuGhG4KVmdnWeQ=;
-        b=D2RZmPxX38ynrqXfqiuDRaHGkSkuK+/gmkunf+Ee7kzvPN/ZrEoPg0+UQ7AszdpNqW
-         qGQ2S/ODFA9cswcWvvWI3s28qsqFB3Xwo/lIVqEs8LOgSKGiqkWUiEZlmc9tGjSVHHBS
-         On0Yrle105AE/oSllD45diEJ3bCHkDFc6A3EBAZ4a3eJf/w3yUkGcLyHLw/rKFxxD31x
-         JeB8YzWt9DLWvqv5WQqCiL/8xixEAtJugj612YY6HkwzxUwqWUyViP4fb3zOMwNy4Vhb
-         rVZrV1Yo+CEBC/YS+1p+vmkzVle2zxTuo1UIIbbeRKN8XSEclBIh//7aZu4p+tI7qvUj
-         FMKg==
+        bh=Pmkt9XDQJzvMw0Pxsg6vMsTVZCgPm6T/hzLgsnUP44E=;
+        b=jSIS9Vx9OEAgkRbSaqCHSCfGovbfsQnNb0bFbryS8dezlziHrt1ybZdhixJlspEuTF
+         a3ND2PZFNLlQ2rXo1fs/xQD0mBeIafu1xjl7HzgHnY/rVgOJT799L9I2mLhQyYFdbazt
+         hXcr/Nrlg3HCpj+e2e07UkVW6P3ZQVXw0Q304e/OTHRxbLdDnDLifMeNhAPfHi9DYopI
+         S8RDfR7JUIXGmQFDttsQqJO8hmGXFI1y3X+o43D3ILJ3wX5kfmS/+n8OvMzaLfRXJraW
+         DuWHelF8Aawn9l0nIxVzujLtNBHPd7grYa5SsFYR7+2s3K/bubBeE/t+zq4xOvkefu36
+         FoHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734535954; x=1735140754;
+        d=1e100.net; s=20230601; t=1734539187; x=1735143987;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wWsiw9I5pv4FapkM3jVZP2M6Eu9YyFuGhG4KVmdnWeQ=;
-        b=baRHrk8s12bE0SVo5D9IesvA0KOUgKMSxiJ/h9s1PEhQ05s+jiLiflhYCWSNe8qcB4
-         j03b5jTrqYaxPga7MBD69dJI4DZv1uMZCE8mh4kCXqM72BNmCdlWBungo6DvlC2qBQqr
-         aSR9A28nULHW5/zMMdLeRZQuLHqwECks95G7MFhSAi3DM/PyZCZIuET/484g/1nLOdht
-         hl+6xslEKwhWPMY4pVZoM8JHcHitnH4IlYqzRjvBpIJWpaOqAdG7E8s4apYweFFz8uGq
-         9JQtc4R8rXNlS7hrNPDvAndMSdZtm47HbaSER5yEdfAROj44bC0DRhCLhnJFey02opm0
-         LGaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVP/FLFgUhA65JWRNXa0NTxfqS4+3CrElrCj61eLj1QM94L+d+3UIFDe8WVDsI0rlRvck+5o50Yko/o2PUE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZMcYnFTq+YHgfdyAYn28ZadAIT5H18//Oe9KLymg2NQwaIiFi
-	APpF9XIc+Nc5ljHqRuUqQAoKHOMyrY2lno1Cmw8ExX390u4/pyBrJn29rdcCk66X0CNqF1kc3mp
-	daQcr0ds0a6RI4jOmQp5g2VhnINA=
-X-Gm-Gg: ASbGncvOZuoWPdzirLHT+Ec7aQt2Z/hSCaPbnyW8Iy8Gs8iBvYAI5CU06j3rCMhOiZI
-	GvkreZ3rlQgZav2zIfqbVBF2YWh157IzKbkuVpEA=
-X-Google-Smtp-Source: AGHT+IH1A+S/2W/40HsNaeSVcEykyO5/hZRlqQNZoF0YIahsypXIjdYJLxu1cxsTPXAHbQYlkVVpjuI9GUnEW4eDi2I=
-X-Received: by 2002:a05:622a:15c9:b0:467:57c8:ca31 with SMTP id
- d75a77b69052e-46908ecc83fmr58456561cf.46.1734535954357; Wed, 18 Dec 2024
- 07:32:34 -0800 (PST)
+        bh=Pmkt9XDQJzvMw0Pxsg6vMsTVZCgPm6T/hzLgsnUP44E=;
+        b=Wo4YPipODgWXnxrSrkQyYasAvEmCgnWHJU0cIf/TlNtfZ1adqzYsyEp0g5afEeq/93
+         qyHrdfnEFCM3YliodOxgRrvipLUnOySIOCS57iKPm/oyvhbEmvzZQ1c6F6vFjxa+nW4M
+         zBT2E+HijKtc0C6XSR4oUy8jT8RQHOgBbOpJlRm2z2iNcpM4f2QsIO/QUTzD61ZOHTtN
+         UzH1jx7BLLIq908xH9Gz3kHkss57ljS7RMVp/eL+sf9Uoo4ShUXGSy/enVQ9mVJoGdQH
+         zeMFzHfwrDLfanSvjbTsy6c74cDeUGzCMsJdmbM9O3sJj6S71EjR1wh30iYt8bMHqNNj
+         8L+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVd6N2hYqsUVPqvtAH70scQH0yZVt0WBlLooQ5/GHzsiVbSGG40PVqcV6InGlRTHliLiJ9YiCalqeY+e2AL@vger.kernel.org, AJvYcCWudrbgk/JJ2llZ3C+3yjUZfaZpAvFtlOIdcXL0rVph2BjkTnJR8WAhRHh4LhHWjGsvX+1ep1y98FVPCIoI@vger.kernel.org, AJvYcCXBj+u+jpn1iXAKUo7f4ZqdGDQbJnnPwKyfyz8y0JaSaK7dm+/YzotPiqUp+pdLXBvBBfREMaXExAj7HpgTNg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQfMxZ/KDcYsOgrEwLX+IeeSM1eoKJgE38CeK5pWNwPIwVHo/R
+	M7z+49Q0d8emmtgjStmhaMI9ZSGxM3PkBBbw8Z9dJzsLvcozFzjVbmyN7lgGt8Ql8+iwpfDIs87
+	W3y9cdHaZmMjAZC/nneyQW6gshElb0WG6ncw=
+X-Gm-Gg: ASbGncvhWmsV5lHKAvzbFKPfxYvjVZcCIslMjQf64zv6s6h1Lc7fUO3ffFM1VUtQJxR
+	V7GLTYzuGc/YZ22/EqgHhpYNwrjvIL98vn/8FDQ==
+X-Google-Smtp-Source: AGHT+IESnxrG6R404Jw5OAKvVosjGdfsoo4IrN4TWS4lh187CtuM2wH4crULNRmul7lyoU5qQnfFbG2HzlF4afI/DMU=
+X-Received: by 2002:a05:6402:530e:b0:5d3:cdb3:a60 with SMTP id
+ 4fb4d7f45d1cf-5d7ee4269d2mr3350074a12.34.1734539186587; Wed, 18 Dec 2024
+ 08:26:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214022827.1773071-1-joannelkoong@gmail.com>
- <20241214022827.1773071-2-joannelkoong@gmail.com> <8d0e50812e0141e24855f99b63c3e6d7cb57e7f8.camel@kernel.org>
- <CAJnrk1a+hxtv5kiaEJu-m-C35E8Bbg-ehd8yRjc1fBd2Amm8Ug@mail.gmail.com>
- <CAMHPp_Srx+u9XN9SLNe58weMKnUoq9XbN9sNHBJAn9eiA0kYnw@mail.gmail.com>
- <CAJnrk1YBYYV=wazzTfMEQcd8vaSkYAGraHz2fHoJJaVibybxaQ@mail.gmail.com>
- <CAMHPp_TkRV_izpSqzboz7YnWVijxTwJyQao6iZ5cczDXHXmN8g@mail.gmail.com>
- <CAJnrk1abKAr=V+JOSpHSQGrjYE7b_LDCLoBkCJLnF6-Egp+kXg@mail.gmail.com>
- <CAMHPp_RO_Bqe9mvtMntJsAb+JjwDercPT8NsT5W3e=_gqa_4AQ@mail.gmail.com> <CAJnrk1bsMfvtTdAhp4JsB5V-8YrrBLjmrvJJzVDyMQWJWNTOig@mail.gmail.com>
-In-Reply-To: <CAJnrk1bsMfvtTdAhp4JsB5V-8YrrBLjmrvJJzVDyMQWJWNTOig@mail.gmail.com>
-From: Etienne Martineau <etmartin4313@gmail.com>
-Date: Wed, 18 Dec 2024 10:32:23 -0500
-Message-ID: <CAMHPp_S51EtFtX_W9F3XdRwiwOVGzK2P8=1NNSFxamyr0a3XyA@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] fuse: add kernel-enforced timeout option for requests
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, 
-	laoar.shao@gmail.com, senozhatsky@chromium.org, tfiga@chromium.org, 
-	bgeffon@google.com, kernel-team@meta.com
+References: <CAGrbwDTLt6drB9eaUagnQVgdPBmhLfqqxAf3F+Juqy_o6oP8uw@mail.gmail.com>
+ <CAOQ4uxibFVCGBEORDHjUuB_b6ELq8NdGaNv+Srz9rzQAdh=4OQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxibFVCGBEORDHjUuB_b6ELq8NdGaNv+Srz9rzQAdh=4OQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 18 Dec 2024 17:26:14 +0100
+Message-ID: <CAOQ4uxiie81voLZZi2zXS1BziXZCM24nXqPAxbu8kxXCUWdwOg@mail.gmail.com>
+Subject: Re: overlayfs: WARN_ONCE(Can't encode file handler for inotify: 255)
+To: Dmitry Safonov <dima@arista.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Dmitry Safonov <0x7f454c46@gmail.com>, 
+	Sahil Gupta <s.gupta@arista.com>, Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 3:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
+On Wed, Dec 18, 2024 at 1:10=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> On Tue, Dec 17, 2024 at 12:02=E2=80=AFPM Etienne Martineau
-> <etmartin4313@gmail.com> wrote:
+> On Wed, Dec 18, 2024 at 1:23=E2=80=AFAM Dmitry Safonov <dima@arista.com> =
+wrote:
 > >
-> > On Mon, Dec 16, 2024 at 8:26=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> > >
-> > > On Mon, Dec 16, 2024 at 2:09=E2=80=AFPM Etienne Martineau
-> > > <etmartin4313@gmail.com> wrote:
-> > > >
-> > > > On Mon, Dec 16, 2024 at 1:21=E2=80=AFPM Joanne Koong <joannelkoong@=
-gmail.com> wrote:
-> > > > >
-> > > > > On Mon, Dec 16, 2024 at 9:51=E2=80=AFAM Etienne Martineau
-> > > > > <etmartin4313@gmail.com> wrote:
-> > > > > >
-> > > > > > On Mon, Dec 16, 2024 at 12:32=E2=80=AFPM Joanne Koong <joannelk=
-oong@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Sat, Dec 14, 2024 at 4:10=E2=80=AFAM Jeff Layton <jlayton@=
-kernel.org> wrote:
-> > > > > > > >
-> > > > > > > > On Fri, 2024-12-13 at 18:28 -0800, Joanne Koong wrote:
-> > > > > > > > > There are situations where fuse servers can become unresp=
-onsive or
-> > > > > > > > > stuck, for example if the server is deadlocked. Currently=
-, there's no
-> > > > > > > > > good way to detect if a server is stuck and needs to be k=
-illed manually.
-> > > > > > > > >
-> > > > > > > > > This commit adds an option for enforcing a timeout (in se=
-conds) for
-> > > > > > > > > requests where if the timeout elapses without the server =
-responding to
-> > > > > > > > > the request, the connection will be automatically aborted=
-.
-> > > > > > > > >
-> > > > > > > > > Please note that these timeouts are not 100% precise. For=
- example, the
-> > > > > > > > > request may take roughly an extra FUSE_TIMEOUT_TIMER_FREQ=
- seconds beyond
-> > > > > > > > > the requested timeout due to internal implementation, in =
-order to
-> > > > > > > > > mitigate overhead.
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > > > > > > ---
-> > > > > > > > >  fs/fuse/dev.c    | 83 ++++++++++++++++++++++++++++++++++=
-++++++++++++++
-> > > > > > > > >  fs/fuse/fuse_i.h | 22 +++++++++++++
-> > > > > > > > >  fs/fuse/inode.c  | 23 ++++++++++++++
-> > > > > > > > >  3 files changed, 128 insertions(+)
-> > > > > > > > >
-> > > > > > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > > > > > > > index 27ccae63495d..e97ba860ffcd 100644
-> > > > > > > > > --- a/fs/fuse/dev.c
-> > > > > > > > > +++ b/fs/fuse/dev.c
-> > > > > > > > >
-> > > > > > > > >  static struct fuse_req *fuse_request_alloc(struct fuse_m=
-ount *fm, gfp_t flags)
-> > > > > > > > > @@ -2308,6 +2388,9 @@ void fuse_abort_conn(struct fuse_co=
-nn *fc)
-> > > > > > > > >               spin_unlock(&fc->lock);
-> > > > > > > > >
-> > > > > > > > >               end_requests(&to_end);
-> > > > > > > > > +
-> > > > > > > > > +             if (fc->timeout.req_timeout)
-> > > > > > > > > +                     cancel_delayed_work(&fc->timeout.wo=
-rk);
-> > > > > > > >
-> > > > > > > > As Sergey pointed out, this should be a cancel_delayed_work=
-_sync(). The
-> > > > > > > > workqueue job can still be running after cancel_delayed_wor=
-k(), and
-> > > > > > > > since it requeues itself, this might not be enough to kill =
-it
-> > > > > > > > completely.
-> > > > > > >
-> > > > > > > I don't think we need to synchronously cancel it when a conne=
-ction is
-> > > > > > > aborted. The fuse_check_timeout() workqueue job can be simult=
-aneously
-> > > > > > > running when cancel_delayed_work() is called and can requeue =
-itself,
-> > > > > > > but then on the next trigger of the job, it will check whethe=
-r the
-> > > > > > > connection was aborted (eg the if (!fc->connected)... return;=
- lines in
-> > > > > > > fuse_check_timeout()) and will not requeue itself if the conn=
-ection
-> > > > > > > was aborted. This seemed like the simplest / cleanest approac=
-h to me.
-> > > > > > >
-> > > > > > Is there a scenario where the next trigger of the job dereferen=
-ce
-> > > > > > struct fuse_conn *fc which already got freed because say the FU=
-SE
-> > > > > > server has terminated?
-> > > > >
-> > > > > This isn't possible because the struct fuse_conn *fc gets freed o=
-nly
-> > > > > after the call to "cancel_delayed_work_sync(&fc->timeout.work);" =
-that
-> > > > > synchronously cancels the workqueue job. This happens in the
-> > > > > fuse_conn_put() function.
-> > > > >
-> > > > cancel_delayed_work_sync() won't prevent the work from re-queuing
-> > > > itself if it's already running.
-> > > > I think we need some flag like Sergey pointed out here
-> > > >   https://lore.kernel.org/linux-fsdevel/CAMHPp_S2ANAguT6fYfNcXjTZxU=
-14nh2Zv=3D5=3D8dG8qUnD3F8e7A@mail.gmail.com/T/#m543550031f31a9210996ccf815d=
-5bc2a4290f540
-> > > > Maybe we don't requeue when fc->count becomes 0?
-> > >
-> > > The connection will have been aborted when cancel_delayed_work_sync()
-> > > is called (otherwise we will have a lot of memory crashes/leaks). If
-> > > the fuse_check_timeout() workqueue job is running while
-> > > cancel_delayed_work_sync() is called, there's the "if (!fc->connected=
-)
-> > > { ... return; }" path that returns and avoids requeueing.
-> > >
-> > I ran some tests and from what I see, calling
-> > cancel_delayed_work_sync() on a workqueue that is currently running
-> > and re-queueing itself is enough to kill it completely. For that
-> > reason I believe we don't even need the cancel_delayed_work() in
-> > fuse_abort_conn() because everything is taken care of by
-> > fuse_conn_put();
+> > Hi Amir and Miklos, linux-unionfs,
+> >
+> > On v6.9.0 kernel we stepped over the WARN_ON() in show_mark_fhandle():
+> >
+> > > ------------[ cut here ]------------
+> > > Can't encode file handler for inotify: 255
+> > > WARNING: CPU: 0 PID: 11136 at fs/notify/fdinfo.c:55 show_mark_fhandle=
++0xfa/0x110
+> > > CPU: 0 PID: 11136 Comm: lsof Kdump: loaded Tainted: P        W  O    =
+   6.9.0 #1
+> > > RIP: 0010:show_mark_fhandle+0xfa/0x110
+> > > Code: 00 00 00 5b 41 5c 5d e9 44 21 97 00 80 3d 0d af 99 01 00 75 d8 =
+89 ce 48 c7 c7 68 ad 4a 82 c6 05 fb ae 99 01 01 e8 f6 98 cc ff <0f> 0b eb b=
+f e8 4d        29 96 00 66 66 2e 0f 1f 84 00 00 00 00 00 66 90
+> > ...
+> > > Call Trace:
+> > >  <TASK>
+> > >  inotify_show_fdinfo+0x124/0x170
+> > >  seq_show+0x188/0x1f0
+> > >  seq_read_iter+0x115/0x4a0
+> > >  seq_read+0xf9/0x130
+> > >  vfs_read+0xb6/0x330
+> > >  ksys_read+0x6b/0xf0
+> > >  __do_fast_syscall_32+0x80/0x110
+> > >  do_fast_syscall_32+0x37/0x80
+> > >  entry_SYSCALL_compat_after_hwframe+0x75/0x75
+> > > RIP: 0023:0xf7f93569
+> >
+> > it later reproduced on v6.12.0. With some debug, it was narrowed down
+> > to the way overlayfs encodes file handlers in ovl_encode_fh(). It
+> > seems that currently it calculates them with the help of dentries.
+> > Straight away from that, the reproducer becomes an easy drop_caches +
+> > lsof (which parses procfs and finds some pid(s) that utilize inotify,
+> > reading their correspondent fdinfo(s)).
+> >
+> > So, my questions are: is a dentry actually needed for
+> > ovl_dentry_to_fid()? Can't it just encode fh based on an inode? It
+> > seems that the only reason it "needs" a dentry is to find the origin
+> > layer in ovl_check_encode_origin(), is it so?
 >
-> I think the cancel_delayed_work() in fuse_abort_conn() would still be
-> good to have. There are some instances where the connection gets
-> aborted but the connection doesn't get freed (eg user forgets to
-> unmount the fuse filesystem or the unmount only happens a lot later).
-> When the connection is aborted however, this will automatically cancel
-> the workqueue job on the next run (on the next run, the job won't
-> requeue itself if it sees that the connection was aborted) so we
-> technically don't need the cancel_delayed_work() because of this, but
-> imo it'd be good to minimize the number of workqueue jobs that get run
-> and canceling it asap is preferable.
+...
+
+> However, I am concerned about the possibility of exportfs_encode_fid()
+> failing in fanotify_encode_fh().
 >
-Ok, it makes sense.
-Also in fuse_check_timeout() does it make sense to leverage
-fc->num_waiting to save some cycle in the function?
-Something like:
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index e97ba860ffcd..344af61124f4 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -97,6 +97,10 @@ void fuse_check_timeout(struct work_struct *work)
-                spin_unlock(&fc->lock);
-                return;
-        }
-+       if (!fc->num_waiting){
-+               spin_unlock(&fc->lock);
-+               goto out;
-+       }
-        list_for_each_entry(fud, &fc->devices, entry) {
-                fpq =3D &fud->pq;
-                spin_lock(&fpq->lock);
-@@ -113,6 +117,7 @@ void fuse_check_timeout(struct work_struct *work)
-        }
-        spin_unlock(&fc->lock);
-
-+out:
-        queue_delayed_work(system_wq, &fc->timeout.work,
-                           secs_to_jiffies(FUSE_TIMEOUT_TIMER_FREQ));
-        return;
-
-thanks
-Etienne
-
+> Most fsnotify events are generated with a reference on the dentry, but
+> fsnotify_inoderemove() is called from dentry_unlink_inode() after removin=
+g
+> the dentry from the inode aliases list, so does that mean that FAN_DELETE=
+_SELF
+> events from overlayfs are never reported with fid info and that we will
+> always print pr_warn_ratelimited("fanotify: failed to encode fid ("...?
 >
-> Thanks,
-> Joanne
->
+> I see that the LTP test to cover overlayfs fid events reporting (fanotify=
+13)
+> does not cover FAN_DELETE_SELF events, so I need to go check.
+
+As predicted, I added a test case for FAN_DELETE_SELF over overlayfs
+and it fails
+to get the file handle of the deleted inode:
+
+https://github.com/amir73il/ltp/commits/ovl_encode_fid/
+
+fanotify13.c:174: TINFO: Test #6.4: FAN_REPORT_FID of delete events
+with mark type FAN_MARK_INODE
+[ 2967.311260] fanotify_encode_fh: 23 callbacks suppressed
+[ 2967.311276] fanotify: failed to encode fid (type=3D0, len=3D0, err=3D-2)
+[ 2967.317410] fanotify: failed to encode fid (type=3D0, len=3D0, err=3D-2)
+[ 2967.320933] fanotify: failed to encode fid (type=3D0, len=3D0, err=3D-2)
+fanotify13.c:268: TFAIL: handle_bytes (0) returned in event does not
+equal to handle_bytes (24) returned in name_to_handle_at(2)
+fanotify13.c:268: TFAIL: handle_bytes (0) returned in event does not
+equal to handle_bytes (24) returned in name_to_handle_at(2)
+fanotify13.c:268: TFAIL: handle_bytes (180003) returned in event does
+not equal to handle_bytes (24) returned in name_to_handle_at(2)
+
+Note that this is not a regression, because FAN_REPORT_FID was not supporte=
+d on
+overlayfs before 16aac5ad1fa9 ("ovl: support encoding non-decodable
+file handles"),
+so I do plan to fix ovl_dentry_to_fid(), but with the holidays coming
+up, it could take
+more time than usual.
+
+If you have an urgency to fix the reported WARN_ONCE(), then do feel free
+to post a patch to remove this assertion, because my fix to ovl_dentry_to_f=
+id()
+may be simplified to deal only with unlinked inodes, so it may not be enoug=
+h
+fix the use case that you reported.
+
+Thanks,
+Amir.
 
