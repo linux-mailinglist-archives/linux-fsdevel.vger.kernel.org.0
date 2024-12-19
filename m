@@ -1,130 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-37835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6974D9F8198
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:22:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7EF9F8177
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334D016F5A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:18:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5587E7A24E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793461A42A5;
-	Thu, 19 Dec 2024 17:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1671A9B54;
+	Thu, 19 Dec 2024 17:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="pPptSqYd";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="xWBtlMme"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mFAxqs9r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4BC19DFA5;
-	Thu, 19 Dec 2024 17:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FC91A76B0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 17:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734628477; cv=none; b=RooQgnxX1e7NyOf+t2Dq+0oZ4j5A+Cz+fGbLBp6cfTwtcgc58oRk3BLwa/AEaK5sD6oOVnWgoCINb7XpAbEJgCYfpFD7QfppCa5qH0OPWTrfuwyVswAEDWeD8d4reX6q5YeFIw76hrQRhg57LqsFZ5KVSmbN/LHeyaXNUwsRiYw=
+	t=1734628506; cv=none; b=Vna9M3FNltqh1OB4XQKmOpddRsTCdG557FHk2GXjgAQDP3MfkEbc5IHW5KB03hB76geYuPFBEJGsAQcXo+qiER9Drt+Pd8UnTeDIu+t+ijFoWefIEVdthKucvP4eK8slZzQF1C0ddx8WBJqJKYmA70hXxv1cjY8y4/6lRz+aTiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734628477; c=relaxed/simple;
-	bh=mvSUgxWzg4ua88OO42ymyaWrC9482DQkJDq/AzwCXik=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kSaZO5b9YOzxhJZdP3KJQrAjAf86lBlSWjYVv2WPDRaaegA6VN94/FkNVK5+j/KoaFjwQkoYoMgDaLACjePK5Dnv14hlkg39DkA1CYtBlVnUNqCgaZ8+2LH3apbaE3kNaCBXRbsWrrzHUWIeuF85oG6ntTG5hkD+U2K2TwWoxhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=pPptSqYd; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=xWBtlMme; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1734628475;
-	bh=mvSUgxWzg4ua88OO42ymyaWrC9482DQkJDq/AzwCXik=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=pPptSqYd8t7ClnbAMKRoMhTiBFhVQQzwEiKuGWlEKJXUt3kmNVGIioOmiIY+8cUB8
-	 yGuWSrnKGWroP7DTrNZqLdJNzrMvEcIs8gTZtH9yIa0S0Woslcd+DjKxuj8QFWLf3J
-	 pPkWhPCL6ncIzTh6agI7iwnk7ZJYnUliH79Vwk+g=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0CB7F1280C50;
-	Thu, 19 Dec 2024 12:14:35 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id i2GyJq7_JHCq; Thu, 19 Dec 2024 12:14:34 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1734628474;
-	bh=mvSUgxWzg4ua88OO42ymyaWrC9482DQkJDq/AzwCXik=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=xWBtlMmecNqCM0ZvGlK2UAQc7UDbt0fEh56RxSA+Gu+TO4UuGYGWQSTOjFodohPvb
-	 NcZUe5GWPU/1MGTsWqSkN4kNVzQRGVGBkyepBXNc6Li8d+w/RzjBWWOwP/o0kdJrt2
-	 9a2TKr0b5MvaYutz4vEVbHt3fim2AlEyL1rn5atM=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1565412804E8;
-	Thu, 19 Dec 2024 12:14:34 -0500 (EST)
-Message-ID: <6e09c8a812a85cb96a75391abcc48bee3b2824e9.camel@HansenPartnership.com>
-Subject: Re: [PATCH 6/6] efivarfs: fix error on write to new variable
- leaving remnants
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Christian
-	Brauner <christian@brauner.io>, Lennart Poettering <mzxreary@0pointer.de>
-Date: Thu, 19 Dec 2024 12:14:32 -0500
-In-Reply-To: <20241210170224.19159-7-James.Bottomley@HansenPartnership.com>
-References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com>
-	 <20241210170224.19159-7-James.Bottomley@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1734628506; c=relaxed/simple;
+	bh=7jGIsXlEOJLkkQ7oxm+WDPX3h2416RiBwAVHJQazvio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LR6bky+nUZnmXB2Xax+RybxRkik3LdwWpURrATFu2lRHStFFx1GxsiGJJEsAOuSGsyyUOl8/NtpXW7l3qJtL140O5hlT/4IaHiS6jzKXQ40aDZCqjUxf2NZstCU87XcVkZAdqPpJx3D48xLQ9MgXa2+oQbXQOChirPeL3JwqDgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mFAxqs9r; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 19 Dec 2024 09:14:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734628499;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EeFJTG6jg/QfGCeD5x2h9WUaphItSLBzS2trrpbjGwA=;
+	b=mFAxqs9r4fwNaYbTrftZXM71IkL/Y+eDsf28w5XiitYUr7TloMku1eHK2DzCPg+Pl9bv/P
+	D6hGZA2YTNb7EqlP3x9moAN2gc1+r+Ui+4qCBn7SMewNyIRV8BLH8ubks2NqrDSTvUZzJ4
+	PUw3Xepne2lJDgk29j5ZI9B16yILsb4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: Zi Yan <ziy@nvidia.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
+	josef@toxicpanda.com, bernd.schubert@fastmail.fm, linux-mm@kvack.org, 
+	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, 
+	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+Message-ID: <ssc3bperkpjyqdrlmdbh2woxlghua2t44tg4cywj5pkwwdcpdo@2jpzqfy5zyzf>
+References: <20241122232359.429647-5-joannelkoong@gmail.com>
+ <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
+ <hltxbiupl245ea7b4rzpcyz3d62mzs6igcx42g7zsksanbxqb3@sho3dzzht3rx>
+ <f30fba5f-b2ca-4351-8c8f-3ac120b2d227@redhat.com>
+ <gdu7kmz4nbnjqenj5vea4rjwj7v67kjw6ggoyq7ok4la2uosqa@i5gxpmoopuii>
+ <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
+ <onnjsfrlgyv6blttpmfn5yhbv5q7niteiwbhoze3qnz2zuwldc@seooqlssrpvx>
+ <43e13556-18a4-4250-b4fe-7ab736ceba7d@redhat.com>
+ <ggm2n6wqpx4pnlrkvgzxclm7o7luqmzlv4655yf2huqaxrebkl@2qycr6dhcpcd>
+ <968d3543-d8ac-4b5a-af8e-e6921311d5cf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <968d3543-d8ac-4b5a-af8e-e6921311d5cf@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 2024-12-10 at 12:02 -0500, James Bottomley wrote:
-> Even though this fixes the bug that a create either not followed by a
-> write or followed by a write that errored would leave a remnant file
-> for the variable, the file will appear momentarily globally visible
-> until the close of the fd deletes it.  This is safe because the
-> normal filesystem operations will mediate any races; however, it is
-> still possible for a directory listing at that instant between create
-> and close contain a variable that doesn't exist in the EFI table.
+On Thu, Dec 19, 2024 at 05:41:36PM +0100, David Hildenbrand wrote:
+> On 19.12.24 17:40, Shakeel Butt wrote:
+> > On Thu, Dec 19, 2024 at 05:29:08PM +0100, David Hildenbrand wrote:
+> > [...]
+> > > > 
+> > > > If you check the code just above this patch, this
+> > > > mapping_writeback_indeterminate() check only happen for pages under
+> > > > writeback which is a temp state. Anyways, fuse folios should not be
+> > > > unmovable for their lifetime but only while under writeback which is
+> > > > same for all fs.
+> > > 
+> > > But there, writeback is expected to be a temporary thing, not possibly:
+> > > "AS_WRITEBACK_INDETERMINATE", that is a BIG difference.
+> > > 
+> > > I'll have to NACK anything that violates ZONE_MOVABLE / ALLOC_CMA
+> > > guarantees, and unfortunately, it sounds like this is the case here, unless
+> > > I am missing something important.
+> > > 
+> > 
+> > It might just be the name "AS_WRITEBACK_INDETERMINATE" is causing
+> > the confusion. The writeback state is not indefinite. A proper fuse fs,
+> > like anyother fs, should handle writeback pages appropriately. These
+> > additional checks and skips are for (I think) untrusted fuse servers.
+> 
+> Can unprivileged user space provoke this case?
 
-Systemd doesn't like 0 length files appearing in efivarfs, even if only
-momentarily, so I think this needs updating to prevent even momentary
-instances of zero length files:
+Let's ask Joanne and other fuse folks about the above question.
 
-https://github.com/systemd/systemd/issues/34304
-
-These occur for two reasons
-
-   1. The system has hibernated and resumed and the dcache entries are
-      now out of sync with the original variables
-   2. between the create and a successful write of a variable being
-      created in efivarfs
-
-1. can only really be fixed by adding a hibernation hook to the
-filesystem code, which would be a separate patch set (which I'll work
-on after we get this upstream); but 2. can be fixed by ensuring that
-all variables returned from .create aren't visible in the directory
-listing until a successful write.
-
-Since we need the file to be visible to lookups but not the directory,
-the only two ways of doing this are either to mark the directory in a
-way that libfs.c:dcache_readdir() won't see it ... I think this would
-have to be marking it as a cursor (we'd remove the cursor mark on
-successful write); or to implement our own .iterate_shared function and
-hijack the actor to skip newly created files (this is similar to what
-overlayfs does to merge directories) which would be identified as
-having zero size.
-
-Do the fs people have a preference? The cursor mark is simpler to
-implement but depends on internal libfs.c magic. The actor hijack is at
-least something that already exists, so would be less prone to breaking
-due to internal changes.
-
-Regards,
-
-James
-
-
-
+Let's say unprivileged user space can start a untrusted fuse server,
+mount fuse, allocate and dirty a lot of fuse folios (within its dirty
+and memcg limits) and trigger the writeback. To cause pain (through
+fragmentation), it is not clearing the writeback state. Is this the
+scenario you are envisioning?
 
