@@ -1,87 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-37780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9719F7548
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 08:20:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE589F7600
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 08:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F95016CBD4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 07:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA46168E2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 07:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87D9216E1F;
-	Thu, 19 Dec 2024 07:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B0121771B;
+	Thu, 19 Dec 2024 07:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WKqxdhg3"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0PaeD2mZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3A97082A;
-	Thu, 19 Dec 2024 07:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BFE21770F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 07:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734592830; cv=none; b=r67DjMsYmZSbgPvLicCawlkPNph8kPBtH7Ub06HOsQuoSVzvjCfYV/g9PR5zarH5HthRPuqV9Uv85zcxr4LnkKcvwGcGhIdkez8siehJpHCRY4jdFnDGGGttwhncfLemEgWfQ7YFl5zc1OILx28sDwRpJqbbHW4J4pRTnHedo54=
+	t=1734594313; cv=none; b=qAg5lzgZYaOKZ29QjfSJ6MAQA5Z0fM6GegH4HWnBQ+YdYiVt1Ob9BRPYezdNjvDs3QK958iekrUXx+b7S/eirg2ItXuVQIpUm9ZNhUnDCspIf2Nq7gQohs71VO1lsCU0Gb2uiEIcBUgcIW/R9vZpaIqIaPg0poA+MLT96Z6g0y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734592830; c=relaxed/simple;
-	bh=K7+6eIBsM9cT2n1sW+PGgL7yKTLsy6qCreKTtcS4IbY=;
+	s=arc-20240116; t=1734594313; c=relaxed/simple;
+	bh=4kZV05gAcdH13bba/KY+LydZ9n98bA1dNYEnzu9VffA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqTouwcODbdQ8aPFDL98Xr6//GL8Kc6RkxDnw4oWVzjE7Vy91OBi4Bq48SI6LafJWhzYCr5UJPr+UFKlfzr8eE2Wuv99AItD9zanIc24O1vpr3DBw6rnjIZwg9q3TU/x14f4cyxeBhFejy8yHBoiSBYcpyZW6T3AEeXtus1TyR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WKqxdhg3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJ3qrN6025027;
-	Thu, 19 Dec 2024 07:20:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Fq4OC/
-	zST+6kr7yzWYiZgCb0zkX2J8C06oDPUnCpZ2w=; b=WKqxdhg37XTroB2re4D+CO
-	22u3UYtezmzW4DSi8nHEFipJ4KWO61qfWoQhl8YPN6MuJ191BaN/1/gSU/KSdHWa
-	1y4gpbWw0hkoQna45ZEIKoCJ+iJdYfWhQj2S12k+UfSwxn1jy0Y5fDlVDQqBCfat
-	iJBw6meRa/1d6qhYQWZilI4sIjPZpU0n/LWCLr3lFCAtguMfO5BX6bN15PYDZ8fo
-	8y5gUSrM4C/UOUGw2eZpGxjXkp49piXybRg3jEE31hX3jQv2xZVbJ8SeHCG7WudZ
-	mGAFlgv8Od+b5p5k9GuZTUx8OY3Ww/cbMA7RxKoQCHIw42tD+5+Mh1Co1vttwdLQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43mbyhrp1h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Dec 2024 07:20:06 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJ7I2GN014320;
-	Thu, 19 Dec 2024 07:20:05 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqyc53w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Dec 2024 07:20:05 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BJ7K3vV18547088
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Dec 2024 07:20:03 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4C1482004B;
-	Thu, 19 Dec 2024 07:20:03 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 471AC20040;
-	Thu, 19 Dec 2024 07:20:01 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.218.178])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 19 Dec 2024 07:20:00 +0000 (GMT)
-Date: Thu, 19 Dec 2024 12:49:58 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-        yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v4 01/10] ext4: remove writable userspace mappings before
- truncating page cache
-Message-ID: <Z2PJHssCBqVDDU7w@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
- <20241216013915.3392419-2-yi.zhang@huaweicloud.com>
- <Z2KcZt91otMCYqvi@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <a2be273d-f7d2-48e4-84c8-27066d8136b1@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyikaLzzLJC9dujQ2gm2matNtMkcoj4iL0iAIFoWTYiITXjQV0iBah29DOd1pMMB3B5bcdpNKMzIbyvjqEyrW9UgoiG6O8a2rCjbPkB0/zLMFsnRZvQRugIDw5VsZemJUKfP2fGpJzLn0IYESWmybNaN1U5LS0IbEYJ9wE5/n/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0PaeD2mZ; arc=none smtp.client-ip=45.157.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YDMyk2dlLzg73;
+	Thu, 19 Dec 2024 08:45:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1734594302;
+	bh=oKhFkfeKlHLMteV17dJwPYDJMj25IWwSaNtedn4t5og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0PaeD2mZXMVXSB0s3zaJLGesGRhVGJwjco61VkN0AtFjed07nbQSnjPZq0OMG4Uiu
+	 6GGqjloRLZ+q2vtgOzexlRTyqCRQmT7TjrWl+anvbdbs6ryn0zJs5ggkQ/7y6qXsl9
+	 4EbXr0LzwyzvuSLNxj4fMgTNVxzVW43NV/jKyqCA=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YDMyf3syCzYXg;
+	Thu, 19 Dec 2024 08:44:58 +0100 (CET)
+Date: Thu, 19 Dec 2024 08:44:56 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v23 0/8] Script execution control (was O_MAYEXEC)
+Message-ID: <20241219.CaiVie9caNge@digikod.net>
+References: <20241212174223.389435-1-mic@digikod.net>
+ <20241218.aBaituy0veK7@digikod.net>
+ <202412181130.84A2FCF2@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,233 +85,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a2be273d-f7d2-48e4-84c8-27066d8136b1@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: l0LfRjHBP4QSjYz9MwUR-KLlLCyDMFp-
-X-Proofpoint-GUID: l0LfRjHBP4QSjYz9MwUR-KLlLCyDMFp-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 clxscore=1015 phishscore=0
- mlxscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412190054
+In-Reply-To: <202412181130.84A2FCF2@keescook>
+X-Infomaniak-Routing: alpha
 
-On Wed, Dec 18, 2024 at 09:02:18PM +0800, Zhang Yi wrote:
-> On 2024/12/18 17:56, Ojaswin Mujoo wrote:
-> > On Mon, Dec 16, 2024 at 09:39:06AM +0800, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> When zeroing a range of folios on the filesystem which block size is
-> >> less than the page size, the file's mapped blocks within one page will
-> >> be marked as unwritten, we should remove writable userspace mappings to
-> >> ensure that ext4_page_mkwrite() can be called during subsequent write
-> >> access to these partial folios. Otherwise, data written by subsequent
-> >> mmap writes may not be saved to disk.
-> >>
-> >>  $mkfs.ext4 -b 1024 /dev/vdb
-> >>  $mount /dev/vdb /mnt
-> >>  $xfs_io -t -f -c "pwrite -S 0x58 0 4096" -c "mmap -rw 0 4096" \
-> >>                -c "mwrite -S 0x5a 2048 2048" -c "fzero 2048 2048" \
-> >>                -c "mwrite -S 0x59 2048 2048" -c "close" /mnt/foo
-> >>
-> >>  $od -Ax -t x1z /mnt/foo
-> >>  000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
-> >>  *
-> >>  000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59
-> >>  *
-> >>  001000
-> >>
-> >>  $umount /mnt && mount /dev/vdb /mnt
-> >>  $od -Ax -t x1z /mnt/foo
-> >>  000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
-> >>  *
-> >>  000800 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >>  *
-> >>  001000
-> >>
-> >> Fix this by introducing ext4_truncate_page_cache_block_range() to remove
-> >> writable userspace mappings when truncating a partial folio range.
-> >> Additionally, move the journal data mode-specific handlers and
-> >> truncate_pagecache_range() into this function, allowing it to serve as a
-> >> common helper that correctly manages the page cache in preparation for
-> >> block range manipulations.
-> > 
-> > Hi Zhang,
-> > 
-> > Thanks for the fix, just to confirm my understanding, the issue arises
-> > because of the following flow:
-> > 
-> > 1. page_mkwrite() makes folio dirty when we write to the mmap'd region
-> > 
-> > 2. ext4_zero_range (2kb to 4kb)
-> >     truncate_pagecache_range
-> >       truncate_inode_pages_range
-> >         truncate_inode_partial_folio
-> >           folio_zero_range (2kb to 4kb)
-> >             folio_invalidate
-> >               ext4_invalidate_folio
-> >                 block_invalidate_folio -> clear the bh dirty bit
-> > 
-> > 3. mwrite (2kb to 4kb): Again we write in pagecache but the bh is not
-> >    dirty hence after a remount the data is not seen on disk
-> > 
-> > Also, we won't see this issue if we are zeroing a page aligned range
-> > since we end up unmapping the pages from the proccess address space in 
-> > that case. Correct?
+On Wed, Dec 18, 2024 at 11:31:57AM -0800, Kees Cook wrote:
+> On Wed, Dec 18, 2024 at 11:40:59AM +0100, Mickaël Salaün wrote:
+> > In the meantime I've pushed it in my tree, it should appear in -next
+> > tomorrow.  Please, let me know when you take it, I'll remove it from my
+> > tree.
 > 
-> Thank you for review! Yes, it's correct.
+> Thanks! Yeah, I was just finally getting through my email after my
+> pre-holiday holiday. ;)
 > 
-> > 
-> > I have also tested the patch in PowerPC with 64k pagesize and 4k blocks
-> > size and can confirm that it fixes the data loss issue. That being said,
-> > I have a few minor comments on the patch below:
-> > 
-> 
-> Thank you for the test.
-> 
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> >> ---
-> >>  fs/ext4/ext4.h    |  2 ++
-> >>  fs/ext4/extents.c | 19 ++++-----------
-> >>  fs/ext4/inode.c   | 62 +++++++++++++++++++++++++++++++++++++++++++++++
-> >>  3 files changed, 69 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> >> index 74f2071189b2..8843929b46ce 100644
-> >> --- a/fs/ext4/ext4.h
-> >> +++ b/fs/ext4/ext4.h
-> >> @@ -3016,6 +3016,8 @@ extern int ext4_inode_attach_jinode(struct inode *inode);
-> >>  extern int ext4_can_truncate(struct inode *inode);
-> >>  extern int ext4_truncate(struct inode *);
-> >>  extern int ext4_break_layouts(struct inode *);
-> >> +extern int ext4_truncate_page_cache_block_range(struct inode *inode,
-> >> +						loff_t start, loff_t end);
-> >>  extern int ext4_punch_hole(struct file *file, loff_t offset, loff_t length);
-> >>  extern void ext4_set_inode_flags(struct inode *, bool init);
-> >>  extern int ext4_alloc_da_blocks(struct inode *inode);
-> >> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> >> index a07a98a4b97a..8dc6b4271b15 100644
-> >> --- a/fs/ext4/extents.c
-> >> +++ b/fs/ext4/extents.c
-> >> @@ -4667,22 +4667,13 @@ static long ext4_zero_range(struct file *file, loff_t offset,
-> >>  			goto out_mutex;
-> >>  		}
-> >>  
-> >> -		/*
-> >> -		 * For journalled data we need to write (and checkpoint) pages
-> >> -		 * before discarding page cache to avoid inconsitent data on
-> >> -		 * disk in case of crash before zeroing trans is committed.
-> >> -		 */
-> >> -		if (ext4_should_journal_data(inode)) {
-> >> -			ret = filemap_write_and_wait_range(mapping, start,
-> >> -							   end - 1);
-> >> -			if (ret) {
-> >> -				filemap_invalidate_unlock(mapping);
-> >> -				goto out_mutex;
-> >> -			}
-> >> +		/* Now release the pages and zero block aligned part of pages */
-> >> +		ret = ext4_truncate_page_cache_block_range(inode, start, end);
-> >> +		if (ret) {
-> >> +			filemap_invalidate_unlock(mapping);
-> >> +			goto out_mutex;
-> >>  		}
-> >>  
-> >> -		/* Now release the pages and zero block aligned part of pages */
-> >> -		truncate_pagecache_range(inode, start, end - 1);
-> >>  		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
-> >>  
-> >>  		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
-> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> >> index 89aade6f45f6..c68a8b841148 100644
-> >> --- a/fs/ext4/inode.c
-> >> +++ b/fs/ext4/inode.c
-> >> @@ -31,6 +31,7 @@
-> >>  #include <linux/writeback.h>
-> >>  #include <linux/pagevec.h>
-> >>  #include <linux/mpage.h>
-> >> +#include <linux/rmap.h>
-> >>  #include <linux/namei.h>
-> >>  #include <linux/uio.h>
-> >>  #include <linux/bio.h>
-> >> @@ -3902,6 +3903,67 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
-> >>  	return ret;
-> >>  }
-> >>  
-> >> +static inline void ext4_truncate_folio(struct inode *inode,
-> >> +				       loff_t start, loff_t end)
-> >> +{
-> >> +	unsigned long blocksize = i_blocksize(inode);
-> >> +	struct folio *folio;
-> >> +
-> >> +	/* Nothing to be done if no complete block needs to be truncated. */
-> >> +	if (round_up(start, blocksize) >= round_down(end, blocksize))
-> >> +		return;
-> >> +
-> >> +	folio = filemap_lock_folio(inode->i_mapping, start >> PAGE_SHIFT);
-> >> +	if (IS_ERR(folio))
-> >> +		return;
-> >> +
-> >> +	if (folio_mkclean(folio))
-> >> +		folio_mark_dirty(folio);
-> >> +	folio_unlock(folio);
-> >> +	folio_put(folio);
-> >> +}
-> >> +
-> >> +int ext4_truncate_page_cache_block_range(struct inode *inode,
-> >> +					 loff_t start, loff_t end)
-> >> +{
-> >> +	unsigned long blocksize = i_blocksize(inode);
-> >> +	int ret;
-> >> +
-> >> +	/*
-> >> +	 * For journalled data we need to write (and checkpoint) pages
-> >> +	 * before discarding page cache to avoid inconsitent data on disk
-> >> +	 * in case of crash before freeing or unwritten converting trans
-> >> +	 * is committed.
-> >> +	 */
-> >> +	if (ext4_should_journal_data(inode)) {
-> >> +		ret = filemap_write_and_wait_range(inode->i_mapping, start,
-> >> +						   end - 1);
-> >> +		if (ret)
-> >> +			return ret;
-> >> +		goto truncate_pagecache;
-> >> +	}
-> >> +
-> >> +	/*
-> >> +	 * If the block size is less than the page size, the file's mapped
-> >> +	 * blocks within one page could be freed or converted to unwritten.
-> >> +	 * So it's necessary to remove writable userspace mappings, and then
-> >> +	 * ext4_page_mkwrite() can be called during subsequent write access
-> >> +	 * to these partial folios.
-> >> +	 */
-> >> +	if (blocksize < PAGE_SIZE && start < inode->i_size) {
-> > 
-> > Maybe we should only call ext4_truncate_folio() if the range is not page
-> > aligned, rather than calling it everytime for bs < ps?
-> 
-> I agree with you, so how about below？
-> 
-> 	if (!IS_ALIGNED(start | end, PAGE_SIZE) &&
-> 	    blocksize < PAGE_SIZE && start < inode->i_size && )
+> I'll get this into my -next tree now.
 
-This looks good Zhang, with this change and the variable rename, feel free to add
+Thanks, I just removed mine.
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-
-Regards,
-ojaswin
 > 
-> > 
-> >> +		loff_t start_boundary = round_up(start, PAGE_SIZE);
-> > 
-> > I think page_boundary seems like a more suitable name for the variable.
+> -Kees
 > 
-> Yeah, it looks fine to me.
-> 
-> Thanks,
-> Yi.
-> 
+> -- 
+> Kees Cook
 
