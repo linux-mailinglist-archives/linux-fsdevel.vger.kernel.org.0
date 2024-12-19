@@ -1,195 +1,291 @@
-Return-Path: <linux-fsdevel+bounces-37794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93AB9F7BF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 14:05:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FCA9F7C94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 14:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAF137A0587
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 13:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323791891365
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 13:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52E838DFC;
-	Thu, 19 Dec 2024 13:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0E71F2C4C;
+	Thu, 19 Dec 2024 13:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U5lOBKa9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jcy7curD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F5B801
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 13:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF98A8BEE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 13:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734613512; cv=none; b=ARfCp9uy6eefcsUGYKwyOr8SiashRp+xmCsvELViO3SH9hcKvlEF+QmMPLaGjdmcUay5PLohri9ezJpCEX3NbRKfSvU0lC3HC8/akM9UUrLgvEMerISTNzwtPZoKFb0raTlukwfNNuyWfWpXjE/oFU6QjmW+uBBl+8bWdxzflhA=
+	t=1734615965; cv=none; b=plrDMCk+BLESIY3k+KaCAbdj5LrLhvxSf/cqDU3ScADoLF06qZvF/MYbmZIIwrnAL8pCdx6CxqX2T7voR+j+A71314POZdzk0aT5Bfmmlzo0t53ypCEAAsYKfle2pUMEEu2HQrQ6AoZLoRFnG636iDvpSoY8WzJfXBSjVDV5WMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734613512; c=relaxed/simple;
-	bh=r1jCidUp+cvRhjuC2J6eG7t33CTSGGM8hB3Cq3HHWm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AR6D2GKON8YMTa+cCMOXd60eSczKJ0z8wFXyieYHN3R8y0J0s0NKIlFsIo4yFMyzCQRuICDwUEu2zswLmVzwsjLmfmW6iJsQxUkdodGo7bCd5UxgTR6GLpMNWnGa/zEul/mKkb1dM+KUqAaCpoBvTgQDEjXiAG0vMViFkO1FxO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U5lOBKa9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734613509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T5ScgxkNuZ1ybwXQme4UGRREuWyyWaRIhTG+vUuR3Xc=;
-	b=U5lOBKa9m1OLePCruvB8yhAd2wpW0U+gT2kL7ctUtTT/zgiJHlwyiiIqdzX6NvUPIWJngK
-	ZThgdFilHkFSarIQaCeDU4q4o7FK8h7wIYuPKUR2nnLt/AKG9U1rp3OL0Vj8yUkH66Rfx3
-	p8Iq4873WqCFbpRbGqcETjCPTYGTVso=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-AM-WnhsAMnGnQqrAc0tF8Q-1; Thu, 19 Dec 2024 08:05:08 -0500
-X-MC-Unique: AM-WnhsAMnGnQqrAc0tF8Q-1
-X-Mimecast-MFC-AGG-ID: AM-WnhsAMnGnQqrAc0tF8Q
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-385ed79291eso996870f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 05:05:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734613507; x=1735218307;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=T5ScgxkNuZ1ybwXQme4UGRREuWyyWaRIhTG+vUuR3Xc=;
-        b=pY7iwQoUqeRE9CNgi90/aW1o7A9ERuUM5F0rXykDCqQxzOQokzLERVproIkyySJBH2
-         g/AHZNmn5Vbvq5BvD+SKFEGps+lWW5lP0Y8TVGq2/FTuRLiHEoonh2hpqxaNumCsD81T
-         RwILf4kxYf1gJGZHoD8giHbDvWvqdEaMvpgGnUAgpbthGexkntm4oTzm9+0LitNqr7IW
-         rNyU5mKBGKsRR22zvhsK2dUbSEM+1TcWIAY+Yf5d9p3uVRmLddh/aYnnMq392F26aeHy
-         9E1iNnrGHhFXDfo/MRKPuZOOekvp++c3CGO0CKMabSzG8v+T6q2IRp2d+I335CVYhfZP
-         3Daw==
-X-Forwarded-Encrypted: i=1; AJvYcCUExxeu5CsZMBwLtNsy+S2m8mYdSvr19HIgVu+n3sNm33DtXYqTxNM1m/lTkiywan3BlFUwpoMMN7/lz7ss@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/GZWhgmfLZX2SrQTlCLJC8rePq30xuaROaebcYr/eIZDlo8Gt
-	TIMc72qO3sZOxnazB3Uj2WZKZHIBs+4SucwCFTbGphjTKR++G2ZclEACbdyRb9GRcCnavwIyQb3
-	DmqwBGZJIAwJ4VTeu1VSr8QTHgO2UYtCDrVwff+IcGuTojrISW54ihnaV8YxKn4k=
-X-Gm-Gg: ASbGncvktuQktUXndiJUYDSCEISvjRyRnFr8VwbtKgjzPM3gx9ZwnKq7+7xI35LwjAI
-	FmjJ5+10RyaWtSbAd1NwVWzkCP5O//dX1eellG36U0UnHaRY7PNJdcu3hrtKomvX/LFNTnLxT9K
-	0G35osn/Kgh/stxt+91BpwvyTzNuN4R2AnsJv6gFOZa62gZ9FkKMZxBrmyDlTdGBv41E+dxWvQg
-	/iYmMhxZ58TgNesUyC/VgQlaOdgCgOhfjmvQsuxyM7NHy3Osr+Bwi0TyFz01qvu3erV7vLNyKb7
-	Y574+3MQmt1UNreqZS4hqPh+5RJAVUiAvryvsdcPeLOtk+cduNQzLtuCPwZSnUbqhoefEm2rvul
-	gghQwRA==
-X-Received: by 2002:a05:6000:1863:b0:386:3bde:9849 with SMTP id ffacd0b85a97d-38a1a20f407mr2696274f8f.12.1734613507023;
-        Thu, 19 Dec 2024 05:05:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGZxd5/mfBE4XH/PDfC5RZrYtRzsU+3d1fLOzHQbPbIWfr4ljQziLuWO40YIOgGa7NxCDTgAg==
-X-Received: by 2002:a05:6000:1863:b0:386:3bde:9849 with SMTP id ffacd0b85a97d-38a1a20f407mr2696219f8f.12.1734613506515;
-        Thu, 19 Dec 2024 05:05:06 -0800 (PST)
-Received: from ?IPV6:2003:cb:c749:6600:b73a:466c:e610:686? (p200300cbc7496600b73a466ce6100686.dip0.t-ipconnect.de. [2003:cb:c749:6600:b73a:466c:e610:686])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4366127c639sm17416435e9.31.2024.12.19.05.05.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 05:05:05 -0800 (PST)
-Message-ID: <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
-Date: Thu, 19 Dec 2024 14:05:04 +0100
+	s=arc-20240116; t=1734615965; c=relaxed/simple;
+	bh=ATswPCOjxrjIL/7+ZE0Lq10hG0AXXky49N5+NAMDiM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gtu4YJT5falCl/sb85gAKKXRd+glBrs17KneZnW1ufQ4yMfFnIEYt83ZL81RSPyUVChG/NlGOieAl0ZibA1ymnrBs5z9/lpcGroO6OUl0dGc8gmrnw0EQvBsJ9pCmMNipbAVREXSlk/T8HO1stFxXkOXUdr2Rl4acV8bhO0uFUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jcy7curD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95026C4CED0;
+	Thu, 19 Dec 2024 13:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734615964;
+	bh=ATswPCOjxrjIL/7+ZE0Lq10hG0AXXky49N5+NAMDiM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jcy7curDYDCL+FCd5VC3Sgw0skLfiIPCHnrtkjP5zeRsmcjL2+Qfj8N80/msgheWT
+	 kO30XeQ/RVhqsRjUgGvm1msUbVlRuKCJPZfp/AEQqXxYXtahelkdvqopzwzmfzPYn/
+	 F2hY1nGBP1+nlxlJ29svxo7n2Al9EevzBNiXzIJTrMXSObYSahzBubiKJCdSew1q4p
+	 prSXTGOUZfDhQEjJA0PXsk0+bMMDFHh5KNYDYIMY0PjLColozgN3u/VwGxIZv4mgID
+	 lnW4OYfqgXf+m23cNrsMgWtK2qSPo1gN+4dXMPdq0hBXfgu6X8qtu8rvykVZGgMt5Y
+	 6+wg5bpXq7s7Q==
+Date: Thu, 19 Dec 2024 14:45:59 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Ziljstra <peterz@infradead.org>, 
+	linux-fsdevel@vger.kernel.org, yi1.lai@intel.com
+Subject: Re: [PATCH v3 03/10] fs: lockless mntns rbtree lookup
+Message-ID: <20241219-kasten-sonst-b3d92ae618fe@brauner>
+References: <20241213-work-mount-rbtree-lockless-v3-0-6e3cdaf9b280@kernel.org>
+ <20241213-work-mount-rbtree-lockless-v3-3-6e3cdaf9b280@kernel.org>
+ <Z2PlT5rcRTIhCpft@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: shakeel.butt@linux.dev, jefflexu@linux.alibaba.com, josef@toxicpanda.com,
- bernd.schubert@fastmail.fm, linux-mm@kvack.org, kernel-team@meta.com,
- Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>,
- Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
-References: <20241122232359.429647-1-joannelkoong@gmail.com>
- <20241122232359.429647-5-joannelkoong@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241122232359.429647-5-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z2PlT5rcRTIhCpft@ly-workstation>
 
-On 23.11.24 00:23, Joanne Koong wrote:
-> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
-> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
-> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
-> writeback may take an indeterminate amount of time to complete, and
-> waits may get stuck.
+On Thu, Dec 19, 2024 at 05:20:15PM +0800, Lai, Yi wrote:
+> On Fri, Dec 13, 2024 at 12:03:42AM +0100, Christian Brauner wrote:
+> > Currently we use a read-write lock but for the simple search case we can
+> > make this lockless. Creating a new mount namespace is a rather rare
+> > event compared with querying mounts in a foreign mount namespace. Once
+> > this is picked up by e.g., systemd to list mounts in another mount in
+> > it's isolated services or in containers this will be used a lot so this
+> > seems worthwhile doing.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/mount.h     |   5 ++-
+> >  fs/namespace.c | 119 +++++++++++++++++++++++++++++++++++----------------------
+> >  2 files changed, 77 insertions(+), 47 deletions(-)
+> > 
+> > diff --git a/fs/mount.h b/fs/mount.h
+> > index 185fc56afc13338f8185fe818051444d540cbd5b..36ead0e45e8aa7614c00001102563a711d9dae6e 100644
+> > --- a/fs/mount.h
+> > +++ b/fs/mount.h
+> > @@ -12,7 +12,10 @@ struct mnt_namespace {
+> >  	struct user_namespace	*user_ns;
+> >  	struct ucounts		*ucounts;
+> >  	u64			seq;	/* Sequence number to prevent loops */
+> > -	wait_queue_head_t poll;
+> > +	union {
+> > +		wait_queue_head_t	poll;
+> > +		struct rcu_head		mnt_ns_rcu;
+> > +	};
+> >  	u64 event;
+> >  	unsigned int		nr_mounts; /* # of mounts in the namespace */
+> >  	unsigned int		pending_mounts;
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 10fa18dd66018fadfdc9d18c59a851eed7bd55ad..52adee787eb1b6ee8831705b2b121854c3370fb3 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -79,6 +79,8 @@ static DECLARE_RWSEM(namespace_sem);
+> >  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+> >  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+> >  static DEFINE_RWLOCK(mnt_ns_tree_lock);
+> > +static seqcount_rwlock_t mnt_ns_tree_seqcount = SEQCNT_RWLOCK_ZERO(mnt_ns_tree_seqcount, &mnt_ns_tree_lock);
+> > +
+> >  static struct rb_root mnt_ns_tree = RB_ROOT; /* protected by mnt_ns_tree_lock */
+> >  
+> >  struct mount_kattr {
+> > @@ -105,17 +107,6 @@ EXPORT_SYMBOL_GPL(fs_kobj);
+> >   */
+> >  __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
+> >  
+> > -static int mnt_ns_cmp(u64 seq, const struct mnt_namespace *ns)
+> > -{
+> > -	u64 seq_b = ns->seq;
+> > -
+> > -	if (seq < seq_b)
+> > -		return -1;
+> > -	if (seq > seq_b)
+> > -		return 1;
+> > -	return 0;
+> > -}
+> > -
+> >  static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
+> >  {
+> >  	if (!node)
+> > @@ -123,19 +114,41 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
+> >  	return rb_entry(node, struct mnt_namespace, mnt_ns_tree_node);
+> >  }
+> >  
+> > -static bool mnt_ns_less(struct rb_node *a, const struct rb_node *b)
+> > +static int mnt_ns_cmp(struct rb_node *a, const struct rb_node *b)
+> >  {
+> >  	struct mnt_namespace *ns_a = node_to_mnt_ns(a);
+> >  	struct mnt_namespace *ns_b = node_to_mnt_ns(b);
+> >  	u64 seq_a = ns_a->seq;
+> > +	u64 seq_b = ns_b->seq;
+> > +
+> > +	if (seq_a < seq_b)
+> > +		return -1;
+> > +	if (seq_a > seq_b)
+> > +		return 1;
+> > +	return 0;
+> > +}
+> >  
+> > -	return mnt_ns_cmp(seq_a, ns_b) < 0;
+> > +static inline void mnt_ns_tree_write_lock(void)
+> > +{
+> > +	write_lock(&mnt_ns_tree_lock);
+> > +	write_seqcount_begin(&mnt_ns_tree_seqcount);
+> > +}
+> > +
+> > +static inline void mnt_ns_tree_write_unlock(void)
+> > +{
+> > +	write_seqcount_end(&mnt_ns_tree_seqcount);
+> > +	write_unlock(&mnt_ns_tree_lock);
+> >  }
+> >  
+> >  static void mnt_ns_tree_add(struct mnt_namespace *ns)
+> >  {
+> > -	guard(write_lock)(&mnt_ns_tree_lock);
+> > -	rb_add(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_less);
+> > +	struct rb_node *node;
+> > +
+> > +	mnt_ns_tree_write_lock();
+> > +	node = rb_find_add_rcu(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_cmp);
+> > +	mnt_ns_tree_write_unlock();
+> > +
+> > +	WARN_ON_ONCE(node);
+> >  }
+> >  
+> >  static void mnt_ns_release(struct mnt_namespace *ns)
+> > @@ -150,41 +163,36 @@ static void mnt_ns_release(struct mnt_namespace *ns)
+> >  }
+> >  DEFINE_FREE(mnt_ns_release, struct mnt_namespace *, if (_T) mnt_ns_release(_T))
+> >  
+> > +static void mnt_ns_release_rcu(struct rcu_head *rcu)
+> > +{
+> > +	struct mnt_namespace *mnt_ns;
+> > +
+> > +	mnt_ns = container_of(rcu, struct mnt_namespace, mnt_ns_rcu);
+> > +	mnt_ns_release(mnt_ns);
+> > +}
+> > +
+> >  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+> >  {
+> >  	/* remove from global mount namespace list */
+> >  	if (!is_anon_ns(ns)) {
+> > -		guard(write_lock)(&mnt_ns_tree_lock);
+> > +		mnt_ns_tree_write_lock();
+> >  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+> > +		mnt_ns_tree_write_unlock();
+> >  	}
+> >  
+> > -	mnt_ns_release(ns);
+> > +	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
+> >  }
+> >  
+> > -/*
+> > - * Returns the mount namespace which either has the specified id, or has the
+> > - * next smallest id afer the specified one.
+> > - */
+> > -static struct mnt_namespace *mnt_ns_find_id_at(u64 mnt_ns_id)
+> > +static int mnt_ns_find(const void *key, const struct rb_node *node)
+> >  {
+> > -	struct rb_node *node = mnt_ns_tree.rb_node;
+> > -	struct mnt_namespace *ret = NULL;
+> > -
+> > -	lockdep_assert_held(&mnt_ns_tree_lock);
+> > -
+> > -	while (node) {
+> > -		struct mnt_namespace *n = node_to_mnt_ns(node);
+> > +	const u64 mnt_ns_id = *(u64 *)key;
+> > +	const struct mnt_namespace *ns = node_to_mnt_ns(node);
+> >  
+> > -		if (mnt_ns_id <= n->seq) {
+> > -			ret = node_to_mnt_ns(node);
+> > -			if (mnt_ns_id == n->seq)
+> > -				break;
+> > -			node = node->rb_left;
+> > -		} else {
+> > -			node = node->rb_right;
+> > -		}
+> > -	}
+> > -	return ret;
+> > +	if (mnt_ns_id < ns->seq)
+> > +		return -1;
+> > +	if (mnt_ns_id > ns->seq)
+> > +		return 1;
+> > +	return 0;
+> >  }
+> >  
+> >  /*
+> > @@ -194,18 +202,37 @@ static struct mnt_namespace *mnt_ns_find_id_at(u64 mnt_ns_id)
+> >   * namespace the @namespace_sem must first be acquired. If the namespace has
+> >   * already shut down before acquiring @namespace_sem, {list,stat}mount() will
+> >   * see that the mount rbtree of the namespace is empty.
+> > + *
+> > + * Note the lookup is lockless protected by a sequence counter. We only
+> > + * need to guard against false negatives as false positives aren't
+> > + * possible. So if we didn't find a mount namespace and the sequence
+> > + * counter has changed we need to retry. If the sequence counter is
+> > + * still the same we know the search actually failed.
+> >   */
+> >  static struct mnt_namespace *lookup_mnt_ns(u64 mnt_ns_id)
+> >  {
+> > -       struct mnt_namespace *ns;
+> > +	struct mnt_namespace *ns;
+> > +	struct rb_node *node;
+> > +	unsigned int seq;
+> > +
+> > +	guard(rcu)();
+> > +	do {
+> > +		seq = read_seqcount_begin(&mnt_ns_tree_seqcount);
+> > +		node = rb_find_rcu(&mnt_ns_id, &mnt_ns_tree, mnt_ns_find);
+> > +		if (node)
+> > +			break;
+> > +	} while (read_seqcount_retry(&mnt_ns_tree_seqcount, seq));
+> >  
+> > -       guard(read_lock)(&mnt_ns_tree_lock);
+> > -       ns = mnt_ns_find_id_at(mnt_ns_id);
+> > -       if (!ns || ns->seq != mnt_ns_id)
+> > -               return NULL;
+> > +	if (!node)
+> > +		return NULL;
+> >  
+> > -       refcount_inc(&ns->passive);
+> > -       return ns;
+> > +	/*
+> > +	 * The last reference count is put with RCU delay so we can
+> > +	 * unconditonally acquire a reference here.
+> > +	 */
+> > +	ns = node_to_mnt_ns(node);
+> > +	refcount_inc(&ns->passive);
+> > +	return ns;
+> >  }
+> >  
+> >  static inline void lock_mount_hash(void)
+> > 
+> > -- 
+> > 2.45.2
+> >
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->   mm/migrate.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+> Hi Christian Brauner ,
 > 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index df91248755e4..fe73284e5246 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->   		 */
->   		switch (mode) {
->   		case MIGRATE_SYNC:
-> -			break;
-> +			if (!src->mapping ||
-> +			    !mapping_writeback_indeterminate(src->mapping))
-> +				break;
-> +			fallthrough;
->   		default:
->   			rc = -EBUSY;
->   			goto out;
+> Greetings!
+> 
+> I used Syzkaller and found that there is WARNING in mnt_ns_release in linux v6.13-rc3.
 
-Ehm, doesn't this mean that any fuse user can essentially completely 
-block CMA allocations, memory compaction, memory hotunplug, memory 
-poisoning... ?!
-
-That sounds very bad.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Right, the lockdep assertion is wrong and needs to be dropped.
 
