@@ -1,329 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-37826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB579F7FEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:35:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8EB49F8018
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85CDB163CC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD3D3188A403
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5238E226888;
-	Thu, 19 Dec 2024 16:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8D622687C;
+	Thu, 19 Dec 2024 16:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Bfcdyczw"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OztNAEf4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7A6225790
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002EF2AE96
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734626122; cv=none; b=dZFgGfxGEScD9zJJ5pJ/FtCoNqO21srauWZrhChTbnUi7NiKinlTgykn9ZNzcAlYsLVH/aRUJpvqr+ORsRwgnXuKSEUECBQRva/POPtIiKBn7xbrQwZJb5ehDLv6P9rrpq5weK5XADR4FIdsDbqFx0rqLowH11Fnan1r5uQmZnM=
+	t=1734626453; cv=none; b=DXyRortFb5Hupw0zogzPqUnty7cmMqmAqXQGjchrbKU5Jk+jKn5/L1ch3BZzmqFBME8rTpSsILHir6LNYXNoFdcCMr8e0ohW6MdXOHrxb5NBSmOeWWqodk/VujZkvtS+ddooFDT9/hu8OwtNrUx823oszxTYMHN9BCfmSNZ4zck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734626122; c=relaxed/simple;
-	bh=VY2LhPE7qpJ+JS19W9F427RdYKWAi0StXFYID6wxOL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EcDw0gAtl138gKGUGr+EvbwCW69fuz1a1zUaeTTJaPSPLC8ok04GIVIjPllcypA38JJu1J9EZk3g31sT/05USZRQsH/wxGwr8d35jRNt1Yz4QJoYPgt5v6RQ2C0GAsWfOrwnma9mjjBhBtDHJgBBpTD8KPBiRBA+m4gJNdkY3CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Bfcdyczw; arc=none smtp.client-ip=91.218.175.183
+	s=arc-20240116; t=1734626453; c=relaxed/simple;
+	bh=QazBR5jTUYmbMkyUp8ziiK45jUfncM0lKIk+VYJp5gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1vDI0vZz6aW6lO4JCEMYGvJ7Ml2vgGAWJ8jSTYeiflzHhbALHC5hN9A/IE5KSYfftUv2yrERyEkRvpnX2XTCLABlRk30u8+e2F363QWmS10b6RZ+U2l0996A/7YXLWJSRtk29IzZj7G/tziL9QUbW9BoGgCAkcSWZlXrSBuwzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OztNAEf4; arc=none smtp.client-ip=91.218.175.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2d389258-ad08-4d28-a347-667909b0e190@linux.dev>
+Date: Thu, 19 Dec 2024 08:40:43 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734626116;
+	t=1734626449;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wE4woTuzO5Vn0u1/80asGZMkatsiSe7DQQ29k/o5eNg=;
-	b=BfcdyczwxmRq/ZVq/xD0sGno/3/0z0YfutKqZVLTvuhjkJ+4K+V7xdKw/42Wu3cw15dAKX
-	kK34zptABIKzyaHLYhwtImTstb7iBJvbWiFny61fyiwoX4c8KOiWfFsc4ku4Bjssgfg+oC
-	tuwb06Vgol5AGpZsUJ0vq0UmJ6kjIfU=
-Date: Thu, 19 Dec 2024 08:35:09 -0800
+	bh=wWPJuiiJybDd1Rz94btJfDZ/lmxqC2aRO87v8CIWY9o=;
+	b=OztNAEf4VQcRYqQ8PjONb0fiIA+KLKq1ajAKT58JAgzQlRbVHeNd5LBYRabfA1K7ZHHsk5
+	HG7Zug/9UNJ6vlR+8JiRtBembrH6i6Rq2F3Rm+R7ZRZ8ZC+AhKSwBkMAWYE25AM6/JEetb
+	RyKjyH73LrAq5RSUFXIBvm+jFnlaun8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: Zi Yan <ziy@nvidia.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
+	josef@toxicpanda.com, bernd.schubert@fastmail.fm, linux-mm@kvack.org, 
+	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, 
+	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+Message-ID: <ggm2n6wqpx4pnlrkvgzxclm7o7luqmzlv4655yf2huqaxrebkl@2qycr6dhcpcd>
+References: <20241122232359.429647-1-joannelkoong@gmail.com>
+ <20241122232359.429647-5-joannelkoong@gmail.com>
+ <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
+ <hltxbiupl245ea7b4rzpcyz3d62mzs6igcx42g7zsksanbxqb3@sho3dzzht3rx>
+ <f30fba5f-b2ca-4351-8c8f-3ac120b2d227@redhat.com>
+ <gdu7kmz4nbnjqenj5vea4rjwj7v67kjw6ggoyq7ok4la2uosqa@i5gxpmoopuii>
+ <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
+ <onnjsfrlgyv6blttpmfn5yhbv5q7niteiwbhoze3qnz2zuwldc@seooqlssrpvx>
+ <43e13556-18a4-4250-b4fe-7ab736ceba7d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v6 2/5] selftests/bpf: Add tests for open-coded
- style process file iterator
-Content-Language: en-GB
-To: Juntong Deng <juntong.deng@outlook.com>, ast@kernel.org,
- daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- memxor@gmail.com, snorcht@gmail.com, brauner@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <AM6PR03MB5080DC63013560E26507079E99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB508014EBAC89D14D0C3ADA6899042@AM6PR03MB5080.eurprd03.prod.outlook.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <AM6PR03MB508014EBAC89D14D0C3ADA6899042@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43e13556-18a4-4250-b4fe-7ab736ceba7d@redhat.com>
 X-Migadu-Flow: FLOW_OUT
 
-
-
-
-On 12/17/24 3:37 PM, Juntong Deng wrote:
-> This patch adds test cases for open-coded style process file iterator.
->
-> Test cases related to process files are run in the newly created child
-> process. Close all opened files inherited from the parent process in
-> the child process to avoid the files opened by the parent process
-> affecting the test results.
->
-> In addition, this patch adds failure test cases where bpf programs
-> cannot pass the verifier due to uninitialized or untrusted
-> arguments, etc.
->
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
->   .../testing/selftests/bpf/bpf_experimental.h  |  7 ++
->   .../testing/selftests/bpf/prog_tests/iters.c  | 79 ++++++++++++++++
->   .../selftests/bpf/progs/iters_task_file.c     | 86 ++++++++++++++++++
->   .../bpf/progs/iters_task_file_failure.c       | 91 +++++++++++++++++++
->   4 files changed, 263 insertions(+)
->   create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file.c
->   create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file_failure.c
->
-> diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-> index cd8ecd39c3f3..ce1520c56b55 100644
-> --- a/tools/testing/selftests/bpf/bpf_experimental.h
-> +++ b/tools/testing/selftests/bpf/bpf_experimental.h
-> @@ -588,4 +588,11 @@ extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym
->   extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
->   extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
->   
-> +struct bpf_iter_task_file;
-> +struct bpf_iter_task_file_item;
-> +extern int bpf_iter_task_file_new(struct bpf_iter_task_file *it, struct task_struct *task) __ksym;
-> +extern struct bpf_iter_task_file_item *
-> +bpf_iter_task_file_next(struct bpf_iter_task_file *it) __ksym;
-> +extern void bpf_iter_task_file_destroy(struct bpf_iter_task_file *it) __ksym;
-
-All the above declarations should be in vmlinux.h already and I see your below bpf prog already
-included vmlinux.h, there is no need to put them here.
-
-> +
->   #endif
-> diff --git a/tools/testing/selftests/bpf/prog_tests/iters.c b/tools/testing/selftests/bpf/prog_tests/iters.c
-> index 3cea71f9c500..cfe5b56cc027 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/iters.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/iters.c
-> @@ -1,6 +1,8 @@
->   // SPDX-License-Identifier: GPL-2.0
->   /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
->   
-> +#define _GNU_SOURCE
-> +#include <sys/socket.h>
->   #include <sys/syscall.h>
->   #include <sys/mman.h>
->   #include <sys/wait.h>
-> @@ -16,11 +18,13 @@
->   #include "iters_num.skel.h"
->   #include "iters_testmod.skel.h"
->   #include "iters_testmod_seq.skel.h"
-> +#include "iters_task_file.skel.h"
->   #include "iters_task_vma.skel.h"
->   #include "iters_task.skel.h"
->   #include "iters_css_task.skel.h"
->   #include "iters_css.skel.h"
->   #include "iters_task_failure.skel.h"
-> +#include "iters_task_file_failure.skel.h"
->   
->   static void subtest_num_iters(void)
->   {
-> @@ -291,6 +295,78 @@ static void subtest_css_iters(void)
->   	iters_css__destroy(skel);
->   }
->   
-> +static int task_file_test_process(void *args)
-> +{
-> +	int pipefd[2], sockfd, err = 0;
-> +
-> +	/* Create a clean file descriptor table for the test process */
-> +	close_range(0, ~0U, 0);
-> +
-> +	if (pipe(pipefd) < 0)
-> +		return 1;
-> +
-> +	sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-> +	if (sockfd < 0) {
-> +		err = 2;
-> +		goto cleanup_pipe;
-> +	}
-> +
-> +	usleep(1);
-> +
-> +	close(sockfd);
-> +cleanup_pipe:
-> +	close(pipefd[0]);
-> +	close(pipefd[1]);
-> +	return err;
-> +}
-> +
-> +static void subtest_task_file_iters(void)
-> +{
-> +	const int stack_size = 1024 * 1024;
-> +	struct iters_task_file *skel;
-> +	int child_pid, wstatus, err;
-> +	char *stack;
-> +
-> +	skel = iters_task_file__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-> +		return;
-> +
-> +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
-> +		goto cleanup_skel;
-> +
-> +	skel->bss->parent_pid = getpid();
-> +	skel->bss->count = 0;
-> +
-> +	err = iters_task_file__attach(skel);
-> +	if (!ASSERT_OK(err, "skel_attach"))
-> +		goto cleanup_skel;
-> +
-> +	stack = (char *)malloc(stack_size);
-> +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
-> +		goto cleanup_attach;
-> +
-> +	/* Note that there is no CLONE_FILES */
-> +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, NULL);
-> +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
-> +		goto cleanup_stack;
-> +
-> +	if (!ASSERT_GT(waitpid(child_pid, &wstatus, 0), -1, "waitpid"))
-> +		goto cleanup_stack;
-> +
-> +	if (!ASSERT_OK(WEXITSTATUS(wstatus), "run_task_file_iters_test_err"))
-> +		goto cleanup_stack;
-> +
-> +	ASSERT_EQ(skel->bss->count, 1, "run_task_file_iters_test_count_err");
-> +	ASSERT_OK(skel->bss->err, "run_task_file_iters_test_failure");
-> +
-> +cleanup_stack:
-> +	free(stack);
-> +cleanup_attach:
-> +	iters_task_file__detach(skel);
-> +cleanup_skel:
-> +	iters_task_file__destroy(skel);
-> +}
-> +
->   void test_iters(void)
->   {
->   	RUN_TESTS(iters_state_safety);
-> @@ -315,5 +391,8 @@ void test_iters(void)
->   		subtest_css_task_iters();
->   	if (test__start_subtest("css"))
->   		subtest_css_iters();
-> +	if (test__start_subtest("task_file"))
-> +		subtest_task_file_iters();
->   	RUN_TESTS(iters_task_failure);
-> +	RUN_TESTS(iters_task_file_failure);
->   }
-> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file.c b/tools/testing/selftests/bpf/progs/iters_task_file.c
-> new file mode 100644
-> index 000000000000..47941530e51b
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/iters_task_file.c
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include "vmlinux.h"
-> +#include <bpf/bpf_tracing.h>
-> +#include <bpf/bpf_helpers.h>
-> +#include "bpf_misc.h"
-> +#include "bpf_experimental.h"
-> +#include "task_kfunc_common.h"
-> +
-> +char _license[] SEC("license") = "GPL";
-> +
-> +int err, parent_pid, count;
-> +
-> +extern const void pipefifo_fops __ksym;
-> +extern const void socket_file_ops __ksym;
-
-There is no need to have 'const' in the above two extern declarations.
-
-> +
-> +SEC("fentry/" SYS_PREFIX "sys_nanosleep")
-> +int test_bpf_iter_task_file(void *ctx)
-> +{
-> +	struct bpf_iter_task_file task_file_it;
-> +	struct bpf_iter_task_file_item *item;
-> +	struct task_struct *task;
-> +
-> +	task = bpf_get_current_task_btf();
-> +	if (task->parent->pid != parent_pid)
-> +		return 0;
-> +
-> +	count++;
-> +
-> +	bpf_iter_task_file_new(&task_file_it, task);
-> +
-> +	item = bpf_iter_task_file_next(&task_file_it);
-> +	if (item == NULL) {
-> +		err = 1;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (item->fd != 0) {
-> +		err = 2;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (item->file->f_op != &pipefifo_fops) {
-> +		err = 3;
-> +		goto cleanup;
-> +	}
-> +
-> +	item = bpf_iter_task_file_next(&task_file_it);
-> +	if (item == NULL) {
-> +		err = 4;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (item->fd != 1) {
-> +		err = 5;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (item->file->f_op != &pipefifo_fops) {
-> +		err = 6;
-> +		goto cleanup;
-> +	}
-> +
-> +	item = bpf_iter_task_file_next(&task_file_it);
-> +	if (item == NULL) {
-> +		err = 7;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (item->fd != 2) {
-> +		err = 8;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (item->file->f_op != &socket_file_ops) {
-> +		err = 9;
-> +		goto cleanup;
-> +	}
-> +
-> +	item = bpf_iter_task_file_next(&task_file_it);
-> +	if (item != NULL)
-> +		err = 10;
-> +cleanup:
-> +	bpf_iter_task_file_destroy(&task_file_it);
-> +	return 0;
-> +}
-
+On Thu, Dec 19, 2024 at 05:29:08PM +0100, David Hildenbrand wrote:
 [...]
+> > 
+> > If you check the code just above this patch, this
+> > mapping_writeback_indeterminate() check only happen for pages under
+> > writeback which is a temp state. Anyways, fuse folios should not be
+> > unmovable for their lifetime but only while under writeback which is
+> > same for all fs.
+> 
+> But there, writeback is expected to be a temporary thing, not possibly:
+> "AS_WRITEBACK_INDETERMINATE", that is a BIG difference.
+> 
+> I'll have to NACK anything that violates ZONE_MOVABLE / ALLOC_CMA
+> guarantees, and unfortunately, it sounds like this is the case here, unless
+> I am missing something important.
+> 
+
+It might just be the name "AS_WRITEBACK_INDETERMINATE" is causing
+the confusion. The writeback state is not indefinite. A proper fuse fs,
+like anyother fs, should handle writeback pages appropriately. These
+additional checks and skips are for (I think) untrusted fuse servers.
+Personally I think waiting indefinitely on writeback, particularly for
+sync compaction, should be fine but fuse maintainers want to avoid
+scenarios where an untrusted fuse server can force such stalls in other
+jobs. Yes, this will not solve the untrusted fuse server causing
+fragmentation issue but that is the risk of running untrusted fuse
+server, IMHO.
 
 
