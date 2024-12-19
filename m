@@ -1,112 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-37876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3928B9F836D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 19:40:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50FD9F85CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 21:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22531188ACBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A15AC7A1948
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 20:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CBF1AAA34;
-	Thu, 19 Dec 2024 18:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02B31A4F1B;
+	Thu, 19 Dec 2024 20:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vQ7OXFcl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1776A1AA795
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 18:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34E013D279
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 20:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734633563; cv=none; b=IW47hgln8lFazJNnl0d9/iCWkDYPV9mt/PnaeoH+F4CjoLnsVANVNOyRzmZo0ciNsGcpIi6rYBBaUUqOIMOlIMsL5/zG3p91wSsf1mkfJHOOCZhl48mIuVaRIZtO4fwZJGFlo2OqLnqzlc2GZZ0oNEKSQUykrYaLWPzbQNoO4QM=
+	t=1734639861; cv=none; b=ue2s1VCpju0g1N9xic9CoFgX4Gs9PDs12D54l/5/WogotaU050camzXaFetyoqcEruZowq7RkiMtbdgekcLFZaz5rje77zr5ZfyTkZ42CfbnDSXqFTs5/xqJATbmTr8cCKmUmlI/sE1fNzYt6SnjIyWVS8VkLOFGQLZpiQXfWnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734633563; c=relaxed/simple;
-	bh=U1Uiegv1ZCct7k2+fvSUzSZtJGd1SAHqs/owApShhco=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k56hkKI2HlsMfOBT/XMhHxICkvCYDWEQ61gDx6wYfdci2DgOSPPFgh0AbJ+s2vgiDBEzHgV6kPV4lkH9tyScw/1OJITHY5wkL+aUXg3reWzPWsd0lJWv52FsBqlM6MUreW0hs8zJdbNZh+9LPZ/pfwNhIBOuOh0wXTIr6C+mO9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-845dee0425cso90773139f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 10:39:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734633561; x=1735238361;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/CDzv1PSPwjXGx+dM7QMgYslMHLNIYGCNHyyf7EERzc=;
-        b=Wslayz2ER7zrFbo1AnA12qACfGkoOUcBcYvearQZImnTU48mK8hwZbF7zFw8MStJl6
-         Sk2lA9zvQYUWLhjpJW2Qxwcd+z7Neh5IxDY5kHcswChqB49HIFRqmDApAxQVv0C1nvfH
-         BKRx+Yli1NxoTLCJr/oCNxh+bwlgCtB9axyshnUKEMSiW1yselCFwSl5s28kka7Y7Wx7
-         NKiuuv+MQuNMU5/Lr52cgDyJd6UauYRAqXfEcAsgT6d9LgNVP4AV+LNyPLSHJBCBYdEh
-         J5Gs1tzyiq8AS1CF2tcL+9VCiRlduHTmmV+YXRERjWYDNqxi0wY22wGPodB1TudQojKi
-         8AEA==
-X-Gm-Message-State: AOJu0YyRsee2iqlSwdy2Q/zFkWL0woBIeMahxttbDgn/pxy/slBuJqrc
-	zF/o9cm5vWHOUdvEAln8LbWNpdzoT1dQhq8p/2D27N/UL+UaRddKi5+TwNjPTCNwjcqloemyRwn
-	hpwWJh0mvbj1K173om4rsS5xqNQbaSoTTqZC10oUJS1CIskNeZDY8Hq4=
-X-Google-Smtp-Source: AGHT+IECwR3Fdj7t7KRiwon0ybqbRErDkk6EIDXR8FSpzw7wBBZZYmfD2PThhLYSrcWnIC2aqeOSSe7adfL46H2dmvxrgtldE2cZ
+	s=arc-20240116; t=1734639861; c=relaxed/simple;
+	bh=RA2ktsWodE7uY/f2+mqrPEnO14EwKojV13qbYitUL8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJa416I3EgUWw7upteOWUI3fFRf4ii4jhBe17Cz2gWbCxYxe/+hq6nYeaa0QVEMME+paSNQsADsY5oqOsrneNoQP7dCfIufE4RJvDi3gLyLa9oZDtZRWi327kiQF5npX6hBIHRbWb3UEwUhXyUhmcv4bFS4qqQA6zbbk0Frrk0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vQ7OXFcl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=A2/D4DeH0ZBcOF8aXl0fNhMd+z5TxNm8Gqfq4xS8FVY=; b=vQ7OXFclA3lpxictEY5CFh6MBG
+	1ymSCGtRTlatdu1YdwvPT1vQiZJF6yDZmVclo4vl2zJDSDn7qb4Aj1YbS8rkcq7lXl1ZOmjUo2s9J
+	kIWlsXxGp2lR7jGsmzMHwudgykrjqYTSgWM1fNA27u1WPPeKW9K8h270diROPGFcAPxOBKDVuFLuI
+	K+z2UYETlONR/YGKgjAAJJLTWyHNHJpKHbtk+tXAaIRZ8/OLwqv+F2D1NI72jGLVpOCyOdLSXFEy1
+	STHqIUS1HEOnU9aYYEt+bBHNr/nveUdzT/Gt0z+jBcaoe3WMbLCrQFq36BJtolA7yZ3MUtIv2lJ2t
+	AYIYK0Cw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tON46-00000005Eqv-0Qa4;
+	Thu, 19 Dec 2024 20:24:10 +0000
+Date: Thu, 19 Dec 2024 20:24:09 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
+	shakeel.butt@linux.dev, kernel-team@meta.com
+Subject: Re: [PATCH v3 04/12] fuse: support large folios for writethrough
+ writes
+Message-ID: <Z2SA6Qi78hkNUmbw@casper.infradead.org>
+References: <20241213221818.322371-1-joannelkoong@gmail.com>
+ <20241213221818.322371-5-joannelkoong@gmail.com>
+ <c1c8b8043f5b724bce86d5c84430d4dbf6c1c207.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:7289:b0:844:e06e:53c6 with SMTP id
- ca18e2360f4ac-8499c229208mr61364439f.11.1734633561312; Thu, 19 Dec 2024
- 10:39:21 -0800 (PST)
-Date: Thu, 19 Dec 2024 10:39:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67646859.050a0220.1dcc64.0020.GAE@google.com>
-Subject: [syzbot] Monthly hfs report (Dec 2024)
-From: syzbot <syzbot+list2d8c80c53431a947568f@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1c8b8043f5b724bce86d5c84430d4dbf6c1c207.camel@kernel.org>
 
-Hello hfs maintainers/developers,
+On Thu, Dec 19, 2024 at 01:08:15PM -0500, Jeff Layton wrote:
+> > +		tmp = copy_folio_from_iter_atomic(folio, folio_offset, bytes, ii);
+> 
+> Just to save someone else going down the same rabbit hole:
+> 
+> copy_folio_from_iter_atomic() is defined as:
+> 
+> static inline size_t copy_folio_from_iter_atomic(struct folio *folio,
+>                 size_t offset, size_t bytes, struct iov_iter *i)
+> {
+>         return copy_page_from_iter_atomic(&folio->page, offset, bytes, i);
+> }
+> 
+> ...which _looks_ sort of like it's not fully baked yet and can't handle
+> a large folio, but it turns out that copy_page_from_iter_atomic() can
+> handle compound pages, so I think this is actually OK. Whew!
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
-
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 44 issues are still open and 21 have already been fixed.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  11793   Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<2>  11502   Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<3>  3398    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
-<4>  2388    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<5>  2260    Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<6>  2202    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
-                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
-<7>  2121    Yes   possible deadlock in hfs_find_init (2)
-                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
-<8>  2002    Yes   KMSAN: uninit-value in hfsplus_lookup
-                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
-<9>  1806    Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
-<10> 1800    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Yes, this is fine.  I'd love to clean this up further.  If someone wants
+the kudos of doing that, ntfs_compress_write() is your challenge.  It's
+the only remaining caller of copy_page_from_iter_atomic() and
+once it's converted to use folios, we can push folios deeper into
+the iov_iter code.
 
