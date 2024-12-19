@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C989F7FC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:30:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C54C9F7FD4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A9F1888120
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9F27A1B49
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94626227574;
-	Thu, 19 Dec 2024 16:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5778226182;
+	Thu, 19 Dec 2024 16:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UyDK9Z5k"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kt4a3jDm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26208226529
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F49A86345
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734625756; cv=none; b=mwXCfqsc1/kkUca2TiTWYv9UUZ+RCqnkjCFdbRJCvmfYWAsasdODwhNWnQvEkLXw2UZlaUCvqzJsoqKpPfN21cdw88VBDCWybip5LjivVA9f2tvDaA4IOmhFFKRSLqB+c7pJmgQ0yzsXt3uadXK3RiLkaxGjwL780YqHseaWvhY=
+	t=1734625884; cv=none; b=cdBFquYdPL13sB7Ro+xi19ymZ08QraGEPvGZYlnJa9ivLdf55gqMw9aJaq/4PPUH+2O/TN2vfddQHkTG5h4N2NWsuDa83lU8VKzYRIoy7e7rc2QUN2PnPeGk3Y08VTCkYjqTJ43DNconcgSO4o8f4597DLl366NMkiKLQAvczgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734625756; c=relaxed/simple;
-	bh=BoH6UOqoxWV2Rvcz/7Jf4FN23hYTNn2jm9CUCXsa0rI=;
+	s=arc-20240116; t=1734625884; c=relaxed/simple;
+	bh=TKLXk2QQJwrzpinDm9R+0cvl7/fSdaH8utwfFibJ0Wc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VuB4oH6Loz0slTYgzqkP3zTNnH+hnHJG01c64a5GZN5Y4CH36UlOHPH+BY4FHlX1aoomPtu7AQIyNWjgg9JZM+5rD1KVERV7PMuUcoK8e+Du2XEe0pXEOmZNyYFFnqRKR58sNF0WY2gPl6XxYvyG7b5n0+dwbRrmsappLiwJ0mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UyDK9Z5k; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=YH183+4XpzQKCtOG3IUmTTVodHJWSv5gEtJLdj6TbiTrkYJvUmFyCG9Ol07fRRZR+Lvq/ggbjPCRiaf3X2C0jRX4ArYyYp7ASBBOrrWqDyB1mG8D4/TYLxVaY3bxFQgwuEvXlGPKJkFVDvzWQ7JbhA3OWLXJSoeiw6oGvqLERPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kt4a3jDm; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734625753;
+	s=mimecast20190719; t=1734625881;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wIHtTS4O0/SVjEnSdIzpMljXeiY8pPykNqCcAJo4M8U=;
-	b=UyDK9Z5kg5He8/rPU9CQzt2k4/reUdcSQNOAXLoWmXEnR5+svq0YNYJxdsuEUtEWF45xyK
-	v+I39gFuihMQrQ0byWbXtt1fhBPNa0939JrUJg0uw7ZLLUC+53ZIeOU7gudCGzas/MYZw0
-	XXCK9RKiF4Ge7F2XmRw1QoudA46Hu4c=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=17ik6LxZEcy8+yRyouwf1xyDz+INnAX0PQox0iBV/TQ=;
+	b=Kt4a3jDmiOoII/aZ9OdfLsZHAcujHiV0sn410V2mzPkDe00vJIHfC1DITDpG3ez+vNEcdk
+	iE9LzQFpNHBNnBPsxtjZDqD5DrBeEKG91BHU4hQSQByfEBvRnK5WzC/58zEcZVcolqfAzQ
+	l7/fPo8ZvYMEsCoCMQsxIW3VQkamlpU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-617-LrQMSgMYP_qbPTIj3yuL2Q-1; Thu, 19 Dec 2024 11:29:12 -0500
-X-MC-Unique: LrQMSgMYP_qbPTIj3yuL2Q-1
-X-Mimecast-MFC-AGG-ID: LrQMSgMYP_qbPTIj3yuL2Q
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385dcae001fso496081f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 08:29:11 -0800 (PST)
+ us-mta-617-dOnrKRnjMb6_KCeXrwDgOw-1; Thu, 19 Dec 2024 11:31:20 -0500
+X-MC-Unique: dOnrKRnjMb6_KCeXrwDgOw-1
+X-Mimecast-MFC-AGG-ID: dOnrKRnjMb6_KCeXrwDgOw
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43626224274so6211225e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 08:31:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734625751; x=1735230551;
+        d=1e100.net; s=20230601; t=1734625879; x=1735230679;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=wIHtTS4O0/SVjEnSdIzpMljXeiY8pPykNqCcAJo4M8U=;
-        b=qB3Ib/8M+NWxF7j97gbMZL+kmNnrkVPygVJSuBKo39j7VC9B377aYq6nR/MlBUOTMd
-         2lu4sKha/Sys6k2UoqxzgBSlscLkx7uIYXOxulpZjNmXYJGrBEzDpOcAHwuEw6LflJEP
-         wWez3EqwC/4c5y80FW5+0gSQPZib4XSyIqwoU+fTUPtqwX6HaHMoLD0/MFwlL37Q4hA0
-         5Txv/NE2W3MvTDqin4JS1bDtOGf9PUqrpYEUAAsaU96OXgeb2wDtOYPZeiMZstg0d/Ui
-         9OdFtc45IxxeGn4eRCOCkJSv0g91ITWjph+v5ooaNe/VD2P/DFC81BLGVJp4Wb7n4c5Q
-         ShBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYQSLpvxS2copCtG1mqZdXYg7yhRg1GYjrpWgOPGdNetF2XkJIBjtKiYUtllzF8btIyeboY000X6H54BQV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgAV95GreWA0egb/U3m+DaR6vEFY6cxBnniqqY6XzaLqWXqOmr
-	IU1mNymbmkuMIGSsCK1sQZFprzp51U7wZFnyWskt8is/cMD20n3oNBuQyRQSSv66s1BTRS/oVaC
-	nwgeTCk+UvYnThtsiwc7h9Ohu9QFFZCWvgSfyy/hNFOPbkaA/+NUstsOIbg8tsW4=
-X-Gm-Gg: ASbGncsFRvKSwOFYrRln2m/Q3Il3G/ZkGh2ZO2+ARgSYJ4b6NABVdIphq9dYVYuNdaO
-	2uaKzxCNl+Q49hSgUu1NZmWw/awJJRrj9F1S33+Sre3HB1Xe3zq6JfRCPp674fYGMBf7UlMvUOO
-	3jeMkeeufWYb+4hsaSCM8KKpd9BIp07Utue++n+yesH2asGCaLb89NEkYDn/wwgSLGiWkFheG5O
-	6JNh5D9BZfDw6nCK2T3nxd5HybR61Lphmht4uQTTXaBgwDhY/N+lVejj874zSM66uSaLoRsVmMC
-	rTW1g2sXxPnhjn6TcmbZACymKh0VKV7v/r3TSIwX3I2T1Mj/Ky6BVEh6h7fQCrHmDtLxQ4Ju3Ig
-	ue/gpRQ==
-X-Received: by 2002:a5d:47cf:0:b0:385:dd10:215d with SMTP id ffacd0b85a97d-388e4d8e695mr7966471f8f.44.1734625750807;
-        Thu, 19 Dec 2024 08:29:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFiBd6jY3xIZYSbuHrrqWNL0IPXpXDuh8jP+ZSaLMd2VzEVygCtANIr/7QBGXmrLnUPl5ELlA==
-X-Received: by 2002:a5d:47cf:0:b0:385:dd10:215d with SMTP id ffacd0b85a97d-388e4d8e695mr7966431f8f.44.1734625750394;
-        Thu, 19 Dec 2024 08:29:10 -0800 (PST)
+        bh=17ik6LxZEcy8+yRyouwf1xyDz+INnAX0PQox0iBV/TQ=;
+        b=rmek/vMV8UXZxyRs1yBSAWvHdTb+0cXBew2n+HKq5xN4Fqx81W64Z/EPV132A0uJen
+         hIrgWGW1DH8462zW7dFjp9z6t2c1J/IvENih38XlFEHzccPSKThKENULDk1dxUs+B3bd
+         vM0sdgvCwzNIq+HOib8Sb7OFsqIC5IsK8vIITtm5es5lnae33WjNOpLZ5AMQs/+QvkyJ
+         TVzXwfQBLskCZKGFdc/154RZXd9prZLEpiFqCi+BfM/fcPu0SaYbgn6XSwbJaquAZJnd
+         +s8+dsDmBPt2/wxt9F3o0H2Pg20ukC9cWgfZbPRl1L7tvZUfq1rew6iLaf+U2g7TC8uo
+         ft7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXVbg9nqtsKORyWKBX5BbQGviQiQrRSkRnZWRWuYVpu2VQLfQDAUKl2m8YgQUCcikKJ9DTt/l4VseIrZvpD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdDJZRWgEoTLdjYnXDzWPyUlyeQBvk9doSGDHZ611/l6gI1TEw
+	f0GgvQZJFkIYxWTGGO5bXITW9xnBpSeYqnZds1IBJy4+f8qEZCOhEG2dohoz7rkowI2MecKRZic
+	waz56m3XzotDtKgjfYfCcB7H7rNZ21q1vCJ6SJd0pDzPWXbxmOjcoP4OJ+Vf4tmw=
+X-Gm-Gg: ASbGncvYy3ZRLyk44ZoHooVbVushvCmpHVSRWSVBKi9Z1zVeygUDd2mTyQgXdHqlf1h
+	aSNrU39UgVl7tTB6qa/0XY1dWabghAPxdcBgJQZ3LKpF6qsyCjLv87Q5+d2wZCAyLn8QEHhKpR0
+	QdrqsVmqbmwfkkJhD0poST7vmsxeGdtd5l8lhZm3c5rp5g2ss7vq43UE/Ndl7FKm3es08FTp5nc
+	8WZK94K3IKv689gA1tefzmb4oHGlxGsMo2B4fnCFDRTUxWYMO/4sQ0mtGdLspbQFgWQ8Km9g3Nb
+	A7AMNI0he6lqzrUoO+d1ooUqtANTdf3oO3ekE8K2z6HR3wuX2cYaF4YTWyDQxu2f9qj+3kbq+hI
+	6QjgDLg==
+X-Received: by 2002:a05:600c:4fd3:b0:436:346a:fa9b with SMTP id 5b1f17b1804b1-4365c7c9707mr29422775e9.20.1734625877363;
+        Thu, 19 Dec 2024 08:31:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHOfobzoUqE0Vv76Zk/1ThRAAU7lh3RNnu0e3gi7JMTQX1+xmBaSbMvv+ihIXkK6c9WtKbfSg==
+X-Received: by 2002:a05:600c:4fd3:b0:436:346a:fa9b with SMTP id 5b1f17b1804b1-4365c7c9707mr29422405e9.20.1734625876944;
+        Thu, 19 Dec 2024 08:31:16 -0800 (PST)
 Received: from ?IPV6:2003:cb:c749:6600:b73a:466c:e610:686? (p200300cbc7496600b73a466ce6100686.dip0.t-ipconnect.de. [2003:cb:c749:6600:b73a:466c:e610:686])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b4432dsm55513135e9.41.2024.12.19.08.29.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b119ccsm56313895e9.24.2024.12.19.08.31.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 08:29:09 -0800 (PST)
-Message-ID: <43e13556-18a4-4250-b4fe-7ab736ceba7d@redhat.com>
-Date: Thu, 19 Dec 2024 17:29:08 +0100
+        Thu, 19 Dec 2024 08:31:15 -0800 (PST)
+Message-ID: <4104f64a-09c3-4f20-8e1a-5f4547fdcb25@redhat.com>
+Date: Thu, 19 Dec 2024 17:31:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,19 +93,23 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
  with AS_WRITEBACK_INDETERMINATE mappings
 To: Shakeel Butt <shakeel.butt@linux.dev>, Zi Yan <ziy@nvidia.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
  linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
- josef@toxicpanda.com, bernd.schubert@fastmail.fm, linux-mm@kvack.org,
- kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
- Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
-References: <20241122232359.429647-1-joannelkoong@gmail.com>
- <20241122232359.429647-5-joannelkoong@gmail.com>
- <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
+ josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Michal Hocko <mhocko@kernel.org>
+References: <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
  <hltxbiupl245ea7b4rzpcyz3d62mzs6igcx42g7zsksanbxqb3@sho3dzzht3rx>
  <f30fba5f-b2ca-4351-8c8f-3ac120b2d227@redhat.com>
  <gdu7kmz4nbnjqenj5vea4rjwj7v67kjw6ggoyq7ok4la2uosqa@i5gxpmoopuii>
  <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
- <onnjsfrlgyv6blttpmfn5yhbv5q7niteiwbhoze3qnz2zuwldc@seooqlssrpvx>
+ <ec27cb90-326a-40b8-98ac-c9d5f1661809@fastmail.fm>
+ <0CF889CE-09ED-4398-88AC-920118D837A1@nvidia.com>
+ <722A63E5-776E-4353-B3EE-DE202E4A4309@nvidia.com>
+ <ec2e747d-ea84-4487-9c9f-af3db8a3355f@fastmail.fm>
+ <6FBDD501-25A0-4A21-8051-F8EE74AD177B@nvidia.com>
+ <7qyun2waznrduxpf2i5eebqdvpigrd5ycu4rlpawu336kqkyvh@xmfmlsmr43gw>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -153,90 +157,117 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <onnjsfrlgyv6blttpmfn5yhbv5q7niteiwbhoze3qnz2zuwldc@seooqlssrpvx>
+In-Reply-To: <7qyun2waznrduxpf2i5eebqdvpigrd5ycu4rlpawu336kqkyvh@xmfmlsmr43gw>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.12.24 17:22, Shakeel Butt wrote:
-> On Thu, Dec 19, 2024 at 10:55:10AM -0500, Zi Yan wrote:
->> On 19 Dec 2024, at 10:53, Shakeel Butt wrote:
+On 19.12.24 17:26, Shakeel Butt wrote:
+> On Thu, Dec 19, 2024 at 11:14:49AM -0500, Zi Yan wrote:
+>> On 19 Dec 2024, at 11:09, Bernd Schubert wrote:
 >>
->>> On Thu, Dec 19, 2024 at 04:47:18PM +0100, David Hildenbrand wrote:
->>>> On 19.12.24 16:43, Shakeel Butt wrote:
->>>>> On Thu, Dec 19, 2024 at 02:05:04PM +0100, David Hildenbrand wrote:
->>>>>> On 23.11.24 00:23, Joanne Koong wrote:
->>>>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
->>>>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
->>>>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
->>>>>>> writeback may take an indeterminate amount of time to complete, and
->>>>>>> waits may get stuck.
->>>>>>>
->>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
->>>>>>> ---
->>>>>>>     mm/migrate.c | 5 ++++-
->>>>>>>     1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>>>>> index df91248755e4..fe73284e5246 100644
->>>>>>> --- a/mm/migrate.c
->>>>>>> +++ b/mm/migrate.c
->>>>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->>>>>>>     		 */
->>>>>>>     		switch (mode) {
->>>>>>>     		case MIGRATE_SYNC:
->>>>>>> -			break;
->>>>>>> +			if (!src->mapping ||
->>>>>>> +			    !mapping_writeback_indeterminate(src->mapping))
->>>>>>> +				break;
->>>>>>> +			fallthrough;
->>>>>>>     		default:
->>>>>>>     			rc = -EBUSY;
->>>>>>>     			goto out;
->>>>>>
->>>>>> Ehm, doesn't this mean that any fuse user can essentially completely block
->>>>>> CMA allocations, memory compaction, memory hotunplug, memory poisoning... ?!
->>>>>>
->>>>>> That sounds very bad.
+>>> On 12/19/24 17:02, Zi Yan wrote:
+>>>> On 19 Dec 2024, at 11:00, Zi Yan wrote:
+>>>>> On 19 Dec 2024, at 10:56, Bernd Schubert wrote:
 >>>>>
->>>>> The page under writeback are already unmovable while they are under
->>>>> writeback. This patch is only making potentially unrelated tasks to
->>>>> synchronously wait on writeback completion for such pages which in worst
->>>>> case can be indefinite. This actually is solving an isolation issue on a
->>>>> multi-tenant machine.
->>>>>
->>>> Are you sure, because I read in the cover letter:
+>>>>>> On 12/19/24 16:55, Zi Yan wrote:
+>>>>>>> On 19 Dec 2024, at 10:53, Shakeel Butt wrote:
+>>>>>>>
+>>>>>>>> On Thu, Dec 19, 2024 at 04:47:18PM +0100, David Hildenbrand wrote:
+>>>>>>>>> On 19.12.24 16:43, Shakeel Butt wrote:
+>>>>>>>>>> On Thu, Dec 19, 2024 at 02:05:04PM +0100, David Hildenbrand wrote:
+>>>>>>>>>>> On 23.11.24 00:23, Joanne Koong wrote:
+>>>>>>>>>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
+>>>>>>>>>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
+>>>>>>>>>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
+>>>>>>>>>>>> writeback may take an indeterminate amount of time to complete, and
+>>>>>>>>>>>> waits may get stuck.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>>>>>>>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>>     mm/migrate.c | 5 ++++-
+>>>>>>>>>>>>     1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>>>>>>>>>> index df91248755e4..fe73284e5246 100644
+>>>>>>>>>>>> --- a/mm/migrate.c
+>>>>>>>>>>>> +++ b/mm/migrate.c
+>>>>>>>>>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>>>>>>>>>>     		 */
+>>>>>>>>>>>>     		switch (mode) {
+>>>>>>>>>>>>     		case MIGRATE_SYNC:
+>>>>>>>>>>>> -			break;
+>>>>>>>>>>>> +			if (!src->mapping ||
+>>>>>>>>>>>> +			    !mapping_writeback_indeterminate(src->mapping))
+>>>>>>>>>>>> +				break;
+>>>>>>>>>>>> +			fallthrough;
+>>>>>>>>>>>>     		default:
+>>>>>>>>>>>>     			rc = -EBUSY;
+>>>>>>>>>>>>     			goto out;
+>>>>>>>>>>>
+>>>>>>>>>>> Ehm, doesn't this mean that any fuse user can essentially completely block
+>>>>>>>>>>> CMA allocations, memory compaction, memory hotunplug, memory poisoning... ?!
+>>>>>>>>>>>
+>>>>>>>>>>> That sounds very bad.
+>>>>>>>>>>
+>>>>>>>>>> The page under writeback are already unmovable while they are under
+>>>>>>>>>> writeback. This patch is only making potentially unrelated tasks to
+>>>>>>>>>> synchronously wait on writeback completion for such pages which in worst
+>>>>>>>>>> case can be indefinite. This actually is solving an isolation issue on a
+>>>>>>>>>> multi-tenant machine.
+>>>>>>>>>>
+>>>>>>>>> Are you sure, because I read in the cover letter:
+>>>>>>>>>
+>>>>>>>>> "In the current FUSE writeback design (see commit 3be5a52b30aa ("fuse:
+>>>>>>>>> support writable mmap"))), a temp page is allocated for every dirty
+>>>>>>>>> page to be written back, the contents of the dirty page are copied over to
+>>>>>>>>> the temp page, and the temp page gets handed to the server to write back.
+>>>>>>>>> This is done so that writeback may be immediately cleared on the dirty
+>>>>>>>>> page,"
+>>>>>>>>>
+>>>>>>>>> Which to me means that they are immediately movable again?
+>>>>>>>>
+>>>>>>>> Oh sorry, my mistake, yes this will become an isolation issue with the
+>>>>>>>> removal of the temp page in-between which this series is doing. I think
+>>>>>>>> the tradeoff is between extra memory plus slow write performance versus
+>>>>>>>> temporary unmovable memory.
+>>>>>>>
+>>>>>>> No, the tradeoff is slow FUSE performance vs whole system slowdown due to
+>>>>>>> memory fragmentation. AS_WRITEBACK_INDETERMINATE indicates it is not
+>>>>>>> temporary.
+>>>>>>
+>>>>>> Is there is a difference between FUSE TMP page being unmovable and
+>>>>>> AS_WRITEBACK_INDETERMINATE folios/pages being unmovable?
 >>>>
->>>> "In the current FUSE writeback design (see commit 3be5a52b30aa ("fuse:
->>>> support writable mmap"))), a temp page is allocated for every dirty
->>>> page to be written back, the contents of the dirty page are copied over to
->>>> the temp page, and the temp page gets handed to the server to write back.
->>>> This is done so that writeback may be immediately cleared on the dirty
->>>> page,"
+>>>> (Fix my response location)
 >>>>
->>>> Which to me means that they are immediately movable again?
+>>>> Both are unmovable, but you can control where FUSE TMP page
+>>>> can come from to avoid spread across the entire memory space. For example,
+>>>> allocate a contiguous region as a TMP page pool.
 >>>
->>> Oh sorry, my mistake, yes this will become an isolation issue with the
->>> removal of the temp page in-between which this series is doing. I think
->>> the tradeoff is between extra memory plus slow write performance versus
->>> temporary unmovable memory.
+>>> Wouldn't it make sense to have that for fuse writeback pages as well?
+>>> Fuse tries to limit dirty pages anyway.
 >>
->> No, the tradeoff is slow FUSE performance vs whole system slowdown due to
->> memory fragmentation. AS_WRITEBACK_INDETERMINATE indicates it is not
->> temporary.
+>> Can fuse constraint the location of writeback pages? Something like what
+>> I proposed[1], migrating pages to a location before their writeback? Will
+>> that be a performance concern?
+>>
+>> In terms of the number of dirty pages, you only need one page out of 512
+>> pages to prevent 2MB THP from allocation. For CMA allocation, one unmovable
+>> page can kill one contiguous range. What is the limit of fuse dirty pages?
+>>
+>> [1] https://lore.kernel.org/linux-mm/90C41581-179F-40B6-9801-9C9DBBEB1AF4@nvidia.com/
 > 
-> If you check the code just above this patch, this
-> mapping_writeback_indeterminate() check only happen for pages under
-> writeback which is a temp state. Anyways, fuse folios should not be
-> unmovable for their lifetime but only while under writeback which is
-> same for all fs.
+> I think this whole concern of fuse making system memory unmovable
+> forever is overblown. Fuse is already using a temp (unmovable) page 
 
-But there, writeback is expected to be a temporary thing, not possibly: 
-"AS_WRITEBACK_INDETERMINATE", that is a BIG difference.
+Right, and we allocated in a way that we expect it to not be movable 
+(e.g., not on ZONE_MOVABLE, usually in a UNMOVABLE pageblock etc).
 
-I'll have to NACK anything that violates ZONE_MOVABLE / ALLOC_CMA 
-guarantees, and unfortunately, it sounds like this is the case here, 
-unless I am missing something important.
+As another question, which effect does this change here have on 
+folio_wait_writeback() users like arch/s390/kernel/uv.c or 
+shrink_folio_list()?
+
 
 -- 
 Cheers,
