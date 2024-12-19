@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-37863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C899F82D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 19:02:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7939F82DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 19:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D33189092E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:57:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 485F37A35DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DEF1A38E4;
-	Thu, 19 Dec 2024 17:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB2618B46A;
+	Thu, 19 Dec 2024 18:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6cr/+N/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIJXHjVg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D909B197A8F;
-	Thu, 19 Dec 2024 17:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B2741C6C;
+	Thu, 19 Dec 2024 18:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734630962; cv=none; b=VbbdcSQHuQc7BYLEjGbDVGizpdrK5ErWZey16+EkiRsYI6RD8j0WogJ15itCgtP+RtZ5Y2vR9dNX4VEMOh5tBEpcA/S79QuWMdUzxMkIbU4KaCSZ2+3j3xte/yupY/sHDR/YyOYlWdZgzKIk7Xg+4Q4IrUboJ4HVEn7JIqtQ1ac=
+	t=1734631329; cv=none; b=M8zRCaJYaULTLd+4QzaBmXa7kviv4hrpFzvsH7KZlMToOaTLLDHOP/NRJYymT9/0amnb5/ldzc6fwKpXpYHcxiFEXpFrI9k11MDE8Hd/1LPkrfM3ha3MJUFt0XndfWY3WLST90mcU5G/nbxmIfL6IAjgdU56JxKKUrWE2wamXHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734630962; c=relaxed/simple;
-	bh=DAzSeCDqtlZuR8cAXPinbFoede2W+nq3x90M1Vu0FK0=;
+	s=arc-20240116; t=1734631329; c=relaxed/simple;
+	bh=yUy7WZwjZ6OTcH75dwHDRB5iYuei1IXfYM/HLNv1n+4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsZbOJ15ygWJkROG6en72oc064617GKxchoE8asRzCjVkQQk54r4MJqrvHBMaijQJ9q7DDW8xR+Xw+RVRh/fRNubXsDtCV++kI9cIDl+OEaCWYZw9x1OGqSjIAxpF7ND0rrkSgF4qam/MtRwIz3i3cobOqLWBlX4RWN1C3HApR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6cr/+N/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742BAC4CECE;
-	Thu, 19 Dec 2024 17:56:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsPJnD3NcXmp/Z3Jro3Q4QFa7rHJCDtLSNOAA4Y74eOSIcNbhgqa8EjD5BoxUgUcFoOiIkZvUu0JL+kpJ4KUGZqDFGNy4lizUM4r920G44LR2530vGAXW5woGhjg1pqBH5O2uKpWrLoeTvhFJFQJCwVH7ma8TMQ0hvB9fCF2b4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIJXHjVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB96FC4CED0;
+	Thu, 19 Dec 2024 18:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734630961;
-	bh=DAzSeCDqtlZuR8cAXPinbFoede2W+nq3x90M1Vu0FK0=;
+	s=k20201202; t=1734631329;
+	bh=yUy7WZwjZ6OTcH75dwHDRB5iYuei1IXfYM/HLNv1n+4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A6cr/+N/Zxp0qNFmysIWLO0K6RketWJi4SMoiiH/wrUtEp/SDKlSFERFhKzqAsMBn
-	 Zlfgb6T0skoURxsT6x4Reh2s7ctmvhj0AqNIfUgLZsCDPe8VbzW/XaVXBM8hzIjFCX
-	 ZIslbAw7IEt+cHpP/32nRuoSYUVLs0hR5+3cJj/XmwxtENyctLYXW4lJR71TxGqygl
-	 rUtN9ipmjxyzmlHPnfWE5rEW2II3dzfxRhMMqAsYREbEJUNGNZFGWo/Df/WYruBBWk
-	 MHE+hFuF5I9s4cVpcyJbZnJn3YQinhVbg+nkF4okz2bPgkRQ/ppjdIuatR6ZD9/BzS
-	 0qooDZHGmqmPQ==
-Date: Thu, 19 Dec 2024 09:56:00 -0800
+	b=MIJXHjVgVXc5ssh0b9qBH9t6BUP+NVTL1saDjM257JFLflpj+8BRhqqRJczPQOxRq
+	 Zhtj2dX9AZrCuBRet3IUzFNPBvh6yMdYTey57abuUL1xxvqt0B0iQ+Bw3bBWmhyiWi
+	 uQSyLx92BALyfyX5pvZWLi2R0c9jJ0R2dcgwXYwvrxGsyn2j/oaorVmJqvRmGR8pve
+	 NdBlCTz62/pO1eQu/dYkT90IsS2CBcadsSUH9uC7E92aQHSKp2oGlBX50FEtv0OQga
+	 OUImeyBo42PbnimuagIXKycb+qAHdeE+q7XL0AhDeoAdmXd2IsC7Eboa5Ly43Z/0ES
+	 s5URfUOBixldA==
+Date: Thu, 19 Dec 2024 10:02:08 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Christian Brauner <brauner@kernel.org>,
 	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/10] iomap: simplify io_flags and io_type in struct
- iomap_ioend
-Message-ID: <20241219175600.GB6156@frogsfrogsfrogs>
+Subject: Re: [PATCH 03/10] iomap: add a IOMAP_F_ANON_WRITE flag
+Message-ID: <20241219180208.GC6156@frogsfrogsfrogs>
 References: <20241219173954.22546-1-hch@lst.de>
- <20241219173954.22546-3-hch@lst.de>
+ <20241219173954.22546-4-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,197 +59,134 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241219173954.22546-3-hch@lst.de>
+In-Reply-To: <20241219173954.22546-4-hch@lst.de>
 
-On Thu, Dec 19, 2024 at 05:39:07PM +0000, Christoph Hellwig wrote:
-> The ioend fields for distinct types of I/O are a bit complicated.
-> Consolidate them into a single io_flag field with it's own flags
-> decoupled from the iomap flags.  This also prepares for adding a new
-> flag that is unrelated to both of the iomap namespaces.
+On Thu, Dec 19, 2024 at 05:39:08PM +0000, Christoph Hellwig wrote:
+> Add a IOMAP_F_ANON_WRITE flag that indicates that the write I/O does not
+> have a target block assigned to it yet at iomap time and the file system
+> will do that in the bio submission handler, splitting the I/O as needed.
+> 
+> This is used to implement Zone Append based I/O for zoned XFS, where
+> splitting writes to the hardware limits and assigning a zone to them
+> happens just before sending the I/O off to the block layer, but could
+> also be useful for other things like compressed I/O.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/iomap/buffered-io.c | 39 ++++++++++++++++++++++-----------------
->  fs/xfs/xfs_aops.c      | 12 ++++++------
->  include/linux/iomap.h  | 20 ++++++++++++++++++--
->  3 files changed, 46 insertions(+), 25 deletions(-)
+>  Documentation/filesystems/iomap/design.rst |  4 ++++
+>  fs/iomap/buffered-io.c                     | 13 +++++++++----
+>  fs/iomap/direct-io.c                       |  6 ++++--
+>  include/linux/iomap.h                      |  7 +++++++
+>  4 files changed, 24 insertions(+), 6 deletions(-)
 > 
+> diff --git a/Documentation/filesystems/iomap/design.rst b/Documentation/filesystems/iomap/design.rst
+> index b0d0188a095e..28ab3758c474 100644
+> --- a/Documentation/filesystems/iomap/design.rst
+> +++ b/Documentation/filesystems/iomap/design.rst
+> @@ -246,6 +246,10 @@ The fields are as follows:
+>     * **IOMAP_F_PRIVATE**: Starting with this value, the upper bits can
+>       be set by the filesystem for its own purposes.
+>  
+> +   * **IOMAP_F_ANON_WRITE**: Indicates that (write) I/O does not have a target
+> +     block assigned to it yet and the file system will do that in the bio
+> +     submission handler, splitting the I/O as needed.
+> +
+>     These flags can be set by iomap itself during file operations.
+>     The filesystem should supply an ``->iomap_end`` function if it needs
+>     to observe these flags:
 > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index cdccf11bb3be..3176dc996fb7 100644
+> index 3176dc996fb7..8c18fb2a82e0 100644
 > --- a/fs/iomap/buffered-io.c
 > +++ b/fs/iomap/buffered-io.c
-> @@ -1605,13 +1605,10 @@ iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
->  {
->  	if (ioend->io_bio.bi_status != next->io_bio.bi_status)
->  		return false;
-> -	if (next->io_flags & IOMAP_F_BOUNDARY)
-> +	if (next->io_flags & IOMAP_IOEND_BOUNDARY)
->  		return false;
-> -	if ((ioend->io_flags & IOMAP_F_SHARED) ^
-> -	    (next->io_flags & IOMAP_F_SHARED))
-> -		return false;
-> -	if ((ioend->io_type == IOMAP_UNWRITTEN) ^
-> -	    (next->io_type == IOMAP_UNWRITTEN))
-> +	if ((ioend->io_flags & IOMAP_IOEND_NOMERGE_FLAGS) !=
-> +	    (next->io_flags & IOMAP_IOEND_NOMERGE_FLAGS))
->  		return false;
->  	if (ioend->io_offset + ioend->io_size != next->io_offset)
->  		return false;
-> @@ -1709,7 +1706,8 @@ static int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
->  }
+> @@ -1691,10 +1691,14 @@ static int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
+>  	 * failure happened so that the file system end I/O handler gets called
+>  	 * to clean up.
+>  	 */
+> -	if (wpc->ops->submit_ioend)
+> +	if (wpc->ops->submit_ioend) {
+>  		error = wpc->ops->submit_ioend(wpc, error);
+> -	else if (!error)
+> -		submit_bio(&wpc->ioend->io_bio);
+> +	} else {
+> +		if (WARN_ON_ONCE(wpc->iomap.flags & IOMAP_F_ANON_WRITE))
+> +			error = -EIO;
+> +		if (!error)
+> +			submit_bio(&wpc->ioend->io_bio);
+> +	}
 >  
->  static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
-> -		struct writeback_control *wbc, struct inode *inode, loff_t pos)
-> +		struct writeback_control *wbc, struct inode *inode, loff_t pos,
-> +		u16 ioend_flags)
->  {
->  	struct iomap_ioend *ioend;
->  	struct bio *bio;
-> @@ -1724,8 +1722,7 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
->  
->  	ioend = iomap_ioend_from_bio(bio);
->  	INIT_LIST_HEAD(&ioend->io_list);
-> -	ioend->io_type = wpc->iomap.type;
-> -	ioend->io_flags = wpc->iomap.flags;
-> +	ioend->io_flags = ioend_flags;
->  	if (pos > wpc->iomap.offset)
->  		wpc->iomap.flags &= ~IOMAP_F_BOUNDARY;
->  	ioend->io_inode = inode;
-> @@ -1737,14 +1734,13 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
->  	return ioend;
->  }
->  
-> -static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos)
-> +static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
-> +		u16 ioend_flags)
->  {
-> -	if (wpc->iomap.offset == pos && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-> -		return false;
-> -	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
-> -	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
-> +	if (ioend_flags & IOMAP_IOEND_BOUNDARY)
->  		return false;
-> -	if (wpc->iomap.type != wpc->ioend->io_type)
-> +	if ((ioend_flags & IOMAP_IOEND_NOMERGE_FLAGS) !=
-> +	    (wpc->ioend->io_flags & IOMAP_IOEND_NOMERGE_FLAGS))
+>  	if (error) {
+>  		wpc->ioend->io_bio.bi_status = errno_to_blk_status(error);
+> @@ -1744,7 +1748,8 @@ static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
 >  		return false;
 >  	if (pos != wpc->ioend->io_offset + wpc->ioend->io_size)
 >  		return false;
-> @@ -1778,14 +1774,23 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
->  {
->  	struct iomap_folio_state *ifs = folio->private;
->  	size_t poff = offset_in_folio(folio, pos);
-> +	unsigned int ioend_flags = 0;
->  	int error;
->  
-> -	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos)) {
-> +	if (wpc->iomap.type == IOMAP_UNWRITTEN)
-> +		ioend_flags |= IOMAP_IOEND_UNWRITTEN;
-> +	if (wpc->iomap.flags & IOMAP_F_SHARED)
-> +		ioend_flags |= IOMAP_IOEND_SHARED;
-> +	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-> +		ioend_flags |= IOMAP_IOEND_BOUNDARY;
-> +
-> +	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
->  new_ioend:
->  		error = iomap_submit_ioend(wpc, 0);
->  		if (error)
->  			return error;
-> -		wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos);
-> +		wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos,
-> +				ioend_flags);
->  	}
->  
->  	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index d175853da5ae..d35ac4c19fb2 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -114,7 +114,7 @@ xfs_end_ioend(
->  	 */
->  	error = blk_status_to_errno(ioend->io_bio.bi_status);
->  	if (unlikely(error)) {
-> -		if (ioend->io_flags & IOMAP_F_SHARED) {
-> +		if (ioend->io_flags & IOMAP_IOEND_SHARED) {
->  			xfs_reflink_cancel_cow_range(ip, offset, size, true);
->  			xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK, offset,
->  					offset + size);
-> @@ -125,9 +125,9 @@ xfs_end_ioend(
+> -	if (iomap_sector(&wpc->iomap, pos) !=
+> +	if (!(wpc->iomap.flags & IOMAP_F_ANON_WRITE) &&
+> +	    iomap_sector(&wpc->iomap, pos) !=
+>  	    bio_end_sector(&wpc->ioend->io_bio))
+>  		return false;
 >  	/*
->  	 * Success: commit the COW or unwritten blocks if needed.
->  	 */
-> -	if (ioend->io_flags & IOMAP_F_SHARED)
-> +	if (ioend->io_flags & IOMAP_IOEND_SHARED)
->  		error = xfs_reflink_end_cow(ip, offset, size);
-> -	else if (ioend->io_type == IOMAP_UNWRITTEN)
-> +	else if (ioend->io_flags & IOMAP_IOEND_UNWRITTEN)
->  		error = xfs_iomap_write_unwritten(ip, offset, size, false);
->  
->  	if (!error && xfs_ioend_is_append(ioend))
-> @@ -410,7 +410,7 @@ xfs_submit_ioend(
->  	nofs_flag = memalloc_nofs_save();
->  
->  	/* Convert CoW extents to regular */
-> -	if (!status && (ioend->io_flags & IOMAP_F_SHARED)) {
-> +	if (!status && (ioend->io_flags & IOMAP_IOEND_SHARED)) {
->  		status = xfs_reflink_convert_cow(XFS_I(ioend->io_inode),
->  				ioend->io_offset, ioend->io_size);
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index b521eb15759e..641649a04614 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -81,10 +81,12 @@ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
+>  		WRITE_ONCE(iocb->private, bio);
 >  	}
-> @@ -418,8 +418,8 @@ xfs_submit_ioend(
->  	memalloc_nofs_restore(nofs_flag);
 >  
->  	/* send ioends that might require a transaction to the completion wq */
-> -	if (xfs_ioend_is_append(ioend) || ioend->io_type == IOMAP_UNWRITTEN ||
-> -	    (ioend->io_flags & IOMAP_F_SHARED))
-> +	if (xfs_ioend_is_append(ioend) ||
-> +	    (ioend->io_flags & (IOMAP_IOEND_UNWRITTEN | IOMAP_IOEND_SHARED)))
->  		ioend->io_bio.bi_end_io = xfs_end_bio;
->  
->  	if (status)
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index c0339678d798..31857d4750a9 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -327,13 +327,29 @@ loff_t iomap_seek_data(struct inode *inode, loff_t offset,
->  sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
->  		const struct iomap_ops *ops);
->  
-> +/*
-> + * Flags for iomap_ioend->io_flags.
-> + */
-> +/* shared COW extent */
-> +#define IOMAP_IOEND_SHARED		(1U << 0)
-> +/* unwritten extent */
-> +#define IOMAP_IOEND_UNWRITTEN		(1U << 1)
-> +/* don't merge into previous ioend */
-> +#define IOMAP_IOEND_BOUNDARY		(1U << 2)
-> +
-> +/*
-> + * Flags that if set on either ioend prevent the merge of two ioends.
-> + * (IOMAP_IOEND_BOUNDARY also prevents merged, but only one-way)
+> -	if (dio->dops && dio->dops->submit_io)
+> +	if (dio->dops && dio->dops->submit_io) {
+>  		dio->dops->submit_io(iter, bio, pos);
+> -	else
+> +	} else {
+> +		WARN_ON_ONCE(iter->iomap.flags & IOMAP_F_ANON_WRITE);
+>  		submit_bio(bio);
 
-                                          merges
+Do we need to error the bio instead of submitting it if
+IOMAP_F_ANON_WRITE is set here?  Or are we relying on the block
+layer/device will reject an IO to U64_MAX and produce the EIO for us?
 
-With that fixed,
+If yes, then that's acceptagble to me
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> + */
-> +#define IOMAP_IOEND_NOMERGE_FLAGS \
-> +	(IOMAP_IOEND_SHARED | IOMAP_IOEND_UNWRITTEN)
-> +
->  /*
->   * Structure for writeback I/O completions.
+> +	}
+>  }
+>  
+>  ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 31857d4750a9..36a7298b6cea 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -56,6 +56,10 @@ struct vm_fault;
+>   *
+>   * IOMAP_F_BOUNDARY indicates that I/O and I/O completions for this iomap must
+>   * never be merged with the mapping before it.
+> + *
+> + * IOMAP_F_ANON_WRITE indicates that (write) I/O does not have a target block
+> + * assigned to it yet and the file system will do that in the bio submission
+> + * handler, splitting the I/O as needed.
 >   */
->  struct iomap_ioend {
->  	struct list_head	io_list;	/* next ioend in chain */
-> -	u16			io_type;
-> -	u16			io_flags;	/* IOMAP_F_* */
-> +	u16			io_flags;	/* IOMAP_IOEND_* */
->  	struct inode		*io_inode;	/* file being written to */
->  	size_t			io_size;	/* size of the extent */
->  	loff_t			io_offset;	/* offset in the file */
+>  #define IOMAP_F_NEW		(1U << 0)
+>  #define IOMAP_F_DIRTY		(1U << 1)
+> @@ -68,6 +72,7 @@ struct vm_fault;
+>  #endif /* CONFIG_BUFFER_HEAD */
+>  #define IOMAP_F_XATTR		(1U << 5)
+>  #define IOMAP_F_BOUNDARY	(1U << 6)
+> +#define IOMAP_F_ANON_WRITE	(1U << 7)
+>  
+>  /*
+>   * Flags set by the core iomap code during operations:
+> @@ -111,6 +116,8 @@ struct iomap {
+>  
+>  static inline sector_t iomap_sector(const struct iomap *iomap, loff_t pos)
+>  {
+> +	if (iomap->flags & IOMAP_F_ANON_WRITE)
+> +		return U64_MAX; /* invalid */
+>  	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+>  }
+>  
 > -- 
 > 2.45.2
 > 
