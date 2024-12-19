@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-37857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D843D9F82B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:59:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14ED39F82C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 19:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3E81899C03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300591899E71
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E881A3BC8;
-	Thu, 19 Dec 2024 17:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD911A0BFB;
+	Thu, 19 Dec 2024 17:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/RXGlzI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Amy0BJEC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366BE19CD0E;
-	Thu, 19 Dec 2024 17:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7224D199234;
+	Thu, 19 Dec 2024 17:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734630667; cv=none; b=H0faCOTwnFFSmOfOSGLvY4+NDsaE/93DZMpc3m0fNdi06EfT6tauUfNU0zrbf8Nb51QXB7hi6tT+UPIA7LoqhJVjFnjrYV5gYc7kWmU7WX4M5gY5uAXQjMNvgSGr46CBsD012SyY+0w8SDckD80MGyTuHXuZPlvKjxLxFmNoi1c=
+	t=1734630772; cv=none; b=lu19nbHQzoT+SJVYfKX8vwAx5dqrro3YVxejNoQJPadGcVCaGtxbfvyNXyGNyVQtEWb5rGG41LHi0dqVc1tIjHPi5XAsuz0ha1Mp5H8czKridOkTnfdexZP6rx9XxQcEtQ581lFtGmLb5PPhjbet43FsMjjLlNqlkcPy5WGbmHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734630667; c=relaxed/simple;
-	bh=h0NHpDYNGk/tw5e+6LH7gXcndayIy+r6nLGbrzYm398=;
+	s=arc-20240116; t=1734630772; c=relaxed/simple;
+	bh=F/ejyaow6rzNUPRFErXeyw1aHICk0FHlQOdXhIUJSRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQqZCP54lo9iGZjgrmHjsu0tFu4CvYjO+DCBa8atGZkw67m6t7PSo2KeT5UwUmUadIlOZWUcaucTbJYlnWYwR70zxP4sODboFU2ldMXpxGqv9bYixMxCSBIeHnCi/U+0ajW8K3IzG4tWO+Lxto6FSIvLwBWl9nyUAXsmzQ5NJyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/RXGlzI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B998AC4CED0;
-	Thu, 19 Dec 2024 17:51:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=E5GazYr55QWMPnrmxGccNnhHpfs2XvWePF7ym/7kuZQUScY4SfKj54wi0Hbl1LOmm2g+yOAfjT19Db0rat+5g/JLjE15S/cakgFuf4dofz1xk/LqY33XLKg+ki1eKVH5NMhI9bZShIZHpw7wnjC/pTUhVE3pIdtcVFvnyWW+CX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Amy0BJEC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E72AC4CECE;
+	Thu, 19 Dec 2024 17:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734630666;
-	bh=h0NHpDYNGk/tw5e+6LH7gXcndayIy+r6nLGbrzYm398=;
+	s=k20201202; t=1734630772;
+	bh=F/ejyaow6rzNUPRFErXeyw1aHICk0FHlQOdXhIUJSRM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X/RXGlzIGwqf/8jjxruuSAAij4YwxmV3VHjU6aANmRwlAto49Ogg0Mq9pagvWIJKQ
-	 re4K2LGEDG0zZIs3kzYQpk99sgYikVoa4J6qWMqM6poMhZ2tlaRk+Nd/qyNIz4ET0r
-	 FrT40Si3hyHlRKhfTP9K+A6mtk+hzCfCHuGo95hflZi/edPf8wXK1A4ybT8gq4aFC1
-	 bmXELrQRKWyjWWhtBj5PPAgLPEV2bExFAw8jvzpHy8udQKZgulUXqxmNM9ujD/HBCm
-	 G9p8TbqJa0HJrqXw0vYJJSvqxAndXV8oJ1BmuirAgcMxR1B65JXSW6rxK/Yckapqsr
-	 xAvcvrR60u2ew==
-Date: Thu, 19 Dec 2024 09:51:06 -0800
+	b=Amy0BJECkEjmRtM2EIXUbeU0sRN7VydsbOtPl5C9iFnhLtduT69JjvzNKYdQqDSuP
+	 Kzhc8rjOLlcMxX6mdHoZEdbQaJAUfRchtvFJOymHhpW1shfL3tiVz5rB1pUiCiviNk
+	 ky5JCo/716MGo0LUweGNcwzaPGay7lWz9HrTPTy6NXTkmx4pt9K5hpb8fDVZ1WEJSR
+	 QHEE7Pp7rfcCFBxSjXiugH0HyW1CvICAnvc1/jk8Ps4c8iFp2L6r3nKaJrwsOfYrym
+	 Q9Oic83m3pz+Yn5ILp52D7ccQKERx9Oie7cvRvZFslLmEWw0wiXzInHrEChVbCYHZ/
+	 WJlLNcdcLCojA==
+Date: Thu, 19 Dec 2024 09:52:51 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: Re: [PATCH 1/2] fsx: support reads/writes from buffers backed by
- hugepages
-Message-ID: <20241219175106.GG6160@frogsfrogsfrogs>
+Subject: Re: [PATCH 2/2] generic: add tests for read/writes from
+ hugepages-backed buffers
+Message-ID: <20241219175251.GH6160@frogsfrogsfrogs>
 References: <20241218210122.3809198-1-joannelkoong@gmail.com>
- <20241218210122.3809198-2-joannelkoong@gmail.com>
+ <20241218210122.3809198-3-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,179 +59,137 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241218210122.3809198-2-joannelkoong@gmail.com>
+In-Reply-To: <20241218210122.3809198-3-joannelkoong@gmail.com>
 
-On Wed, Dec 18, 2024 at 01:01:21PM -0800, Joanne Koong wrote:
-> Add support for reads/writes from buffers backed by hugepages.
-> This can be enabled through the '-h' flag. This flag should only be used
-> on systems where THP capabilities are enabled.
+On Wed, Dec 18, 2024 at 01:01:22PM -0800, Joanne Koong wrote:
+> Add generic tests 758 and 759 for testing reads/writes from buffers
+> backed by hugepages.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
->  ltp/fsx.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 92 insertions(+), 8 deletions(-)
+>  common/rc             | 10 ++++++++++
+>  tests/generic/758     | 23 +++++++++++++++++++++++
+>  tests/generic/758.out |  4 ++++
+>  tests/generic/759     | 24 ++++++++++++++++++++++++
+>  tests/generic/759.out |  4 ++++
+>  5 files changed, 65 insertions(+)
+>  create mode 100755 tests/generic/758
+>  create mode 100644 tests/generic/758.out
+>  create mode 100755 tests/generic/759
+>  create mode 100644 tests/generic/759.out
 > 
-> diff --git a/ltp/fsx.c b/ltp/fsx.c
-> index 41933354..3656fd9f 100644
-> --- a/ltp/fsx.c
-> +++ b/ltp/fsx.c
-> @@ -190,6 +190,7 @@ int	o_direct;			/* -Z */
->  int	aio = 0;
->  int	uring = 0;
->  int	mark_nr = 0;
-> +int	hugepages = 0;                  /* -h flag */
->  
->  int page_size;
->  int page_mask;
-> @@ -2471,7 +2472,7 @@ void
->  usage(void)
->  {
->  	fprintf(stdout, "usage: %s",
-> -		"fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
-> +		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
->  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
->  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
->  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
-> @@ -2484,6 +2485,7 @@ usage(void)
->  	-e: pollute post-eof on size changes (default 0)\n\
->  	-f: flush and invalidate cache after I/O\n\
->  	-g X: write character X instead of random generated data\n\
-> +	-h hugepages: use buffers backed by hugepages for reads/writes\n\
->  	-i logdev: do integrity testing, logdev is the dm log writes device\n\
->  	-j logid: prefix debug log messsages with this id\n\
->  	-k: do not truncate existing file and use its size as upper bound on file size\n\
-> @@ -2856,6 +2858,56 @@ keep_running(void)
->  	return numops-- != 0;
+> diff --git a/common/rc b/common/rc
+> index 1b2e4508..33af7fa7 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -3016,6 +3016,16 @@ _require_xfs_io_command()
+>  	fi
 >  }
 >  
-> +static long
-> +get_hugepage_size(void)
+> +# check that the kernel and system supports huge pages
+> +_require_thp()
 > +{
-> +	const char *str = "Hugepagesize:";
-> +	long hugepage_size = -1;
-> +	char buffer[64];
-> +	FILE *file;
-> +
-> +	file = fopen("/proc/meminfo", "r");
-> +	if (!file) {
-> +		prterr("get_hugepage_size: fopen /proc/meminfo");
-> +		return -1;
-> +	}
-> +	while (fgets(buffer, sizeof(buffer), file)) {
-> +		if (strncmp(buffer, str, strlen(str)) == 0) {
-> +			sscanf(buffer + strlen(str), "%ld", &hugepage_size);
-> +			break;
-> +		}
-> +	}
-> +	fclose(file);
-> +	if (hugepage_size == -1) {
-> +		prterr("get_hugepage_size: failed to find "
-> +			"hugepage size in /proc/meminfo\n");
-> +		return -1;
-> +	}
-> +
-> +	/* convert from KiB to bytes  */
-> +	return hugepage_size * 1024;
+> +    thp_status=$(cat /sys/kernel/mm/transparent_hugepage/enabled)
+> +    if [[ $thp_status == *"[never]"* ]]; then
+> +	    _notrun "system doesn't support transparent hugepages"
+> +    fi
+> +    _require_kernel_config CONFIG_TRANSPARENT_HUGEPAGE
+
+Will /sys/kernel/mm/transparent_hugepage/ exist if
+CONFIG_TRANSPARENT_HUGEPAGE=n ?
+
+Or put another way, if /sys/kernel/mm/transparent_hugepage/ doesn't
+exist, is that a sign that hugepages aren't enabled?
+
 > +}
 > +
-> +static void *
-> +init_hugepages_buf(unsigned len, long hugepage_size)
-> +{
-> +	void *buf;
-> +	long buf_size = roundup(len, hugepage_size);
+>  # check that kernel and filesystem support direct I/O, and check if "$1" size
+>  # aligned (optional) is supported
+>  _require_odirect()
+> diff --git a/tests/generic/758 b/tests/generic/758
+> new file mode 100755
+> index 00000000..b3bd6e5b
+> --- /dev/null
+> +++ b/tests/generic/758
+> @@ -0,0 +1,23 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# FS QA Test No. 758
+> +#
+> +# fsx exercising reads/writes from userspace buffers
+> +# backed by hugepages
+> +#
+> +. ./common/preamble
+> +_begin_fstest rw auto quick
 > +
-> +	if (posix_memalign(&buf, hugepage_size, buf_size)) {
-> +		prterr("posix_memalign for buf");
-> +		return NULL;
-> +	}
-> +	memset(buf, '\0', len);
-> +	if (madvise(buf, buf_size, MADV_COLLAPSE)) {
-> +		prterr("madvise collapse for buf");
-> +		free(buf);
-> +		return NULL;
-> +	}
-> +
-> +	return buf;
-> +}
-> +
->  static struct option longopts[] = {
->  	{"replay-ops", required_argument, 0, 256},
->  	{"record-ops", optional_argument, 0, 255},
-> @@ -2883,7 +2935,7 @@ main(int argc, char **argv)
->  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
->  
->  	while ((ch = getopt_long(argc, argv,
-> -				 "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> +				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
->  				 longopts, NULL)) != EOF)
->  		switch (ch) {
->  		case 'b':
-> @@ -2916,6 +2968,9 @@ main(int argc, char **argv)
->  		case 'g':
->  			filldata = *optarg;
->  			break;
-> +		case 'h':
-> +			hugepages = 1;
-> +			break;
->  		case 'i':
->  			integrity = 1;
->  			logdev = strdup(optarg);
-> @@ -3232,12 +3287,41 @@ main(int argc, char **argv)
->  	original_buf = (char *) malloc(maxfilelen);
->  	for (i = 0; i < maxfilelen; i++)
->  		original_buf[i] = random() % 256;
-> -	good_buf = (char *) malloc(maxfilelen + writebdy);
-> -	good_buf = round_ptr_up(good_buf, writebdy, 0);
-> -	memset(good_buf, '\0', maxfilelen);
-> -	temp_buf = (char *) malloc(maxoplen + readbdy);
-> -	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> -	memset(temp_buf, '\0', maxoplen);
-> +	if (hugepages) {
-> +		long hugepage_size;
-> +
-> +		hugepage_size = get_hugepage_size();
-> +		if (hugepage_size == -1) {
-> +			prterr("get_hugepage_size()");
-> +			exit(99);
-> +		}
-> +
-> +		if (writebdy != 1 && writebdy != hugepage_size)
-> +			prt("ignoring write alignment (since -h is enabled)");
-> +
-> +		if (readbdy != 1 && readbdy != hugepage_size)
-> +			prt("ignoring read alignment (since -h is enabled)");
+> +# Import common functions.
 
-What if readbdy is a multiple of the hugepage size?
-
-> +		good_buf = init_hugepages_buf(maxfilelen, hugepage_size);
-> +		if (!good_buf) {
-> +			prterr("init_hugepages_buf failed for good_buf");
-> +			exit(100);
-> +		}
-
-Why is it necessary for the good_buf to be backed by a hugepage?
-I thought good_buf was only used to compare file contents?
+No need for ^^ this comment.  Same with 759.
 
 --D
 
+> +. ./common/filter
 > +
-> +		temp_buf = init_hugepages_buf(maxoplen, hugepage_size);
-> +		if (!temp_buf) {
-> +			prterr("init_hugepages_buf failed for temp_buf");
-> +			exit(101);
-> +		}
-> +	} else {
-> +		good_buf = (char *) malloc(maxfilelen + writebdy);
-> +		good_buf = round_ptr_up(good_buf, writebdy, 0);
-> +		memset(good_buf, '\0', maxfilelen);
+> +_require_test
+> +_require_thp
 > +
-> +		temp_buf = (char *) malloc(maxoplen + readbdy);
-> +		temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> +		memset(temp_buf, '\0', maxoplen);
-> +	}
->  	if (lite) {	/* zero entire existing file */
->  		ssize_t written;
->  
+> +run_fsx -N 10000   	    -l 500000 -h
+> +run_fsx -N 10000  -o 8192   -l 500000 -h
+> +run_fsx -N 10000  -o 128000 -l 500000 -h
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/758.out b/tests/generic/758.out
+> new file mode 100644
+> index 00000000..af04bb14
+> --- /dev/null
+> +++ b/tests/generic/758.out
+> @@ -0,0 +1,4 @@
+> +QA output created by 758
+> +fsx -N 10000 -l 500000 -h
+> +fsx -N 10000 -o 8192 -l 500000 -h
+> +fsx -N 10000 -o 128000 -l 500000 -h
+> diff --git a/tests/generic/759 b/tests/generic/759
+> new file mode 100755
+> index 00000000..6dfe2b86
+> --- /dev/null
+> +++ b/tests/generic/759
+> @@ -0,0 +1,24 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# FS QA Test No. 759
+> +#
+> +# fsx exercising direct IO reads/writes from userspace buffers
+> +# backed by hugepages
+> +#
+> +. ./common/preamble
+> +_begin_fstest rw auto quick
+> +
+> +# Import common functions.
+> +. ./common/filter
+> +
+> +_require_test
+> +_require_odirect
+> +_require_thp
+> +
+> +run_fsx -N 10000            -l 500000 -Z -R -W -h
+> +run_fsx -N 10000  -o 8192   -l 500000 -Z -R -W -h
+> +run_fsx -N 10000  -o 128000 -l 500000 -Z -R -W -h
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/759.out b/tests/generic/759.out
+> new file mode 100644
+> index 00000000..18d21229
+> --- /dev/null
+> +++ b/tests/generic/759.out
+> @@ -0,0 +1,4 @@
+> +QA output created by 759
+> +fsx -N 10000 -l 500000 -Z -R -W -h
+> +fsx -N 10000 -o 8192 -l 500000 -Z -R -W -h
+> +fsx -N 10000 -o 128000 -l 500000 -Z -R -W -h
 > -- 
 > 2.47.1
 > 
