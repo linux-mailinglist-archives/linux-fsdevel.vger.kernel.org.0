@@ -1,205 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-37884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7185B9F881C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 23:52:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CFE9F882F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 23:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1F5164E80
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 22:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25EA16AD3A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 22:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761441D86C3;
-	Thu, 19 Dec 2024 22:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6F91EE7D3;
+	Thu, 19 Dec 2024 22:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGPRVuX4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RVkWCXVa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D92C2AE96;
-	Thu, 19 Dec 2024 22:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AFF78F4A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 22:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734648732; cv=none; b=Vggzzv2d0j4RKX6ZLO01b0M4BVj7KcjDaic6ZqXLY51EUGDsppNWGlHWnWII4pLwiMpfkLQ8qfSEj0iialvPGigPTao07nVxojEvtMo6WrE/BirP9DFfSDXPP1UQ26rH8lyOyEQvMLdCZA3dO+1mx5O8IZstw05NKpTzdAgSMDg=
+	t=1734649075; cv=none; b=WyfG36dZTxQ+hILboMUgl88/5Lx7n7+qroaj4QESGyP7yjnCnnwCNRevlWTx1b6PYX1H8kmnS0tv0cd7ZvSiVpdBnwl3uqswYGKFLMkudIuHuPKyf+NpYfOyaVAdFNimbwfLv3PlQaTngo9HbhQfsw8Ox697UTZ4ucN2mm77fLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734648732; c=relaxed/simple;
-	bh=15i2Yf3WvNbPYR2CeeyGmn0NLChz4hZ9/foJ9BNFIPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ppc3OthRJwwdZiTqjnDPOyHMkZ6lOGZcPKy2ixEUOQEvhzw5VSLrJe5Gv1XVVt6Qobt+gcUCGWnNYq5tLKwaaBbpjg+hzIw1CsM1IR+QzrEuYPOtvz4aQAnoc1N9tEjVy+2PCi+unDT5TZ2AY8x1rF6yRC5amAFGfQxZp8mwf0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGPRVuX4; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d8f65ef5abso10580276d6.3;
-        Thu, 19 Dec 2024 14:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734648730; x=1735253530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cp/htC487sqv/1tkg8tsXKWi7Ae2CyTqYDyO16YYE1A=;
-        b=XGPRVuX4lrhypKlP4KxFxUccKk9ILf6eYeOfq9D4GWle6esddY6PMYI1xF5JyAfDji
-         Wk3bP3QY0j7uyqZV+aDEwyIuNrIsWzKHcBjplUPz09aSMKtbHSO3b+DHQ2TGFbv8HXRK
-         eSbrY1re3V0QFG0MXkZPp2jnmpVDPPfIOfAizuifMbDWAQbGNp0HcNdxhVYqvVcpOuzS
-         PMihCIxf0RxEadIvfZMSfHQI+PGfkvicGmabDRgPnyc5sDqLMBQ+Fm/BHcVkcIY8M4ir
-         s54PZMkZ2CZkcNUGBNUJF2CBGwmzpUv7EXSWZDbYGNPCgPg0+IArCqWsh4CnyL+4PiRr
-         lWVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734648730; x=1735253530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cp/htC487sqv/1tkg8tsXKWi7Ae2CyTqYDyO16YYE1A=;
-        b=gZfr6s9vzq0CDI82zuYcJfugzLarhKEWTKiN2rg3IM2x4CY5Zk52zkzXE7BaIr7v6i
-         ukhnA5I8VYyrciXF6EkYIrFe6RnsHzspeLLydbRAPqcfSs1mxJx++5Mk5YEf3E7EUDNm
-         XY2myu1EBGuAyCd6+GhZJKyn1J5pNAaztQEeoXRLSPydjhd0vre2nBW6dwHu1n0C1Vt7
-         FzxmoAwCjhtkDcb3GJprxo9WnGQcQ3hgAR1JSEGLeFDzUKIiVnvnlp3n3MXMCamF2W0Y
-         ZML7oVYvxFf7w0FxYyIOczb94pbPmjhtCNb/TXMIefSAEik3uG4DLVerucHr/AvcHU4K
-         hYiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXr4+WhzEgwomp2ithjRCFN5oAG2ss9bz5m22hkijn4Fav86k0+tx7qoPJrHg1L9eIsuouKMCb4x3fqStsQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOpttvFhn79RbY1YBHcfLY38N1BNf5/jq4DHNf1WQ2difXnBV+
-	Y9gO9N02vR5aBtqGedAHQthgHaD+2Vh5hY2JDqHrNlNFhh0lAu9ArEhRt6DcRmi0q2Au+OiPvj/
-	MCQ9Xpdw/1OW7EDlqyRfS0D7smDI=
-X-Gm-Gg: ASbGnctS3RvjI35ragoyxhrAuG87WWldBa/HKrq63ws+YDW0pBvC8CVqbXvyXqAbrw8
-	AQsEU55OE0Txlw5LNYVtaAfCw77rufetmkkJRWrM=
-X-Google-Smtp-Source: AGHT+IGRMz0brz8SSQVM3I7RiL1V4Hu6DujwJaSEOEsezJqEbpFkLoGqHvvlt1OimPK5lskPxEUvsxX2gj6bIjfYbnI=
-X-Received: by 2002:a05:6214:449f:b0:6d8:7a7d:1e6b with SMTP id
- 6a1803df08f44-6dd2331efc0mr14342636d6.10.1734648730161; Thu, 19 Dec 2024
- 14:52:10 -0800 (PST)
+	s=arc-20240116; t=1734649075; c=relaxed/simple;
+	bh=RVNbwD3LyvGM0ku0JM4001S4rukg/ebjE+YuoU21BzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iDC05Ala7d4Xqkc2XQHOtE9D9r9mxCmtAVg1t4p48HWcETwkbRuFQ7z5W/2b+Ubc/HekKqScDE4l1WU7rwjtqqB2uPkdIihspFFRG3R+fCdGLwTNBHCwzmR7feNUZChXeOJ92o8rLldWqaY5R/jn1avyyC7djmAIb8BL5sd2Iqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RVkWCXVa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=kDqpVmMfkt2AhPmZO9HiKMTJ8MPFb7OtQwdb5+0HSnI=; b=RVkWCXVaXc+2kLkWRbYKDfjzuG
+	fzJ8rnUHpz0onHjGTJ5vnTrXVZfnoNa4WVkip6QwkEfkri7RpkRy3+S2u1fmo0Oga9OyCpfBNdCFD
+	PTUgAftCAllZBmivux2jTMkf2cnEcX48eUuLxiA0wMg2VkUDe3cMFm3G6hNCJvlStfqtK+bSbDD2D
+	xIltOmkUDZgHHTCUqSzhnqYKBLNbgPPJyftlNJBSu+69n3xq7XU72xUTPySjqEnm7uQF1JO31Tmed
+	xcSml5GEhcjc1AEvWGjcivABYl5fbRgJpkpeHkTVFZvDSuai6QRKlAJwaMCNmN/OfpuG9LlLMi/T4
+	s+sT++Uw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tOPSo-000000061fh-1mvj;
+	Thu, 19 Dec 2024 22:57:50 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] vboxsf: Convert to writepages
+Date: Thu, 19 Dec 2024 22:57:46 +0000
+Message-ID: <20241219225748.1436156-1-willy@infradead.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218210122.3809198-1-joannelkoong@gmail.com>
- <20241218210122.3809198-2-joannelkoong@gmail.com> <20241219175106.GG6160@frogsfrogsfrogs>
-In-Reply-To: <20241219175106.GG6160@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 19 Dec 2024 14:51:59 -0800
-Message-ID: <CAJnrk1avghdbecZO_fNJjQ3m_1zw=6zsHY8+R0xx7cb2qGNiNQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 19, 2024 at 9:51=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Wed, Dec 18, 2024 at 01:01:21PM -0800, Joanne Koong wrote:
-> > Add support for reads/writes from buffers backed by hugepages.
-> > This can be enabled through the '-h' flag. This flag should only be use=
-d
-> > on systems where THP capabilities are enabled.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  ltp/fsx.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 92 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > index 41933354..3656fd9f 100644
-> > --- a/ltp/fsx.c
-> > +++ b/ltp/fsx.c
-> > +
-> >  static struct option longopts[] =3D {
-> >       {"replay-ops", required_argument, 0, 256},
-> >       {"record-ops", optional_argument, 0, 255},
-> > @@ -2883,7 +2935,7 @@ main(int argc, char **argv)
-> >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> >
-> >       while ((ch =3D getopt_long(argc, argv,
-> > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyAB=
-D:EFJKHzCILN:OP:RS:UWXZ",
-> > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyA=
-BD:EFJKHzCILN:OP:RS:UWXZ",
-> >                                longopts, NULL)) !=3D EOF)
-> >               switch (ch) {
-> >               case 'b':
-> > @@ -2916,6 +2968,9 @@ main(int argc, char **argv)
-> >               case 'g':
-> >                       filldata =3D *optarg;
-> >                       break;
-> > +             case 'h':
-> > +                     hugepages =3D 1;
-> > +                     break;
-> >               case 'i':
-> >                       integrity =3D 1;
-> >                       logdev =3D strdup(optarg);
-> > @@ -3232,12 +3287,41 @@ main(int argc, char **argv)
-> >       original_buf =3D (char *) malloc(maxfilelen);
-> >       for (i =3D 0; i < maxfilelen; i++)
-> >               original_buf[i] =3D random() % 256;
-> > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
-> > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > -     memset(good_buf, '\0', maxfilelen);
-> > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
-> > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > -     memset(temp_buf, '\0', maxoplen);
-> > +     if (hugepages) {
-> > +             long hugepage_size;
-> > +
-> > +             hugepage_size =3D get_hugepage_size();
-> > +             if (hugepage_size =3D=3D -1) {
-> > +                     prterr("get_hugepage_size()");
-> > +                     exit(99);
-> > +             }
-> > +
-> > +             if (writebdy !=3D 1 && writebdy !=3D hugepage_size)
-> > +                     prt("ignoring write alignment (since -h is enable=
-d)");
-> > +
-> > +             if (readbdy !=3D 1 && readbdy !=3D hugepage_size)
-> > +                     prt("ignoring read alignment (since -h is enabled=
-)");
->
-> What if readbdy is a multiple of the hugepage size?
+If we add a migrate_folio operation, we can convert the writepage
+operation to writepages.  Further, this lets us optimise by using
+the same write handle for multiple folios.  The large folio support here
+is illusory; we would need to kmap each page in turn for proper support.
+But we do remove a few hidden calls to compound_head().
 
-Good point, the user could potentially request an alignment that's a
-multiple. I'll account for this in v2.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/vboxsf/file.c | 47 +++++++++++++++++++++++++----------------------
+ 1 file changed, 25 insertions(+), 22 deletions(-)
 
->
-> > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
-);
-> > +             if (!good_buf) {
-> > +                     prterr("init_hugepages_buf failed for good_buf");
-> > +                     exit(100);
-> > +             }
->
-> Why is it necessary for the good_buf to be backed by a hugepage?
-> I thought good_buf was only used to compare file contents?
+diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
+index b780deb81b02..b492794f8e9a 100644
+--- a/fs/vboxsf/file.c
++++ b/fs/vboxsf/file.c
+@@ -262,40 +262,42 @@ static struct vboxsf_handle *vboxsf_get_write_handle(struct vboxsf_inode *sf_i)
+ 	return sf_handle;
+ }
+ 
+-static int vboxsf_writepage(struct page *page, struct writeback_control *wbc)
++static int vboxsf_writepages(struct address_space *mapping,
++		struct writeback_control *wbc)
+ {
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = mapping->host;
++	struct folio *folio = NULL;
+ 	struct vboxsf_inode *sf_i = VBOXSF_I(inode);
+ 	struct vboxsf_handle *sf_handle;
+-	loff_t off = page_offset(page);
+ 	loff_t size = i_size_read(inode);
+-	u32 nwrite = PAGE_SIZE;
+-	u8 *buf;
+-	int err;
+-
+-	if (off + PAGE_SIZE > size)
+-		nwrite = size & ~PAGE_MASK;
++	int error;
+ 
+ 	sf_handle = vboxsf_get_write_handle(sf_i);
+ 	if (!sf_handle)
+ 		return -EBADF;
+ 
+-	buf = kmap(page);
+-	err = vboxsf_write(sf_handle->root, sf_handle->handle,
+-			   off, &nwrite, buf);
+-	kunmap(page);
++	while ((folio = writeback_iter(mapping, wbc, folio, &error))) {
++		loff_t off = folio_pos(folio);
++		u32 nwrite = folio_size(folio);
++		u8 *buf;
+ 
+-	kref_put(&sf_handle->refcount, vboxsf_handle_release);
++		if (nwrite > size - off)
++			nwrite = size - off;
+ 
+-	if (err == 0) {
+-		/* mtime changed */
+-		sf_i->force_restat = 1;
+-	} else {
+-		ClearPageUptodate(page);
++		buf = kmap_local_folio(folio, 0);
++		error = vboxsf_write(sf_handle->root, sf_handle->handle,
++				off, &nwrite, buf);
++		kunmap_local(buf);
++
++		folio_unlock(folio);
+ 	}
+ 
+-	unlock_page(page);
+-	return err;
++	kref_put(&sf_handle->refcount, vboxsf_handle_release);
++
++	/* mtime changed */
++	if (error == 0)
++		sf_i->force_restat = 1;
++	return error;
+ }
+ 
+ static int vboxsf_write_end(struct file *file, struct address_space *mapping,
+@@ -347,10 +349,11 @@ static int vboxsf_write_end(struct file *file, struct address_space *mapping,
+  */
+ const struct address_space_operations vboxsf_reg_aops = {
+ 	.read_folio = vboxsf_read_folio,
+-	.writepage = vboxsf_writepage,
++	.writepages = vboxsf_writepages,
+ 	.dirty_folio = filemap_dirty_folio,
+ 	.write_begin = simple_write_begin,
+ 	.write_end = vboxsf_write_end,
++	.migrate_folio = filemap_migrate_folio,
+ };
+ 
+ static const char *vboxsf_get_link(struct dentry *dentry, struct inode *inode,
+-- 
+2.45.2
 
-good_buf is used too as the source buffer for the write in dowrite().
-
-
-Thanks,
-Joanne
->
-> --D
->
-> > +
-> > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size);
-> > +             if (!temp_buf) {
-> > +                     prterr("init_hugepages_buf failed for temp_buf");
-> > +                     exit(101);
-> > +             }
-> > +     } else {
-> > +             good_buf =3D (char *) malloc(maxfilelen + writebdy);
-> > +             good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > +             memset(good_buf, '\0', maxfilelen);
-> > +
-> > +             temp_buf =3D (char *) malloc(maxoplen + readbdy);
-> > +             temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > +             memset(temp_buf, '\0', maxoplen);
-> > +     }
-> >       if (lite) {     /* zero entire existing file */
-> >               ssize_t written;
-> >
-> > --
-> > 2.47.1
-> >
-> >
 
