@@ -1,227 +1,343 @@
-Return-Path: <linux-fsdevel+bounces-37868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0A39F82F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 19:13:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023239F8311
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 19:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8060188516A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845CF166578
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 18:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728B119F11B;
-	Thu, 19 Dec 2024 18:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AF719F43B;
+	Thu, 19 Dec 2024 18:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boZLXWh0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5XfggqA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE624192D66
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 18:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2560C19AD5C;
+	Thu, 19 Dec 2024 18:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734631973; cv=none; b=Tt2Zcrqy6jNrDFB2SUyIVLJU4dgzwpXqF6ku9MvWWXVmSudE8yit6M/+yKBiDV9kGPJIYbSEe7Z5QxkJN4Mxs6dkUpXBx4q2ynJ6NKOLU5orJef9elbw2LlKEIJuQuZA8kp1j2mWhrKVUOKwNPGqCCGFJdkJar1d0ZGSczX/wPU=
+	t=1734632246; cv=none; b=Omr3gH9Kr0rFy7sUWn4IaG1O57FbaxIuVo9ZB+iCbSQpP4Xm2/UFxAOXCpfWK7cmWHfLxl2h6W5s915CjP5DSLGVhRf9jjnEkKX97bKoDDT0MVCbD4349bmjFJIhpLztx2MXP9MUMu2nNO6QNNSBHY/088npSjLWsR0y0PLtglU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734631973; c=relaxed/simple;
-	bh=mI+XdmR2E+ktvV04yOqgMW0HTSUDAXYrWMmyFEkUW/A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lm2u/dahCJp11zGGpO8QDors8jaBHYvJol/VolRoQ53n6w5rTABLROXykcuLWfL8Z85xYMgy++cCbT7CNO9+gXJgWjdP2QeoOYIixMiBSfc9i/pMnad68bgribKHg2A4sgNzm8jpAbMqFFln8nHzspH6AHeko7VQN05VkLJq1kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boZLXWh0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2AFC4CED0;
-	Thu, 19 Dec 2024 18:12:52 +0000 (UTC)
+	s=arc-20240116; t=1734632246; c=relaxed/simple;
+	bh=RSqro+ivZYy4XpddWdfxlePwg8vb5IJUxMyIHpxBwNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nALZokcN8lK32hL5Q2mHMutAf+oxp143zMiFK7JdZKhKEPLKd5F/O5pDhKT6mWtGp3ZDXdV9z87y1XLWIx1Z/h8ElDk9SPWBrA8O6pBJWBhEqAmCc1H/9DXVZ1qZKUPbbjhD47MhvDsbs/3aruavikfjDtVeoZUrlkOvim6ES/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5XfggqA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE79C4CECE;
+	Thu, 19 Dec 2024 18:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734631973;
-	bh=mI+XdmR2E+ktvV04yOqgMW0HTSUDAXYrWMmyFEkUW/A=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=boZLXWh0vivx479Ov2OlmktOdMvlvQvIhvBE3JL4Qe4fSica08hs/F4N84zzhYaFe
-	 2ib77K69J+QipOZ+DR1TMNwpmoF7BHnYuyZxjmTvCVXSlwrDOnu28KoYihtQKCpKV8
-	 cfSxCry6t7dti9qFTChzqNKp5pbmrQTqpADama2OBH+m9Jpi4b/dNSvY02KLgRoKjN
-	 6Vv9fjvZjzVU4Sm09r9BEUwx6Y8bhHppoz2L3jqlxdAvrEI4KpujWaP4E2O/ABN8Ic
-	 OvGAur12cEFXap9FCWv9sXAHDMMnmO4wC/x7MAImObQlfkkGVrsWkOptOaTe2zZOxp
-	 V5XleJPOGtbjw==
-Message-ID: <92fab77a9f6112b3661e2a2fbc1f57fed8476236.camel@kernel.org>
-Subject: Re: [PATCH v3 00/12] fuse: support large folios
-From: Jeff Layton <jlayton@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, 
+	s=k20201202; t=1734632245;
+	bh=RSqro+ivZYy4XpddWdfxlePwg8vb5IJUxMyIHpxBwNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B5XfggqAMet/N56kdffmXIVtIEt09b8aZBhHjuctzEGjSa5L8VTx13hQBiwpnYrvj
+	 vQ+aPsAy2OdjDyAWm/PDy7s8i4svd+Zzj1nYHOxjbEYVBK89leKqKdbBxi3ch+kBQc
+	 pfAZTm5L+3d9A/RfuAf8SNl9XLDcOqKy/widvQzlbq7q3T/BmTK6rQ/g9tUt/DakmS
+	 lSFpicBzZXVZxfwqMs8Zhm0skn+j4W9L7+HbQfk1LjLvdVcXQXkTvzD9cxM1SxSSfE
+	 S1K4sr9JhsbQmrT1PMnT1o1SitJ3JOAROSv2FI9AttKU4lZ2CR3tmCrhFu5qxUfuOf
+	 Nn4z7cHeS73jQ==
+Date: Thu, 19 Dec 2024 10:17:25 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, willy@infradead.org, 
-	jefflexu@linux.alibaba.com, shakeel.butt@linux.dev, kernel-team@meta.com
-Date: Thu, 19 Dec 2024 13:12:51 -0500
-In-Reply-To: <20241213221818.322371-1-joannelkoong@gmail.com>
-References: <20241213221818.322371-1-joannelkoong@gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+Subject: Re: [PATCH 04/10] iomap: split bios to zone append limits in the
+ submission handlers
+Message-ID: <20241219181725.GD6156@frogsfrogsfrogs>
+References: <20241219173954.22546-1-hch@lst.de>
+ <20241219173954.22546-5-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241219173954.22546-5-hch@lst.de>
 
-On Fri, 2024-12-13 at 14:18 -0800, Joanne Koong wrote:
-> This patchset adds support for folios larger than one page size in FUSE.
->=20
-> This patchset is rebased on top of the (unmerged) patchset that removes t=
-emp
-> folios in writeback [1]. This patchset was tested by running it through f=
-stests
-> on passthrough_hp.
->=20
-> Please note that writes are still effectively one page size. Larger write=
-s can
-> be enabled by setting the order on the fgp flag passed in to __filemap_ge=
-t_folio()
-> but benchmarks show this significantly degrades performance. More investi=
-gation
-> needs to be done into this. As such, buffered writes will be optimized in=
- a
-> future patchset.
->=20
-> Benchmarks show roughly a ~45% improvement in read throughput.
->=20
-> Benchmark setup:
->=20
-> -- Set up server --
->  ./libfuse/build/example/passthrough_hp --bypass-rw=3D1 ~/libfuse
-> ~/mounts/fuse/ --nopassthrough
-> (using libfuse patched with https://github.com/libfuse/libfuse/pull/807)
->=20
-> -- Run fio --
->  fio --name=3Dread --ioengine=3Dsync --rw=3Dread --bs=3D1M --size=3D1G
-> --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
-> --directory=3Dmounts/fuse/
->=20
-> Machine 1:
->     No large folios:     ~4400 MiB/s
->     Large folios:        ~7100 MiB/s
->=20
-> Machine 2:
->     No large folios:     ~3700 MiB/s
->     Large folios:        ~6400 MiB/s
->=20
->=20
-> [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannel=
-koong@gmail.com/
->=20
-> Changelog:
-> v2: https://lore.kernel.org/linux-fsdevel/20241125220537.3663725-1-joanne=
-lkoong@gmail.com/
-> v2 -> v3:
-> * Fix direct io parsing to check each extracted page instead of assuming =
-all
->   pages in a large folio will be used (Matthew)
->=20
-> v1: https://lore.kernel.org/linux-fsdevel/20241109001258.2216604-1-joanne=
-lkoong@gmail.com/
-> v1 -> v2:
-> * Change naming from "non-writeback write" to "writethrough write"
-> * Fix deadlock for writethrough writes by calling fault_in_iov_iter_reada=
-ble()
-> * first
->   before __filemap_get_folio() (Josef)
-> * For readahead, retain original folio_size() for descs.length (Josef)
-> * Use folio_zero_range() api in fuse_copy_folio() (Josef)
-> * Add Josef's reviewed-bys
->=20
-> Joanne Koong (12):
->   fuse: support copying large folios
->   fuse: support large folios for retrieves
->   fuse: refactor fuse_fill_write_pages()
->   fuse: support large folios for writethrough writes
->   fuse: support large folios for folio reads
->   fuse: support large folios for symlinks
->   fuse: support large folios for stores
->   fuse: support large folios for queued writes
->   fuse: support large folios for readahead
->   fuse: optimize direct io large folios processing
->   fuse: support large folios for writeback
->   fuse: enable large folios
->=20
->  fs/fuse/dev.c  | 128 ++++++++++++++++++++++---------------------
->  fs/fuse/dir.c  |   8 +--
->  fs/fuse/file.c | 144 +++++++++++++++++++++++++++++++++----------------
->  3 files changed, 166 insertions(+), 114 deletions(-)
->=20
+On Thu, Dec 19, 2024 at 05:39:09PM +0000, Christoph Hellwig wrote:
+> Provide helpers for file systems to split bios in the direct I/O and
+> writeback I/O submission handlers.
+> 
+> This Follows btrfs' lead and don't try to build bios to hardware limits
+> for zone append commands, but instead build them as normal unconstrained
+> bios and split them to the hardware limits in the I/O submission handler.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
+I wonder what iomap_split_ioend callsites look like now that the
+alloc_len outparam from the previous version is gone, but I guess I'll
+have to wait to see that.
 
-Nice work, Joanne!
+> ---
+>  fs/iomap/Makefile      |  1 +
+>  fs/iomap/buffered-io.c | 49 ++++++++++++++----------
+>  fs/iomap/ioend.c       | 86 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/iomap.h  |  9 +++++
+>  4 files changed, 125 insertions(+), 20 deletions(-)
+>  create mode 100644 fs/iomap/ioend.c
+> 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index 381d76c5c232..69e8ebb41302 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -12,6 +12,7 @@ iomap-y				+= trace.o \
+>  				   iter.o
+>  iomap-$(CONFIG_BLOCK)		+= buffered-io.o \
+>  				   direct-io.o \
+> +				   ioend.o \
+>  				   fiemap.o \
+>  				   seek.o
+>  iomap-$(CONFIG_SWAP)		+= swapfile.o
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 8c18fb2a82e0..0b68c9584a7f 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -40,7 +40,8 @@ struct iomap_folio_state {
+>  	unsigned long		state[];
+>  };
+>  
+> -static struct bio_set iomap_ioend_bioset;
+> +struct bio_set iomap_ioend_bioset;
+> +EXPORT_SYMBOL_GPL(iomap_ioend_bioset);
+>  
+>  static inline bool ifs_is_fully_uptodate(struct folio *folio,
+>  		struct iomap_folio_state *ifs)
+> @@ -1539,15 +1540,15 @@ static void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
+>   * ioend after this.
+>   */
+>  static u32
+> -iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+> +iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
+>  {
+>  	struct inode *inode = ioend->io_inode;
+>  	struct bio *bio = &ioend->io_bio;
+>  	struct folio_iter fi;
+>  	u32 folio_count = 0;
+>  
+> -	if (error) {
+> -		mapping_set_error(inode->i_mapping, error);
+> +	if (ioend->io_error) {
+> +		mapping_set_error(inode->i_mapping, ioend->io_error);
+>  		if (!bio_flagged(bio, BIO_QUIET)) {
+>  			pr_err_ratelimited(
+>  "%s: writeback error on inode %lu, offset %lld, sector %llu",
+> @@ -1566,6 +1567,24 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+>  	return folio_count;
+>  }
+>  
+> +static u32
+> +iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+> +{
+> +	if (ioend->io_parent) {
+> +		struct bio *bio = &ioend->io_bio;
+> +
+> +		ioend = ioend->io_parent;
+> +		bio_put(bio);
+> +	}
+> +
+> +	if (error)
+> +		cmpxchg(&ioend->io_error, 0, error);
+> +
+> +	if (!atomic_dec_and_test(&ioend->io_remaining))
+> +		return 0;
+> +	return iomap_finish_ioend_buffered(ioend);
+> +}
+> +
+>  /*
+>   * Ioend completion routine for merged bios. This can only be called from task
+>   * contexts as merged ioends can be of unbound length. Hence we have to break up
+> @@ -1667,8 +1686,10 @@ EXPORT_SYMBOL_GPL(iomap_sort_ioends);
+>  
+>  static void iomap_writepage_end_bio(struct bio *bio)
+>  {
+> -	iomap_finish_ioend(iomap_ioend_from_bio(bio),
+> -			blk_status_to_errno(bio->bi_status));
+> +	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
+> +
+> +	ioend->io_error = blk_status_to_errno(bio->bi_status);
+> +	iomap_finish_ioend_buffered(ioend);
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Hmm.  This wasn't in the previous version of the patch.  But my guess is
+that anyone using the io_parent chaining has its own ->submit_ioend
+function and therefore set its own bi_end_io function?  IOWs, letting
+iomap submit the bio itself is not compatible with io_parent != NULL.
+
+If so, then you might want to note that in the declaration of io_parent
+in iomap.h; and with that,
+
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+>  }
+>  
+>  /*
+> @@ -1713,7 +1734,6 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+>  		struct writeback_control *wbc, struct inode *inode, loff_t pos,
+>  		u16 ioend_flags)
+>  {
+> -	struct iomap_ioend *ioend;
+>  	struct bio *bio;
+>  
+>  	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
+> @@ -1721,21 +1741,10 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+>  			       GFP_NOFS, &iomap_ioend_bioset);
+>  	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
+>  	bio->bi_end_io = iomap_writepage_end_bio;
+> -	wbc_init_bio(wbc, bio);
+>  	bio->bi_write_hint = inode->i_write_hint;
+> -
+> -	ioend = iomap_ioend_from_bio(bio);
+> -	INIT_LIST_HEAD(&ioend->io_list);
+> -	ioend->io_flags = ioend_flags;
+> -	if (pos > wpc->iomap.offset)
+> -		wpc->iomap.flags &= ~IOMAP_F_BOUNDARY;
+> -	ioend->io_inode = inode;
+> -	ioend->io_size = 0;
+> -	ioend->io_offset = pos;
+> -	ioend->io_sector = bio->bi_iter.bi_sector;
+> -
+> +	wbc_init_bio(wbc, bio);
+>  	wpc->nr_folios = 0;
+> -	return ioend;
+> +	return iomap_init_ioend(inode, bio, pos, ioend_flags);
+>  }
+>  
+>  static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
+> diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
+> new file mode 100644
+> index 000000000000..1b032323ee4e
+> --- /dev/null
+> +++ b/fs/iomap/ioend.c
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 Christoph Hellwig.
+> + */
+> +#include <linux/iomap.h>
+> +
+> +struct iomap_ioend *iomap_init_ioend(struct inode *inode,
+> +		struct bio *bio, loff_t file_offset, u16 ioend_flags)
+> +{
+> +	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
+> +
+> +	atomic_set(&ioend->io_remaining, 1);
+> +	ioend->io_error = 0;
+> +	ioend->io_parent = NULL;
+> +	INIT_LIST_HEAD(&ioend->io_list);
+> +	ioend->io_flags = ioend_flags;
+> +	ioend->io_inode = inode;
+> +	ioend->io_offset = file_offset;
+> +	ioend->io_size = bio->bi_iter.bi_size;
+> +	ioend->io_sector = bio->bi_iter.bi_sector;
+> +	return ioend;
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_init_ioend);
+> +
+> +/*
+> + * Split up to the first @max_len bytes from @ioend if the ioend covers more
+> + * than @max_len bytes.
+> + *
+> + * If @is_append is set, the split will be based on the hardware limits for
+> + * REQ_OP_ZONE_APPEND commands and can be less than @max_len if the hardware
+> + * limits don't allow the entire @max_len length.
+> + *
+> + * The bio embedded into @ioend must be a REQ_OP_WRITE because the block layer
+> + * does not allow splitting REQ_OP_ZONE_APPEND bios.  The file systems has to
+> + * switch the operation after this call, but before submitting the bio.
+> + */
+> +struct iomap_ioend *iomap_split_ioend(struct iomap_ioend *ioend,
+> +		unsigned int max_len, bool is_append)
+> +{
+> +	struct bio *bio = &ioend->io_bio;
+> +	struct iomap_ioend *split_ioend;
+> +	unsigned int nr_segs;
+> +	int sector_offset;
+> +	struct bio *split;
+> +
+> +	if (is_append) {
+> +		struct queue_limits *lim = bdev_limits(bio->bi_bdev);
+> +
+> +		max_len = min(max_len,
+> +			      lim->max_zone_append_sectors << SECTOR_SHIFT);
+> +
+> +		sector_offset = bio_split_rw_at(bio, lim, &nr_segs, max_len);
+> +		if (unlikely(sector_offset < 0))
+> +			return ERR_PTR(sector_offset);
+> +		if (!sector_offset)
+> +			return NULL;
+> +	} else {
+> +		if (bio->bi_iter.bi_size <= max_len)
+> +			return NULL;
+> +		sector_offset = max_len >> SECTOR_SHIFT;
+> +	}
+> +
+> +	/* ensure the split ioend is still block size aligned */
+> +	sector_offset = ALIGN_DOWN(sector_offset << SECTOR_SHIFT,
+> +			i_blocksize(ioend->io_inode)) >> SECTOR_SHIFT;
+> +
+> +	split = bio_split(bio, sector_offset, GFP_NOFS, &iomap_ioend_bioset);
+> +	if (IS_ERR_OR_NULL(split))
+> +		return ERR_CAST(split);
+> +	split->bi_private = bio->bi_private;
+> +	split->bi_end_io = bio->bi_end_io;
+> +
+> +	split_ioend = iomap_init_ioend(ioend->io_inode, split, ioend->io_offset,
+> +			ioend->io_flags);
+> +	split_ioend->io_parent = ioend;
+> +
+> +	atomic_inc(&ioend->io_remaining);
+> +	ioend->io_offset += split_ioend->io_size;
+> +	ioend->io_size -= split_ioend->io_size;
+> +
+> +	split_ioend->io_sector = ioend->io_sector;
+> +	if (!is_append)
+> +		ioend->io_sector += (split_ioend->io_size >> SECTOR_SHIFT);
+> +	return split_ioend;
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_split_ioend);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 36a7298b6cea..0d221fbe0eb3 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -358,6 +358,9 @@ struct iomap_ioend {
+>  	struct list_head	io_list;	/* next ioend in chain */
+>  	u16			io_flags;	/* IOMAP_IOEND_* */
+>  	struct inode		*io_inode;	/* file being written to */
+> +	atomic_t		io_remaining;	/* completetion defer count */
+> +	int			io_error;	/* stashed away status */
+> +	struct iomap_ioend	*io_parent;	/* parent for completions */
+>  	size_t			io_size;	/* size of the extent */
+>  	loff_t			io_offset;	/* offset in the file */
+>  	sector_t		io_sector;	/* start sector of ioend */
+> @@ -408,6 +411,10 @@ struct iomap_writepage_ctx {
+>  	u32			nr_folios;	/* folios added to the ioend */
+>  };
+>  
+> +struct iomap_ioend *iomap_init_ioend(struct inode *inode, struct bio *bio,
+> +		loff_t file_offset, u16 ioend_flags);
+> +struct iomap_ioend *iomap_split_ioend(struct iomap_ioend *ioend,
+> +		unsigned int max_len, bool is_append);
+>  void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
+>  void iomap_ioend_try_merge(struct iomap_ioend *ioend,
+>  		struct list_head *more_ioends);
+> @@ -479,4 +486,6 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
+>  # define iomap_swapfile_activate(sis, swapfile, pagespan, ops)	(-EIO)
+>  #endif /* CONFIG_SWAP */
+>  
+> +extern struct bio_set iomap_ioend_bioset;
+> +
+>  #endif /* LINUX_IOMAP_H */
+> -- 
+> 2.45.2
+> 
+> 
 
