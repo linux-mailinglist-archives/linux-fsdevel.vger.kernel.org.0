@@ -1,291 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-37795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FCA9F7C94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 14:46:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FE89F7CC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 15:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323791891365
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 13:46:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CC616DA6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 14:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0E71F2C4C;
-	Thu, 19 Dec 2024 13:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD82224AE3;
+	Thu, 19 Dec 2024 14:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jcy7curD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHfQApo7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF98A8BEE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 13:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE57224AEB;
+	Thu, 19 Dec 2024 14:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734615965; cv=none; b=plrDMCk+BLESIY3k+KaCAbdj5LrLhvxSf/cqDU3ScADoLF06qZvF/MYbmZIIwrnAL8pCdx6CxqX2T7voR+j+A71314POZdzk0aT5Bfmmlzo0t53ypCEAAsYKfle2pUMEEu2HQrQ6AoZLoRFnG636iDvpSoY8WzJfXBSjVDV5WMw=
+	t=1734617033; cv=none; b=DDvzOI7AFpec1aApfM0HlSOAcSqfEnzDU+QvqnEOxmUVND0LHqIbgsFYw/UaUwMvHzp4Q5OX5/N79/Coo96LRj8I6tvBxZZeeP8h7dGRUiyPAw1gWV1rGtTEBzYDJ+Nl6fltWKG44RBWTE0ly5ink6mrQj0U7JE7Lmq5acx6omA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734615965; c=relaxed/simple;
-	bh=ATswPCOjxrjIL/7+ZE0Lq10hG0AXXky49N5+NAMDiM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtu4YJT5falCl/sb85gAKKXRd+glBrs17KneZnW1ufQ4yMfFnIEYt83ZL81RSPyUVChG/NlGOieAl0ZibA1ymnrBs5z9/lpcGroO6OUl0dGc8gmrnw0EQvBsJ9pCmMNipbAVREXSlk/T8HO1stFxXkOXUdr2Rl4acV8bhO0uFUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jcy7curD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95026C4CED0;
-	Thu, 19 Dec 2024 13:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734615964;
-	bh=ATswPCOjxrjIL/7+ZE0Lq10hG0AXXky49N5+NAMDiM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jcy7curDYDCL+FCd5VC3Sgw0skLfiIPCHnrtkjP5zeRsmcjL2+Qfj8N80/msgheWT
-	 kO30XeQ/RVhqsRjUgGvm1msUbVlRuKCJPZfp/AEQqXxYXtahelkdvqopzwzmfzPYn/
-	 F2hY1nGBP1+nlxlJ29svxo7n2Al9EevzBNiXzIJTrMXSObYSahzBubiKJCdSew1q4p
-	 prSXTGOUZfDhQEjJA0PXsk0+bMMDFHh5KNYDYIMY0PjLColozgN3u/VwGxIZv4mgID
-	 lnW4OYfqgXf+m23cNrsMgWtK2qSPo1gN+4dXMPdq0hBXfgu6X8qtu8rvykVZGgMt5Y
-	 6+wg5bpXq7s7Q==
-Date: Thu, 19 Dec 2024 14:45:59 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Ziljstra <peterz@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, yi1.lai@intel.com
-Subject: Re: [PATCH v3 03/10] fs: lockless mntns rbtree lookup
-Message-ID: <20241219-kasten-sonst-b3d92ae618fe@brauner>
-References: <20241213-work-mount-rbtree-lockless-v3-0-6e3cdaf9b280@kernel.org>
- <20241213-work-mount-rbtree-lockless-v3-3-6e3cdaf9b280@kernel.org>
- <Z2PlT5rcRTIhCpft@ly-workstation>
+	s=arc-20240116; t=1734617033; c=relaxed/simple;
+	bh=SvmUuyQyFr4uGst4abikBEocTmIlPcqLVco6Jv0dXjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LjRUSshQ9TGB/ewmnfpEL4FIgxNqfUOS0CTYXJE49SnzMbtUkSvzqzcfaXDfw0pmJCOnGiKKxeBItvYlOAA10SB9npMQGOnTBkhpISBxtD2FQ95W/vBKOPdAcuv4Gt19wlaHJnyFzz92Fl11yqKXO9SgNmel3oxmdMbWY4mZISs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHfQApo7; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d0ac27b412so1020174a12.1;
+        Thu, 19 Dec 2024 06:03:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734617030; x=1735221830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3oDR4celxliNyZRpM72Sc5yWpWAlWHmW2d+ic9H91NA=;
+        b=JHfQApo7mwVGPIPSVsj8sHkaJb65/DymuHkXvWKx1TH9M5fquX+gKz0ngsW2Vzh5YH
+         W0KPnRmxjjqxRIWn71NdfvVxOSNWmKQitqXuuAqwOR6aT1zSoyJcHMkXB6juuOPOTc2Z
+         iQmGZEQ6BVDnpjN8LJ6zUMH90ulKFZdtUULDVLNozd1rfx6+KDbZbF8ER7V+dK9U0wuy
+         1y5v5fiQa2zUSjeT+sto7eXTqaZlmIwMwyY5yQopIhUfAVv5zTmYZwLlazD0amIZnxlv
+         ecaJS+8jEwKGX58TYvToIvghIiNeIADoJpjSzqYIt3tyYG+4VuykTzC1ve2MfHk/jSO/
+         /DdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734617030; x=1735221830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3oDR4celxliNyZRpM72Sc5yWpWAlWHmW2d+ic9H91NA=;
+        b=fpAAw9QBx8+Db/JhBdplq3zhIYMDcn+Q6GunqxJd/+IiFoMobuZdZpzdcoo5DGlWe4
+         siurVJGhArJazIaEHWvn1X0OR+zy96X3VFZN08QwmezmMN6ptEJT+dKzk5ovzdMydsYk
+         TVwbmugDQtP9uDYxliLOrLZ929XM9Gq2yu5qJzoChgOvTCP62o7b/cG5qVSNVP8ipq1W
+         28Fm36Appf8v5CIfIBS3cafb+L5A6vIVZGFi8uVgg0wax2ZJOZbyN1EVZfn5mvmkgJgl
+         thMU34rcR6bILHbv8AWNQ4Bv9vQOPwXGiFb//5S5qKL2U1raUmzS6qFubh3c4YfEqhjk
+         1s0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUuO/9zVwZKuPFs7Y7s3rqmQLt9jPgmAINZUSiMuYi055vpLofS90yFOHLdzq2ibj3IsrLMMM9YpPADJxM2@vger.kernel.org, AJvYcCV5x+FbZM53Jhpkus1zDKKM/QqMZFmnWVgY5H+zrpqV1wlnKuLNmnXS5532RaF8RGdh1jfCq0fUgxIZI2pyvQ==@vger.kernel.org, AJvYcCWdMVLRRYf39Mv6RcPi65kPAfeR8gVoOe4itvDjyO3wN2deJfkPh0d6VvN6eRvKuJyxGckaP3v7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJzUxCvl28ICZMKodSRxFSRmSDXBK33HW5ncRsLvFbZkaeS3dP
+	O+o2osnjd2Gg7OnDSoLCd+mUfUiDivVC71MwVfyqvYYLjXTPfw/9afqen599Lpl7b01uXSFGzF0
+	jnt0k7WSD2T+10NQf+CqsoNGNibM=
+X-Gm-Gg: ASbGncudnneDXFVd9HFXuKJpJI1g4bqrkeqivNHnXLYnqLF6FPEJOtvwSlmgldQaPIK
+	GqJpg7SXAjUeBuE7dJkrDv56RDcm1f+IbPo2mCQ==
+X-Google-Smtp-Source: AGHT+IHnoeVrZy/udZ8RnupvBrpsTluJuRxJva4kaqcCtTaKZXJAqiRK0gCohu/wLYrsH0KeXzdMg67Iu98wUdgKBPA=
+X-Received: by 2002:a05:6402:3514:b0:5d0:e877:7664 with SMTP id
+ 4fb4d7f45d1cf-5d7ee3e0924mr6043649a12.19.1734617027832; Thu, 19 Dec 2024
+ 06:03:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z2PlT5rcRTIhCpft@ly-workstation>
+References: <20241219115301.465396-1-amir73il@gmail.com>
+In-Reply-To: <20241219115301.465396-1-amir73il@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 19 Dec 2024 15:03:36 +0100
+Message-ID: <CAOQ4uxg2Lx9bKmkou7jGeOr4JfSXYj6CB48bP=SSUYQr+DR7mg@mail.gmail.com>
+Subject: Re: [PATCH] fs: relax assertions on failure to encode file handles
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, Edward Adam Davis <eadavis@qq.com>, 
+	Dmitry Safonov <dima@arista.com>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, 
+	syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 19, 2024 at 05:20:15PM +0800, Lai, Yi wrote:
-> On Fri, Dec 13, 2024 at 12:03:42AM +0100, Christian Brauner wrote:
-> > Currently we use a read-write lock but for the simple search case we can
-> > make this lockless. Creating a new mount namespace is a rather rare
-> > event compared with querying mounts in a foreign mount namespace. Once
-> > this is picked up by e.g., systemd to list mounts in another mount in
-> > it's isolated services or in containers this will be used a lot so this
-> > seems worthwhile doing.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/mount.h     |   5 ++-
-> >  fs/namespace.c | 119 +++++++++++++++++++++++++++++++++++----------------------
-> >  2 files changed, 77 insertions(+), 47 deletions(-)
-> > 
-> > diff --git a/fs/mount.h b/fs/mount.h
-> > index 185fc56afc13338f8185fe818051444d540cbd5b..36ead0e45e8aa7614c00001102563a711d9dae6e 100644
-> > --- a/fs/mount.h
-> > +++ b/fs/mount.h
-> > @@ -12,7 +12,10 @@ struct mnt_namespace {
-> >  	struct user_namespace	*user_ns;
-> >  	struct ucounts		*ucounts;
-> >  	u64			seq;	/* Sequence number to prevent loops */
-> > -	wait_queue_head_t poll;
-> > +	union {
-> > +		wait_queue_head_t	poll;
-> > +		struct rcu_head		mnt_ns_rcu;
-> > +	};
-> >  	u64 event;
-> >  	unsigned int		nr_mounts; /* # of mounts in the namespace */
-> >  	unsigned int		pending_mounts;
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 10fa18dd66018fadfdc9d18c59a851eed7bd55ad..52adee787eb1b6ee8831705b2b121854c3370fb3 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -79,6 +79,8 @@ static DECLARE_RWSEM(namespace_sem);
-> >  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> >  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> >  static DEFINE_RWLOCK(mnt_ns_tree_lock);
-> > +static seqcount_rwlock_t mnt_ns_tree_seqcount = SEQCNT_RWLOCK_ZERO(mnt_ns_tree_seqcount, &mnt_ns_tree_lock);
-> > +
-> >  static struct rb_root mnt_ns_tree = RB_ROOT; /* protected by mnt_ns_tree_lock */
-> >  
-> >  struct mount_kattr {
-> > @@ -105,17 +107,6 @@ EXPORT_SYMBOL_GPL(fs_kobj);
-> >   */
-> >  __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
-> >  
-> > -static int mnt_ns_cmp(u64 seq, const struct mnt_namespace *ns)
-> > -{
-> > -	u64 seq_b = ns->seq;
-> > -
-> > -	if (seq < seq_b)
-> > -		return -1;
-> > -	if (seq > seq_b)
-> > -		return 1;
-> > -	return 0;
-> > -}
-> > -
-> >  static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
-> >  {
-> >  	if (!node)
-> > @@ -123,19 +114,41 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
-> >  	return rb_entry(node, struct mnt_namespace, mnt_ns_tree_node);
-> >  }
-> >  
-> > -static bool mnt_ns_less(struct rb_node *a, const struct rb_node *b)
-> > +static int mnt_ns_cmp(struct rb_node *a, const struct rb_node *b)
-> >  {
-> >  	struct mnt_namespace *ns_a = node_to_mnt_ns(a);
-> >  	struct mnt_namespace *ns_b = node_to_mnt_ns(b);
-> >  	u64 seq_a = ns_a->seq;
-> > +	u64 seq_b = ns_b->seq;
-> > +
-> > +	if (seq_a < seq_b)
-> > +		return -1;
-> > +	if (seq_a > seq_b)
-> > +		return 1;
-> > +	return 0;
-> > +}
-> >  
-> > -	return mnt_ns_cmp(seq_a, ns_b) < 0;
-> > +static inline void mnt_ns_tree_write_lock(void)
-> > +{
-> > +	write_lock(&mnt_ns_tree_lock);
-> > +	write_seqcount_begin(&mnt_ns_tree_seqcount);
-> > +}
-> > +
-> > +static inline void mnt_ns_tree_write_unlock(void)
-> > +{
-> > +	write_seqcount_end(&mnt_ns_tree_seqcount);
-> > +	write_unlock(&mnt_ns_tree_lock);
-> >  }
-> >  
-> >  static void mnt_ns_tree_add(struct mnt_namespace *ns)
-> >  {
-> > -	guard(write_lock)(&mnt_ns_tree_lock);
-> > -	rb_add(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_less);
-> > +	struct rb_node *node;
-> > +
-> > +	mnt_ns_tree_write_lock();
-> > +	node = rb_find_add_rcu(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_cmp);
-> > +	mnt_ns_tree_write_unlock();
-> > +
-> > +	WARN_ON_ONCE(node);
-> >  }
-> >  
-> >  static void mnt_ns_release(struct mnt_namespace *ns)
-> > @@ -150,41 +163,36 @@ static void mnt_ns_release(struct mnt_namespace *ns)
-> >  }
-> >  DEFINE_FREE(mnt_ns_release, struct mnt_namespace *, if (_T) mnt_ns_release(_T))
-> >  
-> > +static void mnt_ns_release_rcu(struct rcu_head *rcu)
-> > +{
-> > +	struct mnt_namespace *mnt_ns;
-> > +
-> > +	mnt_ns = container_of(rcu, struct mnt_namespace, mnt_ns_rcu);
-> > +	mnt_ns_release(mnt_ns);
-> > +}
-> > +
-> >  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
-> >  {
-> >  	/* remove from global mount namespace list */
-> >  	if (!is_anon_ns(ns)) {
-> > -		guard(write_lock)(&mnt_ns_tree_lock);
-> > +		mnt_ns_tree_write_lock();
-> >  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
-> > +		mnt_ns_tree_write_unlock();
-> >  	}
-> >  
-> > -	mnt_ns_release(ns);
-> > +	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
-> >  }
-> >  
-> > -/*
-> > - * Returns the mount namespace which either has the specified id, or has the
-> > - * next smallest id afer the specified one.
-> > - */
-> > -static struct mnt_namespace *mnt_ns_find_id_at(u64 mnt_ns_id)
-> > +static int mnt_ns_find(const void *key, const struct rb_node *node)
-> >  {
-> > -	struct rb_node *node = mnt_ns_tree.rb_node;
-> > -	struct mnt_namespace *ret = NULL;
-> > -
-> > -	lockdep_assert_held(&mnt_ns_tree_lock);
-> > -
-> > -	while (node) {
-> > -		struct mnt_namespace *n = node_to_mnt_ns(node);
-> > +	const u64 mnt_ns_id = *(u64 *)key;
-> > +	const struct mnt_namespace *ns = node_to_mnt_ns(node);
-> >  
-> > -		if (mnt_ns_id <= n->seq) {
-> > -			ret = node_to_mnt_ns(node);
-> > -			if (mnt_ns_id == n->seq)
-> > -				break;
-> > -			node = node->rb_left;
-> > -		} else {
-> > -			node = node->rb_right;
-> > -		}
-> > -	}
-> > -	return ret;
-> > +	if (mnt_ns_id < ns->seq)
-> > +		return -1;
-> > +	if (mnt_ns_id > ns->seq)
-> > +		return 1;
-> > +	return 0;
-> >  }
-> >  
-> >  /*
-> > @@ -194,18 +202,37 @@ static struct mnt_namespace *mnt_ns_find_id_at(u64 mnt_ns_id)
-> >   * namespace the @namespace_sem must first be acquired. If the namespace has
-> >   * already shut down before acquiring @namespace_sem, {list,stat}mount() will
-> >   * see that the mount rbtree of the namespace is empty.
-> > + *
-> > + * Note the lookup is lockless protected by a sequence counter. We only
-> > + * need to guard against false negatives as false positives aren't
-> > + * possible. So if we didn't find a mount namespace and the sequence
-> > + * counter has changed we need to retry. If the sequence counter is
-> > + * still the same we know the search actually failed.
-> >   */
-> >  static struct mnt_namespace *lookup_mnt_ns(u64 mnt_ns_id)
-> >  {
-> > -       struct mnt_namespace *ns;
-> > +	struct mnt_namespace *ns;
-> > +	struct rb_node *node;
-> > +	unsigned int seq;
-> > +
-> > +	guard(rcu)();
-> > +	do {
-> > +		seq = read_seqcount_begin(&mnt_ns_tree_seqcount);
-> > +		node = rb_find_rcu(&mnt_ns_id, &mnt_ns_tree, mnt_ns_find);
-> > +		if (node)
-> > +			break;
-> > +	} while (read_seqcount_retry(&mnt_ns_tree_seqcount, seq));
-> >  
-> > -       guard(read_lock)(&mnt_ns_tree_lock);
-> > -       ns = mnt_ns_find_id_at(mnt_ns_id);
-> > -       if (!ns || ns->seq != mnt_ns_id)
-> > -               return NULL;
-> > +	if (!node)
-> > +		return NULL;
-> >  
-> > -       refcount_inc(&ns->passive);
-> > -       return ns;
-> > +	/*
-> > +	 * The last reference count is put with RCU delay so we can
-> > +	 * unconditonally acquire a reference here.
-> > +	 */
-> > +	ns = node_to_mnt_ns(node);
-> > +	refcount_inc(&ns->passive);
-> > +	return ns;
-> >  }
-> >  
-> >  static inline void lock_mount_hash(void)
-> > 
-> > -- 
-> > 2.45.2
-> >
-> 
-> Hi Christian Brauner ,
-> 
-> Greetings!
-> 
-> I used Syzkaller and found that there is WARNING in mnt_ns_release in linux v6.13-rc3.
+On Thu, Dec 19, 2024 at 12:53=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> Encoding file handles is usually performed by a filesystem >encode_fh()
+> method that may fail for various reasons.
+>
+> The legacy users of exportfs_encode_fh(), namely, nfsd and
+> name_to_handle_at(2) syscall are ready to cope with the possibility
+> of failure to encode a file handle.
+>
+> There are a few other users of exportfs_encode_{fh,fid}() that
+> currently have a WARN_ON() assertion when ->encode_fh() fails.
+> Relax those assertions because they are wrong.
+>
+> The second linked bug report states commit 16aac5ad1fa9 ("ovl: support
+> encoding non-decodable file handles") in v6.6 as the regressing commit,
+> but this is not accurate.
+>
+> The aforementioned commit only increases the chances of the assertion
+> and allows triggering the assertion with the reproducer using overlayfs,
+> inotify and drop_caches.
+>
+> Triggering this assertion was always possible with other filesystems and
+> other reasons of ->encode_fh() failures and more particularly, it was
+> also possible with the exact same reproducer using overlayfs that is
+> mounted with options index=3Don,nfs_export=3Don also on kernels < v6.6.
+> Therefore, I am not listing the aforementioned commit as a Fixes commit.
+>
+> Backport hint: this patch will have a trivial conflict applying to
+> v6.6.y, and other trivial conflicts applying to stable kernels < v6.6.
+>
+> Reported-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+> Tested-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-unionfs/671fd40c.050a0220.4735a.024=
+f.GAE@google.com/
+> Reported-by: Dmitry Safonov <dima@arista.com>
+> Closes: https://lore.kernel.org/linux-fsdevel/CAGrbwDTLt6drB9eaUagnQVgdPB=
+mhLfqqxAf3F+Juqy_o6oP8uw@mail.gmail.com/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Christian,
+>
+> I could have sumbitted two independant patches to relax the assertion
+> in fsnotify and overlayfs via fsnotify and overlayfs trees, but the
+> nature of the problem is the same and in both cases, the problem became
+> worse with the introduction of non-decodable file handles support,
+> so decided to fix them together and ask you to take the fix via the
+> vfs tree.
+>
+> Please let you if you think it should be done differently.
 
-Right, the lockdep assertion is wrong and needs to be dropped.
+FWIW, pushed two separate patches to branch fsnotify-fixes
+on my github.
+
+I guess it is nicer this way and will help automatic backporting.
+
+Thanks,
+Amir.
+
+>
+> Thanks,
+> Amir.
+>
+>  fs/notify/fdinfo.c     | 4 +---
+>  fs/overlayfs/copy_up.c | 5 ++---
+>  2 files changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index dec553034027e..e933f9c65d904 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -47,10 +47,8 @@ static void show_mark_fhandle(struct seq_file *m, stru=
+ct inode *inode)
+>         size =3D f->handle_bytes >> 2;
+>
+>         ret =3D exportfs_encode_fid(inode, (struct fid *)f->f_handle, &si=
+ze);
+> -       if ((ret =3D=3D FILEID_INVALID) || (ret < 0)) {
+> -               WARN_ONCE(1, "Can't encode file handler for inotify: %d\n=
+", ret);
+> +       if ((ret =3D=3D FILEID_INVALID) || (ret < 0))
+>                 return;
+> -       }
+>
+>         f->handle_type =3D ret;
+>         f->handle_bytes =3D size * sizeof(u32);
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index 3601ddfeddc2e..56eee9f23ea9a 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -442,9 +442,8 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs,=
+ struct dentry *real,
+>         buflen =3D (dwords << 2);
+>
+>         err =3D -EIO;
+> -       if (WARN_ON(fh_type < 0) ||
+> -           WARN_ON(buflen > MAX_HANDLE_SZ) ||
+> -           WARN_ON(fh_type =3D=3D FILEID_INVALID))
+> +       if (fh_type < 0 || fh_type =3D=3D FILEID_INVALID ||
+> +           WARN_ON(buflen > MAX_HANDLE_SZ))
+>                 goto out_err;
+>
+>         fh->fb.version =3D OVL_FH_VERSION;
+> --
+> 2.34.1
+>
 
