@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-37883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F75C9F87EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 23:34:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7185B9F881C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 23:52:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5A6D7A1749
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 22:34:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1F5164E80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 22:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2CD1DC9B4;
-	Thu, 19 Dec 2024 22:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761441D86C3;
+	Thu, 19 Dec 2024 22:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezl8Pcbi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGPRVuX4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2381886337;
-	Thu, 19 Dec 2024 22:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D92C2AE96;
+	Thu, 19 Dec 2024 22:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734647654; cv=none; b=F+3raC34N2o1jLxPZ40HM/i5gDQZGYnvIC7cwQ2fRkzNwbtstNJOUUpjSX/w3QOXD2BgwZ7XAcKT2lTO4P7UTiOkdHMaH4cfH/RWEJJozYpoJpPEBPE8pgcjV3vN7NgNQStReLXFihjPxiAHEW+PPnq9dxyL0WgUwO40xu3QW08=
+	t=1734648732; cv=none; b=Vggzzv2d0j4RKX6ZLO01b0M4BVj7KcjDaic6ZqXLY51EUGDsppNWGlHWnWII4pLwiMpfkLQ8qfSEj0iialvPGigPTao07nVxojEvtMo6WrE/BirP9DFfSDXPP1UQ26rH8lyOyEQvMLdCZA3dO+1mx5O8IZstw05NKpTzdAgSMDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734647654; c=relaxed/simple;
-	bh=qxS55oO27rKPnOfhteHz+D3RnOslvXFFsJ2ttK8g0rI=;
+	s=arc-20240116; t=1734648732; c=relaxed/simple;
+	bh=15i2Yf3WvNbPYR2CeeyGmn0NLChz4hZ9/foJ9BNFIPs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MSPrSqCHX4m1PsKs3lqb7rBZelE9KAb6pHWI7w5VYyeqnleCesXnQnNq/4TnlG2yJAOrb+EIx72vxF/fEQCWFUZUXGAa4KFHd+s/bHpzvaCuEMNXEChRQG8aC2n3bblghj2Ju9Q+XnTn4moojMRnTyw+c7SUYhaqecoDj3TIVMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezl8Pcbi; arc=none smtp.client-ip=209.85.160.182
+	 To:Cc:Content-Type; b=Ppc3OthRJwwdZiTqjnDPOyHMkZ6lOGZcPKy2ixEUOQEvhzw5VSLrJe5Gv1XVVt6Qobt+gcUCGWnNYq5tLKwaaBbpjg+hzIw1CsM1IR+QzrEuYPOtvz4aQAnoc1N9tEjVy+2PCi+unDT5TZ2AY8x1rF6yRC5amAFGfQxZp8mwf0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGPRVuX4; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-467a37a2a53so14560151cf.2;
-        Thu, 19 Dec 2024 14:34:12 -0800 (PST)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d8f65ef5abso10580276d6.3;
+        Thu, 19 Dec 2024 14:52:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734647652; x=1735252452; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734648730; x=1735253530; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u9XI++Qd5/FsAHM/VtpJpu0/P901WHIBleQv+lOHczw=;
-        b=ezl8PcbietyAWfNtsegQX1/c/QO+M1Sl90NnLS4+g1BMhI4bFenSS/kzPwvxFbKt1i
-         vH6epLT4ELdUz+VkSuEsPvipTS2Za6pmjSBN8qka9fbfp2YzuIrB+iJMdtJ/7qbQumv2
-         cY7Vpu9N77rE75k6mL/a9DEAF/LuPS4MdhoSECs8far+0XiqgklOqd9/GjvqHzNdgjNz
-         Lcja2fbwBvcCASaorocX3UYwnQjDkdJeNttRJTgBDQT72qveloVrgzcfjOjvtCIFUBJ8
-         CoZeJn/qPiGBhfHR4bNrW8dB8q4h9AbXKq/NESlkdC74QLtJHPsOFovRO/+xXRWNIK7t
-         albA==
+        bh=Cp/htC487sqv/1tkg8tsXKWi7Ae2CyTqYDyO16YYE1A=;
+        b=XGPRVuX4lrhypKlP4KxFxUccKk9ILf6eYeOfq9D4GWle6esddY6PMYI1xF5JyAfDji
+         Wk3bP3QY0j7uyqZV+aDEwyIuNrIsWzKHcBjplUPz09aSMKtbHSO3b+DHQ2TGFbv8HXRK
+         eSbrY1re3V0QFG0MXkZPp2jnmpVDPPfIOfAizuifMbDWAQbGNp0HcNdxhVYqvVcpOuzS
+         PMihCIxf0RxEadIvfZMSfHQI+PGfkvicGmabDRgPnyc5sDqLMBQ+Fm/BHcVkcIY8M4ir
+         s54PZMkZ2CZkcNUGBNUJF2CBGwmzpUv7EXSWZDbYGNPCgPg0+IArCqWsh4CnyL+4PiRr
+         lWVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734647652; x=1735252452;
+        d=1e100.net; s=20230601; t=1734648730; x=1735253530;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u9XI++Qd5/FsAHM/VtpJpu0/P901WHIBleQv+lOHczw=;
-        b=qO6rHCtQTLPQiVnwOrOl9owNSSuCOIDfVSMCJawFu8RE6wqPqdPnvU/xLSSM5B7M/o
-         3QvXtHxEx0+vKHHIr6m9qkI+0+2TXQ5rqae5IgM6SJuLAy6hYSz1dvYEhmzF3a6vkFN1
-         A5xORne7O68xDkNn/Lgaotz3GoySabRJyEHAczzLj0JFOXcgRTG4yIbI8EjVZMMRW2Gb
-         gTfFzi8LLPBOmCxDsPYGJPEsWpx71/H3vLVLmfcek+ZDUDmI4/U1A/YM99SmyuYTlSQc
-         FZg01HIubf13Ma3PNlkHbTKR9lnUYLWPxHzcda0EqVU5yE7BIaDj08n4V12P2jLbmlnz
-         qyOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+kUx8UgFeKJrxIgab4HNUUmrStt42QrPf1bPp3DAexFoAKU6UVxYLuHSug2KnPYYA+9NzT17qtp/oi638@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJGqbO9Ao5oDfOy7DqPIO8oBkSQlOjT0kZet3xC1ibKBezENMm
-	9z9HLLAUAkNR8VDhUTgcysMdZFXlK04Q77Zj4mdPokI1H5+ikFB/a8X+U9HidrPJINv6FgLz3JW
-	FTRHNFRy3jypqmXwIGbidZUMZ1+Uzgfdl
-X-Gm-Gg: ASbGncvo3dV1KTMuUpH1KPbWdzG0o5LZqZXZdPT10XS4TbS2R1g7RT/esmVOYPPypM+
-	YcEOsyVKP/68t1FTLIHfj306RXRHbGXaZQvyICj4=
-X-Google-Smtp-Source: AGHT+IGSdjSYG7wHcVlBNdexoUiQoZFJy3ZtW/5Rw28kqOxa6PVg/sQswm2nnrAWy25p3I/dBwh/C9SYbkWqdpcMW40=
-X-Received: by 2002:a05:622a:1a29:b0:467:6cce:44ba with SMTP id
- d75a77b69052e-46a4a976beemr12161851cf.43.1734647651953; Thu, 19 Dec 2024
- 14:34:11 -0800 (PST)
+        bh=Cp/htC487sqv/1tkg8tsXKWi7Ae2CyTqYDyO16YYE1A=;
+        b=gZfr6s9vzq0CDI82zuYcJfugzLarhKEWTKiN2rg3IM2x4CY5Zk52zkzXE7BaIr7v6i
+         ukhnA5I8VYyrciXF6EkYIrFe6RnsHzspeLLydbRAPqcfSs1mxJx++5Mk5YEf3E7EUDNm
+         XY2myu1EBGuAyCd6+GhZJKyn1J5pNAaztQEeoXRLSPydjhd0vre2nBW6dwHu1n0C1Vt7
+         FzxmoAwCjhtkDcb3GJprxo9WnGQcQ3hgAR1JSEGLeFDzUKIiVnvnlp3n3MXMCamF2W0Y
+         ZML7oVYvxFf7w0FxYyIOczb94pbPmjhtCNb/TXMIefSAEik3uG4DLVerucHr/AvcHU4K
+         hYiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXr4+WhzEgwomp2ithjRCFN5oAG2ss9bz5m22hkijn4Fav86k0+tx7qoPJrHg1L9eIsuouKMCb4x3fqStsQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOpttvFhn79RbY1YBHcfLY38N1BNf5/jq4DHNf1WQ2difXnBV+
+	Y9gO9N02vR5aBtqGedAHQthgHaD+2Vh5hY2JDqHrNlNFhh0lAu9ArEhRt6DcRmi0q2Au+OiPvj/
+	MCQ9Xpdw/1OW7EDlqyRfS0D7smDI=
+X-Gm-Gg: ASbGnctS3RvjI35ragoyxhrAuG87WWldBa/HKrq63ws+YDW0pBvC8CVqbXvyXqAbrw8
+	AQsEU55OE0Txlw5LNYVtaAfCw77rufetmkkJRWrM=
+X-Google-Smtp-Source: AGHT+IGRMz0brz8SSQVM3I7RiL1V4Hu6DujwJaSEOEsezJqEbpFkLoGqHvvlt1OimPK5lskPxEUvsxX2gj6bIjfYbnI=
+X-Received: by 2002:a05:6214:449f:b0:6d8:7a7d:1e6b with SMTP id
+ 6a1803df08f44-6dd2331efc0mr14342636d6.10.1734648730161; Thu, 19 Dec 2024
+ 14:52:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,20 +74,20 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241218210122.3809198-1-joannelkoong@gmail.com>
- <20241218210122.3809198-2-joannelkoong@gmail.com> <Z2QtyaryQtBZZw7q@bfoster>
-In-Reply-To: <Z2QtyaryQtBZZw7q@bfoster>
+ <20241218210122.3809198-2-joannelkoong@gmail.com> <20241219175106.GG6160@frogsfrogsfrogs>
+In-Reply-To: <20241219175106.GG6160@frogsfrogsfrogs>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 19 Dec 2024 14:34:01 -0800
-Message-ID: <CAJnrk1ZfvyrP=8qKyHFzVte_G1q85bVtmKb4KRwJCe_cYHBmxg@mail.gmail.com>
+Date: Thu, 19 Dec 2024 14:51:59 -0800
+Message-ID: <CAJnrk1avghdbecZO_fNJjQ3m_1zw=6zsHY8+R0xx7cb2qGNiNQ@mail.gmail.com>
 Subject: Re: [PATCH 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 19, 2024 at 6:27=E2=80=AFAM Brian Foster <bfoster@redhat.com> w=
-rote:
+On Thu, Dec 19, 2024 at 9:51=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
 >
 > On Wed, Dec 18, 2024 at 01:01:21PM -0800, Joanne Koong wrote:
 > > Add support for reads/writes from buffers backed by hugepages.
@@ -97,22 +97,6 @@ d
 > >
 > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > > ---
->
-> Firstly, thanks for taking the time to add this. This seems like a nice
-> idea. It might be nice to have an extra sentence or two in the commit
-> log on the purpose/motivation. For example, has this been used to detect
-> a certain class of problem?
-
-Hi Brian,
-
-Thanks for reviewing this. That's a good idea - I'll include the
-sentence from the cover letter to this commit message as well: "This
-is motivated by a recent bug that was due to faulty handling for
-userspace buffers backed by hugepages."
-
->
-> A few other quick comments below...
->
 > >  ltp/fsx.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++++-----
 > >  1 file changed, 92 insertions(+), 8 deletions(-)
 > >
@@ -120,39 +104,31 @@ userspace buffers backed by hugepages."
 > > index 41933354..3656fd9f 100644
 > > --- a/ltp/fsx.c
 > > +++ b/ltp/fsx.c
-> > @@ -190,6 +190,7 @@ int       o_direct;                       /* -Z */
-> >  int  aio =3D 0;
-> > +}
 > > +
-> > +static void *
-> > +init_hugepages_buf(unsigned len, long hugepage_size)
-> > +{
-> > +     void *buf;
-> > +     long buf_size =3D roundup(len, hugepage_size);
-> > +
-> > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
-> > +             prterr("posix_memalign for buf");
-> > +             return NULL;
-> > +     }
-> > +     memset(buf, '\0', len);
->
-> I'm assuming it doesn't matter, but did you want to use buf_size here to
-> clear the whole buffer?
-
-I only saw buf being used up to len in the rest of the code so I
-didn't think it was necessary, but I also don't feel strongly about
-this and am happy to change this to clear the entire buffer if
-preferred.
-
->
-> > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
-> > +             prterr("madvise collapse for buf");
-> > +             free(buf);
-> > +             return NULL;
-> > +     }
-> > +
-> > +     return buf;
-> > +}
+> >  static struct option longopts[] =3D {
+> >       {"replay-ops", required_argument, 0, 256},
+> >       {"record-ops", optional_argument, 0, 255},
+> > @@ -2883,7 +2935,7 @@ main(int argc, char **argv)
+> >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> >
+> >       while ((ch =3D getopt_long(argc, argv,
+> > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyAB=
+D:EFJKHzCILN:OP:RS:UWXZ",
+> > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyA=
+BD:EFJKHzCILN:OP:RS:UWXZ",
+> >                                longopts, NULL)) !=3D EOF)
+> >               switch (ch) {
+> >               case 'b':
+> > @@ -2916,6 +2968,9 @@ main(int argc, char **argv)
+> >               case 'g':
+> >                       filldata =3D *optarg;
+> >                       break;
+> > +             case 'h':
+> > +                     hugepages =3D 1;
+> > +                     break;
+> >               case 'i':
+> >                       integrity =3D 1;
+> >                       logdev =3D strdup(optarg);
 > > @@ -3232,12 +3287,41 @@ main(int argc, char **argv)
 > >       original_buf =3D (char *) malloc(maxfilelen);
 > >       for (i =3D 0; i < maxfilelen; i++)
@@ -180,49 +156,30 @@ d)");
 > > +                     prt("ignoring read alignment (since -h is enabled=
 )");
 >
-> I'm a little unclear on what these warnings mean. The alignments are
-> still used in the read/write paths afaics. The non-huge mode seems to
-> only really care about the max size of the buffers in this code.
->
-> If your test doesn't actually use read/write alignments and the goal is
-> just to keep things simple, perhaps it would be cleaner to add something
-> like an if (hugepages && (writebdy !=3D 1 || readbdy !=3D 1)) check after
-> option processing and exit out as an unsupported combination..?
+> What if readbdy is a multiple of the hugepage size?
 
-My understanding of the 'writebdy' and 'readbdy' options are that
-they're for making reads/writes aligned to the passed-in value, which
-depends on the starting address of the buffer being aligned to that
-value as well. However for hugepages buffers, they must be aligned to
-the system hugepage size (eg 2 MiB) or the madvise(... MADV_COLLAPSE)
-call will fail. As such, it is not guaranteed that the requested
-alignment will actually be abided by. For that reason, I thought it'd
-be useful to print this out to the user so they know requested
-alignments will be ignored, but it didn't seem severe enough of an
-issue to error out and exit altogether. But maybe it'd be less
-confusing for the user if this instead does just error out if the
-alignment isn't a multiple of the hugepage size.
+Good point, the user could potentially request an alignment that's a
+multiple. I'll account for this in v2.
 
 >
-> BTW, it might also be nice to factor out this whole section of buffer
-> initialization code (including original_buf) into an init_buffers() or
-> some such. That could be done as a prep patch, but just a suggestion
-> either way.
-
-Good idea - i'll do this refactoring for v2.
-
-
-Thanks,
-Joanne
->
-> Brian
->
-> > +
 > > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
 );
 > > +             if (!good_buf) {
 > > +                     prterr("init_hugepages_buf failed for good_buf");
 > > +                     exit(100);
 > > +             }
+>
+> Why is it necessary for the good_buf to be backed by a hugepage?
+> I thought good_buf was only used to compare file contents?
+
+good_buf is used too as the source buffer for the write in dowrite().
+
+
+Thanks,
+Joanne
+>
+> --D
+>
 > > +
 > > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size);
 > > +             if (!temp_buf) {
@@ -245,5 +202,4 @@ Joanne
 > > 2.47.1
 > >
 > >
->
 
