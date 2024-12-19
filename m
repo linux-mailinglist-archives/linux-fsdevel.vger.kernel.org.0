@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-37816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EB29F7EB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:01:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA9C9F7ED0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E137A10C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F3816A651
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBEB226896;
-	Thu, 19 Dec 2024 16:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BBB22687E;
+	Thu, 19 Dec 2024 16:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VbKbpCgO"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SlJy0QHS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2079.outbound.protection.outlook.com [40.107.243.79])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2041.outbound.protection.outlook.com [40.107.96.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23527226554
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545B43D3B8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734624037; cv=fail; b=KtJggBDDxs0TCCWAgoIr+hsfbmCpJ5m7W7gl5cT+c7dstke4150I5B6N2MSV8Z7XAb7eWq+z/xZb/S58CSCR+G5rF7v3nAZUXDSLLyhyzPYiEDLDK2NB08fixTUJN55l4yXVsB4+2EzPK8wNukZ95MdQS0HYmZ4sLZ5tflypyIs=
+	t=1734624160; cv=fail; b=H8D5yUHZrAn//SqyYqYx7wDEN2//1F/FMlFQuq2smDwMbp+2KakiW7+JLQUoL8nqjXm086u5Gu7xZoPtNgEbbBXi2bcL+bwsYTd6OOCyUcx45RciWk7QRgvfszhb8XX56Rldm+YXLIZsr04uu/RoA0+0776kLzjRgLhfk/bSLzc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734624037; c=relaxed/simple;
-	bh=XO0wNihup93Tbr6FWyDtQjSeZUXC28Qa1oea7zqcVRc=;
+	s=arc-20240116; t=1734624160; c=relaxed/simple;
+	bh=zdmWu0+8rdZ3V58NsofQfN9TpfrCBXOxoyIsvxONzjA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ov00JcbxElHNcDwPBTk+MUkck/OdZ7D3XI46ejihBiGJ006tjIhBX+eGfa9TyxW5t2/Cdm2BN5eFNhqaeW2cIwxrRLhw72ZV1HlP/fvtrDlMt5TS21rS2N3vmEOzHve4CjTyGKRcE6MzTT83KsMdeyWIOHU3kDB98I5UviSlYqw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VbKbpCgO; arc=fail smtp.client-ip=40.107.243.79
+	 Content-Type:MIME-Version; b=t5VaTHCHg/qkNUahy413JUNy0YoBjE038/sASXfmv/1iOpQY7yBikWUhRHD+SQ7MwTD6Cpr+/kv8uf4zdPMtPlQdHqCpPxqEphHgaoKzuQnaKNsQtwKrbGUXcRU8+2S8Fd8AJABiBRdBQ9tmHuw6KkuHjVcar2DbOSpBHUOsPDc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SlJy0QHS; arc=fail smtp.client-ip=40.107.96.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zbe+iu+R+2wiTWhCwXJDn0WFe7k5N4LGeoccAVgLrcuh+jAa7km3U5tmSEflFFMGHc5OCrFvVNEBHp4xsqYcPvztlgVG9g9pEfQRZsZv0RXeEszPWKuLcTHEalDTR1pIHYPIYp7AfgU8BUdKoHXuHIfOTy9GAYpRDlQUz28K6EqMl6SZONaUEnqp7thlOMkQDbU7k8sQJuneIFaSEblgt2EhOAxzvVr2KLzFOzy4dy3FWjei8f7X44WPlZgT8vWFVkzUlvmoVQmO/yhaPJzJabcF/WYNMF4/Gx5352O65a4qJ7+rXLf5k2YURX0EKgT4CgD4jNCoe1gQCZl+aapgDw==
+ b=vMSjDIfjMrQsdLa8Q0k58UO4/xCWnZbz3uF2GGJHspIqNnols4DC3rlyvpqvdBBMve4oIUpzr1SgfIZWVDdtpvEzuuO4Lh1I+fYmMFuLf6jbnXakWDy6TirZduUtFzS7ysW1O8LUtIcDYqu8NpQX5sDvQ8y/CIO88WVq0QTnw3dVgfT2ltVJTazTz1iqo8z77A4foWYxYJJGlKWI5IlSlMphWdaVjBzr1XcPGGvM9Q9mI58+DQ/9ZwKMffpqhvi9FQaYz2JiwWIYibgYdCYz2eYhi7kbR//hnbTDK14Z5Bc3Nlme+bMfNBpp5N0Bk+clgZ4cEcOZmgTPO9fB0yHMSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AqNce4BBACBkeonVCRM2EGUAHpQDTxluFsILnetzutg=;
- b=ud39Y6DAIM/jJPq1aDCaAFxhDBowKz2kaCNAdqlh33+gdvd70F237R8vER8/1CYaqn7JA14mNuu8PQZKehCGl6+1r8Haq/kCHdo28bEg4S3hB2pXeOKJFD4U2pqzaf4u9PUOChA/fRG4x+XFtgUzWgf77Tp3qNpNsAPnfFbid6N/+RrsyH05PO3BA2VbFawDxuYZ4GfrvG/m1gvncG7Wvn8fnTAk/droddp8Pl+pp+//OgbHYjVwByNqPhYQ5mrP/ZAizUIW1M3/BHZA4hYvZtKvJyPy/5hB4OwE6/qkchHH4xFfObugvXXjPaj/xXxHkVlTjZFb760Kr8da/Joalw==
+ bh=xUKQgU55+q0z+QA6OsoYdH2GCEgHsZQWCHUMen/3Yyo=;
+ b=SAwGJv510VZjoJ04WKNWjzlebQIdxA6VwFoUwIuvyYrrXubXrrMaEOsYRIuPeRCcWn1FdofMvNXQZWKrHNDmUTZbXuVEvgrnfSGZiFgUKHowBPJX/855kbNUMRQdm0uR2PJcah5UX+5zUZR1Vq/Qhmjy+K6k8rbZRh3zfoYnv7iezOk9+G4dTK/xT+u+ErZA3eBiGzu6ownDNqCP3icH8FQrSSbTm+vwk7wBrnOzOvybQMwBVGipxNTHZtalkQfR25yoyvwgxBFodi2R4svIgbxEDSujY5ciO1syzCmWysmOWLOn+RCuxrUB9FBCtmYGaJmrCQxy99t8pbQgDLpf/w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AqNce4BBACBkeonVCRM2EGUAHpQDTxluFsILnetzutg=;
- b=VbKbpCgO72pOd6iAUR1MtOGlvHo6Y/BKYX6vWvluXQ+KIvZUfwVdd//75S8VLCsoWAdSe4PUpKVXd4qH+Oy6YIaDyyvz8GPKX/lI8y0BU2ZWEuxVriqsDOaq6sLRzm1Jnx7MItvcAXhgh/aFpwSz55fziY7ChEUyfjGT1IwZCoXxUTkzen43XB9iSoTuTDtQxYboKETw3QovIhgzLptmkv6bXGbHAWI+q6yyRiKIXn+/vklB31ObFR5pv+kXvp/3V3Ibyx3dwFxvMMKdYHRUKoSPv+SLn8GddZN8bBi89PMH/vp4VI0Q1wNiHaCms/+wKrbBd3wNvKf+oA7k5Grsuw==
+ bh=xUKQgU55+q0z+QA6OsoYdH2GCEgHsZQWCHUMen/3Yyo=;
+ b=SlJy0QHSsRba+nXN5ZM6xi3krNUmno14jkSY4/DWcWsNXZZWF4JfNyOj574B9InT1jNNqtdtC5hPZijwgJerMTSDFPE+bWbGrOUUYIiMfGAlfqNS/MQWOYyic0MBmgNqkf/kwiUA9PWgnZHY4BLFA6VXFFvy6wfrb9NnaB6PWqn/hxz22XH0VHvcTpNP9kjbCGhM66Pm9ph8cHUXQH0mdwfESAWoOhVouoW2LC/X+dYfSV0Nt/a4gt/yGv1VOMQs5u8iDNWEgtHHnGfn2+dn1bVFNdeaiGL5rnq7WKlYVPFyejiB+T9jxCFeEPUrPrXaHFIZlcRxikDd8rq3NEch8w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9)
  by BL1PR12MB5996.namprd12.prod.outlook.com (2603:10b6:208:39c::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.13; Thu, 19 Dec
- 2024 16:00:33 +0000
+ 2024 16:02:34 +0000
 Received: from BL4PR12MB9478.namprd12.prod.outlook.com
  ([fe80::b90:212f:996:6eb9]) by BL4PR12MB9478.namprd12.prod.outlook.com
  ([fe80::b90:212f:996:6eb9%6]) with mapi id 15.20.8272.013; Thu, 19 Dec 2024
- 16:00:33 +0000
+ 16:02:34 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: Bernd Schubert <bernd.schubert@fastmail.fm>
 Cc: Shakeel Butt <shakeel.butt@linux.dev>,
@@ -67,10 +67,10 @@ Cc: Shakeel Butt <shakeel.butt@linux.dev>,
  Michal Hocko <mhocko@kernel.org>
 Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
  with AS_WRITEBACK_INDETERMINATE mappings
-Date: Thu, 19 Dec 2024 11:00:32 -0500
+Date: Thu, 19 Dec 2024 11:02:33 -0500
 X-Mailer: MailMate (1.14r6065)
-Message-ID: <0CF889CE-09ED-4398-88AC-920118D837A1@nvidia.com>
-In-Reply-To: <ec27cb90-326a-40b8-98ac-c9d5f1661809@fastmail.fm>
+Message-ID: <722A63E5-776E-4353-B3EE-DE202E4A4309@nvidia.com>
+In-Reply-To: <0CF889CE-09ED-4398-88AC-920118D837A1@nvidia.com>
 References: <20241122232359.429647-1-joannelkoong@gmail.com>
  <20241122232359.429647-5-joannelkoong@gmail.com>
  <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
@@ -79,10 +79,11 @@ References: <20241122232359.429647-1-joannelkoong@gmail.com>
  <gdu7kmz4nbnjqenj5vea4rjwj7v67kjw6ggoyq7ok4la2uosqa@i5gxpmoopuii>
  <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
  <ec27cb90-326a-40b8-98ac-c9d5f1661809@fastmail.fm>
+ <0CF889CE-09ED-4398-88AC-920118D837A1@nvidia.com>
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BLAPR03CA0079.namprd03.prod.outlook.com
- (2603:10b6:208:329::24) To BL4PR12MB9478.namprd12.prod.outlook.com
+X-ClientProxiedBy: BN0PR04CA0037.namprd04.prod.outlook.com
+ (2603:10b6:408:e8::12) To BL4PR12MB9478.namprd12.prod.outlook.com
  (2603:10b6:208:58e::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -92,177 +93,180 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL4PR12MB9478:EE_|BL1PR12MB5996:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93e3c1a7-2436-45b8-ac9a-08dd204644e0
+X-MS-Office365-Filtering-Correlation-Id: c2af3429-5125-4b21-5247-08dd20468d24
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mG6plFAqueLRsZzKzZIxVpQjsauiCmrCckq1rCWrV2xH2ejtyTzrJymiUFpw?=
- =?us-ascii?Q?6Yb91ax9pubWLZrPv/a6mlpLIzFuKxQhYG3TgVlrf89ku66cMJq3nBOMo2Sf?=
- =?us-ascii?Q?ngmC0vr9yiJRv1bindQMY9AuHqbgqUFBolasrhNwXtNPjqwEHR3c/rYnm0Tw?=
- =?us-ascii?Q?TyYknKegY5p5fBuK9B7ZDT9OM3ry0xYwYlYV9ALUD5uFTADTTiL3gpkDREiN?=
- =?us-ascii?Q?zKfEWy8p0cVPKfis7KyscPX7zRpQp68DqWhyA2T03rfMxdQzCKZBJWm2KY8s?=
- =?us-ascii?Q?+1GQtmqfuXY/MsgLXOcYllXyKZN4e1cjP+z4fh3K1eLd2ixu9REy5z8qlaE+?=
- =?us-ascii?Q?jq0raiPcV8EBLV6g7O2bbaRs2RwppvwdSAlHOQjyuiWyTetEYrEenxI4Glcb?=
- =?us-ascii?Q?7gy9mQWJ83WtoyVkPBg06jf9T5U4utQ7URMV5keOMpypDAG4FJ5tQCK6Pl4r?=
- =?us-ascii?Q?w5d8gauYK6c0d3ImaTsu4J671+KCnjDVhLH4N/NShsymGPfRwHQy/HUzD0l6?=
- =?us-ascii?Q?F5Ec0Q5MxW7ouE0OO7ZLF6boAw5tarTa+vituIaJoJA/QRFbVb+x6HYXIpY2?=
- =?us-ascii?Q?HfSySyUV8OOBHrD6WhdqGq6fE2ROJnrD0X8UNqmojtj1YiSpQSKlejQw4flD?=
- =?us-ascii?Q?+ZGiHHlIVswQiyeZF7FgA1EiZsInurFmp0pRal1hXVuqSxR8RzkuEy30rK63?=
- =?us-ascii?Q?18VrgB5LdGtbAHZrCdZGBNr/gwPSz5eUdUfq0jT7SOw6SVHbIf4YEHcq//T8?=
- =?us-ascii?Q?GmzU9bqDU2fuG0nOyaKwiczcQVuwEL0ifRgG5sV6u1WimEI24hWM08Hswa+E?=
- =?us-ascii?Q?svBfdjlFrZRoBHmfCA9qsRIAtxvvL8q3OxNt+7VWK0Z2phW04MDox+Tmpr3E?=
- =?us-ascii?Q?ztNHXon9xEVlua0+aciE029tr+HeN1Gu6tII9AQmz6Img4rBsL0mh9HJBXq6?=
- =?us-ascii?Q?K01URHDJFZFjuuGxLRsLi8tHUuNVS/soHpFfYgW/D+49azFmBJG/Mg63H7gB?=
- =?us-ascii?Q?l2ADhMI9yagMlWIrxW345/IT98CA9/dOenwvLGQMwB8MJ0VS5IlZJLYeOEfA?=
- =?us-ascii?Q?u/TZVXd15wfUaU7WU7bUukw1Njboid/Kw35rNNdDjuS0LYgUu63ZHSFcn/rI?=
- =?us-ascii?Q?E/W9CvakPQW8d0/1lU49lXPUkqWRAlb02DxTdbAFJDcvMXFCwtglpe3i2Igt?=
- =?us-ascii?Q?yrXzT5rHT4j4eF6c/KkOEaKKRLTEA9JQYN+OGpTKM6gQuFa66XGJpXPAWzHX?=
- =?us-ascii?Q?AK2HMMPs+wGcsKY9+rz+IcC0TkDZBEelR0sg5cHAlNeDAsP6F8QI+aPPVNKy?=
- =?us-ascii?Q?vLNeoIbJtsR9FYoSRbNPc/pFhZ56TupDU32XiihG0LEQygEK+czIROFlkMyt?=
- =?us-ascii?Q?KuBgZhJ6LHcvfkdNnGjPh6Mknlxg?=
+	=?us-ascii?Q?4ERtYJtUNP7IILjFBsMWnmMCzJynaxkl6vXJp6m8OcdRYhQATSWkr5yDCAqA?=
+ =?us-ascii?Q?OWUHPOboo5PHNNngo925wBS3U5vpkeTcllbZVL4d4iS5zlyBex2IDEkwuqVa?=
+ =?us-ascii?Q?uyG/BE/R26l33KafCH7s4FsSvroeOoWoQkPMCWK5A5lPhvZZNj2X+Y/0LxLG?=
+ =?us-ascii?Q?6tqCprOX1KA8VGh5cEVozpZdDwC00i9/Z4PsXMszN8YbvKu7XKZGHWVnJ1Sn?=
+ =?us-ascii?Q?f8Wpk5pWrSX90EMHA34gRWTCB80YcePK/U42A61CmfYtJKWwjWXXX7jXvGzo?=
+ =?us-ascii?Q?2TVKwdvA/7nJ5jNvSQ2Bn3qvLP/IdJqazD+5cz4XwjxSZeZ/s0USnVXEwB1M?=
+ =?us-ascii?Q?WyDXnQGiBbidb8F6sVhlRahlxlr+oXjiJ+fSl6V8jQWHWqluihLn/MNSh2mA?=
+ =?us-ascii?Q?pIBVf0Au4e6ZjHk7adaxFzmzQE58MGntiP6GjVmFeRO1lepD6qIPqqpJCNyK?=
+ =?us-ascii?Q?jwC4YmkgsDm8/6VfcdPzXn89mkUdZSrVkS1US2vs1eDeiYnpSnirmtu1ZtGA?=
+ =?us-ascii?Q?12/8JxaDYB1qj9JooI0prsBgPagD61/6FPuzTyZvQZ0CtCHulOLGLy7bPLVz?=
+ =?us-ascii?Q?tLcLw1+Gw5Qja/HW9gwSJpurD/iEZZVIDccGTUwd0W7Pp30hcjRGaBVRctCK?=
+ =?us-ascii?Q?ydxC7q9qkCxezgpgXC/BtFXE9srYkU+PefjGQG/XULunlv5ccRMfZnzz4WJg?=
+ =?us-ascii?Q?ge2j5Z6aZWtE7UqJ9lwIpX+DSaUuDqfkyPjY910TTb9UXSVqiHXbjK2/Ui76?=
+ =?us-ascii?Q?wODm3zuGmVmkTIEf5JI/UpKumCEbXA9bC3hGwWhJSU9Ue06hlS5WD6Cs1uVi?=
+ =?us-ascii?Q?3SGsmWIq4tfdnExGIm+zbDrFb+QG+hPDqnkrkeYUMhkCFBRY/m889/gDHHwc?=
+ =?us-ascii?Q?iyfhJb90aMaQoB25SAji8tmM//L5RGE7LP1cI21FqiUHPQJDPr9lMGuZ3Kya?=
+ =?us-ascii?Q?8wvAIb6bIY96Evg3j6Cw89I0VJS9aV7SAMRoZYe/oJpysCRFNJoIiAR/0muN?=
+ =?us-ascii?Q?D1Av3SF+UIDKsd+nclRmGnkKO/kEt3Q2n9T7UAs1mKZWiWCbx/R8Pvk+htXk?=
+ =?us-ascii?Q?OWWe2IY5nQnm1gPQiJVFQ+1VXHirratg8GG0CP6MtKGsm++MwTd1MpI99sc9?=
+ =?us-ascii?Q?26HWbo1MfGWL9vNY3WHOLCVxBHHaPl2kynfVV92vHP0HvgW2bhpnPtD5Q7MM?=
+ =?us-ascii?Q?iGDqAJA6X3sSx37LljHXaSYkvNhJhxNOVQcBHzoYj4t38WHVUAnm+VH+O/iH?=
+ =?us-ascii?Q?hziOUJ/QSK/5Td4cgNVXPDmW3T1/I28ohTjO04o64Pzwj0v1qbVp3iu9ytvS?=
+ =?us-ascii?Q?TNDMJHYy8jqpI59VvvwfQa7ot5jA6YcqxD0sqq7lnn9hFE9clGc6pVRA2xAJ?=
+ =?us-ascii?Q?T4b7HPFkq2bhgSTjKM0sYtqWC2rf?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR12MB9478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SvpqbwvpFUfHafuOO1APLpPYbAzEzlfP2NGXi/eJrE84UXX6mQuZUvSDUwM2?=
- =?us-ascii?Q?leBVpgglTv4rEqyMla5G/LndMimc1rZt2x1gy4hfqZdL86RnUu6mtBXPWLRo?=
- =?us-ascii?Q?uJOry5KclQxByZ7MLpJLpRiEZJz0bURNDmXfKQ9zqtXuoswcnvD2bX679Ivg?=
- =?us-ascii?Q?OROAUVifOaqScqzFSi5w7Kjt2S/HWaoJpecGYOnYRBGVx3SHyWNtWoEkvNlW?=
- =?us-ascii?Q?TItx3aUtL7AcXWW2lVK/chFuT9gpODqasX976nqepvGpgS9yOSiGsw40uHNx?=
- =?us-ascii?Q?gtUvtDxmijtT/zswqeD+BRrLpGGb5nLjuetafp77clBlzZPLhpJ47hMfUuik?=
- =?us-ascii?Q?3y0xtkm4630zb7kzC9EaIBsdoKrxL1fn3KXSf6DkF0g0Ja6txTpD9ORgGVem?=
- =?us-ascii?Q?bjumNn3om0bcAwSAivsHSM0hM6+BBiWmX1GUmtzUmP4JZGDoGQIjYOhctytl?=
- =?us-ascii?Q?E3WfqXOl9aUy+am8kjxY2+vnFrMfSLeox8DJDIymSuKPxkMFm2tYAv2gPptr?=
- =?us-ascii?Q?cJDnv+tpyLCN1malJ0yrqz8lsFLjLGOq9046uHFwSHd62OIXMypmamBKf1Cg?=
- =?us-ascii?Q?eKwfXvguLFlBq8g3Oj1+9N+3wCZEbrwM217U2eK3Dq+XB9E5O1pV5qJKJWyp?=
- =?us-ascii?Q?KAJvYzaqWPXbixRB4YxM3MhufwxKW4s7H7MkYbv0m1666tStNLIj6jf2h5At?=
- =?us-ascii?Q?UjWsGM2vYMyrVe07FXmeybmtsb43YJi4lBaby6feKewanXYwyydGA3G93Toa?=
- =?us-ascii?Q?UQAiBub9BlY6nIwRA2mFbMnck1txSADzXvu9sZa5LPFtmnfReDKZPiuRSX8l?=
- =?us-ascii?Q?Pflm8F5RmRX5PrkxhEUxraa/FdwxbURjmefin1ovJRnVyd1Gjgrfx3VgIN2Q?=
- =?us-ascii?Q?wuQ/CtMipVeaEtpyuGNI7u6KyE28uzH/cqLwgdWNgvwSV6T+2EYlO/XXVFcs?=
- =?us-ascii?Q?YuWp3JsA9hyt4C9wXNiZdIMeY1G5lurE6i1edGuxqDcHp2VdYnXeFabZBugB?=
- =?us-ascii?Q?lAA0JGBJWO1u4wQomsYKMWyA9vNsuQXyq+ZKUc9WfBZbDe01gbfi0LfOj6sB?=
- =?us-ascii?Q?G0hEWOAEKX4S3i5dRr/Sy3H1BOwKhQ816BGv/bdN+RLaVpTc2xvJDlcxmQrz?=
- =?us-ascii?Q?ocfQIDdGWrBKfPrXiXe7gTktuO/3hQAazbNHwfkdHfddw5iasS8PmTqM1ulK?=
- =?us-ascii?Q?mYbF73prZgNTQHb1VcYo4rM3PugwQOudRq5k++IyFpHJbw+2oD3R6w9J5xX3?=
- =?us-ascii?Q?osdNlriqBLOrNVXc8s1T3tQcbf8yz/0yppWx7o8Rbfo69v+IDkQZOduSz/8e?=
- =?us-ascii?Q?K4qU6V53Cs9alxay4wtcu98jycNFeaCLB1eMKIb0nXrtWJ1zUtMUPfE3hnaW?=
- =?us-ascii?Q?8XkaieMap6fLZ86LrNsNy5lSV2IyBYbtpEUEKZgrlYuRI5U9YYi4dz+/VoqQ?=
- =?us-ascii?Q?KSCibkio8tsjF+/Y7zVGwL6SY3Q4oIwi5nrC/66iya6LoBh1Ed0kwf21a0Bu?=
- =?us-ascii?Q?Ae4KuYOkCpSY1NNCNc4ZkwiioXrPH4rU5DHYRvvguRxEQaowr0eCWhdAw2mr?=
- =?us-ascii?Q?SL7sggEkoJAGX4UdDtmeumzRF82GYH9aPSs3k2WH?=
+	=?us-ascii?Q?48L2NhET3PopykLjNa9ieLn13B7ZL5SOVN9pux7smBQNllhAPwIRhEfSMZ/i?=
+ =?us-ascii?Q?5iCgaSEEdGYUi4ObdFukF/t2cogPC5YjXOkTIRswRQLuWBa/ugleOybVvGxG?=
+ =?us-ascii?Q?FYj5oRD4nRoySufzai4OAovVseBcDfs9RFYWr7U09w/Zyduuv9SCRIL0ZZwL?=
+ =?us-ascii?Q?rUXQFX4pJLKQw7VUAnA0R17l6N0sthdneYI/laJgDCWkK4EqpG4YTp/f5EN3?=
+ =?us-ascii?Q?7W8teVGT7cDXRSTkjP1/6Ev7yi6JtK/QUpLa7BaY+xrY5pTxzJxDSQF9Xu5J?=
+ =?us-ascii?Q?5/W1GTRwCnwJ5qgRvUdYNgKti5UU4LIXt2fiAdcL4vHafDxE0KP3VTUcUKDv?=
+ =?us-ascii?Q?96PuuWIvhdn+zPygjddBwB5ZLoH+/KlAzhPVZZR2zIdQlXeznqSt/mSu6Zj+?=
+ =?us-ascii?Q?ljotpzO4GUQYog/JXzKVrU90DXHI3tJo7pLkvsL95jKAaVQxF/JN04LxUOfA?=
+ =?us-ascii?Q?t1d9VghuvT3eD4poLTEQ5mf/ocIxihsLQo7WqoI/eeuTKGD37Vww8LajM44E?=
+ =?us-ascii?Q?4mTgeXd4ZEWbmCQ097dMuxf5P+I5odUSNTwT1J8xDPgxygSHHFahNKgPnF53?=
+ =?us-ascii?Q?SDo53MSHZmT/pcMQLQh/6rruqTd2OIy2kriqqt0X9bow+1LCZQmKUunU4LRf?=
+ =?us-ascii?Q?xyMYtJHGFYGfcoGu0ZgTze1enGWTbe3bpvTW2Tj2lyTAWZgOlmMPYkMjLf/y?=
+ =?us-ascii?Q?W96FlYs4Y37ZmKoE3HslZDoDHubVRPtqhQFW1x8FAAzlQBq2mgdLiQUf1nXG?=
+ =?us-ascii?Q?0vYRqVIEadrr2Z1lB8s1trPWlBhc1s0EIvuqS/G2sUdpvrXektQ/oHDOitGs?=
+ =?us-ascii?Q?Q1wWvxSNjB+PHPR+jbDqq5bcIBuFfGwc/L8UicYD9GHaitH+/KtSjdBVkqca?=
+ =?us-ascii?Q?FezAkgxP9dYJxlUneDgyxYc3qaWmd25Z/YjpsgBhqbngzERAQHWARfSGFW4G?=
+ =?us-ascii?Q?nbv5ftUJh82TvMwCCLGfdJntO7+eSuYEjFoMpxdunXyczS+ukCPV06tNfKMv?=
+ =?us-ascii?Q?dejNGR6kGt0a/kjE7RUkBH06o5uO1ARmu0nTa+UIMbIXKQKmPdHjs3JEyBs5?=
+ =?us-ascii?Q?8v0axAanpjdnAmdi3UWoJ0nRWML4CmjBlFA4heZUcZP1F9fvqgttltStQ3xI?=
+ =?us-ascii?Q?0anJDl15EVGp2jrgc8owO1Slt7UJYsN8SEnOEsAESAU/SjopCXGIu3SXvF1r?=
+ =?us-ascii?Q?2Nz7+tf0kVQYfpBb+XSUWTaoWzca55YJJ2bzW0W3JvIhvbW0AXPmNZVU5J1B?=
+ =?us-ascii?Q?wYk6HAmVVMRpE4X2L2eKN98ID3/NsJJgVNq3byM/4Ed1oBfV+orY7snG48qX?=
+ =?us-ascii?Q?cb8DKjkkxFoBx8MKSJFZmRhi1BSdWGQY5eHugF4JnW63mlvZLetZmlODhaMK?=
+ =?us-ascii?Q?SLKND6yDjBCypTdKQlSWUhwfxSUj1LYYnHTamQwktb5e49TjBnAts5E8VIor?=
+ =?us-ascii?Q?RBpBA3+0ZOjeeYKvvG6wddTg01CRWpAQqyOGLhwVf3vsejw79GhqncYbUsp8?=
+ =?us-ascii?Q?4/hIsWwGc08/syNPZXUsdGSAdrw/a0kN24JT6Ch/Zums35G5QKe1/bOnhI59?=
+ =?us-ascii?Q?wopIdeLWxXX68jGDAoKxIlm3VgamG1bqkZ98uizK?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93e3c1a7-2436-45b8-ac9a-08dd204644e0
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2af3429-5125-4b21-5247-08dd20468d24
 X-MS-Exchange-CrossTenant-AuthSource: BL4PR12MB9478.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Dec 2024 16:00:33.2957
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Dec 2024 16:02:34.5476
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B2czCCTaFbMFGyh9A7e6XVfdQQc6wXpr6UfRdaghnrzIm9QhqDTHwCOT/nvjE+z/
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8PBBnAVn/EZLPH5abeJto3w0zkvXygQPaiqQbApowogl8OLibLkeDuYIrvs9mlK8
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5996
 
-
-
---
-Best Regards,
-Yan, Zi
-
-On 19 Dec 2024, at 10:56, Bernd Schubert wrote:
-
-> On 12/19/24 16:55, Zi Yan wrote:
->> On 19 Dec 2024, at 10:53, Shakeel Butt wrote:
->>
->>> On Thu, Dec 19, 2024 at 04:47:18PM +0100, David Hildenbrand wrote:
->>>> On 19.12.24 16:43, Shakeel Butt wrote:
->>>>> On Thu, Dec 19, 2024 at 02:05:04PM +0100, David Hildenbrand wrote:
->>>>>> On 23.11.24 00:23, Joanne Koong wrote:
->>>>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the fo=
-lio if
->>>>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag=
- set on its
->>>>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the map=
-ping, the
->>>>>>> writeback may take an indeterminate amount of time to complete, a=
-nd
->>>>>>> waits may get stuck.
->>>>>>>
->>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
->>>>>>> ---
->>>>>>>    mm/migrate.c | 5 ++++-
->>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>>>>> index df91248755e4..fe73284e5246 100644
->>>>>>> --- a/mm/migrate.c
->>>>>>> +++ b/mm/migrate.c
->>>>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t=
- get_new_folio,
->>>>>>>    		 */
->>>>>>>    		switch (mode) {
->>>>>>>    		case MIGRATE_SYNC:
->>>>>>> -			break;
->>>>>>> +			if (!src->mapping ||
->>>>>>> +			    !mapping_writeback_indeterminate(src->mapping))
->>>>>>> +				break;
->>>>>>> +			fallthrough;
->>>>>>>    		default:
->>>>>>>    			rc =3D -EBUSY;
->>>>>>>    			goto out;
->>>>>>
->>>>>> Ehm, doesn't this mean that any fuse user can essentially complete=
-ly block
->>>>>> CMA allocations, memory compaction, memory hotunplug, memory poiso=
-ning... ?!
->>>>>>
->>>>>> That sounds very bad.
->>>>>
->>>>> The page under writeback are already unmovable while they are under=
-
->>>>> writeback. This patch is only making potentially unrelated tasks to=
-
->>>>> synchronously wait on writeback completion for such pages which in =
-worst
->>>>> case can be indefinite. This actually is solving an isolation issue=
- on a
->>>>> multi-tenant machine.
->>>>>
->>>> Are you sure, because I read in the cover letter:
->>>>
->>>> "In the current FUSE writeback design (see commit 3be5a52b30aa ("fus=
-e:
->>>> support writable mmap"))), a temp page is allocated for every dirty
->>>> page to be written back, the contents of the dirty page are copied o=
-ver to
->>>> the temp page, and the temp page gets handed to the server to write =
-back.
->>>> This is done so that writeback may be immediately cleared on the dir=
-ty
->>>> page,"
->>>>
->>>> Which to me means that they are immediately movable again?
->>>
->>> Oh sorry, my mistake, yes this will become an isolation issue with th=
-e
->>> removal of the temp page in-between which this series is doing. I thi=
-nk
->>> the tradeoff is between extra memory plus slow write performance vers=
-us
->>> temporary unmovable memory.
->>
->> No, the tradeoff is slow FUSE performance vs whole system slowdown due=
- to
->> memory fragmentation. AS_WRITEBACK_INDETERMINATE indicates it is not
->> temporary.
+On 19 Dec 2024, at 11:00, Zi Yan wrote:
+> On 19 Dec 2024, at 10:56, Bernd Schubert wrote:
 >
-> Is there is a difference between FUSE TMP page being unmovable and
-> AS_WRITEBACK_INDETERMINATE folios/pages being unmovable?
+>> On 12/19/24 16:55, Zi Yan wrote:
+>>> On 19 Dec 2024, at 10:53, Shakeel Butt wrote:
+>>>
+>>>> On Thu, Dec 19, 2024 at 04:47:18PM +0100, David Hildenbrand wrote:
+>>>>> On 19.12.24 16:43, Shakeel Butt wrote:
+>>>>>> On Thu, Dec 19, 2024 at 02:05:04PM +0100, David Hildenbrand wrote:=
+
+>>>>>>> On 23.11.24 00:23, Joanne Koong wrote:
+>>>>>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the f=
+olio if
+>>>>>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE fla=
+g set on its
+>>>>>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the ma=
+pping, the
+>>>>>>>> writeback may take an indeterminate amount of time to complete, =
+and
+>>>>>>>> waits may get stuck.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>>>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>>>>>> ---
+>>>>>>>>    mm/migrate.c | 5 ++++-
+>>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>>>>>> index df91248755e4..fe73284e5246 100644
+>>>>>>>> --- a/mm/migrate.c
+>>>>>>>> +++ b/mm/migrate.c
+>>>>>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_=
+t get_new_folio,
+>>>>>>>>    		 */
+>>>>>>>>    		switch (mode) {
+>>>>>>>>    		case MIGRATE_SYNC:
+>>>>>>>> -			break;
+>>>>>>>> +			if (!src->mapping ||
+>>>>>>>> +			    !mapping_writeback_indeterminate(src->mapping))
+>>>>>>>> +				break;
+>>>>>>>> +			fallthrough;
+>>>>>>>>    		default:
+>>>>>>>>    			rc =3D -EBUSY;
+>>>>>>>>    			goto out;
+>>>>>>>
+>>>>>>> Ehm, doesn't this mean that any fuse user can essentially complet=
+ely block
+>>>>>>> CMA allocations, memory compaction, memory hotunplug, memory pois=
+oning... ?!
+>>>>>>>
+>>>>>>> That sounds very bad.
+>>>>>>
+>>>>>> The page under writeback are already unmovable while they are unde=
+r
+>>>>>> writeback. This patch is only making potentially unrelated tasks t=
+o
+>>>>>> synchronously wait on writeback completion for such pages which in=
+ worst
+>>>>>> case can be indefinite. This actually is solving an isolation issu=
+e on a
+>>>>>> multi-tenant machine.
+>>>>>>
+>>>>> Are you sure, because I read in the cover letter:
+>>>>>
+>>>>> "In the current FUSE writeback design (see commit 3be5a52b30aa ("fu=
+se:
+>>>>> support writable mmap"))), a temp page is allocated for every dirty=
+
+>>>>> page to be written back, the contents of the dirty page are copied =
+over to
+>>>>> the temp page, and the temp page gets handed to the server to write=
+ back.
+>>>>> This is done so that writeback may be immediately cleared on the di=
+rty
+>>>>> page,"
+>>>>>
+>>>>> Which to me means that they are immediately movable again?
+>>>>
+>>>> Oh sorry, my mistake, yes this will become an isolation issue with t=
+he
+>>>> removal of the temp page in-between which this series is doing. I th=
+ink
+>>>> the tradeoff is between extra memory plus slow write performance ver=
+sus
+>>>> temporary unmovable memory.
+>>>
+>>> No, the tradeoff is slow FUSE performance vs whole system slowdown du=
+e to
+>>> memory fragmentation. AS_WRITEBACK_INDETERMINATE indicates it is not
+>>> temporary.
+>>
+>> Is there is a difference between FUSE TMP page being unmovable and
+>> AS_WRITEBACK_INDETERMINATE folios/pages being unmovable?
+
+(Fix my response location)
 
 Both are unmovable, but you can control where FUSE TMP page
 can come from to avoid spread across the entire memory space. For example=
 ,
 allocate a contiguous region as a TMP page pool.
+
+--
+Best Regards,
+Yan, Zi
 
