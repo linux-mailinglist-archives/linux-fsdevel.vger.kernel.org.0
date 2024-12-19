@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA05E9F7E55
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:47:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE819F7E64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92974188CC72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 15:47:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68D967A2D8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 15:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D86C225770;
-	Thu, 19 Dec 2024 15:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50761226881;
+	Thu, 19 Dec 2024 15:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e/hdT8kt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dVuiGjVb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97443D3B8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 15:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAA15FDA7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 15:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734623246; cv=none; b=FALVRk4EC/edoHvCiiDyYchXWe2Um1ONy7JDnjAAkgvqq5TgZjiOVBot72RFcSG6Dahhqs86yixT87Lh1zERxwcjeuD3izvx3QqpKXogxY0G7S72RQ+EVs1rzb8Ws5PYk3f406+EbQJreYyAN9Ap4mYRpRMYgAQj4QYNuelbVPQ=
+	t=1734623417; cv=none; b=GFi5yL9Jpyipv/XVp/om94zhd3oh/EU3euLghlDQk1XyXomqxQaiP0+MQRoyX42UaiSq0s+zjbw7hhxxYqgWCO4JnDinzI9KS0tkPXS0nv1tvEzmbwCticPxJCR7uHzOC+ogROJi+bsmxSsLaOlzL4Z8+aBxs7f4hnUYm+sKoyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734623246; c=relaxed/simple;
-	bh=HGc/O0fLayT9IHQNDaTZ2//uvweeJOFzUaov7laqUE4=;
+	s=arc-20240116; t=1734623417; c=relaxed/simple;
+	bh=6BmfJ8/dUxwhxdsy8ZmMtNnvYWgVzYiFNR4yApjTh7I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rwdB1PnADeg6XZkiwKAd5OFDFnSPjwqjw2AFniycU4IMRlLuWJHAJmSsH3NwqG02I7h/YhabA1q9baAYoztdSOYLM8ivgD1hMB6vAOxBtzT5A0G0iSzxuyTD/5HsWbN7vKV3VzNYjbraJPrut6bddFfsK9pzC4Miv39PFJCpg2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e/hdT8kt; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=kZwcpQzeEZ+aunTpgRAx+vpEPB/6dgs8oVZOCpT9dRuyprnScPpJMactW8xUZbD93tqRxA2u5ZFLIgsZ63CishyNKRGq9PbDNKIooQPVkqgToEscqa6E22n7dZU8uR0uuRZHC1v/zAirK4nuPrnBlWi8yTCjznOPLdY3MC0CvOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dVuiGjVb; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734623243;
+	s=mimecast20190719; t=1734623415;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LtJ9h9zUfVww3DKEtUkUv7Bzjw8SnqlhuK1sCMv4jYk=;
-	b=e/hdT8ktzVpii/f9fGi6emmEz4weHip+bAo0dnwyxCYyl97aKsGKggkfeJi1tQjuHvf3OM
-	IJhqgOM7ZFtfGqXYV4nfrnrV6lWHzwwGyWsbBcF/Po5weHNjkYj2WFygYtupYHGmkAJf7r
-	klKGKrp0XnTVfYZpQny8Q3Vv4Qzx2gg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=3fE3M+asuk4ehrGOcmv5cXLOHvJiWY6eF+Pas/6OjQ8=;
+	b=dVuiGjVbrUKSBA7UtstgWLrSba4XpNKjLmtQb+cTTWLPDszfY8B7AeZhcR0WbQOioR+FLK
+	YXwqoVW0QIrnF/nbExfOx2CjQt167dQn4Q7AywefZ9IYLWa+UYQzPBa6qiYF6r41doiC6h
+	yo8RT0B2FwOMkrnaly2s+BcGsKx5baM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-448-QUxgMHBVOfOBRSbi1a7xEg-1; Thu, 19 Dec 2024 10:47:22 -0500
-X-MC-Unique: QUxgMHBVOfOBRSbi1a7xEg-1
-X-Mimecast-MFC-AGG-ID: QUxgMHBVOfOBRSbi1a7xEg
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-386333ea577so452041f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 07:47:21 -0800 (PST)
+ us-mta-7-oPWoh45-PEKCnzVIt87B3Q-1; Thu, 19 Dec 2024 10:50:13 -0500
+X-MC-Unique: oPWoh45-PEKCnzVIt87B3Q-1
+X-Mimecast-MFC-AGG-ID: oPWoh45-PEKCnzVIt87B3Q
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4361fc2b2d6so5824145e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 07:50:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734623241; x=1735228041;
+        d=1e100.net; s=20230601; t=1734623412; x=1735228212;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=LtJ9h9zUfVww3DKEtUkUv7Bzjw8SnqlhuK1sCMv4jYk=;
-        b=CM5Eq0Np7eINT3VweRLRHKmJ8nhquymKkfbCMyph9wY+gwPDNgi6avzayF8wjZha7j
-         jlz8ggtAupLIPRoUDIUjVfVJgCt7a3ZkueOnQlL4QjLnhFcqFo0oofoQ/Jq9Qc8sv72o
-         aCH3VK0tAkEIddqj6ttmcW+aBCivM3DbnuHOs9GIK8kkgqKexVPqGTdCdg/fprCoOPPk
-         fudiJg632pnzrUfKBWrJY4bseKI5RJMe1PlUOdynsNHFNjBDD4Y1nypADUz/3GTzuK+I
-         F+Rs/VnAJmUwLN2BCRC2IWriK5qww+3qheCcWVjkRxOYVCKuQm/T0yHi8f9bIelHu8z2
-         ganA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4WgB0m0KFeyKrl+4VdxIrrFVIW403PeR1dAKhLj1K8YBagqQu2fbSZo5WrZ07FAceEA9hMqjmcJdQ/sF8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCAFHYP/9sbFOV8IvEeDq9ZtTZ0c/p2t+Pm83E/51QU0ApRpGv
-	JUKEl8oYa6mCzIupkwES3mKWYgodBYS2VWN5EHLQ/qnn4DSpbUZBxeTYzlnm5CUhCg4M4iAB5EQ
-	0iF0Z2sKQv/x2OJRiIM3b9dIr0nODHy3v3ZqI4K3pS8G/3NVXmYCRddI7l8ZTv/Y=
-X-Gm-Gg: ASbGncu0Cr/3t21ItBiasuUPhiF7mCZDRCnOFi6K631KOOoPcCfZxGiySSB2ZeR+cf2
-	9DNklNjsikxcigQOLFIofOj9/iP2QSiOKcUu3KRHkYi9sxEJqHkhmK7IOaShSmDNtOE8RAcKXlE
-	FPYX9BrYXCm1CsfNZKd97HWs2/q3qmdb58PDLfc1A2JUAnzH0ZRe05O5ffuAK1Hem4ruRgWDKTY
-	rOs0JaNaGD5luJcMAFUG10gk14unTFlWL8Cw7ooi9BK1vlCkhgfCwZksE5m+BymB9bc0gbUan5y
-	OCQ+kzkWGJSnDj6IkysLhqro3LjNrCXH7heiuuC2klWXXkafsLfCVdi87rwgwDG8IgJ+uIZVY8Y
-	XkQ7X6g==
-X-Received: by 2002:a05:6000:1fae:b0:388:e3e6:69cb with SMTP id ffacd0b85a97d-38a19b1e71amr3674752f8f.37.1734623240699;
-        Thu, 19 Dec 2024 07:47:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGdGsLbb6Y+kzc2T48yRITUSDrN92p1wgS7UeSo9ZOtJhznpONh6av8dQ2S9nLr0DHAtDEx/Q==
-X-Received: by 2002:a05:6000:1fae:b0:388:e3e6:69cb with SMTP id ffacd0b85a97d-38a19b1e71amr3674725f8f.37.1734623240290;
-        Thu, 19 Dec 2024 07:47:20 -0800 (PST)
+        bh=3fE3M+asuk4ehrGOcmv5cXLOHvJiWY6eF+Pas/6OjQ8=;
+        b=FBH4kUEo5yF0upMnlPpfrV8HHNIs+tr+M145nT1xCZFIVTTEp7+rZdBquzLaI0GC4c
+         cMVLVDckb4KYSax+maWeTWI5CSiEQuUTwEfGw10VT7bRhlUhLWt8Qi7/b7XCBfMXT6oK
+         YzSGwr4E5j4aATVcj6dAoYV7V3y0l7Y/UaPKk3H5DoYtPvXxt3MWuAAtWfCNJWcLhOhT
+         yt5h9JiaP4X63x0zA3n0lBRoLCyyy3Vnw/lBUeTA2p0z1GVRpftu1e3z20k63PZa9s//
+         fmB7lIrFk/HWPKD9M4ZajFsoqpbJlUrKl2GnachNYRMU3mp7xjf2MzxKjscbd+5Al3ww
+         tk7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIWtodg0ODpSbsyiE7brguQsHtRXHMfzFh2OenBjmbJt3mJCoq/AQBUdKFqCaHn9XrTtY0QeoF8V67Mmq0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIEdF/fHkLVzT2Do3U8Nex+jBmpazBxjQ4ns1dKsOeMwRS0Lky
+	tSk5LYU1g6V5glbQlPzOkcghQQm47URFMDMhCvKD0MQfU48NZ0qkAxTByCOw/9GxX7r0blVo1JV
+	gg+lF8gxXKLwOzZw9bYqG7ua8lrxF2NsgyECVQoBLhr7qjd6I78V2/MP2yAJarMw=
+X-Gm-Gg: ASbGnctJr8sje1assV7s90DKecyHb73fZhUbOuR+N43gjgj+Ely6f7PsR1X0btEw1S8
+	cUiQxPOUG4KHlxHqj0uthoVH/k8g09R8XpMcoMmLPJ/dRVeMI6ZRq2aHkHCRzrMMjG45J30qcIa
+	+A1zXDVOvjtvPKHAB13ScAvfe9dC67X/goCV87xLM/FU+jkzozeX0y5UF6UxHw/RYOTwqMI39Au
+	BaHG2ieC6IJvLwGiWGhuFfZXkag84sQrZtjB6a+UkyOmpLBMBdItrxnK/fcbJ9ocv3oW+v3R92G
+	weKI3wi3UY34LFzXQw9PDoU9PFjSZx0Bg5eBo6+HePZVxacbGOscYLd66dxX4hq2M7E8j+2sx/3
+	zd9W1pg==
+X-Received: by 2002:a05:600c:314a:b0:434:fdaf:af2d with SMTP id 5b1f17b1804b1-4365c9ca4c9mr38342635e9.30.1734623412445;
+        Thu, 19 Dec 2024 07:50:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF7Foe7CxMJRcEUl//p+aYMCxZbhHxB2OFtrmCjQuB3z/SEYjBCEaxGdcwkFtdox5Ynq2GgCw==
+X-Received: by 2002:a05:600c:314a:b0:434:fdaf:af2d with SMTP id 5b1f17b1804b1-4365c9ca4c9mr38342355e9.30.1734623412070;
+        Thu, 19 Dec 2024 07:50:12 -0800 (PST)
 Received: from ?IPV6:2003:cb:c749:6600:b73a:466c:e610:686? (p200300cbc7496600b73a466ce6100686.dip0.t-ipconnect.de. [2003:cb:c749:6600:b73a:466c:e610:686])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8acb17sm1791950f8f.97.2024.12.19.07.47.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b0145csm55403945e9.15.2024.12.19.07.50.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 07:47:19 -0800 (PST)
-Message-ID: <f30fba5f-b2ca-4351-8c8f-3ac120b2d227@redhat.com>
-Date: Thu, 19 Dec 2024 16:47:18 +0100
+        Thu, 19 Dec 2024 07:50:11 -0800 (PST)
+Message-ID: <49dc2ccc-888f-4e40-bad9-ba014381554e@redhat.com>
+Date: Thu, 19 Dec 2024 16:50:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,17 +92,20 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
  with AS_WRITEBACK_INDETERMINATE mappings
-To: Shakeel Butt <shakeel.butt@linux.dev>
+To: Zi Yan <ziy@nvidia.com>
 Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
- josef@toxicpanda.com, bernd.schubert@fastmail.fm, linux-mm@kvack.org,
- kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
- Zi Yan <ziy@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev,
+ jefflexu@linux.alibaba.com, josef@toxicpanda.com,
+ bernd.schubert@fastmail.fm, linux-mm@kvack.org, kernel-team@meta.com,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
  Michal Hocko <mhocko@kernel.org>
 References: <20241122232359.429647-1-joannelkoong@gmail.com>
  <20241122232359.429647-5-joannelkoong@gmail.com>
  <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
- <hltxbiupl245ea7b4rzpcyz3d62mzs6igcx42g7zsksanbxqb3@sho3dzzht3rx>
+ <485BC133-98F3-4E57-B459-A5C424428C0F@nvidia.com>
+ <90C41581-179F-40B6-9801-9C9DBBEB1AF4@nvidia.com>
+ <b3df8b0a-fa19-425a-b703-cbe70b6abeda@redhat.com>
+ <96EA65A5-EA67-4245-95DA-D0DAD7BE2E47@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -150,63 +153,76 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <hltxbiupl245ea7b4rzpcyz3d62mzs6igcx42g7zsksanbxqb3@sho3dzzht3rx>
+In-Reply-To: <96EA65A5-EA67-4245-95DA-D0DAD7BE2E47@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.12.24 16:43, Shakeel Butt wrote:
-> On Thu, Dec 19, 2024 at 02:05:04PM +0100, David Hildenbrand wrote:
->> On 23.11.24 00:23, Joanne Koong wrote:
->>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
->>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
->>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
->>> writeback may take an indeterminate amount of time to complete, and
->>> waits may get stuck.
->>>
->>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
->>> ---
->>>    mm/migrate.c | 5 ++++-
->>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/mm/migrate.c b/mm/migrate.c
->>> index df91248755e4..fe73284e5246 100644
->>> --- a/mm/migrate.c
->>> +++ b/mm/migrate.c
->>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->>>    		 */
->>>    		switch (mode) {
->>>    		case MIGRATE_SYNC:
->>> -			break;
->>> +			if (!src->mapping ||
->>> +			    !mapping_writeback_indeterminate(src->mapping))
->>> +				break;
->>> +			fallthrough;
->>>    		default:
->>>    			rc = -EBUSY;
->>>    			goto out;
->>
->> Ehm, doesn't this mean that any fuse user can essentially completely block
->> CMA allocations, memory compaction, memory hotunplug, memory poisoning... ?!
->>
->> That sounds very bad.
+On 19.12.24 16:47, Zi Yan wrote:
+> On 19 Dec 2024, at 10:39, David Hildenbrand wrote:
 > 
-> The page under writeback are already unmovable while they are under
-> writeback. This patch is only making potentially unrelated tasks to
-> synchronously wait on writeback completion for such pages which in worst
-> case can be indefinite. This actually is solving an isolation issue on a
-> multi-tenant machine.
+>> On 19.12.24 16:08, Zi Yan wrote:
+>>> On 19 Dec 2024, at 9:19, Zi Yan wrote:
+>>>
+>>>> On 19 Dec 2024, at 8:05, David Hildenbrand wrote:
+>>>>
+>>>>> On 23.11.24 00:23, Joanne Koong wrote:
+>>>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
+>>>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
+>>>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
+>>>>>> writeback may take an indeterminate amount of time to complete, and
+>>>>>> waits may get stuck.
+>>>>>>
+>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>>>> ---
+>>>>>>     mm/migrate.c | 5 ++++-
+>>>>>>     1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>>>> index df91248755e4..fe73284e5246 100644
+>>>>>> --- a/mm/migrate.c
+>>>>>> +++ b/mm/migrate.c
+>>>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>>>>     		 */
+>>>>>>     		switch (mode) {
+>>>>>>     		case MIGRATE_SYNC:
+>>>>>> -			break;
+>>>>>> +			if (!src->mapping ||
+>>>>>> +			    !mapping_writeback_indeterminate(src->mapping))
+>>>>>> +				break;
+>>>>>> +			fallthrough;
+>>>>>>     		default:
+>>>>>>     			rc = -EBUSY;
+>>>>>>     			goto out;
+>>>>>
+>>>>> Ehm, doesn't this mean that any fuse user can essentially completely block CMA allocations, memory compaction, memory hotunplug, memory poisoning... ?!
+>>>>>
+>>>>> That sounds very bad.
+>>>>
+>>>> Yeah, these writeback folios become unmovable. It makes memory fragmentation
+>>>> unrecoverable. I do not know why AS_WRITEBACK_INDETERMINATE is allowed, since
+>>>> it is essentially a forever pin to writeback folios. Why not introduce a
+>>>> retry and timeout mechanism instead of waiting for the writeback forever?
+>>>
+>>> If there is no way around such indeterminate writebacks, to avoid fragment memory,
+>>> these to-be-written-back folios should be migrated to a physically contiguous region. Either you have a preallocated region or get free pages from MIGRATE_UNMOVABLE.
+>>
+>> But at what point?
 > 
-Are you sure, because I read in the cover letter:
+> Before each writeback. And there should be a limit on the amount of unmovable
+> pages they can allocate.
 
-"In the current FUSE writeback design (see commit 3be5a52b30aa ("fuse: 
-support writable mmap"))), a temp page is allocated for every dirty
-page to be written back, the contents of the dirty page are copied over 
-to the temp page, and the temp page gets handed to the server to write 
-back. This is done so that writeback may be immediately cleared on the 
-dirty page,"
+The question is if that is than still a performance win :) But yes, we 
+can avoid another migration if we are already on allows-movable memory.
 
-Which to me means that they are immediately movable again?
+> 
+>>
+>> We surely don't want to make fuse consume only effectively-unmovable memory.
+> 
+> Yes, that is undesirable, but the folio under writeback cannot be migrated,
+> since migration needs to wait until its finish.
+Right, and currently that works by immediately marking the folio clean 
+again (IIUC after reading the cover letter).
 
 -- 
 Cheers,
