@@ -1,215 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-37818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2724C9F7EF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:09:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA9C9F7F1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 17:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B8716C276
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B781891F53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 16:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49483226887;
-	Thu, 19 Dec 2024 16:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C223229B02;
+	Thu, 19 Dec 2024 16:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="yGaY/irh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QhXiwXe+"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XM249I5r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4D6226529
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E75E226883
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2024 16:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734624550; cv=none; b=qReH3lu2CMRAMUCm4J0kkEZuCdziaBjAq0JrSzw5pzetOVWtCF5E8niyUYcRUVvVzzOutoE8dtoYOBX+Gb9LLMmWLqjEL1JZ0KhxsP/OS/+TNmapnZnOiHuCTSaK/dwNP8GVj4+B2zNxHo6uWbjCrvTMAnoF5sAe187TlGdKAVo=
+	t=1734624694; cv=none; b=PzE5lfiV1sMaxe3gT3LD3SKGf3q1yk5IyAepETKNlNfleR6ZAZnwBfLTWeK3xgteyk88SgCx2r9lx1SzA8dN/KXIsIra2Wl0pT/dsOM5pDZOj2iZodiYiNx+YtmSV4BrqBATXTOVbZ2sPZqQcwoQlQOPpjdc3p28ZRFc64tHEVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734624550; c=relaxed/simple;
-	bh=ARl14DuEFHJGAO7R/evMREEwI9lLvM1yQGSS/fBbbuw=;
+	s=arc-20240116; t=1734624694; c=relaxed/simple;
+	bh=mWVH3rAsk5h3ckz3gNoSdBBBTkSCZ9BSG+hyNch2g3g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ViN5x0RenM1cFAD0WZZGdnpJdbTOu446+zKuCdTgPYy3ELffC5198WhsCTjj1MwP3mh4+N1YHKrtx46KeJkBgQ3Uglvl6lxgNzBPshsCBqy7VHbx1LS01oFgp1QCHOvKCSSyjOt7KcqQnjWQBKQymyvyFqsZvmkDR0am51U4lYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=yGaY/irh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QhXiwXe+; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 2E991114013F;
-	Thu, 19 Dec 2024 11:09:07 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 19 Dec 2024 11:09:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1734624547;
-	 x=1734710947; bh=mek9gh2qCnrmwkTbLZwTrAHm/dw3ZHqNhHYFkkmDqS8=; b=
-	yGaY/irhR2I2mVPcVI4vmxEz7Jp/9ytly7MsNm6WtZFkMn2QbAoCDXeokSdCdM74
-	Yso+KyfleYbojnFwsljhUv68m6KO1DcC7ecsIn0vdWUnNwhDrHn74KY7RF9hvNNf
-	HD/W81dH5Ff7fyrjEUN6XubTwEWkdIemtQMbo9zMBrXKXFfYAoBhFe37u60F6UZL
-	jLV3LHZnMJDWd+cXrA0kUEEu2P7rt685llNya1pnc3NZ5Mc1KOtWxfFOMypjhCBo
-	1LPHZcG2R+nIboi87ZLqLUMNnVF4Sn1aZDa4oPrr8NWxntPjj8Vr6lhwzq//OA4c
-	ij5aJ+Wbk6U/WTVtnphsaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734624547; x=
-	1734710947; bh=mek9gh2qCnrmwkTbLZwTrAHm/dw3ZHqNhHYFkkmDqS8=; b=Q
-	hXiwXe+GEby1kpRmgcBaZTbCyPDNetoGLaC8OGQeG7Nl8if3kYxURw+9OoexlvwV
-	2VNoQHv2+UldafDQyX4U6oJ2Nhezag/HhQMo+lQIV9T7Zzhh/s1zEV0MIPtGEqCS
-	fje+78Hl6Ge91izsjAbJsZ9vfg2bWCN4cKEUol37Nro2rWPgxrzK+HX9N8ORvA8o
-	Z4UAxRrC0TRTCp+s00+qNjVBihvMt6DCS+x7bZZ7xXJWBGJp5oSzWDPuFILXhCTZ
-	6rHP++nBtcZVUKC+Qw/K+TacoeQCiAsB7VdM/P/SaNULPdkrvpvKH+ZD6293gCNE
-	aRjS6ji74pJ6Fsm1/HXEQ==
-X-ME-Sender: <xms:IUVkZ7O5OB9UkRajQYy_QUjFhOEKTFmun9zCWh3x_yTHZtVXwdFXGA>
-    <xme:IUVkZ1__9_TTe4TOBW9Lkqr9YUKchwQ0lenyO3Ja6uoaEP7oahUPhxEw2TFG_NIkk
-    IMoiTy3Uyb8JvSS>
-X-ME-Received: <xmr:IUVkZ6Rt--FHFdZW86f_7B7qPQ6y-sgHYDyoaUJE2c_7iRe_YpV8bUFtg4AnV56EpmCRufq__OgFcIjkGcZEFWIaQrQeKyOwJY40TAYruE9IJEfFqfaN>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddttddgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepshhh
-    rghkvggvlhdrsghuthhtsehlihhnuhigrdguvghvpdhrtghpthhtohepuggrvhhiugesrh
-    gvughhrghtrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepjhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpth
-    htohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtoheplhhinhhu
-    gidqmhhmsehkvhgrtghkrdhorhhg
-X-ME-Proxy: <xmx:IUVkZ_tyoqwGu8ODZJajOEe5Yt56TWU29WxqKQeKv7zMCjbZ-RK_tQ>
-    <xmx:IUVkZzc7IFrFdWgWT-3IYs9dRMvjNgmf6r-GC8RzcsLBVAZaKBNdvQ>
-    <xmx:IUVkZ708hx5C1uw7caiTgj3-clbPw_fp1uiRHdqrGynvS-2J-nZvCw>
-    <xmx:IUVkZ_87ANcxWWb_dlT_jtfKI-RKvn8H8pRfh61afLpYjcdKyytRNA>
-    <xmx:I0VkZ-9Hv8szlGb2F-YPQ3hoJoQEklSZQy6NE-yjzHr7RuqypdjnBG05>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 19 Dec 2024 11:09:03 -0500 (EST)
-Message-ID: <ec2e747d-ea84-4487-9c9f-af3db8a3355f@fastmail.fm>
-Date: Thu, 19 Dec 2024 17:09:02 +0100
+	 In-Reply-To:Content-Type; b=aL5L6ICBUEQO9oMpBbe8btj2UivEg8kAgWrGEP2Z8JZmoFQ/ZlOMcQ7hbTam8ahx2z2JvaMrALQkdQiB2RO4uOvPMtjyhHhg56SZ73vQIQ+9yhHuqwGmc5skm4gRpZs3cIYzTuwwkebk3KkeFZVwVhSWtiPVGwMKe7b4jXH4IOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XM249I5r; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <09256acb-9b23-4a25-a260-a4063d219899@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734624681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7UovLRK5y6ohnM8T6CZvegkTaxuziaYqQQ/0lf+o36A=;
+	b=XM249I5r/a0K+DJ29HlMkFWuV4T21RQctWitV/3T5jB/4TT6oTCtBGNj4pzVQmZ4Jnt4xg
+	FdYee6uZZm9ZTSdMzHIyBVDfpqMT4mkqMHfNXukGuzuCekg+e71YJXPY4auBkslde62N1Q
+	6AaNqDiZlu3OwK6eJi+0lsrNKioTzIw=
+Date: Thu, 19 Dec 2024 08:11:12 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: Zi Yan <ziy@nvidia.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
- David Hildenbrand <david@redhat.com>, Joanne Koong <joannelkoong@gmail.com>,
- miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
- jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
- kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
- Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
-References: <20241122232359.429647-1-joannelkoong@gmail.com>
- <20241122232359.429647-5-joannelkoong@gmail.com>
- <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
- <hltxbiupl245ea7b4rzpcyz3d62mzs6igcx42g7zsksanbxqb3@sho3dzzht3rx>
- <f30fba5f-b2ca-4351-8c8f-3ac120b2d227@redhat.com>
- <gdu7kmz4nbnjqenj5vea4rjwj7v67kjw6ggoyq7ok4la2uosqa@i5gxpmoopuii>
- <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
- <ec27cb90-326a-40b8-98ac-c9d5f1661809@fastmail.fm>
- <0CF889CE-09ED-4398-88AC-920118D837A1@nvidia.com>
- <722A63E5-776E-4353-B3EE-DE202E4A4309@nvidia.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <722A63E5-776E-4353-B3EE-DE202E4A4309@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH bpf-next v6 0/5] bpf: Add open-coded style process file
+ iterator and bpf_fget_task() kfunc
+Content-Language: en-GB
+To: Juntong Deng <juntong.deng@outlook.com>, ast@kernel.org,
+ daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ memxor@gmail.com, snorcht@gmail.com, brauner@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <AM6PR03MB5080DC63013560E26507079E99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <AM6PR03MB5080DC63013560E26507079E99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
 
-On 12/19/24 17:02, Zi Yan wrote:
-> On 19 Dec 2024, at 11:00, Zi Yan wrote:
->> On 19 Dec 2024, at 10:56, Bernd Schubert wrote:
->>
->>> On 12/19/24 16:55, Zi Yan wrote:
->>>> On 19 Dec 2024, at 10:53, Shakeel Butt wrote:
->>>>
->>>>> On Thu, Dec 19, 2024 at 04:47:18PM +0100, David Hildenbrand wrote:
->>>>>> On 19.12.24 16:43, Shakeel Butt wrote:
->>>>>>> On Thu, Dec 19, 2024 at 02:05:04PM +0100, David Hildenbrand wrote:
->>>>>>>> On 23.11.24 00:23, Joanne Koong wrote:
->>>>>>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
->>>>>>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
->>>>>>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
->>>>>>>>> writeback may take an indeterminate amount of time to complete, and
->>>>>>>>> waits may get stuck.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
->>>>>>>>> ---
->>>>>>>>>    mm/migrate.c | 5 ++++-
->>>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>>>>>
->>>>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>>>>>>> index df91248755e4..fe73284e5246 100644
->>>>>>>>> --- a/mm/migrate.c
->>>>>>>>> +++ b/mm/migrate.c
->>>>>>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->>>>>>>>>    		 */
->>>>>>>>>    		switch (mode) {
->>>>>>>>>    		case MIGRATE_SYNC:
->>>>>>>>> -			break;
->>>>>>>>> +			if (!src->mapping ||
->>>>>>>>> +			    !mapping_writeback_indeterminate(src->mapping))
->>>>>>>>> +				break;
->>>>>>>>> +			fallthrough;
->>>>>>>>>    		default:
->>>>>>>>>    			rc = -EBUSY;
->>>>>>>>>    			goto out;
->>>>>>>>
->>>>>>>> Ehm, doesn't this mean that any fuse user can essentially completely block
->>>>>>>> CMA allocations, memory compaction, memory hotunplug, memory poisoning... ?!
->>>>>>>>
->>>>>>>> That sounds very bad.
->>>>>>>
->>>>>>> The page under writeback are already unmovable while they are under
->>>>>>> writeback. This patch is only making potentially unrelated tasks to
->>>>>>> synchronously wait on writeback completion for such pages which in worst
->>>>>>> case can be indefinite. This actually is solving an isolation issue on a
->>>>>>> multi-tenant machine.
->>>>>>>
->>>>>> Are you sure, because I read in the cover letter:
->>>>>>
->>>>>> "In the current FUSE writeback design (see commit 3be5a52b30aa ("fuse:
->>>>>> support writable mmap"))), a temp page is allocated for every dirty
->>>>>> page to be written back, the contents of the dirty page are copied over to
->>>>>> the temp page, and the temp page gets handed to the server to write back.
->>>>>> This is done so that writeback may be immediately cleared on the dirty
->>>>>> page,"
->>>>>>
->>>>>> Which to me means that they are immediately movable again?
->>>>>
->>>>> Oh sorry, my mistake, yes this will become an isolation issue with the
->>>>> removal of the temp page in-between which this series is doing. I think
->>>>> the tradeoff is between extra memory plus slow write performance versus
->>>>> temporary unmovable memory.
->>>>
->>>> No, the tradeoff is slow FUSE performance vs whole system slowdown due to
->>>> memory fragmentation. AS_WRITEBACK_INDETERMINATE indicates it is not
->>>> temporary.
->>>
->>> Is there is a difference between FUSE TMP page being unmovable and
->>> AS_WRITEBACK_INDETERMINATE folios/pages being unmovable?
-> 
-> (Fix my response location)
-> 
-> Both are unmovable, but you can control where FUSE TMP page
-> can come from to avoid spread across the entire memory space. For example,
-> allocate a contiguous region as a TMP page pool.
 
-Wouldn't it make sense to have that for fuse writeback pages as well?
-Fuse tries to limit dirty pages anyway.
+On 12/17/24 3:34 PM, Juntong Deng wrote:
+> This patch series adds open-coded style process file iterator
+> bpf_iter_task_file and bpf_fget_task() kfunc, and corresponding
+> selftests test cases.
+>
+> In addition, since fs kfuncs is generic and useful for scenarios
+> other than LSM, this patch makes fs kfuncs available for SYSCALL
+> program type.
+>
+> Although iter/task_file already exists, for CRIB we still need the
+> open-coded iterator style process file iterator, and the same is true
+> for other bpf iterators such as iter/tcp, iter/udp, etc.
+>
+> The traditional bpf iterator is more like a bpf version of procfs, but
+> similar to procfs, it is not suitable for CRIB scenarios that need to
+> obtain large amounts of complex, multi-level in-kernel information.
+>
+> The following is from previous discussions [1].
+>
+> [1]: https://lore.kernel.org/bpf/AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
+>
+> This is because the context of bpf iterators is fixed and bpf iterators
+> cannot be nested. This means that a bpf iterator program can only
+> complete a specific small iterative dump task, and cannot dump
+> multi-level data.
+>
+> An example, when we need to dump all the sockets of a process, we need
+> to iterate over all the files (sockets) of the process, and iterate over
+> the all packets in the queue of each socket, and iterate over all data
+> in each packet.
+>
+> If we use bpf iterator, since the iterator can not be nested, we need to
+> use socket iterator program to get all the basic information of all
+> sockets (pass pid as filter), and then use packet iterator program to
+> get the basic information of all packets of a specific socket (pass pid,
+> fd as filter), and then use packet data iterator program to get all the
+> data of a specific packet (pass pid, fd, packet index as filter).
+>
+> This would be complicated and require a lot of (each iteration)
+> bpf program startup and exit (leading to poor performance).
+>
+> By comparison, open coded iterator is much more flexible, we can iterate
+> in any context, at any time, and iteration can be nested, so we can
+> achieve more flexible and more elegant dumping through open coded
+> iterators.
+>
+> With open coded iterators, all of the above can be done in a single
+> bpf program, and with nested iterators, everything becomes compact
+> and simple.
+>
+> Also, bpf iterators transmit data to user space through seq_file,
+> which involves a lot of open (bpf_iter_create), read, close syscalls,
+> context switching, memory copying, and cannot achieve the performance
+> of using ringbuf.
+>
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
+> v5 -> v6:
+> * Remove local variable in bpf_fget_task.
+>
+> * Remove KF_RCU_PROTECTED from bpf_iter_task_file_new.
+>
+> * Remove bpf_fs_kfunc_set from being available for TRACING.
+>
+> * Use get_task_struct in bpf_iter_task_file_new.
+>
+> * Use put_task_struct in bpf_iter_task_file_destroy.
+>
+> v4 -> v5:
+> * Add file type checks in test cases for process file iterator
+>    and bpf_fget_task().
+>
+> * Use fentry to synchronize tests instead of waiting in a loop.
+>
+> * Remove path_d_path_kfunc_non_lsm test case.
+>
+> * Replace task_lookup_next_fdget_rcu() with fget_task_next().
+>
+> * Remove future merge conflict section in cover letter (resolved).
+>
+> v3 -> v4:
+> * Make all kfuncs generic, not CRIB specific.
+>
+> * Move bpf_fget_task to fs/bpf_fs_kfuncs.c.
+>
+> * Remove bpf_iter_task_file_get_fd and bpf_get_file_ops_type.
+>
+> * Use struct bpf_iter_task_file_item * as the return value of
+>    bpf_iter_task_file_next.
+>
+> * Change fd to unsigned int type and add next_fd.
+>
+> * Add KF_RCU_PROTECTED to bpf_iter_task_file_new.
+>
+> * Make fs kfuncs available to SYSCALL and TRACING program types.
+>
+> * Update all relevant test cases.
+>
+> * Remove the discussion section from cover letter.
+>
+> v2 -> v3:
+> * Move task_file open-coded iterator to kernel/bpf/helpers.c.
+>
+> * Fix duplicate error code 7 in test_bpf_iter_task_file().
+>
+> * Add comment for case when bpf_iter_task_file_get_fd() returns -1.
+>
+> * Add future plans in commit message of "Add struct file related
+>    CRIB kfuncs".
+>
+> * Add Discussion section to cover letter.
+>
+> v1 -> v2:
+> * Fix a type definition error in the fd parameter of
+>    bpf_fget_task() at crib_common.h.
+>
+> Juntong Deng (5):
+>    bpf: Introduce task_file open-coded iterator kfuncs
+>    selftests/bpf: Add tests for open-coded style process file iterator
+>    bpf: Add bpf_fget_task() kfunc
+>    bpf: Make fs kfuncs available for SYSCALL program type
+>    selftests/bpf: Add tests for bpf_fget_task() kfunc
+>
+>   fs/bpf_fs_kfuncs.c                            | 38 ++++----
+>   kernel/bpf/helpers.c                          |  3 +
+>   kernel/bpf/task_iter.c                        | 91 +++++++++++++++++++
+>   .../testing/selftests/bpf/bpf_experimental.h  | 15 +++
+>   .../selftests/bpf/prog_tests/fs_kfuncs.c      | 46 ++++++++++
+>   .../testing/selftests/bpf/prog_tests/iters.c  | 79 ++++++++++++++++
+>   .../selftests/bpf/progs/fs_kfuncs_failure.c   | 33 +++++++
+>   .../selftests/bpf/progs/iters_task_file.c     | 86 ++++++++++++++++++
+>   .../bpf/progs/iters_task_file_failure.c       | 91 +++++++++++++++++++
+>   .../selftests/bpf/progs/test_fget_task.c      | 63 +++++++++++++
+>   .../selftests/bpf/progs/verifier_vfs_reject.c | 10 --
+>   11 files changed, 529 insertions(+), 26 deletions(-)
+>   create mode 100644 tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file_failure.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/test_fget_task.c
+
+There are quite some CI failures.
+
+    https://github.com/kernel-patches/bpf/actions/runs/12403224240/job/34626610882?pr=8266
+
+Please investigate.
 
 
-Thanks,
-Bernd
 
