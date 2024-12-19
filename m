@@ -1,124 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-37882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194759F8795
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 23:12:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F75C9F87EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 23:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CA9E16F3FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 22:12:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5A6D7A1749
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2024 22:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E1D1CD1F6;
-	Thu, 19 Dec 2024 22:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2CD1DC9B4;
+	Thu, 19 Dec 2024 22:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOqu2148"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezl8Pcbi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE274189BB5;
-	Thu, 19 Dec 2024 22:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2381886337;
+	Thu, 19 Dec 2024 22:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734646310; cv=none; b=Cw90AzbF7j1w8nNx8OOqQ8z2wuUl7tn8YrfGZMn5HoUP8Du2mbPgVwJ0R4sBV5wPK4sAE71nrw1W2g8KWTYznHhkh1K1U4U7FRBrMJEuWr5Xwq+5At2l3Y2L3EZc0mpDo+j1oLVMarFf73VeeGUKU3u/fmkjSL6UTz+J+v1RGKg=
+	t=1734647654; cv=none; b=F+3raC34N2o1jLxPZ40HM/i5gDQZGYnvIC7cwQ2fRkzNwbtstNJOUUpjSX/w3QOXD2BgwZ7XAcKT2lTO4P7UTiOkdHMaH4cfH/RWEJJozYpoJpPEBPE8pgcjV3vN7NgNQStReLXFihjPxiAHEW+PPnq9dxyL0WgUwO40xu3QW08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734646310; c=relaxed/simple;
-	bh=CwQO2tuAbFruVfWpVEOsLSkckT/e9nIDGitbrWb7Aas=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Sd4mq2ZFPTqTsGsjDdWs+MQFXhI1a60TQFOzzLTjE50IxHYC3ZiXxxWJcy8p24oHRhlhU1nsu9hVDhuUPcX61ndRJCi135ow+r0PFYlM+K3008ffO/tGaNQBdTunCodwaZgG2NXjItDZU3R6/YCCJ6vVNMmVOx1XNZO4tay+HNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOqu2148; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 064AFC4CECE;
-	Thu, 19 Dec 2024 22:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734646309;
-	bh=CwQO2tuAbFruVfWpVEOsLSkckT/e9nIDGitbrWb7Aas=;
-	h=From:Date:Subject:To:Cc:From;
-	b=HOqu2148/tCzC5/wtEP+Yy7uUNvkZfHFdDiYfW/DLqUEvJFgTZ5cBHOYk5Um9LnVB
-	 gvODeDPdlb9ks7PwypDoj+ETdS+bqwDcVdFhdloZdDKaMiTS83gFbHJs9sHudYZMRt
-	 AI3ybZaF+It/EGO1sw4gh0M4OMnL+2cJX6jnM6q9zwhTS2lUmk2aiRkXnEARv30hxh
-	 4qr674gdO5OS8RJP6JyuUH7O0NgpomYzxwN535apKCwx1I2/BUY1K3y14zT1MZXouM
-	 oNBYzVVW8/SV50piKy3NyBUH72Cfvlku1lsnzic8hQxmZHcsl8fKOQWkRFNetLuFZg
-	 WA78H/gwH8k+Q==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 19 Dec 2024 17:11:40 -0500
-Subject: [PATCH] samples/vfs: add __SANE_USERSPACE_TYPES__ to mountinfo
- program
+	s=arc-20240116; t=1734647654; c=relaxed/simple;
+	bh=qxS55oO27rKPnOfhteHz+D3RnOslvXFFsJ2ttK8g0rI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MSPrSqCHX4m1PsKs3lqb7rBZelE9KAb6pHWI7w5VYyeqnleCesXnQnNq/4TnlG2yJAOrb+EIx72vxF/fEQCWFUZUXGAa4KFHd+s/bHpzvaCuEMNXEChRQG8aC2n3bblghj2Ju9Q+XnTn4moojMRnTyw+c7SUYhaqecoDj3TIVMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezl8Pcbi; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-467a37a2a53so14560151cf.2;
+        Thu, 19 Dec 2024 14:34:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734647652; x=1735252452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u9XI++Qd5/FsAHM/VtpJpu0/P901WHIBleQv+lOHczw=;
+        b=ezl8PcbietyAWfNtsegQX1/c/QO+M1Sl90NnLS4+g1BMhI4bFenSS/kzPwvxFbKt1i
+         vH6epLT4ELdUz+VkSuEsPvipTS2Za6pmjSBN8qka9fbfp2YzuIrB+iJMdtJ/7qbQumv2
+         cY7Vpu9N77rE75k6mL/a9DEAF/LuPS4MdhoSECs8far+0XiqgklOqd9/GjvqHzNdgjNz
+         Lcja2fbwBvcCASaorocX3UYwnQjDkdJeNttRJTgBDQT72qveloVrgzcfjOjvtCIFUBJ8
+         CoZeJn/qPiGBhfHR4bNrW8dB8q4h9AbXKq/NESlkdC74QLtJHPsOFovRO/+xXRWNIK7t
+         albA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734647652; x=1735252452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u9XI++Qd5/FsAHM/VtpJpu0/P901WHIBleQv+lOHczw=;
+        b=qO6rHCtQTLPQiVnwOrOl9owNSSuCOIDfVSMCJawFu8RE6wqPqdPnvU/xLSSM5B7M/o
+         3QvXtHxEx0+vKHHIr6m9qkI+0+2TXQ5rqae5IgM6SJuLAy6hYSz1dvYEhmzF3a6vkFN1
+         A5xORne7O68xDkNn/Lgaotz3GoySabRJyEHAczzLj0JFOXcgRTG4yIbI8EjVZMMRW2Gb
+         gTfFzi8LLPBOmCxDsPYGJPEsWpx71/H3vLVLmfcek+ZDUDmI4/U1A/YM99SmyuYTlSQc
+         FZg01HIubf13Ma3PNlkHbTKR9lnUYLWPxHzcda0EqVU5yE7BIaDj08n4V12P2jLbmlnz
+         qyOA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+kUx8UgFeKJrxIgab4HNUUmrStt42QrPf1bPp3DAexFoAKU6UVxYLuHSug2KnPYYA+9NzT17qtp/oi638@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJGqbO9Ao5oDfOy7DqPIO8oBkSQlOjT0kZet3xC1ibKBezENMm
+	9z9HLLAUAkNR8VDhUTgcysMdZFXlK04Q77Zj4mdPokI1H5+ikFB/a8X+U9HidrPJINv6FgLz3JW
+	FTRHNFRy3jypqmXwIGbidZUMZ1+Uzgfdl
+X-Gm-Gg: ASbGncvo3dV1KTMuUpH1KPbWdzG0o5LZqZXZdPT10XS4TbS2R1g7RT/esmVOYPPypM+
+	YcEOsyVKP/68t1FTLIHfj306RXRHbGXaZQvyICj4=
+X-Google-Smtp-Source: AGHT+IGSdjSYG7wHcVlBNdexoUiQoZFJy3ZtW/5Rw28kqOxa6PVg/sQswm2nnrAWy25p3I/dBwh/C9SYbkWqdpcMW40=
+X-Received: by 2002:a05:622a:1a29:b0:467:6cce:44ba with SMTP id
+ d75a77b69052e-46a4a976beemr12161851cf.43.1734647651953; Thu, 19 Dec 2024
+ 14:34:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241219-statmount-v1-1-9fd8eab3cf0c@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABuaZGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDI0NL3eKSxJLc/NK8El0DAyNjU8NE48REMwsloPqCotS0zAqwWdGxtbU
- AysshIFsAAAA=
-X-Change-ID: 20241219-statmount-002351a3aa68
-To: Christian Brauner <brauner@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1403; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=CwQO2tuAbFruVfWpVEOsLSkckT/e9nIDGitbrWb7Aas=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnZJokIb9iomv5XV0hKRlDaAmbF7TXd7PluLvKZ
- xs5vZX/A9iJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ2SaJAAKCRAADmhBGVaC
- FZoSEADDyJfwyoxZXeJzahMKzTUw/mYp4oyZxRVwvDWO/jEcg3McBDS+dzN//Fg714vGtqOmfbD
- AuQZX9s9u5WS39lOulBBDl6YRxVaR7vkaKcwafY48fGcfbjK6AFprU0cYMeCUivn7rslLronW60
- SFnk6OElijDjnhJ5935yQm0/YGCZYzG8SaHxDut+kW3MOQR31YzAQYAA8CIIVshXxlyRMNQHNUV
- bIyt9b6P/mi32vIHGx876qRCEMhbv34jyYRt42TT4auumcX4aNrcbvoAvSuXXjpmFhxvjSLA+hu
- 25IqIauR+QBzMU79/HyRozEffExM7zmssAQslDpuXlj0tT18GNWZIQulU4YStDk99/G3sqDVqpd
- aqVDyv04MKooPbJ3CjMU5oaWLk8pU8ABlLtHEFQmPKNRz9VAr+fHVD+Dm525bstvxJp77mvl74r
- ioFgKo4RoDL139b4NOkZWk/gj+zzSSA3veuew2D9xmAXUM3G+pDytu5YjcjUFAqxxebg6xJ6H/g
- /nSN4WXLlGGjbuSno92UV4ntQRNPH7zf7ysz2E00Wkk3uhz6DrS1Tkr0P5GnGHBZ9d8yJIBURH5
- bb8bLhZGYF2s8cYRWbjzIpDVMJH0JMJvXHoaRQ0Gu5XGruozh2iFcrervZtPsUqUp2Lf96vwazZ
- bpbtYEqec5IBBJA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20241218210122.3809198-1-joannelkoong@gmail.com>
+ <20241218210122.3809198-2-joannelkoong@gmail.com> <Z2QtyaryQtBZZw7q@bfoster>
+In-Reply-To: <Z2QtyaryQtBZZw7q@bfoster>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 19 Dec 2024 14:34:01 -0800
+Message-ID: <CAJnrk1ZfvyrP=8qKyHFzVte_G1q85bVtmKb4KRwJCe_cYHBmxg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fsx: support reads/writes from buffers backed by hugepages
+To: Brian Foster <bfoster@redhat.com>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-mountinfo.c is throwing compiler warnings on ppc64. The comment over
-__SANE_USERSPACE_TYPES__ says:
+On Thu, Dec 19, 2024 at 6:27=E2=80=AFAM Brian Foster <bfoster@redhat.com> w=
+rote:
+>
+> On Wed, Dec 18, 2024 at 01:01:21PM -0800, Joanne Koong wrote:
+> > Add support for reads/writes from buffers backed by hugepages.
+> > This can be enabled through the '-h' flag. This flag should only be use=
+d
+> > on systems where THP capabilities are enabled.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+>
+> Firstly, thanks for taking the time to add this. This seems like a nice
+> idea. It might be nice to have an extra sentence or two in the commit
+> log on the purpose/motivation. For example, has this been used to detect
+> a certain class of problem?
 
- * This is here because we used to use l64 for 64bit powerpc
- * and we don't want to impact user mode with our change to ll64
- * in the kernel.
- *
- * However, some user programs are fine with this.  They can
- * flag __SANE_USERSPACE_TYPES__ to get int-ll64.h here.
+Hi Brian,
 
-That is the case with mountinfo.c, so define it.
+Thanks for reviewing this. That's a good idea - I'll include the
+sentence from the cover letter to this commit message as well: "This
+is motivated by a recent bug that was due to faulty handling for
+userspace buffers backed by hugepages."
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/all/20241211143701.5cfc95a7@canb.auug.org.au/
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Feel free to fold this into an earlier patch if that's easier. Also, I
-wonder if samples/vfs/test-list-all-mounts.c needs similar treatment?
----
- samples/vfs/mountinfo.c | 1 +
- 1 file changed, 1 insertion(+)
+>
+> A few other quick comments below...
+>
+> >  ltp/fsx.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 92 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > index 41933354..3656fd9f 100644
+> > --- a/ltp/fsx.c
+> > +++ b/ltp/fsx.c
+> > @@ -190,6 +190,7 @@ int       o_direct;                       /* -Z */
+> >  int  aio =3D 0;
+> > +}
+> > +
+> > +static void *
+> > +init_hugepages_buf(unsigned len, long hugepage_size)
+> > +{
+> > +     void *buf;
+> > +     long buf_size =3D roundup(len, hugepage_size);
+> > +
+> > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
+> > +             prterr("posix_memalign for buf");
+> > +             return NULL;
+> > +     }
+> > +     memset(buf, '\0', len);
+>
+> I'm assuming it doesn't matter, but did you want to use buf_size here to
+> clear the whole buffer?
 
-diff --git a/samples/vfs/mountinfo.c b/samples/vfs/mountinfo.c
-index 349aaade4de53912b96eadb35bf1b7457b4b04fa..2b17d244d321ee759543cefa3c9e84e7cd489c9a 100644
---- a/samples/vfs/mountinfo.c
-+++ b/samples/vfs/mountinfo.c
-@@ -5,6 +5,7 @@
-  * contents of /proc/self/mountinfo.
-  */
- #define _GNU_SOURCE
-+#define __SANE_USERSPACE_TYPES__
- #include <stdio.h>
- #include <stdint.h>
- #include <sys/ioctl.h>
+I only saw buf being used up to len in the rest of the code so I
+didn't think it was necessary, but I also don't feel strongly about
+this and am happy to change this to clear the entire buffer if
+preferred.
 
----
-base-commit: ef5bbd2a286805b0f97b5fa8616d28a84336ee7b
-change-id: 20241219-statmount-002351a3aa68
+>
+> > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
+> > +             prterr("madvise collapse for buf");
+> > +             free(buf);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     return buf;
+> > +}
+> > @@ -3232,12 +3287,41 @@ main(int argc, char **argv)
+> >       original_buf =3D (char *) malloc(maxfilelen);
+> >       for (i =3D 0; i < maxfilelen; i++)
+> >               original_buf[i] =3D random() % 256;
+> > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
+> > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
+> > -     memset(good_buf, '\0', maxfilelen);
+> > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
+> > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
+> > -     memset(temp_buf, '\0', maxoplen);
+> > +     if (hugepages) {
+> > +             long hugepage_size;
+> > +
+> > +             hugepage_size =3D get_hugepage_size();
+> > +             if (hugepage_size =3D=3D -1) {
+> > +                     prterr("get_hugepage_size()");
+> > +                     exit(99);
+> > +             }
+> > +
+> > +             if (writebdy !=3D 1 && writebdy !=3D hugepage_size)
+> > +                     prt("ignoring write alignment (since -h is enable=
+d)");
+> > +
+> > +             if (readbdy !=3D 1 && readbdy !=3D hugepage_size)
+> > +                     prt("ignoring read alignment (since -h is enabled=
+)");
+>
+> I'm a little unclear on what these warnings mean. The alignments are
+> still used in the read/write paths afaics. The non-huge mode seems to
+> only really care about the max size of the buffers in this code.
+>
+> If your test doesn't actually use read/write alignments and the goal is
+> just to keep things simple, perhaps it would be cleaner to add something
+> like an if (hugepages && (writebdy !=3D 1 || readbdy !=3D 1)) check after
+> option processing and exit out as an unsupported combination..?
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+My understanding of the 'writebdy' and 'readbdy' options are that
+they're for making reads/writes aligned to the passed-in value, which
+depends on the starting address of the buffer being aligned to that
+value as well. However for hugepages buffers, they must be aligned to
+the system hugepage size (eg 2 MiB) or the madvise(... MADV_COLLAPSE)
+call will fail. As such, it is not guaranteed that the requested
+alignment will actually be abided by. For that reason, I thought it'd
+be useful to print this out to the user so they know requested
+alignments will be ignored, but it didn't seem severe enough of an
+issue to error out and exit altogether. But maybe it'd be less
+confusing for the user if this instead does just error out if the
+alignment isn't a multiple of the hugepage size.
 
+>
+> BTW, it might also be nice to factor out this whole section of buffer
+> initialization code (including original_buf) into an init_buffers() or
+> some such. That could be done as a prep patch, but just a suggestion
+> either way.
+
+Good idea - i'll do this refactoring for v2.
+
+
+Thanks,
+Joanne
+>
+> Brian
+>
+> > +
+> > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
+);
+> > +             if (!good_buf) {
+> > +                     prterr("init_hugepages_buf failed for good_buf");
+> > +                     exit(100);
+> > +             }
+> > +
+> > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size);
+> > +             if (!temp_buf) {
+> > +                     prterr("init_hugepages_buf failed for temp_buf");
+> > +                     exit(101);
+> > +             }
+> > +     } else {
+> > +             good_buf =3D (char *) malloc(maxfilelen + writebdy);
+> > +             good_buf =3D round_ptr_up(good_buf, writebdy, 0);
+> > +             memset(good_buf, '\0', maxfilelen);
+> > +
+> > +             temp_buf =3D (char *) malloc(maxoplen + readbdy);
+> > +             temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
+> > +             memset(temp_buf, '\0', maxoplen);
+> > +     }
+> >       if (lite) {     /* zero entire existing file */
+> >               ssize_t written;
+> >
+> > --
+> > 2.47.1
+> >
+> >
+>
 
