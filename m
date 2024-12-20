@@ -1,132 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-37939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F039F9502
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 16:01:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992BF9F950A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 16:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F78A7A2988
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2DF18936A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7E7210182;
-	Fri, 20 Dec 2024 15:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BF6218ABC;
+	Fri, 20 Dec 2024 15:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IQWAn3T+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DyekCPiC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89216C139
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 15:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE7E1C3F2B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 15:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734706897; cv=none; b=L/NfcBrV9tecQDr8C4bVqutwDvZX7nBjU443NFA9CAVaFxsLhJtpH1c/AD779ylqhdBBbhJ7XuIXbW7JhhkWy4469fetxrmhwIdhXEsinIh09EarcX94tydYhWMPk4L/8V0JuIunJ0giWRF4IKzxAt4i1lX3sHHsAubson/RE5M=
+	t=1734707032; cv=none; b=kNJZH5uhPu3a2VUMxVHLnEX39kmCgY+3EFa6vAoXNsLZv+akEHpcTZh6YBsn3Qz0yHrZUGh3dm1Jfc8ebOedZBN0fh+jc+opPZRfPHzwU1VSJ5ijLp2ZiruI9Bsu1sqhgB6jlxzKdl3WZCJUsRd8JpPJ9eGv4ilvK7vC6MSvefg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734706897; c=relaxed/simple;
-	bh=YICxQZi4cg6eZTeagz9OE+0WDrIIqLAP3jm5f03O+IM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohnIuiKrY88qooxMKWrQ/luEORW9u+Wdq6Y0ugf9gpDH8ZQiEVdbjtSmIbtymXMkF5dLRh471sE8WIdJh0QtxKOi9ANRwt8PPhrN1iptXhoBLso5VBmI+U24QNqBoqyKaqSWIQwa2JrVqO2fGCpybxyUZSmA9/jJMDgfo2t4KoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IQWAn3T+; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 20 Dec 2024 10:01:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734706892;
+	s=arc-20240116; t=1734707032; c=relaxed/simple;
+	bh=e+m7fBHPpMDdNahwnBtswauC8Bzq0gPI01dZRSoqa3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TqmL6/vSE/EMkC9vRTa2sCdUJZXJws9jOGLE3sGb619FEFGaOwnVuVywiZNBf1hdiOWY/fPjrTOlMtKoVoQq/0J/tzAvddaF1gJV129o5sYIcH3W9/LcDjOf9u1Gp8PsX/VMUr7m92ciUZQ2NORL1AiidJaYItwbj68WiRv1GsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DyekCPiC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734707029;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tBvtHZrsG8pIWGr7RL5243AeoJrwfvchc6/qui55As8=;
-	b=IQWAn3T+resGcUIbPhveOT6kZBeO2DK89jr2AHL5YPcTknB20R2tLLS20bl6t7cFHCC+sH
-	RL0/Q04FBA9dGu9eMdCgZar8xVyLsBGWBUmbs0AXlXvndQTfuyY4D6430qBJ+8NBcsxUVa
-	BC3WKto6LbYTspVfkUSruYp5RkDaxjk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Haichi Wang <wanghaichi@tju.edu.cn>, dave.hansen@linux.intel.com, 
-	brauner@kernel.org, hpa@zytor.com, viro@zeniv.linux.org.uk, 
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luto@kernel.org, x86@kernel.org, mingo@redhat.com, jack@suse.cz, 
-	syzkaller@googlegroups.com
-Subject: Re: Kernel bug: "general protection fault in
- bch2_btree_path_traverse_one"
-Message-ID: <3gs6aqeby2ymbuhdw3lytsdcl5qigg6ekzox6uejosfodr4xau@dtks66rjrnxa>
-References: <AOAA*AACIqMsH7SiGMkHgaoE.1.1734695024950.Hmail.3014218099@tju.edu.cn>
- <Z2V21UH_3FuNDoa1@casper.infradead.org>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OWAB0kDBETvYpu2MrV6mU0PsK+ELU4H4C8gE6dHo/1A=;
+	b=DyekCPiC5Tf5YlThowa5nTt2w2fKIbSpkAXN49IL6+ZncSV/RzT1A/yeApyOvsesVQdbS9
+	APtlfovTMWps2LQQLvz4kVWja1goWGSw5fIr7xpAsyEM2dzisBBmxILzb2X4ptNAaDLu9+
+	gQvXb2jNtkOo2FAxYi1PUd6j2LXXI+Q=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284--zBwKtKNM1uAyLBnZ4ekvg-1; Fri, 20 Dec 2024 10:03:48 -0500
+X-MC-Unique: -zBwKtKNM1uAyLBnZ4ekvg-1
+X-Mimecast-MFC-AGG-ID: -zBwKtKNM1uAyLBnZ4ekvg
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4361a8fc3bdso11473985e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 07:03:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734707027; x=1735311827;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OWAB0kDBETvYpu2MrV6mU0PsK+ELU4H4C8gE6dHo/1A=;
+        b=WwEkBSPRZ5zDc8GAnlC/q2sVfu+mkRwAqoPQ99XyEv+cUnGqXzQf1vvsrNQ0M6cFVr
+         ZV5Q22ykVxdhkq2qGZhuKqKmHYUyhbBvQr5aysqVqQS/qyfbb/DaCN5MCl4LXNrz6wSq
+         aFchOzxp29q5l1sl2ycJ/2jLXxoMePctz0bBZZMHdJDSlWsbH0AMtTmCg5OAmrwHszIF
+         nUzcusG7iFSx/WXFBekgepHwrBVI9Y1es64DsLCi07avcZVl5BGRIdMQuNvdiSVigzSv
+         7SNytpH3z/+UdaxLHaFqt4kn3QHGqnGO8sApR49X0k/9e1elVukSKnBk+Zse1MyJzXv4
+         Favg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1jDr6YGeVD/kjY8Ld0f3OpjYaLDHGc+Vp5WlyJEDr9+l4iY/6YfRs/Kq0x8ROPzAYtGHZ2Njwxhsj7iGH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLXtiNnuu8ycKpdnBYKLizKd5vbBMDV4mldTLKVr839883jbgr
+	XyLTyZkst7P8b9TVAdtfhH1SY0+L0HlEwqHriz3QZMkXDm7tmgbjXetjpcKV6ktr6PqDEplZ9M6
+	r4alIH+d9iVam8ZqSE5ddKXK4lhutALC379eX4fbXogX3X71KgK+wWdmbcyJjm1M=
+X-Gm-Gg: ASbGncvBgBu500ImmBMmQfT6u09zLw4PZl2G7cgEBqEet5L/0Kf7OyE1McPfqvihzFe
+	n2j2BLUwFcmntF3XpOLlGlj4TozdmhtN0BHokmK3XAN71qLFf4l23A2jDhVCp3ZzZxp4mJZtWgt
+	2G6BLbMPh5wTuflSg5Wko8u/CyFaGMDBRejHGIMJwUweF8cbhZ7HRJQSO8DpAb6o4M49T7qP/8g
+	BZo0RedzX0aaEO9Ftvy4fIr0HtzpN8MeH/52P7nl+rTu3gETr1Lx6oH/1PPwK74pzYSXtJw6W6Y
+	lOmTXQ0RhYW9jzW3d6rePNzfi26HCfz5ru2OzTcOUBPA2r5GH774OLNtC7ISH8A5WR+by9QZ9gB
+	1Xya3lFNU
+X-Received: by 2002:a05:6000:4012:b0:385:f892:c8fe with SMTP id ffacd0b85a97d-38a221fa22cmr3417278f8f.21.1734707026726;
+        Fri, 20 Dec 2024 07:03:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGnarzRDpKkohEao/pdyX0GNLj+85BhrAGPwqQr4aAIG/ckAEOg73IGCK6l092v0cKpqvqSWg==
+X-Received: by 2002:a05:6000:4012:b0:385:f892:c8fe with SMTP id ffacd0b85a97d-38a221fa22cmr3417166f8f.21.1734707025953;
+        Fri, 20 Dec 2024 07:03:45 -0800 (PST)
+Received: from ?IPV6:2003:cb:c708:9d00:edd9:835b:4bfb:2ce3? (p200300cbc7089d00edd9835b4bfb2ce3.dip0.t-ipconnect.de. [2003:cb:c708:9d00:edd9:835b:4bfb:2ce3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c828ba0sm4188959f8f.14.2024.12.20.07.03.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2024 07:03:45 -0800 (PST)
+Message-ID: <042d3631-e3ab-437a-b628-4004ca3ddb45@redhat.com>
+Date: Fri, 20 Dec 2024 16:03:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z2V21UH_3FuNDoa1@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] mm: add PG_dropbehind folio flag
+To: "Kirill A. Shutemov" <kirill@shutemov.name>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+ bfoster@redhat.com, Vlastimil Babka <vbabka@suse.cz>
+References: <20241213155557.105419-1-axboe@kernel.dk>
+ <20241213155557.105419-5-axboe@kernel.dk>
+ <wi3n3k26uizgm3hhbz4qxi6k342e5gxprtvqpzdqftekutfy65@3usaz63baobt>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <wi3n3k26uizgm3hhbz4qxi6k342e5gxprtvqpzdqftekutfy65@3usaz63baobt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 20, 2024 at 01:53:25PM +0000, Matthew Wilcox wrote:
-> On Fri, Dec 20, 2024 at 07:43:44PM +0800, Haichi Wang wrote:
-> > Dear Linux maintainers and reviewers:
-> > We are reporting a Linux kernel bug titled **general protection fault in bch2_btree_path_traverse_one**, discovered using a modified version of Syzkaller.
+On 20.12.24 12:08, Kirill A. Shutemov wrote:
+> On Fri, Dec 13, 2024 at 08:55:18AM -0700, Jens Axboe wrote:
+>> Add a folio flag that file IO can use to indicate that the cached IO
+>> being done should be dropped from the page cache upon completion.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > 
-> No, you aren't.  This is a terrible bug report, and you seem to have
-> sent several with the same defects.  First, read:
+> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > 
-> https://blog.regehr.org/archives/2037
+> + David, Vlastimil.
 > 
-> Then, specifically to reporting a kernel bug *LOOK AT HOW OTHER PEOPLE
-> DO IT*.  Your email includes lots of stuff that is of no help and
-> doesn't include the most important thing -- the kernel logs from around
-> the time of the failure.
-> 
-> > ### Affected Files
-> > The affected files, as obtained from the VM log, are listed below. The corresponding maintainers were identified using `./scripts/get_maintainer.pl`:
-> > fs/bcachefs/btree_update_interior.c
-> > fs/bcachefs/alloc_foreground.c
-> > fs/bcachefs/btree_iter.c
-> > fs/bcachefs/btree_trans_commit.c
-> > fs/namespace.c
-> > arch/x86/entry/common.c
-> > fs/bcachefs/recovery.c
-> > fs/bcachefs/recovery_passes.c
-> > fs/bcachefs/super.c
-> > fs/bcachefs/fs.c
-> > fs/super.c
-> 
-> This is useless.
-> 
-> > ### Kernel Versions
-> > - **Kernel Version Tested:** v6.12-rc6:59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-> > - **Latest Kernel Version Reproduced On:** f44d154d6e3d633d4c49a5d6a8aed0e4684ae25e
-> 
-> Useful
-> 
-> > ### Environment Details
-> > - **QEMU Version:** QEMU emulator version 4.2.1 (Debian 1:4.2-3ubuntu6.29)  
-> > - **GCC Version:** gcc (Ubuntu 11.4.0-2ubuntu1~20.04) 11.4.0  
-> > - **Syzkaller Version:** 2b3ef1577cde5da4fd1f7ece079731e140351177
-> 
-> Useful
-> 
-> > ### Attached Files
-> > We have attached the following files to assist in reproducing and diagnosing the bug:
-> > - **Bug Title:** `bugtitle`  
-> > - **Bug Report:** `report`  
-> > - **Machine Information:** `machineInfo`  
-> > - **Kernel Config:** `config`  
-> > - **Compiled Kernel Image:** `vmlinux`  
-> 
-> You didn't attach these things, but please don't.
-> 
-> We want the stacktrace.  Preferably passed through
-> scripts/decode_stacktrace.sh so we get nice symbols.
+> I think we should consider converting existing folio_set_reclaim() /
+> SetPageReclaim() users to the new flag. From a quick scan, all of them
+> would benefit from dropping the page after writeback is complete instead
+> of leaving the folio on the LRU.
 
-I'm not at all clear on why we need a syzbot copycat project - why not
-just work with those guys and contribute whatever improvements you have
-there?
+I wonder of there are some use cases where we write a lot of data to 
+then only consume it read-only from that point on (databases? fancy AI 
+stuff? no idea :) ).
 
-I've been doing some work with the syzbot folks on ktest integration so
-I can reproduce syzbot bugs in a single command - I'm not going to redo
-that work for a second backend.
+-- 
+Cheers,
+
+David / dhildenb
+
 
