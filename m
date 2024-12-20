@@ -1,55 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-37928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779CC9F91F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 13:14:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EE59F91FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 13:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7570B188C605
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 12:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F79188CBE3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 12:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEE61C5F10;
-	Fri, 20 Dec 2024 12:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE86E1C5CC1;
+	Fri, 20 Dec 2024 12:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eiBkUleH"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Y59c+By/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QdeoGkyg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28231C549D;
-	Fri, 20 Dec 2024 12:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1652F1C549E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 12:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734696824; cv=none; b=ImZ0mF3saMkeuS/gDuJOpVkU9Fj3/XovMYId00GQMLw1+JeYMehfdQ1vcH8pkduoT4/rOSnx9Bpk5WewjRuwQnFuyJYQMslcsm5KrwP0qPdOe0dnVPgKRrq2xAFED8ivn9azd1+aDgBDqrELASASl0J1RgoHgLFKNudJrJuVPRs=
+	t=1734696948; cv=none; b=adBc473QkdbWm98YrnMrSvWjsNYG6poYIFrxMZS2sChAhTLp5DnVxrh137TX3RJuClIKjW3fTPzB+Nn+7md0oU0QJ2V9Tm0OM71Lae2QzZ6tMGzms6siTWOyDZSvrKmWAKm2CPPS9VBQ0fkCU+PFiyCkBj+pY3r8Uk1uCv/MR0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734696824; c=relaxed/simple;
-	bh=l0QV3pCfNvTEaAr2tp5IR6Nyt9OZ/n9ia4nnm12cf0Y=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=EImn8QSaTYx88SONIScOYilqi5JVR4DgAn892rFX+n4+aGXr0bH/JNUef+Px4l/vY7/bWI00gI5iuAIVm95P7aY4trXHBy3OdQLJ4K5cyEAhO6CWc6UwFngAKk7RqCgjDfN323clQOXuK7ykhWwOEXRiVw6ETSxGQoqVT+WL6GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eiBkUleH; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1734696803; x=1735301603; i=markus.elfring@web.de;
-	bh=l0QV3pCfNvTEaAr2tp5IR6Nyt9OZ/n9ia4nnm12cf0Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eiBkUleH7S96Qiv4WR7VxwUr19IBYVgVOFafXpuBMphrSVd8y85eYqeBuKeRgQmB
-	 TaiEhAO+fc2DN92vSax7oe3HD+2aYjashIDVvwsLkOzd0sKfgdmmIMZR7ySOgskyY
-	 x8HOHxoBkdzyprMo0MKIKaMGeRhY0EI/DaL6nFoltx4AUDnzW++jINYrzqlJhuTSv
-	 9TEHX1qnqSrDI8MewypA80/muqCn2UDDLuoMOTNLxVcNKp16uqPMf+isE/jutPeAb
-	 xqpNDFJmSNFX26/9rnVsUcxCvTgUND3skX/xZ56nDMSTXtQ1pmlLEOGfIoSweJIuc
-	 tKaaarcu8pOtLPY5GA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.93.21]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1tn7ii1d19-00vTyD; Fri, 20
- Dec 2024 13:13:23 +0100
-Message-ID: <18a1ba96-86d5-4c89-85f5-d816808e7735@web.de>
-Date: Fri, 20 Dec 2024 13:13:20 +0100
+	s=arc-20240116; t=1734696948; c=relaxed/simple;
+	bh=kIiqKxX5ary8UkLEKVQhK+O4Q9YlzHk8WI1WJSsyJRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCnIBkcHiztG0uNgHrFOT4oiKN1efKenB7AmUYhICp6BszeGrqucs0zQxV0wfFbR7ZlOa0teGSlJuTHwj+JE02lfKjRmitpZNyQW+QjXjG2ioUpl8L6v0N5rDxKvi1W91JD0pjZG4+tF2b+j1b7w75bLDZrtuYaqZK4Wc0pQIdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Y59c+By/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QdeoGkyg; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D4E5F25401F2;
+	Fri, 20 Dec 2024 07:15:44 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 20 Dec 2024 07:15:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1734696944;
+	 x=1734783344; bh=+YGk28ztcSAWjy0uYggB9XXCE8N2gUhF1YO1R6mlzLg=; b=
+	Y59c+By/BKXKhLTZGutksTiVzXmlh8WW2yZkyPbb/Uz3wQjTS1qw4ocjMOCf7tJs
+	SpDvgLktO7JMK+jtiRDOy8aZ8sF5Gv3RgKAl1ETd0fSxzg+iorW9KNAHYrAgn48s
+	HFtfAcAQfdrrSIXT2FvR2uCx0UEgKB9pXiYzb5Dqsi9aePwDTb4IIeXVk2Fuzs1M
+	vwXbrtFiW7aZZX+oId96HZjkrez3y0CvPnw0ZVzFqg3ExPAwo1bdKYzegeRu5bcP
+	j7hhhsexJkd7x9g1JC9o8NQ6mdw5xiuhLUY70fbTS1Ht39HGLvLekSFQZIEe1VZa
+	szWpzgQ9RQi248/AOkp7/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734696944; x=
+	1734783344; bh=+YGk28ztcSAWjy0uYggB9XXCE8N2gUhF1YO1R6mlzLg=; b=Q
+	deoGkygSbRte96yoqCBzNFy/jkC1YAhRpFA+9so3li+2yVdYZhDuDZOIWeiash3p
+	exSMADNg5wyy7VuNFHcVlIbPykWnO4a6SQICR47jejkfymaflxu3pOyYkRrjzSEG
+	Ac7Qz2J03sErExfhlf+yjc/qYoI4qrq77vtNwViNZnh9GLwh30Be90WMsn6mW6Uy
+	zoZz8FDAI1yNfZe2tVZ3p+ylv1+r76bujMEx+NIfa+snfK1gzAWkerGLtmPnee+M
+	eEZWzdTQuDZpcCGcYw7zvstfqihDktc04RVHKznslbeSyHV0M3nTX07UpWJOf1V0
+	SrZooqYfPnTvCKm8CoeSA==
+X-ME-Sender: <xms:719lZ1h7P2a0hIeMcCUUpCIpCB8o4oIcq-EJ0nYuMYoB_YeLJCYIsA>
+    <xme:719lZ6Cw7t5AxS0cDOvOg3uyZlCy1g5n8IVDZEfAYxbPafwyI8IBk4B-kDn5lpqXa
+    jf3fMkbP2JDvqZJ>
+X-ME-Received: <xmr:719lZ1FMMel9h4TVG7Z5wK2pvRQ22qz4clEwzkzgPgxrql0zPQXohQAUpZpNAP_I5B9dmqHM9iQLEri6dsKew-KINas6Wf0RQ0eY-YpCR2PbH591AhuS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefgueektdefuefg
+    keeuieekieeljeehffejheeludeifeetueefhfetueehhfefnecuffhomhgrihhnpehkvg
+    hrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnhgspg
+    hrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgu
+    sehrvgguhhgrthdrtghomhdprhgtphhtthhopehshhgrkhgvvghlrdgsuhhttheslhhinh
+    hugidruggvvhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtgho
+    mhdprhgtphhtthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthhopehmihhklh
+    hoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvghffhhlvgiguheslhhinh
+    hugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgr
+    nhgurgdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrgh
+X-ME-Proxy: <xmx:719lZ6SwHXIrc6MHm8aR9m3C_8mf-9YcZBFbHngmMGRc3DrcaFcVJA>
+    <xmx:719lZyxSy47vV-k_jhsAsoLSutwLa7ONw4G6I2iWTZy4_NxeSrU84w>
+    <xmx:719lZw4h3OGHTMTLEeg_cKrLqVoN_ml2Odr67kDPm5n2_PPH1ZZGKQ>
+    <xmx:719lZ3w48v-X1ma22UlB0CswYX0oAXxebH3PnMwKIYPd1-vFRQMv-Q>
+    <xmx:8F9lZ2hXgpNKEkJu8hW1gTUbBDmrgHWyu5yolkuE54rlUYGvnZ-6S2IL>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 20 Dec 2024 07:15:41 -0500 (EST)
+Message-ID: <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm>
+Date: Fri, 20 Dec 2024 13:15:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,49 +99,98 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: David Wang <00107082@163.com>, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241220041605.6050-1-00107082@163.com>
-Subject: Re: [PATCH] seq_file: copy as much as possible to user buffer in
- seq_read()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241220041605.6050-1-00107082@163.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: David Hildenbrand <david@redhat.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Joanne Koong <joannelkoong@gmail.com>
+Cc: Zi Yan <ziy@nvidia.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
+ josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Michal Hocko <mhocko@kernel.org>
+References: <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
+ <onnjsfrlgyv6blttpmfn5yhbv5q7niteiwbhoze3qnz2zuwldc@seooqlssrpvx>
+ <43e13556-18a4-4250-b4fe-7ab736ceba7d@redhat.com>
+ <ggm2n6wqpx4pnlrkvgzxclm7o7luqmzlv4655yf2huqaxrebkl@2qycr6dhcpcd>
+ <968d3543-d8ac-4b5a-af8e-e6921311d5cf@redhat.com>
+ <ssc3bperkpjyqdrlmdbh2woxlghua2t44tg4cywj5pkwwdcpdo@2jpzqfy5zyzf>
+ <7b6b8143-d7a4-439f-ae35-a91055f9d62a@redhat.com>
+ <2e13a67a-0bad-4795-9ac8-ee800b704cb6@fastmail.fm>
+ <ukkygby3u7hjhk3cgrxkvs6qtmlrigdwmqb5k22ru3qqn242au@s4itdbnkmvli>
+ <CAJnrk1bRk9xkVkMg8twaNi-gWBRps7A6HubMivKBHQiHzf+T8w@mail.gmail.com>
+ <2bph7jx4hvhxpgp77shq2j7mo4xssobhqndw5v7hdvbn43jo2w@scqly5zby7bm>
+ <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uNHzAjhlC9pYUlTg22o33E46vj4ldFHQ1M9h+Ve/1S3tqH6DGBj
- Pxd5yniTW0RaGPNl6OBtcBaI3mhpo7ujVWgR1ZE2f9IirC1C/VO7vnVK2syW85rgpUdhYs+
- No6lKcjZpO8/rFzvAHEeTM42UEiq6DrZAwCT24D+3oMYyyROnNjBbyYp9jHeIOFIsUY/Up6
- NYrGcfFVd98hFvINh9hbw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fqrwgblh1xM=;l+7bQwjTg0IDcWlzPjrDex5zUV6
- 5B5vUwWLxi132UdfN+mG3+ODC+WotgBJ7tmFJOs1c14JdlXg73jcz+Lda9FfRBG8ctJinXrcD
- kTEOCISgX21NnR7+l+oHzgFyABtXPxmgeZgg0C71z4kYfD02unm6zap+cdQz1jgznelBZ7Zie
- jrkiMW+O+owVUUVWWerm/nNSln7byFn00fW/LxtieRaxt6Ia3dnyFjK0/Cp783IG+aJ2+7tz6
- gA2FDAQ3I7gjk8fci8KihkRsMVKj6FUEJgrY6lI5bwPn4uQ5LRD+0sc8TsOp4XogQBw6CzEO/
- P268oOD3hmmNuP34Kwl8R+vqWwuVD1Tf1VOqCrD+0NW8paSa3ZaUGNGHeAF2JVlYyLALNBK86
- AbQT/NqUfGmqep9WXSZOb2YiFlHOEMBR1nGXYhYilalKPq8yTlN3FFLpNPQtT5u3WE2pdGDLA
- jpjuJPJ8TfLS7Z+sOadTIMyQOuiUfZDKD42Ryc4DRpWbn0IqGh3AUGkv6d+cO0WYKc2eTVqRs
- 4RujnWXf4uXxl3utiXayCn1ymd290Ld6fjflWMSzxospLKGGgUIN/ivbF5sa19YxPExyBxV2m
- huEyKRW3ZooPTPyJYyWHplWtAyvQdmnI15hpXxlZsRqA2UBjo1afRUMSEF8ol6ge4bjtBFEAR
- gRhcZFHDcRJ35B84fAuMm+jTaai4eZKwYA+yFKaC7Y74nKee1tUZItbsmkMHffBegKrwcnHBB
- Yg9QAm5LsnABiuT4i0lfwehMk9V8+BEEzXcVtJyabZA1YEuje+AXJ1QvMSDvjmtbDKPAzqQRG
- 8FCdZJ2Q6OOtiFYG87nnPlsGZmA2OjMkTbfE8qCCtzE1hXQFCl6jNXh/93E4iAs+TOQNzD7Yo
- t2KVBZ/B3N2eOPRq7TvgKeBD9SMvrUhmlj1JaYdl8bQJcXCO9GGDFQ2N5UN+pDFBsqKcRBdqY
- D2QisGDwg5aOSgxbzi3dyGNm6D458W9xt8jKz1L5t5xAiQtOTIXP457Aff4oRoNkVqqQdEQSt
- ZX07vHUar8SeMh16crpvUDo9m+Tnn69YFMQd7gwVeufOZrRtkhfe7/FJs+KWPUKTTiOgeAYQv
- pn+gJDvFw=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> This patch try to fill up user buffer as much as possible, =E2=80=A6
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.13-rc3#n94
 
-Regards,
-Markus
+On 12/20/24 12:44, David Hildenbrand wrote:
+> On 19.12.24 18:54, Shakeel Butt wrote:
+>> On Thu, Dec 19, 2024 at 09:44:42AM -0800, Joanne Koong wrote:
+>>> On Thu, Dec 19, 2024 at 9:37 AM Shakeel Butt <shakeel.butt@linux.dev>
+>>> wrote:
+>> [...]
+>>>>>
+>>>>> The request is canceled then - that should clear the page/folio state
+>>>>>
+>>>>>
+>>>>> I start to wonder if we should introduce really short fuse request
+>>>>> timeouts and just repeat requests when things have cleared up. At
+>>>>> least
+>>>>> for write-back requests (in the sense that fuse-over-network might
+>>>>> be slow or interrupted for some time).
+>>>>>
+>>>>>
+>>>>
+>>>> Thanks Bernd for the response. Can you tell a bit more about the
+>>>> request
+>>>> timeouts? Basically does it impact/clear the page/folio state as well?
+>>>
+>>> Request timeouts can be set by admins system-wide to protect against
+>>> malicious/buggy fuse servers that do not reply to requests by a
+>>> certain amount of time. If the request times out, then the whole
+>>> connection will be aborted, and pages/folios will be cleaned up
+>>> accordingly. The corresponding patchset is here [1]. This helps
+>>> mitigate the possibility of unprivileged buggy servers tieing up
+>>> writeback state by not replying.
+>>>
+>>
+>> Thanks a lot Joanne and Bernd.
+>>
+>> David, does these timeouts resolve your concerns?
+> 
+> Thanks for that information. Yes and no. :)
+> 
+> Bernd wrote: "I start to wonder if we should introduce really short fuse
+> request timeouts and just repeat requests when things have cleared up.
+> At least for write-back requests (in the sense that fuse-over-network
+> might be slow or interrupted for some time).
+> 
+> Indicating to me that while timeouts might be supported soon (will there
+> be a sane default?) even trusted implementations can run into this
+> (network example above) where timeouts might actually be harmful I suppose?
+
+Yeah and that makes it hard to provide a default. In Joannes timeout patches
+the admin can set a system default.
+
+https://lore.kernel.org/all/20241218222630.99920-3-joannelkoong@gmail.com/
+
+> 
+> I'm wondering if there would be a way to just "cancel" the writeback and
+> mark the folio dirty again. That way it could be migrated, but not
+> reclaimed. At least we could avoid the whole AS_WRITEBACK_INDETERMINATE
+> thing.
+> 
+
+That is what I basically meant with short timeouts. Obviously it is not
+that simple to cancel the request and to retry - it would add in quite
+some complexity, if all the issues that arise can be solved at all.
+
+
+Thanks,
+Bernd
 
