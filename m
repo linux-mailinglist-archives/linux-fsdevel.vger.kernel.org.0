@@ -1,79 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-37934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C5B9F9424
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:21:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64979F9476
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9F7165C87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 14:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 425537A3FDC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 14:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B31216392;
-	Fri, 20 Dec 2024 14:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C7621638D;
+	Fri, 20 Dec 2024 14:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="csTVOiXW"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EzQvoGT8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15380215F6F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 14:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920EA215F66;
+	Fri, 20 Dec 2024 14:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734704466; cv=none; b=Ol2C9AwB9WNIkRH9xAa88G29vlL3hPUoklzRKjcuSV0rmo1oVl/ijCiJJKJ+nwxddjr7QRfaaQuylu04MiKFdTiafEdWNCwgS8jyxYMWhfAQaBhTkr2ax1Gx9r2FXLbGh9ka/+CNuuyiwIzLPGFZlGuzLjYClIPuMGa3LrLTNww=
+	t=1734705266; cv=none; b=ISkPl/DB4BLx7hVgS02dP8uGo/6gl5YzxMa4iA/B/j3o9ZwCzfDxGVTwXYEF06ZwOW4kotVu3TfA5qNjPPs59KpQ4PVQydKhjf34FlumCOTWTugRFteWOG8QHbOe4fC/F6y0DNEvVaSbyuCM4o8cXi6BDr51uryb9rNB7YLIVNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734704466; c=relaxed/simple;
-	bh=ZmvORrp2lZZv9x8zCaTOLAkBhQDSjTLLRa6i8Pc30dg=;
+	s=arc-20240116; t=1734705266; c=relaxed/simple;
+	bh=/QgsaZGxWOTIhdITtBIUUC+iS6luLG8QYQ3+p+/HCOI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I3ov4CqGjH7pPwk8AJgS4rlv+bVsZFOhACyvbAjuNhoAjFIHS7DmN743+lk18T7c1URQJ7oMxUwvsi6qUOUU572/DFQDXyhu/v8AJwBPAymob28DBY1xyhH6wgGoCIStQeHPnVWzOz9WxCf2VSYdH5KINtNAGFY4mDzyBV7I3pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=csTVOiXW; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-844e9b8b0b9so159139339f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 06:21:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734704463; x=1735309263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=31DzIQjE9S8zB8EihDSpAerIn7KsH/HS0eAgGru0OYk=;
-        b=csTVOiXW2NZiyIi3cvIOvd8qx7uxqmmQbdkufGeFmqoRiTeMKpO7AXG99fKfopbfaa
-         vsXCKBw75NryC0Fh6jEWSX2nrZPK8WrtO/6AAsnrJ1v7wB+SVy8YKeF5Zh60hsJ6AaUS
-         Qd9eZg9jWAxjsE36xtTLllX4RMY/4s1DQ/NA17VM5HsHENrXsZNeVoQxOlvBFUtgkiVW
-         wNeiAeGH+rhmkinzBZbunaQlQjMfLhvzrUWcwi6XBLG7hMcAXHLzASwZ3yKrs9UN2dXQ
-         Fky/tCazmZytAeyTatSSP1e/Bce/TlYNlqZ3JL+azd02x1L1w7E3tZBYBaCl5afg5Krk
-         j7lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734704463; x=1735309263;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=31DzIQjE9S8zB8EihDSpAerIn7KsH/HS0eAgGru0OYk=;
-        b=K2BHckrYWTAeKJAw2l5Et53+s8NKhJl1mzgxreh4WDP8KZEbZ6e0uKD0ollrB5Q+4I
-         rdZXP+G1VNMBhGHJ05cmSFu7iZ4PNOFBQ2NZQtVNqwFM4TGQgWvBXH7r2D2PK2/hJ0uh
-         zYomkXROzQmV3SYKrjSX0wdgiHXkMSOqvQ5Qr4i8z+N4eFNugKPPQGd4aC6INYFizFCf
-         0wTBMYLH2+aNBky045INPJMo2DRoglEjxZ/J4b7hvUeM33Oi9iSrrr3HBDARtO7VAm1w
-         4V5nOkKsKiFrwf6JZIFOkyHV1/JfNI1OV+A2lNG5SN/Lw0uYS0O5mWQHQg0TTkMwKwln
-         BrXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcTTzmPXjCYNTgXe1MRevYlNRwOaJgteOuHeF6UzdQX5th7QNB5gJqxx09f0TdAixvsJhVOtwFeG7xRnr8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZq9+19XUgvu5t72zFJ6mr25gjLxtUSyqdfUF/80FvPrwJDEk8
-	NjvTJ6H+eAW0F72jWtYeXz+LW/Ne1VQqz54rkI7fjNxWURLWUAhBp5Abwc+VDuJ04PsMJ1xHFf8
-	Q
-X-Gm-Gg: ASbGncuv2qZdscCWndw7p2qcJp4ZvlwYBHcauUP1hJ5N6+jjuw8xLYyDMJEyXZg70/m
-	ISayiqMfCui2z/miXQMPRqxNJwN05tz8GlrsXJC3FTpTHdXr7pNngnzAak+rEsds/HjJ6+0jEpd
-	h9JbwKFmwMfg5/z+5hXZnE4zrhtEm/Z15tbDUElSwnAMXogRf2nzH5tCJH8QxG1VF3nV4/WBE/f
-	DD+LajrGDYAo7Z1iLAnpFA7CLp8gEW8H80xdyWWJ9CZt8L946M5
-X-Google-Smtp-Source: AGHT+IEj0xCISBX0Tk5xDDbo9glyTwomym223EgEc8tW4cI6P2VS4z3kvPSV5qtUa4FmLA3Gwp08uw==
-X-Received: by 2002:a05:6e02:219c:b0:3a7:a2c6:e6d1 with SMTP id e9e14a558f8ab-3c2d5151ee6mr28309845ab.16.1734704461729;
-        Fri, 20 Dec 2024 06:21:01 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3c0e3f3633esm8740715ab.59.2024.12.20.06.21.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2024 06:21:00 -0800 (PST)
-Message-ID: <b5b9b6f3-218c-4360-89a7-e58a92327aca@kernel.dk>
-Date: Fri, 20 Dec 2024 07:21:00 -0700
+	 In-Reply-To:Content-Type; b=OSK2AvXfca74jCAexdDc9VgEqQOumZ6ABWNSgUbZzuilzJlVz6b9CMYPKgNtKRcgycsB0Sh7NeDCKET1z+7ZoErE6mdGppIhKTMLkthKcRdzgTbU50k7xtMDAqUYvF8Oe32SEdvl3FEDuurzSMHT/Dlv2N5pykSiVpj/DRKwcn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EzQvoGT8; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1734705253; x=1735310053; i=markus.elfring@web.de;
+	bh=5T0917byC1huSWtpTb769iZOPl3HsxjQatmAkTeKph4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=EzQvoGT8akVJeYFTWcfJZrNtoWcJ5r4AgdAOQPyfhyce8xIkmzXZmxXrXLxC9llX
+	 F9btkmShB/vu0yd0Fmv6eGxNMmpYZtOQlVU8gW5ZBLFFhqgN2NAn6+38nY9Ng6Rg0
+	 qmXtZ7QxK/F/i1ZAwwDCVSo8zuG35VxHKH3hu2DCDQZ4oHhRB9ovH2HSdiidDmnFf
+	 Ls9mudI8WzsznU/qmxtrOLiq8V03Pkul9T0Bm0PBGT33l0b+10zOLrn+rT47UwrgH
+	 SksanIFDAyC8201GufYdscJdL9L/GEO0sNrYh4LWhRv0U3KavbVwW0rGRSOCISym4
+	 f/wAffnkrU2JsZ/7DQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.93.21]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MAtsj-1tHoa40Mqv-00EzVJ; Fri, 20
+ Dec 2024 15:34:13 +0100
+Message-ID: <4256c3d6-5769-444a-84d5-3b416015bc34@web.de>
+Date: Fri, 20 Dec 2024 15:34:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,55 +58,68 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v7 0/11] Uncached buffered IO
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- bfoster@redhat.com
-References: <20241213155557.105419-1-axboe@kernel.dk>
- <tp5nhohkf73dubmepzo7u2hkwwstl2cphuznigdgnf7usd7tst@6ba2nmyu4ugy>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <tp5nhohkf73dubmepzo7u2hkwwstl2cphuznigdgnf7usd7tst@6ba2nmyu4ugy>
+Subject: Re: [PATCH v2] seq_file: copy as much as possible to user buffer in
+ seq_read()
+To: David Wang <00107082@163.com>, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>
+References: <20241220041605.6050-1-00107082@163.com>
+ <20241220140819.9887-1-00107082@163.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241220140819.9887-1-00107082@163.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VVfMjF3HkBj7R3rGza+9QgxWM4UrbeSIDlOwVMNBNVo0WUeQaJS
+ TSBNXzGNLNzNkUIqc3IzznbZa2hCXWCCF5Rvu4prTlKl+HOvo4+p+ixxBynoQJdEoWD2xIv
+ XMeoHGZjjbPPrvIqTp1iaXGf57zM9zo4BIgNEbiuAgH++FnOw21VLexjQCkI60VGfI3RXap
+ UlGAuQ/f+FJ4Y77CedE4g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iq4p8VkIdXA=;sbVzcdWdWDCqPdVmhW2l6r2vULG
+ 1qn6II3NNoyiNSjMeMdRgPNt06xfLbmnT9TsQtH7mzySre5uPTxuyOKN7dzddFuA2ganbp27v
+ yvvH2aB2T8z8Jx3YEg+Yz06j5rrKfwUgatLfp2kmzkZFS2X2EBZ19Bz/EJaXdKGKwy+tHlbIs
+ /qTDz3t1A5+bwu6lt6Id2yHTs9evW6Ns+9aZgIRHI1SdgT2hSIsAssuiyTxP6vNUseUjtfziB
+ epLJ/GfLVIUkiFeIhBt+KFcjUYLj9v3qOiBIfcxpDK6Xf7KMAtVu/lJ1YHhJQVoWsJjF6ol9L
+ WYjpnAZKzkdtnmK0RwSnjxV47fgZwv8dQTKlFaEHu+DUUsaeMX0YwVVNgzg6yJBmYtvemSojD
+ YOiiEeTXp0WARQLmXYPj4C7mwqp8VyZdCswlNJtacD2QSSenvjfRd51l3FLkRTrMNuuYhrQoQ
+ 2ah9rCN53rbjBwOb5oNYK+JnIgBqJRS90FOudfFAJWW4Dp/aiLEJqwpGXkfhRqztJpY6RGnCm
+ 03cH92KcEF5jKg4fI1pKFCIIIDX2WH+1lW0sKetyFIa/Fhvy5Q2OVmiYbR+pX3Y5R/g1fcn2l
+ wrAELch3DK8znJmcm8wNNpHScVQOXgL5pIlZcox5hqRE+ZTm9tokRa94Ba0Gl/tMEk5ajIJ+2
+ fqjHbSnbBUUA0+7pEA+wGnGnqeuZU9l7qN5jxJTZH+mnfRvsA5zjLSdFAqyFlrKd218XbaIx6
+ /CYHAFpwQ9NCVFKvZdLgYsogtsZkCfA/CJnud7eArPFFn0JAUj+AFRTi3ulFQR4bWjZcFSV9S
+ BgsS9e1WW7/54yUmUaHdZpFkglrchHUZ+j1K6/USrk7uQQsAlNIED6Gbm9iCYe0g6Id/vh8bZ
+ z9C8LYUYkTdCLFt2xzCR+GBkDIc/bL6XUWwMx3Zy6y4F8HEI9ORxcWZRm4Gw9ImRHs+qv3MoA
+ P+jcSjOh/eXcAjRCO472y2Ghd38eOFEktyrnSMQFcbtwKK1NSn2qb7VS9VIlQju95XETFptOm
+ Rag+671URusynVjjCp6tI27iKPjiI1T2HXk5GiIYrRQ6uslDsCccN+Bd8rdxTF74MLdUALlYW
+ 8QV6IL9+o=
 
-On 12/20/24 4:25 AM, Kirill A. Shutemov wrote:
->> Since v6
->> - Rename the PG_uncached flag to PG_dropbehind
->> - Shuffle patches around a bit, most notably so the foliop_uncached
->>   patch goes with the ext4 support
->> - Get rid of foliop_uncached hack for btrfs (Christoph)
->> - Get rid of passing in struct address_space to filemap_create_folio()
->> - Inline invalidate_complete_folio2() in folio_unmap_invalidate() rather
->>   than keep it as a separate helper
->> - Rebase on top of current master
-> 
-> Hm. v6 had a patch that cleared the PG_uncached flag if the page accessed
-> via non-uncached lookup[1]. What happened to it? I don't see it here.
-> 
-> https://lore.kernel.org/all/20241203153232.92224-14-axboe@kernel.dk
+> seq_read() yields at most seq_file->size bytes to userspace, =E2=80=A6
 
-Since I only needed these bits for the fs support, I didn't include it in
-this series. However, I did move it back to the core series for v8, it's
-this one:
+                                                    user space?
 
-https://git.kernel.dk/cgit/linux/commit/?h=buffered-uncached.10&id=e4b7e8f693caf84021424ebafa139f38c5599db3
 
-to avoid having a core dependency for the patches adding support to
-iomap and xfs/btrfs.
+=E2=80=A6
+> 	$ strace -T -e read cat /proc/interrupts  > /dev/null
+=E2=80=A6
+> 	 45 read(3, "", 131072)                     =3D 0 <0.000010>
+> On a system with hundreds of cpus, it would need =E2=80=A6
 
-I'll send out a new version with just slight tweaks today. So far it
-has the following changelog:
+                               CPUs?
 
-- Rename filemap_uncached_read() to filemap_end_dropbehind_read()
-- Rename folio_end_dropbehind() to folio_end_dropbehind_write()
-- Make the "mm: add FGP_DONTCACHE folio creation flag" patch part of
-  the base patches series, to avoid dependencies with btrfs/xfs/iomap
-- Remove now dead IOMAP_F_DONTCACHE define and setting on xfs/iomap
 
-where moving this patch back to teh core series is one of the entries.
+Is it a bit nicer to separate test output and subsequent comments by blank=
+ lines?
 
--- 
-Jens Axboe
+
+=E2=80=A6
+> Fill up user buffer as much as possible in seq_read(), extra read
+> calls can be avoided with a larger user buffer, and 2%~10% performance
+> improvement would be observed:
+Will it help to split such a paragraph into three sentences
+(on separate lines)?
+
+Regards,
+Markus
 
