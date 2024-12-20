@@ -1,183 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-37985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8733C9F9B40
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 21:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDDF9F9B4F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 22:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A9B1895498
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 20:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B131896BE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 21:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FACB2236F8;
-	Fri, 20 Dec 2024 20:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5305B21CA09;
+	Fri, 20 Dec 2024 21:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="d1fEg+MQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCW2YaEQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC0019D8A9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 20:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A1E157A48
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 21:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734728130; cv=none; b=K9gDJ0RgHdfepYGlLG/VZ6lyV8MPPDsLeKTP+lFSZd+FH26OxBdqtO3eiWS2ZXoRvU2qPzGuL0CXvu+vVPIpUr5e30Rb52JhSW2x4mELwh9PNHf4H0gpHXYEbKnKsz5JSgDRHVxmE4t3zp7oz7cd2ZwCmgId+qHiLMKlrgT5e84=
+	t=1734728519; cv=none; b=lTJHRWNjh98C7gPVsOoXkoYNhhrchGKk8f9Tck0w3FG4Jq8ElH88+8ddRH22X01hrdK0Arje/AOEzTf7xEpq+22SVSApPtu28VJM6xzChFTTx0IY27pNke0iu9hFwCacbPFCyXoOD3dzDE5FxkRyNBe23ePn/ASPx2M9YmqYOR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734728130; c=relaxed/simple;
-	bh=EaAbbNFvZ+Le2Q+431mtajLrRtmFXGPcrPJLchnEkZ4=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=D6LnFuxZ/DwJ1GVWtJKemo+TbTR1yIVuwlEkcHNKhUhMPUvt8PgxN1L5G9WOd/Ge3ea74cW1gp4MA5ZDzhxUoAX6+Cwq4qJgc/PnrDzO4AXe7J7XVhas7wVfi3jwhO1MOUVuipcCUIANkeaToSsJjDmdlzJ+rzwVK3J6O/hMg9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=d1fEg+MQ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21661be2c2dso19711135ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 12:55:28 -0800 (PST)
+	s=arc-20240116; t=1734728519; c=relaxed/simple;
+	bh=Ytr1v1Bw7arE5zymE2nO4szf5NYsr7gMv345sU8XBbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YyNnNjq1I7Kqm0Uobc9XM1/9tutnkvhc7kH88YjvBwGRa0/QNvOWeK4Oolr1yGZluk2gWTt7GY0a8TbAdOxlAeXe2RtafUlIZHm1kTl+N0wANIhIpZRcegPwIVgxv7A9VroZMGrSfL5EmeEZYDF5b5ZHSFzfk7l1zGbpjXKUKbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCW2YaEQ; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46785fbb949so23990491cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 13:01:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1734728128; x=1735332928; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t8Z3ebZirLTObnPLBSRwuf8YPbB4+CRZ6PwECDAKszs=;
-        b=d1fEg+MQGQB7xMFEnoxiSDLBwggqksx7xOcPS0zfuykLq9Al8o+OQLaOpwPw5CQkEm
-         qjO4gd+ykyTRWWqd+H/duQGkh1k6EJAHBvh4hBLEfi1oWAI31S9ClKzBlQc7SJyiNgB2
-         jOjwLNmZbc5PHdiHR7aDsBaplnwK08Oql6ZmQDJF+2tUewX4V6nb1/606/s0tE03OZC9
-         Wx4RzE3DbbJXSS/9PeA0Zvmf2j89MutvHX85iOGSHhnIHp78KBUooQtI1GUj4XLEJ/y6
-         LnJ3CasUCycNs+li6/yGd7nc++ki4DBEmb9EU4h5Al+L9kuMItasc7okTxHZ52P0Ntv+
-         DoFg==
+        d=gmail.com; s=20230601; t=1734728517; x=1735333317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ytr1v1Bw7arE5zymE2nO4szf5NYsr7gMv345sU8XBbM=;
+        b=LCW2YaEQ+M213mD90jKRvC2rP4ZFdQBDV0ZJc0j5dbWd4itiqbNPxWHdr7k7y9HlNE
+         xSd5Ed9tIrK5PrfQNqoPCAJbS8X2rwHyqfJZzXhNgWnP8wIFPcBGU4KNpm4vYjEajfTQ
+         W9PRUNUbftzde1lhiCrXU1e66XawKrkNVX2ey/HnMAGaTEEs28K9J6BVGtmt+4Z4QsHu
+         mnreZtPrYz+LR53DQc/uz54Hjy025EaO25EiIKLAHvSef1P68DrM+DYY9yxEOndvYhHI
+         1fQZVN6UOntSsW7hGh9rZ1RcK1nZLi6nyo2UkIJxLjkiCVRU18CrlKlAnCVcLrpiz959
+         lJyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734728128; x=1735332928;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t8Z3ebZirLTObnPLBSRwuf8YPbB4+CRZ6PwECDAKszs=;
-        b=icw3A/EPwC8JB4TJAvL1xXV7sMqWInl+zZdXQOuy4rhGlSiW2qXgjW3zI4gHQqebBc
-         v8g2+7JGvbwTsye13T65slQyygQhKWgToOBT1Ez1OOLTnVgUfQJlrWF3Hs7xu78kppmu
-         gz598sjp4+Y+eXzaXV/Rv6W1T6gDpSaP1op8Y6UYqa35kPuYt7TAtBgJu+Uw48q7GvRk
-         PWiERa+gjRkrL3aEk4pYOqf7+v14vCRqqbUWCnaDjDFGMtDjyJLcbJTCXXBnsRg7u9Pq
-         Uc2RcPpwO+GFlVAsfTWkvOZTKJLRN6mXSkkvBtVozKuqhQmaED25X9OiO85xB6BzaIJg
-         V5nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWVJkCisT6sYhOhVZEdw2eL8s4mZxqJa0HYYr7rKfS99up1kR5F/w7rHZCv/ICIzcXx7bliOtbu3p0BTLs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzbJSzVT8PPTLh3/nigYyAK7YRhoYEeEnKHyn+DWVje5dDFLP/
-	Qf19a9VpSA7OMUm2m54Mms9rRxnCQypnfMq7OHfrdQ9OyCz3SnWQagF2m/8IDZ0=
-X-Gm-Gg: ASbGnctL7RMnEJYEy3A9R7scBxMU7j+S9JeBQ4Yi57/cvGHl1ADLuoxgxft87OFX042
-	KYrZFtlq4K+U1Fm+S6JumjbIbnCnXFtBn/ISuLTWmt41Qo255KAhA8GLi2Jr90gsWF1QK1Uww1n
-	WfeYeVX//sq7zQ2Yw3jSMwKLdcVZeDgi94hvtE8/L0RwuLsFvS4co8I3AXNIxyXrLQyD2WziZwX
-	DEeT6ExzoRbTnLFhEH4fYa4tkVrwVPvWqSFBb9aC/ksgcorP8pWvK8mirPkN3zIlHxhUgVN3mZb
-	VNO4DXJfQ9GYiHn5F4psdNkOMk34Dw==
-X-Google-Smtp-Source: AGHT+IEYjyHVHXFwwi8XGFpsvRgybiclYWmOxgxiRAESmfoSL7thjroVD1lP0Nnftv1RpDEt6CAchQ==
-X-Received: by 2002:a17:902:c407:b0:216:50c6:6b42 with SMTP id d9443c01a7336-219e6f25ddbmr48836355ad.56.1734728128180;
-        Fri, 20 Dec 2024 12:55:28 -0800 (PST)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dca02b3fsm33142885ad.244.2024.12.20.12.55.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Dec 2024 12:55:27 -0800 (PST)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <C36B2823-4392-4831-B9D3-0F3C35ADF188@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_D43D194B-9BDF-4EEE-B3E7-9E2F557226BA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        d=1e100.net; s=20230601; t=1734728517; x=1735333317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ytr1v1Bw7arE5zymE2nO4szf5NYsr7gMv345sU8XBbM=;
+        b=AC8wkRnyv2geUXaraEwFFVi2KGPvUdkAzdarVovv5GFZmoCk0EApIX+/XujxxASoB5
+         /wDW4rZtEsRELWWTCsaMnTcrkmtHQosa/DdDXsrSShnq0OXBWDVAOAAjX6qsJA5M3Ez3
+         3eqt6BImla9KTaOdJu0EMv462rC30DijGwz7BGMelLpFZXoRrfjJxtTFa2TQJUtUk4KF
+         0iV8JbzEoqNpCXJre+pogAbniEWHwEzZ1vlgl4e6hbnDcq5mU39ukSb5W60rnQcyTHAB
+         8+GHgcNbK01fE1XOTlr2hL7nBzc6Uzm5nLrqOr71jFDJJB2XtiAqK0o5Wcj4Do0hS8Jg
+         aCAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcNH2kKDBXdejAQaDCipLjvN3Zr2Kpq27DkVyJbh8KMuX76YTx0VlPcZHGGlBXyeNKNSZl/BR4PUfuC4e0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMNTy7Gx5lH5nZaPgDIYpgvLS0NjAd31QI6l5GeyyrxAzCd4S0
+	zKma3Jyndy6g7OmaMio+dEWQ+VybUkXcUN1a80lIHEE0XCBTZsIjksDXARND9mtWbltVFLf4W0O
+	r+jdgSdn63pMDpAXIdnJVYuHZAiM=
+X-Gm-Gg: ASbGnctMIM/XfOyKc4SJBrmIM62j8JsLxXblUKiZfUPLQGGD6oNrnJGYtEK8eoISRHr
+	ihcvWL2ungKXjLICuKOjw9fs3OZWP+5DFE1ep9ig=
+X-Google-Smtp-Source: AGHT+IFTGFkhw3g3zTscn7M0FHo1K9ZsZAMHNzDMdz7Nd2l4rxPJQJcx5/GQ32u4yMAggjh+Sibjlwq8D5DzUNuzS6k=
+X-Received: by 2002:a05:622a:1a07:b0:466:99a9:c354 with SMTP id
+ d75a77b69052e-46a4a8cc49cmr77255841cf.22.1734728516983; Fri, 20 Dec 2024
+ 13:01:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 00/11 RFC] Allow concurrent changes in a directory
-Date: Fri, 20 Dec 2024 13:55:24 -0700
-In-Reply-To: <20241220030830.272429-1-neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-To: NeilBrown <neilb@suse.de>
-References: <20241220030830.272429-1-neilb@suse.de>
-X-Mailer: Apple Mail (2.3273)
-
-
---Apple-Mail=_D43D194B-9BDF-4EEE-B3E7-9E2F557226BA
+MIME-Version: 1.0
+References: <C34102A1-F571-4700-8D16-74642046376D@nvidia.com>
+ <onnjsfrlgyv6blttpmfn5yhbv5q7niteiwbhoze3qnz2zuwldc@seooqlssrpvx>
+ <43e13556-18a4-4250-b4fe-7ab736ceba7d@redhat.com> <ggm2n6wqpx4pnlrkvgzxclm7o7luqmzlv4655yf2huqaxrebkl@2qycr6dhcpcd>
+ <968d3543-d8ac-4b5a-af8e-e6921311d5cf@redhat.com> <ssc3bperkpjyqdrlmdbh2woxlghua2t44tg4cywj5pkwwdcpdo@2jpzqfy5zyzf>
+ <7b6b8143-d7a4-439f-ae35-a91055f9d62a@redhat.com> <2e13a67a-0bad-4795-9ac8-ee800b704cb6@fastmail.fm>
+ <ukkygby3u7hjhk3cgrxkvs6qtmlrigdwmqb5k22ru3qqn242au@s4itdbnkmvli>
+ <CAJnrk1bRk9xkVkMg8twaNi-gWBRps7A6HubMivKBHQiHzf+T8w@mail.gmail.com>
+ <2bph7jx4hvhxpgp77shq2j7mo4xssobhqndw5v7hdvbn43jo2w@scqly5zby7bm>
+ <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com> <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm>
+ <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com>
+In-Reply-To: <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 20 Dec 2024 13:01:46 -0800
+Message-ID: <CAJnrk1YWJKcMT41Boa_NcMEgx1rd5YN-Qau3VV6v3uiFcZoGgQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: David Hildenbrand <david@redhat.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Zi Yan <ziy@nvidia.com>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
+	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, 
+	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
 
-On Dec 19, 2024, at 7:54 PM, NeilBrown <neilb@suse.de> wrote:
->=20
-> A while ago I posted a patchset with a similar goal as this:
->=20
-> =
-https://lore.kernel.org/all/166147828344.25420.13834885828450967910.stgit@=
-noble.brown/
->=20
-> and recieved useful feedback.  Here is a new version.
->=20
-> This version is not complete.  It does not change rename and does not
-> change any filesystem to make use of the new opportunity for
-> parallelism.  I'll work on those once the bases functionality is =
-agreed
-> on.
->=20
-> With this series, instead of a filesystem setting a flag to indiciate
-> that parallel updates are support, there are now a new set of inode
-> operations with a _shared prefix.  If a directory provides a _shared
-> interface it will be used with a shared lock on the inode, else the
-> current interface will be used with an exclusive lock.
+On Fri, Dec 20, 2024 at 6:49=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> >> I'm wondering if there would be a way to just "cancel" the writeback a=
+nd
+> >> mark the folio dirty again. That way it could be migrated, but not
+> >> reclaimed. At least we could avoid the whole AS_WRITEBACK_INDETERMINAT=
+E
+> >> thing.
+> >>
+> >
+> > That is what I basically meant with short timeouts. Obviously it is not
+> > that simple to cancel the request and to retry - it would add in quite
+> > some complexity, if all the issues that arise can be solved at all.
+>
+> At least it would keep that out of core-mm.
+>
+> AS_WRITEBACK_INDETERMINATE really has weird smell to it ... we should
+> try to improve such scenarios, not acknowledge and integrate them, then
+> work around using timeouts that must be manually configured, and ca
+> likely no be default enabled because it could hurt reasonable use cases :=
+(
+>
+> Right now we clear the writeback flag immediately, indicating that data
+> was written back, when in fact it was not written back at all. I suspect
+> fsync() currently handles that manually already, to wait for any of the
+> allocated pages to actually get written back by user space, so we have
+> control over when something was *actually* written back.
+>
+>
+> Similar to your proposal, I wonder if there could be a way to request
+> fuse to "abort" a writeback request (instead of using fixed timeouts per
+> request). Meaning, when we stumble over a folio that is under writeback
+> on some paths, we would tell fuse to "end writeback now", or "end
+> writeback now if it takes longer than X". Essentially hidden inside
+> folio_wait_writeback().
+>
+> When aborting a request, as I said, we would essentially "end writeback"
+> and mark the folio as dirty again. The interesting thing is likely how
+> to handle user space that wants to process this request right now (stuck
+> in fuse_send_writepage() I assume?), correct?
 
-Hi Neil, thanks for the patch.  One minor nit for the next revision
-of the cover letter:
-
-> Another motivation is lustre which
-> can use a modified ext4 as the storage backend.  One of the current
-> modification is to allow concurrent updates in a directory as lustre =
-uses a flat directory structure to store data.
-
-This isn't really correct.  Lustre uses a directory tree for the
-namespace, but directories might become very large in some cases
-with 1M+ cores working in a single directory (hey, I don't write
-the applications, I just need to deal with them).  The servers will
-only have 500-2000 threads working on a single directory, but the
-fine-grained locking on the servers is definitely a big win.
-
-Being able to have parallel locking on the client VFS side would
-also be a win, given that large nodes commonly have 192 or 256
-cores/threads today.  We know parallel directory locking will be
-a win because mounting the filesystem multiple times on a single
-client (which the VFS treats as multiple separate filesystems)
-and running a multi-threaded benchmark in each mount in parallel
-is considerably faster than running the same number of threads in
-a single mountpoint.
-
-Cheers, Andreas
-
-
-
-
+This would be fine if the writeback request hasn't been sent yet to
+userspace but if it has and the pages are spliced, then ending
+writeback could lead to memory crashes if the pipebuf buf->page is
+accessed as it's being migrated. When a page/folio is being migrated,
+is there some state set on the page to indicate that it's currently
+under migration? The only workaround I can see for the splice case
+that doesn't resort to bringing back extra copies is to have splice
+somehow ensure that the page isn't being migrated when it's accessing
+it.
 
 
---Apple-Mail=_D43D194B-9BDF-4EEE-B3E7-9E2F557226BA
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+Thanks,
+Joanne
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmdl2b0ACgkQcqXauRfM
-H+Dqfw/+NnRjj0Xl+1PLELzk5pj+Rl7pCy4FN0gyvDkpwoFjVWCDqxmrm+pewJZL
-pCHoK2iq5cIUkuK4YUcJh3m4JjmFHETepFebj0eIK3j4F0KYTabiDQlaE5pClxtT
-v6apdh65svTkhtU3RLy5IKL/OBZi4NhtBxoxlQAnxa7xZGU74J59PGhLt8I55Kr+
-aJro74LWRgBJG/j/u75Dno6BI99aLTVH3EwiA43o+sVurlaDD6TCPmkE+spa5rSh
-TWjzYl8FnVvJ/43+5wAv7uJE9lMEJej1DSvLg7fq2BqvbkQzedmUDJZTpWh2bYb2
-PM9NkSJpywhDKvmuDc8sRUaDwsXkbPo+i2G7MsfhMo2DQyKP/PBk1TWD/ubmc3B7
-FkZeiYX9lEmClWpsKSnjBe+KCr4Y/3eNxzrjFFfQo6znnNN/X/ez/Vu9L1e9Nlgg
-Hr0eyLrF50WLU5VR1VBieZ/yhYrpfG3vGnI6bBKQGNYF+WyFE//eGdAI7FAwwSiz
-BVtj7hZYtmDnhD2P0ZeKLPD7BilpOIv4KngHBDnw96Lmydq1EcYNLiFagptFCnur
-9s2+sZ3RRszkA41vz9dtOEmOMHvpoGc0U/d5ThyXrfJd0zxQxtP79VnUi1zSWJEG
-M/WfPf0v49DXtxdqjlXH/9hyaczoF8MCq4oIUtiZKs231FWd5tc=
-=5abU
------END PGP SIGNATURE-----
-
---Apple-Mail=_D43D194B-9BDF-4EEE-B3E7-9E2F557226BA--
+>
+> Just throwing it out there ... no expert at all on fuse ...
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
