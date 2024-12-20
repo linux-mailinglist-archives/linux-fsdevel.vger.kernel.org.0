@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-37920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1179F90D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 12:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0FC9F90EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 12:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56C31167806
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 11:00:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52912167FE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 11:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F6C1C54A7;
-	Fri, 20 Dec 2024 11:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EB11C232D;
+	Fri, 20 Dec 2024 11:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Kwot/jsE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WXa5Ukon"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="prS3/2ez";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q16tZmpk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074EA1C3038;
-	Fri, 20 Dec 2024 11:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BE61BD9C1;
+	Fri, 20 Dec 2024 11:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734692408; cv=none; b=fTVRs0fr4wsdBgSQk3f+1s1BbL5Eo6Aqho5+8H9eywGhX5wuBS8j/sQsXQY6kPXXVio1g4vlwC2/wDup0ZlUnHFjJjlrIzCtfgI/E4Kfb54pvFBYknHnvTlAvHTSUDii90fydAGWanQ64Gdj2TO4bJGENwwuSKvvWJAWrSA8FGA=
+	t=1734692930; cv=none; b=MbLL3V9JXoWHgn4uRgTtUpGkZzLdAunlKDPklgDVxflD53hlTf4Db0gL1YagqcYMCd2IknDv3xhRP5uQnDEYBdzctUgj0hEbp5bhE3sqVVEos5pxG4bVpeaIW4SjrCGfILZ515KJuggOvK8JI7/owznMqpzQcgrPiIscVJTWqxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734692408; c=relaxed/simple;
-	bh=hyQFEvZqT0gVwikdO/VVwoH+k3Ld5S1aQnx5SJb7S40=;
+	s=arc-20240116; t=1734692930; c=relaxed/simple;
+	bh=tL3FadEvvM00OuFwPZXvFChzPFmbe44DkMQ9Oe5umI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z119hIlSFMvovrfK7d7hMdvqpVPrCcHpLRVYtfsSRs2yWwzddAFL7AaHPpJNqMPnAFZE3YFuj3lbKPHuArHKLCpKzvpWz218SpTcTKdYnSfjnI6WHxBW4+A5f40rKjWpoU/4ThFg+hHQNP42i91MzSL/PaFB6TfhMLZrU8+XYWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Kwot/jsE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WXa5Ukon; arc=none smtp.client-ip=103.168.172.156
+	 Content-Type:Content-Disposition:In-Reply-To; b=tE8xvce5SeBpisr3MSNLESQ5y14cUIhy0YHGiO7ifCucX6+SPiuyp8UlMkkabIedE6p4g1aT2zuUPLFgLfBQkI3hQ/9t7B7Kx4xT97PNut7becqzh+t2hOS2jDAAHvTFusKJZj5cdvYoCUNltM2+DZQekwOWda93WIP8PjFyV6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=prS3/2ez; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q16tZmpk; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
 Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DF8D811400D4;
-	Fri, 20 Dec 2024 06:00:05 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Fri, 20 Dec 2024 06:00:05 -0500
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2BA051140136;
+	Fri, 20 Dec 2024 06:08:48 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Fri, 20 Dec 2024 06:08:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
 	 h=cc:cc:content-type:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1734692405; x=
-	1734778805; bh=ko6LR9Ga4DXB+RQqzBAg0bvL3abH+Spg9iRhRGKtbCg=; b=K
-	wot/jsE5LJTzrk1ImWG56g20h9ysFknK2zxUWklpmO28AWLQ7kmB5QUnc/iy4fTt
-	+S5QTCUMXo/uUZWaX3ArkG6Rj5F4laTrOnjLfXmNs+acm6g4CDYqJWs9V2LQX48p
-	xXTcKhzKB63i9P8VZyPljKUQZ93ujLJdZg8QkSLjtWt8JxDST5EOwtqU7y5LZNFy
-	66gza7CTCK76IfKLFLRpQP9Z00O9dctPoev1cZ30H/ZOYKsZkfEhBI7O3SLZx1XH
-	OEzEzmsnnMspW6qbFRtQ8BNgeeQRuo2b7s1dIH3/U5INbYiSLkb/GR0aRfiMZAzg
-	Uk3KL8IuTN35aoviTbMtQ==
+	:reply-to:subject:subject:to:to; s=fm3; t=1734692928; x=
+	1734779328; bh=dBLiuAzHvMBEoc6ZDN/KN5+HvtxCsSX//Zw04k+D2ew=; b=p
+	rS3/2ezvtBp4o1UCi3eQ5Jz422jTvmg825ZuwTDLJpK2PHNTxO56ILYo8YT4fN2G
+	c/LQk8WaV+eL2bhmgD/NtcwkOAgJMOlEfi/pikEg1dAvBYj9jF5HDZW3yBcxcHgS
+	/vI/Mx7/OgYj+X013h/Sf+dWOxLGx/IrR8HEiRLT6b5w7Igtgn4FFabMAEbfhiwo
+	pIgeeXmGWPLE3aMe0Yj/77LlGIndcnaOHKACcRL2j5TrDxod/opdoFaF7eC4lFDY
+	wTU/OJxfZEgZ2KWbGp42cnLHq1MtX8uRMjVo6Pi3l/cmlyO9hd9RsPP33yw6yBjg
+	Sh0BsEhxi/oenqrZKjqug==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734692405; x=1734778805; bh=ko6LR9Ga4DXB+RQqzBAg0bvL3abH+Spg9iR
-	hRGKtbCg=; b=WXa5Ukonm7boTfviNx8YwUXU2l08BffDsYHd6v/QVuJsXBOFKW7
-	Vc5Nk5rH5u/C6iI3/n3qNn+DXrEH4MIpFo1ekntu6K1aAprrBPD388SSelT9g/c6
-	byPq/j9C9L8DYIgE4kYXxfXu5s0cEswTrgDU2CFJcOsKgN85jVws0bLI+zwRUdaR
-	SmNoV+ljt1cqyYe92w5lTvFiIwgldu1sc4tNXFsAmetpzTNzVztVhx26/zK2kvls
-	4FEmJqVUHlnoLbg8Rx4caEfrW17tPK8fYO0KivhXs5t1EpfFxj3UL7qJwy8Bi9Vj
-	uoiaWnGTH3LeXTeY42R7RewxJ8/EIhf/+Eg==
-X-ME-Sender: <xms:NU5lZ1Xc3xwWlWmsYsnQvKOPewRVnHg6nBlKJ4V9vmLRV5gmQzO4qQ>
-    <xme:NU5lZ1lKl4cWUd-XpGvQVvgaY1t5NKGcV1-x7jJ-4aYtNJZ1__wjpRx_wzTwYoHG9
-    S9Jrz3SQ4b0R8egQFo>
-X-ME-Received: <xmr:NU5lZxb2olc8iV8S7C8ZOrm4Mc2CrOneAWeSey0hTM9YKauhgJzhv9Kk5x7abiz9YtCN3Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgvdduucetufdoteggodetrfdotf
+	1734692928; x=1734779328; bh=dBLiuAzHvMBEoc6ZDN/KN5+HvtxCsSX//Zw
+	04k+D2ew=; b=Q16tZmpkPHHgQl5iE4l8VV4TyiVg54Qz3CUD4PsTCFigqpMX6vN
+	tPov+fq616x6Zazw315ZVnGDq1+5aEe+uxO7L355ZPWxa5l8myR2+0YadTi9OXQd
+	CtsZs9vgSaONy8LiBRGoXbiqD/7W65O+3EFS835j/O0KEALoknRUPBT7mzdCAe1M
+	WTxnNJSzZNmCd7qnEI34W+6mlqg5Q8zsFeaPN/WecycPlJeqoV8ivnbjxw3kXd5P
+	7Uf9xy6dk8qm/pPBkwSxK4zGJpcx9ldWqu177+ar6OhLCDRCzxukMpDSyrC7VGtO
+	Z/Z3tIGfVXVG982fYKzzdYW/SXC/gw5Yogg==
+X-ME-Sender: <xms:P1BlZytxN8v5cs89SbMQLQsluR4N7ad80dt7VXui4gOP8V49oDJpXg>
+    <xme:P1BlZ3ft4TtnnnnAAFGvJSvJGaAcd0tjhmKuen4pSZOX0G2rzZFAyG7TCMW2Qq6DZ
+    vK00WKNUb2CYXHlzYo>
+X-ME-Received: <xmr:P1BlZ9xdn41y4TR9dfEnftBcywOt6pf_1ivDmtrnJP7v2-WosFbecOQxPV6Mpc6liwaSaQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgvdefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
@@ -72,32 +72,33 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgvdduucetufdoteggod
     hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
     veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
     gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhmmhes
-    khhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrdho
-    rhhgpdhrtghpthhtoheptghlmhesmhgvthgrrdgtohhmpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhl
-    hiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhh
-    grthdrtghomh
-X-ME-Proxy: <xmx:NU5lZ4X3pe6SVVNF1696F0Uu3Ji2qPwD1OfRvcxQz7u10XHvD2RABg>
-    <xmx:NU5lZ_ml63kB-anHxWbczGTdD30xdyBoIcemhQce4EAI08k5FIAdvg>
-    <xmx:NU5lZ1f95RB6koHZvn9XGCbPlFUGDtcQFfze-kfAZCZ-QEt1UceIyw>
-    <xmx:NU5lZ5GZWkSmmpLqRff2l_qvIgYVmfDyrlWeyA3l57x_OvrPOaCIow>
-    <xmx:NU5lZx6Q83_NkpkChKWOzD3x5UoD8Aac0EIxiO1-NCKLeqwbh8t9l3Sn>
+    rdhnrghmvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhm
+    sehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdr
+    ohhrghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuh
+    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhl
+    lhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsghfohhsthgvrhesrhgvug
+    hhrghtrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:P1BlZ9MK4g7gs2lmx0ewrua198cToSwyM7nbGAr0rX8klfI2W3ET1g>
+    <xmx:P1BlZy_yv5zGwSmVVZFJEN963HhX_eAB9vJmJDUClEYPEPpPq7xtwA>
+    <xmx:P1BlZ1X0irfqDndCig3-9bJBb9MX3DjWaoj61c8izefTYSGPDIiPYg>
+    <xmx:P1BlZ7f3p2R8za2knRu0AKATJtH_GLt3vHnHw1pfhtXvzGANvLk8cg>
+    <xmx:QFBlZz1uUzrxkfCCufK-bSi3S5hSdrOuGF5pg-r0Ox6ExIH4_Bidep3O>
 Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Dec 2024 06:00:01 -0500 (EST)
-Date: Fri, 20 Dec 2024 12:59:58 +0200
+ 20 Dec 2024 06:08:43 -0500 (EST)
+Date: Fri, 20 Dec 2024 13:08:39 +0200
 From: "Kirill A. Shutemov" <kirill@shutemov.name>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
 	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org, 
-	bfoster@redhat.com
-Subject: Re: [PATCH 03/11] mm/readahead: add folio allocation helper
-Message-ID: <3ehi4yvdnvzqmbij5u4wziqmyuqud4vj25cy2qkwl4yj5fz2sk@4pgcndonckzn>
+	bfoster@redhat.com, David Hildenbrand <david@redhat.com>, 
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 04/11] mm: add PG_dropbehind folio flag
+Message-ID: <wi3n3k26uizgm3hhbz4qxi6k342e5gxprtvqpzdqftekutfy65@3usaz63baobt>
 References: <20241213155557.105419-1-axboe@kernel.dk>
- <20241213155557.105419-4-axboe@kernel.dk>
+ <20241213155557.105419-5-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,18 +107,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241213155557.105419-4-axboe@kernel.dk>
+In-Reply-To: <20241213155557.105419-5-axboe@kernel.dk>
 
-On Fri, Dec 13, 2024 at 08:55:17AM -0700, Jens Axboe wrote:
-> Just a wrapper around filemap_alloc_folio() for now, but add it in
-> preparation for modifying the folio based on the 'ractl' being passed
-> in.
-> 
-> No functional changes in this patch.
+On Fri, Dec 13, 2024 at 08:55:18AM -0700, Jens Axboe wrote:
+> Add a folio flag that file IO can use to indicate that the cached IO
+> being done should be dropped from the page cache upon completion.
 > 
 > Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
++ David, Vlastimil.
+
+I think we should consider converting existing folio_set_reclaim() /
+SetPageReclaim() users to the new flag. From a quick scan, all of them
+would benefit from dropping the page after writeback is complete instead
+of leaving the folio on the LRU.
 
 -- 
   Kiryl Shutsemau / Kirill A. Shutemov
