@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-37955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A3E9F95C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 16:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F09F95C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 16:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE3D16A6CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DA316EC31
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D192F21A931;
-	Fri, 20 Dec 2024 15:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D95B21B1AB;
+	Fri, 20 Dec 2024 15:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nQV3wjDc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Oc8efsLy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED5D219A77
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 15:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECB021A423
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 15:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734709722; cv=none; b=B2zSuThE9QnnYRcMTCJgq9aOYqA5ftsAz9R7MrMVBP7/xhgJA8vZNJc7YWBZ0oCpaSae15EehxMx9vymT9Jj0lFEU4kuwsvAfOX3Ysz5n5coHCrhDsniCuNCd2tj+37t+26T867F7nyqJ6EQjClJsu83uXrLy7bBtyD3HgKKa0Q=
+	t=1734709722; cv=none; b=UMiTGtsXQdNqJ5Z67GUf5qKTWc7n/06c5FfaHIoZHP2LUN20lC+dfrUjdYIhYovxsLKbAJ8M8kn3EWMpGUdg+xE4/3YHD+f36Cqb8o2tGynXMNmdJ6Yhv13t2i5935vkxcwAcj06Ghw6uJMkQ9atqcf6YnnHFbQDoPRi1iGi2lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734709722; c=relaxed/simple;
-	bh=gjkhKuIh/F81dbqkaKljfYc7jS3icLdyh4zFI+rhjmA=;
+	bh=JO6tsxSlP852WA3y5S797XWTlY9uJCLdRkQsjOqf/SY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ASudJ0V5XA/MYqCU2KPvamDWJ2FZOEVYv6HYLXmMdAkcfdp+HZtHpph6YZoh/dd99oFMAU+L+gC/XDYOhh0iYIyavhXV4Bim45l8PDGSXPG8DHOme7FhJYmLe9q9q+vfr++Dvdgf37ErKc3rxnbRF3bz5kMB1pPK3VEuZ8P5OFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nQV3wjDc; arc=none smtp.client-ip=209.85.166.181
+	 MIME-Version; b=IsbigaSKBTXajXOGcDnYLS1MkgZapn/Arok/om6IrEnX1zuKcaQ1WHsqX1V6KNUGfP3ar9zyeidTr+OEoEUX+PObKanVRXWM8WgBXep+u0XKSgSj+44iCxeV8jgGcC+0fTaQeA9MhtY4LwZ6MA95l5ysRVh1CLE5vQ3Ae+OfaNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Oc8efsLy; arc=none smtp.client-ip=209.85.166.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a9cee9d741so13093275ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 07:48:39 -0800 (PST)
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-844e1020253so72383839f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 07:48:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734709719; x=1735314519; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734709720; x=1735314520; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U1i1r3ArZkX2vgdPDoEq+WK9gDY1/MkPULwwiAP9Trg=;
-        b=nQV3wjDcNTgJ4GchyVBCil7RWw3kEBcqovSCDdq407h+Fp4OUxJAHtkRzl7caMbOCW
-         QUQRa9it6AvF+DPyJKC/Ng6Z4LxF7LYXb+fH1HP/8nLspS7vc3ZXjwC5ajUz6lVsIiCb
-         waUtyWQBb+MkdhbP45bVZvLRmdt7yUnioSorXOs7kFcjTfDlw/5Z3RAkJRxGSPf0dXRx
-         4nL3ElUqrA7V22XHs9Ce1OtmnqPRTrETi53u+6od7ScPx3Yq+9UlkO+rMKBMzBN5N/ee
-         GShvNHmHpXUyQfioJXe2VWYi+wLENkEgj/k3X2561CHf2sI0cTpR8qcX9UIxsHNGWxG9
-         JEYw==
+        bh=TZWY6vJPfqFGr1DBynm1KpCMDB4zdovTdnWkeolaIOo=;
+        b=Oc8efsLyd512POrstMUgXa+FvteRc1oMKe9Ma51mEWEnjkPmq8lmhCK02N/JPMCUs5
+         fFoKBE9OyTb6NPJr46dyQ3rprc68njEKgQqczl1/azIDQpmO1tLR8mE0N5aaDPkJ6jtk
+         Dz6fi0Z+6HAOco6MZtXj8mmPgNOzU8dGSTXFKqhdIX1DCxfprvoES1r6czX0z4OuH1Gw
+         rqbPn8gvjVcq55EFFL/GpuZ1wMUuq7Ma1qkoCi2gh+IqV+vLh8PDYSivfeP25WQnE/Po
+         SYelfNI1xK8fcErXUkdstKmaALvH/us9Lt9J1WETzro/u/inGdlUmTWf8pU1PvH2nGl/
+         EMCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734709719; x=1735314519;
+        d=1e100.net; s=20230601; t=1734709720; x=1735314520;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U1i1r3ArZkX2vgdPDoEq+WK9gDY1/MkPULwwiAP9Trg=;
-        b=MzGirhVMc8vJj+9ALlNRkWNeYfiolnV1tB5g521i6hp5thSJUBinRLSOjMDy+OTRCN
-         HbJD9hvHRpNU5ZBBDAIGJbrUFAHYOs6ioApuoqPk1j55cuYMqNrqcsMCwWnVUDOg+W3J
-         /UnxnJaoyRq1JxF1uzzO97d9YCc8GAAvY7GZHP+4msQmgM5Yb0TtloT3Vmx54KufIKQi
-         JxzfD9JAzdHvvzc0qLStZZ4/g8FoTDRT6yGZthFEzFX4AKJWzn1MnB3n/E9bjuViKWZ4
-         CTDiAaD6e6NBG0FC0x0BLKB0a3q1m88VarEfDjTvGCbSQ5QNvW1WCKTe1nj+xJn0oh56
-         H6yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNZff0HTDz5908KeYzIIJM0LNJqgihB3Yf3FQgc2d9keTfwfiNNBFqLA4vsS/jpxKlValcjanlRPp30N88@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3z5Gws/MChkU9TJy2DGASs2DUAtAanMoKODqGMN0tY84Z5kns
-	IPjB/a/D8fWnKKJPa8usNuLrZW7xHVCT/RfWjXbBJYQE8+cusBRmdk6mVwhdt/o=
-X-Gm-Gg: ASbGncuIaO7e5KfLL5jCJ5IoOUbSPry4k8DjQaT8CUhFdrKPVUatpo3U0ZbopxfSTTD
-	Z+IPPzjgZH2VFEbMH7gH/ysyzRJ4P5VOxUYeVSIfzXkwGXRvGZsvMc3QQuIINqrP0TiFQIWEKLs
-	T6vyvhlMWl+4IREtZT2nrglS0r996yN0AxQwSnA9DeROyFcpsWj5jPMOC9lOiN/no8hVBQAwQvG
-	WGQfY+mITJQOJwcFviRVpw1Mjws8UcEUDuyueHYZHITYj3v1KzA/+2+L2GL
-X-Google-Smtp-Source: AGHT+IEQ+rQahAFsMNf0wBgiaHc3ybkwynnm3ue1l0Cc7XmizswXF3l+0I9aVhCYoLyroOrTRrUFJg==
-X-Received: by 2002:a05:6e02:1ca5:b0:3a7:88f2:cfa9 with SMTP id e9e14a558f8ab-3c2d2d50b1emr32075375ab.11.1734709719216;
-        Fri, 20 Dec 2024 07:48:39 -0800 (PST)
+        bh=TZWY6vJPfqFGr1DBynm1KpCMDB4zdovTdnWkeolaIOo=;
+        b=weWOVpf4mNuPrev3jnS5TiFYQbMXFLC/gCKiFuDQibKGDiqNDRcYSKIRFY/ktfqmEt
+         GnM64+JfFhrljYeboMNzLORXjV8cYozDreXvf1dZADSBO+ytqLgQMLcBuUvNLC/MZMRK
+         gc/tOvLKsa3u1vcN2J0M66m195YWj+MOsZMygPwP+IhpnkJUa6L3jnyPuCqCuAscdezo
+         tmCRWZ5A9rZIops47m5Lk3hvvkB49vVLALNbFhS7e36CpdBucAC0eTzXtWcKgpckLLYm
+         AGTU3hxgzMD8VKvMA1HiTwBvJ6vIPJ73YwfQWFr3CaZ8ABqw0mY2xZaW4qhawvc1Yuc9
+         Ym+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWSJEOg6xwhRa1FwZkNwWTXypn94Crgix+LLoCwhncTQdEmjp+7IqBxYg7xMM9hhloYJnHj4tXTt0Ubaq9C@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPLooWDrGbKQKoi4svk1XTkKC2Y527V3JtrTs4Jm2JEXxBDCO9
+	kqDYNLPGyfy5NVTkOLFjGbBnXMfRvgBEA0blGXjXBuR2Si+XKHLYEwomKhIjSVo=
+X-Gm-Gg: ASbGnctvQ7AqQuxI28n/U25O1VpdYWl4cu9Z90Ve9yhZqHwQFIvP2Dnk/sLJjwJclat
+	CjbJpeNhHzMHChYIS1uSI4OGRO6thYf/0G9Bca1DMaUygGtvlyTzRdaEwOQ3lcHxwwQt0ms0T0f
+	zP9HIeOYqFONhHPoVwz269/h/949edUOxsRY3HIJSouqRkDtoRG/MJZETSMuzYVUq3Wc57EAWYm
+	VHLJZNeus84vl2Fe2VKjhIddmWANFkKbt0jUxUEmigkApMnHd3l4tSCh9CJ
+X-Google-Smtp-Source: AGHT+IFvp8gxmeuG0px26ehs16GxVvbXtCVpdcyc+9Br4GzsJzwQZ198tT+fp2EHMgvEVKANcydJew==
+X-Received: by 2002:a92:cda6:0:b0:3a7:a738:d9c8 with SMTP id e9e14a558f8ab-3c2d14d1839mr28931745ab.2.1734709720617;
+        Fri, 20 Dec 2024 07:48:40 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68bf66ed9sm837821173.45.2024.12.20.07.48.37
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68bf66ed9sm837821173.45.2024.12.20.07.48.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 07:48:38 -0800 (PST)
+        Fri, 20 Dec 2024 07:48:39 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -82,9 +82,9 @@ Cc: hannes@cmpxchg.org,
 	bfoster@redhat.com,
 	Jens Axboe <axboe@kernel.dk>,
 	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 03/12] mm/readahead: add folio allocation helper
-Date: Fri, 20 Dec 2024 08:47:41 -0700
-Message-ID: <20241220154831.1086649-4-axboe@kernel.dk>
+Subject: [PATCH 04/12] mm: add PG_dropbehind folio flag
+Date: Fri, 20 Dec 2024 08:47:42 -0700
+Message-ID: <20241220154831.1086649-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241220154831.1086649-1-axboe@kernel.dk>
 References: <20241220154831.1086649-1-axboe@kernel.dk>
@@ -96,73 +96,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Just a wrapper around filemap_alloc_folio() for now, but add it in
-preparation for modifying the folio based on the 'ractl' being passed
-in.
-
-No functional changes in this patch.
+Add a folio flag that file IO can use to indicate that the cached IO
+being done should be dropped from the page cache upon completion.
 
 Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- mm/readahead.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ include/linux/page-flags.h     | 5 +++++
+ include/trace/events/mmflags.h | 3 ++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index ea650b8b02fb..8a62ad4106ff 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -188,6 +188,12 @@ static void read_pages(struct readahead_control *rac)
- 	BUG_ON(readahead_count(rac));
- }
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index cf46ac720802..16607f02abd0 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -110,6 +110,7 @@ enum pageflags {
+ 	PG_reclaim,		/* To be reclaimed asap */
+ 	PG_swapbacked,		/* Page is backed by RAM/swap */
+ 	PG_unevictable,		/* Page is "unevictable"  */
++	PG_dropbehind,		/* drop pages on IO completion */
+ #ifdef CONFIG_MMU
+ 	PG_mlocked,		/* Page is vma mlocked */
+ #endif
+@@ -562,6 +563,10 @@ PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
+ FOLIO_FLAG(readahead, FOLIO_HEAD_PAGE)
+ 	FOLIO_TEST_CLEAR_FLAG(readahead, FOLIO_HEAD_PAGE)
  
-+static struct folio *ractl_alloc_folio(struct readahead_control *ractl,
-+				       gfp_t gfp_mask, unsigned int order)
-+{
-+	return filemap_alloc_folio(gfp_mask, order);
-+}
++FOLIO_FLAG(dropbehind, FOLIO_HEAD_PAGE)
++	FOLIO_TEST_CLEAR_FLAG(dropbehind, FOLIO_HEAD_PAGE)
++	__FOLIO_SET_FLAG(dropbehind, FOLIO_HEAD_PAGE)
 +
- /**
-  * page_cache_ra_unbounded - Start unchecked readahead.
-  * @ractl: Readahead control.
-@@ -265,8 +271,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 			continue;
- 		}
- 
--		folio = filemap_alloc_folio(gfp_mask,
--					    mapping_min_folio_order(mapping));
-+		folio = ractl_alloc_folio(ractl, gfp_mask,
-+					mapping_min_folio_order(mapping));
- 		if (!folio)
- 			break;
- 
-@@ -436,7 +442,7 @@ static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
- 		pgoff_t mark, unsigned int order, gfp_t gfp)
- {
- 	int err;
--	struct folio *folio = filemap_alloc_folio(gfp, order);
-+	struct folio *folio = ractl_alloc_folio(ractl, gfp, order);
- 
- 	if (!folio)
- 		return -ENOMEM;
-@@ -750,7 +756,7 @@ void readahead_expand(struct readahead_control *ractl,
- 		if (folio && !xa_is_value(folio))
- 			return; /* Folio apparently present */
- 
--		folio = filemap_alloc_folio(gfp_mask, min_order);
-+		folio = ractl_alloc_folio(ractl, gfp_mask, min_order);
- 		if (!folio)
- 			return;
- 
-@@ -779,7 +785,7 @@ void readahead_expand(struct readahead_control *ractl,
- 		if (folio && !xa_is_value(folio))
- 			return; /* Folio apparently present */
- 
--		folio = filemap_alloc_folio(gfp_mask, min_order);
-+		folio = ractl_alloc_folio(ractl, gfp_mask, min_order);
- 		if (!folio)
- 			return;
- 
+ #ifdef CONFIG_HIGHMEM
+ /*
+  * Must use a macro here due to header dependency issues. page_zone() is not
+diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+index bb8a59c6caa2..3bc8656c8359 100644
+--- a/include/trace/events/mmflags.h
++++ b/include/trace/events/mmflags.h
+@@ -116,7 +116,8 @@
+ 	DEF_PAGEFLAG_NAME(head),					\
+ 	DEF_PAGEFLAG_NAME(reclaim),					\
+ 	DEF_PAGEFLAG_NAME(swapbacked),					\
+-	DEF_PAGEFLAG_NAME(unevictable)					\
++	DEF_PAGEFLAG_NAME(unevictable),					\
++	DEF_PAGEFLAG_NAME(dropbehind)					\
+ IF_HAVE_PG_MLOCK(mlocked)						\
+ IF_HAVE_PG_HWPOISON(hwpoison)						\
+ IF_HAVE_PG_IDLE(idle)							\
 -- 
 2.45.2
 
