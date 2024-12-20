@@ -1,77 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-37962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165899F95D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 16:54:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F3D9F95D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 16:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA63B1890BB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:51:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2554B16FCE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6564121D5AB;
-	Fri, 20 Dec 2024 15:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1C721E0BB;
+	Fri, 20 Dec 2024 15:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ncr/MD9e"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XpNPsYgT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C31D21CA1C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 15:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72F321B199
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 15:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734709730; cv=none; b=WoAY0E6TAOmA7ADe/IlceJnvOoCrDsF6Qg6iK+H34lPZ+wwLyq2aZsTFodK1litODuYmiccCzvekEGXpYV54MugX8EgeDwb9W58nsVWVYkkFTYGtKEjeSPdcisOSKiCwPTvlnAyQ/+c+4qYE6NxwzrsLArr19JRm1R6DymK08fw=
+	t=1734709732; cv=none; b=HAGn/ou5IsrgH0EySg/PfpgNc83H98k09RI5cSsK1KvsktUkUvooSj4IGI+oKF2RltbkEo3fBMKiu72fK4E8PDVY30aI10LK+Gbm3oB7t5dqJCYN9cVPdGP8R9ZuUzrzOdb5ezjWx6NYLMtB8WZ6J15JDbaKo2dUJyZAXSHkHao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734709730; c=relaxed/simple;
-	bh=GaN0/oBzXsAiWqwBFn1n2Fc++lywThntHtcNeWBfcz4=;
+	s=arc-20240116; t=1734709732; c=relaxed/simple;
+	bh=zE0xjm5rhzd2cUhrSxtogiQia/migrwaLvBNVMhxtxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EzuSwI0UoeS5resPVOC6S71/q6kCcLvI0UGHIjc0AcI+w9WKjnlKH8/peg8Z9f5equ9NS5/Y8IReFFAtJ6PGM4nkhGTl6ZQrvAMsbKqPlmZ+4dYxXV9/bJhh9AnqvfmGLktP3yoVRdXyyon/1BGEHWNejfqqQsUZ18GtzID1s8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ncr/MD9e; arc=none smtp.client-ip=209.85.166.51
+	 MIME-Version; b=ZyY0YIZgq04nRsDSrkK2XWbAJ+Hskb18qNWLulJw01bxUPgZ99Wb0KjAHbc0w70gm62itnLZIEEUO3oNqOLGfy/+hmrcgJwTRpC+/HblUaPleorS/uUqVJBQedhbubLxr6Yrq6+MnGUgiWoS4alfgoJ43Hp9pQ3F2u4fMNTIN3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XpNPsYgT; arc=none smtp.client-ip=209.85.166.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-844ee15d6f4so158518739f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 07:48:49 -0800 (PST)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a9cb80dbfdso14303875ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 07:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734709728; x=1735314528; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734709730; x=1735314530; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z4qQwDJE6vdlPLyJQIpmMrltr90cAGUkJZOMxstE6os=;
-        b=ncr/MD9eAO4S+4YZqT2PvSRUEUfRH0XRRnl8I516z8jRSkZ31sND98yfS6V+rRRspf
-         5Kf/Ih7ECLvuydILFZhyqjSWG5a0bFHOQuclk7Aa5IkNAXA9StMT23TpMMzuiaE8Reop
-         s+/SZtvp/g63rRqlCEC4yu/eGk5P5iygxFE7q1pQGkGw2K1J91g8DrjgTMMq4WDIRrSD
-         D0Fv68GrKAqWRL0VI0jnvmWPRajAKViBpycTXrWNDBoIKkqs0jJq5fWbWXhb1zrIdMDv
-         OaUM3NEj+wa0kS9lobiBPDHTorWqD9w2cbpGIhaDA4lYoZVx4sZFwChBBXDGWiJfmQyw
-         Z1zg==
+        bh=ol/7y93UZDywrWGNYi5AP2kj1AIRWUpJ2p+2aggyqzo=;
+        b=XpNPsYgTpipkSpVs7LrbeF1UL0my+iixYP3Cr4OQkBjATc8tdVJhLIT476q7wihOZV
+         BkB5ehPy16t6rAFUTluHuYjes5Gaf51+jjOZiXYKMf6qtE5GjeUIijoOA/ODjm8NdrLn
+         0XZ8WETcvLRc+t5zb707wNiMIptKwv6c0v2+0NfazgNqK9co/x4RAnB4QT+wpvvb6GmZ
+         5Xmm3bZIPMrEsJLXaN8u6rDnXrVegjcLy1lcYFDlE0OsZzbhB7rYdv49n1kpQ6M7o3D6
+         I9fNEVK3Mz1L9I6osQSY4N8BMInx4CeTCYQySqVBUI3Ntk5Ho718230kzdmgVMGjbNjS
+         JvhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734709728; x=1735314528;
+        d=1e100.net; s=20230601; t=1734709730; x=1735314530;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z4qQwDJE6vdlPLyJQIpmMrltr90cAGUkJZOMxstE6os=;
-        b=tvYNE71TwtBsdxzILtbDbizj/otezOWyGjWr53Wut92Dw/1IU3oNfHmk/jw0c3E2F+
-         0A2/4Lh0HyzjrPXd6GQYVSr8FfQ4yiLMtUZcNgeaVPcV9aevIo+dnAUxu771nhlVfS2+
-         YxdSITp/xeTuj/W2RlfaIuRl12NpajZcRJ2hHA3ZsBYIBssp3dSTeB8rXVbVBFZcqJri
-         myxlWmYjDHnfaqW9aET8wPE/qtK9qk/lBm+3/UkWYgFp6dutcUJALBjc+J4wudmip3Nl
-         R8G6SOXMLMtKs5GFk4yRfV7YQ4zQ5H3V63rexTDXvaBEBsKI/fV9L6v6npbKWeIlI8XI
-         s5GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWow4vuk0umC0OnAfkTIiNkpe0o2us+J9XHf0rpS4SlSG3ZSxi8OufbYk5phSHJPdhghEtMIOGLJF6S9GbS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT3oCPmXbySibIMTq3MXOJ1AiS3X/Uk50BmIqDdCEDTVjj++va
-	zBYfQKKnZnYf7HjsHErX80CE3RgwFXM/dR2cbVnCYq3l7LoN26ArpWpVQyXrmcPqdDYirAqGqYv
-	9
-X-Gm-Gg: ASbGncudR2PW7cLoKuDHUfSIjP89JAk3rQZFtjhDrslQqBh7ZunboLDmV2s4+Aclm7v
-	waOWVCGPgzn4IRUFweTCwuL9n3+7aPtt48UxnfMnHPgiN6nAoTPtTiU/t6NU6kN0iZnWCjWast/
-	MOWe5/nRVXDUzfRq/H1dmTL0gDDWLX3suNM86hJU7u8qlM3H+6KDFuUvEI7fERA8LNihMoV8Om1
-	l45K46gqCbm1oXbqKD8TaLg1YwtBb/QFOahBdNzkOBbR8v81LR3SNocAY2f
-X-Google-Smtp-Source: AGHT+IFGv05g9yMPyknBeMlKwprAW5pwl3vrHXnYcOynrc2BQ0O5hQEIENaNx6lgdvRHQ9LzhuK/ng==
-X-Received: by 2002:a05:6602:158e:b0:844:e06e:53c5 with SMTP id ca18e2360f4ac-8499e4fafe3mr298729939f.8.1734709728444;
-        Fri, 20 Dec 2024 07:48:48 -0800 (PST)
+        bh=ol/7y93UZDywrWGNYi5AP2kj1AIRWUpJ2p+2aggyqzo=;
+        b=Ch3mweB8GIShpZUN/l2FDy0OHdTyaS3zZn08/oyuHTXpkbdHrX68FzMcX9zuEssYOu
+         q4QRKYbh7CnOyCZECfaHuMVTXubHKdSny2A5TIR37ys1CCCwrwQsQe0koeTigyGRtLuR
+         zXjSNgsa1KTaInu8DzpUTcZIVwgAVHDMuUZ4b96zvaMCLTk7jIjrSiSdejmtuFOJMC8p
+         AmogsTPBJ5H3ZUhAY2EE6chiGvRwFMOIlF5TXnCBX44gfnnqmDgvoBLWadMneohF+gVo
+         aJ3I7hqFiILAY4qWC6LOJ8tJ0sYGvBcC85CBUBQNwHUiGOw0Zm4ns7zM/XzULWQgpSx2
+         DGCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmquuT5c+MYz8PNSYfOOkZ8wirX22NGWzdPiHRzi8hTuNBGXk2NSE3XcGfNZ+UF2LzyiFXPGeuD9CTJcVX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJAYhFHajTGFj8OHJ2StO5AEVE8UyYc8+7BDYdvj4Jo+XiOlOo
+	DZB5PFfvd+T/J9+EyFx5iIP7ct+m9XgbWrQ4cP7tZX60Sb2x55E3ux1kqJQNQPo=
+X-Gm-Gg: ASbGncsCkEclB9b6kgLnKApaB3t3A+KCWHeP1xaHyYfftgNeHbFC6bFJ3otoiDMwOTy
+	TSH1+8v86xO1iGh+gZNmNl8QSy1iW+zgUthPDWIT0hEkU0H7orvSrcd+TwezSbZYsDsOx4dhL0L
+	nyx3FukykiM66luKJbC9l2K/WQA38WZ+FJVC8E6kPckUo1yAtXsa2tm03NNE9EyZdR2Q+6VJNRU
+	M4cBe0uIXg+I8OvfRminOwikJ4ZcBGsj/aBIeVx8zvnpubSon4P7oal9fAU
+X-Google-Smtp-Source: AGHT+IHBkJtXw0hIyGWIXWPfQ49T4FfZrn/htFVCpySmbejAxdhZ6x6C0BhRXfs8Jh6Ol55mQ+pxBw==
+X-Received: by 2002:a05:6e02:17cf:b0:3a7:70a4:6872 with SMTP id e9e14a558f8ab-3c2d257934dmr36428035ab.9.1734709729627;
+        Fri, 20 Dec 2024 07:48:49 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68bf66ed9sm837821173.45.2024.12.20.07.48.47
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68bf66ed9sm837821173.45.2024.12.20.07.48.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 07:48:47 -0800 (PST)
+        Fri, 20 Dec 2024 07:48:48 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -82,9 +81,9 @@ Cc: hannes@cmpxchg.org,
 	kirill@shutemov.name,
 	bfoster@redhat.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 10/12] mm/filemap: add filemap_fdatawrite_range_kick() helper
-Date: Fri, 20 Dec 2024 08:47:48 -0700
-Message-ID: <20241220154831.1086649-11-axboe@kernel.dk>
+Subject: [PATCH 11/12] mm: call filemap_fdatawrite_range_kick() after IOCB_DONTCACHE issue
+Date: Fri, 20 Dec 2024 08:47:49 -0700
+Message-ID: <20241220154831.1086649-12-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241220154831.1086649-1-axboe@kernel.dk>
 References: <20241220154831.1086649-1-axboe@kernel.dk>
@@ -96,60 +95,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Works like filemap_fdatawrite_range(), except it's a non-integrity data
-writeback and hence only starts writeback on the specified range. Will
-help facilitate generically starting uncached writeback from
-generic_write_sync(), as header dependencies preclude doing this inline
-from fs.h.
+When a buffered write submitted with IOCB_DONTCACHE has been successfully
+submitted, call filemap_fdatawrite_range_kick() to kick off the IO.
+File systems call generic_write_sync() for any successful buffered write
+submission, hence add the logic here rather than needing to modify the
+file system.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h |  2 ++
- mm/filemap.c       | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+)
+ include/linux/fs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6a838b5479a6..653b5efa3d3f 100644
+index 653b5efa3d3f..58a618853574 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2878,6 +2878,8 @@ extern int __must_check file_fdatawait_range(struct file *file, loff_t lstart,
- extern int __must_check file_check_and_advance_wb_err(struct file *file);
- extern int __must_check file_write_and_wait_range(struct file *file,
- 						loff_t start, loff_t end);
-+int filemap_fdatawrite_range_kick(struct address_space *mapping, loff_t start,
-+		loff_t end);
- 
- static inline int file_write_and_wait(struct file *file)
- {
-diff --git a/mm/filemap.c b/mm/filemap.c
-index aa0b3af6533d..9842258ba343 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -449,6 +449,24 @@ int filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
- }
- EXPORT_SYMBOL(filemap_fdatawrite_range);
- 
-+/**
-+ * filemap_fdatawrite_range_kick - start writeback on a range
-+ * @mapping:	target address_space
-+ * @start:	index to start writeback on
-+ * @end:	last (non-inclusive) index for writeback
-+ *
-+ * This is a non-integrity writeback helper, to start writing back folios
-+ * for the indicated range.
-+ *
-+ * Return: %0 on success, negative error code otherwise.
-+ */
-+int filemap_fdatawrite_range_kick(struct address_space *mapping, loff_t start,
-+				  loff_t end)
-+{
-+	return __filemap_fdatawrite_range(mapping, start, end, WB_SYNC_NONE);
-+}
-+EXPORT_SYMBOL_GPL(filemap_fdatawrite_range_kick);
+@@ -2912,6 +2912,11 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
+ 				(iocb->ki_flags & IOCB_SYNC) ? 0 : 1);
+ 		if (ret)
+ 			return ret;
++	} else if (iocb->ki_flags & IOCB_DONTCACHE) {
++		struct address_space *mapping = iocb->ki_filp->f_mapping;
 +
- /**
-  * filemap_flush - mostly a non-blocking flush
-  * @mapping:	target address_space
++		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos,
++					      iocb->ki_pos + count);
+ 	}
+ 
+ 	return count;
 -- 
 2.45.2
 
