@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0639E9F99B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 19:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DA09F99BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 19:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF793189A6EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 18:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97DD188F61E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD82321C188;
-	Fri, 20 Dec 2024 18:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BF821E0A4;
+	Fri, 20 Dec 2024 18:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9duBBCf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eHTgwNP3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8267821CA16
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 18:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043E5219EB8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 18:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734719581; cv=none; b=A2J723cr98A/DLtr8tIzIX0UdQbsWY/ocFue6KH4cKEqHC581y1K1xsFLOXx8DukLtbWXsgzr2MsMYlKl9gv3TeAQO0RA0nVpWWq2tV/uRcpdGQ/rlF3ImDNiiWBMyFx33zZGT4fG6aQUnWKY8eVZDNfzUplIEiv6RA8GH9Adv4=
+	t=1734719982; cv=none; b=uEHbq9S7t1fIxkaT6tWecc478yGXylDEM/vVgVoUm0SXn5pX8kIP2n9DjkbquZFmtvhw3Wie89z/LZiJ7RwsYaPqAUUXiTKtdhWilH+Im6NmBVyfoYq9IIIjfO7qth+xp6O2jv1cnuyspxJQ1uc+jatHgAeeSAqp6Uuju2bvtWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734719581; c=relaxed/simple;
-	bh=JS4X+Mv4yHz0iVkzrn8UK4tDBoOxclJbiHqvISaM2bQ=;
+	s=arc-20240116; t=1734719982; c=relaxed/simple;
+	bh=fUjC6s3SFHjne64QRCugWk3YriOBNMud5zFvNO6RalE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ej9P/j9PWmIoiFfMhIO/E6CkU734U2b3PsNkdICjT8cRRJVPfsjFzAE1H6guVooocG3UpYRggTh4Qz6cExz65/XHYqvCEls3ZvqH9iHUtIY4LqgkZVWooV/e1V41x/sxCDTLuJ14Bfwh2GvNDMiKHFH8TqT8EutCj1krCd5crUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D9duBBCf; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=laXEG27VtR0Vy6181A1KeHjlD9Tar0scJVDtmbVIiO9yCOuVceTT7gfiha0FIffLGTr/t+Qf3cWv73WqZwcEIFvfm94VQXw0dSBUXxg8URA9OYK6/UBaBrKQ1HtEuwqhM3Rkjs+ibRI2jHcKD0v7pDh1ApP6ivDwvPtsKxbv3xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eHTgwNP3; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734719578;
+	s=mimecast20190719; t=1734719979;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=swU3J22w1qiLCqCLjNaSEiN34P+WDwMezqQF+LZ7YmM=;
-	b=D9duBBCf6+o3+AF+SHhzSWP9zk5kFNJGjqoV3tpURPULb/VVGxSfOY0thatAKttd5GF51w
-	vCVo5g2xClsZW5cE1jMW1h4R+yR2i3yxCwnNeMgcjdiNbED5++kgu7H3K0yXUcOjvZJdTn
-	2j+brg0XDacYPSoM9/lpWI+xWkUTPuY=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=73cgdGka2vtNQUgx27zyhGeElhKrYwaIMwbNLPjOvfk=;
+	b=eHTgwNP3uHxpMvXgcREvHZHSLo0nTA7X6euUavZBT3lOdQb2HLZbBt2jyNiTZMLUBCwXlz
+	YP+hv3WwAtrYZOzf5GKRjN+ZZoWyqDyYVBljaXoWSz0tZzjlfu5X4inwhW9h08gWf05Srp
+	GO+UFa9c3w4y67u2suJGOhNvd+Xj5Bk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-608-NDfJfAy7OdWrjYaPYmDh-w-1; Fri, 20 Dec 2024 13:32:57 -0500
-X-MC-Unique: NDfJfAy7OdWrjYaPYmDh-w-1
-X-Mimecast-MFC-AGG-ID: NDfJfAy7OdWrjYaPYmDh-w
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e03f54d0so1133879f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 10:32:57 -0800 (PST)
+ us-mta-493-dxkLog3cNOWkrPbC0pm-CA-1; Fri, 20 Dec 2024 13:39:37 -0500
+X-MC-Unique: dxkLog3cNOWkrPbC0pm-CA-1
+X-Mimecast-MFC-AGG-ID: dxkLog3cNOWkrPbC0pm-CA
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-436723db6c4so362415e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 10:39:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734719576; x=1735324376;
+        d=1e100.net; s=20230601; t=1734719976; x=1735324776;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=swU3J22w1qiLCqCLjNaSEiN34P+WDwMezqQF+LZ7YmM=;
-        b=u7tNiJQarhjtY89ieP8QjG6gQ2tZOPUVSD48j3wpAAYRlx6kKWYixytdl0e96xeg8E
-         ZOv7Fu5dnPE8/ic5mAh6LlabUShjQpbV9ZBd0oE+DF3y2GW2esIUPfFNWiw8ww5a4tL0
-         5+giurV8jTtmZEE2+PU3yC45HUvAs/CrPSluYum72a1YB9rf3oGAdEJLJ5J5j2vvTTTb
-         LPf7LleRolGXHUObSgOaHkbA2wL6N78nWZmKB7aoTJ4bhJhdahxiV/NRI8qUPHJpVNYU
-         Tf07P51opleM6a/nFGYVM6KS+S7w/mfW2j6r9Bay+ywYBW+IMn2nRhnTMYXi5U6Yxxqd
-         KzWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXAqeJPQUAwaWQLii8UNBvtREDwSIpp2QF6kpAMm9hLmJTCK28qQETgQa8VuuRTlTAVq8+p/xVpyQoONH6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxmtVvV594NFdsljpg6XRJP4UycsvJ04v8qujEbu7NQhTpee2K
-	imO9I/FaOMFRHnf30nzXsfm7Jjq0Km3OWaZFBvcMIh4++EGiklBnN2e+n4pMS59YoSKdMTARRLx
-	uzvAOPWwhqTBufBXc2Iswq8tMxjXRn1UMDFMCVh91hY9gsynryFsQ4sT6+X0SSAc=
-X-Gm-Gg: ASbGncuiE/FUYAzL9pYHoPRMaduDjMpjh41n19AbkDwxEsPSpv9nbpeaER0gaDfrkPf
-	ktOAyWuhANDdSSMdts7DqpVDHllNDvmPB4j70qoInE6r+bTtZyocun0fyQKXVHspM+zqBl1pslR
-	DnBqRavXqWIh2k2HSulb1DUTjI5d/uvqNcAVcgnU9GLM7PSqFZLCjBjkvKrxA7FmJH5AyL3bhry
-	qkzPA/FfImlx7f7LIGmAaDgLNVZlYHipYVpEX/qJ2LxMSHsuLjgG7r2/Z8p66vxtsOeyXiKr5rI
-	KU3CUnkzZcm35urS12Ns2NbtoTiNrzJKxwkazauKpbLwKMZWV8vBShIzSc+dTcLcs/nbzh+f1La
-	c3f3x77/0
-X-Received: by 2002:a05:6000:1fad:b0:385:ec89:2f07 with SMTP id ffacd0b85a97d-38a222001b1mr2999429f8f.32.1734719575923;
-        Fri, 20 Dec 2024 10:32:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEk0Gj/f9sMdkNX68mPrqALSYePXcnIEwcuX62px3U4cp9do+t6yyCpZv960vKDvx0DNpRxKg==
-X-Received: by 2002:a05:6000:1fad:b0:385:ec89:2f07 with SMTP id ffacd0b85a97d-38a222001b1mr2999374f8f.32.1734719575483;
-        Fri, 20 Dec 2024 10:32:55 -0800 (PST)
+        bh=73cgdGka2vtNQUgx27zyhGeElhKrYwaIMwbNLPjOvfk=;
+        b=CwlrvsRcsvh7CR6KGRXsNkHkXsJ13PPoBAu2PtcnRVVZJZTNYlTlhZAazuoR0oMYbv
+         6dWehZWpEehapG6fXPciMfnKoBPAfF8KzWve7i6ioxaHUSDxqRObfJo7KJtNRFrt+bzD
+         mdxvPYalaQJ+pr/KMuBIzT3hMZWJ1sHbi6vN5gTJQNKnHG8+hE8oEby0XqgsvOQAqjfX
+         qQqv9UKIjsJ/2HZdjrYseuqUe9MfuTB/zxgu8zZG/ErnGDGfD7QsSb/8axW0PpyJRl+/
+         /Dznt/pndPzcZzkojs6dN0fQgWOPd8VmOVs0xkN6ZJe5CRVIcKTNjStIWo7VZVP7nTcr
+         lwQA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5sGWQsurCBWqL42JsidN/ZFkGfCEnCaJ7O2ilgjhKocgNtoycLbXuu32jobZPSxzWy6A26teayq/9SAYu@vger.kernel.org
+X-Gm-Message-State: AOJu0YweMOugvZnzfFGppwhNRYceGF5rnTPJK1FLpz6yuj1xcd6drMqZ
+	S4dgacWkFfER8Fxy3hIFR5SJcbc7yjCyAo3G6DV7k0pN3/edSawUm9yaztGSgb/SE7KofEgAxSu
+	9PL+Yqf5hU/3BPsYDsrzCWThuNoexkihLRBoPloID9n9tb/D2plGOeCFtn6da4s4=
+X-Gm-Gg: ASbGncsqoVqIy9czekGx+pEFf9dmuGf4+Xe97XBdlu9Xb3q3xociU4vp/MqA58i/CWV
+	t6fY3tHHWtwGAUrjzY6XtX+v6Tj9/Su0UzJ6t3zTDQklEaaM86UK2rzDungSEuaK1NL+KFrEf2W
+	5HkqQX1pP7OXpuSB/pfoGBsO1MQHYkMs8YK4paGLZ7X/WyjlAjZ+mFTNKZWjLVK4RlIHL2n1FKt
+	JkOl33m/VIwWwNW8ukLd4YjNifoTkWoY5gxi+GIGoW/17JhmuKZsxT9zfC19dWUmgCc+e7Dj/4e
+	SGpqxasZgKFL9q5jxOOZYNQ6/iDq4toxkXZTFZfm2cJR1XPdqgX/JLuYezSzYQe061Tqcit/Z/+
+	zbtRUrqyI
+X-Received: by 2002:a05:6000:4b10:b0:385:f470:c2c6 with SMTP id ffacd0b85a97d-38a221e21a9mr4117828f8f.11.1734719976627;
+        Fri, 20 Dec 2024 10:39:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHvhkUUAwy/jfjax8Ta0r0eePu8K6jy/RVN3Di8xKdao+b/WOuUlqcSJ2seDg5AIrCl7BOxNw==
+X-Received: by 2002:a05:6000:4b10:b0:385:f470:c2c6 with SMTP id ffacd0b85a97d-38a221e21a9mr4117794f8f.11.1734719976204;
+        Fri, 20 Dec 2024 10:39:36 -0800 (PST)
 Received: from ?IPV6:2003:cb:c708:9d00:edd9:835b:4bfb:2ce3? (p200300cbc7089d00edd9835b4bfb2ce3.dip0.t-ipconnect.de. [2003:cb:c708:9d00:edd9:835b:4bfb:2ce3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e278sm4706351f8f.75.2024.12.20.10.32.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e140sm4735396f8f.79.2024.12.20.10.39.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2024 10:32:54 -0800 (PST)
-Message-ID: <36334f20-2b9e-4529-89c4-120678bc5985@redhat.com>
-Date: Fri, 20 Dec 2024 19:32:52 +0100
+        Fri, 20 Dec 2024 10:39:35 -0800 (PST)
+Message-ID: <65af8809-af14-46d1-a479-d82b9973e278@redhat.com>
+Date: Fri, 20 Dec 2024 19:39:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,10 +90,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 19/25] proc/task_mmu: Ignore ZONE_DEVICE pages
-To: Alistair Popple <apopple@nvidia.com>
-Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
- lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+Subject: Re: [PATCH v4 17/25] memremap: Add is_device_dax_page() and
+ is_fsdax_page() helpers
+To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
+ dan.j.williams@intel.com, linux-mm@kvack.org
+Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
  vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
  bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
  will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
@@ -106,9 +107,7 @@ Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
  linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
  david@fromorbit.com
 References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
- <f3ebda542373feb70ed3e5d83b276a2e8347609f.1734407924.git-series.apopple@nvidia.com>
- <c7bd9b00-6920-4dc0-8e2e-36c16ef7ad5a@redhat.com>
- <37rxl2bjda3psdknhboexhbg3hahf5ifmublp5fw7ltdoyqllc@udbz76jklmnu>
+ <58ea909bd178d97bcc73997d6499880137d5e4ed.1734407924.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -156,75 +155,26 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <37rxl2bjda3psdknhboexhbg3hahf5ifmublp5fw7ltdoyqllc@udbz76jklmnu>
+In-Reply-To: <58ea909bd178d97bcc73997d6499880137d5e4ed.1734407924.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.12.24 00:11, Alistair Popple wrote:
-> On Tue, Dec 17, 2024 at 11:31:25PM +0100, David Hildenbrand wrote:
->> On 17.12.24 06:13, Alistair Popple wrote:
->>> The procfs mmu files such as smaps currently ignore device dax and fs
->>> dax pages because these pages are considered special. To maintain
->>> existing behaviour once these pages are treated as normal pages and
->>> returned from vm_normal_page() add tests to explicitly skip them.
->>>
->>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
->>> ---
->>>    fs/proc/task_mmu.c | 18 ++++++++++++++----
->>>    1 file changed, 14 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>> index 38a5a3e..c9b227a 100644
->>> --- a/fs/proc/task_mmu.c
->>> +++ b/fs/proc/task_mmu.c
->>> @@ -801,6 +801,8 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
->>>    	if (pte_present(ptent)) {
->>>    		page = vm_normal_page(vma, addr, ptent);
->>> +		if (page && (is_device_dax_page(page) || is_fsdax_page(page)))
->>
->> This "is_device_dax_page(page) || is_fsdax_page(page)" is a common theme
->> here, likely we should have a special helper?
-> 
-> Sounds good, will add is_dax_page() if there are enough callers left after any
-> review comments.
+On 17.12.24 06:13, Alistair Popple wrote:
+> Add helpers to determine if a page or folio is a device dax or fs dax
+> page or folio.
 
-:)
+... why is it "device_dax" but "fsdax" ? In particular because you wrote 
+"fs dax" above.
 
->   
->> But, don't we actually want to include them in the smaps output now? I think
->> we want.
-> 
-> I'm not an expert in what callers of vm_normal_page() think of as a "normal"
-> page. 
+I see "fsdax" getting used in some functions. But then, people usually 
+say "devdax".
 
-Yeah, it's tricky. It means "this is abnormal, don't look at the struct 
-page". We're moving away from that, such that these folios/pages will be 
-... mostly normal :)
+I'm fine either way (could be cleaned up later), just wondering about 
+that slight "inconsistency".
 
-> So my philosphy here was to ensure anything calling vm_normal_page()
-> didn't accidentally start seeing DAX pages, either by checking existing filters
-> (lots of callers already call vma_is_special_huge() or some equivalent) or
-> explicitly filtering them out in the hope someone smarter than me could tell me
-> it was unneccssary.
-> 
-> That stategy seems to have worked, and so I agree we likely do want them in
-> smaps. I just didn't want to silently do it without this kind of discussion
-> first.
+So whatever you think is best, feel free to add
 
-Yes, absolutely.
-
-> 
->> The rmap code will indicate these pages in /proc/meminfo, per-node info, in
->> the memcg ... as "Mapped:" etc.
->>
->> So likely we just want to also indicate them here, or is there any downsides
->> we know of?
-> 
-> I don't know of any, and I think it makes sense to also indicate them so will
-> drop this check in the respin.
-
-It will be easy to hide them later, at least we talked about it. Thanks 
-for doing all this!
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
