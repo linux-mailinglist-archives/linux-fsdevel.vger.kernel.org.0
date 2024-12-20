@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-37918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072229F90BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 11:52:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349A69F90C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 11:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01C21899CCD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 10:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93358167C64
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 10:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E3D1C4A34;
-	Fri, 20 Dec 2024 10:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316AA1C07EC;
+	Fri, 20 Dec 2024 10:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="kugA4uCw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kCpfiUMx"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="QCFiVbnI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yAWXaQzX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9526574059;
-	Fri, 20 Dec 2024 10:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926E1172BD5;
+	Fri, 20 Dec 2024 10:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734691906; cv=none; b=aOWG7+EgiKdJHmlZKJY0Jpp6/eV4DOFTS1pdgryX6+YF+ctAaxY2WAJ2jtxZ2UzSj2MfHII7pgzO8v6RNDAOJCGNAgtldlfx1xO2204vt87x8jqBtTMKmUeAw/Q9dDtgTmmAzus3hRzFW3VWpzAlx3GM2odN/PbVBLyVTbL8ecQ=
+	t=1734692226; cv=none; b=m5hqlWFi2Ule8SikonTRBgjySuGsy8FIVJ7oB50XIbE0e/900Na/WLGytdeDHy57YrOiEbAcPfsAAA7UuTmpqEBJdZ2524JzaAaZeu3De+REjXnT7XLQZAMHw8LtJzoeXLjPFIvZUMe7k0/HZdj1j+FO8wqgBwUk9KsaJmQxEwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734691906; c=relaxed/simple;
-	bh=/ZaVdN3TJxI3nNk9xHC7aioAzM5CbeN6pVXqEN5Jekc=;
+	s=arc-20240116; t=1734692226; c=relaxed/simple;
+	bh=RQ589VS+jHnu+kQPgRjOFtU6olfR4bjcn9HkYyNCtic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SjyVxqBoVYRjHnFCGy/TlUSUDQHjEfCbjjehNpyeEynGnIJPii23Vazx9+i29qbvyl7ksTwW9rVBaUk7/cEtZN/ep4yx6z4vx4kYi4coGY4rAKYh4sxCz9IWMk7m4NliuQ4QMChj+R/IVOJpPSOdPbH5YD/pjmhsFtOX5xUHBPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=kugA4uCw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kCpfiUMx; arc=none smtp.client-ip=103.168.172.145
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwCVRI0gQSjzXddNngnCjRoh/PTrux32L8PJ2Ftj63mcaAcTcEXKBCJkJ+YIG3CMDLjvTCmSwL6bkRRhdTYQwERnLjUykz/+4B+Hm3pKt1JWhnlIUBqIKW1ST2mEosiuI0C2Kxkq0gtc/s+/t6xgXe0m5VjsuuYtdCL7p+9ME/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=QCFiVbnI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yAWXaQzX; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
 Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 5D5A4138016A;
-	Fri, 20 Dec 2024 05:51:42 -0500 (EST)
+	by mailfout.phl.internal (Postfix) with ESMTP id A183113800B4;
+	Fri, 20 Dec 2024 05:57:03 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Fri, 20 Dec 2024 05:51:42 -0500
+  by phl-compute-06.internal (MEProxy); Fri, 20 Dec 2024 05:57:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
 	 h=cc:cc:content-type:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1734691902; x=
-	1734778302; bh=VdKfaZuoAsTfIEKNboZqkylXyFi+4/vjTA3crwcpBJY=; b=k
-	ugA4uCwfHLeZx+CpN0si0hhNPdzZI7Xr6a3lI9t9KOaOO7GhrjR2FTVBn/aAuhzj
-	4WskTKHpJtRqmRClF3e+foRE5OFA12VB9zPtxq6UhSCDqFE+sAAhtII6UGSXtG1X
-	vdjpaUI4kdU4GvBXOU23sdKDtrp0lNt83tlhT8f1hdURMvtljIXmBilo03SgJhBb
-	gbhkcty8sfg5eJLPicgafNxieDLC8G+vSlQwq43e54j1CzTOZLlrwgd2wJaZFtzg
-	XTsOI2v3gxXNW3Ktb377rzrFksvQdu6wDPuCgpPEsGbXKL/Jtkdr7tglQnrQcIx4
-	RLqTLdEnNJNx/k6U2PkJw==
+	:reply-to:subject:subject:to:to; s=fm3; t=1734692223; x=
+	1734778623; bh=l7zB+DcBUR2WNayH+8Yx83OSvOCD0+6Xtmu8O5gzexQ=; b=Q
+	CFiVbnIAsxTmoyUvdMT55hJ5+IzCRFSq1wfGD7+R+glFn6B1NfO/lxbFXDoas+bO
+	53wKOSnpXdY3fwDLFZncXK5ka0RaPLHbyN6/u+EYb4cIsYnyNGfGV+Pjc0Y+zj8H
+	jVB/ICdCmuXTJ1qbMZddyu4YyfLG4VfRVVXPMWgvZEYtcn3/AhfB0Ir6Tyqy56qm
+	L404Zl/cMJfj+sLTWTeb1RuERbQU+BAhn7iJE688HTKyx95loE+7zJPD04LR5ysz
+	ZyBwrimN4tNy2NFOl1K+NTxBTEQlu8Roc3tUqF2Rw2l0RZMe2j+lOpFbtQVNOePy
+	OGsLOJ6eIhvxeLDLt+NDw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734691902; x=1734778302; bh=VdKfaZuoAsTfIEKNboZqkylXyFi+4/vjTA3
-	crwcpBJY=; b=kCpfiUMxKaEYTCkWV3ZRwgjDEXwdUcqcf1bazM//VcIAPWx8/MR
-	fkgzvNc6NJbMW2bYVXGrThAPOheHmdPrcGGYGcOtq1nYiKhiBQp4hmfU4BXKhC8Q
-	OSNmZpddi02rHRnGapgfr5Str/gf3Dze9lKBCZgjyMvgMV1f1ZDpZHqz7AZNvzbu
-	F2f2tiNCduOqOpJfVXU2BomJRbrRw6q4V/IIeRtRSFWKoyv3yF6mb3c8dudSnaM9
-	hhCSh35WegOZkDm/RcP1LJxRFEfw4AGBCPnx0nr6M7gVEOF7AOQFuBvPDu0/jwQP
-	7jhXHVlLfWwZk744W3p7TJasQ1DaApQQ/GQ==
-X-ME-Sender: <xms:PUxlZz-BVS7ZlDFYQ5OKsB927Ky9hD2zR2nt-iK_xzRWi6FJHhC_ng>
-    <xme:PUxlZ_u9kJx4Qov71TuJPFskavpXfj_ckP3e9GmII5vgsKoLWB8u_8XLXuWTm9axM
-    t0PrYr5FEohFZi4f5E>
-X-ME-Received: <xmr:PUxlZxC-FHnRn1lMNr3Wcy5y5799Pn-7UF-maNNNj1j4-lYdPrG4GrI7hIKeetwnIVMcKg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgudelucetufdoteggodetrfdotf
+	1734692223; x=1734778623; bh=l7zB+DcBUR2WNayH+8Yx83OSvOCD0+6Xtmu
+	8O5gzexQ=; b=yAWXaQzXFReix810ghkhaWZ519vEMPxaLT3QJebUNBOBjMPb+gH
+	eDIlhDAzsxK4Zwa5a0cELjEeenNFBY7wE6lDiL6pqGwV3ME1NxO8PlLgq9fDrLHp
+	xI4YkfRUGA4BanVv6NahbJvbaou7NA5rvFfF1CcqxtatQcI1yIQIuJ5qLIS3HH30
+	wyEecfmAZX2kghSN9vYTNmmIVD9D16+T8HLQmtGPcJw/J8uiHReeWVvg0Crpvspy
+	ctrbpDmQTMdZeboMRNNeINV6AGruSMYWkGLqNe672X4qWf5xznmkx0FvlFqF34Y5
+	/k3E7efxqem/JPQBondNvK+hO8nyDeBq8tQ==
+X-ME-Sender: <xms:fk1lZ1JbJioN1i5sn93CFpAh7M9sljam7JKMZ8cIMWZOgxikV4jjWA>
+    <xme:fk1lZxKq7vvourHyaTGqyiKjD14kPL_zrMXgw4R5vyTjWA00hPkQn9BdCYV0SXO3x
+    CtF-Tioq-9QnZWUDeg>
+X-ME-Received: <xmr:fk1lZ9vtYg27y9JWp6WQQKtItSHNyzfRCpcoMkVzf-mpnbaGFww1yTJ-MoFsFkXqiyZ_Jg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgvddtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
@@ -72,33 +72,33 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgudelucetufdoteggod
     hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
     veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
     gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    rdhnrghmvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
     htoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhmmhes
     khhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrh
     drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrdho
     rhhgpdhrtghpthhtoheptghlmhesmhgvthgrrdgtohhmpdhrtghpthhtoheplhhinhhugi
     dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhl
     hiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhh
-    grthdrtghomh
-X-ME-Proxy: <xmx:PUxlZ_e4OowyjYhSTNFF7KToAw2pRBCbHo6ESADkacSVNY6eRO1n2Q>
-    <xmx:PUxlZ4NvJmk7VtvTBraPSa0Xf_CHV3AcI71J9jnL2ROLjtajPJ4LRg>
-    <xmx:PUxlZxnJNzXJ3wWYGiw6PUpvBmkuKgoktpaganibeBG3VXyEP8KvFA>
-    <xmx:PUxlZyunFks5zS8sXBM6SolwjZL3GTsryvoLTD7SrX8cPGqhGBnzpg>
-    <xmx:PkxlZ5hKrz6kduWue745i4WVr5PK6_WCYhxICIarXI9pAcTNkcb5TLu8>
+    grthdrtghomhdprhgtphhtthhopehhtghhsehlshhtrdguvg
+X-ME-Proxy: <xmx:fk1lZ2Z0mQnjyciCTZ2X0VI8BnWyy40FENG_uv7hKlgsWyW8NuPkUQ>
+    <xmx:fk1lZ8b3NfOHWi4U7ovF6WC84gdhLGeDq7s4oFd9jwRhqz4Mm5IpNA>
+    <xmx:fk1lZ6D_BKpScHk_B-wno74sc_5D-v9twtTqQ6yTkU5kJDHRfSPMxA>
+    <xmx:fk1lZ6Yo6LsGGhJJJrnHy9cOmrQFlCOrWfFSOT6Pne0cIwqIohAYNQ>
+    <xmx:f01lZ6l6LL5Pcm3ydmkHWdmqCM1mpsWY2ZiJQtALR_zDlEB_NlufGFh8>
 Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Dec 2024 05:51:38 -0500 (EST)
-Date: Fri, 20 Dec 2024 12:51:34 +0200
+ 20 Dec 2024 05:56:59 -0500 (EST)
+Date: Fri, 20 Dec 2024 12:56:56 +0200
 From: "Kirill A. Shutemov" <kirill@shutemov.name>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
 	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org, 
-	bfoster@redhat.com
-Subject: Re: [PATCH 01/11] mm/filemap: change filemap_create_folio() to take
- a struct kiocb
-Message-ID: <vvnsjxmc37nivfsbjkujdbjc2f6iisgvzcguboz3xdw54h3rvf@ntejcb6af4ep>
+	bfoster@redhat.com, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 02/11] mm/filemap: use page_cache_sync_ra() to kick off
+ read-ahead
+Message-ID: <e5pdya5cqba5c6acuzvcevhkbhqwosnh4kfui2xpbytsffv6t4@ay3smhgg6ztp>
 References: <20241213155557.105419-1-axboe@kernel.dk>
- <20241213155557.105419-2-axboe@kernel.dk>
+ <20241213155557.105419-3-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,17 +107,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241213155557.105419-2-axboe@kernel.dk>
+In-Reply-To: <20241213155557.105419-3-axboe@kernel.dk>
 
-On Fri, Dec 13, 2024 at 08:55:15AM -0700, Jens Axboe wrote:
-> Rather than pass in both the file and position directly from the kiocb,
-> just take a struct kiocb instead. With the kiocb being passed in, skip
-> passing in the address_space separately as well. While doing so, move the
-> ki_flags checking into filemap_create_folio() as well. In preparation for
-> actually needing the kiocb in the function.
+On Fri, Dec 13, 2024 at 08:55:16AM -0700, Jens Axboe wrote:
+> Rather than use the page_cache_sync_readahead() helper, define our own
+> ractl and use page_cache_sync_ra() directly. In preparation for needing
+> to modify ractl inside filemap_get_pages().
 > 
 > No functional changes in this patch.
 > 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
