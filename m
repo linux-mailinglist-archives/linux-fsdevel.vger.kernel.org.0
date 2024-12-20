@@ -1,94 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-37903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED1D9F8A68
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 04:10:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE609F8A6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 04:10:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC7F7165F36
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 03:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7A71896BCB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 03:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAF21531C8;
-	Fri, 20 Dec 2024 03:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092E717B401;
+	Fri, 20 Dec 2024 03:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L9vPEMp/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iKz9WiNl";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L9vPEMp/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iKz9WiNl"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LXDUHvSK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FUUGJQu8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RjTNp9b2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DOH2YnTk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CC613B5AE;
-	Fri, 20 Dec 2024 03:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D831632C8;
+	Fri, 20 Dec 2024 03:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734664150; cv=none; b=ZyK3lWrq2n+AUjWJ58tFKVTvc/4Mx/UyI3GBlnA5D3nEXgGWEKCmrYXn6hEIC5uE2VrgTod00bjYqKUSRv3IXZ016KazJ+hgixPYdrriq/se8zYJIrJg0JB9kqsuoDK2QB+37iGzCC8VwAaIaCBiu1Alpy8mgI/xspO3ckzInTg=
+	t=1734664154; cv=none; b=JPNEjJIlVx6g+4tH4BBLLUtA1pdJkPU4vZH4hmjCm9NI/gUyQi/UMGNUV1AbjWD6x+imx1tnOzlDJqd7shSGi5mAJWkAha6j1SfjyMhmi4wkgyuJJ19H85yATSXshPwt2oNDgLIHyXFo0YJkAkkeTFD8SRG4s7ows1++MISy9JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734664150; c=relaxed/simple;
-	bh=Bo7QEoD4d6wXAjUqhWsYKI7k/1L8cMEEFHwZm/53sQo=;
+	s=arc-20240116; t=1734664154; c=relaxed/simple;
+	bh=igjLZU34N84JAJHbkG3DJsr5Py53lspSM/nGwQzLgm8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uy2LpunAxxDnpBylOykpeo5EnDPDEqgnPYYxlYfgOP2z4rMdUZMWMhokL00cMsTPERVnFQjMZb3B8WI0mkWqwwmczuVZ/TwkBycyxrRbCwzclgNZcyplC71Orgz4ZE3GueqoJsuU+ErzgM8H8Db71Jn9Oj3dWZpgLYJTROldiEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L9vPEMp/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iKz9WiNl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L9vPEMp/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iKz9WiNl; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=uZtnEZtQ17bH9wwL8xrp9GFtaZzeCh2Q4W0cpD7yJrlINTkXx+3Oqs/kKkV83GD3tfvUUnTQQdECFpeQN/O2EXAfDO3LXsApWrTaNa7F7pdJZaZmLx5bzlX32pdVyYET1xdKTCobERA5vz2U01XoM743CIB8UQc7yJvKngLbAek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LXDUHvSK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FUUGJQu8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RjTNp9b2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DOH2YnTk; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 73D6E1F385;
-	Fri, 20 Dec 2024 03:09:05 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E42AD1F385;
+	Fri, 20 Dec 2024 03:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734664145; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734664151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7SySF3mKOgCcyFExR0bWEbGojqlSsrDz567ZlnXh0aQ=;
-	b=L9vPEMp/UxYN+/TvCtANB7QEIAIwECEGukTeCEbqMvpqmcPFRh5DqTxE2rjbnexf/xpP1x
-	n6DzMhA2/W0DXYI7nb0vhnZYVKRHEL8TKVZ+i0FI9IxwPaZfdizYvqXWd6PAeCFnCyVu0S
-	2/4FlWWeZQwRQpWcX8tyPf8cXRaYWeQ=
+	bh=g78TC/Zbx8kwsLCDh78LnjHG14nWVEMWb4e/lUvSCGI=;
+	b=LXDUHvSKAxVzHleis25dnUqV8IpKRuDk5GO/8ijcmuYt5KDBG+gh6KyQsHq3YD1YJyGy7e
+	gprXAs2Sg5z+dftCPBFuzb4UVVaZZvnd7tVhd9yv6H3oJ3fdj9rb0pZuqYYLfiAOsmtITj
+	1wWfPt0ieIToiZy/3UTDCdpBYz0990M=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734664145;
+	s=susede2_ed25519; t=1734664151;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7SySF3mKOgCcyFExR0bWEbGojqlSsrDz567ZlnXh0aQ=;
-	b=iKz9WiNlUyZaC1s+qMBX9OEtt7CTp4R2wPOrXM8iP76DyH5zZuZ3j1hoKbbdRmHzB9i9OX
-	9oGgVEa3FGl2IOCg==
+	bh=g78TC/Zbx8kwsLCDh78LnjHG14nWVEMWb4e/lUvSCGI=;
+	b=FUUGJQu85zdXk/lvyhN6CF/EDkh8S1i6ui0yCk0VRbW1OWXlWEUuNp5d/G2QVeLzyFQDRN
+	zk82QMPDlK3raLDA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="L9vPEMp/";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=iKz9WiNl
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RjTNp9b2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=DOH2YnTk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734664145; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734664150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7SySF3mKOgCcyFExR0bWEbGojqlSsrDz567ZlnXh0aQ=;
-	b=L9vPEMp/UxYN+/TvCtANB7QEIAIwECEGukTeCEbqMvpqmcPFRh5DqTxE2rjbnexf/xpP1x
-	n6DzMhA2/W0DXYI7nb0vhnZYVKRHEL8TKVZ+i0FI9IxwPaZfdizYvqXWd6PAeCFnCyVu0S
-	2/4FlWWeZQwRQpWcX8tyPf8cXRaYWeQ=
+	bh=g78TC/Zbx8kwsLCDh78LnjHG14nWVEMWb4e/lUvSCGI=;
+	b=RjTNp9b27DSfXom89DQt6DbUZnL1ES/qS28LHCKFsmL2np1bC5cq7qY418T860GG8R6q8H
+	sOdEpsf9LZFwFYQGtdaw7OgoRC7COVLCLA/9ZzKazKjpOfPXKYguQY+x8OnZPDj1X4IoF9
+	1+vrGk8Of06PIP3DO9aZMTvi5mTvel4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734664145;
+	s=susede2_ed25519; t=1734664150;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7SySF3mKOgCcyFExR0bWEbGojqlSsrDz567ZlnXh0aQ=;
-	b=iKz9WiNlUyZaC1s+qMBX9OEtt7CTp4R2wPOrXM8iP76DyH5zZuZ3j1hoKbbdRmHzB9i9OX
-	9oGgVEa3FGl2IOCg==
+	bh=g78TC/Zbx8kwsLCDh78LnjHG14nWVEMWb4e/lUvSCGI=;
+	b=DOH2YnTkN5bh0qVRjo/XzqC582Il62loqkNL3QhPPDJSm+60ceCoUXMNI3iu9WJCTYLtu7
+	MMXJZnVk43laxPBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4BB9813A32;
-	Fri, 20 Dec 2024 03:09:03 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CC20913A32;
+	Fri, 20 Dec 2024 03:09:08 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id p52qAM/fZGdNGAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Fri, 20 Dec 2024 03:09:03 +0000
+	id 42lDINTfZGdTGAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Fri, 20 Dec 2024 03:09:08 +0000
 From: NeilBrown <neilb@suse.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -96,9 +96,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] VFS: use d_alloc_parallel() in lookup_one_qstr_excl()
-Date: Fri, 20 Dec 2024 13:54:22 +1100
-Message-ID: <20241220030830.272429-5-neilb@suse.de>
+Subject: [PATCH 05/11] VFS: change kern_path_locked() and user_path_locked_at() to never return negative dentry
+Date: Fri, 20 Dec 2024 13:54:23 +1100
+Message-ID: <20241220030830.272429-6-neilb@suse.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241220030830.272429-1-neilb@suse.de>
 References: <20241220030830.272429-1-neilb@suse.de>
@@ -109,8 +109,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 73D6E1F385
-X-Spam-Level: 
+X-Rspamd-Queue-Id: E42AD1F385
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
@@ -137,116 +138,185 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	RCVD_TLS_ALL(0.00)[];
 	DKIM_TRACE(0.00)[suse.de:+];
 	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-lookup_one_qstr_excl() is used for lookups prior to directory
-modifications, whether create, unlink, rename, or whatever.
+No callers of kern_path_locked() or user_path_locked_at() want a
+negative dentry.  So change them to return -ENOENT instead.  This
+simplifies callers.
 
-To prepare for allowing modification to happen in parallel, change
-lookup_one_qstr_excl() to use d_alloc_parallel().
-
-If any for the "intent" LOOKUP flags are passed, the caller must ensure
-d_lookup_done() is called at an appropriate time.  If none are passed
-then we can be sure ->lookup() will do a real lookup and d_lookup_done()
-is called internally.
+This results in a subtle change to bcachefs in that an ioctl will now
+return -ENOENT in preference to -EXDEV.  I believe this restores the
+behaviour to what it was prior to
+ Commit bbe6a7c899e7 ("bch2_ioctl_subvolume_destroy(): fix locking")
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/namei.c            | 21 ++++++++++++++-------
- fs/smb/server/vfs.c   |  1 +
- include/linux/namei.h |  3 +++
- 3 files changed, 18 insertions(+), 7 deletions(-)
+ drivers/base/devtmpfs.c | 65 +++++++++++++++++++----------------------
+ fs/bcachefs/fs-ioctl.c  |  4 ---
+ fs/namei.c              |  4 +++
+ kernel/audit_watch.c    | 12 ++++----
+ 4 files changed, 40 insertions(+), 45 deletions(-)
 
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index b848764ef018..c9e34842139f 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -245,15 +245,12 @@ static int dev_rmdir(const char *name)
+ 	dentry = kern_path_locked(name, &parent);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+-	if (d_really_is_positive(dentry)) {
+-		if (d_inode(dentry)->i_private == &thread)
+-			err = vfs_rmdir(&nop_mnt_idmap, d_inode(parent.dentry),
+-					dentry);
+-		else
+-			err = -EPERM;
+-	} else {
+-		err = -ENOENT;
+-	}
++	if (d_inode(dentry)->i_private == &thread)
++		err = vfs_rmdir(&nop_mnt_idmap, d_inode(parent.dentry),
++				dentry);
++	else
++		err = -EPERM;
++
+ 	dput(dentry);
+ 	inode_unlock(d_inode(parent.dentry));
+ 	path_put(&parent);
+@@ -310,6 +307,8 @@ static int handle_remove(const char *nodename, struct device *dev)
+ {
+ 	struct path parent;
+ 	struct dentry *dentry;
++	struct kstat stat;
++	struct path p;
+ 	int deleted = 0;
+ 	int err;
+ 
+@@ -317,32 +316,28 @@ static int handle_remove(const char *nodename, struct device *dev)
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+-	if (d_really_is_positive(dentry)) {
+-		struct kstat stat;
+-		struct path p = {.mnt = parent.mnt, .dentry = dentry};
+-		err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
+-				  AT_STATX_SYNC_AS_STAT);
+-		if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
+-			struct iattr newattrs;
+-			/*
+-			 * before unlinking this node, reset permissions
+-			 * of possible references like hardlinks
+-			 */
+-			newattrs.ia_uid = GLOBAL_ROOT_UID;
+-			newattrs.ia_gid = GLOBAL_ROOT_GID;
+-			newattrs.ia_mode = stat.mode & ~0777;
+-			newattrs.ia_valid =
+-				ATTR_UID|ATTR_GID|ATTR_MODE;
+-			inode_lock(d_inode(dentry));
+-			notify_change(&nop_mnt_idmap, dentry, &newattrs, NULL);
+-			inode_unlock(d_inode(dentry));
+-			err = vfs_unlink(&nop_mnt_idmap, d_inode(parent.dentry),
+-					 dentry, NULL);
+-			if (!err || err == -ENOENT)
+-				deleted = 1;
+-		}
+-	} else {
+-		err = -ENOENT;
++	p.mnt = parent.mnt;
++	p.dentry = dentry;
++	err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
++			  AT_STATX_SYNC_AS_STAT);
++	if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
++		struct iattr newattrs;
++		/*
++		 * before unlinking this node, reset permissions
++		 * of possible references like hardlinks
++		 */
++		newattrs.ia_uid = GLOBAL_ROOT_UID;
++		newattrs.ia_gid = GLOBAL_ROOT_GID;
++		newattrs.ia_mode = stat.mode & ~0777;
++		newattrs.ia_valid =
++			ATTR_UID|ATTR_GID|ATTR_MODE;
++		inode_lock(d_inode(dentry));
++		notify_change(&nop_mnt_idmap, dentry, &newattrs, NULL);
++		inode_unlock(d_inode(dentry));
++		err = vfs_unlink(&nop_mnt_idmap, d_inode(parent.dentry),
++				 dentry, NULL);
++		if (!err || err == -ENOENT)
++			deleted = 1;
+ 	}
+ 	dput(dentry);
+ 	inode_unlock(d_inode(parent.dentry));
+diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
+index 405cf08bda34..c5464219b23f 100644
+--- a/fs/bcachefs/fs-ioctl.c
++++ b/fs/bcachefs/fs-ioctl.c
+@@ -516,10 +516,6 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
+ 		ret = -EXDEV;
+ 		goto err;
+ 	}
+-	if (!d_is_positive(victim)) {
+-		ret = -ENOENT;
+-		goto err;
+-	}
+ 	ret = __bch2_unlink(dir, victim, true);
+ 	if (!ret) {
+ 		fsnotify_rmdir(dir, victim);
 diff --git a/fs/namei.c b/fs/namei.c
-index 174e6693304e..395bfbc8fc92 100644
+index 395bfbc8fc92..8780406cb4d7 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1664,11 +1664,9 @@ static struct dentry *lookup_dcache(const struct qstr *name,
- }
- 
- /*
-- * Parent directory has inode locked exclusive.  This is one
-- * and only case when ->lookup() gets called on non in-lookup
-- * dentries - as the matter of fact, this only gets called
-- * when directory is guaranteed to have no in-lookup children
-- * at all.
-+ * Parent directory has inode locked exclusive.
-+ * If @flags contains any LOOKUP_INTENT_FLAGS then d_lookup_done()
-+ * must be called after the intended operation is performed - or aborted.
-  */
- struct dentry *lookup_one_qstr_excl(const struct qstr *name,
- 				    struct dentry *base,
-@@ -1685,15 +1683,22 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
- 	if (unlikely(IS_DEADDIR(dir)))
- 		return ERR_PTR(-ENOENT);
- 
--	dentry = d_alloc(base, name);
--	if (unlikely(!dentry))
-+	dentry = d_alloc_parallel(base, name);
-+	if (unlikely(IS_ERR_OR_NULL(dentry)))
- 		return ERR_PTR(-ENOMEM);
-+	if (!d_in_lookup(dentry))
-+		/* Raced with another thread which did the lookup */
-+		return dentry;
- 
- 	old = dir->i_op->lookup(dir, dentry, flags);
- 	if (unlikely(old)) {
-+		d_lookup_done(dentry);
- 		dput(dentry);
- 		dentry = old;
+@@ -2743,6 +2743,10 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
  	}
-+	if ((flags & LOOKUP_INTENT_FLAGS) == 0)
-+		/* ->lookup must have given final answer */
-+		d_lookup_done(dentry);
- 	return dentry;
- }
- EXPORT_SYMBOL(lookup_one_qstr_excl);
-@@ -4112,6 +4117,7 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 	}
- 	return dentry;
- fail:
-+	d_lookup_done(dentry);
- 	dput(dentry);
- 	dentry = ERR_PTR(error);
- unlock:
-@@ -5340,6 +5346,7 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	rd.flags	   = flags;
- 	error = vfs_rename(&rd);
- exit5:
-+	d_lookup_done(new_dentry);
- 	dput(new_dentry);
- exit4:
- 	dput(old_dentry);
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index dfb0eee5f5f3..83131f08bfb4 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -772,6 +772,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 		ksmbd_debug(VFS, "vfs_rename failed err %d\n", err);
- 
- out4:
-+	d_lookup_done(new_dentry);
- 	dput(new_dentry);
- out3:
- 	dput(old_parent);
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 8ec8fed3bce8..15118992f745 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -34,6 +34,9 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
- #define LOOKUP_EXCL		0x0400	/* ... in exclusive creation */
- #define LOOKUP_RENAME_TARGET	0x0800	/* ... in destination of rename() */
- 
-+#define LOOKUP_INTENT_FLAGS	(LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_EXCL |	\
-+				 LOOKUP_RENAME_TARGET)
+ 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+ 	d = lookup_one_qstr_excl(&last, path->dentry, 0);
++	if (!IS_ERR(d) && d_is_negative(d)) {
++		dput(d);
++		d = ERR_PTR(-ENOENT);
++	}
+ 	if (IS_ERR(d)) {
+ 		inode_unlock(path->dentry->d_inode);
+ 		path_put(path);
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 7f358740e958..e3130675ee6b 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -350,11 +350,10 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+ 	struct dentry *d = kern_path_locked(watch->path, parent);
+ 	if (IS_ERR(d))
+ 		return PTR_ERR(d);
+-	if (d_is_positive(d)) {
+-		/* update watch filter fields */
+-		watch->dev = d->d_sb->s_dev;
+-		watch->ino = d_backing_inode(d)->i_ino;
+-	}
++	/* update watch filter fields */
++	watch->dev = d->d_sb->s_dev;
++	watch->ino = d_backing_inode(d)->i_ino;
 +
- /* internal use only */
- #define LOOKUP_PARENT		0x0010
+ 	inode_unlock(d_backing_inode(parent->dentry));
+ 	dput(d);
+ 	return 0;
+@@ -419,7 +418,7 @@ int audit_add_watch(struct audit_krule *krule, struct list_head **list)
+ 	/* caller expects mutex locked */
+ 	mutex_lock(&audit_filter_mutex);
  
+-	if (ret) {
++	if (ret && ret != -ENOENT) {
+ 		audit_put_watch(watch);
+ 		return ret;
+ 	}
+@@ -438,6 +437,7 @@ int audit_add_watch(struct audit_krule *krule, struct list_head **list)
+ 
+ 	h = audit_hash_ino((u32)watch->ino);
+ 	*list = &audit_inode_hash[h];
++	ret = 0;
+ error:
+ 	path_put(&parent_path);
+ 	audit_put_watch(watch);
 -- 
 2.47.0
 
