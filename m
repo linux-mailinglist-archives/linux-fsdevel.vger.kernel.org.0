@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-37976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FF79F998A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 19:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0639E9F99B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 19:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC85169DF5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 18:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF793189A6EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 18:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B39220694;
-	Fri, 20 Dec 2024 18:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD82321C188;
+	Fri, 20 Dec 2024 18:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BLMqnjuv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9duBBCf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9919021D58C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 18:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8267821CA16
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 18:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734719471; cv=none; b=QGWQPcbepvl0UFz4sI98YGVfX0g4wqqaXpFLamHsvgqag2OiRvVX1De8DAGB+aw8IGSHCq9weniJ+g8bvpj+SPhNpcjYJP3nQjv5K8boHDPfMvspYeI6mY3hAPDrVmVl+mNHMx0ftnXEEFETxdalv+dHA2rTGNLQiB2NMN+5xbI=
+	t=1734719581; cv=none; b=A2J723cr98A/DLtr8tIzIX0UdQbsWY/ocFue6KH4cKEqHC581y1K1xsFLOXx8DukLtbWXsgzr2MsMYlKl9gv3TeAQO0RA0nVpWWq2tV/uRcpdGQ/rlF3ImDNiiWBMyFx33zZGT4fG6aQUnWKY8eVZDNfzUplIEiv6RA8GH9Adv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734719471; c=relaxed/simple;
-	bh=5zqe6KTdOvbJhjCS4/7P40LvEhqzzNyD4usnj91BBp8=;
+	s=arc-20240116; t=1734719581; c=relaxed/simple;
+	bh=JS4X+Mv4yHz0iVkzrn8UK4tDBoOxclJbiHqvISaM2bQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oTnYu2bfLxgq2A8r6tMns+MBjDQ9X28jVFznaCbkjiJGURzCuJTG+4/AStx1rwrJcICZp/oagdgO5nq0PpbVc7Xdq72IfGoJioXASo3fR55pj6jSIm/LNq8x4iJCkpt/e8ZV7YcXkyz+LEKNGbSjVzRWXntxhyM/g7pV2ym597o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BLMqnjuv; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=Ej9P/j9PWmIoiFfMhIO/E6CkU734U2b3PsNkdICjT8cRRJVPfsjFzAE1H6guVooocG3UpYRggTh4Qz6cExz65/XHYqvCEls3ZvqH9iHUtIY4LqgkZVWooV/e1V41x/sxCDTLuJ14Bfwh2GvNDMiKHFH8TqT8EutCj1krCd5crUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D9duBBCf; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734719468;
+	s=mimecast20190719; t=1734719578;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PN5EVM1NmukZNXj0qpicok/RL7e9UE7DI/QNZtLqqyY=;
-	b=BLMqnjuvwG9+dHuVDlzBLumbSZ8r3qKYjxrFuoON9Q65T/Ap5OlqR5zyyNP263RhgWEJPx
-	u2d7b4DGGz9MBjBvoNAJoFH4SpoGSMGePs6rQHQOOTCAtl7IJbFWxdcPedrfswBpa7Wmqc
-	BB6TNKtfcjss5W0vOx/VE+c0YWI+YlQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=swU3J22w1qiLCqCLjNaSEiN34P+WDwMezqQF+LZ7YmM=;
+	b=D9duBBCf6+o3+AF+SHhzSWP9zk5kFNJGjqoV3tpURPULb/VVGxSfOY0thatAKttd5GF51w
+	vCVo5g2xClsZW5cE1jMW1h4R+yR2i3yxCwnNeMgcjdiNbED5++kgu7H3K0yXUcOjvZJdTn
+	2j+brg0XDacYPSoM9/lpWI+xWkUTPuY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-vx-5k3ZZPJCrEl0W23q7UQ-1; Fri, 20 Dec 2024 13:31:07 -0500
-X-MC-Unique: vx-5k3ZZPJCrEl0W23q7UQ-1
-X-Mimecast-MFC-AGG-ID: vx-5k3ZZPJCrEl0W23q7UQ
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-386333ea577so1008006f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 10:31:07 -0800 (PST)
+ us-mta-608-NDfJfAy7OdWrjYaPYmDh-w-1; Fri, 20 Dec 2024 13:32:57 -0500
+X-MC-Unique: NDfJfAy7OdWrjYaPYmDh-w-1
+X-Mimecast-MFC-AGG-ID: NDfJfAy7OdWrjYaPYmDh-w
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e03f54d0so1133879f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 10:32:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734719466; x=1735324266;
+        d=1e100.net; s=20230601; t=1734719576; x=1735324376;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=PN5EVM1NmukZNXj0qpicok/RL7e9UE7DI/QNZtLqqyY=;
-        b=FsLVVV4bfWXxI7Sahzn6zsOTlFK9BxNLTuZa2EtSrZMCpb/trjYKPG88vNjrOeA598
-         3DyFCjdz2M+IFg5KMllbITbHsNwdKr5Z1zMAE3Yi1++pEUGWU5IHw7dU6i3DXgU9By1B
-         H09W9bqiWXHAevncDpZge3xx9QbKsnNswA9Ex5DbERjkjouDd/eBh4BZ78MisUcn2HAq
-         Doyfu/Fqj82D7ZnWgQtTN/umFKkUO5f27VIne0/o14eSDJqasKlqRM1pSI+x8JSfTOhj
-         jkSdwb70Pt67dAa7s+lsZtITyx8svBJZzLhCXac81RVnzxBwVGcu8QzcKQrWz3Z7TO7O
-         Py+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiQ5tckRllfqhDrynB2E04aH0V8tyhJMEZoa5oyu9XzHcEtNyK+ohRFNOk+UotiJUFFvhqZQzRzp+656Va@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH79+woVOKsJlvFUMnEVP6MsoMkiCLdJC5sUcyjVbwmAQBmOM0
-	d4QakwN62hUwR6vq2kSacoLZ3F49qua3UmUhcl6g9OZf94Zx+qBB/dkVOxXLUFnHPmo3QslGTyQ
-	rMn+e5G0rsl7BY0bB8UODlYg5cpwedh93lZyQlZgF5JbSJypf1uAQveOnolLj4dM=
-X-Gm-Gg: ASbGncv66xTUdb0QvK480tjbzjSo+VGD006wvo92PzQNLGOO0f2UI6oAELL1YkVyyVn
-	TecRNK/yzA96QcgR/zOEIqFx0kZFgRWwx0DzO3f2Z0WFQM4DDFicZReG+vqlBoisCJvcDImL5Hl
-	FBz4zHb97KAG0pUHCNvc7ODiPMOh7y2Zbwsy2pPvNDM08iS/HL+ItmSzYBYcNUJ+h4rcNRe781F
-	GgaU7vff273P5eGniTZ0Mza3gIOfPOyY94aPpmVSFsjavEVOeLqpr5FMC23jP/5chaNOeh46AB2
-	wiRY/zRert8AAGZYcwTUQFPMbluAw4YDcARA4QsNA/v763X6ug6GaO6u18CO4ZDKkeY5/Qt1xcF
-	SNYcaROM7
-X-Received: by 2002:a5d:64c2:0:b0:386:366d:5d0b with SMTP id ffacd0b85a97d-38a22408e8amr3824105f8f.55.1734719466285;
-        Fri, 20 Dec 2024 10:31:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IElxiFyJ9qIUioQdUCoDL6NC0K4joEuaDrLW1M/n6klr2NWFr2HJs9ZJNS8OQoynugK8eIYkQ==
-X-Received: by 2002:a5d:64c2:0:b0:386:366d:5d0b with SMTP id ffacd0b85a97d-38a22408e8amr3824083f8f.55.1734719465905;
-        Fri, 20 Dec 2024 10:31:05 -0800 (PST)
+        bh=swU3J22w1qiLCqCLjNaSEiN34P+WDwMezqQF+LZ7YmM=;
+        b=u7tNiJQarhjtY89ieP8QjG6gQ2tZOPUVSD48j3wpAAYRlx6kKWYixytdl0e96xeg8E
+         ZOv7Fu5dnPE8/ic5mAh6LlabUShjQpbV9ZBd0oE+DF3y2GW2esIUPfFNWiw8ww5a4tL0
+         5+giurV8jTtmZEE2+PU3yC45HUvAs/CrPSluYum72a1YB9rf3oGAdEJLJ5J5j2vvTTTb
+         LPf7LleRolGXHUObSgOaHkbA2wL6N78nWZmKB7aoTJ4bhJhdahxiV/NRI8qUPHJpVNYU
+         Tf07P51opleM6a/nFGYVM6KS+S7w/mfW2j6r9Bay+ywYBW+IMn2nRhnTMYXi5U6Yxxqd
+         KzWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXAqeJPQUAwaWQLii8UNBvtREDwSIpp2QF6kpAMm9hLmJTCK28qQETgQa8VuuRTlTAVq8+p/xVpyQoONH6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxmtVvV594NFdsljpg6XRJP4UycsvJ04v8qujEbu7NQhTpee2K
+	imO9I/FaOMFRHnf30nzXsfm7Jjq0Km3OWaZFBvcMIh4++EGiklBnN2e+n4pMS59YoSKdMTARRLx
+	uzvAOPWwhqTBufBXc2Iswq8tMxjXRn1UMDFMCVh91hY9gsynryFsQ4sT6+X0SSAc=
+X-Gm-Gg: ASbGncuiE/FUYAzL9pYHoPRMaduDjMpjh41n19AbkDwxEsPSpv9nbpeaER0gaDfrkPf
+	ktOAyWuhANDdSSMdts7DqpVDHllNDvmPB4j70qoInE6r+bTtZyocun0fyQKXVHspM+zqBl1pslR
+	DnBqRavXqWIh2k2HSulb1DUTjI5d/uvqNcAVcgnU9GLM7PSqFZLCjBjkvKrxA7FmJH5AyL3bhry
+	qkzPA/FfImlx7f7LIGmAaDgLNVZlYHipYVpEX/qJ2LxMSHsuLjgG7r2/Z8p66vxtsOeyXiKr5rI
+	KU3CUnkzZcm35urS12Ns2NbtoTiNrzJKxwkazauKpbLwKMZWV8vBShIzSc+dTcLcs/nbzh+f1La
+	c3f3x77/0
+X-Received: by 2002:a05:6000:1fad:b0:385:ec89:2f07 with SMTP id ffacd0b85a97d-38a222001b1mr2999429f8f.32.1734719575923;
+        Fri, 20 Dec 2024 10:32:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEk0Gj/f9sMdkNX68mPrqALSYePXcnIEwcuX62px3U4cp9do+t6yyCpZv960vKDvx0DNpRxKg==
+X-Received: by 2002:a05:6000:1fad:b0:385:ec89:2f07 with SMTP id ffacd0b85a97d-38a222001b1mr2999374f8f.32.1734719575483;
+        Fri, 20 Dec 2024 10:32:55 -0800 (PST)
 Received: from ?IPV6:2003:cb:c708:9d00:edd9:835b:4bfb:2ce3? (p200300cbc7089d00edd9835b4bfb2ce3.dip0.t-ipconnect.de. [2003:cb:c708:9d00:edd9:835b:4bfb:2ce3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c829348sm4641303f8f.22.2024.12.20.10.31.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e278sm4706351f8f.75.2024.12.20.10.32.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2024 10:31:05 -0800 (PST)
-Message-ID: <107dacce-87dc-457b-a2e1-e5a4699d66af@redhat.com>
-Date: Fri, 20 Dec 2024 19:31:03 +0100
+        Fri, 20 Dec 2024 10:32:54 -0800 (PST)
+Message-ID: <36334f20-2b9e-4529-89c4-120678bc5985@redhat.com>
+Date: Fri, 20 Dec 2024 19:32:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 14/25] rmap: Add support for PUD sized mappings to rmap
+Subject: Re: [PATCH v4 19/25] proc/task_mmu: Ignore ZONE_DEVICE pages
 To: Alistair Popple <apopple@nvidia.com>
 Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
  lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
@@ -106,9 +106,9 @@ Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
  linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
  david@fromorbit.com
 References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
- <7f739c9e9f0a25cafb76a482e31e632c8f72102e.1734407924.git-series.apopple@nvidia.com>
- <4b5768b7-96e0-4864-9dbe-88fd1f0e87b8@redhat.com>
- <volhyxjxlbsflldgs36ghzartel2tu625ubz3kfed2gdwrsamt@cpfsfhdpc4rp>
+ <f3ebda542373feb70ed3e5d83b276a2e8347609f.1734407924.git-series.apopple@nvidia.com>
+ <c7bd9b00-6920-4dc0-8e2e-36c16ef7ad5a@redhat.com>
+ <37rxl2bjda3psdknhboexhbg3hahf5ifmublp5fw7ltdoyqllc@udbz76jklmnu>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -156,44 +156,75 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <volhyxjxlbsflldgs36ghzartel2tu625ubz3kfed2gdwrsamt@cpfsfhdpc4rp>
+In-Reply-To: <37rxl2bjda3psdknhboexhbg3hahf5ifmublp5fw7ltdoyqllc@udbz76jklmnu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
->>>    				return -EBUSY;
->>> diff --git a/mm/rmap.c b/mm/rmap.c
->>> index c6c4d4e..39d0439 100644
->>> --- a/mm/rmap.c
->>> +++ b/mm/rmap.c
->>> @@ -1203,6 +1203,11 @@ static __always_inline unsigned int __folio_add_rmap(struct folio *folio,
->>>    		}
->>>    		atomic_inc(&folio->_large_mapcount);
->>>    		break;
->>> +	case RMAP_LEVEL_PUD:
->>> +		/* We only support entire mappings of PUD sized folios in rmap */
->>> +		atomic_inc(&folio->_entire_mapcount);
->>> +		atomic_inc(&folio->_large_mapcount);
->>> +		break;
+On 19.12.24 00:11, Alistair Popple wrote:
+> On Tue, Dec 17, 2024 at 11:31:25PM +0100, David Hildenbrand wrote:
+>> On 17.12.24 06:13, Alistair Popple wrote:
+>>> The procfs mmu files such as smaps currently ignore device dax and fs
+>>> dax pages because these pages are considered special. To maintain
+>>> existing behaviour once these pages are treated as normal pages and
+>>> returned from vm_normal_page() add tests to explicitly skip them.
+>>>
+>>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>>> ---
+>>>    fs/proc/task_mmu.c | 18 ++++++++++++++----
+>>>    1 file changed, 14 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>> index 38a5a3e..c9b227a 100644
+>>> --- a/fs/proc/task_mmu.c
+>>> +++ b/fs/proc/task_mmu.c
+>>> @@ -801,6 +801,8 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
+>>>    	if (pte_present(ptent)) {
+>>>    		page = vm_normal_page(vma, addr, ptent);
+>>> +		if (page && (is_device_dax_page(page) || is_fsdax_page(page)))
 >>
->>
->> This way you don't account the pages at all as mapped, whereby PTE-mapping it
->> would? And IIRC, these PUD-sized pages can be either mapped using PTEs or
->> using a single PUD.
+>> This "is_device_dax_page(page) || is_fsdax_page(page)" is a common theme
+>> here, likely we should have a special helper?
 > 
-> Oh good point. I was thinking that because we don't account PUD mappings today
-> that it would be fine to ignore them. But of course this series means we start
-> accounting them if mapped with PTEs so agree we should be consistent.
+> Sounds good, will add is_dax_page() if there are enough callers left after any
+> review comments.
+
+:)
+
 >   
->> I suspect what you want is to
+>> But, don't we actually want to include them in the smaps output now? I think
+>> we want.
 > 
-> Yes, I think so. Thanks for the hint. I will be out over the Christmas break but
-> will do a respin to incorporate this before then.
+> I'm not an expert in what callers of vm_normal_page() think of as a "normal"
+> page. 
 
-I'll be on PTO starting ... well now. But I'll try to give the other 
-parts a quick peek if anything urgent jumps at me. (bad habit of reading 
-mails while on PTO ...)
+Yeah, it's tricky. It means "this is abnormal, don't look at the struct 
+page". We're moving away from that, such that these folios/pages will be 
+... mostly normal :)
 
-In any case, happy holidays to you!
+> So my philosphy here was to ensure anything calling vm_normal_page()
+> didn't accidentally start seeing DAX pages, either by checking existing filters
+> (lots of callers already call vma_is_special_huge() or some equivalent) or
+> explicitly filtering them out in the hope someone smarter than me could tell me
+> it was unneccssary.
+> 
+> That stategy seems to have worked, and so I agree we likely do want them in
+> smaps. I just didn't want to silently do it without this kind of discussion
+> first.
+
+Yes, absolutely.
+
+> 
+>> The rmap code will indicate these pages in /proc/meminfo, per-node info, in
+>> the memcg ... as "Mapped:" etc.
+>>
+>> So likely we just want to also indicate them here, or is there any downsides
+>> we know of?
+> 
+> I don't know of any, and I think it makes sense to also indicate them so will
+> drop this check in the respin.
+
+It will be easy to hide them later, at least we talked about it. Thanks 
+for doing all this!
 
 -- 
 Cheers,
