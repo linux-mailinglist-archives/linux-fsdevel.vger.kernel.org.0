@@ -1,116 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-37917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6165D9F8EC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 10:16:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072229F90BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 11:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC55189703E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 09:16:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01C21899CCD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 10:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A101BD9FF;
-	Fri, 20 Dec 2024 09:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E3D1C4A34;
+	Fri, 20 Dec 2024 10:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cWLbLRLx"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="kugA4uCw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kCpfiUMx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22071BCA0E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 09:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9526574059;
+	Fri, 20 Dec 2024 10:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734686121; cv=none; b=eLBRqdwdQQdY2rzsklfnr2q+02kmP5Qx/eFcFEVHmJiKHg0vwaJzH74OLtwBSsRMjI1+4nibcC8uUG/CWvd1REnPNdwH/b9gjwLsJBYYpz7QeWXPFO95phjUcR8G8nN8Di9ey5ks4lvPXDS2Q/les9nHAuZKc4jYlkoELKeaIng=
+	t=1734691906; cv=none; b=aOWG7+EgiKdJHmlZKJY0Jpp6/eV4DOFTS1pdgryX6+YF+ctAaxY2WAJ2jtxZ2UzSj2MfHII7pgzO8v6RNDAOJCGNAgtldlfx1xO2204vt87x8jqBtTMKmUeAw/Q9dDtgTmmAzus3hRzFW3VWpzAlx3GM2odN/PbVBLyVTbL8ecQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734686121; c=relaxed/simple;
-	bh=NLetd7nVAxQOP/5NukKrvogts5apKvc1tTqPC3qKmrg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k9k1vefNfpKkYc8eurCpDzNIwRTDpIuwXGBf+Rwcmgxc0SclCXM/niWWz/9P6GrVbFEhSbGgqDPcTsgtU2l8kjr/98XQvNvnuqDJ4oRy2uZXAMUAHHCozaDJtimztjbNh79bD7h1dJMc6N4ZAlH5GvQkT+uRfNPYees0cbQNazo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cWLbLRLx; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46677ef6910so16848961cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 01:15:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734686118; x=1735290918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NLetd7nVAxQOP/5NukKrvogts5apKvc1tTqPC3qKmrg=;
-        b=cWLbLRLxUNYVFQfRc3J4XvJM5ck/i2bgNwdtjjcBHJ0Df70CBrNq4SXLFx2WjdlLqo
-         DJ5ihEWvzNdG46QwDKl0MsdAJ40/AQ0dj633a3oOQKa/4gCpO4N8TtoHRkdYdX4i5lZE
-         e1ntkRWe4i9Qlhqw4LHehdIqsDksEYn6yj7NI9k8WylJbEZcBfJ9gGIM5mDBhT2ywjW0
-         f3tdSf6NzQ5hWyX/J58FEdkETHjzRRer6BDvoMMReNytrkmimAjSyFatGw+7IvxU0gHc
-         GikFFvWWanpqrZx168BeQAL0N0b0g48hSuDVAzQ47GYnpPhWczALuxhf4870bQWbFsYn
-         CDlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734686118; x=1735290918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NLetd7nVAxQOP/5NukKrvogts5apKvc1tTqPC3qKmrg=;
-        b=tT1tooiZbmqoa/7IbjL0FlqlEvyRaqew7Tx4MDdUWL2rfbubVm5CEXyjX7PpSFVVA3
-         2sj2fE/pedPJw5Vm2HT4nSlRn9vlBvpvOc8l86tzLhT8SB5djMFwKDEHF17nNuZXY+zg
-         pIhhg+7l0UoUX2fbUoA44U+hUQ7HhZdAsuhw5vc3n81rM+X8lIa22CHaknDRsNi1p++q
-         1NnKBpG9p/AeFj9nuc1BTRLlTBEJX4q//dLFj1mR558auHf03DVYeQt3Cvx8ZkXzMkpa
-         r1V9Zb6yR7uG6pz5XlZ+sR25bV46JGwhCFUGI7xkdiH35HsHTNOHTvNmHzc1ZXKNYTne
-         8Alg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1zYmxN8456fBPx1cPdyLro2oAezXoq/2NsMtEwVVojmCRBqvETddeCkM3vksAKaW1UghnqMzHNfcB0I3K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3OgyeaPwH6u2/CxHXmNWgawBS0EtQHJzgpmmzVnJlynqyguF4
-	/e2g5mPnbJvRxOPUlg5wHwnDRu74C6e7Dw+/6V9Cfxp7CqFPqiM+bHUSMgcOtST4+jTQ8HkxQ4v
-	EFDLYdrpdXO2Hx0GypGtYyYpxhpdHQY09fyko
-X-Gm-Gg: ASbGnctjNKZK8LAygV+LtMK6vdcNusLIl56lhzs6y9pQcNKI+N2pIF+FRTxnse9Oj45
-	Tzuf2ktCGSQ9ziMZe0HoUjLldxKo9/vQooYspUu+GuaEizNlfQymVvBy5zW77af4IHAkd15c=
-X-Google-Smtp-Source: AGHT+IHbqklK1pSTmIW831w6oAdLhJYtp1HjS6HeZzZ/1mmVAAXvEHRnXziEYR94uU6VDefdz0BCkAa8wLSLmYVFNUE=
-X-Received: by 2002:a05:6214:4188:b0:6d8:9002:bdd4 with SMTP id
- 6a1803df08f44-6dd23358724mr35457356d6.28.1734686118302; Fri, 20 Dec 2024
- 01:15:18 -0800 (PST)
+	s=arc-20240116; t=1734691906; c=relaxed/simple;
+	bh=/ZaVdN3TJxI3nNk9xHC7aioAzM5CbeN6pVXqEN5Jekc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SjyVxqBoVYRjHnFCGy/TlUSUDQHjEfCbjjehNpyeEynGnIJPii23Vazx9+i29qbvyl7ksTwW9rVBaUk7/cEtZN/ep4yx6z4vx4kYi4coGY4rAKYh4sxCz9IWMk7m4NliuQ4QMChj+R/IVOJpPSOdPbH5YD/pjmhsFtOX5xUHBPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=kugA4uCw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kCpfiUMx; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5D5A4138016A;
+	Fri, 20 Dec 2024 05:51:42 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Fri, 20 Dec 2024 05:51:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1734691902; x=
+	1734778302; bh=VdKfaZuoAsTfIEKNboZqkylXyFi+4/vjTA3crwcpBJY=; b=k
+	ugA4uCwfHLeZx+CpN0si0hhNPdzZI7Xr6a3lI9t9KOaOO7GhrjR2FTVBn/aAuhzj
+	4WskTKHpJtRqmRClF3e+foRE5OFA12VB9zPtxq6UhSCDqFE+sAAhtII6UGSXtG1X
+	vdjpaUI4kdU4GvBXOU23sdKDtrp0lNt83tlhT8f1hdURMvtljIXmBilo03SgJhBb
+	gbhkcty8sfg5eJLPicgafNxieDLC8G+vSlQwq43e54j1CzTOZLlrwgd2wJaZFtzg
+	XTsOI2v3gxXNW3Ktb377rzrFksvQdu6wDPuCgpPEsGbXKL/Jtkdr7tglQnrQcIx4
+	RLqTLdEnNJNx/k6U2PkJw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734691902; x=1734778302; bh=VdKfaZuoAsTfIEKNboZqkylXyFi+4/vjTA3
+	crwcpBJY=; b=kCpfiUMxKaEYTCkWV3ZRwgjDEXwdUcqcf1bazM//VcIAPWx8/MR
+	fkgzvNc6NJbMW2bYVXGrThAPOheHmdPrcGGYGcOtq1nYiKhiBQp4hmfU4BXKhC8Q
+	OSNmZpddi02rHRnGapgfr5Str/gf3Dze9lKBCZgjyMvgMV1f1ZDpZHqz7AZNvzbu
+	F2f2tiNCduOqOpJfVXU2BomJRbrRw6q4V/IIeRtRSFWKoyv3yF6mb3c8dudSnaM9
+	hhCSh35WegOZkDm/RcP1LJxRFEfw4AGBCPnx0nr6M7gVEOF7AOQFuBvPDu0/jwQP
+	7jhXHVlLfWwZk744W3p7TJasQ1DaApQQ/GQ==
+X-ME-Sender: <xms:PUxlZz-BVS7ZlDFYQ5OKsB927Ky9hD2zR2nt-iK_xzRWi6FJHhC_ng>
+    <xme:PUxlZ_u9kJx4Qov71TuJPFskavpXfj_ckP3e9GmII5vgsKoLWB8u_8XLXuWTm9axM
+    t0PrYr5FEohFZi4f5E>
+X-ME-Received: <xmr:PUxlZxC-FHnRn1lMNr3Wcy5y5799Pn-7UF-maNNNj1j4-lYdPrG4GrI7hIKeetwnIVMcKg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddtvddgudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhmmhes
+    khhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrdho
+    rhhgpdhrtghpthhtoheptghlmhesmhgvthgrrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhl
+    hiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhh
+    grthdrtghomh
+X-ME-Proxy: <xmx:PUxlZ_e4OowyjYhSTNFF7KToAw2pRBCbHo6ESADkacSVNY6eRO1n2Q>
+    <xmx:PUxlZ4NvJmk7VtvTBraPSa0Xf_CHV3AcI71J9jnL2ROLjtajPJ4LRg>
+    <xmx:PUxlZxnJNzXJ3wWYGiw6PUpvBmkuKgoktpaganibeBG3VXyEP8KvFA>
+    <xmx:PUxlZyunFks5zS8sXBM6SolwjZL3GTsryvoLTD7SrX8cPGqhGBnzpg>
+    <xmx:PkxlZ5hKrz6kduWue745i4WVr5PK6_WCYhxICIarXI9pAcTNkcb5TLu8>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 20 Dec 2024 05:51:38 -0500 (EST)
+Date: Fri, 20 Dec 2024 12:51:34 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org, 
+	bfoster@redhat.com
+Subject: Re: [PATCH 01/11] mm/filemap: change filemap_create_folio() to take
+ a struct kiocb
+Message-ID: <vvnsjxmc37nivfsbjkujdbjc2f6iisgvzcguboz3xdw54h3rvf@ntejcb6af4ep>
+References: <20241213155557.105419-1-axboe@kernel.dk>
+ <20241213155557.105419-2-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AFMAUQCEIuMrCuBcOuRJwqrY.1.1734682065298.Hmail.3014218099@tju.edu.cn>
-In-Reply-To: <AFMAUQCEIuMrCuBcOuRJwqrY.1.1734682065298.Hmail.3014218099@tju.edu.cn>
-From: Alexander Potapenko <glider@google.com>
-Date: Fri, 20 Dec 2024 10:14:41 +0100
-Message-ID: <CAG_fn=ULq8ZY_PtZO96ADVHTAVEr1LyTp+XHYOtiBFmn6EewbA@mail.gmail.com>
-Subject: Re: Kernel Bug: "KASAN: slab-out-of-bounds Read in jfs_readdir"
-To: Haichi Wang <wanghaichi@tju.edu.cn>
-Cc: paulmck@kernel.org, rientjes@google.com, josh@joshtriplett.org, 
-	dvyukov@google.com, akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, andreyknvl@gmail.com, peterz@infradead.org, 
-	jfs-discussion@lists.sourceforge.net, bp@alien8.de, linux-mm@kvack.org, 
-	cl@linux.com, joel@joelfernandes.org, iamjoonsoo.kim@lge.com, 
-	jiangshanlai@gmail.com, viro@zeniv.linux.org.uk, kasan-dev@googlegroups.com, 
-	mingo@redhat.com, tglx@linutronix.de, luto@kernel.org, 
-	neeraj.upadhyay@kernel.org, urezki@gmail.com, roman.gushchin@linux.dev, 
-	vbabka@suse.cz, linux-kernel@vger.kernel.org, jack@suse.cz, 
-	rcu@vger.kernel.org, boqun.feng@gmail.com, x86@kernel.org, 
-	frederic@kernel.org, vincenzo.frascino@arm.com, rostedt@goodmis.org, 
-	42.hyeyoo@gmail.com, shaggy@kernel.org, penberg@kernel.org, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, brauner@kernel.org, 
-	qiang.zhang1211@gmail.com, ryabinin.a.a@gmail.com, 
-	syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213155557.105419-2-axboe@kernel.dk>
 
-On Fri, Dec 20, 2024 at 9:07=E2=80=AFAM Haichi Wang <wanghaichi@tju.edu.cn>=
- wrote:
->
-> Dear Linux maintainers and reviewers:
->
-> We are reporting a Linux kernel bug titled **KASAN: slab-out-of-bounds Re=
-ad in jfs_readdir**, discovered using a modified version of Syzkaller.
->
+On Fri, Dec 13, 2024 at 08:55:15AM -0700, Jens Axboe wrote:
+> Rather than pass in both the file and position directly from the kiocb,
+> just take a struct kiocb instead. With the kiocb being passed in, skip
+> passing in the address_space separately as well. While doing so, move the
+> ki_flags checking into filemap_create_folio() as well. In preparation for
+> actually needing the kiocb in the function.
+> 
+> No functional changes in this patch.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Hello Haichi,
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Unfortunately right now the bug is not actionable, because one needs
-to download 180Mb of archives just to look at it and decide whether
-they know anything about it or not.
-Could you at least post the symbolized KASAN report?
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
