@@ -1,124 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-37932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584BA9F9401
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A78CE9F940F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 15:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08C41887849
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 14:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E5E1884F6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 14:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E619215F61;
-	Fri, 20 Dec 2024 14:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8AD215F7D;
+	Fri, 20 Dec 2024 14:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TXo35mCp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="w+V5KDtN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F291A83FD;
-	Fri, 20 Dec 2024 14:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A683186607
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 14:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734703848; cv=none; b=Jf6ws5zgm7BBpAvm+mKq8ns25fkZenGm/Ufvd1LxS8XJn/PsEeBEuS0NNFtiXX9AbbUQaEbJkbNr8Bk/lzYA2Q0FSaDa/cPs3LQ6oOGAT+PrzM0i5gUz/crylNaYze639f1h+IsYjtB50kK8GHDdM4egBTN5wdZtqM7mupMhklo=
+	t=1734704192; cv=none; b=cbCNpu1FfcFTN+sEICsvF7K3rNdxzVPDyVyFODkbWHaOCs0XVNlM0PvoKvfuWU/hIAvOLRlbzqkdlPDXuvCXVaVLVtNps8rR0Onw7KGJ6QTK7RUZ/5fyap02J87wUyWaNrwrOvwUqmVbDmXc30gS2YYhqcrL39x2yqLQhPPcZQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734703848; c=relaxed/simple;
-	bh=GPfnfTn1KX5prNTjXajuoOVanwHklmw90l5iVHHXn7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dJepIsw6/zpP/BFWKnY6vo1UdnfUYu7DfG8NNIoR4TMvB+cpXPzy5KqYDDoJmUg1THcIx3x5ILJS7QsqaCLKzRSzj9wk/caMtKy0k9pnIn5OntoAR88qj8CxvfY2GZa4HL22WZAZhCRIcZyvxdFeKBBkLJagljNOKHeOQ4H6RKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TXo35mCp; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zgO81
-	Y7kgOfMSKitLumdQG8YoricRky6BUgrR7UwCag=; b=TXo35mCp3bpX/kC0nnJZ1
-	pXVY8XAC9MkpUUirUmcqFbMDAhwELG4m8hVtulczzjbJJvxmTrw0DUjHq7xrXcp2
-	CyVaPn9qv5FkLz6Mrz0q+7HoJhO8VNM3Fsaqh/XzdE+3GkAaA9S7K3VYEWdS8S53
-	9FrF/m+hc2XMJXN2bsnaMY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDnN1tVemVnRQn7AQ--.56170S4;
-	Fri, 20 Dec 2024 22:08:34 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: brauner@kernel.org,
-	viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	surenb@google.com,
-	Markus.Elfring@web.de,
-	David Wang <00107082@163.com>
-Subject: [PATCH v2] seq_file: copy as much as possible to user buffer in seq_read()
-Date: Fri, 20 Dec 2024 22:08:19 +0800
-Message-Id: <20241220140819.9887-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241220041605.6050-1-00107082@163.com>
-References: <20241220041605.6050-1-00107082@163.com>
+	s=arc-20240116; t=1734704192; c=relaxed/simple;
+	bh=nKZxdsq5QzRXV5t8/y9W1d3t4drrwgatktzy5JRC8MA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qxSThw6teNa2N/gyI+ERcczr4QisWmLEQiqGyhxG+J4aL8LD73nT7bVgzjfROB5ZilEWtoUHcK1WIsJm2IgG2YKX/OzaTtuRVnIDyOGfCWC6+R7nCGqCIU0+IIPXv5Vb6JUK/ffE4FMeAOdQkHDpduaPgwcVKGVayC0Dj7QTc38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=w+V5KDtN; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a77bd62fdeso13467165ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 06:16:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734704187; x=1735308987; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Od2zcnvy+Skob7o4jzUxcFwew46oxr58HydCMFgN+I=;
+        b=w+V5KDtNKlg9vlQqIfXw+INvOqVTZcDzZzTOPJm0QuCbzxS3fx5Dh23btgfK+2tybd
+         UgFjSnppQxurKfyu0/ShFxRrQBGHJK1ZJr3f6XKgzy5gqtB4BaAD6g975KiyPNvhCJAM
+         BmcoNHbrLlz2fZFWV85tVx2F+jZrZlDOj2OFj0e2qsmvVCbl42rtluxlB7aM7z8l9VNA
+         du9IvDdgcqmLRlxcUU+dtE0RgjVgiGl4NufsJVDdCuLVsIh/qGEWmeOKkAlrRyynYF0h
+         D8GL1hou58QBbSmsBiyIFy5xmZBDTP8ZcEGd/6124IrK7HmOBcVwP90Tqqn7iobmLI4B
+         3n1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734704187; x=1735308987;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Od2zcnvy+Skob7o4jzUxcFwew46oxr58HydCMFgN+I=;
+        b=T9n9cCB28X6msrG99Q2zNQucrGy+p2g00/i9XhzRhONWgApZwz8dXT5HvJeKjGGM6A
+         a7qQeHCt/SIEU3Q3Xw1Gi3elIp+z3HvwgiFFmz3Pc/JmhFGNpxkMUdVfI8V3alWFsP2O
+         ntPVSRDmvoCY5FDvx3Upip0JkJTTMz+fZtBQrQCCfjhQLzadJ7kdEMaJ/opF4ZseUoXh
+         khOuviQPvRjM+Cl0UvgtRx74Jr7LlOW//C99hE6gbaT2QvESwSeimIEuiOq0NKoanCdB
+         ZZIVW8URNj7ffoFPkWVO9dSc/lPxCwJqkcTsRnfeJMXEWX+UckxoLA4abU0H7S/AafUJ
+         26Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbN2LP9ewnt/MMJTX/ZGivRWFvV2EGiSxVDgXqLxly95FCIHJ3OjBUayQ8bx8Tn831B6uIr4ue2PlXkfnx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYEO8noPOKP20iJjJHFbHR3joKJ8JPX/AFJWNtaTdrNKD4klsq
+	o5v+v+64Ue6mDa+9P3iuatvuuIhtJe4aY6JYNAQ7hr+9MYLPPVNqrv2IEKm1sz+OzTbQcaYB0wd
+	r
+X-Gm-Gg: ASbGncsiWKxJww+WtDO01AnK/wKqxEcGb3Sak39M391AOgsUMow7XYny1ziks8OmylV
+	7NXYmnEojexRo8UIejPVp22doj8v2epn9+jvtlaB3KZjU/MRcPHELT26XqWv0Xqg3u2XukmCxN8
+	YvmipSRzY5/Lvi0IPXEQblFDB6VlVK6G+pJ5WDFNG+0ELFJH1mekFvnYsBU2hIqJY72mkR9kV9m
+	ObNZsg3b2KHRxtPh3xUi+fUhOPrifrHaL8zC/RWowtSRafm1WD1
+X-Google-Smtp-Source: AGHT+IFK4GJzPS9PuZHJQMBiKb29k8t0eWkw3zO63tOvzuoY8e1x5vNSt8Y4g8JbZBqvV+ZRETd90A==
+X-Received: by 2002:a05:6e02:1c8d:b0:3a7:96f3:bb3c with SMTP id e9e14a558f8ab-3c2d1e7df7amr28390245ab.2.1734704186767;
+        Fri, 20 Dec 2024 06:16:26 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3c0dfb3264asm8870215ab.41.2024.12.20.06.16.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2024 06:16:25 -0800 (PST)
+Message-ID: <d24ee33b-4207-4696-b878-5b2c4d47bec8@kernel.dk>
+Date: Fri, 20 Dec 2024 07:16:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnN1tVemVnRQn7AQ--.56170S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WF1UXr4rXw4Utw1xCw1DAwb_yoW8CryUpF
-	1aga9I9F4kJrs8Zrn3AFn8Was5X3W8JayYgayrX3yftw18twn8ZF1xtFy0qw4jqr1rC3yj
-	vr1F9340y3s8J3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p__-BDUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMwq7qmdleYceRwAAsN
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/11] mm/truncate: add folio_unmap_invalidate() helper
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+ bfoster@redhat.com
+References: <20241213155557.105419-1-axboe@kernel.dk>
+ <20241213155557.105419-7-axboe@kernel.dk>
+ <e5rdpzjosbzrddun7vx66dlb522pyo35qpcchaw6eywa3ylxkz@noj2be2j7vjl>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <e5rdpzjosbzrddun7vx66dlb522pyo35qpcchaw6eywa3ylxkz@noj2be2j7vjl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-seq_read() yields at most seq_file->size bytes to userspace, even when
-user buffer is prepared to hold more data. This causes lots of extra
-*read* syscalls to fetch data from /proc/*.
-For example, on an 8-core system, cat /proc/interrupts needs three
-*read*:
-	$ strace -T -e read cat /proc/interrupts  > /dev/null
-	...
-	 43 read(3, "            CPU0       CPU1     "..., 131072) = 4082 <0.000068>
-	 44 read(3, "  75:   13490876          0     "..., 131072) = 2936 <0.000148>
-	 45 read(3, "", 131072)                     = 0 <0.000010>
-On a system with hundreds of cpus, it would need tens of more read calls.
-A more convincing example is /proc/allocinfo, which is available when
-CONFIG_MEM_ALLOC_PROFILING=y. When cat /proc/allocinfo, 4k+ lines need ~100
-read calls.
+On 12/20/24 4:13 AM, Kirill A. Shutemov wrote:
+> On Fri, Dec 13, 2024 at 08:55:20AM -0700, Jens Axboe wrote:
+>> @@ -629,18 +641,8 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+>>  				folio_unlock(folio);
+>>  				continue;
+>>  			}
+>> -			VM_BUG_ON_FOLIO(!folio_contains(folio, indices[i]), folio);
+>>  			folio_wait_writeback(folio);
+> 
+> Any particular reason you drop this VM_BUG_ON_FOLIO()?
 
-Fill up user buffer as much as possible in seq_read(), extra read
-calls can be avoided with a larger user buffer, and 2%~10% performance
-improvement would be observed:
-	$ strace -T -e read cat /proc/interrupts  > /dev/null
-	...
-	 56 read(3, "            CPU0       CPU1     "..., 131072) = 7018 <0.000208>
-	 57 read(3, "", 131072)                     = 0 <0.000010>
+No reason at all, I think it just slipped under the radar. I've put it back
+now, thanks!
 
-Signed-off-by: David Wang <00107082@163.com>
----
- fs/seq_file.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 8bbb1ad46335..2cda43aec4a2 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -220,6 +220,7 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		if (m->count)	// hadn't managed to copy everything
- 			goto Done;
- 	}
-+Restart:
- 	// get a non-empty record in the buffer
- 	m->from = 0;
- 	p = m->op->start(m, &m->index);
-@@ -282,6 +283,11 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	copied += n;
- 	m->count -= n;
- 	m->from = n;
-+	/*
-+	 * Keep reading in case more data could be copied into user buffer.
-+	 */
-+	if (m->count == 0)
-+		goto Restart;
- Done:
- 	if (unlikely(!copied)) {
- 		copied = m->count ? -EFAULT : err;
 -- 
-2.39.2
+Jens Axboe
 
 
