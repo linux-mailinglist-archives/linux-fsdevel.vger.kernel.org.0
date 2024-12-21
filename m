@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-37993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BCF9F9CD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 23:47:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C349F9DAC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 02:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CDA1898579
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2024 22:47:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8CE7A1FC9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 01:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CDA227B8E;
-	Fri, 20 Dec 2024 22:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DYzJo6ry"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFD817588;
+	Sat, 21 Dec 2024 01:21:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711AA21C180
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 22:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE6110F2
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 01:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734734801; cv=none; b=N2beryqO5lvntDsRz+MUJyevkhc+00mlDa+gvls1BNP1MDsn7fnhCEWcMVRYkJT7x4MOoK7+gZ+/mP8YcVP6PcLjBzymI2QmEx5FDd+p0lfE3QeNCaPHLTJz407Qv5dDMTcfA33i6xeRjoS7ghZGjfZXCTfatgOpIfnjyqRt7zw=
+	t=1734744107; cv=none; b=c4iYwXj4hM0c/5u70XATWsyOtkNi4jHfkiA6re3aWBIBGzbOXMrOsa2fyjqb8QeDpJRlqXkb3LM1LlhxILouUhZ63nSs1ROaYE6oS48Ex++6L2zqja5z1zd9H8ens+vCOT2I2NdX5yIdoHNU7pL0yO3YmIRFj/nP6XwV1VAcDzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734734801; c=relaxed/simple;
-	bh=MGh0v9zGiTVXQP1tmKZU6Rjuk5J68nH6nxFeGxLe/n0=;
+	s=arc-20240116; t=1734744107; c=relaxed/simple;
+	bh=SSVXfIwCYLlRynLUZ/XpRx7cJQNwSNNm8pLeqZZO5rc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MWyPS5RcB5dAOnx+q45hahNNe30HTTHrh0qdkoxHKE0XB1nDJ0okh4pE7AMYh/kceFIMkuawqqVzM2zCvG+VpZLcCIw7fqY838FmkPVlclU+lfCe+Z0dB3HXkN76DNDmxnmFmP/nzguVHhKbSwN3aBiNGXoAaAX27HO7iihsCno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DYzJo6ry; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=Fh0BaEx2us0AW3iGfQsY36K6B+upK8UEcVRgMrbaSTg=; b=DYzJo6ryyeKvR9ZNy/KiM26VDN
-	Hn1j758wK1VjEK3H6hlAc/Ur4DFP4tVN7VxUxU5rpBH/707U6dSrjx5P+vRLTZH6FgUsiA2cbSPWk
-	zOJPaMQw8UOrLstSurlRPhMTnE1SIOLp3PJI8IiVVSb+6s9RbR1DS6n6Y3n12CyN1Y1aGXmibOIEy
-	bqNVAjnVcuc9FobfLzDegVDGtGBsO0yBhZiLdtJVts008bDW1I/MvfykWWyp8tIcDmtM128Vk/SWX
-	L6wSDYEC42PkaQMG+dEC6raLnB0NEX7AZAFJmadL7LGdGBzC4OWA36qaqazRSNsBjcQYKeoh6PfAS
-	8lYAXSsg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tOllV-000000032Nn-0Yss;
-	Fri, 20 Dec 2024 22:46:37 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	 MIME-Version; b=EVuk/6QNpiw6UFeyBbOBKrdTqWxogXH4FACvzTkthE81b3zx2UgaIiN8gS8JFdCmz0gCjB4tuTVpZyybcJwwLoJRweHlgza76iD0CU/aan5e29QN/totaPsMbMjIoBvsO3/5odmIt7Tw2OUgRLLY+pa2Yyyu+XGRc74pI3e9DLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.150])
+	by sina.com (10.185.250.22) with ESMTP
+	id 6766181C000024A7; Sat, 21 Dec 2024 09:21:34 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7878927602662
+X-SMAIL-UIID: 28EB3B370EC34327B11C69BE0C58A134-20241221-092134-1
+From: Hillf Danton <hdanton@sina.com>
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 5/5] squashfs: Convert squashfs_fill_page() to take a folio
-Date: Fri, 20 Dec 2024 22:46:28 +0000
-Message-ID: <20241220224634.723899-5-willy@infradead.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241220224634.723899-1-willy@infradead.org>
-References: <20241220224634.723899-1-willy@infradead.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] VFS: add inode_dir_lock/unlock
+Date: Sat, 21 Dec 2024 09:21:20 +0800
+Message-ID: <20241221012128.307-1-hdanton@sina.com>
+In-Reply-To: <20241220030830.272429-9-neilb@suse.de>
+References: <20241220030830.272429-1-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,83 +63,224 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-squashfs_fill_page is only used in this file, so make it static.
-Use kmap_local instead of kmap_atomic, and return a bool so that
-the caller can use folio_end_read() which saves an atomic operation
-over calling folio_mark_uptodate() followed by folio_unlock().
+On Fri, 20 Dec 2024 13:54:26 +1100 NeilBrown <neilb@suse.de>
+> During the transition from providing exclusive locking on the directory
+> for directory modifying operation to providing exclusive locking only on
+> the dentry with a shared lock on the directory - we need an alternate
+> way to provide exclusion on the directory for file systems which haven't
+> been converted.  This is provided by inode_dir_lock() and
+> inode_dir_inlock().
+> This uses a bit in i_state for locking, and wait_var_event_spinlock() for
+> waiting.
+> 
+Inventing anything like mutex sounds bad.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/squashfs/file.c     | 21 ++++++++++++---------
- fs/squashfs/squashfs.h |  1 -
- 2 files changed, 12 insertions(+), 10 deletions(-)
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/inode.c         |  3 ++
+>  fs/namei.c         | 81 +++++++++++++++++++++++++++++++++++++---------
+>  include/linux/fs.h |  5 +++
+>  3 files changed, 74 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 6b4c77268fc0..9ba69837aa56 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -492,6 +492,8 @@ EXPORT_SYMBOL(address_space_init_once);
+>   */
+>  void inode_init_once(struct inode *inode)
+>  {
+> +	static struct lock_class_key __key;
+> +
+>  	memset(inode, 0, sizeof(*inode));
+>  	INIT_HLIST_NODE(&inode->i_hash);
+>  	INIT_LIST_HEAD(&inode->i_devices);
+> @@ -501,6 +503,7 @@ void inode_init_once(struct inode *inode)
+>  	INIT_LIST_HEAD(&inode->i_sb_list);
+>  	__address_space_init_once(&inode->i_data);
+>  	i_size_ordered_init(inode);
+> +	lockdep_init_map(&inode->i_dirlock_map, "I_DIR_LOCKED", &__key, 0);
+>  }
+>  EXPORT_SYMBOL(inode_init_once);
+>  
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 371c80902c59..68750b15dbf4 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3364,6 +3364,34 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+>  	return mode;
+>  }
+>  
+> +static bool check_dir_locked(struct inode *dir)
+> +{
+> +	if (dir->i_state & I_DIR_LOCKED) {
+> +		dir->i_state |= I_DIR_LOCK_WAITER;
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static void inode_lock_dir(struct inode *dir)
+> +{
+> +	lock_acquire_exclusive(&dir->i_dirlock_map, 0, 0, NULL, _THIS_IP_);
+> +	spin_lock(&dir->i_lock);
+> +	wait_var_event_spinlock(dir, !check_dir_locked(dir),
+> +				&dir->i_lock);
+> +	dir->i_state |= I_DIR_LOCKED;
+> +	spin_unlock(&dir->i_lock);
+> +}
+> +
+> +static void inode_unlock_dir(struct inode *dir)
+> +{
+> +	lock_map_release(&dir->i_dirlock_map);
+> +	spin_lock(&dir->i_lock);
+> +	dir->i_state &= ~(I_DIR_LOCKED | I_DIR_LOCK_WAITER);
+> +	wake_up_var_locked(dir, &dir->i_lock);
+> +	spin_unlock(&dir->i_lock);
+> +}
+> +
+>  /**
+>   * vfs_create - create new file
+>   * @idmap:	idmap of the mount the inode was found from
+> @@ -3396,10 +3424,13 @@ int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+>  	error = security_inode_create(dir, dentry, mode);
+>  	if (error)
+>  		return error;
+> -	if (dir->i_op->create_shared)
+> +	if (dir->i_op->create_shared) {
+>  		error = dir->i_op->create_shared(idmap, dir, dentry, mode, want_excl);
+> -	else
+> +	} else {
+> +		inode_lock_dir(dir);
+>  		error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
+> +		inode_unlock_dir(dir);
+> +	}
+>  	if (!error)
+>  		fsnotify_create(dir, dentry);
+>  	return error;
+> @@ -3699,16 +3730,19 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+>  		file->f_mode |= FMODE_CREATED;
+>  		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
+>  
+> -		if (dir_inode->i_op->create_shared)
+> +		if (dir_inode->i_op->create_shared) {
+>  			error = dir_inode->i_op->create_shared(idmap, dir_inode,
+>  							       dentry, mode,
+>  							       open_flag & O_EXCL);
+> -		else if (dir_inode->i_op->create)
+> +		} else if (dir_inode->i_op->create) {
+> +			inode_lock_dir(dir_inode);
+>  			error = dir_inode->i_op->create(idmap, dir_inode,
+>  							dentry, mode,
+>  							open_flag & O_EXCL);
+> -		else
+> +			inode_unlock_dir(dir_inode);
+> +		} else {
+>  			error = -EACCES;
+> +		}
+>  		if (error)
+>  			goto out_dput;
+>  	}
+> @@ -4227,10 +4261,13 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  	if (error)
+>  		return error;
+>  
+> -	if (dir->i_op->mknod_shared)
+> +	if (dir->i_op->mknod_shared) {
+>  		error = dir->i_op->mknod_shared(idmap, dir, dentry, mode, dev);
+> -	else
+> +	} else {
+> +		inode_lock_dir(dir);
+>  		error = dir->i_op->mknod(idmap, dir, dentry, mode, dev);
+> +		inode_unlock_dir(dir);
+> +	}
+>  	if (!error)
+>  		fsnotify_create(dir, dentry);
+>  	return error;
+> @@ -4360,7 +4397,9 @@ int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  		else if (de)
+>  			dput(de);
+>  	} else {
+> +		inode_lock_dir(dir);
+>  		error = dir->i_op->mkdir(idmap, dir, dentry, mode);
+> +		inode_unlock_dir(dir);
+>  	}
+>  	if (!error)
+>  		fsnotify_mkdir(dir, dentry);
+> @@ -4521,10 +4560,13 @@ int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
+>  	if (error)
+>  		goto out;
+>  
+> -	if (dir->i_op->rmdir_shared)
+> +	if (dir->i_op->rmdir_shared) {
+>  		error = dir->i_op->rmdir_shared(dir, dentry);
+> -	else
+> +	} else {
+> +		inode_lock_dir(dir);
+>  		error = dir->i_op->rmdir(dir, dentry);
+> +		inode_unlock_dir(dir);
+> +	}
+>  	if (error)
+>  		goto out;
+>  
+> @@ -4648,10 +4690,13 @@ int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
+>  			error = try_break_deleg(target, delegated_inode);
+>  			if (error)
+>  				goto out;
+> -			if (dir->i_op->unlink_shared)
+> +			if (dir->i_op->unlink_shared) {
+>  				error = dir->i_op->unlink_shared(dir, dentry);
+> -			else
+> +			} else {
+> +				inode_lock_dir(dir);
+>  				error = dir->i_op->unlink(dir, dentry);
+> +				inode_unlock_dir(dir);
+> +			}
+>  			if (!error) {
+>  				dont_mount(dentry);
+>  				detach_mounts(dentry);
+> @@ -4792,10 +4837,13 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  	if (error)
+>  		return error;
+>  
+> -	if (dir->i_op->symlink_shared)
+> +	if (dir->i_op->symlink_shared) {
+>  		error = dir->i_op->symlink_shared(idmap, dir, dentry, oldname);
+> -	else
+> +	} else {
+> +		inode_lock_dir(dir);
+>  		error = dir->i_op->symlink(idmap, dir, dentry, oldname);
+> +		inode_unlock_dir(dir);
+> +	}
+>  	if (!error)
+>  		fsnotify_create(dir, dentry);
+>  	return error;
+> @@ -4920,10 +4968,13 @@ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
+>  		error = try_break_deleg(inode, delegated_inode);
+>  		if (error)
+>  			;
+> -		else if (dir->i_op->link_shared)
+> +		else if (dir->i_op->link_shared) {
+>  			error = dir->i_op->link_shared(old_dentry, dir, new_dentry);
+> -		else
+> +		} else {
+> +			inode_lock_dir(dir);
+>  			error = dir->i_op->link(old_dentry, dir, new_dentry);
+> +			inode_unlock_dir(dir);
+> +		}
+>  	}
+>  
+>  	if (!error && (inode->i_state & I_LINKABLE)) {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 68eba181175b..3ca92a54f28e 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -722,6 +722,8 @@ struct inode {
+>  		void (*free_inode)(struct inode *);
+>  	};
+>  	struct file_lock_context	*i_flctx;
+> +
+> +	struct lockdep_map	i_dirlock_map;	/* For tracking I_DIR_LOCKED locks */
 
-diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-index 1f27e8161319..da25d6fa45ce 100644
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -362,19 +362,21 @@ static int read_blocklist(struct inode *inode, int index, u64 *block)
- 	return squashfs_block_size(size);
- }
- 
--void squashfs_fill_page(struct page *page, struct squashfs_cache_entry *buffer, int offset, int avail)
-+static bool squashfs_fill_page(struct folio *folio,
-+		struct squashfs_cache_entry *buffer, size_t offset,
-+		size_t avail)
- {
--	int copied;
-+	size_t copied;
- 	void *pageaddr;
- 
--	pageaddr = kmap_atomic(page);
-+	pageaddr = kmap_local_folio(folio, 0);
- 	copied = squashfs_copy_data(pageaddr, buffer, offset, avail);
- 	memset(pageaddr + copied, 0, PAGE_SIZE - copied);
--	kunmap_atomic(pageaddr);
-+	kunmap_local(pageaddr);
- 
--	flush_dcache_page(page);
--	if (copied == avail)
--		SetPageUptodate(page);
-+	flush_dcache_folio(folio);
-+
-+	return copied == avail;
- }
- 
- /* Copy data into page cache  */
-@@ -398,6 +400,7 @@ void squashfs_copy_cache(struct folio *folio,
- 			bytes -= PAGE_SIZE, offset += PAGE_SIZE) {
- 		struct folio *push_folio;
- 		size_t avail = buffer ? min(bytes, PAGE_SIZE) : 0;
-+		bool uptodate = true;
- 
- 		TRACE("bytes %zu, i %d, available_bytes %zu\n", bytes, i, avail);
- 
-@@ -412,9 +415,9 @@ void squashfs_copy_cache(struct folio *folio,
- 		if (folio_test_uptodate(push_folio))
- 			goto skip_folio;
- 
--		squashfs_fill_page(&push_folio->page, buffer, offset, avail);
-+		uptodate = squashfs_fill_page(push_folio, buffer, offset, avail);
- skip_folio:
--		folio_unlock(push_folio);
-+		folio_end_read(push_folio, uptodate);
- 		if (i != folio->index)
- 			folio_put(push_folio);
- 	}
-diff --git a/fs/squashfs/squashfs.h b/fs/squashfs/squashfs.h
-index 9295556ecfd0..37f3518a804a 100644
---- a/fs/squashfs/squashfs.h
-+++ b/fs/squashfs/squashfs.h
-@@ -67,7 +67,6 @@ extern __le64 *squashfs_read_fragment_index_table(struct super_block *,
- 				u64, u64, unsigned int);
- 
- /* file.c */
--void squashfs_fill_page(struct page *, struct squashfs_cache_entry *, int, int);
- void squashfs_copy_cache(struct folio *, struct squashfs_cache_entry *,
- 		size_t bytes, size_t offset);
- 
--- 
-2.45.2
-
+The cost of this map says no to any attempt inventing mutex in any form.
 
