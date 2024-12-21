@@ -1,326 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-37998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E639FA0B0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 13:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065899FA199
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 17:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3A61887AB2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 12:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B1118841E5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 16:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D423A1F2C5B;
-	Sat, 21 Dec 2024 12:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE68152196;
+	Sat, 21 Dec 2024 16:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1RZTZvl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9E81EE00B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 12:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5042D1C32
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 16:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734785304; cv=none; b=dZt57qEN2vr35ZsCN5CGkXDV8bXJ++wO/vukoVxJkDvuv7FitJ2XrC63QxhxyqioOGY1TXJhF+Vd9bJd366SHM2qfhVPsz/Spu2MSJoYsRBUppO6kmNOwYsES4uaD+1v6tqf5JbwdsnBd9laeV6I/bstJa29i8pu1eyPTba7Knc=
+	t=1734797910; cv=none; b=jC9OAcvUSlm1KXZ/+81RBh2fim6wOi3wiECqC4udtZCvkKxnvU3ESiRuBuZcn5bETmfT/ZmPjbV7Bnd29Dq+If1Bjq3e+4S3S5Glys8jhD2/TK8OYuZh+ZKqXGC5U5ZoEZ6bs/+vkGQdAqN5RrBLQuZ0OvlW9eyUjfiKNU/ERhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734785304; c=relaxed/simple;
-	bh=6Gm3F54zW1FyrGPu8ZS0ghjalLljUCp3clO76b8D37k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rueDRZNvc+yh3clQ2NJPuVgkNYWhHYPhvIKguRoRkVt1dEatr2sXEqoYE1EZFS6gdZkcxCxNIZq2Y+P6BOsf8Kgm4daZZdQeF+rxojoBslVaACRCop1S7zaMecxvzRQtza7KyLgp85sz8bVkxH/YVjVR9aSBUncOH3zT76PMwVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso48046765ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 04:48:22 -0800 (PST)
+	s=arc-20240116; t=1734797910; c=relaxed/simple;
+	bh=6yB+vvn5oa8lo2esyYbktpfAyCoJwJ7mBWLJBZboVXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDV1uEOZbDZeXlFHJsQ6/+sNk93sJTJdKOxQQi4g6MhSqe7M4wwCP5PCqxog/dzHjgarzRbnRPMhAhX1Z2Do70LxWkK42SPTuAdqTiIhsHyuAloWjzNEsrzD3/vWCNE5K7HlbAeEat8A5gxbjd74uBLwR72mEhn9QETM7lvnRF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1RZTZvl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734797907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9zbL9DzfI/m+SVuvQfuz5ThQUFsMGBqPX/Gf47k6fXo=;
+	b=e1RZTZvlqTSQXsayoMUjX8cY4awHY71BhuQ1aSIv5TvcRS2KBh5KFNBNEvqArgigPtC2fH
+	I70bnU8x7Q/A4ZohqXUT9Ix/YJPcx7zL9z9+KY2dMfCo3X9RFPi7J8BnGnag9hTnWcyt0C
+	daUCzR9PDBabO44YbuwvVAPcpyWCm6k=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-583-JYO-_tPqNVSgUQArH3ctSQ-1; Sat, 21 Dec 2024 11:18:25 -0500
+X-MC-Unique: JYO-_tPqNVSgUQArH3ctSQ-1
+X-Mimecast-MFC-AGG-ID: JYO-_tPqNVSgUQArH3ctSQ
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-436248d1240so14993825e9.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 08:18:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734785301; x=1735390101;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FZsdCBieHfh2wEyE4VCnYio0ehMIJO+a5z5xUcd76kc=;
-        b=wYvoYPklIVtcHIOhyZlujyYYlonNIwJsBHMpzLOTVXrTb/IB8tigiLbZqNX7N/hFUg
-         ZSJGJstOKdaCKWJcHEdaY8HoygGwLJOuxvXrshQ6vib7Z/eYitCiZ5U5k+UTz6RPTj+k
-         kS/Xi59VdBdn8VxfMEibfz4Q8BVb4RMEaMhFLWAoA/IajHTVg1gRdooeVspTZeCs3ZAS
-         6YfgdCDJM5hPBQ3p0cmNwTOZXO0YKXna6LlYDLL0c35ngW9WxA+D5aknpytc6Xn81ygX
-         c8dUixFJbyg2+QcpxXqnaVBQnxsEjePAN8yxFq/t8JMHksSPHNadCpXCVkSDZ9a/+uS/
-         6UVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqaJSHJ06DXhvncUcOzA0STjkSOwleBmNgGSfkoL35Sjyf83d3Bns1yrOC4yn5c022fsR0KqiFfUCJL2FS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG+ixp7H6bWUbN0/8iDHa0o3KNaG2aJhdulMcc6lnP6qGtxfiM
-	yEqrpQwI6h2BZQCRgBwcJ0anymonMs01vAd+ArUiMiRjmFlzpfLgNMNonsedh6OkBuxDoNJId8G
-	JSo/K6TTXWPM4hUxLKiy/2VQvN+Mbxp3WJhdbFe4LusvNfKOIYj9kO/I=
-X-Google-Smtp-Source: AGHT+IHyuv1s94WmnX2JbPsYbvNmgBMgLYV05TY9syZrS47iOMSAsfsN1PEFSoXKEfVKcmlmQqSlxND8T4PmHziSfAP4jvE9VB7T
+        d=1e100.net; s=20230601; t=1734797904; x=1735402704;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9zbL9DzfI/m+SVuvQfuz5ThQUFsMGBqPX/Gf47k6fXo=;
+        b=rU0qpRJTB/yZieWfcgb+IPaPMamhYc1t9Iq+UL55W+C0w4IGT/C3QJ5Z8z9nLbJc3Y
+         G1GyssRymsSKWP+WW4LupgFerpT7c4WNl1pVJbIQIP603nZuZpYuDAsEm0hHTU9P8Txk
+         MVfEnO9k+zVQNo4GTpGaPw3w1qxfODLPDq5Hec3L5cGGFhpEvMDYR4MllONeF8gMhOMU
+         aDVlp/0+vZJGC8og/HO58cUnmglI1h7MGl6fQvvW3kuZGXfKdi7eH/sux4L0kD9FegM+
+         rTyADwhGzs+aoDUAVq8Dzydo8kTHmGdGYFQUBcNmxQQZNNTYdERK+Xz1dhEQCliAj2tq
+         Bqvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFmFKqZqZQA67IRb37tci3Y+B6AuuECg+7+IrbVuZ0ZfiQ47oLt+X8Si3OlKmZ6xt9h4a7CowMlUw0ziJQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxsdH7lezvUn4XGBVCKOcU0unC9bjTBIuqYQO0W1kBblPEGG/j
+	hyrzGbjo7IsNR4oUD40fTX8NTTWtAKGUFFW6Rw1Fe7qBNKhzOG+Fq9ZCaRc9U9NBBjaj++mgEIY
+	Ue5OaeumUQb30J0i5Gq4ze5YVvib/PJ2XCFkU5kI7Q1rTaOW7ehLgptWEhRCSRXg=
+X-Gm-Gg: ASbGncvxWBDtlqqQqjxtA7Y/j0AQ/Sh7MJLK0hOEX8jhef3UJC23HDPCUX+VTAyrTqT
+	2z2cKm/qGF3PhvXv3oEv6wwBvTRz0G/eqhcQ4Ao2Ps8PdzMf1IC27DV45+5PKc8MzNz8sb2lrsC
+	L9oZJYWkiurn9whg85tIdID2W2iP0ARCbKwsQCJk8jYXmXuxRcWbNCavt679xTL6vaV7l26ZvL9
+	DtOAmeDuYrFVMV3FekHUsDRdi+zD8H1GVLkbnfHCwxq9rybnp/xiXSvz9XxSZln0RxUpVB8dlCv
+	sVteuehVIX9e796ewBJV8YRrtMTImrmQEHtGMlImoaoOCr7XYfI4AQ3UitfruDPzZ6UQBoboHk1
+	fbo3x8ARf
+X-Received: by 2002:a05:600c:314a:b0:434:f7e3:bfbd with SMTP id 5b1f17b1804b1-43668b49929mr53681385e9.23.1734797904460;
+        Sat, 21 Dec 2024 08:18:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEdqCbMQ41u82OBsRy/1CcW1Fh9pEekW/Zl0oARY2fn4Zf97l2Ef5oung4fXnWxJt9AZi8inw==
+X-Received: by 2002:a05:600c:314a:b0:434:f7e3:bfbd with SMTP id 5b1f17b1804b1-43668b49929mr53681175e9.23.1734797903973;
+        Sat, 21 Dec 2024 08:18:23 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70e:d000:4622:73e7:6184:8f0d? (p200300cbc70ed000462273e761848f0d.dip0.t-ipconnect.de. [2003:cb:c70e:d000:4622:73e7:6184:8f0d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8332absm6718502f8f.38.2024.12.21.08.18.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Dec 2024 08:18:22 -0800 (PST)
+Message-ID: <3f3c7254-7171-4987-bb1b-24c323e22a0f@redhat.com>
+Date: Sat, 21 Dec 2024 17:18:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19c6:b0:3a7:956c:61a4 with SMTP id
- e9e14a558f8ab-3c2d2681c55mr65100535ab.10.1734785301772; Sat, 21 Dec 2024
- 04:48:21 -0800 (PST)
-Date: Sat, 21 Dec 2024 04:48:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6766b915.050a0220.25abdd.012e.GAE@google.com>
-Subject: [syzbot] [fs?] [mm?] [io-uring?] INFO: task hung in hugetlbfs_zero_partial_page
-From: syzbot <syzbot+1c6e77303b6fae1f5957@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
-	hughd@google.com, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mike.kravetz@oracle.com, 
-	muchun.song@linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Joanne Koong <joannelkoong@gmail.com>, Zi Yan <ziy@nvidia.com>,
+ miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+ jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
+ Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+References: <968d3543-d8ac-4b5a-af8e-e6921311d5cf@redhat.com>
+ <ssc3bperkpjyqdrlmdbh2woxlghua2t44tg4cywj5pkwwdcpdo@2jpzqfy5zyzf>
+ <7b6b8143-d7a4-439f-ae35-a91055f9d62a@redhat.com>
+ <2e13a67a-0bad-4795-9ac8-ee800b704cb6@fastmail.fm>
+ <ukkygby3u7hjhk3cgrxkvs6qtmlrigdwmqb5k22ru3qqn242au@s4itdbnkmvli>
+ <CAJnrk1bRk9xkVkMg8twaNi-gWBRps7A6HubMivKBHQiHzf+T8w@mail.gmail.com>
+ <2bph7jx4hvhxpgp77shq2j7mo4xssobhqndw5v7hdvbn43jo2w@scqly5zby7bm>
+ <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com>
+ <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm>
+ <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com>
+ <qsytb6j4j6v7kzmiygmmsrdgfkwszpjudvwbq5smkhowfd75dd@beks3genju7x>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <qsytb6j4j6v7kzmiygmmsrdgfkwszpjudvwbq5smkhowfd75dd@beks3genju7x>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 20.12.24 19:01, Shakeel Butt wrote:
+> On Fri, Dec 20, 2024 at 03:49:39PM +0100, David Hildenbrand wrote:
+>>>> I'm wondering if there would be a way to just "cancel" the writeback and
+>>>> mark the folio dirty again. That way it could be migrated, but not
+>>>> reclaimed. At least we could avoid the whole AS_WRITEBACK_INDETERMINATE
+>>>> thing.
+>>>>
+>>>
+>>> That is what I basically meant with short timeouts. Obviously it is not
+>>> that simple to cancel the request and to retry - it would add in quite
+>>> some complexity, if all the issues that arise can be solved at all.
+>>
+>> At least it would keep that out of core-mm.
+>>
+>> AS_WRITEBACK_INDETERMINATE really has weird smell to it ... we should try to
+>> improve such scenarios, not acknowledge and integrate them, then work around
+>> using timeouts that must be manually configured, and ca likely no be default
+>> enabled because it could hurt reasonable use cases :(
+> 
+> Just to be clear AS_WRITEBACK_INDETERMINATE is being used in two core-mm
+> parts. First is reclaim and second is compaction/migration. For reclaim,
+> it is a must have as explained by Jingbo in [1] i.e. due to potential
+> self deadlock by fuse server. If I understand you correctly, the main
+> concern you have is its usage in the second case.
 
-syzbot found the following issue on:
+Yes, so I can see fuse
 
-HEAD commit:    f44d154d6e3d Merge tag 'soc-fixes-6.13' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=117e4744580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a2b862bf4a5409f
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c6e77303b6fae1f5957
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f8a7e8580000
+(1) Breaking memory reclaim (memory cannot get freed up)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e8be4151807d/disk-f44d154d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a5f22853d301/vmlinux-f44d154d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d7a4a78964e0/bzImage-f44d154d.xz
+(2) Breaking page migration (memory cannot be migrated)
 
-The issue was bisected to:
+Due to (1) we might experience bigger memory pressure in the system I 
+guess. A handful of these pages don't really hurt, I have no idea how 
+bad having many of these pages can be. But yes, inherently we cannot 
+throw away the data as long as it is dirty without causing harm. (maybe 
+we could move it to some other cache, like swap/zswap; but that smells 
+like a big and complicated project)
 
-commit 72e315f7a750281b4410ac30d8930f735459e72d
-Author: Hugh Dickins <hughd@google.com>
-Date:   Tue Oct 3 09:27:47 2023 +0000
+Due to (2) we turn pages that are supposed to be movable possibly for a 
+long time unmovable. Even a *single* such page will mean that CMA 
+allocations / memory unplug can start failing.
 
-    mempolicy: mmap_lock is not needed while migrating folios
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154877e8580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=174877e8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=134877e8580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1c6e77303b6fae1f5957@syzkaller.appspotmail.com
-Fixes: 72e315f7a750 ("mempolicy: mmap_lock is not needed while migrating folios")
-
-INFO: task syz.3.1803:9905 blocked for more than 143 seconds.
-      Not tainted 6.13.0-rc3-syzkaller-00017-gf44d154d6e3d #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.1803      state:D stack:22160 pid:9905  tgid:9904  ppid:5954   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- io_schedule+0x8d/0x110 kernel/sched/core.c:7681
- folio_wait_bit_common+0x839/0xee0 mm/filemap.c:1308
- __folio_lock mm/filemap.c:1646 [inline]
- folio_lock include/linux/pagemap.h:1151 [inline]
- __filemap_get_folio+0x14c/0x940 mm/filemap.c:1899
- filemap_lock_folio include/linux/pagemap.h:788 [inline]
- filemap_lock_hugetlb_folio include/linux/hugetlb.h:789 [inline]
- hugetlbfs_zero_partial_page+0xb0/0x590 fs/hugetlbfs/inode.c:661
- hugetlbfs_punch_hole fs/hugetlbfs/inode.c:715 [inline]
- hugetlbfs_fallocate+0xbdd/0x11a0 fs/hugetlbfs/inode.c:748
- vfs_fallocate+0x56b/0x6e0 fs/open.c:327
- madvise_remove mm/madvise.c:1020 [inline]
- madvise_vma_behavior mm/madvise.c:1255 [inline]
- madvise_walk_vmas mm/madvise.c:1497 [inline]
- do_madvise+0x23c1/0x4d10 mm/madvise.c:1684
- __do_sys_madvise mm/madvise.c:1700 [inline]
- __se_sys_madvise mm/madvise.c:1698 [inline]
- __x64_sys_madvise+0xa6/0xc0 mm/madvise.c:1698
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa4fef85d19
-RSP: 002b:00007fa4ffdff038 EFLAGS: 00000246 ORIG_RAX: 000000000000001c
-RAX: ffffffffffffffda RBX: 00007fa4ff175fa0 RCX: 00007fa4fef85d19
-RDX: 0000000000000009 RSI: 0000000000600002 RDI: 0000000020000000
-RBP: 00007fa4ff001a20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fa4ff175fa0 R15: 00007ffd7e368038
- </TASK>
-INFO: task syz.3.1803:9910 blocked for more than 144 seconds.
-      Not tainted 6.13.0-rc3-syzkaller-00017-gf44d154d6e3d #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.1803      state:D stack:27120 pid:9910  tgid:9904  ppid:5954   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6905
- rwsem_down_read_slowpath kernel/locking/rwsem.c:1084 [inline]
- __down_read_common kernel/locking/rwsem.c:1248 [inline]
- __down_read kernel/locking/rwsem.c:1261 [inline]
- down_read+0x705/0xa40 kernel/locking/rwsem.c:1526
- i_mmap_lock_read include/linux/fs.h:529 [inline]
- rmap_walk_file+0x69c/0x780 mm/rmap.c:2694
- remove_migration_ptes mm/migrate.c:373 [inline]
- unmap_and_move_huge_page mm/migrate.c:1526 [inline]
- migrate_hugetlbs mm/migrate.c:1648 [inline]
- migrate_pages+0xd26/0x3380 mm/migrate.c:2046
- do_mbind mm/mempolicy.c:1394 [inline]
- kernel_mbind mm/mempolicy.c:1537 [inline]
- __do_sys_mbind mm/mempolicy.c:1611 [inline]
- __se_sys_mbind+0x145b/0x18d0 mm/mempolicy.c:1607
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa4fef85d19
-RSP: 002b:00007fa4ffdab038 EFLAGS: 00000246 ORIG_RAX: 00000000000000ed
-RAX: ffffffffffffffda RBX: 00007fa4ff176080 RCX: 00007fa4fef85d19
-RDX: 0000000000000000 RSI: 0000000000800000 RDI: 0000000020001000
-RBP: 00007fa4ff001a20 R08: 0000000000000000 R09: 0000000000000002
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fa4ff176080 R15: 00007ffd7e368038
- </TASK>
-
-Showing all locks held in the system:
-4 locks held by kworker/u8:1/12:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
-1 lock held by udevd/5197:
-1 lock held by dhcpcd/5491:
- #0: ffffffff8fcb2888 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:128 [inline]
- #0: ffffffff8fcb2888 (rtnl_mutex){+.+.}-{4:4}, at: devinet_ioctl+0x31a/0x1ac0 net/ipv4/devinet.c:1129
-2 locks held by getty/5586:
- #0: ffff8880313710a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fd62f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-2 locks held by kworker/0:3/5810:
- #0: ffff8880b863e8d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
- #1: ffff8880b8628948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x41d/0x7a0 kernel/sched/psi.c:987
-3 locks held by kworker/u8:8/6048:
- #0: ffff88801ac81148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac81148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
- #1: ffffc900046d7d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900046d7d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
- #2: ffffffff8fcb2888 (rtnl_mutex){+.+.}-{4:4}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:281
-3 locks held by syz.3.1803/9905:
- #0: ffff8881436e6420 (sb_writers#13){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2964 [inline]
- #0: ffff8881436e6420 (sb_writers#13){.+.+}-{0:0}, at: vfs_fallocate+0x4fe/0x6e0 fs/open.c:326
- #1: ffff888024d19078 (&sb->s_type->i_mutex_key#21){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
- #1: ffff888024d19078 (&sb->s_type->i_mutex_key#21){+.+.}-{4:4}, at: hugetlbfs_punch_hole fs/hugetlbfs/inode.c:690 [inline]
- #1: ffff888024d19078 (&sb->s_type->i_mutex_key#21){+.+.}-{4:4}, at: hugetlbfs_fallocate+0x407/0x11a0 fs/hugetlbfs/inode.c:748
- #2: ffff888024d19348 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: i_mmap_lock_write include/linux/fs.h:509 [inline]
- #2: ffff888024d19348 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: hugetlbfs_punch_hole fs/hugetlbfs/inode.c:698 [inline]
- #2: ffff888024d19348 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: hugetlbfs_fallocate+0x4cd/0x11a0 fs/hugetlbfs/inode.c:748
-1 lock held by syz.3.1803/9910:
- #0: ffff888024d19348 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: i_mmap_lock_read include/linux/fs.h:529 [inline]
- #0: ffff888024d19348 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: rmap_walk_file+0x69c/0x780 mm/rmap.c:2694
-1 lock held by syz.6.2635/11669:
- #0: ffff888077021858 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: i_mmap_lock_read include/linux/fs.h:529 [inline]
- #0: ffff888077021858 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: rmap_walk_file+0x69c/0x780 mm/rmap.c:2694
-3 locks held by syz.6.2635/11677:
- #0: ffff8881436e6420 (sb_writers#13){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2964 [inline]
- #0: ffff8881436e6420 (sb_writers#13){.+.+}-{0:0}, at: vfs_fallocate+0x4fe/0x6e0 fs/open.c:326
- #1: ffff888077021588 (&sb->s_type->i_mutex_key#21){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
- #1: ffff888077021588 (&sb->s_type->i_mutex_key#21){+.+.}-{4:4}, at: hugetlbfs_punch_hole fs/hugetlbfs/inode.c:690 [inline]
- #1: ffff888077021588 (&sb->s_type->i_mutex_key#21){+.+.}-{4:4}, at: hugetlbfs_fallocate+0x407/0x11a0 fs/hugetlbfs/inode.c:748
- #2: ffff888077021858 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: i_mmap_lock_write include/linux/fs.h:509 [inline]
- #2: ffff888077021858 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: hugetlbfs_punch_hole fs/hugetlbfs/inode.c:698 [inline]
- #2: ffff888077021858 (&hugetlbfs_i_mmap_rwsem_key){++++}-{4:4}, at: hugetlbfs_fallocate+0x4cd/0x11a0 fs/hugetlbfs/inode.c:748
-2 locks held by syz-executor/21337:
- #0: ffffffff8f45c1e0 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8f45c1e0 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8f45c1e0 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x22/0x250 net/core/rtnetlink.c:555
- #1: ffffffff8fcb2888 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #1: ffffffff8fcb2888 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:326 [inline]
- #1: ffffffff8fcb2888 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0xbcb/0x2150 net/core/rtnetlink.c:4010
-1 lock held by syz.5.7438/22297:
- #0: ffffffff8e93cff8 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:329 [inline]
- #0: ffffffff8e93cff8 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:976
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.13.0-rc3-syzkaller-00017-gf44d154d6e3d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
- watchdog+0xff6/0x1040 kernel/hung_task.c:397
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 5197 Comm: udevd Not tainted 6.13.0-rc3-syzkaller-00017-gf44d154d6e3d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:validate_chain+0x15/0x5920 kernel/locking/lockdep.c:3860
-Code: 02 4d 0a 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 <48> 81 ec c0 02 00 00 49 89 ce 89 54 24 58 48 89 bc 24 80 00 00 00
-RSP: 0018:ffffc90004827700 EFLAGS: 00000086
-RAX: 1ffffffff2783629 RBX: ffffffff93c1b148 RCX: 58cce5e7c8d5ebdc
-RDX: 0000000000000001 RSI: ffff88807d7a64e0 RDI: ffff88807d7a5a00
-RBP: ffffc90004827740 R08: ffffffff942a1887 R09: 1ffffffff2854310
-R10: dffffc0000000000 R11: fffffbfff2854311 R12: ffff88807d7a5a00
-R13: ffff88807d7a5a00 R14: 1ffff1100faf4ca0 R15: 0000000000000001
-FS:  00007f2066ba4c80(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6e7cffdf98 CR3: 000000007c9ba000 CR4: 0000000000350ef0
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- __d_lookup+0x81/0x7b0 fs/dcache.c:2331
- lookup_fast+0x74/0x4a0 fs/namei.c:1749
- walk_component fs/namei.c:2108 [inline]
- link_path_walk+0x672/0xea0 fs/namei.c:2477
- path_lookupat+0xa9/0x450 fs/namei.c:2633
- filename_lookup+0x2a3/0x670 fs/namei.c:2663
- do_readlinkat+0xf0/0x3a0 fs/stat.c:562
- __do_sys_readlink fs/stat.c:599 [inline]
- __se_sys_readlink fs/stat.c:596 [inline]
- __x64_sys_readlink+0x7f/0x90 fs/stat.c:596
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2066717d47
-Code: 73 01 c3 48 8b 0d e1 90 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 59 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b1 90 0d 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffd34177f68 EFLAGS: 00000246 ORIG_RAX: 0000000000000059
-RAX: ffffffffffffffda RBX: 00007ffd34177f78 RCX: 00007f2066717d47
-RDX: 0000000000000400 RSI: 00007ffd34177f78 RDI: 00007ffd34178458
-RBP: 0000000000000400 R08: 000055cbc6b605a4 R09: 0000000000000000
-R10: 0000000000000812 R11: 0000000000000246 R12: 00007ffd34178458
-R13: 00007ffd341783c8 R14: 000055cbc6b4c910 R15: 0000000000000000
- </TASK>
+We have similar situations with page pinning. With things like O_DIRECT, 
+our assumption/experience so far is that it will only take a couple of 
+seconds max, and retry loops are sufficient to handle it. That's why 
+only long-term pinning ("indeterminate", e.g., vfio) migrate these pages 
+out of ZONE_MOVABLE/MIGRATE_CMA areas in order to long-term pin them.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+The biggest concern I have is that timeouts, while likely reasonable it 
+many scenarios, might not be desirable even for some sane workloads, and 
+the default in all system will be "no timeout", letting the clueless 
+admin of each and every system out there that might support fuse to make 
+a decision.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I might have misunderstood something, in which case I am very sorry, but 
+we also don't want CMA allocations to start failing simply because a 
+network connection is down for a couple of minutes such that a fuse 
+daemon cannot make progress.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> The reason for adding AS_WRITEBACK_INDETERMINATE in the second case was
+> to avoid untrusted fuse server causing pain to unrelated jobs on the
+> machine (fuse folks please correct me if I am wrong here). Now we are
+> discussing how to better handle that scenario.
+> 
+> I just wanted to point out that irrespective of that discussion, the
+> reclaim will have handle the potential recursive deadlock and thus will
+> be using AS_WRITEBACK_INDETERMINATE or something similar.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Yes, I see no way to throw away dirty data without causing harm.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Migration was kept working for now, although in a hacky fashion I admit. 
+I do enjoy that "writeback" on the folio actually matches the reality now.
 
-If you want to undo deduplication, reply with:
-#syz undup
+I guess an alternative to "aborting writeback" would be to make fuse 
+allow for migrating folios that are under writeback. I would assume that 
+with fuse we have very good control over who is currently 
+reading/writing that folio, and we could swap it out? Again, just an 
+idea ...
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
