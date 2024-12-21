@@ -1,286 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-37994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-37995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C349F9DAC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 02:22:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D069F9DE2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 03:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8CE7A1FC9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 01:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A21F1886AA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2024 02:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFD817588;
-	Sat, 21 Dec 2024 01:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309FD7CF16;
+	Sat, 21 Dec 2024 02:14:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE6110F2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 01:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC27225D7
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2024 02:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734744107; cv=none; b=c4iYwXj4hM0c/5u70XATWsyOtkNi4jHfkiA6re3aWBIBGzbOXMrOsa2fyjqb8QeDpJRlqXkb3LM1LlhxILouUhZ63nSs1ROaYE6oS48Ex++6L2zqja5z1zd9H8ens+vCOT2I2NdX5yIdoHNU7pL0yO3YmIRFj/nP6XwV1VAcDzA=
+	t=1734747266; cv=none; b=Uv2rc5iCRw4Cex6emx6EjTX5LJfy47RvO5hlFFDkgmTKFUZPcP6zCUjvFQE4VpNAvKW21EZErSrQziUh+waaqmbE6ZdlDjY+tTZgsgSvsRvtg8SZSBiYNdYE8eoXRQwvno7m45g1VW4pUOsyERX+Auc/838542vozVeXyIAFUlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734744107; c=relaxed/simple;
-	bh=SSVXfIwCYLlRynLUZ/XpRx7cJQNwSNNm8pLeqZZO5rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EVuk/6QNpiw6UFeyBbOBKrdTqWxogXH4FACvzTkthE81b3zx2UgaIiN8gS8JFdCmz0gCjB4tuTVpZyybcJwwLoJRweHlgza76iD0CU/aan5e29QN/totaPsMbMjIoBvsO3/5odmIt7Tw2OUgRLLY+pa2Yyyu+XGRc74pI3e9DLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.150])
-	by sina.com (10.185.250.22) with ESMTP
-	id 6766181C000024A7; Sat, 21 Dec 2024 09:21:34 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7878927602662
-X-SMAIL-UIID: 28EB3B370EC34327B11C69BE0C58A134-20241221-092134-1
-From: Hillf Danton <hdanton@sina.com>
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] VFS: add inode_dir_lock/unlock
-Date: Sat, 21 Dec 2024 09:21:20 +0800
-Message-ID: <20241221012128.307-1-hdanton@sina.com>
-In-Reply-To: <20241220030830.272429-9-neilb@suse.de>
-References: <20241220030830.272429-1-neilb@suse.de>
+	s=arc-20240116; t=1734747266; c=relaxed/simple;
+	bh=e/4c+pA3HWh5hHsxKL7zU+bWoUv02OXMBNzotPc8S8g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XjSgvcxo7VwNeIzSKiI+//DMeewg5DlffHf15xml23iZIkYWAhdGARKqImLqYp+TqNcnx2kH3oYLE6cz7CrynLekxOKaWqROgvSAkBGnajmRNemZE7Ti+R4xaTrbcCmTi0lC1SH4f3OOHbjFOhGL//T07rKMEc1lEJ9zmBT2mE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so47896735ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2024 18:14:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734747264; x=1735352064;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l7Z6Db8UcMPD9tVeG8l2Tt12DDejWp5FKTuKz4O8F2Q=;
+        b=sgp76Cd0xH7HmXCkT32uunTNAJv8taeUwe5yWCkHuuSuDVIGTSeoI0u+H0hjwPrdN3
+         ox9msUXyCYmQDa7HGg/E/mdo7YFeUijqb4oso41nxgrX5nKx5l5dXB6t/x9jFlPGMrBx
+         Qi4puBJwH3CW7y89Q6YWc0AysduhUqzMCDy5tSCObH+8UOzyFBwGwzcaPc6agNpuAoDP
+         YWte09eYBA4pwqTwCaKZt5zWNuPYmX65wMVhAxO08fbXgHYuXk5eqRBb07/PwWt6+NOR
+         KqGvTMhGtrKUdFKT/dyGZOx3FHamNgav9V4jMMuWA8b1tyAZsTssusNEtONjcvhW4fjt
+         rx9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJZaz+tRB+obrO5+ucqbVjnqUaBDdFndgBgRDSNtfgqIjVRAngj4Q3h7GSFBDJs+p6+v95x5AYSUXv04Yo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTTXBXQxgfwfR+u7JVCagVWb4LQx7ZmBcYJojKZuCe9oWghqFr
+	feb4kt77OU0KTX5CVCriZICKuvTQuxK9kudUMYHLJNQh1775zYwIDmRPwLhF3STzwGjdGXsmoI1
+	zotpwPmvTwcpS0wBCsp9kR6ntsV2HN62slUrM8I5FpTpldZeMlm2Shm0=
+X-Google-Smtp-Source: AGHT+IESpRsz06Zzq8rINS80JC2u7d4pql4bYtGj0FBm4zNASzwJpI+V/m7CmUzSYIigwPXU/uKiHQsowJW4VBO1Zlm82QWFipOj
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:174d:b0:3a7:dd45:bca1 with SMTP id
+ e9e14a558f8ab-3c2d514f31bmr42978455ab.17.1734747264307; Fri, 20 Dec 2024
+ 18:14:24 -0800 (PST)
+Date: Fri, 20 Dec 2024 18:14:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67662480.050a0220.25abdd.0123.GAE@google.com>
+Subject: [syzbot] [exfat?] general protection fault in exfat_find_empty_entry
+From: syzbot <syzbot+8941485e471cec199c9e@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 20 Dec 2024 13:54:26 +1100 NeilBrown <neilb@suse.de>
-> During the transition from providing exclusive locking on the directory
-> for directory modifying operation to providing exclusive locking only on
-> the dentry with a shared lock on the directory - we need an alternate
-> way to provide exclusion on the directory for file systems which haven't
-> been converted.  This is provided by inode_dir_lock() and
-> inode_dir_inlock().
-> This uses a bit in i_state for locking, and wait_var_event_spinlock() for
-> waiting.
-> 
-Inventing anything like mutex sounds bad.
+Hello,
 
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/inode.c         |  3 ++
->  fs/namei.c         | 81 +++++++++++++++++++++++++++++++++++++---------
->  include/linux/fs.h |  5 +++
->  3 files changed, 74 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 6b4c77268fc0..9ba69837aa56 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -492,6 +492,8 @@ EXPORT_SYMBOL(address_space_init_once);
->   */
->  void inode_init_once(struct inode *inode)
->  {
-> +	static struct lock_class_key __key;
-> +
->  	memset(inode, 0, sizeof(*inode));
->  	INIT_HLIST_NODE(&inode->i_hash);
->  	INIT_LIST_HEAD(&inode->i_devices);
-> @@ -501,6 +503,7 @@ void inode_init_once(struct inode *inode)
->  	INIT_LIST_HEAD(&inode->i_sb_list);
->  	__address_space_init_once(&inode->i_data);
->  	i_size_ordered_init(inode);
-> +	lockdep_init_map(&inode->i_dirlock_map, "I_DIR_LOCKED", &__key, 0);
->  }
->  EXPORT_SYMBOL(inode_init_once);
->  
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 371c80902c59..68750b15dbf4 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3364,6 +3364,34 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
->  	return mode;
->  }
->  
-> +static bool check_dir_locked(struct inode *dir)
-> +{
-> +	if (dir->i_state & I_DIR_LOCKED) {
-> +		dir->i_state |= I_DIR_LOCK_WAITER;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static void inode_lock_dir(struct inode *dir)
-> +{
-> +	lock_acquire_exclusive(&dir->i_dirlock_map, 0, 0, NULL, _THIS_IP_);
-> +	spin_lock(&dir->i_lock);
-> +	wait_var_event_spinlock(dir, !check_dir_locked(dir),
-> +				&dir->i_lock);
-> +	dir->i_state |= I_DIR_LOCKED;
-> +	spin_unlock(&dir->i_lock);
-> +}
-> +
-> +static void inode_unlock_dir(struct inode *dir)
-> +{
-> +	lock_map_release(&dir->i_dirlock_map);
-> +	spin_lock(&dir->i_lock);
-> +	dir->i_state &= ~(I_DIR_LOCKED | I_DIR_LOCK_WAITER);
-> +	wake_up_var_locked(dir, &dir->i_lock);
-> +	spin_unlock(&dir->i_lock);
-> +}
-> +
->  /**
->   * vfs_create - create new file
->   * @idmap:	idmap of the mount the inode was found from
-> @@ -3396,10 +3424,13 @@ int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
->  	error = security_inode_create(dir, dentry, mode);
->  	if (error)
->  		return error;
-> -	if (dir->i_op->create_shared)
-> +	if (dir->i_op->create_shared) {
->  		error = dir->i_op->create_shared(idmap, dir, dentry, mode, want_excl);
-> -	else
-> +	} else {
-> +		inode_lock_dir(dir);
->  		error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
-> +		inode_unlock_dir(dir);
-> +	}
->  	if (!error)
->  		fsnotify_create(dir, dentry);
->  	return error;
-> @@ -3699,16 +3730,19 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->  		file->f_mode |= FMODE_CREATED;
->  		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
->  
-> -		if (dir_inode->i_op->create_shared)
-> +		if (dir_inode->i_op->create_shared) {
->  			error = dir_inode->i_op->create_shared(idmap, dir_inode,
->  							       dentry, mode,
->  							       open_flag & O_EXCL);
-> -		else if (dir_inode->i_op->create)
-> +		} else if (dir_inode->i_op->create) {
-> +			inode_lock_dir(dir_inode);
->  			error = dir_inode->i_op->create(idmap, dir_inode,
->  							dentry, mode,
->  							open_flag & O_EXCL);
-> -		else
-> +			inode_unlock_dir(dir_inode);
-> +		} else {
->  			error = -EACCES;
-> +		}
->  		if (error)
->  			goto out_dput;
->  	}
-> @@ -4227,10 +4261,13 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
->  	if (error)
->  		return error;
->  
-> -	if (dir->i_op->mknod_shared)
-> +	if (dir->i_op->mknod_shared) {
->  		error = dir->i_op->mknod_shared(idmap, dir, dentry, mode, dev);
-> -	else
-> +	} else {
-> +		inode_lock_dir(dir);
->  		error = dir->i_op->mknod(idmap, dir, dentry, mode, dev);
-> +		inode_unlock_dir(dir);
-> +	}
->  	if (!error)
->  		fsnotify_create(dir, dentry);
->  	return error;
-> @@ -4360,7 +4397,9 @@ int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
->  		else if (de)
->  			dput(de);
->  	} else {
-> +		inode_lock_dir(dir);
->  		error = dir->i_op->mkdir(idmap, dir, dentry, mode);
-> +		inode_unlock_dir(dir);
->  	}
->  	if (!error)
->  		fsnotify_mkdir(dir, dentry);
-> @@ -4521,10 +4560,13 @@ int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
->  	if (error)
->  		goto out;
->  
-> -	if (dir->i_op->rmdir_shared)
-> +	if (dir->i_op->rmdir_shared) {
->  		error = dir->i_op->rmdir_shared(dir, dentry);
-> -	else
-> +	} else {
-> +		inode_lock_dir(dir);
->  		error = dir->i_op->rmdir(dir, dentry);
-> +		inode_unlock_dir(dir);
-> +	}
->  	if (error)
->  		goto out;
->  
-> @@ -4648,10 +4690,13 @@ int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
->  			error = try_break_deleg(target, delegated_inode);
->  			if (error)
->  				goto out;
-> -			if (dir->i_op->unlink_shared)
-> +			if (dir->i_op->unlink_shared) {
->  				error = dir->i_op->unlink_shared(dir, dentry);
-> -			else
-> +			} else {
-> +				inode_lock_dir(dir);
->  				error = dir->i_op->unlink(dir, dentry);
-> +				inode_unlock_dir(dir);
-> +			}
->  			if (!error) {
->  				dont_mount(dentry);
->  				detach_mounts(dentry);
-> @@ -4792,10 +4837,13 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
->  	if (error)
->  		return error;
->  
-> -	if (dir->i_op->symlink_shared)
-> +	if (dir->i_op->symlink_shared) {
->  		error = dir->i_op->symlink_shared(idmap, dir, dentry, oldname);
-> -	else
-> +	} else {
-> +		inode_lock_dir(dir);
->  		error = dir->i_op->symlink(idmap, dir, dentry, oldname);
-> +		inode_unlock_dir(dir);
-> +	}
->  	if (!error)
->  		fsnotify_create(dir, dentry);
->  	return error;
-> @@ -4920,10 +4968,13 @@ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
->  		error = try_break_deleg(inode, delegated_inode);
->  		if (error)
->  			;
-> -		else if (dir->i_op->link_shared)
-> +		else if (dir->i_op->link_shared) {
->  			error = dir->i_op->link_shared(old_dentry, dir, new_dentry);
-> -		else
-> +		} else {
-> +			inode_lock_dir(dir);
->  			error = dir->i_op->link(old_dentry, dir, new_dentry);
-> +			inode_unlock_dir(dir);
-> +		}
->  	}
->  
->  	if (!error && (inode->i_state & I_LINKABLE)) {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 68eba181175b..3ca92a54f28e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -722,6 +722,8 @@ struct inode {
->  		void (*free_inode)(struct inode *);
->  	};
->  	struct file_lock_context	*i_flctx;
-> +
-> +	struct lockdep_map	i_dirlock_map;	/* For tracking I_DIR_LOCKED locks */
+syzbot found the following issue on:
 
-The cost of this map says no to any attempt inventing mutex in any form.
+HEAD commit:    e9b8ffafd20a Merge tag 'usb-6.13-rc4' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=120d5cf8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6a2b862bf4a5409f
+dashboard link: https://syzkaller.appspot.com/bug?extid=8941485e471cec199c9e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13edd2df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1182af30580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e9b8ffaf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ad411c12e636/vmlinux-e9b8ffaf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/61fac154060e/bzImage-e9b8ffaf.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/8fae9ce0ef68/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/8fa8077be4fc/mount_8.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8941485e471cec199c9e@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+CPU: 0 UID: 0 PID: 5363 Comm: syz-executor144 Not tainted 6.13.0-rc3-syzkaller-00193-ge9b8ffafd20a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:exfat_find_empty_entry+0x16c9/0x1a10 fs/exfat/namei.c:398
+Code: 46 8b ff 48 8b 1b 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 f5 45 8b ff 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 d8 45 8b ff 4c 8b 33 48 8b 54 24
+RSP: 0018:ffffc9000d2af120 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff88800068c880
+RDX: 0000000000000000 RSI: 00000000fffffffb RDI: 00000000fffffffb
+RBP: ffffc9000d2af370 R08: ffffffff827a8268 R09: 1ffff110089f4c63
+R10: dffffc0000000000 R11: ffffed10089f4c64 R12: 00000000fffffffb
+R13: ffffc9000d2af820 R14: ffff888044f981a8 R15: dffffc0000000000
+FS:  00007f746cfe96c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f746cfe9d58 CR3: 000000004287a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ exfat_add_entry+0x409/0xaa0 fs/exfat/namei.c:496
+ exfat_create+0x1c7/0x570 fs/exfat/namei.c:565
+ lookup_open fs/namei.c:3649 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3984
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_openat fs/open.c:1433 [inline]
+ __se_sys_openat fs/open.c:1428 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f746d074ed9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f746cfe9218 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f746d0fe6e8 RCX: 00007f746d074ed9
+RDX: 000000000000275a RSI: 0000000020000000 RDI: 00000000ffffff9c
+RBP: 0000000000000000 R08: 00007fff65f63967 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f746d0fe6e0
+R13: 00007f746d0cab00 R14: 0030656c69662f2e R15: 00303636396f7369
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:exfat_find_empty_entry+0x16c9/0x1a10 fs/exfat/namei.c:398
+Code: 46 8b ff 48 8b 1b 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 f5 45 8b ff 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 d8 45 8b ff 4c 8b 33 48 8b 54 24
+RSP: 0018:ffffc9000d2af120 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff88800068c880
+RDX: 0000000000000000 RSI: 00000000fffffffb RDI: 00000000fffffffb
+RBP: ffffc9000d2af370 R08: ffffffff827a8268 R09: 1ffff110089f4c63
+R10: dffffc0000000000 R11: ffffed10089f4c64 R12: 00000000fffffffb
+R13: ffffc9000d2af820 R14: ffff888044f981a8 R15: dffffc0000000000
+FS:  00007f746cfe96c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7464a14000 CR3: 000000004287a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	46 8b ff             	rex.RX mov %edi,%r15d
+   3:	48 8b 1b             	mov    (%rbx),%rbx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 f5 45 8b ff       	call   0xff8b4611
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 18          	add    $0x18,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 d8 45 8b ff       	call   0xff8b4611
+  39:	4c 8b 33             	mov    (%rbx),%r14
+  3c:	48                   	rex.W
+  3d:	8b                   	.byte 0x8b
+  3e:	54                   	push   %rsp
+  3f:	24                   	.byte 0x24
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
