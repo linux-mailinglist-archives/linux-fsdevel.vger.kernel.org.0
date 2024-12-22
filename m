@@ -1,61 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-38007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0C19FA54B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2024 11:45:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783769FA54D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2024 11:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82B27A2191
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2024 10:44:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73A316646F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2024 10:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D28F18A924;
-	Sun, 22 Dec 2024 10:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5520318A6AF;
+	Sun, 22 Dec 2024 10:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rb9iS4Ph"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFWHGkMK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB15189B86
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Dec 2024 10:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFFA170A1B;
+	Sun, 22 Dec 2024 10:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734864293; cv=none; b=iMBXf+in9sSEY3KMb1IFgjsxj0TPwfg96XCDDVpRye0mxh5Q1XvL20dHeGS+rzkktzR/uFYe9ZOcrkG1DlIunHb6dE8Hw5p3le+NKDmEH/V7HFOaN/Av3ZJRZQ5YZ8JRGTVFvtGGb/BkHkkUvii+fs4OiN9NN2Zo8HZGPmMe8J4=
+	t=1734864442; cv=none; b=OoZxbvZqIcG65IB8ZLS2PvtHX1DU5FcZJfVIdv0WP0cCoqGf3eEUGdmPjTXyz+XGpYUsHonKDpflCVWbYrvlJL/ng2aac/w2wnq+Ji6wei8JUj70nHMslVcpxn3Kvt7YH7fx437J5pQYLL62XZAhy9EVd/zoanZKwm47kqybTzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734864293; c=relaxed/simple;
-	bh=UNlZaBUJOp/OLWHsK2jBXdSKalUbpdR3O5ZvhA0wu3g=;
+	s=arc-20240116; t=1734864442; c=relaxed/simple;
+	bh=6EMSslUEddoHu+IpDHBvGx+zzFKAlyrR0bJRVdY1Yx8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J/GtfQmzwS29GNj4vEsaZg8bZTNz7C39J/WTdUSZB1dmBXd2teb03mm7yNIUFfUNExYhveVvVqSJL1oTJkpMqx3OeNjgBmvc0+uRBliC+Fp64mKv9oLZZ5nT9mK3xKkbcmpDwyhzc3sekYf2q82VySlU8dmpQG6io3+7umOMGjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rb9iS4Ph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C4FC4CECD;
-	Sun, 22 Dec 2024 10:44:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aVTKDxfK6cMKHwhdhi0Y0M0+O6A3JrB+g5ekT2S+Bmk1DLy5OjuqspsLKpjwlgmixNShnER50zADTsdm5rJ9TOKBMz2gbkLYbTYwUeNvW5ybd674U6NSVQfoZHx/5jQWgOBqyr/JgFenzoZa6t0s9QCrmj8205hQPc9Mu6q8cx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFWHGkMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3668C4CECD;
+	Sun, 22 Dec 2024 10:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734864293;
-	bh=UNlZaBUJOp/OLWHsK2jBXdSKalUbpdR3O5ZvhA0wu3g=;
+	s=k20201202; t=1734864442;
+	bh=6EMSslUEddoHu+IpDHBvGx+zzFKAlyrR0bJRVdY1Yx8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Rb9iS4PhS84JfZVHfu04RAHnskP9hVND/yP9y/shQ8xDfa5I642EquaKmUVAdBvME
-	 XqfcJV6scATRXdlxy0ZVj2yyvml4rsxQQpF3rXtqodHGSBt7Cecy92dOuLKfcJwXjK
-	 IJXbfiwL4YeQpzbNBs39QJ+2X/Mq+lPyhwj6WF5mfblp1xZdonKBg1Hduxi6Rq89j9
-	 YvRrfqmYIzPdP3VvSOFMu2/ukLiZXfisbF1FO7CADiBjjSqphIZ8tG69XxZTVQ6sbL
-	 kCi4NcLd82Upva/koWdkQSzEwZ1Hp7gFuS8+s/dr3kPAu3F8X6ca0N4imBNhciro00
-	 YrwbxQWVi7cng==
+	b=FFWHGkMK/aC9gf0Qwx0SUIVYdhBhOLQlF+T/Z351uR+NTTGfIj32EJo0HPDerUtCx
+	 7sGpf+HfdKVOwBMNFdHrr7QwD1Bzama8WP28612YzsEceFAK9nd0rGrqoIf8fGPV+q
+	 q5RRgP1bR33mW34AGcEbPE7GCRMJsE8eRKKwjCABiEbLZ7DCBw8XMK+EaBMo7fx9Qe
+	 ri+G7/s1CPk6/Ub2Sg8b9vE205OWU3mpOvxG2wQQ5RPgbwg/P/BULvIrAKUHhs3P0k
+	 WZMxHfyZByCn6FFNqx+YlstbCU+gZGsvZj4DPHNmovhw+npYWW5FbjgYB4NqBFLMFf
+	 +0eV/56oZCWiw==
 From: Christian Brauner <brauner@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
+To: Jeff Layton <jlayton@kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	yukuai3@huawei.com,
-	yangerkun@huaweicloud.com,
-	Hugh Dickins <hughd@google.com>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v6 0/5] Improve simple directory offset wrap behavior
-Date: Sun, 22 Dec 2024 11:44:43 +0100
-Message-ID: <20241222-baldigen-ungewiss-a2b704fc6104@brauner>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] samples/vfs: add __SANE_USERSPACE_TYPES__ to mountinfo program
+Date: Sun, 22 Dec 2024 11:47:15 +0100
+Message-ID: <20241222-bagger-laute-70409cd196f7@brauner>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241220153314.5237-1-cel@kernel.org>
-References: <20241220153314.5237-1-cel@kernel.org>
+In-Reply-To: <20241219-statmount-v1-1-9fd8eab3cf0c@kernel.org>
+References: <20241219-statmount-v1-1-9fd8eab3cf0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,23 +60,32 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1579; i=brauner@kernel.org; h=from:subject:message-id; bh=UNlZaBUJOp/OLWHsK2jBXdSKalUbpdR3O5ZvhA0wu3g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSnv539VuRa/SvBqratghzp08W3tH8/Ficq02UV9KLyq PEiVeOyjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk4H2P4H9F/657fLobmDYIP jQOnfO6f+dzDrcvwv35R37V/0lVpSxgZDjWmidZ7SKZKuYasOHajueZSyKNZfvwvjy3P5d/Ckav LBQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1443; i=brauner@kernel.org; h=from:subject:message-id; bh=6EMSslUEddoHu+IpDHBvGx+zzFKAlyrR0bJRVdY1Yx8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSnvzMW+PrsftS2qwxW+zS/Bjo8SRf7nfBOKvajTjzno sfz3V72dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykKJuRYWG0kuG+ZNbeiTp+ K4V1JO9tWn3xqNVT6b0X3m4Jrmi/783w30XpEde7SwzCk8OtAlSXr+arq/SNDtjmO49bIf3i9YP dfAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 20 Dec 2024 10:33:09 -0500, cel@kernel.org wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
+On Thu, 19 Dec 2024 17:11:40 -0500, Jeff Layton wrote:
+> mountinfo.c is throwing compiler warnings on ppc64. The comment over
+> __SANE_USERSPACE_TYPES__ says:
 > 
-> The purpose of this series is to construct a set of upstream fixes
-> that can be backported to v6.6 to address CVE-2024-46701.
-> 
-> Changes since v5:
-> - Improve error flow in simple_offset_add()
+>  * This is here because we used to use l64 for 64bit powerpc
+>  * and we don't want to impact user mode with our change to ll64
+>  * in the kernel.
+>  *
+>  * However, some user programs are fine with this.  They can
+>  * flag __SANE_USERSPACE_TYPES__ to get int-ll64.h here.
 > 
 > [...]
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+Thanks! Folded into the patch that added the mountinfo program.
+
+Please also note that I moved the series of which this was part from
+vfs-6.14.misc to vfs-6.14.mount as it makes a lot more sense there.
+
+---
+
+Applied to the vfs-61.14.mount branch of the vfs/vfs.git tree.
+Patches in the vfs-61.14.mount branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -91,16 +97,8 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
+branch: vfs-61.14.mount
 
-[1/5] libfs: Return ENOSPC when the directory offset range is exhausted
-      https://git.kernel.org/vfs/vfs/c/a644104d9168
-[2/5] Revert "libfs: Add simple_offset_empty()"
-      https://git.kernel.org/vfs/vfs/c/fa9c3b906334
-[3/5] Revert "libfs: fix infinite directory reads for offset dir"
-      https://git.kernel.org/vfs/vfs/c/41480e28a4e0
-[4/5] libfs: Replace simple_offset end-of-directory detection
-      https://git.kernel.org/vfs/vfs/c/4ea4beb53d0f
-[5/5] libfs: Use d_children list to iterate simple_offset directories
-      https://git.kernel.org/vfs/vfs/c/02a3d7715c3e
+[1/1] samples/vfs: add __SANE_USERSPACE_TYPES__ to mountinfo program
+      (no commit info)
 
