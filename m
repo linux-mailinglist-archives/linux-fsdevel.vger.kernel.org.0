@@ -1,163 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-38023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEA49FAEC6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 909179FAF66
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C2E1612B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 13:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9A2D1669A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7349B1A8F7A;
-	Mon, 23 Dec 2024 13:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0MWwMXt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4761B0F15;
+	Mon, 23 Dec 2024 14:19:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D60819CC0A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2024 13:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0CB194AF9;
+	Mon, 23 Dec 2024 14:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734959030; cv=none; b=laTRJTA4u2eOgLk2KBi+3qFOz9Xl+EZabkn8hH2+4Vo5WbDs7Ips/ivnDc6P4d1EhJ5xF4cS6upcuu66eFPnwkQyZKO2Qgbqxuiay2hze2mIhflcdt52clLDQSMyE/IXDyCPNY3eB5p+7MXlJzCYvd3GoRVRv/77bKVb1PwWL8k=
+	t=1734963581; cv=none; b=rDsi3FE9v4irQ9a+EdHg4X9dGGiIdZY3okKMS5+Y6Oh6uDAcngkcSfs68XNXXGir6Ydk7/NID0kb6cUzS5zQLg++121sIOvHwZePcxQSX503MlOk6ZspcqFfoKedMmWtdAWT3Zw92U0G0EQk5OuVuqif2tOhDgVzbM9RUZuIbKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734959030; c=relaxed/simple;
-	bh=7ofghjsmGN1rPOxM6a8mV/o+3l+2/+69oKAXNuluaDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RIamLT77YRfPCxncAEfw1EcLb7XcJ99ugR5pCKdqSEhlIPERy4dgGnd1cxJk+F6eILIE8Y3L6jySXRk5ejjy95aOBuxbnq1scOPsdDDgvO+TNJX8KIuI93tCX56bcrsRtwtJMQWLCMt6B4WswYq1iI/GSNIWb2SFkUeDCSwaGkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0MWwMXt; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734959030; x=1766495030;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=7ofghjsmGN1rPOxM6a8mV/o+3l+2/+69oKAXNuluaDQ=;
-  b=h0MWwMXtegaFdczxuTh0eyKVZYwn/hbdQJIomWqeaXk6ARofKgSAABHy
-   0ZsKj8dq+eVdgAeBWTZVIa9Pp3rQ2ushxBGTFlLyWTZ6Ft8ukpn4LS4jX
-   iMNTKFCgOqIutTtA56dXUJ5LbTyJ2EWfX/sGzWyRuGVz/IotrMVSNRg7p
-   0w39ILMAeHXxXMEne1Tum4xonOBhIBxUT9Rh4zE+qmmnbigz2WDWYw2xj
-   tZ5ZYYE8ZynzzqvQs5p0RitXE92zeD4vpq8AKX5UA3QhPJaoYnqBhF4KK
-   nfTqicsJFBypoBMGTWkTJ5UBO0H0OV3cLqboWgUoABd8GV4jQuVAzdFRG
-   A==;
-X-CSE-ConnectionGUID: hHfd6ABFR4OdB89sxPLQhQ==
-X-CSE-MsgGUID: /9G1DN9QRVuceKYGnm04PQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11295"; a="35451239"
-X-IronPort-AV: E=Sophos;i="6.12,257,1728975600"; 
-   d="scan'208";a="35451239"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2024 05:03:49 -0800
-X-CSE-ConnectionGUID: qf520nabTS2xJoifRnOf5w==
-X-CSE-MsgGUID: LMWRrNFAR5CwBx1HiPB24A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,257,1728975600"; 
-   d="scan'208";a="99033688"
-Received: from lkp-server01.sh.intel.com (HELO a46f226878e0) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 23 Dec 2024 05:03:47 -0800
-Received: from kbuild by a46f226878e0 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tPi65-0003bY-0Y;
-	Mon, 23 Dec 2024 13:03:45 +0000
-Date: Mon, 23 Dec 2024 21:02:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.dcache 6/6] fs/libfs.c:1819:17: warning: comparison
- of distinct pointer types lacks a cast
-Message-ID: <202412232059.54ry0khI-lkp@intel.com>
+	s=arc-20240116; t=1734963581; c=relaxed/simple;
+	bh=LD1ldJyFEOxj/gShQMs55PiIrz4vec4vEH1Dps8gt9M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BlRPYlak2kfIHiO0dbCCammk7URxmdAdk29wui5myKuxq8hfFVyK4bji8PxB9Ntn7qBk2z5Cq78rsRUoQNIGROe54T/P36q+warW8CKOibFqJEM8pZgK3hn2CG3GT801IfkHV4Td7Wu1O3YMHgEcP5k4UBb6sHS6YgVbyM5MWQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YH0XT6B6Kz20mdx;
+	Mon, 23 Dec 2024 22:19:53 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5884F180043;
+	Mon, 23 Dec 2024 22:19:34 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Dec
+ 2024 22:19:30 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>
+Subject: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into its own files
+Date: Mon, 23 Dec 2024 22:15:19 +0800
+Message-ID: <20241223141550.638616-1-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache
-head:   08141fdc186755910b5bffc21a4325e2b673629f
-commit: 7cd7d43774879a6d7fc35662fb788ed8210dd09a [6/6] generic_ci_d_compare(): use shortname_storage
-config: csky-randconfig-002-20241223 (https://download.01.org/0day-ci/archive/20241223/202412232059.54ry0khI-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241223/202412232059.54ry0khI-lkp@intel.com/reproduce)
+This patch series moves sysctls of vm_table in kernel/sysctl.c to
+places where they actually belong, and do some related code clean-ups.
+After this patch series, all sysctls in vm_table have been moved into its
+own files, meanwhile, delete vm_table.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412232059.54ry0khI-lkp@intel.com/
+All the modifications of this patch series base on
+linux-next(tags/next-20241219). To test this patch series, the code was
+compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+x86_64 architectures. After this patch series is applied, all files
+under /proc/sys/vm can be read or written normally.
 
-All warnings (new ones prefixed by >>):
+Changes in v4:
+ - change all "static struct ctl_table" type into
+   "static const struct ctl_table" type in patch1~10,12,13,14
+ - simplify result of rpcauth_cache_shrink_count() in patch11
 
-   fs/libfs.c: In function 'generic_ci_d_compare':
->> fs/libfs.c:1819:17: warning: comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]
-    1819 |         if (str == dentry->d_shortname.string) {
-         |                 ^~
+Changes in v3:
+ - change patch1~10, patch14 title suggested by Joel Granados
+ - change sysctl_stat_interval to static type in patch1
+ - add acked-by from Paul Moore in patch7
+ - change dirtytime_expire_interval to static type in patch9
+ - add acked-by from Anna Schumaker in patch11
 
+Changes in v2:
+ - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+ - update changelog for patch7/12, suggested by Kees/Paul
+ - fix patch8, sorry for wrong changes and forget to built with NOMMU
+ - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+ - add reviewed-by from Jan Kara, Christian Brauner in patch12
 
-vim +1819 fs/libfs.c
+Kaixiong Yu (15):
+  mm: vmstat: move sysctls to mm/vmstat.c
+  mm: filemap: move sysctl to mm/filemap.c
+  mm: swap: move sysctl to mm/swap.c
+  mm: vmscan: move vmscan sysctls to mm/vmscan.c
+  mm: util: move sysctls to mm/util.c
+  mm: mmap: move sysctl to mm/mmap.c
+  security: min_addr: move sysctl to security/min_addr.c
+  mm: nommu: move sysctl to mm/nommu.c
+  fs: fs-writeback: move sysctl to fs/fs-writeback.c
+  fs: drop_caches: move sysctl to fs/drop_caches.c
+  sunrpc: simplify rpcauth_cache_shrink_count()
+  fs: dcache: move the sysctl to fs/dcache.c
+  x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+  sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+  sysctl: remove unneeded include
 
-  1776	
-  1777	#if IS_ENABLED(CONFIG_UNICODE)
-  1778	/**
-  1779	 * generic_ci_d_compare - generic d_compare implementation for casefolding filesystems
-  1780	 * @dentry:	dentry whose name we are checking against
-  1781	 * @len:	len of name of dentry
-  1782	 * @str:	str pointer to name of dentry
-  1783	 * @name:	Name to compare against
-  1784	 *
-  1785	 * Return: 0 if names match, 1 if mismatch, or -ERRNO
-  1786	 */
-  1787	int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-  1788				 const char *str, const struct qstr *name)
-  1789	{
-  1790		const struct dentry *parent;
-  1791		const struct inode *dir;
-  1792		union shortname_store strbuf;
-  1793		struct qstr qstr;
-  1794	
-  1795		/*
-  1796		 * Attempt a case-sensitive match first. It is cheaper and
-  1797		 * should cover most lookups, including all the sane
-  1798		 * applications that expect a case-sensitive filesystem.
-  1799		 *
-  1800		 * This comparison is safe under RCU because the caller
-  1801		 * guarantees the consistency between str and len. See
-  1802		 * __d_lookup_rcu_op_compare() for details.
-  1803		 */
-  1804		if (len == name->len && !memcmp(str, name->name, len))
-  1805			return 0;
-  1806	
-  1807		parent = READ_ONCE(dentry->d_parent);
-  1808		dir = READ_ONCE(parent->d_inode);
-  1809		if (!dir || !IS_CASEFOLDED(dir))
-  1810			return 1;
-  1811	
-  1812		/*
-  1813		 * If the dentry name is stored in-line, then it may be concurrently
-  1814		 * modified by a rename.  If this happens, the VFS will eventually retry
-  1815		 * the lookup, so it doesn't matter what ->d_compare() returns.
-  1816		 * However, it's unsafe to call utf8_strncasecmp() with an unstable
-  1817		 * string.  Therefore, we have to copy the name into a temporary buffer.
-  1818		 */
-> 1819		if (str == dentry->d_shortname.string) {
-  1820			strbuf = dentry->d_shortname;
-  1821			strbuf.string[len] = 0;
-  1822			str = strbuf.string;
-  1823			/* prevent compiler from optimizing out the temporary buffer */
-  1824			barrier();
-  1825		}
-  1826		qstr.len = len;
-  1827		qstr.name = str;
-  1828	
-  1829		return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
-  1830	}
-  1831	EXPORT_SYMBOL(generic_ci_d_compare);
-  1832	
+ arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+ arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+ fs/dcache.c                        |  21 ++-
+ fs/drop_caches.c                   |  23 ++-
+ fs/fs-writeback.c                  |  30 ++--
+ include/linux/dcache.h             |   7 +-
+ include/linux/mm.h                 |  23 ---
+ include/linux/mman.h               |   2 -
+ include/linux/swap.h               |   9 --
+ include/linux/vmstat.h             |  11 --
+ include/linux/writeback.h          |   4 -
+ kernel/sysctl.c                    | 221 -----------------------------
+ mm/filemap.c                       |  18 ++-
+ mm/internal.h                      |  10 ++
+ mm/mmap.c                          |  54 +++++++
+ mm/nommu.c                         |  15 +-
+ mm/swap.c                          |  16 ++-
+ mm/swap.h                          |   1 +
+ mm/util.c                          |  67 +++++++--
+ mm/vmscan.c                        |  23 +++
+ mm/vmstat.c                        |  44 +++++-
+ net/sunrpc/auth.c                  |   2 +-
+ security/min_addr.c                |  11 ++
+ 23 files changed, 330 insertions(+), 312 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
