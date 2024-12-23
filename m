@@ -1,92 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-38071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31189FB51E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 21:20:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32C19FB562
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 21:36:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F5A164DC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 20:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2174F18812B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 20:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02AC1C5496;
-	Mon, 23 Dec 2024 20:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859A11CDFDC;
+	Mon, 23 Dec 2024 20:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hyN1XBqj"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KAfDNvnW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gLAz3juR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KAfDNvnW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gLAz3juR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0691538F82;
-	Mon, 23 Dec 2024 20:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F301AE01E;
+	Mon, 23 Dec 2024 20:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734985233; cv=none; b=PhRvbq6iBOUL55Hkvhn1B+GcLywo9lhhHv37V+wWtOqSTXAYBV/sOqR85KxFcL4fmSpVkXzH3Gu+h8d7JJsXi4WZNW+rUfpopNPBGj+XhcXLHy5v8lS/bCubeV2Zom73aLb9NWU4qMeVAxtBnxrPH5OaB2RXjUzg54Dqy8gboSU=
+	t=1734986193; cv=none; b=m7ULdep2tYZhcu/GWEZMAVIwnvkpEoh4K7OvnH0tHAeEZ0BAciybWaPZpRoulOcJ0Wd4gk7k9N5OVH0/bTDLDsYhX1s2a2xaetY/u+a3c+Yu9RKtBpD+31auSMsDZZ0O2zJZfTQXTJOLVK3ztCWJhepM7L67WomoyV3DKHhHVUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734985233; c=relaxed/simple;
-	bh=QDE7sTj6D2f16oggKs3fTpt5E4GFNVsv48oy7HnRD8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAedXHhjf/FXNhEtGPn8tfUn/aIQ0bsOrKcPv80snDUwS+dWDlLlPQzW71I6xv1fKw6JaGEDpimmlT4u6rIOmbBMPfEIxiofyCO98gM7uAJjQcV+wECBM4gPa/kyLZkMHCRCnRQ/vLqTAJ9wyZd8aTvhZ5Qexkd3SjZPBtS2xZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hyN1XBqj; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=I3/kAdSnGEKGkUM1UWCTRtS1hHL/EqWNK+lWJxh8Blg=; b=hyN1XBqjDRuiic+Jpd9T7+to7b
-	AQ2Dx4nauSoQ9pn9z9Z3Z7v8tbRmGnx9lZ1wdTyXN0naHmIElGtgY/Kab8rdbvz2btAkMfP0nQWgX
-	O1paw5GAXxNEAvuN6c6+qjuIarmnIM2+bvLpSA66C6nQWiwV0B6pueZFdziRXWXMPQLeTaFeMRJlS
-	vE3NeL94mT4d2CSGtd/O2xBgaeHjnU1zmHey63gZXbRkV1T5qcfrZuIa3tB9L3PA9A9PPRCoSQ4Bp
-	0GapncDIlVu/4InTrh/ZdW0dMI9J2+pPT+HO7lnr8b58E1JHHk3EHtjWwDZjvMuZQyblLBYBQq8P3
-	10WuWRQw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tPouj-0000000BQ6f-1m5x;
-	Mon, 23 Dec 2024 20:20:29 +0000
-Date: Mon, 23 Dec 2024 20:20:29 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>
-Subject: Re: [PATCH 3/6] efivarfs: make variable_is_present use dcache lookup
-Message-ID: <20241223202029.GP1977892@ZenIV>
-References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com>
- <20241210170224.19159-4-James.Bottomley@HansenPartnership.com>
+	s=arc-20240116; t=1734986193; c=relaxed/simple;
+	bh=iWPMVyQbdAqMR4Wq2hU03Mkiyvflvwq7XL9PME055N0=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=YfoktDeFEnkHGSgVUrEEdz8vFBX31UqCBg7wZS71+tQkarDNfCxzBbVo7cY7+jgPRdOTkiO//gCbW2ZhbzjFAIf9bsx9WTE+BHUMm2zMX2expJzK8aEeJWttIBQFvf7KOtdmAmbsFmcOtC1spkdTDZTu2bHZy727chJL/aFrUaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KAfDNvnW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gLAz3juR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KAfDNvnW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gLAz3juR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5AFD322448;
+	Mon, 23 Dec 2024 20:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734986190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3ZPztEOINWo5t2auZp6Pwm15N22ERZv/xHDAQnz/uw=;
+	b=KAfDNvnW27j/g9HY8v7vQkLOC6wvwAHWSECBjPEh5hvrbQowBtWLHsilz/m7cxeIH7r1Gj
+	TkxCOkvbq3USD8baeE5afkq+h4TFLudjqbFYN3MF/f4oJubFJwNORpcqElkCs1nmwcutyA
+	emwWqvUi4w+KbGegxKBKFn/haeyawUQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734986190;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3ZPztEOINWo5t2auZp6Pwm15N22ERZv/xHDAQnz/uw=;
+	b=gLAz3juRJU8UTw18KTkJmNubX1Nc2aX7hPC7T7cn+Sj8C6KYshVIrXtD1hA648QITnfcWO
+	3+eWayE5M34iEWAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734986190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3ZPztEOINWo5t2auZp6Pwm15N22ERZv/xHDAQnz/uw=;
+	b=KAfDNvnW27j/g9HY8v7vQkLOC6wvwAHWSECBjPEh5hvrbQowBtWLHsilz/m7cxeIH7r1Gj
+	TkxCOkvbq3USD8baeE5afkq+h4TFLudjqbFYN3MF/f4oJubFJwNORpcqElkCs1nmwcutyA
+	emwWqvUi4w+KbGegxKBKFn/haeyawUQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734986190;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3ZPztEOINWo5t2auZp6Pwm15N22ERZv/xHDAQnz/uw=;
+	b=gLAz3juRJU8UTw18KTkJmNubX1Nc2aX7hPC7T7cn+Sj8C6KYshVIrXtD1hA648QITnfcWO
+	3+eWayE5M34iEWAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7283137DA;
+	Mon, 23 Dec 2024 20:36:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jK8dF8vJaWf8fQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 23 Dec 2024 20:36:27 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210170224.19159-4-James.Bottomley@HansenPartnership.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: "NeilBrown" <neilb@suse.de>
+To: "Hillf Danton" <hdanton@sina.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] VFS: add inode_dir_lock/unlock
+In-reply-to: <20241223111225.389-1-hdanton@sina.com>
+References: <20241220030830.272429-1-neilb@suse.de>,
+ <20241221012128.307-1-hdanton@sina.com>,
+ <20241223111225.389-1-hdanton@sina.com>
+Date: Tue, 24 Dec 2024 07:36:08 +1100
+Message-id: <173498616860.11072.11978717859547245956@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	NEURAL_HAM_SHORT(-0.20)[-0.988];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[sina.com];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[sina.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Dec 10, 2024 at 12:02:21PM -0500, James Bottomley wrote:
-> Instead of searching the variable entry list for a variable, use the
-> dcache lookup functions to find it instead.  Also add an efivarfs_
-> prefix to the function now it is no longer static.
+On Mon, 23 Dec 2024, Hillf Danton wrote:
+> On Mon, 23 Dec 2024 14:10:07 +1100 NeilBrown <neilb@suse.de>
+> > On Sat, 21 Dec 2024, Hillf Danton wrote:
+> > > Inventing anything like mutex sounds bad.
+> > 
+> > In general I would agree.  But when the cost of adding a mutex exceeds
+> > the cost of using an alternate solution that only requires 2 bits, I
+> > think the alternate solution is justified.
+> > 
+> Inode deserves more than the 2 bits before such a solution is able to
+> rework mutex.
 
-> +bool efivarfs_variable_is_present(efi_char16_t *variable_name,
-> +				  efi_guid_t *vendor, void *data)
-> +{
-> +	char *name = efivar_get_utf8name(variable_name, vendor);
-> +	struct super_block *sb = data;
-> +	struct dentry *dentry;
-> +	struct qstr qstr;
-> +
-> +	if (!name)
-> +		return true;
-> +
-> +	qstr.name = name;
-> +	qstr.len = strlen(name);
-> +	dentry = d_hash_and_lookup(sb->s_root, &qstr);
-> +	kfree(name);
-> +	if (dentry)
-> +		dput(dentry);
+I'm sorry but I don't understand what you are saying.  Could you please
+give more details about your concern?
+Are you concerned about correctness?  Performance?  Maintainability?
+Something else?
 
-If that ever gets called with efivarfs_valid_name(name, strlen(name))
-being false, that's going to oops...
+Thanks,
+NeilBrown
 
