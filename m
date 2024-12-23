@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1A79FAF6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:20:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5E89FAF7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169941885FB3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA49167B42
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8943F1B393A;
-	Mon, 23 Dec 2024 14:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058301C07DC;
+	Mon, 23 Dec 2024 14:19:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD234194AF9;
-	Mon, 23 Dec 2024 14:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3DA1B85DF;
+	Mon, 23 Dec 2024 14:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734963586; cv=none; b=SqMp1lNekhT5ZGY12WYBoTKYfMwziEjERCnturG+5jpb46RW0/mYSVpn0AMn4FanNubS2TW8Fei7y4PPgi6B47qGBpM6koJ35Dj5Ufq92xHEW+rkvrRa8bJ96ARBt5t9fxmOdQH7GZ9SZNS6NkjzUpVS26ROIl2S9uqpMOAtMWs=
+	t=1734963594; cv=none; b=g9sbPp5xHNYXl1AdqhQHCACnVF3C1Xp7BxCewWXx3sLVRQK3RAl7sp15vvbLzAy9Bg+tpkBnr//UMIEc7ui/2kpdofpAQmwR5lBpr/AHkScjUz48MIFCvvu+vrJLK3xtOWL7WpFotaXlDYD83gA88n0rO/vDCTzobHd0R+sex+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734963586; c=relaxed/simple;
-	bh=MJBnExEPzVRwKLL/pZ1B3TcVW6PoQ9S0B/WaOPT2E/w=;
+	s=arc-20240116; t=1734963594; c=relaxed/simple;
+	bh=bamcIdzVZRRdfLmC1Lu05/MmX20ZnHBl+HSAyfF2ZMs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lpvSRtTgOX/oN5FxPLVMSgHAwoxW+dSajAFnk7gy7aAeqMQ226dSYlpP1m/iY7wmLJs/js21qAMy2rVmK3BUQkjLHHsx8kJvg1d3fHb4BzARJOzbZr8MfNIOVrEH6cdp19isoFrCnpDrG1lwXm/CAJGRF/zeWVs2IzGAekZcdh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=qvjen58ges66rJAkMVL1d7xlESeLi0JfHBnQqAC7nIiwEklSnQr7IFv1PhExC2GifcdERTIdED2Nh9Y7FxL55OuLfplNuxVdnFpGVvUdYMtPAAeFJbkr5qfCj2LYVokVe2fZ00crmbfGVwkqSB6BIM2lwoRhYUEhFuB74Hq3GZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YH0SM1Wztz11NKN;
-	Mon, 23 Dec 2024 22:16:19 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4YH0TB1fQ0z1T711;
+	Mon, 23 Dec 2024 22:17:02 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id C2CF31800D1;
-	Mon, 23 Dec 2024 22:19:40 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 087BF180043;
+	Mon, 23 Dec 2024 22:19:44 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Dec
- 2024 22:19:37 +0800
+ 2024 22:19:40 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -63,9 +63,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v4 -next 02/15] mm: filemap: move sysctl to mm/filemap.c
-Date: Mon, 23 Dec 2024 22:15:21 +0800
-Message-ID: <20241223141550.638616-3-yukaixiong@huawei.com>
+Subject: [PATCH v4 -next 03/15] mm: swap: move sysctl to mm/swap.c
+Date: Mon, 23 Dec 2024 22:15:22 +0800
+Message-ID: <20241223141550.638616-4-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241223141550.638616-1-yukaixiong@huawei.com>
 References: <20241223141550.638616-1-yukaixiong@huawei.com>
@@ -80,105 +80,117 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-This moves the filemap related sysctl to mm/filemap.c, and
-removes the redundant external variable declaration.
+The page-cluster belongs to mm/swap.c, move it to mm/swap.c .
+Removes the redundant external variable declaration and unneeded
+include(linux/swap.h).
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
 ---
 v4:
- - const qualify struct ctl_table filemap_sysctl_table
+ - const qualify struct ctl_table swap_sysctl_table
 v3:
  - change the title
 ---
 ---
  include/linux/mm.h |  2 --
- kernel/sysctl.c    |  8 --------
- mm/filemap.c       | 18 +++++++++++++++---
- 3 files changed, 15 insertions(+), 13 deletions(-)
+ kernel/sysctl.c    | 10 ----------
+ mm/swap.c          | 16 +++++++++++++++-
+ mm/swap.h          |  1 +
+ 4 files changed, 16 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d61b9c7a3a7b..dbdf8950d681 100644
+index dbdf8950d681..8941ba3d9a77 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -40,8 +40,6 @@ struct user_struct;
- struct pt_regs;
- struct folio_batch;
+@@ -76,8 +76,6 @@ static inline void totalram_pages_add(long count)
+ }
  
--extern int sysctl_page_lock_unfairness;
--
- void mm_core_init(void);
- void init_mm_internals(void);
+ extern void * high_memory;
+-extern int page_cluster;
+-extern const int page_cluster_max;
  
+ #ifdef CONFIG_SYSCTL
+ extern int sysctl_legacy_va_layout;
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index f1ab251fc2d0..23c8db80da5d 100644
+index 23c8db80da5d..ab5d94f07e53 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2079,14 +2079,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_FOUR,
+@@ -21,7 +21,6 @@
+ 
+ #include <linux/module.h>
+ #include <linux/mm.h>
+-#include <linux/swap.h>
+ #include <linux/slab.h>
+ #include <linux/sysctl.h>
+ #include <linux/bitmap.h>
+@@ -2044,15 +2043,6 @@ static struct ctl_table vm_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= overcommit_kbytes_handler,
  	},
 -	{
--		.procname	= "page_lock_unfairness",
--		.data		= &sysctl_page_lock_unfairness,
--		.maxlen		= sizeof(sysctl_page_lock_unfairness),
+-		.procname	= "page-cluster",
+-		.data		= &page_cluster,
+-		.maxlen		= sizeof(int),
 -		.mode		= 0644,
 -		.proc_handler	= proc_dointvec_minmax,
 -		.extra1		= SYSCTL_ZERO,
+-		.extra2		= (void *)&page_cluster_max,
 -	},
- #ifdef CONFIG_MMU
  	{
- 		.procname	= "max_map_count",
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 899dab55d235..bb7aff8960a4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -47,6 +47,7 @@
- #include <linux/splice.h>
- #include <linux/rcupdate_wait.h>
- #include <linux/sched/mm.h>
-+#include <linux/sysctl.h>
- #include <linux/fsnotify.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
-@@ -1069,6 +1070,19 @@ static wait_queue_head_t *folio_waitqueue(struct folio *folio)
- 	return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_TABLE_BITS)];
+ 		.procname	= "dirtytime_expire_seconds",
+ 		.data		= &dirtytime_expire_interval,
+diff --git a/mm/swap.c b/mm/swap.c
+index 062c8565b899..d3344123381c 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -45,7 +45,7 @@
+ 
+ /* How many pages do we try to swap or page in/out together? As a power of 2 */
+ int page_cluster;
+-const int page_cluster_max = 31;
++static const int page_cluster_max = 31;
+ 
+ struct cpu_fbatches {
+ 	/*
+@@ -1072,6 +1072,18 @@ void folio_batch_remove_exceptionals(struct folio_batch *fbatch)
+ 	fbatch->nr = j;
  }
  
-+/* How many times do we accept lock stealing from under a waiter? */
-+static int sysctl_page_lock_unfairness = 5;
-+static const struct ctl_table filemap_sysctl_table[] = {
++static const struct ctl_table swap_sysctl_table[] = {
 +	{
-+		.procname	= "page_lock_unfairness",
-+		.data		= &sysctl_page_lock_unfairness,
-+		.maxlen		= sizeof(sysctl_page_lock_unfairness),
++		.procname	= "page-cluster",
++		.data		= &page_cluster,
++		.maxlen		= sizeof(int),
 +		.mode		= 0644,
 +		.proc_handler	= proc_dointvec_minmax,
 +		.extra1		= SYSCTL_ZERO,
++		.extra2		= (void *)&page_cluster_max,
 +	}
 +};
 +
- void __init pagecache_init(void)
- {
- 	int i;
-@@ -1077,6 +1091,7 @@ void __init pagecache_init(void)
- 		init_waitqueue_head(&folio_wait_table[i]);
- 
- 	page_writeback_init();
-+	register_sysctl_init("vm", filemap_sysctl_table);
- }
- 
  /*
-@@ -1224,9 +1239,6 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- 	return true;
+  * Perform any setup for the swap system
+  */
+@@ -1088,4 +1100,6 @@ void __init swap_setup(void)
+ 	 * Right now other parts of the system means that we
+ 	 * _really_ don't want to cluster much more
+ 	 */
++
++	register_sysctl_init("vm", swap_sysctl_table);
  }
+diff --git a/mm/swap.h b/mm/swap.h
+index ad2f121de970..274dcc6219a0 100644
+--- a/mm/swap.h
++++ b/mm/swap.h
+@@ -3,6 +3,7 @@
+ #define _MM_SWAP_H
  
--/* How many times do we accept lock stealing from under a waiter? */
--int sysctl_page_lock_unfairness = 5;
--
- static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		int state, enum behavior behavior)
- {
+ struct mempolicy;
++extern int page_cluster;
+ 
+ #ifdef CONFIG_SWAP
+ #include <linux/swapops.h> /* for swp_offset */
 -- 
 2.34.1
 
