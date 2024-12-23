@@ -1,204 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-38010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6EB9FA961
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 03:43:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18189FA9A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 04:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3AED164F4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 02:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5FD162D60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 03:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627673EA69;
-	Mon, 23 Dec 2024 02:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1BA8624B;
+	Mon, 23 Dec 2024 03:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="InSththi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="a6TJnzjs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="InSththi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="a6TJnzjs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495714C70;
-	Mon, 23 Dec 2024 02:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7F4E56C;
+	Mon, 23 Dec 2024 03:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734921795; cv=none; b=BF6jEwOa8u0pyBekL9lFvnQzxqidyPdanow4Ux6R/DaUwbY06QXFegW5QOCCN2M2uBzyhV0RBW+ZJJlLw0CFhzon5uLtg+CCHhWAHaiaR0XV1OfpFuKUcXNmBPTTEyT/ZL0qXAj1elvvEs0Da8+oErnoJF3pLGbYynWIW/J9JXI=
+	t=1734923419; cv=none; b=tBIAQXoMEnoSaMqIZpS6O2r/oXRKjPj2ulW68zCopvODgTSIEphOHsu2//Iua/SAf5PDRhkAzn3IS25dF/rQ7eOBabeIktzr9FsEz/DXmx7Mo3LYmaKQ+gLwaQmaPYku0BmbIBy6o8Q8YtCq7yMzjq4vN5cS7V63exkIDxnJKpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734921795; c=relaxed/simple;
-	bh=epH6mfC9cH98Qgtiyo4xjZbPdxf+AuONA7UNbMDxLMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mW+rzKykplIlZvuVk9ZQSkGmmEqErmyedMSK8T7MZLqxrtg0/PAr8gN3WYhZdHND/WpJvch+nDYXoaWTNi/pHAQ/OAh7xwygLRLE07B3vhjPTtFn8C+dbZzgt2lrVo05IHPbKp/rCYvIDrhdwOvyL1U1BGPM3hUzDtZmGw9QTfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YGj473R3Hz4f3lWG;
-	Mon, 23 Dec 2024 10:42:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 328C11A018C;
-	Mon, 23 Dec 2024 10:43:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgA3XoIxzmhnKTuBFQ--.5176S4;
-	Mon, 23 Dec 2024 10:43:05 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: fstests@vger.kernel.org,
-	zlang@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	willy@infradead.org,
-	ojaswin@linux.ibm.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [xfstests PATCH] generic/567: add partial pages zeroing out case
-Date: Mon, 23 Dec 2024 10:39:30 +0800
-Message-ID: <20241223023930.2328634-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1734923419; c=relaxed/simple;
+	bh=08s5/yMikxWGd+nsFpjZQeZDxUSczQPgVF69pfK9AWA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=II75ZoAonHymVVF2HmcNDgrS6+YWq6tlSotWP464Yfb3Rf8tJe7KAucpkhLCr+qPnB4rUw6s4M9t+ev7d8X3aayfpD8Nr68KHGLGw+stlsTEOHHRhTIWuEwch6ki5o0IiRhbdYLPICIlw//7tIxuo9ZJknyjhxhD0toRn7m627c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=InSththi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=a6TJnzjs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=InSththi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=a6TJnzjs; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7BAE51F38D;
+	Mon, 23 Dec 2024 03:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734923414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ddFWJy7zs9oCDYfpZsv0LCBYdrU1857cNzAeIpY0tY=;
+	b=InSththiPsEp7jimIXJz14xqnA2K5u6R5tQCNwjvuMarKp1JEfp9XCn5Iz6PGIYMu2nwtT
+	kx8OiIXHx3gHzGa2YyYdUkAZvlufS/QJMQaa9x4SPiGTqdkcbTv5trY5P6x1cbF8vo1bK8
+	BCZQ//z0Xq4SesPu4bNZL06uo1QO5Gk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734923414;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ddFWJy7zs9oCDYfpZsv0LCBYdrU1857cNzAeIpY0tY=;
+	b=a6TJnzjs7l7EP5q/QYWgh65kZreareWkx4q4ttKhwJE/LI6VcpTGt1JQ/5TF69mfZoniZ2
+	dBh6Kkrk71IvksBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=InSththi;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=a6TJnzjs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734923414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ddFWJy7zs9oCDYfpZsv0LCBYdrU1857cNzAeIpY0tY=;
+	b=InSththiPsEp7jimIXJz14xqnA2K5u6R5tQCNwjvuMarKp1JEfp9XCn5Iz6PGIYMu2nwtT
+	kx8OiIXHx3gHzGa2YyYdUkAZvlufS/QJMQaa9x4SPiGTqdkcbTv5trY5P6x1cbF8vo1bK8
+	BCZQ//z0Xq4SesPu4bNZL06uo1QO5Gk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734923414;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ddFWJy7zs9oCDYfpZsv0LCBYdrU1857cNzAeIpY0tY=;
+	b=a6TJnzjs7l7EP5q/QYWgh65kZreareWkx4q4ttKhwJE/LI6VcpTGt1JQ/5TF69mfZoniZ2
+	dBh6Kkrk71IvksBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDCAD13485;
+	Mon, 23 Dec 2024 03:10:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id U5U1HJPUaGc1FAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 23 Dec 2024 03:10:11 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3XoIxzmhnKTuBFQ--.5176S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4kCw18tF1rAryfJF18Xwb_yoW5KFyDpF
-	yfG34Syr48Z3W3AFZFk34UXryrJwn3ZF15Jry3Xr98Zr10y3W7GFsFgw10yr1UGr10vrs0
-	vr4Dtryjgw48ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+From: "NeilBrown" <neilb@suse.de>
+To: "Hillf Danton" <hdanton@sina.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] VFS: add inode_dir_lock/unlock
+In-reply-to: <20241221012128.307-1-hdanton@sina.com>
+References: <20241220030830.272429-1-neilb@suse.de>,
+ <20241221012128.307-1-hdanton@sina.com>
+Date: Mon, 23 Dec 2024 14:10:07 +1100
+Message-id: <173492340768.11072.6052736961769187676@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 7BAE51F38D
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[sina.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[sina.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Sat, 21 Dec 2024, Hillf Danton wrote:
+> On Fri, 20 Dec 2024 13:54:26 +1100 NeilBrown <neilb@suse.de>
+> > During the transition from providing exclusive locking on the directory
+> > for directory modifying operation to providing exclusive locking only on
+> > the dentry with a shared lock on the directory - we need an alternate
+> > way to provide exclusion on the directory for file systems which haven't
+> > been converted.  This is provided by inode_dir_lock() and
+> > inode_dir_inlock().
+> > This uses a bit in i_state for locking, and wait_var_event_spinlock() for
+> > waiting.
+> > 
+> Inventing anything like mutex sounds bad.
 
-This addresses a data corruption issue encountered during partial page
-zeroing in ext4 which the block size is smaller than the page size [1].
-Expand this test to include a zeroing range test that spans two partial
-pages to cover this case.
+In general I would agree.  But when the cost of adding a mutex exceeds
+the cost of using an alternate solution that only requires 2 bits, I
+think the alternate solution is justified.
 
-Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- tests/generic/567     | 50 +++++++++++++++++++++++++------------------
- tests/generic/567.out | 18 ++++++++++++++++
- 2 files changed, 47 insertions(+), 21 deletions(-)
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -722,6 +722,8 @@ struct inode {
+> >  		void (*free_inode)(struct inode *);
+> >  	};
+> >  	struct file_lock_context	*i_flctx;
+> > +
+> > +	struct lockdep_map	i_dirlock_map;	/* For tracking I_DIR_LOCKED locks */
+> 
+> The cost of this map says no to any attempt inventing mutex in any form.
+> 
 
-diff --git a/tests/generic/567 b/tests/generic/567
-index fc109d0d..756280e8 100755
---- a/tests/generic/567
-+++ b/tests/generic/567
-@@ -4,43 +4,51 @@
- #
- # FS QA Test No. generic/567
- #
--# Test mapped writes against punch-hole to ensure we get the data
--# correctly written. This can expose data corruption bugs on filesystems
--# where the block size is smaller than the page size.
-+# Test mapped writes against punch-hole and zero-range to ensure we get
-+# the data correctly written. This can expose data corruption bugs on
-+# filesystems where the block size is smaller than the page size.
- #
- # (generic/029 is a similar test but for truncate.)
- #
- . ./common/preamble
--_begin_fstest auto quick rw punch
-+_begin_fstest auto quick rw punch zero
- 
- # Import common functions.
- . ./common/filter
- 
- _require_scratch
- _require_xfs_io_command "fpunch"
-+_require_xfs_io_command "fzero"
- 
- testfile=$SCRATCH_MNT/testfile
- 
- _scratch_mkfs > /dev/null 2>&1
- _scratch_mount
- 
--# Punch a hole straddling two pages to check that the mapped write after the
--# hole-punching is correctly handled.
--
--$XFS_IO_PROG -t -f \
---c "pwrite -S 0x58 0 12288" \
---c "mmap -rw 0 12288" \
---c "mwrite -S 0x5a 2048 8192" \
---c "fpunch 2048 8192" \
---c "mwrite -S 0x59 2048 8192" \
---c "close"      \
--$testfile | _filter_xfs_io
--
--echo "==== Pre-Remount ==="
--_hexdump $testfile
--_scratch_cycle_mount
--echo "==== Post-Remount =="
--_hexdump $testfile
-+# Punch a hole and zero out straddling two pages to check that the mapped
-+# write after the hole-punching and range-zeroing are correctly handled.
-+_straddling_test()
-+{
-+	local test_cmd=$1
-+
-+	$XFS_IO_PROG -t -f \
-+		-c "pwrite -S 0x58 0 12288" \
-+		-c "mmap -rw 0 12288" \
-+		-c "mwrite -S 0x5a 2048 8192" \
-+		-c "$test_cmd 2048 8192" \
-+		-c "mwrite -S 0x59 2048 8192" \
-+		-c "close"      \
-+	$testfile | _filter_xfs_io
-+
-+	echo "==== Pre-Remount ==="
-+	_hexdump $testfile
-+	_scratch_cycle_mount
-+	echo "==== Post-Remount =="
-+	_hexdump $testfile
-+}
-+
-+_straddling_test "fpunch"
-+_straddling_test "fzero"
- 
- status=0
- exit
-diff --git a/tests/generic/567.out b/tests/generic/567.out
-index 0e826ed3..df89b8f3 100644
---- a/tests/generic/567.out
-+++ b/tests/generic/567.out
-@@ -17,3 +17,21 @@ XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
- 002800 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
- *
- 003000
-+wrote 12288/12288 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+==== Pre-Remount ===
-+000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
-+*
-+000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  >YYYYYYYYYYYYYYYY<
-+*
-+002800 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
-+*
-+003000
-+==== Post-Remount ==
-+000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
-+*
-+000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  >YYYYYYYYYYYYYYYY<
-+*
-+002800 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
-+*
-+003000
--- 
-2.46.1
+"struct lockdep_map" is size-zero when lockdep is not enabled.  And when
+it is enabled we accept the cost of larger structures to benefit from
+deadlock detection.
+So I don't think this is a sound argument.
 
+Thanks for the review,
+NeilBrown
 
