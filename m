@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27169FAFBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:28:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C436E9FAFC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 318847A3768
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:28:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A522169766
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DD21DDC18;
-	Mon, 23 Dec 2024 14:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565811DE3A6;
+	Mon, 23 Dec 2024 14:20:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329CE1DD886;
-	Mon, 23 Dec 2024 14:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EAC1DDC22;
+	Mon, 23 Dec 2024 14:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734963627; cv=none; b=MRis0c3eRMrtGNBgX6kOY/cqn7+HQZp6pO1brwWDCw/QDAn6OBC0fXmVGrF2lF4OeYlBAUjbboOlP6hdSQwEacCXpNq0U6nFIb1T3HnHChyJ344LSeFAoXW5lpZtTrP8RPvq0RLVz+cwIAQ6ARywkbUDPDS6nujEbQuLRstQYEs=
+	t=1734963629; cv=none; b=cstYCoRmCVSX6m4EqWa8kSNfpXXBDKagk+xTCTenMRHpyTtQ3+En/N11tFsooOSHBdwkFfcxAtcrWz/5P4TI785jzqGntPooJgruOCIqNm6Js6GSUVXUp5KsaB6plpx9nEZlAAloElrTpeRBzaktHhEjAEpsPaBmG7Cm9joXBaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734963627; c=relaxed/simple;
-	bh=QlnJEpBp4fXU3fC+e0GKeOTxfhyigAYnpz0GbfIk3zI=;
+	s=arc-20240116; t=1734963629; c=relaxed/simple;
+	bh=LD1ldJyFEOxj/gShQMs55PiIrz4vec4vEH1Dps8gt9M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vr4TF4CVaJ0FCzmo36ddZrc/GgkD/3E1FAzVYBV6xXT0T7Imq43aj5Yr4QRw1HqGYsfxdEApabPIw0tsq83D6I35XmLldletidAsmDwefIXzGT18gjZnJ0w2SopNKfFb74cMTnkSsi8t0PIA+WeZa1YaZ9fw+vB2HQXf5R9JTwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=XSUsFNoXqEyyaojQ1zzpetYIs1/2CS9+OoWzQ/UUeYGq4NKvAIfZvxf5/P4YPgvzxzg1w01tlE81DcE5vV7cL4dgy90zvBam6rN7Qj3rk/O/ZeuCEiCugxOk1O3dOr0D1kynxtdlpxRGSpjK9WHmwwPnYHqG66eNpoHL4Ag/Ano=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YH0Tx66Xlz1kwqQ;
-	Mon, 23 Dec 2024 22:17:41 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YH0YT4HKfz20mck;
+	Mon, 23 Dec 2024 22:20:45 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id DB2F81A0188;
-	Mon, 23 Dec 2024 22:20:22 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 1AD13180043;
+	Mon, 23 Dec 2024 22:20:26 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Dec
- 2024 22:20:19 +0800
+ 2024 22:20:22 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -63,9 +63,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v4 -next 15/15] sysctl: remove unneeded include
-Date: Mon, 23 Dec 2024 22:15:34 +0800
-Message-ID: <20241223141550.638616-16-yukaixiong@huawei.com>
+Subject: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into its own files
+Date: Mon, 23 Dec 2024 22:15:35 +0800
+Message-ID: <20241223141550.638616-17-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241223141550.638616-1-yukaixiong@huawei.com>
 References: <20241223141550.638616-1-yukaixiong@huawei.com>
@@ -80,57 +80,78 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-Removing unneeded mm includes in kernel/sysctl.c.
+This patch series moves sysctls of vm_table in kernel/sysctl.c to
+places where they actually belong, and do some related code clean-ups.
+After this patch series, all sysctls in vm_table have been moved into its
+own files, meanwhile, delete vm_table.
 
-Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
----
- kernel/sysctl.c | 6 ------
- 1 file changed, 6 deletions(-)
+All the modifications of this patch series base on
+linux-next(tags/next-20241219). To test this patch series, the code was
+compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+x86_64 architectures. After this patch series is applied, all files
+under /proc/sys/vm can be read or written normally.
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cebd0ef5d19d..aece984bee19 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -20,8 +20,6 @@
-  */
- 
- #include <linux/module.h>
--#include <linux/mm.h>
--#include <linux/slab.h>
- #include <linux/sysctl.h>
- #include <linux/bitmap.h>
- #include <linux/signal.h>
-@@ -30,7 +28,6 @@
- #include <linux/proc_fs.h>
- #include <linux/security.h>
- #include <linux/ctype.h>
--#include <linux/kmemleak.h>
- #include <linux/filter.h>
- #include <linux/fs.h>
- #include <linux/init.h>
-@@ -41,7 +38,6 @@
- #include <linux/highuid.h>
- #include <linux/writeback.h>
- #include <linux/ratelimit.h>
--#include <linux/hugetlb.h>
- #include <linux/initrd.h>
- #include <linux/key.h>
- #include <linux/times.h>
-@@ -52,13 +48,11 @@
- #include <linux/reboot.h>
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
--#include <linux/oom.h>
- #include <linux/kmod.h>
- #include <linux/capability.h>
- #include <linux/binfmts.h>
- #include <linux/sched/sysctl.h>
- #include <linux/mount.h>
--#include <linux/userfaultfd_k.h>
- #include <linux/pid.h>
- 
- #include "../lib/kstrtox.h"
+Changes in v4:
+ - change all "static struct ctl_table" type into
+   "static const struct ctl_table" type in patch1~10,12,13,14
+ - simplify result of rpcauth_cache_shrink_count() in patch11
+
+Changes in v3:
+ - change patch1~10, patch14 title suggested by Joel Granados
+ - change sysctl_stat_interval to static type in patch1
+ - add acked-by from Paul Moore in patch7
+ - change dirtytime_expire_interval to static type in patch9
+ - add acked-by from Anna Schumaker in patch11
+
+Changes in v2:
+ - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+ - update changelog for patch7/12, suggested by Kees/Paul
+ - fix patch8, sorry for wrong changes and forget to built with NOMMU
+ - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+ - add reviewed-by from Jan Kara, Christian Brauner in patch12
+
+Kaixiong Yu (15):
+  mm: vmstat: move sysctls to mm/vmstat.c
+  mm: filemap: move sysctl to mm/filemap.c
+  mm: swap: move sysctl to mm/swap.c
+  mm: vmscan: move vmscan sysctls to mm/vmscan.c
+  mm: util: move sysctls to mm/util.c
+  mm: mmap: move sysctl to mm/mmap.c
+  security: min_addr: move sysctl to security/min_addr.c
+  mm: nommu: move sysctl to mm/nommu.c
+  fs: fs-writeback: move sysctl to fs/fs-writeback.c
+  fs: drop_caches: move sysctl to fs/drop_caches.c
+  sunrpc: simplify rpcauth_cache_shrink_count()
+  fs: dcache: move the sysctl to fs/dcache.c
+  x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+  sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+  sysctl: remove unneeded include
+
+ arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+ arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+ fs/dcache.c                        |  21 ++-
+ fs/drop_caches.c                   |  23 ++-
+ fs/fs-writeback.c                  |  30 ++--
+ include/linux/dcache.h             |   7 +-
+ include/linux/mm.h                 |  23 ---
+ include/linux/mman.h               |   2 -
+ include/linux/swap.h               |   9 --
+ include/linux/vmstat.h             |  11 --
+ include/linux/writeback.h          |   4 -
+ kernel/sysctl.c                    | 221 -----------------------------
+ mm/filemap.c                       |  18 ++-
+ mm/internal.h                      |  10 ++
+ mm/mmap.c                          |  54 +++++++
+ mm/nommu.c                         |  15 +-
+ mm/swap.c                          |  16 ++-
+ mm/swap.h                          |   1 +
+ mm/util.c                          |  67 +++++++--
+ mm/vmscan.c                        |  23 +++
+ mm/vmstat.c                        |  44 +++++-
+ net/sunrpc/auth.c                  |   2 +-
+ security/min_addr.c                |  11 ++
+ 23 files changed, 330 insertions(+), 312 deletions(-)
+
 -- 
 2.34.1
 
