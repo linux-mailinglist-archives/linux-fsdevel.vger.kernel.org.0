@@ -1,112 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-38009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7289FA7A8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2024 20:19:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6EB9FA961
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 03:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CC8B7A20DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2024 19:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3AED164F4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 02:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27974191489;
-	Sun, 22 Dec 2024 19:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OxjY5uLP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627673EA69;
+	Mon, 23 Dec 2024 02:43:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D639F1DFF8
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Dec 2024 19:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495714C70;
+	Mon, 23 Dec 2024 02:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734895155; cv=none; b=GBNqsGj9Dt4hBPQ3ym8CqbQtAlSZsqwSpVAo4dj5igmKuGof/xzQa0VotkmcDzr4YV9t6yjK1K3mGxqBhJlT9S1txt73nGCQxFS4jrli4KsmNxlED7JkTck2mAnCQjvXITn7+O91fpcGqJWhftx6UH6cLkd/owwoKH1w73ao/S0=
+	t=1734921795; cv=none; b=BF6jEwOa8u0pyBekL9lFvnQzxqidyPdanow4Ux6R/DaUwbY06QXFegW5QOCCN2M2uBzyhV0RBW+ZJJlLw0CFhzon5uLtg+CCHhWAHaiaR0XV1OfpFuKUcXNmBPTTEyT/ZL0qXAj1elvvEs0Da8+oErnoJF3pLGbYynWIW/J9JXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734895155; c=relaxed/simple;
-	bh=3fYwNzIBWKbEuxRCKjXnKf6+QLQCZIJ7U4RHQamSGUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lLFAGc+bdI8UsLSTauJqwNKhfrh+9BIXxVmNFNIoIfSurkoCn6wl/CMbdm5WfS9me3zXkzWx2FNmyFnZq7Wq6NxxFViF1tQv43MHLTc5coX9IE43AkhJWr3fQXfIB2KHq+29upiMrQsxZAUkiqrFAszEavcv5A9AwDWi1fcQdao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OxjY5uLP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734895152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3fYwNzIBWKbEuxRCKjXnKf6+QLQCZIJ7U4RHQamSGUY=;
-	b=OxjY5uLPt9BTGTTrrLM7dU45kdenvG5Z4cGpRn5MNF4gdYf81G3KBH1gmVXh60D1e0T0Uf
-	gFk4JSHwwara6krA+EweyIAERAa4gZ2kP/RRHmk3VQ9b6Tq2luZq2xn2QYGq2EOjtIpkmG
-	OLsvChvPCbS68hvpIfzOw9LRaUM8664=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-125-M0dHsuhIMK6xe8Bd2aO7gg-1; Sun,
- 22 Dec 2024 14:19:09 -0500
-X-MC-Unique: M0dHsuhIMK6xe8Bd2aO7gg-1
-X-Mimecast-MFC-AGG-ID: M0dHsuhIMK6xe8Bd2aO7gg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DA5719560AA;
-	Sun, 22 Dec 2024 19:19:07 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.16])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 535C83000197;
-	Sun, 22 Dec 2024 19:19:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 22 Dec 2024 20:18:43 +0100 (CET)
-Date: Sun, 22 Dec 2024 20:18:37 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dylan Hatch <dylanbhatch@google.com>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/proc: do_task_stat: Fix ESP not readable during
- coredump
-Message-ID: <20241222191837.GA4224@redhat.com>
-References: <cover.1730883229.git.namcao@linutronix.de>
- <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
- <20241217145923.GA29091@redhat.com>
- <20241217150913.GB29091@redhat.com>
- <20241220145326.Q7Z6NQ7j@linutronix.de>
+	s=arc-20240116; t=1734921795; c=relaxed/simple;
+	bh=epH6mfC9cH98Qgtiyo4xjZbPdxf+AuONA7UNbMDxLMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mW+rzKykplIlZvuVk9ZQSkGmmEqErmyedMSK8T7MZLqxrtg0/PAr8gN3WYhZdHND/WpJvch+nDYXoaWTNi/pHAQ/OAh7xwygLRLE07B3vhjPTtFn8C+dbZzgt2lrVo05IHPbKp/rCYvIDrhdwOvyL1U1BGPM3hUzDtZmGw9QTfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YGj473R3Hz4f3lWG;
+	Mon, 23 Dec 2024 10:42:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 328C11A018C;
+	Mon, 23 Dec 2024 10:43:08 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgA3XoIxzmhnKTuBFQ--.5176S4;
+	Mon, 23 Dec 2024 10:43:05 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: fstests@vger.kernel.org,
+	zlang@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	willy@infradead.org,
+	ojaswin@linux.ibm.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [xfstests PATCH] generic/567: add partial pages zeroing out case
+Date: Mon, 23 Dec 2024 10:39:30 +0800
+Message-ID: <20241223023930.2328634-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241220145326.Q7Z6NQ7j@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3XoIxzmhnKTuBFQ--.5176S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF4kCw18tF1rAryfJF18Xwb_yoW5KFyDpF
+	yfG34Syr48Z3W3AFZFk34UXryrJwn3ZF15Jry3Xr98Zr10y3W7GFsFgw10yr1UGr10vrs0
+	vr4Dtryjgw48ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Nam,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-On 12/20, Nam Cao wrote:
->
-> > Can't the trivial patch below fix the problem?
->
-> It can. In fact this is the original fix we had. I thought that checking a
-> single "core_state" is simpler than checking 3 flags, oh well..
->
-> Can you send a proper patch, or should I do it?
+This addresses a data corruption issue encountered during partial page
+zeroing in ext4 which the block size is smaller than the page size [1].
+Expand this test to include a zeroing range test that spans two partial
+pages to cover this case.
 
-Can you send V2 please? It was you who found/investigated the problem,
-and the patch is trivial.
+Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ tests/generic/567     | 50 +++++++++++++++++++++++++------------------
+ tests/generic/567.out | 18 ++++++++++++++++
+ 2 files changed, 47 insertions(+), 21 deletions(-)
 
-Feel free to include my acked-by.
-
-Thanks,
-
-Oleg.
+diff --git a/tests/generic/567 b/tests/generic/567
+index fc109d0d..756280e8 100755
+--- a/tests/generic/567
++++ b/tests/generic/567
+@@ -4,43 +4,51 @@
+ #
+ # FS QA Test No. generic/567
+ #
+-# Test mapped writes against punch-hole to ensure we get the data
+-# correctly written. This can expose data corruption bugs on filesystems
+-# where the block size is smaller than the page size.
++# Test mapped writes against punch-hole and zero-range to ensure we get
++# the data correctly written. This can expose data corruption bugs on
++# filesystems where the block size is smaller than the page size.
+ #
+ # (generic/029 is a similar test but for truncate.)
+ #
+ . ./common/preamble
+-_begin_fstest auto quick rw punch
++_begin_fstest auto quick rw punch zero
+ 
+ # Import common functions.
+ . ./common/filter
+ 
+ _require_scratch
+ _require_xfs_io_command "fpunch"
++_require_xfs_io_command "fzero"
+ 
+ testfile=$SCRATCH_MNT/testfile
+ 
+ _scratch_mkfs > /dev/null 2>&1
+ _scratch_mount
+ 
+-# Punch a hole straddling two pages to check that the mapped write after the
+-# hole-punching is correctly handled.
+-
+-$XFS_IO_PROG -t -f \
+--c "pwrite -S 0x58 0 12288" \
+--c "mmap -rw 0 12288" \
+--c "mwrite -S 0x5a 2048 8192" \
+--c "fpunch 2048 8192" \
+--c "mwrite -S 0x59 2048 8192" \
+--c "close"      \
+-$testfile | _filter_xfs_io
+-
+-echo "==== Pre-Remount ==="
+-_hexdump $testfile
+-_scratch_cycle_mount
+-echo "==== Post-Remount =="
+-_hexdump $testfile
++# Punch a hole and zero out straddling two pages to check that the mapped
++# write after the hole-punching and range-zeroing are correctly handled.
++_straddling_test()
++{
++	local test_cmd=$1
++
++	$XFS_IO_PROG -t -f \
++		-c "pwrite -S 0x58 0 12288" \
++		-c "mmap -rw 0 12288" \
++		-c "mwrite -S 0x5a 2048 8192" \
++		-c "$test_cmd 2048 8192" \
++		-c "mwrite -S 0x59 2048 8192" \
++		-c "close"      \
++	$testfile | _filter_xfs_io
++
++	echo "==== Pre-Remount ==="
++	_hexdump $testfile
++	_scratch_cycle_mount
++	echo "==== Post-Remount =="
++	_hexdump $testfile
++}
++
++_straddling_test "fpunch"
++_straddling_test "fzero"
+ 
+ status=0
+ exit
+diff --git a/tests/generic/567.out b/tests/generic/567.out
+index 0e826ed3..df89b8f3 100644
+--- a/tests/generic/567.out
++++ b/tests/generic/567.out
+@@ -17,3 +17,21 @@ XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+ 002800 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
+ *
+ 003000
++wrote 12288/12288 bytes at offset 0
++XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
++==== Pre-Remount ===
++000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
++*
++000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  >YYYYYYYYYYYYYYYY<
++*
++002800 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
++*
++003000
++==== Post-Remount ==
++000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
++*
++000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  >YYYYYYYYYYYYYYYY<
++*
++002800 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
++*
++003000
+-- 
+2.46.1
 
 
