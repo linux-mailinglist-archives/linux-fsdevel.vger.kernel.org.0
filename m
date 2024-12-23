@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810049FB011
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:36:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D339FB014
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 15:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2636F16D2E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22B9169308
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2024 14:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8854F1E3793;
-	Mon, 23 Dec 2024 14:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72741E47BE;
+	Mon, 23 Dec 2024 14:21:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549C1E3762;
-	Mon, 23 Dec 2024 14:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BC51E3DE7;
+	Mon, 23 Dec 2024 14:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734963677; cv=none; b=g1sn/LR4iLDxxua9xEOWXdekqv8xYdipF0cA7puh6JT1MGX/4q4r7HsIDLkeA6/wbmpQ5pX9I7EX4QnfoDwLGrC9lP40rWa6Ansq1hfSxaUXElQzJ1gF5ll1uluidFM9ScpsPk5WORwiCrO5Xu8fS7S0k5boHbJr40ZDIfO3LdI=
+	t=1734963680; cv=none; b=teLPAcG5/qDCtru4GnQx2MQWwOz2ivOdcyXCdkynIXkr1UhjqZm5MN/zl70P9YRnjwXIddDOglGozXxDtTDEVh2u2XoHBdQpr/Cxc01AJaLpY2yQK6EZjIfUJMMHf90D0oWwfUGTsb5UKkhgOqf3N6j9B4gVxK1ecCaREBQ8loQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734963677; c=relaxed/simple;
-	bh=mVynxR4ENQ8pwt669iVIuxHpk/Ejk3/+P2N16D+TN5M=;
+	s=arc-20240116; t=1734963680; c=relaxed/simple;
+	bh=QlnJEpBp4fXU3fC+e0GKeOTxfhyigAYnpz0GbfIk3zI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RmQoyEey/6+PMgbmSzxw5UxZDF2t2KGte/UECx+vNWMnLkiMlSRSMPzmzeQGrBvDBBKPsczIWnUxz87+8SeXZpwJGZkLINwpCrQJ7HSA9a6p6V8vwYOARutHOFHmm6GH4hOvI+lNSwXZ6H8Rhje9HemIou7MVXxNvDL7FeB6nO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=exVZo0PJjCHrCffO3aCXqKM18YcfCEbEN1g6KEXSGlc7YDAhN1iQNuCuKYvxJmerzDYB0L++z1Ml99F8ReL+177nNY8F1fvVr7sgjVY5viIuxmET+4tADdHlIb6Ee9EPnm38/w8gbIK2Zt8mj+CXCS0Z9wJo1icCttS+x+FFc94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YH0YS60ZCz1JG5j;
-	Mon, 23 Dec 2024 22:20:44 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YH0ZR5blCz20mgG;
+	Mon, 23 Dec 2024 22:21:35 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1079C140202;
-	Mon, 23 Dec 2024 22:21:13 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 486461A016C;
+	Mon, 23 Dec 2024 22:21:16 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Dec
- 2024 22:21:09 +0800
+ 2024 22:21:12 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -63,9 +63,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v4 -next 14/15] sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
-Date: Mon, 23 Dec 2024 22:15:49 +0800
-Message-ID: <20241223141550.638616-31-yukaixiong@huawei.com>
+Subject: [PATCH v4 -next 15/15] sysctl: remove unneeded include
+Date: Mon, 23 Dec 2024 22:15:50 +0800
+Message-ID: <20241223141550.638616-32-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241223141550.638616-1-yukaixiong@huawei.com>
 References: <20241223141550.638616-1-yukaixiong@huawei.com>
@@ -80,91 +80,57 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-When CONFIG_SUPERH and CONFIG_VSYSCALL are defined,
-vdso_enabled belongs to arch/sh/kernel/vsyscall/vsyscall.c.
-So, move it into its own file. After this patch is applied,
-all sysctls of vm_table would be moved. So, delete vm_table.
+Removing unneeded mm includes in kernel/sysctl.c.
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
 ---
-v4:
- - const qualify struct ctl_table vdso_table
-v3:
- - change the title
----
----
- arch/sh/kernel/vsyscall/vsyscall.c | 14 ++++++++++++++
- kernel/sysctl.c                    | 14 --------------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ kernel/sysctl.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/sh/kernel/vsyscall/vsyscall.c b/arch/sh/kernel/vsyscall/vsyscall.c
-index add35c51e017..898132f34e6a 100644
---- a/arch/sh/kernel/vsyscall/vsyscall.c
-+++ b/arch/sh/kernel/vsyscall/vsyscall.c
-@@ -14,6 +14,7 @@
- #include <linux/module.h>
- #include <linux/elf.h>
- #include <linux/sched.h>
-+#include <linux/sysctl.h>
- #include <linux/err.h>
- 
- /*
-@@ -30,6 +31,17 @@ static int __init vdso_setup(char *s)
- }
- __setup("vdso=", vdso_setup);
- 
-+static const struct ctl_table vdso_table[] = {
-+	{
-+		.procname	= "vdso_enabled",
-+		.data		= &vdso_enabled,
-+		.maxlen		= sizeof(vdso_enabled),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+		.extra1		= SYSCTL_ZERO,
-+	},
-+};
-+
- /*
-  * These symbols are defined by vsyscall.o to mark the bounds
-  * of the ELF DSO images included therein.
-@@ -55,6 +67,8 @@ int __init vsyscall_init(void)
- 	       &vsyscall_trapa_start,
- 	       &vsyscall_trapa_end - &vsyscall_trapa_start);
- 
-+	register_sysctl_init("vm", vdso_table);
-+
- 	return 0;
- }
- 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 7ff07b7560b4..cebd0ef5d19d 100644
+index cebd0ef5d19d..aece984bee19 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2012,23 +2012,9 @@ static struct ctl_table kern_table[] = {
- #endif
- };
+@@ -20,8 +20,6 @@
+  */
  
--static struct ctl_table vm_table[] = {
--#if defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL)
--	{
--		.procname	= "vdso_enabled",
--		.data		= &vdso_enabled,
--		.maxlen		= sizeof(vdso_enabled),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--		.extra1		= SYSCTL_ZERO,
--	},
--#endif
--};
--
- int __init sysctl_init_bases(void)
- {
- 	register_sysctl_init("kernel", kern_table);
--	register_sysctl_init("vm", vm_table);
+ #include <linux/module.h>
+-#include <linux/mm.h>
+-#include <linux/slab.h>
+ #include <linux/sysctl.h>
+ #include <linux/bitmap.h>
+ #include <linux/signal.h>
+@@ -30,7 +28,6 @@
+ #include <linux/proc_fs.h>
+ #include <linux/security.h>
+ #include <linux/ctype.h>
+-#include <linux/kmemleak.h>
+ #include <linux/filter.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+@@ -41,7 +38,6 @@
+ #include <linux/highuid.h>
+ #include <linux/writeback.h>
+ #include <linux/ratelimit.h>
+-#include <linux/hugetlb.h>
+ #include <linux/initrd.h>
+ #include <linux/key.h>
+ #include <linux/times.h>
+@@ -52,13 +48,11 @@
+ #include <linux/reboot.h>
+ #include <linux/ftrace.h>
+ #include <linux/perf_event.h>
+-#include <linux/oom.h>
+ #include <linux/kmod.h>
+ #include <linux/capability.h>
+ #include <linux/binfmts.h>
+ #include <linux/sched/sysctl.h>
+ #include <linux/mount.h>
+-#include <linux/userfaultfd_k.h>
+ #include <linux/pid.h>
  
- 	return 0;
- }
+ #include "../lib/kstrtox.h"
 -- 
 2.34.1
 
