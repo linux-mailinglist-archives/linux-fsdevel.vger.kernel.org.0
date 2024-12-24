@@ -1,108 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-38102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E5D9FBF72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 16:09:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED57F9FBFE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 17:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CC418854E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 15:09:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E2007A1E2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 16:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F321D63E1;
-	Tue, 24 Dec 2024 15:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5228A1D8A0B;
+	Tue, 24 Dec 2024 16:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ctMnb0ep";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="SZTJ1lKU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzw+JBz0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1910C4C80;
-	Tue, 24 Dec 2024 15:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A204E1B3926;
+	Tue, 24 Dec 2024 16:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735052948; cv=none; b=RBs/sF8zWeMT4Z+w4hRBHDlk4vMSC2tYzBy/jcA9qQBsybMDInqtRZijcw9Yax+PjaHt4z5yAZ7C8W9eplQEXnUVwVskGtuTyo6zm6mJtvDRO3cll+L0U38tN0hQTeCKcPSwPiQXWppIoUfKaeSTutq3BGsxaV/SLmhr7CdAZs4=
+	t=1735056346; cv=none; b=BSAUqVf2lDgWgG7gkUMWAaADdYayjQEjlSQQwBsgGk9FTvJ+I3HYKSJ+RdczB0uCm2bEz0YLYNF0I5Po35W45uO5cwtymJ6XgBHcGaDtAymnaHrb8BUDYBGpXKqIH7C67hgomi6HL+i7osVubbmkO/LU1TI14PR3jyXqCL8Nwuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735052948; c=relaxed/simple;
-	bh=m2IbEsVbJt2+tpFLXZd50VVxImL7PyJAbDeT4NmeizQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ev0h9c6zXOiMDqwwLYdl9l5VQZ85pFaHytf4vi25yIvHf+yu/QcpbTeMsr9ynoJuW+OTk8RY44d6eMtQYnpsXhLI1jJx4x3uu4papsNM4MLWCeweSZT2ilHRE3MGDdn/F3SyMx/3FcEwnyynwps7bYTaIYILuscsWVtqOIqs0qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ctMnb0ep; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=SZTJ1lKU; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1735052945;
-	bh=m2IbEsVbJt2+tpFLXZd50VVxImL7PyJAbDeT4NmeizQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=ctMnb0ep58iZIHwTH0tIhxEbOJxmXIFG/Lt1hdrt4nwsHM8++XKn5UFOAJknYaxy0
-	 6/UhdqvsyaVJa9T1rWHS5wdFa0buACmUnJgH333ABnVg6vkgdsvpg7cE0AWwr/NmRA
-	 OBpzMsJUdYGBvnguE8QGG2uq95hbkjeTK/JbP7Go=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2F3DA12807A6;
-	Tue, 24 Dec 2024 10:09:05 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id yY2jynytn77X; Tue, 24 Dec 2024 10:09:05 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1735052944;
-	bh=m2IbEsVbJt2+tpFLXZd50VVxImL7PyJAbDeT4NmeizQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=SZTJ1lKUwU3MCvQGIPCxtAztMPeaLzEzK64djujPHaMW8120Wbn039RsgTa9u1+w1
-	 xfowjox1QXHqP8o2d2w3cbToF5DCk1T2QPwWypJOCheemIDK5QRtvgHx1EM21q9B4k
-	 ftodSfo8KEfilFIriCm11l8dnj/mpFWmICFciOWY=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0A7FB1280659;
-	Tue, 24 Dec 2024 10:09:03 -0500 (EST)
-Message-ID: <03f765e9fa9cceeded1a02e12ddec68a0743233f.camel@HansenPartnership.com>
-Subject: Re: [PATCH 6/6] efivarfs: fix error on write to new variable
- leaving remnants
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr
-	 <jk@ozlabs.org>
-Date: Tue, 24 Dec 2024 10:09:01 -0500
-In-Reply-To: <25eadec2e46a5f0d452fd1b3d4902f67aeb39360.camel@HansenPartnership.com>
-References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com>
-	 <20241210170224.19159-7-James.Bottomley@HansenPartnership.com>
-	 <20241211-krabben-tresor-9f9c504e5bd7@brauner>
-	 <049209daadc928ecbf3bdb17d80634fa55842263.camel@HansenPartnership.com>
-	 <f9690563fe9d7ae4db31dd37650777e02580b332.camel@HansenPartnership.com>
-	 <20241223200513.GO1977892@ZenIV>
-	 <72a3f304b895084a1da0a8a326690a57fce541b7.camel@HansenPartnership.com>
-	 <20241223231218.GQ1977892@ZenIV>
-	 <41df6ecc304101b688f4b23040859d6b21ed15d8.camel@HansenPartnership.com>
-	 <20241224044414.GR1977892@ZenIV>
-	 <25eadec2e46a5f0d452fd1b3d4902f67aeb39360.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1735056346; c=relaxed/simple;
+	bh=ZpKBVprYkpYtjeHa4udStkTIytH/4XDXfCEGZY/JC3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ae7uLdcxGD5dzihPRy/eMBdz88YamngOF32un7iFLM5NWWG3qdMeps2ay5pIWD0AYwQhlKwspAC0qdv4psjWK5OGHNRSczWbUOWW1TwsyJ5fUe/7lj0CPdWofF+aDUkrrYF6vVIeOITSf0x5G1fMT36jBa7NZFJFrVwEjthyPkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzw+JBz0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF13C4CED0;
+	Tue, 24 Dec 2024 16:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735056346;
+	bh=ZpKBVprYkpYtjeHa4udStkTIytH/4XDXfCEGZY/JC3s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Wzw+JBz0bPJmn5MAIY2rpZJBiJoB3vO8JmL+mvdO7rlJ08uZpa9WQpSk0o0vuL3Hy
+	 R8Y9QhqO7HCIziB8XMGRQAzuoxgwbD3iFnIkLufsGrVHzCW1aVep+HEGY8BqTC8nma
+	 f408MziE079pqIALFjCYGkpzLXnNeGB3YrbgJA3NKFQLlqOEj/Uz6rycGOn4iAjPoq
+	 +FNboMNT3wg2UaHqJEuZ2ISUxLU6MkCgoHch4QGkHVjcW1JV6MSDC8J3R1FAi6MESx
+	 jQaHn/DKLVfNgNUoE237sPfun03v3kpICE4lRPhd/fgtI026ecFOYieZxu9Voh2ecV
+	 sYiXSCk/Iv5tw==
+Received: by pali.im (Postfix)
+	id 00CCF988; Tue, 24 Dec 2024 17:05:35 +0100 (CET)
+Date: Tue, 24 Dec 2024 17:05:35 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Errno codes from symlink() syscall
+Message-ID: <20241224160535.pi6nazpugqkhvfns@pali>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 
-On Tue, 2024-12-24 at 08:07 -0500, James Bottomley wrote:
-[...]
+TL;DR;
+Which errno code should network fs driver returns on create symlink
+failure to userspace application for these cases?
+* creating new symlink is not supported by fs driver mount options
+* creating new symlink is not supported by remote server software
+* creating new symlink is not supported by remote server storage
+* creating new symlink is not permitted for user due to missing
+  privilege/capability (indicated by remote server)
+* access to the directory was denied due to ACL/mode (on remote)
 
-> On the other hand the most intuitive thing would be to remove zero
-> length files on last close, not first, so if you have a thought on
-> how to do that easily, I'm all ears.
 
-I could do this by adding an open_count to the i_private data struct
-efivar_entry and reimplementing simple_open as an efivarfs specific
-open that increments this count and decrementing it in ->release(). 
-That's still somewhat adding "more convoluted crap", though ...
+Hello,
 
-Regards,
+I discussed with Steve that current error codes from symlink() syscall
+propagated to userspace on mounted SMB share are in most cases
+misleading for end user who is trying to create a new symlink via ln -s
+command.
 
-James
+Linux SMB client (cifs.ko) can see different kind of errors when it is
+trying to create a symlink on SMB server. I know at least about these
+errors which can happen:
 
+1 For the current mount parameters, the Linux SMB client does not
+  implement creating a new symlink yet and server supports symlinks.
+  This applies for example for SMB1 dialect against Windows server, when
+  Linux SMB client is already able to query existing symlinks via
+  readlink() syscall (just not able to create new one).
+
+2 For the current mount parameters, the SMB server does not support
+  symlink operations at all. But it can support it when using other
+  mount parameters. This applies for example for older Samba server with
+  SMB2+ dialect (when older version supported symlinks only over SMB1).
+
+3 The SMB server for the mounted share does not support symlink
+  operations at all. For example server supports symlinks, but mounted
+  share is on FAT32 on which symlinks cannot be stored.
+
+4 The user who is logged to SMB server does not have a privilege to
+  create a new symlink at all. But server and also share supports
+  symlinks without any problem. Just this user is less privileged,
+  and no ACL/mode can help.
+
+5 The user does not have access right to create a new object (file,
+  directory, symlink, etc...) in the specified directory. For example
+  "chmod -w" can cause this.
+
+Linux SMB client should have all information via different SMB error
+codes to distinguish between all these 5 situations.
+
+On Windows servers for creating a new symlink is required that user has
+SeCreateSymbolicLinkPrivilege. This privilege is by default enabled only
+for Administrators, so by default ordinary users cannot create symlinks
+due to security restrictions. On the other hand, querying symlink path
+is allowed for any user (who has access to that symlink fs object).
+
+Therefore it is important for user who is calling 'ln -s' command on SMB
+share mounted on Linux to distinguish between 4 and 5 on failure. If
+user needs to just add "write-directory" permission (chmod +w) or asking
+AD admin for adding SeCreateSymbolicLinkPrivilege into Group Policy.
+
+
+I would like to open a discussion on fsdevel list, what errno codes from
+symlink() syscall should be reported to userspace for particular
+situations 1 - 5?
+
+Situation 5 should be classic EACCES. I think this should be clear.
+
+Situation 4 start to be complicated. Windows "privilege" is basically
+same as Linux "capability", it is bound to the process and in normal
+situation it is set by login manager. Just Linux does not have
+equivalent capability for allowing creating new symlink. But generally
+Linux for missing permission which is granted by capability (e.g. for
+ioperm() via CAP_SYS_RAWIO) is in lot of cases returned errno EPERM.
+
+So I thought that EPERM is a good errno candidate for situation 4, until
+I figured out that "symlink(2)" manapage has documented that EPERM has
+completely different meaning:
+
+  EPERM  The filesystem containing linkpath does not support the
+         creation of symbolic links.
+
+And I do not understand why. I have tried to call 'ln -s' on FAT32 and
+it really showed me: "Operation not permitted" even under root. For user
+this error message sounds like it needs to be admin / root. It is very
+misleading.
+
+At least it looks like that EPERM cannot be used for this situation.
+And so it is not so easy to figure out what error codes should be
+correctly returned to userspace.
+
+
+Pali
 
