@@ -1,293 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-38095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03BE9FBD1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 13:11:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 760BE9FBD74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 13:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0599E162015
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 12:11:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B95D47A20DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 12:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD641BDAA1;
-	Tue, 24 Dec 2024 12:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330F51B87F5;
+	Tue, 24 Dec 2024 12:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="AdmIhfyH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S2S4s2pe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03olkn2104.outbound.protection.outlook.com [40.92.57.104])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654541B1D65;
-	Tue, 24 Dec 2024 12:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.57.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735042261; cv=fail; b=CKrYzBValIg8ogRggh2QesxmB0PT48hMxGZi/LB+NQpVvtmwY1B82s1pw2FODWCtPsahdLOYrc5fDHr9GdGbCjkS9ul6RW+QBg0hDs6ug3M+o5ohA7iqf+i1HBNZY3Zv0wC+twywodVvK2ITU9n4iRy5yhZMUZmGsQUkKz1QAlk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735042261; c=relaxed/simple;
-	bh=RqurSDEhJxTWRT5tLP4jbuJYWtNbhlUiD1iCSFUBchM=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EcijOqQKkIRzzKVjgcegKg/lWed/yty9b+W0qC75k01iGakoBgV+Tahqa5tSXHE8JQR7ur0mq53VLLlmY5reyNZ9pz873k4sqCZJpB6uH+X8T+DeOM+kUhOzuLu1h/3S4DYP2pkm8BtwtoQCrWluGSZZGqkSH/yltSi1JSrlYBw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=AdmIhfyH; arc=fail smtp.client-ip=40.92.57.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b5cyzArNwDKDuE7ARPpHkosZQF1SL0lxUJdlxQzByJIusocOeCi9KBWyceS5WEEp8QrSFSxSUSNpNOAUYRflNEVnC0k9UsOMil+2TTrarDCo243VJgUNNpiGN9N4zQez/eJ9FtokSjVQJzxjjSCYBMw2vP/QBeGZjS08VVXnVK/+m1orCafhvIR7xDekU7D4FTyvGfZY34pGDFI1bUGnUYj8YN/oHAvtvPtxqSQKSxgzYiXnumOeQ2glV/NzO3gUrS94do3kgaHr+oYaBijKWiMFiJFU+iL8fEaAuEsy5xvnD4JUTvPZFMw5HrsfVF7q/siBMmCFEYAquUm5hkaIhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9oW7fR37d+6KUX0Aci4Lnv3pYfx3Ms7Y2On+6xU1jDo=;
- b=s9rrgJ7dXE5MO7CkxAKPAK53oFfEcjtLgZiqNHeUDUJGayvvlrEhO+Hs0fwpBufrCHgUHlzX++UrhTDrJUYBcAa7167CapmqV3figSL690B2Eq8Vst8yFHq5cAzZeQLyd2qAWi/aJrg+oI++4CKsBPGVoS8R7Ble15c7L5gRrOjfj3z1KZikRIDaHNcGnyqveJoH3Te6z9W+kyOnujjduH4ykZ7QlPKArUzDBbzihHpOl6FzSXQwRjflnHL3cZ/ugFj7Rv7Ttr5TLpDLZFyjHpPu9POueKpvVOI0QlatPIokrO+MIXJDcdA8iMFk4EmQ86zYjEB5ler61yE7rOTJSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9oW7fR37d+6KUX0Aci4Lnv3pYfx3Ms7Y2On+6xU1jDo=;
- b=AdmIhfyHTzuhkGlGG2IVsy51A4ANPvvJxuOSvAmLeF7I3tfHi/hDjlXtnP5/s1SWeHRBj2R6IRq0/ePK42KrwFpEPC5sL4fkbv79+ujyxpf+notDURDTuktYc2KINcAgsAaqk2hPm0ngWmg6fnj/TyY09qoIrITBCi2FiTtZQ+ice6koGDqEKxN+BXgFrSQYy++NytUOZ6PZ/146c9AW/PZLCRxtNVnum9zCUU9+8M78MMc12tAAda585ZhWm+XqkAxe/JRxuHYNSN52P0PrG9Tq2lEelt1h+xfnr2FlEqSyXFdgfydnXZUKbipfvGSM7TXpVL9yuUExfsa5RiRmTw==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by DBBPR03MB6794.eurprd03.prod.outlook.com (2603:10a6:10:209::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.21; Tue, 24 Dec
- 2024 12:10:56 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8272.013; Tue, 24 Dec 2024
- 12:10:56 +0000
-Message-ID:
- <AM6PR03MB50806221B121CB56E0D4958E99032@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Date: Tue, 24 Dec 2024 12:10:56 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v6 4/5] bpf: Make fs kfuncs available for SYSCALL
- program type
-From: Juntong Deng <juntong.deng@outlook.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com,
- Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-References: <AM6PR03MB5080DC63013560E26507079E99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080E0DFE4F9BAFFDB9D113B99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLU=W7fuEQommfDYrxr9A2ESV7E3uUAm4VUbEugKEZbkQ@mail.gmail.com>
- <AM6PR03MB50805EAC8B42B0570A2F76B399032@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Language: en-US
-In-Reply-To: <AM6PR03MB50805EAC8B42B0570A2F76B399032@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0327.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:390::10) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <af06e16d-8554-444e-b256-0fe253206160@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6046914D2BD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 12:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1735043880; cv=none; b=bWVETpiZYBV7UIj81fwyF6xCgzIw+cqoVrAotAyTFWWTqKFCxZGWIsmZpjnVxoCiYmXprcfT7pAQt1PJF4tW4NoLIBla2Ws8U0V8sYZf5hJzRUR/CwdHrEjIUQrVEGFHg/C9oI45160g9OJzFNZdjYDUiTP1Q9r22xRwzT4CpIQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1735043880; c=relaxed/simple;
+	bh=+ZI837Mep5kkGVexPqEp6/KPNQ+/9F2Nc8fRuhyfEts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lVxoPgXMFGNGqV9hZHFRszlsBdGAiN2yfi3xoGwyCZLjdq4yMtuUzgQ36+e83HqBXvCLy/f7dMtWphub2Pgd+MFzK9Uv82AA2WNgr989tQZiQa+L+aqHZqJZL+yQ5gv2YB7R/c/PHHmfUxZ7uxlREnNHbWHbyuSiiVyHhYobb4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S2S4s2pe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1735043877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NSG4ayEYm3Kz9Nh0mNnanQ0akRiWq82T1wa6YfP8Ei8=;
+	b=S2S4s2pex6PFD4Yy3b2Nh0krXVuLTOBb9V9SqlEQgPVQrkdnKB/vARHfNBKMXeJmL5iFs3
+	Xn+eM+hg3DP02KEF1dUVyIRS0UlMcsIyM9nOvP+lMQzh0nZg4FRYKyquGt7/kICDEiOtw4
+	UDnOD0TlUCHELZax8ixL+cSVCC9bGGQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-365-2mO-x_NON-O55VQ0LEksqA-1; Tue, 24 Dec 2024 07:37:53 -0500
+X-MC-Unique: 2mO-x_NON-O55VQ0LEksqA-1
+X-Mimecast-MFC-AGG-ID: 2mO-x_NON-O55VQ0LEksqA
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4361eb83f46so38258675e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 04:37:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735043873; x=1735648673;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NSG4ayEYm3Kz9Nh0mNnanQ0akRiWq82T1wa6YfP8Ei8=;
+        b=SH8M8BzaIqXOSDEXFS5M7EIqKYeL7G7sIP7+A6bQph6hVev6CJ6Y2lmuXyplmeZ89v
+         93s5zxPKuzatzM4mU9WA7yXGeHoMjT/rd51+HPVqAy+l/BULsd0AhfXHHqTJ2bPZtUgo
+         JPYCJdyNoC11V+QsshgLC8Dw4du9XGi2e2bloTYhMbrhOcPdv9GH7GI3FD5opcCvxDog
+         OthHivcc5iitGs3rBKlaLuPM0/7S7BT5RhZgO3GS4hH3r9ICOqYtuKWwrfe8HU8a7qfy
+         FxV/vOFyMtyauwd2xdpD+esYmCxf/+ADJ/oA0QLSA+B2lYqWxStdN73qi8L0XS9Za3gG
+         A4uA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1jAdOvUPPTpZ6jS6RnG5MUnFx2Qtw0K4T8WOxLB/X6lEtPZUP5mbNm6UXo/+eBau5shY7ARVMMai68BRd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcISW/q66lXrVygmx8btzbLu5EiNvuBPPCW8tJ+uJGsaePbjKd
+	9Y07BvUwyN6FzsWDMZzmLYOeTxSaFzKKgBLtlup6/5g0KFkXNObdTIIIcI3/jMc+xhfJo80foxW
+	67ov52gwmxfl4gYHnUggapoZzPakpD8xTC2rrR5oTEjkbN+IDr9W11zv/y7e2Ruw=
+X-Gm-Gg: ASbGncvRp49HkFR+gS7b1tG1lKl807hONZE/7wOfV+UYOoabUhsoD5BDbmUszfKRfLS
+	aWCReXLWmIWBdQYpRpef+e/B+0q80TXme7Llu7x1p6mmPi73LlFH8EkWBANHvxs2MQM7gyD0kCo
+	s+4ZAFbSox2sZV9zTRAfYTTdbVODIiRmC7YOkuUi09KNQNMcVkFU1aL+f/5KqyhbR1wksKAXri0
+	vpOXbWo4NdhuV5j+FJWRo+1rbqen8E7/1gNaRlbhVdCdjZnNjmsWt9Raw3U3x6/2TWPy5DCMacA
+	sDDIay5EUKjzCOSZubOzH1BXpWJOzwVoGgSTgsxsE8EdoklbXvtIIXMqLH0D4Z6Ovg5n8lSx/3Q
+	3E/UvT3bb
+X-Received: by 2002:a05:600c:1c91:b0:434:e9ee:c2d with SMTP id 5b1f17b1804b1-43668b5e085mr127426495e9.26.1735043872661;
+        Tue, 24 Dec 2024 04:37:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGsuTEaE5C3CRfktkkUHL4DfNBeyPEDuHNAm22EMav6rvDL0wDUDchnt71Z94INolH2uT9Fkg==
+X-Received: by 2002:a05:600c:1c91:b0:434:e9ee:c2d with SMTP id 5b1f17b1804b1-43668b5e085mr127426295e9.26.1735043872262;
+        Tue, 24 Dec 2024 04:37:52 -0800 (PST)
+Received: from ?IPV6:2003:cb:c72a:da00:e63f:f575:6b1a:df4e? (p200300cbc72ada00e63ff5756b1adf4e.dip0.t-ipconnect.de. [2003:cb:c72a:da00:e63f:f575:6b1a:df4e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b4471bsm200613125e9.44.2024.12.24.04.37.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Dec 2024 04:37:51 -0800 (PST)
+Message-ID: <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com>
+Date: Tue, 24 Dec 2024 13:37:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|DBBPR03MB6794:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6bbe39d-4475-4c30-456f-08dd241404d6
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|19110799003|8060799006|5072599009|15080799006|6090799003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VWpTWmZGYUswQmFVUE01WElwbTA1a1JObXVzaUtiZEE1Z0NlcmN5elR3WlBL?=
- =?utf-8?B?djZEcndhS3dEYWNuTHhocEl3Q3B6a0k3bnVnaGlNTi9Ea1pjdlNraGZQOVQw?=
- =?utf-8?B?dDVvRzJ1YjZSdHNmZStwQWN4dGcwbnExNnVlMUFxQXB3OVBxbXVvRFR4VHVX?=
- =?utf-8?B?TVM0OXNZNWdkSERvamNXZU5US0c1NTBKZlRJaUdFYktTV0ZzMHZ0YWh2c3RU?=
- =?utf-8?B?TlFjcXRPeUprdHd5OEVUQkhIakNPMkNTeldMS2JWMVR3ZmJqMVJVa1lhbDFG?=
- =?utf-8?B?NUJjUkRJbEpQVG80R0pPelcwYzNkMkk1VkFMbE9qL3VERFFhS2RvWUU3QjVB?=
- =?utf-8?B?M3N6ZHVBS1RJNk9USGUvckpGTStMOGhpTlBiTW5rVDNQRG54bDlPWjk5aGly?=
- =?utf-8?B?WVMwczRBQmtIQUhTVkdGTmJBWW1xeW4vL2RoREUvaG80SnRPb3BvZVAvejVu?=
- =?utf-8?B?U1d4eTJWRHpGaTE4V0lENDZoaVRpZXR2RXFnb3lueW82cVVvRUUxNG9yZ2Rs?=
- =?utf-8?B?aEhBd0RjTWV4OUl3TC9yZGFEcnNmcW9HUnRKMHgwazlncndVL2ZmY0xoNEZn?=
- =?utf-8?B?OUVFMTVRK0lXcVN0Z3hmNUtuaVRmdmE2ZkdnMEhhMnFmemtTR2U3ajZDNlBG?=
- =?utf-8?B?Snlxa01GWVlPNGdqRUxpSUpCYTFMWUFZZ0Z3dXpWNkQ4VjhKWGw4RkFZTFov?=
- =?utf-8?B?TU00OUZ5UDI1NG9uaVhUanhJN09kbUpYM240aGhaVEFTVG5CV3h0UW1ScHRu?=
- =?utf-8?B?SGhyOWJKYmUvOTJSNEV6aGJRb3RYQ3VqdFNldDN4VGJWUGhMeC95Z3RxQytx?=
- =?utf-8?B?QndPSytPYXM2eFEycGY2QUhrbzhyNDRudkk2RHY0cTlSamlIQmlpSnQ5aVgw?=
- =?utf-8?B?VWRxZHZlYmpxVnlvckNFYVdHbzJKUmhFb0xjZkZ1UGd1Q1NNUjFoelgrQk9I?=
- =?utf-8?B?WXg3SGs5enc2MXVOZjNuYW13RWw1anljMnptcUk0UmtFM2hVbmpCeHhzL05z?=
- =?utf-8?B?a2lMRGJTSDliT1Jvbk5leWk2b0ZPTGdDMDFYNGxuOHF3a3VwZnZkcHNjaDJn?=
- =?utf-8?B?eXlCMUxlbmZsZWlqTWVPS0NOQitDRWNPdlVEM3JPa090ZVpRQUN2cEV0aENi?=
- =?utf-8?B?dGo4bWRyZjhjNCtLcUc1VHhKWlJGWVA0NU92aUJRMis2VHNoSHpVWDFOM3B1?=
- =?utf-8?B?a3RQS0dqa3JmQ1dkVWd5WTNSdEtiSWd5OFY1ZnViMno4a2RDZndCQkdNTXRk?=
- =?utf-8?B?dm9ZNHBiZVkxeENLTnNyd04wSjB1WWgrQTA4YTVOb1dzbHFaNUU0Y1hKY1ZN?=
- =?utf-8?B?MDJWSDBtdVFpRlpKYjNHdjVrTTJBZCsyWkNLUVdDUWswajJMNlJEeG9nZlND?=
- =?utf-8?B?THZKb0tmeEtzUmhJWDhQb1V4LzdZUEdsM055dFd2cVFaU1JsUW15UXU0MmlP?=
- =?utf-8?B?SGN6Wks0YkhqVFZMQ1Fub3FuU0FKSFA2Snp6Q3p3PT0=?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkp4ZXVXRjZyT1ZlZklBdGpqKzMrbllzNTUzQjVWalVpQ0szY3ZHTFJmajNM?=
- =?utf-8?B?ZFFsTGtMQkgrQlF4bDZJNE9na0dVQUVCb01MelBNL0oxcXU2Q2hmTTdIM3FF?=
- =?utf-8?B?N0RUMFBEV045VVZDVmRrTTBoMkhFVjRTcXNVbFNqRVlhVnNzbFNoVlhwTG9z?=
- =?utf-8?B?ZjZFWDFDRnVkbGRLMXBYaTducDczTzZydS9Bb2Y1NGN3NUdnZHBwb2ZleXZw?=
- =?utf-8?B?bzVQL2hWSnR4L0F0NFBGOVdZbHdzdFhrMU9DaWJzZVlOV0pTRWVHVjBEZzFa?=
- =?utf-8?B?SmdsVVhCQ1pFQkNHMWpGQzE1Ym9BaWFseEo4STgvUGRIWTk0WFI3OHgwaWdI?=
- =?utf-8?B?dEtvZEFZWUxkOGNacGphVGp5SDgwb0p1Rk8xbWtBcDdqeU5Ud2FjNkV1Qyty?=
- =?utf-8?B?S0Jud1FPV2VhczJ5QXRDQmcwR3E4Z2g5eC9CN1BhY1A3UmZLcjA4T215Q1FY?=
- =?utf-8?B?VmlLSzdXZW1kb0NUamZOSjVIcStaT3lrZDhsajBISjNkUk1qdkdxenVLUnNZ?=
- =?utf-8?B?cjh0V1BrYzNmNkw5bTh1THYwU3FEQ1B2RzFYU09qdTgwaUErbGl5UTNvT0dm?=
- =?utf-8?B?dnRZOVRKUitvdDNKNlhGOHZ6Q0Fra0hHQTVLOFJ2ejcrSHpnSUpqQWpLOEVX?=
- =?utf-8?B?MzgzMTlvRVYrYkhRRlhYU09ZdkZwdWRrRmd1eHlmR2NEdTVjd2VhcUhBUjJ0?=
- =?utf-8?B?cTQ4WlRIT1FoS1p1M0N0T29yQkxsV0ljZHhOeHpYeWZTT1lXKzFIWlR3S3NW?=
- =?utf-8?B?M3RuaEEvQUVWZHo0cGZyVmZyZnBhOUFTUTN6YlNFQnRQZEpRZVJ2c3JzUlh2?=
- =?utf-8?B?R2oyaGRvQ3NUK3dJd2lJbGZKSU5OZGhSV0ZxbytVUzAzNFBYb2tIMS9pV2ZF?=
- =?utf-8?B?NkswVGk0T3lHbXJiMnJTVjNwZVduV0E0QzNxREx3Sm1Ua3VqUGtlY1lJSCtZ?=
- =?utf-8?B?S09SQkdVS25YeXR2UkxwZXFVODFQenZDc01pd0J2L3BlZlp0SGRKbVNMTnU2?=
- =?utf-8?B?WjZGQ2pzSlRyYy9DblVtM0xTRjQrY3dyU3AvblBIUGIxMFV4YVJmTXcxTWdY?=
- =?utf-8?B?VkVvTjRVa2NDV05VUlQxNGxzOElhVmxoN1dKYXMvQVMzNlFGeXBVTjc2UVN3?=
- =?utf-8?B?NE5GQ3BJbk1Qd1RoU1dpOGx2YWQweG81WHhhV1AzdEM1dXlBanN0ZXNXZEFJ?=
- =?utf-8?B?dGNqcjc0cVRFQzdlRGhYc3RZSUFrMXlUWGNxUzBQbno1SWRDVTUrWWtTeU55?=
- =?utf-8?B?RGFFYnFkWjBGV1J3emRkaUk5V21MN1F4QmF5OWk2TE4yN2ViSG9HY1RyaFB3?=
- =?utf-8?B?NGozU2RyOGJmRGlBRHpwd016UFprZG9CTXdycHArR1RBSjJuTzZXNWlWT3Y5?=
- =?utf-8?B?NXZ3cTM1MVl5dzFTRVF6aEhEN3JnUDhLOHlxcHRqNXZBN0NMRUZDUzVwYTND?=
- =?utf-8?B?N1Q1L2ZGNXlUOWNYNGpUSzU5dVBiOG1ENHlBRTI3cFJrZkJSOVdCeis5OGdV?=
- =?utf-8?B?bVI4N2xMK29FbWRXcURlaWd2NkpYUkJwVkNWMndQU1E1RGVnRkFlVXkwK3A3?=
- =?utf-8?B?YXR0U04wYzlZSGMxZ00wTVNMV3ZsbVR6VHVaeFdMNkdDbTlRSkk1MW5PSzJr?=
- =?utf-8?B?bEg4UEROdERUb0tQcmpTL1dna0JtcCtyeFhTd2NCcEQyTW5PT3lOc1Y2WGhT?=
- =?utf-8?Q?Od6UvqR6Rv2kj3IEMVcr?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6bbe39d-4475-4c30-456f-08dd241404d6
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Dec 2024 12:10:56.0673
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR03MB6794
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Joanne Koong <joannelkoong@gmail.com>, Zi Yan <ziy@nvidia.com>,
+ miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+ jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
+ Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+References: <7b6b8143-d7a4-439f-ae35-a91055f9d62a@redhat.com>
+ <2e13a67a-0bad-4795-9ac8-ee800b704cb6@fastmail.fm>
+ <ukkygby3u7hjhk3cgrxkvs6qtmlrigdwmqb5k22ru3qqn242au@s4itdbnkmvli>
+ <CAJnrk1bRk9xkVkMg8twaNi-gWBRps7A6HubMivKBHQiHzf+T8w@mail.gmail.com>
+ <2bph7jx4hvhxpgp77shq2j7mo4xssobhqndw5v7hdvbn43jo2w@scqly5zby7bm>
+ <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com>
+ <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm>
+ <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com>
+ <qsytb6j4j6v7kzmiygmmsrdgfkwszpjudvwbq5smkhowfd75dd@beks3genju7x>
+ <3f3c7254-7171-4987-bb1b-24c323e22a0f@redhat.com>
+ <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/12/24 00:51, Juntong Deng wrote:
-> On 2024/12/19 16:41, Alexei Starovoitov wrote:
->> On Tue, Dec 17, 2024 at 3:45 PM Juntong Deng 
->> <juntong.deng@outlook.com> wrote:
->>>
->>> -static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 
->>> kfunc_id)
->>> -{
->>> -       if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
->>> -           prog->type == BPF_PROG_TYPE_LSM)
->>> -               return 0;
->>> -       return -EACCES;
->>> -}
->>> -
->>>   static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
->>>          .owner = THIS_MODULE,
->>>          .set = &bpf_fs_kfunc_set_ids,
->>> -       .filter = bpf_fs_kfuncs_filter,
->>>   };
->>>
->>>   static int __init bpf_fs_kfuncs_init(void)
->>>   {
->>> -       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, 
->>> &bpf_fs_kfunc_set);
->>> +       int ret;
->>> +
->>> +       ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, 
->>> &bpf_fs_kfunc_set);
->>> +       return ret ?: 
->>> register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &bpf_fs_kfunc_set);
->>>   }
->>>
->>>   late_initcall(bpf_fs_kfuncs_init);
->>> diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c 
->>> b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
->>> index d6d3f4fcb24c..5aab75fd2fa5 100644
->>> --- a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
->>> +++ b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
->>> @@ -148,14 +148,4 @@ int BPF_PROG(path_d_path_kfunc_invalid_buf_sz, 
->>> struct file *file)
->>>          return 0;
->>>   }
->>>
->>> -SEC("fentry/vfs_open")
->>> -__failure __msg("calling kernel function bpf_path_d_path is not 
->>> allowed")
+On 23.12.24 23:14, Shakeel Butt wrote:
+> On Sat, Dec 21, 2024 at 05:18:20PM +0100, David Hildenbrand wrote:
+> [...]
 >>
->> This is incorrect.
->> You have to keep bpf_fs_kfuncs_filter() and prog->type == 
->> BPF_PROG_TYPE_LSM
->> check because bpf_prog_type_to_kfunc_hook() aliases LSM and fentry
->> into BTF_KFUNC_HOOK_TRACING category. It's been an annoying quirk.
->> We're figuring out details for significant refactoring of
->> register_btf_kfunc_id_set() and the whole registration process.
+>> Yes, so I can see fuse
 >>
->> Maybe you would be interested in working on it?
+>> (1) Breaking memory reclaim (memory cannot get freed up)
 >>
->> The main goal is to get rid of run-time mask check in SCX_CALL_OP() and
->> make it static by the verifier. To make that happen scx_kf_mask flags
->> would need to become KF_* flags while each struct-ops callback will
->> specify the expected mask.
->> Then at struct-ops prog attach time the verifier will see the expected 
->> mask
->> and can check that all kfuncs calls of this particular program
->> satisfy the mask. Then all of the runtime overhead of
->> current->scx.kf_mask and scx_kf_allowed() will go away.
+>> (2) Breaking page migration (memory cannot be migrated)
+>>
+>> Due to (1) we might experience bigger memory pressure in the system I guess.
+>> A handful of these pages don't really hurt, I have no idea how bad having
+>> many of these pages can be. But yes, inherently we cannot throw away the
+>> data as long as it is dirty without causing harm. (maybe we could move it to
+>> some other cache, like swap/zswap; but that smells like a big and
+>> complicated project)
+>>
+>> Due to (2) we turn pages that are supposed to be movable possibly for a long
+>> time unmovable. Even a *single* such page will mean that CMA allocations /
+>> memory unplug can start failing.
+>>
+>> We have similar situations with page pinning. With things like O_DIRECT, our
+>> assumption/experience so far is that it will only take a couple of seconds
+>> max, and retry loops are sufficient to handle it. That's why only long-term
+>> pinning ("indeterminate", e.g., vfio) migrate these pages out of
+>> ZONE_MOVABLE/MIGRATE_CMA areas in order to long-term pin them.
+>>
+>>
+>> The biggest concern I have is that timeouts, while likely reasonable it many
+>> scenarios, might not be desirable even for some sane workloads, and the
+>> default in all system will be "no timeout", letting the clueless admin of
+>> each and every system out there that might support fuse to make a decision.
+>>
+>> I might have misunderstood something, in which case I am very sorry, but we
+>> also don't want CMA allocations to start failing simply because a network
+>> connection is down for a couple of minutes such that a fuse daemon cannot
+>> make progress.
+>>
 > 
-> Thanks for pointing this out.
-> 
-> Yes, I am interested in working on it.
-> 
-> I will try to solve this problem in a separate patch series.
-> 
-> 
-> The following are my thoughts:
-> 
-> Should we really use KF_* to do this? I think KF_* is currently more
-> like declaring that a kfunc has some kind of attribute, e.g.
-> KF_TRUSTED_ARGS means that the kfunc only accepts trusted arguments,
-> rather than being used to categorise kfuncs.
-> 
-> It is not sustainable to restrict the kfuncs that can be used based on
-> program types, which are coarse-grained. This problem will get worse
-> as kfuncs increase.
-> 
-> In my opinion, managing the kfuncs available to bpf programs should be
-> implemented as capabilities. Capabilities are a mature permission model.
-> We can treat a set of kfuncs as a capability (like the various current
-> kfunc_sets, but the current kfunc_sets did not carefully divide
-> permissions).
-> 
-> We should use separate BPF_CAP_XXX flags to manage these capabilities.
-> For example, SCX may define BPF_CAP_SCX_DISPATCH.
-> 
-> For program types, we should divide them into two levels, types and
-> subtypes. Types are used to register common capabilities and subtypes
-> are used to register specific capabilities. The verifier can check if
-> the used kfuncs are allowed based on the type and subtype of the bpf
-> program.
-> 
-> I understand that we need to maintain backward compatibility to
-> userspace, but capabilities are internal changes in the kernel.
-> Perhaps we can make the current program types as subtypes and
-> add 'types' that are only used internally, and more subtypes
-> (program types) can be added in the future.
+> I think you have valid concerns but these are not new and not unique to
+> fuse. Any filesystem with a potential arbitrary stall can have similar
+> issues. The arbitrary stall can be caused due to network issues or some
+> faultly local storage.
 
-Sorry, this email was sent at midnight before I went to bed, and yes,
-it looks a bit radical.
+What concerns me more is that this is can be triggered by even 
+unprivileged user space, and that there is no default protection as far 
+as I understood, because timeouts cannot be set universally to a sane 
+defaults.
 
-But in the long run, as ebpf is used in more and more scenarios
-(better kernel module), and we have more and more kfuncs
-(better EXPORT_SYMBOL_GPL).
+Again, please correct me if I got that wrong.
 
-Managing (restricting) kfuncs that can be used in different contexts
-will become more and more complex.
 
-Therefore it might be better for ebpf to transition to fine-grained
-permission management (capabilities).
+BTW, I just looked at NFS out of interest, in particular 
+nfs_page_async_flush(), and I spot some logic about re-dirtying pages + 
+canceling writeback. IIUC, there are default timeouts for UDP and TCP, 
+whereby the TCP default one seems to be around 60s (* retrans?), and the 
+privileged user that mounts it can set higher ones. I guess one could 
+run into similar writeback issues?
 
-Maybe we can have more discussion.
+So I wonder why we never required AS_WRITEBACK_INDETERMINATE for nfs? 
+Not sure if I grasped all details about NFS and writeback and when it 
+would redirty+end writeback, and if there is some other handling in there.
 
-Many thanks.
+> 
+> Regarding the reclaim, I wouldn't say fuse or similar filesystem are
+> breaking memory reclaim as the kernel has mechanism to throttle the
+> threads dirtying the file memory to reduce the chance of situations
+> where most of memory becomes unreclaimable due to being dirty.
+
+Yes, likely even cgroups can easily limit the amount.
+
+> 
+> Please note that such filesystems are mostly used in environments like
+> data center or hyperscalar and usually have more advanced mechanisms to
+> handle and avoid situations like long delays. For such environment
+> network unavailability is a larger issue than some cma allocation
+> failure. My point is: let's not assume the disastrous situaion is normal
+> and overcomplicate the solution.
+
+Let me summarize my main point: ZONE_MOVABLE/MIGRATE_CMA must only be 
+used for movable allocations.
+
+Mechanisms that possible turn these folios unmovable for a 
+long/indeterminate time must either fail or migrate these folios out of 
+these regions, otherwise we start violating the very semantics why 
+ZONE_MOVABLE/MIGRATE_CMA was added in the first place.
+
+Yes, there are corner cases where we cannot guarantee movability (e.g., 
+OOM when allocating a migration destination), but these are not cases 
+that can be triggered by (unprivileged) user space easily.
+
+That's why FOLL_LONGTERM pinning does exactly that: even if user space 
+would promise that this is really only "short-term", we will treat it as 
+"possibly forever", because it's under user-space control.
+
+
+Instead of having more subsystems violate these semantics because 
+"performance" ... I would hope we would do better. Maybe it's an issue 
+for NFS as well ("at least" only for privileged user space)? In which 
+case, again, I would hope we would do better.
+
+
+Anyhow, I'm hoping there will be more feedback from other MM folks, but 
+likely right now a lot of people are out (just like I should ;) ).
+
+If I end up being the only one with these concerns, then likely people 
+can feel free to ignore them. ;)
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
