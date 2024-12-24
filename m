@@ -1,304 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-38088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5318F9FB94F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 05:40:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37699FB951
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 05:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0E9163063
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 04:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B148D188452F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 04:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7051137C35;
-	Tue, 24 Dec 2024 04:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827491487D5;
+	Tue, 24 Dec 2024 04:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BP/p1VWu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98DFDDC5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 04:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7366DDC5;
+	Tue, 24 Dec 2024 04:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735015211; cv=none; b=Ah1iIyusEi4m6PAcU2P2M+aR6m/Mw0kzB61fjWX4esu5058XiEl6do0A0yRsM90v14tqtIX+VecxtiLzElM8J0x2rfncIbjEKhs0RxFTp+PD4KTMzKf4O2Jm4CO0ANHQNR99dq4p3QF/rUHNK5ZE8Qc8IoQok9uWwGlC/NvvCXY=
+	t=1735015459; cv=none; b=Eu4OZg5MaSJ/X2wRO8lejIhh3dEAN0OmWFZMTy3KRpEHS4FXjxEHR1/89M4F0s/Nfj3a4aM6zRYEfR73a+K3c4LvINz+iNeo80Eiq0+jeXG4+qF7p9aZw4R2hzaOHQtJ8SsIY+3SybJqVGkTBFYcatrsuMZN84YoZUPq0YQXDPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735015211; c=relaxed/simple;
-	bh=Cz8oElHmFQt6NOk1fwLgbFd2pnZBzO+03fsDfizgMr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+Ig5ee2iE2+C9IsBRuQ5CiPpyZS9P1u3O+doXrO8I8dHOmtGLbUFLvE3KM9tTuyZ8g6ZOKg6xuzGUNaqQyhAYom8CkG/api/tZvqaDa7TQCeTRI/RTA46Eb3d6m/wF4qJKZg2/+p1IpG+Oj2gQutBE3oJI7XMEr7TpXgRD+tZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YHMcd24sFz4f3jrl
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 12:39:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EF8421A08DC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 12:40:04 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgAnT4MjO2pnHwboFQ--.21175S3;
-	Tue, 24 Dec 2024 12:40:04 +0800 (CST)
-Message-ID: <3976ba47-76c7-28e1-9f20-6e94e0adbbea@huaweicloud.com>
-Date: Tue, 24 Dec 2024 12:40:03 +0800
+	s=arc-20240116; t=1735015459; c=relaxed/simple;
+	bh=ZBIO/fbLNMs7HsX5yLcRM5qva7vrj7Rb96EFhq/st2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBMDbipDR9cozQBXflR/biYukiSLc1u8TO2T3lBy5L+zlIKy4qIFbB7C6uoTBJF/BHNuwLhZPeoTXi/VbCH3QUDzRb/m8JuAs9HHP9uab7PFEI41lqv5BzTomgFA+HWWmdqIpnBarAo9u9/U0qiNf3cEnD9jagcYxcS5vrQ92q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BP/p1VWu; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/qXFdkzo2A5QPDuYdZZ5isI8Y5K6t0BFlIlqTTNwZVc=; b=BP/p1VWuKtI7JAkaXGv34KEb71
+	kSvQ+xmeeFV1i4kbJ3fjsF80Nat7iGu7a2dC7FXWkV6O5hbu6pVPacamTsu4x8SFY3GhINX7pE5EY
+	x31JQKjcv559Kc6Efn1KLeiDcFTlIcZClfA8293wAzJ1FABckOhsntjhGwxLS2wqkLYleQwoE/+Kd
+	A8WIy2NGVSIdzt+QkQyx85O6HIBAq/GpDJ1ePbKbvfQ4x1elwQmfnDkeNfUl/GiamxFYs2RbxCJ8H
+	DroJ2Ts9VxhvH1t+7fPkexsgjpsBNZJCQrB4UWrPWQhHBW0FtIzut3H4mtGpMlCCcAlpS3iZh++KA
+	UgWZDk8Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tPwmE-0000000BWvu-3TZs;
+	Tue, 24 Dec 2024 04:44:14 +0000
+Date: Tue, 24 Dec 2024 04:44:14 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Jeremy Kerr <jk@ozlabs.org>
+Subject: Re: [PATCH 6/6] efivarfs: fix error on write to new variable leaving
+ remnants
+Message-ID: <20241224044414.GR1977892@ZenIV>
+References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com>
+ <20241210170224.19159-7-James.Bottomley@HansenPartnership.com>
+ <20241211-krabben-tresor-9f9c504e5bd7@brauner>
+ <049209daadc928ecbf3bdb17d80634fa55842263.camel@HansenPartnership.com>
+ <f9690563fe9d7ae4db31dd37650777e02580b332.camel@HansenPartnership.com>
+ <20241223200513.GO1977892@ZenIV>
+ <72a3f304b895084a1da0a8a326690a57fce541b7.camel@HansenPartnership.com>
+ <20241223231218.GQ1977892@ZenIV>
+ <41df6ecc304101b688f4b23040859d6b21ed15d8.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v6 5/5] libfs: Use d_children list to iterate
- simple_offset directories
-To: Chuck Lever <chuck.lever@oracle.com>, cel@kernel.org,
- Hugh Dickins <hughd@google.com>, Christian Brauner <brauner@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, yukuai3@huawei.com
-References: <20241220153314.5237-1-cel@kernel.org>
- <20241220153314.5237-6-cel@kernel.org>
- <3ccf8255-dfbb-d019-d156-01edf5242c49@huaweicloud.com>
- <fcae58c8-edcf-4a42-a23b-4747ccbf758c@oracle.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <fcae58c8-edcf-4a42-a23b-4747ccbf758c@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnT4MjO2pnHwboFQ--.21175S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF18CrWruF1DAw1fXFW5KFg_yoWfWF1fpF
-	n5JFW5GrW5Xrn3Gr18XF1DXryFyw17G3WUXr18W3W8J3y7Ar12gF1UWrn09ryUJr48Gr1U
-	JF4UKrnxuF45JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
-	UUUUU==
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41df6ecc304101b688f4b23040859d6b21ed15d8.camel@HansenPartnership.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Mon, Dec 23, 2024 at 11:04:58PM -0500, James Bottomley wrote:
 
+> +static int efivarfs_file_release(struct inode *inode, struct file *file)
+> +{
+> +	if (i_size_read(inode) == 0)
+> +		simple_recursive_removal(file->f_path.dentry, NULL);
+> +
+> +	return 0;
+> +}
 
-在 2024/12/23 22:44, Chuck Lever 写道:
-> On 12/23/24 9:21 AM, yangerkun wrote:
->>
->>
->> 在 2024/12/20 23:33, cel@kernel.org 写道:
->>> From: Chuck Lever <chuck.lever@oracle.com>
->>>
->>> The mtree mechanism has been effective at creating directory offsets
->>> that are stable over multiple opendir instances. However, it has not
->>> been able to handle the subtleties of renames that are concurrent
->>> with readdir.
->>>
->>> Instead of using the mtree to emit entries in the order of their
->>> offset values, use it only to map incoming ctx->pos to a starting
->>> entry. Then use the directory's d_children list, which is already
->>> maintained properly by the dcache, to find the next child to emit.
->>>
->>> One of the sneaky things about this is that when the mtree-allocated
->>> offset value wraps (which is very rare), looking up ctx->pos++ is
->>> not going to find the next entry; it will return NULL. Instead, by
->>> following the d_children list, the offset values can appear in any
->>> order but all of the entries in the directory will be visited
->>> eventually.
->>>
->>> Note also that the readdir() is guaranteed to reach the tail of this
->>> list. Entries are added only at the head of d_children, and readdir
->>> walks from its current position in that list towards its tail.
->>>
->>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->>> ---
->>>   fs/libfs.c | 84 +++++++++++++++++++++++++++++++++++++-----------------
->>>   1 file changed, 58 insertions(+), 26 deletions(-)
->>>
->>> diff --git a/fs/libfs.c b/fs/libfs.c
->>> index 5c56783c03a5..f7ead02062ad 100644
->>> --- a/fs/libfs.c
->>> +++ b/fs/libfs.c
->>> @@ -247,12 +247,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
->>>   /* simple_offset_add() allocation range */
->>>   enum {
->>> -    DIR_OFFSET_MIN        = 2,
->>> +    DIR_OFFSET_MIN        = 3,
->>>       DIR_OFFSET_MAX        = LONG_MAX - 1,
->>>   };
->>>   /* simple_offset_add() never assigns these to a dentry */
->>>   enum {
->>> +    DIR_OFFSET_FIRST    = 2,        /* Find first real entry */
->>>       DIR_OFFSET_EOD        = LONG_MAX,    /* Marks EOD */
->>>   };
->>> @@ -458,51 +459,82 @@ static loff_t offset_dir_llseek(struct file 
->>> *file, loff_t offset, int whence)
->>>       return vfs_setpos(file, offset, LONG_MAX);
->>>   }
->>> -static struct dentry *offset_find_next(struct offset_ctx *octx, 
->>> loff_t offset)
->>> +static struct dentry *find_positive_dentry(struct dentry *parent,
->>> +                       struct dentry *dentry,
->>> +                       bool next)
->>>   {
->>> -    MA_STATE(mas, &octx->mt, offset, offset);
->>> +    struct dentry *found = NULL;
->>> +
->>> +    spin_lock(&parent->d_lock);
->>> +    if (next)
->>> +        dentry = d_next_sibling(dentry);
->>> +    else if (!dentry)
->>> +        dentry = d_first_child(parent);
->>> +    hlist_for_each_entry_from(dentry, d_sib) {
->>> +        if (!simple_positive(dentry))
->>> +            continue;
->>> +        spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
->>> +        if (simple_positive(dentry))
->>> +            found = dget_dlock(dentry);
->>> +        spin_unlock(&dentry->d_lock);
->>> +        if (likely(found))
->>> +            break;
->>> +    }
->>> +    spin_unlock(&parent->d_lock);
->>> +    return found;
->>> +}
->>> +
->>> +static noinline_for_stack struct dentry *
->>> +offset_dir_lookup(struct dentry *parent, loff_t offset)
->>> +{
->>> +    struct inode *inode = d_inode(parent);
->>> +    struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
->>>       struct dentry *child, *found = NULL;
->>> -    rcu_read_lock();
->>> -    child = mas_find(&mas, DIR_OFFSET_MAX);
->>> -    if (!child)
->>> -        goto out;
->>> -    spin_lock(&child->d_lock);
->>> -    if (simple_positive(child))
->>> -        found = dget_dlock(child);
->>> -    spin_unlock(&child->d_lock);
->>> -out:
->>> -    rcu_read_unlock();
->>> +    MA_STATE(mas, &octx->mt, offset, offset);
->>> +
->>> +    if (offset == DIR_OFFSET_FIRST)
->>> +        found = find_positive_dentry(parent, NULL, false);
->>> +    else {
->>> +        rcu_read_lock();
->>> +        child = mas_find(&mas, DIR_OFFSET_MAX);
->>
->> Can this child be NULL?
-> 
-> Yes, this mas_find() call can return NULL. find_positive_dentry() should
-> then return NULL. Kind of subtle.
-> 
-> 
->> Like we delete some file after first readdir, maybe we should break 
->> here, or we may rescan all dentry and return them to userspace again?
-> 
-> You mean to deal with the case where the "next" entry has an offset
-> that is lower than @offset? mas_find() will return the entry in the
-> tree that is "at or after" mas->index.
-> 
-> I'm not sure either "break" or returning repeats is safe. But, now that
-> you point it out, this function probably does need additional logic to
-> deal with the offset wrap case.
-> 
-> But since this logic already exists here, IMO it is reasonable to leave
-> that to be addressed by a subsequent patch. So far there aren't any
-> regression test failures that warn of a user-visible problem the way it
-> is now.
+What happens if you have
 
-Sorry for the confusing, the case I am talking is something like below:
+	fd = creat(name, 0700);
+	fd2 = open(name, O_RDONLY);
+	close(fd2);
+	write(fd, "barf", 4);
 
-mkdir /tmp/dir && cd /tmp/dir
-touch file1 # offset is 3
-touch file2 # offset is 4
-touch file3 # offset is 5
-touch file4 # offset is 6
-touch file5 # offset is 7
-first readdir and get file5 file4 file3 file2 #ctx->pos is 3, which
-means we will get file1 for second readdir
+or, better yet, if open()/close() pair happens in an unrelated thread
+poking around?
 
-unlink file1 # can not get entry for ctx->pos == 3
+I mean, having that logics in ->release() feels very awkward...
 
-second readdir # offset_dir_lookup will use mas_find but return NULL,
-and we will get file5 file4 file3 file2 again?
+For that matter, what about
+	fd = creat(name, 0700);
+	fd2 = open(name, O_RDWR);
+	close(fd);
+	write(fd2, "barf", 4);
 
-
-And for the offset wrap case, I prefer it's safe with your patch if we 
-won't unlink file between two readdir. The second readdir will use an
-active ctx->pos which means there is a active dentry attach to this
-ctx->pos. find_positive_dentry will stop once we meet the last child.
-
-
-I am not sure if I understand correctly, if not, please point out!
-
-Thanks!
-
-> 
-> 
->>> +        found = find_positive_dentry(parent, child, false);
->>> +        rcu_read_unlock();
->>> +    }
->>>       return found;
->>>   }
->>>   static bool offset_dir_emit(struct dir_context *ctx, struct dentry 
->>> *dentry)
->>>   {
->>>       struct inode *inode = d_inode(dentry);
->>> -    long offset = dentry2offset(dentry);
->>> -    return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, 
->>> offset,
->>> -              inode->i_ino, fs_umode_to_dtype(inode->i_mode));
->>> +    return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
->>> +            inode->i_ino, fs_umode_to_dtype(inode->i_mode));
->>>   }
->>> -static void offset_iterate_dir(struct inode *inode, struct 
->>> dir_context *ctx)
->>> +static void offset_iterate_dir(struct file *file, struct dir_context 
->>> *ctx)
->>>   {
->>> -    struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
->>> +    struct dentry *dir = file->f_path.dentry;
->>>       struct dentry *dentry;
->>> +    dentry = offset_dir_lookup(dir, ctx->pos);
->>> +    if (!dentry)
->>> +        goto out_eod;
->>>       while (true) {
->>> -        dentry = offset_find_next(octx, ctx->pos);
->>> -        if (!dentry)
->>> -            goto out_eod;
->>> +        struct dentry *next;
->>> -        if (!offset_dir_emit(ctx, dentry)) {
->>> -            dput(dentry);
->>> +        ctx->pos = dentry2offset(dentry);
->>> +        if (!offset_dir_emit(ctx, dentry))
->>>               break;
->>> -        }
->>> -        ctx->pos = dentry2offset(dentry) + 1;
->>> +        next = find_positive_dentry(dir, dentry, true);
->>>           dput(dentry);
->>> +
->>> +        if (!next)
->>> +            goto out_eod;
->>> +        dentry = next;
->>>       }
->>> +    dput(dentry);
->>>       return;
->>>   out_eod:
->>> @@ -541,7 +573,7 @@ static int offset_readdir(struct file *file, 
->>> struct dir_context *ctx)
->>>       if (!dir_emit_dots(file, ctx))
->>>           return 0;
->>>       if (ctx->pos != DIR_OFFSET_EOD)
->>> -        offset_iterate_dir(d_inode(dir), ctx);
->>> +        offset_iterate_dir(file, ctx);
->>>       return 0;
->>>   }
->>
-> 
-> 
-
+I'm not asking about the implementation; what behaviour do you want
+to see in userland?
 
