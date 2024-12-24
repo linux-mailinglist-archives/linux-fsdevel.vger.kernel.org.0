@@ -1,231 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-38087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C259FB912
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 05:05:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5318F9FB94F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 05:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2AEF165151
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 04:05:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0E9163063
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2024 04:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3747DA95;
-	Tue, 24 Dec 2024 04:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HcwtCYcv";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HcwtCYcv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7051137C35;
+	Tue, 24 Dec 2024 04:40:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C558442C;
-	Tue, 24 Dec 2024 04:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98DFDDC5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 04:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735013104; cv=none; b=mXY6xtH2cv0n2KGDF3XcZoJvmbAkKhfTt/+yJ1CkWdUH9Q7U1VTJzcMzn3t0UoJk6NDau+F4YX5/z2PUWGOsnNvvBsfsTIPBdBImPTMDj5IVCnfC4R5UOgNdirYlFnsbVT4A7APurv+70PvAL7UXc3GXMDPdlGhXyzgRFtJKGlU=
+	t=1735015211; cv=none; b=Ah1iIyusEi4m6PAcU2P2M+aR6m/Mw0kzB61fjWX4esu5058XiEl6do0A0yRsM90v14tqtIX+VecxtiLzElM8J0x2rfncIbjEKhs0RxFTp+PD4KTMzKf4O2Jm4CO0ANHQNR99dq4p3QF/rUHNK5ZE8Qc8IoQok9uWwGlC/NvvCXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735013104; c=relaxed/simple;
-	bh=MfOLkJPwCOs2uTuF4yOW27AD93N3RLE2TLRIsHp4KOc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SIuVYHeUnBK/xQYzYiozhaAlI6PQ9/f3siUt1n+1TPrhgPxVqBMhDxuECNpJjoQuVHh60+1olVCjPstdzwfnTo93NhVlq9C9n9JzEKByDTvdBddGw+ekuw/NZKckjGWkXBWf4GRrVyL3BiJ7RM7gLjp8HLt6Yu/EDY20x9u8iyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=HcwtCYcv; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=HcwtCYcv; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1735013101;
-	bh=MfOLkJPwCOs2uTuF4yOW27AD93N3RLE2TLRIsHp4KOc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=HcwtCYcvV8fBrRimEi5aiyszOxLCwN+bsgSuqPSDFVF+t9yYVIREebrYU0MocCCcY
-	 8f/ns4LOv87BAygK5tv7OTPcOJAS3q3UQ4rMVFkaoIpyrKLxdXRZXFFGcPesGy7fo/
-	 ME06NNpCXBAVRqUyVQnAHfWUiCMDlZedNoDzKRXk=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id C766C1286465;
-	Mon, 23 Dec 2024 23:05:01 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id dIQZlNWgqb6p; Mon, 23 Dec 2024 23:05:01 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1735013101;
-	bh=MfOLkJPwCOs2uTuF4yOW27AD93N3RLE2TLRIsHp4KOc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=HcwtCYcvV8fBrRimEi5aiyszOxLCwN+bsgSuqPSDFVF+t9yYVIREebrYU0MocCCcY
-	 8f/ns4LOv87BAygK5tv7OTPcOJAS3q3UQ4rMVFkaoIpyrKLxdXRZXFFGcPesGy7fo/
-	 ME06NNpCXBAVRqUyVQnAHfWUiCMDlZedNoDzKRXk=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id EE658128645C;
-	Mon, 23 Dec 2024 23:05:00 -0500 (EST)
-Message-ID: <41df6ecc304101b688f4b23040859d6b21ed15d8.camel@HansenPartnership.com>
-Subject: Re: [PATCH 6/6] efivarfs: fix error on write to new variable
- leaving remnants
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr
-	 <jk@ozlabs.org>
-Date: Mon, 23 Dec 2024 23:04:58 -0500
-In-Reply-To: <20241223231218.GQ1977892@ZenIV>
-References: <20241210170224.19159-1-James.Bottomley@HansenPartnership.com>
-	 <20241210170224.19159-7-James.Bottomley@HansenPartnership.com>
-	 <20241211-krabben-tresor-9f9c504e5bd7@brauner>
-	 <049209daadc928ecbf3bdb17d80634fa55842263.camel@HansenPartnership.com>
-	 <f9690563fe9d7ae4db31dd37650777e02580b332.camel@HansenPartnership.com>
-	 <20241223200513.GO1977892@ZenIV>
-	 <72a3f304b895084a1da0a8a326690a57fce541b7.camel@HansenPartnership.com>
-	 <20241223231218.GQ1977892@ZenIV>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1735015211; c=relaxed/simple;
+	bh=Cz8oElHmFQt6NOk1fwLgbFd2pnZBzO+03fsDfizgMr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V+Ig5ee2iE2+C9IsBRuQ5CiPpyZS9P1u3O+doXrO8I8dHOmtGLbUFLvE3KM9tTuyZ8g6ZOKg6xuzGUNaqQyhAYom8CkG/api/tZvqaDa7TQCeTRI/RTA46Eb3d6m/wF4qJKZg2/+p1IpG+Oj2gQutBE3oJI7XMEr7TpXgRD+tZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YHMcd24sFz4f3jrl
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 12:39:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EF8421A08DC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Dec 2024 12:40:04 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgAnT4MjO2pnHwboFQ--.21175S3;
+	Tue, 24 Dec 2024 12:40:04 +0800 (CST)
+Message-ID: <3976ba47-76c7-28e1-9f20-6e94e0adbbea@huaweicloud.com>
+Date: Tue, 24 Dec 2024 12:40:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v6 5/5] libfs: Use d_children list to iterate
+ simple_offset directories
+To: Chuck Lever <chuck.lever@oracle.com>, cel@kernel.org,
+ Hugh Dickins <hughd@google.com>, Christian Brauner <brauner@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, yukuai3@huawei.com
+References: <20241220153314.5237-1-cel@kernel.org>
+ <20241220153314.5237-6-cel@kernel.org>
+ <3ccf8255-dfbb-d019-d156-01edf5242c49@huaweicloud.com>
+ <fcae58c8-edcf-4a42-a23b-4747ccbf758c@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <fcae58c8-edcf-4a42-a23b-4747ccbf758c@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAnT4MjO2pnHwboFQ--.21175S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF18CrWruF1DAw1fXFW5KFg_yoWfWF1fpF
+	n5JFW5GrW5Xrn3Gr18XF1DXryFyw17G3WUXr18W3W8J3y7Ar12gF1UWrn09ryUJr48Gr1U
+	JF4UKrnxuF45JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
+	UUUUU==
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-On Mon, 2024-12-23 at 23:12 +0000, Al Viro wrote:
-> On Mon, Dec 23, 2024 at 05:56:04PM -0500, James Bottomley wrote:
-> > > Let me look into that area...
-> > 
-> > I thought about this some more.  I could see a twisted container
-> > use case where something like this might happen (expose some but
-> > not all efi variables to the container).
-> > 
-> > So, help me understand the subtleties here.  If it's the target of
-> > a bind mount, that's all OK, because you are allowed to delete the
-> > target.  If something is bind mounted on to an efivarfs object, the
-> > is_local_mountpoint() check in vfs_unlink would usually trip and
-> > prevent deletion (so the subtree doesn't become unreachable).  If I
-> > were to duplicate that, I think the best way would be simply to do
-> > a d_put() in the file->release function and implement drop_nlink()
-> > in d_prune (since last put will always call __dentry_kill)?
+
+
+在 2024/12/23 22:44, Chuck Lever 写道:
+> On 12/23/24 9:21 AM, yangerkun wrote:
+>>
+>>
+>> 在 2024/12/20 23:33, cel@kernel.org 写道:
+>>> From: Chuck Lever <chuck.lever@oracle.com>
+>>>
+>>> The mtree mechanism has been effective at creating directory offsets
+>>> that are stable over multiple opendir instances. However, it has not
+>>> been able to handle the subtleties of renames that are concurrent
+>>> with readdir.
+>>>
+>>> Instead of using the mtree to emit entries in the order of their
+>>> offset values, use it only to map incoming ctx->pos to a starting
+>>> entry. Then use the directory's d_children list, which is already
+>>> maintained properly by the dcache, to find the next child to emit.
+>>>
+>>> One of the sneaky things about this is that when the mtree-allocated
+>>> offset value wraps (which is very rare), looking up ctx->pos++ is
+>>> not going to find the next entry; it will return NULL. Instead, by
+>>> following the d_children list, the offset values can appear in any
+>>> order but all of the entries in the directory will be visited
+>>> eventually.
+>>>
+>>> Note also that the readdir() is guaranteed to reach the tail of this
+>>> list. Entries are added only at the head of d_children, and readdir
+>>> walks from its current position in that list towards its tail.
+>>>
+>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>> ---
+>>>   fs/libfs.c | 84 +++++++++++++++++++++++++++++++++++++-----------------
+>>>   1 file changed, 58 insertions(+), 26 deletions(-)
+>>>
+>>> diff --git a/fs/libfs.c b/fs/libfs.c
+>>> index 5c56783c03a5..f7ead02062ad 100644
+>>> --- a/fs/libfs.c
+>>> +++ b/fs/libfs.c
+>>> @@ -247,12 +247,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
+>>>   /* simple_offset_add() allocation range */
+>>>   enum {
+>>> -    DIR_OFFSET_MIN        = 2,
+>>> +    DIR_OFFSET_MIN        = 3,
+>>>       DIR_OFFSET_MAX        = LONG_MAX - 1,
+>>>   };
+>>>   /* simple_offset_add() never assigns these to a dentry */
+>>>   enum {
+>>> +    DIR_OFFSET_FIRST    = 2,        /* Find first real entry */
+>>>       DIR_OFFSET_EOD        = LONG_MAX,    /* Marks EOD */
+>>>   };
+>>> @@ -458,51 +459,82 @@ static loff_t offset_dir_llseek(struct file 
+>>> *file, loff_t offset, int whence)
+>>>       return vfs_setpos(file, offset, LONG_MAX);
+>>>   }
+>>> -static struct dentry *offset_find_next(struct offset_ctx *octx, 
+>>> loff_t offset)
+>>> +static struct dentry *find_positive_dentry(struct dentry *parent,
+>>> +                       struct dentry *dentry,
+>>> +                       bool next)
+>>>   {
+>>> -    MA_STATE(mas, &octx->mt, offset, offset);
+>>> +    struct dentry *found = NULL;
+>>> +
+>>> +    spin_lock(&parent->d_lock);
+>>> +    if (next)
+>>> +        dentry = d_next_sibling(dentry);
+>>> +    else if (!dentry)
+>>> +        dentry = d_first_child(parent);
+>>> +    hlist_for_each_entry_from(dentry, d_sib) {
+>>> +        if (!simple_positive(dentry))
+>>> +            continue;
+>>> +        spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+>>> +        if (simple_positive(dentry))
+>>> +            found = dget_dlock(dentry);
+>>> +        spin_unlock(&dentry->d_lock);
+>>> +        if (likely(found))
+>>> +            break;
+>>> +    }
+>>> +    spin_unlock(&parent->d_lock);
+>>> +    return found;
+>>> +}
+>>> +
+>>> +static noinline_for_stack struct dentry *
+>>> +offset_dir_lookup(struct dentry *parent, loff_t offset)
+>>> +{
+>>> +    struct inode *inode = d_inode(parent);
+>>> +    struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+>>>       struct dentry *child, *found = NULL;
+>>> -    rcu_read_lock();
+>>> -    child = mas_find(&mas, DIR_OFFSET_MAX);
+>>> -    if (!child)
+>>> -        goto out;
+>>> -    spin_lock(&child->d_lock);
+>>> -    if (simple_positive(child))
+>>> -        found = dget_dlock(child);
+>>> -    spin_unlock(&child->d_lock);
+>>> -out:
+>>> -    rcu_read_unlock();
+>>> +    MA_STATE(mas, &octx->mt, offset, offset);
+>>> +
+>>> +    if (offset == DIR_OFFSET_FIRST)
+>>> +        found = find_positive_dentry(parent, NULL, false);
+>>> +    else {
+>>> +        rcu_read_lock();
+>>> +        child = mas_find(&mas, DIR_OFFSET_MAX);
+>>
+>> Can this child be NULL?
 > 
-> Refcounting is not an issue.  At all.
+> Yes, this mas_find() call can return NULL. find_positive_dentry() should
+> then return NULL. Kind of subtle.
 > 
-> Inability to find and evict the mount, OTOH, very much is.  And after
-> your blind d_delete() that's precisely what will happen.
 > 
-> You are steadily moving towards more and more convoluted crap, in
-> places where it really does not belong.
+>> Like we delete some file after first readdir, maybe we should break 
+>> here, or we may rescan all dentry and return them to userspace again?
 > 
-> If anything, simple_recursive_removal() should be used for that,
-> instead of trying to open-code bizarre subsets of its
-> functionality...
+> You mean to deal with the case where the "next" entry has an offset
+> that is lower than @offset? mas_find() will return the entry in the
+> tree that is "at or after" mas->index.
+> 
+> I'm not sure either "break" or returning repeats is safe. But, now that
+> you point it out, this function probably does need additional logic to
+> deal with the offset wrap case.
+> 
+> But since this logic already exists here, IMO it is reasonable to leave
+> that to be addressed by a subsequent patch. So far there aren't any
+> regression test failures that warn of a user-visible problem the way it
+> is now.
 
-OK, so like the below?
+Sorry for the confusing, the case I am talking is something like below:
 
-In my defence, simple_recursive_removal() isn't mentioned in
-Documentation/filesystems and the function itself also has no
-documentation, so even if I had stumbled across it in libfs.c the
-recursive in the name would have lead me to believe it wasn't for
-single dentry removal.
+mkdir /tmp/dir && cd /tmp/dir
+touch file1 # offset is 3
+touch file2 # offset is 4
+touch file3 # offset is 5
+touch file4 # offset is 6
+touch file5 # offset is 7
+first readdir and get file5 file4 file3 file2 #ctx->pos is 3, which
+means we will get file1 for second readdir
 
-Regards,
+unlink file1 # can not get entry for ctx->pos == 3
 
-James
+second readdir # offset_dir_lookup will use mas_find but return NULL,
+and we will get file5 file4 file3 file2 again?
 
----8>8>8><8<8<8---
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH] efivarfs: fix error on write to new variable leaving remnants
+And for the offset wrap case, I prefer it's safe with your patch if we 
+won't unlink file between two readdir. The second readdir will use an
+active ctx->pos which means there is a active dentry attach to this
+ctx->pos. find_positive_dentry will stop once we meet the last child.
 
-Make variable cleanup go through the fops release mechanism and use
-zero inode size as the indicator to delete the file.  Since all EFI
-variables must have an initial u32 attribute, zero size occurs either
-because the update deleted the variable or because an unsuccessful
-write after create caused the size never to be set in the first place.
 
-Even though this fixes the bug that a create either not followed by a
-write or followed by a write that errored would leave a remnant file
-for the variable, the file will appear momentarily globally visible
-until the close of the fd deletes it.  This is safe because the normal
-filesystem operations will mediate any races; however, it is still
-possible for a directory listing at that instant between create and
-close contain a variable that doesn't exist in the EFI table.
+I am not sure if I understand correctly, if not, please point out!
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- fs/efivarfs/file.c | 40 +++++++++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 9 deletions(-)
+Thanks!
 
-diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-index 23c51d62f902..0e545c8be173 100644
---- a/fs/efivarfs/file.c
-+++ b/fs/efivarfs/file.c
-@@ -36,28 +36,41 @@ static ssize_t efivarfs_file_write(struct file *file,
- 	if (IS_ERR(data))
- 		return PTR_ERR(data);
- 
-+	inode_lock(inode);
-+	if (d_unhashed(file->f_path.dentry)) {
-+		/*
-+		 * file got removed; don't allow a set.  Caused by an
-+		 * unsuccessful create or successful delete write
-+		 * racing with us.
-+		 */
-+		bytes = -EIO;
-+		goto out;
-+	}
-+
- 	bytes = efivar_entry_set_get_size(var, attributes, &datasize,
- 					  data, &set);
--	if (!set && bytes) {
-+	if (!set) {
- 		if (bytes == -ENOENT)
- 			bytes = -EIO;
- 		goto out;
- 	}
- 
- 	if (bytes == -ENOENT) {
--		drop_nlink(inode);
--		d_delete(file->f_path.dentry);
--		dput(file->f_path.dentry);
-+		/*
-+		 * zero size signals to release that the write deleted
-+		 * the variable
-+		 */
-+		i_size_write(inode, 0);
- 	} else {
--		inode_lock(inode);
- 		i_size_write(inode, datasize + sizeof(attributes));
- 		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
--		inode_unlock(inode);
- 	}
- 
- 	bytes = count;
- 
- out:
-+	inode_unlock(inode);
-+
- 	kfree(data);
- 
- 	return bytes;
-@@ -106,8 +119,17 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
- 	return size;
- }
- 
-+static int efivarfs_file_release(struct inode *inode, struct file *file)
-+{
-+	if (i_size_read(inode) == 0)
-+		simple_recursive_removal(file->f_path.dentry, NULL);
-+
-+	return 0;
-+}
-+
- const struct file_operations efivarfs_file_operations = {
--	.open	= simple_open,
--	.read	= efivarfs_file_read,
--	.write	= efivarfs_file_write,
-+	.open		= simple_open,
-+	.read		= efivarfs_file_read,
-+	.write		= efivarfs_file_write,
-+	.release	= efivarfs_file_release,
- };
--- 
-2.35.3
-
+> 
+> 
+>>> +        found = find_positive_dentry(parent, child, false);
+>>> +        rcu_read_unlock();
+>>> +    }
+>>>       return found;
+>>>   }
+>>>   static bool offset_dir_emit(struct dir_context *ctx, struct dentry 
+>>> *dentry)
+>>>   {
+>>>       struct inode *inode = d_inode(dentry);
+>>> -    long offset = dentry2offset(dentry);
+>>> -    return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, 
+>>> offset,
+>>> -              inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>> +    return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
+>>> +            inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>>   }
+>>> -static void offset_iterate_dir(struct inode *inode, struct 
+>>> dir_context *ctx)
+>>> +static void offset_iterate_dir(struct file *file, struct dir_context 
+>>> *ctx)
+>>>   {
+>>> -    struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+>>> +    struct dentry *dir = file->f_path.dentry;
+>>>       struct dentry *dentry;
+>>> +    dentry = offset_dir_lookup(dir, ctx->pos);
+>>> +    if (!dentry)
+>>> +        goto out_eod;
+>>>       while (true) {
+>>> -        dentry = offset_find_next(octx, ctx->pos);
+>>> -        if (!dentry)
+>>> -            goto out_eod;
+>>> +        struct dentry *next;
+>>> -        if (!offset_dir_emit(ctx, dentry)) {
+>>> -            dput(dentry);
+>>> +        ctx->pos = dentry2offset(dentry);
+>>> +        if (!offset_dir_emit(ctx, dentry))
+>>>               break;
+>>> -        }
+>>> -        ctx->pos = dentry2offset(dentry) + 1;
+>>> +        next = find_positive_dentry(dir, dentry, true);
+>>>           dput(dentry);
+>>> +
+>>> +        if (!next)
+>>> +            goto out_eod;
+>>> +        dentry = next;
+>>>       }
+>>> +    dput(dentry);
+>>>       return;
+>>>   out_eod:
+>>> @@ -541,7 +573,7 @@ static int offset_readdir(struct file *file, 
+>>> struct dir_context *ctx)
+>>>       if (!dir_emit_dots(file, ctx))
+>>>           return 0;
+>>>       if (ctx->pos != DIR_OFFSET_EOD)
+>>> -        offset_iterate_dir(d_inode(dir), ctx);
+>>> +        offset_iterate_dir(file, ctx);
+>>>       return 0;
+>>>   }
+>>
+> 
+> 
 
 
