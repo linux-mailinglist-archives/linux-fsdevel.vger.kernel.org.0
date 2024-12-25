@@ -1,232 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-38111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451EB9FC365
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 03:49:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010499FC36F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 04:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0A98164F58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 02:49:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 345797A1BF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 03:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0BD1BC3F;
-	Wed, 25 Dec 2024 02:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="npkSGzQg"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50825757;
+	Wed, 25 Dec 2024 03:11:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CFC20E6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Dec 2024 02:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735094989; cv=fail; b=XPB5FW73lNsQrGGnea7Bm+7tcMqzIiXtYdvWi+1npb0xcyAL+yx5ImcFf6bCq/XtlWNIhLJJRyYNd1Xv0pW/rlTqc1t7wfVSQDr/sLhprF+85FGKLGGh9ct7F8WV2gB1CsI8rP7Ap1VsM/R064TdBztU/0azl/ssEj3xjjC/coo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735094989; c=relaxed/simple;
-	bh=e55sgHEFuKHoSswQLYSgKiE45Rlr9cZUAPBrzsOg0Dk=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=TfM5w97dDRZIgFN5jvhxo94VVnEeRZc9T0Wjo58j6vEOSucd0UkF+qaGjzgHphIOCKr8BKPZ5x0UDpxy8Ajg0GCjjAhEw0TMkhuJCcr50eZze2kUn4h0ilj0mUr5YvjIWdRtzclAnAJ6z2BQKIE4iV89d2G/pJDoeKHJIFYZjqQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=npkSGzQg; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1735094988; x=1766630988;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=e55sgHEFuKHoSswQLYSgKiE45Rlr9cZUAPBrzsOg0Dk=;
-  b=npkSGzQgXQqCBeBvTvkocOk/5NtmveS7swkP+SQ6Z3nKxZc3xIJdYYz7
-   jnH8c8mBL4fj0MwMpl52Uh5QiL8wJ73CG8JjBvlnDV/MBidxZglS+G41e
-   mCEpyVxinw0ePoo+l6pOT8QMiQvUwcBHDZrkmqCOsXw55mHMAr/CpqtpC
-   0nQte5HpvHxPsY50ICZwPPQNQd3TixVy6hm7iUOi3kpcfX3KZOECvyUtj
-   npFlQ0wQgc7HutL0FV1kUGbhITgOFP6g7J+WgIiIui5Osf5IX+/Ii0+3D
-   2LOSgVvITHqSCs+MqERqL1yqWGI95L9O7FmN3lcwHtL4/1b5H7LsO4XYh
-   g==;
-X-CSE-ConnectionGUID: 5UVouylaTVKDgmDoDHWezA==
-X-CSE-MsgGUID: vUXtm2FDR4GvrZpTYt27Ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11296"; a="35720167"
-X-IronPort-AV: E=Sophos;i="6.12,262,1728975600"; 
-   d="scan'208";a="35720167"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Dec 2024 18:49:47 -0800
-X-CSE-ConnectionGUID: lmpo4g2oSm6IGfHcjBwgzw==
-X-CSE-MsgGUID: XLS9ehTDQuutbzkoWpSELQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,262,1728975600"; 
-   d="scan'208";a="99716504"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Dec 2024 18:49:47 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 24 Dec 2024 18:49:46 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Tue, 24 Dec 2024 18:49:46 -0800
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.171)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 24 Dec 2024 18:49:46 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l9L+rWjf0lh7LvQfHx+dUi9k2JoetBlZslPAGbN428VNexashLKR6ht2IYILAjoGjsyF3aSZoft5Lulg7lMrqvFeOobPbEew66inmODuQza9SY4QIIqYX+PIrwpU5Ec7G5gADN+FuQ3avx2y/GCNM+cj/p75o8+f9BA77p0xqsKCn9rCir8sjRhha+ILeaGqLY/3nLmEIpBWj+MWv13A0z48xti67ldb3DsoGpXwqLCyqvwBI1CDdEd1rHxt2xYSblkVGwqdoySbjqc9ZkrBv2WLG6kuMqRWMZ9F8fF92CJqdnnxrvZgJn+al93tVS0d0+Md5g+ahIJTRrM5g6vCmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VLRtfGPcWl+SC2X5Zv1jAO+FpnVIwJ/LCT7X1OdjhBg=;
- b=L/YCFPwTTIySw9Kd5GT2bdZp+XS0dJKkDlgkViUFnghTo6NrYvERxdoEyJrh+UPfesqsiNWNdjIN02tGPeeonPebB2efO5Vkm1cSSEKdhYTmzDbpktoGw0YKOcfNoYknATaeBe31pBpBjipJnCc5x5bwUJ3f8hW+lrqrnsWOOevvShoySHsyuX4SUPwap+zYefAtRWfFuBx4M1HDoSe9ZjUO+2aBrpL73K+tyfNXRR84RUR0S0Iol+Fo8ZWjmSvRcud++SoBMRr3bmgdhL5Meu0amId5VWxj6cTVCMDR1rPvPc4NeM+roZNGEcMFcTmqTsPyT2sYEvZbJ7jmsXCWAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by MW3PR11MB4603.namprd11.prod.outlook.com (2603:10b6:303:5e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8293.14; Wed, 25 Dec
- 2024 02:49:13 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8293.000; Wed, 25 Dec 2024
- 02:49:13 +0000
-Date: Wed, 25 Dec 2024 10:49:05 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Chuck Lever <chuck.lever@oracle.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Christian Brauner
-	<brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: [linux-next:master] [libfs]  d4849629a4:
-  libhugetlbfs-test.32bit.gethugepagesizes.fail
-Message-ID: <202412251039.eec88248-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG3P274CA0008.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::20)
- To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6751F101E6;
+	Wed, 25 Dec 2024 03:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1735096284; cv=none; b=LY7seu6oaUTG/uG4/WEWEW76kiBD9ZY4LyJZgu/cFENBA+ZmEwTBR3aa5RKKxBy9du6rzs1YXofPk4L3yVNfWh0KImRUiCDOQuuHejqKvPByhBZVxKNAS7KBvQ2Bm8aKR2951YjDeYwE9FKbS4SZGMhRQLyLTmGDOPtoP0olpnw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1735096284; c=relaxed/simple;
+	bh=9SWBds2nHkwPyTHcoJlZn5LbIzOFokFiVPFU3AggpKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KiXHePIRMQMtEbO0NDwQxf5jpDTpKOeEynKF/1bh65L6UycKoFO/rP6pHQZV6uWhwb5vaEXtf8jpuYEyNQ5HLy9zwcAQtLG+vkALP7rZ/yb54nVLmBItstj9oGPLGC4lO99IKeqJQ55EGpkxlSyUp8P8RR1XGZB57DkyuIu/Ifo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YHxbh22mwz4f3jd2;
+	Wed, 25 Dec 2024 11:10:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 030E41A0AE9;
+	Wed, 25 Dec 2024 11:11:16 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCngYXPd2tnrZFAFg--.1644S3;
+	Wed, 25 Dec 2024 11:11:13 +0800 (CST)
+Message-ID: <e876594b-7ed8-4048-b1e3-4a40387d3299@huaweicloud.com>
+Date: Wed, 25 Dec 2024 11:11:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MW3PR11MB4603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3aa6da0d-4255-4785-211f-08dd248eb75a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NaVNdRo42KrTqkfDL17bc+Eu8N+oEGP4aWRLvPHWE0G2u/S4/+quCC646q1H?=
- =?us-ascii?Q?i2xkkBeXzY9MB0OC9WjAyFPhbRe3J4iz8MunPSsk/4PG4LoK0hdVuwlA+2PX?=
- =?us-ascii?Q?5vRFzUVF8GywnXwj7kwO36d5aPXHNIrEaEnxmQY1/QHwP0294/wlpzgGZ194?=
- =?us-ascii?Q?wjs6qc2aqzMXV8N3Answ/yI5XHoaLRMgOuLuYddKYc/s2q1RTWOblFVA+fah?=
- =?us-ascii?Q?M7G/gbsFusaZvnl1J8Af4vvkF8rotpU+yg70LcOvvlIEdnuQUne7pVTTSFGg?=
- =?us-ascii?Q?D01B5Q0PhEsZGiZ2wyehVr6IIAIKMQZnIpqe+CN9qvXWmO0lTT29nXNwuTSs?=
- =?us-ascii?Q?QpAoTcqjTfovKffmMXgiVqbqRzpjUQCRCZ8LFmf27+b4IqpWKWZxwANBwPG1?=
- =?us-ascii?Q?J9hS+T2ezgvH8jytW0XiAscVHwCI0tuSBnCTgh3jqNbDuQcOGHABdDYzDIlX?=
- =?us-ascii?Q?544Qm+bCYH93trCKyWVeS177ZU4C5wn4FdTiiWJo8aqi4KmkCnnXKaV73zIo?=
- =?us-ascii?Q?AyUNR03n8pa9qwpUsoDiQq4XbFuznC3IDnF/5nJeJ4VJUIbgcsVbl9TV5QwX?=
- =?us-ascii?Q?kCvxxR7WM3vAvNglMOUDf7CEhJD+5hexRL5oB1TecrIVIEOeMEkRBivGHubz?=
- =?us-ascii?Q?kMLnkVwhlJSAq5g3g/6N5IFOReclTA0WZwppZ2llj9DlvKSv6ZSplw37uFeR?=
- =?us-ascii?Q?mUTAMMO98qxU39vkBIiY3yPmMcLXqMZRli5s3TImGStEfI60YSvW9XxEUEPK?=
- =?us-ascii?Q?vwYKhVN9KKXG1LlJ4S6fNkgJDJBHEIrzBSYbwu3KGciGqGdT38NHRabeG55o?=
- =?us-ascii?Q?5bBjFi1oXPh8HEpIYfDWFrnaYRnVdgZKbgW02cKtmfHh9HZ/KIOzVOK8xa46?=
- =?us-ascii?Q?h3hM4SB0h7OaEmyRgnbeUgcj4OcJJUZf7KGF6+ccp8uGNhEfCGcSO41XbeJf?=
- =?us-ascii?Q?A2vG1Fc1wN48yMmVMhf5O6dp7ZLqd/6lX0/ka2nQS9gbGxCt3nYXHccY5E+Z?=
- =?us-ascii?Q?xgvBJ8A29qV7d8cxSGZaA6/a9NNcCyKzOX549Ns782mczi4rxua5Ar2zx4XZ?=
- =?us-ascii?Q?P4IYQA+aJrtsCO5MUSNlL2l2R/xXWHqOlyRKtD80w6g6r+mkX3JinLIT3AmH?=
- =?us-ascii?Q?EAZY89KHJzT7l0cUPQjhHF14wSupGqL2KO6ITA3o8rcRkm9v6FU/hfb7IQ+y?=
- =?us-ascii?Q?PvF+h4ExyPppPTE9MAbatuEZCHsfHrtHuPC55aSy8wOXRw5OzAYbcCkGyFz3?=
- =?us-ascii?Q?EiYA4Gq1Ugc2e8svLe4S/y/Y9fORgjlCm39+sEwzgExkkXy3rEBjyBiLj98A?=
- =?us-ascii?Q?fWd8KA3PQdXGtnJkp4iMdfY7/keiXfTCnJeJ5WtUZTbk6w=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?grRSXoDPGfB/N5qpxXmBsFxKg1h66TRLllsEcORxKU60ob5KY/7v555eUOZQ?=
- =?us-ascii?Q?BPKggCP0rrwcrDIrS9eFc1k4oppS3vWOSVu6GKiYG19nnrF4dGMuNOKVWAlo?=
- =?us-ascii?Q?E5ryMD1uLsWEaHazZpaNn0UQrL5c6tptvc2bmBK/mSG/4A0Nf99vPx9qBtW5?=
- =?us-ascii?Q?BI2gmgGKCs5YBJCsYiA4BzcOiNLKGocG+nSgENuHzFT5l0sHd6agRjHjCtF/?=
- =?us-ascii?Q?p7koaiu39VrFCGNts/cvMokHox/T1Wc/gr5t9Q9UmEq/DX9cSjBk7Os3G1jq?=
- =?us-ascii?Q?C9bK5RDwA6+EYmW+TSFKbywDC7CTUZzgUIYYSwqAvujPa53AMAU5Nn5clTR8?=
- =?us-ascii?Q?g7YST18neA1YaBWTJvV82TIc7a6j/snuJe98f8FE197GKeUGc8IA5kl9x55z?=
- =?us-ascii?Q?0VbU36jA5v8FlOR6khHwmNrvxa/Vh0jXB1w+qNw6Rpo8Ey/QIz9mgN7KZz3m?=
- =?us-ascii?Q?7529yiCtRpas9HotHn2uzhGElJrkvV3arwhlt/56whjJj/jTbiHF2XEziJD1?=
- =?us-ascii?Q?AOBIMRE+p2x/NoWwHoDx99tCJz0lyf5SCSi9yk9+z0J5TlIKLe8EXz0EvQ1m?=
- =?us-ascii?Q?9pNTJZyPycaCLvMpsCcMysxZkxbKCLlCSCHbqeeo7fZSG6pZsb7P87F7GZW5?=
- =?us-ascii?Q?2TaM6qcpmjib1wY2hwQNMs+9ya65vmp3pxbVq62oIDXdHWCC2OH0y9ZNhA3e?=
- =?us-ascii?Q?16E5+DPj5UAK9FwyhZhyvODZnu/Nc/pmqaSKy3jTXh90QmHNczyWXlKPt/BP?=
- =?us-ascii?Q?+NwK8C9hmMsObrs88Jv2B0kJPOPZpgBs0UYbEqDiKnSgY1eKXcIDE+BhaNNm?=
- =?us-ascii?Q?Pu6gpSdfqzM4owq2bGtsjCmulmtHz9E9iemklXDyYhzUHVl1i7U/iPEpB7sY?=
- =?us-ascii?Q?mnSZaZcuvQ1TC1cDLJ7FHpo9GI64wFT4gFbLuyidUgg40dCB/cyDSJQBJ6oe?=
- =?us-ascii?Q?K1/AHju2EWy7b/2BaUnvYKSPHQJjjq0KvH+Ocw0lnIDDzwFPVyeyHrighxFc?=
- =?us-ascii?Q?tNnsdqT9QjlEHvT5ssTT52YYtSe+i7YMnxNi9OVDvwPZC6bNxIf65qmdXkFO?=
- =?us-ascii?Q?cc/0anOWSzRqAcLChF+M0oU8LyKts+Lg7SyuqkRsuE1ZSPAZfZ3UsVRybtEb?=
- =?us-ascii?Q?Q5e7hgY3yd/HGcKTZ09eZ+TywWuweZPIABBcWSQLsQkhCMYpLNFwH4UYUxYP?=
- =?us-ascii?Q?tKh2pp/hzRx0Z8uaDfEfN+LKf2IHEPjRUEpkzEvxoay743m9XsOppy0RWmIc?=
- =?us-ascii?Q?lshm6IohmveDBy1Cyqin8wNYaFBve+g5Qxm06RFoXlmk75zD4U1v7+kH2OE9?=
- =?us-ascii?Q?5QsrAfq0Rko9b1WJZT5KFGos5zYE2yIITbKQKw/ubh9FgheoEI+pmkS9F85t?=
- =?us-ascii?Q?/AL4M0lvP4i4v6JnbnZtitp2Lg5/zVY+VbC/OkhlpTfn/zxNzCzMPmePUagH?=
- =?us-ascii?Q?DVzwbc68beKb/CG5X32qHFWt4tpqq2Ug9VYxKrCLbS9S35+MV8tkiVNKgZ1J?=
- =?us-ascii?Q?yB9zr3Z3Uz5g+rjENzwoV3tQacispmwaSaTtMBlmDA6fPdlsUqbauyIpIXji?=
- =?us-ascii?Q?R3V3snVCxxYIC0SxH6limZjNeZYvyl/dxv/L9Jpc9sQW2KhY/iTB9fsuVa5G?=
- =?us-ascii?Q?EQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aa6da0d-4255-4785-211f-08dd248eb75a
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Dec 2024 02:49:13.7265
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oXOGHb6iRQIQVl9A3374Dp9y0GufPBehBYyPT2o/vk0Ql+l6ZDYPDWDdirAabA5AOUZ0y9l/gZpiVaJqealNEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4603
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [xfstests PATCH] generic/567: add partial pages zeroing out case
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: fstests@vger.kernel.org, zlang@kernel.org, linux-fsdevel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, willy@infradead.org,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20241223023930.2328634-1-yi.zhang@huaweicloud.com>
+ <Z2pYVqXKLvM2xwKt@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <Z2pYVqXKLvM2xwKt@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCngYXPd2tnrZFAFg--.1644S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFW5Kr45Ww4xXw47Zw18Zrb_yoW5Ar1xpF
+	y3Ga4ayr4Iqa4xuw4avr13XFyrtrsavFsrZr13Xr98ZF1j9r1xKrnF9340qFyDKr4v9r4F
+	vws7try5Ww1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
+On 2024/12/24 14:45, Ojaswin Mujoo wrote:
+> On Mon, Dec 23, 2024 at 10:39:30AM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> This addresses a data corruption issue encountered during partial page
+>> zeroing in ext4 which the block size is smaller than the page size [1].
+>> Expand this test to include a zeroing range test that spans two partial
+>> pages to cover this case.
+>>
+>> Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  tests/generic/567     | 50 +++++++++++++++++++++++++------------------
+>>  tests/generic/567.out | 18 ++++++++++++++++
+>>  2 files changed, 47 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/tests/generic/567 b/tests/generic/567
+>> index fc109d0d..756280e8 100755
+>> --- a/tests/generic/567
+>> +++ b/tests/generic/567
+>> @@ -4,43 +4,51 @@
+>>  #
+>>  # FS QA Test No. generic/567
+>>  #
+>> -# Test mapped writes against punch-hole to ensure we get the data
+>> -# correctly written. This can expose data corruption bugs on filesystems
+>> -# where the block size is smaller than the page size.
+>> +# Test mapped writes against punch-hole and zero-range to ensure we get
+>> +# the data correctly written. This can expose data corruption bugs on
+>> +# filesystems where the block size is smaller than the page size.
+>>  #
+>>  # (generic/029 is a similar test but for truncate.)
+>>  #
+>>  . ./common/preamble
+>> -_begin_fstest auto quick rw punch
+>> +_begin_fstest auto quick rw punch zero
+>>  
+>>  # Import common functions.
+>>  . ./common/filter
+>>  
+>>  _require_scratch
+>>  _require_xfs_io_command "fpunch"
+>> +_require_xfs_io_command "fzero"
+>>  
+>>  testfile=$SCRATCH_MNT/testfile
+>>  
+>>  _scratch_mkfs > /dev/null 2>&1
+>>  _scratch_mount
+>>  
+>> -# Punch a hole straddling two pages to check that the mapped write after the
+>> -# hole-punching is correctly handled.
+>> -
+>> -$XFS_IO_PROG -t -f \
+>> --c "pwrite -S 0x58 0 12288" \
+>> --c "mmap -rw 0 12288" \
+>> --c "mwrite -S 0x5a 2048 8192" \
+>> --c "fpunch 2048 8192" \
+>> --c "mwrite -S 0x59 2048 8192" \
+>> --c "close"      \
+>> -$testfile | _filter_xfs_io
+>> -
+>> -echo "==== Pre-Remount ==="
+>> -_hexdump $testfile
+>> -_scratch_cycle_mount
+>> -echo "==== Post-Remount =="
+>> -_hexdump $testfile
+>> +# Punch a hole and zero out straddling two pages to check that the mapped
+>> +# write after the hole-punching and range-zeroing are correctly handled.
+>> +_straddling_test()
+>> +{
+>> +	local test_cmd=$1
+>> +
+>> +	$XFS_IO_PROG -t -f \
+>> +		-c "pwrite -S 0x58 0 12288" \
+>> +		-c "mmap -rw 0 12288" \
+>> +		-c "mwrite -S 0x5a 2048 8192" \
+>> +		-c "$test_cmd 2048 8192" \
+>> +		-c "mwrite -S 0x59 2048 8192" \
+>> +		-c "close"      \
+>> +	$testfile | _filter_xfs_io
+> 
+> Hey Zhang,
+> 
+> While we are at it, can we generalize the test to work for
+> non-4k page sizes as well.
+> 
 
+Hi, Ojaswin.
 
-Hello,
+Yeah, I suppose we can do it.
 
-kernel test robot noticed "libhugetlbfs-test.32bit.gethugepagesizes.fail" on:
-
-commit: d4849629a4b7dcc73764f273e1879e76497acdc7 ("libfs: Replace simple_offset end-of-directory detection")
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-
-[test failed on linux-next/master 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2]
-
-in testcase: libhugetlbfs-test
-version: libhugetlbfs-test-x86_64-6ddbae4-1_20241102
-with following parameters:
-
-	pagesize: 2MB
-
-
-
-config: x86_64-rhel-9.4-func
-compiler: gcc-12
-test machine: 128 threads 2 sockets Intel(R) Xeon(R) Platinum 8358 CPU @ 2.60GHz (Ice Lake) with 128G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202412251039.eec88248-lkp@intel.com
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20241225/202412251039.eec88248-lkp@intel.com
-
-
-
-gethugepagesize (2M: 32):	PASS
-gethugepagesize (2M: 64):	PASS
-gethugepagesizes (2M: 32):	FAIL	rmdir /tmp/sysfs-fPtma7: Directory not empty   <----
-gethugepagesizes (2M: 64):	PASS
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Yi.
 
 
