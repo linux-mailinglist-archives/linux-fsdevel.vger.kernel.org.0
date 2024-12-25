@@ -1,78 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-38123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A559FC5FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 17:05:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8BC9FC60D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 17:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA1C1882DC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 16:05:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3DE018835F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2024 16:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2198717B50F;
-	Wed, 25 Dec 2024 16:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3662C19258B;
+	Wed, 25 Dec 2024 16:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+CXviSv"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dFjyE7OZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15EBC133;
-	Wed, 25 Dec 2024 16:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A3D256D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Dec 2024 16:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735142703; cv=none; b=njPXnzT06nNt2XtTcJyBbwSibrz1mM7yP523sofJE3au/aklNN1vZvpMB1VxiPsKbclxT/pgJAem4AzAvmW41rHn2kjJuFs3ix/MVhQbEVJN4MIvJ0pChpvbPGGxLAj51XxO+RcchNYpIZP5YSWqJmw0TT54JtOO/ZCat4R/tEM=
+	t=1735144357; cv=none; b=UENqawc9IY8P4pl2ZLoQPZSh/4owhSaF4ohwxr4Y0yHn7J+rD8WKWfmZHC5QLiarJ3HVGq7ebJLyNTp1eBErxbWgcSCA3TBMVhFpE9P048SPJH/QHOIJa8kbVRK6V1laSYxI+AFx1qk1zx1RmICXmFq9/4t1ncbUhYGtBPb754Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735142703; c=relaxed/simple;
-	bh=AMXfZt0Pt5NoFdjWvNFBMLosuhnnEAypOCkh2BLPVWY=;
+	s=arc-20240116; t=1735144357; c=relaxed/simple;
+	bh=aEynyIJVLKOR8r5skvgd2qro9TWMwxNrHeant58Lxs4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4YEJBb5pXCSCfB2LyGsgg33mdE84n8mLjLAWkFricUGSYHkGd/BDcyFT1ROg8dnRmRxfKWY0oaSuV1rRVaUpKJNdXtyhNIP+dA6scHFl0ESwjrbSCCAFxAw15G/UGdIkRiKWWkOGuZD8HZv8obZD5COgnx0UNQSwnpZmlCvvno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+CXviSv; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aab925654d9so1062251266b.2;
-        Wed, 25 Dec 2024 08:05:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735142700; x=1735747500; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ER+s7JBiAMsNiH63puVZlnAS3pWud1FMajpGFbkmero=;
-        b=C+CXviSvMB6lj8txGk2bHx5vQzix5JKtSe/kuX6K6uoAgrK3t3PTWtQS/hTq3V66mz
-         2q0H1Wrm7f9ACBd3W1GGVeRC4hqs+svi5nbO+G02HY7auO5TzCgVu43ObbW5EO3vZr3d
-         EXW3O78EzvHLVmM62gXNu/qDGlnHNWmGYj4lJKQPsTOel2CYg6pIuCFAO4TDsU++s4Js
-         Rx8+XhjVM84jJxvTSaIPDkhg7AAKdY7Pzgx2Diliz6oeka7tKhgPK04mNdVQ7CXD8kkz
-         1G9ydi/1rlqIt/x9pRLm8VbgZyHBSSPh4SIuOzC8HSRfBoUp5Jw1pRzXd6HqEnAAFUgu
-         Gu5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735142700; x=1735747500;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ER+s7JBiAMsNiH63puVZlnAS3pWud1FMajpGFbkmero=;
-        b=U1d0i4yEPvGz2WKz7Lt8E7blyJNz4Uxkoobnu4a24AT1qJ8nZbfs5d5LvYudUFfUiA
-         fgY1mVoNF+BSgLzqPpffboZp9NBqBrleVStnuYFf+O7RDMyL9ZBL0MVJr8bnjEtW3VKx
-         9Gh0FpAd+CYNDteXKDqoVoXcnN3RRlWIJi0YbLt0w/zd3Z2KAxcWR4ODRdsWqcC0yIme
-         t99OfwlnB1PVjJxlO1Zxj32/1/Rn1uf0R3jAqT2cQ65XX4YciiDY4rUf8i1rEMe8i+d5
-         Qa1MfWw7Kcd7FhExn8ZIv7JkpoWxNUaTl9KjHsIWiumXQoqcs0XMxl30SLMnbDh76fx8
-         NlPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp0pJfYCg1kzw5IIf8VZ478PX/bP5W7/1gnau/arDLxEwUFjAjQazkRAYpbkv7H7Y3Du2rK+cAoqJATLiO@vger.kernel.org, AJvYcCVBQsezyq+7HejQDDvZtTcFqYNRLxM/uaxkMrsExVVVQbHdZz8uQzXS3VZVr+tci6K/4awRnOFBRWzgrAlw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo7mH/JrJFUPjoJ4xzdSztVcqnkRlnTcG/hvTqdYdPNs2iFV8k
-	FAniPEYw+g48Yko5wB95xBvAs/1SkluTbpGUw4+ziEDrzIm/sRZB
-X-Gm-Gg: ASbGnct7UqdQKuuRuocHHVjqOSPKwWFK6zaULMVUdT4dogcsSix2BzfnQ58akpiGr1S
-	Nm+WjqSA/sAIRWdIcFhOqsr5cKhZWvLWXccffE+OJb7jUhXS9tfyO+G/HjYogf0OS8y+aInD+7V
-	EqTyuX9bMmFzhW8uO5YlVSw2qgmZmaZquz52XU8YSmuM3pAjRTze31J5w/mb+09N1oPVeNAsH2d
-	WFhWkgaOpusTyol73pIN4Kgb7YLY4gZKTQZaMD01JWLZuF6rLAZb4vqEyCIhdiToB4BzFT2
-X-Google-Smtp-Source: AGHT+IH8G/1QG1RTofv9OnjP8M48sIAYyeGbwXs/8wkRYSNOwZx1V/YWYRBBrk7BkGlaGg8MMvfITw==
-X-Received: by 2002:a17:907:7dab:b0:aa6:98c9:aadc with SMTP id a640c23a62f3a-aac2d45fb01mr1887821766b.31.1735142699864;
-        Wed, 25 Dec 2024 08:04:59 -0800 (PST)
-Received: from f (cst-prg-15-174.cust.vodafone.cz. [46.135.15.174])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f012229sm812610766b.133.2024.12.25.08.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Dec 2024 08:04:59 -0800 (PST)
-Date: Wed, 25 Dec 2024 17:04:46 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+kXBcKYqBFrYK4/seIZj+PR8IO0DJNySRGROs5oqMa2Rfh+8xS1dyoCIPn0MGXc1YbejUDZJt7l3y2WkvzL/xXKTEpBZ8hJV12usZnutiPYqGvvqbUfENOT6/ByVkuhO8A4qaaDFp2qnMPZ//Ayp4Xy3eAXvRhfTQCo4OlmK8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dFjyE7OZ; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 25 Dec 2024 11:32:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1735144352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YapoxDcaCdsR8NhLq15jcbunp38SIWnqzkLd1YTmFhY=;
+	b=dFjyE7OZVWSV/1WGiACFV66h9IaRlwj5y6iKlNYKVpk0YzBI0FspDliszFTC2u460UXZdb
+	emBLfAPBdnRUBy2Kyuc42FoS/NJWYpqMnFBY99DnaE7uXNXFcTjNc+LUFGjcBCyr6j0r9f
+	S+4Z6xrdvANvEL571XTIva1JsU+EToQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
 	WangYuli <wangyuli@uniontech.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, yushengjin@uniontech.com, 
@@ -87,74 +58,92 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	davem@davemloft.net, jsipek@cs.sunysb.edu
 Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping
  processes during pipe read/write
-Message-ID: <4tee2rwpqjmx7jj5poxxelv4sp2jyw6nuhpiwrlpv2lurgvpmz@3paxwuit47i6>
+Message-ID: <gspf7guqczppgfrus5lfhinyl62xezc4h7nqcnd4m7243v4mna@hxmu2wousrh7>
 References: <75B06EE0B67747ED+20241225094202.597305-1-wangyuli@uniontech.com>
  <Z2wI3dmmrhMRT-48@smile.fi.intel.com>
  <am7mlhd67ymicifo6qi56pw4e34cj3623drir3rvtisezpl4eu@e5zpca7g5ayy>
+ <4tee2rwpqjmx7jj5poxxelv4sp2jyw6nuhpiwrlpv2lurgvpmz@3paxwuit47i6>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <am7mlhd67ymicifo6qi56pw4e34cj3623drir3rvtisezpl4eu@e5zpca7g5ayy>
+In-Reply-To: <4tee2rwpqjmx7jj5poxxelv4sp2jyw6nuhpiwrlpv2lurgvpmz@3paxwuit47i6>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Dec 25, 2024 at 08:53:05AM -0500, Kent Overstreet wrote:
-> On Wed, Dec 25, 2024 at 03:30:05PM +0200, Andy Shevchenko wrote:
-> > Don't you think the Cc list is a bit overloaded?
-> 
-> Indeed, my mail server doesn't let me reply-all.
-> 
-> > On Wed, Dec 25, 2024 at 05:42:02PM +0800, WangYuli wrote:
-> > > +config PIPE_SKIP_SLEEPER
-> > > +	bool "Skip sleeping processes during pipe read/write"
-> > > +	default n
+On Wed, Dec 25, 2024 at 05:04:46PM +0100, Mateusz Guzik wrote:
+> On Wed, Dec 25, 2024 at 08:53:05AM -0500, Kent Overstreet wrote:
+> > On Wed, Dec 25, 2024 at 03:30:05PM +0200, Andy Shevchenko wrote:
+> > > Don't you think the Cc list is a bit overloaded?
 > > 
-> > 'n' is the default 'default', no need to have this line.
+> > Indeed, my mail server doesn't let me reply-all.
+> > 
+> > > On Wed, Dec 25, 2024 at 05:42:02PM +0800, WangYuli wrote:
+> > > > +config PIPE_SKIP_SLEEPER
+> > > > +	bool "Skip sleeping processes during pipe read/write"
+> > > > +	default n
+> > > 
+> > > 'n' is the default 'default', no need to have this line.
+> > 
+> > Actually, I'd say to skip the kconfig option for this. Kconfig options
+> > that affect the behaviour of core code increase our testing burden, and
+> > are another variable to account for when chasing down bugs, and the
+> > potential overhead looks negligable.
+> > 
 > 
-> Actually, I'd say to skip the kconfig option for this. Kconfig options
-> that affect the behaviour of core code increase our testing burden, and
-> are another variable to account for when chasing down bugs, and the
-> potential overhead looks negligable.
+> I agree the behavior should not be guarded by an option. However,
+> because of how wq_has_sleeper is implemented (see below) I would argue
+> this needs to show how often locking can be avoided in real workloads.
 > 
+> The commit message does state this comes with a slowdown for cases which
+> can't avoid wakeups, but as is I thought the submitter just meant an
+> extra branch.
+> 
+> > Also, did you look at adding this optimization to wake_up()? No-op
+> > wakeups are very common, I think this has wider applicability.
+> 
+> I was going to suggest it myself, but then:
+> 
+> static inline bool wq_has_sleeper(struct wait_queue_head *wq_head)
+> {
+>         /*
+>          * We need to be sure we are in sync with the
+>          * add_wait_queue modifications to the wait queue.
+>          *
+>          * This memory barrier should be paired with one on the
+>          * waiting side.
+>          */
+>         smp_mb();
+>         return waitqueue_active(wq_head);
+> }
+> 
+> Which means this is in fact quite expensive.
+>
+> Since wakeup is a lock + an interrupt trip, it would still be
+> cheaper single-threaded to "merely" suffer a full fence and for cases
+> where the queue is empty often enough this is definitely the right thing
+> to do.
 
-I agree the behavior should not be guarded by an option. However,
-because of how wq_has_sleeper is implemented (see below) I would argue
-this needs to show how often locking can be avoided in real workloads.
+We're comparing against no-op wakeup. A real wakeup does an IPI, which
+completely dwarfs the cost of a barrier.
 
-The commit message does state this comes with a slowdown for cases which
-can't avoid wakeups, but as is I thought the submitter just meant an
-extra branch.
+And note that wake_up() is spin_lock_irqsave(), not spin_lock(). I
+assume it's gotten better, but back when I was looking at waitqueues
+nested pushf/popf was horrifically expensive.
 
-> Also, did you look at adding this optimization to wake_up()? No-op
-> wakeups are very common, I think this has wider applicability.
+But perhaps can we do this with just a release barrier? Similar to how
+list_empty_careful() works.
 
-I was going to suggest it myself, but then:
+> On the other hand this executing when the queue is mostly *not* empty
+> would combat the point.
+> 
+> So unfortunately embedding this in wake_up is a no-go.
 
-static inline bool wq_has_sleeper(struct wait_queue_head *wq_head)
-{
-        /*
-         * We need to be sure we are in sync with the
-         * add_wait_queue modifications to the wait queue.
-         *
-         * This memory barrier should be paired with one on the
-         * waiting side.
-         */
-        smp_mb();
-        return waitqueue_active(wq_head);
-}
-
-Which means this is in fact quite expensive.
-
-Since wakeup is a lock + an interrupt trip, it would still be
-cheaper single-threaded to "merely" suffer a full fence and for cases
-where the queue is empty often enough this is definitely the right thing
-to do.
-
-On the other hand this executing when the queue is mostly *not* empty
-would combat the point.
-
-So unfortunately embedding this in wake_up is a no-go.
+You definitely can't say that without knowing how often no-op
+wake_up()s occur. It wouldn't be hard to gather that (write a patch to
+add a pair of percpu counters, throw it on a few machines running random
+workloads) and I think the results might surprise you.
 
