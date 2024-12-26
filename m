@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-38130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9A59FC777
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 02:51:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B869FC778
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 02:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61CEB162927
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 01:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710571629D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 01:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F25A12B71;
-	Thu, 26 Dec 2024 01:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9EC12B71;
+	Thu, 26 Dec 2024 01:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Us5mEt8A"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QeDvDDDe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583EB360
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2024 01:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F860360
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2024 01:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735177872; cv=none; b=n5+J7PUIaSaZ4Wh2kEvI46qQ+bIr1b/S4/wA3YIgvMSovRG9Yvk+ZHIFckHxBgxrChfmMs2t323JqtpG+zPHhh3Lm6N4+1ivdHX7JuOb56BAOzae8Y9WzrCk1q3E6V27+Smk7yAwsr651IqfkgktiTCwY58CVt6NPXTVj+Bb3dY=
+	t=1735177927; cv=none; b=XsM4hGV3YKZfFN8TTXkRre9OgNfOKeGtolv8SSdbMsuqr7aVPv9ntGZhX9iYCQVfut+06iKK7l0XJWy1L3Q9QMpoJNaWAHPk64Tp54S3bQ2BPPjCfH3Dp4KRRIko3XfXW1WfcL0VvSJpPN/5ePTT7GmJWwV9kfe/SFumoOnJfe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735177872; c=relaxed/simple;
-	bh=p+/HCp4uytKHS4RRtVR5mZ4RNjZ6losOFjkOEUasiEs=;
+	s=arc-20240116; t=1735177927; c=relaxed/simple;
+	bh=umNMczzwZV52oBQviKiaqNsvrepMY6ivd823r4zUMus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTBLn2biGthp2RhLhu9HR3FPGJAnHoxRcPBj1jrXiOuDyfFiOg6xaNWAKw3+VfwlJosj2Vd7YIYTNT0Om1zTn9F20Ua9066hyuUpxLIMNxsjzUUqI6EBkbZNep6Ny2oND0JzZAhz58qRqPxMCRr5XFgF5U0aqaFCjVKwy2WWXII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Us5mEt8A; arc=none smtp.client-ip=209.85.216.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=IS2NaPavvDbOpzLaDOXFnLLJ3UtiOeG/tx5kwDUeD90QK2EHJJKS/RpYzMZiJSUpe+p+juDBNpVzMOS53E+tvCsn/xNRHD4di8ftUdd7ewNhmpmrPWwYH7XEbwyEu97yv4IgMPpi+1xA8obtOXJ1T5JgnPVqGqUNDhyfFvEfLcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QeDvDDDe; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2efd81c7ca4so5549285a91.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Dec 2024 17:51:09 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21649a7bcdcso67973735ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Dec 2024 17:52:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1735177868; x=1735782668; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1735177926; x=1735782726; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=366DNgTZXC3bkjUlhSBobSEILOlddeFbJWISVWcfjbY=;
-        b=Us5mEt8AFNJBb2dBCu2mWc/IhI1G8Ok5vIlt5SFGobBjecL+UfQlazOVBi+rlVyHmr
-         xi30rPp/u+UYfyE+PYbbJeuHOH8KOPmR2Ke5gK3fnPBNRmGbQcWHZjV8gYon/JEtGgEK
-         3q6tF4Cx8+FcIdaegxnmSKoz3QwlDIsddmI8Q=
+        bh=jf+PeOeTkzT/OfW1jqyfqfOpXWuWv4q8+IMy17DKA2Q=;
+        b=QeDvDDDe9XgVueuYdRcRkwERMp5fdRVE/2KamtJKV/ucjAxPxmuvyFI4YU4RT4HBVS
+         g8t8wzo/iOfsi41BmdrJUCfWGA3UZHwwxeD4dmHOlzecgtac91xk8LLqo2DU7cwP7s64
+         TTdiL+FnRc8op4bMS3otaTTHXvqBR6/g2ZtEc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735177868; x=1735782668;
+        d=1e100.net; s=20230601; t=1735177926; x=1735782726;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=366DNgTZXC3bkjUlhSBobSEILOlddeFbJWISVWcfjbY=;
-        b=Ut9wBhI48tDjWyQRArGxnU84EBXHbsvs7K5TIphPjzMNbd7Ys1q8687IzSFU5vyraa
-         t7AsilyqBI5Yy7Iq5ldP1+22R6DEF/kByraOo1YhEvuEPQHeZl5MDiMv/NwdlmIx8sDR
-         NgFnqynpRW/Z9foIreNxbF3OFtDzDIXsAfACpi3FtxyC3/CH5eA5thhyj42rERxPOwtp
-         p6vijnpIP2bRKS11xhE8jr0vrD4AWx8sY5VGJ27ZTJi19WCIBn6A+IS5IncOwbDOCgZW
-         jeFQYcPMdYmyNpqjJO0vnbGvCKmO2w5XFmemVJ0nF+W3baU8QE7HcD8h5MqeMWLkt3D+
-         j2Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKnKwyw31rTRbk3bROngCPDBXw+/HrSAAUNHU/jvD3TGw31S6zsIt3su5RJmLA9vJ1d636scHTZ6feQzcs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGVQc3w+g30xgzjoPcnAWwXZVM1vWpanGv1IljetdOL2A+Vc0i
-	u2ZgnIarBIIfOjmRK7WIpaVt3vVx8RhZjhniQDu2LvF54/+C95ha8wuWTmUFXg==
-X-Gm-Gg: ASbGnctqjFYkLnKOUUSBZl0LaNU2yRJpp20vQLTXfX09rf9LiNptASqC4UQlU0FXVjT
-	x7CDw5BasBDuBjr0l+hNuxls66O5BkrgyHw2Fv2xwLRWBMMrm2QM8wnycZ3WtPMYBlTlRrCD+hO
-	bydw0lmboIIAOcMfzI0aN6X59aPgzy/XodTvYnhhTztIaGtdgrjPSyQENijTBOAs2jJ3NfZospm
-	9wBWWIF/s9uiIH4mU2ssrXQBMb3tchW+iqfuPP17qKXcH4g6z0Hug0G088=
-X-Google-Smtp-Source: AGHT+IEuWmpC8lz7gW+a6/J76GEfa5wyqAD8/U7hOOSkVJgKvWlIKdFSa+cz0051BXwvodpsmB0XTw==
-X-Received: by 2002:a17:90b:2745:b0:2ee:d824:b559 with SMTP id 98e67ed59e1d1-2f452ec7001mr29538962a91.28.1735177868722;
-        Wed, 25 Dec 2024 17:51:08 -0800 (PST)
+        bh=jf+PeOeTkzT/OfW1jqyfqfOpXWuWv4q8+IMy17DKA2Q=;
+        b=oqjm6RPOfXzkmFr9PrPdZoH3CXx4yFm3V5+8yuDuW1Wnxwvzb6Dul3Dpk483LJYr45
+         RfRhNxzTBMl87RMyHadwOMcP8EldqZNqxe9AQGNlpXBFbMW9Q5NAu5KvXisXdPjkyv63
+         X5pSVgAQofAB1d/ivXsFiwsmfd0g4kXvePhTmznwK1UQic8cNa6/RrZoj6z6f+niTxjD
+         Bh0QJ5sBvfkUXfka4Tt9CJXKcvM/UnfSOGo+68T8jQrzxgqY3BOfokomYyLjbPRlClEh
+         grDW511XuTWifT94OObsloy38uGYqzjfiwoKQnd27LlKUV7MAYaQN1kE8/L5HtEx6+Kn
+         UI7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6M6MFsE8/AKVs6cKnM/ziesaP1x0BOAB8YxSiuwLfx4LM+z0T2siwld52RxiQudbqi1jt25+9l/Wfq6mE@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwq6ZJj1ThNikps+i8OpYIpnnHdQkrMdIZ0PNsbe8fu1D57dyY
+	cACOBJFPRO7Ww7LY0ISFIVzy1TfdeEOAg0Wi1BXruJjSBz3GO55LYXfbxoWplQ==
+X-Gm-Gg: ASbGncuKfDrldtZABumV9wUl1RvR+jyw8vtpCSLyJa++xn7gd4V3W3GO036xGFtcnYC
+	JzHrrx2lpVfDzOVJzC6pkWoYjxX7JBzgdICQYEXDkTMSe+lTzZf/ZiwxgsyxWPZim16YVuFQw8c
+	GDWGfzisyboJO8fiMEIOBrLAN1365lBmkvTLP8svmWXzHvat7ol6FRkuaUhXVzD9P4Yn9pLKEKs
+	tI2v/pNeFjpM8ZNXcHOZOGkyenDX38odC+1in6G9oFlx8NjwNXYcVX54ms=
+X-Google-Smtp-Source: AGHT+IGfpuDHAgY5GoLIKIpCEUcLfXn8AXt16TX/21nZrtlaEklLAmenbgnnYakQCmK2ZJveloapNg==
+X-Received: by 2002:a17:902:ccc3:b0:216:325f:6f2b with SMTP id d9443c01a7336-219e6ea1a58mr296265935ad.21.1735177925638;
+        Wed, 25 Dec 2024 17:52:05 -0800 (PST)
 Received: from google.com ([2401:fa00:8f:203:e8a3:a0d:e1e8:eb51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9d444csm109646745ad.137.2024.12.25.17.51.05
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9cde50sm109518365ad.154.2024.12.25.17.52.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Dec 2024 17:51:08 -0800 (PST)
-Date: Thu, 26 Dec 2024 10:51:03 +0900
+        Wed, 25 Dec 2024 17:52:05 -0800 (PST)
+Date: Thu, 26 Dec 2024 10:52:00 +0900
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
 	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
 	jlayton@kernel.org, senozhatsky@chromium.org, tfiga@chromium.org, bgeffon@google.com, 
-	etmartin4313@gmail.com, kernel-team@meta.com
-Subject: Re: [PATCH v11 1/2] fuse: add kernel-enforced timeout option for
- requests
-Message-ID: <fmyclqwgnmiem2bfbzfu53bkoivivltxdw2q63amczzzfanw6p@6dbpifizrx56>
+	etmartin4313@gmail.com, kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>
+Subject: Re: [PATCH v11 2/2] fuse: add default_request_timeout and
+ max_request_timeout sysctls
+Message-ID: <34myowizzazpp37cu6i46gp2bjs7pzcss4d7pgzukn4rmktfxr@zrx6auj3v6sl>
 References: <20241218222630.99920-1-joannelkoong@gmail.com>
- <20241218222630.99920-2-joannelkoong@gmail.com>
+ <20241218222630.99920-3-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,23 +87,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241218222630.99920-2-joannelkoong@gmail.com>
+In-Reply-To: <20241218222630.99920-3-joannelkoong@gmail.com>
 
 On (24/12/18 14:26), Joanne Koong wrote:
-> There are situations where fuse servers can become unresponsive or
-> stuck, for example if the server is deadlocked. Currently, there's no
-> good way to detect if a server is stuck and needs to be killed manually.
+> Introduce two new sysctls, "default_request_timeout" and
+> "max_request_timeout". These control how long (in seconds) a server can
+> take to reply to a request. If the server does not reply by the timeout,
+> then the connection will be aborted. The upper bound on these sysctl
+> values is U32_MAX.
 > 
-> This commit adds an option for enforcing a timeout (in seconds) for
-> requests where if the timeout elapses without the server responding to
-> the request, the connection will be automatically aborted.
+> "default_request_timeout" sets the default timeout if no timeout is
+> specified by the fuse server on mount. 0 (default) indicates no default
+> timeout should be enforced. If the server did specify a timeout, then
+> default_request_timeout will be ignored.
 > 
-> Please note that these timeouts are not 100% precise. For example, the
-> request may take roughly an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond
-> the requested timeout due to internal implementation, in order to
-> mitigate overhead.
+> "max_request_timeout" sets the max amount of time the server may take to
+> reply to a request. 0 (default) indicates no maximum timeout. If
+> max_request_timeout is set and the fuse server attempts to set a
+> timeout greater than max_request_timeout, the system will use
+> max_request_timeout as the timeout. Similarly, if default_request_timeout
+> is greater than max_request_timeout, the system will use
+> max_request_timeout as the timeout. If the server does not request a
+> timeout and default_request_timeout is set to 0 but max_request_timeout
+> is set, then the timeout will be max_request_timeout.
+> 
+> Please note that these timeouts are not 100% precise. The request may
+> take roughly an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max
+> timeout due to how it's internally implemented.
+> 
+> $ sysctl -a | grep fuse.default_request_timeout
+> fs.fuse.default_request_timeout = 0
+> 
+> $ echo 4294967296 | sudo tee /proc/sys/fs/fuse/default_request_timeout
+> tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
+> 
+> $ echo 4294967295 | sudo tee /proc/sys/fs/fuse/default_request_timeout
+> 4294967295
+> 
+> $ sysctl -a | grep fuse.default_request_timeout
+> fs.fuse.default_request_timeout = 4294967295
+> 
+> $ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
+> 0
+> 
+> $ sysctl -a | grep fuse.default_request_timeout
+> fs.fuse.default_request_timeout = 0
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
 FWIW
 Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
