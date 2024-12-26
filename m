@@ -1,84 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-38131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B869FC778
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 02:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 634EB9FC77C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 03:03:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710571629D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 01:52:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 016A31628D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2024 02:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9EC12B71;
-	Thu, 26 Dec 2024 01:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC836F9FE;
+	Thu, 26 Dec 2024 02:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QeDvDDDe"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aB96WMBU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F860360
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2024 01:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1F11C6B4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2024 02:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735177927; cv=none; b=XsM4hGV3YKZfFN8TTXkRre9OgNfOKeGtolv8SSdbMsuqr7aVPv9ntGZhX9iYCQVfut+06iKK7l0XJWy1L3Q9QMpoJNaWAHPk64Tp54S3bQ2BPPjCfH3Dp4KRRIko3XfXW1WfcL0VvSJpPN/5ePTT7GmJWwV9kfe/SFumoOnJfe4=
+	t=1735178635; cv=none; b=dMWBtQwYU9YltFLvjx3vb1wZ/pBdA+wM7c+L9wIFkRveUkEG5NJGmeM21WcJA5SC90GwAxpCFdWGXxXaF7vCyelCVnpdyyDcw/CILE+Q5N88Eo0J7cKHFBpI6p26OJl9zvWU4NEZptv7CLkfZzHQDQb5wFNiECm03813JjrJwTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735177927; c=relaxed/simple;
-	bh=umNMczzwZV52oBQviKiaqNsvrepMY6ivd823r4zUMus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IS2NaPavvDbOpzLaDOXFnLLJ3UtiOeG/tx5kwDUeD90QK2EHJJKS/RpYzMZiJSUpe+p+juDBNpVzMOS53E+tvCsn/xNRHD4di8ftUdd7ewNhmpmrPWwYH7XEbwyEu97yv4IgMPpi+1xA8obtOXJ1T5JgnPVqGqUNDhyfFvEfLcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QeDvDDDe; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21649a7bcdcso67973735ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Dec 2024 17:52:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1735177926; x=1735782726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jf+PeOeTkzT/OfW1jqyfqfOpXWuWv4q8+IMy17DKA2Q=;
-        b=QeDvDDDe9XgVueuYdRcRkwERMp5fdRVE/2KamtJKV/ucjAxPxmuvyFI4YU4RT4HBVS
-         g8t8wzo/iOfsi41BmdrJUCfWGA3UZHwwxeD4dmHOlzecgtac91xk8LLqo2DU7cwP7s64
-         TTdiL+FnRc8op4bMS3otaTTHXvqBR6/g2ZtEc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735177926; x=1735782726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jf+PeOeTkzT/OfW1jqyfqfOpXWuWv4q8+IMy17DKA2Q=;
-        b=oqjm6RPOfXzkmFr9PrPdZoH3CXx4yFm3V5+8yuDuW1Wnxwvzb6Dul3Dpk483LJYr45
-         RfRhNxzTBMl87RMyHadwOMcP8EldqZNqxe9AQGNlpXBFbMW9Q5NAu5KvXisXdPjkyv63
-         X5pSVgAQofAB1d/ivXsFiwsmfd0g4kXvePhTmznwK1UQic8cNa6/RrZoj6z6f+niTxjD
-         Bh0QJ5sBvfkUXfka4Tt9CJXKcvM/UnfSOGo+68T8jQrzxgqY3BOfokomYyLjbPRlClEh
-         grDW511XuTWifT94OObsloy38uGYqzjfiwoKQnd27LlKUV7MAYaQN1kE8/L5HtEx6+Kn
-         UI7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6M6MFsE8/AKVs6cKnM/ziesaP1x0BOAB8YxSiuwLfx4LM+z0T2siwld52RxiQudbqi1jt25+9l/Wfq6mE@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwq6ZJj1ThNikps+i8OpYIpnnHdQkrMdIZ0PNsbe8fu1D57dyY
-	cACOBJFPRO7Ww7LY0ISFIVzy1TfdeEOAg0Wi1BXruJjSBz3GO55LYXfbxoWplQ==
-X-Gm-Gg: ASbGncuKfDrldtZABumV9wUl1RvR+jyw8vtpCSLyJa++xn7gd4V3W3GO036xGFtcnYC
-	JzHrrx2lpVfDzOVJzC6pkWoYjxX7JBzgdICQYEXDkTMSe+lTzZf/ZiwxgsyxWPZim16YVuFQw8c
-	GDWGfzisyboJO8fiMEIOBrLAN1365lBmkvTLP8svmWXzHvat7ol6FRkuaUhXVzD9P4Yn9pLKEKs
-	tI2v/pNeFjpM8ZNXcHOZOGkyenDX38odC+1in6G9oFlx8NjwNXYcVX54ms=
-X-Google-Smtp-Source: AGHT+IGfpuDHAgY5GoLIKIpCEUcLfXn8AXt16TX/21nZrtlaEklLAmenbgnnYakQCmK2ZJveloapNg==
-X-Received: by 2002:a17:902:ccc3:b0:216:325f:6f2b with SMTP id d9443c01a7336-219e6ea1a58mr296265935ad.21.1735177925638;
-        Wed, 25 Dec 2024 17:52:05 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:e8a3:a0d:e1e8:eb51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9cde50sm109518365ad.154.2024.12.25.17.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Dec 2024 17:52:05 -0800 (PST)
-Date: Thu, 26 Dec 2024 10:52:00 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
-	jlayton@kernel.org, senozhatsky@chromium.org, tfiga@chromium.org, bgeffon@google.com, 
-	etmartin4313@gmail.com, kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>
-Subject: Re: [PATCH v11 2/2] fuse: add default_request_timeout and
- max_request_timeout sysctls
-Message-ID: <34myowizzazpp37cu6i46gp2bjs7pzcss4d7pgzukn4rmktfxr@zrx6auj3v6sl>
-References: <20241218222630.99920-1-joannelkoong@gmail.com>
- <20241218222630.99920-3-joannelkoong@gmail.com>
+	s=arc-20240116; t=1735178635; c=relaxed/simple;
+	bh=1qCnwQf01MjidK75TCkTvPRxN/FQkCigCy9g6X76eM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=htgDNtwEd+VHVP7xhsY611w40p4tfXU82X4+cX0CnOxyPjjDxbpYl0aBUVW7pO6p+q5jk6xeML15WRUf/1MDU4r3hr6+kPkaJWJ0J0mUZ0yjjueIoS0PVlBhSdqSBG/AIlRW6Jy3wtJ/qneOGEXpA0SqCYB1k64L82Q1d8imR84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aB96WMBU; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1735178633; x=1766714633;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1qCnwQf01MjidK75TCkTvPRxN/FQkCigCy9g6X76eM4=;
+  b=aB96WMBUeLQSnkHt1G1qffwJOO424BfxdGGtFsFOJS+Ja6f6ql/ayc48
+   A8k2ow4SgGNZeEPOQtd3PjDdIRzGr+4t7iYbpqpCGxKXWwbQM7ed5LRR3
+   woYSuc9WETB0frWVP5C+b/K7hr9ThzXaIUXjY30F4Fh8Id0vv+IBBzcOa
+   aig44+XZcUFZHyzSNOb80sB6VGilGAMoE2Xou9XDLt0Z1CCfa2LqOKPCO
+   a3PG2Dbgrrpb7+2XgdIWRo/MD+jVWCR43IfN0+OeyEVQXHKeTa5LeQ4sf
+   T7IUWmfyuW0j77VtyNW6G2nJSLAmY4zdEFfjM7VHw1IAuYzvURUvP1GNI
+   A==;
+X-CSE-ConnectionGUID: pwz/yYMkSpGvWU1YxwM3PQ==
+X-CSE-MsgGUID: MwumF9DlT7qSt4t1KcUrkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11296"; a="46976608"
+X-IronPort-AV: E=Sophos;i="6.12,264,1728975600"; 
+   d="scan'208";a="46976608"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Dec 2024 18:03:53 -0800
+X-CSE-ConnectionGUID: SdOEKf4BSJqoGRohpAOqAg==
+X-CSE-MsgGUID: 8BzOvSS5SoGPvCVMJWH2vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123088722"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 25 Dec 2024 18:03:52 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tQdE5-0002Ha-37;
+	Thu, 26 Dec 2024 02:03:49 +0000
+Date: Thu, 26 Dec 2024 10:03:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:work.debugfs 17/18] mm/slub.c:7576:70: error: macro
+ "debugfs_create_file" passed 6 arguments, but takes just 5
+Message-ID: <202412260912.PLXDHzVz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,56 +76,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241218222630.99920-3-joannelkoong@gmail.com>
 
-On (24/12/18 14:26), Joanne Koong wrote:
-> Introduce two new sysctls, "default_request_timeout" and
-> "max_request_timeout". These control how long (in seconds) a server can
-> take to reply to a request. If the server does not reply by the timeout,
-> then the connection will be aborted. The upper bound on these sysctl
-> values is U32_MAX.
-> 
-> "default_request_timeout" sets the default timeout if no timeout is
-> specified by the fuse server on mount. 0 (default) indicates no default
-> timeout should be enforced. If the server did specify a timeout, then
-> default_request_timeout will be ignored.
-> 
-> "max_request_timeout" sets the max amount of time the server may take to
-> reply to a request. 0 (default) indicates no maximum timeout. If
-> max_request_timeout is set and the fuse server attempts to set a
-> timeout greater than max_request_timeout, the system will use
-> max_request_timeout as the timeout. Similarly, if default_request_timeout
-> is greater than max_request_timeout, the system will use
-> max_request_timeout as the timeout. If the server does not request a
-> timeout and default_request_timeout is set to 0 but max_request_timeout
-> is set, then the timeout will be max_request_timeout.
-> 
-> Please note that these timeouts are not 100% precise. The request may
-> take roughly an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max
-> timeout due to how it's internally implemented.
-> 
-> $ sysctl -a | grep fuse.default_request_timeout
-> fs.fuse.default_request_timeout = 0
-> 
-> $ echo 4294967296 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
-> 
-> $ echo 4294967295 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> 4294967295
-> 
-> $ sysctl -a | grep fuse.default_request_timeout
-> fs.fuse.default_request_timeout = 4294967295
-> 
-> $ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> 0
-> 
-> $ sysctl -a | grep fuse.default_request_timeout
-> fs.fuse.default_request_timeout = 0
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.debugfs
+head:   e98a67d7c1e4a22fa9b851507e25ecdc5b8cea6d
+commit: 3c2d1b64cb4320860923a2097f5891efa2d7060e [17/18] slub: don't mess with ->d_name
+config: arc-randconfig-001-20241226 (https://download.01.org/0day-ci/archive/20241226/202412260912.PLXDHzVz-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241226/202412260912.PLXDHzVz-lkp@intel.com/reproduce)
 
-FWIW
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412260912.PLXDHzVz-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/slub.c: In function 'debugfs_slab_add':
+>> mm/slub.c:7576:70: error: macro "debugfs_create_file" passed 6 arguments, but takes just 5
+    7576 |                 (void *)(unsigned long)TRACK_FREE, &slab_debugfs_fops);
+         |                                                                      ^
+   In file included from mm/slub.c:46:
+   include/linux/debugfs.h:125: note: macro "debugfs_create_file" defined here
+     125 | #define debugfs_create_file(name, mode, parent, data, fops)                     \
+         | 
+>> mm/slub.c:7575:9: error: 'debugfs_create_file' undeclared (first use in this function); did you mean 'debugfs_create_xul'?
+    7575 |         debugfs_create_file("free_traces", 0400, slab_cache_dir, s,
+         |         ^~~~~~~~~~~~~~~~~~~
+         |         debugfs_create_xul
+   mm/slub.c:7575:9: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +/debugfs_create_file +7576 mm/slub.c
+
+  7562	
+  7563	static void debugfs_slab_add(struct kmem_cache *s)
+  7564	{
+  7565		struct dentry *slab_cache_dir;
+  7566	
+  7567		if (unlikely(!slab_debugfs_root))
+  7568			return;
+  7569	
+  7570		slab_cache_dir = debugfs_create_dir(s->name, slab_debugfs_root);
+  7571	
+  7572		debugfs_create_file_aux("alloc_traces", 0400, slab_cache_dir, s,
+  7573			(void *)(unsigned long)TRACK_ALLOC, &slab_debugfs_fops);
+  7574	
+> 7575		debugfs_create_file("free_traces", 0400, slab_cache_dir, s,
+> 7576			(void *)(unsigned long)TRACK_FREE, &slab_debugfs_fops);
+  7577	}
+  7578	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
