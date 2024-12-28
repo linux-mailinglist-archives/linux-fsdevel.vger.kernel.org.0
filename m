@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-38204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67139FDBCA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 18:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79849FDBCB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 18:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2864D3A1443
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C801882C5D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF74197556;
-	Sat, 28 Dec 2024 17:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4B319882F;
+	Sat, 28 Dec 2024 17:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uma4kQ2k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkZyB+e+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412EA194ACC;
-	Sat, 28 Dec 2024 17:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98556194ACC
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 17:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735408529; cv=none; b=CqdVBIhM5SX0Fnw/dgO2DLnlIdu7V3ALS+HJ6SKRXV9Y+vMx63wB4gMOOy6CWcdSTiNXK1IObKmr0tv3SldOh/CA8S1aHV3cctBXx4iC9SK0k2vesOwC3OQ5jJMoik+IPa5F7Rei6sQre3EENiz8rfNPQYw2TeZub/WbAlgKvqo=
+	t=1735408530; cv=none; b=IacxErluOiQUzNQqio5MGtnFs7lGHTmCmmhW9IU25XON1ZrF3yclvKFHYCU6tX85lqrhW9Wkhrzinnvsl5gbz6SxGb0l6ato2EijN7tCSq5OTZ0ZXW25lOrPYir/W1UpLRNEtAlp/cuKjx5z9pVof7/2eZHrRWRm/MDEggwgWKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735408529; c=relaxed/simple;
-	bh=EECtu5EOQPP9WpkyAeyEzP3b+8wuy+Niq71T6d9EZWc=;
+	s=arc-20240116; t=1735408530; c=relaxed/simple;
+	bh=WTZSoNUmlpCr3xI8k1Ogjd81zfFoaOgkluDOdOMlomc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VH8/bKV/WGZELIKfOSElj16aHhC6Arsb7QALTFrynF8PhxolvCyQ22YNyYeFu1HH3CILHq3huwe+KI/5zFzE6Dhc4FldTySwpdzggDr4hz05vh1Zv8UWv1E+fIVR/GbMSLASQVnZzgXCDAI5DjxrQV5+x6j6owZZtiKPHk0mZ4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uma4kQ2k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B35BC4CED3;
-	Sat, 28 Dec 2024 17:55:27 +0000 (UTC)
+	 MIME-Version; b=Og+sLTGcZ3aYgqz8bm5Syu3EIH5IA18LVMNlmxu5lkt/oJV890yiisHP5RwQCDvBEmAr02Km7oImO7GVg2y8bQ/8kppGcnHa7fZWJIBDmrUVgA0ClxG4oQD0pGiMXb7tFRPNYObkIrxI1yYrz/tAh0DdJDehUnbxyrdfPR6ROtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkZyB+e+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5054DC4CED4;
+	Sat, 28 Dec 2024 17:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735408529;
-	bh=EECtu5EOQPP9WpkyAeyEzP3b+8wuy+Niq71T6d9EZWc=;
+	s=k20201202; t=1735408530;
+	bh=WTZSoNUmlpCr3xI8k1Ogjd81zfFoaOgkluDOdOMlomc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Uma4kQ2kNj/TOCp8GofUQATKtCXg9pKPiiaPxerbHBR1J1MtjzVlVou7vExRGYGtA
-	 65BSwylOREkYANw6gZKPDWebHMXN4k54oQ/kIWEaY/Tgi6t6zOjpKC/K5hq/JaKl8G
-	 WJ3Fq5btLxjxUIm9QXgeg6JEOg3z1AHfae9l+B9RTK2SGB3zJQUQNpb0OZQsq/iQ3r
-	 BjoMXzIKW60jDKbAY5trHgHFPHh6VVByIH3v5JCNoZrhwJDCuOnSTjBmT3hCC1c16T
-	 AhH8e3ewz2IJ54b5YjFJ1RfSnphPqXvPxHQkWYWOq9A4kLiOB/+TecXx07wZl7E7Fb
-	 FasZ5Fxn2KSyg==
+	b=QkZyB+e+oXkkoiHfk2e90Exd3floAYt11DNoTBTvESvt94QQxkC2Teg8+ggq+xFly
+	 hh6n3Io4qJeO2eJVX5/oiBoIaxWwI02BBTFu5hPJ9BIyXL5O7WhzGYEuAG5/7DjY3g
+	 00G1EdCX5yStiA+UmPqSLYUoZhviIviS79CEIjDM8eXfWkIhl3QZuys+KfLNEKduK5
+	 r7pXgWrri3WFqa68vMdNuqQyRDNbj/P1mL2CpqIKBpOR9iVmY2GyKq6LW/KawYnc2q
+	 x9NRV17i8nJIEKHRy990w/ibPDPP0H73lUGAZxny5q4qBC7LIs3xDnfBu4mt7EJs9o
+	 UaUDHrVVugSsg==
 From: cel@kernel.org
 To: Hugh Dickins <hughd@google.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -50,13 +50,10 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	yukuai3@huawei.com,
 	yangerkun@huaweicloud.com,
 	Liam.Howlett@oracle.com,
-	Chuck Lever <chuck.lever@oracle.com>,
-	stable@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Yang Erkun <yangerkun@huawei.com>
-Subject: [PATCH v7 1/5] libfs: Return ENOSPC when the directory offset range is exhausted
-Date: Sat, 28 Dec 2024 12:55:17 -0500
-Message-ID: <20241228175522.1854234-2-cel@kernel.org>
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v7 2/5] Revert "libfs: Add simple_offset_empty()"
+Date: Sat, 28 Dec 2024 12:55:18 -0500
+Message-ID: <20241228175522.1854234-3-cel@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241228175522.1854234-1-cel@kernel.org>
 References: <20241228175522.1854234-1-cel@kernel.org>
@@ -70,42 +67,98 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Testing shows that the EBUSY error return from mtree_alloc_cyclic()
-leaks into user space. The ERRORS section of "man creat(2)" says:
+simple_empty() and simple_offset_empty() perform the same task.
+The latter's use as a canary to find bugs has not found any new
+issues. A subsequent patch will remove the use of the mtree for
+iterating directory contents, so revert back to using a similar
+mechanism for determining whether a directory is indeed empty.
 
->	EBUSY	O_EXCL was specified in flags and pathname refers
->		to a block device that is in use by the system
->		(e.g., it is mounted).
+Only one such mechanism is ever needed.
 
-ENOSPC is closer to what applications expect in this situation.
-
-Note that the normal range of simple directory offset values is
-2..2^63, so hitting this error is going to be rare to impossible.
-
-Fixes: 6faddda69f62 ("libfs: Add directory operations for stable offsets")
-Cc: <stable@vger.kernel.org> # v6.9+
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: Yang Erkun <yangerkun@huawei.com>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/libfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/libfs.c         | 32 --------------------------------
+ include/linux/fs.h |  1 -
+ mm/shmem.c         |  4 ++--
+ 3 files changed, 2 insertions(+), 35 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 748ac5923154..3da58a92f48f 100644
+index 3da58a92f48f..8380d9314ebd 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -292,8 +292,8 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
+@@ -329,38 +329,6 @@ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
+ 	offset_set(dentry, 0);
+ }
  
- 	ret = mtree_alloc_cyclic(&octx->mt, &offset, dentry, DIR_OFFSET_MIN,
- 				 LONG_MAX, &octx->next_offset, GFP_KERNEL);
--	if (ret < 0)
+-/**
+- * simple_offset_empty - Check if a dentry can be unlinked
+- * @dentry: dentry to be tested
+- *
+- * Returns 0 if @dentry is a non-empty directory; otherwise returns 1.
+- */
+-int simple_offset_empty(struct dentry *dentry)
+-{
+-	struct inode *inode = d_inode(dentry);
+-	struct offset_ctx *octx;
+-	struct dentry *child;
+-	unsigned long index;
+-	int ret = 1;
+-
+-	if (!inode || !S_ISDIR(inode->i_mode))
 -		return ret;
-+	if (unlikely(ret < 0))
-+		return ret == -EBUSY ? -ENOSPC : ret;
+-
+-	index = DIR_OFFSET_MIN;
+-	octx = inode->i_op->get_offset_ctx(inode);
+-	mt_for_each(&octx->mt, child, index, LONG_MAX) {
+-		spin_lock(&child->d_lock);
+-		if (simple_positive(child)) {
+-			spin_unlock(&child->d_lock);
+-			ret = 0;
+-			break;
+-		}
+-		spin_unlock(&child->d_lock);
+-	}
+-
+-	return ret;
+-}
+-
+ /**
+  * simple_offset_rename - handle directory offsets for rename
+  * @old_dir: parent directory of source entry
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7e29433c5ecc..f7efc6866ebc 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3468,7 +3468,6 @@ struct offset_ctx {
+ void simple_offset_init(struct offset_ctx *octx);
+ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry);
+ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry);
+-int simple_offset_empty(struct dentry *dentry);
+ int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			 struct inode *new_dir, struct dentry *new_dentry);
+ int simple_offset_rename_exchange(struct inode *old_dir,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index f6fb053ac50d..fe5613a5ae20 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3820,7 +3820,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
  
- 	offset_set(dentry, offset);
- 	return 0;
+ static int shmem_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+-	if (!simple_offset_empty(dentry))
++	if (!simple_empty(dentry))
+ 		return -ENOTEMPTY;
+ 
+ 	drop_nlink(d_inode(dentry));
+@@ -3877,7 +3877,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ 		return simple_offset_rename_exchange(old_dir, old_dentry,
+ 						     new_dir, new_dentry);
+ 
+-	if (!simple_offset_empty(new_dentry))
++	if (!simple_empty(new_dentry))
+ 		return -ENOTEMPTY;
+ 
+ 	if (flags & RENAME_WHITEOUT) {
 -- 
 2.47.0
 
