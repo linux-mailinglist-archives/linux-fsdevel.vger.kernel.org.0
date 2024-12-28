@@ -1,206 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-38177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B60B9FD8C9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 02:50:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A118E9FDA68
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 13:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356C41631B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 01:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480181882EF1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 12:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234B470816;
-	Sat, 28 Dec 2024 01:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E4A15B13D;
+	Sat, 28 Dec 2024 12:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPmKL7Ab"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BB53D3B8;
-	Sat, 28 Dec 2024 01:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B278157493;
+	Sat, 28 Dec 2024 12:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735350598; cv=none; b=AyVRZQ/U4pm63bP815JH1xZwOsKMWCAX3vSIexfPcAdaZw4tdfZ3DusmFdrL9KJnzVK2TVFSsHodFB8macPWq02AC+cZ5KO/+Q1WFry0gVM8dGY1pK6R7gEGr03t/2THhs1h6wJoYYVziAwc37LCg7FT0zFuFJv3/ixU+kST2gQ=
+	t=1735388106; cv=none; b=c9P74Fr2WXH4zkqZACaacSPjB6tBkGTOA5axiiZgUO3YlXt5fCxwSBF9KEB1yv757BkZHw1IQx/bSXjlu1nRXMfF93UpFDwfrmI8xoCUUr/i3E3I6cupVZNTOOjmw2NImyVCmvSiefkkvy88ZA+owGAJF3LE5jWQ+4d8Ac6AzeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735350598; c=relaxed/simple;
-	bh=ZOX580lH6VoMPh1GMn3kpm1paH3qlwAybkviFezGTjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IOtbQEt07BW4LLI3OFWuwzYxNsMT7XIr33oeMsus48YQE0chhOKPTAev+slCZYjchAcH+5BgMELgaJi7gcoyrC/7LeTT4pL3v8BDyJygHP/oxUs92QkLDcZbCJyTpXyAfGpI/PUu9c49aheTu6/0/ikgKgHWho26XwpEWfMjcnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YKlfP2f34z4f3jqw;
-	Sat, 28 Dec 2024 09:49:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 140E51A018D;
-	Sat, 28 Dec 2024 09:49:48 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3U4cuWW9nXPNWFw--.42357S6;
-	Sat, 28 Dec 2024 09:49:47 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	adilger.kernel@dilger.ca,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [RFC PATCH 2/2] ext4: add FALLOC_FL_FORCE_ZERO support
-Date: Sat, 28 Dec 2024 09:45:22 +0800
-Message-Id: <20241228014522.2395187-3-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
-References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1735388106; c=relaxed/simple;
+	bh=97/5224KtfCVtGhVMHx6krsVPkUDF0EY+TYp3O6MChU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FsCScX3kgpdoM3GpmcBIMGPVlGasn8jGmPAl5/2eDwxaQlViRIkKEOQ4F/z+v4uuSrGokj4bgeAiskiO5djYmhcMYDp4mnLGTkinZo2G18LzA06LD9sCgtOOCZ6ja1Lcb07kXMFT7KbC5qXVXuA1xpWrpJ/IYYqvraRdocgtHtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPmKL7Ab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62852C4CECD;
+	Sat, 28 Dec 2024 12:15:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735388106;
+	bh=97/5224KtfCVtGhVMHx6krsVPkUDF0EY+TYp3O6MChU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IPmKL7AbU1Kqx31Ft9P9mrdb3gcll7S8m0Qfed5FXR1ytUSAQIbGF9qdOnyxed7Hq
+	 jstjuYa3DV3wH/C2qaXbWwCo/rqhF7/nvV1cKQ9tLz3K5J8GyOFNzDsy2QpIjPO5xq
+	 NepbzrZht8wPww1EphkIlzQverVOpEFgxAm3DtnjPK27lBBvnHBlq01mMQxJhMWBHC
+	 mDunzRZm3w41CX0jK5/YcHTXirHiHIkYNa42270CjE/FXV0DcFfEox0AwYPYRdsOGR
+	 zGnazmXNZEQwfDCiGXjJeQA7MvBYV412juQ3OdflPcnvQ6PuOuIfBBRCY1sTwmdRRv
+	 pZvEd0sww2NqQ==
+Date: Sat, 28 Dec 2024 13:15:00 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
+	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
+	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
+	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
+	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
+	wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
+Message-ID: <42tsyuvdvym6i3j4ppsluvx7kejxjzbma5z4jjgccni6kuwtj7@rhuklbyko7yf>
+References: <20241223141550.638616-1-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3U4cuWW9nXPNWFw--.42357S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw4ruw4kJw4DXw4kCr45Wrg_yoWrArWkpF
-	Z8ZF1rKayIq3429r4fCw4Durn8Ka4kGryUWrWSgryruayUJr1fKFs0gFy8ZayFgrW8AF45
-	Xw4YkryUG3W7A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUl9a9UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241223141550.638616-1-yukaixiong@huawei.com>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Dec 23, 2024 at 10:15:19PM +0800, Kaixiong Yu wrote:
+> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+> places where they actually belong, and do some related code clean-ups.
+> After this patch series, all sysctls in vm_table have been moved into its
+> own files, meanwhile, delete vm_table.
+> 
+> All the modifications of this patch series base on
+> linux-next(tags/next-20241219). To test this patch series, the code was
+> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+> x86_64 architectures. After this patch series is applied, all files
+> under /proc/sys/vm can be read or written normally.
+> 
+> Changes in v4:
+>  - change all "static struct ctl_table" type into
+>    "static const struct ctl_table" type in patch1~10,12,13,14
+>  - simplify result of rpcauth_cache_shrink_count() in patch11
+> 
+> Changes in v3:
+>  - change patch1~10, patch14 title suggested by Joel Granados
+>  - change sysctl_stat_interval to static type in patch1
+>  - add acked-by from Paul Moore in patch7
+>  - change dirtytime_expire_interval to static type in patch9
+>  - add acked-by from Anna Schumaker in patch11
+> 
+> Changes in v2:
+>  - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+>  - update changelog for patch7/12, suggested by Kees/Paul
+>  - fix patch8, sorry for wrong changes and forget to built with NOMMU
+>  - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+>  - add reviewed-by from Jan Kara, Christian Brauner in patch12
+> 
+> Kaixiong Yu (15):
+>   mm: vmstat: move sysctls to mm/vmstat.c
+>   mm: filemap: move sysctl to mm/filemap.c
+>   mm: swap: move sysctl to mm/swap.c
+>   mm: vmscan: move vmscan sysctls to mm/vmscan.c
+>   mm: util: move sysctls to mm/util.c
+>   mm: mmap: move sysctl to mm/mmap.c
+>   security: min_addr: move sysctl to security/min_addr.c
+>   mm: nommu: move sysctl to mm/nommu.c
+>   fs: fs-writeback: move sysctl to fs/fs-writeback.c
+>   fs: drop_caches: move sysctl to fs/drop_caches.c
+>   sunrpc: simplify rpcauth_cache_shrink_count()
+>   fs: dcache: move the sysctl to fs/dcache.c
+>   x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+>   sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+>   sysctl: remove unneeded include
+This patchset looks strange. There seems to be 15 patches, but there are
+30 e-mails in the thread? You can also see this when you look at it in
+lore [1]. And they are different repeated e-mails (mutt does not
+de-duplicate them). Also `b4 shazam ...` does not work. What happened?
+Did you send it twice with the same mail ID? Am I the only one seeing
+this?
 
-Add support for FALLOC_FL_FORCE_ZERO. This first allocates blocks as
-unwritten, then issues a zero command outside of the running journal
-handle, and finally converts them to a written state.
+I would suggest the following (hopefully you are using b4):
+1. Check to see how things will be sent with b4. `b4 send --resend -o OUTPUT_DIR`
+   If you see 30 emails in that dir from your patchset then something is
+   still wrong.
+2. After you make sure that everything is in order. Do the resend
+   without bumping the version up (leave it at version 4)
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/extents.c           | 42 +++++++++++++++++++++++++++++++------
- include/trace/events/ext4.h |  3 ++-
- 2 files changed, 38 insertions(+), 7 deletions(-)
+Best
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 1b028be19193..dcb3ef4ca1d4 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4483,6 +4483,8 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	struct ext4_map_blocks map;
- 	unsigned int credits;
- 	loff_t epos, old_size = i_size_read(inode);
-+	unsigned int blkbits = inode->i_blkbits;
-+	bool alloc_zero = false;
- 
- 	BUG_ON(!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS));
- 	map.m_lblk = offset;
-@@ -4495,6 +4497,17 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	if (len <= EXT_UNWRITTEN_MAX_LEN)
- 		flags |= EXT4_GET_BLOCKS_NO_NORMALIZE;
- 
-+	/*
-+	 * Do the actual write zero during a running journal transaction
-+	 * costs a lot. First allocate an unwritten extent and then
-+	 * convert it to written after zeroing it out.
-+	 */
-+	if (flags & EXT4_GET_BLOCKS_ZERO) {
-+		flags &= ~EXT4_GET_BLOCKS_ZERO;
-+		flags |= EXT4_GET_BLOCKS_UNWRIT_EXT;
-+		alloc_zero = true;
-+	}
-+
- 	/*
- 	 * credits to insert 1 extent into extent tree
- 	 */
-@@ -4531,9 +4544,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		 * allow a full retry cycle for any remaining allocations
- 		 */
- 		retries = 0;
--		map.m_lblk += ret;
--		map.m_len = len = len - ret;
--		epos = (loff_t)map.m_lblk << inode->i_blkbits;
-+		epos = (loff_t)(map.m_lblk + ret) << blkbits;
- 		inode_set_ctime_current(inode);
- 		if (new_size) {
- 			if (epos > new_size)
-@@ -4553,6 +4564,21 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		ret2 = ret3 ? ret3 : ret2;
- 		if (unlikely(ret2))
- 			break;
-+
-+		if (alloc_zero &&
-+		    (map.m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN))) {
-+			ret2 = ext4_issue_zeroout(inode, map.m_lblk, map.m_pblk,
-+						  map.m_len);
-+			if (likely(!ret2))
-+				ret2 = ext4_convert_unwritten_extents(NULL,
-+					inode, (loff_t)map.m_lblk << blkbits,
-+					(loff_t)map.m_len << blkbits);
-+			if (ret2)
-+				break;
-+		}
-+
-+		map.m_lblk += ret;
-+		map.m_len = len = len - ret;
- 	}
- 	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
- 		goto retry;
-@@ -4618,7 +4644,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 	if (end_lblk > start_lblk) {
- 		ext4_lblk_t zero_blks = end_lblk - start_lblk;
- 
--		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
-+		if (mode & FALLOC_FL_FORCE_ZERO)
-+			flags = EXT4_GET_BLOCKS_CREATE_ZERO | EXT4_EX_NOCACHE;
-+		else
-+			flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
-+				  EXT4_EX_NOCACHE);
- 		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
- 					     new_size, flags);
- 		if (ret)
-@@ -4730,8 +4760,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 
- 	/* Return error if mode is not supported */
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--		     FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE |
--		     FALLOC_FL_INSERT_RANGE))
-+		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_FORCE_ZERO |
-+		     FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_INSERT_RANGE))
- 		return -EOPNOTSUPP;
- 
- 	inode_lock(inode);
-diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-index 156908641e68..1ac29dc637a9 100644
---- a/include/trace/events/ext4.h
-+++ b/include/trace/events/ext4.h
-@@ -92,7 +92,8 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
- 	{ FALLOC_FL_KEEP_SIZE,		"KEEP_SIZE"},		\
- 	{ FALLOC_FL_PUNCH_HOLE,		"PUNCH_HOLE"},		\
- 	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
--	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
-+	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"},		\
-+	{ FALLOC_FL_FORCE_ZERO,		"FORCE_ZERO"})
- 
- TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
- TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
+[1] : https://lore.kernel.org/all/20241223141550.638616-1-yukaixiong@huawei.com/
+
+> 
+>  arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+>  arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+>  fs/dcache.c                        |  21 ++-
+>  fs/drop_caches.c                   |  23 ++-
+>  fs/fs-writeback.c                  |  30 ++--
+>  include/linux/dcache.h             |   7 +-
+>  include/linux/mm.h                 |  23 ---
+>  include/linux/mman.h               |   2 -
+>  include/linux/swap.h               |   9 --
+>  include/linux/vmstat.h             |  11 --
+>  include/linux/writeback.h          |   4 -
+>  kernel/sysctl.c                    | 221 -----------------------------
+>  mm/filemap.c                       |  18 ++-
+>  mm/internal.h                      |  10 ++
+>  mm/mmap.c                          |  54 +++++++
+>  mm/nommu.c                         |  15 +-
+>  mm/swap.c                          |  16 ++-
+>  mm/swap.h                          |   1 +
+>  mm/util.c                          |  67 +++++++--
+>  mm/vmscan.c                        |  23 +++
+>  mm/vmstat.c                        |  44 +++++-
+>  net/sunrpc/auth.c                  |   2 +-
+>  security/min_addr.c                |  11 ++
+>  23 files changed, 330 insertions(+), 312 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.39.2
 
+Joel Granados
 
