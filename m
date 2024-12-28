@@ -1,187 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-38201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030479FDBB4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:45:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CC69FDBBD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 18:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD901881EF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F53B3A1437
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922EA18A6CE;
-	Sat, 28 Dec 2024 16:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b="DVlWArlU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8671946DA;
+	Sat, 28 Dec 2024 17:10:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C99474
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 16:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D99F1917E4
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 17:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735404322; cv=none; b=PdY1HWxpFUPdrHmaG+3eLn84YU6+pZWG8cPG7nYHhzAbRczkluyD+Lk7cKQb3FftVySPt6zLgrk1YaiBkVe/vneYcLmXlUG9cFs4DWAYPpUq+dKP1H5lBb9BmkrQWilG/3ocZYTmJkUn1YImy1WmuOpgLAJ3uuB1Ec1sSN1OAXw=
+	t=1735405825; cv=none; b=PryKTDBAWLo5KGdCKV+b2ZcW73M3hTonEK2RYwO5g0AHOgiyzLFLxmJXQIZJK+jXdeCJ4PRazVotLOp6XEqkY7N9LdWBtunxpayG6CDyoxtt900Z6wARpGqn9oft7X2/Q1iLn6ZvFo7XEey86contHLQ9q01F99N+JQ8uo/cZbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735404322; c=relaxed/simple;
-	bh=XPRidIZVC18CQUlEKufW8F52jxa4BJHyPOo2xrs11V0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L/k+JZXK2VFaN42eqcWasIujY+WeSd3+5hjmbEvNQV2na07h3candZJcoSzY3OV8yH33A4kXg/rxk+DFt/sp+38C4aL3zaQ2iki0UYSvE4zBMLOJpU08LgFf9QG9eVMCD4yFoRyJsXX6UexlornmKAe6q1Rddujx5SX2gp/vixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com; spf=pass smtp.mailfrom=colorfullife.com; dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b=DVlWArlU; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorfullife.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fc01so15801500a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 08:45:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20230601.gappssmtp.com; s=20230601; t=1735404318; x=1736009118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cz1VqmSfgwulj4TtgG0EFMyBOjhXN78eW0/1No1Ds5s=;
-        b=DVlWArlUBAMQJbrOEpknvPgE6MCbg52xa47A0eVowXnoLhmSldmT7SuMX/kiU+xaAQ
-         mh0uKIddoNfiAWZb/l8R7QjcTQnlPedjrIFDF+9tWkBDtTmDjFYdQ5RI8FFGysyNdJqI
-         RH6EdaKdRuhKL1Q6rOpa6wGZuGm27lODmIlA366H7JehGyB3xdDGUtyOLLrtvF8OCTkv
-         BD4kYkXhKtQvFTlZA1y3JgICJU5Flqu92i3iS4bqnj0gfvE0L3t2QgA8nReSqXfII+pc
-         PUf05uwqM2FDgVqFEAMns9jnWQ3bkHgbIjzclc0ek9X0QlCcyVlb8Bvc/l9+nBcB4HOd
-         Clvg==
+	s=arc-20240116; t=1735405825; c=relaxed/simple;
+	bh=xZh0K5AoWrKk+2nyL8+5t9boqfrlkhc4gOXTShSk8/k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XgZR6jI/ygGGF1AhwTqWQP7RCUicqWFeSwiIhQSAYI5qQMhP/dZF4TVO3uoQkSv9esKYCfcYHYEkWqwXZeYC5nhjQEpiQH5NDtnUXB0du4i1ho/YASBUDOCBBKfYcZQ+Gvkc3/ara0GrmcqCfzEIDvWXa8bkywt3ykRL/EzoCUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7e4bfae54so77479065ab.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 09:10:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735404318; x=1736009118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1735405823; x=1736010623;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cz1VqmSfgwulj4TtgG0EFMyBOjhXN78eW0/1No1Ds5s=;
-        b=IUmd7Vq6IcepKzbg4rq4NGhQIHLjsVlWKAAsgxc+NFEuLzmXacl0MUN6MgnpbL/ax8
-         45tPa9LtZltZn+vjEsHczo64YDXaTNhYUIbCra1XpuvlryM3B5kQxRf/Aacx/teVrnmZ
-         9fM/iXz4bp6wi/eZ8IzqA/Kx/XtRKG0LG+uFV1kL7/FitCXDUWP028N6mcC840nLuJIC
-         uZJrcQkovC7yH1iLUSdOF8ljBSBRk6hOsbMYZQnn6MwrLS6kQeWdymePecDb7gDLkj7r
-         nSQMyWGfBwqfZWWhSNWnBhjK+qyO0HMsO3ZAWoA+JDiQF02Ie0dcNXnBMIq5ulX8moZo
-         Poiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbnZuorh/2qt/R4D+H3cZt7030Q+kAMOzpOGBqS8E1dMQkwcqeD4ggEZomFBisD4dYBu8CCzx9uhI/OKBA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZpsETUfcr62VSrEzYEymXxbzKh7FTfD6XkuGSC1Iyysw7bjQQ
-	Sq2Dx8VUr5fJUS2BCPuh8Jano/3QI7OIk0V0yaEaAWE5DURIsa3jPnO4cxhynw==
-X-Gm-Gg: ASbGnctzNVEsbTdpEXNvpmrN+r6StwiWHrvFJYj6/noq5xEYjQWLmPZAPWmyc4iIL+U
-	R28GLJ5089g5An0nuYhqWigBzYYcKxlF5mIu8nus2mRrfwn/smY086avn4Kge08sWc/QJ7z50Dw
-	lOOfLp2Tl5rN3efvwWROZeKis9Mjl2eVcBO8WDv7ezLZPE1TV7wHaKsdKFh8USE45sbSUTqgHxE
-	gpKm4z5MaPftRM99YNBT2A+ckyA7v+qeLkiTJqhC1uCtRatfKLl0Qb609HZiEC2R7Fub/p9//3+
-	dGfmiOmGJ23lD/YTHU5+d+0hTksxG08LNsPwZ37a9wsT3j9SbdNYI+cOCCloAmeY8AWFkIgM8Dg
-	Q4FNUciaZuWtSfSL1I8o=
-X-Google-Smtp-Source: AGHT+IEwCOkVYEmRIyllgGUbBkB/nkRg+m8awrnv/+Y37IbH6AsgZsVAegd6S/68CdBE0Kokug+VPA==
-X-Received: by 2002:a17:907:7f8e:b0:aa6:9198:75a2 with SMTP id a640c23a62f3a-aac334e51afmr2680214366b.44.1735404317930;
-        Sat, 28 Dec 2024 08:45:17 -0800 (PST)
-Received: from ?IPV6:2003:d9:974e:9900:6aac:89d9:5e45:a0e6? (p200300d9974e99006aac89d95e45a0e6.dip0.t-ipconnect.de. [2003:d9:974e:9900:6aac:89d9:5e45:a0e6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e895366sm1258629566b.73.2024.12.28.08.45.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Dec 2024 08:45:16 -0800 (PST)
-Message-ID: <addb53ac-2f46-45db-83ce-c6b28e40d831@colorfullife.com>
-Date: Sat, 28 Dec 2024 17:45:15 +0100
+        bh=CODmsC4LZsdpSiW+E8OKW5kDjjIqL2wYdRrUqr1lNS8=;
+        b=WKDSDWZnVl611K1pp6vYOQKX+an4iPMhYSpKOh1HALgQEHVTi0x+cHui85YcZ1Y6tw
+         NQsW+v9l8EfMKpNxN7I/0SlfaDGssVN70mfU//NjRoLeNo9o6Zbu1dTSTbO2xJgcVNFj
+         6QgaNDcCjr3obqzjriyvp+7RUt6lQuq53mGmH9FlzOLr3D2p2PfkRFEWVbjzWrGB1qFr
+         W20J5URb9rf67lCnCTlU2El8ivnFVmoZgP7E8cjm5JTX+eYiIsxN2WpjFsOB3vZIdDUQ
+         tMgnk52LGS2K7FEpOiL5SLCoBmfOW+pyFEg2GVVTZdVY+R/dGGEGIt4rsw31OaKcxBEy
+         mERw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFmM1hLUQEm70h9XHrfzRvpXqhIHhJfd6LO3zvE8qolWRyC8MjLPfiCRFH5Inr7ijyLBRENoBn9Sz3LlJ0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyiy2CeqT0dJGiFdw6AqN6/XbU2CaEtHNxf7IXnGbIhqbfIPg2x
+	GXz0ncF+MxpDRU59/bfuZYHl+FMLDrU9uSEp9F1wbaeOHDGf+yHHTDAaAaw9x4vKnyiNNwJ8ST6
+	gHbtsn9DLDV2mACnZX7zJIBfVdkSEEyX5Kys5ATpQ19N/DaLGp4xyP7E=
+X-Google-Smtp-Source: AGHT+IFpl0r+R7wut9k1MreS/2Yiih5CiUGFH5GutuTjiDtlJjqxeSzUMGhzCJxlvjVJ70UhAtpAFQ27D4JSY3l7C7dv1bV3HzIu
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping
- processes during pipe read/write
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- WangYuli <wangyuli@uniontech.com>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Christian Brauner <brauner@kernel.org>
-References: <75B06EE0B67747ED+20241225094202.597305-1-wangyuli@uniontech.com>
- <CAHk-=wj5A-fO+GnfwqGpXhFbfpS4+_8xU+dnXkSx+0AfwBYrxA@mail.gmail.com>
- <20241226201158.GB11118@redhat.com>
- <1df49d97-df0e-4471-9e40-a850b758d981@colorfullife.com>
- <20241228143248.GB5302@redhat.com> <20241228152229.GC5302@redhat.com>
-Content-Language: en-US
-From: Manfred Spraul <manfred@colorfullife.com>
-In-Reply-To: <20241228152229.GC5302@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1685:b0:3a7:6e59:33ad with SMTP id
+ e9e14a558f8ab-3c2d4e6c573mr205087085ab.17.1735405823311; Sat, 28 Dec 2024
+ 09:10:23 -0800 (PST)
+Date: Sat, 28 Dec 2024 09:10:23 -0800
+In-Reply-To: <676a3d1b.050a0220.2f3838.014f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <677030ff.050a0220.2f3838.0499.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] [nilfs?] WARNING in mnt_ns_release
+From: syzbot <syzbot+5b9d613904b2f185f2fe@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net, 
+	konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Oleg,
+syzbot has found a reproducer for the following issue on:
 
-On 12/28/24 4:22 PM, Oleg Nesterov wrote:
-> On 12/28, Oleg Nesterov wrote:
->>>   int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
->>>   	      int nr_exclusive, void *key)
->>>   {
->>> +	if (list_empty(&wq_head->head)) {
->>> +		struct list_head *pn;
->>> +
->>> +		/*
->>> +		 * pairs with spin_unlock_irqrestore(&wq_head->lock);
->>> +		 * We actually do not need to acquire wq_head->lock, we just
->>> +		 * need to be sure that there is no prepare_to_wait() that
->>> +		 * completed on any CPU before __wake_up was called.
->>> +		 * Thus instead of load_acquiring the spinlock and dropping
->>> +		 * it again, we load_acquire the next list entry and check
->>> +		 * that the list is not empty.
->>> +		 */
->>> +		pn = smp_load_acquire(&wq_head->head.next);
->>> +
->>> +		if(pn == &wq_head->head)
->>> +			return 0;
->>> +	}
->> Too subtle for me ;)
->>
->> I have some concerns, but I need to think a bit more to (try to) actually
->> understand this change.
-> If nothing else, consider
->
-> 	int CONDITION;
-> 	wait_queue_head_t WQ;
->
-> 	void wake(void)
-> 	{
-> 		CONDITION = 1;
-> 		wake_up(WQ);
-> 	}
->
-> 	void wait(void)
-> 	{
-> 		DEFINE_WAIT_FUNC(entry, woken_wake_function);
->
-> 		add_wait_queue(WQ, entry);
-> 		if (!CONDITION)
-> 			wait_woken(entry, ...);
-> 		remove_wait_queue(WQ, entry);
-> 	}
->
-> this code is correct even if LOAD(CONDITION) can leak into the critical
-> section in add_wait_queue(), so CPU running wait() can actually do
->
-> 		// add_wait_queue
-> 		spin_lock(WQ->lock);
-> 		LOAD(CONDITION);	// false!
-> 		list_add(entry, head);
-> 		spin_unlock(WQ->lock);
->
-> 		if (!false)		// result of the LOAD above
-> 			wait_woken(entry, ...);
->
-> Now suppose that another CPU executes wake() between LOAD(CONDITION)
-> and list_add(entry, head). With your patch wait() will miss the event.
-> The same for __pollwait(), I think...
->
-> No?
+HEAD commit:    8155b4ef3466 Add linux-next specific files for 20241220
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=175106df980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c90bb7161a56c88
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b9d613904b2f185f2fe
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16dc4af8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11dc4af8580000
 
-Yes, you are right.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/98a974fc662d/disk-8155b4ef.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2dea9b72f624/vmlinux-8155b4ef.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/593a42b9eb34/bzImage-8155b4ef.xz
 
-CONDITION =1 is worst case written to memory from the store_release() in 
-spin_unlock().
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5b9d613904b2f185f2fe@syzkaller.appspotmail.com
 
-this pairs with the load_acquire for spin_lock(), thus LOAD(CONDITION) 
-is safe.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 18491 at fs/namespace.c:163 mnt_ns_release+0x15d/0x1c0 fs/namespace.c:163
+Modules linked in:
+CPU: 1 UID: 0 PID: 18491 Comm: syz-executor346 Not tainted 6.13.0-rc3-next-20241220-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:mnt_ns_release+0x15d/0x1c0 fs/namespace.c:163
+Code: 15 bf 01 00 00 00 89 ee e8 d0 e8 7d ff 85 ed 7e 39 e8 87 e4 7d ff 4c 89 ff 5b 41 5e 41 5f 5d e9 39 be d8 ff e8 74 e4 7d ff 90 <0f> 0b 90 e9 12 ff ff ff e8 66 e4 7d ff 48 89 df be 03 00 00 00 5b
+RSP: 0018:ffffc90000a18bb8 EFLAGS: 00010246
+RAX: ffffffff82413fac RBX: 0000000000000001 RCX: ffff888022f98000
+RDX: 0000000000000100 RSI: 0000000000000001 RDI: 0000000000000001
+RBP: ffffc90000a18e10 R08: ffffffff82413eb2 R09: 1ffffffff285af0b
+R10: dffffc0000000000 R11: ffffffff82424530 R12: ffffffff81a6a6d7
+R13: ffff88807a8b4e58 R14: dffffc0000000000 R15: ffff88807a8b4e00
+FS:  000055556221c380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff70e84301d CR3: 0000000032e1a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ rcu_do_batch kernel/rcu/tree.c:2546 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2802
+ handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+ __do_softirq kernel/softirq.c:595 [inline]
+ invoke_softirq kernel/softirq.c:435 [inline]
+ __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5853
+Code: 2b 00 74 08 4c 89 f7 e8 0a 13 8b 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
+RSP: 0018:ffffc90004c3fac0 EFLAGS: 00000206
+RAX: 0000000000000001 RBX: 1ffff92000987f64 RCX: ffff888022f98ae0
+RDX: dffffc0000000000 RSI: ffffffff8c0aaba0 RDI: ffffffff8c5fed00
+RBP: ffffc90004c3fc10 R08: ffffffff942d7857 R09: 1ffffffff285af0a
+R10: dffffc0000000000 R11: fffffbfff285af0b R12: 1ffff92000987f60
+R13: dffffc0000000000 R14: ffffc90004c3fb20 R15: 0000000000000246
+ do_write_seqcount_begin_nested include/linux/seqlock.h:476 [inline]
+ do_write_seqcount_begin include/linux/seqlock.h:502 [inline]
+ write_seqlock include/linux/seqlock.h:876 [inline]
+ mnt_ns_tree_write_lock fs/namespace.c:133 [inline]
+ mnt_ns_tree_add+0x52/0x340 fs/namespace.c:145
+ copy_mnt_ns+0x857/0x960 fs/namespace.c:4044
+ create_new_namespaces+0xd3/0x7b0 kernel/nsproxy.c:78
+ unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
+ ksys_unshare+0x57d/0xa70 kernel/fork.c:3331
+ __do_sys_unshare kernel/fork.c:3402 [inline]
+ __se_sys_unshare kernel/fork.c:3400 [inline]
+ __x64_sys_unshare+0x38/0x40 kernel/fork.c:3400
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff70e7faaa9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffec6e71348 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff70e7faaa9
+RDX: 00007ff70e7f9ce0 RSI: 0000000000000012 RDI: 000000002c060000
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000001975b
+R13: 00007ffec6e7135c R14: 00007ffec6e71370 R15: 00007ffec6e71360
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	2b 00                	sub    (%rax),%eax
+   2:	74 08                	je     0xc
+   4:	4c 89 f7             	mov    %r14,%rdi
+   7:	e8 0a 13 8b 00       	call   0x8b1316
+   c:	f6 44 24 61 02       	testb  $0x2,0x61(%rsp)
+  11:	0f 85 85 01 00 00    	jne    0x19c
+  17:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
+  1e:	74 01                	je     0x21
+  20:	fb                   	sti
+  21:	48 c7 44 24 40 0e 36 	movq   $0x45e0360e,0x40(%rsp)
+  28:	e0 45
+* 2a:	4b c7 44 25 00 00 00 	movq   $0x0,0x0(%r13,%r12,1) <-- trapping instruction
+  31:	00 00
+  33:	43 c7 44 25 09 00 00 	movl   $0x0,0x9(%r13,%r12,1)
+  3a:	00 00
+  3c:	43                   	rex.XB
+  3d:	c7                   	.byte 0xc7
+  3e:	44                   	rex.R
+  3f:	25                   	.byte 0x25
 
-It could still work for prepare_to_wait and thus fs/pipe, since then the 
-smb_mb() in set_current_state prevents earlier execution.
 
-
---
-
-     Manfred
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
