@@ -1,234 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-38208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4EF9FDBCE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 18:55:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B78C9FDC11
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 19:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5D91882C58
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7C68161C71
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 18:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A55716CD1D;
-	Sat, 28 Dec 2024 17:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B837119539F;
+	Sat, 28 Dec 2024 18:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaponY1D"
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b="AanS2JaR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67986198A22
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 17:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3728E78F34
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 18:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735408533; cv=none; b=AcHe2hwcV3+RV4sfI4W68ETg+85FfkdRIthg3ZTu/CJC3i0PhpddemvHODi0lMHK+kSFtYfV4vz6JP3KwzZcQB0GR8OzDZ9DznFYT0pGmsB1iBmSDV+oUkVHkkzBRNNvbvvvmq3LVUNuxxMxFJrgbgNCrDvbvplDE8CP4xPe/d4=
+	t=1735412045; cv=none; b=ULBax4y27+a+8cqcfzoMhYWpyh1PwkORnJvgv8sIxyLEpJH7QSbkunId7VcMZMhs748BV9fyL1OHdnUVSn2yStocuOnQVulIV4jxwbHyffhEuhf3GlvTgP6GwL+lCJtgdCQb5UifSfzfOZL1HdHsJEQxKwBMYYJXCO5nakh4+pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735408533; c=relaxed/simple;
-	bh=PJrR9iTSkLO7Ad1cW7Xy5tTxsQkFEv8En0/HpmU5uaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ODkVZ+/8NdtShRpXD0nP+3ZNYkrD+cL8sX00V2BsI7S1L6+iKSUD7cpMpK/9X0t0pRYMCagpVsyTuzpn6OBUcO6xW0ZwCGOXE/XPbwdrr5zRJ233NN6ox8aMKto/JilGepbqpIlFAq5h9drsz1C7yS2HnQce1J2G41vgH7N2spI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaponY1D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75879C4CED3;
-	Sat, 28 Dec 2024 17:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735408533;
-	bh=PJrR9iTSkLO7Ad1cW7Xy5tTxsQkFEv8En0/HpmU5uaA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EaponY1DCwvK9kO+sQHd8NmTQhrL3/6Ul2UEQonLWbZ3xmzGWlGLjdUA7Ppd2DgSx
-	 xItpQE3/E9HoJzUY6ayuKUxVdAhqk1F3mcSD9WK89Sy8YfMzhMkz4aCzzk0xID/d2X
-	 DQ4GH3HL6nZwcwXToopqV3OC1uLtoh8fJMtROQDlEN24kh1ktJZ16HBCiOmLjvtzOy
-	 Y9Wm3AyOnAZ+hmM62midzMME6KAUP1wR5T0ZrVs3239RgKlMLEaXEcVvi1ct0eLXkC
-	 RASz6cY7NBmfVwjEndQ17MQEGopknO+ZnXy1KLKJnvzMaH3OzBhk4iXSzLnTIUsAcO
-	 wXTaNZNNnJp4Q==
-From: cel@kernel.org
-To: Hugh Dickins <hughd@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>,
-	yukuai3@huawei.com,
-	yangerkun@huaweicloud.com,
-	Liam.Howlett@oracle.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v7 5/5] libfs: Use d_children list to iterate simple_offset directories
-Date: Sat, 28 Dec 2024 12:55:21 -0500
-Message-ID: <20241228175522.1854234-6-cel@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241228175522.1854234-1-cel@kernel.org>
-References: <20241228175522.1854234-1-cel@kernel.org>
+	s=arc-20240116; t=1735412045; c=relaxed/simple;
+	bh=Bx6utfrucYDjk/Ma5GOl5Si/kIydjJ8uP4TzaNJ9iyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k0ttr+7mbqkcMvX1NGLpEIoeNPCRdG/hNoCfDlwE8Zjn3ObJsdo8Hoj2RXSwRCxdq3Y1JehjJ17He3XiMVIvB3UjkRGSd4mlSkq1ZB26xmPKwHlmvNUdIMNNAs6KOof+yVaFPoYQrUjpjpKk55ReQLzsDswmajT7alkDpnHWLYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com; spf=pass smtp.mailfrom=colorfullife.com; dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b=AanS2JaR; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorfullife.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e6f6cf69so13388847a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 10:54:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20230601.gappssmtp.com; s=20230601; t=1735412041; x=1736016841; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o4S0sqcHm4frtmlnS19N4Dv/daVSf9ZB3S3iMVK90YA=;
+        b=AanS2JaRm3ZBg0bthkVruOgF7oB0tEbyw/GnEbRvPrtBwpUsgNYkGWAOB9xsL5G4gj
+         1knbyzrNE+Sb/2wevC4y5B+B5YV5Ul8H9dh+FK91Pg2FSCYIQDGJA9bvtymMO8C6q6oH
+         6whXu+V2sHzXqMGpvFc7OgDLFCcetnWhYkQW8zrvvxFwWswWO/Htc17vsM8LH3FZqkUD
+         IGkLe4n32FxltYA+nFhA7RKLYsGRf5VxjW70jbmAjw2YmTIXDfj/vwColdjZZdHkHCmJ
+         9fyXmqPnKw2EoiNVWeKiLD7kqP+mwg2Qkd0+Ztx0ei+aY042u+iUgRwnzoLTsBsfKHLI
+         6daw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735412041; x=1736016841;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4S0sqcHm4frtmlnS19N4Dv/daVSf9ZB3S3iMVK90YA=;
+        b=dlnU6Mi/qNyTDK9SBh4HxzZuatSmZg9alnruMdCBeBugUvrHJMedOKAOmDg0bjDcma
+         kTb1jYQaTRiHgGkv7GVA4P2NucwIZUnWLGwqqTnQYBAhfkQuSqux/Y/7X+aEX8G+ZcJz
+         tSqt+FBxfhn8hOnBlBtvj54O50JBCWKR04qHrxQV1mhCNUFVQbleYb0nudUb4ndTJMm4
+         AykLCpCpH9ls51RT8BjvmBP9DDbTtJrVxLyhEwI9LK1+rR5xZhGgVRLNLHliJUYfsXu6
+         NS/xZrkCv71S1tAPTewK28MeqeJd8ZWs4f9fdcxua4KCf0z0G7IGs3N48ibzCgoMM9TG
+         qmjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFgWz1DE5PZ/MhPxTWV1hsOpGv9TDfTnzyGBkMAXE6q8RJpGxNjiC9DQltX9EEIXkJUCU+5yEZgP0mZ8cK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoyK0loxv9Nf4FGV10XJ316656C5Ww9gyqABu+Jz1/wqwYpCij
+	mN6c3sjiskpXEjAlSyBaLz5zX/K/tMVny59t2xxMnoMy1enGZ8p102vcx0pwRQ==
+X-Gm-Gg: ASbGncsRznHURNSySMEj4DRo3/0WdK1NWNWb9pK1aBA0yFrI39zO8pTTXNc4hxU24Y+
+	OSJrQQ2H88sOVIqjSZJMD5lCvYe9s+oajclB4PJRXKncewZX/S2e2VyKFttFkYwz8iagaa+rn3O
+	DelqufMRV4xE+Gh5ZC2e7FMz/vwWjFfj+I0pn6Vk407wKZhGk4xOCMXsMk4QEMcAtfap5mnvNFv
+	uNv07CVmWGA2rFWsYb6CgDx0uB79FAgbUzWsTbwmyFuNGqOC1EwSt/zDVo+gUF4pLUTX2Yf6mra
+	cflDQOC+g8gwIKzaMtFCWGU8tB0UIuUcB2GxrJzyTeVCAMMMk8b2wgkxM+TmeV1IW+mpFe1lyFj
+	+Tqsn3h1yD1SPJYNgB5Y=
+X-Google-Smtp-Source: AGHT+IHf9YD1SHw2OUXu56V+97edXC8Qj5MiJsLvI2eK3TkO2X6HY7zrYkCW9+id3cNuOI8zDkgtdw==
+X-Received: by 2002:a05:6402:2813:b0:5d3:d7ae:a893 with SMTP id 4fb4d7f45d1cf-5d81de23133mr27217465a12.25.1735412040922;
+        Sat, 28 Dec 2024 10:54:00 -0800 (PST)
+Received: from ?IPV6:2003:d9:974e:9900:6aac:89d9:5e45:a0e6? (p200300d9974e99006aac89d95e45a0e6.dip0.t-ipconnect.de. [2003:d9:974e:9900:6aac:89d9:5e45:a0e6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80675a3d2sm12532440a12.16.2024.12.28.10.53.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Dec 2024 10:53:59 -0800 (PST)
+Message-ID: <8d56b9d7-bb92-4c6e-ba8b-da3ec238943b@colorfullife.com>
+Date: Sat, 28 Dec 2024 19:53:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping
+ processes during pipe read/write
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ WangYuli <wangyuli@uniontech.com>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>
+References: <75B06EE0B67747ED+20241225094202.597305-1-wangyuli@uniontech.com>
+ <CAHk-=wj5A-fO+GnfwqGpXhFbfpS4+_8xU+dnXkSx+0AfwBYrxA@mail.gmail.com>
+ <20241226201158.GB11118@redhat.com>
+ <1df49d97-df0e-4471-9e40-a850b758d981@colorfullife.com>
+ <20241228143248.GB5302@redhat.com> <20241228152229.GC5302@redhat.com>
+ <20241228163231.GA19293@redhat.com>
+Content-Language: en-US
+From: Manfred Spraul <manfred@colorfullife.com>
+In-Reply-To: <20241228163231.GA19293@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Chuck Lever <chuck.lever@oracle.com>
+Hi Oleg,
 
-The mtree mechanism has been effective at creating directory offsets
-that are stable over multiple opendir instances. However, it has not
-been able to handle the subtleties of renames that are concurrent
-with readdir.
+On 12/28/24 5:32 PM, Oleg Nesterov wrote:
+> On 12/28, Oleg Nesterov wrote:
+>> If nothing else, consider
+>>
+>> 	int CONDITION;
+>> 	wait_queue_head_t WQ;
+>>
+>> 	void wake(void)
+>> 	{
+>> 		CONDITION = 1;
+>> 		wake_up(WQ);
+>> 	}
+>>
+>> 	void wait(void)
+>> 	{
+>> 		DEFINE_WAIT_FUNC(entry, woken_wake_function);
+>>
+>> 		add_wait_queue(WQ, entry);
+>> 		if (!CONDITION)
+>> 			wait_woken(entry, ...);
+>> 		remove_wait_queue(WQ, entry);
+>> 	}
+>>
+>> this code is correct even if LOAD(CONDITION) can leak into the critical
+>> section in add_wait_queue(), so CPU running wait() can actually do
+>>
+>> 		// add_wait_queue
+>> 		spin_lock(WQ->lock);
+>> 		LOAD(CONDITION);	// false!
+>> 		list_add(entry, head);
+>> 		spin_unlock(WQ->lock);
+>>
+>> 		if (!false)		// result of the LOAD above
+>> 			wait_woken(entry, ...);
+>>
+>> Now suppose that another CPU executes wake() between LOAD(CONDITION)
+>> and list_add(entry, head). With your patch wait() will miss the event.
+>> The same for __pollwait(), I think...
+>>
+>> No?
+> Even simpler,
+>
+> 	void wait(void)
+> 	{
+> 		DEFINE_WAIT(entry);
+>
+> 		__set_current_state(XXX);
+> 		add_wait_queue(WQ, entry);
+>
+> 		if (!CONDITION)
+> 			schedule();
+>
+> 		remove_wait_queue(WQ, entry);
+> 		__set_current_state(TASK_RUNNING);
+> 	}
+>
+> This code is ugly but currently correct unless I am totally confused.
 
-Instead of using the mtree to emit entries in the order of their
-offset values, use it only to map incoming ctx->pos to a starting
-entry. Then use the directory's d_children list, which is already
-maintained properly by the dcache, to find the next child to emit.
+It is a chance of the add_wait_queue() path, thus impact on all calls.
 
-One of the sneaky things about this is that when the mtree-allocated
-offset value wraps (which is very rare), looking up ctx->pos++ is
-not going to find the next entry; it will return NULL. Instead, by
-following the d_children list, the offset values can appear in any
-order but all of the entries in the directory will be visited
-eventually.
+With (busybox) "find /sys /proc | grep aaaabbbccc", I've seen 16385 
+wakeup calls with empty queue, and just 6 with an entry in the queue.
 
-Note also that the readdir() is guaranteed to reach the tail of this
-list. Entries are added only at the head of d_children, and readdir
-walks from its current position in that list towards its tail.
+But on other workloads, the ratio was more something like 75% 
+empty/25%with entries.
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/libfs.c | 84 +++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 58 insertions(+), 26 deletions(-)
+I.e.: We would have long discussions if the change only helps for some 
+usecases, and might have negative impact on other use cases.
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 47399f90511a..279442b1fe96 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -247,12 +247,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
- 
- /* simple_offset_add() never assigns these to a dentry */
- enum {
-+	DIR_OFFSET_FIRST	= 2,		/* Find first real entry */
- 	DIR_OFFSET_EOD		= S32_MAX,
- };
- 
- /* simple_offset_add() allocation range */
- enum {
--	DIR_OFFSET_MIN		= 2,
-+	DIR_OFFSET_MIN		= DIR_OFFSET_FIRST + 1,
- 	DIR_OFFSET_MAX		= DIR_OFFSET_EOD - 1,
- };
- 
-@@ -457,51 +458,82 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 	return vfs_setpos(file, offset, LONG_MAX);
- }
- 
--static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
-+static struct dentry *find_positive_dentry(struct dentry *parent,
-+					   struct dentry *dentry,
-+					   bool next)
- {
--	MA_STATE(mas, &octx->mt, offset, offset);
-+	struct dentry *found = NULL;
-+
-+	spin_lock(&parent->d_lock);
-+	if (next)
-+		dentry = d_next_sibling(dentry);
-+	else if (!dentry)
-+		dentry = d_first_child(parent);
-+	hlist_for_each_entry_from(dentry, d_sib) {
-+		if (!simple_positive(dentry))
-+			continue;
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+		if (simple_positive(dentry))
-+			found = dget_dlock(dentry);
-+		spin_unlock(&dentry->d_lock);
-+		if (likely(found))
-+			break;
-+	}
-+	spin_unlock(&parent->d_lock);
-+	return found;
-+}
-+
-+static noinline_for_stack struct dentry *
-+offset_dir_lookup(struct dentry *parent, loff_t offset)
-+{
-+	struct inode *inode = d_inode(parent);
-+	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
- 	struct dentry *child, *found = NULL;
- 
--	rcu_read_lock();
--	child = mas_find(&mas, DIR_OFFSET_MAX);
--	if (!child)
--		goto out;
--	spin_lock(&child->d_lock);
--	if (simple_positive(child))
--		found = dget_dlock(child);
--	spin_unlock(&child->d_lock);
--out:
--	rcu_read_unlock();
-+	MA_STATE(mas, &octx->mt, offset, offset);
-+
-+	if (offset == DIR_OFFSET_FIRST)
-+		found = find_positive_dentry(parent, NULL, false);
-+	else {
-+		rcu_read_lock();
-+		child = mas_find(&mas, DIR_OFFSET_MAX);
-+		found = find_positive_dentry(parent, child, false);
-+		rcu_read_unlock();
-+	}
- 	return found;
- }
- 
- static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- {
- 	struct inode *inode = d_inode(dentry);
--	long offset = dentry2offset(dentry);
- 
--	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
--			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-+	return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
-+			inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void offset_iterate_dir(struct file *file, struct dir_context *ctx)
- {
--	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+	struct dentry *dir = file->f_path.dentry;
- 	struct dentry *dentry;
- 
-+	dentry = offset_dir_lookup(dir, ctx->pos);
-+	if (!dentry)
-+		goto out_eod;
- 	while (true) {
--		dentry = offset_find_next(octx, ctx->pos);
--		if (!dentry)
--			goto out_eod;
-+		struct dentry *next;
- 
--		if (!offset_dir_emit(ctx, dentry)) {
--			dput(dentry);
-+		ctx->pos = dentry2offset(dentry);
-+		if (!offset_dir_emit(ctx, dentry))
- 			break;
--		}
- 
--		ctx->pos = dentry2offset(dentry) + 1;
-+		next = find_positive_dentry(dir, dentry, true);
- 		dput(dentry);
-+
-+		if (!next)
-+			goto out_eod;
-+		dentry = next;
- 	}
-+	dput(dentry);
- 	return;
- 
- out_eod:
-@@ -540,7 +572,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 	if (ctx->pos != DIR_OFFSET_EOD)
--		offset_iterate_dir(d_inode(dir), ctx);
-+		offset_iterate_dir(file, ctx);
- 	return 0;
- }
- 
--- 
-2.47.0
+
+And: Your proposal is in conflict with
+
+https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/kernel/fork.c?h=v2.6.0&id=e220fdf7a39b54a758f4102bdd9d0d5706aa32a7 
+
+
+But I do not see the issue, the worst possible scenario should be something like:
+
+	// add_wait_queue
+		spin_lock(WQ->lock);
+		LOAD(CONDITION);	// false!
+		list_add(entry, head);
+		STORE(current_state)
+		spin_unlock(WQ->lock);
+
+
+--
+
+     Manfred
 
 
