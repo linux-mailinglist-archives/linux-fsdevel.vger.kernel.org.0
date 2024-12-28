@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-38197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027729FDB76
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:11:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA569FDB7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98649188395F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 15:11:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD22162C66
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 15:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54419192B74;
-	Sat, 28 Dec 2024 15:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECACB192598;
+	Sat, 28 Dec 2024 15:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uT6ITn/O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPEtU3ay"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ED72111;
-	Sat, 28 Dec 2024 15:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3455AC8DF;
+	Sat, 28 Dec 2024 15:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735398688; cv=none; b=CCGp0LG5KljuC3jCHPjoLc88+fgXjXxtp6QU8TEai3H3al4qSKU602zJ8m1rXWvNAhLyze4o9iqmDS4g0UB9KuZ/NbkFrDk8lys3EwSOvBDGnpGPqtlC5/iON5vV1UHz1B58NGe/XYpPxu2urNoM4bsHSCViFlJCryE6hRdeWTE=
+	t=1735398716; cv=none; b=PSnua+QoYzBcRjfU96JIN8PGzG05wvQwIvKA4WwS/s3qCYj2Ud3l7ngRo0XhIf22mEdmE3EOPM8rOSUCRbxjnn9ckiBSfOX+/P9tcixsbjt5JomcJq9zfq88Ptu8aaccKJ1zyR62QKvWx9SSB6DP/94YkZhNS72r4kwTcTIocjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735398688; c=relaxed/simple;
-	bh=6UxkEp5VUvbzjg5phfl/bi19FEfGCpo82xMHINgWQnM=;
+	s=arc-20240116; t=1735398716; c=relaxed/simple;
+	bh=EOEi0MLcS4ch1lMOKoM9sInaetVXMgfNRi9r6nCz4Kk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YoOiCxCczuowXET7CaU7U9uhLvzrDb+dFr8Yp8KmCgSfiK82krIzZUCWazjTGpVcVfLmYvRNpXReg5Jp7NUq+KbVNSJf1ta/eU/w/hkfj2bXYgvy6r9dSvbgdPOiLnm2NG92XHx+szibHrCKnq9bZI6uNHNMJ9f095ENJ9QPKok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uT6ITn/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431AFC4CECD;
-	Sat, 28 Dec 2024 15:11:23 +0000 (UTC)
+	 Content-Type:MIME-Version; b=SjFrg0SuD0ZQF5Lw1skKjXTXp/PeGZGByhBXeGFtVuQRYZC+o1RR8s+JhYajn/OJB9/QRKSdPePAIzStxSFxzajYNZBMZFqaniUZBpZIt4slw+CEkXlfDhAd1/WiOXRC8+dX3Kug6P234zICgdKMx9L3uaMHU1Ab9gTPD9JlYD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPEtU3ay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B53C4CECD;
+	Sat, 28 Dec 2024 15:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735398688;
-	bh=6UxkEp5VUvbzjg5phfl/bi19FEfGCpo82xMHINgWQnM=;
+	s=k20201202; t=1735398715;
+	bh=EOEi0MLcS4ch1lMOKoM9sInaetVXMgfNRi9r6nCz4Kk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=uT6ITn/OrDBKEXFwTCqgbgVnQsRo/+ArMvekvwp+iMfgDo8ZbrkffmihWr40BHnek
-	 fMo87NZVd24d5BNDsnYFnvDU1hW4CDXwExE2TTuyBlJp9C/w8ljQeh+wC8apxBV2mU
-	 c2JBKuWbY1pdz0K5rtCaQWrwzxcN/k+87pM4iMCBkdiTzSQ0bhqL4JEafVS5Sb8rbI
-	 q21Uj1EKE0Gv7LOD7apE529eQDrLif693lf8MC/X7fY6RXacvyEOxWaW75/z75sanG
-	 nYzRSmnlUnqBJCojWi57XfH03psaFahra7rER2LwjFpOgTaCbuBP9zeIiwX46AEs39
-	 PwE/HOAndAvLA==
-Message-ID: <3bd144e59903056b7f4a95a2996bdeaeff6b5024.camel@kernel.org>
-Subject: Re: [PATCH v4 -next 11/15] sunrpc: simplify
- rpcauth_cache_shrink_count()
+	b=OPEtU3ayCdMZiCsKRc6cx8LKfAcnzdJBDDiCHtpPnFYskR+/Id8u0zQl1C/y3zItW
+	 mh4yUQXoGrCYMr01NABU6pwM8Ym/rbZA0FHt5m62voaOZRzD2jvO/0Dmdb1ZOfCmU9
+	 KLzDHe2uYgzOYVe1uCFfEsNQRjCN0fqRTCcvGp83NCH9L1bvuXNbKBMGbLEOuFhapp
+	 Zmf3UZQAEdCOqfO+4MZbm0Odp3MD/YDq5mY0o8ePhhye2ZHWWEp+RasKmceEJAgYVm
+	 uqOQZ0Mcy+v7WJyqu5KKYroJtspFt7oIAssklfeEetNWBpOClLoVl6VRp+bwBL4oP3
+	 vhl6nYEQwGvmw==
+Message-ID: <f020095744b07958be5b66242d6cbd1826c885f5.camel@kernel.org>
+Subject: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
 From: Jeff Layton <jlayton@kernel.org>
 To: Kaixiong Yu <yukaixiong@huawei.com>, akpm@linux-foundation.org, 
 	mcgrof@kernel.org
@@ -67,10 +67,9 @@ Cc: ysato@users.sourceforge.jp, dalias@libc.org,
 	pasha.tatashin@soleen.com, david@redhat.com, ryan.roberts@arm.com, 
 	ying.huang@intel.com, yang@os.amperecomputing.com, zev@bewilderbeest.net, 
 	serge@hallyn.com, vegard.nossum@oracle.com, wangkefeng.wang@huawei.com
-Date: Sat, 28 Dec 2024 10:11:21 -0500
-In-Reply-To: <20241228145746.2783627-12-yukaixiong@huawei.com>
+Date: Sat, 28 Dec 2024 10:11:50 -0500
+In-Reply-To: <20241228145746.2783627-1-yukaixiong@huawei.com>
 References: <20241228145746.2783627-1-yukaixiong@huawei.com>
-	 <20241228145746.2783627-12-yukaixiong@huawei.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -156,45 +155,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Sat, 2024-12-28 at 22:57 +0800, Kaixiong Yu wrote:
-> It is inappropriate to use sysctl_vfs_cache_pressure here.
-> The sysctl is documented as: This percentage value controls
-> the tendency of the kernel to reclaim the memory which is used
-> for caching of directory and inode objects.
+> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+> places where they actually belong, and do some related code clean-ups.
+> After this patch series, all sysctls in vm_table have been moved into its
+> own files, meanwhile, delete vm_table.
 >=20
-> So, simplify result of rpcauth_cache_shrink_count() to
-> "return number_cred_unused;".
+> All the modifications of this patch series base on
+> linux-next(tags/next-20241219). To test this patch series, the code was
+> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+> x86_64 architectures. After this patch series is applied, all files
+> under /proc/sys/vm can be read or written normally.
 >=20
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> v4:
->  - Simplify result of rpcauth_cache_shrink_count().
-> ---
-> ---
->  net/sunrpc/auth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v4:
+>  - due to my mistake, the previous version sent 15 patches twice.
+>    Please ignore that, as this version is the correct one.
+>  - change all "static struct ctl_table" type into
+>    "static const struct ctl_table" type in patch1~10,12,13,14
+>  - simplify result of rpcauth_cache_shrink_count() in patch11
 >=20
-> diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> index 04534ea537c8..5a827afd8e3b 100644
-> --- a/net/sunrpc/auth.c
-> +++ b/net/sunrpc/auth.c
-> @@ -489,7 +489,7 @@ static unsigned long
->  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_contro=
-l *sc)
-> =20
->  {
-> -	return number_cred_unused * sysctl_vfs_cache_pressure / 100;
-> +	return number_cred_unused;
->  }
-> =20
->  static void
+> Changes in v3:
+>  - change patch1~10, patch14 title suggested by Joel Granados
+>  - change sysctl_stat_interval to static type in patch1
+>  - add acked-by from Paul Moore in patch7
+>  - change dirtytime_expire_interval to static type in patch9
+>  - add acked-by from Anna Schumaker in patch11
+>=20
+> Changes in v2:
+>  - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+>  - update changelog for patch7/12, suggested by Kees/Paul
+>  - fix patch8, sorry for wrong changes and forget to built with NOMMU
+>  - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+>  - add reviewed-by from Jan Kara, Christian Brauner in patch12
+>=20
+> Kaixiong Yu (15):
+>   mm: vmstat: move sysctls to mm/vmstat.c
+>   mm: filemap: move sysctl to mm/filemap.c
+>   mm: swap: move sysctl to mm/swap.c
+>   mm: vmscan: move vmscan sysctls to mm/vmscan.c
+>   mm: util: move sysctls to mm/util.c
+>   mm: mmap: move sysctl to mm/mmap.c
+>   security: min_addr: move sysctl to security/min_addr.c
+>   mm: nommu: move sysctl to mm/nommu.c
+>   fs: fs-writeback: move sysctl to fs/fs-writeback.c
+>   fs: drop_caches: move sysctl to fs/drop_caches.c
+>   sunrpc: simplify rpcauth_cache_shrink_count()
+>   fs: dcache: move the sysctl to fs/dcache.c
+>   x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+>   sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+>   sysctl: remove unneeded include
+>=20
+>  arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+>  arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+>  fs/dcache.c                        |  21 ++-
+>  fs/drop_caches.c                   |  23 ++-
+>  fs/fs-writeback.c                  |  30 ++--
+>  include/linux/dcache.h             |   7 +-
+>  include/linux/mm.h                 |  23 ---
+>  include/linux/mman.h               |   2 -
+>  include/linux/swap.h               |   9 --
+>  include/linux/vmstat.h             |  11 --
+>  include/linux/writeback.h          |   4 -
+>  kernel/sysctl.c                    | 221 -----------------------------
+>  mm/filemap.c                       |  18 ++-
+>  mm/internal.h                      |  10 ++
+>  mm/mmap.c                          |  54 +++++++
+>  mm/nommu.c                         |  15 +-
+>  mm/swap.c                          |  16 ++-
+>  mm/swap.h                          |   1 +
+>  mm/util.c                          |  67 +++++++--
+>  mm/vmscan.c                        |  23 +++
+>  mm/vmstat.c                        |  44 +++++-
+>  net/sunrpc/auth.c                  |   2 +-
+>  security/min_addr.c                |  11 ++
+>  23 files changed, 330 insertions(+), 312 deletions(-)
+>=20
 
-No objection here, but this patch seems unrelated to the rest of the
-series. Should this go in via Anna or Trond's tree?
+Nice cleanup.
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
