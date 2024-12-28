@@ -1,124 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-38200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97989FDBB0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:33:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030479FDBB4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 17:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3BC3A146D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD901881EF9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405DE18E02D;
-	Sat, 28 Dec 2024 16:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922EA18A6CE;
+	Sat, 28 Dec 2024 16:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ewpVTWlG"
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b="DVlWArlU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E4D2744D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 16:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C99474
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 16:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735403632; cv=none; b=Lo5Ku1Nr6YBTca9EUzYBB37t1ar87xJJTj4Sc64nCNQDG3UPY6N9ZmkKMMVYN/ZbJNnVEKvdpnsJfz2vh9/T4GnEWW2sv8tPRLxl043bBM4Gh1CA8IRQ95ykUFG1V0ip+IztQ59WGAnmTIYHL6uunsu5QnZun5B+ZkXSYals+OI=
+	t=1735404322; cv=none; b=PdY1HWxpFUPdrHmaG+3eLn84YU6+pZWG8cPG7nYHhzAbRczkluyD+Lk7cKQb3FftVySPt6zLgrk1YaiBkVe/vneYcLmXlUG9cFs4DWAYPpUq+dKP1H5lBb9BmkrQWilG/3ocZYTmJkUn1YImy1WmuOpgLAJ3uuB1Ec1sSN1OAXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735403632; c=relaxed/simple;
-	bh=uKHw2SIo0IpDPzWH6LZvh1VdOS4dcl+yRpwoZrDj64w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/X3Y0sQSC2VRWGA/a4Golyhe6AAnOcceFjJYMfMksy7pQuvLPcLUz3C5Y2rvEEyc/wHui0QuxNYtc+g2iTTglNjob3eg5w6NXOpfhGYJzZqAfL9LMbEXcWA1LnmX9vexkvVJcDl5INB2/Q3XJCxEPQLZn2yDxeKh2B3UboqhIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ewpVTWlG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1735403629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iEg8vQvfA//up54k/umvCV7B1NFVv1McUmE/HFCAq8o=;
-	b=ewpVTWlGFrJmZDg6CYlNkU+BKcZ/XhuXIe5kJGoczaCLZEPL9FtQozL56ogZg4GhUbFXb7
-	pIW/OayjAfs4sfbL3/tfYdxPcv7Xh4XEBNPpRs+SwDBGeL+A4hDXkLTIB4ky/uzrMJLS35
-	MhTMXOH6UDmuTO9lZnzPBlESsispwpk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-574-ACTqEsqjPh2sCiOIhva_IA-1; Sat,
- 28 Dec 2024 11:33:48 -0500
-X-MC-Unique: ACTqEsqjPh2sCiOIhva_IA-1
-X-Mimecast-MFC-AGG-ID: ACTqEsqjPh2sCiOIhva_IA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A7D5B19560A3;
-	Sat, 28 Dec 2024 16:33:40 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.13])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 33CDB19560A3;
-	Sat, 28 Dec 2024 16:32:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat, 28 Dec 2024 17:33:15 +0100 (CET)
-Date: Sat, 28 Dec 2024 17:32:32 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Manfred Spraul <manfred@colorfullife.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com,
-	ebiederm@xmission.com, colin.king@canonical.com,
-	josh@joshtriplett.org, penberg@cs.helsinki.fi, mingo@elte.hu,
-	jes@sgi.com, hch@lst.de, aia21@cantab.net, arjan@infradead.org,
-	jgarzik@pobox.com, neukum@fachschaft.cup.uni-muenchen.de,
-	oliver@neukum.name, dada1@cosmosbay.com, axboe@kernel.dk,
-	axboe@suse.de, nickpiggin@yahoo.com.au, dhowells@redhat.com,
-	nathans@sgi.com, rolandd@cisco.com, tytso@mit.edu, bunk@stusta.de,
-	pbadari@us.ibm.com, ak@linux.intel.com, ak@suse.de,
-	davem@davemloft.net, jsipek@cs.sunysb.edu, jens.axboe@oracle.com,
-	ramsdell@mitre.org, hch@infradead.org, akpm@linux-foundation.org,
-	randy.dunlap@oracle.com, efault@gmx.de, rdunlap@infradead.org,
-	haveblue@us.ibm.com, drepper@redhat.com, dm.n9107@gmail.com,
-	jblunck@suse.de, davidel@xmailserver.org,
-	mtk.manpages@googlemail.com, linux-arch@vger.kernel.org,
-	vda.linux@googlemail.com, jmorris@namei.org, serue@us.ibm.com,
-	hca@linux.ibm.com, rth@twiddle.net, lethal@linux-sh.org,
-	tony.luck@intel.com, heiko.carstens@de.ibm.com, andi@firstfloor.org,
-	corbet@lwn.net, crquan@gmail.com, mszeredi@suse.cz,
-	miklos@szeredi.hu, peterz@infradead.org, a.p.zijlstra@chello.nl,
-	earl_chew@agilent.com, npiggin@gmail.com, npiggin@suse.de,
-	julia@diku.dk, jaxboe@fusionio.com, nikai@nikai.net,
-	dchinner@redhat.com, davej@redhat.com, npiggin@kernel.dk,
-	eric.dumazet@gmail.com, tim.c.chen@linux.intel.com,
-	xemul@parallels.com, tj@kernel.org, serge.hallyn@canonical.com,
-	gorcunov@openvz.org, bcrl@kvack.org, alan@lxorguk.ukuu.org.uk,
-	will.deacon@arm.com, will@kernel.org, zab@redhat.com, balbi@ti.com,
-	gregkh@linuxfoundation.org, rusty@rustcorp.com.au,
-	socketpair@gmail.com, penguin-kernel@i-love.sakura.ne.jp,
-	mhocko@kernel.org, axboe@fb.com, tglx@linutronix.de,
-	mcgrof@kernel.org, linux@dominikbrodowski.net, willy@infradead.org,
-	paulmck@kernel.org, kernel@tuxforce.de,
-	linux-morello@op-lists.linaro.org
-Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping
- processes during pipe read/write
-Message-ID: <20241228163231.GA19293@redhat.com>
-References: <75B06EE0B67747ED+20241225094202.597305-1-wangyuli@uniontech.com>
- <CAHk-=wj5A-fO+GnfwqGpXhFbfpS4+_8xU+dnXkSx+0AfwBYrxA@mail.gmail.com>
- <20241226201158.GB11118@redhat.com>
- <1df49d97-df0e-4471-9e40-a850b758d981@colorfullife.com>
- <20241228143248.GB5302@redhat.com>
- <20241228152229.GC5302@redhat.com>
+	s=arc-20240116; t=1735404322; c=relaxed/simple;
+	bh=XPRidIZVC18CQUlEKufW8F52jxa4BJHyPOo2xrs11V0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/k+JZXK2VFaN42eqcWasIujY+WeSd3+5hjmbEvNQV2na07h3candZJcoSzY3OV8yH33A4kXg/rxk+DFt/sp+38C4aL3zaQ2iki0UYSvE4zBMLOJpU08LgFf9QG9eVMCD4yFoRyJsXX6UexlornmKAe6q1Rddujx5SX2gp/vixc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com; spf=pass smtp.mailfrom=colorfullife.com; dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b=DVlWArlU; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorfullife.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fc01so15801500a12.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2024 08:45:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20230601.gappssmtp.com; s=20230601; t=1735404318; x=1736009118; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Cz1VqmSfgwulj4TtgG0EFMyBOjhXN78eW0/1No1Ds5s=;
+        b=DVlWArlUBAMQJbrOEpknvPgE6MCbg52xa47A0eVowXnoLhmSldmT7SuMX/kiU+xaAQ
+         mh0uKIddoNfiAWZb/l8R7QjcTQnlPedjrIFDF+9tWkBDtTmDjFYdQ5RI8FFGysyNdJqI
+         RH6EdaKdRuhKL1Q6rOpa6wGZuGm27lODmIlA366H7JehGyB3xdDGUtyOLLrtvF8OCTkv
+         BD4kYkXhKtQvFTlZA1y3JgICJU5Flqu92i3iS4bqnj0gfvE0L3t2QgA8nReSqXfII+pc
+         PUf05uwqM2FDgVqFEAMns9jnWQ3bkHgbIjzclc0ek9X0QlCcyVlb8Bvc/l9+nBcB4HOd
+         Clvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735404318; x=1736009118;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cz1VqmSfgwulj4TtgG0EFMyBOjhXN78eW0/1No1Ds5s=;
+        b=IUmd7Vq6IcepKzbg4rq4NGhQIHLjsVlWKAAsgxc+NFEuLzmXacl0MUN6MgnpbL/ax8
+         45tPa9LtZltZn+vjEsHczo64YDXaTNhYUIbCra1XpuvlryM3B5kQxRf/Aacx/teVrnmZ
+         9fM/iXz4bp6wi/eZ8IzqA/Kx/XtRKG0LG+uFV1kL7/FitCXDUWP028N6mcC840nLuJIC
+         uZJrcQkovC7yH1iLUSdOF8ljBSBRk6hOsbMYZQnn6MwrLS6kQeWdymePecDb7gDLkj7r
+         nSQMyWGfBwqfZWWhSNWnBhjK+qyO0HMsO3ZAWoA+JDiQF02Ie0dcNXnBMIq5ulX8moZo
+         Poiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbnZuorh/2qt/R4D+H3cZt7030Q+kAMOzpOGBqS8E1dMQkwcqeD4ggEZomFBisD4dYBu8CCzx9uhI/OKBA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZpsETUfcr62VSrEzYEymXxbzKh7FTfD6XkuGSC1Iyysw7bjQQ
+	Sq2Dx8VUr5fJUS2BCPuh8Jano/3QI7OIk0V0yaEaAWE5DURIsa3jPnO4cxhynw==
+X-Gm-Gg: ASbGnctzNVEsbTdpEXNvpmrN+r6StwiWHrvFJYj6/noq5xEYjQWLmPZAPWmyc4iIL+U
+	R28GLJ5089g5An0nuYhqWigBzYYcKxlF5mIu8nus2mRrfwn/smY086avn4Kge08sWc/QJ7z50Dw
+	lOOfLp2Tl5rN3efvwWROZeKis9Mjl2eVcBO8WDv7ezLZPE1TV7wHaKsdKFh8USE45sbSUTqgHxE
+	gpKm4z5MaPftRM99YNBT2A+ckyA7v+qeLkiTJqhC1uCtRatfKLl0Qb609HZiEC2R7Fub/p9//3+
+	dGfmiOmGJ23lD/YTHU5+d+0hTksxG08LNsPwZ37a9wsT3j9SbdNYI+cOCCloAmeY8AWFkIgM8Dg
+	Q4FNUciaZuWtSfSL1I8o=
+X-Google-Smtp-Source: AGHT+IEwCOkVYEmRIyllgGUbBkB/nkRg+m8awrnv/+Y37IbH6AsgZsVAegd6S/68CdBE0Kokug+VPA==
+X-Received: by 2002:a17:907:7f8e:b0:aa6:9198:75a2 with SMTP id a640c23a62f3a-aac334e51afmr2680214366b.44.1735404317930;
+        Sat, 28 Dec 2024 08:45:17 -0800 (PST)
+Received: from ?IPV6:2003:d9:974e:9900:6aac:89d9:5e45:a0e6? (p200300d9974e99006aac89d95e45a0e6.dip0.t-ipconnect.de. [2003:d9:974e:9900:6aac:89d9:5e45:a0e6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e895366sm1258629566b.73.2024.12.28.08.45.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Dec 2024 08:45:16 -0800 (PST)
+Message-ID: <addb53ac-2f46-45db-83ce-c6b28e40d831@colorfullife.com>
+Date: Sat, 28 Dec 2024 17:45:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping
+ processes during pipe read/write
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ WangYuli <wangyuli@uniontech.com>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>
+References: <75B06EE0B67747ED+20241225094202.597305-1-wangyuli@uniontech.com>
+ <CAHk-=wj5A-fO+GnfwqGpXhFbfpS4+_8xU+dnXkSx+0AfwBYrxA@mail.gmail.com>
+ <20241226201158.GB11118@redhat.com>
+ <1df49d97-df0e-4471-9e40-a850b758d981@colorfullife.com>
+ <20241228143248.GB5302@redhat.com> <20241228152229.GC5302@redhat.com>
+Content-Language: en-US
+From: Manfred Spraul <manfred@colorfullife.com>
 In-Reply-To: <20241228152229.GC5302@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12/28, Oleg Nesterov wrote:
->
+Hi Oleg,
+
+On 12/28/24 4:22 PM, Oleg Nesterov wrote:
+> On 12/28, Oleg Nesterov wrote:
+>>>   int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
+>>>   	      int nr_exclusive, void *key)
+>>>   {
+>>> +	if (list_empty(&wq_head->head)) {
+>>> +		struct list_head *pn;
+>>> +
+>>> +		/*
+>>> +		 * pairs with spin_unlock_irqrestore(&wq_head->lock);
+>>> +		 * We actually do not need to acquire wq_head->lock, we just
+>>> +		 * need to be sure that there is no prepare_to_wait() that
+>>> +		 * completed on any CPU before __wake_up was called.
+>>> +		 * Thus instead of load_acquiring the spinlock and dropping
+>>> +		 * it again, we load_acquire the next list entry and check
+>>> +		 * that the list is not empty.
+>>> +		 */
+>>> +		pn = smp_load_acquire(&wq_head->head.next);
+>>> +
+>>> +		if(pn == &wq_head->head)
+>>> +			return 0;
+>>> +	}
+>> Too subtle for me ;)
+>>
+>> I have some concerns, but I need to think a bit more to (try to) actually
+>> understand this change.
 > If nothing else, consider
 >
 > 	int CONDITION;
@@ -158,24 +168,20 @@ On 12/28, Oleg Nesterov wrote:
 >
 > No?
 
-Even simpler,
+Yes, you are right.
 
-	void wait(void)
-	{
-		DEFINE_WAIT(entry);
+CONDITION =1 is worst case written to memory from the store_release() in 
+spin_unlock().
 
-		__set_current_state(XXX);
-		add_wait_queue(WQ, entry);
+this pairs with the load_acquire for spin_lock(), thus LOAD(CONDITION) 
+is safe.
 
-		if (!CONDITION)
-			schedule();
+It could still work for prepare_to_wait and thus fs/pipe, since then the 
+smb_mb() in set_current_state prevents earlier execution.
 
-		remove_wait_queue(WQ, entry);
-		__set_current_state(TASK_RUNNING);
-	}
 
-This code is ugly but currently correct unless I am totally confused.
+--
 
-Oleg.
+     Manfred
 
 
