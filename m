@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081FB9FDB57
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A8E9FDB5B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 16:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FC33A2C5C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 15:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459F43A2EF2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2024 15:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99251A23AF;
-	Sat, 28 Dec 2024 15:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092AA1A38E4;
+	Sat, 28 Dec 2024 15:02:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4F314F70;
-	Sat, 28 Dec 2024 15:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDB91A2554;
+	Sat, 28 Dec 2024 15:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735398151; cv=none; b=CJCEYQY3DjZ4S71zm41uXF5A85mbIz6gT43VDcr37QRRilYGjugz9fHdjoO4M7v6mpvD723MScLZnUL//yDzuL0iDWPHDgkWo25qrsjxB832J+vFeRfQvRqS1iCprPI6+a2CXS/JUx5tLdWvb4nH2hTS29eooK/VhUW3fh4y1uI=
+	t=1735398154; cv=none; b=jBCU4IQxgQv1pUXF/JX1cXmEyHWkzGlUE3KURTjhVOjzZQ5q9NChWLaHAgCU3k1u01TpwDcxHNXicvqFl7hy6Olkgi3iYZUJXP56E3DSXaUrBAkgNbasj4xKENokkyFdmfyhPdeAhQqHJsjeNNBm/ZgHqC7AT0gnX4kQKdBYKAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735398151; c=relaxed/simple;
-	bh=G0/hXX8Mux5h/pq5gAqYAZXB7LfB0NEUl29fatTQeaM=;
+	s=arc-20240116; t=1735398154; c=relaxed/simple;
+	bh=mVynxR4ENQ8pwt669iVIuxHpk/Ejk3/+P2N16D+TN5M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U0cS4fw5JWTA/rEQlcYE7BXZ/SHhmZx5tcYIyIabFl48DH3hMCLFp8apzw74G7/+Ovd8hl6Ivqp0Ez6/pb5B5jbVA3HDaxYYnEJU+X6IAKX8k8ktw5uy9ASmqYMPGZ2mlZbpIcWZphGUWFac6cC422EsWRkpMo9R9FzgPwVedzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	 MIME-Version:Content-Type; b=JDOiG+n94j3E8Iy6mm2ND0FHX845WzUJu0aq8pxXfC76QdsLbUkppo18uemqrVcCoCcjn69a27We4n+HsXyiemN/xHHtFhAEJn2Dv572RkEcnH5TeN6XS/A4oyfh7ox9Kp/Qk/NMNgKjGntiBz+V+UUGJ26SdvyJQsL8UYeiWM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YL5B30xN4z2Fby3;
-	Sat, 28 Dec 2024 22:59:39 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YL5B65CNdz1kx8v;
+	Sat, 28 Dec 2024 22:59:42 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id B9F301401E0;
-	Sat, 28 Dec 2024 23:02:26 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 2A977140136;
+	Sat, 28 Dec 2024 23:02:30 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 28 Dec
- 2024 23:02:23 +0800
+ 2024 23:02:26 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -63,9 +63,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v4 -next 13/15] x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
-Date: Sat, 28 Dec 2024 22:57:44 +0800
-Message-ID: <20241228145746.2783627-14-yukaixiong@huawei.com>
+Subject: [PATCH v4 -next 14/15] sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+Date: Sat, 28 Dec 2024 22:57:45 +0800
+Message-ID: <20241228145746.2783627-15-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241228145746.2783627-1-yukaixiong@huawei.com>
 References: <20241228145746.2783627-1-yukaixiong@huawei.com>
@@ -80,94 +80,91 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-When CONFIG_X86_32 is defined and CONFIG_UML is not defined,
-vdso_enabled belongs to arch/x86/entry/vdso/vdso32-setup.c.
-So, move it into its own file.
-
-Before this patch, vdso_enabled was allowed to be set to
-a value exceeding 1 on x86_32 architecture. After this patch is
-applied, vdso_enabled is not permitted to set the value more than 1.
-It does not matter, because according to the function load_vdso32(),
-only vdso_enabled is set to 1, VDSO would be enabled. Other values
-all mean "disabled". The same limitation could be seen in the
-function vdso32_setup().
+When CONFIG_SUPERH and CONFIG_VSYSCALL are defined,
+vdso_enabled belongs to arch/sh/kernel/vsyscall/vsyscall.c.
+So, move it into its own file. After this patch is applied,
+all sysctls of vm_table would be moved. So, delete vm_table.
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
 ---
 v4:
  - const qualify struct ctl_table vdso_table
+v3:
+ - change the title
 ---
 ---
- arch/x86/entry/vdso/vdso32-setup.c | 16 +++++++++++-----
- kernel/sysctl.c                    |  8 +-------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ arch/sh/kernel/vsyscall/vsyscall.c | 14 ++++++++++++++
+ kernel/sysctl.c                    | 14 --------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vdso32-setup.c b/arch/x86/entry/vdso/vdso32-setup.c
-index 76e4e74f35b5..f71625f99bf9 100644
---- a/arch/x86/entry/vdso/vdso32-setup.c
-+++ b/arch/x86/entry/vdso/vdso32-setup.c
-@@ -51,15 +51,17 @@ __setup("vdso32=", vdso32_setup);
- __setup_param("vdso=", vdso_setup, vdso32_setup, 0);
- #endif
+diff --git a/arch/sh/kernel/vsyscall/vsyscall.c b/arch/sh/kernel/vsyscall/vsyscall.c
+index add35c51e017..898132f34e6a 100644
+--- a/arch/sh/kernel/vsyscall/vsyscall.c
++++ b/arch/sh/kernel/vsyscall/vsyscall.c
+@@ -14,6 +14,7 @@
+ #include <linux/module.h>
+ #include <linux/elf.h>
+ #include <linux/sched.h>
++#include <linux/sysctl.h>
+ #include <linux/err.h>
  
--#ifdef CONFIG_X86_64
+ /*
+@@ -30,6 +31,17 @@ static int __init vdso_setup(char *s)
+ }
+ __setup("vdso=", vdso_setup);
  
- #ifdef CONFIG_SYSCTL
--/* Register vsyscall32 into the ABI table */
- #include <linux/sysctl.h>
- 
--static struct ctl_table abi_table2[] = {
 +static const struct ctl_table vdso_table[] = {
- 	{
-+#ifdef CONFIG_X86_64
- 		.procname	= "vsyscall32",
-+#elif (defined(CONFIG_X86_32) && !defined(CONFIG_UML))
++	{
 +		.procname	= "vdso_enabled",
-+#endif
- 		.data		= &vdso32_enabled,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
-@@ -71,10 +73,14 @@ static struct ctl_table abi_table2[] = {
++		.data		= &vdso_enabled,
++		.maxlen		= sizeof(vdso_enabled),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++		.extra1		= SYSCTL_ZERO,
++	},
++};
++
+ /*
+  * These symbols are defined by vsyscall.o to mark the bounds
+  * of the ELF DSO images included therein.
+@@ -55,6 +67,8 @@ int __init vsyscall_init(void)
+ 	       &vsyscall_trapa_start,
+ 	       &vsyscall_trapa_end - &vsyscall_trapa_start);
  
- static __init int ia32_binfmt_init(void)
- {
--	register_sysctl("abi", abi_table2);
-+#ifdef CONFIG_X86_64
-+	/* Register vsyscall32 into the ABI table */
-+	register_sysctl("abi", vdso_table);
-+#elif (defined(CONFIG_X86_32) && !defined(CONFIG_UML))
 +	register_sysctl_init("vm", vdso_table);
-+#endif
++
  	return 0;
  }
- __initcall(ia32_binfmt_init);
- #endif /* CONFIG_SYSCTL */
  
--#endif	/* CONFIG_X86_64 */
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 860dea8f1587..7ff07b7560b4 100644
+index 7ff07b7560b4..cebd0ef5d19d 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2013,17 +2013,11 @@ static struct ctl_table kern_table[] = {
+@@ -2012,23 +2012,9 @@ static struct ctl_table kern_table[] = {
+ #endif
  };
  
- static struct ctl_table vm_table[] = {
--#if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
--   (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
-+#if defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL)
- 	{
- 		.procname	= "vdso_enabled",
--#ifdef CONFIG_X86_32
--		.data		= &vdso32_enabled,
--		.maxlen		= sizeof(vdso32_enabled),
--#else
- 		.data		= &vdso_enabled,
- 		.maxlen		= sizeof(vdso_enabled),
+-static struct ctl_table vm_table[] = {
+-#if defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL)
+-	{
+-		.procname	= "vdso_enabled",
+-		.data		= &vdso_enabled,
+-		.maxlen		= sizeof(vdso_enabled),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-		.extra1		= SYSCTL_ZERO,
+-	},
 -#endif
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 		.extra1		= SYSCTL_ZERO,
+-};
+-
+ int __init sysctl_init_bases(void)
+ {
+ 	register_sysctl_init("kernel", kern_table);
+-	register_sysctl_init("vm", vm_table);
+ 
+ 	return 0;
+ }
 -- 
 2.34.1
 
