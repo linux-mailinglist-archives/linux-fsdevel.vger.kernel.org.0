@@ -1,112 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-38244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BE29FE007
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 18:27:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BDF9FE03D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 19:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914B01882CDD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 17:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D461881D2E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADAC198A17;
-	Sun, 29 Dec 2024 17:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92251991C9;
+	Sun, 29 Dec 2024 18:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U2nstQEU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gcdbp0yb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9022594BE
-	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Dec 2024 17:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221DB198845;
+	Sun, 29 Dec 2024 18:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735493264; cv=none; b=Ya/au0hah7NNQA7QuEipQRjwlL2IygCJ58iUEMBXuqaWnP6I2DAP9ngwj9wfzVp1pCfU/dG2wbGEzSNGSIJ3nsbSJgnhI4vg3ZbgYStpXEgE2iQFS4n0HzkOOxWl4e4zCXp36qf+aBGJiOqNqGcaNsdlootEqcudfJP/6Tp+42E=
+	t=1735498430; cv=none; b=t8c5bBcE4wO76EQqz+UM2N1KIGZE14VNE/vL3eH00SHm5j+RvMYWvyp9HP5AhiysCJ3riTKRTmf6GHTqVQCuvhxUpfTZhWq4DmUR8ml5U7FuKSqxrRjgvUq15X/+egXPhqEsxOF+Zedij5Klsb1nKgWpmOUgv3XBW9kjZmTg/c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735493264; c=relaxed/simple;
-	bh=TQCmeWZCzx8OQcaYNBj9qyqDdkeYNXixteTnMps/iyg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ex+W7gvCvR4fixirj3E4JYV8UoOFkRi1ft/el607pcy0FeTw6U6lxcK2+DpzFZmImbnd5DO8UtYUQf3PPHa6hDVN4Di65B6WxX4WdZb5zA2ycPO0J1dUNSHoevoZFkJzciZFVYYjzKK5neVul1PbHV5g0A7gK/7xDSR/oMvHTKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U2nstQEU; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso1189373566b.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 29 Dec 2024 09:27:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1735493260; x=1736098060; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7a1vZAQNi/4lhbmtM5PrN6TtAvwGa1nioKtjBipxI/g=;
-        b=U2nstQEUqtLK+jX9zn4EsgIp2sDEtFHt2VP+q6rgb0tQazDW4/2WxI9XcxhFlKIKO1
-         MqacSTguO+F2lCSK3veXcQ/eNMCTL9UlGDDR+W4izKiv0PlJN4LJ9Dvqk5Z+iDeSKMOu
-         7L4RCB4t/c+GNhCal5n017co781gV3IJZJcz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735493260; x=1736098060;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7a1vZAQNi/4lhbmtM5PrN6TtAvwGa1nioKtjBipxI/g=;
-        b=fqL1xaEAbzuaSoEqsG51ufI/1fggZvz81inKlc93Hplw4ncPqvgm4zo2D+OeLeGI4C
-         cLCUnuugN49/ucriQfj7NLKTZPVNYldiE5mdmRQd7gZrEjkFe6SkJFDrkVbxcZQPDLJP
-         l+Yxa/exuZdbhy/kKwzKjCrMUUIfqzfnwQkE6E3wn8sCs3RfihdBJL82uidaAPVFcM3X
-         eCFAnwsX5KSXj4n7rDgUabfbOe4McYB6Q+VRKE8jvTWnSnV8FO097mswgC3j1QOEG1Lj
-         S7K477RxSKgRsnSLzW++lbMnpAfhwk9CwZzDwD22cK1qKg8tPuF9/CjSUP6sfgE3dbSB
-         phvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/i++qQI2unOWpCB/+7yp+dxQO3DwYD7mCpjsxZlbZPaiicTnyhkDHJw1ANC9ucacePeSsKRvBymfbU++k@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu5dWDzVSQKYPAZvfZILHjzIZovmc0IFeCor/wM+js3UwKGmzR
-	AoNMvcwnjVahd0EpuXlXUHJwNcfmPIHA9+kjT33wMPn+NRe0oMCApXFBBHWcxxT1V6LEnYRJ2nA
-	xRuU=
-X-Gm-Gg: ASbGnctFUnrzPK3RDP5o2sdXkUDIR6otk7VB+ECi2aPn1lGqGupKAZSPCM7cBcpmFpO
-	NZTZ3y3kWvMha2z1o92m5FcdD4FPb2pQ4ZmLyawEYYIr4UC2JUy7gOLOOA8uWjt23U3MNYkTWc3
-	KDSyYeIFg+3KZWG3s6T/5UjB95bx9FfnzSWnhQSzz9zhQHMksk5XBPvBU9a/8npsd+sPWvMleF7
-	Ka8fAGd/JmsFe0z+3xjeaX4vDQanGasPAwgJvQ9fMPlIjUF40MGEF80VH4o9yere8ENZEUzmuKS
-	uEZXfKF+6MzmGK9wCVjHT9Xk6zLHvPM=
-X-Google-Smtp-Source: AGHT+IG8M6TeFBnN1qPwmi59aEX+zvNcAZwtXNJMyrkaSa/x60NfXNcJq9ZzCJt6aho2N62tlHozFQ==
-X-Received: by 2002:a05:6402:5297:b0:5d2:7270:6128 with SMTP id 4fb4d7f45d1cf-5d81de06427mr76421507a12.25.1735493260114;
-        Sun, 29 Dec 2024 09:27:40 -0800 (PST)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80676f26dsm14109556a12.20.2024.12.29.09.27.38
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Dec 2024 09:27:39 -0800 (PST)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso1189371566b.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 29 Dec 2024 09:27:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWPYn46BBcmnOw1CvRQP/oWQ6c4oCTiIaXiXavZbxwbt21VF/4Itt0TMiQWLddPCYVkom6IVMkC90yiKRGo@vger.kernel.org
-X-Received: by 2002:a05:6402:2802:b0:5d3:cff5:635e with SMTP id
- 4fb4d7f45d1cf-5d81de065b8mr77626276a12.26.1735493257885; Sun, 29 Dec 2024
- 09:27:37 -0800 (PST)
+	s=arc-20240116; t=1735498430; c=relaxed/simple;
+	bh=sNrn2XI79whngEDo+mU6+M0TkVCrFed3PGYC7+kGcSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdQimuyTkQGPsp4n5/F8XtxobDnaoQJuyjDOquO+oEd75RG+D+nQxNUsY1NDAEpHwsevuEqUMRzAemhXMeFPFPOYrxYR5R04wfQK0qYoZPLeNUtnZJNj2J+i272bIqPrv3YSb36PKRJr6sw6xi0eGu6bvxNNV2YzYVWnrsD46Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gcdbp0yb; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iGe2DxKIrwClb3eIxSSgpn1bL7WeuCbpshqxRAST/oQ=; b=gcdbp0ybk5LuQGKf2VnGB0LoRz
+	F4ruCAM4aWP4ezSoGTknSXzUlvBiinNksnaYY80FJunAdry4H6jM4x/47st5rx5wVV36bJCSGrQWl
+	g7BzCI3dswwTJUifRStyce/zLiMP0+vAZnD5T2m98kl6M7gOh/iuABkTzRnITtA2Dq6j2JoVz/bWf
+	aNuxtMgEq4802nPpZlQzyNidl2SHetIcdB4MmkCSToZ0ag0QW8dwr9pIUNKBSlOCPhH9PBUO4FF0U
+	lf1w+88vHZpcRW5MZDpP2UAfZMInunEHQcWyBXUqlw5SMFbY4l09o3v1mZkKbsSB8vu+/v7gCqUvU
+	PVZOn3hg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tRyQ5-0000000DXy1-1hYi;
+	Sun, 29 Dec 2024 18:53:45 +0000
+Date: Sun, 29 Dec 2024 18:53:45 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, linux-fsdevel@vger.kernel.org,
+	Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
+	linux-sound@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [CFT][PATCH] fix descriptor uses in sound/core/compress_offload.c
+Message-ID: <20241229185345.GB1977892@ZenIV>
+References: <20241226182959.GU1977892@ZenIV>
+ <d01e06bf-9cbc-4c0e-bcce-2b10b1d04971@perex.cz>
+ <20241226213122.GV1977892@ZenIV>
+ <20241226221726.GW1977892@ZenIV>
+ <87o70udgzi.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241229135737.GA3293@redhat.com>
-In-Reply-To: <20241229135737.GA3293@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 29 Dec 2024 09:27:21 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whZHXHtpdakcLx+K-LF0=tav6r698Ph3=p3Fpuvi2D+5w@mail.gmail.com>
-Message-ID: <CAHk-=whZHXHtpdakcLx+K-LF0=tav6r698Ph3=p3Fpuvi2D+5w@mail.gmail.com>
-Subject: Re: PATCH? avoid the unnecessary wakeups in pipe_read()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>, Christian Brauner <brauner@kernel.org>, 
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o70udgzi.wl-tiwai@suse.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, 29 Dec 2024 at 05:58, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> If I read this code correctly, in this case the child will wakeup the parent
-> 4095 times for no reason, pipe_writable() == !pipe_pull() will still be true
-> until the last read(fd[0], &c, 1) does
+On Sun, Dec 29, 2024 at 09:35:13AM +0100, Takashi Iwai wrote:
+> On Thu, 26 Dec 2024 23:17:26 +0100,
+> Al Viro wrote:
+> > 
+> > On Thu, Dec 26, 2024 at 09:31:22PM +0000, Al Viro wrote:
+> > > On Thu, Dec 26, 2024 at 08:00:18PM +0100, Jaroslav Kysela wrote:
+> > > 
+> > > >   I already made almost similar patch:
+> > > > 
+> > > > https://lore.kernel.org/linux-sound/20241217100726.732863-1-perex@perex.cz/
+> > > 
+> > > Umm...  The only problem with your variant is that dma_buf_get()
+> > > is wrong here - it should be get_dma_buf() on actual objects,
+> > > and it should be done before fd_install().
+> > 
+> > Incremental on top of what just got merged into mainline:
+> > 
+> > Grab the references to dmabuf before moving them into descriptor
+> > table - trying to do that by descriptor afterwards might end up getting
+> > a different object, with a dangling reference left in task->{input,output}
+> > 
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> Could you resubmit this one as a formal patch to be merged?
+> Thanks!
 
-Ack, that patch looks sane to me.
-
-Only wake writer if we actually released a pipe slot, and it was full
-before we did so.
-
-Makes sense.
-
-                Linus
+Done (https://lore.kernel.org/all/20241229185232.GA1977892@ZenIV/)
 
