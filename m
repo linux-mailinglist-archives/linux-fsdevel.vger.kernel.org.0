@@ -1,98 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-38245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38BDF9FE03D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 19:53:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2169FE04D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 20:42:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D461881D2E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 18:53:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFBC1882016
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 19:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92251991C9;
-	Sun, 29 Dec 2024 18:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FF0199234;
+	Sun, 29 Dec 2024 19:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gcdbp0yb"
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="hWH7DfBA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221DB198845;
-	Sun, 29 Dec 2024 18:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FB82594BC;
+	Sun, 29 Dec 2024 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735498430; cv=none; b=t8c5bBcE4wO76EQqz+UM2N1KIGZE14VNE/vL3eH00SHm5j+RvMYWvyp9HP5AhiysCJ3riTKRTmf6GHTqVQCuvhxUpfTZhWq4DmUR8ml5U7FuKSqxrRjgvUq15X/+egXPhqEsxOF+Zedij5Klsb1nKgWpmOUgv3XBW9kjZmTg/c8=
+	t=1735501360; cv=none; b=HRPAF9jj/p+CQOF9J9idFbmrOE5+jOvcundYIIsSNwFw6kBPsCeCBqBKCFzfmE/0Xn8OI2R1o8CEqv08TabYwEEBzYMFEZPqlR+bkwvMy1U6WqrKRioXqT8Vornse9eXJ9YpqyDxYddDHZ+W8vX1Q/P3jl9QFRcVQJjLgGedHz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735498430; c=relaxed/simple;
-	bh=sNrn2XI79whngEDo+mU6+M0TkVCrFed3PGYC7+kGcSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qdQimuyTkQGPsp4n5/F8XtxobDnaoQJuyjDOquO+oEd75RG+D+nQxNUsY1NDAEpHwsevuEqUMRzAemhXMeFPFPOYrxYR5R04wfQK0qYoZPLeNUtnZJNj2J+i272bIqPrv3YSb36PKRJr6sw6xi0eGu6bvxNNV2YzYVWnrsD46Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gcdbp0yb; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iGe2DxKIrwClb3eIxSSgpn1bL7WeuCbpshqxRAST/oQ=; b=gcdbp0ybk5LuQGKf2VnGB0LoRz
-	F4ruCAM4aWP4ezSoGTknSXzUlvBiinNksnaYY80FJunAdry4H6jM4x/47st5rx5wVV36bJCSGrQWl
-	g7BzCI3dswwTJUifRStyce/zLiMP0+vAZnD5T2m98kl6M7gOh/iuABkTzRnITtA2Dq6j2JoVz/bWf
-	aNuxtMgEq4802nPpZlQzyNidl2SHetIcdB4MmkCSToZ0ag0QW8dwr9pIUNKBSlOCPhH9PBUO4FF0U
-	lf1w+88vHZpcRW5MZDpP2UAfZMInunEHQcWyBXUqlw5SMFbY4l09o3v1mZkKbsSB8vu+/v7gCqUvU
-	PVZOn3hg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tRyQ5-0000000DXy1-1hYi;
-	Sun, 29 Dec 2024 18:53:45 +0000
-Date: Sun, 29 Dec 2024 18:53:45 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, linux-fsdevel@vger.kernel.org,
-	Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
-	linux-sound@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [CFT][PATCH] fix descriptor uses in sound/core/compress_offload.c
-Message-ID: <20241229185345.GB1977892@ZenIV>
-References: <20241226182959.GU1977892@ZenIV>
- <d01e06bf-9cbc-4c0e-bcce-2b10b1d04971@perex.cz>
- <20241226213122.GV1977892@ZenIV>
- <20241226221726.GW1977892@ZenIV>
- <87o70udgzi.wl-tiwai@suse.de>
+	s=arc-20240116; t=1735501360; c=relaxed/simple;
+	bh=B5Yzr1DlE3ZbPLFmZHpdS43ieOvU/CzRyfoxcJy/wgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=N5WGB3Fla+GtbSGH7vpmzcJxkY+VGAn3/vCp0jGFCknfvm1SI3Hnh/AAgVysYM9Xvmo3QWivoMzNtqm0HTIiMrj5no2Mx4goWe+sdaha0UHJkyTt7/tYXkru2g4o7iXBlzzwRk6Wjzrzgx1ObSBv5fvz+IPhAmn/v2HzN7CSeo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=hWH7DfBA; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.4])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 23861518E78F;
+	Sun, 29 Dec 2024 19:42:28 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 23861518E78F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1735501348;
+	bh=SPG/YizN2O05q44/je00g9z52uR4tR/e5GEzszjGkDk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hWH7DfBASDbUxD1oo27LoY3qI0QIyOGu8axT/ftS4tP8Q+7kYuBLNL30PrzdcKSKc
+	 7tqomdl32cJUFyMZT4EHCy+ev3VPN9s43IM5qAKbOV/zS+ehaH5MTbuF+hwcKaJikE
+	 AxBJomFLvWhTtS9O5GMbMuJ8T0kRIg693RO6xiU0=
+Date: Sun, 29 Dec 2024 22:42:17 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jann Horn <jannh@google.com>,
+	syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
+	asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
+Message-ID: <20241229-aa972fa46c7415a89006f784-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87o70udgzi.wl-tiwai@suse.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <Z0kDWtjmlI_LwP5S@casper.infradead.org>
 
-On Sun, Dec 29, 2024 at 09:35:13AM +0100, Takashi Iwai wrote:
-> On Thu, 26 Dec 2024 23:17:26 +0100,
-> Al Viro wrote:
+Matthew Wilcox wrote:
+> On Fri, Nov 29, 2024 at 12:30:35AM +0100, Jann Horn wrote:
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
 > > 
-> > On Thu, Dec 26, 2024 at 09:31:22PM +0000, Al Viro wrote:
-> > > On Thu, Dec 26, 2024 at 08:00:18PM +0100, Jaroslav Kysela wrote:
-> > > 
-> > > >   I already made almost similar patch:
-> > > > 
-> > > > https://lore.kernel.org/linux-sound/20241217100726.732863-1-perex@perex.cz/
-> > > 
-> > > Umm...  The only problem with your variant is that dma_buf_get()
-> > > is wrong here - it should be get_dma_buf() on actual objects,
-> > > and it should be done before fd_install().
+> > This warning is a check for WARN_ON_ONCE(!xa_empty(&tctx->xa)); and as
+> > Jens pointed out, this was triggered after error injection caused a
+> > memory allocation inside xa_store() to fail.
 > > 
-> > Incremental on top of what just got merged into mainline:
-> > 
-> > Grab the references to dmabuf before moving them into descriptor
-> > table - trying to do that by descriptor afterwards might end up getting
-> > a different object, with a dangling reference left in task->{input,output}
-> > 
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > Is there maybe an issue where xa_store() can fail midway through while
+> > allocating memory for the xarray, so that xa_empty() is no longer true
+> > even though there is nothing in the xarray? (And if yes, is that
+> > working as intended?)
 > 
-> Could you resubmit this one as a formal patch to be merged?
-> Thanks!
+> Yes, that's a known possibility.  We have similar problems when people
+> use error injection with mapping->i_pages.  The effort to fix it seems
+> disproportionate to the severity of the problem.
 
-Done (https://lore.kernel.org/all/20241229185232.GA1977892@ZenIV/)
+Found this discussion while investigating memory leak in radix_tree_insert [1].
+That report has a similar cause - a fault injection in the innards of
+radix_tree (say, xarray) allocating loop, then the absence of release of
+already allocated internal xarray memory afterall.
+
+I wonder whether just the plain usage of xa_destroy() should be considered
+a fix for these kinds of failures. Are there any pitfalls? xa_destroy() is
+claimed to cleanup the internal xarray memory.
+
+Judging by ca6484cd308a ("io_uring: no need to call xa_destroy() on empty
+xarray"), seems some pitfalls do exist but still..
+
+Would be glad to have a look into the previous discussions of this problem
+if they exist - in case I'm raising the questions that were already
+answered. Thanks!
+
+P.S. there is no variant of xa_destroy() for radix tree. I think nobody
+noticed this since it may have an effect only on these types of bugs
+triggered by fault injection. If you think adding it overall makes sense
+then I'd try to prepare a patch.
+
+[1]: https://syzkaller.appspot.com/bug?extid=006987d1be3586e13555
+
 
