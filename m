@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-38229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35719FDDF9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 09:13:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECD09FDDFA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 09:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473EB3A1692
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 08:13:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDF71882751
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2024 08:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBD733062;
-	Sun, 29 Dec 2024 08:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385BA14A60F;
+	Sun, 29 Dec 2024 08:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ti1OwuGI"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IfAnh+hL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD5454740
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5C85674D
 	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Dec 2024 08:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735459949; cv=none; b=CBlguyfwyuw+/IasYawzbKS6NKK+mo3UnuvN+6LsBMYzmQRouXSKOyyKqvL9drimIhoHZw+rK0LH1rQOYKNhACujRsPJDk8qIZBExWCB52afB++AE72GI/6pB0Rzuxb8BB1kg1k66K50+qzQAL4rwgb0q0udcz8n0mq0gZxKUzc=
+	t=1735459949; cv=none; b=HpK7Va1aNAlI7d9CMHNVylT9i7HmzGM2f2Yju3W86M+sUoCTBO9ezFtDFH0txMhwbb7Elbfq4gPxsaXS/dCx9kD6vr6QK2RSuFHm3ap1Q283Jc0xhaNy9maC3YUDfNbAYnKs0uIMmMrKWwsPOgHv2tH2GAbwWtdHyN1f2xpnJtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1735459949; c=relaxed/simple;
-	bh=CyRscPQ+JqS39wJ/rbHekCJ5IcGNMw//iYJkpDOpE9c=;
+	bh=0ir4IMnWCsMN4lYkM8N2IHFT6A62V7rx+lso6Z2bObg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lg3DFkJlWOBErKNFucCQfN6gl5chbOPgt7Qq910oEz9aHvtxxEPtyRZehjWEQgoMCNsLK/s4JZrVFsQ882snDemyyMuQQVR0NULUwBMFEyNe5bksMZUfyqxpGiNKdZBBV630bI4Kvyltu54cl4BW+VYT4+co104Iip+enIE57qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ti1OwuGI; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=TaIGC/q8fFUG0+LQb6rzgolYCLdNttzSrKClue537qIqxShrZxqm9poeCOPqol6K+IVxVa1U5zf/1Pz7ENFcjy9W2cB1YDnKUra1XKNcpnzxm/AJhTQJj4yZqro2XYobVeJx39F53Z65mChVnUsv8MI/re08m7jgbq6lfzDnwEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IfAnh+hL; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=qf5TAAhkW5LD0bVX6MGG2xxw06KJdOFvtPuRfP0r7QU=; b=ti1OwuGITa6Dpwbc8oy0rkHPhB
-	pXlDwiEthIjJh5RQKBl/9u3dAwYdqcSNswLfx3AiNGRyUk7ic7lZHszWYLn9FE/s8iOX8gGQGrhm4
-	iEAcTYLqPj+M6NUyZjeFSNueulVkfN+i2TwkiGVlD7KTuXKkv6VpOHI0CUngXPh7fDGhkbKI2Or42
-	MNjIoH1uui7ROGclaP/aQbFCRPcOGem2IuIRhu3uRCntJeqbVer7unEgsPSrd1Kdyp8jZBK+I/DYr
-	Zr4xK19IvZe9i+53a7YS9tnnDuEg2TIGDdufAzqMyrVMB384lyG6G1Du1hH8GlL+TnTfFvHUsVBgn
-	cW1GnV2Q==;
+	bh=G9ukzfpCE150CcVUCbc04iOJl0I8o/jYsdfs7Zf+ai4=; b=IfAnh+hL32dD090tezpSz0VWgd
+	Fx77SWYanWelPflnsPv0/etbsWkxGpaNXp00QgPAHaKYI3ykthxOonIs3ZxmUTcHRr+/D/SfAzQVC
+	WHkm7FPF9zcHWNZ+mCu5TnGg1bUwAH3jH56H9LiZcGTBreUVJhfeF4CWwDnn/6mcLPOVA1z3D1v/l
+	dDWV9t0306OK9VS4JQ6GE6UAdj8S52JXM2Wf+eUmMbb6GlnWs7ocE2wD3XPqFYLdozCeATFH7Q1Wu
+	CC/WNVRchOOCI7I7AJlCgBlsviTmh8bt3AZlKhtWl/WMMmgBC9vASUMDFglkCA1U/dj4snqJfLmkg
+	wIoHIo3A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tRoPR-0000000DOj9-2Be6;
+	id 1tRoPR-0000000DOjE-3655;
 	Sun, 29 Dec 2024 08:12:25 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: gregkh@linuxfoundation.org
-Subject: [PATCH 17/20] slub: don't mess with ->d_name
-Date: Sun, 29 Dec 2024 08:12:20 +0000
-Message-ID: <20241229081223.3193228-17-viro@zeniv.linux.org.uk>
+Subject: [PATCH 18/20] arm_scmi: don't mess with ->d_parent->d_name
+Date: Sun, 29 Dec 2024 08:12:21 +0000
+Message-ID: <20241229081223.3193228-18-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241229081223.3193228-1-viro@zeniv.linux.org.uk>
 References: <20241229080948.GY1977892@ZenIV>
@@ -65,41 +65,50 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- mm/slub.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/firmware/arm_scmi/raw_mode.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index c2151c9fee22..4f006b047552 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -7513,10 +7513,7 @@ static int slab_debug_trace_open(struct inode *inode, struct file *filep)
- 		return -ENOMEM;
+diff --git a/drivers/firmware/arm_scmi/raw_mode.c b/drivers/firmware/arm_scmi/raw_mode.c
+index 9e89a6a763da..7cc0d616b8de 100644
+--- a/drivers/firmware/arm_scmi/raw_mode.c
++++ b/drivers/firmware/arm_scmi/raw_mode.c
+@@ -886,10 +886,8 @@ static __poll_t scmi_dbg_raw_mode_message_poll(struct file *filp,
+ 
+ static int scmi_dbg_raw_mode_open(struct inode *inode, struct file *filp)
+ {
+-	u8 id;
+ 	struct scmi_raw_mode_info *raw;
+ 	struct scmi_dbg_raw_data *rd;
+-	const char *id_str = filp->f_path.dentry->d_parent->d_name.name;
+ 
+ 	if (!inode->i_private)
+ 		return -ENODEV;
+@@ -915,8 +913,8 @@ static int scmi_dbg_raw_mode_open(struct inode *inode, struct file *filp)
  	}
  
--	if (strcmp(filep->f_path.dentry->d_name.name, "alloc_traces") == 0)
--		alloc = TRACK_ALLOC;
--	else
--		alloc = TRACK_FREE;
-+	alloc = debugfs_get_aux_num(filep);
+ 	/* Grab channel ID from debugfs entry naming if any */
+-	if (!kstrtou8(id_str, 16, &id))
+-		rd->chan_id = id;
++	/* not set - reassing 0 we already had after kzalloc() */
++	rd->chan_id = debugfs_get_aux_num(filp);
  
- 	if (!alloc_loc_track(t, PAGE_SIZE / sizeof(struct location), GFP_KERNEL)) {
- 		bitmap_free(obj_map);
-@@ -7572,11 +7569,11 @@ static void debugfs_slab_add(struct kmem_cache *s)
+ 	rd->raw = raw;
+ 	filp->private_data = rd;
+@@ -1225,10 +1223,12 @@ void *scmi_raw_mode_init(const struct scmi_handle *handle,
+ 			snprintf(cdir, 8, "0x%02X", channels[i]);
+ 			chd = debugfs_create_dir(cdir, top_chans);
  
- 	slab_cache_dir = debugfs_create_dir(s->name, slab_debugfs_root);
+-			debugfs_create_file("message", 0600, chd, raw,
++			debugfs_create_file_aux_num("message", 0600, chd,
++					    raw, channels[i],
+ 					    &scmi_dbg_raw_mode_message_fops);
  
--	debugfs_create_file("alloc_traces", 0400,
--		slab_cache_dir, s, &slab_debugfs_fops);
-+	debugfs_create_file_aux_num("alloc_traces", 0400, slab_cache_dir, s,
-+					TRACK_ALLOC, &slab_debugfs_fops);
- 
--	debugfs_create_file("free_traces", 0400,
--		slab_cache_dir, s, &slab_debugfs_fops);
-+	debugfs_create_file_aux_num("free_traces", 0400, slab_cache_dir, s,
-+					TRACK_FREE, &slab_debugfs_fops);
- }
- 
- void debugfs_slab_release(struct kmem_cache *s)
+-			debugfs_create_file("message_async", 0600, chd, raw,
++			debugfs_create_file_aux_num("message_async", 0600, chd,
++					    raw, channels[i],
+ 					    &scmi_dbg_raw_mode_message_async_fops);
+ 		}
+ 	}
 -- 
 2.39.5
 
