@@ -1,296 +1,298 @@
-Return-Path: <linux-fsdevel+bounces-38267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9548A9FE52C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 11:11:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C669FE536
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 11:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB893A1F0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 10:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544F31881F58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 10:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C781A3BC0;
-	Mon, 30 Dec 2024 10:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50951A3A80;
+	Mon, 30 Dec 2024 10:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H4Ro4E+j"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P50L7KoY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062931A0728
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 10:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F659198E6F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 10:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735553498; cv=none; b=E1H34SVYKXGYlAus7mpIADG6F15tL0CmtLc9/5ITiCQ05I9Fr/1MJvIJLBVF3WFt25IQ2hb3n8CFCOwCRPMgMid1GMJfZ5X4GBnZXM0mHqWSwE8vxeOhPOA9bJFRDkwPZ15dye2XirlHcopEPLD+jHijXRdcATJsXoJcfnzcx1s=
+	t=1735553799; cv=none; b=Px3qRZHtPAQyKvjG9EXsQAimzM4maRuodrDAiBZWW4Iedpk3rB9/z9E29+kg9b2KRozxVIFPb4cLConVnkBPB4J85neKFlIizDWhzuEc9EPI1RrzEs8udtHMKvMhCMa8ZrtwEjCOxM9qJ5hFMU81JqPP5z+aTXN9XM8txxhJuMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735553498; c=relaxed/simple;
-	bh=o7ArtUZXxuucJZFRat3oYyC/ucZYiLYDAWi6MjCcjY8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=uye7B/VCOx2gfHRfrb0suAT/LNxHw/uuFrFnbivdGpIR/ygKsGan5aA3yrEl7jXC0ED26MF2ylON25hySaET4+gt4gGXp0S5CMHa+OvB/vL/3jeNEV10ASv8srll5qIRfQqSXJSw6ix/BEH090IPhH5NUPvVmT4cMRn4laMVw0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H4Ro4E+j; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241230101132epoutp04b9475b9cc47c1752758fa4d0976d0e03~V7LTJ6pKr0567705677epoutp04x
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 10:11:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241230101132epoutp04b9475b9cc47c1752758fa4d0976d0e03~V7LTJ6pKr0567705677epoutp04x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1735553492;
-	bh=EFRBiDgKYImOx8Br/vOz/mESdqSm5gtt2bMqsIhy7gk=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=H4Ro4E+jK9OzQEJkkerXCrMf7cL0CMXm33WEMTBR6vGbBjajdcBbKImzWso2qJFT8
-	 Te6Q4+ZwsnP6S0wbRoTmrRmWVvdMMJAH9IPCWP0GpRk3ZCLVyek5I154G62V6i/bPK
-	 5557fa2g0vu2gGjfbxDaXO7QQD5TO3Tgq90C6j/s=
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.42.68]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241230101131epcas5p44adc64fac7c45a222fc92b0c7e463a03~V7LSg1CWd3097130971epcas5p4g;
-	Mon, 30 Dec 2024 10:11:31 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FA.14.19710.3D172776; Mon, 30 Dec 2024 19:11:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241230101102epcas5p1c879ea11518951971c8f1bf3dbc3fe39~V7K2-lIGT0213902139epcas5p1d;
-	Mon, 30 Dec 2024 10:11:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241230101102epsmtrp1fbef31ef58f36203384008c5a4e11d1a~V7K2_wxz32371223712epsmtrp12;
-	Mon, 30 Dec 2024 10:11:02 +0000 (GMT)
-X-AuditID: b6c32a44-36bdd70000004cfe-f3-677271d39e90
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	23.9C.18729.5B172776; Mon, 30 Dec 2024 19:11:02 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.44]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241230101058epsmtip1b5aaea1f9588d4ba67356f1459c6e936~V7Kzrb3GZ1811518115epsmtip1D;
-	Mon, 30 Dec 2024 10:10:58 +0000 (GMT)
-From: Maninder Singh <maninder1.s@samsung.com>
-To: viro@zeniv.linux.org.uk, elver@google.com, brauner@kernel.org,
-	jack@suse.cz, akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, r.thapliyal@samsung.com, Maninder Singh
-	<maninder1.s@samsung.com>
-Subject: [PATCH 1/1] lib/list_debug.c: add object information in case of
- invalid object
-Date: Mon, 30 Dec 2024 15:40:43 +0530
-Message-Id: <20241230101043.53773-1-maninder1.s@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1735553799; c=relaxed/simple;
+	bh=BokepQ40IbBOQkXYMkA/X1yCUkWARvE4w0qoW7aejbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iyo/WXJq4zGe/bdOquE8tXHdubEn7g6CyAwMZC0vXX4Voe2gDzz0SV4TpzIiz8iOLYPMK+TlirkIgr5K6GFOAnX4Zl9VEaOk2/QHw2iULanh4lrTs6ULUJ2cJxd6RHt7f1vMsAH7M7fJ2d0MveDmgMvndL6Uy6bV8oXKnPJUcSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P50L7KoY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1735553795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wfPhj+GsTVBoLadkr2oEBzb5MpKJh5g9F2hLfDLIhAE=;
+	b=P50L7KoYi7Sx8UtDwVAsqhBJV9d4ZmJF/NX0UAz2eLNYnZmv15DQ0HeFeo8ZY1aFCawyxR
+	b3Fxlmfw07D1S0zvfCF8YqOsZiOGEk+l0RTJcxaFL9FvVUY0bMXcOL6k/aGrtkxQdBAP6c
+	9l6CrCv+YXGTDgLJNdaiwGSmGmxb3X0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-438-HCDEoXDsNlC1zy6tZaF6zQ-1; Mon, 30 Dec 2024 05:16:27 -0500
+X-MC-Unique: HCDEoXDsNlC1zy6tZaF6zQ-1
+X-Mimecast-MFC-AGG-ID: HCDEoXDsNlC1zy6tZaF6zQ
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38639b4f19cso5923304f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 02:16:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735553781; x=1736158581;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wfPhj+GsTVBoLadkr2oEBzb5MpKJh5g9F2hLfDLIhAE=;
+        b=cijWb+3YA1x3+ZlRdTP/3WD7HXxX6aSvrEU7J6UmRo1prMRrM6qFW1qISIvX+AE0kL
+         zXXCovQkbssxwjgaayZaR2RPtvUxGCn0vBFHxwZNEbXdneOobKjFUNgopMDThhHTEMCE
+         528hU19tEUSgs0AmNdrFGaJB7Xn3tqi6ehBas9u9qQ/B8t3QjXT5B72x3ZhE5sv+abfZ
+         sdLJhBzUvScDvH2Rel3M4JTlQiKVvjxNES+Gxp9Nz+jgEwftdPwmX149LTwtFF3+KJkw
+         7j0XrfvMFU0LTXoFHPnwV2jQMKYwmjosQMq0Jf12fFTSgdxQlKXOZuUcd6r7B2nj4/YQ
+         tBYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkJehMRSVmkSQxLwzIjz5r3npjkp31UEWXvNJWTCGysvygpXL8b4i/xiVRMt4GxEbnfVLXjmS5WUi10qP8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyGqXp97wEnuvg7z8nj67uwZwh0PZxscEidPSAL1R+m1mje7tR
+	+ENN24Hv7mThx9P5ioOzb8q47Yn0rrSF0sTMdwUUTyG5rDetbX6IhuyWqn4LgolaSs+pok8VhFl
+	m2hqrbxGHy83ZxQkdtOvbhXAJwUZgFd5Yx/89Ik6ULbv/4vfbfPhOxZsG2oSof5c=
+X-Gm-Gg: ASbGncuy6gbECN0OqmngHqCFwSOzl3BHMzxTHtT6grRM2AEiZJn96iM+Re8Q9db1Dyh
+	v26QRaIVF0GDkSi5HysLYmmC+VsBXp96j6ezp6s4w0IVLInBTphtVbr/re5sVG1u+AbycTixl8u
+	fZm8h+L9D7fOfNuAsn7Lp0cMJaFFBKIXVcGuLhHceLaCUQsENJbKkRXV0Tnskj5R2dt15qKlr/3
+	MBNK+5m248LALhTcAnodsHwFtiB/WItmXExcVwzWYWUP7jdIwtHrllikNyItLuConYyGwMdgkcb
+	PbQmesrd2/4sSa751L2Vd6wvKPbO6a7tskca82tDqX2hwFf9572zX6BVsfVfVyfM0Km1Pwqe+By
+	BpmFWFO9T
+X-Received: by 2002:a5d:47ab:0:b0:386:1ab5:f0e1 with SMTP id ffacd0b85a97d-38a221ea67fmr33687876f8f.14.1735553781503;
+        Mon, 30 Dec 2024 02:16:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF0iVyi3Ka5o1ghQOFECyWau7dB/SLiwvV5HEpWiwGLxJiUR3UMPbGjgX5SGFe1rWyUA2+Pbw==
+X-Received: by 2002:a5d:47ab:0:b0:386:1ab5:f0e1 with SMTP id ffacd0b85a97d-38a221ea67fmr33687833f8f.14.1735553781038;
+        Mon, 30 Dec 2024 02:16:21 -0800 (PST)
+Received: from ?IPV6:2003:cb:c718:5800:c745:7e74:aa59:8dbe? (p200300cbc7185800c7457e74aa598dbe.dip0.t-ipconnect.de. [2003:cb:c718:5800:c745:7e74:aa59:8dbe])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e2d2sm30149795f8f.71.2024.12.30.02.16.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Dec 2024 02:16:19 -0800 (PST)
+Message-ID: <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
+Date: Mon, 30 Dec 2024 11:16:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7bCmuu7lwqJ0gyfXDS3mrF/DZvH68CdG
-	i7Yz21ktZk9vZrLYs/cki8XlXXPYLO6t+c9qcXh+G4vFxnvZFuf/Hmd14PJYsKnUY9OqTjaP
-	TZ8msXucmPGbxaNvyypGjzMLjrB7fN4k57HpyVumAI4oLpuU1JzMstQifbsEroz+P79ZCjpM
-	K2Yc/crYwPhWq4uRk0NCwETi+PpZzCC2kMBuRok3n5Ih7E+MEg2rgOJcQPY3Ron1e5YxwjRc
-	/dXCBJHYyyjxef13FgjnC6PE0U8PWUCq2AT0JFbt2gNmiwjkSKw8e4oVpIhZYBajxK8/S9hB
-	EsICkRJvj+1nArFZBFQlfh5YyAZi8wrYSOxbcYsJYp28xMxL39kh4oISJ2c+ARvKDBRv3job
-	7D4JgZ/sEvvbPrJANLhI7O3dxwxhC0u8Or6FHcKWknjZ3wZkcwDZ5RJbJ9RD9LYwSuyfM4UN
-	osZe4snFhawgNcwCmhLrd+lDhGUlpp5axwSxl0+i9/cTqNt4JXbMg7FVJVpubmCFsKUlPn+E
-	OcdD4sy6pSyQMI2V6FzfwTaBUX4WkndmIXlnFsLmBYzMqxglUwuKc9NTk00LDPNSy/WKE3OL
-	S/PS9ZLzczcxghOSlssOxhvz/+kdYmTiYDzEKMHBrCTCey6pIF2INyWxsiq1KD++qDQntfgQ
-	ozQHi5I47+vWuSlCAumJJanZqakFqUUwWSYOTqkGJpPTZsnNfzm+qfG31iz/9uvHT4+Ddtp9
-	P2cr67C1zdwioT19Gt9DjeTD1684bxE7lN1/setZY3Ob2anbFhO1dvza/fqWY3HxH1brR/wL
-	5HfFVWk9Ue4UsJkywcLFquIA02WRDcltlr7tZyc7rOHZZWF7c8dFy+UZScml0h6PUjKvCa90
-	2y8Ye/q4pX3Yuqhu31jrmiWfAhTv3dzSKrR+2jOn/h7ZObyVHm6P/p/9qHneeObBl06bog//
-	XHXTSuanx+cDa4+ErPCUXX46z6okr+au4FSbZO/wkt6d1854xrw8JxkT+7zXrL4jK6XA48Xx
-	XbMdnI9xKXdb+6d9mrLh1bsV7/sPpT//euyndOwcWyWW4oxEQy3mouJEAN8IGw23AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSnO62wqJ0g38LRCzmrF/DZvH68CdG
-	i7Yz21ktZk9vZrLYs/cki8XlXXPYLO6t+c9qcXh+G4vFxnvZFuf/Hmd14PJYsKnUY9OqTjaP
-	TZ8msXucmPGbxaNvyypGjzMLjrB7fN4k57HpyVumAI4oLpuU1JzMstQifbsEroz+P79ZCjpM
-	K2Yc/crYwPhWq4uRk0NCwETi6q8Wpi5GLg4hgd2MEgsfz2KDSEhL/Pz3ngXCFpZY+e85O0TR
-	J0aJUwcvghWxCehJrNq1B6xIRKBIYtm5BSwgRcwC8xgl2rf1sYIkhAXCJb5s3cwEYrMIqEr8
-	PLAQrJlXwEZi34pbTBAb5CVmXvrODhEXlDg58wnYUGagePPW2cwTGPlmIUnNQpJawMi0ilEy
-	taA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOMC1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHec0kF
-	6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5xV/0pggJpCeWpGanphakFsFkmTg4pRqYPHyXPAu9
-	9oP7xkqhK7vK7Q+48DhYXL5coVcvnG/RW/O94JDEUglLa4FZZrp/dit0F7J6B/hk55Wfenua
-	49vXP2UvT76a1n+sXLUz+aQK28uzYTKW//O6g2eu7GP8GreVb1ZPCZ+n5dH8FxqJ8ad5dz9Y
-	86dk79stWblX52j56tRdqVjb171fv1fi3SxBQ+v6T7fWZWrOO6luseJX7b7of1F/RHpndxxS
-	YDr+Yq+A/fW92/uvM5gur+xull7xKuasVsOEG6v/P+lp87LvEr2hvJDDeu0rDwWmeTMZ6iWe
-	l4nytHotU29kP6XprPfAJJZjgvNPU97YYKUUj7wQU/XdX0xOtN55Po19tecuu39KLMUZiYZa
-	zEXFiQAus5xh3wIAAA==
-X-CMS-MailID: 20241230101102epcas5p1c879ea11518951971c8f1bf3dbc3fe39
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20241230101102epcas5p1c879ea11518951971c8f1bf3dbc3fe39
-References: <CGME20241230101102epcas5p1c879ea11518951971c8f1bf3dbc3fe39@epcas5p1.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Joanne Koong <joannelkoong@gmail.com>, Zi Yan <ziy@nvidia.com>,
+ miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+ jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
+ Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+References: <ukkygby3u7hjhk3cgrxkvs6qtmlrigdwmqb5k22ru3qqn242au@s4itdbnkmvli>
+ <CAJnrk1bRk9xkVkMg8twaNi-gWBRps7A6HubMivKBHQiHzf+T8w@mail.gmail.com>
+ <2bph7jx4hvhxpgp77shq2j7mo4xssobhqndw5v7hdvbn43jo2w@scqly5zby7bm>
+ <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com>
+ <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm>
+ <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com>
+ <qsytb6j4j6v7kzmiygmmsrdgfkwszpjudvwbq5smkhowfd75dd@beks3genju7x>
+ <3f3c7254-7171-4987-bb1b-24c323e22a0f@redhat.com>
+ <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+ <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com>
+ <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-As of now during link list corruption it prints about cluprit address
-and its wrong value, but sometime it is not enough to catch the actual
-issue point.
+>> BTW, I just looked at NFS out of interest, in particular
+>> nfs_page_async_flush(), and I spot some logic about re-dirtying pages +
+>> canceling writeback. IIUC, there are default timeouts for UDP and TCP,
+>> whereby the TCP default one seems to be around 60s (* retrans?), and the
+>> privileged user that mounts it can set higher ones. I guess one could run
+>> into similar writeback issues?
+> 
 
-If it prints allocation and free path of that corrupted node,
-it will be a lot easier to find and fix the issues.
+Hi,
 
-Adding the same information when data mismatch is found in link list
-debug data:
+sorry for the late reply.
 
-[   14.243055]  slab kmalloc-32 start ffff0000cda19320 data offset 32 pointer offset 8 size 32 allocated at add_to_list+0x28/0xb0
-[   14.245259]     __kmalloc_cache_noprof+0x1c4/0x358
-[   14.245572]     add_to_list+0x28/0xb0
-...
-[   14.248632]     do_el0_svc_compat+0x1c/0x34
-[   14.249018]     el0_svc_compat+0x2c/0x80
-[   14.249244]  Free path:
-[   14.249410]     kfree+0x24c/0x2f0
-[   14.249724]     do_force_corruption+0xbc/0x100
-...
-[   14.252266]     el0_svc_common.constprop.0+0x40/0xe0
-[   14.252540]     do_el0_svc_compat+0x1c/0x34
-[   14.252763]     el0_svc_compat+0x2c/0x80
-[   14.253071] ------------[ cut here ]------------
-[   14.253303] list_del corruption. next->prev should be ffff0000cda192a8, but was 6b6b6b6b6b6b6b6b. (next=ffff0000cda19348)
-[   14.254255] WARNING: CPU: 3 PID: 84 at lib/list_debug.c:65 __list_del_entry_valid_or_report+0x158/0x164
+> Yes, I think so.
+> 
+>>
+>> So I wonder why we never required AS_WRITEBACK_INDETERMINATE for nfs?
+> 
+> I feel like INDETERMINATE in the name is the main cause of confusion.
 
-moved prototype of mem_dump_obj() to bug.h, as mm.h can not be included
-in bug.h.
+We are adding logic that says "unconditionally, never wait on writeback 
+for these folios, not even any sync migration". That's the main problem 
+I have.
 
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
----
-Comment: I am not sure about moving of prototype, we can make a new wrapper also,
-so please suggest what is best option. because name mem_dump_obj does
-not go with bug.h
+Your explanation below is helpful. Because ...
 
- fs/open.c           |  2 +-
- fs/super.c          |  2 +-
- include/linux/bug.h | 10 +++++++++-
- include/linux/mm.h  |  6 ------
- lib/list_debug.c    | 22 +++++++++++-----------
- 5 files changed, 22 insertions(+), 20 deletions(-)
+> So, let me explain why it is required (but later I will tell you how it
+> can be avoided). The FUSE thread which is actively handling writeback of
+> a given folio can cause memory allocation either through syscall or page
+> fault. That memory allocation can trigger global reclaim synchronously
+> and in cgroup-v1, that FUSE thread can wait on the writeback on the same
+> folio whose writeback it is supposed to end and cauing a deadlock. So,
+> AS_WRITEBACK_INDETERMINATE is used to just avoid this deadlock.
+ > > The in-kernel fs avoid this situation through the use of GFP_NOFS
+> allocations. The userspace fs can also use a similar approach which is
+> prctl(PR_SET_IO_FLUSHER, 1) to avoid this situation. However I have been
+> told that it is hard to use as it is per-thread flag and has to be set
+> for all the threads handling writeback which can be error prone if the
+> threadpool is dynamic. Second it is very coarse such that all the
+> allocations from those threads (e.g. page faults) become NOFS which
+> makes userspace very unreliable on highly utilized machine as NOFS can
+> not reclaim potentially a lot of memory and can not trigger oom-kill.
+> 
 
-diff --git a/fs/open.c b/fs/open.c
-index 0a5d2f6061c6..932e5a6de63b 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1529,7 +1529,7 @@ static int filp_flush(struct file *filp, fl_owner_t id)
- {
- 	int retval = 0;
- 
--	if (CHECK_DATA_CORRUPTION(file_count(filp) == 0,
-+	if (CHECK_DATA_CORRUPTION(file_count(filp) == 0, filp,
- 			"VFS: Close: file count is 0 (f_op=%ps)",
- 			filp->f_op)) {
- 		return 0;
-diff --git a/fs/super.c b/fs/super.c
-index c9c7223bc2a2..5a7db4a556e3 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -647,7 +647,7 @@ void generic_shutdown_super(struct super_block *sb)
- 		 */
- 		fscrypt_destroy_keyring(sb);
- 
--		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes),
-+		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes), NULL,
- 				"VFS: Busy inodes after unmount of %s (%s)",
- 				sb->s_id, sb->s_type->name)) {
- 			/*
-diff --git a/include/linux/bug.h b/include/linux/bug.h
-index 348acf2558f3..a9948a9f1093 100644
---- a/include/linux/bug.h
-+++ b/include/linux/bug.h
-@@ -73,15 +73,23 @@ static inline void generic_bug_clear_once(void) {}
- 
- #endif	/* CONFIG_GENERIC_BUG */
- 
-+#ifdef CONFIG_PRINTK
-+void mem_dump_obj(void *object);
-+#else
-+static inline void mem_dump_obj(void *object) {}
-+#endif
-+
- /*
-  * Since detected data corruption should stop operation on the affected
-  * structures. Return value must be checked and sanely acted on by caller.
-  */
- static inline __must_check bool check_data_corruption(bool v) { return v; }
--#define CHECK_DATA_CORRUPTION(condition, fmt, ...)			 \
-+#define CHECK_DATA_CORRUPTION(condition, addr, fmt, ...)		 \
- 	check_data_corruption(({					 \
- 		bool corruption = unlikely(condition);			 \
- 		if (corruption) {					 \
-+			if (addr)					 \
-+				mem_dump_obj(addr);			 \
- 			if (IS_ENABLED(CONFIG_BUG_ON_DATA_CORRUPTION)) { \
- 				pr_err(fmt, ##__VA_ARGS__);		 \
- 				BUG();					 \
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d61b9c7a3a7b..9cabab47a23e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4097,12 +4097,6 @@ unsigned long wp_shared_mapping_range(struct address_space *mapping,
- 
- extern int sysctl_nr_trim_pages;
- 
--#ifdef CONFIG_PRINTK
--void mem_dump_obj(void *object);
--#else
--static inline void mem_dump_obj(void *object) {}
--#endif
--
- #ifdef CONFIG_ANON_VMA_NAME
- int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
- 			  unsigned long len_in,
-diff --git a/lib/list_debug.c b/lib/list_debug.c
-index db602417febf..ee7eeeb8f92c 100644
---- a/lib/list_debug.c
-+++ b/lib/list_debug.c
-@@ -22,17 +22,17 @@ __list_valid_slowpath
- bool __list_add_valid_or_report(struct list_head *new, struct list_head *prev,
- 				struct list_head *next)
- {
--	if (CHECK_DATA_CORRUPTION(prev == NULL,
-+	if (CHECK_DATA_CORRUPTION(prev == NULL, NULL,
- 			"list_add corruption. prev is NULL.\n") ||
--	    CHECK_DATA_CORRUPTION(next == NULL,
-+	    CHECK_DATA_CORRUPTION(next == NULL, NULL,
- 			"list_add corruption. next is NULL.\n") ||
--	    CHECK_DATA_CORRUPTION(next->prev != prev,
-+	    CHECK_DATA_CORRUPTION(next->prev != prev, next,
- 			"list_add corruption. next->prev should be prev (%px), but was %px. (next=%px).\n",
- 			prev, next->prev, next) ||
--	    CHECK_DATA_CORRUPTION(prev->next != next,
-+	    CHECK_DATA_CORRUPTION(prev->next != next, prev,
- 			"list_add corruption. prev->next should be next (%px), but was %px. (prev=%px).\n",
- 			next, prev->next, prev) ||
--	    CHECK_DATA_CORRUPTION(new == prev || new == next,
-+	    CHECK_DATA_CORRUPTION(new == prev || new == next, NULL,
- 			"list_add double add: new=%px, prev=%px, next=%px.\n",
- 			new, prev, next))
- 		return false;
-@@ -49,20 +49,20 @@ bool __list_del_entry_valid_or_report(struct list_head *entry)
- 	prev = entry->prev;
- 	next = entry->next;
- 
--	if (CHECK_DATA_CORRUPTION(next == NULL,
-+	if (CHECK_DATA_CORRUPTION(next == NULL, NULL,
- 			"list_del corruption, %px->next is NULL\n", entry) ||
--	    CHECK_DATA_CORRUPTION(prev == NULL,
-+	    CHECK_DATA_CORRUPTION(prev == NULL, NULL,
- 			"list_del corruption, %px->prev is NULL\n", entry) ||
--	    CHECK_DATA_CORRUPTION(next == LIST_POISON1,
-+	    CHECK_DATA_CORRUPTION(next == LIST_POISON1, next,
- 			"list_del corruption, %px->next is LIST_POISON1 (%px)\n",
- 			entry, LIST_POISON1) ||
--	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2,
-+	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2, prev,
- 			"list_del corruption, %px->prev is LIST_POISON2 (%px)\n",
- 			entry, LIST_POISON2) ||
--	    CHECK_DATA_CORRUPTION(prev->next != entry,
-+	    CHECK_DATA_CORRUPTION(prev->next != entry, prev,
- 			"list_del corruption. prev->next should be %px, but was %px. (prev=%px)\n",
- 			entry, prev->next, prev) ||
--	    CHECK_DATA_CORRUPTION(next->prev != entry,
-+	    CHECK_DATA_CORRUPTION(next->prev != entry, next,
- 			"list_del corruption. next->prev should be %px, but was %px. (next=%px)\n",
- 			entry, next->prev, next))
- 		return false;
+... now I understand that we want to prevent a deadlock in one specific 
+scenario only?
+
+What sounds plausible for me is:
+
+a) Make this only affect the actual deadlock path: sync migration
+    during compaction. Communicate it either using some "context"
+    information or with a new MIGRATE_SYNC_COMPACTION.
+b) Call it sth. like AS_WRITEBACK_MIGHT_DEADLOCK_ON_RECLAIM to express
+     that very deadlock problem.
+c) Leave all others sync migration users alone for now
+
+Would that prevent the deadlock? Even *better* would be to to be able to 
+ask the fs if starting writeback on a specific folio could deadlock. 
+Because in most cases, as I understand, we'll  not actually run into the 
+deadlock and would just want to wait for writeback to just complete 
+(esp. compaction).
+
+(I still think having folios under writeback for a long time might be a 
+problem, but that's indeed something to sort out separately in the 
+future, because I suspect NFS has similar issues. We'd want to "wait 
+with timeout" and e.g., cancel writeback during memory 
+offlining/alloc_cma ...)
+
+>> Not
+>> sure if I grasped all details about NFS and writeback and when it would
+>> redirty+end writeback, and if there is some other handling in there.
+>>
+> [...]
+>>>
+>>> Please note that such filesystems are mostly used in environments like
+>>> data center or hyperscalar and usually have more advanced mechanisms to
+>>> handle and avoid situations like long delays. For such environment
+>>> network unavailability is a larger issue than some cma allocation
+>>> failure. My point is: let's not assume the disastrous situaion is normal
+>>> and overcomplicate the solution.
+>>
+>> Let me summarize my main point: ZONE_MOVABLE/MIGRATE_CMA must only be used
+>> for movable allocations.
+>>
+>> Mechanisms that possible turn these folios unmovable for a
+>> long/indeterminate time must either fail or migrate these folios out of
+>> these regions, otherwise we start violating the very semantics why
+>> ZONE_MOVABLE/MIGRATE_CMA was added in the first place.
+>>
+>> Yes, there are corner cases where we cannot guarantee movability (e.g., OOM
+>> when allocating a migration destination), but these are not cases that can
+>> be triggered by (unprivileged) user space easily.
+>>
+>> That's why FOLL_LONGTERM pinning does exactly that: even if user space would
+>> promise that this is really only "short-term", we will treat it as "possibly
+>> forever", because it's under user-space control.
+>>
+>>
+>> Instead of having more subsystems violate these semantics because
+>> "performance" ... I would hope we would do better. Maybe it's an issue for
+>> NFS as well ("at least" only for privileged user space)? In which case,
+>> again, I would hope we would do better.
+>>
+>>
+>> Anyhow, I'm hoping there will be more feedback from other MM folks, but
+>> likely right now a lot of people are out (just like I should ;) ).
+>>
+>> If I end up being the only one with these concerns, then likely people can
+>> feel free to ignore them. ;)
+> 
+> I agree we should do better but IMHO it should be an iterative process.
+ > I think your concerns are valid, so let's push the discussion 
+towards> resolving those concerns. I think the concerns can be resolved 
+by better
+> handling of lifetime of folios under writeback. The amount of such
+> folios is already handled through existing dirty throttling mechanism.
+> 
+> We should start with a baseline i.e. distribution of lifetime of folios
+> under writeback for traditional storage devices (spinning disk and SSDs)
+> as we don't want an unrealistic goal for ourself. I think this data will
+> drive the appropriate timeout values (if we decide timeout based
+> approach is the right one).
+> 
+> At the moment we have timeout based approach to limit the lifetime of
+> folios under writeback. Any other ideas?
+
+See above, maybe we could limit the deadlock avoidance to the actual 
+deadlock path and sort out the "infinite writeback in some corner cases" 
+problem separately.
+
 -- 
-2.25.1
+Cheers,
+
+David / dhildenb
 
 
