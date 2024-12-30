@@ -1,99 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-38259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFDE9FE26C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 05:42:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 208BF9FE28A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 06:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DD11881B8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 04:42:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0B41611D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 05:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DF715DBBA;
-	Mon, 30 Dec 2024 04:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F7C15E5BB;
+	Mon, 30 Dec 2024 05:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3kMhBeKu"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mw++6R0E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A252AE8D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 04:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44475A59;
+	Mon, 30 Dec 2024 05:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735533729; cv=none; b=Jljx2GFiGih3z0JNNg+clQ2RX6aZC73pKZS5Rco3GWYeQFA0vQtbV1HIaIeGT2rSgNe15VzMdVgy6FUnULRedzAu1wfrLIbMqjl8Jwk6NEu4MjBFfh/znV6IJgE8XvjyXnO+ILYlY2QK2WknDuCUPI69pA5MTU6ZJjK/JMX0cns=
+	t=1735534855; cv=none; b=rADKaXLg3ItW75iRA/y17xg/gGEShaRVG3DvtC8e4fbAwoWejDpDGs34aqRdxHaVM0xXWEAI7GrGmmByJLtN/JSPIExSKhPJwDgEJkgmz1x4Xh3+jE736RCc16eWiYGSH78cjqCBTg9ye/GyDgRpLFc12q8DlnosFIjXmk/yQLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735533729; c=relaxed/simple;
-	bh=BHhECL8MYTJU+Aq8si59T6lLd2xOEidlCLTLxP28xjY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oyr+SScQaIUwthO9RqeOkzOqJBcF/0FFPRHBnPplxqHorOqvH/sVJB8xwo8scnzGJ1x3ZZ+XBh/p8fZszQw3KVHpIu2nw6l9C8H4ltHe3Xo7Iif8UGW+qyfHOcVQvTwkWj+nx6Mtcw8WcKpx7j+TEdXjDOaUdmoj0bU12PDeWkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3kMhBeKu; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85bc7d126b2so3550467241.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 29 Dec 2024 20:42:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1735533727; x=1736138527; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BHhECL8MYTJU+Aq8si59T6lLd2xOEidlCLTLxP28xjY=;
-        b=3kMhBeKu7HTtpHCZdGPsqRq6WEnpxmSaUGe1FNaQQ51ihD1wxIkC2lX0UTcqMNqO4b
-         9iCc9H8MwzUdAyBCOAT6pGJvSVNdvReZN8Lz1WjZHMmFAfOy/YuZ4/r1YmN5Lul5nRQB
-         fbD+1Flm+DaLiBlSlp370cyL2COfA21GDtY3LEn12nQXBPhEFlUPeGRY7ZefwJBQDMcm
-         jJQ3/Qan6/acIrsAOZff3F4GaGFsUvCglTM5piY0McLjVN6q9HWgxbeQ4yXHYa8jVVbt
-         d7fljy6woYO7lLAUoCVEUiZRClugPWDBWcAjD8xBnvPiiyYGxOTtZ13IcbWxM9GdsiIm
-         OEhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735533727; x=1736138527;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BHhECL8MYTJU+Aq8si59T6lLd2xOEidlCLTLxP28xjY=;
-        b=MQMK617rKIecWGZx9g3bbe6MUwUHWrV2g2ZpiR1o6tgKE0NLGmkgda2cYKMhAioUxU
-         VOEp6nxxfqvH8ZfLVz/ydxrB3g3iYt0+JFQFUZcPGlT6/rLUZUKu8R31hgr0pZnp/Fk5
-         39X5huONM2t+dfz7xJGiMJF14/L/y/6TT72iWvMNSYzhbjsFxnomfU3RiKidZTBJbGIF
-         +tml+AAJbuVUoUb464EoIL6/2e3knmJZL5q3BsPDGTs0JYDw8VDNfnVsJ1OlumwsGsca
-         8zlLrS5iiIXgMZYBAKoft180ssFjvvzjWJxWrAUtnPU0ZVTSHL5vFTx938OVbwUALZJq
-         Nkbw==
-X-Gm-Message-State: AOJu0YwiH0bGamPcWSeLbzx5KHipycIQVVqqXZZuttvLLwzpafBTutUs
-	hOgwmVVTMVI8p+p2OTOfZjyM3YTtH5YE0SVLxBDLlor/y+U5hHujlGKohvm7nmIjjFjonr7WK6H
-	sQ7TrXIhmjk/5D13/Uq/LioMfe10M5GG1kCbNKm1Fet8Y3rMciyoVfH26TQ==
-X-Gm-Gg: ASbGncufVCc2cMPvJq4qHkuF9mZNqk7tXBH+YLNzLPWUEQ3dHAVhpfnM3b5BIkJfdEf
-	KAO+SddNRtH0q8C6Xu2FJnb6EXUPjKGD1k8CHE8IdDT4Zb1nFJgbWV1V2T60qRkfZfc5qrA==
-X-Google-Smtp-Source: AGHT+IGeW1mSE/TkeL77eO0fGCz2Azs9kUfrSXcxJsKtiExeIEaJZFRTewlO0dmQk4muDkGpQ3D4bpXqhFpyhwECd0s=
-X-Received: by 2002:a05:6102:548f:b0:4b2:ae3e:3ff with SMTP id
- ada2fe7eead31-4b2cc48a5eemr25473220137.27.1735533726586; Sun, 29 Dec 2024
- 20:42:06 -0800 (PST)
+	s=arc-20240116; t=1735534855; c=relaxed/simple;
+	bh=F9gq7YxOB8hDOzC+TdcEnQuj3qICCS1stpJ9fZne0XU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ptljhBQl/XeRLEnJay2AqC16ryKlS5cGDS4OpCSq472gs3Tp3ni4rxNnRhsdoIQiE1KsFI0mHVoEux0hmwqmjuO+hdQt54vZ8y3TVOSdJf1v6zD/BYoUJoIV28o8cQEMmUOZcQyWmaR626YZflAlC5atL/Jkde5u0AQ7Ldj1jtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mw++6R0E; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BTNk4Xl007452;
+	Mon, 30 Dec 2024 05:00:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=XrHxNo
+	fox0/Y5rlSKIX5NNHY/bYV8xm9fTSy6bzxZLM=; b=Mw++6R0E0lLgevIk2/vYvA
+	PpNub3KtvVbI7QDsFWSNhSwBDGbYIKGTi1QLloqojoKTDkdh2AgUGqFTVZG2+b8o
+	y5w9nLROWqs9LdFdM/WtfwqhlV+OrlbLClhzv5LZOZkMLSLzhE6+K5Wrqo+Y6JPT
+	lGKhgIuH7bojSSlTT3gaQHUuuRK64SIwb1T2WLy02Vc2fOZLtOp4KRkczDrQG1n7
+	4N0liwlbNkeSCUXBvhtfVyVgAyOpwUfUYsj9XPe8mbGMj5LSIjNR8jfqb1aVMoXD
+	ZddCk4xuRhny7b7D3Sp1z5QiC/Th5O52nJAO+vRUpDskqbR36GiEmbkJxJ97JAMw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ug8a0nj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 05:00:39 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BU50d12028631;
+	Mon, 30 Dec 2024 05:00:39 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ug8a0nj3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 05:00:39 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BU0SjSe010067;
+	Mon, 30 Dec 2024 05:00:38 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43tvnn46wk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 05:00:38 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BU50akh27525658
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Dec 2024 05:00:36 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 82FA020040;
+	Mon, 30 Dec 2024 05:00:36 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 648A720043;
+	Mon, 30 Dec 2024 05:00:35 +0000 (GMT)
+Received: from [9.109.247.80] (unknown [9.109.247.80])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 30 Dec 2024 05:00:35 +0000 (GMT)
+Message-ID: <0763b0c7-8570-4b85-80f6-77ae0b09dde9@linux.ibm.com>
+Date: Mon, 30 Dec 2024 10:30:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Prince Kumar <princer@google.com>
-Date: Mon, 30 Dec 2024 10:11:55 +0530
-X-Gm-Features: AbW1kvYt0AadQPOw68wz6g_x94QWIwzQWpE0ZnbD0VLgPWctKZEsV5aPPa5uK2o
-Message-ID: <CAEW=TRr7CYb4LtsvQPLj-zx5Y+EYBmGfM24SuzwyDoGVNoKm7w@mail.gmail.com>
-Subject: Fuse: directory cache eviction stopped working in the linux 6.9.X and onwards
-To: linux-fsdevel@vger.kernel.org
-Cc: Charith Chowdary <charithc@google.com>, Mayuresh Pise <mpise@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] fsx: support reads/writes from buffers backed by
+ hugepages
+Content-Language: en-US
+To: Joanne Koong <joannelkoong@gmail.com>, fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, bfoster@redhat.com, djwong@kernel.org,
+        kernel-team@meta.com
+References: <20241227193311.1799626-1-joannelkoong@gmail.com>
+ <20241227193311.1799626-2-joannelkoong@gmail.com>
+From: Nirjhar Roy <nirjhar@linux.ibm.com>
+In-Reply-To: <20241227193311.1799626-2-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: syAne63DwaWyOuMqMARRBVhL3WNn8CRZ
+X-Proofpoint-ORIG-GUID: Vyt8rzGIuFRNi-xRqBM4_3dZOdO7M_Pk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ clxscore=1011 spamscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412300039
 
-Hello Team,
 
-I see a regression in the fuse-filesystem for the linux version 6.9.X
-and onwards, where the FOPEN_KEEP_CACHE flag is not working as
-intended. Just for background, I referred to this linux commit
-(https://github.com/torvalds/linux/commit/6433b8998a21dc597002731c4ceb4144e856edc4)
-to implement directory listing cache in jacobsa/fuse
-(https://github.com/jacobsa/fuse/pull/162).
+On 12/28/24 01:03, Joanne Koong wrote:
+> Add support for reads/writes from buffers backed by hugepages.
+> This can be enabled through the '-h' flag. This flag should only be used
+> on systems where THP capabilities are enabled.
+>
+> This is motivated by a recent bug that was due to faulty handling of
+> userspace buffers backed by hugepages. This patch is a mitigation
+> against problems like this in the future.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>   ltp/fsx.c | 108 ++++++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 97 insertions(+), 11 deletions(-)
+>
+> diff --git a/ltp/fsx.c b/ltp/fsx.c
+> index 41933354..fb6a9b31 100644
+> --- a/ltp/fsx.c
+> +++ b/ltp/fsx.c
+> @@ -190,6 +190,7 @@ int	o_direct;			/* -Z */
+>   int	aio = 0;
+>   int	uring = 0;
+>   int	mark_nr = 0;
+> +int	hugepages = 0;                  /* -h flag */
+>   
+>   int page_size;
+>   int page_mask;
+> @@ -2471,7 +2472,7 @@ void
+>   usage(void)
+>   {
+>   	fprintf(stdout, "usage: %s",
+> -		"fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
+> +		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+>   	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+>   	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+>   	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+> @@ -2484,6 +2485,7 @@ usage(void)
+>   	-e: pollute post-eof on size changes (default 0)\n\
+>   	-f: flush and invalidate cache after I/O\n\
+>   	-g X: write character X instead of random generated data\n\
+> +	-h hugepages: use buffers backed by hugepages for reads/writes\n\
+>   	-i logdev: do integrity testing, logdev is the dm log writes device\n\
+>   	-j logid: prefix debug log messsages with this id\n\
+>   	-k: do not truncate existing file and use its size as upper bound on file size\n\
+> @@ -2856,6 +2858,95 @@ keep_running(void)
+>   	return numops-- != 0;
+>   }
+>   
+> +static long
+> +get_hugepage_size(void)
+> +{
+> +	const char str[] = "Hugepagesize:";
+> +	size_t str_len =  sizeof(str) - 1;
+> +	unsigned int hugepage_size = 0;
+> +	char buffer[64];
+> +	FILE *file;
+> +
+> +	file = fopen("/proc/meminfo", "r");
+> +	if (!file) {
+> +		prterr("get_hugepage_size: fopen /proc/meminfo");
+> +		return -1;
+> +	}
+> +	while (fgets(buffer, sizeof(buffer), file)) {
+> +		if (strncmp(buffer, str, str_len) == 0) {
+> +			sscanf(buffer + str_len, "%u", &hugepage_size);
+> +			break;
+> +		}
+> +	}
+> +	fclose(file);
+> +	if (!hugepage_size) {
+> +		prterr("get_hugepage_size: failed to find "
+> +			"hugepage size in /proc/meminfo\n");
+> +		return -1;
+> +	}
+> +
+> +	/* convert from KiB to bytes */
+> +	return hugepage_size << 10;
+Thanks for the change.
+> +}
+> +
+> +static void *
+> +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
+> +{
+> +	void *buf;
+> +	long buf_size = roundup(len, hugepage_size) + alignment;
+> +
+> +	if (posix_memalign(&buf, hugepage_size, buf_size)) {
+> +		prterr("posix_memalign for buf");
+> +		return NULL;
+> +	}
+> +	memset(buf, '\0', buf_size);
+> +	if (madvise(buf, buf_size, MADV_COLLAPSE)) {
+> +		prterr("madvise collapse for buf");
+> +		free(buf);
+> +		return NULL;
+> +	}
+> +
+> +	return buf;
+> +}
+> +
+> +static void
+> +init_buffers(void)
+> +{
+> +	int i;
+> +
+> +	original_buf = (char *) malloc(maxfilelen);
+> +	for (i = 0; i < maxfilelen; i++)
+> +		original_buf[i] = random() % 256;
+> +	if (hugepages) {
+> +		long hugepage_size = get_hugepage_size();
+> +		if (hugepage_size == -1) {
+> +			prterr("get_hugepage_size()");
+> +			exit(100);
+> +		}
+> +		good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy);
+> +		if (!good_buf) {
+> +			prterr("init_hugepages_buf failed for good_buf");
+> +			exit(101);
+> +		}
+> +
+> +		temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy);
+> +		if (!temp_buf) {
+> +			prterr("init_hugepages_buf failed for temp_buf");
+> +			exit(101);
+> +		}
+> +	} else {
+> +		unsigned long good_buf_len = maxfilelen + writebdy;
+> +		unsigned long temp_buf_len = maxoplen + readbdy;
+> +
+> +		good_buf = (char *) malloc(good_buf_len);
+> +		memset(good_buf, '\0', good_buf_len);
+minor:  maybe good_buf = (char *)calloc(1, good_buf_len); So we don't 
+need to use memset.
+> +		temp_buf = (char *) malloc(temp_buf_len);
+> +		memset(temp_buf, '\0', temp_buf_len);
+> +	}
+> +	good_buf = round_ptr_up(good_buf, writebdy, 0);
+> +	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
+> +}
+> +
+>   static struct option longopts[] = {
+>   	{"replay-ops", required_argument, 0, 256},
+>   	{"record-ops", optional_argument, 0, 255},
+> @@ -2883,7 +2974,7 @@ main(int argc, char **argv)
+>   	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+>   
+>   	while ((ch = getopt_long(argc, argv,
+> -				 "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> +				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+>   				 longopts, NULL)) != EOF)
+>   		switch (ch) {
+>   		case 'b':
+> @@ -2916,6 +3007,9 @@ main(int argc, char **argv)
+>   		case 'g':
+>   			filldata = *optarg;
+>   			break;
+> +		case 'h':
+> +			hugepages = 1;
+> +			break;
+>   		case 'i':
+>   			integrity = 1;
+>   			logdev = strdup(optarg);
+> @@ -3229,15 +3323,7 @@ main(int argc, char **argv)
+>   			exit(95);
+>   		}
+>   	}
+> -	original_buf = (char *) malloc(maxfilelen);
+> -	for (i = 0; i < maxfilelen; i++)
+> -		original_buf[i] = random() % 256;
+> -	good_buf = (char *) malloc(maxfilelen + writebdy);
+> -	good_buf = round_ptr_up(good_buf, writebdy, 0);
+> -	memset(good_buf, '\0', maxfilelen);
+> -	temp_buf = (char *) malloc(maxoplen + readbdy);
+> -	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
+> -	memset(temp_buf, '\0', maxoplen);
+> +	init_buffers();
+>   	if (lite) {	/* zero entire existing file */
+>   		ssize_t written;
+>   
 
-Ideally, the kernel directory cache should be evicted if the
-user-daemon doesn't set FOPEN_KEEP_CACHE bit as part of the OpenDir
-response, but it's not getting evicted in the linux version 6.9.X and
-onwards.
+-- 
+Nirjhar Roy
+Linux Kernel Developer
+IBM, Bangalore
 
-Could you please help me in resolving this?
-
-Thanks and regards,
-Prince Kumar.
 
