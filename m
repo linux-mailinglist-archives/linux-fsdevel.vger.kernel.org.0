@@ -1,84 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-38272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673E29FE7AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 16:39:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084FB9FE969
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 18:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA9D3A21AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 15:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB631882EA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 17:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DB91AAA1B;
-	Mon, 30 Dec 2024 15:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1DE1B040A;
+	Mon, 30 Dec 2024 17:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tn6xHVZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4ORg4K1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A57382
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 15:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AA47BAEC;
+	Mon, 30 Dec 2024 17:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735573161; cv=none; b=TN33Vy3IMUrwhzXSXghppYtrnPz7WrA0BXa7xOUCjVFFspBpiXnqY7kJsip/TnCTZGT1hI02hMjjMX1zPkvo51OxHKuj6b7WlSB+Z5rGHyK0L9Xl5Ac38NO6xzRsvvcbXhavaIPK1fSNCz3Cb4zgDefNWaUlQUbo5gN7PB5ygLk=
+	t=1735579856; cv=none; b=GkkU/qKBuU84yzvc6OnCQ31kkBE++BjZNKYJGbKGVZgmHz27kBEv7bEfzAKrcRhqJY5mnByEv+auHJe/y79i/WFErj95Mr3CxGt740o8SB52QgW84kOyJaVem1JdgGPnAAaMd+rfA92AX0uW4D+yY+jk4IDEfTF+qe5FNjEWtGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735573161; c=relaxed/simple;
-	bh=xtzQsm5tN7664xUi7vS936W9m94cACHyKMh4y6o22YQ=;
+	s=arc-20240116; t=1735579856; c=relaxed/simple;
+	bh=VhQbO01j9UWomptl+H9hBM8wYgb2QsoNj3GCT9fVe84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvEYapc2M4qVXsKVqNDU5SLApLwrHQnFxr5fybC0I8Lctj/8RJJ0nMqkjlCMq7gYviWgTMCbSNyzMxKexKdaFNHiEgZGsrw5jwSLbSLvaVQIiRFm6P4DI9yIgmVl7XI/tsWmk76uIrSOwTad0Ca4sVUgnRXlGMTDjWVaQT3zWDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tn6xHVZC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1735573159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtzQsm5tN7664xUi7vS936W9m94cACHyKMh4y6o22YQ=;
-	b=Tn6xHVZCh/xAO4UUKX5CjP09T1zyWrx3XAbFa73A2CbfDhXbc5qII13Fvy9BlIaIV9BBMB
-	E3+YTFnwJPWt4P9NKOad/rjOBRgoSUVD1mAPh8k4dISnqzI/YE45s4UxtQ2x6/uQc+pewH
-	SyvbdUSo5TcK2pO0jWPxnLYxDs/joQ0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-tN6UxOOrNZKZhrd4iX3SfA-1; Mon,
- 30 Dec 2024 10:39:15 -0500
-X-MC-Unique: tN6UxOOrNZKZhrd4iX3SfA-1
-X-Mimecast-MFC-AGG-ID: tN6UxOOrNZKZhrd4iX3SfA
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E65E919560A7;
-	Mon, 30 Dec 2024 15:39:13 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.54])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 49B261956086;
-	Mon, 30 Dec 2024 15:39:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 30 Dec 2024 16:38:49 +0100 (CET)
-Date: Mon, 30 Dec 2024 16:38:45 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Manfred Spraul <manfred@colorfullife.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	WangYuli <wangyuli@uniontech.com>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping
- processes during pipe read/write
-Message-ID: <20241230153844.GA15134@redhat.com>
-References: <20241226201158.GB11118@redhat.com>
- <1df49d97-df0e-4471-9e40-a850b758d981@colorfullife.com>
- <20241228143248.GB5302@redhat.com>
- <20241228152229.GC5302@redhat.com>
- <addb53ac-2f46-45db-83ce-c6b28e40d831@colorfullife.com>
- <20241229115741.GB27491@redhat.com>
- <ee120531-5857-4bfc-908c-8a6f1f3e7385@colorfullife.com>
- <20241229130543.GC27491@redhat.com>
- <20241229131338.GD27491@redhat.com>
- <a71a7cad-c007-45be-9fd1-22642b835edd@colorfullife.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZZQ5r+jaFbAd+zOc6AQm2Mf+PGsikvU2QJwtXDAGLUzbDXy+9vl007Zpc1LFga93dH1yfFbAl1oN6zUdnEiysBjLxwB5REBD3qKkUsvFORYct4eomX7rHLxMx1+vQosMrdx7UCMnyscmkreJTIGABFgFV0NhLcIeQwY2Yn2H1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4ORg4K1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3E6C4CED0;
+	Mon, 30 Dec 2024 17:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735579855;
+	bh=VhQbO01j9UWomptl+H9hBM8wYgb2QsoNj3GCT9fVe84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h4ORg4K1o/s1bMTAWZD9fG2h5gt1fBDLQngLj0LpY0b3NXOo+PVQZ9NI0SOpBU/3+
+	 EWOamxppI80anrRz1cb3rQHox5+Vx1pUk4nDze4q4ZSXgDXRYVNjJWU5pElh3jomU4
+	 mdSmQ/GuIXyMSL/obAjt8sUBPmb1T/lemiIpnbWBajsnkJzp59DlMeekkUYuxbUDyY
+	 ASGj4l+P7ZK3bE55IRiUL3oemNUWEo6GR24xwA1VUvJTw700WiGODLYq7JoJFehmWa
+	 xmAFvC0nTkkbv0XiqSACw/V13p7imRewvd1WTPgLxCtv/+obfBVf4EFB8YZgKdNhTI
+	 liNXuDw6N5fbA==
+Date: Mon, 30 Dec 2024 09:30:53 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: hare@suse.de, dave@stgolabs.net, david@fromorbit.com, djwong@kernel.org,
+	kbusch@kernel.org, john.g.garry@oracle.com, hch@lst.de,
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
+Subject: Re: [PATCH 0/5] fs/buffer: strack reduction on async read
+Message-ID: <Z3LYzWza0y5cHTlT@bombadil.infradead.org>
+References: <20241218022626.3668119-1-mcgrof@kernel.org>
+ <Z2MrCey3RIBJz9_E@casper.infradead.org>
+ <Z2OEmALBGB8ARLlc@bombadil.infradead.org>
+ <Z2OYRkpRcUFIOFog@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,42 +64,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a71a7cad-c007-45be-9fd1-22642b835edd@colorfullife.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <Z2OYRkpRcUFIOFog@casper.infradead.org>
 
-Hi Manfred,
+On Thu, Dec 19, 2024 at 03:51:34AM +0000, Matthew Wilcox wrote:
+> So folio->mapping is NULL.
+> 
+> Ah, I see the problem.  end_buffer_async_read() uses the buffer_async_read
+> test to decide if all buffers on the page are uptodate or not.  So both
+> having no batch (ie this patch) and having a batch which is smaller than
+> the number of buffers in the folio can lead to folio_end_read() being
+> called prematurely (ie we'll unlock the folio before finishing reading
+> every buffer in the folio).
+> 
+> Once the folio is unlocked, it can be truncated.  That's a second-order
+> problem, but it's the one your test happened to hit.
+> 
+> This should fix the problem; we always have at least one BH held in
+> the submission path with the async_read flag set, so
+> end_buffer_async_read() will not end it prematurely.
 
-On 12/29, Manfred Spraul wrote:
->
-> Hi Oleg,
->
-> On 12/29/24 2:13 PM, Oleg Nesterov wrote:
-> >Sorry for the noise...
-> >
-> >and currently this is fine.
+Oh neat, yes.
 
-Heh, please see below.
+> By the way, do you have CONFIG_VM_DEBUG enabled in your testing?
 
-> But if we want to add the wq_has_sleeper()
-> >checks into fs/pipe.c then pipe_poll() needs smp_mb() after it calls
-> >poll_wait().
-> >
-> >Agreed?
->
-> Yes, agreed.
->
-> Just the comment in pipe_poll() was a bit tricky for me.
+You mean DEBUG_VM ? Yes:
 
-Well yes, but... It turns out I didn't grep enough.
+grep DEBUG_VM .config
+CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE=y
+CONFIG_DEBUG_VM_IRQSOFF=y
+CONFIG_DEBUG_VM=y
+# CONFIG_DEBUG_VM_MAPLE_TREE is not set
+# CONFIG_DEBUG_VM_RB is not set
+CONFIG_DEBUG_VM_PGFLAGS=y
+# CONFIG_DEBUG_VM_PGTABLE is not set
 
-See fs/splice.c and wakeup_pipe_readers/writers (which should use
-wq_has_sleeper() for grep sake). And I don't understand why do these helpers
-use key == NULL...
+>         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> in folio_end_read() should have tripped before hitting the race with
+> truncate.
 
-So it seems that pipe_poll() already needs smp_mb() to fix the current code,
-at least in theory. I'll recheck and send the patch(es).
+Odd that it did not, I had run into that folio_test_locked() splat but in my
+attempts to simplify this without your trick to only run into the similar
+truncate race, your resolution to this is nice.
 
-Oleg.
+> diff --git a/fs/buffer.c b/fs/buffer.c
 
+This is a nice resolution and simplification, thanks, I've tested it and
+passes without regressions on ext4. I'll take this into this series as
+an alternative.
+
+  Luis
 
