@@ -1,173 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-38257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1566B9FE225
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 04:03:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5FA9FE25B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 05:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356AB3A1CC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 03:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504C018821B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 04:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F716152E02;
-	Mon, 30 Dec 2024 03:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF3115350B;
+	Mon, 30 Dec 2024 04:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PTEwsNRa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5440740BF5;
-	Mon, 30 Dec 2024 03:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD62F171C9;
+	Mon, 30 Dec 2024 04:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735527775; cv=none; b=ImsRIlGbnT7B4VJmceOQiRYmvyZAXd1chymjTgY1sVB9UDPbTWFLvPiFtka+Tz6VaWFQ9kFxFjVu9bz+E4LjPD8fEU6ny7w+r+SCaQz1GW4I4YgKv6qN2JyA+h7rYrcymqlsf9PTWdpNMan8y1XQxoOKlDQUx5+oUTW3uZWQ5Tg=
+	t=1735532245; cv=none; b=qyRnAJWWi43OeAO7As0pBQP+xoLSyXpHzxNQIAFeO78AtWHnp0AW37zhnfTMi5DAAWd2aOY4UtYvMySoGkpP9qRgs94YMux0Uk+V5B5u5VYDxKeW/FGfk/Xb57aJlvWnzXD2MOZnWFDE1XuF2djtURxtCL618W545jz/IE34EFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735527775; c=relaxed/simple;
-	bh=QaXejW6rcRxfG31NAo512yz4AQGMHU0p3awoME3GMQI=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=qBQRde+05o5RjnVP3i00IQ5zLnWw+Jnisc++wptWexzxgb7oolLidvvmTM+CjTGoV8f20BTB8uDlTPKcTJV4fiPrjbfBF6tZy8unI/2VXdLnIxKCqIt3Ei07/Gh1Cy7XNIo2pSk8Rj85Ld69+vkPY4jsqali1Bx2APhD/kRpL6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YM15r5LzBz11NZQ;
-	Mon, 30 Dec 2024 10:59:12 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id BDF2714022E;
-	Mon, 30 Dec 2024 11:02:42 +0800 (CST)
-Received: from [10.174.179.93] (10.174.179.93) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 30 Dec 2024 11:02:38 +0800
-Subject: Re: [PATCH v4 -next 13/15] x86: vdso: move the sysctl to
- arch/x86/entry/vdso/vdso32-setup.c
-To: Brian Gerst <brgerst@gmail.com>
-References: <20241228145746.2783627-1-yukaixiong@huawei.com>
- <20241228145746.2783627-14-yukaixiong@huawei.com>
- <CAMzpN2hf-CFpO6x58aDK_FX_6C2MBKh1g7PdV4Y=ypaeUNVfRw@mail.gmail.com>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
-	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <5b7530d9-a593-4365-718f-afdd46bdcb31@huawei.com>
-Date: Mon, 30 Dec 2024 11:02:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1735532245; c=relaxed/simple;
+	bh=NLE1O3H4FHga76WxJH0DsaWvVlCO/f3ZOmSdLNGA4zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l2G+CVE7cYQxjdu7WY3AqE6UlY6+N9/ii898FtBmqBewQidYbYrQIs9N4FtoIQ6AQlyGV9z+lfeZ+T4mBHz5pfeb/j21Q+PZj7eOXAqFRncA6bfs5/dHPLpP2cuaee+beT0CKK761k0A2qiq2xTcDFbSu7sc5jIbIVyP5REmDRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PTEwsNRa; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BU3qYUc015272;
+	Mon, 30 Dec 2024 04:16:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=i+rAYS
+	DBFjxdkkJAJF5Sw8fzN0VH7kbJrQHbj5OmlKw=; b=PTEwsNRaHNQYXCIXGz4Xxv
+	fY8CApNX2V8mcmRQTa0sf51CE/tNqVViPDwtYFPn+MdXo/rHieHuJQBjW+TiP3Eg
+	Q/E9jNT6hMvzYwp3RjItwtBceZNRMtJRd4iW7HjivW1mnereuMdbNjEHeCSHKBLm
+	Nrc6utjBfopeVgtZXv0GvrDbzd0DLCd1Q2jAFKhsP678Uv5hFMdSDEaySdtFdy+Y
+	VNpHxfS9H80vrL8Z+OQ53mcKBmrt+Q6IDYxv9bDs9lxbddg8FQqi4mSIkJSByVys
+	ZCct0p5RobpYyTe/rfzh4L/erKe6mXEd2KVcVTElyP1i9O0821rMl4T/HrUf0cow
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43um0b8272-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 04:16:28 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BU0U5nZ010184;
+	Mon, 30 Dec 2024 04:16:27 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43tvnn43ph-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 04:16:27 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BU4GP7q35521240
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Dec 2024 04:16:25 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7CD4C2004E;
+	Mon, 30 Dec 2024 04:16:25 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6778A20043;
+	Mon, 30 Dec 2024 04:16:23 +0000 (GMT)
+Received: from [9.109.247.80] (unknown [9.109.247.80])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 30 Dec 2024 04:16:23 +0000 (GMT)
+Message-ID: <a1749e83-9c29-45b7-be4c-bca1a32ee85a@linux.ibm.com>
+Date: Mon, 30 Dec 2024 09:46:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMzpN2hf-CFpO6x58aDK_FX_6C2MBKh1g7PdV4Y=ypaeUNVfRw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml100007.china.huawei.com (7.185.36.28) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [xfstests PATCH] generic/567: add partial pages zeroing out case
+To: Zhang Yi <yi.zhang@huaweicloud.com>, fstests@vger.kernel.org,
+        zlang@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, willy@infradead.org, ojaswin@linux.ibm.com,
+        yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+        yangerkun@huawei.com
+References: <20241223023930.2328634-1-yi.zhang@huaweicloud.com>
+ <7e77d8d1bf4521a727247badd6b6231256abb791.camel@linux.ibm.com>
+ <67ae32aa-11e1-4e7f-b911-2546856564c2@huaweicloud.com>
+Content-Language: en-US
+From: Nirjhar Roy <nirjhar@linux.ibm.com>
+In-Reply-To: <67ae32aa-11e1-4e7f-b911-2546856564c2@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GyrIubHtt1G-wn5Bn-sKRht7PZbUEm8i
+X-Proofpoint-ORIG-GUID: GyrIubHtt1G-wn5Bn-sKRht7PZbUEm8i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 impostorscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412300030
 
 
-
-On 2024/12/30 7:05, Brian Gerst wrote:
-> On Sat, Dec 28, 2024 at 10:17 AM Kaixiong Yu <yukaixiong@huawei.com> wrote:
->> When CONFIG_X86_32 is defined and CONFIG_UML is not defined,
->> vdso_enabled belongs to arch/x86/entry/vdso/vdso32-setup.c.
->> So, move it into its own file.
+On 12/27/24 13:59, Zhang Yi wrote:
+> On 2024/12/27 13:28, Nirjhar Roy wrote:
+>> On Mon, 2024-12-23 at 10:39 +0800, Zhang Yi wrote:
+>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>
+>>> This addresses a data corruption issue encountered during partial
+>>> page
+>>> zeroing in ext4 which the block size is smaller than the page size
+>>> [1].
+>>> Expand this test to include a zeroing range test that spans two
+>>> partial
+>>> pages to cover this case.
+>>>
+>>> Link:
+>>> https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/
+>>>   [1]
+>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>> ---
+>>>   tests/generic/567     | 50 +++++++++++++++++++++++++--------------
+>>> ----
+>>>   tests/generic/567.out | 18 ++++++++++++++++
+>>>   2 files changed, 47 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/tests/generic/567 b/tests/generic/567
+>>> index fc109d0d..756280e8 100755
+>>> --- a/tests/generic/567
+>>> +++ b/tests/generic/567
+>>> @@ -4,43 +4,51 @@
+>>>   #
+>>>   # FS QA Test No. generic/567
+>>>   #
+>>> -# Test mapped writes against punch-hole to ensure we get the data
+>>> -# correctly written. This can expose data corruption bugs on
+>>> filesystems
+>>> -# where the block size is smaller than the page size.
+>>> +# Test mapped writes against punch-hole and zero-range to ensure we
+>>> get
+>>> +# the data correctly written. This can expose data corruption bugs
+>>> on
+>>> +# filesystems where the block size is smaller than the page size.
+>>>   #
+>>>   # (generic/029 is a similar test but for truncate.)
+>>>   #
+>>>   . ./common/preamble
+>>> -_begin_fstest auto quick rw punch
+>>> +_begin_fstest auto quick rw punch zero
+>>>   
+>>>   # Import common functions.
+>>>   . ./common/filter
+>>>   
+>>>   _require_scratch
+>>>   _require_xfs_io_command "fpunch"
+>>> +_require_xfs_io_command "fzero"
+>>>   
+>>>   testfile=$SCRATCH_MNT/testfile
+>>>   
+>>>   _scratch_mkfs > /dev/null 2>&1
+>> Since this test requires block size < page size, do you think it is a
+>> good idea to hard code the _scratch_mkfs parameters to explicitly pass
+>> the block size to < less than zero? This will require less manipulation
+>> with the local.config file. Or maybe have a _notrun to _notrun the test
+>> if the block size is not less than the page size?
+> Hi, Nirjhar. Thank you for the review!
+>
+> Although the issue we encountered is on the configuration that block
+> size is less than page size, I believe it is also harmless to run this
+> test in an environment where the block size is equal to the page size.
+> This is a quick and basic test.
+Okay makes sense. So with block size equal to page size, the actual 
+functionality that we want to test won't be tested(but the test will 
+pass), is that what you mean?
+>
+>>>   _scratch_mount
+>>>   
+>>> -# Punch a hole straddling two pages to check that the mapped write
+>>> after the
+>>> -# hole-punching is correctly handled.
+>>> -
+>>> -$XFS_IO_PROG -t -f \
+>>> --c "pwrite -S 0x58 0 12288" \
+>>> --c "mmap -rw 0 12288" \
+>>> --c "mwrite -S 0x5a 2048 8192" \
+>>> --c "fpunch 2048 8192" \
+>>> --c "mwrite -S 0x59 2048 8192" \
+>>> --c "close"
+>> Minor: isn't the close command redundant? xfs_io will in any case close
+>> the file right?
+> Yes, but this explicit close is from the original text and appears
+> harmless, so I'd suggest keeping it.
+Okay.
+>
+>>>       \
+>>> -$testfile | _filter_xfs_io
+>>> -
+>>> -echo "==== Pre-Remount ==="
+>>> -_hexdump $testfile
+>>> -_scratch_cycle_mount
+>>> -echo "==== Post-Remount =="
+>>> -_hexdump $testfile
+>>> +# Punch a hole and zero out straddling two pages to check that the
+>>> mapped
+>>> +# write after the hole-punching and range-zeroing are correctly
+>>> handled.
+>>> +_straddling_test()
+>>> +{
+>>> +	local test_cmd=$1
+>>> +
+>>> +	$XFS_IO_PROG -t -f \
+>>> +		-c "pwrite -S 0x58 0 12288" \
+>>> +		-c "mmap -rw 0 12288" \
+>>> +		-c "mwrite -S 0x5a 2048 8192" \
+>>> +		-c "$test_cmd 2048 8192" \
+>>> +		-c "mwrite -S 0x59 2048 8192" \
+>>> +		-c "close"      \
+>>> +	$testfile | _filter_xfs_io
+>>> +
+>>> +	echo "==== Pre-Remount ==="
+>>> +	_hexdump $testfile
+>>> +	_scratch_cycle_mount
+>>> +	echo "==== Post-Remount =="
+>>> +	_hexdump $testfile
+>> Just guessing here: Do you think it is makes sense to test with both
+>> delayed and non-delayed allocation? I mean with and without "msync"?
+> Sorry, I don't understand why we need msync. The umount should flush
+> the dirty pages to the disk even without msync, I mean this this test
+> does not focus on the functionality of msync now.
+Okay makes sense.
+>
+>>> +}
+>>> +
+>>> +_straddling_test "fpunch"
+>>> +_straddling_test "fzero"
+>> Minor: Since we are running 2 independant sub-tests, isn't it better to
+>> use 2 different files?
 >>
->> Before this patch, vdso_enabled was allowed to be set to
->> a value exceeding 1 on x86_32 architecture. After this patch is
->> applied, vdso_enabled is not permitted to set the value more than 1.
->> It does not matter, because according to the function load_vdso32(),
->> only vdso_enabled is set to 1, VDSO would be enabled. Other values
->> all mean "disabled". The same limitation could be seen in the
->> function vdso32_setup().
->>
->> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
->> Reviewed-by: Kees Cook <kees@kernel.org>
->> ---
->> v4:
->>   - const qualify struct ctl_table vdso_table
->> ---
->> ---
->>   arch/x86/entry/vdso/vdso32-setup.c | 16 +++++++++++-----
->>   kernel/sysctl.c                    |  8 +-------
->>   2 files changed, 12 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/x86/entry/vdso/vdso32-setup.c b/arch/x86/entry/vdso/vdso32-setup.c
->> index 76e4e74f35b5..f71625f99bf9 100644
->> --- a/arch/x86/entry/vdso/vdso32-setup.c
->> +++ b/arch/x86/entry/vdso/vdso32-setup.c
->> @@ -51,15 +51,17 @@ __setup("vdso32=", vdso32_setup);
->>   __setup_param("vdso=", vdso_setup, vdso32_setup, 0);
->>   #endif
->>
->> -#ifdef CONFIG_X86_64
->>
->>   #ifdef CONFIG_SYSCTL
->> -/* Register vsyscall32 into the ABI table */
->>   #include <linux/sysctl.h>
->>
->> -static struct ctl_table abi_table2[] = {
->> +static const struct ctl_table vdso_table[] = {
->>          {
->> +#ifdef CONFIG_X86_64
->>                  .procname       = "vsyscall32",
->> +#elif (defined(CONFIG_X86_32) && !defined(CONFIG_UML))
-> vdso32-setup,.c is not used when building UML, so this can be reduced
-> to "#else".
-I will take your advice.
-
-Thanks.
->> +               .procname       = "vdso_enabled",
->> +#endif
->>                  .data           = &vdso32_enabled,
->>                  .maxlen         = sizeof(int),
->>                  .mode           = 0644,
->> @@ -71,10 +73,14 @@ static struct ctl_table abi_table2[] = {
->>
->>   static __init int ia32_binfmt_init(void)
->>   {
->> -       register_sysctl("abi", abi_table2);
->> +#ifdef CONFIG_X86_64
->> +       /* Register vsyscall32 into the ABI table */
->> +       register_sysctl("abi", vdso_table);
->> +#elif (defined(CONFIG_X86_32) && !defined(CONFIG_UML))
-> Same as above.
+> Yes, Darrick had the same suggestion, and I have separated this into
+> generic/758 in my v2.
+Okay.
+>
+>    https://lore.kernel.org/fstests/20241225125120.1952219-1-yi.zhang@huaweicloud.com/
+>
+> Thanks,
+> Yi.
 >
 >
-I will take your advice.
-
-Thanks.
->> +       register_sysctl_init("vm", vdso_table);
->> +#endif
->>          return 0;
->>   }
->>   __initcall(ia32_binfmt_init);
->>   #endif /* CONFIG_SYSCTL */
->>
->> -#endif /* CONFIG_X86_64 */
->
-> Brian Gerst
-> .
->
+-- 
+Nirjhar Roy
+Linux Kernel Developer
+IBM, Bangalore
 
 
