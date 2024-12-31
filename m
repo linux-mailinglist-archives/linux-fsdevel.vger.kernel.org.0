@@ -1,159 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-38285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5E29FEC1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 02:23:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FABE9FEC8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 04:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D547118827DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 01:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE4F1882E96
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 03:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D17DC8C7;
-	Tue, 31 Dec 2024 01:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E9B13D52B;
+	Tue, 31 Dec 2024 03:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MrKwzEXA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402D224FA;
-	Tue, 31 Dec 2024 01:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CFA2F2D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 03:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735608194; cv=none; b=h8ch27EdFrv1+SM5+Q1K7ZoZ9ov3Cym37L5nqRo1vjyJXiWKdrvupa+rymiu3M3oALUmu13I2xgYFPHGhlP8NuDCzWcL+0Tq164D599GE6y8EIqqBmFOIpG7113eohrErlJLRokrZD8Ld2w8ymq0i4F7GMlVozKffYF/iw/ME48=
+	t=1735616176; cv=none; b=ujQbLfwGlQXjxK2iWiZANZaVRCso8W+lSChJu5T74lb11XZBMO55x4zJThDygHnEkwVFaWRAbfbcikGOQIKi342UOsfnCuPRCDBJFBSmdS1v5EyalQO55Z7dah6Lla0kZlUlzwUouPaEPil7nd2CWLbiYR4oEkD/YrjmLTMFWXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735608194; c=relaxed/simple;
-	bh=ZBL+SkupEXB5vIZIax3BI3gfl2rf7JwdJreL2p3altk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BR1yir4JdRzC6bKh8xw2Fa7WjOiI67DRh63CyufBRlUJ3L7j4uRFvp7SnVwv+sBLtXP1oiimLHLRPVl7Pm1m0ea3lWm7a0Jq6g6Nr3DjDZ+U5aEXUfjl7Zv7KntrHw2lSzcsn0uIj4PBTG+HEMxond8ZN9JpqSukVh0Ezf7368Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YMZw54S6kz4f3lVg;
-	Tue, 31 Dec 2024 09:22:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 99E1E1A1253;
-	Tue, 31 Dec 2024 09:23:06 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAHMYV2R3NncIhxGA--.57590S3;
-	Tue, 31 Dec 2024 09:23:04 +0800 (CST)
-Message-ID: <c5a04819-e2af-4406-aee6-b5ddec356465@huaweicloud.com>
-Date: Tue, 31 Dec 2024 09:23:02 +0800
+	s=arc-20240116; t=1735616176; c=relaxed/simple;
+	bh=PBwKw/68EmrjBHb+YWO5a0ihhlwpVK+ltktmPbkL4FY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i03LIKQ7Os8vjIUUBr8DA98JTlkZ8Tvm5/543aK55mKoNa8UGXYCYKixj8nEPefo1C5+E5UeDBQL4M5Ut9mdN14jfDjUoIx2ZF82yycMB2o0Y56JgZaFKRMUYUheIPhGzqDL5ySBero3pH+LrVm+w26LLxk8+HkHzjHITpbt7jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MrKwzEXA; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5162571e761so3025655e0c.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 19:36:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1735616173; x=1736220973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=81RGZnEJG5AVAVemyUVhgP1B19id/VoU1FVc4FqwyDA=;
+        b=MrKwzEXAUpCzW0voy6ik0neoe5STdY9qHoUws9VunydroYw7Y5fOwuIq5u1Fe5MAnT
+         /R6aL83Xl59+ahaYF1ECPViD9Y2/7iomZEb4NBzqDut+cWVu67q6wYkVO2O3KN68Aame
+         5ZL+cxNBK+7FcfxzZV4lTJF9bkIVgOc5LLGDF0DreiTkve4bRKV1zOG4gtwUN++1JY9H
+         D93pr4fxboL950R2L7JyQBc2zigATiTkDDyrhhFZK/hPOIdFEpmxaegSmOJiVvd+3vmG
+         pIJaK9kfcfR3t9MeWYy9nTqADTnimqiwXVCL/MAnqsIqB1G2grKQmaD+SGc1LGrPTbJZ
+         9CZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735616173; x=1736220973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=81RGZnEJG5AVAVemyUVhgP1B19id/VoU1FVc4FqwyDA=;
+        b=SSxSztug3dM+SJYmU24SsBPfxxtOb2rXlvb/LnENpJyqF5tMvZlNGe1jPLMiOoat10
+         py4XBh08X9JPaGb7Ls5dWc1QJ9elrF2w0vJc46TO+xRHTw9YeV9zsqgsmozv1uZ5pKyf
+         kbxnAiQc/E6cgjAT0uF/jzbbIXtc/TmxIfPMvAh3obOf5k3ze01RQLw9ZuHzPWhxqu4x
+         sQ+LWkJpO3VwfWF9tHKXq90u3tjBHPhwSlXtSQzUxYUw+2Fgj/dApndw8Y2TIs6fB0QR
+         5HeG6kdmX71ulrh2kHhEk+y0T9T1q4QDPvcLJNQBUB1p0Zzb8n+30DCcwvTKeglgOCV5
+         p4Rg==
+X-Gm-Message-State: AOJu0Yw4q3NYupe79c9s8P7fzb/NZ36CpxKOYS5Mxgh8RFgL9PvIpEEq
+	S68EQtw+/eePWCLMW7EZWM4WmUDJhJyz3x0clcdBnpoxmRDl3dMiINKD3yoGT/eAujcgzaFas6b
+	sTj+4X+kCaIzvt6nngTim1LYAe00waFMRcN1b
+X-Gm-Gg: ASbGncv3Mtugv8pYTWdfkjp8UcuRXiLiKjjpaFcUvd5WLiUnMs5soTAderd56kDSyjO
+	+tEtNyGfGeJXARxqeHzZKi8RSWW4v0tBCfqsJuSljSK5GBr/dYVKNPqxVbIyS9SEl7DxRPOLR
+X-Google-Smtp-Source: AGHT+IGL9kfI3NDCwxZCKRpDe4JBQGrvgaInmhiiCH/OcAK/NiQZLY0ZXYs9ZdpI4+Z1EMMWYTtcVUYMES6ILwlej8s=
+X-Received: by 2002:a05:6102:548d:b0:4b2:5ce4:2b4f with SMTP id
+ ada2fe7eead31-4b2cc320d9bmr25660070137.2.1735616172705; Mon, 30 Dec 2024
+ 19:36:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [xfstests PATCH] generic/567: add partial pages zeroing out case
-To: Nirjhar Roy <nirjhar@linux.ibm.com>
-Cc: linux-fsdevel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, willy@infradead.org, ojaswin@linux.ibm.com,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com, fstests@vger.kernel.org, zlang@kernel.org
-References: <20241223023930.2328634-1-yi.zhang@huaweicloud.com>
- <7e77d8d1bf4521a727247badd6b6231256abb791.camel@linux.ibm.com>
- <67ae32aa-11e1-4e7f-b911-2546856564c2@huaweicloud.com>
- <a1749e83-9c29-45b7-be4c-bca1a32ee85a@linux.ibm.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <a1749e83-9c29-45b7-be4c-bca1a32ee85a@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHMYV2R3NncIhxGA--.57590S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFW5Jw17XrWrGF45ZFyUAwb_yoW5AFW7pF
-	yfXFyayF4rCr93ur1293WxWryFkw4Syr4UXr13X34rAr4ayw1fKrnFgryvgFykKw48Zw4F
-	vws5t34UuF1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <CAEW=TRr7CYb4LtsvQPLj-zx5Y+EYBmGfM24SuzwyDoGVNoKm7w@mail.gmail.com>
+ <3d7e9844-6f6e-493a-a93a-4d2407378395@bsbernd.com>
+In-Reply-To: <3d7e9844-6f6e-493a-a93a-4d2407378395@bsbernd.com>
+From: Prince Kumar <princer@google.com>
+Date: Tue, 31 Dec 2024 09:06:01 +0530
+X-Gm-Features: AbW1kvYAkHHZnq6eJq8M9QqwnVmuUR3NZcHJ2tgcflZOC07WuTSObtVKXLVvWg4
+Message-ID: <CAEW=TRriHeY3TG-tep29ZnkRjU8Nfr5SHmuUmoc0oWRRy8fq3A@mail.gmail.com>
+Subject: Re: Fuse: directory cache eviction stopped working in the linux 6.9.X
+ and onwards
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: linux-fsdevel@vger.kernel.org, Charith Chowdary <charithc@google.com>, 
+	Mayuresh Pise <mpise@google.com>, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/12/30 12:16, Nirjhar Roy wrote:
-> 
-> On 12/27/24 13:59, Zhang Yi wrote:
->> On 2024/12/27 13:28, Nirjhar Roy wrote:
->>> On Mon, 2024-12-23 at 10:39 +0800, Zhang Yi wrote:
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> This addresses a data corruption issue encountered during partial
->>>> page
->>>> zeroing in ext4 which the block size is smaller than the page size
->>>> [1].
->>>> Expand this test to include a zeroing range test that spans two
->>>> partial
->>>> pages to cover this case.
->>>>
->>>> Link:
->>>> https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/
->>>>   [1]
->>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>>> ---
->>>>   tests/generic/567     | 50 +++++++++++++++++++++++++--------------
->>>> ----
->>>>   tests/generic/567.out | 18 ++++++++++++++++
->>>>   2 files changed, 47 insertions(+), 21 deletions(-)
->>>>
->>>> diff --git a/tests/generic/567 b/tests/generic/567
->>>> index fc109d0d..756280e8 100755
->>>> --- a/tests/generic/567
->>>> +++ b/tests/generic/567
->>>> @@ -4,43 +4,51 @@
->>>>   #
->>>>   # FS QA Test No. generic/567
->>>>   #
->>>> -# Test mapped writes against punch-hole to ensure we get the data
->>>> -# correctly written. This can expose data corruption bugs on
->>>> filesystems
->>>> -# where the block size is smaller than the page size.
->>>> +# Test mapped writes against punch-hole and zero-range to ensure we
->>>> get
->>>> +# the data correctly written. This can expose data corruption bugs
->>>> on
->>>> +# filesystems where the block size is smaller than the page size.
->>>>   #
->>>>   # (generic/029 is a similar test but for truncate.)
->>>>   #
->>>>   . ./common/preamble
->>>> -_begin_fstest auto quick rw punch
->>>> +_begin_fstest auto quick rw punch zero
->>>>     # Import common functions.
->>>>   . ./common/filter
->>>>     _require_scratch
->>>>   _require_xfs_io_command "fpunch"
->>>> +_require_xfs_io_command "fzero"
->>>>     testfile=$SCRATCH_MNT/testfile
->>>>     _scratch_mkfs > /dev/null 2>&1
->>> Since this test requires block size < page size, do you think it is a
->>> good idea to hard code the _scratch_mkfs parameters to explicitly pass
->>> the block size to < less than zero? This will require less manipulation
->>> with the local.config file. Or maybe have a _notrun to _notrun the test
->>> if the block size is not less than the page size?
->> Hi, Nirjhar. Thank you for the review!
->>
->> Although the issue we encountered is on the configuration that block
->> size is less than page size, I believe it is also harmless to run this
->> test in an environment where the block size is equal to the page size.
->> This is a quick and basic test.
-> Okay makes sense. So with block size equal to page size, the actual functionality that we want to test won't be tested(but the test will pass), is that what you mean?
+Thanks Bernd for looking into this!
 
-Yes, this test is very simple and should pass in an environment where
-the block size is equal to the page size.
+I think 6.9 added passthrough support. Are you using that?
+> Not yet, but we have plans to try this out.
+
+FOPEN_CACHE_DIR is default when there is no fuse-server open method
+defined - does your implementation have an open/dir_open?
+> Yes, here is the implementation in GCSFuse (internally uses jacobsa/fuse =
+library) - https://github.com/GoogleCloudPlatform/gcsfuse/blob/b0ca9c5b2c0a=
+35aeb8a48fe7a36120d7b33216aa/internal/fs/fs.go#L2328
+Here, op.CacheDir maps to FOPEN_CACHE_DIR and op.KeepCache maps to
+FOPEN_KEEP_CACHE.
+
+I think the only user of FOPEN_CACHE_DIR is in fs/fuse/readdir.c and
+that always checks if it is set - either the flag gets set or does not
+come into role at all, because passthrough is used?
+> Being honest, I don't have much idea of linux source code. As a user, to =
+me the FOPEN_CACHE_DIR flag is working as expected.
+The problem is with the FOPEN_KEEP_CACHE flags, setting this should
+evict the dir cache, but it's not happening for linux 6.9.x and above.
+Although I see  a line in fs/fuse/dir.c
+(https://github.com/torvalds/linux/blob/ccb98ccef0e543c2bd4ef1a72270461957f=
+3d8d0/fs/fuse/dir.c#L718)
+which invalidates the inode pages if FOPEN_KEEP_CACHE is not set.
+
+So my ultimate question would be:
+(1) Do you see such recent changes in fs/fuse which explains the above
+regression?
+(2) If the changes are intentional, what should be the right way for
+fuse-server to evict the dir-cache (other than auto eviction due to
+change in dir-content, e.g., addition of new file inside a dir)?
 
 Thanks,
-Yi.
+Prince Kumar.
 
 
+On Tue, Dec 31, 2024 at 5:11=E2=80=AFAM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
+>
+>
+>
+> On 12/30/24 05:41, Prince Kumar wrote:
+> > Hello Team,
+> >
+> > I see a regression in the fuse-filesystem for the linux version 6.9.X
+> > and onwards, where the FOPEN_KEEP_CACHE flag is not working as
+> > intended. Just for background, I referred to this linux commit
+> > (https://github.com/torvalds/linux/commit/6433b8998a21dc597002731c4ceb4=
+144e856edc4)
+> > to implement directory listing cache in jacobsa/fuse
+> > (https://github.com/jacobsa/fuse/pull/162).
+> >
+> > Ideally, the kernel directory cache should be evicted if the
+> > user-daemon doesn't set FOPEN_KEEP_CACHE bit as part of the OpenDir
+> > response, but it's not getting evicted in the linux version 6.9.X and
+> > onwards.
+> >
+> > Could you please help me in resolving this?
+>
+> I think 6.9 added passthrough support. Are you using that? Also,
+> FOPEN_CACHE_DIR is default when there is no fuse-server open method
+> defined - does your implementation have an open/dir_open?
+>
+> I think the only user of FOPEN_CACHE_DIR is in fs/fuse/readdir.c and
+> that always checks if it is set - either the flag gets set or does not
+> come into role at all, because passthrough is used?
+>
+>
+> Thanks,
+> Bernd
 
