@@ -1,94 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-38284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872589FEBAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 00:42:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5E29FEC1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 02:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F22E161B86
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Dec 2024 23:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D547118827DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 01:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2375319D8B7;
-	Mon, 30 Dec 2024 23:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="R6o9lKEh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tY5JfJyr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D17DC8C7;
+	Tue, 31 Dec 2024 01:23:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24100199EB0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Dec 2024 23:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402D224FA;
+	Tue, 31 Dec 2024 01:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735602114; cv=none; b=TxNgTNWoVis56E8r/zsk+pYKmRX0siWR+zu2qoHmCNAL63vMYmmWUaTBqh5FE3KiV3yRV0YxRMS+UGxbaipgyHrJXSh9r/1anOIla8f5mFi25hnp3qfKaRhi3sngiZpZ84j+qM9UaoRY8F/N89gC3KQiy1uukuURZ36a0obYPjE=
+	t=1735608194; cv=none; b=h8ch27EdFrv1+SM5+Q1K7ZoZ9ov3Cym37L5nqRo1vjyJXiWKdrvupa+rymiu3M3oALUmu13I2xgYFPHGhlP8NuDCzWcL+0Tq164D599GE6y8EIqqBmFOIpG7113eohrErlJLRokrZD8Ld2w8ymq0i4F7GMlVozKffYF/iw/ME48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735602114; c=relaxed/simple;
-	bh=jWlDGLlEbWY3xUTCtT7sjGNgiI+Qr5J+G+KXQeWc3iY=;
+	s=arc-20240116; t=1735608194; c=relaxed/simple;
+	bh=ZBL+SkupEXB5vIZIax3BI3gfl2rf7JwdJreL2p3altk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hoFCx0+gdkPwzpoJgDJZPik6w+Hs6xu2thYlTFPXoVPKxbw9caBeXUizOffc9+wA5GeB6vWQb35FIAxeV/E5/hGt5hG3nhJZAjZbtGKbHksMgAXyFKVbLJJ0qHF3ghACdSoblDyf10i757c7EnIUxtvUM/DZnsSTQkcjgtWxTrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=R6o9lKEh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tY5JfJyr; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E3021114021F;
-	Mon, 30 Dec 2024 18:41:49 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 30 Dec 2024 18:41:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1735602109;
-	 x=1735688509; bh=pCffspHBKQVNZ2+ei8s6+TRqIDmrmuo0axMdqCNSXpI=; b=
-	R6o9lKEhvRoUCuWnVNYrW7OzeS36MzJ6VEGHxoMcVzvzt4vcKzgOvpkuPHzj6aVx
-	WwQdHBdJ0trdtG36PuYPrgrrtmjLpHYgX386pu/AJWACCrtkaFQ8AAOviojADvjA
-	UPJ5VnbAajt2XXoE53FhVHxyYKIz9HpfJ2Wn3td4RG3es7RWcG9J2HCmbznuY8jM
-	sBRh7Ci4hhLbszdYBpMs5YUXkvhKHjhgVVVPcu53SxkdAWzrtlIPweGikdjI4xpY
-	YMFKsMrfZpQooiarIJZHfNdpwkHPq36wV8KCHnoPNiUME4aycgXdoKEsJHXRkb/q
-	gxH4H1ZNef5vqqw/R5vOQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1735602109; x=
-	1735688509; bh=pCffspHBKQVNZ2+ei8s6+TRqIDmrmuo0axMdqCNSXpI=; b=t
-	Y5JfJyrYbU0e4a5i1xCVd9xU+ufvsC+Fkd11H1HizP47E5H+6dmvPWDCbXrrxfa+
-	qOZuj8f/8FtGxsQmQm6VX1DVLSJuPgZlLaDkFfoFS2S7JS6BNQSR4GbVMhsynHZt
-	mkV26jFI536H71JhAXbtc+LBOWyX3EUwM05PKg6OP+qyhbgA0JK2oDOaHErBYJcO
-	g6w8kHpxbU/CDN8ky2aN0iM5sqU8pieKoRFbUUbBj8AWHKQFUfiYpNh9wKLbhlAB
-	/g96FDNF2ufRZgiOhxP15QZvBBUYb0Fr0fxdGSwNlm6A8VEwHdg4FeGD5RWTx8Pr
-	V4JwXDL1d0IqOTebkI04Q==
-X-ME-Sender: <xms:vS9zZwGOV0fFr2Mv6_os6lUpicuDQQvZOETiuH777JhspXD72ku9Vw>
-    <xme:vS9zZ5V4vhgXGWrF9I6kJogouP_Yo8oTKFuEQ7KhL4AdJ5LwndkXzgufeJYIJSFWK
-    7f-nr-KJ80dSlOo>
-X-ME-Received: <xmr:vS9zZ6KNKwDitCywOwOxd52LNE2AGG83CQicwvDe164NU9UNOq_dA2e8Z8mq0FiUIhPr4AqbbGPGYtrGzr_q5mXLboVPXHZOgzh6Q3FgMrNhBreRbQFb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvjedguddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnh
-    gurdgtohhmqeenucggtffrrghtthgvrhhnpeeugfevvdeggeeutdelgffgiefgffejheff
-    kedtieduffehledvfeevgeejhedtjeenucffohhmrghinhepghhithhhuhgsrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhn
-    ugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepphhrihhntggvrhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegthhgrrhhithhhtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhhpihhs
-    vgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrd
-    gtohhm
-X-ME-Proxy: <xmx:vS9zZyFGBoaMY10t29puAV2IEK8z2Kmnxo64ct8ZBCVb7sVmNMMXmg>
-    <xmx:vS9zZ2VGXTRSmPnPWAoUJolas6rpdT8mTok6U8ZzuOpmasjKsUgcUQ>
-    <xmx:vS9zZ1NT-BTlGpjsTzWwuS9uqfzvuLQ2AmNe1TatDFZorU9uVP7HEQ>
-    <xmx:vS9zZ92duUVJfI7_bRhGqfirZK3iT0VURTi7cHuaAUX55_eBCVQ6GQ>
-    <xmx:vS9zZ4et_UhzfIviElBWy8hWtDsDtNG4hLP8z78NKDqvov_VJNKYfQx->
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 30 Dec 2024 18:41:48 -0500 (EST)
-Message-ID: <3d7e9844-6f6e-493a-a93a-4d2407378395@bsbernd.com>
-Date: Tue, 31 Dec 2024 00:41:47 +0100
+	 In-Reply-To:Content-Type; b=BR1yir4JdRzC6bKh8xw2Fa7WjOiI67DRh63CyufBRlUJ3L7j4uRFvp7SnVwv+sBLtXP1oiimLHLRPVl7Pm1m0ea3lWm7a0Jq6g6Nr3DjDZ+U5aEXUfjl7Zv7KntrHw2lSzcsn0uIj4PBTG+HEMxond8ZN9JpqSukVh0Ezf7368Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YMZw54S6kz4f3lVg;
+	Tue, 31 Dec 2024 09:22:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 99E1E1A1253;
+	Tue, 31 Dec 2024 09:23:06 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHMYV2R3NncIhxGA--.57590S3;
+	Tue, 31 Dec 2024 09:23:04 +0800 (CST)
+Message-ID: <c5a04819-e2af-4406-aee6-b5ddec356465@huaweicloud.com>
+Date: Tue, 31 Dec 2024 09:23:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -96,46 +47,113 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Fuse: directory cache eviction stopped working in the linux 6.9.X
- and onwards
-To: Prince Kumar <princer@google.com>, linux-fsdevel@vger.kernel.org
-Cc: Charith Chowdary <charithc@google.com>, Mayuresh Pise <mpise@google.com>,
- Amir Goldstein <amir73il@gmail.com>
-References: <CAEW=TRr7CYb4LtsvQPLj-zx5Y+EYBmGfM24SuzwyDoGVNoKm7w@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAEW=TRr7CYb4LtsvQPLj-zx5Y+EYBmGfM24SuzwyDoGVNoKm7w@mail.gmail.com>
+Subject: Re: [xfstests PATCH] generic/567: add partial pages zeroing out case
+To: Nirjhar Roy <nirjhar@linux.ibm.com>
+Cc: linux-fsdevel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, willy@infradead.org, ojaswin@linux.ibm.com,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com, fstests@vger.kernel.org, zlang@kernel.org
+References: <20241223023930.2328634-1-yi.zhang@huaweicloud.com>
+ <7e77d8d1bf4521a727247badd6b6231256abb791.camel@linux.ibm.com>
+ <67ae32aa-11e1-4e7f-b911-2546856564c2@huaweicloud.com>
+ <a1749e83-9c29-45b7-be4c-bca1a32ee85a@linux.ibm.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <a1749e83-9c29-45b7-be4c-bca1a32ee85a@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHMYV2R3NncIhxGA--.57590S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFW5Jw17XrWrGF45ZFyUAwb_yoW5AFW7pF
+	yfXFyayF4rCr93ur1293WxWryFkw4Syr4UXr13X34rAr4ayw1fKrnFgryvgFykKw48Zw4F
+	vws5t34UuF1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-On 12/30/24 05:41, Prince Kumar wrote:
-> Hello Team,
+On 2024/12/30 12:16, Nirjhar Roy wrote:
 > 
-> I see a regression in the fuse-filesystem for the linux version 6.9.X
-> and onwards, where the FOPEN_KEEP_CACHE flag is not working as
-> intended. Just for background, I referred to this linux commit
-> (https://github.com/torvalds/linux/commit/6433b8998a21dc597002731c4ceb4144e856edc4)
-> to implement directory listing cache in jacobsa/fuse
-> (https://github.com/jacobsa/fuse/pull/162).
-> 
-> Ideally, the kernel directory cache should be evicted if the
-> user-daemon doesn't set FOPEN_KEEP_CACHE bit as part of the OpenDir
-> response, but it's not getting evicted in the linux version 6.9.X and
-> onwards.
-> 
-> Could you please help me in resolving this?
+> On 12/27/24 13:59, Zhang Yi wrote:
+>> On 2024/12/27 13:28, Nirjhar Roy wrote:
+>>> On Mon, 2024-12-23 at 10:39 +0800, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> This addresses a data corruption issue encountered during partial
+>>>> page
+>>>> zeroing in ext4 which the block size is smaller than the page size
+>>>> [1].
+>>>> Expand this test to include a zeroing range test that spans two
+>>>> partial
+>>>> pages to cover this case.
+>>>>
+>>>> Link:
+>>>> https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/
+>>>>   [1]
+>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>>> ---
+>>>>   tests/generic/567     | 50 +++++++++++++++++++++++++--------------
+>>>> ----
+>>>>   tests/generic/567.out | 18 ++++++++++++++++
+>>>>   2 files changed, 47 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/tests/generic/567 b/tests/generic/567
+>>>> index fc109d0d..756280e8 100755
+>>>> --- a/tests/generic/567
+>>>> +++ b/tests/generic/567
+>>>> @@ -4,43 +4,51 @@
+>>>>   #
+>>>>   # FS QA Test No. generic/567
+>>>>   #
+>>>> -# Test mapped writes against punch-hole to ensure we get the data
+>>>> -# correctly written. This can expose data corruption bugs on
+>>>> filesystems
+>>>> -# where the block size is smaller than the page size.
+>>>> +# Test mapped writes against punch-hole and zero-range to ensure we
+>>>> get
+>>>> +# the data correctly written. This can expose data corruption bugs
+>>>> on
+>>>> +# filesystems where the block size is smaller than the page size.
+>>>>   #
+>>>>   # (generic/029 is a similar test but for truncate.)
+>>>>   #
+>>>>   . ./common/preamble
+>>>> -_begin_fstest auto quick rw punch
+>>>> +_begin_fstest auto quick rw punch zero
+>>>>     # Import common functions.
+>>>>   . ./common/filter
+>>>>     _require_scratch
+>>>>   _require_xfs_io_command "fpunch"
+>>>> +_require_xfs_io_command "fzero"
+>>>>     testfile=$SCRATCH_MNT/testfile
+>>>>     _scratch_mkfs > /dev/null 2>&1
+>>> Since this test requires block size < page size, do you think it is a
+>>> good idea to hard code the _scratch_mkfs parameters to explicitly pass
+>>> the block size to < less than zero? This will require less manipulation
+>>> with the local.config file. Or maybe have a _notrun to _notrun the test
+>>> if the block size is not less than the page size?
+>> Hi, Nirjhar. Thank you for the review!
+>>
+>> Although the issue we encountered is on the configuration that block
+>> size is less than page size, I believe it is also harmless to run this
+>> test in an environment where the block size is equal to the page size.
+>> This is a quick and basic test.
+> Okay makes sense. So with block size equal to page size, the actual functionality that we want to test won't be tested(but the test will pass), is that what you mean?
 
-I think 6.9 added passthrough support. Are you using that? Also, 
-FOPEN_CACHE_DIR is default when there is no fuse-server open method
-defined - does your implementation have an open/dir_open?
-
-I think the only user of FOPEN_CACHE_DIR is in fs/fuse/readdir.c and
-that always checks if it is set - either the flag gets set or does not
-come into role at all, because passthrough is used? 
-
+Yes, this test is very simple and should pass in an environment where
+the block size is equal to the page size.
 
 Thanks,
-Bernd
+Yi.
+
+
 
