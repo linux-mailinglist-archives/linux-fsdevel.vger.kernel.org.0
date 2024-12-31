@@ -1,71 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-38301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F379FF076
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 17:03:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001729FF07B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 17:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADEA18821EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 16:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1CD161EB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 16:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA9C1632CA;
-	Tue, 31 Dec 2024 16:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5AF1885B8;
+	Tue, 31 Dec 2024 16:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Deoy8mmj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WglXZryR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFEC1C683
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 16:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6B1C683
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 16:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735661028; cv=none; b=ooqSGXv+95g43Cxs9lNAvdVZj+Gker9tARCWyk1VlqzkbAXf6EwD1rWEMLe9yhqswUwk3uEVOKBWP0xRqu/ckY7IwwNjHSc9OEqYuKTAX2pTvX5R2E/OyV9BKop097ZO1v8zhdekU5/CbolJ1KwInDSYoypz4ZAcHxmgIksUNaQ=
+	t=1735661380; cv=none; b=Kj/mdZGCUEg1ih7OYkkelMy4lqoQL6MBHt3sucDFsaiNAwdgzSue4jF20n7piHAELQzK3a5U+0Hh91o4ZijkzplI+k8r7ijRq2n5X/cUz/h61DgGZ0sHpNHOIRU42hELiw+rgbFE+6li702FJq/MsYqjarMF1R7lzGn7Y6WfDzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735661028; c=relaxed/simple;
-	bh=NKjcF4zDPGV6Q8WaTBtq207lZ5RPwc/wIEbc/MTpBHU=;
+	s=arc-20240116; t=1735661380; c=relaxed/simple;
+	bh=FY9Hr1rzJfKVwS/irh3zSkwFgTVAD8psrn8HECyPpgU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iB/6vFMsgKBCjJg/aq/VPkxnS0tS5n4RqCUFykkQ1enNIkd1Vr7W9eeqSt0Bdw+XsZ14IvlG+jiqfR4WGQgY7Cr4BqJFuFzkhrsnpu0RVQV5ZgFe7QDUQ+ZtheFwZ4JmHsPStdnIivdHAFGhsBx5G4Z55NPszMQeFpqdnieU7sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Deoy8mmj; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=kJb6jHWjJWba+lAuNDk5oaiXGsnNmpjZq4Jh7WdQbMlPVvIbuLTgcdZxw4xEJoCYJine4XtOijNQhzHt3Ty0WsVwxiPxsAw4EaRvFHBeOjT0Mh+nKrl1CoXy6VFWFMvi59ul+1l6FnMo/WPOAbW3z7nItWn9HxIFcTe8boRFWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WglXZryR; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so1464384a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 08:03:46 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d8de655efaso2267998a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 08:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735661025; x=1736265825; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9GSlwy/U4IbYRKnrsurDugQREc4hcmXrorKd1XERHQ=;
-        b=Deoy8mmjZAhLtmZ+cmCDSk+i9thCoOXWNxicwL6APitV8RsjFukYAtzGg/OxglAF4F
-         mqgnFxSAnvZ8CgAGjZ2vE5eX3iz9x15tJxYEkJxuUZtYttGj81yel8IlU4ekJD/H8Zha
-         +V10jDwpI+ebCeZaVnUW3KkMUH+QPOU9FDe07rNIU+v6R2+LE+ojltfYbY6IdZw61fjO
-         nTwHTT+HRZC0KSgfhc0xi2+BwoeGaqqDKo+8Hrxp4XYKkD0hUlDqsyl0hBVrDIhUAYR/
-         LOjaR5sM2q2LiimFuMuiK7mDO0/vb7Xizcb/UjzLCq/FlFUv73moKOctAAPeUWn+YVSo
-         Nvyw==
+        d=gmail.com; s=20230601; t=1735661377; x=1736266177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wTOnaZX9rz0b8k+gvm1masJuad1WTgo5kMnJEAYOmoM=;
+        b=WglXZryRmFp6phT9XNtzvCEVSKon3UT/XKcx7HNh71r52xI1z2x7ClLDBFKyJFK2mx
+         l/lPm1wScsAbDqzgQqDh1ViQHYBtSAA+r1/5uIJLNsf3gP8aihkDLnHIKMxvYStch8U5
+         7F7fzhEtmmaeYG7JyM5NVIKBW+916EdWX9kiJ109yNA6B6Jcae1qRA2glL/szLhd6C99
+         H043fXWb1qDHgkLrggJDE8qtMH9BlhMiHPgn6W5I9AmAJ6ywiXzu/uOk6s65WnyNuJA9
+         7h/hG5Nn8TdJHtf01nuAp3YTy5yLlsPJiAK5fzWLyrgqtuZDPw5tVP3CvStQtC9d/FQ5
+         tS8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735661025; x=1736265825;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I9GSlwy/U4IbYRKnrsurDugQREc4hcmXrorKd1XERHQ=;
-        b=Wt3DTTq/SR0m7Nsqoz+MsMAyZ4eSGL5NAKRS1ENWpc2JerE7Y/lO/8YT0uZ29z0yQv
-         EjtiMpDEtSSbTCoSMD4oRi4E7insLy49xKugR/DRyhdL+ZUsMkcT/UzG0Vu6VbjbTlSh
-         Rxcw7sIbeFfabJ5D8qyNRFtD+Gq9WSrVJ7AIAV6xADgLBdiq0hRy4KSKQa+Ha3/NeO+T
-         BHSF86UTHkHIk7mfGBDEPkhsIJykqLIL7FdgHwt+7OEjDCki7W66vMT1/nkuQCDK3yn/
-         /GVVwhDhBe1z0I8t3wtmpMqXoJ7aRuPOt5aN72s/03bdEcvk95BG7sz5RBf2COoWpTND
-         jMuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq/WmXWkbEgPdaABb9juYHpkClZlLAe6Nds7fPzyQBI31C2WkueeHfivfA/f4taDyShzYDS2b9+PgXyTE4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuLjjVlQ+lXRHa0fE3mgtrsL0B2ctAexFSWzGqRJx8JotilLTs
-	Dcfkax6oK9gk+wfuhyLam7R6DoarJEYY0y83GVzKiCHuskrN3x5lvXTSv27+dlgdl2YsrgIHgit
-	ZC9DqZjkzauKwZ3c7aFa8OqfwV1VviAvgKZ4=
-X-Gm-Gg: ASbGnctnwFY/3hxrAJciDc8vft3etcOBzNtgi77kJWxCLfPgRiJ+F+v2KI3/Fjf2Xnp
-	W8q73Q5MIX0ux431mladcLdnXF7XkDu45lzHlug==
-X-Google-Smtp-Source: AGHT+IFDMjV+BnL9+Q0FZoDY9KwhCevJcMXBFzfWjKWff5IH3/56an0CrIeS0e7JuONJV2qygdqpNBl2uVXlKPWKBkM=
-X-Received: by 2002:a05:6402:50c6:b0:5d0:81dc:f20e with SMTP id
- 4fb4d7f45d1cf-5d81dd99512mr36169150a12.17.1735661024144; Tue, 31 Dec 2024
- 08:03:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735661377; x=1736266177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wTOnaZX9rz0b8k+gvm1masJuad1WTgo5kMnJEAYOmoM=;
+        b=ZzfNhviQOXheiNdEvjQgK+Ekkp90oND/+IfbUBwmn6TuOH1+sqJLlahCHuAyB84rSR
+         wH4cOdy0P3pegkWULTt8vw9FM8dBBsom22gsoEDWmDN1eNEhXKLLNfnQQaHjMq0EzylM
+         xr/GWHRYN9z0XvVjUcVlHI2243KEpMMs9kDAxnZAUKELeLszagnoY04B86iCRJMbpBAt
+         ZHn6SlRqP1RNWB4/2Yozae0J+AWliLzs1yyJELc8YjkFD4VzcNvkQ40iFuEAVi+OAvIH
+         T5RgWOo7SBY/Tr36nlQnU4/AMc9hFpPCVaKy1Ozdl5yRSQCsLapCLwUVXryOpn5c9c/K
+         Vhvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVq6uJiSiRJ0ah0fBlUdsPDN0bw/Noh7Xry+aL42pSOhNzM+qlBJJsR1bhf0BzwSdy3F8ANI93LYC8/eFac@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHqKqGixWG+l3Ty2MSh5pag+38pA/lCAEV2EW1+je3cgHmjcYC
+	UK5czTc9WGrzZrrutgoUSlADHN3mFJCSsdFcsiD4KLtvqHK/Jj44fJwNg7sadstOHD4LP0ljrH7
+	7ACY9NmqyEZDOiqf/UfXAcGZ8R0v1YBuy
+X-Gm-Gg: ASbGncvCJ1tnFpCpbv26CPJ3jYtbe/1jbQv1TRjhNaA3pxyRQIrDhNu2umD+lj5QlEL
+	batKav14Hm0HIvhiFQYipUgDoBGJ3pwxlDS0eiQ==
+X-Google-Smtp-Source: AGHT+IFpTE5qOLeDrAQ1ZlGhzIyeCVtY9dopdd3a5y8WbFuajwE/Whp6IiYoC4fyXQiNtl+9OvfJAvSbZxZ1RADOLVc=
+X-Received: by 2002:a05:6402:254f:b0:5cf:e71c:ff97 with SMTP id
+ 4fb4d7f45d1cf-5d81ddfbe45mr28457024a12.24.1735661376639; Tue, 31 Dec 2024
+ 08:09:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,99 +75,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <CAEW=TRr7CYb4LtsvQPLj-zx5Y+EYBmGfM24SuzwyDoGVNoKm7w@mail.gmail.com>
  <3d7e9844-6f6e-493a-a93a-4d2407378395@bsbernd.com> <CAEW=TRriHeY3TG-tep29ZnkRjU8Nfr5SHmuUmoc0oWRRy8fq3A@mail.gmail.com>
-In-Reply-To: <CAEW=TRriHeY3TG-tep29ZnkRjU8Nfr5SHmuUmoc0oWRRy8fq3A@mail.gmail.com>
+ <CAOQ4uxhch3DUj3BtYBaZx6X3Jvpw4OqjcdnkXA_qQh2AQwAo1A@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhch3DUj3BtYBaZx6X3Jvpw4OqjcdnkXA_qQh2AQwAo1A@mail.gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 31 Dec 2024 17:03:32 +0100
-Message-ID: <CAOQ4uxhch3DUj3BtYBaZx6X3Jvpw4OqjcdnkXA_qQh2AQwAo1A@mail.gmail.com>
+Date: Tue, 31 Dec 2024 17:09:25 +0100
+Message-ID: <CAOQ4uxjM1pkA+w8XF_cJBC-q5n0_9G1g-JYm7dOt2uSRLX8m4w@mail.gmail.com>
 Subject: Re: Fuse: directory cache eviction stopped working in the linux 6.9.X
  and onwards
-To: Prince Kumar <princer@google.com>
+To: Prince Kumar <princer@google.com>, Miklos Szeredi <miklos@szeredi.hu>
 Cc: Bernd Schubert <bernd@bsbernd.com>, linux-fsdevel@vger.kernel.org, 
 	Charith Chowdary <charithc@google.com>, Mayuresh Pise <mpise@google.com>
-Content-Type: multipart/mixed; boundary="000000000000cba6d9062a9312d9"
-
---000000000000cba6d9062a9312d9
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 31, 2024 at 4:36=E2=80=AFAM Prince Kumar <princer@google.com> w=
-rote:
+On Tue, Dec 31, 2024 at 5:03=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> Thanks Bernd for looking into this!
+> On Tue, Dec 31, 2024 at 4:36=E2=80=AFAM Prince Kumar <princer@google.com>=
+ wrote:
+> >
+> > Thanks Bernd for looking into this!
+> >
+> > I think 6.9 added passthrough support. Are you using that?
+> > > Not yet, but we have plans to try this out.
+> >
+> > FOPEN_CACHE_DIR is default when there is no fuse-server open method
+> > defined - does your implementation have an open/dir_open?
+> > > Yes, here is the implementation in GCSFuse (internally uses jacobsa/f=
+use library) - https://github.com/GoogleCloudPlatform/gcsfuse/blob/b0ca9c5b=
+2c0a35aeb8a48fe7a36120d7b33216aa/internal/fs/fs.go#L2328
+> > Here, op.CacheDir maps to FOPEN_CACHE_DIR and op.KeepCache maps to
+> > FOPEN_KEEP_CACHE.
+> >
+> > I think the only user of FOPEN_CACHE_DIR is in fs/fuse/readdir.c and
+> > that always checks if it is set - either the flag gets set or does not
+> > come into role at all, because passthrough is used?
+> > > Being honest, I don't have much idea of linux source code. As a user,=
+ to me the FOPEN_CACHE_DIR flag is working as expected.
+> > The problem is with the FOPEN_KEEP_CACHE flags, setting this should
+> > evict the dir cache, but it's not happening for linux 6.9.x and above.
+> > Although I see  a line in fs/fuse/dir.c
+> > (https://github.com/torvalds/linux/blob/ccb98ccef0e543c2bd4ef1a72270461=
+957f3d8d0/fs/fuse/dir.c#L718)
+> > which invalidates the inode pages if FOPEN_KEEP_CACHE is not set.
+> >
+> > So my ultimate question would be:
+> > (1) Do you see such recent changes in fs/fuse which explains the above
+> > regression?
+> > (2) If the changes are intentional, what should be the right way for
+> > fuse-server to evict the dir-cache (other than auto eviction due to
+> > change in dir-content, e.g., addition of new file inside a dir)?
+> >
 >
-> I think 6.9 added passthrough support. Are you using that?
-> > Not yet, but we have plans to try this out.
+> Hi Prince,
 >
-> FOPEN_CACHE_DIR is default when there is no fuse-server open method
-> defined - does your implementation have an open/dir_open?
-> > Yes, here is the implementation in GCSFuse (internally uses jacobsa/fus=
-e library) - https://github.com/GoogleCloudPlatform/gcsfuse/blob/b0ca9c5b2c=
-0a35aeb8a48fe7a36120d7b33216aa/internal/fs/fs.go#L2328
-> Here, op.CacheDir maps to FOPEN_CACHE_DIR and op.KeepCache maps to
-> FOPEN_KEEP_CACHE.
+> The change is not international.
+> It is a regression due to commit
+> 7de64d521bf92 ("fuse: break up fuse_open_common()") that missed the fact
+> the fuse_dir_open() may need to clean the page cache.
 >
-> I think the only user of FOPEN_CACHE_DIR is in fs/fuse/readdir.c and
-> that always checks if it is set - either the flag gets set or does not
-> come into role at all, because passthrough is used?
-> > Being honest, I don't have much idea of linux source code. As a user, t=
-o me the FOPEN_CACHE_DIR flag is working as expected.
-> The problem is with the FOPEN_KEEP_CACHE flags, setting this should
-> evict the dir cache, but it's not happening for linux 6.9.x and above.
-> Although I see  a line in fs/fuse/dir.c
-> (https://github.com/torvalds/linux/blob/ccb98ccef0e543c2bd4ef1a7227046195=
-7f3d8d0/fs/fuse/dir.c#L718)
-> which invalidates the inode pages if FOPEN_KEEP_CACHE is not set.
->
-> So my ultimate question would be:
-> (1) Do you see such recent changes in fs/fuse which explains the above
-> regression?
-> (2) If the changes are intentional, what should be the right way for
-> fuse-server to evict the dir-cache (other than auto eviction due to
-> change in dir-content, e.g., addition of new file inside a dir)?
+> Can you test the attached fix patch?
+> It is only compile tested.
+> Due to holidays, I had no time to verify the fix.
 >
 
-Hi Prince,
+Miklos, FYI, in case you plan to send a fixes PR,
+pushed my untested patch to branch fuse-fixes in my github.
 
-The change is not international.
-It is a regression due to commit
-7de64d521bf92 ("fuse: break up fuse_open_common()") that missed the fact
-the fuse_dir_open() may need to clean the page cache.
-
-Can you test the attached fix patch?
-It is only compile tested.
-Due to holidays, I had no time to verify the fix.
+Prince, if you can, please provide Tested-by.
 
 Thanks,
 Amir.
-
---000000000000cba6d9062a9312d9
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-fuse-respect-FOPEN_KEEP_CACHE-on-opendir.patch"
-Content-Disposition: attachment; 
-	filename="0001-fuse-respect-FOPEN_KEEP_CACHE-on-opendir.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m5cnpyc50>
-X-Attachment-Id: f_m5cnpyc50
-
-RnJvbSBjOGY1MDA2NzlmMGQyOGYzN2VmM2Q3NzU1ZmYxMzE3ODhjNDc0MDhkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
-YXRlOiBUdWUsIDMxIERlYyAyMDI0IDE2OjU1OjI0ICswMTAwClN1YmplY3Q6IFtQQVRDSF0gZnVz
-ZTogcmVzcGVjdCBGT1BFTl9LRUVQX0NBQ0hFIG9uIG9wZW5kaXIKClRoZSByZS1mYWN0b3Jpbmcg
-b2YgZnVzZV9kaXJfb3BlbigpIG1pc3NlZCB0aGUgbmVlZCB0byBpbnZhbGlkYXRlCmRpcmVjdG9y
-eSBpbm9kZSBwYWdlIGNhY2hlIHdpdGggb3BlbiBmbGFnIEZPUEVOX0tFRVBfQ0FDSEUuCgpGaXhl
-czogN2RlNjRkNTIxYmY5MiAoImZ1c2U6IGJyZWFrIHVwIGZ1c2Vfb3Blbl9jb21tb24oKSIpClJl
-cG9ydGVkLWJ5OiBQcmluY2UgS3VtYXIgPHByaW5jZXJAZ29vZ2xlLmNvbT4KQ2xvc2VzOiBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9saW51eC1mc2RldmVsL0NBRVc9VFJyN0NZYjRMdHN2UVBMai16
-eDVZK0VZQm1HZk0yNFN1end5RG9HVk5vS203d0BtYWlsLmdtYWlsLmNvbS8KU2lnbmVkLW9mZi1i
-eTogQW1pciBHb2xkc3RlaW4gPGFtaXI3M2lsQGdtYWlsLmNvbT4KLS0tCiBmcy9mdXNlL2Rpci5j
-IHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2Zz
-L2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jCmluZGV4IDQ5NGFjMzcyYWNlMDcuLmU1NDBkMDU1
-NDlmZmYgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZGlyLmMKKysrIGIvZnMvZnVzZS9kaXIuYwpAQCAt
-MTY4MSw2ICsxNjgxLDggQEAgc3RhdGljIGludCBmdXNlX2Rpcl9vcGVuKHN0cnVjdCBpbm9kZSAq
-aW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlKQogCQkgKi8KIAkJaWYgKGZmLT5vcGVuX2ZsYWdzICYg
-KEZPUEVOX1NUUkVBTSB8IEZPUEVOX05PTlNFRUtBQkxFKSkKIAkJCW5vbnNlZWthYmxlX29wZW4o
-aW5vZGUsIGZpbGUpOworCQlpZiAoIShmZi0+b3Blbl9mbGFncyAmIEZPUEVOX0tFRVBfQ0FDSEUp
-KQorCQkJaW52YWxpZGF0ZV9pbm9kZV9wYWdlczIoaW5vZGUtPmlfbWFwcGluZyk7CiAJfQogCiAJ
-cmV0dXJuIGVycjsKLS0gCjIuMzQuMQoK
---000000000000cba6d9062a9312d9--
 
