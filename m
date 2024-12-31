@@ -1,286 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-38293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBCB9FEF10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 12:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 243249FEF82
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 14:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD47160A45
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 11:14:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06C6162321
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2024 13:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CAE1993BD;
-	Tue, 31 Dec 2024 11:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b="JXcjPrnn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F0619D880;
+	Tue, 31 Dec 2024 13:10:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76C52114
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 11:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713B817BA1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 13:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735643686; cv=none; b=UDKLR79Xlukm4XJI8/AEIlwVloRNeO5Z4TOo/FHzJVgeVZeN7riFfIBEfgg6rR7urrXIjl9RMVnkasqWx3udcrk0xifp1SgenLoBGXTVpmBoXuFNH69plqtOHJ7/Dw09yZNO3CLITx8NuYpNXsMrZFIREqwGFtd1rqEnJtZkpug=
+	t=1735650629; cv=none; b=TPus5dqk3VUWScThq4yfYvkEFgyl+NBCYG+yigYH9wZAdwfFqgmRLqPMG8dXxdLNyVJK1zcNZ/IVNWSqOewU6WGG17LH1zHwsgHgL5BwJqtP/GI0r0Ie1qtFL5rJUOTJPPcX4w2dqjBI6IlwM/L2jXMLmA3RrLPrV22BohjY/nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735643686; c=relaxed/simple;
-	bh=rq/DxHG9rMHRWsWAy2l+UZxbUbez/GjIShBVfWWjWyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=khP+fseYJM+5wfviLF6GOzp9LRiYF0b9qQd8tSsd2Pv3ZIPEmQvrWKcSRzd5VYyNd/E4Q4BiAbGbZv7657cASQSvODCZLrlav/S0K7wkAmFUtPxjuc6t3xlxYGLtS6BROQSlVsdpC8QTyZ0e/P+r4e+MLERWVPfavZHVVoyeRoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com; spf=pass smtp.mailfrom=colorfullife.com; dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b=JXcjPrnn; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorfullife.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9e44654ae3so1620508266b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 03:14:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20230601.gappssmtp.com; s=20230601; t=1735643683; x=1736248483; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MmObXSgsMQGxcaUjzd2u+bVoecE4js+QkvAZp6+RrvE=;
-        b=JXcjPrnn/tCg46hE/WMnm0uP3rXsQi8DoXdj50U0+89neI9erjq599so7GR8Ip0MSK
-         BqFCEw5HL2au6OAy9I3hV/dbTx9/jnuuCQR4H2z+TATP8kgpxxe5UfS4gbPSmjUtRNtm
-         IUXqL+F+WZInJ4y27xeJez8Tnc2FDM5umA5WofCI3oScB0riZQT83Qj6AATk6yn0Igxp
-         an5DyRcP60a8V5Kqq6umnqc0YXLSLDK0bK5C8NYuJBxBBky7E0YXQTx5//ul1kcZaPCE
-         tLfT9o2ffgLGX5nI6aKq/DzOCx/D5hnFpZ++NAAelNv0jyvk4MnmkSvcArvuhMkIbB+A
-         66SA==
+	s=arc-20240116; t=1735650629; c=relaxed/simple;
+	bh=AjCqaO/c2C/1RVEwiGokVYVRzXvQ/dPY0ku/Xu31DRI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QYxb4IKYLqN/kaDLB++D133m0Up2jq9jvBk0f2Zktfrbqu0uay5IcqUiZrXxvcRmO3lXlNa6/Gr6P6GTHcC3Yeybd/uys74bFL07/+MPETnyYjb/jd7UoQHxkhl57pNn40DNh/H81ZNsWlfKekVl9Qi7r9Iwlx6mVooKkIhTato=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a9cbe8fea1so104282395ab.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2024 05:10:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735643683; x=1736248483;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MmObXSgsMQGxcaUjzd2u+bVoecE4js+QkvAZp6+RrvE=;
-        b=iUJXdPc1KcFBBP0WN3rLOxZUhUX4evK1AEopIffMVzxxcZ7y+dM+Cn09p1Hz0vmq1v
-         j7MNlTybVHmWIcAqpWJ1+SQimi1AQcKwOBLHcZjYHYHGJmdOUfTLo6Syr1YT8UmgTZMw
-         tHeMMLUfLUH1fDevaQdFrhECSy5LZR2qMId1eTOHfxg/EA8hx0gy8Aif++0POOgtb7vP
-         OSPj0Rp1zqm6rXTz4pg56XZ8ZvD8HroerRyx5aVEt4EJLVYOLvVqLZpjO9EIJkQzdEpg
-         toidwgr0XJIOH1dtlgVugDmm5eDNlUdVEGZrc1CPfkUgSw38g3n1DVfl22IAvO5O6FMy
-         jlNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDevzR3yySNfEGg1aCUAdNwMjKXfUcyLStwutyIcJzHP03T+D8rYhPfmHKJkcQ8hZrtgkpe+xXq8yP77M0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjGR8c6b0yUFxhkNMkCRjjnC4WGMG2plWAggTDgsGQYdxfPrA7
-	qH4p/Zh/moKBAei60735aMPiQWLJAVim+BP+/pkouaOlk7SygpHZoAKUd98+/Q==
-X-Gm-Gg: ASbGncvhYJCtOPMReLBiz+pCYhcWOq14hxZXR3msFFsWpAHR5fvjU1tC5w9K8gNLBm1
-	62Vr8IkuvNdoEs9CuDKFAFdhTn9A20fkawB66iKiGkcXGCdICylvU37YGIVFztFifNb06al5IJW
-	14Z20E8M23AvaadTP2CBrgPbk+QmsxK1x6pgjTdt2CDACx4CnkFH1IwUSOJNwA3pwbpY2PStk1L
-	iNHGWBivdx8mIUixSSzVZ2srIrwrlVUWuTjWcm4ngMLcBGR1GQN4kRspneAvjCAHflFXh+fxM79
-	BhWpUmG+smX4tGwxNTLxkqHYn5bcmEM1DJPfjJOaebo8TUvvNcdD0He9lxyUrIY=
-X-Google-Smtp-Source: AGHT+IF2Rh/r6l9SuGGmJwEZqBUTjQ/v9V27hkd4TmS2UKd1ztjF1aEv68oCNfDmXfhxEH727T5mpw==
-X-Received: by 2002:a17:906:6a28:b0:aa5:391e:cadf with SMTP id a640c23a62f3a-aac334f637fmr3261763366b.42.1735643682798;
-        Tue, 31 Dec 2024 03:14:42 -0800 (PST)
-Received: from localhost.localdomain (p200300d9971255001e3d0644a090dcde.dip0.t-ipconnect.de. [2003:d9:9712:5500:1e3d:644:a090:dcde])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d806fedca8sm16233558a12.61.2024.12.31.03.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Dec 2024 03:14:41 -0800 (PST)
-From: Manfred Spraul <manfred@colorfullife.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	WangYuli <wangyuli@uniontech.com>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	1vier1@web.de,
-	Manfred Spraul <manfred@colorfullife.com>
-Subject: Re: [RESEND PATCH] fs/pipe: Introduce a check to skip sleeping processes during pipe read/write
-Date: Tue, 31 Dec 2024 12:14:28 +0100
-Message-ID: <20241231111428.5510-1-manfred@colorfullife.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241230153844.GA15134@redhat.com>
-References: <20241230153844.GA15134@redhat.com>
+        d=1e100.net; s=20230601; t=1735650625; x=1736255425;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7TiVZTCLlQn31lb/WNkxKEnOV/dYgmRGEbigOHLfObQ=;
+        b=iv9ZFfJ1HSiMHqoHAzV4I7QI9R+Dl38fvhFZvCKZoedYPizeyIo252hs1DPcY4x3xu
+         OnyqK+UjZP68lAimvTaUhCfiMWIWb5bDUuQivHMpQAl20sS26wKznQrttYdbqRbM26V0
+         WGdVHQi9sChGEreuHxKf15ErmMYQ8cxnCgpP5hNR4yLFBn+omyh1rWV/XPPp2bKmqh/S
+         3/COklrA06eLDGOTwECGNL0HbKzEryRKNxn+ju+U24EVvZeL5wq3PeKBjTnWP/96HoFs
+         DRKbW6Fl9FHW2BT/K5TKbfVhdQFAb/ggl3Z/+wHfijpw875HLahLaC+CVKj9uL2Ru8or
+         Em6w==
+X-Gm-Message-State: AOJu0YxbtwkV744PomjmB7q2v4M79LzRjRfk7la9V7aNFfGvNQFiTlf1
+	9Xri3pLzVscR8EzoAAZOVL2sGThmR4aEWKZa3zdJIqSucy42Z42VYQpXOTciG/UePLtkmQP3IfW
+	4aIAH/Gb6AoQQYbOSjyKh3o7AlhDqWRORQKMyMoQhaxgD4QJ1dsj/m7Jr2A==
+X-Google-Smtp-Source: AGHT+IE6OzQorZvdhq+z5mFvPRoea3wmFwX5FM+x7wOva8whmvhvOdYWo3EKlGyqef48YR3LVabgPYdqr41ea5ijB0qtFj6Pe0gR
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1685:b0:3a7:6e59:33ad with SMTP id
+ e9e14a558f8ab-3c2d4e6c573mr255226405ab.17.1735650625403; Tue, 31 Dec 2024
+ 05:10:25 -0800 (PST)
+Date: Tue, 31 Dec 2024 05:10:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6773ed41.050a0220.25abdd.08f6.GAE@google.com>
+Subject: [syzbot] [fuse?] BUG: unable to handle kernel NULL pointer
+ dereference in fuse_copy_one
+From: syzbot <syzbot+43f6243d6c4946b26405@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Oleg,
+Hello,
 
-just FYI, I did some quick tests with:
-- your changes to fs/pipe.c
-- my change, to skip locking in wake-up (and some smp_mb())
-- statistics, to check how often wake_up is called/how often the list is
-  wait queue is actually empty
+syzbot found the following issue on:
 
-Known issue: Statistic printing every 10 seconds doesn't work, it prints
-at eratic times. And the comment in __wake_up is still wrong, the
-memory barrier would pair with smp_mb() after updating wq_head->head.
+HEAD commit:    ccb98ccef0e5 Merge tag 'platform-drivers-x86-v6.13-4' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d4f50f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=86dd15278dbfe19f
+dashboard link: https://syzkaller.appspot.com/bug?extid=43f6243d6c4946b26405
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Result: (all with a 2 core 4 thread i3, fully idle system)
-- your change has no impact on 'find /proc /sys | grep doesnotexist'
-  (using busybox)
-- Running your test app for around 100 seconds
-   - 3 wakeups with non-empty queue
-   - 26 wakeup with empty queue
-   - 2107 __add_wait_queue
-- find|grep produces insane numbers of wakeup. I've seen 20k, I've
-  now seen 50k wakeup calls. With just around 2k __add_wait_queue,
-  ...
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thus, at least for pipe:
-Should we add the missing memory barriers and switch to
-wait_queue_active() in front of all wakeup calls?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ccb98cce.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75a6223b351c/vmlinux-ccb98cce.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/beea89d50f58/bzImage-ccb98cce.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+43f6243d6c4946b26405@syzkaller.appspotmail.com
+
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+PGD 6a754067 P4D 6a754067 PUD 68142067 PMD 0 
+Oops: Oops: 0002 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 7523 Comm: syz.2.395 Not tainted 6.13.0-rc5-syzkaller-00004-gccb98ccef0e5 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:memcpy+0xc/0x20 arch/x86/lib/memcpy_64.S:38
+Code: e9 44 fd ff ff 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 48 89 f8 48 89 d1 <f3> a4 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90
+RSP: 0018:ffffc9000370f8b0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffffc9000370fc50 RCX: 0000000000000004
+RDX: 0000000000000004 RSI: ffff88804ef5d710 RDI: 0000000000000000
+RBP: 0000000000000004 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000004
+R13: 0000000000000000 R14: 0000000000000004 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f5080b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000006ba72000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ fuse_copy_do fs/fuse/dev.c:809 [inline]
+ fuse_copy_one+0x1cc/0x230 fs/fuse/dev.c:1065
+ fuse_copy_args+0x109/0x690 fs/fuse/dev.c:1083
+ copy_out_args fs/fuse/dev.c:1966 [inline]
+ fuse_dev_do_write+0x1b0a/0x3100 fs/fuse/dev.c:2052
+ fuse_dev_write+0x160/0x1f0 fs/fuse/dev.c:2087
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf708e579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5080500 EFLAGS: 00000293 ORIG_RAX: 0000000000000004
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020000700
+RDX: 0000000000000014 RSI: 00000000f73c3ff4 RDI: 0000000000000000
+RBP: 0000000020008380 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 0000000000000000 ]---
+RIP: 0010:memcpy+0xc/0x20 arch/x86/lib/memcpy_64.S:38
+Code: e9 44 fd ff ff 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 48 89 f8 48 89 d1 <f3> a4 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90
+RSP: 0018:ffffc9000370f8b0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffffc9000370fc50 RCX: 0000000000000004
+RDX: 0000000000000004 RSI: ffff88804ef5d710 RDI: 0000000000000000
+RBP: 0000000000000004 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000004
+R13: 0000000000000000 R14: 0000000000000004 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f5080b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000006ba72000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	e9 44 fd ff ff       	jmp    0xfffffd49
+   5:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   c:	00 00
+   e:	90                   	nop
+   f:	90                   	nop
+  10:	90                   	nop
+  11:	90                   	nop
+  12:	90                   	nop
+  13:	90                   	nop
+  14:	90                   	nop
+  15:	90                   	nop
+  16:	90                   	nop
+  17:	90                   	nop
+  18:	90                   	nop
+  19:	90                   	nop
+  1a:	90                   	nop
+  1b:	90                   	nop
+  1c:	90                   	nop
+  1d:	90                   	nop
+  1e:	f3 0f 1e fa          	endbr64
+  22:	66 90                	xchg   %ax,%ax
+  24:	48 89 f8             	mov    %rdi,%rax
+  27:	48 89 d1             	mov    %rdx,%rcx
+* 2a:	f3 a4                	rep movsb %ds:(%rsi),%es:(%rdi) <-- trapping instruction
+  2c:	c3                   	ret
+  2d:	cc                   	int3
+  2e:	cc                   	int3
+  2f:	cc                   	int3
+  30:	cc                   	int3
+  31:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  38:	00 00 00 00
+  3c:	66 90                	xchg   %ax,%ax
+  3e:	90                   	nop
+  3f:	90                   	nop
+
 
 ---
- fs/pipe.c            | 13 +++++++------
- include/linux/wait.h |  5 +++++
- kernel/sched/wait.c  | 45 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 57 insertions(+), 6 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 12b22c2723b7..27ffb650f131 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -253,7 +253,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	size_t total_len = iov_iter_count(to);
- 	struct file *filp = iocb->ki_filp;
- 	struct pipe_inode_info *pipe = filp->private_data;
--	bool was_full, wake_next_reader = false;
-+	bool wake_writer = false, wake_next_reader = false;
- 	ssize_t ret;
- 
- 	/* Null read succeeds. */
-@@ -271,7 +271,6 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	 * (WF_SYNC), because we want them to get going and generate more
- 	 * data for us.
- 	 */
--	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
- 	for (;;) {
- 		/* Read ->head with a barrier vs post_one_notification() */
- 		unsigned int head = smp_load_acquire(&pipe->head);
-@@ -340,8 +339,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 				buf->len = 0;
- 			}
- 
--			if (!buf->len)
-+			if (!buf->len) {
-+				wake_writer |= pipe_full(head, tail, pipe->max_usage);
- 				tail = pipe_update_tail(pipe, buf, tail);
-+			}
- 			total_len -= chars;
- 			if (!total_len)
- 				break;	/* common path: read succeeded */
-@@ -377,7 +378,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * _very_ unlikely case that the pipe was full, but we got
- 		 * no data.
- 		 */
--		if (unlikely(was_full))
-+		if (unlikely(wake_writer))
- 			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 
-@@ -391,14 +392,14 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 			return -ERESTARTSYS;
- 
- 		mutex_lock(&pipe->mutex);
--		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
- 		wake_next_reader = true;
-+		wake_writer = false;
- 	}
- 	if (pipe_empty(pipe->head, pipe->tail))
- 		wake_next_reader = false;
- 	mutex_unlock(&pipe->mutex);
- 
--	if (was_full)
-+	if (wake_writer)
- 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 	if (wake_next_reader)
- 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
-diff --git a/include/linux/wait.h b/include/linux/wait.h
-index 6d90ad974408..0fdad3c3c513 100644
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -166,6 +166,7 @@ extern void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wai
- extern void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry);
- extern void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry);
- 
-+extern atomic_t g_add_count;
- static inline void __add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
- {
- 	struct list_head *head = &wq_head->head;
-@@ -177,6 +178,8 @@ static inline void __add_wait_queue(struct wait_queue_head *wq_head, struct wait
- 		head = &wq->entry;
- 	}
- 	list_add(&wq_entry->entry, head);
-+	smp_mb();
-+	atomic_inc(&g_add_count);
- }
- 
- /*
-@@ -192,6 +195,8 @@ __add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue_en
- static inline void __add_wait_queue_entry_tail(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
- {
- 	list_add_tail(&wq_entry->entry, &wq_head->head);
-+	smp_mb();
-+	atomic_inc(&g_add_count);
- }
- 
- static inline void
-diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
-index 51e38f5f4701..07487429dddf 100644
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -110,6 +110,10 @@ static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int m
- 	return nr_exclusive - remaining;
- }
- 
-+#if 1
-+atomic_t g_add_count = ATOMIC_INIT(0);
-+#endif
-+
- /**
-  * __wake_up - wake up threads blocked on a waitqueue.
-  * @wq_head: the waitqueue
-@@ -124,6 +128,47 @@ static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int m
- int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
- 	      int nr_exclusive, void *key)
- {
-+#if 1
-+static atomic_t g_slow = ATOMIC_INIT(0);
-+static atomic_t g_mid = ATOMIC_INIT(0);
-+static atomic_t g_fast = ATOMIC_INIT(0);
-+static u64 printtime = 10*HZ;
-+#endif
-+	if (list_empty(&wq_head->head)) {
-+		struct list_head *pn;
-+
-+		/*
-+		 * pairs with spin_unlock_irqrestore(&wq_head->lock);
-+		 * We actually do not need to acquire wq_head->lock, we just
-+		 * need to be sure that there is no prepare_to_wait() that
-+		 * completed on any CPU before __wake_up was called.
-+		 * Thus instead of load_acquiring the spinlock and dropping
-+		 * it again, we load_acquire the next list entry and check
-+		 * that the list is not empty.
-+		 */
-+		pn = smp_load_acquire(&wq_head->head.next);
-+
-+		if(pn == &wq_head->head) {
-+#if 1
-+			atomic_inc(&g_fast);
-+#endif
-+			return 0;
-+		} else {
-+#if 1
-+			atomic_inc(&g_mid);
-+#endif
-+		}
-+	} else {
-+#if 1
-+		atomic_inc(&g_slow);
-+#endif
-+	}
-+#if 1
-+	if (get_jiffies_64() > printtime) {
-+		printtime = get_jiffies_64() + 10*HZ;
-+		pr_info("__wakeup: slow/obvious: %d, mid/nearly raced: %d, fast: %d, add: %d.\n", atomic_read(&g_slow), atomic_read(&g_mid), atomic_read(&g_fast), atomic_read(&g_add_count));
-+	}
-+#endif
- 	return __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, key);
- }
- EXPORT_SYMBOL(__wake_up);
--- 
-2.47.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
