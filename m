@@ -1,125 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-38336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B539FFC42
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 17:47:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7466A9FFD4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 18:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20DFB7A165F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 16:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791671883392
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 17:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC89316F8F5;
-	Thu,  2 Jan 2025 16:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5607D183CD1;
+	Thu,  2 Jan 2025 17:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YNosWLNx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTfBONFS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88E11547F5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2025 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61688F66;
+	Thu,  2 Jan 2025 17:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735836417; cv=none; b=IcSyMPGncrGGJ7T06yFseb3yV3hrVGnhkDn2ejsMiirdQM07Hi4Wy9BwtMjSwBgpLl4/u6PiO7nnFs2j8gugDuyWBCx/89qChPaWROOExV8cD1CyNn+wEIXC7LZphGO22ilIzpODVij+CoYlzvZtg2cXdJv/9oxCVUIz/Q7CxI4=
+	t=1735840778; cv=none; b=fglAjzZRt/ZIzJihfsgmIcq0SmcVgMw1tc0LkDdo51d93jlNVdS/bgoFKIPOoe7S8YNFZWskZ2vK5i411DozenQrwh3uSU+IiA9+qulBvAa0F0aSGMH4gcQ6dF1OkYQb24cVFoor7YMWTF5EFTro0WMNmBwceVy7841tvjT9cKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735836417; c=relaxed/simple;
-	bh=vSBralXKEkbDGTENaS0tXNCGkrQA1+hZRUw6eVJm2d4=;
+	s=arc-20240116; t=1735840778; c=relaxed/simple;
+	bh=h+T4Y9bqtjZsq4hUXidgCVAFPZ1PSJDm737jiIOcCBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q78uyymoCWDxhwxTiKWcD2ieOKNkdyMpa+mXuUzIMtuy6O6KFRSrQ2QodVi6uv/oQ47fJMKP9qPm5RCLyq/13ZXec4k18m2H9VgZACEwtIja1hsyY5k2E8ajRX0qKNMe6EWKwYb80xQUDfGk4PMj4ETTWx+/eoN+3y2MevBdRnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YNosWLNx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1735836412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6a6y6X/kRd9rFXkuO6T9vl6ii9Qix4XnwodVh9lCTMI=;
-	b=YNosWLNxUS2TqQ3YeYfcQ8q65QL1P3uULx4k9al7Lb94yrDNXmOk1guzqYYey95X/riAFj
-	ptfL/rJKxXpnfZkcQmeBSAdmo8xmICdsdtNl6FxABblpAijezuH7VqBI2xSOhhUqiqce8G
-	Ao085atSibaTZDGHGQrX0FHw7uaODu4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-50-U7qs44G4Pl26gMyTGQJPfg-1; Thu,
- 02 Jan 2025 11:46:49 -0500
-X-MC-Unique: U7qs44G4Pl26gMyTGQJPfg-1
-X-Mimecast-MFC-AGG-ID: U7qs44G4Pl26gMyTGQJPfg
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 840DA19560A2;
-	Thu,  2 Jan 2025 16:46:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.145])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 94D8419560AA;
-	Thu,  2 Jan 2025 16:46:43 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  2 Jan 2025 17:46:23 +0100 (CET)
-Date: Thu, 2 Jan 2025 17:46:18 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yushengjin@uniontech.com,
-	zhangdandan@uniontech.com, chenyichong@uniontech.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250102164617.GB30778@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <74D957F3D234C8BA+47ec121f-4fea-4693-adeb-ae3d46538834@uniontech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kV964lFHx/T+dyKk11HdB2p3SCsmWeJhblu5XsYFPZ/zmMUAmhoWm1MLyi3tRSiJ+AoPZJXn7uvPBK4VbYL4Eg1pJ/DsPSfQfD0ucXAVmrOZhi0rE3WsjBIbjLi+JLZd4mcM4XO3lfq54uG0i7GRQnonmKZBTZ8nDpXpplP0ino=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTfBONFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADE0CC4CED0;
+	Thu,  2 Jan 2025 17:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735840778;
+	bh=h+T4Y9bqtjZsq4hUXidgCVAFPZ1PSJDm737jiIOcCBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jTfBONFSseTV9D3Gov5WUmkMuhds21kAg1XLxeIjAXiVj4WLa92fC1V2eOlMNyk+v
+	 LuW99P+tMj8hjfRwgfHA5pYdsy86XehZgy4kzE4z9rq5k5EtFiNk1tT2keADwcuDZh
+	 tBMFONyCxtJG87zqMiSgqYWs71+Xuy6nwuezw9E1htJMUSGMaZ9U2UfBfztJgvCDRj
+	 Y0MKOaySvlTulRxl5sw9TqOBXU6jndWLJ1vS018X6Om2NnsIY/uLpnA9XGXpIG+4o5
+	 Q/PamP9QGczFOz4Ql7Xjs6D8k1TeZDjeDZQlhVgFHKVOPIn1sc+X9I+VqhGugMK7yu
+	 KD6UaT1fEJ4ww==
+Received: by pali.im (Postfix)
+	id 317F8812; Thu,  2 Jan 2025 18:59:27 +0100 (CET)
+Date: Thu, 2 Jan 2025 18:59:27 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: Immutable vs read-only for Windows compatibility
+Message-ID: <20250102175927.seescpqw3htsziz2@pali>
+References: <20241227121508.nofy6bho66pc5ry5@pali>
+ <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <74D957F3D234C8BA+47ec121f-4fea-4693-adeb-ae3d46538834@uniontech.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
+User-Agent: NeoMutt/20180716
 
-On 01/03, WangYuli wrote:
->
-> [Adding some of my colleagues who were part of the original submission to
-> the CC list for their information.]
+On Thursday 02 January 2025 15:37:50 Jan Kara wrote:
+> Hello!
+> 
+> On Fri 27-12-24 13:15:08, Pali Rohár wrote:
+> > Few months ago I discussed with Steve that Linux SMB client has some
+> > problems during removal of directory which has read-only attribute set.
+> > 
+> > I was looking what exactly the read-only windows attribute means, how it
+> > is interpreted by Linux and in my opinion it is wrongly used in Linux at
+> > all.
+> > 
+> > Windows filesystems NTFS and ReFS, and also exported over SMB supports
+> > two ways how to present some file or directory as read-only. First
+> > option is by setting ACL permissions (for particular or all users) to
+> > GENERIC_READ-only. Second option is by setting the read-only attribute.
+> > Second option is available also for (ex)FAT filesystems (first option via
+> > ACL is not possible on (ex)FAT as it does not have ACLs).
+> > 
+> > First option (ACL) is basically same as clearing all "w" bits in mode
+> > and ACL (if present) on Linux. It enforces security permission behavior.
+> > Note that if the parent directory grants for user delete child
+> > permission then the file can be deleted. This behavior is same for Linux
+> > and Windows (on Windows there is separate ACL for delete child, on Linux
+> > it is part of directory's write permission).
+> > 
+> > Second option (Windows read-only attribute) means that the file/dir
+> > cannot be opened in write mode, its metadata attribute cannot be changed
+> > and the file/dir cannot be deleted at all. But anybody who has
+> > WRITE_ATTRIBUTES ACL permission can clear this attribute and do whatever
+> > wants.
+> 
+> I guess someone with more experience how to fuse together Windows & Linux
+> permission semantics should chime in here but here are my thoughts.
 
-OK,
+It is important to know that read-only attribute is not a permission
+(like UNIX mode or POSIX ACL or Windows ACL) and neither it is not a
+security mechanism. It is just an attribute which affects execution of
+modification operations.
 
-> perhaps we should include a link to the original discussion
->
-> Link: https://lore.kernel.org/all/75B06EE0B67747ED+20241225094202.597305-1-wangyuli@uniontech.com/
-...
-> Reported-by: WangYuli <wangyuli@uniontech.com>
+> > Linux filesystems has similar thing to Windows read-only attribute
+> > (FILE_ATTRIBUTE_READONLY). It is "immutable" bit (FS_IMMUTABLE_FL),
+> > which can be set by the "chattr" tool. Seems that the only difference
+> > between Windows read-only and Linux immutable is that on Linux only
+> > process with CAP_LINUX_IMMUTABLE can set or clear this bit. On Windows
+> > it can be anybody who has write ACL.
+> > 
+> > Now I'm thinking, how should be Windows read-only bit interpreted by
+> > Linux filesystems drivers (FAT, exFAT, NTFS, SMB)? I see few options:
+> > 
+> > 0) Simply ignored. Disadvantage is that over network fs, user would not
+> >    be able to do modify or delete such file, even as root.
+> > 
+> > 1) Smartly ignored. Meaning that for local fs, it is ignored and for
+> >    network fs it has to be cleared before any write/modify/delete
+> >    operation.
+> > 
+> > 2) Translated to Linux mode/ACL. So the user has some ability to see it
+> >    or change it via chmod. Disadvantage is that it mix ACL/mode.
+> 
+> So this option looks sensible to me. We clear all write permissions in
+> file's mode / ACL. For reading that is fully compatible, for mode
+> modifications it gets a bit messy (probably I'd suggest to just clear
+> FILE_ATTRIBUTE_READONLY on modification) but kind of close.
 
-WangYuli, this patch has nothing to do with your original patch and
-the discussion above.
+This this option, there are lot of open questions regarding the
+behavior. For example:
 
-> I'm happy to provide more test results for this patch if it's not too late.
+How the change mode or change ACL operation executed on Linux should
+behave? Should it always clear or set read-only attribute when calling
+chmod or setfacl? And what if the user does not have capability or
+permission to change mode? Then the user would not be able to clear
+read-only attribute (IIRC this attribute can be set/clear by having
+just write permission).
 
-Would be great, but I don't think this patch can make any difference
-performance-wise in practice. Short reads are not that common, I guess.
+And when reading, to which mode / ACL part should be read-only attribute
+propagated? Only to user, to all 3 parts (user, group, others), or also
+into all ACL entries? For example SMB protocol has extension support for
+POSIX ACL, so how it should be handled?
 
-> Hmm..
-> Initially, the sole purpose of our original patch was to simply check if
-> there were any waiting processes in the process wait queue to avoid
-> unnecessary wake-ups, for both reads and writes.
+Also how to handle unlink operation? With this option, the user first
+would have to call chmod +w and after that would be able to call rm -f.
+It it quite non-Linux way that it is needed to have write permission on
+the file itself for deleting it. Normally it is needed just write
+permission on the parent directory.
 
-Exactly. So once again, this patch is orthogonal to the possible
-wq_has_sleeper() optimizations.
+I do not have answers for these questions, it seems to be really messy
+and not intuitive behavior.
 
-> Do you have any suggestions on how we could better
-> achieve our original objective?
+> > 3) Translated to Linux FS_IMMUTABLE_FL. So the user can use lsattr /
+> >    chattr to see or change it. Disadvantage is that this bit can be
+> >    changed only by root or by CAP_LINUX_IMMUTABLE process.
+> > 
+> > 4) Exported via some new xattr. User can see or change it. But for
+> >    example recursive removal via rm -rf would be failing as rm would not
+> >    know about this special new xattr.
+> > 
+> > In any case, in my opinion, all Linux fs drivers for these filesystems
+> > (FAT, exFAT, NTFS, SMB, are there some others?) should handle this
+> > windows read-only bit in the same way.
+> > 
+> > What do you think, what should be the best option?
+> > 
+> > I have another idea. What about introducing a new FS_IMMUTABLE_USER_FL
+> > bit which have same behavior as FS_IMMUTABLE_FL, just it would be
+> > possible to set it for any user who has granted "write" permission?
+> 
+> Uh, in unix, write permission is for accessing file data. Modifying access
+> permissions etc. is always limited to inode owner (or user with special
+> capabilities). So this would be very confusing in Unix permission model.
 
-See
-	wakeup_pipe_readers/writers() && pipe_poll()
-	https://lore.kernel.org/all/20250102163320.GA17691@redhat.com/
+(Windows) read-only attribute is not a permission, it is an attribute,
+that is probably confusing. Similarly FS_IMMUTABLE_FL is not a
+permission if I understand it correctly.
 
-Oleg.
+And about attributes, Now I have tested that on Linux it is possible to
+change time attributes (utimensat) also for files which are not owned by
+calling user/process, it is just enough for caller to have write
+permission.
 
+Read-only is similar to those time attributes.
+
+> > Instead of requiring CAP_LINUX_IMMUTABLE. I see a nice usecase that even
+> > ordinary user could be able to mark file as protected against removal or
+> > modification (for example some backup data).
+> 
+> So I don't see us introducing another immutable bit in VFS. Special
+> "protected file" bit modifiable by whoever can modify file permissions is
+> not really different from clearing write permission bits in mode.
+
+It differs for unlink operations. Immutable does not allow to to remove
+the file. File without write permission can be removed.
+
+I see benefit in FS_IMMUTABLE_FL for that purpose of backup file, but
+FS_IMMUTABLE_FL cannot be used by normal user.
+
+> So that
+> doesn't seem as a terribly useful feature to me. That being said nothing
+> really stops individual filesystems from introducing their own inode flags,
+> get / set them via ioctl and implement whatever permission checking needed
+> with them. After all this is how the flags like IMMUTABLE or APPEND started
+> and only later on when they propagated into many filesystems we've lifted
+> them into VFS.
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+Ok, fair enough.
+
+As there are more filesystems which supports this read-only attribute
+feature, it make sense to have same API for all of them. So what is the
+better option for exporting it to userspace. Via ioctl or via new xattr?
+Or is there any other option?
 
