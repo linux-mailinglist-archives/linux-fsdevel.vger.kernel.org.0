@@ -1,144 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-38343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B83F9FFFD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 21:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB47E9FFFEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 21:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336EB162A51
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 20:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92ED8162D3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 20:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67081B6CF4;
-	Thu,  2 Jan 2025 20:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54601187342;
+	Thu,  2 Jan 2025 20:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pfO1ILJT"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="GcG3JcZ4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4DE8F58
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2025 20:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33F6CA6B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2025 20:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735848752; cv=none; b=uM7iU1jtLrMSszYPsPFfvVAYPa1/1tJMd8+6XidfFVLhqWs718W+iOPyKHzhB0r852R39ZCRFRB4L/a6L+BPHk6hLxwMeMxGiMNG0OGylx2yL738ktVMvaYW7ixywbbrY09wdB3Chmc9+psHPjWFdztnPnTB1YXhUQCaqKXEmcs=
+	t=1735849100; cv=none; b=ZhUkTd8SPOSMjxaDVu+8XiBjFE1isqEScMiSlMkz2DiclEv84vHuEghNGynXOwcQAP59QOd3WrRIV7iMFLuK94Vdv2V1EflfLbcQ7XOxdYo0drhGEmP3X4lk8w04im+HNge6FS7uXKXAnC2DUklpmr1NNMNVak3cUBiJ9XFixxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735848752; c=relaxed/simple;
-	bh=k1BiPny32Vdcy39cfGCcTfQtxejWNWV0QmLJ9stcBX0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VhJFplx/U7F43NXQEhv9aZ4PfjzXOsfV8e2gXEJbUGoV4MPGjdRvp65uGVBQOjuVCc+8y8yMtApvAje108hXDznqFxsDc7BOInCh91FVDNydbJE7ttaKF292DkRAfRBMDqxAVJTOKIoJwrM7R4KEk49hyBvFNut+6h9mqkqVhNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pfO1ILJT; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-844e9b8b0b9so934020939f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2025 12:12:29 -0800 (PST)
+	s=arc-20240116; t=1735849100; c=relaxed/simple;
+	bh=P5rKo/20HCpsDorB04vTXU/JHstbfmXg+E+FwLLvuY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BM+HgF+bJm7zhSHLnX7dTp28lGjQnY8O5gf25/dvvJ6TQyKTBMY3IVJNs5xrDBpPCCqzK1+Jj/Fx/sRD3tT9lggEx6d2jrERf7qAwwVQnOONrb2w0KRZN+55xsG0DErw7YMKttASy0aG3DiYjIMJDPap0SIrutkZMMkJX46Yig8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=GcG3JcZ4; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4679d366adeso100168631cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2025 12:18:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1735848749; x=1736453549; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v2UPZHRZRRh2ttfhUjF6HZBoXRk72xT/3w5rhEqqtEw=;
-        b=pfO1ILJTL0fzKmMHxcVibOheO0IPhmRZD9vBOvvgkv+u723eU8PauZla7u0iNM6qZh
-         LOjIDB7xTYz+32JaoB4QY41nj5/yc5saS6kfVNCAmCls80qVM4kDPZfLyP01UhJFXsJC
-         o8qx1qgRq9909z+kBifvYyd8SWIlEpyKEfQPKSWazcb29K3ArZUQhD8yxNK7KkAQPUyj
-         Rr9TBydCY4ghOXq+G1X4CmM4kJpOH7je2A0MK1M5OG4IuE44h07Dyf3xhTYND17BctUV
-         YvOOrK/7gpByV3TTBESZsBALT/Rye655MCmojCJS7mmoFansXHdk+T11eDnsAORcB51P
-         VQHA==
+        d=szeredi.hu; s=google; t=1735849095; x=1736453895; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=whjW7ansRJg9of7azCwOlJGbs8sBbLB1p917lKhKZC4=;
+        b=GcG3JcZ4BQakVYBHdBJghw8zQSyoOXKEHz3bERqBRFCaeWgt+JHC8irHWdiixRodjY
+         he+Dhh/sp9xrnw2qIblpBTzgZ1Ha7yhsbiGt3+82ewGR8+jhwem6gI9S60wUQWalZenx
+         yXTcQdAfGWGNDvP+cmKDxbRQzeMoMU4fhE3Jo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735848749; x=1736453549;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2UPZHRZRRh2ttfhUjF6HZBoXRk72xT/3w5rhEqqtEw=;
-        b=Eivr9xQxDJJINPvv0UciPH5Ob8kPXeZ+em2HBlnBedB91H3XD5DOg7Ihw8UTyulUG5
-         bDuz+VvxfoH4hGix/PoPy7uKiUNZyKISC1Qh/FJ93ske+n309CE/LBnczPiPTvLQk6TE
-         L0QX2SnUEIJM88Zy/lRKxWGNe2OdGf2spKJXiWl17dfbEfD9GacbDcYci49/woOgtIrD
-         U/1FKnkRk54nUQFwwl6MD+pDoQpKdgDnF25jwnfFDBIMBzrnHb3WodlI6tuZNFIKxbv9
-         +AUoFh3IKMhMfvLdX3Cx0ZXU1u520jWQQ9nT3w/jGxKA0NiSH0vGHIWMrFtUnjVDiQEb
-         NeEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvsez3mIL2hM2odXnrekt1JEB+5LzUdefVXfRSrCTvLhJMvr7MET4QWvO0Eg3++EgeMYpn1MSx8ZqLSFs7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSJ9YVHtNfBWr2Vu33Nf8jDmprkftDnvRuDs7e7/16wMsq0t8K
-	OlbSpWIl6WWZez9AAmcC5u1lyWAwpALTkxLbs5Ch4vLR8kGTbpXztstFVDYsxb4=
-X-Gm-Gg: ASbGncth+aMMGp8p2UjG5/H1GFaKNd+oxhc9633slhDIVLi4jktRSO3i86l9izNxsr+
-	JKP2wUZoDaecHtvdvZY5Q5sGmtYtE9QOkEfNifUgwRv2PcpfW/iEpZZKV50co+PXyxHoT/vq9tg
-	TyATH8vPkQnnJXuAApt2J4mPRH6PMWx1iYswzUmjDTolmVknGL5YWuDnm896RR+JaLu8uaS692U
-	nlNPitz/TQCCK8yXBhLN2PnWKIEtqceeVEQxVBJqU4TGH1sgvHx0w==
-X-Google-Smtp-Source: AGHT+IEYlb99o+N5pvNX82iwMSNOKAxLdsrEbVqa3Z0i9O3bTDsJaWg1lIWWOB2JxeZcRAFbxYbMjw==
-X-Received: by 2002:a05:6602:14d5:b0:83a:b500:3513 with SMTP id ca18e2360f4ac-8499e4ee9a6mr4443687939f.8.1735848748939;
-        Thu, 02 Jan 2025 12:12:28 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68bf64f29sm7341845173.43.2025.01.02.12.12.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2025 12:12:28 -0800 (PST)
-Message-ID: <abc8ea22-e6ad-49b7-83b9-d71839c2d785@kernel.dk>
-Date: Thu, 2 Jan 2025 13:12:27 -0700
+        d=1e100.net; s=20230601; t=1735849095; x=1736453895;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=whjW7ansRJg9of7azCwOlJGbs8sBbLB1p917lKhKZC4=;
+        b=HanVckMTB+h7mUPywn/Q5yev2V/cyZ9SRzF4H0lZEShLodYveNUi0r5p7xpNErlyRO
+         dFQn4G41YUKqr6bSinKIyd9guiEsJxSWBb+xWM5cDnB2yTuTrlkayEQxdm4XqZ0VqZ0x
+         ffeh0NxLXL9MvlObI+r1P0oKDqpNWQHlTDrSR/dj78sg5ruihWTZ/3OnNpXtQtLCdF5/
+         hdkZ5L9QkCjwxAjteZpbSLRa8rmYOW0VSEG1Y8MB/yaLShUCbC46WHC52ZhQeXZ27PSu
+         m7kwLe5fIdVJjvQCR+X+csJMuUlTUDa6pW/rJkyhkMhk0gE0HDN8vyJoKwaSoPsLqKPy
+         BNDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVow9pWWf0go7IQZMRtgCL1VHj/1llll/jy3ohKHIs36lHDPqnzNDK9gQv/TmhyCFvkjNL7EQeo6q0xwIaN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtNTWIan8LmJyB9i3180GDJsrqAs6o5McMmVhuKs632B0+CZhk
+	nSC+VNjuLf9Xs7qBqgUUSkyr6RXe1fw9EH8sfK6a7rVc14uJskqKcqEH6tWvt9cqD0vd7y1kmZk
+	yd1gT+G3ctVzOcGT1Ek1nebnMYhPvhDRgtIeRsQ==
+X-Gm-Gg: ASbGncsUrHHufo/ml33mUIZWr5SZkTFV4lFwvmTLToCSLFuw4GN7Y8ll9NBqb0f9/c/
+	sPSak4cnK23NEVZ779qmH2nPNtsdB4K1D6vilMQ==
+X-Google-Smtp-Source: AGHT+IHnssMS0rJW35LIoTzFQOzDJTFx8qrOIdHzeXqJduLtr2ZHV+Q05oV07SAY6+3VSl7j9BBmUdUt82kXGzSb32M=
+X-Received: by 2002:ac8:5815:0:b0:467:51d7:e13 with SMTP id
+ d75a77b69052e-46a3af9ff9dmr746325331cf.9.1735849095639; Thu, 02 Jan 2025
+ 12:18:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] mm/truncate: add folio_unmap_invalidate() helper
-From: Jens Axboe <axboe@kernel.dk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <20241220154831.1086649-1-axboe@kernel.dk>
- <20241220154831.1086649-7-axboe@kernel.dk>
- <Z2WZoBUIM2YAr0DZ@casper.infradead.org>
- <5cb98ddb-744a-4fc8-b793-9dbe56e16f35@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <5cb98ddb-744a-4fc8-b793-9dbe56e16f35@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <66ed861b.050a0220.2abe4d.0016.GAE@google.com> <674a5a6e.050a0220.253251.00d3.GAE@google.com>
+In-Reply-To: <674a5a6e.050a0220.253251.00d3.GAE@google.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 2 Jan 2025 21:18:04 +0100
+Message-ID: <CAJfpeguK9Baf4hxBhqS_313bo9Z0ZAGMAAbkaOMQRKTK_auk=w@mail.gmail.com>
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_revert
+To: syzbot <syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, joannelkoong@gmail.com, 
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mszeredi@redhat.com, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/20/24 9:28 AM, Jens Axboe wrote:
-> On 12/20/24 9:21 AM, Matthew Wilcox wrote:
->> On Fri, Dec 20, 2024 at 08:47:44AM -0700, Jens Axboe wrote:
->>> +int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
->>> +			   gfp_t gfp)
->>>  {
->>> -	if (folio->mapping != mapping)
->>> -		return 0;
->>> +	int ret;
->>> +
->>> +	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
->>>  
->>> -	if (!filemap_release_folio(folio, GFP_KERNEL))
->>> +	if (folio_test_dirty(folio))
->>>  		return 0;
->>> +	if (folio_mapped(folio))
->>> +		unmap_mapping_folio(folio);
->>> +	BUG_ON(folio_mapped(folio));
->>> +
->>> +	ret = folio_launder(mapping, folio);
->>> +	if (ret)
->>> +		return ret;
->>> +	if (folio->mapping != mapping)
->>> +		return -EBUSY;
->>
->> The position of this test confuses me.  Usually we want to test
->> folio->mapping early on, since if the folio is no longer part of this
->> file, we want to stop doing things to it, rather than go to the trouble
->> of unmapping it.  Also, why do we want to return -EBUSY in this case?
->> If the folio is no longer part of this file, it has been successfully
->> removed from this file, right?
-> 
-> It's simply doing what the code did before. I do agree the mapping check
-> is a bit odd at that point, but that's how
-> invalidate_inode_pages2_range() and folio_launder() was setup. We can
-> certainly clean that up after the merge of these helpers, but I didn't
-> want to introduce any potential changes with this merge.
-> 
-> -EBUSY was the return from a 0 return from those two helpers before.
+On Sat, 30 Nov 2024 at 01:21, syzbot
+<syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this issue to:
+>
+> commit 3b97c3652d9128ab7f8c9b8adec6108611fdb153
+> Author: Joanne Koong <joannelkoong@gmail.com>
+> Date:   Thu Oct 24 17:18:08 2024 +0000
+>
+>     fuse: convert direct io to use folios
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1033bf5f980000
+> start commit:   b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1233bf5f980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1433bf5f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2625ce08c2659fb9961a
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14534f78580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c3d3c0580000
+>
+> Reported-by: syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com
+> Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Any further concerns with this? Trying to nudge this patchset forward...
-It's not like there's a lot of time left for 6.14.
-
--- 
-Jens Axboe
-
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+7a4f541873734f41f9645ec147cfae72ef3ffd00
 
