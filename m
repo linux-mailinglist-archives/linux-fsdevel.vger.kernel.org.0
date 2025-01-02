@@ -1,301 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-38342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404119FFFBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 20:59:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B83F9FFFD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 21:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509A21883C7F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 19:59:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336EB162A51
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 20:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E871B4F23;
-	Thu,  2 Jan 2025 19:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67081B6CF4;
+	Thu,  2 Jan 2025 20:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQ7TDJnl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pfO1ILJT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212E67E0E4
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2025 19:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4DE8F58
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2025 20:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735847979; cv=none; b=HWhRdXfMqS6AU25lXbCx4ryh2T9nvDNr2oXtcHckwEoW9BEQVmGdcr+IhyvPGqVeHHANKvDgSArKsHZTvDQPIxE1iHa6ZSVvfjd0VPUo39qfy1LWa5/AipxqSTm7K94kUDYAvlD4NoLVJHsfsIijDjVZHcgNoyNKFRIIiKS13X8=
+	t=1735848752; cv=none; b=uM7iU1jtLrMSszYPsPFfvVAYPa1/1tJMd8+6XidfFVLhqWs718W+iOPyKHzhB0r852R39ZCRFRB4L/a6L+BPHk6hLxwMeMxGiMNG0OGylx2yL738ktVMvaYW7ixywbbrY09wdB3Chmc9+psHPjWFdztnPnTB1YXhUQCaqKXEmcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735847979; c=relaxed/simple;
-	bh=De/AtM6Llzu+P+VAtiydarvxmSKAH42c26KQku0OU+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdIXZmqqtjSzxNjEfT6RI7Le+YRggCAKrTuSoxz6npj6u2HDjRJ009XKB7bqrKKs8aU6JZZu8HTk+sSfSbiV0CdM5zOS0YRvaj8HGoPQV3z9PhNPWoyXVC9Rxd8VEJmCI7cNd7XWDvcnjsw3uNrsXJF/iLGDMEd7oqiJztsfJQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQ7TDJnl; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-467a37a2a53so139985351cf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2025 11:59:37 -0800 (PST)
+	s=arc-20240116; t=1735848752; c=relaxed/simple;
+	bh=k1BiPny32Vdcy39cfGCcTfQtxejWNWV0QmLJ9stcBX0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VhJFplx/U7F43NXQEhv9aZ4PfjzXOsfV8e2gXEJbUGoV4MPGjdRvp65uGVBQOjuVCc+8y8yMtApvAje108hXDznqFxsDc7BOInCh91FVDNydbJE7ttaKF292DkRAfRBMDqxAVJTOKIoJwrM7R4KEk49hyBvFNut+6h9mqkqVhNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pfO1ILJT; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-844e9b8b0b9so934020939f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2025 12:12:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735847977; x=1736452777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PjSIfZUGuUkWyeI8Uu3qOfSAK+XFtRgECvJydFhzJn8=;
-        b=AQ7TDJnl8ZXoRGuQV9Zrjkmb30ZTo5GoUH/3berZc+iGkYfWNPZMwmaEOxbgH9M5i4
-         a44RZpNxtsSUUFbhSm7o/e7AKV6VbvYRXbdtl3Prvzj8Yj+EBufXNFI14sjMIDFKS8Zg
-         xxGECxfYCqaOT5Si/ESG/TFzPKCoVQXVxot/mVVEt83fw+nrjyD2OELXWzT9ednpW3CZ
-         Wu3I1B3tWR+jhurh+Dwbp3akfBu39heBOpy5y1zEwla9oUapvHKcT0ZOyPa56QrEbckg
-         eOt+4bB9Mglt5CCCWhMwSWMJkeeMYU6MnihAuu/46RCixIDwW5ZAdDSvrvrHo26YRXyZ
-         qLkA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1735848749; x=1736453549; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v2UPZHRZRRh2ttfhUjF6HZBoXRk72xT/3w5rhEqqtEw=;
+        b=pfO1ILJTL0fzKmMHxcVibOheO0IPhmRZD9vBOvvgkv+u723eU8PauZla7u0iNM6qZh
+         LOjIDB7xTYz+32JaoB4QY41nj5/yc5saS6kfVNCAmCls80qVM4kDPZfLyP01UhJFXsJC
+         o8qx1qgRq9909z+kBifvYyd8SWIlEpyKEfQPKSWazcb29K3ArZUQhD8yxNK7KkAQPUyj
+         Rr9TBydCY4ghOXq+G1X4CmM4kJpOH7je2A0MK1M5OG4IuE44h07Dyf3xhTYND17BctUV
+         YvOOrK/7gpByV3TTBESZsBALT/Rye655MCmojCJS7mmoFansXHdk+T11eDnsAORcB51P
+         VQHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735847977; x=1736452777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PjSIfZUGuUkWyeI8Uu3qOfSAK+XFtRgECvJydFhzJn8=;
-        b=MxrJeGjYyPaGwpJKWwTDCJiNq4TNojmKnvoT1JE8AES15cdGqrWXU7djNvhx/1qzXW
-         IbHEq8cP0a3nk4LB8T2JAy+spMckqL+PwSPd+gvBmZ0xaBBEEAonSVASS0tQEurjffmF
-         U+kETPc+hJYVqgLsOc01BkpQmOyz2UmZDdq74vLcCyTWhLaGJCPghDVVVQz20cToV+Kf
-         PUKYqaPe01qBtr97FkQR8JwiedMIJ69NbvB/x/GYuLY1xYygMc6xl0SQCcMayaDz6keA
-         lOBa9mgQrSzB158DFDF55QVP+RP8e5ZKlZoR25wwBNzI4uWAjLJR6yn2o5ZU5CcJdYTc
-         Sg5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWtLFwDJFOXHNMkCt2o3H1PuDp6VDX/Gbq97qlQrwnRdOmkI1UaXIqbAGCE59Ke5IJ6Xd6Dyrb6v9H861u@vger.kernel.org
-X-Gm-Message-State: AOJu0YywEQT/4vmIvOJZZcveJaQfuSBdPdkgQBOOmnRFf3Uxjfftx128
-	n3wIAACWc9JM6Ax0FoLZNSslfqnRxGVE3Pf9caOsV+GIXlJcI8d1LQhs38aeFhLdUVattV8RGaR
-	7dc9SfEksrE13DXY54t2yuqg/DYc=
-X-Gm-Gg: ASbGncu37FTFSeX5hPxQqszxOOZAOOidhvsUyDlQI6FGnQpPx2mYlTv2sl2XfIDmL57
-	zb6uPGIsN/q/HsCD9xssHOd0Mp1gCsa9BlmI2A90=
-X-Google-Smtp-Source: AGHT+IEZkNcUvY6ZY5oPLOjgB3IoNX19M+CYYbv8xFIM1fWH0J82WPyfmMIYP/gUvxNTXaDxcMsgUr+umRjaqoRECa0=
-X-Received: by 2002:ac8:5d07:0:b0:467:73f3:887d with SMTP id
- d75a77b69052e-46a4a8f0f2cmr764271641cf.33.1735847976752; Thu, 02 Jan 2025
- 11:59:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735848749; x=1736453549;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v2UPZHRZRRh2ttfhUjF6HZBoXRk72xT/3w5rhEqqtEw=;
+        b=Eivr9xQxDJJINPvv0UciPH5Ob8kPXeZ+em2HBlnBedB91H3XD5DOg7Ihw8UTyulUG5
+         bDuz+VvxfoH4hGix/PoPy7uKiUNZyKISC1Qh/FJ93ske+n309CE/LBnczPiPTvLQk6TE
+         L0QX2SnUEIJM88Zy/lRKxWGNe2OdGf2spKJXiWl17dfbEfD9GacbDcYci49/woOgtIrD
+         U/1FKnkRk54nUQFwwl6MD+pDoQpKdgDnF25jwnfFDBIMBzrnHb3WodlI6tuZNFIKxbv9
+         +AUoFh3IKMhMfvLdX3Cx0ZXU1u520jWQQ9nT3w/jGxKA0NiSH0vGHIWMrFtUnjVDiQEb
+         NeEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvsez3mIL2hM2odXnrekt1JEB+5LzUdefVXfRSrCTvLhJMvr7MET4QWvO0Eg3++EgeMYpn1MSx8ZqLSFs7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSJ9YVHtNfBWr2Vu33Nf8jDmprkftDnvRuDs7e7/16wMsq0t8K
+	OlbSpWIl6WWZez9AAmcC5u1lyWAwpALTkxLbs5Ch4vLR8kGTbpXztstFVDYsxb4=
+X-Gm-Gg: ASbGncth+aMMGp8p2UjG5/H1GFaKNd+oxhc9633slhDIVLi4jktRSO3i86l9izNxsr+
+	JKP2wUZoDaecHtvdvZY5Q5sGmtYtE9QOkEfNifUgwRv2PcpfW/iEpZZKV50co+PXyxHoT/vq9tg
+	TyATH8vPkQnnJXuAApt2J4mPRH6PMWx1iYswzUmjDTolmVknGL5YWuDnm896RR+JaLu8uaS692U
+	nlNPitz/TQCCK8yXBhLN2PnWKIEtqceeVEQxVBJqU4TGH1sgvHx0w==
+X-Google-Smtp-Source: AGHT+IEYlb99o+N5pvNX82iwMSNOKAxLdsrEbVqa3Z0i9O3bTDsJaWg1lIWWOB2JxeZcRAFbxYbMjw==
+X-Received: by 2002:a05:6602:14d5:b0:83a:b500:3513 with SMTP id ca18e2360f4ac-8499e4ee9a6mr4443687939f.8.1735848748939;
+        Thu, 02 Jan 2025 12:12:28 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68bf64f29sm7341845173.43.2025.01.02.12.12.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Jan 2025 12:12:28 -0800 (PST)
+Message-ID: <abc8ea22-e6ad-49b7-83b9-d71839c2d785@kernel.dk>
+Date: Thu, 2 Jan 2025 13:12:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <71d7ac34-a5e5-4e59-802b-33d8a4256040@redhat.com>
- <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm> <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com>
- <qsytb6j4j6v7kzmiygmmsrdgfkwszpjudvwbq5smkhowfd75dd@beks3genju7x>
- <3f3c7254-7171-4987-bb1b-24c323e22a0f@redhat.com> <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
- <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com> <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
- <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com> <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
- <xucuoi4ywape4ftgzgahqqgzk6xhvotzdu67crq37ccmyl53oa@oiq354b6sfu7>
-In-Reply-To: <xucuoi4ywape4ftgzgahqqgzk6xhvotzdu67crq37ccmyl53oa@oiq354b6sfu7>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 2 Jan 2025 11:59:25 -0800
-Message-ID: <CAJnrk1bmjd_yE0LO=Qdff==Zk5neunvUbnsEVYqNPPDsSJUudw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Zi Yan <ziy@nvidia.com>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
-	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, 
-	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/12] mm/truncate: add folio_unmap_invalidate() helper
+From: Jens Axboe <axboe@kernel.dk>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, kirill@shutemov.name,
+ bfoster@redhat.com
+References: <20241220154831.1086649-1-axboe@kernel.dk>
+ <20241220154831.1086649-7-axboe@kernel.dk>
+ <Z2WZoBUIM2YAr0DZ@casper.infradead.org>
+ <5cb98ddb-744a-4fc8-b793-9dbe56e16f35@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <5cb98ddb-744a-4fc8-b793-9dbe56e16f35@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 30, 2024 at 12:04=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Mon, Dec 30, 2024 at 10:38:16AM -0800, Joanne Koong wrote:
-> > On Mon, Dec 30, 2024 at 2:16=E2=80=AFAM David Hildenbrand <david@redhat=
-.com> wrote:
->
-> Thanks David for the response.
->
-> > >
-> > > >> BTW, I just looked at NFS out of interest, in particular
-> > > >> nfs_page_async_flush(), and I spot some logic about re-dirtying pa=
-ges +
-> > > >> canceling writeback. IIUC, there are default timeouts for UDP and =
-TCP,
-> > > >> whereby the TCP default one seems to be around 60s (* retrans?), a=
-nd the
-> > > >> privileged user that mounts it can set higher ones. I guess one co=
-uld run
-> > > >> into similar writeback issues?
-> > > >
-> > >
-> > > Hi,
-> > >
-> > > sorry for the late reply.
-> > >
-> > > > Yes, I think so.
-> > > >
-> > > >>
-> > > >> So I wonder why we never required AS_WRITEBACK_INDETERMINATE for n=
-fs?
-> > > >
-> > > > I feel like INDETERMINATE in the name is the main cause of confusio=
-n.
-> > >
-> > > We are adding logic that says "unconditionally, never wait on writeba=
-ck
-> > > for these folios, not even any sync migration". That's the main probl=
-em
-> > > I have.
-> > >
-> > > Your explanation below is helpful. Because ...
-> > >
-> > > > So, let me explain why it is required (but later I will tell you ho=
-w it
-> > > > can be avoided). The FUSE thread which is actively handling writeba=
-ck of
-> > > > a given folio can cause memory allocation either through syscall or=
- page
-> > > > fault. That memory allocation can trigger global reclaim synchronou=
-sly
-> > > > and in cgroup-v1, that FUSE thread can wait on the writeback on the=
- same
-> > > > folio whose writeback it is supposed to end and cauing a deadlock. =
-So,
-> > > > AS_WRITEBACK_INDETERMINATE is used to just avoid this deadlock.
-> > >  > > The in-kernel fs avoid this situation through the use of GFP_NOF=
-S
-> > > > allocations. The userspace fs can also use a similar approach which=
- is
-> > > > prctl(PR_SET_IO_FLUSHER, 1) to avoid this situation. However I have=
- been
-> > > > told that it is hard to use as it is per-thread flag and has to be =
-set
-> > > > for all the threads handling writeback which can be error prone if =
-the
-> > > > threadpool is dynamic. Second it is very coarse such that all the
-> > > > allocations from those threads (e.g. page faults) become NOFS which
-> > > > makes userspace very unreliable on highly utilized machine as NOFS =
-can
-> > > > not reclaim potentially a lot of memory and can not trigger oom-kil=
-l.
-> > > >
-> > >
-> > > ... now I understand that we want to prevent a deadlock in one specif=
-ic
-> > > scenario only?
-> > >
-> > > What sounds plausible for me is:
-> > >
-> > > a) Make this only affect the actual deadlock path: sync migration
-> > >     during compaction. Communicate it either using some "context"
-> > >     information or with a new MIGRATE_SYNC_COMPACTION.
-> > > b) Call it sth. like AS_WRITEBACK_MIGHT_DEADLOCK_ON_RECLAIM to expres=
-s
-> > >      that very deadlock problem.
-> > > c) Leave all others sync migration users alone for now
-> >
-> > The deadlock path is separate from sync migration. The deadlock arises
-> > from a corner case where cgroupv1 reclaim waits on a folio under
-> > writeback where that writeback itself is blocked on reclaim.
-> >
->
-> Joanne, let's drop the patch to migrate.c completely and let's rename
-> the flag to something like what David is suggesting and only handle in
-> the reclaim path.
->
-> > >
-> > > Would that prevent the deadlock? Even *better* would be to to be able=
- to
-> > > ask the fs if starting writeback on a specific folio could deadlock.
-> > > Because in most cases, as I understand, we'll  not actually run into =
-the
-> > > deadlock and would just want to wait for writeback to just complete
-> > > (esp. compaction).
-> > >
-> > > (I still think having folios under writeback for a long time might be=
- a
-> > > problem, but that's indeed something to sort out separately in the
-> > > future, because I suspect NFS has similar issues. We'd want to "wait
-> > > with timeout" and e.g., cancel writeback during memory
-> > > offlining/alloc_cma ...)
->
-> Thanks David and yes let's handle the folios under writeback issue
-> separately.
->
-> >
-> > I'm looking back at some of the discussions in v2 [1] and I'm still
-> > not clear on how memory fragmentation for non-movable pages differs
-> > from memory fragmentation from movable pages and whether one is worse
-> > than the other.
->
-> I think the fragmentation due to movable pages becoming unmovable is
-> worse as that situation is unexpected and the kernel can waste a lot of
-> CPU to defrag the block containing those folios. For non-movable blocks,
-> the kernel will not even try to defrag. Now we can have a situation
-> where almost all memory is backed by non-movable blocks and higher order
-> allocations start failing even when there is enough free memory. For
-> such situations either system needs to be restarted (or workloads
-> restarted if they are cause of high non-movable memory) or the admin
-> needs to setup ZONE_MOVABLE where non-movable allocations don't go.
+On 12/20/24 9:28 AM, Jens Axboe wrote:
+> On 12/20/24 9:21 AM, Matthew Wilcox wrote:
+>> On Fri, Dec 20, 2024 at 08:47:44AM -0700, Jens Axboe wrote:
+>>> +int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
+>>> +			   gfp_t gfp)
+>>>  {
+>>> -	if (folio->mapping != mapping)
+>>> -		return 0;
+>>> +	int ret;
+>>> +
+>>> +	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>>>  
+>>> -	if (!filemap_release_folio(folio, GFP_KERNEL))
+>>> +	if (folio_test_dirty(folio))
+>>>  		return 0;
+>>> +	if (folio_mapped(folio))
+>>> +		unmap_mapping_folio(folio);
+>>> +	BUG_ON(folio_mapped(folio));
+>>> +
+>>> +	ret = folio_launder(mapping, folio);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +	if (folio->mapping != mapping)
+>>> +		return -EBUSY;
+>>
+>> The position of this test confuses me.  Usually we want to test
+>> folio->mapping early on, since if the folio is no longer part of this
+>> file, we want to stop doing things to it, rather than go to the trouble
+>> of unmapping it.  Also, why do we want to return -EBUSY in this case?
+>> If the folio is no longer part of this file, it has been successfully
+>> removed from this file, right?
+> 
+> It's simply doing what the code did before. I do agree the mapping check
+> is a bit odd at that point, but that's how
+> invalidate_inode_pages2_range() and folio_launder() was setup. We can
+> certainly clean that up after the merge of these helpers, but I didn't
+> want to introduce any potential changes with this merge.
+> 
+> -EBUSY was the return from a 0 return from those two helpers before.
 
-Thanks for the explanations.
+Any further concerns with this? Trying to nudge this patchset forward...
+It's not like there's a lot of time left for 6.14.
 
-The reason I ask is because I'm trying to figure out if having a time
-interval wait or retry mechanism instead of skipping migration would
-be a viable solution. Where when attempting the migration for folios
-with the as_writeback_indeterminate flag that are under writeback,
-it'll wait on folio writeback for a certain amount of time and then
-skip the migration if no progress has been made and the folio is still
-under writeback.
+-- 
+Jens Axboe
 
-there are two cases for fuse folios under writeback (for folios not
-under writeback, migration will work as is):
-a) normal case: server is not malicious or buggy, writeback is
-completed in a timely manner.
-For this case, migration would be successful and there'd be no
-difference for this between having no temp pages vs temp pages
-
-
-b) server is malicious or buggy:
-eg the server never completes writeback
-
-With no temp pages:
-The folio under writeback prevents a memory block (not sure how big
-this usually is?) from being compacted, leading to memory
-fragmentation
-
-With temp pages:
-fuse allocates a non-movable page for every page it needs to write
-back, which worsens memory usage, these pages will never get freed
-since the server never finishes writeback on them. The non-movable
-pages could also fragment memory blocks like in the scenario with no
-temp pages.
-
-
-Is the b) case with no temp pages worse for memory health than the
-scenario with temp pages? For the cpu usage issue (eg kernel keeps
-trying to defrag blocks containing these problematic folios), it seems
-like this could be potentially mitigated by marking these blocks as
-uncompactable?
-
-
-Thanks,
-Joanne
-
->
-> > Currently fuse uses movable temp pages (allocated with
-> > gfp flags GFP_NOFS | __GFP_HIGHMEM), and these can run into the same
-> > issue where a buggy/malicious server may never complete writeback.
->
-> So, these temp pages are not an issue for fragmenting the movable blocks
-> but if there is no limit on temp pages, the whole system can become
-> non-movable (there is a case where movable blocks on non-ZONE_MOVABLE
-> can be converted into non-movable blocks under low memory). ZONE_MOVABLE
-> will avoid such scenario but tuning the right size of ZONE_MOVABLE is
-> not easy.
->
-> > This has the same effect of fragmenting memory and has a worse memory
-> > cost to the system in terms of memory used. With not having temp pages
-> > though, now in this scenario, pages allocated in a movable page block
-> > can't be compacted and that memory is fragmented. My (basic and maybe
-> > incorrect) understanding is that memory gets allocated through a buddy
-> > allocator and moveable vs nonmovable pages get allocated to
-> > corresponding blocks that match their type, but there's no other
-> > difference otherwise. Is this understanding correct? Or is there some
-> > substantial difference between fragmentation for movable vs nonmovable
-> > blocks?
->
-> The main difference is the fallback of high order allocation which can
-> trigger compaction or background compaction through kcompactd. The
-> kernel will only try to defrag the movable blocks.
->
 
