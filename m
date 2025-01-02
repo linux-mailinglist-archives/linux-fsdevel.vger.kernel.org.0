@@ -1,203 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-38339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7319FFDE0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 19:20:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398349FFEEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 19:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD1097A160E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 18:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02186160F0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2025 18:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923781B6D0D;
-	Thu,  2 Jan 2025 18:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A5B1917ED;
+	Thu,  2 Jan 2025 18:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqgNnfD6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmicEsnC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC06A1922E1;
-	Thu,  2 Jan 2025 18:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B9A7E782
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2025 18:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735841945; cv=none; b=G4/BhDPyUeo7oyuNNnIWDHsCxQlfxInZbrn1boBdnoqGwq0hhK0hGtSsD2pOmcL927rENVjWrkQEeiBpmQOwu6EpGKAay0QgEVg4TVATk4Tr5ikit4Y4JBEqoIbMfkib4rrrBP+GYE2Jth6ECd5BA2fbreX33IQuZpKh4h5KhpU=
+	t=1735844057; cv=none; b=qf5HS90GbPxEczRVLA63Halh9gYs80UC9sdGCZSXvs4s7dq6B1HvVsHyxzOBN2cDBxybUhbaCDq8RW9hv38mEIusQtXGlOFZE7Q3p59TfwAHDtikqWtYr9yl4SZk/AmACDMEQesU6Zl6rooxhYYo9Z/tIjt+RVu+Wqfr95XLQxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735841945; c=relaxed/simple;
-	bh=Fb/paBAcrHpzPIF4vJdz91IniJJtVJEMK4QGu/SeVH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqiNGU+LgfQ+ofW3y17jAOf/pynoCQ1X5dr9rO/NpH4NSmLueLJfd4siPkPi38QAFLosoFxQOyik5/4aID0TLLXk0f4oJ+bFIZAfmneFI1/kbwlwjJ1v7h6DrbWmn9FMLz/OIxp7MsYcdpyB3c4DZ/dnKAUgV6SfwfVCsPqtDlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqgNnfD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB948C4CED0;
-	Thu,  2 Jan 2025 18:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735841945;
-	bh=Fb/paBAcrHpzPIF4vJdz91IniJJtVJEMK4QGu/SeVH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nqgNnfD6bBzGBEyVEm0lA4R6pe1JoHfro3BVL/RG1/YypeHEWUsokYyKu8zNe/TX0
-	 i1eov9n4zghsCAk+0CC33jEC3zkNiaBWb8aeL8GSQR5PdxALgup9S4X61DDkwsBXux
-	 S/yg4hUv3BANfepioN40NRvYKy9EXO/9vTcGfHvQYWV3F990f9PcqEViwnDmrqdlw5
-	 powSIotsXK9iI0T4T1pOHWHJgUlxRo1gZiqpizmwSD+PMKG5OahWyWdFPTEkQb2sfX
-	 Fioj2y94n1U4FwFG0nt6wCzQPw76MPIShIXb+2MnlzcOXAbnlbRxXy9f2l9oHo6wD9
-	 YGWCfyGURqsVA==
-Received: by pali.im (Postfix)
-	id 8720F812; Thu,  2 Jan 2025 19:18:54 +0100 (CET)
-Date: Thu, 2 Jan 2025 19:18:54 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Errno codes from symlink() syscall
-Message-ID: <20250102181854.jzmzdz3j4ekrpa7z@pali>
-References: <20241224160535.pi6nazpugqkhvfns@pali>
- <20241227130139.dplqu5jlli57hhhm@pali>
- <u7omfwq7othzaol24tio5tmmhc5kmpjhrqoxrzwtkhus65koa6@4bccjy7zza4w>
+	s=arc-20240116; t=1735844057; c=relaxed/simple;
+	bh=+Qs6xMGr55p17XkDku0NKUz2RFSdFUS3pnWF6VgBGyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=edMpLCwM4khBsTZSYVr1WsxuDm2Lr8j/k8Ul9HfqSAM71mOhz4QQcpJky7zIZOdoay29yi4B8NeVtsIt3jDvBsyNtUrrQJ5/1uKijtSyM32ZYA7SHf09cH8ms/GHW9REQKzOhqWDMGlHAAWXNvStadQiwQipKoWaCtzLnielxww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmicEsnC; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4678cce3d60so117150311cf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2025 10:54:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1735844055; x=1736448855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Qs6xMGr55p17XkDku0NKUz2RFSdFUS3pnWF6VgBGyc=;
+        b=fmicEsnC5OajRYdm3G72VOE7lxSikd3kUaDCRJK56Rqak1kzKTVfvfB4bTS8d6RttJ
+         y/pOWB43LJCAPVSq1ZYgz83b9uYKTNuL0nCYraC6tR3EegYZbbJmvHjEVOCYbdqlbBl0
+         thv05A6DstVxY9UUZ0gQKuCtD5iDU4onJ3Z+Qq5vLB91opb1PpMad3Vx//mXwEus80IX
+         sjHp9rfd75/Eiz+aS/j7b0zr7yHOzVNNwQdQQ1CnkUEHMVxYtAcFUr0SP4FOrzFQk/v7
+         Pg7xCANnigr0Dabx4aNQAQeYbdNY4SxgrdqLtVFKhRxqO/OuNLQ2ch9lNMTCFn6OCRCm
+         GSGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735844055; x=1736448855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Qs6xMGr55p17XkDku0NKUz2RFSdFUS3pnWF6VgBGyc=;
+        b=C8DvtIVDuThUYsMdxLgvHOJxppWdjur9CAIVX4GAc/C08cT/Q3rKp3RiXjcnn2T0WP
+         1hdz9/O5qC3UaLZa4v0zDbEai8mNO8+WAAQdxmbrqcTyaq0D3Qz3pIOqhDBmqajzNyUK
+         uAdIff7bYlBTmrzk3T3RaSjsquxubRMRrX5wKJBW39LokHus+TMuEv7JxIhygRIA6i0/
+         /3PecSMcMAFo80jehWwGE4NxmU0hZ5J9msbfKJZoFDIAXBBQONdG6Gjl94VPqIQ5sglF
+         QbqWwyvUacd3khEKsW26J+ksvK4iObnEizUZAWpgt4gnGl5U/Mj8Pn5n8UEq6kz2EP0O
+         K/ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXPX3dhKXso/9uUo2WzzqE0tvMJnpb2hjerIlg6+k0I4dC3gDo/YrD1T/iSpvbO79SyQIXOfRxLyTD0Iv0w@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQtBSP/343Mcl0N8uY1Us8fznIelhwi0uk+39aDwoof9UJfhj/
+	ZurTY8JCpHdso5ihy4I8Nl6WStcMw6TBIgD29GnPUKeSb26Ech8kFQbOnbmupkGBBc8uyri9beD
+	cmHye+Pu1x/zlG28oL7Jw+SV7+hs=
+X-Gm-Gg: ASbGncvuBffdTCGuDjaCN3RnzUgthwr5tEXU2j9SFjmypOutXgDfG8UH6yeNsOliMYy
+	RXsHWJA4IjsQzFwTVqYOJzF43qZbTy5lSoi5AgCw=
+X-Google-Smtp-Source: AGHT+IH0NZ+gCvxNDFQIWosoMmhOwNrAe8SZr2ALLTzinSxgkzv6mxbZ9MEZ9zk1QkDFGzCc1gK1ZLVCuEYWCkQUXMg=
+X-Received: by 2002:a05:622a:1651:b0:466:9507:624d with SMTP id
+ d75a77b69052e-46a4a8fbb8dmr750549081cf.27.1735844053474; Thu, 02 Jan 2025
+ 10:54:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <u7omfwq7othzaol24tio5tmmhc5kmpjhrqoxrzwtkhus65koa6@4bccjy7zza4w>
-User-Agent: NeoMutt/20180716
+References: <b16bff80-758c-451b-a96c-b047f446f992@fastmail.fm>
+ <9404aaa2-4fc2-4b8b-8f95-5604c54c162a@redhat.com> <qsytb6j4j6v7kzmiygmmsrdgfkwszpjudvwbq5smkhowfd75dd@beks3genju7x>
+ <3f3c7254-7171-4987-bb1b-24c323e22a0f@redhat.com> <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+ <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com> <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+ <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com> <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
+ <446704ab-434e-45ac-a062-45fef78815e4@redhat.com> <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+In-Reply-To: <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 2 Jan 2025 10:54:02 -0800
+Message-ID: <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Zi Yan <ziy@nvidia.com>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
+	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, 
+	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday 02 January 2025 16:06:56 Jan Kara wrote:
-> On Fri 27-12-24 14:01:39, Pali Rohár wrote:
-> > On Tuesday 24 December 2024 17:05:35 Pali Rohár wrote:
-> > > TL;DR;
-> > > Which errno code should network fs driver returns on create symlink
-> > > failure to userspace application for these cases?
-> > > * creating new symlink is not supported by fs driver mount options
-> > > * creating new symlink is not supported by remote server software
-> > > * creating new symlink is not supported by remote server storage
-> > > * creating new symlink is not permitted for user due to missing
-> > >   privilege/capability (indicated by remote server)
-> > > * access to the directory was denied due to ACL/mode (on remote)
-> > > 
-> > > 
-> > > Hello,
-> > > 
-> > > I discussed with Steve that current error codes from symlink() syscall
-> > > propagated to userspace on mounted SMB share are in most cases
-> > > misleading for end user who is trying to create a new symlink via ln -s
-> > > command.
-> > > 
-> > > Linux SMB client (cifs.ko) can see different kind of errors when it is
-> > > trying to create a symlink on SMB server. I know at least about these
-> > > errors which can happen:
-> > > 
-> > > 1 For the current mount parameters, the Linux SMB client does not
-> > >   implement creating a new symlink yet and server supports symlinks.
-> > >   This applies for example for SMB1 dialect against Windows server, when
-> > >   Linux SMB client is already able to query existing symlinks via
-> > >   readlink() syscall (just not able to create new one).
-> > > 
-> > > 2 For the current mount parameters, the SMB server does not support
-> > >   symlink operations at all. But it can support it when using other
-> > >   mount parameters. This applies for example for older Samba server with
-> > >   SMB2+ dialect (when older version supported symlinks only over SMB1).
-> > > 
-> > > 3 The SMB server for the mounted share does not support symlink
-> > >   operations at all. For example server supports symlinks, but mounted
-> > >   share is on FAT32 on which symlinks cannot be stored.
-> > > 
-> > > 4 The user who is logged to SMB server does not have a privilege to
-> > >   create a new symlink at all. But server and also share supports
-> > >   symlinks without any problem. Just this user is less privileged,
-> > >   and no ACL/mode can help.
-> > > 
-> > > 5 The user does not have access right to create a new object (file,
-> > >   directory, symlink, etc...) in the specified directory. For example
-> > >   "chmod -w" can cause this.
-> > > 
-> > > Linux SMB client should have all information via different SMB error
-> > > codes to distinguish between all these 5 situations.
-> > > 
-> > > On Windows servers for creating a new symlink is required that user has
-> > > SeCreateSymbolicLinkPrivilege. This privilege is by default enabled only
-> > > for Administrators, so by default ordinary users cannot create symlinks
-> > > due to security restrictions. On the other hand, querying symlink path
-> > > is allowed for any user (who has access to that symlink fs object).
-> > > 
-> > > Therefore it is important for user who is calling 'ln -s' command on SMB
-> > > share mounted on Linux to distinguish between 4 and 5 on failure. If
-> > > user needs to just add "write-directory" permission (chmod +w) or asking
-> > > AD admin for adding SeCreateSymbolicLinkPrivilege into Group Policy.
-> > > 
-> > > 
-> > > I would like to open a discussion on fsdevel list, what errno codes from
-> > > symlink() syscall should be reported to userspace for particular
-> > > situations 1 - 5?
-> > > 
-> > > Situation 5 should be classic EACCES. I think this should be clear.
-> > > 
-> > > Situation 4 start to be complicated. Windows "privilege" is basically
-> > > same as Linux "capability", it is bound to the process and in normal
-> > > situation it is set by login manager. Just Linux does not have
-> > > equivalent capability for allowing creating new symlink. But generally
-> > > Linux for missing permission which is granted by capability (e.g. for
-> > > ioperm() via CAP_SYS_RAWIO) is in lot of cases returned errno EPERM.
-> > > 
-> > > So I thought that EPERM is a good errno candidate for situation 4, until
-> > > I figured out that "symlink(2)" manapage has documented that EPERM has
-> > > completely different meaning:
-> > > 
-> > >   EPERM  The filesystem containing linkpath does not support the
-> > >          creation of symbolic links.
-> > > 
-> > > And I do not understand why. I have tried to call 'ln -s' on FAT32 and
-> > > it really showed me: "Operation not permitted" even under root. For user
-> > > this error message sounds like it needs to be admin / root. It is very
-> > > misleading.
-> > > 
-> > > At least it looks like that EPERM cannot be used for this situation.
-> > > And so it is not so easy to figure out what error codes should be
-> > > correctly returned to userspace.
-> > > 
-> > > 
-> > > Pali
-> > 
-> > I was thinking more about it and the reasonable solution could be to use
-> > following errno codes for these situations:
-> > 
-> >  EOPNOTSUPP - server or client does not support symlink operation
-> >  EPERM - user does not have privilege / capability to create new symlink
-> >  EACCES - user does not have (ACL) permission to create new symlink
-> 
-> Yes, this looks sensible to me.
-> 
-> > But in this case it would be needed to extend symlink(2) manpage. It is
-> > feasible? Or the meaning of EPERM is written in the stone, it means that
-> > operation is not supported, and it cannot be changed?
-> > 
-> > For me it sounds a bug if EPERM means "not supported", and also "ln -s"
-> > tool does not understand this EPERM error as it shows human readable
-> > message "Operation not permitted" instead of "Operation not supported"
-> > (which is the correct one in this situation).
-> 
-> What manpage says can certainly be changed, just write to the manpage
-> maintainer. After all it is just documenting how the code behaves. I didn't
-> find anything in the standards that would forbid this behavior and we don't
-> even take standards too seriously ;). What matters is application behavior.
-> I would be a bit reluctant to change EPERM return code to EOPNOTSUPP for
-> all the filesystems (as much as I agree it would be more sensible error) as
-> I don't see a strong enough reason for risking that it might break some
-> application somewhere. But making Samba behave as above and documenting in
-> the manpage that EPERM means that particular problem for it sounds
-> certainly fine to me.
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+On Mon, Dec 30, 2024 at 12:11=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
+ev> wrote:
+>
+> On Mon, Dec 30, 2024 at 08:52:04PM +0100, David Hildenbrand wrote:
+> >
+> [...]
+> > > I'm looking back at some of the discussions in v2 [1] and I'm still
+> > > not clear on how memory fragmentation for non-movable pages differs
+> > > from memory fragmentation from movable pages and whether one is worse
+> > > than the other. Currently fuse uses movable temp pages (allocated wit=
+h
+> > > gfp flags GFP_NOFS | __GFP_HIGHMEM), and these can run into the same
+> >
+> > Why are they movable? Do you also specify __GFP_MOVABLE?
+> >
+> > If not, they are unmovable and are never allocated from
+> > ZONE_MOVABLE/MIGRATE_CMA -- and usually only from MIGRATE_UNMOVBALE, to
+> > group these unmovable pages.
+> >
+>
+> Yes, these temp pages are non-movable. (Must be a typo in Joanne's
+> email).
 
-Ok, if it makes sense to use EOPNOTSUPP / EPERM / EACCES like
-I described above, then I can prepare changes for cifs.ko driver and
-also for Linux symlink manpage.
+Sorry for the confusion, that should have been "non-movable temp pages".
+
+>
+> [...]
+> >
+> > I assume not regarding fragmentation.
+> >
+> >
+> > In general, I see two main issues:
+> >
+> > A) We are no longer waiting on writeback, even though we expect in sane
+> > environments that writeback will happen and we it might be worthwhile t=
+o
+> > just wait for writeback so we can migrate these folios.
+> >
+> > B) We allow turning movable pages to be unmovable, possibly forever/lon=
+g
+> > time, and there is no way to make them movable again (e.g., cancel
+> > writeback).
+> >
+> >
+> > I'm wondering if A) is actually a new issue introduced by this change. =
+Can
+> > folios with busy temp pages (writeback cleared on folio, but temp pages=
+ are
+> > still around) be migrated? I will look into some details once I'm back =
+from
+> > vacation.
+> >
+
+Folios with busy temp pages can be migrated since fuse will clear
+writeback on the folio immediately once it's copied to the temp page.
+
+To me, these two issues seem like one and the same. No longer waiting
+on writeback renders it unmovable, which prevents
+compaction/migration.
+
+>
+> My suggestion is to just drop the patch related to A as it is not
+> required for deadlock avoidance. For B, I think we need a long term
+> solution which is usable by other filesystems as well.
+
+Sounds good. With that, we need to take this patchset out of
+mm-unstable or this could lead to migration infinitely waiting on
+folio writeback without the migrate patch there.
+
+
+Thanks,
+Joanne
 
