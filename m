@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-38357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E76CA005AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 09:19:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB77A005AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 09:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595E0162ADE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 08:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05E9D1884161
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 08:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4C51C5F0F;
-	Fri,  3 Jan 2025 08:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F191C5F0F;
+	Fri,  3 Jan 2025 08:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAYdFDt3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpntoF01"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C571B1AD3E5;
-	Fri,  3 Jan 2025 08:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F127E1B0F2F;
+	Fri,  3 Jan 2025 08:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735892390; cv=none; b=FiwA4mPEpZpC1ixUkFaAbyOfTpPUDpozNpICaXPK8I9IWMMFmpKV5vcGbTxumZWU4XzEA8RJjCyU+b4DI6NL078EhR1yEUQrcAdZNsNB++LyWrzzaWbo9SUuBCnPqOVoTyyftIdXZCVhXoPNLQqzZ5z1m2WTtoc06o+pzLCox8c=
+	t=1735892445; cv=none; b=CnR1X7sDcjbq0202HKTnElo71ZstmspTdL13KDfXdcJlnOgmD+FKvKfjRD3+F0BV5vph0wt5jKZHsznsPF2pKD+zAqxTjtlTdfVUwuo9qbs98zJ2JczJVJbNaqZZwiSy1JspQ5X7vswdtz6Z/h114sjnlFmWfK8eUDWprBbzcP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735892390; c=relaxed/simple;
+	s=arc-20240116; t=1735892445; c=relaxed/simple;
 	bh=azZgEyxUZ5yStL5qKwKklVZMW+QR5Yn42m5lZPo1ZNM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=s4pJO05MRG9FYY30jM4fPScK7pQsF3Yvmb+4p9hpNKtOJSNte1WcdcxzzgBv7sjeUdBQ7L9BQYhvUkQukqueYHzfwlz2/bbCLHf4zX5ONbBoXoQkfyyEy1EFJCiRCFbGbPYuZm9e3d/g4D27eNmFFqTG4tHK3f0YDUKyqZjUXU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAYdFDt3; arc=none smtp.client-ip=209.85.218.48
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=f5KxUVRohn6H9ByAtMCVAwkO9OZviuxFnrxvn6fSQunkbB3HfDkjJoD3uO3zsIHY0EnDGPWAgOin6O/b4iBuX4MFayxWQxbTd33XgWCMgCl3ygGbgK0I3KvbxPFsiSrckTAdoPZXwHi8aCyvHwlQwaG28HthJb729jwgMbg8K+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NpntoF01; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa679ad4265so2354395766b.0;
-        Fri, 03 Jan 2025 00:19:48 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3f65844deso19989838a12.0;
+        Fri, 03 Jan 2025 00:20:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735892387; x=1736497187; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1735892440; x=1736497240; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
         bh=azZgEyxUZ5yStL5qKwKklVZMW+QR5Yn42m5lZPo1ZNM=;
-        b=gAYdFDt3cpvMXTuxky+kEm958+Ob3NhD0sxwQZllYHcD7ykRjour9QORdobni0Rw4s
-         FXnVrn1/YjipPN1pGW2GzrcTxGqRRZ86r6YgBciIostVHd3LF0WsMg0UeUH0Larpo+8y
-         8PSHO/oRVKGYYXNPh1yeJDsCWmV36/PYkf78Bc5LI3aXZatOhpSPWEe9BJx4+zUcV60d
-         bpjUwEUOBr8y/zzMqEwnmHfU+qYiJtXIYcUT7kxbaeQY941dcfreB/r5SrBhzGJc5hEr
-         B4G+QMbptm5Y5rrRuDm6HyCaZdBaS09X+n39nSRinRXOE3Vmny0pigfasOy6JcPTRKml
-         BT0A==
+        b=NpntoF019l3754KYIUS2WqlqNip2r3gb3OERNbRc8SGVuQXtaFtfmOnezYEe24HUTX
+         lz6cqMqgo9YxdF1QD4I5zmanzzbNpTwQzKtxPotvdaoPs3Alo4PnmAT119D7OnPSUpnF
+         ghl8VRpkvF/V11spqEBY62wAQIBndTGswuyjnm09GLazz6G4IJTh6kknJgcCtc1qX3Ij
+         vbKXTZG74Eoki2+CboudH3NAMpN8jpR+rmx7xqdIZDKLwQLaN97X43rAtU1AQFKLwVa/
+         0vco/RvRQbOWD1fxIu39NJLH4cYYN4DDXwF8ClVMVmpEpjf/4Ry3L5qnkjVtf02PjpcO
+         0J1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735892387; x=1736497187;
+        d=1e100.net; s=20230601; t=1735892440; x=1736497240;
         h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
         bh=azZgEyxUZ5yStL5qKwKklVZMW+QR5Yn42m5lZPo1ZNM=;
-        b=TDDj0vfZRWevzYWlm5mo/WtfomKx9TYz4CjdY8AbOAqeC6amctybmYNQ5SLrXNrC+F
-         bdCjoHlCKpk5OkI5DRBp8VmWVSB7syDbjTynsw/xbKLb539Cd6W+2LlX7PsllWO3XoHa
-         MUeumywS6rSOQnorpxNmnDp54W9tzgMaO8zJrcQNqHYOiQjI74r9U4DnWt8nI9ceWdhQ
-         vRuVImgi9eOnvry0y3WLwJsyXyhbvlhx+OqAGjV5kenOM+QVQI3FPTk4O+/h8nGL6px3
-         Xpdri6Dt3ioX7Br2fFLibXddZie4RmyHNTu2XAog1mYMVpgkl1Gbpbyehch5wziejoHi
-         NsKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRt1edI7wJHiKUkO0MUKR4aI02nW08qOU4uxLR+MTrEGJNrnqeBTwvn8OBLC0PE/auH+chQ3G9CaInDORq@vger.kernel.org, AJvYcCX5eU261FpLr6IwCZd5cUpL/idAPbuhqERc5WNxbVme2OB8WIQyupKYOXroO8aoUpFaS4v3I+jhDtUcqpnV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLOY6fzJ7PthM6lgw3rv9AtcQeZz3078HbS9GvslXFZhuv1Ad6
-	tQAZR1E8I5G7Nzv16bwhhRGp5JgFDZnRTeqNz3wlBQ5+RKhOAcoOcrnRacovOKPWhAa4/5dUxkJ
-	7P28Xh/+5HTN0UCVzAXSzy5ydNRDNG8/c
-X-Gm-Gg: ASbGncs+3gvfh91pt+u8GrcuJi2Jy0DFZux6tHgSPAJuIRO+ZFCtOVh0XFuxYBYqi/k
-	ZUPhZ8Yy11/hSpOUXZjmotCtjx1PU9vXHRxW6yE8=
-X-Google-Smtp-Source: AGHT+IFAoUKPorYGUI4+Rocmu8JPMdQOdR7QPJSJAUnpegYGm55+Xbi0LRnryDD20TQSLvChEL6GhlkLn68KSdgJnHw=
-X-Received: by 2002:a17:907:9443:b0:aab:7289:fcd4 with SMTP id
- a640c23a62f3a-aac0822b338mr3925102066b.19.1735892386968; Fri, 03 Jan 2025
- 00:19:46 -0800 (PST)
+        b=uCAsGAFA5QKQYpAx5nIizALoY1rJuazvFzL0nlDBe9Vw/a0BktSy73vcNLAYFq85UX
+         9g4MYpb9DcHQ9N99Yd7/iMdPVXtdfGteY1uEA776hL4+/1IDUdSAvANPw2lz+u7i/tBP
+         4EDRpyYKE88qw40OGP2TuZPTf2oOLGX3XQ4/PIC5E5puc0PCFqpdjSaw5SMDDxKlfSGx
+         vOWG4RN1Jj6cvFI9sjrjRVAyaYuvCnQuw2Y2cH4oDyaqEDBPMnSexTpb2rOxcgdpT2lo
+         b4wSU9q3pqcFx93g2Rvl2HrinbAjuq17vd7zdNhPjhRxEcIEiMN6CLnP4ZvEdOwLmGK1
+         F1tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWW6XsS1Q5OBYma7ZLIhxXcTliwzNr+aJbnz58kWLz/ZLgvVLUpym1/saOP6BlUNkiXPV7DBsu3wxGl1/1z@vger.kernel.org, AJvYcCXiLK6BQ6NYn1BZhqlhoDkjPMXWx1lQtrg+FexGJ7Za/X2l5i/PQdHui3K4/L24x/9UWiVenQuaKlC3h1e6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJXVcdJN8WrXtwooAa/HgEUe28+kuCuKZDk8eDE8WyL3aVNEyf
+	6a37hDU/0v04Ee56ReHrYoZ8xbozkSIpGb07R2cm+r/a9HFsBV8TDs6jwwKyYnEW/jq5N0gwMuF
+	z+p7QnDcwfMXn0ZIvJKTN+B7phvk=
+X-Gm-Gg: ASbGnctI8qjyT262VqIBYAYNHhG59Xs8/K/c+xj7yMFHRuIHjyyoOdArFNAhskkDOgx
+	y1JappaufTKKkQ1d4KTQPnIR2lB/OCLTDJ2dUql8=
+X-Google-Smtp-Source: AGHT+IFXRFOOYYIaxZg4I3UZDPe4EEGZXcwR0bAviIpgTvck/1u1e1/5oo6AwN1PWP1mE77CLT4qjOVnbWJJBNwCZf8=
+X-Received: by 2002:a17:907:7fa9:b0:aa6:9332:7fa7 with SMTP id
+ a640c23a62f3a-aac345fe3e3mr4413188866b.54.1735892439954; Fri, 03 Jan 2025
+ 00:20:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,9 +71,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: cheung wall <zzqq0103.hey@gmail.com>
-Date: Fri, 3 Jan 2025 16:19:35 +0800
-Message-ID: <CAKHoSAu3D+s_jzquKrR2YXFd_gNMu5AfDg7_+HjYEtyCSwJ-4g@mail.gmail.com>
-Subject: "WARNING in max_vclocks_store" in Linux kernel version 6.13.0-rc2
+Date: Fri, 3 Jan 2025 16:20:28 +0800
+Message-ID: <CAKHoSAtoy8UMwt_iXyFdrU1Zh4Q63oZb=BtjbPmJQ3zp+fxQKQ@mail.gmail.com>
+Subject: "INFO: rcu detected stall in sys_sendfile64" in Linux kernel version 6.13.0-rc2
 To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
