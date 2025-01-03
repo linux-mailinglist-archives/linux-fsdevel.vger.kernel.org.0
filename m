@@ -1,140 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-38363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D8BA00A05
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 14:49:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E25A00A97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 15:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9E0163D22
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 13:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877A81636E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 14:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BA51F9F4F;
-	Fri,  3 Jan 2025 13:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518261FA25D;
+	Fri,  3 Jan 2025 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DplbHVXE"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bGg0uN03";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dpt4/yJ2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bGg0uN03";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dpt4/yJ2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C63145B3F;
-	Fri,  3 Jan 2025 13:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0761F9405;
+	Fri,  3 Jan 2025 14:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735912164; cv=none; b=eh0IDNDegUEoC0od+E/jYQ8YCqVl0itDacaHpYDkw4K6kxNN5a2SOd2SNeCvoQkdJv2vcvpzM0zHDu8ZHe/zqJnSri7UUDol25h/m1wCyKbjQVlP1s7z8xH4f4AuSX3CLAmNPxUUd+eMn84wc+JxG/JxhRD/asV77CebNBaqF6Q=
+	t=1735914894; cv=none; b=WjcsKPHksaCja3CZfAnndlB6gbw3+VZEE51UMowzD4ivblmZy0hafxTL42ImaNfBnEz+H0WDUs9cpde7u7mHCaDTcs36T7SW1CrbWAIq8/Se/4MkfSWDZH0mDmiV2/5133SvJftJfWloWrZOz7Kg2jNZP2uzmzwjS8sUcBtZNwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735912164; c=relaxed/simple;
-	bh=wXxm1GIY5h12x2uvw69+6aNeFaQADdJOk1bRHIcb61A=;
+	s=arc-20240116; t=1735914894; c=relaxed/simple;
+	bh=rAhXEWfGaQaPHAR3eMLyUnC01OO39rczaefmfHmFToI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tcGOYaOW6ib7ZapxwubOteMBk/s9002wiHBscQyETrY365eVmOvVsCwvdz85OPY7xp1VrD3UjveHQsNvgm4YrqX4c4BmvfJsMe5Y3xPiPAj2bmbjRZSeGN87RVrAqO5sjqqXubaj2Og16yGvhi9dv3s42uLpleq5s9IiSm4rGoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DplbHVXE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9mF7t6NmWUf0oub/sbaixYjiY8as59cuzFbTBqyhaoQ=; b=DplbHVXE16QDN6CXFxnusaX3gr
-	4um33md0b12GUJrDpvsGFaXTYZzZ231GhZas0D4SfJTyunEQVLIBXLaz1G7lZj5ek/XKQgkuEb+Ng
-	g/XjcNOXYSy0NH9OZQYzFRTuC8VKcbvRxwpaTg+W4zSxVJmDmbZwmZaIoQbV/TY2vtAXfA7LXqIx3
-	DwaDPxYicFuJUXdDqtZ+XGejpZ2hAxxaOSuZXqXFgcqDTQd51qALaqy17MPNKcI6MtKCPpZ7BiVC9
-	Jwc/zj3PB396UTNsRb/phWFysCF0yfLaLyzjNAUp4wgfRCdfPhHKwSSlB/oJlOSftPRpLHARgOUx8
-	2pANyPVg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tTi3B-00000005v2F-2Gla;
-	Fri, 03 Jan 2025 13:49:17 +0000
-Date: Fri, 3 Jan 2025 13:49:17 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: cheung wall <zzqq0103.hey@gmail.com>, Stefan Roesch <shr@devkernel.io>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: "divide error in bdi_set_min_bytes" in Linux kernel version
- 6.13.0-rc2
-Message-ID: <Z3fq3VLthzzmsYd9@casper.infradead.org>
-References: <CAKHoSAsMYWOYfqw6h74cEzucg1vGZaY4ShT3e35NnX2v_Ro04w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmQoWHoH8NdQhYEPY1P3nyxv+mQOVTZr/vUT3R79+Qqoc2rRESzqzJa1IoZehtUsDOXE4rAtlqy+gL1ARXbC1IOFSFeybiIssz1yqstK2azt8Ywvec6sRdbLCSRNxfTLPs/z5INtsSLuVTmWR/6fyzNDN3i4j0bhG8jexGruz5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bGg0uN03; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dpt4/yJ2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bGg0uN03; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dpt4/yJ2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 662FB1F38E;
+	Fri,  3 Jan 2025 14:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1735914890; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UiGE0yHZuy+JyzwHFlaQMza/dvndIURW3Hv19uOrv5c=;
+	b=bGg0uN03AJ9CA2+wmyU/WLN4lKqX1zqMsPzDb40Kk0zD6Ow0QyS1MgiuMVe9vcrbPZI4sk
+	lxH/B2j2VU1LLD9prIPSM2zzh/lPLr+YheHCA8zgratEVEl5AMFn9d5BAnn2syf5mLCHJQ
+	s/7WMPYTXMPmVfLzpf1qrCwlF6e5nZ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1735914890;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UiGE0yHZuy+JyzwHFlaQMza/dvndIURW3Hv19uOrv5c=;
+	b=dpt4/yJ29uRYATzZaD5BJBzoLQ9L0AG+5zGvAgBK+dhXBflAFN/P3emUrheldzl3D0OkLb
+	RKYrrdy7syvS6AAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bGg0uN03;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="dpt4/yJ2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1735914890; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UiGE0yHZuy+JyzwHFlaQMza/dvndIURW3Hv19uOrv5c=;
+	b=bGg0uN03AJ9CA2+wmyU/WLN4lKqX1zqMsPzDb40Kk0zD6Ow0QyS1MgiuMVe9vcrbPZI4sk
+	lxH/B2j2VU1LLD9prIPSM2zzh/lPLr+YheHCA8zgratEVEl5AMFn9d5BAnn2syf5mLCHJQ
+	s/7WMPYTXMPmVfLzpf1qrCwlF6e5nZ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1735914890;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UiGE0yHZuy+JyzwHFlaQMza/dvndIURW3Hv19uOrv5c=;
+	b=dpt4/yJ29uRYATzZaD5BJBzoLQ9L0AG+5zGvAgBK+dhXBflAFN/P3emUrheldzl3D0OkLb
+	RKYrrdy7syvS6AAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44204134E4;
+	Fri,  3 Jan 2025 14:34:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PIRNEIr1d2eqXgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 03 Jan 2025 14:34:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3DD1DA0844; Fri,  3 Jan 2025 15:34:48 +0100 (CET)
+Date: Fri, 3 Jan 2025 15:34:48 +0100
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+	Christian Brauner <brauner@kernel.org>, sunyongjian1@huawei.com, Yang Erkun <yangerkun@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [BUG REPORT] ext4: =?utf-8?B?4oCcZXJyb3JzPXJlbW91bnQtcm/igJ0g?=
+ =?utf-8?B?aGFzIGJlY29tZSDigJxlcnJvcnM9c2h1dGRvd27igJ0/?=
+Message-ID: <7zrjd67t2fyl6wre7t6fuudjn22edslce5xlgioqc7ovfjtwp7@wk44gob6kwwh>
+References: <22d652f6-cb3c-43f5-b2fe-0a4bb6516a04@huawei.com>
+ <z52ea53du2k66du24ju4yetqm72e6pvtcbwkrjf4oomw2feffq@355vymdndrxn>
+ <17108cad-efa8-46b4-a320-70d7b696f75b@huawei.com>
+ <umpsdxhd2dz6kgdttpm27tigrb3ytvpf3y3v73ugavgh4b5cuj@dnacioqwq4qq>
+ <198ead4f-dba6-43d7-a4a5-06b92001518d@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAKHoSAsMYWOYfqw6h74cEzucg1vGZaY4ShT3e35NnX2v_Ro04w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <198ead4f-dba6-43d7-a4a5-06b92001518d@huawei.com>
+X-Rspamd-Queue-Id: 662FB1F38E
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	SUBJECT_ENDS_QUESTION(1.00)[];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Jan 03, 2025 at 03:25:01PM +0800, cheung wall wrote:
-> I am writing to report a potential vulnerability identified in the
-> Linux Kernel version 6.13.0-rc2. This issue was discovered using our
-> custom vulnerability discovery tool.
+On Fri 03-01-25 21:19:27, Baokun Li wrote:
+> On 2025/1/3 18:42, Jan Kara wrote:
+> > > > > What's worse is that after commit
+> > > > >     95257987a638 ("ext4: drop EXT4_MF_FS_ABORTED flag")
+> > > > > was merged in v6.6-rc1, the EXT4_FLAGS_SHUTDOWN bit is set in
+> > > > > ext4_handle_error(). This causes the file system to not be read-only
+> > > > > when an error is triggered in "errors=remount-ro" mode, because
+> > > > > EXT4_FLAGS_SHUTDOWN prevents both writing and reading.
+> > > > Here I don't understand what is really the problem with EXT4_MF_FS_ABORTED
+> > > > removal. What do you exactly mean by "causes the file system to not be
+> > > > read-only"? We still return EROFS where we used to, we disallow writing as
+> > > > we used to. Can you perhaps give an example what changed with this commit?
+> > > Sorry for the lack of clarity in my previous explanation. The key point
+> > > is not about removing EXT4_MF_FS_ABORTED, but rather we will set
+> > > EXT4_FLAGS_SHUTDOWN bit, which not only prevents writes but also prevents
+> > > reads. Therefore, saying it's not read-only actually means it's completely
+> > > unreadable.
+> > Ah, I see. I didn't think about that. Is it that you really want reading to
+> > work from a filesystem after error? Can you share why (I'm just trying to
+> > understand the usecase)? Or is this mostly a theoretical usecase?
+> Switching to read-only mode after an error is a common practice for most
+> file systems (ext4/btrfs/affs/fat/jfs/nilfs/nilfs2/ocfs2/ubifs/ufs, etc.).
+> There are two main benefits to doing this:
+>  * Read-only processes can continue to run unaffected after the error.
+>  * Shutting down after an error would lose some data in memory that has
+>    not been written to disk. If the file system is read-only, we can back
+>    up these data to another location in time and then exit gracefully.
+> > I think we could introduce "shutdown modifications" state which would still
+> > allow pure reads to succeed if there's a usecase for such functionality.
+> I agree that maintaining a flag like EXT4_FLAGS_RDONLY within ext4 seems
+> to be a good solution at this point. It avoids both introducing mechanism
+> changes and VFS coupling. If no one has a better idea, I will implement it.
 
-Your tool would be more useful if you told us what it was doing.
-I suspect it's writing a very small value into the min_bytes pseudo-file.
-Since that's something only root can do, this isn't a vulnerability.
-This is a very annoying conversation to keep having with people who
-write their own custom "vulnerability discovery tools".
+Yeah, let's go with a separate "emergency RO" ext4 flag then. I think we
+could just enhance the ext4_forced_shutdown() checks to take a flag whether
+the operation is a modification or not and when it is a modification, it
+would additionally trigger also when EMERGENCY_RO flag is set (which would
+get set by ext4_handle_error()).
 
-That said, we could do better here.  Stefan, you wrote this code.
+Thanks for having a look into this.
 
-> RIP: 0010:div64_u64 include/linux/math64.h:69 [inline]
-> RIP: 0010:bdi_ratio_from_pages mm/page-writeback.c:695 [inline]
-> RIP: 0010:bdi_set_min_bytes+0x9f/0x1d0 mm/page-writeback.c:799
-> Code: ff 48 39 d8 0f 82 3b 01 00 00 e8 ac fd e7 ff 48 69 db 40 42 0f
-> 00 48 8d 74 24 40 48 8d 7c 24 20 e8 c6 f1 ff ff 31 d2 48 89 d8 <48> f7
-> 74 24 40 48 89 c3 3d 40 42 0f 00 0f 87 08 01 00 00 e8 79 fd
-> RSP: 0018:ffff88810a5f7b60 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff9c9ef057
-> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88810a5f7ab8
-> RBP: 1ffff110214bef6c R08: 0000000000000000 R09: fffffbfff4081c7b
-> R10: ffffffffa040e3df R11: 0000000000032001 R12: ffff888105c65000
-> R13: dffffc0000000000 R14: ffff888105c65000 R15: ffff888105c65800
-> FS: 00007fdfc7c37580(0000) GS:ffff88811b280000(0000) knlGS:0000000000000000
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055adcdc786c8 CR3: 0000000104128000 CR4: 0000000000350ef0
-> Call Trace:
-> <TASK>
-> min_bytes_store+0xba/0x120 mm/backing-dev.c:385
-> dev_attr_store+0x58/0x80 drivers/base/core.c:2439
-> sysfs_kf_write+0x136/0x1a0 fs/sysfs/file.c:139
-> kernfs_fop_write_iter+0x323/0x530 fs/kernfs/file.c:334
-> new_sync_write fs/read_write.c:586 [inline]
-> vfs_write+0x51e/0xc80 fs/read_write.c:679
-> ksys_write+0x110/0x200 fs/read_write.c:731
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fdfc7b4d513
-> Code: 8b 15 81 29 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f
-> 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 0f 05 <48> 3d
-> 00 f0 ff ff 77 55 c3 0f 1f 40 00 48 83 ec 28 48 89 54 24 18
-> RSP: 002b:00007ffe7796ae28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 000055adcdc766c0 RCX: 00007fdfc7b4d513
-> RDX: 0000000000000002 RSI: 000055adcdc766c0 RDI: 0000000000000001
-> RBP: 0000000000000002 R08: 000055adcdc766c0 R09: 00007fdfc7c30be0
-> R10: 0000000000000070 R11: 0000000000000246 R12: 0000000000000001
-> R13: 0000000000000002 R14: 7fffffffffffffff R15: 0000000000000000
+								Honza
+
+> > > > So how does your framework detect that the filesystem has failed with
+> > > > errors=remount-ro? By parsing /proc/mounts or otherwise querying current
+> > > > filesystem mount options?
+> > > In most cases, run the mount command and filter related options.
+> > > > Would it be acceptable for you to look at some
+> > > > other mount option (e.g. "shutdown") to detect that state? We could easily
+> > > > implement that.
+> > > We do need to add a shutdown hint, but that's not the point.
+> > > 
+> > > We've discussed this internally, and now if the logs are flushed,
+> > > we have no way of knowing if the current filesystem is shutdown. We don't
+> > > know if the -EIO from the filesystem is a hardware problem or if the
+> > > filesystem is already shutdown. So even if there is no current problem,
+> > > we should add some kind of hint to let the user know that the current
+> > > filesystem is shutdown.
+> > > 
+> > > The changes to display shutdown are as follows, so that we can see if the
+> > > current filesystem has been shutdown in the mount command.
+> > Yes, I think this would be a good addition regardless of other changes we
+> > might need to do. It would be preferable to be able to come up with
+> > something that's acceptable for querying of shutdown state also for other
+> > filesystems - I've CCed fsdevel and XFS in particular since it has much
+> > longer history of fs shutdown implementation.
+> > 
+> > 								Honza
+> > 
+> > > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > > index 3955bec9245d..ba28ef0f662e 100644
+> > > --- a/fs/ext4/super.c
+> > > +++ b/fs/ext4/super.c
+> > > @@ -3157,6 +3157,9 @@ static int _ext4_show_options(struct seq_file *seq,
+> > > struct super_block *sb,
+> > >          if (nodefs && !test_opt(sb, NO_PREFETCH_BLOCK_BITMAPS))
+> > >                  SEQ_OPTS_PUTS("prefetch_block_bitmaps");
+> > > 
+> > > +       if (!nodefs && ext4_forced_shutdown(sb))
+> > > +               SEQ_OPTS_PUTS("shutdown");
+> > > +
+> > >          ext4_show_quota_options(seq, sb);
+> > >          return 0;
+> > >   }
+> > > > I'm sorry again for causing you trouble.
+> > > Never mind, thank you for your reply!
+> > > 
 > 
-> ------------[ cut here end]------------
-> 
-> Root Cause:
-> 
-> The crash is caused by a division by zero error within the Linux
-> kernel's page-writeback subsystem. Specifically, the bdi_set_min_bytes
-> function attempts to calculate a ratio using bdi_ratio_from_pages,
-> which internally calls div64_u64. During this calculation, a
-> denominator value unexpectedly becomes zero, likely due to improper
-> handling or validation of input data provided through the sysfs
-> interface during the min_bytes_store operation. This erroneous zero
-> value leads to a divide error exception when the kernel tries to
-> perform the division. The issue occurs while processing a sysfs write
-> operation (min_bytes_store), suggesting that invalid or uninitialized
-> data supplied through sysfs triggers the faulty calculation,
-> ultimately causing the kernel to crash.
-> 
-> Thank you for your time and attention.
-> 
-> Best regards
-> 
-> Wall
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
