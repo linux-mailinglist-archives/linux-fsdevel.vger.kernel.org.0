@@ -1,190 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-38370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA1DA01039
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 23:25:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84211A010C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 00:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E9B57A1B7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 22:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA48F161397
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2025 23:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E36C1C07F4;
-	Fri,  3 Jan 2025 22:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5A71C175C;
+	Fri,  3 Jan 2025 23:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b="ZcQ8W2ui";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i88FAFXv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIDhAZpX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888611BD51B;
-	Fri,  3 Jan 2025 22:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08DE1BDAA1;
+	Fri,  3 Jan 2025 23:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735943123; cv=none; b=NZpEFExwsGrLsloVNPeeXXyHRH74WxX58PwJg8DXM5XSpcJ70EsNhhcGIjscZ5q8oR2RzqYHDa16MeJCwChK8woao2KHj5nZ37A7DgNGOKlBfnVUMrB/N2U5NtS/12ys4I5kF5Hiuv7Xijj/pKVvM6kX9r/PEGsrlJEXxyFNiZc=
+	t=1735945898; cv=none; b=o9QiruFRskPcGF7T4eLQ0fEVFOCso/2qO5wRmIkJ+OGLZ2HxFPYR0YONF4F9bZzxPZzy0B7NTsBXbPrjv0OgEtbgVwuWqKJBj8Ylamn5nDKZHTL5AxaVyZv8XTxHyaJtBm7ZAHzNKBfGUcqJPlVL7XGOpiqRQHwg3Z/camklDYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735943123; c=relaxed/simple;
-	bh=+uQYrY+TUtHjqokU9nkitOIw25sm/w2lLl4H7tJbRGo=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=FhhzGEgeedIHbt4B7x4ZpvH2TR05Q1OZ9+xYumcKEWKYX6si6fIdPsJgRuaMxEnmbaMqUszS72K+dvCEGk5S7/p21FSH4QTEp89l5C7NbR7OAoonxs7jLMUNP9P4XaMo1iZNfRI1zj81t6kP60sQo/bOeGSqhBAn5iup3II9ocw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io; spf=pass smtp.mailfrom=devkernel.io; dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b=ZcQ8W2ui; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i88FAFXv; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=devkernel.io
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7C4F21380217;
-	Fri,  3 Jan 2025 17:25:19 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Fri, 03 Jan 2025 17:25:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1735943119; x=1736029519; bh=wJP1ar9X0L
-	6IgFAANXqamn8drs36v0rwgpIryR2P3aw=; b=ZcQ8W2uiHrP644Bj8cc0E+t2Pv
-	ZcEHKmh8lCFlvfB/+2WyT5y66Fn28n36nWkhDuzt7q9XhiEoJB5ZT1bJu9dVipxG
-	Br552CbZ+qALfbv8tRVR7Hz0mPCPCgBgLv/rZDbY8/2JVGZTa8yJTl8ojVwyOZ3d
-	+6NeDoHH5fETpmlDkhUVo85XCtVwNkHk7rPJbUwIFi1sOkQXq+NaUGXlcF8Lea4n
-	3sUSaD8JPc5yNobUYls49Il0K4PGgwlJZsIFLuP5X5uLmQLilx3cAolOyksK88Yn
-	VIRCqObiLeg1rCwtwdRq7ING0k/N+riXwwdYW2hX8VcxL3exY2tanzbogp/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1735943119; x=1736029519; bh=wJP1ar9X0L6IgFAANXqamn8drs36v0rwgpI
-	ryR2P3aw=; b=i88FAFXvWupBXATM2+7lRopawpdEOY6gDoDvLWH/PSquU35N13P
-	a4D2fyVeDNZ9AT7KqRFyeB3gpEa/LMBKKyfHLoNfJ24G5zIfV1ELmbCmJVIcYAlv
-	60qSxyEDKXLXhitUGc7oJv1Qqs0faMvI+Ae4E8yhzMC33lAq3UrCXSQOeIj4GkUM
-	3f82+C+wBwepYAp6z9Gv+uRKgTpWKnhxrm8xetSGwZ0htcuKBvC/hzUZnVrMbztH
-	tCLnoIfvCovcbDvCTUEs0NZupvpLmg8cxRnKBzZa6rwiNuXVxOq1wrp6hrlE3Nut
-	AEEFBm6mWjE/wTIdtcgcYUns7p4hFhgMCNw==
-X-ME-Sender: <xms:zmN4ZwwePaS2BN4MMOWrIPaygnlSHMK7KFcZLn2_UJvSGesD6lIpxw>
-    <xme:zmN4Z0SvCjq3W99M63NbOzVuMGOPvwcmBjlz0Ec35Gbo6V0T67Y7s3ePY4GdTdD_V
-    7P6f5arTMoZL3fpofs>
-X-ME-Received: <xmr:zmN4ZyUQFNJjRpLZYHfaMS9ZS7hdW0G0bGe-2Jb_dqezjONXKu6h0rk-tfjGKnP9B81M0nenQGB4X56hdPNIQB2uk8mOpt_P5Yk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudefgedgudehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfhgfhf
-    fvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghfrghnucftohgvshgt
-    hhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrthhtvghrnhepveelgf
-    fghfehudeitdehjeevhedthfetvdfhledutedvgeeikeeggefgudeguedtnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshhhrhesuggvvhhkvg
-    hrnhgvlhdrihhopdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprg
-    hkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeiiiihq
-    qhdtuddtfedrhhgvhiesghhmrghilhdrtghomhdprhgtphhtthhopeifihhllhihsehinh
-    hfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:zmN4Z-iJC7a3MplmYaKrQEIt-IXRI7-9pQy-gEKF6jfeescqCPwoEA>
-    <xmx:zmN4ZyDs824ToQ6uG7QBu00xOmwcZxRSbWGajpfqNR7255MqPzxHug>
-    <xmx:zmN4Z_LlZlLw0ZQ9zWiqxjDLUEmuWZqS_m27-qQ0sO-NhVW-09yLyA>
-    <xmx:zmN4Z5DlHNJ91XWjQ0Um6ginDg5V-bMhwatg9-x-fWU_tDvadFtQ-Q>
-    <xmx:z2N4Z00envbzZwP0FIstFvpnRQqFstSD_oBNszgsoV5ngVMhkbkPT3OQ>
-Feedback-ID: i84614614:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Jan 2025 17:25:17 -0500 (EST)
-References: <CAKHoSAsMYWOYfqw6h74cEzucg1vGZaY4ShT3e35NnX2v_Ro04w@mail.gmail.com>
- <Z3fq3VLthzzmsYd9@casper.infradead.org>
-User-agent: mu4e 1.10.3; emacs 29.4
-From: Stefan Roesch <shr@devkernel.io>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: cheung wall <zzqq0103.hey@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: "divide error in bdi_set_min_bytes" in Linux kernel version
- 6.13.0-rc2
-Date: Fri, 03 Jan 2025 14:24:07 -0800
-In-reply-to: <Z3fq3VLthzzmsYd9@casper.infradead.org>
-Message-ID: <87pll35yd0.fsf@devkernel.io>
+	s=arc-20240116; t=1735945898; c=relaxed/simple;
+	bh=X4ZcfTqU6IlK7Hy1vojjiwkI3XEvrxPS4Pnc/j8eABI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ex5Fhe7fNff4aBgHJxb5eX8isDpcTeY6YJlw3gwQWo3KuD0C2v+hHcn5VTPvcUWbJAyM92wlSiH6K/3QbJPpwava3K5t4GvpI90+bSsBTL79gaH+NtKN5O87Z6m/IAf3Q/NKAJEA47WKz2FEWrYA8cFZQgAlMW8u18FPgCZpVAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIDhAZpX; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4678afeb133so115629401cf.0;
+        Fri, 03 Jan 2025 15:11:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1735945896; x=1736550696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4ZcfTqU6IlK7Hy1vojjiwkI3XEvrxPS4Pnc/j8eABI=;
+        b=aIDhAZpXq8QPR03PlPQBKuow5Q12yC0+Prfr5Gc5lRVXvFIEQC6K3xIkM0zSVTgBrT
+         q1Wdaa8vwR28zWm0HwqRWuuBJ91D1h1jFUv8nIzvoG16WplLqIZsL4Rmpx0P/jhm5gmi
+         3nNPI4rntMrQQ42CIxPVm4j9138HZuVASkqZc5qqQucixc8Qt0I3jlknuNsuSAQQTPsy
+         PYmDbIyZS02OZrwY/uPuynGIorgL2y3b8B7P+lhj+k2pUDo6q6SQdpamZOxMCMpEFk+H
+         A6r4A8xdO+BP6RtMuWCWViyD+gL1fsYzjXoI2zT2eqhC26uAHrv6ISO+taVzVzcU439u
+         50HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735945896; x=1736550696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X4ZcfTqU6IlK7Hy1vojjiwkI3XEvrxPS4Pnc/j8eABI=;
+        b=gWLXo/fOVQ9ZCa9Gk8TfCCsU2RKZ9mxgTzZWeTrDKnWJbP40nHyAXEvGH/Dd3febbH
+         8h9JCfKtuvA17SPUaNIMPO8STmNjnzw/z7giRIh89tLDH0Pb8fYYoZOwjhzhUkpOH1CB
+         ob09UUcUVtXqUU06pTryZVAURUZLTyfIQUJPG6eSV4hBLj5uh+Un9ZglMUwTaAfqa4R6
+         +KtrDCJ4PsYN2vzVAXfWlxd7xkXPXzJh9KKOmoh5JKGRzqQ92k6RmpGMZyTAQssbkJQs
+         fxpfi3m78fJ/Tj+7sSJRUh7lRLMr3EAU7rq2hutX+Q4MulMstu9m6ym57Cmosd4hXZ3i
+         jghw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhgg8b0gVjSvafI9ekDesSKyq/s1WZZE7fnjmL8/xCowjNASUyVtHqwq2xIgouc1ZDneuCpIwHG2e59WUc@vger.kernel.org, AJvYcCWyxrvXLglDlBXgqqHW46/UYwqPz6XqPDt3HfU3aqOgMw8DC36zkMhzjzi6oAF5J0fT27GetR3UW2U0S4A5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8fGrPskJcisT3E9T8/4USjxMktmUiSnGBoeGLrV7d/xv0SKGf
+	VAL6TCS8OQHwL9LZUGMvLwCwAvbKpScOokxspsT+RUMob6fsf7dOMkfyt80RyOrNc2Da/ovJiVg
+	XM7Sck34SOCpPGsZ/SF9pAzGBK1o=
+X-Gm-Gg: ASbGnctub8V6CzHqwlCNRkpm6FdzoU34FsdDlp6+ki0oVVL2ZTxZvhdL0QqSilm61J3
+	S8iQagzsoetye1vzVbX8GbRRFBYSxn5Odfna1dH4=
+X-Google-Smtp-Source: AGHT+IE0sYxgffs8HOAzg4jFNz/ATU6VSq8U82LvRAmkbSGFUdnQbwIZ/8z0CYEzNYlVLHFsgab0L+d4xrZVxGMO4KM=
+X-Received: by 2002:ac8:598a:0:b0:466:93b9:8356 with SMTP id
+ d75a77b69052e-46a4b188f79mr1002427311cf.22.1735945895818; Fri, 03 Jan 2025
+ 15:11:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CAJfpeguPw9CsK56RHGTfpYhfh4V5Kj8+JHJJo=hJDy39=RB+3w@mail.gmail.com>
+ <6776f4d9.050a0220.3a8527.0050.GAE@google.com>
+In-Reply-To: <6776f4d9.050a0220.3a8527.0050.GAE@google.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 3 Jan 2025 15:11:25 -0800
+Message-ID: <CAJnrk1aumuyz9J1ZWReB+diDXffRQFr1Et1UMoyyuBRf+s272g@mail.gmail.com>
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_revert
+To: syzbot <syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com>
+Cc: miklos@szeredi.hu, dhowells@redhat.com, jlayton@kernel.org, 
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mszeredi@redhat.com, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-Matthew Wilcox <willy@infradead.org> writes:
-
-> On Fri, Jan 03, 2025 at 03:25:01PM +0800, cheung wall wrote:
->> I am writing to report a potential vulnerability identified in the
->> Linux Kernel version 6.13.0-rc2. This issue was discovered using our
->> custom vulnerability discovery tool.
+On Thu, Jan 2, 2025 at 12:19=E2=80=AFPM syzbot
+<syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com> wrote:
 >
-> Your tool would be more useful if you told us what it was doing.
-> I suspect it's writing a very small value into the min_bytes pseudo-file.
-> Since that's something only root can do, this isn't a vulnerability.
-> This is a very annoying conversation to keep having with people who
-> write their own custom "vulnerability discovery tools".
+> > #syz test git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.g=
+it
 >
-> That said, we could do better here.  Stefan, you wrote this code.
+> want either no args or 2 args (repo, branch), got 1
 >
+> > 7a4f5418
 
-Thanks for the analysis Matthew. I'll have a look.
-Is there a testcase?
+Sorry for the late reply on this Miklos, didn't realize this was
+related to my "convert direct io to use folios" change.
 
->> RIP: 0010:div64_u64 include/linux/math64.h:69 [inline]
->> RIP: 0010:bdi_ratio_from_pages mm/page-writeback.c:695 [inline]
->> RIP: 0010:bdi_set_min_bytes+0x9f/0x1d0 mm/page-writeback.c:799
->> Code: ff 48 39 d8 0f 82 3b 01 00 00 e8 ac fd e7 ff 48 69 db 40 42 0f
->> 00 48 8d 74 24 40 48 8d 7c 24 20 e8 c6 f1 ff ff 31 d2 48 89 d8 <48> f7
->> 74 24 40 48 89 c3 3d 40 42 0f 00 0f 87 08 01 00 00 e8 79 fd
->> RSP: 0018:ffff88810a5f7b60 EFLAGS: 00010246
->> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff9c9ef057
->> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88810a5f7ab8
->> RBP: 1ffff110214bef6c R08: 0000000000000000 R09: fffffbfff4081c7b
->> R10: ffffffffa040e3df R11: 0000000000032001 R12: ffff888105c65000
->> R13: dffffc0000000000 R14: ffff888105c65000 R15: ffff888105c65800
->> FS: 00007fdfc7c37580(0000) GS:ffff88811b280000(0000) knlGS:0000000000000000
->> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000055adcdc786c8 CR3: 0000000104128000 CR4: 0000000000350ef0
->> Call Trace:
->> <TASK>
->> min_bytes_store+0xba/0x120 mm/backing-dev.c:385
->> dev_attr_store+0x58/0x80 drivers/base/core.c:2439
->> sysfs_kf_write+0x136/0x1a0 fs/sysfs/file.c:139
->> kernfs_fop_write_iter+0x323/0x530 fs/kernfs/file.c:334
->> new_sync_write fs/read_write.c:586 [inline]
->> vfs_write+0x51e/0xc80 fs/read_write.c:679
->> ksys_write+0x110/0x200 fs/read_write.c:731
->> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->> do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
->> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7fdfc7b4d513
->> Code: 8b 15 81 29 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f
->> 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 0f 05 <48> 3d
->> 00 f0 ff ff 77 55 c3 0f 1f 40 00 48 83 ec 28 48 89 54 24 18
->> RSP: 002b:00007ffe7796ae28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
->> RAX: ffffffffffffffda RBX: 000055adcdc766c0 RCX: 00007fdfc7b4d513
->> RDX: 0000000000000002 RSI: 000055adcdc766c0 RDI: 0000000000000001
->> RBP: 0000000000000002 R08: 000055adcdc766c0 R09: 00007fdfc7c30be0
->> R10: 0000000000000070 R11: 0000000000000246 R12: 0000000000000001
->> R13: 0000000000000002 R14: 7fffffffffffffff R15: 0000000000000000
->>
->> ------------[ cut here end]------------
->>
->> Root Cause:
->>
->> The crash is caused by a division by zero error within the Linux
->> kernel's page-writeback subsystem. Specifically, the bdi_set_min_bytes
->> function attempts to calculate a ratio using bdi_ratio_from_pages,
->> which internally calls div64_u64. During this calculation, a
->> denominator value unexpectedly becomes zero, likely due to improper
->> handling or validation of input data provided through the sysfs
->> interface during the min_bytes_store operation. This erroneous zero
->> value leads to a divide error exception when the kernel tries to
->> perform the division. The issue occurs while processing a sysfs write
->> operation (min_bytes_store), suggesting that invalid or uninitialized
->> data supplied through sysfs triggers the faulty calculation,
->> ultimately causing the kernel to crash.
->>
->> Thank you for your time and attention.
->>
->> Best regards
->>
->> Wall
+I think Bernd's fix in 78f2560fc ("fuse: Set *nbytesp=3D0 in
+fuse_get_user_pages on allocation failure") should have fixed this?
 
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+for-next
 
