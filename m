@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-38381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E430BA01360
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 09:46:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888BBA01367
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 09:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC5941641A3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 08:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89C018849D9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 08:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B7E178395;
-	Sat,  4 Jan 2025 08:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9524157A46;
+	Sat,  4 Jan 2025 08:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uaaC3LPM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPdScDLU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806B1148FF0;
-	Sat,  4 Jan 2025 08:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084C328FD;
+	Sat,  4 Jan 2025 08:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735980389; cv=none; b=nbvgWKtdTeLz2H1Cyx63NRfXLQMuzCoig+Q8xxNavJqHDUwrTNNOBGpwwTOwdf3PJebpaePRiIJS1CcRH9h5Wr0JTIaUgXwgR0g28dnzM2tbC0o1RWSX/HK2FxsM9Lf1VrNlWA2PQXp/2Xz2dXOLY/MlVlHfsfMT9Vmk2gpH6gc=
+	t=1735980767; cv=none; b=jwb47x5qVDBx5UYw3E3OXb2zjApZvMTw62y/bJ14nfd24Os4rIz8QBhyfqH4fcVE2H3hqTeHvZxmTP4Kt8YLC3pz6toCoU5+JmERFJmMLQ3tHOjQkEP1EgdN9ljHmPhT9CBfriWyncvfFimezoxm2NRWndkhSGXdKM2E60VpBJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735980389; c=relaxed/simple;
-	bh=jGOziNg613otFjAGnOexebua3rzZHCCXYLbXJiUDLGc=;
+	s=arc-20240116; t=1735980767; c=relaxed/simple;
+	bh=KV4LRhXV1cLTdL3DC8lI4dNZMZC1Vz1wdSyOTDNZmHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNZ1mG452jmp5RxfA7kX9rEVVp7cAPnA0qPsMSvj4OYj7SBx5NyotPPTzJvKsUrPoRudBWzG8KGVr/HIUzM8kI0I1Qt5P8e71lk33MgEMWaTU3FlBZ2UICkBcxFrIAv6I/UC36vALywXrTVm7aI26uo/4eazfccp+kGkohjZmGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uaaC3LPM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ECC5C4CED1;
-	Sat,  4 Jan 2025 08:46:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kumq4PCPswDy1h5hUHx7eqFEpxmK2UoI5wv/IqDtCkvq/7/+J45l8Qz/m0Tgu5EB+oasGP+g5cbq40MdSxpm0g8nZ9cBcu25FIH3a7x59GjWXMam2ezOZhPOEW+oRBEAkLf0eHBCv3MhlRQBEwLmYpBAj3Cw3EB2D7LjHYR/HAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPdScDLU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01618C4CED1;
+	Sat,  4 Jan 2025 08:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735980389;
-	bh=jGOziNg613otFjAGnOexebua3rzZHCCXYLbXJiUDLGc=;
+	s=k20201202; t=1735980766;
+	bh=KV4LRhXV1cLTdL3DC8lI4dNZMZC1Vz1wdSyOTDNZmHA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uaaC3LPMwvgI7CLZJgQwQs0sHYhtjzkU+my804fjoMPB0ucIZrXOdqU2pKYk+5gSa
-	 fseIFU7AkcLRT/OqE2B+Hjl07O22FPxG0nVeQ/92dAx7s/ixEKTProj3T80+Kd2Aj5
-	 6HXEXPn70kL687bDm7Rem1fHzxnAcLwsFTNLkANytJsd2xdBMowiAgfl64smQqxSqW
-	 1+TuZ3GlkHHCJr/RRk6dEUdwako1B8o8B88iFDWHJCYEenIYC3QyC7dmIlhhxQQyh8
-	 R7OjlsmpUd2SV5eh2uXF7Kh2PJiqu8RaewKuSlEczdeEag/osKEFRakUaYbQOZMUWs
-	 QlE+sDzYQayKg==
-Date: Sat, 4 Jan 2025 09:46:26 +0100
+	b=rPdScDLUdVAUDJdcU8G/7XPP2/4eBln680kEmCsVnMWpaTT04fsLTka8eY32BMf60
+	 w0moxa+Nxwc9Q8WvL3KjHs/EbX7JX3psKWfmFasikPrKL3bUnATG68gsDmb8nC1/os
+	 uwPcQbZRzjBCgO9dpK+ynB5p85d0izX7hncMMiFZp9hahNuMFndBCqs9qbDyVxgssh
+	 UmBi76JbWDATBrfSOR8O6p4wcL+qEZKb5KXymkngNjr13/5pAWH8WkLDdgoajWGbgn
+	 /qJILPyEf2gesJd+PwbyeRfz2sh+CWkuZiuQ9ED+pk1mCesJFKkQnGzliJcvT31lt8
+	 6diZVyChExhXw==
+Date: Sat, 4 Jan 2025 09:52:44 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: Errno codes from symlink() syscall
-Message-ID: <20250104-altglas-pedal-9576abc7b63c@brauner>
-References: <20241224160535.pi6nazpugqkhvfns@pali>
- <20241227130139.dplqu5jlli57hhhm@pali>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jan Kara <jack@suse.cz>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Immutable vs read-only for Windows compatibility
+Message-ID: <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
+References: <20241227121508.nofy6bho66pc5ry5@pali>
+ <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
+ <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,112 +61,81 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241227130139.dplqu5jlli57hhhm@pali>
+In-Reply-To: <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com>
 
-On Fri, Dec 27, 2024 at 02:01:39PM +0100, Pali Rohár wrote:
-> On Tuesday 24 December 2024 17:05:35 Pali Rohár wrote:
-> > TL;DR;
-> > Which errno code should network fs driver returns on create symlink
-> > failure to userspace application for these cases?
-> > * creating new symlink is not supported by fs driver mount options
-> > * creating new symlink is not supported by remote server software
-> > * creating new symlink is not supported by remote server storage
-> > * creating new symlink is not permitted for user due to missing
-> >   privilege/capability (indicated by remote server)
-> > * access to the directory was denied due to ACL/mode (on remote)
+On Thu, Jan 02, 2025 at 10:52:51AM -0500, Chuck Lever wrote:
+> On 1/2/25 9:37 AM, Jan Kara wrote:
+> > Hello!
 > > 
+> > On Fri 27-12-24 13:15:08, Pali Rohár wrote:
+> > > Few months ago I discussed with Steve that Linux SMB client has some
+> > > problems during removal of directory which has read-only attribute set.
+> > > 
+> > > I was looking what exactly the read-only windows attribute means, how it
+> > > is interpreted by Linux and in my opinion it is wrongly used in Linux at
+> > > all.
+> > > 
+> > > Windows filesystems NTFS and ReFS, and also exported over SMB supports
+> > > two ways how to present some file or directory as read-only. First
+> > > option is by setting ACL permissions (for particular or all users) to
+> > > GENERIC_READ-only. Second option is by setting the read-only attribute.
+> > > Second option is available also for (ex)FAT filesystems (first option via
+> > > ACL is not possible on (ex)FAT as it does not have ACLs).
+> > > 
+> > > First option (ACL) is basically same as clearing all "w" bits in mode
+> > > and ACL (if present) on Linux. It enforces security permission behavior.
+> > > Note that if the parent directory grants for user delete child
+> > > permission then the file can be deleted. This behavior is same for Linux
+> > > and Windows (on Windows there is separate ACL for delete child, on Linux
+> > > it is part of directory's write permission).
+> > > 
+> > > Second option (Windows read-only attribute) means that the file/dir
+> > > cannot be opened in write mode, its metadata attribute cannot be changed
+> > > and the file/dir cannot be deleted at all. But anybody who has
+> > > WRITE_ATTRIBUTES ACL permission can clear this attribute and do whatever
+> > > wants.
 > > 
-> > Hello,
+> > I guess someone with more experience how to fuse together Windows & Linux
+> > permission semantics should chime in here but here are my thoughts.
 > > 
-> > I discussed with Steve that current error codes from symlink() syscall
-> > propagated to userspace on mounted SMB share are in most cases
-> > misleading for end user who is trying to create a new symlink via ln -s
-> > command.
+> > > Linux filesystems has similar thing to Windows read-only attribute
+> > > (FILE_ATTRIBUTE_READONLY). It is "immutable" bit (FS_IMMUTABLE_FL),
+> > > which can be set by the "chattr" tool. Seems that the only difference
+> > > between Windows read-only and Linux immutable is that on Linux only
+> > > process with CAP_LINUX_IMMUTABLE can set or clear this bit. On Windows
+> > > it can be anybody who has write ACL.
+> > > 
+> > > Now I'm thinking, how should be Windows read-only bit interpreted by
+> > > Linux filesystems drivers (FAT, exFAT, NTFS, SMB)? I see few options:
+> > > 
+> > > 0) Simply ignored. Disadvantage is that over network fs, user would not
+> > >     be able to do modify or delete such file, even as root.
+> > > 
+> > > 1) Smartly ignored. Meaning that for local fs, it is ignored and for
+> > >     network fs it has to be cleared before any write/modify/delete
+> > >     operation.
+> > > 
+> > > 2) Translated to Linux mode/ACL. So the user has some ability to see it
+> > >     or change it via chmod. Disadvantage is that it mix ACL/mode.
 > > 
-> > Linux SMB client (cifs.ko) can see different kind of errors when it is
-> > trying to create a symlink on SMB server. I know at least about these
-> > errors which can happen:
-> > 
-> > 1 For the current mount parameters, the Linux SMB client does not
-> >   implement creating a new symlink yet and server supports symlinks.
-> >   This applies for example for SMB1 dialect against Windows server, when
-> >   Linux SMB client is already able to query existing symlinks via
-> >   readlink() syscall (just not able to create new one).
-> > 
-> > 2 For the current mount parameters, the SMB server does not support
-> >   symlink operations at all. But it can support it when using other
-> >   mount parameters. This applies for example for older Samba server with
-> >   SMB2+ dialect (when older version supported symlinks only over SMB1).
-> > 
-> > 3 The SMB server for the mounted share does not support symlink
-> >   operations at all. For example server supports symlinks, but mounted
-> >   share is on FAT32 on which symlinks cannot be stored.
-> > 
-> > 4 The user who is logged to SMB server does not have a privilege to
-> >   create a new symlink at all. But server and also share supports
-> >   symlinks without any problem. Just this user is less privileged,
-> >   and no ACL/mode can help.
-> > 
-> > 5 The user does not have access right to create a new object (file,
-> >   directory, symlink, etc...) in the specified directory. For example
-> >   "chmod -w" can cause this.
-> > 
-> > Linux SMB client should have all information via different SMB error
-> > codes to distinguish between all these 5 situations.
-> > 
-> > On Windows servers for creating a new symlink is required that user has
-> > SeCreateSymbolicLinkPrivilege. This privilege is by default enabled only
-> > for Administrators, so by default ordinary users cannot create symlinks
-> > due to security restrictions. On the other hand, querying symlink path
-> > is allowed for any user (who has access to that symlink fs object).
-> > 
-> > Therefore it is important for user who is calling 'ln -s' command on SMB
-> > share mounted on Linux to distinguish between 4 and 5 on failure. If
-> > user needs to just add "write-directory" permission (chmod +w) or asking
-> > AD admin for adding SeCreateSymbolicLinkPrivilege into Group Policy.
-> > 
-> > 
-> > I would like to open a discussion on fsdevel list, what errno codes from
-> > symlink() syscall should be reported to userspace for particular
-> > situations 1 - 5?
-> > 
-> > Situation 5 should be classic EACCES. I think this should be clear.
-> > 
-> > Situation 4 start to be complicated. Windows "privilege" is basically
-> > same as Linux "capability", it is bound to the process and in normal
-> > situation it is set by login manager. Just Linux does not have
-> > equivalent capability for allowing creating new symlink. But generally
-> > Linux for missing permission which is granted by capability (e.g. for
-> > ioperm() via CAP_SYS_RAWIO) is in lot of cases returned errno EPERM.
-> > 
-> > So I thought that EPERM is a good errno candidate for situation 4, until
-> > I figured out that "symlink(2)" manapage has documented that EPERM has
-> > completely different meaning:
-> > 
-> >   EPERM  The filesystem containing linkpath does not support the
-> >          creation of symbolic links.
-> > 
-> > And I do not understand why. I have tried to call 'ln -s' on FAT32 and
-> > it really showed me: "Operation not permitted" even under root. For user
-> > this error message sounds like it needs to be admin / root. It is very
-> > misleading.
-> > 
-> > At least it looks like that EPERM cannot be used for this situation.
-> > And so it is not so easy to figure out what error codes should be
-> > correctly returned to userspace.
-> > 
-> > 
-> > Pali
+> > So this option looks sensible to me. We clear all write permissions in
+> > file's mode / ACL. For reading that is fully compatible, for mode
+> > modifications it gets a bit messy (probably I'd suggest to just clear
+> > FILE_ATTRIBUTE_READONLY on modification) but kind of close.
 > 
-> I was thinking more about it and the reasonable solution could be to use
-> following errno codes for these situations:
+> IMO Linux should store the Windows-specific attribute information but
+> otherwise ignore it. Modifying ACLs based seems like a road to despair.
+> Plus there's no ACL representation for OFFLINE and some of the other
+> items that we'd like to be able to support.
 > 
->  EOPNOTSUPP - server or client does not support symlink operation
->  EPERM - user does not have privilege / capability to create new symlink
->  EACCES - user does not have (ACL) permission to create new symlink
 > 
-> But in this case it would be needed to extend symlink(2) manpage. It is
-> feasible? Or the meaning of EPERM is written in the stone, it means that
+> If I were king-for-a-day (tm) I would create a system xattr namespace
+> just for these items, and provide a VFS/statx API for consumers like
+> Samba, ksmbd, and knfsd to set and get these items. Each local
+> filesystem can then implement storage with either the xattr or (eg,
+> ntfs) can store them directly.
 
-This sounds reasonable and should be doable.
+Introducing a new xattr namespace for this wouldn't be a problem imho.
+Why would this need a new statx() extension though? Wouldn't the regular
+xattr apis to set and get xattrs be enough?
 
