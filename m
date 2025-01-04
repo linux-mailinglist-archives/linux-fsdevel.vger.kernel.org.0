@@ -1,103 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-38374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2813AA01136
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 01:04:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A621A01183
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 02:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FA8164551
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 00:04:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BDBB3A4657
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 01:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6180C846D;
-	Sat,  4 Jan 2025 00:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863C44174A;
+	Sat,  4 Jan 2025 01:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pcsEFWZ8"
+	dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b="e21MOVU1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FczubmTm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703A636C;
-	Sat,  4 Jan 2025 00:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE218125D5
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Jan 2025 01:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735949053; cv=none; b=iyPWauxDEXG4oXgYkqKd8KWKmteXSSioGX04jFBzEQbX/4iNTWPqsFAw2rgcy8ldbAJwo0ZAIvnPjpp4QybKCNQD8U6qieZQbfQH29+ce/wOwNFX/nu+dsDCEy47mNg1DQcmFr8A5RZ8ueaCckW6y2Wi4gQ4XvN44ovofjUbyqk=
+	t=1735953645; cv=none; b=gAIBG+WvJBryOPvXzXx0y7kHm8Bequ1IXjdYkLiLJUqu+WykHTF47IRiZ/PAvz3jZHEek3a5hblCMwC1XQWwy88jPPjnIlWn3qXYQkQJQSyzEV/zc/R8tCGqki5j7pMJa7dxOBcZQ5f9PpXimOkqq29LGPinua0HRYDm1lYCMfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735949053; c=relaxed/simple;
-	bh=Yy++yQU15UJak0FuUUPzCKeuieQdmhTX/GEkQwQJS5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlkSpXM7ebaQLMuJ8UAE6Ll1bfxHdWgP/GDCEBUB0cSNtf0lPmiJOeo2GX9pLaOoG+9bktmjM9mZ6C61EjHqQfaChcHWbT7SNFhPInTfEooI1UjuAm/kOvHklMycjlKcUlO2YIprWaFK2w6xcGwLe24cJNwnvFCwFlk9cis9BEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pcsEFWZ8; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KhgMglCFXQO4QMPJMWxdpuWJUo3MEmsC6qyW1d13b0E=; b=pcsEFWZ8AG17xPc1KtJaamACaH
-	ej0smnjBTeKivYKWPQpq/Xu9Zsb3tidmZd74Lsig47wt04b8DeEOdRY4ZBtnzq3BPbkgWPfthNnDL
-	5k6Zi4iGp2XC1GqomDROvCilnim6DsN8T9HEISE2tyR8LlelDVs56aZAFTEs8euM/HH7x1IlI6c0l
-	NiPegODVHvQR3jgc502lA5PmPPQGFOcr2yuTtKN1d6CBk87XLGXjaZYlS9HPHRXUCJ8+eamJ0r/TV
-	foGvfCjxsUA7GQXiZ1LXTtfeb5550FuHrZYUl5QK1NNEMIdGRhyS9gLcIZK/xSUCr7vlfkZEuFrnK
-	miWX1o/g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tTreC-0000000FE4G-1CrK;
-	Sat, 04 Jan 2025 00:04:08 +0000
-Date: Sat, 4 Jan 2025 00:04:08 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: cheung wall <zzqq0103.hey@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: "INFO: rcu detected stall in sys_sendfile64" in Linux kernel
- version 6.13.0-rc2
-Message-ID: <20250104000408.GE1977892@ZenIV>
-References: <CAKHoSAtoy8UMwt_iXyFdrU1Zh4Q63oZb=BtjbPmJQ3zp+fxQKQ@mail.gmail.com>
+	s=arc-20240116; t=1735953645; c=relaxed/simple;
+	bh=k1H97hhOeZn6z+zbwFZKoYV5rcCrE+zknB2SLrJMYfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dph/pRpXnSO3d3BZR+LQRfCDluzBfAG8vT9uHY7Y2NdMqMfY0afZq4cyRwO9ZLQdAbFFL94Dj7nUFT7Mf+z1hHvRMs49KkTsORSoAtcYOsw/t8IQ4X92Udlf9kNvaLABQ3/8LW0PWfw/LkWOjIyeOsgGfA3oizuYshyu5lCTwJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io; spf=pass smtp.mailfrom=devkernel.io; dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b=e21MOVU1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FczubmTm; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=devkernel.io
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id D93931380232;
+	Fri,  3 Jan 2025 20:20:41 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 03 Jan 2025 20:20:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1735953641; x=1736040041; bh=hC/m9P7PjtOpQenVYa1xG
+	aGlnEienU5z/T5QpgQf3jM=; b=e21MOVU1eRNlsIxk3nWMB/Ddz6BPPVzWU2RYo
+	aGUHJx3da2ipdgQDGTWnBnamF1p8lKbzS2G4T8pzVtw6Ta0yPawy2ykokvVFKYdf
+	jvsQPcL1/hNbipwzIylauhf5lBHQv6AE8NKV7qUaSrPg4P/X2X2uqPxo5fNq7NOX
+	wnPdq396r6WMqsY5sBkPThTL2gPe1VxmH0FdimT0KjtamG1Mp/ypvt0XW9j0D4Jt
+	/ojKhJCYc0uWzwDH1HpIivTzYpRruDxsfI0OBYvfOe7Oxx+i87wxHdTrpKrke87Q
+	2Y44BKqgLu4pHJM9FfmxVRgBFdXfWuLs5K4M5+2TqEc0NRwZA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1735953641; x=1736040041; bh=hC/m9P7PjtOpQenVYa1xGaGlnEienU5z/T5
+	QpgQf3jM=; b=FczubmTm+fOLHVKbblEEnkDjkyoVHXPtvLq5IBbuxOe3j0+MU/9
+	oi+bsC76kWmdfQk3RczjY0XUTPcS+kBxXInmbO1sg59E9ibwM0xQj0fRCqhKTa0r
+	PAzzx+Z9jCZEAEylnTJmg0Kc/zThdIVEJs75JV/sxvOrSlDM3AaoL30r8b6sAy6B
+	05R9cK7EkXjIvP4CFgjFBk5OQwJmqA2YpdLuwiAgJd6Y4onjvD/qvVwlV3gWAyHN
+	vVz6B5/HrdJ9SfmhE03r4VZRsa/qxzkXGXb8hiNVETQ5dreD3kmcxDM0N8PkXXX+
+	Xk902WhPbVQ3um5R1MWbPufXLzEly5Eymeg==
+X-ME-Sender: <xms:6Yx4Z_Qw0MfiG9B5ymsfAfbvAzE5h9lWZ2LALvqA5RIeqhd0PnZovA>
+    <xme:6Yx4ZwwshiA2TtDwhiUjcSjiTKL-V_mznG0Nb2hHD7rlZC5PytKCnS4uTgbD-zY7F
+    _cUA0kCixmetn75zeU>
+X-ME-Received: <xmr:6Yx4Z03hI1-Z0hKQ5K2dbD9E5X8lgDgfYEiMWbu1_foQ7fZhB85ZkoQgyt4d8AA9-THyZPGqE28GJxRJOC17pH7VbuapApHBgHo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudefhedgfeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvfhgrnhcutfhovghstghhuceo
+    shhhrhesuggvvhhkvghrnhgvlhdrihhoqeenucggtffrrghtthgvrhhnpeevieegfeffhf
+    ekudeuieelgfeljeekgedthfeiveeltedukeegfeeuvdelvdejueenucffohhmrghinhep
+    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepshhhrhesuggvvhhkvghrnhgvlhdrihhopdhnsggprhgtphhtthhopeei
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrg
+    gurdhorhhgpdhrtghpthhtohepiiiiqhhqtddutdefrdhhvgihsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsh
+    hhrhesuggvvhhkvghrnhgvlhdrihho
+X-ME-Proxy: <xmx:6Yx4Z_CHkXyteKf0cGKyTVaNd73HCTI86umkGAv8eQZKGn9XH35B8g>
+    <xmx:6Yx4Z4hFnHckja2MwOfMsPtz7hMk_t_fidzHnlFDRtXmBYA8ToWYgw>
+    <xmx:6Yx4ZzpnSN6_F6FKz8dwgSk2ok0qhDVzAJMn8V3duIw2P4kIiZczRg>
+    <xmx:6Yx4Zzihp5n0VcwFpKfzoVxOspRH32C5zc78eeGoGSVVLQl_zW6SAg>
+    <xmx:6Yx4ZzW7O7Ye-bsdjrccJvYQEcsG7kq4LKLPwwlSWetztKF_-VINVfvp>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Jan 2025 20:20:40 -0500 (EST)
+From: Stefan Roesch <shr@devkernel.io>
+To: willy@infradead.org,
+	zzqq0103.hey@gmail.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: shr@devkernel.io
+Subject: [PATCH v1] mm: fix div by zero in bdi_ratio_from_pages
+Date: Fri,  3 Jan 2025 17:20:37 -0800
+Message-ID: <20250104012037.159386-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKHoSAtoy8UMwt_iXyFdrU1Zh4Q63oZb=BtjbPmJQ3zp+fxQKQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jan 03, 2025 at 04:20:28PM +0800, cheung wall wrote:
-> Hello,
-> 
-> I am writing to report a potential vulnerability identified in the
-> Linux Kernel version 6.13.0-rc2. This issue was discovered using our
-> custom vulnerability discovery tool.
-> 
-> HEAD commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4 (tag: v6.13-rc2)
-> 
-> Detailed Call Stack:
-> 
-> ------------[ cut here begin]------------
+During testing it has been detected, that it is possible to get div by
+zero error in bdi_set_min_bytes. The error is caused by the function
+bdi_ratio_from_pages(). bdi_ratio_from_pages() calls
+global_dirty_limits. If the dirty threshold is 0, the div by zero is
+raised. This can happen if the root user is setting:
 
-Ugh...  Your tool is, by the look of it, some kind of fuzzer.
-If that is correct, you really need to do a lot of things
-for it to be useful.
+echo 0 > /proc/sys/vm/dirty_ration.
 
-"Something done by my userland code has ended up with this spew into
-kernel log" _may_ be of use in some cases, but examples you've posted
-are not of that sort.
+The following is a test case:
 
-The things missing:
-	* what _was_ done by the userland to trigger that?
-	* how reproducible it is?
-	* which commit (if any) has introduced that behaviour?
-Might or might not be available, but "bump the version number to
-6.13-rc2" is very unlikely to be it.
-	* can the reproducer (if available) be trimmed down?
+echo 0 > /proc/sys/vm/dirty_ratio
+cd /sys/class/bdi/<device>
+echo 1 > strict_limit
+echo 8192 > min_bytes
 
-You really would be better off if you described what that tool is
-trying to do and what are your plans for it - missing parts, etc.
+==> error is raised.
 
-As it is, you are dumping a stream of low-quality output on people
-who are not in position to do anything useful with it.  In effect,
-you are training everyone to ignore anything you post, which is
-probably not the desired result.
+The problem is addressed by returning -EINVAL if dirty_ratio or
+dirty_bytes is set to 0.
+
+Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+Closes: https://lore.kernel.org/linux-mm/87pll35yd0.fsf@devkernel.io/T/#t
+Signed-off-by: Stefan Roesch <shr@devkernel.io>
+---
+ mm/page-writeback.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index d213ead95675..91aa7a5c0078 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -692,6 +692,8 @@ static unsigned long bdi_ratio_from_pages(unsigned long pages)
+ 	unsigned long ratio;
+ 
+ 	global_dirty_limits(&background_thresh, &dirty_thresh);
++	if (!dirty_thresh)
++		return -EINVAL;
+ 	ratio = div64_u64(pages * 100ULL * BDI_RATIO_SCALE, dirty_thresh);
+ 
+ 	return ratio;
+
+base-commit: 0bc21e701a6ffacfdde7f04f87d664d82e8a13bf
+-- 
+2.47.1
+
 
