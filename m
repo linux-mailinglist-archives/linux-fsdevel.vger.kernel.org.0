@@ -1,91 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-38384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C619CA01377
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 09:58:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21118A0137D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 10:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 352BD7A1F78
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 08:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D328A3A0FA8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 09:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF1315ECDF;
-	Sat,  4 Jan 2025 08:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E864C17278D;
+	Sat,  4 Jan 2025 09:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q09MUULQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dt0rG3VG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2F91494DC
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Jan 2025 08:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BCA149C7B;
+	Sat,  4 Jan 2025 09:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735981119; cv=none; b=OEALp+8RDO5/kc20Zs2LrQbgvW7WiSxQ3kXdnkpc9hL7RfOIYmjDEl6H+igbB2rCCV+xO/iUGlva1itpSKEUETolNWJenGv0hxm7W143ZUHDRTQx03cjMQSWNSakz88pAZvmL3DS04Uwd9XNZGx8gXGHYt7nrKEfqzFOTo0BmRg=
+	t=1735981554; cv=none; b=JhyRGaV5qMbMc4Z89M7Cz9w+iIy47MymZL8GxjEhjOiLbOpmlNGJTd+iCpTMoeU3bOJ7RI81dL2uanny8nNzjumIbfiIRVD9d0MdeQlrML5K4azlKWoyoEVI0NqHKBtAoffoanb05qHgQ6WlB+nsfZeQQC/uVNxF62qChHdjIwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735981119; c=relaxed/simple;
-	bh=KOZx20LR4rZPEZCX4BToRqR/iDVYpV+4YBVxrE/fWRU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jywZ4pon5BO6tjp05GWAy8fdQTWUGR5lfAXolpMKfPDzEV37+ADv0uUzQ4ZS+4JmU7u7vlifJzBCKFoSjPCpjYfFeUO6TSeWVI/VTWZKxpLqo7mNKLI5UHPw4U1iIXTnbeMlhkM70zwpRpjNDkjOw7h4Y3QptjGEhpMcdguEnBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q09MUULQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0019FC4CED1;
-	Sat,  4 Jan 2025 08:58:37 +0000 (UTC)
+	s=arc-20240116; t=1735981554; c=relaxed/simple;
+	bh=Zdr7RTfQs13SLt0RR6y+htEU9KH1H0YQGvPzOAN681E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RUI2BljsovZNzX6kG6V2eNV87+k58P/X6gRiQ10pG6rd/Hp4z59G3cv5oxe4RjfX2oFZPDj7dLAQrHcHdDi/3WAnHov68NHdAxsjFGtQlpezait5A2yzFC8hrU7i+sMZ0904nxMabpIoJMq7LDymxgeqZVuLGSul3pcLH36fDHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dt0rG3VG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A2DC4CED1;
+	Sat,  4 Jan 2025 09:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735981119;
-	bh=KOZx20LR4rZPEZCX4BToRqR/iDVYpV+4YBVxrE/fWRU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q09MUULQ10q6k7dxBlZCPr6ZB/xNUkl7yacHSjrQhd+ob/IbmHz+13DVwSFmKZ/D8
-	 E+83nhcOixKmSUq+YOeOAQtab/+Qglg2xgbWOdHx/1Rq53pK5p6tSF8RE5Qgv9O6Pr
-	 lLbMGS5wh454APJJYwo8a5CFyz6Zb3wo4Hobo+7DTps8wWBanddHAV/DKQ6czuDMBQ
-	 uPE06qL/733REcHbxowlZFDa4I+4zAwIhjljmLAey7MltMbbDMYSydIeQ/jBjYiGRG
-	 bT0vrGUpVqwSJxxy+ZYXv6syxu2VIWnSRAq1FXom80hFOWptlDPpa0Nf2MxY+H3NPv
-	 Xf2zMm5MJl3og==
+	s=k20201202; t=1735981553;
+	bh=Zdr7RTfQs13SLt0RR6y+htEU9KH1H0YQGvPzOAN681E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dt0rG3VG9Nk8QsmgFxn3cbEvqHjxcZlop3LHxc/WmKn0FpOANWie8c3QaMam8qM1a
+	 KfW/JF8ZQO1NykS4B5S0qfYOi5gGSv2Y/rWtsXAz1reHjg+1C9YgRMRZ1FamUA8s8r
+	 mbeSol9zKU22LvosH5zdjx6FR88XPgmTTtGqbZ11KclW4qyXy9TYj6GFVBQuM8fI9V
+	 NDitKnvIXhHJo5aZ1ieaDVmcYNa/B/kf9dExGUsMqdkumTrCrWS+TnBz2BHDU6UPxk
+	 FSQmKziotzk+c5OFR8OED8H1C4vuJJjxdASB9rbXQlA5Mq49VAqo9yVepqiNlWJ1gX
+	 3vdxp9jPqNp2A==
+Date: Sat, 4 Jan 2025 10:05:49 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	linux-fsdevel@vger.kernel.org,
-	Prince Kumar <princer@google.com>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] fuse: respect FOPEN_KEEP_CACHE on opendir
-Date: Sat,  4 Jan 2025 09:58:26 +0100
-Message-ID: <20250104-abkassieren-entkernen-107c439c917f@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250101130037.96680-1-amir73il@gmail.com>
-References: <20250101130037.96680-1-amir73il@gmail.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Jeff Layton <jlayton@kernel.org>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Miklos Szeredi <mszeredi@redhat.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [linus:master] [fs]  75ead69a71:
+ kernel-selftests.filesystems/statmount.statmount_test.fail
+Message-ID: <20250104-insgeheim-rezitieren-5e6dc33ca403@brauner>
+References: <202412301338.77cc6482-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=955; i=brauner@kernel.org; h=from:subject:message-id; bh=KOZx20LR4rZPEZCX4BToRqR/iDVYpV+4YBVxrE/fWRU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRX/LCs2GWXUZ3TO+3OQU/n+QVGx562FdkdaJ72IqJ/2 wnD8JxlHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPRqmP4H7/yFLcl/4IzgWcv PHou/HfX0wmae+UyuQ+K2D5gkli+7AnDP22X6yXLXvxSOvbygWRdY03g17Ns3Ros/fpGtpPkVqr EMQEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202412301338.77cc6482-lkp@intel.com>
 
-On Wed, 01 Jan 2025 14:00:37 +0100, Amir Goldstein wrote:
-> The re-factoring of fuse_dir_open() missed the need to invalidate
-> directory inode page cache with open flag FOPEN_KEEP_CACHE.
+On Mon, Dec 30, 2024 at 02:35:49PM +0800, kernel test robot wrote:
 > 
 > 
+> Hello,
+> 
+> kernel test robot noticed "kernel-selftests.filesystems/statmount.statmount_test.fail" on:
+> 
+> commit: 75ead69a717332efa70303fba85e1876793c74a9 ("fs: don't let statmount return empty strings")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> [test failed on linus/master      8379578b11d5e073792b5db2690faa12effce8e0]
+> [test failed on linux-next/master 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2]
+> 
+> in testcase: kernel-selftests
+> version: kernel-selftests-x86_64-7503345ac5f5-1_20241208
+> with following parameters:
+> 
+> 	group: filesystems
+> 
+> 
+> 
+> config: x86_64-dcg_x86_64_defconfig-kselftests
+> compiler: gcc-12
+> test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 32G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202412301338.77cc6482-lkp@intel.com
+> 
+> 
+> TAP version 13
+> 1..2
+> # timeout set to 300
+> # selftests: filesystems/statmount: statmount_test
+> # TAP version 13
+> # 1..15
+> # ok 1 listmount empty root
+> # ok 2 statmount zero mask
+> # ok 3 statmount mnt basic
+> # ok 4 statmount sb basic
+> # ok 5 statmount mount root
+> # ok 6 statmount mount point
+> # ok 7 statmount fs type
+> # not ok 8 unexpected mount options: 'tmpfs' != ''
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fuse: respect FOPEN_KEEP_CACHE on opendir
-      https://git.kernel.org/vfs/vfs/c/03f275adb8fb
+This test needs to be changed. We fixed mount option retrieval so it now
+also retrieve security mount options with STATMOUNT_MNT_OPTS.
 
