@@ -1,170 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-38397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7F7A016F1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 22:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D8EA01706
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 23:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FAA162A17
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 21:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A6A162F82
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2025 22:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C5A1D63C1;
-	Sat,  4 Jan 2025 21:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0991D5CCD;
+	Sat,  4 Jan 2025 22:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b="aFVxSd+9"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H7bPl6kF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797531D5CE5
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Jan 2025 21:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A26B157A67
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Jan 2025 22:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736025369; cv=none; b=ScrE3Tt8mW7by5se9q5typstABPswsP8IwrOoZAHPbU3LfZkO2kcjYAYu3QMmCPfcz3q3tqmzT3q/y0GhTr3ktsOvxDJuKFtaXeeMradnLOrlQ2K6FTPplu0mR9arlbt8qkvBVik/6VN5/QO6n54JUCtonsK76MUhWZd2MnzZzU=
+	t=1736028373; cv=none; b=h5OtIP/kVivGV+ZNirloYg5kClOXk7RF9z4GOEjrf41T2An3vb6U79oV+DBcwu3pVul45FOMfTpfq8PQr9wQcJxuSl4Pm1LeDjypR1FUTJKBrDFTp8pSEj1PmppGzehPgKLDHyUoqya91QFAkTqZzhBBwUHa+wClCiM5LZyTSCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736025369; c=relaxed/simple;
-	bh=DYU5AoJFN88QPgDHNfxcw0BVy8MieTaaGFGqDOAKSrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j4L0mdnXLffSln8mnxKmg8DhamqxxY5iJEbxWcUyM9Z3oQ9B4lbvAQs7O/KXZ/+H/KE1v2kHrdJucALnfpAUK8/7uHncfCoKviDBYu5m73HJOkNw5tgyZCHyBVgEIexp/a53jYrNyhfwIDioAx+ccWU3s7xXVhJaYxby2tA3cs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com; spf=pass smtp.mailfrom=colorfullife.com; dkim=pass (2048-bit key) header.d=colorfullife-com.20230601.gappssmtp.com header.i=@colorfullife-com.20230601.gappssmtp.com header.b=aFVxSd+9; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorfullife.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-386329da1d9so6061454f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Jan 2025 13:16:04 -0800 (PST)
+	s=arc-20240116; t=1736028373; c=relaxed/simple;
+	bh=PZyUUMGWQ99TdEA2ys/ORrG29yLGIO8uIIsVJDLTFF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XBVHm91z7WGX3UDRn3V1Unxb32A0Fo5tofGNoaJv+U/oIL1SO/0LeTQgsDy0dLExVbwG4QkQkhGo2p6dRnvW32ext/LOCp7sS/DTwGDUi5fN54CNLu2FtRCksieyR9OilYqvz2Ts/LZ/Z21zGctvJVmCFKD6owvy4c6m3Qp83TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H7bPl6kF; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa696d3901bso1636005866b.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Jan 2025 14:06:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20230601.gappssmtp.com; s=20230601; t=1736025363; x=1736630163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gyr/eOHsgmSVZnniBJlKIc3iYrLLHuoPpsr0i9Z8NYs=;
-        b=aFVxSd+9V+AcWQNM9IkJiCbzjTcVn/fkwZ69dGf3fZvq+qoCj/owq+Uu+3SHEJ/RAo
-         rUHq8b10WCyXM3QS/pZ3v3Ds/xVqBOJyOtyZst4Tl3QBCEZNLjFdRhXrC4zmrukW2Gsg
-         SHzm3Jl19Mpvm9fySd6oXqJJ0LeLp17duDqmqy7ey2q9i8U1A8Vs30r/AyVgqtcZz+cK
-         DqlamlV2/rFJ66Re/5YwklnRPXfe9iwVdL0MbDVaBv6xUpqiL0Ag0Zwio8Pw9LbQX5dk
-         tNxTJYTN/tyKZixoF0pCRCnSduhvh3WsrHxDB+QlVj7AAmJ4uakE/6d+Mz02VeYrsBLr
-         CsaQ==
+        d=linux-foundation.org; s=google; t=1736028369; x=1736633169; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nYKO0NnUzfqhaYI1HioLJFUWrXfhBCJrSebWyffvRhk=;
+        b=H7bPl6kFFLhG30tyeR65KRGqaRItLX+NXWAhM8bbG5DQQRrMxNnBnXL3u7gQYa3F9O
+         pIgFdIQxkeM823H4ZaX78JASGOtw0E9ev1YAR9FndP7ru5o3A5I2jVFcW0qSbWXjVYpp
+         CtbIBs6pZbRqVnjRCJBbRz3c8i4vSQQyG4Daw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736025363; x=1736630163;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gyr/eOHsgmSVZnniBJlKIc3iYrLLHuoPpsr0i9Z8NYs=;
-        b=IdgrpB6arHNG39eg+5nkLOQoGiDYPbmWa0W2NW/pLoBovCnLY8eHtC4Hd4qImME+7K
-         l3PNmhNeQ2rrUW35k7+RRrtnZ7Zr3m81V6fadS/5/mVJJcAqaRmg3zKYtHSoeu0b2Gv+
-         C5qLZgN6nhDY5CL71IHy7qfx+l3ZnDJWdNolCCzTsDwt1RPySCh+4eFLjTgcaAoyhBsn
-         Sm3Gdb1CKSU69fcinlGLK97kTNgZs8r6kNBLIftb/HcwyKntyXR823nfQ5cX33cX4UBB
-         806qFEtr1+edHoL9Ge+JNRtzYPF7wojr/Xrv5eWQ6T6PcWsGpIDyU3uv3CG0iNx/GafN
-         sRhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkNZLq4yzc+hnsgLTVOENK7cE0MQYgkVJEhLh1hr83w4DjS77mNjkQqmwzh3Ae/fQ15TlLAFA6xBSzM+WS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuFUymaMT2eVhUzqNg2o38iZ4lOmLhJ/crnLQSvbo81900aQe7
-	uFKDXALMqX+O1P53LvMafhWuam8z2EYxbtkaZEGoA4RJj7h62bJsaMvheYOMzFW0372A2Hldwft
-	fmw==
-X-Gm-Gg: ASbGncskAfHktXWzc2uLG61/uasY2FC8hfU9svxMCcvAAMQpnq/oSngfdWwDSettbQ2
-	sVzPbmqlNboC1LyntD0XI9P/jOnKuEplb+/V/ubZ9jkRXbKPsQK1AzCcC9J2r4pvDy1DE6aY1aY
-	XVmXBMbRXoMfE0ThpZ33CouaBmdLVls+B4d345/4aHMekD+Ut/6fgScViKPIEcEFrxS4eypWQE+
-	peKawjKqc3UnRrL4bIrrpd3T5gdB9j4oZYtX0NjuCKc0r7CXQskLyjROND0gpBVyrib8jo5fRGt
-	Yg0lws7Rz/9yr0dtMzS5qLBssU6Dd8aRptkhgwQp7twLPT14H8+U5H0qGS5mDSmV
-X-Google-Smtp-Source: AGHT+IHiI9NKb62RzTDNVCW3aL8W1D6GUC+nkKfpURYeEe95xovPEND/d+FNloiqr8u+h5iZCIi17w==
-X-Received: by 2002:a5d:6da1:0:b0:386:4a0c:fe17 with SMTP id ffacd0b85a97d-38a2220039fmr43957061f8f.27.1736025362594;
-        Sat, 04 Jan 2025 13:16:02 -0800 (PST)
-Received: from localhost.localdomain (p200300d9973d88005833f4708c0fe0a2.dip0.t-ipconnect.de. [2003:d9:973d:8800:5833:f470:8c0f:e0a2])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a67c77a90sm5935667f8f.54.2025.01.04.13.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2025 13:16:01 -0800 (PST)
-From: Manfred Spraul <manfred@colorfullife.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Joe Perches <joe@perches.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	WangYuli <wangyuli@uniontech.com>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	1vier1@web.de,
-	Manfred Spraul <manfred@colorfullife.com>
-Subject: RFC: Checkpatch: Introduce list of functions that need memory barriers.
-Date: Sat,  4 Jan 2025 22:15:54 +0100
-Message-ID: <20250104211554.20205-1-manfred@colorfullife.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241230153844.GA15134@redhat.com>
-References: <20241230153844.GA15134@redhat.com>
+        d=1e100.net; s=20230601; t=1736028369; x=1736633169;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nYKO0NnUzfqhaYI1HioLJFUWrXfhBCJrSebWyffvRhk=;
+        b=Yg0Hz7mm5xaf8b/H8OVYxL8aJ+jDPOD25qFNMoanZAYGnnGs2/T8AxMPrZltz4d7O1
+         H+R97UJRvq6APbByOvYc9S0+hlyqjGczOQ9aQMkx/tYFQFP4wNpXGT5dzHDFPM4taqy2
+         MFefJLXQt0heuknznhIDx1DCbtAzPPKhW6gaIN1XwVrI1LHgsJMw7+mPgpLdr32C2seu
+         pJ6kDCQZdHwUaS9VLnIIWejQCgQZtZSj8d8Ubiw4Pba9nXgkkKHc1HfxGuKRmFGEayE2
+         3i6bau4XeSYo5dBKIeuH55goViDGyfDQ3pehLLMUlmoyHb+lheHTwUgPv7HfewPsue6N
+         9+ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVBOCIdLoUODi1r32wVli2LbY29NJxfNDTxJR/qySuYsK2N2RZeQXsB5v/LvyUHP1mz25x+AKOaTg748Nnk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIRHsVaUK9UEzGR/9nfVKgrJOZwKQz0v9NpO+MXu8N9O6Vwvjg
+	9nTYlVJ8t3qRmnb7MEvo8jKxtAPnu2aM0RKh99oGj6+c/cRHPcv5Zj9DWCwNisXgcOm5hwN37Sl
+	J
+X-Gm-Gg: ASbGncuYGMQt7Bgjj0b11Ls9UrWVcBrxtlNfmwbr6J13K86f++2UdH+bjRO+Y3kRaJE
+	fwwgNFWyqK9LmN/5EtJ/Zo3D8/tasGqjuVGFIu598SbPfdJfdcifkai6RelKIv+/G9oHsIAaVpu
+	hvEWCRDU6ZEZYEybqREnBAP/ofRfTPL3WRZDfPv2DEY9YC81uZQZveyHAeevfct4Ot4nrzsdMu9
+	VoJmHEewXISXaA4i3QuLCXoOgRD4ujkYd9QL78UzKQ7XHeegKlyryts8URib7SpiMfYxEaBXFkE
+	ATQVMU89efYSHn7uleUPE+Vjjh2ZZ2w=
+X-Google-Smtp-Source: AGHT+IEb1N5WNSUjW2D71fXVFt0uvKzk+dnlrd+VtVhBbwuWC0VSyfkHrvfX4NcAc1k9snrlgDqBxA==
+X-Received: by 2002:a17:907:3d87:b0:aa6:841a:dff0 with SMTP id a640c23a62f3a-aac2d458126mr4273378466b.32.1736028368999;
+        Sat, 04 Jan 2025 14:06:08 -0800 (PST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0efe4b6bsm2069098066b.93.2025.01.04.14.06.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Jan 2025 14:06:07 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa696d3901bso1636002666b.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Jan 2025 14:06:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW2B6Uelvw/I99Ap24mXcxca5qVyASU3115xG3si77+lwZ5LXgeMZq0VR18ZX12U1P53wF+wAdepeGFQ6TR@vger.kernel.org
+X-Received: by 2002:a17:907:9722:b0:aa6:6fa5:65b3 with SMTP id
+ a640c23a62f3a-aac3352c204mr4836721266b.47.1736028366076; Sat, 04 Jan 2025
+ 14:06:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241229135737.GA3293@redhat.com> <20250102163320.GA17691@redhat.com>
+In-Reply-To: <20250102163320.GA17691@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 4 Jan 2025 14:05:49 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj9Hr4PBobc13ZEv3HvFfpiZYrWX2-t5F62TXmMJoL5ZA@mail.gmail.com>
+Message-ID: <CAHk-=wj9Hr4PBobc13ZEv3HvFfpiZYrWX2-t5F62TXmMJoL5ZA@mail.gmail.com>
+Subject: Re: wakeup_pipe_readers/writers() && pipe_poll()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>, Christian Brauner <brauner@kernel.org>, 
+	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-(depending on output of the discussion in
-https://lore.kernel.org/lkml/20250102163320.GA17691@redhat.com/T/#u
+On Thu, 2 Jan 2025 at 08:33, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> I was going to send a one-liner patch which adds mb() into pipe_poll()
+> but then I decided to make even more spam and ask some questions first.
 
-It does not make sense to change it now, but I do not see a reason
-to single out waitqueue_active().
-The code is copy&paste, it seems to work.
-There is already a recommendation for spin_is_locked()
-)
+poll functions are not *supposed* to need memory barriers.
 
+They are supposed to do "poll_wait()" and then not need any more
+serialization after that, because we either
 
-2nd spinoff from the fs/pipe discussion, and ortogonal to both
-the initial topic (use waitqueue_active()) and the 2nd topic
-(do not wake up writers if the pipe is not writable)
+ (a) have a NULL wait-address, in which case we're not going to sleep
+and this is just a "check state"
 
-Memory barriers must be paired to be effective, thus it is
-mandatory to add comments that explain the pairing.
-Several functions depend on the caller to take care of this.
+ (b) the waiting function is supposed to do add_wait_queue() (usually
+by way of __pollwait) and that should be a sufficient barrier to
+anybody who does a wakeup
 
-There is already a request to add a comment for waitqueue_active(),
-but there are further comparable functions:
+Note that add_wait_queue() ends up doing a spinlock sequence, and
+while that is not a full memory barrier (well, it is on x86, but not
+necessarily in general), it *should* be sufficient against an actual
+waker.
 
- wq_has_sleepers(): No barrier is needed if the function
-  is paired with prepare_to_wait(). With add_wait_queue(),
-  a barrier is needed after the add_wait_queue() call.
+That's kind of how add_wait_queue() vs wake_up() is supposed to work.
 
-- spin_is_locked(): the ACQUIRE barrier from spin_lock()
-  is on the load, not on the store. Thus spin_is_locked()
-  may return false even though the lock is already taken.
-  Avoid to use it outside of debug code.
+Of course, the fact that we're not discussing the pipe code *not*
+doing a full wake sequence (but just a "is the wait queue empty"
+thing) is what then messes with the generic rules.
 
-(and, for completeness)
-- waitqueue_active(): Usually, a memory barrier before
-  the call is needed, and if add_wait_queue() is used, also
-  a barrier after add_wait_queue. See wait.h for details.
+And this makes me think that the whole comment above
+waitqueue_active() is just fundamentally wrong. The smp_mb() is *not*
+sufficient in the sequence
 
--
-Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
----
- scripts/checkpatch.pl | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+    smp_mb();
+    if (waitqueue_active(wq_head))
+        wake_up(wq_head);
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 9eed3683ad76..8bf5849ee108 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6685,11 +6685,17 @@ sub process {
- 			     "__smp memory barriers shouldn't be used outside barrier.h and asm-generic\n" . $herecurr);
- 		}
- 
--# check for waitqueue_active without a comment.
--		if ($line =~ /\bwaitqueue_active\s*\(/) {
-+# check for functions that are only safe with memory barriers without a comment.
-+		my $need_barriers = qr{
-+			waitqueue_active|
-+			wq_has_sleeper|
-+			spin_is_locked
-+		}x;
-+
-+		if ($line =~ /\b(?:$need_barriers)\s*\(/) {
- 			if (!ctx_has_comment($first_line, $linenr)) {
--				WARN("WAITQUEUE_ACTIVE",
--				     "waitqueue_active without comment\n" . $herecurr);
-+				WARN("NEED_MEMORY_BARRIERS",
-+				     "function that usually depend on manual memory barriers without comment\n" . $herecurr);
- 			}
- 		}
- 
--- 
-2.47.1
+because while it happens to work wrt prepare_to_wait() sequences, is
+is *not* against other users of add_wait_queue().
 
+In those other sequences the smp_mb() in set_current_state might have
+happened long long before.
+
+Those other users aren't just 'poll()', btw. There's quite a lot of
+add_wait_queue() users in the kernel. It's a traditional model even if
+it's not something people generally add to any more.
+
+Now, hopefully many of those add_wait_queue() users end up using
+set_current_state() and getting the memory barrier that way. Or they
+use wait_woken() or any of the other proper helpers we have.
+
+But I think this poll() thing is very much an example of this *not*
+being valid, and I don't think it's in any way pipe-specific.
+
+So maybe we really do need to add the memory barrier to
+__add_wait_queue(). That's going to be painful, particularly with lots
+of users not needing it because they have the barrier in all the other
+places.
+
+End result: maybe adding it just to __pollwait() is the thing to do,
+in the hopes that non-poll users all use the proper sequences.
+
+But no, this is most definitely not a pipe-only thing.
+
+          Linus
 
