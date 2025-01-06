@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-38414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C17A021A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 10:22:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A79A021BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 10:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD101885244
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 09:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93A327A1751
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 09:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF4F1D934D;
-	Mon,  6 Jan 2025 09:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906D91D90CD;
+	Mon,  6 Jan 2025 09:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jNtHuX41"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fWfmZOKq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2C61D8DEE
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 09:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA8EEB2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 09:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736155308; cv=none; b=J5QnkIvEptqGk/6QOTgVc9IvBumNzni54qY5HHJTiRKLgVIfj5F2QuYWGuANRob9LcbSGC9usz8c5bQy0+cdE9t+jm6aWObwdZ03/wAhG8Rm/0jj3LH9DGDWYp7xMalS+iD9Y/gDD00gr7AqW72ikbt1b2x7agAhkAKhVXnyOq0=
+	t=1736155465; cv=none; b=VgXUunSJsJAsaKTRvrVNZ4NCaT8UU2rW3nyNA+h6fwYoZF2VhGPWqqC0a+35rE3y0QrspTTQVlbjgnQzjCR/OUU/0oGvcmRUSAxLEoVjzO6xPhMcRuC2iaovxTRTTVFG4ApW6a2a0anMt9vLeL/6xIQw4uF2n6w5nptJGXfCOOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736155308; c=relaxed/simple;
-	bh=o+kXTplRVUCUvhEajnIjUGWu05VGVRRba7eVIYEAOuk=;
+	s=arc-20240116; t=1736155465; c=relaxed/simple;
+	bh=jNO9i89qSQSBkB69s7RgnVMmgO9CzUVgQ56e8cAbncM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cg2VaVHtB/RbSQx5+9y8SM7tud5hHyFZSE6jviQIvytk3EX54/HKZMhmBUx0ernCbnwYFacMBhTAXwofbO/B56StFI8Vfs13AwL8aQ7pCX83B8MaunAhCIySuFIUmkWFPLAJ+wPaPxo/hj+/hsLLrHomIASqtSbQL4yyJFL67OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jNtHuX41; arc=none smtp.client-ip=209.85.160.174
+	 To:Cc:Content-Type; b=rah7ds5mX68i91MKgxOKqKcLwRUw/nWJQKJnPnzw7i863E3672lned8/4aHglSzumHwLEkcMeTU0C8/cnx9VjhS6wV1w1ImNCk4gdV/fhYXwbbIuKJFcD8KglEK1bpvGIUHYTCQHhvT8o0L8jGj0fAuzY8Efo/YTGqH6pLONRfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fWfmZOKq; arc=none smtp.client-ip=209.85.160.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-467838e75ffso173469801cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 01:21:46 -0800 (PST)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4678afeb133so128357991cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 01:24:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1736155305; x=1736760105; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1736155462; x=1736760262; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o+kXTplRVUCUvhEajnIjUGWu05VGVRRba7eVIYEAOuk=;
-        b=jNtHuX41fUg5w1wToPpW1AQSg7NXsExsROj4oE4E4ul7FiGqyTNp8sKCV242GXTy3r
-         fsRztX+3N0bNaXANcMVCfH2hWAJXgTmhHA5XZa9mw8lhb9eyAbazLZFL4HUjl402xq/r
-         JzSsj/kvLqxAYJJeXD1HsQqRM6rm1Ur5uLCvU=
+        bh=jNO9i89qSQSBkB69s7RgnVMmgO9CzUVgQ56e8cAbncM=;
+        b=fWfmZOKqOlMW7H6/hx+j+rUuVRHfVc9lB6P459WyUgTh/24J1qHR3596q52QAmJ4JO
+         Lsjy65nofJ4O7+H5Qh+5i4n4Sm26cHEDZ5nbikZveWSWBfrB9D7/Zlp1sezGm5ymXS4f
+         9sLuRRhWCSyTuNkxb/2MUt7/ImTnwXE/ynYU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736155305; x=1736760105;
+        d=1e100.net; s=20230601; t=1736155462; x=1736760262;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o+kXTplRVUCUvhEajnIjUGWu05VGVRRba7eVIYEAOuk=;
-        b=OGfpDhHzi4KaqV/hUVDSEjBeGUu/zgnsH5rjEHMrQumxB64oj2eFHhfJavOre2Zioz
-         7Zw4B8EZXSS3BYTlZ3ZnEqrGBCemtnUucMNQcUC1M66qcr1c8z2E83hJM65SNdmMFj28
-         qL6LHrBa6GJ0ZX32BX0iG8JGW3jcMK02rKDi4gjONKfck8Idr0+5ox1aIAh6ciMR/SEi
-         3UQJtqQLcdzsssWv647bwEedYXfFojoav5FjpX3qehFFpOh43oUTvpUMScAxZzw/MJy6
-         KLTAxbHvpV9breXblMeZd5TKiLhaLqFqAgbFCMXaMB/FrFWk1rjr0RFVbbYGTI3cDOvG
-         InQg==
-X-Gm-Message-State: AOJu0Yzl7HWymfdVlGkQy7UxHOCMVd/bNmpzEb5dQsv8T/tfMBLfLKvi
-	9X6D2uq40OnaPsuQiPXqzL8JlgHmPFgCK6+hWjxRwVDfKHAHrTrBRR6rYL0M+6q7v10DANZdCSf
-	G+7pi1enxGBnmQujIbYBtfzW6jR8jaLhx/1k2Jg==
-X-Gm-Gg: ASbGnctlx4RNxCNYb/p+/gAdC8tw2PE2ZcTB0aYS0gVALe9GP9gj0LrNC8xrAYhn6jv
-	cf7trpPmQMt1OSF5/8Et/K2CTvnHw8wagAec7ew==
-X-Google-Smtp-Source: AGHT+IF8Ds6ghfbOGGDbhNh6X9Y8CqcczoY31NSOWdgQapCpIVDNnkjA+RlTfwrKVoqDUHnGcUWziAyULUaL9wQZZLA=
-X-Received: by 2002:a05:622a:1822:b0:466:8e3a:e6cb with SMTP id
- d75a77b69052e-46a4a8ea644mr864262471cf.29.1736155305347; Mon, 06 Jan 2025
- 01:21:45 -0800 (PST)
+        bh=jNO9i89qSQSBkB69s7RgnVMmgO9CzUVgQ56e8cAbncM=;
+        b=KvaPv8P+wPsyfkyAErSNhO6tNFP9MTS3A5f8j9vc78iGOoYGRiRtmgmgd+tnYBcdj5
+         6MRUmOzJILDnOUZn1xSF4Ozz8qPTyqCk5GjUtvELZ7wzKUxy/k81GTgGu0ASahFN5mty
+         Ly9+TsTb1rWWbzbTysaINgVfiQANjYrKjNqSDlCpTNrZ3IFkRz+bkqim+uAt7I2umqCx
+         oQjObDZYJ8QOPxRHxqRt2MSJwvS0PACP9eitOS9WrYWJtdI04ThPv9NVchXYUfbnL96u
+         jFTJGogoThf4kFKECuzx5OiaAOzdb9z+yyqEfpBp5SdfRBaF0jB9jkMiPSOBP4xKf4z1
+         ZpUg==
+X-Gm-Message-State: AOJu0YwnO1/uKPXPJxqtClQo+BgYmhwcjJg6fdVdfqhBsx7lyRu0lnt9
+	6Om+P86tWEY01OYUKZUmkP13nlm0yNpDVOMvDSUvGSqIlIfOWnmye+CIc8lsqrah1akEbN/eAw7
+	6oi4pXZSI00qk/8Ygua5ZRJuehKaJ+ECm2ViabA==
+X-Gm-Gg: ASbGncuvMd29HttZTG1qb3G6HZotRqlHk1E4wqYPbRIXCEHVh7IyTqm0pEtl/bxkn3X
+	WLuANZLJpvfXC6ok0V2+IFlCSgO3251Exh7Qnrw==
+X-Google-Smtp-Source: AGHT+IHWrslzdiFvliWwB0WkD+89NHGSCEypEDjO2vDiK7khiC9C6MRSkviDYuEL9HO/IO2YcCzIAjKaRBcbNKXahWo=
+X-Received: by 2002:a05:622a:2cf:b0:467:6585:66bd with SMTP id
+ d75a77b69052e-46a4b113607mr917500381cf.11.1736155462528; Mon, 06 Jan 2025
+ 01:24:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6773ed41.050a0220.25abdd.08f6.GAE@google.com>
-In-Reply-To: <6773ed41.050a0220.25abdd.08f6.GAE@google.com>
+References: <677b2eab.050a0220.3b53b0.0062.GAE@google.com>
+In-Reply-To: <677b2eab.050a0220.3b53b0.0062.GAE@google.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 6 Jan 2025 10:21:34 +0100
-Message-ID: <CAJfpegvukv7oXtvzCFwSGQScPDzW9xerpV8D6B=pEVJ8SiU=5g@mail.gmail.com>
-Subject: Re: [syzbot] [fuse?] BUG: unable to handle kernel NULL pointer
- dereference in fuse_copy_one
-To: syzbot <syzbot+43f6243d6c4946b26405@syzkaller.appspotmail.com>
+Date: Mon, 6 Jan 2025 10:24:11 +0100
+Message-ID: <CAJfpegv2hgjB9xvxFY0+wN2P74kZSN9_w_mffdv=e6Vib1atJQ@mail.gmail.com>
+Subject: Re: [syzbot] [fuse?] KASAN: out-of-bounds Read in proc_pid_stack
+To: syzbot <syzbot+2886d86a850adcd36196@syzkaller.appspotmail.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-#syz dup: kernel BUG in iov_iter_revert (2)
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+7a4f5418
 
