@@ -1,88 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-38409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9597BA020EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 09:38:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10062A020EC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 09:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5BD47A1F96
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 08:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC3E1627C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 08:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E398C1D90B3;
-	Mon,  6 Jan 2025 08:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3401DAC83;
+	Mon,  6 Jan 2025 08:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOKiGDxQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RguIPiPY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BCE1D8DE1;
-	Mon,  6 Jan 2025 08:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C9315EFA0
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 08:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736152524; cv=none; b=q3QrF08RHRO1eoEZrg2Uwz+Jv6+mQanfOTbOhDRnsIA2eGyOr6tgE1s4ogPkZ/piyY3c9bCqwccjUHr4ElVebZaIhhzHS5oOrzskoeiYJy5y2pgN0IwCqnAoX/IyYfkRUqMktAAQIdtnXqfP2otuYURVX/TXzl5XY7uSvUpnftw=
+	t=1736152574; cv=none; b=t6Tq1eFJfRvtdV/+O2dCvu/jwLRIrep2TlgDmlYVtnSfjwL/ztT1YOcXCymFjjIF5JFUtG37pWjgyPvBidyIreXPZ+eM8+JB5ZqkZyrmU4bqv5eIOmamRCRfG9+r1GRgfvN+kf6B56M7fBfRbTLO90rF0Uvdvdyt4kP/Pih7OPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736152524; c=relaxed/simple;
-	bh=H+gFINVbb+nOCEqT9QQN/XMGSyGN9OGVfjvZIOdNJwc=;
+	s=arc-20240116; t=1736152574; c=relaxed/simple;
+	bh=L6s+Rwmim67+j7Ln36wa21wC3/N4uadQbHRS0sVWv20=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHlBGbQiDJ17U+Mh38+DFUXdezIhQvwi+eA5DgT2fO3mS8pOBH1y/j1kxngYO/Jz4n2UBMzNrKZM0eVSKKamp5e9kM0cT6fBLRh2rsbS5N6UVm+9YSk1LC5UhsUrrNzyCAYkkQFuhzNC5ntmBFKGspeGgdOo1qVXNSOJt6nRbcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOKiGDxQ; arc=none smtp.client-ip=209.85.167.47
+	 To:Cc:Content-Type; b=V6xvjHXYQ+8kSeBsHmY+N73yfWM80IiNn3WDvtEiX/aL/lvPkanf/IclU0R/01leyuuMICC9+1LKQCyTDREgpLP8hgs0E8YCkp/hxzUrq67oJ91Nnn7b9tdlziwRaZqVW+ZkoKMoUwMOpe7yHXDmstOwfbsa0BuOe2quctfgPTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RguIPiPY; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5401e6efffcso16580626e87.3;
-        Mon, 06 Jan 2025 00:35:18 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53f22fd6887so13155897e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 00:36:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736152517; x=1736757317; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1736152569; x=1736757369; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nq36ONrrzNeUzm/WBB++1PFiUlFmJ9wXn3DMdB5FnEA=;
-        b=cOKiGDxQl3KgGY77mXBhdWLcU68pPWMCxqutclKtvqfvRbkjb/n2qkHqHC1fq8Jsdo
-         vfBkjJEnlERaV1CBCrvbE9rb0s9CldrQrh9Hv2BB3SSZ1v7/goaW7xOT4AJ4eZEA37re
-         jqnzkacg3CagTqvavf3A/gW7ysxaaMKuPMw2d67ilct9Kc+vA8BeeKuMqRBfcp5/EBr7
-         Ws+LeXe5zw1Cdtf/vbXs/5e0GypmBVEnFyBzgZJDg3S4J9zsjoGsl5IDrMpKBNIl8Fr8
-         DpFXYl8Od2Ec/MAFLLuECJVOlS/j7qly7PgskWyi4fhEKo0YZGGQORtu79Pe05Uv19E8
-         pJLA==
+        bh=1ejBNHLkaoLmmaLuycx7ZFMBKERt9Z8cTBhk9JxCnjI=;
+        b=RguIPiPYvv2/MMOMfCE9c64ougfNacZPGz/MyFQmoIEHf6sf5dC99YGz01N6fC6C1I
+         VJQl4U6TZ9+Ry/iihbqXadvov5BJKLJptrTpM9tBWnnTQtGH7uUxo6dWSqeM6mfeKy4r
+         LsnBGVXqaevI0q3YVqJhBjfJDk9JtkN3VJt5qtTI8aJXBgcwH4RgaIh7jF5/YqTyt09j
+         EhpgRiM/xMQ4BnkYSTLmA9eG9GOKTjKJqkegPWaKCmqOI8XculEiwSBWZwtySqa+ISok
+         KgeKMhFmyrwjZvPW0RwRKG2HiCRB7XximHw36Hqc1NEEaCIxNOEWRErL+OND+/sSvyZV
+         5Ysw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736152517; x=1736757317;
+        d=1e100.net; s=20230601; t=1736152569; x=1736757369;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nq36ONrrzNeUzm/WBB++1PFiUlFmJ9wXn3DMdB5FnEA=;
-        b=MaR//1tfhtoooNcYExM1bMJPavC4vRY490XuKwrsypKhLsmc93k73ZXBaJw9Ys+BlU
-         qbQOptYw80815TFY4oxZsYeyNIBgdhKY7o9p2O5HeFDSJFfv/qcxyKjzRH0rxlfACgeP
-         EQIKr3Tq9JPhWMreoiP9tZNUMdkJrbhgjt6cDyBRdOtMAYbHX8py9bN5kF8fJsDdTqDf
-         DiJsWycFuVUI+3UzegFbK/+w3NsOBZwV9cgN79MSAGlR7LqC6TA7MZJvds/rsUKTWuy9
-         YUAbBp1piLAoFXz6cO311f+FqcaFdN68D1wBfYZhb0dX1XbmtJdRw7JxYj1ALgI5lQrW
-         +28w==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6DfEUv5EipNovDbGwnxJJH8C532rL9XC6NC4FmguS5A8w33cpbIBUyeYkicUchnbZkZ+aHqS+frz@vger.kernel.org, AJvYcCW0kQrdXWOHVPENrwCblxDgkD18k+OkDfGW3LLd1wJUbj1TfPWy5L/3PCZBqs+32azkMSzEcerf8KEKpqpI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkfZ2egRqg6blMioFNGxxmX9ZEkfk9cQp2Rv1c24E/4VbMtuC7
-	hHQK/S3fZlWfGUbWASlTyxUmZeJ90X25r1ZWF7MSqNkbr+yLmeiJPu7dwAnscEWgJBdpfg7UKyt
-	mbuC1t/yEyogaWfP0ZYGdTzF5SEpLCefoyzTZ2wYj
-X-Gm-Gg: ASbGncueeFr8sZHNfB4010SAdv6x8r22GHhKUPO971sgr7UX9CY+ZuWRxhv6OTKdRiO
-	TtuEJmC/fy4ScILwZHB5m+Wj4AbTn+FtQtxd1oV8=
-X-Google-Smtp-Source: AGHT+IF58MtI8FTeFFToH4mIQ4HnNZKlvKx8EUWDToPP070VoXPwU3tV9FWEzY8FSPGyvsgv1QKAWyv/q8qb9uQKgtQ=
-X-Received: by 2002:a05:6512:3d86:b0:542:218a:2af7 with SMTP id
- 2adb3069b0e04-54229538b19mr18578842e87.15.1736152516643; Mon, 06 Jan 2025
- 00:35:16 -0800 (PST)
+        bh=1ejBNHLkaoLmmaLuycx7ZFMBKERt9Z8cTBhk9JxCnjI=;
+        b=s0Xbch/lWH4Gv6K6gfjI2bQeLhtyayHS5jSHgi27v09vpJ6A9PPTLK84DVUavSalTN
+         +hx1inwDeZ5PYIYnHcGDVoBITkG0ibzzgJ6DtTKyrCuNJpAqp8xXhYmkgBc/fIKrGFLQ
+         tqlXdQu4R24rxuNDITmX+TU0IgfESHJBVPy6SfMgfEO19v6wweyOypprlQejGhwZl6Jd
+         x+GOpv0wMkRQ5T1t+cPnV2QKqdPFpRZhfvQmQPuupYgi3x0OsJ7ba3Xp0RdxSLpSyTw5
+         QXyHEn2KdxxaGTM6NSAHXEkS3ov8J8s9aC2VELzVYOX/edB8h2+sDLqR2GJOsZ5NALIW
+         MVPA==
+X-Gm-Message-State: AOJu0Yx36mGyjYOfLNdGI0KRgDSMsVkuLKJkb60WxUAUeutLcLfRDJ6Y
+	zA+LXZEz9tDpMPzVSNUz+VujdyREQr7VxJ+Zv9t+RZCFHN1NkoiXHqd+C2Aknx/ra71TizDa2Yu
+	I6soacO8zYkIUBuRc0XCeITL1lHNszuEVbll2M7xr
+X-Gm-Gg: ASbGnctgyrRspeEvDkIuuxkhQxPnyTAdPJpWTLV2wZ3Bl5VsGQFt2HnI42YprSLMUvr
+	fKQCgsTmED2D29M9my8xgvbvIRE85nCP7MBh2Fa0=
+X-Google-Smtp-Source: AGHT+IEHD2YeFiZ+y2EW4m7i8r77cUv7Fsl9yaJ1yANFkhx9COGaKU91016BOzpPekk5rLl+Rl1UI+yNStdmO14SFfM=
+X-Received: by 2002:a05:6512:6d3:b0:542:1137:611a with SMTP id
+ 2adb3069b0e04-54229533db1mr20364062e87.17.1736152568945; Mon, 06 Jan 2025
+ 00:36:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920122851.215641-1-sunjunchao2870@gmail.com> <20240925-gewillt-bankintern-0fd0ba5bca82@brauner>
-In-Reply-To: <20240925-gewillt-bankintern-0fd0ba5bca82@brauner>
+References: <20240927065325.2628648-1-sunjunchao2870@gmail.com> <20240927-eilte-willkommen-36601271c983@brauner>
+In-Reply-To: <20240927-eilte-willkommen-36601271c983@brauner>
 From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Mon, 6 Jan 2025 16:35:05 +0800
-Message-ID: <CAHB1NaicZFAGDHaOxiKDL+wcSx2ncWcKNLBBATDBfJ+9bxLa+w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] vfs: Fix implicit conversion problem when testing
- overflow case
+Date: Mon, 6 Jan 2025 16:35:58 +0800
+Message-ID: <CAHB1Najz=Eiof7vSUq+MqpaSpUY5MnkfzrBggjrz-==nGVKAqQ@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: return -EOVERFLOW in generic_remap_checks() when
+ overflow check fails
 To: Christian Brauner <brauner@kernel.org>
-Cc: stable@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -92,21 +90,17 @@ I noticed this patch hasn=E2=80=99t been merged into 6.13. Was it overlooke=
 d
 or rejected?
 
-Christian Brauner <brauner@kernel.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8825=
-=E6=97=A5=E5=91=A8=E4=B8=89 16:37=E5=86=99=E9=81=93=EF=BC=9A
+Christian Brauner <brauner@kernel.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8827=
+=E6=97=A5=E5=91=A8=E4=BA=94 19:27=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On Fri, 20 Sep 2024 20:28:51 +0800, Julian Sun wrote:
-> > The overflow check in generic_copy_file_checks() and generic_remap_chec=
-ks()
-> > is now broken because the result of the addition is implicitly converte=
-d to
-> > an unsigned type, which disrupts the comparison with signed numbers.
-> > This caused the kernel to not return EOVERFLOW in copy_file_range()
-> > call with len is set to 0xffffffffa003e45bul.
+> On Fri, 27 Sep 2024 14:53:25 +0800, Julian Sun wrote:
+> > Keep the errno value consistent with the equivalent check in
+> > generic_copy_file_checks() that returns -EOVERFLOW, which feels like th=
+e
+> > more appropriate value to return compared to the overly generic -EINVAL=
+.
 > >
-> > Use the check_add_overflow() macro to fix this issue.
 > >
-> > [...]
 >
 > Applied to the vfs.misc.v6.13 branch of the vfs/vfs.git tree.
 > Patches in the vfs.misc.v6.13 branch should appear in linux-next soon.
@@ -123,11 +117,12 @@ d to
 > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 > branch: vfs.misc.v6.13
 >
-> [2/3] vfs: Fix implicit conversion problem when testing overflow case
->       https://git.kernel.org/vfs/vfs/c/8f3ab2511887
+> [1/1] vfs: return -EOVERFLOW in generic_remap_checks() when overflow chec=
+k fails
+>       https://git.kernel.org/vfs/vfs/c/53070eb468a2
 
 
-
+Thanks,
 --=20
 Julian Sun <sunjunchao2870@gmail.com>
 
