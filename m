@@ -1,124 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-38450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1182A02DA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 17:22:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83C3A02DAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 17:22:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36FD161968
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4540E1888A36
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24EC1DED66;
-	Mon,  6 Jan 2025 16:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD9F165F1F;
+	Mon,  6 Jan 2025 16:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="AGn8M1Jx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X7TEvbcN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1741DED70
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 16:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E82146D40
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 16:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736180427; cv=none; b=BdZXS0+BPUR+h+/dO3oE0WwL4F4TwYvwfOrtYOKYqde/ZIsRN4ixyVItv5lvQ/SPQMNQi557bAwyeiC6qoDhPLJ+rVaWu2967y6i5/KQGvDAymkV1QfcX1fYZSpOvDKGignT6LFmV0FBpIzzgfH/nkklQu/+0UnnYLy4uGzeEms=
+	t=1736180473; cv=none; b=t4vCYRe/NhaJtbl2wnzuTlkgvqUb9Yj5dEQTsR0lNm6mHWTSy3ZXbpnEcekxJOEu4g/vHWT7ZhshBcsNb/Z2j0NtNfZhuBcENFjzFT7Ibbaag//wOCzBBbqpe1NkynsoWjGjEuAsT1j8k1+FEcOe/TijaAqRrOs7u1UO/z92jr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736180427; c=relaxed/simple;
-	bh=08CjTAXcNllOpHbngukcppmmfL3j5mHqq1F42ZY/Ay8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QL/BXtJuLEIAFQOtClho7nFn3nqn1PNaZkHL6qmgdLNQdUAleDYWOUt8V6ZM2zduBNIvq1gTagTW2x0u0AyBGqZXHB2HD9TtHpkXMOR1pg7XeFD6BXvDWN/KkxRtJjzdqkXHeQhlEOAZ2MgzZmHBlaQHNoBwuAjWXgUZoPegfzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=AGn8M1Jx; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-117-149.bstnma.fios.verizon.net [173.48.117.149])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 506GHW7k007725
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 6 Jan 2025 11:17:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1736180257; bh=NXScXVaoAKvLqsWBqs7KdteOT3Hvubxucjt3/r7nXWo=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=AGn8M1JxhpFdMe57olflxB4reH+1M7lV3Wbo91mwonjDIC8JDnbL0sHZHt5wljWG6
-	 70R3qB1VU8unS/Vx3dXkKbDke06qPpu09r11wjKyTZ0z8tckXf9yed8XwDXzZBB2bj
-	 HAYPmIs7U7rPqcGPL2j2j3bijHrYSC6XGgbYBDQoTJGZbbmoVz+ZFAc2qyjVcCV5tj
-	 j5pZeNwyNSSw4CiYeU3I4m6KPBJt/uefIpM2SA45+P0LHo/pSTnpYpw2qQANu99xk3
-	 2ZseTZ2jRfcUpcSEOS/Yh3UAiZTnohd8GoKpX4ruNFgyvzmQv49LXCqby3iUybw26j
-	 pIWwzjSNLxZqQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 73CFF15C0164; Mon, 06 Jan 2025 11:17:32 -0500 (EST)
-Date: Mon, 6 Jan 2025 11:17:32 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        djwong@kernel.org, adilger.kernel@dilger.ca, yi.zhang@huawei.com,
-        chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
-        Sai Chaitanya Mitta <mittachaitu@gmail.com>, linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
-Message-ID: <20250106161732.GG1284777@mit.edu>
-References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
- <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
- <Z3u-OCX86j-q7JXo@infradead.org>
+	s=arc-20240116; t=1736180473; c=relaxed/simple;
+	bh=27xZFrTjPhujZkL5cSY6iX5OT3UACobCEFOhceKCEpg=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=KXHiiXbJv49mA1/JXUDfqiWTwZ+vM6ecIUcl+EQOrzyBmWWs0buo37rqWM0+6TVIuhvPmXT3o3/IdUrFAa9Aa1IYTirIjiXiyOc/ggYXJA0Y3Vv2hH95evx11t/Su7aqQhRrR772mjhaK+j8UcO117M7zX3Wx6fOY+XMDqpgr+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X7TEvbcN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736180468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/MIweyE8QzeGVfBbPE75lvw7yX09jVlfJuNkuLyuodY=;
+	b=X7TEvbcNedc0Nvf/wCq/oTaniQK29gFPKSemI0UTEEfbSFKCdKH6ixiUNg6AETzIMzNGI1
+	m9hK9Rn0S9I+QqMEJL3WAHYiZqPCe9DAZ2YW6iQZiMqKG7VNXJyFt1xAmQrC4xX43hHypO
+	+yVV6NxN7LiMWB0MajApJ05nkeAK67c=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-149-oOJ9EKG5P7WrMjEyTqjyZQ-1; Mon,
+ 06 Jan 2025 11:21:05 -0500
+X-MC-Unique: oOJ9EKG5P7WrMjEyTqjyZQ-1
+X-Mimecast-MFC-AGG-ID: oOJ9EKG5P7WrMjEyTqjyZQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5A4AE19560A1;
+	Mon,  6 Jan 2025 16:21:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.12])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 522B61956088;
+	Mon,  6 Jan 2025 16:21:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com,
+    syzbot <syzbot+7848fee1f1e5c53f912b@syzkaller.appspotmail.com>,
+    marc.dionne@auristor.com, linux-afs@lists.infradead.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    syzkaller-bugs@googlegroups.com
+Subject: [PATCH] afs: Fix the maximum cell name length 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z3u-OCX86j-q7JXo@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <376235.1736180460.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 06 Jan 2025 16:21:00 +0000
+Message-ID: <376236.1736180460@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Jan 06, 2025 at 03:27:52AM -0800, Christoph Hellwig wrote:
-> There's a feature request for something similar on the xfs list, so
-> I guess people are asking for it.
+The kafs filesystem limits the maximum length of a cell to 256 bytes, but =
+a
+problem occurs if someone actually does that: kafs tries to create a
+directory under /proc/net/afs/ with the name of the cell, but that fails
+with a warning:
 
-Yeah, I have folks asking for this on the ext4 side as well.
+        WARNING: CPU: 0 PID: 9 at fs/proc/generic.c:405
 
-The one caution that I've given to them is that there is no guarantee
-what the performance will be for WRITE SAME or equivalent operations,
-since the standards documents state that performance is out of scope
-for the document.  So in some cases, WRITE SAME might be fast (if for
-example it is just adjusing FTL metadata on an SSD, or some similar
-thing on cloud-emulated block devices such as Google's Persistent Desk
-or Amazon's Elastic Block Device --- what Darrick has called "software
-defined storage" for the cloud), but in other hardware deployments,
-WRITE SAME might be as slow as writing zeros to an HDD.
+because procfs limits the maximum filename length to 255.
 
-This is technically not the kernel's problem, since we can also use
-the same mealy-mouth "performance is out of scope and not the kernel's
-concern", but that just transfers the problem to the application
-programmers.  I could imagine some kind of tunable which we can make
-the block device pretend that it really doesn't support using WRITE
-SAME if the performance characteristics are such that it's a Bad Idea
-to use it, so that there's a single tunable knob that the system
-adminstrator can reach for as opposed to have different ways for
-PostgresQL, MySQL, Oracle Enterprise Database, etc have for
-configuring whether or not to disable WRITE SAME, but that's not
-something we need to decide right away.
+However, the DNS limits the maximum lookup length and, by extension, the
+maximum cell name, to 255 less two (length count and trailing NUL).
 
-> That being said this really should not be a modifier but a separate
-> operation, as the logic is very different from FALLOC_FL_ZERO_RANGE,
-> similar to how plain prealloc, hole punch and zero range are different
-> operations despite all of them resulting in reads of zeroes from the
-> range.
+Fix this by limiting the maximum acceptable cellname length to 253.  This
+also allows us to be sure we can create the "/afs/.<cell>/" mountpoint too=
+.
 
-Yes.  And we might decide that it should be done using some kind of
-ioctl, such as BLKDISCARD, as opposed to a new fallocate operation,
-since it really isn't a filesystem metadata operation, just as
-BLKDISARD isn't.  The other side of the argument is that ioctls are
-ugly, and maybe all new such operations should be plumbed through via
-fallocate as opposed to adding a new ioctl.  I don't have strong
-feelings on this, although I *do* belive that whatever interface we
-use, whether it be fallocate or ioctl, it should be supported by block
-devices and files in a file system, to make life easier for those
-databases that want to support running on a raw block device (for
-full-page advertisements on the back cover of the Businessweek
-magazine) or on files (which is how 99.9% of all real-world users
-actually run enterprise databases.  :-)
+Further, split the YFS VL record cell name maximum to be the 256 allowed b=
+y
+the protocol and ignore the record retrieved by YFSVL.GetCellName if it
+exceeds 253.
 
-						- Ted
+Fixes: c3e9f888263b ("afs: Implement client support for the YFSVL.GetCellN=
+ame RPC op")
+Reported-by: syzbot+7848fee1f1e5c53f912b@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/r/6776d25d.050a0220.3a8527.0048.GAE@google=
+.com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: syzbot+7848fee1f1e5c53f912b@syzkaller.appspotmail.com
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/afs.h      |    2 +-
+ fs/afs/afs_vl.h   |    1 +
+ fs/afs/vl_alias.c |    8 ++++++--
+ fs/afs/vlclient.c |    2 +-
+ 4 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/fs/afs/afs.h b/fs/afs/afs.h
+index b488072aee87..ec3db00bd081 100644
+--- a/fs/afs/afs.h
++++ b/fs/afs/afs.h
+@@ -10,7 +10,7 @@
+ =
+
+ #include <linux/in.h>
+ =
+
+-#define AFS_MAXCELLNAME		256  	/* Maximum length of a cell name */
++#define AFS_MAXCELLNAME		253  	/* Maximum length of a cell name (DNS limi=
+ted) */
+ #define AFS_MAXVOLNAME		64  	/* Maximum length of a volume name */
+ #define AFS_MAXNSERVERS		8   	/* Maximum servers in a basic volume record=
+ */
+ #define AFS_NMAXNSERVERS	13  	/* Maximum servers in a N/U-class volume re=
+cord */
+diff --git a/fs/afs/afs_vl.h b/fs/afs/afs_vl.h
+index a06296c8827d..b835e25a2c02 100644
+--- a/fs/afs/afs_vl.h
++++ b/fs/afs/afs_vl.h
+@@ -13,6 +13,7 @@
+ #define AFS_VL_PORT		7003	/* volume location service port */
+ #define VL_SERVICE		52	/* RxRPC service ID for the Volume Location servic=
+e */
+ #define YFS_VL_SERVICE		2503	/* Service ID for AuriStor upgraded VL servi=
+ce */
++#define YFS_VL_MAXCELLNAME	256  	/* Maximum length of a cell name in YFS =
+protocol */
+ =
+
+ enum AFSVL_Operations {
+ 	VLGETENTRYBYID		=3D 503,	/* AFS Get VLDB entry by ID */
+diff --git a/fs/afs/vl_alias.c b/fs/afs/vl_alias.c
+index 9f36e14f1c2d..f9e76b604f31 100644
+--- a/fs/afs/vl_alias.c
++++ b/fs/afs/vl_alias.c
+@@ -253,6 +253,7 @@ static char *afs_vl_get_cell_name(struct afs_cell *cel=
+l, struct key *key)
+ static int yfs_check_canonical_cell_name(struct afs_cell *cell, struct ke=
+y *key)
+ {
+ 	struct afs_cell *master;
++	size_t name_len;
+ 	char *cell_name;
+ =
+
+ 	cell_name =3D afs_vl_get_cell_name(cell, key);
+@@ -264,8 +265,11 @@ static int yfs_check_canonical_cell_name(struct afs_c=
+ell *cell, struct key *key)
+ 		return 0;
+ 	}
+ =
+
+-	master =3D afs_lookup_cell(cell->net, cell_name, strlen(cell_name),
+-				 NULL, false);
++	name_len =3D strlen(cell_name);
++	if (!name_len || name_len > AFS_MAXCELLNAME)
++		master =3D ERR_PTR(-EOPNOTSUPP);
++	else
++		master =3D afs_lookup_cell(cell->net, cell_name, name_len, NULL, false)=
+;
+ 	kfree(cell_name);
+ 	if (IS_ERR(master))
+ 		return PTR_ERR(master);
+diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
+index cac75f89b64a..55dd0fc5aad7 100644
+--- a/fs/afs/vlclient.c
++++ b/fs/afs/vlclient.c
+@@ -697,7 +697,7 @@ static int afs_deliver_yfsvl_get_cell_name(struct afs_=
+call *call)
+ 			return ret;
+ =
+
+ 		namesz =3D ntohl(call->tmp);
+-		if (namesz > AFS_MAXCELLNAME)
++		if (namesz > YFS_VL_MAXCELLNAME)
+ 			return afs_protocol_error(call, afs_eproto_cellname_len);
+ 		paddedsz =3D (namesz + 3) & ~3;
+ 		call->count =3D namesz;
+
 
