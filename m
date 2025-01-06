@@ -1,89 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-38426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43B8A0248A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:49:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2880AA024AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBCAB164A37
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 11:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF451885E03
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 11:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80091DC9A3;
-	Mon,  6 Jan 2025 11:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C001DDC0F;
+	Mon,  6 Jan 2025 11:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP4xZKwv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCA31A76C7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 11:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6911DB346;
+	Mon,  6 Jan 2025 11:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736164145; cv=none; b=Qf8RjdSPAohUE1SuCxOc0blEp5cE1mnZf+gJqz4EHnHES7Hor+MJjZ6re4ZXnKRMfRG2+/oPInzfzozVLsWoMNRgRzV+7d/5LhoG+3ZJ1zWSxCjAMzHmvkLAaECGqmnzXKpTQ2knCxrGsQ0Pt58mgWzAeEYbwrmID1KwYzIvLMA=
+	t=1736164771; cv=none; b=BLcvHxup7g6F+weDKRjd4KMYzSQGW9Pid+llZKNDDnVxQ16wUFDDaixm55nWT6VoSCuZdF5yvsG3kikMtHQuEio7G4b/WM53YVLCa1XlNiyx3tgDMkm9zSHoWumTXoX1x6QLTjSySkp6pME08pYtsCePJFHCR6dYDRuGZN85lNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736164145; c=relaxed/simple;
-	bh=FzkEN3po3MF5kXxLK9tfx35wrpsTEZGzg1w8lpdIZSw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Eivde7moZjtmwLB0PHVPaVss3+IPbS8Om7Mqz0HbpFpr7WBiNjYyCPaqootL03mFyEnJrTBquktz6NX3HC+XwtKrdrYEnuWGupvFB5pd4OfDVJxdTq9dD6hU0NfE7GmiA+YGLi1NCpkJasnGslVJJ4SnsdGOsM21SA8pE6enOVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ab68717b73so139405025ab.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 03:49:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736164143; x=1736768943;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+P4yUyExVDMlqyEBo1OdBOBUW91y7nuRSUnX3E8iDEw=;
-        b=nxAmZ/9STKpJ1T/0QAMTaOe1nWPS61rvzqF+0Wb525XID60YX5lUM4WSPqrR6gTzcB
-         vL80wF9ztfWb68DLeVKNv48KZO99Mh29X7W+3lF3pUJtAchHA8qb5e2xlqmhAFScsAf1
-         a1dQg9i+yTFejw1TMR6piGa/ep2Ur7EyKukmbJ059Z8mbCMRi5nXb9oLENNsbBwya9yx
-         ju3622KTdROMgMn5WLxrc6N/WQFIHlhLdI1i1NuPYloVzaXP4r/R5LuXAwnKRgpsvD0Q
-         KHeKlJk9penHPU6VdUno9Ygd8LJtElhN5QyuFEliE5xFYlFRhNt35+4pXI/Ab2qo5GMb
-         iZuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwVwwjd7I2smoizKIo0/fE/ozzS1PsHxd7FSrvhh8337T6kd8MR19Q8rJSSGzTP+tLvHruPGk7I0YKjkQ/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmK+kiLFgaGd8/DoF7aS7TAZEsoOQMpRaQLAn316yczikd/coG
-	iv5UlaZswEeDPlVoiGX1QE/HxPJVzfHPdUxyC/H+fugXZ0ekta0+F7n6zHQqE7fG07yWi3eprc6
-	jco+VYoE2ScQTHgx3eWkaMWf58QwdBWTgjRRKdUSTNNVjZj/LodVHpxs=
-X-Google-Smtp-Source: AGHT+IFCnn5Ib/0LAJngy5tc/taCRAjqly5qH8isgx8HgN0UrV2GfMnnrRFhv9Hxq2au4a35NECkC5AqHWll84PSwoD6/HEeQ3Iv
+	s=arc-20240116; t=1736164771; c=relaxed/simple;
+	bh=V3UI3pxRy5iNtJCoL0NaOG5gDruTQVT2IoIJ4kD3Q/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jliHaE3jD4lNnNSJu8AuD8MoRCFs1esfNZv3Mjkttnizm1uZ9IIx4rURCP9tjssbVhFYUotrv5T7gHtPT1X2GpX51FTVAKRqMWXc9uwDrR4Der/eIqfyE8QO+AQ/N8fWsTVP73/o7o2HhYVoO+16usoh1alXghAcrq3JZeaC5Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP4xZKwv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F5AC4CED2;
+	Mon,  6 Jan 2025 11:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736164770;
+	bh=V3UI3pxRy5iNtJCoL0NaOG5gDruTQVT2IoIJ4kD3Q/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CP4xZKwvSKPXpdL6WQezLv7buO14myH/Eg7GLBppcd4uhHRyU1mMf25JQAGreU7pC
+	 72P1c9I14dcTxUG8mOh/zkeKchsfITBN8xqL0vPnRDfglHsQB7VpmVelun4FEnHFhB
+	 ijta7qDDHZndv7aRnY70jpQowzNTI5Hq5maxG4HdN2dKPthAMSf/5Hc5C48ndnIxpz
+	 AhEFvkqePFmebeQC4XnT+gOiQNSyq376QkqleqbJCkM5c6nfU7xirOJpp75RJuhhp7
+	 VyXIpvQtJOL7b7gcy4zGToM+KklyqrjYBXljZzOuy9mbniKSrhYLP2PdBSjh0nbtZS
+	 Tcoyda4SzZedg==
+Date: Mon, 6 Jan 2025 12:59:25 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
+	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
+	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
+	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
+	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
+	wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v4 -next 14/15] sh: vdso: move the sysctl to
+ arch/sh/kernel/vsyscall/vsyscall.c
+Message-ID: <eiskmyz22ckjfmsxztt7a6m7e4sktp226j4hjktuggyqb4jirc@2rqxvgoq4v55>
+References: <20241228145746.2783627-1-yukaixiong@huawei.com>
+ <20241228145746.2783627-15-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a63:b0:3a8:1195:f1f9 with SMTP id
- e9e14a558f8ab-3c2d2564124mr561384215ab.6.1736164143046; Mon, 06 Jan 2025
- 03:49:03 -0800 (PST)
-Date: Mon, 06 Jan 2025 03:49:03 -0800
-In-Reply-To: <dlkmio7icps3j2l7iz5g7d2patw2ivssiaus7jzucbrqd4jaq5@w3rekecxeeka>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <677bc32f.050a0220.3b3668.000a.GAE@google.com>
-Subject: Re: [syzbot] [fs?] KASAN: slab-out-of-bounds Write in __put_unused_fd
-From: syzbot <syzbot+6a3aa63412255587b21b@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, repnop@google.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241228145746.2783627-15-yukaixiong@huawei.com>
 
-Hello,
+On Sat, Dec 28, 2024 at 10:57:45PM +0800, Kaixiong Yu wrote:
+> When CONFIG_SUPERH and CONFIG_VSYSCALL are defined,
+> vdso_enabled belongs to arch/sh/kernel/vsyscall/vsyscall.c.
+> So, move it into its own file. After this patch is applied,
+> all sysctls of vm_table would be moved. So, delete vm_table.
+> 
+> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> ---
+> v4:
+>  - const qualify struct ctl_table vdso_table
+> v3:
+>  - change the title
+> ---
+> ---
+>  arch/sh/kernel/vsyscall/vsyscall.c | 14 ++++++++++++++
+>  kernel/sysctl.c                    | 14 --------------
+>  2 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/sh/kernel/vsyscall/vsyscall.c b/arch/sh/kernel/vsyscall/vsyscall.c
+> index add35c51e017..898132f34e6a 100644
+> --- a/arch/sh/kernel/vsyscall/vsyscall.c
+> +++ b/arch/sh/kernel/vsyscall/vsyscall.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/module.h>
+>  #include <linux/elf.h>
+>  #include <linux/sched.h>
+> +#include <linux/sysctl.h>
+>  #include <linux/err.h>
+>  
+>  /*
+> @@ -30,6 +31,17 @@ static int __init vdso_setup(char *s)
+>  }
+>  __setup("vdso=", vdso_setup);
+>  
+> +static const struct ctl_table vdso_table[] = {
+> +	{
+> +		.procname	= "vdso_enabled",
+> +		.data		= &vdso_enabled,
+> +		.maxlen		= sizeof(vdso_enabled),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec,
+> +		.extra1		= SYSCTL_ZERO,
+> +	},
+> +};
+> +
+>  /*
+>   * These symbols are defined by vsyscall.o to mark the bounds
+>   * of the ELF DSO images included therein.
+> @@ -55,6 +67,8 @@ int __init vsyscall_init(void)
+>  	       &vsyscall_trapa_start,
+>  	       &vsyscall_trapa_end - &vsyscall_trapa_start);
+>  
+> +	register_sysctl_init("vm", vdso_table);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 7ff07b7560b4..cebd0ef5d19d 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2012,23 +2012,9 @@ static struct ctl_table kern_table[] = {
+>  #endif
+>  };
+>  
+As you mentioned in the commit message, this patch has two objectives.
+1. It moves the vdso_enabled table and 2. It removes the vm_table.
+Please separate these two in such a way that the second (removal of
+vm_table) can be done at the end and is not related to any particular
+table under vm_table. I prefer it that way so that the removal of
+vm_table does not block the upstreaming of a move that is already
+reviewed and ready.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+6a3aa63412255587b21b@syzkaller.appspotmail.com
-Tested-by: syzbot+6a3aa63412255587b21b@syzkaller.appspotmail.com
+> -static struct ctl_table vm_table[] = {
+> -#if defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL)
+> -	{
+> -		.procname	= "vdso_enabled",
+> -		.data		= &vdso_enabled,
+> -		.maxlen		= sizeof(vdso_enabled),
+> -		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec,
+> -		.extra1		= SYSCTL_ZERO,
+> -	},
+> -#endif
+> -};
+> -
+>  int __init sysctl_init_bases(void)
+>  {
+>  	register_sysctl_init("kernel", kern_table);
+> -	register_sysctl_init("vm", vm_table);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.34.1
+> 
 
-Tested on:
+-- 
 
-commit:         94dfee45 Merge fix for access beyond end of bitmap in ..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13473418580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16a6f811a8c2a826
-dashboard link: https://syzkaller.appspot.com/bug?extid=6a3aa63412255587b21b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Joel Granados
 
