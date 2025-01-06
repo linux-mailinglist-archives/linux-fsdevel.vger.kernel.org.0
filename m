@@ -1,99 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-38423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C029AA02449
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:28:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46B5A0244A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B078D164220
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 11:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C071645E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 11:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683561DC997;
-	Mon,  6 Jan 2025 11:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950C01DB924;
+	Mon,  6 Jan 2025 11:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C5WVTdcZ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zR6Bz44l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TblNmqPR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zR6Bz44l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TblNmqPR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F861D7E47;
-	Mon,  6 Jan 2025 11:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EBE18A6B2;
+	Mon,  6 Jan 2025 11:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736162874; cv=none; b=oRM3U2L7/pl4vxJo9nxYgLTL90eguj/OnNWb8kT3qiIllpS2AZN7RejvnTEtpsFIxxEdzwRsJdbSLVMMR0NFfPbvyXqzmTDHKnpE/4OGou0TRVvOsrezh/3qO2yW1TsfeTuHTJMSEhz39aXjrKogQ/FD1EGD3FQQznPlS75/Ruw=
+	t=1736162948; cv=none; b=BiVRmTVERN7EnjHZ9UStD+FAcv1vDu4K1fc+o9Ct7o4+s0VYeNmtEZMiBywjffWhWpRvHo+d+fsmuEFvcH/L01PKYy5O2o9iHOdJwQDwq12kJshngrmCoCu/bfsQ8Zf07UbQ2wuUutV8TwQywDjiKlGlgl6bMClSzLJeehcS/qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736162874; c=relaxed/simple;
-	bh=l04Sn1dfSlQGCURV9x7QruuY//X+d0MieVxpN6+yUE8=;
+	s=arc-20240116; t=1736162948; c=relaxed/simple;
+	bh=xi/vALZ9gVTN/+LrfoKD2Q5KybzGOb0aT0908yFzayE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dol24l/ns9A7IjzG1OrduF9Jkr2c7ZThbKS63CZdxYX7Ym/kZvFtC7oudSIbhvX5w0AfRzAZj5O6D/r6BZ3kHQ7zZziOWY9vYJoXbPqD+VdE4YU515CrjHgj/fH5qGV4hq3z9zIjWHUA/KAnm9vZa7qzUknM3cC7+0kzCw9XbqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C5WVTdcZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vDW6gnYA7VPDj+2tAOrKHd0KqqAcw1BLmo2EgHZGMDA=; b=C5WVTdcZe0co06gSEJ9iaPDcmT
-	384Kc53WCiaItAxPvAZ7vtbEtJsr/n1nopl/+LlEcg0H+YytRWHRIlk/NqZYyQYBue2zMlMSBs1kX
-	qIx4TEK82js1TlN0QGav/c76C0y0XIqy5jBet2FOiXFyxYyTPQasPOqLs5lkKcPhlt/1z3Wszh+Lg
-	CRPjKic0U4JNk8C1JE/wyTAdIhf416qeBm44wr9Zute4HANUIiMFpkfFS7YrHltpC8ftc2KeR/Mn2
-	FxuLyUyz7fA8L3zjRkURrpAdmYYqXh7pufI8OAu+BZhMmtJYSGM4NkFs4sui2PH3AVhvDE18+7GeT
-	4no0BvbQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tUlGy-000000012gx-1B3f;
-	Mon, 06 Jan 2025 11:27:52 +0000
-Date: Mon, 6 Jan 2025 03:27:52 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, tytso@mit.edu, djwong@kernel.org,
-	adilger.kernel@dilger.ca, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
-	Sai Chaitanya Mitta <mittachaitu@gmail.com>,
-	linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
-Message-ID: <Z3u-OCX86j-q7JXo@infradead.org>
-References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
- <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VsAb4cCsnYcB8S5f2X1Utgsr7urydH95WsWY0pYC/M7ZPmVN+MuHpv35ppYHVUdSix06wZfFLXgnwqw1rWHYVcEyck9At178NSYAEcsNGroxx4MzcFfhXxFcDPHDMSCU9WBJKDm4C3g6G4xy/FpRjI6LkCtF+MQ9Pdpo/heYXXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zR6Bz44l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TblNmqPR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zR6Bz44l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TblNmqPR; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 26A2B1F399;
+	Mon,  6 Jan 2025 11:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736162943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0sBa4lg8WWY1wSiBxYcNlBoUKjd3APDh5hdQLOP7wE=;
+	b=zR6Bz44lXKZvyG4/mqE3LTE9Adhpp1C3zyZFzkvuozPBT6MXSd3Gp5sYxkWbuWEj4rCubm
+	PmJU0eMfUBNQWdogIOp7UpFUm0aj2zVc/F840p+05EqHgBE+61PTg7HeIFA/sBFK6IYMVs
+	vIy2n6iPrhqbc8UDX0DecPKNcU8DfTc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736162943;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0sBa4lg8WWY1wSiBxYcNlBoUKjd3APDh5hdQLOP7wE=;
+	b=TblNmqPRRF2T8RJW7yGHz6gOzPYRwb5HMis6uauVooG+td0VEmq7HLFfcs3woc6yq+FcKP
+	EpPoW8zWmkOxplBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736162943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0sBa4lg8WWY1wSiBxYcNlBoUKjd3APDh5hdQLOP7wE=;
+	b=zR6Bz44lXKZvyG4/mqE3LTE9Adhpp1C3zyZFzkvuozPBT6MXSd3Gp5sYxkWbuWEj4rCubm
+	PmJU0eMfUBNQWdogIOp7UpFUm0aj2zVc/F840p+05EqHgBE+61PTg7HeIFA/sBFK6IYMVs
+	vIy2n6iPrhqbc8UDX0DecPKNcU8DfTc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736162943;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0sBa4lg8WWY1wSiBxYcNlBoUKjd3APDh5hdQLOP7wE=;
+	b=TblNmqPRRF2T8RJW7yGHz6gOzPYRwb5HMis6uauVooG+td0VEmq7HLFfcs3woc6yq+FcKP
+	EpPoW8zWmkOxplBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A9F6139AB;
+	Mon,  6 Jan 2025 11:29:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jmt6Bn++e2frDgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 06 Jan 2025 11:29:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AFBAAA089C; Mon,  6 Jan 2025 12:29:02 +0100 (CET)
+Date: Mon, 6 Jan 2025 12:29:02 +0100
+From: Jan Kara <jack@suse.cz>
+To: Kun Hu <huk23@m.fudan.edu.cn>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
+Subject: Re: Bug: slab-out-of-bounds Write in __bh_read
+Message-ID: <brheoinx2gsmonf6uxobqicuxnqpxnsum26c3hcuroztmccl3m@lnmielvfe4v7>
+References: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-There's a feature request for something similar on the xfs list, so
-I guess people are asking for it.
+Hello!
 
-That being said this really should not be a modifier but a separate
-operation, as the logic is very different from FALLOC_FL_ZERO_RANGE,
-similar to how plain prealloc, hole punch and zero range are different
-operations despite all of them resulting in reads of zeroes from the
-range.
+On Mon 06-01-25 15:23:06, Kun Hu wrote:
+> When using our customized fuzzer tool to fuzz the latest Linux kernel,
+> the following crash was triggered.
+> 
+> HEAD commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
+> git tree: upstream
+> Console output: https://drive.google.com/file/d/1-YGytaKuh9M4hI6x27YjsE0vSyRFngf5/view?usp=sharing
+> Kernel config: https://drive.google.com/file/d/1n2sLNg-YcIgZqhhQqyMPTDWM_N1Pqz73/view?usp=sharing
+> C reproducer: /
+> Syzlang reproducer: /
+> 
+> We found an issue in the __bh_read function at line 3086, where a
+> slab-out-of-bounds error was reported. While the BUG_ON check ensures
+> that bh is locked, I suspect it’s possible that bh might have been
+> released prior to the call to __bh_read. This could result in accessing
+> invalid memory, ultimately triggering the reported issue.
 
-That will also make it more clear that for files or file systems that
-require out place writes this operation should fail instead of doing
-pointless multiple writes.
+Well, most likely the bh pointer has already been corrupted. Again, nobody
+is likely to be able to debug this unless we have a reliable way to
+reproduce this problem.
 
-Also please write a man page update clearly specifying the semantics,
-especially if this should work or not if there is no write zeroes
-offload in the hardware, or if that offload actually writes physical
-zeroes to the media or not.
+								Honza
 
-Btw, someone really should clean up the ext4 fallocate code to use
-helper adnd do the
-
-	switch (mode & FALLOC_FL_MODE_MASK) {
-	}
-
-and then use helpers for each mode whih will make these things a lot
-more obvious.
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
