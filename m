@@ -1,116 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-38430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BD4A02529
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 13:18:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9430A02615
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 14:01:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E56C4161931
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:18:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3725A160F60
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 13:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BC21DE885;
-	Mon,  6 Jan 2025 12:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA571DBB19;
+	Mon,  6 Jan 2025 13:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTYyJPQl"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="MYLGsR20"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167A61D6182;
-	Mon,  6 Jan 2025 12:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DF52BD10
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 13:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736165708; cv=none; b=hDUPrYAsFvr5FMjskErJpDZQFVpkRQSdHwEo8/rVc0gKJLY0BW2SnSzyZVRHITRFY26KTjjIZ2/P3EAp9dYSjd7AplD4Xn686K1BLmXcXfReKZwSfNrF82ZQYBLbA+kGDo51FxKM5wgEstSfASvpDuNHVwaZq7Zd5sh/2mSQ6wE=
+	t=1736168512; cv=none; b=H8cgN0oK4RSZYS6dI+SDRMUfaTu/2OoAEpYAQbuI0/I3e9vxt+MHg4vnQl+kFxqt6iEkQSCkQDkaFFUVr9t33zlfyY0+Ur9oBJfTMZivoigx+aFzjjFvqe4kxJRugq+x/vZWTeV+FCqf6ZMTshb4fyxYw1Roo0u8VoGlbxtZ/n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736165708; c=relaxed/simple;
-	bh=7if+6chVPBtkpuf0yafjGMeeJGQXiQ4tJJvW4EBQSj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOWA4oP5AmZCeP6z/gWrtJKZaKypqyD6ZfYij8srAKtd+0GFh+AVIQ5fIOekU9Msu3dOAFSf9xHk2Cs2QLnNjl45mZ9rAxCLPvQum2Cv04RlrzqzWUCRwU4EXybKOqM+meDCTgQSE/f36VBtB/aLOMgEhX5xN3QajaQrgRvUBKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTYyJPQl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CAC4C4CED2;
-	Mon,  6 Jan 2025 12:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736165707;
-	bh=7if+6chVPBtkpuf0yafjGMeeJGQXiQ4tJJvW4EBQSj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZTYyJPQl1Vgp01XncM2/C03xclL3/1SGxnK2cq14/L9OmRiMabXiA+/Lp0q23fHx0
-	 J8G4zMDxMMS6OUJnbZWughB+f8ziHMmnaONQejF0W5oeLCWalp/Nb2zJ9Ry62DuG72
-	 31ZCToXTEF/PyCK8SIRTSfQFk2SG5csUOKvzWXmisDAMi72cJtHgrTMxQrnXptZSJa
-	 Cb5ghiFY1AQgctd2WGwImTjRWPVLnQma4ED+2buC4R1tmXE/cHcJxUXmxtW90CoOhx
-	 lvD8zXcE0o0vstqE/6NQux/tpKRhqsXfAA40dN915REMxyyOczzKIDJ6lgHSBIJP+5
-	 CwR/PJaIc4sjw==
-Date: Mon, 6 Jan 2025 13:15:02 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-Message-ID: <tgp2b7kbbdx4obapr4fgtmgjjo6zjbxbligucs32eewiasacko@f4h6uoamznry>
-References: <20241228145746.2783627-1-yukaixiong@huawei.com>
+	s=arc-20240116; t=1736168512; c=relaxed/simple;
+	bh=yCJ2YP0l4KPLC0wgnVjuWLZA7faZQsIPToVD00FBAyA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Z6IuOqGz5CpQ+KFQNd2XMfOVu/phSBbvDpEtjQnIdA/bdAxOH7DLaSB+E3VCQQ9Equ2b8gORmlPC1je3Tb/PtKAPGt94+U7AlyGzk8wgdIV5HyoYZsq9VZ8zxBbex5dSRWjWjQLQ6RgIXEa4aHqrirgU3rRsnjdcN+vaHG3k6OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=MYLGsR20; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4679fc9b5f1so108797741cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 05:01:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1736168507; x=1736773307; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vsJhuMGcMDNOj4rZnRSEHTdtXxAFLi16x0I+zjVxebg=;
+        b=MYLGsR208G5O4sfQYpENDIKgmETctcXDpVEvHKlnwRCZcq4sImuSp0sN1Mb7XDgerP
+         y/wuS7BGcUDD/e0KFP4HbKWtIxs7aqUNa+zImtcu3Q2k38x3l9HOXCZqy42j3IZZC3L5
+         D7/5GTrffwrFj8tApFUf5it5f5HUwZaSESMxc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736168507; x=1736773307;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vsJhuMGcMDNOj4rZnRSEHTdtXxAFLi16x0I+zjVxebg=;
+        b=LM816lolmP2y7UQevwgNpaiFBCEEqWRY2ChqixhL0jzOGp/cbfAzGKsoUPPjZI8QCF
+         VN81ULNq35LEVOOFTRYjfPd6EJ2xFs0OZSyn7TAGFMJIfiJ21ew5JIehqI1t0fnodm3R
+         P0/AzIh3ebFZDRZtOXU6q4vU5CyMqNpvgkQ5c9qmNms4iDkVzzrePhWwnHaQ7EBfADfO
+         OivF/0dT1Gceq3WuGaDOAcDrWJVGburw+wR5+R6bR42evzIsNBzi8gKwzaud+pnLZEf+
+         K0fpMedDidS5g7eZ4f/0IUVSMEH2dVDJMfonOqyN2NdzfloEDqHl/9OlKm2q54PjRNtl
+         /poA==
+X-Gm-Message-State: AOJu0YxyUvn2lDAFcNiGB42NiYO2MN2UFMBonUTbES8g9NGoRbu2FqtI
+	27ZSDxI/Ny5N2d7KMHfbVeBm4mhWOUMPRneFS0W9GHh8cgyWRllc2ztRvwGbWmuqjYY7OQ9cetE
+	8A+4ERlxL4myLfZsub0mwE3ANQf4zlE5iPXhGnQ==
+X-Gm-Gg: ASbGnctlt9aqVHJyGwICxu5/FJ+3o8uWmXisJyp49EQK+XSkm3gZR920PZZXcVzReDQ
+	FKO1SalnTNJDqABu6ruRykuvPPiVWPE0c0uSWiQ==
+X-Google-Smtp-Source: AGHT+IFx2IzMP7UjMR6KkmzBLz0806dE98eSP6wwS4+DXa5z3OmCRe63Mm+RL2UvUMJIi2G5uekCG97A4JuZIGs+fZI=
+X-Received: by 2002:a05:622a:302:b0:467:7ff3:e4bf with SMTP id
+ d75a77b69052e-46a4a9a3e7emr991917841cf.51.1736168507517; Mon, 06 Jan 2025
+ 05:01:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241228145746.2783627-1-yukaixiong@huawei.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 6 Jan 2025 14:01:36 +0100
+Message-ID: <CAJfpegu7o_X=SBWk_C47dUVUQ1mJZDEGe1MfD0N3wVJoUBWdmg@mail.gmail.com>
+Subject: [GIT PULL] fuse fixes for 6.13-rc7
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Dec 28, 2024 at 10:57:31PM +0800, Kaixiong Yu wrote:
-> This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> places where they actually belong, and do some related code clean-ups.
-> After this patch series, all sysctls in vm_table have been moved into its
-> own files, meanwhile, delete vm_table.
-> 
-> All the modifications of this patch series base on
-> linux-next(tags/next-20241219). To test this patch series, the code was
-> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> x86_64 architectures. After this patch series is applied, all files
-> under /proc/sys/vm can be read or written normally.
-> 
-> Changes in v4:
->  - due to my mistake, the previous version sent 15 patches twice.
->    Please ignore that, as this version is the correct one.
-I would not ignore the reviewed-by tags that you got from Lorenzo.
-Please include those moving forward.
+Hi Christian,
 
->  - change all "static struct ctl_table" type into
->    "static const struct ctl_table" type in patch1~10,12,13,14
->  - simplify result of rpcauth_cache_shrink_count() in patch11
-...
->  mm/vmscan.c                        |  23 +++
->  mm/vmstat.c                        |  44 +++++-
->  net/sunrpc/auth.c                  |   2 +-
->  security/min_addr.c                |  11 ++
->  23 files changed, 330 insertions(+), 312 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+Please pull from:
 
-best
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+tags/fuse-fixes-6.13-rc7
 
--- 
+ - Two fixes for the folio conversion added in this cycle
 
-Joel Granados
+Thanks,
+Miklos
+---
+
+Bernd Schubert (1):
+      fuse: Set *nbytesp=0 in fuse_get_user_pages on allocation failure
+
+Joanne Koong (1):
+      fuse: fix direct io folio offset and length calculation
+
+---
+ fs/fuse/file.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
