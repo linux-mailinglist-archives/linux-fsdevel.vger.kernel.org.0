@@ -1,73 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-38422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEE2A02438
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:22:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C029AA02449
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 12:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEF3C7A2CB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 11:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B078D164220
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 11:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333231DC9A3;
-	Mon,  6 Jan 2025 11:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683561DC997;
+	Mon,  6 Jan 2025 11:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqytaXf/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C5WVTdcZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F58812BF24;
-	Mon,  6 Jan 2025 11:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F861D7E47;
+	Mon,  6 Jan 2025 11:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736162553; cv=none; b=GtnfbHIRAn+f4uqkiPC3m61aNbNHuOqfaEv1RpX6sO1ZITiRfyElo+iUqSBR1AEoPo2hFHPz47Nkbw+oQL8POCX7RFn6cNi8mlu3C0e2J2yjNi/NVxkB694UOEhYuFcecNpuHbebH4QLUJSARJ2YtfXOe1LGy3rPtJbm1Q6VlEA=
+	t=1736162874; cv=none; b=oRM3U2L7/pl4vxJo9nxYgLTL90eguj/OnNWb8kT3qiIllpS2AZN7RejvnTEtpsFIxxEdzwRsJdbSLVMMR0NFfPbvyXqzmTDHKnpE/4OGou0TRVvOsrezh/3qO2yW1TsfeTuHTJMSEhz39aXjrKogQ/FD1EGD3FQQznPlS75/Ruw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736162553; c=relaxed/simple;
-	bh=YFa9n4kRGb7FoyqSu+bxpz+vwRWZ9zT3kNRGUT1JfBY=;
+	s=arc-20240116; t=1736162874; c=relaxed/simple;
+	bh=l04Sn1dfSlQGCURV9x7QruuY//X+d0MieVxpN6+yUE8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBT1yzBoM0Dj2fwW5hyl9H7hvNi/uS49Y+6s2TNuQLlKIoAvbAM0uA6+kgHC08P0YtcfAJNMplBhNTDhDjGPogrWvU1P5tr967BCfGCCeJF4klWeWmnDu6bhXV7fUNVR1/xsgqDU1nojfRQ9pbyMnjrWeNdZ0rx3fQreop96qQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqytaXf/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0F7C4CED2;
-	Mon,  6 Jan 2025 11:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736162553;
-	bh=YFa9n4kRGb7FoyqSu+bxpz+vwRWZ9zT3kNRGUT1JfBY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EqytaXf/7ROrApNQc7+jdeEXSnG0XyB08a51lNqhal39rNrVGwnNgN+u/Z8hIhmce
-	 d2yxLhvWHE7J1n1GOk/CTpKIHOHrGQLdUcpmORwyzHesjm2dJGzfoj2kRVelTG1MK/
-	 GuV+fcIovomL/5xMd9TeNwkdviLgqUTGyQRwSokQuZImy34o/4wgB9eZJOa5q3YoyQ
-	 zQRq6cyE9aOlPY+E1XL2LROe2WtvmgyA8HetkqILqy4ZfmOCIOrcqnvQmm0u9C11Tt
-	 dEuIwGkTD9dQfEuPHY4KvFZfnIdzF5adD5QpmOAO6aC5I81zMi2mq+qter+pNgSLS0
-	 p3RjUmiAeK7pQ==
-Date: Mon, 6 Jan 2025 12:22:27 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: yukaixiong <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table
- into its own files
-Message-ID: <3elcftj5bn5iqfdly4cgmzpz4kodqrdl6dnqyqvn5fxjgmoxw4@yactmy2fbdkm>
-References: <20241223141550.638616-1-yukaixiong@huawei.com>
- <42tsyuvdvym6i3j4ppsluvx7kejxjzbma5z4jjgccni6kuwtj7@rhuklbyko7yf>
- <ceb3be0a-f035-aaec-286f-8ba95e62deba@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dol24l/ns9A7IjzG1OrduF9Jkr2c7ZThbKS63CZdxYX7Ym/kZvFtC7oudSIbhvX5w0AfRzAZj5O6D/r6BZ3kHQ7zZziOWY9vYJoXbPqD+VdE4YU515CrjHgj/fH5qGV4hq3z9zIjWHUA/KAnm9vZa7qzUknM3cC7+0kzCw9XbqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C5WVTdcZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vDW6gnYA7VPDj+2tAOrKHd0KqqAcw1BLmo2EgHZGMDA=; b=C5WVTdcZe0co06gSEJ9iaPDcmT
+	384Kc53WCiaItAxPvAZ7vtbEtJsr/n1nopl/+LlEcg0H+YytRWHRIlk/NqZYyQYBue2zMlMSBs1kX
+	qIx4TEK82js1TlN0QGav/c76C0y0XIqy5jBet2FOiXFyxYyTPQasPOqLs5lkKcPhlt/1z3Wszh+Lg
+	CRPjKic0U4JNk8C1JE/wyTAdIhf416qeBm44wr9Zute4HANUIiMFpkfFS7YrHltpC8ftc2KeR/Mn2
+	FxuLyUyz7fA8L3zjRkURrpAdmYYqXh7pufI8OAu+BZhMmtJYSGM4NkFs4sui2PH3AVhvDE18+7GeT
+	4no0BvbQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tUlGy-000000012gx-1B3f;
+	Mon, 06 Jan 2025 11:27:52 +0000
+Date: Mon, 6 Jan 2025 03:27:52 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, tytso@mit.edu, djwong@kernel.org,
+	adilger.kernel@dilger.ca, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
+	Sai Chaitanya Mitta <mittachaitu@gmail.com>,
+	linux-xfs@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
+Message-ID: <Z3u-OCX86j-q7JXo@infradead.org>
+References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
+ <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,49 +66,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ceb3be0a-f035-aaec-286f-8ba95e62deba@huawei.com>
+In-Reply-To: <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Dec 28, 2024 at 09:40:50PM +0800, yukaixiong wrote:
-> 
-> 
-> On 2024/12/28 20:15, Joel Granados wrote:
-> > On Mon, Dec 23, 2024 at 10:15:19PM +0800, Kaixiong Yu wrote:
-> >> This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> >> places where they actually belong, and do some related code clean-ups.
-> >> After this patch series, all sysctls in vm_table have been moved into its
-> >> own files, meanwhile, delete vm_table.
-...
-> >>    sysctl: remove unneeded include
-> > This patchset looks strange. There seems to be 15 patches, but there are
-> > 30 e-mails in the thread? You can also see this when you look at it in
-> > lore [1]. And they are different repeated e-mails (mutt does not
-> > de-duplicate them). Also `b4 shazam ...` does not work. What happened?
-> > Did you send it twice with the same mail ID? Am I the only one seeing
-> > this?
-> >
-> > I would suggest the following (hopefully you are using b4):
-> > 1. Check to see how things will be sent with b4. `b4 send --resend -o OUTPUT_DIR`
-> >     If you see 30 emails in that dir from your patchset then something is
-> >     still wrong.
-> > 2. After you make sure that everything is in order. Do the resend
-> >     without bumping the version up (leave it at version 4)
-> >
-> > Best
-> >
-> > [1] : https://lore.kernel.org/all/20241223141550.638616-1-yukaixiong@huawei.com/
-> 
-> I'm very sorry, due to my mistake, 15 patches were sent twice.
-No worries. I saw that you have re-sent the patchset and it seems that
-this time there is only 15 mails. I see that you are only using my
-j.granados@samsung.com ID; can you please add my kernel.org
-(joel.granados@kernel.org) mail to the future mails that you send (no
-need to re-send v4).
+There's a feature request for something similar on the xfs list, so
+I guess people are asking for it.
 
-Thx
+That being said this really should not be a modifier but a separate
+operation, as the logic is very different from FALLOC_FL_ZERO_RANGE,
+similar to how plain prealloc, hole punch and zero range are different
+operations despite all of them resulting in reads of zeroes from the
+range.
 
-...
+That will also make it more clear that for files or file systems that
+require out place writes this operation should fail instead of doing
+pointless multiple writes.
 
--- 
+Also please write a man page update clearly specifying the semantics,
+especially if this should work or not if there is no write zeroes
+offload in the hardware, or if that offload actually writes physical
+zeroes to the media or not.
 
-Joel Granados
+Btw, someone really should clean up the ext4 fallocate code to use
+helper adnd do the
+
+	switch (mode & FALLOC_FL_MODE_MASK) {
+	}
+
+and then use helpers for each mode whih will make these things a lot
+more obvious.
+
 
