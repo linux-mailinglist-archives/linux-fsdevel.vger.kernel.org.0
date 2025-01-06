@@ -1,245 +1,334 @@
-Return-Path: <linux-fsdevel+bounces-38407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C955A01F56
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 07:43:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A1BA01FDB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 08:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E487161E34
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 06:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D13A1884F17
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 07:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E77D1D54F4;
-	Mon,  6 Jan 2025 06:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640D31D6DA5;
+	Mon,  6 Jan 2025 07:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NLTDt9A7"
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="ALGVNN3n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89D435952;
-	Mon,  6 Jan 2025 06:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736145813; cv=fail; b=e5q1GOlWVFrPnD4KH/u0nI6h+N7e6wJfJJU8+hIgVVUDj3oiEYSM4XRm1qW/YUy4d/zNtuWbkT4cP1j7eD4jwhb79K/5LU9wBoV8HtxA3rYKYk+VwhNuZscAHgpMeOYemQ1OLqBzuSOYLNppmXncP+tEIgl/hfmo0Yh99WyaKsU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736145813; c=relaxed/simple;
-	bh=dd6SIoVaoH9HI+7pP53lBgydVpJQ8Ea6SYjhNrX45Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BvieNk5rH80rrAzaU+wehJrR+pzmNEK/AJtUTvNo12q+Nld/qdWXuNL/XDee65XUuOR7InM6FDV+m6vSVFBRpjX0CKZrbsNZ+E/MMX8M12eby2JDhOaWqnaGb2txhLx8+QNkIL1zgN/pD7dIY/NcYZ4p43R//QuhLH6NY5bqh18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NLTDt9A7; arc=fail smtp.client-ip=40.107.223.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SrzWKZFRSxGhxXwG1DDuAG/txA/cDvsKMN7dEbX0mfa/908bpoDOg7C0bzHAsy/F2/VbKS2+ifiTEOExk0UJo1S+Igp6AKuRuo1g05tuULhBHvoSBzfNhPA/fzlf2N2fkppMUnXNK+SVNZO3sVSc30qW84shuw76VAWdtkH+Lp/MLELnXv9A4468/XhFAb1B71WViTePTbI62TOxtaKjWZlZMgMnQ6vRJRcSNsh7twu5/xSWkrwiry17rDFBvGzEDjtSZGhib9qrgOFx1nfVFg03puR0cCbKyCB+hu96fOGHQUZmu2CU6ddRbpiCrW6G31rUQ+SlhvT89URd36q5IA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JCcXG3JIFkEbKyh+uur/Wu+q8UM9XaBlD9VZ5VT4/Zc=;
- b=POJvYVHwVbQbXTz/reX1MWqDW9QQYwIrguH3FkBXGUEj9xa61jX2BLZhiTzCDmxSDbmYJElGGinr7+EH6EJhv6Uf6nH5tdQHvoX7NgDDWehJr5PAnVCfaasWH1Jc2VCbzXLe8rj5hrT59nJvesgrM75UQx+p64DXOlWOZt65VgmzryjoLMDTZYJZx/LFlgWo5IsYfO5RCgIEkP9hAlMknESrESrzIIOayT0LwKyM90F+3WzuKE/7L5k/FiP4uddF/yf5R+Ey0LPhpNZntRNqp5vZvCFbz3wQ/5nfyJPYPtlYXYd/3MGGqrkHrjKrBRz7w+qYOr7pVCOSdfXWCMGPlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JCcXG3JIFkEbKyh+uur/Wu+q8UM9XaBlD9VZ5VT4/Zc=;
- b=NLTDt9A7kncEHwE+gzy1McQOOdj9PNst/BFBS1w0gmCY1ixviVpAODoSkzaKd9SS4BfQZxovcJ1RGl6bas3qTGtPJVefxSsbht8okskTuXWmX1Z+VZ8tloAGfoZ6fnfUOXNX8PzCJmLmYLln7faZfXA5OOWYNQglu8uqlFsEvqcgXbffU07hE1aKtgUIeZjUYmwVjvzfUOdnZ9p7sIeKVKVsQMd08gaQz7IIDPMPTZCZelWy7xg+PY1rBnP17h5+RRm0SbmCwF/zzbPCyAxM/WQiImOhu/PkvustDVe+hF8qq0+GD8W1RA6emdOLgQy/G0/5j4Oajb/tcY70b3JvPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SJ0PR12MB6989.namprd12.prod.outlook.com (2603:10b6:a03:448::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.17; Mon, 6 Jan
- 2025 06:43:25 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.8314.015; Mon, 6 Jan 2025
- 06:43:24 +0000
-Date: Mon, 6 Jan 2025 17:43:20 +1100
-From: Alistair Popple <apopple@nvidia.com>
-To: David Hildenbrand <david@redhat.com>, a@nvdebian.thelocal
-Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, 
-	linux-mm@kvack.org, lina@asahilina.net, zhang.lyra@gmail.com, 
-	gerald.schaefer@linux.ibm.com, vishal.l.verma@intel.com, dave.jiang@intel.com, 
-	logang@deltatee.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, 
-	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com, 
-	dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org, 
-	tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
-Subject: Re: [PATCH v4 19/25] proc/task_mmu: Ignore ZONE_DEVICE pages
-Message-ID: <54hi667mw7agwueoo4ijmogdvrt4unmw35xekwyiycrxe7o2i7@novwkzibndz5>
-References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
- <f3ebda542373feb70ed3e5d83b276a2e8347609f.1734407924.git-series.apopple@nvidia.com>
- <c7bd9b00-6920-4dc0-8e2e-36c16ef7ad5a@redhat.com>
- <37rxl2bjda3psdknhboexhbg3hahf5ifmublp5fw7ltdoyqllc@udbz76jklmnu>
- <36334f20-2b9e-4529-89c4-120678bc5985@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36334f20-2b9e-4529-89c4-120678bc5985@redhat.com>
-X-ClientProxiedBy: SY5P300CA0055.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:1fe::10) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DEB1D61B9;
+	Mon,  6 Jan 2025 07:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736148243; cv=none; b=BtpjFGa/AbHBXmouMVFHwvGaSJ+poAWcw46zfl5lQiLkFdDFyUMp0qk+1kGK+y9WERCqesh2UdCm4JCtyqwuIbZFiPpwTNkHShNXA/n9lebNLCH3tchmcJ7+wNL+iJQWnQLRdVpm8GEBfbC8Rm1A1uMA3kHYoGiqh/pq7+fr9Zo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736148243; c=relaxed/simple;
+	bh=+V65Imnv+Tvn73/Xvz1ZXUW/HhYKQwcKPucmItPXqlY=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=CT3BLRXW4et+Y7MX+ptp+ZT763PfefEK3A0u8JZXpyI2vVf29Ev0ydzthdow0D0ba/XcqMoSy5JNbN/0d9osjkSaT9ek35MAJMrKKts29UkyWszRwVKs8ZygrU+6mGSqUzA9lYgTijV/Uh4eULSknS9TVx+80Tldm77hntpfxNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=ALGVNN3n; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1736148205;
+	bh=60qdLsafybpRiNbXIy7sj8aOcSWykjzujico41ZLi+c=;
+	h=From:Mime-Version:Subject:Message-Id:Date:To;
+	b=ALGVNN3nb1fsEpen9xQ6bDCaZaTqjq0PJR9eknjibnCoQXYQYdWdavMRwHiVafFwO
+	 8HREyqiXrw2sgSdbnNsQ+Lc6psJpNBGS8ByS7orNTgu7vDSrV2bKF5oGIfK7S7sxE2
+	 l2+svfgKyi8B58cxRrVZqVI+0S0QJ9EJVX0ooGc0=
+X-QQ-mid: bizesmtpsz13t1736148198tdmmbz
+X-QQ-Originating-IP: tOLh7ra5Ue+Kv2O5SQjmTxzo1PRGcQJoC2zekDjr4Kg=
+Received: from smtpclient.apple ( [202.120.235.227])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 06 Jan 2025 15:23:16 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9369401867067891742
+From: Kun Hu <huk23@m.fudan.edu.cn>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ0PR12MB6989:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5bed9a7-f6ff-494b-e593-08dd2e1d6b4e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ncdyri868tJYUgjU/AS/aewgUGj97phEP5wqelOR1xhFnpqXJHbkZJnkeAnW?=
- =?us-ascii?Q?ISJPy+svP4NLd02F4wwLFOOkZ3WWGeTjwbaeEbbDpHTdWz0Op0uDZXn6oe1F?=
- =?us-ascii?Q?4xhgl8z+bn9+7bzWNQt0fWdReXkYVg0ohryfrqvZQhh0IL/F2UCrTvc3Bmy8?=
- =?us-ascii?Q?Y/ot/7lLBcLw1AkNLkiTdiztcp8Rr/qwumAAhcUz74XJJn9/3h+Agkncz+bF?=
- =?us-ascii?Q?IRIMXjGG6YivoF9H1TZ+AxoUkYZnJ+a+AX/zAX50FlriG/ArpOpE+PVH2ah7?=
- =?us-ascii?Q?lcnAOwXqGD+8fjxPDd25Fq0BKDtdfkexoaNoVV4HxNWaZ/Emw+N/BgHg+YeA?=
- =?us-ascii?Q?3rwUH6I04f/keZAof0oL/mW/SsausMDyvGK7s6hnaxR5OHB48Sit22QpcAgd?=
- =?us-ascii?Q?5YzZ9jzD9QKH+FydF9VVsppkf9L6qFY2fKKZcyc7NqridAfrPWG7pO1Ws71W?=
- =?us-ascii?Q?JulKfx02G+aH7Tf9ic6JXXVaxSXDQfuP6CXPIP31bCZVNvosBop2IKALMoPf?=
- =?us-ascii?Q?9FWKUjbBYfHEKXa/FfepTELPqaZuRrt5IGb/H68a3kyi5we/iNfC2AZYHd7k?=
- =?us-ascii?Q?Pjo80bEJVeC/7T4a+qKLK1PArAb+8d73uRdVglrtA8kKa21ejOiFoMJ3jyN/?=
- =?us-ascii?Q?GcEIIWcjUndIicMNreMVPK4vVDECvwxeXwaRlzrfzRdplZ9lN6fmNyhoYwQg?=
- =?us-ascii?Q?DD2p2EA7IJs3h6I6w7vEm/NorLimZ6IdHR6lVk1wWQiCPQyyidie0U2Y6wb+?=
- =?us-ascii?Q?XaX8ul1t4PYPMyoDcEql0ObucZqVLrGIOh03UahM5UZi1IzNyd2INos1xuKN?=
- =?us-ascii?Q?hfxhIAfmrSYToYTl+BU4WorbNq1lM8y/dafqJn+n4TZJiJy1nhnmVK+t3ijH?=
- =?us-ascii?Q?jyOww0rmpHQR/WV0ZcAYnBUtj2G7/KVtVPhodUE5JtUODliKetTYT+bF9C9f?=
- =?us-ascii?Q?UQmqTMF2HlVWBPleXIT39nGpfj77VpqappmguakX3p8YZrTcLLjFStEw2OQ7?=
- =?us-ascii?Q?W+PoAzsaE1vOpfskfYcdOwxya6/YFsISzXLhIVL3E6ubqAxA2ksy4njX8E7I?=
- =?us-ascii?Q?FDQfu4P9pUH94N2hdcbthPjvjuASCXJCCitpkwd1Ef2ckVwImgPe3Lm6KPZf?=
- =?us-ascii?Q?hVoHiFTPKZ41hLdjbaKDB97zfE5MnE22vkvof9sBhMLAVDhKSzVLFX9yQS6t?=
- =?us-ascii?Q?zihPfOmTq8H2bwKugGCSCVDQ2/U0e1KbDoKbprxJXQRcRPEjrEjvt65je4fs?=
- =?us-ascii?Q?UDwJlpRvDLsBjEk0kncDKcKynFtHHcYiOXT5tsUVPFtMFUK+kK446V0Yy+cN?=
- =?us-ascii?Q?3GQXDggCewI4vXtXfHrKIICu7wAHbC3Nnfo+EGiKnS7KT+Go5kAdKV4gBxzn?=
- =?us-ascii?Q?0hHy6RvhIfy0ZUR1nKsj9+9I+Lww?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LtCegbPKFp0togHtIa15iB24W0Rh3Sg36cMDf4i/nqCKVHu/gslMgPc1p0yb?=
- =?us-ascii?Q?eKGSTz4wukWvQ/hsAvK/hJHkN8OXbGOyNJeF6DIlOjxb77qIr7X6NDskSvg3?=
- =?us-ascii?Q?BAcYAPG0Gq99f3tusGaCnkIl3NrJ6E0cEbtePcSBYmJGshYhBHNwkAnKYkqR?=
- =?us-ascii?Q?HJ0Vlau0ESYvYdsv3D2rLdogJr937HR/xBxBxLLtVnv4RjchkDLe93zYxFTg?=
- =?us-ascii?Q?CJ8YvguSwxjMgNb7hQphOkRkBDXPxTQvl+iizLDOYqxbDiBstoaiapR8qilS?=
- =?us-ascii?Q?sBoL6aP5R7LHr1Y/o1s33lZwxtZq0zMj3DoSoBdX7sC6u97AwfXT1mQ5O3bB?=
- =?us-ascii?Q?k5+4EIUZbgm5sTtjnEsk3i8LLDEv2+bPTZJbkXMdeuxx7oer6mSXE8CHbgqA?=
- =?us-ascii?Q?iAoEmZcRD7IF+0SnGZYHickerllRT5zQS9aNeXMkg4lzHdrddBivrWQw2c9M?=
- =?us-ascii?Q?6Wm4dP1PuWnYb68oGDOGK/0Y1xrDeZ7hZSnw0zofJL2ki1e8BQetshPu1M+9?=
- =?us-ascii?Q?qwGq35zTQ94yGztSFAT0DGcWaHqbOayUmuWYKZ88HbuOVjHAZL2yTSYmL0Dz?=
- =?us-ascii?Q?ziWWCyDvE3YovIC0q5MBwfkLKsc7bBSeGmNIFkUyNDqJq/30HJMZarGsODp5?=
- =?us-ascii?Q?5yN90chjDklPM4O83KwSI110BLARXv3T1EqD8TsVJ1Br5brj9UGKOVsrpGhB?=
- =?us-ascii?Q?dK7sqqcC5uQh8o57Bcc3wwonblm5eiHuUtbzesdCoM7dXDzKjzmAobtFmAkk?=
- =?us-ascii?Q?fiIIZbqQ+Z7vZWYsXweRd80oUMMuw6lPCy3yZGbY/S/E1PQjUqW7MH/spk8N?=
- =?us-ascii?Q?nt0YVJRWvO2Q9i5S89ckh5PWwZ6l0unn5NrL0Y8C8OZm4gG7ZxaeaIyR+pLE?=
- =?us-ascii?Q?CJCAtqfmZM6dHIYUUCj+q2TaOD2Qv04YGP4uUUmWYycfAP6eZmNo6FECSw8n?=
- =?us-ascii?Q?M047Vt4hQbklbX1Yh8F6F0Lia3NO50rf6VS/BO9TNygL0slqqi8pd0/V14NO?=
- =?us-ascii?Q?GXJg7DOMRYxBrAWoz2VyJ1QJRaenW7YBgIHtjtXXq3BFeIDIYm98LMGz3LWJ?=
- =?us-ascii?Q?dNF9p3l8n1fm7Ks9HDYQhEgsBOcNx/hqxyHoptufNiIzrtUX2Z4uq2XlFBQF?=
- =?us-ascii?Q?g6ESmA88YofrxWxL6FH2sxNJi8uByvkqZIqHwkJQdkPMPK5nqUt3mXLbrsDN?=
- =?us-ascii?Q?6VR+T62AcwUdq2sjYH9AbowDjWMYHCrqIAB9VY7Wm3gNK+u/vIex6wPTr0ar?=
- =?us-ascii?Q?kYljzHAomvTLZp9LwMoD8MxlTFoDuZXM/batwEzYypmhCyQxOFrFhrtChr0I?=
- =?us-ascii?Q?q88td4nbwZSuTTeStt7CEu/1z6XA4ZgDqlNtcss/bX94ckXfh0G8sZ9RUoQD?=
- =?us-ascii?Q?wfP4lu4Bz2B58mlmTxfoUPbA6l9ZfsfriFWchX9DU32TGthDZINVw8nxBc2j?=
- =?us-ascii?Q?NOeGh2mFYoGBXHs+ea51AlLjMcVPpR6FB54LhVjjzB5Pl3WbcKvFmS40UIoV?=
- =?us-ascii?Q?2nPL/XnuEjXuIiAK+2NpxiDbwXsKeQ4F7tnDzUq6Ga/epf/lXZpP8UVfUopF?=
- =?us-ascii?Q?Fkh6zouS1teQecAUMmwxF3b5uf+Y2gkSaSG/B5O9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5bed9a7-f6ff-494b-e593-08dd2e1d6b4e
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2025 06:43:24.9172
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xew9SqsYOzwEXBZwBE9a5GoZbdqd1svaYPGY5YX/R1QDrRpr10vHFRBHi+vTfsETdLUDPPdLwsf4W2J+RL5v+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6989
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Bug: slab-out-of-bounds Write in __bh_read
+Message-Id: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
+Date: Mon, 6 Jan 2025 15:23:06 +0800
+Cc: linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
+To: viro@zeniv.linux.org.uk,
+ brauner@kernel.org,
+ jack@suse.cz
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NMGzQWUSIfvT7hcupXFFaqMpsSIrL7KrP/bynifEMAdeBClGD06LEkeB
+	mpVMUDe+ZXBVuGZLnM8NBayOaIjIOr/4DSwDAEUshTyGUBFfxkCofCH6+TOZuL3Ef2bPTJb
+	OBLzamT3NQk0nZLkTJVwwuUSX3tH+QbAnCsHJ08aZl7joSyKye2z1C7cbwvXMA5I417u/3n
+	Ak1uB8EBhnQfHbIut9JU0rqfh1XVn/yToKVU4xV0pez0+PXxE4QwuP02rTNwVmEL7KF6xVf
+	DGAzj9ri01bogzIXuZqaQQoGs2SbDo2mylIclZiP1W3X3+bSAgU8ZWl2BrfHfmZ58otwkIT
+	hG9AnDh2XgV/I+vqjic1+txheTL3u6BY3Ls+p/LPQrSF7AwU0dPCzuRPcFTSBpv3F96q9hh
+	q84BdXEPSPzghOtEdtDtTt6Xh24UrChMnB8Bl9sgGziitFVVQgwyOhbaxDBNg1tssgZ563r
+	7a6JauXDGOWa7Eqgsl3DtHH7kf26txctnVU5zinivGO6IxkNn1nTZVJr8VNRJODYVgQVbZB
+	zbsoOzBn0CEWTm5+azoqpgnMpBcFqx10euECDJ8/vwKsiKlaeVyIw+J1e2mGXwLQubqmqSV
+	8XfjVaYcaTxFOUk9kMuizH5VPfO+q8DC70QS4IqTeXKU3IQuBHTGdvJH9GvziYbxNMTb21s
+	DVZu7pSF5qIV4g4vhk/VmoKmHPQD+qLoZZywRYj/lDw0lPcNOc3RbOOyssECQJsUAaqW7hO
+	8aQ2lsPG4Jj6nnG43rMLjO/EOoRdvMAb50ElDFbaEQeJ3nkApsLaNl6omjaQOqmRcIA7R+X
+	njQ31/9xrsXYkh8zIU+OpN7YI+uIk4rPyHuhqZIBt/KRuiv4vH4hzfLY4q90aMjiCmufNcr
+	4XpapG8tounOcmdEl220CocM27eIUfvIgFe/Lxy5y++mT67nn8cS0q3jBkabkOupWJqbBjT
+	nL1YEoAWZYC5pCuObYKQP5POZFVeDCv1OvdoriJPNs0gCNSY/p3wD8scN3SWObBEdbR6ZT6
+	uYHgT1Ig==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Dec 20, 2024 at 07:32:52PM +0100, David Hildenbrand wrote:
-> On 19.12.24 00:11, Alistair Popple wrote:
-> > On Tue, Dec 17, 2024 at 11:31:25PM +0100, David Hildenbrand wrote:
-> > > On 17.12.24 06:13, Alistair Popple wrote:
-> > > > The procfs mmu files such as smaps currently ignore device dax and fs
-> > > > dax pages because these pages are considered special. To maintain
-> > > > existing behaviour once these pages are treated as normal pages and
-> > > > returned from vm_normal_page() add tests to explicitly skip them.
-> > > > 
-> > > > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> > > > ---
-> > > >    fs/proc/task_mmu.c | 18 ++++++++++++++----
-> > > >    1 file changed, 14 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > index 38a5a3e..c9b227a 100644
-> > > > --- a/fs/proc/task_mmu.c
-> > > > +++ b/fs/proc/task_mmu.c
-> > > > @@ -801,6 +801,8 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
-> > > >    	if (pte_present(ptent)) {
-> > > >    		page = vm_normal_page(vma, addr, ptent);
-> > > > +		if (page && (is_device_dax_page(page) || is_fsdax_page(page)))
-> > > 
-> > > This "is_device_dax_page(page) || is_fsdax_page(page)" is a common theme
-> > > here, likely we should have a special helper?
-> > 
-> > Sounds good, will add is_dax_page() if there are enough callers left after any
-> > review comments.
-> 
-> :)
+Hello,
 
-In the end there was only a single caller so I will leave this open-coded.
+When using our customized fuzzer tool to fuzz the latest Linux kernel, =
+the following crash
+was triggered.
 
-> > > But, don't we actually want to include them in the smaps output now? I think
-> > > we want.
-> > 
-> > I'm not an expert in what callers of vm_normal_page() think of as a "normal"
-> > page.
-> 
-> Yeah, it's tricky. It means "this is abnormal, don't look at the struct
-> page". We're moving away from that, such that these folios/pages will be ...
-> mostly normal :)
-> 
-> > So my philosphy here was to ensure anything calling vm_normal_page()
-> > didn't accidentally start seeing DAX pages, either by checking existing filters
-> > (lots of callers already call vma_is_special_huge() or some equivalent) or
-> > explicitly filtering them out in the hope someone smarter than me could tell me
-> > it was unneccssary.
-> > 
-> > That stategy seems to have worked, and so I agree we likely do want them in
-> > smaps. I just didn't want to silently do it without this kind of discussion
-> > first.
-> 
-> Yes, absolutely.
-> 
-> > 
-> > > The rmap code will indicate these pages in /proc/meminfo, per-node info, in
-> > > the memcg ... as "Mapped:" etc.
-> > > 
-> > > So likely we just want to also indicate them here, or is there any downsides
-> > > we know of?
-> > 
-> > I don't know of any, and I think it makes sense to also indicate them so will
-> > drop this check in the respin.
-> 
-> It will be easy to hide them later, at least we talked about it. Thanks for
-> doing all this!
+HEAD commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
+git tree: upstream
+Console output: =
+https://drive.google.com/file/d/1-YGytaKuh9M4hI6x27YjsE0vSyRFngf5/view?usp=
+=3Dsharing
+Kernel config: =
+https://drive.google.com/file/d/1n2sLNg-YcIgZqhhQqyMPTDWM_N1Pqz73/view?usp=
+=3Dsharing
+C reproducer: /
+Syzlang reproducer: /
 
-Not a problem. The other main thing in this patch is also hiding them from
-/proc/<PID>/pagemap. Based on this discussion I can't think of any good reason
-why we would want to hide them there so will also remove the checks in the
-pagemap walker.
+We found an issue in the __bh_read function at line 3086, where a =
+slab-out-of-bounds error was reported. While the BUG_ON check ensures =
+that bh is locked, I suspect it=E2=80=99s possible that bh might have =
+been released prior to the call to __bh_read. This could result in =
+accessing invalid memory, ultimately triggering the reported issue.
 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+Unfortunately, We can=E2=80=99t get stable reproducers yet. Could you =
+please help check if this needs to be addressed?
+
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin =
+<jjtan24@m.fudan.edu.cn>
+
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+BUG: KASAN: slab-out-of-bounds in instrument_atomic_read_write =
+include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-out-of-bounds in atomic_inc =
+include/linux/atomic/atomic-instrumented.h:435 [inline]
+BUG: KASAN: slab-out-of-bounds in get_bh include/linux/buffer_head.h:296 =
+[inline]
+BUG: KASAN: slab-out-of-bounds in __bh_read+0x6f/0x1f0 fs/buffer.c:3086
+Write of size 4 at addr ff110000026598e0 by task syz.2.15/1705
+
+CPU: 2 UID: 0 PID: 1705 Comm: syz.2.15 Not tainted 6.13.0-rc5 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcf/0x5f0 mm/kasan/report.c:489
+ kasan_report+0x93/0xc0 mm/kasan/report.c:602
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xf6/0x1b0 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_inc include/linux/atomic/atomic-instrumented.h:435 [inline]
+ get_bh include/linux/buffer_head.h:296 [inline]
+ __bh_read+0x6f/0x1f0 fs/buffer.c:3086
+ bh_read_nowait include/linux/buffer_head.h:442 [inline]
+ __block_write_begin_int+0x156d/0x18c0 fs/buffer.c:2145
+ iomap_write_begin+0x581/0x18d0 fs/iomap/buffered-io.c:827
+ iomap_write_iter fs/iomap/buffered-io.c:955 [inline]
+ iomap_file_buffered_write+0x402/0xbe0 fs/iomap/buffered-io.c:1039
+ gfs2_file_buffered_write+0x40b/0xb10 fs/gfs2/file.c:1060
+ gfs2_file_write_iter+0x6c9/0x1080 fs/gfs2/file.c:1164
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write fs/read_write.c:679 [inline]
+ vfs_write+0xb9b/0x10f0 fs/read_write.c:659
+ ksys_write+0x122/0x240 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f65c364471d
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 =
+f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 =
+f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f65c2297ba8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f65c3806f80 RCX: 00007f65c364471d
+RDX: 0000000000001006 RSI: 0000000020001240 RDI: 0000000000000007
+RBP: 00007f65c36b9425 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f65c3806f8c R14: 00007f65c3807018 R15: 00007f65c2297d40
+ </TASK>
+
+Allocated by task 1705:
+ kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4298 [inline]
+ __kmalloc_noprof+0x1ef/0x570 mm/slub.c:4310
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ ifs_alloc+0x1c9/0x400 fs/iomap/buffered-io.c:202
+ __iomap_write_begin fs/iomap/buffered-io.c:707 [inline]
+ iomap_write_begin+0xa54/0x18d0 fs/iomap/buffered-io.c:829
+ iomap_write_iter fs/iomap/buffered-io.c:955 [inline]
+ iomap_file_buffered_write+0x402/0xbe0 fs/iomap/buffered-io.c:1039
+ gfs2_file_buffered_write+0x40b/0xb10 fs/gfs2/file.c:1060
+ gfs2_file_write_iter+0x6c9/0x1080 fs/gfs2/file.c:1164
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write fs/read_write.c:679 [inline]
+ vfs_write+0xb9b/0x10f0 fs/read_write.c:659
+ ksys_write+0x122/0x240 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ff11000002659880
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 16 bytes to the right of
+ allocated 80-byte region [ff11000002659880, ff110000026598d0)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 =
+pfn:0x2659
+anon flags: 0x100000000000000(node=3D0|zone=3D1)
+page_type: f5(slab)
+raw: 0100000000000000 ff1100000103c280 ffd40000010501c0 dead000000000005
+raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ff11000002659780: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
+ ff11000002659800: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+>ff11000002659880: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
+                                                       ^
+ ff11000002659900: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+ ff11000002659980: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+BUG: unable to handle page fault for address: ffffffffffffffff
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 2fcf2067=20
+P4D 2fcf3067 PUD 2fcf5067 PMD 0=20
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 1705 Comm: syz.2.15 Tainted: G    B              =
+6.13.0-rc5 #1
+Tainted: [B]=3DBAD_PAGE
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:constant_test_bit arch/x86/include/asm/bitops.h:206 [inline]
+RIP: 0010:arch_test_bit arch/x86/include/asm/bitops.h:238 [inline]
+RIP: 0010:_test_bit =
+include/asm-generic/bitops/instrumented-non-atomic.h:142 [inline]
+RIP: 0010:compound_order include/linux/mm.h:1112 [inline]
+RIP: 0010:page_size include/linux/mm.h:1311 [inline]
+RIP: 0010:bh_offset include/linux/buffer_head.h:176 [inline]
+RIP: 0010:submit_bh_wbc.constprop.0+0x37d/0x640 fs/buffer.c:2801
+Code: 00 00 4c 89 e7 48 89 44 24 08 e8 3e 64 e9 ff 4c 89 e1 48 b8 00 00 =
+00 00 00 fc ff df 48 c1 e9 03 80 3c 01 00 0f 85 16 02 00 00 <4d> 8b 3c =
+24 31 ff bd ff 0f 00 00 49 c1 ef 06 41 83 e7 01 44 89 fe
+RSP: 0018:ffa0000014c1f5f0 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ff11000002659880 RCX: 1fffffffffffffff
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffffffffffff
+RBP: 227ffffd1bbc268c R08: 0000000000000001 R09: ffe21c00012f37ae
+R10: ffe21c00012f37ad R11: ff1100000979bd6f R12: ffffffffffffffff
+R13: ff11000002659890 R14: ff1100000979bd00 R15: ff11000002659880
+FS:  00007f65c2298700(0000) GS:ff1100006a200000(0000) =
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffff CR3: 00000000413da004 CR4: 0000000000771ef0
+PKRU: 80000000
+Call Trace:
+ <TASK>
+ submit_bh fs/buffer.c:2819 [inline]
+ __bh_read+0xa7/0x1f0 fs/buffer.c:3088
+ bh_read_nowait include/linux/buffer_head.h:442 [inline]
+ __block_write_begin_int+0x156d/0x18c0 fs/buffer.c:2145
+ iomap_write_begin+0x581/0x18d0 fs/iomap/buffered-io.c:827
+ iomap_write_iter fs/iomap/buffered-io.c:955 [inline]
+ iomap_file_buffered_write+0x402/0xbe0 fs/iomap/buffered-io.c:1039
+ gfs2_file_buffered_write+0x40b/0xb10 fs/gfs2/file.c:1060
+ gfs2_file_write_iter+0x6c9/0x1080 fs/gfs2/file.c:1164
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write fs/read_write.c:679 [inline]
+ vfs_write+0xb9b/0x10f0 fs/read_write.c:659
+ ksys_write+0x122/0x240 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f65c364471d
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 =
+f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 =
+f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f65c2297ba8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f65c3806f80 RCX: 00007f65c364471d
+RDX: 0000000000001006 RSI: 0000000020001240 RDI: 0000000000000007
+RBP: 00007f65c36b9425 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f65c3806f8c R14: 00007f65c3807018 R15: 00007f65c2297d40
+ </TASK>
+Modules linked in:
+CR2: ffffffffffffffff
+---[ end trace 0000000000000000 ]---
+RIP: 0010:constant_test_bit arch/x86/include/asm/bitops.h:206 [inline]
+RIP: 0010:arch_test_bit arch/x86/include/asm/bitops.h:238 [inline]
+RIP: 0010:_test_bit =
+include/asm-generic/bitops/instrumented-non-atomic.h:142 [inline]
+RIP: 0010:compound_order include/linux/mm.h:1112 [inline]
+RIP: 0010:page_size include/linux/mm.h:1311 [inline]
+RIP: 0010:bh_offset include/linux/buffer_head.h:176 [inline]
+RIP: 0010:submit_bh_wbc.constprop.0+0x37d/0x640 fs/buffer.c:2801
+Code: 00 00 4c 89 e7 48 89 44 24 08 e8 3e 64 e9 ff 4c 89 e1 48 b8 00 00 =
+00 00 00 fc ff df 48 c1 e9 03 80 3c 01 00 0f 85 16 02 00 00 <4d> 8b 3c =
+24 31 ff bd ff 0f 00 00 49 c1 ef 06 41 83 e7 01 44 89 fe
+RSP: 0018:ffa0000014c1f5f0 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ff11000002659880 RCX: 1fffffffffffffff
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffffffffffff
+RBP: 227ffffd1bbc268c R08: 0000000000000001 R09: ffe21c00012f37ae
+R10: ffe21c00012f37ad R11: ff1100000979bd6f R12: ffffffffffffffff
+R13: ff11000002659890 R14: ff1100000979bd00 R15: ff11000002659880
+FS:  00007f65c2298700(0000) GS:ff1100006a200000(0000) =
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffff CR3: 00000000413da004 CR4: 0000000000771ef0
+PKRU: 80000000
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	4c 89 e7             	mov    %r12,%rdi
+   5:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+   a:	e8 3e 64 e9 ff       	callq  0xffe9644d
+   f:	4c 89 e1             	mov    %r12,%rcx
+  12:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  19:	fc ff df
+  1c:	48 c1 e9 03          	shr    $0x3,%rcx
+  20:	80 3c 01 00          	cmpb   $0x0,(%rcx,%rax,1)
+  24:	0f 85 16 02 00 00    	jne    0x240
+* 2a:	4d 8b 3c 24          	mov    (%r12),%r15 <-- trapping =
+instruction
+  2e:	31 ff                	xor    %edi,%edi
+  30:	bd ff 0f 00 00       	mov    $0xfff,%ebp
+  35:	49 c1 ef 06          	shr    $0x6,%r15
+  39:	41 83 e7 01          	and    $0x1,%r15d
+  3d:	44 89 fe             	mov    %r15d,%esi
+
+
+---------------
+thanks,
+Kun Hu=
 
