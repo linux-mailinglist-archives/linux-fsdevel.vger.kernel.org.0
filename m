@@ -1,122 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-38447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F7AA02B4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BACF3A02ABB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005891885E85
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 15:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283661881807
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 15:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F61DDF71;
-	Mon,  6 Jan 2025 15:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F09155300;
+	Mon,  6 Jan 2025 15:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="rKWzZ9y6";
-	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="BH8lzgUp";
-	dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="Xq8eSv9G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XO8xTxxg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from trent.utfs.org (trent.utfs.org [94.185.90.103])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764A51DACBE;
-	Mon,  6 Jan 2025 15:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.185.90.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F907BA34;
+	Mon,  6 Jan 2025 15:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736178107; cv=none; b=UcRUIgTKS/pSqUBMjP4pJRQT3FaBHXIet3WsasZYIj0IOfdnrSZcg1UdSJwiSRF0W8mkvWaobBjzhC9Pt4E/6QUhSnm32ruanrVxNSWaCMJK7MF2HVvmNShemzQgMewtx7ZyqZp9yVxmzLRvAxeni75y4omX3x2MjYoLVhimRwE=
+	t=1736177795; cv=none; b=Tm3093bhrp9KiP1oqjVHTPpLhgnjWh+DJ8rGZg8kwa9T1a4NNM2XH3Q5J2DtXpfy8RSu2Jin1FZ4g7zhWp1fUW2mIZ8jcC6V0exfM38LFXZleBlYAPFXRl2/xvsrPtU3s+CQ7w0Y0oG4q4gaYYlYjA99LcOpbPWeT4bEjczA3cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736178107; c=relaxed/simple;
-	bh=hSp2/2KeglgI/flnnugGWXi9UTshJjqb2tbMgN4C2dg=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=NMJ8nccqDWRgvoKWw7rULwx09IiQUxz+W8/pJ9Ugd5XIRARgvt/ZLso2+J+0LXGOf+mp2RyHvMosrvCNScF1CEdL8SblDZFa7Bmgt7ktlNfSwCzQPTEKY6xUyKWc6kUGCaSyfNjS2TRRSpGnODb1rxGNjij/Xwi/XnposlzR0mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de; spf=pass smtp.mailfrom=nerdbynature.de; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=rKWzZ9y6; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=BH8lzgUp; dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=Xq8eSv9G; arc=none smtp.client-ip=94.185.90.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nerdbynature.de
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple;
- d=nerdbynature.de; i=@nerdbynature.de; q=dns/txt; s=key1;
- t=1736177525; h=date : from : to : cc : subject : message-id :
- mime-version : content-type : from;
- bh=hSp2/2KeglgI/flnnugGWXi9UTshJjqb2tbMgN4C2dg=;
- b=rKWzZ9y6e/Pg4WzzucR5lNeFttIVqzpHikza93nJ2AdKeMU5ZjRIXFDdFmInQ2ez2wzF8
- TqKdCfo7qcLUOe9Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=nerdbynature.de;
-	s=dkim; t=1736177525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=16laj4Me5+o+WZh3Y/wpz56jOsbL2TRJ0UzNl1rcvH8=;
-	b=BH8lzgUphqVJtozumNlml2ElcZhCdswiXxdOwvu+xmOTnYvV3Dxaf14D7kfX8QpaQmUPYq
-	zONGEI6spkLfNwBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nerdbynature.de;
- i=@nerdbynature.de; q=dns/txt; s=key0; t=1736177525; h=date : from :
- to : cc : subject : message-id : mime-version : content-type : from;
- bh=hSp2/2KeglgI/flnnugGWXi9UTshJjqb2tbMgN4C2dg=;
- b=Xq8eSv9GMD/L9KqO0xNfJtR8i9Sw5PO2yy97SLMTCPrgZEz/nT9GfOKCbfE4Tccxg7tRf
- l8i36BdKtURf6O4QCqbZULasnDx32NHxmPq9s7KtM6mvRoqgV6jkLz1LoWjWkNBa5uTKhZp
- R3JSjLML2pa67KydVnR6WBVlVcxh1ozCTk5ZClLOrnFwdStymPqv3c/F+Tasc7T5tSUdXRr
- mTyOmLGgEa45R7HuMDNQTx4HmdabPlVGObY9bFkPJ7h/RheunfuJ41b1ApkX6oxTjsbHl6F
- AWfv5jbxispGZsC0J0ixAhoxpAsPG7QVpIJTQyRo1I7hyzGZIF5FpHu4tQKQ==
-Received: from localhost (localhost [IPv6:::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by trent.utfs.org (Postfix) with ESMTPS id 9748C5F883;
-	Mon,  6 Jan 2025 16:32:05 +0100 (CET)
-Date: Mon, 6 Jan 2025 16:32:05 +0100 (CET)
-From: Christian Kujau <lists@nerdbynature.de>
-To: Hans de Goede <hdegoede@redhat.com>
-cc: Arnd Bergmann <arnd@arndb.de>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-    linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] vbox: Enable VBOXGUEST and VBOXSF_FS on ARM64
-Message-ID: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
+	s=arc-20240116; t=1736177795; c=relaxed/simple;
+	bh=iiynLgs3P+7Sxa9qn+UPkCEgB1748cx6ki83a7aJJUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sdOVgwSbZ1k6r8W1/cxxlx8U3fTCjxbsmmd31wFd8PBFw4Nj4aA/ZjMEdLVMCgAcolyCNeUFk3HUJUPKXoUw4jsi8DihVu9vBqjbTyESLC21PBdcpji8+yHHWwkZq/G1l9NnqiKmEc3fjSKtlrr3ick+nGEoTqB9pmxoTe5vECY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XO8xTxxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 201F6C4CED2;
+	Mon,  6 Jan 2025 15:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736177795;
+	bh=iiynLgs3P+7Sxa9qn+UPkCEgB1748cx6ki83a7aJJUY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XO8xTxxgn9RBBtJdQR8s030W/QGQPzPOnxLOYJFiEcb7cFPvyloouuDmIXsKYvl9T
+	 G1Omck0VqqXGJ0yq0dL9SA21IPT2g9tPwYporcZ7hOrUfaVfTogex+hhYXv8+Tluyx
+	 aKpLIsygvFuULLZs5+sDnVco10Op2hQFh8fwIPD8AtsH37iyTTNU/Q2Iz44wPfFpJu
+	 kJ1ElV1jGl+7WjHwyCaIS0mhdtsywj/TesUQVnOmOMwWMjOrAoHOdbFFVh4NvpHY3n
+	 ffUUsnYXTsB01QTo7eJgUtzyR0fQ8kqnZwzlWfeK8elnxf8EG1b9Zzd96lJppDuIl7
+	 Ywc0Vl0AdlyTw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon,  6 Jan 2025 16:32:26 +0100
+Message-ID: <20250106-vfs-fixes-5a197ffbc262@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6782; i=brauner@kernel.org; h=from:subject:message-id; bh=iiynLgs3P+7Sxa9qn+UPkCEgB1748cx6ki83a7aJJUY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRX/6hWcliSO/fpwcLIlrr+wqcs+4wnvD3+4dKaW6pp8 7h6nxn+6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjITR9Ghqf2mZEiPyQucXnO nnVirljGXzaX7Ya2JmcnCiw3+XH+ZRrD/8yTx3pO2B8/UqWTEWGmGSVQlCu0zPZb667fEWUuH3R 3sQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Now that VirtualBox is able to run as a host on arm64 (e.g. the Apple M3 
-processors) we can enable VBOXSF_FS (and in turn VBOXGUEST) for this 
-architecture. Tested with various runs of bonnie++ and dbench on an Apple 
-MacBook Pro with the latest Virtualbox 7.1.4 r165100 installed.
+Hey Linus,
 
-Signed-off-by: Christian Kujau <lists@nerdbynature.de>
----
- drivers/virt/vboxguest/Kconfig | 2 +-
- fs/vboxsf/Kconfig              | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+slowly resurrecting from the holidays... What year is it? And have we
+already started generating pull requests with AI?
 
-diff --git a/drivers/virt/vboxguest/Kconfig b/drivers/virt/vboxguest/Kconfig
-index cc329887bfae..11b153e7454e 100644
---- a/drivers/virt/vboxguest/Kconfig
-+++ b/drivers/virt/vboxguest/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config VBOXGUEST
- 	tristate "Virtual Box Guest integration support"
--	depends on X86 && PCI && INPUT
-+	depends on (ARM64 || X86) && PCI && INPUT
- 	help
- 	  This is a driver for the Virtual Box Guest PCI device used in
- 	  Virtual Box virtual machines. Enabling this driver will add
-diff --git a/fs/vboxsf/Kconfig b/fs/vboxsf/Kconfig
-index b84586ae08b3..d4694026db8b 100644
---- a/fs/vboxsf/Kconfig
-+++ b/fs/vboxsf/Kconfig
-@@ -1,6 +1,6 @@
- config VBOXSF_FS
- 	tristate "VirtualBox guest shared folder (vboxsf) support"
--	depends on X86 && VBOXGUEST
-+	depends on (ARM64 || X86) && VBOXGUEST
- 	select NLS
- 	help
- 	  VirtualBox hosts can share folders with guests, this driver
+/* Summary */
 
--- 
-BOFH excuse #76:
+This contains various fixes for this cycle:
 
-Unoptimized hard drive
+- Relax assertions on failure to encode file handles.
+  The ->encode_fh() method can fail for various reasons. None of them
+  warrant a WARN_ON().
+
+- Fix overlayfs file handle encoding by allowing encoding an fid from an
+  inode without an alias.
+
+- Make sure fuse_dir_open() handles FOPEN_KEEP_CACHE. If it's not
+  specified fuse needs to invaludate the directory inode page cache.
+
+- Fix qnx6 so it builds with gcc-15.
+
+- Various fixes for netfslib and ceph and nfs filesystems:
+
+  - Ignore silly rename files from afs and nfs when building header archives.
+
+  - Fix read result collection in netfslib with multiple subrequests.
+
+  - Handle ENOMEM for netfslib buffered reads.
+
+  - Fix oops in nfs_netfs_init_request().
+
+  - Parse the secctx command immediately in cachefiles.
+
+  - Remove a redundant smp_rmb() in netfslib.
+
+  - Handle recursion in read retry in netfslib.
+
+  - Fix clearing of folio_queue.
+
+  - Fix missing cancellation of copy-to_cache when the cache for a file
+    is temporarly disabled in netfslib.
+
+- Sanity check the hfs root record.
+
+- Fix zero padding data issues in concurrent write scenarios.
+
+- Fix is_mnt_ns_file() after converting nsfs to path_from_stashed().
+
+- Fix missing declaration of init_files.
+
+- Increase I/O priority when writing revoke records in jbd2.
+
+- Flush filesystem device before updating tail sequence in jbd2.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+- There will be a small merge conflict with mainline. The conflict
+  resolution should like this:
+
+diff --cc fs/smb/client/smb2pdu.c
+index 959359301250,458b53d1f9cb..000000000000
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@@ -4840,12 -4841,12 +4841,14 @@@ smb2_writev_callback(struct mid_q_entr
+                if (written > wdata->subreq.len)
+                        written &= 0xFFFF;
+
+ +              cifs_stats_bytes_written(tcon, written);
+ +
+-               if (written < wdata->subreq.len)
++               if (written < wdata->subreq.len) {
+                        wdata->result = -ENOSPC;
+-               else
++               } else if (written > 0) {
+                        wdata->subreq.len = written;
++                       __set_bit(NETFS_SREQ_MADE_PROGRESS, &wdata->subreq.flags);
++               }
+                break;
+        case MID_REQUEST_SUBMITTED:
+        case MID_RETRY_NEEDED:
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13-rc7.fixes
+
+for you to fetch changes up to 368fcc5d3f8bf645a630a44e65f5eb008aba7082:
+
+  Merge patch series "Fix encoding overlayfs fid for fanotify delete events" (2025-01-06 15:43:58 +0100)
+
+Please consider pulling these changes from the signed vfs-6.13-rc7.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.13-rc7.fixes
+
+----------------------------------------------------------------
+Amir Goldstein (4):
+      fs: relax assertions on failure to encode file handles
+      fuse: respect FOPEN_KEEP_CACHE on opendir
+      ovl: pass realinode to ovl_encode_real_fh() instead of realdentry
+      ovl: support encoding fid from inode with no alias
+
+Brahmajit Das (1):
+      fs/qnx6: Fix building with GCC 15
+
+Christian Brauner (4):
+      Merge patch series "jbd2: two straightforward fixes"
+      Merge patch series "iomap: fix zero padding data issue in concurrent append writes"
+      Merge patch series "netfs, ceph, nfs, cachefiles: Miscellaneous fixes/changes"
+      Merge patch series "Fix encoding overlayfs fid for fanotify delete events"
+
+David Howells (9):
+      kheaders: Ignore silly-rename files
+      netfs: Fix non-contiguous donation between completed reads
+      netfs: Fix enomem handling in buffered reads
+      nfs: Fix oops in nfs_netfs_init_request() when copying to cache
+      netfs: Fix missing barriers by using clear_and_wake_up_bit()
+      netfs: Work around recursion by abandoning retry if nothing read
+      netfs: Fix ceph copy to cache on write-begin
+      netfs: Fix the (non-)cancellation of copy when cache is temporarily disabled
+      netfs: Fix is-caching check in read-retry
+
+Leo Stone (1):
+      hfs: Sanity check the root record
+
+Long Li (2):
+      iomap: pass byte granular end position to iomap_add_to_ioend
+      iomap: fix zero padding data issue in concurrent append writes
+
+Max Kellermann (1):
+      cachefiles: Parse the "secctx" immediately
+
+Miklos Szeredi (1):
+      fs: fix is_mnt_ns_file()
+
+Zhang Kunbo (1):
+      fs: fix missing declaration of init_files
+
+Zhang Yi (2):
+      jbd2: increase IO priority for writing revoke records
+      jbd2: flush filesystem device before updating tail sequence
+
+Zilin Guan (1):
+      netfs: Remove redundant use of smp_rmb()
+
+ fs/9p/vfs_addr.c         |  6 ++++-
+ fs/afs/write.c           |  5 +++-
+ fs/cachefiles/daemon.c   | 14 +++++-----
+ fs/cachefiles/internal.h |  3 ++-
+ fs/cachefiles/security.c |  6 ++---
+ fs/file.c                |  1 +
+ fs/fuse/dir.c            |  2 ++
+ fs/hfs/super.c           |  4 ++-
+ fs/iomap/buffered-io.c   | 66 +++++++++++++++++++++++++++++++++++++++++-------
+ fs/jbd2/commit.c         |  4 +--
+ fs/jbd2/revoke.c         |  2 +-
+ fs/namespace.c           | 10 ++++++--
+ fs/netfs/buffered_read.c | 28 +++++++++++---------
+ fs/netfs/direct_write.c  |  1 -
+ fs/netfs/read_collect.c  | 33 ++++++++++++++----------
+ fs/netfs/read_pgpriv2.c  |  4 +++
+ fs/netfs/read_retry.c    |  8 +++---
+ fs/netfs/write_collect.c | 14 ++++------
+ fs/netfs/write_issue.c   |  2 ++
+ fs/nfs/fscache.c         |  9 ++++++-
+ fs/notify/fdinfo.c       |  4 +--
+ fs/overlayfs/copy_up.c   | 16 ++++++------
+ fs/overlayfs/export.c    | 49 +++++++++++++++++++----------------
+ fs/overlayfs/namei.c     |  4 +--
+ fs/overlayfs/overlayfs.h |  2 +-
+ fs/qnx6/inode.c          | 11 +++-----
+ fs/smb/client/cifssmb.c  | 13 +++++++---
+ fs/smb/client/smb2pdu.c  |  9 ++++---
+ include/linux/iomap.h    |  2 +-
+ include/linux/netfs.h    |  7 +++--
+ kernel/gen_kheaders.sh   |  1 +
+ 31 files changed, 217 insertions(+), 123 deletions(-)
 
