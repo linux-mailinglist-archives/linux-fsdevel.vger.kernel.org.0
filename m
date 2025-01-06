@@ -1,187 +1,317 @@
-Return-Path: <linux-fsdevel+bounces-38411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C42A0210D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 09:47:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7A9A02189
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 10:13:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D883A13BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 08:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1385F163753
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 09:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A056B1D86CE;
-	Mon,  6 Jan 2025 08:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE921D89F0;
+	Mon,  6 Jan 2025 09:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="LHz7te1P"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KRmrPign";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vxyQPM/F";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KRmrPign";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vxyQPM/F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.124.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A2B1D6DB7;
-	Mon,  6 Jan 2025 08:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.124.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F5873451;
+	Mon,  6 Jan 2025 09:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736153223; cv=none; b=oTn7qNGv8w1AqowR1Qt2MetHSJ68ZqYY+Vlb18/4bjFkxazsYo2ixW/qnLDbTyoMG8nNj90ev9RHfcUucz3PsIQ4CkTx9X6HaSuqUJcWv2ulDCEDj1xCS6XWnHiYEe4Bc/c8D0BIgm+ZKeI4OeN+QQs88hgZ4I4rZTCuGn8ZKSY=
+	t=1736154827; cv=none; b=TpjqrGRCCTGJvfJV4xsaUwzES7IPk9K5lCEjz59vi3cukuEPIxVbGpgwbUcMnA+fNZfe+TyYpIsKOR/vWxhHXoXCnUQkRPK+eJ+Nfz7vgj/ZUM62Cos7usmtj5U3AKyViqP/Zx1jb+YWQbmMFfWGeGiGqJiFiY7mhhAO43fW5aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736153223; c=relaxed/simple;
-	bh=bdwCJaRc0NhIN1eujVEj5S0ccizl5OwLSYPkifa2ZA4=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=rmey8UCLvl1/YUUXxYT6MtiZWjYjnH2+IkhXfbBpumSOZAeC2j7rT8eBz9KZaCQho3egH6NbKT4ugzK7dn19qq4+AG+GXI+kUThiH2UW6QEEKVMIoDIGvCdvpyub5ZfKhdpxI++n7kvetGEQqmD1oPZlbDLngrLWivcTXQkxQFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=LHz7te1P; arc=none smtp.client-ip=114.132.124.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1736153156;
-	bh=vsblgSXFXopivgIx3Vxd57llgSHm0A2faMT7+RjvGPA=;
-	h=From:Mime-Version:Subject:Message-Id:Date:To;
-	b=LHz7te1P0pY0Zh8M7qTG4bbg4IuP8MLhPqqFNtE5zLdLLPAmRzyK4tKO/KRbHsp5U
-	 ugyxgqF207zGN/XPz1z/1ZbvBE56yBc/Q3QLzSumiyDSyaAj629vIvDz9qC7J35raY
-	 OAyh1gcVQ1mkbyUnClAgv7SWjrfIMCzHxmeG3bXo=
-X-QQ-mid: bizesmtpip2t1736153149t5wqwvj
-X-QQ-Originating-IP: W66C8zQJ8jPXc/Fjbxcpn73EUWC3z4FZgQ0XVUpQRY4=
-Received: from smtpclient.apple ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 06 Jan 2025 16:45:47 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7965384316647114918
-From: Kun Hu <huk23@m.fudan.edu.cn>
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1736154827; c=relaxed/simple;
+	bh=0hXHb7qPEKdhm0/RK6SqPhjdZrX9KRn+qrYDsUjOhSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrBO+BAhYMYyCwLSP9R1nupCeOm1iuPc+8Kfg1b28uOw8sFM/hoi/KW1aVUj4DokGAQrTyLMV+45apnaUj9bGcO6m/HJEK0qimmDOSIGrABrp9yfTZLh6sv0KNZrRe/QGYLG76Uvs07AogsoKfL7TWWfes1+RyRG+wPP+DqGbwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KRmrPign; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vxyQPM/F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KRmrPign; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vxyQPM/F; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0417221157;
+	Mon,  6 Jan 2025 09:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736154824; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDkRF+Vf55DYF2+Zua2WtZLKZjL1FB0xYlA/o8pczd8=;
+	b=KRmrPign7EHmD19HO4vsyczHnQ8URTrayWVqOGlCQ1QT8a+xr/aYJU38lveFv703p+tylI
+	04dr38yadqoaFgejSxFAbdKL4OI9iO3tDJcb1qA9DL6JqsQeyUL18JaCv6zwLh1uFADWxU
+	a1sW9aOHW8fETKv4K5y7PuxoxBqNLNE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736154824;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDkRF+Vf55DYF2+Zua2WtZLKZjL1FB0xYlA/o8pczd8=;
+	b=vxyQPM/FaV4IqQFLjVAINS5ugChoY04ZQ8+n6dBpnBGl3763BAa/znQYeTY6V3+uzzkEmv
+	guZQf6j8oyh9WXBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736154824; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDkRF+Vf55DYF2+Zua2WtZLKZjL1FB0xYlA/o8pczd8=;
+	b=KRmrPign7EHmD19HO4vsyczHnQ8URTrayWVqOGlCQ1QT8a+xr/aYJU38lveFv703p+tylI
+	04dr38yadqoaFgejSxFAbdKL4OI9iO3tDJcb1qA9DL6JqsQeyUL18JaCv6zwLh1uFADWxU
+	a1sW9aOHW8fETKv4K5y7PuxoxBqNLNE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736154824;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dDkRF+Vf55DYF2+Zua2WtZLKZjL1FB0xYlA/o8pczd8=;
+	b=vxyQPM/FaV4IqQFLjVAINS5ugChoY04ZQ8+n6dBpnBGl3763BAa/znQYeTY6V3+uzzkEmv
+	guZQf6j8oyh9WXBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E6CB3139AB;
+	Mon,  6 Jan 2025 09:13:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qZVXOMeee2coagAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 06 Jan 2025 09:13:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 875C1A0887; Mon,  6 Jan 2025 10:13:43 +0100 (CET)
+Date: Mon, 6 Jan 2025 10:13:43 +0100
+From: Jan Kara <jack@suse.cz>
+To: Maninder Singh <maninder1.s@samsung.com>
+Cc: viro@zeniv.linux.org.uk, elver@google.com, brauner@kernel.org, 
+	jack@suse.cz, akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, r.thapliyal@samsung.com
+Subject: Re: [PATCH 1/1] lib/list_debug.c: add object information in case of
+ invalid object
+Message-ID: <4vvrz4fqhtxb4l6yfapxaj37cxmcgywqwzg2c3rhswjsleq54a@glu62exwujrh>
+References: <CGME20241230101102epcas5p1c879ea11518951971c8f1bf3dbc3fe39@epcas5p1.samsung.com>
+ <20241230101043.53773-1-maninder1.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Bug: soft lockup in exfat_clear_bitmap
-Message-Id: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
-Date: Mon, 6 Jan 2025 16:45:37 +0800
-Cc: linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
-To: linkinjeon@kernel.org,
- sj1557.seo@samsung.com,
- yuezhang.mo@sony.com
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M6mCw2Ve0qEm0tKhfntmoQJQ/tk09aH2nHBYKfaB53rcvL0nk7Sjh23R
-	+Qvemvb6/idf4bijUHiBRiGMaVcDEpQIV6Qa9Cz/AoqNSj1PefhRhQt4IloDbSjy4leoavo
-	0cTBRdNqVjOlomKt2A6+pUZEVxaN46mXqz29FWkO8bnHzWqeXdPCWS1I4H45ca+iUa123V3
-	l3Rg7dssme/UvYjzeSUsB0nPukYzF6Blp+MAiGMgF4X+HM1BXdxMxgyXVZfvZvvDCDVvD++
-	rdLPhnv/yqKlI6j8pq4jPWPBAN2OS/YPimujb+YMU+22hooJanKzg4pQM11t1mPqQFqvSmy
-	I8ANuMHGk+xyfQeXAriRIIJ0kg6umS0XeUt6dVSiZ1SrLMplPssf0tjsvO6M+bsotE4lnzG
-	P49iPrYPzSDZPoFxL6yBAcl4Tpr6Yd3SASFyoxYcI427KxJAMWcAYcR7bS0caTGxP59VG/g
-	cli9gowVI3yjzaQ7UtyoCIS92pAc2vNUxvw+udjadGLXGIrH+uzHz62vfAJwMxifm2pLfC5
-	/7EYEaQKrfKjZmYGkew6ianUYv7Dn2uaY9m4SDl9rwPpSMgjUyKOaWk9EnCnJOpGdM+Vj/G
-	VZdqA2Ha8rrJmJwKHWLvxHlPm1DvHB2dmwmrGhOZMBruw/E+6sl5AMNpgUHJGt/210XoBSJ
-	/dTkUiaOpHXJXjQRpJZZzAjKspQy9tzvkfbfyIfdqzz07OZUptySH4wRWFPLS3AkO55SUKG
-	nWwo2N1bntupae2e1qMWvfCGFmTQKFe8ARLthJ4Fj738VQM5HfvsG81KEKWruYj6qtrXy13
-	PGjrFjA7RZ71LfwUjb7qyACcn1fAQADrNkWrgnUsC2x9bwx6hwxectMQi8enCaYc/NMMjsb
-	r0+w+FPo05xr+X8Dpf2UM1gQMw13kLz1jMQpmPLKjsmEegvhkB1FZsqN5cQRZz/hWU2PUPK
-	Yva1X+L07U8/qypGmQfUYFSbilp3qXXj0AXPtgoIeggAM3sWO8Pz0LTrNqlbadXUKuWVIVE
-	dCkraXwA==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241230101043.53773-1-maninder1.s@samsung.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hello,
+On Mon 30-12-24 15:40:43, Maninder Singh wrote:
+> As of now during link list corruption it prints about cluprit address
+> and its wrong value, but sometime it is not enough to catch the actual
+> issue point.
+> 
+> If it prints allocation and free path of that corrupted node,
+> it will be a lot easier to find and fix the issues.
+> 
+> Adding the same information when data mismatch is found in link list
+> debug data:
+> 
+> [   14.243055]  slab kmalloc-32 start ffff0000cda19320 data offset 32 pointer offset 8 size 32 allocated at add_to_list+0x28/0xb0
+> [   14.245259]     __kmalloc_cache_noprof+0x1c4/0x358
+> [   14.245572]     add_to_list+0x28/0xb0
+> ...
+> [   14.248632]     do_el0_svc_compat+0x1c/0x34
+> [   14.249018]     el0_svc_compat+0x2c/0x80
+> [   14.249244]  Free path:
+> [   14.249410]     kfree+0x24c/0x2f0
+> [   14.249724]     do_force_corruption+0xbc/0x100
+> ...
+> [   14.252266]     el0_svc_common.constprop.0+0x40/0xe0
+> [   14.252540]     do_el0_svc_compat+0x1c/0x34
+> [   14.252763]     el0_svc_compat+0x2c/0x80
+> [   14.253071] ------------[ cut here ]------------
+> [   14.253303] list_del corruption. next->prev should be ffff0000cda192a8, but was 6b6b6b6b6b6b6b6b. (next=ffff0000cda19348)
+> [   14.254255] WARNING: CPU: 3 PID: 84 at lib/list_debug.c:65 __list_del_entry_valid_or_report+0x158/0x164
+> 
+> moved prototype of mem_dump_obj() to bug.h, as mm.h can not be included
+> in bug.h.
+> 
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
 
-When using our customized fuzzer tool to fuzz the latest Linux kernel, =
-the following crash
-was triggered.
+Looks like this could be useful. The changes look good to me. Feel free to
+add:
 
-HEAD commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
-git tree: upstream
-Console output: =
-https://drive.google.com/file/d/1aWtDTAUFlAzvMI7YM_TLWbfbyqKFB71i/view?usp=
-=3Ddrive_link
-Kernel config: =
-https://drive.google.com/file/d/1n2sLNg-YcIgZqhhQqyMPTDWM_N1Pqz73/view?usp=
-=3Dsharing
-C reproducer: =
-https://drive.google.com/file/d/1oXFZgdxZDCrcZTmyatmI6TeYoHCaIxEA/view?usp=
-=3Ddrive_link
-Syzlang reproducer: =
-https://drive.google.com/file/d/1KX9cnANDRzXZ1FjKl3uv6rSFC-5kLsko/view?usp=
-=3Dsharing
+Acked-by: Jan Kara <jack@suse.cz>
 
+								Honza
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin =
-<jjtan24@m.fudan.edu.cn>
-
-watchdog: BUG: soft lockup - CPU#1 stuck for 26s! [syz-executor140:420]
-Modules linked in:
-irq event stamp: 163590
-hardirqs last  enabled at (163589): [<ffffffff9c4d07eb>] =
-irqentry_exit+0x3b/0x90 kernel/entry/common.c:357
-hardirqs last disabled at (163590): [<ffffffff9c4cedbf>] =
-sysvec_apic_timer_interrupt+0xf/0xb0 arch/x86/kernel/apic/apic.c:1049
-softirqs last  enabled at (163576): [<ffffffff9450f554>] =
-softirq_handle_end kernel/softirq.c:407 [inline]
-softirqs last  enabled at (163576): [<ffffffff9450f554>] =
-handle_softirqs+0x544/0x870 kernel/softirq.c:589
-softirqs last disabled at (163555): [<ffffffff9451120e>] __do_softirq =
-kernel/softirq.c:595 [inline]
-softirqs last disabled at (163555): [<ffffffff9451120e>] invoke_softirq =
-kernel/softirq.c:435 [inline]
-softirqs last disabled at (163555): [<ffffffff9451120e>] __irq_exit_rcu =
-kernel/softirq.c:662 [inline]
-softirqs last disabled at (163555): [<ffffffff9451120e>] =
-irq_exit_rcu+0xee/0x140 kernel/softirq.c:678
-CPU: 1 UID: 0 PID: 420 Comm: syz-executor140 Not tainted 6.13.0-rc5 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:exfat_clear_bitmap+0x3f1/0x580 fs/exfat/balloc.c:174
-Code: 24 60 01 00 00 b9 40 0c 00 00 4c 89 fa e8 57 10 ff 01 bf a1 ff ff =
-ff 89 c3 89 c6 e8 49 52 5f ff 83 fb a1 74 13 48 83 c4 18 5b <5d> 41 5c =
-41 5d 41 5e 41 5f e9 01 50 5f ff e8 fc 4f 5f ff 49 8d b4
-RSP: 0018:ffa00000035f7a90 EFLAGS: 00000286
-RAX: 0000000000000000 RBX: 0000000000006ccc RCX: ffffffff952a4d03
-RDX: 0000000000000011 RSI: ff110000118ba340 RDI: 0000000000000003
-RBP: ff110000131cc000 R08: 0000000000000000 R09: fffffbfff4d5f0ed
-R10: fffffbfff4d5f0ec R11: 0000000000000001 R12: ff110000131ce000
-R13: 0000000000000011 R14: 0000000000000000 R15: 0000000006cccf6b
-FS:  000055556ed2d880(0000) GS:ff11000053a80000(0000) =
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe1b6fdd18 CR3: 000000000db32002 CR4: 0000000000771ef0
-PKRU: 55555554
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- __exfat_free_cluster+0x775/0x980 fs/exfat/fatent.c:192
- exfat_free_cluster+0x7a/0x100 fs/exfat/fatent.c:232
- __exfat_truncate+0x6bf/0x900 fs/exfat/file.c:235
- exfat_evict_inode+0x10d/0x1a0 fs/exfat/inode.c:683
- evict+0x403/0x880 fs/inode.c:796
- iput_final fs/inode.c:1946 [inline]
- iput fs/inode.c:1972 [inline]
- iput+0x51c/0x830 fs/inode.c:1958
- do_unlinkat+0x5c7/0x750 fs/namei.c:4594
- __do_sys_unlink fs/namei.c:4635 [inline]
- __se_sys_unlink fs/namei.c:4633 [inline]
- __x64_sys_unlink+0x40/0x50 fs/namei.c:4633
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff5d82fb1db
-Code: 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e =
-0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 57 00 00 00 0f 05 <48> 3d 01 =
-f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe1b6ff558 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff5d82fb1db
-RDX: 00007ffe1b6ff580 RSI: 00007ffe1b6ff580 RDI: 00007ffe1b6ff610
-RBP: 00007ffe1b6ff610 R08: 0000000000000001 R09: 00007ffe1b6ff3e0
-R10: 00000000fffffff7 R11: 0000000000000206 R12: 00007ffe1b700710
-R13: 000055556ed36bb0 R14: 00007ffe1b6ff578 R15: 0000000000000001
- </TASK>
-
-
----------------
-thanks,
-Kun Hu=
+> ---
+> Comment: I am not sure about moving of prototype, we can make a new wrapper also,
+> so please suggest what is best option. because name mem_dump_obj does
+> not go with bug.h
+> 
+>  fs/open.c           |  2 +-
+>  fs/super.c          |  2 +-
+>  include/linux/bug.h | 10 +++++++++-
+>  include/linux/mm.h  |  6 ------
+>  lib/list_debug.c    | 22 +++++++++++-----------
+>  5 files changed, 22 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 0a5d2f6061c6..932e5a6de63b 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1529,7 +1529,7 @@ static int filp_flush(struct file *filp, fl_owner_t id)
+>  {
+>  	int retval = 0;
+>  
+> -	if (CHECK_DATA_CORRUPTION(file_count(filp) == 0,
+> +	if (CHECK_DATA_CORRUPTION(file_count(filp) == 0, filp,
+>  			"VFS: Close: file count is 0 (f_op=%ps)",
+>  			filp->f_op)) {
+>  		return 0;
+> diff --git a/fs/super.c b/fs/super.c
+> index c9c7223bc2a2..5a7db4a556e3 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -647,7 +647,7 @@ void generic_shutdown_super(struct super_block *sb)
+>  		 */
+>  		fscrypt_destroy_keyring(sb);
+>  
+> -		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes),
+> +		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes), NULL,
+>  				"VFS: Busy inodes after unmount of %s (%s)",
+>  				sb->s_id, sb->s_type->name)) {
+>  			/*
+> diff --git a/include/linux/bug.h b/include/linux/bug.h
+> index 348acf2558f3..a9948a9f1093 100644
+> --- a/include/linux/bug.h
+> +++ b/include/linux/bug.h
+> @@ -73,15 +73,23 @@ static inline void generic_bug_clear_once(void) {}
+>  
+>  #endif	/* CONFIG_GENERIC_BUG */
+>  
+> +#ifdef CONFIG_PRINTK
+> +void mem_dump_obj(void *object);
+> +#else
+> +static inline void mem_dump_obj(void *object) {}
+> +#endif
+> +
+>  /*
+>   * Since detected data corruption should stop operation on the affected
+>   * structures. Return value must be checked and sanely acted on by caller.
+>   */
+>  static inline __must_check bool check_data_corruption(bool v) { return v; }
+> -#define CHECK_DATA_CORRUPTION(condition, fmt, ...)			 \
+> +#define CHECK_DATA_CORRUPTION(condition, addr, fmt, ...)		 \
+>  	check_data_corruption(({					 \
+>  		bool corruption = unlikely(condition);			 \
+>  		if (corruption) {					 \
+> +			if (addr)					 \
+> +				mem_dump_obj(addr);			 \
+>  			if (IS_ENABLED(CONFIG_BUG_ON_DATA_CORRUPTION)) { \
+>  				pr_err(fmt, ##__VA_ARGS__);		 \
+>  				BUG();					 \
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index d61b9c7a3a7b..9cabab47a23e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4097,12 +4097,6 @@ unsigned long wp_shared_mapping_range(struct address_space *mapping,
+>  
+>  extern int sysctl_nr_trim_pages;
+>  
+> -#ifdef CONFIG_PRINTK
+> -void mem_dump_obj(void *object);
+> -#else
+> -static inline void mem_dump_obj(void *object) {}
+> -#endif
+> -
+>  #ifdef CONFIG_ANON_VMA_NAME
+>  int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
+>  			  unsigned long len_in,
+> diff --git a/lib/list_debug.c b/lib/list_debug.c
+> index db602417febf..ee7eeeb8f92c 100644
+> --- a/lib/list_debug.c
+> +++ b/lib/list_debug.c
+> @@ -22,17 +22,17 @@ __list_valid_slowpath
+>  bool __list_add_valid_or_report(struct list_head *new, struct list_head *prev,
+>  				struct list_head *next)
+>  {
+> -	if (CHECK_DATA_CORRUPTION(prev == NULL,
+> +	if (CHECK_DATA_CORRUPTION(prev == NULL, NULL,
+>  			"list_add corruption. prev is NULL.\n") ||
+> -	    CHECK_DATA_CORRUPTION(next == NULL,
+> +	    CHECK_DATA_CORRUPTION(next == NULL, NULL,
+>  			"list_add corruption. next is NULL.\n") ||
+> -	    CHECK_DATA_CORRUPTION(next->prev != prev,
+> +	    CHECK_DATA_CORRUPTION(next->prev != prev, next,
+>  			"list_add corruption. next->prev should be prev (%px), but was %px. (next=%px).\n",
+>  			prev, next->prev, next) ||
+> -	    CHECK_DATA_CORRUPTION(prev->next != next,
+> +	    CHECK_DATA_CORRUPTION(prev->next != next, prev,
+>  			"list_add corruption. prev->next should be next (%px), but was %px. (prev=%px).\n",
+>  			next, prev->next, prev) ||
+> -	    CHECK_DATA_CORRUPTION(new == prev || new == next,
+> +	    CHECK_DATA_CORRUPTION(new == prev || new == next, NULL,
+>  			"list_add double add: new=%px, prev=%px, next=%px.\n",
+>  			new, prev, next))
+>  		return false;
+> @@ -49,20 +49,20 @@ bool __list_del_entry_valid_or_report(struct list_head *entry)
+>  	prev = entry->prev;
+>  	next = entry->next;
+>  
+> -	if (CHECK_DATA_CORRUPTION(next == NULL,
+> +	if (CHECK_DATA_CORRUPTION(next == NULL, NULL,
+>  			"list_del corruption, %px->next is NULL\n", entry) ||
+> -	    CHECK_DATA_CORRUPTION(prev == NULL,
+> +	    CHECK_DATA_CORRUPTION(prev == NULL, NULL,
+>  			"list_del corruption, %px->prev is NULL\n", entry) ||
+> -	    CHECK_DATA_CORRUPTION(next == LIST_POISON1,
+> +	    CHECK_DATA_CORRUPTION(next == LIST_POISON1, next,
+>  			"list_del corruption, %px->next is LIST_POISON1 (%px)\n",
+>  			entry, LIST_POISON1) ||
+> -	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2,
+> +	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2, prev,
+>  			"list_del corruption, %px->prev is LIST_POISON2 (%px)\n",
+>  			entry, LIST_POISON2) ||
+> -	    CHECK_DATA_CORRUPTION(prev->next != entry,
+> +	    CHECK_DATA_CORRUPTION(prev->next != entry, prev,
+>  			"list_del corruption. prev->next should be %px, but was %px. (prev=%px)\n",
+>  			entry, prev->next, prev) ||
+> -	    CHECK_DATA_CORRUPTION(next->prev != entry,
+> +	    CHECK_DATA_CORRUPTION(next->prev != entry, next,
+>  			"list_del corruption. next->prev should be %px, but was %px. (next=%px)\n",
+>  			entry, next->prev, next))
+>  		return false;
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
