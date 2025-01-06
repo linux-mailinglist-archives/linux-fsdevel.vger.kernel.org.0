@@ -1,247 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-38483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2347A03265
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 23:00:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C643EA0326B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 23:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598721885C47
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 22:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F6F3A4E68
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 22:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8DF1E1A08;
-	Mon,  6 Jan 2025 22:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC131E0DEE;
+	Mon,  6 Jan 2025 22:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JxIZAVBS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="on6pmF3i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A9B1E0DD9
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 22:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4E11E0DD0;
+	Mon,  6 Jan 2025 22:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736200815; cv=none; b=hR8lWoVQw+DxpSOkBI2aqqjAKLx7LcUaHQjNzR6LLfVJa3LweLaCuK+T/44ptFbX/0ie9xw8TSMzzmbcC4ZQoEkDnZ23wJ8ZYlsyk5WCbjC0DV+ppdcs2ym+xtpisMfgHkllU6QYSJVgqff0ukKIhpmIRQoux05D1egX7XLnpKc=
+	t=1736200895; cv=none; b=Ar69CGrDviyflNVhJrjESqpLexKpuCBKwjhVgZ4K2P3OQLmb+6MDDP95FOnvT5URrT7uAkMb3VECxiCmbemokoUQBX/vwuK6vESUKfFo1ldbnSKk/6ye5cHs3mc2qpSXSIdF6+xsVLIUeDhjAV0m1afB1hiLqNhSSrpWPLLOijY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736200815; c=relaxed/simple;
-	bh=v8rpy6PG0nq0UvnObT6Q3zfeQ5hF+sVeTC2y0RSQkzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HWB1jh91Z4vbeVzCQrsXEVRGZ1Njr0/yXljxW82ryGsa4SN46m+KXG6FKDfoMj4qitK08gGVwrSlDtoGZsbo8D37+QfwOPy2tZipSAqBaZ/O5SH5pbMzraa/UKpg/ylrCHaT4XDbADh7Bn8R+oicHZfS+1ErN0C9K/OMzHNyQRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JxIZAVBS; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaecf50578eso390008766b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 14:00:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1736200811; x=1736805611; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+XQHlzH0IPMSSYa20ZvXqUmjwG8STbttCyRRBx8b3bo=;
-        b=JxIZAVBSNDccZKcjxg22l2MwpVSo0Z47cTMrZpfbk5Ffe/TxEjwQl8rDvPpSiTaKIL
-         mG7ntLIswoX2pKcFxKBARBSMaMr8YDJmLt8d1WLpOT/+0zuyfZzz5oxup+RR52Yw+1P+
-         Y+6gaJIu78wr1FE2ry36n2R6Wqvftl2O6GNCNMM0/ANYxV8mR9fAER2rpJdcioxWMuQX
-         fPqPyhJiuCMvU70CtB3GV+KtbDDqhK9pc95T/NcYSWDFvp6Rh0ZFp+9q1KZqQe/0ZGry
-         1JMMzXleBAcwuRa5GOOjTIoJkBbcjVD3iRhF/N+TFbW9EZtjopkIBuuTdVDr2evFQCet
-         Tegg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736200811; x=1736805611;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+XQHlzH0IPMSSYa20ZvXqUmjwG8STbttCyRRBx8b3bo=;
-        b=tnqdZROLbK//UTB/OaLZ5XSgpe1vulXgQSX0cfQMXNF1/yBt3zRmopa9/yR9M75c9L
-         7dMxWd1NYDmg7EAgMsM39KZK1gjWGXDfhK6Tpt1CdfvacBZhGMJOZiRAk+VdFSEte98L
-         hFyxyYElbgwow36RbqHK8uXdG1ollCkD9MgzLW6czfVgBid/HJM2TleAgnDESyjEuX7Z
-         4VIBKP+fp1XWBVGDcy52GMBNrIPCxXOxVcts1kaiD2Qs4c+EcndUSMPLkVxdcBCxtaqB
-         c0C00+oM+0NaJ0u6+tkXMokpZ/17Ax0fbvMKMN+7foiFbxolWkjz1dI6PTkeYmylZCkl
-         1oFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQkg2PKI1v76UhNiGMvxjGagrA8HDopZ4XPqg1amAC00d54SXol6P1kfnn+wTwiJEyHrzJ169yPciU222M@vger.kernel.org
-X-Gm-Message-State: AOJu0YycEMHshY82Cz6u9aun1ycsBiQo6sugpexnjwOwvX5ZEWKdXpw9
-	BOa/hITqM9hsEzkRiVarm3RILacgIHorFq0a0+wjhZKDx94PFEsCAdWVmDg0pL8=
-X-Gm-Gg: ASbGncsU7N/xsJTbxxs8VLi6FJl6HTjW3IIYh3KWds0O+X5GXB82cGxnU20GjFNyT01
-	M+OFajUvpYnvXeJyH5DZwV/iBgjisdMi7dcPyLKmA02qFaTC+on/Ai6XSobK3jzLOuj7BXi+eM4
-	6QRBga2smJbb+ao4USV93v8riHT78QiMX1e4HtVAOMWeihT6KRS05WWOpsovwNGd7KHu5gtyx5j
-	L5nwgzGMIwVebcQDCy/GCR9McnpLuYj/JH98vX4hQmmtb/gMF2tru+rl3YZj7poBthZ1AdjwrdL
-	ziT+1Ort
-X-Google-Smtp-Source: AGHT+IF9ihUF/Sp0+6lwDc7T1klzmbkyJFfCNzLLW/oMyVOGu6o3Fy0UFA8ZvofC9ZeihZnm3Q6JFA==
-X-Received: by 2002:a17:907:180b:b0:aae:e948:1bab with SMTP id a640c23a62f3a-aaee9481c0amr3804059466b.36.1736200810595;
-        Mon, 06 Jan 2025 14:00:10 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::e9d? (2403-580d-fda1--e9d.ip6.aussiebb.net. [2403:580d:fda1::e9d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9d4474sm299039235ad.142.2025.01.06.14.00.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jan 2025 14:00:09 -0800 (PST)
-Message-ID: <1d0788af-bbac-44e6-8954-af7810fbb101@suse.com>
-Date: Tue, 7 Jan 2025 08:30:05 +1030
+	s=arc-20240116; t=1736200895; c=relaxed/simple;
+	bh=S2QpiZGspdAdj3+qLUTQA5K+9H4mlRwZcICOV9quZqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohPDtq563cBGz7+rVfDhx9Ddjg3hihp8uH4wscHpjMoZCdGjTcy0LT63/WdEL2NaiHOgQrnfF93ERv3nRKet4cIBtFEfPVQDwG9K5FLXeR2Xzxv7l9lnNskniMHCB0f98/tLom2v7apAZomHidBsjGEhUiCCrtrfJT+pNYhUsT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=on6pmF3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF03CC4CED2;
+	Mon,  6 Jan 2025 22:01:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736200895;
+	bh=S2QpiZGspdAdj3+qLUTQA5K+9H4mlRwZcICOV9quZqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=on6pmF3iIyL5HkSnbBKNp6n129URPEwx4FrNNyKapkIvKskMmgGMVYYC8fCpSlPeF
+	 u4V+sJ6UejHDjxSB5jxWvgvBPeZbM9lsntDxS1FCqY2Rft0IWdFoOBGU5iMdxNbUmi
+	 8GBVOjzPMQow8YiTM6besGnNT+pBgHDGZz8BqGqxd79ENlGwT0lrjNzaQiZRlg1BPY
+	 ElESiceu7si03B7OB+4dq02s0smSNp/kevkxyFxScxt7cuwiNBrV0z5EpLTvqpRC68
+	 kGWwCctyNs/4gbgDRhfg6pD8pLAec4JIz2q+g9a6SqOt+BJWz/RBO+2hHojRGoU9yW
+	 zoPe9SVDJ54aQ==
+Date: Mon, 6 Jan 2025 23:01:34 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Hongbo Li <lihongbo22@huawei.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH] statx.2: document STATX_DIO_READ_ALIGN
+Message-ID: <v53wfbop4gkwjaptg2vppcooeoqlp2wcb3uret6hopuqisxqif@xtpgtzrgiv64>
+References: <20250106151607.954940-1-hch@lst.de>
+ <20250106151938.GA27324@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: mnt_list corruption triggered during btrfs/326
-To: Daniel Vacek <neelx@suse.com>
-Cc: Christian Brauner <brauner@kernel.org>, Qu Wenruo
- <quwenruo.btrfs@gmx.com>, linux-fsdevel@vger.kernel.org,
- linux-btrfs <linux-btrfs@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <ec6784ed-8722-4695-980a-4400d4e7bd1a@gmx.com>
- <324cf712-7a7e-455b-b203-e221cb1ed542@gmx.com>
- <20250104-gockel-zeitdokument-59fe0ff5b509@brauner>
- <6f5f97bc-6333-4d07-9684-1f9bab9bd571@suse.com>
- <CAPjX3FcG5ATWuC1v7_W9szX=VNx-S2PnFSBEgeZ0BKFmPViKqQ@mail.gmail.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <CAPjX3FcG5ATWuC1v7_W9szX=VNx-S2PnFSBEgeZ0BKFmPViKqQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="toqkwwn2i3pvzsuk"
+Content-Disposition: inline
+In-Reply-To: <20250106151938.GA27324@lst.de>
 
 
+--toqkwwn2i3pvzsuk
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Hongbo Li <lihongbo22@huawei.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH] statx.2: document STATX_DIO_READ_ALIGN
+References: <20250106151607.954940-1-hch@lst.de>
+ <20250106151938.GA27324@lst.de>
+MIME-Version: 1.0
+In-Reply-To: <20250106151938.GA27324@lst.de>
 
-在 2025/1/7 08:20, Daniel Vacek 写道:
-> On Sat, 4 Jan 2025 at 23:26, Qu Wenruo <wqu@suse.com> wrote:
->>
->>
->>
->> 在 2025/1/4 21:56, Christian Brauner 写道:
->>> On Wed, Jan 01, 2025 at 07:05:10AM +1030, Qu Wenruo wrote:
->>>>
->>>>
->>>> 在 2024/12/30 19:59, Qu Wenruo 写道:
->>>>> Hi,
->>>>>
->>>>> Although I know it's triggered from btrfs, but the mnt_list handling is
->>>>> out of btrfs' control, so I'm here asking for some help.
->>>
->>> Thanks for the report.
->>>
->>>>>
->>>>> [BUG]
->>>>> With CONFIG_DEBUG_LIST and CONFIG_BUG_ON_DATA_CORRUPTION, and an
->>>>> upstream 6.13-rc kernel, which has commit 951a3f59d268 ("btrfs: fix
->>>>> mount failure due to remount races"), I can hit the following crash,
->>>>> with varied frequency (from 1/4 to hundreds runs no crash):
->>>>
->>>> There is also another WARNING triggered, without btrfs callback involved
->>>> at all:
->>>>
->>>> [  192.688671] ------------[ cut here ]------------
->>>> [  192.690016] WARNING: CPU: 3 PID: 59747 at fs/mount.h:150
->>>
->>> This would indicate that move_from_ns() was called on a mount that isn't
->>> attached to a mount namespace (anymore or never has).
->>>
->>> Here's it's particularly peculiar because it looks like the warning is
->>> caused by calling move_from_ns() when moving a mount from an anonymous
->>> mount namespace in attach_recursive_mnt().
->>>
->>> Can you please try and reproduce this with
->>> commit 211364bef4301838b2e1 ("fs: kill MNT_ONRB")
->>> from the vfs-6.14.mount branch in
->>> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git ?
->>>
->>
->> After the initial 1000 runs (with 951a3f59d268 ("btrfs: fix mount
->> failure due to remount races") cherry picked, or it won't pass that test
->> case), there is no crash nor warning so far.
->>
->> It's already the best run so far, but I'll keep it running for another
->> day or so just to be extra safe.
->>
->> So I guess the offending commit is 2eea9ce4310d ("mounts: keep list of
->> mounts in an rbtree")?
-> 
-> This one was merged in v6.8 - why would it cause crashes only now?
+Hi Christoph,
 
-Because in v6.8 btrfs also migrated to the new mount API, which caused 
-the ro/rw mount race which can fail the mount.
+On Mon, Jan 06, 2025 at 04:19:38PM +0100, Christoph Hellwig wrote:
+> Document the new STATX_DIO_READ_ALIGN flag and the new
+> stx_dio_read_offset_align field guarded by it.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-That's exactly why the test case is introduced.
+Thanks for the patch!  Please see some minor comments below.
 
-Before the recent ro/rw mount fix, the test case won't go that far but 
-error out early so we don't have enough loops to trigger the bug.
+Have a lovely night!
+Alex
 
-> 
->> Putting a list and rb_tree into a union indeed seems a little dangerous,
->> sorry I didn't notice that earlier, but my vmcore indeed show a
->> seemingly valid mnt_node (color = 1, both left/right are NULL).
-> 
-> The union seems fine to me as long as the `MNT_ONRB` bit stays
-> consistent. The crashes (nor warnings) are simply caused by the flag
-> missing where it should have been set.
+> ---
+>  man/man2/statx.2 | 27 ++++++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/statx.2 b/man/man2/statx.2
+> index c5b5a28ec2f1..378bf363d93f 100644
+> --- a/man/man2/statx.2
+> +++ b/man/man2/statx.2
+> @@ -76,6 +76,9 @@ struct statx {
+>      __u32 stx_atomic_write_unit_min;
+>      __u32 stx_atomic_write_unit_max;
+>      __u32 stx_atomic_write_segments_max;
+> +
+> +    /* File offset alignment for direct I/O reads */
+> +    __u32   stx_dio_read_offset_align;
+>  };
+>  .EE
+>  .in
+> @@ -261,7 +264,7 @@ STATX_BTIME	Want stx_btime
+>  STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+>  	It is deprecated and should not be used.
+>  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> -STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
+> +STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align.
+>  	(since Linux 6.1; support varies by filesystem)
+>  STATX_MNT_ID_UNIQUE	Want unique stx_mnt_id (since Linux 6.8)
+>  STATX_SUBVOL	Want stx_subvol
+> @@ -270,6 +273,8 @@ STATX_WRITE_ATOMIC	Want stx_atomic_write_unit_min,
+>  	stx_atomic_write_unit_max,
+>  	and stx_atomic_write_segments_max.
+>  	(since Linux 6.11; support varies by filesystem)
+> +STATX_DIO_READ_ALIGN	Want stx_dio_read_offset_align.
+> +	(since Linux 6.14; support varies by filesystem)
+>  .TE
+>  .in
+>  .P
+> @@ -467,6 +472,26 @@ This will only be nonzero if
+>  .I stx_dio_mem_align
+>  is nonzero, and vice versa.
+>  .TP
+> +.I stx_dio_read_offset_align
+> +The alignment (in bytes) required for file offsets and I/O segment lengt=
+hs for
+> +direct I/O reads
+> +.RB ( O_DIRECT )
+> +on this file.  If zero the limit in
 
-That also means the mnt_flag needs to be properly protected, at least 
-with the same level of mnt_list/mnt_node.
+Please write poems, not prose.  :)
 
-But a lot of time such flag is atomically accessed using 
-test/set/clear_bit(), without the same level of lock protection.
-So my current uneducated guess is, there is a race window where the flag 
-and member got de-synced.
+In other words, new sentence, new line.  See man-pages(7).
 
-Thus it's not as safe as a non-unioned member.
+$ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+   Use semantic newlines
+     In the source of a manual page, new sentences should be started on
+     new lines, long sentences should be split  into  lines  at  clause
+     breaks  (commas,  semicolons, colons, and so on), and long clauses
+     should be split at phrase boundaries.  This convention,  sometimes
+     known as "semantic newlines", makes it easier to see the effect of
+     patches, which often operate at the level of individual sentences,
+     clauses, or phrases.
 
-Thanks,
-Qu
+> +.I
+> +stx_dio_offset_align
 
-> 
-> --nX
-> 
->> Thanks a lot for the fix, and it's really a huge relief that it's not
->> something inside btrfs causing the bug.
->>
->> Thanks,
->> Qu
->>
->> [...]
->>>>>
->>>>> The only caller doesn't hold @mount_lock is iterate_mounts() but that's
->>>>> only called from audit, and I'm not sure if audit is even involved in
->>>>> this case.
->>>
->>> This is fine as audit creates a private copy of the mount tree it is
->>> interested in. The mount tree is not visible to other callers anymore.
->>>
->>>>>
->>>>> So I ran out of ideas why this mnt_list can even happen.
->>>>>
->>>>> Even if it's some btrfs' abuse, all mnt_list users are properly
->>>>> protected thus it should not lead to such list corruption.
->>>>>
->>>>> Any advice would be appreciated.
->>>>>
->>>>> Thanks,
->>>>> Qu
->>>>>
->>>>
->>>
->>
->>
+We put the italics word in the same line as the .I.
 
+> +applies for reads as well.  If non-zero this value must be
+> +smaller than
+> +.I
+> +stx_dio_offset_align
+> +which must be provided by the file system.
+> +This value does not affect the memory alignent in
+> +.I stx_dio_mem_align .
+> +.IP
+> +.B STATX_DIO_READ_ALIGN
+> +.I ( stx_dio_offset_align )
+
+You probably meant .RI (roman-italics alternating).
+
+> +support by filesystem;
+> +it is supported by xfs since Linux 6.14.
+> +.TP
+>  .I stx_subvol
+>  Subvolume number of the current file.
+>  .IP
+> --=20
+> 2.45.2
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--toqkwwn2i3pvzsuk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmd8Ur4ACgkQnowa+77/
+2zLv8BAAnNftXiOmD+T+yg5Z7i+ZS+CkNjevuv6jJaQn/egxcN9uRWcmmoWaqMds
+XvDZ9tEwPlWUk8CEgf1G7IKhvPQs5KlBQDZ/R9V2ubuoo2jMxIaPzEY8egztlA/2
+LFy4RVN4jsjaJvM5/efTrvksaxiqdYS7NYqb6tt2nYW6uJszKJmzAfcKI61WuGz6
+iYZAGWkvgxaV5cHXd8PhJWGcZCgPR4Wr9DL47btZgXONsNAFarKjJqEP5o1BFlXy
+Qss36MvpCM0TYd1EvdHlcm+sAEop1TR5Ax7JBGmcj1FXXd4H05EsTl0UrV3XYzlX
+ItZeZtjojr/ZfvBjmWqn3H7MobYtQtwbLP3DnsvgsxYnz7l1NupNhmQTtCwLEDv0
+gr+DFXdB+wX/meBOlG3s7jVRx0fogNDbPPT8Cf9Z8yC9BWrm9Oc92O15FYI3jqO7
+UmI93XovGSfeW1QFm+SoYBM4na2FxppLJttSkbiOliiynNzQ83XGXYHGwryRpoN+
+UF7PPRCbIwskbrefIi6O5qJ9Kp9ipyy0PQlsqHlqz/TuWfnCuiEUY101TvyZFTbU
+o2YQb3Mrcr6McO1foOrZp89+IrrWjFaoXYuoYqcV0gagm9IA7CoLHYnmeVEkalNn
+gKQtkWDbXJcbiRX0hIAvDEGQ4hLU0hQ9KfKHZBNh+iLwa/BB7vs=
+=5ZsW
+-----END PGP SIGNATURE-----
+
+--toqkwwn2i3pvzsuk--
 
