@@ -1,63 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-38444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53209A02A7B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:34:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38ED3A02B29
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442CB164EAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 15:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3938616581A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 15:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B43158525;
-	Mon,  6 Jan 2025 15:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273A318B46A;
+	Mon,  6 Jan 2025 15:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QyMiXG6U"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PerTtid3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D2C78F49;
-	Mon,  6 Jan 2025 15:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2A014A617;
+	Mon,  6 Jan 2025 15:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736177660; cv=none; b=eN4rIwztRqr17e8TkMpbTa23cJ0IVRCILvx0gD7nUnb7UsILEdl1INv4Q0DnMpyzyIdnMAqocAyhIQJ2ZoGxDEdZpHC3LjRgfaAdTaWGMi6ND+somiVs1NnK5z1s47GUcqFrnMVNbIqlyXGxqzZW4fGMdVoWKP2GF9J5XFE9QDA=
+	t=1736178032; cv=none; b=RYt4x0f0BSa6wKjTcQHGkoV39nVsIrehSvZW0xgbQ2zFVcG5GViBanpYGDgpUW4OlJvsOZY7A/uepDFWfdb0XQsi51uQ0OhEtb2+Pl+Yu4h8wSTo2WGWAONz19F5HrMz2OQMS7r3Y0uSg2wmQLoGkBLWrCoaV5HNwOKwuu9Bo20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736177660; c=relaxed/simple;
-	bh=QJLQ6rflt4XyaXpP9xSwkGauknLAyMdxyfE5BLOx/9k=;
+	s=arc-20240116; t=1736178032; c=relaxed/simple;
+	bh=jU0ucL6VEdkgd09RDvrMuXZW66i2YNt0mhd63oqPxLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTr/z6Mtc4r+n8HcnCJfoNvAczvvpJlxJCLll8/4dZdPxlD3S5sVKZTk9UAN8V5UssMhwlNtr1qrq7zTBGPp3hs9ppltPaS0t9j3353QdjAB+l1RWPuCUjNh5dGOgtJrLpyw3YFde2vApVoTQ6pbc9rwE/yxGwDVmAMtAmS3nHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QyMiXG6U; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cgAjjKJiHCaH82HENENmVpcOqkdz5nrdQ1hbhMz4z/A=; b=QyMiXG6U8j5VVIz/mUrFq7V0Oy
-	UIIT6UaoKHgZLHT/yUwVDtEYeJD0rWIg39lRxmPNIaAbWQqVB7EmacUpIkyBZBPnw1VobX5Em2qPF
-	Oujgg1SuBQ1yUvDh54OfvYr33vC9SHstRTg4YxqOhyHMvk+5SJNyAckipbc05ZQVSVNdmwQcLQegT
-	G+iIb37vuyMGJyXTmAg66WGAv5UAtu6Vtf9D7Xt3L8o6goy8jgPzbtvaO4692mF4Qa/BirvoGMF0T
-	N8eXq4A4le4YbhNA5Il3s6yLIK5hyYsAZJ9uKCGWMsrISZN3oTC39OArhOWyzw+STmj67yWHDnwzb
-	FwJ+98FA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tUp7Q-00000001mt8-354b;
-	Mon, 06 Jan 2025 15:34:16 +0000
-Date: Mon, 6 Jan 2025 07:34:16 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: nicolas.baranger@3xo.fr, Steve French <smfrench@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix kernel async DIO
-Message-ID: <Z3v3-LNGff6OxObh@infradead.org>
-References: <fedd8a40d54b2969097ffa4507979858@3xo.fr>
- <669f22fc89e45dd4e56d75876dc8f2bf@3xo.fr>
- <286638.1736163444@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPWAoyGgnmEYkras8jmEtd4uY+3gE1EVIxPx6Ki/XnyU+mdUHQJhm5AUSkYqui++XH0eRxTJwMHYTg6Q7GLAIDUZxBAyA3b4i4BU0RCaMF8ucKW6tRqhmDZo/wmJv/d3RNTbpIbvcL0LkQ06LZZTGXSw8gSPXBIw5/dknMmuBms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PerTtid3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2924C4CED2;
+	Mon,  6 Jan 2025 15:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1736178032;
+	bh=jU0ucL6VEdkgd09RDvrMuXZW66i2YNt0mhd63oqPxLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PerTtid3hNXLOSCFjOxMVjuGPhFR8j1aszxJRFm0uPK8gdSUJCu4n5jNqOQNMQEoE
+	 Kj6lybfWriIonrvd4omj/EWoUw6xFwZBFRMJ2/4kvonkHxcTF0RHPFlxiEVtLumK2R
+	 jmMu6t4Ybjg0UoqGO41lj3RAOM35OOzUpMA0vlDk=
+Date: Mon, 6 Jan 2025 16:39:43 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Kujau <lists@nerdbynature.de>
+Cc: Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vbox: Enable VBOXGUEST and VBOXSF_FS on ARM64
+Message-ID: <2025010630-enclose-reassign-3ac6@gregkh>
+References: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,16 +55,76 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <286638.1736163444@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
 
-On Mon, Jan 06, 2025 at 11:37:24AM +0000, David Howells wrote:
->         mount //my/cifs/share /foo
->         dd if=/dev/zero of=/foo/m0 bs=4K count=1K
->         losetup --sector-size 4096 --direct-io=on /dev/loop2046 /foo/m0
->         echo hello >/dev/loop2046
+On Mon, Jan 06, 2025 at 04:32:05PM +0100, Christian Kujau wrote:
+> Now that VirtualBox is able to run as a host on arm64 (e.g. the Apple M3 
+> processors) we can enable VBOXSF_FS (and in turn VBOXGUEST) for this 
+> architecture. Tested with various runs of bonnie++ and dbench on an Apple 
+> MacBook Pro with the latest Virtualbox 7.1.4 r165100 installed.
+> 
+> Signed-off-by: Christian Kujau <lists@nerdbynature.de>
+> ---
+>  drivers/virt/vboxguest/Kconfig | 2 +-
+>  fs/vboxsf/Kconfig              | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/virt/vboxguest/Kconfig b/drivers/virt/vboxguest/Kconfig
+> index cc329887bfae..11b153e7454e 100644
+> --- a/drivers/virt/vboxguest/Kconfig
+> +++ b/drivers/virt/vboxguest/Kconfig
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config VBOXGUEST
+>  	tristate "Virtual Box Guest integration support"
+> -	depends on X86 && PCI && INPUT
+> +	depends on (ARM64 || X86) && PCI && INPUT
+>  	help
+>  	  This is a driver for the Virtual Box Guest PCI device used in
+>  	  Virtual Box virtual machines. Enabling this driver will add
+> diff --git a/fs/vboxsf/Kconfig b/fs/vboxsf/Kconfig
+> index b84586ae08b3..d4694026db8b 100644
+> --- a/fs/vboxsf/Kconfig
+> +++ b/fs/vboxsf/Kconfig
+> @@ -1,6 +1,6 @@
+>  config VBOXSF_FS
+>  	tristate "VirtualBox guest shared folder (vboxsf) support"
+> -	depends on X86 && VBOXGUEST
+> +	depends on (ARM64 || X86) && VBOXGUEST
+>  	select NLS
+>  	help
+>  	  VirtualBox hosts can share folders with guests, this driver
+> 
+> -- 
+> BOFH excuse #76:
+> 
+> Unoptimized hard drive
 
-Can you add a testcase using losetup --direct-io with a file on
-$TEST_DIR so that we get coverage for ITER_BVEC directio to xfstests?
+Hi,
 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
