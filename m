@@ -1,87 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-38448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE04A02B7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:44:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA48A02BAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 16:45:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455A0166562
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 15:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A833A5C1A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 15:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5553E1DACBB;
-	Mon,  6 Jan 2025 15:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1935D16D9B8;
+	Mon,  6 Jan 2025 15:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cHCfKGrm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kUt4cAgu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054B0165F1F
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 15:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2FA1422DD
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jan 2025 15:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736178190; cv=none; b=uTULRNHD4NrKKa3FjwCrD3n4kB+WMXPlEvnQh4H1Dm3cJhFlQPClms8pFFeUx7nbiwwYvj1MJP5no4JC1O2+FCXwR37hpzUcYESPAWDMlCGiBI3UAMKYqGDA/FtCK5rt/KFhyl3pmxIMugIyfX/C1oyH8JqEB13DHG2oOiwamb0=
+	t=1736178275; cv=none; b=LTm+x0uN7pHe29KP5EPA4ISgn0At2/yYaLijjuROIUosdkOyK0C+Kyz9wqrSB5tVlALj/jcotyoj1hSnL2N8dA56+WBaBq+h0T17v9yxkZRaaBuRuy3dRspA2FZQxAuA4woynII08PGvFq9TtD7z/Wl4jLxMiEKSgQqU2SY94MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736178190; c=relaxed/simple;
-	bh=pjRYLW2M8ATiVu8MdExKBxk6pj9xrLtCQoBwL1iqToU=;
+	s=arc-20240116; t=1736178275; c=relaxed/simple;
+	bh=dEdXfZtGDIhEERcRg4SdlyOPDk21qvykP6K1tGF33Dg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f8XDmRv9pDBOrEREgcklIXTmaTSiszPuKwG+YW6xnlW644FLvs87SXQqPJagYfIx6YQCwhmRA/owM9lQo3MBnbr6gT68EAQxSG37zs8OmMq+lUSmyfxICBXpg2WpPq+rDhlzuhnDwUS40yGXWnOFmpRsS9fYYhcGCeIQkfb0lOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cHCfKGrm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736178187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a8+TDjby6KE4EMO7ds4q72h8NVWVA/u8ThRfkShnz9I=;
-	b=cHCfKGrmDv7WXECG7t5ayVBcnuEZLtvzHFdxbRqFdWNT85Gb45z7+vndKN2o6MmqNXgjiX
-	yKH1Y1b5Fb7rUIj4GJcCCGALRfYXbrx1+mULjw34y+fvpUnTuAKADF28MMI4Oq0osUICPs
-	fnmbmWFc8SGriJC61h9JctBNdY3KtWw=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-nbYvWXQQMmCCD1bamVxK5g-1; Mon, 06 Jan 2025 10:43:06 -0500
-X-MC-Unique: nbYvWXQQMmCCD1bamVxK5g-1
-X-Mimecast-MFC-AGG-ID: nbYvWXQQMmCCD1bamVxK5g
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa67f18cb95so660665566b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 07:43:06 -0800 (PST)
+	 In-Reply-To:Content-Type; b=Mw11WJZ7OMawojzTftpzxESY1iC5tuHW1t1qW7tRQMAA5sNW3wNEWUWcIWdcAOHQvSCpudxevtQeoUV+h6xsrIUrnRaToUSjeKPFgQrMMUiizBju8MZr9HC1RFl7PwqQrFmKiWgq2nhFPLzsGST4H7hQhIV29FfuzTTzF6w9/AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kUt4cAgu; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-844c9993c56so1221412839f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 07:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736178268; x=1736783068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IlSiOUU0BWGUrYw5zFn5x8RCblwpmS03HB7Ae3PdDoU=;
+        b=kUt4cAgueJ3qXiuntbkW1NS1g4M+zvi0/AKxKRzZer7eH4+Om6bFqrVnIktPzbVdqh
+         U6x1wjwjhHhS/FBWFbtAThoQK13lSzNzcu/wsCu7O9i9JqrGOC7tDKHRVq3fYauc3qjR
+         p7PyKQcg8IN71FZCrbgBgSK1DaPA+RLsgrrB3I+ooaMb0vxQXeWrZPzNJBTZaqzcNFVr
+         yJdTtAG8gHOOn97MVQLDUJJYdGaO94ckqshqfb8bL0sH82JyD2wyqAXdwcCYjAyvDe/l
+         EOiaO5OqoaVb4eM/lSR1Slam/nLXmLBn2LuKupuef73hZ8SOQ+CK1b1Xh8z94+O+eyyf
+         kfcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736178185; x=1736782985;
+        d=1e100.net; s=20230601; t=1736178268; x=1736783068;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a8+TDjby6KE4EMO7ds4q72h8NVWVA/u8ThRfkShnz9I=;
-        b=hWlh1U/DVldcjiELV2CXzMQar+bWuS8lWZcSizrJGb4KhltqxMh4eG5pkc9eGt330n
-         O17WpyZsPKIomkb6nG6sTHH6PTDHzw/Un8dIgFT2hgKFC00ase4QqYyrHyZuwxQvBGkn
-         Dg1onZcXDuWC9xcbSIC48MhrNTAG6G64l0WH0v0f0tRfCTQOgGLZ9gkSFsiqcMXB4Gln
-         DbuMZ9fQXsDAQsVWq75RYGqHZF/2TLnH+KnGvPuasveBROsJIwLhKwpKffL+wXtf6SPq
-         9gQvlwXRDLdNP35Uyz8WlC4aeqyye9BZv/QL/lbv+0qxihqfLNJftmJVglVMnTNmKDAF
-         /F0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWq6TLwCfi0V2X56gaDtMyPnhoCWXjHU8NkOKHrbPDVjQH2bSQ2uwqdWSkdfrjf3jjlYjVy9cEuk13yofsb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0JgLoIXX0LJ4HB/oST7qIjsdPxeN5zzim//sk7p7c2w8hAXH9
-	DEYBFLBLs0TGHBD10v+0qldeU2jUlvkcPy2uNZfiPVd/iFZ6J13SlfmvCIkGWaPQwVR04QPqH69
-	NeepGew8IPHyIE/S688GMsQxnzozu/7WBBkn9z4H9hv7N2KGud6PJRgyHHigQ3vc=
-X-Gm-Gg: ASbGncvsMHjA09kvFUyK34KKtrcYLuwq1mAi8ROLZrGdL9+XNgcw8wVLX6sAF2QSNVG
-	HjTLNzFYi45cFlBMd6a2vm0htHOlKlSZEwrB6CaMTNgbg7wuRBvS3k+CHVo6DQUBvLiTTc3W+CX
-	JJ6Sumcti9Mey23A1DUkfU5XiO1pEMj8jURpacyG16O7kVIlFiPsvEkWV9CxqghvuztTE8dnzKs
-	tNjSmgFZanJqATIwyWuRPyByt8P3OYwaSYxc1TMIwzmRdcbBf2s5VGIhX50hodW9M+yOEForRHY
-	8d0okHrEuc4G9IneS7bSVOjT19TnbANelp244vlwMt06K1zyKhwBD5L54uelqynAtnjXwAfgw6g
-	AMw6dEoOzaaOIpexSUe39Szk2b55CeUA=
-X-Received: by 2002:a17:907:60d0:b0:aab:933c:4125 with SMTP id a640c23a62f3a-aac2702afb5mr5740127966b.10.1736178185492;
-        Mon, 06 Jan 2025 07:43:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEoWFIOSEiFHslSxQ8PU0t1ES9RVQ8WPUWcdVI/Jbu6BoiLVlmCy3XsgKJFB9kF05shhAOW7g==
-X-Received: by 2002:a17:907:60d0:b0:aab:933c:4125 with SMTP id a640c23a62f3a-aac2702afb5mr5740120566b.10.1736178183924;
-        Mon, 06 Jan 2025 07:43:03 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80676f218sm23879990a12.26.2025.01.06.07.43.01
+        bh=IlSiOUU0BWGUrYw5zFn5x8RCblwpmS03HB7Ae3PdDoU=;
+        b=FEYiyXXvMCt4E3ySvA5dBYUtSMGVZP3BOmqWiataY+QxY6M6AHTs0t2xFGhQ8PY8fC
+         WAmh9rKZ34HqvwHYE0usyp1PSLa2Hyck8dEDMFuBxGbhljJgBQtTs4ns07vI2dQOVYT5
+         bY02iFSWqnXnN6iqyQF+SsozY5g3rtfaRIPiEAzZ/XjAiWNN+XOXi5uiG1+jCayn1g/i
+         kZJFiYFUJG+aXl8sNI2l9vPoIIL3sR6PMGMcdhkAms0+D17mPQanR3QswIW3rPSSBDVx
+         rICx2WyBDLtxbOo5sIQbnIpYuppDPoLXgJGzhY8XzSBS9UDWhqYpJ2eg8de+LarKkIm6
+         XrSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPlLf/zCSCmmdbGgWmCWPPst5BXaPupyaonTGmjkCd75j9vAsB/ljtALcGHGuArU7Qvf+eiZtattKHY8WF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+ObVcTCVdE+CGJ3LMk6OT2zGCUU6gpNduDAXDLFPSIBjyb3jS
+	4/wuqGYkjb5g+HDWoybIfF14prL4rxTKS69MiVt8XpbHhgUk9lWWyX7XZjQZeVU=
+X-Gm-Gg: ASbGncuHUACi7gKHUPFbfZbjSZNX5cW5/XnFfIrhB7BOjmQkLfjTAQrCGwCdweKI75p
+	yXfza7Qy5DnySV92DBnBM7UQVJRVyMekxrYk0+Bdg3gbRYJdz4iCH/1ZaW4BRkKFL9Q1oRrRMhs
+	eqEwuW4GLmq+0xQAF0ITdUdP62C/mKIfvgJQvPqdALAGnNzX/KICrYW5kKTko0BrEEOBe/CNUBs
+	c6TOjDtWmUZeb+6uG1c//eLZj6uyORpR/mAwFXsBGZ1FvzWqX+u
+X-Google-Smtp-Source: AGHT+IFcdehDP255DWRph+48knRanMbgh6ZLjrKK4+egd2E9177Col5P85NZctiCtC+wznRaBUf/NQ==
+X-Received: by 2002:a05:6602:1689:b0:83a:9488:154c with SMTP id ca18e2360f4ac-8499e4996f0mr5639389339f.3.1736178267835;
+        Mon, 06 Jan 2025 07:44:27 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68c189372sm9415208173.102.2025.01.06.07.44.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jan 2025 07:43:02 -0800 (PST)
-Message-ID: <b1436351-df89-4f57-b394-6cd202d9cb9a@redhat.com>
-Date: Mon, 6 Jan 2025 16:43:01 +0100
+        Mon, 06 Jan 2025 07:44:27 -0800 (PST)
+Message-ID: <b9abacf0-35e8-49d9-9b25-05a40997a6b6@kernel.dk>
+Date: Mon, 6 Jan 2025 08:44:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,69 +80,39 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] vbox: Enable VBOXGUEST and VBOXSF_FS on ARM64
-To: Christian Kujau <lists@nerdbynature.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+Subject: Re: (subset) [PATCH 07/12] fs: add RWF_DONTCACHE iocb and
+ FOP_DONTCACHE file_operations flag
+To: Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org,
  linux-fsdevel@vger.kernel.org
-References: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
+Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org,
+ willy@infradead.org, kirill@shutemov.name, bfoster@redhat.com
+References: <20241220154831.1086649-1-axboe@kernel.dk>
+ <20241220154831.1086649-8-axboe@kernel.dk>
+ <20250104-sonnabend-sogar-9621cd449aca@brauner>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250104-sonnabend-sogar-9621cd449aca@brauner>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 6-Jan-25 4:32 PM, Christian Kujau wrote:
-> Now that VirtualBox is able to run as a host on arm64 (e.g. the Apple M3 
-> processors) we can enable VBOXSF_FS (and in turn VBOXGUEST) for this 
-> architecture. Tested with various runs of bonnie++ and dbench on an Apple 
-> MacBook Pro with the latest Virtualbox 7.1.4 r165100 installed.
+On 1/4/25 1:39 AM, Christian Brauner wrote:
+> On Fri, 20 Dec 2024 08:47:45 -0700, Jens Axboe wrote:
+>> If a file system supports uncached buffered IO, it may set FOP_DONTCACHE
+>> and enable support for RWF_DONTCACHE. If RWF_DONTCACHE is attempted
+>> without the file system supporting it, it'll get errored with -EOPNOTSUPP.
+>>
+>>
 > 
-> Signed-off-by: Christian Kujau <lists@nerdbynature.de>
+> Jens, you can use this as a stable branch for the VFS changes.
 
-Thanks, patch looks good to me:
+Thanks, but not sure it's super useful for a patch in the middle. It
+just adds a dependency, and I'd need to rebase. Providing an ack
+or reviewed by would probably be more useful.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+But given how slow the mm side is going, honestly not sure what the
+target or plan is for inclusion at this point in time.
 
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/virt/vboxguest/Kconfig | 2 +-
->  fs/vboxsf/Kconfig              | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/virt/vboxguest/Kconfig b/drivers/virt/vboxguest/Kconfig
-> index cc329887bfae..11b153e7454e 100644
-> --- a/drivers/virt/vboxguest/Kconfig
-> +++ b/drivers/virt/vboxguest/Kconfig
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config VBOXGUEST
->  	tristate "Virtual Box Guest integration support"
-> -	depends on X86 && PCI && INPUT
-> +	depends on (ARM64 || X86) && PCI && INPUT
->  	help
->  	  This is a driver for the Virtual Box Guest PCI device used in
->  	  Virtual Box virtual machines. Enabling this driver will add
-> diff --git a/fs/vboxsf/Kconfig b/fs/vboxsf/Kconfig
-> index b84586ae08b3..d4694026db8b 100644
-> --- a/fs/vboxsf/Kconfig
-> +++ b/fs/vboxsf/Kconfig
-> @@ -1,6 +1,6 @@
->  config VBOXSF_FS
->  	tristate "VirtualBox guest shared folder (vboxsf) support"
-> -	depends on X86 && VBOXGUEST
-> +	depends on (ARM64 || X86) && VBOXGUEST
->  	select NLS
->  	help
->  	  VirtualBox hosts can share folders with guests, this driver
-> 
+-- 
+Jens Axboe
 
 
