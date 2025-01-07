@@ -1,64 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-38546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E0BA03856
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 08:04:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEBCA0386C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 08:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428D83A42E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 07:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720671886752
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 07:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163A41DFE23;
-	Tue,  7 Jan 2025 07:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779AA1E0DD8;
+	Tue,  7 Jan 2025 07:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tip5vQQy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a++2Dgo8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5F197A68;
-	Tue,  7 Jan 2025 07:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BEB1E048A;
+	Tue,  7 Jan 2025 07:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736233436; cv=none; b=tjQQuBHBX/9hFUWUktgwrF9RlEePO5A0vPtvZ+oGXHuhSiFGBeUNxGDoA8NTZ02q4narDE1hCeCEsRaSBvCVwwQQXL5At4R8ztElIE4hsWvecrx/LeYXob3JUux1xj1wAN7zeQUC2t834JxEFcwUJBPEvZ19UR/PnUzWSWQLVhs=
+	t=1736233702; cv=none; b=RO6rGmcIb2n87uAci6nZGEz+/JxQSLt7eJ33pZ2rUUgtsctOJN312NAYw11euxCfmM5luIcTWGeLP2Jgve6gn8/tEiypJBOQH1fByDayCnL48UCzxP68SeCZAZn07HdJRlL915V471sKAHypzlbtKFq85dBNVgvP4HKb35EH6Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736233436; c=relaxed/simple;
-	bh=xHQte6L/AwKA5hpjNm6UhPZjwQKdvizBRh0A+UFDyIg=;
+	s=arc-20240116; t=1736233702; c=relaxed/simple;
+	bh=riRq09BCQs2eWbe53PVULdlkjmUtPBgbr9/pEmKTjic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieAmiKO42GcrlleaLpJK82tQ5HXKz0j7OtWpBq/aHrZ0X/sna3MLfBzgSSDEiR0clM7+2fPv3L/8kmxRNhxs+DOU1ywaLkPvfTbCYPgDev54r5YgQD89XV/5eSmytVYn5tDda+6c4JnW7loLsMEI71Rn/h4qcSM4674X76s1o8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tip5vQQy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB31DC4CEE0;
-	Tue,  7 Jan 2025 07:03:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkHF2PTonShMZvZd/HS1KA/jHnnL2qs1/7EYiYODqf+NGMIhkgfWUE5g/RPf/11YGHWyO6kGa+pGSn9m2AYV1kKXaHXRDkXzWwZ5YADlmE7m8kH6v5qIlcA1kooRsk4KzIAvxlycQ4DoQ6NBzCgQRG+J2/KcNpIkH8XS+cXsSYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a++2Dgo8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B36C4CED6;
+	Tue,  7 Jan 2025 07:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736233435;
-	bh=xHQte6L/AwKA5hpjNm6UhPZjwQKdvizBRh0A+UFDyIg=;
+	s=k20201202; t=1736233702;
+	bh=riRq09BCQs2eWbe53PVULdlkjmUtPBgbr9/pEmKTjic=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tip5vQQy11mk6ukdUDJo7V0eKJYJ3iw5o3L+aIQY1CO6gzVD4NXlbJNjtaxxUpYz2
-	 qyDHqjiBmCZ5wPBGVM/Q0hO8OeEbWzQ+f7SF+/ZCP+IlsmcixiKQjilrYhhRETG14h
-	 bnJQEjU5gM5EdeKuCvdQ1O6SKWc1t6OG1ZuKZSbOL40BNRva28tbGgc+IvStBdCZZe
-	 H1LXJuOR/zetU/3KHcY5IVVeB1PKtmLJAA3rXCf7Sfq9kIuxAh0BlQJvDRsR007UFv
-	 mxz20baxB0PQveqsVTbOwi2IhWsGRc82Idv2kf70Rv4SJJvA6GqnxfLZv5YSxUeQWX
-	 AOwOEpPQQrjrA==
-Date: Mon, 6 Jan 2025 23:03:55 -0800
+	b=a++2Dgo82RtXhLPymQXK/9RjUhn1bBxGRBUciehp3GrCJO9Z+ELD2SUiSOth7dm2G
+	 1pSFQQwdeQj4cLH27UvsmBbyRRjYevfuPsv5iy5tvfoQeX9pYhEvT+SnerBO+Onw/E
+	 0CjxcN+5DqW3Wv75P4Jspacc47ggMSOhNGEbfamyl0wdKXg4PEVquXi9bKqtZloX6U
+	 kNczfdT7Axp8fYMfCMIfgY771SyEl1UK++O+u6M1TziTqvctxnwhj7Y2E2s0Cflz86
+	 ya70HWHusONXIAHk2F/w1NAcxiS2r7jxz0Il/SNXADjo92wuX+lxNZ19BEYDdBhk1/
+	 xuUTNpJCZu8Aw==
+Date: Mon, 6 Jan 2025 23:08:20 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>, sunyongjian1@huawei.com,
+	Yang Erkun <yangerkun@huawei.com>, linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 4/4] xfs: report the correct read/write dio alignment for
- reflinked inodes
-Message-ID: <20250107070355.GH6174@frogsfrogsfrogs>
-References: <20250106151607.954940-1-hch@lst.de>
- <20250106151607.954940-5-hch@lst.de>
- <dd525ca1-68ff-4f6d-87a9-b0c67e592f83@oracle.com>
- <20250107061012.GA13898@lst.de>
+Subject: Re: [BUG REPORT] ext4: =?utf-8?B?4oCcZXJy?=
+ =?utf-8?Q?ors=3Dremount-ro=E2=80=9D_has_become_=E2=80=9Cerrors=3Dshutdown?=
+ =?utf-8?B?4oCdPw==?=
+Message-ID: <20250107070820.GJ6174@frogsfrogsfrogs>
+References: <22d652f6-cb3c-43f5-b2fe-0a4bb6516a04@huawei.com>
+ <z52ea53du2k66du24ju4yetqm72e6pvtcbwkrjf4oomw2feffq@355vymdndrxn>
+ <17108cad-efa8-46b4-a320-70d7b696f75b@huawei.com>
+ <umpsdxhd2dz6kgdttpm27tigrb3ytvpf3y3v73ugavgh4b5cuj@dnacioqwq4qq>
+ <20250103153517.GB1284777@mit.edu>
+ <20250103155406.GC1284777@mit.edu>
+ <5eb2ad64-c6ea-45f8-9ba1-7de5c68d59aa@huawei.com>
+ <20250106234956.GM6174@frogsfrogsfrogs>
+ <0acc1709-1349-4dbb-ba3e-ae786c4b5b53@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,41 +70,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250107061012.GA13898@lst.de>
+In-Reply-To: <0acc1709-1349-4dbb-ba3e-ae786c4b5b53@huawei.com>
 
-On Tue, Jan 07, 2025 at 07:10:12AM +0100, Christoph Hellwig wrote:
-> On Mon, Jan 06, 2025 at 06:37:06PM +0000, John Garry wrote:
-> >> +	/*
-> >> +	 * On COW inodes we are forced to always rewrite an entire file system
-> >> +	 * block or RT extent.
-> >> +	 *
-> >> +	 * Because applications assume they can do sector sized direct writes
-> >> +	 * on XFS we fall back to buffered I/O for sub-block direct I/O in that
-> >> +	 * case.  Because that needs to copy the entire block into the buffer
-> >> +	 * cache it is highly inefficient and can easily lead to page cache
-> >> +	 * invalidation races.
-> >> +	 *
-> >> +	 * Tell applications to avoid this case by reporting the natively
-> >> +	 * supported direct I/O read alignment.
-> >
-> > Maybe I mis-read the complete comment, but did you really mean "natively 
-> > supported direct I/O write alignment"? You have been talking about writes 
-> > only, but then finally mention read alignment.
+On Tue, Jan 07, 2025 at 10:01:32AM +0800, Baokun Li wrote:
+> On 2025/1/7 7:49, Darrick J. Wong wrote:
+> > On Sat, Jan 04, 2025 at 10:41:28AM +0800, Baokun Li wrote:
+> > > Hi Ted,
+> > > 
+> > > On 2025/1/3 23:54, Theodore Ts'o wrote:
+> > > > On Fri, Jan 03, 2025 at 10:35:17AM -0500, Theodore Ts'o wrote:
+> > > > > I don't see how setting the shutdown flag causes reads to fail.  That
+> > > > > was true in an early version of the ext4 patch which implemented
+> > > > > shutdown support, but one of the XFS developers (I don't remember if
+> > > > > it was Dave or Cristoph) objected because XFS did not cause the
+> > > > > read_pages function to fail.  Are you seeing this with an upstream
+> > > > > kernel, or with a patched kernel?  The upstream kernel does *not* have
+> > > > > the check in ext4_readpages() or ext4_read_folio() (post folio
+> > > > > conversion).
+> > > > OK, that's weird.  Testing on 6.13-rc4, I don't see the problem simulating an ext4 error:
+> > > > 
+> > > > root@kvm-xfstests:~# mke2fs -t ext4 -Fq /dev/vdc
+> > > > /dev/vdc contains a ext4 file system
+> > > > 	last mounted on /vdc on Fri Jan  3 10:38:21 2025
+> > > > root@kvm-xfstests:~# mount -t ext4 -o errors=continue /dev/vdc /vdc
+> > > We are discussing "errors=remount-ro," as the title states, not the
+> > > continue mode. The key code leading to the behavior change is as follows,
+> > > therefore the continue mode is not affected.
+> > Hmm.  On the one hand, XFS has generally returned EIO (or ESHUTDOWN in a
+> > couple of specialty cases) when the fs has been shut down.
+> Indeed, this is the intended behavior during shutdown.
+> > 
+> > OTOH XFS also doesn't have errors=remount-ro; it just dies, which I
+> > think has been its behavior for a long time.
+> Yes. As an aside, is there any way for xfs to determine if -EIO is
+> originating from a hardware error or if the filesystem has been shutdown?
+
+XFS knows the difference, but nothing above it does.
+
+> Or would you consider it useful to have the mount command display
+> "shutdown" when the file system is being shut down?
+
+Trouble is, will mount get confused and try to pass ",shutdown" as part
+of a remount operation?  I suppose the fs is dead so what does it
+matter...
+
+> > To me, it doesn't sound unreasonable for ext* to allow reads after a
+> > shutdown when errors=remount-ro since it's always had that behavior.
+> Yes, a previous bug fix inadvertently changed the behavior of
+> errors=remount-ro,
+> and the patch to correct this is coming.
 > 
-> No, this is indeed intended to talk about the different (smaller) read
-> alignment we are now reporting.  But I guess the wording is confusing
-> enough that I should improve it?
+> Additionally, ext4 now allows directory reads even after shutdown, is this
+> expected behavior?
 
-How about:
+There's no formal specification for what shutdown means, so ... it's not
+unexpected.  XFS doesn't allow that.
 
-/*
- * For COW inodes, we can only perform out of place writes of entire
- * file allocation units (clusters).  For a sub-cluster directio write,
- * we must fall back to buffered I/O to perform the RMW.  At best this
- * is highly inefficient; at worst it leads to page cache invalidation
- * races.  Tell applications to avoid this by reporting separately the
- * read and (larger) write alignments.
- */
+> > Bonus Q: do you want an errors=fail variant to shut things down fast?
+> > 
+> > --D
+> 
+> In my opinion, I have not yet seen a scenario where the file system needs
+> to be shut down after an error occurs. Therefore, using errors=remount-ro
+> to prevent modifications after an error is sufficient. Of course, if
+> customers have such needs, implementing this mode is also very simple.
+
+IO errors, sure.  Metadata errors?  No, we want to stop the world
+immediately, either so the sysadmin can go run xfs_repair, or the clod
+manager can just kill the node and deploy another.
 
 --D
+
+> 
+> 
+> Thanks,
+> Baokun
+> 
+> 
 
