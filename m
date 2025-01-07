@@ -1,106 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-38596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B92EA048AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:57:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD18FA048E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042D2165526
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 17:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAE73A5557
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ED1199236;
-	Tue,  7 Jan 2025 17:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2618C900;
+	Tue,  7 Jan 2025 18:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SDIbbyxX"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F42TyEdB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351B618628F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 17:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB3753AC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 18:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736272622; cv=none; b=DdiXsI5jprP85E/MdSYyHyuxJ+rXwft/V1a/xcFqSppuEvDhos8J5SHF+fGGYJZXsxA3mGbXkeABUB68CpThmlwSIPMWFoRo3eA6E5wVe/Ji7XeI8jG0NtNpJbihv4orhC1i2a53/0yyEHNaDaERif7KSJR8KROILh7LLo+W7/4=
+	t=1736273286; cv=none; b=aDz26J8tJa69hiOamj0vxNVsBqIeRfYe05FbvCp9h1BP0avQFO0mz+UZgcujFkMCL4xTrmD002wZy1z8CvtfoLrTNojFvXlSosxrlaH/l6ourWjymaF0lLrPW48nrsr0TpvjuX5tTc6OLAarCho2M5ypoZpNLdMpy0FeJCwVRws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736272622; c=relaxed/simple;
-	bh=xtGznjkFjU2j2JyizdGOjY46uQbVdSii9CAm4CED3g0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=o/5k6XBsVnfu7f/I6FRe9lHY0cTagSO4SPFzzsDHHFKKv+x5ZxdbxrlNQkJBBNQRgtt930+IbPeIzhy5mkyId9+M7OWP7MB2PyqBySLl2bxC/KoS/8AXSGKuT83rVRbbU2rEjnCWHsRwh6OV9ubybAaLrEO9ie0uuRITzIKxBCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SDIbbyxX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736272616;
+	s=arc-20240116; t=1736273286; c=relaxed/simple;
+	bh=UEjZcVWnfS2uXxtqUyVgvGvg6PJIgM9A46dNuLcwf4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fe7z2kUTYgyipD88B6ZMw7L92esrxUHYy3vUZjlNU5F70jWEzVdFNUX2riXAc3Zg4SpwAOXtUBRD5B5Bu7CYYGvidzsYAEj3hc9XbdUiNkuzBB3hGqlBaesHZTrwstcp8FpBTn9chOqZas5wm8B136sfLixGzLEiav2N28UsBLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F42TyEdB; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 7 Jan 2025 10:07:54 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1736273278;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WTq33EoWpM3rfkjorX4/dJHRzV36Z30CG6gKd1GBlzs=;
-	b=SDIbbyxXo48vE/HwBdn6LLymqiYQyVxxOQKa/bisEoIcoec7s4CMGlgTfuECYmZW4LsQU3
-	ieA1IlXQ3IU1i8JFnIvavwCgMzucAHDRslL7ftA4/rmvv0div8UQAVq2D54wXorM0coq/c
-	eS4O0hdylNAVDYjOKhkQ48Wz8zV2EBU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-ZHy_XoJHObOpybr4ExFAfQ-1; Tue,
- 07 Jan 2025 12:56:54 -0500
-X-MC-Unique: ZHy_XoJHObOpybr4ExFAfQ-1
-X-Mimecast-MFC-AGG-ID: ZHy_XoJHObOpybr4ExFAfQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0102C1955F41;
-	Tue,  7 Jan 2025 17:56:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.12])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 87F3A1955F43;
-	Tue,  7 Jan 2025 17:56:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250107152050.GP1977892@ZenIV>
-References: <20250107152050.GP1977892@ZenIV> <20250107142513.527300-1-dhowells@redhat.com> <20250107142513.527300-3-dhowells@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    Christian Brauner <christian@brauner.io>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] afs: Make /afs/@cell and /afs/.@cell symlinks
+	bh=UlTBV59tQI4p6soTuVdHSsi53ggiM94qcxAUVClW1FI=;
+	b=F42TyEdBzh/W4f1dY/234muoLagcd0O75lKfy7Oq+0AHaJlb6XC2xNKtL57w2JFI+AMzWq
+	i+5lvm2vi+gcJ1SMdDqYzR8DZXCn/8Y0vuLbCrtPZdSlzuz4UmLOQemEoCfBScdtRMwSpH
+	lhGEiwRFT/PhywZhju361Hd/xBLhn6w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
+	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
+	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
+	Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+Message-ID: <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
+References: <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+ <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
+ <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
+ <446704ab-434e-45ac-a062-45fef78815e4@redhat.com>
+ <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+ <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+ <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
+ <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+ <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+ <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <599880.1736272608.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 07 Jan 2025 17:56:48 +0000
-Message-ID: <599881.1736272608@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Tue, Jan 07, 2025 at 09:34:49AM +0100, David Hildenbrand wrote:
+> On 06.01.25 19:17, Shakeel Butt wrote:
+> > On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
+> > > On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
+> > > > In any case, having movable pages be turned unmovable due to persistent
+> > > > writaback is something that must be fixed, not worked around. Likely a
+> > > > good topic for LSF/MM.
+> > > 
+> > > Yes, this seems a good cross fs-mm topic.
+> > > 
+> > > So the issue discussed here is that movable pages used for fuse
+> > > page-cache cause a problems when memory needs to be compacted. The
+> > > problem is either that
+> > > 
+> > >   - the page is skipped, leaving the physical memory block unmovable
+> > > 
+> > >   - the compaction is blocked for an unbounded time
+> > > 
+> > > While the new AS_WRITEBACK_INDETERMINATE could potentially make things
+> > > worse, the same thing happens on readahead, since the new page can be
+> > > locked for an indeterminate amount of time, which can also block
+> > > compaction, right?
+> 
+> Yes, as memory hotplug + virtio-mem maintainer my bigger concern is these
+> pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there *must not be
+> unmovable pages ever*. Not triggered by an untrusted source, not triggered
+> by an trusted source.
+> 
+> It's a violation of core-mm principles.
 
-> Just allocate those child dentries and call your afs_lookup_atcell() for=
- them.
-> No need to keep that mess in ->lookup() - you are keeping those suckers =
-cached
-> now, so...
+The "must not be unmovable pages ever" is a very strong statement and we
+are violating it today and will keep violating it in future. Any
+page/folio under lock or writeback or have reference taken or have been
+isolated from their LRU is unmovable (most of the time for small period
+of time). These operations are being done all over the place in kernel.
+Miklos gave an example of readahead. The per-CPU LRU caches are another
+case where folios can get stuck for long period of time. Reclaim and
+compaction can isolate a lot of folios that they need to have
+too_many_isolated() checks. So, "must not be unmovable pages ever" is
+impractical.
 
-Actually, I wonder if creating the inodes and dentries for cells and the @=
-cell
-symlinks at mount of the dynamic root or when the cells are created is
-actually the best way.
-
-It might be better to list all the cells and symlinks in readdir and only
-create them on demand in ->lookup().  The cells are kept in their own list=
- on
-the network namespace anyway, even if the dynamic root isn't mounted.
-
-David
-
+The point is that, yes we should aim to improve things but in iterations
+and "must not be unmovable pages ever" is not something we can achieve
+in one step. Though I doubt that state is practically achievable and to
+me something like a bound (time or amount) on the transient unmovable
+folios is more practical.
 
