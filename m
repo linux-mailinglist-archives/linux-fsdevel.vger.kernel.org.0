@@ -1,247 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-38508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F57A03485
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 02:26:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED10A034D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 03:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E0807A184C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 01:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 109101641F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 02:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6367082B;
-	Tue,  7 Jan 2025 01:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vZvagTuP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BC078F32;
+	Tue,  7 Jan 2025 02:01:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA00E22331
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 01:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62625ECC;
+	Tue,  7 Jan 2025 02:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736213206; cv=none; b=tZr8adQS/NjPNgfL/rpV9m/7MnuxZ+5AM2hAN90GceQNJx2TgX03Icnz/S/7ZsqMPJb0OGH72w74MGP4td0DK/RM4ML/jSisvaeMAPu1b0H6lALJQpg5cPOdBe5giwHgoMPah6GZYIyxMLnoByrRj72Mnotd+hUcPYpU2Sd9kZc=
+	t=1736215300; cv=none; b=c2er1fDxF5ScmNYY9uGnDAWU+K+7s3HzYCTTLyC0JpN2YHDxujtpMXNKN18HxSzLO2mKJRVT/eEug8HSvR2iw0vyeTPF0d2dLxsoQTj/CMxc2NVLAgPVAbZ2EqaBpCLDU8HLE59F98fZfkD9Hfez58KokFYjH4IjNzty+X2ivn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736213206; c=relaxed/simple;
-	bh=KO50LlfdJt2i4wpFMI9ThGGSdZBM4MjXb0cipiAo8Cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZ+96amK2Jil26z84ulkoUDOTbqj5osNGB+ttEAMpsTqxoYTz1n1VE4lzEwXgMUyMmXvqaeZ2MXPb3axq5Ghgy6aChJRGrpRa/LK6mR0I8xYdbsECCyJ1jZIeumAAyc1mD0IjAhghyDoo9Itejhz+oF5IF5KsDd2qCzThepa6pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vZvagTuP; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215740b7fb8so65675ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 17:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1736213204; x=1736818004; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M372tjeIGF/B6j8tuFkO5rd4a50LQoTcJMIW9ilW1lM=;
-        b=vZvagTuP8r+HNK6NdI850DtIW8e5+OtML0dWMCivm8BHVgkEMjYEa0haHCrLRpNKWV
-         pP9L0PFBQ46BPeG0N8j2RckZ6AqwAzK31Rs0uYG8TJUvoKdonSu9YXAExIkn+9Z4P2G/
-         NcMmz4bRTyGMjJSBWxnkrsVRz5RfN8AOoWdT6y99pyKjQN77xx1IZzUjupp22VtxySqZ
-         EP+arA5mWDEoHkivXNDHXhzDBlilt6t+kVVSdxwRpoProZZuEyDui2MPNTtzO4vcysYj
-         qialLhu1SbDXCHXRw916yaZcN0jLhy+zNYIL7KwVUeFVXcLRhMQoKkoXK7O71MdSRiZl
-         FCKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736213204; x=1736818004;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M372tjeIGF/B6j8tuFkO5rd4a50LQoTcJMIW9ilW1lM=;
-        b=P0MFCRgUgJjBuagy6DyvWLnA0GtAKrquiZKEHwwWRmStYdeUsgYbUxqEwOV+BM+1Yr
-         H/DbzxWFI/8YYOZYXXbVskxUMcR3UYz54PX2DLyWTEQ8djbDG0BmUXBe5ZA7NNfOrshv
-         ARcwfEvQT1RqSL8CyMHDc1zW7z3tj/N/EU2y+MFr28MnqsnsOIYS3Em7PemYwNLbN8FU
-         Ap7DTxvZw011h6xcj1M4ytlGAE5MFF0nN0qLQLf4LOsF29Y4VpwbKKNwIrcBI/i9RTS3
-         XYr8PG+TIF8Ew9BHFFp+fIVRL8FzYh+Xf1wzIoIqiirgU9a5yHeWpbwaGvuysO/ycXKJ
-         cLyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoyCLkK1nDXUMWs5x7gQld/ku8LawuhiDgk5iZp4ox5qKvISz0uPJj7SOWlUPQtqY3Fh30W3qglRTUqvQf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoDAqQ4fzUUBotae6Pgmmar/LSJhebBiOJ5MhnMBdY2RlNECYO
-	lXpVwPTyjxd+e5TufU/oie8qZ0Qfiw4b/oIzQT8ojWYpZsICo8bucmsHG2XhRg==
-X-Gm-Gg: ASbGncuSpxnAffMWwTNqXE5v6y/Zo05Difx5kIqfGaZ5FQ88nQbQeQCDLILE5SXCKJ1
-	z2ViViMEKMoSUmh7F230TX7Elh5vzSmjP+g+zZHjCtRW6iEj0wMrRh2S4EPNwLatHypEf9sVIwe
-	3SqmSmnXNMvmzzkgEclrOmq8C0pgG7Wj3ve825t9CzpIyrP7M7kzSVTwX5uDtShNZ2kmkbJOiB/
-	bWvYatjtU+BQkPsimWkWPLJHInMPo8dqxQ4bKzsVUeZuCt/Pi57nEqV
-X-Google-Smtp-Source: AGHT+IFUje41UqMGChKWwoUXHu8SMmzrXD2rW9ZDvE3vXGz/NkrxhtzEWY6tO9tH8NrLIu1jBzPmiQ==
-X-Received: by 2002:a17:902:e849:b0:216:48d4:b3a8 with SMTP id d9443c01a7336-21a7acca8ddmr1058805ad.16.1736213202325;
-        Mon, 06 Jan 2025 17:26:42 -0800 (PST)
-Received: from google.com ([2620:15c:2d:3:42b3:1d33:ab4b:8279])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbb70sm32188398b3a.98.2025.01.06.17.26.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2025 17:26:41 -0800 (PST)
-Date: Mon, 6 Jan 2025 17:26:37 -0800
-From: Isaac Manjarres <isaacmanjarres@google.com>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-	lorenzo.stoakes@oracle.com, Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, surenb@google.com,
-	kaleshsingh@google.com, jstultz@google.com, aliceryhl@google.com,
-	jeffxu@google.com, kees@kernel.org, kernel-team@android.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND v2 1/2] mm/memfd: Add support for
- F_SEAL_FUTURE_EXEC to memfd
-Message-ID: <Z3yCzcpTHnW671WL@google.com>
-References: <20250102233255.1180524-1-isaacmanjarres@google.com>
- <20250102233255.1180524-2-isaacmanjarres@google.com>
- <CAG48ez2q_V_cOu8O_mor8WCt7GaC47baYQgjisP=KDzkxkqR1Q@mail.gmail.com>
- <CABi2SkVmdxuETrgucYA2RucV3D4UoaPkDrXZKvLGjfEGp1-v2A@mail.gmail.com>
+	s=arc-20240116; t=1736215300; c=relaxed/simple;
+	bh=FPu22WdP7+WPBiYHzN11L5F2QUPfxQ+hvw/96Y2we+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EGwR494OhMgkz88yokP6nOgy21W3ri4N2A5JDJ7Mnj2rVNWWS0eC1zvZ0Hzf6U9w9UKUU8d9G2roWy7SOGh95iDFrAA6x5CoxWlH8dMTMrKwFjPswKvtEAWOfRtYdUan8hpYwBJE7pKERH7H+rN9l85zDqK+Z9Se/n8L/+v4Amw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YRvMQ21G4z1W3Vq;
+	Tue,  7 Jan 2025 09:57:54 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4D8D21402DA;
+	Tue,  7 Jan 2025 10:01:34 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 7 Jan
+ 2025 10:01:33 +0800
+Message-ID: <0acc1709-1349-4dbb-ba3e-ae786c4b5b53@huawei.com>
+Date: Tue, 7 Jan 2025 10:01:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABi2SkVmdxuETrgucYA2RucV3D4UoaPkDrXZKvLGjfEGp1-v2A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IFtCVUcgUkVQT1JUXSBleHQ0OiDigJxlcnJvcnM9cmVtb3VudC1y?=
+ =?UTF-8?B?b+KAnSBoYXMgYmVjb21lIOKAnGVycm9ycz1zaHV0ZG93buKAnT8=?=
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, Christian Brauner
+	<brauner@kernel.org>, <sunyongjian1@huawei.com>, Yang Erkun
+	<yangerkun@huawei.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-xfs@vger.kernel.org>, Baokun Li <libaokun1@huawei.com>
+References: <22d652f6-cb3c-43f5-b2fe-0a4bb6516a04@huawei.com>
+ <z52ea53du2k66du24ju4yetqm72e6pvtcbwkrjf4oomw2feffq@355vymdndrxn>
+ <17108cad-efa8-46b4-a320-70d7b696f75b@huawei.com>
+ <umpsdxhd2dz6kgdttpm27tigrb3ytvpf3y3v73ugavgh4b5cuj@dnacioqwq4qq>
+ <20250103153517.GB1284777@mit.edu> <20250103155406.GC1284777@mit.edu>
+ <5eb2ad64-c6ea-45f8-9ba1-7de5c68d59aa@huawei.com>
+ <20250106234956.GM6174@frogsfrogsfrogs>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250106234956.GM6174@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Mon, Jan 06, 2025 at 09:35:09AM -0800, Jeff Xu wrote:
-> + Kees because this is related to W^X memfd and security.
-> 
-> On Fri, Jan 3, 2025 at 7:04 AM Jann Horn <jannh@google.com> wrote:
-> >
-> > On Fri, Jan 3, 2025 at 12:32 AM Isaac J. Manjarres
-> > <isaacmanjarres@google.com> wrote:
-> > > Android currently uses the ashmem driver [1] for creating shared memory
-> > > regions between processes. Ashmem buffers can initially be mapped with
-> > > PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
-> > > ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
-> > > permissions that the buffer can be mapped with.
-> > >
-> > > Processes can remove the ability to map ashmem buffers as executable to
-> > > ensure that those buffers cannot be exploited to run unintended code.
-> >
-> > Is there really code out there that first maps an ashmem buffer with
-> > PROT_EXEC, then uses the ioctl to remove execute permission for future
-> > mappings? I don't see why anyone would do that.
-> >
-> > > For instance, suppose process A allocates a memfd that is meant to be
-> > > read and written by itself and another process, call it B.
-> > >
-> > > Process A shares the buffer with process B, but process B injects code
-> > > into the buffer, and compromises process A, such that it makes A map
-> > > the buffer with PROT_EXEC. This provides an opportunity for process A
-> > > to run the code that process B injected into the buffer.
-> > >
-> > > If process A had the ability to seal the buffer against future
-> > > executable mappings before sharing the buffer with process B, this
-> > > attack would not be possible.
-> >
-> > I think if you want to enforce such restrictions in a scenario where
-> > the attacker can already make the target process perform
-> > semi-arbitrary syscalls, it would probably be more reliable to enforce
-> > rules on executable mappings with something like SELinux policy and/or
-> > F_SEAL_EXEC.
-> >
-> I would like to second on the suggestion of  making this as part of F_SEAL_EXEC.
-
-Thanks for taking a look at this patch Jeff! Can you please elaborate
-some more on how F_SEAL_EXEC should be extended to restricting executable
-mappings?
-
-I understand that if a memfd file is non-executable (either because it
-was made non-executable via fchmod() or by being created with
-MFD_NOEXEC_SEAL) one could argue that applying F_SEAL_EXEC to that file
-would also mean preventing any executable mappings. However, it is not
-clear to me if we should tie a file's executable permissions to whether
-or not if it can be mapped as executable. For example, shared object
-files don't have to have executable permissions, but processes should
-be able to map them as executable.
-
-The case where we apply F_SEAL_EXEC on an executable memfd also seems
-awkward to me, since memfds can be mapped as executable by default
-so what would happen in that scenario?
-
-I also shared the same concerns in my response to Jann in [1].
-
-> > > diff --git a/mm/memfd.c b/mm/memfd.c
-> > > index 5f5a23c9051d..cfd62454df5e 100644
-> > > --- a/mm/memfd.c
-> > > +++ b/mm/memfd.c
-> > > @@ -184,6 +184,7 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
-> > >  }
-> > >
-> > >  #define F_ALL_SEALS (F_SEAL_SEAL | \
-> > > +                    F_SEAL_FUTURE_EXEC |\
-> > >                      F_SEAL_EXEC | \
-> > >                      F_SEAL_SHRINK | \
-> > >                      F_SEAL_GROW | \
-> > > @@ -357,14 +358,50 @@ static int check_write_seal(unsigned long *vm_flags_ptr)
-> > >         return 0;
-> > >  }
-> > >
-> > > +static inline bool is_exec_sealed(unsigned int seals)
-> > > +{
-> > > +       return seals & F_SEAL_FUTURE_EXEC;
-> > > +}
-> > > +
-> > > +static int check_exec_seal(unsigned long *vm_flags_ptr)
-> > > +{
-> > > +       unsigned long vm_flags = *vm_flags_ptr;
-> > > +       unsigned long mask = vm_flags & (VM_SHARED | VM_EXEC);
-> > > +
-> > > +       /* Executability is not a concern for private mappings. */
-> > > +       if (!(mask & VM_SHARED))
-> > > +               return 0;
-> >
-> > Why is it not a concern for private mappings?
-> >
-> > > +       /*
-> > > +        * New PROT_EXEC and MAP_SHARED mmaps are not allowed when exec seal
-> > > +        * is active.
-> > > +        */
-> > > +       if (mask & VM_EXEC)
-> > > +               return -EPERM;
-> > > +
-> > > +       /*
-> > > +        * Prevent mprotect() from making an exec-sealed mapping executable in
-> > > +        * the future.
-> > > +        */
-> > > +       *vm_flags_ptr &= ~VM_MAYEXEC;
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > >  int memfd_check_seals_mmap(struct file *file, unsigned long *vm_flags_ptr)
-> > >  {
-> > >         int err = 0;
-> > >         unsigned int *seals_ptr = memfd_file_seals_ptr(file);
-> > >         unsigned int seals = seals_ptr ? *seals_ptr : 0;
-> > >
-> > > -       if (is_write_sealed(seals))
-> > > +       if (is_write_sealed(seals)) {
-> > >                 err = check_write_seal(vm_flags_ptr);
-> > > +               if (err)
-> > > +                       return err;
-> > > +       }
-> > > +
-> > > +       if (is_exec_sealed(seals))
-> > > +               err = check_exec_seal(vm_flags_ptr);
-> > >
-> memfd_check_seals_mmap is only for mmap() path, right ?
-> 
-> How about the mprotect()  path ? i.e.  An attacker can first create a
-> RW VMA mapping for the memfd and later mprotect the VMA to be
-> executable.
-> 
-> Similar to the check_write_seal call , we might want to block mprotect
-> for write seal as well.
+On 2025/1/7 7:49, Darrick J. Wong wrote:
+> On Sat, Jan 04, 2025 at 10:41:28AM +0800, Baokun Li wrote:
+>> Hi Ted,
+>>
+>> On 2025/1/3 23:54, Theodore Ts'o wrote:
+>>> On Fri, Jan 03, 2025 at 10:35:17AM -0500, Theodore Ts'o wrote:
+>>>> I don't see how setting the shutdown flag causes reads to fail.  That
+>>>> was true in an early version of the ext4 patch which implemented
+>>>> shutdown support, but one of the XFS developers (I don't remember if
+>>>> it was Dave or Cristoph) objected because XFS did not cause the
+>>>> read_pages function to fail.  Are you seeing this with an upstream
+>>>> kernel, or with a patched kernel?  The upstream kernel does *not* have
+>>>> the check in ext4_readpages() or ext4_read_folio() (post folio
+>>>> conversion).
+>>> OK, that's weird.  Testing on 6.13-rc4, I don't see the problem simulating an ext4 error:
+>>>
+>>> root@kvm-xfstests:~# mke2fs -t ext4 -Fq /dev/vdc
+>>> /dev/vdc contains a ext4 file system
+>>> 	last mounted on /vdc on Fri Jan  3 10:38:21 2025
+>>> root@kvm-xfstests:~# mount -t ext4 -o errors=continue /dev/vdc /vdc
+>> We are discussing "errors=remount-ro," as the title states, not the
+>> continue mode. The key code leading to the behavior change is as follows,
+>> therefore the continue mode is not affected.
+> Hmm.  On the one hand, XFS has generally returned EIO (or ESHUTDOWN in a
+> couple of specialty cases) when the fs has been shut down.
+Indeed, this is the intended behavior during shutdown.
 >
+> OTOH XFS also doesn't have errors=remount-ro; it just dies, which I
+> think has been its behavior for a long time.
+Yes. As an aside, is there any way for xfs to determine if -EIO is
+originating from a hardware error or if the filesystem has been shutdown?
 
-So when memfd_check_seals_mmap() is called, if the file is exec_sealed,
-check_exec_seal() will not only just check that VM_EXEC is not set,
-but it will also clear VM_MAYEXEC, which will prevent the mapping from
-being changed to executable via mprotect() later.
+Or would you consider it useful to have the mount command display
+"shutdown" when the file system is being shut down?
+> To me, it doesn't sound unreasonable for ext* to allow reads after a
+> shutdown when errors=remount-ro since it's always had that behavior.
+Yes, a previous bug fix inadvertently changed the behavior of 
+errors=remount-ro,
+and the patch to correct this is coming.
 
-[1] https://lore.kernel.org/all/Z3x_8uFn2e0EpDqM@google.com/
+Additionally, ext4 now allows directory reads even after shutdown, is this
+expected behavior?
+> Bonus Q: do you want an errors=fail variant to shut things down fast?
+>
+> --D
+
+In my opinion, I have not yet seen a scenario where the file system needs
+to be shut down after an error occurs. Therefore, using errors=remount-ro
+to prevent modifications after an error is sufficient. Of course, if
+customers have such needs, implementing this mode is also very simple.
+
 
 Thanks,
-Isaac
+Baokun
+
 
