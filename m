@@ -1,151 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-38603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920F3A04961
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:39:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6231A049C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DBE166774
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D018E166906
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF5C1F37C8;
-	Tue,  7 Jan 2025 18:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A711F3D5D;
+	Tue,  7 Jan 2025 18:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SL6NOU3h"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="HTxOcFlV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ldMbbGtX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3AB1F2C35
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 18:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA681F2C3F;
+	Tue,  7 Jan 2025 18:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736275181; cv=none; b=mD9FskN1N7CiveUbC3czfgwG1sitNHa1K8EfaiBFz0wzBlwbRrH5W5R/3dRvqh2OzV3t0uG8mJtDIxUymkYO5dGUHdILc/RA3yfzZq1/YmFaLAdHMuECVh+qN26NNi3b/FoweTH1+h6Np6wqOmeUEfYca1bYLMhYU90TiOETEGM=
+	t=1736276353; cv=none; b=KMvr5W5b1aAZrmi3cDDHrk8Givuw61tROpCkY+oStruFGPTpDqX7n0Ebw5wNjbLe8eg7QHRdh97ssPfo6nkDiOM5YjVFYEMH+qfkfc0cLG9ThucTLEOElZeILkWQ5/BJCn2aSCPFGVzxNW8MLEOhQYaeARLKx3DJNVfbOzbYY5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736275181; c=relaxed/simple;
-	bh=5WYXUpQPGVXhqaV9VdfXAy839GK5dHFgwTrPjPlMdXA=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=kalMSucVb+CC6ARgOBxKjGlv1/U1ugzSh7I+n7vDfeQoYLjs4YtVblethYAvoP1+Yu7x9EdjALLTLKlTwic6DAsw0HO+wAr/8mcoKr1xurrirGNtDNpT6yn7s5r7XH6O7y4jnQFUt6YAtnPyOpBYOwKb8KJsqb5v3h31jX8ONxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SL6NOU3h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736275176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=P1+ypZtOfhvrgbMyRTn27M8yHHraLIlusZRvt7dT4ko=;
-	b=SL6NOU3hx119crocT4/Ym3IhsUbrLCOK2tDqHvrHEEG+sVGVSzNM90oJPfJRJZk40YgP5G
-	QXQRSIDiK0K/t0WXxseMHiRjhpaZoqYhRHWUBA6a0tSbqaYfdiIeS39uh0pyqgAXn6rptF
-	EIksU/QvbaCRXbMGyOlDBnfPkPcJNd4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-318-C6BJI74wO4id5nc8uicbFQ-1; Tue,
- 07 Jan 2025 13:39:33 -0500
-X-MC-Unique: C6BJI74wO4id5nc8uicbFQ-1
-X-Mimecast-MFC-AGG-ID: C6BJI74wO4id5nc8uicbFQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4645A1956089;
-	Tue,  7 Jan 2025 18:39:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.12])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 821BC3000197;
-	Tue,  7 Jan 2025 18:39:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Nicolas Baranger <nicolas.baranger@3xo.fr>,
-    Paulo Alcantara (Red Hat) <pc@manguebit.com>,
-    Steve French <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>,
-    netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Fix kernel async DIO
+	s=arc-20240116; t=1736276353; c=relaxed/simple;
+	bh=05dXKPp3UeggAAObe7YFouMLps+ul1mZpEJYQEKYVLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rB8Jjf+fI40t2ogQTNrtbcNDYfJtZ35x4B66bGwZ9z2hm3KkDMCoFJlFy9O1G+2gboxSiScWwsy8j7a3soLRwoQv421RahCGHRaj5zruAPu9U4WaNzvFvALV+a5Fk46o8kQreWoj1KYvM1dmEmROHJ8F/0/yarbeilUOGRMpT6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=HTxOcFlV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ldMbbGtX; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 20A7A1380237;
+	Tue,  7 Jan 2025 13:59:10 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 07 Jan 2025 13:59:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1736276350;
+	 x=1736362750; bh=GkQ4VTpp0Z7U0EdUHbP4HtEemK6HZFuRWZwXdkmDPDw=; b=
+	HTxOcFlV8+bxWDaDRnenEsiPf2b2x9nECmO2yYgpf45yhWpygbFYjB6ipxK1+89p
+	iL7uA0dOpkzUWDIgmuyYh0RNbstUQShH2+NrQjPQIm0eTFDZrY58s/TwGgUrVTfq
+	b5BiFWLldUQVQIgX+/11t9ZFDRpkDt11QWf0pRm3cSAqe/xcmFZmMlAfoCUgZr86
+	6beVVE6h2bAsFHulo6DHMqy47Evijikod4JdgUqD7y722sxI+vXPlGlp+/DJYGyb
+	VhkempmJfwovDMZPW/3NZ6ucLNxQdDNbrr4KygajmKqsNR8VCoPX1Snib8raQY8l
+	vK6W2s7AajOnRu3NAuh1dA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736276350; x=
+	1736362750; bh=GkQ4VTpp0Z7U0EdUHbP4HtEemK6HZFuRWZwXdkmDPDw=; b=l
+	dMbbGtXpV7cY6uDctTdK9MmTgekVrWdnCmVZzpNLqPqknw1LqrjOiIw4KRW73OBZ
+	6dXcxySTydpW78WALLlzrGSUOqidr5bzr56IkpnJ1JvWtubZmMGAfss/3JIdPD1d
+	TQukmZaGkjH4rjXCaZGdHG1yuZup6hyoeVGlFt3Z0d4fZNRB4gi3tn7bygwJBgm+
+	xr3JSs0iaks9qdJ7onPzY0Nj4o3oAHQ7ibUcFTaeyBLNwhc5t8BLWB+hfEtYj04h
+	MIDQl+4rVnM3TrkOHxBL/lRogzaSl0kcMdyABUh/M+y2P9SUFN1YootP/OcpkOho
+	QMv+NGQDYkSSXFhrw7Wuw==
+X-ME-Sender: <xms:fXl9Z37L9eBxQ4LAzRrVRuZ3g7Q2BOO2PMERWHHfXoZ4Q34xXZkuuA>
+    <xme:fXl9Z870mMEQG1rWjQ-sBB7q0N0k1nTeKbHiLOanEMXX4Z8fgXwj1O2BmSV16Pjkg
+    StOefvlAGhS8Tw_>
+X-ME-Received: <xmr:fXl9Z-enWSPsb_EU1EUjVwP1SwuWBGWuAG3DNjaiB4tn5tGYQ03UrXU31-nWs7GMDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegvddguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleff
+    uedujefhheegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
+    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehluhhishesih
+    hgrghlihgrrdgtohhmpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdp
+    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsg
+    hovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhm
+    rghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhm
+X-ME-Proxy: <xmx:fXl9Z4Jz3fm7mPnTUHRok_l-bPI11jJs4dhlb_tXgPV81ig8h5ox3w>
+    <xmx:fXl9Z7K-LM1xOKnpIE2xROn1XxcZFp2uPVJopFDtPXuSv1lG3A7Kgg>
+    <xmx:fXl9Zxy6XzhlwxWH4LroaQPIvzb6zUIDW2yP-KwzXzGQBEEJA4h1SQ>
+    <xmx:fXl9Z3L3ZE6bPJIh_goR2qTXTsA0Pj8VroMGBXnnDtB5ckKtHj8FMg>
+    <xmx:fnl9Z1C45TcIA-3OPPoeUUJjVPSewX7hpmd5sKJwsAMluSG_CF853w1e>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Jan 2025 13:59:07 -0500 (EST)
+Message-ID: <87a9354b-4371-4862-b94c-8797e77b0068@bsbernd.com>
+Date: Tue, 7 Jan 2025 19:59:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <608724.1736275167.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 07 Jan 2025 18:39:27 +0000
-Message-ID: <608725.1736275167@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 13/17] fuse: Allow to queue fg requests through
+ io-uring
+To: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+ <87a5c239ho.fsf@igalia.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US
+In-Reply-To: <87a5c239ho.fsf@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Netfslib needs to be able to handle kernel-initiated asynchronous DIO that
-is supplied with a bio_vec[] array.  Currently, because of the async flag,
-this gets passed to netfs_extract_user_iter() which throws a warning and
-fails because it only handles IOVEC and UBUF iterators.  This can be
-triggered through a combination of cifs and a loopback blockdev with
-something like:
 
-        mount //my/cifs/share /foo
-        dd if=3D/dev/zero of=3D/foo/m0 bs=3D4K count=3D1K
-        losetup --sector-size 4096 --direct-io=3Don /dev/loop2046 /foo/m0
-        echo hello >/dev/loop2046
 
-This causes the following to appear in syslog:
+On 1/7/25 16:54, Luis Henriques wrote:
 
-        WARNING: CPU: 2 PID: 109 at fs/netfs/iterator.c:50 netfs_extract_u=
-ser_iter+0x170/0x250 [netfs]
+[...]
 
-and the write to fail.
+>> @@ -785,10 +830,22 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ring_ent,
+>>   				   unsigned int issue_flags)
+>>   {
+>>   	struct fuse_ring_queue *queue = ring_ent->queue;
+>> +	struct fuse_ring *ring = queue->ring;
+>> +	struct fuse_conn *fc = ring->fc;
+>> +	struct fuse_iqueue *fiq = &fc->iq;
+>>   
+>>   	spin_lock(&queue->lock);
+>>   	fuse_uring_ent_avail(ring_ent, queue);
+>>   	spin_unlock(&queue->lock);
+>> +
+>> +	if (!ring->ready) {
+>> +		bool ready = is_ring_ready(ring, queue->qid);
+>> +
+>> +		if (ready) {
+>> +			WRITE_ONCE(ring->ready, true);
+>> +			fiq->ops = &fuse_io_uring_ops;
+> 
+> Shouldn't we be taking the fiq->lock to protect the above operation?
 
-Fix this by removing the check in netfs_unbuffered_write_iter_locked() tha=
-t
-causes async kernel DIO writes to be handled as userspace writes.  Note
-that this change relies on the kernel caller maintaining the existence of
-the bio_vec array (or kvec[] or folio_queue) until the op is complete.
+I switched the order and changed it to WRITE_ONCE. fiq->lock would
+require that doing the operations would also hold lock.
+Also see "[PATCH v9 16/17] fuse: block request allocation until",
+there should be no races anyone.
 
-Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
-Reported-by: Nicolas Baranger <nicolas.baranger@3xo.fr>
-Closes: https://lore.kernel.org/r/fedd8a40d54b2969097ffa4507979858@3xo.fr/
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Nicolas Baranger <nicolas.baranger@3xo.fr>
-Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-cc: Steve French <smfrench@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/direct_write.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   /*
+>> @@ -979,3 +1036,119 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_cmd *cmd,
+>>   
+>>   	return -EIOCBQUEUED;
+>>   }
+>> +
+>> +/*
+>> + * This prepares and sends the ring request in fuse-uring task context.
+>> + * User buffers are not mapped yet - the application does not have permission
+>> + * to write to it - this has to be executed in ring task context.
+>> + */
+>> +static void
+>> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+>> +			    unsigned int issue_flags)
+>> +{
+>> +	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+>> +	struct fuse_ring_queue *queue = ent->queue;
+>> +	int err;
+>> +
+>> +	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD)) {
+>> +		err = -ECANCELED;
+>> +		goto terminating;
+>> +	}
+>> +
+>> +	err = fuse_uring_prepare_send(ent);
+>> +	if (err)
+>> +		goto err;
+> 
+> Suggestion: simplify this function flow.  Something like:
+> 
+> 	int err = 0;
+> 
+> 	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD))
+> 		err = -ECANCELED;
+> 	else if (fuse_uring_prepare_send(ent)) {
+> 		fuse_uring_next_fuse_req(ent, queue, issue_flags);
+> 		return;
+> 	}
+> 	spin_lock(&queue->lock);
+>          [...]
 
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index 173e8b5e6a93..f9421f3e6d37 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -67,7 +67,7 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb =
-*iocb, struct iov_iter *
- 		 * allocate a sufficiently large bvec array and may shorten the
- 		 * request.
- 		 */
--		if (async || user_backed_iter(iter)) {
-+		if (user_backed_iter(iter)) {
- 			n =3D netfs_extract_user_iter(iter, len, &wreq->iter, 0);
- 			if (n < 0) {
- 				ret =3D n;
-@@ -77,6 +77,11 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb=
- *iocb, struct iov_iter *
- 			wreq->direct_bv_count =3D n;
- 			wreq->direct_bv_unpin =3D iov_iter_extract_will_pin(iter);
- 		} else {
-+			/* If this is a kernel-generated async DIO request,
-+			 * assume that any resources the iterator points to
-+			 * (eg. a bio_vec array) will persist till the end of
-+			 * the op.
-+			 */
- 			wreq->iter =3D *iter;
- 		}
- =
+That makes it look like fuse_uring_prepare_send is not an
+error, but expected. How about like this?
 
+static void
+fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+			    unsigned int issue_flags)
+{
+	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+	struct fuse_ring_queue *queue = ent->queue;
+	int err;
+
+	if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
+		err = fuse_uring_prepare_send(ent);
+		if (err) {
+			fuse_uring_next_fuse_req(ent, queue, issue_flags);
+			return;
+		}
+	} else {
+		err = -ECANCELED;
+	}
+
+	spin_lock(&queue->lock);
+	ent->state = FRRS_USERSPACE;
+	list_move(&ent->list, &queue->ent_in_userspace);
+	spin_unlock(&queue->lock);
+
+	io_uring_cmd_done(cmd, err, 0, issue_flags);
+	ent->cmd = NULL;
+}
+
+
+
+Thanks,
+Bernd
 
