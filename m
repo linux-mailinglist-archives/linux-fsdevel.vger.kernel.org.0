@@ -1,97 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-38562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4237FA03E99
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 13:08:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE868A03F79
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 13:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2743816425A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 12:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8555918871AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 12:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CBF1DFE1D;
-	Tue,  7 Jan 2025 12:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="sgvlAhz0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L+g/YvLL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275A81E9B3A;
+	Tue,  7 Jan 2025 12:38:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7154C9D;
-	Tue,  7 Jan 2025 12:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923848F6B;
+	Tue,  7 Jan 2025 12:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736251682; cv=none; b=GOaHvy53q9Xs+wlfqPF7bukzt8uO1DXWO9Qqhua7Joev7iWxzMSLR0voFp7LROOpS2YokHZmKl5SMF3QdV6Cnx6NikjlPguSBTULflddkFflpYn8ybSGXUmEek6J/15nfzvwS7zLJdVRBwNmZqL2E9eoPu3z3Bw5x/E5YeFRAqc=
+	t=1736253538; cv=none; b=drfCjSccDOWEjQyIHebg04pb4YOw72w1yWdrj3IJZpEFI/284Al8BTbfVJEU1QnLf/FZ/ZeoGJQgXFqG9TujEGXWPvMWVYar5B+fBhmgtjbMwC+imBRlzcwWeBcchVz5E99wOzACjh4Yt0NV65lKE7rVO8GKF0XKycHKdVBvTXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736251682; c=relaxed/simple;
-	bh=op5HImHqYb+4AvhRX02Y74mHm2ek0TjZyK3aMBK+28c=;
+	s=arc-20240116; t=1736253538; c=relaxed/simple;
+	bh=L0nfuSD2CSSJ7OAPd80iCht8aeMgdGjN/dt4w7/FAVE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NvhcaAKt/Gm1kaZS9EhmHrwZ3A6IIKapK20KxBNg7opnprDYppWXt0kL0O6lFuo0u6kqwBfCY/jlwoIpTFWQxKqVGOqaOfZz8J9W/+NCxkunv7DksUJk4E6OFbG6hpXuzCXf7BsqtvF8OoCstH08R4RDsLRnKCqnlryHAtOok0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=sgvlAhz0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L+g/YvLL; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 972831140149;
-	Tue,  7 Jan 2025 07:07:58 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 07 Jan 2025 07:07:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1736251678;
-	 x=1736338078; bh=S54aJw5a+El555L0/D6uSM+XLBPUOhMQlUNmqm58VSc=; b=
-	sgvlAhz0ppppk1N6S/begQEed5lNnGov0Pbk2ayaMUx7J1ooNtgti7zvIp8pyQxr
-	m/3z33Vrh72jQZfFpa8TP96113abqPr3P6k5v/Z6IcRNNoLOlUreq7GzXnJfO3i0
-	/oivdFz6ODagfi3Dxmjf8wXV7WV4f/lZ8ayti95G+6pMgkuhDND1fiIuDXGvVgWi
-	P7najFFWxfyA4+4N8dcGZ+RL0ZG2f4/FX37eKOV7vhfx8m4hZTZGrD3OpSOse8yX
-	E0NIznlft2wHZxayrOKRAFAne4m395gzXn8ou8h9Y28fRx8S3Bp61oajuZpzUOEm
-	KIFxvaLNcVSYR3usiNcwxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736251678; x=
-	1736338078; bh=S54aJw5a+El555L0/D6uSM+XLBPUOhMQlUNmqm58VSc=; b=L
-	+g/YvLLMJTofZM0SJA700u7+hI/vEWFO6C+Z6/RY9Bdxjgpbk/AEZrbNvUqDNUvD
-	OR/aQKl25Fq4CjXjC3CXahlx+q5CQud8J7qlK4d/8C4ixARx7nFfUDNp3QmIiWMo
-	3nr+hxBNXU2w+1kBhitNqpL/iEFqua9j3DSPiG3chlyVdY0ITujiQb9kXB1XoFyK
-	ITyEn0VGi8oYs4hNfHQtwf/Rl7I5ZTUrt65DxgTZK+ltDXWCjClFwcDU76ZEiS37
-	+9FqfUYZU62Z2YSRbDNbwB/X9gEWVHlASdtV+xZD99tnrsfgTCAmay7yatzYa6f6
-	iDgqqqkbNJFGOMkFkBn+w==
-X-ME-Sender: <xms:HBl9Z9_mNLSFlpyl_RIobqklScn5AiVYeLXXdYQxIHFJsy3VF2S9mA>
-    <xme:HBl9ZxvDfMGHejtJq_iI-HyVZmLSfuYLv9hJMujlkz5hGVOq-IP4iExeHrhpSV3AA
-    ON3nOrIA9YbajX7>
-X-ME-Received: <xmr:HBl9Z7Csrbch6bO3pXCHvwTWugjVWWP4iOy0TjwIrhp_hJHZ-YkRY7c0E3_KhT5bBw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegvddgfeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
-    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtoheplhhuihhssehighgrlhhirgdrtghomhdprhgtphhtthhopegs
-    shgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
-    gvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
-    oheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehi
-    ohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnh
-    hnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohig
-    ihgtphgrnhgurgdrtghomh
-X-ME-Proxy: <xmx:HRl9ZxcTPFV8mLpDHZBoqrjG6YtsCxABewVaYwuYRRvFA0hVA3dRxw>
-    <xmx:HRl9ZyOPMgt_THRxnsCsaThE_zPmKxgKuRpVxP6W5vj_hgc_ksWDVQ>
-    <xmx:HRl9ZzkASwAyo6sKoMyxUrk4I91tSQP2fB_V_fo2iXkk8K7Gji4g_g>
-    <xmx:HRl9Z8vfS5eTPNzLYigNAMyAA_w9qC7AFLMoPY42IyAe3xTXDUkzvQ>
-    <xmx:Hhl9Z8t8aujjx_YlwlOKpsUKzS8oJF-GbZvAmI1EPVTMGK81fFioBuYs>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 Jan 2025 07:07:55 -0500 (EST)
-Message-ID: <215c477e-0cb2-475d-85d3-f15baf7b208a@fastmail.fm>
-Date: Tue, 7 Jan 2025 13:07:54 +0100
+	 In-Reply-To:Content-Type; b=MCHHj85UHtXKiZcgnN0NKMoiAjFY7XdXo6o0SHLUcLBkbFq5kky4W2SrT8RDxEKTBkiySqo5G/AfIFHyJniWbagsONd423BP/BqEzipXueRYIgwLPJWN+OZtdCmDdiqaat9l66uNa3eAtZ952zzGIkNZpOi7sAJNOVd4H29wMVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YS9ZZ2H1lz4f3lWJ;
+	Tue,  7 Jan 2025 20:38:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9F5681A0E98;
+	Tue,  7 Jan 2025 20:38:51 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDHKl9ZIH1nZKstAQ--.45269S3;
+	Tue, 07 Jan 2025 20:38:51 +0800 (CST)
+Message-ID: <3e443003-ff12-45c8-b41b-65a0af43de61@huaweicloud.com>
+Date: Tue, 7 Jan 2025 20:38:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,45 +47,78 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/17] fuse: {io-uring} Handle SQEs - register commands
-To: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
- bernd@bsbernd.com
-References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
- <20250107-fuse-uring-for-6-10-rfc4-v9-6-9c786f9a7a9d@ddn.com>
- <87zfk32bh6.fsf@igalia.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, tytso@mit.edu, djwong@kernel.org, adilger.kernel@dilger.ca,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com, Sai Chaitanya Mitta <mittachaitu@gmail.com>,
+ linux-xfs@vger.kernel.org
+References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
+ <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
+ <Z3u-OCX86j-q7JXo@infradead.org>
 Content-Language: en-US
-In-Reply-To: <87zfk32bh6.fsf@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <Z3u-OCX86j-q7JXo@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHKl9ZIH1nZKstAQ--.45269S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7JFyDuFW5ZFW7Ww4DKr4fGrg_yoW8JF17pF
+	WYkF4vy3Z093W09w18Za1kXFyFv3y8Gay5JrySqrWkAr15Gr12yF18WFyY9Fy8Cr97Ww4Y
+	q3yavF9xuF1UuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	aFAJUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-On 1/7/25 10:56, Luis Henriques wrote:
-> Hi Bernd,
+On 2025/1/6 19:27, Christoph Hellwig wrote:
+> There's a feature request for something similar on the xfs list, so
+> I guess people are asking for it.
 > 
-> On Tue, Jan 07 2025, Bernd Schubert wrote:
+> That being said this really should not be a modifier but a separate
+> operation, as the logic is very different from FALLOC_FL_ZERO_RANGE,
+> similar to how plain prealloc, hole punch and zero range are different
+> operations despite all of them resulting in reads of zeroes from the
+> range.
+
+OK, it seems reasonable to me, and adding a new operation would be
+better. There is actually no need to mix it with the current
+FALLOC_FL_ZERO_RANGE.
+
 > 
->> This adds basic support for ring SQEs (with opcode=IORING_OP_URING_CMD).
->> For now only FUSE_IO_URING_CMD_REGISTER is handled to register queue
->> entries.
+> That will also make it more clear that for files or file systems that
+> require out place writes this operation should fail instead of doing
+> pointless multiple writes.
 > 
-> Please find below two (minor) comments I had already for v8.  Hopefully
-> this time I'll finish reviewing rev v9!
+> Also please write a man page update clearly specifying the semantics,
+> especially if this should work or not if there is no write zeroes
+> offload in the hardware, or if that offload actually writes physical
+> zeroes to the media or not.
+> 
 
-
-Thank you very much, both fixed in v10 branch, I will wait a bit for
-further reviews before sending out v10.
-I think the leak of ring_ent in error cases is actually new v9 - I think
-I wanted to move up error checking (before the allocation) and then forgot
-about that :/ Done now, no need to allocate at all if the IOV is not correct.
-
+Sure. thanks for your advice.
 
 Thanks,
-Bernd
+Yi.
+
+> Btw, someone really should clean up the ext4 fallocate code to use
+> helper adnd do the
+> 
+> 	switch (mode & FALLOC_FL_MODE_MASK) {
+> 	}
+> 
+> and then use helpers for each mode whih will make these things a lot
+> more obvious.
+
 
