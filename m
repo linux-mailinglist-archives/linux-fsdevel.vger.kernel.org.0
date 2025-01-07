@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-38600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED47BA0494B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A50A0494C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D738A166426
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FFE16478C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B6D1F4719;
-	Tue,  7 Jan 2025 18:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8591F4E29;
+	Tue,  7 Jan 2025 18:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aacyNTX5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hxx+ugME"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00E71F427D
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 18:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072561EBFE2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 18:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736274912; cv=none; b=QG0/wFXV/GiQ5+O5uZrtWWYEwZYilh+vZQteJYHnp1I/QC9MD48TwryOgkLPUbcQ1dq1gb/Gzp1jYHM3UI4YU/DzT+ZpTAytFe7gD7UwNCr96FP5jU+c/nmI5O1wcIBnZrniPiv4TfhjXSqBnNwat/hWknnbSLg+cgd4aP6jaPk=
+	t=1736274914; cv=none; b=KwQglqdJwSDNT4v6fv/ZfMb/Qtq6PhZuQoY7n9Q6jwDlh0tG4Vpe9jgJ5HQXKsvQL1WzMjhORSaI7+Qt9b/HqZz3xhAFFgaKBR3OnSgGolDwHoT5eEAchQwghIQwH3BmbdegrVZcZWw/wQ03m+Rl7WvZzTem66TVXLqIKVvrXrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736274912; c=relaxed/simple;
-	bh=Q11pG85zrRGgDAFQxBRfmBBWf01etcXbSgKoKnbYPRc=;
+	s=arc-20240116; t=1736274914; c=relaxed/simple;
+	bh=M5p7ePPBNkYpcoERczixf1W0gMGDRFLHkB2szaz9aN0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OMOrBm/WXhz6Ui2ABI+A1njSG1wR1luGRkzx0/2rAxznSXnp1SRfNShRSgOHHIDXYh0Hnvvqmd0ghaW04MUPa46pT6HJHq4Zejx4zsEN/+dXb/piiBSk/JMFgU27TVtmjAefO6iykgVGYVfx2QFskcNUdqGTilWAn7xhRWOeA4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aacyNTX5; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=ox6TrQVXjjDGW0a9G8X9g0IYmIy6TEPTjU87XMUAoR92qRET6CYrN5iwkCB4+ZBq3QfeIxjRQ1Cm0KtD5T0ISJbL/R13vaOyP2ReS0LSlQBAAPA4USU5819F4Pkt3KyQs8XZe9MQ2cKizbsMBP6vNKMgHnIaVgGcf50Xitzf7io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hxx+ugME; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736274906;
+	s=mimecast20190719; t=1736274910;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Sa/GU7W0ecMxEDBGDWuoSeU5bwFHSdZFnN7p8T+LcWM=;
-	b=aacyNTX5kLg2SrLZ1b1tkcjziHOotztWp1OHJBWog9BVziSVn1D0iNoknHe0gWHbtHDiI8
-	ps+DQYYbsVjapV8PHgZpchcaGsa2zyV0pu6msF85M24hEeXIh3URZmM9LLuhpX+SXFasQb
-	TKJd59jsPjwWaTsE0Lx99062aPsERpw=
+	bh=1HAy8KP8uW8+fxVBQ0kDAUsn1FGBX/4TFL4u84KCiPA=;
+	b=Hxx+ugMEPwYNkPDkOqdWTIm1K1Ah31+8c7tPeurxHwBV3zPu37HCxqzsUDcyxWoTbPGZh/
+	i5hqlNUUh9FySm8TbXgfNsnsHNCbsJU9jtyi87+uO9DX3vQ8DEZcbz3Ti+DZTL4tzC4ZAD
+	nE1b84SA9Cgk6iEJliTQr4wV47xUwj4=
 Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-I_z0VGMgNsyBgnbKCJXdHw-1; Tue,
- 07 Jan 2025 13:35:03 -0500
-X-MC-Unique: I_z0VGMgNsyBgnbKCJXdHw-1
-X-Mimecast-MFC-AGG-ID: I_z0VGMgNsyBgnbKCJXdHw
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-LeYqNbBwMlqCCf2BqVWjXQ-1; Tue,
+ 07 Jan 2025 13:35:06 -0500
+X-MC-Unique: LeYqNbBwMlqCCf2BqVWjXQ-1
+X-Mimecast-MFC-AGG-ID: LeYqNbBwMlqCCf2BqVWjXQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2B2AA19560B8;
-	Tue,  7 Jan 2025 18:35:02 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E2BA19560B8;
+	Tue,  7 Jan 2025 18:35:05 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4C89B19560A2;
-	Tue,  7 Jan 2025 18:35:00 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 805BF1956053;
+	Tue,  7 Jan 2025 18:35:03 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Marc Dionne <marc.dionne@auristor.com>
 Cc: David Howells <dhowells@redhat.com>,
@@ -64,9 +64,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-afs@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] afs: Make /afs/.<cell> as well as /afs/<cell> mountpoints
-Date: Tue,  7 Jan 2025 18:34:49 +0000
-Message-ID: <20250107183454.608451-2-dhowells@redhat.com>
+Subject: [PATCH v2 2/3] afs: Add rootcell checks
+Date: Tue,  7 Jan 2025 18:34:50 +0000
+Message-ID: <20250107183454.608451-3-dhowells@redhat.com>
 In-Reply-To: <20250107183454.608451-1-dhowells@redhat.com>
 References: <20250107183454.608451-1-dhowells@redhat.com>
 Precedence: bulk
@@ -76,162 +76,62 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-When a cell is instantiated, automatically create an /afs/.<cell>
-mountpoint to match the /afs/<cell> mountpoint to match other AFS clients.
+Add some checks for the validity of the cell name.  It's may get put into a
+symlink, so preclude it containing any slashes or "..".  Also disallow
+starting/ending with a dot.  This makes /afs/@cell/ as a symlink less of a
+security risk.
+
+Also disallow multiple setting of /proc/net/afs/rootcell for any given
+network namespace.  Once set, the value may not be changed.  This makes it
+easier to only create /afs/@cell and /afs/.@cell if there's a rootcell.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
 cc: linux-afs@lists.infradead.org
 ---
- fs/afs/cell.c    | 13 +++++++-----
- fs/afs/dynroot.c | 52 ++++++++++++++++++++++++++++++------------------
- 2 files changed, 41 insertions(+), 24 deletions(-)
+ fs/afs/cell.c | 8 ++++++++
+ fs/afs/proc.c | 8 +++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index caa09875f520..1aba6d4d03a9 100644
+index 1aba6d4d03a9..cee42646736c 100644
 --- a/fs/afs/cell.c
 +++ b/fs/afs/cell.c
-@@ -146,18 +146,20 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 		return ERR_PTR(-ENOMEM);
+@@ -367,6 +367,14 @@ int afs_cell_init(struct afs_net *net, const char *rootcell)
+ 		len = cp - rootcell;
  	}
  
--	cell->name = kmalloc(namelen + 1, GFP_KERNEL);
-+	cell->name = kmalloc(1 + namelen + 1, GFP_KERNEL);
- 	if (!cell->name) {
- 		kfree(cell);
- 		return ERR_PTR(-ENOMEM);
- 	}
++	if (len == 0 || !rootcell[0] || rootcell[0] == '.' || rootcell[len - 1] == '.')
++		return -EINVAL;
++	if (memchr(rootcell, '/', len))
++		return -EINVAL;
++	cp = strstr(rootcell, "..");
++	if (cp && cp < rootcell + len)
++		return -EINVAL;
++
+ 	/* allocate a cell record for the root cell */
+ 	new_root = afs_lookup_cell(net, rootcell, len, vllist, false);
+ 	if (IS_ERR(new_root)) {
+diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+index 15eab053af6d..e7614f4f30c2 100644
+--- a/fs/afs/proc.c
++++ b/fs/afs/proc.c
+@@ -240,7 +240,13 @@ static int afs_proc_rootcell_write(struct file *file, char *buf, size_t size)
+ 	/* determine command to perform */
+ 	_debug("rootcell=%s", buf);
  
--	cell->net = net;
-+	cell->name[0] = '.';
-+	cell->name++;
- 	cell->name_len = namelen;
- 	for (i = 0; i < namelen; i++)
- 		cell->name[i] = tolower(name[i]);
- 	cell->name[i] = 0;
+-	ret = afs_cell_init(net, buf);
++	ret = -EEXIST;
++	inode_lock(file_inode(file));
++	if (!net->ws_cell)
++		ret = afs_cell_init(net, buf);
++	else
++		printk("busy\n");
++	inode_unlock(file_inode(file));
  
-+	cell->net = net;
- 	refcount_set(&cell->ref, 1);
- 	atomic_set(&cell->active, 0);
- 	INIT_WORK(&cell->manager, afs_manage_cell_work);
-@@ -211,7 +213,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 	if (ret == -EINVAL)
- 		printk(KERN_ERR "kAFS: bad VL server IP address\n");
- error:
--	kfree(cell->name);
-+	kfree(cell->name - 1);
- 	kfree(cell);
+ out:
  	_leave(" = %d", ret);
- 	return ERR_PTR(ret);
-@@ -502,7 +504,7 @@ static void afs_cell_destroy(struct rcu_head *rcu)
- 	afs_put_vlserverlist(net, rcu_access_pointer(cell->vl_servers));
- 	afs_unuse_cell(net, cell->alias_of, afs_cell_trace_unuse_alias);
- 	key_put(cell->anonymous_key);
--	kfree(cell->name);
-+	kfree(cell->name - 1);
- 	kfree(cell);
- 
- 	afs_dec_cells_outstanding(net);
-@@ -710,7 +712,8 @@ static void afs_deactivate_cell(struct afs_net *net, struct afs_cell *cell)
- 	afs_proc_cell_remove(cell);
- 
- 	mutex_lock(&net->proc_cells_lock);
--	hlist_del_rcu(&cell->proc_link);
-+	if (!hlist_unhashed(&cell->proc_link))
-+		hlist_del_rcu(&cell->proc_link);
- 	afs_dynroot_rmdir(net, cell);
- 	mutex_unlock(&net->proc_cells_lock);
- 
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index c4d2711e20ad..f80a4244b9d2 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -271,7 +271,8 @@ const struct dentry_operations afs_dynroot_dentry_operations = {
- int afs_dynroot_mkdir(struct afs_net *net, struct afs_cell *cell)
- {
- 	struct super_block *sb = net->dynroot_sb;
--	struct dentry *root, *subdir;
-+	struct dentry *root, *subdir, *dsubdir;
-+	char *dotname = cell->name - 1;
- 	int ret;
- 
- 	if (!sb || atomic_read(&sb->s_active) == 0)
-@@ -286,34 +287,31 @@ int afs_dynroot_mkdir(struct afs_net *net, struct afs_cell *cell)
- 		goto unlock;
- 	}
- 
--	/* Note that we're retaining an extra ref on the dentry */
-+	dsubdir = lookup_one_len(dotname, root, cell->name_len + 1);
-+	if (IS_ERR(dsubdir)) {
-+		ret = PTR_ERR(dsubdir);
-+		dput(subdir);
-+		goto unlock;
-+	}
-+
-+	/* Note that we're retaining extra refs on the dentries. */
- 	subdir->d_fsdata = (void *)1UL;
-+	dsubdir->d_fsdata = (void *)1UL;
- 	ret = 0;
- unlock:
- 	inode_unlock(root->d_inode);
- 	return ret;
- }
- 
--/*
-- * Remove a manually added cell mount directory.
-- * - The caller must hold net->proc_cells_lock
-- */
--void afs_dynroot_rmdir(struct afs_net *net, struct afs_cell *cell)
-+static void afs_dynroot_rm_one_dir(struct dentry *root, const char *name, size_t name_len)
- {
--	struct super_block *sb = net->dynroot_sb;
--	struct dentry *root, *subdir;
--
--	if (!sb || atomic_read(&sb->s_active) == 0)
--		return;
--
--	root = sb->s_root;
--	inode_lock(root->d_inode);
-+	struct dentry *subdir;
- 
- 	/* Don't want to trigger a lookup call, which will re-add the cell */
--	subdir = try_lookup_one_len(cell->name, root, cell->name_len);
-+	subdir = try_lookup_one_len(name, root, name_len);
- 	if (IS_ERR_OR_NULL(subdir)) {
- 		_debug("lookup %ld", PTR_ERR(subdir));
--		goto no_dentry;
-+		return;
- 	}
- 
- 	_debug("rmdir %pd %u", subdir, d_count(subdir));
-@@ -324,8 +322,24 @@ void afs_dynroot_rmdir(struct afs_net *net, struct afs_cell *cell)
- 		dput(subdir);
- 	}
- 	dput(subdir);
--no_dentry:
--	inode_unlock(root->d_inode);
-+}
-+
-+/*
-+ * Remove a manually added cell mount directory.
-+ * - The caller must hold net->proc_cells_lock
-+ */
-+void afs_dynroot_rmdir(struct afs_net *net, struct afs_cell *cell)
-+{
-+	struct super_block *sb = net->dynroot_sb;
-+	char *dotname = cell->name - 1;
-+
-+	if (!sb || atomic_read(&sb->s_active) == 0)
-+		return;
-+
-+	inode_lock(sb->s_root->d_inode);
-+	afs_dynroot_rm_one_dir(sb->s_root, cell->name, cell->name_len);
-+	afs_dynroot_rm_one_dir(sb->s_root, dotname, cell->name_len + 1);
-+	inode_unlock(sb->s_root->d_inode);
- 	_leave("");
- }
- 
 
 
