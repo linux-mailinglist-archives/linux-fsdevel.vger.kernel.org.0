@@ -1,132 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-38507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224C3A0347D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 02:24:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F57A03485
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 02:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017BD1631D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 01:24:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E0807A184C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 01:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A2C18641;
-	Tue,  7 Jan 2025 01:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6367082B;
+	Tue,  7 Jan 2025 01:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="aQf0AcQA"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vZvagTuP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564652F46
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 01:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA00E22331
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 01:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736213061; cv=none; b=Wg6qfiXV660B2hnJN92PqLTJ5aESM2hsULZBlfc8gk4N0qLmFokceceIQes4oLkTkvv5vaAbB63H/Iw6Ol9OLaqxzuOxEMRcFQ0LprnKBj8KSj5p9AyBW6bFVALSzZAIvvjl+W988972BLfll/nmYrFPo/VHlOEQ1ev5bKpEKOg=
+	t=1736213206; cv=none; b=tZr8adQS/NjPNgfL/rpV9m/7MnuxZ+5AM2hAN90GceQNJx2TgX03Icnz/S/7ZsqMPJb0OGH72w74MGP4td0DK/RM4ML/jSisvaeMAPu1b0H6lALJQpg5cPOdBe5giwHgoMPah6GZYIyxMLnoByrRj72Mnotd+hUcPYpU2Sd9kZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736213061; c=relaxed/simple;
-	bh=oa7BLax2vVLwTKNZySRQlJ5gQj0CImWlqaBcE1PQDYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DjZZF0KFYZU1D4RPFisay2TUnjHWOxdWZ4tTz8uGa4Cq8rH2LwswB7ZNcxfoZgTTzkAoLYKraerhB9lEz4rlShTiovu+cBFqx18fVznNiVZHXvn94YDzob2DM+y+o3dhtPfse3Elw6pGiyWYucZVzeDxCSELSuN3z+3ib8Dbdtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=aQf0AcQA; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21654fdd5daso202176665ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 17:24:18 -0800 (PST)
+	s=arc-20240116; t=1736213206; c=relaxed/simple;
+	bh=KO50LlfdJt2i4wpFMI9ThGGSdZBM4MjXb0cipiAo8Cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZ+96amK2Jil26z84ulkoUDOTbqj5osNGB+ttEAMpsTqxoYTz1n1VE4lzEwXgMUyMmXvqaeZ2MXPb3axq5Ghgy6aChJRGrpRa/LK6mR0I8xYdbsECCyJ1jZIeumAAyc1mD0IjAhghyDoo9Itejhz+oF5IF5KsDd2qCzThepa6pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vZvagTuP; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215740b7fb8so65675ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 17:26:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1736213057; x=1736817857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qZPecWCgpba7sHQq5CdN+bg6c+cUTB9glWE2EXzfT+o=;
-        b=aQf0AcQAijCKSENokV67gGaUMY7uj1H5sx998H/AsgRe16NyLGoA9bs+u87drG2SVI
-         qds73hI0xAr5co5daNE06RbMkhwqNm0K9mZQM86rcGdnonRWPvBNnDD87VBvzNDCvNvs
-         xUulZgYTIjoyFS2tIxRzVX/Atf13J2HN0llZcNZ3LFu1h6Jp/mbOorgfqsAST5V+IXxj
-         dRZYXM6cZZOI9Xv0JpVIlLxHW9uVoPxwwynHFJGMZs7FFDDF0pqf9FngcsuCgOVJYOR6
-         SnoZhQlt611ZdjxvqkA9zYDgumHB26qkjd4rUEio/qcbV5fPTlVgPaW6Vpf6Am3iR8oB
-         pPOw==
+        d=google.com; s=20230601; t=1736213204; x=1736818004; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M372tjeIGF/B6j8tuFkO5rd4a50LQoTcJMIW9ilW1lM=;
+        b=vZvagTuP8r+HNK6NdI850DtIW8e5+OtML0dWMCivm8BHVgkEMjYEa0haHCrLRpNKWV
+         pP9L0PFBQ46BPeG0N8j2RckZ6AqwAzK31Rs0uYG8TJUvoKdonSu9YXAExIkn+9Z4P2G/
+         NcMmz4bRTyGMjJSBWxnkrsVRz5RfN8AOoWdT6y99pyKjQN77xx1IZzUjupp22VtxySqZ
+         EP+arA5mWDEoHkivXNDHXhzDBlilt6t+kVVSdxwRpoProZZuEyDui2MPNTtzO4vcysYj
+         qialLhu1SbDXCHXRw916yaZcN0jLhy+zNYIL7KwVUeFVXcLRhMQoKkoXK7O71MdSRiZl
+         FCKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736213058; x=1736817858;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qZPecWCgpba7sHQq5CdN+bg6c+cUTB9glWE2EXzfT+o=;
-        b=BKZch7b2CbbggXYdNk1lHk2Pxxq3OPABM3Dwuzb7hN+79iMVVH2RuIvVVIKwL3j47h
-         aTSqGR8o8+f4ttfDGuPXUkwseOfmvEkQ1+PfbPWe9dqd3ZLDJrGsRYnM7FyciWd/irZl
-         kzc4zdcpdf0LV1wJaMSYE9+T65I0Qv5z1NLgNVSVUe/z3BN1J6oYvrCyXve4C2IRsJdx
-         NzmwC40gNwFD56TrnypD5IBwzn3ax3pW6wNOxWoeCaV2OoDSmqD2CnrcBE9qNDylVBH9
-         qKx3NZXjx0uAk3ZhrNIYZ8mdEC6mpCHwxilUG14c+/rllJ9/Jo2alYTb6qTWq4IwPWtP
-         CmxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOgH6UD/WbtGY9rez1jMNjivRReB7a+eXyG4Wgx9F3EAQTWHFs6ZtbYn4Hc/kwqnmsACKAg4L8r8Av58rF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUUCrPneTKyw31fw1MOQVHH8Ak4UzFKbf1y0LegePi5RbM2BZp
-	ZUOdJrHN8/ctT0jX3UCi3JrCVm0zyKLuqZHVK1G3E02fpoJ4l4GCSyiLoY/YJWtkqL0encVZhO8
-	69wmeqaZ0lygKubg/H7tDNl9NIgRRnDRsQs3wlRWyN6mW7jE=
-X-Gm-Gg: ASbGncs0ParP3CPNViat/8h8vJYtfaYffvrl9caCydIZHza1koLbAWTxxWRI61L0E45
-	xFW4K+p9sBibar2zkIapRzjVwCwwxQrVxvDvDQ1Q=
-X-Google-Smtp-Source: AGHT+IGxfCbhDsiYzXZ10koahsLwALN0WibBZXuBUkv/+S+3vs2NQ0VIZ42W4wWqWcJdy87TM2gOAcNKVf56f3j3rIs=
-X-Received: by 2002:a05:6a00:918a:b0:725:322a:922c with SMTP id
- d2e1a72fcca58-72abdd20f53mr79384328b3a.3.1736213057605; Mon, 06 Jan 2025
- 17:24:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736213204; x=1736818004;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M372tjeIGF/B6j8tuFkO5rd4a50LQoTcJMIW9ilW1lM=;
+        b=P0MFCRgUgJjBuagy6DyvWLnA0GtAKrquiZKEHwwWRmStYdeUsgYbUxqEwOV+BM+1Yr
+         H/DbzxWFI/8YYOZYXXbVskxUMcR3UYz54PX2DLyWTEQ8djbDG0BmUXBe5ZA7NNfOrshv
+         ARcwfEvQT1RqSL8CyMHDc1zW7z3tj/N/EU2y+MFr28MnqsnsOIYS3Em7PemYwNLbN8FU
+         Ap7DTxvZw011h6xcj1M4ytlGAE5MFF0nN0qLQLf4LOsF29Y4VpwbKKNwIrcBI/i9RTS3
+         XYr8PG+TIF8Ew9BHFFp+fIVRL8FzYh+Xf1wzIoIqiirgU9a5yHeWpbwaGvuysO/ycXKJ
+         cLyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoyCLkK1nDXUMWs5x7gQld/ku8LawuhiDgk5iZp4ox5qKvISz0uPJj7SOWlUPQtqY3Fh30W3qglRTUqvQf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoDAqQ4fzUUBotae6Pgmmar/LSJhebBiOJ5MhnMBdY2RlNECYO
+	lXpVwPTyjxd+e5TufU/oie8qZ0Qfiw4b/oIzQT8ojWYpZsICo8bucmsHG2XhRg==
+X-Gm-Gg: ASbGncuSpxnAffMWwTNqXE5v6y/Zo05Difx5kIqfGaZ5FQ88nQbQeQCDLILE5SXCKJ1
+	z2ViViMEKMoSUmh7F230TX7Elh5vzSmjP+g+zZHjCtRW6iEj0wMrRh2S4EPNwLatHypEf9sVIwe
+	3SqmSmnXNMvmzzkgEclrOmq8C0pgG7Wj3ve825t9CzpIyrP7M7kzSVTwX5uDtShNZ2kmkbJOiB/
+	bWvYatjtU+BQkPsimWkWPLJHInMPo8dqxQ4bKzsVUeZuCt/Pi57nEqV
+X-Google-Smtp-Source: AGHT+IFUje41UqMGChKWwoUXHu8SMmzrXD2rW9ZDvE3vXGz/NkrxhtzEWY6tO9tH8NrLIu1jBzPmiQ==
+X-Received: by 2002:a17:902:e849:b0:216:48d4:b3a8 with SMTP id d9443c01a7336-21a7acca8ddmr1058805ad.16.1736213202325;
+        Mon, 06 Jan 2025 17:26:42 -0800 (PST)
+Received: from google.com ([2620:15c:2d:3:42b3:1d33:ab4b:8279])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbb70sm32188398b3a.98.2025.01.06.17.26.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2025 17:26:41 -0800 (PST)
+Date: Mon, 6 Jan 2025 17:26:37 -0800
+From: Isaac Manjarres <isaacmanjarres@google.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+	lorenzo.stoakes@oracle.com, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, surenb@google.com,
+	kaleshsingh@google.com, jstultz@google.com, aliceryhl@google.com,
+	jeffxu@google.com, kees@kernel.org, kernel-team@android.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND v2 1/2] mm/memfd: Add support for
+ F_SEAL_FUTURE_EXEC to memfd
+Message-ID: <Z3yCzcpTHnW671WL@google.com>
+References: <20250102233255.1180524-1-isaacmanjarres@google.com>
+ <20250102233255.1180524-2-isaacmanjarres@google.com>
+ <CAG48ez2q_V_cOu8O_mor8WCt7GaC47baYQgjisP=KDzkxkqR1Q@mail.gmail.com>
+ <CABi2SkVmdxuETrgucYA2RucV3D4UoaPkDrXZKvLGjfEGp1-v2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250105162404.357058-1-amir73il@gmail.com> <20250105162404.357058-3-amir73il@gmail.com>
-In-Reply-To: <20250105162404.357058-3-amir73il@gmail.com>
-From: Dmitry Safonov <dima@arista.com>
-Date: Tue, 7 Jan 2025 01:24:05 +0000
-Message-ID: <CAGrbwDRVE8GdAaHmS78yVR3wqLtGwPiR=uHaygcG0moemovH1A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ovl: support encoding fid from inode with no alias
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABi2SkVmdxuETrgucYA2RucV3D4UoaPkDrXZKvLGjfEGp1-v2A@mail.gmail.com>
 
-Hi Amir,
+On Mon, Jan 06, 2025 at 09:35:09AM -0800, Jeff Xu wrote:
+> + Kees because this is related to W^X memfd and security.
+> 
+> On Fri, Jan 3, 2025 at 7:04 AM Jann Horn <jannh@google.com> wrote:
+> >
+> > On Fri, Jan 3, 2025 at 12:32 AM Isaac J. Manjarres
+> > <isaacmanjarres@google.com> wrote:
+> > > Android currently uses the ashmem driver [1] for creating shared memory
+> > > regions between processes. Ashmem buffers can initially be mapped with
+> > > PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
+> > > ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
+> > > permissions that the buffer can be mapped with.
+> > >
+> > > Processes can remove the ability to map ashmem buffers as executable to
+> > > ensure that those buffers cannot be exploited to run unintended code.
+> >
+> > Is there really code out there that first maps an ashmem buffer with
+> > PROT_EXEC, then uses the ioctl to remove execute permission for future
+> > mappings? I don't see why anyone would do that.
+> >
+> > > For instance, suppose process A allocates a memfd that is meant to be
+> > > read and written by itself and another process, call it B.
+> > >
+> > > Process A shares the buffer with process B, but process B injects code
+> > > into the buffer, and compromises process A, such that it makes A map
+> > > the buffer with PROT_EXEC. This provides an opportunity for process A
+> > > to run the code that process B injected into the buffer.
+> > >
+> > > If process A had the ability to seal the buffer against future
+> > > executable mappings before sharing the buffer with process B, this
+> > > attack would not be possible.
+> >
+> > I think if you want to enforce such restrictions in a scenario where
+> > the attacker can already make the target process perform
+> > semi-arbitrary syscalls, it would probably be more reliable to enforce
+> > rules on executable mappings with something like SELinux policy and/or
+> > F_SEAL_EXEC.
+> >
+> I would like to second on the suggestion of  making this as part of F_SEAL_EXEC.
 
-On Sun, Jan 5, 2025 at 4:24=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> Dmitry Safonov reported that a WARN_ON() assertion can be trigered by
-> userspace when calling inotify_show_fdinfo() for an overlayfs watched
-> inode, whose dentry aliases were discarded with drop_caches.
->
-> The WARN_ON() assertion in inotify_show_fdinfo() was removed, because
-> it is possible for encoding file handle to fail for other reason, but
-> the impact of failing to encode an overlayfs file handle goes beyond
-> this assertion.
->
-> As shown in the LTP test case mentioned in the link below, failure to
-> encode an overlayfs file handle from a non-aliased inode also leads to
-> failure to report an fid with FAN_DELETE_SELF fanotify events.
->
-> As Dmitry notes in his analyzis of the problem, ovl_encode_fh() fails
-> if it cannot find an alias for the inode, but this failure can be fixed.
-> ovl_encode_fh() seldom uses the alias and in the case of non-decodable
-> file handles, as is often the case with fanotify fid info,
-> ovl_encode_fh() never needs to use the alias to encode a file handle.
->
-> Defer finding an alias until it is actually needed so ovl_encode_fh()
-> will not fail in the common case of FAN_DELETE_SELF fanotify events.
->
-> Fixes: 16aac5ad1fa9 ("ovl: support encoding non-decodable file handles")
-> Reported-by: Dmitry Safonov <dima@arista.com>
-> Closes: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiie81voLZZi2zXS1BziX=
-ZCM24nXqPAxbu8kxXCUWdwOg@mail.gmail.com/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Thanks for taking a look at this patch Jeff! Can you please elaborate
+some more on how F_SEAL_EXEC should be extended to restricting executable
+mappings?
 
-Thank you for such a quick and proper fix, even though it was the
-holiday season :-)
+I understand that if a memfd file is non-executable (either because it
+was made non-executable via fchmod() or by being created with
+MFD_NOEXEC_SEAL) one could argue that applying F_SEAL_EXEC to that file
+would also mean preventing any executable mappings. However, it is not
+clear to me if we should tie a file's executable permissions to whether
+or not if it can be mapped as executable. For example, shared object
+files don't have to have executable permissions, but processes should
+be able to map them as executable.
 
-FWIW, I've pushed the patches locally. In two or three days I should
-have some hundreds of test results from the duts where the issue was
-hitting originally. Judging by code changes, I hardly doubt the
-original issue would reproduce, but might be worth getting more
-coverage of this code.
+The case where we apply F_SEAL_EXEC on an executable memfd also seems
+awkward to me, since memfds can be mapped as executable by default
+so what would happen in that scenario?
+
+I also shared the same concerns in my response to Jann in [1].
+
+> > > diff --git a/mm/memfd.c b/mm/memfd.c
+> > > index 5f5a23c9051d..cfd62454df5e 100644
+> > > --- a/mm/memfd.c
+> > > +++ b/mm/memfd.c
+> > > @@ -184,6 +184,7 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+> > >  }
+> > >
+> > >  #define F_ALL_SEALS (F_SEAL_SEAL | \
+> > > +                    F_SEAL_FUTURE_EXEC |\
+> > >                      F_SEAL_EXEC | \
+> > >                      F_SEAL_SHRINK | \
+> > >                      F_SEAL_GROW | \
+> > > @@ -357,14 +358,50 @@ static int check_write_seal(unsigned long *vm_flags_ptr)
+> > >         return 0;
+> > >  }
+> > >
+> > > +static inline bool is_exec_sealed(unsigned int seals)
+> > > +{
+> > > +       return seals & F_SEAL_FUTURE_EXEC;
+> > > +}
+> > > +
+> > > +static int check_exec_seal(unsigned long *vm_flags_ptr)
+> > > +{
+> > > +       unsigned long vm_flags = *vm_flags_ptr;
+> > > +       unsigned long mask = vm_flags & (VM_SHARED | VM_EXEC);
+> > > +
+> > > +       /* Executability is not a concern for private mappings. */
+> > > +       if (!(mask & VM_SHARED))
+> > > +               return 0;
+> >
+> > Why is it not a concern for private mappings?
+> >
+> > > +       /*
+> > > +        * New PROT_EXEC and MAP_SHARED mmaps are not allowed when exec seal
+> > > +        * is active.
+> > > +        */
+> > > +       if (mask & VM_EXEC)
+> > > +               return -EPERM;
+> > > +
+> > > +       /*
+> > > +        * Prevent mprotect() from making an exec-sealed mapping executable in
+> > > +        * the future.
+> > > +        */
+> > > +       *vm_flags_ptr &= ~VM_MAYEXEC;
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > >  int memfd_check_seals_mmap(struct file *file, unsigned long *vm_flags_ptr)
+> > >  {
+> > >         int err = 0;
+> > >         unsigned int *seals_ptr = memfd_file_seals_ptr(file);
+> > >         unsigned int seals = seals_ptr ? *seals_ptr : 0;
+> > >
+> > > -       if (is_write_sealed(seals))
+> > > +       if (is_write_sealed(seals)) {
+> > >                 err = check_write_seal(vm_flags_ptr);
+> > > +               if (err)
+> > > +                       return err;
+> > > +       }
+> > > +
+> > > +       if (is_exec_sealed(seals))
+> > > +               err = check_exec_seal(vm_flags_ptr);
+> > >
+> memfd_check_seals_mmap is only for mmap() path, right ?
+> 
+> How about the mprotect()  path ? i.e.  An attacker can first create a
+> RW VMA mapping for the memfd and later mprotect the VMA to be
+> executable.
+> 
+> Similar to the check_write_seal call , we might want to block mprotect
+> for write seal as well.
+>
+
+So when memfd_check_seals_mmap() is called, if the file is exec_sealed,
+check_exec_seal() will not only just check that VM_EXEC is not set,
+but it will also clear VM_MAYEXEC, which will prevent the mapping from
+being changed to executable via mprotect() later.
+
+[1] https://lore.kernel.org/all/Z3x_8uFn2e0EpDqM@google.com/
 
 Thanks,
-           Dmitry
+Isaac
 
