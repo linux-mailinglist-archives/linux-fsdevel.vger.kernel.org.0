@@ -1,112 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-38569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAD8A042F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 15:45:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D377A042FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 15:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74541638C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 14:45:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1E337A169D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 14:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97ED31F3D54;
-	Tue,  7 Jan 2025 14:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E7B1F2C3F;
+	Tue,  7 Jan 2025 14:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DwOB1XX/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGXOYHJV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E086A1F3D4E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 14:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE911D958E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 14:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736261023; cv=none; b=OfFF7VqryMZSt4g5etmHEvch1X/1abvO6Tmf08S+TYmQierZWhgYg1AuYJbRnaF2rINtjxWN1Y3NLTNHH/UID9JTnEGI1g37NQVUyQVnN/tUlXCGS1YN44N4G9L5WUptfYdjMbOuE6syr6vxC3SW4rXKsf5fDhwG+stElPzzE4Y=
+	t=1736261165; cv=none; b=euPJjSeYYyIS2rrrR04XwQSBu1sLk/qPtmO2zYKH18H4xAlPY9IPM9L8lavktYNRh9x9kVCUl5YLYytWLRkqvo/o0NHxBup/sWZasGXj8X+hqAfnvvsVKu7Vbr0V1cX/9Thf3WgxDqCk/bU8qmmnheA28gdcowIdkwFN1pZ+Vh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736261023; c=relaxed/simple;
-	bh=sntHQIVesXD5yZEwojjjAR3H66+NwGTt5n50NGAHieE=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=odrxbWTbB1HKiHu66Eax1HjtUZnLi8Xo7A+R7mtOlixwqHBUTbT6m8/7UIUQywYXbQiristVTFfLNbIN9amWjzj3xJWZ8OMHe+mBCmNJNEtKAKcRFJHtMb+3Q9PYqppQ0AkSRMNcVDH477/6KoKqM/kpOUTl0WTrmawjfMp42KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DwOB1XX/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736261017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/UVIzz5vWxd3je9CAuSh2DO18s44N+6cEi2+ThdjS5A=;
-	b=DwOB1XX/Nhj9hrmRjLTxV2QeoOy6EpGGZ9nPGD42C0V1lYGGRc9BQ9M8hqvW5WXCKtKjvY
-	L4VTJdROaRFrMGrnYpaXuPX3Uf/841s3iKC0goKgVWM+/hHsHA3qY4253OgkfkeARqLuXj
-	CfPUAKMGcErLE48ZJTlRKDnv2k07O9k=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-fcV7vOimOVCYUNdHzRlwrg-1; Tue,
- 07 Jan 2025 09:43:35 -0500
-X-MC-Unique: fcV7vOimOVCYUNdHzRlwrg-1
-X-Mimecast-MFC-AGG-ID: fcV7vOimOVCYUNdHzRlwrg
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CA2DE1955F2F;
-	Tue,  7 Jan 2025 14:43:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.12])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 03CDE1955F43;
-	Tue,  7 Jan 2025 14:43:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Fix read-retry for fs with no ->prepare_read()
+	s=arc-20240116; t=1736261165; c=relaxed/simple;
+	bh=EMMIx2b/AQwoZCw3Mxgb80QcQH/nA4Fe27eBqnFyTuk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sf/U7AzTN718sEYrmA0QX7vlFmUYm4wdbMg2krgxv7dK87C/cMq/0cOFbZTLcYpAQEl7Z2BhDKZNSXDjCImTtB92p8xtNOWoYkOiLf6Bpacg7IzFx2BpJnYT42134r2W4iuMOP/SgDSbrsqO5ttAdwIQxvGC/ejFGGXrd16jYOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGXOYHJV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B390C4CED6;
+	Tue,  7 Jan 2025 14:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736261165;
+	bh=EMMIx2b/AQwoZCw3Mxgb80QcQH/nA4Fe27eBqnFyTuk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=vGXOYHJVyJBmhvdgEYlwhOhCnhtxWbl5HHsl64Nvr7Lj4QznYc4X/RSY1NzULgPCq
+	 C6kfQkz5w/6PcvuX4sqTpl29+fO/eeSajZI4FxiEn/YCNuvieD6f9+m7RICB583TLW
+	 s1hQTeaKNDNC0iwYZPkTB9PvRUOX7B1jqxVVOUi7bymNS4o06n8K/GzdUCMOfx8/C2
+	 +V3iAyBF0WoIM76tdGpD+2IojQcS5zu6EmjWAvnl46MAK36OTUXQolblhMPoV4ZtSo
+	 5CJSaOefpsL2Uolot0/kdcg3yqUGAv+nrvr1f0P3i2CNAsK0XfYTVnyP5Llnjb7Wev
+	 9JYZr30m6Sjsg==
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [GIT PULL] fuse fixes for 6.13-rc7
+Date: Tue,  7 Jan 2025 15:45:44 +0100
+Message-ID: <20250107-behielt-haselnuss-e0ff6d12d941@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CAJfpegu7o_X=SBWk_C47dUVUQ1mJZDEGe1MfD0N3wVJoUBWdmg@mail.gmail.com>
+References: <CAJfpegu7o_X=SBWk_C47dUVUQ1mJZDEGe1MfD0N3wVJoUBWdmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <529328.1736261010.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 07 Jan 2025 14:43:30 +0000
-Message-ID: <529329.1736261010@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=853; i=brauner@kernel.org; h=from:subject:message-id; bh=EMMIx2b/AQwoZCw3Mxgb80QcQH/nA4Fe27eBqnFyTuk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTX2qnbXfFJyJ+ROmUNr3bLuduX4yd33P4VFRxycJK/h 4zTTbErHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPZ7MLIME/nwnwXP71XOdKy i031u4xy9A9+mvky+XWRfFD/3CJDX4bfLJbnz9emyP2PPshf1p5wcF/u3KSXv+fX/qzaLawc49L MCQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Fix netfslib's read-retry to only call ->prepare_read() in the backing
-filesystem such a function is provided.  We can get to this point if a
-there's an active cache as failed reads from the cache need negotiating
-with the server instead.
+On Mon, 06 Jan 2025 14:01:36 +0100, Miklos Szeredi wrote:
+> Please pull from:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+> tags/fuse-fixes-6.13-rc7
+> 
+>  - Two fixes for the folio conversion added in this cycle
+> 
+> Thanks,
+> Miklos
+> 
+> [...]
 
-Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/read_retry.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Pulled into the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-index 21b4a54e545e..16b676c68dcd 100644
---- a/fs/netfs/read_retry.c
-+++ b/fs/netfs/read_retry.c
-@@ -152,7 +152,8 @@ static void netfs_retry_read_subrequests(struct netfs_=
-io_request *rreq)
- 			BUG_ON(!len);
- =
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series or pull request allowing us to
+drop it.
 
- 			/* Renegotiate max_len (rsize) */
--			if (rreq->netfs_ops->prepare_read(subreq) < 0) {
-+			if (rreq->netfs_ops->prepare_read &&
-+			    rreq->netfs_ops->prepare_read(subreq) < 0) {
- 				trace_netfs_sreq(subreq, netfs_sreq_trace_reprep_failed);
- 				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
- 			}
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+https://git.kernel.org/vfs/vfs/c/3ff93c593561
 
