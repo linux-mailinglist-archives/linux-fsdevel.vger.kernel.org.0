@@ -1,187 +1,437 @@
-Return-Path: <linux-fsdevel+bounces-38486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B19CA0338C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 00:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5529A033F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 01:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E056A3A14D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2025 23:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4353A1FB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 00:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B671E260D;
-	Mon,  6 Jan 2025 23:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19A3A8F7;
+	Tue,  7 Jan 2025 00:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pz1HgIx/"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="Uj3lgr9T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outbound-ip191b.ess.barracuda.com (outbound-ip191b.ess.barracuda.com [209.222.82.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0064B1E1025;
-	Mon,  6 Jan 2025 23:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736207398; cv=none; b=iL51MlB7xLq0j/SC/OaJ17Np+hDzn5/XAAriM0pjYSK6yVm7EJBMOBJUJ07AzAGR7prtsimKOivVaizJlPaCLHJaD/+bjbSeYntiPvHZqEPYumQW1cEOwjPvqv7Dz06NhjHOJMuWroASA/kvZr/49xcsYxy+42w1ezyPTpoHKh8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736207398; c=relaxed/simple;
-	bh=fYRywOPmfgHYpX4Q1BeTvWS+5nz1VVw2i6Ft9vmcLg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHPfJxW3L85OiIaK7jIEEoUA6UappQV0HoMGIXf8FXTXiVcUkLqxQ+oKEoGqsZa14wda5EgO5NqxYPfEu1ccUuTI+NL5vytg1eMZid1SCVwaAh0tk86jmJ7Io5UUZGzwaA1VbFUtBsg223ZlFi3FGl+K2x7+CLnJ8VR4d38/130=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pz1HgIx/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85698C4CED2;
-	Mon,  6 Jan 2025 23:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736207397;
-	bh=fYRywOPmfgHYpX4Q1BeTvWS+5nz1VVw2i6Ft9vmcLg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pz1HgIx/jedXCAPUL82RtNiwksHXWp3q6+OvjBpNT0gB++f9aETT2Oa7EMKcfUbPk
-	 Lu1yj9KwnF1EH8tZWU4AUgftr8+qhEa4jTAdHDLE/JMoDHQIX6D7ORabpGY+0dk2x2
-	 jVAobq9swE3ackv6/inGqju+jX48wx8O7xeLatQz1+kGRtY4ymDPekmcd05KVJnD1J
-	 XWruXU2QWiNv6nfNTw6SUci+8FPMFJywFNO+GWvkaypmv0TGWnogoQuIXoKv5ECy2/
-	 JVsNsBWkA4qK6Ac/vFZEddGFhpdSch606wvVj0CQYhpUlTn3FuwrunFtji9dJao/5o
-	 fTgzdhmrOErlg==
-Date: Mon, 6 Jan 2025 15:49:56 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>, sunyongjian1@huawei.com,
-	Yang Erkun <yangerkun@huawei.com>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [BUG REPORT] ext4: =?utf-8?B?4oCcZXJy?=
- =?utf-8?Q?ors=3Dremount-ro=E2=80=9D_has_become_=E2=80=9Cerrors=3Dshutdown?=
- =?utf-8?B?4oCdPw==?=
-Message-ID: <20250106234956.GM6174@frogsfrogsfrogs>
-References: <22d652f6-cb3c-43f5-b2fe-0a4bb6516a04@huawei.com>
- <z52ea53du2k66du24ju4yetqm72e6pvtcbwkrjf4oomw2feffq@355vymdndrxn>
- <17108cad-efa8-46b4-a320-70d7b696f75b@huawei.com>
- <umpsdxhd2dz6kgdttpm27tigrb3ytvpf3y3v73ugavgh4b5cuj@dnacioqwq4qq>
- <20250103153517.GB1284777@mit.edu>
- <20250103155406.GC1284777@mit.edu>
- <5eb2ad64-c6ea-45f8-9ba1-7de5c68d59aa@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD441CD3F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 00:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736209535; cv=fail; b=j9wM0ZijB0HJCxceSuWDjfu+UGFFaJh1W0cZxacF+PPYpB3AK2R4imYD3+hBZlhfqFj2+gEwhnptL1lWaY6bMCHHvMhxLKWnFU30MahgEVHNvdTa2NfrDlR5xEvBMXd/DaXqCpkd8AzV22g0/zsbjVAFTSn6slza10QWMKAVj0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736209535; c=relaxed/simple;
+	bh=qDrJQD5GIUFgEPfAsu6PeustEMyFEnEPmBk1X6gapVc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MLdpQkvICL2prKkrzEEER7ckx9MKrDP2RXMB+Z7lc2bcONpT3+nZqWSUCX5Wz543tj+iIolfKLZ1X0rtbbbjEL48yWD9V9xD8gSOKtB69g+9z1JkOof1HbYB9lREX8zeqhINZJrZZdgwNgW1Xv3jl1OPklieXFBvEW0XN+Qxxkc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=Uj3lgr9T; arc=fail smtp.client-ip=209.222.82.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2173.outbound.protection.outlook.com [104.47.57.173]) by mx-outbound18-108.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 07 Jan 2025 00:25:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D+in07hx6KzCOA5xThDupNNM4ZMR8tzExkp+Gwq0hvWKI5e0procd+2eysbdNWw33GDebdSxLoJtEGCSBIFps/TJ8wdRFbiijAL1tXSgYz+Wk9CwhZaQxH7BE2pl9XzsF28yR+UfmtcVCf1CkbRpMtgEmTSLXd1feQ4ee07cvQX09bDnrTtkJ0Var6xhTV4qcQaejoK2++cHF+DPsP9aeDUT3ofBBQNLsQXPUdIoSYmntperQTuge+WdYSqQLC2Ytlt+vg0JDdLu8i+T4Isz8+MW6HzifqRA9OX+mpdqMEsbDRmDkzmXGY7uq4cBo0eki8fre1MrccPt2pEW8txiKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3Bs8av6muO2dzP8iqIxkblkMbf84WzArLrGlxzRam0Q=;
+ b=kbas8I7ZtQb/A1I+AjAKQKEflh+0CF0fK4TwxnOU842KW2aw2Nt3SAAhdoc4zAvWIwO8Hx6obhNCpcEuznFgg0EYwRlTNKdZGGLnrBXQV0bzJz1pEppOyHoXujdf0HCEvho4gR49bIGuEJIh0g7fwVUXZM4GMpyUzaCqFTdKJtyHVo4uiVpHMm/XD+YdyfP1dN9OZCfTtXb/GI9wWtPGz9+xmzgIDC+rrrpbn6GE/KuzftrNYQJmlW2elqHz19NY73njJr11pIRcbNLB9GZPzO/yhYdyp7GcOHhUL4LbDtr9FAyCY4qRE9I+h6vvG8fSU7u8E4dj5lty/QYmVpt09g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=bsbernd.com smtp.mailfrom=ddn.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ddn.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3Bs8av6muO2dzP8iqIxkblkMbf84WzArLrGlxzRam0Q=;
+ b=Uj3lgr9ThdDRXn9jMCjc30bdfwwSolrBnwTYz9zsvUNoxUV0q1Lrbms3RllZLv7EvBjDKI2NgNdQL4+Gb5io5Qz1cKOOcwHi2NKIiWEt2UoRBVrEVfIx/KETcHPqu60SU2BRBalFrrcWFbAPCGNzt4H+WvNWnwWi5r1njorxqA0=
+Received: from SJ0PR03CA0211.namprd03.prod.outlook.com (2603:10b6:a03:39f::6)
+ by BY1PR19MB8013.namprd19.prod.outlook.com (2603:10b6:a03:532::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.18; Tue, 7 Jan
+ 2025 00:25:12 +0000
+Received: from SJ1PEPF00001CEA.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::24) by SJ0PR03CA0211.outlook.office365.com
+ (2603:10b6:a03:39f::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8314.17 via Frontend Transport; Tue,
+ 7 Jan 2025 00:25:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ SJ1PEPF00001CEA.mail.protection.outlook.com (10.167.242.26) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8335.7
+ via Frontend Transport; Tue, 7 Jan 2025 00:25:10 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 5D6034D;
+	Tue,  7 Jan 2025 00:25:10 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Subject: [PATCH v9 00/17] fuse: fuse-over-io-uring
+Date: Tue, 07 Jan 2025 01:25:05 +0100
+Message-Id: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5eb2ad64-c6ea-45f8-9ba1-7de5c68d59aa@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGF0fGcC/33PSW6EMBAF0Ku0vE5FnijbWeUeURbGQ+MF0DJDE
+ rW4ewyKumERlt/Sf/V9J0PIKQzk7XInOcxpSH1Xgnm5ENfY7hog+ZIJp1wyyiqI0xBgyqm7Quw
+ zIDAKOToJyDyNDnXFoialfsshpu+N/vgsuUnD2Oef7dIs19cNpYYyqOXeLdws4CuNTT+N0Lb2B
+ iVTMJyqqIRhUsp377tX17frpb9t+P+2Wa71UnWqEogYHvV12Vw91jBG1QlTFSZoRGpNWWHMkcE
+ dw/kJg4XhOqDznoYCHRm1Z87WqPVTQtbCoqmts0dGPxlOzQmjC+NNNJGj5HUQT2ZZll9UniY3I
+ QIAAA==
+X-Change-ID: 20241015-fuse-uring-for-6-10-rfc4-61d0fc6851f8
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, 
+ David Wei <dw@davidwei.uk>, bernd@bsbernd.com, 
+ Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1736209509; l=12590;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=qDrJQD5GIUFgEPfAsu6PeustEMyFEnEPmBk1X6gapVc=;
+ b=m2YzJ2FdwXIyvPL40JD3fo9/2VXu4TZE1EJqVgfTNGq7KTTkTlPSyWBPfUan81KybwOy4+8w2
+ cwyHcp2MET6BUv8Uh8pcYXi8Yj0p83GjkyFsYY6x0gG1KeWEfipRTJ+
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CEA:EE_|BY1PR19MB8013:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9176b514-0f2b-43bf-8ff2-08dd2eb1bf59
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?czllNnd2OUx6cG01emQva2s2cjY1SzkycHE3SzNZZHpxaDR6alpDRVlsNEwz?=
+ =?utf-8?B?Zm1rUmlqd0hhTThqTUNBQlhZWDY2T0piME81d3lQaGtYSEtkRndIK1Q1WnRs?=
+ =?utf-8?B?bnNidjg0Tlo0eXJpYlJtZ0s2S2RqSWVhcmtDTEhsamdWMFUvWStVZHRzK1ZE?=
+ =?utf-8?B?Wjl3SFRZMjM0eXd6VFA2T21mb2t6alloUmZYbkZ5aFRYOVlWWHRTV0JVRlVr?=
+ =?utf-8?B?bVF2cFUvYkljTHV4Qi9NaUJaQUN6WHpTUFY3aWpQbnJ4SStRZTB3blNFVm9E?=
+ =?utf-8?B?TE1CRTdFUTNCUjRHY1JnTTRXTEpEV0tQRjU4WGtSbE00eTNxL2g1V1VmSlQz?=
+ =?utf-8?B?QkFuS0VOenh3eUEySFNOdzM1NmxLdGx3RUlCbHhCNTVGYkhjT0cvVERvOUZw?=
+ =?utf-8?B?YmFvcW1iOXZwRU56T3RndXZNOWNBTmppaUN5V1RsMzRMRUEzc0ZMclRnREov?=
+ =?utf-8?B?bGJsTjBHTEVSUUpNR1g4cGRyb2tYQWpNeW55Q3dwcmVVc3ZQaGlna0ZocVlS?=
+ =?utf-8?B?SGlkYnJpbHVuRXk2WVhjalBvbC9mRWRSQXp4UTMvOE8yOXhwUjhiODFVNDhV?=
+ =?utf-8?B?bGVsZlRKTDhlVWI1R2FGSDZSVFZWc20yTy83WXpsQzdWN3VOVDRDaHNZd3E5?=
+ =?utf-8?B?R2sxakpyS0FvamNiU1J6clZ3dGdWTzRjeThFczE3R0ZiQ0VLSTNwS0t6bHNQ?=
+ =?utf-8?B?VWJLZllVNTZoOXFHZlpQNExkYkdIMUdpZlBYd3ZDTm55ejdYOCtsS3VmMWZv?=
+ =?utf-8?B?cEQzbGpSaUZYN2xTOEpFSzVkZTJqa3VxUFdZRVJXWTNYRGRZZUxrNENnQUVG?=
+ =?utf-8?B?M0dBOHNoMGh4QkpUTTR3cGI2Ui9lRU1uVjMySGdURGFzM2pDWEVrMmhvMVV2?=
+ =?utf-8?B?MElNR3F0VnF3aTRrcVU4SUFVdUdRUmEraXdxNDR3MzlEVjFkUFlSL2ZiKzFZ?=
+ =?utf-8?B?Y2lOMDE3ZWU0Y2pWV2N0Z25YZmxRM0l2UDQ0SzVxa3o0UHQ4UFBOQ3FHZWRo?=
+ =?utf-8?B?TUFYb3YrNzVRaWdoMzd4NWZtZEw1QUdVN3VqY2dPcldmSUpFVFIrV3gxL0hz?=
+ =?utf-8?B?ekVBUkdKVUR5NElVeTY1c2FySnAxUS9rb2dRb3J4YVVUbjIweGZBNHZDak1p?=
+ =?utf-8?B?YnRNWkxUTm9Nd1FNQzYxN1ZZSHVFcUNtaTFpNmZmdENJNzd3M2toUE4vbUp2?=
+ =?utf-8?B?QzhIL251Q3JJM0pSRXZCZUtpN3ZXZFpPWk9XcHY3L2d1Q3cyN2s1dE1WNklE?=
+ =?utf-8?B?SGtkY05wSXZpOURPeXNxTGJlVmpZTElUdDRwWXJoUTBDdlBtU1NPMzNhSC9S?=
+ =?utf-8?B?ZG56VjFWMkpDN1hJNW1zS2pVaUFMdEdmbXpQZWRPRXpGQ3pIcTNEakZHelJw?=
+ =?utf-8?B?UlZvMjJuTTl3TmtrWk1jM1NqNklZWHBITjhqT1h2NEI3UUJwMmJUTDBEQy9x?=
+ =?utf-8?B?dTlmTHhIeHR2aUd3ZlErVGtlakdySUxFaGFNZmVDWklxQzVzNXVSd3NyU2VX?=
+ =?utf-8?B?bzU2WGZXTlF5bE9Xa1NSM1g4V21BUllXTktRVHlNdHp0d1Vkb0JUQmJRTnRM?=
+ =?utf-8?B?NGlrcWRTK1hQZFVqMWpwZGgvOVkrQzlRZFRsOGRVUFRZK0JNeGNZamRNakN4?=
+ =?utf-8?B?U3kxZ3hSU2hGQVlySE9NcWpYNUIrZU1vZ3Y0b080S1VOSExUY1huUldNTFF1?=
+ =?utf-8?B?YkV3WTBZRmRVcFVnUENoeVdhSkVoRjdMMXpqRnV2WitMUFZyYUJ0MTQ1UExT?=
+ =?utf-8?B?VkUySSsyMU9oZE9NRXZWUFpTWE1wZWxFQzFseW9oWEtlNVdHVGpJMnFCemVD?=
+ =?utf-8?B?bHZDSTJ3YlJDRFprL0lBODFJTkUzbUVrajR1SHcrVU8xNzFEVTd5byt6Zmto?=
+ =?utf-8?B?eURvYys1emYzUzJBRUhxQ0N0NHpZSmV4STR0UEFwWVg5bDlKL3pkeFA2QUx5?=
+ =?utf-8?Q?dXnuB9dLR70=3D?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(7416014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	mXLKuhB+RokPHy4BqxkvBV+WXuDom2931VPyopbVqUAx60loHZ6z5zHSrDw/ltKE6KBOVTlc5EUO2n6JpVDxUNNE8VZSiTVQv56ejqsoPixHG6ozuiol+ZDoHreS0b5DsdSj1jIh6W/C20DJBGVaz6qaBDt9dXm2HOX3xHDmPmDR7xo2F1m/CEnc/hx+VpIpllCXIDet/VAedhhmChG2tG7PDU1FRVxlTRTLx7crI/3TTRiSWMwkwrPgpHaH03EU7F0HlqXi0Mq+JTVzqPLdvUAC3JULK3nGXKZ+h0FyUOZWqpUoBxL15UFGEKwr1EOA63i95gGUy5njrpIPijztronP0G9Etjf9Dio2celW8DiRFcqi/tpmHs8hZDfJ6YSOherAZ5+PMpm11rer6WLJBCXClHgrR01757VOq+ZgLZcUJdaVo5UerTrjvzLzIgUGClbuiAMQYRm0os/wIAeqOIKNAkluMDtDPlCWZOGktfEcp5pGltfvedueDJ19aKr/J9leE0xdRuQIqzDFD6m6kmv85KZJjfh1eJaYgpl9HXcHeKBWkfUTck6Oo2lonODDbeLZX8fsP1lGTp5UrEp2/X/KXnF8nf5zPAG11mPUW+ke57jW3UyyPEFENlwfJq3gkZyNl7VTfEv3x34wMGGHxA==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2025 00:25:10.9947
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9176b514-0f2b-43bf-8ff2-08dd2eb1bf59
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CEA.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR19MB8013
+X-BESS-ID: 1736209517-104716-7790-12453-1
+X-BESS-VER: 2019.1_20241219.1759
+X-BESS-Apparent-Source-IP: 104.47.57.173
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGxsamQGYGUNTM0CDRLDUtJc
+	XYINXczNTA1NTIPNHYwDLJLNHcKNXMUqk2FgAyYCYYQgAAAA==
+X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261635 [from 
+	cloudscan19-124.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.50 BSF_RULE7568M          META: Custom Rule 7568M 
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-On Sat, Jan 04, 2025 at 10:41:28AM +0800, Baokun Li wrote:
-> Hi Ted,
-> 
-> On 2025/1/3 23:54, Theodore Ts'o wrote:
-> > On Fri, Jan 03, 2025 at 10:35:17AM -0500, Theodore Ts'o wrote:
-> > > I don't see how setting the shutdown flag causes reads to fail.  That
-> > > was true in an early version of the ext4 patch which implemented
-> > > shutdown support, but one of the XFS developers (I don't remember if
-> > > it was Dave or Cristoph) objected because XFS did not cause the
-> > > read_pages function to fail.  Are you seeing this with an upstream
-> > > kernel, or with a patched kernel?  The upstream kernel does *not* have
-> > > the check in ext4_readpages() or ext4_read_folio() (post folio
-> > > conversion).
-> > OK, that's weird.  Testing on 6.13-rc4, I don't see the problem simulating an ext4 error:
-> > 
-> > root@kvm-xfstests:~# mke2fs -t ext4 -Fq /dev/vdc
-> > /dev/vdc contains a ext4 file system
-> > 	last mounted on /vdc on Fri Jan  3 10:38:21 2025
-> > root@kvm-xfstests:~# mount -t ext4 -o errors=continue /dev/vdc /vdc
-> We are discussing "errors=remount-ro," as the title states, not the
-> continue mode. The key code leading to the behavior change is as follows,
-> therefore the continue mode is not affected.
+This adds support for io-uring communication between kernel and
+userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+approach was taken from ublk.
 
-Hmm.  On the one hand, XFS has generally returned EIO (or ESHUTDOWN in a
-couple of specialty cases) when the fs has been shut down.
+Motivation for these patches is all to increase fuse performance,
+by:
+- Reducing kernel/userspace context switches
+    - Part of that is given by the ring ring - handling multiple
+      requests on either side of kernel/userspace without the need
+      to switch per request
+    - Part of that is FUSE_URING_REQ_COMMIT_AND_FETCH, i.e. submitting
+      the result of a request and fetching the next fuse request
+      in one step. In contrary to legacy read/write to /dev/fuse
+- Core and numa affinity - one ring per core, which allows to
+  avoid cpu core context switches
 
-OTOH XFS also doesn't have errors=remount-ro; it just dies, which I
-think has been its behavior for a long time.
+A more detailed motivation description can be found in the
+introction of previous patch series
+https://lore.kernel.org/r/20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com
+That description also includes benchmark results with RFCv1.
+Performance with the current series needs to be tested, but will
+be lower, as several optimization patches are missing, like
+wake-up on the same core. These optimizations will be submitted
+after merging the main changes.
 
-To me, it doesn't sound unreasonable for ext* to allow reads after a
-shutdown when errors=remount-ro since it's always had that behavior.
+The corresponding libfuse patches are on my uring branch, but needs
+cleanup for submission - that will be done once the kernel design
+will not change anymore
+https://github.com/bsbernd/libfuse/tree/uring
 
-Bonus Q: do you want an errors=fail variant to shut things down fast?
+Testing with that libfuse branch is possible by running something
+like:
 
---D
+example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+--uring  --uring-q-depth=128 /scratch/source /scratch/dest
 
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -657,7 +657,7 @@ static void ext4_handle_error(struct super_block *sb,
-> bool force_ro, int error,
->                 WARN_ON_ONCE(1);
-> 
->         if (!continue_fs && !sb_rdonly(sb)) {
-> -               ext4_set_mount_flag(sb, EXT4_MF_FS_ABORTED);
-> +               set_bit(EXT4_FLAGS_SHUTDOWN, &EXT4_SB(sb)->s_ext4_flags);
->                 if (journal)
->                         jbd2_journal_abort(journal, -EIO);
->         }
-> 
-> See the end for problem reproduction.
-> 
-> > [   24.780982] EXT4-fs (vdc): mounted filesystem f8595206-fe57-486c-80dd-48b03d41ebdb r/w with ordered data mode. Quota mode: none.
-> > root@kvm-xfstests:~# cp /etc/motd /vdc/motd
-> > root@kvm-xfstests:~# echo testing > /sys/fs/ext4/vdc/trigger_fs_error
-> > [   42.943141] EXT4-fs error (device vdc): trigger_test_error:129: comm bash: testing
-> > root@kvm-xfstests:~# cat /vdc/motd
-> > 
-> > The programs included with the Debian GNU/Linux system are free software;
-> > the exact distribution terms for each program are described in the
-> > individual files in /usr/share/doc/*/copyright.
-> > 
-> > Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-> > permitted by applicable law.
-> > root@kvm-xfstests:~#
-> > 
-> > 
-> > HOWEVER, testing with shutdown ioctl, both ext4 and xfs are failing with EIO:
-> Yes, this is as expected.
-> > root@kvm-xfstests:~# mount /dev/vdc /vdc
-> > [    7.969168] XFS (vdc): Mounting V5 Filesystem 7834ea96-eab0-46c5-9b18-c8f054fa9cf4
-> > [    7.978539] XFS (vdc): Ending clean mount
-> > root@kvm-xfstests:~# cp /etc/motd /vdc
-> > root@kvm-xfstests:~# /root/xfstests/src/godown -v /vdc
-> > Opening "/vdc"
-> > Calling XFS_IOC_GOINGDOWN
-> > [   29.354609] XFS (vdc): User initiated shutdown received.
-> > [   29.356123] XFS (vdc): Log I/O Error (0x6) detected at xfs_fs_goingdown+0x55/0xb0 (fs/xfs/xfs_fsops.c:452).  Shutting down filesystem.
-> > [   29.357092] XFS (vdc): Please unmount the filesystem and rectify the problem(s)
-> > root@kvm-xfstests:~# cat /vdc/motd
-> > cat: /vdc/motd: Input/output error
-> > root@kvm-xfstests:~#
-> > 
-> > So I take back what I said earlier, but I am a bit confused why it
-> > worked after simulating an file system error using "echo testing >
-> > /sys/fs/ext4/vdc/trigger_fs_error".
-> > 
-> It's because "errors=remount-ro" wasn't used when mounting...
-> 
-> Here's a replication:
-> 
-> root@kvm-xfstests:~# mount -o errors=remount-ro /dev/vdc /mnt/test
-> [  115.731007] EXT4-fs (vdc): mounted filesystem
-> 0838f08f-c04e-440c-a9a5-417677efb03e r/w with ordered data mode. Quota mode:
-> none.
-> root@kvm-xfstests:~# echo test > /mnt/test/file
-> root@kvm-xfstests:~# cat /mnt/test/file
-> test
-> root@kvm-xfstests:~# echo 1 > /sys/fs/ext4/vdc/trigger_fs_error
-> [  131.537649] EXT4-fs error (device vdc): trigger_test_error:129: comm
-> bash: 1
-> [  131.538226] Aborting journal on device vdc-8.
-> [  131.538844] EXT4-fs (vdc): Remounting filesystem read-only
-> root@kvm-xfstests:~# cat /mnt/test/file
-> cat: /mnt/test/file: Input/output error
-> root@kvm-xfstests:~# uname -a
-> Linux kvm-xfstests 6.13.0-rc4-xfstests-g6cfe3548f8f5-dirty #284 SMP
-> PREEMPT_DYNAMIC Fri Dec 27 10:39:02 CST 2024 x86_64 GNU/Linux
-> 
-> 
-> Regards,
-> Baokun
-> 
-> 
+With the --debug-fuse option one should see CQE in the request type,
+if requests are received via io-uring:
+
+cqe unique: 4, opcode: GETATTR (3), nodeid: 1, insize: 16, pid: 7060
+    unique: 4, result=104
+
+Without the --uring option "cqe" is replaced by the default "dev"
+
+dev unique: 4, opcode: GETATTR (3), nodeid: 1, insize: 56, pid: 7117
+   unique: 4, success, outsize: 120
+
+Future work
+- different payload sizes per ring
+- zero copy
+
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+---
+Changes in v9:
+- Fixed a queue->lock/fc->bg_lock order issue, fuse_block_alloc() now waits
+  until fc->io_uring is ready
+- Renamed fuse_ring_ent_unset_userspace to fuse_ring_ent_set_commit (Joanne)
+- No need to initialize *ring to NULL in fuse_uring_create (Joanne)
+- Use max() instead of max_t in fuse_uring_create (Joanne)
+- Rename FRRS_WAIT to FRRS_AVAILABLE (Joanne)
+- Add comment for WRITE_ONCE(ring->queues[qid], ...) (Joanne)
+- Rename _fuse_uring_register to fuse_uring_do_register (Joanne)
+- Split out fuse_uring_create_ring_ent() (Joanne)
+- Use 'struct fuse_uring_ent_in_out' instead of char[] in
+  fuse_uring_req_header (Joanne)
+- Set fuse_ring_ent->cmd to NULL to ensure io-uring commands cannot
+  be used two times (Pavel). That also allows to simplify
+  fuse_uring_entry_teardown().
+- Fix return value on allocation failure in fuse_uring_create_queue (Joanne)
+- Renamed struct fuse_copy_state.ring.offset to .copied_sz
+- static const struct fuse_iqueue_ops fuse_io_uring_ops (kernel test robot)
+- ring_ent->commit_id was removed and req->in.h.unique is set in the request
+  header as commit id.
+- Rename of "ring_ent" to "ent" in several functions
+- Rename struct fuse_uring_cmd_pdu to struct fuse_uring_pdu
+- Link to v8: https://lore.kernel.org/r/20241209-fuse-uring-for-6-10-rfc4-v8-0-d9f9f2642be3@ddn.com
+- No return code from fuse_uring_cancel(), io-uring handles
+  resending IO_URING_F_CANCEL on its own (Pavel)
+
+Changes in v8:
+- Move the lock in fuse_uring_create_queue to have initialization before
+  taking fc->lock (Joanne)
+- Avoid double assignment of ring_ent->cmd (Pavel)
+- Set a global ring may_payload size instead of per ring-entry (Joanne)
+- Also consider fc->max_pages for the max payload size (instead of
+  fc->max_write only) (Joanne)
+- Fix freeing of ring->queues in error case in fuse_uring_create (Joanne)
+- Fix allocation size of the ring, including queues was a leftover from
+  previous patches (Miklos, Joanne)
+- Move FUSE_URING_IOV_SEGS definiton to the top of dev_uring.c (Joanne)a
+- Update Documentation/filesystems/fuse-io-uring.rst and use 'io-uring'
+  instead of 'uring' (Pavel)
+- Rename SQE op codes to FUSE_IO_URING_CMD_REGISTER and
+  FUSE_IO_URING_CMD_COMMIT_AND_FETCH
+- Use READ_ONCE on data in 80B SQE section (struct fuse_uring_cmd_req)
+  (Pavel)
+- Add back sanity check for IO_URING_F_SQE128 (had been initially there,
+  but got lost between different version updates) (Pavel)
+- Remove pr_devel logs (Miklos)
+- Only set fuse_uring_cmd() in to file_operations in the last patch
+  and mark that function with __maybe_unused before, to avoid potential
+  compiler warnings (Pavel)
+- Add missing sanity for qid < ring->nr_queues
+- Add check for fc->initialized - FUSE_IO_URING_CMD_REGISTER must only
+  arrive after FUSE_INIT in order to know the max payload size
+- Add in 'struct fuse_uring_ent_in_out' and add in the commit id.
+  For now the commit id is the request unique, but any number
+  that can identify the corresponding struct fuse_ring_ent object.
+  The current way via struct fuse_req needs struct fuse_pqueue per
+  queue (>2kb per core/queue), has hash overhead and is not suitable
+  for requests types without a unique (like future updates for notify
+- Increase FUSE_KERNEL_MINOR_VERSION to 42
+- Separate out make fuse_request_find/fuse_req_hash/fuse_pqueue_init
+  non-static to simplify review
+- Don't return too early in fuse_uring_copy_to_ring, to always update
+  'ring_ent_in_out'
+- Code simplification of fuse_uring_next_fuse_req()
+- fuse_uring_commit_fetch was accidentally doing a full copy on stack
+  of queue->fpq
+- Separate out setting and getting values from io_uring_cmd *cmd->pdu
+  into functions
+- Fix freeing of queue->ent_released (was accidentally in the wrong
+  function)
+- Remove the queue from fuse_uring_cmd_pdu, ring_ent is enough since
+  v7
+- Return -EAGAIN for IO_URING_F_CANCEL when ring-entries are in the
+  wrong state. To be clarified with io-uring upstream if that is right.
+- Slight simplifaction by using list_first_entry_or_null instead of
+  extra checks if the list is empty
+- Link to v7: https://lore.kernel.org/r/20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com
+
+Changes in v7:
+- Bug fixes:
+   - Removed unsetting ring->ready as that brought up a lock
+     order violation for fc->bg_lock/queue->lock
+   - Check for !fc->connected in fuse_uring_cmd(), tear down issues
+     came up with large ring sizes without that.
+   - Removal of (arg->size == 0) condition and warning in fuse_copy_args
+     as that is actually expected for some op codes.
+- New init flag: FUSE_OVER_IO_URING to tell fuse-server about over-io-uring
+                 capability
+- Use fuse_set_zero_arg0() to set arg0 and rename to struct fuse_zero_header
+  (I hope I got Miklos suggestion right)
+- Simplification of fuse_uring_ent_avail()
+- Renamed some structs in uapi/linux/fuse.h to fuse_uring
+  (from fuse_ring) to be consistent
+- Removal of 'if 0' in fuse_uring_cmd()
+- Return -E... directly in fuse_uring_cmd() instead of setting err first
+  and removal of goto's in that function.
+- Just a simple WARN_ON_ONCE() for (oh->unique & FUSE_INT_REQ_BIT) as
+  that code should be unreachable
+- Removal of several pr_devel and some pr_warn() messages
+- Removed RFC as it passed several xfstests runs now
+- Link to v6: https://lore.kernel.org/r/20241122-fuse-uring-for-6-10-rfc4-v6-0-28e6cdd0e914@ddn.com
+
+Changes in v6:
+- Update to linux-6.12
+- Use 'struct fuse_iqueue_ops' and redirect fiq->ops once
+  the ring is ready.
+- Fix return code from fuse_uring_copy_from_ring on
+  copy_from_user failure (Dan Carpenter / kernel test robot)
+- Avoid list iteration in fuse_uring_cancel (Joanne)
+- Simplified struct fuse_ring_req_header
+	- Adds a new 'struct struct fuse_ring_ent_in_out'
+- Fix assigning ring->queues[qid] in fuse_uring_create_queue,
+  it was too early, resulting in races
+- Add back 'FRRS_INVALID = 0' to ensure ring-ent states always
+  have a value > 0
+- Avoid assigning struct io_uring_cmd *cmd->pdu multiple times,
+  once on settings up IO_URING_F_CANCEL is sufficient for sending
+  the request as well.
+- Link to v5: https://lore.kernel.org/r/20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com
+
+Changes in v5:
+- Main focus in v5 is the separation of headers from payload,
+  which required to introduce 'struct fuse_zero_in'.
+- Addressed several teardown issues, that were a regression in v4.
+- Fixed "BUG: sleeping function called" due to allocation while
+  holding a lock reported by David Wei
+- Fix function comment reported by kernel test rebot
+- Fix set but unused variabled reported by test robot
+- Link to v4: https://lore.kernel.org/r/20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com
+
+Changes in v4:
+- Removal of ioctls, all configuration is done dynamically
+  on the arrival of FUSE_URING_REQ_FETCH
+- ring entries are not (and cannot be without config ioctls)
+  allocated as array of the ring/queue - removal of the tag
+  variable. Finding ring entries on FUSE_URING_REQ_COMMIT_AND_FETCH
+  is more cumbersome now and needs an almost unused
+  struct fuse_pqueue per fuse_ring_queue and uses the unique
+  id of fuse requests.
+- No device clones needed for to workaroung hanging mounts
+  on fuse-server/daemon termination, handled by IO_URING_F_CANCEL
+- Removal of sync/async ring entry types
+- Addressed some of Joannes comments, but probably not all
+- Only very basic tests run for v3, as more updates should follow quickly.
+
+Changes in v3
+- Removed the __wake_on_current_cpu optimization (for now
+  as that needs to go through another subsystem/tree) ,
+  removing it means a significant performance drop)
+- Removed MMAP (Miklos)
+- Switched to two IOCTLs, instead of one ioctl that had a field
+  for subcommands (ring and queue config) (Miklos)
+- The ring entry state is a single state and not a bitmask anymore
+  (Josef)
+- Addressed several other comments from Josef (I need to go over
+  the RFCv2 review again, I'm not sure if everything is addressed
+  already)
+
+- Link to v3: https://lore.kernel.org/r/20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com
+- Link to v2: https://lore.kernel.org/all/20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com/
+- Link to v1: https://lore.kernel.org/r/20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com
+
+---
+Bernd Schubert (17):
+      fuse: rename to fuse_dev_end_requests and make non-static
+      fuse: Move fuse_get_dev to header file
+      fuse: Move request bits
+      fuse: Add fuse-io-uring design documentation
+      fuse: make args->in_args[0] to be always the header
+      fuse: {io-uring} Handle SQEs - register commands
+      fuse: Make fuse_copy non static
+      fuse: Add fuse-io-uring handling into fuse_copy
+      fuse: {io-uring} Make hash-list req unique finding functions non-static
+      fuse: Add io-uring sqe commit and fetch support
+      fuse: {io-uring} Handle teardown of ring entries
+      fuse: {io-uring} Make fuse_dev_queue_{interrupt,forget} non-static
+      fuse: Allow to queue fg requests through io-uring
+      fuse: Allow to queue bg requests through io-uring
+      fuse: {io-uring} Prevent mount point hang on fuse-server termination
+      fuse: block request allocation until io-uring init is complete
+      fuse: enable fuse-over-io-uring
+
+ Documentation/filesystems/fuse-io-uring.rst |  101 ++
+ fs/fuse/Kconfig                             |   12 +
+ fs/fuse/Makefile                            |    1 +
+ fs/fuse/dax.c                               |   11 +-
+ fs/fuse/dev.c                               |  127 +--
+ fs/fuse/dev_uring.c                         | 1318 +++++++++++++++++++++++++++
+ fs/fuse/dev_uring_i.h                       |  205 +++++
+ fs/fuse/dir.c                               |   32 +-
+ fs/fuse/fuse_dev_i.h                        |   67 ++
+ fs/fuse/fuse_i.h                            |   30 +
+ fs/fuse/inode.c                             |   14 +-
+ fs/fuse/xattr.c                             |    7 +-
+ include/uapi/linux/fuse.h                   |   76 +-
+ 13 files changed, 1924 insertions(+), 77 deletions(-)
+---
+base-commit: 5428dc1906dde5fb5ab283cda4714011f9811aa1
+change-id: 20241015-fuse-uring-for-6-10-rfc4-61d0fc6851f8
+
+Best regards,
+-- 
+Bernd Schubert <bschubert@ddn.com>
+
 
