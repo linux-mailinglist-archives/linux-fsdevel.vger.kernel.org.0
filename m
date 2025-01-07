@@ -1,116 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-38577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41FEA04378
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 15:56:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EEDA0437E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 15:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96A21885812
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 14:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19951640CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 14:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC421F2C20;
-	Tue,  7 Jan 2025 14:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318CA1F1905;
+	Tue,  7 Jan 2025 14:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bQTsU90d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoMwCWfv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B1A1F238F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 14:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9C7259499;
+	Tue,  7 Jan 2025 14:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736261783; cv=none; b=Sm/HcrbTqpZUynWKVhtirYz602sAmIV+3Qhb4xBZ77vzsHca2heGNDUsz8SjztMFf1CV1xzDfFuexNbcrPvqZDoRbV7sQtGCqaeJUAxtpzREB9iMdsrDGWhR2p4Eqo703alLMqO14eYNZ/u/wE+KfzgSapkipAJ5A2yLEwR5938=
+	t=1736261872; cv=none; b=FrpeV/unDy9/vD8VrX5BCYC/+dCMXluxU7W/Ic+1OBIafc3BNtv+QRisQT9SyPMERhKgR+/Kf7NVGBhSRVE5a2pIPactdu/zcH6W5S69tTIbcbq5z5+8HFoV3JijCu+KlETsXpAYQPUESEMJiCG+JL36B0mpo5IeyLIcJ3dZENg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736261783; c=relaxed/simple;
-	bh=eL/GDRInGF+I0i9Sj0cwngnsZF2oD250l8ncdYPW4Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2YCSLYiWdnxjwK//J6Prr9ZlCc3LP4Ibsp4WKPpjhedxhqKqo/JUhJ5Bf/39tZj6DQZCGMma+3i1eKyVZf+veZIoiBdorfIExF4dwlHKs1laZAtwD9pDbiX8H19DKlWyx1ZteDgCMkWgVXhQtIg+v/EJvabNSWBfQhxfR4CHvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bQTsU90d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9EEC4CED6;
-	Tue,  7 Jan 2025 14:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1736261782;
-	bh=eL/GDRInGF+I0i9Sj0cwngnsZF2oD250l8ncdYPW4Lg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bQTsU90db9Z6337SGKK2qe0DqW+cgDoo7qShfTWpR9AqXwtbLWkVyTkgFn9uiihwf
-	 ZELv0SnfWHwpOFMjscZUuwrfTSuaY9Gvi0o3oGJhQT8GlJdr9aOT5NZOjOs5TgnjFL
-	 meX6NGM0kvqqswooiI5ebbu7W14EEn0s/cuK91Cg=
-Date: Tue, 7 Jan 2025 15:56:20 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCHES][RFC][CFT] debugfs cleanups
-Message-ID: <2025010715-afterlife-labrador-02f7@gregkh>
-References: <20241229080948.GY1977892@ZenIV>
- <20241229205828.GC1977892@ZenIV>
+	s=arc-20240116; t=1736261872; c=relaxed/simple;
+	bh=DbzU733XgZnUEo05Q+osOhh3dvR7UWfP1ZibysEtpMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pe/4bHRBGRHLOz6a15rkZzFBUTY9c7wCT7iMglg28tHg+eFI8Z8jnTyf+TJBle4zKCvCCVoiC1v7hf8zE6WNl9m3mX424yLmLrDcKzpmn4FyhHqhCFGUEbsFjgfHqZWVtJ33n5eiG3xHelcEJhp80CxyFSX5ikhIaXGv5jGguIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoMwCWfv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF82C4CED6;
+	Tue,  7 Jan 2025 14:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736261872;
+	bh=DbzU733XgZnUEo05Q+osOhh3dvR7UWfP1ZibysEtpMs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hoMwCWfvwszkPz3mCFv7U2JOLU2f0D63hXzPv0KbxyViXQbvSDeF2okg0lZq7rBUm
+	 nG42+cJbiJkNp/CXmA2yaMjSHpl7N8tBGT9R3ZDh1NW38I5L87NoWT/6l8nWrJKFZq
+	 a6IGqkUVigEyI9N80iBYLxf6iXHvYHrtzQtLcF61w2aclB91sFC27nLTv1UkUm486i
+	 D4MsGQnY431RGh1B3p4GN/ey9dg3quSOsmukgIDYHKbPRkmAMWYeUPJuDuYfqma56t
+	 zyFLkbXKsQzRU2mODI93UfyTJIlVsradQun5fq3f0hiPOT7qyaRPcNYM7myRNsZPeB
+	 8KO6IDGFXaPdA==
+From: Christian Brauner <brauner@kernel.org>
+To: Christian Kujau <lists@nerdbynature.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fsdevel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2] vbox: Enable VBOXGUEST and VBOXSF_FS on ARM64
+Date: Tue,  7 Jan 2025 15:57:35 +0100
+Message-ID: <20250107-halbwahrheiten-vordach-b6ba4d1f8aa4@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
+References: <7384d96c-2a77-39b0-2306-90129bae9342@nerdbynature.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241229205828.GC1977892@ZenIV>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1132; i=brauner@kernel.org; h=from:subject:message-id; bh=DbzU733XgZnUEo05Q+osOhh3dvR7UWfP1ZibysEtpMs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTXOrwy/Mzq9V65J+pa7e0Jfw4xe/0L8uHSSNyuKLRZX XKS4JrGjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk86mRkOHNAOED5ieSNFLee w1an/wm7XGC6M+/zNAmr0tmpQk3HnRj+SlV2cew/lfnouVSzzpp2liQ9a+NJRxu5rJXC385cZGD NCQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 29, 2024 at 08:58:28PM +0000, Al Viro wrote:
-> On Sun, Dec 29, 2024 at 08:09:48AM +0000, Al Viro wrote:
-> 
-> > 	All of that could be avoided if we augmented debugfs inodes with
-> > a couple of pointers - no more stashing crap in ->d_fsdata, etc.
-> > And it's really not hard to do.  The series below attempts to untangle
-> > that mess; it can be found in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.debugfs
-> > 
-> > 	It's very lightly tested; review and more testing would be
-> > very welcome.
-> 
-> BTW, looking through debugfs-related stuff...
-> 
-> arch/x86/kernel/cpu/resctrl/pseudo_lock.c:pseudo_lock_measure_trigger()
-> 	debugfs_file_get()/debugfs_file_put() pair inside, even though the
-> 	only use of that sucker is ->write() of file_operations fed
-> 	to debugfs_create_file().  In other words, it's going to be
-> 	called only by full_proxy_write(), which already has such a pair
-> 	around that...
-> drivers/base/regmap/regmap-debugfs.c:regmap_cache_{only,bypass}_write_file()
-> 	ditto
-> drivers/gpu/drm/xlnx/zynqmp_dp.c:zynqmp_dp_{pattern,custom}_write()
-> 	ditto
-> drivers/gpu/drm/xlnx/zynqmp_dp.c:zynqmp_dp_{pattern,custom}_read()
-> 	similar, except that it's ->read() rather than ->write()
-> drivers/infiniband/hw/hfi1/debugfs.c:hfi1_seq_read()
-> 	ditto, AFAICS.  Verifying that is not pleasant (use of ## in
-> 	that forest of macros is seriously grep-hostile), but...
-> drivers/infiniband/hw/hfi1/debugfs.c:hfi1_seq_lseek()
-> 	same story for ->llseek()
-> drivers/infiniband/hw/hfi1/fault.c:fault_opcodes_{read,write}()
-> 	same story
-> drivers/thermal/testing/command.c:tt_command_write()
-> 	same, but debugfs_file_put() is apparently lost.
-> 	Attempt to rmmod that sucker ought to deadlock if there had
-> 	been a call of that...
-> sound/soc/sof/ipc4-mtrace.c:sof_ipc4_mtrace_dfs_open()
-> 	->open() calling debugfs_file_get(), with matching debugfs_file_put()
-> 	only in ->release().  Again, that's debugfs_create_file() fodder -
-> 	with nothing to trigger removal in sight.  Fortunately, since had
-> 	that been triggerable from userland, you could get a nice deadlock
-> 	by opening that file and triggering removal...
-> sound/soc/sof/sof-client-ipc-flood-test.c:sof_ipc_flood_dfs_open()
-> 	same, except that here removal *is* triggerable.  Do rmmod with
-> 	e.g. stdin redirected from that file and you are screwed.
-> sound/soc/sof/sof-client-ipc-kernel-injector.c:sof_msg_inject_dfs_open()
-> 	same, complete with deadlock on rmmod...
-> sound/soc/sof/sof-client-ipc-msg-injector.c:sof_msg_inject_dfs_open()
-> 	... and here as well.
+On Mon, 06 Jan 2025 16:32:05 +0100, Christian Kujau wrote:
+> Now that VirtualBox is able to run as a host on arm64 (e.g. the Apple M3
+> processors) we can enable VBOXSF_FS (and in turn VBOXGUEST) for this
+> architecture. Tested with various runs of bonnie++ and dbench on an Apple
+> MacBook Pro with the latest Virtualbox 7.1.4 r165100 installed.
 > 
 > 
-> As far as I can see, there's not a single legitimate caller of
-> debugfs_file_{get,put}() outside of fs/debugfs/file.c.  Is there any
-> reason to keep that stuff non-static, let alone exported?
 
-Nope, not at all!
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[1/1] vbox: Enable VBOXGUEST and VBOXSF_FS on ARM64
+      https://git.kernel.org/vfs/vfs/c/5cf8f938bf5c
 
