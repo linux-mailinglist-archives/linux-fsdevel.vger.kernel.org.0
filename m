@@ -1,150 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-38547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEBCA0386C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 08:08:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A76A038AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 08:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720671886752
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 07:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 018293A45B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 07:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779AA1E0DD8;
-	Tue,  7 Jan 2025 07:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F2C1DE3D9;
+	Tue,  7 Jan 2025 07:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a++2Dgo8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dkaer1G8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BEB1E048A;
-	Tue,  7 Jan 2025 07:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3017C9E8
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 07:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736233702; cv=none; b=RO6rGmcIb2n87uAci6nZGEz+/JxQSLt7eJ33pZ2rUUgtsctOJN312NAYw11euxCfmM5luIcTWGeLP2Jgve6gn8/tEiypJBOQH1fByDayCnL48UCzxP68SeCZAZn07HdJRlL915V471sKAHypzlbtKFq85dBNVgvP4HKb35EH6Eo=
+	t=1736234302; cv=none; b=hGko0ZtBwsmHq/HUKGTbcPcXrBXUy4HWnpyoqdMWg1igS7XmAshSGC7EEn/RrUlJiF48zPlis8k7VQggc8CWmvWJY91oBxWh11J0bZum4+vMJTmrvxO+g9vmgqr+/7oNdrDl9laSZlB8g84XGRBhIIIJI7JxAlRy2bRl7XiK19s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736233702; c=relaxed/simple;
-	bh=riRq09BCQs2eWbe53PVULdlkjmUtPBgbr9/pEmKTjic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkHF2PTonShMZvZd/HS1KA/jHnnL2qs1/7EYiYODqf+NGMIhkgfWUE5g/RPf/11YGHWyO6kGa+pGSn9m2AYV1kKXaHXRDkXzWwZ5YADlmE7m8kH6v5qIlcA1kooRsk4KzIAvxlycQ4DoQ6NBzCgQRG+J2/KcNpIkH8XS+cXsSYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a++2Dgo8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B36C4CED6;
-	Tue,  7 Jan 2025 07:08:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736233702;
-	bh=riRq09BCQs2eWbe53PVULdlkjmUtPBgbr9/pEmKTjic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a++2Dgo82RtXhLPymQXK/9RjUhn1bBxGRBUciehp3GrCJO9Z+ELD2SUiSOth7dm2G
-	 1pSFQQwdeQj4cLH27UvsmBbyRRjYevfuPsv5iy5tvfoQeX9pYhEvT+SnerBO+Onw/E
-	 0CjxcN+5DqW3Wv75P4Jspacc47ggMSOhNGEbfamyl0wdKXg4PEVquXi9bKqtZloX6U
-	 kNczfdT7Axp8fYMfCMIfgY771SyEl1UK++O+u6M1TziTqvctxnwhj7Y2E2s0Cflz86
-	 ya70HWHusONXIAHk2F/w1NAcxiS2r7jxz0Il/SNXADjo92wuX+lxNZ19BEYDdBhk1/
-	 xuUTNpJCZu8Aw==
-Date: Mon, 6 Jan 2025 23:08:20 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>, sunyongjian1@huawei.com,
-	Yang Erkun <yangerkun@huawei.com>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [BUG REPORT] ext4: =?utf-8?B?4oCcZXJy?=
- =?utf-8?Q?ors=3Dremount-ro=E2=80=9D_has_become_=E2=80=9Cerrors=3Dshutdown?=
- =?utf-8?B?4oCdPw==?=
-Message-ID: <20250107070820.GJ6174@frogsfrogsfrogs>
-References: <22d652f6-cb3c-43f5-b2fe-0a4bb6516a04@huawei.com>
- <z52ea53du2k66du24ju4yetqm72e6pvtcbwkrjf4oomw2feffq@355vymdndrxn>
- <17108cad-efa8-46b4-a320-70d7b696f75b@huawei.com>
- <umpsdxhd2dz6kgdttpm27tigrb3ytvpf3y3v73ugavgh4b5cuj@dnacioqwq4qq>
- <20250103153517.GB1284777@mit.edu>
- <20250103155406.GC1284777@mit.edu>
- <5eb2ad64-c6ea-45f8-9ba1-7de5c68d59aa@huawei.com>
- <20250106234956.GM6174@frogsfrogsfrogs>
- <0acc1709-1349-4dbb-ba3e-ae786c4b5b53@huawei.com>
+	s=arc-20240116; t=1736234302; c=relaxed/simple;
+	bh=Nn6ssU/gCuzRYJej1uDczGueu534Spol+jDKr7o9AXk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=emFoTar05ZFXoI+hMQ4dK+kliedNxmkzxdDPJcbxB3ZoYZV7Tl5XcFv1Y/MlJge0eBSp+8MPIMzrPqk+FWYhgPmpGTdJW6W+K9ZLX/fSrut0CJPM3ceNS+X7286NvoHVHbGxzv+sJXyLC+ApFjDrGGfBL4G4AfQ9njkNxeaZWUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dkaer1G8; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d88c355e0dso8282407a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2025 23:18:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736234297; x=1736839097; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gN9aSPqNKUTtvc1NoggE14h34DUUmbAMsnVsk3sO0Qg=;
+        b=Dkaer1G8ZXFhIa3YGrNZqTG/KlQ3bsgl8qGP0wji5pGXxu/QM5q5LzVT6tnR5RdAVa
+         pR/+JLBZrao47yiu8WohT7YMCMpGeV75IPGJiceJQR+Jvdgh6d5EgIKcmL2Ag0vkK6xT
+         N5EU6r/W4ChYeq9vNdEtH3JUPVPEPmAIxWUwK0aB0Q57rG6hZLPZdqRKzseAAjduNOcD
+         X3wmcQi7DkiMCOXwIXZ9gw7XxHPfVqfuxxjwChJjZJX8u4l3W/M0eB3itpoEiLGWOIUg
+         oCib1W+8eX5e5/FA99ku4eL5V7OyvwjUlYTOx+nMKfApW4UdGooun9AJTfN9FC2wzQmY
+         toxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736234297; x=1736839097;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gN9aSPqNKUTtvc1NoggE14h34DUUmbAMsnVsk3sO0Qg=;
+        b=Ry74Ea3tGUnKZ7UTStmPt68HO238iE8ug2cwmYX93TVT6XJhRTPm8i2aXi+iarVpA4
+         JCy9PXcvvw21v+tROQQEQkwpTaESyqher/+FrC60M1gs834kK9mqZtMFnWzBhNzbQLWe
+         os5keLlAE8ZNw+P1jBPydtW2vfqg2YY72413pJjBCcEDwefku3StGTT/bwohQxKOjir7
+         krRbQhB8as5X/2N97ir3aFvB+iQ3ID3iBK7iJ7ag0TT9AmM+Omtvsx4wvV+a0B4KUML7
+         GA+yQC68V+9FGM97WF26ivKh9zBRHhkjyn5J8QpnVpEyLGuQ3dORsVH8628G9jhZe/bc
+         ZJ5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXcZmqwJCqKtvUCTUYhkk7+F+BPtPYkpMwC280XpKRx5X7nA8anmsgrlPPMBCpyml7f/Gr7V45lb7Tl1OjM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYz+AwQd/gBDh/rTb5eYPtFAb1d2N9vbMzQXYYOrHyCUICgRCe
+	Vh2TbHebYHM2gtdn+HeJtFCXn5ZFq5TZIYIJAIuWyWnyhRnVvy8VqSXVFZYtmgQ0hmKtDVjE4Oq
+	Eer14ZxTKBhMfxpjv/8chU8Db1YM=
+X-Gm-Gg: ASbGnctEWCiCLoVIljPc8g1KJJBw+lVzfRl0f1EvdYtFAt5/ij+yX/uoo6OsMVu/Maa
+	IeLsIJQxFE5MIsuCr684rmj0wDzjn2ir7A1RsfyQ=
+X-Google-Smtp-Source: AGHT+IF+5ME0ZlnKcFPwwoMZnK33B2H5urUU9dG8wPM4bAC38RgJdedldMscu25JDOAA6CZYI8YEJNBWErMCh5ZppAY=
+X-Received: by 2002:a05:6402:35c2:b0:5cf:c33c:34cf with SMTP id
+ 4fb4d7f45d1cf-5d81dd99557mr50130786a12.15.1736234296402; Mon, 06 Jan 2025
+ 23:18:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0acc1709-1349-4dbb-ba3e-ae786c4b5b53@huawei.com>
+References: <20250106162401.21156-1-jack@suse.cz> <b4a292ba5a33cc5d265a46824057fe001ed2ced6.camel@kernel.org>
+ <20250106233112.GI6156@frogsfrogsfrogs>
+In-Reply-To: <20250106233112.GI6156@frogsfrogsfrogs>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Tue, 7 Jan 2025 08:17:00 +0100
+Message-ID: <CALXu0UcWsAcDMZqAP=wM5mb9o0-T+sPyFxLcWpHZNbDWguLKEA@mail.gmail.com>
+Subject: Re: [PATCH] sysv: Remove the filesystem
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jan 07, 2025 at 10:01:32AM +0800, Baokun Li wrote:
-> On 2025/1/7 7:49, Darrick J. Wong wrote:
-> > On Sat, Jan 04, 2025 at 10:41:28AM +0800, Baokun Li wrote:
-> > > Hi Ted,
-> > > 
-> > > On 2025/1/3 23:54, Theodore Ts'o wrote:
-> > > > On Fri, Jan 03, 2025 at 10:35:17AM -0500, Theodore Ts'o wrote:
-> > > > > I don't see how setting the shutdown flag causes reads to fail.  That
-> > > > > was true in an early version of the ext4 patch which implemented
-> > > > > shutdown support, but one of the XFS developers (I don't remember if
-> > > > > it was Dave or Cristoph) objected because XFS did not cause the
-> > > > > read_pages function to fail.  Are you seeing this with an upstream
-> > > > > kernel, or with a patched kernel?  The upstream kernel does *not* have
-> > > > > the check in ext4_readpages() or ext4_read_folio() (post folio
-> > > > > conversion).
-> > > > OK, that's weird.  Testing on 6.13-rc4, I don't see the problem simulating an ext4 error:
-> > > > 
-> > > > root@kvm-xfstests:~# mke2fs -t ext4 -Fq /dev/vdc
-> > > > /dev/vdc contains a ext4 file system
-> > > > 	last mounted on /vdc on Fri Jan  3 10:38:21 2025
-> > > > root@kvm-xfstests:~# mount -t ext4 -o errors=continue /dev/vdc /vdc
-> > > We are discussing "errors=remount-ro," as the title states, not the
-> > > continue mode. The key code leading to the behavior change is as follows,
-> > > therefore the continue mode is not affected.
-> > Hmm.  On the one hand, XFS has generally returned EIO (or ESHUTDOWN in a
-> > couple of specialty cases) when the fs has been shut down.
-> Indeed, this is the intended behavior during shutdown.
-> > 
-> > OTOH XFS also doesn't have errors=remount-ro; it just dies, which I
-> > think has been its behavior for a long time.
-> Yes. As an aside, is there any way for xfs to determine if -EIO is
-> originating from a hardware error or if the filesystem has been shutdown?
+I disagree with the removal.
 
-XFS knows the difference, but nothing above it does.
+This is still being used, but people running Debian will notice such
+bugs only with the next stable release. Imagine their nasty xmas
+present when SYSVFS support is gone for no reason.
 
-> Or would you consider it useful to have the mount command display
-> "shutdown" when the file system is being shut down?
+Better add a test to CI
 
-Trouble is, will mount get confused and try to pass ",shutdown" as part
-of a remount operation?  I suppose the fs is dead so what does it
-matter...
+Ced
 
-> > To me, it doesn't sound unreasonable for ext* to allow reads after a
-> > shutdown when errors=remount-ro since it's always had that behavior.
-> Yes, a previous bug fix inadvertently changed the behavior of
-> errors=remount-ro,
-> and the patch to correct this is coming.
-> 
-> Additionally, ext4 now allows directory reads even after shutdown, is this
-> expected behavior?
+On Tue, 7 Jan 2025 at 00:31, Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> On Mon, Jan 06, 2025 at 02:52:11PM -0500, Jeff Layton wrote:
+> > On Mon, 2025-01-06 at 17:24 +0100, Jan Kara wrote:
+> > > Since 2002 (change "Replace BKL for chain locking with sysvfs-private
+> > > rwlock") the sysv filesystem was doing IO under a rwlock in its
+> > > get_block() function (yes, a non-sleepable lock hold over a function
+> > > used to read inode metadata for all reads and writes).  Nobody noticed
+> > > until syzbot in 2023 [1]. This shows nobody is using the filesystem.
+> > > Just drop it.
+> > >
+> > > [1] https://lore.kernel.org/all/0000000000000ccf9a05ee84f5b0@google.com/
+> > >
+> > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > > ---
+> > >  What do people think about this? Or should we perhaps go through a (short)
+> > >  deprecation period where we warn about removal?
+> > >
+> >
+> > FWIW, it was orphaned in 2023:
+> >
+> >     commit a8cd2990b694ed2c0ef0e8fc80686c664b4ebbe5
+> >     Author: Christoph Hellwig <hch@lst.de>
+> >     Date:   Thu Feb 16 07:29:22 2023 +0100
+> >
+> >         orphan sysvfs
+> >
+> >         This code has been stale for years and I have no way to test it.
+> >
+> >
+> > Given how long this was broken with no one noticing, and since it's not
+> > being adequately tested, I vote we remove it.
+>
+> I concur, if someone really wants this we can always add it back (after
+> making them deal with the bugs):
+>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+>
+> --D
+>
+> >
+> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> >
+>
 
-There's no formal specification for what shutdown means, so ... it's not
-unexpected.  XFS doesn't allow that.
 
-> > Bonus Q: do you want an errors=fail variant to shut things down fast?
-> > 
-> > --D
-> 
-> In my opinion, I have not yet seen a scenario where the file system needs
-> to be shut down after an error occurs. Therefore, using errors=remount-ro
-> to prevent modifications after an error is sufficient. Of course, if
-> customers have such needs, implementing this mode is also very simple.
-
-IO errors, sure.  Metadata errors?  No, we want to stop the world
-immediately, either so the sysadmin can go run xfs_repair, or the clod
-manager can just kill the node and deploy another.
-
---D
-
-> 
-> 
-> Thanks,
-> Baokun
-> 
-> 
+-- 
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
