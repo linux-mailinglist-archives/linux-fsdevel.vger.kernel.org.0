@@ -1,112 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-38561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F472A03E7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 13:03:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4237FA03E99
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 13:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2270A18803A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 12:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2743816425A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 12:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8641E25FE;
-	Tue,  7 Jan 2025 12:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CBF1DFE1D;
+	Tue,  7 Jan 2025 12:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="J4lkPJBO"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="sgvlAhz0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L+g/YvLL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378898C1E;
-	Tue,  7 Jan 2025 12:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7154C9D;
+	Tue,  7 Jan 2025 12:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736251406; cv=none; b=E7azBj4QLjVsN16h+rkgMO+eFbZQtxTNQ2659pOpk8wXaSuL/Pdlz+BQV+KimvOiOkR4J7botBQheJ8zndCCA/pQCTEbAgkCYn/tO5uO9Hcw5CxNji47K9u2rMieUbfQxwckK1V/0FA5OexlaW1wltS4NjSbxjLk1a1+EILZ6xY=
+	t=1736251682; cv=none; b=GOaHvy53q9Xs+wlfqPF7bukzt8uO1DXWO9Qqhua7Joev7iWxzMSLR0voFp7LROOpS2YokHZmKl5SMF3QdV6Cnx6NikjlPguSBTULflddkFflpYn8ybSGXUmEek6J/15nfzvwS7zLJdVRBwNmZqL2E9eoPu3z3Bw5x/E5YeFRAqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736251406; c=relaxed/simple;
-	bh=Q3AsT43SmSRP+nitd8Ran57PP3jfeFUiHGozaUyhrX4=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=pzOMR5Aij0Spl5+vOCvwvXqhtrVm6bou3UdZyEAUVRyg+Vwra+M3ySw3ZjooFPhz9ro8ZNbyVZSPmBBCnYBHW5Hd9/vESVv8uEcYVCk4zwh0MlI2gOiqOWjKPJbm2YZ6fMMFvYMk60h/S7rsM151q0HRQVRgJlZpVb0U0AzP3DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=J4lkPJBO; arc=none smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <14271ed82a5be7fcc5ceea5f68a10bbd@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1736251394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3XYQZjfmPw1rESA4PsPNxtkwfMccg6wZ10QaSbm/jqE=;
-	b=J4lkPJBO1KxqKqv3nXlPb6286rFUlxCe5kR5gAYbQvQdE+Y1v2dU//WJ6ivo3K1LYNt1oJ
-	loW8KTIT+8q4VP1hFC7UL9zjM8ByqiTnFyLpPsO1d3ZKyBDHrampcJvHRndGQxzUI1dAsI
-	lSb3N3rNj04Xd4As4hmpBDrw+9pEbvcKCk4W1rRg8cHFphvB5IFzwhkND2K3peeQBmAxce
-	i8E12TML8VcIEyssxIHODKFIQRS4wf8f5uAX5OoegYq9IpEk3OB4Y2QzKoY/eRhw0YOb9R
-	uwoLpjZ5UA3baT1J6hqP+YXHU+HzibOsUq7b95blVE9Axh89qTtesZ73tryqQw==
-From: Paulo Alcantara <pc@manguebit.com>
-To: David Howells <dhowells@redhat.com>, nicolas.baranger@3xo.fr
-Cc: dhowells@redhat.com, Steve French <smfrench@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Jeff Layton <jlayton@kernel.org>, Christian
- Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
- linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix kernel async DIO
-In-Reply-To: <286638.1736163444@warthog.procyon.org.uk>
-References: <fedd8a40d54b2969097ffa4507979858@3xo.fr>
- <669f22fc89e45dd4e56d75876dc8f2bf@3xo.fr>
- <286638.1736163444@warthog.procyon.org.uk>
-Date: Tue, 07 Jan 2025 09:03:11 -0300
+	s=arc-20240116; t=1736251682; c=relaxed/simple;
+	bh=op5HImHqYb+4AvhRX02Y74mHm2ek0TjZyK3aMBK+28c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NvhcaAKt/Gm1kaZS9EhmHrwZ3A6IIKapK20KxBNg7opnprDYppWXt0kL0O6lFuo0u6kqwBfCY/jlwoIpTFWQxKqVGOqaOfZz8J9W/+NCxkunv7DksUJk4E6OFbG6hpXuzCXf7BsqtvF8OoCstH08R4RDsLRnKCqnlryHAtOok0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=sgvlAhz0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L+g/YvLL; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 972831140149;
+	Tue,  7 Jan 2025 07:07:58 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Tue, 07 Jan 2025 07:07:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1736251678;
+	 x=1736338078; bh=S54aJw5a+El555L0/D6uSM+XLBPUOhMQlUNmqm58VSc=; b=
+	sgvlAhz0ppppk1N6S/begQEed5lNnGov0Pbk2ayaMUx7J1ooNtgti7zvIp8pyQxr
+	m/3z33Vrh72jQZfFpa8TP96113abqPr3P6k5v/Z6IcRNNoLOlUreq7GzXnJfO3i0
+	/oivdFz6ODagfi3Dxmjf8wXV7WV4f/lZ8ayti95G+6pMgkuhDND1fiIuDXGvVgWi
+	P7najFFWxfyA4+4N8dcGZ+RL0ZG2f4/FX37eKOV7vhfx8m4hZTZGrD3OpSOse8yX
+	E0NIznlft2wHZxayrOKRAFAne4m395gzXn8ou8h9Y28fRx8S3Bp61oajuZpzUOEm
+	KIFxvaLNcVSYR3usiNcwxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736251678; x=
+	1736338078; bh=S54aJw5a+El555L0/D6uSM+XLBPUOhMQlUNmqm58VSc=; b=L
+	+g/YvLLMJTofZM0SJA700u7+hI/vEWFO6C+Z6/RY9Bdxjgpbk/AEZrbNvUqDNUvD
+	OR/aQKl25Fq4CjXjC3CXahlx+q5CQud8J7qlK4d/8C4ixARx7nFfUDNp3QmIiWMo
+	3nr+hxBNXU2w+1kBhitNqpL/iEFqua9j3DSPiG3chlyVdY0ITujiQb9kXB1XoFyK
+	ITyEn0VGi8oYs4hNfHQtwf/Rl7I5ZTUrt65DxgTZK+ltDXWCjClFwcDU76ZEiS37
+	+9FqfUYZU62Z2YSRbDNbwB/X9gEWVHlASdtV+xZD99tnrsfgTCAmay7yatzYa6f6
+	iDgqqqkbNJFGOMkFkBn+w==
+X-ME-Sender: <xms:HBl9Z9_mNLSFlpyl_RIobqklScn5AiVYeLXXdYQxIHFJsy3VF2S9mA>
+    <xme:HBl9ZxvDfMGHejtJq_iI-HyVZmLSfuYLv9hJMujlkz5hGVOq-IP4iExeHrhpSV3AA
+    ON3nOrIA9YbajX7>
+X-ME-Received: <xmr:HBl9Z7Csrbch6bO3pXCHvwTWugjVWWP4iOy0TjwIrhp_hJHZ-YkRY7c0E3_KhT5bBw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegvddgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
+    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtoheplhhuihhssehighgrlhhirgdrtghomhdprhgtphhtthhopegs
+    shgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
+    gvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
+    oheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehi
+    ohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnh
+    hnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohig
+    ihgtphgrnhgurgdrtghomh
+X-ME-Proxy: <xmx:HRl9ZxcTPFV8mLpDHZBoqrjG6YtsCxABewVaYwuYRRvFA0hVA3dRxw>
+    <xmx:HRl9ZyOPMgt_THRxnsCsaThE_zPmKxgKuRpVxP6W5vj_hgc_ksWDVQ>
+    <xmx:HRl9ZzkASwAyo6sKoMyxUrk4I91tSQP2fB_V_fo2iXkk8K7Gji4g_g>
+    <xmx:HRl9Z8vfS5eTPNzLYigNAMyAA_w9qC7AFLMoPY42IyAe3xTXDUkzvQ>
+    <xmx:Hhl9Z8t8aujjx_YlwlOKpsUKzS8oJF-GbZvAmI1EPVTMGK81fFioBuYs>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Jan 2025 07:07:55 -0500 (EST)
+Message-ID: <215c477e-0cb2-475d-85d3-f15baf7b208a@fastmail.fm>
+Date: Tue, 7 Jan 2025 13:07:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 06/17] fuse: {io-uring} Handle SQEs - register commands
+To: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-6-9c786f9a7a9d@ddn.com>
+ <87zfk32bh6.fsf@igalia.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US
+In-Reply-To: <87zfk32bh6.fsf@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-David Howells <dhowells@redhat.com> writes:
 
-> netfs: Fix kernel async DIO
->
-> Netfslib needs to be able to handle kernel-initiated asynchronous DIO that
-> is supplied with a bio_vec[] array.  Currently, because of the async flag,
-> this gets passed to netfs_extract_user_iter() which throws a warning and
-> fails because it only handles IOVEC and UBUF iterators.  This can be
-> triggered through a combination of cifs and a loopback blockdev with
-> something like:
->
->         mount //my/cifs/share /foo
->         dd if=/dev/zero of=/foo/m0 bs=4K count=1K
->         losetup --sector-size 4096 --direct-io=on /dev/loop2046 /foo/m0
->         echo hello >/dev/loop2046
->
-> This causes the following to appear in syslog:
->
->         WARNING: CPU: 2 PID: 109 at fs/netfs/iterator.c:50 netfs_extract_user_iter+0x170/0x250 [netfs]
->
-> and the write to fail.
->
-> Fix this by removing the check in netfs_unbuffered_write_iter_locked() that
-> causes async kernel DIO writes to be handled as userspace writes.  Note
-> that this change relies on the kernel caller maintaining the existence of
-> the bio_vec array (or kvec[] or folio_queue) until the op is complete.
->
-> Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
-> Reported by: Nicolas Baranger <nicolas.baranger@3xo.fr>
-> Closes: https://lore.kernel.org/r/fedd8a40d54b2969097ffa4507979858@3xo.fr/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <smfrench@gmail.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: netfs@lists.linux.dev
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/netfs/direct_write.c |    7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
 
-LGTM.  Feel free to add:
+On 1/7/25 10:56, Luis Henriques wrote:
+> Hi Bernd,
+> 
+> On Tue, Jan 07 2025, Bernd Schubert wrote:
+> 
+>> This adds basic support for ring SQEs (with opcode=IORING_OP_URING_CMD).
+>> For now only FUSE_IO_URING_CMD_REGISTER is handled to register queue
+>> entries.
+> 
+> Please find below two (minor) comments I had already for v8.  Hopefully
+> this time I'll finish reviewing rev v9!
 
-Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
 
-Thanks Christoph and Dave!
+Thank you very much, both fixed in v10 branch, I will wait a bit for
+further reviews before sending out v10.
+I think the leak of ring_ent in error cases is actually new v9 - I think
+I wanted to move up error checking (before the allocation) and then forgot
+about that :/ Done now, no need to allocate at all if the IOV is not correct.
+
+
+Thanks,
+Bernd
 
