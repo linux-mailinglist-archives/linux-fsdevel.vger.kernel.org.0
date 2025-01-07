@@ -1,315 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-38591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07666A045BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 17:15:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF08A045C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 17:16:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8345F1885FF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 16:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58691665AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 16:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A1D1F4299;
-	Tue,  7 Jan 2025 16:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8D41F4714;
+	Tue,  7 Jan 2025 16:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="etGaFkM8"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="UaSTDCiV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DCC1F428A;
-	Tue,  7 Jan 2025 16:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC361F03DB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 16:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736266521; cv=none; b=PPXQpC75HuUNSh80AqLKAhFhRdPZTjs648J0gzLzG9p68Kb56OgMb5DMTraXMByoxX3SmK/VkDR0BwKNmh3YQD8OwV3e0AORwNX2G1xmt3hLxoPy4aqztZgGoQPxuWegRH7+Gjvf1HA7eDny5Mrjz4nJJMtyyr7dgXydHqJyaio=
+	t=1736266559; cv=none; b=d4uPX5yDCUMt05kcx2rPwTyamJRVZuXDGcdK8c4bVPNsY/xmCv09m5Kjd1g+bXMJzkYBYTDHpU1ELnoigxkNFDCMrSb7KC9T4Keq7ME0KfuMpu6ItClIuKTr+LOJJWDYTvVTINQmBFXxn0g63mXf4H58KA+vUKQrrdrI3pvcwZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736266521; c=relaxed/simple;
-	bh=5aDHHk//kByQ308ogbbl7PQiaCsOsJCtrCW0Nw29m3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g0tO/1xaHD0n+BReRvBsHkpB1xP8GDGLDeWLW+I5x0U0qxw+zVeXV8Ac23SnSYmYxJpwmBR9EOPAApHnSNGGXzSLx6C384roeKaKI4oR6L5qRhlf3Y6esogO7zBA2UO+DHBI6nMf9PTWVeEk1k36LuOcrP62UDa2Z7WYAp2SnNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=etGaFkM8; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Z4oAg9v3TB+Izb+Y0dX2k6GiHyQU6MG3niqfWbg8TCM=; b=etGaFkM8wfTXkpInRQuSd/kk7p
-	8ElHRb/yM/G9GRQ8M+BMcpQ+kp7sRV6FvV45b5tG2cmWmZ4rxEFrcYKVSS4TkqGlNvZAgNG0cVZmp
-	Yjx6aarY0eCl8qnCgd1CB11z0CDF5cQ8EW68paURg9zWmW2SPYHVr9344zf+vc011OALi+lq2oqdv
-	BXozS4rZ83mlsK3YROx8HyjVGUAFQ+ZlRamIJqT6MLNkia80Y25IvdLPOsviwjte53hHFv15nq/Yc
-	I3OR21U9CFLif+MfDpLxZEaJVezloa7UvSmLZiH2qPqcOgVYwrNwboTtgieEpgNKp3ATsQInR8LBi
-	5k7cXhaA==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tVCEY-00CnI4-53; Tue, 07 Jan 2025 17:15:10 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Jens Axboe <axboe@kernel.dk>,
-  Pavel Begunkov <asml.silence@gmail.com>,  linux-fsdevel@vger.kernel.org,
-  io-uring@vger.kernel.org,  Joanne Koong <joannelkoong@gmail.com>,  Josef
- Bacik <josef@toxicpanda.com>,  Amir Goldstein <amir73il@gmail.com>,  Ming
- Lei <tom.leiming@gmail.com>,  David Wei <dw@davidwei.uk>,
-  bernd@bsbernd.com
-Subject: Re: [PATCH v9 15/17] fuse: {io-uring} Prevent mount point hang on
- fuse-server termination
-In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-15-9c786f9a7a9d@ddn.com>
-	(Bernd Schubert's message of "Tue, 07 Jan 2025 01:25:20 +0100")
-References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
-	<20250107-fuse-uring-for-6-10-rfc4-v9-15-9c786f9a7a9d@ddn.com>
-Date: Tue, 07 Jan 2025 16:14:15 +0000
-Message-ID: <8734hu38ko.fsf@igalia.com>
+	s=arc-20240116; t=1736266559; c=relaxed/simple;
+	bh=uhlwxdGLVevVWY0ddGH77zh9bUE9cf3TAGQVcSHsi8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O5sOZdMeygb9o6xPBwmaJNC29ZFGNJauPEN//Laaw3KtDsvZyl5yhsQQpyUrlB5kQJxKv+OZn8aGBCiIaTlsVKrkRqkvL7FnUpqzEAdcpsLGKPCBfDNwYUDrLO22NhRRHrBRO1ABcLtk7SK5nhZeb3LDhpfZSfJjfW5bjFg0IDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=UaSTDCiV; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-467a3f1e667so92589461cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2025 08:15:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1736266553; x=1736871353; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8HTQC2dY09JVji1mK3JWq1qA3dc8JRC619x9fLvkYo=;
+        b=UaSTDCiV75+PuMB95vyzop7g7+mrrpIaoI4ytLTvk5phFqI+ZxwARoh91QoFV0sv33
+         S5j2IlnRxWlTXdo5tONzic5XLQoR2QpfyjhrTndQGW8zxY60X8z6TaUSp0KilYri6/Tz
+         bf4UTgIAjJrIf/j4kabVFDjpDcd5JiXJT8V9Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736266553; x=1736871353;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w8HTQC2dY09JVji1mK3JWq1qA3dc8JRC619x9fLvkYo=;
+        b=CJODHRiXyCDjit4DXVHGq4E3sJsXybYCiZ7O0rbDwEQF3loLX4ts/zAnK/XpxLxNTl
+         Hvt/s3n/bDkG1folCYzgZ6fE+HMTFXQAOg5ZMTHA9HCyXmdV2ciUbOD2pkMFYUWO1hBW
+         lRiMd2iZR52gJ6FdXvcSkuM+/XFW/4+NqhmyAMpQG5JFZs1Mc4KxsUYACeTHUk/3B/9Y
+         v/iMM8hO6Hmxe0XJk6l2MWZBC2Iw0KdPSTbtS8uwtyDcWUqRNU7AT8rSwe9Nw596tg2L
+         /1eagI4/CZJ3rGakmh7n51/W0r8Fy+mSjEFRqdPR6fbKmzTxRrMMDzsnETLyfE7qCFVJ
+         BAOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwWre+JsJKpU7x9ySsYad5R6L/db6fJgMpqE4wQaYEYyfugDkgBU4iAGqs0M5iQrZxAZQfTOYIRsP08Ix7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5oqrWCsn7ShTJgX9ovj2mZALEuKX8Yt8SAbFsGqCxuntElumV
+	0H8UxOuLE6ppnrF4BNuf+BGjlK+E7du1J+qtckHxEnX422N0iTOq1Nj4xfNl8//6zTtoqFY6wVF
+	zlrWhL8rfBkVmROZnRQbRoe1GMe7b7Cz2fS5H3A==
+X-Gm-Gg: ASbGncvK+U/iJzuUjqqO7UqhVW9yHU3x481YzB+2WY1+43OTJu7C2oRgV6oC4JbyiIq
+	p0TbO/ipBMDjQ3kgisAnKukH5z52+JKRKC315tw==
+X-Google-Smtp-Source: AGHT+IGiwyO0VH+7z+OXe/zmO+Jj4kFyEAI533AFV+pb9IosvNedi4FrEvDQ7+OaefzrkOx0AwsXySXp5mVmtxJ/CIc=
+X-Received: by 2002:a05:622a:1184:b0:466:b1b2:6f0d with SMTP id
+ d75a77b69052e-46a4a98a262mr1004907511cf.36.1736266553449; Tue, 07 Jan 2025
+ 08:15:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+ <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com> <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+ <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com> <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
+ <446704ab-434e-45ac-a062-45fef78815e4@redhat.com> <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+ <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+ <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com> <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+ <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+In-Reply-To: <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 7 Jan 2025 17:15:42 +0100
+X-Gm-Features: AbW1kvbpEUXzpI4gujIL0BzsqsO803aPdUPT5KniHw52BwvyoC2ZwLH6S3opfkI
+Message-ID: <CAJfpegthP2enc9o1hV-izyAG9nHcD_tT8dKFxxzhdQws6pcyhQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Bernd Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>, 
+	linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
+	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
+	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
+	Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jan 07 2025, Bernd Schubert wrote:
+On Mon, 6 Jan 2025 at 19:17, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>
+> On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
+> > On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
+> > > In any case, having movable pages be turned unmovable due to persistent
+> > > writaback is something that must be fixed, not worked around. Likely a
+> > > good topic for LSF/MM.
+> >
+> > Yes, this seems a good cross fs-mm topic.
+> >
+> > So the issue discussed here is that movable pages used for fuse
+> > page-cache cause a problems when memory needs to be compacted. The
+> > problem is either that
+> >
+> >  - the page is skipped, leaving the physical memory block unmovable
+> >
+> >  - the compaction is blocked for an unbounded time
+> >
+> > While the new AS_WRITEBACK_INDETERMINATE could potentially make things
+> > worse, the same thing happens on readahead, since the new page can be
+> > locked for an indeterminate amount of time, which can also block
+> > compaction, right?
+>
+> Yes locked pages are unmovable. How much of these locked pages/folios
+> can be caused by untrusted fuse server?
 
-> When the fuse-server terminates while the fuse-client or kernel
-> still has queued URING_CMDs, these commands retain references
-> to the struct file used by the fuse connection. This prevents
-> fuse_dev_release() from being invoked, resulting in a hung mount
-> point.
->
-> This patch addresses the issue by making queued URING_CMDs
-> cancelable, allowing fuse_dev_release() to proceed as expected
-> and preventing the mount point from hanging.
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev.c         |  2 ++
->  fs/fuse/dev_uring.c   | 71 +++++++++++++++++++++++++++++++++++++++++++++=
-+++---
->  fs/fuse/dev_uring_i.h |  9 +++++++
->  3 files changed, 79 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index afafa960d4725d9b64b22f17bf09c846219396d6..1b593b23f7b8c319ec38c7e72=
-6dabf516965500e 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -599,8 +599,10 @@ static int fuse_request_queue_background(struct fuse=
-_req *req)
->  	}
->  	__set_bit(FR_ISREPLY, &req->flags);
->=20=20
-> +#ifdef CONFIG_FUSE_IO_URING
->  	if (fuse_uring_ready(fc))
->  		return fuse_request_queue_background_uring(fc, req);
-> +#endif
+A stuck server would quickly reach the background threshold at which
+point everything stops.   So my guess is that accidentally this won't
+do much harm.
 
-I guess this should be moved to the previous patch.
+Doing it deliberately (tuning max_background, starting multiple
+servers) the number of pages that are permanently locked could be
+basically unlimited.
 
-Cheers,
---=20
-Lu=C3=ADs
-
->=20=20
->  	spin_lock(&fc->bg_lock);
->  	if (likely(fc->connected)) {
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 4e4385dff9315d25aa8c37a37f1e902aec3fcd20..cdd3917b365f4040c0f147648=
-b09af9a41e2f49e 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -153,6 +153,7 @@ void fuse_uring_destruct(struct fuse_conn *fc)
->=20=20
->  	for (qid =3D 0; qid < ring->nr_queues; qid++) {
->  		struct fuse_ring_queue *queue =3D ring->queues[qid];
-> +		struct fuse_ring_ent *ent, *next;
->=20=20
->  		if (!queue)
->  			continue;
-> @@ -162,6 +163,12 @@ void fuse_uring_destruct(struct fuse_conn *fc)
->  		WARN_ON(!list_empty(&queue->ent_commit_queue));
->  		WARN_ON(!list_empty(&queue->ent_in_userspace));
->=20=20
-> +		list_for_each_entry_safe(ent, next, &queue->ent_released,
-> +					 list) {
-> +			list_del_init(&ent->list);
-> +			kfree(ent);
-> +		}
-> +
->  		kfree(queue->fpq.processing);
->  		kfree(queue);
->  		ring->queues[qid] =3D NULL;
-> @@ -245,6 +252,7 @@ static struct fuse_ring_queue *fuse_uring_create_queu=
-e(struct fuse_ring *ring,
->  	INIT_LIST_HEAD(&queue->ent_in_userspace);
->  	INIT_LIST_HEAD(&queue->fuse_req_queue);
->  	INIT_LIST_HEAD(&queue->fuse_req_bg_queue);
-> +	INIT_LIST_HEAD(&queue->ent_released);
->=20=20
->  	queue->fpq.processing =3D pq;
->  	fuse_pqueue_init(&queue->fpq);
-> @@ -283,6 +291,7 @@ static void fuse_uring_stop_fuse_req_end(struct fuse_=
-ring_ent *ent)
->   */
->  static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
->  {
-> +	struct fuse_ring_queue *queue =3D ent->queue;
->  	if (ent->cmd) {
->  		io_uring_cmd_done(ent->cmd, -ENOTCONN, 0, IO_URING_F_UNLOCKED);
->  		ent->cmd =3D NULL;
-> @@ -291,8 +300,16 @@ static void fuse_uring_entry_teardown(struct fuse_ri=
-ng_ent *ent)
->  	if (ent->fuse_req)
->  		fuse_uring_stop_fuse_req_end(ent);
->=20=20
-> -	list_del_init(&ent->list);
-> -	kfree(ent);
-> +	/*
-> +	 * The entry must not be freed immediately, due to access of direct
-> +	 * pointer access of entries through IO_URING_F_CANCEL - there is a risk
-> +	 * of race between daemon termination (which triggers IO_URING_F_CANCEL
-> +	 * and accesses entries without checking the list state first
-> +	 */
-> +	spin_lock(&queue->lock);
-> +	list_move(&ent->list, &queue->ent_released);
-> +	ent->state =3D FRRS_RELEASED;
-> +	spin_unlock(&queue->lock);
->  }
->=20=20
->  static void fuse_uring_stop_list_entries(struct list_head *head,
-> @@ -312,6 +329,7 @@ static void fuse_uring_stop_list_entries(struct list_=
-head *head,
->  			continue;
->  		}
->=20=20
-> +		ent->state =3D FRRS_TEARDOWN;
->  		list_move(&ent->list, &to_teardown);
->  	}
->  	spin_unlock(&queue->lock);
-> @@ -426,6 +444,46 @@ void fuse_uring_stop_queues(struct fuse_ring *ring)
->  	}
->  }
->=20=20
-> +/*
-> + * Handle IO_URING_F_CANCEL, typically should come on daemon termination.
-> + *
-> + * Releasing the last entry should trigger fuse_dev_release() if
-> + * the daemon was terminated
-> + */
-> +static void fuse_uring_cancel(struct io_uring_cmd *cmd,
-> +			      unsigned int issue_flags)
-> +{
-> +	struct fuse_ring_ent *ent =3D uring_cmd_to_ring_ent(cmd);
-> +	struct fuse_ring_queue *queue;
-> +	bool need_cmd_done =3D false;
-> +
-> +	/*
-> +	 * direct access on ent - it must not be destructed as long as
-> +	 * IO_URING_F_CANCEL might come up
-> +	 */
-> +	queue =3D ent->queue;
-> +	spin_lock(&queue->lock);
-> +	if (ent->state =3D=3D FRRS_AVAILABLE) {
-> +		ent->state =3D FRRS_USERSPACE;
-> +		list_move(&ent->list, &queue->ent_in_userspace);
-> +		need_cmd_done =3D true;
-> +		ent->cmd =3D NULL;
-> +	}
-> +	spin_unlock(&queue->lock);
-> +
-> +	if (need_cmd_done) {
-> +		/* no queue lock to avoid lock order issues */
-> +		io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
-> +	}
-> +}
-> +
-> +static void fuse_uring_prepare_cancel(struct io_uring_cmd *cmd, int issu=
-e_flags,
-> +				      struct fuse_ring_ent *ring_ent)
-> +{
-> +	uring_cmd_set_ring_ent(cmd, ring_ent);
-> +	io_uring_cmd_mark_cancelable(cmd, issue_flags);
-> +}
-> +
->  /*
->   * Checks for errors and stores it into the request
->   */
-> @@ -836,6 +894,7 @@ static int fuse_uring_commit_fetch(struct io_uring_cm=
-d *cmd, int issue_flags,
->  	spin_unlock(&queue->lock);
->=20=20
->  	/* without the queue lock, as other locks are taken */
-> +	fuse_uring_prepare_cancel(ring_ent->cmd, issue_flags, ring_ent);
->  	fuse_uring_commit(ring_ent, issue_flags);
->=20=20
->  	/*
-> @@ -885,6 +944,8 @@ static void fuse_uring_do_register(struct fuse_ring_e=
-nt *ring_ent,
->  	struct fuse_conn *fc =3D ring->fc;
->  	struct fuse_iqueue *fiq =3D &fc->iq;
->=20=20
-> +	fuse_uring_prepare_cancel(ring_ent->cmd, issue_flags, ring_ent);
-> +
->  	spin_lock(&queue->lock);
->  	fuse_uring_ent_avail(ring_ent, queue);
->  	spin_unlock(&queue->lock);
-> @@ -1041,6 +1102,11 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_=
-cmd *cmd,
->  		return -EOPNOTSUPP;
->  	}
->=20=20
-> +	if ((unlikely(issue_flags & IO_URING_F_CANCEL))) {
-> +		fuse_uring_cancel(cmd, issue_flags);
-> +		return 0;
-> +	}
-> +
->  	/* This extra SQE size holds struct fuse_uring_cmd_req */
->  	if (!(issue_flags & IO_URING_F_SQE128))
->  		return -EINVAL;
-> @@ -1173,7 +1239,6 @@ void fuse_uring_queue_fuse_req(struct fuse_iqueue *=
-fiq, struct fuse_req *req)
->=20=20
->  	if (ent) {
->  		struct io_uring_cmd *cmd =3D ent->cmd;
-> -
->  		err =3D -EIO;
->  		if (WARN_ON_ONCE(ent->state !=3D FRRS_FUSE_REQ))
->  			goto err;
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index a4271f4e55aa9d2d9b42f3d2c4095887f9563351..af2b3de829949a778d60493f3=
-6588fea67a4ba85 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -28,6 +28,12 @@ enum fuse_ring_req_state {
->=20=20
->  	/* The ring entry is in or on the way to user space */
->  	FRRS_USERSPACE,
-> +
-> +	/* The ring entry is in teardown */
-> +	FRRS_TEARDOWN,
-> +
-> +	/* The ring entry is released, but not freed yet */
-> +	FRRS_RELEASED,
->  };
->=20=20
->  /** A fuse ring entry, part of the ring queue */
-> @@ -79,6 +85,9 @@ struct fuse_ring_queue {
->  	/* entries in userspace */
->  	struct list_head ent_in_userspace;
->=20=20
-> +	/* entries that are released */
-> +	struct list_head ent_released;
-> +
->  	/* fuse requests waiting for an entry slot */
->  	struct list_head fuse_req_queue;
->=20=20
->
-> --=20
-> 2.43.0
->
->
-
+Thanks,
+Miklos
 
