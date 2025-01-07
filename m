@@ -1,45 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-38558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63429A03D93
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 12:25:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138EEA03DB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 12:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69331885084
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 11:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AADD3A4BBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 11:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82AB1F236C;
-	Tue,  7 Jan 2025 11:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71E31E7678;
+	Tue,  7 Jan 2025 11:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V+97O02f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301121EC013;
-	Tue,  7 Jan 2025 11:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D211E0DB3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 11:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736248983; cv=none; b=OkJiKPDi2ISn2+549fR5F4gP6fFpuqzrFM1xC19JsBf64yrZFgSx+YTRsPpAqcjQKU7JpV5hqjeFAPJBq/mziAJcRU6f/LAqtF3/TVUUHvncfFnRVXFnqnjq9E37J3A8J+VYsuc3EX1LbrHUyf/ifVK/uvXZOvy8kyfikTH42hM=
+	t=1736249391; cv=none; b=NdDJ+beu7Qb+1KK7JphEeOuo1KyeFYE1RcVNElsRT1rN6H2M5y8d0BHuk4IpPCZim6QZZ1TwJVLDeyin1/DVKjG0lDJaiSB6MZf24MEa9Z6Ncc7hqvTRUex6282S7r1yVx0++eiWgOlSrAVgR0UqxOnT0pM1jlIAHwwT5slKrkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736248983; c=relaxed/simple;
-	bh=n/Px38k0FTwpHO1WE6onLWdX94BYQFfzAitPJXOsIBU=;
+	s=arc-20240116; t=1736249391; c=relaxed/simple;
+	bh=UUKH+3f7te6b8Lcca0m/RZwQdYdbtuMENEk9IWOoe1Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQC9MmHiD2HXPk/gxo8dCNERxns3nOaiGZxVcy2Dex++xzPFcIhZUcRZ3kipiG1tSfPczP/dFJXXUEDl0QroXxG2DFKHu3//57/a68DeHbRy6qmbq8slTjXFz69RO4vtDVMF/cN/+n5fvE2MMl4fc9qlL1/4Xym18htVqhD+SKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YS7v23Xvqz4f3jqL;
-	Tue,  7 Jan 2025 19:22:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 728F81A094E;
-	Tue,  7 Jan 2025 19:22:53 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgB321+LDn1nJtUoAQ--.45317S3;
-	Tue, 07 Jan 2025 19:22:53 +0800 (CST)
-Message-ID: <d8e93ca9-6c68-436d-8d8b-5320ab0f803a@huaweicloud.com>
-Date: Tue, 7 Jan 2025 19:22:50 +0800
+	 In-Reply-To:Content-Type; b=lUzepIt5Rp/hP0IaUsFFgdwzn9J7tfHyvTBm5jDxQvKrOb50u+wlcixZKSjkrKCLgYkWu+vSVx/7GRPeER6+Ki+ixEUwByh4yDLxlf/L0XvpsR4BKYirqwWxwTNoRkj3yhZ3J9vQtkJc5F9Ffs/UXRahPKlLr7RWu4boAy2e/8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V+97O02f; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736249387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dT6jaGzM8ONtg5YiCq4PRzv+lHLx9HZ9naYINeLLcq4=;
+	b=V+97O02f/ro3VsYbdzexcbfvGLVoLbED2x8729EvBpw88MtR6gQ3MCgY8vCZYsaAeGooYi
+	dGPubdzO3Z0Cm4G/FCdldWFmP29QqnZz2kIh8p5l4YHJDWg/3I6fWqFNQHbXoKW9OF4py3
+	wMfhMkC+UjHb/z9jZQMWOOQIuf2mE7o=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-267-KIrOBwC0MseqLlSPg8pbwA-1; Tue, 07 Jan 2025 06:29:45 -0500
+X-MC-Unique: KIrOBwC0MseqLlSPg8pbwA-1
+X-Mimecast-MFC-AGG-ID: KIrOBwC0MseqLlSPg8pbwA
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43626224274so46778795e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2025 03:29:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736249384; x=1736854184;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dT6jaGzM8ONtg5YiCq4PRzv+lHLx9HZ9naYINeLLcq4=;
+        b=eJ22PbuU8eWHTJDLPlKX+ghWyr/3CzDgRzr6mP3kjZ+5AJ7lV4gatjmWsb3JTx0tG2
+         xYLS9jduwapq2B9thyTWFfaAkArCgWlVJamj26r331pz0ezE3krpDv2D3lDpvU16nFG4
+         XJBaQud8Bd56er65wWISIuqpXv7Z0UD1MbuJSTWWcxupSrs4O096iQE2GRkyacQAuwQ8
+         N/Uhr+ybI3T/Evt8ggk02osCuwh/ucCNTdlqhYkZ2h6+5HMbeXZACd1UrcauX84mJenZ
+         Qin84NNnoA5AWLpYCyDc9VWIvaB6mOUJbICAIe4s72SX5AbGiSY1eo3GMkhZEHljoCIo
+         JRBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXf04KDQsAQzEhasixRrKCttw6gFGdtuWltgkm0e3ap7yyj2M+kw/VQqDXiEE6RpVffFKOrtrsND7TnbOKt@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYGm999kksUH3q+1aEvJkVLnKJLlvWwT3aPcwFn0D4wZRkPzNZ
+	ZmXj4CQZLYlQetqA5ziLy5j35xHPROrWGjF2s3q1kLEdehI9LkH6CPXb5lqq0vKsn1Na8PrL5ZE
+	v4593RYLyGYzuxDCms7zq2FeXz2LPj/67ogxItC8he2QmfhynIThd0BN4AQDniIQ=
+X-Gm-Gg: ASbGncuXPfAgsldXISLTqQ/lEP/yo02UuBiZUgWKC1FZrIgTSGuJF2HBEwuyRYc2B2r
+	hz+awROUhFHDcQDUafjElaJmLYLJxABkYRjlffQdmbKpvGlXeMzuhraWHhGcjy+ORQMZvaTr/El
+	B2rKsDv+/cyTM1Dgt9pLqUNYEVpugEVdjeGSIc+tCmux1b23bazJ3FfV59xHCIQxrhakQq5IzHZ
+	aOQTrxUXh8basgdtCuzWbTmhTdB7tpMsnPhQJvGkSse+iNH8Ie35+lXOm7NuAZh6126q2m34soQ
+	5Xezs30e4heADxhzzm5WpEa2R7eYCrks1+txKtPq9ETJWBqagc1YjKDEQxRwaw3zBp+rQOtOe58
+	64hD2UjlV
+X-Received: by 2002:a05:600c:45d2:b0:434:f7f0:1880 with SMTP id 5b1f17b1804b1-436cf562615mr96542475e9.32.1736249383776;
+        Tue, 07 Jan 2025 03:29:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHJ3qnj0FFqFijLuXZ4Dwc22AX0w86kSYGeu3WGMLaEQBJgLzuIVM01ibBPmcl6KS6iZpaLSA==
+X-Received: by 2002:a05:600c:45d2:b0:434:f7f0:1880 with SMTP id 5b1f17b1804b1-436cf562615mr96542315e9.32.1736249383367;
+        Tue, 07 Jan 2025 03:29:43 -0800 (PST)
+Received: from ?IPV6:2003:cb:c719:1700:56dc:6a88:b509:d3f3? (p200300cbc719170056dc6a88b509d3f3.dip0.t-ipconnect.de. [2003:cb:c719:1700:56dc:6a88:b509:d3f3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b3b214sm635741635e9.28.2025.01.07.03.29.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2025 03:29:42 -0800 (PST)
+Message-ID: <35b64e41-b9b1-4fdb-af4f-1296602592ff@redhat.com>
+Date: Tue, 7 Jan 2025 12:29:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,111 +90,191 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
-To: Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, djwong@kernel.org, adilger.kernel@dilger.ca,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com, Sai Chaitanya Mitta <mittachaitu@gmail.com>,
- linux-xfs@vger.kernel.org
-References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
- <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
- <Z3u-OCX86j-q7JXo@infradead.org> <20250106161732.GG1284777@mit.edu>
+Subject: Re: [PATCH v4 12/25] mm/memory: Enhance insert_page_into_pte_locked()
+ to create writable mappings
+To: Alistair Popple <apopple@nvidia.com>
+Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
+ lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+ bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+ will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+ dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
+ djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ david@fromorbit.com
+References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
+ <25a23433cb70f0fe6af92042eb71e962fcbf092b.1734407924.git-series.apopple@nvidia.com>
+ <d4d32e17-d8e2-4447-bd33-af41e89a528f@redhat.com>
+ <6254ce2c-4a47-4501-b518-dedaddcbf91a@redhat.com>
+ <gjuqvidcpvzwqrwogeoygwnsbvlpa4fvsvaoq6rlfzcq4wxmh5@tdhz3f2fm4ga>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250106161732.GG1284777@mit.edu>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <gjuqvidcpvzwqrwogeoygwnsbvlpa4fvsvaoq6rlfzcq4wxmh5@tdhz3f2fm4ga>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB321+LDn1nJtUoAQ--.45317S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr43Gw1Utr4UArWktryDAwb_yoWrJF4rpa
-	y8WFs2ka95Kr1xGwn7Z3yDCF4rCwsYy3y3GFyYgrW2yr98WF1Ikr4fKF1YkFyxXrn3Xa4j
-	qr4Y9ry3C3Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	aFAJUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2025/1/7 0:17, Theodore Ts'o wrote:
-> On Mon, Jan 06, 2025 at 03:27:52AM -0800, Christoph Hellwig wrote:
->> There's a feature request for something similar on the xfs list, so
->> I guess people are asking for it.
+On 06.01.25 03:07, Alistair Popple wrote:
+> On Fri, Dec 20, 2024 at 08:06:48PM +0100, David Hildenbrand wrote:
+>> On 20.12.24 20:01, David Hildenbrand wrote:
+>>> On 17.12.24 06:12, Alistair Popple wrote:
+>>>> In preparation for using insert_page() for DAX, enhance
+>>>> insert_page_into_pte_locked() to handle establishing writable
+>>>> mappings.  Recall that DAX returns VM_FAULT_NOPAGE after installing a
+>>>> PTE which bypasses the typical set_pte_range() in finish_fault.
+>>>>
+>>>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>>>> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+>>>>
+>>>> ---
+>>>>
+>>>> Changes since v2:
+>>>>
+>>>>     - New patch split out from "mm/memory: Add dax_insert_pfn"
+>>>> ---
+>>>>     mm/memory.c | 45 +++++++++++++++++++++++++++++++++++++--------
+>>>>     1 file changed, 37 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 06bb29e..cd82952 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -2126,19 +2126,47 @@ static int validate_page_before_insert(struct vm_area_struct *vma,
+>>>>     }
+>>>>     static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
+>>>> -			unsigned long addr, struct page *page, pgprot_t prot)
+>>>> +				unsigned long addr, struct page *page,
+>>>> +				pgprot_t prot, bool mkwrite)
+>>>>     {
+>>>>     	struct folio *folio = page_folio(page);
+>>>> +	pte_t entry = ptep_get(pte);
+>>>>     	pte_t pteval;
+>>>> -	if (!pte_none(ptep_get(pte)))
+>>>> -		return -EBUSY;
+>>>> +	if (!pte_none(entry)) {
+>>>> +		if (!mkwrite)
+>>>> +			return -EBUSY;
+>>>> +
+>>>> +		/*
+>>>> +		 * For read faults on private mappings the PFN passed in may not
+>>>> +		 * match the PFN we have mapped if the mapped PFN is a writeable
+>>>> +		 * COW page.  In the mkwrite case we are creating a writable PTE
+>>>> +		 * for a shared mapping and we expect the PFNs to match. If they
+>>>> +		 * don't match, we are likely racing with block allocation and
+>>>> +		 * mapping invalidation so just skip the update.
+>>>> +		 */
+>>>
+>>> Would it make sense to instead have here
+>>>
+>>> /* See insert_pfn(). */
+>>>
+>>> But ...
+>>>
+>>>> +		if (pte_pfn(entry) != page_to_pfn(page)) {
+>>>> +			WARN_ON_ONCE(!is_zero_pfn(pte_pfn(entry)));
+>>>> +			return -EFAULT;
+>>>> +		}
+>>>> +		entry = maybe_mkwrite(entry, vma);
+>>>> +		entry = pte_mkyoung(entry);
+>>>> +		if (ptep_set_access_flags(vma, addr, pte, entry, 1))
+>>>> +			update_mmu_cache(vma, addr, pte);
+>>>
+>>> ... I am not sure if we want the above at all. Someone inserted a page,
+>>> which is refcounted + mapcounted already.
+>>>
+>>> Now you ignore that and do like the second insertion "worked" ?
+>>>
+>>> No, that feels wrong, I suspect you will run into refcount+mapcount issues.
+>>>
+>>> If there is already something, inserting must fail IMHO. If you want to
+>>> change something to upgrade write permissions, then a different
+>>> interface should be used.
+>>
+>> Ah, now I realize that the early exit saves you because we won't adjust the
+>> refcount +mapcount.
 > 
-> Yeah, I have folks asking for this on the ext4 side as well.
+> Right.
+>   
+>> I still wonder if that really belongs in here, I would prefer to not play
+>> such tricks to upgrade write permissions if possible.
 > 
-> The one caution that I've given to them is that there is no guarantee
-> what the performance will be for WRITE SAME or equivalent operations,
-> since the standards documents state that performance is out of scope
-> for the document.  So in some cases, WRITE SAME might be fast (if for
-> example it is just adjusing FTL metadata on an SSD, or some similar
-> thing on cloud-emulated block devices such as Google's Persistent Desk
-> or Amazon's Elastic Block Device --- what Darrick has called "software
-> defined storage" for the cloud), but in other hardware deployments,
-> WRITE SAME might be as slow as writing zeros to an HDD.
+> As you have pointed out this was all inspired (ie. mostly copied)
+> from the existing insert_pfn() implementation which is used from
+> vmf_insert_mixed{_mkwrite}().
 > 
-> This is technically not the kernel's problem, since we can also use
-> the same mealy-mouth "performance is out of scope and not the kernel's
-> concern", but that just transfers the problem to the application
-> programmers.  I could imagine some kind of tunable which we can make
-> the block device pretend that it really doesn't support using WRITE
-> SAME if the performance characteristics are such that it's a Bad Idea
-> to use it, so that there's a single tunable knob that the system
-> adminstrator can reach for as opposed to have different ways for
-> PostgresQL, MySQL, Oracle Enterprise Database, etc have for
-> configuring whether or not to disable WRITE SAME, but that's not
-> something we need to decide right away.
-
-Yes, I completely agree with you. At this time, it is not possible to
-determine whether a disk supports fast write zeros only by checking if
-the disk supports the write_zero command. Especially for some HDDs,
-which should submit actual zeros to the disk even if they claim to
-support the write_zero command, but that is very slow.
-
-Therefore, I propose that we add a new feature flag, such as
-BLK_FEAT_FAST_WRITE_ZERO, to queue->limits.features. This flag should
-be set by each disk driver if the attached disk supports fast write
-zeros. For instance, the NVMe SSD driver should set this flag if the
-given namespace supports NVME_NS_DEAC. Additionally, we can add an
-entry in sysfs that allows the user to enable and disable this feature
-manually when the driver don't know the whether the disk supports it
-or not for some corner cases.
-
+> I agree a different interface to upgrade permissions would be nice. However
+> it's tricky because in general callers of these functions (eg. FS DAX) aren't
+> aware if the page is already mapped by a PTE/PMD. They only know a fault has
+> occured and the faulting permissions.
 > 
->> That being said this really should not be a modifier but a separate
->> operation, as the logic is very different from FALLOC_FL_ZERO_RANGE,
->> similar to how plain prealloc, hole punch and zero range are different
->> operations despite all of them resulting in reads of zeroes from the
->> range.
+> This wouldn't be impossible to fix - the mm does provide vm_ops->page_mkwrite()
+> for permission upgrades. The difficulty is that most filesystems that support
+> FS DAX (ie. ext4, XFS) don't treat a vm_ops->page_mkwrite() call any differently
+> from a vm_ops->fault() call due to write fault. Therefore the FS DAX code is
+> unaware of whether or not this is a permission upgrade or initial writeable
+> mapping of the page in the VMA.
 > 
-> Yes.  And we might decide that it should be done using some kind of
-> ioctl, such as BLKDISCARD, as opposed to a new fallocate operation,
-> since it really isn't a filesystem metadata operation, just as
-> BLKDISARD isn't.  The other side of the argument is that ioctls are
-> ugly, and maybe all new such operations should be plumbed through via
-> fallocate as opposed to adding a new ioctl.  I don't have strong
-> feelings on this, although I *do* belive that whatever interface we
-> use, whether it be fallocate or ioctl, it should be supported by block
-> devices and files in a file system, to make life easier for those
-> databases that want to support running on a raw block device (for
-> full-page advertisements on the back cover of the Businessweek
-> magazine) or on files (which is how 99.9% of all real-world users
-> actually run enterprise databases.  :-)
+> A further issue in there is currently no vm_ops->huge_mkwrite() callback.
 > 
+> Obviously this could all be plumbed through the MM/FS layers, but that would
+> require a separate patch series. Given the current implementation has no issues
+> beyond the cosmetic I'd rather not delay this series any longer, especially as
+> the cosmetic defect is largely pre-existing (vmf_insert_mixed{_mkwrite}() could
+> have equally had a separate upgrade interface).
 
-For this part, I still think it would be better to use fallocate.
+Fine with me, just stumbled over it an thought "that looks odd".
 
-Thanks,
-Yi.
+-- 
+Cheers,
 
+David / dhildenb
 
 
