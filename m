@@ -1,133 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-38564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48072A041DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 15:13:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B0EA0426C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 15:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7D3166A79
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 14:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A75D1881FEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 14:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8AB1F63E4;
-	Tue,  7 Jan 2025 14:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530ED1F190C;
+	Tue,  7 Jan 2025 14:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Li4/61K5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE29E1F3D48;
-	Tue,  7 Jan 2025 14:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259241AD3E0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 14:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736258757; cv=none; b=Cn8zq6lr0VPPfa0Wp61kfvsB9GHP4t4/uqYtOAl3Xy8uqVyKHcr6fq/gDAaa6+1IfTipI5tP+oLHjRcFFO/yl2YhODK+6/OjJpCvYhlZeEkKLKrgW3dyQUsVYg3S06sbkqzikecLjgb4Kk73j1KlW4ehRf9sNlAIh1GnZi2cg8w=
+	t=1736259926; cv=none; b=oyVn5ijjE4ZFkMcPT8kDc+eW5ZZBA8/xy7N8eqY3PHxeTO4ARvoWf4gxQM6ORhW7vEuJSBuo2xNF/gggueXkWueLFSNLA7pjTuJh6GcSk74WrwVwpk97yp845GhoAXIzEjLJTTVvhF6USBPYrH58P70w5h3vcOgtAA53JVR9fWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736258757; c=relaxed/simple;
-	bh=ymO0pR/jZ9c/Yw0Sffygjl0lMBjbUTgAaRWofBYyiU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gFOC1fpwSCgMeO/h98yWzv0MwEka+ugTmc3+cr0AS9pAm2Nv36Yxfltj55vkNXC/IdHd2Dzy5TvMyBhaaIw7E0dr2n7baktb/CxpRUKsfutBuXlTiV3Otmz6HIwTk//QYIFaMf7w2DWY0273Q5k/HMuUU9zFiOOPH090zbb+vsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YSCVx3WBCz4f3jrt;
-	Tue,  7 Jan 2025 22:05:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 964891A164F;
-	Tue,  7 Jan 2025 22:05:49 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAni1+7NH1nNiczAQ--.46088S3;
-	Tue, 07 Jan 2025 22:05:49 +0800 (CST)
-Message-ID: <b964a57a-0237-4cbd-9aae-457527a44440@huaweicloud.com>
-Date: Tue, 7 Jan 2025 22:05:47 +0800
+	s=arc-20240116; t=1736259926; c=relaxed/simple;
+	bh=d1LIxk0qATz7Bx4CSYXVDlVnUV+KY+MMY4q3GcikwAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F1XyLxYD8Fv/bhl5BdSVXt7XsvjLtbARXs0YmRniMjCVUkwK259vHCJD72MJs9T8xKDHfTiwquYPu7ZPqYJy3fe02nvNODdk9tOmpJHesTHQTTb34jMN8tNvis84R5jFfiXox1fwZmb1I8K6mm315DOpSfCrnGIR0+1H3LAjQXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Li4/61K5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736259924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fF/UPutmJQWTWBXfGNwys3gTtOLsUadSzknGE532siM=;
+	b=Li4/61K5B/2CI3d009RvbpHquD86urcReTUfL9L0/SC1Tj5jCte9z4KHhfxPyN8WteJUTw
+	qE+ql6Skt+MDxWKCR4ZaEgQNhjkXMswHfjv+Ap2VtANoK5nV+Jk6JYvFqaCwxPSb0nAx+P
+	AQX77MQ2duayIDCbEtD/9vU+qetCHeY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-xRfsoEZbMnafl6X5nVz4bw-1; Tue,
+ 07 Jan 2025 09:25:20 -0500
+X-MC-Unique: xRfsoEZbMnafl6X5nVz4bw-1
+X-Mimecast-MFC-AGG-ID: xRfsoEZbMnafl6X5nVz4bw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A8FC1955F45;
+	Tue,  7 Jan 2025 14:25:19 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 219C83000707;
+	Tue,  7 Jan 2025 14:25:16 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+Cc: David Howells <dhowells@redhat.com>,
+	Christian Brauner <christian@brauner.io>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] afs: Dynamic root improvements
+Date: Tue,  7 Jan 2025 14:25:07 +0000
+Message-ID: <20250107142513.527300-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
-To: "Darrick J. Wong" <djwong@kernel.org>,
- Christoph Hellwig <hch@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- adilger.kernel@dilger.ca, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com,
- Sai Chaitanya Mitta <mittachaitu@gmail.com>, linux-xfs@vger.kernel.org
-References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
- <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
- <Z3u-OCX86j-q7JXo@infradead.org> <20250106161732.GG1284777@mit.edu>
- <Z3wEhXakqrW4i3UC@infradead.org> <20250106173133.GB6174@frogsfrogsfrogs>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250106173133.GB6174@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAni1+7NH1nNiczAQ--.46088S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryrtw47Cr1kCF4rJrW7XFb_yoW8uw1Upa
-	yrJr1DKr1ktr43u3s7Z3WxKrW8Cw4rAr47uFn0qr4DZr15Zr1SqF47KryY9a47uryxA3Wj
-	qrWIvay5uwsrCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
-	u4UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 2025/1/7 1:31, Darrick J. Wong wrote:
-> On Mon, Jan 06, 2025 at 08:27:49AM -0800, Christoph Hellwig wrote:
->> On Mon, Jan 06, 2025 at 11:17:32AM -0500, Theodore Ts'o wrote:
->>> Yes.  And we might decide that it should be done using some kind of
->>> ioctl, such as BLKDISCARD, as opposed to a new fallocate operation,
->>> since it really isn't a filesystem metadata operation, just as
->>> BLKDISARD isn't.  The other side of the argument is that ioctls are
->>> ugly, and maybe all new such operations should be plumbed through via
->>> fallocate as opposed to adding a new ioctl.  I don't have strong
->>> feelings on this, although I *do* belive that whatever interface we
->>> use, whether it be fallocate or ioctl, it should be supported by block
->>> devices and files in a file system, to make life easier for those
->>> databases that want to support running on a raw block device (for
->>> full-page advertisements on the back cover of the Businessweek
->>> magazine) or on files (which is how 99.9% of all real-world users
->>> actually run enterprise databases.  :-)
->>
->> If you want the operation to work for files it needs to be routed
->> through the file system as otherwise you can't make it actually
->> work coherently.  While you could add a new ioctl that works on a
->> file fallocate seems like a much better interface.  Supporting it
->> on a block device is trivial, as it can mostly (or even entirely
->> depending on the exact definition of the interface) reuse the existing
->> zero range / punch hole code.
-> 
-> I think we should wire it up as a new FALLOC_FL_WRITE_ZEROES mode,
-> document very vigorously that it exists to facilitate pure overwrites
-> (specifically that it returns EOPNOTSUPP for always-cow files), and not
-> add more ioctls.
-> 
+Here's a pair of patches to make a number of improvements to the AFS
+dynamic root:
 
-Sorry. the "pure overwrites" and "always-cow files" makes me confused,
-this is mainly used to create a new written file range, but also could
-be used to zero out an existing range, why you mentioned it exists to
-facilitate pure overwrites?
+ (1) Create an /afs/.<cell> mountpoint to match the /afs/<cell> mountpoint
+     when a cell is created.
 
-For the "always-cow files", do you mean reflinked files? Could you
-please give more details?
+ (2) Change the handling of /afs/@cell from being a dentry name
+     substitution at lookup time to making it a symlink to the current cell
+     name and also provide a /afs/.@cell symlink to point to the dotted
+     cell mountpoint.
+
+The patches are here:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
 
 Thanks,
-Yi.
+David
 
-> (That said, doesn't BLKZEROOUT already do this for bdevs?)
-> 
-> --D
+David Howells (2):
+  afs: Make /afs/.<cell> as well /afs/<cell> mountpoints
+  afs: Make /afs/@cell and /afs/.@cell symlinks
+
+ fs/afs/cell.c              |  13 ++-
+ fs/afs/dynroot.c           | 190 +++++++++++++++++++++++++++----------
+ include/trace/events/afs.h |   2 +
+ 3 files changed, 152 insertions(+), 53 deletions(-)
 
 
