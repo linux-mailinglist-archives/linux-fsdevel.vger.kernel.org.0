@@ -1,220 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-38556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76BAA03BD8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 11:08:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F55CA03D1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 11:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0224163F94
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 10:08:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE493A02C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 10:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364031E0E16;
-	Tue,  7 Jan 2025 10:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A671E47C8;
+	Tue,  7 Jan 2025 10:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bjeHVxgd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N1n5DiVX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bjeHVxgd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N1n5DiVX"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="JDaiiKuo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B4F1547D2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 10:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A978A1E0DE5
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 10:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736244501; cv=none; b=RrUcQBlLKzSTWDg6JoecBAF9H5spTG6w7wqybaToqR/hFRe/wxA/X0YTGKb7pJB56tEOcDl2FByjSXtvB0Kig0Jb1NzWajtrxjzJqKGK+OJXByJZ2TpzYdAVrNvSEaIsChEheZMKaidTtS4u2h7PtQad37qSH0RRaGkmS4YgFzU=
+	t=1736247531; cv=none; b=HgAEFAoLdyWm1eFcMNswKfTVVbfqWkfzkoCa+Pqm7TG+bOk0HB6eXOYpNSHvYuT32dN91yz9amJDLBgG00lJHAkHCa51TddNBK4wfU8Lkm5PUieneNg1GN6mFXO7J1lVWev59EpyLR5kpBFO8Q7uGubx4MgYCRlCkh1PAdjgVlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736244501; c=relaxed/simple;
-	bh=syQ0UcB0WElaq0BBcrLtEHxdQcHj7yNus0G4Km6uNCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y//X4OPXEV9a5Ev+2Lc+2mo0gGyDINMGKq87pH8vOGhy2f/VwWKkevKi0lfLicJgVxjialf/IYmgfRE/ImwgAfP49lpFMbVffLYOPBiZoJKzmGozXv/9a5opptWVL+RAYCCT0cXQLPrvjxJesGqby2y5LH0ZwQ8ZrtYb06vHKpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bjeHVxgd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N1n5DiVX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bjeHVxgd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N1n5DiVX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5FD7421106;
-	Tue,  7 Jan 2025 10:08:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736244494; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5pTKHH7AwBByQVPLNvCYyaEpc2MIKxRmp803bVr2DnA=;
-	b=bjeHVxgdOakFgQFP5LjOBLHrBl7AO6GyzeY1r4L1Y7BWSs5df6+Jc4r8dEwxQM28QSjXIY
-	Sa/Cmm91z+2GALtev+XHH/5KXokZXIFDGfOT1sk+/b35Ma4NBvhJaPeAwJeNAHfTxiO5Ib
-	PdTcFr8sOj/BYtXFIJ/czSA071qH33c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736244494;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5pTKHH7AwBByQVPLNvCYyaEpc2MIKxRmp803bVr2DnA=;
-	b=N1n5DiVX1rUpsOkSRxzwvUmWxuVYgYFljZtnECxiCLprrsQEhyMExIDqrXqsIEpQQIM16J
-	prLGZiJ/V3MX7DBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bjeHVxgd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=N1n5DiVX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736244494; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5pTKHH7AwBByQVPLNvCYyaEpc2MIKxRmp803bVr2DnA=;
-	b=bjeHVxgdOakFgQFP5LjOBLHrBl7AO6GyzeY1r4L1Y7BWSs5df6+Jc4r8dEwxQM28QSjXIY
-	Sa/Cmm91z+2GALtev+XHH/5KXokZXIFDGfOT1sk+/b35Ma4NBvhJaPeAwJeNAHfTxiO5Ib
-	PdTcFr8sOj/BYtXFIJ/czSA071qH33c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736244494;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5pTKHH7AwBByQVPLNvCYyaEpc2MIKxRmp803bVr2DnA=;
-	b=N1n5DiVX1rUpsOkSRxzwvUmWxuVYgYFljZtnECxiCLprrsQEhyMExIDqrXqsIEpQQIM16J
-	prLGZiJ/V3MX7DBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52A4413A6A;
-	Tue,  7 Jan 2025 10:08:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7Z4tFA79fGfXXgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 07 Jan 2025 10:08:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DE343A091E; Tue,  7 Jan 2025 11:08:13 +0100 (CET)
-Date: Tue, 7 Jan 2025 11:08:13 +0100
-From: Jan Kara <jack@suse.cz>
-To: Cedric Blancher <cedric.blancher@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] sysv: Remove the filesystem
-Message-ID: <dl55ihsxe45c7bv2g7w7hlqugs3wdwebfpuanzcxe4qsvm5uzt@dzafyykaaeyj>
-References: <20250106162401.21156-1-jack@suse.cz>
- <b4a292ba5a33cc5d265a46824057fe001ed2ced6.camel@kernel.org>
- <20250106233112.GI6156@frogsfrogsfrogs>
- <CALXu0UcWsAcDMZqAP=wM5mb9o0-T+sPyFxLcWpHZNbDWguLKEA@mail.gmail.com>
+	s=arc-20240116; t=1736247531; c=relaxed/simple;
+	bh=r9cba/X2LZ+xXzIfLu11VdFcsGQUaqpTLxJ+TPcAd0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FHttpOHS8c2E9IFkLlbloLx0NKLj+abELuNA3+Im7WfBcORADAOmsfbSmJZnaUaiKNC8lZeZr7ACN2489hndRoESo1naAxhaEZYBK3Ye0n5EEvZ+psAGNPpy8GVjH4kjxvvxlW0sLolxUh3RYQ7INSgSLsqZ6FeCkkMFv96Scgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=JDaiiKuo; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaf8f0ea963so17011566b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2025 02:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1736247528; x=1736852328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r9cba/X2LZ+xXzIfLu11VdFcsGQUaqpTLxJ+TPcAd0U=;
+        b=JDaiiKuoEelj/wmzgsTFui/5L8T5ICx3rdx3iW2fQPSSa7HW7hTp2S9a8kpZnFWJcq
+         IIAJRjsEEtOToWny0BMfGb4xKfLWIODHpqaAj775aXgBaiPr/gxxbUSeH6f77s4hUfN/
+         d/x8u2dWD0F9yThZmnQMR5gt2m8vbQkxLXkyK+SRRml6n0qe5JdLY+AK7/ilBquaiAwn
+         hMc5E8bKAC8/Ks1HJK+fTEcPSHg883pg89YMknsqSgaZD1jLkFWQb/FeB0WdXZON3Q8l
+         6lGgUjiwfr7kPQKDk/jGILrcvkDZHGfDbP0VVQBvoHLx9bHC4D7dEpFmMD/noRGfJzkm
+         uIMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736247528; x=1736852328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r9cba/X2LZ+xXzIfLu11VdFcsGQUaqpTLxJ+TPcAd0U=;
+        b=UYC8ddZyBlM3vWimIy2+pHSUlPRKkNZnjtMDdPYaOkO+zOPI0jaLnVzQxODi1sNTf5
+         boEx1/P/UAQidccCkKEj5AA/CSjGiy3/xDCoJgPMSDg5yuQG+rxbnjg8MA1RecLhiXlq
+         gIrXm/RVrd8TZJRyhCPMV2tzqE6jhiNoOsLQLK16lS0GUjgUzJtcteLsRlFVCQwBbdVH
+         yb6AqzCe5aeN7UF5tlGdZciFM4zjwM0fKCXf7R0qD9LowQWn2mZN0750An4+OYqsOTRj
+         aVa/E1JOihphjBTIjQnsq92/tYwvabqdLG8UPMg3rcLKIZUxyzOBubGlc5CO3O/+gqaJ
+         fWDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMPNU48hMvHhAv2CYSTHBdsvouaE3j0j9kDgsYMifxCvjlB12wNnDHkfG55fs4M5waBAFb6Qtouqqa/din@vger.kernel.org
+X-Gm-Message-State: AOJu0YybdX7BBYx0lyxmYrzAPYFSLuKuRt54NJdaTKVhnmmBxV6IPMCs
+	UnEJ0wHCSkeg1jFRkOVll6zlQ1vGzRxfADF6+6aMoqZqmin2jdVuh+RsvDwJV5b74Nuu6jBBXkX
+	tUfI/DUd4N9x20WEoHFzjZrDvkm84M4lJhnW9Kw==
+X-Gm-Gg: ASbGncu2TRtRtXnyb8KX6L52y5zXt86qmDSGMBw+vPfnFghVvUvRfS8dMLPQU0mbSO8
+	TEJsrzuCDTFFTdZn9oVhvw5UUWWQdhVsT00ZAak5nIVbydV3ym+yxv2QwbsmFAc7+Kvs=
+X-Google-Smtp-Source: AGHT+IETZOmNG/e0pTEpYkVhrwGsLepWld2hp3oIZEoqxA3MiEDxyRVbckh1TvXsfUQviSS2Bg03tqiW0zDp2s9kgt8=
+X-Received: by 2002:a17:907:1c10:b0:aab:eefd:4ceb with SMTP id
+ a640c23a62f3a-aac27025de5mr5732340766b.10.1736247528011; Tue, 07 Jan 2025
+ 02:58:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALXu0UcWsAcDMZqAP=wM5mb9o0-T+sPyFxLcWpHZNbDWguLKEA@mail.gmail.com>
-X-Rspamd-Queue-Id: 5FD7421106
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
+ <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
+ <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+ <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com>
+ <1995560.1733519609@warthog.procyon.org.uk> <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com>
+ <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com>
+ <2117977.1733750054@warthog.procyon.org.uk> <CAKPOu+-Bpds7-Ocb-tBMs1==YzVhhx01+FaiokiGR3A-W9t_gQ@mail.gmail.com>
+ <2787700.1734019232@warthog.procyon.org.uk>
+In-Reply-To: <2787700.1734019232@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 7 Jan 2025 11:58:37 +0100
+Message-ID: <CAKPOu+-O4NVRO-oEsSv_GG__q5tdC-X8zPUnLkJ+9iDaVp_UyA@mail.gmail.com>
+Subject: Re: [PATCH] netfs: Fix ceph copy to cache on write-begin
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 07-01-25 08:17:00, Cedric Blancher wrote:
-> I disagree with the removal.
-> 
-> This is still being used, but people running Debian will notice such
-> bugs only with the next stable release. Imagine their nasty xmas
-> present when SYSVFS support is gone for no reason.
+On Thu, Dec 12, 2024 at 5:00=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+> How about if you add the attached?
 
-Hum, do you *know* any user of sysv filesystem driver? Because the kernel
-should be spewing warnings for sleeping in atomic context left and right when
-you use that driver for 20 years and nobody complained.
+Still no change, first try led to hang, as always.
 
-> Better add a test to CI
-
-That's easier said than done. AFAIK we don't have tools to create the
-filesystem or verify its integrity. And perhaps most importantly I don't
-know of anyone wishing to invest their time into keeping this filesystem
-alive. Are you volunteering to become a SYSV maintainer?
-
-								Honza
-
-
-> On Tue, 7 Jan 2025 at 00:31, Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Mon, Jan 06, 2025 at 02:52:11PM -0500, Jeff Layton wrote:
-> > > On Mon, 2025-01-06 at 17:24 +0100, Jan Kara wrote:
-> > > > Since 2002 (change "Replace BKL for chain locking with sysvfs-private
-> > > > rwlock") the sysv filesystem was doing IO under a rwlock in its
-> > > > get_block() function (yes, a non-sleepable lock hold over a function
-> > > > used to read inode metadata for all reads and writes).  Nobody noticed
-> > > > until syzbot in 2023 [1]. This shows nobody is using the filesystem.
-> > > > Just drop it.
-> > > >
-> > > > [1] https://lore.kernel.org/all/0000000000000ccf9a05ee84f5b0@google.com/
-> > > >
-> > > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > > ---
-> > > >  What do people think about this? Or should we perhaps go through a (short)
-> > > >  deprecation period where we warn about removal?
-> > > >
-> > >
-> > > FWIW, it was orphaned in 2023:
-> > >
-> > >     commit a8cd2990b694ed2c0ef0e8fc80686c664b4ebbe5
-> > >     Author: Christoph Hellwig <hch@lst.de>
-> > >     Date:   Thu Feb 16 07:29:22 2023 +0100
-> > >
-> > >         orphan sysvfs
-> > >
-> > >         This code has been stale for years and I have no way to test it.
-> > >
-> > >
-> > > Given how long this was broken with no one noticing, and since it's not
-> > > being adequately tested, I vote we remove it.
-> >
-> > I concur, if someone really wants this we can always add it back (after
-> > making them deal with the bugs):
-> >
-> > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> >
-> > --D
-> >
-> > >
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > >
-> >
-> 
-> 
-> -- 
-> Cedric Blancher <cedric.blancher@gmail.com>
-> [https://plus.google.com/u/0/+CedricBlancher/]
-> Institute Pasteur
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+(Sorry for the late reply, I was offline on vacation)
 
