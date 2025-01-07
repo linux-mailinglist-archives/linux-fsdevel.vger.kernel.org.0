@@ -1,123 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-38597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD18FA048E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:08:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC67A048EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 19:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAE73A5557
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D4E162081
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2025 18:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2618C900;
-	Tue,  7 Jan 2025 18:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3040198A0D;
+	Tue,  7 Jan 2025 18:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F42TyEdB"
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="t20gnFjE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB3753AC
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jan 2025 18:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C016749652;
+	Tue,  7 Jan 2025 18:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736273286; cv=none; b=aDz26J8tJa69hiOamj0vxNVsBqIeRfYe05FbvCp9h1BP0avQFO0mz+UZgcujFkMCL4xTrmD002wZy1z8CvtfoLrTNojFvXlSosxrlaH/l6ourWjymaF0lLrPW48nrsr0TpvjuX5tTc6OLAarCho2M5ypoZpNLdMpy0FeJCwVRws=
+	t=1736273316; cv=none; b=QJqsFstOsfcwnec5TFa66QlL4tlswLFFTIs7GR66j1j2yfTmWYVYZS5ZFrKtkvFsKR0RmDHhCnQxkwXu7Lk/7zt3AE0VYuiWQVyLE8CBPHGoFHi67c/7P8dVKLu5TuW6SWEH7GpXv9As0WzTL92Y+yAaljpHLjc2GUB57u90by0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736273286; c=relaxed/simple;
-	bh=UEjZcVWnfS2uXxtqUyVgvGvg6PJIgM9A46dNuLcwf4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fe7z2kUTYgyipD88B6ZMw7L92esrxUHYy3vUZjlNU5F70jWEzVdFNUX2riXAc3Zg4SpwAOXtUBRD5B5Bu7CYYGvidzsYAEj3hc9XbdUiNkuzBB3hGqlBaesHZTrwstcp8FpBTn9chOqZas5wm8B136sfLixGzLEiav2N28UsBLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F42TyEdB; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 7 Jan 2025 10:07:54 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1736273278;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UlTBV59tQI4p6soTuVdHSsi53ggiM94qcxAUVClW1FI=;
-	b=F42TyEdBzh/W4f1dY/234muoLagcd0O75lKfy7Oq+0AHaJlb6XC2xNKtL57w2JFI+AMzWq
-	i+5lvm2vi+gcJ1SMdDqYzR8DZXCn/8Y0vuLbCrtPZdSlzuz4UmLOQemEoCfBScdtRMwSpH
-	lhGEiwRFT/PhywZhju361Hd/xBLhn6w=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: David Hildenbrand <david@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
-	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
-	Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-Message-ID: <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
-References: <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
- <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
- <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
- <446704ab-434e-45ac-a062-45fef78815e4@redhat.com>
- <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
- <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
- <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
- <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
- <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
- <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
+	s=arc-20240116; t=1736273316; c=relaxed/simple;
+	bh=DQ3nqgC+a7Gk2yp+F1zJDb5j38I24K/y7V8EU+q1tfs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=tASqSdrO8Fg70clXL+CpGL/twJIIgsjj8R0+Iz9rM/Z+rEt6gRK6X90/6Qv/DjtRG6uK1fBsfgu/lCXDh0nohMkI6AhbMhtD85D3k6iQpKAyr1aVRSqGksKrP8GWIf/s7kAZ/zHkinufzmS2YequGTZIZvoc8KZjZ94DxNrWbYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=t20gnFjE; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id A7C7FC6;
+	Tue,  7 Jan 2025 19:08:23 +0100 (CET)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id KbCLaDkcSIhM; Tue,  7 Jan 2025 19:08:18 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 51DA49A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1736273298; bh=bRwhxHfmIxxbjng+D/WKOrd85HcvY8pgd0ECxPTeUVk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t20gnFjEOlo1npzMGWTQuIFZ8VHN6Vd7MEJwjsgcgwm/Tkj+okL97nGWCUXxsDaJe
+	 df6lkqrVECvNCN4XMD2LeZ6ZO+cwXGt0Xo1clRgYREAlMKUSBA6rQuxRHgV0dYG+X7
+	 5v1Xt2DiRhiRSAisPrj19dc00lmNjT4tc8kpzFlEo7UFyqT1bNwVx3a22pF56ESh7C
+	 ccLVj9EaPijovzMt9MMiPFEiXOmGcApZYzQWJ0BZEehJCxIWiQ+4hsI5T7YUPIl8Jg
+	 Zx4+5lwHAveksM6szQXqc1ONFJjg43LibkzmgfkblPLd42pkQksXZYrLHCcboi3tEl
+	 50nBhxbc1O3Bg==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3xo.fr (Postfix) with ESMTPSA id 51DA49A;
+	Tue,  7 Jan 2025 19:08:18 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Date: Tue, 07 Jan 2025 19:08:18 +0100
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <smfrench@gmail.com>, Christoph Hellwig
+ <hch@infradead.org>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
+ <brauner@kernel.org>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix kernel async DIO
+In-Reply-To: <529745.1736261368@warthog.procyon.org.uk>
+References: <d98ca4470c447182020b576841115a20@3xo.fr>
+ <fedd8a40d54b2969097ffa4507979858@3xo.fr>
+ <669f22fc89e45dd4e56d75876dc8f2bf@3xo.fr>
+ <286638.1736163444@warthog.procyon.org.uk>
+ <b3e8129937055ff8971d8be44286f0b8@3xo.fr>
+ <529745.1736261368@warthog.procyon.org.uk>
+Message-ID: <bb21f2c816e75425c9200a7f9700d216@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 07, 2025 at 09:34:49AM +0100, David Hildenbrand wrote:
-> On 06.01.25 19:17, Shakeel Butt wrote:
-> > On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
-> > > On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
-> > > > In any case, having movable pages be turned unmovable due to persistent
-> > > > writaback is something that must be fixed, not worked around. Likely a
-> > > > good topic for LSF/MM.
-> > > 
-> > > Yes, this seems a good cross fs-mm topic.
-> > > 
-> > > So the issue discussed here is that movable pages used for fuse
-> > > page-cache cause a problems when memory needs to be compacted. The
-> > > problem is either that
-> > > 
-> > >   - the page is skipped, leaving the physical memory block unmovable
-> > > 
-> > >   - the compaction is blocked for an unbounded time
-> > > 
-> > > While the new AS_WRITEBACK_INDETERMINATE could potentially make things
-> > > worse, the same thing happens on readahead, since the new page can be
-> > > locked for an indeterminate amount of time, which can also block
-> > > compaction, right?
+Hi David
+
+Sure you can !
+
+Please also note that after building 'linux-next' and applying the first 
+patch you provide I sucessfully test DIO write (same test process as 
+before).
+It works fine too !
+
+I stay availiable for further testing
+
+Thanks again for help (special thanks to Christoph and David)
+Nicolas
+
+
+
+Le 2025-01-07 15:49, David Howells a écrit :
+
+> Thanks!
 > 
-> Yes, as memory hotplug + virtio-mem maintainer my bigger concern is these
-> pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there *must not be
-> unmovable pages ever*. Not triggered by an untrusted source, not triggered
-> by an trusted source.
+> I ported the patch to linus/master (see below) and it looks pretty much 
+> the
+> same as yours, give or take tabs getting converted to spaces.
 > 
-> It's a violation of core-mm principles.
-
-The "must not be unmovable pages ever" is a very strong statement and we
-are violating it today and will keep violating it in future. Any
-page/folio under lock or writeback or have reference taken or have been
-isolated from their LRU is unmovable (most of the time for small period
-of time). These operations are being done all over the place in kernel.
-Miklos gave an example of readahead. The per-CPU LRU caches are another
-case where folios can get stuck for long period of time. Reclaim and
-compaction can isolate a lot of folios that they need to have
-too_many_isolated() checks. So, "must not be unmovable pages ever" is
-impractical.
-
-The point is that, yes we should aim to improve things but in iterations
-and "must not be unmovable pages ever" is not something we can achieve
-in one step. Though I doubt that state is practically achievable and to
-me something like a bound (time or amount) on the transient unmovable
-folios is more practical.
+> Could I put you down as a Tested-by?
+> 
+> David
+> 
+> ---
+> netfs: Fix kernel async DIO
+> 
+> Netfslib needs to be able to handle kernel-initiated asynchronous DIO 
+> that
+> is supplied with a bio_vec[] array.  Currently, because of the async 
+> flag,
+> this gets passed to netfs_extract_user_iter() which throws a warning 
+> and
+> fails because it only handles IOVEC and UBUF iterators.  This can be
+> triggered through a combination of cifs and a loopback blockdev with
+> something like:
+> 
+> mount //my/cifs/share /foo
+> dd if=/dev/zero of=/foo/m0 bs=4K count=1K
+> losetup --sector-size 4096 --direct-io=on /dev/loop2046 /foo/m0
+> echo hello >/dev/loop2046
+> 
+> This causes the following to appear in syslog:
+> 
+> WARNING: CPU: 2 PID: 109 at fs/netfs/iterator.c:50 
+> netfs_extract_user_iter+0x170/0x250 [netfs]
+> 
+> and the write to fail.
+> 
+> Fix this by removing the check in netfs_unbuffered_write_iter_locked() 
+> that
+> causes async kernel DIO writes to be handled as userspace writes.  Note
+> that this change relies on the kernel caller maintaining the existence 
+> of
+> the bio_vec array (or kvec[] or folio_queue) until the op is complete.
+> 
+> Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
+> Reported by: Nicolas Baranger <nicolas.baranger@3xo.fr>
+> Closes: 
+> https://lore.kernel.org/r/fedd8a40d54b2969097ffa4507979858@3xo.fr/
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <smfrench@gmail.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: netfs@lists.linux.dev
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+> fs/netfs/direct_write.c |    7 ++++++-
+> 1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+> index 173e8b5e6a93..f9421f3e6d37 100644
+> --- a/fs/netfs/direct_write.c
+> +++ b/fs/netfs/direct_write.c
+> @@ -67,7 +67,7 @@ ssize_t netfs_unbuffered_write_iter_locked(struct 
+> kiocb *iocb, struct iov_iter *
+> * allocate a sufficiently large bvec array and may shorten the
+> * request.
+> */
+> -        if (async || user_backed_iter(iter)) {
+> +        if (user_backed_iter(iter)) {
+> n = netfs_extract_user_iter(iter, len, &wreq->iter, 0);
+> if (n < 0) {
+> ret = n;
+> @@ -77,6 +77,11 @@ ssize_t netfs_unbuffered_write_iter_locked(struct 
+> kiocb *iocb, struct iov_iter *
+> wreq->direct_bv_count = n;
+> wreq->direct_bv_unpin = iov_iter_extract_will_pin(iter);
+> } else {
+> +            /* If this is a kernel-generated async DIO request,
+> +             * assume that any resources the iterator points to
+> +             * (eg. a bio_vec array) will persist till the end of
+> +             * the op.
+> +             */
+> wreq->iter = *iter;
+> }
 
