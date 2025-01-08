@@ -1,292 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-38619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39D7A04EBF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:20:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B53A1A04ECA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:21:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A129188811A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61AF5188811A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D73619408C;
-	Wed,  8 Jan 2025 01:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YwIQxUwH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6CA15696E;
+	Wed,  8 Jan 2025 01:20:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D121214F104;
-	Wed,  8 Jan 2025 01:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736299157; cv=fail; b=ddU94L6BaKNnjeq3QU7QwhEHxTqil8+b1ieZh3P8zBl2uPar2zkiybem4JCB8YYkwFLKs2rX+ENUCcbqzsxbYN7uEIOq4mLldayEG7peNUI6uQ3dlr65CxFHa0+lB/CyIbvxXXbyiwwXzX5NG9EspRmF1FHe/dR4n4nlTLxWc1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736299157; c=relaxed/simple;
-	bh=ujzx/WQRsMF0eBSC+IyKU+sEkbLBLr3cEoVBSozwfdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D2jyQ0HEl0OSBc0YWJPoqXmWQAkrdCBCFCiYJ5wHYf9F6s4TshxNqWPxqntErY5H8tCNRSz61yFCKHPv1/SneIRzSnZ2IB7VKIkkn8d2DGtoXgn4M4uBmdkP7b2NecYMQ1FwEv240o/2ZtG4sihATu0S5yx7q0bNXLv7cXnBdYY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YwIQxUwH; arc=fail smtp.client-ip=40.107.92.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wp0IYMuq113HJfM3u+GwGRShS/gQwJd+qbo5zLZ7HeMPOTlamkrKWRJP/6o4JB6Akqbpejl6wqOqs4RVS1ZJ75lE+LjrTdBlYI0KWKRcNbgin7jRLgl4E2hYsT5ZpxsQgGGwcNXqe9hLyCMF0kBXNw6UL4P4IvUo6KqSOnhru1Fg18ZiNmWEaVdneLPi+Ot1D+0GieYiRtCNFXOYWuQQW2N71eiba2Ub1w5r/ZSOjWj5OTFSvXPQqgGUtmGbrYbxq9Yesh8kuEkySd4CklhQJ6eU6eV7Nba+q4rPyZ8XkjJG1MJQGqbOATqjJPKG8ZOhAxg2U6SRU7MenE1Z6yfMcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L7lvzuDdKfKSwlcRCTo250cbJaCJWsopJVFrrMGY2rM=;
- b=Cckqo3qRIKBBS81qajSbEuwrxhSuhruFkUAFTgNTJRg95bIaRb0pgesf+MGF4890a8AJAHyOr9FggTZlRoADVuIr8PIZa7qtMMsQwyR9/W/V+QLU43XMwfW4+cXU/ljlh2FWTN1TljCUAWbjDSCTHFDM5fOzujILZZuQJFmNF+xq2fIoBnMGI+y3eEIHjBwU34o8sf0IOjdUsssu8nsQD5BRgmB94Krd3JYNM1hU6M2h219UgCc5zC0zPUY3+pnUrxXKQUOC2KmkjBFEfR/HTzXlInUNl3/n2Bz8Nf6YKJSIY2mKuIOhN1kE5m5MiSE/yZdyS5KUIiJpbrdLcPs3kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L7lvzuDdKfKSwlcRCTo250cbJaCJWsopJVFrrMGY2rM=;
- b=YwIQxUwHG3CWHg1I6n1C6VBSh+sEdB0MQH1pIMOJtyYrQaNihDeX36YbvLuruDA1Ad1pBrKVnJ25LUrPfhDCzE9BjIFxv3z3ggtlDHxqb5S5F8sYsi7qBqIFqWorhgIDoAngJreCCozvvmVVphjDVOUw2H31EurWYTv5gPKL40EyQmCN+17ncuMRWfMTYf7etivBYidrqjqiKSgN18FCx64qDr5h8nUeras4vUwuOMDwd65OtMgts1CeHoo2GMEBGjuNReHx+eyU8YXL7zcnXbj1fg1xqVdtHFAckHH+B28w5YkbNO7Kmw2KF7HbstRmMzMSzweC5ljjYBqkKCyXgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- LV8PR12MB9264.namprd12.prod.outlook.com (2603:10b6:408:1e8::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8335.10; Wed, 8 Jan 2025 01:19:12 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.8314.015; Wed, 8 Jan 2025
- 01:19:12 +0000
-From: Alistair Popple <apopple@nvidia.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: Alistair Popple <apopple@nvidia.com>,
-	gerald.schaefer@linux.ibm.com,
-	dan.j.williams@intel.com,
-	jgg@ziepe.ca,
-	willy@infradead.org,
-	david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com,
-	hch@lst.de
-Subject: [RFC 4/4] mm: Remove include/linux/pfn_t.h
-Date: Wed,  8 Jan 2025 12:18:48 +1100
-Message-ID: <34dfcab0f529cb32b59e70c8bce132a9d82dc3f0.1736299058.git-series.apopple@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.a7cdeffaaa366a10c65e2e7544285059cc5d55a4.1736299058.git-series.apopple@nvidia.com>
-References: <cover.a7cdeffaaa366a10c65e2e7544285059cc5d55a4.1736299058.git-series.apopple@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY6PR01CA0044.ausprd01.prod.outlook.com
- (2603:10c6:10:e9::13) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DA778F24;
+	Wed,  8 Jan 2025 01:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736299239; cv=none; b=FXYVrIARrd/1rNGyn44airrAKC1vqrVhLB9QkN4T15ZTmTcATQlLK0SrezVFBG2SPZDT5ML/a0YkNCvjcCXpuKew4q3lFUSd1b/8ogiyGyUpNO95XsdfHTacggOYXG/WhAc0kXNRSulxov3klK1LEhqB8HpZumSK84eZDIkWSmk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736299239; c=relaxed/simple;
+	bh=IzOOzUG7AoU1E7QXJeIgLSgU3omWwrBeAwxDhmLwfRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdTGQSGMc6OrgRqg7MuGV47Dw6wxwxVZ/Aff9gU+gH9ryUhrrJtfCBTO7Qe0bPvLYTOvWoii2h3jyK/gNylNnfpaqQFFC7noi9DQGphae1Q06y1x0lS4qN1pWEYWGXHLlyPfNdKDJQakZWC7UHhmjBqDiyWQQTfxbzrkMyh6jzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YSVTR5J55z4f3lfJ;
+	Wed,  8 Jan 2025 09:20:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 174F61A092F;
+	Wed,  8 Jan 2025 09:20:33 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBHrGDe0n1nC4RfAQ--.53048S3;
+	Wed, 08 Jan 2025 09:20:32 +0800 (CST)
+Message-ID: <f26a21c9-2520-4deb-98f5-385adc92a934@huaweicloud.com>
+Date: Wed, 8 Jan 2025 09:20:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|LV8PR12MB9264:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88b9d458-6a30-4e49-1007-08dd2f8275c6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/PJ8zAXQoXAEVx0fHIyn22W8LcqWnECQ9D+LlVAvqgL+1ScDpXV0BITSzD89?=
- =?us-ascii?Q?LGWjpet3VvidtIUtCnnSj9ZOEdNhjDuSFklrkamlZDlwprCoC2f0wzX1Ckg/?=
- =?us-ascii?Q?yw4uIzdiwXvxkxIJhnf4lnvggxHSzuvb4Tt33TliBsQkRSB8qE3dfkvoAcjR?=
- =?us-ascii?Q?sglJ8ONRO1Bqz+UDmyrnyGzfFwFm+CiaiIftZTMSY0xYwbWZABGYuwchEZQU?=
- =?us-ascii?Q?h1TgBGD6+SnVxMjNyhklDrJGuUowMcdSG4kWHby1A7pP9Pp0ITRauEqZyfNP?=
- =?us-ascii?Q?opYUluV0BrJKXRiqBlf+1sDsABU0f8FUCSZynNG1fq6To6SxyRUwlmNOP0tA?=
- =?us-ascii?Q?sJWHE7CcTbnI0QK0EBGXvKqd6DFrRsGJOwMe204qNo795ebvJYdZesZ1+Nqe?=
- =?us-ascii?Q?QmB5eaJIQXah5UezKC2yXlB+ah2J2qIh+JU4ZPeOVT0Y5o1WvdiTYfISalUv?=
- =?us-ascii?Q?RYmn2uX0pGPc0TPi65BgpYHuJ+MxwCUOBugqZYBQfx+ePz8csRfHBnmyU5CJ?=
- =?us-ascii?Q?tSBNelskF5zYWdlIelYwFwtHL73HqBh41mzA47wVOV6nIHz7GEFm/4Mb7UI4?=
- =?us-ascii?Q?/Vbh2gLPHi2iN071gZgKi4u9CD5w1nIc+kClNIq8OC9Uxa6HK3jD9SMGMdqj?=
- =?us-ascii?Q?R3nW6tPh6JwwjMrgr21TJMapCORuOdS0qECMRJAvl2ibXKgcsngkIeK8YCYz?=
- =?us-ascii?Q?UQCLQxfhZOgn2yzS3EIQ4mFwdyJbwCWJDjGRxl1rsfd63oyZ4T1GcuowcLsZ?=
- =?us-ascii?Q?wvcjqkjzF5GAdAFbpWnfx70n8xgSFLCLmwHW1UEEgEn4MbqLc8I/cKLlYdXA?=
- =?us-ascii?Q?1JV6cJKP7Ek5NG67FcTBBQZ/J51N60lnno5o3SkKaFhJLwySNC6PxerGZhP9?=
- =?us-ascii?Q?u95s/iXw6xf/fxNW9ZLjYeU6v1SFwv2QsIZeOZgOp48HyrtV/3Svr6F9SIi2?=
- =?us-ascii?Q?s0+IzItrik4qBESKWQrVrtsEP4JKS1GT3YZA633DeRlsBWX3ToPoflwvaWsB?=
- =?us-ascii?Q?Sw78fxXogbzVX9e5yqE9T9YzAdN251zI4dogjGyxhOYi6/lLcRccwHdwXOCF?=
- =?us-ascii?Q?co/io7pAHDZ+IwPoNpwyYJJL94KgoZ7itCWQ8Xf8giFrQsa5Be7DWbXsMCSO?=
- =?us-ascii?Q?CI4HcaV6dbK3XtlqTqWdz2AmXvOuOSd94hlcf6qaMSjGTKDJQ9ZL8r99m3Sg?=
- =?us-ascii?Q?RjYGCG96iODmp+pAFgEvBcdA16cUU6zM+4xzUuNlYaoxOHFfy5uj4laiXoNh?=
- =?us-ascii?Q?31UsOWobV9PsrhaDhuJZikV9qFLdRTlOGNH3T5Q8ALvYzKh2voiB2i0R4RR5?=
- =?us-ascii?Q?wPkbRVuklE0UGDH1ux1q1fz2CyZyOlRhwSarvu2Sx9MxXpHD+HDrfWXoF88r?=
- =?us-ascii?Q?P5PPskdEr9RK6mZpbA7jh3HCJ7A0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?c0HUy9jjvJ696px+5rATlcFiIxXIsVfGjzh2iPW2YiMGT98Y0UKCb+Xx9G8D?=
- =?us-ascii?Q?sO9vLIU2Ka+PM+9bOn8YBb9SJTQqNpfpE30HzaC+U2ofsXmnEvFhYGAxGpZT?=
- =?us-ascii?Q?yFwt+WFgJuKy9tcN0wK8PSkGx2NXdvrxFOFzJprtaAwvy+dXNAyUMafiCrkp?=
- =?us-ascii?Q?waEmsXZKwLvRbzYMzXse+Hh3usxofi+oN/5TGWH8LXk4VK4LYjcvJrgoDNaj?=
- =?us-ascii?Q?zHC3DuM/2KzZAgy3ClEM3pNJZWB/PBddonzRGSzmgGtPjiCnXZKe3hJTZcEy?=
- =?us-ascii?Q?4wuAqiiRM8E+TKxJbbtzFhCtJNKzQw0SKTgRXI0iOuxXheieMiMyGwm4HAFk?=
- =?us-ascii?Q?P9SL/Q6W8+gkIaYG1SA/vdXE5TJf0PkimsusvgaeH1quh0zuykQdYm6EIrU6?=
- =?us-ascii?Q?HpqkKSjtFNRI9KeMsUSHWtIVokrZM3c4WbvzqHPU4i14tYfvoD/uhk8F9HCq?=
- =?us-ascii?Q?UTzLocp9Q28DpzSKAuVu0Qk67kgt5a/I1x6eHlIsXdOtEwgMatc8oY5JhwvY?=
- =?us-ascii?Q?0PBeW8dzL6bvtcTLiAccVQK5jAgL1QddbjvW+wfpzpa87XIL/btkHL88LLmg?=
- =?us-ascii?Q?Y6NM9TSesbHlfRNk7wjqQ8HQhzVHE6wQ0oOQIeCrqa7Gnak81IMeuXs2RLGm?=
- =?us-ascii?Q?Vgoiw7XO+z59kiXt9ljqBjnFeGiDZO8Czmf2f2fxEfVVm1c8G2P7yMiNxgAm?=
- =?us-ascii?Q?3QydX9L3KB99V+dyccnX0ZONFZAjNAxP/ZwhgPPBr/DNstKLpF7bMTdcfncp?=
- =?us-ascii?Q?SC8kQ7UTZfRE5JSdKPGkdsvexIQcqZi5KQt/NiEKMaIyERndt7CB1UNzwICC?=
- =?us-ascii?Q?4QM+2uTGcUTTBrT7BLcWRW77/wB4BlhZeJj+0KEQjHnW+QMZnUY8yeYovp0U?=
- =?us-ascii?Q?I0MnGIbThj3Mmjgovv7qva6DV8e5z5DjURjeWaHUm2uWIHLGlnpTITTgiA4j?=
- =?us-ascii?Q?CzGn1dPgWIidYwSWdfpQgWwaX9OjVYKK4kt28YHy0uIMBcHEph0eOMXVhuIn?=
- =?us-ascii?Q?jfTbL+KZKsPEigZxRlvdIBS4hUkJp4zWIxKvdYAtjA+5XBRcZ2LU/KqhXMKe?=
- =?us-ascii?Q?EOrvwUrBehyIzx0w4idVUnFHbzwPe20vJuJpPi4G7eHron3ngIwVOqWyoEY0?=
- =?us-ascii?Q?UvCLzc6Ql350JLo7RzBWsZGlT7raooRjHnR7pRxxSu97h7CXwud1A+EXa8mr?=
- =?us-ascii?Q?TV8183klexpIteAy30ZMb3ZyntVSed7MAI/+trzQRfAkGh6d0u/lzNtIqWbB?=
- =?us-ascii?Q?upWWLujb8SN41VH7c7NDI69Ghfsxe2mJEX7IOpbzbAiPpfGsGnIsI7eMK6PM?=
- =?us-ascii?Q?LXljWYG+jtQgG3QbItXSG3w3KDTvZoU5Epq6nOZLCNpBhfF8fhhP3mv0SOsv?=
- =?us-ascii?Q?mDgzpbM3ZFHrfm2u8P4Jv44++7VYpCCsbcFkMxaM7SuhSUtO+L7RDagw6iK7?=
- =?us-ascii?Q?WUMV6/h/UuWHEfjogYJEB1LOm0+rWez6RUh+WIzp7PeKFGaDLk4sx0fPyACF?=
- =?us-ascii?Q?hYmmcj/5DbQXBXeese1RBSBKSnpeYu7i/WfZRXMp7qxr/MWK+gTgPByz5Wv3?=
- =?us-ascii?Q?5M/TPS31mWz3K+u0ya1QLfKm4zsHJ7Cs0ERy+rUd?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88b9d458-6a30-4e49-1007-08dd2f8275c6
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2025 01:19:12.7505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LUH/Z+Wbrezqahemi0tVm1WzeHRHDvkkVhS5F6k/dZ6bDukB8MVf+5Hmgm9gmh3TypX3kfDvaWBDMMHDufS2fg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9264
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, adilger.kernel@dilger.ca, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
+ Sai Chaitanya Mitta <mittachaitu@gmail.com>, linux-xfs@vger.kernel.org
+References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
+ <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
+ <Z3u-OCX86j-q7JXo@infradead.org> <20250106161732.GG1284777@mit.edu>
+ <Z3wEhXakqrW4i3UC@infradead.org> <20250106173133.GB6174@frogsfrogsfrogs>
+ <b964a57a-0237-4cbd-9aae-457527a44440@huaweicloud.com>
+ <Z31Za6Ma97QPHp1W@infradead.org>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <Z31Za6Ma97QPHp1W@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBHrGDe0n1nC4RfAQ--.53048S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrykAF47uF1UCr47tr43Jrb_yoWDWrgE93
+	9Iqr4kAw1qqF97Aa1ayFZ8XrWxW3srGayUJry5Jw1fZF9xJa9xuF95Wr4S9F4xZF4jkr9I
+	9FsxXr4DG3WakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
+	u4UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-None of the functionality in pfn_t.h is required so delete it.
+On 2025/1/8 0:42, Christoph Hellwig wrote:
+> On Tue, Jan 07, 2025 at 10:05:47PM +0800, Zhang Yi wrote:
+>> Sorry. the "pure overwrites" and "always-cow files" makes me confused,
+>> this is mainly used to create a new written file range, but also could
+>> be used to zero out an existing range, why you mentioned it exists to
+>> facilitate pure overwrites?
+> 
+> If you're fine with writes to your file causing block allocations you
+> can already use the hole punch or preallocate fallocate modes.  No
+> need to actually send a command to the device.
+> 
 
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
----
- include/linux/pfn.h   | 10 +-----
- include/linux/pfn_t.h | 88 +--------------------------------------------
- 2 files changed, 98 deletions(-)
- delete mode 100644 include/linux/pfn_t.h
+Okay, I misunderstood your point earlier. This is indeed prepared for
+subsequent overwrites. Thanks a lot for explaining.
 
-diff --git a/include/linux/pfn.h b/include/linux/pfn.h
-index 14bc053..f4a74d1 100644
---- a/include/linux/pfn.h
-+++ b/include/linux/pfn.h
-@@ -5,16 +5,6 @@
- #ifndef __ASSEMBLY__
- #include <linux/types.h>
- 
--/*
-- * pfn_t: encapsulates a page-frame number that is optionally backed
-- * by memmap (struct page).  Whether a pfn_t has a 'struct page'
-- * backing is indicated by flags in the high bits of the value.
-- */
--typedef struct {
--	u64 val;
--} pfn_t;
--#endif
--
- #define PFN_ALIGN(x)	(((unsigned long)(x) + (PAGE_SIZE - 1)) & PAGE_MASK)
- #define PFN_UP(x)	(((x) + PAGE_SIZE-1) >> PAGE_SHIFT)
- #define PFN_DOWN(x)	((x) >> PAGE_SHIFT)
-diff --git a/include/linux/pfn_t.h b/include/linux/pfn_t.h
-deleted file mode 100644
-index 034b5b0..0000000
---- a/include/linux/pfn_t.h
-+++ /dev/null
-@@ -1,88 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _LINUX_PFN_T_H_
--#define _LINUX_PFN_T_H_
--#include <linux/mm.h>
--
--/*
-- * PFN_FLAGS_MASK - mask of all the possible valid pfn_t flags
-- * PFN_SG_CHAIN - pfn is a pointer to the next scatterlist entry
-- * PFN_SG_LAST - pfn references a page and is the last scatterlist entry
-- * PFN_DEV - pfn is not covered by system memmap by default
-- * PFN_MAP - pfn has a dynamic page mapping established by a device driver
-- */
--#define PFN_FLAGS_MASK (((u64) (~PAGE_MASK)) << (BITS_PER_LONG_LONG - PAGE_SHIFT))
--
--#define PFN_FLAGS_TRACE { }
--
--static inline pfn_t __pfn_to_pfn_t(unsigned long pfn, u64 flags)
--{
--	pfn_t pfn_t = { .val = pfn | (flags & PFN_FLAGS_MASK), };
--
--	return pfn_t;
--}
--
--/* a default pfn to pfn_t conversion assumes that @pfn is pfn_valid() */
--static inline pfn_t pfn_to_pfn_t(unsigned long pfn)
--{
--	return __pfn_to_pfn_t(pfn, 0);
--}
--
--static inline pfn_t phys_to_pfn_t(phys_addr_t addr, u64 flags)
--{
--	return __pfn_to_pfn_t(addr >> PAGE_SHIFT, flags);
--}
--
--static inline bool pfn_t_has_page(pfn_t pfn)
--{
--	return (pfn.val & PFN_DEV) == 0;
--}
--
--static inline unsigned long pfn_t_to_pfn(pfn_t pfn)
--{
--	return pfn.val & ~PFN_FLAGS_MASK;
--}
--
--static inline struct page *pfn_t_to_page(pfn_t pfn)
--{
--	if (pfn_t_has_page(pfn))
--		return pfn_to_page(pfn_t_to_pfn(pfn));
--	return NULL;
--}
--
--static inline phys_addr_t pfn_t_to_phys(pfn_t pfn)
--{
--	return PFN_PHYS(pfn_t_to_pfn(pfn));
--}
--
--static inline pfn_t page_to_pfn_t(struct page *page)
--{
--	return pfn_to_pfn_t(page_to_pfn(page));
--}
--
--static inline int pfn_t_valid(pfn_t pfn)
--{
--	return pfn_valid(pfn_t_to_pfn(pfn));
--}
--
--#ifdef CONFIG_MMU
--static inline pte_t pfn_t_pte(pfn_t pfn, pgprot_t pgprot)
--{
--	return pfn_pte(pfn_t_to_pfn(pfn), pgprot);
--}
--#endif
--
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--static inline pmd_t pfn_t_pmd(pfn_t pfn, pgprot_t pgprot)
--{
--	return pfn_pmd(pfn_t_to_pfn(pfn), pgprot);
--}
--
--#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
--static inline pud_t pfn_t_pud(pfn_t pfn, pgprot_t pgprot)
--{
--	return pfn_pud(pfn_t_to_pfn(pfn), pgprot);
--}
--#endif
--#endif
--
--#endif /* _LINUX_PFN_T_H_ */
--- 
-git-series 0.9.1
+Thanks,
+Yi.
+
+>>
+>> For the "always-cow files", do you mean reflinked files? Could you
+>> please give more details?
+> 
+> reflinked files will require out of place writes for shared blocks.
+> As will anything on device mapper snapshots.  Or any file on
+> file systems that write out of place (btrfs, f2fs, nilfs2, the
+> upcoming zoned xfs mode).
+> 
+
 
