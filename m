@@ -1,129 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-38623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826CDA04FC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7CFA04FDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239AF188787D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965CC188511D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC7513792B;
-	Wed,  8 Jan 2025 01:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FCA38DE3;
+	Wed,  8 Jan 2025 01:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hPygx2Wn"
+	dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b="OQwtYONq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="otripk5h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECF02C80
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jan 2025 01:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7E3142905
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jan 2025 01:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736300434; cv=none; b=fn4RTi5ewZD7RGteWvm8Xyz+N/6TyPdc8O2TO95zbktj5gBsf46JfvdHpT0hcX3v4F35WVFpukATK0bU/KYrC1HJjqhJxOfI+XrdDCJeaV5bIZ1KeTn7XtANSvSdS9yVpko9HgNdcCS2B+igmqr4fvKn60ZE3W4d/n0npwBYbYM=
+	t=1736300850; cv=none; b=G8loSlGHOk3t1Z8cbIzzXakw9qSzC2kOrfX6j64UJpylgsSbYfBd4IAy9g/vb6BREBhkT0LIA2w00Go44BNkO7v4hB8TTtjRWOqtFvjRw1+ymCpZqPaU3lC/uUs1OHZSTXVNpYaHmKPpuzw1UcXKL+e10FMgIynPX4WlMN7BHqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736300434; c=relaxed/simple;
-	bh=ybFLJkaDRALHV6np8+ksNj5Z2uQ57D+LC/+Ano3kX8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FFglPaidAYtfmaReH+Uc1FAe7iJrRAPwITbgLNBBroZNMobDY1d7U+1isRTlgZL7+6m3OuaDaj5Cn8Y+GZuzsTd0fn8c3E5DaBz1FKUZ+ClOE1DTr/lTHkQOAAk75FtMLyLTPzwE3SfPTMnEVHdFJ2FiXKgE8Xd1k1rgRVsqbII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hPygx2Wn; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1736300430; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=e44YPIJX7mdgwR9QtS4wdSipveX6mt2j2rqrldUApVk=;
-	b=hPygx2WnrdywNXabr11JBbqQp/wNM4/HczPbkZuN18thG7zwUNwV7NgcXIMtumZoqsoGazDtM/xLfXuC4/20IufUvO2DQ/iM2G+CwECi/fKiPMtNuv5RFZqhPkVNHg5Dz8nHpPloK/XTH1md3ZxBmG+/qIFsHSiV07ghE66rdf8=
-Received: from 30.221.145.29(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WNBydP5_1736300427 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 08 Jan 2025 09:40:28 +0800
-Message-ID: <4fb67211-d20f-4e36-b62b-2ef15c7aaef8@linux.alibaba.com>
-Date: Wed, 8 Jan 2025 09:40:24 +0800
+	s=arc-20240116; t=1736300850; c=relaxed/simple;
+	bh=oS0DcxaIaQpkO21Q15XllaD+d+RB8Pkov0NdvWyEqWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SobewCjgVf1NXAtLsOZVkt/Z5a8LXC0ojjJ+aBEs02oZoPgK29vPm9mE2phPR73+oMTq/pVA2UbSTp/Dt1nkh3B+yPCXuc1d/4aDiKM3ohtsz5bVGj8qVGBiaGir3XqlTXSV2tedXQiIQX+lBN8M7svwC1wL3pye/kO0qISmd+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io; spf=pass smtp.mailfrom=devkernel.io; dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b=OQwtYONq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=otripk5h; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=devkernel.io
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D25DC114015B;
+	Tue,  7 Jan 2025 20:47:26 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Tue, 07 Jan 2025 20:47:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1736300846; x=1736387246; bh=RN+WmroQAy5U//HcW1Bpq
+	k2VS4LIfsmqhq83IHpBk4s=; b=OQwtYONqsNiaBxYn1go/sqjUGPAxtJhtu5v8z
+	HIapm3DAAZu3XuYSP2LT905rfjAMXTEMeeajvQXHkUZkL/2UTuIxZWd7UmHsRuvI
+	40c4ZWpWeVn5tGhPLMheoTquoXFkAMsesDVYcnhkxjim873yEJJhGCRzCD8s0nmW
+	N93AJHORHeGsl6W3I9bZbyXefMVt/9m2mHhfELr+pCbx2Kn5SZIXxCLVy7cQeiGq
+	hZJdBvh4qZ7YIs5q3/uaScg0pAVyXF5oqfFuDa88K4ISOu/mA6AvzqNd5Rzh90Lk
+	NpXmO4NnJ4vA2TvMYYNXdiCkLlPJg/cZ+GJaDjV1xSHgwtYTQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1736300846; x=1736387246; bh=RN+WmroQAy5U//HcW1Bpqk2VS4LIfsmqhq8
+	3IHpBk4s=; b=otripk5h0y09oGxooWLmyVuiIb7eXAz9vk9nVAcCDdXopvV05oc
+	NCcPkO8frDUkLpTYtT0x7E5XUnz/RHWdttfKjWiFUN/fsqBI+KuNy995X9Qweulp
+	Z0rZHZIs8YIStvbDSLxrVZZ8EUqyaF1ku3BCabqlFU0i1rOCNvFmFNy9u0/jBR05
+	CLYSY0FyBOBWgAZp98H68GQ7FH7zcDdHHCJqO518IT4g9TkQ8kNbWLqMtRLox6qu
+	1aznYUK7vlySkORJxEt9BqcbNgpNYexztMmuVQX65VMHgEN8kaf0sxkXl+bk38k1
+	VpR4cIhFeRlY4sZgUa3nxERYuk14BckajJw==
+X-ME-Sender: <xms:Ltl9Z3o1yeEfYHt02azmK89WNFPlysChvi1gocyWZ-Z7t6smGujRLg>
+    <xme:Ltl9Zxp9JUm4b_7oazjJnhCTsJm48p7v_RyHGLb4uoWD-ZZlI8lNaUpEUUkHskfDu
+    wDIK2B2wNAl8WNr8f8>
+X-ME-Received: <xmr:Ltl9Z0P4s6oFjYZzptcXLN0Ggn6ncemv0gcVagOH8rgTgeh4avfr0cin1hBxyZhAPrnhCCnVHTSH3UD5zJX2prq95Vtk97pRVVQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegfedgfeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvfhgrnhcutfhovghstghhuceo
+    shhhrhesuggvvhhkvghrnhgvlhdrihhoqeenucggtffrrghtthgvrhhnpeevieegfeffhf
+    ekudeuieelgfeljeekgedthfeiveeltedukeegfeeuvdelvdejueenucffohhmrghinhep
+    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepshhhrhesuggvvhhkvghrnhgvlhdrihhopdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthht
+    ohepiiiiqhhqtddutdefrdhhvgihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghkph
+    hmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrhesuggvvhhkvghrnhgv
+    lhdrihho
+X-ME-Proxy: <xmx:Ltl9Z65SVJw6x4RJatsA7sU3J-mOqjDrwcVpfq0ycr5eQgFecYEXCw>
+    <xmx:Ltl9Z25M26oxsYk7Hgy3p4MnV-OfOC4A-fniZmwRM1UmfqrgU5bq_A>
+    <xmx:Ltl9Zyj7WCCbfa7SregXlnBP_OMEaz2sEybjs_4ZdwOAGXmerslqTw>
+    <xmx:Ltl9Z45xBmOqH0SrWkG5IcszKmEv3YR_SwximzgpNSShVFa_9-KC9w>
+    <xmx:Ltl9Z9aBsD8XA1Rvde8qGdJkO2eg_LeULRqAcIzzg3-JqQKGhz71NZSc>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Jan 2025 20:47:25 -0500 (EST)
+From: Stefan Roesch <shr@devkernel.io>
+To: david@redhat.com,
+	willy@infradead.org,
+	zzqq0103.hey@gmail.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: shr@devkernel.io
+Subject: [PATCH v2] mm: fix div by zero in bdi_ratio_from_pages
+Date: Tue,  7 Jan 2025 17:47:23 -0800
+Message-ID: <20250108014723.166637-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: Miklos Szeredi <miklos@szeredi.hu>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>,
- Joanne Koong <joannelkoong@gmail.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>,
- linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, linux-mm@kvack.org,
- kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
- Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
-References: <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
- <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com>
- <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
- <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
- <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
- <446704ab-434e-45ac-a062-45fef78815e4@redhat.com>
- <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
- <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
- <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
- <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
- <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
- <CAJfpegthP2enc9o1hV-izyAG9nHcD_tT8dKFxxzhdQws6pcyhQ@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJfpegthP2enc9o1hV-izyAG9nHcD_tT8dKFxxzhdQws6pcyhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+During testing it has been detected, that it is possible to get div by
+zero error in bdi_set_min_bytes. The error is caused by the function
+bdi_ratio_from_pages(). bdi_ratio_from_pages() calls
+global_dirty_limits. If the dirty threshold is 0, the div by zero is
+raised. This can happen if the root user is setting:
 
+echo 0 > /proc/sys/vm/dirty_ratio
 
-On 1/8/25 12:15 AM, Miklos Szeredi wrote:
-> On Mon, 6 Jan 2025 at 19:17, Shakeel Butt <shakeel.butt@linux.dev> wrote:
->>
->> On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
->>> On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
->>>> In any case, having movable pages be turned unmovable due to persistent
->>>> writaback is something that must be fixed, not worked around. Likely a
->>>> good topic for LSF/MM.
->>>
->>> Yes, this seems a good cross fs-mm topic.
->>>
->>> So the issue discussed here is that movable pages used for fuse
->>> page-cache cause a problems when memory needs to be compacted. The
->>> problem is either that
->>>
->>>  - the page is skipped, leaving the physical memory block unmovable
->>>
->>>  - the compaction is blocked for an unbounded time
->>>
->>> While the new AS_WRITEBACK_INDETERMINATE could potentially make things
->>> worse, the same thing happens on readahead, since the new page can be
->>> locked for an indeterminate amount of time, which can also block
->>> compaction, right?
->>
->> Yes locked pages are unmovable. How much of these locked pages/folios
->> can be caused by untrusted fuse server?
-> 
-> A stuck server would quickly reach the background threshold at which
-> point everything stops.   So my guess is that accidentally this won't
-> do much harm.
-> 
-> Doing it deliberately (tuning max_background, starting multiple
-> servers) the number of pages that are permanently locked could be
-> basically unlimited.
+The following is a test case:
 
-If "limiting the number of actually unmovable pages in a reasonable
-bound" is acceptable, maybe we could limit the maximum number of
-background requests that the whole unprivileged FUSE servers could achieve.
+echo 0 > /proc/sys/vm/dirty_ratio
+cd /sys/class/bdi/<device>
+echo 1 > strict_limit
+echo 8192 > min_bytes
 
-BTW currently the writeback requests are not limited by max_background
-as the writeback routine allocates requests with "force == true".  We
-had ever noticed that heavy writeback workload could starve other
-background requests (e.g. readahead), in which the readahead routine
-were waiting in fuse_get_req() forever until the writeback workload
-finished.
+==> error is raised.
 
+The problem is addressed by returning -EINVAL if dirty_ratio or
+dirty_bytes is set to 0.
+
+Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+Closes: https://lore.kernel.org/linux-mm/87pll35yd0.fsf@devkernel.io/T/#t
+Signed-off-by: Stefan Roesch <shr@devkernel.io>
+
+---
+Changes in V2:
+- check for -EINVAL in bdi_set_min_bytes()
+- check for -EINVAL in bdi_set_max_bytes()
+---
+ mm/page-writeback.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index d213ead95675..fcc486e0d5c2 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -692,6 +692,8 @@ static unsigned long bdi_ratio_from_pages(unsigned long pages)
+ 	unsigned long ratio;
+ 
+ 	global_dirty_limits(&background_thresh, &dirty_thresh);
++	if (!dirty_thresh)
++		return -EINVAL;
+ 	ratio = div64_u64(pages * 100ULL * BDI_RATIO_SCALE, dirty_thresh);
+ 
+ 	return ratio;
+@@ -797,6 +799,8 @@ int bdi_set_min_bytes(struct backing_dev_info *bdi, u64 min_bytes)
+ 		return ret;
+ 
+ 	min_ratio = bdi_ratio_from_pages(pages);
++	if (min_ratio == -EINVAL)
++		return -EINVAL;
+ 	return __bdi_set_min_ratio(bdi, min_ratio);
+ }
+ 
+@@ -816,6 +820,8 @@ int bdi_set_max_bytes(struct backing_dev_info *bdi, u64 max_bytes)
+ 		return ret;
+ 
+ 	max_ratio = bdi_ratio_from_pages(pages);
++	if (max_ratio == -EINVAL)
++		return -EINVAL;
+ 	return __bdi_set_max_ratio(bdi, max_ratio);
+ }
+ 
+
+base-commit: fbfd64d25c7af3b8695201ebc85efe90be28c5a3
 -- 
-Thanks,
-Jingbo
+2.47.1
+
 
