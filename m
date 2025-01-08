@@ -1,196 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-38625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC56BA04FE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:50:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F76A05032
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 03:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95DEB7A1A79
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853083A39ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97181537C8;
-	Wed,  8 Jan 2025 01:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2knh6A/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C29B1A726F;
+	Wed,  8 Jan 2025 02:08:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CFB86AE3;
-	Wed,  8 Jan 2025 01:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190271A23B9;
+	Wed,  8 Jan 2025 02:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736301043; cv=none; b=CEGqOAOb59RiA9pZkPQnJ4hjXFIR9K07se4VJE8IwRYtHvSPDwdABzHevKwAwIZnmIqAa2KD7t1CKZMV5l4CHCuW2tXaJi28aH5p6AErQuPTSr6o/mB9i9P6PmfKJ2slB6fhQXB5WedL+Mzi6byA4eL9VAzZsBaD7EbPsjvwxRg=
+	t=1736302116; cv=none; b=nf8U4mG584fipYOeBWTHjznS+4kfuCDE1eS1yNjDpakgDT1wccwpEgrsoL8SF1aENshS7NckAmdoUb4OFA6oDLUXE4PlG6DzGWodVgdj1OFlW+0yaaFrhZXK3ySRuKugl8zWmY3QLTl1wVuQyZrpfI2o0yb4JhmqJmVorlzDBQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736301043; c=relaxed/simple;
-	bh=DSGUzJdSZzfL57rQZO42U2Z9ROW5bEFH+MSYoaH0mHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6CvhKYfp4UHw9vkH8POydVPU88jLOetgjeoiMD25dCwdiC94x83AOy9P43TWXHcPOj0l6foeEiC6D0XyFyZeTZpXIR2Y6+Ih1jRvUOLYPPDJLupoH4jlECvg0TcQL9ttiF+QlFeLKUqy1WvL1rFKScIuxQeIIxUK4bmwtldzBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2knh6A/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF804C4CED6;
-	Wed,  8 Jan 2025 01:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736301042;
-	bh=DSGUzJdSZzfL57rQZO42U2Z9ROW5bEFH+MSYoaH0mHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a2knh6A/dJpC1MMELvtaLqg/VDm2xhn79zPNzRNdD/JhGLur+lQzUY6vaYN3ZqEse
-	 7OW8uN09HpM67aQdb3h3GGS6g58iyhb4C1zBtB7dxgyGA93Rd6kk8ulwGS7dhhQEzl
-	 kOTcV/xcM9C6wQ2QyNkZdH3nNaTNjw4D4/f6VDXEyBPUkpgRqbzKpJlxebB+BctRSU
-	 ehs3puvEpaxSbctx+MDwF6XA0kfHYpDvfoOeb61+MnsNwM8jX1ZJSkY5fKp0Jy+hJ+
-	 2KWSNHPKVUH0xFvEsV7NJebv131UR+gUQOzhQau5y3qYvokElk9XUDB734OUm3O6Gf
-	 6GTBvx3kuDumg==
-Date: Tue, 7 Jan 2025 17:50:42 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: fstests@vger.kernel.org, zlang@kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, willy@infradead.org,
-	ojaswin@linux.ibm.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [xfstests PATCH v2] generic: add a partial pages zeroing out test
-Message-ID: <20250108015042.GC1251194@frogsfrogsfrogs>
-References: <20241225125120.1952219-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1736302116; c=relaxed/simple;
+	bh=yV8w28YSWeQK0MzXYTeq8sehGEQp5FF3e60syr5ihrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ceRlqpdfkK8btWirgaIq88Mm9OuJ/R8vtAUtvZSYdXekX8nRltkjJO66BbLIF9hdEezyCjEXIqaisIsBrHq89a4ErnHvw1p/r8yF8M7BEVocHd7f1LI7xTyqeYCfwRx8zbZJ3vZ/yvQghPQ33+zTlUJAb8yKJQ0p+NbfT5xNeyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YSWSx2ZXCz1W3j0;
+	Wed,  8 Jan 2025 10:04:49 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA6951402D0;
+	Wed,  8 Jan 2025 10:08:30 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 8 Jan
+ 2025 10:08:29 +0800
+Message-ID: <05106b71-5119-4b69-9b2f-523e60c31965@huawei.com>
+Date: Wed, 8 Jan 2025 10:08:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241225125120.1952219-1-yi.zhang@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IFtCVUcgUkVQT1JUXSBleHQ0OiDigJxlcnJvcnM9cmVtb3VudC1y?=
+ =?UTF-8?B?b+KAnSBoYXMgYmVjb21lIOKAnGVycm9ycz1zaHV0ZG93buKAnT8=?=
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, Christian Brauner
+	<brauner@kernel.org>, <sunyongjian1@huawei.com>, Yang Erkun
+	<yangerkun@huawei.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-xfs@vger.kernel.org>, Baokun Li <libaokun1@huawei.com>
+References: <22d652f6-cb3c-43f5-b2fe-0a4bb6516a04@huawei.com>
+ <z52ea53du2k66du24ju4yetqm72e6pvtcbwkrjf4oomw2feffq@355vymdndrxn>
+ <17108cad-efa8-46b4-a320-70d7b696f75b@huawei.com>
+ <umpsdxhd2dz6kgdttpm27tigrb3ytvpf3y3v73ugavgh4b5cuj@dnacioqwq4qq>
+ <20250103153517.GB1284777@mit.edu> <20250103155406.GC1284777@mit.edu>
+ <5eb2ad64-c6ea-45f8-9ba1-7de5c68d59aa@huawei.com>
+ <20250106234956.GM6174@frogsfrogsfrogs>
+ <0acc1709-1349-4dbb-ba3e-ae786c4b5b53@huawei.com>
+ <20250107070820.GJ6174@frogsfrogsfrogs>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250107070820.GJ6174@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Wed, Dec 25, 2024 at 08:51:20PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> This addresses a data corruption issue encountered during partial page
-> zeroing in ext4 which the block size is smaller than the page size [1].
-> Add a new test which is expanded upon generic/567, this test performs a
-> zeroing range test that spans two partial pages to cover this case, and
-> also generalize it to work for non-4k page sizes.
-> 
-> Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
-> v1->v2:
->  - Add a new test instead of modifying generic/567.
->  - Generalize the test to work for non-4k page sizes.
-> v1: https://lore.kernel.org/fstests/20241223023930.2328634-1-yi.zhang@huaweicloud.com/
-> 
->  tests/generic/758     | 76 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/758.out |  3 ++
->  2 files changed, 79 insertions(+)
->  create mode 100755 tests/generic/758
->  create mode 100644 tests/generic/758.out
-> 
-> diff --git a/tests/generic/758 b/tests/generic/758
-> new file mode 100755
-> index 00000000..e03b5e80
-> --- /dev/null
-> +++ b/tests/generic/758
-> @@ -0,0 +1,76 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2024 Huawei.  All Rights Reserved.
-> +#
-> +# FS QA Test No. generic/758
+On 2025/1/7 15:08, Darrick J. Wong wrote:
+> On Tue, Jan 07, 2025 at 10:01:32AM +0800, Baokun Li wrote:
+>> On 2025/1/7 7:49, Darrick J. Wong wrote:
+>>> On Sat, Jan 04, 2025 at 10:41:28AM +0800, Baokun Li wrote:
+>>>> Hi Ted,
+>>>>
+>>>> On 2025/1/3 23:54, Theodore Ts'o wrote:
+>>>>> On Fri, Jan 03, 2025 at 10:35:17AM -0500, Theodore Ts'o wrote:
+>>>>>> I don't see how setting the shutdown flag causes reads to fail.  That
+>>>>>> was true in an early version of the ext4 patch which implemented
+>>>>>> shutdown support, but one of the XFS developers (I don't remember if
+>>>>>> it was Dave or Cristoph) objected because XFS did not cause the
+>>>>>> read_pages function to fail.  Are you seeing this with an upstream
+>>>>>> kernel, or with a patched kernel?  The upstream kernel does *not* have
+>>>>>> the check in ext4_readpages() or ext4_read_folio() (post folio
+>>>>>> conversion).
+>>>>> OK, that's weird.  Testing on 6.13-rc4, I don't see the problem simulating an ext4 error:
+>>>>>
+>>>>> root@kvm-xfstests:~# mke2fs -t ext4 -Fq /dev/vdc
+>>>>> /dev/vdc contains a ext4 file system
+>>>>> 	last mounted on /vdc on Fri Jan  3 10:38:21 2025
+>>>>> root@kvm-xfstests:~# mount -t ext4 -o errors=continue /dev/vdc /vdc
+>>>> We are discussing "errors=remount-ro," as the title states, not the
+>>>> continue mode. The key code leading to the behavior change is as follows,
+>>>> therefore the continue mode is not affected.
+>>> Hmm.  On the one hand, XFS has generally returned EIO (or ESHUTDOWN in a
+>>> couple of specialty cases) when the fs has been shut down.
+>> Indeed, this is the intended behavior during shutdown.
+>>> OTOH XFS also doesn't have errors=remount-ro; it just dies, which I
+>>> think has been its behavior for a long time.
+>> Yes. As an aside, is there any way for xfs to determine if -EIO is
+>> originating from a hardware error or if the filesystem has been shutdown?
+> XFS knows the difference, but nothing above it does.
+Okay.
+>> Or would you consider it useful to have the mount command display
+>> "shutdown" when the file system is being shut down?
+> Trouble is, will mount get confused and try to pass ",shutdown" as part
+> of a remount operation?
+The ",shutdown" string is only displayed by show_options when specific
+flags are set; it's not actually parsed by remount. Unless the sysadmin
+sees it in the mount command output and then mounts with this option.
+> I suppose the fs is dead so what does it
+> matter...
+Since XFS is typically already shut down when it returns EIO, this prompt
+may not be important for xfs. However, it's not as straightforward to
+distinguish between EIO and shutdown for file systems that support a
+continue mode or allow some operations even after shutdown.
+>>> To me, it doesn't sound unreasonable for ext* to allow reads after a
+>>> shutdown when errors=remount-ro since it's always had that behavior.
+>> Yes, a previous bug fix inadvertently changed the behavior of
+>> errors=remount-ro,
+>> and the patch to correct this is coming.
+>>
+>> Additionally, ext4 now allows directory reads even after shutdown, is this
+>> expected behavior?
+> There's no formal specification for what shutdown means, so ... it's not
+> unexpected.  XFS doesn't allow that.
+Okay.
+>>> Bonus Q: do you want an errors=fail variant to shut things down fast?
+>>>
+>>> --D
+>> In my opinion, I have not yet seen a scenario where the file system needs
+>> to be shut down after an error occurs. Therefore, using errors=remount-ro
+>> to prevent modifications after an error is sufficient. Of course, if
+>> customers have such needs, implementing this mode is also very simple.
+> IO errors, sure.  Metadata errors?  No, we want to stop the world
+> immediately, either so the sysadmin can go run xfs_repair, or the clod
+> manager can just kill the node and deploy another.
+>
+> --D
 
-"FS QA Test No. 758" is ok here, or whatever ./new spat out.
+The remount-ro mode generally only becomes read-only when metadata errors
+occur，too. I think if users have no need to read after an error, there is
+basically no difference between read-only and shutdown. In fact,
+errors=remount-ro does more; it allows users to back up some potentially
+lost data after an error and then exit gracefully. However, reading
+corrupted metadata does have some risks, for which we have done a lot of
+work.
 
-> +#
-> +# Test mapped writes against zero-range to ensure we get the data
-> +# correctly written. This can expose data corruption bugs on filesystems
-> +# where the block size is smaller than the page size.
-> +#
-> +# (generic/567 is a similar test but for punch hole.)
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick rw zero
-> +
-> +# Override the default cleanup function.
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -r -f $verifyfile $testfile
 
-Don't bother deleting anything on $SCRATCH_MNT, it'll get mkfs'd out of
-existence soon enough.
+Regards,
+Baokun
 
-> +}
-> +
-> +# Import common functions.
-> +. ./common/filter
-> +
-> +_require_test
-> +_require_scratch
-> +_require_xfs_io_command "fzero"
-> +
-> +verifyfile=$TEST_DIR/verifyfile
-
-Also is there any harm in putting verifyfile on $SCRATCH_MNT and thereby
-not having to override _cleanup?
-
---D
-
-> +testfile=$SCRATCH_MNT/testfile
-> +
-> +pagesz=$(getconf PAGE_SIZE)
-> +
-> +_scratch_mkfs > /dev/null 2>&1
-> +_scratch_mount
-> +
-> +_dump_files()
-> +{
-> +	echo "---- testfile ----"
-> +	_hexdump $testfile
-> +	echo "---- verifyfile --"
-> +	_hexdump $verifyfile
-> +}
-> +
-> +# Build verify file, the data in this file should be consistent with
-> +# that in the test file.
-> +$XFS_IO_PROG -f -c "pwrite -S 0x58 0 $((pagesz * 3))" \
-> +		-c "pwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
-> +		$verifyfile | _filter_xfs_io >> /dev/null
-> +
-> +# Zero out straddling two pages to check that the mapped write after the
-> +# range-zeroing are correctly handled.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 $((pagesz * 3))" \
-> +	-c "mmap -rw 0 $((pagesz * 3))" \
-> +	-c "mwrite -S 0x5a $((pagesz / 2)) $((pagesz * 2))" \
-> +	-c "fzero $((pagesz / 2)) $((pagesz * 2))" \
-> +	-c "mwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
-> +	-c "close"      \
-> +$testfile | _filter_xfs_io > $seqres.full
-> +
-> +echo "==== Pre-Remount ==="
-> +if ! cmp -s $testfile $verifyfile; then
-> +	echo "Data does not match pre-remount."
-> +	_dump_files
-> +fi
-> +_scratch_cycle_mount
-> +echo "==== Post-Remount =="
-> +if ! cmp -s $testfile $verifyfile; then
-> +	echo "Data does not match post-remount."
-> +	_dump_files
-> +fi
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/758.out b/tests/generic/758.out
-> new file mode 100644
-> index 00000000..d01c1959
-> --- /dev/null
-> +++ b/tests/generic/758.out
-> @@ -0,0 +1,3 @@
-> +QA output created by 758
-> +==== Pre-Remount ===
-> +==== Post-Remount ==
-> -- 
-> 2.39.2
-> 
-> 
 
