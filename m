@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-38640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012C9A055F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 09:56:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E87A055E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 09:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5B3A6E8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 08:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD49918883E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 08:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063F61F1907;
-	Wed,  8 Jan 2025 08:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B241F1936;
+	Wed,  8 Jan 2025 08:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kOClGWj8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B75GCB7h"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077FE1E9B2B;
-	Wed,  8 Jan 2025 08:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47B91E9B2B;
+	Wed,  8 Jan 2025 08:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736326566; cv=none; b=OAmmp/VwjsM8QowFvgrJw8ERAMBp2/n3/lS0pYvywvKQQt2r99LQ69l7SvQigVZFU4lyN+AbnG2aQh3pYYwtI/XM7Hnn3JLK7RuZmXFFWwR6TxByjlz/Cwk7ob1PsCCzXnIPvnOmeAh+utMr5yPRvj2e5WMaafD4iXWYi6krkBE=
+	t=1736326570; cv=none; b=hizPt3YfG9PliDLxeoSYkWG7Oa9hpBw0Mk2rRP2wACvBD/tbH6nbt9mucY5DIoUCGLO/gETGoNpmqpPwNwdDwmPFwmR8eDalhq3ag0AJE1/Q0IURI+GFnZsWA4agDcWCzolwYe4Ud80kQkKIJrEFJ3SLepQsPvvZLslNj4zDhNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736326566; c=relaxed/simple;
-	bh=XE0OfV/pjayF5um6IkwDCoYIGSdbcGnJk+6DC27/w8Q=;
+	s=arc-20240116; t=1736326570; c=relaxed/simple;
+	bh=PLI1iug43MUXqNNQ82z7bxdQD4bPaH0qBo6qY8dXECI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T16/jficQ3fKCFmOe3F3mH29/6nt234aUWca4PNJfW5qaBofIEXXR87lxqM7mi6vem/rR+yHbQmjsfEgbQeF47m9IetSfmgo93rySYIxGNJX2KhwvMKtEhF9gqOt35f0pAjR8i9QstFTnTdl2s3i/aaM9A501GI9bbI6ckUsnDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kOClGWj8; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=K3eoMDDp1FzK2YKMmrjx/QSbJHsynV2CTnNisbGfQ5okHhGCTKFCD2bZZk/dYjPC80SVLgMjNScrwko6A9Ce0t1zytotstOvQsvxsBYy1jwrWxI40JMox/NYQuWnhrc3AGkLsGIT9bReDh3E1XRPa92Q9IIvwR7mKKHRpOab2Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B75GCB7h; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=68MY4ZVpJaZ+DAXWGJqHCnZMMLxIbLIsNLxkrI3iu7E=; b=kOClGWj8lMNZeP5IcoCTE/4net
-	dYvkDcE32CzKzdyyo80ymWYffxnY1va5HyJbi4VjKgt6Q9gr2f62qC6ym6K21VBVpsq9RBFkAB4ot
-	Nsin1bs953LYmrEatxrGn00R5NGPUa3wF9O8VLLli1vz/jO3yCDelCdTIEhKQpEs9X94tmrkc7QSr
-	nThMlmJpEYdJO8+ET977MJRMfyFN9/UCU+tB+ieZmfISQTJtSoAbE8opOJ9LGl3fQWTkQT2gdLcE4
-	8BFjTv/VAQ5OBcVIQyc0ztTQUM73fKulIZvezW9WlO1jaiQaXfAvWeknw+gbYU/deypLYxy5qoT4M
-	niiuw+XQ==;
+	bh=Dft7MIy23CyEG2PquDs0+TgqwlRHRiq4fSjhQ9dPiIc=; b=B75GCB7hajsN3D8TKOdQQ5zboR
+	LbZXLZPZW2ao+V/XfZ91eWaYPqsb40Idfjlr3uAG4aW3wAYylJ1iENT/bhUI2gkwRirehaSc3/hID
+	OT1uFyvuS7ApTxV0Eeu02/u8whC0lWyG4Z3VJ2P+HuZR0SX0cpk8WHyjLhens5YDaRIg6oxGO/9I7
+	ngc/I1Qq8tc6QGRCCZKGhla4Z62RSt5So1E+g1HUFvZNtYbkvKVxnR5WyUUtGjdW/fQ7yqQmBR+LA
+	MbqaNSC2rf4wRjY2Hk4QLdVMy1g7D1QIKBZvUrBLoEK6zWPA9m7w/440yFnA1QSpNKySBvLbu3Nxt
+	Z7yVduEA==;
 Received: from 2a02-8389-2341-5b80-e44b-b36a-6403-8f06.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:e44b:b36a:6403:8f06] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tVRr8-00000007dp3-0QfD;
-	Wed, 08 Jan 2025 08:56:03 +0000
+	id 1tVRrC-00000007dqM-12yc;
+	Wed, 08 Jan 2025 08:56:07 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
@@ -55,10 +55,11 @@ Cc: Jan Kara <jack@suse.cz>,
 	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
 	linux-nilfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: [PATCH 2/5] fs: add STATX_DIO_READ_ALIGN
-Date: Wed,  8 Jan 2025 09:55:30 +0100
-Message-ID: <20250108085549.1296733-3-hch@lst.de>
+	linux-xfs@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>
+Subject: [PATCH 3/5] xfs: cleanup xfs_vn_getattr
+Date: Wed,  8 Jan 2025 09:55:31 +0100
+Message-ID: <20250108085549.1296733-4-hch@lst.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250108085549.1296733-1-hch@lst.de>
 References: <20250108085549.1296733-1-hch@lst.de>
@@ -71,69 +72,85 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add a separate dio read align field, as many out of place write
-file systems can easily do reads aligned to the device sector size,
-but require bigger alignment for writes.
-
-This is usually papered over by falling back to buffered I/O for smaller
-writes and doing read-modify-write cycles, but performance for this
-sucks, so applications benefit from knowing the actual write alignment.
+Split the two bits of optional statx reporting into their own helpers
+so that they are self-contained instead of deeply indented in the main
+getattr handler.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: John Garry <john.g.garry@oracle.com>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/stat.c                 | 1 +
- include/linux/stat.h      | 1 +
- include/uapi/linux/stat.h | 4 +++-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_iops.c | 47 +++++++++++++++++++++++------------------------
+ 1 file changed, 23 insertions(+), 24 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 0870e969a8a0..2c0e111a098a 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -725,6 +725,7 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 	tmp.stx_mnt_id = stat->mnt_id;
- 	tmp.stx_dio_mem_align = stat->dio_mem_align;
- 	tmp.stx_dio_offset_align = stat->dio_offset_align;
-+	tmp.stx_dio_read_offset_align = stat->dio_read_offset_align;
- 	tmp.stx_subvol = stat->subvol;
- 	tmp.stx_atomic_write_unit_min = stat->atomic_write_unit_min;
- 	tmp.stx_atomic_write_unit_max = stat->atomic_write_unit_max;
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 3d900c86981c..9d8382e23a9c 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -52,6 +52,7 @@ struct kstat {
- 	u64		mnt_id;
- 	u32		dio_mem_align;
- 	u32		dio_offset_align;
-+	u32		dio_read_offset_align;
- 	u64		change_cookie;
- 	u64		subvol;
- 	u32		atomic_write_unit_min;
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 8b35d7d511a2..f78ee3670dd5 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -179,7 +179,8 @@ struct statx {
- 	/* Max atomic write segment count */
- 	__u32   stx_atomic_write_segments_max;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 207e0dadffc3..6b0228a21617 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -573,17 +573,28 @@ xfs_stat_blksize(
+ }
  
--	__u32   __spare1[1];
-+	/* File offset alignment for direct I/O reads */
-+	__u32	stx_dio_read_offset_align;
+ static void
+-xfs_get_atomic_write_attr(
++xfs_report_dioalign(
+ 	struct xfs_inode	*ip,
+-	unsigned int		*unit_min,
+-	unsigned int		*unit_max)
++	struct kstat		*stat)
+ {
+-	if (!xfs_inode_can_atomicwrite(ip)) {
+-		*unit_min = *unit_max = 0;
+-		return;
+-	}
++	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
++	struct block_device	*bdev = target->bt_bdev;
  
- 	/* 0xb8 */
- 	__u64	__spare3[9];	/* Spare space for future expansion */
-@@ -213,6 +214,7 @@ struct statx {
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
- #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
- #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
-+#define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
+-	*unit_min = *unit_max = ip->i_mount->m_sb.sb_blocksize;
++	stat->result_mask |= STATX_DIOALIGN;
++	stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
++	stat->dio_offset_align = bdev_logical_block_size(bdev);
++}
++
++static void
++xfs_report_atomic_write(
++	struct xfs_inode	*ip,
++	struct kstat		*stat)
++{
++	unsigned int		unit_min = 0, unit_max = 0;
++
++	if (xfs_inode_can_atomicwrite(ip))
++		unit_min = unit_max = ip->i_mount->m_sb.sb_blocksize;
++	generic_fill_statx_atomic_writes(stat, unit_min, unit_max);
+ }
  
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
+ STATIC int
+@@ -647,22 +658,10 @@ xfs_vn_getattr(
+ 		stat->rdev = inode->i_rdev;
+ 		break;
+ 	case S_IFREG:
+-		if (request_mask & STATX_DIOALIGN) {
+-			struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+-			struct block_device	*bdev = target->bt_bdev;
+-
+-			stat->result_mask |= STATX_DIOALIGN;
+-			stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
+-			stat->dio_offset_align = bdev_logical_block_size(bdev);
+-		}
+-		if (request_mask & STATX_WRITE_ATOMIC) {
+-			unsigned int	unit_min, unit_max;
+-
+-			xfs_get_atomic_write_attr(ip, &unit_min,
+-					&unit_max);
+-			generic_fill_statx_atomic_writes(stat,
+-					unit_min, unit_max);
+-		}
++		if (request_mask & STATX_DIOALIGN)
++			xfs_report_dioalign(ip, stat);
++		if (request_mask & STATX_WRITE_ATOMIC)
++			xfs_report_atomic_write(ip, stat);
+ 		fallthrough;
+ 	default:
+ 		stat->blksize = xfs_stat_blksize(ip);
 -- 
 2.45.2
 
