@@ -1,60 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-38666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D456A0635C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 18:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C878A0639E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 18:42:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92703A70C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 17:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971D73A1D15
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 17:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FDE200BBE;
-	Wed,  8 Jan 2025 17:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1128E20102E;
+	Wed,  8 Jan 2025 17:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWS/oUo+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrY5i/88"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D50E1FF7D5;
-	Wed,  8 Jan 2025 17:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CB11FF1A5;
+	Wed,  8 Jan 2025 17:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736357263; cv=none; b=nYP8e5C+n7oXaMHJFXEeKzrDXytsSa0jl3izveTdYGC5Rz1RdoE8b4SwYusOGiAQ0Ei8EYwp74GxhzE6cEP2vcsALkgJGsZuuB7jHM2YKXVPLzQgpC3kLXiPG/Leg8TXO6/CEP65aTJcvk2yniMrMC39GqpUJehALZvo9VfVAQc=
+	t=1736358137; cv=none; b=X3io7nlCurQZRThmv3NvrUFj93W+bg2XffUVsrf38qgVh3dES0MJ5hMoqdAsYuZ69i2KZLU3o+7g7zv8iJQbqldoM3+EIVifdJY5SfjKEz9e6fIWo3Zvt88p7cJZ/reHYCkBWvUoFtWMJcoyMWeva/jB+W9ePX2hRHNavRGi8YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736357263; c=relaxed/simple;
-	bh=Fd/ChOXqWXSLL6ad01QK9TB9XaT+4qZHk5d/62xJaSI=;
+	s=arc-20240116; t=1736358137; c=relaxed/simple;
+	bh=32pOxZlcUILokTHCOAjxQ+XhQsNVIvJj21fdapehVOg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4tYYOqsHJ8mwi04pLtUGE2+T/NEYkkc89gSFeEOyu9tFdggxrVedFnNWFZFzJALEbmKfu3PBeYRCpuJ+PSBK3HoaSK87HibVfY3LSCt9J4yEWOmL9kKJhQioFWCjMuU4eWUikQK0n9rauG5wQFt5izrUuA8kNsC65DTeN38D3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWS/oUo+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B0EC4CED3;
-	Wed,  8 Jan 2025 17:27:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=itW12POppM1A5MykcR0XH1CkMAor6aepzXxxcGnavmnoOWWtw1fMfTaWc09VC1QRbzo8IVc5QcAHPqQ6wgoAFfmB+l8NcVhXyQcCIEwRko3zkAkXvm9rWviu54bRXidl1H165o0hZen5CANA3ojFMcWZygSK9TQwyldQ/QZDAm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrY5i/88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C5CC4CED3;
+	Wed,  8 Jan 2025 17:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736357262;
-	bh=Fd/ChOXqWXSLL6ad01QK9TB9XaT+4qZHk5d/62xJaSI=;
+	s=k20201202; t=1736358137;
+	bh=32pOxZlcUILokTHCOAjxQ+XhQsNVIvJj21fdapehVOg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pWS/oUo+z1iZbbqIThQJ9SY8CG3ds2ucVWo0LaCtoRXf3hL6b3B3/r4+AxCRvB4nm
-	 N16ORCVDFJLZUuOxPdk/8MbFS9qJ5UopEHQGvNVrQd0BPvIN+J7D6FbY8AxD8XHfVR
-	 H+xnuwtP0ls3E5fO08XEaz7QoFtMKhMPnyMrLIVvjjpOsFQRKFbATRXiTHqAh0QTx1
-	 dDeViBKg/XM0JnYj0OnGBMRygkTlX3+d4bCo5rz667lhmCC+28rLA00IlPLbNpu0o6
-	 j1qx7vP2gKJ+PuN9hs67LCWGX0zn5gsDZWgRnx7Vg1gH6c+BwT2bbzuAlJ/fIaz34V
-	 FvcV7xcrOq1Ng==
-Date: Wed, 8 Jan 2025 09:27:42 -0800
+	b=JrY5i/884uO+sU2FSUyFImbrxuoCfbl12uYXg2Cz/36ZML3ph54qbCn9kDk0zctWp
+	 fC+6Ppv6d61MbRfIiENcvv2rZDuuB8wltU16s5uMz1gEc0xdwMR73kMJ/+uns8l4c0
+	 UK6DIDuBNzvw76Fmiwa55FS9VFnHdaYQs4URnYr2Z3trQAXSgVg+SZp6W13ZirAmzJ
+	 0UHY72RT45+YURbdibRBpUKSCZsvQxtNsipjuptJhyVfmjFgOXiBoAOn8wInFYwnpB
+	 zMRyKaUkP/1PYggWtoEg+UstYDbe6rEH18XnPmkGvwM8UpNJZTcLpIhflmQ0c2Yy4A
+	 1YWeEFftS0qHQ==
+Date: Wed, 8 Jan 2025 09:42:16 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH] statx.2: document STATX_DIO_READ_ALIGN
-Message-ID: <20250108172742.GH1306365@frogsfrogsfrogs>
-References: <20250108085549.1296733-1-hch@lst.de>
- <20250108085900.GA27227@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org, cem@kernel.org,
+	dchinner@redhat.com, ritesh.list@gmail.com,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
+Subject: Re: [PATCH v2 2/7] iomap: Add zero unwritten mappings dio support
+Message-ID: <20250108174216.GJ1306365@frogsfrogsfrogs>
+References: <20241210125737.786928-3-john.g.garry@oracle.com>
+ <20241211234748.GB6678@frogsfrogsfrogs>
+ <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com>
+ <20241212204007.GL6678@frogsfrogsfrogs>
+ <20241213144740.GA17593@lst.de>
+ <20241214005638.GJ6678@frogsfrogsfrogs>
+ <20241217070845.GA19358@lst.de>
+ <93eecf38-272b-426f-96ec-21939cd3fbc5@oracle.com>
+ <20250108012636.GE1306365@frogsfrogsfrogs>
+ <332f29ce-4962-496e-ab37-f972c1d4aa12@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,93 +68,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250108085900.GA27227@lst.de>
+In-Reply-To: <332f29ce-4962-496e-ab37-f972c1d4aa12@oracle.com>
 
-On Wed, Jan 08, 2025 at 09:59:00AM +0100, Christoph Hellwig wrote:
-> Document the new STATX_DIO_READ_ALIGN flag and the new
-> stx_dio_read_offset_align field guarded by it.
+On Wed, Jan 08, 2025 at 11:39:35AM +0000, John Garry wrote:
+> On 08/01/2025 01:26, Darrick J. Wong wrote:
+> > > > I (vaguely) agree ith that.
+> > > > 
+> > > > > And only if the file mapping is in the correct state, and the
+> > > > > program is willing to*maintain* them in the correct state to get the
+> > > > > better performance.
+> > > > I kinda agree with that, but the maintain is a bit hard as general
+> > > > rule of thumb as file mappings can change behind the applications
+> > > > back.  So building interfaces around the concept that there are
+> > > > entirely stable mappings seems like a bad idea.
+> > > I tend to agree.
+> > As long as it's a general rule that file mappings can change even after
+> > whatever prep work an application tries to do, we're never going to have
+> > an easy time enabling any of these fancy direct-to-storage tricks like
+> > cpu loads and stores to pmem, or this block-untorn writes stuff.
+> > 
+> > > > > I don't want xfs to grow code to write zeroes to
+> > > > > mapped blocks just so it can then write-untorn to the same blocks.
+> > > > Agreed.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  man/man2/statx.2 | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
+> Any other ideas on how to achieve this then?
 > 
-> diff --git a/man/man2/statx.2 b/man/man2/statx.2
-> index c5b5a28ec2f1..8ef6a1cfb1c0 100644
-> --- a/man/man2/statx.2
-> +++ b/man/man2/statx.2
-> @@ -76,6 +76,9 @@ struct statx {
->      __u32 stx_atomic_write_unit_min;
->      __u32 stx_atomic_write_unit_max;
->      __u32 stx_atomic_write_segments_max;
-> +
-> +    /* File offset alignment for direct I/O reads */
-> +    __u32   stx_dio_read_offset_align;
->  };
->  .EE
->  .in
-> @@ -261,7 +264,7 @@ STATX_BTIME	Want stx_btime
->  STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
->  	It is deprecated and should not be used.
->  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
-> -STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
-> +STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align.
->  	(since Linux 6.1; support varies by filesystem)
->  STATX_MNT_ID_UNIQUE	Want unique stx_mnt_id (since Linux 6.8)
->  STATX_SUBVOL	Want stx_subvol
-> @@ -270,6 +273,8 @@ STATX_WRITE_ATOMIC	Want stx_atomic_write_unit_min,
->  	stx_atomic_write_unit_max,
->  	and stx_atomic_write_segments_max.
->  	(since Linux 6.11; support varies by filesystem)
-> +STATX_DIO_READ_ALIGN	Want stx_dio_read_offset_align.
-> +	(since Linux 6.14; support varies by filesystem)
->  .TE
->  .in
->  .P
-> @@ -467,6 +472,25 @@ This will only be nonzero if
->  .I stx_dio_mem_align
->  is nonzero, and vice versa.
->  .TP
-> +.I stx_dio_read_offset_align
-> +The alignment (in bytes) required for file offsets and I/O segment lengths for
-> +direct I/O reads
-> +.RB ( O_DIRECT )
-> +on this file.
-> +If zero the limit in
+> There was the proposal to create a single bio covering mixed mappings, but
+> then we had the issue that all the mappings cannot be atomically converted.
+> I am not sure if this is really such an issue. I know that RWF_ATOMIC means
+> all or nothing, but partially converted extents (from an atomic write) is a
+> sort of grey area, as the original unmapped extents had nothing in the first
+> place.
 
-nit: add a comma here (really a dependent clause) to make it clearer
-that 'zero' isn't being used as a verb here:
+The long way -- introducing a file remap log intent item to guarantee
+that the ioend processing completes no matter how mixed the mapping
+might be.
 
-"If zero, the limit in..."
+> > > > 
+> > > So if we want to allow large writes over mixed extents, how to handle?
+> > > 
+> > > Note that some time ago we also discussed that we don't want to have a
+> > > single bio covering mixed extents as we cannot atomically convert all
+> > > unwritten extents to mapped.
+> > Fromhttps://lore.kernel.org/linux-xfs/Z3wbqlfoZjisbe1x@infradead.org/ :
+> > 
+> > "I think we should wire it up as a new FALLOC_FL_WRITE_ZEROES mode,
+> > document very vigorously that it exists to facilitate pure overwrites
+> > (specifically that it returns EOPNOTSUPP for always-cow files), and not
+> > add more ioctls."
+> > 
+> > If we added this new fallocate mode to set up written mappings, would it
+> > be enough to write in the programming manuals that applications should
+> > use it to prepare a file for block-untorn writes?
+> 
+> Sure, that API extension could be useful in the case that we conclude that
+> we don't permit atomic writes over mixed mappings.
+> 
+> > Perhaps we should
+> > change the errno code to EMEDIUMTYPE for the mixed mappings case.
+> > 
+> > Alternately, maybe we/should/ let programs open a lease-fd on a file
+> > range, do their untorn writes through the lease fd, and if another
+> > thread does something to break the lease, then the lease fd returns EIO
+> > until you close it.
+> 
+> So do means applications own specific ranges in files for exclusive atomic
+> writes? Wouldn't that break what we already support today?
 
-> +.I stx_dio_offset_align
-> +applies for reads as well.
-> +If non-zero this value must be smaller than
-
-Same here.
-
-"If non-zero, this value..."
-
-With that fixed,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+The application would own a lease on a specific range, but it could pass
+that fd around.  Also you wouldn't need a lease for a single-fsblock
+untorn write.
 
 --D
 
-> +.I stx_dio_offset_align
-> +which must be provided by the file system.
-> +The memory alignment in
-> +.I stx_dio_mem_align
-> +is not affected by this value.
-> +.IP
-> +.B STATX_DIO_READ_ALIGN
-> +.RI ( stx_dio_offset_align )
-> +is supported by xfs on regular files since Linux 6.14.
-> +.TP
->  .I stx_subvol
->  Subvolume number of the current file.
->  .IP
-> -- 
-> 2.45.2
+> Cheers,
+> John
 > 
 > 
 
