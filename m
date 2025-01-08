@@ -1,90 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-38674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A8DA06692
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 21:45:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C787A066A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 21:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03208188979D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 20:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802023A29BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 20:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35F12046B5;
-	Wed,  8 Jan 2025 20:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536D82040B6;
+	Wed,  8 Jan 2025 20:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nk0yYdRl";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hGboOs0e"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BUOzSCsd";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hFsSw2gi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAA01FBC99;
-	Wed,  8 Jan 2025 20:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53681FA15F;
+	Wed,  8 Jan 2025 20:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736369037; cv=fail; b=NhVlnOMBNkBn9loTXOWKIoR1noCzTOd1wNUnzMFClunS1zSh9/RT/OC10qDo3+EDsGeXApXhqGAgphBdu2tnFkKQSYDDlgkHSIAKslqV3vBPErVoqG9ZRxO1U9G3S+M77VNOpXkuKYCUbe+vHhm0Fy2f8I/j6nUZeCPaWf7PSSM=
+	t=1736369692; cv=fail; b=GCkFWC50OiyR7h2CTFzWDOG67UgMm2Du0w3a+E2x8v8uqvZfyIj3gXutCivWJg+CyYD3eMP4/urtJS55UjlDlbWo15tjkqwVZhxYF2MPNzTQJiKi6go7aXvaWGI1+lHGt7UKebBJT+UJkcYXqpnGtLZUIwKVGyS07a0oB/c2JZo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736369037; c=relaxed/simple;
-	bh=dXmkS9amhX1esXkRkr/42aZpw3TTtXKof+PjAf1ALqs=;
+	s=arc-20240116; t=1736369692; c=relaxed/simple;
+	bh=OmUTbbN8c6ITg0pYT/SySBS6ZHcOFJIXCudJF3y7S8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=b0+EOXxsaPY8DcdnFJd1S5NrVUPj15FlTeSaQjW5ti9tNbSe2eoFRF1DufzluPal+5n3yTu4O8FMzvIJeTHf/mJBRnLFQPlrWSkmHkIP6Ib4E/jMKYmKNGdTQJPbpfSlpT9BSzLjmyvqsD2HI9/Kg7vHtJ2n6vjlV3rKGW9iUIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nk0yYdRl; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hGboOs0e; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TTd96CNzQCyj37bpsJe30SwXCsOEslJryUzOjWM2D7X3/ijHiHWZWq6XgsqXzBHhSlH2XNOwASAXyaH0Vz2Dp2asyAuZUWWDVi4f/zv/+jBwV20b3I3Ov6a1nRqvujUxKLFaNqyOuAkoWJpbxlkv5/hbmWFTneqkFrbARyc8FRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BUOzSCsd; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hFsSw2gi; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 508INQoO001255;
-	Wed, 8 Jan 2025 20:43:44 GMT
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 508INEVc029693;
+	Wed, 8 Jan 2025 20:54:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=cV5bdfxdfcO4MSCTresIAILf7dQm6zgGeXfI6wiZsGw=; b=
-	nk0yYdRlBvLdgu2C/Gt3SUj3YhKZffu+LBDx6PcHxT+9f1JX8Ag54uxhd763xp9e
-	7uGEwOGWdsAGkz1GB92nh9yYPz01uy2A3cKXzrLfv9t2P/HTgjaK0g9SOpLTRrGO
-	nNKjpvmGFsUyBU41iOeWu4w63oT/6cnHx+zOB3UrfIUPkR6unpEqWYDrAmbJT2eW
-	RhKBmV5Re5TuwiEkoP3XAwzks7qjoqpfsONSeC32Q4U19FTi5Y/6+5rfSlyqzIPy
-	ar/xwCabaQ3RWHsqEbcIUmkoWaZB5n8AxBKZqI/cH5DGKwUofKmRqRpSBdtpd0AH
-	ryd2igp78notOos0ORpgXg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43xw1byj3a-1
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=vTf9nz2+UmYFR7bd62
+	Tz/vb1/rZTIifnKN9rsIUHWVg=; b=BUOzSCsdmSqmOrqlwxxj7mErnZ8+6k9XAm
+	jnUwuCVKOmupiKLSvGQG1E4oi2XUpo6RUWPHA4oNJAdSGWJHebEUKeGW8IcHGeuP
+	jJHZGtAACzgaHH6mG8EdwS/3+H4uVUCll96tU0S1vTRpEJ+ZaX8vH08i/K53da9R
+	eBVMRe16D41sHeoudFYnVL3lUklCG4+8kR02UvaPHVO3yjr0Jv2l2KFv3SEN1IVj
+	DFAax927NyHaSC6FV6uVyZeOPs4uaI/3TlG7r1/gk1adVop0UAFYbh82PoMfVk1V
+	veXhBMWbylqxxn3zUxBk73DFQ+4bxEwthkcPtg/WK0ld4McVz8kQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43xuk08096-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 08 Jan 2025 20:43:44 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 508KAdx8011015;
-	Wed, 8 Jan 2025 20:43:43 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2048.outbound.protection.outlook.com [104.47.58.48])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43xuea2jvp-1
+	Wed, 08 Jan 2025 20:54:39 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 508K9HrT022602;
+	Wed, 8 Jan 2025 20:54:39 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2042.outbound.protection.outlook.com [104.47.58.42])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43xuea8cg0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 08 Jan 2025 20:43:43 +0000
+	Wed, 08 Jan 2025 20:54:39 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FOI+XDH4lLXia7ks9/TiWamR92MB+fjLz5jTT2/LlAxX51ETvkXY861DnzHDBcW51YH7zVRroQDB7EZGKApnH57Qv5dvBOEaoDmjd0e3XXTNTjJJqnNqkbdQJE7eq+bR4P1OsOFQAyJBRq8sRbYHROIy9EriXP8AlXyJRG7DuKuvuML0B8yGZAEMeRuy7x8JNeqCA7Y90w4mYERqdtT/CwEWGEJcr3mQOpJfWnZOt8LNCUEzz059k3yVEkFspJWpiW9fWRvXDLOl+sQTdmIpEO9TwzT7jtHu+BUy/Si8YI+YkWPSRt8rQmeUo03lYC5RMBb0SLKtlwL7lGBIn7dSxA==
+ b=DV6Ex+mQs5Phf9cWpk92RYftBVm06EKhxQUs3E9Fb30DyJfMZY2EKcCIEoTl4GdjbysmBxWb1dZClOVX8hS+orTCDhahwF4fIk3f6LbqvbAcQeiVHiRtjXAgC95rX3p2Jhxo57gFXf1Pa+Oh1PbUTCgDt7P+1jG7oXyRNHt9RtShVD0+bbNRfvuYqfPPQOjYG7PvuJeiQ2uLiR/07KWECb+juJcygRPNGB4OObIaJumPehTjEbkob9R0PoiiF8GfWVX627foSYU851KCM69SdmK6Gj+NCIgeeO6PS/d7VBNd5W15PPqoRp+tnuTlPB3XyP+6yowyDXe/5bJUyje/Xw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cV5bdfxdfcO4MSCTresIAILf7dQm6zgGeXfI6wiZsGw=;
- b=hSO090Ae1PWPtBJRd67ybfeHEhcPr372iUD0SPq6kH1/nv6Dr1GOEsRM094YfaaeyZkBg/KQrk4d/OW6rhfmjhcPIen5tfm1eNTBaLiskq+T0V4m60I9WnL7f9+GQTfpPiRKmxNBGukJGxtP/NE68/lHzSgAv2j8JcQTtkC15GdD85GyePAfofEM0QUQuk6o8zvxlhTnxSUW9+2HpbuNqgsRvyw7roakHS4u4+Gp19ha4z4p0nBKYoyDbaYjl4693/eYFzhtMZwBthpimPSZ1ws/cU36UKNPTfzmhRBtDMOiYXEpVZdQRIpo5lqXp2xrT1iCpJ//7ZgjzpnbNOg+xg==
+ bh=vTf9nz2+UmYFR7bd62Tz/vb1/rZTIifnKN9rsIUHWVg=;
+ b=HjfJDba7AhWJkva8Kv3hMotYhFWG2JiSPennnWLXYkzMvlQd+hknoQQMq58G1CBJdZZyurVMf/8CG3ai9133ZLHdqZUruTe+nXALXyxZPN3Yd5fL8GiPbnO6+dng4GSmZDbPuiJkEDaNbromfHtN8dUK/VErt3XWzVuXHZ643GrDTfBSq/yC0C9/KTKEn4jHHqWYKqqhLwuPRmviTFYc4ijPmgNSHFZg1YXJh7Z8wv/bZwGUqjvOKNGInRqvzuM7CL6fI6x9jkQGx9lqWHVPfZR2i1//tFGV2acCBIBwX58zVejfVzYFSGbe10OTGKLlIslt69w5bZa82QtRcaffkA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cV5bdfxdfcO4MSCTresIAILf7dQm6zgGeXfI6wiZsGw=;
- b=hGboOs0eqwexA+UQFGqHw6OdRYzgDdJmVU8Q0mJi6Zn8z3Zc5eI5IAXPayzWeyCbSlq0IRNm+Ykc8mpWOhF2bfpVloT+0NCogc0N0sCQi7Xv1SxHuN4dGXXiXu/SH9m1ad4nkdUSG9GJ2Zj9+hn9BSSOIqRC0FrKYAPtJSNqnlU=
+ bh=vTf9nz2+UmYFR7bd62Tz/vb1/rZTIifnKN9rsIUHWVg=;
+ b=hFsSw2giaif3JykIQHdWIkqp/8YvDRqQ0t2tXWKRTm7jWiD5+0/BR9mwTIHXTMPAtMBiWPGO0z3vtp+3uqZWI2IaE/7FdF2URNQ+ypmwJ6MaiaSC0fWjIu/d0OpNHYcqFBdWx1xouhy9Y5LGrHD+Wh4JnknEDs01PPVhj0FLt4c=
 Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by CYXPR10MB7950.namprd10.prod.outlook.com (2603:10b6:930:db::21) with
+ by SJ0PR10MB6423.namprd10.prod.outlook.com (2603:10b6:a03:44d::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.10; Wed, 8 Jan
- 2025 20:43:41 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.18; Wed, 8 Jan
+ 2025 20:54:32 +0000
 Received: from BYAPR10MB3366.namprd10.prod.outlook.com
  ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
  ([fe80::baf2:dff1:d471:1c9%4]) with mapi id 15.20.8335.010; Wed, 8 Jan 2025
- 20:43:41 +0000
-Date: Wed, 8 Jan 2025 20:43:38 +0000
+ 20:54:32 +0000
+Date: Wed, 8 Jan 2025 20:54:29 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Isaac Manjarres <isaacmanjarres@google.com>
-Cc: Jann Horn <jannh@google.com>, Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
+To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
         Alexander Aring <alex.aring@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Shuah Khan <shuah@kernel.org>, surenb@google.com,
@@ -94,17 +92,14 @@ Cc: Jann Horn <jannh@google.com>, Jeff Layton <jlayton@kernel.org>,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org
 Subject: Re: [RFC PATCH RESEND v2 1/2] mm/memfd: Add support for
  F_SEAL_FUTURE_EXEC to memfd
-Message-ID: <7e508a01-7d77-4065-8656-e5e5a551fa5f@lucifer.local>
+Message-ID: <0d76351b-8b0d-4383-b188-c4c63d85733b@lucifer.local>
 References: <20250102233255.1180524-1-isaacmanjarres@google.com>
  <20250102233255.1180524-2-isaacmanjarres@google.com>
- <CAG48ez2q_V_cOu8O_mor8WCt7GaC47baYQgjisP=KDzkxkqR1Q@mail.gmail.com>
- <Z3x_8uFn2e0EpDqM@google.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z3x_8uFn2e0EpDqM@google.com>
-X-ClientProxiedBy: LO2P265CA0304.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::28) To BYAPR10MB3366.namprd10.prod.outlook.com
+In-Reply-To: <20250102233255.1180524-2-isaacmanjarres@google.com>
+X-ClientProxiedBy: LO4P123CA0651.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:296::17) To BYAPR10MB3366.namprd10.prod.outlook.com
  (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -113,317 +108,253 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|CYXPR10MB7950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4275452e-d55f-4c1f-407d-08dd302522ae
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|SJ0PR10MB6423:EE_
+X-MS-Office365-Filtering-Correlation-Id: e62c9c94-29aa-4b8f-e8e7-08dd3026a706
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dlZMdmVkQjIwOUJwem5jWE9rQ1VjT1RZYzJWbmVmN0N3VUlBTHNpK3BUS0di?=
- =?utf-8?B?ODRaQ0pkLzVDVk1ja1lFcGJIaXlGbEpMRXUreXlpRWhVNDJxL2Y0ZWFlWjN2?=
- =?utf-8?B?YWxvQ0JUdjVIVndISHlJRjhxZzh5MlMzanVXWHhxNmFqWjRhZDRtaDBQTXpJ?=
- =?utf-8?B?OU5jMStGM0ZLVFQxcFoyWTQ1eHlkVHRHV0o0bmFIblZJTVlLQTM4eFZxbUtl?=
- =?utf-8?B?SllQV1dHbmpZRU9KajNzeHdCRTE3WEdtajFwazB3MmxyR0FXYXdTZjNzbzQr?=
- =?utf-8?B?c1IzK0VXWUNadEZ1TVhoTGRDK1hwVUUwcmtZTDZWSmVUS0p0Ky9FVW4zcVBJ?=
- =?utf-8?B?ZXlLUkxLSXVMRlFiOXpDdjlMb1BLQ2VSQjJOL1ZGb3dOSGxFeWEyUkdobXZ1?=
- =?utf-8?B?cG81MjgxdTN5ankwaVA3RVFsUEVFTEg2QVhyRXFCOXhsYm9jckE1NDVITlY0?=
- =?utf-8?B?dExqNW5QdXhhbWs1ZHdlaWZIRGYvZWdia05lTGxrMEdnYm4wT1lBdEx5VXBJ?=
- =?utf-8?B?d2lwbCtKalFDWW8rek5jbjFhcTJ3K21IUWJKblFSNkV4OHFLaUdnQTFUWnFh?=
- =?utf-8?B?UUd0YXRncW9IaWhqSkRFeTlLTXZsOHVYWnE1QjR4N3dDbVdSR2hBQWFlcnNS?=
- =?utf-8?B?UTBMZWxhLzdGK2gwc1c3bUZOcHVmQXprUUlIZVhjTUV2aTg4dksrQm5uM3hq?=
- =?utf-8?B?RHBzeFdmQWNJMWMzWS9EQ1d4SW1rNmVDS1RNOTFPVm9sQ2ZqRlVrRGYxMlhV?=
- =?utf-8?B?WDVZcUMvOWZWclR4UmY0NDFWTjFSekQrbWo2L1hBZDNHSUxRWnZ6TGVUblhV?=
- =?utf-8?B?aXo0N2FZaGlSWXB4K21uNzlML2dBUUprYkltNExiWW4yTkJYSEZHTjUrVEJV?=
- =?utf-8?B?UlErdStuQTJVdG9UUThtdFR0c3lHcUhLbzVFS2JySUIxU0Z4V0RTa2RtbmtQ?=
- =?utf-8?B?SmdTNGxERENUOE1lak9TVmZNUUhhRVNtbElyRUVtNzBIWjhDUDA0NW5oQnR2?=
- =?utf-8?B?TmN3ZXBMNVRqSHZxT01FWlNRbEhkMVN4b09CUm1sUVBhcERYVllvU2VtVkc4?=
- =?utf-8?B?RUZjeEk5UzgraHA0Ri9vWmhYODFVZFNZaVdTQW9PNDM2S2JlNjhhOENZRmYz?=
- =?utf-8?B?cG9mVlZSdmtVTW4xblRJc0gzUHpUODVnRytBMzJQRytLMjBHYnd6VStmS1dq?=
- =?utf-8?B?cGtPNEhBOGc5QnNvbU5WbDIzNEpVOE5hYkJyNG1tRTFscE93M3B5SU96YUdO?=
- =?utf-8?B?RkUrU0Jxa09ReGVNMy9NSXFKcnBQdDd3bEQ1OEJ6QVVFUFY4TzI2OEpJZ0o4?=
- =?utf-8?B?V1I1QWw4SmV1eHV3ZThOSXlqQWcycW9sSWg1R3pJUTNZbUJOVnc2bmpWSXZn?=
- =?utf-8?B?UDBySEI5NTBmNXJVZlBDM0I3NWFUREFWZmxOOXIrS3pMS1BJRHNpMWlvMXFF?=
- =?utf-8?B?bU9uWXN1ZU00RG1FSE01MFJMck5HVlBvcllqT2FVNnhROHVRV0ViTFJlYlBD?=
- =?utf-8?B?MjdtSGtmdFc3VnpyUldVTXcwaCtjczk0NGd0eC9OSTVJdW4xTFk3LzczKzFS?=
- =?utf-8?B?L3VrQkllODRVU09LTmdlVWlXRWNzOTNUZkxZVkVXNEo0ZTVXcmo2eW5wTnVB?=
- =?utf-8?B?ZW9DMldGeWgrRGZGUjU0UGd0V28vUVd1YWptNmgwWUUxaGlWNkJYdzlMUk9h?=
- =?utf-8?B?TFd4bjhHSWZ5WnZtTVZLMmpxZUtrekt6cVVJNkdEdGEzR2RSWE1tdVVNZWpm?=
- =?utf-8?B?QWpabHdWUzVOY1JsTHpkR05QazBQU1J2R1NqRnFrSkpia2lMZk9lRSsxYUxy?=
- =?utf-8?B?bVhzaFBOZnY2M1pQcTFsQloxeEJEd2d0MGx4N2VKOE0yVGtiUG5zSlpZUHNZ?=
- =?utf-8?Q?o90p5aWQEgQ9K?=
+	=?us-ascii?Q?uyyvK+TSOHnuNNAG7ALuuSdxluRxJzaMyykhFeolf95LQkX/ff6KSeXSW6mS?=
+ =?us-ascii?Q?BgICu2WYUWIII6VIu6EXjoH4E1ZJv8D9tOxVYgs4xXyq4aGH9+jQmp9oDwRO?=
+ =?us-ascii?Q?AulZewHxOzZsn8sBA8atBl3+5It8D0rB4N//3G14a0nGrpHUIN0LJ4nBuCuu?=
+ =?us-ascii?Q?nM6vP8DjWi7J4INaX/l1I6Zv4xsQqr89wvg317cUc0FiTn19jYK7MzU8/3+4?=
+ =?us-ascii?Q?EA27C5ihzaiB5oycICdnX/hLFGbnI3iyCige4zLMwtS+U+tkj8DHXgd/DrKY?=
+ =?us-ascii?Q?Ru77ectfGIIv2el5KSXTWBSPeldQyzrlsSNeN7ElslH40C+bBHHqvF1WexBw?=
+ =?us-ascii?Q?KJVQnqCJpeSPsg/uEfzkmB9gWLkOS+aMNpVtCUEgSztUyQZVKJ4i7MkPqTIw?=
+ =?us-ascii?Q?TsS9boQYnUn1CBv7pYnOw49WOnGfwC2Co0ZyNWf5GpSoGbnIsjA7t4xu8xCm?=
+ =?us-ascii?Q?GI2+5MOU9vcTq0cj41fVgcx6bidwLNJgZf2rhqldghZpTgP7WxKurbO1X58I?=
+ =?us-ascii?Q?Z2BE6qnQ2uYcJUged6frzbWxmNzN44X+acvxtPQH1qcHaQbU6dRraPxbar9M?=
+ =?us-ascii?Q?/MZ5FGsOGo2FoOEvs4NRb754hPcY5sNRHqFm9hH9OdQmHZ7tdqchcEu41bT2?=
+ =?us-ascii?Q?I/4uUMd9xo88TG/QfFe3681/HNLwsjFIwJ5H7qtrKI/JwpKo2j4N/g3ffHKa?=
+ =?us-ascii?Q?3d89jaGhHgRl3W6mCeZaAiFTetrb9uzz6rCKHZNFOmh6FTPxe1pgAtCQzvrT?=
+ =?us-ascii?Q?mISx8A7OYGy7ZdAPbjTglXmZdAksJa7L1cRTw/6cBiXqdrqZYwbotGNnDOvf?=
+ =?us-ascii?Q?fodGaHjilorz2S5wNhGvVBxJdWbmEUSCTA4iqYwcVVMh5vr1km0/GdrGyvF+?=
+ =?us-ascii?Q?U0sY43KjYExVZMUrzsc1YCKZsUvyXXTsMtoXVHKa5uH2X8Iv6TRwvNtQ5KV5?=
+ =?us-ascii?Q?KImAnjrF/Xq61C5Hacgq8K7NfpHCGqd/0OBydBRuGEiq6QYAQWClib0sCGqf?=
+ =?us-ascii?Q?25cqEdWDX1QTkqNzJPLk77n0LPKXtU6Tv7qGX02lYpuo1AUHCNn9YkHpIhyI?=
+ =?us-ascii?Q?hvA0paMoAH2CrQrWkOil0AFISgzFgv0ldnwarcTdhfS8R1mzE/U6mi4rizl3?=
+ =?us-ascii?Q?LiI0xlo8HI0Sow7SK1Nfce9SUpkuZyHS/Qjui+87OFF3qhYI/R7WYvvcSqJw?=
+ =?us-ascii?Q?k15zKX4ZEz8nf3lUgavTVKTGjPXsP7zi/6ypAGCeP+PIrR3UzBo9u2pfgf5R?=
+ =?us-ascii?Q?MuGNjyVtYoRZsrZcUeaYc5lCopZAuhR2uyyZ5n7tKqyQ68NmNqh/GWF8o8zm?=
+ =?us-ascii?Q?tFwuJ0EvoniGTfFiwKmlk8u+UUCbMTuJvXoduWUiaT82xIxw1l5EpWd5obLO?=
+ =?us-ascii?Q?qRq4xX6AcIXMtlaTzjPhH/0T7dJA?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U1I1aGx0Y003RGJGQkF4WFFhV1AxSzhFSjZrdHdJVXpUeGEyNTVtZ3BtWnZS?=
- =?utf-8?B?bzZka3libTc3YXFFYlY1SGxqZW5PQ2F3RmpMSHpVdzVCaUU3OVhMUWw0c04r?=
- =?utf-8?B?UXhuRTY5K2Y5SzJvak9XNm1ZQXpJRld1bXQ1aURhb2hXTm5DNkg2dUdDbUd2?=
- =?utf-8?B?NENnb3RGVHdmeGs4TTNzdGNpMlNrSThzS0Q0cURGaUVHMGdUcTk2S1NCN1dV?=
- =?utf-8?B?S0YwaktaUUpLQnVtRVZybkpmbVFjc2RRWGx4YWE1SnlYbGtnNGt2c0E2alBK?=
- =?utf-8?B?SmZ6UVNIZTRONjh6SDFvV2FjcGRLY1d4N282MXJnWVNWWS9NUU1pWisvdWNM?=
- =?utf-8?B?bkxDc2NtbXVzcXRremJ0Nk5UNzFTNEtrRG02Wmp6SVp3ZFlZNUx1RmdyL0tu?=
- =?utf-8?B?R3NOQ21XOS9xNS9ISHJRZkorQUc0QU5sZ0RmKy9YRVM3cHVRTmFpU3RVSXVl?=
- =?utf-8?B?c3RkNXNMcitsMkJPdUZJa0w3YytUOXVpR3RydFBNNGpuR3Y1M2g4UmFVSWJk?=
- =?utf-8?B?OFN5WDVLcXBBY1ZRZmJHOFFCUkVWcytiaVg0azV3YkxVbVROaWNUV1F3SGho?=
- =?utf-8?B?SHRWSlJKYmY2aWxId2dhb3c3WjRBb2xIcDMvLzdtcjhpN3grZXNmM0JPREN5?=
- =?utf-8?B?dmhpb3pQTXZjQ2FWWVE1NEo5dXpVczhIZWJTN0ZnVVlBZC9ST0FQNXAzUlJX?=
- =?utf-8?B?SFhJM0dMU0dYSTBRS3YrTDRyUDFwVGllRDNYWE10Rm1BSEhxWDl0QmYzUTlZ?=
- =?utf-8?B?bnFjR0ZLTlI3c1VhTHVsbksvM0FYdU1QVE5Xa0U4bTNNTjZGYTdtR3dqSmdG?=
- =?utf-8?B?M2laaCtVTlZUcnF1TXZSS3E4NkdKWXpBdGtQUUhWd2hpdzdtOHNWODdlMkUv?=
- =?utf-8?B?NHJqcGcwVUU1Ym55c2IrUFkxMnpEN0d5bW1rVEVBb0w3SXVkWWV5RHdROTQ0?=
- =?utf-8?B?U05ZSXZ4U2Q4REFSQVBtS0oxT08zWEVtVE15WWNHZDR3bXk3YkVDWDR0SmhL?=
- =?utf-8?B?VTBYbm1RQ3phem1rZksyTmRMYnM4ejZaOGhUNUlobXE5LzhkUVVlRUxoVTJy?=
- =?utf-8?B?LzJEZkFQeFVPcjZiazhuYW93TjVDckxHc0RoVzFXVFY5Snc2NjFPczdhd1Fj?=
- =?utf-8?B?cklMSTRHV2h6aURxdEFZQytYdnpGSDA3S29JdlJkR3RuR05LZ3NIVHpEcktk?=
- =?utf-8?B?cHlNNldvM3ZWTTVUaFlZaC9JeUg2bE00cWdVMzNJZ3NacThReG5scldMVm45?=
- =?utf-8?B?WWxpWnRkMitNRUd6UWFYNzR2eFVPd0Q2SE05eTJUcVpCNmpibXA3d0s3UCtI?=
- =?utf-8?B?ZlRsa0Jwd0IvY0RMcUc1M2dZdk1jeXRPbFBFcUdGT3NQYTlZWm91Y0Y2R2py?=
- =?utf-8?B?cEt0L0tCODNQamNFak9hODJWSjZacUV6aDJvazRzRStPUUp6OFhONmRSMEN6?=
- =?utf-8?B?ZEFYc2VuSjNkUnkxdVN1ZWNLa2lFZUp6T2VFeHVqQXIrS3hNTHNkV0RXaVhS?=
- =?utf-8?B?eW9tYnJhRlRnVFNnYkQxYU1IcmZONjV4ZVB4cEFzeE9YT0ZCS3NPK0VyeFBr?=
- =?utf-8?B?RmVCSzRiUkEwTGdkVWR2TTJ2QnhMZmh2c0NMUm5kZ2YxSWpIZGlCMjVWelpr?=
- =?utf-8?B?MjVueEF0aENJdnQ1WEhmbi9IZTE3Umt5QXhFcmJ2L1hOekZqWG9qK2xXRGpV?=
- =?utf-8?B?T0xVVTUydEJNTis3SUJiV0JmRDNDcUw3SlpKYXA4cmV2a1U4ZkNSZVFyRlpa?=
- =?utf-8?B?N0tWUnB1a3NDMlpyeUZCMDlCMWhVaTg2V21nYmJCd0pweDFMTkxtbU1zYnN3?=
- =?utf-8?B?b3BVbHkyL2dzL3RlZDBJRmRicW5lRHdIVDk4eUVTUjIrai9vZGZydnpDU3lR?=
- =?utf-8?B?amk3YzZoYW03ZVk4WTM4MlJNdlN1T0d5RTVPckQwbjlGUVpqdjNCaGVXVHlS?=
- =?utf-8?B?aG1aWXdHSCsyYloxWUs0dVZzWngvSkhXY2ZkMmgxNC9mendxdkVYckx5ekcz?=
- =?utf-8?B?bnlRaFI0cFlGWWc2WkZmdUN2Z0lrdnVrdGdrNm9saHgvZ1BvT2tJRVRXQkVa?=
- =?utf-8?B?UTN5MFlsT1FKUzRuUUFLMk05UHNOdWhBc0lTa0xyWUNsQnlLQXlCeG8wRWU2?=
- =?utf-8?B?ODZpYldqY05vSXdRRzU5c1A4OXpQQVRpdUZZTlNUNVhZUExpaFdTYTJOQmVW?=
- =?utf-8?B?aUE9PQ==?=
+	=?us-ascii?Q?yx2i0E7lN+H9q21TNN7a7yHCTZzTyO7/VdoOvskHHkzG+gwTgjMFWAoAzsl+?=
+ =?us-ascii?Q?cswhBYDUSGe+hN/Jl/oY1VZFcjTq+u9Cqgv9JcRzz6X9ZMINmr40GCZytEOt?=
+ =?us-ascii?Q?JS4jykEJ/Ik7PK0cHD2M8V4+YhBq2+NFjeD0qopwaWQRW+1Mua+HKi2IYC0h?=
+ =?us-ascii?Q?NAvq7AgW1yglDFBBUMWMshWz1eFCQXZTFetsOnqRFfX4YsdBOEMSpU9uLoU1?=
+ =?us-ascii?Q?/PyioQUHl/g/AGq+vynij7QJMQAZzga0ZE93RdfWnr0aEsDolJo8Msyu3RVd?=
+ =?us-ascii?Q?ojvCbp3hVB57TcRJqjFG7rTEqPzEcCNWXxJdmxqnjfQr2MH5gd2qQkA0nyaf?=
+ =?us-ascii?Q?wt5WaKr3oXtXf2tAWGlqRau3nGF7zXLC/QoWrrOaFwIb2gm9WNSdYhSqXvsC?=
+ =?us-ascii?Q?rN9xV5CJKEgcli/lZY5EKuFrIFMlsN6+wyC6/w4tpxH5lWtWUOmN9PSkyBru?=
+ =?us-ascii?Q?daFZKjbLNMYzrwwZ5vRfcYxgFu8DDckGunIf9X4RKFxVkMr3ncIMd5l/ds/F?=
+ =?us-ascii?Q?/cuVPQbfVhHVEVdzx13aiYJSrNBvF6ovHtkDDQ4PrqG76yKHUqHkexxxDmkl?=
+ =?us-ascii?Q?UItuU3oxysRhw/oUgz5HdpILmU254YrwGB2NICAzUCBwaiK+k5gqFpj2HJpu?=
+ =?us-ascii?Q?tvQOkFCgucBHyYRIL5XdrxTw6SjBsk2SI4z4fkvOPU+Wv18+dFYRPoC3vIUC?=
+ =?us-ascii?Q?BCkfWMcfo+ox1V8udt98lz0pfMrlNMsta/OomfScsFcKiyvMpCnwdVnCwmMl?=
+ =?us-ascii?Q?myUSq3tqLmjXCkWuC3/gQemnL9hwWSqnwg09JEniaY/jlW9cLSS4PdAURNFX?=
+ =?us-ascii?Q?V+4G/TUY6qGJRRoPL+YtcnHhtRCnNggm0n5kMron4ejg7Jr/uq21MqBafg2q?=
+ =?us-ascii?Q?JJwkcqKd7IMV/ea37fACsvqERSqSTpX1BhFfPAZsh/h99NCJ/JO6+6zg8Tlc?=
+ =?us-ascii?Q?h3RmiQi3St+H+GpAdbJEA02bTGUKR7wQtwm2jPC9JLiT7ZCvBgwKdH+LDEpZ?=
+ =?us-ascii?Q?+ZqhIGTV4pAp9RhHgEoalF/GpBiwsQ2EgZvlFuBfq2dfjeFz6xO6S5aQHwFu?=
+ =?us-ascii?Q?Q9Ou34KQOO1OEuUiCIgAdjyaNPhpGcqscevtw0b1KClY3hVVqf4Rdz4fHkms?=
+ =?us-ascii?Q?fRRSZ5cTrg+vz9BpjrbcYdS/hI8mktkEKfaYOE7mR38r1jdiEPmuiO+ZiK7w?=
+ =?us-ascii?Q?Bt3j6o2fv2VjSOC8OKZvrX68EDh1W1/nPQq5VLXE/Vc39LFpNks05kbrF8RN?=
+ =?us-ascii?Q?lqc0xw1RlqnZ0pvnhzPzEFMMsbSn6OWftKfn2sIjw1+c9R+ur1l9fNeEpbVR?=
+ =?us-ascii?Q?RqEu9StHTOtGVisy8GBsoSTfT5Qr8zjuHNgSdGFztXxNE56Gwp+nj+apn7yu?=
+ =?us-ascii?Q?a94HBiBOSw7lgL6XhAbhHmp1KIRd7Fd+XeE0BolS0Hr/BRBOj1NX6s6ZuzeR?=
+ =?us-ascii?Q?BSlRBz5pcVgAq5v5cY6q7gaw1GNIGcotIQ8V5AhXx8gsOwSS0JkFk9KWDR7k?=
+ =?us-ascii?Q?UgeoxgnYvwvDuDOHAuPVC1RpeJUkiFbzkFA7ritjjEspLzdHs1DgDowrH1Lp?=
+ =?us-ascii?Q?9WnoJFBSCuyIHHMmyyovuOnVLevXWBHfDBD1xNy4cyK4JSaVEZ9Tyr/3Jlgh?=
+ =?us-ascii?Q?2g=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	shZvT1AhNu3WuGr+gcIboHq2ySb+zu+2KdLX2OiV8/ERfaeN3U8f9T/vTxpRESF6113q+SlnHXz8TwgoioP6QVMhgrq1a881tdodDRWBKnsQz9gvKMp8T4AFJCJHIIv/e6cEOOL20U3vm0BdKpkVBOVoJ2p0mlvp70cNei/uZqUR/R1zcTaNSv1swtdAZgDambmgLLa1OLAScm8QQvg9p6DvhZyx2GkNGaovawnu53gUN1zgb/8xfCJbhOrcLvndh3iPTygyTP3p0K5rJ6Vv1/5obyaA+VgfQ3mLK0pEK4Jdeom5KqXKSHVYKIY+ozUwnRrAnOgjkXAKhqKv/9v9OKvXzyfBJJs+c6MZf+zkE3fgWRoAba8XpcBZNQGQDn6SFPjdZ0gftlLGQA3lmeQVe2+GaOm4fE/NwNO0GSsXYTKBAU+stAe7VZ3tbNTn35OgGYNOMOjmv4UoJxVl0bRBPR7J/OnlboNNmsb6V+1oXWXQ5l85Ltc/ao7n95tkGW8MwpVkO+suSA1MaiQOjveTKW+WfCVXrFlB4dVK9Ik/TZ3fuEZrvVGQyLqMCK5Ebj5bFxz31nSC9yE47zeqbOYcxPJMsEVbBigZz7GhmJRWXZg=
+	P6rvqp6fl2hi+OZhzKmVEq7RQucmRArY0OlQBuqpow3p67PZwXifhYOfSOQPyaSrtnwnLQHaVCOaIroMbAvzjHchYOCRDtmySY7Rnk0sVIpJC+bbbrtgrin2LjvY3IR+Eb9M8+WjdvyZAbQsNvTqJ+5EFE+i8y0++ON+ac19tH9Tu8vgQB7VZU7ilnj8wzMv87jjYEmTtSZzjqa0gYHpqA5DpMsJsvacI/qSWrga6C3H0x1Wi4YRiKkl8DZxHel0crjm3TeWaJYn8ABd7HxRyqdrZOHcCA3q7S0+fK3Taw/QHxX4x2VkzEwsza4PpZCJWFxGP+LFs1nu6Yrt/PiSY2n13CUXRIJV7BBwdfVVDTnqaAXEVidMmQNbiil50pUuQ4GbS0TWZV/M4K9Aw3PXApbYyrQvL/yr9WtYl1XzSjy7ctdraCU3nzuB85gn6kiw+EKcmVh9ILI5xH6NzdFlFj8T/Gg1xC3sNww935QdYfKdq5YzNpoWh3FZorbv0T0cd/dcBe88wYwMEuBjy63f0pUtWdRjdqPz1feMapY/dBIK/D8LHNBMWcESsOjycHHkyzDiAtPm8Bklv4q+0wTYPoj+Lr9thWkwTQyzPFoqCZg=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4275452e-d55f-4c1f-407d-08dd302522ae
+X-MS-Exchange-CrossTenant-Network-Message-Id: e62c9c94-29aa-4b8f-e8e7-08dd3026a706
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2025 20:43:41.1716
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2025 20:54:32.8385
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6VmQdOHsg2oWN8VPDpmd21HA22/9XLRXkNFDy+kzDlpnsrtY5IbLIdt84aNja2A3cajStBs2o0nPOLaDiyO7bLGinxlOfdAMpG2TkJbqFTc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR10MB7950
+X-MS-Exchange-CrossTenant-UserPrincipalName: f+Uc9XWch1CsZGtqYLqsrJn3KJ2jSiEV07iBt4WwLH1QIURXpibUWVTb+cw34hOuzfZwzgNLxE/AeJDICKr/nbz4iPZv+Ki0AW5MN198IPA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6423
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-01-08_05,2025-01-08_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
- mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2501080169
-X-Proofpoint-ORIG-GUID: 4AuGqrSa0B-eT21yL0UuwtOM71ZWrGb4
-X-Proofpoint-GUID: 4AuGqrSa0B-eT21yL0UuwtOM71ZWrGb4
+ definitions=main-2501080170
+X-Proofpoint-ORIG-GUID: K2BtN7jOSWdvOFUrylhtv1sKsZvjlow8
+X-Proofpoint-GUID: K2BtN7jOSWdvOFUrylhtv1sKsZvjlow8
 
-On Mon, Jan 06, 2025 at 05:14:26PM -0800, Isaac Manjarres wrote:
-> On Fri, Jan 03, 2025 at 04:03:44PM +0100, Jann Horn wrote:
-> > On Fri, Jan 3, 2025 at 12:32 AM Isaac J. Manjarres
-> > <isaacmanjarres@google.com> wrote:
-> > > Android currently uses the ashmem driver [1] for creating shared memory
-> > > regions between processes. Ashmem buffers can initially be mapped with
-> > > PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
-> > > ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
-> > > permissions that the buffer can be mapped with.
-> > >
-> > > Processes can remove the ability to map ashmem buffers as executable to
-> > > ensure that those buffers cannot be exploited to run unintended code.
-> >
-> > Is there really code out there that first maps an ashmem buffer with
-> > PROT_EXEC, then uses the ioctl to remove execute permission for future
-> > mappings? I don't see why anyone would do that.
+On Thu, Jan 02, 2025 at 03:32:50PM -0800, Isaac J. Manjarres wrote:
+> Android currently uses the ashmem driver [1] for creating shared memory
+> regions between processes. Ashmem buffers can initially be mapped with
+> PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
+> ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
+> permissions that the buffer can be mapped with.
 >
-> Hi Jann,
+> Processes can remove the ability to map ashmem buffers as executable to
+> ensure that those buffers cannot be exploited to run unintended code.
 >
-> Thanks for your feedback and for taking the time to review these
-> patches!
+> For instance, suppose process A allocates a memfd that is meant to be
+> read and written by itself and another process, call it B.
 >
-> Not that I'm aware of. The reason why I made this seal have semantics
-> where it prevents future executable mappings is because there are
-> existing applications that allocate an ashmem buffer (default
-> permissions are RWX), map the buffer as RW, and then restrict
-> the permissions to just R.
+> Process A shares the buffer with process B, but process B injects code
+> into the buffer, and compromises process A, such that it makes A map
+> the buffer with PROT_EXEC. This provides an opportunity for process A
+> to run the code that process B injected into the buffer.
 >
-> When the buffer is mapped as RW, do_mmap() unconditionally sets
-> VM_MAYEXEC on the VMA for the mapping, which means that the mapping
-> could later be mapped as executable via mprotect(). Therefore, having
-> the semantics of the seal be that it prevents any executable mappings
-> would break existing code that has already been released. It would
-> make transitioning clients to memfd difficult, because to amend that,
-> the ashmem users would have to first restrict the permissions of the
-> buffer to be RW, then map it as RW, and then restrict the permissions
-> again to be just R, which also means an additional system call.
+> If process A had the ability to seal the buffer against future
+> executable mappings before sharing the buffer with process B, this
+> attack would not be possible.
+>
+> Android is currently trying to replace ashmem with memfd. However, memfd
+> does not have a provision to permanently remove the ability to map a
+> buffer as executable, and leaves itself open to the type of attack
+> described earlier. However, this should be something that can be
+> achieved via a new file seal.
+>
+> There are known usecases (e.g. CursorWindow [2]) where a process
+> maps a buffer with read/write permissions before restricting the buffer
+> to being mapped as read-only for future mappings.
+>
+> The resulting VMA from the writable mapping has VM_MAYEXEC set, meaning
+> that mprotect() can change the mapping to be executable. Therefore,
+> implementing the seal similar to F_SEAL_WRITE would not be appropriate,
+> since it would not work with the CursorWindow usecase. This is because
+> the CursorWindow process restricts the mapping permissions to read-only
+> after the writable mapping is created. So, adding a file seal for
+> executable mappings that operates like F_SEAL_WRITE would fail.
+>
+> Therefore, add support for F_SEAL_FUTURE_EXEC, which is handled
+> similarly to F_SEAL_FUTURE_WRITE. This ensures that CursorWindow can
+> continue to create a writable mapping initially, and then restrict the
+> permissions on the buffer to be mappable as read-only by using both
+> F_SEAL_FUTURE_WRITE and F_SEAL_FUTURE_EXEC. After the seal is
+> applied, any calls to mmap() with PROT_EXEC will fail.
+>
+> [1] https://cs.android.com/android/kernel/superproject/+/common-android-mainline:common/drivers/staging/android/ashmem.c
+> [2] https://developer.android.com/reference/android/database/CursorWindow
+>
+> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+> ---
+>  include/uapi/linux/fcntl.h |  1 +
+>  mm/memfd.c                 | 39 +++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 39 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 6e6907e63bfc..ef066e524777 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -49,6 +49,7 @@
+>  #define F_SEAL_WRITE	0x0008	/* prevent writes */
+>  #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+>  #define F_SEAL_EXEC	0x0020  /* prevent chmod modifying exec bits */
 
-You could do something similar to my adjustments to the F_SEAL_WRITE
-changes that clears VM_MAYEXEC in cases where do_mmap() maps an
-F_SEAL_EXEC'd without PROT_EXEC.
+Hmm ok I just noticed this... F_SEAL_EXEC is weird then.
 
-Please note that F_SEAL_EXEC implies:
+It doesn't prevent execution in the same way F_SEAL_WRITE does, nor does it seem
+to check or care about VM_MAYEXEC...
 
-F_SEAL_SHRINK
-F_SEAL_GROW
-F_SEAL_WRITE <- important, obviously
-F_SEAL_FUTURE_WRITE <- also important
+It just 'prevents chmod from modifying exec bits'.
 
-	if (seals & F_SEAL_EXEC && inode->i_mode & 0111)
-		seals |= F_SEAL_SHRINK|F_SEAL_GROW|F_SEAL_WRITE|F_SEAL_FUTURE_WRITE;
+I mean lord above haha.
 
-Though interestingly only _after_ the mapping_deny_writable() call is
-performed which is... odd.
+And of course the code for it is in shmem_setattr()...
 
-Probably worth exploring F_SEAL_EXEC semantics in detail if you haven't
-already to see how viable this is.
+I have not enough faces to palm or palms to face.
 
+So yes I suppose for any sane exec semantics you'll need something new...
+
+> +#define F_SEAL_FUTURE_EXEC	0x0040 /* prevent future executable mappings */
+>  /* (1U << 31) is reserved for signed error codes */
 >
-> > > For instance, suppose process A allocates a memfd that is meant to be
-> > > read and written by itself and another process, call it B.
-> > >
-> > > Process A shares the buffer with process B, but process B injects code
-> > > into the buffer, and compromises process A, such that it makes A map
-> > > the buffer with PROT_EXEC. This provides an opportunity for process A
-> > > to run the code that process B injected into the buffer.
-> > >
-> > > If process A had the ability to seal the buffer against future
-> > > executable mappings before sharing the buffer with process B, this
-> > > attack would not be possible.
-> >
-> > I think if you want to enforce such restrictions in a scenario where
-> > the attacker can already make the target process perform
-> > semi-arbitrary syscalls, it would probably be more reliable to enforce
-> > rules on executable mappings with something like SELinux policy and/or
-> > F_SEAL_EXEC.
-> >
+>  /*
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 5f5a23c9051d..cfd62454df5e 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -184,6 +184,7 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+>  }
 >
-> For SELinux policy, do you mean to not allow execmem permissions? What
-> about scenarios where a process wants to use JIT compilation, but
-> doesn't want memfd data buffers to be executable? My thought was to use
-> this new seal to have a finer granularity to control what buffers can
-> be mapped as executable. If not, could you please clarify?
+>  #define F_ALL_SEALS (F_SEAL_SEAL | \
+> +		     F_SEAL_FUTURE_EXEC |\
+>  		     F_SEAL_EXEC | \
+>  		     F_SEAL_SHRINK | \
+>  		     F_SEAL_GROW | \
+> @@ -357,14 +358,50 @@ static int check_write_seal(unsigned long *vm_flags_ptr)
+>  	return 0;
+>  }
 >
-> Also, F_SEAL_EXEC just seals the memfd's current executable permissions,
-> and doesn't affect the mapping permissions at all. Are you saying that
-> F_SEAL_EXEC should be extended to cover mappings as well? If so, it is
-> not clear to me what the semantics of that would be.
+> +static inline bool is_exec_sealed(unsigned int seals)
 
-I need to dig into how this functions, but I'm guessing then it doesn't
-immediatley enforce anything preventing an existing mapping from executing?
-Which differs from F_SEAL_WRITE semantics and then makes it seem like it is
-already acting like an F_SEAL_FUTURE_EXEC in effect?
+This should say 'future', otherwise this is very confusing vs. F_SEAL_EXEC.
 
-Hm need to dig into this a bit.
+Also no need for inline outside of a header.
 
+> +{
+> +	return seals & F_SEAL_FUTURE_EXEC;
+> +}
+> +
+> +static int check_exec_seal(unsigned long *vm_flags_ptr)
+> +{
+> +	unsigned long vm_flags = *vm_flags_ptr;
+> +	unsigned long mask = vm_flags & (VM_SHARED | VM_EXEC);
+> +
+> +	/* Executability is not a concern for private mappings. */
+> +	if (!(mask & VM_SHARED))
+> +		return 0;
+> +
+> +	/*
+> +	 * New PROT_EXEC and MAP_SHARED mmaps are not allowed when exec seal
+> +	 * is active.
+> +	 */
+> +	if (mask & VM_EXEC)
+> +		return -EPERM;
+> +
+> +	/*
+> +	 * Prevent mprotect() from making an exec-sealed mapping executable in
+> +	 * the future.
+> +	 */
+> +	*vm_flags_ptr &= ~VM_MAYEXEC;
+> +
+> +	return 0;
+> +}
+> +
+>  int memfd_check_seals_mmap(struct file *file, unsigned long *vm_flags_ptr)
+>  {
+>  	int err = 0;
+>  	unsigned int *seals_ptr = memfd_file_seals_ptr(file);
+>  	unsigned int seals = seals_ptr ? *seals_ptr : 0;
 >
-> For instance, if a memfd is non-executable and F_SEAL_EXEC is applied,
-> we can also prevent any executable mappings at that point. I'm not sure
-> if that's the right thing to do though. For instance, there are shared
-> object files that don't have executable permissions, but their code
-> sections should be mapped as executable. So, drawing from that, I'm not
-> sure if it makes sense to tie the file execution permissions to the
-> mapping permissions.
+> -	if (is_write_sealed(seals))
+> +	if (is_write_sealed(seals)) {
+>  		err = check_write_seal(vm_flags_ptr);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	if (is_exec_sealed(seals))
+> +		err = check_exec_seal(vm_flags_ptr);
 >
-> There's also the case where F_SEAL_EXEC is invoked on an executable
-> memfd. In that case, there doesn't seem to be anything to do from a
-> mapping perspective since memfds can be mapped as executable by
-> default?
->
-> > > Android is currently trying to replace ashmem with memfd. However, memfd
-> > > does not have a provision to permanently remove the ability to map a
-> > > buffer as executable, and leaves itself open to the type of attack
-> > > described earlier. However, this should be something that can be
-> > > achieved via a new file seal.
-> > >
-> > > There are known usecases (e.g. CursorWindow [2]) where a process
-> > > maps a buffer with read/write permissions before restricting the buffer
-> > > to being mapped as read-only for future mappings.
-> >
-> > Here you're talking about write permission, but the patch is about
-> > execute permission?
-> >
->
-> Sorry, I used this example about write permission to show why I implemented
-> the seal with support for preventing future mappings, since the writable
-> mappings that get created can become executable in the future, as
-> described later in the commit text.
->
-> > > The resulting VMA from the writable mapping has VM_MAYEXEC set, meaning
-> > > that mprotect() can change the mapping to be executable. Therefore,
-> > > implementing the seal similar to F_SEAL_WRITE would not be appropriate,
-> > > since it would not work with the CursorWindow usecase. This is because
-> > > the CursorWindow process restricts the mapping permissions to read-only
-> > > after the writable mapping is created. So, adding a file seal for
-> > > executable mappings that operates like F_SEAL_WRITE would fail.
-> > >
-> > > Therefore, add support for F_SEAL_FUTURE_EXEC, which is handled
-> > > similarly to F_SEAL_FUTURE_WRITE. This ensures that CursorWindow can
-> > > continue to create a writable mapping initially, and then restrict the
-> > > permissions on the buffer to be mappable as read-only by using both
-> > > F_SEAL_FUTURE_WRITE and F_SEAL_FUTURE_EXEC. After the seal is
-> > > applied, any calls to mmap() with PROT_EXEC will fail.
-> > >
-> > > [1] https://cs.android.com/android/kernel/superproject/+/common-android-mainline:common/drivers/staging/android/ashmem.c
-> > > [2] https://developer.android.com/reference/android/database/CursorWindow
-> > >
-> > > Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> > > ---
-> > >  include/uapi/linux/fcntl.h |  1 +
-> > >  mm/memfd.c                 | 39 +++++++++++++++++++++++++++++++++++++-
-> > >  2 files changed, 39 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > > index 6e6907e63bfc..ef066e524777 100644
-> > > --- a/include/uapi/linux/fcntl.h
-> > > +++ b/include/uapi/linux/fcntl.h
-> > > @@ -49,6 +49,7 @@
-> > >  #define F_SEAL_WRITE   0x0008  /* prevent writes */
-> > >  #define F_SEAL_FUTURE_WRITE    0x0010  /* prevent future writes while mapped */
-> > >  #define F_SEAL_EXEC    0x0020  /* prevent chmod modifying exec bits */
-> > > +#define F_SEAL_FUTURE_EXEC     0x0040 /* prevent future executable mappings */
-> > >  /* (1U << 31) is reserved for signed error codes */
-> > >
-> > >  /*
-> > > diff --git a/mm/memfd.c b/mm/memfd.c
-> > > index 5f5a23c9051d..cfd62454df5e 100644
-> > > --- a/mm/memfd.c
-> > > +++ b/mm/memfd.c
-> > > @@ -184,6 +184,7 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
-> > >  }
-> > >
-> > >  #define F_ALL_SEALS (F_SEAL_SEAL | \
-> > > +                    F_SEAL_FUTURE_EXEC |\
-> > >                      F_SEAL_EXEC | \
-> > >                      F_SEAL_SHRINK | \
-> > >                      F_SEAL_GROW | \
-> > > @@ -357,14 +358,50 @@ static int check_write_seal(unsigned long *vm_flags_ptr)
-> > >         return 0;
-> > >  }
-> > >
-> > > +static inline bool is_exec_sealed(unsigned int seals)
-> > > +{
-> > > +       return seals & F_SEAL_FUTURE_EXEC;
-> > > +}
-> > > +
-> > > +static int check_exec_seal(unsigned long *vm_flags_ptr)
-> > > +{
-> > > +       unsigned long vm_flags = *vm_flags_ptr;
-> > > +       unsigned long mask = vm_flags & (VM_SHARED | VM_EXEC);
-> > > +
-> > > +       /* Executability is not a concern for private mappings. */
-> > > +       if (!(mask & VM_SHARED))
-> > > +               return 0;
-> >
-> > Why is it not a concern for private mappings?
-> >
-> I didn't consider private mappings since it wasn't clear as to how
-> they could be a threat to another process. A process can copy the
-> contents of the buffer into another executable region of memory
-> and just run it from there? Or are you saying that because it
-> can do that, is there any value in differentiating between
-> shared and private mappings?
+>  	return err;
+>  }
 
-Yes this is my point of view also but I might be missing something.
+OK this is actually quite neat now we have everything set up in do_mmap().
 
+I think we probably want some comments to very clearly point out that
+F_SEAL_EXEC is a bit crazy and weird and meaningless and this is actually
+vaguely sane...
+
+> --
+> 2.47.1.613.gc27f4b7a9f-goog
 >
-> Thanks,
-> Isaac
 
