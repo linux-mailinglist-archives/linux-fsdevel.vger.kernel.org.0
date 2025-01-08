@@ -1,161 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-38656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3595AA05B5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 13:19:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD35A05BD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 13:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008B13A889F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 12:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7504D163324
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 12:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168FB1F9ED1;
-	Wed,  8 Jan 2025 12:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB591F9A80;
+	Wed,  8 Jan 2025 12:40:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3B51DE895
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jan 2025 12:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472761F7589;
+	Wed,  8 Jan 2025 12:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736338644; cv=none; b=PdTZAB3i5fLBYYUXqlQGUn3Vs0RbNedUjoL1rTfixG5mYqWsTKgGYo081Ed6KLeYSIBUkEIkToSYZ/ciin4lInjWUTKzZ+MSwAuY/mzPcT8wdb+Q6TbRBCdT8Zo5e7V7xWzgaDavt4F7cqA17GIjg9mo/6E00XRwPdINEqU4VDE=
+	t=1736340043; cv=none; b=gK/R2ZHPkpon1dN8ofJSVeugb6G/7V9eoEKq4Q+ckrxAybSknz3mKjcY2zV7rfFxgz4edWh7A97+BvMp1Ea2wi07YdurZLsShsOKHgQ2XQ7dW0L6+QJooLAsKJ2snxsESyIXtvqJ7X1hIvbZNVQiiKGrr90laNvbvs0Uks8Rx3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736338644; c=relaxed/simple;
-	bh=Q+9uQxrXpihw3MD6R3XtE2fPrMpD4NUmpuB5KMufYp4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uHVNzDrH6iFL+2pVZ8KUlJeLE3sOeaRmoY48wwqE5mXoE/h9pc9J1NxBYwsDNoe/TRh78glyvm/HZLD6tfxz3xxFWovU767/d1PByyU373PCl//FK0qpXd3aRBZxLCSwlOodp4d1sdOw+0LtgeV7/QSZ3tstvdbNx03vUMtUMwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a9c9b37244so323775655ab.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2025 04:17:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736338642; x=1736943442;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A/ml6B0pMxr4gHNtkbSBd0Eg/unwYv5YitEJahfz9OM=;
-        b=Qilut/m/NdNbxmTeeaguSk0P+IbGYc40J2wNWkiVJGREYVzxAVQ0kAcqpl9nyE6EYZ
-         1I94dYR4wi7TR0cKT0H3wOs9QHJewbQXdW5ehesk34uGB9Qmi/elvs3Hs917YST1YTys
-         BtoL7LrHmF228CqWBHJH03w9YdspRbktH1hTjoNeELU9anp73VhHNwOQy9AweKGsuctF
-         46LztBDt0WfXiRWQ3IVJrQHiQYY4tIWAY5KPFkMcANvKjQk+8ujSnaDiMDjjVzNNrXSA
-         NMXlJ+Fb57phIACq93xMYjE+xspuD0rd/UF1yaIcUu1a0LgYEEL0FylUzxtv92L9IocA
-         4RzA==
-X-Gm-Message-State: AOJu0YwFR7svctpEbBBliAFhtZJglPGLMZUma6MexAeKV5rvLnHXoNu2
-	iXqUuCL7OUemKrPA5mql/WG0gntSWQcsUYVZ3KuiuzAeRwUeXsRz8FyJKNLch/nRB1RKQVK7kOe
-	JRuwzdYELhN2ET31IcfiW2UnWpa0t378uvSGbMeVX9i7fLOhwHKSVD5z3nw==
-X-Google-Smtp-Source: AGHT+IHAB4hE4gEfLWJF6NOHUb5TBvkmyJG2DJfbCtIikg5iV6UndYBUiLONfJBe5saNxmWw0SF9n3UO7VpHgFvYRabyf+YIJy71
+	s=arc-20240116; t=1736340043; c=relaxed/simple;
+	bh=G5vR0767zTaraxFuhrohmjBsq8q3vsxYqe95VC6Vrlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzVxiU6Qprd5bJsZo9JJ5kY5J1rN2SLGsobjC+8O31m43kIfFeT1gd2gl8TQWbPT4RAMsBUWZmEKnl6m/IkQqLCan+1Stw0JLb/k77K28oyth5FeJonFtzff8UzDsOSC69Gsd2TqRvdccleVJo+s72nJnGSa5nqE5oyFRGHM2NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YSnZF1bRWz4f3jqw;
+	Wed,  8 Jan 2025 20:40:21 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3CDD21A1546;
+	Wed,  8 Jan 2025 20:40:36 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDHK2BAcn5nV_GLAQ--.59515S3;
+	Wed, 08 Jan 2025 20:40:34 +0800 (CST)
+Message-ID: <65cb61dd-e342-412d-91c7-4fb7baa68d5d@huaweicloud.com>
+Date: Wed, 8 Jan 2025 20:40:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1f09:b0:3a7:e0c0:5f27 with SMTP id
- e9e14a558f8ab-3ce3a86a220mr21467045ab.2.1736338642365; Wed, 08 Jan 2025
- 04:17:22 -0800 (PST)
-Date: Wed, 08 Jan 2025 04:17:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <677e6cd2.050a0220.3b3668.02e7.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in minix_rmdir
-From: syzbot <syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [xfstests PATCH v2] generic: add a partial pages zeroing out test
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: fstests@vger.kernel.org, zlang@kernel.org, linux-fsdevel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, willy@infradead.org,
+ djwong@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241225125120.1952219-1-yi.zhang@huaweicloud.com>
+ <Z35LbZohVTVhTl--@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <Z35LbZohVTVhTl--@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHK2BAcn5nV_GLAQ--.59515S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFW8AF18GFyDCw4ktrW8JFb_yoW5tw1xpa
+	yru3W5Ar4xJa47J3s3CFsxur93tan3Xr47ury3Wr90vFs0vr1xGF9Igr4UWFW3Gw4jkr4F
+	vw4kXryagr1jvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello,
+On 2025/1/8 17:54, Ojaswin Mujoo wrote:
+> On Wed, Dec 25, 2024 at 08:51:20PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> This addresses a data corruption issue encountered during partial page
+>> zeroing in ext4 which the block size is smaller than the page size [1].
+>> Add a new test which is expanded upon generic/567, this test performs a
+>> zeroing range test that spans two partial pages to cover this case, and
+>> also generalize it to work for non-4k page sizes.
+>>
+>> Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>> v1->v2:
+>>  - Add a new test instead of modifying generic/567.
+>>  - Generalize the test to work for non-4k page sizes.
+>> v1: https://lore.kernel.org/fstests/20241223023930.2328634-1-yi.zhang@huaweicloud.com/
+>>
+>>  tests/generic/758     | 76 +++++++++++++++++++++++++++++++++++++++++++
+>>  tests/generic/758.out |  3 ++
+>>  2 files changed, 79 insertions(+)
+>>  create mode 100755 tests/generic/758
+>>  create mode 100644 tests/generic/758.out
+>>
+>> diff --git a/tests/generic/758 b/tests/generic/758
+>> new file mode 100755
+>> index 00000000..e03b5e80
+>> --- /dev/null
+>> +++ b/tests/generic/758
+>> @@ -0,0 +1,76 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (c) 2024 Huawei.  All Rights Reserved.
+>> +#
+>> +# FS QA Test No. generic/758
+>> +#
+>> +# Test mapped writes against zero-range to ensure we get the data
+>> +# correctly written. This can expose data corruption bugs on filesystems
+>> +# where the block size is smaller than the page size.
+>> +#
+>> +# (generic/567 is a similar test but for punch hole.)
+>> +#
+>> +. ./common/preamble
+>> +_begin_fstest auto quick rw zero
+>> +
+>> +# Override the default cleanup function.
+>> +_cleanup()
+>> +{
+>> +	cd /
+>> +	rm -r -f $verifyfile $testfile
+>> +}
+>> +
+>> +# Import common functions.
+>> +. ./common/filter
+>> +
+>> +_require_test
+>> +_require_scratch
+>> +_require_xfs_io_command "fzero"
+>> +
+>> +verifyfile=$TEST_DIR/verifyfile
+>> +testfile=$SCRATCH_MNT/testfile
+>> +
+>> +pagesz=$(getconf PAGE_SIZE)
+>> +
+>> +_scratch_mkfs > /dev/null 2>&1
+>> +_scratch_mount
+>> +
+>> +_dump_files()
+>> +{
+>> +	echo "---- testfile ----"
+>> +	_hexdump $testfile
+>> +	echo "---- verifyfile --"
+>> +	_hexdump $verifyfile
+>> +}
+>> +
+>> +# Build verify file, the data in this file should be consistent with
+>> +# that in the test file.
+>> +$XFS_IO_PROG -f -c "pwrite -S 0x58 0 $((pagesz * 3))" \
+>> +		-c "pwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
+>> +		$verifyfile | _filter_xfs_io >> /dev/null
+>> +
+>> +# Zero out straddling two pages to check that the mapped write after the
+>> +# range-zeroing are correctly handled.
+>> +$XFS_IO_PROG -t -f \
+>> +	-c "pwrite -S 0x58 0 $((pagesz * 3))" \
+>> +	-c "mmap -rw 0 $((pagesz * 3))" \
+>> +	-c "mwrite -S 0x5a $((pagesz / 2)) $((pagesz * 2))" \
+>> +	-c "fzero $((pagesz / 2)) $((pagesz * 2))" \
+>> +	-c "mwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
+>> +	-c "close"      \
+> 
+> Hi Zhang,
+> 
+> Thanks for making it work for non-4k pages. Feel free to add:
+> 
+> Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-syzbot found the following issue on:
+Hello Ojaswin!
 
-HEAD commit:    8155b4ef3466 Add linux-next specific files for 20241220
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=115656f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c90bb7161a56c88
-dashboard link: https://syzkaller.appspot.com/bug?extid=4e49728ec1cbaf3b91d2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16726edf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17535418580000
+Thank you very much for your review. I made some minor changes
+based on Darrick's comments and sent out v3 earlier today.
+Perhaps you would like to add your review tag to that one.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/98a974fc662d/disk-8155b4ef.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2dea9b72f624/vmlinux-8155b4ef.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/593a42b9eb34/bzImage-8155b4ef.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7d86236cea0c/mount_0.gz
+https://lore.kernel.org/fstests/20250108084407.1575909-1-yi.zhang@huaweicloud.com/
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+Thanks,
+Yi.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122c7418580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=112c7418580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=162c7418580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5830 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
-Modules linked in:
-CPU: 0 UID: 0 PID: 5830 Comm: syz-executor235 Not tainted 6.13.0-rc3-next-20241220-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
-Code: bb 70 07 00 00 be 08 00 00 00 e8 87 15 e7 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 4d 97 80 ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
-RSP: 0018:ffffc90003ecfd30 EFLAGS: 00010293
-RAX: ffffffff823e8cd3 RBX: 1ffff1100ef7ca0c RCX: ffff88803493bc00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff823e8c53 R09: 1ffffffff203563e
-R10: dffffc0000000000 R11: fffffbfff203563f R12: ffff888077be5060
-R13: ffff8880792a5a70 R14: ffff888077be5018 R15: dffffc0000000000
-FS:  0000555592c31380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe52599f9c CR3: 0000000076e2e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- inode_dec_link_count include/linux/fs.h:2567 [inline]
- minix_rmdir+0xa5/0xc0 fs/minix/namei.c:170
- vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
- do_rmdir+0x3b5/0x580 fs/namei.c:4453
- __do_sys_rmdir fs/namei.c:4472 [inline]
- __se_sys_rmdir fs/namei.c:4470 [inline]
- __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb0206e3d47
-Code: 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 54 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe52599f88 EFLAGS: 00000207 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb0206e3d47
-RDX: 0000000000008890 RSI: 0000000000000000 RDI: 00007ffe5259b130
-RBP: 0000000000000065 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000100 R11: 0000000000000207 R12: 00007ffe5259b130
-R13: 0000555592c42740 R14: 431bde82d7b634db R15: 00007ffe5259d2b0
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
