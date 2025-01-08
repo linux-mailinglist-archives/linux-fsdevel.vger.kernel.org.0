@@ -1,116 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-38620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53A1A04ECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:21:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46A5A04F95
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 02:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61AF5188811A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC9A3A1EDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2025 01:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6CA15696E;
-	Wed,  8 Jan 2025 01:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4EE19F13B;
+	Wed,  8 Jan 2025 01:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b="LZl3c0Y4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qL0mhawL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DA778F24;
-	Wed,  8 Jan 2025 01:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889871FE477
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jan 2025 01:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736299239; cv=none; b=FXYVrIARrd/1rNGyn44airrAKC1vqrVhLB9QkN4T15ZTmTcATQlLK0SrezVFBG2SPZDT5ML/a0YkNCvjcCXpuKew4q3lFUSd1b/8ogiyGyUpNO95XsdfHTacggOYXG/WhAc0kXNRSulxov3klK1LEhqB8HpZumSK84eZDIkWSmk=
+	t=1736299385; cv=none; b=C2e/AHDiPPklHBECTWZG9MLZBP2SgvOwcdEOEQBCZYLpmE3Ermrv4OhJH67m7+xjnH+tnprobewVpDlS7eNVWL+0QRQmLlVBJkxb9e5UoRdZ/6pBG0schaRRZ9WYRVoe24aDC7IlVZ7MUcXj59wP8NuXFt/kyugsPaTdk9UoNs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736299239; c=relaxed/simple;
-	bh=IzOOzUG7AoU1E7QXJeIgLSgU3omWwrBeAwxDhmLwfRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IdTGQSGMc6OrgRqg7MuGV47Dw6wxwxVZ/Aff9gU+gH9ryUhrrJtfCBTO7Qe0bPvLYTOvWoii2h3jyK/gNylNnfpaqQFFC7noi9DQGphae1Q06y1x0lS4qN1pWEYWGXHLlyPfNdKDJQakZWC7UHhmjBqDiyWQQTfxbzrkMyh6jzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YSVTR5J55z4f3lfJ;
-	Wed,  8 Jan 2025 09:20:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 174F61A092F;
-	Wed,  8 Jan 2025 09:20:33 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBHrGDe0n1nC4RfAQ--.53048S3;
-	Wed, 08 Jan 2025 09:20:32 +0800 (CST)
-Message-ID: <f26a21c9-2520-4deb-98f5-385adc92a934@huaweicloud.com>
-Date: Wed, 8 Jan 2025 09:20:30 +0800
+	s=arc-20240116; t=1736299385; c=relaxed/simple;
+	bh=nQgD3e8V0oVBD+ie6xuiSg3E05whcXEnl3zWwjThT7E=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=sX8w5c/tyFhANF5RWL7bSDARpPbsNMa7zqIMfQn0wQWyYKdGpNSFdXXj3P3a7f28HIoy3nEkwIcQ9zjZFdnkSB8Jo/teKgkpfEt+o4uBaKRxnW/LBlR3UcR54eUGiIe6/62N5zIODg35SkrnZoQhoBJha2c4Oq1+7aZaW/HmXlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io; spf=pass smtp.mailfrom=devkernel.io; dkim=pass (2048-bit key) header.d=devkernel.io header.i=@devkernel.io header.b=LZl3c0Y4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qL0mhawL; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=devkernel.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=devkernel.io
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 80EC81140136;
+	Tue,  7 Jan 2025 20:23:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 07 Jan 2025 20:23:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1736299381; x=1736385781; bh=jxbz0UX4ZC
+	weTB9tOgdu2tF0VYN93uv1f7RUFPTNieM=; b=LZl3c0Y43nd8yBiy6SJLd3GSH3
+	FqRlApq57M78EjWppiKJuIDpLwoXN6pEeDPotuOdjDOPrRWEr4+2PAjle3BU/EWg
+	dN3QEY+DqSGEVkOFMYh9Xtu3Pkh09JlBYk4CKl3w9X3QPATed1OV16/fLeDhL2qE
+	LMUdGBnsUIbrRfLQmP59xgbiC7GGWUkNrHvuyQ1TrijX8MweHKN9rLlr2oS/ciX0
+	avv3giWUJhVHKQVbsLujHMpgqmDIG/3BgZfzF8InDH7DuVfYECqrC04r0VtCY8Mg
+	UP1xW7AuHew0WDa8Ox2VOxvbKZ1/CLfJAePVj23DlRatVcuW6T9PtyL3EBPQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1736299381; x=1736385781; bh=jxbz0UX4ZCweTB9tOgdu2tF0VYN93uv1f7R
+	UFPTNieM=; b=qL0mhawLn0SpBiERJ5nax1kxLEvSS0OdxsymuxLgYGYUoecFmnj
+	9TbVf1xGszkfteAg26UeCYPLW95A+cy8+378k2+p9qrxxj35+cZMj2qf6trCiodA
+	b+MA/86cDnlSM+JdFeokg0wsgQNA+jYYAOJsZN4n4uRkWgjnZuwI+Smx70eiw2Zh
+	pEX5P9adwrUNPW1stNunQp+YYZQhb9NlH6rw/YOFkTiegqR11Wuu1JTvJl0R3au3
+	ca82Vu4WeFFQ0AgWfqPQ7T4WsR8fvtbJBQ7biEDtUm1u30srM6DQgE8OjzTZULwz
+	cYDLUI/xHIVT987ConnRP5Ng7Nxjo/lEfNg==
+X-ME-Sender: <xms:dNN9Z3OZge3sFE9L-m2Iwq2r_Mfif_hpo_Yr-chzB35xk-WWKhEdHQ>
+    <xme:dNN9Zx_EBQgtXFqlMiqCFqGmaDYjwHftAkMBpDtpc3oIOJfduhWQi0jvvUWd-8AR1
+    lB-K-PyugWP-oA1CKI>
+X-ME-Received: <xmr:dNN9Z2SznD5-W7-TaxOf3iHMVnKFe4pIH22eCJg93Qp_AyM1_rLxDiOqT6vv5TkKH1AWG-J_nidu8mD6mTv7QhuP-dwQTyaKLPU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegfedgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertden
+    ucfhrhhomhepufhtvghfrghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrd
+    hioheqnecuggftrfgrthhtvghrnhephffgjeevudduhedvudevgfduvdfffefghfeiuedu
+    feduhffhieejfeejffehledvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehshhhrseguvghv
+    khgvrhhnvghlrdhiohdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhope
+    grkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepiiii
+    qhhqtddutdefrdhhvgihsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfihilhhlhiesih
+    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtgho
+    mh
+X-ME-Proxy: <xmx:dNN9Z7ul9842gZ1EZVUImXj5bT7BVXynNaiV4BDf2FVPpg-rsZklJQ>
+    <xmx:dNN9Z_dW_8wkVpctJw_aWTou66B0naQlP41e82e1y4Lp-QbUOGuGZw>
+    <xmx:dNN9Z32NdI8STpjDC-PIQmaI-qCy3HYoBw7nHWpEBW1PArLlLdUnAg>
+    <xmx:dNN9Z78dmBPYYHjEwHaxA3Z5_Iq_DbC-Dnua_f5VI2uk28tjHdxYhA>
+    <xmx:ddN9Z3RBpKRztbI8ZYrdcuxUA0Brx_3Oj4909hiluf9xOcnmLPYfnAPZ>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Jan 2025 20:22:57 -0500 (EST)
+References: <20250104012037.159386-1-shr@devkernel.io>
+ <2339600b-ebd5-49f3-a0be-414bc400a858@redhat.com>
+User-agent: mu4e 1.10.3; emacs 29.4
+From: Stefan Roesch <shr@devkernel.io>
+To: David Hildenbrand <david@redhat.com>
+Cc: willy@infradead.org, zzqq0103.hey@gmail.com, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] mm: fix div by zero in bdi_ratio_from_pages
+Date: Tue, 07 Jan 2025 17:22:07 -0800
+In-reply-to: <2339600b-ebd5-49f3-a0be-414bc400a858@redhat.com>
+Message-ID: <87o70i5cb6.fsf@devkernel.io>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] fs: introduce FALLOC_FL_FORCE_ZERO to fallocate
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, adilger.kernel@dilger.ca, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
- Sai Chaitanya Mitta <mittachaitu@gmail.com>, linux-xfs@vger.kernel.org
-References: <20241228014522.2395187-1-yi.zhang@huaweicloud.com>
- <20241228014522.2395187-2-yi.zhang@huaweicloud.com>
- <Z3u-OCX86j-q7JXo@infradead.org> <20250106161732.GG1284777@mit.edu>
- <Z3wEhXakqrW4i3UC@infradead.org> <20250106173133.GB6174@frogsfrogsfrogs>
- <b964a57a-0237-4cbd-9aae-457527a44440@huaweicloud.com>
- <Z31Za6Ma97QPHp1W@infradead.org>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <Z31Za6Ma97QPHp1W@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHrGDe0n1nC4RfAQ--.53048S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrykAF47uF1UCr47tr43Jrb_yoWDWrgE93
-	9Iqr4kAw1qqF97Aa1ayFZ8XrWxW3srGayUJry5Jw1fZF9xJa9xuF95Wr4S9F4xZF4jkr9I
-	9FsxXr4DG3WakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
-	u4UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain
 
-On 2025/1/8 0:42, Christoph Hellwig wrote:
-> On Tue, Jan 07, 2025 at 10:05:47PM +0800, Zhang Yi wrote:
->> Sorry. the "pure overwrites" and "always-cow files" makes me confused,
->> this is mainly used to create a new written file range, but also could
->> be used to zero out an existing range, why you mentioned it exists to
->> facilitate pure overwrites?
-> 
-> If you're fine with writes to your file causing block allocations you
-> can already use the hole punch or preallocate fallocate modes.  No
-> need to actually send a command to the device.
-> 
 
-Okay, I misunderstood your point earlier. This is indeed prepared for
-subsequent overwrites. Thanks a lot for explaining.
+David Hildenbrand <david@redhat.com> writes:
 
-Thanks,
-Yi.
+> On 04.01.25 02:20, Stefan Roesch wrote:
+>> During testing it has been detected, that it is possible to get div by
+>> zero error in bdi_set_min_bytes. The error is caused by the function
+>> bdi_ratio_from_pages(). bdi_ratio_from_pages() calls
+>> global_dirty_limits. If the dirty threshold is 0, the div by zero is
+>> raised. This can happen if the root user is setting:
+>> echo 0 > /proc/sys/vm/dirty_ration.
+>> The following is a test case:
+>> echo 0 > /proc/sys/vm/dirty_ratio
+>> cd /sys/class/bdi/<device>
+>> echo 1 > strict_limit
+>> echo 8192 > min_bytes
+>> ==> error is raised.
+>> The problem is addressed by returning -EINVAL if dirty_ratio or
+>> dirty_bytes is set to 0.
+>> Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+>> Closes: https://lore.kernel.org/linux-mm/87pll35yd0.fsf@devkernel.io/T/#t
+>> Signed-off-by: Stefan Roesch <shr@devkernel.io>
+>> ---
+>>   mm/page-writeback.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+>> index d213ead95675..91aa7a5c0078 100644
+>> --- a/mm/page-writeback.c
+>> +++ b/mm/page-writeback.c
+>> @@ -692,6 +692,8 @@ static unsigned long bdi_ratio_from_pages(unsigned long pages)
+>>   	unsigned long ratio;
+>>     	global_dirty_limits(&background_thresh, &dirty_thresh);
+>> +	if (!dirty_thresh)
+>> +		return -EINVAL;
+>>   	ratio = div64_u64(pages * 100ULL * BDI_RATIO_SCALE, dirty_thresh);
+>>     	return ratio;
+>
+> bdi_set_min_bytes() calls bdi_ratio_from_pages() and passes the result to
+> __bdi_set_min_ratio().
+>
+> __bdi_set_min_ratio() expects an "unsigned int min_ratio". I assume this will
+> work because "max_ratio > 100 * BDI_RATIO_SCALE", but it is rather confusing ...
+>
+> Maybe we want something like:
+>
+> /* Use 101% to indicate "invalid" */
+> #define BDI_RATIO_INVALID (101 * BDI_RATIO_SCALE)
+>
+> Or alternatively, just handle it in the callers of bdi_ratio_from_pages(),
+> checking for -EINVAL manually.
 
->>
->> For the "always-cow files", do you mean reflinked files? Could you
->> please give more details?
-> 
-> reflinked files will require out of place writes for shared blocks.
-> As will anything on device mapper snapshots.  Or any file on
-> file systems that write out of place (btrfs, f2fs, nilfs2, the
-> upcoming zoned xfs mode).
-> 
+David, I prefer the second option, its a bit easier to follow.
 
 
