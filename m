@@ -1,87 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-38739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DF3A0782F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 14:52:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D50BA0772E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 14:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1FAD3A41BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 13:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846A5168E1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 13:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219E2218AC3;
-	Thu,  9 Jan 2025 13:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E9B21882B;
+	Thu,  9 Jan 2025 13:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="uapG9uox"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVnzvjV1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AA28472;
-	Thu,  9 Jan 2025 13:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81BD215F5F;
+	Thu,  9 Jan 2025 13:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736430598; cv=none; b=ezz/nb5cj1o/dYTRYaV+jmZZ+Y/bMh+SHdXNp1aMnfsrZ+eyKK4hkUMKDTw6+Su0ZLyjPxI03IhInU24tVH1ziUuxJmbOvvlpcZDXDkCA/BuOn9DqfnfQwE46kgW74UmVJEDj/oD8sXAJPjAY3oi/62lkNj7S3uck4c1xZiUL5c=
+	t=1736428887; cv=none; b=fTl0DXKXNFgc3nL0TeDDQwYKaTUTDNCF2BKzPDcC331lRn6tFKw0B8z69oDUmJoOWJ3RH7ZjHVLM85eeM74hi+zrYUprNAdKuyw249uNDlKn4ChXJWYidIaLvvDxKNM4gTGqs0rwsJktHYPgapYeumk1U+eGAAco7PObaVitu6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736430598; c=relaxed/simple;
-	bh=XpMeLtIysxgFw7x5N11dNjJt9Lv/Wg5mqKg4jWUbR6w=;
+	s=arc-20240116; t=1736428887; c=relaxed/simple;
+	bh=6d+LO0dPq7EhPfFup42LjHy3/gWDPCkOtjawOogUy3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaAbgPQ2szcJcQnQFVh/Q9hKuQjiqm3Z4vDBiJ+5vHPpE7CT7U/Z987EXqsp/cK4r6Oo3p0kL0dThkrRFtBAQ6S71k8NxgcpoDtjWQaMo+y2ncnrWBL19SpozB+l9didD+Q95Jz5hdT+GAE8Nss1l+7WEqodemcA3QOPHN1ZVV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=uapG9uox; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EkQXP1UDzlaOfDtfefd5iRK+wBcBT+EX+RVaHgZcXpM=; b=uapG9uoxm1Gxf97kU3XOnveiep
-	oIuNAuoR4G0s6pFrkc8MX9bLno2iyUFR9dyodzagXJ0vHsY14kPYffJBrpqunDKlkNJUnaBw/3Hht
-	wbVNvMErrEclL6eVECloIIFXZkYy0gwa6FTovG2pkCkokIEfCyYoXjWRFJbS40AXnvXrtDe/sSRaf
-	i/cV0FdhhL7AC2mmo71J+woMMUYQZjbNgb4EJZmvbbAkezHPPhzcbhjk19g4GRciA2IQGqm+Rhgt9
-	SfcXVjTcESPEWnVp3ZSK4dhx7ZDP0IjPkdzJW9HxhpFPBxCg+uTRMCSErygxLsor2kwRj7vg1yN3l
-	qjTbEmbw==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <zeha@debian.org>)
-	id 1tVsTC-00ENuP-Vi; Thu, 09 Jan 2025 13:21:07 +0000
-Date: Thu, 9 Jan 2025 14:21:06 +0100
-From: Chris Hofstaedtler <zeha@debian.org>
-To: Karel Zak <kzak@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	util-linux@vger.kernel.org
-Subject: Re: [ANNOUNCE] util-linux v2.40.3
-Message-ID: <wzdbgtxffvujwnv5oeeutbmeodm5chcmelyhwhhx7yt6dym7lh@j5vdmg3rnm3z>
-References: <xw6eivqjw6nc75sbejmi3nkbfssmakkrwpbjpfqtwwbpqxmb4f@rmyrm5gnizln>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fua43Kh6wYeXaIjX287teiv/R6eUnbQNg460DTLJtzjNpzTn36bYr0gOdkOJ7RWWrXuoO1amiH2u/BTICbynQSAq/74Mh9+H20zJ2KOvmGQHPQyaH0HqUdcon7chCnIQLO1yOMhyutgXTmFQdflRiCqYZK/gDQYEOAcRyV6iVh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVnzvjV1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25AAC4CED2;
+	Thu,  9 Jan 2025 13:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736428887;
+	bh=6d+LO0dPq7EhPfFup42LjHy3/gWDPCkOtjawOogUy3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gVnzvjV1pM+3JKBgDFloKrmn1ptVAmfToOSLih9Sklu5psfrlrZtZi1rdzacNN6vz
+	 kmVfYn8t9+Nw2VM5UellqXfuP1yfaR/avYHveYgMQei1JdkDJof5/FPc5NjYNSnhNl
+	 JhakAcSp9nl+qx31u2HAN0cKtDza94XYyuloRGfkpLshqd0eZ7M7yzuXD6BadVgrc7
+	 Vmgt5zrS+sntX7ZWbEXROhsOgmnU3NWllXyHZ09cfWnJ4nN/CEkvuFfDu0Ues13DvX
+	 ir4kD6hmnpeZPwW+nSuzE0CfaYTgbP1Kys3RVfhZvaFXpnltA55Xq5NKg7S2Z5jda5
+	 RF2Wlr46zLhzQ==
+Date: Thu, 9 Jan 2025 14:21:28 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Hongbo Li <lihongbo22@huawei.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH] statx.2: document STATX_DIO_READ_ALIGN
+Message-ID: <mpmubgbnuk5vw34l6req2yctf5zdgbggq5k2zwyp2cksquuupe@gqkytiva43ca>
+References: <20250109083109.1441561-1-hch@lst.de>
+ <20250109083226.GA22264@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2fvkxjltk6wvfh43"
 Content-Disposition: inline
-In-Reply-To: <xw6eivqjw6nc75sbejmi3nkbfssmakkrwpbjpfqtwwbpqxmb4f@rmyrm5gnizln>
-X-Debian-User: zeha
+In-Reply-To: <20250109083226.GA22264@lst.de>
 
-Hi Karel,
 
-* Karel Zak <kzak@redhat.com> [250109 13:54]:
-> The util-linux stable maintenance release v2.40.3 is now available at
->       
->   http://www.kernel.org/pub/linux/utils/util-linux/v2.40/
+--2fvkxjltk6wvfh43
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Hongbo Li <lihongbo22@huawei.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH] statx.2: document STATX_DIO_READ_ALIGN
+References: <20250109083109.1441561-1-hch@lst.de>
+ <20250109083226.GA22264@lst.de>
+MIME-Version: 1.0
+In-Reply-To: <20250109083226.GA22264@lst.de>
 
-I'm not sure where this comes from, but building the translated
-manpages seems to fail:
+Hi Christoph,
 
-GEN      ro :  fsck.minix.8
-asciidoctor: ERROR: fsck.minix.8.adoc: line 29: dropping cells from incomplete row detected end of table
+On Thu, Jan 09, 2025 at 09:32:26AM +0100, Christoph Hellwig wrote:
+> Document the new STATX_DIO_READ_ALIGN flag and the new
+> stx_dio_read_offset_align field guarded by it.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-I haven't dug deeper yet; if someone has an idea upfront that'd be
-great.
+Thanks for the patch!  I've applied it.
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3D3eb8ef31cb5295b5eaaaf319796ea6279b7f7002>
 
-Thanks,
-Chris
+A few minor comments:
 
+Please add the CCd people as Cc: in the commit message.  I'll do that
+anyway, so it avoids me pasting them, and will probably make it easier
+for you to send with git-send-email(1) (or whatever you use).
+
+> Subject: Re: [PATCH] statx.2: document STATX_DIO_READ_ALIGN
+
+I changed commit subjects to use the full path to the manual page.
+Also please start with uppercase after the ':'.
+
+Also, please use version numbers for patches (v2, v3, ...).
+
+> ---
+>  man/man2/statx.2 | 26 +++++++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/statx.2 b/man/man2/statx.2
+> index c5b5a28ec2f1..7ad9c219a51d 100644
+> --- a/man/man2/statx.2
+> +++ b/man/man2/statx.2
+> @@ -76,6 +76,9 @@ struct statx {
+>      __u32 stx_atomic_write_unit_min;
+>      __u32 stx_atomic_write_unit_max;
+>      __u32 stx_atomic_write_segments_max;
+> +
+
+I didn't realize this needed a \&.  The CI reminded me.  I've amended
+that.
+
+
+Have a lovely day!
+Alex
+
+> +    /* File offset alignment for direct I/O reads */
+> +    __u32   stx_dio_read_offset_align;
+>  };
+>  .EE
+>  .in
+> @@ -261,7 +264,7 @@ STATX_BTIME	Want stx_btime
+>  STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+>  	It is deprecated and should not be used.
+>  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> -STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
+> +STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align.
+>  	(since Linux 6.1; support varies by filesystem)
+>  STATX_MNT_ID_UNIQUE	Want unique stx_mnt_id (since Linux 6.8)
+>  STATX_SUBVOL	Want stx_subvol
+> @@ -270,6 +273,8 @@ STATX_WRITE_ATOMIC	Want stx_atomic_write_unit_min,
+>  	stx_atomic_write_unit_max,
+>  	and stx_atomic_write_segments_max.
+>  	(since Linux 6.11; support varies by filesystem)
+> +STATX_DIO_READ_ALIGN	Want stx_dio_read_offset_align.
+> +	(since Linux 6.14; support varies by filesystem)
+>  .TE
+>  .in
+>  .P
+> @@ -467,6 +472,25 @@ This will only be nonzero if
+>  .I stx_dio_mem_align
+>  is nonzero, and vice versa.
+>  .TP
+> +.I stx_dio_read_offset_align
+> +The alignment (in bytes) required for file offsets and I/O segment lengt=
+hs for
+> +direct I/O reads
+> +.RB ( O_DIRECT )
+> +on this file.
+> +If zero, the limit in
+> +.I stx_dio_offset_align
+> +applies for reads as well.
+> +If non-zero, this value must be smaller than or equal to
+> +.I stx_dio_offset_align
+> +which must be provided by the file system if requested by the applicatio=
+n.
+> +The memory alignment in
+> +.I stx_dio_mem_align
+> +is not affected by this value.
+> +.IP
+> +.B STATX_DIO_READ_ALIGN
+> +.RI ( stx_dio_offset_align )
+> +is supported by xfs on regular files since Linux 6.14.
+> +.TP
+>  .I stx_subvol
+>  Subvolume number of the current file.
+>  .IP
+> --=20
+> 2.45.2
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--2fvkxjltk6wvfh43
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmd/zVgACgkQnowa+77/
+2zKP/hAAiff/HOuiTtbwQXRuRtY7UOESjfLKrJM/e1SDpBYV+rtPOCoWIjU5PbAc
+4F+HgRwKvylcgb6PLk1oEOZkm8Plway4Xkq3Tz9Vg96oClWwbto66x1oqd+2Xxtk
+j+7dptOn+wnIlQdpB1HsrceadOIDXQOr8UINGwr2yhL7Cb0uyXOgShOPxbtCcYgp
+kZr8wC/+AD2drL2eORlf5A4GWXicsDqAgGRqmFX7wiTYEhnLtNqkrfCNLArvGV8M
+AmiIPzcgHraBIUWi8aiXxKYg2iqYoEHvo/vqSA+bFCba6PSVII77Fn9rYVhoaBnt
+E1q9WctVJljV/z57CAp14NHsiedGIAa/kNpsKb1UpLizvIPiVpA0qJek5tyd4M/h
+l5wGbUDp6kmhaq49Y0ZRe5hcgr4apV6HbsYcuyIwiD4VXnLguPM9U5waz0GtUk1l
+bNH9Ddvg/dwdL211qELX0PzFQh9ILd9u/5OXjHjBG2DczETycvkhl5HRgnOVUgmB
+5wrgUeSercTs7Zx/vu3twsZFIs4tjk34WexSYhMszzGfHb4eQ/LovSkzHZjn2H1f
+YJ/YH2YY3JAanJk++yagnjdqZlJDO60bIsd/LLSo0GRr649liRyWs49yXdLjU7r2
+5PuE4ri0PWePw47bu/8ZzR83E6xcBtJQmBTWyjIXI6J2h/BAUVo=
+=52Ng
+-----END PGP SIGNATURE-----
+
+--2fvkxjltk6wvfh43--
 
