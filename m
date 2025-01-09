@@ -1,231 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-38758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78592A07FA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 19:19:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA22A0808C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 20:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65354168EBB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 18:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0C83A9260
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 19:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E5B19CD0B;
-	Thu,  9 Jan 2025 18:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3D31F427A;
+	Thu,  9 Jan 2025 19:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GyF5p9Bd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auqxbQk+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFACB19B59C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2025 18:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E4D189BBB;
+	Thu,  9 Jan 2025 19:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736446767; cv=none; b=uaSNuRgL1+SYp598nRnHF4g8Al54z4TmQ+uSpDBfU54OKcCt9MuFXF28xTx48aGjJyRrKj4erXsk6sL6EnXTu8rI96aIjRiJoHk4c23jqFa+DHfeJzpD4tAO1QJGg/IYLZ2etBBYeLLFDjo2LuXLx9F7S6Kdn8IioDASlfR/pL8=
+	t=1736450654; cv=none; b=P5QtCc6PAHSko1abzTJ+HXLKvh+pnLnJJ+KPWN+jIzSlchZDCga+9i0mLCWK7AgxN1JwG+iv+Fjll2FzridgSmTgGq6lYKsIoE+Fp6j0I+WoxUmFP3qQXgzQNTLbEmO2eoH5nMWY9zjIjl36CxOW1nJbCnnQKetTI3CqB3UpkZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736446767; c=relaxed/simple;
-	bh=mDRgJuIFRng3hmlsm/4ED0AEjd2kOpo2NzQ9qtXi+II=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Svc4bXT0MJioFbYK89HmbJk7KLLfO/zn4FTesOcieadNEAR14YKn1LwB8QAx+7FXixAncsXSpUjV0hprMfZJWOaxsSd7apasA+oSoKld254hIcz0Y5vaH7l8CtY/ujZUqM7u7Rd08Yk7roTxuuefgRXj4AM6WnYndCWSDHMeyvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GyF5p9Bd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736446762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lfJmIra0ne6TmR+G1rnLUESQEt4RTuCy0vegz6T9XIc=;
-	b=GyF5p9Bd27Q7KlOBEsYNYst7/2via8LqsoyEH7NemDjDCoEWVcNdmFzjojRzLYNaoefJ+p
-	Ydd+kl0nOiz7t+ksGCFy46LtwhPdOxERCyWLVv8yvXWt+kQcmcN2vOT+O85B2UB1SJbnAe
-	5qCMdinPDRi/d+d7063/HiM7waKRUS8=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-28nbJiSrNya4P0Ka3eVXDQ-1; Thu, 09 Jan 2025 13:19:21 -0500
-X-MC-Unique: 28nbJiSrNya4P0Ka3eVXDQ-1
-X-Mimecast-MFC-AGG-ID: 28nbJiSrNya4P0Ka3eVXDQ
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ef9204f898so2060704a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jan 2025 10:19:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736446760; x=1737051560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1736450654; c=relaxed/simple;
+	bh=AKkKpALtlFLHuYq+a/cEQYvg7emjoCafX3YBGMmSNzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsP+HjnTaWroN2y4KjINKHgqyEWL2wmIWe4sdeSgyZbxF2LZjUkesb8bz7IAt4tF5Ep/N2W/gT/xMYwQpwhujxGBSsJOuMpJXOtqfg47XrrWUgL9TV9TLitZcY7+7bt4tVcEDuvbb3XN/1vMmeiN8EH/5bzd9U4rGwjj53LZkZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auqxbQk+; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38633b5dbcfso1320778f8f.2;
+        Thu, 09 Jan 2025 11:24:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736450651; x=1737055451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lfJmIra0ne6TmR+G1rnLUESQEt4RTuCy0vegz6T9XIc=;
-        b=sO6oWc3xwMwP8TsxviwbWwrvSX66cXN6h6e3Sgpqy7816b2EJuBujIIVOxd1IKdoBI
-         0OTS728/QV1W8bTBuiWiwlPvGCe1LBGoGOOdhLaXZo2IPgdR8uYCqTDbzvn25cTad6/q
-         54jrn/DfRxCHdWGHBW/tVfdfauKRJC8tfRZnxQ8dyU423WI0nmWlz87gCpmFB3qLrlIa
-         tqpo4HVPZlP67C3+nHI7250UyEebqF0BNxSTtNVic9sUOrZSUrTktyKz0IUrvt+Dfwqi
-         AwTgRPsLblj8iTWDeTxJwArDyw5QTnl9ALv5/S+KX++XLNRhL4e8eIpM+qQBDfSWDUNJ
-         0R1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUmB4mCxmL7o1u6j0DIL8poXBQk826h2/yMzJ6odIFxZLUGnO5OFGWFLw1EZe2d2AeZX66Z0tRdcRtjdiNU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya4vN/B/Xgvdxv/mecXFfJKyVDd778f789chon8McL+Dx7lpL1
-	F+cR4WZAl5tyCA/D75NVe5LLwN3OuZljHObokTgKn9b43MrbMI80evIVhgL2GYcLMW8PfNhfQlX
-	9V1wz9wYRitha6iCffwxakS/k3hcsfR104rFBcnUDF2PCISgISeW43qsyH8NR4lc=
-X-Gm-Gg: ASbGnct5tTAT0h6pUrXUmSZi6cyCn6wSvQxj1+02Cz2yVFdxnpEcq1nH3FsqoGJPXLv
-	qr/wEFFGwvM3hOQj911wOP8rU7tTddsOSH/2QmWFApc2RfG8OYBNrDSTliO1f46MKY78f84fYeN
-	sEcvemR5TnPKWYqyUqJ6oAbEdOHMtFj81bm49ZawN1GeK27ApJ8XWIitO1KXMk4XeRHVWVa/TXP
-	B9hXj9wr5lZTxALglQ0sFINPSQDMevGNUjLwZaIh8DhRnQcoaGZ8f+YZIgf/WSaOK7/poVoyP9x
-	8OFrIjxP/8Fus6pQPfAkeg==
-X-Received: by 2002:a17:90b:3d09:b0:2ee:a6f0:f54 with SMTP id 98e67ed59e1d1-2f548f33baemr10916209a91.13.1736446760111;
-        Thu, 09 Jan 2025 10:19:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEOY5fNCvK6mHVj7nIEA5eP+vmjWIUdzctq4BbMz+IQYvvcswifKbIGEbRsFy1lGlU1r9VIlA==
-X-Received: by 2002:a17:90b:3d09:b0:2ee:a6f0:f54 with SMTP id 98e67ed59e1d1-2f548f33baemr10916179a91.13.1736446759726;
-        Thu, 09 Jan 2025 10:19:19 -0800 (PST)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f54a2ad2basm3959447a91.24.2025.01.09.10.19.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2025 10:19:19 -0800 (PST)
-Date: Fri, 10 Jan 2025 02:19:14 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: fstests@vger.kernel.org, zlang@kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, willy@infradead.org,
-	ojaswin@linux.ibm.com, djwong@kernel.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [xfstests PATCH v3] generic: add a partial pages zeroing out test
-Message-ID: <20250109181914.xffhgu2x75eh4m2u@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20250108084407.1575909-1-yi.zhang@huaweicloud.com>
+        bh=AKkKpALtlFLHuYq+a/cEQYvg7emjoCafX3YBGMmSNzY=;
+        b=auqxbQk+qo65a7bG9dSTrJMQ0DbftiO8IKPTKscGOwlXaAYrsK2Fl2kcqz3VrEDrS1
+         gmWnu63x7zlvyR+ZAeLAmoEFMcLgIsOy9hZmRJEeFl+Kgl+ezPhxpJ96siF0eUpe0W6f
+         7pPao7GLMGWn8yd9AXF3rfQ3M4D8Ag+LNzVoJzvgStvDbiWBeE8aR/FgKsjfFga+KWcT
+         VZxkWnVSIyWKHcVGrB/WMEiPq9Qi3v4bEWaX1oDCF5pd3vwxyM3zllqplXYFKqYHZSUr
+         cfA97luFNVEzBzFac6dVjWAWOZ4zERsCbnew3MCT8F/AlDQzDRP4R35z0b8ICzNHqJ+S
+         bCQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736450651; x=1737055451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AKkKpALtlFLHuYq+a/cEQYvg7emjoCafX3YBGMmSNzY=;
+        b=DxNKHdExO75afdA/HT0Tv90vNtsqRyyGy9/d97mvCWibDYbKgynQHelPmtyOPDGD5b
+         V8ulBwmtTQg2BPXwjtLoX52VLaDUFKn6SCazJCgdQh2BcF1oLPmXu6UvkaeSxTNTtiWT
+         eXdoUGcEODbLQcsyyvlTuFVoTkCzlchEqu15eX33M4R/gi3qPOLkL+F7IRPtAi4RAgHB
+         wVJBPJ34vRzcdWonyx8NPBRUJMU51223uj9Gk2at4rL1zUTemVWOK1jx67jDwILhEr+v
+         ZIFnDQK/AiFGg/Y398aMgGl3dpWShSdMbGLTXwukmMYMMQrT3EW68PxMd5ULdLzRbOFP
+         t/nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVI6hqIhiBVquTzpow4fJtP31BmS7aCgfcKn3IfnV+x0i+tscCWft4MHvhjrRhzVWM0bnOC6pNINCpm5JpRA==@vger.kernel.org, AJvYcCUnhGv5hz6EgZNjjlsAzvlSEzL7+iteXTi+y9aSAj//w5xUBhn5rlAg93zBbxVhuNEZBcoCRClxTvrpN5C0@vger.kernel.org, AJvYcCUtuFDPT7sLuU0Ejtj6ED1Wogb1tWKdkBwyx5VAiz+M6ZJZn0q7M01yALrDJlwhUeYkSyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmZNHtt1g1VrnuBNIg4oNgd5J1DRUg52x2WaJx8sZC40ttDKLz
+	vdIylMVfZNgjZFh5bP086eFgPTlTSBej7qE20vmJrb+TifItIQwc8zr9fuqRJmrqn1NhMZ5Lw0t
+	cuMCtxWIgfZN+wYXS9MlKebuokS4fMImz
+X-Gm-Gg: ASbGnctQmxPUodxRu9TiIQP52bZwmuVh4o8ArNCaQoQwji0BOLTf+8bPYqWLeype7jy
+	BhON1YJeReFjtbrv3lhvkoAOatd7V0v/gW2VDQS/7MDd3vVmGV8LMPg==
+X-Google-Smtp-Source: AGHT+IE6W5rQ22/6vLZrKK2Z3c7ISulxE3JJWCNlRHGYDcMAE7W8/krB1IkKaQavxaG0gvLBQcMUikPWz1a39CC574s=
+X-Received: by 2002:a05:6000:188e:b0:388:c61d:43e4 with SMTP id
+ ffacd0b85a97d-38a8733e1d1mr8656297f8f.45.1736450650506; Thu, 09 Jan 2025
+ 11:24:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250108084407.1575909-1-yi.zhang@huaweicloud.com>
+References: <AM6PR03MB5080DC63013560E26507079E99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080E0DFE4F9BAFFDB9D113B99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQLU=W7fuEQommfDYrxr9A2ESV7E3uUAm4VUbEugKEZbkQ@mail.gmail.com> <AM6PR03MB50805EAC8B42B0570A2F76B399032@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB50805EAC8B42B0570A2F76B399032@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 9 Jan 2025 11:23:59 -0800
+X-Gm-Features: AbW1kvbG5GJZwdRooLFdnF_9APM9Cf4MRaxLyij5yhdp_aUPERAEkwcit6I8EKA
+Message-ID: <CAADnVQJYVLEs8zr414j1xRZ_DAAwcxiCC-1YqDOt8oF13Wf6zw@mail.gmail.com>
+Subject: per st_ops kfunc allow/deny mask. Was: [PATCH bpf-next v6 4/5] bpf:
+ Make fs kfuncs available for SYSCALL program type
+To: Juntong Deng <juntong.deng@outlook.com>, Tejun Heo <tj@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
+	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 08, 2025 at 04:44:07PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> This addresses a data corruption issue encountered during partial page
-> zeroing in ext4 which the block size is smaller than the page size [1].
-> Add a new test which is expanded upon generic/567, this test performs a
-> zeroing range test that spans two partial pages to cover this case, and
-> also generalize it to work for non-4k page sizes.
-> 
-> Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
-> v2->v3:
->  - Put the verifyfile in $SCRATCH_MNT and remove the overriding
->    _cleanup.
->  - Correct the test name.
-> v1->v2:
->  - Add a new test instead of modifying generic/567.
->  - Generalize the test to work for non-4k page sizes.
-> v2: https://lore.kernel.org/fstests/20241225125120.1952219-1-yi.zhang@huaweicloud.com/
-> v1: https://lore.kernel.org/fstests/20241223023930.2328634-1-yi.zhang@huaweicloud.com/
-> 
->  tests/generic/758     | 68 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/758.out |  3 ++
->  2 files changed, 71 insertions(+)
->  create mode 100755 tests/generic/758
->  create mode 100644 tests/generic/758.out
-> 
-> diff --git a/tests/generic/758 b/tests/generic/758
-> new file mode 100755
-> index 00000000..bf0a342b
-> --- /dev/null
-> +++ b/tests/generic/758
-> @@ -0,0 +1,68 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2024 Huawei.  All Rights Reserved.
-> +#
-> +# FS QA Test No. 758
-> +#
-> +# Test mapped writes against zero-range to ensure we get the data
-> +# correctly written. This can expose data corruption bugs on filesystems
-> +# where the block size is smaller than the page size.
-> +#
-> +# (generic/567 is a similar test but for punch hole.)
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick rw zero
-> +
-> +# Import common functions.
-> +. ./common/filter
-> +
-> +_require_scratch
-> +_require_xfs_io_command "fzero"
-> +
-> +verifyfile=$SCRATCH_MNT/verifyfile
-> +testfile=$SCRATCH_MNT/testfile
-> +
-> +pagesz=$(getconf PAGE_SIZE)
+On Mon, Dec 23, 2024 at 4:51=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
+>
+> >
+> > The main goal is to get rid of run-time mask check in SCX_CALL_OP() and
+> > make it static by the verifier. To make that happen scx_kf_mask flags
+> > would need to become KF_* flags while each struct-ops callback will
+> > specify the expected mask.
+> > Then at struct-ops prog attach time the verifier will see the expected =
+mask
+> > and can check that all kfuncs calls of this particular program
+> > satisfy the mask. Then all of the runtime overhead of
+> > current->scx.kf_mask and scx_kf_allowed() will go away.
+>
+> Thanks for pointing this out.
+>
+> Yes, I am interested in working on it.
+>
+> I will try to solve this problem in a separate patch series.
+>
+>
+> The following are my thoughts:
+>
+> Should we really use KF_* to do this? I think KF_* is currently more
+> like declaring that a kfunc has some kind of attribute, e.g.
+> KF_TRUSTED_ARGS means that the kfunc only accepts trusted arguments,
+> rather than being used to categorise kfuncs.
+>
+> It is not sustainable to restrict the kfuncs that can be used based on
+> program types, which are coarse-grained. This problem will get worse
+> as kfuncs increase.
+>
+> In my opinion, managing the kfuncs available to bpf programs should be
+> implemented as capabilities. Capabilities are a mature permission model.
+> We can treat a set of kfuncs as a capability (like the various current
+> kfunc_sets, but the current kfunc_sets did not carefully divide
+> permissions).
+>
+> We should use separate BPF_CAP_XXX flags to manage these capabilities.
+> For example, SCX may define BPF_CAP_SCX_DISPATCH.
+>
+> For program types, we should divide them into two levels, types and
+> subtypes. Types are used to register common capabilities and subtypes
+> are used to register specific capabilities. The verifier can check if
+> the used kfuncs are allowed based on the type and subtype of the bpf
+> program.
+>
+> I understand that we need to maintain backward compatibility to
+> userspace, but capabilities are internal changes in the kernel.
+> Perhaps we can make the current program types as subtypes and
+> add 'types' that are only used internally, and more subtypes
+> (program types) can be added in the future.
 
-There's a common helper "_get_page_size" to do this.
+Sorry for the delay.
+imo CAP* approach doesn't fit.
+caps are security bits exposed to user space.
+Here there is no need to expose anything to user space.
 
-> +
-> +_scratch_mkfs > /dev/null 2>&1
-> +_scratch_mount
-> +
-> +_dump_files()
-> +{
-> +	echo "---- testfile ----"
-> +	_hexdump $testfile
-> +	echo "---- verifyfile --"
-> +	_hexdump $verifyfile
-> +}
-> +
-> +# Build verify file, the data in this file should be consistent with
-> +# that in the test file.
-> +$XFS_IO_PROG -f -c "pwrite -S 0x58 0 $((pagesz * 3))" \
-> +		-c "pwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
-> +		$verifyfile | _filter_xfs_io >> /dev/null
-                                             ????????
-                                             >> $seqres.full ?
+But you're also correct that we cannot extend kfunc KF_* flags
+that easily. KF_* flags are limited to 32-bit and we're already
+using 12 bits.
+enum scx_kf_mask needs 5 bits, so we can squeeze them into
+the current 32-bit field _for now_,
+but eventually we'd need to refactor kfunc definition into a wider set:
+BTF_ID_FLAGS(func, .. KF_*)
+so that different struct_ops consumers can define their own bits.
 
-> +
-> +# Zero out straddling two pages to check that the mapped write after the
-> +# range-zeroing are correctly handled.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 $((pagesz * 3))" \
-> +	-c "mmap -rw 0 $((pagesz * 3))" \
-> +	-c "mwrite -S 0x5a $((pagesz / 2)) $((pagesz * 2))" \
-> +	-c "fzero $((pagesz / 2)) $((pagesz * 2))" \
-> +	-c "mwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
-> +	-c "close"      \
-> +$testfile | _filter_xfs_io > $seqres.full
-                              ^^
-                              >> $seqres.full
+Right now SCX is the only st_ops consumer who needs this feature,
+so let's squeeze into the existing KF facility.
 
-I'll help to make above tiny changes when I merge it, others looks good
-to me.
+First step is to remap scx_kf_mask bits into unused bits in KF_
+and annotate corresponding sched-ext kfuncs with it.
+For example:
+SCX_KF_DISPATCH will become
+KF_DISPATCH (1 << 13)
 
-Reviewed-by: Zorro Lang <zlang@redhat.com>
+and all kfuncs that are allowed to be called from ->dispatch() callback
+will be annotated like:
+- BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
+- BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots)
+- BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel)
++ BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
++ BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots, KF_DISPATCH)
++ BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel, KF_DISPATCH)
 
-> +
-> +echo "==== Pre-Remount ==="
-> +if ! cmp -s $testfile $verifyfile; then
-> +	echo "Data does not match pre-remount."
-> +	_dump_files
-> +fi
-> +_scratch_cycle_mount
-> +echo "==== Post-Remount =="
-> +if ! cmp -s $testfile $verifyfile; then
-> +	echo "Data does not match post-remount."
-> +	_dump_files
-> +fi
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/758.out b/tests/generic/758.out
-> new file mode 100644
-> index 00000000..d01c1959
-> --- /dev/null
-> +++ b/tests/generic/758.out
-> @@ -0,0 +1,3 @@
-> +QA output created by 758
-> +==== Pre-Remount ===
-> +==== Post-Remount ==
-> -- 
-> 2.39.2
-> 
 
+For sched_ext_ops callback annotations, I think,
+the simplest approach is to add special
+BTF_SET8_START(st_ops_flags)
+BTF_ID_FLAGS(func, sched_ext_ops__dispatch, KF_DISPATCH)
+and so on for other ops stubs.
+
+sched_ext_ops__dispatch() is an empty function that
+exists in the vmlinux, and though it's not a kfunc
+we can use it to annotate
+(struct sched_ext_ops *)->dispatch() callback
+with a particular KF_ flag
+(or a set of flags for SCX_KF_RQ_LOCKED case).
+
+Then the verifier (while analyzing the program that is targeted
+to be attach to this ->dispatch() hook)
+will check this extra KF flag in st_ops
+and will only allow to call kfuncs with matching flags:
+
+if (st_ops->kf_mask & kfunc->kf_mask) // ok to call kfunc from this callbac=
+k
+
+The end result current->scx.kf_mask will be removed
+and instead of run-time check it will become static verifier check.
 
