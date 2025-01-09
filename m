@@ -1,115 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-38757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36159A07F8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 19:06:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78592A07FA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 19:19:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214423A666D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 18:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65354168EBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 18:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251C519E7F8;
-	Thu,  9 Jan 2025 18:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E5B19CD0B;
+	Thu,  9 Jan 2025 18:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXJVC9TE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GyF5p9Bd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353901891A8;
-	Thu,  9 Jan 2025 18:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFACB19B59C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2025 18:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736445964; cv=none; b=VvHEyCfUg876uGgrEmYxXy8UlEdiwWGoaWWMkr5oFovrJb2FwTebjDin5EpnoVGYN28ukq2myVh045svMJRL8JsE63HRfqjdXQUl0H7gIUF9MzCVFKBKpnJjQbHKPxKz4Cwf4idIawEkLnve+ppo6OhZbiIIU0jjqIZfLC+2X38=
+	t=1736446767; cv=none; b=uaSNuRgL1+SYp598nRnHF4g8Al54z4TmQ+uSpDBfU54OKcCt9MuFXF28xTx48aGjJyRrKj4erXsk6sL6EnXTu8rI96aIjRiJoHk4c23jqFa+DHfeJzpD4tAO1QJGg/IYLZ2etBBYeLLFDjo2LuXLx9F7S6Kdn8IioDASlfR/pL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736445964; c=relaxed/simple;
-	bh=rp9xKD+8m1msQ0xxbCs9oZzFyU1GURrqUZhq3NbpvyQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZDfMAbOVoBTLRuPumm/61F/h2i1GJZRnbEgzMhnss0baXDo1f0XYOpYBi4tzja4LFrqQzafYP5JJv1S7AdbWgoNz5EGEy4gUerg2ncDitCupUAfGFl3lErZBMARDgI5diRRJnipAROC50bHeFT1zHg9fSZZr/jK+qNPqzMkH2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXJVC9TE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C334DC4CEE4;
-	Thu,  9 Jan 2025 18:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736445963;
-	bh=rp9xKD+8m1msQ0xxbCs9oZzFyU1GURrqUZhq3NbpvyQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hXJVC9TEna9TWYKbS9F02aIUvOHalq4E7m1+cvMk0ArDdbnyNkOQeESQ7Ur7QTEYq
-	 oV3fJnNHiU6ugTU9/tuOjHdJ9qaR831jsML8BcJ2B2+uzRQfA4kpmr3AmZ+XqRvw70
-	 BTN8HX8ggLtR2WOIhN2X2Ipa4OKa5qs1wwTNGfy1p+9su4jHqsiWIAwGFmgaxU7Nfw
-	 H9Abn1fQ/2SPP2QU6lVw0EYHITfjtwSWp9wIQJbaVZRVNv4TDYE1jWwRNuescPEqI8
-	 vYK392uOFALwuMqP1HoC1bERclFcBuYV7fmAeGJqkaXECHPwUoHQw9LVho0fFgK9tk
-	 fJ+fXn+JQWXLQ==
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-844e61f3902so84636339f.0;
-        Thu, 09 Jan 2025 10:06:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7vJw0Yhmq1HoAJE/OsvsfkQbIo3Qpr1D+sW06TxmQ5b/DqPayTYNKisT6YlckhoJ/IfnE5UGOvIbJrutD@vger.kernel.org, AJvYcCUKdmxyZjBp3BN7k7bDpN4N42WSL1faJzx46lngDyuVmFlNTI2wAZ/leYEmL86hu//fxZPWQhEABSYGBg==@vger.kernel.org, AJvYcCULY3K6q3eLHaJUinkOdCYzYWWRKDGEXIaMe8mEfRkN7N0K8Ln5LelCSICnWBP+PVw21khAYRY0I/yXGM34ex8875Lt@vger.kernel.org, AJvYcCVCk/MjPKokyvIFdvJp7RsCvf++XNAKuITebk7mFTLuT4l7VFi6vfvJas82zOGLosM7pdOUakoKNiRPAVV1L9BY@vger.kernel.org, AJvYcCVFFZUa45jD1kY7O9eFU5SsUOqiXanSiyk6iItfL/7JIGCYDwQAnECEOmbGSW/J+JeHcB6lQHM7lC43jd5b@vger.kernel.org, AJvYcCVKb72VeDQU6u4ACgTVz6YEQ9f7JtoFU9ctAvBDnt3aKvFaKQ54WshcK/7b9jpNv5D7FWre/NxGxAk=@vger.kernel.org, AJvYcCWSrc8M6fjpLnYyFHGOEb0RYL+mB/Fgxv1FV7zmoLzsAJ/Wtn0fIkCarRXTIngSvrano0x6/jdeyxsYuYEC@vger.kernel.org, AJvYcCWtgvWJyxsKGbn8X+vDuQqN1WrpeWmOWctnx7Ti3HzLu15h1v1usBlf1r3HeMsvDVagzn8TvL7uzPxfkw==@vger.kernel.org, AJvYcCX1Empd1OmdV4QaxGiw76Wp2zNEdc/H8iMRZeDlhlVKhz+vvxL6oJW0ZpjcVO3ki6VJyF8ALxZck6AoB/K1dw==@vger.kernel.org, AJvY
- cCXCdgnNYyUlkiKT78jlZjfznht9f2JVWR1FljjRzn/hSF7yDBGVSj/joJqZdFNNQVpgo7plN3gnyhdWbQ==@vger.kernel.org, AJvYcCXFAQPNv8JtV7Wufe/McLhaGMCOYYMEUuHAmDXIIawBAvL4rUEOqJWikiBGT1GQ0wOeS3/g9CdYIF2h@vger.kernel.org, AJvYcCXGtnrLPWgALgr4QfzQA/NmEN6VmXmCX3wvTuErCHMi7SS8EiHmFcpyctKEJjF0V//QHSPsdom+rrFL3VKS@vger.kernel.org, AJvYcCXIzeaTKwsRbHvTyT2sT4J+p6Lh7htnXdaRITEsFqjlkKr7xu+q6+m2LKFK5/i2uR/Qu6E=@vger.kernel.org, AJvYcCXTsx3jAkPtqX7iahsPp8jY9cpP/DM984HqW5e5UUcTmN4TWdk2KDFO+cbAx2jA6Ae3+lm91tc+D1yVGg==@vger.kernel.org, AJvYcCXZ70fEeI70dxqfxPZVy8gOKyomd4lrw3DiPAmwp8fv74mTYEvvhCkSKuLewpzIZgciA3MiXVGc2Ys=@vger.kernel.org, AJvYcCXkhvwjOgsaIzBVYWxnjX61N5K2at4QUYgwmwKHhktkaridkUeBV6OMnzfq0vd6TMRwa9M/P7iyAql4@vger.kernel.org, AJvYcCXrcdxhbTsLKpwI1RIN5zp6raljAefAN4PXOQoTv2fBw5HAHfCD7FvZy5vJWBmhGWDqwVNFKpR8Co/lYKYTnT8acJP5/X5U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAA8huuUN4T/BErSHEBklOz+LJ/qJkbUPu2hkdEypz5WdiISEO
-	+iw2r5548Ec7U0VJ51OVdV81QeQasNe8w7IkhP5T2gqDd/c925a0zD8/6rhvfa+CwPjO/nxhtxn
-	OkxDxrMGctxtZtN+RNCllTsC25ns=
-X-Google-Smtp-Source: AGHT+IHw82IqZn0L3vIWI2GRAE2/Fu1vkOzFuTOkK3ccul7HxPp7E2ac95iMCNTUN8mztI4YyZ2Kf9FZUsicSlonzfg=
-X-Received: by 2002:a05:6e02:3048:b0:3a7:6a98:3fdf with SMTP id
- e9e14a558f8ab-3ce3a9da817mr60484875ab.14.1736445963152; Thu, 09 Jan 2025
- 10:06:03 -0800 (PST)
+	s=arc-20240116; t=1736446767; c=relaxed/simple;
+	bh=mDRgJuIFRng3hmlsm/4ED0AEjd2kOpo2NzQ9qtXi+II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Svc4bXT0MJioFbYK89HmbJk7KLLfO/zn4FTesOcieadNEAR14YKn1LwB8QAx+7FXixAncsXSpUjV0hprMfZJWOaxsSd7apasA+oSoKld254hIcz0Y5vaH7l8CtY/ujZUqM7u7Rd08Yk7roTxuuefgRXj4AM6WnYndCWSDHMeyvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GyF5p9Bd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736446762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lfJmIra0ne6TmR+G1rnLUESQEt4RTuCy0vegz6T9XIc=;
+	b=GyF5p9Bd27Q7KlOBEsYNYst7/2via8LqsoyEH7NemDjDCoEWVcNdmFzjojRzLYNaoefJ+p
+	Ydd+kl0nOiz7t+ksGCFy46LtwhPdOxERCyWLVv8yvXWt+kQcmcN2vOT+O85B2UB1SJbnAe
+	5qCMdinPDRi/d+d7063/HiM7waKRUS8=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-172-28nbJiSrNya4P0Ka3eVXDQ-1; Thu, 09 Jan 2025 13:19:21 -0500
+X-MC-Unique: 28nbJiSrNya4P0Ka3eVXDQ-1
+X-Mimecast-MFC-AGG-ID: 28nbJiSrNya4P0Ka3eVXDQ
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ef9204f898so2060704a91.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jan 2025 10:19:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736446760; x=1737051560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lfJmIra0ne6TmR+G1rnLUESQEt4RTuCy0vegz6T9XIc=;
+        b=sO6oWc3xwMwP8TsxviwbWwrvSX66cXN6h6e3Sgpqy7816b2EJuBujIIVOxd1IKdoBI
+         0OTS728/QV1W8bTBuiWiwlPvGCe1LBGoGOOdhLaXZo2IPgdR8uYCqTDbzvn25cTad6/q
+         54jrn/DfRxCHdWGHBW/tVfdfauKRJC8tfRZnxQ8dyU423WI0nmWlz87gCpmFB3qLrlIa
+         tqpo4HVPZlP67C3+nHI7250UyEebqF0BNxSTtNVic9sUOrZSUrTktyKz0IUrvt+Dfwqi
+         AwTgRPsLblj8iTWDeTxJwArDyw5QTnl9ALv5/S+KX++XLNRhL4e8eIpM+qQBDfSWDUNJ
+         0R1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmB4mCxmL7o1u6j0DIL8poXBQk826h2/yMzJ6odIFxZLUGnO5OFGWFLw1EZe2d2AeZX66Z0tRdcRtjdiNU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya4vN/B/Xgvdxv/mecXFfJKyVDd778f789chon8McL+Dx7lpL1
+	F+cR4WZAl5tyCA/D75NVe5LLwN3OuZljHObokTgKn9b43MrbMI80evIVhgL2GYcLMW8PfNhfQlX
+	9V1wz9wYRitha6iCffwxakS/k3hcsfR104rFBcnUDF2PCISgISeW43qsyH8NR4lc=
+X-Gm-Gg: ASbGnct5tTAT0h6pUrXUmSZi6cyCn6wSvQxj1+02Cz2yVFdxnpEcq1nH3FsqoGJPXLv
+	qr/wEFFGwvM3hOQj911wOP8rU7tTddsOSH/2QmWFApc2RfG8OYBNrDSTliO1f46MKY78f84fYeN
+	sEcvemR5TnPKWYqyUqJ6oAbEdOHMtFj81bm49ZawN1GeK27ApJ8XWIitO1KXMk4XeRHVWVa/TXP
+	B9hXj9wr5lZTxALglQ0sFINPSQDMevGNUjLwZaIh8DhRnQcoaGZ8f+YZIgf/WSaOK7/poVoyP9x
+	8OFrIjxP/8Fus6pQPfAkeg==
+X-Received: by 2002:a17:90b:3d09:b0:2ee:a6f0:f54 with SMTP id 98e67ed59e1d1-2f548f33baemr10916209a91.13.1736446760111;
+        Thu, 09 Jan 2025 10:19:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEOY5fNCvK6mHVj7nIEA5eP+vmjWIUdzctq4BbMz+IQYvvcswifKbIGEbRsFy1lGlU1r9VIlA==
+X-Received: by 2002:a17:90b:3d09:b0:2ee:a6f0:f54 with SMTP id 98e67ed59e1d1-2f548f33baemr10916179a91.13.1736446759726;
+        Thu, 09 Jan 2025 10:19:19 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f54a2ad2basm3959447a91.24.2025.01.09.10.19.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jan 2025 10:19:19 -0800 (PST)
+Date: Fri, 10 Jan 2025 02:19:14 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: fstests@vger.kernel.org, zlang@kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, willy@infradead.org,
+	ojaswin@linux.ibm.com, djwong@kernel.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [xfstests PATCH v3] generic: add a partial pages zeroing out test
+Message-ID: <20250109181914.xffhgu2x75eh4m2u@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20250108084407.1575909-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
-In-Reply-To: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Thu, 9 Jan 2025 10:05:51 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5zpA28gkBQYMMuYCUbnDzdeq4pHsd0Mx=PBnDPiHKqHw@mail.gmail.com>
-X-Gm-Features: AbW1kvZZD8oqcdTZ9DXv7tEUC7bpyqeBsuw6nnhXboAE2kNg_1eTiibnv93HXj8
-Message-ID: <CAPhsuW5zpA28gkBQYMMuYCUbnDzdeq4pHsd0Mx=PBnDPiHKqHw@mail.gmail.com>
-Subject: Re: [PATCH] treewide: const qualify ctl_tables where applicable
-To: Joel Granados <joel.granados@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev, 
-	codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250108084407.1575909-1-yi.zhang@huaweicloud.com>
 
-On Thu, Jan 9, 2025 at 5:16=E2=80=AFAM Joel Granados <joel.granados@kernel.=
-org> wrote:
->
-[...]
->  drivers/base/firmware_loader/fallback_table.c | 2 +-
->  drivers/cdrom/cdrom.c                         | 2 +-
->  drivers/char/hpet.c                           | 2 +-
->  drivers/char/ipmi/ipmi_poweroff.c             | 2 +-
->  drivers/char/random.c                         | 2 +-
->  drivers/gpu/drm/i915/i915_perf.c              | 2 +-
->  drivers/gpu/drm/xe/xe_observation.c           | 2 +-
->  drivers/hv/hv_common.c                        | 2 +-
->  drivers/infiniband/core/iwcm.c                | 2 +-
->  drivers/infiniband/core/ucma.c                | 2 +-
->  drivers/macintosh/mac_hid.c                   | 2 +-
->  drivers/md/md.c                               | 2 +-
+On Wed, Jan 08, 2025 at 04:44:07PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> This addresses a data corruption issue encountered during partial page
+> zeroing in ext4 which the block size is smaller than the page size [1].
+> Add a new test which is expanded upon generic/567, this test performs a
+> zeroing range test that spans two partial pages to cover this case, and
+> also generalize it to work for non-4k page sizes.
+> 
+> Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+> v2->v3:
+>  - Put the verifyfile in $SCRATCH_MNT and remove the overriding
+>    _cleanup.
+>  - Correct the test name.
+> v1->v2:
+>  - Add a new test instead of modifying generic/567.
+>  - Generalize the test to work for non-4k page sizes.
+> v2: https://lore.kernel.org/fstests/20241225125120.1952219-1-yi.zhang@huaweicloud.com/
+> v1: https://lore.kernel.org/fstests/20241223023930.2328634-1-yi.zhang@huaweicloud.com/
+> 
+>  tests/generic/758     | 68 +++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/758.out |  3 ++
+>  2 files changed, 71 insertions(+)
+>  create mode 100755 tests/generic/758
+>  create mode 100644 tests/generic/758.out
+> 
+> diff --git a/tests/generic/758 b/tests/generic/758
+> new file mode 100755
+> index 00000000..bf0a342b
+> --- /dev/null
+> +++ b/tests/generic/758
+> @@ -0,0 +1,68 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2024 Huawei.  All Rights Reserved.
+> +#
+> +# FS QA Test No. 758
+> +#
+> +# Test mapped writes against zero-range to ensure we get the data
+> +# correctly written. This can expose data corruption bugs on filesystems
+> +# where the block size is smaller than the page size.
+> +#
+> +# (generic/567 is a similar test but for punch hole.)
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick rw zero
+> +
+> +# Import common functions.
+> +. ./common/filter
+> +
+> +_require_scratch
+> +_require_xfs_io_command "fzero"
+> +
+> +verifyfile=$SCRATCH_MNT/verifyfile
+> +testfile=$SCRATCH_MNT/testfile
+> +
+> +pagesz=$(getconf PAGE_SIZE)
 
-For md bits:
+There's a common helper "_get_page_size" to do this.
 
-Reviewed-by: Song Liu <song@kernel.org>
+> +
+> +_scratch_mkfs > /dev/null 2>&1
+> +_scratch_mount
+> +
+> +_dump_files()
+> +{
+> +	echo "---- testfile ----"
+> +	_hexdump $testfile
+> +	echo "---- verifyfile --"
+> +	_hexdump $verifyfile
+> +}
+> +
+> +# Build verify file, the data in this file should be consistent with
+> +# that in the test file.
+> +$XFS_IO_PROG -f -c "pwrite -S 0x58 0 $((pagesz * 3))" \
+> +		-c "pwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
+> +		$verifyfile | _filter_xfs_io >> /dev/null
+                                             ????????
+                                             >> $seqres.full ?
 
-Thanks,
-Song
+> +
+> +# Zero out straddling two pages to check that the mapped write after the
+> +# range-zeroing are correctly handled.
+> +$XFS_IO_PROG -t -f \
+> +	-c "pwrite -S 0x58 0 $((pagesz * 3))" \
+> +	-c "mmap -rw 0 $((pagesz * 3))" \
+> +	-c "mwrite -S 0x5a $((pagesz / 2)) $((pagesz * 2))" \
+> +	-c "fzero $((pagesz / 2)) $((pagesz * 2))" \
+> +	-c "mwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
+> +	-c "close"      \
+> +$testfile | _filter_xfs_io > $seqres.full
+                              ^^
+                              >> $seqres.full
 
-[...]
+I'll help to make above tiny changes when I merge it, others looks good
+to me.
+
+Reviewed-by: Zorro Lang <zlang@redhat.com>
+
+> +
+> +echo "==== Pre-Remount ==="
+> +if ! cmp -s $testfile $verifyfile; then
+> +	echo "Data does not match pre-remount."
+> +	_dump_files
+> +fi
+> +_scratch_cycle_mount
+> +echo "==== Post-Remount =="
+> +if ! cmp -s $testfile $verifyfile; then
+> +	echo "Data does not match post-remount."
+> +	_dump_files
+> +fi
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/758.out b/tests/generic/758.out
+> new file mode 100644
+> index 00000000..d01c1959
+> --- /dev/null
+> +++ b/tests/generic/758.out
+> @@ -0,0 +1,3 @@
+> +QA output created by 758
+> +==== Pre-Remount ===
+> +==== Post-Remount ==
+> -- 
+> 2.39.2
+> 
+
 
