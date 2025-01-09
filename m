@@ -1,119 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-38752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544BFA07D0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 17:12:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15DBA07D4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 17:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2135818818D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 16:12:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B69E87A013F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 16:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD4A2206B6;
-	Thu,  9 Jan 2025 16:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7EA221D9B;
+	Thu,  9 Jan 2025 16:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N48xC6Rc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWoBNtx0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAECD220681;
-	Thu,  9 Jan 2025 16:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E8D7FD;
+	Thu,  9 Jan 2025 16:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736439118; cv=none; b=BNDGQ4gEty4bI+9z4L07uVmhvg4ed5agTUXkvJtD+XEfFh9LSnvP3ONLd4xitl+e5B5axzouKaK0TYb+yZK2l2JhRLvdhDCG308QbtYpzQ2Dl+0p9v7f6Mn++jsdS3gA1m3rrHomqDkimzDPUKsuMxO0pVtMwT3sT87odYEeQlM=
+	t=1736439589; cv=none; b=sRh8IA86ZM/9dIGnzwF4cuNRXwgQU9DcBXK4auTm9PCOy4CHtghf+AKw3ShIUcfyxgvrEROnFknPhfaKlN9zryC+NSXp0KvgGGPwXHtmpRKEVLsmubhtg+6sS+coB4elrHi8lz7nBtRf6FHxWaLeMlIpWmpQz4sfJW5YnBKbZGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736439118; c=relaxed/simple;
-	bh=JA7m3+r2MUe8BHdxHsYdtx9F4e5KEVY5GM8J8HYfzD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SZXTGMQayR8+oRXiBscJj4DjGMI+N127KXX96bQC1fAMUbuP/34/ayvW5gRzul/t6Vbh7/wtnvqrhjFquY25yK/Qgc37CvyqN+EpS+DmEKKX+7j7+D8IyUekPq5lPELXTka0doUYR75863eURMlCiq1wjsBdt+p5qmPs6INWJk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N48xC6Rc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CD5C4CED2;
-	Thu,  9 Jan 2025 16:11:57 +0000 (UTC)
+	s=arc-20240116; t=1736439589; c=relaxed/simple;
+	bh=dT2Di/AJfEvLQNlMs2IJ4b62sJt2FtdY0tvJXjcTzpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IblMENjdTg+aQZ9wrH4NVWgj05LrQKpksABITx5+2pdIIH9z60zj70Iv49wpvPrCGGyz7qNwNhpkQw8RSS8D54T7xvZBPy/ta8YjEiRs411hQ5HE5y9z3/mES4MQZxDhuq7leqwSCibJFFMaLqNMjKRlzxPD2/DyAXK+EQWz+OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWoBNtx0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1954C4CED2;
+	Thu,  9 Jan 2025 16:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736439117;
-	bh=JA7m3+r2MUe8BHdxHsYdtx9F4e5KEVY5GM8J8HYfzD4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=N48xC6Rc69yQT12hw/UF6XlsPGxQNkiwzATCT9e9HcGy1V4HbY+QbE9XnEciXQt9r
-	 6NY7R3HFe/DttdJLNj+uRElShysR0ztm0O+DfboBcmCYk8E+EJ/NCxbMYTIAzqXAJL
-	 hyDSXPj7r9KFcJyYSWi41xb4lKX8FCPO9ct6MSxAQbkDn1/6TtDF1xPyAlLFMtl1x+
-	 DSke/Y855hlon88bkr/7TTb2O+Auo5zVQ5CmqFzolow1YY/2muUkLqdsd5Nbn4mN75
-	 7hlcZM4ieAHa+hPYQ85HBktU0AMI157JKA/KuSprzwwCyT2eYCqa1kLlfHLsB6Derd
-	 KKxaR9+YD17dQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54024aa9febso1046662e87.1;
-        Thu, 09 Jan 2025 08:11:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJKZ6yhOAESAaOpNgsGo9PsYFOkkG5X4SKW3l73A+HNJQqc3miih3eWEGek57u3LCgzI5xuWxVYa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynoW5yluSMO7KOunrOhCDIKWfZ5oTyqCe7x52KZq7G+8xYeVBI
-	WF8YfdOnk0VUQfNdNB8Ho47oMTicK/wAdQrfoO9X6UdLPRQ9PfAjnJEk1AQKB0NB/sDOPl1t4c4
-	wHAfRKq8UysqeonJKwM50LVtNYJI=
-X-Google-Smtp-Source: AGHT+IEab1pzhymrx824hZ6lRescnrHeXXXXsbufv7ysX2MRpKtM9EJJjpadE3xU3zoL+CRZg9WrgVc5aBHTGvzK2i8=
-X-Received: by 2002:a05:6512:ea8:b0:540:1a0c:9ba6 with SMTP id
- 2adb3069b0e04-542845d47f9mr2269416e87.34.1736439115801; Thu, 09 Jan 2025
- 08:11:55 -0800 (PST)
+	s=k20201202; t=1736439588;
+	bh=dT2Di/AJfEvLQNlMs2IJ4b62sJt2FtdY0tvJXjcTzpM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WWoBNtx0ooMX7M0lUJyRfruK6zWbtIC8NBuWD+EFbRx6YcS9Yv6vhH0mielNoQ1cW
+	 xBCYFuD6GCtvOKvbewdBGxSsL6oTj/ARcEtm5epGXEi4mSzhpkAotAlS7LvUO1pCQn
+	 fulgpu3D0KueKJsUrYWHCjhZNJTgK2kFHN8gDwPr620Q1kRGd6MKvOtqNSJYou93z1
+	 tYPFCCHuri2Ou8pnbPyEYh+XXyPKiRB5XNCeGGJjhwdiQHdxkHa9SzhHc9wT/6vy4P
+	 k2SzAJAoKWgTmeUMwMGqsA3lRhouayhlgF4Bo4//0k1tdhDuLiVLXikll1MX+7XNVa
+	 ZbtAHmLueSUGw==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Nicolas Baranger <nicolas.baranger@3xo.fr>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Steve French <smfrench@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix kernel async DIO
+Date: Thu,  9 Jan 2025 17:19:39 +0100
+Message-ID: <20250109-sonntag-surfen-6f60a9399120@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <608725.1736275167@warthog.procyon.org.uk>
+References: <608725.1736275167@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
- <CAMj1kXHy+D2GDANFyYJLOZj1fPmgoX+Ed6CRy3mSSCeutsO07w@mail.gmail.com> <8ec4aa383506dd1c28c650874b3d8e36ded2a2c9.camel@HansenPartnership.com>
-In-Reply-To: <8ec4aa383506dd1c28c650874b3d8e36ded2a2c9.camel@HansenPartnership.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 9 Jan 2025 17:11:44 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEpUyMUH38GEM-vtzPNGGKOOcuRzi8qGQkTzf9CB+AwQQ@mail.gmail.com>
-X-Gm-Features: AbW1kvYRDBp1BKPCwvSj4Lv09-pt0pOtbAda7hveevAA8AW5xhjNFCX2LxuSBgU
-Message-ID: <CAMj1kXEpUyMUH38GEM-vtzPNGGKOOcuRzi8qGQkTzf9CB+AwQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] convert efivarfs to manage object data correctly
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Jeremy Kerr <jk@ozlabs.org>, Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1208; i=brauner@kernel.org; h=from:subject:message-id; bh=dT2Di/AJfEvLQNlMs2IJ4b62sJt2FtdY0tvJXjcTzpM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTXf5ctCSlN+6xpPn/Crt1C939Y3zHcYufTVj1zaT9n2 65blptndJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkuS4jQ9+f21XxHQVWZ5Ol D5fPndo1WXaRjJGVyuJbocuE5e63RjAy7Fq8bmaoq1JxlvZu/yTnVf7bfb9sf7tn+7wPBtlNkbJ X2QE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, 9 Jan 2025 at 16:50, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Thu, 2025-01-09 at 10:50 +0100, Ard Biesheuvel wrote:
-> > On Tue, 7 Jan 2025 at 03:36, James Bottomley
-> > <James.Bottomley@hansenpartnership.com> wrote:
+On Tue, 07 Jan 2025 18:39:27 +0000, David Howells wrote:
+> Netfslib needs to be able to handle kernel-initiated asynchronous DIO that
+> is supplied with a bio_vec[] array.  Currently, because of the async flag,
+> this gets passed to netfs_extract_user_iter() which throws a warning and
+> fails because it only handles IOVEC and UBUF iterators.  This can be
+> triggered through a combination of cifs and a loopback blockdev with
+> something like:
+> 
 > [...]
-> > > James Bottomley (6):
-> > >   efivarfs: remove unused efi_varaible.Attributes and .kobj
-> > >   efivarfs: add helper to convert from UC16 name and GUID to utf8
-> > > name
-> > >   efivarfs: make variable_is_present use dcache lookup
-> > >   efivarfs: move freeing of variable entry into evict_inode
-> > >   efivarfs: remove unused efivarfs_list
-> > >   efivarfs: fix error on write to new variable leaving remnants
-> > >
-> >
-> > Thanks James,
-> >
-> > I've tentatively queued up this series, as well as the hibernate one,
-> > to get some coverage from the robots while I run some tests myself.
-> >
-> > Are there any existing test suites that cover efivarfs that you could
-> > recommend?
->
-> I'm afraid I couldn't find any.  I finally wrote a few shell scripts to
-> try out multiple threads updating the same variable.  I think I can
-> probably work out how to add these to the kselftest infrastructure.
-> Hibernation was a real pain because it doesn't work with secure boot,
-> but I finally wrote a UEFI shell script to modify variables and reset.
-> Unfortunately I don't think we have a testing framework I can add these
-> to.
->
 
-I tested the hibernation changes using QEMU/arm64, using a
-non-persistent varstore image, and checked whether adding and/or
-deleting variables via efivarfs resulted in the expected behavior
-after a resume from hibernate.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-I also checked the behavior regarding zero sized files, and that looks
-sound to me. But I didn't go as far as torture test it with concurrent
-updates as you have.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-All in all, I think it is reasonable to queue this up so it gets some
-wider exposure.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] netfs: Fix kernel async DIO
+      https://git.kernel.org/vfs/vfs/c/3f6bc9e3ab9b
 
