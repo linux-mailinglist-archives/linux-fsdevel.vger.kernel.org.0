@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-38710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB53A06E91
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 08:02:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EB1A06EA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 08:08:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79EC1886384
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 07:02:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E167C7A37D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 07:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B4820102E;
-	Thu,  9 Jan 2025 07:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71148214A78;
+	Thu,  9 Jan 2025 07:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RCH36RRl"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kDZEOM65"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6E37160;
-	Thu,  9 Jan 2025 07:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A021421B;
+	Thu,  9 Jan 2025 07:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736406154; cv=none; b=M0aYZfbQaErFb7Ml963ofmHNur774+/ZNeCWYRBVRDpysAR1HznT0E6G5ANUQ92XcWa25DdLEcY44R9CAXWLvUx//oRnnkcO+As5+aSQHz1Rb+NsD5KWv3AWxN6FKnXqykm51w2x1K8LNBjRDz/2Vwb2Hq7AExXswjtefTOm+gM=
+	t=1736406447; cv=none; b=NJ2iynpnhv4CzwSP6RDcNgQLIerXW5gkBNSbPC+zMBbmGw9r25JkGBwNm5IgZm5tk2PW0okAFw/uijYnB3+qYJW1TLHCDXO/ttUmIbhBSr1dJxUlmVsvEFs6yFeSEfBksi3aVW72Qopfk3u78UGmsjbQwq5Guqb4RBTFYY8usdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736406154; c=relaxed/simple;
-	bh=uhdMHQiMIgG0tObI4bHKhWWKpDrnQcDd2/GR2fGBTcY=;
+	s=arc-20240116; t=1736406447; c=relaxed/simple;
+	bh=pekhkn+nJwGZcO1y5dn7ppitqoq/rv3unPbldZ0Yugc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oCekPD8wPYHWfCiNv7mjcTEw4gBGQCPohCyFfAITeiHDZhstf1oA3D+ZOyILOHzo4lxd3SAkxCX7Pfwv9N/2GKx7GC6+gFF5VM9Rytb5LP4wczrjJtoq2FeIvwtDDm16hXBzSNc7D0ZOoQ0kpKAETdx+2DcSK73cUvX/unR0A+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RCH36RRl; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMi1G/Xl9HmCpkA4QqVKOokMVCfIEg+/GozNf+z/HZZGxIT8X4jXMzFXEoFbiYYOKhEMMj7BKca6+Po8TGUpa7rEk8OxoWf09CbXx4od9CzhbADuU0c+trIVHb4tDD4feDx45OR5iiDVfoKe03RPQWV3t6Z5mATbCFWqJQSjbBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kDZEOM65; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dYaSzXCkNd7U2OoLfONGfzJgDSKjBbj483PLTwNj3UY=; b=RCH36RRlypffLv8GUfjel2MuzJ
-	i5HjUR3OCZpWH5tzsPT6lRT37qD7HnD7btna9OmxtwdV5FAqQD5GHu+PwqdIvDbhmvBl+ilHXQhsP
-	EoPTz3LLYz3vooOcimlVzHINIp76q7UgnXjnMnRMdW8sIyehmMdONUvXdbddiYScqBZm794KI0lsQ
-	3kglq1yvfNmwP6lX359UTcGqI+vvzh/KuDdFLGszirBTsBhqUwpjMJmx1PLnRm3qxKhN9KV6dyiz3
-	mKDjcPITUMV1dlxaHZbo5PbY2U1bv3hGleCLDF7lDRTaOg4xSbI66p1QxVeQPj9Rz1OX8IAREa5qd
-	GfRoKU0w==;
+	bh=2dTz/6/ttopgX3sM2RfgLNZGtNwCqFJV1qF3/VzVwrI=; b=kDZEOM65vsa07X2T8l2U9agyrU
+	KF/F0DKvhFgE4BtdhJ/je/8QYuAM24mXkfqs+0XAVa9lPpgxp0fiEPjKEkcsxoUA1ZL5/hL6R6brv
+	IZTJecfudNZwmAEDAauN6KEn4ZrjW7dJ55qwmO3NeYOXKOHGVsSDBgrpBvOw8rn378T3GwHWq27Dp
+	JqgC46vN9QxHHtaVJrJlpIkB6qaoyvJYEoqA+ZfhhFCxyofTOf0c8eCUnynFdd54x63ZxamLY72T8
+	3nuB/SI7pPxSnaxVGLt6d3Vi/pCI/9rCu5FPmqrWArySCbFPyAvRqpXQFWL5YkDWcRdgopVQ2S7/D
+	OLjXakwg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tVmYp-0000000Az6K-0lAm;
-	Thu, 09 Jan 2025 07:02:31 +0000
-Date: Wed, 8 Jan 2025 23:02:31 -0800
+	id 1tVmdW-0000000Azhj-2xZP;
+	Thu, 09 Jan 2025 07:07:22 +0000
+Date: Wed, 8 Jan 2025 23:07:22 -0800
 From: Christoph Hellwig <hch@infradead.org>
 To: Brian Foster <bfoster@redhat.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/6] iomap: factor out iomap length helper
-Message-ID: <Z390h2_8AmSQp_7R@infradead.org>
+Subject: Re: [PATCH 3/6] iomap: support incremental iomap_iter advances
+Message-ID: <Z391qhtj_c56nfc2@infradead.org>
 References: <20241213143610.1002526-1-bfoster@redhat.com>
- <20241213143610.1002526-3-bfoster@redhat.com>
+ <20241213143610.1002526-4-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,32 +60,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241213143610.1002526-3-bfoster@redhat.com>
+In-Reply-To: <20241213143610.1002526-4-bfoster@redhat.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Dec 13, 2024 at 09:36:06AM -0500, Brian Foster wrote:
-> In preparation to support more granular iomap iter advancing, factor
-> the pos/len values as parameters to length calculation.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->  include/linux/iomap.h | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 5675af6b740c..cbacccb3fb14 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -236,13 +236,19 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
->   *
->   * Returns the length that the operation applies to for the current iteration.
->   */
-> -static inline u64 iomap_length(const struct iomap_iter *iter)
-> +static inline u64 __iomap_length(const struct iomap_iter *iter, loff_t pos,
-> +		u64 len)
+On Fri, Dec 13, 2024 at 09:36:07AM -0500, Brian Foster wrote:
+> Note that the semantics for operations that use incremental advances
+> is slightly different than traditional operations. Operations that
+> advance the iter directly are expected to return success or failure
+> (i.e. 0 or negative error code) in iter.processed rather than the
+> number of bytes processed.
 
-__iomap_length is not a a very good name for this, maybe something like
-iomap_cap_length?  Also please move the kerneldoc comment for
-iomap_length down to be next to it.
+While the uses of the incremental advance later look nice, this bit
+is pretty ugly.  I wonder if we could just move overy everything to
+the incremental advance model, even if it isn't all that incremental,
+that is always call iomap_iter_advance from the processing loop and
+eventually remove the call in iomap_iter() entirely?
+
+> @@ -36,7 +36,7 @@ static inline int iomap_iter_advance(struct iomap_iter *iter, s64 count)
+>  		return -EIO;
+>  	iter->pos += count;
+>  	iter->len -= count;
+> -	if (!iter->len || (!count && !stale))
+> +	if (!iter->len || (!count && !stale && iomap_length(iter)))
+
+This probably warrantd a comment even with the existing code, but really
+needs one now.
+
+> + * @iter_spos: The original start pos for the current iomap. Used for
+> + *	incremental iter advance.
+
+Maybe spell out the usage as iter_start_pos in the field name as spos
+reads a little weird?
 
 
