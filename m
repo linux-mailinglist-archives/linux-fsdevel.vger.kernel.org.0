@@ -1,58 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-38715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E00A06F05
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 08:26:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11051A06F7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 08:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F9C164643
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 07:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6FA1887971
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 07:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAEB2144B4;
-	Thu,  9 Jan 2025 07:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NxUiFHkS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12C3214A71;
+	Thu,  9 Jan 2025 07:54:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187AA19F421;
-	Thu,  9 Jan 2025 07:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E14A43169;
+	Thu,  9 Jan 2025 07:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736407570; cv=none; b=p6QufKITimnxOEqNTQmyAGNTRz67gk97YnXkFCVI2yrw8RYyer6g3fOSmiJwyOCl0pTj2++aZjIzj5n/1JZT2gq4eYg2OzDqENG07EE8zSOl3Bovce5SA/RJO03k190KKgLsSSqJ3IZUyb6xNtG7OgroVqBK59YqbszghGPNQRQ=
+	t=1736409260; cv=none; b=CssngnoLDPytjHJbDU4B+m7xf855DOmhx7lx17TRIhYGp/ljv8wdqIxybJxi5pLoS/D1VwnLeMgax0PxeIl3OFl10ZMyVx1OmVmeR0iqVzEmXXUH5u300tBmPJ9gtYVqQr7qXrImeEiFtHVeeENmk+fND596TpdstJGOwV2msY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736407570; c=relaxed/simple;
-	bh=i/PfRnwVvb91invkTP3ANFcGajpe13PmT0iGstEz+Zs=;
+	s=arc-20240116; t=1736409260; c=relaxed/simple;
+	bh=rXSu+APBUArO7zhcrYoDKY6pjZhZp3DliO28WmxP7VM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mkHTP6Fn9DbCIxLcMsw/YHiNbVwpCnTqaTAWV5eyX3hTjFAs+BcTklxAqUpC97nU/xB5fpta/Vz3sI614dUovOyEivuYesDDRH8O6pfRKjWQiyMiigY+aWld0uSIOYy9T1Rg5m1lXaz1VPVTLceK0p27yz1WZ1bhxxUqSnSjIfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NxUiFHkS; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ezlV/4EJBMAJ676pi3aA8w5PWpPJ4HEyIsOrgmnK2AQ=; b=NxUiFHkSukEy00L25thneda7ot
-	jlLJSwAdQntiGTnwYmj+vU5VVw6Lv2/LNvFqTA9BfNnXaw8X12f16OWaKtelEtMAu+x/fuZS8RpeZ
-	dBkfB6HQfTScE0/Gyt6uOWwWSBICyjLGCnJIAfI+YUE0/dflS+9XRxO+Vk2fjbzNXYBuyw6BUX4FY
-	KBcGD7xWG9RM6kG9AmdVIMPxU/KKY0dUWLjMlrhYXHx0wBXe2/U7RLpgKRcIhL1uPFeDLHZ5e7AJ9
-	qtCuIc0k8gDy961wni9GRrpz8UUfcCzXCtbhpAG6vPEcfQz4Ypd/i0XRqqFJmBiE5k/lNA+3YG6QA
-	UPjV790A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tVmvg-0000000B2mF-1dF6;
-	Thu, 09 Jan 2025 07:26:08 +0000
-Date: Wed, 8 Jan 2025 23:26:08 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH RFCv2 4/4] xfs: fill dirty folios on zero range of
- unwritten mappings
-Message-ID: <Z396EO-6XNK9SAdW@infradead.org>
-References: <20241213150528.1003662-1-bfoster@redhat.com>
- <20241213150528.1003662-5-bfoster@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0aMDp14kOkiQTo6MHXrofkr2s4WWawdZB3cYw5vkp6XB7nzZCNS4HACGnyssdWLGoAb6EtAAUWO1VmL5DYT9S5mSbI4huHRX6qGFI8qTxoLKG35eyg4uQE8TKdKBNp55lB+Y+Kg+9ooAx2jPe6fbhmPd0OsOc+G7QPN9uSy+Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 32F4A68BFE; Thu,  9 Jan 2025 08:54:13 +0100 (CET)
+Date: Thu, 9 Jan 2025 08:54:12 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, Christoph Hellwig <hch@lst.de>,
+	brauner@kernel.org, cem@kernel.org, dchinner@redhat.com,
+	ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v2 2/7] iomap: Add zero unwritten mappings dio support
+Message-ID: <20250109075412.GA19081@lst.de>
+References: <20241210125737.786928-1-john.g.garry@oracle.com> <20241210125737.786928-3-john.g.garry@oracle.com> <20241211234748.GB6678@frogsfrogsfrogs> <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com> <20241212204007.GL6678@frogsfrogsfrogs> <20241213144740.GA17593@lst.de> <20241214005638.GJ6678@frogsfrogsfrogs> <20241217070845.GA19358@lst.de> <93eecf38-272b-426f-96ec-21939cd3fbc5@oracle.com> <20250108012636.GE1306365@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,43 +50,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241213150528.1003662-5-bfoster@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250108012636.GE1306365@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-> +	struct iomap_iter	*iter = container_of(iomap, struct iomap_iter, iomap);
+On Tue, Jan 07, 2025 at 05:26:36PM -0800, Darrick J. Wong wrote:
+> "I think we should wire it up as a new FALLOC_FL_WRITE_ZEROES mode,
+> document very vigorously that it exists to facilitate pure overwrites
+> (specifically that it returns EOPNOTSUPP for always-cow files), and not
+> add more ioctls."
+> 
+> If we added this new fallocate mode to set up written mappings, would it
+> be enough to write in the programming manuals that applications should
+> use it to prepare a file for block-untorn writes?  Perhaps we should
+> change the errno code to EMEDIUMTYPE for the mixed mappings case.
+> 
+> Alternately, maybe we /should/ let programs open a lease-fd on a file
+> range, do their untorn writes through the lease fd, and if another
+> thread does something to break the lease, then the lease fd returns EIO
+> until you close it.
 
-Overly long line.
-
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
->  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-> @@ -1065,12 +1066,21 @@ xfs_buffered_write_iomap_begin(
->  	 */
->  	if (flags & IOMAP_ZERO) {
->  		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> +		u64 end;
->  
->  		if (isnullstartblock(imap.br_startblock) &&
->  		    offset_fsb >= eof_fsb)
->  			goto convert_delay;
->  		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
->  			end_fsb = eof_fsb;
-> +		if (imap.br_state == XFS_EXT_UNWRITTEN &&
-> +		    offset_fsb < eof_fsb) {
-> +			xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
-> +			end = iomap_fill_dirty_folios(iter,
-> +					XFS_FSB_TO_B(mp, imap.br_startoff),
-> +					XFS_FSB_TO_B(mp, imap.br_blockcount));
-> +			end_fsb = min_t(xfs_fileoff_t, end_fsb, XFS_B_TO_FSB(mp, end));
-
-A few more here.
-
-But most importantly please add a comment desribing the logic behind
-this in the function.  It's hairy logic and not obvious from reading
-the code, so explaining it will be helpful.
-
-Splitting it into a separate helper might be useful for that, but due
-to the amount of state shared with the caller that might not look all
-that pretty in the end, so I'm not entirely sure about it.
+This still violates the "no unexpected errors" paradigm.  The whole
+FALLOC_FL_WRITE_ZEROES (I hate that name btw) model would only work
+if we had a software fallback that make the operations slower but
+still work in case of an unexpected change to the extent mapping.
 
 
