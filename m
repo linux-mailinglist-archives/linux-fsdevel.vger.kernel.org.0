@@ -1,116 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-38750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E41A07C68
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 16:50:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F8DA07C84
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 16:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D639188C39F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 15:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CF4169BF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 15:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C6621D583;
-	Thu,  9 Jan 2025 15:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361932206B1;
+	Thu,  9 Jan 2025 15:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Gm/yzwmO";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="CiXXoUcS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9BSlQcx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [104.223.66.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F4D21E0A6;
-	Thu,  9 Jan 2025 15:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.223.66.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335FF14D6F9;
+	Thu,  9 Jan 2025 15:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736437839; cv=none; b=ChEZps1rTNj1o7EJGptI7fNEzNfi0HQSYKqQ/xWpvaKWin8qaAqBifkWTHyqVz47h0YBNG/o7sJcHyiiDqQzOjVsbRcC0CUPJQT7JzbdpAW6/YNT1aPiy7fMWeF9COQST5GKxdxOEXGokxGQTsYa7HEKPpXOo9t5EvjZ8Kc0Dxc=
+	t=1736437915; cv=none; b=d9ztAOH0Zjh0rdtneZoSzI5RZMwyxkw3a+pN0Cr0ABmJC3Ho39865ogbb+lkmcGeTvq5Gah6lDuFTbPSv4ylR6yWormBwItXVUkr9vR/maMRRDScB/X/fzncEbbiShMkk0a+hHdiK1EHKwZMWSLEZTvrGwQ461ddE55WVV5QreU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736437839; c=relaxed/simple;
-	bh=Y+NALXzWAOb4cRzU3p94qNqwrTFqvz5LULlvKeAgxK8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EZenGQD5XZo/L7Yr/s3VfF7ZBinGh6FLFBmj3hCVM60vqNzGX9NynPOdyRSJirHmqIKcYIH2YC5AUF34YvxYmPn94WUA8IDGBFrLYFUPgtdk6Jas8OzdN5xbPUvDypqFTXse8F12x1A2MQK94mnJLipO18ZutQJbCWetpCqdJqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Gm/yzwmO; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=CiXXoUcS; arc=none smtp.client-ip=104.223.66.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1736437830;
-	bh=Y+NALXzWAOb4cRzU3p94qNqwrTFqvz5LULlvKeAgxK8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=Gm/yzwmO9nyDmVzD/tj97tUK81hqEb5sN2Bs4iklfTVlvUjq7IX8Al1jaVJ0qD3y6
-	 HLKmTWhNntBgucsy6ZNc1HF0PCJxtdF33mC4ysFZ9kz1Ie6A4oyICjhJJq5UrSg56p
-	 89GbiAWycqvnmFk0SyVIzf0ryadbnH8Mnaik0sh8=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 38AED128165E;
-	Thu, 09 Jan 2025 10:50:30 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 3dhUy0ueGQSr; Thu,  9 Jan 2025 10:50:30 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1736437829;
-	bh=Y+NALXzWAOb4cRzU3p94qNqwrTFqvz5LULlvKeAgxK8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=CiXXoUcSKvS8RYwEooB5HhSi+KvRV700y2rzEZfHoa/naL/e07DsYpeBdaPuWGnxb
-	 ++gSba5moVjosLyy/OX79fSgxV/Bjler6LHTKpQeuyapGxmC9/eDi3Q+i2gippdLDo
-	 7Qmqzri1CKR6qlKAYkX+x8JeGIyaqGai3BPvMh6o=
-Received: from [172.20.4.117] (unknown [74.85.233.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 90418128135E;
-	Thu, 09 Jan 2025 10:50:29 -0500 (EST)
-Message-ID: <8ec4aa383506dd1c28c650874b3d8e36ded2a2c9.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 0/6] convert efivarfs to manage object data correctly
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, Jeremy Kerr
-	 <jk@ozlabs.org>, Christian Brauner <brauner@kernel.org>, Al Viro
-	 <viro@zeniv.linux.org.uk>
-Date: Thu, 09 Jan 2025 07:50:28 -0800
-In-Reply-To: <CAMj1kXHy+D2GDANFyYJLOZj1fPmgoX+Ed6CRy3mSSCeutsO07w@mail.gmail.com>
-References: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
-	 <CAMj1kXHy+D2GDANFyYJLOZj1fPmgoX+Ed6CRy3mSSCeutsO07w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1736437915; c=relaxed/simple;
+	bh=4PNW5U1RCpwSI6ed5qCmkDfjxSB39XjXAAnaje7o+L4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgSL0Pd1nJaFdW1GYTicH/Ycjm7wc6v4pyxm1j4g2r5erQdKrVE5oZ1LR1g8lyXY1/k4fS1BxUXKDh7bo6FvvhgUXId5cuRly7PLukaUcgfAOCrvM5b6uc2hYuvspIeaWnmbm4XPghEv2r3h9eDCfNT3Gr4OaqAfx1vGvdzM2aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9BSlQcx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E5AC4CED2;
+	Thu,  9 Jan 2025 15:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736437915;
+	bh=4PNW5U1RCpwSI6ed5qCmkDfjxSB39XjXAAnaje7o+L4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F9BSlQcxUU/kvrDz8ezVoOO+s/YBhBI99DBGbLdRbteRKBcsdBNKhfA6NIrkjDYkC
+	 9GtrmQ7VK0dv7qDBCLFFprwhk5flkxmRl+V2FYyKWlDlaQk5dy/y43RuJc1rAObSVE
+	 sl7FszvwCJ3ZWmJ3LwoRXHehBmq48TqQ4/nOFcPMPAGWGxlPfP39p5Evt4580Qxykh
+	 T6IreW5JxdI40u2aiQRRvDdYRS5jpPoTlnD0T3RTnaN10Mg41YwaqUaSESqRhF+j/w
+	 8yWPU7z9RguVCtFoKzz3OeFzncyxzknkL/0P6P7tlQkSO/uCgw6CAfTy6ch0j+etXR
+	 6KWhdTwfzx9bw==
+Date: Thu, 9 Jan 2025 07:51:54 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+	codalist@coda.cs.cmu.edu, linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	io-uring@vger.kernel.org, bpf@vger.kernel.org,
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH] treewide: const qualify ctl_tables where applicable
+Message-ID: <20250109155154.GP1306365@frogsfrogsfrogs>
+References: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
 
-On Thu, 2025-01-09 at 10:50 +0100, Ard Biesheuvel wrote:
-> On Tue, 7 Jan 2025 at 03:36, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-[...]
-> > James Bottomley (6):
-> >   efivarfs: remove unused efi_varaible.Attributes and .kobj
-> >   efivarfs: add helper to convert from UC16 name and GUID to utf8
-> > name
-> >   efivarfs: make variable_is_present use dcache lookup
-> >   efivarfs: move freeing of variable entry into evict_inode
-> >   efivarfs: remove unused efivarfs_list
-> >   efivarfs: fix error on write to new variable leaving remnants
-> > 
+On Thu, Jan 09, 2025 at 02:16:39PM +0100, Joel Granados wrote:
+> Add the const qualifier to all the ctl_tables in the tree except the
+> ones in ./net dir. The "net" sysctl code is special as it modifies the
+> arrays before passing it on to the registration function.
 > 
-> Thanks James,
-> 
-> I've tentatively queued up this series, as well as the hibernate one,
-> to get some coverage from the robots while I run some tests myself.
-> 
-> Are there any existing test suites that cover efivarfs that you could
-> recommend?
+> Constifying ctl_table structs will prevent the modification of
+> proc_handler function pointers as the arrays would reside in .rodata.
+> This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> constify the ctl_table argument of proc_handlers") constified all the
+> proc_handlers.
 
-I'm afraid I couldn't find any.  I finally wrote a few shell scripts to
-try out multiple threads updating the same variable.  I think I can
-probably work out how to add these to the kselftest infrastructure. 
-Hibernation was a real pain because it doesn't work with secure boot,
-but I finally wrote a UEFI shell script to modify variables and reset.
-Unfortunately I don't think we have a testing framework I can add these
-to.
+Sounds like a good idea,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org> # xfs
 
-Regards,
-
-James
-
+--D
 
