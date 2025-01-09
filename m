@@ -1,146 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-38725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C45A07233
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 10:54:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F75A072EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 11:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58148164044
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 09:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4413A8F7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 10:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCE021766F;
-	Thu,  9 Jan 2025 09:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F08216E00;
+	Thu,  9 Jan 2025 10:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNPOOk7j"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ciDErO7e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fSRlFUWo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ciDErO7e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fSRlFUWo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4B2214808;
-	Thu,  9 Jan 2025 09:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE902153C7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2025 10:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736416243; cv=none; b=U47ALMSnD9x10yI7iYWd76x0qX/02KoFVPr9YMUJ5+/lhWsgZ3l/1NHzHaX+dHmGQe17jqFDCz0DdpWZ1wCyGbiHJ+2+ZRtkKFu8W/0e2MhiAXuRd2+Dl341bTfEE5zJbjlS+DRqx+MXn312Jievxu3nOyQV9OuycSFn+bbBbfI=
+	t=1736418074; cv=none; b=TufSxWZmTwb8g50rh9ePuHFo6XXOtlrG0JHUexViIPhbRWgJjBeTQdhe3Qd0nh6+xSsuCQGW1zj0qPJ+p4MEH5Msxk8Rr1wjGxgxRKUvFq4I71VEHyugXrRZgPRI14deM8Y50lGFI/eE0JSi0iEWQoOYPHcMwD2EcTZnPmLiYBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736416243; c=relaxed/simple;
-	bh=QxW0YnCh4Op2rTt0Nx+fhzd5s7rQ5RCcgZ6nyfZnHC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=De63XP7oKRISj44AblVGeSWuQsEj4JUCwIqpNtj77fe1RBU7LtG6gVQ4mRoxajqGDJrCelYo6xbNL9uqpmAEdLDbfHwU5a97frG73MStjTnkVBLuG2JcangbKxUsy+tzJcXt7yAZvgyK3Brpzfrjgy77tn/u5h5zjigLCGvv6y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNPOOk7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A08C4CEE1;
-	Thu,  9 Jan 2025 09:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736416242;
-	bh=QxW0YnCh4Op2rTt0Nx+fhzd5s7rQ5RCcgZ6nyfZnHC4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DNPOOk7j47wmJFW8alf5lxRakO4z8uVBhXYR9UxQ1yveTB6p4nRRKwP1DC4PDHI85
-	 yybxml1iVML0L8AtR4OV7MGmW1gDUUssGHWFKBNnLkfnm8uV7YXt39acZNiJDr3ZtC
-	 YAx9HH8XmPubO1XhwRTvlbz9MbD3MkeAfoOrS0r3QFrqjZgYPFsLk0KApkdu4a+YWc
-	 KkYmT9I9PEeTkYL1Xn1i7J8xpQU3B4nmRUf/n6GZj5xniZ4s7cPW44WKTjdyaWDfhc
-	 +9ZzbzpQ0IkihmqXbG8zTNh8rEQZI5FPNv+EoD6oKxY5LEnmMgLUJ5srnwOVBeU6+N
-	 682+YkB/Z2z0A==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5401e6efffcso758027e87.3;
-        Thu, 09 Jan 2025 01:50:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWH7sOeA01EG8/pGNiq5NDC97HQnpuhAysIhr6V5hXDorro2MOiQ+0CbpsCechf2k4VBy8NPqt/rnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp1QnXTDOdL8pBGfKjCxBR5de8bBigP71iw1nWPlBTx7Na0du2
-	KOclL+UnDLgmyeK9Cz+nu8mlYyCLYTra+SVSXnsLEnYTGawY1mefJYNBIIPeSoAldFMRcNz5Ulh
-	KkUXxFAqcpHcfSZq3nqOe+/HjzEM=
-X-Google-Smtp-Source: AGHT+IE9vSHLJMB/9vMrNNGtMs3kSYmpVMUCgYuG56Np0X2+klv919g9mQwblyEV5YGfVTD8sAZlMRb4awOWEQM6qvE=
-X-Received: by 2002:a05:6512:401e:b0:542:1bd3:bc47 with SMTP id
- 2adb3069b0e04-542845d8670mr2243839e87.31.1736416240821; Thu, 09 Jan 2025
- 01:50:40 -0800 (PST)
+	s=arc-20240116; t=1736418074; c=relaxed/simple;
+	bh=PVXLemHqbm3NbEGFBGharVqrfd8llLLDv3je5x14Rio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMLq7w/UYG8Z6alaZkmvnkKxleUIjR66rU0Ad7RpipNZalCD17Yh9GJKukvz2Upxwbi2sBds2uRe+ScRFOcrPIW50+fzpXF191jzNJ/BzWn4znFs7CyVeQaAk4g/1x42S8iYJK8daPv2fbeu4pna9G11MT9tiqMnbQkpMItLvXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ciDErO7e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fSRlFUWo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ciDErO7e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fSRlFUWo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B596E21101;
+	Thu,  9 Jan 2025 10:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736418070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
+	b=ciDErO7euAoSJG5fcPyqeh6xI69F0lSVFAuj9oBi9Aa1hzZq3gOn0rywNzyElF3NqDVFOK
+	FKf94jJUeKweo74MvLCvLnK5Ov9R7POfV5BVYaxz9YOYJiy5qrVZaFJf7TV0zReFaScYfX
+	KNModr1PeBXae6b511mjXyM0W6lgOHg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736418070;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
+	b=fSRlFUWoz/69D05/yzBHhIUvEblB4nFnyxyD9pY4wEyPVbBYq2Y9AH8bdiUXUuDK0by2EW
+	Kk2VzhUks4ZjXpAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736418070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
+	b=ciDErO7euAoSJG5fcPyqeh6xI69F0lSVFAuj9oBi9Aa1hzZq3gOn0rywNzyElF3NqDVFOK
+	FKf94jJUeKweo74MvLCvLnK5Ov9R7POfV5BVYaxz9YOYJiy5qrVZaFJf7TV0zReFaScYfX
+	KNModr1PeBXae6b511mjXyM0W6lgOHg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736418070;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
+	b=fSRlFUWoz/69D05/yzBHhIUvEblB4nFnyxyD9pY4wEyPVbBYq2Y9AH8bdiUXUuDK0by2EW
+	Kk2VzhUks4ZjXpAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A9CD0139AB;
+	Thu,  9 Jan 2025 10:21:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IylsKRajf2crEAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 09 Jan 2025 10:21:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 58FDAA0887; Thu,  9 Jan 2025 11:21:02 +0100 (CET)
+Date: Thu, 9 Jan 2025 11:21:02 +0100
+From: Jan Kara <jack@suse.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] The future of anon_vma
+Message-ID: <zh2hu4fzaqrhw5qdbpcspcsvmnczjo7v5q4b65uq7eaz7exanz@ihsk5oa5njfn>
+References: <c87f41ff-a49c-4476-8153-37ff667f47b9@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
-In-Reply-To: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 9 Jan 2025 10:50:29 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHy+D2GDANFyYJLOZj1fPmgoX+Ed6CRy3mSSCeutsO07w@mail.gmail.com>
-X-Gm-Features: AbW1kvadMVFamQhugcJIhHigDGsbT-fk1duHP7ziZB39LrsSMRkLmN7ElSJJLSE
-Message-ID: <CAMj1kXHy+D2GDANFyYJLOZj1fPmgoX+Ed6CRy3mSSCeutsO07w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] convert efivarfs to manage object data correctly
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Jeremy Kerr <jk@ozlabs.org>, Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c87f41ff-a49c-4476-8153-37ff667f47b9@lucifer.local>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Tue, 7 Jan 2025 at 03:36, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> I've added fsdevel because I'm hopping some kind vfs person will check
-> the shift from efivarfs managing its own data to its data being
-> managed as part of the vfs object lifetimes.  The following paragraph
-> should describe all you need to know about the unusual features of the
-> filesystem.
->
-> efivarfs is a filesystem projecting the current state of the UEFI
-> variable store and allowing updates via write.  Because EFI variables
-> contain both contents and a set of attributes, which can't be mapped
-> to filesystem data, the u32 attribute is prepended to the output of
-> the file and, since UEFI variables can't be empty, this makes every
-> file at least 5 characters long.  EFI variables can be removed either
-> by doing an unlink (easy) or by doing a conventional write update that
-> reduces the content to zero size, which means any write update can
-> potentially remove the file.
->
-> Currently efivarfs has two bugs: it leaks memory and if a create is
-> attempted that results in an error in the write, it creates a zero
-> length file remnant that doesn't represent an EFI variable (i.e. the
-> state reflection of the EFI variable store goes out of sync).
->
-> The code uses inode->i_private to point to additionaly allocated
-> information but tries to maintain a global list of the shadowed
-> varibles for internal tracking.  Forgetting to kfree() entries in this
-> list when they are deleted is the source of the memory leak.
->
-> I've tried to make the patches as easily reviewable by non-EFI people
-> as possible, so some possible cleanups (like consolidating or removing
-> the efi lock handling and possibly removing the additional entry
-> allocation entirely in favour of simply converting the dentry name to
-> the variable name and guid) are left for later.
->
-> The first patch removes some unused fields in the entry; patches 2-3
-> eliminate the list search for duplication (some EFI variable stores
-> have buggy iterators) and replaces it with a dcache lookup.  Patch 4
-> move responsibility for freeing the entry data to inode eviction which
-> both fixes the memory leak and also means we no longer need to iterate
-> over the variable list and free its entries in kill_sb.  Since the
-> variable list is now unused, patch 5 removes it and its helper
-> functions.
->
-> Patch 6 fixes the second bug by introducing a file_operations->release
-> method that checks to see if the inode size is zero when the file is
-> closed and removes it if it is.  Since all files must be at least 5 in
-> length we use a zero i_size as an indicator that either the variable
-> was removed on write or that it wasn't correctly created in the first
-> place.
->
-> v2: folded in feedback from Al Viro: check errors on lookup and delete
->     zero length file on last close
->
-> James
->
-> ---
->
-> James Bottomley (6):
->   efivarfs: remove unused efi_varaible.Attributes and .kobj
->   efivarfs: add helper to convert from UC16 name and GUID to utf8 name
->   efivarfs: make variable_is_present use dcache lookup
->   efivarfs: move freeing of variable entry into evict_inode
->   efivarfs: remove unused efivarfs_list
->   efivarfs: fix error on write to new variable leaving remnants
->
+Hi!
 
-Thanks James,
+On Wed 08-01-25 22:23:16, Lorenzo Stoakes via Lsf-pc wrote:
+> A future where we unify anonymous and file-backed memory mappings would be
+> one in which a reflinks were implemented at a general level rather than, as
+> they are now, implemented individually within file systems.
+> 
+> I'd like to discuss how feasible doing so might be, whether this is a sane
+> line of thought at all, and how a roadmap for working towards the
+> elimination of anon_vma as it stands might look.
 
-I've tentatively queued up this series, as well as the hibernate one,
-to get some coverage from the robots while I run some tests myself.
+As you can imagine this has been discussed in the past and some folks are
+very interested in saving page cache memory for some heavily reflinked
+container setups or for various FUSE filesystems. So if someone manages to
+come up with a feasible design, the usecases are there. I think reading
+e.g. [1] and comments below it is a good preparation for the session to get
+some idea what challenges are there :).
 
-Are there any existing test suites that cover efivarfs that you could recommend?
+								Honza
+
+[1] https://lwn.net/Articles/717950/
+
+
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
