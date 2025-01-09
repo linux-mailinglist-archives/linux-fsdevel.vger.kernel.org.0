@@ -1,99 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-38726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F75A072EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 11:24:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C34A07371
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 11:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4413A8F7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 10:24:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D946018811A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2025 10:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F08216E00;
-	Thu,  9 Jan 2025 10:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D00216381;
+	Thu,  9 Jan 2025 10:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ciDErO7e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fSRlFUWo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ciDErO7e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fSRlFUWo"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UhabqEOq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fqGqhtka";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UhabqEOq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fqGqhtka"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE902153C7
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2025 10:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A992204C0D;
+	Thu,  9 Jan 2025 10:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736418074; cv=none; b=TufSxWZmTwb8g50rh9ePuHFo6XXOtlrG0JHUexViIPhbRWgJjBeTQdhe3Qd0nh6+xSsuCQGW1zj0qPJ+p4MEH5Msxk8Rr1wjGxgxRKUvFq4I71VEHyugXrRZgPRI14deM8Y50lGFI/eE0JSi0iEWQoOYPHcMwD2EcTZnPmLiYBk=
+	t=1736419075; cv=none; b=DLXauAxIE3slLXzj0BSRsVJHm2ohVxFrSjXqJo+SxNw6M5mtC1CntM6BAnjPIuNmj7gc4F6K2ZcvUHxD9cyWOxhwjHI6OpkrJg4CLT3yXa2QcYLtPwMkwSSXHUNded4u8zDfbymk/5rMbsrbtxrEVSX8lM2N/hnscr8LXOTyUGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736418074; c=relaxed/simple;
-	bh=PVXLemHqbm3NbEGFBGharVqrfd8llLLDv3je5x14Rio=;
+	s=arc-20240116; t=1736419075; c=relaxed/simple;
+	bh=7xl1sBFt2GFWC41AWFg2risMqWrJmQ862WAJ8DnWKlc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMLq7w/UYG8Z6alaZkmvnkKxleUIjR66rU0Ad7RpipNZalCD17Yh9GJKukvz2Upxwbi2sBds2uRe+ScRFOcrPIW50+fzpXF191jzNJ/BzWn4znFs7CyVeQaAk4g/1x42S8iYJK8daPv2fbeu4pna9G11MT9tiqMnbQkpMItLvXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ciDErO7e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fSRlFUWo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ciDErO7e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fSRlFUWo; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFPbIPj2SU5c7cvX8DpqpfKPwFMeBUZQYyxuYEysXt1cDhiwsbg8C4Kty+iKpuEO2mRwvjce/lnTgVhI6KQHa0wyrV0jRYu5cmqtQfNTfWyf6mZ3r/TyodER0GNBEa7F9ML7HPBAa+DGYcgtOIytdFUWtjBxDasYY85f+Ky7Tbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UhabqEOq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fqGqhtka; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UhabqEOq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fqGqhtka; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B596E21101;
-	Thu,  9 Jan 2025 10:21:10 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 235E821114;
+	Thu,  9 Jan 2025 10:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736418070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1736419071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
-	b=ciDErO7euAoSJG5fcPyqeh6xI69F0lSVFAuj9oBi9Aa1hzZq3gOn0rywNzyElF3NqDVFOK
-	FKf94jJUeKweo74MvLCvLnK5Ov9R7POfV5BVYaxz9YOYJiy5qrVZaFJf7TV0zReFaScYfX
-	KNModr1PeBXae6b511mjXyM0W6lgOHg=
+	bh=CX40sLvsmEhDLSJTaTldfvB4pJb1E1M5ld3ODr0Mkbs=;
+	b=UhabqEOqWkFJt9pS2Eg7bmNobXgAaYioaBedkfwEo6llN+5M7LZttYYlHSWbWwnIK5CAv4
+	uCYy6llxHAUGUOZRo2WXQ8ksSFDzmbZMGytwVMhwE0AztxyqrPRhgLGuTlQTRygCldfEhg
+	HiYoojxFk1Z5q1xzu01v0zQdB2VgIQU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736418070;
+	s=susede2_ed25519; t=1736419071;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
-	b=fSRlFUWoz/69D05/yzBHhIUvEblB4nFnyxyD9pY4wEyPVbBYq2Y9AH8bdiUXUuDK0by2EW
-	Kk2VzhUks4ZjXpAg==
+	bh=CX40sLvsmEhDLSJTaTldfvB4pJb1E1M5ld3ODr0Mkbs=;
+	b=fqGqhtka0ItNK7M+x7GYmey/2CvecS9u9o5ZCX/Gzcn4G1CO+LTRHjXpV4N1ALoQKV4UZE
+	WppUXtBqx4qV0aAA==
 Authentication-Results: smtp-out1.suse.de;
-	none
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UhabqEOq;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=fqGqhtka
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736418070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1736419071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
-	b=ciDErO7euAoSJG5fcPyqeh6xI69F0lSVFAuj9oBi9Aa1hzZq3gOn0rywNzyElF3NqDVFOK
-	FKf94jJUeKweo74MvLCvLnK5Ov9R7POfV5BVYaxz9YOYJiy5qrVZaFJf7TV0zReFaScYfX
-	KNModr1PeBXae6b511mjXyM0W6lgOHg=
+	bh=CX40sLvsmEhDLSJTaTldfvB4pJb1E1M5ld3ODr0Mkbs=;
+	b=UhabqEOqWkFJt9pS2Eg7bmNobXgAaYioaBedkfwEo6llN+5M7LZttYYlHSWbWwnIK5CAv4
+	uCYy6llxHAUGUOZRo2WXQ8ksSFDzmbZMGytwVMhwE0AztxyqrPRhgLGuTlQTRygCldfEhg
+	HiYoojxFk1Z5q1xzu01v0zQdB2VgIQU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736418070;
+	s=susede2_ed25519; t=1736419071;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RD/Go8GakXcQNS/wr3NWmGSY+qbUSSyDhJT0l2tR2+U=;
-	b=fSRlFUWoz/69D05/yzBHhIUvEblB4nFnyxyD9pY4wEyPVbBYq2Y9AH8bdiUXUuDK0by2EW
-	Kk2VzhUks4ZjXpAg==
+	bh=CX40sLvsmEhDLSJTaTldfvB4pJb1E1M5ld3ODr0Mkbs=;
+	b=fqGqhtka0ItNK7M+x7GYmey/2CvecS9u9o5ZCX/Gzcn4G1CO+LTRHjXpV4N1ALoQKV4UZE
+	WppUXtBqx4qV0aAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A9CD0139AB;
-	Thu,  9 Jan 2025 10:21:10 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14593139AB;
+	Thu,  9 Jan 2025 10:37:51 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IylsKRajf2crEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 09 Jan 2025 10:21:10 +0000
+	id 1pDtBP+mf2ewFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 09 Jan 2025 10:37:51 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 58FDAA0887; Thu,  9 Jan 2025 11:21:02 +0100 (CET)
-Date: Thu, 9 Jan 2025 11:21:02 +0100
+	id BF005A0887; Thu,  9 Jan 2025 11:37:46 +0100 (CET)
+Date: Thu, 9 Jan 2025 11:37:46 +0100
 From: Jan Kara <jack@suse.cz>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] The future of anon_vma
-Message-ID: <zh2hu4fzaqrhw5qdbpcspcsvmnczjo7v5q4b65uq7eaz7exanz@ihsk5oa5njfn>
-References: <c87f41ff-a49c-4476-8153-37ff667f47b9@lucifer.local>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kselftest@vger.kernel.org, Yuri Benditovich <yuri.benditovich@daynix.com>, 
+	Andrew Melnychenko <andrew@daynix.com>, Stephen Hemminger <stephen@networkplumber.org>, 
+	gur.stavi@huawei.com, devel@daynix.com
+Subject: Re: [PATCH v2 2/3] tun: Pad virtio header with zero
+Message-ID: <apouzqstvjjracsde2o4ky3wguw7xeerolc5mp4aty4zgnpxct@gongys63jwdw>
+References: <20250109-tun-v2-0-388d7d5a287a@daynix.com>
+ <20250109-tun-v2-2-388d7d5a287a@daynix.com>
+ <20250109023056-mutt-send-email-mst@kernel.org>
+ <571a2d61-5fbe-4e49-b4d1-6bf0c7604a57@daynix.com>
+ <20250109024247-mutt-send-email-mst@kernel.org>
+ <6f33c048-81ad-4d15-872d-187e965e6d79@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,55 +118,90 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c87f41ff-a49c-4476-8153-37ff667f47b9@lucifer.local>
+In-Reply-To: <6f33c048-81ad-4d15-872d-187e965e6d79@daynix.com>
+X-Rspamd-Queue-Id: 235E821114
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
+X-Spamd-Result: default: False [-2.51 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MX_GOOD(-0.01)[];
 	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLxr8yp7wrfbdywxro7ki6ncu8)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,davemloft.net,google.com,lwn.net,gmail.com,linux.alibaba.com,lists.linux-foundation.org,daynix.com,networkplumber.org,huawei.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
 X-Spam-Flag: NO
 
-Hi!
-
-On Wed 08-01-25 22:23:16, Lorenzo Stoakes via Lsf-pc wrote:
-> A future where we unify anonymous and file-backed memory mappings would be
-> one in which a reflinks were implemented at a general level rather than, as
-> they are now, implemented individually within file systems.
+On Thu 09-01-25 18:36:52, Akihiko Odaki wrote:
+> On 2025/01/09 16:43, Michael S. Tsirkin wrote:
+> > On Thu, Jan 09, 2025 at 04:41:50PM +0900, Akihiko Odaki wrote:
+> > > On 2025/01/09 16:31, Michael S. Tsirkin wrote:
+> > > > On Thu, Jan 09, 2025 at 03:58:44PM +0900, Akihiko Odaki wrote:
+> > > > > tun used to simply advance iov_iter when it needs to pad virtio header,
+> > > > > which leaves the garbage in the buffer as is. This is especially
+> > > > > problematic when tun starts to allow enabling the hash reporting
+> > > > > feature; even if the feature is enabled, the packet may lack a hash
+> > > > > value and may contain a hole in the virtio header because the packet
+> > > > > arrived before the feature gets enabled or does not contain the
+> > > > > header fields to be hashed. If the hole is not filled with zero, it is
+> > > > > impossible to tell if the packet lacks a hash value.
+> > > > > 
+> > > > > In theory, a user of tun can fill the buffer with zero before calling
+> > > > > read() to avoid such a problem, but leaving the garbage in the buffer is
+> > > > > awkward anyway so fill the buffer in tun.
+> > > > > 
+> > > > > Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> > > > 
+> > > > But if the user did it, you have just overwritten his value,
+> > > > did you not?
+> > > 
+> > > Yes. but that means the user expects some part of buffer is not filled after
+> > > read() or recvmsg(). I'm a bit worried that not filling the buffer may break
+> > > assumptions others (especially the filesystem and socket infrastructures in
+> > > the kernel) may have.
+> > > 
+> > > If we are really confident that it will not cause problems, this behavior
+> > > can be opt-in based on a flag or we can just write some documentation
+> > > warning userspace programmers to initialize the buffer.
+> > 
+> > It's been like this for years, I'd say we wait until we know there's a problem?
 > 
-> I'd like to discuss how feasible doing so might be, whether this is a sane
-> line of thought at all, and how a roadmap for working towards the
-> elimination of anon_vma as it stands might look.
+> Perhaps we can just leave it as is. Let me ask filesystem and networking
+> people:
+> 
+> Is it OK to leave some part of buffer uninitialized with read_iter() or
+> recvmsg()?
 
-As you can imagine this has been discussed in the past and some folks are
-very interested in saving page cache memory for some heavily reflinked
-container setups or for various FUSE filesystems. So if someone manages to
-come up with a feasible design, the usecases are there. I think reading
-e.g. [1] and comments below it is a good preparation for the session to get
-some idea what challenges are there :).
+I think that leaving part of the IO buffer within returned IO length
+uninitialized is a very bad practice and I'm not aware of any place in
+filesystem area that would do that. It makes life unnecessarily harder
+for userspace and also it is invitation for subtle information leaks
+(depending on who allocates the buffer and who then gets to read the
+results). So I think the patch makes sense.
 
 								Honza
-
-[1] https://lwn.net/Articles/717950/
-
-
-
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
