@@ -1,123 +1,337 @@
-Return-Path: <linux-fsdevel+bounces-38888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5165EA097AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 17:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276BEA097BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 17:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D06188EF44
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 16:39:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA63188D584
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 16:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85734212FB9;
-	Fri, 10 Jan 2025 16:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24151213246;
+	Fri, 10 Jan 2025 16:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlS7VVcB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5UR+WQT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B1620E714;
-	Fri, 10 Jan 2025 16:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F8720E714;
+	Fri, 10 Jan 2025 16:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736527178; cv=none; b=juOlL1zahkQAOC3LeznU4b+v+7/27ae2uxQmgvTJ++32zc3bFjLU4RqrDlx+L328apV4UO2Ura/z/e2bLouUBY9OubKoP5nNiuXrRNSLGt6ilXjRYMcTM5uwO6AIUNxpibSrgC1k4wVJm/0SvzO34g9UwI0b/sHuGhkBATz/15Q=
+	t=1736527479; cv=none; b=QLC0oO1gY10bgwW8wJ/iRg9kCqNDddB9ReY6EnuedEnCg6gG4mo1gOz6IhKBkX2h8rgxb5p4onEhZiFjH7LhuiuWhPVTKHfUmXFVwhh4LpEz0Xu1WJ69w5tS2hV8LhmnLyxan8T5ik063AeG7/NO0PGLEw24pEmgUadAhay572c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736527178; c=relaxed/simple;
-	bh=wevkyyRE4XzWzc4iD5tWIkhakh/t6XUAOCgDphhxbkc=;
+	s=arc-20240116; t=1736527479; c=relaxed/simple;
+	bh=C4CeHm6Or5VLGEzPlFMQwU1Lqi8VzWhjclCv/3py67E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oO+a8d8c16sB6WiO3PVhorbRtgpPlnxCTBYCUicxEpar4cADoyUHx3yETOWmd25usiOtEzXiiYuwdRm2aFxLeV9yArNo0CSs36ILZWZRxfyHlTt8HCKdiR3I6QFm9cRzADjeXJZiknjR/ltoAX9XKMlyMVFsNM+9iCgo2UR+NVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlS7VVcB; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so2032439f8f.0;
-        Fri, 10 Jan 2025 08:39:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736527174; x=1737131974; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cAajNuheEIUxYToiDTKpUORJhZAX6ChA6pZVRkkTCDM=;
-        b=AlS7VVcBDeaayAZKCX1MfvI3PQ0wW+9aTZH5VfUWfmxmG4QUWMICli5/uiyHbH2jkS
-         VFLFEjwDBCprhzKd628DMrlGV0NEWjw6aBSY7gkhsFQS+lmx5X4yVIPJ9RyvD6Fjv1jQ
-         cn8r3IPubteIbyjUL/6gUWBaXSPRp7QYoDcrc2RbjJNhmApHd3uI5+RwL+8kEhc3vDf9
-         48z894HQQn5TN2UX6i3nYitPt7kdYfgzfpUWh0DbBLsML/VOczJe7x4uPkhbmSJM+6EA
-         mTedNd/WguL2vskUMymx5noNNcqJMjVnIOSVoL2ZpP1gx9WauNc0m19d49vwGKXU6VYP
-         Yv5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736527174; x=1737131974;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cAajNuheEIUxYToiDTKpUORJhZAX6ChA6pZVRkkTCDM=;
-        b=LuVuqhZlvIEhpFZ9k520CM6j+JTO7azGg+TiMqr/ZJGCTlIuzuH/F2B9qeaRUruc0w
-         07sbUFkbWPzi5sky5MT8y7dUctkRd4bi8a1767/CK3/P4LEIlZolxNqTdoYu5io37Md1
-         ZFBO5PIQ62LPzk6WE30G4+T+YGxNKForIjRQxFgiuLgVSr8MllINU30QKE8aLLaNiEHz
-         GW2ChNns6jZNYZYe/O9c+ACAfbu0WB4gH0FeEqgN2V6v4MyL9EGgCEQiqgasxqFQobze
-         sC3YXMRlLGhTW0uU4RNwyFaWJfE3g8Mg+0kTzsPdCmndB8Xk+PA+ORZ8U5DyRXbF0Ke2
-         KcAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5tYPE5t8TYbMWmZoajpRr4riNnfdN1wCvKiIMbb+XiLX9+UA8nFbwpYTHvGs1hHwRsUdxdFVWnn2Jbbcs@vger.kernel.org, AJvYcCUkbiU1JQ+8xH9/EWD1Y8FZjtnNWym/hYZLKaLm4H+rZmF11r9EWWdxNo/K2dxSYWGHEIShGYbWJltmZ29f@vger.kernel.org, AJvYcCWoXhW9UFYBvuRDVuMgyEjyXm5x2B6Ch2ss3ncaNj/6G6AVb9TQ0FgEnNvMTEMOd506ryW7CA4Sz2AawuBN8d9aOFNFDVaz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx48gA8b/JEbU4cXF3ws1Pd42VunWEfbDxzQiflPv7IQAjGXO1D
-	xTmd3jKK+Z6DQ1NM9KDEq8O0GtYeVAEQegs4q2UoQowtCnxX7Lsl
-X-Gm-Gg: ASbGncvLZcTai7OAxLUEV5sNrVpy3w/0FiUIAN16mNTVO8st8eoJFo/Qlc9l2LhdnTs
-	z7vsBza1G/DxxuU2kmrVd8u3Nz7GoZXqYQxSiOzNNRAbkYVfzo09kUg+JCnGDCvYN2OUpzrE3rl
-	SL8JnrrQSI/Kl4HoqFvvK9nx5zFcJqMI1k/4XJ+Iuq7JuDF7+aEGW+p1n4/kzkoN4jW7gO0tNjy
-	SwVVzuFqjB/bOsEY9V3hOfP3b/bgvQxDnFXxSOM2dmeKp9GuJtd8rvfCA==
-X-Google-Smtp-Source: AGHT+IE+UIl5Z+Zv3YdukIMMEPj3XSnEdNDR30DgmIjSlt0D1Mxs/Sp/Et5ttrNPX7c675bRuwUX1A==
-X-Received: by 2002:a05:6000:470b:b0:386:37f5:99e7 with SMTP id ffacd0b85a97d-38a872f51a3mr10210276f8f.33.1736527174296;
-        Fri, 10 Jan 2025 08:39:34 -0800 (PST)
-Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4b81b1sm5029255f8f.66.2025.01.10.08.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2025 08:39:34 -0800 (PST)
-Date: Fri, 10 Jan 2025 17:39:32 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH v1 2/2] landlock: Constify get_mode_access()
-Message-ID: <20250110.672e9e7a7417@gnoack.org>
-References: <20250110153918.241810-1-mic@digikod.net>
- <20250110153918.241810-2-mic@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeTyoKJckcn1j18SB8FF/HRCUSvYcf8IHnEp/V/J0ocEKu2JNfvBxGu8ktPLWULWbt7r2p8pb0uPDbeQOOtoOpygLSpcSBkbL34NPo+8/Qwj47ikpjySUxtm6Qy8iFjWu2X5IAkHiV+KmodNK2A9eOBxZpQtFq7Bp9nqkzDZJpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5UR+WQT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD1CC4CED6;
+	Fri, 10 Jan 2025 16:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736527478;
+	bh=C4CeHm6Or5VLGEzPlFMQwU1Lqi8VzWhjclCv/3py67E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O5UR+WQTuOopW+m3Pi1zmwj3sDf93V+XjOFJYBM1RzPO3sDZ1K+ormfip92T4e79w
+	 U7XfSgY+NLYzXu3FSqu6NPO6Duv551jmp1bCI/QrpFZEE2pZI1sr9JEOmCb6BY1OnU
+	 ygd6hC3MnYQ2N+RhjQSfldq11cHroGlaZKiItHVNmIb3DkLT0NVgh6huf2W9+DLo9X
+	 YeINgKpATzcjR+uCpeX3HIxD3GxiQDjsZM7pKUDW6Vf7Go2Sgai6ua3WPKo0H4Ox5B
+	 AqV/p/rvC1rT0uQQGOw0QzXTSq+PszsSgUN9oJlsXQxouGCrMbf3PP8PksxH6qiYUq
+	 YoNvaeUovuyGw==
+Date: Fri, 10 Jan 2025 08:44:38 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
+	alison.schofield@intel.com, lina@asahilina.net,
+	zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+	npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, tytso@mit.edu, linmiaohe@huawei.com,
+	david@redhat.com, peterx@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com,
+	chenhuacai@kernel.org, kernel@xen0n.name, loongarch@lists.linux.dev
+Subject: Re: [PATCH v6 05/26] fs/dax: Create a common implementation to break
+ DAX layouts
+Message-ID: <20250110164438.GJ6156@frogsfrogsfrogs>
+References: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
+ <79936ac15c917f4004397027f648d4fc9c092424.1736488799.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250110153918.241810-2-mic@digikod.net>
+In-Reply-To: <79936ac15c917f4004397027f648d4fc9c092424.1736488799.git-series.apopple@nvidia.com>
 
-On Fri, Jan 10, 2025 at 04:39:14PM +0100, Mickaël Salaün wrote:
-> Use __attribute_const__ for get_mode_access().
+On Fri, Jan 10, 2025 at 05:00:33PM +1100, Alistair Popple wrote:
+> Prior to freeing a block file systems supporting FS DAX must check
+> that the associated pages are both unmapped from user-space and not
+> undergoing DMA or other access from eg. get_user_pages(). This is
+> achieved by unmapping the file range and scanning the FS DAX
+> page-cache to see if any pages within the mapping have an elevated
+> refcount.
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> This is done using two functions - dax_layout_busy_page_range() which
+> returns a page to wait for the refcount to become idle on. Rather than
+> open-code this introduce a common implementation to both unmap and
+> wait for the page to become idle.
+> 
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+
+So now that Dan Carpenter has complained, I guess I should look at
+this...
+
 > ---
->  security/landlock/fs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 7adb25150488..f81d0335b825 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -932,7 +932,7 @@ static int current_check_access_path(const struct path *const path,
->  	return check_access_path(dom, path, access_request);
+> Changes for v5:
+> 
+>  - Don't wait for idle pages on non-DAX mappings
+> 
+> Changes for v4:
+> 
+>  - Fixed some build breakage due to missing symbol exports reported by
+>    John Hubbard (thanks!).
+> ---
+>  fs/dax.c            | 33 +++++++++++++++++++++++++++++++++
+>  fs/ext4/inode.c     | 10 +---------
+>  fs/fuse/dax.c       | 27 +++------------------------
+>  fs/xfs/xfs_inode.c  | 23 +++++------------------
+>  fs/xfs/xfs_inode.h  |  2 +-
+>  include/linux/dax.h | 21 +++++++++++++++++++++
+>  mm/madvise.c        |  8 ++++----
+>  7 files changed, 68 insertions(+), 56 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index d010c10..9c3bd07 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -845,6 +845,39 @@ int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index)
+>  	return ret;
 >  }
 >  
-> -static access_mask_t get_mode_access(const umode_t mode)
-> +static __attribute_const__ access_mask_t get_mode_access(const umode_t mode)
->  {
->  	switch (mode & S_IFMT) {
->  	case S_IFLNK:
-> -- 
-> 2.47.1
-> 
+> +static int wait_page_idle(struct page *page,
+> +			void (cb)(struct inode *),
+> +			struct inode *inode)
+> +{
+> +	return ___wait_var_event(page, page_ref_count(page) == 1,
+> +				TASK_INTERRUPTIBLE, 0, 0, cb(inode));
+> +}
+> +
+> +/*
+> + * Unmaps the inode and waits for any DMA to complete prior to deleting the
+> + * DAX mapping entries for the range.
+> + */
+> +int dax_break_mapping(struct inode *inode, loff_t start, loff_t end,
+> +		void (cb)(struct inode *))
+> +{
+> +	struct page *page;
+> +	int error;
+> +
+> +	if (!dax_mapping(inode->i_mapping))
+> +		return 0;
+> +
+> +	do {
+> +		page = dax_layout_busy_page_range(inode->i_mapping, start, end);
+> +		if (!page)
+> +			break;
+> +
+> +		error = wait_page_idle(page, cb, inode);
+> +	} while (error == 0);
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+You didn't initialize error to 0, so it could be any value.  What if
+dax_layout_busy_page_range returns null the first time through the loop?
+
+> +
+> +	return error;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_break_mapping);
+> +
+>  /*
+>   * Invalidate DAX entry if it is clean.
+>   */
+
+<I'm no expert, skipping to xfs>
+
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 42ea203..295730a 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -2715,21 +2715,17 @@ xfs_mmaplock_two_inodes_and_break_dax_layout(
+>  	struct xfs_inode	*ip2)
+>  {
+>  	int			error;
+> -	bool			retry;
+>  	struct page		*page;
+>  
+>  	if (ip1->i_ino > ip2->i_ino)
+>  		swap(ip1, ip2);
+>  
+>  again:
+> -	retry = false;
+>  	/* Lock the first inode */
+>  	xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
+> -	error = xfs_break_dax_layouts(VFS_I(ip1), &retry);
+> -	if (error || retry) {
+> +	error = xfs_break_dax_layouts(VFS_I(ip1));
+> +	if (error) {
+>  		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
+> -		if (error == 0 && retry)
+> -			goto again;
+
+Hmm, so the retry loop has moved into xfs_break_dax_layouts, which means
+that we no longer cycle the MMAPLOCK.  Why was the lock cycling
+unnecessary?
+
+>  		return error;
+>  	}
+>  
+> @@ -2988,19 +2984,11 @@ xfs_wait_dax_page(
+>  
+>  int
+>  xfs_break_dax_layouts(
+> -	struct inode		*inode,
+> -	bool			*retry)
+> +	struct inode		*inode)
+>  {
+> -	struct page		*page;
+> -
+>  	xfs_assert_ilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL);
+>  
+> -	page = dax_layout_busy_page(inode->i_mapping);
+> -	if (!page)
+> -		return 0;
+> -
+> -	*retry = true;
+> -	return dax_wait_page_idle(page, xfs_wait_dax_page, inode);
+> +	return dax_break_mapping_inode(inode, xfs_wait_dax_page);
+>  }
+>  
+>  int
+> @@ -3018,8 +3006,7 @@ xfs_break_layouts(
+>  		retry = false;
+>  		switch (reason) {
+>  		case BREAK_UNMAP:
+> -			error = xfs_break_dax_layouts(inode, &retry);
+> -			if (error || retry)
+> +			if (xfs_break_dax_layouts(inode))
+
+dax_break_mapping can return -ERESTARTSYS, right?  So doesn't this need
+to be:
+			error = xfs_break_dax_layouts(inode);
+			if (error)
+				break;
+
+Hm?
+
+--D
+
+>  				break;
+>  			fallthrough;
+>  		case BREAK_WRITE:
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 1648dc5..c4f03f6 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -593,7 +593,7 @@ xfs_itruncate_extents(
+>  	return xfs_itruncate_extents_flags(tpp, ip, whichfork, new_size, 0);
+>  }
+>  
+> -int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
+> +int	xfs_break_dax_layouts(struct inode *inode);
+>  int	xfs_break_layouts(struct inode *inode, uint *iolock,
+>  		enum layout_break_reason reason);
+>  
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 9b1ce98..f6583d3 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -228,6 +228,20 @@ static inline void dax_read_unlock(int id)
+>  {
+>  }
+>  #endif /* CONFIG_DAX */
+> +
+> +#if !IS_ENABLED(CONFIG_FS_DAX)
+> +static inline int __must_check dax_break_mapping(struct inode *inode,
+> +			    loff_t start, loff_t end, void (cb)(struct inode *))
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void dax_break_mapping_uninterruptible(struct inode *inode,
+> +						void (cb)(struct inode *))
+> +{
+> +}
+> +#endif
+> +
+>  bool dax_alive(struct dax_device *dax_dev);
+>  void *dax_get_private(struct dax_device *dax_dev);
+>  long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+> @@ -251,6 +265,13 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
+>  int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
+>  int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
+>  				      pgoff_t index);
+> +int __must_check dax_break_mapping(struct inode *inode, loff_t start,
+> +				loff_t end, void (cb)(struct inode *));
+> +static inline int __must_check dax_break_mapping_inode(struct inode *inode,
+> +						void (cb)(struct inode *))
+> +{
+> +	return dax_break_mapping(inode, 0, LLONG_MAX, cb);
+> +}
+>  int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+>  				  struct inode *dest, loff_t destoff,
+>  				  loff_t len, bool *is_same,
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 49f3a75..1f4c99e 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1063,7 +1063,7 @@ static int guard_install_pud_entry(pud_t *pud, unsigned long addr,
+>  	pud_t pudval = pudp_get(pud);
+>  
+>  	/* If huge return >0 so we abort the operation + zap. */
+> -	return pud_trans_huge(pudval) || pud_devmap(pudval);
+> +	return pud_trans_huge(pudval);
+>  }
+>  
+>  static int guard_install_pmd_entry(pmd_t *pmd, unsigned long addr,
+> @@ -1072,7 +1072,7 @@ static int guard_install_pmd_entry(pmd_t *pmd, unsigned long addr,
+>  	pmd_t pmdval = pmdp_get(pmd);
+>  
+>  	/* If huge return >0 so we abort the operation + zap. */
+> -	return pmd_trans_huge(pmdval) || pmd_devmap(pmdval);
+> +	return pmd_trans_huge(pmdval);
+>  }
+>  
+>  static int guard_install_pte_entry(pte_t *pte, unsigned long addr,
+> @@ -1183,7 +1183,7 @@ static int guard_remove_pud_entry(pud_t *pud, unsigned long addr,
+>  	pud_t pudval = pudp_get(pud);
+>  
+>  	/* If huge, cannot have guard pages present, so no-op - skip. */
+> -	if (pud_trans_huge(pudval) || pud_devmap(pudval))
+> +	if (pud_trans_huge(pudval))
+>  		walk->action = ACTION_CONTINUE;
+>  
+>  	return 0;
+> @@ -1195,7 +1195,7 @@ static int guard_remove_pmd_entry(pmd_t *pmd, unsigned long addr,
+>  	pmd_t pmdval = pmdp_get(pmd);
+>  
+>  	/* If huge, cannot have guard pages present, so no-op - skip. */
+> -	if (pmd_trans_huge(pmdval) || pmd_devmap(pmdval))
+> +	if (pmd_trans_huge(pmdval))
+>  		walk->action = ACTION_CONTINUE;
+>  
+>  	return 0;
+> -- 
+> git-series 0.9.1
+> 
 
