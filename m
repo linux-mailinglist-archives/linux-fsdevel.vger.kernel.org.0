@@ -1,432 +1,300 @@
-Return-Path: <linux-fsdevel+bounces-38917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F53A09CCE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 22:08:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF3BA09CD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 22:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86A416886F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 21:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650D6188C30E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 21:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD48208983;
-	Fri, 10 Jan 2025 21:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205AF20896C;
+	Fri, 10 Jan 2025 21:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WAzRjjeS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VeCFhKEx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2088.outbound.protection.outlook.com [40.107.237.88])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AB62080F2;
-	Fri, 10 Jan 2025 21:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736543296; cv=fail; b=FJ59nLDdPRJbpB6u8MHY6oWdnqAFtEZ8qfvJ7eXa72Z1fJHfaRELiFlzSRe6Jya4sXKAmC0Mbnv16aXwqgQ9p5VpVEsmfv5MiaHNACGE09VRe+a0Wdtmp4QYi7lzqK0whX/CpjhePfzykrbL2JwT1CfKU/dGdCvIlYrXuqykEj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736543296; c=relaxed/simple;
-	bh=DGq12vO80zkMD+7Xs2jCVqt4wUdnbLAExZv5791ObLM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=L6x3TSSLgnWOVxRQ5vlRm1yIGucho1iHhMVfZyT4GvJ0tQeik2L4lGu9UQU+QwApgQpUDzhs42aaokx9RS6elqVVPZ7Wzkin4L1AsQ20HmUUYWskVuHFa9quNjjhVTokWKWca1/Kt86wnHr9377SZPB4ViBBIHlUnmVc5LuYRX0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WAzRjjeS; arc=fail smtp.client-ip=40.107.237.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MDzx+a/fqoHgELri40DtecZb5+dUcjiCAo/r1wcxESp7IY9YWxgQUB8JjrRpttRqCDAEQmYXia/n+pxrVUQCcZx3JO9cIKx5BQ5jS6SmKp3s1ATCOn2PwnRFe+ETQHqxN6GzqFvYHk7nsRgdynBP8+1zIBMI0MyNEEhed0G41M6Qkv1fiyqKReDxNHM5AsAAlwbWvzyJomx/9nizXtlU9HKVbA8kp+UUAdFa3agrmgSVyxc4j+9TuPUm0iUEAmWgR7w4MWCdnIbgBNuBZ//30BuWzCNudWAYSUG4OOP5mx2DgQGr2BXzse6Y84cLLaALoGIG4L8cygimT+wuXeiA5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uSfg84KfS2/DuFe8JuJZo5twuYnNeLPGmVj+vl9Es2c=;
- b=YXzQBXWsJJ5X2toqZT3CoJHo6OWELaAlj9OhBha43EGoF5y6OQf9dG3gG2n9Qrt7RV1e8v4M2wzzZAJFvEkOSc/b+sto0K73IW9bAsvCnEDsl6ebJW0veSpKNh+3TyaTxK5uN+cPmbmoq7yRGZ1J9T/Ob+HjLdbexWkb7ywmeiwi9gHuj05iTzUmt4c0KTNdX3mA7rMoJ7eGl14Eqdgz2aWCl7GshH4d6HkcUJx8ExZipQZr3g2DlprUtPbrJOvO73lbs77mlhuMszk5LNi1XZq4EgNrGPlo+UF5HHP7N52QOe4+3hk4ulykGe+1Fu+2UoEf+gQnHcn+MYuKsE3KfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uSfg84KfS2/DuFe8JuJZo5twuYnNeLPGmVj+vl9Es2c=;
- b=WAzRjjeS1kIAP0E5p16pH5QbLhJfbtxSYOlsW4z5lH6NyqDTB17LNvxRwmtF7Rp5lEVnOTtyugRvmCNJj57qLoCswGMM5Sh93BY4tZIrfFxMqnvm5vlmj2cXNpMvCxxN7A1ey/xa28F/GqWn5irkQgBZdSjxMqWyUX6/2YmNkuc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SA1PR12MB5672.namprd12.prod.outlook.com (2603:10b6:806:23c::5)
- by DM4PR12MB5963.namprd12.prod.outlook.com (2603:10b6:8:6a::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8335.10; Fri, 10 Jan 2025 21:08:12 +0000
-Received: from SA1PR12MB5672.namprd12.prod.outlook.com
- ([fe80::60f:5e8d:f0da:4eca]) by SA1PR12MB5672.namprd12.prod.outlook.com
- ([fe80::60f:5e8d:f0da:4eca%4]) with mapi id 15.20.8335.010; Fri, 10 Jan 2025
- 21:08:12 +0000
-Message-ID: <7cf9f0fd-279e-4e4d-99ac-966a752090a2@amd.com>
-Date: Fri, 10 Jan 2025 15:08:08 -0600
-User-Agent: Mozilla Thunderbird
-Reply-To: michael.day@amd.com
-Subject: Re: [RFC PATCH 2/2] KVM: guest_memfd: use filemap_grab_folios in
- write
-To: Nikita Kalyazin <kalyazin@amazon.com>, willy@infradead.org,
- pbonzini@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: david@redhat.com, jthoughton@google.com, michael.roth@amd.com,
- ackerleytng@google.com, graf@amazon.de, jgowans@amazon.com,
- roypat@amazon.co.uk, derekmn@amazon.com, nsaenz@amazon.es,
- xmarcalx@amazon.com
-References: <20250110154659.95464-1-kalyazin@amazon.com>
- <20250110154659.95464-3-kalyazin@amazon.com>
-From: Mike Day <michael.day@amd.com>
-Content-Language: en-US
-In-Reply-To: <20250110154659.95464-3-kalyazin@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0045.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2d0::22) To SA1PR12MB5672.namprd12.prod.outlook.com
- (2603:10b6:806:23c::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1852080DA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 21:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736543608; cv=none; b=Ewtb8TfyGrCPTUcPwkMl+VNhoemcQbaEC4cFKlxo/gNDfZP1O6uavWjIkTf7lKJsTevuPwgMjSUqcHKaHK0i24kX5DPzB9UtoH0dJ4Tz2rdm0M0b61Ehyfw7lCjSCr/suQeMQJ6H/GW7PhogQCi+mvt8GxUQi1FDj4LgPqtwrC4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736543608; c=relaxed/simple;
+	bh=FVI0/6qpry5sKriVjmJQijuiGqC1NEAjPMq4ldsarDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UPsbcAHvSertTaicg8Ft7YoEy0VMPB7H5gqstSw70NnytX77/ZRd+Y5I/02aHv4aO8dW4hRsCXYlbIsJcdwAJ+9aiyZd9ogmvM/hndijxDNN01lIfHtNwy3TvCZujkDkCEuOUuhbdBX8fc/BkKXs5g02kYE3NrcEsyqSTneVHHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VeCFhKEx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736543605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EeIUoIjZUFNtiNRnVwaW4fp2T66i1qr7WJzeNybd0b4=;
+	b=VeCFhKExHD5bB4TYdjWE9+VXm/v1jaQuabSgy7vJr3ZXlPeHh28I5a0DhisDAUgiNWJFDV
+	XjYw6oHY6Ai1xE6v0f+vDPDxhDXKwF8hIviXL4tu56l4vFsJ1Abolm6nqUM/6/T7DXj5x+
+	bifz/cbWUsLdpaJqXY/ZOQ725uq7lbE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-JaKQLOOjMHqvVjKsdFQ7Pg-1; Fri, 10 Jan 2025 16:13:22 -0500
+X-MC-Unique: JaKQLOOjMHqvVjKsdFQ7Pg-1
+X-Mimecast-MFC-AGG-ID: JaKQLOOjMHqvVjKsdFQ7Pg
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385ed79291eso1705863f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 13:13:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736543601; x=1737148401;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EeIUoIjZUFNtiNRnVwaW4fp2T66i1qr7WJzeNybd0b4=;
+        b=KlVZ5yXBDq5mmqDuAmzGDWH9sSrq9MWNxL/HotNP2rIokMnJtfF1XVubeHaSs8+f+u
+         RjwDnonzKFeHk4E1aRqmpBeYzVid/2+m+xh6lja5B2R/yn8jEScoQjUdR8dbiQdIKEcU
+         S76hj9VSkI1o511G04a1EOeUADm32vT9O4rg0GmuC7d/TcgWxNP/YUPGKPJGwvKjED1x
+         h7gWvCs43Jf09UYLTOXf+NVzJP8M1eswDtCQmNsckGxxrflrAtJpSy0UqjPHnKje4orS
+         7VOGL70aZdBjv+2lzVEt5KT+BzPZ84gjUypLfnBkjm1cIOKJGIlP1B4utr3R2TejDBBy
+         sWpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXunY/UFOCR/4efevON3/iIRbAHniPfZ9SxNzAv+frmNcLD8FRliqvVucjStdKo3uO5W1EsaaJcXSs/aAfT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxCrxANqL/asEvjXzi3+X3OZA2xDZoWjPrcPae8S9SZMSCQ6q0
+	TCg0Yj9MQyNpVML6OEthliOTjUkyBSCdf5IcB3zSI/bMR/hVebU/ulaBJ0Rn2ViQTcvTVORz9Ec
+	kPBjCdZgwjaRJLwNZN0TBX0fkXx677q1ccFTKxXKbRVwVn5fI8qGmYWS4Fv2USus=
+X-Gm-Gg: ASbGnct2HUCxdVOFVhUJUHjked3/iSgREbwoV3R2L+tLHFq0YmIVDMaz4lTa8GdjQwu
+	1TvtvH9xgUID/F2I1Wap2qQo9u/Par9Kt5F+KTt6vqRvJODVYjJSEtbKG6naCZu/qq/YDDyf31w
+	YhmMFCIbYurpNZjPoNdx7t4dZVCHMPmMhnpCZjDjTOJdhuNXMnF6IPorVSMGtdaTcwlYIu+1APv
+	8sl2bpd50moGdPp9WRKn13lGNu+HM37zxGaTdQxcYLWepPB6TkFICISogk5dcnBf6um0zl5mNi4
+	sTkTk7FZYBWzZn/XL+8G+ODl735CkoctpEoMoYouDXSPjE8komwtgP5okVKwu+dA/qvh+avNE1q
+	hWcD5XQ22
+X-Received: by 2002:a5d:6d04:0:b0:385:f07a:f4cb with SMTP id ffacd0b85a97d-38a8b0d3166mr6945470f8f.8.1736543600965;
+        Fri, 10 Jan 2025 13:13:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG5R47FaOgB1kt8eBsOyKxn/mdF0lH6hJkFFQSVsNWL9a3o0cjUcVhjjK+cWeMmdXpZSiAiEQ==
+X-Received: by 2002:a5d:6d04:0:b0:385:f07a:f4cb with SMTP id ffacd0b85a97d-38a8b0d3166mr6945458f8f.8.1736543600591;
+        Fri, 10 Jan 2025 13:13:20 -0800 (PST)
+Received: from ?IPV6:2003:cb:c708:e100:4f41:ff29:a59f:8c7a? (p200300cbc708e1004f41ff29a59f8c7a.dip0.t-ipconnect.de. [2003:cb:c708:e100:4f41:ff29:a59f:8c7a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e37d01dsm5427873f8f.9.2025.01.10.13.13.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2025 13:13:19 -0800 (PST)
+Message-ID: <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com>
+Date: Fri, 10 Jan 2025 22:13:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB5672:EE_|DM4PR12MB5963:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c2d9731-3f37-4fa6-fed3-08dd31bae431
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NUFyaGhMM0ZMMUNmS2drQjhJWW5MSGQ0WDZ6QitZS2NZUVVrL2tXbHYydEcy?=
- =?utf-8?B?bUZBS3JlRDZhbUtmay9TRWs5dk9TS29FMmVPZjE4UlJBV0gzQ3owdnRMaEQ4?=
- =?utf-8?B?ZHJydTlSQ2VacGJHclJQYnU2K2hVKzJwK29pMXlsUzFMbjJaUDMzTFk0WVkx?=
- =?utf-8?B?aG1NTlIveHRaVEh0dDV3ODJzQm5lYUI2eEt6OEQzSVA4QUUwQVcrblREYVpl?=
- =?utf-8?B?T1g3Q1dPTWxCVmlKT3VIYXV0OEI3em9zd242TXR4aTg4bGpXaGFDWFFaaUVu?=
- =?utf-8?B?WFpYWFY0VUVhUDZ6cUgrckJWYXZUZzYzRS9OdnRzTGl0YVlMT0FFcjlPd3dB?=
- =?utf-8?B?a3B4K1RrMjB2K0JPSjM5ZnZNTkNSemNhUnNTb2w4b0JkdXAzak1RWHZjdTVj?=
- =?utf-8?B?RHZtYXZNT21teXZPZ0ZjVnc0MHM3WE01SUxnRUhLYkJndE9zRHJVTmlGT05N?=
- =?utf-8?B?QUxOMVRndVJaUXJLaHNUNXNpbkgxWUp6T0ZkM3J3VUtnL29MZ1JTS05xMktj?=
- =?utf-8?B?M1dWMDdpdUtEaE9hT1Y1d2FtZlUwbVV1ODdoTjNHT0N1Wkk2V1haWjFocWRZ?=
- =?utf-8?B?UnFnYzdYUGRkVG5qLzBiZ0Z2dHEzU21hMEpNbEdXMXdqNXh3dHZ0c1dQTGs1?=
- =?utf-8?B?eHdkaS83TkNjUklyYVdnTnRsTTBkaE9MNEk2d3JXUXVQdUF1RmJmZjRWcmd4?=
- =?utf-8?B?Z0VnNFE2a3V6YzdXNkxpeUo3RExERUZRSHRmUVdwdXlmZkFZWWlBZ2NhdXZZ?=
- =?utf-8?B?cTVmYlEveUEwcG1YV0pkZHc0d0lya3BzVXMra3dDZ3NZL1M2N2g4Mno4elUy?=
- =?utf-8?B?N3JPZklqYWF2em9NZWRjL2pNNzVDWXlBRnZZWWcrYlloeCtEbTk4a1ZoVGhI?=
- =?utf-8?B?RFZaK0UrUnlPQ1hnem1nWS9zVlAwd2t4a09Vb1RVK2Q4aGtFSEx6aDExTjFH?=
- =?utf-8?B?SlNNWEtQM3Q0RjFjd21DSGIweld0Q1Nsek40cjdURGNGejc0UDNaMXNYK1ZT?=
- =?utf-8?B?cFRVRklscUtCTi9JVzJNV05uRGxtUCtTR0VuMlNLVWRod0k0Wk4yb1poK2VO?=
- =?utf-8?B?OW96OWlUZkZPRFVaYUEyYjJlai9OTTZuREJZNnRzYXgxTk5McU9kbDR0YllK?=
- =?utf-8?B?RERzSjczK2lhdDU5dEtFaDl1aU0zRmN3dDJKUHljU2o4TnZPV1F3K3ZVSS80?=
- =?utf-8?B?ajB0Rmc0b28zcWo0SldkT1p6Slc5SkZZUUsvMkdxVUNvNDZRRXhTOXIvd2xu?=
- =?utf-8?B?cG42cUtJUFUwUFBKakFBakE5QUdGcy9RQ3puc1BHeGZIamVxcFNHZFZ4SkNr?=
- =?utf-8?B?OEl2NTVlc2FMVnlRM1VxbGlNSWFHOTBWY29yZUU1eXduNGdmWnBPa1VBZkxC?=
- =?utf-8?B?L0NOQmhQTXpObEM2Y0dxWnVCYTRxbCtUMDRmOTVSR3V5NzI2NWRWRmdXWFFM?=
- =?utf-8?B?YWM4enFBajhjQ29kSmIrS0dnL3NhOUMwald5Q0tublUxMXNpSDJKU0p3RmJu?=
- =?utf-8?B?SGZ4U25iODdqTW9QSDlkNWRNZ0QzRXZtTmhldTZoZ0kvVC9aS1FHR2tCVnJZ?=
- =?utf-8?B?UDVLVTYxNkhQeUhFZFBtMklUK3dtaVFVSytwek1VZ2tYTndVZDU5YUhKb051?=
- =?utf-8?B?T2VvenRWTUYwNGJDeFF1S1ZiUFkxWVlLQllHbEN3b3E5cHZJNk4xSjVpT2Jo?=
- =?utf-8?B?WHdoSGdNQThJSWg3ekdKWkw1S096TzQwQUcrbVlwWEZpQnpMRUhmb2xHKzB3?=
- =?utf-8?B?NDRsTE5UbVlVdE04bldaa3R1WEVjbkNJUUZ5L28waEVkcWZGb1AvRTg0eU14?=
- =?utf-8?B?RzBDejJOcTRsZGV5cE5lY2dEa25UYWlLNXcrSmxTNUc1a1pqZXkxWHRXVllK?=
- =?utf-8?Q?0YVSSIfDUdqHe?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB5672.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UVoxck1lbWx1NVdhOTg0VTU0UGU1cnVBeVdTUDFFUUxBL1VRZVloK1Q5MUhu?=
- =?utf-8?B?VzZTQlZZRUxvc0lVcEVrdUZXbW9vY1hqK2lXazZ5L0VaVzdaY3BIS2VYUGZn?=
- =?utf-8?B?Y0xvSi9od2NVQmUvT3VJVXVzelEvYWszVHJiS1h5RmJrYlZRZFJvbitNS0ow?=
- =?utf-8?B?OTBmcGZzaHFFNi82cmV4czhmYmVkdlVidHR2enpBajlYa2xjLzdTbUFsUUJ3?=
- =?utf-8?B?YXJTTXRoVjZLbFd3SUhrbGlTeXFydDF6ei8raHlJU2NDaERnMHBla0pwV0Zx?=
- =?utf-8?B?K1pQWTFEbGp2K0I5YXNnSXNnTUU0Ym9SZWZPYlNQY0FldCs0eEpJMytVUWV0?=
- =?utf-8?B?UzN4MmhRMWxaRWNtNk9RSGZyZEZqeDgzWlU1V0ZIc3h0ZkpOQlBwT3NZVWZJ?=
- =?utf-8?B?WHFJMVV3QkdKaW9vT1pwWWkrV2JKQUNxc0N1UDdUVS9HUlMvS3A1TEF6TUxO?=
- =?utf-8?B?ZFAvV25JclcraHRrb3dZUWxVakNmVXFEaVNNbWw4UEwvTit5dms2dmRwRlFF?=
- =?utf-8?B?RGxGaktkWGlRNld0WXVmSFJKWWZKakdybFBod3NET0Z4Sjgwb3c1Z3R6Njdl?=
- =?utf-8?B?NXNGNUZac0Y2b2t0OWMrMTR1NmpWWWQwemlFelA4S1gxcEM0azlsM28rNlA2?=
- =?utf-8?B?ck8rS2ZOU241TXh6WEkyT0I3d3dzamZDcElnUFdvY0ZCSDVUTEZFY0Q0MGlI?=
- =?utf-8?B?U1R2NHlLZFQvN1FHQXE5RDY0RUFUUmZ6bVByU21zY2lrRFZVS1I4UFpCNGpT?=
- =?utf-8?B?SmoxTXBqTmdYaitWTEJPeU9ocmhVVmw3UEM4eHlXZXQycVlFQzNLSFQwanY4?=
- =?utf-8?B?L2JrMlJwdHlhOS9aRGZobEhTdHF1dHRVWngzSGxBQjJudlRIanZUdzdXdDhz?=
- =?utf-8?B?WHExYTBSdDZMRlI2d1lCcWJSaU9tZWZMSGlUOFpGQVhiRC9wK1lCSDRrcTV6?=
- =?utf-8?B?VmxqMklnZi9OQmxkY1k4ZjdCNU5FaGJJQVpwblBhc2tuQnlTbldxZ0Y5VWRW?=
- =?utf-8?B?dUNORXZCYVBZMTVaeHNZTFgrWE5lbHlCenMrdUc1c0dXbVFNTUVFeDFVdytW?=
- =?utf-8?B?eUtzaHozNThQcGc0WkVKb2NjS2F5bE5UUWcxT2lVNmlMYzMybERTWGZjaGEy?=
- =?utf-8?B?WFZaZ2tvTVgyYmpVUithVmxHQVk1VWtBV3h2Y3NVakJ2K1JsMmtnSktmMXRR?=
- =?utf-8?B?aUp4U0c4UGtOL1NoNUZFcXF0UU03YzFMWDdUOW13V0VmRm5TUnF1UUV5dGlN?=
- =?utf-8?B?ejJKa3pmdTBPOVduS3llTGNTYlUxb0l4TzVYbEYyWVYzQ01XdUNQLytVWGg2?=
- =?utf-8?B?aENxOGNTbTVQdkFWN3RoNGNiNk1ua0U1enhoN1lUbCtLd0NXSW4xUytLWWdm?=
- =?utf-8?B?cXMrUE93WUZPd29zR3JWRUFDN29Mb2hpYUFyTVZpZWJFM0FWdmFkbFdlUkoz?=
- =?utf-8?B?UG9aKzFoUVM1NHozTEdoaTRlMU1NdkdqQzR2Y3oxMlZWVzZKcjdlejlQZnM3?=
- =?utf-8?B?VzBodjBsa0lhQWZGMTQ4V2hTQXgvZkdJTHJna2pWK0o2WmhkTXBGRmsrMExq?=
- =?utf-8?B?cEJINnc4cGRCMnlIdjdlZGtGRXNaOWluYWVPUkUzQW02OUdYUGVrL1N6ajZy?=
- =?utf-8?B?VmMrS2tIZ043TzNzR2dVNEVsRjhYcHJGTDVsMGIrVFVXZnlIdHZDTUJBQzZk?=
- =?utf-8?B?WStWaDJNaGQrcGRqS1AwTGNrMWlyU2pQaHpEOTVDaFNSY0lDSzhsako4UHgx?=
- =?utf-8?B?a3psWjFYOEQ3YlZveVArbW5NK0YzVURHNHd1Qlg1UDhvd29PSDB3S3lZNzdq?=
- =?utf-8?B?MnJxUjAzeXRTZmxkY0hlSUVYcE5QZ24xeGFNaFFZUkpuNkgyaW5pZmdSTGk3?=
- =?utf-8?B?T3ROUDhNZGFOMGt4RU9haVJ6SFo3Sm84Szd4d3crYXRCZzI0R1RHNkVjcmoz?=
- =?utf-8?B?L2I1Y2VOWEN5ejhOcWdQSHF5OEhxU203eFhFZzJtYk1aL3VtZGk0Zitzc291?=
- =?utf-8?B?QXlUaUFIME4zZHMvMU4zRmh0RmNNdEtpREpqY1dIRUVXS21VVUVMcG9jbWVG?=
- =?utf-8?B?VmFCSXVpZ0ZxUjVRalhINmMxaXQ4eFV6RmJHaXY2WHBTTU5ZSzU3S2VEWVQ4?=
- =?utf-8?Q?/FtOmlTRqm8wS7skVfiBmfRxF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c2d9731-3f37-4fa6-fed3-08dd31bae431
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB5672.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 21:08:11.9798
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UWyiRRRN7VRGr8g52A2dguFz3mb9QmRYHem129aFpJZRKh7HFlnv9QK27ys6/IXEvcx+4DwB4OeakPSkgnTBlw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5963
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Jeff Layton <jlayton@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong
+ <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org,
+ jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
+ Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+References: <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+ <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
+ <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
+ <446704ab-434e-45ac-a062-45fef78815e4@redhat.com>
+ <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+ <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+ <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
+ <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+ <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+ <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
+ <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
+ <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com>
+ <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 1/10/25 09:46, Nikita Kalyazin wrote:
-> The write syscall on guest_memfd makes use of filemap_grab_folios to
-> grab folios in batches.  This speeds up population by 8.3% due to the
-> reduction in locking and tree walking when adding folios to the
-> pagecache.
+On 10.01.25 21:28, Jeff Layton wrote:
+> On Thu, 2025-01-09 at 12:22 +0100, David Hildenbrand wrote:
+>> On 07.01.25 19:07, Shakeel Butt wrote:
+>>> On Tue, Jan 07, 2025 at 09:34:49AM +0100, David Hildenbrand wrote:
+>>>> On 06.01.25 19:17, Shakeel Butt wrote:
+>>>>> On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
+>>>>>> On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
+>>>>>>> In any case, having movable pages be turned unmovable due to persistent
+>>>>>>> writaback is something that must be fixed, not worked around. Likely a
+>>>>>>> good topic for LSF/MM.
+>>>>>>
+>>>>>> Yes, this seems a good cross fs-mm topic.
+>>>>>>
+>>>>>> So the issue discussed here is that movable pages used for fuse
+>>>>>> page-cache cause a problems when memory needs to be compacted. The
+>>>>>> problem is either that
+>>>>>>
+>>>>>>     - the page is skipped, leaving the physical memory block unmovable
+>>>>>>
+>>>>>>     - the compaction is blocked for an unbounded time
+>>>>>>
+>>>>>> While the new AS_WRITEBACK_INDETERMINATE could potentially make things
+>>>>>> worse, the same thing happens on readahead, since the new page can be
+>>>>>> locked for an indeterminate amount of time, which can also block
+>>>>>> compaction, right?
+>>>>
+>>>> Yes, as memory hotplug + virtio-mem maintainer my bigger concern is these
+>>>> pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there *must not be
+>>>> unmovable pages ever*. Not triggered by an untrusted source, not triggered
+>>>> by an trusted source.
+>>>>
+>>>> It's a violation of core-mm principles.
+>>>
+>>> The "must not be unmovable pages ever" is a very strong statement and we
+>>> are violating it today and will keep violating it in future. Any
+>>> page/folio under lock or writeback or have reference taken or have been
+>>> isolated from their LRU is unmovable (most of the time for small period
+>>> of time).
+>>
+>> ^ this: "small period of time" is what I meant.
+>>
+>> Most of these things are known to not be problematic: retrying a couple
+>> of times makes it work, that's why migration keeps retrying.
+>>
+>> Again, as an example, we allow short-term O_DIRECT but disallow
+>> long-term page pinning. I think there were concerns at some point if
+>> O_DIRECT might also be problematic (I/O might take a while), but so far
+>> it was not a problem in practice that would make CMA allocations easily
+>> fail.
+>>
+>> vmsplice() is a known problem, because it behaves like O_DIRECT but
+>> actually triggers long-term pinning; IIRC David Howells has this on his
+>> todo list to fix. [I recall that seccomp disallows vmsplice by default
+>> right now]
+>>
+>> These operations are being done all over the place in kernel.
+>>> Miklos gave an example of readahead.
+>>
+>> I assume you mean "unmovable for a short time", correct, or can you
+>> point me at that specific example; I think I missed that.
+>>
+>>> The per-CPU LRU caches are another
+>>> case where folios can get stuck for long period of time.
+>>
+>> Which is why memory offlining disables the lru cache. See
+>> lru_cache_disable(). Other users that care about that drain the LRU on
+>> all cpus.
+>>
+>>> Reclaim and
+>>> compaction can isolate a lot of folios that they need to have
+>>> too_many_isolated() checks. So, "must not be unmovable pages ever" is
+>>> impractical.
+>>
+>> "must only be short-term unmovable", better?
+>>
 > 
-> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
-> ---
->   virt/kvm/guest_memfd.c | 176 +++++++++++++++++++++++++++++++++--------
->   1 file changed, 143 insertions(+), 33 deletions(-)
+> Still a little ambiguous.
 > 
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index e80566ef56e9..ccfadc3a7389 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -102,17 +102,134 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
->   	return filemap_grab_folio(inode->i_mapping, index);
->   }
->   
-> +/*
-> + * Returns locked folios on success.  The caller is responsible for
-> + * setting the up-to-date flag before the memory is mapped into the guest.
-> + * There is no backing storage for the memory, so the folios will remain
-> + * up-to-date until they're removed.
-> + *
-> + * Ignore accessed, referenced, and dirty flags.  The memory is
-> + * unevictable and there is no storage to write back to.
-> + */
-> +static int kvm_gmem_get_folios(struct inode *inode, pgoff_t index,
-> +			       struct folio **folios, int num)
-> +{
-> +	return filemap_grab_folios(inode->i_mapping, index, folios, num);
-> +}
-> +
->   #if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM) && !defined(CONFIG_KVM_AMD_SEV)
-> +static int kvm_kmem_gmem_write_inner(struct inode *inode, pgoff_t index,
-> +				     const void __user *buf,
-> +                                     struct folio **folios, int num)
-> +{
-> +	int ret, i, num_grabbed, num_written;
-> +
-> +	num_grabbed = kvm_gmem_get_folios(inode, index, folios, num);
-> +	if (num_grabbed < 0)
-> +		return num_grabbed;
-> +
-> +	for (i = 0; i < num_grabbed; i++) {
-> +		struct folio *folio = folios[i];
-> +		void *vaddr;
-> +
-> +		if (folio_test_hwpoison(folio)) {
-> +			folio_unlock(folio);
-> +			folio_put(folio);
-> +			ret = -EFAULT;
-> +			break;
-> +		}
-> +
-> +		if (folio_test_uptodate(folio)) {
-> +			folio_unlock(folio);
-> +			folio_put(folio);
-> +			ret = -ENOSPC;
-> +			break;
-> +		}
-> +
-> +		folio_unlock(folio);
-> +
-> +		vaddr = kmap_local_folio(folio, 0);
-> +		ret = copy_from_user(vaddr, buf + (i << PAGE_SHIFT), PAGE_SIZE);
-> +		if (ret)
-> +			ret = -EINVAL;
-> +		kunmap_local(vaddr);
-> +
-> +		if (ret) {
-> +			folio_put(folio);
-> +			break;
-> +		} else {
-> +			kvm_gmem_mark_prepared(folio);
-> +			folio_put(folio);
-> +		}
-> +	}
-> +
-> +	num_written = i;
-> +
-> +	for (i = num_written; i < num_grabbed; i++) {
-> +		folio_unlock(folios[i]);
-> +		folio_put(folios[i]);
-> +	}
-> +
-> +	return num_written ?: ret;
-> +}
-> +
-> +static struct folio *kvm_kmem_gmem_write_folio(struct inode *inode, pgoff_t index,
-> +					       const char __user *buf)
+> How short is "short-term"? Are we talking milliseconds or minutes?
+
+Usually a couple of seconds, max. For memory offlining, slightly longer 
+times are acceptable; other things (in particular compaction or CMA 
+allocations) will give up much faster.
+
 > 
+> Imposing a hard timeout on writeback requests to unprivileged FUSE
+> servers might give us a better guarantee of forward-progress, but it
+> would probably have to be on the order of at least a minute or so to be
+> workable.
 
-This could probably be rewritten as:
+Yes, and that might already be a bit too much, especially if stuck on 
+waiting for folio writeback ... so ideally we could find a way to 
+migrate these folios that are under writeback and it's not your ordinary 
+disk driver that responds rather quickly.
 
-	struct folio *p_folio;
-	int ret;
+Right now we do it via these temp pages, and I can see how that's 
+undesirable.
 
-	ret = kvm_kmem_gmem_write_inner(inode, index, buf, &p_folio, 1);
-	
-	if (ret == 1)
-		return p_folio;
-	else
-		return ERR_PTR(ret);
+For NFS etc. we probably never ran into this, because it's all used in 
+fairly well managed environments and, well, I assume NFS easily outdates 
+CMA and ZONE_MOVABLE :)
 
-Would remove a few lines of duplicated code and use only one prototype.
+ > >>>
+>>> The point is that, yes we should aim to improve things but in iterations
+>>> and "must not be unmovable pages ever" is not something we can achieve
+>>> in one step.
+>>
+>> I agree with the "improve things in iterations", but as
+>> AS_WRITEBACK_INDETERMINATE has the FOLL_LONGTERM smell to it, I think we
+>> are making things worse.
+>>
+>> And as this discussion has been going on for too long, to summarize my
+>> point: there exist conditions where pages are short-term unmovable, and
+>> possibly some to be fixed that turn pages long-term unmovable (e.g.,
+>> vmsplice); that does not mean that we can freely add new conditions that
+>> turn movable pages unmovable long-term or even forever.
+>>
+>> Again, this might be a good LSF/MM topic. If I would have the capacity I
+>> would suggest a topic around which things are know to cause pages to be
+>> short-term or long-term unmovable/unsplittable, and which can be
+>> handled, which not. Maybe I'll find the time to propose that as a topic.
+>>
+> 
+> 
+> This does sound like great LSF/MM fodder! I predict that this session
+> will run long! ;)
 
-Mike
+Heh, fully agreed! :)
 
-+{
-> +	struct folio *folio;
-> +	void *vaddr;
-> +	int ret = 0;
-> +
-> +	folio = kvm_gmem_get_folio(inode, index);
-> +	if (IS_ERR(folio))
-> +		return ERR_PTR(-EFAULT);
-> +
-> +	if (folio_test_hwpoison(folio)) {
-> +		ret = -EFAULT;
-> +		goto out_unlock_put;
-> +	}
-> +
-> +	if (folio_test_uptodate(folio)) {
-> +		ret = -ENOSPC;
-> +		goto out_unlock_put;
-> +	}
-> +
-> +	folio_unlock(folio);
-> +
-> +	vaddr = kmap_local_folio(folio, 0);
-> +	ret = copy_from_user(vaddr, buf, PAGE_SIZE);
-> +	if (ret)
-> +		ret = -EINVAL;
-> +	kunmap_local(vaddr);
-> +
-> +	if (ret) {
-> +		folio_put(folio);
-> +		kvm_gmem_mark_prepared(folio);
-> +		goto out_err;
-> +	}
-> +
-> +	folio_put(folio);
-> +
-> +	return folio;
-> +
-> +out_unlock_put:
-> +	folio_unlock(folio);
-> +	folio_put(folio);
-> +out_err:
-> +	return ERR_PTR(ret);
-> +}
-> +
->   static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
->   				   size_t count, loff_t *offset)
->   {
-> +	struct inode *inode = file_inode(file);
-> +	int ret = 0, batch_size = FILEMAP_GET_FOLIOS_BATCH_SIZE;
->   	pgoff_t start, end, index;
-> -	ssize_t ret = 0;
->   
->   	if (!PAGE_ALIGNED(*offset) || !PAGE_ALIGNED(count))
->   		return -EINVAL;
->   
-> -	if (*offset + count > i_size_read(file_inode(file)))
-> +	if (*offset + count > i_size_read(inode))
->   		return -EINVAL;
->   
->   	if (!buf)
-> @@ -123,9 +240,8 @@ static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
->   
->   	filemap_invalidate_lock(file->f_mapping);
->   
-> -	for (index = start; index < end; ) {
-> -		struct folio *folio;
-> -		void *vaddr;
-> +	for (index = start; index + batch_size - 1 < end; ) {
-> +		struct folio *folios[FILEMAP_GET_FOLIOS_BATCH_SIZE] = { NULL };
->   		pgoff_t buf_offset = (index - start) << PAGE_SHIFT;
->   
->   		if (signal_pending(current)) {
-> @@ -133,46 +249,40 @@ static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
->   			goto out;
->   		}
->   
-> -		folio = kvm_gmem_get_folio(file_inode(file), index);
-> -		if (IS_ERR(folio)) {
-> -			ret = -EFAULT;
-> +		ret = kvm_kmem_gmem_write_inner(inode, index, buf + buf_offset, folios, batch_size);
-> +		if (ret < 0)
->   			goto out;
-> -		}
->   
-> -		if (folio_test_hwpoison(folio)) {
-> -			folio_unlock(folio);
-> -			folio_put(folio);
-> -			ret = -EFAULT;
-> +		index += ret;
-> +		if (ret < batch_size)
-> +			break;
-> +	}
-> +
-> +	for (; index < end; index++) {
-> +		struct folio *folio;
-> +		pgoff_t buf_offset = (index - start) << PAGE_SHIFT;
-> +
-> +		if (signal_pending(current)) {
-> +			ret = -EINTR;
->   			goto out;
->   		}
->   
-> -		if (folio_test_uptodate(folio)) {
-> -			folio_unlock(folio);
-> -			folio_put(folio);
-> -			ret = -ENOSPC;
-> +		folio = kvm_kmem_gmem_write_folio(inode, index,
-> +						  buf + buf_offset);
-> +		if (IS_ERR(folio)) {
-> +			ret = PTR_ERR(folio);
->   			goto out;
->   		}
-> -
-> -		folio_unlock(folio);
-> -
-> -		vaddr = kmap_local_folio(folio, 0);
-> -		ret = copy_from_user(vaddr, buf + buf_offset, PAGE_SIZE);
-> -		if (ret)
-> -			ret = -EINVAL;
-> -		kunmap_local(vaddr);
-> -
-> -		kvm_gmem_mark_prepared(folio);
-> -		folio_put(folio);
-> -
-> -		index = folio_next_index(folio);
-> -		*offset += PAGE_SIZE;
->   	}
->   
->   out:
->   	filemap_invalidate_unlock(file->f_mapping);
-> +	if (index > start) {
-> +		*offset += (index - start) << PAGE_SHIFT;
-> +		return (index - start) << PAGE_SHIFT;
-> +	}
->   
-> -	return ret && start == (*offset >> PAGE_SHIFT) ?
-> -		ret : *offset - (start << PAGE_SHIFT);
-> +	return ret;
->   }
->   #endif
->   
+-- 
+Cheers,
+
+David / dhildenb
+
 
