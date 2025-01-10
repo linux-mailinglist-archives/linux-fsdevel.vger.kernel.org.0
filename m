@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-38790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C12FA0859C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 03:45:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A55A08590
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 03:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D773A965D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 02:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6E40168981
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 02:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27317207A35;
-	Fri, 10 Jan 2025 02:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D3A207663;
+	Fri, 10 Jan 2025 02:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gku9RaIM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="m1NrTMUC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3AC1E32C5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9201E2614;
 	Fri, 10 Jan 2025 02:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736476989; cv=none; b=HeXBQVy2AKcVYOsDGcn7MxkNFkv3Qb2JIaXPsjs2qRcggQ2LXGcefzAMaioeB6Yf5lhjzMOQU3RhRGFjxmqRw3fy34qv1i0yf2CCoWCTELmubD84F5zUg4JFYAa4GOpMkB2loivcFapTNAWADRvD82L/ttJ2Ci86RN3Cmb1dYSo=
+	t=1736476988; cv=none; b=nzSCYxc0x9ZNo0vdS4We4f8rTOp6n24sZnySWBCHue+BbDBjydfWiQF7LBuqwGiyWBcM+9kvHHm+uOcnZ2uDpeg+kad4/CRnitU488rj4S8xZewme2vkZkVvIMzKc6UxEad6dTy7OkAKe9hVYSsGR64/f2Xdl2ZMAhvbzTSksK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736476989; c=relaxed/simple;
-	bh=jmK/wW2YLHbJxfn8fI7IJgelVSspe4ngR4kICJ2MuNo=;
+	s=arc-20240116; t=1736476988; c=relaxed/simple;
+	bh=L4CuPi5jJc1MGAvCcr4lIwWYxLvWgzHZ6Xiyc9X0t6k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Px/BiElAIwPPNhgbg2mC4phSVr0ISdFdq9UqGG9IcxaTfhxiWwjcEkIjMXNaZc+L0JnRCDpGfCiQpZnluDHhPfQyX0B/JWSmVJDJ85hvdjq+lY/3UofaRXT/Y2UbP66M/lF4760wFLo4yWtwUehJYSR345ok1/eNbeQYGQVIOpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gku9RaIM; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=ghGy7wYUsJodWTsBlM4vaa7Z7y79+TNvUDxKAmjOfffvaTI8A43ZS6OncxgOYE4d7bu4cKzDTb96Orp4owTJ5nCqJkr09NC0I45q1j1oZSsPpU0cAm+rh7bAjxPC5LQ083z/mb/6Z0UqcfC8lrmdXS0ONNh885Hg22/0trRMYEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=m1NrTMUC; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ufJMBHMAmpmiY/Djp1CabwveoHb3CZ40EXQ3u044p9E=; b=gku9RaIM8hF3vKgcAgtxM1RevQ
-	umaV11Uj9ryjQmoTcybMVn1d/hl6JCzmWG8MVnIhR3Kqsea5EdrVCLnSNp8FP/j6GXbxDjS7vP/EW
-	PkLb6CI4xx41sBE99ezmcwjFEDHRmtH1hRbTzgXpofjfNx+bNjrdcTxU9KBKVAL+EJVH22mjyA+QE
-	flqJFwfvHGesUn3KuVnvHA0rv7WhTP9DSJnyMkTr3vWELq+zE04T0flIRNtyVVsZHOmNQglJVAqcF
-	9mJu7pEBSvh8VZrS/sc/gVBLAnxoHn7Xnpk1dxbRDDiCNIaTv++gYAgX5OTbqqoPzrJNZk0XMugQz
-	n7oGyPew==;
+	bh=nNa75NB+AlX0KHLw/H1Is4u5y+bHPU/WREt2toMBY8E=; b=m1NrTMUCYL9gGcOMMPzANhIjch
+	9TAvogLfXqb7nsOEf4kW1qBZKiPXlDIge2ds8H9PC+lUSnMtuD+dS1AO0qxUuYw4rBK0O/zRz8ZDy
+	XUeAUH/+54dfV/XLl9NgKzEKsx0zV8aN2xw79VlWlHsipBZYnZKAH3I6aCOP7Xg8ZFeybGUTuRv5m
+	hiKcQ5Z7pkqbJjyi8easI08Xd2c4RMouqQOuYv4t8vf2GJN0OAnpEGaMVoxUdxe94xvwTIFfi0L+P
+	5TV6fQX84K5u1XbtFjQ6WlPiKzaP2ZPL5u60yxSIphaeRJJ/iYKXZ5E5S3K4CSfY7JL4JHYcZoc19
+	UAXwIE/w==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tW4zJ-0000000HRcS-0IMr;
+	id 1tW4zJ-0000000HRce-0wPF;
 	Fri, 10 Jan 2025 02:43:05 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -57,9 +57,9 @@ Cc: agruenba@redhat.com,
 	linux-nfs@vger.kernel.org,
 	miklos@szeredi.hu,
 	torvalds@linux-foundation.org
-Subject: [PATCH 14/20] fuse_dentry_revalidate(): use stable parent inode and name passed by caller
-Date: Fri, 10 Jan 2025 02:42:57 +0000
-Message-ID: <20250110024303.4157645-14-viro@zeniv.linux.org.uk>
+Subject: [PATCH 15/20] gfs2_drevalidate(): use stable parent inode and name passed by caller
+Date: Fri, 10 Jan 2025 02:42:58 +0000
+Message-ID: <20250110024303.4157645-15-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
 References: <20250110023854.GS1977892@ZenIV>
@@ -74,50 +74,74 @@ Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
 No need to mess with dget_parent() for the former; for the latter we really should
-not rely upon ->d_name.name remaining stable - it's a real-life UAF.
+not rely upon ->d_name.name remaining stable.  Again, a UAF there.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/fuse/dir.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ fs/gfs2/dentry.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index d9e9f26917eb..7e93a8470c36 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -196,7 +196,6 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
- 				  struct dentry *entry, unsigned int flags)
+diff --git a/fs/gfs2/dentry.c b/fs/gfs2/dentry.c
+index 86c338901fab..95050e719233 100644
+--- a/fs/gfs2/dentry.c
++++ b/fs/gfs2/dentry.c
+@@ -35,48 +35,40 @@
+ static int gfs2_drevalidate(struct inode *dir, const struct qstr *name,
+ 			    struct dentry *dentry, unsigned int flags)
  {
- 	struct inode *inode;
 -	struct dentry *parent;
- 	struct fuse_mount *fm;
- 	struct fuse_inode *fi;
- 	int ret;
-@@ -228,11 +227,9 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+-	struct gfs2_sbd *sdp;
+-	struct gfs2_inode *dip;
++	struct gfs2_sbd *sdp = GFS2_SB(dir);
++	struct gfs2_inode *dip = GFS2_I(dir);
+ 	struct inode *inode;
+ 	struct gfs2_holder d_gh;
+ 	struct gfs2_inode *ip = NULL;
+-	int error, valid = 0;
++	int error, valid;
+ 	int had_lock = 0;
  
- 		attr_version = fuse_get_attr_version(fm->fc);
+ 	if (flags & LOOKUP_RCU)
+ 		return -ECHILD;
  
--		parent = dget_parent(entry);
--		fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
--				 &entry->d_name, &outarg);
-+		fuse_lookup_init(fm->fc, &args, get_node_id(dir),
-+				 name, &outarg);
- 		ret = fuse_simple_request(fm, &args);
--		dput(parent);
- 		/* Zero nodeid is same as -ENOENT */
- 		if (!ret && !outarg.nodeid)
- 			ret = -ENOENT;
-@@ -266,9 +263,7 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
- 			if (test_bit(FUSE_I_INIT_RDPLUS, &fi->state))
- 				return -ECHILD;
- 		} else if (test_and_clear_bit(FUSE_I_INIT_RDPLUS, &fi->state)) {
--			parent = dget_parent(entry);
--			fuse_advise_use_readdirplus(d_inode(parent));
--			dput(parent);
-+			fuse_advise_use_readdirplus(dir);
- 		}
+-	parent = dget_parent(dentry);
+-	sdp = GFS2_SB(d_inode(parent));
+-	dip = GFS2_I(d_inode(parent));
+ 	inode = d_inode(dentry);
+ 
+ 	if (inode) {
+ 		if (is_bad_inode(inode))
+-			goto out;
++			return 0;
+ 		ip = GFS2_I(inode);
  	}
- 	ret = 1;
+ 
+-	if (sdp->sd_lockstruct.ls_ops->lm_mount == NULL) {
+-		valid = 1;
+-		goto out;
+-	}
++	if (sdp->sd_lockstruct.ls_ops->lm_mount == NULL)
++		return 1;
+ 
+ 	had_lock = (gfs2_glock_is_locked_by_me(dip->i_gl) != NULL);
+ 	if (!had_lock) {
+ 		error = gfs2_glock_nq_init(dip->i_gl, LM_ST_SHARED, 0, &d_gh);
+ 		if (error)
+-			goto out;
++			return 0;
+ 	}
+ 
+-	error = gfs2_dir_check(d_inode(parent), &dentry->d_name, ip);
++	error = gfs2_dir_check(dir, name, ip);
+ 	valid = inode ? !error : (error == -ENOENT);
+ 
+ 	if (!had_lock)
+ 		gfs2_glock_dq_uninit(&d_gh);
+-out:
+-	dput(parent);
+ 	return valid;
+ }
+ 
 -- 
 2.39.5
 
