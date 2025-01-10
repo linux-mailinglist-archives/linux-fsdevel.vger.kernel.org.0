@@ -1,111 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-38849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B167DA08CF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:53:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AD0A08D07
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F373A8F64
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 09:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E27E3ABE66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 09:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF4B20C03F;
-	Fri, 10 Jan 2025 09:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B219320B808;
+	Fri, 10 Jan 2025 09:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KReXlo1E"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="f4Xg4moZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED7120A5DD;
-	Fri, 10 Jan 2025 09:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F90D20B21D;
+	Fri, 10 Jan 2025 09:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736502488; cv=none; b=jctq9F4wVtn2WV3qr3sPUnhKx7+oa3wLV4T4XrPnXJJbup4HnMIlnihGvvHpxewX3s2W7OkJxKefJzIw1jJYLY4O5dK2cVKaidYOejPW0sEQ2HITlGPBhgO7d8JqeTAm/IzDx+CUdQfeR5YM+G5XOuhMIco2TlDHrmsx7vYNSZE=
+	t=1736502564; cv=none; b=fGBWZ/XzsbpaISaEXClMNy5copvyd1eWSAQHK397xEdj4iiprQ5wwajV9dg438SM99k+iF2lAnziZNyQJJ426hQcr4SaI73xXOM9+RmBiChnndshMiVO5BUMGARJt8ZxC+43JasfohmRLuQeqZ2r/L81t6oqlCDaOB1SOhn+AlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736502488; c=relaxed/simple;
-	bh=mtBp3AyjCM/ZWQ3Dt+JtvHpf0ZzFbURIvx/WMvyfUuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+RmW4IXMZ+itA7gZo4W3kWKR8QsxNMVLOkbTUgUPnxYL5Ep/Mdb1EMPFxThyOsF77cyNBXnbq3lyPjxUgU6plqWJeaZi0L/cMOAhiQJSjzDjt5KFFyF0ZJYQqsIXJsoZESxKop8JvnDQg3LiUCvrmyXTN+o+1zVY081o/68f+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KReXlo1E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B09FC4CEE1;
-	Fri, 10 Jan 2025 09:48:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736502487;
-	bh=mtBp3AyjCM/ZWQ3Dt+JtvHpf0ZzFbURIvx/WMvyfUuI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KReXlo1El0w8Eap63jMfFIWC4zPSM2kfOrgoj3Jkx31AZjSNdG0fH3RYQ8OfbtH9o
-	 LlsKxxkkVgJ6xAWIWWnqvumXm0B1JceDx7P97H8XmNBwXQnQT5/bSt4N6rTltt/biM
-	 TiuvOPlYJEc0NxoetkPFTIhpKSAL4bCnD5BJc7jZWTXfM3GWJOmRUdFcsek3XU3RXH
-	 EZvpslsTygAb+pwz7iihaBmhmnvuC3dQbyV97ITCqBLLDYYoLsBgB4FH+UChAxiEZQ
-	 Sr7FC2Ky7vKsfHXieyhcF6+1u1fKDCnUFyGCg5Z4P8UNRaApimY4N37hm7UKa3N5Zy
-	 QqjhoEGN2AW1g==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5401ab97206so1888363e87.3;
-        Fri, 10 Jan 2025 01:48:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUrSYfhjj4VD9dt4YQh7UK+E+7RL+/RYIEoN91zYO+OjTgov4MXX6tkefUzXo7uQEARkyaligjjrN22Yso=@vger.kernel.org, AJvYcCVEBDbvKsrw0A1THKNP8vCSMJyNvOrMkb2HfmtyVtWIvnzW4brnHwzcxYofeQwih4VY8fvVTxiH@vger.kernel.org, AJvYcCVr6ual1KIDaJYTVo4PM47iKIrosqlPqOiKIO0gDe3TnvnJFSvYmUALVJinopqSEcfxqhHVnHK2ppfs+1bvDw==@vger.kernel.org, AJvYcCVtwTUW1ldjezhq2gmdVHB2dlvdV3j8MVCj7vFLxQYx6hW/YoCQ0kQEeWK1mRdjrHNlAmMdCKvS5wzrkgbP@vger.kernel.org, AJvYcCXlc/0KlnIfPUndd8IZ1cfFNS31pN7zUFCmCdVkVpZDiczVpVS/L3t/w513sAGotK+ThbY0mJH8l6Rz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhBWpKGxbGR87sxMuIJ174bxayl77gnExTaOUmixJgdyvHTti6
-	fUkUnxSQh/l5w7ElJcSdVG7F2o2lLEQOehtKiXbrKWPyY24g+vpYjT1h6gSLb811jFbjqsv+2Vl
-	0xljRbI2rO6x15JynhGN/zTXKz6Q=
-X-Google-Smtp-Source: AGHT+IGw8EE7iwyfzN0h+0xxLtGtpQdXnmrLV+5rsgOpOep915zSvu0wEuCxYBjpYwWkvDsdG3N62lBbWn0iggorhOo=
-X-Received: by 2002:a05:6512:1196:b0:53f:231e:6f92 with SMTP id
- 2adb3069b0e04-542845491ffmr3512417e87.34.1736502485591; Fri, 10 Jan 2025
- 01:48:05 -0800 (PST)
+	s=arc-20240116; t=1736502564; c=relaxed/simple;
+	bh=MZm7JsfukNZTzizqFkl+4BmfBELHFIJk4hrjdZsbZcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=plHAaMAmswBC8PpLTzi47FpTiooRPSgdNc6Tc00jV/Ta5J0Yk/UeiHwlqmgZi3HdoJ+dJUvvHDBOjUqqcLrq0VnAf8zp49eFI244Zg1ZL5vcF5z9DUJIS9QVzk6wzXJkuzTOlMUa2w7TRlW/i6KaWSZ4P0TT/sd/FXNJJY3nuL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=f4Xg4moZ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=W6OrZGwU2ohzYLkVhoo1Up0mkLfx9Dld/9qt6ikIX3o=; b=f4Xg4moZcRCldbafjO7Jkm4mrf
+	4KQE46rcfqRf99aKwl7v10HhX+QhDSe3jyvbZmWLzSqLgpMDwb37pybH5ZUzl7KQE80ZV2UMdkybr
+	x3coHDNfty+DWCDt+hUTI+jLgMmxZSCDWmGFqBZv6+cwPsnoYmX7xmNQ94pOSIpTLJqUzWq8okynE
+	brQOpbAlt63JR2pIBOoSUXxUAZizGwvV4nWb4sSjZgqSvXFXRsSESCvWmoTE+84lI+4AGp1mRsDZM
+	yeISqT8W7Jjlu3GzqEiCK/NjjPe6PZEoS3uQKokJlTiZanuZnnyCWCbjVaswV/GMyzjHyD4YwdbXI
+	PgnuYX0A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tWBQB-007nZ7-23;
+	Fri, 10 Jan 2025 17:48:37 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Jan 2025 17:48:36 +0800
+Date: Fri, 10 Jan 2025 17:48:36 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Howells <dhowells@redhat.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/8] crypto/krb5: Provide Kerberos 5 crypto through
+ AEAD API
+Message-ID: <Z4Ds9NBiXUti-idl@gondor.apana.org.au>
+References: <20250110010313.1471063-1-dhowells@redhat.com>
+ <20250110010313.1471063-3-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110010313.1471063-1-dhowells@redhat.com> <20250110010313.1471063-3-dhowells@redhat.com>
- <20250110055058.GA63811@sol.localdomain> <1478993.1736493228@warthog.procyon.org.uk>
-In-Reply-To: <1478993.1736493228@warthog.procyon.org.uk>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 10 Jan 2025 10:47:54 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXE2mhXJaa9uq==Xki3On9ZKYY+KV-oH0ednqWC6b9BTYw@mail.gmail.com>
-X-Gm-Features: AbW1kvZNBd0gTj-dTR8eQGzNskVAFPXnGvmvtM6UKqY4sqGaw8a7UTaWuNi-eRE
-Message-ID: <CAMj1kXE2mhXJaa9uq==Xki3On9ZKYY+KV-oH0ednqWC6b9BTYw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/8] crypto/krb5: Provide Kerberos 5 crypto through
- AEAD API
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
-	"David S. Miller" <davem@davemloft.net>, Marc Dionne <marc.dionne@auristor.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, linux-crypto@vger.kernel.org, 
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250110010313.1471063-3-dhowells@redhat.com>
 
-On Fri, 10 Jan 2025 at 08:14, David Howells <dhowells@redhat.com> wrote:
+On Fri, Jan 10, 2025 at 01:03:04AM +0000, David Howells wrote:
 >
-> Eric Biggers <ebiggers@kernel.org> wrote:
->
-> > It sounds like a lot of workarounds had to be implemented to fit these
-> > protocols into the crypto_aead API.
-> >
-> > It also seems unlikely that there will be other implementations of these
-> > protocols added to the kernel, besides the one you're adding in crypto/krb5/.
-> >
-> > Given that, providing this functionality as library functions instead would be
-> > much simpler.  Take a look at how crypto/kdf_sp800108.c works, for example.
->
-> Yes.  That's how I did my first implementation.  I basically took the code
-> from net/sunrpc/auth_gss/ and made it more generic.  Herbert wants it done
-> this way, however.  :-/
->
+> +		.etype			= KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128,
+> +		.ctype			= KRB5_CKSUMTYPE_HMAC_SHA256_128_AES128,
+> +		.name			= "aes128-cts-hmac-sha256-128",
+> +		.encrypt_name		= "cts(cbc(aes))",
+> +		.cksum_name		= "hmac(sha256)",
+> +		.hash_name		= "sha256",
+> +		.key_bytes		= 16,
+> +		.key_len		= 16,
+> +		.Kc_len			= 16,
+> +		.Ke_len			= 16,
+> +		.Ki_len			= 16,
+> +		.block_len		= 16,
+> +		.conf_len		= 16,
+> +		.cksum_len		= 16,
+> +		.hash_len		= 20,
+> +		.prf_len		= 32,
+> +		.keyed_cksum		= true,
+> +		.random_to_key		= NULL, /* Identity */
+> +		.profile		= &rfc8009_crypto_profile,
+> +
+> +		.aead.setkey		= krb5_setkey,
+> +		.aead.setauthsize	= NULL,
+> +		.aead.encrypt		= rfc8009_aead_encrypt,
+> +		.aead.decrypt		= rfc8009_aead_decrypt,
 
-What is the reason for shoehorning any of this into the crypto API?
+rfc8009 is basically the same as authenc.  So rather than being an
+AEAD algorithm it should really be an AEAD template which takes a
+cipher and and a hash as its parameters.
 
-I agree with Eric here: it seems both the user (Kerberos) and the
-crypto API are worse off here, due to mutual API incompatibilities
-that seem rather fundamental.
+In fact, you could probably use authenc directly.
 
-Are you anticipating other, accelerated implementations of the
-combined algorithms? Isn't it enough to rely on the existing Camellia
-and AES code? Mentioning 'something like the Intel QAT' doesn't
-suggest you have something specific in mind.
+rfc3691 on the other hand is slightly different from authenc in that
+the integrity is computed on the plain text.
 
-Also, this patch is rather big and therefore hard to review.
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
