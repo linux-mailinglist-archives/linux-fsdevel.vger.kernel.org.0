@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-38918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF3BA09CD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 22:13:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B902A09D1E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 22:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650D6188C30E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 21:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0643A95C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 21:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205AF20896C;
-	Fri, 10 Jan 2025 21:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8017D208990;
+	Fri, 10 Jan 2025 21:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VeCFhKEx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CbR4zfih"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1852080DA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 21:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2741A23B0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 21:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736543608; cv=none; b=Ewtb8TfyGrCPTUcPwkMl+VNhoemcQbaEC4cFKlxo/gNDfZP1O6uavWjIkTf7lKJsTevuPwgMjSUqcHKaHK0i24kX5DPzB9UtoH0dJ4Tz2rdm0M0b61Ehyfw7lCjSCr/suQeMQJ6H/GW7PhogQCi+mvt8GxUQi1FDj4LgPqtwrC4=
+	t=1736544079; cv=none; b=noZDvACX5QDkh2w2SWwjwnFJ1hEVB1/n9Bq8nGVvzUJRKgE//SHzGyFpaRXEcLq3cdTgUsBYCpEy2xBv91m5v+yB/QEDCL4gLEaGeiAOIeONHbs8i/2EQr7Z8++Y0qWc4KdvkqORuBPywmQ0J5PNOue+cF7ZCcY9DBP3vWwSR84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736543608; c=relaxed/simple;
-	bh=FVI0/6qpry5sKriVjmJQijuiGqC1NEAjPMq4ldsarDw=;
+	s=arc-20240116; t=1736544079; c=relaxed/simple;
+	bh=mgJ+UHSwzN5h0uRwRywpCvwDSE2g1mRG4Ft+OworMXs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UPsbcAHvSertTaicg8Ft7YoEy0VMPB7H5gqstSw70NnytX77/ZRd+Y5I/02aHv4aO8dW4hRsCXYlbIsJcdwAJ+9aiyZd9ogmvM/hndijxDNN01lIfHtNwy3TvCZujkDkCEuOUuhbdBX8fc/BkKXs5g02kYE3NrcEsyqSTneVHHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VeCFhKEx; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=ll68nQ9e4aDbGogDftycUVey4vLXKPefQi3pwD6HhfPIGmOsIw//9xkE4SGxrhl8VGpGfsrRyqh2QLKvkfA9FwPbCLFkomTGItjD3eiQquVJJHdd6JT6uxwQtOS8HWYG3IBPXEUJuypPaAPIF+hSoZ/qKWN1ljg4JWGPk5xWsEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CbR4zfih; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736543605;
+	s=mimecast20190719; t=1736544077;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EeIUoIjZUFNtiNRnVwaW4fp2T66i1qr7WJzeNybd0b4=;
-	b=VeCFhKExHD5bB4TYdjWE9+VXm/v1jaQuabSgy7vJr3ZXlPeHh28I5a0DhisDAUgiNWJFDV
-	XjYw6oHY6Ai1xE6v0f+vDPDxhDXKwF8hIviXL4tu56l4vFsJ1Abolm6nqUM/6/T7DXj5x+
-	bifz/cbWUsLdpaJqXY/ZOQ725uq7lbE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=sthEKVmb10XAo4rNGJPWmHpmDGbVRVERpD7LcYoTGpY=;
+	b=CbR4zfihkvsrVgXkg1N7esTZfUtz3sUJhV/vBTMP8/Qmlc4C5OoA5p+GU/xF8HgNGwPVtO
+	XQIalXPIrwaEzviPjomwbZ1hyTMr1hIKNXur93fIqq3jf9EqjCgA8mIIddI+uOqBiaLhW1
+	srYsUtp+VXSNW9PQ3aO4KprpIcBB7gw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-JaKQLOOjMHqvVjKsdFQ7Pg-1; Fri, 10 Jan 2025 16:13:22 -0500
-X-MC-Unique: JaKQLOOjMHqvVjKsdFQ7Pg-1
-X-Mimecast-MFC-AGG-ID: JaKQLOOjMHqvVjKsdFQ7Pg
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385ed79291eso1705863f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 13:13:22 -0800 (PST)
+ us-mta-379--UU3sW1eMzmJm9r-bnFFJg-1; Fri, 10 Jan 2025 16:21:15 -0500
+X-MC-Unique: -UU3sW1eMzmJm9r-bnFFJg-1
+X-Mimecast-MFC-AGG-ID: -UU3sW1eMzmJm9r-bnFFJg
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43626224274so13707045e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 13:21:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736543601; x=1737148401;
+        d=1e100.net; s=20230601; t=1736544075; x=1737148875;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=EeIUoIjZUFNtiNRnVwaW4fp2T66i1qr7WJzeNybd0b4=;
-        b=KlVZ5yXBDq5mmqDuAmzGDWH9sSrq9MWNxL/HotNP2rIokMnJtfF1XVubeHaSs8+f+u
-         RjwDnonzKFeHk4E1aRqmpBeYzVid/2+m+xh6lja5B2R/yn8jEScoQjUdR8dbiQdIKEcU
-         S76hj9VSkI1o511G04a1EOeUADm32vT9O4rg0GmuC7d/TcgWxNP/YUPGKPJGwvKjED1x
-         h7gWvCs43Jf09UYLTOXf+NVzJP8M1eswDtCQmNsckGxxrflrAtJpSy0UqjPHnKje4orS
-         7VOGL70aZdBjv+2lzVEt5KT+BzPZ84gjUypLfnBkjm1cIOKJGIlP1B4utr3R2TejDBBy
-         sWpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXunY/UFOCR/4efevON3/iIRbAHniPfZ9SxNzAv+frmNcLD8FRliqvVucjStdKo3uO5W1EsaaJcXSs/aAfT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxCrxANqL/asEvjXzi3+X3OZA2xDZoWjPrcPae8S9SZMSCQ6q0
-	TCg0Yj9MQyNpVML6OEthliOTjUkyBSCdf5IcB3zSI/bMR/hVebU/ulaBJ0Rn2ViQTcvTVORz9Ec
-	kPBjCdZgwjaRJLwNZN0TBX0fkXx677q1ccFTKxXKbRVwVn5fI8qGmYWS4Fv2USus=
-X-Gm-Gg: ASbGnct2HUCxdVOFVhUJUHjked3/iSgREbwoV3R2L+tLHFq0YmIVDMaz4lTa8GdjQwu
-	1TvtvH9xgUID/F2I1Wap2qQo9u/Par9Kt5F+KTt6vqRvJODVYjJSEtbKG6naCZu/qq/YDDyf31w
-	YhmMFCIbYurpNZjPoNdx7t4dZVCHMPmMhnpCZjDjTOJdhuNXMnF6IPorVSMGtdaTcwlYIu+1APv
-	8sl2bpd50moGdPp9WRKn13lGNu+HM37zxGaTdQxcYLWepPB6TkFICISogk5dcnBf6um0zl5mNi4
-	sTkTk7FZYBWzZn/XL+8G+ODl735CkoctpEoMoYouDXSPjE8komwtgP5okVKwu+dA/qvh+avNE1q
-	hWcD5XQ22
-X-Received: by 2002:a5d:6d04:0:b0:385:f07a:f4cb with SMTP id ffacd0b85a97d-38a8b0d3166mr6945470f8f.8.1736543600965;
-        Fri, 10 Jan 2025 13:13:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG5R47FaOgB1kt8eBsOyKxn/mdF0lH6hJkFFQSVsNWL9a3o0cjUcVhjjK+cWeMmdXpZSiAiEQ==
-X-Received: by 2002:a5d:6d04:0:b0:385:f07a:f4cb with SMTP id ffacd0b85a97d-38a8b0d3166mr6945458f8f.8.1736543600591;
-        Fri, 10 Jan 2025 13:13:20 -0800 (PST)
+        bh=sthEKVmb10XAo4rNGJPWmHpmDGbVRVERpD7LcYoTGpY=;
+        b=FLNvXzZ33h9x3Cz+EmzRFF3S6MLW62qkvUmRfDDs16ExOFOv05jH24VIt331xfANnA
+         HmYynwkdTJz9IRhyRyrG9KHdGQ+QQ/kl4lOhT43l/OxgwbM9CBVYBzpLETROJOxHhkJj
+         ktHPvCqe44/51NbJdrDg5GDL/eZlksytldjr8Ge/6uzlde6WsdqqxBYbnYCgoZjZx/TX
+         mpz4dyPXB21MyD9gz5mz/jzSPn5JpUbkJk1cb6cyt8BmS8f0eLj8iwsu45Q1x/L2mNsc
+         cgkg+epMVyviFPBRY6pnizXuIsXXf3cy7sL37jnRQN4r2n4+tjaM6r+dDdaiLQJyhoxc
+         h8GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCNu1/8dnbivNvBMsPEqKt9Z9fJqvuzMOQ2hkXRp9EzMxSkuvTtvHZzj2DM2mZ1nY+yn16rUP0kXTc5fNw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy90gVpHcYCgPAFggaYfUaOcxTMqlDoC4iRU0HyHb2JbQEvjwdG
+	zFuV8lvbQLdBW124WIlBtF90a86LJt7IZhU7oFd601tBgoFaS6nLaluIJolYW5aNW0ZtDmyewGO
+	0TZxKmFPL819KYc4lQ7cpCrvechqlkzYDNrYq3TIGmcMzr3VcnMUtFWyuhkKlNXE=
+X-Gm-Gg: ASbGncvxsEWITO3rNhTXHnoeoSH2hnqzOeEmifRKueqv9F22o+fy1nbIwmvj9g3r/DI
+	6tbKs28RtLCXDZXatJztnuqR80ERz3ME6476HmOv3Yj1FDjQobcgAVcSIXrDLwpYXnrQlm+MQho
+	hbCZuH2h45R1XqjG431EMfgWGc9vXZF7WyAsD9CXwmpeIpqKPMGUYaSYbVVGR6uGcAYRCzuGp1c
+	Lu0pkjoUp642e/STQ7QTo40jxbrptl3n1ORE5GZfSOUjHEW7UtZdx58ARd/o6dmaKp8oNHFf91a
+	3rk+UzGnyvnP0XQZBdDbGhCRIKz42QgNVYOctBofq9TaLmONry5RZvtGcbeednVFaHXtzXCBals
+	Euh9uTyVg
+X-Received: by 2002:a05:600c:5698:b0:434:a7f1:6545 with SMTP id 5b1f17b1804b1-436e2d91910mr101285025e9.27.1736544074656;
+        Fri, 10 Jan 2025 13:21:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFJ8wFczgFhHwFzj/WleUwk7pix9NascQqOgaTNxpuzbcw4rPO0K0tR8E5rTCDbNHnYqRI57w==
+X-Received: by 2002:a05:600c:5698:b0:434:a7f1:6545 with SMTP id 5b1f17b1804b1-436e2d91910mr101284755e9.27.1736544074165;
+        Fri, 10 Jan 2025 13:21:14 -0800 (PST)
 Received: from ?IPV6:2003:cb:c708:e100:4f41:ff29:a59f:8c7a? (p200300cbc708e1004f41ff29a59f8c7a.dip0.t-ipconnect.de. [2003:cb:c708:e100:4f41:ff29:a59f:8c7a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e37d01dsm5427873f8f.9.2025.01.10.13.13.18
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2da66e6sm98625705e9.4.2025.01.10.13.21.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2025 13:13:19 -0800 (PST)
-Message-ID: <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com>
-Date: Fri, 10 Jan 2025 22:13:17 +0100
+        Fri, 10 Jan 2025 13:21:12 -0800 (PST)
+Message-ID: <def423f4-fecd-4017-9bcb-74a5dbf0e9f5@redhat.com>
+Date: Fri, 10 Jan 2025 22:21:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,14 +92,16 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
  with AS_WRITEBACK_INDETERMINATE mappings
-To: Jeff Layton <jlayton@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong
- <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>,
- Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org,
- jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
- kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
- Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
-References: <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+To: Jeff Layton <jlayton@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>,
+ linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
+ josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Michal Hocko <mhocko@kernel.org>
+References: <kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+ <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
  <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
  <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
  <446704ab-434e-45ac-a062-45fef78815e4@redhat.com>
@@ -109,9 +111,11 @@ References: <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
  <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
  <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
  <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
- <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
- <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com>
- <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+ <153c5a4f08daf60e1bbbdde02975392dc608cfdf.camel@kernel.org>
+ <e4150b98-99ed-45fc-8485-5ad044f10d84@redhat.com>
+ <47fff939fc1fb3153af5b129be600a018c8485e9.camel@kernel.org>
+ <c9e4017a-9883-4052-9ca0-774b3745f439@redhat.com>
+ <956ae3eba9ef549d4f1ab3dff9e0bb09a39101b2.camel@kernel.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -159,138 +163,111 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+In-Reply-To: <956ae3eba9ef549d4f1ab3dff9e0bb09a39101b2.camel@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10.01.25 21:28, Jeff Layton wrote:
-> On Thu, 2025-01-09 at 12:22 +0100, David Hildenbrand wrote:
->> On 07.01.25 19:07, Shakeel Butt wrote:
->>> On Tue, Jan 07, 2025 at 09:34:49AM +0100, David Hildenbrand wrote:
->>>> On 06.01.25 19:17, Shakeel Butt wrote:
->>>>> On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
->>>>>> On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
->>>>>>> In any case, having movable pages be turned unmovable due to persistent
->>>>>>> writaback is something that must be fixed, not worked around. Likely a
->>>>>>> good topic for LSF/MM.
+On 10.01.25 22:07, Jeff Layton wrote:
+> On Fri, 2025-01-10 at 22:00 +0100, David Hildenbrand wrote:
+>> On 10.01.25 21:43, Jeff Layton wrote:
+>>> On Fri, 2025-01-10 at 21:20 +0100, David Hildenbrand wrote:
+>>>> On 10.01.25 21:16, Jeff Layton wrote:
+>>>>> On Tue, 2025-01-07 at 09:34 +0100, David Hildenbrand wrote:
+>>>>>> On 06.01.25 19:17, Shakeel Butt wrote:
+>>>>>>> On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
+>>>>>>>> On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
+>>>>>>>>> In any case, having movable pages be turned unmovable due to persistent
+>>>>>>>>> writaback is something that must be fixed, not worked around. Likely a
+>>>>>>>>> good topic for LSF/MM.
+>>>>>>>>
+>>>>>>>> Yes, this seems a good cross fs-mm topic.
+>>>>>>>>
+>>>>>>>> So the issue discussed here is that movable pages used for fuse
+>>>>>>>> page-cache cause a problems when memory needs to be compacted. The
+>>>>>>>> problem is either that
+>>>>>>>>
+>>>>>>>>      - the page is skipped, leaving the physical memory block unmovable
+>>>>>>>>
+>>>>>>>>      - the compaction is blocked for an unbounded time
+>>>>>>>>
+>>>>>>>> While the new AS_WRITEBACK_INDETERMINATE could potentially make things
+>>>>>>>> worse, the same thing happens on readahead, since the new page can be
+>>>>>>>> locked for an indeterminate amount of time, which can also block
+>>>>>>>> compaction, right?
 >>>>>>
->>>>>> Yes, this seems a good cross fs-mm topic.
+>>>>>> Yes, as memory hotplug + virtio-mem maintainer my bigger concern is
+>>>>>> these pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there
+>>>>>> *must not be unmovable pages ever*. Not triggered by an untrusted
+>>>>>> source, not triggered by an trusted source.
 >>>>>>
->>>>>> So the issue discussed here is that movable pages used for fuse
->>>>>> page-cache cause a problems when memory needs to be compacted. The
->>>>>> problem is either that
+>>>>>> It's a violation of core-mm principles.
 >>>>>>
->>>>>>     - the page is skipped, leaving the physical memory block unmovable
+>>>>>> Even if we have a timeout of 60s, making things like alloc_contig_page()
+>>>>>> wait for that long on writeback is broken and needs to be fixed.
 >>>>>>
->>>>>>     - the compaction is blocked for an unbounded time
+>>>>>> And the fix is not to skip these pages, that's a workaround.
 >>>>>>
->>>>>> While the new AS_WRITEBACK_INDETERMINATE could potentially make things
->>>>>> worse, the same thing happens on readahead, since the new page can be
->>>>>> locked for an indeterminate amount of time, which can also block
->>>>>> compaction, right?
+>>>>>> I'm hoping I can find an easy way to trigger this also with NFS.
+>>>>>>
+>>>>>
+>>>>> I imagine that you can just open a file and start writing to it, pull
+>>>>> the plug on the NFS server, and then issue a fsync or something to
+>>>>> ensure some writeback occurs.
 >>>>
->>>> Yes, as memory hotplug + virtio-mem maintainer my bigger concern is these
->>>> pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there *must not be
->>>> unmovable pages ever*. Not triggered by an untrusted source, not triggered
->>>> by an trusted source.
+>>>> Yes, that's the plan, thanks!
 >>>>
->>>> It's a violation of core-mm principles.
+>>>>>
+>>>>> Any dirty pagecache folios should be stuck in writeback at that point.
+>>>>> The NFS client is also very patient about waiting for the server to
+>>>>> come back, so it should stay that way indefinitely.
+>>>>
+>>>> Yes, however the default timeout for UDP is fairly small (for TCP
+>>>> certainly much longer). So one thing I'd like to understand what that
+>>>> "cancel writeback -> redirty folio" on timeout does, and when it
+>>>> actually triggers with TCP vs UDP timeouts.
+>>>>
 >>>
->>> The "must not be unmovable pages ever" is a very strong statement and we
->>> are violating it today and will keep violating it in future. Any
->>> page/folio under lock or writeback or have reference taken or have been
->>> isolated from their LRU is unmovable (most of the time for small period
->>> of time).
+>>>
+>>> The lifetime of the pagecache pages is not at all related to the socket
+>>> lifetimes. IOW, the client can completely lose the connection to the
+>>> server and the page will just stay dirty until the connection can be
+>>> reestablished and the server responds.
 >>
->> ^ this: "small period of time" is what I meant.
+>> Right. It cannot get reclaimed while that is the case.
 >>
->> Most of these things are known to not be problematic: retrying a couple
->> of times makes it work, that's why migration keeps retrying.
+>>>
+>>> The exception here is if you mount with "-o soft" in which case, an RPC
+>>> request will time out with an error after a major RPC timeout (usually
+>>> after a minute or so). See nfs(5) for the gory details of timeouts and
+>>> retransmission. The default is "-o hard" since that's necessary for
+>>> data-integrity in the face of spotty network connections.
+>>>
+>>> Once a soft mount has a writeback RPC time out, the folio is marked
+>>> clean and a writeback error is set on the mapping, so that fsync() will
+>>> return an error.
 >>
->> Again, as an example, we allow short-term O_DIRECT but disallow
->> long-term page pinning. I think there were concerns at some point if
->> O_DIRECT might also be problematic (I/O might take a while), but so far
->> it was not a problem in practice that would make CMA allocations easily
->> fail.
->>
->> vmsplice() is a known problem, because it behaves like O_DIRECT but
->> actually triggers long-term pinning; IIRC David Howells has this on his
->> todo list to fix. [I recall that seccomp disallows vmsplice by default
->> right now]
->>
->> These operations are being done all over the place in kernel.
->>> Miklos gave an example of readahead.
->>
->> I assume you mean "unmovable for a short time", correct, or can you
->> point me at that specific example; I think I missed that.
->>
->>> The per-CPU LRU caches are another
->>> case where folios can get stuck for long period of time.
->>
->> Which is why memory offlining disables the lru cache. See
->> lru_cache_disable(). Other users that care about that drain the LRU on
->> all cpus.
->>
->>> Reclaim and
->>> compaction can isolate a lot of folios that they need to have
->>> too_many_isolated() checks. So, "must not be unmovable pages ever" is
->>> impractical.
->>
->> "must only be short-term unmovable", better?
+>> I assume that's the code I stumbled over in nfs_page_async_flush(),
+>> where we end up calling folio_redirty_for_writepage() +
+>> nfs_redirty_request(), unless we run into a fatal error; in that case,
+>> we end up in nfs_write_error() where we set the mapping error and stop
+>> writeback using nfs_page_end_writeback().
 >>
 > 
-> Still a little ambiguous.
+> Exactly.
 > 
-> How short is "short-term"? Are we talking milliseconds or minutes?
-
-Usually a couple of seconds, max. For memory offlining, slightly longer 
-times are acceptable; other things (in particular compaction or CMA 
-allocations) will give up much faster.
-
+> The upshot is that you can dirty NFS pages that will sit in the
+> pagecache indefinitely, if you can disrupt the connection to the server
+> indefinitely. This is substantially the same in other netfs's too --
+> CIFS, Ceph, etc.
 > 
-> Imposing a hard timeout on writeback requests to unprivileged FUSE
-> servers might give us a better guarantee of forward-progress, but it
-> would probably have to be on the order of at least a minute or so to be
-> workable.
+> The big difference vs FUSE is that they don't allow unprivileged users
+> to mount arbitrary filesystems, so it's a harder for an attacker to do
+> this with only a local unprivileged account to work with.
 
-Yes, and that might already be a bit too much, especially if stuck on 
-waiting for folio writeback ... so ideally we could find a way to 
-migrate these folios that are under writeback and it's not your ordinary 
-disk driver that responds rather quickly.
-
-Right now we do it via these temp pages, and I can see how that's 
-undesirable.
-
-For NFS etc. we probably never ran into this, because it's all used in 
-fairly well managed environments and, well, I assume NFS easily outdates 
-CMA and ZONE_MOVABLE :)
-
- > >>>
->>> The point is that, yes we should aim to improve things but in iterations
->>> and "must not be unmovable pages ever" is not something we can achieve
->>> in one step.
->>
->> I agree with the "improve things in iterations", but as
->> AS_WRITEBACK_INDETERMINATE has the FOLL_LONGTERM smell to it, I think we
->> are making things worse.
->>
->> And as this discussion has been going on for too long, to summarize my
->> point: there exist conditions where pages are short-term unmovable, and
->> possibly some to be fixed that turn pages long-term unmovable (e.g.,
->> vmsplice); that does not mean that we can freely add new conditions that
->> turn movable pages unmovable long-term or even forever.
->>
->> Again, this might be a good LSF/MM topic. If I would have the capacity I
->> would suggest a topic around which things are know to cause pages to be
->> short-term or long-term unmovable/unsplittable, and which can be
->> handled, which not. Maybe I'll find the time to propose that as a topic.
->>
-> 
-> 
-> This does sound like great LSF/MM fodder! I predict that this session
-> will run long! ;)
-
-Heh, fully agreed! :)
+Exactly my point/concern. With most netfs's I would assume that reliable 
+connections are mandatory, otherwise you might be in bigger trouble, 
+maybe one of the reasons being stuck forever waiting for writeback on 
+folios was not identified as a problem so far. Maybe :)
 
 -- 
 Cheers,
