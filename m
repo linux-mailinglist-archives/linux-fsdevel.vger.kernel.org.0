@@ -1,93 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-38890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED677A097C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 17:46:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549F7A097D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 17:50:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3242D3A3C3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 16:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59FEE1679CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 16:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162A0213242;
-	Fri, 10 Jan 2025 16:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6AF213249;
+	Fri, 10 Jan 2025 16:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FMqALCww"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLO9DXzI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35E3210F6D;
-	Fri, 10 Jan 2025 16:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C40210F6D;
+	Fri, 10 Jan 2025 16:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736527601; cv=none; b=moMI2wdZlsH84tOEg8DXryDpiHmyXEJokaM5do5vueypOzLoE5bWJPR0Gk2bblqdOlEKIh0x6Mgxf2ZoDy2MIfK78uF9d/+O363eu7rxpgA2H9XsbBl/4DDMryqnRmkEjFcPn9vZdXTDoSr8UWTDUeq+55wR9Yr9N1c9EV9PPNk=
+	t=1736527792; cv=none; b=p/w/YJIC+TBRU+/Qe5u+GNeshQbpkHP8G6koaYZxthT92FgpF1TtD/KOJZ0mvnBhyiAeK2RubwDwAKKklKEPGOo/bbdeDXT5NhhakPRP/LwMwgz1cdciQk2N7JBefqnhTkR2yzkdlND7hfsFnkTTUqL4g+NJj9009QBQmIZVY5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736527601; c=relaxed/simple;
-	bh=mC5WEjxjPlLXt5NGRY3gU1gtoiQoz2WChcIzJzjdeyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDgn2jA8mI5dmcBkaryOYNrDPZFUZ9B6J11kxQvtRbSWi8S+1axdaaT98mBsq0MpcnCQ1vreU25uQWXQbZG+UY11gTfN13k93/muq44UJ82kEnNppKF9BjLYoK3QZZGVZj0njaX0ZsXUoAt1rS8NplaOzxIZn4Dnl28xUkrYdwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FMqALCww; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Rnj4JwveGd20pP/SVmf5TX/F7gZngqQd8a1sgs58r+4=; b=FMqALCwwol1roK740NnBmzrcnL
-	4gFg69KwcHsB+FWlWL7QKc4z2xrtEYdEi47FV0O9ZgZlXbYl0Yz5Yfdubmk2coWKEZqkQjJwmv1ba
-	mmC+vHVmuVknDV/DW0YYM6MGKYqiEwZkMv8JBGB4XKzDRtBbHryx1pjmXLfZa9Svuc7GVKWP/rm3I
-	hKuJrAj0phbBKUpRo2dhh01O4upJX5vFDEUQas0jfOJ/ECAD5y3nKCIuKz8XZTFvMe6wKMECtXXCY
-	SKGC0WX4xZasMv3VIijmeyETlVL0Mnolwy/7FOxjpV6bK8R9UcaYdzfBAZM6q0GrfLptmeZPaCaUF
-	K8MIWx8w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tWI9c-000000002zj-2HAk;
-	Fri, 10 Jan 2025 16:46:36 +0000
-Date: Fri, 10 Jan 2025 16:46:36 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com,
-	brauner@kernel.org, ceph-devel@vger.kernel.org, hubcap@omnibond.com,
-	jack@suse.cz, krisman@kernel.org, linux-nfs@vger.kernel.org,
-	miklos@szeredi.hu, torvalds@linux-foundation.org
-Subject: Re: [PATCH 04/20] dissolve external_name.u into separate members
-Message-ID: <20250110164636.GW1977892@ZenIV>
-References: <20250110024303.4157645-4-viro@zeniv.linux.org.uk>
- <20250110023854.GS1977892@ZenIV>
- <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
- <1479433.1736494451@warthog.procyon.org.uk>
+	s=arc-20240116; t=1736527792; c=relaxed/simple;
+	bh=+yDQ+vJqHznaDyos9xjW00xrBMEHb0ruggMNJ4oZado=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FFRITKTtjwuxTUcR0nqJp7VwW4BiHdqhg6L2TDurffso2h5XNhPZ1Au1q7rtnroTidWUpfs+pTiUG3W+odYYn8mEPJ/PPeg3TlcQ8/AKvvUVOuyJkKq1c3IM+eHwEvJbbFDj5XacW2LZG8Lg7dTjDJ1NGwVjXvm8jhp8sXW0BH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLO9DXzI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40CDAC4CED6;
+	Fri, 10 Jan 2025 16:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736527791;
+	bh=+yDQ+vJqHznaDyos9xjW00xrBMEHb0ruggMNJ4oZado=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gLO9DXzIlngQ9OUW3zqrNtoKR/H74kAqGYSNWAScFW40NQZJn2QqcvV6+MG3gNXgI
+	 my5endsWAut9pMhmvwxsvzquT3VC1mKv5BjgbGhotQIzW3OogWmpYsEn3+uqWcd38m
+	 5G0gI2C7eH443UZFOqee6loc3CoWD8/K57KY0OSpObvFjG9HE9v6GQin6VK8AExl88
+	 rHmm3X45mMJjtDM9spQ8s8VL9MGJWWsVLwjqBmk7qHUoyGiFDPYTa+AFZV1/R2TMF4
+	 1IG+OfL3s3hZDWmsgCw1MQ8Rm+HNhXbgkQ6f8B7oaD9tHFy7Qew4SpzdVm0r6qIXbo
+	 cD2Vklyl/aqPA==
+From: Kees Cook <kees@kernel.org>
+To: Nicolas Pitre <npitre@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] binfmt_flat: Fix integer overflow bug on 32 bit systems
+Date: Fri, 10 Jan 2025 08:49:47 -0800
+Message-Id: <173652778610.3103415.15796406713093643015.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
+References: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1479433.1736494451@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jan 10, 2025 at 07:34:11AM +0000, David Howells wrote:
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Wed, 04 Dec 2024 15:07:15 +0300, Dan Carpenter wrote:
+> Most of these sizes and counts are capped at 256MB so the math doesn't
+> result in an integer overflow.  The "relocs" count needs to be checked
+> as well.  Otherwise on 32bit systems the calculation of "full_data"
+> could be wrong.
 > 
-> >  struct external_name {
-> > -	struct {
-> > -		atomic_t count;		// ->count and ->head can't be combined
-> > -		struct rcu_head head;	// see take_dentry_name_snapshot()
-> > -	} u;
-> > +	atomic_t count;		// ->count and ->head can't be combined
-> > +	struct rcu_head head;	// see take_dentry_name_snapshot()
-> >  	unsigned char name[];
-> >  };
+> 	full_data = data_len + relocs * sizeof(unsigned long);
 > 
-> This gets you a 4-byte hole between count and head on a 64-bit system.  Did
-> you want to flip the order of count and head?
+> [...]
 
-Umm...  Could do, but that probably wouldn't be that much of a win - we use
-those for names >= 40 characters long, and currently the size is 25 + len
-bytes.  And it's kmalloc'ed, so anything in range 40...71 goes into kmalloc-96.
+Applied to for-next/topic/execve/core, thanks!
 
-Reordering those would have 40..43 land in kmalloc-64, leaving the rest as-is.
-Might as well...
+[1/1] binfmt_flat: Fix integer overflow bug on 32 bit systems
+      https://git.kernel.org/kees/c/55cf2f4b945f
+
+Take care,
+
+-- 
+Kees Cook
+
 
