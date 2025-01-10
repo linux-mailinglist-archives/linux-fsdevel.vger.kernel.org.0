@@ -1,230 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-38920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056BAA09D87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 23:01:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DF1A09DAA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 23:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE9C416B4BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 22:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7F3188D407
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 22:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3320ADC0;
-	Fri, 10 Jan 2025 22:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B5421766F;
+	Fri, 10 Jan 2025 22:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PNDVkAZY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjPZUKvp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECC05464B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 22:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E152E215F5A;
+	Fri, 10 Jan 2025 22:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736546453; cv=none; b=aTe4BbjbXz+25Cc7w7Prwc95X0LMuVyj/Ou3VOBT6REkl6MAtljdlFZ3d0ETf0kLyhj2x9WltH9dXi3tY5GLYUa+SF18ebuimKZOV48roXT5PSxsrzizi74RhsCVD+QVHXMntent/479DedotI94/lYgAZfyCo3JNidbUfY22so=
+	t=1736547544; cv=none; b=ovfJT9qcXnkyruSKVpkyfRohZv4vFYZpi/8YerTGq9Fxv6gaZKbDTL8GP/6e+7a12tiAZTA/dj3ARFQhRjPTVpRxrVQdXgav7jpTnAJBUd5R4Z0PhDHHMJMuVUuCL5YEgYdQneNUmF5cnSYYkfAaVL7FjT8EinRrIczr5vLA0G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736546453; c=relaxed/simple;
-	bh=rKr2x9Sitt8zg+HAkaxYKCuoj3DvasIL3dARRmrmlYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uU/EKK3mB4pL/bNDlf8HR1dMDdDSxYAraUSKf3UvQ1JZ8UC73eTXe5FMe9MHcdKh5gyQU36gireEJEzaABiKPWLSgaVYEGKyRGREFKYat2xFwNGdgB73LiXwohsGxcSjW1j1ykM6v8dcclogZTODQMTEDEz54QTkGMdhHpVGKLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PNDVkAZY; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 10 Jan 2025 14:00:38 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1736546443;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaxYa+/pvGC0VMVl2r1hPuxMDV9adl0c5vS7IpWG08s=;
-	b=PNDVkAZYG2ovbPLBVXu/Ml+vOIPMploI3ZSX8DijqUIkYFTqdwVfCdGnzBxhEuy3/58hbs
-	tCzfHFIFhKjveaGUeKqOXZekEZ4M7Ul+0RGz9dWPOfG0ngUQTSBZ/c/rx/dKxF2R/3RPcv
-	28oMQdXqL2+MVRYHyJHdRRQ3eAIm0lM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: David Hildenbrand <david@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
-	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
-	Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-Message-ID: <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
-References: <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
- <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
- <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
- <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
- <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
- <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
- <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
- <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com>
- <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
- <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com>
+	s=arc-20240116; t=1736547544; c=relaxed/simple;
+	bh=08D2rBWWjfluCKhbnE/2W6TJ+/eUfAZjelNyKFyFSmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZA1v8zeL7E72uJWoOpHFMGg/rXbr/G6bOgPwvneNNQ19vUyg4PqwftehxLHY9AlcMriBDoJT02FArluJGeG9xewOtB266x8lcXLaFySxCVgfIMkFC4YVXT9bOHdZIBq5BQLe7Nm0PHe9KvUjx4dVOGQE8GsnE5S2hSpYq/3k9Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjPZUKvp; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-467a37a2a53so28578491cf.2;
+        Fri, 10 Jan 2025 14:19:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736547542; x=1737152342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4hJCNkZdVqe87O3O38D3vS2ZKezMZSTJAjERIFDD6qg=;
+        b=BjPZUKvp7Wyu+aqQ35ZfN7/3sKRAQNtchox6FWcNl7Swf1uM/XV4HaeU78Rv/+E4WP
+         Fws9W1iJfPufzYhuIrkRqh3xnnHFeqdKHR+hZGYRm3gMAnS76TbV6g5UPElgsnIz+OVG
+         +NKxK0pvPxfZfvQurCVkEbtV/OBUI6k4VLPR7MM79tmhunB5QSkGL7Gb23BdVB+BGC87
+         VBjp6odgrXL7qdIfOx8aG3dSpsQMS6Vbm5hOl2chOZH5/E+AsXlYKZs1YQarL3X3oEWk
+         3R0xXKxar9EE49a2dmbd5ruWO0kW5aw7sLZ5tqE0nig4RLBtqMaQp6rHBVZbshNuexlH
+         Ucsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736547542; x=1737152342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4hJCNkZdVqe87O3O38D3vS2ZKezMZSTJAjERIFDD6qg=;
+        b=Hl1aymgM4PtG+4qvdqoC/xveLsUbJVu8C9ttq1xuiti9pstQo/DfVf/A9BAt7/0eNu
+         m0GagOSGAN6ydtj2fspmi5HF3MBFuSCxAZ1VEpfrqPOoiu23gNIFeuQ+0kEnWW+ubMAN
+         U1cQQE8iPBZ39XD4Yw7/WM2vu0Jl5MCivl5TfjxBH/VMAmnmiWZ6iFM4PWSY+a6GyyXl
+         +GRpSIo00stdgc2PrzjFJp+FaOJ9Mr4n4hQFafoJoVQfkNPVLIZdInYLe4oU8qMfYs61
+         Kok6UP+dqZWz/bAGF2rvXstdyWW4U8msh7nfiBsFeIJEZ2DIfZ/WkIJoUryA+1Bmd/iG
+         CAiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw8ADEnKWvnktiP6iLj/KIDn5NJNMh4Gh/cKSGaWh2URIloxVkEqbxfXNOZtT/vwwj5NuE0XEz4pQESVd5/Q==@vger.kernel.org, AJvYcCWunRmRVcqeLJ1yd8I8Jt8dxLMH6OgAIKVLBVh4pWaq2RJpssdBaGGZVpUdsTfGU5lD/qoXrMjJgQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSuQyL1X78fmYXBybQjFCBlmoc/JQAWmhufoh+6rPFLbHx/Hhz
+	4ZciYXQiVhpHZZSSoPt7bKA/mV5OyR7M+hT7jwVYNISJtMrADkI+EmXDt7NZL4SykiV2ckxvV7M
+	cqzTJGFoR4cHk08G3PE0EtVrBpLQ=
+X-Gm-Gg: ASbGncuGXMttSnAhSMCS+yniBNgFHX6INByDp05spWjXIBNifxbO56vU9o/X4I75mrf
+	eezRS9L3h8kT6UuRl4dC8f5M93GVskAkvAuIY9h93b9IUKUVDhvN3hg==
+X-Google-Smtp-Source: AGHT+IHGBLsQr0hgX7l7qQwObUfam+daY2Aq2HPy1YIj01o1e6R8FuqqXgdLdTdZg09JXse0T8zzqQtF2d/mrEetPg4=
+X-Received: by 2002:a05:622a:1a19:b0:467:6e45:2177 with SMTP id
+ d75a77b69052e-46c70ffed13mr180414441cf.12.1736547541841; Fri, 10 Jan 2025
+ 14:19:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com> <20250107-fuse-uring-for-6-10-rfc4-v9-8-9c786f9a7a9d@ddn.com>
+In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-8-9c786f9a7a9d@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 10 Jan 2025 14:18:50 -0800
+X-Gm-Features: AbW1kvavO3d5iLS8zkFkzDdj_WquwbNCyPnEsHzu8qmkIxiSwrTU_V-AlqkW50o
+Message-ID: <CAJnrk1auxGHU3ZLac93y7NoLHLGo9V=C7K47naF2-+0oBkJ_kA@mail.gmail.com>
+Subject: Re: [PATCH v9 08/17] fuse: Add fuse-io-uring handling into fuse_copy
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
+	bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 10, 2025 at 10:13:17PM +0100, David Hildenbrand wrote:
-> On 10.01.25 21:28, Jeff Layton wrote:
-> > On Thu, 2025-01-09 at 12:22 +0100, David Hildenbrand wrote:
-> > > On 07.01.25 19:07, Shakeel Butt wrote:
-> > > > On Tue, Jan 07, 2025 at 09:34:49AM +0100, David Hildenbrand wrote:
-> > > > > On 06.01.25 19:17, Shakeel Butt wrote:
-> > > > > > On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
-> > > > > > > On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com> wrote:
-> > > > > > > > In any case, having movable pages be turned unmovable due to persistent
-> > > > > > > > writaback is something that must be fixed, not worked around. Likely a
-> > > > > > > > good topic for LSF/MM.
-> > > > > > > 
-> > > > > > > Yes, this seems a good cross fs-mm topic.
-> > > > > > > 
-> > > > > > > So the issue discussed here is that movable pages used for fuse
-> > > > > > > page-cache cause a problems when memory needs to be compacted. The
-> > > > > > > problem is either that
-> > > > > > > 
-> > > > > > >     - the page is skipped, leaving the physical memory block unmovable
-> > > > > > > 
-> > > > > > >     - the compaction is blocked for an unbounded time
-> > > > > > > 
-> > > > > > > While the new AS_WRITEBACK_INDETERMINATE could potentially make things
-> > > > > > > worse, the same thing happens on readahead, since the new page can be
-> > > > > > > locked for an indeterminate amount of time, which can also block
-> > > > > > > compaction, right?
-> > > > > 
-> > > > > Yes, as memory hotplug + virtio-mem maintainer my bigger concern is these
-> > > > > pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there *must not be
-> > > > > unmovable pages ever*. Not triggered by an untrusted source, not triggered
-> > > > > by an trusted source.
-> > > > > 
-> > > > > It's a violation of core-mm principles.
-> > > > 
-> > > > The "must not be unmovable pages ever" is a very strong statement and we
-> > > > are violating it today and will keep violating it in future. Any
-> > > > page/folio under lock or writeback or have reference taken or have been
-> > > > isolated from their LRU is unmovable (most of the time for small period
-> > > > of time).
-> > > 
-> > > ^ this: "small period of time" is what I meant.
-> > > 
-> > > Most of these things are known to not be problematic: retrying a couple
-> > > of times makes it work, that's why migration keeps retrying.
-> > > 
-> > > Again, as an example, we allow short-term O_DIRECT but disallow
-> > > long-term page pinning. I think there were concerns at some point if
-> > > O_DIRECT might also be problematic (I/O might take a while), but so far
-> > > it was not a problem in practice that would make CMA allocations easily
-> > > fail.
-> > > 
-> > > vmsplice() is a known problem, because it behaves like O_DIRECT but
-> > > actually triggers long-term pinning; IIRC David Howells has this on his
-> > > todo list to fix. [I recall that seccomp disallows vmsplice by default
-> > > right now]
-> > > 
-> > > These operations are being done all over the place in kernel.
-> > > > Miklos gave an example of readahead.
-> > > 
-> > > I assume you mean "unmovable for a short time", correct, or can you
-> > > point me at that specific example; I think I missed that.
+On Mon, Jan 6, 2025 at 4:25=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> w=
+rote:
+>
+> Add special fuse-io-uring into the fuse argument
+> copy handler.
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 
-Please see https://lore.kernel.org/all/CAJfpegthP2enc9o1hV-izyAG9nHcD_tT8dKFxxzhdQws6pcyhQ@mail.gmail.com/
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 
-> > > 
-> > > > The per-CPU LRU caches are another
-> > > > case where folios can get stuck for long period of time.
-> > > 
-> > > Which is why memory offlining disables the lru cache. See
-> > > lru_cache_disable(). Other users that care about that drain the LRU on
-> > > all cpus.
-> > > 
-> > > > Reclaim and
-> > > > compaction can isolate a lot of folios that they need to have
-> > > > too_many_isolated() checks. So, "must not be unmovable pages ever" is
-> > > > impractical.
-> > > 
-> > > "must only be short-term unmovable", better?
-
-Yes and you have clarified further below of the actual amount.
-
-> > > 
-> > 
-> > Still a little ambiguous.
-> > 
-> > How short is "short-term"? Are we talking milliseconds or minutes?
-> 
-> Usually a couple of seconds, max. For memory offlining, slightly longer
-> times are acceptable; other things (in particular compaction or CMA
-> allocations) will give up much faster.
-> 
-> > 
-> > Imposing a hard timeout on writeback requests to unprivileged FUSE
-> > servers might give us a better guarantee of forward-progress, but it
-> > would probably have to be on the order of at least a minute or so to be
-> > workable.
-> 
-> Yes, and that might already be a bit too much, especially if stuck on
-> waiting for folio writeback ... so ideally we could find a way to migrate
-> these folios that are under writeback and it's not your ordinary disk driver
-> that responds rather quickly.
-> 
-> Right now we do it via these temp pages, and I can see how that's
-> undesirable.
-> 
-> For NFS etc. we probably never ran into this, because it's all used in
-> fairly well managed environments and, well, I assume NFS easily outdates CMA
-> and ZONE_MOVABLE :)
-> 
-> > >>>
-> > > > The point is that, yes we should aim to improve things but in iterations
-> > > > and "must not be unmovable pages ever" is not something we can achieve
-> > > > in one step.
-> > > 
-> > > I agree with the "improve things in iterations", but as
-> > > AS_WRITEBACK_INDETERMINATE has the FOLL_LONGTERM smell to it, I think we
-> > > are making things worse.
-
-AS_WRITEBACK_INDETERMINATE is really a bad name we picked as it is still
-causing confusion. It is a simple flag to avoid deadlock in the reclaim
-code path and does not say anything about movability.
-
-> > > 
-> > > And as this discussion has been going on for too long, to summarize my
-> > > point: there exist conditions where pages are short-term unmovable, and
-> > > possibly some to be fixed that turn pages long-term unmovable (e.g.,
-> > > vmsplice); that does not mean that we can freely add new conditions that
-> > > turn movable pages unmovable long-term or even forever.
-> > > 
-> > > Again, this might be a good LSF/MM topic. If I would have the capacity I
-> > > would suggest a topic around which things are know to cause pages to be
-> > > short-term or long-term unmovable/unsplittable, and which can be
-> > > handled, which not. Maybe I'll find the time to propose that as a topic.
-> > > 
-> > 
-> > 
-> > This does sound like great LSF/MM fodder! I predict that this session
-> > will run long! ;)
-> 
-> Heh, fully agreed! :)
-
-I would like more targeted topic and for that I want us to at least
-agree where we are disagring. Let me write down two statements and
-please tell me where you disagree:
-
-1. For a normal running FUSE server (without tmp pages), the lifetime of
-writeback state of fuse folios falls under "short-term unmovable" bucket
-as it does not differ in anyway from anyother filesystems handling
-writeback folios.
-
-2. For a buggy or untrusted FUSE server (without tmp pages), the
-lifetime of writeback state of fuse folios can be arbitrarily long and
-we need some mechanism to limit it.
+> ---
+>  fs/fuse/dev.c        | 12 +++++++++++-
+>  fs/fuse/fuse_dev_i.h |  4 ++++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 6ee7e28a84c80a3e7c8dc933986c0388371ff6cd..8b03a540e151daa1f62986aa7=
+9030e9e7a456059 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -786,6 +786,9 @@ static int fuse_copy_do(struct fuse_copy_state *cs, v=
+oid **val, unsigned *size)
+>         *size -=3D ncpy;
+>         cs->len -=3D ncpy;
+>         cs->offset +=3D ncpy;
+> +       if (cs->is_uring)
+> +               cs->ring.copied_sz +=3D ncpy;
+> +
+>         return ncpy;
+>  }
+>
+> @@ -1922,7 +1925,14 @@ static struct fuse_req *request_find(struct fuse_p=
+queue *fpq, u64 unique)
+>  int fuse_copy_out_args(struct fuse_copy_state *cs, struct fuse_args *arg=
+s,
+>                        unsigned nbytes)
+>  {
+> -       unsigned reqsize =3D sizeof(struct fuse_out_header);
+> +
+> +       unsigned int reqsize =3D 0;
+> +
+> +       /*
+> +        * Uring has all headers separated from args - args is payload on=
+ly
+> +        */
+> +       if (!cs->is_uring)
+> +               reqsize =3D sizeof(struct fuse_out_header);
+>
+>         reqsize +=3D fuse_len_args(args->out_numargs, args->out_args);
+>
+> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> index 21eb1bdb492d04f0a406d25bb8d300b34244dce2..4a8a4feb2df53fb84938a6711=
+e6bcfd0f1b9f615 100644
+> --- a/fs/fuse/fuse_dev_i.h
+> +++ b/fs/fuse/fuse_dev_i.h
+> @@ -27,6 +27,10 @@ struct fuse_copy_state {
+>         unsigned int len;
+>         unsigned int offset;
+>         unsigned int move_pages:1;
+> +       unsigned int is_uring:1;
+> +       struct {
+> +               unsigned int copied_sz; /* copied size into the user buff=
+er */
+> +       } ring;
+>  };
+>
+>  static inline struct fuse_dev *fuse_get_dev(struct file *file)
+>
+> --
+> 2.43.0
+>
 
