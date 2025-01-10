@@ -1,325 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-38881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC343A09659
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 16:48:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D37A0967C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 16:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97A716A66C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 15:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FC83A8CCB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 15:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2277421322C;
-	Fri, 10 Jan 2025 15:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EFD211A3E;
+	Fri, 10 Jan 2025 15:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="G4mG36iN"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g1aQxVtB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85818211A36;
-	Fri, 10 Jan 2025 15:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB08211A08
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 15:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736524057; cv=none; b=V2odBdGgF8NXNXNTzt4PHJvkqInqUgvAFyztb2ozd0QMRxkVLdHazzm3jZw7kPz1VMbXDvaZHHzVRcE9IrgIaOy4JKRZy1Q8NWjhEo375HzglEDCdjFTwI8g58Ie+VnVxICTBxn0r2obitI4b6UiF37wBsqtktjnR8r/nBGvd1M=
+	t=1736524531; cv=none; b=MwoCqZxrSbiM+ARljSOQ8wTO7NDQL5TB/Fi5sj5yLVmWTdEaIpZzDpI8h7Wh9nZDEx21hmmUGYgwgU4V36QHi3v/0w1GccIM7h//c64uroWVyU7mFMN/FE7GB+OCqRQjUPjRmwFiNJbnMK4Q09/q6S3QhI8csmPdAeXo+gXBYsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736524057; c=relaxed/simple;
-	bh=PBXXx7pW7eA48iN3Hdo1hG7FWWvlkYwDQgtJNZjLljA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ms0BtGDASTeN/+kxgfmRaGpjP6LfuoOA/Q79ybgw+auYa5OejUTktBm0pX4zh1fGLWbLNzSHPUyIDdy6WJL7VHUEew2ahNO2Twd3TJdEPOq1R9ELRNZ1/kp6BdaEgXG9o6buWxWqXjepX6F3bnRP7k9ljn6iowMTfdmdFg4CVdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=G4mG36iN; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1736524531; c=relaxed/simple;
+	bh=PT5KbB8STzieb8SI43c9r4bJRZSyJCdnd4NCbGpXFZI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l6mE0Wt5/e3gKOnShj9egjj0uJE9iFOG5o1qDtn9R3jBXfyobyVBGUr3aZXm9Z0gtmTjJi4CD7rLnL504YY2qpCdfkNaBBltdU2pCMJ/e4nkUbNuJbcsF6ooijCT5ImEw5LKGcUj1snAKQZzMrAQcHEfPu3O6R41NUJS+GTzvUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g1aQxVtB; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6df83fd01cbso9322646d6.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 07:55:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1736524056; x=1768060056;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cN9Hyj3eVGx1RuR/kRE7v7aHU8VJ+bo+4A0MAmXwMOI=;
-  b=G4mG36iNkrNYEyo7CBS+AcKTke59e5065yEDoZIiZjKKKF2SydqxcNjh
-   RXk5mugWz9KhKx/o2hMIHeTCkaJDAgZ+24Qh2cFRP2Lgd6k7hUod5wlP1
-   8yfu+82DWi4Kusvx/hzy9P1bkuxxagRvp5SwAKoxuwZE60tEZ0eR2w/M/
-   w=;
-X-IronPort-AV: E=Sophos;i="6.12,303,1728950400"; 
-   d="scan'208";a="262160788"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jan 2025 15:47:31 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:19422]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.22:2525] with esmtp (Farcaster)
- id 885983d0-7c00-418f-9f0d-8bbdfc3b2667; Fri, 10 Jan 2025 15:47:29 +0000 (UTC)
-X-Farcaster-Flow-ID: 885983d0-7c00-418f-9f0d-8bbdfc3b2667
-Received: from EX19D020UWA004.ant.amazon.com (10.13.138.231) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 10 Jan 2025 15:47:27 +0000
-Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
- EX19D020UWA004.ant.amazon.com (10.13.138.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 10 Jan 2025 15:47:27 +0000
-Received: from email-imr-corp-prod-iad-all-1a-6ea42a62.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Fri, 10 Jan 2025 15:47:27 +0000
-Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
-	by email-imr-corp-prod-iad-all-1a-6ea42a62.us-east-1.amazon.com (Postfix) with ESMTPS id 9C2B34039B;
-	Fri, 10 Jan 2025 15:47:25 +0000 (UTC)
-From: Nikita Kalyazin <kalyazin@amazon.com>
-To: <willy@infradead.org>, <pbonzini@redhat.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-CC: <michael.day@amd.com>, <david@redhat.com>, <jthoughton@google.com>,
-	<michael.roth@amd.com>, <ackerleytng@google.com>, <graf@amazon.de>,
-	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
-	<nsaenz@amazon.es>, <xmarcalx@amazon.com>, <kalyazin@amazon.com>
-Subject: [RFC PATCH 2/2] KVM: guest_memfd: use filemap_grab_folios in write
-Date: Fri, 10 Jan 2025 15:46:59 +0000
-Message-ID: <20250110154659.95464-3-kalyazin@amazon.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250110154659.95464-1-kalyazin@amazon.com>
-References: <20250110154659.95464-1-kalyazin@amazon.com>
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1736524527; x=1737129327; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+4DHniq6Jwfm/qrHjg7vshNTs6ZZXTUjwzCd53ai3s=;
+        b=g1aQxVtB9sEhUJIZs/HmU/oTV2vlRxnHfwx8Z9mBDGICh/YnW5Mi443b/X0NO7M1Au
+         bzNagGCVSE2LfcL1aq6CHWyM16DibiNB4Ml0MabriqzGVzD2ziRnkk1M10BHWXdVcnT7
+         E6xlPqkAskO78ARUUgbhBEukUHJMGFpkhTaXlQrx/9QCze35MwMDAkVyUUjmsx4rnuml
+         AIFZFtsIxrr67yTXUX2u10+zuCixlzGHXUnVu5NX1oYoDLqorQ9yoFXajEm1EdO5K5KI
+         DMc/DX7cSdJUIZNKhBYduCkSpXJemZmGGgACvObtKX6Yixc3VBD5FBvwTh445LU83fw8
+         J8YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736524527; x=1737129327;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+4DHniq6Jwfm/qrHjg7vshNTs6ZZXTUjwzCd53ai3s=;
+        b=Xn+8CwoB0ETykVL7Y8SkPaJQG3y5FSV91GozWHaCNHFnPWs6hzu0XocgxezDhJFUcc
+         oHpPhFUR8GzvB7ow+M6iI3eOu+exCP3qRVP22MWiRBqd2LxUz4ovvaIHagHgDkNyhYzB
+         x9hzefo+QywxTqyKHsnmDnPVNanQe6gwx+66DUw8d3S7vD+UA6hhpQ7xmnrWe5np/Jqn
+         LFqQ4ccOVzmhlVl5nlYb+DODGLwjRExKmke4BodUv5KKtaPxdRii7QIPP0PYQOSKUent
+         H8UBi8bZ+BXpg+7hNz6w4hMKuI3x5u+sKerJprwI+6NSsHAkacdWgm+kHCuHQedW6Aan
+         TD2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgIv7807x71/5KU2z4nZBoBZCDLwZilxURg2s9vAbEtPNQ9dNMk89ArnzvKtzHRcawzrcrfQnlmvFnfNYp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6nHwZOtaKnmDe4PlRZyiPC7vdI9Za649HRspwXgBKvV9vVlH1
+	LZ2UAsF+r48doImraZ5xgP+8n2B22+AeNRdO1q83R1KZa3HAcemQq9DsSjbTTfk=
+X-Gm-Gg: ASbGncsXboaw1eZlSpDa+cmPjnDUazUMyNr79OY3CT19GNabiDK3Bv8q8nVVAg06NUG
+	bRxNZZY2BQvF0ssL/M9nuKZ/RQBv9q57wO+0dr5RHCnDkomO8ZXRmS5rejiHPQPHKu8uwb85vqa
+	U+p2piGMFeoHXqPKU1rwri1mmRtxCOzSce95+k6H0uqALrHRFTTnb2fjd1Du0rV05JlLwKbYZvg
+	xdRQI38Ii+QF6vd4SdeG50PiHBAkIVd16G1s0Siv+o0T3Eo2iFkiW6sa5/xedN9SYW54rBRTFXx
+	aMdN6vvczzbmNEWAH3s=
+X-Google-Smtp-Source: AGHT+IEu9QWoE1yj8ljZXJZo7UtmDZAvNDTGtvJsoZEgk/j6xFlgrRvToReL+/TBCH5oXr0zA/7vWg==
+X-Received: by 2002:a05:6214:e6a:b0:6d4:3b7a:313a with SMTP id 6a1803df08f44-6df9b2d36c0mr158944466d6.32.1736524527444;
+        Fri, 10 Jan 2025 07:55:27 -0800 (PST)
+Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dfade733e9sm10375056d6.82.2025.01.10.07.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2025 07:55:26 -0800 (PST)
+Date: Fri, 10 Jan 2025 10:55:25 -0500 (EST)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+    Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] binfmt_flat: Fix integer overflow bug on 32 bit
+ systems
+In-Reply-To: <f946074f-60ed-455f-bcc7-4364f15b9603@stanley.mountain>
+Message-ID: <4252467r-08n8-4oqr-3910-p5n1pq8so9s5@onlyvoer.pbz>
+References: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain> <f946074f-60ed-455f-bcc7-4364f15b9603@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-The write syscall on guest_memfd makes use of filemap_grab_folios to
-grab folios in batches.  This speeds up population by 8.3% due to the
-reduction in locking and tree walking when adding folios to the
-pagecache.
+On Fri, 10 Jan 2025, Dan Carpenter wrote:
 
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
----
- virt/kvm/guest_memfd.c | 176 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 143 insertions(+), 33 deletions(-)
+> Ping.
+> 
+> regards,
+> dan carpenter
+> 
+> On Wed, Dec 04, 2024 at 03:07:15PM +0300, Dan Carpenter wrote:
+> > Most of these sizes and counts are capped at 256MB so the math doesn't
+> > result in an integer overflow.  The "relocs" count needs to be checked
+> > as well.  Otherwise on 32bit systems the calculation of "full_data"
+> > could be wrong.
+> > 
+> > 	full_data = data_len + relocs * sizeof(unsigned long);
+> > 
+> > Fixes: c995ee28d29d ("binfmt_flat: prevent kernel dammage from corrupted executable headers")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index e80566ef56e9..ccfadc3a7389 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -102,17 +102,134 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
- 	return filemap_grab_folio(inode->i_mapping, index);
- }
- 
-+/*
-+ * Returns locked folios on success.  The caller is responsible for
-+ * setting the up-to-date flag before the memory is mapped into the guest.
-+ * There is no backing storage for the memory, so the folios will remain
-+ * up-to-date until they're removed.
-+ *
-+ * Ignore accessed, referenced, and dirty flags.  The memory is
-+ * unevictable and there is no storage to write back to.
-+ */
-+static int kvm_gmem_get_folios(struct inode *inode, pgoff_t index,
-+			       struct folio **folios, int num)
-+{
-+	return filemap_grab_folios(inode->i_mapping, index, folios, num);
-+}
-+
- #if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM) && !defined(CONFIG_KVM_AMD_SEV)
-+static int kvm_kmem_gmem_write_inner(struct inode *inode, pgoff_t index,
-+				     const void __user *buf,
-+                                     struct folio **folios, int num)
-+{
-+	int ret, i, num_grabbed, num_written;
-+
-+	num_grabbed = kvm_gmem_get_folios(inode, index, folios, num);
-+	if (num_grabbed < 0)
-+		return num_grabbed;
-+
-+	for (i = 0; i < num_grabbed; i++) {
-+		struct folio *folio = folios[i];
-+		void *vaddr;
-+
-+		if (folio_test_hwpoison(folio)) {
-+			folio_unlock(folio);
-+			folio_put(folio);
-+			ret = -EFAULT;
-+			break;
-+		}
-+
-+		if (folio_test_uptodate(folio)) {
-+			folio_unlock(folio);
-+			folio_put(folio);
-+			ret = -ENOSPC;
-+			break;
-+		}
-+
-+		folio_unlock(folio);
-+
-+		vaddr = kmap_local_folio(folio, 0);
-+		ret = copy_from_user(vaddr, buf + (i << PAGE_SHIFT), PAGE_SIZE);
-+		if (ret)
-+			ret = -EINVAL;
-+		kunmap_local(vaddr);
-+
-+		if (ret) {
-+			folio_put(folio);
-+			break;
-+		} else {
-+			kvm_gmem_mark_prepared(folio);
-+			folio_put(folio);
-+		}
-+	}
-+
-+	num_written = i;
-+
-+	for (i = num_written; i < num_grabbed; i++) {
-+		folio_unlock(folios[i]);
-+		folio_put(folios[i]);
-+	}
-+
-+	return num_written ?: ret;
-+}
-+
-+static struct folio *kvm_kmem_gmem_write_folio(struct inode *inode, pgoff_t index,
-+					       const char __user *buf)
-+{
-+	struct folio *folio;
-+	void *vaddr;
-+	int ret = 0;
-+
-+	folio = kvm_gmem_get_folio(inode, index);
-+	if (IS_ERR(folio))
-+		return ERR_PTR(-EFAULT);
-+
-+	if (folio_test_hwpoison(folio)) {
-+		ret = -EFAULT;
-+		goto out_unlock_put;
-+	}
-+
-+	if (folio_test_uptodate(folio)) {
-+		ret = -ENOSPC;
-+		goto out_unlock_put;
-+	}
-+
-+	folio_unlock(folio);
-+
-+	vaddr = kmap_local_folio(folio, 0);
-+	ret = copy_from_user(vaddr, buf, PAGE_SIZE);
-+	if (ret)
-+		ret = -EINVAL;
-+	kunmap_local(vaddr);
-+
-+	if (ret) {
-+		folio_put(folio);
-+		kvm_gmem_mark_prepared(folio);
-+		goto out_err;
-+	}
-+
-+	folio_put(folio);
-+
-+	return folio;
-+
-+out_unlock_put:
-+	folio_unlock(folio);
-+	folio_put(folio);
-+out_err:
-+	return ERR_PTR(ret);
-+}
-+
- static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
- 				   size_t count, loff_t *offset)
- {
-+	struct inode *inode = file_inode(file);
-+	int ret = 0, batch_size = FILEMAP_GET_FOLIOS_BATCH_SIZE;
- 	pgoff_t start, end, index;
--	ssize_t ret = 0;
- 
- 	if (!PAGE_ALIGNED(*offset) || !PAGE_ALIGNED(count))
- 		return -EINVAL;
- 
--	if (*offset + count > i_size_read(file_inode(file)))
-+	if (*offset + count > i_size_read(inode))
- 		return -EINVAL;
- 
- 	if (!buf)
-@@ -123,9 +240,8 @@ static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
- 
- 	filemap_invalidate_lock(file->f_mapping);
- 
--	for (index = start; index < end; ) {
--		struct folio *folio;
--		void *vaddr;
-+	for (index = start; index + batch_size - 1 < end; ) {
-+		struct folio *folios[FILEMAP_GET_FOLIOS_BATCH_SIZE] = { NULL };
- 		pgoff_t buf_offset = (index - start) << PAGE_SHIFT;
- 
- 		if (signal_pending(current)) {
-@@ -133,46 +249,40 @@ static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
- 			goto out;
- 		}
- 
--		folio = kvm_gmem_get_folio(file_inode(file), index);
--		if (IS_ERR(folio)) {
--			ret = -EFAULT;
-+		ret = kvm_kmem_gmem_write_inner(inode, index, buf + buf_offset, folios, batch_size);
-+		if (ret < 0)
- 			goto out;
--		}
- 
--		if (folio_test_hwpoison(folio)) {
--			folio_unlock(folio);
--			folio_put(folio);
--			ret = -EFAULT;
-+		index += ret;
-+		if (ret < batch_size)
-+			break;
-+	}
-+
-+	for (; index < end; index++) {
-+		struct folio *folio;
-+		pgoff_t buf_offset = (index - start) << PAGE_SHIFT;
-+
-+		if (signal_pending(current)) {
-+			ret = -EINTR;
- 			goto out;
- 		}
- 
--		if (folio_test_uptodate(folio)) {
--			folio_unlock(folio);
--			folio_put(folio);
--			ret = -ENOSPC;
-+		folio = kvm_kmem_gmem_write_folio(inode, index,
-+						  buf + buf_offset);
-+		if (IS_ERR(folio)) {
-+			ret = PTR_ERR(folio);
- 			goto out;
- 		}
--
--		folio_unlock(folio);
--
--		vaddr = kmap_local_folio(folio, 0);
--		ret = copy_from_user(vaddr, buf + buf_offset, PAGE_SIZE);
--		if (ret)
--			ret = -EINVAL;
--		kunmap_local(vaddr);
--
--		kvm_gmem_mark_prepared(folio);
--		folio_put(folio);
--
--		index = folio_next_index(folio);
--		*offset += PAGE_SIZE;
- 	}
- 
- out:
- 	filemap_invalidate_unlock(file->f_mapping);
-+	if (index > start) {
-+		*offset += (index - start) << PAGE_SHIFT;
-+		return (index - start) << PAGE_SHIFT;
-+	}
- 
--	return ret && start == (*offset >> PAGE_SHIFT) ?
--		ret : *offset - (start << PAGE_SHIFT);
-+	return ret;
- }
- #endif
- 
--- 
-2.40.1
+Acked-by: Nicolas Pitre <npitre@baylibre.com>
 
+
+> > ---
+> >  fs/binfmt_flat.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+> > index 390808ce935d..b5b5ca1a44f7 100644
+> > --- a/fs/binfmt_flat.c
+> > +++ b/fs/binfmt_flat.c
+> > @@ -478,7 +478,7 @@ static int load_flat_file(struct linux_binprm *bprm,
+> >  	 * 28 bits (256 MB) is way more than reasonable in this case.
+> >  	 * If some top bits are set we have probable binary corruption.
+> >  	*/
+> > -	if ((text_len | data_len | bss_len | stack_len | full_data) >> 28) {
+> > +	if ((text_len | data_len | bss_len | stack_len | relocs | full_data) >> 28) {
+> >  		pr_err("bad header\n");
+> >  		ret = -ENOEXEC;
+> >  		goto err;
+> > -- 
+> > 2.45.2
+> 
 
