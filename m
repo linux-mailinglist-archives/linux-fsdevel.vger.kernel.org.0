@@ -1,180 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-38905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235E8A09B70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 20:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E109A09BC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 20:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD613A4C4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 19:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83193A7083
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 19:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FE6224AE0;
-	Fri, 10 Jan 2025 18:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EDA214A61;
+	Fri, 10 Jan 2025 19:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="gUcds19a"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Li/TB0NC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E320764A;
-	Fri, 10 Jan 2025 18:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81DC24B248;
+	Fri, 10 Jan 2025 19:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736535255; cv=none; b=VUJ/NozgnvvZqPE43J544XbzByafdaMiI2neI74xbj52jcsMfrV4Gxg4sptEaqXfTuGN2EOsUThatM5n5QRO3That/Tz8gAzyB3Rnw2Vs7zZNZ4nwApXLmlXwwVKs9z+hTP3Z4PSdyGPBEzMz9zJkSrcLWfkC4c7zjzw8bERhlo=
+	t=1736536856; cv=none; b=qfDl3UsIy16eAoSVV8hELvNrfvoV/yGMxo37YlMywICnK12sAO6LG2oefBJIgy82C+Pg2dDXCp4SWbwOIGX1iniJ7fJQ90k8/3OBolH1kCtsEq0A5kgRRhlmLPMSxWNMcpXo5Cz3EJimS1o0h3915USuoSciTim4+ikYjyeeHAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736535255; c=relaxed/simple;
-	bh=N67Au3zI8gSuIxYQ9HZyBG+m19KuGbzYRH6GokXtSEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dxGBeIjNbWOEDW6RnHoIGgho7esES+FwzcAp5IuXi/qUPjCbGyzjySyfkox+kyIN/0z8q61pwhrCC7Fmnf0bqUPYyC+rID7nCPQg3NWc2XM8iJEKXwaLI7vFzAFU0C4jVF5dtpHGPOJhmiO9IqZgJvUlPn2pWqorhjHqf7NWt6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=gUcds19a; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1736536856; c=relaxed/simple;
+	bh=TsUacba3ZNHue/H4DtA4q8B1cm7VOIj72LZpEo+y4gs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gvucpWdnP+8eVhG3Kh28CufrIJAWe9eQb1ilLmwv6hZhaQamQ1rxfk4fpC46vYcE0/7+5wIxj7QXwL1DrAvrI64do+Dysf/om9dAQb0l63db4aeKDQyfwuEsl31Z6rciWBUoGSpZPsEnDjMW9IEP8qeJBg0fsVJHiz0kyQQP/sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Li/TB0NC; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53e384e3481so2235112e87.2;
+        Fri, 10 Jan 2025 11:20:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1736535254; x=1768071254;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=dVDd8Owu5mmhfXq9kotQZKYGFY24PHmq4HgS4SvakZc=;
-  b=gUcds19avaxUCstr+CyS1qGDEVfX5eIYn1FsMRpvSnk3NIL+7QaQVVO+
-   WC3At/RfLGwocCOwNi0BCWwDBvK+RE0Wfj66wNSe55a18EsfHmq+vl/5/
-   BjTk8+u4TdMQ4M0zo6WOIawLA5woqMwze3OIGClshsNsyBvtDoNXPs8BL
-   k=;
-X-IronPort-AV: E=Sophos;i="6.12,305,1728950400"; 
-   d="scan'208";a="13453976"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jan 2025 18:54:12 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:2623]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.45.180:2525] with esmtp (Farcaster)
- id b928f9af-217a-405f-8ef6-6ae3379b2b81; Fri, 10 Jan 2025 18:54:11 +0000 (UTC)
-X-Farcaster-Flow-ID: b928f9af-217a-405f-8ef6-6ae3379b2b81
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 10 Jan 2025 18:54:10 +0000
-Received: from [192.168.12.16] (10.106.82.30) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39; Fri, 10 Jan 2025
- 18:54:09 +0000
-Message-ID: <bda9f9a8-1e5a-454e-8506-4e31e6b4c152@amazon.com>
-Date: Fri, 10 Jan 2025 18:54:03 +0000
+        d=gmail.com; s=20230601; t=1736536852; x=1737141652; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2ETi9XuLcb2bxyHKTfjjsalpH1+hdaYldvTRFOmiXQ=;
+        b=Li/TB0NCm7TdyW9gNo8bFTz8C6Ntz9H9vug0BC/MV+AU54br5vlllQUTinBU6sRShb
+         S07ePnjGS+fXOTyrAxF9Vjdlq3+xmOGSF2sGrG16LawA5p1iRkCH1yr8U8dpWtowS6y6
+         AUh/d1OxSmG2GGFcckz6lOZJxjmErWq+IEW6vYhvOyO3tT0pIbGxKF5qELan3H77ZLh4
+         W37oVYVYbtak68DPHW4LRAGY8ApS0+4XrtVBO6SgmNjJ52PMrV+5G2aHLrOJ/65mTCX4
+         s9Qt02pEyDztCvjVOUHSwQcuMXkLT2tkXPTwlOEIfWV0Kq1/1xC9AdhAi2ZkxuhA0N6n
+         Xe1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736536852; x=1737141652;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w2ETi9XuLcb2bxyHKTfjjsalpH1+hdaYldvTRFOmiXQ=;
+        b=LkA3RO6H6m0hFAYl+BJfjEXaNixYRGrEGSQ9fMT/tr/0KB4yTnp2VZCtWAaTgaoc5s
+         Jq53A7qjYAG73SEWIil8hq6nYZdE4JgNNu+A7MUoO+iR0/+8dMW+jWczBWKIJKGno/uy
+         67thWbpytqxg/enSeeshG/fSiG20AzjB3aRiI1moo4cD/vHAbqEOsu3ZP8R7E8ME4z1o
+         Wwm5Dba65cf8szeCR66CRrAE9i3EaVSA/vWi5dXFrMG/kGfdeYXneDH7k3xZAabmNzSk
+         6l1/8NYbz56io2Y5Zt3Ksp7Z+y0YOo4AMcasvIeLxOOieOCilDurM9ZLQyxGPC41Tcrr
+         Goag==
+X-Forwarded-Encrypted: i=1; AJvYcCU78MROnwWv4Sp0I6U7CKrgjjH6cquqVsam+two+5P/eH/HpamDtWVCvQ7qnVHu4kZLNC0PqTmpZRu2@vger.kernel.org, AJvYcCWsBY3pRgLw6QGJwPkmTtAV+4zQW0ESciBKggssb+MOVKdSZg2X303t0aM6L/nrmHxhfPsQSetjOOai@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYwb7rSnn5u3gouhFPIGv1KRWw/2qjySlucOTuI/7F1jEJkxhF
+	NFJuTyyTDuZvvjI6zzP8bfs6r/K3NGR/P94RXIZ8fUSIht1n315yW3H6yYAfc6dDxGTB/Xsd5ZK
+	L3Y94y1PASscrKIM/Ij7C+u9D6o8=
+X-Gm-Gg: ASbGncvRkFFMMn2t8by8v8EjgvxmMmmlG/mhIO0nP5OHh0IdxIhdD8hFodNzUYD90aw
+	3zfE4vvrzeDZuVnPzh21BivI2hsxjztQbqEuR
+X-Google-Smtp-Source: AGHT+IEAdYrk21bidDzR//LEYUeS/P2MwthakCw7I93640ZsXXLOWOiIkfaQ5wxzDoRvZrP/6PmRJGmbCrUYaeNsvBQ=
+X-Received: by 2002:a05:6512:23aa:b0:540:358d:d9b5 with SMTP id
+ 2adb3069b0e04-542844ad98bmr4322449e87.0.1736536851587; Fri, 10 Jan 2025
+ 11:20:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/2] mm: filemap: add filemap_grab_folios
-To: David Hildenbrand <david@redhat.com>, <willy@infradead.org>,
-	<pbonzini@redhat.com>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-CC: <michael.day@amd.com>, <jthoughton@google.com>, <michael.roth@amd.com>,
-	<ackerleytng@google.com>, <graf@amazon.de>, <jgowans@amazon.com>,
-	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
-	<xmarcalx@amazon.com>
-References: <20250110154659.95464-1-kalyazin@amazon.com>
- <5608af05-0b7a-4e11-b381-8b57b701e316@redhat.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <5608af05-0b7a-4e11-b381-8b57b701e316@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D002EUC003.ant.amazon.com (10.252.51.218) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+References: <20250110023854.GS1977892@ZenIV> <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
+ <20250110024303.4157645-15-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250110024303.4157645-15-viro@zeniv.linux.org.uk>
+From: =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date: Fri, 10 Jan 2025 20:20:40 +0100
+X-Gm-Features: AbW1kvbywTuwz72RGQtWElnGxGCJpZ-FnlbRCT77Q-5fBd30IjCjaa4HU5INQXg
+Message-ID: <CAHpGcMLGujcBko5LeRgYCLzT4JCh16Jn97iXDZr8EZ4sMaKn_A@mail.gmail.com>
+Subject: Re: [PATCH 15/20] gfs2_drevalidate(): use stable parent inode and
+ name passed by caller
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
+	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, 
+	linux-nfs@vger.kernel.org, miklos@szeredi.hu, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/01/2025 17:01, David Hildenbrand wrote:
-> On 10.01.25 16:46, Nikita Kalyazin wrote:
->> Based on David's suggestion for speeding up guest_memfd memory
->> population [1] made at the guest_memfd upstream call on 5 Dec 2024 [2],
->> this adds `filemap_grab_folios` that grabs multiple folios at a time.
->>
-> 
-> Hi,
+Am Fr., 10. Jan. 2025 um 03:44 Uhr schrieb Al Viro <viro@zeniv.linux.org.uk>:
+> No need to mess with dget_parent() for the former; for the latter we really should
+> not rely upon ->d_name.name remaining stable.  Again, a UAF there.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/gfs2/dentry.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
+>
+> diff --git a/fs/gfs2/dentry.c b/fs/gfs2/dentry.c
+> index 86c338901fab..95050e719233 100644
+> --- a/fs/gfs2/dentry.c
+> +++ b/fs/gfs2/dentry.c
+> @@ -35,48 +35,40 @@
+>  static int gfs2_drevalidate(struct inode *dir, const struct qstr *name,
+>                             struct dentry *dentry, unsigned int flags)
+>  {
+> -       struct dentry *parent;
+> -       struct gfs2_sbd *sdp;
+> -       struct gfs2_inode *dip;
+> +       struct gfs2_sbd *sdp = GFS2_SB(dir);
+> +       struct gfs2_inode *dip = GFS2_I(dir);
+>         struct inode *inode;
+>         struct gfs2_holder d_gh;
+>         struct gfs2_inode *ip = NULL;
+> -       int error, valid = 0;
+> +       int error, valid;
+>         int had_lock = 0;
+>
+>         if (flags & LOOKUP_RCU)
+>                 return -ECHILD;
+>
+> -       parent = dget_parent(dentry);
+> -       sdp = GFS2_SB(d_inode(parent));
+> -       dip = GFS2_I(d_inode(parent));
+>         inode = d_inode(dentry);
+>
+>         if (inode) {
+>                 if (is_bad_inode(inode))
+> -                       goto out;
+> +                       return 0;
+>                 ip = GFS2_I(inode);
+>         }
+>
+> -       if (sdp->sd_lockstruct.ls_ops->lm_mount == NULL) {
+> -               valid = 1;
+> -               goto out;
+> -       }
+> +       if (sdp->sd_lockstruct.ls_ops->lm_mount == NULL)
+> +               return 1;
+>
+>         had_lock = (gfs2_glock_is_locked_by_me(dip->i_gl) != NULL);
+>         if (!had_lock) {
+>                 error = gfs2_glock_nq_init(dip->i_gl, LM_ST_SHARED, 0, &d_gh);
+>                 if (error)
+> -                       goto out;
+> +                       return 0;
+>         }
+>
+> -       error = gfs2_dir_check(d_inode(parent), &dentry->d_name, ip);
+> +       error = gfs2_dir_check(dir, name, ip);
+>         valid = inode ? !error : (error == -ENOENT);
+>
+>         if (!had_lock)
+>                 gfs2_glock_dq_uninit(&d_gh);
+> -out:
+> -       dput(parent);
+>         return valid;
+>  }
+>
+> --
+> 2.39.5
 
-Hi :)
+Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-> 
->> Motivation
->>
->> When profiling guest_memfd population and comparing the results with
->> population of anonymous memory via UFFDIO_COPY, I observed that the
->> former was up to 20% slower, mainly due to adding newly allocated pages
->> to the pagecache.  As far as I can see, the two main contributors to it
->> are pagecache locking and tree traversals needed for every folio.  The
->> RFC attempts to partially mitigate those by adding multiple folios at a
->> time to the pagecache.
->>
->> Testing
->>
->> With the change applied, I was able to observe a 10.3% (708 to 635 ms)
->> speedup in a selftest that populated 3GiB guest_memfd and a 9.5% (990 to
->> 904 ms) speedup when restoring a 3GiB guest_memfd VM snapshot using a
->> custom Firecracker version, both on Intel Ice Lake.
-> 
-> Does that mean that it's still 10% slower (based on the 20% above), or
-> were the 20% from a different micro-benchmark?
-
-Yes, it is still slower:
-  - isolated/selftest: 2.3%
-  - Firecracker setup: 8.9%
-
-Not sure why the values are so different though.  I'll try to find an 
-explanation.
-
->>
->> Limitations
->>
->> While `filemap_grab_folios` handles THP/large folios internally and
->> deals with reclaim artifacts in the pagecache (shadows), for simplicity
->> reasons, the RFC does not support those as it demonstrates the
->> optimisation applied to guest_memfd, which only uses small folios and
->> does not support reclaim at the moment.
-> 
-> It might be worth pointing out that, while support for larger folios is
-> in the works, there will be scenarios where small folios are unavoidable
-> in the future (mixture of shared and private memory).
-> 
-> How hard would it be to just naturally support large folios as well?
-
-I don't think it's going to be impossible.  It's just one more dimension 
-that needs to be handled.  `__filemap_add_folio` logic is already rather 
-complex, and processing multiple folios while also splitting when 
-necessary correctly looks substantially convoluted to me.  So my idea 
-was to discuss/validate the multi-folio approach first before rolling 
-the sleeves up.
-
-> We do have memfd_pin_folios() that can deal with that and provides a
-> slightly similar interface (struct folio **folios).
-> 
-> For reference, the interface is:
-> 
-> long memfd_pin_folios(struct file *memfd, loff_t start, loff_t end,
->                       struct folio **folios, unsigned int max_folios,
->                       pgoff_t *offset)
-> 
-> Maybe what you propose could even be used to further improve
-> memfd_pin_folios() internally? However, it must do this FOLL_PIN thingy,
-> so it must process each and every folio it processed.
-
-Thanks for the pointer.  Yeah, I see what you mean.  I guess, it can 
-potentially allocate/add folios in a batch and then pin them?  Although 
-swap/readahead logic may make it more difficult to implement.
-
-> -- 
-> Cheers,
-> 
-> David / dhildenb 
-
+Thanks,
+Andreas
 
