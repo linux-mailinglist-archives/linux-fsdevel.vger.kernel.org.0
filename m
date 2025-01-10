@@ -1,336 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-38773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E445FA08466
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 02:06:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF51CA08520
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 03:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92783188366B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 01:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E28E1889B3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 02:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D064B206F05;
-	Fri, 10 Jan 2025 01:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hqjfj624"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A4218C01D;
+	Fri, 10 Jan 2025 02:05:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750F21E0DCF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 01:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1421718027;
+	Fri, 10 Jan 2025 02:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736471056; cv=none; b=QIe+gdDHGgGVl+TwLDRGW4i4Eq6tZB0xQaFDSgTQLSra1q9w2yyZOv2jLn53gknxrEeip+vAOQotFaT8VS+xcBW9twowrhdBx0SN3rOKBwgKHT2D5t2UEh3k3UN/dZa1fKN6x4C/UnuonYiA2VFPqma/xfz6FEVj4FU6LIOfGY8=
+	t=1736474724; cv=none; b=o6mGw16RtBVHJ77Po0k/3pSKFbUOCyBnQWGrEyLOjg1TdoCcRZnX+mGuSRKnY8Q59g/8I8hUFcOK6mu0uWtj5XlYFLfcNSnTKvWo2YrJQFzIXVpIgJUKCnSybPRt07Lr0AYd1T73APQY8ks3+IWoN17xI5k+LFIhfyjEi2kNfao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736471056; c=relaxed/simple;
-	bh=mB7CSBUc/zPyuAIvcNU1VoCNxE1QrCmcgQm776XUdwc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dQgdR2u8SxFAH80ciUJzeVlbu0yjtEE/nhIJ3QO2PI+ywT0WTuDJvWD/DlHSYsI1C0q3xvuXqZ41XKT1zoipJRlaMHrTd+8yOx6Tmrg1kj69QXKxEr2YncyrnawCcv4yfAj6AYRbGdgztmSMiaER30I1B1vzotP+MIWkRrxnGiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hqjfj624; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736471053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r+BHhLFoDCiqeH2JzrdvAP1GvlO2WIxVq9IEXsMrIfw=;
-	b=hqjfj624dSTrhLGl45XpslUiGVJ43gDxqomzQQcHYbeQgD65yTaIURpMoa2j3AT4Qoq8gC
-	lvQzHgcsHdboIt2i8yKSneLsFpAt2MUG/9ZtBeV33SdqCKvAsxaUAMq0F1KQK1qox71giF
-	6caim0ssWaUNg6Gc//vpmft5sTerjwo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-111-4VHIN3ueNOC3foRXWS9Fuw-1; Thu,
- 09 Jan 2025 20:04:10 -0500
-X-MC-Unique: 4VHIN3ueNOC3foRXWS9Fuw-1
-X-Mimecast-MFC-AGG-ID: 4VHIN3ueNOC3foRXWS9Fuw
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29B7419560BD;
-	Fri, 10 Jan 2025 01:04:08 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A08F19560AB;
-	Fri, 10 Jan 2025 01:04:04 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: David Howells <dhowells@redhat.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-crypto@vger.kernel.org,
-	linux-afs@lists.infradead.org,
-	linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 8/8] rxrpc: rxgk: Implement connection rekeying
-Date: Fri, 10 Jan 2025 01:03:10 +0000
-Message-ID: <20250110010313.1471063-9-dhowells@redhat.com>
-In-Reply-To: <20250110010313.1471063-1-dhowells@redhat.com>
-References: <20250110010313.1471063-1-dhowells@redhat.com>
+	s=arc-20240116; t=1736474724; c=relaxed/simple;
+	bh=4xYgW0a6YtAwogWixOy5AD59vqq7JLFwPDnj5/tyBVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JIRGej6TV9FwSjkUb5L2IcflM4NQOSNVfG4XdGd62SBBYshxFCrvctnQvnL6wtRrIaaY9+9eKqpp+gMonRhE81g3rAysod+cetLSeXsH8ATQxzHgbp8h62yvVFnu33bB+cuJDVE/pt2QdklZDQ9HtQwWFH8TkmmHDVxvvJ7TBxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YTlN74xC6z4f3jHt;
+	Fri, 10 Jan 2025 10:04:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 23B081A0E79;
+	Fri, 10 Jan 2025 10:05:17 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgA3m19ZgIBnk6geAg--.15902S3;
+	Fri, 10 Jan 2025 10:05:14 +0800 (CST)
+Message-ID: <be3dfb59-b9ec-4682-92c4-b47b12dab5e8@huaweicloud.com>
+Date: Fri, 10 Jan 2025 10:05:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [xfstests PATCH v3] generic: add a partial pages zeroing out test
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, zlang@kernel.org, linux-fsdevel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, willy@infradead.org,
+ ojaswin@linux.ibm.com, djwong@kernel.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250108084407.1575909-1-yi.zhang@huaweicloud.com>
+ <20250109181914.xffhgu2x75eh4m2u@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250109181914.xffhgu2x75eh4m2u@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgA3m19ZgIBnk6geAg--.15902S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFW8AF18GFW5ur4rCw1kuFg_yoWrAF43pF
+	Wru3Wayr4xJa47G3s3uFn8XryrJrs3ZF47ur9xWw1YkFWqvrn7CFZIgr48GrZxGr4j9r4F
+	vw4vq34a9r1qqrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Implement rekeying of connections with the RxGK security class.  This
-involves regenerating the keys with a different key number as part of the
-input data after a certain amount of time or a certain amount of bytes
-encrypted.  Rekeying may be triggered by either end.
+On 2025/1/10 2:19, Zorro Lang wrote:
+> On Wed, Jan 08, 2025 at 04:44:07PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> This addresses a data corruption issue encountered during partial page
+>> zeroing in ext4 which the block size is smaller than the page size [1].
+>> Add a new test which is expanded upon generic/567, this test performs a
+>> zeroing range test that spans two partial pages to cover this case, and
+>> also generalize it to work for non-4k page sizes.
+>>
+>> Link: https://lore.kernel.org/linux-ext4/20241220011637.1157197-2-yi.zhang@huaweicloud.com/ [1]
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>> v2->v3:
+>>  - Put the verifyfile in $SCRATCH_MNT and remove the overriding
+>>    _cleanup.
+>>  - Correct the test name.
+>> v1->v2:
+>>  - Add a new test instead of modifying generic/567.
+>>  - Generalize the test to work for non-4k page sizes.
+>> v2: https://lore.kernel.org/fstests/20241225125120.1952219-1-yi.zhang@huaweicloud.com/
+>> v1: https://lore.kernel.org/fstests/20241223023930.2328634-1-yi.zhang@huaweicloud.com/
+>>
+>>  tests/generic/758     | 68 +++++++++++++++++++++++++++++++++++++++++++
+>>  tests/generic/758.out |  3 ++
+>>  2 files changed, 71 insertions(+)
+>>  create mode 100755 tests/generic/758
+>>  create mode 100644 tests/generic/758.out
+>>
+>> diff --git a/tests/generic/758 b/tests/generic/758
+>> new file mode 100755
+>> index 00000000..bf0a342b
+>> --- /dev/null
+>> +++ b/tests/generic/758
+>> @@ -0,0 +1,68 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (c) 2024 Huawei.  All Rights Reserved.
+>> +#
+>> +# FS QA Test No. 758
+>> +#
+>> +# Test mapped writes against zero-range to ensure we get the data
+>> +# correctly written. This can expose data corruption bugs on filesystems
+>> +# where the block size is smaller than the page size.
+>> +#
+>> +# (generic/567 is a similar test but for punch hole.)
+>> +#
+>> +. ./common/preamble
+>> +_begin_fstest auto quick rw zero
+>> +
+>> +# Import common functions.
+>> +. ./common/filter
+>> +
+>> +_require_scratch
+>> +_require_xfs_io_command "fzero"
+>> +
+>> +verifyfile=$SCRATCH_MNT/verifyfile
+>> +testfile=$SCRATCH_MNT/testfile
+>> +
+>> +pagesz=$(getconf PAGE_SIZE)
+> 
+> There's a common helper "_get_page_size" to do this.
+> 
 
-The LSW of the key number is inserted into the security-specific field in
-the RX header, and we try and expand it to 32-bits to make it last longer.
+Ha, I missed this, thanks for point this out.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Herbert Xu <herbert@gondor.apana.org.au>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Chuck Lever <chuck.lever@oracle.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-crypto@vger.kernel.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/ar-internal.h |   5 +-
- net/rxrpc/conn_object.c |   1 +
- net/rxrpc/rxgk.c        | 156 ++++++++++++++++++++++++++++++++++++++--
- 3 files changed, 155 insertions(+), 7 deletions(-)
+>> +
+>> +_scratch_mkfs > /dev/null 2>&1
+>> +_scratch_mount
+>> +
+>> +_dump_files()
+>> +{
+>> +	echo "---- testfile ----"
+>> +	_hexdump $testfile
+>> +	echo "---- verifyfile --"
+>> +	_hexdump $verifyfile
+>> +}
+>> +
+>> +# Build verify file, the data in this file should be consistent with
+>> +# that in the test file.
+>> +$XFS_IO_PROG -f -c "pwrite -S 0x58 0 $((pagesz * 3))" \
+>> +		-c "pwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
+>> +		$verifyfile | _filter_xfs_io >> /dev/null
+>                                              ????????
+>                                              >> $seqres.full ?
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 736dc6ea20ac..e00f3b0edc98 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -533,11 +533,14 @@ struct rxrpc_connection {
- 			u32	nonce;		/* response re-use preventer */
- 		} rxkad;
- 		struct {
--			struct rxgk_context *keys[1];
-+			struct rxgk_context *keys[4]; /* (Re-)keying buffer */
- 			u64	start_time;	/* The start time for TK derivation */
- 			u8	nonce[20];	/* Response re-use preventer */
-+			u32	key_number;	/* Current key number */
- 		} rxgk;
- 	};
-+	rwlock_t		security_use_lock; /* Security use/modification lock */
-+
- 	unsigned long		flags;
- 	unsigned long		events;
- 	unsigned long		idle_timestamp;	/* Time at which last became idle */
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index 7eba4d7d9a38..56459b00266d 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -72,6 +72,7 @@ struct rxrpc_connection *rxrpc_alloc_connection(struct rxrpc_net *rxnet,
- 		skb_queue_head_init(&conn->rx_queue);
- 		conn->rxnet = rxnet;
- 		conn->security = &rxrpc_no_security;
-+		rwlock_init(&conn->security_use_lock);
- 		spin_lock_init(&conn->state_lock);
- 		conn->debug_id = atomic_inc_return(&rxrpc_debug_id);
- 		conn->idle_timestamp = jiffies;
-diff --git a/net/rxrpc/rxgk.c b/net/rxrpc/rxgk.c
-index 7344f19b8ae2..c278a242f855 100644
---- a/net/rxrpc/rxgk.c
-+++ b/net/rxrpc/rxgk.c
-@@ -76,11 +76,153 @@ static void rxgk_describe_server_key(const struct key *key, struct seq_file *m)
- 		seq_printf(m, ": %s", krb5->name);
- }
- 
-+/*
-+ * Handle rekeying the connection when we see our limits overrun or when the
-+ * far side decided to rekey.
-+ *
-+ * Returns a ref on the context if successful or -ESTALE if the key is out of
-+ * date.
-+ */
-+static struct rxgk_context *rxgk_rekey(struct rxrpc_connection *conn,
-+				       const u16 *specific_key_number)
-+{
-+	struct rxgk_context *gk, *dead = NULL;
-+	unsigned int key_number, current_key, mask = ARRAY_SIZE(conn->rxgk.keys) - 1;
-+	bool crank = false;
-+
-+	_enter("%d", specific_key_number ? *specific_key_number : -1);
-+
-+	mutex_lock(&conn->security_lock);
-+
-+	current_key = conn->rxgk.key_number;
-+	if (!specific_key_number) {
-+		key_number = current_key;
-+	} else {
-+		if (*specific_key_number == (u16)current_key)
-+			key_number = current_key;
-+		else if (*specific_key_number == (u16)(current_key - 1))
-+			key_number = current_key - 1;
-+		else if (*specific_key_number == (u16)(current_key + 1))
-+			goto crank_window;
-+		else
-+			goto bad_key;
-+	}
-+
-+	gk = conn->rxgk.keys[key_number & mask];
-+	if (!gk)
-+		goto generate_key;
-+	if (!specific_key_number &&
-+	    test_bit(RXGK_TK_NEEDS_REKEY, &gk->flags))
-+		goto crank_window;
-+
-+grab:
-+	refcount_inc(&gk->usage);
-+	mutex_unlock(&conn->security_lock);
-+	rxgk_put(dead);
-+	return gk;
-+
-+crank_window:
-+	if (current_key == UINT_MAX)
-+		goto bad_key;
-+	if (current_key + 1 == UINT_MAX)
-+		set_bit(RXRPC_CONN_DONT_REUSE, &conn->flags);
-+
-+	key_number = current_key + 1;
-+	if (WARN_ON(conn->rxgk.keys[key_number & mask]))
-+		goto bad_key;
-+	crank = true;
-+
-+generate_key:
-+	gk = conn->rxgk.keys[current_key & mask];
-+	gk = rxgk_generate_transport_key(conn, gk->key, key_number, GFP_NOFS);
-+	if (IS_ERR(gk)) {
-+		mutex_unlock(&conn->security_lock);
-+		return gk;
-+	}
-+
-+	write_lock(&conn->security_use_lock);
-+	if (crank) {
-+		current_key++;
-+		conn->rxgk.key_number = current_key;
-+		dead = conn->rxgk.keys[(current_key - 2) & mask];
-+		conn->rxgk.keys[(current_key - 2) & mask] = NULL;
-+	}
-+	conn->rxgk.keys[current_key & mask] = gk;
-+	write_unlock(&conn->security_use_lock);
-+	goto grab;
-+
-+bad_key:
-+	mutex_unlock(&conn->security_lock);
-+	return ERR_PTR(-ESTALE);
-+}
-+
-+/*
-+ * Get the specified keying context.
-+ *
-+ * Returns a ref on the context if successful or -ESTALE if the key is out of
-+ * date.
-+ */
- static struct rxgk_context *rxgk_get_key(struct rxrpc_connection *conn,
--					 u16 *specific_key_number)
-+					 const u16 *specific_key_number)
- {
--	refcount_inc(&conn->rxgk.keys[0]->usage);
--	return conn->rxgk.keys[0];
-+	struct rxgk_context *gk;
-+	unsigned int key_number, current_key, mask = ARRAY_SIZE(conn->rxgk.keys) - 1;
-+
-+	_enter("{%u},%d",
-+	       conn->rxgk.key_number, specific_key_number ? *specific_key_number : -1);
-+
-+	read_lock(&conn->security_use_lock);
-+
-+	current_key = conn->rxgk.key_number;
-+	if (!specific_key_number) {
-+		key_number = current_key;
-+	} else {
-+		/* Only the bottom 16 bits of the key number are exposed in the
-+		 * header, so we try and keep the upper 16 bits in step.  The
-+		 * whole 32 bits are used to generate the TK.
-+		 */
-+		if (*specific_key_number == (u16)current_key)
-+			key_number = current_key;
-+		else if (*specific_key_number == (u16)(current_key - 1))
-+			key_number = current_key - 1;
-+		else if (*specific_key_number == (u16)(current_key + 1))
-+			goto rekey;
-+		else
-+			goto bad_key;
-+	}
-+
-+	gk = conn->rxgk.keys[key_number & mask];
-+	if (!gk)
-+		goto slow_path;
-+	if (!specific_key_number &&
-+	    key_number < UINT_MAX) {
-+		if (time_after(jiffies, gk->expiry) ||
-+		    gk->bytes_remaining < 0) {
-+			set_bit(RXGK_TK_NEEDS_REKEY, &gk->flags);
-+			goto slow_path;
-+		}
-+
-+		if (test_bit(RXGK_TK_NEEDS_REKEY, &gk->flags))
-+			goto slow_path;
-+	}
-+
-+	refcount_inc(&gk->usage);
-+	read_unlock(&conn->security_use_lock);
-+	return gk;
-+
-+rekey:
-+	_debug("rekey");
-+	if (current_key == UINT_MAX)
-+		goto bad_key;
-+	gk = conn->rxgk.keys[current_key & mask];
-+	if (gk)
-+		set_bit(RXGK_TK_NEEDS_REKEY, &gk->flags);
-+slow_path:
-+	read_unlock(&conn->security_use_lock);
-+	return rxgk_rekey(conn, specific_key_number);
-+bad_key:
-+	read_unlock(&conn->security_use_lock);
-+	return ERR_PTR(-ESTALE);
- }
- 
- /*
-@@ -92,7 +234,8 @@ static int rxgk_init_connection_security(struct rxrpc_connection *conn,
- 	struct rxgk_context *gk;
- 	int ret;
- 
--	_enter("{%d},{%x}", conn->debug_id, key_serial(conn->key));
-+	_enter("{%d,%u},{%x}",
-+	       conn->debug_id, conn->rxgk.key_number, key_serial(conn->key));
- 
- 	conn->security_ix = token->security_index;
- 	conn->security_level = token->rxgk->level;
-@@ -102,10 +245,11 @@ static int rxgk_init_connection_security(struct rxrpc_connection *conn,
- 		do_div(conn->rxgk.start_time, 100);
- 	}
- 
--	gk = rxgk_generate_transport_key(conn, token->rxgk, 0, GFP_NOFS);
-+	gk = rxgk_generate_transport_key(conn, token->rxgk, conn->rxgk.key_number,
-+					 GFP_NOFS);
- 	if (IS_ERR(gk))
- 		return PTR_ERR(gk);
--	conn->rxgk.keys[0] = gk;
-+	conn->rxgk.keys[gk->key_number & 3] = gk;
- 
- 	switch (conn->security_level) {
- 	case RXRPC_SECURITY_PLAIN:
+I think both of these are okay, write to $seqres.full also looks fine
+to me.
+
+> 
+>> +
+>> +# Zero out straddling two pages to check that the mapped write after the
+>> +# range-zeroing are correctly handled.
+>> +$XFS_IO_PROG -t -f \
+>> +	-c "pwrite -S 0x58 0 $((pagesz * 3))" \
+>> +	-c "mmap -rw 0 $((pagesz * 3))" \
+>> +	-c "mwrite -S 0x5a $((pagesz / 2)) $((pagesz * 2))" \
+>> +	-c "fzero $((pagesz / 2)) $((pagesz * 2))" \
+>> +	-c "mwrite -S 0x59 $((pagesz / 2)) $((pagesz * 2))" \
+>> +	-c "close"      \
+>> +$testfile | _filter_xfs_io > $seqres.full
+>                               ^^
+>                               >> $seqres.full
+> 
+> I'll help to make above tiny changes when I merge it, others looks good
+> to me.
+> 
+> Reviewed-by: Zorro Lang <zlang@redhat.com>
+
+Thanks.
+Yi.
+
+> 
+>> +
+>> +echo "==== Pre-Remount ==="
+>> +if ! cmp -s $testfile $verifyfile; then
+>> +	echo "Data does not match pre-remount."
+>> +	_dump_files
+>> +fi
+>> +_scratch_cycle_mount
+>> +echo "==== Post-Remount =="
+>> +if ! cmp -s $testfile $verifyfile; then
+>> +	echo "Data does not match post-remount."
+>> +	_dump_files
+>> +fi
+>> +
+>> +status=0
+>> +exit
+>> diff --git a/tests/generic/758.out b/tests/generic/758.out
+>> new file mode 100644
+>> index 00000000..d01c1959
+>> --- /dev/null
+>> +++ b/tests/generic/758.out
+>> @@ -0,0 +1,3 @@
+>> +QA output created by 758
+>> +==== Pre-Remount ===
+>> +==== Post-Remount ==
+>> -- 
+>> 2.39.2
+>>
 
 
