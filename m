@@ -1,376 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-38912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FB8A09C91
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 21:43:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F843A09C98
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 21:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289923AAA2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 20:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D09E163BDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 20:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0F8215F7B;
-	Fri, 10 Jan 2025 20:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7CC215F6C;
+	Fri, 10 Jan 2025 20:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="WZvW2liD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXgoSeA7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2010.outbound.protection.outlook.com [40.92.90.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530832063FB;
-	Fri, 10 Jan 2025 20:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736541778; cv=fail; b=ieGaHfeP1843xT6G1zxoVvj1WdgvBHNs6HF6JMF1MyYAxEQQUcdT+tAk7ARIxPcYBWJrKCZD1yGmyo6+6OmeZbk3qPdwDhadxgmlNL5GZdOHtAqXQOMyucU3YPOgiWgPRMfIB/wSm5JBf38hOMZO+Q2Mh6bpSwRqGtsLjmnLOSE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736541778; c=relaxed/simple;
-	bh=dqEuRE04Hgx1ecFqP6RhpzfLA3A0TJvuXPLuTF5aMD4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fJdN/Bn10Csbe/Rc7sqA1ca5LFdQXsxDH3xRvz5zDEzWs5Znx5q0UmgMNLjccu2klSjKrIbHSv1jDxKcogEfx8ctXtHn9CbmZuEIYqKzPObfxqdsniB6EpFxfRSSAJHAVf72MvTouNlJGWzLDKt6sz9ncjY+XmPWA7N/oekMshk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=WZvW2liD; arc=fail smtp.client-ip=40.92.90.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RKutrm9xn6taa4xZ0H80FVQ0/AVilV/uQcPEUXbYsULLbTQIIw4eoucpnl+TBLr/9IU7mAU4O2/STWwUXgFvCrAv9JA/ll/oIY3XD8WxxGi320U7fp1AJrXL9OosBUskX2lOJ7mlhbcKEi2BXpitwYKFfCm130PRezJn08G+Qb6CyjVA44dlzdixGFY9HPx6Ur3Sm+6q36qwyq3APcqmKRxkmEGzcuL0EJsFbwiFjMOwj29Wlr9oEJsM12b27kNE/UbSlQmid5N1/2M1E11gFdik+On2iuygwjwDYtdpt72S+s+eAI2rBU+pHerdK5zBzGV3/sa1P//2MPO4Xx64MA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u6NcaAfYJ8SHCpdzBu04vSfpXohZqdZEMx6ACoWqnwI=;
- b=DyHVXJeOBnkr2tgOmFIPmoImaxLwcml5hXcC64vMJfHrdKvClPTBC+wTS0XCKO5pIQvt/+O5bXy/RN9AlaH6bOOAonBomxX6BZJjnT4uuZJC0Zbbd1xLYnKGuIMnr/AWf+tmzLiGX1oo45e3HRmnhl9nz6BM12CCGxNO0KYRFvMsq6NAMGfUv8wBPb87gCZ8vmL7za7HRnmXEMwTDcC5cVwGYc3CVphbPe1LZjEo77GCLvC+PkIgOSN05B7b7IPPCyoYGRrRmHxWtU8K6QPF2qV/DTJfVemmOq/wbRp3dYW0LzQlykZ1i7ii9kznz41ISJz3IUWvEIbV0c1UU/+a7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u6NcaAfYJ8SHCpdzBu04vSfpXohZqdZEMx6ACoWqnwI=;
- b=WZvW2liDRBmOXmHTXg0+K5fWBA/kdlebR11YJiwjHS2JLd/Uu2IJuZdaMm16L2yQoya76STGPKnnkzTa4ej7oxN524oSWyDEHJCwqSs1CAM5c2FJVjLL+O4vAl9+CMlROihJjIhHYFqtRF8VAXaiHwa+DzXZHpL4eLkKyIv68nonHojDeDgnwP9n+RHeQqQiy8VYmYuhMnYTFMjathxJqqRGoPKiUFBh57lyv0FbG/m43U7LgjDBVI85WCHr9SnN3AUjeeWz/YniPpRcX/GZhr8ZZuU5mrdYSUPwi5PtRFsaC0EoJwAbz0lu9Sc1unPwvrPyRCOwItGawY2A75gmcw==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by VI2PR03MB10595.eurprd03.prod.outlook.com (2603:10a6:800:271::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.12; Fri, 10 Jan
- 2025 20:42:53 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%3]) with mapi id 15.20.8335.012; Fri, 10 Jan 2025
- 20:42:52 +0000
-Message-ID:
- <AM6PR03MB50808DF836B6C08FE31E199C991C2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Date: Fri, 10 Jan 2025 20:42:31 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: per st_ops kfunc allow/deny mask. Was: [PATCH bpf-next v6 4/5]
- bpf: Make fs kfuncs available for SYSCALL program type
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Tejun Heo <tj@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com,
- Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-References: <AM6PR03MB5080DC63013560E26507079E99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080E0DFE4F9BAFFDB9D113B99042@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLU=W7fuEQommfDYrxr9A2ESV7E3uUAm4VUbEugKEZbkQ@mail.gmail.com>
- <AM6PR03MB50805EAC8B42B0570A2F76B399032@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQJYVLEs8zr414j1xRZ_DAAwcxiCC-1YqDOt8oF13Wf6zw@mail.gmail.com>
-Content-Language: en-US
-From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <CAADnVQJYVLEs8zr414j1xRZ_DAAwcxiCC-1YqDOt8oF13Wf6zw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0636.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:294::14) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <74532087-8a72-4102-bebc-d55b7d60cfa9@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC342144A8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 20:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736541842; cv=none; b=rJTwrVoDt3Up6h5mwSVS6TY4obinTsSWeBH6RpJVv8l3ol/fwmOzrw7haaDs0S/AqL5gtEylfGoJabPQVKVyHQbg+Llfuj/VNXECvufwUpmIXOrxkPQyvD6/7YhWcyL9lfuxRG9TYdeqHrnhS2dpcf08oaHVJrz+6j1OKH4YZlM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736541842; c=relaxed/simple;
+	bh=mUyZrlTsZEShwU6y8ksNepKQd6W8coZrigAixksSuo4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gmD0rWlFIhnaRYzXw2nGboI1WQ/YjAIERrvMVu/raukneJi2jx5RZsLwIgPRotJM4FDICrdTaa9HoAPI9AdVRA0XkNcqVZ6Qr2+RxwXtyJaXpR/beJmRIIXQXCynI8g/NaJDQC+b0mymIxvIbOMs+0/qeTWqC+p/JlDuWTWA5ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXgoSeA7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB932C4CED6;
+	Fri, 10 Jan 2025 20:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736541842;
+	bh=mUyZrlTsZEShwU6y8ksNepKQd6W8coZrigAixksSuo4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=QXgoSeA7H3tJ50TZsGv2mTWGwcTbKd6r4bz3BMJdfFX7G+bZKYAjQFf5xVOOTrN1+
+	 uB5f+K830+xBPpFUOR8u+zGt9Od8lj13ysj82gJ3KUAYO4NWX593bnhFni4ae6zua1
+	 0vrHfve6Zc8GfNsMrL408pGJ7NZ/gUtH7UzHCo+k1sax1kh38iJUPvAiOV6BAI/ZDZ
+	 nPwXvZXQ4/ETRLEVkEULrewQuZY8VwGEhLRJ2afNlVsk5MSeMOet+SOGXzT4Du4ULd
+	 XQNXm+OZdUry8WEIZ9D8qjeQU/Yjk/Tjg8emlI/xP9Z5uqWbxMsP9Ft73BtRChOreV
+	 Ajxs72Z9OtfJA==
+Message-ID: <47fff939fc1fb3153af5b129be600a018c8485e9.camel@kernel.org>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under
+ writeback with AS_WRITEBACK_INDETERMINATE mappings
+From: Jeff Layton <jlayton@kernel.org>
+To: David Hildenbrand <david@redhat.com>, Shakeel Butt
+ <shakeel.butt@linux.dev>,  Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert	
+ <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>, 
+	linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
+ josef@toxicpanda.com, 	linux-mm@kvack.org, kernel-team@meta.com, Matthew
+ Wilcox <willy@infradead.org>,  Oscar Salvador <osalvador@suse.de>, Michal
+ Hocko <mhocko@kernel.org>
+Date: Fri, 10 Jan 2025 15:43:59 -0500
+In-Reply-To: <e4150b98-99ed-45fc-8485-5ad044f10d84@redhat.com>
+References: 
+	<kyn5ji73biubd5fqbpycu4xsheqvomb3cu45ufw7u2paj5rmhr@bhnlclvuujcu>
+	 <c91b6836-fa30-44a9-bc15-afc829acaba9@redhat.com>
+	 <h3jbqkgaatads2732mzoyucjmin6rakzsvkjvdaw2xzjlieapc@k6r7xywaeozg>
+	 <0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com>
+	 <CAJnrk1ZYV3hXz_fdssk=tCWPzD_fpHyMW1L_+VRJtK8fFGD-1g@mail.gmail.com>
+	 <446704ab-434e-45ac-a062-45fef78815e4@redhat.com>
+	 <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+	 <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+	 <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
+	 <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+	 <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+	 <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
+	 <153c5a4f08daf60e1bbbdde02975392dc608cfdf.camel@kernel.org>
+	 <e4150b98-99ed-45fc-8485-5ad044f10d84@redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|VI2PR03MB10595:EE_
-X-MS-Office365-Filtering-Correlation-Id: 745920d4-b84d-445c-7c55-08dd31b75a32
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799006|461199028|8060799006|19110799003|5072599009|6090799003|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RnhTMVdMbDBjMnhiL2V0TFZ5UGVIVC9LVnh4ak1FemtYT2pPWlpPelVyWWQ0?=
- =?utf-8?B?L2owSlQza1lQblkwSHVDeEZJeUNLUk9tcU5COGxhRGdhTitCU2hQTzFySkts?=
- =?utf-8?B?MnhuNWh4RThKTlRLdWV2N0tmSUhGVEJRbmtabEY2WVh6STh0YnpEQmZIdHkx?=
- =?utf-8?B?RWJ6Y1RVNjBublZoS2ozR01jemxkMlNrcXl1TVB6MXlQYmZkOVN5a0F2TE5N?=
- =?utf-8?B?bzhwK0dsM1pGVFhLMm9iTjRvdC84eGcwQnNoMGd4blZsMFpLZHg1aVAzR29G?=
- =?utf-8?B?NkZFNXJ3WGZuK09XYlVSUXdIdjd6VkhqZnpHTGY5UHJudXJPYWNDWldCMkNP?=
- =?utf-8?B?QWw2RktjTzRBSXNldm5Fb0xES0ZFQmR0cFdHZUc2YzBVVnJvTTRzZElKajYz?=
- =?utf-8?B?Z2pnNG5MOGtJbDlYaG1hOCsyREErUWRxN25CYW9DaytPNCs2aUVsWjRJeGhz?=
- =?utf-8?B?V3REcXpuaUxGa0kvYWhhZG8zdlQ2Z0ZkNGtSSGdZYWdQM21UWWdRbllTVGxP?=
- =?utf-8?B?WUpIdjRESzg3aHRERU1YRWpFWFB4YjIyWHVLMjFOeGVNdENUNXp4QU1SR3Nw?=
- =?utf-8?B?S0Q2TUlteExzNjh1U3JETGlENWpITU55U3RiTVQrQlloaFBYc1JvMnJMWFZY?=
- =?utf-8?B?UENZMXR3K2UzdGF2WHpkNFZjaG9kbG44RmxPRTBORHV3UXVIVC9IN1NRbllY?=
- =?utf-8?B?ZVVjKzRuZG5OM1NoTE93NVd5OUpnMmpFRXJFb05NakZncDRRZUVWcWsyNVdH?=
- =?utf-8?B?b244dm8rMkVrTllqN08vRFRwUW11R2pRL24vU3dHT0swcHdJZ3ROQUdoc3Fh?=
- =?utf-8?B?OWp3bmxvQkFOeGIycU44eXdEUUJwQ1FRT0ZQbkEwVTVUR2cwSFFadnZzYlcr?=
- =?utf-8?B?MStlck8zdlhJOFNPSVBVemJnTjd1RXpsdDhNcjZSU0Q3WGhmVzBobkZ4cDhO?=
- =?utf-8?B?UXdzNFRFV1RGL0NHTi9xdEt2VHdvWVhMMVNEeC91bC9scHVwQlp0TkNIa0g2?=
- =?utf-8?B?ajdRaFdnc05EbFEzTXRyaGtLRnA2SlZsQjRPa3BaTkx4eFZtbk9GbVo0VmhD?=
- =?utf-8?B?ZnhtWG1IalZUN0ppUUNQY3NIeGp3R1g3RDFKRlZieGZORlhpYUlKd2dzamlv?=
- =?utf-8?B?SHVPQ3lwSkp5K2MvU2lHUWNTd3VhbnVGNWVOMlZrczh0cUFhV2NsSWVKaEV4?=
- =?utf-8?B?c2ZzYzNleUMwSFo0RlNjZXFvakYrU1VrNXlnWjBsTXQ4ZDZNYTROZkJSdW00?=
- =?utf-8?B?QzNWdm15Wmw0ajg4dTVJTENUY2NTb1dBMWVPYUcwR0k0MW9PQnYrNmRHbVpK?=
- =?utf-8?B?cC9uZ2o1dHI0Q01hZSt1NlRyVVpYUlBzVTNjSGw0dW5iNmNZejc0c3owRWlt?=
- =?utf-8?B?cUhMOXBJWjFtUzhJcjllNW05SXBla2FQVDNRemhmYlp4TUVRcStnbjNxbFhk?=
- =?utf-8?B?QnFJQTVkRzkycW5LMmJ4S1ZVcGlZclZpS2VVNEpBPT0=?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cjFKc2w0cXNkNEJkYm1qNld6ZHcrK2Jtc05UYjJyWVFoWXFEVE5ISGV0ZTNy?=
- =?utf-8?B?d0lUQWFCVDdoa0p3U3pNck9MWjlhaEc3cEs5ZVJuQVk0UUFFTFdOSGNBYzd1?=
- =?utf-8?B?dHU0Vkd6SXIxT0xBcUdlZEJTZHVEVW1jTXo5bURZc3RvSlBIeTZoMmhYVUxC?=
- =?utf-8?B?RGpCRFA1bTdUc3pZR0hkV1ZsQk5MUDd4d0JndGtjN1l4aXhsa21tMzJoK2RD?=
- =?utf-8?B?d01tQlpGS0J5MHVzaGdiQ21RRWg4bkM0RnJXbklVWVR5VE9ORjljdUVKd2JB?=
- =?utf-8?B?NkdKSmlKbThGbklMVmRoSGlWRUNiYVkxdlhHaVRIcGRRdWJlbTBjbmdTYkMy?=
- =?utf-8?B?R2hCd2VCZWdIM3hlUmhybFRYeW84OTdPY2hjdk45ZE9YalpaMk4raHluWStp?=
- =?utf-8?B?WERzNzdBbEx0aXNJaHFPSFAxWGZwUXJoTW5KWVRKd280eTJCMFFWQ0NoZ1Yw?=
- =?utf-8?B?djhjTXZ2R2ozcE9TeWUwZjR4WlJFc1NsL0VTMDVMT0dtNktNdmhEOFk1NUhZ?=
- =?utf-8?B?MWZtRzF4MnQ1RC9SM2ZmSDlJNW5MU2s1dWZLUHBITjlNd3Y2ZDllM3JJUzBB?=
- =?utf-8?B?K1hrY0ZMQUpxNFB1VG1zUGRuN0VhQzNrdVhQemFvQ2tRVHdUU2lhN3JxZk16?=
- =?utf-8?B?dWFEWXZVRnZ5SEd3dXdsSHRFcVROWVZIV1o4ZkhIQkh0NUhwVnFsejlPNjk2?=
- =?utf-8?B?UTNMd3E5NFVDWVZIc3RmVEVYUzluMXo5UHgyVlRLMUk3YWpYQndvaUhYSnZ6?=
- =?utf-8?B?UHRiMzhvZXpiYUVDdkh1WnVYa2ZjZHBIQTJKWkpDVzlza1p1ZXRtamlObG9k?=
- =?utf-8?B?SzRZNEJRZHRCREMvS3FEbU5RN3FsTWlvb0tldGh3Y0o2eGd3T1VRWVI0MFh5?=
- =?utf-8?B?VmtNS1pJajkvbjVqUVRSRU5oVkhlZWFIeXN2R2dxdExRckMwcmM5UHJkK2lM?=
- =?utf-8?B?dTFvTG5GdDh1OG9jVGR4QytScGtudWFxdkQ4T09vR1YzK1NKL1l6Y3N4aE4x?=
- =?utf-8?B?Q2pPRUc4MEl6UWFwRVRFQU1RRGpkNVRWbHcrb2dpT0xYdU53RVY0UUhKalY5?=
- =?utf-8?B?TVBzMEJkMGdVdzNVRWs3ZjJGQmtGMlBjN0hnNVZrQmZJbVhKWUZXWTA0dzJu?=
- =?utf-8?B?SjhaMnhsdHkyNmhBdm43R2hhTTBaRnU2Q0pReTVNcEhZd0NyZzU2dFlFYUw4?=
- =?utf-8?B?cTRUQ3VURXJXbjd2aW4rMzg2YmVVdnZIeUxJQldhSlBkMUQ3TktBd1I5WEIy?=
- =?utf-8?B?SjlHaDFiUVFmazhNK0xYNlNlSWlFV0V2L2tXUnFhdkJReUQ3VklZa0s2OWw5?=
- =?utf-8?B?dGFpSUcvcXFXZVAzRDBYcDBnVjdXM3BwRk5vUnFTZmV4TCtyZGx4dk8vMmdx?=
- =?utf-8?B?RjBlTUk2VHlJK0tteGp2NWczT1pSVUxOc1hoS3JpaEVXL2duenhVY0pjVS9Q?=
- =?utf-8?B?bXd2OVB2WDdkYXdPT0Y4cVY4K3hlMzVkdkNwaWZ3OEdLeG1yQWdlZ2t1SVhm?=
- =?utf-8?B?MG4wL3JWaGNwck96Y2U0UEh2UkgybnlkaHErTjhsd0YwK2djUUZKUnc2MFMw?=
- =?utf-8?B?anJVbTBGNlJINkNWSWY0NFFmNjQ2WjNiTUw1TlJVMERTRytLU3JVNXB0TVRP?=
- =?utf-8?B?NjhBWXZvcnNob28xeVRWVEdTS3p3SzVHVE5TK0RYNHNSRktMSm5Nalp6ZVhI?=
- =?utf-8?Q?/XFKnbA55DHbOjmkMvuB?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 745920d4-b84d-445c-7c55-08dd31b75a32
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 20:42:52.7838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR03MB10595
 
-On 2025/1/9 19:23, Alexei Starovoitov wrote:
-> On Mon, Dec 23, 2024 at 4:51 PM Juntong Deng <juntong.deng@outlook.com> wrote:
->>
->>>
->>> The main goal is to get rid of run-time mask check in SCX_CALL_OP() and
->>> make it static by the verifier. To make that happen scx_kf_mask flags
->>> would need to become KF_* flags while each struct-ops callback will
->>> specify the expected mask.
->>> Then at struct-ops prog attach time the verifier will see the expected mask
->>> and can check that all kfuncs calls of this particular program
->>> satisfy the mask. Then all of the runtime overhead of
->>> current->scx.kf_mask and scx_kf_allowed() will go away.
->>
->> Thanks for pointing this out.
->>
->> Yes, I am interested in working on it.
->>
->> I will try to solve this problem in a separate patch series.
->>
->>
->> The following are my thoughts:
->>
->> Should we really use KF_* to do this? I think KF_* is currently more
->> like declaring that a kfunc has some kind of attribute, e.g.
->> KF_TRUSTED_ARGS means that the kfunc only accepts trusted arguments,
->> rather than being used to categorise kfuncs.
->>
->> It is not sustainable to restrict the kfuncs that can be used based on
->> program types, which are coarse-grained. This problem will get worse
->> as kfuncs increase.
->>
->> In my opinion, managing the kfuncs available to bpf programs should be
->> implemented as capabilities. Capabilities are a mature permission model.
->> We can treat a set of kfuncs as a capability (like the various current
->> kfunc_sets, but the current kfunc_sets did not carefully divide
->> permissions).
->>
->> We should use separate BPF_CAP_XXX flags to manage these capabilities.
->> For example, SCX may define BPF_CAP_SCX_DISPATCH.
->>
->> For program types, we should divide them into two levels, types and
->> subtypes. Types are used to register common capabilities and subtypes
->> are used to register specific capabilities. The verifier can check if
->> the used kfuncs are allowed based on the type and subtype of the bpf
->> program.
->>
->> I understand that we need to maintain backward compatibility to
->> userspace, but capabilities are internal changes in the kernel.
->> Perhaps we can make the current program types as subtypes and
->> add 'types' that are only used internally, and more subtypes
->> (program types) can be added in the future.
-> 
-> Sorry for the delay.
-> imo CAP* approach doesn't fit.
-> caps are security bits exposed to user space.
-> Here there is no need to expose anything to user space.
-> 
-> But you're also correct that we cannot extend kfunc KF_* flags
-> that easily. KF_* flags are limited to 32-bit and we're already
-> using 12 bits.
-> enum scx_kf_mask needs 5 bits, so we can squeeze them into
-> the current 32-bit field _for now_,
-> but eventually we'd need to refactor kfunc definition into a wider set:
-> BTF_ID_FLAGS(func, .. KF_*)
-> so that different struct_ops consumers can define their own bits.
-> 
-> Right now SCX is the only st_ops consumer who needs this feature,
-> so let's squeeze into the existing KF facility.
-> 
-> First step is to remap scx_kf_mask bits into unused bits in KF_
-> and annotate corresponding sched-ext kfuncs with it.
-> For example:
-> SCX_KF_DISPATCH will become
-> KF_DISPATCH (1 << 13)
-> 
-> and all kfuncs that are allowed to be called from ->dispatch() callback
-> will be annotated like:
-> - BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
-> - BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots)
-> - BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel)
-> + BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
-> + BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots, KF_DISPATCH)
-> + BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel, KF_DISPATCH)
-> 
-> 
-> For sched_ext_ops callback annotations, I think,
-> the simplest approach is to add special
-> BTF_SET8_START(st_ops_flags)
-> BTF_ID_FLAGS(func, sched_ext_ops__dispatch, KF_DISPATCH)
-> and so on for other ops stubs.
-> 
-> sched_ext_ops__dispatch() is an empty function that
-> exists in the vmlinux, and though it's not a kfunc
-> we can use it to annotate
-> (struct sched_ext_ops *)->dispatch() callback
-> with a particular KF_ flag
-> (or a set of flags for SCX_KF_RQ_LOCKED case).
-> 
-> Then the verifier (while analyzing the program that is targeted
-> to be attach to this ->dispatch() hook)
-> will check this extra KF flag in st_ops
-> and will only allow to call kfuncs with matching flags:
-> 
-> if (st_ops->kf_mask & kfunc->kf_mask) // ok to call kfunc from this callback
-> 
-> The end result current->scx.kf_mask will be removed
-> and instead of run-time check it will become static verifier check.
+On Fri, 2025-01-10 at 21:20 +0100, David Hildenbrand wrote:
+> On 10.01.25 21:16, Jeff Layton wrote:
+> > On Tue, 2025-01-07 at 09:34 +0100, David Hildenbrand wrote:
+> > > On 06.01.25 19:17, Shakeel Butt wrote:
+> > > > On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wrote:
+> > > > > On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@redhat.com>=
+ wrote:
+> > > > > > In any case, having movable pages be turned unmovable due to pe=
+rsistent
+> > > > > > writaback is something that must be fixed, not worked around. L=
+ikely a
+> > > > > > good topic for LSF/MM.
+> > > > >=20
+> > > > > Yes, this seems a good cross fs-mm topic.
+> > > > >=20
+> > > > > So the issue discussed here is that movable pages used for fuse
+> > > > > page-cache cause a problems when memory needs to be compacted. Th=
+e
+> > > > > problem is either that
+> > > > >=20
+> > > > >    - the page is skipped, leaving the physical memory block unmov=
+able
+> > > > >=20
+> > > > >    - the compaction is blocked for an unbounded time
+> > > > >=20
+> > > > > While the new AS_WRITEBACK_INDETERMINATE could potentially make t=
+hings
+> > > > > worse, the same thing happens on readahead, since the new page ca=
+n be
+> > > > > locked for an indeterminate amount of time, which can also block
+> > > > > compaction, right?
+> > >=20
+> > > Yes, as memory hotplug + virtio-mem maintainer my bigger concern is
+> > > these pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where there
+> > > *must not be unmovable pages ever*. Not triggered by an untrusted
+> > > source, not triggered by an trusted source.
+> > >=20
+> > > It's a violation of core-mm principles.
+> > >=20
+> > > Even if we have a timeout of 60s, making things like alloc_contig_pag=
+e()
+> > > wait for that long on writeback is broken and needs to be fixed.
+> > >=20
+> > > And the fix is not to skip these pages, that's a workaround.
+> > >=20
+> > > I'm hoping I can find an easy way to trigger this also with NFS.
+> > >=20
+> >=20
+> > I imagine that you can just open a file and start writing to it, pull
+> > the plug on the NFS server, and then issue a fsync or something to
+> > ensure some writeback occurs.
+>=20
+> Yes, that's the plan, thanks!
+>=20
+> >=20
+> > Any dirty pagecache folios should be stuck in writeback at that point.
+> > The NFS client is also very patient about waiting for the server to
+> > come back, so it should stay that way indefinitely.
+>=20
+> Yes, however the default timeout for UDP is fairly small (for TCP=20
+> certainly much longer). So one thing I'd like to understand what that=20
+> "cancel writeback -> redirty folio" on timeout does, and when it=20
+> actually triggers with TCP vs UDP timeouts.
+>=20
 
-Sorry, I may not have explained my idea clearly.
 
-The "capabilities" I mentioned have nothing to do with userspace.
-The "capabilities" I mentioned are conceptual, not referring to the
-capabilities in the Linux.
+The lifetime of the pagecache pages is not at all related to the socket
+lifetimes. IOW, the client can completely lose the connection to the
+server and the page will just stay dirty until the connection can be
+reestablished and the server responds.
 
-My idea is that a similar "capabilities" mechanism should be used
-inside the BPF subsystem (separate).
+The exception here is if you mount with "-o soft" in which case, an RPC
+request will time out with an error after a major RPC timeout (usually
+after a minute or so). See nfs(5) for the gory details of timeouts and
+retransmission. The default is "-o hard" since that's necessary for
+data-integrity in the face of spotty network connections.=20
 
-I think the essence of the problem is that ONE bpf program type can
-be used in MANY different contexts, but different contexts can have
-different restrictions.
-
-It is reasonable for one bpf program type to be used in different
-contexts. There is no need for one bpf program type to be used
-in only one context.
-
-But currently the "permission" management of the BPF subsystem is
-completely based on the bpf program type, which is a coarse-grained
-model (for example, what kfuncs are allowed to be used, which can
-be considered as permissions).
-
-As BPF is used in more and more scenarios, and as one bpf program type
-is used in more and more different scenarios, the coarse-grained problem
-starts to emerge. It is difficult to divide permissions in different
-contexts based on a coarse-grained permission model.
-
-This is why I said that the BPF subsystem should have its own
-"capabilities" (again, not part of Linux capabilities, and nothing
-to do with userspace).
-
-In my opinion, we should separate permission management from bpf program
-types. We need an extra layer of abstraction so that we can achieve
-fine-grained permission management.
-
-The reason why I have the idea of capabilities is because in my opinion,
-bpf programs need application-like permissions management in a sense,
-because BPF is generic.
-
-When BPF is applied to other subsystems (e.g. scheduling, security,
-accessing information from other subsystems), we need something like
-capabilities. Each subsystem can define its own set of bpf capabilities
-to restrict the features that can be used by bpf programs in different
-contexts, so that bpf programs can only use a subset of features.
-
-Another advantage of this approach is that bpf capabilities do not need
-to be tightly placed inside the bpf core, people in other subsystems can
-define them externally and add bpf capabilities they need (Adding
-KF_FLAGS can be considered as modifying the bpf core, right?).
-
-Of course, maybe one day in the future, we may be able to associate bpf
-capabilities with Linux capabilities, maybe system administrators can
-choose to open only some of bpf features to certain users, and maybe all
-of this can be configured through /sys/bpf.
-
-So, how do we implement this in the verifier? I think registering the
-bpf capabilities is not an problem, it is consistent with the current
-registration of kfuncs to the bpf program type, we still use
-struct btf_kfunc_id_set.
-
-The really interesting part is how we allow people from different
-subsystems to change the capabilities of the bpf program in different
-contexts under the same bpf program type. My idea is to add a new
-callback function in struct bpf_verifier_ops, say bpf_ctx_allowed_cap.
-We can pass context information to this callback function, and the
-person who implements this callback function can decide to adjust the
-current capabilities (add or delete) in different contexts. In the
-case of bpf_struct_ops, the context information may be "moff".
-
-In my opinion, capabilities are a flexible and extensible approach.
-All it takes is adding a layer of abstraction to decouple permissions
-from program types.
-
-Of course, there are more other technical details that need to be
-figured out, and if you think the bpf capabilities is an interesting
-idea worth trying, I will try to write a minimal POC and send an
-RFC PATCH.
-
-(Actually I have always wanted to write a POC but in the last two weeks
-I have been busy with my university stuff and really didn't have the
-time, but now I finally have some time to try it)
-
-Yes, maybe I am a bit too forward thinking, at the moment only SCX has
-hit this "wall", and at the moment we can indeed solve it directly with
-KF_FLAGS or filters.
-
-But I think the problem will persist and come up again in other
-scenarios, and maybe we can try something new and maybe not just
-solve the SCX problem.
-
-Does this make sense?
-
-Maybe we can have more discussion.
-
-Many thanks.
+Once a soft mount has a writeback RPC time out, the folio is marked
+clean and a writeback error is set on the mapping, so that fsync() will
+return an error.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
