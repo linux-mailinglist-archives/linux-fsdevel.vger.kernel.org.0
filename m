@@ -1,128 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-38895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F50A0983E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 18:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB310A0984D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 18:18:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396B33A9FED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 17:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56AA3A9261
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 17:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A11E213E70;
-	Fri, 10 Jan 2025 17:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727AB2139CE;
+	Fri, 10 Jan 2025 17:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWvPm9S9"
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="EWLtKxVb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998202135CD;
-	Fri, 10 Jan 2025 17:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3474A567D;
+	Fri, 10 Jan 2025 17:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736529242; cv=none; b=YHA6WPjai2AXfv8OxCgDNDW8FylN1NKdGUqRSC6O90OLumH01NHdj+tExkim4UrVuEpaBrxeWW0ai5/asBXa+KLeTLSlafDwEeWsl0l1YfvFTA4OtmWaTR8GkMDHj6MlmRNRch3FGSU6NMqpvnx9EzlQs2pxJYVBC7vEqR5Jwe8=
+	t=1736529509; cv=none; b=upqIxZ6Pabb/IXapp52A4vrKP+lecR7XJEhf5CoND9LJ6iqYCWugzrblHqlLB6qw9PwY/eoTdD1kAqYUPYjbemw+Dw4Zd3aLe4FpK1wSSSD3Z2Gf1Nn9STBF3Dk/opel5nDbdUesCpyDJjzIfejElho7/NgYvA7KNQGnInDncmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736529242; c=relaxed/simple;
-	bh=zCD9wMt7oj+kJBhlIcsVVTGT43QE2wPIyfO0mHZuo3E=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AAjN4aD1+LG9tm4CDTT98hANfLwZOwpT1esfVG5PUP6rD7p7JWcTczqfDiExaoNz3ll+vgd7jPhqO5SOXaqsiL0jBTIJg7zQs17Fy/X+gzZ7qpj2jCYmpz0HK+OUtxEG5+vAlk3BL/j4o23sXW2dz9yvHfZw2tUEfPpwytLLdGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWvPm9S9; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1736529240; x=1768065240;
-  h=date:message-id:from:to:cc:subject:in-reply-to:
-   references:mime-version;
-  bh=zCD9wMt7oj+kJBhlIcsVVTGT43QE2wPIyfO0mHZuo3E=;
-  b=hWvPm9S9gyyWflhxezAJQ0/Zw5EZKsCuAkNL9pt9ibrxvKhfx8igBLau
-   BqAxt/w+4WkhB7JJeGhd2XKu7BTEUI/u+ZCjJZLax3klENzioM0Ogu8lV
-   PfZO/Ur9FgiISKQAktuwXDv+fKDWBBLhsHE3nTEvd7HEfk5ILPMEy+C+i
-   v7E/Bn3dcZExGuv+WXwcKSpdB8KGwD5qn3eKJp4zYHR+m82wlFlpFSVej
-   Zj+F+2HJbkF1YqnKygWuQDJ/VUu15h2UnCLWYzcjwzwNjZ/0bri7MxpqP
-   ws6x4YtpsaSIYSiiMKXJNlfXHbNtrSTP7okJPY7QFGY+mFzAY/yI1B5Pm
-   Q==;
-X-CSE-ConnectionGUID: eETlnapHTZaJYZoWsWncOQ==
-X-CSE-MsgGUID: kcx024AdTVSnnR8CHTt/pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11311"; a="36712482"
-X-IronPort-AV: E=Sophos;i="6.12,303,1728975600"; 
-   d="scan'208";a="36712482"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jan 2025 09:13:58 -0800
-X-CSE-ConnectionGUID: d+N1H3FPQryemumCSoERgQ==
-X-CSE-MsgGUID: skCK+1HISZSgobnkHZdoJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="127073384"
-Received: from orsosgc001.jf.intel.com (HELO orsosgc001.intel.com) ([10.165.21.142])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jan 2025 09:13:57 -0800
-Date: Fri, 10 Jan 2025 09:13:56 -0800
-Message-ID: <8534hqvbfv.wl-ashutosh.dixit@intel.com>
-From: "Dixit, Ashutosh" <ashutosh.dixit@intel.com>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,	Kees Cook
- <kees@kernel.org>,	Luis Chamberlain <mcgrof@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,	linux-crypto@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,	intel-xe@lists.freedesktop.org,
-	linux-hyperv@vger.kernel.org,	linux-rdma@vger.kernel.org,
-	linux-raid@vger.kernel.org,	linux-scsi@vger.kernel.org,
-	linux-serial@vger.kernel.org,	xen-devel@lists.xenproject.org,
-	linux-aio@kvack.org,	linux-fsdevel@vger.kernel.org,	netfs@lists.linux.dev,
-	codalist@coda.cs.cmu.edu,	linux-mm@kvack.org,	linux-nfs@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev,	fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org,	io-uring@vger.kernel.org,	bpf@vger.kernel.org,
-	kexec@lists.infradead.org,	linux-trace-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,	keyrings@vger.kernel.org
-Subject: Re: [PATCH] treewide: const qualify ctl_tables where applicable
-In-Reply-To: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
-References: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
- Emacs/28.2 (x86_64-redhat-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1736529509; c=relaxed/simple;
+	bh=gA9CRd3z1uUx2WIM7oWWXA4uJ9d3tU6j8Qd0j11Qc24=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OUv1vD1Ddk8JBnniXRL+bWlSPEtTVEwvPLQccQPH/j4kG/Xhw/2v0Q8avddrtzxIh9ObOR7pRKCbn6ulFT8eFBlSvAUS/ecozYhZes9MEj3KzR7JSWvqQiebdfedIcWH+QLDc6DDPDqpSGkfjNjnwK243HcTgKP7/PCQE7sRS7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=EWLtKxVb; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1736529438;
+	bh=gA9CRd3z1uUx2WIM7oWWXA4uJ9d3tU6j8Qd0j11Qc24=;
+	h=Mime-Version:Subject:From:Date:Message-Id:To;
+	b=EWLtKxVb2XBckbxnfAGZzGksOYvqdjBZ1fbSw3YJNd+DQjgpJlER8gCAn1yo5Ppfw
+	 tEXCdVpwT+jJJ0AIOzOayHqvpQF0APNOZpt556QcxtuRsvjA4/BSsrKdY59detz9uR
+	 vRCkwydo1C2BByCVSMTrHwczVw8UMtx2atXwg94k=
+X-QQ-mid: bizesmtp85t1736529437tgd5c9wi
+X-QQ-Originating-IP: rfRVqPL4txtl60iWvUuhxU77twpo5FTl9NnQ+pIfbug=
+Received: from smtpclient.apple ( [202.120.235.170])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 11 Jan 2025 01:17:15 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14616802370816495427
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Bug: slab-out-of-bounds Write in __bh_read
+From: Kun Hu <huk23@m.fudan.edu.cn>
+In-Reply-To: <xqx6qkwti3ouotgkq5teay3adsja37ypjinrhur4m3wzagf5ia@ippcgcsvem5b>
+Date: Sat, 11 Jan 2025 01:17:04 +0800
+Cc: viro@zeniv.linux.org.uk,
+ brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
+ Andreas Gruenbacher <agruenba@redhat.com>,
+ gfs2@lists.linux.dev,
+ Jan Kara <jack@suse.cz>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <86F5589E-BC3A-49E5-824F-0E840F75F46D@m.fudan.edu.cn>
+References: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
+ <brheoinx2gsmonf6uxobqicuxnqpxnsum26c3hcuroztmccl3m@lnmielvfe4v7>
+ <5757218E-52F8-49C7-95F1-9051EB51A2F3@m.fudan.edu.cn>
+ <6yd5s7fxnr7wtmluqa667lok54sphgtg4eppubntulelwidvca@ffyohkeovnyn>
+ <31A10938-C36E-40A2-8A1D-180BD95528DD@m.fudan.edu.cn>
+ <xqx6qkwti3ouotgkq5teay3adsja37ypjinrhur4m3wzagf5ia@ippcgcsvem5b>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MDN2VRNR2P4wNAmzXcTo5GwdpyYF3irlID+jkbcBHceoYXWS0P1gGAO3
+	BvHXr/ll6yfk43HjlNgXybu6fvE2M4unh9cvrgk1pXvucjhs1B8g8zSNopv+fuYlQBRuN8Q
+	B0Y1nzO0aHCpH8Hlig+yhRBv+ql3cwxWGruFVq0MCuVLepicOM+1w8cqfEIEvPe7dc3OMRt
+	ELJ5ofXb5eSIDx3qNHDXytFhJEIp0YG6pxbB10cc77klS/T7IoU1fibQjW/UgvjthDOjQIP
+	JN1v3kM81D3KHtRIZkTpOfFiRygKxHwjFvXApU/kwnxBxVvZd8SJv+oSUYrZ9Jo5saPb/71
+	PaMqvMXPrPIFnT8Zyg8ijczIUqOQkxGBwKZhkcAH82qdL5xqZ+UW06r+5LUOhhRc0jlL/Ai
+	P577kurLf9mz3yQXArgR7xDJknd00oLxrZWR8opkK0K8Mlv+bCAh050R3Ndz0xJNMzLDqPS
+	S9CGYEI0Cm7/Wv0TArgL4zxF/+Zaq1QCYyLB0zv5AC7G8u/croIX0dxgyIeC7zvq/84sHmM
+	Wzfbt4yspVrVk23Y1M62HAuVwgjCImVZw1ZxhpusVOIMQAbFC/bm9bOUp/R/dskVkagAjY1
+	HT7hk9SJPSCLiWtWnqXsuNm0mr/FDmjvA1IL7GfzUQfR3PBNdwGoA/GKuZOy5kZQ1VhMSZi
+	Fch83e7D1/PBMJEZNIbkWIa2E8viECmT3hDCM3r5vJSh5RIfLEotKd0mKHxVNX1Cwr9I4nn
+	MoQVH4LmeLfaP4O8SuYJ+p+qNxcVRdbWS60WLC6olCbLRcawE+6QOlgVaCnFAPVgYeVaUOr
+	tAkTd+Y4FLDzVglLiOnAstYQpqthxEoINygHBd/AnYW4adwcQDXPoMcyeVvLtzjauYpIkWC
+	ALyPD4sZDRwOUB7SOXdX+Ms+OFjVl97OxF2fGhKy3JL5MI3SLF2yBG2KEl5qE+6a/5/DQow
+	EkpEY/yElPP3wU0O/ctO8wUau
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Thu, 09 Jan 2025 05:16:39 -0800, Joel Granados wrote:
->
-> diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
-> index 2406cda75b7b..5384d1bb4923 100644
-> --- a/drivers/gpu/drm/i915/i915_perf.c
-> +++ b/drivers/gpu/drm/i915/i915_perf.c
-> @@ -4802,7 +4802,7 @@ int i915_perf_remove_config_ioctl(struct drm_device *dev, void *data,
->	return ret;
->  }
->
-> -static struct ctl_table oa_table[] = {
-> +static const struct ctl_table oa_table[] = {
->	{
->	 .procname = "perf_stream_paranoid",
->	 .data = &i915_perf_stream_paranoid,
-> diff --git a/drivers/gpu/drm/xe/xe_observation.c b/drivers/gpu/drm/xe/xe_observation.c
-> index 8ec1b84cbb9e..57cf01efc07f 100644
-> --- a/drivers/gpu/drm/xe/xe_observation.c
-> +++ b/drivers/gpu/drm/xe/xe_observation.c
-> @@ -56,7 +56,7 @@ int xe_observation_ioctl(struct drm_device *dev, void *data, struct drm_file *fi
->	}
->  }
->
-> -static struct ctl_table observation_ctl_table[] = {
-> +static const struct ctl_table observation_ctl_table[] = {
->	{
->	 .procname = "observation_paranoid",
->	 .data = &xe_observation_paranoid,
 
-For i915 and xe:
+>=20
+> Thanks. Based on the crash report and the reproducer it indeed looks =
+like
+> some mixing of iomap_folio_state and buffer heads attached to a folio
+> (iomap_folio_state is attached there but we end up calling
+> __block_write_begin_int() which expects buffer heads there) in GFS2. =
+GFS2
+> guys, care to have a look?
+>=20
 
-Acked-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
+Thanks to Jan.
+
+Hi Andreas,
+
+It seems that iomap_write_begin is expected to handle I/O directly based =
+on folio, rather than entering the buffer head path. Is it possible that =
+GFS2 incorrectly passes data related to buffer head to =
+iomap_write_begin?
+
+Could you please help us to check the exact cause of the issue?
+
+Thanks,
+Kun Hu=
 
