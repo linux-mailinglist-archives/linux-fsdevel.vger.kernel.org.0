@@ -1,380 +1,310 @@
-Return-Path: <linux-fsdevel+bounces-38834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E10A08847
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 07:23:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5289A088A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 07:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C943A1D0F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 06:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66BC1188B4C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 06:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C622063ED;
-	Fri, 10 Jan 2025 06:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECBF206F1D;
+	Fri, 10 Jan 2025 06:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AwrB+n1a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8512317B500
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 06:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736490205; cv=none; b=VLY9OvhXe5n9K9v1wcH8oW6EqN47jNF5qS+XlQizxHOscQb14AoPnOO1fuxzjF+uHgHN0+LSJwn1+I43RNiNUuDSgNPguqVFsTo7coJfnqhrtJNA19jfu/IgkoHSgnMUCf0TYJ1Eq+QYyHEG7upckppjzPcV9Nmz55LUvP79WS4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736490205; c=relaxed/simple;
-	bh=zuydqTbpJVmKCppgFRphFCiPHDXdRoz7PS0SjlGoOdQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RhQ1ZiCBlXk297/SGtlI5XBOQuvSgDklMPk01QCp+ZWexpUGhpKbfnRRN34bNwizs2crSANxcrUwz91bMZ+jFDkMq2zmcM9SUk5xqPbQfiM9V6bf8xJaVBkMCmgM9nKoEwj3vv8SHGFom/hS5CJc7Ikdq83+zzIr86rit6BjZGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ac98b49e4dso15150995ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jan 2025 22:23:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736490201; x=1737095001;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m/4TZLx8pJXbwqvrOZgR/URNnN9ChT/1nWxCpomeSRQ=;
-        b=G6F8EceSyPrHy551hz7v5lkT0aNM3/iQSJ1GMy3VDrle8KPFP5J+pNhO66JIGODTut
-         pitAyKvxd3fRe/OMQnvNxjFmkx+rjOcy3yC7SO5gPERkGK82ZDOsP+znkHWTzk8HnLU5
-         JnIIzWSCUvb2ajj2DF2XrWEwpRXNWryrV0lWImEFeshyhyAH7K8FlEECygpOlnXcAH3j
-         muJK7a60ohx1eSb8kMlyG65oYhNFA4FFT66k0SU5/rW1u76aUek7Su4b342evur5gXGr
-         pNS2k6rNWQJ0xRTNzxu9JQYYJGmlzUUzdPy8AIEk5LCDUhMtvgUFYRdGJzNmjZ5/MqlV
-         B/Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWi8Xg/yKLJNVzutpsO4dK1YI2FshYgcY28k95ErAx7FTAHtIV7CWEqAmhzzdp7SNARr9NyK7iYqUlY+BBw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo4MK3OR4YFpMq2Gx1O5W/UDZuHD7ciB5zu4ahdZuW7Oe/n3An
-	SMcUJnobCYKg8mISM3SK2am5qT4e9gah/Jk7Zw0/YUVEtSnK6iAoUHPbTY92GCRmoxnOlRbgivJ
-	seT2Fj8EPemFfqIXgeflqWxgDID/zbOMXPmSXyhOiugyKbTsglI+/NHE=
-X-Google-Smtp-Source: AGHT+IEDjgGHPv1W2sYBQCX1W7maoqsX0P2d3838VlzUb5ePaQBvsvN69K13dlPATOOpJWHXPP2qF+cSctbd5qb5R8U2PojQ2c3N
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157F61E5020;
+	Fri, 10 Jan 2025 06:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736492176; cv=fail; b=sE4xj0Y1D4NLaRjfvFaNnUyKzfXdzr/N70rYktZV2aR2TQGwwXVHpYqyfnbQNnxokDXHNxfJ5Gxxtp1fTYgvZdv7jhTIB7IRr2YemD6l9988coYpfi5w4wLwJzJd57s3nCUOXat4NIBeLnRf4bvOHmkzinOqU6XYY2HOiPkkOkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736492176; c=relaxed/simple;
+	bh=hYzoHQfH11woX70qE7wThQVNGHlLkv6wADN03i5SaiE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LiatOku5mvgTbDal/5wRzDwusMURpWFHPVwxsGEripoVM2vhGTLO85Kw1aYyBweeT3kGfHYE5yDJS75WcKxU5sLPND7UlozJBQXVq30FgbFh6R+veb7FhOQtOW6kd50rT/ClQDAktmySvo4De18Oskdexia8FenasDkITqRGi+c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AwrB+n1a; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736492175; x=1768028175;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=hYzoHQfH11woX70qE7wThQVNGHlLkv6wADN03i5SaiE=;
+  b=AwrB+n1aE4msKdHCaMgHvLwD1LxphNXRlmhweJ6AFqO282p+628GDDHt
+   bpQ4yAZWTykhuXmTRFzL+MBHyGAk1DU2Z5vzfMpZEbIXZ3dBIX+663gtG
+   oK7bFP+6ejRJDadXcFzSHrzkf8mfwj/3cYarvcMGw+iOB0ENMcvN+0IkC
+   DBdxPaa2yWbQtUxWXn/oiWYjpSO41IEZFvc0Ff3nhECBoUcVDQUNAggqa
+   cKnV9n2/maCcrNeEvP3he23YI9b9s0dPqt3bSlXlGT/u6VsYjREOm6WRM
+   BSGLnRz69fdxi8TAjO8cvVi1SfFpQ4DYTVIVMz/+vvnVH6DcnQCrYFd0E
+   w==;
+X-CSE-ConnectionGUID: xzn+uxwoQUK6rsiXHsFqhw==
+X-CSE-MsgGUID: VM67XGvSQaKc3GDkfXjjSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11310"; a="36659546"
+X-IronPort-AV: E=Sophos;i="6.12,303,1728975600"; 
+   d="scan'208";a="36659546"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 22:56:13 -0800
+X-CSE-ConnectionGUID: +6j98LJSRiGVtVDLscu7uQ==
+X-CSE-MsgGUID: RDnyRDP7Rx2B8z7FMnPwOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="108756340"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Jan 2025 22:56:13 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 9 Jan 2025 22:56:12 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 9 Jan 2025 22:56:12 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 9 Jan 2025 22:56:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D+7rOynMq0PxIXx4xDpvUx9lza7xpuwyFIfBjjq6MVDTVbnWahxcHKVicIbLIKCgSTxW0FKHTCdbO3zzHzcVJj5wTblToIsSDQ+2Dwl3Kqf8LjzwQgIPfcRQ+mN1f3K3Vdv912UZYMxiAVS30LQOFhizwCxL+1hJthg3fX2AXxPhqGADZT7jIgXivOZBO2krLsN3T1J1eVYDsvFTq4v9KOQn7pIwZe1HWgnPcKSYqFqpAUfY59+bbalDbL14tlcXZkj0hkh5oouWByvCQ9RVoFSNjkry1RvyiZoi4WciS3OoyIQenT/UtWTXx36pVybyhgTcN6K5n2tHdxtjqrpaHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yswrPAo5cWR9oooR3xaGY7cspe+kv5JCJjLolQAYZ3w=;
+ b=Esef6nMZA/GzVqeII9P+7moIcIxLEWwWCcRiPadEA1rI/JziJx/xo1zSeRVSp1s2ceZtfRICAZAtSHJ9fcWOsMCKVJowLY/Q72hsEy9EMY7/yvf22VhpY/QrFOH6Xq1GW+zMEVAikuXwcLzbd4Yny++m8+gUHQkKDPCZ1ZQWQ3QIfDkWJU6SkJ1cGk0gF/tTSe9hC4Ljlav20m9DBAF/gTh8W16927hasZg+9EB4LuPmjyxyGYz/rVDxFUFNkdV3uwEf3ng4jBJ63JZa/WRMVT94phGdt6FGhxqxoLsSApyWDkxI6SmafYAMS5s0nJLI69SBdIYMY4OkIvwv3WdNeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by MN2PR11MB4709.namprd11.prod.outlook.com (2603:10b6:208:267::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.12; Fri, 10 Jan
+ 2025 06:56:10 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8314.015; Fri, 10 Jan 2025
+ 06:56:10 +0000
+Date: Thu, 9 Jan 2025 22:56:06 -0800
+From: Dan Williams <dan.j.williams@intel.com>
+To: Alistair Popple <apopple@nvidia.com>, Dan Williams
+	<dan.j.williams@intel.com>
+CC: <akpm@linux-foundation.org>, <linux-mm@kvack.org>, <lina@asahilina.net>,
+	<zhang.lyra@gmail.com>, <gerald.schaefer@linux.ibm.com>,
+	<vishal.l.verma@intel.com>, <dave.jiang@intel.com>, <logang@deltatee.com>,
+	<bhelgaas@google.com>, <jack@suse.cz>, <jgg@ziepe.ca>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <mpe@ellerman.id.au>,
+	<npiggin@gmail.com>, <dave.hansen@linux.intel.com>, <ira.weiny@intel.com>,
+	<willy@infradead.org>, <djwong@kernel.org>, <tytso@mit.edu>,
+	<linmiaohe@huawei.com>, <david@redhat.com>, <peterx@redhat.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+	<linux-xfs@vger.kernel.org>, <jhubbard@nvidia.com>, <hch@lst.de>,
+	<david@fromorbit.com>
+Subject: Re: [PATCH v5 05/25] fs/dax: Create a common implementation to break
+ DAX layouts
+Message-ID: <6780c4862b417_2aff42943b@dwillia2-xfh.jf.intel.com.notmuch>
+References: <cover.425da7c4e76c2749d0ad1734f972b06114e02d52.1736221254.git-series.apopple@nvidia.com>
+ <e8f1302aa676169ef5a10e2e06397e78794d5bb4.1736221254.git-series.apopple@nvidia.com>
+ <677f14dc3e96c_f58f294f6@dwillia2-xfh.jf.intel.com.notmuch>
+ <lxz2pq2m4gqlovfwsmunwzfjq3taosedbrkaf63jbrxwwg6dek@7vbwtibeyh4m>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <lxz2pq2m4gqlovfwsmunwzfjq3taosedbrkaf63jbrxwwg6dek@7vbwtibeyh4m>
+X-ClientProxiedBy: MW4PR04CA0144.namprd04.prod.outlook.com
+ (2603:10b6:303:84::29) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214f:b0:3a7:e528:6ee6 with SMTP id
- e9e14a558f8ab-3ce3a888287mr71139445ab.13.1736490201589; Thu, 09 Jan 2025
- 22:23:21 -0800 (PST)
-Date: Thu, 09 Jan 2025 22:23:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6780bcd9.050a0220.216c54.0009.GAE@google.com>
-Subject: [syzbot] [exfat?] possible deadlock in exfat_get_block (2)
-From: syzbot <syzbot+32b7df93cfaf0062bf37@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MN2PR11MB4709:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc8edae4-87d9-4f94-b399-08dd3143dd5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rfN8T6LkjC08gBlee1K4V/J/lsWR51BDUJKicTEO25I4Y3ChztjRmMJDT1Qi?=
+ =?us-ascii?Q?WqJtld+R6/yxxtJyLq2FOTFB8HUvKZkpXPJLvNDI9c6jxRcuSa47FX9kj/GQ?=
+ =?us-ascii?Q?GKMQOYKt4wekkXtsbGq7jtn03y7RsCUq4dJCe7L3Aq6S3fWk25csZf+t3k95?=
+ =?us-ascii?Q?Tg5gh6gW4i/pyttQCk5s93PiXspsQKGNcZ+zNVwStExbAAfeeh4v+NxVnXqU?=
+ =?us-ascii?Q?LKTCGsqnZ3Zuk7SV9eBFI/NJrsTukdynFPgS1sJE/02h21V3ASV6DDPtYFO7?=
+ =?us-ascii?Q?UeIF1g7wt0mwKj8+J7Os/Z7PDH8641XX6xWvLIm8n1OYbu6M9xqePcZ1KVI1?=
+ =?us-ascii?Q?Fv1/pmzxNEsfzh/1y01Ji6cbbZE3/IsRIe5SMex98hw8edLIu/J5Dv9Sg4TK?=
+ =?us-ascii?Q?XO4BuRJAfd2xz/K7QFl7nlEgMS4q9/+casXQ8EennICgwfwT68adbG9ivO+F?=
+ =?us-ascii?Q?VITBAkG8MQkJOYgjZvZJRUm/9xr1sHRULVvPUQd4FtJIcvBA4qfHBlhMcrl7?=
+ =?us-ascii?Q?flDIbbeCbVjHeIgmVrkrD7er/nZe1jp1x7yJgga0psmRwRVm4KVdsbtkoBrt?=
+ =?us-ascii?Q?sv82ABfUvt72m9gDwwTc7FubfCXhCYdFhKnhjGnr1aPSd39u37bDEztndSjs?=
+ =?us-ascii?Q?xjUM8BCtD8UGVgApSUhPEd2kfLSVgNrHcWE1qKLNjtgVGCkvKeZXRDxgJqoD?=
+ =?us-ascii?Q?1+bRorML9iHcba/pH950isGDc3PAiOj6pLaklNlwfINVVbpCGUqkwniu08rl?=
+ =?us-ascii?Q?LnEI2YhtqluNetx8Pe4Nj/IWEeymFY8UpIUIeuTMRDj6kGjL+r3p8AXJr/uy?=
+ =?us-ascii?Q?/uuNEd+9KrLmteTyPsyBMUw/ulWXe/PasVKJdDsAt50qg7C3AVWRtapaDPKU?=
+ =?us-ascii?Q?iYA2YI/Ruuu+er2thc0tBwe5GebLf5im0V1YNQs7bksC0aCYOkNmRsk+nm+Y?=
+ =?us-ascii?Q?yX1yP6WIFXNQuzpNtpgxweLTKyavz29y0kItV/ug3MJkBYrIdXYfQ0AOAI8W?=
+ =?us-ascii?Q?PIR7hkwYV6qGMParlX3GID2Ppk5UVc3aTEVJUJYMOhK+kR+nF2aNm2e61ca+?=
+ =?us-ascii?Q?Zv8MDQpY1usl8YlAzgOrQdTZIZ+pKRriCCEpvjPTUFzIOZ0wi+2l0lk2Vv+D?=
+ =?us-ascii?Q?f3GO2MiqcMj3WkyrHxBtV8XDKTGTzLuKMVRhv9StphUNYvwACnrBPtsx2gCz?=
+ =?us-ascii?Q?dWipeW5oaeOlNFZrqTVa2hWMI/KvndU37vJRsUVmh+gkRI2F/3+1LQ0CjJ7u?=
+ =?us-ascii?Q?QMQ4MGgCxfl8GIAnxCUF0kCyAZE1eJZ78bUMZ8m+Tzw0asUyju5eTfYCH4Fx?=
+ =?us-ascii?Q?7ff072zxRghlk0cBmD0TDJihD4cL4lUUNa2pJmL/bCrJtRACvf1AXz57CyLc?=
+ =?us-ascii?Q?ueQ9b77kucUBIgKu1VfUvlZA+Buq?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LlsgUex9GHM86Wm2QsRS/SzszmpT91mSFqi/IqLJe9x/J5fh+q7KELGu7LwO?=
+ =?us-ascii?Q?CWn6lleAmNbzepBHqMI1m24/FUH+ofBmNf5rGkaneF3ioqDfqx6m+ayQ4ub5?=
+ =?us-ascii?Q?1TFPZG09ixqjqpl5ymp8ScXqCs9rAN/qilSBkAFqL3wUwK8Q77O6UXq2TbpY?=
+ =?us-ascii?Q?DP3VhORJzI66/0yP+0yz5ZuQWwBb7iRKcDs2KRFSTpIMhcnQFZxZmMUYuDAs?=
+ =?us-ascii?Q?c+hBcC9UktObpbiLxbMRyBnbJQQzp7m2qnkoA3mXgivKvK/Fb6GcgmeWazLS?=
+ =?us-ascii?Q?+iDH1H0WZhI/MjP1JWLH7JpPYGcFDBnkTOgC/W8wa+LUKqovIcLon5d5H+cT?=
+ =?us-ascii?Q?AGd3I80mQdaL4Mlprh3HgORiO/CoFOMdxpDbvYs6HCpW6i2QYpuxKmMcTCgJ?=
+ =?us-ascii?Q?8hmY2DJQPWVj71O2jnbY+BGZMelB3x/HlkzejPmvzfiBjPCYCzmX5+E2Mob7?=
+ =?us-ascii?Q?hEOjhZMuvsNgMzi9ebkJ5MjLa0TRDpP9DpliHk4UDWWXi6PRLS/Jk4Bce8yF?=
+ =?us-ascii?Q?onwqlneVel/xOxH47RAb8mfEdBSD+mrIaVVeKZpsM1KIN1ahRZywSBkXBSMQ?=
+ =?us-ascii?Q?u9KqeIVWkAs22YXGZn4Sbtlkx/KYPIdi6FWuU6WM7F6X0Bgyxj71oHP+hQcR?=
+ =?us-ascii?Q?AFZ+ct6XShK3jEU9eSjQi8i3cGIPI7Yyhj60QnQKM2qOtb3GwFr5WCCNuRUf?=
+ =?us-ascii?Q?5nSWRrlzK0+aUZGmac8VpbVP6mPdgRSa78n/sWwRYfVQJVnDK72Yu/cLyD8u?=
+ =?us-ascii?Q?mMafUKX75BmqGukOr8LEdPms6Px0AYba9ARWUSp3om0iz/iArKyU9FNpMTMI?=
+ =?us-ascii?Q?8g0N2tBQaNEJ0/ys/v9BLcYcRPtXDURtGA2x35qBy8ou5uXj+0N/mU1gpgvF?=
+ =?us-ascii?Q?QtUV+et27NYAXhVmY7xEbfEV0p/NW/Uel7GCEvP3HnFUCfaLGAqhDCroOcj3?=
+ =?us-ascii?Q?JU+hgCrjQrE00mXjUajR8SqpHPBERMXRPwUdReYfWSNiYHtfaFLSwwTndtd5?=
+ =?us-ascii?Q?KhS1jQ7BYJtOW5mX2X+wnt2FasTBq2J/73sVKyHYfMpKqvpgQmJ9vqYK18Bo?=
+ =?us-ascii?Q?xMy5sTy7KY4ClsI+N+xhC6fTMctQAz4HSdsiyR+fa7UcP6r5ZsNR6r1YzDyH?=
+ =?us-ascii?Q?yXg7u273BMPWEC/Q2z2E9ya8vE2BehJYbQJPCgFNBfp6JqVYvvRUVU9l+3CD?=
+ =?us-ascii?Q?fGf+J7IzfX1ozYKCIvHNVAW18MyJLW1bga0klYa8j3+9MR+EDZARrMh8NTN7?=
+ =?us-ascii?Q?NT38yfL4MOMf/s9WNe+z9B8HYAIKqacmClYW147VlRYT/oaX2394CCisZPFZ?=
+ =?us-ascii?Q?UQPAoNM55BqdvHtY02FnueFvNpXhPZ61W0aFmw4aYezmfK8iKDjPi2nc37r4?=
+ =?us-ascii?Q?msxz/OCD0ZtwCMJJpC5va7TEFMeFpxNRHkMPxqDGcfaerTH6iIqOTpOE9glE?=
+ =?us-ascii?Q?0nCYDw0eaQ9PptkfJceTwxh0kF4z5Lh/sHdXREAFyPwlBGTTbMt6q6I16f8H?=
+ =?us-ascii?Q?DdByNOtftMvOy3b11WI9ySaTdTkQbgn1dFcgO3219FcuKZGnIG7fTo3dEyn1?=
+ =?us-ascii?Q?VY0V6vjmuwONUP2mjdWY72Q4HcPbo5hHfxcByMAUp/5oySjfpGTuRFytm0m2?=
+ =?us-ascii?Q?Vg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc8edae4-87d9-4f94-b399-08dd3143dd5b
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 06:56:10.4273
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BwCO09EmqLcx0mAl/hNfRyWaNawDwuaiIZxy6F6cVqggxzZa5eWtKK4CEacz1ciS4xTV0BON+b3PYFWwpcXVzFEcjqmVaC8KLYU2NVlt6DI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4709
+X-OriginatorOrg: intel.com
 
-Hello,
+Alistair Popple wrote:
+> On Wed, Jan 08, 2025 at 04:14:20PM -0800, Dan Williams wrote:
+> > Alistair Popple wrote:
+> > > Prior to freeing a block file systems supporting FS DAX must check
+> > > that the associated pages are both unmapped from user-space and not
+> > > undergoing DMA or other access from eg. get_user_pages(). This is
+> > > achieved by unmapping the file range and scanning the FS DAX
+> > > page-cache to see if any pages within the mapping have an elevated
+> > > refcount.
+> > > 
+> > > This is done using two functions - dax_layout_busy_page_range() which
+> > > returns a page to wait for the refcount to become idle on. Rather than
+> > > open-code this introduce a common implementation to both unmap and
+> > > wait for the page to become idle.
+> > > 
+> > > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> > > 
+> > > ---
+> > > 
+> > > Changes for v5:
+> > > 
+> > >  - Don't wait for idle pages on non-DAX mappings
+> > > 
+> > > Changes for v4:
+> > > 
+> > >  - Fixed some build breakage due to missing symbol exports reported by
+> > >    John Hubbard (thanks!).
+> > > ---
+> > >  fs/dax.c            | 33 +++++++++++++++++++++++++++++++++
+> > >  fs/ext4/inode.c     | 10 +---------
+> > >  fs/fuse/dax.c       | 29 +++++------------------------
+> > >  fs/xfs/xfs_inode.c  | 23 +++++------------------
+> > >  fs/xfs/xfs_inode.h  |  2 +-
+> > >  include/linux/dax.h | 21 +++++++++++++++++++++
+> > >  mm/madvise.c        |  8 ++++----
+> > >  7 files changed, 70 insertions(+), 56 deletions(-)
+> > > 
+> > > diff --git a/fs/dax.c b/fs/dax.c
+> > > index d010c10..9c3bd07 100644
+> > > --- a/fs/dax.c
+> > > +++ b/fs/dax.c
+> > > @@ -845,6 +845,39 @@ int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +static int wait_page_idle(struct page *page,
+> > > +			void (cb)(struct inode *),
+> > > +			struct inode *inode)
+> > > +{
+> > > +	return ___wait_var_event(page, page_ref_count(page) == 1,
+> > > +				TASK_INTERRUPTIBLE, 0, 0, cb(inode));
+> > > +}
+> > > +
+> > > +/*
+> > > + * Unmaps the inode and waits for any DMA to complete prior to deleting the
+> > > + * DAX mapping entries for the range.
+> > > + */
+> > > +int dax_break_mapping(struct inode *inode, loff_t start, loff_t end,
+> > > +		void (cb)(struct inode *))
+> > > +{
+> > > +	struct page *page;
+> > > +	int error;
+> > > +
+> > > +	if (!dax_mapping(inode->i_mapping))
+> > > +		return 0;
+> > > +
+> > > +	do {
+> > > +		page = dax_layout_busy_page_range(inode->i_mapping, start, end);
+> > > +		if (!page)
+> > > +			break;
+> > > +
+> > > +		error = wait_page_idle(page, cb, inode);
+> > 
+> > This implementations removes logic around @retry found in the XFS and
+> > FUSE implementations, I think that is a mistake, and EXT4 has
+> > apparently been broken in this regard.
+> 
+> I think both implementations are equivalent though, just that the XFS/FUSE ones are
+> spread across two functions with the retry happening in the outer function
+> whilst the EXT4 implementation is implemented in a single function with a do/
+> while loop.
+> 
+> Both exit early if dax_layout_busy_page() doesn't find a DMA-busy page, and
+> both call dax_layout_busy_page() a second time after waiting on a page to become
+> idle. So I don't think anything is broken here, unless I've missed something.
 
-syzbot found the following issue on:
+Nope, you're right. I crossed my eyes flipping between FUSE/XFS and EXT4.
 
-HEAD commit:    ab75170520d4 Merge tag 'linux-watchdog-6.13-rc6' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a836f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c541fa8af5c9cc7
-dashboard link: https://syzkaller.appspot.com/bug?extid=32b7df93cfaf0062bf37
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> > wait_page_idle() returns after @page is idle, but that does not mean
+> > @inode is DMA idle. After one found page from
+> > dax_layout_busy_page_range() is waited upon a new call to
+> > dax_break_mapping() needs to made to check if another DMA started, or if
+> > there were originally more pages active.
+> > 
+> > > +	} while (error == 0);
+> > > +
+> > > +	return error;
+> > 
+> > Surprised that the compiler does not warn about an uninitialized
+> > variable here?
+> 
+> So am I. Turns out this is built with -Wno-maybe-uninitialized and it's not
+> certain error is used uninitialized because we may bail early if this is not a
+> dax_mapping. So it's only maybe used uninitialized which isn't warned about.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4d752d5dc5aa/disk-ab751705.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/146ff38a4872/vmlinux-ab751705.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d68e63897d18/bzImage-ab751705.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+32b7df93cfaf0062bf37@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.13.0-rc5-syzkaller-00163-gab75170520d4 #0 Not tainted
-------------------------------------------------------
-syz.7.4118/20433 is trying to acquire lock:
-ffff88805d2f40e8 (&sbi->s_lock#2){+.+.}-{4:4}, at: exfat_get_block+0x1c3/0x2180 fs/exfat/inode.c:278
-
-but task is already holding lock:
-ffff8880127232a0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
-ffff8880127232a0 (&mm->mmap_lock){++++}-{4:4}, at: get_mmap_lock_carefully mm/memory.c:6149 [inline]
-ffff8880127232a0 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x32/0x2f0 mm/memory.c:6209
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #5 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __might_fault+0xc6/0x120 mm/memory.c:6751
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
-       blk_trace_ioctl+0x1ad/0x9a0 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x40c/0x6a0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #4 (&q->debugfs_mutex){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x3fa/0x830 block/blk-mq-sched.c:473
-       elevator_init_mq+0x20e/0x320 block/elevator.c:610
-       add_disk_fwnode+0x10d/0xf80 block/genhd.c:413
-       sd_probe+0xba6/0x1100 drivers/scsi/sd.c:4024
-       really_probe+0x2ba/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xaa/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f2/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #3 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       blk_queue_enter+0xe1/0x600 block/blk-core.c:328
-       blk_mq_alloc_request+0x4fa/0xaa0 block/blk-mq.c:652
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x177/0x1090 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x2b4/0x1450 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk+0x1013/0xbce0 drivers/scsi/sd.c:3734
-       sd_probe+0x9fa/0x1100 drivers/scsi/sd.c:4010
-       really_probe+0x2ba/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xaa/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f2/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #2 (&q->limits_lock){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:947 [inline]
-       loop_reconfigure_limits+0x43f/0x900 drivers/block/loop.c:998
-       loop_set_block_size drivers/block/loop.c:1473 [inline]
-       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
-       lo_ioctl+0x1351/0x1f50 drivers/block/loop.c:1559
-       blkdev_ioctl+0x57f/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&q->q_usage_counter(io)#24){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3090
-       __submit_bio+0x2c6/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       submit_bh fs/buffer.c:2819 [inline]
-       __sync_dirty_buffer+0x23d/0x390 fs/buffer.c:2857
-       exfat_set_volume_dirty+0x5d/0x80 fs/exfat/super.c:124
-       exfat_create+0x190/0x570 fs/exfat/namei.c:564
-       lookup_open fs/namei.c:3649 [inline]
-       open_last_lookups fs/namei.c:3748 [inline]
-       path_openat+0x1c05/0x3590 fs/namei.c:3984
-       do_filp_open+0x27f/0x4e0 fs/namei.c:4014
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_openat fs/open.c:1433 [inline]
-       __se_sys_openat fs/open.c:1428 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sbi->s_lock#2){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       exfat_get_block+0x1c3/0x2180 fs/exfat/inode.c:278
-       __block_write_begin_int+0x694/0x19a0 fs/buffer.c:2116
-       block_write_begin+0x8f/0x120 fs/buffer.c:2226
-       exfat_write_begin+0xfb/0x240 fs/exfat/inode.c:434
-       exfat_extend_valid_size+0x1f8/0x340 fs/exfat/file.c:553
-       exfat_page_mkwrite+0x16e/0x220 fs/exfat/file.c:649
-       do_page_mkwrite+0x15e/0x350 mm/memory.c:3176
-       do_shared_fault mm/memory.c:5398 [inline]
-       do_fault mm/memory.c:5460 [inline]
-       do_pte_missing mm/memory.c:3979 [inline]
-       handle_pte_fault+0x10c6/0x5ed0 mm/memory.c:5801
-       __handle_mm_fault mm/memory.c:5944 [inline]
-       handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
-       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x2b9/0x8b0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-       copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
-       raw_copy_to_user arch/x86/include/asm/uaccess_64.h:147 [inline]
-       _inline_copy_to_user include/linux/uaccess.h:197 [inline]
-       _copy_to_user+0x86/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:225 [inline]
-       cp_new_stat+0x545/0x6e0 fs/stat.c:496
-       __do_sys_newfstat fs/stat.c:543 [inline]
-       __se_sys_newfstat fs/stat.c:537 [inline]
-       __x64_sys_newfstat+0x16c/0x1c0 fs/stat.c:537
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sbi->s_lock#2 --> &q->debugfs_mutex --> &mm->mmap_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&mm->mmap_lock);
-                               lock(&q->debugfs_mutex);
-                               lock(&mm->mmap_lock);
-  lock(&sbi->s_lock#2);
-
- *** DEADLOCK ***
-
-2 locks held by syz.7.4118/20433:
- #0: ffff8880127232a0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
- #0: ffff8880127232a0 (&mm->mmap_lock){++++}-{4:4}, at: get_mmap_lock_carefully mm/memory.c:6149 [inline]
- #0: ffff8880127232a0 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x32/0x2f0 mm/memory.c:6209
- #1: ffff88805bbaafb0 (&sb->s_type->i_mutex_key#35){+.+.}-{4:4}, at: inode_trylock include/linux/fs.h:838 [inline]
- #1: ffff88805bbaafb0 (&sb->s_type->i_mutex_key#35){+.+.}-{4:4}, at: exfat_page_mkwrite+0x8f/0x220 fs/exfat/file.c:641
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 20433 Comm: syz.7.4118 Not tainted 6.13.0-rc5-syzkaller-00163-gab75170520d4 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
- exfat_get_block+0x1c3/0x2180 fs/exfat/inode.c:278
- __block_write_begin_int+0x694/0x19a0 fs/buffer.c:2116
- block_write_begin+0x8f/0x120 fs/buffer.c:2226
- exfat_write_begin+0xfb/0x240 fs/exfat/inode.c:434
- exfat_extend_valid_size+0x1f8/0x340 fs/exfat/file.c:553
- exfat_page_mkwrite+0x16e/0x220 fs/exfat/file.c:649
- do_page_mkwrite+0x15e/0x350 mm/memory.c:3176
- do_shared_fault mm/memory.c:5398 [inline]
- do_fault mm/memory.c:5460 [inline]
- do_pte_missing mm/memory.c:3979 [inline]
- handle_pte_fault+0x10c6/0x5ed0 mm/memory.c:5801
- __handle_mm_fault mm/memory.c:5944 [inline]
- handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x2b9/0x8b0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0010:copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
-RIP: 0010:raw_copy_to_user arch/x86/include/asm/uaccess_64.h:147 [inline]
-RIP: 0010:_inline_copy_to_user include/linux/uaccess.h:197 [inline]
-RIP: 0010:_copy_to_user+0x86/0xb0 lib/usercopy.c:26
-Code: c0 1c dd fc 4c 39 fb 72 3d 4c 39 eb 77 38 e8 51 1a dd fc 4c 89 f7 44 89 e6 e8 b6 84 43 fd 0f 01 cb 4c 89 ff 4c 89 e1 4c 89 f6 <f3> a4 0f 1f 00 49 89 cc 0f 01 ca 4c 89 e0 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc9000beafbb0 EFLAGS: 00050246
-RAX: ffffffff84c26901 RBX: 0000000020000390 RCX: 0000000000000090
-RDX: 0000000000000000 RSI: ffffc9000beafc20 RDI: 0000000020000300
-RBP: ffffc9000beafd50 R08: ffffc9000beafcaf R09: 1ffff920017d5f95
-R10: dffffc0000000000 R11: fffff520017d5f96 R12: 0000000000000090
-R13: 00007ffffffff000 R14: ffffc9000beafc20 R15: 0000000020000300
- copy_to_user include/linux/uaccess.h:225 [inline]
- cp_new_stat+0x545/0x6e0 fs/stat.c:496
- __do_sys_newfstat fs/stat.c:543 [inline]
- __se_sys_newfstat fs/stat.c:537 [inline]
- __x64_sys_newfstat+0x16c/0x1c0 fs/stat.c:537
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcfdf985d29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fcfe0865038 EFLAGS: 00000246 ORIG_RAX: 0000000000000005
-RAX: ffffffffffffffda RBX: 00007fcfdfb75fa0 RCX: 00007fcfdf985d29
-RDX: 0000000000000000 RSI: 0000000020000300 RDI: 0000000000000004
-RBP: 00007fcfdfa01b08 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fcfdfb75fa0 R15: 00007ffea462a438
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	c0 1c dd fc 4c 39 fb 	rcrb   $0x72,-0x4c6b304(,%rbx,8)
-   7:	72
-   8:	3d 4c 39 eb 77       	cmp    $0x77eb394c,%eax
-   d:	38 e8                	cmp    %ch,%al
-   f:	51                   	push   %rcx
-  10:	1a dd                	sbb    %ch,%bl
-  12:	fc                   	cld
-  13:	4c 89 f7             	mov    %r14,%rdi
-  16:	44 89 e6             	mov    %r12d,%esi
-  19:	e8 b6 84 43 fd       	call   0xfd4384d4
-  1e:	0f 01 cb             	stac
-  21:	4c 89 ff             	mov    %r15,%rdi
-  24:	4c 89 e1             	mov    %r12,%rcx
-  27:	4c 89 f6             	mov    %r14,%rsi
-* 2a:	f3 a4                	rep movsb %ds:(%rsi),%es:(%rdi) <-- trapping instruction
-  2c:	0f 1f 00             	nopl   (%rax)
-  2f:	49 89 cc             	mov    %rcx,%r12
-  32:	0f 01 ca             	clac
-  35:	4c 89 e0             	mov    %r12,%rax
-  38:	5b                   	pop    %rbx
-  39:	41 5c                	pop    %r12
-  3b:	41 5d                	pop    %r13
-  3d:	41 5e                	pop    %r14
-  3f:	41                   	rex.B
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Looks like smatch just caught it.
 
