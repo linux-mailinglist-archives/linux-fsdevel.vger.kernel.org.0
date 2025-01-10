@@ -1,188 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-38852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6990A08CFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:54:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9733AA08D2B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:59:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7748218844ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 09:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976313A3DBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 09:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FA020A5F7;
-	Fri, 10 Jan 2025 09:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F8220A5C5;
+	Fri, 10 Jan 2025 09:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VsO9gsY7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I7nNPC6r";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VsO9gsY7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I7nNPC6r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pyk3jzbz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD66209F44;
-	Fri, 10 Jan 2025 09:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C88D17F4F2;
+	Fri, 10 Jan 2025 09:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736502844; cv=none; b=KFrKrFCtf/LbVJ1nZvbw2sgUNsmRV+YTWppeApxkSX9lToWvnWDF8Fq6iouzy82VVTOdye5WSDSVQGJdDQlm0LxEu8Lj07bhBnFKM5FwDjNq+ZiIJVggb9D0FDK0RL7m0g7Jgm4ExIm41T9OPYZgoepDEFn2Op7UbxVYkB5J5Ek=
+	t=1736503057; cv=none; b=KDt4+DobehneNSH29c95Z96B88TWtClUXFW4v5jtcS5f8cUhuX4x/liy3Xs6BlqboGk0YORGaoGakfKEnhc3rL2tAhIrg+OPDX0IZodbkv5jM5l9IjVocBea3hMSTttAjfADO0Rv1pRyUdOEnAuUAnZqem0GuwJsjAO4OCT+VNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736502844; c=relaxed/simple;
-	bh=8/2e/mWos9wuKE0t99GBlAnYf5FdSlBLCcGc3g2a46Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fmf/IWjeSbKkXXBS2kjHmhkVFXWJsqpUANgEbhD3HrXDYIg9g/HFIHWPtgVW89xwuD/A0m8Zf7dmkAyTvEmpc95x/AbCxuAun5NgySO/429lHnbg1xEGLO+QvF38r7qtbODv/YPXHWJ/IWtDZ88zhFP+fnfXBabDfGyDhVEbVWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VsO9gsY7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I7nNPC6r; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VsO9gsY7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I7nNPC6r; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CA83B1F394;
-	Fri, 10 Jan 2025 09:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736502840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
-	b=VsO9gsY7FSoiORu9UOtTUHEkZxBWpDOl7mZL4F0w8LDwgAsKaEbZ81ZgIzGC7oNYNoWXYl
-	5oAbxGSvoOE5UYkdts6JYBB4ATYY2L47Q3qwyvOxRSBRVphj/Zu6EAqTv12UmuOvHTh/sS
-	Ra3RWHNKsieiK9s7zMTAz0WpFJNZ0xc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736502840;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
-	b=I7nNPC6rgqoNGx+4/T56qwZ6wF4QxHoQeWhiI8tJhGvvN4AM5z1rGAZrMRHpNdxbbkE+0i
-	2ewNtGNDiqL3A3DQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736502840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
-	b=VsO9gsY7FSoiORu9UOtTUHEkZxBWpDOl7mZL4F0w8LDwgAsKaEbZ81ZgIzGC7oNYNoWXYl
-	5oAbxGSvoOE5UYkdts6JYBB4ATYY2L47Q3qwyvOxRSBRVphj/Zu6EAqTv12UmuOvHTh/sS
-	Ra3RWHNKsieiK9s7zMTAz0WpFJNZ0xc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736502840;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
-	b=I7nNPC6rgqoNGx+4/T56qwZ6wF4QxHoQeWhiI8tJhGvvN4AM5z1rGAZrMRHpNdxbbkE+0i
-	2ewNtGNDiqL3A3DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B945913A86;
-	Fri, 10 Jan 2025 09:54:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jhnvLDjugGf5GgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 10 Jan 2025 09:54:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 63781A0889; Fri, 10 Jan 2025 10:54:00 +0100 (CET)
-Date: Fri, 10 Jan 2025 10:54:00 +0100
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
-	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, linux-nfs@vger.kernel.org, 
-	miklos@szeredi.hu, torvalds@linux-foundation.org
-Subject: Re: [PATCH 18/20] ocfs2_dentry_revalidate(): use stable parent inode
- and name passed by caller
-Message-ID: <gqakhrasapfiocyilg5zbehb7m24n6sgtyoxe5pluih256v5ht@n7vp2zm5xsti>
-References: <20250110023854.GS1977892@ZenIV>
- <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
- <20250110024303.4157645-18-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1736503057; c=relaxed/simple;
+	bh=rgV487CnbslRTZhg0qn2dmf39AD1jlzPkLoug1tuyvk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iZxhuseSI28MFgVd335M/drDS/Rg75nONyrn5fyNiKxe8OpTfPmDc4WCj9gUJzqdqKukov7nV6CNbJbyubKqqmHUscZyyHANgeqeLtOWWK264ZAroRp4Q/b7tnOPDHg9I/8HWNkNPZU5C4Et7PSuu4LU0wOoSbZwd7yzUQIF9EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pyk3jzbz; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-2156e078563so26511545ad.2;
+        Fri, 10 Jan 2025 01:57:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736503055; x=1737107855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Duw3/ndnY86PXGNZcla5r5A2fqGgkDUfYOYJe+kw63M=;
+        b=Pyk3jzbzqwNK+uKxeEMUDJEuhh5YdF3hkRLShYqSJSoy9owSycLHgKMFtNwhVs0Bui
+         1iqfel52BU2XpAjOUBZ/U5d1089pjUQXOVEcK4KYZkql7FHO3lx33jdCX8oP3sM1xxp9
+         jDpwE7E6+D2mke8VZPZFAfP46WgmYcaGo5foJclQHR7Ie4UQHgbymCARtz1Vi5FCFtWv
+         FQvoVf9uj0SuIITWwZtOLC5KmEHyG1JfVh7MUvB+JNmVUVzItp7HuOKnA8sC1RPrNp0w
+         Ciz08GEz+Ej1/mLWyd7sdwKBknHtDbKdrL0BaQtIL0Slwa/4K4iz9Fj0pkkkrguyPEwi
+         PXqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736503055; x=1737107855;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Duw3/ndnY86PXGNZcla5r5A2fqGgkDUfYOYJe+kw63M=;
+        b=qUwSxzfi04a8ZVXUHzOuIKIW8Pa3jCYBc5DPweebB2Y1OEFrd/OwAnvaErZdDaCojy
+         MvNWXoprjfmOatMtwvMLk7+S7moMl259sfCWqXOFb2TkfXHxpx4grQlclxKEU5XlboCG
+         Q3arSTHQ/z2DWNf8g22ed7xD2qhSyGPOGI06L1ZoeB5mc2dw3EeqPTWzZHmfseCPoQo8
+         O2ypEwNlinO7cQTkaZd23ekN9nFlhU1G0trDmDIC8Et//KsfMoSZfiJYispVVbRjsvt+
+         uYYtwjtspTpdyKzc1lNaeFuBqd8vde15dcIFMlkMBuzCr3w+pV4+McXxO6J8Q6Yg0qOU
+         5y3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUrop05ckHNSLPBgCUB43IF8ALfa2N4QHnVEWR3rpxt92w6Ed6W3eDyE8VueFM4hFUdRKPo2/+HLwEDq1SI@vger.kernel.org, AJvYcCV23D+kNh4A8CWI/wic0FJvhdHLbclp28rohF0IjLWv8uT3Lm8FsXvGgss4JRttgRLdEOieONah8VI1tz4Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW6toMlmeT/euRMZZ2VecIPXrzbcfDZNVtXEhvBo9VwEUJBBjF
+	FqD9HqGK8dh160UWp3zbEva4wUf9ULsat36aEY3FEAiHXF7PUCNy
+X-Gm-Gg: ASbGncvS++LtR2kyXEdlpFGtJumaH0nF4ENX/x3VBvYGUgBZEWoffFuenSaSuUqKYt9
+	K66dZ4XFK/BthPfF0hiVh4IB5u1L70cDrf8znqfaJ9iQ5vBn9Od4Yz1TpjQ0Hs/od2OFnbINDJD
+	Cg5aZEAi6PrEtG9Ngms1lceYN5FSaG2wGN8Oq6xbKHagTj7dq9/bADokC0v+jutigqbVBJL7Tyn
+	r8h4K1QKCjLQauH+BMwG4uniYKF6k1mASKwclkqqE4pQSHK1ak9yIP82gl+rDrE17mztw==
+X-Google-Smtp-Source: AGHT+IGl6aE5kXky5funQPPsyrxK3u5IW4Ixiegbwcy9K/RE1uERz2BkbNp8fNXWE8zBM39xrb41KA==
+X-Received: by 2002:a17:903:1109:b0:216:48f4:4f1a with SMTP id d9443c01a7336-21a83f4bfa8mr152077135ad.16.1736503055232;
+        Fri, 10 Jan 2025 01:57:35 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f2178ddsm10767775ad.157.2025.01.10.01.57.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2025 01:57:34 -0800 (PST)
+From: xu xin <xu.xin.sc@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To: akpm@linux-foundation.org
+Cc: david@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wang.yaxin@zte.com.cn,
+	xu.xin16@zte.com.cn
+Subject: Re: [PATCH linux-next v4] ksm: add ksm involvement information for each process
+Date: Fri, 10 Jan 2025 09:57:30 +0000
+Message-Id: <20250110095730.665478-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241203165643.729e6c5fe58f59adc7ee098f@linux-foundation.org>
+References: <20241203165643.729e6c5fe58f59adc7ee098f@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250110024303.4157645-18-viro@zeniv.linux.org.uk>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,redhat.com,gmail.com,kernel.org,omnibond.com,suse.cz,szeredi.hu,linux-foundation.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,linux.org.uk:email,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Fri 10-01-25 02:43:01, Al Viro wrote:
-> theoretically, ->d_name use in there is a UAF, but only if you are messing with
-> tracepoints...
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+>> From: xu xin <xu.xin16@zte.com.cn>
+>>
+>> In /proc/<pid>/ksm_stat, Add two extra ksm involvement items including
+>> KSM_mergeable and KSM_merge_any. It helps administrators to
+>> better know the system's KSM behavior at process level.
+>
+>It's hard for me to judge the usefulness of this.  Please tell us more:
+>usage examples, what actions have been taken using this information, etc.
 
-Looks good. Feel free to add:
+Thank you.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+They are just simply to improve the observability of KSM at process level,
+so that users can know if a certain process has enable KSM.
 
-								Honza
+For example, if without these two items, when we look at
+/proc/<pid>/ksm_stat and there's no merging pages found, We are not sure
+whether it is because KSM was not enabled or because KSM did not
+successfully merge any pages.
 
-> ---
->  fs/ocfs2/dcache.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ocfs2/dcache.c b/fs/ocfs2/dcache.c
-> index ecb1ce6301c4..1873bbbb7e5b 100644
-> --- a/fs/ocfs2/dcache.c
-> +++ b/fs/ocfs2/dcache.c
-> @@ -45,8 +45,7 @@ static int ocfs2_dentry_revalidate(struct inode *dir, const struct qstr *name,
->  	inode = d_inode(dentry);
->  	osb = OCFS2_SB(dentry->d_sb);
->  
-> -	trace_ocfs2_dentry_revalidate(dentry, dentry->d_name.len,
-> -				      dentry->d_name.name);
-> +	trace_ocfs2_dentry_revalidate(dentry, name->len, name->name);
->  
->  	/* For a negative dentry -
->  	 * check the generation number of the parent and compare with the
-> @@ -54,12 +53,8 @@ static int ocfs2_dentry_revalidate(struct inode *dir, const struct qstr *name,
->  	 */
->  	if (inode == NULL) {
->  		unsigned long gen = (unsigned long) dentry->d_fsdata;
-> -		unsigned long pgen;
-> -		spin_lock(&dentry->d_lock);
-> -		pgen = OCFS2_I(d_inode(dentry->d_parent))->ip_dir_lock_gen;
-> -		spin_unlock(&dentry->d_lock);
-> -		trace_ocfs2_dentry_revalidate_negative(dentry->d_name.len,
-> -						       dentry->d_name.name,
-> +		unsigned long pgen = OCFS2_I(dir)->ip_dir_lock_gen;
-> +		trace_ocfs2_dentry_revalidate_negative(name->len, name->name,
->  						       pgen, gen);
->  		if (gen != pgen)
->  			goto bail;
-> -- 
-> 2.39.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>> KSM_mergeable: yes/no
+>>      whether any VMAs of the process'mm are currently applicable to KSM.
+>
+>Could we simply display VM_MERGEABLE in /proc/<pid>/maps?
+
+Althrough "mg" in /proc/<pid>/smaps indicate VM_MERGEABLE, it's opaque
+and not very obvious for non professionals. 
+
+
+>>
+>>  fs/proc/base.c      | 11 +++++++++++
+>>  include/linux/ksm.h |  1 +
+>>  mm/ksm.c            | 19 +++++++++++++++++++
+>
+>Documentation/admin-guide/mm/ksm.rst will require an update please.
+
+Yes, okay. Thank you.
+
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -3269,6 +3269,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+>>                              struct pid *pid, struct task_struct *task)
+>>  {
+>>      struct mm_struct *mm;
+>> +    int ret = 0;
+>>
+>>      mm = get_task_mm(task);
+>>      if (mm) {
+>> @@ -3276,6 +3277,16 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+>>              seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
+>>              seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+>>              seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
+>> +            seq_printf(m, "ksm_merge_any: %s\n",
+>> +                            test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
+>> +            ret = mmap_read_lock_killable(mm);
+>
+>Could do the locking in ksm_process_mergeable()?
+
+Well, the reason why it's not placed inside is to prevent future deadlocks caused by someone using
+this function incorrectly under lock already held.
+
+Thanks.
+
 
