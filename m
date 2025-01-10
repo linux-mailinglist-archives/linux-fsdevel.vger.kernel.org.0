@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-38783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02C4A0858B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 03:44:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CD4A08581
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 03:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCC1188B6D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 02:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5D897A37BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 02:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6804A206F1D;
-	Fri, 10 Jan 2025 02:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F120A2066DE;
+	Fri, 10 Jan 2025 02:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="n7W3mIqv"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oyqJXHqG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEE5149C50;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9E8B674;
 	Fri, 10 Jan 2025 02:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736476988; cv=none; b=sSqr1QrYTC9mL/NQVJx4H3RNobwzHzFjHtjZV9QlsY2CUJNYn9HWUEUI/AijJTM/swyqaGaJV/yGLeRmyj8l06oLFC2F3pcBiLKmwMjzKzIjzjpkxaL2IjhjWY6QWHfSnUwbuBTUYm3v9/LIvUg7CiDYR13m4s877Y4ZONx3yAU=
+	t=1736476988; cv=none; b=f9v+dAoqnPDlakURN/M/5wWjWbGYugCDbhkhyuU3Yg9+2WEFCNGr36OT746Nw6QpArJZ5d9pZqZQyZcV3/QAG8GQMIXgoo8N5voVonCnX0lEX4ei2qXp8dIIIr+JIg/1URxgUFX71L6OydSbIU5A1fGRJ/5XDKm9cNz0WoEaBTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736476988; c=relaxed/simple;
-	bh=/+23/NdxjPLdcAKyYWPvhNukDGf5iaCTaLLO1EjgLHE=;
+	bh=/onXWoVDvdtJ91sqrAPwoEq7Y81/hf1LzJoqT3zvhj8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gb4MXX1hGgIl4g7HFzn3vuwOM8HqDMrk3i9oaDl1O9fFmcsjXvN2LaVlzCvWmTH5HEF8r2PjURZNokt47EDJEKs0IRnfqwPhS/TMxLtJAwQJbUfNP0w//lREqRrPdD1TZlRDbO2vNCP72AVV/deNvoQrO62H59ydRIb9MKnjfzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=n7W3mIqv; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=M2QoITdTtmrESEvRDe2O6aEJl24xMmRFUwLfFszBCVJUdkbV5sXM5lET9K84UE0Irn8iMEpUah4DAo7gx6wzLXWJzSBbkGxXJMvpOHoiWHORFHAjJq8GsLyuwoygAn3Lt/FnTpaAjBUqd+cCXroE+i/rNvDcU8t9bpHdZKoUoYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oyqJXHqG; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=YothkI0qm/ny+i6tgohpDmcCLFOR152J1clRwveDxFk=; b=n7W3mIqvH9FENwHMUbUkXs9b7e
-	mgJPo6XHjpX8rQd+QAItxDxXmBvOL4zagODv3prl80Qxo6bNNAbQZ5ImXGOG+gTwlM0nNw7CfpQBH
-	JiXKsq03wSMpvYw9FxmwQipZ8fBCQSpZZBG5YAG4f/n6MyFPfMxsBBdC0ODQ8zEO1Ouu3C9wK2TS2
-	kq+iGCR2kPe+HXBBDPM0AnSJuk9rK86wXl4CSdiXvswFt3OCG/9HhSJbXLnN3ZASt+7FkdYCC8vhx
-	3DjyHbq8q6YgttmqUX4/1wfJS2diuJdCMoYxDUaZ5eRbrTiAelphJLDxS9KmiV6SlFT0FPWuL2aGC
-	kvfu8aOw==;
+	bh=EYhHIi3WIy/RIYTBd92+7gF/vb64orZOvlH78Q3iY5E=; b=oyqJXHqGvKFHJoKdcBEnEQ8aqx
+	BU83oyNpEqbaLq7ZWpBgnXiKiopV4uBcJiC3Wi6gVcM52HVtXN2Vk4DoazoVRANBPZfrjJ4k2bO68
+	Mv6WUG73rjBsufGCswOn4kqOgZaqURhfrWrNBhJ47WvIe1m4z5fVkajzbyYtv6OK8cAm/uv/IG3mD
+	l4cg1N/4smkYOXw0mvO04WPGvnlUpujSJJCILD9y2PdbFVTTUmGt+91n9ci/g+sBOmYb1BK2UxiLE
+	PH/oVXQi/rPAmn/ndeN1w8cROOrhTQ3M9G0abKsqZtODn2LI+TmD6OUw1GkfFSSynRQEDO1a40XzV
+	ncYFLe7g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tW4zH-0000000HRau-2CE5;
+	id 1tW4zH-0000000HRaw-2asf;
 	Fri, 10 Jan 2025 02:43:03 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -57,12 +57,13 @@ Cc: agruenba@redhat.com,
 	linux-nfs@vger.kernel.org,
 	miklos@szeredi.hu,
 	torvalds@linux-foundation.org
-Subject: [PATCH 01/20] make sure that DNAME_INLINE_LEN is a multiple of word size
-Date: Fri, 10 Jan 2025 02:42:44 +0000
-Message-ID: <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 02/20] dcache: back inline names with a struct-wrapped array of unsigned long
+Date: Fri, 10 Jan 2025 02:42:45 +0000
+Message-ID: <20250110024303.4157645-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250110023854.GS1977892@ZenIV>
+In-Reply-To: <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
 References: <20250110023854.GS1977892@ZenIV>
+ <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,59 +73,206 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... calling the number of words DNAME_INLINE_WORDS.
+... so that they can be copied with struct assignment (which generates
+better code) and accessed word-by-word.
 
-The next step will be to have a structure to hold inline name arrays
-(both in dentry and in name_snapshot) and use that to alias the
-existing arrays of unsigned char there.  That will allow both
-full-structure copies and convenient word-by-word accesses.
+The type is union shortname_storage; it's a union of arrays of
+unsigned char and unsigned long.
+
+struct name_snapshot.inline_name turned into union shortname_storage;
+users (all in fs/dcache.c) adjusted.
+
+struct dentry.d_iname has some users outside of fs/dcache.c; to
+reduce the amount of noise in commit, it is replaced with
+union shortname_storage d_shortname and d_iname is turned into a macro
+that expands to d_shortname.string (similar to d_lock handling, hopefully
+temporary - most, if not all, users shouldn't be messing with it).)
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/dcache.c            | 4 +---
- include/linux/dcache.h | 8 +++++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/dcache.c                                  | 43 +++++++++-----------
+ include/linux/dcache.h                       | 10 ++++-
+ tools/testing/selftests/bpf/progs/find_vma.c |  2 +-
+ 3 files changed, 28 insertions(+), 27 deletions(-)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index b4d5e9e1e43d..ea0f0bea511b 100644
+index ea0f0bea511b..52662a5d08e4 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -2748,9 +2748,7 @@ static void swap_names(struct dentry *dentry, struct dentry *target)
+@@ -324,7 +324,7 @@ static void __d_free_external(struct rcu_head *head)
+ 
+ static inline int dname_external(const struct dentry *dentry)
+ {
+-	return dentry->d_name.name != dentry->d_iname;
++	return dentry->d_name.name != dentry->d_shortname.string;
+ }
+ 
+ void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry)
+@@ -334,9 +334,8 @@ void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry
+ 	if (unlikely(dname_external(dentry))) {
+ 		atomic_inc(&external_name(dentry)->u.count);
+ 	} else {
+-		memcpy(name->inline_name, dentry->d_iname,
+-		       dentry->d_name.len + 1);
+-		name->name.name = name->inline_name;
++		name->inline_name = dentry->d_shortname;
++		name->name.name = name->inline_name.string;
+ 	}
+ 	spin_unlock(&dentry->d_lock);
+ }
+@@ -344,7 +343,7 @@ EXPORT_SYMBOL(take_dentry_name_snapshot);
+ 
+ void release_dentry_name_snapshot(struct name_snapshot *name)
+ {
+-	if (unlikely(name->name.name != name->inline_name)) {
++	if (unlikely(name->name.name != name->inline_name.string)) {
+ 		struct external_name *p;
+ 		p = container_of(name->name.name, struct external_name, name[0]);
+ 		if (unlikely(atomic_dec_and_test(&p->u.count)))
+@@ -1654,10 +1653,10 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 	 * will still always have a NUL at the end, even if we might
+ 	 * be overwriting an internal NUL character
+ 	 */
+-	dentry->d_iname[DNAME_INLINE_LEN-1] = 0;
++	dentry->d_shortname.string[DNAME_INLINE_LEN-1] = 0;
+ 	if (unlikely(!name)) {
+ 		name = &slash_name;
+-		dname = dentry->d_iname;
++		dname = dentry->d_shortname.string;
+ 	} else if (name->len > DNAME_INLINE_LEN-1) {
+ 		size_t size = offsetof(struct external_name, name[1]);
+ 		struct external_name *p = kmalloc(size + name->len,
+@@ -1670,7 +1669,7 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 		atomic_set(&p->u.count, 1);
+ 		dname = p->name;
+ 	} else  {
+-		dname = dentry->d_iname;
++		dname = dentry->d_shortname.string;
+ 	}	
+ 
+ 	dentry->d_name.len = name->len;
+@@ -2729,10 +2728,9 @@ static void swap_names(struct dentry *dentry, struct dentry *target)
+ 			 * dentry:internal, target:external.  Steal target's
+ 			 * storage and make target internal.
+ 			 */
+-			memcpy(target->d_iname, dentry->d_name.name,
+-					dentry->d_name.len + 1);
+ 			dentry->d_name.name = target->d_name.name;
+-			target->d_name.name = target->d_iname;
++			target->d_shortname = dentry->d_shortname;
++			target->d_name.name = target->d_shortname.string;
+ 		}
+ 	} else {
+ 		if (unlikely(dname_external(dentry))) {
+@@ -2740,18 +2738,16 @@ static void swap_names(struct dentry *dentry, struct dentry *target)
+ 			 * dentry:external, target:internal.  Give dentry's
+ 			 * storage to target and make dentry internal
+ 			 */
+-			memcpy(dentry->d_iname, target->d_name.name,
+-					target->d_name.len + 1);
+ 			target->d_name.name = dentry->d_name.name;
+-			dentry->d_name.name = dentry->d_iname;
++			dentry->d_shortname = target->d_shortname;
++			dentry->d_name.name = dentry->d_shortname.string;
+ 		} else {
  			/*
  			 * Both are internal.
  			 */
--			unsigned int i;
--			BUILD_BUG_ON(!IS_ALIGNED(DNAME_INLINE_LEN, sizeof(long)));
--			for (i = 0; i < DNAME_INLINE_LEN / sizeof(long); i++) {
-+			for (int i = 0; i < DNAME_INLINE_WORDS; i++) {
- 				swap(((long *) &dentry->d_iname)[i],
- 				     ((long *) &target->d_iname)[i]);
- 			}
+-			for (int i = 0; i < DNAME_INLINE_WORDS; i++) {
+-				swap(((long *) &dentry->d_iname)[i],
+-				     ((long *) &target->d_iname)[i]);
+-			}
++			for (int i = 0; i < DNAME_INLINE_WORDS; i++)
++				swap(dentry->d_shortname.words[i],
++				     target->d_shortname.words[i]);
+ 		}
+ 	}
+ 	swap(dentry->d_name.hash_len, target->d_name.hash_len);
+@@ -2766,9 +2762,8 @@ static void copy_name(struct dentry *dentry, struct dentry *target)
+ 		atomic_inc(&external_name(target)->u.count);
+ 		dentry->d_name = target->d_name;
+ 	} else {
+-		memcpy(dentry->d_iname, target->d_name.name,
+-				target->d_name.len + 1);
+-		dentry->d_name.name = dentry->d_iname;
++		dentry->d_shortname = target->d_shortname;
++		dentry->d_name.name = dentry->d_shortname.string;
+ 		dentry->d_name.hash_len = target->d_name.hash_len;
+ 	}
+ 	if (old_name && likely(atomic_dec_and_test(&old_name->u.count)))
+@@ -3101,12 +3096,12 @@ void d_mark_tmpfile(struct file *file, struct inode *inode)
+ {
+ 	struct dentry *dentry = file->f_path.dentry;
+ 
+-	BUG_ON(dentry->d_name.name != dentry->d_iname ||
++	BUG_ON(dname_external(dentry) ||
+ 		!hlist_unhashed(&dentry->d_u.d_alias) ||
+ 		!d_unlinked(dentry));
+ 	spin_lock(&dentry->d_parent->d_lock);
+ 	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+-	dentry->d_name.len = sprintf(dentry->d_iname, "#%llu",
++	dentry->d_name.len = sprintf(dentry->d_shortname.string, "#%llu",
+ 				(unsigned long long)inode->i_ino);
+ 	spin_unlock(&dentry->d_lock);
+ 	spin_unlock(&dentry->d_parent->d_lock);
+@@ -3194,7 +3189,7 @@ static void __init dcache_init(void)
+ 	 */
+ 	dentry_cache = KMEM_CACHE_USERCOPY(dentry,
+ 		SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_ACCOUNT,
+-		d_iname);
++		d_shortname.string);
+ 
+ 	/* Hash may have been set up in dcache_init_early */
+ 	if (!hashdist)
 diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index bff956f7b2b9..42dd89beaf4e 100644
+index 42dd89beaf4e..8bc567a35718 100644
 --- a/include/linux/dcache.h
 +++ b/include/linux/dcache.h
-@@ -68,15 +68,17 @@ extern const struct qstr dotdot_name;
-  * large memory footprint increase).
-  */
- #ifdef CONFIG_64BIT
--# define DNAME_INLINE_LEN 40 /* 192 bytes */
-+# define DNAME_INLINE_WORDS 5 /* 192 bytes */
- #else
- # ifdef CONFIG_SMP
--#  define DNAME_INLINE_LEN 36 /* 128 bytes */
-+#  define DNAME_INLINE_WORDS 9 /* 128 bytes */
- # else
--#  define DNAME_INLINE_LEN 44 /* 128 bytes */
-+#  define DNAME_INLINE_WORDS 11 /* 128 bytes */
- # endif
- #endif
+@@ -79,7 +79,13 @@ extern const struct qstr dotdot_name;
  
-+#define DNAME_INLINE_LEN (DNAME_INLINE_WORDS*sizeof(unsigned long))
+ #define DNAME_INLINE_LEN (DNAME_INLINE_WORDS*sizeof(unsigned long))
+ 
++union shortname_store {
++	unsigned char string[DNAME_INLINE_LEN];
++	unsigned long words[DNAME_INLINE_WORDS];
++};
 +
  #define d_lock	d_lockref.lock
++#define d_iname d_shortname.string
  
  struct dentry {
+ 	/* RCU lookup touched fields */
+@@ -90,7 +96,7 @@ struct dentry {
+ 	struct qstr d_name;
+ 	struct inode *d_inode;		/* Where the name belongs to - NULL is
+ 					 * negative */
+-	unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
++	union shortname_store d_shortname;
+ 	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+ 
+ 	/* Ref lookup also touches following */
+@@ -591,7 +597,7 @@ static inline struct inode *d_real_inode(const struct dentry *dentry)
+ 
+ struct name_snapshot {
+ 	struct qstr name;
+-	unsigned char inline_name[DNAME_INLINE_LEN];
++	union shortname_store inline_name;
+ };
+ void take_dentry_name_snapshot(struct name_snapshot *, struct dentry *);
+ void release_dentry_name_snapshot(struct name_snapshot *);
+diff --git a/tools/testing/selftests/bpf/progs/find_vma.c b/tools/testing/selftests/bpf/progs/find_vma.c
+index 38034fb82530..02b82774469c 100644
+--- a/tools/testing/selftests/bpf/progs/find_vma.c
++++ b/tools/testing/selftests/bpf/progs/find_vma.c
+@@ -25,7 +25,7 @@ static long check_vma(struct task_struct *task, struct vm_area_struct *vma,
+ {
+ 	if (vma->vm_file)
+ 		bpf_probe_read_kernel_str(d_iname, DNAME_INLINE_LEN - 1,
+-					  vma->vm_file->f_path.dentry->d_iname);
++					  vma->vm_file->f_path.dentry->d_shortname.string);
+ 
+ 	/* check for VM_EXEC */
+ 	if (vma->vm_flags & VM_EXEC)
 -- 
 2.39.5
 
