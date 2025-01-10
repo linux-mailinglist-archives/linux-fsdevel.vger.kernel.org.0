@@ -1,71 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-38850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AD0A08D07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:54:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 856A7A08D11
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E27E3ABE66
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 09:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8B13A4643
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 09:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B219320B808;
-	Fri, 10 Jan 2025 09:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCB71885A1;
+	Fri, 10 Jan 2025 09:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="f4Xg4moZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4jWIXJI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F90D20B21D;
-	Fri, 10 Jan 2025 09:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A780A209F59;
+	Fri, 10 Jan 2025 09:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736502564; cv=none; b=fGBWZ/XzsbpaISaEXClMNy5copvyd1eWSAQHK397xEdj4iiprQ5wwajV9dg438SM99k+iF2lAnziZNyQJJ426hQcr4SaI73xXOM9+RmBiChnndshMiVO5BUMGARJt8ZxC+43JasfohmRLuQeqZ2r/L81t6oqlCDaOB1SOhn+AlQ=
+	t=1736502691; cv=none; b=Ux/uyKKqKYzt/QUm3CkIz6iphmwruuPfoCBHoy+kvNQw1Ico+8db/3VKdHEijmFzMqmJeOBhU5ioh0vdDiFnectzOrIx1VjrssLOXFsVfhvffJ57sJ1yPvaDxW1pgKWjJV4oKkLykRG80g0AnSdCLOpsp34xE5i58lQ14RUDMXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736502564; c=relaxed/simple;
-	bh=MZm7JsfukNZTzizqFkl+4BmfBELHFIJk4hrjdZsbZcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plHAaMAmswBC8PpLTzi47FpTiooRPSgdNc6Tc00jV/Ta5J0Yk/UeiHwlqmgZi3HdoJ+dJUvvHDBOjUqqcLrq0VnAf8zp49eFI244Zg1ZL5vcF5z9DUJIS9QVzk6wzXJkuzTOlMUa2w7TRlW/i6KaWSZ4P0TT/sd/FXNJJY3nuL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=f4Xg4moZ; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=W6OrZGwU2ohzYLkVhoo1Up0mkLfx9Dld/9qt6ikIX3o=; b=f4Xg4moZcRCldbafjO7Jkm4mrf
-	4KQE46rcfqRf99aKwl7v10HhX+QhDSe3jyvbZmWLzSqLgpMDwb37pybH5ZUzl7KQE80ZV2UMdkybr
-	x3coHDNfty+DWCDt+hUTI+jLgMmxZSCDWmGFqBZv6+cwPsnoYmX7xmNQ94pOSIpTLJqUzWq8okynE
-	brQOpbAlt63JR2pIBOoSUXxUAZizGwvV4nWb4sSjZgqSvXFXRsSESCvWmoTE+84lI+4AGp1mRsDZM
-	yeISqT8W7Jjlu3GzqEiCK/NjjPe6PZEoS3uQKokJlTiZanuZnnyCWCbjVaswV/GMyzjHyD4YwdbXI
-	PgnuYX0A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tWBQB-007nZ7-23;
-	Fri, 10 Jan 2025 17:48:37 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Jan 2025 17:48:36 +0800
-Date: Fri, 10 Jan 2025 17:48:36 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: David Howells <dhowells@redhat.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/8] crypto/krb5: Provide Kerberos 5 crypto through
- AEAD API
-Message-ID: <Z4Ds9NBiXUti-idl@gondor.apana.org.au>
-References: <20250110010313.1471063-1-dhowells@redhat.com>
- <20250110010313.1471063-3-dhowells@redhat.com>
+	s=arc-20240116; t=1736502691; c=relaxed/simple;
+	bh=Zw+MxsoiL++TXNxcJzmcSY6magNVOQw/LmrQIkGhoXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pL9/Rkz/ZY1+ZrAolkYG6aL+FYDDFg2ewHwtEnYyf5zT6F45PSjtscLnkNNkScYc+t2LCgLsabsQ5iyJPKQrDT1a4WvuHM1tXH4geByJUOfT1QNGBWZzBVQJkF7E2xemYMxvy/wa1lbyhkD+ll4DNi91SRU+m15dsP9Y4djJyvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4jWIXJI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43704C4CED6;
+	Fri, 10 Jan 2025 09:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736502691;
+	bh=Zw+MxsoiL++TXNxcJzmcSY6magNVOQw/LmrQIkGhoXk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=o4jWIXJI0KCIzFIRsMdO2C6sWgTblpQ43/aP9CZVKGnFTQy+GzHZ5ho34nTWWcgzy
+	 gFkaHW8Awh2m5OyNv/OL6HGlKO0K8sxeE6ylB4mzHoWcTN0xq6jhHyO+zhZcYUt0m3
+	 pYCeLsoTJ+SOnQ1+VGok+pgSbCyteBGSPItfe1V6TqF1qDlG6p5M1LJ1nX9C805ArB
+	 fuCoUfIOdPfNmWdE2iDVSv3Whq7V/iviVzBZ8uwgnfi1lPbIwtzsT/NQVgv9L489sM
+	 IVaGwSlQbuppLnE4R3Ywhy7MP8dhZt6MVU34nHrcyYjgVwW12QXw0d+z2w6QMeV6tk
+	 /cVlzhY0pPHSQ==
+Date: Fri, 10 Jan 2025 10:51:27 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] XFS fixes for 6.13-rc7
+Message-ID: <fsn2arw4xjoozcqqrf7l56fmxn5r54ytkcv3rqjrwr74arrm7e@2a67uibjsdm4>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,47 +55,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250110010313.1471063-3-dhowells@redhat.com>
 
-On Fri, Jan 10, 2025 at 01:03:04AM +0000, David Howells wrote:
->
-> +		.etype			= KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128,
-> +		.ctype			= KRB5_CKSUMTYPE_HMAC_SHA256_128_AES128,
-> +		.name			= "aes128-cts-hmac-sha256-128",
-> +		.encrypt_name		= "cts(cbc(aes))",
-> +		.cksum_name		= "hmac(sha256)",
-> +		.hash_name		= "sha256",
-> +		.key_bytes		= 16,
-> +		.key_len		= 16,
-> +		.Kc_len			= 16,
-> +		.Ke_len			= 16,
-> +		.Ki_len			= 16,
-> +		.block_len		= 16,
-> +		.conf_len		= 16,
-> +		.cksum_len		= 16,
-> +		.hash_len		= 20,
-> +		.prf_len		= 32,
-> +		.keyed_cksum		= true,
-> +		.random_to_key		= NULL, /* Identity */
-> +		.profile		= &rfc8009_crypto_profile,
-> +
-> +		.aead.setkey		= krb5_setkey,
-> +		.aead.setauthsize	= NULL,
-> +		.aead.encrypt		= rfc8009_aead_encrypt,
-> +		.aead.decrypt		= rfc8009_aead_decrypt,
+Hello Linus,
 
-rfc8009 is basically the same as authenc.  So rather than being an
-AEAD algorithm it should really be an AEAD template which takes a
-cipher and and a hash as its parameters.
+could you please pull the two patches in the request below?
 
-In fact, you could probably use authenc directly.
+I'm assuming you'll be releasing a 6.13-rc7, and if that's the case we'd like
+to have the fixes below in 6.13 yet.
 
-rfc3691 on the other hand is slightly different from authenc in that
-the integrity is computed on the plain text.
+Notice though, the top most patch:
+(xfs: lock dquot buffer before detaching dquot from b_li_list)
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Is a last-minute one, so it didn't go to linux-next. Giving this is an important
+fix, I believe it's ok to bypass linux-next so that we get this into 6.13 yet,
+if possible.
+
+I just attempted a merge against your TOT and no conflicts have been found.
+
+Thanks,
+Carlos
+
+
+The following changes since commit 9d89551994a430b50c4fffcb1e617a057fa76e20:
+
+  Linux 6.13-rc6 (2025-01-05 14:13:40 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-fixes-6.13-rc7
+
+for you to fetch changes up to 111d36d6278756128b7d7fab787fdcbf8221cd98:
+
+  xfs: lock dquot buffer before detaching dquot from b_li_list (2025-01-10 10:12:48 +0100)
+
+----------------------------------------------------------------
+Bug fixes for 6.13-rc7
+
+* Fix a missing lock while detaching a dquot buffer
+* Fix failure on xfs_update_last_rtgroup_size for !XFS_RT
+
+Signed-off-by: Carlos Maiolino <cem@kernel.org>
+
+----------------------------------------------------------------
+Christoph Hellwig (1):
+      xfs: don't return an error from xfs_update_last_rtgroup_size for !XFS_RT
+
+Darrick J. Wong (1):
+      xfs: lock dquot buffer before detaching dquot from b_li_list
+
+ fs/xfs/libxfs/xfs_rtgroup.h | 2 +-
+ fs/xfs/xfs_dquot.c          | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
