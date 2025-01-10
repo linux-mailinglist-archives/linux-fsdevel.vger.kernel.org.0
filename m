@@ -1,62 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-38830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0279A087E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 07:10:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914B1A087E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 07:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD4E0169B71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 06:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA63169C16
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 06:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA25520E6E6;
-	Fri, 10 Jan 2025 06:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2C220E710;
+	Fri, 10 Jan 2025 06:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J9wJzfOI"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eJqtczIV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2067.outbound.protection.outlook.com [40.107.100.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3564920E318;
-	Fri, 10 Jan 2025 06:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200702080EF;
+	Fri, 10 Jan 2025 06:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736489007; cv=fail; b=smJrARvpEtqsAYEhVULRpHd/vfSpMUsSyUk+suB4pVZg/JtDULVXJKYBcmZuqSQgGFhe9GrZOKp8HcNeD5Z3CEu/+HVV3SWQbiJRzKxJkhV2Tv3yPirb01RC6EPNUtufln6pVvrVJrwc+pmljq/Gaq7bvw8m8y2KV0SV84Pwvk0=
+	t=1736489012; cv=fail; b=QuJQdQeEIA9cuW3iMC4iC7RoiwRJU4sRCIuAUz1FNKMw+cMcvev+59u/c4qPyrLz34xlih5LJmsXrHcj+JQ4TZaaxDAGCYKl5UuEjrdsh6ckOFiXF6Y8JgHx/AcP7+Swz+NkYN3twtZab83ZsYuuJgbHSiH+7IYfvXrzX1/3qxg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736489007; c=relaxed/simple;
-	bh=HgviY+0/45TifewQ7adUjnWRqZ8uk0Uznd0yeQNhfNg=;
+	s=arc-20240116; t=1736489012; c=relaxed/simple;
+	bh=/Csrylkm2NidU986QPWqaDZpz+jU+FcWBDetRvEORiA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G7NwgYYh9PR/pE6AQqAaVJGouMaDTaLHKzkwfFJGUwz92gFHOLj7OiDg7ou9uLxyYrzlGvqSnIUfJ+1DXEtzVNfPomf1WD6zgVFPBB5Y/+WMgZyaXI9Aft3+zpB458WsTi9xA9Rz8uC5khzpVIEKpqfRIKzt2+UI3RdLBtyrRJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J9wJzfOI; arc=fail smtp.client-ip=40.107.92.84
+	 Content-Type:MIME-Version; b=PhavbP7oP1aJgsC/NKJkXkEZ11bCL6l64CqowgI0qAWiCaO91HFtTVnoTyx8pCd3JR0CGWx2c7ZOPU6HeViY/qTYzo1WI7LuR9OlpZWEycOs72qBLqkbmAogDWWKH1fNWIL0QMZPsMKw2xCsMk+PerKgoHBvVruNQHlmaLHng6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eJqtczIV; arc=fail smtp.client-ip=40.107.100.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CqkMAhQynfPVsbM0H0FOd1HCOIwp3oT9iOdGp96+/7gd3+4BxeEb2EQUMc274BYQHDouTjOAJoz9KN+Zl5AAhouiV4RMl2qmREffTgITqP5E/FofA1Rz7/1VLcv+kkiZsq44EqxaPB9IDpgat2LcS6KpjrFUmBY3g/996Mn+4wKfy1/pRnjYlOIEJd18dEBGG5PDw4wi275t0pwFiY9L+t9HL7skVUGDccZEwrSYMkX6EQDI45WiBgS9ESNlylt649fbn9MnOaHn1LaMKrv2g88hPyFN9Z/3QDznoRUYJPT9g2X7vx2N1hiJpcTAa6jU5PWJwx7dddvkl6LNrzwnPw==
+ b=pecagJ9KKGI7M8e5D3OLuqXN9L1HIPoflIuoo1gdnW0xwpaPyzE7PmRcBovg9ml1LtEwvVF40XrnDQEHF1CoxnFGLorZOsNg8l8aWF7K0mLZhtnaS1LVJnXFss/Q4Mb6R1UO4eMG5JyVB9Zut6hpdAy+GBYyJ3y3pKAeEvo54Ce7FENrKhmsCQZgjihqHDsfsbpdt0Ffdz/iHwHfr4Fa7chLqzPl3Ig0UmgcTIOJ146oabnIItd/jcLp8YOwkYN0SuOFLNlIu/0gqGARVAnRF4GjIUovN6RpnjDZ5TLi9LsHYLBUB8jc0+HHPEO0nVzDYI9nEj/5fw5ATXZGj4KcCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6w2Kog3Lmcqs5LeJaLWhm5K6jgsDQ16iK+3FS1TJ+as=;
- b=PEhqRH2BDFzWrtiONd+vdMDx3PSrSs46ML573veYq3n5WDeRlmnN5xhzNCaXdJ8X+gGTNqCjcyINvax92RM4jTh8yU99SUbq/hC6YORFGdfB8q178GIonqBIun3PSlzSXye5nrlGTDfK4AumrIpyRjOe92WguuVCI9pTfn227DtxAlnsPqI9gGuxTmS6SCyD11QzDT8CfHarJZhCMILCTlxfyY6/QBHUic0jzNYBxbvAKiNw0unVtW59v77mvLC11C1/ERUTJ9f2TzjslsAwL8fs6100lzNVwREWzthk3yZN6Cr6PTWtBeTdygwT1AdS6kkrkYcORd0a90ALOvrKsg==
+ bh=ANnS9ugPhWXEhOP/c+FzNHxXqu35Gn0O+fqlriZg1uw=;
+ b=rdV11lwFNOuw3GAS8hYPKRug6DI9mttHZCB6OA2sPAe/j8+Bf4g9Mgk+cjetBy8WG8o4wgM0hMS9Sd7R90GvUZLD/FMxYMZjnlVYEFYP244XSJx324ahy3UqVO9XpAA7inGPx+cfU0m/Ns66B8+OraiQa65eO+O69ykvDWByzAZ1cS+CAd41hjKSiVtMIYrwvQIzf2Ay/l9Ps8QnEbfi8RRjAtUbaQisqtKR99LBgzRpEacpcLtCWWImlJqul/uh+/SogbFD6RcCUd7re946/yRhzkSFka6eY1miwgrzamWiEqWrJPpZeDbNxyR0qrlgjI/hrNsSdKmKxp7aPNTHkA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6w2Kog3Lmcqs5LeJaLWhm5K6jgsDQ16iK+3FS1TJ+as=;
- b=J9wJzfOI8DXVQrAO3/S7LeGTSNVCRvOn8d+rIt/6OBdjLukqN3GbyS4aJRzFLThQ4Y2exgvksNQul+AERofiUb9D3ilpl2wdycsSdtE+1T6j1eJT/4CbIVobc9Dwv7SYmPiyKF3bFm3ADLG1sEifXOpKjJj10O1Zx+rZkaf6HB58i49liUfH6K+dlpKzA//7gWQJo8qkLRCxZiR7zEWgVlze141nz6vTJj3ItBXQHz0pPwgtQsALDMIzQYUFYmIjxKfIbE2zj6jMlo6/dpqVt4XJIuT5WhCx9+8/2TtBD7uoL9p44sEOUnGEfiltlgX41zFm0MBCXuC4ZGR+vSoEjQ==
+ bh=ANnS9ugPhWXEhOP/c+FzNHxXqu35Gn0O+fqlriZg1uw=;
+ b=eJqtczIVlHKK9NrayjGhTQaaBAa+mJNCYgFw6IP3lSPJHxq6vSl4SamgeqwDl1Dhp30zFbn4+ii8dALKEVAPcKPy2XQUECbwCgF1kbDmLu/B883bb/fWw8UF8001tOodLZIFimUN65ZCovL1DpG9czclisNzd5h2wqV8Ya5dLopL4KxI2tOtmJ/2S/TwXUEI35gkm90JeSeukBaIDliUto91X16xwGibsyFXdsnRbIR4WaljV0gYxqj1ZX8sjYuQ/8/efx4hiOyB1kWvIa9uinZ52RvxJp5HYFqSVJRlPyQWOBvQ+vjXDr4c9Td0coXxmm5eploJmfgvrrypKzM/XA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SA0PR12MB7002.namprd12.prod.outlook.com (2603:10b6:806:2c0::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.13; Fri, 10 Jan
- 2025 06:03:21 +0000
+ IA1PR12MB6331.namprd12.prod.outlook.com (2603:10b6:208:3e3::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8335.11; Fri, 10 Jan 2025 06:03:27 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8335.011; Fri, 10 Jan 2025
- 06:03:21 +0000
+ 06:03:27 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: akpm@linux-foundation.org,
 	dan.j.williams@intel.com,
@@ -98,17 +97,18 @@ Cc: alison.schofield@intel.com,
 	david@fromorbit.com,
 	chenhuacai@kernel.org,
 	kernel@xen0n.name,
-	loongarch@lists.linux.dev
-Subject: [PATCH v6 24/26] mm: Remove devmap related functions and page table bits
-Date: Fri, 10 Jan 2025 17:00:52 +1100
-Message-ID: <42a318bcbb65931958e52ce4b1334f3d012cbd6f.1736488799.git-series.apopple@nvidia.com>
+	loongarch@lists.linux.dev,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>
+Subject: [PATCH v6 25/26] Revert "riscv: mm: Add support for ZONE_DEVICE"
+Date: Fri, 10 Jan 2025 17:00:53 +1100
+Message-ID: <4983dede0d60686508513b3d9cfd26aed983fb7d.1736488799.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
 References: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY8P300CA0001.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:29d::31) To DS0PR12MB7726.namprd12.prod.outlook.com
+X-ClientProxiedBy: SY5PR01CA0063.ausprd01.prod.outlook.com
+ (2603:10c6:10:1f4::15) To DS0PR12MB7726.namprd12.prod.outlook.com
  (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -117,346 +117,132 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SA0PR12MB7002:EE_
-X-MS-Office365-Filtering-Correlation-Id: 20879973-3fd2-4f3a-af0d-08dd313c7c9d
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|IA1PR12MB6331:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0906086e-222e-41ba-b703-08dd313c7fd9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KJJY87FoU8vTDd2RYle02Ltc1Gbk9NB0csDM3BItDoeonzEJM3GatIXDwOtk?=
- =?us-ascii?Q?x8MWxnO0doU4jpM4rs6gEepMKNC47f7X/MZC2PYJXXbs4oF6nK3l1e/CDni8?=
- =?us-ascii?Q?W3LCndy87YGUftFzdlehOztUhHUkEDp+mhzcvJh4pTE9HgpjXvShTLH3ZJfe?=
- =?us-ascii?Q?jvi6Yx/5la2EEJdxytFCHX+WKjhdkE+EFGeHg+wFQV6HPm2uEcNooVPCJe1z?=
- =?us-ascii?Q?kiou6by05GhfH29ChpEAOnE7JYHtZdxRRJHO0Z4JGDgHMeSDBuICgJ6uO5DZ?=
- =?us-ascii?Q?DvEQyI6/yjsm7ft25mOJRWaAh8ET6+mBw8eHcaUbWiRwmHNqVVrjgKmdNWJ9?=
- =?us-ascii?Q?UjMk+b2UXAf8RKyeT7UZTVytb92kA4QE3f4ykrw1/xb/bb6tRJIiS9eIzYol?=
- =?us-ascii?Q?O7DPxJjCapUFAq6Q264CmGkrCtLK9R4z5p69MqcsXYig5v+SZ4ovRJV/Yk+J?=
- =?us-ascii?Q?fGTCsE3VVlqz5cGs38TvMbUu5ckHjlplozxb7WVxnu11k2gLOxv28VqkG1w/?=
- =?us-ascii?Q?UzessDb2/Kl0JjnDbGhXF7aUyIE9YGgJce5pBUCkEx3QGTw+TxvtFp9nw4ip?=
- =?us-ascii?Q?4CeCbqjOZ7d/G7qsOP5rWqZowhxrEMXBr6YUATah4p5sWRjLGWlSE/rv61JP?=
- =?us-ascii?Q?j3rb7Z0vYO9wOd81sYzhd5ASGhiP5RmiaIFZM7/jFKnuxJJ4y0vRCqmnSiGT?=
- =?us-ascii?Q?detPqXShcPeic0SXL+9x4pLpEWJLaJh/8GcGRlYe/WrrLbBp3bimI092JrQn?=
- =?us-ascii?Q?pTARHNiwQJ0grSkokyC7LeqpnPs/uRU+gOTi5m5iJd7m71E7dtE1k08MK0Wq?=
- =?us-ascii?Q?5XGVBalOdKjG9RhbWe3moIr8XDixR5NwBekzK6m96MJTm+8vc4LTQQcKvCLB?=
- =?us-ascii?Q?BJDhkKRPB500i/7EXKml5NQF0QeFGXZibVfcPW1cX8AzPlDr+a2V3vy/w59s?=
- =?us-ascii?Q?rJGSJFJRqopqSbSW58ZG+pyoEyiNiKc60fFxqhl/+uQs+2gaT1Xsb4FwWMFX?=
- =?us-ascii?Q?6FuASkTEkpjRYeEqEDAvWX8hE1C+gEESIkOVe6mI84BaMVF98k5hazwThmWt?=
- =?us-ascii?Q?N+lOuWu5Gh6dxA2qcvfraaawl80dBEmSor958nFZtkSoHRGX9XH+ylEDNcJR?=
- =?us-ascii?Q?JiDQQUGQoDQ9dlYRIn8C5qKvf5WiLKbP9lYB1UbuksawA+I/8lFVy3ogCxet?=
- =?us-ascii?Q?+lY0iXNf+9HdW/i6QqZB3LhwQIuWM3GFx1Su26G2qumH+UmSXiSwxwhN49eS?=
- =?us-ascii?Q?E91S59JZ9Wo4CkU3Kb9xsjkkVcUZwl2Zj48qGCrCPGZLIlG3aoWa9fHfYVIW?=
- =?us-ascii?Q?epSeyq14cQ2JVUmBb6Wr9Tlq5pQd4Nhm1Q8W4WWf8TSQjb0hetOYRmx0Bmtr?=
- =?us-ascii?Q?YTnGFoO4rwkn69Y0b1zkuCmQ3dvn?=
+	=?utf-8?B?YzBYanlIUFJ1ZTY1VlpGT0RzY3NOOTN5MU40ZWtNdUVzWlh4Z09yVTQxdXRU?=
+ =?utf-8?B?OWc3bWNkeFBkOW5ONG0xa0JaMzJPT2hMWm1nVDlrQkd1bXBSOFF2Q0NpV0ZZ?=
+ =?utf-8?B?SGxURWNIMncxMkFrYWltNHV6TUttYlZWVHR6cnI1UEFmK3Q1enhQTXFQb29G?=
+ =?utf-8?B?elg2MHQ0TnErVWh3OWtwRnlHTERVOW5ZOGlWRjVPV1BtbW9UVVlsUEo3d3Zi?=
+ =?utf-8?B?aU1VdU1UbWJIS2FUSUdBNDdHc3NXRUlQTDcxTFlOR001OUpiOHNhRTF0K3hQ?=
+ =?utf-8?B?MlBPYVNPclFnalJpeksrSllyUTErMzE4eTdqdm5mM09QRHJOK0d2aEcrYnpM?=
+ =?utf-8?B?cHhzZStJTGZjdGJIN3o3YnhNTEE2VStobVl6c1grU0VlOEttNFJHbnhDSFNt?=
+ =?utf-8?B?YlJXdFhoQVljTWM0WXNuc3JRUHNDMzI5d29NaUZ2TXpZcjI4OUs4WkQva1Fp?=
+ =?utf-8?B?VXRzVkdOVUZGR1c2V05SRHNIWlF3L0dOWXlhcW8zank5QWxsTytpY3RJT3A5?=
+ =?utf-8?B?ckplZm0yMnBqd0c3NGQ4MWJqaDVaVU5pZVRLTW1OSjNsVFgvY2pNc0pxcStv?=
+ =?utf-8?B?aVNlT3RYU0ZjWjlNMkNPNnF3UDh2eTlaa1BBeUVQM0FZa2RKV1VMWXRxRk5r?=
+ =?utf-8?B?N1l4eDgyWWxUTUpyMWNkMjNvdUpXcWY3eS9ZVndpME9uNUh2ZWtwNGdPOEtK?=
+ =?utf-8?B?bEZaT29GNHgraXkrdVltbDJkR3oxdkZXdXVoWUVRNDkrSVNwUHRpNlkyWGly?=
+ =?utf-8?B?aXMyMXBZVDZaNzB3Tm16UWR6cXRDY1VIVGo3d3hpS1J5YUJ3YnFtTE9zM3Ra?=
+ =?utf-8?B?WWp4T1hiRlJBTGp2WWk0VXhmeWRadG1JNVhGSTdsZlhIL0F2anVnMk9VVGhu?=
+ =?utf-8?B?RDdMMTF6T2d1N29MUnN6TnE3aDlub1laRXpCcjNXc3VXbmhtcG9tSGNBckVk?=
+ =?utf-8?B?VUZqS0pzSmpvNmNSQmhPcjRjUVFtd2xSN0RxWWl3RE1RSU1zaHNiSjRLWkpT?=
+ =?utf-8?B?dUs5R0N6VGtGTzR0b2tmeTFndE90cTk5UE5UaDREMVhYWm04WTN6QnFlSzFJ?=
+ =?utf-8?B?bHVmeTkwbzMyVVg1SGlGcjltaWUyOWczRUJpQUhNSWUrbDBsa2hRS1RpY0Uv?=
+ =?utf-8?B?empObUlDUEdpWkl3Mm02eTBSdVJDdUVzd0Z5RXg3RGxSWWRSZXdHSlBkUmZz?=
+ =?utf-8?B?VFZ0M1JadFo5Mnh4SDBQUEkxY2xqVllIN0ZmMWN6T2wwVXh4RjIwLy9aSmlR?=
+ =?utf-8?B?K3czNks1VGJHRWdYZERCTERQMkNXSzBrUVNyM2dMb1ZmUkJaYjcvNTY0R2Jj?=
+ =?utf-8?B?Mm1rSnNCMTJFeGdvTG5NbTNZbTI5ejVoOWpNbW5RMTRqQUFFOEduUkV4VVho?=
+ =?utf-8?B?b2FzY2lPdGloQWhLbXhhQnFRcXVqSVU1OGk0ckFQM3NvUFhLWHlubmlVck9D?=
+ =?utf-8?B?di95QTYxQ0w4RTlBRXZGb01JQTRWc1RCa0NLZWtGNldXcS9BTUFnM0pCRG5J?=
+ =?utf-8?B?WmZ6eWZmcjVod2FoTUJuZEZuWVN5TFgyTEhib1J3eEVBMzhjazFXQnd5dldE?=
+ =?utf-8?B?UXpZVVFhNVV6WGQyVGlYdXQreXZEei9UV0I5VWNHY0hqc0x4RjM1QkNSTFRR?=
+ =?utf-8?B?clRKZFdUNS82RkVGdkduU3h5SzB0UFExT3liK0YwcitaK1pKRWJtSTNZM0dT?=
+ =?utf-8?B?Rnl1MXFFV1I3aHRBMzZjMC9PN1VYOVhKKzVGTGx4RVJEdEF2eVdlVkpIVmll?=
+ =?utf-8?B?b1A5SDdmSFdrczJoSUtuV29RN0k0RTdhR3pKZmdkdFpITDFQQnpRUlNFUC8w?=
+ =?utf-8?B?YktLSFdUTEk5Y2xibks5c3cvbno2ODkyRllWNEdyeUhIOUhKcEF6RWsyOUdD?=
+ =?utf-8?Q?lEEjD/8oycXVC?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wuLHchReqwAkTtP7X/+esKhtb6cocheqNjru5KlQfiCDO6O53Wb0rREcmF2h?=
- =?us-ascii?Q?5eQTMG7jr3oJQwuKzmJWRo7F4ddF+MVCBOf4R6jTww0hw0fHXVScrDPYrwIg?=
- =?us-ascii?Q?k8sqE8gJXY/XZJmr9J4NDQfofK6eUHQuNHISd4NKcsX3dhNoJb128rE5pfhh?=
- =?us-ascii?Q?80NIXEbBMrBfyychrEPJc8JXyLhM/mUe1TwCw2wD7R03UfxfyYl6VJGkxSX7?=
- =?us-ascii?Q?1pWBgscImSLpcZQnI5LPNu4GjwuIDpNy0MdnTI/8dCD+g7W1QY/VLnk273Qe?=
- =?us-ascii?Q?m5Sa+CDMe7BQPhOzBAlN6pgEbfLWO4RqPcsHyya6z3BpxoZ5pbrINO8QL4iL?=
- =?us-ascii?Q?drH9qLRAdtAuVYnS+xKV/s3a0YbjcvJdx2qHTiJqGUs8fSM0P4jcU16Dd62K?=
- =?us-ascii?Q?oKuT+GK+F/upg4UIjz1oBkPm98+Wk/R3dl2tW/z+HBdyJYd78zILmSoRuXrC?=
- =?us-ascii?Q?ex8AAVS2KXYdXVOnqJr2tA5T1TfC47XsIOXZOm/xSNoX4T04v4waWh9pWwoj?=
- =?us-ascii?Q?tGXaIpMFLUP8dOWRqjO1UsS6Wal58N+Qvy1hPou8C7NQZE4rMzgWvrI9kqXn?=
- =?us-ascii?Q?IQ1WVJpLHwbvrQEdTbyGA/1un1gYFh2AazOzj+2Bu2qmJEOONsxNMZ3mj+q6?=
- =?us-ascii?Q?0mxodYB3yzirnJbfBJ+H0y1Jb7YbBeNBCZmyR28ImudBMJz7B3LKvnemyzfG?=
- =?us-ascii?Q?t7YcPicBGi9RGk+Lo4haDcwXb/OFVLfnMibUUcHWTKqJXMaBu+fFLYYMUJc7?=
- =?us-ascii?Q?0Pb6Vmw2O3ppxEft2UM7j+2YvOzLa5hGWB60AJC7GqMk0qNyRuFsr+Uzpb5l?=
- =?us-ascii?Q?rtRr6jvv1//KCz7IvoLowIfC8VyyGaWzGwaUZulZe8gkVsl/SSc3iaJqHuDY?=
- =?us-ascii?Q?MaHiuG0L+alhUXFQAS4hHBc/LD3w5vwIhs5S8iIVfzR4T+j+Nx/U3GNcngM8?=
- =?us-ascii?Q?oeNc5E5MByH89c+KR5I163yjHyRpky3V9rN3ARYf0lbggaedwWg+StUntt6z?=
- =?us-ascii?Q?VY1r5kEppxK+3FSODr24A2VZxtFusWKN7n13LbvStK77nwBwamPzXVqD+cHs?=
- =?us-ascii?Q?bQm/7NFdwi8+acTk8A9d04xjDcwydAeyR4J4H5jSWRM5OxGOHK+Yx+xhO38b?=
- =?us-ascii?Q?flxpPCMw31kKm4oNJtn9d8/jgbved+WeAPAU9APfIk0JtMx7kM/gFUzBf9MJ?=
- =?us-ascii?Q?hXvElLAJHwqSszLpiOcKIc+arkOyMvzexuCbp1/yjq0ul/ETzy+wRoPk1l0e?=
- =?us-ascii?Q?ZrdxcXdjYNJP5lU18EJpfdsDgRntAfZa+XUBhy44LeiFS36esgwIeXlMEkU2?=
- =?us-ascii?Q?9EWTSw9ePQXIVLosrJqcSCOze564GIcrVKysh8SFbipHaR4oy4vkBCA5+CGw?=
- =?us-ascii?Q?Nu6rmnTNRfRy3RbsIxyFMNOrL59hvXa7dYCzqbXNnZKXgdA/Q9cFjTu0yfse?=
- =?us-ascii?Q?CDe5Fq64CqOEL89HShybUFBLtY3Q+gdcntU3uSFY/7Mp1vms0JL0U6obwOoq?=
- =?us-ascii?Q?nNeaUWocN9GF4vd73u8inTHlxObfw+UNzzJ+Y6ZTBVJ4zrAta0fNjh8zAyYp?=
- =?us-ascii?Q?Ii2gg2Ej11uNQa0KDE3JU60gblqDLeA+E8aSv6V+?=
+	=?utf-8?B?QkhHUGRtQUFLL3ZIanVRVkx3RXZVbGVpZk85T2NUMGVnaWRvcVhubzVMRytF?=
+ =?utf-8?B?NndTQlkvcWJiSmlWOEdzTXRhbmx4d1VSV1BFZlpqR05waDR3UHVSSG04UHhx?=
+ =?utf-8?B?YlJSMHcrSXk4TzRISXQxWVlobmp6QkFEOVNZblpkdWpKemhaRTFwREh3RURC?=
+ =?utf-8?B?bTV6WWQ5TC9KdGtCTjcrZWlTQlVhUW1RUTlnZjZnOTBXYVppcnRzeHZSL0lM?=
+ =?utf-8?B?SFI1aEwrMzNUbSs2NHNMRDI1VFBaTDFsRXBncExpeStkRUZaYXRSK3JML21G?=
+ =?utf-8?B?WG52cGFCbTFvd2pNUE9MWlp2c2RzVjFwdDROd0o3UU5McEpaUklVWVQ1YmtF?=
+ =?utf-8?B?Z3MySzMrRnJpeWV2REZMdHE5Y3l2eHJRSHM3d0llZEpZWVRMeWl0Qmt4eHg5?=
+ =?utf-8?B?MTJNbEE3bGo0UlA0T3NhRFUrZlNvN01CNjVxS1B1TG1lQVUyTXY4UzZPcktx?=
+ =?utf-8?B?eUFEUjVjL0RZbzZ4RHJWQmRXeWllQzRtdWpVRm1ER0lCRGxYSmtjMWxkQVY5?=
+ =?utf-8?B?RG9ZcGVYZ29rTzFJdk5WbmRzdTJlTkVuWThIQmlYODV5YWs1eit4N2x4UmdT?=
+ =?utf-8?B?NjcwUHFTUWNlZXpMeDZCZ3VYUk1VWWtkTmkvUmxDbjFBZktjTGM3U1R5TXRl?=
+ =?utf-8?B?eTQ5K1J1bmJTYWt6Rm14VTg2MUNBZURZYmJSOWo5cGVPUFdaY04wejdtS0hV?=
+ =?utf-8?B?ODNFVWNyVVc1Y0hiYzNjSWxGTUlwUGtJeGZpTEZuWnhvTjl0T2pqczFTeXds?=
+ =?utf-8?B?OHltTFV2clVBb2pRVStrV3dlZUpsUm9qcmM1N2tQbERzSEc0V0JYN05NTnlG?=
+ =?utf-8?B?TVZZWTBrYjNlQWhzR1FRbDlmODdrRzlDeVo1UnZ0ZTVVdnhkN0tMUXZCTy9p?=
+ =?utf-8?B?L0RwRWVrSFR4VzhWS1NwNEFJbWVRSDFWVElwQ3MwdmxjQTBMb3dGSXhiV3dI?=
+ =?utf-8?B?YU84Q1JtTTZGN2U4SjVuNnNKL2dSL1MxRmhieU5yQUNCYmNkODEzSk9CSXc2?=
+ =?utf-8?B?RTUzQUQyWjl4ckRoU3BtbmpuZlZrZjdxQmVrZzRaeERaS2RlZmpTOGdUWGNs?=
+ =?utf-8?B?L1g4dEVtdFoyalFBeHlRTWw3WjJURkxGNm9JM29KRmdyMlZjQ1RZZU5ucEdo?=
+ =?utf-8?B?bCtSdTdLdFpNQzBlMVhQWDRud1QrVlpuaTlBZUkzaXg4dE50dWR2dFM4S3FI?=
+ =?utf-8?B?VktsdkpqVnJXdGZubTFTZ1VTb2JDWm5VdzdKYXhNSnRLZkVrbDVQTE16MlNs?=
+ =?utf-8?B?RVY4Z1JXdkUrNzdlaDJ1bzEreVhodndVWmNrZXM2anJPM1ROMkZadkR2Z3Rr?=
+ =?utf-8?B?MzBkUkREQWljdHg4YWZoQm9BQVVRaFJGa2xRVXlVZ0g0YTNrZW9HYjh5U0Yw?=
+ =?utf-8?B?SjgwaDdQNWFVa0drM01kYW5QcDZwVHUyK1pxbUZXQU9xQnpPMFlMc0VpQjQ0?=
+ =?utf-8?B?WFBZLzloUVNZMzZ2a1E4SGJ4blZZUFhIemk1MThZNGlvb3RmTks1Q21DbVVG?=
+ =?utf-8?B?Um9qcnV5NHBBRTQyMTh0cmVwZldTRGdjNXkzTkVvMkZYUm9ZR2t1cDNnN0Nt?=
+ =?utf-8?B?QWxpeUJxTVdKOVlZY0pjZXE4ZzRDLzZ4RXZzNzh3TkxpOW4wMmJORThGMmUx?=
+ =?utf-8?B?QVF6b00xdEtFVXdEQWFHSC9DcERFMUo4MnNJaU94dWk0VkFVN0Rqd1RYMGZF?=
+ =?utf-8?B?ZndKdWVnK0E4STRDV3cveSt4a1luTzJZT0ZGeDc0ZUluNUgzTUxJVkZWRlVx?=
+ =?utf-8?B?V1lDb3pOU09qdFpEeTdDc1U4MHNPdXRidkR0TGlaRGNwOENQekpKZUtNSnhh?=
+ =?utf-8?B?NzRLeXV1MG9XUCtLQWhqNFIyRG81Yi9NK1RpVkswWlVtU3B5dC9xVHAvVUZY?=
+ =?utf-8?B?OElZR3dWOHFnR3FmMlRwQmxzaW1UdHhQQnEraTRBV2xpZi9vazBOODFET1ha?=
+ =?utf-8?B?S3pmYjl4dmpzK1JQRUhBakdJT2k3cEJMNEJCY0d6alVNdm52Zk4xRWRqdHVF?=
+ =?utf-8?B?enF0c3paSlhPR3A2M2NoQXRwQVMwS2JIU2lOS1A0OEFzTnBRM2cxY2RGK0lD?=
+ =?utf-8?B?aVVpTWg4L2M2R2MxQmNLZTFsNGlweHA3d1pUSGw4QXhkaDBmbjFqVGY1K2RO?=
+ =?utf-8?Q?0I538ngeZpcUHpJv0J+N6xzia?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20879973-3fd2-4f3a-af0d-08dd313c7c9d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0906086e-222e-41ba-b703-08dd313c7fd9
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 06:03:21.8335
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 06:03:27.2130
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LUVEDGxDAMXzj8mp+JZ6z6FMADNMzNJkcLSub5EXwjEWziDX275mDWMwNcXTQuKWMcJvNRTW6YR5WT3esgWmbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7002
+X-MS-Exchange-CrossTenant-UserPrincipalName: UKbIjNar9c3KNeNThk/fQPLETjSND1sBNp1/q5G9bXsINHuRAFHLiSpcJdNMqhWkuXXn+PdmVUjM7ODQwLM9Rg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6331
 
-Now that DAX and all other reference counts to ZONE_DEVICE pages are
-managed normally there is no need for the special devmap PTE/PMD/PUD
-page table bits. So drop all references to these, freeing up a
-software defined page table bit on architectures supporting it.
+DEVMAP PTEs are no longer required to support ZONE_DEVICE so remove
+them.
 
 Signed-off-by: Alistair Popple <apopple@nvidia.com>
-Acked-by: Will Deacon <will@kernel.org> # arm64
+Suggested-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
 ---
- Documentation/mm/arch_pgtable_helpers.rst     |  6 +--
- arch/arm64/Kconfig                            |  1 +-
- arch/arm64/include/asm/pgtable-prot.h         |  1 +-
- arch/arm64/include/asm/pgtable.h              | 24 +--------
- arch/powerpc/Kconfig                          |  1 +-
- arch/powerpc/include/asm/book3s/64/hash-4k.h  |  6 +--
- arch/powerpc/include/asm/book3s/64/hash-64k.h |  7 +--
- arch/powerpc/include/asm/book3s/64/pgtable.h  | 53 +------------------
- arch/powerpc/include/asm/book3s/64/radix.h    | 14 +-----
- arch/x86/Kconfig                              |  1 +-
- arch/x86/include/asm/pgtable.h                | 51 +-----------------
- arch/x86/include/asm/pgtable_types.h          |  5 +--
- include/linux/mm.h                            |  7 +--
- include/linux/pfn_t.h                         | 20 +-------
- include/linux/pgtable.h                       | 19 +------
- mm/Kconfig                                    |  4 +-
- mm/debug_vm_pgtable.c                         | 59 +--------------------
- mm/hmm.c                                      |  3 +-
- 18 files changed, 11 insertions(+), 271 deletions(-)
+ arch/riscv/Kconfig                    |  1 -
+ arch/riscv/include/asm/pgtable-64.h   | 20 --------------------
+ arch/riscv/include/asm/pgtable-bits.h |  1 -
+ arch/riscv/include/asm/pgtable.h      | 17 -----------------
+ 4 files changed, 39 deletions(-)
 
-diff --git a/Documentation/mm/arch_pgtable_helpers.rst b/Documentation/mm/arch_pgtable_helpers.rst
-index af24516..c88c7fa 100644
---- a/Documentation/mm/arch_pgtable_helpers.rst
-+++ b/Documentation/mm/arch_pgtable_helpers.rst
-@@ -30,8 +30,6 @@ PTE Page Table Helpers
- +---------------------------+--------------------------------------------------+
- | pte_protnone              | Tests a PROT_NONE PTE                            |
- +---------------------------+--------------------------------------------------+
--| pte_devmap                | Tests a ZONE_DEVICE mapped PTE                   |
--+---------------------------+--------------------------------------------------+
- | pte_soft_dirty            | Tests a soft dirty PTE                           |
- +---------------------------+--------------------------------------------------+
- | pte_swp_soft_dirty        | Tests a soft dirty swapped PTE                   |
-@@ -104,8 +102,6 @@ PMD Page Table Helpers
- +---------------------------+--------------------------------------------------+
- | pmd_protnone              | Tests a PROT_NONE PMD                            |
- +---------------------------+--------------------------------------------------+
--| pmd_devmap                | Tests a ZONE_DEVICE mapped PMD                   |
--+---------------------------+--------------------------------------------------+
- | pmd_soft_dirty            | Tests a soft dirty PMD                           |
- +---------------------------+--------------------------------------------------+
- | pmd_swp_soft_dirty        | Tests a soft dirty swapped PMD                   |
-@@ -177,8 +173,6 @@ PUD Page Table Helpers
- +---------------------------+--------------------------------------------------+
- | pud_write                 | Tests a writable PUD                             |
- +---------------------------+--------------------------------------------------+
--| pud_devmap                | Tests a ZONE_DEVICE mapped PUD                   |
--+---------------------------+--------------------------------------------------+
- | pud_mkyoung               | Creates a young PUD                              |
- +---------------------------+--------------------------------------------------+
- | pud_mkold                 | Creates an old PUD                               |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 39310a4..81855d1 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -41,7 +41,6 @@ config ARM64
- 	select ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
- 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	select ARCH_HAS_NONLEAF_PMD_YOUNG if ARM64_HAFT
--	select ARCH_HAS_PTE_DEVMAP
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 7d57186..c285250 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -43,7 +43,6 @@ config RISCV
+ 	select ARCH_HAS_PMEM_API
+ 	select ARCH_HAS_PREEMPT_LAZY
+ 	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+-	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
  	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_HW_PTE_YOUNG
- 	select ARCH_HAS_SETUP_DMA_OPS
-diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-index 9f9cf13..49b51df 100644
---- a/arch/arm64/include/asm/pgtable-prot.h
-+++ b/arch/arm64/include/asm/pgtable-prot.h
-@@ -17,7 +17,6 @@
- #define PTE_SWP_EXCLUSIVE	(_AT(pteval_t, 1) << 2)	 /* only for swp ptes */
- #define PTE_DIRTY		(_AT(pteval_t, 1) << 55)
- #define PTE_SPECIAL		(_AT(pteval_t, 1) << 56)
--#define PTE_DEVMAP		(_AT(pteval_t, 1) << 57)
- 
- /*
-  * PTE_PRESENT_INVALID=1 & PTE_VALID=0 indicates that the pte's fields should be
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index f8dac66..ea34e51 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -108,7 +108,6 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
- #define pte_user(pte)		(!!(pte_val(pte) & PTE_USER))
- #define pte_user_exec(pte)	(!(pte_val(pte) & PTE_UXN))
- #define pte_cont(pte)		(!!(pte_val(pte) & PTE_CONT))
--#define pte_devmap(pte)		(!!(pte_val(pte) & PTE_DEVMAP))
- #define pte_tagged(pte)		((pte_val(pte) & PTE_ATTRINDX_MASK) == \
- 				 PTE_ATTRINDX(MT_NORMAL_TAGGED))
- 
-@@ -290,11 +289,6 @@ static inline pmd_t pmd_mkcont(pmd_t pmd)
- 	return __pmd(pmd_val(pmd) | PMD_SECT_CONT);
- }
- 
--static inline pte_t pte_mkdevmap(pte_t pte)
--{
--	return set_pte_bit(pte, __pgprot(PTE_DEVMAP | PTE_SPECIAL));
--}
--
- #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
- static inline int pte_uffd_wp(pte_t pte)
- {
-@@ -587,14 +581,6 @@ static inline int pmd_trans_huge(pmd_t pmd)
- 
- #define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
+ 	select ARCH_HAS_SET_DIRECT_MAP if MMU
+ 	select ARCH_HAS_SET_MEMORY if MMU
+diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
+index 0897dd9..8c36a88 100644
+--- a/arch/riscv/include/asm/pgtable-64.h
++++ b/arch/riscv/include/asm/pgtable-64.h
+@@ -398,24 +398,4 @@ static inline struct page *pgd_page(pgd_t pgd)
+ #define p4d_offset p4d_offset
+ p4d_t *p4d_offset(pgd_t *pgd, unsigned long address);
  
 -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
--#endif
--static inline pmd_t pmd_mkdevmap(pmd_t pmd)
--{
--	return pte_pmd(set_pte_bit(pmd_pte(pmd), __pgprot(PTE_DEVMAP)));
--}
--
- #ifdef CONFIG_ARCH_SUPPORTS_PMD_PFNMAP
- #define pmd_special(pte)	(!!((pmd_val(pte) & PTE_SPECIAL)))
- static inline pmd_t pmd_mkspecial(pmd_t pmd)
-@@ -1195,16 +1181,6 @@ static inline int pmdp_set_access_flags(struct vm_area_struct *vma,
- 	return __ptep_set_access_flags(vma, address, (pte_t *)pmdp,
- 							pmd_pte(entry), dirty);
- }
--
--static inline int pud_devmap(pud_t pud)
--{
--	return 0;
--}
--
--static inline int pgd_devmap(pgd_t pgd)
--{
--	return 0;
--}
- #endif
- 
- #ifdef CONFIG_PAGE_TABLE_CHECK
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index da0ac66..3e85f89 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -147,7 +147,6 @@ config PPC
- 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	select ARCH_HAS_PHYS_TO_DMA
- 	select ARCH_HAS_PMEM_API
--	select ARCH_HAS_PTE_DEVMAP		if PPC_BOOK3S_64
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE && PPC_BOOK3S_64
- 	select ARCH_HAS_SET_MEMORY
-diff --git a/arch/powerpc/include/asm/book3s/64/hash-4k.h b/arch/powerpc/include/asm/book3s/64/hash-4k.h
-index c3efaca..b0546d3 100644
---- a/arch/powerpc/include/asm/book3s/64/hash-4k.h
-+++ b/arch/powerpc/include/asm/book3s/64/hash-4k.h
-@@ -160,12 +160,6 @@ extern pmd_t hash__pmdp_huge_get_and_clear(struct mm_struct *mm,
- extern int hash__has_transparent_hugepage(void);
- #endif
- 
--static inline pmd_t hash__pmd_mkdevmap(pmd_t pmd)
--{
--	BUG();
--	return pmd;
--}
--
- #endif /* !__ASSEMBLY__ */
- 
- #endif /* _ASM_POWERPC_BOOK3S_64_HASH_4K_H */
-diff --git a/arch/powerpc/include/asm/book3s/64/hash-64k.h b/arch/powerpc/include/asm/book3s/64/hash-64k.h
-index 0bf6fd0..0fb5b7d 100644
---- a/arch/powerpc/include/asm/book3s/64/hash-64k.h
-+++ b/arch/powerpc/include/asm/book3s/64/hash-64k.h
-@@ -259,7 +259,7 @@ static inline void mark_hpte_slot_valid(unsigned char *hpte_slot_array,
-  */
- static inline int hash__pmd_trans_huge(pmd_t pmd)
- {
--	return !!((pmd_val(pmd) & (_PAGE_PTE | H_PAGE_THP_HUGE | _PAGE_DEVMAP)) ==
-+	return !!((pmd_val(pmd) & (_PAGE_PTE | H_PAGE_THP_HUGE)) ==
- 		  (_PAGE_PTE | H_PAGE_THP_HUGE));
- }
- 
-@@ -281,11 +281,6 @@ extern pmd_t hash__pmdp_huge_get_and_clear(struct mm_struct *mm,
- extern int hash__has_transparent_hugepage(void);
- #endif /*  CONFIG_TRANSPARENT_HUGEPAGE */
- 
--static inline pmd_t hash__pmd_mkdevmap(pmd_t pmd)
--{
--	return __pmd(pmd_val(pmd) | (_PAGE_PTE | H_PAGE_THP_HUGE | _PAGE_DEVMAP));
--}
--
- #endif	/* __ASSEMBLY__ */
- 
- #endif /* _ASM_POWERPC_BOOK3S_64_HASH_64K_H */
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 6d98e6f..1d98d0a 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -88,7 +88,6 @@
- 
- #define _PAGE_SOFT_DIRTY	_RPAGE_SW3 /* software: software dirty tracking */
- #define _PAGE_SPECIAL		_RPAGE_SW2 /* software: special page */
--#define _PAGE_DEVMAP		_RPAGE_SW1 /* software: ZONE_DEVICE page */
- 
- /*
-  * Drivers request for cache inhibited pte mapping using _PAGE_NO_CACHE
-@@ -109,7 +108,7 @@
-  */
- #define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
- 			 _PAGE_ACCESSED | H_PAGE_THP_HUGE | _PAGE_PTE | \
--			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
-+			 _PAGE_SOFT_DIRTY)
- /*
-  * user access blocked by key
-  */
-@@ -123,7 +122,7 @@
-  */
- #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
- 			 _PAGE_ACCESSED | _PAGE_SPECIAL | _PAGE_PTE |	\
--			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
-+			 _PAGE_SOFT_DIRTY)
- 
- /*
-  * We define 2 sets of base prot bits, one for basic pages (ie,
-@@ -609,24 +608,6 @@ static inline pte_t pte_mkhuge(pte_t pte)
- 	return pte;
- }
- 
--static inline pte_t pte_mkdevmap(pte_t pte)
--{
--	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_SPECIAL | _PAGE_DEVMAP));
--}
--
--/*
-- * This is potentially called with a pmd as the argument, in which case it's not
-- * safe to check _PAGE_DEVMAP unless we also confirm that _PAGE_PTE is set.
-- * That's because the bit we use for _PAGE_DEVMAP is not reserved for software
-- * use in page directory entries (ie. non-ptes).
-- */
--static inline int pte_devmap(pte_t pte)
--{
--	__be64 mask = cpu_to_be64(_PAGE_DEVMAP | _PAGE_PTE);
--
--	return (pte_raw(pte) & mask) == mask;
--}
--
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- {
- 	/* FIXME!! check whether this need to be a conditional */
-@@ -1380,36 +1361,6 @@ static inline bool arch_needs_pgtable_deposit(void)
- }
- extern void serialize_against_pte_lookup(struct mm_struct *mm);
- 
--
--static inline pmd_t pmd_mkdevmap(pmd_t pmd)
--{
--	if (radix_enabled())
--		return radix__pmd_mkdevmap(pmd);
--	return hash__pmd_mkdevmap(pmd);
--}
--
--static inline pud_t pud_mkdevmap(pud_t pud)
--{
--	if (radix_enabled())
--		return radix__pud_mkdevmap(pud);
--	BUG();
--	return pud;
--}
+-static inline int pte_devmap(pte_t pte);
+-static inline pte_t pmd_pte(pmd_t pmd);
 -
 -static inline int pmd_devmap(pmd_t pmd)
 -{
@@ -465,430 +251,69 @@ index 6d98e6f..1d98d0a 100644
 -
 -static inline int pud_devmap(pud_t pud)
 -{
--	return pte_devmap(pud_pte(pud));
+-	return 0;
 -}
 -
 -static inline int pgd_devmap(pgd_t pgd)
 -{
 -	return 0;
 -}
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- #define __HAVE_ARCH_PTEP_MODIFY_PROT_TRANSACTION
-diff --git a/arch/powerpc/include/asm/book3s/64/radix.h b/arch/powerpc/include/asm/book3s/64/radix.h
-index 8f55ff7..df23a82 100644
---- a/arch/powerpc/include/asm/book3s/64/radix.h
-+++ b/arch/powerpc/include/asm/book3s/64/radix.h
-@@ -264,7 +264,7 @@ static inline int radix__p4d_bad(p4d_t p4d)
- 
- static inline int radix__pmd_trans_huge(pmd_t pmd)
- {
--	return (pmd_val(pmd) & (_PAGE_PTE | _PAGE_DEVMAP)) == _PAGE_PTE;
-+	return (pmd_val(pmd) & _PAGE_PTE) == _PAGE_PTE;
- }
- 
- static inline pmd_t radix__pmd_mkhuge(pmd_t pmd)
-@@ -274,7 +274,7 @@ static inline pmd_t radix__pmd_mkhuge(pmd_t pmd)
- 
- static inline int radix__pud_trans_huge(pud_t pud)
- {
--	return (pud_val(pud) & (_PAGE_PTE | _PAGE_DEVMAP)) == _PAGE_PTE;
-+	return (pud_val(pud) & _PAGE_PTE) == _PAGE_PTE;
- }
- 
- static inline pud_t radix__pud_mkhuge(pud_t pud)
-@@ -315,16 +315,6 @@ static inline int radix__has_transparent_pud_hugepage(void)
- }
- #endif
- 
--static inline pmd_t radix__pmd_mkdevmap(pmd_t pmd)
--{
--	return __pmd(pmd_val(pmd) | (_PAGE_PTE | _PAGE_DEVMAP));
--}
+-#endif
 -
--static inline pud_t radix__pud_mkdevmap(pud_t pud)
--{
--	return __pud(pud_val(pud) | (_PAGE_PTE | _PAGE_DEVMAP));
--}
--
- struct vmem_altmap;
- struct dev_pagemap;
- extern int __meminit radix__vmemmap_create_mapping(unsigned long start,
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 77f001c..acac373 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -97,7 +97,6 @@ config X86
- 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	select ARCH_HAS_PMEM_API		if X86_64
- 	select ARCH_HAS_PREEMPT_LAZY
--	select ARCH_HAS_PTE_DEVMAP		if X86_64
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_HW_PTE_YOUNG
- 	select ARCH_HAS_NONLEAF_PMD_YOUNG	if PGTABLE_LEVELS > 2
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 593f10a..77705be 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -308,16 +308,15 @@ static inline bool pmd_leaf(pmd_t pte)
- }
+ #endif /* _ASM_RISCV_PGTABLE_64_H */
+diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+index a8f5205..179bd4a 100644
+--- a/arch/riscv/include/asm/pgtable-bits.h
++++ b/arch/riscv/include/asm/pgtable-bits.h
+@@ -19,7 +19,6 @@
+ #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
  
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--/* NOTE: when predicate huge page, consider also pmd_devmap, or use pmd_leaf */
- static inline int pmd_trans_huge(pmd_t pmd)
- {
--	return (pmd_val(pmd) & (_PAGE_PSE|_PAGE_DEVMAP)) == _PAGE_PSE;
-+	return (pmd_val(pmd) & _PAGE_PSE) == _PAGE_PSE;
- }
+ #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
+-#define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
+ #define _PAGE_TABLE     _PAGE_PRESENT
  
- #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
- static inline int pud_trans_huge(pud_t pud)
- {
--	return (pud_val(pud) & (_PAGE_PSE|_PAGE_DEVMAP)) == _PAGE_PSE;
-+	return (pud_val(pud) & _PAGE_PSE) == _PAGE_PSE;
- }
- #endif
- 
-@@ -327,24 +326,6 @@ static inline int has_transparent_hugepage(void)
- 	return boot_cpu_has(X86_FEATURE_PSE);
+ /*
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index d4e99ee..9fa9d13 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -399,13 +399,6 @@ static inline int pte_special(pte_t pte)
+ 	return pte_val(pte) & _PAGE_SPECIAL;
  }
  
 -#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
--static inline int pmd_devmap(pmd_t pmd)
+-static inline int pte_devmap(pte_t pte)
 -{
--	return !!(pmd_val(pmd) & _PAGE_DEVMAP);
--}
--
--#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
--static inline int pud_devmap(pud_t pud)
--{
--	return !!(pud_val(pud) & _PAGE_DEVMAP);
--}
--#else
--static inline int pud_devmap(pud_t pud)
--{
--	return 0;
+-	return pte_val(pte) & _PAGE_DEVMAP;
 -}
 -#endif
 -
- #ifdef CONFIG_ARCH_SUPPORTS_PMD_PFNMAP
- static inline bool pmd_special(pmd_t pmd)
- {
-@@ -368,12 +349,6 @@ static inline pud_t pud_mkspecial(pud_t pud)
- 	return pud_set_flags(pud, _PAGE_SPECIAL);
- }
- #endif	/* CONFIG_ARCH_SUPPORTS_PUD_PFNMAP */
--
--static inline int pgd_devmap(pgd_t pgd)
--{
--	return 0;
--}
--#endif
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ /* static inline pte_t pte_rdprotect(pte_t pte) */
  
- static inline pte_t pte_set_flags(pte_t pte, pteval_t set)
-@@ -534,11 +509,6 @@ static inline pte_t pte_mkspecial(pte_t pte)
- 	return pte_set_flags(pte, _PAGE_SPECIAL);
+ static inline pte_t pte_wrprotect(pte_t pte)
+@@ -447,11 +440,6 @@ static inline pte_t pte_mkspecial(pte_t pte)
+ 	return __pte(pte_val(pte) | _PAGE_SPECIAL);
  }
  
 -static inline pte_t pte_mkdevmap(pte_t pte)
 -{
--	return pte_set_flags(pte, _PAGE_SPECIAL|_PAGE_DEVMAP);
+-	return __pte(pte_val(pte) | _PAGE_DEVMAP);
 -}
 -
- /* See comments above mksaveddirty_shift() */
- static inline pmd_t pmd_mksaveddirty(pmd_t pmd)
+ static inline pte_t pte_mkhuge(pte_t pte)
  {
-@@ -610,11 +580,6 @@ static inline pmd_t pmd_mkwrite_shstk(pmd_t pmd)
- 	return pmd_set_flags(pmd, _PAGE_DIRTY);
+ 	return pte;
+@@ -763,11 +751,6 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
+ 	return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
  }
  
 -static inline pmd_t pmd_mkdevmap(pmd_t pmd)
 -{
--	return pmd_set_flags(pmd, _PAGE_DEVMAP);
+-	return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
 -}
 -
- static inline pmd_t pmd_mkhuge(pmd_t pmd)
- {
- 	return pmd_set_flags(pmd, _PAGE_PSE);
-@@ -680,11 +645,6 @@ static inline pud_t pud_mkdirty(pud_t pud)
- 	return pud_mksaveddirty(pud);
- }
- 
--static inline pud_t pud_mkdevmap(pud_t pud)
--{
--	return pud_set_flags(pud, _PAGE_DEVMAP);
--}
--
- static inline pud_t pud_mkhuge(pud_t pud)
- {
- 	return pud_set_flags(pud, _PAGE_PSE);
-@@ -1012,13 +972,6 @@ static inline int pte_present(pte_t a)
- 	return pte_flags(a) & (_PAGE_PRESENT | _PAGE_PROTNONE);
- }
- 
--#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
--static inline int pte_devmap(pte_t a)
--{
--	return (pte_flags(a) & _PAGE_DEVMAP) == _PAGE_DEVMAP;
--}
--#endif
--
- #define pte_accessible pte_accessible
- static inline bool pte_accessible(struct mm_struct *mm, pte_t a)
- {
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 4b80453..e4c7b51 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -33,7 +33,6 @@
- #define _PAGE_BIT_CPA_TEST	_PAGE_BIT_SOFTW1
- #define _PAGE_BIT_UFFD_WP	_PAGE_BIT_SOFTW2 /* userfaultfd wrprotected */
- #define _PAGE_BIT_SOFT_DIRTY	_PAGE_BIT_SOFTW3 /* software dirty tracking */
--#define _PAGE_BIT_DEVMAP	_PAGE_BIT_SOFTW4
- 
- #ifdef CONFIG_X86_64
- #define _PAGE_BIT_SAVED_DIRTY	_PAGE_BIT_SOFTW5 /* Saved Dirty bit (leaf) */
-@@ -119,11 +118,9 @@
- 
- #if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)
- #define _PAGE_NX	(_AT(pteval_t, 1) << _PAGE_BIT_NX)
--#define _PAGE_DEVMAP	(_AT(u64, 1) << _PAGE_BIT_DEVMAP)
- #define _PAGE_SOFTW4	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW4)
- #else
- #define _PAGE_NX	(_AT(pteval_t, 0))
--#define _PAGE_DEVMAP	(_AT(pteval_t, 0))
- #define _PAGE_SOFTW4	(_AT(pteval_t, 0))
- #endif
- 
-@@ -152,7 +149,7 @@
- #define _COMMON_PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |	\
- 				 _PAGE_SPECIAL | _PAGE_ACCESSED |	\
- 				 _PAGE_DIRTY_BITS | _PAGE_SOFT_DIRTY |	\
--				 _PAGE_DEVMAP | _PAGE_CC | _PAGE_UFFD_WP)
-+				 _PAGE_CC | _PAGE_UFFD_WP)
- #define _PAGE_CHG_MASK	(_COMMON_PAGE_CHG_MASK | _PAGE_PAT)
- #define _HPAGE_CHG_MASK (_COMMON_PAGE_CHG_MASK | _PAGE_PSE | _PAGE_PAT_LARGE)
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a734278..23c4e9b 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2769,13 +2769,6 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif	/* CONFIG_ARCH_SUPPORTS_PUD_PFNMAP */
- 
--#ifndef CONFIG_ARCH_HAS_PTE_DEVMAP
--static inline int pte_devmap(pte_t pte)
--{
--	return 0;
--}
--#endif
--
- extern pte_t *__get_locked_pte(struct mm_struct *mm, unsigned long addr,
- 			       spinlock_t **ptl);
- static inline pte_t *get_locked_pte(struct mm_struct *mm, unsigned long addr,
-diff --git a/include/linux/pfn_t.h b/include/linux/pfn_t.h
-index 2d91482..0100ad8 100644
---- a/include/linux/pfn_t.h
-+++ b/include/linux/pfn_t.h
-@@ -97,26 +97,6 @@ static inline pud_t pfn_t_pud(pfn_t pfn, pgprot_t pgprot)
- #endif
- #endif
- 
--#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
--static inline bool pfn_t_devmap(pfn_t pfn)
--{
--	const u64 flags = PFN_DEV|PFN_MAP;
--
--	return (pfn.val & flags) == flags;
--}
--#else
--static inline bool pfn_t_devmap(pfn_t pfn)
--{
--	return false;
--}
--pte_t pte_mkdevmap(pte_t pte);
--pmd_t pmd_mkdevmap(pmd_t pmd);
--#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && \
--	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
--pud_t pud_mkdevmap(pud_t pud);
--#endif
--#endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
--
- #ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
- static inline bool pfn_t_special(pfn_t pfn)
- {
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 00e4a06..1c377de 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1606,21 +1606,6 @@ static inline int pud_write(pud_t pud)
- }
- #endif /* pud_write */
- 
--#if !defined(CONFIG_ARCH_HAS_PTE_DEVMAP) || !defined(CONFIG_TRANSPARENT_HUGEPAGE)
--static inline int pmd_devmap(pmd_t pmd)
--{
--	return 0;
--}
--static inline int pud_devmap(pud_t pud)
--{
--	return 0;
--}
--static inline int pgd_devmap(pgd_t pgd)
--{
--	return 0;
--}
--#endif
--
- #if !defined(CONFIG_TRANSPARENT_HUGEPAGE) || \
- 	!defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
- static inline int pud_trans_huge(pud_t pud)
-@@ -1875,8 +1860,8 @@ typedef unsigned int pgtbl_mod_mask;
-  * - It should contain a huge PFN, which points to a huge page larger than
-  *   PAGE_SIZE of the platform.  The PFN format isn't important here.
-  *
-- * - It should cover all kinds of huge mappings (e.g., pXd_trans_huge(),
-- *   pXd_devmap(), or hugetlb mappings).
-+ * - It should cover all kinds of huge mappings (i.e. pXd_trans_huge()
-+ *   or hugetlb mappings).
-  */
- #ifndef pgd_leaf
- #define pgd_leaf(x)	false
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 7949ab1..e1d0981 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1044,9 +1044,6 @@ config ARCH_HAS_CURRENT_STACK_POINTER
- 	  register alias named "current_stack_pointer", this config can be
- 	  selected.
- 
--config ARCH_HAS_PTE_DEVMAP
--	bool
--
- config ARCH_HAS_ZONE_DMA_SET
- 	bool
- 
-@@ -1064,7 +1061,6 @@ config ZONE_DEVICE
- 	depends on MEMORY_HOTPLUG
- 	depends on MEMORY_HOTREMOVE
- 	depends on SPARSEMEM_VMEMMAP
--	depends on ARCH_HAS_PTE_DEVMAP
- 	select XARRAY_MULTI
- 
- 	help
-diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-index bc748f7..cf5ff92 100644
---- a/mm/debug_vm_pgtable.c
-+++ b/mm/debug_vm_pgtable.c
-@@ -348,12 +348,6 @@ static void __init pud_advanced_tests(struct pgtable_debug_args *args)
- 	vaddr &= HPAGE_PUD_MASK;
- 
- 	pud = pfn_pud(args->pud_pfn, args->page_prot);
--	/*
--	 * Some architectures have debug checks to make sure
--	 * huge pud mapping are only found with devmap entries
--	 * For now test with only devmap entries.
--	 */
--	pud = pud_mkdevmap(pud);
- 	set_pud_at(args->mm, vaddr, args->pudp, pud);
- 	flush_dcache_page(page);
- 	pudp_set_wrprotect(args->mm, vaddr, args->pudp);
-@@ -366,7 +360,6 @@ static void __init pud_advanced_tests(struct pgtable_debug_args *args)
- 	WARN_ON(!pud_none(pud));
- #endif /* __PAGETABLE_PMD_FOLDED */
- 	pud = pfn_pud(args->pud_pfn, args->page_prot);
--	pud = pud_mkdevmap(pud);
- 	pud = pud_wrprotect(pud);
- 	pud = pud_mkclean(pud);
- 	set_pud_at(args->mm, vaddr, args->pudp, pud);
-@@ -384,7 +377,6 @@ static void __init pud_advanced_tests(struct pgtable_debug_args *args)
- #endif /* __PAGETABLE_PMD_FOLDED */
- 
- 	pud = pfn_pud(args->pud_pfn, args->page_prot);
--	pud = pud_mkdevmap(pud);
- 	pud = pud_mkyoung(pud);
- 	set_pud_at(args->mm, vaddr, args->pudp, pud);
- 	flush_dcache_page(page);
-@@ -693,53 +685,6 @@ static void __init pmd_protnone_tests(struct pgtable_debug_args *args)
- static void __init pmd_protnone_tests(struct pgtable_debug_args *args) { }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
--#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
--static void __init pte_devmap_tests(struct pgtable_debug_args *args)
--{
--	pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
--
--	pr_debug("Validating PTE devmap\n");
--	WARN_ON(!pte_devmap(pte_mkdevmap(pte)));
--}
--
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--static void __init pmd_devmap_tests(struct pgtable_debug_args *args)
--{
--	pmd_t pmd;
--
--	if (!has_transparent_hugepage())
--		return;
--
--	pr_debug("Validating PMD devmap\n");
--	pmd = pfn_pmd(args->fixed_pmd_pfn, args->page_prot);
--	WARN_ON(!pmd_devmap(pmd_mkdevmap(pmd)));
--}
--
--#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
--static void __init pud_devmap_tests(struct pgtable_debug_args *args)
--{
--	pud_t pud;
--
--	if (!has_transparent_pud_hugepage())
--		return;
--
--	pr_debug("Validating PUD devmap\n");
--	pud = pfn_pud(args->fixed_pud_pfn, args->page_prot);
--	WARN_ON(!pud_devmap(pud_mkdevmap(pud)));
--}
--#else  /* !CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
--static void __init pud_devmap_tests(struct pgtable_debug_args *args) { }
--#endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
--#else  /* CONFIG_TRANSPARENT_HUGEPAGE */
--static void __init pmd_devmap_tests(struct pgtable_debug_args *args) { }
--static void __init pud_devmap_tests(struct pgtable_debug_args *args) { }
--#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
--#else
--static void __init pte_devmap_tests(struct pgtable_debug_args *args) { }
--static void __init pmd_devmap_tests(struct pgtable_debug_args *args) { }
--static void __init pud_devmap_tests(struct pgtable_debug_args *args) { }
--#endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
--
- static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
- {
- 	pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
-@@ -1341,10 +1286,6 @@ static int __init debug_vm_pgtable(void)
- 	pte_protnone_tests(&args);
- 	pmd_protnone_tests(&args);
- 
--	pte_devmap_tests(&args);
--	pmd_devmap_tests(&args);
--	pud_devmap_tests(&args);
--
- 	pte_soft_dirty_tests(&args);
- 	pmd_soft_dirty_tests(&args);
- 	pte_swap_soft_dirty_tests(&args);
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 285578e..2a12879 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -395,8 +395,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	return 0;
- }
- 
--#if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && \
--    defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
-+#if defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
- static inline unsigned long pud_to_hmm_pfn_flags(struct hmm_range *range,
- 						 pud_t pud)
+ static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+ 				pmd_t *pmdp, pmd_t pmd)
  {
 -- 
 git-series 0.9.1
