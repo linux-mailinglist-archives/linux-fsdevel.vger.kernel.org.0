@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-38812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6457A08761
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 07:03:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C40AA0877A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 07:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E2D97A365F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 06:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E7E3A7468
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 06:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576B3208976;
-	Fri, 10 Jan 2025 06:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA67209F35;
+	Fri, 10 Jan 2025 06:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ki2exUkX"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nYM1hyYq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2071.outbound.protection.outlook.com [40.107.236.71])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35F4208973;
-	Fri, 10 Jan 2025 06:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE5420967B;
+	Fri, 10 Jan 2025 06:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736488917; cv=fail; b=W5+dP74KTGCSDCebtk65rP9dGzA0a7sKaFWKi3ItAyfxYST96R9HPZbEAFYvqSfPgyeV23GHGspklD0zxr0z5kQiQmJSmP7ucoPlXOubARG71RWmr7BLj2E6KnR+JvfZ6IF2VASWow6G+fO8KBOZzeJ3ZkLdzRXqVsxOUwNO1ug=
+	t=1736488921; cv=fail; b=Hdd2Iy+hbCk+46iG0DgVtbSebPQpQ3HOErRniFIkv6T/UL3dBX4OawFBt0drYri2xRLknxKZ/r+q1IXkKj43zm8jN8q/tcaQ3cIk+v/dilJJ9zqLSJRF2gHmvXg8ZNsb3NzLd1QhzW489d+MTsKsvOXJKrHqgQXVuykJ1JupFBA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736488917; c=relaxed/simple;
-	bh=FDleqUDEtdB1YSQa50VaPvs5gN/6lVm60NeLESWAhys=;
+	s=arc-20240116; t=1736488921; c=relaxed/simple;
+	bh=I8N8ykoX+IlHs1Dz/s3j0FUyPTi53pkKwSnEOijdpFU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XF1q0APc0wPZ4hAkHdafQTPm3St1aukDX4nu28s47aHpNfOzloKGSb0k29JlyOrjHB/NU+ye1ATK/M7h185e/MmC5BAOJ+qsoz43Ou9T4A7LvscrMSmVacTGG1x+r3j8rDqOUky7aIFQIWeJ+g0k5XSJtsERVwDXRYwnCzKSmfU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ki2exUkX; arc=fail smtp.client-ip=40.107.236.71
+	 Content-Type:MIME-Version; b=sQAZ7tSsmdXaXCwOA9pInPzZVUBcnZ48/64CvxWvkSCJUEAy6Dff248yl+Sxl6/h/B4Ugvupx3+o6f9HJzkA+x88XY0uneumxmB2bXRAdyKwbp2aMjdCd/tmBwU0gBWbbf+XYKCJs2u5SXUBKh5gvciChp5wrin75F7nHHrFIik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nYM1hyYq; arc=fail smtp.client-ip=40.107.236.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i61thtl+sa3BxgzzLz937/Nxu0bfaKEwi5T2sXoCHJg0lHYnINtSl0gIc5gV8FsCC7rQ5MZBf9WjpDC1+aHP1QJR+PCEf1nvmMK6mA40wzHkfrt/7C9WHjMytSsf57keL7dg9BUiDOjmfCHOFHbL40KYsDc382B0wps9siLLwR5C9ilJu9WrsGW8ohxXHDu6/OtPNk//pK1ISuJtCwZ4D87vMS/Xo2LPlQGkHXeVRUB3c9t/QCS162e295onQ7hOXAmheR84/2FhhMzkp90Xzj2lQ+OTK4j9cmdTrdqTOfqL2YgDAybdM9GwEVy7Xo6V0JTN94+K/uu2OUBRFwhAKA==
+ b=iagfebz39dN9cQQf/PcA9LXjPiVOYw8u+qIJxGJ2C5nfMPnaGe6KrCBUXZF/cmwOsCaezOmQrWjGAVQr9TM8ZbOM9DBkGMmyPCjOxAbUxrXL2yvig+FCuaHtwBHRr4XqnZy3g6o8nSYSL3AvVDLWjhYR9E/+Kh6dY2vwGTw5D8b4WcE5ntaX6OAB5BZz7QzWxD3I+efTi7MY55u0IoiA0vMZHayByunVKk0PVQMiQefF999GOOOtq/IUm+WMIptaCPqN/NECNAaqygPWQTMi5paSUvKW1aVdQtEOurOMr0jg49ngjkFowq6XBzrv3ZxHzrpyXrK3EYCm8HfVm229gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v+5E4H/DuQ0pAoXXKbxaYAoc2WqaY+EzxUHO8qCAqb8=;
- b=UxvF7QSspfZcjWcJQb3us4Pvrc/0dThIPo5LNr24XoUW9PNBMvC6brqssudi0BbhNyeCIVmkulQf6IYt4GDEWW/u1qpXZXGdZU8e5coKYrkwCk61KavbvOukpvjJUUuRYCMEeQv+GeVrE3EdezfzmzKdt0sVlsH+J99N1jhVSN1+jpA3t5fF5bgJWxp7ENwLPbYPaJMKsp/vdYnAe+F6UmmiEtXu5Vfpfb/j/pZzdD5eKPhBHh4RsyXQWcyGyW53tUMbf6iEeuGlsY5oKjEcUR59dNCoPpyEhypog7fPUkNIwnP8h1s8EN+qJeraQHv4HsiMluzXgBgP3vQ8BjIZzA==
+ bh=mA6IK/Y2KuCTn5DEQhgF4VkZcX2IeUmqIqn2SXK5C70=;
+ b=R2u4Au46y+lOz0Am4MowwcuIBJkSyMuvolMHEEt18JzdPth0ykCurt0WsfNMxWoprDuYKeEVwRcOJMmo0x8lkkesMS4Y38BXp0pi04QzeRaAZfa3JPn25Yud0SgZ/cLSQb9KmK9lAh/VORM0bad0yTUgupMos49NTiGXTQc9OdtYjPWn7esHKRMIV/CKXRJtxCcH/aMjiBRnC2CTZ9scRduAIXujdKPYt00ap/uh7YqgpPXUzfwMnqYI1xHvlpbE+ZiB+rdTM2hTxMIkHP8HOMBCZiucDzuc83tzIlpQRDprPNiTxYvqutFqjgjRHDM6p8MK/vUhXdxIGcG2U47DaQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v+5E4H/DuQ0pAoXXKbxaYAoc2WqaY+EzxUHO8qCAqb8=;
- b=Ki2exUkXCnQcWQYv/ijoWWndA44Shn2xqspHqYTqKR2jwPUsjqQYjPuLff4dnmOjb9amKUWmLSBTpo+CQQbZTDGwzd3FPl8TU3ZS62/SIq5b9zfA30XUIyjsQv0A43/g0lgc3TK3N5mgSiCKAFInpARWx6JJ2E18ZWD17NO43mNpASvhDpM6TSG6TghK9UF7Xq46UG6SBotAlHUoc+kk5MwAsSIfxPSHfJufGS1sqfCAzen4bnJwmDF00kf5b3TwENRmrPo9D6XIKll5+dvCH7rnF4uimm3BUM8qxi/O2YgHgq8LJ2Fp+3HHz4NL2xpDrFK1P9BtxinJHcMdsPApyg==
+ bh=mA6IK/Y2KuCTn5DEQhgF4VkZcX2IeUmqIqn2SXK5C70=;
+ b=nYM1hyYqKwpV2+ChOz4dbZFYhBZHrm7o5FHvfScTNDcRfxgNzGGHJ6aqbW12E5wPkYwbOXK2Mf3z3nS8aMhfD2unWN3gJXVLM2fMQLD3EyHSlBR9VrxyylTZiCQJ96vUyhiPGPNbCQ45W1F2sLkCNUHWHVkWFfj8JbDtWzUysUX9jC1pcaZXco/Zx8UY5H6V4xKbXl1ukgbCXDAA4Bf/hfUaO+xmaB3cVpbdGFxr8JWGJr3mmT34Qpx/jK86m6myGGTWw5J53ldvw5mT9DFUoFYeEjLF5r/piwfFW+pRgaDL5AtmYRSUEKIFkGQaC4Xhjkgr0fSNjDeAmMamQSHfnA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
  BY5PR12MB4132.namprd12.prod.outlook.com (2603:10b6:a03:209::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.10; Fri, 10 Jan
- 2025 06:01:53 +0000
+ 2025 06:01:57 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8335.011; Fri, 10 Jan 2025
- 06:01:53 +0000
+ 06:01:57 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: akpm@linux-foundation.org,
 	dan.j.williams@intel.com,
@@ -99,16 +99,16 @@ Cc: alison.schofield@intel.com,
 	chenhuacai@kernel.org,
 	kernel@xen0n.name,
 	loongarch@lists.linux.dev
-Subject: [PATCH v6 06/26] fs/dax: Always remove DAX page-cache entries when breaking layouts
-Date: Fri, 10 Jan 2025 17:00:34 +1100
-Message-ID: <47bef43b54474a8ba7f266b9b5fc68ed91b1d7b8.1736488799.git-series.apopple@nvidia.com>
+Subject: [PATCH v6 07/26] fs/dax: Ensure all pages are idle prior to filesystem unmount
+Date: Fri, 10 Jan 2025 17:00:35 +1100
+Message-ID: <704662ae360abeb777ed00efc6f8f232a79ae4ff.1736488799.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
 References: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SY5P300CA0021.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:1ff::9) To DS0PR12MB7726.namprd12.prod.outlook.com
+X-ClientProxiedBy: SY6PR01CA0053.ausprd01.prod.outlook.com
+ (2603:10c6:10:e9::22) To DS0PR12MB7726.namprd12.prod.outlook.com
  (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -118,224 +118,292 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|BY5PR12MB4132:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67ac2924-3e27-432c-c614-08dd313c47cb
+X-MS-Office365-Filtering-Correlation-Id: 1f0babb1-de22-472a-5ea3-08dd313c4a34
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Sh2VSoZUpO6jStPWLaekWTDgE/jLZBXVBpJeckqen9QoTvRdTaHthUDjt/w9?=
- =?us-ascii?Q?5jgakRHaMxvUs5T68+Y0oTjXs4vLswl7RaigPdLPxMxSxQeFUVVBGmj7SLVV?=
- =?us-ascii?Q?1nv25OhOJUGhSfMW5EjTogKrsJzz24RZ55t041VT17UGunw6Gsg71HAuBCPZ?=
- =?us-ascii?Q?N8S+tthP6M6JWwKG1hUAFJ2LkfAthd9hxYKGAmgparUaXoZi0vODf49sWsCX?=
- =?us-ascii?Q?kItiQgfDjvFlC0ELd+dGFSWHwJ5LfNDPaqaeGDqdQSvwykS7AnP9185Qg08y?=
- =?us-ascii?Q?QbDI1A0UShApVuBTg6Q9QgzfRwlzQeWecjsiNn3ovKE6M9oP0ukD2TucoJFL?=
- =?us-ascii?Q?lkfItFIuiZlJ/Y2qp8dTwqKASGOe2oVAhviL/IefeIPce0znJ6BjGBXgP/dd?=
- =?us-ascii?Q?q168wfZxo1Meqh2xZ7i6FMXnoPfJQrFOWr7S4UttJfUt6XbWJmIoznhZ1H98?=
- =?us-ascii?Q?xPdq2KRBtKortvcGGjuroo4s9ZQgO1+PQaNyF5AVp4zMQahnU0/A1Ol3hHuu?=
- =?us-ascii?Q?QDT8mz8wYltEJd7HW+un479mPYhjHJmqGCkoltf8s5tm+OmmnVP3zrUiaHK0?=
- =?us-ascii?Q?3ydOvbXUZRI5pVGIgGxa2N/kfVKgjXwPMZjTo/VuWbG/o9IALKAgNwbENKIS?=
- =?us-ascii?Q?uhSzSw8d5YKcCzyIVihB7ysFDzEXnaU1o6OY8N548nrzuOx89PfC8DrGsqCg?=
- =?us-ascii?Q?LxPP/wBMlVo+JK/SlZCYyAw2Un2vICud1YcGd4QMrTOhPTNBbAqSlaF/SxsU?=
- =?us-ascii?Q?tnbeYpNhWdHOfpwiFEOOF054P/XCbag+CuGQqI3Eg1oKh5AyGV5t2605M7bI?=
- =?us-ascii?Q?cXKQ1Ufz7LH3eoap5fQ0ATZoWJugLNE6xqaQIfzgulrEmpjVdPFnalgv82oI?=
- =?us-ascii?Q?GWVPc750bLZarzTg9ic924Mb6cXrW9U7oddB7npUofdy/vDPipKW/BmsPADh?=
- =?us-ascii?Q?9iT+AxUSdKUOheCkHNFF/ifWIgpGA0Mq3EAKPxUgFereSR1lhcGdY/6TLDzW?=
- =?us-ascii?Q?0mfIlMYwIVilUv7Uk81ucemwsD1E9jHHxnxVK2srsEAOjOwYST5bFSXtqPXn?=
- =?us-ascii?Q?sAAM2HJUPtcNc4FaXnHPhKMVqjBGdS+E58bgCxZ2rh0ARcd0fS5b9UCt9TuN?=
- =?us-ascii?Q?ZRkGEPKl2vuKkYZOwmG2RaIqevNRG6Z9MQY4fzL4usVMm/4jy9A0+AbQ6YFs?=
- =?us-ascii?Q?rgiLXHKTpDEGKJiGtD3vlfOfUGWFvaJDMfkJqQ1KR9Rm4VjJ5XELPVC8IIWl?=
- =?us-ascii?Q?I1+cESHBDAQPHAO+vB9DT2Ya+j1K6hs40WERCcZzY8sT1VIzm6tjSYpoKVqq?=
- =?us-ascii?Q?96DRUMbevLIZWlAOtRHLX19+7XCg1zV41hMRruY+nV4OKyI/Apu21JUEQuPJ?=
- =?us-ascii?Q?dsmjZ4yiVXjLo5UorcXRHKBqbfdh?=
+	=?us-ascii?Q?6NsyHrZgV8A66cwzja+f6rM4hf2kdo/tEQdS0xAnS3bC526UpwKDKdUXnHxF?=
+ =?us-ascii?Q?EZ+CmXIddyBzZDVYPh9YJSNvGp5gtebXdkmap4XGDR+2/UX8SzPxCdMm6+jJ?=
+ =?us-ascii?Q?0qqtGdudsdjmokldqPNyOte6B52ylg2FrkaX5PGvBo30k3rGtJ/j/krkGTSB?=
+ =?us-ascii?Q?i4ziE8R+GO/u1c0fxpZVg4HYiS/kBYsO3Mbefzm862XtlQ6kUcHuoijBs26U?=
+ =?us-ascii?Q?CQutS/Pj/2ymsWs87dfGWelB8FJsOy5Opaf24QPcP18wlYzHww+n4FOGA7Az?=
+ =?us-ascii?Q?MS2neCpJJ+P3ivMrokVtJWXRIANXt/u1T0991oWGnLQ62D2z93hW213LkqUw?=
+ =?us-ascii?Q?U5k7iqHk9FTLlbWJkDrM0TMkFUIqii8c6d/FWQE3gWty27h037P6JzeWjzKO?=
+ =?us-ascii?Q?6Hx1CkNq/CxEQ+gJViuZMg8EGU+U8tV4nThQUWp8TZbP6jQiT34qgws8fyr+?=
+ =?us-ascii?Q?+n3HSMX9wuKxrrmwt/39f15Mh1wdIdDIb7SMIyWIc5j3OguL92QmIC1lnurX?=
+ =?us-ascii?Q?ShXtwiCSAWwNY5mkr8RWseTXX/xOcoc4zHiZSPfB4HP/UhjeX4ziF9tYuKE+?=
+ =?us-ascii?Q?kE2MhFl+RGmyHzoTTVbjCPW2NF96WZmtDUfdHD8jFX9gJc8w+/GBoGORfEfQ?=
+ =?us-ascii?Q?gJYy0U57fQEUcdR9hLrk8EyLYZY78IXeHjNbJIDoz0uZ3IACcBVgeP9El48o?=
+ =?us-ascii?Q?awHb++YT/Vo/qIZtMkT31HheY/gaDVd3+lCgHW6/3fpYjWjgBjY8NKnYzVb5?=
+ =?us-ascii?Q?dGZLd298nxaBL6grRtnld4UT3rDzsxwUxQTnh+KylmgGX9xUJ2sgPNYwSoeM?=
+ =?us-ascii?Q?tVCpgY6DjyhmcarXpk0ys9h2osVqPV9/Rj27P89WfKOEdO6aGtyUGoN6VOC3?=
+ =?us-ascii?Q?wrC7HzWa4XF3VgPJmPKA2Ex+ZQ8I9bNKdrLN+HKn4kTj1hu0CjX3BiEaOHln?=
+ =?us-ascii?Q?GSdiqUsgB8CjnXaCQ92YoODFGQ5zvHfd2i6Gmt5kGsVj941eIr6z/G6vngmA?=
+ =?us-ascii?Q?z0JTFGwB/LayTuYQNZ2PlVacifaktqXJVRliTaqFEbmTKnNT8CAF76fVa4C0?=
+ =?us-ascii?Q?yrlLUH1G7/0dZC9dSumUBa2ZPtiF1ku4jEP0QRViI7g0NHxvnqI+4+RIjpAK?=
+ =?us-ascii?Q?0CwybEN9md2EIiYLmum1qVyWdnON92he1foIFsFpEU3AmswXhpRflOTOzFBz?=
+ =?us-ascii?Q?IWmjaGUj8UWiv2L17u45gbr8bZuGZzv4QEpGX/VuYzLrAyRr8Pah+VUs4ele?=
+ =?us-ascii?Q?uZC61HjmkjennVPLQEGvfcQ0DJeReAVqxu6opk4q3/A95DmDddRULd2xJKoi?=
+ =?us-ascii?Q?MJOdxhnfsW83+XLwbJjrLj6nsRIAjCE///ZdgBWIGX5bncVQfb4T+O0IyPmw?=
+ =?us-ascii?Q?53LMran3wEIiV9b+Odf0XaUrmEBW?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?j7fqjqB6IxZJIp97dNNsS25ezS7VjNyb7X+jnbHq2PRNJJ0/rZPYAhhtUAX9?=
- =?us-ascii?Q?f8KCua3Xo/okqW0Q+De1cVIrMIRAglEFbyJ2sG5owuOBDFdZl3Jv6N78+Yuc?=
- =?us-ascii?Q?cS+zH2ySRcDJPYs/dnWj7Cc4D3vP9Ptk31qrvbhE57rVbnI7x6EkyoYyaVq5?=
- =?us-ascii?Q?LgULKEawBQj1TLLdyj4AmMjR9GGQM/0zu309bxe7li3skrhETHfyRMjJzpfp?=
- =?us-ascii?Q?uK/tvD2vFMBM/vTeTzN7gSeBMgRHnFTY1d9cuUKWErYPhaNvWKvXTgsw15Q5?=
- =?us-ascii?Q?x8oye1LYjH9NMD+KIRirN74pw2g8nohkrwsdHEC82IRdF2/M3W+zBjkFbvGv?=
- =?us-ascii?Q?X35FgY5B17dA8CeV0R3OujIjfJch08zM5tCOQIkMNLvXUp2Pmf7iArfBsqtN?=
- =?us-ascii?Q?ND7esRg6Qmi+f15LFe4y9hABmIeuTmpM2cxf4JCX94wsTA7xEtzNczdFctr5?=
- =?us-ascii?Q?UgpxudWqTCQzdfntmhSlDyi0QWSxCbj0rGtQ/dRAakrRBB4uQjtASuuU0/Ez?=
- =?us-ascii?Q?qak4BLDxHDQlz6xkubVkY3WAIA7JbjRDsBWWXlOHxE9kBnQzo3O3/OdrYdox?=
- =?us-ascii?Q?pC8gz3lBRCt5LIJqLExWdMRWuyoAp+TEX6VGqJ1VyPLbojBvczmgCvi+c6SG?=
- =?us-ascii?Q?lXIizf2o8+lgcHsBlB0jKe4GM5MkTOUQcuI6SJiKvVJfHwXHY8RKQjre4HFC?=
- =?us-ascii?Q?DT7skHZnEiderrcJInfaVBMz/7AoAbnT0LQ4Q8Ltrshncm44g2Xk9cmuEB11?=
- =?us-ascii?Q?Hyqed/vxF1Lj+HQtnkqWOYzAqTZXHprtnIxzAV8Acn2pZJOCVNng2wwHqDGx?=
- =?us-ascii?Q?z/ISAOzjwlXtRNdZg5wlMmz8Pv23/7YPzCEPPqZw5IYxLaLS98+w2T2kUhUB?=
- =?us-ascii?Q?W7uTCIgb72mZ/1rZmVt3TqZlOzEP2ytZyoWrtRxaHgOnPkMN1Hu/Fk0H0sBn?=
- =?us-ascii?Q?rIiJf/EM93REByaVCLVlIGMZG80pIDEb0P/b0lRvF6aks9tXFUfjDFWLfXJm?=
- =?us-ascii?Q?MOk7wByZO66yEMbN974i4M+UvBV9ml36NWiTrhqBOEixjINWHSxx1g0gAbp1?=
- =?us-ascii?Q?9D6rwRAI8y4q2x/j2BdVtY7k1WYfwXdr+GZq6anpJ3IEsnNPZjatzV9Q/o4A?=
- =?us-ascii?Q?IyELfUwpNCrJuWvnAZIxNPQB1rXIofHnQGEQZnG6OzRn1eXPXo0bB9QH9Ge/?=
- =?us-ascii?Q?38mMF3U4YIxbo8UjCLx5YkbJSKJZMSbWFVfu2FFjKT+vWgQkF+ll3uNPVFEM?=
- =?us-ascii?Q?zfoXd2o+dc+g6KSmSDtEieLYViTirl1kQSnBFoj1sdE9Pk1vFIfZ6IFnNqDy?=
- =?us-ascii?Q?EntGlhc/cyLtl84lF1ERgLfIHDmvizHi3KWgtAbRTlzef7tVEGGXVrMeyTbj?=
- =?us-ascii?Q?U6Xc2AnbgHs6fQ0incR9FgqJVaqtZYJK/C6fgef6g+md4Yr3sCs+hyNUbyev?=
- =?us-ascii?Q?vwOXDD5vdxSNQt96/O1GTFrDiXXlBfj77Ep2aHwpYZTuh/NUHEC0+bm78gnG?=
- =?us-ascii?Q?rpBfjtPi5kxAq/riSkuToBCL2uHxYplbLtOJUZfgVPq3izJm9xqt3HkVBbMR?=
- =?us-ascii?Q?Rgn6T30JUoipXs6B5P3H1A1cdXzCB2OadhFgxRDL?=
+	=?us-ascii?Q?Uo5TRXkAe380qdvgTsh4fBZhQTQdd+ZaUcQFK4zbJNVQ5o4o3RqK8f3rG1nA?=
+ =?us-ascii?Q?htCEKYKif7W0694eC9ld3mu5z3T+XSOyZ/HG+O/a6/vWdQGdB5aQANBgnQyg?=
+ =?us-ascii?Q?biZeEJA03RB+dGSYMsaHPUn4y8/mbvvoMwzS2HsoD2waHiMNksfpU5P4CpBy?=
+ =?us-ascii?Q?i2Tf7p+xMBXieMTvEU0ivd+xjPPKs/p1UNdWc/L8A43XidJ3JAQE+InqbWCj?=
+ =?us-ascii?Q?1Un4MksLuWqk7oxu8gn/gFRH+9p8ug4EzJEpgGMHe8ngDuuDaFqxCUNsXvO7?=
+ =?us-ascii?Q?jfyNzYOjK+YtPUjzMfz4vN/BH6CRFfKPPrrPX2/AY+W/JzTx6nFTHuOoji1z?=
+ =?us-ascii?Q?ov4XyysMoVRggaBu00rM+9PALYYbhbgMMnR153xu7GEeivuajQaTwzaTLQws?=
+ =?us-ascii?Q?UZEL99FupZvj1VkqUDLNgm3N370oYTxYdFhOW9jM2St/g7IrSj5IRDAR7VYt?=
+ =?us-ascii?Q?GNxeqTCfjg591q6MUQanCrerAQcQk5AKvBc2pU34nQW4F2BnXm2vE/8g8cla?=
+ =?us-ascii?Q?vhCFWDe4j2T7Je6crb1O7zHEtWp4negK0LbCTxe3c0pEwBGkquxpYaY3kgHu?=
+ =?us-ascii?Q?2EbOAc9FqJ3mJFj6C+wVXOWnP8rzIScWUcrcHZ24sv/IKRBOw3HQZQGze0/9?=
+ =?us-ascii?Q?PbGE0d6IjnisfQss6ocIijENWlSnqFRgVd/yAELj9eBD6W0xHee8R55K16lV?=
+ =?us-ascii?Q?sLWqb0lvGnwrDHS44xnEuAY3mwJceS6CRzqwFXjVuZLul8B2t4FEbqIq1Hd3?=
+ =?us-ascii?Q?jNhRAqYXLYoMcKBvCG0XLknQHz4kpMG8wOzj3HJhinZG3SD0sx8YV3D1yJRD?=
+ =?us-ascii?Q?rk+z2/w98WEtB8fv0HpWIPQrbsfdbrRwKvmRfAXTtNDGsGxTrcgB8h2JVGKn?=
+ =?us-ascii?Q?TgKHwlDz3Ap/cK3Xeve6b6RgwSmLLypNjzyxUu8bmktyReNBEYY+3J5sGMon?=
+ =?us-ascii?Q?gPDr8fgSeuO3RW0idEPpR2IXmEujnZ29Q9zXAqYpsWZXbqbydiZQk9gbjyix?=
+ =?us-ascii?Q?NzOVh1v9pCJyLD0inNAfx2SlvBi/sj3McYYAAwuJY8pX6X6xWsEmH+MPN5Qh?=
+ =?us-ascii?Q?Fa3dyItYIvOZqy0H7PONkbCQRZB3veq9wwo4emaSTy+qoFQJmjlvviJbQkZT?=
+ =?us-ascii?Q?TS3hMtWDZ9BVd8JZpye3WSA9b+C5dHu7TNMp89+QVBf4xIe2PZ0EX5GAV/m3?=
+ =?us-ascii?Q?XLPHTM6i+1M9FIWreVF3C3EQXW/EuvoIhloy36Q+OdOvRRp0jTY7k9N7+vtg?=
+ =?us-ascii?Q?2XvLfsBnqkLSBPulggyuqGj2WHR0t+m18KE7ea+W3PCb9M+ms2fb/gx2D5eA?=
+ =?us-ascii?Q?CqPWs78kX2IJQdhgnGJAIlfZT/IpvE3TaSKgOYd4JUaqTWLhuuU0UVm8Vv8X?=
+ =?us-ascii?Q?AjoGrNmbR88jgJ/hun617Av8YMY8mXiYTOtEbGEib5VkyXZc4rZKLJKqGk6M?=
+ =?us-ascii?Q?STH97xnqxzzHp20p1yugJsgob8K/Azk8/HEHiqE1Bq0yoRyxjkulHdxpkTlf?=
+ =?us-ascii?Q?Dx8rb7j0EPNFbi6b3CC0PVr1qJN3xudyKtNP5MTylFOx0mrUv08LvTG5WB/U?=
+ =?us-ascii?Q?vV3/wMCloYVhS8nFlZsT1cNSqcHPeUHPMKjx2S7d?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67ac2924-3e27-432c-c614-08dd313c47cb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f0babb1-de22-472a-5ea3-08dd313c4a34
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 06:01:53.1849
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 06:01:57.2146
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 28x45XP53E/wqjGddiWRG8HHGf8+mfhFHUe4dhTmreN+VhavB+ZRxlMSeflyyonmYAVx3amfX0w9w3DhV3phBQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: PHInXyb+w8vFl03FW3LfUfWmbraDhWbV6W2eallRKEDOtaqQ6lpLq8Cjh/XbaF0yYx3zFLXfLVLPwobzd1/ivA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4132
 
-Prior to any truncation operations file systems call
-dax_break_mapping() to ensure pages in the range are not under going
-DMA. Later DAX page-cache entries will be removed by
-truncate_folio_batch_exceptionals() in the generic page-cache code.
+File systems call dax_break_mapping() prior to reallocating file
+system blocks to ensure the page is not undergoing any DMA or other
+accesses. Generally this is needed when a file is truncated to ensure
+that if a block is reallocated nothing is writing to it. However
+filesystems currently don't call this when an FS DAX inode is evicted.
 
-However this makes it possible for folios to be removed from the
-page-cache even though they are still DMA busy if the file-system
-hasn't called dax_break_mapping(). It also means they can never be
-waited on in future because FS DAX will lose track of them once the
-page-cache entry has been deleted.
-
-Instead it is better to delete the FS DAX entry when the file-system
-calls dax_break_mapping() as part of it's truncate operation. This
-ensures only idle pages can be removed from the FS DAX page-cache and
-makes it easy to detect if a file-system hasn't called
-dax_break_mapping() prior to a truncate operation.
+This can cause problems when the file system is unmounted as a page
+can continue to be under going DMA or other remote access after
+unmount. This means if the file system is remounted any truncate or
+other operation which requires the underlying file system block to be
+freed will not wait for the remote access to complete. Therefore a
+busy block may be reallocated to a new file leading to corruption.
 
 Signed-off-by: Alistair Popple <apopple@nvidia.com>
 
 ---
 
-Ideally I think we would move the whole wait-for-idle logic directly
-into the truncate paths. However this is difficult for a few
-reasons. Each filesystem needs it's own wait callback, although a new
-address space operation could address that. More problematic is that
-the wait-for-idle can fail as the wait is TASK_INTERRUPTIBLE, but none
-of the generic truncate paths allow for failure.
+Changes for v5:
 
-So it ends up being easier to continue to let file systems call this
-and check that they behave as expected.
+ - Don't wait for pages to be idle in non-DAX mappings
 ---
- fs/dax.c            | 33 +++++++++++++++++++++++++++++++++
- fs/xfs/xfs_inode.c  |  6 ++++++
+ fs/dax.c            | 29 +++++++++++++++++++++++++++++
+ fs/ext4/inode.c     | 32 ++++++++++++++------------------
+ fs/xfs/xfs_inode.c  |  9 +++++++++
+ fs/xfs/xfs_inode.h  |  1 +
+ fs/xfs/xfs_super.c  | 18 ++++++++++++++++++
  include/linux/dax.h |  2 ++
- mm/truncate.c       | 16 +++++++++++++++-
- 4 files changed, 56 insertions(+), 1 deletion(-)
+ 6 files changed, 73 insertions(+), 18 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index 9c3bd07..7008a73 100644
+index 7008a73..4e49cc4 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -845,6 +845,36 @@ int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index)
+@@ -883,6 +883,14 @@ static int wait_page_idle(struct page *page,
+ 				TASK_INTERRUPTIBLE, 0, 0, cb(inode));
+ }
+ 
++static void wait_page_idle_uninterruptible(struct page *page,
++					void (cb)(struct inode *),
++					struct inode *inode)
++{
++	___wait_var_event(page, page_ref_count(page) == 1,
++			TASK_UNINTERRUPTIBLE, 0, 0, cb(inode));
++}
++
+ /*
+  * Unmaps the inode and waits for any DMA to complete prior to deleting the
+  * DAX mapping entries for the range.
+@@ -911,6 +919,27 @@ int dax_break_mapping(struct inode *inode, loff_t start, loff_t end,
+ }
+ EXPORT_SYMBOL_GPL(dax_break_mapping);
+ 
++void dax_break_mapping_uninterruptible(struct inode *inode,
++				void (cb)(struct inode *))
++{
++	struct page *page;
++
++	if (!dax_mapping(inode->i_mapping))
++		return;
++
++	do {
++		page = dax_layout_busy_page_range(inode->i_mapping, 0,
++						LLONG_MAX);
++		if (!page)
++			break;
++
++		wait_page_idle_uninterruptible(page, cb, inode);
++	} while (true);
++
++	dax_delete_mapping_range(inode->i_mapping, 0, LLONG_MAX);
++}
++EXPORT_SYMBOL_GPL(dax_break_mapping_uninterruptible);
++
+ /*
+  * Invalidate DAX entry if it is clean.
+  */
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index ee8e83f..fa35161 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -163,6 +163,18 @@ int ext4_inode_is_fast_symlink(struct inode *inode)
+ 	       (inode->i_size < EXT4_N_BLOCKS * 4);
+ }
+ 
++static void ext4_wait_dax_page(struct inode *inode)
++{
++	filemap_invalidate_unlock(inode->i_mapping);
++	schedule();
++	filemap_invalidate_lock(inode->i_mapping);
++}
++
++int ext4_break_layouts(struct inode *inode)
++{
++	return dax_break_mapping_inode(inode, ext4_wait_dax_page);
++}
++
+ /*
+  * Called at the last iput() if i_nlink is zero.
+  */
+@@ -181,6 +193,8 @@ void ext4_evict_inode(struct inode *inode)
+ 
+ 	trace_ext4_evict_inode(inode);
+ 
++	dax_break_mapping_uninterruptible(inode, ext4_wait_dax_page);
++
+ 	if (EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL)
+ 		ext4_evict_ea_inode(inode);
+ 	if (inode->i_nlink) {
+@@ -3902,24 +3916,6 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
  	return ret;
  }
  
-+void dax_delete_mapping_range(struct address_space *mapping,
-+				loff_t start, loff_t end)
-+{
-+	void *entry;
-+	pgoff_t start_idx = start >> PAGE_SHIFT;
-+	pgoff_t end_idx;
-+	XA_STATE(xas, &mapping->i_pages, start_idx);
-+
-+	/* If end == LLONG_MAX, all pages from start to till end of file */
-+	if (end == LLONG_MAX)
-+		end_idx = ULONG_MAX;
-+	else
-+		end_idx = end >> PAGE_SHIFT;
-+
-+	xas_lock_irq(&xas);
-+	xas_for_each(&xas, entry, end_idx) {
-+		if (!xa_is_value(entry))
-+			continue;
-+		entry = wait_entry_unlocked_exclusive(&xas, entry);
-+		if (!entry)
-+			continue;
-+		dax_disassociate_entry(entry, mapping, true);
-+		xas_store(&xas, NULL);
-+		mapping->nrpages -= 1UL << dax_entry_order(entry);
-+		put_unlocked_entry(&xas, entry, WAKE_ALL);
-+	}
-+	xas_unlock_irq(&xas);
-+}
-+EXPORT_SYMBOL_GPL(dax_delete_mapping_range);
-+
- static int wait_page_idle(struct page *page,
- 			void (cb)(struct inode *),
- 			struct inode *inode)
-@@ -874,6 +904,9 @@ int dax_break_mapping(struct inode *inode, loff_t start, loff_t end,
- 		error = wait_page_idle(page, cb, inode);
- 	} while (error == 0);
- 
-+	if (!page)
-+		dax_delete_mapping_range(inode->i_mapping, start, end);
-+
- 	return error;
- }
- EXPORT_SYMBOL_GPL(dax_break_mapping);
+-static void ext4_wait_dax_page(struct inode *inode)
+-{
+-	filemap_invalidate_unlock(inode->i_mapping);
+-	schedule();
+-	filemap_invalidate_lock(inode->i_mapping);
+-}
+-
+-int ext4_break_layouts(struct inode *inode)
+-{
+-	struct page *page;
+-	int error;
+-
+-	if (WARN_ON_ONCE(!rwsem_is_locked(&inode->i_mapping->invalidate_lock)))
+-		return -EINVAL;
+-
+-	return dax_break_mapping_inode(inode, ext4_wait_dax_page);
+-}
+-
+ /*
+  * ext4_punch_hole: punches a hole in a file by releasing the blocks
+  * associated with the given offset and length
 diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 295730a..4410b42 100644
+index 4410b42..c7ec5ab 100644
 --- a/fs/xfs/xfs_inode.c
 +++ b/fs/xfs/xfs_inode.c
-@@ -2746,6 +2746,12 @@ xfs_mmaplock_two_inodes_and_break_dax_layout(
- 		goto again;
- 	}
- 
-+	/*
-+	 * Normally xfs_break_dax_layouts() would delete the mapping entries as well so
-+	 * do that here.
-+	 */
-+	dax_delete_mapping_range(VFS_I(ip2)->i_mapping, 0, LLONG_MAX);
-+
- 	return 0;
+@@ -2997,6 +2997,15 @@ xfs_break_dax_layouts(
+ 	return dax_break_mapping_inode(inode, xfs_wait_dax_page);
  }
  
++void
++xfs_break_dax_layouts_uninterruptible(
++	struct inode		*inode)
++{
++	xfs_assert_ilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL);
++
++	dax_break_mapping_uninterruptible(inode, xfs_wait_dax_page);
++}
++
+ int
+ xfs_break_layouts(
+ 	struct inode		*inode,
+diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+index c4f03f6..613797a 100644
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@ -594,6 +594,7 @@ xfs_itruncate_extents(
+ }
+ 
+ int	xfs_break_dax_layouts(struct inode *inode);
++void xfs_break_dax_layouts_uninterruptible(struct inode *inode);
+ int	xfs_break_layouts(struct inode *inode, uint *iolock,
+ 		enum layout_break_reason reason);
+ 
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 8524b9d..73ec060 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -751,6 +751,23 @@ xfs_fs_drop_inode(
+ 	return generic_drop_inode(inode);
+ }
+ 
++STATIC void
++xfs_fs_evict_inode(
++	struct inode		*inode)
++{
++	struct xfs_inode	*ip = XFS_I(inode);
++	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
++
++	if (IS_DAX(inode)) {
++		xfs_ilock(ip, iolock);
++		xfs_break_dax_layouts_uninterruptible(inode);
++		xfs_iunlock(ip, iolock);
++	}
++
++	truncate_inode_pages_final(&inode->i_data);
++	clear_inode(inode);
++}
++
+ static void
+ xfs_mount_free(
+ 	struct xfs_mount	*mp)
+@@ -1189,6 +1206,7 @@ static const struct super_operations xfs_super_operations = {
+ 	.destroy_inode		= xfs_fs_destroy_inode,
+ 	.dirty_inode		= xfs_fs_dirty_inode,
+ 	.drop_inode		= xfs_fs_drop_inode,
++	.evict_inode		= xfs_fs_evict_inode,
+ 	.put_super		= xfs_fs_put_super,
+ 	.sync_fs		= xfs_fs_sync_fs,
+ 	.freeze_fs		= xfs_fs_freeze,
 diff --git a/include/linux/dax.h b/include/linux/dax.h
-index f6583d3..ef9e02c 100644
+index ef9e02c..7c3773f 100644
 --- a/include/linux/dax.h
 +++ b/include/linux/dax.h
-@@ -263,6 +263,8 @@ vm_fault_t dax_iomap_fault(struct vm_fault *vmf, unsigned int order,
- vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
- 		unsigned int order, pfn_t pfn);
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
-+void dax_delete_mapping_range(struct address_space *mapping,
-+				loff_t start, loff_t end);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
- int __must_check dax_break_mapping(struct inode *inode, loff_t start,
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 7c304d2..b7f51a6 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -78,8 +78,22 @@ static void truncate_folio_batch_exceptionals(struct address_space *mapping,
- 
- 	if (dax_mapping(mapping)) {
- 		for (i = j; i < nr; i++) {
--			if (xa_is_value(fbatch->folios[i]))
-+			if (xa_is_value(fbatch->folios[i])) {
-+				/*
-+				 * File systems should already have called
-+				 * dax_break_mapping_entry() to remove all DAX
-+				 * entries while holding a lock to prevent
-+				 * establishing new entries. Therefore we
-+				 * shouldn't find any here.
-+				 */
-+				WARN_ON_ONCE(1);
-+
-+				/*
-+				 * Delete the mapping so truncate_pagecache()
-+				 * doesn't loop forever.
-+				 */
- 				dax_delete_mapping_entry(mapping, indices[i]);
-+			}
- 		}
- 		goto out;
- 	}
+@@ -274,6 +274,8 @@ static inline int __must_check dax_break_mapping_inode(struct inode *inode,
+ {
+ 	return dax_break_mapping(inode, 0, LLONG_MAX, cb);
+ }
++void dax_break_mapping_uninterruptible(struct inode *inode,
++				void (cb)(struct inode *));
+ int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 				  struct inode *dest, loff_t destoff,
+ 				  loff_t len, bool *is_same,
 -- 
 git-series 0.9.1
 
