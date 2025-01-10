@@ -1,97 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-38860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F032BA08E42
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 11:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E0BA08EDC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 12:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05BC11684F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 10:42:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D23A16426B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2025 11:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A3A20B7F1;
-	Fri, 10 Jan 2025 10:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B7220B7E0;
+	Fri, 10 Jan 2025 11:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ZGhTG4ih"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OHeCkiun"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F5618FC80;
-	Fri, 10 Jan 2025 10:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C8205AB5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2025 11:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736505764; cv=none; b=PjKKz/5ZeEbbAVoRmKLYPTlHV4OnYsVYcqaPeiB9r99Lisq1gKDdolO9xDiFjeuky4mPZoi0QSI9iHCaDXkutbJomULbYEABedqqL1YPxgae0hcNRVHUBtUsJg8fNKnnELJbKGWea257rY4rU1MQthbrV2Ukeu/IMLovTIyHuv8=
+	t=1736507403; cv=none; b=MGAn5Zue8zqeqFkAuB8Ebv3Q0DON4SrO+/V7iRWcaVND22Cy6g442cC7WiNiauxGFobEFk4yWgVzBBpyW5srM1/+BjIjemuh2+pPdrR4gycZHVCnWT7g9iqs4r1yn8PzxOM6LgwPPYhobsnhkJyPv12IWz3o4z7U+S04weKllRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736505764; c=relaxed/simple;
-	bh=ohoM/SKWkKyFvW6KhIrzfvo2nFEDuXd5GKki5PYWfeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TeAzWLBbAOs39az+nShHzspSOKD/5eECfYjgffQuwlF26Viv/9T83pmRO1Acic0fBcC9z8nTkRSkQfO9v6he2P+XCW7NrZCniDfHRdDoWsCrl28cIYFAyt+6YPjCWUfvQpsFnB12zYfOazrS8vkIvNsuTpr4rydQHkpLgLpP7vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ZGhTG4ih; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=cK66ALb0EIz2SRdvZooDu5fFKEL9ZHoB4UCgLNPgQRI=; b=ZGhTG4ihUwKFlMQZl0L6kIm3aH
-	c5MjlOcsrQNCfIoo3Zpe94bHe5wbyRwryTzqw/BfIoPb39mRHA2lUb3BZxMl1i7yTkrbUTF3AnpVG
-	b5iDTK9qsm75ZJReBMJVIJjIxkUaWqObetUkAxYqJXKPl7/n4GSqvA2hwC42/BnE/xU//3cJo9lJM
-	yI5sX8mhXBPTlZIkzUqs73bpnWMV7TZOSoKGZagKM8pJFbe1xWJlAtOInRluDVCB+QpW8V96il8vD
-	26UfpGJjW9UhOx1ViWKb+m8Me1mhIK3SqX7udGNeBtp2MLGbwfDilavSQ9TBhR6oGKEKtwJJ6Bpsx
-	FAnFWm3A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tWCG6-007oa4-2l;
-	Fri, 10 Jan 2025 18:42:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Jan 2025 18:42:15 +0800
-Date: Fri, 10 Jan 2025 18:42:15 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: David Howells <dhowells@redhat.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/8] crypto/krb5: Provide Kerberos 5 crypto through
- AEAD API
-Message-ID: <Z4D5h_KBvxwmrdQq@gondor.apana.org.au>
-References: <Z4DwNPgLFcfy6jdl@gondor.apana.org.au>
- <20250110010313.1471063-1-dhowells@redhat.com>
- <20250110010313.1471063-3-dhowells@redhat.com>
- <1486113.1736505567@warthog.procyon.org.uk>
+	s=arc-20240116; t=1736507403; c=relaxed/simple;
+	bh=fYBMx6/W+Y63QdmCsvCX4sRxROZreOBO/jOOtxkMZ8c=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=r7PR+fi/nxCHqbe0ETdnkBhd2Wq4L5xBPxXXCRRVspFdm4gMwjOgxoLaHXwRXaRh+YM9gcEkGBIjzmsopochQZhV11QYGs4okItqVKqILxbDv5zdXIlL/GplRaRFxu0h/L2bF2fF2B3wQbFopKDMPabSGskFn3CtSjh8WTRtWE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OHeCkiun; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736507400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nD5UCcIZbhJA8p0YUT2WLXyXLAGi/VYDZnjWOeOQtro=;
+	b=OHeCkiunQA+72Xur5FtO8xcGuc3hYM5zB1GA7rlJesXWV1j75uREB/BHuV5pkeI+XjQPaB
+	sADOTmck2jxYTYqwH1YZSRD/yp0FY1gb84n+wB+/R0/j37dvfPMruKDztlAKFIMT/hdcEL
+	O2Ihcxg4BAkvzr+SAkrDXOd7NR98gNk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-pY4G9-5mOHG6UBaCweusXQ-1; Fri,
+ 10 Jan 2025 06:09:57 -0500
+X-MC-Unique: pY4G9-5mOHG6UBaCweusXQ-1
+X-Mimecast-MFC-AGG-ID: pY4G9-5mOHG6UBaCweusXQ
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4AE4C195605B;
+	Fri, 10 Jan 2025 11:09:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.12])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 09D6619560AB;
+	Fri, 10 Jan 2025 11:09:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Z4D2uC-kcSzQJS-H@gondor.apana.org.au>
+References: <Z4D2uC-kcSzQJS-H@gondor.apana.org.au> <Z4Ds9NBiXUti-idl@gondor.apana.org.au> <20250110010313.1471063-1-dhowells@redhat.com> <20250110010313.1471063-3-dhowells@redhat.com> <1485676.1736504798@warthog.procyon.org.uk>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: dhowells@redhat.com, Chuck Lever <chuck.lever@oracle.com>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
+    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/8] crypto/krb5: Provide Kerberos 5 crypto through AEAD API
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1486113.1736505567@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1488633.1736507389.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 10 Jan 2025 11:09:49 +0000
+Message-ID: <1488634.1736507389@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Jan 10, 2025 at 10:39:27AM +0000, David Howells wrote:
->
-> Is it?  That's entirely unclear.  The algorithm should deal with inserting the
-> checksum in the appropriate place.  The caller should not need to know about
-> that or where the checksum is or about extra bits of metadata that may need to
-> be inserted (as I think the extra gssapi layer does for sunrpc).
+Herbert Xu <herbert@gondor.apana.org.au> wrote:
 
-The AEAD interface does not dictate where the authentication
-tag is.  Most algorithms put it at the end, but it really could
-be anywhere.
+> On Fri, Jan 10, 2025 at 10:26:38AM +0000, David Howells wrote:
+> >
+> > However the point of having a library is to abstract those details fro=
+m the
+> > callers.  You wanted me to rewrite the library as AEAD algorithms, whi=
+ch I
+> > have done as far as I can.  This makes the object for each kerberos en=
+ctype
+> > look the same from the PoV of the clients.
+> =
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> I think there is some misunderstanding here.  For a library outside
+> of the Crypto API you can do whatever you want.
+> =
+
+> I only suggested AEAD because I thought you wanted to bring this within
+> the Crypto API.
+
+Not precisely.  What I (and Chuck when I discussed it with him) were think=
+ing
+is that the kerberos crypto stuff probably belongs in the crypto/ *directo=
+ry*
+rather than in the net/ directory - but not necessarily as part of the cry=
+pto
+API.  It mediates use of the crypto API on the part of its users (probably
+just sunrpc and rxrpc's rxgk).
+
+That said, I kind of like the implementation of the pure crypto part as AE=
+AD
+crypto algorithms as it provides a number of advantages:
+
+ (1) The client can be given a single AEAD object to use for each usage an=
+d
+     call the encrypt and decrypt on that directly, no matter what enctype=
+ or
+     mode of operation it is doing.
+
+     Of course, it's not quite so simple that I can just share the code fo=
+r
+     encrypt-mode and checksum-mode at the client level (eg. rxgk).  In th=
+e
+     former, some metadata is placed in the message; in the latter it's ju=
+st
+     added into the hash.
+
+ (2) The AEAD object looks after inserting the checksum into the right pla=
+ce
+     for the enctype, which means the client doesn't have to do that and c=
+ould
+     therefore more easily asynchronise it through the crypto API.
+
+ (3) Since these do just the crypto and not the laying out, it may be feas=
+ible
+     to substitute the AES2 encrypt-mode kerberos AEAD driver with an
+     authenc() AEAD object.
+
+ (4) The possibility exists of providing optimised drivers to directly
+     substitute the kerberos AEAD algorithms.
+
+David
+
 
