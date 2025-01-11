@@ -1,163 +1,259 @@
-Return-Path: <linux-fsdevel+bounces-38946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56C5A0A2D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 11:33:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59ECA0A396
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 13:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7FF3AA414
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 10:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D6A7A1DA1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 12:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22804191489;
-	Sat, 11 Jan 2025 10:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6446D1946A1;
+	Sat, 11 Jan 2025 12:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAZlJk+r"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YhEHnU+D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73CB24B229;
-	Sat, 11 Jan 2025 10:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB11BA4A;
+	Sat, 11 Jan 2025 12:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736591613; cv=none; b=MIjtzEQLNrQIpvpXuTbFRric9pTMSni7NeMtJ2u3HPvmlfgu2ImR79U8yPkJA0il/rUNlmFJu9zrqS8JehuA7OTXEW5kDAI+JDgeYzop4DhMZfo2vrs7EOAYfhlmZVt7msNGNx9cwLT/m5cK10zEvN3udBXIhiTR1ahgqWVcDbc=
+	t=1736598301; cv=none; b=R3dHXfcUHpUvRi74i26QGiXTHPWpYiUdgGYF7iH6gjFxLlmQJJV0fAfayfEfoV5zU/SEVq5vGDnPDb8fp33fuvmdG0AZkBpeugHpo/hdxBewVXaXEzSJvp2NyFkGDp+GhSJqAqRK7Ff4XCYoICHISJxylqDjsY8hQ+YBncBESDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736591613; c=relaxed/simple;
-	bh=+44fMNQLZujGybGNU9OLOAvGz6NoUNQ8Y+J6pnI1Jig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fus8SACZq0AsKzZdNBm1WSD+/s7EE4qLGXo8fLtCmAcyrFaH4FzwMlrebh4lbP/nn96bd0XxUwRPvUx896t8OaAuIHJKd8YsfIjISHS2ys2EA2VCZzyvSRe57T2yGYhvoYuXeooybQs7Fd6vx6Y8q3+cNv8IJn3+71BVQO2KXsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAZlJk+r; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3cf094768so4914161a12.0;
-        Sat, 11 Jan 2025 02:33:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736591609; x=1737196409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W32qY0/4Le8cLL/pnhpEJJYyJqJo4K3dmqNXFMZJ4ws=;
-        b=TAZlJk+rtlE5eUq4J3Yy1ShB7IW1OHTWSLh1fSy/pDXZ3jZPyjzXtzWjP+WQ5I1OsL
-         3tMrccPItjDnTjhpthn6eslfrLs2+B/HxmiJr0KYyOy8ISJcnRtvlxfYYx1DTMHOBnAP
-         61w/WJM3zHhQKpb1+YVmkTRHNPJKAK6e9hICFg7tPWXJ9beuUSork/ZULJF2GwrU30mH
-         DkgLWRyZk9iV5Z/uxi3QPDMG+8bqZ4a/VgWSjO0BwNP1VHkJM/DkE4oqucLTqqCZQr1U
-         oXIKMPjrq8XCchcgtvnOVvDyMlbwGfb6zV0HxANEiOHVXBoHlJeC3p60qxav4/mYS2UT
-         bZ7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736591609; x=1737196409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W32qY0/4Le8cLL/pnhpEJJYyJqJo4K3dmqNXFMZJ4ws=;
-        b=XC6tHBirdUTpUu+fNpnxFH2KqEOzlOItol5lds3kCB3Xw9cxFezMjWTQLrtANanx/B
-         m0U9rKwv+nH/nURecO2ECzparESW4ScxEMIuNuFk9NecVc4x5ixw40MdyTvmifYEtFza
-         7ZXIc6VEh5kgEt9GcBImCr8+xVW8yojcRFwDh9/rvRxHx0fJcGThJAeQJPwnDEZBGOgn
-         FHU9/MLmpbxtzI0Z0r4Ng/OvmNu0KArm0ERj3nHv7AZQwDzYWDx41UQhH7Xi4LqUgAX5
-         MGOBmjheiEAOajNs9uMpfl3aKTelt97RE0URywdcvavSG1wsyeIIFvAFlcmXCCcMUZWG
-         KU/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXjhzE9R+jIkK181jspfO63A2nYxcGND1cHhh2c73klrCXO9VUM7o/FyJcaLKaQ5MlsMgy93S6Ra/a0@vger.kernel.org, AJvYcCXyLrdgjCDeCyjOdE+eopKRz3Z3eVmuDFpkUBVQR3+jlm/ijD+ged/aLoWh9kW+/sGGDM9IZRB8IURTmYGf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7kd7/hFKZMcIn0I54YqLK/Ter1JYxP5k4Fslzd5AiR2bnI1aU
-	1/tsYBT18H/jL/SWGIEi5sHkn8D3m7ay9Y7ki05lm5VfiVOuE3y5vjfN32rDZdSS7VcHUcxV0FK
-	ffrFZsvyfR4PBMvA0VpfntKNGpR5BtEk5
-X-Gm-Gg: ASbGnctfXXZok4JHZDzoNCEG8nwIkFO4N5pdeUwfRCrgrDIY6LBROnr+btUQtBtgAwW
-	k7DYDrv4SKMzRbrS/SpBRB7t1YUPmeFAfkLFWTw==
-X-Google-Smtp-Source: AGHT+IEwHZwI+zAl6oBIMKOgDfa5fIg4UVWhCs0XRjRBTFyJvCP2F/JhoKYw5tU9GM6FfUwIac5IXyEC+ZcjMvE3ZfU=
-X-Received: by 2002:a05:6402:26d2:b0:5d2:73b0:81ef with SMTP id
- 4fb4d7f45d1cf-5d972e4cc04mr12407698a12.22.1736591609243; Sat, 11 Jan 2025
- 02:33:29 -0800 (PST)
+	s=arc-20240116; t=1736598301; c=relaxed/simple;
+	bh=QC0tsVxw1Vrc3UHfBFtZ8WSU48G7CiyQT5R64hxeu8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcSCY2Xf+AZgYQaLd+7ox1aun0e8SqO1hthq8yVoVsh7ABWgyi+e2d21LhED1BSH094RrImy/PE/3CcpBCQpFrUTz8KG+ePeqIOYaqjLO4VE5D+6kUPadohLTNFoTVl1OLNHjuUxYmzG4zLP5Fh+o2GNAzbFsx1CnR6m1q9bHmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YhEHnU+D; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736598299; x=1768134299;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QC0tsVxw1Vrc3UHfBFtZ8WSU48G7CiyQT5R64hxeu8g=;
+  b=YhEHnU+DyhVHI0G9LT7KlrEgrzD+i+75iO+YhMdv352aI5gRgQdKK5Kr
+   UHtY/BhrWDkdYiOqJIn6jjPe1puwyyxLVpdsyqe5kJezUDxMh1tNujY3I
+   H+9CcJGm+pu69YDx8j1TX8xeVn6SrZJmfVLfdZ2yrmBvKPENhxOVIBNP1
+   gO33kd490lTSD4G8rfrNFWXzgTEr3TD0spUZT0U2/IDjt3g+5raBcQk20
+   Ii0qwaf0EsQ873JlCU++BvC8zF1TazdGBjItGOiDd36iQJd9FFKxgl0+y
+   mlYgPJPSuwwvmp3tEWzN6m3O6grIhX7IL0U4/L36SHDBnyRIXcNupbGT2
+   A==;
+X-CSE-ConnectionGUID: qP6sm4GgQEaHGvF48yUdrw==
+X-CSE-MsgGUID: 9rz4oZQJQXCx5hp2QmInRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11312"; a="36568759"
+X-IronPort-AV: E=Sophos;i="6.12,307,1728975600"; 
+   d="scan'208";a="36568759"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2025 04:24:59 -0800
+X-CSE-ConnectionGUID: hEWcBoU8Sxe7LxTjjy17eA==
+X-CSE-MsgGUID: sAC3gbaPTLS0G6Yg8p6oKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="127260896"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Jan 2025 04:24:56 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tWaXu-000Kcr-09;
+	Sat, 11 Jan 2025 12:24:54 +0000
+Date: Sat, 11 Jan 2025 20:24:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Charles Han <hanchunchao@inspur.com>, kees@kernel.org,
+	joel.granados@kernel.org, logang@deltatee.com, mcgrof@kernel.org,
+	yzaikin@google.com, gregkh@linuxfoundation.org,
+	brendan.higgins@linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Charles Han <hanchunchao@inspur.com>
+Subject: Re: [PATCH] kernel/sysctl-test: Fix potential null dereference in
+ sysctl-test
+Message-ID: <202501112024.fU1FgDDE-lkp@intel.com>
+References: <20250110100748.63470-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
-In-Reply-To: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 11 Jan 2025 11:33:18 +0100
-X-Gm-Features: AbW1kvaw0h6MkSPJbyD4xISUkZtRHC50WlhlvMXvjMcF31YArRsD-KoZTnPTARY
-Message-ID: <CAOQ4uxieqyB9oVAoEL+CG-J-LsWVN0GEke+J=pTad4+D+OrBxA@mail.gmail.com>
-Subject: Re: Spooling large metadata updates / Proposal for a new API/feature
- in the Linux Kernel (VFS/Filesystems):
-To: "Artem S. Tashkinov" <aros@gmx.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs <linux-xfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250110100748.63470-1-hanchunchao@inspur.com>
 
-On Sat, Jan 11, 2025 at 10:18=E2=80=AFAM Artem S. Tashkinov <aros@gmx.com> =
-wrote:
->
-> Hello,
->
-> I had this idea on 2021-11-07, then I thought it was wrong/stupid, now
-> I've asked AI and it said it was actually not bad, so I'm bringing it
-> forward now:
->
-> Imagine the following scenarios:
->
->   * You need to delete tens of thousands of files.
->   * You need to change the permissions, ownership, or security context
-> (chmod, chown, chcon) for tens of thousands of files.
->   * You need to update timestamps for tens of thousands of files.
->
-> All these operations are currently relatively slow because they are
-> executed sequentially, generating significant I/O overhead.
->
-> What if these operations could be spooled and performed as a single
-> transaction? By bundling metadata updates into one atomic operation,
+Hi Charles,
 
-atomicity is not implied from the use case you described.
-IOW, the use case should not care in how many sub-transactions
-the changes are executed.
+kernel test robot noticed the following build warnings:
 
-> such tasks could become near-instant or significantly faster. This would
-> also reduce the number of writes, leading to less wear and tear on
-> storage devices.
->
-> Does this idea make sense? If it already exists, or if there=E2=80=99s a =
-reason
-> it wouldn=E2=80=99t work, please let me know.
+[auto build test WARNING on linus/master]
+[also build test WARNING on mcgrof/sysctl-next sysctl/sysctl-next v6.13-rc6 next-20250110]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes it is already how journaled filesystems work, but userspace can only re=
-quest
-to commit the current transaction (a.k.a fsync), so transactions can
-be committed
-too frequently or at inefficient manner for the workload (e.g. rm -rf).
+url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Han/kernel-sysctl-test-Fix-potential-null-dereference-in-sysctl-test/20250110-181004
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250110100748.63470-1-hanchunchao%40inspur.com
+patch subject: [PATCH] kernel/sysctl-test: Fix potential null dereference in sysctl-test
+config: i386-randconfig-063-20250111 (https://download.01.org/0day-ci/archive/20250111/202501112024.fU1FgDDE-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250111/202501112024.fU1FgDDE-lkp@intel.com/reproduce)
 
-There was a big effort IIRC around v6.1 to improve scalability of rm
--rf workload
-in xfs which led to a long series of regressions and fixes cycles.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501112024.fU1FgDDE-lkp@intel.com/
 
-I think that an API for rm -rf is interesting because:
-- It is a *very* common use case, which is often very inefficient
-- filesystems already have "orphan" lists to deal with deferred work
-on deleted inodes
+sparse warnings: (new ones prefixed by >>)
+>> kernel/sysctl-test.c:38:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const *value @@     got void [noderef] __user *const __ptr @@
+   kernel/sysctl-test.c:38:9: sparse:     expected void const *value
+   kernel/sysctl-test.c:38:9: sparse:     got void [noderef] __user *const __ptr
+   kernel/sysctl-test.c:47:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:47:9: sparse:     expected void *
+   kernel/sysctl-test.c:47:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:47:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:47:9: sparse:     expected void *
+   kernel/sysctl-test.c:47:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:56:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:56:9: sparse:     expected void *
+   kernel/sysctl-test.c:56:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:56:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:56:9: sparse:     expected void *
+   kernel/sysctl-test.c:56:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:85:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const *value @@     got void [noderef] __user *const __ptr @@
+   kernel/sysctl-test.c:85:9: sparse:     expected void const *value
+   kernel/sysctl-test.c:85:9: sparse:     got void [noderef] __user *const __ptr
+   kernel/sysctl-test.c:94:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:94:9: sparse:     expected void *
+   kernel/sysctl-test.c:94:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:94:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:94:9: sparse:     expected void *
+   kernel/sysctl-test.c:94:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:103:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:103:9: sparse:     expected void *
+   kernel/sysctl-test.c:103:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:103:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:103:9: sparse:     expected void *
+   kernel/sysctl-test.c:103:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:129:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const *value @@     got void [noderef] __user *const __ptr @@
+   kernel/sysctl-test.c:129:9: sparse:     expected void const *value
+   kernel/sysctl-test.c:129:9: sparse:     got void [noderef] __user *const __ptr
+   kernel/sysctl-test.c:136:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:136:9: sparse:     expected void *
+   kernel/sysctl-test.c:136:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:136:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:136:9: sparse:     expected void *
+   kernel/sysctl-test.c:136:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:140:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:140:9: sparse:     expected void *
+   kernel/sysctl-test.c:140:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:140:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:140:9: sparse:     expected void *
+   kernel/sysctl-test.c:140:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:164:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const *value @@     got void [noderef] __user *const __ptr @@
+   kernel/sysctl-test.c:164:9: sparse:     expected void const *value
+   kernel/sysctl-test.c:164:9: sparse:     got void [noderef] __user *const __ptr
+   kernel/sysctl-test.c:176:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:176:9: sparse:     expected void *
+   kernel/sysctl-test.c:176:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:176:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/sysctl-test.c:176:9: sparse:     expected void *
+   kernel/sysctl-test.c:176:9: sparse:     got void [noderef] __user *buffer
+   kernel/sysctl-test.c:206:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:206:9: sparse:     expected void *
+   kernel/sysctl-test.c:206:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:206:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:206:9: sparse:     expected void *
+   kernel/sysctl-test.c:206:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:237:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:237:9: sparse:     expected void *
+   kernel/sysctl-test.c:237:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:237:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:237:9: sparse:     expected void *
+   kernel/sysctl-test.c:237:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:269:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:269:9: sparse:     expected void *
+   kernel/sysctl-test.c:269:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:269:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:269:9: sparse:     expected void *
+   kernel/sysctl-test.c:269:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:300:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:300:9: sparse:     expected void *
+   kernel/sysctl-test.c:300:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:300:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:300:9: sparse:     expected void *
+   kernel/sysctl-test.c:300:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:341:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:341:9: sparse:     expected void *
+   kernel/sysctl-test.c:341:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:341:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:341:9: sparse:     expected void *
+   kernel/sysctl-test.c:341:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:374:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:374:9: sparse:     expected void *
+   kernel/sysctl-test.c:374:9: sparse:     got char [noderef] __user *user_buffer
+   kernel/sysctl-test.c:374:9: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got char [noderef] __user *user_buffer @@
+   kernel/sysctl-test.c:374:9: sparse:     expected void *
+   kernel/sysctl-test.c:374:9: sparse:     got char [noderef] __user *user_buffer
 
-What could be done in principle:
-1. Filesystems could opt-in to implement unlink(path, AT_REMOVE_NONEMPTY_DI=
-R)
-2. This API will fail if the directory has subdirs (i_nlink !=3D 2)
-3. If the directory has only files, it can be unlinked and its inode added =
-to an
-    "orphan" list as a special "batch delete" transaction
-4. When executed, the "batch delete" transaction will iterate the
-directory entries,
-    decrement nlink of inodes, likely adding those inodes to the "orphan" l=
-ist
-5. rm -rf will iterate DFS, calling unlink(path, AT_REMOVE_NONEMPTY_DIR)
-    on leaf directories whose nlink is 2
+vim +38 kernel/sysctl-test.c
 
-Among other complications, this API does not take into account permissions =
-for
-unlinking the child inodes, based on the child inode attributes such
-as immutable
-flag or LSM security policies.
+    11	
+    12	/*
+    13	 * Test that proc_dointvec will not try to use a NULL .data field even when the
+    14	 * length is non-zero.
+    15	 */
+    16	static void sysctl_test_api_dointvec_null_tbl_data(struct kunit *test)
+    17	{
+    18		struct ctl_table null_data_table = {
+    19			.procname = "foo",
+    20			/*
+    21			 * Here we are testing that proc_dointvec behaves correctly when
+    22			 * we give it a NULL .data field. Normally this would point to a
+    23			 * piece of memory where the value would be stored.
+    24			 */
+    25			.data		= NULL,
+    26			.maxlen		= sizeof(int),
+    27			.mode		= 0644,
+    28			.proc_handler	= proc_dointvec,
+    29			.extra1		= SYSCTL_ZERO,
+    30			.extra2         = SYSCTL_ONE_HUNDRED,
+    31		};
+    32		/*
+    33		 * proc_dointvec expects a buffer in user space, so we allocate one. We
+    34		 * also need to cast it to __user so sparse doesn't get mad.
+    35		 */
+    36		void __user *buffer = (void __user *)kunit_kzalloc(test, sizeof(int),
+    37								   GFP_USER);
+  > 38		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buffer);
+    39		size_t len;
+    40		loff_t pos;
+    41	
+    42		/*
+    43		 * We don't care what the starting length is since proc_dointvec should
+    44		 * not try to read because .data is NULL.
+    45		 */
+    46		len = 1234;
+    47		KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&null_data_table,
+    48						       KUNIT_PROC_READ, buffer, &len,
+    49						       &pos));
+    50		KUNIT_EXPECT_EQ(test, 0, len);
+    51	
+    52		/*
+    53		 * See above.
+    54		 */
+    55		len = 1234;
+    56		KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&null_data_table,
+    57						       KUNIT_PROC_WRITE, buffer, &len,
+    58						       &pos));
+    59		KUNIT_EXPECT_EQ(test, 0, len);
+    60	}
+    61	
 
-This could be an interesting as TOPIC for LSFMM.
-
-Thanks,
-Amir.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
