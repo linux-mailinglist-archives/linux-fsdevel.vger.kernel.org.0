@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C8E7A0A19B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:16:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88A4A0A1A0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BBF3ABBE2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1AD16CB2E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B473D1AC887;
-	Sat, 11 Jan 2025 07:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6FE1AF0AE;
+	Sat, 11 Jan 2025 07:12:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9071AA7B9;
-	Sat, 11 Jan 2025 07:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC4E1ADFF1;
+	Sat, 11 Jan 2025 07:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736579574; cv=none; b=sw2R+HgdidLYWoeALWgh1MrcVL0+5tAociFhUsIsX22ottV86jkD44BTXOP54WPNIRdu3E2XEbjd+Iu+CpgJEezu7nsvDtmpxobxiorgdhWOcKQzKkZA6OvdOn5P1QnMRfQvQ7uhuousXJO5RITXTbKj6rzFuE+nVp3LqaHmItA=
+	t=1736579578; cv=none; b=FGRrfdoc2U6m1TYihzAW7oIZ/x6gjovbv27a53zKk3YSgWk6UoHSkUGckXWYqaKcwqc8Wv5zw2LcklUNLxoJCUm9ViBVsCTBguFVqhRJYbfdF0tAJA3y/VkklI6ILkJ6owQesNNx7lBzl58mR1LRzUo71hKSSsFzoFu2nsOVYYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736579574; c=relaxed/simple;
-	bh=fAeSG8GX2vLrPZYjKh64LRtiL1F/nvMSmcxJk9KJfNI=;
+	s=arc-20240116; t=1736579578; c=relaxed/simple;
+	bh=UvMETLqd18cly1CwmlVeihTEzj1etCtFaA5pu9z8AyE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jUWi9I2gM+gtek60E1uKzbdvy0QKj4h+H7qRZqNpLBjiR1hL23fyNyAlEnQhcZYHXy/c3PJFm2C1wZXNb2Wr1sSuBWRMkwzyqGbSN0TbdCgrcV+wSnsCRormdc2psOmLseM7nrT0W0jw0gpNMep/14F8Y7Z9WI0hr4QL4IZp3Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	 MIME-Version:Content-Type; b=sIDvrW1KCj5mGdKCN3RiZikZ+T+nkySG/AYsn05OPXPIPphauwYTsoCroajuY51HLTDR4BmFJptSQrlX/ppGdQAatMuChqbW/gGfDWPviR3oioo8gRF45s5gnplHH1/DiGcc5jB7Vvglq3BK5o8m8kIabr+hqk+0RYvPIqiWUTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YVV712NdxzrRtl;
-	Sat, 11 Jan 2025 15:11:09 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4YVV5S14prz1V4Py;
+	Sat, 11 Jan 2025 15:09:48 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 522901401F3;
-	Sat, 11 Jan 2025 15:12:50 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id BEA0A180043;
+	Sat, 11 Jan 2025 15:12:53 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 11 Jan
- 2025 15:12:46 +0800
+ 2025 15:12:50 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
 	<joel.granados@kernel.org>
@@ -64,9 +64,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v5 -next 09/16] fs: fs-writeback: move sysctl to fs/fs-writeback.c
-Date: Sat, 11 Jan 2025 15:07:44 +0800
-Message-ID: <20250111070751.2588654-10-yukaixiong@huawei.com>
+Subject: [PATCH v5 -next 10/16] fs: drop_caches: move sysctl to fs/drop_caches.c
+Date: Sat, 11 Jan 2025 15:07:45 +0800
+Message-ID: <20250111070751.2588654-11-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250111070751.2588654-1-yukaixiong@huawei.com>
 References: <20250111070751.2588654-1-yukaixiong@huawei.com>
@@ -81,118 +81,108 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-The dirtytime_expire_interval belongs to fs/fs-writeback.c, move it to
-fs/fs-writeback.c from /kernel/sysctl.c. And remove the useless extern
-variable declaration and the function declaration from
-include/linux/writeback.h
+The sysctl_drop_caches to fs/drop_caches.c, move it to
+fs/drop_caches.c from /kernel/sysctl.c. And remove the
+useless extern variable declaration from include/linux/mm.h
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
 Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
 v4:
- - const qualify struct ctl_table vm_fs_writeback_table
+ - const qualify struct ctl_table drop_caches_table
 v3:
- - change dirtytime_expire_interval to static type
  - change the title
 ---
 ---
- fs/fs-writeback.c         | 30 +++++++++++++++++++++---------
- include/linux/writeback.h |  4 ----
- kernel/sysctl.c           |  8 --------
- 3 files changed, 21 insertions(+), 21 deletions(-)
+ fs/drop_caches.c   | 23 +++++++++++++++++++++--
+ include/linux/mm.h |  6 ------
+ kernel/sysctl.c    |  9 ---------
+ 3 files changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 5980ac24c7a4..4f907e8dbfff 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -65,7 +65,7 @@ struct wb_writeback_work {
-  * timestamps written to disk after 12 hours, but in the worst case a
-  * few inodes might not their timestamps updated for 24 hours.
-  */
--unsigned int dirtytime_expire_interval = 12 * 60 * 60;
-+static unsigned int dirtytime_expire_interval = 12 * 60 * 60;
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d45ef541d848..019a8b4eaaf9 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -14,7 +14,7 @@
+ #include "internal.h"
  
- static inline struct inode *wb_inode(struct list_head *head)
+ /* A global variable is a bit ugly, but it keeps the code simple */
+-int sysctl_drop_caches;
++static int sysctl_drop_caches;
+ 
+ static void drop_pagecache_sb(struct super_block *sb, void *unused)
  {
-@@ -2435,14 +2435,7 @@ static void wakeup_dirtytime_writeback(struct work_struct *w)
- 	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
+@@ -48,7 +48,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 	iput(toput_inode);
  }
  
--static int __init start_dirtytime_writeback(void)
--{
--	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
--	return 0;
--}
--__initcall(start_dirtytime_writeback);
--
--int dirtytime_interval_handler(const struct ctl_table *table, int write,
-+static int dirtytime_interval_handler(const struct ctl_table *table, int write,
- 			       void *buffer, size_t *lenp, loff_t *ppos)
+-int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
++static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+ 		void *buffer, size_t *length, loff_t *ppos)
  {
  	int ret;
-@@ -2453,6 +2446,25 @@ int dirtytime_interval_handler(const struct ctl_table *table, int write,
- 	return ret;
+@@ -77,3 +77,22 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+ 	}
+ 	return 0;
  }
- 
-+static const struct ctl_table vm_fs_writeback_table[] = {
++
++static const struct ctl_table drop_caches_table[] = {
 +	{
-+		.procname	= "dirtytime_expire_seconds",
-+		.data		= &dirtytime_expire_interval,
-+		.maxlen		= sizeof(dirtytime_expire_interval),
-+		.mode		= 0644,
-+		.proc_handler	= dirtytime_interval_handler,
-+		.extra1		= SYSCTL_ZERO,
++		.procname	= "drop_caches",
++		.data		= &sysctl_drop_caches,
++		.maxlen		= sizeof(int),
++		.mode		= 0200,
++		.proc_handler	= drop_caches_sysctl_handler,
++		.extra1		= SYSCTL_ONE,
++		.extra2		= SYSCTL_FOUR,
 +	},
 +};
 +
-+static int __init start_dirtytime_writeback(void)
++static int __init init_vm_drop_caches_sysctls(void)
 +{
-+	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
-+	register_sysctl_init("vm", vm_fs_writeback_table);
++	register_sysctl_init("vm", drop_caches_table);
 +	return 0;
 +}
-+__initcall(start_dirtytime_writeback);
-+
- /**
-  * __mark_inode_dirty -	internal function to mark an inode dirty
-  *
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index d11b903c2edb..caf4f0b12235 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -327,12 +327,8 @@ extern struct wb_domain global_wb_domain;
- /* These are exported to sysctl. */
- extern unsigned int dirty_writeback_interval;
- extern unsigned int dirty_expire_interval;
--extern unsigned int dirtytime_expire_interval;
- extern int laptop_mode;
++fs_initcall(init_vm_drop_caches_sysctls);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 98654abef3b8..3ed6f2600abd 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3873,12 +3873,6 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
  
--int dirtytime_interval_handler(const struct ctl_table *table, int write,
--		void *buffer, size_t *lenp, loff_t *ppos);
+ extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
+ 
+-#ifdef CONFIG_SYSCTL
+-extern int sysctl_drop_caches;
+-int drop_caches_sysctl_handler(const struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-#endif
 -
- void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty);
- unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
- unsigned long cgwb_calc_thresh(struct bdi_writeback *wb);
+ void drop_slab(void);
+ 
+ #ifndef CONFIG_MMU
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 97f9abffff0f..c5527f59e3f2 100644
+index c5527f59e3f2..7fb77cbcc24d 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2014,14 +2014,6 @@ static struct ctl_table kern_table[] = {
+@@ -2014,15 +2014,6 @@ static struct ctl_table kern_table[] = {
  };
  
  static struct ctl_table vm_table[] = {
 -	{
--		.procname	= "dirtytime_expire_seconds",
--		.data		= &dirtytime_expire_interval,
--		.maxlen		= sizeof(dirtytime_expire_interval),
--		.mode		= 0644,
--		.proc_handler	= dirtytime_interval_handler,
--		.extra1		= SYSCTL_ZERO,
+-		.procname	= "drop_caches",
+-		.data		= &sysctl_drop_caches,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0200,
+-		.proc_handler	= drop_caches_sysctl_handler,
+-		.extra1		= SYSCTL_ONE,
+-		.extra2		= SYSCTL_FOUR,
 -	},
  	{
- 		.procname	= "drop_caches",
- 		.data		= &sysctl_drop_caches,
+ 		.procname	= "vfs_cache_pressure",
+ 		.data		= &sysctl_vfs_cache_pressure,
 -- 
 2.34.1
 
