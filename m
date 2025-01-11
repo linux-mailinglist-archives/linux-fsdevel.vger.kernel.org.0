@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E03A0A1A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:16:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DB2A0A198
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 583D516CE5B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:16:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C451A7A5B4D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CDB18871A;
-	Sat, 11 Jan 2025 07:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A085185B5F;
+	Sat, 11 Jan 2025 07:12:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9334917E45B;
-	Sat, 11 Jan 2025 07:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C5E16DEB3;
+	Sat, 11 Jan 2025 07:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736579579; cv=none; b=TQ0w12muusOljeYt1LgUSDfZW8QkZ9wB65B6B05EDKqfGiAssY8sGCIVdhaDH4fm8BoHndxhLoag2IvBQhRZMUJcQDhVL/bgz//QJ0FBL0aol+DAV6YtGaNAZU3ty6MULo0UD3+tZbvGHlI2z0KQFkP27EqwV8V77WEJiW/yJt0=
+	t=1736579568; cv=none; b=F6qLiCiItvCE8m7PqF0WQJJws4/1CQPvG4MsIaYcAI5sO1mbwFZ4gW0KF8+zeX/SDwgmH2xBspEVgU8jzDqdSpwHKUhplVyExEG+lbXsTwKENFTBhNHss+qf5BEmgXkNW3404IimZQq55TGUz+slNl5n8e8O4mO7TYz3BFMsvOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736579579; c=relaxed/simple;
-	bh=IA6CmX5oWojSIskX+VwxAGEibPSMT7Z9BkYdoAtF/Y0=;
+	s=arc-20240116; t=1736579568; c=relaxed/simple;
+	bh=M3xZTu6EzZyd6n2YrYUR5sdHROdsWcbu6nDRtPtIFM8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FU+yLkbwGtCaqIBLEJzi5zQVLV5RM/UY7DzmNXfUfX3JwNTb6aC8U8b0gKTjDYh0IRONAHF+6AOfHXDRITK4FhNlGEeYbU2wFPLrTmpjoSHVegKq5oYcJ8K61ANi0wGoZVQ1ozwvSNJl2uhWYZ6lkd/paNuu3NcHgFp/723iYlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=VBBLTP6kPJQluzOfL5YbmAfhwwoJH6Y8+gg5PTP603FUlopG/kJf8BjV9JOgteGB0ixCybLmrh0rxT9qte4XwNwq6UXOsz9ezVMX5dTCOJXdY8JZrKLzJTZ8xzyuM11FGG5jv9Wdi+W/ZI+EckRATaSPkRmsWuT9z3pulyjcTMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YVV4Q1yR4z11Nrw;
-	Sat, 11 Jan 2025 15:08:54 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YVV692Jpyz22ktr;
+	Sat, 11 Jan 2025 15:10:25 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03F68180064;
-	Sat, 11 Jan 2025 15:12:40 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C5F81402DE;
+	Sat, 11 Jan 2025 15:12:43 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 11 Jan
- 2025 15:12:36 +0800
+ 2025 15:12:39 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
 	<joel.granados@kernel.org>
@@ -64,9 +64,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v5 -next 06/16] mm: mmap: move sysctl to mm/mmap.c
-Date: Sat, 11 Jan 2025 15:07:41 +0800
-Message-ID: <20250111070751.2588654-7-yukaixiong@huawei.com>
+Subject: [PATCH v5 -next 07/16] security: min_addr: move sysctl to security/min_addr.c
+Date: Sat, 11 Jan 2025 15:07:42 +0800
+Message-ID: <20250111070751.2588654-8-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250111070751.2588654-1-yukaixiong@huawei.com>
 References: <20250111070751.2588654-1-yukaixiong@huawei.com>
@@ -81,182 +81,78 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-This moves all mmap related sysctls to mm/mmap.c, as part of the
-kernel/sysctl.c cleaning, also move the variable declaration from
-kernel/sysctl.c into mm/mmap.c.
+The dac_mmap_min_addr belongs to min_addr.c, move it to
+min_addr.c from /kernel/sysctl.c. In the previous Linux kernel
+boot process, sysctl_init_bases needs to be executed before
+init_mmap_min_addr, So, register_sysctl_init should be executed
+before update_mmap_min_addr in init_mmap_min_addr. And according
+to the compilation condition in security/Makefile:
+
+      obj-$(CONFIG_MMU)            += min_addr.o
+
+if CONFIG_MMU is not defined, min_addr.c would not be included in the
+compilation process. So, drop the CONFIG_MMU check.
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
 ---
-v5:
- - add Reviewed-by: Lorenzo Stoakes
 v4:
- - const qualify struct ctl_table mmap_table
+ - const qualify struct ctl_table min_addr_sysctl_table
 v3:
  - change the title
 v2:
- - fix sysctl_max_map_count undeclared issue in mm/nommu.c
+ - update the changelog to explain why drop CONFIG_MMU check.
 ---
 ---
- kernel/sysctl.c | 50 +--------------------------------------------
- mm/mmap.c       | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+), 49 deletions(-)
+ kernel/sysctl.c     |  9 ---------
+ security/min_addr.c | 11 +++++++++++
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index aea3482106e0..9c245898f535 100644
+index 9c245898f535..62a58e417c40 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -127,12 +127,6 @@ enum sysctl_writes_mode {
- 
- static enum sysctl_writes_mode sysctl_writes_strict = SYSCTL_WRITES_STRICT;
- #endif /* CONFIG_PROC_SYSCTL */
--
--#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
--    defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
--int sysctl_legacy_va_layout;
--#endif
--
- #endif /* CONFIG_SYSCTL */
- 
- /*
-@@ -2037,16 +2031,7 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_FOUR,
- 	},
--#ifdef CONFIG_MMU
--	{
--		.procname	= "max_map_count",
--		.data		= &sysctl_max_map_count,
--		.maxlen		= sizeof(sysctl_max_map_count),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--	},
--#else
-+#ifndef CONFIG_MMU
- 	{
- 		.procname	= "nr_trim_pages",
- 		.data		= &sysctl_nr_trim_pages,
-@@ -2064,17 +2049,6 @@ static struct ctl_table vm_table[] = {
+@@ -2049,15 +2049,6 @@ static struct ctl_table vm_table[] = {
  		.proc_handler	= proc_dointvec_minmax,
  		.extra1		= SYSCTL_ZERO,
  	},
--#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
--    defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+-#ifdef CONFIG_MMU
 -	{
--		.procname	= "legacy_va_layout",
--		.data		= &sysctl_legacy_va_layout,
--		.maxlen		= sizeof(sysctl_legacy_va_layout),
+-		.procname	= "mmap_min_addr",
+-		.data		= &dac_mmap_min_addr,
+-		.maxlen		= sizeof(unsigned long),
 -		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
+-		.proc_handler	= mmap_min_addr_handler,
 -	},
 -#endif
- #ifdef CONFIG_MMU
+ #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+    (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
  	{
- 		.procname	= "mmap_min_addr",
-@@ -2100,28 +2074,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 	},
- #endif
--#ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
--	{
--		.procname	= "mmap_rnd_bits",
--		.data		= &mmap_rnd_bits,
--		.maxlen		= sizeof(mmap_rnd_bits),
--		.mode		= 0600,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= (void *)&mmap_rnd_bits_min,
--		.extra2		= (void *)&mmap_rnd_bits_max,
--	},
--#endif
--#ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
--	{
--		.procname	= "mmap_rnd_compat_bits",
--		.data		= &mmap_rnd_compat_bits,
--		.maxlen		= sizeof(mmap_rnd_compat_bits),
--		.mode		= 0600,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= (void *)&mmap_rnd_compat_bits_min,
--		.extra2		= (void *)&mmap_rnd_compat_bits_max,
--	},
--#endif
- };
- 
- int __init sysctl_init_bases(void)
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 7aa36216ecc0..9b9d7ded839e 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1544,6 +1544,57 @@ struct vm_area_struct *_install_special_mapping(
- 					&special_mapping_vmops);
+diff --git a/security/min_addr.c b/security/min_addr.c
+index 0ce267c041ab..df1bc643d886 100644
+--- a/security/min_addr.c
++++ b/security/min_addr.c
+@@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *table, int write,
+ 	return ret;
  }
  
-+#ifdef CONFIG_SYSCTL
-+#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
-+		defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
-+int sysctl_legacy_va_layout;
-+#endif
-+
-+static const struct ctl_table mmap_table[] = {
-+		{
-+				.procname       = "max_map_count",
-+				.data           = &sysctl_max_map_count,
-+				.maxlen         = sizeof(sysctl_max_map_count),
-+				.mode           = 0644,
-+				.proc_handler   = proc_dointvec_minmax,
-+				.extra1         = SYSCTL_ZERO,
-+		},
-+#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
-+		defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
-+		{
-+				.procname       = "legacy_va_layout",
-+				.data           = &sysctl_legacy_va_layout,
-+				.maxlen         = sizeof(sysctl_legacy_va_layout),
-+				.mode           = 0644,
-+				.proc_handler   = proc_dointvec_minmax,
-+				.extra1         = SYSCTL_ZERO,
-+		},
-+#endif
-+#ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
-+		{
-+				.procname       = "mmap_rnd_bits",
-+				.data           = &mmap_rnd_bits,
-+				.maxlen         = sizeof(mmap_rnd_bits),
-+				.mode           = 0600,
-+				.proc_handler   = proc_dointvec_minmax,
-+				.extra1         = (void *)&mmap_rnd_bits_min,
-+				.extra2         = (void *)&mmap_rnd_bits_max,
-+		},
-+#endif
-+#ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
-+		{
-+				.procname       = "mmap_rnd_compat_bits",
-+				.data           = &mmap_rnd_compat_bits,
-+				.maxlen         = sizeof(mmap_rnd_compat_bits),
-+				.mode           = 0600,
-+				.proc_handler   = proc_dointvec_minmax,
-+				.extra1         = (void *)&mmap_rnd_compat_bits_min,
-+				.extra2         = (void *)&mmap_rnd_compat_bits_max,
-+		},
-+#endif
++static const struct ctl_table min_addr_sysctl_table[] = {
++	{
++		.procname	= "mmap_min_addr",
++		.data		= &dac_mmap_min_addr,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= mmap_min_addr_handler,
++	},
 +};
-+#endif /* CONFIG_SYSCTL */
 +
- /*
-  * initialise the percpu counter for VM
-  */
-@@ -1553,6 +1604,9 @@ void __init mmap_init(void)
+ static int __init init_mmap_min_addr(void)
+ {
++	register_sysctl_init("vm", min_addr_sysctl_table);
+ 	update_mmap_min_addr();
  
- 	ret = percpu_counter_init(&vm_committed_as, 0, GFP_KERNEL);
- 	VM_BUG_ON(ret);
-+#ifdef CONFIG_SYSCTL
-+	register_sysctl_init("vm", mmap_table);
-+#endif
- }
- 
- /*
+ 	return 0;
 -- 
 2.34.1
 
