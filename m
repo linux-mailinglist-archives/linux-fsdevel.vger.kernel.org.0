@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-38929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8F4A0A179
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:13:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E709A0A185
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E563AA5A0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:13:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5524B3AACC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7736518F2DF;
-	Sat, 11 Jan 2025 07:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B703192B7F;
+	Sat, 11 Jan 2025 07:12:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261DD1632F3;
-	Sat, 11 Jan 2025 07:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D629E16DEB3;
+	Sat, 11 Jan 2025 07:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736579552; cv=none; b=HIVbGgnU3v77X595XMqNjwUF56Q4K9BnEi0LWUW27UZeGN+3zXCx7G6U1zhjh56UcaJeV9tjTN5PwOW5ZE1LUNejobrbxHfN8ufbRPcU7lgAMb1RKoHRbAzYzTOqCQSzk1Xl8Jx8rHSc3J59mIPV38viuzyfZHBx5NLiO+z5aOo=
+	t=1736579562; cv=none; b=cm5X/PtnLPxUeh70b5Y1CT4qbRviaq2Q5+oajHGntUti/aygSKQiPIsvtECLfDwtcC9Ch6DmwhZ1w8Wc2XLQfPH6g3ScB0SdUKG5aVl45gEyJX2DTqSAKrh1oammV8Lcg1GH94t+87JcbnQ0pBUax+Ia4LxbY8buIwRNJIQ+S+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736579552; c=relaxed/simple;
-	bh=X9XlW3EeFhfT/GIehKECT4Vefvi6Fw5WTxTGMfsU0uY=;
+	s=arc-20240116; t=1736579562; c=relaxed/simple;
+	bh=J6d7z/kRT4HBLB6mnmq2N6zU3tbR25XClQO6XrEL+iU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CI0Dy+7bO5hytm8f8O0681Gmtuezp9bocs3hxql80uhlm4es9Hu6fSJQsyOD6On8rMJTglxWRE3ExpckfXDGeedx5qGX2H+wAjXHdVK8ltB8UQHAXjaAv9BkFPzx+TIaEl+LKhxJvHDuXMJzacrot0cHeYJED2CzdA/IAu+Jp9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	 MIME-Version:Content-Type; b=TVmyXEba4o0LBhRBFsZiyXaXCeKDzT9qUmNaBCTs1HhTl8XyDahVB8o7mNMx97uDFpFl37Db22Ej77v1ZGi5NMcTns1zRFCQcFkwVetJgEw3pkCEMoY1le6k1L0Zux9lFYQ780t9PiUF8iUNqBIssBW1t2tzggHTllmGFkqIzic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YVV6Z3mXnzrSD8;
-	Sat, 11 Jan 2025 15:10:46 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YVV516XRFz2DhnV;
+	Sat, 11 Jan 2025 15:09:25 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7F8FB180218;
-	Sat, 11 Jan 2025 15:12:27 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id E72E41A0188;
+	Sat, 11 Jan 2025 15:12:30 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 11 Jan
- 2025 15:12:23 +0800
+ 2025 15:12:27 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
 	<joel.granados@kernel.org>
@@ -64,9 +64,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
 	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v5 -next 03/16] mm: swap: move sysctl to mm/swap.c
-Date: Sat, 11 Jan 2025 15:07:38 +0800
-Message-ID: <20250111070751.2588654-4-yukaixiong@huawei.com>
+Subject: [PATCH v5 -next 04/16] mm: vmscan: move vmscan sysctls to mm/vmscan.c
+Date: Sat, 11 Jan 2025 15:07:39 +0800
+Message-ID: <20250111070751.2588654-5-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250111070751.2588654-1-yukaixiong@huawei.com>
 References: <20250111070751.2588654-1-yukaixiong@huawei.com>
@@ -81,117 +81,159 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-The page-cluster belongs to mm/swap.c, move it to mm/swap.c .
-Removes the redundant external variable declaration and unneeded
-include(linux/swap.h).
+This moves vm_swappiness and zone_reclaim_mode to mm/vmscan.c,
+as part of the kernel/sysctl.c cleaning, also moves some external
+variable declarations and function declarations from include/linux/swap.h
+into mm/internal.h.
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 Reviewed-by: Kees Cook <kees@kernel.org>
 ---
 v4:
- - const qualify struct ctl_table swap_sysctl_table
+ - const qualify struct ctl_table vmscan_sysctl_table
 v3:
  - change the title
 ---
 ---
- include/linux/mm.h |  2 --
- kernel/sysctl.c    | 10 ----------
- mm/swap.c          | 16 +++++++++++++++-
- mm/swap.h          |  1 +
- 4 files changed, 16 insertions(+), 13 deletions(-)
+ include/linux/swap.h |  9 ---------
+ kernel/sysctl.c      | 19 -------------------
+ mm/internal.h        | 10 ++++++++++
+ mm/vmscan.c          | 23 +++++++++++++++++++++++
+ 4 files changed, 33 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index b9a63a6c960f..fb00ee129f77 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -77,8 +77,6 @@ static inline void totalram_pages_add(long count)
- }
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index b13b72645db3..a98c757400fe 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -433,19 +433,10 @@ extern int vm_swappiness;
+ long remove_mapping(struct address_space *mapping, struct folio *folio);
  
- extern void * high_memory;
--extern int page_cluster;
--extern const int page_cluster_max;
+ #ifdef CONFIG_NUMA
+-extern int node_reclaim_mode;
+ extern int sysctl_min_unmapped_ratio;
+ extern int sysctl_min_slab_ratio;
+-#else
+-#define node_reclaim_mode 0
+ #endif
  
- #ifdef CONFIG_SYSCTL
- extern int sysctl_legacy_va_layout;
+-static inline bool node_reclaim_enabled(void)
+-{
+-	/* Is any node_reclaim_mode bit set? */
+-	return node_reclaim_mode & (RECLAIM_ZONE|RECLAIM_WRITE|RECLAIM_UNMAP);
+-}
+-
+ void check_move_unevictable_folios(struct folio_batch *fbatch);
+ 
+ extern void __meminit kswapd_run(int nid);
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 23c8db80da5d..ab5d94f07e53 100644
+index ab5d94f07e53..cb6ca272fe9f 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -21,7 +21,6 @@
- 
- #include <linux/module.h>
- #include <linux/mm.h>
--#include <linux/swap.h>
- #include <linux/slab.h>
- #include <linux/sysctl.h>
- #include <linux/bitmap.h>
-@@ -2044,15 +2043,6 @@ static struct ctl_table vm_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= overcommit_kbytes_handler,
+@@ -2051,15 +2051,6 @@ static struct ctl_table vm_table[] = {
+ 		.proc_handler	= dirtytime_interval_handler,
+ 		.extra1		= SYSCTL_ZERO,
  	},
 -	{
--		.procname	= "page-cluster",
--		.data		= &page_cluster,
--		.maxlen		= sizeof(int),
+-		.procname	= "swappiness",
+-		.data		= &vm_swappiness,
+-		.maxlen		= sizeof(vm_swappiness),
 -		.mode		= 0644,
 -		.proc_handler	= proc_dointvec_minmax,
 -		.extra1		= SYSCTL_ZERO,
--		.extra2		= (void *)&page_cluster_max,
+-		.extra2		= SYSCTL_TWO_HUNDRED,
 -	},
  	{
- 		.procname	= "dirtytime_expire_seconds",
- 		.data		= &dirtytime_expire_interval,
-diff --git a/mm/swap.c b/mm/swap.c
-index fc8281ef4241..b81cce146eb2 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -45,7 +45,7 @@
+ 		.procname	= "drop_caches",
+ 		.data		= &sysctl_drop_caches,
+@@ -2107,16 +2098,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 	},
+ #endif
+-#ifdef CONFIG_NUMA
+-	{
+-		.procname	= "zone_reclaim_mode",
+-		.data		= &node_reclaim_mode,
+-		.maxlen		= sizeof(node_reclaim_mode),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-	},
+-#endif
+ #ifdef CONFIG_MMU
+ 	{
+ 		.procname	= "mmap_min_addr",
+diff --git a/mm/internal.h b/mm/internal.h
+index 109ef30fee11..cdbbe4c215c0 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1097,9 +1097,13 @@ static inline void mminit_verify_zonelist(void)
+ #define NODE_RECLAIM_SUCCESS	1
  
- /* How many pages do we try to swap or page in/out together? As a power of 2 */
- int page_cluster;
--const int page_cluster_max = 31;
-+static const int page_cluster_max = 31;
+ #ifdef CONFIG_NUMA
++extern int node_reclaim_mode;
++
+ extern int node_reclaim(struct pglist_data *, gfp_t, unsigned int);
+ extern int find_next_best_node(int node, nodemask_t *used_node_mask);
+ #else
++#define node_reclaim_mode 0
++
+ static inline int node_reclaim(struct pglist_data *pgdat, gfp_t mask,
+ 				unsigned int order)
+ {
+@@ -1111,6 +1115,12 @@ static inline int find_next_best_node(int node, nodemask_t *used_node_mask)
+ }
+ #endif
  
- struct cpu_fbatches {
- 	/*
-@@ -1076,6 +1076,18 @@ void folio_batch_remove_exceptionals(struct folio_batch *fbatch)
- 	fbatch->nr = j;
++static inline bool node_reclaim_enabled(void)
++{
++	/* Is any node_reclaim_mode bit set? */
++	return node_reclaim_mode & (RECLAIM_ZONE|RECLAIM_WRITE|RECLAIM_UNMAP);
++}
++
+ /*
+  * mm/memory-failure.c
+  */
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 6d06bb40d5ad..f1183519bf41 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -7404,6 +7404,28 @@ void __meminit kswapd_stop(int nid)
+ 	pgdat_kswapd_unlock(pgdat);
  }
  
-+static const struct ctl_table swap_sysctl_table[] = {
++static const struct ctl_table vmscan_sysctl_table[] = {
 +	{
-+		.procname	= "page-cluster",
-+		.data		= &page_cluster,
-+		.maxlen		= sizeof(int),
++		.procname	= "swappiness",
++		.data		= &vm_swappiness,
++		.maxlen		= sizeof(vm_swappiness),
 +		.mode		= 0644,
 +		.proc_handler	= proc_dointvec_minmax,
 +		.extra1		= SYSCTL_ZERO,
-+		.extra2		= (void *)&page_cluster_max,
++		.extra2		= SYSCTL_TWO_HUNDRED,
++	},
++#ifdef CONFIG_NUMA
++	{
++		.procname	= "zone_reclaim_mode",
++		.data		= &node_reclaim_mode,
++		.maxlen		= sizeof(node_reclaim_mode),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
 +	}
++#endif
 +};
 +
- /*
-  * Perform any setup for the swap system
-  */
-@@ -1092,4 +1104,6 @@ void __init swap_setup(void)
- 	 * Right now other parts of the system means that we
- 	 * _really_ don't want to cluster much more
- 	 */
-+
-+	register_sysctl_init("vm", swap_sysctl_table);
+ static int __init kswapd_init(void)
+ {
+ 	int nid;
+@@ -7411,6 +7433,7 @@ static int __init kswapd_init(void)
+ 	swap_setup();
+ 	for_each_node_state(nid, N_MEMORY)
+  		kswapd_run(nid);
++	register_sysctl_init("vm", vmscan_sysctl_table);
+ 	return 0;
  }
-diff --git a/mm/swap.h b/mm/swap.h
-index ad2f121de970..274dcc6219a0 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -3,6 +3,7 @@
- #define _MM_SWAP_H
  
- struct mempolicy;
-+extern int page_cluster;
- 
- #ifdef CONFIG_SWAP
- #include <linux/swapops.h> /* for swp_offset */
 -- 
 2.34.1
 
