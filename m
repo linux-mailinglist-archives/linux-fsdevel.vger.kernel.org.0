@@ -1,61 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-38953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7CFA0A525
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 18:58:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F1CA0A611
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 22:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815551889917
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 17:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB813A5D05
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 21:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7D61B424E;
-	Sat, 11 Jan 2025 17:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FEE1BBBE3;
+	Sat, 11 Jan 2025 21:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TM+5lBWo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpQjtE4n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041EC1B424A
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jan 2025 17:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90091B87D3;
+	Sat, 11 Jan 2025 21:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736618317; cv=none; b=OGnbcch1nfg9vRSj38UuPQbNMiyi8KzNPGV04Qyv2InECEzwdcMbE55QeXDwXrWJHk+GKLipREcmG4Xw71oL3PoFPls3xBswPBWWPuRFzXtBeCOPjS9AjJ081e0jrMvoQqoM/4YB94MP/xaoJK7k5N8dAv00DNt4kbXpD4Wn5tc=
+	t=1736629569; cv=none; b=sV5xB3gfeIYdCuRs7oYwynSepdshnr9P/3v/yQThzMu7wr2/ZXlNoumlezrhR5gGVx7aaFEii9bNoKC9OcRZMidqiW6mAx0G6wYR6HN4uxGGlZCMZEuLcy1jo8M0En/VGeIybg8HReoF9LKL/oLkPvlUnhCQ2Po0UTBYfCxiooY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736618317; c=relaxed/simple;
-	bh=1keDDxA0XuRXDfT/S5iNhaK9eZLl/lk005Ox1AcD6Do=;
+	s=arc-20240116; t=1736629569; c=relaxed/simple;
+	bh=KIyVo7rhDv5U9a2m9uUPF1sHWPaMkt6MToDHXgzY2SQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhV5mE4PEBdWMJauFhc3t50ZlK//JTjOqeHvKdlDy3JX23Fy9a9Gk8edG6ptMH3H78KqTqEmBUzC+Z3ErYujTqgUrZ0a/tFJBTDfo2Jk0aKTNmCavMCy9FzB7eLJPDdyVj2puhoCy9il7gJP7QqFdfnHHDJ1pOHczo5dkOiQDGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TM+5lBWo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gDP2rkKKQtBaLbOL9OpXTvDsGssxcS6T4UgYMd+zd2o=; b=TM+5lBWo1bDzyZ620+2CXerYEF
-	q1YNTlcpH/RjwUMphuiXxxKlFWoj8weTY5PQFnG6LJex0ExVYy/3mzG4s7mNegq5v8CFJwxBwmsCm
-	JzbWNcyry0kNs2HYMe4egUptLt8844dqvwW14QTIwBi7rCN9CY7gg9D6N8Boq20M1HTOFHJJ4goZk
-	1dElQZFiB9iubewANMFy65Mr7DGDaRFq4MGEMUa/kv3/gmsjyy/cbLCdRXTwLIYRFyae/a+TsTxJ0
-	fQLZvfZP3c3FshahWL97VJ8sRHvg007b31FN3oWh7t0xDK+IQSvvOwK4CqIzdbZcKh2zDw2An6S78
-	DNYJlZqg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tWfkn-0000000Fb4e-0Hu9;
-	Sat, 11 Jan 2025 17:58:33 +0000
-Date: Sat, 11 Jan 2025 17:58:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	squashfs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] squashfs: Fix "convert squashfs_fill_page() to take
- a folio"
-Message-ID: <Z4KxSBcKpwwr-WF2@casper.infradead.org>
-References: <20250110163300.3346321-1-willy@infradead.org>
- <20250110163300.3346321-2-willy@infradead.org>
- <b9ce358d-4f67-48be-94b3-b65a17ef56f9@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGBGqug9BQM+R4kajAvIRau2Q3XJt784YkmdfNiZ4sjkeB52Fc+PPD4KRpbkBh0i52FDJZErL0x2JV0fzOYdfYgH09kX1m8L2iR1DHwEf5B/jM6MZNRZHdv9zQ/ohGWaDA7PNpRDWjyHRlkjte3hJZ0R3c1Ho1kgybyHb2lwgec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpQjtE4n; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736629566; x=1768165566;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KIyVo7rhDv5U9a2m9uUPF1sHWPaMkt6MToDHXgzY2SQ=;
+  b=VpQjtE4nf2cXjIMmZszRL1EOr7mJ+4GIXSLWeLF2qWtuZ+nItWhjkCZp
+   SkH7086HkXntiCyl+TVBWKosFLvKUQFFpCcOTBm6+vf1V7i+SeuH+aBqb
+   RMI4evC2PYGZmPZ52TRqj307jx9w6sHI0jiPltcoi0RvlT4U9+wgawAw3
+   c7UcAbWWGJCC2nYBiY1d4jjQVyPCkcu417dVD/MBwsjc2cHYMSrfA6q1R
+   Q8ybU4vhOFzslSurb/sJHRUvtiXu1NcZ4B1/ZYEuzWAY4tK5t3zOkjH73
+   lIDR8g1/03hoAp/9bJFK1jvxtv9oD7oN4jcR7OfswioscGSLofurD6DMf
+   Q==;
+X-CSE-ConnectionGUID: 2NDMreUASjyZOqGQIDSoog==
+X-CSE-MsgGUID: XKMs+2mSTluK5mP8Cb1Z5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11312"; a="47391049"
+X-IronPort-AV: E=Sophos;i="6.12,308,1728975600"; 
+   d="scan'208";a="47391049"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2025 13:06:05 -0800
+X-CSE-ConnectionGUID: USUZh5MxQrKqMrvcO7TRsQ==
+X-CSE-MsgGUID: v47+EjcAR0GF9DNRbLx7iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,308,1728975600"; 
+   d="scan'208";a="109054185"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 11 Jan 2025 13:05:58 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tWig7-000LCn-2U;
+	Sat, 11 Jan 2025 21:05:55 +0000
+Date: Sun, 12 Jan 2025 05:05:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrey Albershteyn <aalbersh@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Andrey Albershteyn <aalbersh@redhat.com>,
+	linux-api@vger.kernel.org, monstr@monstr.eu, mpe@ellerman.id.au,
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+	maddy@linux.ibm.com, luto@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	arnd@arndb.de, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org
+Subject: Re: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
+Message-ID: <202501120410.3ZwwYXqY-lkp@intel.com>
+References: <20250109174540.893098-1-aalbersh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,26 +88,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b9ce358d-4f67-48be-94b3-b65a17ef56f9@arm.com>
+In-Reply-To: <20250109174540.893098-1-aalbersh@kernel.org>
 
-On Sat, Jan 11, 2025 at 01:21:31PM +0000, Ryan Roberts wrote:
-> On 10/01/2025 16:32, Matthew Wilcox (Oracle) wrote:
-> > I got the polarity of "uptodate" wrong.  Rename it.  Thanks to
-> > Ryan for testing; please fold into above named patch, and he'd like
-> > you to add
-> > 
-> > Tested-by: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> This is missing the change to folio_end_read() and the change for IS_ERR() that
-> was in the version of the patch I tested. Just checking that those were handled
-> separately in a thread I'm not CCed on?
+Hi Andrey,
 
-https://lore.kernel.org/mm-commits/20250109043130.F38E0C4CED2@smtp.kernel.org/
-https://lore.kernel.org/mm-commits/20250110232601.CBE47C4CED6@smtp.kernel.org/
+kernel test robot noticed the following build warnings:
 
-Shouldn't be anything missing; I applied the first one to my tree,
-then wrote the second one and the third one you're replying to.  Then
-I did a git diff HEAD~3 and sent the result to you to test.
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on geert-m68k/for-next powerpc/next powerpc/fixes s390/features linus/master v6.13-rc6 next-20250110]
+[cannot apply to geert-m68k/for-linus deller-parisc/for-next jcmvbkbc-xtensa/xtensa-for-next tip/x86/asm]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Has anything gone wrong in this process?
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrey-Albershteyn/fs-introduce-getfsxattrat-and-setfsxattrat-syscalls/20250110-014739
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250109174540.893098-1-aalbersh%40kernel.org
+patch subject: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
+config: riscv-randconfig-002-20250111 (https://download.01.org/0day-ci/archive/20250112/202501120410.3ZwwYXqY-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250112/202501120410.3ZwwYXqY-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501120410.3ZwwYXqY-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> <stdin>:1615:2: warning: #warning syscall getfsxattrat not implemented [-Wcpp]
+>> <stdin>:1618:2: warning: #warning syscall setfsxattrat not implemented [-Wcpp]
+--
+>> <stdin>:1615:2: warning: #warning syscall getfsxattrat not implemented [-Wcpp]
+>> <stdin>:1618:2: warning: #warning syscall setfsxattrat not implemented [-Wcpp]
+--
+>> <stdin>:1615:2: warning: #warning syscall getfsxattrat not implemented [-Wcpp]
+>> <stdin>:1618:2: warning: #warning syscall setfsxattrat not implemented [-Wcpp]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
