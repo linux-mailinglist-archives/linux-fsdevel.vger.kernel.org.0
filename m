@@ -1,122 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-38952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D07A0A4CF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 17:36:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7CFA0A525
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 18:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38079169D7B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 16:36:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815551889917
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 17:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A131B4120;
-	Sat, 11 Jan 2025 16:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7D61B424E;
+	Sat, 11 Jan 2025 17:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="iAVhOCtZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TM+5lBWo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222456B81;
-	Sat, 11 Jan 2025 16:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041EC1B424A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jan 2025 17:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736613356; cv=none; b=Jc61pg/KQwS6azXf2HKMGXE0p+ISPTuuEqhKVLA5fcnApy3f/U93KBZK9dtxdSptm3L7DEhViGrOtB+J5KJMey4PGFlYMPJ/gxjGWcslgQJ9bK2EeYhCsVH379JxfMtwvKsJCvwuV6gm+MnmxzqzZsP6cbk5uK7mu36kkXu8qUk=
+	t=1736618317; cv=none; b=OGnbcch1nfg9vRSj38UuPQbNMiyi8KzNPGV04Qyv2InECEzwdcMbE55QeXDwXrWJHk+GKLipREcmG4Xw71oL3PoFPls3xBswPBWWPuRFzXtBeCOPjS9AjJ081e0jrMvoQqoM/4YB94MP/xaoJK7k5N8dAv00DNt4kbXpD4Wn5tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736613356; c=relaxed/simple;
-	bh=8oS8g8vWlpDoDdc0oVAc4SwCCpbRu7dEKzxSEwJ4hrg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=k6hE9vUZ/gFdfhKjTF4WFcoston/ac/hM2shHx8ex946IhnC1Iv++NoZx8nJg/3tfR1fmE9XCdTXmKvdfEPl+2/jB50wXx34aRwNpuzJewce46dQtNisNEbqc71IOhD+azWiVBEeqwGfMueo2E9vc12qLNxuUOo4CoGR72r66+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=iAVhOCtZ; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1736613300;
-	bh=8oS8g8vWlpDoDdc0oVAc4SwCCpbRu7dEKzxSEwJ4hrg=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=iAVhOCtZWTiLLPL5JjCr1M2Lv6eXUWpEYUsMs9ty7t+BnWs3c4kKnOzaEIDfZVEGo
-	 vilct67aK+yitzcTt4EqOod4WjkaFBrNl02ujq5E6vOr5eDT2j3db/y0DCNqxBKiO7
-	 ryZj4zsgrB5Mj7smQKiqB0Fl54LRVAtelsNMVugQ=
-X-QQ-mid: bizesmtpsz15t1736613295t5wfd5
-X-QQ-Originating-IP: wH9oQ3ZGUszIRxFRxortNl5zhRpACfpzeLu8CDL70bs=
-Received: from smtpclient.apple ( [202.120.235.170])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 12 Jan 2025 00:34:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16196429251209116610
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1736618317; c=relaxed/simple;
+	bh=1keDDxA0XuRXDfT/S5iNhaK9eZLl/lk005Ox1AcD6Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YhV5mE4PEBdWMJauFhc3t50ZlK//JTjOqeHvKdlDy3JX23Fy9a9Gk8edG6ptMH3H78KqTqEmBUzC+Z3ErYujTqgUrZ0a/tFJBTDfo2Jk0aKTNmCavMCy9FzB7eLJPDdyVj2puhoCy9il7gJP7QqFdfnHHDJ1pOHczo5dkOiQDGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TM+5lBWo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gDP2rkKKQtBaLbOL9OpXTvDsGssxcS6T4UgYMd+zd2o=; b=TM+5lBWo1bDzyZ620+2CXerYEF
+	q1YNTlcpH/RjwUMphuiXxxKlFWoj8weTY5PQFnG6LJex0ExVYy/3mzG4s7mNegq5v8CFJwxBwmsCm
+	JzbWNcyry0kNs2HYMe4egUptLt8844dqvwW14QTIwBi7rCN9CY7gg9D6N8Boq20M1HTOFHJJ4goZk
+	1dElQZFiB9iubewANMFy65Mr7DGDaRFq4MGEMUa/kv3/gmsjyy/cbLCdRXTwLIYRFyae/a+TsTxJ0
+	fQLZvfZP3c3FshahWL97VJ8sRHvg007b31FN3oWh7t0xDK+IQSvvOwK4CqIzdbZcKh2zDw2An6S78
+	DNYJlZqg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tWfkn-0000000Fb4e-0Hu9;
+	Sat, 11 Jan 2025 17:58:33 +0000
+Date: Sat, 11 Jan 2025 17:58:32 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Phillip Lougher <phillip@squashfs.org.uk>,
+	squashfs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] squashfs: Fix "convert squashfs_fill_page() to take
+ a folio"
+Message-ID: <Z4KxSBcKpwwr-WF2@casper.infradead.org>
+References: <20250110163300.3346321-1-willy@infradead.org>
+ <20250110163300.3346321-2-willy@infradead.org>
+ <b9ce358d-4f67-48be-94b3-b65a17ef56f9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Bug: soft lockup in exfat_clear_bitmap
-From: Kun Hu <huk23@m.fudan.edu.cn>
-In-Reply-To: <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
-Date: Sun, 12 Jan 2025 00:34:42 +0800
-Cc: sj1557.seo@samsung.com,
- yuezhang.mo@sony.com,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn>
-References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
- <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn>
- <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NafziRg7Bx69axgrdcN6XfSltcFUXXQaqrcJifISZEtBl70nk+18+Q8X
-	+Pdh3tv81E+dzJB9Vy+oLyVRYWqo9l+QR7q/x8zBu9syCHfjDhWJwYX2CUVC2igr6U6dBks
-	AUPPDUS5cYEtuoHgN/Lg3UDY+zy5UW0YAooG0khXRGvHOhSEWTX+ZMIhsNPMoPZt0sShVvq
-	INcqbVmPiZbVt+gIlwUdASCht5BRuBN7sobm2XqFf5TxWzwHtexu+nGYTyZIhBR7gRth/er
-	Uq1Qa7ZGb3PE6v4jOI8+iPy+1W82iofOjzdVrOJPEZwcbZF+ZcGJL4BEUgr74vFamTfzvMj
-	oIf4jLusSX0lEwVVZ1SlmhylXP6qOPM6OnlLBwjh8xKMumoFRfd+yDo2vEveUtMU3CG72/Q
-	uvbnzXKOTO/gVsFSn7KnEG4RU/1eImiYWGnYaAwSsyuzEkHJTUZ/yi6VDYzm8As+zmgsMaf
-	GDQp1QvqMdIoCzzG6mSPm7PnD2+A2WAwm+uE0vpdoqt/j9GG46Qez3/KqDlw4Yeo/Be0Ljr
-	z1QysiwgEgF2dZnhKLSPrXB/AVbsZRRPU+nF+FG3s/8oV1uvHhI/2fghcrre3k2tF7cFaVA
-	P7Ck5AetxXhL7CXeVSifRFVnNAqyRvoyqJXv1pUWsIH8M2Ir2oAeGU2Xql3J+36rYNXKcT6
-	tIUu+ZFlHx9SxbL/WKWw4+7imhOmbBp/hVK66+MrBKOaRPZ6giFTLqTx561hzaIKUB90WIG
-	o91rpRUhN2yXr0i4Sl3csjg7tL7KkKr8zoGQH9RTvX+zY26UGDScIwlU2+mU8nZ6Iqax84W
-	BeBc7zkYnvMOJNlCFuMvTpzh9sbqBgfw3GFR4Iovg/zWiPM2DwYt14CT17qBBN+wKVs2ao6
-	Y/+KMwqZs1nn12xFM2rsSdALx7Og7RyC9U7FZ1g4i9WXpOgyY0MK5Ta4+96mtIshuf1A4f8
-	8/8coy2UJ/99MGss8NBnkmkALX5Uoc9OQvWLQ2VF/XMcSqjHBwAQcWqXW
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9ce358d-4f67-48be-94b3-b65a17ef56f9@arm.com>
 
+On Sat, Jan 11, 2025 at 01:21:31PM +0000, Ryan Roberts wrote:
+> On 10/01/2025 16:32, Matthew Wilcox (Oracle) wrote:
+> > I got the polarity of "uptodate" wrong.  Rename it.  Thanks to
+> > Ryan for testing; please fold into above named patch, and he'd like
+> > you to add
+> > 
+> > Tested-by: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> This is missing the change to folio_end_read() and the change for IS_ERR() that
+> was in the version of the patch I tested. Just checking that those were handled
+> separately in a thread I'm not CCed on?
 
-> Please try to reproduce it with linux-next or the latest Linus tree.
+https://lore.kernel.org/mm-commits/20250109043130.F38E0C4CED2@smtp.kernel.org/
+https://lore.kernel.org/mm-commits/20250110232601.CBE47C4CED6@smtp.kernel.org/
 
+Shouldn't be anything missing; I applied the first one to my tree,
+then wrote the second one and the third one you're replying to.  Then
+I did a git diff HEAD~3 and sent the result to you to test.
 
-Hi Namjae,
-
-We have reproduced this issue in v6.13-rc6 and obtained a new crash log. =
-The links are provided below:
-
-Crash log: =
-https://drive.google.com/file/d/1qUmBfpcGeDMHsqBjurhymaH43Jnbvt-F/view?usp=
-=3Dsharing
-
-It seems that the new report highlights additional issues beyond the =
-original one. While both involve exfat_clear_bitmap and =
-__exfat_free_cluster, the new report indicates broader impacts, such as =
-multiple CPUs encountering soft lockups, resource contention across =
-threads, and potential conflicts with the =
-sanitizer_cov_trace_pcinstrumentation. These suggest that the underlying =
-issue might extend beyond simple bitmap management to systemic resource =
-handling flaws in the exFAT module.
-
-Could you please help to check the cause of the issue?
-
-Thanks,
-Kun Hu
-
-
-
+Has anything gone wrong in this process?
 
