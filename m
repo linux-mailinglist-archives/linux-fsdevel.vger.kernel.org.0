@@ -1,138 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-38943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50960A0A1CB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 08:19:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9A7A0A235
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 10:18:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5862C16DBDE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 07:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42303A5CFF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 09:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA571BC9EE;
-	Sat, 11 Jan 2025 07:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269E1188734;
+	Sat, 11 Jan 2025 09:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="WICqlTsz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8906D18E379;
-	Sat, 11 Jan 2025 07:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3776517E472;
+	Sat, 11 Jan 2025 09:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736579599; cv=none; b=kdY3sYCF7nvUn9w2bHwWHewLcrOy+YBg4pMekxepDtZVXJiM7bTqFcUJU2WYQmeAfjMdkQ+JV+yGdLBnvI3DSyoW9uDrgLZbO/SlZ+ts5avvocmreDP03BmwqUDeg7XV0TfdQsxBLbMgtKuMdYACRKfvyjXr2CUpkbhf1HEvmPI=
+	t=1736587076; cv=none; b=f/jmVlnH7ph3RUvIOc5in6kv7fAtpxl+mqKd/VC16dOaudoRLF0Vl8yKjTv2LWTvr/pqwsOYTl+8A+VI9uSpSXZvowQFVil7G4TFAemmQ4dL3Bga9+U6LyfYNcaw0yrHB/R+j7QRdEDtTpL1SZc1geAjLBuZw3vEDHzPCMUJ5Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736579599; c=relaxed/simple;
-	bh=QlnJEpBp4fXU3fC+e0GKeOTxfhyigAYnpz0GbfIk3zI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CbxKkK1n9lEjeyiUneF0/P1FXWwh6k6ecVPy1pv3xrjLEwKQAKGpzVksKUXdgN/PdWxwOSPTzXBuafHtCkktnbCWpPjQKwsK8TaICfAlbYecMGKM7eV9WIygo6fv2QzV3UU3VSw7guUaAMxRE0YAmOs2IkPZFSFexlz8O2AUUbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YVV5s2gSBz2DkKG;
-	Sat, 11 Jan 2025 15:10:09 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 619481402DE;
-	Sat, 11 Jan 2025 15:13:14 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
- (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 11 Jan
- 2025 15:13:10 +0800
-From: Kaixiong Yu <yukaixiong@huawei.com>
-To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
-	<joel.granados@kernel.org>
-CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v5 -next 16/16] sysctl: remove unneeded include
-Date: Sat, 11 Jan 2025 15:07:51 +0800
-Message-ID: <20250111070751.2588654-17-yukaixiong@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250111070751.2588654-1-yukaixiong@huawei.com>
-References: <20250111070751.2588654-1-yukaixiong@huawei.com>
+	s=arc-20240116; t=1736587076; c=relaxed/simple;
+	bh=ixqMGuuKFDVNMkNVmpMMIAyYeVMfV812g+GglJjKRMQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=i6XW0gkbtRpDnbSRdFBoa5Yt3xfukZsEgSMtn/rWSf4NaweuNxs4oYS9dwTvFvakRzJ3Ds0pd6lAmSp1juBhx1UKxf00It2LoIfRR62qJjYFSImadSO/GlkAmAuBkUDfS62jWZCI21Dx69N27nLIXqcr0IieVCQ69JCJLEFgzOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=WICqlTsz; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1736587072; x=1737191872; i=aros@gmx.com;
+	bh=0y9kdtvsjN5QHpBk4RhAs/eZpN4T+QK1R+Puzd/4g7g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WICqlTszBdlQqrIMgNpJOrpBqqchEd0ITTwzjjqpWpE0C9AFoIX4wFK6rMwrmwq8
+	 lxFUqJFogg+9cmFi0R1O/tZuONjqSSVayTv2d8GUAPVcTTNAvWbxYe7b44AInzbJg
+	 D3Xing1ZD+lEDWjJRDeeaFsaxtdPfJ0d6CjblQTvuSoqUF50gyaqW3NEoursranfS
+	 iENRntXPwlUF+OcfPuiN+ftKtpUmpRfybg0OxqOxInZoE3DTzo++wd4znia+h2bln
+	 WEtWZa3lcQUgpabFnuv7SikjIYap7EBHf2IeY+PFDe4oQSW4HPGGn1AZlbDzxqvT0
+	 WUs8+rCIoJqOnGBVaQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.21.12.20] ([98.159.234.22]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M8QS8-1tavL5460O-00946i; Sat, 11
+ Jan 2025 10:17:52 +0100
+Message-ID: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
+Date: Sat, 11 Jan 2025 09:17:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+From: "Artem S. Tashkinov" <aros@gmx.com>
+Subject: Spooling large metadata updates / Proposal for a new API/feature in
+ the Linux Kernel (VFS/Filesystems):
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RGbUu9CrQIfjPyXoPO1KUQxhTsdIH+FL8Q4hehWvybdESw/MAcb
+ z7SRzbNI4NT7hTo9aZEoymYCg1O7F1M6B20bDwDl5ko/gFrj+9CiagfrX7MaIrErD4htVN+
+ VaqeXNfgqjNNWmI+1sdh8Hx48eidcd5i7yXjWoa6vvfdz0bR9r6l/yVSPB/lr0egloTBbjK
+ SWeos+GQDJO3ZbIN654Zg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:azeKCnXdfOY=;Xg3mtGC1dBQamf77bylMhLreqYz
+ S+s7IgZoddiIjYktAVMjDO4oUJP++JgcU33pADvvKJFoBN6Ih4DCiDrAE31nYmkw4HWdtiLiM
+ xwL7xSYbB4HeD+KpIAr0XWyGeSZ2ORQwHunlwCSvrBXzdab/PCRgUopGrWBPG/nuCK5duSiyo
+ T9oIWUkhF9oS/btYvlS4NA+5EgdhdAZ0LxgWwnqOC1bUUmO5TTpgzeqJmR6WQ1P5RR76bGbVb
+ 0T3icRwl3DKxj6aovCqQhA0zbcvTDJC2j5eQPL4H8LOUnnfujmvyLoStsuKXrpSZwJokT5ZTI
+ CsPEg/BRqy5OEVMMqQAtLAsvAFDFXYYgifwd3uAUt5LeJPckgXaQUDXcEub6XAzSIbZJSe5ir
+ bF0xRlXDMi+8yZWtQdGqYkMWN0l+dn8VorSwZ0Hjexols0MM9SlelGpqHTZBv82nQY5cgXypg
+ TFImQYDDa1ZeJM3F9GiYAvMnDjRDAuQoiOI9VzWNqYsxecnoR6QBAwJLJporOUuEsg5mqL87d
+ n4vQeRZJRIgLsicVvMGCobKhUBjpFdeUKIZamSz2Ae0hbl8OgoigldX61rCtqIRLs2FRrYkGV
+ CVWjHQUKhV6MFIGln/Vh9/KoCLtK3vHrocFW+anIUB6o2LT0jVM3Hc6DWf7jc/0cX0tmt1B4z
+ mMO5tS4ut5K3oxRbkXJOKY01SWoO77gz6YTEvG/fgpjrmahvaHqDku7v+PrfHqcQNGGgo9w9s
+ HeeYg4Ln/jZ4unxXdhkVo0p58L9TqCQ6MvEoZpIpw/FTZsOEJWxQ0uCpCJ3jI6yXAbSV1TVE/
+ JRCFBNu9abiq1+3pLFaxpvlM6bCzYC26+uW2F7c5+5wsi5lJ4ZyZt4Ji5Az9k7AzvgppHtXNt
+ TZORKpOsFa6nSIdlCQL7nliaKUcQdwUgg7Lde64s7Vqa3tXa2R2utOIoxX2/rqdAtkP/e4Qvv
+ 41bFOWqqh6TlLYNWLrsGtawgl5chlUatIIpTzqeW4O08fOwb23RqEYzzeYTRH6+JkyBaECZpf
+ MZ7pjaENLMwkp1FChgah6IXWnkQc9OwWXvxpx3a8kf9rJqCv2Gp0/dkds4KiNUZpATgJUr7wU
+ QwxgNvBkFzlsN1Z7KuW68KJ9Kl3JaW
 
-Removing unneeded mm includes in kernel/sysctl.c.
+Hello,
 
-Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
----
- kernel/sysctl.c | 6 ------
- 1 file changed, 6 deletions(-)
+I had this idea on 2021-11-07, then I thought it was wrong/stupid, now
+I've asked AI and it said it was actually not bad, so I'm bringing it
+forward now:
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cebd0ef5d19d..aece984bee19 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -20,8 +20,6 @@
-  */
- 
- #include <linux/module.h>
--#include <linux/mm.h>
--#include <linux/slab.h>
- #include <linux/sysctl.h>
- #include <linux/bitmap.h>
- #include <linux/signal.h>
-@@ -30,7 +28,6 @@
- #include <linux/proc_fs.h>
- #include <linux/security.h>
- #include <linux/ctype.h>
--#include <linux/kmemleak.h>
- #include <linux/filter.h>
- #include <linux/fs.h>
- #include <linux/init.h>
-@@ -41,7 +38,6 @@
- #include <linux/highuid.h>
- #include <linux/writeback.h>
- #include <linux/ratelimit.h>
--#include <linux/hugetlb.h>
- #include <linux/initrd.h>
- #include <linux/key.h>
- #include <linux/times.h>
-@@ -52,13 +48,11 @@
- #include <linux/reboot.h>
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
--#include <linux/oom.h>
- #include <linux/kmod.h>
- #include <linux/capability.h>
- #include <linux/binfmts.h>
- #include <linux/sched/sysctl.h>
- #include <linux/mount.h>
--#include <linux/userfaultfd_k.h>
- #include <linux/pid.h>
- 
- #include "../lib/kstrtox.h"
--- 
-2.34.1
+Imagine the following scenarios:
 
+  * You need to delete tens of thousands of files.
+  * You need to change the permissions, ownership, or security context
+(chmod, chown, chcon) for tens of thousands of files.
+  * You need to update timestamps for tens of thousands of files.
+
+All these operations are currently relatively slow because they are
+executed sequentially, generating significant I/O overhead.
+
+What if these operations could be spooled and performed as a single
+transaction? By bundling metadata updates into one atomic operation,
+such tasks could become near-instant or significantly faster. This would
+also reduce the number of writes, leading to less wear and tear on
+storage devices.
+
+Does this idea make sense? If it already exists, or if there=E2=80=99s a r=
+eason
+it wouldn=E2=80=99t work, please let me know.
+
+
+Best regards,
+Artem
 
