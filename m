@@ -1,148 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-38950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F8DA0A466
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 16:39:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C665A0A477
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 16:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AAB01644E8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 15:39:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACC727A3850
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jan 2025 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDD11B041B;
-	Sat, 11 Jan 2025 15:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664141B0F18;
+	Sat, 11 Jan 2025 15:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="BcvQ0Epe"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ADxHocu4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EF818FDBA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jan 2025 15:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC2056B81;
+	Sat, 11 Jan 2025 15:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736609949; cv=none; b=XhDafO75iyjwbcmu6WGGcp/b1JorN86cPEyhWfNDDe/kGNVg63Bf9PzZIosLm0v/NR+qXqcXOgT8J90lSgNUnenTAYXMQdMj2t6rW2TP1sn2cwAP2e7Q6F7cpse/0qOp/mcvbj8TyXjfoP8+y13RBaioYJm5xNlpAPaQXHES8PI=
+	t=1736610456; cv=none; b=hUlLJ8PbH1sT+hWcqYTaMhKduJaZGznpRQJWWtAOEQkTRC9BX4jxfyjl+m+WaRSkpbMQ+MMFI3KLNXZVGH8jnoTIFWqfZEwaTk+w+CN9Dk5Qz/ugmsND4CVaifMNSdZJFYskX32gkCooLNcASkIxdVoOVHP2XgKxwp+ObtbYliQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736609949; c=relaxed/simple;
-	bh=9IFdTwZ+yBnPyfmpwB38q8dAqIrG6OSXEQlgm+4Ayf4=;
+	s=arc-20240116; t=1736610456; c=relaxed/simple;
+	bh=b3P6KNSNfX8VCZ+6tJgRB2tHLM4xz/W71xYZ7MASfBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=edGZzTf4Cf+q1NlcBmM2dEeTU1Om/ZigUZDt2zF0mrpweLEFmLlVk3Nd/6nUMx0FXaTmr3uAYAqMW8hxUI5kRdE4QxaOxJigpkoLE6zY8lQE4kBVXF2oaP56q5hBBVgwRUqRDX1f2xam0dDaz7zlgG17ZfJ47ASHWPyp6lX5GII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=BcvQ0Epe; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YVjNy6bFGzpMH;
-	Sat, 11 Jan 2025 16:38:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1736609938;
-	bh=8qOYE5fhMwTZl6ab4L7AoSR/uklgpbBSnLF+bBJGY2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BcvQ0EpesgImbVFCn2idhlce4+SO6Le0b2rccONi48PiCAurGGDPzpWjq85mnJufh
-	 E6dscsTOU3nPfUymrXhhzSxdoo/17T8CCCo9uWfruGKmr1OaSMK6yC8Tm8F01RDsdO
-	 mq74bFHnr9eje3CopmyO+IGLt/ty4fQhHekrb98Q=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YVjNx6TnczTjj;
-	Sat, 11 Jan 2025 16:38:57 +0100 (CET)
-Date: Sat, 11 Jan 2025 16:38:56 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	Dave Chinner <david@fromorbit.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	syzbot+34b68f850391452207df@syzkaller.appspotmail.com, syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com, 
-	Ubisectech Sirius <bugreport@ubisectech.com>, Brian Foster <bfoster@redhat.com>, 
-	linux-bcachefs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] landlock: Handle weird files
-Message-ID: <20250111.PhoHophoh1zi@digikod.net>
-References: <20250110153918.241810-1-mic@digikod.net>
- <20250110.3421eeaaf069@gnoack.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFvXRgIy9utZg4QjwU+ibr5RhK39k9ht03g924TSZtAYyRQIyQrr1PTNfuVbSIsoYyhj3MfauhpqQNUDNRhdozf3HlCunqJI3tNWxPPeQE5Vz5aQRcTHd5UQyFyDjKdapq4cA45jyJZKdMDB4pN4SqR/5QOvAjD8f7snYKc4fCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ADxHocu4; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736610455; x=1768146455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b3P6KNSNfX8VCZ+6tJgRB2tHLM4xz/W71xYZ7MASfBg=;
+  b=ADxHocu4/xMoRGMQnOlvShon3ycmoiig3CEqC36RseC8Ykf3lY4NHwXx
+   ohgAslHCtofdegM1dcdiTJESrApoIb6ZPd+P5vIf+sZM6/H0OTPWxo9WY
+   LnWpN+oymM59kk+pcOK5yOL5XQzlhAkecG6NlGZq3pQMQJwbLKHZiK+n0
+   UOo7y/hSODz1fYaW5Ehbi+0gtDAxEWeSL/gF87a76FMVfYz7icXR6Iyh5
+   adVtbIBpr2KfkQNdejybeGjDdHngH7ylVdtTfUdPGEkNbCFARHbp2y01f
+   Boo135jW30QFHNtaJsvji0U9c6dgkXS6yYN8uVHrO/q2YiHKPjbK6LbUJ
+   w==;
+X-CSE-ConnectionGUID: UJpR7jNESA2CDzoCOs6hvg==
+X-CSE-MsgGUID: ty/KI+o9SYiEX6NwiJrXsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11312"; a="36105394"
+X-IronPort-AV: E=Sophos;i="6.12,307,1728975600"; 
+   d="scan'208";a="36105394"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2025 07:47:33 -0800
+X-CSE-ConnectionGUID: TrK7FUPAQ9a6FiuyaSBJlA==
+X-CSE-MsgGUID: H2dRrx1jSreuGV87yZ9ZVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="127290445"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Jan 2025 07:47:27 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tWdhs-000Kqd-2f;
+	Sat, 11 Jan 2025 15:47:24 +0000
+Date: Sat, 11 Jan 2025 23:47:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrey Albershteyn <aalbersh@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Andrey Albershteyn <aalbersh@redhat.com>,
+	linux-api@vger.kernel.org, monstr@monstr.eu, mpe@ellerman.id.au,
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+	maddy@linux.ibm.com, luto@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	arnd@arndb.de, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org
+Subject: Re: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
+Message-ID: <202501112305.EPQr5jnx-lkp@intel.com>
+References: <20250109174540.893098-1-aalbersh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250110.3421eeaaf069@gnoack.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20250109174540.893098-1-aalbersh@kernel.org>
 
-On Fri, Jan 10, 2025 at 05:37:26PM +0100, Günther Noack wrote:
-> On Fri, Jan 10, 2025 at 04:39:13PM +0100, Mickaël Salaün wrote:
-> > A corrupted filesystem (e.g. bcachefs) might return weird files.
-> > Instead of throwing a warning and allowing access to such file, treat
-> > them as regular files.
-> > 
-> > Cc: Dave Chinner <david@fromorbit.com>
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/r/000000000000a65b35061cffca61@google.com
-> > Reported-by: syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/r/67379b3f.050a0220.85a0.0001.GAE@google.com
-> > Reported-by: Ubisectech Sirius <bugreport@ubisectech.com>
-> > Closes: https://lore.kernel.org/r/c426821d-8380-46c4-a494-7008bbd7dd13.bugreport@ubisectech.com
-> > Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> >  security/landlock/fs.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index e31b97a9f175..7adb25150488 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -937,10 +937,6 @@ static access_mask_t get_mode_access(const umode_t mode)
-> >  	switch (mode & S_IFMT) {
-> >  	case S_IFLNK:
-> >  		return LANDLOCK_ACCESS_FS_MAKE_SYM;
-> > -	case 0:
-> > -		/* A zero mode translates to S_IFREG. */
-> > -	case S_IFREG:
-> > -		return LANDLOCK_ACCESS_FS_MAKE_REG;
-> >  	case S_IFDIR:
-> >  		return LANDLOCK_ACCESS_FS_MAKE_DIR;
-> >  	case S_IFCHR:
-> > @@ -951,9 +947,12 @@ static access_mask_t get_mode_access(const umode_t mode)
-> >  		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
-> >  	case S_IFSOCK:
-> >  		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
-> > +	case S_IFREG:
-> > +	case 0:
-> > +		/* A zero mode translates to S_IFREG. */
-> >  	default:
-> > -		WARN_ON_ONCE(1);
-> > -		return 0;
-> > +		/* Treats weird files as regular files. */
-> > +		return LANDLOCK_ACCESS_FS_MAKE_REG;
-> >  	}
-> >  }
-> >  
-> > -- 
-> > 2.47.1
-> > 
-> 
-> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-> 
-> Makes sense to me, since this is enforcing a stronger check than before
-> and can only happen in the case of corruption.
-> 
-> I do not have a good intuition about what happens afterwards when the
-> file system is in such a state.  I imagine that this will usually give
-> an error shortly afterwards, as the opening of the file continues?  Is
-> that right?
+Hi Andrey,
 
-I guess it depends on the filesystem implementation.  For instance, XFS
-returns an error if a weird file is detected [1], whereas bcachefs
-ignores it (which is considered a bug, but not fixed yet) [2].
+kernel test robot noticed the following build warnings:
 
-[1] https://lore.kernel.org/all/Zpc46HEacI%2Fwd7Rg@dread.disaster.area/
-[2] https://lore.kernel.org/all/4hohnthh54adx35lnxzedop3oxpntpmtygxso4iraiexfdlt4d@6m7ssepvjyar/
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on geert-m68k/for-next powerpc/next powerpc/fixes s390/features linus/master v6.13-rc6 next-20250110]
+[cannot apply to geert-m68k/for-linus deller-parisc/for-next jcmvbkbc-xtensa/xtensa-for-next arnd-asm-generic/master tip/x86/asm]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> –Günther
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrey-Albershteyn/fs-introduce-getfsxattrat-and-setfsxattrat-syscalls/20250110-014739
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250109174540.893098-1-aalbersh%40kernel.org
+patch subject: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
+config: s390-randconfig-r133-20250111 (https://download.01.org/0day-ci/archive/20250111/202501112305.EPQr5jnx-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250111/202501112305.EPQr5jnx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501112305.EPQr5jnx-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   fs/inode.c:605:28: sparse: sparse: context imbalance in 'inode_wait_for_lru_isolating' - unexpected unlock
+   fs/inode.c: note: in included file (through include/linux/wait.h, include/linux/wait_bit.h, include/linux/fs.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   fs/inode.c:999:28: sparse: sparse: context imbalance in 'inode_lru_isolate' - unexpected unlock
+   fs/inode.c:1058:9: sparse: sparse: context imbalance in 'find_inode' - different lock contexts for basic block
+   fs/inode.c:1099:9: sparse: sparse: context imbalance in 'find_inode_fast' - different lock contexts for basic block
+   fs/inode.c:1829:5: sparse: sparse: context imbalance in 'insert_inode_locked' - wrong count at exit
+   fs/inode.c:1947:20: sparse: sparse: context imbalance in 'iput_final' - unexpected unlock
+   fs/inode.c:1961:6: sparse: sparse: context imbalance in 'iput' - wrong count at exit
+   fs/inode.c:2494:17: sparse: sparse: context imbalance in '__wait_on_freeing_inode' - unexpected unlock
+>> fs/inode.c:2960:1: sparse: sparse: Using plain integer as NULL pointer
+>> fs/inode.c:2960:1: sparse: sparse: Using plain integer as NULL pointer
+>> fs/inode.c:2960:1: sparse: sparse: Using plain integer as NULL pointer
+>> fs/inode.c:2960:1: sparse: sparse: Using plain integer as NULL pointer
+   fs/inode.c:2998:39: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct fsxattr [noderef] __user *ufa @@     got struct fsxattr *fsx @@
+   fs/inode.c:2998:39: sparse:     expected struct fsxattr [noderef] __user *ufa
+   fs/inode.c:2998:39: sparse:     got struct fsxattr *fsx
+   fs/inode.c:2998:39: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct fsxattr [noderef] __user *ufa @@     got struct fsxattr *fsx @@
+   fs/inode.c:2998:39: sparse:     expected struct fsxattr [noderef] __user *ufa
+   fs/inode.c:2998:39: sparse:     got struct fsxattr *fsx
+   fs/inode.c:3008:1: sparse: sparse: Using plain integer as NULL pointer
+   fs/inode.c:3008:1: sparse: sparse: Using plain integer as NULL pointer
+   fs/inode.c:3008:1: sparse: sparse: Using plain integer as NULL pointer
+   fs/inode.c:3008:1: sparse: sparse: Using plain integer as NULL pointer
+   fs/inode.c:3032:41: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct fsxattr [noderef] __user *ufa @@     got struct fsxattr *fsx @@
+   fs/inode.c:3032:41: sparse:     expected struct fsxattr [noderef] __user *ufa
+   fs/inode.c:3032:41: sparse:     got struct fsxattr *fsx
+   fs/inode.c:3032:41: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct fsxattr [noderef] __user *ufa @@     got struct fsxattr *fsx @@
+   fs/inode.c:3032:41: sparse:     expected struct fsxattr [noderef] __user *ufa
+   fs/inode.c:3032:41: sparse:     got struct fsxattr *fsx
+
+vim +2960 fs/inode.c
+
+  2959	
+> 2960	SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
+  2961			struct fsxattr *, fsx, int, at_flags)
+  2962	{
+  2963		struct fd dir;
+  2964		struct fileattr fa;
+  2965		struct path filepath;
+  2966		struct inode *inode;
+  2967		int error;
+  2968	
+  2969		if (at_flags)
+  2970			return -EINVAL;
+  2971	
+  2972		if (!capable(CAP_FOWNER))
+  2973			return -EPERM;
+  2974	
+  2975		dir = fdget(dfd);
+  2976		if (!fd_file(dir))
+  2977			return -EBADF;
+  2978	
+  2979		if (!S_ISDIR(file_inode(fd_file(dir))->i_mode)) {
+  2980			error = -EBADF;
+  2981			goto out;
+  2982		}
+  2983	
+  2984		error = user_path_at(dfd, filename, at_flags, &filepath);
+  2985		if (error)
+  2986			goto out;
+  2987	
+  2988		inode = filepath.dentry->d_inode;
+  2989		if (file_inode(fd_file(dir))->i_sb->s_magic != inode->i_sb->s_magic) {
+  2990			error = -EBADF;
+  2991			goto out_path;
+  2992		}
+  2993	
+  2994		error = vfs_fileattr_get(filepath.dentry, &fa);
+  2995		if (error)
+  2996			goto out_path;
+  2997	
+  2998		if (copy_fsxattr_to_user(&fa, fsx))
+  2999			error = -EFAULT;
+  3000	
+  3001	out_path:
+  3002		path_put(&filepath);
+  3003	out:
+  3004		fdput(dir);
+  3005		return error;
+  3006	}
+  3007	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
