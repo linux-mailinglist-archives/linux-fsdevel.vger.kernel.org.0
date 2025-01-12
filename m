@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-38962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F3FA0A78D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:07:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A9BA0A78F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8321886962
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755B33A8A19
 	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 08:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461E3185955;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31DD1632DF;
 	Sun, 12 Jan 2025 08:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VbjPs4H5"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YTfViQE8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C2A1632DF
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 08:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BABA1684AC
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 08:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736669229; cv=none; b=etAZDBzTi0UewqvH+p3RhHkokLaFNeLpaVlPdDxNnBEokyipHApDv04OaSXuK8NLhPwI74+7JwJy2vU6Vqo+Req/4/vQCazp+dmZ48mTBqxz87qaLb5eaQqRkPSO03XQK80aZs1Hc9/aLsHLrlLupGZdG1uDdajxRNvmkeLDcFs=
+	t=1736669230; cv=none; b=VtniZHP8MtWS8tbb2Vvxjv1tYikWGAspi4hiRp7/xL/xox5KWSOl9v9H5jruU7U567TRz51hFDyEhvbKhQC8maP51fup/NKYXET4li19qGu0e/RDeNPh4iOOWk6HJLf01r9taW+Lm+BMXXv8YwwGeD2ZBUwMHseFyuqNkoPNzdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736669229; c=relaxed/simple;
-	bh=JmsdoPD/bMeM7aHLi9HnuwqPvP1LegNfxDqAR2y1otw=;
+	s=arc-20240116; t=1736669230; c=relaxed/simple;
+	bh=a80962AGD0bL4RTkj4HI2WkzDl4gR16hvvx0M4XOjRg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J2pugT89cK97xuWaea/3P4InkX0ccwwSGmNwFxa0VTJEQWmVy4a1JEDMzlFu7YiANCXTsVWZQl0+m+kZe2Ay8WOd8tnyaLnzSNWvDVWWjy5GCZa92iOF+i6X2aAoP4wfjaL8YJNTFpilNFL75i2T5UpcCBWXREdYcjK4Hqw3AJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VbjPs4H5; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=IYQd0C5ObX7FCYu5aLFPibNuTSmr9orUIsMbxEsheNzF/QNudkiatPk0whSYosB+7/Mb4dcos6htQYvkbe4bjRf9hm6lxuNoB/eGsa2202czLpvDcJd0gB8D5KSAqTY523PncUkJihfGhBHmfZpcAdGQ50arK9kxlDDooz7Qw5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YTfViQE8; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=7lqeus4QTeCN/hjlDsViFag5rEIdwqFfljAzIRQIogY=; b=VbjPs4H5b53dZijChVHOH+3xDg
-	2CNjzHlNNVkhuOYf4wA5KZRoQNsMZaNfjy4a4z+0V3ekcUoqPh6Fr3gOoJvaG0lsvZ4PPNjiEs3KN
-	Mybxrg86GQsAf6Hm8jVpSgso9lpcOOzhQkcjIKlE+1lGeD4vgQ6+vIBVoCX5/BfM3/WBcLauRuPrD
-	/8Yqpj7JpM9lqOwnGKaMB+2ZiIAFAjb4l5Mrmg7GlxPvYoYCGQnRVZFpIKnFdBK0ztJwSPOigleKC
-	AXwHGF0I5sPgeqHDX/bIEmfSfDGBg3Q+8SFUla7SavBLVZLY7qelMxN73nNq/B/zP/HBJT8+YUGB0
-	py7nhTqg==;
+	bh=gX2Z1GBA+HPHQoAFq+18FlcSwvN4OZcqZvt4eAIX0D8=; b=YTfViQE8fMrc9iWdlv4WUr/Kt6
+	gypxONDXe9fRLNUvfPWOwT+OLEo2FncK0Xvh3XEc3U16n/n/+0pvG3aDmMP2pLgbCfrEsxKgFdCNx
+	vyRzgMXiuBNJwXER3eRXTYQST+ylrstzP38bnp9lnghJlMIm1R6q0ewSYunoVoziY/3B6rPsvfg9o
+	4nsrcVoPN09vxpRNAgCXnh07/ELYr20+7zYsHV55E9D/qPGDjX4Kdoegd/jvCmBYFH4wipvNRZLcr
+	FRHtlznwIvsfZ1laQoiJHXqa8VPJm10swpNPeuKpjFsGibB1w3IInEfkDr8Y9/C7RIAKxLXoQ/CrL
+	Vc/W2wKg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tWszy-00000000ajY-24xw;
+	id 1tWszy-00000000ajd-2Slx;
 	Sun, 12 Jan 2025 08:07:06 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: gregkh@linuxfoundation.org
-Subject: [PATCH v2 09/21] b43legacy: make use of debugfs_get_aux()
-Date: Sun, 12 Jan 2025 08:06:53 +0000
-Message-ID: <20250112080705.141166-9-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 10/21] netdevsim: don't embed file_operations into your structs
+Date: Sun, 12 Jan 2025 08:06:54 +0000
+Message-ID: <20250112080705.141166-10-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250112080705.141166-1-viro@zeniv.linux.org.uk>
 References: <20250112080545.GX1977892@ZenIV>
@@ -63,96 +63,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+Just use debugfs_get_aux() instead of debugfs_real_fops().
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- .../net/wireless/broadcom/b43legacy/debugfs.c | 26 ++++++++-----------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+ drivers/net/netdevsim/hwstats.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/debugfs.c b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-index 6b0e8d117061..5d04bcc216e5 100644
---- a/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-@@ -31,7 +31,6 @@ static struct dentry *rootdir;
- struct b43legacy_debugfs_fops {
- 	ssize_t (*read)(struct b43legacy_wldev *dev, char *buf, size_t bufsize);
- 	int (*write)(struct b43legacy_wldev *dev, const char *buf, size_t count);
--	struct file_operations fops;
- 	/* Offset of struct b43legacy_dfs_file in struct b43legacy_dfsentry */
- 	size_t file_struct_offset;
- 	/* Take wl->irq_lock before calling read/write? */
-@@ -188,7 +187,7 @@ static ssize_t b43legacy_debugfs_read(struct file *file, char __user *userbuf,
- 				size_t count, loff_t *ppos)
+diff --git a/drivers/net/netdevsim/hwstats.c b/drivers/net/netdevsim/hwstats.c
+index 0e58aa7f0374..66b3215db3ac 100644
+--- a/drivers/net/netdevsim/hwstats.c
++++ b/drivers/net/netdevsim/hwstats.c
+@@ -331,7 +331,6 @@ enum nsim_dev_hwstats_do {
+ };
+ 
+ struct nsim_dev_hwstats_fops {
+-	const struct file_operations fops;
+ 	enum nsim_dev_hwstats_do action;
+ 	enum netdev_offload_xstats_type type;
+ };
+@@ -342,13 +341,12 @@ nsim_dev_hwstats_do_write(struct file *file,
+ 			  size_t count, loff_t *ppos)
  {
- 	struct b43legacy_wldev *dev;
--	struct b43legacy_debugfs_fops *dfops;
-+	const struct b43legacy_debugfs_fops *dfops;
- 	struct b43legacy_dfs_file *dfile;
- 	ssize_t ret;
- 	char *buf;
-@@ -208,8 +207,7 @@ static ssize_t b43legacy_debugfs_read(struct file *file, char __user *userbuf,
- 		goto out_unlock;
- 	}
+ 	struct nsim_dev_hwstats *hwstats = file->private_data;
+-	struct nsim_dev_hwstats_fops *hwsfops;
++	const struct nsim_dev_hwstats_fops *hwsfops;
+ 	struct list_head *hwsdev_list;
+ 	int ifindex;
+ 	int err;
  
--	dfops = container_of(debugfs_real_fops(file),
--			     struct b43legacy_debugfs_fops, fops);
-+	dfops = debugfs_get_aux(file);
- 	if (!dfops->read) {
- 		err = -ENOSYS;
- 		goto out_unlock;
-@@ -257,7 +255,7 @@ static ssize_t b43legacy_debugfs_write(struct file *file,
- 				 size_t count, loff_t *ppos)
- {
- 	struct b43legacy_wldev *dev;
--	struct b43legacy_debugfs_fops *dfops;
-+	const struct b43legacy_debugfs_fops *dfops;
- 	char *buf;
- 	int err = 0;
+-	hwsfops = container_of(debugfs_real_fops(file),
+-			       struct nsim_dev_hwstats_fops, fops);
++	hwsfops = debugfs_get_aux(file);
  
-@@ -275,8 +273,7 @@ static ssize_t b43legacy_debugfs_write(struct file *file,
- 		goto out_unlock;
- 	}
- 
--	dfops = container_of(debugfs_real_fops(file),
--			     struct b43legacy_debugfs_fops, fops);
-+	dfops = debugfs_get_aux(file);
- 	if (!dfops->write) {
- 		err = -ENOSYS;
- 		goto out_unlock;
-@@ -308,17 +305,16 @@ static ssize_t b43legacy_debugfs_write(struct file *file,
- 	return err ? err : count;
+ 	err = kstrtoint_from_user(data, count, 0, &ifindex);
+ 	if (err)
+@@ -381,14 +379,13 @@ nsim_dev_hwstats_do_write(struct file *file,
+ 	return count;
  }
  
 +static struct debugfs_short_fops debugfs_ops = {
-+	.read	= b43legacy_debugfs_read,
-+	.write	= b43legacy_debugfs_write,
-+	.llseek = generic_file_llseek
++	.write = nsim_dev_hwstats_do_write,
++	.llseek = generic_file_llseek,
 +};
- 
- #define B43legacy_DEBUGFS_FOPS(name, _read, _write, _take_irqlock)	\
- 	static struct b43legacy_debugfs_fops fops_##name = {		\
- 		.read	= _read,				\
- 		.write	= _write,				\
--		.fops	= {					\
--			.open	= simple_open,				\
--			.read	= b43legacy_debugfs_read,		\
--			.write	= b43legacy_debugfs_write,		\
--			.llseek = generic_file_llseek,			\
++
+ #define NSIM_DEV_HWSTATS_FOPS(ACTION, TYPE)			\
+ 	{							\
+-		.fops = {					\
+-			.open = simple_open,			\
+-			.write = nsim_dev_hwstats_do_write,	\
+-			.llseek = generic_file_llseek,		\
+-			.owner = THIS_MODULE,			\
 -		},						\
- 		.file_struct_offset = offsetof(struct b43legacy_dfsentry, \
- 					       file_##name),	\
- 		.take_irqlock	= _take_irqlock,		\
-@@ -386,9 +382,9 @@ void b43legacy_debugfs_add_device(struct b43legacy_wldev *dev)
+ 		.action = ACTION,				\
+ 		.type = TYPE,					\
+ 	}
+@@ -433,12 +430,12 @@ int nsim_dev_hwstats_init(struct nsim_dev *nsim_dev)
+ 		goto err_remove_hwstats_recursive;
+ 	}
  
- #define ADD_FILE(name, mode)	\
- 	do {							\
--		debugfs_create_file(__stringify(name), mode,	\
-+		debugfs_create_file_aux(__stringify(name), mode,	\
- 				    e->subdir, dev,		\
--				    &fops_##name.fops);		\
-+				    &fops_##name, &debugfs_ops);	\
- 	} while (0)
+-	debugfs_create_file("enable_ifindex", 0200, hwstats->l3_ddir, hwstats,
+-			    &nsim_dev_hwstats_l3_enable_fops.fops);
+-	debugfs_create_file("disable_ifindex", 0200, hwstats->l3_ddir, hwstats,
+-			    &nsim_dev_hwstats_l3_disable_fops.fops);
+-	debugfs_create_file("fail_next_enable", 0200, hwstats->l3_ddir, hwstats,
+-			    &nsim_dev_hwstats_l3_fail_fops.fops);
++	debugfs_create_file_aux("enable_ifindex", 0200, hwstats->l3_ddir, hwstats,
++			    &nsim_dev_hwstats_l3_enable_fops, &debugfs_ops);
++	debugfs_create_file_aux("disable_ifindex", 0200, hwstats->l3_ddir, hwstats,
++			    &nsim_dev_hwstats_l3_disable_fops, &debugfs_ops);
++	debugfs_create_file_aux("fail_next_enable", 0200, hwstats->l3_ddir, hwstats,
++			    &nsim_dev_hwstats_l3_fail_fops, &debugfs_ops);
  
- 
+ 	INIT_DELAYED_WORK(&hwstats->traffic_dw,
+ 			  &nsim_dev_hwstats_traffic_work);
 -- 
 2.39.5
 
