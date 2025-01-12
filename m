@@ -1,151 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-38957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAD5A0A74B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 06:28:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3210BA0A78A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE2918890A8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 05:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50FBF7A0F38
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 08:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6562A85931;
-	Sun, 12 Jan 2025 05:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4484815F41F;
+	Sun, 12 Jan 2025 08:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="V1C5Pzk/"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TCILOVwm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC374632
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 05:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3440379E1
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 08:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736659679; cv=none; b=SL7bS3qo5bejzy+w9CzrSOADuKkbMQce3iIgiDivGbtNgy+Wn98HYzlTLNd18G5ka7cMpIp2pddIcrtBqNooz9MqhAd8Yx4wRf8EVqo0TOaxZ2LBGr9cb97Y7vrVUXbPM5Hm9e+YRtB5LXRR/U0PBPVAxjfq2OyVM4yDO+1ssto=
+	t=1736669151; cv=none; b=pqdtBbPJMjg8RzJ9BVa+Y6aslmz5V/tM3z1UHCDQ30yxbW6s5wNBYeYJGdGtlFKK7cIk+dcWBR83aOXxhj8KXO6INYw8iiRZFSU7iZqY8DCrYms/m6O5OyB//h2+wNeYowVK0vr4jHabHBT2Myzqj51VX62TSldLa1lN3aBkfeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736659679; c=relaxed/simple;
-	bh=FZJI0NwyAdhQDvuggZkPC1A75OwQnn4pL+nCY9+hMIo=;
+	s=arc-20240116; t=1736669151; c=relaxed/simple;
+	bh=O4ZpQB07hBOqrS3qQM39iMd0qINQ7mI76YvqUS0fjRg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5vjLPvUjFUZ9CO0qDIFtyhWIzK64BZ9oStPcpsFVZa6j3qdu60d0g2CV0wSthwtdX5V6+fdOsqyHUHqjwlKMGaTuqjjX6j5s7nyNxT2uvZz4ef0Uda8YyQIs1htHW0v1BI2C0zP4Re9ksgQTeLjDxc8v1JqgUVxbZDn8kkYZGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=V1C5Pzk/; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-102-19.bstnma.fios.verizon.net [173.48.102.19])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50C5RiUf005035
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 Jan 2025 00:27:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1736659666; bh=hsJn6lx2Sfxyjgi2rtTSEM4Cc9L/e68NGlFow50qVNM=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=V1C5Pzk/6pJKAXj5Ir8UDi5x3dkdSRuYOe47T2EIaROHJn6HN23rJTuX2KtF9w091
-	 E3jTHeGi7+6xX/P2DMORzWR0CmvYHnxiDZEFZDjs8euCny0xZ5aXnyQ7hs3znkbAwI
-	 k394yCASrrZWGTj+0oGRlyaVxXE1s7OjXYKBoI+XmaQS59odHcj72YDBTnq9aO2P18
-	 M/kMGEcowMS2bkWcJcH3EPgC9m+ZyF13eRotPUHRDFmiEBIvLNEX3ATnqND4Us+q7l
-	 5k4hx27jEy5yd7vPuLOts3vebdvFv3zxfupcUcFxm+WpIEbz+lqqwYzCsviImURZCC
-	 SxO3B3YgtfTSQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id DC3F815C0148; Sun, 12 Jan 2025 00:27:43 -0500 (EST)
-Date: Sun, 12 Jan 2025 00:27:43 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: "Artem S. Tashkinov" <aros@gmx.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: Spooling large metadata updates / Proposal for a new API/feature
- in the Linux Kernel (VFS/Filesystems):
-Message-ID: <20250112052743.GH1323402@mit.edu>
-References: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPMOCKrJXViA1BfEaPG10DVMQgd4DVSjy5lwJa+C3X401YJtWOalkwmZt1Cukw4F3uAedITc0/uUsn8Mqs1UH0Jg4v/PYNTOe+eeT6sn4jE/tQ6BAXL5XA4kOir3xcUAelx62ukPnPrO3DfU6/VpwPejGMnzsH7IOUx7P/BMlFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TCILOVwm; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NOsCQh4Kfy244o5ubzEniOm/WRlr+t2zligUwHb3i+U=; b=TCILOVwm7yukkBzyN51AZWFTXT
+	vUDKAfaezGOnIg3RotmhBKoZtivYYE6iS3BmFUUOiKoOARrE74Gh9Ju0sNTf7kp5rOanpjfymad31
+	Xvz7RVakXpmqHEFgdDoNMXFpj7RWM94WngUEteQg6M8OJZQP/8EiW1dmx09WwfCGrMcvhRbft/Yz9
+	plYkC8sLdmC7r2brUHdJX+BfqOFpQGT572Y87hyV0DT1bW/GVPeJG/VjeIEcqBrHakwjSZl4uWT0F
+	JUGmPZZ0oHA7OoO5YX3e7mHKXzbi/qnSMJFZ0cKpPmYC+6P+bCuU/vC43XSsS2T4+oT7Lap4YZtQ+
+	939Uq/tw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tWsyg-00000000ah5-04lV;
+	Sun, 12 Jan 2025 08:05:46 +0000
+Date: Sun, 12 Jan 2025 08:05:45 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org
+Subject: [PATCHES v2][RFC][CFT] debugfs cleanups
+Message-ID: <20250112080545.GX1977892@ZenIV>
+References: <20241229080948.GY1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
+In-Reply-To: <20241229080948.GY1977892@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Jan 11, 2025 at 09:17:49AM +0000, Artem S. Tashkinov wrote:
-> Hello,
-> 
-> I had this idea on 2021-11-07, then I thought it was wrong/stupid, now
-> I've asked AI and it said it was actually not bad, so I'm bringing it
-> forward now:
-> 
-> Imagine the following scenarios:
-> 
->  * You need to delete tens of thousands of files.
->  * You need to change the permissions, ownership, or security context
-> (chmod, chown, chcon) for tens of thousands of files.
->  * You need to update timestamps for tens of thousands of files.
-> 
-> All these operations are currently relatively slow because they are
-> executed sequentially, generating significant I/O overhead.
-> 
-> What if these operations could be spooled and performed as a single
-> transaction? By bundling metadata updates into one atomic operation,
-> such tasks could become near-instant or significantly faster. This would
-> also reduce the number of writes, leading to less wear and tear on
-> storage devices.
+On Sun, Dec 29, 2024 at 08:09:48AM +0000, Al Viro wrote:
 
-As Amir has stated, pretty much all journalled file systems will
-combine a large number of file system operations into a single
-transation, unless there is an explicit request via an fsync(2) system
-call.  For example, ext4 in general only closes a journal transaction
-every five seconds, or there isn't enough space in the journal
-(athough in practice this isn't an issue if you are using a reasonably
-modern mkfs.ext4, since we've increased the default size of the
-journal).
+> 	All of that could be avoided if we augmented debugfs inodes with
+> a couple of pointers - no more stashing crap in ->d_fsdata, etc.
+> And it's really not hard to do.  The series below attempts to untangle
+> that mess; it can be found in
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.debugfs
 
-The reason why deleting a large number of files, or changing the
-permissions, ownership, timestamps, etc., of a large number of files
-is because you need to read the directory blocks to find the inodes
-that you need to modify, read a large number of inodes, update a large
-number of inodes, and if you are deleting the inodes, also update the
-block allocation metadata (bitmaps, or btrees) so that those blocks
-are marked as no longer in use.  Some of the directory entries might
-be cached in the dentry cache, and some of the inodes might be cached
-in the inode cache, but that's not always the case.
+Rebased on top of
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-linus
+and force-pushed into the same branch.
 
-If all of the metadata blocks that you need to read in order to
-accomplish the operation are already cached in memory, then what you
-propose is something that pretty much all journaled file systems will
-do already, today. That is, the modifications that need to be made to
-the metadata will be first written to the journal first, and only
-after the journal transaction has been committed, will the actual
-metadata blocks be written to the storage device, and this will be
-done asynchronously.
+Changes since v1:
 
-In pratice, the actual delay in doing one of these large operations is
-the need to read the metadata blocks into memory, and this must be
-done synchronously, since (for example), if you are deleting 100,000
-files, you first need to know which inodes for those 100,000 files by
-reading the directory blocks; you then need to know which blocks will
-be freed by deleting each of those 100,000 files, which means you will
-need to read 100,000 inodes and their extent tree blocks, and then you
-need to update the block allocation information, and that will require
-that you read the block allocation bitmaps so they can be updated.
+* "debugfs: fix missing mutex_destroy() in short_fops case" dropped - already
+merged.
+* struct debugfs_short_fops made available without CONFIG_DEBUG_FS (fixes
+build breakage on !DEBUG_FS builds)
+* orangefs-debugfs converted to debugfs_create_file_aux_num() (accidentally
+missed in the original series)
 
-> Does this idea make sense? If it already exists, or if there’s a reason
-> it wouldn’t work, please let me know.
+Shortlog:
+Al Viro (21):
+      debugfs: separate cache for debugfs inodes
+      debugfs: move ->automount into debugfs_inode_info
+      debugfs: get rid of dynamically allocation proxy_ops
+      debugfs: don't mess with bits in ->d_fsdata
+      debugfs: allow to store an additional opaque pointer at file creation
+      debugfs: take debugfs_short_fops definition out of ifdef
+      carl9170: stop embedding file_operations into their objects
+      b43: stop embedding struct file_operations into their objects
+      b43legacy: make use of debugfs_get_aux()
+      netdevsim: don't embed file_operations into your structs
+      mediatek: stop messing with ->d_iname
+      [not even compile-tested] greybus/camera - stop messing with ->d_iname
+      mtu3: don't mess wiht ->d_iname
+      xhci: don't mess with ->d_iname
+      qat: don't mess with ->d_name
+      sof-client-ipc-flood-test: don't mess with ->d_name
+      slub: don't mess with ->d_name
+      arm_scmi: don't mess with ->d_parent->d_name
+      octeontx2: don't mess with ->d_parent or ->d_parent->d_name
+      orangefs-debugfs: don't mess with ->d_name
+      saner replacement for debugfs_rename()
 
-So yes, it basically exists, although in practice, it doesn't work as
-well as you might think, because of the need to read potentially a
-large number of the metdata blocks.  But for example, if you make sure
-that all of the inode information is already cached, e.g.:
+Diffstat:
+ Documentation/filesystems/debugfs.rst              |  12 +-
+ .../crypto/intel/qat/qat_common/adf_tl_debugfs.c   |  36 +---
+ drivers/firmware/arm_scmi/raw_mode.c               |  12 +-
+ drivers/net/bonding/bond_debugfs.c                 |   9 +-
+ drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c       |  19 +-
+ .../ethernet/marvell/octeontx2/af/rvu_debugfs.c    |  76 +++-----
+ drivers/net/ethernet/marvell/skge.c                |   5 +-
+ drivers/net/ethernet/marvell/sky2.c                |   5 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   6 +-
+ drivers/net/netdevsim/hwstats.c                    |  29 ++-
+ drivers/net/wireless/ath/carl9170/debug.c          |  28 ++-
+ drivers/net/wireless/broadcom/b43/debugfs.c        |  27 ++-
+ drivers/net/wireless/broadcom/b43legacy/debugfs.c  |  26 ++-
+ drivers/opp/debugfs.c                              |  10 +-
+ drivers/phy/mediatek/phy-mtk-tphy.c                |  40 +---
+ drivers/staging/greybus/camera.c                   |  17 +-
+ drivers/usb/host/xhci-debugfs.c                    |  25 +--
+ drivers/usb/mtu3/mtu3_debugfs.c                    |  40 +---
+ fs/debugfs/file.c                                  | 165 ++++++++--------
+ fs/debugfs/inode.c                                 | 208 ++++++++++-----------
+ fs/debugfs/internal.h                              |  50 +++--
+ fs/orangefs/orangefs-debugfs.c                     |  16 +-
+ include/linux/debugfs.h                            |  44 ++++-
+ mm/shrinker_debug.c                                |  16 +-
+ mm/slub.c                                          |  13 +-
+ net/hsr/hsr_debugfs.c                              |   9 +-
+ net/mac80211/debugfs_netdev.c                      |  11 +-
+ net/wireless/core.c                                |   5 +-
+ sound/soc/sof/sof-client-ipc-flood-test.c          |  39 ++--
+ 29 files changed, 402 insertions(+), 596 deletions(-)
 
-   ls -lR /path/to/large/tree > /dev/null
-
-Then the operation to do a bulk update will be fast:
-
-  time chown -R root:root /path/to/large/tree
-
-This demonstrates that the bottleneck tends to be *reading* the
-metdata blocks, not *writing* the metadata blocks.
-
-Cheers,
-
-				- Ted
+Individual patches in followups.
 
