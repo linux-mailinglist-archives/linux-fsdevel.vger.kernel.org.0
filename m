@@ -1,58 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-38965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0676A0A791
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:07:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CFCA0A790
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA20F164C78
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 08:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68983A89C2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 08:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40751922F8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F074E1922F2;
 	Sun, 12 Jan 2025 08:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="GlZf0ADp"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="D+UBgtoW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A25C154456
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005731494A3
 	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 08:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736669230; cv=none; b=m861I9ib4XnKus+dxoIH62p5Sq2hKnKT1/o+lzZeF92+sRjfq/8MVAmT4IuQAV/Gm9kxnLrFT0anfsddHm22S/xxqzGOEkNUB/Wg4yWRRWFenN4v0+THY4a91WY8Vfr1P/17YMHsziJ4fxeTOVEUkbaloRYqBII5HKn7nBsoBb0=
+	t=1736669230; cv=none; b=GEQobmD6ScCzs2Dg/Q7IPpygnBRhAXWEuoB3mIjrEl9FhD+vAD725zpuWST3FM7U2ejyNi7gIVqTgu6gt4PnH9NpryTuQ/OidFOZMTv8Ve6aoM9dD8ZZWTXlMeux7b721ZAbUarDiAfQKxXo3KDsEZLCJGTbHe/j3h+WeXBjYz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736669230; c=relaxed/simple;
-	bh=mHadgRfritLH2mUKjulWkr3tvtB7lzsBxlFk7fvDAmE=;
+	bh=HEaCBbZkihChoOI3bMNRU4zvLAlX9FhGx3Ov1FEtG8w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qMKAsdbLstc42TX9a66zLPEaYaQYvbAIpX3+3GjaNsBg/JtMAcYi5w8rSpMKEj6ffN33Ljl7/1IDkI6xw1xTeqpeGbUQEqitgJnrl7X5FKqUU7AZtmAFeH1Julxzmh/kQBWabHRiK/Z1Sw2E8P3+HjiDI6mP6TjYhK0AwdjziUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=GlZf0ADp; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=YGJH23qZniZeOK7PKxsFfn2oEqdwPL2oPyU5yRB+YZbRImQ5qCvDt3UANn3w6okeQx30nxM5LFJo7yFYDU1SfXvnV/gALJQR/QYe58qqVO1CDL3GxEDRhH9XtyO7hVuIY2DU6044sDKTCP1l2WxKKEq7TdtYMbdiMeY8Evyer4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=D+UBgtoW; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=L/mnsQLDDKaL2OxxbVxrCZCiNiu/obgKoaYVCacvb4M=; b=GlZf0ADpIU3dJoTur7dy7xZNHi
-	LSVuVZQxgLsf/LL8PXh81EICalRhRPBBe4CxAlYkw0xAAm6cvJA13zEQl+NfF6CRyU4HXIf0zncTq
-	YeV+ksSKEfDJuxpXrp1CUgrAoIJsyeMpRzJiTPP5aPHd6wnFB1atsnMgs+f3bTNM431jjiR9WXw/K
-	bh4LIe4JQTWYm3C/jvQHh9AYR+pYc704buHEBxo8siuMMLVEyX/PbtRI+SSiyHwZXK5WhfMGO1kqr
-	YWwsF2yeKkE4PjcWHLlZ/+ec54+gB9V1eaA+DV/qWrXSHm5h2fvtDt497UhjZLTSpuT0C08nuuzY0
-	P1nBzvlA==;
+	bh=gdyGFIBoU1ORCe952ZRKQoSeaYnFIXXg/0Zeoxy/ohs=; b=D+UBgtoW5N+y9yDaxbrmLHVf+0
+	yiNHD+7nRJ5NMX/1jcv7RF+JMrePMGRCszuSp3eiEwwb+Gyh5gK9ZKUkbdV15OZQ9yBiQeL0i05+R
+	g2u64OEzxqRAuJGL+TGtxYwfT/OCcvFvyjVSVgQoBijnpiJWf7g8/k12QJPz8QXW9nbyFobhcqzNy
+	ZQCYo3/7b53c54UibRGaBeDSZXtWexGDbzgJbD+Xs1ExlPZoTQpy9jmlPg81dSWRJ779SE1Ui9hUX
+	yykmY+Vog0zfUBsway9uJ1rrS8RcMaZ6F97qqyOz8tQBwPGEhd+lPBPA13dpVhqbHO+cTDR7Jmj47
+	uFbYXfUg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tWszx-00000000aj0-1mdi;
+	id 1tWszx-00000000aj2-2Qjd;
 	Sun, 12 Jan 2025 08:07:05 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: gregkh@linuxfoundation.org
-Subject: [PATCH v2 01/21] debugfs: separate cache for debugfs inodes
-Date: Sun, 12 Jan 2025 08:06:45 +0000
-Message-ID: <20250112080705.141166-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 02/21] debugfs: move ->automount into debugfs_inode_info
+Date: Sun, 12 Jan 2025 08:06:46 +0000
+Message-ID: <20250112080705.141166-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250112080545.GX1977892@ZenIV>
+In-Reply-To: <20250112080705.141166-1-viro@zeniv.linux.org.uk>
 References: <20250112080545.GX1977892@ZenIV>
+ <20250112080705.141166-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,106 +63,120 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Embed them into container (struct debugfs_inode_info, with nothing
-else in it at the moment), set the cache up, etc.
-
-Just the infrastructure changes letting us augment debugfs inodes
-here; adding stuff will come at the next step.
+... and don't bother with debugfs_fsdata for those.  Life's
+simpler that way...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/debugfs/inode.c    | 40 ++++++++++++++++++++++++++++++++++------
- fs/debugfs/internal.h |  9 +++++++++
- 2 files changed, 43 insertions(+), 6 deletions(-)
+ fs/debugfs/inode.c    | 21 +++++----------------
+ fs/debugfs/internal.h | 19 +++++++++----------
+ 2 files changed, 14 insertions(+), 26 deletions(-)
 
 diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index e752009de929..5d423bd92f93 100644
+index 5d423bd92f93..2f5afd7b1b94 100644
 --- a/fs/debugfs/inode.c
 +++ b/fs/debugfs/inode.c
-@@ -208,16 +208,34 @@ static int debugfs_show_options(struct seq_file *m, struct dentry *root)
- 	return 0;
- }
+@@ -246,8 +246,8 @@ static void debugfs_release_dentry(struct dentry *dentry)
+ 	if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)
+ 		return;
  
-+static struct kmem_cache *debugfs_inode_cachep __ro_after_init;
-+
-+static void init_once(void *foo)
-+{
-+	struct debugfs_inode_info *info = foo;
-+	inode_init_once(&info->vfs_inode);
-+}
-+
-+static struct inode *debugfs_alloc_inode(struct super_block *sb)
-+{
-+	struct debugfs_inode_info *info;
-+	info = alloc_inode_sb(sb, debugfs_inode_cachep, GFP_KERNEL);
-+	if (!info)
-+		return NULL;
-+	return &info->vfs_inode;
-+}
-+
- static void debugfs_free_inode(struct inode *inode)
+-	/* check it wasn't a dir (no fsdata) or automount (no real_fops) */
+-	if (fsd && (fsd->real_fops || fsd->short_fops)) {
++	/* check it wasn't a dir or automount (no fsdata) */
++	if (fsd) {
+ 		WARN_ON(!list_empty(&fsd->cancellations));
+ 		mutex_destroy(&fsd->cancellations_mtx);
+ 	}
+@@ -257,9 +257,9 @@ static void debugfs_release_dentry(struct dentry *dentry)
+ 
+ static struct vfsmount *debugfs_automount(struct path *path)
  {
- 	if (S_ISLNK(inode->i_mode))
- 		kfree(inode->i_link);
--	free_inode_nonrcu(inode);
-+	kmem_cache_free(debugfs_inode_cachep, DEBUGFS_I(inode));
+-	struct debugfs_fsdata *fsd = path->dentry->d_fsdata;
++	struct inode *inode = path->dentry->d_inode;
+ 
+-	return fsd->automount(path->dentry, d_inode(path->dentry)->i_private);
++	return DEBUGFS_I(inode)->automount(path->dentry, inode->i_private);
  }
  
- static const struct super_operations debugfs_super_operations = {
- 	.statfs		= simple_statfs,
- 	.show_options	= debugfs_show_options,
-+	.alloc_inode	= debugfs_alloc_inode,
- 	.free_inode	= debugfs_free_inode,
- };
+ static const struct dentry_operations debugfs_dops = {
+@@ -642,23 +642,13 @@ struct dentry *debugfs_create_automount(const char *name,
+ 					void *data)
+ {
+ 	struct dentry *dentry = start_creating(name, parent);
+-	struct debugfs_fsdata *fsd;
+ 	struct inode *inode;
  
-@@ -939,12 +957,22 @@ static int __init debugfs_init(void)
- 	if (retval)
- 		return retval;
+ 	if (IS_ERR(dentry))
+ 		return dentry;
  
--	retval = register_filesystem(&debug_fs_type);
--	if (retval)
-+	debugfs_inode_cachep = kmem_cache_create("debugfs_inode_cache",
-+				sizeof(struct debugfs_inode_info), 0,
-+				SLAB_RECLAIM_ACCOUNT | SLAB_ACCOUNT,
-+				init_once);
-+	if (debugfs_inode_cachep == NULL) {
- 		sysfs_remove_mount_point(kernel_kobj, "debug");
--	else
--		debugfs_registered = true;
-+		return -ENOMEM;
-+	}
+-	fsd = kzalloc(sizeof(*fsd), GFP_KERNEL);
+-	if (!fsd) {
+-		failed_creating(dentry);
+-		return ERR_PTR(-ENOMEM);
+-	}
+-
+-	fsd->automount = f;
+-
+ 	if (!(debugfs_allow & DEBUGFS_ALLOW_API)) {
+ 		failed_creating(dentry);
+-		kfree(fsd);
+ 		return ERR_PTR(-EPERM);
+ 	}
  
--	return retval;
-+	retval = register_filesystem(&debug_fs_type);
-+	if (retval) { // Really not going to happen
-+		sysfs_remove_mount_point(kernel_kobj, "debug");
-+		kmem_cache_destroy(debugfs_inode_cachep);
-+		return retval;
-+	}
-+	debugfs_registered = true;
-+	return 0;
- }
- core_initcall(debugfs_init);
+@@ -666,14 +656,13 @@ struct dentry *debugfs_create_automount(const char *name,
+ 	if (unlikely(!inode)) {
+ 		pr_err("out of free dentries, can not create automount '%s'\n",
+ 		       name);
+-		kfree(fsd);
+ 		return failed_creating(dentry);
+ 	}
+ 
+ 	make_empty_dir_inode(inode);
+ 	inode->i_flags |= S_AUTOMOUNT;
+ 	inode->i_private = data;
+-	dentry->d_fsdata = fsd;
++	DEBUGFS_I(inode)->automount = f;
+ 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+ 	inc_nlink(inode);
+ 	d_instantiate(dentry, inode);
 diff --git a/fs/debugfs/internal.h b/fs/debugfs/internal.h
-index bbae4a228ef4..5cb940b0b8f6 100644
+index 5cb940b0b8f6..a644e44a0ee4 100644
 --- a/fs/debugfs/internal.h
 +++ b/fs/debugfs/internal.h
-@@ -11,6 +11,15 @@
+@@ -13,6 +13,9 @@ struct file_operations;
  
- struct file_operations;
+ struct debugfs_inode_info {
+ 	struct inode vfs_inode;
++	union {
++		debugfs_automount_t automount;
++	};
+ };
  
-+struct debugfs_inode_info {
-+	struct inode vfs_inode;
-+};
-+
-+static inline struct debugfs_inode_info *DEBUGFS_I(struct inode *inode)
-+{
-+	return container_of(inode, struct debugfs_inode_info, vfs_inode);
-+}
-+
- /* declared over in file.c */
- extern const struct file_operations debugfs_noop_file_operations;
- extern const struct file_operations debugfs_open_proxy_file_operations;
+ static inline struct debugfs_inode_info *DEBUGFS_I(struct inode *inode)
+@@ -29,17 +32,13 @@ extern const struct file_operations debugfs_full_short_proxy_file_operations;
+ struct debugfs_fsdata {
+ 	const struct file_operations *real_fops;
+ 	const struct debugfs_short_fops *short_fops;
+-	union {
+-		/* automount_fn is used when real_fops is NULL */
+-		debugfs_automount_t automount;
+-		struct {
+-			refcount_t active_users;
+-			struct completion active_users_drained;
++	struct {
++		refcount_t active_users;
++		struct completion active_users_drained;
+ 
+-			/* protect cancellations */
+-			struct mutex cancellations_mtx;
+-			struct list_head cancellations;
+-		};
++		/* protect cancellations */
++		struct mutex cancellations_mtx;
++		struct list_head cancellations;
+ 	};
+ };
+ 
 -- 
 2.39.5
 
