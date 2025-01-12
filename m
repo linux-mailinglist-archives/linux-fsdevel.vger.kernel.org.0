@@ -1,247 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-38956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739F3A0A72A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 05:16:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAD5A0A74B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 06:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700A5165B01
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 04:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE2918890A8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 05:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EC11DFD1;
-	Sun, 12 Jan 2025 04:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6562A85931;
+	Sun, 12 Jan 2025 05:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZpTZ0pFM"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="V1C5Pzk/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8998F819
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 04:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC374632
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 05:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736655400; cv=none; b=DA9+QL2wTTDWXT8ifJm3lUShpzFBrWvjc9ZAu6lhOWfNkR/4k7bLIj+UsYQfwXwkIp2XfSN2tuk4B1svqLDQK3Ae/OIXIIHuGRQWt3B9Im+5n4NNe3NnBY5ugcDkD6XEr3ZnvaBtAJKGni8u5kbmybtXDxUw+71Iw5kU4z6hzL4=
+	t=1736659679; cv=none; b=SL7bS3qo5bejzy+w9CzrSOADuKkbMQce3iIgiDivGbtNgy+Wn98HYzlTLNd18G5ka7cMpIp2pddIcrtBqNooz9MqhAd8Yx4wRf8EVqo0TOaxZ2LBGr9cb97Y7vrVUXbPM5Hm9e+YRtB5LXRR/U0PBPVAxjfq2OyVM4yDO+1ssto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736655400; c=relaxed/simple;
-	bh=7hHc1pSQH1UlR5jDDmAUy5Fra0CcdoApO9uHV9L8OKU=;
+	s=arc-20240116; t=1736659679; c=relaxed/simple;
+	bh=FZJI0NwyAdhQDvuggZkPC1A75OwQnn4pL+nCY9+hMIo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwgUqlIf1qLrERB4pONsgIx11BA3gxts1Na0BQBBjAZzHdvgnBAcNq/Z0NPJA5i81JNhEosFAC7r9/1YJ+lnyKmHKIb7hQPpCai7EM7oK8GqzhGz0lPfDrVDhcDIU7iDGh9/CF4GDRHC9+oYvcMZ/5nENSkDjV2n+5QZa95XF7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZpTZ0pFM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736655396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nTY6TMmCzfQlzVIQg5Y/MHXa+8quUBbVQp5dpY6lhXU=;
-	b=ZpTZ0pFMz7rm+FaeAeR9KNoHmillSdfR7Pq/l8Slhzwjwbi0scMHObQwuC4lYPFirUnH5h
-	6FEYEpjRNexyIWAZ1YxL52VvWQPbOK3Xf2moPxaK/sRVRflGumWCx9LxBXqw/YPvqQfN1B
-	QLD1x6Ux6etxDxQUJ3BT4ByhwrolE7I=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-8bDGaVcrOVydfE8Nh271KQ-1; Sat, 11 Jan 2025 23:16:31 -0500
-X-MC-Unique: 8bDGaVcrOVydfE8Nh271KQ-1
-X-Mimecast-MFC-AGG-ID: 8bDGaVcrOVydfE8Nh271KQ
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2163d9a730aso59652275ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jan 2025 20:16:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736655390; x=1737260190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nTY6TMmCzfQlzVIQg5Y/MHXa+8quUBbVQp5dpY6lhXU=;
-        b=A7pgrsIs8JdR1Rq25MsUgaTz71uPYysBvDHxBB+tBBLZogYCcEFn/gOVZGC8E1gHkD
-         ueqPlTy1hrmcvy/Y5j0ojC5QzSxCms8OdYgzR3bBNtj1mvBeOK2EaWBhTGoDNOb2DMtZ
-         EQ571n8dXY4J+oWJjgPX7DhhI91AC/gu1z/KukERVqz7LKOAQM7F/SF0TR7WPuojOGQF
-         uOoFzvs2i7fcg41yVUhOCSzXdR2yo9d9PO1d0O+5+IvkXVBNpFVY3XquXpy2eeqwVlfu
-         ABDyXMRzZE/6KLn6zuMXDEgtTbBJRKV8cuynAU9438UKOyR+PcYez9CVKEFpjT2jr4nY
-         q3hA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlFfRPRzEJH25aq4/VbumTK+eupCEbvFkeZju3jl+DYu05G0e5jRzIdRsZL4lCIJlToIeJhMJgYX06sR+A@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYKXHI6JNHXYgfmdaPJHRuvqe4bs0LkKFDa5Ki2eozSz422VXL
-	rzCMiFNN6elmlpkiZm/VUUJ7VnXxB75KkrFf6VoS/dLO/S0SaKnbJOn6xWkLhfbXfoyQhztmfgo
-	siALWCnsjwiyluKSSAVXpu4c/Ttz9vbVb92eAE4lkFGCsVXgpjLXg0ODw5XxTe1LXZJldY/693g
-	==
-X-Gm-Gg: ASbGncvmuu8pSKTrTfPQ0798OCGknTGhUAurAw4V7b+iMPX0pSJDzCK38hVz5zToDFj
-	VJkIkJabm1yOdRXu47/l0e3N0KwIwww9DD6WQeUcqpFweObNSYGUXstSR1bVdSBFB/dI51VFBpK
-	vzIyFO8NhxScBl0IbEYt1W6nwmfZ9PULf0MFfG3rt2XUHYRfhej/7GtJ8/tSGaJoNx46nCo0rf0
-	VLzljY+nyCz/N1t1/78XdaaM+lClhlVOIjl1xudcH3bvEC7lFFqL548PvDBSqt7Y4v7ZzDVicXm
-	jAMkW0bZk2aQIlgE0PK7KQ==
-X-Received: by 2002:a17:902:dac9:b0:215:742e:5cff with SMTP id d9443c01a7336-21ad9f7ca15mr60029635ad.16.1736655390052;
-        Sat, 11 Jan 2025 20:16:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFQy7ZyNMZEphjGRQwqp3Z7rj5F/Nk/MuuJx8raJ9MhFYQB9SMky7CVrddpIzz52aioEP5oNA==
-X-Received: by 2002:a17:902:dac9:b0:215:742e:5cff with SMTP id d9443c01a7336-21ad9f7ca15mr60029455ad.16.1736655389674;
-        Sat, 11 Jan 2025 20:16:29 -0800 (PST)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f2179b6sm33477535ad.115.2025.01.11.20.16.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jan 2025 20:16:29 -0800 (PST)
-Date: Sun, 12 Jan 2025 12:16:24 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	bfoster@redhat.com, djwong@kernel.org, nirjhar@linux.ibm.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 1/2] fsx: support reads/writes from buffers backed by
- hugepages
-Message-ID: <20250112041624.xzenih232klygwvw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20241227193311.1799626-1-joannelkoong@gmail.com>
- <20241227193311.1799626-2-joannelkoong@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A5vjLPvUjFUZ9CO0qDIFtyhWIzK64BZ9oStPcpsFVZa6j3qdu60d0g2CV0wSthwtdX5V6+fdOsqyHUHqjwlKMGaTuqjjX6j5s7nyNxT2uvZz4ef0Uda8YyQIs1htHW0v1BI2C0zP4Re9ksgQTeLjDxc8v1JqgUVxbZDn8kkYZGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=V1C5Pzk/; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-19.bstnma.fios.verizon.net [173.48.102.19])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50C5RiUf005035
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Jan 2025 00:27:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1736659666; bh=hsJn6lx2Sfxyjgi2rtTSEM4Cc9L/e68NGlFow50qVNM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=V1C5Pzk/6pJKAXj5Ir8UDi5x3dkdSRuYOe47T2EIaROHJn6HN23rJTuX2KtF9w091
+	 E3jTHeGi7+6xX/P2DMORzWR0CmvYHnxiDZEFZDjs8euCny0xZ5aXnyQ7hs3znkbAwI
+	 k394yCASrrZWGTj+0oGRlyaVxXE1s7OjXYKBoI+XmaQS59odHcj72YDBTnq9aO2P18
+	 M/kMGEcowMS2bkWcJcH3EPgC9m+ZyF13eRotPUHRDFmiEBIvLNEX3ATnqND4Us+q7l
+	 5k4hx27jEy5yd7vPuLOts3vebdvFv3zxfupcUcFxm+WpIEbz+lqqwYzCsviImURZCC
+	 SxO3B3YgtfTSQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id DC3F815C0148; Sun, 12 Jan 2025 00:27:43 -0500 (EST)
+Date: Sun, 12 Jan 2025 00:27:43 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Artem S. Tashkinov" <aros@gmx.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Spooling large metadata updates / Proposal for a new API/feature
+ in the Linux Kernel (VFS/Filesystems):
+Message-ID: <20250112052743.GH1323402@mit.edu>
+References: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241227193311.1799626-2-joannelkoong@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba4f3df5-027b-405e-8e6e-a3630f7eef93@gmx.com>
 
-On Fri, Dec 27, 2024 at 11:33:10AM -0800, Joanne Koong wrote:
-> Add support for reads/writes from buffers backed by hugepages.
-> This can be enabled through the '-h' flag. This flag should only be used
-> on systems where THP capabilities are enabled.
+On Sat, Jan 11, 2025 at 09:17:49AM +0000, Artem S. Tashkinov wrote:
+> Hello,
 > 
-> This is motivated by a recent bug that was due to faulty handling of
-> userspace buffers backed by hugepages. This patch is a mitigation
-> against problems like this in the future.
+> I had this idea on 2021-11-07, then I thought it was wrong/stupid, now
+> I've asked AI and it said it was actually not bad, so I'm bringing it
+> forward now:
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  ltp/fsx.c | 108 ++++++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 97 insertions(+), 11 deletions(-)
+> Imagine the following scenarios:
 > 
-
-[snip]
-
-> +static void *
-> +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
-> +{
-> +	void *buf;
-> +	long buf_size = roundup(len, hugepage_size) + alignment;
-> +
-> +	if (posix_memalign(&buf, hugepage_size, buf_size)) {
-> +		prterr("posix_memalign for buf");
-> +		return NULL;
-> +	}
-> +	memset(buf, '\0', buf_size);
-> +	if (madvise(buf, buf_size, MADV_COLLAPSE)) {
-
-Hi Joanne,
-
-Sorry I have to drop this patchset from the "upcoming" release v2025.01.12. Due to
-it cause a regression build error on older system, e.g. RHEL-9:
-
-    [CC]    fsx
- fsx.c: In function 'init_hugepages_buf':
- fsx.c:2935:36: error: 'MADV_COLLAPSE' undeclared (first use in this function); did you mean 'MADV_COLD'?
-  2935 |         if (madvise(buf, buf_size, MADV_COLLAPSE)) {
-       |                                    ^~~~~~~~~~~~~
-       |                                    MADV_COLD
- fsx.c:2935:36: note: each undeclared identifier is reported only once for each function it appears in
- gmake[4]: *** [Makefile:51: fsx] Error 1
- gmake[4]: *** Waiting for unfinished jobs....
- gmake[3]: *** [include/buildrules:30: ltp] Error 2
-
-It might cause xfstests totally can't be used on downstream systems, so it can't
-catch up the release of this weekend. Sorry about that, let's try to have it
-in next release :)
-
-Thanks,
-Zorro
-
-
-> +		prterr("madvise collapse for buf");
-> +		free(buf);
-> +		return NULL;
-> +	}
-> +
-> +	return buf;
-> +}
-> +
-> +static void
-> +init_buffers(void)
-> +{
-> +	int i;
-> +
-> +	original_buf = (char *) malloc(maxfilelen);
-> +	for (i = 0; i < maxfilelen; i++)
-> +		original_buf[i] = random() % 256;
-> +	if (hugepages) {
-> +		long hugepage_size = get_hugepage_size();
-> +		if (hugepage_size == -1) {
-> +			prterr("get_hugepage_size()");
-> +			exit(100);
-> +		}
-> +		good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy);
-> +		if (!good_buf) {
-> +			prterr("init_hugepages_buf failed for good_buf");
-> +			exit(101);
-> +		}
-> +
-> +		temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy);
-> +		if (!temp_buf) {
-> +			prterr("init_hugepages_buf failed for temp_buf");
-> +			exit(101);
-> +		}
-> +	} else {
-> +		unsigned long good_buf_len = maxfilelen + writebdy;
-> +		unsigned long temp_buf_len = maxoplen + readbdy;
-> +
-> +		good_buf = (char *) malloc(good_buf_len);
-> +		memset(good_buf, '\0', good_buf_len);
-> +		temp_buf = (char *) malloc(temp_buf_len);
-> +		memset(temp_buf, '\0', temp_buf_len);
-> +	}
-> +	good_buf = round_ptr_up(good_buf, writebdy, 0);
-> +	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> +}
-> +
->  static struct option longopts[] = {
->  	{"replay-ops", required_argument, 0, 256},
->  	{"record-ops", optional_argument, 0, 255},
-> @@ -2883,7 +2974,7 @@ main(int argc, char **argv)
->  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
->  
->  	while ((ch = getopt_long(argc, argv,
-> -				 "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> +				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
->  				 longopts, NULL)) != EOF)
->  		switch (ch) {
->  		case 'b':
-> @@ -2916,6 +3007,9 @@ main(int argc, char **argv)
->  		case 'g':
->  			filldata = *optarg;
->  			break;
-> +		case 'h':
-> +			hugepages = 1;
-> +			break;
->  		case 'i':
->  			integrity = 1;
->  			logdev = strdup(optarg);
-> @@ -3229,15 +3323,7 @@ main(int argc, char **argv)
->  			exit(95);
->  		}
->  	}
-> -	original_buf = (char *) malloc(maxfilelen);
-> -	for (i = 0; i < maxfilelen; i++)
-> -		original_buf[i] = random() % 256;
-> -	good_buf = (char *) malloc(maxfilelen + writebdy);
-> -	good_buf = round_ptr_up(good_buf, writebdy, 0);
-> -	memset(good_buf, '\0', maxfilelen);
-> -	temp_buf = (char *) malloc(maxoplen + readbdy);
-> -	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> -	memset(temp_buf, '\0', maxoplen);
-> +	init_buffers();
->  	if (lite) {	/* zero entire existing file */
->  		ssize_t written;
->  
-> -- 
-> 2.47.1
+>  * You need to delete tens of thousands of files.
+>  * You need to change the permissions, ownership, or security context
+> (chmod, chown, chcon) for tens of thousands of files.
+>  * You need to update timestamps for tens of thousands of files.
 > 
+> All these operations are currently relatively slow because they are
+> executed sequentially, generating significant I/O overhead.
 > 
+> What if these operations could be spooled and performed as a single
+> transaction? By bundling metadata updates into one atomic operation,
+> such tasks could become near-instant or significantly faster. This would
+> also reduce the number of writes, leading to less wear and tear on
+> storage devices.
 
+As Amir has stated, pretty much all journalled file systems will
+combine a large number of file system operations into a single
+transation, unless there is an explicit request via an fsync(2) system
+call.  For example, ext4 in general only closes a journal transaction
+every five seconds, or there isn't enough space in the journal
+(athough in practice this isn't an issue if you are using a reasonably
+modern mkfs.ext4, since we've increased the default size of the
+journal).
+
+The reason why deleting a large number of files, or changing the
+permissions, ownership, timestamps, etc., of a large number of files
+is because you need to read the directory blocks to find the inodes
+that you need to modify, read a large number of inodes, update a large
+number of inodes, and if you are deleting the inodes, also update the
+block allocation metadata (bitmaps, or btrees) so that those blocks
+are marked as no longer in use.  Some of the directory entries might
+be cached in the dentry cache, and some of the inodes might be cached
+in the inode cache, but that's not always the case.
+
+If all of the metadata blocks that you need to read in order to
+accomplish the operation are already cached in memory, then what you
+propose is something that pretty much all journaled file systems will
+do already, today. That is, the modifications that need to be made to
+the metadata will be first written to the journal first, and only
+after the journal transaction has been committed, will the actual
+metadata blocks be written to the storage device, and this will be
+done asynchronously.
+
+In pratice, the actual delay in doing one of these large operations is
+the need to read the metadata blocks into memory, and this must be
+done synchronously, since (for example), if you are deleting 100,000
+files, you first need to know which inodes for those 100,000 files by
+reading the directory blocks; you then need to know which blocks will
+be freed by deleting each of those 100,000 files, which means you will
+need to read 100,000 inodes and their extent tree blocks, and then you
+need to update the block allocation information, and that will require
+that you read the block allocation bitmaps so they can be updated.
+
+> Does this idea make sense? If it already exists, or if there’s a reason
+> it wouldn’t work, please let me know.
+
+So yes, it basically exists, although in practice, it doesn't work as
+well as you might think, because of the need to read potentially a
+large number of the metdata blocks.  But for example, if you make sure
+that all of the inode information is already cached, e.g.:
+
+   ls -lR /path/to/large/tree > /dev/null
+
+Then the operation to do a bulk update will be fast:
+
+  time chown -R root:root /path/to/large/tree
+
+This demonstrates that the bottleneck tends to be *reading* the
+metdata blocks, not *writing* the metadata blocks.
+
+Cheers,
+
+				- Ted
 
