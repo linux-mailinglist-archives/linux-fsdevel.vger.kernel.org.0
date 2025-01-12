@@ -1,176 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-38989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24532A0AB95
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 19:56:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82865A0AC03
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 22:50:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFCB18873C4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 18:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8263C165D65
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 21:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C78B1C1F1D;
-	Sun, 12 Jan 2025 18:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF551B0F0A;
+	Sun, 12 Jan 2025 21:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MSn39utw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624201BB6BC
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 18:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080A1183CBB
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 21:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736708186; cv=none; b=jvhPIakZQYq63fNBdgF9PTJ6SpKMLcxm3/sQZbA1zd+GhhkEJkrDNHpAp1aBtD/39NMHa5C8/AlNtJIVw4S8uupGOdXcCohUGT2NGrF5t6Gy2d4kqvwrVDipvQgQ5AvInB3+3aCLsneymnQ9Adsmww7vJzRjnbUpbBQ3mH8MNfg=
+	t=1736718617; cv=none; b=RXmmls4GnABvTqrr3RASX/139tFNUUxCXnnKGmsu2P0wvpnXkVR+PolY9tVHyy3obbn0VOuVMHr0NvNOx9wYfIi7XEms5+FsKEG0XUCntAyD76/zDB37FTyTCSn/P+WIBH01YnxtTQ7RLtNjLHWV9JTGrK96y5liNF/y1vVMvEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736708186; c=relaxed/simple;
-	bh=4952sKTdMkL5AOWg6bIY1w91xb192S+O1y28dKbkZuE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bBcD+9AJTT5cK34GFvEVah4gpTNQMuVCKqkMZZ4jNZhLQ12pTNiNMEJyxPAk9BvEBbrcKzGteNSWudlb5wrV1ed2AO17Ed2FH9QQ6uV2UlGwHHcc7/WrOAuR/vQN95WXWsO/gYF/NJ7+cg5qgRaesT+9S46fd3itLlmwCRRzDZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a81684bac0so65263745ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 10:56:25 -0800 (PST)
+	s=arc-20240116; t=1736718617; c=relaxed/simple;
+	bh=dUPZvkd26rp5nnxx2nnC+RDJVUuCgxxfynGiCaVDLQ0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LJ2TRC+Dyoyyk9qBpE4D/cru2ZdLKGDQhyWuO+UwYZ6Ecg3BgOiwfen1RBIOteQP+bBGnpbP5jlOdTn+Ffp0pOqCebfv3/qVPAFw4Z6bHV6eN1rSOxNMxakiCo/AEVD/muwePKjj59rPZcHTfh/dSBLCw6tAepwEvyQldgqwfBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jsperbeck.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MSn39utw; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jsperbeck.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ef9204f898so6277363a91.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 13:50:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1736718615; x=1737323415; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IH0ik4yzm9DiMEtBgML907miOMMnCwRLSjV+4R7sEQ=;
+        b=MSn39utwVR52469e+dAo0HhBP5i7eBslCHxUnGmZbwiGExd8Z1W9jv+P1JyLpMIbqP
+         IRTgd+ionOX+UJk9Ub0aWsPIeg7SFGyEGVBLx+db1iaAcLJSd+YrdAqN1P5mPFGO4JbS
+         bBmnYxTz1d1EA9jJIPUndLQbLQxnpUKpNgefpuL7xAHztNdcxmGoS8E5/bfNTu4NmSlz
+         Ao0nGPlwgIeefpRMRsEI5H+TLbT5JQMwgTJHg7wpLjBBWX4HZuprWhRNhp5qrK4ahyQ3
+         Na0iK8TospuhvbUKiC10QJXdrUWzXS+2ig0ya0zLa8dkEELgI7ggUu70tcuO90KCgSx7
+         AF1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736708184; x=1737312984;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4D38t2N5a1X+GK3JqPv9nazLgqGL66rJUmuis2XAjaA=;
-        b=qqklKCLnw2VSUICjIjaelOx2p41PibICnUM6KM23kPX9ouSSwxWX6bgvYCK/8uNT6p
-         xN48+M3p3ZokNGGwbgplm3QDz9kRTXvW454qsaoXsd+wWvMrzPNJCJ7gphFC9ZR6FG3+
-         YxBKsPYpeInLB7Flbk7VT9EnhAOMa3jJEVyhBhsmzA67Rmz7C7NjBb5VIHm1EbcFR1ie
-         BC2er6MQ/oizjBZQ0N0Jn1L+ZThS+fRSip1/HA+Ov+D+XBzYomEiaifx9bN605ptI96n
-         vWTymW+CXEIPl6yWT9V+qtIsFe/ex4j3cJczpq9C1/OlIR5AS5sAqCFnhu9GgHfZqbd2
-         mcGg==
-X-Gm-Message-State: AOJu0YxmDmpj1n+1aCDYAhqWA01jA07XUFLd7YF746lWEElWBBUhmOxD
-	CPI4YybXXIh13uFtH6WlH2KC3W7Qqbmpg0LI3FMuWtmut5JH3BVQ7vzXg00xLkY0FSUS/SEEt6a
-	AD5xdd9oIN9Yp3S6vS5tfEBspMfUIkpQDVY9RA7qKxMQKqPlN6x+yrM7fOw==
-X-Google-Smtp-Source: AGHT+IE0lZnLACULa/knqBizlDbyoYenwUzvlGvViLn/1XU/dqc8yo6aFkzLHZC3m6D9dTL6/QTmExtFFomlT0L0eIEGZ8SUxUe1
+        d=1e100.net; s=20230601; t=1736718615; x=1737323415;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IH0ik4yzm9DiMEtBgML907miOMMnCwRLSjV+4R7sEQ=;
+        b=f3aXtqIbGbo5frtYHGNG3z2kGsP6hmYe4VgY665ruEBop9jIfkxNZJp0R8MnT9i+gG
+         mcc5vWy1q3F3g1XZc2br/Xa2cvlzVbtEBXwaUYOwGqEU0xPS7Hajwb76E2228N5mfhWv
+         skSrTIkFUCVnch3im7B4BgTw7wqd3hqNQID43dEjklocle5I1y5IYMurfEiAkQoRdN3i
+         HXHJwe4PoCIqXoXyNOe7I33Bx51G0pUFh2CgcXPoQPTqyX5Cy54MvZzRq8WrFO3mRfvh
+         uG9nmdCVRASePLwtLrsN3ZyOUYMjcjAtdKYDrhBbxMa1jmohDblAvPrVuz7mBoveihhb
+         oWLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZgyg5tjD6Pa2LBB90+Iesmcy1/JYzb5eEt3B5Btv8q1RR1sV6SMunp6eY8uePCD96nIRPzJiThpnbHSuh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlO451ra2m06eC/FCgjpwsiiP940MVGtuG4qMf+oL1AEqcH6Tl
+	DGxN+UJzT7h8YYdZdv7ssX91uUpeMxdJk/jGrn5ssbgbL/rLRFfZI1doiKRJTpWq2NDElw84+d2
+	DReukM4jwj9PC7A==
+X-Google-Smtp-Source: AGHT+IFwFREJ+qX2LscO1D8raNq4nlV5ZdcigUfzpR+1lXhg9uQ+wUmsnMHqWSEsW+qiA6L/gVGxAsY2vLQ3Ays=
+X-Received: from pjbqi14.prod.google.com ([2002:a17:90b:274e:b0:2ef:d283:5089])
+ (user=jsperbeck job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:2748:b0:2f1:30c8:6e75 with SMTP id 98e67ed59e1d1-2f5490e89e0mr22796888a91.32.1736718615426;
+ Sun, 12 Jan 2025 13:50:15 -0800 (PST)
+Date: Sun, 12 Jan 2025 13:50:13 -0800
+In-Reply-To: <jedmwyiggspxnr76ugyax73zwotbnrwpccy7gafdeq6vyweb6z@4c3ivqegpgkd>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d86:b0:3ce:5a89:326e with SMTP id
- e9e14a558f8ab-3ce5a893465mr65812625ab.13.1736708184562; Sun, 12 Jan 2025
- 10:56:24 -0800 (PST)
-Date: Sun, 12 Jan 2025 10:56:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67841058.050a0220.216c54.0034.GAE@google.com>
-Subject: [syzbot] [fs?] KASAN: global-out-of-bounds Read in number
-From: syzbot <syzbot+fcee6b76cf2e261c51a4@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+References: <jedmwyiggspxnr76ugyax73zwotbnrwpccy7gafdeq6vyweb6z@4c3ivqegpgkd>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Message-ID: <20250112215013.2386009-1-jsperbeck@google.com>
+Subject: [PATCH v2] sysctl: expose sysctl_check_table for unit testing and use it
+From: John Sperbeck <jsperbeck@google.com>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: John Sperbeck <jsperbeck@google.com>, Kees Cook <kees@kernel.org>, Wen Yang <wen.yang@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+In commit b5ffbd139688 ("sysctl: move the extra1/2 boundary check
+of u8 to sysctl_check_table_array"), a kunit test was added that
+registers a sysctl table.  If the test is run as a module, then a
+lingering reference to the module is left behind, and a 'sysctl -a'
+leads to a panic.
 
-syzbot found the following issue on:
+This can be reproduced with these kernel config settings:
 
-HEAD commit:    7b4b9bf203da Add linux-next specific files for 20250107
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14246bc4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=63fa2c9d5e12faef
-dashboard link: https://syzkaller.appspot.com/bug?extid=fcee6b76cf2e261c51a4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174f0a18580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=168aecb0580000
+    CONFIG_KUNIT=y
+    CONFIG_SYSCTL_KUNIT_TEST=m
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c179cc0c7a3c/disk-7b4b9bf2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fdea80f2ec16/vmlinux-7b4b9bf2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a277fcaff608/bzImage-7b4b9bf2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a96fcb87dd70/mount_0.gz
+Then run these commands:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fcee6b76cf2e261c51a4@syzkaller.appspotmail.com
+    modprobe sysctl-test
+    rmmod sysctl-test
+    sysctl -a
 
-==================================================================
-BUG: KASAN: global-out-of-bounds in number+0x3be/0xf40 lib/vsprintf.c:494
-Read of size 1 at addr ffffffff8c5fc971 by task syz-executor351/5832
+The panic varies but generally looks something like this:
 
-CPU: 0 UID: 0 PID: 5832 Comm: syz-executor351 Not tainted 6.13.0-rc6-next-20250107-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- number+0x3be/0xf40 lib/vsprintf.c:494
- pointer+0x764/0x1210 lib/vsprintf.c:2484
- vsnprintf+0x75a/0x1220 lib/vsprintf.c:2846
- seq_vprintf fs/seq_file.c:391 [inline]
- seq_printf+0x172/0x270 fs/seq_file.c:406
- show_partition+0x29f/0x3f0 block/genhd.c:905
- seq_read_iter+0x969/0xd70 fs/seq_file.c:272
- proc_reg_read_iter+0x1c2/0x290 fs/proc/inode.c:299
- copy_splice_read+0x63a/0xb40 fs/splice.c:365
- do_splice_read fs/splice.c:985 [inline]
- splice_direct_to_actor+0x4af/0xc80 fs/splice.c:1089
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- do_sendfile+0x564/0x8a0 fs/read_write.c:1363
- __do_sys_sendfile64 fs/read_write.c:1424 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3fa8cf4c69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd536a0078 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3fa8cf4c69
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000004
-RBP: 00007f3fa8d685f0 R08: 000055558679c4c0 R09: 000055558679c4c0
-R10: 000000000000023b R11: 0000000000000246 R12: 00007ffd536a00a0
-R13: 00007ffd536a02c8 R14: 431bde82d7b634db R15: 00007f3fa8d3d03b
- </TASK>
+    BUG: unable to handle page fault for address: ffffa4571c0c7db4
+    #PF: supervisor read access in kernel mode
+    #PF: error_code(0x0000) - not-present page
+    PGD 100000067 P4D 100000067 PUD 100351067 PMD 114f5e067 PTE 0
+    Oops: Oops: 0000 [#1] SMP NOPTI
+    ... ... ...
+    RIP: 0010:proc_sys_readdir+0x166/0x2c0
+    ... ... ...
+    Call Trace:
+     <TASK>
+     iterate_dir+0x6e/0x140
+     __se_sys_getdents+0x6e/0x100
+     do_syscall_64+0x70/0x150
+     entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-The buggy address belongs to the variable:
- hex_asc_upper+0x11/0x40
+Instead of fully registering a sysctl table, expose the underlying
+checking function and use it in the unit test.
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xc5fc
-flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000002000 ffffea0000317f08 ffffea0000317f08 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff8c5fc800: 00 03 f9 f9 02 f9 f9 f9 02 f9 f9 f9 00 02 f9 f9
- ffffffff8c5fc880: 00 04 f9 f9 00 03 f9 f9 07 f9 f9 f9 00 00 04 f9
->ffffffff8c5fc900: f9 f9 f9 f9 00 00 01 f9 f9 f9 f9 f9 00 00 01 f9
-                                                             ^
- ffffffff8c5fc980: f9 f9 f9 f9 00 04 f9 f9 02 f9 f9 f9 01 f9 f9 f9
- ffffffff8c5fca00: 00 f9 f9 f9 00 f9 f9 f9 00 04 f9 f9 00 06 f9 f9
-==================================================================
-
-
+Fixes: b5ffbd139688 ("sysctl: move the extra1/2 boundary check of u8 to sysctl_check_table_array")
+Signed-off-by: John Sperbeck <jsperbeck@google.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/proc/proc_sysctl.c  | 22 +++++++++++++++++-----
+ include/linux/sysctl.h |  8 ++++++++
+ kernel/sysctl-test.c   |  9 ++++++---
+ 3 files changed, 31 insertions(+), 8 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 27a283d85a6e..1de946176d74 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1137,11 +1137,12 @@ static int sysctl_check_table_array(const char *path, const struct ctl_table *ta
+ 	return err;
+ }
+ 
+-static int sysctl_check_table(const char *path, struct ctl_table_header *header)
++static int sysctl_check_table(const char *path, const struct ctl_table *table,
++			      size_t table_size)
+ {
+-	const struct ctl_table *entry;
++	const struct ctl_table *entry = table;
+ 	int err = 0;
+-	list_for_each_table_entry(entry, header) {
++	for (size_t i = 0 ; i < table_size; ++i, entry++) {
+ 		if (!entry->procname)
+ 			err |= sysctl_err(path, entry, "procname is null");
+ 		if ((entry->proc_handler == proc_dostring) ||
+@@ -1173,6 +1174,16 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
+ 	return err;
+ }
+ 
++#ifdef CONFIG_KUNIT
++int sysctl_check_table_test_helper_sz(const char *path,
++				      const struct ctl_table *table,
++				      size_t table_size)
++{
++	return sysctl_check_table(path, table, table_size);
++}
++EXPORT_SYMBOL(sysctl_check_table_test_helper_sz);
++#endif /* CONFIG_KUNIT */
++
+ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_header *head)
+ {
+ 	struct ctl_table *link_table, *link;
+@@ -1372,6 +1383,9 @@ struct ctl_table_header *__register_sysctl_table(
+ 	struct ctl_dir *dir;
+ 	struct ctl_node *node;
+ 
++	if (sysctl_check_table(path, table, table_size))
++		return NULL;
++
+ 	header = kzalloc(sizeof(struct ctl_table_header) +
+ 			 sizeof(struct ctl_node)*table_size, GFP_KERNEL_ACCOUNT);
+ 	if (!header)
+@@ -1379,8 +1393,6 @@ struct ctl_table_header *__register_sysctl_table(
+ 
+ 	node = (struct ctl_node *)(header + 1);
+ 	init_header(header, root, set, node, table, table_size);
+-	if (sysctl_check_table(path, header))
+-		goto fail;
+ 
+ 	spin_lock(&sysctl_lock);
+ 	dir = &set->dir;
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 40a6ac6c9713..0f1d3a626f4f 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -247,6 +247,14 @@ extern int unaligned_enabled;
+ extern int unaligned_dump_stack;
+ extern int no_unaligned_warning;
+ 
++#ifdef CONFIG_KUNIT
++int sysctl_check_table_test_helper_sz(const char *path,
++				      const struct ctl_table *table,
++				      size_t table_size);
++#define sysctl_check_table_test_helper(path, table)	\
++	sysctl_check_table_test_helper_sz(path, table, ARRAY_SIZE(table))
++#endif /* CONFIG_KUNIT */
++
+ #else /* CONFIG_SYSCTL */
+ 
+ static inline void register_sysctl_init(const char *path, const struct ctl_table *table)
+diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
+index 3ac98bb7fb82..247dd8536fc7 100644
+--- a/kernel/sysctl-test.c
++++ b/kernel/sysctl-test.c
+@@ -410,9 +410,12 @@ static void sysctl_test_register_sysctl_sz_invalid_extra_value(
+ 		},
+ 	};
+ 
+-	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_foo));
+-	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_bar));
+-	KUNIT_EXPECT_NOT_NULL(test, register_sysctl("foo", table_qux));
++	KUNIT_EXPECT_EQ(test, -EINVAL,
++			sysctl_check_table_test_helper("foo", table_foo));
++	KUNIT_EXPECT_EQ(test, -EINVAL,
++			sysctl_check_table_test_helper("foo", table_bar));
++	KUNIT_EXPECT_EQ(test, 0,
++			sysctl_check_table_test_helper("foo", table_qux));
+ }
+ 
+ static struct kunit_case sysctl_test_cases[] = {
+-- 
+2.47.1.613.gc27f4b7a9f-goog
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
