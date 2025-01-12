@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-38959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-38966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5898A0A78B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:07:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C763A0A793
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 09:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A031F1886A8E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 08:07:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12D2C7A3BDE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2025 08:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213D187FE0;
-	Sun, 12 Jan 2025 08:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B1F1925A1;
+	Sun, 12 Jan 2025 08:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gjx1cPJl"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OvhcTPfK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169015667D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C736715F41F
 	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2025 08:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736669229; cv=none; b=CiQ5WO5pwKEPz49t2O7NkvcqZAb9zNBgCahn6myWDY9e7o5U5kPyoQgI6msK0bbco/klwIcvr6zV6QUDkLPrrAE8G4JGdUqaJRaPodujxN1uqYmzNUmzurRDyURvJJF457DaujRFGarmaaWlg0+oGo2JYf3UbYI7KJ3BpDmYyMQ=
+	t=1736669230; cv=none; b=qLWGQX0UPKvMzGDxkqf/GbNC7evO0UogcNaEaHjQSed7u7IF3/EfB4Tua1ZSeNHHDkDV0sovs2VHBpTMcgxIMbbV8aTPC+afky3SOY0CkRgm5rwxDx7eGsmpWd+y2nzRSjYYxIiVpOD+8zda4RbLFX7v9eVVDnTuHpV1j1hi/CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736669229; c=relaxed/simple;
-	bh=5eJsLqYNtJ7xSugE5E96fAtH7ixGSu5cpqpe9a7K01M=;
+	s=arc-20240116; t=1736669230; c=relaxed/simple;
+	bh=egLJDU+W5tnzsIhx0qTIWbyZCPUvMHIkYidP5U8SnRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Phbub4k5dVlx3oWAuQRy1M2YMbPIu6mmU7lBIhETmJmb2KFEnuMGnWCwqLg2VJuLW6Rek/UIxaArgKnMzI13D7HZXjQT2mY/MvrdWKw8j/VbdAec9p9c8Qk5Ylit5ib2obA7bvuWfDE0JNdziDmE/fky2uNQJBmyz4X3Nmh8w/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gjx1cPJl; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=WR4E9rv8HjkAHUSqZnY1FYL0fYGuazQaohiLNVl3a7Mop79Iwietmhz7v7XRLF2NlbUToew3aSKrrQX5n06P9g2nN38LCC9m2oTSPXe2OoWuZ8/89uhZoqe4qLNWUadQzJIczhQuQBT2y8ECYwQauGQ+4mBNpG0scI8nJeff+LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OvhcTPfK; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ClZNbglaHnnHV2LCTUaEvZTs9wMh9fgjq0YxT5cMIys=; b=gjx1cPJlnYHx9tV1LbkHPl/iRU
-	1/fQsHB9ZoIX9dqJqVQYGmlWQszFSgdIdBkaITkfk0yebv3G0/+imNh21TcmE87pQNwsWe4gjojSB
-	6Lv/thAKJjIOwZVSw2hrc13Dj8V9f6TzJFo8axgZcQLvkze9xzmILm5w07xtiqjMCKdYihTtJmhEe
-	3lkTdUx7doiEA8uYEp0v2PPpFLdVLV5Es3nqET3fwX36T9a9xCUG8oCEbckev0N9JlmU+QM+wRaLD
-	RmOpjXjbh2sq2M9NhnNyaorubiWaKBdeul3mCUh1gYJsZQLkaD5QLxpMWp+nuniN2qgmJX+6zUJpX
-	4W4LBjug==;
+	bh=EB1sCu4u+fHUikvXsHZPwN9g8QetZDIS6tgtAQGc4mA=; b=OvhcTPfKzlrF8oLJeIm6EOOdWr
+	TWWJEYQVZL3car2k7xYeTyzfFRcnBDv5CWanWiKRTZYIDBk7UZd2ySxMge5/i2YXdJV4bW0w9dBgG
+	wYx86bDNK2H+kPJGdBur80wcolBZvtlKyIfUQWASgH/DgQkF56zN2nf3+GeDQhZ/ypDgmmcLDx05t
+	ydlF4ylN51tfzmM3//90wVZADaAfXxiHuTYAwoCkDUF++TLrp15qc/SADkGdTMEcfoCOieIJeRQhM
+	/rsXUH2nJ/R7e3ivR+sUEkaxDnoZmW9PQ8QJcBwAPAjvefYJoq74PPPJxp+aoE2Rw8RrTTDzgIMQN
+	Vmj2WRWg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tWszy-00000000ajJ-00IT;
+	id 1tWszy-00000000ajN-0ahO;
 	Sun, 12 Jan 2025 08:07:06 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: gregkh@linuxfoundation.org
-Subject: [PATCH v2 06/21] debugfs: take debugfs_short_fops definition out of ifdef
-Date: Sun, 12 Jan 2025 08:06:50 +0000
-Message-ID: <20250112080705.141166-6-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 07/21] carl9170: stop embedding file_operations into their objects
+Date: Sun, 12 Jan 2025 08:06:51 +0000
+Message-ID: <20250112080705.141166-7-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250112080705.141166-1-viro@zeniv.linux.org.uk>
 References: <20250112080545.GX1977892@ZenIV>
@@ -63,36 +63,101 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+use debugfs_get_aux() instead; switch to debugfs_short_ops as well.
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/linux/debugfs.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/carl9170/debug.c | 28 ++++++++++-------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index 7c97417d73b5..68e9c6cbd835 100644
---- a/include/linux/debugfs.h
-+++ b/include/linux/debugfs.h
-@@ -67,16 +67,16 @@ static const struct file_operations __fops = {				\
+diff --git a/drivers/net/wireless/ath/carl9170/debug.c b/drivers/net/wireless/ath/carl9170/debug.c
+index bb40889d7c72..2d734567000a 100644
+--- a/drivers/net/wireless/ath/carl9170/debug.c
++++ b/drivers/net/wireless/ath/carl9170/debug.c
+@@ -54,7 +54,6 @@ struct carl9170_debugfs_fops {
+ 	char *(*read)(struct ar9170 *ar, char *buf, size_t bufsize,
+ 		      ssize_t *len);
+ 	ssize_t (*write)(struct ar9170 *aru, const char *buf, size_t size);
+-	const struct file_operations fops;
  
- typedef struct vfsmount *(*debugfs_automount_t)(struct dentry *, void *);
- 
--#if defined(CONFIG_DEBUG_FS)
--
--struct dentry *debugfs_lookup(const char *name, struct dentry *parent);
--
- struct debugfs_short_fops {
- 	ssize_t (*read)(struct file *, char __user *, size_t, loff_t *);
- 	ssize_t (*write)(struct file *, const char __user *, size_t, loff_t *);
- 	loff_t (*llseek) (struct file *, loff_t, int);
+ 	enum carl9170_device_state req_dev_state;
  };
+@@ -62,7 +61,7 @@ struct carl9170_debugfs_fops {
+ static ssize_t carl9170_debugfs_read(struct file *file, char __user *userbuf,
+ 				     size_t count, loff_t *ppos)
+ {
+-	struct carl9170_debugfs_fops *dfops;
++	const struct carl9170_debugfs_fops *dfops;
+ 	struct ar9170 *ar;
+ 	char *buf = NULL, *res_buf = NULL;
+ 	ssize_t ret = 0;
+@@ -75,8 +74,7 @@ static ssize_t carl9170_debugfs_read(struct file *file, char __user *userbuf,
  
-+#if defined(CONFIG_DEBUG_FS)
+ 	if (!ar)
+ 		return -ENODEV;
+-	dfops = container_of(debugfs_real_fops(file),
+-			     struct carl9170_debugfs_fops, fops);
++	dfops = debugfs_get_aux(file);
+ 
+ 	if (!dfops->read)
+ 		return -ENOSYS;
+@@ -113,7 +111,7 @@ static ssize_t carl9170_debugfs_read(struct file *file, char __user *userbuf,
+ static ssize_t carl9170_debugfs_write(struct file *file,
+ 	const char __user *userbuf, size_t count, loff_t *ppos)
+ {
+-	struct carl9170_debugfs_fops *dfops;
++	const struct carl9170_debugfs_fops *dfops;
+ 	struct ar9170 *ar;
+ 	char *buf = NULL;
+ 	int err = 0;
+@@ -128,8 +126,7 @@ static ssize_t carl9170_debugfs_write(struct file *file,
+ 
+ 	if (!ar)
+ 		return -ENODEV;
+-	dfops = container_of(debugfs_real_fops(file),
+-			     struct carl9170_debugfs_fops, fops);
++	dfops = debugfs_get_aux(file);
+ 
+ 	if (!dfops->write)
+ 		return -ENOSYS;
+@@ -165,6 +162,11 @@ static ssize_t carl9170_debugfs_write(struct file *file,
+ 	return err;
+ }
+ 
++static struct debugfs_short_fops debugfs_fops = {
++	.read	= carl9170_debugfs_read,
++	.write	= carl9170_debugfs_write,
++};
 +
-+struct dentry *debugfs_lookup(const char *name, struct dentry *parent);
-+
- struct dentry *debugfs_create_file_full(const char *name, umode_t mode,
- 					struct dentry *parent, void *data,
- 					const void *aux,
+ #define __DEBUGFS_DECLARE_FILE(name, _read, _write, _read_bufsize,	\
+ 			       _attr, _dstate)				\
+ static const struct carl9170_debugfs_fops carl_debugfs_##name ##_ops = {\
+@@ -173,12 +175,6 @@ static const struct carl9170_debugfs_fops carl_debugfs_##name ##_ops = {\
+ 	.write = _write,						\
+ 	.attr = _attr,							\
+ 	.req_dev_state = _dstate,					\
+-	.fops = {							\
+-		.open	= simple_open,					\
+-		.read	= carl9170_debugfs_read,			\
+-		.write	= carl9170_debugfs_write,			\
+-		.owner	= THIS_MODULE					\
+-	},								\
+ }
+ 
+ #define DEBUGFS_DECLARE_FILE(name, _read, _write, _read_bufsize, _attr)	\
+@@ -816,9 +812,9 @@ void carl9170_debugfs_register(struct ar9170 *ar)
+ 		ar->hw->wiphy->debugfsdir);
+ 
+ #define DEBUGFS_ADD(name)						\
+-	debugfs_create_file(#name, carl_debugfs_##name ##_ops.attr,	\
+-			    ar->debug_dir, ar,				\
+-			    &carl_debugfs_##name ## _ops.fops)
++	debugfs_create_file_aux(#name, carl_debugfs_##name ##_ops.attr,	\
++			    ar->debug_dir, ar, &carl_debugfs_##name ## _ops, \
++			    &debugfs_fops)
+ 
+ 	DEBUGFS_ADD(usb_tx_anch_urbs);
+ 	DEBUGFS_ADD(usb_rx_pool_urbs);
 -- 
 2.39.5
 
