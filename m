@@ -1,121 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-39051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B31A0BBA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:21:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F1BA0BBBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5A43AD6A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 15:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02FF03A27E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 15:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB9C1C5D4B;
-	Mon, 13 Jan 2025 15:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5981C3034;
+	Mon, 13 Jan 2025 15:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="R8VJClAM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtD06kRj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4A01C5D42
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 15:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB2C24025E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 15:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736781281; cv=none; b=LdVjSVyJig4m1zhZCb0FzOIlqxqS6DDuiVR3QoBmjgOrMR12/4+FD5mhS0CoK5ZIrl9EG1jFeNuL6Tgbqa7leLgQ3tm5NXBZi9KGfQtk2Bp/eSeL5W/KzRbB2b6qQlrfUZwXCNNrcwVBVl0e8egjzN/i5xNg5q59UaJAV7iiFFA=
+	t=1736781882; cv=none; b=k61KOSTdynwk7miAvE1irRjOmH/4bY2uKMX53LHhd7Cu874gp3YWY4tOxbSDhIAL+oCDX5UIwQyp/kH5BKQaoxPZ81/csABsGotpo8YYuZWcea5M+yrm1rihDggBo4QtD8qfQmhrg0IhgaJHnyGvXvpYm0furpfzKyp6e7CEbo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736781281; c=relaxed/simple;
-	bh=27af6UFTjgC8JXuzWTKbG4wXMsixlK2CXsc9i10mk8Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gGR0Cc+hXhB7otVyPn5vjP7Bs9uFOAy7/jk0FplrJDfLwHbSQcLHclrvP3M153XzVcnoZ5R6NjFS9ILKZMU5RHMdhKTmr+GC/VckRugr1Ol9m/PhCjaA/soJIAruaJPVJI3N2bNwZjLbn3f1PMjnJNTd8xxX/X870y0lBmiFx/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=R8VJClAM; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1736781279; x=1768317279;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ABTXRqtlKUWAkRNrq8PVrov2W35Dcn6JEopf0ixSESc=;
-  b=R8VJClAMsMm4Q8cR1+Prezl4qFvqzvsHstK43//m9MnGIH3zoCnU6Eg8
-   G+Gb1+57FZoL3J/jjATdqpaj92nKM+3MSn4Mu0Ow11Iorixg9KDa1JHf5
-   ZUcvRzIlSPZK3hoUi5PBVMQQ1dD8/upPjWxDwcTWznzzz1q8EXqG+f2GM
-   I=;
-X-IronPort-AV: E=Sophos;i="6.12,310,1728950400"; 
-   d="scan'208";a="163779839"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2025 15:14:37 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:64957]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.70:2525] with esmtp (Farcaster)
- id f8d8fd07-36e5-4732-b743-984d6e52c462; Mon, 13 Jan 2025 15:14:37 +0000 (UTC)
-X-Farcaster-Flow-ID: f8d8fd07-36e5-4732-b743-984d6e52c462
-Received: from EX19D005AND004.ant.amazon.com (10.37.240.247) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Mon, 13 Jan 2025 15:14:36 +0000
-Received: from c889f3c14e42.amazon.com (10.119.6.222) by
- EX19D005AND004.ant.amazon.com (10.37.240.247) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Mon, 13 Jan 2025 15:14:33 +0000
-From: Sentaro Onizuka <sentaro@amazon.com>
-To: <linux-fsdevel@vger.kernel.org>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kuniyuki Iwashima
-	<kuniyu@amazon.com>, Sentaro Onizuka <sentaro@amazon.com>
-Subject: [PATCH] fs: Fix return type of do_mount() from long to int
-Date: Tue, 14 Jan 2025 00:14:00 +0900
-Message-ID: <20250113151400.55512-1-sentaro@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1736781882; c=relaxed/simple;
+	bh=vthFnwXoa+f2qz76huP0+IT9Wx38kE91PY5hnXToedc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lKPzTzUStWDSG0H1hIxVlDMoPY98+/2QJe8rlCtm2y0bqUrxC0Q248euo/sD/qI5RjVC6yOTE31i1Z5fF4THJa6U76lVAwHMpdC5N9foThXpLmrl6WkTfg7N3H/5ZzfysRvPyfu+WhFMbbg6tihMhRTs3j25W0UMH3dLDL5e4PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtD06kRj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C397FC4CEE2;
+	Mon, 13 Jan 2025 15:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736781881;
+	bh=vthFnwXoa+f2qz76huP0+IT9Wx38kE91PY5hnXToedc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qtD06kRjaOgbS+6b9wlOaP+Xnvbyk872R9j7JB7ebI+vvvwV/DoYr2hNxdfhjBQFV
+	 wE56qjjI6E1j53odFnW8oTp/so0hhF3hH38vn7qXidxDxb7XB7AQGuFGmnE+jj8w+F
+	 S0q4z8KEsv4kpRFibJZfkpk+b73jGhgUxmLzANuvX6R+yudhpP1c9cVdTPst7ZzHMx
+	 0OEQ0zmvo9zqp4EZEsd/6gEHBqd1kK5XbKkskk8kI61FE7Y936GlqMPptN3sJId2QU
+	 VwgeE8RqYEbc5snG2/zaBrCmZKl2Dz5oISCJaBTNB1Le8XSja/NkYYUf/G0RQmgDr0
+	 UPZ1g7hlOOekg==
+From: Christian Brauner <brauner@kernel.org>
+To: Sentaro Onizuka <sentaro@amazon.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: Fix return type of do_mount() from long to int
+Date: Mon, 13 Jan 2025 16:24:30 +0100
+Message-ID: <20250113-sehnsucht-denkweise-ab349537f9f8@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250113151400.55512-1-sentaro@amazon.com>
+References: <20250113151400.55512-1-sentaro@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1266; i=brauner@kernel.org; h=from:subject:message-id; bh=vthFnwXoa+f2qz76huP0+IT9Wx38kE91PY5hnXToedc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS3GhjbBelqHAxflrhf1vSG3ynrnHNtfCIbhApUby2NK 3OsOtzRUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJFVcgz/g7+2KNxluLxfs2zp ngeHnmyc+GxFMqOz7QulpFLVkN95HQz/E9f8rDnJsTyXaV7URPlP79afs3x31NQ64EdkH/fLtbs 7OAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D032UWB002.ant.amazon.com (10.13.139.190) To
- EX19D005AND004.ant.amazon.com (10.37.240.247)
 
-Fix the return type of do_mount() function from long to int to match its ac
-tual behavior. The function only returns int values, and all callers, inclu
-ding those in fs/namespace.c and arch/alpha/kernel/osf_sys.c, already treat
- the return value as int. This change improves type consistency across the
-filesystem code and aligns the function signature with its existing impleme
-ntation and usage.
+On Tue, 14 Jan 2025 00:14:00 +0900, Sentaro Onizuka wrote:
+> Fix the return type of do_mount() function from long to int to match its ac
+> tual behavior. The function only returns int values, and all callers, inclu
+> ding those in fs/namespace.c and arch/alpha/kernel/osf_sys.c, already treat
+>  the return value as int. This change improves type consistency across the
+> filesystem code and aligns the function signature with its existing impleme
+> ntation and usage.
+> 
+> [...]
 
-Signed-off-by: Sentaro Onizuka <sentaro@amazon.com>
----
- fs/namespace.c        | 2 +-
- include/linux/mount.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 23e81c2a1e3f..5d808778a3ae 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3835,7 +3835,7 @@ int path_mount(const char *dev_name, struct path *path,
- 			    data_page);
- }
- 
--long do_mount(const char *dev_name, const char __user *dir_name,
-+int do_mount(const char *dev_name, const char __user *dir_name,
- 		const char *type_page, unsigned long flags, void *data_page)
- {
- 	struct path path;
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index 33f17b6e8732..a7b472faec2c 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -114,7 +114,7 @@ extern struct vfsmount *kern_mount(struct file_system_type *);
- extern void kern_unmount(struct vfsmount *mnt);
- extern int may_umount_tree(struct vfsmount *);
- extern int may_umount(struct vfsmount *);
--extern long do_mount(const char *, const char __user *,
-+int do_mount(const char *, const char __user *,
- 		     const char *, unsigned long, void *);
- extern struct vfsmount *collect_mounts(const struct path *);
- extern void drop_collected_mounts(struct vfsmount *);
--- 
-2.39.5 (Apple Git-154)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[1/1] fs: Fix return type of do_mount() from long to int
+      https://git.kernel.org/vfs/vfs/c/cd1db3448474
 
