@@ -1,142 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-39059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6DAA0BCFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 17:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5032A0BD08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 17:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2211164249
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C599C1649C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A3C20F06D;
-	Mon, 13 Jan 2025 16:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4453820AF80;
+	Mon, 13 Jan 2025 16:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XIXQHB73"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fmpoWUHA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305720AF89
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 16:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104BC20AF68
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 16:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736784684; cv=none; b=GsaPg6sM8QHGNmNXJMdOhWGKEq+D/GCUGX446OE5E3Rpyzg38wrTy1N8Xss3duqEEISyApmFDUYjaI4OjHuKMEm2NgGgWtHMCdoSYVBdy+ewS/tkTMEH9yXrfFp1UPe0Z5dnsRhJiLpINk4/wTYo6HiqJARKWDaLzX/pUsPgtLc=
+	t=1736784739; cv=none; b=LkpSgdb+DhXBRxED3DNueAEqB/WDPpd2pTtHB6/xZWrYokFn+zuANlYYJXUV88OkM498x/QZsmJTF2B2oAgToofAZh5cpV0qUFkuYvCXXSjcF5C44d7clI5hCWYL04Sui5ERrUbr/BBGPcXe6Bjy5HtbzC6neNc1pLgXr65Yg+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736784684; c=relaxed/simple;
-	bh=psxJGpeVFsbrFufxwmUIDo351AmSH3mNDvNXtHO2nq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=abzYksavqShVzZ/27eWmqgSqCn0Hnjsj1Igz16I5tcOfSBd2xpAgkEggYIC9WZSwQocBKbGhjm/R90i3qKXEqHh8wTj4d/Xri0qUdbek9OneyWan6Kry3AkRr3fILVxwQLPJ9pcCsvRpwIVQv6YW3VxM5Bm9pGNQ45DakmriFpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XIXQHB73; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d8f99cb0d9so32515306d6.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 08:11:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1736784682; x=1737389482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0nln6xuSTTaoMOsjO/bzAdYR40fjFobKxVXqk79yIRg=;
-        b=XIXQHB73/bEY5a04oXp0dZ2wYzZySyXsuDRQdnh10kK/CJIr0IPEzK2YiJ8mvOwVfT
-         EwycpepZyRm3Askly8S6VpfQGsvf3y5EIqidaM5T5MggyC/S4rAaMm7+zCZm/a1rfFhm
-         rHSqF3z3BEA7/hWcc8cMFAr37yMV3oF86wPF4M5Rs+1Tml+nhlkgvHhbxDGQV0EoS+uZ
-         iybLcpugozsx1kZ8IsEl1ddrHTZxqVKq+rA2poIzC3lcxQo9uuBg9iRbg8JVqav2gHwj
-         EyHNWzQfFyXbQtwP/dFABvHufqL8SEe0MDApGbC3UU8KvRs3dmZiRGrqEfnWNda7O/B6
-         AA/A==
+	s=arc-20240116; t=1736784739; c=relaxed/simple;
+	bh=H+F9tHVBR0fQmf71J3gLkHC9qgPnJkYNp5GS5S4g+7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RK4vxhNjNUOqtgavcAdxJzREoGUfrh3htJgmx7fMHLUu3ww2Mk/YI924zxqAk6R+uoAMF9uj39JCvra+ninAniAQyjd3Fv5CQqbU7KovCVqumr1LpY5lfIzrUwQ1u386QDanLyGRAPt4KTtkw5tphigKfyXr82/T+K7FuOIqj1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fmpoWUHA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736784737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pjWyIe8mnk7g6/F83/ZX7003rIKqe+bESoWt3TOXDo=;
+	b=fmpoWUHARcHa1L5eBdiJm/uSkhcGrmcmjnJW219VmUgXm6qCED5+Kk2BgmFFGJ+sQH5WEl
+	4wjzyr8vr9hy3rpp46JLpf5fe96EkAv3skAgoYWM3yB0+1CLBinYwNr2VsnymP+00zI/Sy
+	wVVXBopl40WkIK++BXMVwH4oWSxaBRI=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-177-ezOroC7PMmC4SlB1wgCqeA-1; Mon, 13 Jan 2025 11:12:15 -0500
+X-MC-Unique: ezOroC7PMmC4SlB1wgCqeA-1
+X-Mimecast-MFC-AGG-ID: ezOroC7PMmC4SlB1wgCqeA
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43628594d34so25690205e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 08:12:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736784682; x=1737389482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0nln6xuSTTaoMOsjO/bzAdYR40fjFobKxVXqk79yIRg=;
-        b=Ha3H3qP78VNrl+WUmWw2iem+DqRk4tcRZro3WhtIJ6EORQD2h1vxlD6nhu7j/OLeZC
-         edrRVN3WPyMQjcxsejgsPC7WQZsR4meORtTsvmQxDrVld80yXBBeNAVCy4c9FxUYpSu0
-         bdYza1Wb7XHpdhZAPLfg1EbJU3zYiZ1pLq8fiTCfub9QLaRfKwFW2y/tT3n37+RB6AnX
-         hhiyNsKmhiPsUFhZGP/l5mIwm0NxaLIh46fIIgrEXM85lcAmbZRxFTFddmRHKkqRVH1e
-         ZbCZFsb1U60Fy5kn91+bzF+Z0Y4ZibclnZFOnKJwlNYfhale+6iSh83Y6OmmI9ySk1mF
-         fGig==
-X-Forwarded-Encrypted: i=1; AJvYcCUHWPBYAt9jifKwK8a/IgNSzCvJt0rH4CWI6qBUARGk/p2E1DtE6zuM+Xbl2IrCZIpgmt43lUpJS4expi6/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBHCo1+0fGd6rqV3AvTWcO5fDf3/eLaEnPN6PNBOKFQ/ftRLYU
-	uqBd2BulaDgk/jc0OAIKULTlLfwuWWV1NwqDtkXjv0lvIkaLE0rf0nQiNB9ApcU0+wmYyaynKbb
-	OcmuC1W3Y4pO0ULnkU5wBcSdmIxtlC3q1nrG8
-X-Gm-Gg: ASbGncsIfjQOU7U++jniQqJqEWTmE3VhfRjCaO/MOC/mXAQ1Gitlmlzwv0/A4ZoPm2g
-	PGj26e2amKCaqZBFFtN2jtXMVkTXZps1uXdE=
-X-Google-Smtp-Source: AGHT+IEZHimf0erqHl9P9hdsVm///MN8stQzn+Oj7UFKcLM1rFbaFHquGnXMlUQnxJqTuDGwgck+ox3NI5bhvjgf1ZE=
-X-Received: by 2002:ad4:5ca5:0:b0:6d4:25c4:e77d with SMTP id
- 6a1803df08f44-6df9b2ddad5mr358474696d6.34.1736784681463; Mon, 13 Jan 2025
- 08:11:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736784734; x=1737389534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+pjWyIe8mnk7g6/F83/ZX7003rIKqe+bESoWt3TOXDo=;
+        b=wntt8SObnkR18EdEugwqfEtB4q1MXnpWkxsx5SkBffBmBCpdx0yiPDWXx7r/S9nSLa
+         +JNfjngkgRG3zg8meWKWMa57Hlq8lR8FAsf+le+EVUJz8GEAKdqG1/IXqNx7yhDanhoh
+         eZW356hRaOyFk+JjaUylb8uTxWRCyWI5vurCyTTPaVayKVqfif/IlQvecKHs98Z3Htb7
+         W79AQ8hB/b5XjKoSeyO9/wtM8q8pNi6/ex339cN8ntQi770YOpcChyc/TRnkJd8k02hn
+         u4Dplm3V9Hw3psL6PvVsntbGcWtQrFPwzOSJqK912X2LhyI70aNvVYh++8tE4SesHIqu
+         s1Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVblVkfEWxJEMvQ6DcUjnp4pVU+UAupZ9JUQHRrSUo1SbHU0Cq6wg/wiKQcKNeBTW5MCBohrs2ZIw+W3RG/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1aVISMrvIg5wDd4lBGHRDojr7IP41q+1S3OjzMIKt+9QXD5h/
+	m61eIi11KnpUNpgXUkLvA1ufj62UKpfMqLEbzeo4e7STbO1sMh9HjeLbRRXf+BA/Hmc236R7O8q
+	AKDnhbuBstBqGKjGAnevs/zsKhY+v5nqR6OcRNom2WTl17fNBELoNJ2O2Gi/vuiY=
+X-Gm-Gg: ASbGncvjBGcwtt91BgGSWCZgCFqUnvtyjKZYTEIUCd1tnLSc9jpDKTNvxMYrvEFE443
+	SZByWD88gtXWxAd7jeky86K91q2Kat+1LQN7qN2FOZVJUKT3zVnuxG9qQxwVyQkJWJnmhrHiQ4Y
+	XfUEDZNKHj9NKzq/uuf1Xbp1j0I+blyZCxlULJhwu5gVdeI5uCWCikDB+c90vvt6NFlFq5eO5qT
+	Fhz7fVqYDjkar+0sPXCJNgI8qJC5/9hgKOe8FWrYFnNJ0cXVjQ6aEaN2Mr8d+uGaC71tz+S+SBH
+	uCAp76LRl1PFaMBMSe1RVvBuHyltoUhtNEhV1liy
+X-Received: by 2002:a05:600c:a44:b0:434:a852:ba6d with SMTP id 5b1f17b1804b1-436e2692d98mr192763375e9.9.1736784734397;
+        Mon, 13 Jan 2025 08:12:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFf6XW1cvL5UoHvdjbD30b+iBZ9HkwmTvZwbT8O+46nwB/B8rcXEgT73vr2SwiShA/NK8OOuA==
+X-Received: by 2002:a05:600c:a44:b0:434:a852:ba6d with SMTP id 5b1f17b1804b1-436e2692d98mr192763035e9.9.1736784733859;
+        Mon, 13 Jan 2025 08:12:13 -0800 (PST)
+Received: from [192.168.1.167] (cpc76484-cwma10-2-0-cust967.7-3.cable.virginm.net. [82.31.203.200])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e38bd0dsm12465616f8f.45.2025.01.13.08.12.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2025 08:12:13 -0800 (PST)
+Message-ID: <31f0da2e-4dd7-44eb-95ee-6d22d310a2d6@redhat.com>
+Date: Mon, 13 Jan 2025 16:12:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250113093453.1932083-1-kirill.shutemov@linux.intel.com> <20250113093453.1932083-4-kirill.shutemov@linux.intel.com>
-In-Reply-To: <20250113093453.1932083-4-kirill.shutemov@linux.intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 13 Jan 2025 08:10:45 -0800
-X-Gm-Features: AbW1kvYVFjw-APVc_AtsFocTeHs3A7WI3FQm934n3hdXUG8p6Ploc_paz3DXv-A
-Message-ID: <CAJD7tkYfh=K1FV2NPFD5P0+Td66PtoMRHAkAcwUJcRwYDKLZjQ@mail.gmail.com>
-Subject: Re: [PATCH 3/8] mm/zswap: Use PG_dropbehind instead of PG_reclaim
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti <andi.shyti@linux.intel.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	David Airlie <airlied@gmail.com>, David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>, 
-	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Yu Zhao <yuzhao@google.com>, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Bug: slab-out-of-bounds Write in __bh_read
+Content-Language: en-US
+To: Kun Hu <huk23@m.fudan.edu.cn>, Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>, gfs2@lists.linux.dev
+References: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
+ <brheoinx2gsmonf6uxobqicuxnqpxnsum26c3hcuroztmccl3m@lnmielvfe4v7>
+ <5757218E-52F8-49C7-95F1-9051EB51A2F3@m.fudan.edu.cn>
+ <6yd5s7fxnr7wtmluqa667lok54sphgtg4eppubntulelwidvca@ffyohkeovnyn>
+ <31A10938-C36E-40A2-8A1D-180BD95528DD@m.fudan.edu.cn>
+ <xqx6qkwti3ouotgkq5teay3adsja37ypjinrhur4m3wzagf5ia@ippcgcsvem5b>
+ <86F5589E-BC3A-49E5-824F-0E840F75F46D@m.fudan.edu.cn>
+ <CAHc6FU5YgChLiiUtEmS8pJGHUUhHAK3eYrrGd+FaNMDLti786g@mail.gmail.com>
+ <27DB604A-8C3B-4703-BB8A-CBC16B9C4969@m.fudan.edu.cn>
+From: Andrew Price <anprice@redhat.com>
+In-Reply-To: <27DB604A-8C3B-4703-BB8A-CBC16B9C4969@m.fudan.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 13, 2025 at 1:35=E2=80=AFAM Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
->
-> The recently introduced PG_dropbehind allows for freeing folios
-> immediately after writeback. Unlike PG_reclaim, it does not need vmscan
-> to be involved to get the folio freed.
->
-> Instead of using folio_set_reclaim(), use folio_set_dropbehind() in
-> zswap_writeback_entry().
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+On 13/01/2025 15:54, Kun Hu wrote:
+> 
+>>
+>> 32generated_program.c memory maps the filesystem image, mounts it, and
+>> then modifies it through the memory map. It's those modifications that
+>> cause gfs2 to crash, so the test case is invalid.
+>>
+>> Is disabling CONFIG_BLK_DEV_WRITE_MOUNTED supposed to prevent that? If
+>> so, then it doesn't seem to be working.
+>>
+>> Thanks,
+>> Andreas
+> 
+> 
+>>   We have reproduced the crash with CONFIG_BLK_DEV_WRITE_MOUNTED disabled to obtain the same crash log. The new crash log, along with C and Syzlang reproducers are provided below:
+> 
+>> Crash log: https://drive.google.com/file/d/1FiCgo05oPheAt4sDQzRYTQwl0-CY6rvi/view?usp=sharing
+>> C reproducer: https://drive.google.com/file/d/1TTR9cquaJcMYER6vtYUGh3gOn_mROME4/view?usp=sharing
+>> Syzlang reproducer: https://drive.google.com/file/d/1R9QDUP2r7MI4kYMiT_yn-tzm6NqmcEW-/view?usp=sharing
+> 
+> Hi Andreas,
+> 
+> As per Jan's suggestion, we’ve successfully reproduced the crash with CONFIG_BLK_DEV_WRITE_MOUNTED disabled. Should you require us to test this issue again, we are happy to do so.
+> 
+FWIW the reproducer boils down to
 
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
+   #include <fcntl.h>
+   #include <unistd.h>
+   #include <sys/ioctl.h>
+   #include <linux/fs.h>
 
-> ---
->  mm/zswap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 167ae641379f..c20bad0b0978 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1096,8 +1096,8 @@ static int zswap_writeback_entry(struct zswap_entry=
- *entry,
->         /* folio is up to date */
->         folio_mark_uptodate(folio);
->
-> -       /* move it to the tail of the inactive list after end_writeback *=
-/
-> -       folio_set_reclaim(folio);
-> +       /* free the folio after writeback */
-> +       folio_set_dropbehind(folio);
->
->         /* start writeback */
->         __swap_writepage(folio, &wbc);
-> --
-> 2.45.2
->
+   /*
+      mkfs.gfs2 -b 2048 -p lock_nolock $DEV
+      mount $DEV $MNT
+      cd $MNT
+      /path/to/this_test
+    */
+   int main(void)
+   {
+           unsigned flag = FS_JOURNAL_DATA_FL;
+           char buf[4102] = {0};
+           int fd;
+
+           /* Error checking omitted for clarity */
+           fd = open("f", O_CREAT|O_RDWR);
+           write(fd, buf, sizeof(buf));
+           ioctl(fd, FS_IOC_SETFLAGS, &flag);
+           write(fd, buf, sizeof(buf)); /* boom */
+           close(fd);
+           return 0;
+   }
+
+So it's switching the file to journaled data mode between two writes.
+
+The size of the writes seems to be relevant and the fs needs to be 
+created with a 2K block size (I'm guessing it could reproduce with other 
+combinations).
+
+Andy
+
 
