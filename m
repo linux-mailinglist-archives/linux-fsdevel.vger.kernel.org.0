@@ -1,62 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-39078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0929FA0C05E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 19:44:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54986A0C06C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 19:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129F818882AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 18:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B313A2B76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 18:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB34212D9C;
-	Mon, 13 Jan 2025 18:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB0A2139DC;
+	Mon, 13 Jan 2025 18:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="np2RYKA3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtfgMVP0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11851212B18;
-	Mon, 13 Jan 2025 18:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D862135DD;
+	Mon, 13 Jan 2025 18:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736793358; cv=none; b=e3aztsm/fWlacndEx75XaMyLiN93imae+f+hifaO7q0jKpWBCxcBnLW2B9kSYdXSXito+jO8cmWYVkR7ia1bpFozoWmQ3u3utUmeG2Axh3qEgEHzOajLPpEiqUH7IjlC/Qh/5BmM3KDqziaddcN+9DqdKGuGnRGWNFilWsyRMxo=
+	t=1736793370; cv=none; b=cxc3AaNZAGXKoY4DXeVvXhtKTnBAGpHq5YDYjeeFKZ0Ub9fdkK90QHC4gbthyfxEJxD3Iiia3pwNWjK9nEYZSCzRDfY4K+6ddfp1qkoFKhAdfZaGlbap99T3OBYDiUivwgnwviQoagpfx2MN0G9lpqEg1jBNynz87ucz9OhWiCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736793358; c=relaxed/simple;
-	bh=jVhsJjvzz32AdO6tvAcF9a4PjY7qms/GrqQJ2cSoJjQ=;
+	s=arc-20240116; t=1736793370; c=relaxed/simple;
+	bh=y1o2LMikgplcjwXIPq9Z/CuaTfAcD4na1HivCa8NOLw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WC6VjQbQcBcF5wEcQPNAxdGq9sCVxhHcDhzRms6hQxjnQM1DjIJ1ZQTEEbssFLp3vASHAofMnIkhhbM0aFt8ncJIatBTB44/AS0J9ODFT2tKQM20aHXFkXHhTrs28+gMvaKkizv6yH6zkzRTZ6sc3mRE0ESf9Y404/fsvMSW1Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=np2RYKA3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F047CC4CEE1;
-	Mon, 13 Jan 2025 18:35:56 +0000 (UTC)
+	 MIME-Version; b=quA2fmFsesLVYhpjncszT6EFS9zZGtHonCLIxQjLaJg3yeyZImQReg4qZ9f28iVfLSIf025ejzgV3f2q7bplBPWT7VQlBT7JHvt5YHwoPBVLg87+f+ns692RRx57zqMyA3wnEgq2CqedETvcZUHUje3gUCYFeqmPN2vAVK8HbNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtfgMVP0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D325C4CED6;
+	Mon, 13 Jan 2025 18:36:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736793357;
-	bh=jVhsJjvzz32AdO6tvAcF9a4PjY7qms/GrqQJ2cSoJjQ=;
+	s=k20201202; t=1736793370;
+	bh=y1o2LMikgplcjwXIPq9Z/CuaTfAcD4na1HivCa8NOLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=np2RYKA3zHQrjfLA5cY2++bn+dabuN0Vr5arJ+EoXkNZhD7IAuTTBX4knrCC3q/1V
-	 my1nmqDZqLZovtkRzkebZWv4VNskYwMd/+Zc0FvTYj9E6yQ+ePQbdd53n82cMCT9qI
-	 1Yw9jKtMRGOndY1MkSThN7JzQcOfC+aV3YAY59KaDzMbtwx1vUtSXLcJpyFETWKSQp
-	 ohc24hfvyBdYx1x2GlkSlNT5++ZpMd9Ae6QAgnMyHZwGP0IVVQrNV5bR3hUhiEkHQT
-	 V+KXtkDRD2GbHx9U8JkJaA8iXVwj7OS/d2e+VSlUYhVa8+YM28J9vjgzCIiqwUrvG+
-	 0+yJ0igFGi9zw==
+	b=rtfgMVP0/W+fX23lm4VmgLWqMPQfCcfIUe99RKqzlq2+eRAYl+EFkNbj7LYpuQUTW
+	 3C8d982bbC5qxPN24wQb8n6EAT6UmUQgX6ZwbJG7DCmiPajWLcQj2qrPzx/qLM+BMD
+	 WayJ3B5UCBsGedjFx3MxhKRhu0wj6yP4wXSwipgKEZZ3FOHQ2LkNEsyJuNL/eBuVdN
+	 721MOw70X3K7f69Ojpi00hMh1xU5JQSDVWUeek9FgPuOh4YRWkNpnOAnG+x43UNbaI
+	 KqRANSRVMwVzLrJsLk7kiz1LPMaOhbfxFU3DFQAIv3kKJF5oFsZdY3XWeTfWAIzqBT
+	 ryYTpWtWBOdcw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Marco Nelissen <marco.nelissen@gmail.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
+Cc: Leo Stone <leocstone@gmail.com>,
+	syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
+	Jan Kara <jack@suse.cz>,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-xfs@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	sandeen@redhat.com,
+	quic_jjohnson@quicinc.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 09/10] iomap: avoid avoid truncating 64-bit offset to 32 bits
-Date: Mon, 13 Jan 2025 13:35:35 -0500
-Message-Id: <20250113183537.1784136-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 2/6] hfs: Sanity check the root record
+Date: Mon, 13 Jan 2025 13:35:56 -0500
+Message-Id: <20250113183601.1784402-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250113183537.1784136-1-sashal@kernel.org>
-References: <20250113183537.1784136-1-sashal@kernel.org>
+In-Reply-To: <20250113183601.1784402-1-sashal@kernel.org>
+References: <20250113183601.1784402-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,40 +67,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.124
+X-stable-base: Linux 5.15.176
 Content-Transfer-Encoding: 8bit
 
-From: Marco Nelissen <marco.nelissen@gmail.com>
+From: Leo Stone <leocstone@gmail.com>
 
-[ Upstream commit c13094b894de289514d84b8db56d1f2931a0bade ]
+[ Upstream commit b905bafdea21a75d75a96855edd9e0b6051eee30 ]
 
-on 32-bit kernels, iomap_write_delalloc_scan() was inadvertently using a
-32-bit position due to folio_next_index() returning an unsigned long.
-This could lead to an infinite loop when writing to an xfs filesystem.
+In the syzbot reproducer, the hfs_cat_rec for the root dir has type
+HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
+This indicates it should be used as an hfs_cat_file, which is 102 bytes.
+Only the first 70 bytes of that struct are initialized, however,
+because the entrylength passed into hfs_bnode_read() is still the length of
+a directory record. This causes uninitialized values to be used later on,
+when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
 
-Signed-off-by: Marco Nelissen <marco.nelissen@gmail.com>
-Link: https://lore.kernel.org/r/20250109041253.2494374-1-marco.nelissen@gmail.com
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Add a check to make sure the retrieved record has the correct type
+for the root directory (HFS_CDR_DIR), and make sure we load the correct
+number of bytes for a directory record.
+
+Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
+Tested-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+Tested-by: Leo Stone <leocstone@gmail.com>
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+Link: https://lore.kernel.org/r/20241201051420.77858-1-leocstone@gmail.com
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap/buffered-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/hfs/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 47f44b02c17d..70e246f7e8fe 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -907,7 +907,7 @@ static int iomap_write_delalloc_scan(struct inode *inode,
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 12d9bae39363..699dd94b1a86 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -418,11 +418,13 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto bail_no_root;
+ 	res = hfs_cat_find_brec(sb, HFS_ROOT_CNID, &fd);
+ 	if (!res) {
+-		if (fd.entrylength > sizeof(rec) || fd.entrylength < 0) {
++		if (fd.entrylength != sizeof(rec.dir)) {
+ 			res =  -EIO;
+ 			goto bail_hfs_find;
  		}
- 
- 		/* move offset to start of next folio in range */
--		start_byte = folio_next_index(folio) << PAGE_SHIFT;
-+		start_byte = folio_pos(folio) + folio_size(folio);
- 		folio_unlock(folio);
- 		folio_put(folio);
+ 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
++		if (rec.type != HFS_CDR_DIR)
++			res = -EIO;
  	}
+ 	if (res)
+ 		goto bail_hfs_find;
 -- 
 2.39.5
 
