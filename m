@@ -1,162 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-39056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD24A0BC21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:34:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C317A0BC3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E06188283F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 15:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44DBC3A43C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 15:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3DC1C5D59;
-	Mon, 13 Jan 2025 15:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92961C5D6B;
+	Mon, 13 Jan 2025 15:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PUDsrASC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RtPTfkBK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD48B29D19
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 15:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B2329D19
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 15:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736782463; cv=none; b=tgv0H8/ecUTYWi2cawa6RQ0aUf4o5IkxzbUMZPXdTxWbdTVIbgpwkQWPr+f0d62/52KJm+CKLJT9pcgR2a3JmxQM2Jjm6oH6TVMvlKzC/QUjg9Ik4Xa1GwQ6P11wjbBIpcqO3I/Md7BkFmculEIJ5D/7qBeKJXQBsxErf5DAbbE=
+	t=1736782913; cv=none; b=HOGYV29k7CxlHkZ/Hk3PTFUvNHxxNB7uIZpSRs2cxznbaxU//+ysFCKdAx6XbsuXqSv0/Dp630bAZarNrEVrrXq98FOGjwtTZCKfEPmvptLRm3JNnZ9nLFHYHUzryHDf1p9xUc9r97ZZG2vbP4keqgWkBoS68VArBBIMEBRq9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736782463; c=relaxed/simple;
-	bh=KFif0h9Z2iyeT/cC7vr7cdcNUZTAlVeVHVCZorx1GJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=by2i9+odEEjDTb0nYomit4kB3uztN4VlAewGMR3zi7TJY5v6C/p3B2tj5fb43N7CccxmVmtxUWW5ZBY8ewWaVKOX3DUdW65wxXA0ixx4yxqSarxGwn/4pyzxRGrP2Led9iG9bzQqSMijYps6/fkPau0UhM/M9AHcVso1PV7l6HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PUDsrASC; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-844d7f81dd1so160070139f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 07:34:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736782461; x=1737387261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GEjZgb0EizZw0bzYqKOhvOuaHAC4ZwLKvUf+U47cO60=;
-        b=PUDsrASCAXF4/opvCwzoBNdJmXDcqTgtezP+giX6TVAPO9c826OrN1nDmv3FSGKtQW
-         n4juRws8ebHW8ULy4rvykOL6vfuwypxCmZXE3JrBxk2XKv7gbQBAXgm1bpj/w2/0isSQ
-         wgNqtHtSIrbsCLi10Tw712nsAsQfh6bfesST1nHv6Juq8Eg1fW6lpKSfdfDJ8Se4d7l8
-         uUqlVrLvksfWXguDP+Zp1Hk01giZOHNUZLDhlUoTaeC305vgWvOSf22oAFTgsG0b0hJJ
-         deVrkjc2uacDAXFpE2g7XutkhZRtX7Edx1+Z35uG8iciUfrZ0zQEzIXIahh34gZxQaWN
-         UeVw==
+	s=arc-20240116; t=1736782913; c=relaxed/simple;
+	bh=gYg7v2wBLlHvxcDn7o6TkmSFMBdkJ3utWV5WpaEbvQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u4HjwIMXHFG5oSnr53xv1n9slzpu0CTmtvJDeeWTL05tmqI/OsDMOkm+Aop4Oy92WPNV8oHCsNoB7tSP+uu19X+prWEpaGG/fQtw+6kLVHuHhBjbDpgFgb3X4A/VJ3w4GiTwBqcOJgEpOnORuwN5E9jvhoSrzlZSJfV2q68vENA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RtPTfkBK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736782910;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gYg7v2wBLlHvxcDn7o6TkmSFMBdkJ3utWV5WpaEbvQs=;
+	b=RtPTfkBKV+FIU2mXqHYdBKfi62qlVTM4oNI9GFiA6gdH2xScf0ko+ApASGX8pyt6esgHUR
+	ZbfFmBF1P/ysiVHXnZtbcO9kNAeFCPRXQ2F2l32A003cQsI9eufiabKoSoaO7uHlQp1nG4
+	J+cbi+QNSLF2QaI5XRQFyC1ZsSFaacU=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-jZtWFn9KN0aYcqGCc2JSpQ-1; Mon, 13 Jan 2025 10:41:49 -0500
+X-MC-Unique: jZtWFn9KN0aYcqGCc2JSpQ-1
+X-Mimecast-MFC-AGG-ID: jZtWFn9KN0aYcqGCc2JSpQ
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-216387ddda8so84938745ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 07:41:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736782461; x=1737387261;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEjZgb0EizZw0bzYqKOhvOuaHAC4ZwLKvUf+U47cO60=;
-        b=YLt0fOfelKSULq4WJ3B49c4wvZRlEfWO7w+76XJ/wmW5icySNkBUu0pxkcusKBtKvq
-         NSfjv7C1SeXCCanV2bnPMSo1otj5QUHanBc3qix4phjUBr97G77QZBo9VwkFBzvPVYTG
-         2RP4qpSTQkpQfP1umOnhkJHNJyKnYYz+cr6SHeDZSqccqMBii0QzAc3V0xW3gGZBTgkl
-         0FcDyieC0ztte5PGK7cYVj7xQBMIacVDjT8u/bZ6wUJZeLkv3MKnKNF+umyw5Y+k/592
-         i8u9UDy/jFZjdnhxN7xHgBz8rWsAGS+KqqyUFJBa7hp1z+1w/ds/CJuKsLoOems7xTDY
-         tP9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXkW0eG65Fj/s3JqBBRWRZO5pJtHnQvaRkBTl0V+oSVNkD+8XKJpt3taUS8OcEKrMk8tKlo6nWIuWmWRdbv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ54BNSt6Il8W3e6n9cM3as/eejElntXGzTQuV2XQRe6VY0MAX
-	UN39umi94CJ2MGRWFZNX3bqK101F+UpCk3cEh2BitOh9Gbk8Mk7r3hGB44k0OWoAL6MLwMadS85
-	r
-X-Gm-Gg: ASbGncvEhh32pOFOOHZH35dlJ/qBwGVmVPPnoUiRQ9hu6KQH7sj1m6Nisj5xEHxfxs9
-	PVbmYf/Fehedw99TazNB6/SyogeyL82jYKkA1Mx5Sbt/Uv8KvdJekbepLfCBO5jxXaIg21mh2zb
-	csCqVeFTwmQX7oVJ0D53YLNrcsMz7AtsA2iYRUBj6hbMaXjn3lHhttc6PWY4wy6XVv07nFQp//F
-	J1Rsx1Ma4uiUWzBWIT1VNbthQGdYNLkipTOQfb17nJOf7b1GqZG
-X-Google-Smtp-Source: AGHT+IHeWU+1/sgyx4t7fFAnRIeJMvyo+nWNiMDWMOBaX1uADlQszp0S1Zd+4roi1BcUC+HGm8i57w==
-X-Received: by 2002:a05:6e02:2206:b0:3ce:6aa8:6c56 with SMTP id e9e14a558f8ab-3ce6aa86d30mr53055385ab.8.1736782460911;
-        Mon, 13 Jan 2025 07:34:20 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ce4adee7bfsm27398815ab.44.2025.01.13.07.34.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2025 07:34:19 -0800 (PST)
-Message-ID: <3cba2c9e-4136-4199-84a6-ddd6ad302875@kernel.dk>
-Date: Mon, 13 Jan 2025 08:34:18 -0700
+        d=1e100.net; s=20230601; t=1736782908; x=1737387708;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gYg7v2wBLlHvxcDn7o6TkmSFMBdkJ3utWV5WpaEbvQs=;
+        b=WKkG+PcV3OISn+4dQfjPeDo5y+V94txcotnxQSjiwk1wQKPWCqKkFzQFZmp3BrUGWU
+         7B1u1REuk1lhft56xcB3whDytTDg+XcO2m7f1TDYb9dR8ZV7IH5X5T3cPvG/kM/+7EVL
+         2q3UEwhEOYjP+qrWc8bDAmSZEIv3Mr+EE/6OjyaeH+4msjdsj2q2ibg5Q6q3xbiS7kuC
+         0iALm+YOmUOqkTDizyw3AtBkgpR+/w12WqXkIJ5riEXCEtELK33UxJ4MGPPXiIAg1OPJ
+         ml7mvME4tRtL0S/7wqRocfUE3Mkg8NGkTBAcXfoV4GY8cSuB8zaWkr6yhdMicH+pCs7U
+         QOAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFTDBpknYRfrmcERZsJwss7OxROvmE4D1oHmW6Gh4k9kL5HuIW/km76+Kr1uS98I0JiKz+ovls0WXmOdCZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YymDLLP2s69aBiA36BILNmTlQowCjRPmyPG1aReYx63FWeYcQtF
+	k0t6Ohf6j3sGtj3fc4P3naLARNf7Wz/o4BEa0FBDGE/UDTZ2gzEVwYY5jLXmb1TszW6wwYwAA/S
+	FpTKocbBp3ewlDJIjMqtd7dicuMN9BBEOBfeuIYlzFt6TqghXmzEos74I+/kSoaIhu8tz4zsdHT
+	o2+6Rq/JdH+AZTx3/a3CREFvparhWAaScB0mASDg==
+X-Gm-Gg: ASbGncsZ12cmYV5coPyV0yKx6iL6ZpJNUrlQyArYMrkrPaxAIhw6XDUyFBVJwI46wgU
+	+dCFLKOojtJy341BFjjLqR+RmUK06m1a6b59y
+X-Received: by 2002:a17:902:dac6:b0:215:b058:289c with SMTP id d9443c01a7336-21a83f339f2mr301613425ad.8.1736782908216;
+        Mon, 13 Jan 2025 07:41:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHZ/Z5o9hGA5nCeYoJCsyh8QaRo/h/BrqoQ80/+eLg/gXfDpGr/wo5b7xjgaelY6+5vLVTddk3Z9C1Ag9z4SMk=
+X-Received: by 2002:a17:902:dac6:b0:215:b058:289c with SMTP id
+ d9443c01a7336-21a83f339f2mr301613125ad.8.1736782907907; Mon, 13 Jan 2025
+ 07:41:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v8 0/12] Uncached buffered IO
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, bfoster@redhat.com
-References: <20241220154831.1086649-1-axboe@kernel.dk>
- <20250107193532.f8518eb71a469b023b6a9220@linux-foundation.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250107193532.f8518eb71a469b023b6a9220@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
+ <brheoinx2gsmonf6uxobqicuxnqpxnsum26c3hcuroztmccl3m@lnmielvfe4v7>
+ <5757218E-52F8-49C7-95F1-9051EB51A2F3@m.fudan.edu.cn> <6yd5s7fxnr7wtmluqa667lok54sphgtg4eppubntulelwidvca@ffyohkeovnyn>
+ <31A10938-C36E-40A2-8A1D-180BD95528DD@m.fudan.edu.cn> <xqx6qkwti3ouotgkq5teay3adsja37ypjinrhur4m3wzagf5ia@ippcgcsvem5b>
+ <86F5589E-BC3A-49E5-824F-0E840F75F46D@m.fudan.edu.cn>
+In-Reply-To: <86F5589E-BC3A-49E5-824F-0E840F75F46D@m.fudan.edu.cn>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Mon, 13 Jan 2025 16:41:36 +0100
+X-Gm-Features: AbW1kvZme8_fiRYjqU8QPQBZD6KR6UiY7TzmRpAKFob7Q2UrgMDwN0Cf7_ov7-0
+Message-ID: <CAHc6FU5YgChLiiUtEmS8pJGHUUhHAK3eYrrGd+FaNMDLti786g@mail.gmail.com>
+Subject: Re: Bug: slab-out-of-bounds Write in __bh_read
+To: Jan Kara <jack@suse.cz>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>, gfs2@lists.linux.dev, 
+	Kun Hu <huk23@m.fudan.edu.cn>
+Content-Type: text/plain; charset="UTF-8"
 
-(sorry missed this reply!)
+Hi Jan,
 
-On 1/7/25 8:35 PM, Andrew Morton wrote:
-> On Fri, 20 Dec 2024 08:47:38 -0700 Jens Axboe <axboe@kernel.dk> wrote:
-> 
->> So here's a new approach to the same concent, but using the page cache
->> as synchronization. Due to excessive bike shedding on the naming, this
->> is now named RWF_DONTCACHE, and is less special in that it's just page
->> cache IO, except it prunes the ranges once IO is completed.
->>
->> Why do this, you may ask? The tldr is that device speeds are only
->> getting faster, while reclaim is not. Doing normal buffered IO can be
->> very unpredictable, and suck up a lot of resources on the reclaim side.
->> This leads people to use O_DIRECT as a work-around, which has its own
->> set of restrictions in terms of size, offset, and length of IO. It's
->> also inherently synchronous, and now you need async IO as well. While
->> the latter isn't necessarily a big problem as we have good options
->> available there, it also should not be a requirement when all you want
->> to do is read or write some data without caching.
-> 
-> Of course, we're doing something here which userspace could itself do:
-> drop the pagecache after reading it (with appropriate chunk sizing) and
-> for writes, sync the written area then invalidate it.  Possible
-> added benefits from using separate threads for this.
-> 
-> I suggest that diligence requires that we at least justify an in-kernel
-> approach at this time, please.
+Am Fr., 10. Jan. 2025 um 18:18 Uhr schrieb Kun Hu <huk23@m.fudan.edu.cn>:
+> > Thanks. Based on the crash report and the reproducer it indeed looks like
+> > some mixing of iomap_folio_state and buffer heads attached to a folio
+> > (iomap_folio_state is attached there but we end up calling
+> > __block_write_begin_int() which expects buffer heads there) in GFS2. GFS2
+> > guys, care to have a look?
+> >
+>
+> Thanks to Jan.
+>
+> Hi Andreas,
+>
+> It seems that iomap_write_begin is expected to handle I/O directly based on folio, rather than entering the buffer head path. Is it possible that GFS2 incorrectly passes data related to buffer head to iomap_write_begin?
+>
+> Could you please help us to check the exact cause of the issue?
 
-Conceptually yes. But you'd end up doing extra work to do it. Some of
-that not so expensive, like system calls, and others more so, like LRU
-manipulation. Outside of that, I do think it makes sense to expose as a
-generic thing, rather than require applications needing to kick
-writeback manually, reclaim manually, etc.
+32generated_program.c memory maps the filesystem image, mounts it, and
+then modifies it through the memory map. It's those modifications that
+cause gfs2 to crash, so the test case is invalid.
 
-> And there's a possible middle-ground implementation where the kernel
-> itself kicks off threads to do the drop-behind just before the read or
-> write syscall returns, which will probably be simpler.  Can we please
-> describe why this also isn't acceptable?
+Is disabling CONFIG_BLK_DEV_WRITE_MOUNTED supposed to prevent that? If
+so, then it doesn't seem to be working.
 
-That's more of an implementation detail. I didn't test anything like
-that, though we surely could. If it's better, there's no reason why it
-can't just be changed to do that. My gut tells me you want the task/CPU
-that just did the page cache additions to do the pruning to, that should
-be more efficient than having a kworker or similar do it.
+Thanks,
+Andreas
 
-> Also, it seems wrong for a read(RWF_DONTCACHE) to drop cache if it was
-> already present.  Because it was presumably present for a reason.  Does
-> this implementation already take care of this?  To make an application
-> which does read(/etc/passwd, RWF_DONTCACHE) less annoying?
-
-The implementation doesn't drop pages that were already present, only
-pages that got created/added to the page cache for the operation. So
-that part should already work as you expect.
-
-> Also, consuming a new page flag isn't a minor thing.  It would be nice
-> to see some justification around this, and some decription of how many
-> we have left.
-
-For sure, though various discussions on this already occurred and Kirill
-posted patches for unifying some of this already. It's not something I
-wanted to tackle, as I think that should be left to people more familiar
-with the page/folio flags and they (sometimes odd) interactions.
-
--- 
-Jens Axboe
 
