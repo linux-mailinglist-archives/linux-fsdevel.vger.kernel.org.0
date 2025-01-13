@@ -1,376 +1,416 @@
-Return-Path: <linux-fsdevel+bounces-39089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027A1A0C3D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 22:35:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DFCA0C3F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 22:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6CDB1889296
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 21:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC893A5ACF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 21:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965A71D63DE;
-	Mon, 13 Jan 2025 21:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF85F1DACAA;
+	Mon, 13 Jan 2025 21:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cQioIY7i";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="M9h2nyDe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjYV0XVJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C28146A66;
-	Mon, 13 Jan 2025 21:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736804126; cv=fail; b=sNfTgywMX1lkUZGgFY5XO1PvOzVTxHy0UD52KHN9GC50gZGDJ8GkgewZOTDRDLG9mn0eymZNqXuqo724duzeGSOci8fvTaNqpgita1xSp5UPdscZ2rrqtIZWYgTQ8Lt/LE4TiH7fDyD3fQNbbyWsDbu2ab0dc90FgwOmGxmhPgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736804126; c=relaxed/simple;
-	bh=qwsIhEfC5neQvQ+n5hnHJSy07kdr2eFL/KmqvrPb2BE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KM9xh7hc7KkXxajxe2Qi0bwrNgmkYjobdCs6OaHQjksqQpimdKiNgk7zZjJinb8hdTWxhFIZXjxyoUgmPsRMLA8Xb0KedaGR/d/zNv5kKVzaN6+300WdyEu54K3A9v9zkCguFRxij+UTwDtG5G5fv2OXKxSO6KgzL/qeVPWlWE0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cQioIY7i; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=M9h2nyDe; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50DHMru6032646;
-	Mon, 13 Jan 2025 21:35:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=WPt0CjpxrTaEqWxSkQHibZy+8DYuYa2YoB2hmDfU8+s=; b=
-	cQioIY7i1TVEjBHqk6JlxcC4v0PcKOxZdqLU9/4miOBkHKlpNOFwkWc4MhTOqHDF
-	j3ksBk8tisFHHNq2GBLfbpVuS2DIFVMw8mta1+ZSpdvSquTLjRIgQ7Tn20KNNQvp
-	Fv/QXSA4mRIIylknzjsZ+73APxVnUiII+UZaDGpV4JVqQICGq+cyBqTE5r6Tuh5d
-	I/K57vP464NWP1s5yOU9nS0xhI1wRFKw2NkcHADnqMod8quLlvfz/7BfjMp9iqPo
-	1s82GrXOfb1xnREfguuzABvX/I22pAhbEoGK37W//tph8Rprxsex+C94y6eGuo1N
-	HYZ8xtRNnlt92injUoq4ow==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 443g8sckp0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Jan 2025 21:35:09 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 50DLKlcP038991;
-	Mon, 13 Jan 2025 21:35:08 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 443f37gcs9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Jan 2025 21:35:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T5sMXbxjHA5/fneGWL346BADHm1Lslo6Vnqi6yHw1V1pmcz+XfNdPfysVAAgG2ev86VTNefG4k4xEGC2v0vJNpfB5P1I5rbugNf4alC/cukT1Qp2MGAuq9LXmCd7CtcYD4NcMOlWj53dd0/AJ4PDZPObdFPO6Hj6QB+BnSXzGqyvE4Ma1zUq5P2n9Vs3Fx49TyXlCazvYkqnXpmh/h2stvzRwdlsP2huucDHAJV0xIQQS5jgzazOxzggQSctXJ7F/Goz3nH7Bcz2A3ewtmj7zve6lgpQicxNB4B7IiRBjBckHsJJVUjaYWvqWKu4eym3CA6zzi9zhyFYQWx4j27rEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WPt0CjpxrTaEqWxSkQHibZy+8DYuYa2YoB2hmDfU8+s=;
- b=KmnHDcitqJrHOlpk8Tpgpg87nFeRFsCthBN1kWiLVyLI7eGzh6Coy3hh2SxlR+55sRTWIY514VG+ZWUI3Clkq2aEkCxmwmXNpOJansQvm+XHSEPubnP3y/D6h2qma8R/hbo7tjmSjFaJC1Rnh3SF2fEJyRjsXyxTUsv2EvFx6DM32hJJ7NJE10lnLf8MNpD27LSv7/B+BQQCWQd5B4LBiRa95isAzS+yHGalQYpbJvxAhwc3jEq4zso+CURxj5gtKlRZ5n21230DxTDXRrAgcTvd1wMXosFAn+GSwEqdgBBKjufcN0CyzkuK/bMqtzFY+RxU5jxnCDQgDXGzzZ1qjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WPt0CjpxrTaEqWxSkQHibZy+8DYuYa2YoB2hmDfU8+s=;
- b=M9h2nyDe3LV77nNwpqg0BxJ8SM0rc/Qq4ZZ4zH0OL+BAce3D7lFx/+f4sUXn4zQg0l0YKCMh+wzenHKQLm64qUJPpEUkjhXOsvfqS4CXbcwwV/TtGk/xUQ4zAYSlJjalWDf5yEOopepSLAn6cTdM/QTraYhzHu6yWRp6HXMXIRc=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SJ0PR10MB4656.namprd10.prod.outlook.com (2603:10b6:a03:2d1::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.18; Mon, 13 Jan
- 2025 21:35:05 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%4]) with mapi id 15.20.8335.011; Mon, 13 Jan 2025
- 21:35:05 +0000
-Message-ID: <ef979627-52dc-4a15-896b-c848ab703cd6@oracle.com>
-Date: Mon, 13 Jan 2025 21:35:01 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
-To: Dave Chinner <david@fromorbit.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com,
-        hch@lst.de, ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        martin.petersen@oracle.com
-References: <20241204154344.3034362-1-john.g.garry@oracle.com>
- <20241204154344.3034362-2-john.g.garry@oracle.com>
- <Z1C9IfLgB_jDCF18@dread.disaster.area>
- <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
- <Z1IX2dFida3coOxe@dread.disaster.area>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <Z1IX2dFida3coOxe@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0506.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13b::13) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BE21C1AAA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 21:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736804669; cv=none; b=hElp4NzA7XYI/SCWq2d2XzNIHOr08FLncztbQICXxsvR2y9+xnp7QLpEHPL2LPTgbmiQCdgnbrPaOu+csnwthw5G/AbTf/Urb9OhrmzVn7QihSGBR1yTgQwgfP/SDVB/E75O1uCG6KqVBmu8hWdV/qmCMrEMYu6ST+hmOHRG/TU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736804669; c=relaxed/simple;
+	bh=5J4FIZHJNtdwTF6zwzfIgKGrq/YLgfdmKM3PSrrX3Es=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qqxRW37EEXuIjHDXgVuj8v7ZwD1nLh/2zoI0id0crEfWzrLEk9hJNMXsPz/MN5CPNPZ4SXn9r3ObuKnSWVOARFMrAq0YnoDE/gBTGpTzlSIGMOvEFvRWmV3Imx6xmbU08W7BJnANB1aPLY/2ga2Y3xAWDu0yBgY0MkAFys12lYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjYV0XVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7834DC4CED6;
+	Mon, 13 Jan 2025 21:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736804668;
+	bh=5J4FIZHJNtdwTF6zwzfIgKGrq/YLgfdmKM3PSrrX3Es=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=SjYV0XVJ9ygFqF8YCCw5Rtm96Ciknj6cXG/E9o4mfQ77Qe5sYbSJtcE0Oe5KO8rza
+	 3/+TVVjsWsqhX8DszlFEdn6SQ2GfP3m8U5jN0D5neIEETu+jATTAq+RAUnmM4wqMfc
+	 bs6Kpz9E1RSz6Lo0xWjASSuq+PBRlycBfa84JRqCk15GSZELFm5omAgo6y1ITNLPM0
+	 qecyYBZu0u+f5/nktHyBFD/R+3TNUhSpkAvPu8nkEQNna+V4aZ8T6V1t9fD83xwBPA
+	 owWqSH2obDzD3quB3x5rMGiUgut8fU3ZOhxzJzWR2QvsDlto7M/3aLuN1c6hRtMWUo
+	 oLxhforL+oHRA==
+Message-ID: <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under
+ writeback with AS_WRITEBACK_INDETERMINATE mappings
+From: Jeff Layton <jlayton@kernel.org>
+To: David Hildenbrand <david@redhat.com>, Shakeel Butt
+ <shakeel.butt@linux.dev>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong
+ <joannelkoong@gmail.com>,  Bernd Schubert <bernd.schubert@fastmail.fm>, Zi
+ Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
+	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, Oscar Salvador	
+ <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>
+Date: Mon, 13 Jan 2025 16:44:26 -0500
+In-Reply-To: <2848b566-3cae-4e89-916c-241508054402@redhat.com>
+References: 
+	<hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+	 <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+	 <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
+	 <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+	 <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+	 <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
+	 <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
+	 <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com>
+	 <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+	 <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com>
+	 <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
+	 <2848b566-3cae-4e89-916c-241508054402@redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB4656:EE_
-X-MS-Office365-Filtering-Correlation-Id: a97202b6-094e-4b3e-45d9-08dd341a24d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aFJIRkdNMWgwano0b3BFTE50cHYzS0JvZFIzdncxcFRmQVZjaHN5QVVHWi9G?=
- =?utf-8?B?cytiNWZqSkNRMk1UWTlGQnF6bmVFSW4wZ3U3L0hadVF3RDVJRVR2ZUorUnUy?=
- =?utf-8?B?cFVTby8wNFhOYjRubWhCczBpaVdodjEyZkZ4TlI2RGpEUlZSVEpsdzRJOUgz?=
- =?utf-8?B?cVJHSXU4b3gwMnZ6YTJFQm9nOXIzcEVPcWxJUjg5UHZ2SkQyWmljZlVkU3Z6?=
- =?utf-8?B?ODBURFVNZ2lCNzJ4cll5WGpNQ0xYOEZpRkJvWkQ3d0ViV2JlRGlBUDBLY09S?=
- =?utf-8?B?Y0NTbjdaTHQ4SlhmelhEenR2RmtEM1pRNzdmSjR1WGhTdW9qZHR3N0pMYUtY?=
- =?utf-8?B?TGhiWmlMdVFaelZMdHlNOGtneXZGYjRJOE16NEgxR3pYZTY3VHRBVVJHcUp1?=
- =?utf-8?B?SWZ5Q1hTeE03WmRlMGVNblgxT0NIZzdLUEc3d09sU1JENzFXeGwwVWNoN1RO?=
- =?utf-8?B?ZG9FK2RaTlljdU05MUdIRXk4VjRwUjQxcU54RXhIRkpHTEdZTjZHZStKQmU3?=
- =?utf-8?B?VmcvSTVpQXB1U0RJeVAvZmJtVGV4MjhZbjlEclhUMVFCWXZLTHN3SnFoMER4?=
- =?utf-8?B?RFBIbTIyUkZmdnkzTHZYSDRpeGZpZDRhWGJjSm1YeURIb1Myc1lINmJDQmow?=
- =?utf-8?B?OGhvdDQvN2JOOGRFZzMwbmVkMUt0czdBK1BrZzE1dCtGeVAybldkZlkwMklC?=
- =?utf-8?B?bUo5ME1mOWE0aTFOWDJXQVJGSDhVL3hWRGUzR05JYWs4d1V4dTFBSWxSWGJI?=
- =?utf-8?B?TzIwMFJrdStMaDdjd3Z5dnQ1dWhvL1RCWnViTXJkb3AwZFdWd1MwUm1WM21u?=
- =?utf-8?B?WnduK1VSY3JEbnowNk45bkZxaVI3cUtiVXNzL1pLWEpOUFFOcTg3bnI1Wkk0?=
- =?utf-8?B?WTRucEIzOW9tdXVVUUdCOFQrbEZnVDY0NCtpdDl2QWdmdkl5Q1NGeVdYUEFD?=
- =?utf-8?B?VzdNdkZRdXdLUnhaWE9PaW40M2RzUUNhaHFCMGVoaHZ5OXdscnljU2NTalV3?=
- =?utf-8?B?QXFETEREMTJPdUxLZFovMVFrR213V2lqL0ZudFdKYlhtMi9RSEtEc1JVU1Nv?=
- =?utf-8?B?bTZJd01HNExPMHBGcjZhMzNGV1hJMCs2WHhyNTU5OFpRNFc0L0MzYnA5eDNC?=
- =?utf-8?B?a2xkQ09WUG1yS0xlYWpjYjJTa0h1L0QzNnhJNVVMQXFsVHRLRk9NU2NoZzYz?=
- =?utf-8?B?bFd3TG1ZeSt4cTNSTCsvQit6dnU0S1I2TW0rS21KVVovT0MrK0xRTjNnRUFX?=
- =?utf-8?B?RVAvSkhyR1hRaXVYbXlyeVhTenV2emVodFViYzNiY04wdHZhSWxjdTBNOUVG?=
- =?utf-8?B?RFdYanlzZ0RHTlhJNWY3K3hVUk5GcVZRb1BwYUEwVDBYNG4rNlh6djY5dS9q?=
- =?utf-8?B?L1lvVUJSK0pDaG84d1hVV1dPWm1yeXdDZGp1WUQxQk1uZmdCQXBDeHRENTli?=
- =?utf-8?B?TG9GZjZqYzBLUk5wd3dKNkgxMHA5eXoyc0t0ZEtSaU5VWmtUbEYwV29IY1gz?=
- =?utf-8?B?S1F3QWtiMGxWaVFEeFFSTXJxNkw2TnRkU29JNUk5enhJcjRxdXAzdWYyMndS?=
- =?utf-8?B?SXdGZ05YWkZiOEhXL0JZVStzVWVkTHlSSkdEclRCQkdpa2pzL05vcVpKZExK?=
- =?utf-8?B?eHBjSkU5dDRQWFFocHhIaU5mRy9JTlZ1dmR5emZzZnVWY1Y3TnBJK004R3gx?=
- =?utf-8?B?dDRVU1paK0pTYmdrTHlPSWZXZ1orRGIrQ1dWdVd2Ym5wckRpeUErQ2VZdTFT?=
- =?utf-8?B?UVRLY2pmUExnZ3RuMmFKVTFGQ0JXL0lFTWc1cGlvNS9VdGplTkJyY0Y5NHZY?=
- =?utf-8?B?ckord2E4TU5lOWhnY1lhWWloS29nVWZGUW1zcGUyQzlacG5hRzNKQlZEYzN1?=
- =?utf-8?Q?OwwCl7LodXXnr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bzZyY25PZjkyL3ZObU1qVHpNL01aWTdlRXI5eTdjN3JOdVM1KzJwcFlKMy9v?=
- =?utf-8?B?UGFCK1BRcjVZTmpjNThZSmhJWVFwOVVwMmVPVFhDa2FXLzdtM0ZybFJ5L001?=
- =?utf-8?B?bHFXMHQ2VmsvNm1jR0NVU2FWdjBFWkQ4VE5HaENTbXg0amN2NFFYNlZULzJG?=
- =?utf-8?B?K0dXamQ0dk51UWI4OFlGZ1BlYmZxc1hNSFJwdEJuKzh6RnA4QmtmWHFvQWR3?=
- =?utf-8?B?VmZwRGw5SWFnRVpRd2VIa2pWdFlnUjRmYU5Vdjh4LzcvWVlRSGYrTlBGZFlz?=
- =?utf-8?B?SjI0NUxEcnhid0paWlRKTDVMeVlrSjhpUVhwUjZaYWtkVUpWM1phL0tON1hZ?=
- =?utf-8?B?cUo0cmViZEpzc1hHbnd0Q09SSDhnWk45WW55Zi9XMUVLV3Y2dG1uT1FpYWtS?=
- =?utf-8?B?dWRlbWNzK09DQWxmSGZsTkVsQ2RtYkpnNFdUKzhYRnd4bGdaRmpNWEFQT0s2?=
- =?utf-8?B?OHYzOE9BNHlFcDJ6dHNmUFJKeUxrWDVZR2l5Ry93NlZ3R3VJTHAxcFVFbm55?=
- =?utf-8?B?dmVRYkk5c0FzMitlcE9YK0tYcDg4WGRoTnBLQThWQnZpSHMycjRibFNOT25r?=
- =?utf-8?B?SjZjdkR2MCtUUi9oQkZaV1NaemphVTFaOHdzZjhhNDZQbmd4U0d1b2szN1Rw?=
- =?utf-8?B?ZUtzVnQ2alNWSHQ4QWV6ZkRpYk10QXlGbDhMODBqb0prVG9tb3FLQnl0WGhB?=
- =?utf-8?B?Q0poZjduZjFydUJzOUNpTGJRUlJwTU1teWFMOENLTmxYeEt0NkxmMnhlSTMv?=
- =?utf-8?B?TStTazFKK0dOTUtWUG9UUDF2UW5zMHRZenRNb09Jd1B3a1R1dXliRFdkRTVU?=
- =?utf-8?B?RzBVaWNQWCtXN0duQ01OeVVVWXIzT0R4c0tPcWdkN3pLb0Z5WmZoa2JodE5z?=
- =?utf-8?B?bVZPRXNrNHl1dmhYQnh1Vk1qVEZZcDZ5dXRLT0RQeVBhNTVQcWM4ci94L3Nw?=
- =?utf-8?B?dnV6ZDM4K2VueGhhYjNpbHorbllJaW5aa1VnM1NIdmFmemo1NmRaQWpidmlD?=
- =?utf-8?B?RTBhd2owZVhyeWhQUmdoOGVYUFgvUzlNc1NjM3B5VTUwN3NQV05GMzFmVkR5?=
- =?utf-8?B?dC9ab3B6UE1RWjI0Q2FvQ0dsREZ5MkxOTkErb2drMHViWXhuanRURzJxVDBI?=
- =?utf-8?B?dlc5eGtiVVBkRlN2dTZvSnQrMkY0SzVLLzlrVTFYNm1LcWtleGVmRXF4VDBJ?=
- =?utf-8?B?dllKa1BER1RrRjd5cmwyQk9LamNlbnBONmgzaXBwLzhLTW52Tk9OUndDemdl?=
- =?utf-8?B?VFVFZTcybDBRSFJPTzNpMlo4aGJCaW12UlFxckJ5ZkZDWVJCcDc4b3p4SkdQ?=
- =?utf-8?B?d0xOK0NWYVVhVXp4QmV4RnA2SksxK1hsWk1SZUxiMXNCUU91TEE4N3lNRFBI?=
- =?utf-8?B?Y0xpY0E0ZStpaE5XQ0pRZ3VEU2h0OVJWWXRscUMvWkRCWk9nLzhiaGRyTjh5?=
- =?utf-8?B?TzRLcEQ2R0ZoNTdQVkhWL0Zwek0wcUE1VnVwWG95SUVnc0hvSHJmbWczMDhh?=
- =?utf-8?B?TTY3S0RwUzAyUTZkREdCc3h6aVNZQWRhSG5RTUJNcG84NVN4SFQyeFZmc1RZ?=
- =?utf-8?B?YjV6S242eDBEZmhyRGdVZzBQS3FYbHNPOFZxUWJ0ZlY4ZWVEcC9vMmRjaElJ?=
- =?utf-8?B?LzZCTEhQNmNSMlNGTkpYdzl2VkpoQkR6M0lQWGpSdjdlVGR2eXJLcExXU0lo?=
- =?utf-8?B?dXpyVitCM0NwVG1DNk5mTFQwbGhDTnJMMjVoWWNqbEcxdnQ2MW9pNmtqSmM0?=
- =?utf-8?B?Wm1IVkszd0xuRDBoYWZLUzZKOUJ4R3FGeUJYMDdLSXRhQWFpWFBXVzRKVXpS?=
- =?utf-8?B?NENWNWdzbjZDZWNSTEVLTGRaUWxnWEdtSGRYYTBYdmY3R0FHOTB4eHVqelkv?=
- =?utf-8?B?M2hRaVh2ZDlyZ2xpcjdrTXBsVnBNbk96L0QxVEgwb0c3QlFJTmJkQUo0Ulla?=
- =?utf-8?B?ZHBBZXU3blJyd0xtT1I3V21aQnNVV0VLcU5HNGlNMENmTjdzS1cza3ljRTZj?=
- =?utf-8?B?VW51Vm5Pd3RsL29EYmxVQTluMzd3eWtXT0NNblhiNm5sa1hkd2lrbWR0OFY0?=
- =?utf-8?B?Qmc2UFRJOFA3Q0lEcTB4WTlCVmFpQzQ3a0FMamVnQnZHKzJoVEROd1FWeXhB?=
- =?utf-8?B?NnBEZ1ZqM3ZnS2l4ZVJ0aGdyckJGcDhobmpLNklVL3RrcFhMQWV6RG9Bc3JR?=
- =?utf-8?B?c1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	PHH/coqbsYqjQShHAGlJhtUmCbt6+SYWgnOpIRBi8yJptqLOec6qFgIcj2t7thh/KteYhiJM4aC0YkMGJqb/5zSdBtBDIrKAz352wxrQVkLFwU/ydU0OycYGGXS73dC2QEYcNvwkOAFox2htnHu0Qe3/mebk580h9gfi+8E9mZFq9wVUon52sdaGNCODW+jl+IehtvEiU2AQKbqiCbdtq5mpQJ15XERvaPKgP9It8h20b4kynTdpGXCM1h6v7kFkFnA3FW+FFXjMqWaG9NOLojmLvywLQhpUXdIEVTlscIwkLWlucJzcGihNsU090C7CpATwaThiL85OJEARw2eYwjSkMMohERZxvl3ZHQ5MVbSXxroUM6o0fUyeJLrQ3mmIAd/wRdpsOe1fNDdxeHRscXszSLQefgATk1h+3cWDa/k/tOPv+S5hcaoxjsm3PpOhyPVfw2q81mbdZuY8HnliKFmlS8F0EnnIdI6rDSq9q0qlVwq4LwImhehAvMNRSrY60kZXwrYmqu1vFKEBjFLbJXe80STcICU9lpkfyUpcKE3VD7BEW3Vf2QQ9kX8VPDfEvcXdYRfAsTZq2pgMs7AwSXH6vjXrvS1LGofRvkPncZM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a97202b6-094e-4b3e-45d9-08dd341a24d1
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2025 21:35:05.1967
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lLMD+oz5HZtbrcu298Ix3hZRMHwXzistLW9GiTr4lhEGpEjzliBrjpbanCxGQPJmQxFZqW942f/lKfdNkSmmfw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4656
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-13_08,2025-01-13_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 phishscore=0 bulkscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2501130170
-X-Proofpoint-GUID: VdrJZhi7mKYXihYwlBhkeG4BJAsnUcEg
-X-Proofpoint-ORIG-GUID: VdrJZhi7mKYXihYwlBhkeG4BJAsnUcEg
 
-On 05/12/2024 21:15, Dave Chinner wrote:
-> On Thu, Dec 05, 2024 at 10:52:50AM +0000, John Garry wrote:
->> On 04/12/2024 20:35, Dave Chinner wrote:
->>> On Wed, Dec 04, 2024 at 03:43:41PM +0000, John Garry wrote:
->>>> From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
->>>>
->>>> Filesystems like ext4 can submit writes in multiples of blocksizes.
->>>> But we still can't allow the writes to be split into multiple BIOs. Hence
->>>> let's check if the iomap_length() is same as iter->len or not.
->>>>
->>>> It is the responsibility of userspace to ensure that a write does not span
->>>> mixed unwritten and mapped extents (which would lead to multiple BIOs).
->>>
->>> How is "userspace" supposed to do this?
->>
->> If an atomic write spans mixed unwritten and mapped extents, then it should
->> manually zero the unwritten extents beforehand.
->>
->>>
->>> No existing utility in userspace is aware of atomic write limits or
->>> rtextsize configs, so how does "userspace" ensure everything is
->>> laid out in a manner compatible with atomic writes?
->>>
->>> e.g. restoring a backup (or other disaster recovery procedures) is
->>> going to have to lay the files out correctly for atomic writes.
->>> backup tools often sparsify the data set and so what gets restored
->>> will not have the same layout as the original data set...
->>
->> I am happy to support whatever is needed to make atomic writes work over
->> mixed extents if that is really an expected use case and it is a pain for an
->> application writer/admin to deal with this (by manually zeroing extents).
->>
->> JFYI, I did originally support the extent pre-zeroing for this. That was to
->> support a real-life scenario which we saw where we were attempting atomic
->> writes over mixed extents. The mixed extents were coming from userspace
->> punching holes and then attempting an atomic write over that space. However
->> that was using an early experimental and buggy forcealign; it was buggy as
->> it did not handle punching holes properly - it punched out single blocks and
->> not only full alloc units.
->>
->>>
->>> Where's the documentation that outlines all the restrictions on
->>> userspace behaviour to prevent this sort of problem being triggered?
->>
->> I would provide a man page update.
-> 
-> I think, at this point, we need an better way of documenting all the
-> atomic write stuff in one place. Not just the user interface and
-> what is expected of userspace, but also all the things the
-> filesystems need to do to ensure atomic writes work correctly. I was
-> thinking that a document somewhere in the Documentation/ directory,
-> rather than random pieces of information splattered across random man pages
-> would be a much better way of explaining all this.
-> 
-> Don't get me wrong - man pages explaining the programmatic API are
-> necessary, but there's a whole lot more to understanding and making
-> effective use of atomic writes than what has been added to the man
-> pages so far.
-> 
->>> Common operations such as truncate, hole punch,
->>
->> So how would punch hole be a problem? The atomic write unit max is limited
->> by the alloc unit, and we can only punch out full alloc units.
-> 
-> I was under the impression that this was a feature of the
-> force-align code, not a feature of atomic writes. i.e. force-align
-> is what ensures the BMBT aligns correctly with the underlying
-> extents.
-> 
-> Or did I miss the fact that some of the force-align semantics bleed
-> back into the original atomic write patch set?
-> 
->>> buffered writes,
->>> reflinks, etc will trip over this, so application developers, users
->>> and admins really need to know what they should be doing to avoid
->>> stepping on this landmine...
->>
->> If this is not a real-life scenario which we expect to see, then I don't see
->> why we would add the complexity to the kernel for this.
-> 
-> I gave you one above - restoring a data set as a result of disaster
-> recovery.
-> 
->> My motivation for atomic writes support is to support atomically writing
->> large database internal page size. If the database only writes at a fixed
->> internal page size, then we should not see mixed mappings.
-> 
-> Yup, that's the problem here. Once atomic writes are supported by
-> the kernel and userspace, all sorts of applications are going to
-> start using them for in all sorts of ways you didn't think of.
-> 
->> But you see potential problems elsewhere ..
-> 
-> That's my job as a senior engineer with 20+ years of experience in
-> filesystems and storage related applications. I see far because I
-> stand on the shoulders of giants - I don't try to be a giant myself.
-> 
-> Other people become giants by implementing ground-breaking features
-> (e.g. like atomic writes), but without the people who can see far
-> enough ahead just adding features ends up with an incoherent mess of
-> special interest niche features rather than a neatly integrated set
-> of widely usable generic features.
-> 
-> e.g. look at MySQL's use of fallocate(hole punch) for transparent
-> data compression - nobody had forseen that hole punching would be
-> used like this, but it's a massive win for the applications which
-> store bulk compressible data in the database even though it does bad
-> things to the filesystem.
-> 
-> Spend some time looking outside the proprietary database application
-> box and think a little harder about the implications of atomic write
-> functionality.  i.e. what happens when we have ubiquitous support
-> for guaranteeing only the old or the new data will be seen after
-> a crash *without the need for using fsync*.
-> 
-> Think about the implications of that for a minute - for any full
-> file overwrite up to the hardware atomic limits, we won't need fsync
-> to guarantee the integrity of overwritten data anymore. We only need
-> a mechanism to flush the journal and device caches once all the data
-> has been written (e.g. syncfs)...
-> 
-> Want to overwrite a bunch of small files safely?  Atomic write the
-> new data, then syncfs(). There's no need to run fdatasync after each
-> write to ensure individual files are not corrupted if we crash in
-> the middle of the operation. Indeed, atomic writes actually provide
-> better overwrite integrity semantics that fdatasync as it will be
-> all or nothing. fdatasync does not provide that guarantee if we
-> crash during the fdatasync operation.
-> 
-> Further, with COW data filesystems like XFS, btrfs and bcachefs, we
-> can emulate atomic writes for any size larger than what the hardware
-> supports.
-> 
-> At this point we actually provide app developers with what they've
-> been repeatedly asking kernel filesystem engineers to provide them
-> for the past 20 years: a way of overwriting arbitrary file data
-> safely without needing an expensive fdatasync operation on every
-> file that gets modified.
-> 
-> Put simply: atomic writes have a huge potential to fundamentally
-> change the way applications interact with Linux filesystems and to
-> make it *much* simpler for applications to safely overwrite user
-> data.  Hence there is an imperitive here to make the foundational
-> support for this technology solid and robust because atomic writes
-> are going to be with us for the next few decades...
-> 
+On Mon, 2025-01-13 at 16:27 +0100, David Hildenbrand wrote:
+> On 10.01.25 23:00, Shakeel Butt wrote:
+> > On Fri, Jan 10, 2025 at 10:13:17PM +0100, David Hildenbrand wrote:
+> > > On 10.01.25 21:28, Jeff Layton wrote:
+> > > > On Thu, 2025-01-09 at 12:22 +0100, David Hildenbrand wrote:
+> > > > > On 07.01.25 19:07, Shakeel Butt wrote:
+> > > > > > On Tue, Jan 07, 2025 at 09:34:49AM +0100, David Hildenbrand wro=
+te:
+> > > > > > > On 06.01.25 19:17, Shakeel Butt wrote:
+> > > > > > > > On Mon, Jan 06, 2025 at 11:19:42AM +0100, Miklos Szeredi wr=
+ote:
+> > > > > > > > > On Fri, 3 Jan 2025 at 21:31, David Hildenbrand <david@red=
+hat.com> wrote:
+> > > > > > > > > > In any case, having movable pages be turned unmovable d=
+ue to persistent
+> > > > > > > > > > writaback is something that must be fixed, not worked a=
+round. Likely a
+> > > > > > > > > > good topic for LSF/MM.
+> > > > > > > > >=20
+> > > > > > > > > Yes, this seems a good cross fs-mm topic.
+> > > > > > > > >=20
+> > > > > > > > > So the issue discussed here is that movable pages used fo=
+r fuse
+> > > > > > > > > page-cache cause a problems when memory needs to be compa=
+cted. The
+> > > > > > > > > problem is either that
+> > > > > > > > >=20
+> > > > > > > > >      - the page is skipped, leaving the physical memory b=
+lock unmovable
+> > > > > > > > >=20
+> > > > > > > > >      - the compaction is blocked for an unbounded time
+> > > > > > > > >=20
+> > > > > > > > > While the new AS_WRITEBACK_INDETERMINATE could potentiall=
+y make things
+> > > > > > > > > worse, the same thing happens on readahead, since the new=
+ page can be
+> > > > > > > > > locked for an indeterminate amount of time, which can als=
+o block
+> > > > > > > > > compaction, right?
+> > > > > > >=20
+> > > > > > > Yes, as memory hotplug + virtio-mem maintainer my bigger conc=
+ern is these
+> > > > > > > pages residing in ZONE_MOVABLE / MIGRATE_CMA areas where ther=
+e *must not be
+> > > > > > > unmovable pages ever*. Not triggered by an untrusted source, =
+not triggered
+> > > > > > > by an trusted source.
+> > > > > > >=20
+> > > > > > > It's a violation of core-mm principles.
+> > > > > >=20
+> > > > > > The "must not be unmovable pages ever" is a very strong stateme=
+nt and we
+> > > > > > are violating it today and will keep violating it in future. An=
+y
+> > > > > > page/folio under lock or writeback or have reference taken or h=
+ave been
+> > > > > > isolated from their LRU is unmovable (most of the time for smal=
+l period
+> > > > > > of time).
+> > > > >=20
+> > > > > ^ this: "small period of time" is what I meant.
+> > > > >=20
+> > > > > Most of these things are known to not be problematic: retrying a =
+couple
+> > > > > of times makes it work, that's why migration keeps retrying.
+> > > > >=20
+> > > > > Again, as an example, we allow short-term O_DIRECT but disallow
+> > > > > long-term page pinning. I think there were concerns at some point=
+ if
+> > > > > O_DIRECT might also be problematic (I/O might take a while), but =
+so far
+> > > > > it was not a problem in practice that would make CMA allocations =
+easily
+> > > > > fail.
+> > > > >=20
+> > > > > vmsplice() is a known problem, because it behaves like O_DIRECT b=
+ut
+> > > > > actually triggers long-term pinning; IIRC David Howells has this =
+on his
+> > > > > todo list to fix. [I recall that seccomp disallows vmsplice by de=
+fault
+> > > > > right now]
+> > > > >=20
+> > > > > These operations are being done all over the place in kernel.
+> > > > > > Miklos gave an example of readahead.
+> > > > >=20
+> > > > > I assume you mean "unmovable for a short time", correct, or can y=
+ou
+> > > > > point me at that specific example; I think I missed that.
+> >=20
+> > Please see https://lore.kernel.org/all/CAJfpegthP2enc9o1hV-izyAG9nHcD_t=
+T8dKFxxzhdQws6pcyhQ@mail.gmail.com/
+> >=20
+> > > > >=20
+> > > > > > The per-CPU LRU caches are another
+> > > > > > case where folios can get stuck for long period of time.
+> > > > >=20
+> > > > > Which is why memory offlining disables the lru cache. See
+> > > > > lru_cache_disable(). Other users that care about that drain the L=
+RU on
+> > > > > all cpus.
+> > > > >=20
+> > > > > > Reclaim and
+> > > > > > compaction can isolate a lot of folios that they need to have
+> > > > > > too_many_isolated() checks. So, "must not be unmovable pages ev=
+er" is
+> > > > > > impractical.
+> > > > >=20
+> > > > > "must only be short-term unmovable", better?
+> >=20
+> > Yes and you have clarified further below of the actual amount.
+> >=20
+> > > > >=20
+> > > >=20
+> > > > Still a little ambiguous.
+> > > >=20
+> > > > How short is "short-term"? Are we talking milliseconds or minutes?
+> > >=20
+> > > Usually a couple of seconds, max. For memory offlining, slightly long=
+er
+> > > times are acceptable; other things (in particular compaction or CMA
+> > > allocations) will give up much faster.
+> > >=20
+> > > >=20
+> > > > Imposing a hard timeout on writeback requests to unprivileged FUSE
+> > > > servers might give us a better guarantee of forward-progress, but i=
+t
+> > > > would probably have to be on the order of at least a minute or so t=
+o be
+> > > > workable.
+> > >=20
+> > > Yes, and that might already be a bit too much, especially if stuck on
+> > > waiting for folio writeback ... so ideally we could find a way to mig=
+rate
+> > > these folios that are under writeback and it's not your ordinary disk=
+ driver
+> > > that responds rather quickly.
+> > >=20
+> > > Right now we do it via these temp pages, and I can see how that's
+> > > undesirable.
+> > >=20
+> > > For NFS etc. we probably never ran into this, because it's all used i=
+n
+> > > fairly well managed environments and, well, I assume NFS easily outda=
+tes CMA
+> > > and ZONE_MOVABLE :)
+> > >=20
+> > > > > > >=20
+> > > > > > The point is that, yes we should aim to improve things but in i=
+terations
+> > > > > > and "must not be unmovable pages ever" is not something we can =
+achieve
+> > > > > > in one step.
+> > > > >=20
+> > > > > I agree with the "improve things in iterations", but as
+> > > > > AS_WRITEBACK_INDETERMINATE has the FOLL_LONGTERM smell to it, I t=
+hink we
+> > > > > are making things worse.
+> >=20
+> > AS_WRITEBACK_INDETERMINATE is really a bad name we picked as it is stil=
+l
+> > causing confusion. It is a simple flag to avoid deadlock in the reclaim
+> > code path and does not say anything about movability.
+> >=20
+> > > > >=20
+> > > > > And as this discussion has been going on for too long, to summari=
+ze my
+> > > > > point: there exist conditions where pages are short-term unmovabl=
+e, and
+> > > > > possibly some to be fixed that turn pages long-term unmovable (e.=
+g.,
+> > > > > vmsplice); that does not mean that we can freely add new conditio=
+ns that
+> > > > > turn movable pages unmovable long-term or even forever.
+> > > > >=20
+> > > > > Again, this might be a good LSF/MM topic. If I would have the cap=
+acity I
+> > > > > would suggest a topic around which things are know to cause pages=
+ to be
+> > > > > short-term or long-term unmovable/unsplittable, and which can be
+> > > > > handled, which not. Maybe I'll find the time to propose that as a=
+ topic.
+> > > > >=20
+> > > >=20
+> > > >=20
+> > > > This does sound like great LSF/MM fodder! I predict that this sessi=
+on
+> > > > will run long! ;)
+> > >=20
+> > > Heh, fully agreed! :)
+> >=20
+> > I would like more targeted topic and for that I want us to at least
+> > agree where we are disagring. Let me write down two statements and
+> > please tell me where you disagree:
+>=20
+> I think we're mostly in agreement!
+>=20
+> >=20
+> > 1. For a normal running FUSE server (without tmp pages), the lifetime o=
+f
+> > writeback state of fuse folios falls under "short-term unmovable" bucke=
+t
+> > as it does not differ in anyway from anyother filesystems handling
+> > writeback folios.
+>=20
+> That's the expectation, yes. As long as the FUSE server is able to make=
+=20
+> progress, the expectation is that it's just like NFS etc. If it isn't=20
+> able to make progress (i.e., crash), the expectation is that everything=
+=20
+> will get cleaned up either way.
+>=20
+> I wonder if there could be valid scenario where the FUSE server is no=20
+> longer able to make progress (ignoring network outages), or the progress=
+=20
+> might start being extremely slow such that it becomes a problem. In=20
+> contrast to in-kernel FSs, one can do some fancy stuff with fuse where=
+=20
+> writing a page could possibly consume a lot of memory in user-space.=20
+> Likely, in this case we might just blame it on the admin that agreed to=
+=20
+> running this (trusted) fuse server.
+>=20
+> >=20
+> > 2. For a buggy or untrusted FUSE server (without tmp pages), the
+> > lifetime of writeback state of fuse folios can be arbitrarily long and
+> > we need some mechanism to limit it.
+>=20
+> Yes.
+>=20
+>=20
+> Especially in 1), we really want to wait for writeback to finish, just=
+=20
+> like for any other filesystem. For 2), we want a way so writeback will=
+=20
+> not get stuck for a long time, but are able to make progress and migrate=
+=20
+> these pages.
+>=20
 
+What if we were to allow the kernel to kill off an unprivileged FUSE
+server that was "misbehaving" [1], clean any dirty pagecache pages that
+it has, and set writeback errors on the corresponding FUSE inodes [2]?
+We'd still need a rather long timeout (on the order of at least a
+minute or so, by default).
 
+Would that be enough to assuage concerns about unprivileged servers
+pinning pages indefinitely? Buggy servers are still a problem, but
+there's not much we can do about that.
 
-Dave,
+There are a lot of details we'd have to sort out, so I'm also
+interested in whether anyone (Miklos? Bernd?) would find this basic
+approach objectionable.
 
-I provided an proposal to solve this issue in 
-https://lore.kernel.org/lkml/20241210125737.786928-3-john.g.garry@oracle.com/ 
-(there is also a v3, which is much the same.
+[1]: for some definition of misbehavior. Probably a writeback
+timeout=C2=A0of some sort but maybe there would be other criteria too.
 
-but I can't make progress, as there is no agreement upon how this should 
-be implemented, if at all. Any input there would be appreciated...
-
-Cheers
-
+[2]: or maybe just make them eligible to be cleaned without talking to
+the server, should the VM wish it.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
