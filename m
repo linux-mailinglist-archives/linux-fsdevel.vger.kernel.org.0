@@ -1,124 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-39083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634C2A0C08D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 19:47:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79B9A0C0D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 19:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857FA1887E27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 18:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A903D3A2E4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 18:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CB2224B12;
-	Mon, 13 Jan 2025 18:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7733B1C5486;
+	Mon, 13 Jan 2025 18:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRG3TzZ7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PBbJ+bCP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD12F224AFE;
-	Mon, 13 Jan 2025 18:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289BA2B2DA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 18:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736793401; cv=none; b=lnKRSCXYRCaV0hEGx0HFmjg4RNrD/T7jjDe7eexwQ+6SsNJFntjl9Vo+pP6+qHZ7TP+Edh2TxNffttjDFqnY+BxTCHmEVPn14rXVHzqD3Rg0gvibkCKmVvl1/nWv53FPpDnBQiWPj4NbR07P7Vn89U8HbaLCvEcvjNG4YZKWRrI=
+	t=1736794413; cv=none; b=oGoegqq/wqzHhl6EQIavIuenR+BTgn6Vzp4jDC4WW+fHEAisElD/IBq3YJCb0bJDydkwsbMrm96GoC8Vz+MaXHYKI5QNN2zdjo6x8lHmQtvduAZZ3Y5JEKZfMr00q2u7497QDyDXRb4l6341ShE3THwknkZu875eFE920d9w72Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736793401; c=relaxed/simple;
-	bh=OSMd6m3CV9jUJ8WykRwJ1KDi0nH2xHT6tg95x+6TSTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OfIIXoHIQpabpGFWyHCYZlQ/LbkYK23d2HyCJ2nSWLb0xZuTHOuev6TjDgak7oVzXa4dEhttPUne1IGhVFyNeM/K/F1W9Qz7yHl/JguMVL4DL4qhk1a99ifOyp7ONnukdxUBqqWPCMSw2jFzjSfAwdA1s+8+F+J0fJDH/yi8ETg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRG3TzZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638D9C4CED6;
-	Mon, 13 Jan 2025 18:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736793401;
-	bh=OSMd6m3CV9jUJ8WykRwJ1KDi0nH2xHT6tg95x+6TSTE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nRG3TzZ7riGviLHQv+8zZWc/liDi0FDgDzd5F+Taro6pfxyMP7luYTY63tsvXlepi
-	 d1yN/e55pIvdGZKibkUPG+ZJNVCXl6g71PH1BRPtSLaEtsJgLG1cKp2EgdlmaVr2pD
-	 bT8wYAF98LhdKZ9ib8GfO/6Tl4Iu/lKFjztI0HstVNQpcNI6FwZR3sCHpYRnyNjQ/b
-	 BF9rs7FfoUPgc+Cz+3LFWwPquks+AmH5pdFqp0WgpUX/P1yw2GGrbQMQskxdizBOSy
-	 xnqrSmuLzq9RwE+ELKxopuPa0v9XmxyW3EqGJ7zfiY47skBOevJZwta3ZtiYnRk01n
-	 fNX9pMxyeBwFw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Leo Stone <leocstone@gmail.com>,
-	syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
-	Jan Kara <jack@suse.cz>,
+	s=arc-20240116; t=1736794413; c=relaxed/simple;
+	bh=2dkygM1+F7ng0CXJhY9rw5Uo2Gm1mS4UHZYlkhW+6JE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fANa/oBY+wEGytPbCSh24eoQrZ+N1Cs10YIH+iBAVS0/PE508EsIYsTvNQ4FwWmZK7FN/B2mBsA/TDVn4o8nYCUV1b7oaWuH0h84WIEsLp+4l46BSrlKMsH+b7oDMbdn5E5Y+GnHe+44G97WFsJgECGsdtfSjfH26f6WSm2VFMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PBbJ+bCP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736794411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tN6TnFm2Xr2+2MnjTv8L6Mquqv9TtlwwwWgfBy/a+KM=;
+	b=PBbJ+bCPrIkAYaol7WSC/p4O51mnxK7h0xPczsl5g6UfyyO3qaU4WdnOyhL6BW4F3bln5h
+	TVkWSh3iJoOXS0iYgoyUbzBgSTO3dH1HZXfis8xrGQ9S4YfBm4MZAAA+PsDzjaF+V2Xd/s
+	44+7bAaDB9Er71Yad2pK2V5CWAm4rew=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-kmv7AmIpMjWz73eOauhPwA-1; Mon,
+ 13 Jan 2025 13:53:27 -0500
+X-MC-Unique: kmv7AmIpMjWz73eOauhPwA-1
+X-Mimecast-MFC-AGG-ID: kmv7AmIpMjWz73eOauhPwA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40CB719560B7;
+	Mon, 13 Jan 2025 18:53:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.5])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 753B6195608A;
+	Mon, 13 Jan 2025 18:53:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 13 Jan 2025 19:53:01 +0100 (CET)
+Date: Mon, 13 Jan 2025 19:52:57 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+	Christian Brauner <christianvanbrauner@gmail.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	quic_jjohnson@quicinc.com,
-	viro@zeniv.linux.org.uk,
-	sandeen@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 2/4] hfs: Sanity check the root record
-Date: Mon, 13 Jan 2025 13:36:31 -0500
-Message-Id: <20250113183633.1784590-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250113183633.1784590-1-sashal@kernel.org>
-References: <20250113183633.1784590-1-sashal@kernel.org>
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [brauner-vfs:vfs-6.14.misc] [pipe_read]  aaec5a95d5:
+ hackbench.throughput 7.5% regression
+Message-ID: <20250113185257.GA7471@redhat.com>
+References: <202501101015.90874b3a-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.289
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202501101015.90874b3a-lkp@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Leo Stone <leocstone@gmail.com>
+Well, I guess I need to react somehow...
 
-[ Upstream commit b905bafdea21a75d75a96855edd9e0b6051eee30 ]
+On 01/10, kernel test robot wrote:
+>
+> kernel test robot noticed a 7.5% regression of hackbench.throughput on:
+>
+> commit: aaec5a95d59615523db03dd53c2052f0a87beea7 ("pipe_read: don't wake up the writer if the pipe is still full")
+> https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git vfs-6.14.misc
 
-In the syzbot reproducer, the hfs_cat_rec for the root dir has type
-HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
-This indicates it should be used as an hfs_cat_file, which is 102 bytes.
-Only the first 70 bytes of that struct are initialized, however,
-because the entrylength passed into hfs_bnode_read() is still the length of
-a directory record. This causes uninitialized values to be used later on,
-when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
+Hmm. Not good ;)
 
-Add a check to make sure the retrieved record has the correct type
-for the root directory (HFS_CDR_DIR), and make sure we load the correct
-number of bytes for a directory record.
+But otoh,
 
-Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
-Tested-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
-Tested-by: Leo Stone <leocstone@gmail.com>
-Signed-off-by: Leo Stone <leocstone@gmail.com>
-Link: https://lore.kernel.org/r/20241201051420.77858-1-leocstone@gmail.com
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/hfs/super.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> In addition to that, the commit also has significant impact on the following tests:
+>
+> +------------------+-------------------------------------------------------------------------------------------+
+> | testcase: change | stress-ng: stress-ng.tee.ops_per_sec 500.7% improvement                                   |
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index bcf820ce0e02..f82444fbbedc 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -419,11 +419,13 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto bail_no_root;
- 	res = hfs_cat_find_brec(sb, HFS_ROOT_CNID, &fd);
- 	if (!res) {
--		if (fd.entrylength > sizeof(rec) || fd.entrylength < 0) {
-+		if (fd.entrylength != sizeof(rec.dir)) {
- 			res =  -EIO;
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
-+		if (rec.type != HFS_CDR_DIR)
-+			res = -EIO;
- 	}
- 	if (res)
- 		goto bail_hfs_find;
--- 
-2.39.5
+So I hope we do not need to revert this patch?
+
+-------------------------------------------------------------------------------
+I am looking at
+
+	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
+
+and I don't understand how can this patch make a noticable difference.
+And can't reproduce,
+
+	hackbench -g 4 -f 10 --process --pipe -l 50000 -s 100
+
+on my laptop under qemu doesn't show any regression.
+
+OK, in this case the early/unnecessary wakeup (removed by this patch) is
+not necessarily bad, when the woken writer actually gets CPU pipe_full()
+will be likely false, plus receiver() can wakeup more writers when it does
+the next read()s. But 7.5% ?
+
+Perhaps this is another case which shows that "artificial" benchmarks like
+this one are very sensitive... Or perhaps I am trying to deny the problem.
+
+So, Christian, et al, unless you think I should try to investigate, I am
+going to forget this report. If nothing else, "500.7% improvement" doesn't
+look bad even if I have no idea whether the stress-ng.tee.ops_per_sec test
+realistic or not (I have no idea what does it do).
+
+Oleg.
 
 
