@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-39047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36111A0BA5A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 15:52:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87A9A0BAFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 16:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBB41881843
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 14:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64D883A13F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2025 15:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F0423A105;
-	Mon, 13 Jan 2025 14:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4122CA1F;
+	Mon, 13 Jan 2025 14:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVMQPjIC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYeevyod"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9853B23A0EC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 14:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7BD229808
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2025 14:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736779882; cv=none; b=nrH/SsbA1btE4SdDqpbWAvMo6Re91iqnJ0p9bwD+HROMxXXWiVbXJ1/ksaDy2Vie0CIOAeR7Cd/8ZSq2vkmEYn9BisfxmfiUAPO1hEj97DTdZtrAaPGAIPlki1dg9s0u/tWIyIYwcZyytk9m+I97b3uzkvLFDX1alFDubnNGrWM=
+	t=1736780111; cv=none; b=lj/FlQDksDlTTvBleAVVCVl80ho/JfYlC73Ye78FNYZ1dg86H4IYhKmQv59jAt2Y73tZdVjkFySaGxlXs1uqMAWiTDMCdUYKtBMgCnOgvRaenh5erFwabvtaSti7CCtnVmEHGXfPmEukeqdzN8XEMOY4UtMq2MfC5yo5qBRrcPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736779882; c=relaxed/simple;
-	bh=ehsW4sZ4w7KL03QvmuaXjIA/lL4QW4GeLUlMmqS1oKk=;
+	s=arc-20240116; t=1736780111; c=relaxed/simple;
+	bh=f/T94yh48kxxpCXxCWdWwNTYocQpEAaBaubmg5/ycUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t03G1Pt9zXXtNxeFdTWirFoFlPJaBn8JP/6UpR8OI+f+Yt5zidRzjoCO7+x26OE6VfNUBPc7h2Fc6hF9g5rPVwKVPN70v0H5Rw7j/WXwXymyo8Fq9YdKEty6Q6KlWREvHCBw8aWAEMx98NduroOEGncryKpQwSQGWGPfCqUbPDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVMQPjIC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601C4C4CED6;
-	Mon, 13 Jan 2025 14:51:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQp4R4XbV0f1QIbkb0MckVkl1eujRSXuCNLw2riD/9LqgiuSwiWEOJFB57T/w2vGx7L9NS3xL6xUBqL0p/Rv++uGSOR0UeQ3R7Sy7+TYi1WgiMUjpN9bLAqep7kx7bW4VmK4k0kA/QjbyKcN5j+4Xv4nNyhFrzxCuf1mB3fZOLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYeevyod; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F30DC4CED6;
+	Mon, 13 Jan 2025 14:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736779882;
-	bh=ehsW4sZ4w7KL03QvmuaXjIA/lL4QW4GeLUlMmqS1oKk=;
+	s=k20201202; t=1736780111;
+	bh=f/T94yh48kxxpCXxCWdWwNTYocQpEAaBaubmg5/ycUY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eVMQPjICGScCEd4S5BmTMFgTRXfgvdeYHAvM9+4hHaS4wpKVIaL0UnpNC2zzPknXx
-	 CLyTgvPngNkAOGU+Y4D4LhedMwzuBR+BPUI8Op7/W2Q8sOO38h8SXxZ8QXXBbqSYr0
-	 A1uJalQ3GWrYyHKkvwlrDmtkmO67i7n1Y9K1twPTeoMMVZR+tnpapWHJrkgvK74VML
-	 OppYwfDz/8j3dF78dYwkx/RUIM8zN/rvOEQ19Nk64VaLUQJuDTRPD9yGs+Z7eRWStr
-	 L9+57//UsYd1MRyqvyayJgQ9E5aCA09ymXNBHGV/KbewV2vnPOrlQszB5ga398nOu6
-	 lNROon2No9i0w==
-Date: Mon, 13 Jan 2025 15:51:18 +0100
+	b=kYeevyodbXh+qOG6mgOQa9MrPMiFh/tCTfPygyVnkdJZIfL6gcdy0DBQMjL9JIl3U
+	 klYYfCInx5ZnaugbG+EZGajEPqK0eiAHYj2t7A1CvCTb7lR78qNHdqzkI8lU7EiWVn
+	 FK59nxIQpPLAiGXVmOpWP3O372P1OVr2wh479rkuuDQj8hoDBLSfbQrayedzSJuarD
+	 PTugRFgF+KsDqjML+8jvCKx0OTPy+MU+5EnmA/h9GewhKBAZz20RmPvsDu4W4W80cn
+	 FDWm73lXKQV421AMr0G0foEH5FGY7YZzncbHrL0EtkAHooGwHPkGI5uLxIkoiWhsqU
+	 k7wuZDVDaslrA==
+Date: Mon, 13 Jan 2025 15:55:07 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, gregkh@linuxfoundation.org
-Subject: Re: [PATCH v2 03/21] debugfs: get rid of dynamically allocation
- proxy_ops
-Message-ID: <20250113-bedrucken-abbaden-ef2c23406924@brauner>
+Subject: Re: [PATCH v2 04/21] debugfs: don't mess with bits in ->d_fsdata
+Message-ID: <20250113-reformieren-baurecht-921c48ce2e96@brauner>
 References: <20250112080545.GX1977892@ZenIV>
  <20250112080705.141166-1-viro@zeniv.linux.org.uk>
- <20250112080705.141166-3-viro@zeniv.linux.org.uk>
+ <20250112080705.141166-4-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,23 +58,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250112080705.141166-3-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250112080705.141166-4-viro@zeniv.linux.org.uk>
 
-On Sun, Jan 12, 2025 at 08:06:47AM +0000, Al Viro wrote:
-> All it takes is having full_proxy_open() collect the information
-> about available methods and store it in debugfs_fsdata.
+On Sun, Jan 12, 2025 at 08:06:48AM +0000, Al Viro wrote:
+> The reason we need that crap is the dual use ->d_fsdata has there -
+> it's both holding a debugfs_fsdata reference after the first
+> debugfs_file_get() (actually, after the call of proxy ->open())
+> *and* it serves as a place to stash a reference to real file_operations
+> from object creation to the first open.  Oh, and it's triple use,
+> actually - that stashed reference might be to debugfs_short_fops.
 > 
-> Wrappers are called only after full_proxy_open() has succeeded
-> calling debugfs_get_file(), so they are guaranteed to have
-> ->d_fsdata already pointing to debugfs_fsdata.
+> Bugger that for a game of solidiers - just put the operations
+
+The most confusing part of this patch is this sentence. :)
+"game of solidiers"?
+
+> reference into debugfs-private augmentation of inode.  And split
+> debugfs_full_file_operations into full and short cases, so that
+> debugfs_get_file() could tell one from another.
 > 
-> As the result, they can check if method is absent and bugger off
-> early, without any atomic operations, etc. - same effect as what
-> we'd have from NULL method.  Which makes the entire proxy_fops
-> contents unconditional, making it completely pointless - we can
-> just put those methods (unconditionally) into
-> debugfs_full_proxy_file_operations and forget about dynamic
-> allocation, replace_fops, etc.
+> Voila - ->d_fsdata holds NULL until the first (successful) debugfs_get_file()
+> and a reference to struct debugfs_fsdata afterwards.
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
