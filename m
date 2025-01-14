@@ -1,195 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-39206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E63A11597
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:42:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FC5A1159B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9A67A1729
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F6F3A26A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CE821ADD1;
-	Tue, 14 Jan 2025 23:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466FF21B8E1;
+	Tue, 14 Jan 2025 23:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIqZsE86"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvPVAUkR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8B321423A;
-	Tue, 14 Jan 2025 23:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FB420AF6D;
+	Tue, 14 Jan 2025 23:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736898160; cv=none; b=UBMR6bX0YmTbxEpycaWBGYhxh1bCaOyhlzK1PzREWI0/RCwQr+mVZC/hnPsQJH38GhTcuNXkvQkuf8dd9Zg/qR/4+5Kd4o86+FWtpnSCK7eLEjVJJtCahY4XFsU/QiazawR792FSqfbNTWGTZHwBJqlPq9FErbR6nWVcFDBIcTw=
+	t=1736898210; cv=none; b=jjr7kPtBw7xbUigrGqL6gNeepVNR1RdNj+zSfJ89U+onXi0XMYUJCd5kAFofFAy5JJWH4flmKTDnsj4yo0WpiisaAog1/jWaqItMUI0HRi2Xh54atrxjIaoIFJvYd0aDPb92GRmj1suNXLk5ODQRTnYJiRJVMOTV66iRlquzxMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736898160; c=relaxed/simple;
-	bh=yLnnR/D2Cs5GDfkk3Hf9EEVwQ5C+xBnPJs/Bp4dV7kE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bS7hlnOqu6+k73SIHTs2pCEkeDEYssq++218E5fulXol6J4SIJ9Gb45e+e++rqQM9kWC6ru4amPg4GPIkkttsVtpXEidP23YvSs2Y92i1fSgYpGgkFJeZSF7+ZNlZKRy940wX44Pvv7VtuzKWm60A1I1q7B5W0rGnYccBuXDwG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIqZsE86; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ef72924e53so10083960a91.3;
-        Tue, 14 Jan 2025 15:42:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736898158; x=1737502958; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=quyaB8ziKmWh5lICJCqpbl7CI7id+IgEsASBV0XeQtQ=;
-        b=BIqZsE862mh5jfzuEYu40PYgNG0oO1wfsBEkf4VxZOIYbshUhLdH1oIvWC2KojzFPP
-         z+fN/EeqcgU+5SvUmH5GWh925J3gzXe36hS/AMGtcjfgh5RTUZaoqVCXWckRWvNcSaEo
-         UeAjLz8HdqWT44vdO2/kBKrXU0sfL4ZWR7EcZxSO14NhirEWC/Flw3rNc2xXPDKV6vog
-         i3U/L8nx2fs1NaB5VLlY7S3EtvJ7+2T/ikl6WbvIZL/Sc90T2oYUz2H3FyoteXoljxlS
-         uTdPthG21k54ejOl8q/h0L4TIdJzMZuyTrs+tw55Bobu2uE+FS01JGbjaS1QXohzNu+c
-         P7iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736898158; x=1737502958;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=quyaB8ziKmWh5lICJCqpbl7CI7id+IgEsASBV0XeQtQ=;
-        b=a29iu6q3aufl6C5mJiuPzqeqPzLpz2Fno+MSBW6gVYF0MVuePuTla7XAxfkHeIHZg8
-         zpj+ZmDs02P/W+4YCX726J2ilKif9P50RcxGliOQyNMsIAlbG13YqbmMga9MVB+TeSdw
-         P8E92Bcsb8T3quATSs578rJ7JbmrpLieC4gquQVGAjJrh0RXNc6iQSlPm/ogr52F4Acs
-         QaPC7rV33PlHKDJlj03jnrST6Hnma3kEoRVAq3rCAt+4p2ZXnRb27VRUIGMTcl4mGbrP
-         LqPj/gm0GDxkfMdGsR8TdgP4ViGrYp+QCvBIFjdfNvDsmgDbUuxAvYfTN7aIszYu6r36
-         00vA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVa0lbwWoq78FxgeKSrWKgfQ/BLlRq7Am20HVy1nmf82yQ5rPAday0sO8+lWJGlBHMKO5AUJGpWNlq@vger.kernel.org, AJvYcCVQYwjePUocplCvUX2DXe+sSCikK4R9+/wXHyPxGMo8ENuz4azSLI3Gi8dX91/AF4Nv3vH/pYNrfj0UPIbi@vger.kernel.org, AJvYcCVQm8Wcm/0o1oL+uvPtSt7cq2r2YpNEGNApzdydune3Weks3l9l5PCwTBMJToD5z73IiRqCYOmpFSuqEChwCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3oXc8lmMS1wuzsYZEO+1pA8vdJ+4Jr45kvIoFqztZ0PugeoRr
-	7thqErJg0i+BTJq1quXFyPV1K3urSGgL6eZ2bMnoP+SkfbgLYdyt2Zj01pu3I4Bv+BWc4PuYqGB
-	tujZoJjdafklUkdC3UydDXKufeLk=
-X-Gm-Gg: ASbGncuZldmlFfxsitJChUq4GOHLh29LJmC20nPXvJ8+kRCjf6DNyjAS9CFCSmTpjAa
-	+kUYo+XpZlHXXOv36qCRkF108ZAYGj5SL3dMcjQ==
-X-Google-Smtp-Source: AGHT+IEOkrFDlJ3CDOjczpR7YBZ9RD2D1W4AQ7cRnHkYS1odRc0LsFdmFqWUY6c/gNjIvQLEwzloiqj+6cjmjfUI9qU=
-X-Received: by 2002:a17:90b:2f45:b0:2ef:2f49:7d7f with SMTP id
- 98e67ed59e1d1-2f548ece7afmr42867667a91.18.1736898158308; Tue, 14 Jan 2025
- 15:42:38 -0800 (PST)
+	s=arc-20240116; t=1736898210; c=relaxed/simple;
+	bh=cZScX6fcoSfywy6Y+mVmT+VskTpcHA+stbUNBFhbfVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nW1qHGQLtrEzUVkYWY/5+FQcHqPTLODyT2wuxo9wc6rqp13f9M2+rJYe7oXv4tLq+YarKPvbfjeNRRQqbnvoF0T7D0SEfVV6SZQTc7U74Iv6ER4N7QQkymqXT02d19cZ2m89lWO4bKn1gSKgY3PgFPMXtgCX+4WWqTPhLXPk690=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvPVAUkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10829C4CEDD;
+	Tue, 14 Jan 2025 23:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736898210;
+	bh=cZScX6fcoSfywy6Y+mVmT+VskTpcHA+stbUNBFhbfVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XvPVAUkRpTqbvmShjZbOKSmaIP6ofopqUmDqluYI7J+9/ZMUwhvGsNzaMQCuzzcAj
+	 SMKN3UyQrtLW/DCR1room859ksz465Byl5IKEY11loVNxlA3hY/28OkR08H1z5Ho4n
+	 CxaB/rg0xs9ZtMEjBGM4ME/+oJ5SVk3VU77mFr1g3XPTu0ijp7NfpJv8ZdnkNfRk3H
+	 BTOv2TBM6mklHUjNhYIfSkcj5TKYweb/NfwywU0p7OCRnVAb+642GPIBuxXWvCFMoI
+	 jUaOY6QlasV+5wuheWb7xiBDkF4IyHNkicHUz/ERkz+EFlUHeLZ+2IITDYqXz1LOVJ
+	 opjtUPT+rGUVg==
+Date: Tue, 14 Jan 2025 15:43:29 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Kun Hu <huk23@m.fudan.edu.cn>,
+	Andrey Konovalov <andreyknvl@gmail.com>, jack@suse.cz,
+	jlayton@redhat.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+	david@fromorbit.com, viro@zeniv.linux.org.uk, hch@lst.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
+Message-ID: <20250114234329.GB3557553@frogsfrogsfrogs>
+References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
+ <20250113-herzhaft-desolat-e4d191b82bdf@brauner>
+ <Z4U89Wfyaz2fLbCt@casper.infradead.org>
+ <20250113180830.GM6156@frogsfrogsfrogs>
+ <CACT4Y+YVy3OqiG=HD4TcERCHqS7XrNUwMgJtjM-HLC_-kA5rdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241227121508.nofy6bho66pc5ry5@pali> <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
- <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com> <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
- <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com> <20250114211050.iwvxh7fon7as7sty@pali>
- <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com> <Z4b0H5hQv0ocD75j@dread.disaster.area>
-In-Reply-To: <Z4b0H5hQv0ocD75j@dread.disaster.area>
-From: ronnie sahlberg <ronniesahlberg@gmail.com>
-Date: Wed, 15 Jan 2025 09:42:26 +1000
-X-Gm-Features: AbW1kvYJBu5VJLEJM1yKyFVzTzmTetgu7Qt4ucboXL1SJgcKdfDphZiDjCsymBg
-Message-ID: <CAN05THT8oP4q90wqxSN3vR+EYEPXfe1Ts=rqVYg6mthUXytWbA@mail.gmail.com>
-Subject: Re: Immutable vs read-only for Windows compatibility
-To: Dave Chinner <david@fromorbit.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YVy3OqiG=HD4TcERCHqS7XrNUwMgJtjM-HLC_-kA5rdw@mail.gmail.com>
 
-On Wed, 15 Jan 2025 at 09:32, Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, Jan 14, 2025 at 04:44:55PM -0500, Chuck Lever wrote:
-> > On 1/14/25 4:10 PM, Pali Roh=C3=A1r wrote:
-> > > > My thought was to have a consistent API to access these attributes,=
- and
-> > > > let the filesystem implementers decide how they want to store them.=
- The
-> > > > Linux implementation of ntfs, for example, probably wants to store =
-these
-> > > > on disk in a way that is compatible with the Windows implementation=
- of
-> > > > NTFS.
+On Tue, Jan 14, 2025 at 10:15:28AM +0100, Dmitry Vyukov wrote:
+> On Mon, 13 Jan 2025 at 19:08, Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Mon, Jan 13, 2025 at 04:19:01PM +0000, Matthew Wilcox wrote:
+> > > On Mon, Jan 13, 2025 at 03:38:57PM +0100, Christian Brauner wrote:
+> > > > On Sun, Jan 12, 2025 at 06:00:24PM +0800, Kun Hu wrote:
+> > > > > Hello,
+> > > > >
+> > > > > When using our customized fuzzer tool to fuzz the latest Linux kernel, the following crash (43s)
+> > > > > was triggered.
 > > > >
-> > > > A common API would mean that consumers (like NFSD) wouldn't have to=
- know
-> > > > those details.
-> > > >
-> > > >
-> > > > --
-> > > > Chuck Lever
+> > > > I think we need to come to an agreement at LSFMM or somewhere else that
+> > > > we will by default ingore but reports from non-syzbot fuzzers. Because
+> > > > we're all wasting time on them.
+> >
+> > No need to wait until LSFMM, I already agree with the premise of
+> > deprioritizing/ignoring piles of reports that come in all at once with
+> > very little analysis, an IOCCC-esque reproducer, and no effort on the
+> > part of the reporter to do *anything* about the bug.
+> >
+> > While the Google syzbot dashboard has improved remarkably since 2018,
+> > particularly in the past couple of years, thanks to the people who did
+> > that!
+> 
+> And, thanks, Darrick!
+> Most credit goes to Aleksandr Nogikh, who worked on improvements in
+> the past years.
+> We don't always have cycles to implement everything immediately, but
+> we are listening.
+
+You're welcome, and to both of you, thank you for all the improvements
+over the last 8-9 years. :)
+
+--D
+
+> >  It's nice that I can fire off patches at the bot and it'll test
+> > them.  That said, I don't perceive Google management to be funding much
+> > of anyone to solve the problems that their fuzzer uncovers.
+> >
+> > This is to say nothing of the people who are coyly running their own
+> > instances of syzbot sans dashboard and expecting me to download random
+> > crap from Google Drive.  Hell no, I don't do that kind of thing in 2025.
+> >
+> > > I think it needs to be broader than that to also include "AI generated
+> > > bug reports" (while not excluding AI-translated bug reports); see
 > > >
-> > > So, what about introducing new xattrs for every attribute with this p=
-attern?
+> > > https://daniel.haxx.se/blog/2024/01/02/the-i-in-llm-stands-for-intelligence/
 > > >
-> > > system.attr.readonly
-> > > system.attr.hidden
-> > > system.attr.system
-> > > system.attr.archive
-> > > system.attr.temporary
-> > > system.attr.offline
-> > > system.attr.not_content_indexed
->
-> "attr" is a poor choice for an attribute class (yes, naming is
-> hard...). It's a windows file attribute class, the name should
-> reflect that.
->
-> However, my main problem with this approach is that it will be
-> pretty nasty in terms of performance regressions. xattr lookup is
-> *much* more expensive than reading a field out of the inode itself.
->
-> If you want an example of the cost of how a single xattr per file
-> can affect the performance of CIFS servers, go run dbench (a CIFS
-> workload simulator) with and without xattrs. The difference in
-> performance storing a single xattr per file is pretty stark, and it
-> only gets worse as we add more xattrs. i.e. xattrs like this will
-> have significant performance implications for all file create,
-> lookup/stat and unlink operations.
->
-> IOWs, If this information is going to be stored as an xattr, it
-> needs to be a single xattr with a well defined bit field as it's
-> value (i.e. one bit per attribute). The VFS inode can then cache
-> that bitfield with minimal addition overhead during the first
-> lookup/creation/modification for the purpose of fast, low overhead,
-> statx() operation.
-
-For this use case I don't think he means to store them on the cifs
-server as xattr
-(or case-insensitive extended attributes as cifs does).
-They can already be read/written using SMB2 GetInfo/SetInfo commands.
-
-What I think he means is to read these attributes using SMB2 GetInfo
-but then present this to the application via a synthetic xattr.
-Application reads a magic xattr and then the driver just makes it up based =
-on
-other information it has. (cifs does this for other things already afaik)
-
-Correct me if I am wrong Pali, but you mean translate the SMB2 attribute fi=
-eld
-into a magic xattr?  But that means it is not storage of the
-attributes anymore but rather
-the API for applications to read these attributes.
-
->
-> > Yes, all of them could be stored as xattrs for file systems that do
-> > not already support these attributes.
+> > > so really, any "automated bug report" system is out of bounds unless
+> > > previously arranged with the developers who it's supposed to be helping.
 > >
-> > But I think we don't want to expose them directly to users, however.
-> > Some file systems, like NTFS, might want to store these on-disk in a wa=
-y
-> > that is compatible with Windows.
+> > Agree.  That's been my stance since syzbot first emerged in 2017-18.
 > >
-> > So I think we want to create statx APIs for consumers like user space
-> > and knfsd, who do not care to know the specifics of how this informatio=
-n
-> > is stored by each file system.
+> > > We need to write that down somewhere in Documentation/process/ so we
+> > > can point misguided people at it.
+> > >
+> > > We should also talk about how some parts of the kernel are basically
+> > > unmaintained and unused, and that automated testing should be focused
+> > > on parts of the kernel that are actually used.  A report about being
+> > > able to crash a stock configuration of ext4 is more useful than being
+> > > able to crash an unusual configuration of ufs.
 > >
-> > The xattrs would be for file systems that do not already have a way to
-> > represent this information in their on-disk format.
->
-> Even the filesystems that store this information natively should
-> support the xattr interface - they just return the native
-> information in the xattr format, and then every application has a
-> common way to change these attributes. (i.e. change the xattr to
-> modify the attributes, statx to efficiently sample them.
->
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
->
+> > Or maybe we should try to make fuse + iouring fast enough that we can
+> > kick all these old legacy drivers out to userspace. ;)
+> >
+> > > Distinguishing between warnings, BUG()s and actual crashes would also
+> > > be a useful thing to put in this document.
+> >
+> > Yes.  And also state that panic_on_warn=1 is a signal that you wanted
+> > fail(over) fast mode.
+> >
+> > --D
 
