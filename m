@@ -1,184 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-39180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC20A112BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 22:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 362B8A112E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 22:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C473A3DEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 21:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D288C3A23B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 21:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6FE20E30A;
-	Tue, 14 Jan 2025 21:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXcalPSR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83DD2080DF;
+	Tue, 14 Jan 2025 21:20:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sxb1plsmtpa01-11.prod.sxb1.secureserver.net (sxb1plsmtpa01-11.prod.sxb1.secureserver.net [188.121.53.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB2B8493;
-	Tue, 14 Jan 2025 21:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15011ADC72
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 21:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736889062; cv=none; b=Qt5VXcONPlQ2SGGt6V21TLLJlwW95PPhx/egzPw/hWNwQPhB/OB5xyGP4EBJGtutq/7n/1Xg0YDMvYHqlBACe24X27VLKxx7UDkNOe3qvKIhmhs6N7J7gCe7c0gX6fhlOllNL+xq7Pc74cyGIzZRqVhNe/J4rwXw751NkrbHcOw=
+	t=1736889600; cv=none; b=awOdg6fCvtESRLbIkwHXuagkuuRgsoB4yS/3Kk7hRqyIzEnh9HToKd66f/Iq98vU2vjReFaMDoafTAqp2yd+y/lkOw9NqUvlsh4fSfsmges+l9M+TaFV9cMJk8ZrKsofc6kdnK0j/L5Jrp9VoA/13aGisRrAXUmMl21lmcTyRUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736889062; c=relaxed/simple;
-	bh=h2PtMVFX77nlJqvXqeOFV/GzyWRU78lPj2Sn/joTiRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXBYFVZ07oueoBsqTFrZS5FmByyaJgq7Tm9ML16onNCW4zdai0AqnqW3kXiLZKdGWZyyqqh/9LeGkWEqFRm0Qr8lbLuwjcT/f8Ah/yxk++JHA9lR6UWJThrQJq1Wak7BNixFPvWqIveQcDdW6p1A7xRiwKvBcCiqmbaKX1CIWQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXcalPSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03C8C4CEDD;
-	Tue, 14 Jan 2025 21:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736889062;
-	bh=h2PtMVFX77nlJqvXqeOFV/GzyWRU78lPj2Sn/joTiRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rXcalPSRuaBVgdrzfdCijIu40QeAsuymP/1Kab0o6dxceR6uwZgrVLurJOBeCLI6R
-	 5C8CnffxXrcNUWO+SXXPzCV8eAw9nwNZY1TLhVpHBMbKFlxPXqSmDVQ84ZsS8agdpC
-	 G8cFhnjN4gXZcnuqteqNM1lqHMf7ukaGdEX8Nepp7PJaTmDmATblwN3/o73MO5ou2+
-	 +IYZv9WmparHN/wqh+9sdxx2lex7a8qaeKABYHBWca/rpcmpjqgA0k6M2uiMv6N9sr
-	 srb0O1/e1F7aigVHkRzMEcu7OwC0oGTGBSKJdeVfhKJN2GVYFtyqiyFrhjG8nFapzi
-	 zNnhLk9e/7vZw==
-Received: by pali.im (Postfix)
-	id 958D84B4; Tue, 14 Jan 2025 22:10:50 +0100 (CET)
-Date: Tue, 14 Jan 2025 22:10:50 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <20250114211050.iwvxh7fon7as7sty@pali>
-References: <20241227121508.nofy6bho66pc5ry5@pali>
- <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
- <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com>
- <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
- <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com>
+	s=arc-20240116; t=1736889600; c=relaxed/simple;
+	bh=neAaSvJvhh4YzHwuC+sg0RBE6/i5vfsFlk2Xx3W4Cvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rKJsKNRNURX4y1kcvH5J96KuWFtGN4IVDLEXHPmjgzsau32R3oxn2KLsUIOjzlOd9zD3FgDHX+LKfIqs7smKhXYzzl20ZAt13tTprUd0HxLzhVaPqs4rrUxczkX0zlZf4lBaETGglsQzAHX9xYdpRPnhB/QxJWYfCidbyVK4JFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id XoCxtHqWoyuW9XoCxtO3SX; Tue, 14 Jan 2025 14:12:19 -0700
+X-CMAE-Analysis: v=2.4 cv=JoYLrN4C c=1 sm=1 tr=0 ts=6786d333
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=JfrnYn6hAAAA:8 a=FXvPX3liAAAA:8 a=LwKSgBnj7Ks5V7603F0A:9
+ a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <84318429-1677-4a2b-9cd7-5abbb15f2acd@squashfs.org.uk>
+Date: Tue, 14 Jan 2025 21:11:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com>
-User-Agent: NeoMutt/20180716
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] squashfs: Convert squashfs_readpage_block() to
+ take a folio
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20241220224634.723899-1-willy@infradead.org>
+ <20241220224634.723899-3-willy@infradead.org>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20241220224634.723899-3-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfPblwQbBMGzT+lDtLRn8PCM3CzkMbHRCSX3Ui7a76/4Vo9Ejbf7SDCNTWmuvwg68u0ooYbQh76Cnir/z2Fpz5FOGCNG1gWtrwN9TuLL62PQBHfWV2J62
+ Hrg3xsdLOUMftp/T80e5KccbvG1smbd0PGBvqchue6meFXnXAPI986rjyHo6VO6il1ROGv2x+XUkvcFf2qckO6iKdRDbRWvVVdT1TIDy3o74qXkYVdgC9myk
+ awap1JOsqUP7Q+KFpFuC+6EQJIBzkxiN71avVgJ+ZwE=
 
-On Saturday 04 January 2025 10:30:26 Chuck Lever wrote:
-> On 1/4/25 3:52 AM, Christian Brauner wrote:
-> > On Thu, Jan 02, 2025 at 10:52:51AM -0500, Chuck Lever wrote:
-> > > On 1/2/25 9:37 AM, Jan Kara wrote:
-> > > > Hello!
-> > > > 
-> > > > On Fri 27-12-24 13:15:08, Pali Rohár wrote:
-> > > > > Few months ago I discussed with Steve that Linux SMB client has some
-> > > > > problems during removal of directory which has read-only attribute set.
-> > > > > 
-> > > > > I was looking what exactly the read-only windows attribute means, how it
-> > > > > is interpreted by Linux and in my opinion it is wrongly used in Linux at
-> > > > > all.
-> > > > > 
-> > > > > Windows filesystems NTFS and ReFS, and also exported over SMB supports
-> > > > > two ways how to present some file or directory as read-only. First
-> > > > > option is by setting ACL permissions (for particular or all users) to
-> > > > > GENERIC_READ-only. Second option is by setting the read-only attribute.
-> > > > > Second option is available also for (ex)FAT filesystems (first option via
-> > > > > ACL is not possible on (ex)FAT as it does not have ACLs).
-> > > > > 
-> > > > > First option (ACL) is basically same as clearing all "w" bits in mode
-> > > > > and ACL (if present) on Linux. It enforces security permission behavior.
-> > > > > Note that if the parent directory grants for user delete child
-> > > > > permission then the file can be deleted. This behavior is same for Linux
-> > > > > and Windows (on Windows there is separate ACL for delete child, on Linux
-> > > > > it is part of directory's write permission).
-> > > > > 
-> > > > > Second option (Windows read-only attribute) means that the file/dir
-> > > > > cannot be opened in write mode, its metadata attribute cannot be changed
-> > > > > and the file/dir cannot be deleted at all. But anybody who has
-> > > > > WRITE_ATTRIBUTES ACL permission can clear this attribute and do whatever
-> > > > > wants.
-> > > > 
-> > > > I guess someone with more experience how to fuse together Windows & Linux
-> > > > permission semantics should chime in here but here are my thoughts.
-> > > > 
-> > > > > Linux filesystems has similar thing to Windows read-only attribute
-> > > > > (FILE_ATTRIBUTE_READONLY). It is "immutable" bit (FS_IMMUTABLE_FL),
-> > > > > which can be set by the "chattr" tool. Seems that the only difference
-> > > > > between Windows read-only and Linux immutable is that on Linux only
-> > > > > process with CAP_LINUX_IMMUTABLE can set or clear this bit. On Windows
-> > > > > it can be anybody who has write ACL.
-> > > > > 
-> > > > > Now I'm thinking, how should be Windows read-only bit interpreted by
-> > > > > Linux filesystems drivers (FAT, exFAT, NTFS, SMB)? I see few options:
-> > > > > 
-> > > > > 0) Simply ignored. Disadvantage is that over network fs, user would not
-> > > > >      be able to do modify or delete such file, even as root.
-> > > > > 
-> > > > > 1) Smartly ignored. Meaning that for local fs, it is ignored and for
-> > > > >      network fs it has to be cleared before any write/modify/delete
-> > > > >      operation.
-> > > > > 
-> > > > > 2) Translated to Linux mode/ACL. So the user has some ability to see it
-> > > > >      or change it via chmod. Disadvantage is that it mix ACL/mode.
-> > > > 
-> > > > So this option looks sensible to me. We clear all write permissions in
-> > > > file's mode / ACL. For reading that is fully compatible, for mode
-> > > > modifications it gets a bit messy (probably I'd suggest to just clear
-> > > > FILE_ATTRIBUTE_READONLY on modification) but kind of close.
-> > > 
-> > > IMO Linux should store the Windows-specific attribute information but
-> > > otherwise ignore it. Modifying ACLs based seems like a road to despair.
-> > > Plus there's no ACL representation for OFFLINE and some of the other
-> > > items that we'd like to be able to support.
-> > > 
-> > > 
-> > > If I were king-for-a-day (tm) I would create a system xattr namespace
-> > > just for these items, and provide a VFS/statx API for consumers like
-> > > Samba, ksmbd, and knfsd to set and get these items. Each local
-> > > filesystem can then implement storage with either the xattr or (eg,
-> > > ntfs) can store them directly.
-> > 
-> > Introducing a new xattr namespace for this wouldn't be a problem imho.
-> > Why would this need a new statx() extension though? Wouldn't the regular
-> > xattr apis to set and get xattrs be enough?
+
+
+On 12/20/24 22:46, Matthew Wilcox (Oracle) wrote:
+> Remove a few accesses to page->mapping.
 > 
-> My thought was to have a consistent API to access these attributes, and
-> let the filesystem implementers decide how they want to store them. The
-> Linux implementation of ntfs, for example, probably wants to store these
-> on disk in a way that is compatible with the Windows implementation of
-> NTFS.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
+Tested-by: Phillip Lougher <phillip@squashfs.org.uk>
+
+> ---
+>   fs/squashfs/file.c        |  2 +-
+>   fs/squashfs/file_cache.c  |  6 +++---
+>   fs/squashfs/file_direct.c | 11 +++++------
+>   fs/squashfs/squashfs.h    |  2 +-
+>   4 files changed, 10 insertions(+), 11 deletions(-)
 > 
-> A common API would mean that consumers (like NFSD) wouldn't have to know
-> those details.
-> 
-> 
-> -- 
-> Chuck Lever
-
-So, what about introducing new xattrs for every attribute with this pattern?
-
-system.attr.readonly
-system.attr.hidden
-system.attr.system
-system.attr.archive
-system.attr.temporary
-system.attr.offline
-system.attr.not_content_indexed
-
-All those attributes can be set by user, I took names from SMB, which
-matches NTFS and which subsets are used by other filesystems like FAT,
-exFAT, NFS4, UDF, ...
-
-Every xattr would be in system.attr namespace and would contain either
-value 0 or 1 based on that fact if is set or unset. If the filesystem
-does not support particular attribute then xattr get/set would return
-error that it does not exist.
-
-This would be possible to use by existing userspace getfattr/setfattr
-tools and also by knfsd/ksmbd via accessing xattrs directly.
+> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+> index 6bd16e12493b..5b81e26b1226 100644
+> --- a/fs/squashfs/file.c
+> +++ b/fs/squashfs/file.c
+> @@ -472,7 +472,7 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
+>   		if (res == 0)
+>   			res = squashfs_readpage_sparse(&folio->page, expected);
+>   		else
+> -			res = squashfs_readpage_block(&folio->page, block, res, expected);
+> +			res = squashfs_readpage_block(folio, block, res, expected);
+>   	} else
+>   		res = squashfs_readpage_fragment(folio, expected);
+>   
+> diff --git a/fs/squashfs/file_cache.c b/fs/squashfs/file_cache.c
+> index 54c17b7c85fd..0360d22a77d4 100644
+> --- a/fs/squashfs/file_cache.c
+> +++ b/fs/squashfs/file_cache.c
+> @@ -18,9 +18,9 @@
+>   #include "squashfs.h"
+>   
+>   /* Read separately compressed datablock and memcopy into page cache */
+> -int squashfs_readpage_block(struct page *page, u64 block, int bsize, int expected)
+> +int squashfs_readpage_block(struct folio *folio, u64 block, int bsize, int expected)
+>   {
+> -	struct inode *i = page->mapping->host;
+> +	struct inode *i = folio->mapping->host;
+>   	struct squashfs_cache_entry *buffer = squashfs_get_datablock(i->i_sb,
+>   		block, bsize);
+>   	int res = buffer->error;
+> @@ -29,7 +29,7 @@ int squashfs_readpage_block(struct page *page, u64 block, int bsize, int expecte
+>   		ERROR("Unable to read page, block %llx, size %x\n", block,
+>   			bsize);
+>   	else
+> -		squashfs_copy_cache(page, buffer, expected, 0);
+> +		squashfs_copy_cache(&folio->page, buffer, expected, 0);
+>   
+>   	squashfs_cache_put(buffer);
+>   	return res;
+> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
+> index d19d4db74af8..2c3e809d6891 100644
+> --- a/fs/squashfs/file_direct.c
+> +++ b/fs/squashfs/file_direct.c
+> @@ -19,12 +19,11 @@
+>   #include "page_actor.h"
+>   
+>   /* Read separately compressed datablock directly into page cache */
+> -int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
+> -	int expected)
+> -
+> +int squashfs_readpage_block(struct folio *folio, u64 block, int bsize,
+> +		int expected)
+>   {
+> -	struct folio *folio = page_folio(target_page);
+> -	struct inode *inode = target_page->mapping->host;
+> +	struct page *target_page = &folio->page;
+> +	struct inode *inode = folio->mapping->host;
+>   	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
+>   	loff_t file_end = (i_size_read(inode) - 1) >> PAGE_SHIFT;
+>   	int mask = (1 << (msblk->block_log - PAGE_SHIFT)) - 1;
+> @@ -48,7 +47,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
+>   	/* Try to grab all the pages covered by the Squashfs block */
+>   	for (i = 0, index = start_index; index <= end_index; index++) {
+>   		page[i] = (index == folio->index) ? target_page :
+> -			grab_cache_page_nowait(target_page->mapping, index);
+> +			grab_cache_page_nowait(folio->mapping, index);
+>   
+>   		if (page[i] == NULL)
+>   			continue;
+> diff --git a/fs/squashfs/squashfs.h b/fs/squashfs/squashfs.h
+> index 5a756e6790b5..0f5373479516 100644
+> --- a/fs/squashfs/squashfs.h
+> +++ b/fs/squashfs/squashfs.h
+> @@ -72,7 +72,7 @@ void squashfs_copy_cache(struct page *, struct squashfs_cache_entry *, int,
+>   				int);
+>   
+>   /* file_xxx.c */
+> -extern int squashfs_readpage_block(struct page *, u64, int, int);
+> +int squashfs_readpage_block(struct folio *, u64 block, int bsize, int expected);
+>   
+>   /* id.c */
+>   extern int squashfs_get_id(struct super_block *, unsigned int, unsigned int *);
 
