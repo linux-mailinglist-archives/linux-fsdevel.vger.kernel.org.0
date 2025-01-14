@@ -1,179 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-39203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2C3A11574
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:33:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339A6A1158F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9F73A1A58
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D4A166941
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30658215069;
-	Tue, 14 Jan 2025 23:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E47222594;
+	Tue, 14 Jan 2025 23:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AZRfclU9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QOBBC+DB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3135220F077
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 23:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A194B20AF6D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 23:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736897572; cv=none; b=JZvcjoGQWiltkL0dH5hWe93+4r0RrBi550lQ/rL+N9mJW+v0Y/uf1WDZ/ALQFjXJT9yWLGV0h4JA2M397WQGPnqNQeTgS3eFMkJ3w7CxCfAvqEKCEgh/fzyPfo7UG+AJnv9kzjqTG3y51tUFNoUEApGMxUyungl9bRIzZqfZRI0=
+	t=1736898075; cv=none; b=oP72n/DBt6227pcJYXXR45TdpcdLbeU1O/T4XxCPhyAUKQBwj1GbDNQmeT78uFk3QoNSkRAwZoqTVqhtALiHiD6BaomSUXpcNx4PSg95Rbao1sJo9n+al0ZDqaNL8vWyvp3wP/JK/3tG5VMUIdtCSM0d+QZ4rVKU/2AgKRAo+pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736897572; c=relaxed/simple;
-	bh=EH4RLqsDVF9zSUks6UrRLaqphy/hbeH6z3cPBC+YP9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6Sj/yHoEctiqsBihbicqHZnlaSgl+8Pst1Ual6KqExkLTCi093+jjNJavoc4QinBJyRRq3aDeiP2vvvA2Empclu1klJ+lHiHD5sHW1Ia84g5erq11UOfTHUvNKjeS5DlrX9vb4V0v7jGv1Wftx3FiumcxUzW5RKvrmaRDdVoQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AZRfclU9; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2164b662090so105596205ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 15:32:50 -0800 (PST)
+	s=arc-20240116; t=1736898075; c=relaxed/simple;
+	bh=3B8j00eSEg37fEaAXzPpRwW6KIITIMSCXjNxb2TcjAI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pjXfyJoDlvzpiFzxUcRgFIf0W/Trsy3qgtbX1+i7JRLl77xDrN2I9r2fjH9eRlPlicYA9k61ZWwiBZU9cD25TWT1rvekZNRu9USKbH56yFXfFeUUANiTxrERIw2YY5xTkY984ZHUVRkX7H4nLrv79InOPzcbqvx6+hoKjPCAb04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QOBBC+DB; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-71e252c3c19so397911a34.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 15:41:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1736897570; x=1737502370; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VPYIbHVE1it102on3lTKA/uIDG+wS+cqUn+a2PGr4p4=;
-        b=AZRfclU96UGExG6klDK8eIBDZw4ukmCgX9OCrgqLvkQAaIwcxWlt6y1QSNPiluCu4N
-         ceU5Vnm9VUkJ2tNiLl+9OBV21uOoZqM3t2rmhW3r4JlQmPnOALRVHF4WQtKbtANap40d
-         UAqK2oHwbAlGbB4rbvztzzCcbtpJ2cNMsd0n9M03QToTuUptm0XgFFztEahxLP+fxBh+
-         rMW58r9AYJMVAfdGpHuj9ilQJxUz0SjBuHjoXk2cS8ri+b9PFUXCOIPMrpBy5R0N25Pj
-         56d3ISUHIUp8dIWvpvUO9pQEqrmhtWeWhGryE6c6GM5rOp1ACl1hel7rKoZkGMFjczzF
-         N8pw==
+        d=chromium.org; s=google; t=1736898073; x=1737502873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3B8j00eSEg37fEaAXzPpRwW6KIITIMSCXjNxb2TcjAI=;
+        b=QOBBC+DBA29fTWFyIhnZFo+Ip3UCMMqIapcpSpqFHU67n4sRKUmz3DpaikSA0tDsY+
+         VT5nX+cZwobagxk0iPYSFE0dU3/VeJFn7Au1j1QQ1RkG9lpAIuJ4XOTJ3wGrmeAL8iR0
+         OXpwhQi9EcwEAQqQz9U77vmZeFwekFxfm+6cw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736897570; x=1737502370;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPYIbHVE1it102on3lTKA/uIDG+wS+cqUn+a2PGr4p4=;
-        b=IXpnXBfakFYQQrfaWsCqLPIQ4a6pKtDG7pNOrYk83XyZxOW0nX8rgDMYjsQZsP39ji
-         9B/dFHckbuMgrJL3j/h5wGA/sKxIjFJQmta3Pq4gnYMJvpioStACq+bt5ibXUKcka25y
-         KB9BV5wd45fyISj28AxEMjvXPjen/gYZfzOP45daHLDFPfMwIPjqf80lHlc2FGNF3F3Z
-         e+IUANZLKRwo0ycplveOFDq4m2Ow+xrcAoeCGRefdTw9RzQMY+hyAenVChsVEttZ+Bq1
-         Rz3ui5cGA0xfpEjHiABbSw0UFtYYokRwgEyyf0qF4xXIgfmxt0sClNISZ52VB9bRvc8M
-         eZXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcLAmsD2WSeCQqnbrGTEqmu5kwEHcdHLrC/KJczB9SOFpdDpusobiIPKuZh/Ddk4xDIqkhWaPVHl3fzn9N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3aOY9pnj3dmmlxtoXe/KZPpn/MbOBke2t2ahP3Mz2ogZR7e7d
-	ZrQ2BuQqivB/T5Yorjceq4h8KHcGGdDIeeSbVegMyy6RdBp82ZGlDz8BC/1/f/4=
-X-Gm-Gg: ASbGncsTfl2LzUnQbKQU5v4GLAxf8ks2fCNn4L8OF+UWIMRKRZJeLFcC8nK7YU6oUvI
-	nB8KuXp25wBh41r10G20vxPMWC138e2PXmJQSwg/d5bpDMFVOs+3gl1wMQJ+y2BApelhIPeXk5j
-	G6AFcOlAYfIxOCxNt90Hf+OIEjBnNAXYYBIzQ2jxbHVo1KXotsUhXYReFKJzZw/m15f9emzN7nh
-	7QvndWZEJqHwG9gRCUJHRQT3lm0FqlFqKPPoW94NDnvH0+ZNlKHuayJscuf1HbYhRUSmIpluc2+
-	6o9CMSoaOhRCwXkyfb67ig==
-X-Google-Smtp-Source: AGHT+IEeG1jpueZQKj48HDOCPZVqrDJXvdVPxFGMLEPy6dXGa9TZnVPJnyPtfMQiw0IPOU1K9JiA7A==
-X-Received: by 2002:a17:902:d4cf:b0:216:3466:7414 with SMTP id d9443c01a7336-21a83fcaafdmr420150135ad.44.1736897570399;
-        Tue, 14 Jan 2025 15:32:50 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-a317a07cce2sm8846186a12.4.2025.01.14.15.32.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 15:32:49 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tXqOt-00000005wyS-21zj;
-	Wed, 15 Jan 2025 10:32:47 +1100
-Date: Wed, 15 Jan 2025 10:32:47 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <Z4b0H5hQv0ocD75j@dread.disaster.area>
-References: <20241227121508.nofy6bho66pc5ry5@pali>
- <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
- <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com>
- <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
- <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com>
- <20250114211050.iwvxh7fon7as7sty@pali>
- <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
+        d=1e100.net; s=20230601; t=1736898073; x=1737502873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3B8j00eSEg37fEaAXzPpRwW6KIITIMSCXjNxb2TcjAI=;
+        b=c4vNMWxagoo7ZDonZtZ2gwTf5Hr+f2wGr+bLaftWH4xntOvjmgWluY5fbQwI6Xajw6
+         8NO2mYs65SsgHdctlE8308527t5TKGz1Zdl+Exty6n8YSjur4ZX0hhRBE2ljzLmwXAO3
+         jgNZIXPWpkQf7LneSJe4VhcIH7kPPGh7ROs9lt1E6PtHNAKEMOQvXBV4Nt1K+ut/VztS
+         iHfcCDPIYFKmrEzct3BjnvZ4j7toVSLfnjcfEci5YQ/8sCcbbCmspsHTL8OKaukPHoUq
+         eTFip171g04XSANbcWZLPO4MhUIXCSgJF/llV1svFy1hzGAcP6YOZgSsTmWEz/pfKrC0
+         BgjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv1MotwC6JcU2ZIxuroydOOeZZ4x3kX5UtuPahpaWoyzRXbUts2YQWjgnweUV3ryykcpv6hi9ly0B9bSLO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqsfc0dadWSm3UpqMKpVVi5d08xQL8iTNyftsW4PghJqcDvxMS
+	YssIBp2HPurwlk4rkZOtoRGxtCCFVhjdI/KJdB4U7/xM7scCCuo1UKtkLhrXB0Ac2FEDI6pVAMS
+	y0oW99sPYqlaclcxJgp3aHxdIF3ZTLcEJJHrP
+X-Gm-Gg: ASbGncuKFInv9E7WgHqD3Sjwpcwr41STWa1nVcGmVwD3qeD2rBFpAo1q2Dm6fYDT/ej
+	6gEjYtDjfxox1OEzpX3Ilrcxlbhl9tPKmOufM0/nptnM1ekOQbiZ2c3/nK2HAtq45esk=
+X-Google-Smtp-Source: AGHT+IFsxdxAj5uDDfRMODfRkctmdNwKPiaPnxX0N+8IXey09stJ81ZQL9rOFw9h/m9QU/FLiQYhIIqpyweJHxf243E=
+X-Received: by 2002:a05:6870:2a43:b0:296:8deb:d14c with SMTP id
+ 586e51a60fabf-2aa068070f2mr5322435fac.8.1736898072710; Tue, 14 Jan 2025
+ 15:41:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
+References: <20241206010930.3871336-1-isaacmanjarres@google.com>
+ <20241206010930.3871336-2-isaacmanjarres@google.com> <0ff1c9d9-85f0-489e-a3f7-fa4cef5bb7e5@lucifer.local>
+ <CAG48ez1gnURo_DVSfNk0RLWNbpdbMefNcQXu3as9z2AkNgKaqg@mail.gmail.com>
+ <CABi2SkUuz=qGvoW1-qrgxiDg1meRdmq3bN5f89XPR39itqtmUg@mail.gmail.com>
+ <202501061643.986D9453@keescook> <e8d21f15-56c6-43c3-9009-3de74cccdf3a@lucifer.local>
+ <CABi2SkV72c+28S3ThwQo+qbK8UXuhfVK4K=Ztv7+FhzeYyF-CA@mail.gmail.com>
+ <Z4bC1I1GTlXiJhvS@google.com> <202501141326.E81023D@keescook> <Z4boRqW9Gv57GDzu@google.com>
+In-Reply-To: <Z4boRqW9Gv57GDzu@google.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Tue, 14 Jan 2025 15:41:00 -0800
+X-Gm-Features: AbW1kvaFU3ktWHZsWot8W04v-eF2GY_9VBvBnGe5wzGI_v6Sbb1GKmM0Ti_6fT0
+Message-ID: <CABi2SkVqa7o7E82m7c8KTsHO4MjwCsdtp21UO+wb_A=r-+aqmw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC
+ to memfd
+To: Isaac Manjarres <isaacmanjarres@google.com>
+Cc: Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>, kernel-team@android.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	John Stultz <jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 14, 2025 at 04:44:55PM -0500, Chuck Lever wrote:
-> On 1/14/25 4:10 PM, Pali Rohár wrote:
-> > > My thought was to have a consistent API to access these attributes, and
-> > > let the filesystem implementers decide how they want to store them. The
-> > > Linux implementation of ntfs, for example, probably wants to store these
-> > > on disk in a way that is compatible with the Windows implementation of
-> > > NTFS.
-> > > 
-> > > A common API would mean that consumers (like NFSD) wouldn't have to know
-> > > those details.
-> > > 
-> > > 
-> > > -- 
-> > > Chuck Lever
-> > 
-> > So, what about introducing new xattrs for every attribute with this pattern?
-> > 
-> > system.attr.readonly
-> > system.attr.hidden
-> > system.attr.system
-> > system.attr.archive
-> > system.attr.temporary
-> > system.attr.offline
-> > system.attr.not_content_indexed
+On Tue, Jan 14, 2025 at 2:42=E2=80=AFPM Isaac Manjarres
+<isaacmanjarres@google.com> wrote:
+>
+> On Tue, Jan 14, 2025 at 01:29:44PM -0800, Kees Cook wrote:
+> > On Tue, Jan 14, 2025 at 12:02:28PM -0800, Isaac Manjarres wrote:
 
-"attr" is a poor choice for an attribute class (yes, naming is
-hard...). It's a windows file attribute class, the name should
-reflect that.
+> Alternatively, MFD_NOEXEC_SEAL could be extended
+> to prevent executable mappings, and MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+> could be enabled, but that type of system would prevent memfd buffers
+> from being used for execution for legitimate usecases (e.g. JIT), which
+> may not be desirable.
+>
+The JIT case doesn't use execve(memfd), right ?
 
-However, my main problem with this approach is that it will be
-pretty nasty in terms of performance regressions. xattr lookup is
-*much* more expensive than reading a field out of the inode itself.
 
-If you want an example of the cost of how a single xattr per file
-can affect the performance of CIFS servers, go run dbench (a CIFS
-workload simulator) with and without xattrs. The difference in
-performance storing a single xattr per file is pretty stark, and it
-only gets worse as we add more xattrs. i.e. xattrs like this will
-have significant performance implications for all file create,
-lookup/stat and unlink operations.
 
-IOWs, If this information is going to be stored as an xattr, it
-needs to be a single xattr with a well defined bit field as it's
-value (i.e. one bit per attribute). The VFS inode can then cache
-that bitfield with minimal addition overhead during the first
-lookup/creation/modification for the purpose of fast, low overhead,
-statx() operation.
-
-> Yes, all of them could be stored as xattrs for file systems that do
-> not already support these attributes.
-> 
-> But I think we don't want to expose them directly to users, however.
-> Some file systems, like NTFS, might want to store these on-disk in a way
-> that is compatible with Windows.
-> 
-> So I think we want to create statx APIs for consumers like user space
-> and knfsd, who do not care to know the specifics of how this information
-> is stored by each file system.
-> 
-> The xattrs would be for file systems that do not already have a way to
-> represent this information in their on-disk format.
-
-Even the filesystems that store this information natively should
-support the xattr interface - they just return the native
-information in the xattr format, and then every application has a
-common way to change these attributes. (i.e. change the xattr to
-modify the attributes, statx to efficiently sample them.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> --Isaac
 
