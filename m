@@ -1,234 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-39200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B448A11548
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:21:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004B6A11555
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70DF318893F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:21:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3FC7A3E41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4485A21423A;
-	Tue, 14 Jan 2025 23:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAB32144DB;
+	Tue, 14 Jan 2025 23:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uqfe+ptj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DW6BFujW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD7D20F07A;
-	Tue, 14 Jan 2025 23:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE44A2139D2;
+	Tue, 14 Jan 2025 23:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736896883; cv=none; b=VXj9O1XzFxC9KiJIKE0j7ahuTyjMlz5YsjUkClPN8dNnA9KuZKNjkJBzZ4PnYI9n5K9Hiek/7Z74uvqVj4mh9rH2GLV+nrq2pxGINoQnJtC60KN5bWwFsrgc5+HhO2sjj792X3SF1ohRdqRPQn+BdCoU7obiUsAQbUMA2QFUhsg=
+	t=1736897036; cv=none; b=n8qUgmZZCD4NOQhp3f9SOu4QYRSwRMgGj7ia8eFyw32x2yD8bMbj/be2yvrRNe7ktW0XAdNqbI0WvGhBvbHs37JzKZjgK1M1e4NcDNWaMu3444WGAhWyputsbB1UaLQ0IK+sjVL7+FZy9GdzGd6j4hlLExStIIhpo3Z7veqymIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736896883; c=relaxed/simple;
-	bh=6vKh4eWOjSFIhHT/BkEUjNZ/cMLSjrWgJCXgQ+IGXYo=;
+	s=arc-20240116; t=1736897036; c=relaxed/simple;
+	bh=yVIwxMpYst29LKOdvumA7yCPlPn/rRofWv+Jpgd5UBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCH8Gj5Y1hYb7xgnFbHBSxMO1jln+p0omxeN6YtjrEWV8YDX4D3Pz/vEYgBRok5XHUpc1l5cV9pdCG5RKZSBVJ4rnUEINVIBg1iVUBDcD8TxLLBmS15AeArPUhPNotMpu152z41se24z1YhdifqcIfSejB79Q8Cc6Og36z2V1uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uqfe+ptj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38371C4CEDD;
-	Tue, 14 Jan 2025 23:21:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=b22y3z6yRWJXHYSn7LbIzFBU1Y4w+bRSliz7j5saIJxxqw6fhMgbnxERYWYS91ydL6slE6MGfiCzGubmM494W06Wdd6FiyMal+ly/r0vHurKRgktVqGkRic7rmIACEuKnm/Hl9MHwhIe+OjVV/evteJKzbCw9RFxmP4ATsEMBu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DW6BFujW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E03DC4CEDD;
+	Tue, 14 Jan 2025 23:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736896883;
-	bh=6vKh4eWOjSFIhHT/BkEUjNZ/cMLSjrWgJCXgQ+IGXYo=;
+	s=k20201202; t=1736897036;
+	bh=yVIwxMpYst29LKOdvumA7yCPlPn/rRofWv+Jpgd5UBM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uqfe+ptj9tf6wpTWN+bw1JlKHPwKk73RJ9LE+JXNfMpO8LLmw6iFDGKkvMV7uQlym
-	 cVvJ8gq7osUrKH1SHdFgA7uB0MZ7W8267VcCGVSuIA4CO/a/Dkv6siVtLNBiK4TwEL
-	 a2+wV9oUf/EfgK2kYVZ+Hod5fLZeuQAgWVG2pElnlx9yiBfJZJAo3ccwr24JVBk5Dh
-	 rPBHyI0BfhzBkcNO9gl+3Ne8Het5fI4bDi+kdy7kyH5DL5IrGiPE1SVR5M0J+oFUbz
-	 uzjBz8451XsSoWe6BKnYJq1rPmjQglYZvMTpT8RSLhrQqLEazY6N99BwAxUILe0CJa
-	 UMz2pb6Jcow6w==
-Date: Tue, 14 Jan 2025 15:21:22 -0800
+	b=DW6BFujWYNWbks38ZERDXFwbHacLktBywY8XIE13wWi9sZCg2WhOKcSfvOjyNVWBA
+	 nMGOZ8P/6fsEShtywQhUuJOe65XO2ErXrjwlGI9NifrTqBwUySTFL7J3wzxN9rTCpp
+	 Ob0nEykBTZOKD189z6T0fpJ3dsBR2/ZjB24kMzG8NYIVPg5QdBAY84ugcPWIyF0oED
+	 tizib2458FcIjeHL1EZ/gqUX1Bo9/XHpKabvBKWQBnzsX3AXOFw+4hkyb7r+dVn5dy
+	 PN8uVnHh250s4Tumrlij1snuqvDToaYDv0uLEOO5PNqJEbjgiej92FhDb2U6vijgdc
+	 WJwx/OiqU6ERQ==
+Date: Tue, 14 Jan 2025 15:23:55 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <20250114232122.GA3561231@frogsfrogsfrogs>
-References: <20241227121508.nofy6bho66pc5ry5@pali>
- <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
- <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com>
- <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
- <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com>
- <20250114211050.iwvxh7fon7as7sty@pali>
- <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
- <20250114215350.gkc2e2kcovj43hk7@pali>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Dmitry Vyukov <dvyukov@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Jan Kara <jack@suse.cz>, Kun Hu <huk23@m.fudan.edu.cn>,
+	jlayton@redhat.com, adilger.kernel@dilger.ca, bfields@redhat.com,
+	viro@zeniv.linux.org.uk, christian.brauner@ubuntu.com, hch@lst.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, linux-bcachefs@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
+Message-ID: <20250114232355.GB3561231@frogsfrogsfrogs>
+References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
+ <gwgec4tknjmjel4e37myyichugheuba3sy7cxkdqqj2raaglf5@n7uttxolimpa>
+ <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
+ <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
+ <20250114135751.GB1997324@mit.edu>
+ <Z4bVQEKdj4ouAGI4@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250114215350.gkc2e2kcovj43hk7@pali>
+In-Reply-To: <Z4bVQEKdj4ouAGI4@dread.disaster.area>
 
-On Tue, Jan 14, 2025 at 10:53:50PM +0100, Pali Rohár wrote:
-> On Tuesday 14 January 2025 16:44:55 Chuck Lever wrote:
-> > On 1/14/25 4:10 PM, Pali Rohár wrote:
-> > > On Saturday 04 January 2025 10:30:26 Chuck Lever wrote:
-> > > > On 1/4/25 3:52 AM, Christian Brauner wrote:
-> > > > > On Thu, Jan 02, 2025 at 10:52:51AM -0500, Chuck Lever wrote:
-> > > > > > On 1/2/25 9:37 AM, Jan Kara wrote:
-> > > > > > > Hello!
-> > > > > > > 
-> > > > > > > On Fri 27-12-24 13:15:08, Pali Rohár wrote:
-> > > > > > > > Few months ago I discussed with Steve that Linux SMB client has some
-> > > > > > > > problems during removal of directory which has read-only attribute set.
-> > > > > > > > 
-> > > > > > > > I was looking what exactly the read-only windows attribute means, how it
-> > > > > > > > is interpreted by Linux and in my opinion it is wrongly used in Linux at
-> > > > > > > > all.
-> > > > > > > > 
-> > > > > > > > Windows filesystems NTFS and ReFS, and also exported over SMB supports
-> > > > > > > > two ways how to present some file or directory as read-only. First
-> > > > > > > > option is by setting ACL permissions (for particular or all users) to
-> > > > > > > > GENERIC_READ-only. Second option is by setting the read-only attribute.
-> > > > > > > > Second option is available also for (ex)FAT filesystems (first option via
-> > > > > > > > ACL is not possible on (ex)FAT as it does not have ACLs).
-> > > > > > > > 
-> > > > > > > > First option (ACL) is basically same as clearing all "w" bits in mode
-> > > > > > > > and ACL (if present) on Linux. It enforces security permission behavior.
-> > > > > > > > Note that if the parent directory grants for user delete child
-> > > > > > > > permission then the file can be deleted. This behavior is same for Linux
-> > > > > > > > and Windows (on Windows there is separate ACL for delete child, on Linux
-> > > > > > > > it is part of directory's write permission).
-> > > > > > > > 
-> > > > > > > > Second option (Windows read-only attribute) means that the file/dir
-> > > > > > > > cannot be opened in write mode, its metadata attribute cannot be changed
-> > > > > > > > and the file/dir cannot be deleted at all. But anybody who has
-> > > > > > > > WRITE_ATTRIBUTES ACL permission can clear this attribute and do whatever
-> > > > > > > > wants.
-> > > > > > > 
-> > > > > > > I guess someone with more experience how to fuse together Windows & Linux
-> > > > > > > permission semantics should chime in here but here are my thoughts.
-> > > > > > > 
-> > > > > > > > Linux filesystems has similar thing to Windows read-only attribute
-> > > > > > > > (FILE_ATTRIBUTE_READONLY). It is "immutable" bit (FS_IMMUTABLE_FL),
-> > > > > > > > which can be set by the "chattr" tool. Seems that the only difference
-> > > > > > > > between Windows read-only and Linux immutable is that on Linux only
-> > > > > > > > process with CAP_LINUX_IMMUTABLE can set or clear this bit. On Windows
-> > > > > > > > it can be anybody who has write ACL.
-> > > > > > > > 
-> > > > > > > > Now I'm thinking, how should be Windows read-only bit interpreted by
-> > > > > > > > Linux filesystems drivers (FAT, exFAT, NTFS, SMB)? I see few options:
-> > > > > > > > 
-> > > > > > > > 0) Simply ignored. Disadvantage is that over network fs, user would not
-> > > > > > > >       be able to do modify or delete such file, even as root.
-> > > > > > > > 
-> > > > > > > > 1) Smartly ignored. Meaning that for local fs, it is ignored and for
-> > > > > > > >       network fs it has to be cleared before any write/modify/delete
-> > > > > > > >       operation.
-> > > > > > > > 
-> > > > > > > > 2) Translated to Linux mode/ACL. So the user has some ability to see it
-> > > > > > > >       or change it via chmod. Disadvantage is that it mix ACL/mode.
-> > > > > > > 
-> > > > > > > So this option looks sensible to me. We clear all write permissions in
-> > > > > > > file's mode / ACL. For reading that is fully compatible, for mode
-> > > > > > > modifications it gets a bit messy (probably I'd suggest to just clear
-> > > > > > > FILE_ATTRIBUTE_READONLY on modification) but kind of close.
-> > > > > > 
-> > > > > > IMO Linux should store the Windows-specific attribute information but
-> > > > > > otherwise ignore it. Modifying ACLs based seems like a road to despair.
-> > > > > > Plus there's no ACL representation for OFFLINE and some of the other
-> > > > > > items that we'd like to be able to support.
-> > > > > > 
-> > > > > > 
-> > > > > > If I were king-for-a-day (tm) I would create a system xattr namespace
-> > > > > > just for these items, and provide a VFS/statx API for consumers like
-> > > > > > Samba, ksmbd, and knfsd to set and get these items. Each local
-> > > > > > filesystem can then implement storage with either the xattr or (eg,
-> > > > > > ntfs) can store them directly.
-> > > > > 
-> > > > > Introducing a new xattr namespace for this wouldn't be a problem imho.
-> > > > > Why would this need a new statx() extension though? Wouldn't the regular
-> > > > > xattr apis to set and get xattrs be enough?
-> > > > 
-> > > > My thought was to have a consistent API to access these attributes, and
-> > > > let the filesystem implementers decide how they want to store them. The
-> > > > Linux implementation of ntfs, for example, probably wants to store these
-> > > > on disk in a way that is compatible with the Windows implementation of
-> > > > NTFS.
-> > > > 
-> > > > A common API would mean that consumers (like NFSD) wouldn't have to know
-> > > > those details.
-> > > > 
-> > > > 
-> > > > -- 
-> > > > Chuck Lever
-> > > 
-> > > So, what about introducing new xattrs for every attribute with this pattern?
-> > > 
-> > > system.attr.readonly
-> > > system.attr.hidden
-> > > system.attr.system
-> > > system.attr.archive
-> > > system.attr.temporary
-> > > system.attr.offline
-> > > system.attr.not_content_indexed
-> > 
-> > Yes, all of them could be stored as xattrs for file systems that do
-> > not already support these attributes.
-> > 
-> > But I think we don't want to expose them directly to users, however.
-> > Some file systems, like NTFS, might want to store these on-disk in a way
-> > that is compatible with Windows.
-> > 
-> > So I think we want to create statx APIs for consumers like user space
-> > and knfsd, who do not care to know the specifics of how this information
-> > is stored by each file system.
-> > 
-> > The xattrs would be for file systems that do not already have a way to
-> > represent this information in their on-disk format.
-> > 
-> > 
-> > > All those attributes can be set by user, I took names from SMB, which
-> > > matches NTFS and which subsets are used by other filesystems like FAT,
-> > > exFAT, NFS4, UDF, ...
-> > > 
-> > > Every xattr would be in system.attr namespace and would contain either
-> > > value 0 or 1 based on that fact if is set or unset. If the filesystem
-> > > does not support particular attribute then xattr get/set would return
-> > > error that it does not exist.
-> > 
-> > Or, if the xattr exists, then that means the equivalent Windows
-> > attribute is asserted; and if it does not, the equivalent Windows
-> > attribute is clear. But again, I think each file system should be
-> > able to choose how they implement these, and that implementation is
-> > then hidden by statx.
-> > 
-> > 
-> > > This would be possible to use by existing userspace getfattr/setfattr
-> > > tools and also by knfsd/ksmbd via accessing xattrs directly.
-> > 
-> > 
-> > -- 
-> > Chuck Lever
+On Wed, Jan 15, 2025 at 08:21:04AM +1100, Dave Chinner wrote:
+> On Tue, Jan 14, 2025 at 08:57:51AM -0500, Theodore Ts'o wrote:
+> > P.S.  If you want to push back on this nonsense, Usenix program
+> > committee chairs are very much looking for open source professionals
+> > to participate on the program committees for Usenix ATC (Annual
+> > Technical Conference) and FAST (File System and Storage Technologies)
+> > conference.
 > 
-> With this xattr scheme I mean that API would be xattr between fs and
-> vfs/userspace/knfsd/smbd. So NTFS would take that xattr request and
-> translate it to its own NTFS attributes. Other non-windows fs stores
-> them as xattrs.
+> The problem is that the Usenix/FAST paper committees will not reach
+> out to OSS subject matter experts to review papers that they have
+> been asked to review for the conference.
 > 
-> I think that you understood it quite differently as I thought because
-> you are proposing statx() API for fetching them. I thought that they
-> would be exported via getxattr()/setxattr().
+> Let me give you a recent example of a clear failure of the FAST
+> paper committee w.r.t. plagarism.
 > 
-> This is also a good idea, just would need to write new userspace tools
-> for setting and gettting... And there is still one important thing. How
-> to modify those attribute? Because statx() is GET-only API.
+> The core of this paper from FAST 2022:
+> 
+> https://www.usenix.org/conference/fast22/presentation/kim-dohyun
+> 
+> "ScaleXFS: Getting scalability of XFS back on the ring"
+> 
+> is based on the per-CPU CIL logging work I prototyped and posted an
+> RFC for early in 2021:
+> 
+> https://lore.kernel.org/linux-xfs/20200512092811.1846252-1-david@fromorbit.com/
+> 
+> The main core of the improvements described in the ScaleXFS paper
+> are the exact per-cpu CIL algorithm in that was contained in the
+> above RFC patchset.
+> 
+> That algorithm had serious problems that meant it was unworkable in
+> practice - these didn't show up until journal recovery was tested
+> and it resulted in random filesystem corruptions. I didn't
+> understand the root cause of the problem until months later.
+> 
+> These problems were all based on failures to correctly order the
+> per-CPU log items in the journal due to the per-CPU CIL being
+> inherently racy.  The algorithm I proposed 6 months later (and
+> eventually got merged in July 2022) had significant changes to the
+> way the per-CPU CIL ordered operations to address these problems.
+> 
+> IOWs, object ordering on the CIL is the single most important
+> critical correctness citeria for the entire journalling algorithm
+> and hence a fundamental algorithmic constraint for the per-CPU CIL
+> implementation.
+> 
+> However, the ScaleXFS paper does not make any mention of this
+> fundamental algorithmic constraint - I did not publish anything
+> about this constraint until the November 2022 patch set....
+> 
+> There were more clear tell-tales in the paper that indicate
+> that the "research" was based on that early per-CPU CIL RFC I
+> posted, but I won't go into details.
+> 
+> I brought this to the FAST committee almost immediately after I was
+> able to review the paper (a couple of days after the FAST conference
+> itself). I provided them with all the links to public postings of
+> the algorithm, detailed analysis of the paper and publicly posted
+> code, etc. In response, they basically did nothing and brushed my
+> concerns off. It would take weeks to get any response from the paper
+> committee, and the overall response really felt like the Usenix
+> people simply didn't care at all about what was obviously plagarised
+> work.
+> 
+> IOWs, the Usenix/FAST peer review process for OSS related papers is
+> broken, and they don't seem to care when experts from the OSS
+> community actually bring clear cases of academic malpractice to
+> them...
 
-statx/FS_IOC_FSGETXATTR to retrieve and FS_IOC_FSSETXATTR to set?
-
-Last time this came up hch said no to random magic xattrs that every
-filesystem then has to filter.
+Heh, I had some pretty strong suspicions of that when I saw the paper.
 
 --D
+
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
