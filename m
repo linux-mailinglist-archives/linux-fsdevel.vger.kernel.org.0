@@ -1,117 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-39204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339A6A1158F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:41:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347A5A11593
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D4A166941
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:41:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65C81188AE3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E47222594;
-	Tue, 14 Jan 2025 23:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993BD21ADD1;
+	Tue, 14 Jan 2025 23:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QOBBC+DB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtLWGYac"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A194B20AF6D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 23:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED60921423A;
+	Tue, 14 Jan 2025 23:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736898075; cv=none; b=oP72n/DBt6227pcJYXXR45TdpcdLbeU1O/T4XxCPhyAUKQBwj1GbDNQmeT78uFk3QoNSkRAwZoqTVqhtALiHiD6BaomSUXpcNx4PSg95Rbao1sJo9n+al0ZDqaNL8vWyvp3wP/JK/3tG5VMUIdtCSM0d+QZ4rVKU/2AgKRAo+pE=
+	t=1736898127; cv=none; b=OxcH3ClBRz0VPCAYOl528ygyb/wWiFpwfWdnxvp0obEYClrHAxqZy39RpZLO4BGXWtjERobHXAO9xiNUsUQtHkH4ftVa1xpGXeEU/6ns2IYiV3aF5SOyk0T+Mls88CIHkRU2jFHjZhYpaMc/PXy2xq0JPeUjYt5zQemCFeZcK5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736898075; c=relaxed/simple;
-	bh=3B8j00eSEg37fEaAXzPpRwW6KIITIMSCXjNxb2TcjAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pjXfyJoDlvzpiFzxUcRgFIf0W/Trsy3qgtbX1+i7JRLl77xDrN2I9r2fjH9eRlPlicYA9k61ZWwiBZU9cD25TWT1rvekZNRu9USKbH56yFXfFeUUANiTxrERIw2YY5xTkY984ZHUVRkX7H4nLrv79InOPzcbqvx6+hoKjPCAb04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QOBBC+DB; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-71e252c3c19so397911a34.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 15:41:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1736898073; x=1737502873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3B8j00eSEg37fEaAXzPpRwW6KIITIMSCXjNxb2TcjAI=;
-        b=QOBBC+DBA29fTWFyIhnZFo+Ip3UCMMqIapcpSpqFHU67n4sRKUmz3DpaikSA0tDsY+
-         VT5nX+cZwobagxk0iPYSFE0dU3/VeJFn7Au1j1QQ1RkG9lpAIuJ4XOTJ3wGrmeAL8iR0
-         OXpwhQi9EcwEAQqQz9U77vmZeFwekFxfm+6cw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736898073; x=1737502873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3B8j00eSEg37fEaAXzPpRwW6KIITIMSCXjNxb2TcjAI=;
-        b=c4vNMWxagoo7ZDonZtZ2gwTf5Hr+f2wGr+bLaftWH4xntOvjmgWluY5fbQwI6Xajw6
-         8NO2mYs65SsgHdctlE8308527t5TKGz1Zdl+Exty6n8YSjur4ZX0hhRBE2ljzLmwXAO3
-         jgNZIXPWpkQf7LneSJe4VhcIH7kPPGh7ROs9lt1E6PtHNAKEMOQvXBV4Nt1K+ut/VztS
-         iHfcCDPIYFKmrEzct3BjnvZ4j7toVSLfnjcfEci5YQ/8sCcbbCmspsHTL8OKaukPHoUq
-         eTFip171g04XSANbcWZLPO4MhUIXCSgJF/llV1svFy1hzGAcP6YOZgSsTmWEz/pfKrC0
-         BgjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv1MotwC6JcU2ZIxuroydOOeZZ4x3kX5UtuPahpaWoyzRXbUts2YQWjgnweUV3ryykcpv6hi9ly0B9bSLO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqsfc0dadWSm3UpqMKpVVi5d08xQL8iTNyftsW4PghJqcDvxMS
-	YssIBp2HPurwlk4rkZOtoRGxtCCFVhjdI/KJdB4U7/xM7scCCuo1UKtkLhrXB0Ac2FEDI6pVAMS
-	y0oW99sPYqlaclcxJgp3aHxdIF3ZTLcEJJHrP
-X-Gm-Gg: ASbGncuKFInv9E7WgHqD3Sjwpcwr41STWa1nVcGmVwD3qeD2rBFpAo1q2Dm6fYDT/ej
-	6gEjYtDjfxox1OEzpX3Ilrcxlbhl9tPKmOufM0/nptnM1ekOQbiZ2c3/nK2HAtq45esk=
-X-Google-Smtp-Source: AGHT+IFsxdxAj5uDDfRMODfRkctmdNwKPiaPnxX0N+8IXey09stJ81ZQL9rOFw9h/m9QU/FLiQYhIIqpyweJHxf243E=
-X-Received: by 2002:a05:6870:2a43:b0:296:8deb:d14c with SMTP id
- 586e51a60fabf-2aa068070f2mr5322435fac.8.1736898072710; Tue, 14 Jan 2025
- 15:41:12 -0800 (PST)
+	s=arc-20240116; t=1736898127; c=relaxed/simple;
+	bh=3VQN+rVY5l/jVo7a/1PQvpOAy9GDidt+UUiHtyuciRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPosqYAsTVWSlffDNbsI5vD40RnhnKyuNlwX0pg6LeonaWRqonH7GFqr3x/pUkYZe5+sn7ljXwve0QTxEPIrYU2n2++5gSjwmhSD73NnrakcbF0IdLk9EibydcKdbVBSprYR6VqGAHJ44nAgwsiSkl+CsOAU5ERlTLlkdslrQO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtLWGYac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F90C4CEDD;
+	Tue, 14 Jan 2025 23:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736898126;
+	bh=3VQN+rVY5l/jVo7a/1PQvpOAy9GDidt+UUiHtyuciRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KtLWGYacIEX7HkKK83Y2BJbcASsKkmiV5iZ5luqEjjoX6js/koGLNdeeCaKBbbM3s
+	 bxzDS+tEt3FS27RQL+1JWtGo/5JgzN8ZCfROQhC+w1AxF3EwDEPueGZhjI8i1Px8rL
+	 sXyY1wE7rTkPHz6bkf//6pc/c0XRRTR00s7vDlfQIsPDt9GikdOqA/lLDpVTrJ39JF
+	 qUc3Xab2ZtH7StICwAwPA3TAoJgmAXxAiB21COA0EIzfiof0FvrRC7fYFHytsz7NDd
+	 q+ADCjgk+mtVi4Rrw+FQOTkHlqleWIwpcwSuqYy8mC9Qzc+7A0PnOdldSnjDotLTHs
+	 nE+RJ9wjTE8cg==
+Date: Tue, 14 Jan 2025 15:42:05 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Kun Hu <huk23@m.fudan.edu.cn>,
+	Andrey Konovalov <andreyknvl@gmail.com>, jack@suse.cz,
+	jlayton@redhat.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+	david@fromorbit.com, bfields@redhat.com, viro@zeniv.linux.org.uk,
+	christian.brauner@ubuntu.com, hch@lst.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
+Message-ID: <20250114234205.GA3557553@frogsfrogsfrogs>
+References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
+ <20250113-herzhaft-desolat-e4d191b82bdf@brauner>
+ <Z4U89Wfyaz2fLbCt@casper.infradead.org>
+ <20250113180830.GM6156@frogsfrogsfrogs>
+ <CACT4Y+ZJawZEAxsygR8tH=CcOBiVRaVt+RdzwhHYfZYHQdcHdg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206010930.3871336-1-isaacmanjarres@google.com>
- <20241206010930.3871336-2-isaacmanjarres@google.com> <0ff1c9d9-85f0-489e-a3f7-fa4cef5bb7e5@lucifer.local>
- <CAG48ez1gnURo_DVSfNk0RLWNbpdbMefNcQXu3as9z2AkNgKaqg@mail.gmail.com>
- <CABi2SkUuz=qGvoW1-qrgxiDg1meRdmq3bN5f89XPR39itqtmUg@mail.gmail.com>
- <202501061643.986D9453@keescook> <e8d21f15-56c6-43c3-9009-3de74cccdf3a@lucifer.local>
- <CABi2SkV72c+28S3ThwQo+qbK8UXuhfVK4K=Ztv7+FhzeYyF-CA@mail.gmail.com>
- <Z4bC1I1GTlXiJhvS@google.com> <202501141326.E81023D@keescook> <Z4boRqW9Gv57GDzu@google.com>
-In-Reply-To: <Z4boRqW9Gv57GDzu@google.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 14 Jan 2025 15:41:00 -0800
-X-Gm-Features: AbW1kvaFU3ktWHZsWot8W04v-eF2GY_9VBvBnGe5wzGI_v6Sbb1GKmM0Ti_6fT0
-Message-ID: <CABi2SkVqa7o7E82m7c8KTsHO4MjwCsdtp21UO+wb_A=r-+aqmw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC
- to memfd
-To: Isaac Manjarres <isaacmanjarres@google.com>
-Cc: Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>, kernel-team@android.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	John Stultz <jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZJawZEAxsygR8tH=CcOBiVRaVt+RdzwhHYfZYHQdcHdg@mail.gmail.com>
 
-On Tue, Jan 14, 2025 at 2:42=E2=80=AFPM Isaac Manjarres
-<isaacmanjarres@google.com> wrote:
->
-> On Tue, Jan 14, 2025 at 01:29:44PM -0800, Kees Cook wrote:
-> > On Tue, Jan 14, 2025 at 12:02:28PM -0800, Isaac Manjarres wrote:
+On Tue, Jan 14, 2025 at 09:59:08AM +0100, Dmitry Vyukov wrote:
+> On Mon, 13 Jan 2025 at 19:08, Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Mon, Jan 13, 2025 at 04:19:01PM +0000, Matthew Wilcox wrote:
+> > > On Mon, Jan 13, 2025 at 03:38:57PM +0100, Christian Brauner wrote:
+> > > > On Sun, Jan 12, 2025 at 06:00:24PM +0800, Kun Hu wrote:
+> > > > > Hello,
+> > > > >
+> > > > > When using our customized fuzzer tool to fuzz the latest Linux kernel, the following crash (43s)
+> > > > > was triggered.
+> > > >
+> > > > I think we need to come to an agreement at LSFMM or somewhere else that
+> > > > we will by default ingore but reports from non-syzbot fuzzers. Because
+> > > > we're all wasting time on them.
+> >
+> > No need to wait until LSFMM, I already agree with the premise of
+> > deprioritizing/ignoring piles of reports that come in all at once with
+> > very little analysis, an IOCCC-esque reproducer, and no effort on the
+> > part of the reporter to do *anything* about the bug.
+> 
+> +1
+> 
+> It would be good to publish it somewhere on kernel.org (Documentation/
+> or people.kernel.org).
+> We could include the link to our guidelines for external reporters
+> (where we ask to not test old kernels, reporting dups, not including
+> essential info, and other silly things):
+> https://github.com/google/syzkaller/blob/master/docs/linux/reporting_kernel_bugs.mdThere
 
-> Alternatively, MFD_NOEXEC_SEAL could be extended
-> to prevent executable mappings, and MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
-> could be enabled, but that type of system would prevent memfd buffers
-> from being used for execution for legitimate usecases (e.g. JIT), which
-> may not be desirable.
->
-The JIT case doesn't use execve(memfd), right ?
+/me reads, wonders if "Do NOT mimic syzbot reports" is behind why
+everyone claims they have a "custom fuzzer" and proceed to leak the
+letters s, y, and z in the report. :P
 
+> is unfortunately no way to make people read all docs on the internet
+> beforehand, but at least it's handy to have a link to an existing doc
+> to give to people.
 
+<nod> Good idea, we probably ought to have a kernel document setting out
+our general policies about automated bug finders and linking to the
+known good ones.
 
-> --Isaac
+BTW, if one got handed a syzbot report, is there an easy way to ask your
+dashboard if it already knows about that report?
+
+--D
+
+> > While the Google syzbot dashboard has improved remarkably since 2018,
+> > particularly in the past couple of years, thanks to the people who did
+> > that!  It's nice that I can fire off patches at the bot and it'll test
+> > them.  That said, I don't perceive Google management to be funding much
+> > of anyone to solve the problems that their fuzzer uncovers.
+> >
+> > This is to say nothing of the people who are coyly running their own
+> > instances of syzbot sans dashboard and expecting me to download random
+> > crap from Google Drive.  Hell no, I don't do that kind of thing in 2025.
+> >
+> > > I think it needs to be broader than that to also include "AI generated
+> > > bug reports" (while not excluding AI-translated bug reports); see
+> > >
+> > > https://daniel.haxx.se/blog/2024/01/02/the-i-in-llm-stands-for-intelligence/
+> > >
+> > > so really, any "automated bug report" system is out of bounds unless
+> > > previously arranged with the developers who it's supposed to be helping.
+> >
+> > Agree.  That's been my stance since syzbot first emerged in 2017-18.
+> >
+> > > We need to write that down somewhere in Documentation/process/ so we
+> > > can point misguided people at it.
+> > >
+> > > We should also talk about how some parts of the kernel are basically
+> > > unmaintained and unused, and that automated testing should be focused
+> > > on parts of the kernel that are actually used.  A report about being
+> > > able to crash a stock configuration of ext4 is more useful than being
+> > > able to crash an unusual configuration of ufs.
+> >
+> > Or maybe we should try to make fuse + iouring fast enough that we can
+> > kick all these old legacy drivers out to userspace. ;)
+> >
+> > > Distinguishing between warnings, BUG()s and actual crashes would also
+> > > be a useful thing to put in this document.
+> >
+> > Yes.  And also state that panic_on_warn=1 is a signal that you wanted
+> > fail(over) fast mode.
+> >
+> > --D
 
