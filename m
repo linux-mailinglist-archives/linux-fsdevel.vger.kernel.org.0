@@ -1,128 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-39137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C346A10827
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 14:50:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05776A10841
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 14:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4233A814F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 13:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5B01882F5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 13:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16CC535DC;
-	Tue, 14 Jan 2025 13:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75D744360;
+	Tue, 14 Jan 2025 13:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3WYSv8m"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="SaSOrO7c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC2D382;
-	Tue, 14 Jan 2025 13:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4349249625
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 13:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736862618; cv=none; b=uYDd7FKgMKuf+hKD3yX7Tn9Xe3GA2gFPwcNzXOqd7VvaPvgmqXRzXeRF+Cdb7tZRlFE4wLjIDHu1b6rQbJlojQ6tWrGbESBPJVHQ5VhqrxSmped+cvyH04sClzrVdL3o1azSKBpl4P1Fjv2SApKvtIXM7gdYhxhLcYMuH1/dzCA=
+	t=1736863114; cv=none; b=bDRjMao7U/MUpUuz5qHMWSxF27x7JNaKbCOipQgMThRlUh8Kn1crz2OZRV3nwpk9JAL85Zxir+pTuc5MxCGRcwJWjxdUEITvk1P+k89wzsrlcW/VncyIgyja/JH2OHd0WFCoKuz1Vxk7YmSH7JvC2eSu9cRjvkdPBxzRj0TFrxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736862618; c=relaxed/simple;
-	bh=E9WCKWqZDdWrhuOJ8T3MRR+Wdu7159qHRnRM7zfR6Ps=;
+	s=arc-20240116; t=1736863114; c=relaxed/simple;
+	bh=KOWpwa76h2JS2Po6Ok32t2A85PJPiBQXO+UNFW1FIk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzEIY8nVUCaC1PEBMeN3I1t31ktPu3cWlty5aoyxoh2PeOW498cBwJ0n7cbIeAZtVBKnuPDkVEnPgiMX7jCsctZi7L+iAOBWwVSpakwfhlg87o3vByRrYPl295PjvYEkqUq+mbK4X0cW/rpBsceDqtAv6MeRV1Q6eUXUr8IGvrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3WYSv8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6FC1C4CEDD;
-	Tue, 14 Jan 2025 13:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736862617;
-	bh=E9WCKWqZDdWrhuOJ8T3MRR+Wdu7159qHRnRM7zfR6Ps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B3WYSv8m4sWSylXp9W3Sf17zPbMaNvU2ichDqWJ/pV+WhqBkiLI/x0mixcZekP/aV
-	 7IPatKNy77Ep4aVGaq7/e5nrblpErKiiUZ0utc/rib3Bb7eqQylyqJOPn+a5aoJ7tS
-	 9V3/DBK6XIWKUe4dkKp3i//29eH+tgB4F5QfCjIbsRhJjyAxbB1ba2DCm6IHk8nw2P
-	 biqr9P1Wy+gXBaNqjgJGV/r23EWsD8jZNVMdkIPnxyCBU1x/TMKREi0xDCXR0DRQIH
-	 PLualSGnHYpy1D1fcUUvDGZRtkr+MQKg+IlH4/HDClH4Ly4UOEfuXu0coYhf2di1Dr
-	 Kcz4QrkfD9Z0w==
-Date: Tue, 14 Jan 2025 14:50:12 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v5 -next 00/16] sysctl: move sysctls from vm_table into
- its own files
-Message-ID: <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
-References: <20250111070751.2588654-1-yukaixiong@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hCh9DIKvLtE10MpHupYdOnDQTDB4ynK6lTB5Q72qLsMVgybsrb3QWPEFKb7UuQWIjOc1Sbg58Ee2aacQKwcNqkGOMMEkoI7DTWpS2IKQX/D4Un9e8UGvwmPXxlnO8USebSWYGslI8yTTjLCAj09LDfqxEHOPaHki9G0uHZhtrtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=SaSOrO7c; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-108-26-156-113.bstnma.fios.verizon.net [108.26.156.113])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50EDvpEY003344
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Jan 2025 08:57:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1736863079; bh=FX7CkqWHdHk5KIIlkT7tie2aBHCRixCTbmo2nECMnvw=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=SaSOrO7cRWw1h3p6+uyklT9mZFWGe7vTVj9CYj+RnZMLXdUNhfdapVj3FKpYptqJz
+	 wS0LZx20hGICDNi4k7aJ9D4+DtHFBZN/41oc787FLRJh9o0zgOuMIHH0chK3S56TFc
+	 hrkZ62LNVd/33UdAHlrY+VLOTevy3imVlAknnb3KXwFXzPqv83tYeEKjSsWcRP8Osq
+	 AW67VcMuESI3NJpqJP+q4IlGo5w29+dT0BLjSWsu7LzsLqi4urHb304uIUtRk8gyLj
+	 TlMHgxEZKyDRf7YNtEyahP+CIW/wnugei5ve3D+YjKGdUwkx+A4StgQDFviIJMOcVd
+	 mnr+eYgHVuRzw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id BFCA215C0175; Tue, 14 Jan 2025 08:57:51 -0500 (EST)
+Date: Tue, 14 Jan 2025 08:57:51 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Jan Kara <jack@suse.cz>,
+        Kun Hu <huk23@m.fudan.edu.cn>, jlayton@redhat.com,
+        adilger.kernel@dilger.ca, david@fromorbit.com, bfields@redhat.com,
+        viro@zeniv.linux.org.uk, christian.brauner@ubuntu.com, hch@lst.de,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brauner@kernel.org, linux-bcachefs@vger.kernel.org,
+        syzkaller@googlegroups.com
+Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
+Message-ID: <20250114135751.GB1997324@mit.edu>
+References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
+ <gwgec4tknjmjel4e37myyichugheuba3sy7cxkdqqj2raaglf5@n7uttxolimpa>
+ <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
+ <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250111070751.2588654-1-yukaixiong@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
 
-On Sat, Jan 11, 2025 at 03:07:35PM +0800, Kaixiong Yu wrote:
-> This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> places where they actually belong, and do some related code clean-ups.
-> After this patch series, all sysctls in vm_table have been moved into its
-> own files, meanwhile, delete vm_table.
+On Tue, Jan 14, 2025 at 10:07:03AM +0100, Dmitry Vyukov wrote:
+> I suspect the bulk of the reports are coming from academia
+> researchers. In lots of academia papers based on syzkaller I see "we
+> also reported X bugs to the upstream kernel". Somehow there seems to
+> be a preference to keep things secret before publication, so upstream
+> syzbot integration is problematic. Though it is well possible to
+> publish papers based on OSS work, these usually tend to be higher
+> quality and have better evaluation.
 > 
-> All the modifications of this patch series base on
-> linux-next(tags/next-20250110). To test this patch series, the code was
-> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> x86_64 architectures. After this patch series is applied, all files
-> under /proc/sys/vm can be read or written normally.
+> I also don't fully understand the value of "we also reported X bugs to
+> the upstream kernel" for research papers. There is little correlation
+> with the quality/novelty of research.
 
-It is looking good! Here is how I think we should move it upstream:
+Oh, that's easy.  Statements make it more likely that program
+committee members will more likely accept the paper because it's "real
+world impact".
 
-1. These should queued in for 6.15 instead of the next merge window.
-   It is too late in the current cycle and if we put it in now, it will
-   not properly tested in linux-next.
+And if you're an academic, it's publish or perish, because due to the
+gamification of tenure track committees.  Apparently in some countries
+the pressure is so huge that academics have started submit fake/sham
+papers:
 
-2. I am putting this in sysctl-testing with the expectation of pushing this
-   up for the 6.15 merge window. Please tell me if you want this to go
-   through some other tree.
+   The startling rise in the publication of sham science papers has
+   its roots in China, where young doctors and scientists seeking
+   promotion were required to have published scientific papers. Shadow
+   organisations – known as “paper mills” – began to supply fabricated
+   work for publication in journals there.
 
-Thx for the contribution
+   The practice has since spread to India, Iran, Russia, former Soviet
+   Union states and eastern Europe, with paper mills supplying
+   fabricated studies to more and more journals as increasing numbers
+   of young scientists try to boost their careers by claiming false
+   research experience. In some cases, journal editors have been
+   bribed to accept articles, while paper mills have managed to
+   establish their own agents as guest editors who then allow reams of
+   falsified work to be published.
 
-Best
-> 
-> my test steps as below listed:
-> 
-> Step 1: Set CONFIG_SYSCTL to 'n' and compile the Linux kernel on the
-> arm64 architecture. The kernel compiles successfully without any errors
-> or warnings.
-> 
-...
->  mm/swap.c                          |  16 ++-
->  mm/swap.h                          |   1 +
->  mm/util.c                          |  67 +++++++--
->  mm/vmscan.c                        |  23 +++
->  mm/vmstat.c                        |  44 +++++-
->  net/sunrpc/auth.c                  |   2 +-
->  security/min_addr.c                |  11 ++
->  23 files changed, 336 insertions(+), 312 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+   https://www.theguardian.com/science/2024/feb/03/the-situation-has-become-appalling-fake-scientific-papers-push-research-credibility-to-crisis-point
 
--- 
+At least in this case it appears to be real syzkaller reports,
+although if they were submitting sham papers to sham journals, they at
+least wouldn't be wasting upstream kernel developers' time.  :-)
 
-Joel Granados
+It would be *nice* if researchers at *least* checked to see if their
+reports had already been discovered using an unmodified Syzkaller (for
+example, by checking the upstream Syzbot web pages).  After all, if
+the unmodified/upstream Syzkaller can find the problem, in addition to
+wasting our time even more, it's *clearly* not a new/novel result.
+
+	    	    	     	    		- Ted
+
+P.S.  If you want to push back on this nonsense, Usenix program
+committee chairs are very much looking for open source professionals
+to participate on the program committees for Usenix ATC (Annual
+Technical Conference) and FAST (File System and Storage Technologies)
+conference.  It's a huge amount of work; easily 40-60 hours of work over
+3-4 months.  But it does get you to see what academics are up to, and
+it's a way to help point out bogus research, and to push back on
+research groups using ancient kernels (typically whatever kernel was
+current when the lead professor was a graduate student)....
+
+If you're interested, I can put you in touch with some of those
+Program Committee chairs when they are asking me to serve --- there's
+more than enough opportunity to go around.  :-)
+
 
