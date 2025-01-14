@@ -1,141 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-39125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD20A102FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 10:28:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1B7A1032F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 10:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8E618883A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:28:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6463D7A3658
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA63246348;
-	Tue, 14 Jan 2025 09:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6E724334E;
+	Tue, 14 Jan 2025 09:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="T/6MPyWJ"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jBk0rMOG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BF422DC21;
-	Tue, 14 Jan 2025 09:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C6022DC5D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 09:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736846907; cv=none; b=JcMXWMBFpdnaA4Lhyr+wBLZVrF9ZYK3xOXLiOdlT8hlh7Ke0LbKfSlVYtbfSXRHk80GyKCYIya4p5nnwAvchFXMrky6nv85RE05wzbjxagOuTrorQJxuBfr5IeWZsA0d4dBr0w5TcmFjwuy1ezQ6cmkuCo2ms6X1wdykvUSt6QU=
+	t=1736847631; cv=none; b=M/F2uOfKMYsWzbA2cp5M1VV1vMsR/IN6W3J3B3JXFu0PMzPa/he1q/k0IT5LKxLeNWhksiOtSMvOft6y3Gw4N5tM5HNE4fmMUrod2KWhk63kgFtTIuKxQeRxqLlRZpCNbg4uYVAgn7V0FJtHefSZhcebbhpIHtaIq+4gdq56YoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736846907; c=relaxed/simple;
-	bh=xrRf/STHU4FI76n55CmKOZHnl+F1zNW7E4K/8QoRqw0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=m28SL0OFSVS67Ao2LfSJpBU33Ikgz7aGohMPatH/npJWfgiwzMOhp4rQp6rHkT9IR7grZvxr629CzsZqlasfpswLWc8J8DegvjWCfBILGnAPa9GoqQAPLqf9wkMHdDLnJMIDuH9YtuXKgiBVjAwZJCBQtYWNXyxXCWKr1mJl0U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=T/6MPyWJ; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1736846873;
-	bh=xrRf/STHU4FI76n55CmKOZHnl+F1zNW7E4K/8QoRqw0=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=T/6MPyWJN48ANFTLuhSUqBs6S/KW5VpV/i5ITCQ3JeUQvln+KxaPSmj5ytUOB7e0G
-	 73stnV1pNBIdN2mdAu13onmjoy3IGTUZZmoUIEIpZnldDlfg8jyPXtct9UajVDwY2y
-	 hcIt+k1uW/WhAV/mdjIxyZcxX62yY3WQSAL7BcJc=
-X-QQ-mid: bizesmtpip3t1736846866ta2p9xq
-X-QQ-Originating-IP: cr0VfyFDHnZqBzVNLZDAiWo3OGK/r1NXQUnAxuHJTrw=
-Received: from smtpclient.apple ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 14 Jan 2025 17:27:45 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 652092266574935630
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1736847631; c=relaxed/simple;
+	bh=aZ8FuGNqZ+3iV51Cb1i5vgeCEtICB6sGbemIZemD+0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=liFPUqm9ZPuhJyYynVMynDjKGfO+owuHro3rsC7ZlzqNxAioW5d4Qvu+n96PahpZa0r6BCu7d146Ee7o6jsEV8k/r14mkQTqP3L9wIneSL3FsXR53toeewrwXwpbAlJSmqhudRJ2b/z+BJqv55BkcIDFAZjHBevKL9Q8ERMxn3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jBk0rMOG; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467918c360aso60021891cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 01:40:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1736847628; x=1737452428; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HgPy2eorjQtqOTgVzB2y5cAsY+IvT0FtA9XMxPuPMDA=;
+        b=jBk0rMOGiUp4o4hbjVlrpcN40UU3uNfUFXlluq+ePIsnf7KjHJZFyG/EdKOiTpZ015
+         hITOxPOAvaq9LygTaFUiI/2z1LWE34skGPzZVeewG250xv+VebQqYN+8e59DfUczSNZL
+         zFCfqA+TS33XUD3ipqTkrTDhXsn3a2iuU685g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736847628; x=1737452428;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HgPy2eorjQtqOTgVzB2y5cAsY+IvT0FtA9XMxPuPMDA=;
+        b=iFGVvNwceMFELvmQpMb2SCA8A2STosGMPWO5kv+1N65/sz078sm2xiIGiGabyeE4Vk
+         xlz0DnlrQeHoqHCBFp3aSlZUd38gsdGowi9qMg9KXlA6LI9DtuAaA5lqd/8x81hf9VZK
+         BYAqhL4qfKIzqV9pGaQoo+dytZ0K4C5zVi5ARYtQKi7YfKXzQOuTTAvEN2q0FXbiUfQZ
+         f8me9DNsHGICjPKfCaQ1M5363rw+GH7lNQTQMzEuBfwF2MOVxOiPFO0ZiMFkjrOcmRLH
+         m95rJLzmKP5ElECHE42hcCOM9J9p+QXWfHm3TbzQy1006YJWlpTpjQ3uletqBrXeF+RD
+         JVvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9QWMYya7tWGO3PLCPsgJUhN9kCM6O6UfqVuNQiYDZFeaVn3/NZaEhMzYnundaCDd7AwynNx1iAoYdx2VE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvAYPzDRrtKY+++J1qB0LEk4Rqo25yKMqes0zzgA+MCfjurbH0
+	W0BNFua+lmSFSBFPvQ8IRzsJ/Tm/M+nceBA4nAQ8X3sEVDfK4/gdpAUbx1nv1pJl3XcPRgt2hLK
+	mkJ7k7FhCFEBN0U3CXRYogE9bUvIuL6YDskf8kQ==
+X-Gm-Gg: ASbGncuSaMuTdQYmFquMVO2jHVfrjbWrxnQF2ReVVyFdAUMisTuh3b7VHUsu60LGsf0
+	AECR1cCpaHA4pCrNuaQZj+EppN8UnO7hWIKeb
+X-Google-Smtp-Source: AGHT+IH5zcZYV4uugUlC0KgfwH0v4ZvazwCDkLcLzwd/+LyEAh5KxIisX+gUXKeRn1fXcoK5aOWBXn/ZrSX1cT3C4M0=
+X-Received: by 2002:ac8:7c4e:0:b0:466:ac8d:7341 with SMTP id
+ d75a77b69052e-46c710841e4mr356199921cf.35.1736847627940; Tue, 14 Jan 2025
+ 01:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
-From: Kun Hu <huk23@m.fudan.edu.cn>
-In-Reply-To: <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
-Date: Tue, 14 Jan 2025 17:27:30 +0800
-Cc: Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-bcachefs@vger.kernel.org,
- Dmitry Vyukov <dvyukov@google.com>,
- syzkaller@googlegroups.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F3AD44A5-CA04-40D1-B80D-82B23EB9EF28@m.fudan.edu.cn>
-References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
- <gwgec4tknjmjel4e37myyichugheuba3sy7cxkdqqj2raaglf5@n7uttxolimpa>
- <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NyTsQ4JOu2J2HM+Y4GC9kWT2eZFGRgSRJ96nz3wPukXvGnX853x3/46a
-	wbM6osf70ZDXlFkfUnv0zoeSvWddl3ZdiMSnUkhGHzXIx/LIQofAsk9w77EAD1c2wqM6JgB
-	XJF8OwOu5Zx8lK7HixP7hi1Qrt5N6Mojsxb5WkBp6ZzOB2T4jn2VjCvBKMasubVvdJo2LWm
-	/LulTELWypG7S04ZilObUvqotRzgmWS4L2c4t5nc+6w0UqN0w77dVoW+Bx3GH53VWMWYQJ7
-	ULq1T6SNwwIAQ67Z7du3uEw2jGGXew2+hmtrnScMxOjS2QJp2Scyk6WydDhFpxb1PIdp/X5
-	ahygKzYzsVRxq1NvRNmtKqZ8efdqStFKNZviNzYErku/EPjPdjBJ6pyK7gYPbAJgSzMEphv
-	otvRwZo+EyRX8/F5S1z3SYw6a1r+e9bK+XVfExURfSQPgACOQRhiow7BnpUoADxjU8LCygE
-	NDUhnyz3YkAty2mHKq2UT3/iGJLcQ4u5Feeo0wLM9MfV0GPutteixRJM0+eQ+UeiMBxHU2J
-	d/UPpmVHesaGBuamq/a41M+Ejw1WzRcSHT9g9+jr5wUnS5DCBDFbPB/6Z5QDx7y5JBuqWrY
-	Fvp1NOuUDVOswZ993Be9/pavmktewFn8ENiQ3jsVTkTmriBFljKOXPBAetRFFuSbIViAQ5h
-	SlQPMSCBF9FLNMYxLY1iB15lU6BqdHfMLtLzb1yMW3M9WcMxoTvVL1RoTtqNyTAwYGzd+Xy
-	KAUTokBrUt4p5iwN+utzqRLPxYoS/yClph3Af7DURyA6gdNcmnT4Bb/PqYX+K14XnecSyng
-	RqPPD1Xle0dIWMFIEtRFcH3k7raD0kNn8TTEE8D7Owa+Xza5s+SuvthWSf7j6HObmCxStX3
-	njBxdgRy7atBEoTToupPP+iI5B/+2/UWGb+yCCn1SziMeO22Y6MgUh+deZ+UftflcblJoWG
-	pOx7Ib1/MITMSdEfyOAXLQzoIZRhBFeWXMfEhpaFdOVXcp9eyvS/ouKiB0NB52SrPUGlkBE
-	wt0YErTbYRfX2OGIGBWwTZwPTsd/M=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+References: <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+ <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+ <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com> <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+ <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+ <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com> <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
+ <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com> <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+ <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com> <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
+ <2848b566-3cae-4e89-916c-241508054402@redhat.com> <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
+ <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
+In-Reply-To: <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 14 Jan 2025 10:40:17 +0100
+X-Gm-Features: AbW1kvYXIdAjEYEuwiuhLrszud5yTv1k-6o5wyMwr9_6HvXpRPUCw9p-BVpd0Eg
+Message-ID: <CAJfpeguSXf0tokOMjoOP-gnxoNHO33wTyiMXH5pQP8eqzj_R0g@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Jeff Layton <jlayton@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
+	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
+	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
+	Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 14 Jan 2025 at 09:38, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
->=20
-> Is there some political reason that collaboration isn't happening? =
-I've
-> found the syzbot people to be great to work with.
->=20
-> I'll give some analysis on this bug, but in general I won't in the
-> future until you guys start collaborating (or at least tell us what =
-the
-> blocker is) - I don't want to be duplicating work I've already done =
-for
-> syzbot.
+> Maybe an explicit callback from the migration code to the filesystem
+> would work. I.e. move the complexity of dealing with migration for
+> problematic filesystems (netfs/fuse) to the filesystem itself.  I'm
+> not sure how this would actually look, as I'm unfamiliar with the
+> details of page migration, but I guess it shouldn't be too difficult
+> to implement for fuse at least.
 
-Thanks, no political reasons, simply just researching this area and not =
-familiar enough with it, I'll keep an eye out for this later.
+Thinking a bit...
 
+1) reading pages
 
->=20
-> We need to know what the other threads are doing. Since lockdep didn't
-> detect an actual deadlock, it seems most likely that the blocked =
-thread
-> is blocked because the thread holding the inode lock is spinning and
-> livelocked.
->=20
-> That's not in the dump, so to debug this we'd need to reproduce this =
-in
-> a local VM and poke around with e.g. top/perf and see what's going on.
->=20
-> I've a tool to reproduce syzbot bugs locally in a single command [1], =
-so
-> that would be my starting point - except it doesn't work with your
-> forked version. Doh.
->=20
-> Another thing we could do is write some additional code for the hung
-> task detector that, when lockdep is enabled, uses it to figure out =
-which
-> task it's blocked on and additionally print a backtrace for that.
->=20
-> [1]: =
-https://evilpiepirate.org/git/ktest.git/tree/tests/syzbot-repro.ktest
->=20
->>=20
+Pages are allocated (PG_locked set, PG_uptodate cleared) and passed to
+->readpages(), which may make the pages uptodate asynchronously.  If a
+page is unlocked but not set uptodate, then caller is supposed to
+retry the reading, at least that's how I interpret
+filemap_get_pages().   This means that it's fine to migrate the page
+before it's actually filled with data, since the caller will retry.
 
-Ok, I'll try it with this tool. For now, we are experimenting based on =
-the early November 2024 version (df3dc63), let's see if we can debug =
-this tool of yours.=
+It also means that it would be sufficient to allocate the page itself
+just before filling it in, if there was a mechanism to keep track of
+these "not yet filled" pages.  But that probably off topic.
+
+2) writing pages
+
+When the page isn't actually being copied, the writeback could be
+cancelled and the page redirtied.  At which point it's fine to migrate
+it.  The problem is with pages that are spliced from /dev/fuse and
+control over when it's being accessed is lost.  Note: this is not
+actually done right now on cached pages, since writeback always copies
+to temp pages.  So we can continue to do that when doing a splice and
+not risk any performance regressions.
+
+Am I missing something?
+
+Thanks,
+Miklos
 
