@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-39181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6207A112BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 22:11:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A580AA11375
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 22:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB93166A29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 21:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B45188A1E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 21:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D86720E6FF;
-	Tue, 14 Jan 2025 21:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7265220D507;
+	Tue, 14 Jan 2025 21:53:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sxb1plsmtpa01-02.prod.sxb1.secureserver.net (sxb1plsmtpa01-02.prod.sxb1.secureserver.net [188.121.53.13])
+Received: from sxb1plsmtpa01-07.prod.sxb1.secureserver.net (sxb1plsmtpa01-07.prod.sxb1.secureserver.net [92.204.81.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C875A20CCE4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 21:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8FE1CDFC1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 21:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736889089; cv=none; b=MwdLr3s9TolzKkVLqRhk0+0iu5TEbFLE+hFFatD34Fe5gOZWAoRId8EsswgrkCVHhn0kih/6n7NQv3TIcXGlNhpE3A0vk2dybyCwm+Vw9tX9PB36P9TmosvOa1ZgJ/J9uXFnZfTi5l26f6wGVLFbmzePch44F9d+OGeBzuKxDBI=
+	t=1736891637; cv=none; b=sRTTolpLY4/POutVRjDI5A1XePl+XZwpABFmK1TEVKWbZRJS97wHp2H+YDrKfptXFtcja8v3YS3cMBtPK/4eMMOq58gBZjJFFlm1xx1mGFiGThP5VnaUnSaLB2JDjRM7nW6RAYDbRBhlZpA87O2IJXTwapXuqBek4W6I1Cols58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736889089; c=relaxed/simple;
-	bh=Vb7qBG+WHO3HhYJGS4k9UFw9x3AgHnRkFWRY2Rbhzno=;
+	s=arc-20240116; t=1736891637; c=relaxed/simple;
+	bh=9tUaxhOx7+0yXfCtN4AVvJPL4qrrrMl7QRxeaUyXNcU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hkK9g7TSPpWEMYNLbUY1UURHrXRcRStfVE+YYV57O6BiAsHlPOJx8ctbDGuoipMfUV/RorriAzlwqbhkUwXUFuLVkpIflXsm39SIganmVqiFlp6vzmOAbJlAG6FoS3eT35bLweesMMHiWXQVBldaUB6IX2jEMvepK1Ps5KuKTMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.13
+	 In-Reply-To:Content-Type; b=vGRxd19pRx2E+ohdVJoEcDjZ8dYdCYNNLBSl11ar9CcsEGp44VUYEfxv8b96q++WmorvXHmbHtrT7n80JwUhOhDH8giYuu7dWka5E4l1BSaZ8yiLAbJ4mjrBabXJCBe7K/ClHKivCwTvuf6sHEr5KxoAkz61uD/m3IzclkYnyM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=92.204.81.212
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
 Received: from [192.168.178.95] ([82.69.79.175])
 	by :SMTPAUTH: with ESMTPSA
-	id Xo9gtGd7iwNr3Xo9gtVvbc; Tue, 14 Jan 2025 14:08:57 -0700
-X-CMAE-Analysis: v=2.4 cv=L4LnQ/T8 c=1 sm=1 tr=0 ts=6786d269
+	id Xo9qtxqGXOmR4Xo9rteqgO; Tue, 14 Jan 2025 14:09:07 -0700
+X-CMAE-Analysis: v=2.4 cv=FN/hx/os c=1 sm=1 tr=0 ts=6786d273
  a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=JfrnYn6hAAAA:8 a=FXvPX3liAAAA:8 a=YMrt_mpcskI9137y0l4A:9
+ a=IkcTkHD0fZMA:10 a=JfrnYn6hAAAA:8 a=FXvPX3liAAAA:8 a=W2xiLW0GlORWcRYWJokA:9
  a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=UObqyxdv-6Yh2QiB9mM_:22
 X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <0f6aefda-b616-40f9-9ccd-bb5eabad4e27@squashfs.org.uk>
-Date: Tue, 14 Jan 2025 21:08:31 +0000
+Message-ID: <41ed0b22-099a-40dd-b7e7-1e8719241fcc@squashfs.org.uk>
+Date: Tue, 14 Jan 2025 21:08:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,27 +46,29 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] squashfs; Convert squashfs_copy_cache() to take a
+Subject: Re: [PATCH 5/5] squashfs: Convert squashfs_fill_page() to take a
  folio
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-mm@kvack.org
 References: <20241216162701.57549-1-willy@infradead.org>
- <20241216162701.57549-4-willy@infradead.org>
+ <20241216162701.57549-5-willy@infradead.org>
 Content-Language: en-US
 From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <20241216162701.57549-4-willy@infradead.org>
+In-Reply-To: <20241216162701.57549-5-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfKZ/ag7YFn83X3UpOTOBUlGZoIWbzXzp7sr0lnOgdg1P4M1liOEAcRsVPSc/3oAIBXlZHplfGmiacjCIKeyVUd5a7+91oh1IZ1Ha94NT4v4hdOBh4+Oq
- 523JT6pb6tGhtn3M242FOwGTrO8Be43gHqvoiVQNZ9DfqQkk8po9u4SPJgk6feon6D80AJqPIConuJyUd9qLSPmm5iyXoXc7NdJstu76iP2A775JCW0ySlgi
- iYeGH1Rnoh/BdH6ATs7FxmX8vIQLjX3xjAkXaaS8vNHsusF5v57DpAG6x4ACb2Xpe6IdsZDuWXgvoULRH9VNbA==
+X-CMAE-Envelope: MS4xfCXhunHkNxoWSf35AGq1AS2ZxNymf8dCK3R07SZLZu5nJ3RksmXsoJ7y4Qe8N7NdOtLSSNf75fiveT2/Grvw4TiGMgYrUuXkMPybT+Y/pgWAFcw0fAXo
+ B90QsaVPRVGjqebSFlXyXfphndQ6V4ctkTSj1nGGmCp2oE6BuVkiU4SA/4qaxfT95QIolXgQOpoV3yelLaIBJQbLhvGX04BL48giWtrg1sShrGMwfOoP+kyD
+ HqKvjUYcGSzFxdyeEoUdtXaiQ3mm8T52snXv7rR/88RzGKJ7K9ifqjRLjS+nkzyf/vlQpmRdKMa5PoHSVteBmA==
 
 
 
 On 12/16/24 16:26, Matthew Wilcox (Oracle) wrote:
-> Remove accesses to page->index and page->mapping.  Also use folio
-> APIs where available.  This code still assumes order 0 folios.
+> squashfs_fill_page is only used in this file, so make it static.
+> Use kmap_local instead of kmap_atomic, and return a bool so that
+> the caller can use folio_end_read() which saves an atomic operation
+> over calling folio_mark_uptodate() followed by folio_unlock().
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
@@ -74,131 +76,73 @@ Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
 Tested-by: Phillip Lougher <phillip@squashfs.org.uk>
 
 > ---
->   fs/squashfs/file.c       | 46 ++++++++++++++++++++++------------------
->   fs/squashfs/file_cache.c |  2 +-
->   fs/squashfs/squashfs.h   |  4 ++--
->   3 files changed, 28 insertions(+), 24 deletions(-)
+>   fs/squashfs/file.c     | 21 ++++++++++++---------
+>   fs/squashfs/squashfs.h |  1 -
+>   2 files changed, 12 insertions(+), 10 deletions(-)
 > 
 > diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-> index 5b81e26b1226..1f27e8161319 100644
+> index 1f27e8161319..d363fb26c2c8 100644
 > --- a/fs/squashfs/file.c
 > +++ b/fs/squashfs/file.c
-> @@ -378,13 +378,15 @@ void squashfs_fill_page(struct page *page, struct squashfs_cache_entry *buffer,
+> @@ -362,19 +362,21 @@ static int read_blocklist(struct inode *inode, int index, u64 *block)
+>   	return squashfs_block_size(size);
+>   }
+>   
+> -void squashfs_fill_page(struct page *page, struct squashfs_cache_entry *buffer, int offset, int avail)
+> +static bool squashfs_fill_page(struct folio *folio,
+> +		struct squashfs_cache_entry *buffer, size_t offset,
+> +		size_t avail)
+>   {
+> -	int copied;
+> +	size_t copied;
+>   	void *pageaddr;
+>   
+> -	pageaddr = kmap_atomic(page);
+> +	pageaddr = kmap_local_folio(folio, 0);
+>   	copied = squashfs_copy_data(pageaddr, buffer, offset, avail);
+>   	memset(pageaddr + copied, 0, PAGE_SIZE - copied);
+> -	kunmap_atomic(pageaddr);
+> +	kunmap_local(pageaddr);
+>   
+> -	flush_dcache_page(page);
+> -	if (copied == avail)
+> -		SetPageUptodate(page);
+> +	flush_dcache_folio(folio);
+> +
+> +	return copied == avail;
 >   }
 >   
 >   /* Copy data into page cache  */
-> -void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
-> -	int bytes, int offset)
-> +void squashfs_copy_cache(struct folio *folio,
-> +		struct squashfs_cache_entry *buffer, size_t bytes,
-> +		size_t offset)
->   {
-> -	struct inode *inode = page->mapping->host;
-> +	struct address_space *mapping = folio->mapping;
-> +	struct inode *inode = mapping->host;
->   	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
->   	int i, mask = (1 << (msblk->block_log - PAGE_SHIFT)) - 1;
-> -	int start_index = page->index & ~mask, end_index = start_index | mask;
-> +	int start_index = folio->index & ~mask, end_index = start_index | mask;
->   
->   	/*
->   	 * Loop copying datablock into pages.  As the datablock likely covers
-> @@ -394,25 +396,27 @@ void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
->   	 */
->   	for (i = start_index; i <= end_index && bytes > 0; i++,
+> @@ -398,6 +400,7 @@ void squashfs_copy_cache(struct folio *folio,
 >   			bytes -= PAGE_SIZE, offset += PAGE_SIZE) {
-> -		struct page *push_page;
-> -		int avail = buffer ? min_t(int, bytes, PAGE_SIZE) : 0;
-> +		struct folio *push_folio;
-> +		size_t avail = buffer ? min(bytes, PAGE_SIZE) : 0;
+>   		struct folio *push_folio;
+>   		size_t avail = buffer ? min(bytes, PAGE_SIZE) : 0;
+> +		bool filled = false;
 >   
-> -		TRACE("bytes %d, i %d, available_bytes %d\n", bytes, i, avail);
-> +		TRACE("bytes %zu, i %d, available_bytes %zu\n", bytes, i, avail);
+>   		TRACE("bytes %zu, i %d, available_bytes %zu\n", bytes, i, avail);
 >   
-> -		push_page = (i == page->index) ? page :
-> -			grab_cache_page_nowait(page->mapping, i);
-> +		push_folio = (i == folio->index) ? folio :
-> +			__filemap_get_folio(mapping, i,
-> +					FGP_LOCK|FGP_CREAT|FGP_NOFS|FGP_NOWAIT,
-> +					mapping_gfp_mask(mapping));
+> @@ -412,9 +415,9 @@ void squashfs_copy_cache(struct folio *folio,
+>   		if (folio_test_uptodate(push_folio))
+>   			goto skip_folio;
 >   
-> -		if (!push_page)
-> +		if (!push_folio)
->   			continue;
->   
-> -		if (PageUptodate(push_page))
-> -			goto skip_page;
-> +		if (folio_test_uptodate(push_folio))
-> +			goto skip_folio;
->   
-> -		squashfs_fill_page(push_page, buffer, offset, avail);
-> -skip_page:
-> -		unlock_page(push_page);
-> -		if (i != page->index)
-> -			put_page(push_page);
-> +		squashfs_fill_page(&push_folio->page, buffer, offset, avail);
-> +skip_folio:
-> +		folio_unlock(push_folio);
-> +		if (i != folio->index)
-> +			folio_put(push_folio);
+> -		squashfs_fill_page(&push_folio->page, buffer, offset, avail);
+> +		filled = squashfs_fill_page(push_folio, buffer, offset, avail);
+>   skip_folio:
+> -		folio_unlock(push_folio);
+> +		folio_end_read(folio, filled);
+>   		if (i != folio->index)
+>   			folio_put(push_folio);
 >   	}
->   }
->   
-> @@ -430,16 +434,16 @@ static int squashfs_readpage_fragment(struct folio *folio, int expected)
->   			squashfs_i(inode)->fragment_block,
->   			squashfs_i(inode)->fragment_size);
->   	else
-> -		squashfs_copy_cache(&folio->page, buffer, expected,
-> +		squashfs_copy_cache(folio, buffer, expected,
->   			squashfs_i(inode)->fragment_offset);
->   
->   	squashfs_cache_put(buffer);
->   	return res;
->   }
->   
-> -static int squashfs_readpage_sparse(struct page *page, int expected)
-> +static int squashfs_readpage_sparse(struct folio *folio, int expected)
->   {
-> -	squashfs_copy_cache(page, NULL, expected, 0);
-> +	squashfs_copy_cache(folio, NULL, expected, 0);
->   	return 0;
->   }
->   
-> @@ -470,7 +474,7 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
->   			goto out;
->   
->   		if (res == 0)
-> -			res = squashfs_readpage_sparse(&folio->page, expected);
-> +			res = squashfs_readpage_sparse(folio, expected);
->   		else
->   			res = squashfs_readpage_block(folio, block, res, expected);
->   	} else
-> diff --git a/fs/squashfs/file_cache.c b/fs/squashfs/file_cache.c
-> index 0360d22a77d4..40e59a43d098 100644
-> --- a/fs/squashfs/file_cache.c
-> +++ b/fs/squashfs/file_cache.c
-> @@ -29,7 +29,7 @@ int squashfs_readpage_block(struct folio *folio, u64 block, int bsize, int expec
->   		ERROR("Unable to read page, block %llx, size %x\n", block,
->   			bsize);
->   	else
-> -		squashfs_copy_cache(&folio->page, buffer, expected, 0);
-> +		squashfs_copy_cache(folio, buffer, expected, 0);
->   
->   	squashfs_cache_put(buffer);
->   	return res;
 > diff --git a/fs/squashfs/squashfs.h b/fs/squashfs/squashfs.h
-> index 0f5373479516..9295556ecfd0 100644
+> index 9295556ecfd0..37f3518a804a 100644
 > --- a/fs/squashfs/squashfs.h
 > +++ b/fs/squashfs/squashfs.h
-> @@ -68,8 +68,8 @@ extern __le64 *squashfs_read_fragment_index_table(struct super_block *,
+> @@ -67,7 +67,6 @@ extern __le64 *squashfs_read_fragment_index_table(struct super_block *,
+>   				u64, u64, unsigned int);
 >   
 >   /* file.c */
->   void squashfs_fill_page(struct page *, struct squashfs_cache_entry *, int, int);
-> -void squashfs_copy_cache(struct page *, struct squashfs_cache_entry *, int,
-> -				int);
-> +void squashfs_copy_cache(struct folio *, struct squashfs_cache_entry *,
-> +		size_t bytes, size_t offset);
+> -void squashfs_fill_page(struct page *, struct squashfs_cache_entry *, int, int);
+>   void squashfs_copy_cache(struct folio *, struct squashfs_cache_entry *,
+>   		size_t bytes, size_t offset);
 >   
->   /* file_xxx.c */
->   int squashfs_readpage_block(struct folio *, u64 block, int bsize, int expected);
 
