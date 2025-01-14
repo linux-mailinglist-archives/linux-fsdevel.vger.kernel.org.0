@@ -1,159 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-39123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC416A102D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 10:15:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA05A102E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 10:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A139B1887B05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78C2167EBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D24622DC4B;
-	Tue, 14 Jan 2025 09:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC93233539;
+	Tue, 14 Jan 2025 09:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="axDTZv9u"
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="N1JzSope"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F722DC22
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 09:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E76722DC20;
+	Tue, 14 Jan 2025 09:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736846143; cv=none; b=AHAm7eGlbtFUNCktHN8j6x0cOvHPyWo/diMoY4GdbLHDVhhPeyBYfK0o4m3bg80Szj4XA1btj0z+uUCpkA35tIy7TC9wemdf+h0M/extJhM4AbFzWxqatA1fhmsmdooWEXfG9x2+cq7VENY1TdKc2s+i4VqqNox15LRyxUOZaOk=
+	t=1736846529; cv=none; b=dCvO+Ohk/KXRlrh9j8ukl/nM/tOjENcOmoAxGYnSnoLWRv4prPEX7emD9ydRc/Y1BrMWwpExuVynGlLKKI3JdOkN6csnSVkySvE2xRIa0syjKScDWFudEDU7LokG2FK0fADSYZPHejrWEBNARCjO+r2ps7h6W/ISURAsRB0XHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736846143; c=relaxed/simple;
-	bh=rDh9eh0kYeMAJG41fHofk0sbVUDz4s+QhR8WZeIbnAE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LC7LTHJp2pP7eQYEtamGw2cROMaGiG1csyKc3nHhH+Deq4dyEmx/0wXbG605/5C3YEdDKBauYhUZEMnKeJhNmEKZKh7Lw3K+QzG1nq9oIWaleo9H2+mvaIs4fUYEURnw8G6XJLE8xV4ayZb3t5SFhAs+Ykv/6z4I629GFuWYSOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=axDTZv9u; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30613037309so25635451fa.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 01:15:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1736846140; x=1737450940; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PU9jDjS3EKreNh/3y7h/s76+QMb8kIneaatpj3HfJJ8=;
-        b=axDTZv9ukqaLg82LJTkI8MS64hvdlgA44UVmwlFGS+uZmqaGu0z1DLz8RB9VHS/TJH
-         D4mESSfKD7b2uc2fmDQTx1h1BBk3oVpxuTNKOqKPJ8FkiRe2/R3cxBcdS7gGf3gOEYbf
-         /iMOsux43MqMIjdDG760QQk3yR3IDanfLfWi1VZUvIezYhM4qdjyPAsUsb7TB8r7w5ve
-         w7oWQY2pSLe9AXAq6159jzTwFUkpv0m/rmroQtAjXIBDUYdA29PoSeXrxUMo2VXCGWyp
-         OlJ8/eWScD/sAny8LQZGUTiccD+LIijHlieWOpKKviXfdQZ6J5/32spjWhq7uOKl4Ge4
-         iJjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736846140; x=1737450940;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PU9jDjS3EKreNh/3y7h/s76+QMb8kIneaatpj3HfJJ8=;
-        b=n7pEGs0acgzskW0jxlr3dNPkkUzgJME/pQzijMJaFafW5IlHFBEc5TYVTL03kv93Ts
-         25O8CV7XTR805PQYne+U7QU2vetKXmXwAWszdDWhYIYFIX0iOgAvr8TmhDuN3HX1UtiD
-         2MR9hswMEYOKs1/K4r7ER/OPYFhxa9KSjx/WH/3O3oWzwbby3QsF+KMgjK6ivtuMTaA8
-         DFlru7al7eHq3pNvOnM3HhiHcW/eJlvu1oN/f4NSTQiRV+odde4lsBrnjFcZwzX2Iglp
-         oEyC67Z3x/ArHDt/GSakwG/TE1tNTIiOip8KMaFt6Eukc7pktnBkO5D9DHxZolJltwnE
-         PVYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVw8fi18IPDeqpX6kjJkF77DFJI4jRrDyRTtnCT8cKY3IUnKrxZkTjejbtt+H7gzHrg5TryrIiyQ+YpZBKQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE70eZNpp8+cm4s2c3U3r/7PW7ox0wrspKk7XP3acJ2K1pRwq0
-	q/zkeI3BXYSXlhai703JPUwWvMoo/LwVcRxOE8i6WPxL6/5o/VIxCwm/F//o0sWQAtcqePvi9Zh
-	0FDPjjRACGwvuASn2pMIolNd8hdWrH277t6++
-X-Gm-Gg: ASbGncsJV7hd+BG+zNE3EXmC81roPuiXd2Kkj/Ldqw3KyS+O2acHkFcEyOP8vqLYcml
-	6Faa5mUsjZQzytRKsZERPJXf99MpxX95dFUhW8EhZ6grlugjs0dkgj4Fk0AtrCrY5R8wScA==
-X-Google-Smtp-Source: AGHT+IG7q7p56cLQrXudvQLIKgNyrObYkouGvIO+uE9TTepUhhEBhvVuAEL+fOuv5LwNNVlWEqJ8gjR318dJo+qL9Nw=
-X-Received: by 2002:a05:651c:19ac:b0:2ff:cfbb:c893 with SMTP id
- 38308e7fff4ca-305f459ab20mr76724551fa.6.1736846139701; Tue, 14 Jan 2025
- 01:15:39 -0800 (PST)
+	s=arc-20240116; t=1736846529; c=relaxed/simple;
+	bh=TH2vAVb5AYL70xvYA6GVhSGcPYch4D4kepXt8XTpHNg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YBX5p12Hd+on7aFLUyE8d6jISQBGxwLPt1BpXcS2tp3RuPwUAdsegBAfjuxgGIe8HiXgY6AncNaK/xG1QKnUgvf4GlFloCvkembsKB81myemw4jjOGilr5iWlDqsNAcabPGdQsCAX3BgS4ikj44J5FOiLEmijmv0900XqNHp7Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=N1JzSope; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1736846481;
+	bh=TH2vAVb5AYL70xvYA6GVhSGcPYch4D4kepXt8XTpHNg=;
+	h=Mime-Version:Subject:From:Date:Message-Id:To;
+	b=N1JzSopeTIqd0x8cfhJAR+bwkIh70Fo657j8vMJYySee64oPkRjMMwnZHPxsT16qM
+	 2wA6REAwAuo7qXPpYr+5XZqeXe8kkM5n8hrO2tg4Gs6VkZb2ZcnrW/Yrrq4/DkR7MX
+	 53zia2a57EWyA43UrKHgZnhmfhgMbtpFT2g3dZbE=
+X-QQ-mid: bizesmtpsz9t1736846475t2a83y8
+X-QQ-Originating-IP: IJ7GpVF/84LQcIPcLPnMYjf94O3hwgJRK67umQ0/mZ4=
+Received: from smtpclient.apple ( [202.120.235.170])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 14 Jan 2025 17:21:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10348364636119842022
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
- <20250113-herzhaft-desolat-e4d191b82bdf@brauner> <Z4U89Wfyaz2fLbCt@casper.infradead.org>
- <20250113180830.GM6156@frogsfrogsfrogs>
-In-Reply-To: <20250113180830.GM6156@frogsfrogsfrogs>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 14 Jan 2025 10:15:28 +0100
-X-Gm-Features: AbW1kvar_DVbRprcruFTOeA3ThPr4U7dDnbMvzcYy_l8DdJmQkFwUNPv35gkSLA
-Message-ID: <CACT4Y+YVy3OqiG=HD4TcERCHqS7XrNUwMgJtjM-HLC_-kA5rdw@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
 Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Christian Brauner <brauner@kernel.org>, 
-	Kun Hu <huk23@m.fudan.edu.cn>, Andrey Konovalov <andreyknvl@gmail.com>, jack@suse.cz, 
-	jlayton@redhat.com, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	david@fromorbit.com, bfields@redhat.com, viro@zeniv.linux.org.uk, 
-	christian.brauner@ubuntu.com, hch@lst.de, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: Kun Hu <huk23@m.fudan.edu.cn>
+In-Reply-To: <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
+Date: Tue, 14 Jan 2025 17:20:58 +0800
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-bcachefs@vger.kernel.org,
+ syzkaller@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D9B23942-DDAF-45D5-A805-BCB40FBB9E5B@m.fudan.edu.cn>
+References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
+ <gwgec4tknjmjel4e37myyichugheuba3sy7cxkdqqj2raaglf5@n7uttxolimpa>
+ <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
+ <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MOes/g5XSnTfvRRouqbjJDa/YxzP3nIBkAMbAmK3SmdTib5uV0xKh19Y
+	j2eEvZ8us+UWYJgXpsgGhd57Shji8uhwbpSb0cGAyIWc1IShcx+2kfuF1gbD/90ULk5f4aD
+	JkZ4bvnEA/r5Lr3PkUBfwqlP4zdWlx3dGsIXRdyIOy7Aq98M1GzibKsiChmuumEbmPobmIG
+	2AFrwDItjyEksmfbiA7WLO65V5L0sFp4XPwld+8ihtEBjBaEl1htH/JpmOtoY5PFIr0311G
+	XEuCRVVKxILg3iTZ8kuTTKUGojJLnKeZJ11Ot1govlk3LR1aC9x2BY8KXsliNK9/mw4EbJY
+	iekjTGcaEGjDpi9842Qhf6EXpQ0QphxpdN98ZmFQ7BgNsf1BnnE8zq96iqdXyddCYaM2QKA
+	UDso3YZijz9NHYc8OOWxV8LSZWmB9FMK3uvy08q9vHTyWDy5SKzrQZeYi8n1azIOhHVGlqt
+	fOEUnf6pIAdWBuxqTGijcAq2TR6KCB6sK3PYuSwCflXRFeKVEb2oAgEwoBjw6ZHBqmvCQSz
+	E5kzBuisFLrU81Lvf1Uso2T76oTdGzaSgXTWwkSSb8HaR7fVSlZYXhlYukyqC8XDclfDBzM
+	YnxARMDUQHIt4CKBGrl+m4S+ubMMnKwofuJ9if19mFtpuINnKdns1BqFa/bt3/Q4vIt/MjD
+	hoVljcRF/JEkRTP9HuD9hbjMQeN9TEUMjvYr4OnIVpijt4kBZ7wscHyqWZVo8nLVOdGJtI6
+	pDlj4W7Aqe7CW8pR5dD9VrrmTHQ37jjrp2LDS5dAk9jCWr4qoKGekRSJKZKwuenDLGRo95c
+	Zx0a8YLoLVtpngfaomUMnraLGv2QXtDEFmTCkLNfQVVPPGlaJxVPL3spCzIqTlU0Amf/3R4
+	inTlMcow5ZiMT3G5uU+NGH+CMJbrmG9kJsu+8iZtMOq8Odwg8Kc6QS/AJ9kjEuaZn8sLkXb
+	W9l50GUFPn6/gd8XncSI70fwflgMJH8vZdMNomkC3LCRzG8ZB+P+wvC8i
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Mon, 13 Jan 2025 at 19:08, Darrick J. Wong <djwong@kernel.org> wrote:
->
-> On Mon, Jan 13, 2025 at 04:19:01PM +0000, Matthew Wilcox wrote:
-> > On Mon, Jan 13, 2025 at 03:38:57PM +0100, Christian Brauner wrote:
-> > > On Sun, Jan 12, 2025 at 06:00:24PM +0800, Kun Hu wrote:
-> > > > Hello,
-> > > >
-> > > > When using our customized fuzzer tool to fuzz the latest Linux kernel, the following crash (43s)
-> > > > was triggered.
-> > >
-> > > I think we need to come to an agreement at LSFMM or somewhere else that
-> > > we will by default ingore but reports from non-syzbot fuzzers. Because
-> > > we're all wasting time on them.
->
-> No need to wait until LSFMM, I already agree with the premise of
-> deprioritizing/ignoring piles of reports that come in all at once with
-> very little analysis, an IOCCC-esque reproducer, and no effort on the
-> part of the reporter to do *anything* about the bug.
->
-> While the Google syzbot dashboard has improved remarkably since 2018,
-> particularly in the past couple of years, thanks to the people who did
-> that!
+>=20
+> I suspect the bulk of the reports are coming from academia
+> researchers. In lots of academia papers based on syzkaller I see "we
+> also reported X bugs to the upstream kernel". Somehow there seems to
+> be a preference to keep things secret before publication, so upstream
+> syzbot integration is problematic. Though it is well possible to
+> publish papers based on OSS work, these usually tend to be higher
+> quality and have better evaluation.
+>=20
+> I also don't fully understand the value of "we also reported X bugs to
+> the upstream kernel" for research papers. There is little correlation
+> with the quality/novelty of research.
 
-And, thanks, Darrick!
-Most credit goes to Aleksandr Nogikh, who worked on improvements in
-the past years.
-We don't always have cycles to implement everything immediately, but
-we are listening.
+It's nice to have a statement from a report. Because academics may not =
+be familiar with the process of reporting, and based on some of the =
+wrong experiences with past Mailing lists, they may continue to use it =
+and make this redundant process reproduce over and over again. I =
+personally support this.=F0=9F=98=82
 
->  It's nice that I can fire off patches at the bot and it'll test
-> them.  That said, I don't perceive Google management to be funding much
-> of anyone to solve the problems that their fuzzer uncovers.
->
-> This is to say nothing of the people who are coyly running their own
-> instances of syzbot sans dashboard and expecting me to download random
-> crap from Google Drive.  Hell no, I don't do that kind of thing in 2025.
->
-> > I think it needs to be broader than that to also include "AI generated
-> > bug reports" (while not excluding AI-translated bug reports); see
-> >
-> > https://daniel.haxx.se/blog/2024/01/02/the-i-in-llm-stands-for-intelligence/
-> >
-> > so really, any "automated bug report" system is out of bounds unless
-> > previously arranged with the developers who it's supposed to be helping.
->
-> Agree.  That's been my stance since syzbot first emerged in 2017-18.
->
-> > We need to write that down somewhere in Documentation/process/ so we
-> > can point misguided people at it.
-> >
-> > We should also talk about how some parts of the kernel are basically
-> > unmaintained and unused, and that automated testing should be focused
-> > on parts of the kernel that are actually used.  A report about being
-> > able to crash a stock configuration of ext4 is more useful than being
-> > able to crash an unusual configuration of ufs.
->
-> Or maybe we should try to make fuse + iouring fast enough that we can
-> kick all these old legacy drivers out to userspace. ;)
->
-> > Distinguishing between warnings, BUG()s and actual crashes would also
-> > be a useful thing to put in this document.
->
-> Yes.  And also state that panic_on_warn=1 is a signal that you wanted
-> fail(over) fast mode.
->
-> --D
+-kun=
 
