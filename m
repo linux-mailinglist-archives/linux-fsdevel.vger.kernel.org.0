@@ -1,160 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-39139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C017EA10843
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 14:58:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7B3A108CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 15:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703DB3A85F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 13:58:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFCBE7A1536
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 14:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C9D136E21;
-	Tue, 14 Jan 2025 13:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590613B7A1;
+	Tue, 14 Jan 2025 14:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ecWS653C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ln5OSU9T";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ecWS653C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ln5OSU9T"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hZxA7bkb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DFD130A73;
-	Tue, 14 Jan 2025 13:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7638223242D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 14:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736863122; cv=none; b=CXvO9KfF0JYkKwJurVwYGl0Jf416BeSFjnW79suMFg4OpbfsHswgvJ0S0JCA1NExywaK5PF6lLl8sYsejEUvarqocMupHl0rMZLLjkktwLQZK3h0gU7+BqLCwiZ3PJgtwsLWTGkmAqCcKeUMFCTZrRZYRQOaYIQQeHlVlgAvS2k=
+	t=1736863989; cv=none; b=ZBnjW5PDDeU+k/hhpiOb4eAyoS2a4CWCUbeypiWfOxS/8KhC4ztjvm45qQUkaRipJRuxuX2ohqp1fwsNR5kLNedNvvBc+U6N46a5u282PLrp3nocKkCoqSA7xZ2NYaXn8C9XpcUPPUolL6vE1yBQHStMuROzW9CLF5K3FFaOAn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736863122; c=relaxed/simple;
-	bh=IGqkx4X7wa7i3kT6/5gv42mXQHNtanOIbEAM/Y0DgCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYLOPmRYQZ6h+F1H8MERKhKUi262aeZsUGKeNvreMyOuOMAj0RxF36liTAhh6C4tz2l6mlmg1O42yNrn0QGu+eyn6+TmjVvekieKoA9jnkGvUT4O4QpZ/mb0tsUr3rJWClHOrB6pwmAM7ATjYV8yxM0HlTOQPq5zBxO55mKztP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ecWS653C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ln5OSU9T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ecWS653C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ln5OSU9T; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1736863989; c=relaxed/simple;
+	bh=H+3vaac2q1oXi2Voq08GOy34GbqWWixbbK/eHTbdMaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fqz1kOPuubbV5v5eqHln1T100UGguUTNOTm0GThS0G/8Cegija8eQDG54DD/HV+ko3Xf+uEM1Tz/zRzgqLZGWMQJ8TdVGAh1wc70G3Sb9Kv1OnvadrqU7pQsLlxBRR18HjADLTUwG+rHBT3gEKGVMYNxFgZvmm/MRwijKqqaHTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hZxA7bkb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736863986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B04i/gZ8lgb0zv2argciPqONFDUYHmh8OQrj2OyE9uo=;
+	b=hZxA7bkbaTNlJjmbVNEdx1Ay7sHBbL0AEdi1udlPbskPEWelgOCUHYDznEGzl3LTdaeqWF
+	p2i5dOdkl/ow5aJf/6FAJJ67DyxoVGeAoSvDUeRKGXtWhEovQEbPVYg6XvrvFlEUTjKhtY
+	jyo+h2s1qWt0oKNP4CcBE8wYvy8BpDs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-324-GmAEdh9ENC6QwlqhKjVq9w-1; Tue,
+ 14 Jan 2025 09:13:04 -0500
+X-MC-Unique: GmAEdh9ENC6QwlqhKjVq9w-1
+X-Mimecast-MFC-AGG-ID: GmAEdh9ENC6QwlqhKjVq9w
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E4B42117B;
-	Tue, 14 Jan 2025 13:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736863118; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wYrrC1Ay1frUFzvKXOzH8OW8eOdadzQMCqSZhD6SX44=;
-	b=ecWS653CiFEb2Rq3v9zlzFbpKhV6CSzEIQ+kl2PikhdhaDu7JT3xtTOMFRdkXwI6MBDm6o
-	DTFM7bKj7uedvd7DCw2z5BPYe1oWljGS9zQZPQI41zcmj07Bt9m1BUxvEJEMb2k4XbGIyf
-	Ct29Y9sMWJhRlUmNjwYqxhjfaSMXVhY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736863118;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wYrrC1Ay1frUFzvKXOzH8OW8eOdadzQMCqSZhD6SX44=;
-	b=ln5OSU9T7DlL2t4sqI98YnV6Y7Q2Ic7tU6wHZQfQDzBwVOxaNeKKT3e93M6erKmgo7dPAZ
-	1zhKH0kFFp2K2nCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ecWS653C;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ln5OSU9T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736863118; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wYrrC1Ay1frUFzvKXOzH8OW8eOdadzQMCqSZhD6SX44=;
-	b=ecWS653CiFEb2Rq3v9zlzFbpKhV6CSzEIQ+kl2PikhdhaDu7JT3xtTOMFRdkXwI6MBDm6o
-	DTFM7bKj7uedvd7DCw2z5BPYe1oWljGS9zQZPQI41zcmj07Bt9m1BUxvEJEMb2k4XbGIyf
-	Ct29Y9sMWJhRlUmNjwYqxhjfaSMXVhY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736863118;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wYrrC1Ay1frUFzvKXOzH8OW8eOdadzQMCqSZhD6SX44=;
-	b=ln5OSU9T7DlL2t4sqI98YnV6Y7Q2Ic7tU6wHZQfQDzBwVOxaNeKKT3e93M6erKmgo7dPAZ
-	1zhKH0kFFp2K2nCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BBD2139CB;
-	Tue, 14 Jan 2025 13:58:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rSItCo5thme7VAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 14 Jan 2025 13:58:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BF308A08CD; Tue, 14 Jan 2025 14:58:37 +0100 (CET)
-Date: Tue, 14 Jan 2025 14:58:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Jan Kara <jack@suse.cz>, 
-	Kun Hu <huk23@m.fudan.edu.cn>, jlayton@redhat.com, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	david@fromorbit.com, bfields@redhat.com, viro@zeniv.linux.org.uk, 
-	christian.brauner@ubuntu.com, hch@lst.de, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, brauner@kernel.org, linux-bcachefs@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
-Message-ID: <435wi7dfddjqhn5yxuw34tww2gyr4x2oeh3s25htuwl7cwggza@zuyzyrha7qk6>
-References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
- <gwgec4tknjmjel4e37myyichugheuba3sy7cxkdqqj2raaglf5@n7uttxolimpa>
- <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
- <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 648AA1955DC0;
+	Tue, 14 Jan 2025 14:13:02 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.76.4])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1476219560A3;
+	Tue, 14 Jan 2025 14:12:58 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Shyam Prasad N <nspmangalore@gmail.com>,
+ lsf-pc@lists.linux-foundation.org,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org,
+ brauner@kernel.org, Matthew Wilcox <willy@infradead.org>,
+ David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+ Steve French <smfrench@gmail.com>, trondmy@kernel.org,
+ Shyam Prasad N <sprasad@microsoft.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Predictive readahead of dentries
+Date: Tue, 14 Jan 2025 09:12:57 -0500
+Message-ID: <460E352E-DDFA-4259-A017-CAE51C78EDFC@redhat.com>
+In-Reply-To: <CAOQ4uxjk_YmSd_pwOkDbSoBdFiBXEBQF01mYyw+xSiCDOjqUOg@mail.gmail.com>
+References: <CANT5p=rxLH-D9qSoOWgjYeD87uahmZJMwXp8uNKW66mbv8hmDg@mail.gmail.com>
+ <CAOQ4uxjk_YmSd_pwOkDbSoBdFiBXEBQF01mYyw+xSiCDOjqUOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
-X-Rspamd-Queue-Id: 3E4B42117B
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue 14-01-25 10:07:03, Dmitry Vyukov wrote:
-> I also don't fully understand the value of "we also reported X bugs to
-> the upstream kernel" for research papers. There is little correlation
-> with the quality/novelty of research.
+On 14 Jan 2025, at 8:24, Amir Goldstein wrote:
 
-Since I was working in academia in the (distant) pass, let me share my
-(slightly educated) guess: In the paper you're supposed to show practical
-applicability and relevance of the improvement you propose. It doesn't have
-to be really useful but it has to sound useful enough to convince paper
-reviewer. I suppose in the fuzzer area this "practical applicability" part
-boils down how many bugs were reported...
+> On Tue, Jan 14, 2025 at 4:38 AM Shyam Prasad N <nspmangalore@gmail.com> wrote:
+>>
+>> The Linux kernel does buffered reads and writes using the page cache
+>> layer, where the filesystem reads and writes are offloaded to the
+>> VM/MM layer. The VM layer does a predictive readahead of data by
+>> optionally asking the filesystem to read more data asynchronously than
+>> what was requested.
+>>
+>> The VFS layer maintains a dentry cache which gets populated during
+>> access of dentries (either during readdir/getdents or during lookup).
+>> This dentries within a directory actually forms the address space for
+>> the directory, which is read sequentially during getdents. For network
+>> filesystems, the dentries are also looked up during revalidate.
+>>
+>> During sequential getdents, it makes sense to perform a readahead
+>> similar to file reads. Even for revalidations and dentry lookups,
+>> there can be some heuristics that can be maintained to know if the
+>> lookups within the directory are sequential in nature. With this, the
+>> dentry cache can be pre-populated for a directory, even before the
+>> dentries are accessed, thereby boosting the performance. This could
+>> give even more benefits for network filesystems by avoiding costly
+>> round trips to the server.
+>>
+>
+> I believe you are referring to READDIRPLUS, which is quite common
+> for network protocols and also supported by FUSE.
+>
+> Unlike network protocols, FUSE decides by server configuration and
+> heuristics whether to "fuse_use_readdirplus" - specifically in readdirplus_auto
+> mode, FUSE starts with readdirplus, but if nothing calls lookup on the
+> directory inode by the time the next getdents call, it stops with readdirplus.
+>
+> I personally ran into the problem that I would like to control from the
+> application, which knows if it is doing "ls" or "ls -l" whether a specific
+> getdents() will use FUSE readdirplus or not, because in some situations
+> where "ls -l" is not needed that can avoid a lot of unneeded IO.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Indeed, we often have folks wanting dramatically different behavior from
+getdents() in NFS, and every time we've tried to improve our heuristics
+someone else shouts "regression"!
+
+We can tune the NFS heuristic per-mount, but it often makes the wrong
+choice..  As you say letting the application make the call would be ideal.
+POSIX_FADV_ ?
+
+Ben
+
 
