@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-39159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098F6A10BFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 17:16:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE17A10C25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 17:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D671639C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 16:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CE61888D16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 16:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD44B1CAA8A;
-	Tue, 14 Jan 2025 16:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B874B1C2DB2;
+	Tue, 14 Jan 2025 16:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K1y1wuVP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E8VLNTt/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41B71ADC88
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 16:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C0D1ACE12
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 16:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736871365; cv=none; b=C7iE2hHHbzeC9cZMzuDp9sERhjnHwtWRj4IT3Au1vEg7rVI6YfIMZE16BZPfLSGW+CQaBGwlrG+EhtR37L376tngz5QD6lw2jjkLjPFCtOPoAK7rkl/Dl8GYoaWTAAXe5S0527i5UYe4OUZpqOYWI0HX2V2eoYz88WB3obirv/Y=
+	t=1736871744; cv=none; b=QF0gwHBVlpK1DRe526A6wQAWgZbqZREpbJ6A09KJdQCRfMeqSHl8QXXO1hXPWMzt1/i7ldTJ7TnF210t4p/gCtgRz+2K8RT1O9QOHT6IW9Txd+VbbTnz0Xer5IM93yLvTdurtSpMMT976cUiBJd/zAlK6EjWIVwQ7A9+oIrpnhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736871365; c=relaxed/simple;
-	bh=9QyVPolCezUvbBdiIcGpoR8EeYVhurGkFpaIP1HsnmE=;
+	s=arc-20240116; t=1736871744; c=relaxed/simple;
+	bh=4ao/NUGmaxaKVVgcyi/MaeA+sr+ghIi9JGqMpkQRUp4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYS2rnmPEoWDHFB/YuPpAbHra73UlVVsvvmaUbiDg3VoUURAT7taazNsTxLguwFYyTq+/ZOVwjxIEyi38DL37c9K30m0QdPH2tZC40ItW6YvKH5KNaDztDQbqtNLicJ3hBUq80ayAV4Xyxe9Ps8bxXXKMw29e398XtBJgbYnxcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K1y1wuVP; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=ILehHWhbvnEpjTVGsNGrf1eqd/iV/YKeq8/uwu9LljA0Eyisbn5hz6Ycw8F0Fss740r/VXEyqZkDiDJU2xWtm3R794t2aH3Qmwv0TpnG8pKNeLiO7R0U9vnIF74xydkFY+q2i/88i8npVA43TfAhk0GnGtZxnE1Wkq6W+FUYgL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E8VLNTt/; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736871361;
+	s=mimecast20190719; t=1736871741;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BKZGegbns0oO2BiwJ3+f97YYTvSOiPn2dNKausDj72c=;
-	b=K1y1wuVPm0xeJfz6ZhVEMVOUv3iaV9rbyHlBxtoRIgb1B81Vfispdpb+aI9i+ZbMuHdYFh
-	DbebOj32TDyrlQy8TeMfJ1+vvgzIpth16crtap4CzUZ/Q6Sk5yjLilbKvy/pIBWBXSTF2c
-	4PcvgdtWcY106xuWx2/rWbg7pX2h4eg=
+	bh=Gy0Ldt+ZI7Y3XWp3OlPzHMQgs1yINwkH9YDhGI10yLM=;
+	b=E8VLNTt/xM4Ct+YHV1CgQdQ5PhtMwJ8MSW9OzFBWp0YKQ/wtle9K+r4SG/j/8zGoH6AdNj
+	a60WRm1dbL0YZmowiVOP4gYYWQlj+v0f7j5hBSvp5fxfhqrNcomBxQWt+THgStaiO/jHrd
+	OrOHDoByubYvRhTKf13Uwi3FRaZIL/Q=
 Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
  [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-205-30R9YrLSPNSvc_pEsuAF1w-1; Tue, 14 Jan 2025 11:16:00 -0500
-X-MC-Unique: 30R9YrLSPNSvc_pEsuAF1w-1
-X-Mimecast-MFC-AGG-ID: 30R9YrLSPNSvc_pEsuAF1w
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4362f893bfaso31087815e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 08:16:00 -0800 (PST)
+ us-mta-232-8ck-olCBNsyoQZ2hJPw5UQ-1; Tue, 14 Jan 2025 11:22:20 -0500
+X-MC-Unique: 8ck-olCBNsyoQZ2hJPw5UQ-1
+X-Mimecast-MFC-AGG-ID: 8ck-olCBNsyoQZ2hJPw5UQ
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43628594d34so31899655e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 08:22:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736871359; x=1737476159;
+        d=1e100.net; s=20230601; t=1736871739; x=1737476539;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=BKZGegbns0oO2BiwJ3+f97YYTvSOiPn2dNKausDj72c=;
-        b=uLtDkhLKThTsS72eF7EtH5k4bEpj6YRPKUT+2e3ftk0BHMhA/AI2N4UNiPQ1Uap2kb
-         qG+3eyvPw/7WKgpW7pJCdDbQBK2fC68zxIdti0FfMkur9ujHoPl8vpPcBQtN8AVRy0dY
-         8yLKkcbm9D2kxX9vvDqSZutIEGZXjfT8ExGpxYhzKkvh21erUOEeWgruszuDmarZQi9E
-         183XysiuN8KWTEerISyF/QFLo/Wbs/tAF8B6PFC1+Ya+LzfAxj2JT8zck5d32lhSl1OD
-         lw6eU8J7LyRmU3xi7CCcKAhDbxkx3Ecnr4OqOCU51JZ4aTf/KbaEiQsdu0SToGaCqXLO
-         didQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH0WDSWSiwCozjhif4Esvxd6lOOvLMHcuUxvoTbEoyni9KxO3pEigQsOX+aED4st492rfq9kc2T6L4yvQj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFA+qrjHkr4arw8Z0B2nFNTaul81ifBWXLT7GLlH+ClG41ZDvO
-	jx7aIbXwXs8fWKpCX8zc8chJuajXkKprqXMLbrImbIjoDZ442/rLf+RH1V1qHB6470eZlT/sJkL
-	XwnqUvnNfAdXUk6xms7xSscyFlUiwnYsUG2L4+1kPkR5bi0An8PBXj4qWBRB59OA=
-X-Gm-Gg: ASbGncuS6YIL1Up9XvwZ8nGuqKijeuSAHJPctNN2HYLHf16Mu3m3tXjz/2C3J1OKsc3
-	UlIUGwq06zKHXR0SkOfhOsvazev+8g9gcQCqYZx3DXfWaR2Iifig9VpL1AjFZJlTDD/Femm0LRQ
-	4ZiLaGGQhmYmVSuXzr4GulzjXW+f3v5H2z0TYeQha+waDtrzN1we26nf1pcvmXppaeCzhPuEjc0
-	rq8bJsV0/Tp1VjSe/c5AEX4WVwPBQ7+OvnZZpRGBH3iNGmbpTSThiqAtHJHA0SCIymS5o02gKio
-	a4Ke2CUvcPl19hmBjMiqlv0NGTrAt3ddGiWC9waf5V7oiky8Ab5bdfXVHyd0kiyfhplGII1WJiT
-	9OxSD3kUj
-X-Received: by 2002:a05:600c:5355:b0:436:ed33:1526 with SMTP id 5b1f17b1804b1-436ed33162amr182756845e9.9.1736871359375;
-        Tue, 14 Jan 2025 08:15:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFQbYca8iq/sXXNIyR3sSpTPcooFVjpwvneyEuVZssY7PhZf37hAnmkM55yUX0wAVqiodKD2A==
-X-Received: by 2002:a05:600c:5355:b0:436:ed33:1526 with SMTP id 5b1f17b1804b1-436ed33162amr182756535e9.9.1736871359013;
-        Tue, 14 Jan 2025 08:15:59 -0800 (PST)
+        bh=Gy0Ldt+ZI7Y3XWp3OlPzHMQgs1yINwkH9YDhGI10yLM=;
+        b=vh9s3xsQgCQm1to4/wSyL77T2eXVKqmoe3L1rA3d1s6zPve8uPyogaVdzcYylwddad
+         4jCGtakBUFlqizslP9T5I5+ZBzE1+6IcJGarYVKJtFyLqXo7SQpVE+w8YFQtcuVwkzVm
+         +X4STglmSpR1dgw+rlwVbL7yo8Jk6jziKvK80BnlH1U8E3arVyxfVaU0Q0fqpRqFJdYp
+         EuUCi9ezsZhLjjOS6RtlYj969fqFdntVp/qKui3OFCtrS8j3I1CJZaAA542ObrEkAPmi
+         FB2RZanweuJ1IJoUH71JvUyN56YLP7n+LPwNDrB9Xrc4XsDhEX0aF+QunFTQm0AnOXKk
+         SsZw==
+X-Forwarded-Encrypted: i=1; AJvYcCX06fe0yZclv4kl6xVMKzGsERJD6qeVa459r1YnfuCStmlwbsiNlcjB1H8v8vlXexmxCZpNKqXge8igkLXV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVVEiCKrbSmLrbbA7jc0QJKCTEY/kBq56fS575MCb06/v/JE9B
+	x3iGn0jeJ/zB0LXuioAeYnzbmz/ENl6d2PcTIN2Dcq6qmJ+TMCmInXkTG7mjYf6URnTbDlrbP0B
+	sN/qJt+jWlDo1vOhknIc36/hGKTPR1CjxMW1zcruVOKAoxwndUhDamG9Kn6eL/3A=
+X-Gm-Gg: ASbGncs14JDgExZMriGP0fbPwYMVPWTlgfhTtKRK4Gp9u0zzbPgu353ELowpgS2JUK/
+	yRWT5eBi5k1V6H81+M3uB0LwUWJjLOxuI+aWiZ8V98Ww96KSsE2ykIMycIVQ0PD5S6KghXGmTbm
+	mVIBeId4w0bCmyWPZegNKL+7poStgWhtKLEROeTKmGsfzk+J/0JINVifc/sduY3Jow/FYTkasgw
+	m6VniwT+mBPKNkeZjsFy9IQ5H8w73P0lldNNmTxiMBOBPTGvjn0LPp9SBfcxMpoENVgCxQ4R+FP
+	UUkU/1AlUgxzh30JsNyWHULBWFJFaKenQ+l7eyTp858WmbbkS7E/Ul0PCGswGEwxxy/HpsQ7ncu
+	Nz1TcpsWc
+X-Received: by 2002:a05:600c:808:b0:436:488f:4f3 with SMTP id 5b1f17b1804b1-436e26a1b3dmr248887985e9.17.1736871738769;
+        Tue, 14 Jan 2025 08:22:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGzrt+oh+BDgDr0mTUmNNAkoVBPx3QMSnwQIay9ds7g9OeGpsrnfeAbT16Qe0MdXZET33lN3g==
+X-Received: by 2002:a05:600c:808:b0:436:488f:4f3 with SMTP id 5b1f17b1804b1-436e26a1b3dmr248887545e9.17.1736871738414;
+        Tue, 14 Jan 2025 08:22:18 -0800 (PST)
 Received: from ?IPV6:2003:cb:c738:3100:8133:26cf:7877:94aa? (p200300cbc7383100813326cf787794aa.dip0.t-ipconnect.de. [2003:cb:c738:3100:8133:26cf:7877:94aa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e6249csm178402255e9.38.2025.01.14.08.15.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e6249csm178599775e9.38.2025.01.14.08.22.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2025 08:15:57 -0800 (PST)
-Message-ID: <17d32dc8-39c1-4aa4-ab8c-873c78097fde@redhat.com>
-Date: Tue, 14 Jan 2025 17:15:54 +0100
+        Tue, 14 Jan 2025 08:22:17 -0800 (PST)
+Message-ID: <fb1b7d1d-33da-4de1-b863-61ea8421c7fa@redhat.com>
+Date: Tue, 14 Jan 2025 17:22:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 13/26] mm/memory: Add vmf_insert_page_mkwrite()
+Subject: Re: [PATCH v6 15/26] huge_memory: Add vmf_insert_folio_pud()
 To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
  dan.j.williams@intel.com, linux-mm@kvack.org
 Cc: alison.schofield@intel.com, lina@asahilina.net, zhang.lyra@gmail.com,
@@ -107,7 +107,7 @@ Cc: alison.schofield@intel.com, lina@asahilina.net, zhang.lyra@gmail.com,
  hch@lst.de, david@fromorbit.com, chenhuacai@kernel.org, kernel@xen0n.name,
  loongarch@lists.linux.dev
 References: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
- <e75232267bb9b5411b67df267e16aa27597eba33.1736488799.git-series.apopple@nvidia.com>
+ <60fcfaa3df47885b1df9b064ecb3d4e366fc07e7.1736488799.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -155,135 +155,69 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <e75232267bb9b5411b67df267e16aa27597eba33.1736488799.git-series.apopple@nvidia.com>
+In-Reply-To: <60fcfaa3df47885b1df9b064ecb3d4e366fc07e7.1736488799.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 10.01.25 07:00, Alistair Popple wrote:
-> Currently to map a DAX page the DAX driver calls vmf_insert_pfn. This
-> creates a special devmap PTE entry for the pfn but does not take a
-> reference on the underlying struct page for the mapping. This is
-> because DAX page refcounts are treated specially, as indicated by the
-> presence of a devmap entry.
+> Currently DAX folio/page reference counts are managed differently to
+> normal pages. To allow these to be managed the same as normal pages
+> introduce vmf_insert_folio_pud. This will map the entire PUD-sized folio
+> and take references as it would for a normally mapped page.
 > 
-> To allow DAX page refcounts to be managed the same as normal page
-> refcounts introduce vmf_insert_page_mkwrite(). This will take a
-> reference on the underlying page much the same as vmf_insert_page,
-> except it also permits upgrading an existing mapping to be writable if
-> requested/possible.
+> This is distinct from the current mechanism, vmf_insert_pfn_pud, which
+> simply inserts a special devmap PUD entry into the page table without
+> holding a reference to the page for the mapping.
 > 
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> 
-> ---
-> 
-> Updates from v2:
-> 
->   - Rename function to make not DAX specific
-> 
->   - Split the insert_page_into_pte_locked() change into a separate
->     patch.
-> 
-> Updates from v1:
-> 
->   - Re-arrange code in insert_page_into_pte_locked() based on comments
->     from Jan Kara.
-> 
->   - Call mkdrity/mkyoung for the mkwrite case, also suggested by Jan.
-> ---
->   include/linux/mm.h |  2 ++
->   mm/memory.c        | 36 ++++++++++++++++++++++++++++++++++++
->   2 files changed, 38 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index e790298..f267b06 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3620,6 +3620,8 @@ int vm_map_pages(struct vm_area_struct *vma, struct page **pages,
->   				unsigned long num);
->   int vm_map_pages_zero(struct vm_area_struct *vma, struct page **pages,
->   				unsigned long num);
-> +vm_fault_t vmf_insert_page_mkwrite(struct vm_fault *vmf, struct page *page,
-> +			bool write);
->   vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
->   			unsigned long pfn);
->   vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 8531acb..c60b819 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2624,6 +2624,42 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
->   	return VM_FAULT_NOPAGE;
->   }
->   
-> +vm_fault_t vmf_insert_page_mkwrite(struct vm_fault *vmf, struct page *page,
-> +			bool write)
+
+[...]
+
+> +/**
+> + * vmf_insert_folio_pud - insert a pud size folio mapped by a pud entry
+> + * @vmf: Structure describing the fault
+> + * @folio: folio to insert
+> + * @write: whether it's a write fault
+> + *
+> + * Return: vm_fault_t value.
+> + */
+> +vm_fault_t vmf_insert_folio_pud(struct vm_fault *vmf, struct folio *folio, bool write)
 > +{
 > +	struct vm_area_struct *vma = vmf->vma;
-> +	pgprot_t pgprot = vma->vm_page_prot;
-> +	unsigned long pfn = page_to_pfn(page);
-> +	unsigned long addr = vmf->address;
-> +	int err;
+> +	unsigned long addr = vmf->address & PUD_MASK;
+> +	pud_t *pud = vmf->pud;
+> +	struct mm_struct *mm = vma->vm_mm;
+> +	spinlock_t *ptl;
 > +
 > +	if (addr < vma->vm_start || addr >= vma->vm_end)
 > +		return VM_FAULT_SIGBUS;
 > +
-> +	track_pfn_insert(vma, &pgprot, pfn_to_pfn_t(pfn));
-
-I think I raised this before: why is this track_pfn_insert() in here? It 
-only ever does something to VM_PFNMAP mappings, and that cannot possibly 
-be the case here (nothing in VM_PFNMAP is refcounted, ever)?
-
-> +
-> +	if (!pfn_modify_allowed(pfn, pgprot))
+> +	if (WARN_ON_ONCE(folio_order(folio) != PUD_ORDER))
 > +		return VM_FAULT_SIGBUS;
-
-Why is that required? Why are we messing so much with PFNs? :)
-
-Note that x86 does in there
-
-	/* If it's real memory always allow */
-	if (pfn_valid(pfn))
-		return true;
-
-See below, when would we ever have a "struct page *" but !pfn_valid() ?
-
-
 > +
-> +	/*
-> +	 * We refcount the page normally so make sure pfn_valid is true.
-> +	 */
-> +	if (!pfn_valid(pfn))
-> +		return VM_FAULT_SIGBUS;
+> +	ptl = pud_lock(mm, pud);
+> +	if (pud_none(*vmf->pud)) {
+> +		folio_get(folio);
+> +		folio_add_file_rmap_pud(folio, &folio->page, vma);
+> +		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PUD_NR);
+> +	}
+> +	insert_pfn_pud(vma, addr, vmf->pud, pfn_to_pfn_t(folio_pfn(folio)), write);
 
-Somebody gave us a "struct page", how could the pfn ever by invalid (not 
-have a struct page)?
+This looks scary at first (inserting something when not taking a 
+reference), but insert_pfn_pud() seems to handle that. A comment here 
+would have been nice.
 
-I think all of the above regarding PFNs should be dropped -- unless I am 
-missing something important.
+It's weird, though, that if there is already something else, that we 
+only WARN but don't actually return an error. So ...
 
-> +
-> +	if (WARN_ON(is_zero_pfn(pfn) && write))
-> +		return VM_FAULT_SIGBUS;
-
-is_zero_page() if you already have the "page". But note that in 
-validate_page_before_insert() we do have a check that allows for 
-conditional insertion of the shared zeropage.
-
-So maybe this hunk is also not required.
-
-> +
-> +	err = insert_page(vma, addr, page, pgprot, write);
-> +	if (err == -ENOMEM)
-> +		return VM_FAULT_OOM;
-> +	if (err < 0 && err != -EBUSY)
-> +		return VM_FAULT_SIGBUS;
+> +	spin_unlock(ptl);
 > +
 > +	return VM_FAULT_NOPAGE;
-> +}
-> +EXPORT_SYMBOL_GPL(vmf_insert_page_mkwrite);
 
+I assume always returning VM_FAULT_NOPAGE, even when something went 
+wrong, is the right thing to do?
 
-
+Apart from that LGTM.
 
 
 -- 
