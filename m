@@ -1,121 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-39217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3512A1163E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 01:51:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6F1A1177F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 03:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7579188A3F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:51:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C7297A1C72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 02:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD8C1BC58;
-	Wed, 15 Jan 2025 00:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIVEMH3g"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639F922DF9B;
+	Wed, 15 Jan 2025 02:54:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9D33595D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 00:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E221A22E3E7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 02:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736902267; cv=none; b=avg3A0La0p6XJ36unbf2pAIkUwJQn8sOQkGzpbPtp/NlXT68qscSYNLVbO30ak2v93aMuISCSLgd6rwfFpMY3dZIxy0tMBYaZumGFFh41Oc/Sg9b56zT2sS1B+oPVNZEdFyNswG33KuY89nM66CYCry9NSaK3DJTf/2Le9zSsDk=
+	t=1736909667; cv=none; b=XLL9GgKzCdGlPILAeNQ4ILZmT2EA+dM8ctoR/1KIf2M43xcsTuu4Q01SMzYV+nrdKU8S5XGv2IIPKhsukVKatqfXOS9kJwVzJ4QbvIdeMZiK5yfX3zR0LJ/5tNBoC4+LpA7Fe11f0a5h1lQIUPCFakmJEGXUJfCpaS9neCSwWik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736902267; c=relaxed/simple;
-	bh=UZequrAvRvKd4UTlNzoo0boLDHb5K7SNUlbAXXqfxO4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MPgXNd+2LXVgHHcSJbIIQBnyojJY3fxCh5kjcTd9H5KuioeWFDZ3wj8gvo7nsiVCM0NlP2ybsbzYH5rcxCp008WIPZqy5H2uGU7Q8MfjxIaDSrSkFeq02fYOswwOmM6k96BjsidptseYdvyZwdjvAeGD+ypwSFsu8TuaTJSSLxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIVEMH3g; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-467a1d43821so3300091cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 16:51:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736902264; x=1737507064; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UZequrAvRvKd4UTlNzoo0boLDHb5K7SNUlbAXXqfxO4=;
-        b=aIVEMH3guGzsGTqRJRSsshroVZv5ceLgEAvQ3/v1PZH5dphkRekjqbSq8I/5TlndI5
-         vAET4VKiJv36yVOWw/QsTZ5MZLxvpbPRGC6fpmW7zUjg5yqcoz379GAZ7Pqx5ajnvRdS
-         16JwsD6x8XRh+PvAPK+mIa9pp+PH4EGy1RQ+xqmMU8UZdoEDx6bwk2EK2Qm/Z3Fum10L
-         4xwfuOQdpZS05Ci7Y2qbhbTCtq4bhc7HQoka2XqdvvVjR8XYH5F1r+pue45eCunHttYp
-         IOAcuqQegfIDTv7wTlMZVrrAq/ZCQQZQDRcrR/vujwr+hffKmIQk5oCJuaLriz5BI/0m
-         +mhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736902264; x=1737507064;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UZequrAvRvKd4UTlNzoo0boLDHb5K7SNUlbAXXqfxO4=;
-        b=mPgOi9aPnGGhGxADXCBC5mvw8XTMki74Y0xwHC/1aslGzOaipdVw7Y9dWfVBepDv9o
-         4irxrUjHExhuzW4n8K3WdlkVqi/VC6LHAFXY4gfw1Lbj9M4xWFNMK0PipVDsqEhPOGdJ
-         BeMwZNS8lJR5yXSOQnQ0dM8CKFJvIl5i8YEAuMNOsNpX8qWkhRbgMVcVezF26eaNNFze
-         iD5ZRIWlcHz51nncrYOASDID+Y3LwJgjsHyTddKrki5v0oiK5cHPbHFAjfkwI/mwyDlj
-         loVWisekZ7WNBE1+FFeBFw/aMpHns9BRU3qTXsXN3MMTK80cmgHVFbqxp1f4upeKS1O5
-         c2zQ==
-X-Gm-Message-State: AOJu0YyYvf/tCKUscoyfR+xzK7E+xASAGHQ0wGc12om7XSNb7K47e/gH
-	klA4XgGPqlmjq8gyohT4QuJKEYhWoClP44Xb/7OAtOGCPXHDm13UtJqmUHwAhaGDBvSDCdOaQtE
-	12EaBKYRfpOsc+xIqWYiQ10r0BaU=
-X-Gm-Gg: ASbGnctsnX03gg2HpWh38nUb34dWbK3yhsyfio53XHEGLxFISYLqmnLy8SMwzlRn+YV
-	mkpHySa9ur3BoNTBFSqxzPuFa1Ag60n1Bm+vxzMk=
-X-Google-Smtp-Source: AGHT+IG0ULU+4kvAJL+SO0+TmFf6xUXVq5KlUeuTmvQS82g8Yiivvwj1NtRlshMXZmhGdlkLuTKnnzqYcQntN7UeRXQ=
-X-Received: by 2002:ac8:7f16:0:b0:465:2fba:71b5 with SMTP id
- d75a77b69052e-46df56d386emr17630041cf.13.1736902264576; Tue, 14 Jan 2025
- 16:51:04 -0800 (PST)
+	s=arc-20240116; t=1736909667; c=relaxed/simple;
+	bh=dpwWf+m75OkqfJTiSdciwyHJNdVXyBieuBUHOhecWYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTOpLP2tszUZmCa8HYFzdr6coulhi3uf7O3dVfEhbQFq+89/cUCNjiciLDT01ymCLdlEz8XEe/EKxVdnrW7YNU0QDg/OOoZ84PWwhnOqVtvQ/OP2RYQ3dKwuvLbM/hmkZuLVn+FeluoJ8VTCT2ppbF51H8iEw5jfwrt2roYgFww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id XoCEtPK8Px4XtXoCFtujmE; Tue, 14 Jan 2025 14:11:35 -0700
+X-CMAE-Analysis: v=2.4 cv=Fa3NxI+6 c=1 sm=1 tr=0 ts=6786d307
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=JfrnYn6hAAAA:8 a=FXvPX3liAAAA:8 a=PXAFGWOKMHoxhg3sn_wA:9
+ a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <8c391f15-b30c-4d2d-856e-0eb74f68e433@squashfs.org.uk>
+Date: Tue, 14 Jan 2025 21:11:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 14 Jan 2025 16:50:53 -0800
-X-Gm-Features: AbW1kva7ivpAyvaPfCT1YGtWlyt-QPg3gb8b4M71_XGeZ22TdVC_qesb44X4K2I
-Message-ID: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
-Subject: [LSF/MM/BPF TOPIC] Improving large folio writeback performance
-To: lsf-pc@lists.linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-
-Hi all,
-
-I would like to propose a discussion topic about improving large folio
-writeback performance. As more filesystems adopt large folios, it
-becomes increasingly important that writeback is made to be as
-performant as possible. There are two areas I'd like to discuss:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] squashfs: Use a folio throughout
+ squashfs_read_folio()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20241220224634.723899-1-willy@infradead.org>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20241220224634.723899-1-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfENWepOiRwFkYR6Vlt7hCMenpMy5wn5og774Ssac3cKZjajAc7lAai1e/GWEjMfzSKouO/N+rOv48c2CpVQKcl4K+A8pUume9vE0T5uHIRbRmfLUalYg
+ VXWu5Wg/2GXce9N9HlkOI9tnJMDoQqk62gGQNLNHHIgZWs9E47oj1kI7bwU1pqgNmmx8LNzWgIGXsxGL2JvRZ30p0y3sumLAnow3Hz3JfAfiQnsjxmpaIbTH
+ Dz+o1Wyd9TwiZXhGWX1dZHHccnBLR+5Hq7WyX2vV1hw=
 
 
-== Granularity of dirty pages writeback ==
-Currently, the granularity of writeback is at the folio level. If one
-byte in a folio is dirty, the entire folio will be written back. This
-becomes unscalable for larger folios and significantly degrades
-performance, especially for workloads that employ random writes.
 
-One idea is to track dirty pages at a smaller granularity using a
-64-bit bitmap stored inside the folio struct where each bit tracks a
-smaller chunk of pages (eg for 2 MB folios, each bit would track 32k
-pages), and only write back dirty chunks rather than the entire folio.
+On 12/20/24 22:46, Matthew Wilcox (Oracle) wrote:
+> Use modern folio APIs where they exist and convert back to struct
+> page for the internal functions.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
+Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
+Tested-by: Phillip Lougher <phillip@squashfs.org.uk>
 
-== Balancing dirty pages ==
-It was observed that the dirty page balancing logic used in
-balance_dirty_pages() fails to scale for large folios [1]. For
-example, fuse saw around a 125% drop in throughput for writes when
-using large folios vs small folios on 1MB block sizes, which was
-attributed to scheduled io waits in the dirty page balancing logic. In
-generic_perform_write(), dirty pages are balanced after every write to
-the page cache by the filesystem. With large folios, each write
-dirties a larger number of pages which can grossly exceed the
-ratelimit, whereas with small folios each write is one page and so
-pages are balanced more incrementally and adheres more closely to the
-ratelimit. In order to accomodate large folios, likely the logic in
-balancing dirty pages needs to be reworked.
-
-
-Thanks,
-Joanne
-
-[1] https://lore.kernel.org/linux-fsdevel/Z1N505RCcH1dXlLZ@casper.infradead.org/T/#m9e3dd273aa202f9f4e12eb9c96602b5fec2d383d
+> ---
+>   fs/squashfs/file.c | 25 +++++++++----------------
+>   1 file changed, 9 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+> index 21aaa96856c1..bc6598c3a48f 100644
+> --- a/fs/squashfs/file.c
+> +++ b/fs/squashfs/file.c
+> @@ -445,21 +445,19 @@ static int squashfs_readpage_sparse(struct page *page, int expected)
+>   
+>   static int squashfs_read_folio(struct file *file, struct folio *folio)
+>   {
+> -	struct page *page = &folio->page;
+> -	struct inode *inode = page->mapping->host;
+> +	struct inode *inode = folio->mapping->host;
+>   	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
+> -	int index = page->index >> (msblk->block_log - PAGE_SHIFT);
+> +	int index = folio->index >> (msblk->block_log - PAGE_SHIFT);
+>   	int file_end = i_size_read(inode) >> msblk->block_log;
+>   	int expected = index == file_end ?
+>   			(i_size_read(inode) & (msblk->block_size - 1)) :
+>   			 msblk->block_size;
+>   	int res = 0;
+> -	void *pageaddr;
+>   
+>   	TRACE("Entered squashfs_readpage, page index %lx, start block %llx\n",
+> -				page->index, squashfs_i(inode)->start);
+> +				folio->index, squashfs_i(inode)->start);
+>   
+> -	if (page->index >= ((i_size_read(inode) + PAGE_SIZE - 1) >>
+> +	if (folio->index >= ((i_size_read(inode) + PAGE_SIZE - 1) >>
+>   					PAGE_SHIFT))
+>   		goto out;
+>   
+> @@ -472,23 +470,18 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
+>   			goto out;
+>   
+>   		if (res == 0)
+> -			res = squashfs_readpage_sparse(page, expected);
+> +			res = squashfs_readpage_sparse(&folio->page, expected);
+>   		else
+> -			res = squashfs_readpage_block(page, block, res, expected);
+> +			res = squashfs_readpage_block(&folio->page, block, res, expected);
+>   	} else
+> -		res = squashfs_readpage_fragment(page, expected);
+> +		res = squashfs_readpage_fragment(&folio->page, expected);
+>   
+>   	if (!res)
+>   		return 0;
+>   
+>   out:
+> -	pageaddr = kmap_atomic(page);
+> -	memset(pageaddr, 0, PAGE_SIZE);
+> -	kunmap_atomic(pageaddr);
+> -	flush_dcache_page(page);
+> -	if (res == 0)
+> -		SetPageUptodate(page);
+> -	unlock_page(page);
+> +	folio_zero_segment(folio, 0, folio_size(folio));
+> +	folio_end_read(folio, res == 0);
+>   
+>   	return res;
+>   }
 
