@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-39118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D96CA101CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:12:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6598A1020B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F42167E32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 08:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC2218825B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 08:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B9E2500D1;
-	Tue, 14 Jan 2025 08:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917AF1CEEA4;
+	Tue, 14 Jan 2025 08:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NSwc/+B7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CFgyCgX1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF91D2500B0;
-	Tue, 14 Jan 2025 08:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9BB1C07C3;
+	Tue, 14 Jan 2025 08:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736842337; cv=none; b=U9dw1aqWwKnu3PUACPa5mswNI16kvC4wuRRm5ZokXoP19yTRF1YNOcfpDR5wMSNpFOhIO6Zdd6nwA+PINDJhFPesWsKOY36/SK0cQgJMuro+fnsJte/shda9D4myanQJl3DqIHzdfaOXBj554RX9VAEpw4eiYw0d5HLDGjvf5sM=
+	t=1736843457; cv=none; b=Kme8pmXW6imQlWWmzJ7LtI3oV6MhCLmFMCyNZkz6vMMoYr6GPmJzcJudMM2NVYDrromz5UK3QK404vkz1P3RT0l2eQ1TBiYX3R05QFQWuvdmJY3jT2VxvrNzB3mRNyW+3hNlxiM/EwhMEMrVk+G/nx6REchQXQZUpvk4PMHxeLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736842337; c=relaxed/simple;
-	bh=pxe5Cr3IUU4vuhI2W5Tsk9Ljrj/+VC3k0IJ02hJCG94=;
+	s=arc-20240116; t=1736843457; c=relaxed/simple;
+	bh=d76ZuYXYGd5MhYXwKrUOaL/NFOW9yG6blep811EcGeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImRjT0HYG6r9owy8rVx2jtmTj9IHKAoXTYFXZw3C/yK/+ohsWGBoTksuE4m00tn1TnBD1pzo2ucfh8mbrO9Cg1SXvpSzrIFBW8RQGJOY1Q6ADz8upJKj0vGF+SWt2wiX7vsGtihfIeRn68TI7vkF9X1EUsKTUiViA9E6AuVD6y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NSwc/+B7; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcqPS2uQGawWqWqUbFPb9xQxKociCVOIUdt3g3RWhFccTBGoRh0SSe778ywexuwSz5uEriu6np6RetFv92W57tHAuxUN07uQNVxW7Trj5gvPzDdc/MEAN1T7Cb8UXECx7NpqQy0IV0xqk+JsjhxKiZaNTrms6W6VMTscJAxNqdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CFgyCgX1; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1736842336; x=1768378336;
+  t=1736843455; x=1768379455;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=pxe5Cr3IUU4vuhI2W5Tsk9Ljrj/+VC3k0IJ02hJCG94=;
-  b=NSwc/+B7F/GnmC7jsTNgCSI4So8YyZ4fxDxORCXz7yaw7PWVGvzCk6jw
-   VVkKRBaUuzVqMAHT7JnQAoAwJKxoCN/uRHibWJ0odcP4UpRAq0Vh9w/jh
-   nKK2kVhQvf4/ncs1N/jM45wYV8UrFcjf58nH2ZMbHlB+babSez82VjdQ4
-   9qPksMNdnvkOf6sv5Y4ZpUlVPyuJ8EwS7hhGepH117vB03L5DKxxq72kV
-   05+riQJOvoXcHazjOTWNjlL7/XaDV6Fy5ztZNxeR3CiQSqJwh2wZtkFmj
-   yTZt3ryJ9yYFCjqXUKh+Jf8n2vrMTFZiTFBzMoBGdP+7/ZEVDvqrqXfuA
-   g==;
-X-CSE-ConnectionGUID: 4/5ES+dKRkenoAfhyqVxlw==
-X-CSE-MsgGUID: Q+/hrZzuSmiU3JA8kjbRKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40893207"
-X-IronPort-AV: E=Sophos;i="6.12,313,1728975600"; 
-   d="scan'208";a="40893207"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2025 00:12:13 -0800
-X-CSE-ConnectionGUID: q+uksDtPR+etdITJ2foqng==
-X-CSE-MsgGUID: +ZAIAAAPT/WLm4t+jo2BVw==
+   mime-version:in-reply-to;
+  bh=d76ZuYXYGd5MhYXwKrUOaL/NFOW9yG6blep811EcGeg=;
+  b=CFgyCgX16mwWlhGyfMpK3ByL7XgQN+9XpmFGjyVWnQf/9jFy/+ei+mHg
+   +6vsYfHnXxT66Vmy7pNHxmhafPkXy2QYT/5ldBvhpTXfvszZSSjIt3xHq
+   EIdIFHW0i8oneTIIcjiN16qALeguS79OwTdcl64aAo5TXauZSym8p8fBR
+   QMQ5uLusJGsooY/QilHzw67ES2Bdh69Jl2lLYTAdwLlQAdyHsaTPnOs3P
+   SvYZUZSp1xTi4rIjcVTr5ExAKnh1hFWESb9VT8nk43DwWuwRntzJE1uUq
+   5tuQefcKTygKEd96Sft9ggemIuYfFHfPEVov4Ebit9DEteNhF9h+8tJ5w
+   A==;
+X-CSE-ConnectionGUID: TyWPe7nBS16NHAk99ORPRw==
+X-CSE-MsgGUID: EPd2tT4lTvewxfTr71sEhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="37241821"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="37241821"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2025 00:30:54 -0800
+X-CSE-ConnectionGUID: OGS8UdzDSvmjat/Rleu/Tg==
+X-CSE-MsgGUID: Yr9g/hOpTTeh7GM4krWnuQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="105220331"
+   d="scan'208";a="109880457"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 14 Jan 2025 00:12:05 -0800
+  by orviesa005.jf.intel.com with ESMTP; 14 Jan 2025 00:30:47 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 6A55439C; Tue, 14 Jan 2025 10:12:03 +0200 (EET)
-Date: Tue, 14 Jan 2025 10:12:03 +0200
+	id B879339C; Tue, 14 Jan 2025 10:30:45 +0200 (EET)
+Date: Tue, 14 Jan 2025 10:30:45 +0200
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Yosry Ahmed <yosryahmed@google.com>
+To: Matthew Wilcox <willy@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti <andi.shyti@linux.intel.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	David Airlie <airlied@gmail.com>, David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
+	Jens Axboe <axboe@kernel.dk>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Andi Shyti <andi.shyti@linux.intel.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Christian Brauner <brauner@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, David Airlie <airlied@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
 	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
 	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
 	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
@@ -76,88 +76,81 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
 	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
 	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Yu Zhao <yuzhao@google.com>, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] mm/swap: Use PG_dropbehind instead of PG_reclaim
-Message-ID: <sct6vvupd4cp6xt66nn6sfs7w3srpx6zcxxsn6rz5qo4tz3la6@btdqsbicmrto>
+	Vlastimil Babka <vbabka@suse.cz>, Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/8] mm: Remove PG_reclaim
+Message-ID: <vpy2hikqvw3qrncjdlxp6uonpmbueoulhqipdkac7tav4t7m2s@3ebncdtepyv6>
 References: <20250113093453.1932083-1-kirill.shutemov@linux.intel.com>
- <20250113093453.1932083-5-kirill.shutemov@linux.intel.com>
- <CAJD7tkYH8KO8NLJY564PRAmW-mtMfDCMTECGKyYyVAf+JtTcRA@mail.gmail.com>
+ <20250113093453.1932083-9-kirill.shutemov@linux.intel.com>
+ <Z4UxK_bsFD7TtL1l@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkYH8KO8NLJY564PRAmW-mtMfDCMTECGKyYyVAf+JtTcRA@mail.gmail.com>
+In-Reply-To: <Z4UxK_bsFD7TtL1l@casper.infradead.org>
 
-On Mon, Jan 13, 2025 at 08:17:20AM -0800, Yosry Ahmed wrote:
-> On Mon, Jan 13, 2025 at 1:35 AM Kirill A. Shutemov
-> <kirill.shutemov@linux.intel.com> wrote:
-> >
-> > The recently introduced PG_dropbehind allows for freeing folios
-> > immediately after writeback. Unlike PG_reclaim, it does not need vmscan
-> > to be involved to get the folio freed.
-> >
-> > Instead of using folio_set_reclaim(), use folio_set_dropbehind() in
-> > lru_deactivate_file().
-> >
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > ---
-> >  mm/swap.c | 8 +-------
-> >  1 file changed, 1 insertion(+), 7 deletions(-)
-> >
-> > diff --git a/mm/swap.c b/mm/swap.c
-> > index fc8281ef4241..4eb33b4804a8 100644
-> > --- a/mm/swap.c
+On Mon, Jan 13, 2025 at 03:28:43PM +0000, Matthew Wilcox wrote:
+> On Mon, Jan 13, 2025 at 11:34:53AM +0200, Kirill A. Shutemov wrote:
+> > diff --git a/mm/migrate.c b/mm/migrate.c
+> > index caadbe393aa2..beba72da5e33 100644
+> > --- a/mm/migrate.c
+> > +++ b/mm/migrate.c
+> > @@ -686,6 +686,8 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
+> >  		folio_set_young(newfolio);
+> >  	if (folio_test_idle(folio))
+> >  		folio_set_idle(newfolio);
+> > +	if (folio_test_readahead(folio))
+> > +		folio_set_readahead(newfolio);
+> >  
+> >  	folio_migrate_refs(newfolio, folio);
+> >  	/*
+> 
+> Not a problem with this patch ... but aren't we missing a
+> test_dropbehind / set_dropbehind pair in this function?  Or are we
+> prohibited from migrating a folio with the dropbehind flag set
+> somewhere?
+
+Hm. Good catch.
+
+We might want to drop clean dropbehind pages instead migrating them.
+
+But I am not sure about dirty ones. With slow backing storage it might be
+better for the system to migrate them instead of keeping them in the old
+place for potentially long time.
+
+Any opinions?
+
 > > +++ b/mm/swap.c
-> > @@ -562,14 +562,8 @@ static void lru_deactivate_file(struct lruvec *lruvec, struct folio *folio)
-> >         folio_clear_referenced(folio);
-> >
-> >         if (folio_test_writeback(folio) || folio_test_dirty(folio)) {
-> > -               /*
-> > -                * Setting the reclaim flag could race with
-> > -                * folio_end_writeback() and confuse readahead.  But the
-> > -                * race window is _really_ small and  it's not a critical
-> > -                * problem.
-> > -                */
-> >                 lruvec_add_folio(lruvec, folio);
-> > -               folio_set_reclaim(folio);
-> > +               folio_set_dropbehind(folio);
-> >         } else {
-> >                 /*
-> >                  * The folio's writeback ended while it was in the batch.
+> > @@ -221,22 +221,6 @@ static void lru_move_tail(struct lruvec *lruvec, struct folio *folio)
+> >  	__count_vm_events(PGROTATED, folio_nr_pages(folio));
+> >  }
+> >  
+> > -/*
+> > - * Writeback is about to end against a folio which has been marked for
+> > - * immediate reclaim.  If it still appears to be reclaimable, move it
+> > - * to the tail of the inactive list.
+> > - *
+> > - * folio_rotate_reclaimable() must disable IRQs, to prevent nasty races.
+> > - */
+> > -void folio_rotate_reclaimable(struct folio *folio)
+> > -{
+> > -	if (folio_test_locked(folio) || folio_test_dirty(folio) ||
+> > -	    folio_test_unevictable(folio))
+> > -		return;
+> > -
+> > -	folio_batch_add_and_move(folio, lru_move_tail, true);
+> > -}
 > 
-> Now there's a difference in behavior here depending on whether or not
-> the folio is under writeback (or will be written back soon). If it is,
-> we set PG_dropbehind to get it freed right after, but if writeback has
-> already ended we put it on the tail of the LRU to be freed later.
-> 
-> It's a bit counterintuitive to me that folios with pending writeback
-> get freed faster than folios that completed their writeback already.
-> Am I missing something?
+> I think this is the last caller of lru_move_tail(), which means we can
+> get rid of fbatches->lru_move_tail and the local_lock that protects it.
+> Or did I miss something?
 
-Yeah, it is strange.
-
-I think we can drop the writeback/dirty check. Set PG_dropbehind and put
-the page on the tail of LRU unconditionally. The check was required to
-avoid confusion with PG_readahead.
-
-Comment above the function is not valid anymore.
-
-But the folio that is still dirty under writeback will be freed faster as
-we get rid of the folio just after writeback is done while clean page can
-dangle on LRU for a while.
-
-I don't think we have any convenient place to free clean dropbehind page
-other than shrink_folio_list(). Or do we?
-
-Looking at shrink_folio_list(), I think we need to bypass page demotion
-for PG_dropbehind pages.
+I see lru_move_tail() being used by lru_add_drain_cpu().
 
 -- 
   Kiryl Shutsemau / Kirill A. Shutemov
