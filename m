@@ -1,119 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-39175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232A3A11198
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 21:01:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB7FA1119B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 21:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C6693A1E57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 20:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C3F3A1D3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 20:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D521FBCA9;
-	Tue, 14 Jan 2025 20:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F4420897A;
+	Tue, 14 Jan 2025 20:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="DAYT05gc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MIgh8ZIL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6618493
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 20:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE9B1FBCA9
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 20:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736884869; cv=none; b=oo4y0oTcfRrEvV7PkU/kL1W9tPNQrosiEfEjjQ+0+nb2HvQKMwfGX9qYeM0hyZV03pejwUZVgmIy2okDV8oaVDjv5QDkz7wXuTZNrA8pPIb3FaZQMYqXWl7WTuFjqYdBZLfqwSk9XLC6XVFVkfI72h9pcXLwSE4kDWvIyDmAMBo=
+	t=1736884957; cv=none; b=cmYTloyM9Cckpe2Q1cZWypdJ9csupgiN+6nERrXzmUsQk/kjNpyAIitcIPZyNpUEhy/P3KzH8+JSXMj1tsl85sA9D3hWQy/EUT1E+SmIo+/6A7kv+fnhchld5w+sab07b8kCroMF1qtqSkbiA+hPPrFm/9TVuLhd4lgYlf3zE/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736884869; c=relaxed/simple;
-	bh=ZHd+rRX4f26BkyN0FGG2UtQyut13eyjg4ut19XWw5LI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oYJpO6Vshq/MHJhrm29cSezJMQFUGtT5NIEQD32SfcWPujgSLSoO///kKGH7hwLBN2ioK/5FkwsvIjMPhhJGFUpYSLjjm615nqS9tH4YqJpwN8GcC8IhWfAwXgpgVr8qTVQvvjOiDr0S3U4bI9rU9mr76h1myoKX4sfgb4GI2GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=DAYT05gc; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4678afeb133so1618901cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 12:01:07 -0800 (PST)
+	s=arc-20240116; t=1736884957; c=relaxed/simple;
+	bh=G1NWNqJ3o0Xvmg9Lzh0JSizt0ZbxBRfw6HXipcTT9GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T92HZcjrxjFNQDfWC8GicezpfiBEiBdA/ls36xvPnoH7EFQS4lxc4YiW9KyIh4WhNTemFKsTg6NlZQyfGcGcRWU0vPIxm+9e4rHhkBa+x7/4Vwwfaw/GmrJpnkeb4r/jAn7bCtyfbZFf6GM09rKpDtbNMCd1T7y3FyH5Jlo0UE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MIgh8ZIL; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-219f6ca9a81so154515ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 12:02:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1736884866; x=1737489666; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jGFr9sGZpIt5cN+9vntCHPUXNxuo0ib6aqThpsLGnEg=;
-        b=DAYT05gcgtAfk8TaOop+x2HhCIxrDgyH89ACi1rMBKQBRIhk9jFKeX7El7tjDramZy
-         6Z4yXLOScy65hchY+17z5LqXbugHPuGwr3Q0bi4Y4v8pWk0I0MBojfn9M+njm3EmI8O/
-         KikNRoaC5lOx7ae0DFEsvd4aZZexaMiHFSBL4=
+        d=google.com; s=20230601; t=1736884954; x=1737489754; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Hveyb9aoAeVizaRGg6hO7M1qP+MaTyjktW+AITDIksU=;
+        b=MIgh8ZILmrms4HrmimPHIB2jU+0iDLe6t9piLQOU3pOh1/2NhadWhHKK9bVH6N4coS
+         5qSfg5a4vq6d8tO70BSspdST1SzvfzQWD+/lWfXtDB2Obz62QWSiRnijphTIVjEPGBce
+         v/dsWLgJO3/zIzEFDkNp8LCClTgSbCY40Wb/mkoZw9N1KfGi/6dMJSU3/enYOTr3xr8d
+         +Bv4IoM+0e4GiwA8h3i0Kzrj07o+3ka26yq7HogZnktqXkDvAumDgYcXfmYaL5wxamX/
+         Zderm1u8g1AbAt101DZek+VwKHWnkjeCbm5Wie4TXmjavk7ODVi1fkQxc3lnXZz9qcIO
+         r3EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736884866; x=1737489666;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jGFr9sGZpIt5cN+9vntCHPUXNxuo0ib6aqThpsLGnEg=;
-        b=k+6qtd361wMg7bg/nkr06m8TzZqqyLdW4sjqu07WflM3t7uuv3MKXJJSb8ZwOVdACY
-         t8ScxywdCtum6hvhWzYpoTdkl/Cgx1AUDV5oX4P/HLxDzdg9rlEAzhKkN1bYEPuewKBp
-         dM1anEf5XyYQ2I7/iHRyPGpvLwJSaWayrpbNjr8mZKUcg5KgqdAXzUFiwpSYnaWvsYdk
-         tS0mRSKdg0ohdoX5A5o6zCrGqO9/KkmIP8X4S+aW6oETsklA2Lg8XExry3elW0sx20o9
-         MXBXUmPdspDjpdVaXPGwpkAMxrSDsbUiYPmwR/Z0Z+E2+mQfoAQiiC7Dd7K64e++myKZ
-         q4ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXR2ZLfW4MfIt1SAQWbKWYM1slMWsCAC/vxhZIaE9l24upYLIB60y7qGVkuf8JRy0JDG3ILhye33RJCJTim@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1XY4P6XJdT/2+erugSjL9N0sfGGcfUkO9SeFQvBdjI26QO2lc
-	IVuIOnz5cocOPgCAVaWik554T/9NM0kJ9+zcgZ0/IymugFSyP1Ri4pUOxfn3LhIR9puBu2P4egU
-	j/d7hZXbV/pWc3Vfd+fkJ7PoUSNE5Il8XDKFQog==
-X-Gm-Gg: ASbGnctFtYi1sz+J74jKFN9iuEMoqKSMRBur4x1HYRZ2+/kVRP54Hcnbi9ZhXV+yj90
-	JXuP4Dcco0F6qXT99VTJvLL47adDJzP/SYsCp
-X-Google-Smtp-Source: AGHT+IGsNiYzTVVI8MDJSlYf7hVTIqig6jg284DT6Vyb+WdqzT6QOwHNGBk5QophEC9PjZ5p5NMajIlNiGphROJNr1s=
-X-Received: by 2002:a05:622a:3cb:b0:466:93f3:5bf1 with SMTP id
- d75a77b69052e-46df5661dcdmr5058041cf.1.1736884866684; Tue, 14 Jan 2025
- 12:01:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736884954; x=1737489754;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hveyb9aoAeVizaRGg6hO7M1qP+MaTyjktW+AITDIksU=;
+        b=YOmo3GzCFLq9APSjVgitATkdo+pCAalVEE77muyxjiTsHXX0lOlM4zGAdD0DjIj7Su
+         AESUCbobeHgxQm+tB0KqisM4kN5n46lQTusJ4g0VrIk4zEcsvorwBsuWb6Owl3ZjZdcX
+         9KbCTj90pYA7i/nCtaPk40gebNUGG7zFwWxsoOtkjLkbCMGdkxWvUm5dO7eMJK0sWT/2
+         RtzeZ8CRF6GVCmybDkq4Rv1Tarmx0tPaGMtL38HdcxgoPAXYmHhfg5GZPVKL21uoz2F3
+         FwiLrXyp9xgCwtzwVLgNLh0x23NILNhQBk20tDUwvG3TIaNLXlvFmXTNyEXAew6Rg+Sl
+         1b+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUi1ic+gJ4C+V7UTXOgFGKVwO/mRqjEF3jrFD2VlKgtrZJIHDW41nW8Y7sBgH2AJWhiGOXN8jbabyTWVXl5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1H4tI3fObcQ5BVOqU6j1ACbTRde3IkkgbIo9fYP4czUPbB7hV
+	yE/LoZ0zWA8idS+wdTPoOogO1WeM8GljCU5IMoOw+czq6MgISaR1qrkVA3BU1A==
+X-Gm-Gg: ASbGncu8AqM3AMM6k81IhlqwZiCW0n7DDSMeHKNlMcUGGZv/eNFp1XW6E+gu3wW0LY3
+	CH+9/iedRdMjE4gYemChL0P9Of84jxmXrWe5VtMZzGjHClvoWTeDwRhYTkOWQ7kr+1FI6jZyuwJ
+	6zgOIV1DrGR3QvjSxxxbqcE/S/9Hy+6PrnS/8LuNotof++mzXOQY9WwxVH59Rne9MjtzwTRbtRT
+	P0wnNhpm3AXoOz1sLJ+gI/DHA4K0zQYC7XN7go1rUHAE6zu6vsg7GgD
+X-Google-Smtp-Source: AGHT+IF2bVrYRNGKz3rWLJ9cyUWL1tYn9dVWhGa+vJQWRrJrlqeZGCgalALI2l4sQJoTdui4wjYezA==
+X-Received: by 2002:a17:902:e943:b0:216:21cb:2e06 with SMTP id d9443c01a7336-21bf0e3165amr241995ad.19.1736884953891;
+        Tue, 14 Jan 2025 12:02:33 -0800 (PST)
+Received: from google.com ([2620:15c:2d:3:5f58:5aa8:70b1:12b6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f130004sm70434555ad.80.2025.01.14.12.02.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2025 12:02:33 -0800 (PST)
+Date: Tue, 14 Jan 2025 12:02:28 -0800
+From: Isaac Manjarres <isaacmanjarres@google.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Kees Cook <kees@kernel.org>, Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>,
+	kernel-team@android.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	John Stultz <jstultz@google.com>
+Subject: Re: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC
+ to memfd
+Message-ID: <Z4bC1I1GTlXiJhvS@google.com>
+References: <20241206010930.3871336-1-isaacmanjarres@google.com>
+ <20241206010930.3871336-2-isaacmanjarres@google.com>
+ <0ff1c9d9-85f0-489e-a3f7-fa4cef5bb7e5@lucifer.local>
+ <CAG48ez1gnURo_DVSfNk0RLWNbpdbMefNcQXu3as9z2AkNgKaqg@mail.gmail.com>
+ <CABi2SkUuz=qGvoW1-qrgxiDg1meRdmq3bN5f89XPR39itqtmUg@mail.gmail.com>
+ <202501061643.986D9453@keescook>
+ <e8d21f15-56c6-43c3-9009-3de74cccdf3a@lucifer.local>
+ <CABi2SkV72c+28S3ThwQo+qbK8UXuhfVK4K=Ztv7+FhzeYyF-CA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
- <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
- <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com> <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
- <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
- <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com> <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
- <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com> <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
- <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com> <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
- <2848b566-3cae-4e89-916c-241508054402@redhat.com> <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
- <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
- <CAJfpeguSXf0tokOMjoOP-gnxoNHO33wTyiMXH5pQP8eqzj_R0g@mail.gmail.com>
- <060f4540-6790-4fe2-a4a5-f65693058ebf@fastmail.fm> <CAJfpegsrGX4oBHmRn_+8iwiMkJD_rcVEyPVH5tBAAByw4gSCQA@mail.gmail.com>
- <CAJnrk1ZP4yZZDR0fZghBmuN-N=JfrbJZALBH0pdaC5_gGWFwEw@mail.gmail.com>
- <CAJfpegvqZnMmgYcy28iDD_T=bFgeXgWD7ZZkpuJfXdBmjCK9hA@mail.gmail.com> <CAJnrk1Y14Xn8y2GLhGeVaistpX3ncTpkzSNBhDvN37v7YGSo4g@mail.gmail.com>
-In-Reply-To: <CAJnrk1Y14Xn8y2GLhGeVaistpX3ncTpkzSNBhDvN37v7YGSo4g@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Jan 2025 21:00:55 +0100
-X-Gm-Features: AbW1kvZIbaY8yr45F5FQPamVY8i3T8PpfIf_rUSauH1zAJbBRwND1-UeHpCqnEQ
-Message-ID: <CAJfpeguRGgfNnnDWxtQ4L1vuOA+fPe0KLtMLaUCiDeHdpq0CKg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Jeff Layton <jlayton@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Shakeel Butt <shakeel.butt@linux.dev>, Zi Yan <ziy@nvidia.com>, 
-	linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
-	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
-	Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABi2SkV72c+28S3ThwQo+qbK8UXuhfVK4K=Ztv7+FhzeYyF-CA@mail.gmail.com>
 
-On Tue, 14 Jan 2025 at 20:12, Joanne Koong <joannelkoong@gmail.com> wrote:
+On Thu, Jan 09, 2025 at 03:30:36PM -0800, Jeff Xu wrote:
+> On Wed, Jan 8, 2025 at 11:06 AM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > On Mon, Jan 06, 2025 at 04:44:33PM -0800, Kees Cook wrote:
+> > > On Mon, Jan 06, 2025 at 10:26:27AM -0800, Jeff Xu wrote:
+> > > > + Kees because this is related to W^X memfd and security.
+> > > >
+> > > > On Fri, Jan 3, 2025 at 7:14 AM Jann Horn <jannh@google.com> wrote:
+> > > > >
+> > > > > On Fri, Dec 6, 2024 at 7:19 PM Lorenzo Stoakes
+> > > > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > > > On Thu, Dec 05, 2024 at 05:09:22PM -0800, Isaac J. Manjarres wrote:
+> > > > > > > +             if (is_exec_sealed(seals)) {
+> > > > > >
+> > > > > > Are we intentionally disallowing a MAP_PRIVATE memfd's mapping's execution?
+> > > > > > I've not tested this scenario so don't know if we somehow disallow this in
+> > > > > > another way but note on write checks we only care about shared mappings.
+> > > > > >
+> > > > > > I mean one could argue that a MAP_PRIVATE situation is the same as copying
+> > > > > > the data into an anon buffer and doing what you want with it, here you
+> > > > > > could argue the same...
+> > > > > >
+> > > > > > So probably we should only care about VM_SHARED?
+> > > > >
+> > > > > FWIW I think it doesn't make sense to distinguish between
+> > > > > shared/private mappings here - in the scenario described in the cover
+> > > > > letter, it wouldn't matter that much to an attacker whether the
+> > > > > mapping is shared or private (as long as the VMA contents haven't been
+> > > > > CoWed already).
+> > > > +1 on this.
+> > > > The concept of blocking this for only shared mapping is questionable.
+> > >
+> > > Right -- why does sharedness matter? It seems more robust to me to not
+> > > create a corner case but rather apply the flag/behavior universally?
+> > >
+> >
+> > I'm struggling to understand what you are protecting against, if I can receive a
+> > buffer '-not executable-'. But then copy it into another buffer I mapped, and
+> > execute it?
+> >
+> preventing mmap() a memfd has the same threat model as preventing
+> execve() of a memfd, using execve() of a memfd as an example (since
+> the kernel already supports this): an attacker wanting to execute a
+> hijacked memfd must already have the ability to call execve() (e.g.,
+> by modifying a function pointer or using ROP). To prevent this, the
+> kernel supports making memfds non-executable (rw-) and permanently
+> preventing them from becoming executable (sealing with F_SEAL_EXEC).
+> Once the execve() attack path is blocked, the next thing an attacker
+> could do is mmap() the memfd into the process's memory and jump to it.
+> 
 
-> If we copy the cache page, do we not have the same issue with needing
-> an rb tree to track writeback state since writeback on the original
-> folio would be immediately cleared?
+I think the main issue in the threat model that I described is that
+an attacking process can gain control of a more priveleged process.
+Yes, having the buffer sealed against execution would prevent the
+attacker from running the injected from *that* buffer, but
+if they're already controlling the process, they could have the process
+create a memfd that is executable (imagine a system where
+MFD_NOEXEC_SEAL is not the default), copy the code, and then execute it
+from there.
 
-Writeback would not be cleared in that case.   The copy would be to
-guarantee that the page can be migrated.  Starting migration for an
-under-writeback page would need some new mechanism, because currently
-that's not possible.
+I spoke about this offline with Jann as well, and we both agree that
+given that line of reasoning, this feature that I'm trying to add
+doesn't buy us the security that I initially thought it would.
+Therefore, we will be dropping this patch.
 
-But I realize now that even though write-through does not involve
-PG_writeback, doing splice will result in those cache pages being
-referenced for an indefinite amount of time, which can deny migration.
-Ugh.   Same as page reading, this exists today.
+Thank you everyone for the discussion and reviews!
 
-Thanks,
-Miklos
+--Isaac
 
