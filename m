@@ -1,151 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-39128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C54A103A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 11:07:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE38A103CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 11:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AB318898D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 10:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517C1167AA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 10:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241E41CBE95;
-	Tue, 14 Jan 2025 10:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B35C28EC79;
+	Tue, 14 Jan 2025 10:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Vs9c+g19"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qQdoEncC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VXzJ/XJk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ETeLus2Q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2fA8J3MZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4C61ADC94
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 10:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF6828EC65
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 10:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736849250; cv=none; b=hacmF7PUDm1UCoUIe5x7rgErEx0boHqob8O2XlHau1Wy4DYe6Z5Cnwks8PQl3vR/2ZPi1pSjbqLVHlHEwvnKiVDRVNpNhgb6V3S3aqcWX9QjzFS9WtvBekSk4B4TfWHMp9lUqhHt0o+tAMSS/CXhrN5MQL2jdt9kDkWd/1FGIwM=
+	t=1736849751; cv=none; b=Zl3Kru3JxSfpOOI9a2lDns7kgUm6zseV3lwrLT2GpSEBMrX4aQR5CugO5+MfmYfH3X0YBCVYxT8iz8B3C67TMJQE8gLnFf2vmS46j2mLDGU6cMmZLyXAyO8Q3QLAC/pLEZ8F3KPXM+dGvyxPzwqZqpZswMBYY29ut1CD1fWYJLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736849250; c=relaxed/simple;
-	bh=gNQjL+ThElg03uwgW4KfhxZyUTult/3H70ZhHObdAAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WX7KQv8xykm0ue4MpHdIs3O+O2oSJNUlY6XNV+/GhSm/keh7WkuPgokEBk2hbaVBssJl2cLw7w9o3MJ0za1PgGOspF+SmkX28hY3nOfLWB0Yg/aqiK25EE9kT37nFVcE4SCD3I1O564RRC0w+lSmb1kf2JIJgmjxA7xNpbI0re8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Vs9c+g19; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-467bc28277eso45054511cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 02:07:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1736849247; x=1737454047; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0tU4xnHoOQ4ptkjuyhR+xNOthzAVEDHZG5olEh1NuX4=;
-        b=Vs9c+g19nncASNqOsWZ2cl1hjTDc5ZszJcIdJayet81Z3V2xLmAc39Beqp/s38fQOv
-         MnHQ+ypEa5HVOaN62oDvA6acU/tdnd+9MJ3s9soqOjP18xAhQ0/EdGG3o3ehmenwnMIP
-         zdSf3jW8n246GvjLAKy8b5B2c/9q/eqQFI6lA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736849247; x=1737454047;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0tU4xnHoOQ4ptkjuyhR+xNOthzAVEDHZG5olEh1NuX4=;
-        b=sWe4nwrV3dQgv7VlJJltF+zRjKpTsg7X6gOMsbgFj7iVkYRkzTEKQHgGyibOVb091e
-         jb/ooP7aXD+ddtZ4rm7TNschLn8ubDjTyHx+uYckMKhiroLKTUrdy1uppL26U3leGLB4
-         NRT0InN+fz4o7wBcmjZUpN9uTAEHxT1x+NpL03QtHfubaiURseo37fAmiC4dVe0wbFg7
-         kx0pNSz3qL5CrJN4cVnUNYTicddNb2Y5rgyQJxJ3xPSt73w4VQQpOBmDmO3o280lJCN0
-         7M+m4KHRVfDuNXnIAlusF9xeydUapVSlWoaboxPnLvzuAqXkDsxvKHl5ag1R3XxNdCj6
-         DOiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIeOgQIWu0mzy1dkt2QP5lgv/iacyHpWZ587KNCZ6xINSlhhySrcDvw/BrruGieT6x6xXc7PXJOrGKBEsf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSvA+lc9yHAYVcgZmsNMpsBpghiQy0OtsGbk0E8egdfG9+SE/d
-	1ODxZls9caHhX/KtwcfYTqIfNHPeiAeWphuOn4K5WOYqw9zsbgk8mxovrSq/ghNLgqKIKphmTs7
-	CGPhnneVWSSMfM8GAZZg2vaLxxG09IcemzxDpxw==
-X-Gm-Gg: ASbGncsYM88noeQoVirs8Ij4KtgtGYyDINwJHbXKNDdScVkAG2LTRvVUpCqapBPaKjh
-	KmM0Ht+txJbhb3LHKX1WazIsDINf4MYsq0heB
-X-Google-Smtp-Source: AGHT+IHM86AcpqAe+taIwtf4Bv/WyP95VBljCDSvtwFKlz4VZuwT4EO7BxYiZqXJP006KUCweFrn4ezF43sKGkn029I=
-X-Received: by 2002:ac8:5f91:0:b0:467:451b:eb99 with SMTP id
- d75a77b69052e-46c7101e8d9mr319619141cf.29.1736849247564; Tue, 14 Jan 2025
- 02:07:27 -0800 (PST)
+	s=arc-20240116; t=1736849751; c=relaxed/simple;
+	bh=cn6oemrUmO1tWyTBIPMc2qqi9exUCXTIhWlrcexLbJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oG5i/sBh8yv8c2mNUWvDGR9CighCr6+8TLkt9VZYMoia4zitVzZQ6zgSFulWgtDDO44phTNSMtf+3Ryhz1g1f5CB7+GFOAe7TR2kDrmMTOTC07WmJwJ1Fc9JFO2p6xMcg7A3/z8aM2M1xoblMLC7tYCGaGd0pzQJ2E4//eMFWHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qQdoEncC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VXzJ/XJk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ETeLus2Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2fA8J3MZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 66F341F38E;
+	Tue, 14 Jan 2025 10:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736849747; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANc6pGs30TKvEMUj47HfMRpq5GK/MwoAqpX9lNOcZkg=;
+	b=qQdoEncCm+g016P6RHsPPh0eKS5su/BN2wBPxpRGshQaLGq6uu0CIV/grqZNbNZyg8szyS
+	5rPVts/L/LKOB3y50VmRyiBRBcwo776lEUj9k9gB7fxz7YNvNi1uYoyvSQSXzmtMetdzrE
+	RXbKvvSRDfPk6v7E4C0O/n20kWHjvXg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736849747;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANc6pGs30TKvEMUj47HfMRpq5GK/MwoAqpX9lNOcZkg=;
+	b=VXzJ/XJkmNHYhg85JAMktfA1qGpREiPvrSf/GdIYgmOtUoXRUPjm1BVDEKWUINHY3kO9r2
+	kZ8wbKXOPfBktuDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736849746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANc6pGs30TKvEMUj47HfMRpq5GK/MwoAqpX9lNOcZkg=;
+	b=ETeLus2Q5b+XmmXIJsmIXGftBXiLwNc93k10DEWHaXd01TmgrLVN34htBm9mjSy2fzRZq5
+	CIw1Bb2PhI4/jcDFBi/dOZGg020B8pXlvWRPm02sM+6VyvU8rRNrPQZODZ4XHoAkuqWdVX
+	NtXrI/Tssy9AMSwIe0FDbq35Yl2YgoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736849746;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANc6pGs30TKvEMUj47HfMRpq5GK/MwoAqpX9lNOcZkg=;
+	b=2fA8J3MZzBQg8Zf4bZrZlHVxnNxqVnD0CzNAbhRAdWF1nD7j9ccKSVXgTUuVMDZo7xx0f7
+	EWmvloKClASiDJCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D2CF1384C;
+	Tue, 14 Jan 2025 10:15:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mOy6FlI5hmfyCAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 14 Jan 2025 10:15:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 20686A08CD; Tue, 14 Jan 2025 11:15:46 +0100 (CET)
+Date: Tue, 14 Jan 2025 11:15:46 +0100
+From: Jan Kara <jack@suse.cz>
+To: Sentaro Onizuka <sentaro@amazon.com>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>
+Subject: Re: [PATCH] fs: Fix return type of do_mount() from long to int
+Message-ID: <y7ghtllzkliduhi746fr7vjrvhebmr6z656fvpvibo2u3ttd65@wu2jeyeffge2>
+References: <20250113151400.55512-1-sentaro@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
- <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
- <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com> <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
- <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
- <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com> <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
- <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com> <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
- <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com> <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
- <2848b566-3cae-4e89-916c-241508054402@redhat.com> <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
- <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
- <CAJfpeguSXf0tokOMjoOP-gnxoNHO33wTyiMXH5pQP8eqzj_R0g@mail.gmail.com> <060f4540-6790-4fe2-a4a5-f65693058ebf@fastmail.fm>
-In-Reply-To: <060f4540-6790-4fe2-a4a5-f65693058ebf@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Jan 2025 11:07:16 +0100
-X-Gm-Features: AbW1kvYDCYoxl7hbvd-9qDmaQUUlOh63oYsNN5iCyn7r6KKsxo4LXqtOm8tWtGY
-Message-ID: <CAJfpegsrGX4oBHmRn_+8iwiMkJD_rcVEyPVH5tBAAByw4gSCQA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Jeff Layton <jlayton@kernel.org>, David Hildenbrand <david@redhat.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Joanne Koong <joannelkoong@gmail.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
-	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
-	Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250113151400.55512-1-sentaro@amazon.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, 14 Jan 2025 at 10:55, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 1/14/25 10:40, Miklos Szeredi wrote:
-> > On Tue, 14 Jan 2025 at 09:38, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> >> Maybe an explicit callback from the migration code to the filesystem
-> >> would work. I.e. move the complexity of dealing with migration for
-> >> problematic filesystems (netfs/fuse) to the filesystem itself.  I'm
-> >> not sure how this would actually look, as I'm unfamiliar with the
-> >> details of page migration, but I guess it shouldn't be too difficult
-> >> to implement for fuse at least.
-> >
-> > Thinking a bit...
-> >
-> > 1) reading pages
-> >
-> > Pages are allocated (PG_locked set, PG_uptodate cleared) and passed to
-> > ->readpages(), which may make the pages uptodate asynchronously.  If a
-> > page is unlocked but not set uptodate, then caller is supposed to
-> > retry the reading, at least that's how I interpret
-> > filemap_get_pages().   This means that it's fine to migrate the page
-> > before it's actually filled with data, since the caller will retry.
-> >
-> > It also means that it would be sufficient to allocate the page itself
-> > just before filling it in, if there was a mechanism to keep track of
-> > these "not yet filled" pages.  But that probably off topic.
->
-> With /dev/fuse buffer copies should be easy - just allocate the page
-> on buffer copy, control is in libfuse.
+On Tue 14-01-25 00:14:00, Sentaro Onizuka wrote:
+> Fix the return type of do_mount() function from long to int to match its ac
+> tual behavior. The function only returns int values, and all callers, inclu
+> ding those in fs/namespace.c and arch/alpha/kernel/osf_sys.c, already treat
+>  the return value as int. This change improves type consistency across the
+> filesystem code and aligns the function signature with its existing impleme
+> ntation and usage.
+> 
+> Signed-off-by: Sentaro Onizuka <sentaro@amazon.com>
 
-I think the issue is with generic page cache code, which currently
-relies on the PG_locked flag on the allocated but not yet filled page.
-  If the generic code would be able to keep track of "under
-construction" ranges without relying on an allocated page, then the
-filesystem could allocate the page just before copying the data,
-insert the page into the cache mark the relevant portion of the file
-uptodate.
+Makes sense. Feel free to add:
 
-> With splice you really need
-> a page state.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-It's not possible to splice a not-uptodate page.
+								Honza
 
-> I wrote this before already - what is the advantage of a tmp page copy
-> over /dev/fuse buffer copy? I.e. I wonder if we need splice at all here.
-
-Splice seems a dead end, but we probably need to continue supporting
-it for a while for backward compatibility.
-
-Thanks,
-Miklos
+> ---
+>  fs/namespace.c        | 2 +-
+>  include/linux/mount.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 23e81c2a1e3f..5d808778a3ae 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3835,7 +3835,7 @@ int path_mount(const char *dev_name, struct path *path,
+>  			    data_page);
+>  }
+>  
+> -long do_mount(const char *dev_name, const char __user *dir_name,
+> +int do_mount(const char *dev_name, const char __user *dir_name,
+>  		const char *type_page, unsigned long flags, void *data_page)
+>  {
+>  	struct path path;
+> diff --git a/include/linux/mount.h b/include/linux/mount.h
+> index 33f17b6e8732..a7b472faec2c 100644
+> --- a/include/linux/mount.h
+> +++ b/include/linux/mount.h
+> @@ -114,7 +114,7 @@ extern struct vfsmount *kern_mount(struct file_system_type *);
+>  extern void kern_unmount(struct vfsmount *mnt);
+>  extern int may_umount_tree(struct vfsmount *);
+>  extern int may_umount(struct vfsmount *);
+> -extern long do_mount(const char *, const char __user *,
+> +int do_mount(const char *, const char __user *,
+>  		     const char *, unsigned long, void *);
+>  extern struct vfsmount *collect_mounts(const struct path *);
+>  extern void drop_collected_mounts(struct vfsmount *);
+> -- 
+> 2.39.5 (Apple Git-154)
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
