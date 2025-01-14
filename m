@@ -1,200 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-39132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0CDA10575
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 12:31:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB015A106E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 13:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6B83A264F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 11:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E7918895D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 12:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81085234CF4;
-	Tue, 14 Jan 2025 11:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4F6236A75;
+	Tue, 14 Jan 2025 12:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fv/VH+y+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T2poHIuS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="88lQqFN9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T2poHIuS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="88lQqFN9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2E9234CEC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 11:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6AF236A7B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 12:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736854267; cv=none; b=j+2eJclnKmRRlqvLVdFg51WUszaTm6tkaUKn83DvIOriBO8rOOWLSae8BiCJTMWazNh+28XN6papRw00qarO0vP5e5MWYTACPMrbHJB6bz/2i7W0It3IzNPJQq3kQN3Vl8GldrNOj8YNh2sh/vq9RI8YOhDUCyzxgdpDgDrE/vo=
+	t=1736858372; cv=none; b=Dml/pd2Q9ZROsuF/pbezLviZ3eCSnPLbMv/3qknoPXDUrwYf8FwpvKeWlNqDzCZ8m1oT2Ob/vCRrRAFZoAwycXdLphyLuqmKXCnAkYTAs5kAEb3Ecspepl2s6Wxodcp6OpulWJhkPUz1yvoNxBYDV1mpxeQh2duNMJ+d168E90M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736854267; c=relaxed/simple;
-	bh=Xn2RaNaReEp4HS2lM2B2ydz2zvsDs19KOeICSn68auQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EExw6yZqbePH0LDNhlTttuQ/+n7Gql979AA1uiitqgDrp8YM2A+qehdLPSO2Q2jHnFJXtharn9H7MNy6FOdWFXSzCR7v5H0FeL/4gm14FWvfPiwnGV6QK9Ait5IEXB+gpJu5t1MJwMS+GvAQnIJDHUGaHhd3yv46R+KSSECmVJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fv/VH+y+; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2f44353649aso7112864a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 03:31:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736854264; x=1737459064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ukyNfs65nuvgTdhSkdJYZ2Y9345NLuFCWN/gVQv/aLg=;
-        b=Fv/VH+y+5M36dMoX57gRiSrqC5F4+btjSVzSd+ACYa2fZhil2UVxUiYcViMoi7Px21
-         h6owbDCC+36Ij6huoA5ce16BqWbwxXrjuCt7wZxcExXWBGyyo/jzfrRq/JbYHzdzr5bI
-         nbArgD5vKqXmR9laWPTyCYE8IvJEpVm5Sk654fPiK7Z03DufJgroK7mzl3jcvdZy9tkH
-         ACVd0B7wLORxF+9p350rr5kCVRxXReLdv3kZWY5XsRyaFR3R8pT3GzVtytyssRahUh9t
-         rmb8Wd1LIMuK0JlnDBvc0tU3iMpPie895iCY5Nqx2iT2+p97hriJq3yTxy40Q7EU/q1F
-         bw4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736854264; x=1737459064;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ukyNfs65nuvgTdhSkdJYZ2Y9345NLuFCWN/gVQv/aLg=;
-        b=mVtkK2eQNvu5XjIIHdP07sMSMF/oYEh86eQtreWIHrKpqO6jvjU8GF5acG8xReEPlI
-         qB7LQf934K4AKhZHthUFpugGEgTheeKSeKBR7LcvxmHAVR6C29K5KFxViKg+wVen0UUS
-         lKuO0ILiKM7GIT7kizFUcapaQ2pwFyTSRqeN6Tc/nNhflMdZqTXqLLAhaf1kD1Lzo2da
-         +0gGPku9APtfN8lJnT/ZHoMuI46b9qvPLxs2Zy2nbp+dCSoZ5wnhOoQrjrL71SRZCF6M
-         eSQLu+qLUuiWFOXKvukHsp73nWkwYKk/d50W6s7u+gL8IMjQYxJ7c0r/zm1cFGNIYTR+
-         7hKA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Fik2pZiSWhDko9JJuhirul80uBpMr5dAY96NkWUPOaI4s5F+Z4VYKCleFc7cDY/zdgqNCjt47JtBzZ0j@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVei1emfVA+VFAIpblNgUClXeBnum77MtnNSek5gJY4mXwDQa9
-	I6X32C0fAjIhnbXVgvTaLiC20NzDa8+evX7u7LHUCcHptw9kS+CM
-X-Gm-Gg: ASbGncvOyiVlSmT8V0nkXnujNJJf30NrqQAY3CY8SLW/KvgElzYSPUBoCi2g2Z7TsF/
-	WF50/iKXTp6qe2m7X3Y6OczqLx09ZKrRASuhxf9nFV/Ife1NGWCpe2mLMSCf0dr4YW2QeT6FU//
-	CDgl5ZhjMVHZDcedCrQKWd4kSC1m9AqSw6ubG4slxJ+ArSzb6TAOo1OX3uFkVfoy0i0fCRhtNc7
-	mDAUms1YgetjbJbHwnWqARJPLqgquIs+S+73RrGKcuq/FrNn6Gvo3/P+mzJW1Xxdeortfc0H0SV
-	511CWhYomuOyl/HpqebGO+lBaJey
-X-Google-Smtp-Source: AGHT+IFUwZHNFEc67jBbRXeFTOn0tcZ1umDdW5kX+lEEHYdmJnaChB7NhkDCIdArY2EVW1a5YS/C9A==
-X-Received: by 2002:a17:90b:5208:b0:2ef:33a4:ae6e with SMTP id 98e67ed59e1d1-2f548eba9c4mr42260944a91.12.1736854263922;
-        Tue, 14 Jan 2025 03:31:03 -0800 (PST)
-Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f22ee09sm65234765ad.200.2025.01.14.03.31.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 03:31:03 -0800 (PST)
-Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 5DC8BE1AB50; Tue, 14 Jan 2025 20:31:01 +0900 (JST)
-From: Hajime Tazaki <thehajime@gmail.com>
-To: linux-um@lists.infradead.org
-Cc: thehajime@gmail.com,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 02/13] x86/um: nommu: elf loader for fdpic
-Date: Tue, 14 Jan 2025 20:30:40 +0900
-Message-ID: <d9dd391ee565aa3ad1b8ceba5689caf888f6bd85.1736853926.git.thehajime@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1736853925.git.thehajime@gmail.com>
-References: <cover.1736853925.git.thehajime@gmail.com>
+	s=arc-20240116; t=1736858372; c=relaxed/simple;
+	bh=7lLVV8CD1O8vnLsz2UK+UU7bKUUj4KnbL1xvYJiL464=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qosv6W7LBEixXrLWYymVKCDTmR9lvEKp+Mx4L1Y3dkwBpK2W/JQAd2T0MnQHQlFZYUB1cIT3jjddaUGpQc4eUG5qjzcTZoy5sDLYVPFf35tfSUua+YDogdOWpOkbgZzzP9IIhJd86cwpMLreQDkBwU4qI6Mr0aMMB4oOoSvaeAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T2poHIuS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=88lQqFN9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T2poHIuS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=88lQqFN9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1A2C12115A;
+	Tue, 14 Jan 2025 12:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736858369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bxZl4LR+WA11+D31Pi4AlAKojYOnGZrQ4tY0MJSgQ1U=;
+	b=T2poHIuS5KRb+nvjUNTbLSeuLfPv43LwNcw0UzZ22uych2PdrFkpowLbZEpRGtyzbnS4rg
+	4y+qSAHUmNxeIe/CiQhrMeZeiuyof8IPJdIPSC8QcH3PaFREjfGUc2Sgbb3vBzohEscrij
+	lF4ZGbbjybG6TEYUqutjb5MNm/+jaFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736858369;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bxZl4LR+WA11+D31Pi4AlAKojYOnGZrQ4tY0MJSgQ1U=;
+	b=88lQqFN9OQ00BqcO9i7Fff1Sex3aGI/Y+QNEtoihgjv7aMnRci1Fq92RgPR1JjGkyRNpkR
+	Nb2YlhA8iELEojAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=T2poHIuS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=88lQqFN9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736858369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bxZl4LR+WA11+D31Pi4AlAKojYOnGZrQ4tY0MJSgQ1U=;
+	b=T2poHIuS5KRb+nvjUNTbLSeuLfPv43LwNcw0UzZ22uych2PdrFkpowLbZEpRGtyzbnS4rg
+	4y+qSAHUmNxeIe/CiQhrMeZeiuyof8IPJdIPSC8QcH3PaFREjfGUc2Sgbb3vBzohEscrij
+	lF4ZGbbjybG6TEYUqutjb5MNm/+jaFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736858369;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bxZl4LR+WA11+D31Pi4AlAKojYOnGZrQ4tY0MJSgQ1U=;
+	b=88lQqFN9OQ00BqcO9i7Fff1Sex3aGI/Y+QNEtoihgjv7aMnRci1Fq92RgPR1JjGkyRNpkR
+	Nb2YlhA8iELEojAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E3CF1384C;
+	Tue, 14 Jan 2025 12:39:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1JF2AwFbhmdANgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 14 Jan 2025 12:39:29 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B93E8A08CD; Tue, 14 Jan 2025 13:39:28 +0100 (CET)
+Date: Tue, 14 Jan 2025 13:39:28 +0100
+From: Jan Kara <jack@suse.cz>
+To: Shyam Prasad N <nspmangalore@gmail.com>
+Cc: lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org, brauner@kernel.org, 
+	Matthew Wilcox <willy@infradead.org>, David Howells <dhowells@redhat.com>, 
+	Jeff Layton <jlayton@redhat.com>, Steve French <smfrench@gmail.com>, trondmy@kernel.org, 
+	Shyam Prasad N <sprasad@microsoft.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Predictive readahead of dentries
+Message-ID: <6wcmvyeuelngltuiohumo6pffwptgbgofqba453pdi45ahydkn@ern4qy4i2zoa>
+References: <CANT5p=rxLH-D9qSoOWgjYeD87uahmZJMwXp8uNKW66mbv8hmDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANT5p=rxLH-D9qSoOWgjYeD87uahmZJMwXp8uNKW66mbv8hmDg@mail.gmail.com>
+X-Rspamd-Queue-Id: 1A2C12115A
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_CC(0.00)[lists.linux-foundation.org,vger.kernel.org,kvack.org,kernel.org,infradead.org,redhat.com,gmail.com,microsoft.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-As UML supports CONFIG_MMU=n case, it has to use an alternate ELF
-loader, FDPIC ELF loader.  In this commit, we added necessary
-definitions in the arch, as UML has not been used so far.  It also
-updates Kconfig file to use BINFMT_ELF_FDPIC under !MMU environment.
+Hello!
 
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-Acked-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-Signed-off-by: Ricardo Koller <ricarkol@google.com>
----
- arch/um/include/asm/mmu.h            | 5 +++++
- arch/um/include/asm/ptrace-generic.h | 6 ++++++
- arch/x86/um/asm/elf.h                | 8 ++++++--
- fs/Kconfig.binfmt                    | 2 +-
- 4 files changed, 18 insertions(+), 3 deletions(-)
+On Tue 14-01-25 09:08:38, Shyam Prasad N wrote:
+> The Linux kernel does buffered reads and writes using the page cache
+> layer, where the filesystem reads and writes are offloaded to the
+> VM/MM layer. The VM layer does a predictive readahead of data by
+> optionally asking the filesystem to read more data asynchronously than
+> what was requested.
+> 
+> The VFS layer maintains a dentry cache which gets populated during
+> access of dentries (either during readdir/getdents or during lookup).
+> This dentries within a directory actually forms the address space for
+> the directory, which is read sequentially during getdents. For network
+> filesystems, the dentries are also looked up during revalidate.
+> 
+> During sequential getdents, it makes sense to perform a readahead
+> similar to file reads. Even for revalidations and dentry lookups,
+> there can be some heuristics that can be maintained to know if the
+> lookups within the directory are sequential in nature. With this, the
+> dentry cache can be pre-populated for a directory, even before the
+> dentries are accessed, thereby boosting the performance. This could
+> give even more benefits for network filesystems by avoiding costly
+> round trips to the server.
+> 
+> NFS client already does a simplistic form of this readahead by
+> maintaining an address space for the directory inode and storing the
+> dentry records returned by the server in this space. However, this
+> dentry access mechanism is so generic that I feel that this can be a
+> part of the VFS/VM layer, similar to buffered reads of a file. Also,
+> VFS layer is better equipped to store heuristics about dentry access
+> patterns.
 
-diff --git a/arch/um/include/asm/mmu.h b/arch/um/include/asm/mmu.h
-index a3eaca41ff61..01422b761aa0 100644
---- a/arch/um/include/asm/mmu.h
-+++ b/arch/um/include/asm/mmu.h
-@@ -14,6 +14,11 @@ typedef struct mm_context {
- 	/* Address range in need of a TLB sync */
- 	unsigned long sync_tlb_range_from;
- 	unsigned long sync_tlb_range_to;
-+
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+	unsigned long   exec_fdpic_loadmap;
-+	unsigned long   interp_fdpic_loadmap;
-+#endif
- } mm_context_t;
- 
- #endif
-diff --git a/arch/um/include/asm/ptrace-generic.h b/arch/um/include/asm/ptrace-generic.h
-index 4696f24d1492..4ff844bcb1cd 100644
---- a/arch/um/include/asm/ptrace-generic.h
-+++ b/arch/um/include/asm/ptrace-generic.h
-@@ -29,6 +29,12 @@ struct pt_regs {
- 
- #define PTRACE_OLDSETOPTIONS 21
- 
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+#define PTRACE_GETFDPIC		31
-+#define PTRACE_GETFDPIC_EXEC	0
-+#define PTRACE_GETFDPIC_INTERP	1
-+#endif
-+
- struct task_struct;
- 
- extern long subarch_ptrace(struct task_struct *child, long request,
-diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
-index 62ed5d68a978..33f69f1eac10 100644
---- a/arch/x86/um/asm/elf.h
-+++ b/arch/x86/um/asm/elf.h
-@@ -9,6 +9,7 @@
- #include <skas.h>
- 
- #define CORE_DUMP_USE_REGSET
-+#define ELF_FDPIC_CORE_EFLAGS  0
- 
- #ifdef CONFIG_X86_32
- 
-@@ -190,8 +191,11 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
- 
- extern unsigned long um_vdso_addr;
- #define AT_SYSINFO_EHDR 33
--#define ARCH_DLINFO	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr)
--
-+#define ARCH_DLINFO						\
-+do {								\
-+	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr);		\
-+	NEW_AUX_ENT(AT_MINSIGSTKSZ, 0);			\
-+} while (0)
- #endif
- 
- typedef unsigned long elf_greg_t;
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index bd2f530e5740..419ba0282806 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -58,7 +58,7 @@ config ARCH_USE_GNU_PROPERTY
- config BINFMT_ELF_FDPIC
- 	bool "Kernel support for FDPIC ELF binaries"
- 	default y if !BINFMT_ELF
--	depends on ARM || ((M68K || RISCV || SUPERH || XTENSA) && !MMU)
-+	depends on ARM || ((M68K || RISCV || SUPERH || UML || XTENSA) && !MMU)
- 	select ELFCORE
- 	help
- 	  ELF FDPIC binaries are based on ELF, but allow the individual load
+Interesting idea. Note that individual filesystems actually do directory
+readahead on their own. They just don't readahead 'struct dentry' but
+rather issue readahead for metadata blocks to get into cache which is what
+takes most time. Readahead makes the most sense for readdir() (or
+getdents() as you call it) calls where the filesystem driver has all the
+information it needs (unlike VFS) for performing efficient readahead. So
+here I'm not sure there's much need for a change.
+
+I'm not against some form of readahead for ->lookup calls but we'd have to
+very carefully design the heuristics for detecting some kind of pattern of
+->lookup calls so that we know which entry is going to be the next one
+looked up and evaluate whether it is actually an overall win or not. So
+for this the discussion would need a more concrete proposal to be useful I
+think.
+
+								Honza
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
