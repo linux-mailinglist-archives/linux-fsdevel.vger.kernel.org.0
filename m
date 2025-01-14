@@ -1,157 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-39119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6598A1020B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:31:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F52A1023E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 09:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC2218825B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 08:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F779166068
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 08:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917AF1CEEA4;
-	Tue, 14 Jan 2025 08:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D84F3DABE8;
+	Tue, 14 Jan 2025 08:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CFgyCgX1"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dI6MpSbr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9BB1C07C3;
-	Tue, 14 Jan 2025 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19862500BD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 08:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736843457; cv=none; b=Kme8pmXW6imQlWWmzJ7LtI3oV6MhCLmFMCyNZkz6vMMoYr6GPmJzcJudMM2NVYDrromz5UK3QK404vkz1P3RT0l2eQ1TBiYX3R05QFQWuvdmJY3jT2VxvrNzB3mRNyW+3hNlxiM/EwhMEMrVk+G/nx6REchQXQZUpvk4PMHxeLg=
+	t=1736843943; cv=none; b=UPXIuSylmNplyAGrmSD8USYGLNxP3L74D7IWg162UNJPtomL5YD1/QHKNPZog3vXq/4CwZR/2RjI66PUQG42pZ+s+qZRJ3ssi9AO05rQRWkHOReHr4YudngYPgSF4cesPCbRTzIsljxRv5Onee6U19+n9kAjac7EIY9Y55sa5Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736843457; c=relaxed/simple;
-	bh=d76ZuYXYGd5MhYXwKrUOaL/NFOW9yG6blep811EcGeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fcqPS2uQGawWqWqUbFPb9xQxKociCVOIUdt3g3RWhFccTBGoRh0SSe778ywexuwSz5uEriu6np6RetFv92W57tHAuxUN07uQNVxW7Trj5gvPzDdc/MEAN1T7Cb8UXECx7NpqQy0IV0xqk+JsjhxKiZaNTrms6W6VMTscJAxNqdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CFgyCgX1; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1736843455; x=1768379455;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d76ZuYXYGd5MhYXwKrUOaL/NFOW9yG6blep811EcGeg=;
-  b=CFgyCgX16mwWlhGyfMpK3ByL7XgQN+9XpmFGjyVWnQf/9jFy/+ei+mHg
-   +6vsYfHnXxT66Vmy7pNHxmhafPkXy2QYT/5ldBvhpTXfvszZSSjIt3xHq
-   EIdIFHW0i8oneTIIcjiN16qALeguS79OwTdcl64aAo5TXauZSym8p8fBR
-   QMQ5uLusJGsooY/QilHzw67ES2Bdh69Jl2lLYTAdwLlQAdyHsaTPnOs3P
-   SvYZUZSp1xTi4rIjcVTr5ExAKnh1hFWESb9VT8nk43DwWuwRntzJE1uUq
-   5tuQefcKTygKEd96Sft9ggemIuYfFHfPEVov4Ebit9DEteNhF9h+8tJ5w
-   A==;
-X-CSE-ConnectionGUID: TyWPe7nBS16NHAk99ORPRw==
-X-CSE-MsgGUID: EPd2tT4lTvewxfTr71sEhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="37241821"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="37241821"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2025 00:30:54 -0800
-X-CSE-ConnectionGUID: OGS8UdzDSvmjat/Rleu/Tg==
-X-CSE-MsgGUID: Yr9g/hOpTTeh7GM4krWnuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="109880457"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 14 Jan 2025 00:30:47 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id B879339C; Tue, 14 Jan 2025 10:30:45 +0200 (EET)
-Date: Tue, 14 Jan 2025 10:30:45 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jens Axboe <axboe@kernel.dk>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	Andi Shyti <andi.shyti@linux.intel.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Christian Brauner <brauner@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, David Airlie <airlied@gmail.com>, 
-	David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>, 
-	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] mm: Remove PG_reclaim
-Message-ID: <vpy2hikqvw3qrncjdlxp6uonpmbueoulhqipdkac7tav4t7m2s@3ebncdtepyv6>
-References: <20250113093453.1932083-1-kirill.shutemov@linux.intel.com>
- <20250113093453.1932083-9-kirill.shutemov@linux.intel.com>
- <Z4UxK_bsFD7TtL1l@casper.infradead.org>
+	s=arc-20240116; t=1736843943; c=relaxed/simple;
+	bh=AA3a5lQ28Qzg+T5Ly1w11cJxc9xXvuRMLoCNx1APCV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mh9PJ2oDP1Z+wTmJ1DkxFyJVMuj4PuVIm14I9Sm4aaCHfT549fnolbKAyZ/okzI4mAOUw5bfR69wFH3Z2LeDIy0XWwZRynb/IcKqurCz+arcKof3Hb1uBUl4tgRJjtrQurOBgAmwsNa5XVvxPOF8Xv6FrJLMoEbSaN4wyOwwVqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dI6MpSbr; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4678664e22fso50301551cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 00:39:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1736843939; x=1737448739; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9gXrJEdxE9BES3C0tahnLqshk2xWlO7dk0aSnzTxp4=;
+        b=dI6MpSbrQSr9V62mO8Mwef2A9JJoxEYc9ZE1py5Vi5xge/c5Luq5FXXFsKqlsrV4X8
+         90+uJQJID7Y0RwpkcSxHj2RW3xYmw5XMh52GA1l1lCuuQbTjjH/piIt4FhGDbQqhYLfV
+         gENyrr4Flqx7R0hsDDnxsb/lo2H+e04dhhj0Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736843939; x=1737448739;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/9gXrJEdxE9BES3C0tahnLqshk2xWlO7dk0aSnzTxp4=;
+        b=CpTE86pu6+w48Mxvuvi9G8qro2DJvzTN6gWQntKpsa7RKEVa+LxZ+baNME+9+//zxC
+         Kb7Ux8SsOsUaPA31m6yUB2+M7AMbc01UVNTu0e/TX2k76E7oAd+jqPKH4pUC1XgV1/oj
+         TWWdi9GTG0hAXY3KkdyHPyWKGq+FAOtJkKJ2thYy1YyJbqjwOm54Bsfb4+E831ZN4grk
+         mOJxgwlJWT4QAlpfoOATbN+p9YtZgIIk2RgqhYbchjk5DlDpk5TOd5UqXqe+kM92Imuk
+         /zJ3PlQxCeNoQo2OcnMIkdSwEsqg2Dw/xQB6um3OI9g2/6yxM+ZGztYldFB54Z8WyPAz
+         SfGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEBhuJHiB+oxhcImRTSVxSS21Ng90xoHs3kI8u7FSC2Mji2X16+m0p4XUfFeiSyXaUL+NgSsSO+UvqXLIx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5z/Bn9YvNsky3bVQcRQIRtnwPdfL5YoNi8LdFlQmh+tufewsI
+	vlJrh25mOtSvf25TwmNrj+jQNCn7FCT90xVPOFqDZrBVaggNzjSzeRhc4BFLacsERUq2HTYa8Lp
+	BOjUNfgEj4FkW/6Rq062+qc6bF6TnLcwxEDKdlA==
+X-Gm-Gg: ASbGncsAkYW9FjdUTl9YD+8qcY4wrnIMWyiDQOWsDN2A4lB0iaRdAeyCSJyPM5rhVMO
+	USueH9PpMhaxJ5ON4uqZFUl4++1rU5q8fiGah
+X-Google-Smtp-Source: AGHT+IEJKDfnmsXjSbFk5D88FYMeWl9RkltEjwsUS/7pNDJcXGKcBjcxurJLDulzVtLc0VGVXfFFxYlJlx5xsv+P8Ng=
+X-Received: by 2002:a05:622a:180c:b0:467:4fc5:9d72 with SMTP id
+ d75a77b69052e-46c710e4d0bmr411318271cf.36.1736843939597; Tue, 14 Jan 2025
+ 00:38:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z4UxK_bsFD7TtL1l@casper.infradead.org>
+References: <hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
+ <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
+ <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com> <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
+ <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
+ <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com> <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
+ <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com> <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
+ <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com> <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
+ <2848b566-3cae-4e89-916c-241508054402@redhat.com> <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
+In-Reply-To: <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 14 Jan 2025 09:38:48 +0100
+X-Gm-Features: AbW1kva92yO2fTIr2fmGoiS8vGjhFf6j-l_b4bVMDNUI_zrX-XtZj908q4CRcag
+Message-ID: <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Jeff Layton <jlayton@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Zi Yan <ziy@nvidia.com>, linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com, 
+	josef@toxicpanda.com, linux-mm@kvack.org, kernel-team@meta.com, 
+	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
+	Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 13, 2025 at 03:28:43PM +0000, Matthew Wilcox wrote:
-> On Mon, Jan 13, 2025 at 11:34:53AM +0200, Kirill A. Shutemov wrote:
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index caadbe393aa2..beba72da5e33 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -686,6 +686,8 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
-> >  		folio_set_young(newfolio);
-> >  	if (folio_test_idle(folio))
-> >  		folio_set_idle(newfolio);
-> > +	if (folio_test_readahead(folio))
-> > +		folio_set_readahead(newfolio);
-> >  
-> >  	folio_migrate_refs(newfolio, folio);
-> >  	/*
-> 
-> Not a problem with this patch ... but aren't we missing a
-> test_dropbehind / set_dropbehind pair in this function?  Or are we
-> prohibited from migrating a folio with the dropbehind flag set
-> somewhere?
+On Mon, 13 Jan 2025 at 22:44, Jeff Layton <jlayton@kernel.org> wrote:
 
-Hm. Good catch.
+> What if we were to allow the kernel to kill off an unprivileged FUSE
+> server that was "misbehaving" [1], clean any dirty pagecache pages that
+> it has, and set writeback errors on the corresponding FUSE inodes [2]?
+> We'd still need a rather long timeout (on the order of at least a
+> minute or so, by default).
 
-We might want to drop clean dropbehind pages instead migrating them.
+How would this be different from Joanne's current request timeout patch?
 
-But I am not sure about dirty ones. With slow backing storage it might be
-better for the system to migrate them instead of keeping them in the old
-place for potentially long time.
+I think it makes sense, but it *has* to be opt in, for the same reason
+that NFS soft timeout is opt in, so it can't really solve the page
+migration issue generally.
 
-Any opinions?
+Also page reading has exactly the same issues, so fixing writeback is
+not enough.
 
-> > +++ b/mm/swap.c
-> > @@ -221,22 +221,6 @@ static void lru_move_tail(struct lruvec *lruvec, struct folio *folio)
-> >  	__count_vm_events(PGROTATED, folio_nr_pages(folio));
-> >  }
-> >  
-> > -/*
-> > - * Writeback is about to end against a folio which has been marked for
-> > - * immediate reclaim.  If it still appears to be reclaimable, move it
-> > - * to the tail of the inactive list.
-> > - *
-> > - * folio_rotate_reclaimable() must disable IRQs, to prevent nasty races.
-> > - */
-> > -void folio_rotate_reclaimable(struct folio *folio)
-> > -{
-> > -	if (folio_test_locked(folio) || folio_test_dirty(folio) ||
-> > -	    folio_test_unevictable(folio))
-> > -		return;
-> > -
-> > -	folio_batch_add_and_move(folio, lru_move_tail, true);
-> > -}
-> 
-> I think this is the last caller of lru_move_tail(), which means we can
-> get rid of fbatches->lru_move_tail and the local_lock that protects it.
-> Or did I miss something?
+Maybe an explicit callback from the migration code to the filesystem
+would work. I.e. move the complexity of dealing with migration for
+problematic filesystems (netfs/fuse) to the filesystem itself.  I'm
+not sure how this would actually look, as I'm unfamiliar with the
+details of page migration, but I guess it shouldn't be too difficult
+to implement for fuse at least.
 
-I see lru_move_tail() being used by lru_add_drain_cpu().
+Thanks,
+Miklos
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+
+
+
+
+
+>
+> Would that be enough to assuage concerns about unprivileged servers
+> pinning pages indefinitely? Buggy servers are still a problem, but
+> there's not much we can do about that.
+>
+> There are a lot of details we'd have to sort out, so I'm also
+> interested in whether anyone (Miklos? Bernd?) would find this basic
+> approach objectionable.
+>
+> [1]: for some definition of misbehavior. Probably a writeback
+> timeout of some sort but maybe there would be other criteria too.
+>
+> [2]: or maybe just make them eligible to be cleaned without talking to
+> the server, should the VM wish it.
+> --
+> Jeff Layton <jlayton@kernel.org>
 
