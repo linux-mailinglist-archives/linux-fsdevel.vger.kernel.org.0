@@ -1,211 +1,337 @@
-Return-Path: <linux-fsdevel+bounces-39153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0664A10B59
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 16:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB65A10B64
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 16:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFAE8168EA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 15:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DD0D16AA95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 15:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498751B4148;
-	Tue, 14 Jan 2025 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFEC172BA9;
+	Tue, 14 Jan 2025 15:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="or9Q8Hrd"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vh2q1ZPx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F42149C57
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 15:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4E48C07
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 15:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736869461; cv=none; b=KhSlMr6wh22ympKA1lR0UxLi+JSiqdI4+Uf3aaqee384e+406ccddmc5PPZppoaqoqYncYHWwAqPlVx2XdEUraeImtcPehUtVejTPRiGXUbAF41Dwxu/Jg5zRexvqAqou0e5NSZOZlxZ1w7mBEv4IXqyLfGVGp264OvuwiupTGk=
+	t=1736869590; cv=none; b=rALkiMUkGWGmkcZWtjs4tLSqjMxMB7tYWCUI5Ll5ZRzrEjU/1owEUd9RWhlVuq0v0jGJoOgsiBNadbXDYws4zurKNHi4L3OCMHPEMTTfHln6D8OwX6ZXPSW69pS0fFZjLqJuVqalmY5qEGR8mS68ezkpD/m4niWxQB/6lqxwsdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736869461; c=relaxed/simple;
-	bh=jTzvlPGpoCX9x9yCpHaLfBghwnzXHznfP6+iD76KWfk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QhUgMLwDTheBoYVJlG0ioTPZ6C+QprDqf8UGhXneOz1Y5aTVjqtgCBeQllaKsNttc1KtzXhvSZXgR5ACg/UnogVKze8eeElGqZzYXx9dtfKhry3cVLlGoRpDXLpoPniPe2DE+alLt5Yb4Rfyf3+S1rDB48VviErSfOYSkF8d33k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=or9Q8Hrd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A16EC4CEDD;
-	Tue, 14 Jan 2025 15:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736869461;
-	bh=jTzvlPGpoCX9x9yCpHaLfBghwnzXHznfP6+iD76KWfk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=or9Q8HrdM9uLRTE7AUDTVpdkxMEFuj7D+k7A1MkDXfRtwU+2Si158UukVItkDkask
-	 JEUyuyPQusCmwFoZJpM0/PMqWQGtL17Iv5lq5IV7L56mcu6kJijBGT7gHTUroq8M3E
-	 flrI5rPCc3dt9EyrE8J+W0fJ/dKZMihM4+Sc81lfpx4E5oTDug1B11mgFVrOWk/EGm
-	 NZzaeugTEmH/VSEpN3xnL+OT/Ne4zwUp5nbwkrwPJgXG0GoXuRYXr6bETmMRYXzlz5
-	 koM2kDpgGMIy3pFb5IT8rNzJLLANrzdCYkGhc/ban+FkDraEwKEkwTwKtH5spHHPUN
-	 EaFZdtTrwQ95w==
-Message-ID: <d2c2df64510d2c3fd5d3cae5b06e8d553e291367.camel@kernel.org>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under
- writeback with AS_WRITEBACK_INDETERMINATE mappings
-From: Jeff Layton <jlayton@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: David Hildenbrand <david@redhat.com>, Shakeel Butt
- <shakeel.butt@linux.dev>,  Joanne Koong <joannelkoong@gmail.com>, Bernd
- Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>, 
-	linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
- josef@toxicpanda.com, 	linux-mm@kvack.org, kernel-team@meta.com, Matthew
- Wilcox <willy@infradead.org>,  Oscar Salvador <osalvador@suse.de>, Michal
- Hocko <mhocko@kernel.org>
-Date: Tue, 14 Jan 2025 10:44:18 -0500
-In-Reply-To: <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
-References: 
-	<hftauqdz22ujgkkgrf6jbpxuubfoms42kn5l5nuft3slfp7eaz@yy6uslmp37pn>
-	 <CAJnrk1aPCCjbKm+Ay9dz3HezCFehKDfsDidgsRyAMzen8Dk=-w@mail.gmail.com>
-	 <c04b73a2-b33e-4306-afb9-0fab8655615b@redhat.com>
-	 <CAJfpegtzDvjrH75oXS-d3t+BdZegduVYY_4Apc4bBoRcMiO-PQ@mail.gmail.com>
-	 <gvgtvxjfxoyr4jqqtcpfuxnx3y6etbgxfhcee25gmoiagqyxkq@ejnt3gokkbjt>
-	 <791d4056-cac1-4477-a8e3-3a2392ed34db@redhat.com>
-	 <plvffraql4fq4i6xehw6aklzmdyw3wvhlhkveneajzq7sqzs6h@t7beg2xup2b4>
-	 <1fdc9d50-584c-45f4-9acd-3041d0b4b804@redhat.com>
-	 <54ebdef4205781d3351e4a38e5551046482dbba0.camel@kernel.org>
-	 <ccefea7b-88a5-4472-94cd-1e320bf90b44@redhat.com>
-	 <e3kipe2qcuuvyefnwpo4z5h4q5mwf2mmf6jy6g2whnceze3nsf@uid2mlj5qfog>
-	 <2848b566-3cae-4e89-916c-241508054402@redhat.com>
-	 <dfd5427e2b4434355dd75d5fbe2460a656aba94e.camel@kernel.org>
-	 <CAJfpegs_YMuyBGpSnNKo7bz8_s7cOwn2we+UwhUYBfjAqO4w+g@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1736869590; c=relaxed/simple;
+	bh=kUI7CtwkZ9COv3ocxn23ryFl2J8RzI0PrAHh3SdmBhk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J4OGIRHju7d9xqI+Qk1Xu7oHdnw+E3FuKUFgzNFYIUnszCuxn5gDmTful5Ji9NKsslOJSDF8hlKaqVFB7BB8FBf8UPkkphQu0fZcqIepRQWCAQxOwrht5Z5hKu1tGjgGDz4mnOU0l/HNZbX2zVGDhpS6tQoSdRCx+7qUG/iH2HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vh2q1ZPx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736869587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Po7sFqkgiNpWHgnYbDTLwK+PJsUBPIEB6Kwf5vaywco=;
+	b=Vh2q1ZPxdphIjX9XY/lJBeRRv4ee4AxbPRPxRBpMPTu67WtM7GVge6Eq4iY28grELtQJ7P
+	ANv3QAAudXxlayktihixZnEjvM9OkRsToMHMetktEfDlTD35kv+UZkzAI2ctCamDbswxW9
+	Lm9v8EDC1J/bPPsk1o2v7uV0G2zFu1c=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-qp0HT-LwP4GyIaw0vvUxlg-1; Tue, 14 Jan 2025 10:46:22 -0500
+X-MC-Unique: qp0HT-LwP4GyIaw0vvUxlg-1
+X-Mimecast-MFC-AGG-ID: qp0HT-LwP4GyIaw0vvUxlg
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5424a89c885so3109222e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 07:46:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736869581; x=1737474381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Po7sFqkgiNpWHgnYbDTLwK+PJsUBPIEB6Kwf5vaywco=;
+        b=VPATP8h3e+k+TIlrub0lhX/EibIPjfkUF0bIHd+TmXhsbvpY0JiwKV/A60LKcZLfUE
+         ZgVPXJf8KYH5iaC8JAWxWGnUzbWXnXtoQ7jwh1cqLTkX/A4hgdkvJUrMNj/HHy+rpZKE
+         jwByoL8NgG6pPBqEA7xkwdtyfNKsXEijMe4R1Qywe8R7b1RcsQDCh6dHaTt9gqhpEb4S
+         0wdBAXzaQNZDNRwiI4XhBoAlmyPzRzXM24cWPj0SOwM2AfVK32zUsy+zcmsfcw0A4a0f
+         Ee6DpkvspIz/zsjaat2DfXkx8QskFnQy6HFyd0f5/6jq9Uynj2v/LPMWTXGaDtRCz/Fi
+         12dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMqErqOi5BL5vSLWxnSNxg+tw98ApUSUudFLr/xQpf3DvMgCJUBhkXONaZrB+WlIXerk5A/dXBrnUalbOJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvjxt77OkwM9v6403l/S57cxWOt0PBCxOEbTXGKLAgMvMCagGS
+	V+DeSoywHvnDmuJ/lDBT01E+URlM0ZajJWxYfkCTZc/LGl8v9o5arC+CT8hVPDauE8LPRtcvrEC
+	XbbRsGTyjIAYJpu2+lHiC9xOWYv/dAaCqhVPrn3dJORDVZhhDGknaMa9wmkYRBOFwEj1Wp00DdG
+	Z+AQ/ZlhC/fAgRXDxOUZrqKGAZSH/NwvFMD+SgMw==
+X-Gm-Gg: ASbGncuIguD9SMMZ/7VvbVjQ8Sv3J9Kg0tUeQnOhpvbQPb7VWek+SOMbgxud4dFnrSy
+	iSVVGTGyt3o5HTR0SIwrN/PbBy+5IdA0se5H9UCo=
+X-Received: by 2002:a05:6512:2395:b0:542:62e6:4517 with SMTP id 2adb3069b0e04-542845a6e4amr9119542e87.12.1736869580870;
+        Tue, 14 Jan 2025 07:46:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGX+fhtb56T2Rw9G3WQOoy+tQ06Xt8/tniSED3WskgU41w/L1OqJZex71LoSnemXhht/EINT4HHtclNivAaN2Y=
+X-Received: by 2002:a05:6512:2395:b0:542:62e6:4517 with SMTP id
+ 2adb3069b0e04-542845a6e4amr9119528e87.12.1736869580392; Tue, 14 Jan 2025
+ 07:46:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250110174034304QOb8eDoqtFkp3_t8mqnqc@zte.com.cn>
+In-Reply-To: <20250110174034304QOb8eDoqtFkp3_t8mqnqc@zte.com.cn>
+From: Mario Casquero <mcasquer@redhat.com>
+Date: Tue, 14 Jan 2025 16:46:08 +0100
+X-Gm-Features: AbW1kvY1Q6s4-03Ic3hBYPuGXV99wbPD42iHvf9Tw3ShFrSa5uqs9q-bXf_bX2c
+Message-ID: <CAMXpfWtCROG-CyJWR1qM4k12dpRhKY92g3Mn74nokV_V-U+-cg@mail.gmail.com>
+Subject: Re: [PATCH v5] ksm: add ksm involvement information for each process
+To: xu.xin16@zte.com.cn
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-kernel@vger.kernel.org, 
+	wang.yaxin@zte.com.cn, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	yang.yang29@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-01-14 at 09:38 +0100, Miklos Szeredi wrote:
-> On Mon, 13 Jan 2025 at 22:44, Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> > What if we were to allow the kernel to kill off an unprivileged FUSE
-> > server that was "misbehaving" [1], clean any dirty pagecache pages that
-> > it has, and set writeback errors on the corresponding FUSE inodes [2]?
-> > We'd still need a rather long timeout (on the order of at least a
-> > minute or so, by default).
->=20
-> How would this be different from Joanne's current request timeout patch?
->=20
+This patch has been successfully tested. After starting the KSM and
+obtaining the PID of a process, e.g. qemu-kvm PID, now the new items
+can be checked.
 
-When the timeout pops with Joanne's set, the pages still remain dirty
-(IIUC). The idea here would be that after a call times out and we've
-decided the server is "misbehaving", we'd want to clean the pages and
-mark the inode with a writeback error. That frees up the page to be
-migrated, but a later msync or fsync should return an error. This is
-the standard behavior for writeback errors on filesystems.
+echo 1 > /sys/kernel/mm/ksm/run
+pid=3D$(pgrep -f "qemu-kvm")
+cat /proc/$pid/ksm_stat
+ksm_rmap_items 70692
+ksm_zero_pages 0
+ksm_merging_pages 4211
+ksm_process_profit 12723968
+ksm_merge_any: no
+ksm_mergeable: yes
 
-> I think it makes sense, but it *has* to be opt in, for the same reason
-> that NFS soft timeout is opt in, so it can't really solve the page
-> migration issue generally.
->=20
+Tested-by: Mario Casquero <mcasquer@redhat.com>
 
-Does it really need to be though? We're talking unprivileged mounts
-here. Imposing a hard timeout on reads or writes as a mechanism to
-limit resource consumption by an unprivileged user seems like a
-reasonable thing to do. Writeback errors suck, but what other recourse
-do we have in this situation?
 
-We could also consider only enforcing this when memory gets low, or a
-migration has failed.
+On Fri, Jan 10, 2025 at 10:52=E2=80=AFAM <xu.xin16@zte.com.cn> wrote:
+>
+> From: xu xin <xu.xin16@zte.com.cn>
+>
+> In /proc/<pid>/ksm_stat, Add two extra ksm involvement items including
+> KSM_mergeable and KSM_merge_any. It helps administrators to
+> better know the system's KSM behavior at process level.
+>
+> ksm_merge_any: yes/no
+>         whether the process'mm is added by prctl() into the candidate lis=
+t
+>         of KSM or not, and fully enabled at process level.
+>
+> ksm_mergeable: yes/no
+>     whether any VMAs of the process'mm are currently applicable to KSM.
+>
+> Purpose
+> =3D=3D=3D=3D=3D=3D=3D
+> These two items are just to improve the observability of KSM at process
+> level, so that users can know if a certain process has enable KSM.
+>
+> For example, if without these two items, when we look at
+> /proc/<pid>/ksm_stat and there's no merging pages found, We are not sure
+> whether it is because KSM was not enabled or because KSM did not
+> successfully merge any pages.
+>
+> Althrough "mg" in /proc/<pid>/smaps indicate VM_MERGEABLE, it's opaque
+> and not very obvious for non professionals.
+>
+> Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+> Cc: Wang Yaxin <wang.yaxin@zte.com.cn>
+> ---
+> Changelog v4 -> v5:
+> 1. Update the documentation.
+> 2. Correct a comment sentence and add purpose statment in commit message.
+> ---
+>  Documentation/filesystems/proc.rst | 66 ++++++++++++++++++++++++++++++++=
+++++++
+>  fs/proc/base.c                     | 11 +++++++
+>  include/linux/ksm.h                |  1 +
+>  mm/ksm.c                           | 19 +++++++++++
+>  4 files changed, 97 insertions(+)
+>
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
+ms/proc.rst
+> index 6a882c57a7e7..916f83203de0 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -48,6 +48,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold=
+.net>    June 9 2009
+>    3.11 /proc/<pid>/patch_state - Livepatch patch operation state
+>    3.12 /proc/<pid>/arch_status - Task architecture specific information
+>    3.13  /proc/<pid>/fd - List of symlinks to open files
+> +  3.14  /proc/<pid/ksm_stat - Information about the process' ksm status.
+>
+>    4    Configuring procfs
+>    4.1  Mount options
+> @@ -2232,6 +2233,71 @@ The number of open files for the process is stored=
+ in 'size' member
+>  of stat() output for /proc/<pid>/fd for fast access.
+>  -------------------------------------------------------
+>
+> +3.14 /proc/<pid/ksm_stat - Information about the process' ksm status
+> +--------------------------------------------------------------------
+> +When CONFIG_KSM is enabled, each process has this file which displays
+> +the information of ksm merging status.
+> +
+> +Example
+> +~~~~~~~
+> +
+> +::
+> +
+> +    / # cat /proc/self/ksm_stat
+> +    ksm_rmap_items 0
+> +    ksm_zero_pages 0
+> +    ksm_merging_pages 0
+> +    ksm_process_profit 0
+> +    ksm_merge_any: no
+> +    ksm_mergeable: no
+> +
+> +Description
+> +~~~~~~~~~~~
+> +
+> +ksm_rmap_items
+> +^^^^^^^^^^^^^^
+> +
+> +The number of ksm_rmap_item structure in use. The structure of
+> +ksm_rmap_item is to store the reverse mapping information for virtual
+> +addresses. KSM will generate a ksm_rmap_item for each ksm-scanned page
+> +of the process.
+> +
+> +ksm_zero_pages
+> +^^^^^^^^^^^^^^
+> +
+> +When /sys/kernel/mm/ksm/use_zero_pages is enabled, it represent how many
+> +empty pages are merged with kernel zero pages by KSM.
+> +
+> +ksm_merging_pages
+> +^^^^^^^^^^^^^^^^^
+> +
+> +It represents how many pages of this process are involved in KSM merging
+> +(not including ksm_zero_pages). It is the same with what
+> +/proc/<pid>/ksm_merging_pages shows.
+> +
+> +ksm_process_profit
+> +^^^^^^^^^^^^^^^^^^
+> +
+> +The profit that KSM brings (Saved bytes). KSM can save memory by merging
+> +identical pages, but also can consume additional memory, because it need=
+s
+> +to generate a number of rmap_items to save each scanned page's brief rma=
+p
+> +information. Some of these pages may be merged, but some may not be able=
+d
+> +to be merged after being checked several times, which are unprofitable
+> +memory consumed.
+> +
+> +ksm_merge_any
+> +^^^^^^^^^^^^^
+> +
+> +It specifies whether the process'mm is added by prctl() into the candida=
+te list
+> +of KSM or not, and KSM scanning is fully enabled at process level.
+> +
+> +ksm_mergeable
+> +^^^^^^^^^^^^^
+> +
+> +It specifies whether any VMAs of the process'mm are currently applicable=
+ to KSM.
+> +
+> +More information about KSM can be found at Documentation/admin-guide/mm/=
+ksm.rst.
+> +
+>
+>  Chapter 4: Configuring procfs
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 0edf14a9840e..a50b222a5917 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -3269,6 +3269,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, st=
+ruct pid_namespace *ns,
+>                                 struct pid *pid, struct task_struct *task=
+)
+>  {
+>         struct mm_struct *mm;
+> +       int ret =3D 0;
+>
+>         mm =3D get_task_mm(task);
+>         if (mm) {
+> @@ -3276,6 +3277,16 @@ static int proc_pid_ksm_stat(struct seq_file *m, s=
+truct pid_namespace *ns,
+>                 seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(m=
+m));
+>                 seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_=
+pages);
+>                 seq_printf(m, "ksm_process_profit %ld\n", ksm_process_pro=
+fit(mm));
+> +               seq_printf(m, "ksm_merge_any: %s\n",
+> +                               test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? =
+"yes" : "no");
+> +               ret =3D mmap_read_lock_killable(mm);
+> +               if (ret) {
+> +                       mmput(mm);
+> +                       return ret;
+> +               }
+> +               seq_printf(m, "ksm_mergeable: %s\n",
+> +                               ksm_process_mergeable(mm) ? "yes" : "no")=
+;
+> +               mmap_read_unlock(mm);
+>                 mmput(mm);
+>         }
+>
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index 6a53ac4885bb..d73095b5cd96 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -93,6 +93,7 @@ void folio_migrate_ksm(struct folio *newfolio, struct f=
+olio *folio);
+>  void collect_procs_ksm(const struct folio *folio, const struct page *pag=
+e,
+>                 struct list_head *to_kill, int force_early);
+>  long ksm_process_profit(struct mm_struct *);
+> +bool ksm_process_mergeable(struct mm_struct *mm);
+>
+>  #else  /* !CONFIG_KSM */
+>
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 7ac59cde626c..be2eb1778225 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -3263,6 +3263,25 @@ static void wait_while_offlining(void)
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+>
+>  #ifdef CONFIG_PROC_FS
+> +/*
+> + * The process is mergeable only if any VMA is currently
+> + * applicable to KSM.
+> + *
+> + * The mmap lock must be held in read mode.
+> + */
+> +bool ksm_process_mergeable(struct mm_struct *mm)
+> +{
+> +       struct vm_area_struct *vma;
+> +
+> +       mmap_assert_locked(mm);
+> +       VMA_ITERATOR(vmi, mm, 0);
+> +       for_each_vma(vmi, vma)
+> +               if (vma->vm_flags & VM_MERGEABLE)
+> +                       return true;
+> +
+> +       return false;
+> +}
+> +
+>  long ksm_process_profit(struct mm_struct *mm)
+>  {
+>         return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PA=
+GE_SIZE -
+> --
+> 2.15.2
+>
 
-> Also page reading has exactly the same issues, so fixing writeback is
-> not enough.
->=20
-
-Reads are synchronous, so we could just return an error directly on
-those.
-
-> Maybe an explicit callback from the migration code to the filesystem
-> would work. I.e. move the complexity of dealing with migration for
-> problematic filesystems (netfs/fuse) to the filesystem itself.  I'm
-> not sure how this would actually look, as I'm unfamiliar with the
-> details of page migration, but I guess it shouldn't be too difficult
-> to implement for fuse at least.
->=20
-
-We already have a ->migrate_folio operation. Maybe we could consider
-pushing down the PG_writeback check into the ->migrate_folio ops? As an
-initial step, we could just make them all return -EBUSY, and then allow
-some (like FUSE) to handle the situation properly.
---=20
-Jeff Layton <jlayton@kernel.org>
 
