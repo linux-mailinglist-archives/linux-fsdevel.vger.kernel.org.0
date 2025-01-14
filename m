@@ -1,236 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-39210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D6DA115B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:57:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08369A115C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 00:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174EB1888FDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1469618855CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 23:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5800321C9E4;
-	Tue, 14 Jan 2025 23:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B191321E091;
+	Tue, 14 Jan 2025 23:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2zWRssJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjIT9U5E"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBBE20F97C;
-	Tue, 14 Jan 2025 23:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1697B214205;
+	Tue, 14 Jan 2025 23:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736899048; cv=none; b=cdRsfP6lO8jV+z7YlfJVJFzPQdj//2/OGEH3+TIbI5l/NKiDbZlhvQ7Jw6NDqiD8IBhppVOxqJM/Wee0VWE9XzU3Jez0qmU71Y/m1UIMELNmx8tGUBh5S9Czf50YutZkyPrZjjKkVON8mBhX2AeeFj8ELM9VThS6uLQ+hazU/dI=
+	t=1736899169; cv=none; b=RPG5l2ff1C7Px9T6nmzdWffxRFYGRRK9hO4knRkjYcPKZdV+X55QwpPpEHsM3kbOIEgB+J07r1pIZf6ptn82SsZTyvhtzKTH6WliUaI+UJVLumqSnISPC1wejlyIwnj8JHbmhHHg8wN1NzcDLAV0HHvit2andwl3OAqx1NpdqEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736899048; c=relaxed/simple;
-	bh=3vUP1EaUHYnR7E43+5MGJne5mxuhlaMPxsiO9F2tOME=;
+	s=arc-20240116; t=1736899169; c=relaxed/simple;
+	bh=ZIhHge8HKjBR5y6RxvnIYl0+yjEfXZThkKe1M+rMcwg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mE4nneQSkza/U+A+fMHqWryWr1I3i8fAcMxbFCF3Zpf5vS0AKxxAnbEWjzdXWIIAiTYR1bKRZQ3/77fMYOIfEjdD1IyrbaVG0O3ewusndtIvVOIXOvRql22/TDwPYKlDUUNbnMEbVfq02qNATLpq0EQlyyxi7aO92vEMjD746XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2zWRssJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C9CC4CEDD;
-	Tue, 14 Jan 2025 23:57:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7rKbWMiootnGoDXAgfsJ/22Fehpvr62s8bobusXPrAdB6SnJWznx96qC34GHW9+JibV6JvA/9hVlrtxJ6SH70z3L+ZQb/zgfeWRbEmTLcJyrk4ozHe5JTUHjOPld0JxSPg0mf45ta9gOByai6vA5CFRAthN8WlQZOf4mPGtiJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjIT9U5E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C888C4CEDD;
+	Tue, 14 Jan 2025 23:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736899047;
-	bh=3vUP1EaUHYnR7E43+5MGJne5mxuhlaMPxsiO9F2tOME=;
+	s=k20201202; t=1736899165;
+	bh=ZIhHge8HKjBR5y6RxvnIYl0+yjEfXZThkKe1M+rMcwg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y2zWRssJIJfKezUUjNhNJzVAYrJITsmCsxgwROg2cPvlKiSJb6F3u6VDtDnu+o5G4
-	 2GZ0ZyAVVU6Axl9YXMG8WpniIWGNeVtCFCZ208T+hG7gbH48j4QtJiwx40P7x96mLp
-	 83bhZ15anZmq9gD92SBk7/8kIvEdI8N9FtW0Lw98w1bON/srp7wnDjJiWzyCcj054S
-	 sXTg30lp2sUex7W/R1FdI67lk/lRRfxf3XuGsowkwHV4sQYRPEcjiGiKmkHEe0qu7j
-	 2a/jJWKkQxAZY19DA5qXEvBNzXhMhDbsHdn7VOkWZweOs2hUxANrwxmez2waPrHE3X
-	 7XE3zSWnYk+zA==
-Date: Tue, 14 Jan 2025 15:57:26 -0800
+	b=sjIT9U5Ez07uRDb/JT++D8YiCKBFRxhXyqyvvCGAPHrJEn10LlDovM85QYNH7pXyY
+	 zf+WnTnnvPaq+z06QOxpuyveyPBKDQSoAy4CRMdbnwB+OiFdYfWQg2PHa/Fwb3sK3E
+	 MkKG8IW1anWyh/0a+XZDBpiA17MXksG2F8ENKd5zq6+OrnzFp9giFIkGNoYs5qDy6h
+	 3nqtoK1gylhuVxXJNkpNeiUKxo2a9HRS8SGHmejdz3JnZmwlVq/fyaiLegvOTWC7xi
+	 xRFlfkfYVB8p4RG+u7wxaDBihdEZQ67VaMng4351tLGjPw0ThC/oNZqxDsFBPfaH0Y
+	 +uFgYZIeTpg2g==
+Date: Tue, 14 Jan 2025 15:59:25 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
-Message-ID: <20250114235726.GA3566461@frogsfrogsfrogs>
-References: <20241204154344.3034362-1-john.g.garry@oracle.com>
- <20241204154344.3034362-2-john.g.garry@oracle.com>
- <Z1C9IfLgB_jDCF18@dread.disaster.area>
- <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
- <Z1IX2dFida3coOxe@dread.disaster.area>
- <20241212013433.GC6678@frogsfrogsfrogs>
- <Z4Xq6WuQpVOU7BmS@dread.disaster.area>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc: ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Immutable vs read-only for Windows compatibility
+Message-ID: <20250114235925.GC3561231@frogsfrogsfrogs>
+References: <20241227121508.nofy6bho66pc5ry5@pali>
+ <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
+ <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com>
+ <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
+ <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com>
+ <20250114211050.iwvxh7fon7as7sty@pali>
+ <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
+ <20250114215350.gkc2e2kcovj43hk7@pali>
+ <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
+ <20250114235547.ncqaqcslerandjwf@pali>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Z4Xq6WuQpVOU7BmS@dread.disaster.area>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250114235547.ncqaqcslerandjwf@pali>
 
-On Tue, Jan 14, 2025 at 03:41:13PM +1100, Dave Chinner wrote:
-> On Wed, Dec 11, 2024 at 05:34:33PM -0800, Darrick J. Wong wrote:
-> > On Fri, Dec 06, 2024 at 08:15:05AM +1100, Dave Chinner wrote:
-> > > On Thu, Dec 05, 2024 at 10:52:50AM +0000, John Garry wrote:
-> > > e.g. look at MySQL's use of fallocate(hole punch) for transparent
-> > > data compression - nobody had forseen that hole punching would be
-> > > used like this, but it's a massive win for the applications which
-> > > store bulk compressible data in the database even though it does bad
-> > > things to the filesystem.
-> > > 
-> > > Spend some time looking outside the proprietary database application
-> > > box and think a little harder about the implications of atomic write
-> > > functionality.  i.e. what happens when we have ubiquitous support
-> > > for guaranteeing only the old or the new data will be seen after
-> > > a crash *without the need for using fsync*.
+On Wed, Jan 15, 2025 at 12:55:47AM +0100, Pali Rohár wrote:
+> On Wednesday 15 January 2025 09:29:14 ronnie sahlberg wrote:
+> > On Wed, 15 Jan 2025 at 07:54, Pali Rohár <pali@kernel.org> wrote:
+> > >
+> > > On Tuesday 14 January 2025 16:44:55 Chuck Lever wrote:
+> > > > On 1/14/25 4:10 PM, Pali Rohár wrote:
+> > > > > On Saturday 04 January 2025 10:30:26 Chuck Lever wrote:
+> > > > > > On 1/4/25 3:52 AM, Christian Brauner wrote:
+> > > > > > > On Thu, Jan 02, 2025 at 10:52:51AM -0500, Chuck Lever wrote:
+> > > > > > > > On 1/2/25 9:37 AM, Jan Kara wrote:
+> > > > > > > > > Hello!
+> > > > > > > > >
+> > > > > > > > > On Fri 27-12-24 13:15:08, Pali Rohár wrote:
+> > > > > > > > > > Few months ago I discussed with Steve that Linux SMB client has some
+> > > > > > > > > > problems during removal of directory which has read-only attribute set.
+> > > > > > > > > >
+> > > > > > > > > > I was looking what exactly the read-only windows attribute means, how it
+> > > > > > > > > > is interpreted by Linux and in my opinion it is wrongly used in Linux at
+> > > > > > > > > > all.
+> > > > > > > > > >
+> > > > > > > > > > Windows filesystems NTFS and ReFS, and also exported over SMB supports
+> > > > > > > > > > two ways how to present some file or directory as read-only. First
+> > > > > > > > > > option is by setting ACL permissions (for particular or all users) to
+> > > > > > > > > > GENERIC_READ-only. Second option is by setting the read-only attribute.
+> > > > > > > > > > Second option is available also for (ex)FAT filesystems (first option via
+> > > > > > > > > > ACL is not possible on (ex)FAT as it does not have ACLs).
+> > > > > > > > > >
+> > > > > > > > > > First option (ACL) is basically same as clearing all "w" bits in mode
+> > > > > > > > > > and ACL (if present) on Linux. It enforces security permission behavior.
+> > > > > > > > > > Note that if the parent directory grants for user delete child
+> > > > > > > > > > permission then the file can be deleted. This behavior is same for Linux
+> > > > > > > > > > and Windows (on Windows there is separate ACL for delete child, on Linux
+> > > > > > > > > > it is part of directory's write permission).
+> > > > > > > > > >
+> > > > > > > > > > Second option (Windows read-only attribute) means that the file/dir
+> > > > > > > > > > cannot be opened in write mode, its metadata attribute cannot be changed
+> > > > > > > > > > and the file/dir cannot be deleted at all. But anybody who has
+> > > > > > > > > > WRITE_ATTRIBUTES ACL permission can clear this attribute and do whatever
+> > > > > > > > > > wants.
+> > > > > > > > >
+> > > > > > > > > I guess someone with more experience how to fuse together Windows & Linux
+> > > > > > > > > permission semantics should chime in here but here are my thoughts.
+> > > > > > > > >
+> > > > > > > > > > Linux filesystems has similar thing to Windows read-only attribute
+> > > > > > > > > > (FILE_ATTRIBUTE_READONLY). It is "immutable" bit (FS_IMMUTABLE_FL),
+> > > > > > > > > > which can be set by the "chattr" tool. Seems that the only difference
+> > > > > > > > > > between Windows read-only and Linux immutable is that on Linux only
+> > > > > > > > > > process with CAP_LINUX_IMMUTABLE can set or clear this bit. On Windows
+> > > > > > > > > > it can be anybody who has write ACL.
+> > > > > > > > > >
+> > > > > > > > > > Now I'm thinking, how should be Windows read-only bit interpreted by
+> > > > > > > > > > Linux filesystems drivers (FAT, exFAT, NTFS, SMB)? I see few options:
+> > > > > > > > > >
+> > > > > > > > > > 0) Simply ignored. Disadvantage is that over network fs, user would not
+> > > > > > > > > >       be able to do modify or delete such file, even as root.
+> > > > > > > > > >
+> > > > > > > > > > 1) Smartly ignored. Meaning that for local fs, it is ignored and for
+> > > > > > > > > >       network fs it has to be cleared before any write/modify/delete
+> > > > > > > > > >       operation.
+> > > > > > > > > >
+> > > > > > > > > > 2) Translated to Linux mode/ACL. So the user has some ability to see it
+> > > > > > > > > >       or change it via chmod. Disadvantage is that it mix ACL/mode.
+> > > > > > > > >
+> > > > > > > > > So this option looks sensible to me. We clear all write permissions in
+> > > > > > > > > file's mode / ACL. For reading that is fully compatible, for mode
+> > > > > > > > > modifications it gets a bit messy (probably I'd suggest to just clear
+> > > > > > > > > FILE_ATTRIBUTE_READONLY on modification) but kind of close.
+> > > > > > > >
+> > > > > > > > IMO Linux should store the Windows-specific attribute information but
+> > > > > > > > otherwise ignore it. Modifying ACLs based seems like a road to despair.
+> > > > > > > > Plus there's no ACL representation for OFFLINE and some of the other
+> > > > > > > > items that we'd like to be able to support.
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > If I were king-for-a-day (tm) I would create a system xattr namespace
+> > > > > > > > just for these items, and provide a VFS/statx API for consumers like
+> > > > > > > > Samba, ksmbd, and knfsd to set and get these items. Each local
+> > > > > > > > filesystem can then implement storage with either the xattr or (eg,
+> > > > > > > > ntfs) can store them directly.
+> > > > > > >
+> > > > > > > Introducing a new xattr namespace for this wouldn't be a problem imho.
+> > > > > > > Why would this need a new statx() extension though? Wouldn't the regular
+> > > > > > > xattr apis to set and get xattrs be enough?
+> > > > > >
+> > > > > > My thought was to have a consistent API to access these attributes, and
+> > > > > > let the filesystem implementers decide how they want to store them. The
+> > > > > > Linux implementation of ntfs, for example, probably wants to store these
+> > > > > > on disk in a way that is compatible with the Windows implementation of
+> > > > > > NTFS.
+> > > > > >
+> > > > > > A common API would mean that consumers (like NFSD) wouldn't have to know
+> > > > > > those details.
+> > > > > >
+> > > > > >
+> > > > > > --
+> > > > > > Chuck Lever
+> > > > >
+> > > > > So, what about introducing new xattrs for every attribute with this pattern?
+> > > > >
+> > > > > system.attr.readonly
+> > > > > system.attr.hidden
+> > > > > system.attr.system
+> > > > > system.attr.archive
+> > > > > system.attr.temporary
+> > > > > system.attr.offline
+> > > > > system.attr.not_content_indexed
+> > > >
+> > > > Yes, all of them could be stored as xattrs for file systems that do
+> > > > not already support these attributes.
+> > > >
+> > > > But I think we don't want to expose them directly to users, however.
+> > > > Some file systems, like NTFS, might want to store these on-disk in a way
+> > > > that is compatible with Windows.
+> > > >
+> > > > So I think we want to create statx APIs for consumers like user space
+> > > > and knfsd, who do not care to know the specifics of how this information
+> > > > is stored by each file system.
+> > > >
+> > > > The xattrs would be for file systems that do not already have a way to
+> > > > represent this information in their on-disk format.
+> > > >
+> > > >
+> > > > > All those attributes can be set by user, I took names from SMB, which
+> > > > > matches NTFS and which subsets are used by other filesystems like FAT,
+> > > > > exFAT, NFS4, UDF, ...
+> > > > >
+> > > > > Every xattr would be in system.attr namespace and would contain either
+> > > > > value 0 or 1 based on that fact if is set or unset. If the filesystem
+> > > > > does not support particular attribute then xattr get/set would return
+> > > > > error that it does not exist.
+> > > >
+> > > > Or, if the xattr exists, then that means the equivalent Windows
+> > > > attribute is asserted; and if it does not, the equivalent Windows
+> > > > attribute is clear. But again, I think each file system should be
+> > > > able to choose how they implement these, and that implementation is
+> > > > then hidden by statx.
+> > > >
+> > > >
+> > > > > This would be possible to use by existing userspace getfattr/setfattr
+> > > > > tools and also by knfsd/ksmbd via accessing xattrs directly.
+> > > >
+> > > >
+> > > > --
+> > > > Chuck Lever
+> > >
+> > > With this xattr scheme I mean that API would be xattr between fs and
+> > > vfs/userspace/knfsd/smbd. So NTFS would take that xattr request and
+> > > translate it to its own NTFS attributes. Other non-windows fs stores
+> > > them as xattrs.
 > > 
-> > IOWs, the program either wants an old version or a new version of the
-> > files that it wrote, and the commit boundary is syncfs() after updating
-> > all the files?
-> 
-> Yes, though there isn't a need for syncfs() to guarantee old-or-new.
-> That's the sort of thing an application can choose to do at the end
-> of it's update set...
-
-Well yes, there has to be a caches flush somewhere -- last I checked,
-RWF_ATOMIC doesn't require that the written data be persisted after the
-call completes.
-
-> > > Think about the implications of that for a minute - for any full
-> > > file overwrite up to the hardware atomic limits, we won't need fsync
-> > > to guarantee the integrity of overwritten data anymore. We only need
-> > > a mechanism to flush the journal and device caches once all the data
-> > > has been written (e.g. syncfs)...
+> > I am not sure if for the cifs client doing this by emulating xattrs.
+> > I have bad memories of the emulated xattrs.
 > > 
-> > "up to the hardware atomic limits" -- that's a big limitation.  What if
-> > I need to write 256K but the device only supports up to 64k?  RWF_ATOMIC
-> > won't work.  Or what if the file range I want to dirty isn't aligned
-> > with the atomic write alignment?  What if the awu geometry changes
-> > online due to a device change, how do programs detect that?
+> > What about extending ioctl(FS_IOC_GETFLAGS)? There are plenty of spare
+> > flags there
 > 
-> If awu geometry changes dynamically in an incompatible way, then
-> filesystem RWF_ATOMIC alignment guarantees are fundamentally broken.
-> This is not a problem the filesystem can solve.
+> Are FS_IOC_GETFLAGS/FS_IOC_SETFLAGS flags preserved across regular
+> "cp -a" or "rsync -someflag" commands? I'm just worried to not invent
+
+No, none of them are.  We should perhaps talk to the util-linux folks
+about fixing cp.
+
+> new way how to get or set flags which would not be understood by
+> existing backup or regular "copy" applications. Because the worst thing
+> which can happen is adding new API which nobody would use and basically
+> will not gain those benefits which should have them... Like if I move or
+> copy file from one filesystem to another to not loose all those
+> attributes.
 > 
-> IMO, RAID device hotplug should reject new device replacement that
-> has incompatible atomic write support with the existing device set.
-> With that constraint, the whole mess of "awu can randomly change"
-> problems go away.
-
-Assuming device mapper is subject to that too, I agree.
-
-> > Programs that aren't 100% block-based should use exchange-range.  There
-> > are no alignment restrictions, no limits on the size you can exchange,
-> > no file mapping state requiments to trip over, and you can update
-> > arbitrary sparse ranges.  As long as you don't tell exchange-range to
-> > flush the log itself, programs can use syncfs to amortize the log and
-> > cache flush across a bunch of file content exchanges.
+> > and you even have NTFS.readonly ~= Linux.immutable so ... :-)
 > 
-> Right - that's kinda my point - I was assuming that we'd be using
-> something like xchg-range as the "unaligned slow path" for
-> RWF_ATOMIC.
+> I know it :-) I have not explicitly written it in the email, but put
+> this information into one of the options what can be possible to do.
+> The bad thing about this option for remote filesystems is that
+> Linux.immutable can be cleared only by root (or process which privilege
+> which nobody does not normally have), but on Windows system (and also
+> when exported over SMB) it can be cleared by anybody who can modify file
+> (based on ACL). So with this Linux will start blocking to do some
+> operation with file, which Windows fully allows. And this very user
+> unfriendly, specially if also wine wants to benefit from it, as wine
+> normally is not going to be run under root (or special capabilities).
 > 
-> i.e. RWF_ATOMIC as implemented by a COW capable filesystem should
-> always be able to succeed regardless of IO alignment. In these
-> situations, the REQ_ATOMIC block layer offload to the hardware is a
-> fast path that is enabled when the user IO and filesystem extent
-> alignment matches the constraints needed to do a hardware atomic
-> write.
+> > To me to feels like the flags you want to implement would fit
+> > "somewhat naturally" there.
 > 
-> In all other cases, we implement RWF_ATOMIC something like
-> always-cow or prealloc-beyond-eof-then-xchg-range-on-io-completion
-> for anything that doesn't correctly align to hardware REQ_ATOMIC.
-> 
-> That said, there is nothing that prevents us from first implementing
-> RWF_ATOMIC constraints as "must match hardware requirements exactly"
-> and then relaxing them to be less stringent as filesystems
-> implementations improve. We've relaxed the direct IO hardware
-> alignment constraints multiple times over the years, so there's
-> nothing that really prevents us from doing so with RWF_ATOMIC,
-> either. Especially as we have statx to tell the application exactly
-> what alignment will get fast hardware offloads...
+> So thank you and others for this FS_IOC_GETFLAGS opinion. Maybe this
+> looks like a better solution?
 
-Ok, let's do that then.  Just to be clear -- for any RWF_ATOMIC direct
-write that's correctly aligned and targets a single mapping in the
-correct state, we can build the untorn bio and submit it.  For
-everything else, prealloc some post EOF blocks, write them there, and
-exchange-range them.
-
-Tricky questions: How do we avoid collisions between overlapping writes?
-I guess we find a free file range at the top of the file that is long
-enough to stage the write, and put it there?  And purge it later?
-
-Also, does this imply that the maximum file size is less than the usual
-8EB?
-
-(There's also the question about how to do this with buffered writes,
-but I guess we could skip that for now.)
-
-> > Even better, if you still wanted to use untorn block writes to persist
-> > the temporary file's dirty data to disk, you don't even need forcealign
-> > because the exchange-range will take care of restarting the operation
-> > during log recovery.  I don't know that there's much point in doing that
-> > but the idea is there.
-> 
-> *nod*
-> 
-> > > Want to overwrite a bunch of small files safely?  Atomic write the
-> > > new data, then syncfs(). There's no need to run fdatasync after each
-> > > write to ensure individual files are not corrupted if we crash in
-> > > the middle of the operation. Indeed, atomic writes actually provide
-> > > better overwrite integrity semantics that fdatasync as it will be
-> > > all or nothing. fdatasync does not provide that guarantee if we
-> > > crash during the fdatasync operation.
-> > > 
-> > > Further, with COW data filesystems like XFS, btrfs and bcachefs, we
-> > > can emulate atomic writes for any size larger than what the hardware
-> > > supports.
-> > > 
-> > > At this point we actually provide app developers with what they've
-> > > been repeatedly asking kernel filesystem engineers to provide them
-> > > for the past 20 years: a way of overwriting arbitrary file data
-> > > safely without needing an expensive fdatasync operation on every
-> > > file that gets modified.
-> > > 
-> > > Put simply: atomic writes have a huge potential to fundamentally
-> > > change the way applications interact with Linux filesystems and to
-> > > make it *much* simpler for applications to safely overwrite user
-> > > data.  Hence there is an imperitive here to make the foundational
-> > > support for this technology solid and robust because atomic writes
-> > > are going to be with us for the next few decades...
-> > 
-> > I agree that we need to make the interface solid and robust, but I don't
-> > agree that the current RWF_ATOMIC, with its block-oriented storage
-> > device quirks is the way to go here.
-> 
-> > Maybe a byte-oriented RWF_ATOMIC
-> > would work, but the only way I can think of to do that is (say) someone
-> > implements Christoph's suggestion to change the COW code to allow
-> > multiple writes to a staging extent, and only commit the remapping
-> > operations at sync time... and you'd still have problems if you have to
-> > do multiple remappings if there's not also a way to restart the ioend
-> > chains.
-> > 
-> > Exchange-range already solved all of that, and it's already merged.
-> 
-> Yes, I agree that the block-device quirks need to go away from
-> RWF_ATOMIC, but I think it's the right interface for applications
-> that want to use atomic overwrite semantics.
-
-Ok.
-
-> Hiding exchange-range under the XFS covers for unaligned atomic IO
-> would mean applications won't need to target XFS specific ioctls to
-> do reliable atomic overwrites. i.e. the API really needs to be
-> simple and filesystem independent, and RWF_ATOMIC gives us that...
-
-<nod>
+FS_IOC_FS[GS]ETXATTR captures a superset of file attributes from
+FS_IOC_[GS]ETFLAGS, please use the former if available.
 
 --D
 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> > regards
+> > ronnie s
+> > 
+> > >
+> > > I think that you understood it quite differently as I thought because
+> > > you are proposing statx() API for fetching them. I thought that they
+> > > would be exported via getxattr()/setxattr().
+> > >
+> > > This is also a good idea, just would need to write new userspace tools
+> > > for setting and gettting... And there is still one important thing. How
+> > > to modify those attribute? Because statx() is GET-only API.
+> > >
 > 
 
