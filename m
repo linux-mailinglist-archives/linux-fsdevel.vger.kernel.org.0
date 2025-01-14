@@ -1,169 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-39143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E270A10974
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 15:33:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D1DA109AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 15:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C40A83A1A4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 14:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FF91888E91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2025 14:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FDC1494DF;
-	Tue, 14 Jan 2025 14:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B3015534B;
+	Tue, 14 Jan 2025 14:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Zp7DSMlJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/uyMz5c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4C041C94;
-	Tue, 14 Jan 2025 14:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCB9153BF7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 14:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736865173; cv=none; b=OupUCPWZfKRUmFKr/ps1BwPHCCtwn3kciTadWssyV/+NOybteJYsTj1Jc2iX9zsy8BVf6YUXh8atYzcRpGIs2nFO15FBfc84ApzBiO0lIs37Hq41O4QE9vowZ7Z0Ut3yZdWXPExH+NOuAwY7CWrDEumqqeYKd32FdCHbUDbsWDA=
+	t=1736865975; cv=none; b=UOT0JMlzSzEH+7T33hirgfaEfzPlcqkDbrqP9ZmCdjLy7pYKX48TuwyTg+c6Q3GR6bMHc5n5cIIjE9DwrPvAm+urJcjPTd1DZR2RVPRFfD9JiV2g6h6BNTOXfRUB0mU1ShE2AdTRoDjgMqEu2PD3SHESHf5kamuOOAMomGQOWg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736865173; c=relaxed/simple;
-	bh=CXT+2n998GraIpo3xFCkNZ/cMesx2buqdH/8pQlpHxE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WEt1QotYnr8+iscNmKJ2HK77jOhgRQD0zQxV6CQuPNP/uAJFxChsG9oH3UUw9H5so6kk+PPxJDC695AaPUzQDG4cIIjZoPsCYgrHctKLSQlOZaza5l7rGw3xVJ8CQNA9kLvC09DsMMySNP24jdt04D7h42CAj9k/5uS7e4+vz4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Zp7DSMlJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50EE6KqQ013489;
-	Tue, 14 Jan 2025 14:32:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=jtLAFz
-	jeOwhpY5+se6uHC7jF6IT5yZMY4ox8zRlKOEA=; b=Zp7DSMlJ2IeVzVTFykABEy
-	XCgyRjSBIPfF4ErzK0VGFlGMRpEoGPuirp7HltGmg1We3idLp7aADy3/4dSr8M+X
-	EGuM8VB0o2bdkCiNiRYzm0T6W2HrnsiGQToxHQ3+Hy2rqyRAk/O7N0vts4vTeUMp
-	hw6MYMJDXeTX+HOI3JcpZ9y4wvdXBvQ2TvHhi6F06RhDIISFoH39XEwbd152Z6yl
-	7tOY/VBW8YgHMP0yuFCLMhK9LJ3FUjTUvDVjzAjFnyzaXYT5Pt+p9NFP+iBkNsbS
-	pfiP/szvZlwJxW0Gt/AhZTBsuI4/K+qvMtb5MjCtYv9nPZonnSWN9i3aUeqx1YHQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 445sd6040a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Jan 2025 14:32:30 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 50EEPhIl021648;
-	Tue, 14 Jan 2025 14:32:29 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 445sd60405-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Jan 2025 14:32:29 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50EAk4tl001108;
-	Tue, 14 Jan 2025 14:32:28 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44456juags-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Jan 2025 14:32:28 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50EEWS0J27722340
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Jan 2025 14:32:28 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09FEF5803F;
-	Tue, 14 Jan 2025 14:32:28 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 463EA58056;
-	Tue, 14 Jan 2025 14:32:26 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.110.183])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 14 Jan 2025 14:32:26 +0000 (GMT)
-Message-ID: <6de587ad97ca3f053cd6dae3df9a4af945d8c17d.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 4/7] ima: Mark concurrent accesses to the iint
- pointer in the inode security blob
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date: Tue, 14 Jan 2025 09:32:25 -0500
-In-Reply-To: <20241128100621.461743-5-roberto.sassu@huaweicloud.com>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-	 <20241128100621.461743-5-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1736865975; c=relaxed/simple;
+	bh=H6u6PObGRiaU21SRB9pZtn82Uvg9ghZLRugGvD8f4Ok=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=AYP/5qO7vpWwfa5M83oM04X/mS+vUIAWk/unPmkB5Y4SeOmXvRsVOCCqPQlufFzQwkZWq4riXirCVSx1kgAWPz7SaIK1Yco7lfDMCSCubni3Rn+DJTWbtG5xTwBzE868dQxFMHkw9woXqCuXQZJjxzffXnTJKCnEeD1SgArDuhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S/uyMz5c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736865972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8A6YuvBKTv5YENaFeR9jq3ZL4bi2GBPoerT1MT+3jBA=;
+	b=S/uyMz5c2AMYMDt4R8bCEICx2cQZKmc53FEptAd8N6mXR1Drd5lXMDjuU4nRZwvqPAO452
+	+k7AcbbZkfmxeJdD+5UUBAx29lLw6dG7VGq6MJtvAUUtyORd2QU0O4r7EDH7fR/HYULqoz
+	LcQtmmCpB84onC+2ARzHSeaB4eeFds0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-385-UWB2M65vOa-KacqKbIL9Wg-1; Tue,
+ 14 Jan 2025 09:46:09 -0500
+X-MC-Unique: UWB2M65vOa-KacqKbIL9Wg-1
+X-Mimecast-MFC-AGG-ID: UWB2M65vOa-KacqKbIL9Wg
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E3991953950;
+	Tue, 14 Jan 2025 14:46:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.32])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 77E6419560AD;
+	Tue, 14 Jan 2025 14:46:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix the fallback handling for the YFS.RemoveFile2 RPC call
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cxSxMEpZvOG_kngIrSHYkYKyiQYhaX7a
-X-Proofpoint-ORIG-GUID: mZJLh6tVltSQkoXID79lxcxrH3I7_XCv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- clxscore=1015 phishscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501140115
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <109540.1736865963.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 14 Jan 2025 14:46:03 +0000
+Message-ID: <109541.1736865963@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Use the READ_ONCE() and WRITE_ONCE() macros to mark concurrent read and
-> write accesses to the portion of the inode security blob containing the
-> iint pointer.
->=20
-> Writers are serialized by the iint lock.
->=20
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Fix a pair of bugs in the fallback handling for the YFS.RemoveFile2 RPC
+call:
 
-Thanks, Roberto.
+ (1) Fix the abort code check to also look for RXGEN_OPCODE.  The lack of
+     this masks the second bug.
 
-Reviewed-by:  Mimi Zohar <zohar@linux.ibm.com>
+ (2) call->server is now not used for ordinary filesystem RPC calls that
+     have an operation descriptor.  Fix to use call->op->server instead.
 
-> ---
-> =C2=A0security/integrity/ima/ima_iint.c | 6 +++---
-> =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/i=
-ma_iint.c
-> index fca9db293c79..c763f431fbc1 100644
-> --- a/security/integrity/ima/ima_iint.c
-> +++ b/security/integrity/ima/ima_iint.c
-> @@ -32,7 +32,7 @@ struct ima_iint_cache *ima_iint_find(struct inode *inod=
-e)
-> =C2=A0	if (!iint_lock)
-> =C2=A0		return NULL;
-> =C2=A0
-> -	return iint_lock->iint;
-> +	return READ_ONCE(iint_lock->iint);
-> =C2=A0}
-> =C2=A0
-> =C2=A0#define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH + 1)
-> @@ -99,7 +99,7 @@ struct ima_iint_cache *ima_inode_get(struct inode *inod=
-e)
-> =C2=A0
-> =C2=A0	lockdep_assert_held(&iint_lock->mutex);
-> =C2=A0
-> -	iint =3D iint_lock->iint;
-> +	iint =3D READ_ONCE(iint_lock->iint);
-> =C2=A0	if (iint)
-> =C2=A0		return iint;
-> =C2=A0
-> @@ -109,7 +109,7 @@ struct ima_iint_cache *ima_inode_get(struct inode *in=
-ode)
-> =C2=A0
-> =C2=A0	ima_iint_init_always(iint, inode);
-> =C2=A0
-> -	iint_lock->iint =3D iint;
-> +	WRITE_ONCE(iint_lock->iint, iint);
-> =C2=A0
-> =C2=A0	return iint;
-> =C2=A0}
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" conc=
+ept")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/yfsclient.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/afs/yfsclient.c b/fs/afs/yfsclient.c
+index 024227aba4cd..362845f9aaae 100644
+--- a/fs/afs/yfsclient.c
++++ b/fs/afs/yfsclient.c
+@@ -666,8 +666,9 @@ static int yfs_deliver_fs_remove_file2(struct afs_call=
+ *call)
+ static void yfs_done_fs_remove_file2(struct afs_call *call)
+ {
+ 	if (call->error =3D=3D -ECONNABORTED &&
+-	    call->abort_code =3D=3D RX_INVALID_OPERATION) {
+-		set_bit(AFS_SERVER_FL_NO_RM2, &call->server->flags);
++	    (call->abort_code =3D=3D RX_INVALID_OPERATION ||
++	     call->abort_code =3D=3D RXGEN_OPCODE)) {
++		set_bit(AFS_SERVER_FL_NO_RM2, &call->op->server->flags);
+ 		call->op->flags |=3D AFS_OPERATION_DOWNGRADE;
+ 	}
+ }
 
 
