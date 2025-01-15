@@ -1,193 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-39290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965FFA1247E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 14:13:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2DCA12493
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 14:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB3641671BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 13:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674823A3F68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 13:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DDC2416B4;
-	Wed, 15 Jan 2025 13:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE2523F27F;
+	Wed, 15 Jan 2025 13:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="ThGHAjeZ"
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="tzQcu3/B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0FD2459A8;
-	Wed, 15 Jan 2025 13:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E12F27726;
+	Wed, 15 Jan 2025 13:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736946804; cv=none; b=cZ+lPvCIPsRb/Mw5Q2oHsAewOVwt/b6keRRCSGyNQBDpzSWAFbGMQ9Ft7ZVL1o/V/JTgeVWYM62tNFuIbc8bruKs0ljw9tfiDxo2ZTSHUJbL907Xkp17ZVI59hAro2fVmLXGViuwYaVFE078q2XlMf+rGT/deQIaAoBQk3iY2cE=
+	t=1736947004; cv=none; b=g7vWuYHSmISWg37DYynRh62FGe0UgdYMudo/7f7KQh+L/I/5fpbe6fahJ4Q0uT3ygzmNllkGOeJjpKdOHw63GOMguaj9qSR/SMxZ1mqWRGfzmhewJH22l2FgwNqdExKvoWaOA9Y4AOYaKNms8rMpYrCZFIXVfVQtb2OQYb5fqN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736946804; c=relaxed/simple;
-	bh=ITMq/WFn+XXw/gmRSnpcR1okxP3am/IRL0bBQEpXKxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RAKEhp0lhyn6glYxhvIeUiQ08HdRx/YR7xnofd4fpuZSeAbbC40g7tPYs/kLkG3Ee/8lBSIeewiChbaZlck/oqotRo4WSPStYTAqSV5iAvglpVTkClbE0+xuw2bz7DQlRKGynKjy8hmYaRrLKS8NJ6yooluHHJpH1NxPIqvC1jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=ThGHAjeZ; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E140E2000F;
-	Wed, 15 Jan 2025 13:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1736946793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oi1+f9JJ1Q/PrcOFWJNIFlSVEAkDNgeD327FuM3wz5c=;
-	b=ThGHAjeZpVJojhgp5X1TSwJCAdVf2FoOkye8n5MEZcmpaYi8jl/DHhiGOzuIdVZ/UGSZQN
-	unftFUchZfpAxTLQxiHMKLjB5UMAD43tqyWp+79Y/hy9ECC1SmkgWWehHYeuzYGLBvw/Df
-	svIvAd5BsbbTxJVcVRDFK0/RSgZDCZjeWaIZ6eddLtTxmhKwjR2NynmuvFuGIZKN6cqmeg
-	nrXpzZr0GeQjWGi+wEVGl2WlMJ44gVvM2ZCyXjHPjsuD5KhVVkQMmsxfhhzNB0bVuhsqzo
-	XaJLo+hK9zYGR14hCzurGl2K0+OvQjkf1EwgnAYUVkoIG5nQ17vQCDJ7Ch7mnQ==
-Message-ID: <da2b6a5c-72d6-4e65-a5ad-2cb27fedec29@clip-os.org>
-Date: Wed, 15 Jan 2025 14:13:10 +0100
+	s=arc-20240116; t=1736947004; c=relaxed/simple;
+	bh=82XhqjygfjZYGe54tpJLFGt9UIHx/TY+i3EBQdaXKOM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=AKuT0acQtLP84sVBRzcK3tMNmd/HjUkNkT3vfgdRLWMcmRmwhYpf30u2tj6FhWhj3bzMU0t4R9fRIeoSVf2QLSKCNaFClS7sRpextT00j2tJt/JtEsUKvxAZmyotv2WFgrAaOAeYFiHyFPstJInjTPX+a5fUXqLFlaKM/AtmFtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=tzQcu3/B; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1736946958;
+	bh=82XhqjygfjZYGe54tpJLFGt9UIHx/TY+i3EBQdaXKOM=;
+	h=Mime-Version:Subject:From:Date:Message-Id:To;
+	b=tzQcu3/BQfE4bTxCnSRLey5f3QA4GIMyykRZzhkR/exkPncu7OyxDxPCwxtPyFzlf
+	 l9+UwvThBDqNT9fAMhQDFwffnCah8qnSJeHOg+UFJkioswAQ9zToUorrFTo6rAJrqM
+	 HZvxlZZN/9GQgss1wnRY68tCwE9fCkEgkI3dTjEM=
+X-QQ-mid: bizesmtpip2t1736946952tcubs62
+X-QQ-Originating-IP: vwLl+j1iGrwuzOKHztXQkbketxkLJUlAQYwfd47sNOE=
+Received: from smtpclient.apple ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 15 Jan 2025 21:15:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3564918218073159881
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] sysctl: Fix underflow value setting risk in
- vm_table
-To: Joel Granados <joel.granados@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Bug: soft lockup in exfat_clear_bitmap
+From: Kun Hu <huk23@m.fudan.edu.cn>
+In-Reply-To: <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
+Date: Wed, 15 Jan 2025 21:15:40 +0800
+Cc: sj1557.seo@samsung.com,
+ yuezhang.mo@sony.com,
  linux-fsdevel@vger.kernel.org,
- Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
- Joel Granados <j.granados@samsung.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Neil Horman <nhorman@tuxdriver.com>, Lin Feng <linf@wangsu.com>,
- Theodore Ts'o <tytso@mit.edu>
-References: <20241114162638.57392-1-nicolas.bouchinet@clip-os.org>
- <20241114162638.57392-3-nicolas.bouchinet@clip-os.org>
- <4ietaibtqwl4xfqluvy6ua6cr3nkymmyzzmoo3a62lf65wtltq@s6imawclrht6>
- <2d5447b7-c185-4ce9-852e-b56a28b0306a@clip-os.org>
- <lfdhvbnqhzrnu4efozlr3qydmrzbykvya3cb4lfpkdyacfkvac@j7eij7pvqhlu>
-Content-Language: en-US
-From: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-In-Reply-To: <lfdhvbnqhzrnu4efozlr3qydmrzbykvya3cb4lfpkdyacfkvac@j7eij7pvqhlu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: nicolas.bouchinet@clip-os.org
+ linux-kernel@vger.kernel.org,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn>
+References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
+ <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn>
+ <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
+ <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn>
+ <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MZukwSs1MH20X+WYfya7JRxNpKq6dZHNiMuoAuTtxUsDQKO4cvhZw5jY
+	Lg3fy8pMNZWW6jyVF+gbLDFcshrNLZPuoYZPixhbKo26Wo4Idol1LPgQN8sj8Dqq7VsA2SX
+	VcOi3p96z/e+JpzCUgwIXimJygaVcx3bVLwHoAuK/30FTqKxUr1PLJjDRTMqB46NZvuf/eg
+	cmdpibor5eEsYzDDXVDiSbnNoKk+sA6lCuLvnstHUHNomfwfoXl0gJQPOObnNBwE2AKdgD9
+	R9IufiMQqoppIC8nvLHZROl9Db+XkUCljBLT+LoDXU+/16W9QcmObk2NTqUSzz6s//Rkk7n
+	8u4PDDjAXMNfDd+p/7NjraGpoqWPzBPyciN3NatRSKX23uDFNLN1UOziwgg2GIKTNOanUPs
+	PXGo2Kfan0vBbq4iRy8Io2CKzmIrHut7M7PcaGCg2j9gsRplKn7G68Vk1lilvikjS3AzNCd
+	I7XZGSkbGXLAhqBPT5Y3S1Z9dERA2tEErMUy3D/hEFWstk1mivSL4yJ5TF4ZnQ1wQfxv9gL
+	/Coo59EnGb7n0pMeBKWUV2PmbjmrkR54LFEwvFyDdDr/tMDzMxB79hvEhNUe9oteUUcXMb5
+	HFO0iYn7GKeRj5C5ZnVhoOslWEAhU2PIcqqpHWjg/1n+j04jbYUWpIY8tddEjHK40YvHTeG
+	gF0x3Ydvuh5+PwEMYmGVOb9fT95V78maQGopfMWxpWa4g3jl1uQa+D0Ua7Zju1L5yZLaj7J
+	hKRelPUSaHEFWvr6jZelC3UJ6dSVfhNH6o5ZIVdL9DZD3tWv0IvQFXBRpjaJdSJxAj1IvkU
+	mSmNmba5EIq/O/WrlxCDtfnu6TDuuqO9QByQNwoQ+LBd524DcZuSQHQTqjydUSIrodiztAh
+	i3+t/XVvow9t0LnBLYUuiWatB1GI8TDrlSmJu9Q57dhbuQNQbIW1kG8JPQPrO96QvgBeDxn
+	sEqB1u2hvyf7LDgzSuzXBzasx6xfqk6PYUq1RppaScGHWVA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
 
-On 12/18/24 14:21, Joel Granados wrote:
-> On Tue, Dec 10, 2024 at 03:58:41PM +0100, Nicolas Bouchinet wrote:
->> Hi Joel,
->>
->>
->> Thank's for your reply.
->>
->> I apologize for the reply delay, I wasn't available late weeks.
->>
->> On 11/20/24 1:53 PM, Joel Granados wrote:
->>> On Thu, Nov 14, 2024 at 05:25:51PM +0100, nicolas.bouchinet@clip-os.org wrote:
->>>> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
->>>>
->>>> Commit 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in
->>>> vm_table") fixes underflow value setting risk in vm_table but misses
->>>> vdso_enabled sysctl.
->>>>
->>>> vdso_enabled sysctl is initialized with .extra1 value as SYSCTL_ZERO to
->>>> avoid negative value writes but the proc_handler is proc_dointvec and not
->>>> proc_dointvec_minmax and thus do not uses .extra1 and .extra2.
->>>>
->>>> The following command thus works :
->>>>
->>>> `# echo -1 > /proc/sys/vm/vdso_enabled`
->>> It would be interesting to know what happens when you do a
->>> # echo (INT_MAX + 1) > /proc/sys/vm/vdso_enabled
->> Great question, I'll check that.
->>
->>> This is the reasons why I'm interested in such a test:
->>>
->>> 1. Both proc_dointvec and proc_dointvec_minmax (calls proc_dointvec) have a
->>>      overflow check where they will return -EINVAL if what is given by the user is
->>>      greater than (unsiged long)INT_MAX; this will evaluate can evaluate to true
->>>      or false depending on the architecture where we are running.
->> Indeed, I'll run tests to avouch behaviors of proc handlers bound checks
->> with
->> different architectures.
->>
->>> 2. I noticed that vdso_enabled is an unsigned long. And so the expectation is
->>>      that the range is 0 to ULONG_MAX, which in some cases (depending on the arch)
->>>      would not be the case.
->> Yep, it is. As I've tried to explain in the cover letter
->> (https://lore.kernel.org/all/20241112131357.49582-1-nicolas.bouchinet@clip-os.org/),
->> there are numerous places where sysctl data type differs from the proc
->> handler
->> return type.
->>
->> AFAIK, for proc_dointvec there is more than 10 different sysctl where it
->> happens. The three I've patched represents three common mistakes using
->> proc_handlers.
-> It would be useful to analyze the others. Do you have more outstanding
-> patches for these?
+> This is an already known issue and the relevant patch has been =
+applied.
+> Please make sure that the following patch is applied to the kernel you =
+tested.
+>=20
+> a5324b3a488d exfat: fix the infinite loop in __exfat_free_cluster()
+>=20
+> or try to reproduce it with linux-6.13-rc7.
 
-I've started to analyze them more in depth it this monday, will send a 
-patchset when
-it seems ok.
-I'm focusing on proc_dointvec for now.
+Hi Namjae,
 
->
->>> So my question is: What is the expected range for this value? Because you might
->>> not be getting the whole range in the cases where int is 32 bit and long is 64
->>> bit.
->>>
->>>> This patch properly sets the proc_handler to proc_dointvec_minmax.
->>>>
->>>> Fixes: 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
->>>> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
->>>> ---
->>>>    kernel/sysctl.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->>>> index 79e6cb1d5c48f..37b1c1a760985 100644
->>>> --- a/kernel/sysctl.c
->>>> +++ b/kernel/sysctl.c
->>>> @@ -2194,7 +2194,7 @@ static struct ctl_table vm_table[] = {
->>>>    		.maxlen		= sizeof(vdso_enabled),
->>>>    #endif
->>>>    		.mode		= 0644,
->>>> -		.proc_handler	= proc_dointvec,
->>>> +		.proc_handler	= proc_dointvec_minmax,
->>>>    		.extra1		= SYSCTL_ZERO,
->>> Any reason why extra2 is not defined. I know that it was not defined before, but
->>> this does not mean that it will not have an upper limit. The way that I read the
->>> situation is that this will be bounded by the overflow check done in
->>> proc_dointvec and will have an upper limit of INT_MAX.
->> Yes, it is bounded by the overflow checks done in proc_dointvec, I've not
->> changed the current sysctl behavior but we should bound it between 0
->> and 1 since it seems vdso compat is not supported anymore since
->> Commit b0b49f2673f011cad ("x86, vdso: Remove compat vdso support").
-> I think you have already done this in your V3
->
->> This is the behavior of vdso32_enabled exposed under the abi sysctl
->> node.
->>
->>> Please correct me if I have read the situation incorrectly.
->> You perfectly understood the problematic of it, thanks a lot for your
->> review.
->>
->> I'll reply to above questions after I've run more tests.
->>
->> I saw GKH already merged the third commit of this patchset and
->> backported it to stable branches.
->> Should I evict it from future version of this patchset ?
-> Yes. You should remove what has already been merged into main
-> line. thx.
->
-> Best
->
+We still successfully reproduced it on the v6.13-rc7. Firstly, I =
+apologize for taking up your time, I=E2=80=99m not sure if this is a =
+significant issue since from the reproducer it kind of looks like it=E2=80=
+=99s caused via fault injection.
+
+
+The syz_mount_image in the syscall reproducer mounts a randomly =
+generated image and also has the potential to trigger an abnormal path =
+to the file system. Specifically, the . /file0 file is crafted to =
+contain invalid FAT table or bitmap information, it is possible to cause =
+abnormal cyclic behavior in __exfat_free_cluster.
+
+Because p_chain->size is artificially constructed, if it has a large =
+value, then exfat_clear_bitmap will be called frequently. As the call =
+stack shows, the program eventually deadlocks in the loop in =
+__exfat_free_cluster.
+
+This link is a link to our crash log in the rc7 kernel tree:
+
+Link: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E6%9C%AA%E6%8=
+A%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4%A2%E8%AE%B0%E5%BD=
+%95/39-BUG_%20soft%20lockup%20in%20sys_unlink/crashlog0115_rc7.txt
+
+As I said earlier, I'm still consistently reporting the crash I found to =
+you guys now because I'm not sure if this issue is useful to you. If it =
+is not useful, please ignore it. I hope it doesn't take up too much of =
+your time.
+
+=E2=80=94=E2=80=94=E2=80=94
+Kun Hu
+
+
 
