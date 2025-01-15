@@ -1,84 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-39337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C29A12DC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 22:36:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D824A12DD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 22:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35379165947
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 21:36:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957397A262B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 21:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8201DB366;
-	Wed, 15 Jan 2025 21:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39501DB148;
+	Wed, 15 Jan 2025 21:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ToVkVfF9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hzd8HZXS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3E5156F57;
-	Wed, 15 Jan 2025 21:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57414156F57;
+	Wed, 15 Jan 2025 21:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736976962; cv=none; b=X8XFKSgsQKzoUcspr04GNv+galD0hVFZnqG810k394TR1vYztkLa+4tCGt9a3lisSVLyq30assSknwVvu8xxL4WRBo0QkU4Wh2BgL114UEhHnaNFu/jE3+8/0lQjXQmvZlaUm1kDP0nd8TMwKQ+yoBZTpJpwN9pm6vWtcPkzSWA=
+	t=1736977035; cv=none; b=irJT+s1b+gPT9VV7umZZp34xja9PDvMAVO8I9Zfht7j9XKwWZIFvtQn+w8LVN7E8TVN9PMyxVYFIHMEQ8cg/fljaarI55C0UgjdJh00NaIxUSwUnXD3CVgoQ4TE8imfMSL1T86qAF4lW6VQuGXjbnbcao6q5d9mQS0IAvg/Vw2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736976962; c=relaxed/simple;
-	bh=uexnwH3WY1Eo3zHvsjBwlvsQXyN0iY45WLMUVpn5ihU=;
+	s=arc-20240116; t=1736977035; c=relaxed/simple;
+	bh=zSOPd5LyGcNwTg//cXLR/SMpN+h4usv71b0CMYo9L5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+joh2kb0F7rJBq9td5sPSwsCBB6hCKTej4nvIKb6c9DiFMUw1nT+UooQxWomWDpLfVDDgDuFcqZbK6wcXnC1A8TNhxJGQCDO9vnhoca9EZPwUZxWZ57rkr3wMCtrdQtRtzBThCYK3dFZmGQ1AlbVjXuPboycva8d+3C2F6pD98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ToVkVfF9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0OijV5p7C7RviN2UZr1cmsa6u4crmEp6ronCk1lgptI=; b=ToVkVfF9/LpCeHgqRA5mEb2Asr
-	5IiQa1pSVMQ6mQ6jaE+0AsazgzqSxYkpPEmBGojEh8PatZnK/5QthRSP/VYH6rh70nn6Ke/EJPSqR
-	pQvIeA+gO9O286BzuBzwiq2/nIhxNeuYTGDoy1KPurQxuR3srMkbURdzu+yYH6lHGZbedKnufVhtr
-	S9bwMcCETcS5GTTW5WKl/k/od94Vb1K4FfaL3nYNNeJ4VYYUz82ygpQr3Bbz68Mw9tcQMJoi4Lsda
-	Ph6zvEZ4kSPPfC4N68dEshZ6RHmhrllQtU2V+OMl8wsC0eInunxvmZ41WLChbyJSb3Mcunp/jP/Ca
-	pMZOl1QA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYB30-00000002AHj-3YDk;
-	Wed, 15 Jan 2025 21:35:34 +0000
-Date: Wed, 15 Jan 2025 21:35:34 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Christian Brauner <brauner@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	David Airlie <airlied@gmail.com>,
-	David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 05/11] mm/truncate: Use folio_set_dropbehind() instead
- of deactivate_file_folio()
-Message-ID: <Z4gqJqcO8wau0sgN@casper.infradead.org>
-References: <20250115093135.3288234-1-kirill.shutemov@linux.intel.com>
- <20250115093135.3288234-6-kirill.shutemov@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tyGpwCjDnFgI5V6f0a9vxe7ClIErfMyP4Fevy2AffS3n/3NfDXc55d9xweC9VDCB8VT7E4khsEq1nSo/I9JYcjdxhfvx06Rorz8PZe6m9xcLWyKaXIDrT/1D9V8Kq4w3HAwkLaZBKAAko7rm8RlDXoh23O6WFGNzU/cPIoIpOZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hzd8HZXS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F06C4CED1;
+	Wed, 15 Jan 2025 21:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736977034;
+	bh=zSOPd5LyGcNwTg//cXLR/SMpN+h4usv71b0CMYo9L5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hzd8HZXS0iw1Md+VWT4Wx5nhUAxaiQGrLRoS3iiLHXlWE34iaJzhgz+fYAovWCvfx
+	 nCI1HcGwvV9ZpkZJatX/FtcgNjAoBqgxPm/iYT88ux1CLJAVTOtD7IxcS0TU6Eraxv
+	 p4QSnSLJyFP4tU7+xvEhnuXwdp4ht88DXAfO+tAt92/cbDXoBsI4J+RmKkpd2o6Xi6
+	 TKJ8oskgl9d8VSkJw0zt4cdBg5gCOF9wPlEYvGCrtyP2ZBm74EyS7HuwoAkZfnRvL+
+	 puOBP1Tx/akH7PdOB9epoRcaNir8nB3uCSZhZVc4rzbAALA8IQ1mY45gpAWaxFqp3D
+	 7YFiyGBzZEW6g==
+Date: Wed, 15 Jan 2025 13:37:13 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	bfoster@redhat.com, nirjhar@linux.ibm.com, zlang@redhat.com,
+	kernel-team@meta.com
+Subject: Re: [PATCH v3 1/2] fsx: support reads/writes from buffers backed by
+ hugepages
+Message-ID: <20250115213713.GE3557695@frogsfrogsfrogs>
+References: <20250115183107.3124743-1-joannelkoong@gmail.com>
+ <20250115183107.3124743-2-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,69 +60,223 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250115093135.3288234-6-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20250115183107.3124743-2-joannelkoong@gmail.com>
 
-On Wed, Jan 15, 2025 at 11:31:29AM +0200, Kirill A. Shutemov wrote:
-> -static void lru_deactivate_file(struct lruvec *lruvec, struct folio *folio)
-> -{
-> -	bool active = folio_test_active(folio) || lru_gen_enabled();
-> -	long nr_pages = folio_nr_pages(folio);
-> -
-> -	if (folio_test_unevictable(folio))
-> -		return;
-> -
-> -	/* Some processes are using the folio */
-> -	if (folio_mapped(folio))
-> -		return;
-> -
-> -	lruvec_del_folio(lruvec, folio);
-> -	folio_clear_active(folio);
-> -	folio_clear_referenced(folio);
-> -
-> -	if (folio_test_writeback(folio) || folio_test_dirty(folio)) {
-> -		/*
-> -		 * Setting the reclaim flag could race with
-> -		 * folio_end_writeback() and confuse readahead.  But the
-> -		 * race window is _really_ small and  it's not a critical
-> -		 * problem.
-> -		 */
-> -		lruvec_add_folio(lruvec, folio);
-> -		folio_set_reclaim(folio);
-> -	} else {
-> -		/*
-> -		 * The folio's writeback ended while it was in the batch.
-> -		 * We move that folio to the tail of the inactive list.
-> -		 */
-> -		lruvec_add_folio_tail(lruvec, folio);
-> -		__count_vm_events(PGROTATED, nr_pages);
-> -	}
-> -
-> -	if (active) {
-> -		__count_vm_events(PGDEACTIVATE, nr_pages);
-> -		__count_memcg_events(lruvec_memcg(lruvec), PGDEACTIVATE,
-> -				     nr_pages);
-> -	}
-> -}
+On Wed, Jan 15, 2025 at 10:31:06AM -0800, Joanne Koong wrote:
+> Add support for reads/writes from buffers backed by hugepages.
+> This can be enabled through the '-h' flag. This flag should only be used
+> on systems where THP capabilities are enabled.
+> 
+> This is motivated by a recent bug that was due to faulty handling of
+> userspace buffers backed by hugepages. This patch is a mitigation
+> against problems like this in the future.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  ltp/fsx.c | 119 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 108 insertions(+), 11 deletions(-)
+> 
+> diff --git a/ltp/fsx.c b/ltp/fsx.c
+> index 41933354..8d3a2e2c 100644
+> --- a/ltp/fsx.c
+> +++ b/ltp/fsx.c
+> @@ -190,6 +190,7 @@ int	o_direct;			/* -Z */
+>  int	aio = 0;
+>  int	uring = 0;
+>  int	mark_nr = 0;
+> +int	hugepages = 0;                  /* -h flag */
+>  
+>  int page_size;
+>  int page_mask;
+> @@ -2471,7 +2472,7 @@ void
+>  usage(void)
+>  {
+>  	fprintf(stdout, "usage: %s",
+> -		"fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
+> +		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+>  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+>  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+>  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+> @@ -2484,6 +2485,7 @@ usage(void)
+>  	-e: pollute post-eof on size changes (default 0)\n\
+>  	-f: flush and invalidate cache after I/O\n\
+>  	-g X: write character X instead of random generated data\n\
+> +	-h hugepages: use buffers backed by hugepages for reads/writes\n\
 
-> +++ b/mm/truncate.c
-> @@ -486,7 +486,7 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
->  			 * of interest and try to speed up its reclaim.
->  			 */
->  			if (!ret) {
-> -				deactivate_file_folio(folio);
-> +				folio_set_dropbehind(folio);
+If this requires MADV_COLLAPSE, then perhaps the help text shouldn't
+describe the switch if the support wasn't compiled in?
 
-brr.
+e.g.
 
-This is a fairly substantial change in semantics, and maybe it's fine.
+	-g X: write character X instead of random generated data\n"
+#ifdef MADV_COLLAPSE
+"	-h hugepages: use buffers backed by hugepages for reads/writes\n"
+#endif
+"	-i logdev: do integrity testing, logdev is the dm log writes device\n\
 
-At a high level, we're trying to remove pages from an inode that aren't
-in use.  But we might find that some of them are in use (eg they're
-mapped or under writeback).  If they are mapped, we don't currently
-try to accelerate their reclaim, but now we're going to mark them
-as dropbehind.  I think that's wrong.
+(assuming I got the preprocessor and string construction goo right; I
+might be a few cards short of a deck due to zombie attack earlier)
 
-If they're dirty or under writeback, then yes, mark them as dropbehind, but
-I think we need to be a little more surgical here.  Maybe preserve the
-unevictable check too.
+>  	-i logdev: do integrity testing, logdev is the dm log writes device\n\
+>  	-j logid: prefix debug log messsages with this id\n\
+>  	-k: do not truncate existing file and use its size as upper bound on file size\n\
+> @@ -2856,6 +2858,101 @@ keep_running(void)
+>  	return numops-- != 0;
+>  }
+>  
+> +static long
+> +get_hugepage_size(void)
+> +{
+> +	const char str[] = "Hugepagesize:";
+> +	size_t str_len =  sizeof(str) - 1;
+> +	unsigned int hugepage_size = 0;
+> +	char buffer[64];
+> +	FILE *file;
+> +
+> +	file = fopen("/proc/meminfo", "r");
+> +	if (!file) {
+> +		prterr("get_hugepage_size: fopen /proc/meminfo");
+> +		return -1;
+> +	}
+> +	while (fgets(buffer, sizeof(buffer), file)) {
+> +		if (strncmp(buffer, str, str_len) == 0) {
+> +			sscanf(buffer + str_len, "%u", &hugepage_size);
+> +			break;
+> +		}
+> +	}
+> +	fclose(file);
+> +	if (!hugepage_size) {
+> +		prterr("get_hugepage_size: failed to find "
+> +			"hugepage size in /proc/meminfo\n");
+> +		return -1;
+> +	}
+> +
+> +	/* convert from KiB to bytes */
+> +	return hugepage_size << 10;
+> +}
+> +
+> +#ifdef MADV_COLLAPSE
+> +static void *
+> +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
+> +{
+> +	void *buf;
+> +	long buf_size = roundup(len, hugepage_size) + alignment;
+> +
+> +	if (posix_memalign(&buf, hugepage_size, buf_size)) {
+> +		prterr("posix_memalign for buf");
+> +		return NULL;
+> +	}
+> +	memset(buf, '\0', buf_size);
+> +	if (madvise(buf, buf_size, MADV_COLLAPSE)) {
+
+If the fsx runs for a long period of time, will it be necessary to call
+MADV_COLLAPSE periodically to ensure that reclaim doesn't break up the
+hugepage?
+
+> +		prterr("madvise collapse for buf");
+> +		free(buf);
+> +		return NULL;
+> +	}
+> +
+> +	return buf;
+> +}
+> +#else
+> +static void *
+> +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+> +
+> +static void
+> +init_buffers(void)
+> +{
+> +	int i;
+> +
+> +	original_buf = (char *) malloc(maxfilelen);
+> +	for (i = 0; i < maxfilelen; i++)
+> +		original_buf[i] = random() % 256;
+> +	if (hugepages) {
+> +		long hugepage_size = get_hugepage_size();
+> +		if (hugepage_size == -1) {
+> +			prterr("get_hugepage_size()");
+> +			exit(102);
+> +		}
+> +		good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy);
+> +		if (!good_buf) {
+> +			prterr("init_hugepages_buf failed for good_buf");
+> +			exit(103);
+> +		}
+> +
+> +		temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy);
+> +		if (!temp_buf) {
+> +			prterr("init_hugepages_buf failed for temp_buf");
+> +			exit(103);
+> +		}
+> +	} else {
+> +		unsigned long good_buf_len = maxfilelen + writebdy;
+> +		unsigned long temp_buf_len = maxoplen + readbdy;
+> +
+> +		good_buf = calloc(1, good_buf_len);
+> +		temp_buf = calloc(1, temp_buf_len);
+> +	}
+> +	good_buf = round_ptr_up(good_buf, writebdy, 0);
+> +	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
+> +}
+> +
+>  static struct option longopts[] = {
+>  	{"replay-ops", required_argument, 0, 256},
+>  	{"record-ops", optional_argument, 0, 255},
+> @@ -2883,7 +2980,7 @@ main(int argc, char **argv)
+>  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+>  
+>  	while ((ch = getopt_long(argc, argv,
+> -				 "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> +				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+>  				 longopts, NULL)) != EOF)
+>  		switch (ch) {
+>  		case 'b':
+> @@ -2916,6 +3013,14 @@ main(int argc, char **argv)
+>  		case 'g':
+>  			filldata = *optarg;
+>  			break;
+> +		case 'h':
+> +			#ifndef MADV_COLLAPSE
+
+Preprocessor directives should start at column 0, like most of the rest
+of fstests.
+
+--D
+
+> +				fprintf(stderr, "MADV_COLLAPSE not supported. "
+> +					"Can't support -h\n");
+> +				exit(86);
+> +			#endif
+> +			hugepages = 1;
+> +			break;
+>  		case 'i':
+>  			integrity = 1;
+>  			logdev = strdup(optarg);
+> @@ -3229,15 +3334,7 @@ main(int argc, char **argv)
+>  			exit(95);
+>  		}
+>  	}
+> -	original_buf = (char *) malloc(maxfilelen);
+> -	for (i = 0; i < maxfilelen; i++)
+> -		original_buf[i] = random() % 256;
+> -	good_buf = (char *) malloc(maxfilelen + writebdy);
+> -	good_buf = round_ptr_up(good_buf, writebdy, 0);
+> -	memset(good_buf, '\0', maxfilelen);
+> -	temp_buf = (char *) malloc(maxoplen + readbdy);
+> -	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
+> -	memset(temp_buf, '\0', maxoplen);
+> +	init_buffers();
+>  	if (lite) {	/* zero entire existing file */
+>  		ssize_t written;
+>  
+> -- 
+> 2.47.1
+> 
+> 
 
