@@ -1,137 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-39224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD6F1A1177F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 03:54:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFF6A11672
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 02:21:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C7297A1C72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 02:54:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BDFC188B1CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 01:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639F922DF9B;
-	Wed, 15 Jan 2025 02:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D5F2E630;
+	Wed, 15 Jan 2025 01:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gINc097W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E221A22E3E7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 02:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273681BDC3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 01:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736909667; cv=none; b=XLL9GgKzCdGlPILAeNQ4ILZmT2EA+dM8ctoR/1KIf2M43xcsTuu4Q01SMzYV+nrdKU8S5XGv2IIPKhsukVKatqfXOS9kJwVzJ4QbvIdeMZiK5yfX3zR0LJ/5tNBoC4+LpA7Fe11f0a5h1lQIUPCFakmJEGXUJfCpaS9neCSwWik=
+	t=1736904105; cv=none; b=rYBQ6Os1fy6hfHQCV6T1nFG2C7OioWjIBE9w2EgwLFd+SJTirNn3iB8z2S0c3Zu213k9FHlVVWVOmiqfrotDpmu1WZNcmE9/Jh7m7AxAUUb9lcWka5sJxe1VwKa7pYaoaMj3/XU9u8T8UEOobxzp5Lx2Ss2eKxxQ+aX0F8+d5e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736909667; c=relaxed/simple;
-	bh=dpwWf+m75OkqfJTiSdciwyHJNdVXyBieuBUHOhecWYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTOpLP2tszUZmCa8HYFzdr6coulhi3uf7O3dVfEhbQFq+89/cUCNjiciLDT01ymCLdlEz8XEe/EKxVdnrW7YNU0QDg/OOoZ84PWwhnOqVtvQ/OP2RYQ3dKwuvLbM/hmkZuLVn+FeluoJ8VTCT2ppbF51H8iEw5jfwrt2roYgFww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id XoCEtPK8Px4XtXoCFtujmE; Tue, 14 Jan 2025 14:11:35 -0700
-X-CMAE-Analysis: v=2.4 cv=Fa3NxI+6 c=1 sm=1 tr=0 ts=6786d307
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=JfrnYn6hAAAA:8 a=FXvPX3liAAAA:8 a=PXAFGWOKMHoxhg3sn_wA:9
- a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <8c391f15-b30c-4d2d-856e-0eb74f68e433@squashfs.org.uk>
-Date: Tue, 14 Jan 2025 21:11:09 +0000
+	s=arc-20240116; t=1736904105; c=relaxed/simple;
+	bh=vMGmE8pQCf6eTl0p/jiGTKWXDSrR2+1LJaoQBM6z/Rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQoMKjphIXjZ2PCf2OKGUsICb8heBcwrkR6wug072qLSWeavD2JvodFPRoFTirKlPABN1W8vLaRhuqeUAZV7cRroMtHWt+SX+Gy8C971CoYORCe7kNOlTicfIuUHG8pIuv7h+cowPVn4QhWdGthRU+pfsCgTn9NJNoxNRQgvVYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=gINc097W; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-219f8263ae0so101685195ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2025 17:21:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1736904101; x=1737508901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NBOBPA8Ipngxc0B42kthsUrQ7FIam0y2QCMQkPQgvcc=;
+        b=gINc097Wh9L+0EEa3XJHABAp62o2a+DD4ACB9YXkqTUEXyw/wfcT5QbQ78aDZCoUi4
+         fsMBPShEOjj0ehGDKgcAWYsS1O1+ERPpppQiMsWWRXscpSZtMLNa2QYTOoLysn0JFBfe
+         I1OaUym/G32w+FqEDCHukfS4OLrMsksq37qFudvx4jNGswVwBOgFjHKnHK1arLSAIDA2
+         fYGCRvXtxvzejT/7TMpOYQByPtRfbktkrXhf5XpD9DcM++LJc2BhU6Wu+lOO2m10fRZ5
+         yMBX+sTEYJEtnGXZC1nnhOXJNHXeNterQmuMm183ufUpruvj+tHTSYi4TpJrTw0eqNCf
+         aZUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736904101; x=1737508901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NBOBPA8Ipngxc0B42kthsUrQ7FIam0y2QCMQkPQgvcc=;
+        b=WOaEzS8670dDCEHKzjrFD5fN4WZFNhTVWS0gz2O6NzrVF5zwOylcipTx4c2BPn/Wqj
+         Z3vDzflhhr4x4gPHPcFM9QBUabZbUPev17aNxNutOYMBHDxXoH/iudgs/tpD5WIPfqhe
+         v/NwqWFmDm+SInWik27cg/as3U1++OFBdFTadHaZtbvcbczcp68phY67BIaghChUs38F
+         f6H/E3RnY6UpLfBj7LS3ITQzzVbqTb1qxGMsS39QLx/dtOHu3/qna4rHnelPWhM8CNU4
+         s3eIW2V9AAw7NPoBuZzXjB0ZAG8/kZHBjshkKODmgEtj39CfgwVJKNZzgaaHvUeTeFNu
+         e1MA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIuovn3Q34UAa7obEa5uQHNVm5u+Yzk3FPGDsGFG7NjqhHzo87qZTosqBdy6SsUZ3DWLEVkAxejdxT7QB7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYEHJEVHXQAhTRubu3gCCBB0UljxAqkpfJ8fixtQUhtJ4h/3uW
+	G/h6M0kdisYm3M5Nm4ygJDelnaq+gxcmvB8J5JVCOSgrYz66/R7FnBTNdeU5EWY=
+X-Gm-Gg: ASbGncvMPE5WJdZ7opQPqkJ9l+DnuSIjGVjh4ObYH5rjHAzcrd6kKoEUErpgH8n0p+S
+	9f/tQMErFwCi3jy8+Wos25x9/uPAl5iHpUdwOcRQ7v6fXCfXawx16m7N3amofDKhXFw3C9InYs7
+	HPIVWijZuVL+YVceduINNk4Zx1Z1XsVOgO8GepvCR8WftwEFF8qjF9fNz6BNmVbisymHI+XjH48
+	mZY8HpGlLsdX09rZeAfnMpUpEpM/QivqXTRLqt6eXd565xeSOQ1Wxw3lHreVczGMdf7bMj0Im+3
+	8/wZaWadwnq9FoORKd240Z4Nxl961etj
+X-Google-Smtp-Source: AGHT+IHuZaMET3OrKLCAUT+QNZSCbeemRrlNpVTGqf1GqmIeLz5Cfauklsp95HyiIXeV02U3eBuz/g==
+X-Received: by 2002:a17:90b:2748:b0:2f1:30c8:6e75 with SMTP id 98e67ed59e1d1-2f5490e89e0mr33201668a91.32.1736904101339;
+        Tue, 14 Jan 2025 17:21:41 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f72c17f949sm213531a91.17.2025.01.14.17.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2025 17:21:40 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tXs6D-00000005yrJ-1Q3m;
+	Wed, 15 Jan 2025 12:21:37 +1100
+Date: Wed, 15 Jan 2025 12:21:37 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Improving large folio writeback performance
+Message-ID: <Z4cNoWIWnC7XwCT8@dread.disaster.area>
+References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] squashfs: Use a folio throughout
- squashfs_read_folio()
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-References: <20241220224634.723899-1-willy@infradead.org>
-Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <20241220224634.723899-1-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfENWepOiRwFkYR6Vlt7hCMenpMy5wn5og774Ssac3cKZjajAc7lAai1e/GWEjMfzSKouO/N+rOv48c2CpVQKcl4K+A8pUume9vE0T5uHIRbRmfLUalYg
- VXWu5Wg/2GXce9N9HlkOI9tnJMDoQqk62gGQNLNHHIgZWs9E47oj1kI7bwU1pqgNmmx8LNzWgIGXsxGL2JvRZ30p0y3sumLAnow3Hz3JfAfiQnsjxmpaIbTH
- Dz+o1Wyd9TwiZXhGWX1dZHHccnBLR+5Hq7WyX2vV1hw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
 
-
-
-On 12/20/24 22:46, Matthew Wilcox (Oracle) wrote:
-> Use modern folio APIs where they exist and convert back to struct
-> page for the internal functions.
+On Tue, Jan 14, 2025 at 04:50:53PM -0800, Joanne Koong wrote:
+> Hi all,
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
-Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
-Tested-by: Phillip Lougher <phillip@squashfs.org.uk>
-
-> ---
->   fs/squashfs/file.c | 25 +++++++++----------------
->   1 file changed, 9 insertions(+), 16 deletions(-)
+> I would like to propose a discussion topic about improving large folio
+> writeback performance. As more filesystems adopt large folios, it
+> becomes increasingly important that writeback is made to be as
+> performant as possible. There are two areas I'd like to discuss:
 > 
-> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-> index 21aaa96856c1..bc6598c3a48f 100644
-> --- a/fs/squashfs/file.c
-> +++ b/fs/squashfs/file.c
-> @@ -445,21 +445,19 @@ static int squashfs_readpage_sparse(struct page *page, int expected)
->   
->   static int squashfs_read_folio(struct file *file, struct folio *folio)
->   {
-> -	struct page *page = &folio->page;
-> -	struct inode *inode = page->mapping->host;
-> +	struct inode *inode = folio->mapping->host;
->   	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
-> -	int index = page->index >> (msblk->block_log - PAGE_SHIFT);
-> +	int index = folio->index >> (msblk->block_log - PAGE_SHIFT);
->   	int file_end = i_size_read(inode) >> msblk->block_log;
->   	int expected = index == file_end ?
->   			(i_size_read(inode) & (msblk->block_size - 1)) :
->   			 msblk->block_size;
->   	int res = 0;
-> -	void *pageaddr;
->   
->   	TRACE("Entered squashfs_readpage, page index %lx, start block %llx\n",
-> -				page->index, squashfs_i(inode)->start);
-> +				folio->index, squashfs_i(inode)->start);
->   
-> -	if (page->index >= ((i_size_read(inode) + PAGE_SIZE - 1) >>
-> +	if (folio->index >= ((i_size_read(inode) + PAGE_SIZE - 1) >>
->   					PAGE_SHIFT))
->   		goto out;
->   
-> @@ -472,23 +470,18 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
->   			goto out;
->   
->   		if (res == 0)
-> -			res = squashfs_readpage_sparse(page, expected);
-> +			res = squashfs_readpage_sparse(&folio->page, expected);
->   		else
-> -			res = squashfs_readpage_block(page, block, res, expected);
-> +			res = squashfs_readpage_block(&folio->page, block, res, expected);
->   	} else
-> -		res = squashfs_readpage_fragment(page, expected);
-> +		res = squashfs_readpage_fragment(&folio->page, expected);
->   
->   	if (!res)
->   		return 0;
->   
->   out:
-> -	pageaddr = kmap_atomic(page);
-> -	memset(pageaddr, 0, PAGE_SIZE);
-> -	kunmap_atomic(pageaddr);
-> -	flush_dcache_page(page);
-> -	if (res == 0)
-> -		SetPageUptodate(page);
-> -	unlock_page(page);
-> +	folio_zero_segment(folio, 0, folio_size(folio));
-> +	folio_end_read(folio, res == 0);
->   
->   	return res;
->   }
+> 
+> == Granularity of dirty pages writeback ==
+> Currently, the granularity of writeback is at the folio level. If one
+> byte in a folio is dirty, the entire folio will be written back. This
+> becomes unscalable for larger folios and significantly degrades
+> performance, especially for workloads that employ random writes.
+
+This sounds familiar, probably because we fixed this exact issue in
+the iomap infrastructure some while ago.
+
+commit 4ce02c67972211be488408c275c8fbf19faf29b3
+Author: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Date:   Mon Jul 10 14:12:43 2023 -0700
+
+    iomap: Add per-block dirty state tracking to improve performance
+    
+    When filesystem blocksize is less than folio size (either with
+    mapping_large_folio_support() or with blocksize < pagesize) and when the
+    folio is uptodate in pagecache, then even a byte write can cause
+    an entire folio to be written to disk during writeback. This happens
+    because we currently don't have a mechanism to track per-block dirty
+    state within struct iomap_folio_state. We currently only track uptodate
+    state.
+    
+    This patch implements support for tracking per-block dirty state in
+    iomap_folio_state->state bitmap. This should help improve the filesystem
+    write performance and help reduce write amplification.
+    
+    Performance testing of below fio workload reveals ~16x performance
+    improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
+    FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
+    
+    1. <test_randwrite.fio>
+    [global]
+            ioengine=psync
+            rw=randwrite
+            overwrite=1
+            pre_read=1
+            direct=0
+            bs=4k
+            size=1G
+            dir=./
+            numjobs=8
+            fdatasync=1
+            runtime=60
+            iodepth=64
+            group_reporting=1
+    
+    [fio-run]
+    
+    2. Also our internal performance team reported that this patch improves
+       their database workload performance by around ~83% (with XFS on Power)
+    
+    Reported-by: Aravinda Herle <araherle@in.ibm.com>
+    Reported-by: Brian Foster <bfoster@redhat.com>
+    Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+    Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+
+> One idea is to track dirty pages at a smaller granularity using a
+> 64-bit bitmap stored inside the folio struct where each bit tracks a
+> smaller chunk of pages (eg for 2 MB folios, each bit would track 32k
+> pages), and only write back dirty chunks rather than the entire folio.
+
+Have a look at how sub-folio state is tracked via the
+folio->iomap_folio_state->state{} bitmaps.
+
+Essentially it is up to the subsystem to track sub-folio state if
+they require it; there is some generic filesystem infrastructure
+support already in place (like iomap), but if that doesn't fit a
+filesystem then it will need to provide it's own dirty/uptodate
+tracking....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
