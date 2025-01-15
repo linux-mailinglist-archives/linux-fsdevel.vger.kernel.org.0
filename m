@@ -1,282 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-39298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C960A12555
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 14:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6878CA125E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 15:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1CB716913A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 13:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852FA1880500
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 14:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE5924334A;
-	Wed, 15 Jan 2025 13:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4A87C6E6;
+	Wed, 15 Jan 2025 14:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VkOUQ12I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ge3vhiaT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F85B29A5;
-	Wed, 15 Jan 2025 13:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E6E24A7D0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 14:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736948800; cv=none; b=vGmNAimSZTkTC9SPg6XcgFnQxpYkoJHuTNCGZFHI3S5osFXnN1GilA00hFa1udoiRycaz83ZCEo4L1EbChrA2oKYK8GzUFp+56+f1UTCojSquK69HM5HrjqoH5IQKfj+Y0mdpL6vja78WxXcgQEeFNgPKfFpTRGyvPy/L6CS2Y8=
+	t=1736950928; cv=none; b=noDNK5/7JSXwZivfu1c/46qR2VRMpw4FTnduuvQFiNuBWdPS3xat5hlyEYbJ1PqtAqEhmgcai2dXGjZZhQDVoYfvcoSTiGe/FyUOsYEcjCCbEc4cWXFPDsUIXd4GXQ+IlapF84r2G/Vy0ARs1dfA8lWNsA6HSOzTH0ovxOWePHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736948800; c=relaxed/simple;
-	bh=BJBiP01vAX3/hcSFK9Qtvwkh971Yj1osxx2tvLHtq2I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ky1XsDjRVtRwj+8KVTUibnmWiUAfbyMnhlm0axbDj6/RPEPWA+0g+fGQtjZ2eeu7fwQb3V52MO2TNM2CD9IT7SZzUIfUp/arXzyJblaXibQTH9W5pOHYZwgTnH0TQLwt4wU0qD5ygUAS8fzw55cZIyf3S6p5qtMQN4GvLh8+x0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VkOUQ12I; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50F3rIvn019911;
-	Wed, 15 Jan 2025 13:46:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=zzEO5g
-	okc39peyexb+JjoQ95EgGI6De7Tp73/tvf5Iw=; b=VkOUQ12IR3OmrTGFcMkDzY
-	zFBmGOHCtbjLWORieL438CLKqz1nkZOS+w3STDgMStCP2tPRqfp/dHGwv+2r5oqv
-	s0+TAtl1Ccg8t/+Rr4ce/DbadGYdjiiVnJOPEo2ZKZtE+l3PeZxXcQeMiYXr/QWb
-	VFLHKLvlqRmGm37Ybn/k77gRJfd23FUy5He7d+Bp5HJEnLD6Txd6eZJOPc6EKqM7
-	rtZX+UNV+kr34rOeEVMx1wqWaKtROaPdkr2/x+06Yb/l+wm1AX5saF7IoITtoQBs
-	+NfS1S621keOHPdBNNNpzTNOLw+uqAtWsHNj+oOgzF13xOyggH5sF6/lDtg5V8Hg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4465gjtdc9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Jan 2025 13:46:07 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 50FDjgq9015833;
-	Wed, 15 Jan 2025 13:46:07 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4465gjtdc5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Jan 2025 13:46:07 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50FBoLa7001108;
-	Wed, 15 Jan 2025 13:46:06 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44456k0a30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Jan 2025 13:46:06 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50FDk5qj29491880
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 Jan 2025 13:46:05 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A4325805B;
-	Wed, 15 Jan 2025 13:46:05 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 22A9E58055;
-	Wed, 15 Jan 2025 13:46:04 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.175.76])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 Jan 2025 13:46:03 +0000 (GMT)
-Message-ID: <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 5/7] ima: Set security.ima on file close when
- ima_appraise=fix
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date: Wed, 15 Jan 2025 08:46:03 -0500
-In-Reply-To: <20241128100621.461743-6-roberto.sassu@huaweicloud.com>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-	 <20241128100621.461743-6-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1736950928; c=relaxed/simple;
+	bh=ZpNCaGxLUFXdw93+hpnk6scIhRKltwNHo+b61K1Jcdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QENAFKQ3UUN7Hty1XXnqhc1k0RzixpilZpXUr4wo43PGwPsmKhTjpfUPVVd7oihOcKavpNSI+I0pfUTVFOquogAtiHIOGgNw60+nYJFCkzze46kc1BYJCbGetXST+21lrtE9TGt7sFTLLpeFAA5asgZ0mPMwV+ct7LCZNiMLmmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ge3vhiaT; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso618465966b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 06:22:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736950925; x=1737555725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZpNCaGxLUFXdw93+hpnk6scIhRKltwNHo+b61K1Jcdw=;
+        b=ge3vhiaTT+GHUNY9wfKp401tv9LgZus1P/eCc95fYnVkig5Lo4TpmQQrRc9tA7863L
+         tv/npCY9DtqMtoFjIsvr9/8ba8T3d0pD9uxietTtpKecJQEouRmz8t1n3XKjsUQCurvY
+         OaYT82agPCVzUn0mFecrUynTde4HWUgJQRfgjiokZv1xE56QI+tbmpCTnL/+RmvL5GE+
+         pLtAQxaRT7RNrgPml1ELwvVH/w29Q7AoVik3KnJyLftHXRk2zqs0E3UxI1q6DHoMXy77
+         AyBWFDcp8gfYQnNPmAp/f+9bAunmn83HdoRZlpvR40lX/Tmz1Lo+wsR/ie3o145KdO5v
+         ypeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736950925; x=1737555725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZpNCaGxLUFXdw93+hpnk6scIhRKltwNHo+b61K1Jcdw=;
+        b=nFkpuXujYYwPrXKi1LTMzCnFZc+EIzZmAwgNBYUfVp/Ce4iCStNk1EV/94J/Z8E2zl
+         mP77Hr6S6aJ//aBiZ4hATFRhAAgLwiZZ3UxybWNoxtcDAlVZywt77CIjqHlZtKeTN+kq
+         GwfzPvFEuv1xBssf1z1BQh8orpIOp4keI/Bb3gGdnOtknbaFFk2JtOFrvgGE8Rtqfxtp
+         EoY7F5yBgXRCtVdqAa9X0U1zW9YMzwBi2Oc9BvBHLTWV8CkpNJClGDJ6G97nEN+1OwCE
+         RorrqyWaBGSTZ357oxIBG1MgIU892bcYdOxgf0IZ8xmaMF3sSFhBvmCN7XZOcoiaQq5o
+         PqYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu0vBE6N1DNwbdNPyYOf+7QIRrXLDwfDQkwSOXYgu4eQvP0A+8ewGx7rnbQGqdDdwPocBmLGxTYS6bFr3c@vger.kernel.org
+X-Gm-Message-State: AOJu0YzATJs0S+HeDnHxSsuBPwXtLqRmwgbJKgiZlkj092MZYlpFlwoY
+	/HlSA2GDVy56aG0K0PxpFlfzagTMv3QC1zoVeB7eLet6AUCE079+d1rDDrg1EBsN+Oi+poi5ehy
+	e8ZYYzE7OXSZvGVL5rqIbhcwAtd8=
+X-Gm-Gg: ASbGncu2BSXoYIDVqFt4nSQePzkaDqHxsWQ3Veshhfbj5gEVb50JGfTY3DpMdm5BjUd
+	PAW+c1MuC+yy8ARFIHB3VTa2ey4RGFBggS/2dRg==
+X-Google-Smtp-Source: AGHT+IGLJ7ogFsKvkeEut7+IPf2Nvn/0WbXgOqesdp3s7FRRqdDRryVXxhP3JbWwPE+O4c2IxEyTfuY/uH590XIRMhw=
+X-Received: by 2002:a17:907:3f95:b0:aae:b259:ef6a with SMTP id
+ a640c23a62f3a-ab2aad3a453mr2845127566b.0.1736950924154; Wed, 15 Jan 2025
+ 06:22:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: hvxL16T867bUyhhyR3ZRT50OVa7egvOt
-X-Proofpoint-GUID: gbfl1k6tWGMrM5Yv7bcPMYW43YAd13gz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-15_05,2025-01-15_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- clxscore=1015 suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2501150102
+References: <CANT5p=rxLH-D9qSoOWgjYeD87uahmZJMwXp8uNKW66mbv8hmDg@mail.gmail.com>
+ <CAOQ4uxjk_YmSd_pwOkDbSoBdFiBXEBQF01mYyw+xSiCDOjqUOg@mail.gmail.com> <CANT5p=rxOnq_jtnOpMTKA+ycKYzkJyjESbAkE5zj20h4XtE0Ew@mail.gmail.com>
+In-Reply-To: <CANT5p=rxOnq_jtnOpMTKA+ycKYzkJyjESbAkE5zj20h4XtE0Ew@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 15 Jan 2025 15:21:52 +0100
+X-Gm-Features: AbW1kvaUCHcOHyshncYTFWiOBUhFR2gWq_OQcImpg-Lrap4n5gI-Z1Qaoz55BkE
+Message-ID: <CAOQ4uxhBWV3DfqaE=reuPjh8w92wwujA6Abj=Gt0YvapR4m_1g@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Predictive readahead of dentries
+To: Shyam Prasad N <nspmangalore@gmail.com>
+Cc: lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org, brauner@kernel.org, 
+	Matthew Wilcox <willy@infradead.org>, David Howells <dhowells@redhat.com>, 
+	Jeff Layton <jlayton@redhat.com>, Steve French <smfrench@gmail.com>, trondmy@kernel.org, 
+	Shyam Prasad N <sprasad@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please use "__fput()" rather than "file close".  Perhaps update the subject=
- line to
-something like "ima: Defer fixing security.ima to __fput()".=20
+On Wed, Jan 15, 2025 at 12:27=E2=80=AFPM Shyam Prasad N <nspmangalore@gmail=
+.com> wrote:
+>
+> On Tue, Jan 14, 2025 at 6:55=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Tue, Jan 14, 2025 at 4:38=E2=80=AFAM Shyam Prasad N <nspmangalore@gm=
+ail.com> wrote:
+> > >
+> > > The Linux kernel does buffered reads and writes using the page cache
+> > > layer, where the filesystem reads and writes are offloaded to the
+> > > VM/MM layer. The VM layer does a predictive readahead of data by
+> > > optionally asking the filesystem to read more data asynchronously tha=
+n
+> > > what was requested.
+> > >
+> > > The VFS layer maintains a dentry cache which gets populated during
+> > > access of dentries (either during readdir/getdents or during lookup).
+> > > This dentries within a directory actually forms the address space for
+> > > the directory, which is read sequentially during getdents. For networ=
+k
+> > > filesystems, the dentries are also looked up during revalidate.
+> > >
+> > > During sequential getdents, it makes sense to perform a readahead
+> > > similar to file reads. Even for revalidations and dentry lookups,
+> > > there can be some heuristics that can be maintained to know if the
+> > > lookups within the directory are sequential in nature. With this, the
+> > > dentry cache can be pre-populated for a directory, even before the
+> > > dentries are accessed, thereby boosting the performance. This could
+> > > give even more benefits for network filesystems by avoiding costly
+> > > round trips to the server.
+> > >
+> >
+> > I believe you are referring to READDIRPLUS, which is quite common
+> > for network protocols and also supported by FUSE.
+> This discussion is not completely about readdirplus, but definitely is
+> a part of it.
+> I'm suggesting doing the next set of readdir() calls in advance, so
+> that the data needed to serve those are already in the cache.
+> I'm also suggesting artificially doing a readdir to avoid sequential
+> revalidation of each dentry; or a readdirplus to avoid stat of each
+> inode corresponding to these dentries
 
-On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> IMA-Appraisal implements a fix mode, selectable from the kernel command
-> line by specifying ima_appraise=3Dfix.
->=20
-> The fix mode is meant to be used in a TOFU (trust on first use) model,
-> where systems are supposed to work under controlled conditions before the
-> real enforcement starts.
->=20
-> Since the systems are under controlled conditions, it is assumed that the
-> files are not corrupted, and thus their current data digest can be truste=
-d,
-> and written to security.ima.
->=20
-> When IMA-Appraisal is switched to enforcing mode, the security.ima value
-> collected during the fix mode is used as a reference value, and a mismatc=
-h
-> with the current value cause the access request to be denied.
->=20
-> However, since fixing security.ima is placed in ima_appraise_measurement(=
-)
-> during the integrity check, it requires the inode lock to be taken in
-> process_measurement(), in addition to ima_update_xattr() invoked at file
-> close.
->=20
-> Postpone the security.ima update to ima_check_last_writer(), by setting t=
-he
-> new atomic flag IMA_UPDATE_XATTR_FIX in the inode integrity metadata, in
-> ima_appraise_measurement(), if security.ima needs to be fixed. In this wa=
-y,
-> the inode lock can be removed from process_measurement(). Also, set the
-> cause appropriately for the fix operation and for allowing access to new
-> and empty signed files.
->=20
-> Finally, update security.ima when IMA_UPDATE_XATTR_FIX is set, and when
-> there wasn't a previous security.ima update, which occurs if the process
-> closing the file descriptor is the last writer. =20
->=20
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Well, if readdirplus is implemented, then "readaheadplus" could be
+implemented by async io_uring readdirplus commands. Right?
+io_uring command would have to know to chain the following
+readdirplus commands with the offset returned from the previous
+readdirplus response, but that should be doable I think?
 
-Roberto, I really like the idea of removing the inode_lock in process_measu=
-rement()
-needed for writing xattrs, but I'm concerned about the delay being introduc=
-ed.  For
-example, does it interfere with labeling the filesystem with file signature=
-s
-(with/without EVM enabled)?
+> >
+> > Unlike network protocols, FUSE decides by server configuration and
+> > heuristics whether to "fuse_use_readdirplus" - specifically in readdirp=
+lus_auto
+> > mode, FUSE starts with readdirplus, but if nothing calls lookup on the
+> > directory inode by the time the next getdents call, it stops with readd=
+irplus.
+> >
+> > I personally ran into the problem that I would like to control from the
+> > application, which knows if it is doing "ls" or "ls -l" whether a speci=
+fic
+> > getdents() will use FUSE readdirplus or not, because in some situations
+> > where "ls -l" is not needed that can avoid a lot of unneeded IO.
+> >
+> > I do not know if implementing readdirplus (i.e. populate inode and dent=
+ry)
+> > makes sense for disk filesystems, but if we do it in VFS level, there h=
+as to
+> > be at an API to control or at least opt-out of readdirplus, like with r=
+eadahead.
+> That would be a great knob to have for network filesystems. We have to
+> rely on heuristics today to predict which of these patterns the
+> workload is using.
+>
 
-> ---
-> =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> =C2=A0security/integrity/ima/ima_appraise.c |=C2=A0 7 +++++--
-> =C2=A0security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0 | 18 ++++=
-+++++++-------
-> =C2=A03 files changed, 17 insertions(+), 9 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index b4eeab48f08a..22c3b87cfcac 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -179,6 +179,7 @@ struct ima_kexec_hdr {
-> =C2=A0#define IMA_CHANGE_ATTR		2
-> =C2=A0#define IMA_DIGSIG		3
-> =C2=A0#define IMA_MUST_MEASURE	4
-> +#define IMA_UPDATE_XATTR_FIX	5
-> =C2=A0
-> =C2=A0/* IMA integrity metadata associated with an inode */
-> =C2=A0struct ima_iint_cache {
-> diff --git a/security/integrity/ima/ima_appraise.c
-> b/security/integrity/ima/ima_appraise.c
-> index 656c709b974f..94401de8b805 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -576,8 +576,10 @@ int ima_appraise_measurement(enum ima_hooks func, st=
-ruct
-> ima_iint_cache *iint,
-> =C2=A0		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
-> =C2=A0		=C2=A0=C2=A0=C2=A0 (!xattr_value ||
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 xattr_value->type !=3D EVM_IMA_XATTR_DIG=
-SIG)) {
-> -			if (!ima_fix_xattr(dentry, iint))
-> -				status =3D INTEGRITY_PASS;
-> +			/* Fix by setting security.ima on file close. */
-> +			set_bit(IMA_UPDATE_XATTR_FIX, &iint->atomic_flags);
-> +			status =3D INTEGRITY_PASS;
-> +			cause =3D "fix";
-> =C2=A0		}
-> =C2=A0
-> =C2=A0		/*
-> @@ -587,6 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
-uct
-> ima_iint_cache *iint,
-> =C2=A0		if (inode->i_size =3D=3D 0 && iint->flags & IMA_NEW_FILE &&
-> =C2=A0		=C2=A0=C2=A0=C2=A0 test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
-> =C2=A0			status =3D INTEGRITY_PASS;
-> +			cause =3D "new-signed-file";
-> =C2=A0		}
-> =C2=A0
-> =C2=A0		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index 1e474ff6a777..50b37420ea2c 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -158,13 +158,16 @@ static void ima_check_last_writer(struct ima_iint_c=
-ache
-> *iint,
-> =C2=A0				=C2=A0 struct inode *inode, struct file *file)
-> =C2=A0{
-> =C2=A0	fmode_t mode =3D file->f_mode;
-> -	bool update;
-> +	bool update =3D false, update_fix;
-> =C2=A0
-> -	if (!(mode & FMODE_WRITE))
-> +	update_fix =3D test_and_clear_bit(IMA_UPDATE_XATTR_FIX,
-> +					&iint->atomic_flags);
-> +
-> +	if (!(mode & FMODE_WRITE) && !update_fix)
-> =C2=A0		return;
-> =C2=A0
-> =C2=A0	ima_iint_lock(inode);
-> -	if (atomic_read(&inode->i_writecount) =3D=3D 1) {
-> +	if (atomic_read(&inode->i_writecount) =3D=3D 1 && (mode & FMODE_WRITE))=
- {
+It seems like the demand existed for a long time.
+Man page for posix_fadvise(2) says:
+"Programs can use posix_fadvise() to announce an intention to access file d=
+ata
+ in a specific pattern in the future, thus allowing the kernel to
+perform appropriate
+ optimizations."
 
-Probably better to reverse the "mode & FMODE_WRITE" and atomic_read() test =
-order.
+I do not read this as limiting to non-directory files, and indeed fadvise()=
+ can
+be called on directories, but others could argue that this is an API abuse.
 
-Mimi
+Mind sending a patch for POSIX_FADV_{NO,}READDIRPLUS?
+make sure it fails with -ENOTDIR on non-dir and be ready to face the
+inevitable bikeshedding ;)
 
-> =C2=A0		struct kstat stat;
-> =C2=A0
-> =C2=A0		update =3D test_and_clear_bit(IMA_UPDATE_XATTR,
-> @@ -181,6 +184,10 @@ static void ima_check_last_writer(struct ima_iint_ca=
-che *iint,
-> =C2=A0				ima_update_xattr(iint, file);
-> =C2=A0		}
-> =C2=A0	}
-> +
-> +	if (!update && update_fix)
-> +		ima_update_xattr(iint, file);
-> +
-> =C2=A0	ima_iint_unlock(inode);
-> =C2=A0}
-> =C2=A0
-> @@ -378,13 +385,10 @@ static int process_measurement(struct file *file, c=
-onst
-> struct cred *cred,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 template_desc);
-> =C2=A0	if (rc =3D=3D 0 && (action & IMA_APPRAISE_SUBMASK)) {
-> =C2=A0		rc =3D ima_check_blacklist(iint, modsig, pcr);
-> -		if (rc !=3D -EPERM) {
-> -			inode_lock(inode);
-> +		if (rc !=3D -EPERM)
-> =C2=A0			rc =3D ima_appraise_measurement(func, iint, file,
-> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pathname, xattr_value,
-> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xattr_len, modsig);
-> -			inode_unlock(inode);
-> -		}
-> =C2=A0		if (!rc)
-> =C2=A0			rc =3D mmap_violation_check(func, file, &pathbuf,
-> =C2=A0						=C2=A0 &pathname, filename);
-
+Thanks,
+Amir.
 
