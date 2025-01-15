@@ -1,142 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-39326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1888CA12B3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 19:55:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65C2A12BE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 20:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7EBA3A59D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 18:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A8977A2A49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 19:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C211D63D5;
-	Wed, 15 Jan 2025 18:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2541D86FB;
+	Wed, 15 Jan 2025 19:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="pBGQXSkF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d3L7E7O8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUjM5k2n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A5619922A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 18:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2071D6DA9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 19:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736967351; cv=none; b=XqOqkPXZ3IzCZ47PJPzR8kGsOc/DG+RlsGZ276+Qkt3i/LdOoX7HOHadYbGh3K/n7CF6xjySScVUNq3lFafFaTQ+Ldd8THFrMF7bIMMzzOLVKOuw1ChaX3FQ4HFm6lFEWCiNvOspzvLJKdN+00RUSqccOtArFWYdIEYpDY1kTzY=
+	t=1736970107; cv=none; b=c44uQIsWSqkIDjECSFwqvzwIzVgB4n6U8h/FU7ZT3eOcNiEbuNezMLqU/L6wFQ543YrekSco00IOK5uTzkJilhDPKR7xZyrt4HoTsKAdWq+X1qzHcVeOTWIscXr4HYf23N3K80/kUvuXYGry6yMGz4jriKwJMmz7Yo6ItgTe7KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736967351; c=relaxed/simple;
-	bh=0KmddYUgBmXzMsS1DZ/nke+p3KeI0BTDkC6DScpFCLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nfw8vDGs7CVCmS0mS9NZdg0Wf2Dnfh5l8Xh4d9WsXfNvLO+EI6duZQibWRXJMKkX7QHwFjhn7D8zohK48Hc+jZLhDlN8+7hyJzhkLLQzgshg0wJw9NY2zA9ugw2NdFE/13dE166k9+Ucv1HQJ9ku1LQyuJTbNYQF6BbYV5xfkhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=pBGQXSkF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d3L7E7O8; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bur.io
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3935C1380208;
-	Wed, 15 Jan 2025 13:55:47 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 15 Jan 2025 13:55:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm3;
-	 t=1736967347; x=1737053747; bh=0KmddYUgBmXzMsS1DZ/nke+p3KeI0BTD
-	kC6DScpFCLE=; b=pBGQXSkFKOau97NVHO85kZ5viWckbzWUnJF7o6h2KBBqKvNR
-	HxIpgO4JJkdFdj9YFy6j//OPgVtFc9y/pW5A0TaU2ettm9RdNtRvS9G3Fc1i3xw8
-	fQVIOKXQrG/UDSB0CBmX0pzdvMrhSfl3mdOmftBVLjl3HMwmCThkqUiHaV/cGVmy
-	nYlmYOBWLh1Ee4bdJA8oQigzhc+wgkvT9uQSfz7AyOkH79DUzOauFX2kBCc35PJC
-	pbYPvN5QIE/p6qkUtlhrodNc3sZfN2bFR398FsqfyyyF/iabomUKTD3S7E8hWo1P
-	rGl1kXlPUpScpm9nfTNLckoSM1LTQoY6k//RQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736967347; x=
-	1737053747; bh=0KmddYUgBmXzMsS1DZ/nke+p3KeI0BTDkC6DScpFCLE=; b=d
-	3L7E7O8RHsOPG5DLx9znUJ4f0I9rq+WFBFPvqpBsnzgcNFr4L5AgqrVOYQ3eHTwT
-	w7eywao/WCnHkW1wVc+c4Oq8m43llPxNylYJO/FbvKBASBN5sYYLddxIKNaitnZj
-	8+yXP79GkSPPj6yjvSrOf4LZjtFKE7+FSXGgIKlUT4661atx1SMpw8Efz6x8Jd+b
-	llEshd0I4KcnDSRQSWM4sy32tbCLeiGRbMyjrYjB3iHGyigRu3I6Jt+HxHaEXXEy
-	pTlAQVzHzOVX2gMVQ34mbVMOfbcoU4R8F7P1EjZyIE+buBIrXU1B/xvNbLfdnp3F
-	FXajwXM9jl1W+ycxM1ygw==
-X-ME-Sender: <xms:sgSIZ_4oG0gPfMyqOtOfZE2U1lWLzX4v8dxIJrknDCe4TXPBwV2hcw>
-    <xme:sgSIZ07EgnCT6bniqPcHPhwvV_CNhH9wsRdXFtWfrYIBPVAsd0IvvcaUjWxXJZx_o
-    wVDeiE39Eq0uzONmSA>
-X-ME-Received: <xmr:sgSIZ2cBVPd8tdccYTJ4g3ertYp1_VWBYkqRIW1nKU6wEg-ZSNDTHf7mUlbXs1In8lXlVtSxfJ8PnCvenI7XbVm7PTc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudehledgleduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
-    fukfggtggusehttdertddttddvnecuhfhrohhmpeeuohhrihhsuceuuhhrkhhovhcuoegs
-    ohhrihhssegsuhhrrdhioheqnecuggftrfgrthhtvghrnhepjeeukeethedtfeekhfdvue
-    fgkedvvdelheefueduudduleeugffgudfgkedvleffnecuvehluhhsthgvrhfuihiivgep
-    tdenucfrrghrrghmpehmrghilhhfrhhomhepsghorhhishessghurhdrihhopdhnsggprh
-    gtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhf
-    shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrrghnrd
-    hjrdguvghmvgihvghrsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:sgSIZwKP3qmAt-YnZHLdIPOmDvSTuP5xkixPw1X4klcArS6zwL2mZA>
-    <xmx:swSIZzJ0WhboOMe7CdpNc4hb6fwZSCZbkMFj5CgPe4krmJkTayLlKQ>
-    <xmx:swSIZ5wB58PNfRlkKUuT2PJ4dexmEWdHEmbK7o259pLx3RqQgdTGfA>
-    <xmx:swSIZ_JoOyuG0zx8F5lPwOnunTDy7R3FnxzCH2TppWyI1E_ACfFQWw>
-    <xmx:swSIZ6UV2aURmxz9Dn0WueX5qqS-ATSwoA69HqgYrSsGkfC3czvtmPGX>
-Feedback-ID: i083147f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Jan 2025 13:55:46 -0500 (EST)
-Date: Wed, 15 Jan 2025 10:56:08 -0800
-From: Boris Burkov <boris@bur.io>
-To: linux-fsdevel@vger.kernel.org
-Cc: daan.j.demeyer@gmail.com
-Subject: Possible bug with open between unshare(CLONE_NEWNS) calls
-Message-ID: <20250115185608.GA2223535@zen.localdomain>
+	s=arc-20240116; t=1736970107; c=relaxed/simple;
+	bh=1CepNm1EvZ8v0biMvtMnX7+Z8MS5vHYzEMsaceGKJ64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rj5Cg/UiAQbWJv2JTSMzHeIZlRH359+v0W+IP/CcOHXt/Vnxo43d/GJJMQfv0J8g6AhdB0/YvEN+ZB0rf+XF7KfoSP7VO16L3hfHFoyTY+U/KUM6DiCsWK5s/nv+RmKMjNtlgZq1I94SmE1SqiMiVp6C4NA2cPLZM9J1IhRNWJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUjM5k2n; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46defafbdafso2174461cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 11:41:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736970105; x=1737574905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KciV9bdPKhdWNavUL6XlrPX/IOUek6VCPeClw9BiTTM=;
+        b=hUjM5k2nqqcgpkpcdFm7JTEAsPTVkQFT8zT9L8YStgXQfPDrl1sJIM4jtPvLlsxLFy
+         gzTpq+pG1zN+zKuh+hP4bt6MxyCdOPpAtNOoRxvBObOYpdoInzUm5F11sDJCeIh1nRY5
+         ZnnBTnhCdFyPOdaxzkZhLKXIlC2NS8uy22x5JnKKKHfbpTe5jcmrqV43TrWrEARjFOdO
+         rIySaDdC48Q1/uuUSyg3DshleNNZglGwTQiSCeInQGHZm1iyw2yiNgcXovNh/0Ngb5Y9
+         yZsE1A6PN61za8e1PLKwRq0ocYNkb0Cb3uMc55Uy9vnfjE1RdD81uiU0kZH6+x2isUoS
+         Eeyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736970105; x=1737574905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KciV9bdPKhdWNavUL6XlrPX/IOUek6VCPeClw9BiTTM=;
+        b=qnAKE24OEvm0D+mMteDgDby02wMNmbTnJNz2ciwptWVZOj0eUjJJ5YLrqfqjd7sUJI
+         Wvt1UybqyLeCu45D+oSOJFURthhS2vuzjYUp7DdWrQ9m7zNZDZOOuaCKjclrNcgFG+r0
+         nefwMhZyo9QisukKPK89XXU3/mLbqwDEKTWCM9RGRYsjCF87CQ/1vksw5pXbXXvIhF3g
+         fT2X30L2/6eI2UjmeTSOOWACBmQURZTfXhOPEHVzEfFHfxL7sMBBeXRB4sedqHYUviWO
+         undQWVnBQdoHw3su/6q9ZjbUyqiKiA8C53l9TKjoLZ4mYKGMSdKvsEGg4szJDnmb0p03
+         QckA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlMS5eWBYd57uprdTsb0XByPtAWzORd5aCyt27VPDjydNU3TEm+5OJeANOODI4mwOfAl1JEPzC3uE1EAyL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCzUr+DJM/DVVsHJNg6z8Nt5Uzzo+GPzpmaja/ozDhLzlWjXhw
+	DYnuNlwTHM1sXgl8NqREO7IjVJX2buGuKp1lSIoJQ1cRKLRyigSs+Q07kNGB2Hdb1MCyGqZMBH/
+	sg540T2AfBARWLtzk2LtCcXS7b4uTOQ==
+X-Gm-Gg: ASbGnct7bK+HEED5bwI+b3bOOmyXUkPQnM681VcqRec6NTxSWWOVPTbu83YfuKFAxUZ
+	wxVgrkAnkeZvFzsWNESFT4isrhop5iISHHS1XRmyb1m5Dqc1lGtXmZA==
+X-Google-Smtp-Source: AGHT+IHfT4ThsOinmFp6BD0jwnEeIjPdmBh8YZidnwi8onlJLlM0wh4G6Pwnxo21/8bQ7gVPjWsa8mJRX/laaOizJXQ=
+X-Received: by 2002:a05:622a:5cf:b0:46a:3176:f78b with SMTP id
+ d75a77b69052e-46c710e570fmr484985881cf.38.1736970104679; Wed, 15 Jan 2025
+ 11:41:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241218222630.99920-1-joannelkoong@gmail.com>
+In-Reply-To: <20241218222630.99920-1-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 15 Jan 2025 11:41:34 -0800
+X-Gm-Features: AbW1kvbMEex4RAKWpzR5OpS2BYHdayuyI2EZINdqJ5iSa2f0-aXZLLas78GOVPk
+Message-ID: <CAJnrk1YNtqrzxxEQZuQokMBU42owXGGKStfgZ-3jarm3gEjWQw@mail.gmail.com>
+Subject: Re: [PATCH v11 0/2] fuse: add kernel-enforced request timeout option
+To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
+	jefflexu@linux.alibaba.com, laoar.shao@gmail.com, jlayton@kernel.org, 
+	senozhatsky@chromium.org, tfiga@chromium.org, bgeffon@google.com, 
+	etmartin4313@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Dec 18, 2024 at 2:27=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> There are situations where fuse servers can become unresponsive or
+> stuck, for example if the server is in a deadlock. Currently, there's
+> no good way to detect if a server is stuck and needs to be killed
+> manually.
+>
+> This patchset adds a timeout option where if the server does not reply to=
+ a
+> request by the time the timeout elapses, the connection will be aborted.
+> This patchset also adds two dynamically configurable fuse sysctls
+> "default_request_timeout" and "max_request_timeout" for controlling/enfor=
+cing
+> timeout behavior system-wide.
+>
+> Existing systems running fuse servers will not be affected unless they
+> explicitly opt into the timeout.
 
-If we run the following C code:
-
-unshare(CLONE_NEWNS);
-int fd = open("/dev/loop0", O_RDONLY)
-unshare(CLONE_NEWNS);
-
-Then after the second unshare, the mount hierarchy created by the first
-unshare is fully dereferenced and gets torn down, leaving the file
-pointed to by fd with a broken dentry.
-
-Specifically, subsequent calls to d_path on its path resolve to
-"/loop0". I was able to confirm this with drgn, and it has caused an
-unexpected failure in mkosi/systemd-repart attempting to mount a btrfs
-filesystem through such an fd, since btrfs uses d_path to resolve the
-source device file path fully.
-
-I confirmed that this is definitely due to the first unshare mount
-namespace going away by:
-1. printks/bpftrace the copy_root path in the kernel
-2. rewriting my test program to fork after the first unshare to keep
-that namespace referenced. In this case, the fd is not broken after the
-second unshare.
-
-
-My question is:
-Is this expected behavior with respect to mount reference counts and
-namespace teardown?
-
-If I mount a filesystem and have a running program with an open file
-descriptor in that filesystem, I would expect unmounting that filesystem
-to fail with EBUSY, so it stands to reason that the automatic unmount
-that happens from tearing down the mount namespace of the first unshare
-should respect similar semantics and either return EBUSY or at least
-have the lazy umount behavior and not wreck the still referenced mount
-objects.
-
-If this behavior seems like a bug to people better versed in the
-expected behavior of namespaces, I would be happy to work on a fix.
+Miklos, is this patchset acceptable for your tree?
 
 Thanks,
-Boris
+Joanne
+
+
+>
+> v10:
+> https://lore.kernel.org/linux-fsdevel/20241214022827.1773071-1-joannelkoo=
+ng@gmail.com/
+> Changes from v10 -> v11:
+> * Refactor check for request expiration (Sergey)
+> * Move workqueue cancellation to earlier in function (Jeff)
+> * Check fc->num_waiting as a shortcut in workqueue job (Etienne)
+>
+> v9:
+> https://lore.kernel.org/linux-fsdevel/20241114191332.669127-1-joannelkoon=
+g@gmail.com/
+> Changes from v9 -> v10:
+> * Use delayed workqueues instead of timers (Sergey and Jeff)
+> * Change granularity to seconds instead of minutes (Sergey and Jeff)
+> * Use time_after() api for checking jiffies expiration (Sergey)
+> * Change timer check to run every 15 secs instead of every min
+> * Update documentation wording to be more clear
+>
+> v8:
+> https://lore.kernel.org/linux-fsdevel/20241011191320.91592-1-joannelkoong=
+@gmail.com/
+> Changes from v8 -> v9:
+> * Fix comment for u16 fs_parse_result, ULONG_MAX instead of U32_MAX, fix
+>   spacing (Bernd)
+>
+> v7:
+> https://lore.kernel.org/linux-fsdevel/20241007184258.2837492-1-joannelkoo=
+ng@gmail.com/
+> Changes from v7 -> v8:
+> * Use existing lists for checking expirations (Miklos)
+>
+> v6:
+> https://lore.kernel.org/linux-fsdevel/20240830162649.3849586-1-joannelkoo=
+ng@gmail.com/
+> Changes from v6 -> v7:
+> - Make timer per-connection instead of per-request (Miklos)
+> - Make default granularity of time minutes instead of seconds
+> - Removed the reviewed-bys since the interface of this has changed (now
+>   minutes, instead of seconds)
+>
+> v5:
+> https://lore.kernel.org/linux-fsdevel/20240826203234.4079338-1-joannelkoo=
+ng@gmail.com/
+> Changes from v5 -> v6:
+> - Gate sysctl.o behind CONFIG_SYSCTL in makefile (kernel test robot)
+> - Reword/clarify last sentence in cover letter (Miklos)
+>
+> v4:
+> https://lore.kernel.org/linux-fsdevel/20240813232241.2369855-1-joannelkoo=
+ng@gmail.com/
+> Changes from v4 -> v5:
+> - Change timeout behavior from aborting request to aborting connection
+>   (Miklos)
+> - Clarify wording for sysctl documentation (Jingbo)
+>
+> v3:
+> https://lore.kernel.org/linux-fsdevel/20240808190110.3188039-1-joannelkoo=
+ng@gmail.com/
+> Changes from v3 -> v4:
+> - Fix wording on some comments to make it more clear
+> - Use simpler logic for timer (eg remove extra if checks, use mod timer A=
+PI)
+>   (Josef)
+> - Sanity-check should be on FR_FINISHING not FR_FINISHED (Jingbo)
+> - Fix comment for "processing queue", add req->fpq =3D NULL safeguard  (B=
+ernd)
+>
+> v2:
+> https://lore.kernel.org/linux-fsdevel/20240730002348.3431931-1-joannelkoo=
+ng@gmail.com/
+> Changes from v2 -> v3:
+> - Disarm / rearm timer in dev_do_read to handle race conditions (Bernrd)
+> - Disarm timer in error handling for fatal interrupt (Yafang)
+> - Clean up do_fuse_request_end (Jingbo)
+> - Add timer for notify retrieve requests
+> - Fix kernel test robot errors for #define no-op functions
+>
+> v1:
+> https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelkoo=
+ng@gmail.com/
+> Changes from v1 -> v2:
+> - Add timeout for background requests
+> - Handle resend race condition
+> - Add sysctls
+>
+> Joanne Koong (2):
+>   fuse: add kernel-enforced timeout option for requests
+>   fuse: add default_request_timeout and max_request_timeout sysctls
+>
+>  Documentation/admin-guide/sysctl/fs.rst | 25 ++++++++
+>  fs/fuse/dev.c                           | 85 +++++++++++++++++++++++++
+>  fs/fuse/fuse_i.h                        | 32 ++++++++++
+>  fs/fuse/inode.c                         | 35 ++++++++++
+>  fs/fuse/sysctl.c                        | 14 ++++
+>  5 files changed, 191 insertions(+)
+>
+> --
+> 2.43.5
+>
 
