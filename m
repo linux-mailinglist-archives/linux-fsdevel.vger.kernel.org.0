@@ -1,65 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-39243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C9DA11DFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:33:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED54A11DFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:33:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7253A846B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 09:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FABE3A7F41
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 09:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199E81EEA3D;
-	Wed, 15 Jan 2025 09:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC711E7C31;
+	Wed, 15 Jan 2025 09:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W2/CFTP/"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NEISfs1e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AD024818C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0BA248177;
 	Wed, 15 Jan 2025 09:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736933514; cv=none; b=S+e+Tg3IrUszEtYa9o0+O2itLFu9yAO8f1xbFddY1B17bTBHrGQdpOWbfGoV9RdwG1C63n6SCV+CZ2do1aurRymS1e/srZ5zBxi6zDfxddqNoAIHXmY5dd/wb4uO0IceLv8eddCBN+RR5XIa6u0uGrPGSwbuILaxJanhhr8YftY=
+	t=1736933514; cv=none; b=jXzxun2eOzDAX7fBSbsWmVAKFCEoxdGsOD4PzvW155vL3OdhVy3Z+T2kmGxrFH2IveU5bjV7zKWc1DhV1NO+dbesZ161daJzqfxCRW3Ass9BRCMrVBAg+tRHA+H3w6xQegvXT+q++8f6YAZq+Q/vTaWcFYwTI9B8/pb9K80SEiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736933514; c=relaxed/simple;
-	bh=yFaq4+y3L3aBB+QzbnekiDGuxensl38YhIVnwEC4MWs=;
+	bh=nRzbgXuQyXrlvnkDG9Mh1SQu4X/gBOf94amjJ8YtZCI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bdylJOc5I1XoFWjZ39mX3GD8MmytPcfdJswDu8ARV7KHOYuxZbT/U3Oxu8ejJCKLHoYmRHAtQvAbLuk+ygVkYM9PEoap5/Hu2h+n4D3gOdU3r71GKx9hrzhUQ7d4xqo3c7rCOGRPkwQqzFmMtQ6Jb82KTn2UZvwYhrl18LyzpnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W2/CFTP/; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=IFbrR3LJP2lhnYA9r4W8ZNThlSKiEtEeEQn/LBxa36snb7p1hyJVBDurNpBHl5/EA80xjhwI5G8LFe39RlsZnSI/Lyy37lXo+480nnV6N+o/IpbSE5XJc0c55C1fpbFzCaAAZS1Fv3TPbx7Te3udsdq+4ABl8SlN4Yz+xV4OZqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NEISfs1e; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1736933513; x=1768469513;
+  t=1736933512; x=1768469512;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yFaq4+y3L3aBB+QzbnekiDGuxensl38YhIVnwEC4MWs=;
-  b=W2/CFTP/YGn1x/oyewYajuqS6B13wfhG1G4qiLxCnhxHGY8L2He0n6f/
-   zogJ6+n8RpJiNl7xzPRc5vgdYNTll4FRrsxqIAie2WAKvDZLRIc37UCDC
-   31aMUa2EGmE3+1bUjqgbiwXfPIIo4jOJ1FHRgReKTPbehS7ltmAIuDxi0
-   zNlbyBZLFxELpypIJltZ0mumHJpE6pDViay5Ut6ReA5bXeY2h9nKmXWRp
-   2EjqIfRdcPsSZmn7nUJM63ThWysHp+oCXpX7qQM12RBz4MIYBIm6ZYLQM
-   0WgFbyiK3JaQkhg0a74E5mHhBou7im1z0OKeXogn/ctt5dDr5UKSxmaA5
-   g==;
-X-CSE-ConnectionGUID: aqe80r6nTJS1E1eq3zQarA==
-X-CSE-MsgGUID: KSgL6LwrQimqZzByZSrbOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="37371815"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="37371815"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2025 01:31:52 -0800
-X-CSE-ConnectionGUID: SRJjdY82STKzm2J5zuHSUw==
-X-CSE-MsgGUID: pixpA6aySyq+BTEWCXFN3g==
-X-ExtLoop1: 1
+  bh=nRzbgXuQyXrlvnkDG9Mh1SQu4X/gBOf94amjJ8YtZCI=;
+  b=NEISfs1e/kmVZBxnrEjgyFwltVUU8iDGifsbg8UykE2J1le/Whe+fSso
+   spAE0/5PqmrNYug61rKnMaLkq7Z0of83BWpgKyilQcI0aAUZFBntxCApc
+   Z1fwZMlQBg5h+7RD07AbhlB1JoFedsoqTC8JIZiSR/+mXWkTmr3JY1GE8
+   zx6AwhvQygcZa+KhrkxGy+ZBWqkLrRVQIJuAZbtMSgxQkgB2LWn8G1veL
+   5sWP1UYtdPX2DGxEDuO8ljSAB2XQUUEodmmzvs3akOp+W/7KHSHnhlfcX
+   fXH3H4EzLn943NuNUpYkHJqFq0FJsOT7yV4MQvWakoxenwW6GV6SYSav8
+   A==;
+X-CSE-ConnectionGUID: DO9TP4DdS2SZxA2n/RmrSw==
+X-CSE-MsgGUID: wJusA8VKRoCPB6j689HwCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11315"; a="41195003"
 X-IronPort-AV: E=Sophos;i="6.12,316,1728975600"; 
-   d="scan'208";a="110066760"
+   d="scan'208";a="41195003"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2025 01:31:51 -0800
+X-CSE-ConnectionGUID: AIiWRNDGRCO+nTKGleEiUw==
+X-CSE-MsgGUID: ICetDwloSsuj4G/eQ0fcsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="109700828"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 15 Jan 2025 01:31:43 -0800
+  by fmviesa005.fm.intel.com with ESMTP; 15 Jan 2025 01:31:43 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 3267839C; Wed, 15 Jan 2025 11:31:42 +0200 (EET)
+	id 4A033478; Wed, 15 Jan 2025 11:31:42 +0200 (EET)
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -97,9 +97,9 @@ Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCHv2 01/11] mm/migrate: Transfer PG_dropbehind to the new folio
-Date: Wed, 15 Jan 2025 11:31:25 +0200
-Message-ID: <20250115093135.3288234-2-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 02/11] drm/i915/gem: Convert __shmem_writeback() to folios
+Date: Wed, 15 Jan 2025 11:31:26 +0200
+Message-ID: <20250115093135.3288234-3-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250115093135.3288234-1-kirill.shutemov@linux.intel.com>
 References: <20250115093135.3288234-1-kirill.shutemov@linux.intel.com>
@@ -111,33 +111,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Do not lose the flag on page migration.
+Use folios instead of pages.
 
-Ideally, these folios should be freed instead of migration. But it
-requires to find right spot do this and proper testing.
-
-Transfer the flag for now.
+This is preparation for removing PG_reclaim.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
- mm/migrate.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index caadbe393aa2..690efa064bee 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -682,6 +682,10 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
- 	if (folio_test_dirty(folio))
- 		folio_set_dirty(newfolio);
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+index fe69f2c8527d..9016832b20fc 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+@@ -320,25 +320,25 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
  
-+	/* TODO: free the folio on migration? */
-+	if (folio_test_dropbehind(folio))
-+		folio_set_dropbehind(newfolio);
-+
- 	if (folio_test_young(folio))
- 		folio_set_young(newfolio);
- 	if (folio_test_idle(folio))
+ 	/* Begin writeback on each dirty page */
+ 	for (i = 0; i < size >> PAGE_SHIFT; i++) {
+-		struct page *page;
++		struct folio *folio;
+ 
+-		page = find_lock_page(mapping, i);
+-		if (!page)
++		folio = filemap_lock_folio(mapping, i);
++		if (!folio)
+ 			continue;
+ 
+-		if (!page_mapped(page) && clear_page_dirty_for_io(page)) {
++		if (!folio_mapped(folio) && folio_clear_dirty_for_io(folio)) {
+ 			int ret;
+ 
+-			SetPageReclaim(page);
+-			ret = mapping->a_ops->writepage(page, &wbc);
++			folio_set_reclaim(folio);
++			ret = mapping->a_ops->writepage(&folio->page, &wbc);
+ 			if (!PageWriteback(page))
+-				ClearPageReclaim(page);
++				folio_clear_reclaim(folio);
+ 			if (!ret)
+ 				goto put;
+ 		}
+-		unlock_page(page);
++		folio_unlock(folio);
+ put:
+-		put_page(page);
++		folio_put(folio);
+ 	}
+ }
+ 
 -- 
 2.45.2
 
