@@ -1,258 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-39316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C884A12A40
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 18:54:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFEBA12A74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 19:08:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C9B07A3AFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 17:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454F818811A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 18:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CDD1CFEB2;
-	Wed, 15 Jan 2025 17:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF8D1D5ACD;
+	Wed, 15 Jan 2025 18:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3CIxzaM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bA+FOa7U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB9155C96;
-	Wed, 15 Jan 2025 17:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F7E155C96;
+	Wed, 15 Jan 2025 18:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736963601; cv=none; b=O4qQT85lXcQIw/yX4lh4YNMVNHtbDzMPCqExtUpYc9mgJnCXMVfPIdeiHNWtE8IGgtPWCswq9G3xNcp0GK+z6QC5yAf5J5Md7Ld5lojRfv79nYt07iLSty8KtC4LZ79vcDdUJPPiOkGusvlL1zxAqLrB0E4lNybiTOWGRn654+c=
+	t=1736964521; cv=none; b=lnIMBzoBn6gtFYWNOTavAtkhA6IjdHRuzZRvgk6f+GV0qwpOH38CuiYw60H6M7UGdxxomyBdqwlaICqvdDkctJFyVgBHKczIs8ifpn9L18SO+Y95YXheqtWopasYu122cs2VrIyLWlslK1xrCL8teH5c+sb85VnwvOl20yuhY/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736963601; c=relaxed/simple;
-	bh=rsWMNhPDIpEE2bEC3a3KZ3VHisVYyvYotvkljz+C0/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sQKhCucG58rSbrlYHEdX5eug+NDhAeGItYMsuNfUjrwWYMOw5ckEXavnnRtnnS13U36hVy2Zj5jrSdodKPs68X3BYn/CJordg2NRpfTveGdKwBqzST9vv49E0kCtf0LGHWrSuLAqwUUoDXPvo0v9hWWE1I3AJwQSgHBaqmmJMoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3CIxzaM; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467a6ecaa54so693731cf.0;
-        Wed, 15 Jan 2025 09:53:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736963598; x=1737568398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QxBhmlbb3NqmfO5hIp21TMTAyT6RZ8qBzW1rgk3/8d0=;
-        b=k3CIxzaMaDJXye2YQjCKvrLK463okYab/p7/4NP2oiCk8zhfYgwrl9E6dU6xdJHJjS
-         0GHEUuWNCloosbpghc2d3QaMqwdLC08jErx6+t3ba4G505XHjx9x3iR52GVy/cguMgrd
-         iypRlw3+DdDvKoQEca7WsktJLeD7wfVrZl5GZPGsEFOduZbopJZIMsekhMUl6vRH1eua
-         6UeoQ6dLChKRWVomtzJNIYgnaSwbAtiTT06foOstbSajxW3q9w72u0ckm9KKya4AyB7w
-         PtdCvvW2FcjEId7fbKgcsAWRiSw0giiErTvB0LNJmGbKayslfsS8oj5JYnivRQt6h2wC
-         eD9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736963598; x=1737568398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QxBhmlbb3NqmfO5hIp21TMTAyT6RZ8qBzW1rgk3/8d0=;
-        b=KeWXc2Osna7/MOeJlki3ZlTAD+EGdH0zvi2fbzJ2zLe6ziMu6maPw+oO3C5vkOMfup
-         xSUjsjNEF3NHRe1PVyjx2am/Hiewk2k2uQT9VG2OimNRgtp/TUZPvrYpJD7cf4PR5v6M
-         sJLWK9L2WKEa3h0Metxw3USLNsPjfgcY2nV8CLmhcDugLpRXCfTsVakTuPtnkJuEJ6jr
-         wk8dNAnaUWWGGO0eKFbr4yBbFOe8nX1/+H8n+whtjVzCdqtr8yhXeP1SLUKFlwRCe7AJ
-         eLVB3eCMYSTP+ajD5xyZj+658miBoxPP7DtaEzvJcJXgfE7Nxh+0zLWNOTY7XvEj0wGy
-         +Ayg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGmuzzIeIxVdgohbdeUzAaBDqOuXscjDLbcTD2FOfwAVD8l/Tc+rNFyf7GkS05jfSLTd9ghOYKzJBMrHw7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/zAR8AswSdupaYwi1XZygg554Djk+mOMWYidC9uaAuMaC55I7
-	5YmRbw69q9G6ogUkvbDV5djGZZEUE212hJHhjL46vSO8AO3BVNB6/AG9tYRo8ZPSduNPRuL7NwK
-	DRTTcKjDygcsFFukYA2br2nGm1Y4=
-X-Gm-Gg: ASbGncvfX8r7+AmPNe0i4dyWamyd/kasFBnxrcqw+wZCN3/s7uqPMJZQF7CLvC4fzlz
-	xjhx/KX0RKnhsk6uK7wlBSk62t21SSx2gAfiWpCnKOE6Nch6TPfrw5A==
-X-Google-Smtp-Source: AGHT+IGmoOgg1Rtx5ws4QiZadgUm6YuT50WGAezRWLf8zAKVGuogy4bSm29FNdjzxCaiLnXyXWofNNTYJfSomSZ/zuU=
-X-Received: by 2002:ac8:7fd6:0:b0:466:9ab3:c2d0 with SMTP id
- d75a77b69052e-46c7108c35amr423317891cf.44.1736963597617; Wed, 15 Jan 2025
- 09:53:17 -0800 (PST)
+	s=arc-20240116; t=1736964521; c=relaxed/simple;
+	bh=Q7Yl41Spkx2NMr1UAKJjSoCfRY1mnM1RmnqZ5CqEd38=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XSS4o3WRG3lV8A/fPYouee/v7di0oakrVU9iuhbZ6CszB9CqY279DJhkBWajYniaerl8v8VAFoXXxSjPbW7b0E6DtsgD2KdLe/nLKAjmEpQSR9GfXSCbU67FsUeMsTh8vl9Qc5Jw5ir71UozTQkP+NkuNhtx2Kp3YnzY22ivXcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bA+FOa7U; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=CB9dybXLSuemdc03Jitv4DsVkXDoDvpXraN4s3zQDRE=; b=bA+FOa7UKQjqbN3dok6Nmzh6Cp
+	8MLh06KCCHinuArjbf4yDO7nqFVpUkQqC/yXC/VBI9fMV1I4CsMQWuzcz3GFpSl8KibJGxxCogEhZ
+	3J2kksJuzrOdc1TYebl52gA7tEulhNAltTl9FdQHv8aC6iDdWiAIxAfBbrycwGwIdrWQnx/Upxzoc
+	5jjpy1qYFnxnwQbseX02+J4Fh5/GhJ2nloBHsk5dhVq2Uc4dSTp+jCguuejeAnDAi4GYMfjSF5ly8
+	nuL3O1KfY3Lc1ut/xaA6p4UIKXJ81fa0TG+gz1l0QmP42e1NYHoxo397BpNN4t8s5Z4RNNXB/ab9F
+	lxhl1ZuQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tY7oe-00GCL0-BK; Wed, 15 Jan 2025 19:08:32 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>
+Subject: Re: [RFC PATCH] fuse: add new function to invalidate cache for all
+ inodes
+In-Reply-To: <9e876952-4603-4bf4-a3a0-9369d99d74c6@bsbernd.com> (Bernd
+	Schubert's message of "Wed, 15 Jan 2025 17:43:35 +0100")
+References: <20250115163253.8402-1-luis@igalia.com>
+	<9e876952-4603-4bf4-a3a0-9369d99d74c6@bsbernd.com>
+Date: Wed, 15 Jan 2025 18:07:48 +0000
+Message-ID: <87h660lzm3.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241227193311.1799626-1-joannelkoong@gmail.com>
- <20241227193311.1799626-2-joannelkoong@gmail.com> <20250112041624.xzenih232klygwvw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-In-Reply-To: <20250112041624.xzenih232klygwvw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 15 Jan 2025 09:53:06 -0800
-X-Gm-Features: AbW1kvbLSf0VzrmecAd8o8rfZyvxZUoKFQSwjrv--pKNhrTop2ksjwHrTOvImuI
-Message-ID: <CAJnrk1YABnxcHqcZ8G9S834N1VJJcxfgQim7SGhH=ajpXBeUug@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, bfoster@redhat.com, 
-	djwong@kernel.org, nirjhar@linux.ibm.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jan 11, 2025 at 8:16=E2=80=AFPM Zorro Lang <zlang@redhat.com> wrote=
-:
->
-> On Fri, Dec 27, 2024 at 11:33:10AM -0800, Joanne Koong wrote:
-> > Add support for reads/writes from buffers backed by hugepages.
-> > This can be enabled through the '-h' flag. This flag should only be use=
-d
-> > on systems where THP capabilities are enabled.
-> >
-> > This is motivated by a recent bug that was due to faulty handling of
-> > userspace buffers backed by hugepages. This patch is a mitigation
-> > against problems like this in the future.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  ltp/fsx.c | 108 ++++++++++++++++++++++++++++++++++++++++++++++++------
-> >  1 file changed, 97 insertions(+), 11 deletions(-)
-> >
->
-> [snip]
->
-> > +static void *
-> > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
-> > +{
-> > +     void *buf;
-> > +     long buf_size =3D roundup(len, hugepage_size) + alignment;
-> > +
-> > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
-> > +             prterr("posix_memalign for buf");
-> > +             return NULL;
-> > +     }
-> > +     memset(buf, '\0', buf_size);
-> > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
->
-> Hi Joanne,
->
-> Sorry I have to drop this patchset from the "upcoming" release v2025.01.1=
-2. Due to
-> it cause a regression build error on older system, e.g. RHEL-9:
->
->     [CC]    fsx
->  fsx.c: In function 'init_hugepages_buf':
->  fsx.c:2935:36: error: 'MADV_COLLAPSE' undeclared (first use in this func=
-tion); did you mean 'MADV_COLD'?
->   2935 |         if (madvise(buf, buf_size, MADV_COLLAPSE)) {
->        |                                    ^~~~~~~~~~~~~
->        |                                    MADV_COLD
->  fsx.c:2935:36: note: each undeclared identifier is reported only once fo=
-r each function it appears in
->  gmake[4]: *** [Makefile:51: fsx] Error 1
->  gmake[4]: *** Waiting for unfinished jobs....
->  gmake[3]: *** [include/buildrules:30: ltp] Error 2
->
-> It might cause xfstests totally can't be used on downstream systems, so i=
-t can't
-> catch up the release of this weekend. Sorry about that, let's try to have=
- it
-> in next release :)
+Hi Bernd,
 
-Hi Zorro,
+On Wed, Jan 15 2025, Bernd Schubert wrote:
 
-Thanks for the update. I'll submit a v3 of this patch that gates this
-function behind #ifdef MADV_COLLAPSE, and hopefully that should fix
-this issue.
+> On 1/15/25 17:32, Luis Henriques wrote:
+>> Currently userspace is able to notify the kernel to invalidate the cache
+>> for an inode.  This means that, if all the inodes in a filesystem need to
+>> be invalidated, then userspace needs to iterate through all of them and =
+do
+>> this kernel notification separately.
+>>=20
+>> This patch adds a new option that allows userspace to invalidate all the
+>> inodes with a single notification operation.  In addition to invalidate =
+all
+>> the inodes, it also shrinks the superblock dcache.
+>
+> Out of interest, what is the use case?
+
+This is for a read-only filesystem.  However, the filesystem objects
+(files, directories, ...) may change dramatically in an atomic way, so
+that a totally different set of objects replaces the old one.
+
+Obviously, this patch would help with the process of getting rid of the
+old generation of the filesystem.
+
+>>=20
+>> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> ---
+>> Just an additional note that this patch could eventually be simplified if
+>> Dave Chinner patch to iterate through the superblock inodes[1] is merged.
+>>=20
+>> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.c=
+om
+>>=20
+>>  fs/fuse/inode.c           | 53 +++++++++++++++++++++++++++++++++++++++
+>>  include/uapi/linux/fuse.h |  3 +++
+>>  2 files changed, 56 insertions(+)
+>>=20
+>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>> index 3ce4f4e81d09..1fd9a5f303da 100644
+>> --- a/fs/fuse/inode.c
+>> +++ b/fs/fuse/inode.c
+>> @@ -546,6 +546,56 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u6=
+4 nodeid,
+>>  	return NULL;
+>>  }
+>>=20=20
+>> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
+>> +{
+>> +	struct fuse_mount *fm;
+>> +	struct super_block *sb;
+>> +	struct inode *inode, *old_inode =3D NULL;
+>> +	struct fuse_inode *fi;
+>> +
+>> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, NULL);
+>> +	if (!inode)
+>> +		return -ENOENT;
+>> +
+>> +	fm =3D get_fuse_mount(inode);
+>> +	iput(inode);
+>> +	if (!fm)
+>> +		return -ENOENT;
+>> +	sb =3D fm->sb;
+>> +
+>> +	spin_lock(&sb->s_inode_list_lock);
+>> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+>
+> Maybe list_for_each_entry_safe() and then you can iput(inode) before the
+> next iteration?
+
+I can rework this loop, but are you sure it's safe to use that?  (Genuine
+question!)
+
+I could only find two places where list_for_each_entry_safe() is being
+used to walk through the sb inodes.  And they both use an auxiliary list
+that holds the inodes to be processed later.  All other places use the
+pattern I'm following here.
+
+Or did I misunderstood your suggestion?
+
+Cheers,
+--=20
+Lu=C3=ADs
 
 
-Thanks,
-Joanne
-
+>> +		spin_lock(&inode->i_lock);
+>> +		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+>> +		    !atomic_read(&inode->i_count)) {
+>> +			spin_unlock(&inode->i_lock);
+>> +			continue;
+>> +		}
+>> +
+>> +		__iget(inode);
+>> +		spin_unlock(&inode->i_lock);
+>> +		spin_unlock(&sb->s_inode_list_lock);
+>> +		iput(old_inode);
+>> +
+>> +		fi =3D get_fuse_inode(inode);
+>> +		spin_lock(&fi->lock);
+>> +		fi->attr_version =3D atomic64_inc_return(&fm->fc->attr_version);
+>> +		spin_unlock(&fi->lock);
+>> +		fuse_invalidate_attr(inode);
+>> +		forget_all_cached_acls(inode);
+>> +
+>> +		old_inode =3D inode;
+>> +		cond_resched();
+>> +		spin_lock(&sb->s_inode_list_lock);
+>> +	}
+>> +	spin_unlock(&sb->s_inode_list_lock);
+>> +	iput(old_inode);
+>
 >
 > Thanks,
-> Zorro
->
->
-> > +             prterr("madvise collapse for buf");
-> > +             free(buf);
-> > +             return NULL;
-> > +     }
-> > +
-> > +     return buf;
-> > +}
-> > +
-> > +static void
-> > +init_buffers(void)
-> > +{
-> > +     int i;
-> > +
-> > +     original_buf =3D (char *) malloc(maxfilelen);
-> > +     for (i =3D 0; i < maxfilelen; i++)
-> > +             original_buf[i] =3D random() % 256;
-> > +     if (hugepages) {
-> > +             long hugepage_size =3D get_hugepage_size();
-> > +             if (hugepage_size =3D=3D -1) {
-> > +                     prterr("get_hugepage_size()");
-> > +                     exit(100);
-> > +             }
-> > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
-, writebdy);
-> > +             if (!good_buf) {
-> > +                     prterr("init_hugepages_buf failed for good_buf");
-> > +                     exit(101);
-> > +             }
-> > +
-> > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size, =
-readbdy);
-> > +             if (!temp_buf) {
-> > +                     prterr("init_hugepages_buf failed for temp_buf");
-> > +                     exit(101);
-> > +             }
-> > +     } else {
-> > +             unsigned long good_buf_len =3D maxfilelen + writebdy;
-> > +             unsigned long temp_buf_len =3D maxoplen + readbdy;
-> > +
-> > +             good_buf =3D (char *) malloc(good_buf_len);
-> > +             memset(good_buf, '\0', good_buf_len);
-> > +             temp_buf =3D (char *) malloc(temp_buf_len);
-> > +             memset(temp_buf, '\0', temp_buf_len);
-> > +     }
-> > +     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > +     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > +}
-> > +
-> >  static struct option longopts[] =3D {
-> >       {"replay-ops", required_argument, 0, 256},
-> >       {"record-ops", optional_argument, 0, 255},
-> > @@ -2883,7 +2974,7 @@ main(int argc, char **argv)
-> >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> >
-> >       while ((ch =3D getopt_long(argc, argv,
-> > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyAB=
-D:EFJKHzCILN:OP:RS:UWXZ",
-> > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyA=
-BD:EFJKHzCILN:OP:RS:UWXZ",
-> >                                longopts, NULL)) !=3D EOF)
-> >               switch (ch) {
-> >               case 'b':
-> > @@ -2916,6 +3007,9 @@ main(int argc, char **argv)
-> >               case 'g':
-> >                       filldata =3D *optarg;
-> >                       break;
-> > +             case 'h':
-> > +                     hugepages =3D 1;
-> > +                     break;
-> >               case 'i':
-> >                       integrity =3D 1;
-> >                       logdev =3D strdup(optarg);
-> > @@ -3229,15 +3323,7 @@ main(int argc, char **argv)
-> >                       exit(95);
-> >               }
-> >       }
-> > -     original_buf =3D (char *) malloc(maxfilelen);
-> > -     for (i =3D 0; i < maxfilelen; i++)
-> > -             original_buf[i] =3D random() % 256;
-> > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
-> > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > -     memset(good_buf, '\0', maxfilelen);
-> > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
-> > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > -     memset(temp_buf, '\0', maxoplen);
-> > +     init_buffers();
-> >       if (lite) {     /* zero entire existing file */
-> >               ssize_t written;
-> >
-> > --
-> > 2.47.1
-> >
-> >
->
+> Bernd
+
 
