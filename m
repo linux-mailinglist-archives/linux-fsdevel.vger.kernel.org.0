@@ -1,186 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-39277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5CCA12103
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:51:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1ACA12137
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3805516A8C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:51:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E1577A1831
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445C1E98F0;
-	Wed, 15 Jan 2025 10:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0083205AB6;
+	Wed, 15 Jan 2025 10:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eofBAg95"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7787248BA1;
-	Wed, 15 Jan 2025 10:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A685C1DB13A;
+	Wed, 15 Jan 2025 10:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736938307; cv=none; b=GqWeKjkUSOVg9z/M3Wy7pDSuV9KIOpk4E8FuUBXvY8zPB46hcO8b4or6FttkiL9ipxH+514BKVvfBnjpfUXs60MeLxMXtiRFepfRJS/Y04UZU5HKqPGrHmwVbuzEEhp+wG2ghWIAexOTrPOlFzyUPdrv5oX6+xBNfUrM0LHkAg0=
+	t=1736938448; cv=none; b=gJlNyv1Yj5d7EqJC6D6kZR7nYICcXskEJv7qFq8g6zax/Kx6KRLbFFx/fe8kxQ6yggevAmbiQlUW5UeqsPPU8kqPpAn6n0ED7HaKYiSaKH+gSZTKg4g/5Zi8/XnEMsQ1VMng7yojvuSRUwF5qVmSLbdQHfDcLgf3S6neOvZ0sV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736938307; c=relaxed/simple;
-	bh=QRU8U5lXb2pp4lu+Afpob7QHF/SlW2QAmZnjqoFRw6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NPXJX8s5I92Ewl0H+5w7607scgKvsMWMEmfjiGmU5Yi7K7qhk9C+/ZW50PM8gI02uw2KZKJ9mJd2r15gwQFvbH1WPbdGQs/IfW5OY54bFtKA4oOCbcZsjFpR7Q0xm5zsm/E6U9QWlPopnD2Ciny9TU9F65/UYBZL8bvTFVP9shk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4YY2L516L9z9v7N7;
-	Wed, 15 Jan 2025 18:29:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 61B5F140451;
-	Wed, 15 Jan 2025 18:51:35 +0800 (CST)
-Received: from [10.45.149.44] (unknown [10.45.149.44])
-	by APP1 (Coremail) with SMTP id LxC2BwC3O0osk4dn7zysAA--.10045S2;
-	Wed, 15 Jan 2025 11:51:34 +0100 (CET)
-Message-ID: <85823922-0947-488e-ba95-f6c0e3132313@huaweicloud.com>
-Date: Wed, 15 Jan 2025 11:51:22 +0100
+	s=arc-20240116; t=1736938448; c=relaxed/simple;
+	bh=MQe4/keXc+46fXGZkdCLi+dEZsbohQlmd7oj+SQ/xfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BabOA1ZVC2wfMGcyUKywNq/iVMuRfTpWwFl60Vxfa9cDJAL/VXunW12HcvPf5PABgFr+mxAEvO1R5TQBz08eDMDUzGBSEZ7vg5qDUVfq5LVu2O/fYmcwf0vV6DwC52nlM34AXTA/u3Rz6UoFU7ouh6OoHbFBcRcluSlcZfP8Mrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eofBAg95; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01ADC4CEDF;
+	Wed, 15 Jan 2025 10:54:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736938448;
+	bh=MQe4/keXc+46fXGZkdCLi+dEZsbohQlmd7oj+SQ/xfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eofBAg95qJkrc+sJ9Z4xZc0ZUS5riooC4pdpdjKUyT4Gp9JhgRc23oeY6sQr4B3mW
+	 vLSPSCaJ1oDWKrb2gqqQzorULCHbB+zpFvMxD4Qs+w4G9ZzTzZcwthfRyLfUDr5xAC
+	 4ywoJDiiWuUw1gK2UCpEJLAOE9WOWnS+mwNknjM7qALncDBwOBxMsRqg3qx0SLrbKX
+	 7oGO9XJXWzHaTedmFkfG/fciE8D/6EgnCbBNMVum5tZiv7aviRsavml8jh767dv/ei
+	 GGFeHvw1d/jJSddorHSEPaHW1mCh9PWSNdK5HOoaJgxE3u06gHlo58zuhB0+SMvqVw
+	 wTVSSVpk7DRYA==
+Date: Wed, 15 Jan 2025 11:54:02 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	Dave Chinner <david@fromorbit.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	syzbot+34b68f850391452207df@syzkaller.appspotmail.com, syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com, 
+	Ubisectech Sirius <bugreport@ubisectech.com>, Brian Foster <bfoster@redhat.com>, 
+	linux-bcachefs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] landlock: Handle weird files
+Message-ID: <20250115-andocken-frequentieren-1ad1ec5bb42b@brauner>
+References: <20250110153918.241810-1-mic@digikod.net>
+ <20250110.3421eeaaf069@gnoack.org>
+ <20250111.PhoHophoh1zi@digikod.net>
+ <Z4dgnkCOc_LxMqq2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] ima: Ensure lock is held when setting iint pointer
- in inode security blob
-To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
- <20241128100621.461743-4-roberto.sassu@huaweicloud.com>
- <3545a38326a5d3dff28b1089ab2149f1662a641b.camel@linux.ibm.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <3545a38326a5d3dff28b1089ab2149f1662a641b.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwC3O0osk4dn7zysAA--.10045S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr15Jw4xJFy8tr1fCFyfWFg_yoW5CFy5pa
-	n5ta4UG34jvFZ7Wr4Fva43uF1fK3ySgFWDGw45J3WvyFZrJr1qqr48Gry7ur15Gr4rA3Wv
-	vr1jg3sxu3WqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFf
-	HUUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBGeHXlMCcAADsQ
+In-Reply-To: <Z4dgnkCOc_LxMqq2@infradead.org>
 
-On 1/14/2025 3:20 PM, Mimi Zohar wrote:
-> On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
->> From: Roberto Sassu <roberto.sassu@huawei.com>
->>
->> IMA stores a pointer of the ima_iint_cache structure, containing integrity
->> metadata, in the inode security blob. However, check and assignment of this
->> pointer is not atomic, and it might happen that two tasks both see that the
->> iint pointer is NULL and try to set it, causing a memory leak.
->>
->> Ensure that the iint check and assignment is guarded, by adding a lockdep
->> assertion in ima_inode_get().
+On Tue, Jan 14, 2025 at 11:15:42PM -0800, Christoph Hellwig wrote:
+> On Sat, Jan 11, 2025 at 04:38:56PM +0100, Mickaël Salaün wrote:
+> > I guess it depends on the filesystem implementation.  For instance, XFS
+> > returns an error if a weird file is detected [1], whereas bcachefs
+> > ignores it (which is considered a bug, but not fixed yet) [2].
 > 
-> -> is guarded by the ima_iint_cache_lock mutex, ...
+> If a filesyste, returns an invalid mode that's a file system bug and
+> needs to be fixed there.  Warning in a consumer is perfectly fine.
+> But the right action in that case is indeed not to grant the access.
 
-By the iint_lock mutex...
+Fyi, anonymous inodes traditionally set the mode to 0 which is
+really annoying:
 
->> Consequently, guard the remaining ima_inode_get() calls, in
->> ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the lockdep
->> warnings.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   security/integrity/ima/ima_iint.c |  2 ++
->>   security/integrity/ima/ima_main.c | 14 ++++++++++++--
->>   2 files changed, 14 insertions(+), 2 deletions(-)
->>
->> diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
->> index dcc32483d29f..fca9db293c79 100644
->> --- a/security/integrity/ima/ima_iint.c
->> +++ b/security/integrity/ima/ima_iint.c
->> @@ -97,6 +97,8 @@ struct ima_iint_cache *ima_inode_get(struct inode *inode)
->>   	if (!iint_lock)
->>   		return NULL;
->>   
->> +	lockdep_assert_held(&iint_lock->mutex);
->> +
-> 
-> lockdep_assert_held() doesn't actually "ensure" the lock is held, but emits a warning
-> when the lock is not held (if debugging is enabled).  Semantically "ensure" gives the
-> impression of enforcing.
+lrwx------ 1 root root  64 15. Jan 11:52 94 -> anon_inode:bpf-prog
 
-I agree. I would replace ensure with detect.
-
-Thanks
-
-Roberto
-
-> Mimi
-> 
->>   	iint = iint_lock->iint;
->>   	if (iint)
->>   		return iint;
->> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->> index 05cfb04cd02b..1e474ff6a777 100644
->> --- a/security/integrity/ima/ima_main.c
->> +++ b/security/integrity/ima/ima_main.c
->> @@ -705,14 +705,19 @@ static void ima_post_create_tmpfile(struct mnt_idmap *idmap,
->>   	if (!must_appraise)
->>   		return;
->>   
->> +	ima_iint_lock(inode);
->> +
->>   	/* Nothing to do if we can't allocate memory */
->>   	iint = ima_inode_get(inode);
->> -	if (!iint)
->> +	if (!iint) {
->> +		ima_iint_unlock(inode);
->>   		return;
->> +	}
->>   
->>   	/* needed for writing the security xattrs */
->>   	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
->>   	iint->ima_file_status = INTEGRITY_PASS;
->> +	ima_iint_unlock(inode);
->>   }
->>   
->>   /**
->> @@ -737,13 +742,18 @@ static void ima_post_path_mknod(struct mnt_idmap *idmap,
->> struct dentry *dentry)
->>   	if (!must_appraise)
->>   		return;
->>   
->> +	ima_iint_lock(inode);
->> +
->>   	/* Nothing to do if we can't allocate memory */
->>   	iint = ima_inode_get(inode);
->> -	if (!iint)
->> +	if (!iint) {
->> +		ima_iint_unlock(inode);
->>   		return;
->> +	}
->>   
->>   	/* needed for re-opening empty files */
->>   	iint->flags |= IMA_NEW_FILE;
->> +	ima_iint_unlock(inode);
->>   }
->>   
->>   /**
-> 
+> sudo stat -L /proc/1/fd/94
+  File: /proc/1/fd/94
+  Size: 0               Blocks: 0          IO Block: 4096   weird file
+Device: 0,15    Inode: 4120        Links: 1
+Access: (0600/?rw-------)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2024-11-05 17:15:54.404000000 +0100
+Modify: 2024-11-05 17:15:54.404000000 +0100
+Change: 2024-11-05 17:15:54.404000000 +0100
+ Birth: -
 
 
