@@ -1,140 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-39291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2DCA12493
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 14:16:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE955A1249F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 14:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674823A3F68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 13:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A99188A628
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 13:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE2523F27F;
-	Wed, 15 Jan 2025 13:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF402419F1;
+	Wed, 15 Jan 2025 13:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="tzQcu3/B"
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="ZlzfXryy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E12F27726;
-	Wed, 15 Jan 2025 13:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09AF23F27F;
+	Wed, 15 Jan 2025 13:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736947004; cv=none; b=g7vWuYHSmISWg37DYynRh62FGe0UgdYMudo/7f7KQh+L/I/5fpbe6fahJ4Q0uT3ygzmNllkGOeJjpKdOHw63GOMguaj9qSR/SMxZ1mqWRGfzmhewJH22l2FgwNqdExKvoWaOA9Y4AOYaKNms8rMpYrCZFIXVfVQtb2OQYb5fqN8=
+	t=1736947348; cv=none; b=n+5UAGaKgXEV3ezvnzxvnY/YmFVPVNluqdmGl+LEXtRULh/gV2ycXYEKjgC7kaPt4pxrWMU/KdPvcsPHoHJ1Woz/HIjjO3Tup5Jzmp19Hbpe8WxXZVGGcDGv+PICOVPbtKkWalJGOYmvylrRafDu2DsDoTx4+RS6XSUomxJXBAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736947004; c=relaxed/simple;
-	bh=82XhqjygfjZYGe54tpJLFGt9UIHx/TY+i3EBQdaXKOM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=AKuT0acQtLP84sVBRzcK3tMNmd/HjUkNkT3vfgdRLWMcmRmwhYpf30u2tj6FhWhj3bzMU0t4R9fRIeoSVf2QLSKCNaFClS7sRpextT00j2tJt/JtEsUKvxAZmyotv2WFgrAaOAeYFiHyFPstJInjTPX+a5fUXqLFlaKM/AtmFtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=tzQcu3/B; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1736946958;
-	bh=82XhqjygfjZYGe54tpJLFGt9UIHx/TY+i3EBQdaXKOM=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=tzQcu3/BQfE4bTxCnSRLey5f3QA4GIMyykRZzhkR/exkPncu7OyxDxPCwxtPyFzlf
-	 l9+UwvThBDqNT9fAMhQDFwffnCah8qnSJeHOg+UFJkioswAQ9zToUorrFTo6rAJrqM
-	 HZvxlZZN/9GQgss1wnRY68tCwE9fCkEgkI3dTjEM=
-X-QQ-mid: bizesmtpip2t1736946952tcubs62
-X-QQ-Originating-IP: vwLl+j1iGrwuzOKHztXQkbketxkLJUlAQYwfd47sNOE=
-Received: from smtpclient.apple ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 15 Jan 2025 21:15:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3564918218073159881
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1736947348; c=relaxed/simple;
+	bh=FUQNAiHSVC52GJ8CJwE7e+3ydo/xkZ1P5fJwnc7AL5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Akme3BIEOhH6Gk9qXkp/6yy7JfxxTilY3kvP4sQOdSBMSbui1mM58rC9KZLW2TRynOq88wIb/4O3LR5FaLqQgYdeTZYrbUH3JNdTCTmsCwYyGwnORGo0SrpnOfk/61OA915zWYV9mJ3MG4jpehZLsg4ofL4sDQgOpKgbyw/1pM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=ZlzfXryy; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1F2251C0005;
+	Wed, 15 Jan 2025 13:22:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1736947337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Xyil3Q+9vYZwK/eKmQ7a1Fylg92ySCw0EXCrIO9+Yes=;
+	b=ZlzfXryyYnMxhwkZpff8jyOfkVD+xKwS/Uu5bFo4j8SRKkO0DVlXwbEfFTxWibDWRNkUXG
+	YRWYtjy6o0zLRxXPIjUxosmzDcvitGEyHdKcah1wRUD7Oj8zqlOGmf+YpaOv8N8onFVL8j
+	dCv5QRAklQkM1oe/XTbhMTuyT80maFcJcPkXU4j0sLnqGFq0gIhFjJOLY6ZxQzNPJ6oyFX
+	Lr4Rnb8gUBTCuUo+XrRodUVef5VU2BoYcLAK5m4tvdFC5NhqjxfVJDgaPy3Su1Nyrwx3Wl
+	jozyR+TcSoYFj7mp8iqWHX5/Pub8ZoxRuyoBvYM7UqxfAtvHqnijrBx4ORHk8g==
+From: nicolas.bouchinet@clip-os.org
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	Lin Feng <linf@wangsu.com>,
+	"Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH v4 0/2]  Fixes multiple sysctl proc_handler usage error
+Date: Wed, 15 Jan 2025 14:22:07 +0100
+Message-ID: <20250115132211.25400-1-nicolas.bouchinet@clip-os.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Bug: soft lockup in exfat_clear_bitmap
-From: Kun Hu <huk23@m.fudan.edu.cn>
-In-Reply-To: <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
-Date: Wed, 15 Jan 2025 21:15:40 +0800
-Cc: sj1557.seo@samsung.com,
- yuezhang.mo@sony.com,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn>
-References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
- <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn>
- <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
- <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn>
- <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MZukwSs1MH20X+WYfya7JRxNpKq6dZHNiMuoAuTtxUsDQKO4cvhZw5jY
-	Lg3fy8pMNZWW6jyVF+gbLDFcshrNLZPuoYZPixhbKo26Wo4Idol1LPgQN8sj8Dqq7VsA2SX
-	VcOi3p96z/e+JpzCUgwIXimJygaVcx3bVLwHoAuK/30FTqKxUr1PLJjDRTMqB46NZvuf/eg
-	cmdpibor5eEsYzDDXVDiSbnNoKk+sA6lCuLvnstHUHNomfwfoXl0gJQPOObnNBwE2AKdgD9
-	R9IufiMQqoppIC8nvLHZROl9Db+XkUCljBLT+LoDXU+/16W9QcmObk2NTqUSzz6s//Rkk7n
-	8u4PDDjAXMNfDd+p/7NjraGpoqWPzBPyciN3NatRSKX23uDFNLN1UOziwgg2GIKTNOanUPs
-	PXGo2Kfan0vBbq4iRy8Io2CKzmIrHut7M7PcaGCg2j9gsRplKn7G68Vk1lilvikjS3AzNCd
-	I7XZGSkbGXLAhqBPT5Y3S1Z9dERA2tEErMUy3D/hEFWstk1mivSL4yJ5TF4ZnQ1wQfxv9gL
-	/Coo59EnGb7n0pMeBKWUV2PmbjmrkR54LFEwvFyDdDr/tMDzMxB79hvEhNUe9oteUUcXMb5
-	HFO0iYn7GKeRj5C5ZnVhoOslWEAhU2PIcqqpHWjg/1n+j04jbYUWpIY8tddEjHK40YvHTeG
-	gF0x3Ydvuh5+PwEMYmGVOb9fT95V78maQGopfMWxpWa4g3jl1uQa+D0Ua7Zju1L5yZLaj7J
-	hKRelPUSaHEFWvr6jZelC3UJ6dSVfhNH6o5ZIVdL9DZD3tWv0IvQFXBRpjaJdSJxAj1IvkU
-	mSmNmba5EIq/O/WrlxCDtfnu6TDuuqO9QByQNwoQ+LBd524DcZuSQHQTqjydUSIrodiztAh
-	i3+t/XVvow9t0LnBLYUuiWatB1GI8TDrlSmJu9Q57dhbuQNQbIW1kG8JPQPrO96QvgBeDxn
-	sEqB1u2hvyf7LDgzSuzXBzasx6xfqk6PYUq1RppaScGHWVA==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
+
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+
+Hi, while reading sysctl code I encountered two sysctl proc_handler
+parameters common errors.
+
+The first one is to declare .data as a different type thant the return of
+the used .proc_handler, i.e. using proch_dointvec, thats convert a char
+string to signed integers, and storing the result in a .data that is backed
+by an unsigned int. User can then write "-1" string, which results in a
+different value stored in the .data variable. This can lead to type
+conversion errors in branches and thus to potential security issues.
+
+From a quick search using regex and only for proc_dointvec, this seems to
+be a pretty common mistake.
+
+The second one is to declare .extra1 or .extra2 values with a .proc_handler
+that don't uses them. i.e, declaring .extra1 or .extra2 using proc_dointvec
+in order to declare conversion bounds do not work as do_proc_dointvec don't
+uses those variables if not explicitly asked.
+
+This patchset corrects three sysctl declaration that are buggy as an
+example and is not exhaustive.
+
+Nicolas
+
+---
+
+Changes since v3:
+https://lore.kernel.org/all/20241217132908.38096-1-nicolas.bouchinet@clip-os.org/
+
+* Fixed patch 2/2 extra* parameter typo detected by Joel Granados.
+* Reworded patch 2/2 as suggested by Joel Granados.
 
 
-> This is an already known issue and the relevant patch has been =
-applied.
-> Please make sure that the following patch is applied to the kernel you =
-tested.
->=20
-> a5324b3a488d exfat: fix the infinite loop in __exfat_free_cluster()
->=20
-> or try to reproduce it with linux-6.13-rc7.
+Changes since v2:
+https://lore.kernel.org/all/20241114162638.57392-1-nicolas.bouchinet@clip-os.org/
 
-Hi Namjae,
+* Bound vdso_enabled to 0 and 1 as suggested by Joel Granados.
+* Remove patch 3/3 since Greg Kroah-Hartman merged it.
 
-We still successfully reproduced it on the v6.13-rc7. Firstly, I =
-apologize for taking up your time, I=E2=80=99m not sure if this is a =
-significant issue since from the reproducer it kind of looks like it=E2=80=
-=99s caused via fault injection.
+Changes since v1:
+https://lore.kernel.org/all/20241112131357.49582-1-nicolas.bouchinet@clip-os.org/
 
+* Take Lin Feng review into account.
 
-The syz_mount_image in the syscall reproducer mounts a randomly =
-generated image and also has the potential to trigger an abnormal path =
-to the file system. Specifically, the . /file0 file is crafted to =
-contain invalid FAT table or bitmap information, it is possible to cause =
-abnormal cyclic behavior in __exfat_free_cluster.
+---
 
-Because p_chain->size is artificially constructed, if it has a large =
-value, then exfat_clear_bitmap will be called frequently. As the call =
-stack shows, the program eventually deadlocks in the loop in =
-__exfat_free_cluster.
+Nicolas Bouchinet (2):
+  coredump: Fixes core_pipe_limit sysctl proc_handler
+  sysctl: Fix underflow value setting risk in vm_table
 
-This link is a link to our crash log in the rc7 kernel tree:
+ arch/sh/kernel/vsyscall/vsyscall.c | 3 ++-
+ fs/coredump.c                      | 4 +++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Link: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E6%9C%AA%E6%8=
-A%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4%A2%E8%AE%B0%E5%BD=
-%95/39-BUG_%20soft%20lockup%20in%20sys_unlink/crashlog0115_rc7.txt
-
-As I said earlier, I'm still consistently reporting the crash I found to =
-you guys now because I'm not sure if this issue is useful to you. If it =
-is not useful, please ignore it. I hope it doesn't take up too much of =
-your time.
-
-=E2=80=94=E2=80=94=E2=80=94
-Kun Hu
-
+-- 
+2.48.1
 
 
