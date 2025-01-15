@@ -1,99 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-39239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4818DA11C18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 09:34:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AC2A11C2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 09:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27373A69DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 08:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ABAE18885BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 08:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055F81E7C06;
-	Wed, 15 Jan 2025 08:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=thewand@web.de header.b="B3Ge2QpI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471BF1E7C1A;
+	Wed, 15 Jan 2025 08:39:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8A23F260;
-	Wed, 15 Jan 2025 08:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F021DB154
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 08:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736930051; cv=none; b=WRJ2nC0nbRM2u7XmwOZYWzgZFNqIl6TH7Zkshv8CMDza5Jda2RwfjraFvyXGtv8YuLLjiZHcU9wC1lCIzXYkPalJufcSyvzSnkk7R/QdM0Kmstchy/falN870l5zzmWtcBA1+yFaZzsXgcIv7t7uVogWmNL2+kbtmRrENzdMfKY=
+	t=1736930344; cv=none; b=Mh1LVFrVL/t9bX2Fm/smZ6pJGfqGLjJaGSHo2+6uxf/kRjvPSuiV3/KTC2FzHwbkYHtpbfDA2NrDgOrQ4Qag6R5f72PcKsktVQ2lDWwQCGOVR6qRo11FXwwah3hFeeS0y4HMYVbzZ4/y+dLFfskUwDGHZoIhrXxFJGb+cwmwW70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736930051; c=relaxed/simple;
-	bh=0N57P/AnAVgaStKmf9dVTwcijC90xG1fVYLiY7dzxko=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=MNONMPvOmjh+ozA7OmYK2KLOcA6EAe2Ay2gAW/hsKfFt3qpcntvbCzOd4WcEqDKCA1vxxnYhsdDqo/XiLhBTBteB863qAwmGivDmU6YIwmf/qNUvWamhroHNJVXPBqxPdGd17+aymdKWqcQYL8YqshAAoSRPmj1JTfW5gycAnAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=thewand@web.de header.b=B3Ge2QpI; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1736930046; x=1737534846; i=thewand@web.de;
-	bh=0N57P/AnAVgaStKmf9dVTwcijC90xG1fVYLiY7dzxko=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=B3Ge2QpInACX83ND5wIRRzSu62OJjLRW4+SMeToogIatjzCSHTXcF0Qt0cdZ9ja5
-	 kUzngWCP3ciAve/2Ugn5FQrN5Bccqn8txd+gosQalSmSqSSUiS9oEsaW/twB0RGJQ
-	 /DttYGnxdLAqkw9+C8zHrg13ayE+NyS2y5369ukvuUF5Q0/4SaO0jVt5Iz4vY4diC
-	 wy5zA66wwoH7wzcf1WKqEf71muxWWyb4omoCh30UG+n71H2Covp8xUWERskPl/V8s
-	 5MNdHsJbYUZ5Rmce16a+AH6mLUQJT1ri2JQpU8KCSV5n7OfKYIdi75CyePdPQlaUc
-	 /5zG+X0jiUmZN8KMOg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.2.142] ([87.189.178.119]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzTLO-1tKpe23ANk-00wJMa; Wed, 15
- Jan 2025 09:34:06 +0100
-Message-ID: <f20639eaa10eaa327dc9a294164b731215d5212f.camel@web.de>
-Subject: Two questions on sparse files
-From: Andreas Wagner <thewand@web.de>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Date: Wed, 15 Jan 2025 09:34:06 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1736930344; c=relaxed/simple;
+	bh=Y24pZPuFwPFR1VZHcEMQpqo7yKBdVDnnPlgKCXjs+iY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kW8bXUyWvN+0QRLEaw7LyEZu2PvBqfUamU3sMQbBLUKFJi96BGRSS5FqLfcYw85zU7FkGeAC5n1dppEGlD6C9wMPbGwsFD8wOLqZbp04Ryu6sOPaFoyxtUiJ01VteqUzr+uED1vBdM915sqkN6Q9NYYh1GAmAFiKiiGm03gv6qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ce795254afso32658805ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 00:39:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736930342; x=1737535142;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ta5z2IK+7I07RU1ai/knZKO94BiSdaHRFL5TZfBCeEQ=;
+        b=fRh9EQ290EFztEe7NXPHlUDC9TrL2Ii1LMG/1JCbCsDxEUTPtty1Ob0OwR03sS1Icl
+         mIuoKAWTQNYMqeEw73FE7ATFl6wAlvxDkeLwda7l6r2qOrB5ezQuTixIxrgyil8uIcSK
+         1DwxmkOBKjfnbqiKKxAv0b3RRIMW5FcVQvpmPGPq4Hrldy5mhKplnWrdiwUlXbpb8tu3
+         pBr7hQIlpH4KhFgMquDjuM9ech1PKt3QZ74QPQxpp4Y7qvTfEtFzHBN1ZjGivtUkZqeC
+         qVHBS9Yf7Sbv/eH+kGJ0/NL8PaBgIi11cSNgHexNglKD3wqEPLIFTgIxjVOcU/xN4rHh
+         HiMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3vK2r6Hck+PcSG67i1IDrrO8ztdUTONcusjie4r2WAr5997iaP2Icf2SGlyULssEEL5xw6UT1nmBbHvYV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqqEdemz6amKa8qwYSQYdpSOMlrGrRA0pOT+56XpkmvM9CrsEp
+	fXzk0MdTf9EF0k+74ud5eTSOxzy11bcF1YvWHK4eRciOplnUjZA/aWygeL3AfUCsF+4PPy//S6o
+	U2Wt9QqZTtHLhedYkX33ZCM0ds3pTz13/2r7uIk9KN/IhzHPHXrds4yo=
+X-Google-Smtp-Source: AGHT+IGBUSwrbDRmXtiHaqIZSAmvQ3odCW/shzY20iSKtiAv92ooamYnIFaosuQJLlCINwHHbzf8lnxHnEoj9TfCiaVFm7wp6750
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:q+LUffMs+1GtHhPyY84cm0t2OVnw7rGVZkmQaTObODZP4uyWtA4
- IZP3X6BRpL26DgNcPUpRqvKdlPKxmuzmOqovw99baMNHsuUsIQsfYQjgEJhGpW1Un9P+AnW
- +5CrBADpuCaDXL7iCZNlLBavEK68YFHYdB2XLBKR+KAriOPQbjo7h5MJQSjN5F+sE7B6OP/
- 8cyATG4CS0gtjtXWq3lsA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jnR4H8ctUAI=;z7ZLXxiSijc3+Ou1kqoI7QvYNa8
- RLEvx3rXSnaO8/UeiSVdsN7wOjYUwPYfcLzot07ItPzrlGZRFBWpEdQAAVsz6A1GTrEhuLDIY
- pCe7Q1El4drWEJXG11COGAJADrZFWfW8+DRAgkeKzo8in8acBe0tXIZOAcRliJlFbIsHtIbIW
- PdAUS8lD0mg31a9JUoeDCZ6/35aq7kmj/u3nIIvil3jb8JWNuG5gDTELXOyHjpF4ZM4MRr0ud
- StU1o/yoaJh1/9fR9EeGDi+eL3q9+gjXXNF1xDF+XvSGYd0HGbaFZsLGDkWFgedmabBfcgGxi
- peo5xapDt19Fb31nO8eviFo0B3CvRbgGUgSpc79LMn5R8FXc/i12/os56VwpAkzT8JUktQvot
- ZaVh9lzNQ0WrRZl9YCpHmkkyNig7Oh34TusiIeObibI3gAne+Nk5hSQOmaProX9BaW+CiH/SH
- 4NlBp0jUprvxp/fDeK3jcOd8rjX+FfoubtwLDzU6E4DZMsTux1dvcV7ZNakhS0VS3ySxWxMZN
- DHL3PHiiNnD2gubKRjvfHaIG1JnxV1PNibs30fWTMtRv7gMIsHnPVyCNEaCX89q0PM8KUxUcQ
- fLhHw0APQMCC2aX9jQ7d3TmdAo/ey7EAA1ClsIvBlEXzpcWjwBMGmer+3VKwPSII+eSEtBbAv
- MJoDg8AHry8+1LuKKbWp7JTuzxRc67FfdolAdseOd+PXiE8ChRDCtYQsz/nBJSTtmRJD+Io5U
- BF5iYzntqXuyEfT7zPWrD7ikLcFCXhFWPXttHT97F7JHuHDgmnNa9n1Irak12cyMVVXHMsy5B
- u1oDzt9D+30On+Y5AuHeC3tb0GQaqv5O2Rmyao9ZScI2uY/wW1Y5S/nm23CReRvCWVxR47Vzo
- gRG2k7n74dg6AqLMUu3IaniiYb9p4OJvcMKXwso1Wuh/+bIZud1Ka6K2ZAEtskZsbhDqqCM6Z
- V0vE2/DrA7dRTNYh5xSv3n03eFH5/IUiL69vHSRn0YOxCCk0aR7DEy3YTKQ29OO2yuEE2YSP7
- AwV+Fb19suz9LX/J9rpXDJejx9ZZbxG5jfkzX0U6bf0VOs0IK3BaS7dkoxc2qpSo0vPD6tQ36
- VWhqNZ+HiLzp1k66IFKuK0wBAdbasBtO/izCFXuL/ECQgwtZSQlRonZZoAYbkEoIF65plNoaA
- zD2cDceUo+NRbsrti0e+8GYBkMBdA3cFHgS5M/PPcLQ==
+X-Received: by 2002:a92:c9c6:0:b0:3ce:64a4:4c32 with SMTP id
+ e9e14a558f8ab-3ce64a44d95mr102162105ab.3.1736930342600; Wed, 15 Jan 2025
+ 00:39:02 -0800 (PST)
+Date: Wed, 15 Jan 2025 00:39:02 -0800
+In-Reply-To: <6712465a.050a0220.1e4b4d.0012.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67877426.050a0220.20d369.0009.GAE@google.com>
+Subject: Re: [syzbot] [fs?] [mm?] INFO: rcu detected stall in sys_readlink (5)
+From: syzbot <syzbot+23e14ec82f3c8692eaa9@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, davem@davemloft.net, frederic@kernel.org, 
+	gregkh@linuxfoundation.org, jhs@mojatatu.com, jiri@resnulli.us, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
+	vinicius.gomes@intel.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+syzbot has bisected this issue to:
 
-I have two questions on sparse files:
+commit 5a781ccbd19e4664babcbe4b4ead7aa2b9283d22
+Author: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Date:   Sat Sep 29 00:59:43 2018 +0000
 
-1. Do they really - as media and Wikipedia suggest - reduce allocated
-filesize if the file is sparse?=20
-2. Are the blocks of the file in random order?
+    tc: Add support for configuring the taprio scheduler
 
-Thanks in advance and regards,
-Andreas Wagner
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=124487c4580000
+start commit:   7dc8f809b87d Merge tag 'linux-can-next-for-6.14-20250110' ..
+git tree:       net-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=114487c4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=164487c4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28dc37e0ec0dfc41
+dashboard link: https://syzkaller.appspot.com/bug?extid=23e14ec82f3c8692eaa9
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1634f218580000
+
+Reported-by: syzbot+23e14ec82f3c8692eaa9@syzkaller.appspotmail.com
+Fixes: 5a781ccbd19e ("tc: Add support for configuring the taprio scheduler")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
