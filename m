@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-39286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF84A12340
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 12:55:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2F6A12343
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 12:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7593E7A5738
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089F8188FC19
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209CD248168;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E94C28EC97;
 	Wed, 15 Jan 2025 11:52:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC96242240;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219522416A0;
 	Wed, 15 Jan 2025 11:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736941939; cv=none; b=i8MUI51KEgsU/wf3sdlZpChWeMY3kFRdE9UkOZKzv3ljJnxNJZaa+gFj3ZjKXuUNQgOg/2NQ0rMD97u907f4b9qPuznvEU4yXnFnr9yVD1bHUZkSHnsKzhg5Rb9aahWZ2cG7ZyeBePYE+xVs/SviKGWFWxhIvJ59cm4xI7/VPGM=
+	t=1736941940; cv=none; b=LRhfVDZkau768Kg5038eGMxu+GA3WCwB+RbS4JL9iOQpSDbN/QknWJ6Dbbk+fVNTycgIyBuJEL0QjW9S6j7rGS4ugnMspw280bzrYKMGFL18gYkZQUWnAbvc2G5ye4mRqbOM4gt1V/ZRkP7OTn7W1gt8Urq8tURF2WNdNF62xi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736941939; c=relaxed/simple;
-	bh=ehCAkCvB1kxdK0ZDvtZDOFBtQVygxSwtvrMB7+gdI2s=;
+	s=arc-20240116; t=1736941940; c=relaxed/simple;
+	bh=JgsJW573ldrbF6x31hKKXz0mNmXN80sqUcdXYcBP948=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KVrjQ1T2rOcORgOuKHNRRrij3/txXtAC0ocX0jgRkZ5N+XCxB7kftFESR9miT8iIR8INkSw/nvjM3rOiJciF0GJfr9fl9LEg0+27f8HJQ3pScNnK4Q034wBuCoeRRcezaTlDDqs5bThRsxef1vs/WqJ5q2YLuCjNyV0S+RLLIDo=
+	 MIME-Version; b=eSeCgTmetuQucKBG8Om0V1K1x570kjub+zUs4hNpVm2gP5Q0egVEORRUVR+jYUdTPwsG88cUE3RGNK2BlkR/0Qh6aKprzoAJtyXX097wTJfykVjcPSqdv0tX9eKiC+gaoZQyo8H3+7AisVyIdBA24GYMowbsKnX2Ymk8RTi7O2k=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YY49843ypz4f3jqx;
-	Wed, 15 Jan 2025 19:51:56 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YY4991F4Fz4f3jss;
+	Wed, 15 Jan 2025 19:51:57 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BD3441A10E8;
-	Wed, 15 Jan 2025 19:52:11 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 5C2941A0DBA;
+	Wed, 15 Jan 2025 19:52:12 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgC3Gl9aoYdnvK0ZBA--.21959S11;
-	Wed, 15 Jan 2025 19:52:11 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgC3Gl9aoYdnvK0ZBA--.21959S12;
+	Wed, 15 Jan 2025 19:52:12 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
@@ -54,9 +54,9 @@ Cc: linux-kernel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [RFC PATCH v2 7/8] block: factor out common part in blkdev_fallocate()
-Date: Wed, 15 Jan 2025 19:46:36 +0800
-Message-Id: <20250115114637.2705887-8-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v2 8/8] ext4: add FALLOC_FL_WRITE_ZEROES support
+Date: Wed, 15 Jan 2025 19:46:37 +0800
+Message-Id: <20250115114637.2705887-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20250115114637.2705887-1-yi.zhang@huaweicloud.com>
 References: <20250115114637.2705887-1-yi.zhang@huaweicloud.com>
@@ -67,10 +67,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3Gl9aoYdnvK0ZBA--.21959S11
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4fXry3WFyfCr13uF45Jrb_yoW5JryDpr
-	WagFnxGFs5Wa42qF1fCF4xu34Yya1Utr45uayaqwn3u3yIvr97Kr4qkr1FgrW8KFy8Aw15
-	GFWY9ry29r17C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgC3Gl9aoYdnvK0ZBA--.21959S12
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xry7Ar13Xw13XFy8XFW3GFg_yoW7GF4UpF
+	Z8XF1rKFWIq3429r4fCw4kurn0q3WkKry5WrWSgry093yUJr1fKFn09Fy8uas0gFW8AF45
+	Xa1Y9ryDK3W7A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -89,85 +89,147 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Only the flags passed to blkdev_issue_zeroout() differ among the three
-zeroing branches in blkdev_fallocate(). Therefore, do cleanup by
-factoring them out.
+Add support for FALLOC_FL_WRITE_ZEROES. This first allocates blocks as
+unwritten, then issues a zero command outside of the running journal
+handle, and finally converts them to a written state.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- block/fops.c | 40 +++++++++++++++-------------------------
- 1 file changed, 15 insertions(+), 25 deletions(-)
+ fs/ext4/extents.c           | 59 ++++++++++++++++++++++++++++++-------
+ include/trace/events/ext4.h |  3 +-
+ 2 files changed, 50 insertions(+), 12 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index 56486de0960b..22eda3a43908 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -786,6 +786,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	struct block_device *bdev = I_BDEV(inode);
- 	loff_t end = start + len - 1;
- 	loff_t isize;
-+	unsigned int flags;
- 	int error;
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 1b028be19193..e937a714085c 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4483,6 +4483,8 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
+ 	struct ext4_map_blocks map;
+ 	unsigned int credits;
+ 	loff_t epos, old_size = i_size_read(inode);
++	unsigned int blkbits = inode->i_blkbits;
++	bool alloc_zero = false;
  
- 	/* Fail if we don't recognize the flags. */
-@@ -812,43 +813,32 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 
- 	filemap_invalidate_lock(inode->i_mapping);
- 
--	/*
--	 * Invalidate the page cache, including dirty pages, for valid
--	 * de-allocate mode calls to fallocate().
--	 */
- 	switch (mode) {
- 	case FALLOC_FL_ZERO_RANGE:
- 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
--		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
--		if (error)
--			goto fail;
--
--		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
--					     len >> SECTOR_SHIFT, GFP_KERNEL,
--					     BLKDEV_ZERO_NOUNMAP);
-+		flags = BLKDEV_ZERO_NOUNMAP;
- 		break;
- 	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE:
--		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
--		if (error)
--			goto fail;
--
--		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
--					     len >> SECTOR_SHIFT, GFP_KERNEL,
--					     BLKDEV_ZERO_NOFALLBACK);
-+		flags = BLKDEV_ZERO_NOFALLBACK;
- 		break;
- 	case FALLOC_FL_WRITE_ZEROES:
--		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
--		if (error)
--			goto fail;
--
--		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
--					     len >> SECTOR_SHIFT, GFP_KERNEL,
--					     0);
-+		flags = 0;
- 		break;
- 	default:
- 		error = -EOPNOTSUPP;
-+		goto fail;
- 	}
+ 	BUG_ON(!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS));
+ 	map.m_lblk = offset;
+@@ -4495,6 +4497,17 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
+ 	if (len <= EXT_UNWRITTEN_MAX_LEN)
+ 		flags |= EXT4_GET_BLOCKS_NO_NORMALIZE;
  
 +	/*
-+	 * Invalidate the page cache, including dirty pages, for valid
-+	 * de-allocate mode calls to fallocate().
++	 * Do the actual write zero during a running journal transaction
++	 * costs a lot. First allocate an unwritten extent and then
++	 * convert it to written after zeroing it out.
 +	 */
-+	error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
-+	if (error)
-+		goto fail;
++	if (flags & EXT4_GET_BLOCKS_ZERO) {
++		flags &= ~EXT4_GET_BLOCKS_ZERO;
++		flags |= EXT4_GET_BLOCKS_UNWRIT_EXT;
++		alloc_zero = true;
++	}
 +
-+	error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
-+				     len >> SECTOR_SHIFT, GFP_KERNEL, flags);
-  fail:
- 	filemap_invalidate_unlock(inode->i_mapping);
- 	return error;
+ 	/*
+ 	 * credits to insert 1 extent into extent tree
+ 	 */
+@@ -4531,9 +4544,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
+ 		 * allow a full retry cycle for any remaining allocations
+ 		 */
+ 		retries = 0;
+-		map.m_lblk += ret;
+-		map.m_len = len = len - ret;
+-		epos = (loff_t)map.m_lblk << inode->i_blkbits;
++		epos = (loff_t)(map.m_lblk + ret) << blkbits;
+ 		inode_set_ctime_current(inode);
+ 		if (new_size) {
+ 			if (epos > new_size)
+@@ -4553,6 +4564,21 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
+ 		ret2 = ret3 ? ret3 : ret2;
+ 		if (unlikely(ret2))
+ 			break;
++
++		if (alloc_zero &&
++		    (map.m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN))) {
++			ret2 = ext4_issue_zeroout(inode, map.m_lblk, map.m_pblk,
++						  map.m_len);
++			if (likely(!ret2))
++				ret2 = ext4_convert_unwritten_extents(NULL,
++					inode, (loff_t)map.m_lblk << blkbits,
++					(loff_t)map.m_len << blkbits);
++			if (ret2)
++				break;
++		}
++
++		map.m_lblk += ret;
++		map.m_len = len = len - ret;
+ 	}
+ 	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
+ 		goto retry;
+@@ -4618,7 +4644,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+ 	if (end_lblk > start_lblk) {
+ 		ext4_lblk_t zero_blks = end_lblk - start_lblk;
+ 
+-		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
++		if (mode & FALLOC_FL_WRITE_ZEROES)
++			flags = EXT4_GET_BLOCKS_CREATE_ZERO | EXT4_EX_NOCACHE;
++		else
++			flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
++				  EXT4_EX_NOCACHE);
+ 		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
+ 					     new_size, flags);
+ 		if (ret)
+@@ -4730,8 +4760,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 
+ 	/* Return error if mode is not supported */
+ 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
+-		     FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE |
+-		     FALLOC_FL_INSERT_RANGE))
++		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_COLLAPSE_RANGE |
++		     FALLOC_FL_INSERT_RANGE | FALLOC_FL_WRITE_ZEROES))
+ 		return -EOPNOTSUPP;
+ 
+ 	inode_lock(inode);
+@@ -4762,16 +4792,23 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		goto out_invalidate_lock;
+ 
+-	if (mode & FALLOC_FL_PUNCH_HOLE)
++	switch (mode & FALLOC_FL_MODE_MASK) {
++	case FALLOC_FL_PUNCH_HOLE:
+ 		ret = ext4_punch_hole(file, offset, len);
+-	else if (mode & FALLOC_FL_COLLAPSE_RANGE)
++		break;
++	case FALLOC_FL_COLLAPSE_RANGE:
+ 		ret = ext4_collapse_range(file, offset, len);
+-	else if (mode & FALLOC_FL_INSERT_RANGE)
++		break;
++	case FALLOC_FL_INSERT_RANGE:
+ 		ret = ext4_insert_range(file, offset, len);
+-	else if (mode & FALLOC_FL_ZERO_RANGE)
++		break;
++	case FALLOC_FL_ZERO_RANGE:
++	case FALLOC_FL_WRITE_ZEROES:
+ 		ret = ext4_zero_range(file, offset, len, mode);
+-	else
++		break;
++	default:
+ 		ret = -EOPNOTSUPP;
++	}
+ 
+ out_invalidate_lock:
+ 	filemap_invalidate_unlock(mapping);
+diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
+index 156908641e68..6f9cf2811733 100644
+--- a/include/trace/events/ext4.h
++++ b/include/trace/events/ext4.h
+@@ -92,7 +92,8 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
+ 	{ FALLOC_FL_KEEP_SIZE,		"KEEP_SIZE"},		\
+ 	{ FALLOC_FL_PUNCH_HOLE,		"PUNCH_HOLE"},		\
+ 	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
+-	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
++	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"},		\
++	{ FALLOC_FL_WRITE_ZEROES,	"WRITE_ZEROES"})
+ 
+ TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
+ TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
 -- 
 2.39.2
 
