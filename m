@@ -1,106 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-39315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AD3A12A37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 18:53:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C884A12A40
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 18:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555063A58B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 17:53:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C9B07A3AFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 17:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EFF1D63D4;
-	Wed, 15 Jan 2025 17:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CDD1CFEB2;
+	Wed, 15 Jan 2025 17:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O59TkAiV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fzGlQJbE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3CIxzaM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE24155C96;
-	Wed, 15 Jan 2025 17:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB9155C96;
+	Wed, 15 Jan 2025 17:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736963564; cv=none; b=as7OqnqLMcKoxSEZauhJUGRslfL9HwpuuqhIsXXMRUQlcvLYuVXExZ4MTXqKU7yFLp93AT4sRvwLdHib1N/BJ61LNL5WqU/yg2v8nVgh/T7fHUMy4IvNoxM2CeMzZhIKReOr+AnK3IJr6XeQ5R8HtzbnwWF1h6ePtXmTNEXng0A=
+	t=1736963601; cv=none; b=O4qQT85lXcQIw/yX4lh4YNMVNHtbDzMPCqExtUpYc9mgJnCXMVfPIdeiHNWtE8IGgtPWCswq9G3xNcp0GK+z6QC5yAf5J5Md7Ld5lojRfv79nYt07iLSty8KtC4LZ79vcDdUJPPiOkGusvlL1zxAqLrB0E4lNybiTOWGRn654+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736963564; c=relaxed/simple;
-	bh=SAuv4o0YPcUZA0Dnn4TAU1w9hrOHI62b2s0bpW+yq4M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QplvuKlWnT4nVi8mqnHX4Vm5dJKeDpFj+1O++IbEEzsjJMt8BNXNS4HY6xoRjddYgGAszy1KrP4zniiZQDM0jFj5SFOGeZ2RVxp9sujHScBJzHMsR1UGivVU8c664i/MvMd2DSik4n6Sx4mfw6EETGfnV6UgJ7KNsBavnC5j/sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O59TkAiV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fzGlQJbE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1736963561;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HoxPdbGDiDXMZjZ2YzakPSB0m74gINsG6VFgtuazYj8=;
-	b=O59TkAiVIoh/kyWqt3sD2QUaiElCxlt4joNfsm5Vy47rl6VB5TFRsEG8yyBoGzvY2r/6mY
-	lQrxl2KFOtZwXB8o2yGswqA28AwPR3ILexVj+8YMlHNoNTQyAqrecm5DQu43fEOAoeu1zB
-	AUUJUV3mFLL/jKj4Q1eejS9vRnjN/1NreJFiVLN6lXCv97Xxmp1pRrzkdAR4+8k7oYySE3
-	EjRlx3bwRLZ1kPZatpooq203bOQXFsUoJ5K9wvWgIoGkzYbbWPFekFpYB6FKtIibo4IGCl
-	3qtrgWckX7984+Okk9ULQbx1KIxKVOK20qnnIXjJMWBsTxDlkgtJ8kE9XE9ROg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1736963561;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HoxPdbGDiDXMZjZ2YzakPSB0m74gINsG6VFgtuazYj8=;
-	b=fzGlQJbELsuQf/TIokTn215dpIYwMgfAYRUXgXNteW1TJ/rfCFCi40yte9UtrzUzNBp68H
-	ns68VXLDVpNCEbAA==
-To: Joel Granados <joel.granados@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fsc?=
- =?utf-8?Q?huh?=
- <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-serial@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
- codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev,
- linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
- kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, Song Liu
- <song@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Jani Nikula <jani.nikula@intel.com>, Corey Minyard
- <cminyard@mvista.com>, Joel Granados <joel.granados@kernel.org>
-Subject: Re: [PATCH v2] treewide: const qualify ctl_tables where applicable
-In-Reply-To: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
-Date: Wed, 15 Jan 2025 18:52:40 +0100
-Message-ID: <87jzawarrr.ffs@tglx>
+	s=arc-20240116; t=1736963601; c=relaxed/simple;
+	bh=rsWMNhPDIpEE2bEC3a3KZ3VHisVYyvYotvkljz+C0/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sQKhCucG58rSbrlYHEdX5eug+NDhAeGItYMsuNfUjrwWYMOw5ckEXavnnRtnnS13U36hVy2Zj5jrSdodKPs68X3BYn/CJordg2NRpfTveGdKwBqzST9vv49E0kCtf0LGHWrSuLAqwUUoDXPvo0v9hWWE1I3AJwQSgHBaqmmJMoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3CIxzaM; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467a6ecaa54so693731cf.0;
+        Wed, 15 Jan 2025 09:53:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736963598; x=1737568398; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QxBhmlbb3NqmfO5hIp21TMTAyT6RZ8qBzW1rgk3/8d0=;
+        b=k3CIxzaMaDJXye2YQjCKvrLK463okYab/p7/4NP2oiCk8zhfYgwrl9E6dU6xdJHJjS
+         0GHEUuWNCloosbpghc2d3QaMqwdLC08jErx6+t3ba4G505XHjx9x3iR52GVy/cguMgrd
+         iypRlw3+DdDvKoQEca7WsktJLeD7wfVrZl5GZPGsEFOduZbopJZIMsekhMUl6vRH1eua
+         6UeoQ6dLChKRWVomtzJNIYgnaSwbAtiTT06foOstbSajxW3q9w72u0ckm9KKya4AyB7w
+         PtdCvvW2FcjEId7fbKgcsAWRiSw0giiErTvB0LNJmGbKayslfsS8oj5JYnivRQt6h2wC
+         eD9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736963598; x=1737568398;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QxBhmlbb3NqmfO5hIp21TMTAyT6RZ8qBzW1rgk3/8d0=;
+        b=KeWXc2Osna7/MOeJlki3ZlTAD+EGdH0zvi2fbzJ2zLe6ziMu6maPw+oO3C5vkOMfup
+         xSUjsjNEF3NHRe1PVyjx2am/Hiewk2k2uQT9VG2OimNRgtp/TUZPvrYpJD7cf4PR5v6M
+         sJLWK9L2WKEa3h0Metxw3USLNsPjfgcY2nV8CLmhcDugLpRXCfTsVakTuPtnkJuEJ6jr
+         wk8dNAnaUWWGGO0eKFbr4yBbFOe8nX1/+H8n+whtjVzCdqtr8yhXeP1SLUKFlwRCe7AJ
+         eLVB3eCMYSTP+ajD5xyZj+658miBoxPP7DtaEzvJcJXgfE7Nxh+0zLWNOTY7XvEj0wGy
+         +Ayg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGmuzzIeIxVdgohbdeUzAaBDqOuXscjDLbcTD2FOfwAVD8l/Tc+rNFyf7GkS05jfSLTd9ghOYKzJBMrHw7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/zAR8AswSdupaYwi1XZygg554Djk+mOMWYidC9uaAuMaC55I7
+	5YmRbw69q9G6ogUkvbDV5djGZZEUE212hJHhjL46vSO8AO3BVNB6/AG9tYRo8ZPSduNPRuL7NwK
+	DRTTcKjDygcsFFukYA2br2nGm1Y4=
+X-Gm-Gg: ASbGncvfX8r7+AmPNe0i4dyWamyd/kasFBnxrcqw+wZCN3/s7uqPMJZQF7CLvC4fzlz
+	xjhx/KX0RKnhsk6uK7wlBSk62t21SSx2gAfiWpCnKOE6Nch6TPfrw5A==
+X-Google-Smtp-Source: AGHT+IGmoOgg1Rtx5ws4QiZadgUm6YuT50WGAezRWLf8zAKVGuogy4bSm29FNdjzxCaiLnXyXWofNNTYJfSomSZ/zuU=
+X-Received: by 2002:ac8:7fd6:0:b0:466:9ab3:c2d0 with SMTP id
+ d75a77b69052e-46c7108c35amr423317891cf.44.1736963597617; Wed, 15 Jan 2025
+ 09:53:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241227193311.1799626-1-joannelkoong@gmail.com>
+ <20241227193311.1799626-2-joannelkoong@gmail.com> <20250112041624.xzenih232klygwvw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+In-Reply-To: <20250112041624.xzenih232klygwvw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 15 Jan 2025 09:53:06 -0800
+X-Gm-Features: AbW1kvbLSf0VzrmecAd8o8rfZyvxZUoKFQSwjrv--pKNhrTop2ksjwHrTOvImuI
+Message-ID: <CAJnrk1YABnxcHqcZ8G9S834N1VJJcxfgQim7SGhH=ajpXBeUug@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fsx: support reads/writes from buffers backed by hugepages
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, bfoster@redhat.com, 
+	djwong@kernel.org, nirjhar@linux.ibm.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 10 2025 at 15:16, Joel Granados wrote:
-> sed:
->     sed --in-place \
->       -e "s/struct ctl_table .table = &uts_kern/const struct ctl_table *table = \&uts_kern/" \
->       kernel/utsname_sysctl.c
+On Sat, Jan 11, 2025 at 8:16=E2=80=AFPM Zorro Lang <zlang@redhat.com> wrote=
+:
 >
-> Reviewed-by: Song Liu <song@kernel.org>
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org> # for kernel/trace/
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com> # SCSI
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org> # xfs
-> Acked-by: Jani Nikula <jani.nikula@intel.com>
-> Acked-by: Corey Minyard <cminyard@mvista.com>
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> On Fri, Dec 27, 2024 at 11:33:10AM -0800, Joanne Koong wrote:
+> > Add support for reads/writes from buffers backed by hugepages.
+> > This can be enabled through the '-h' flag. This flag should only be use=
+d
+> > on systems where THP capabilities are enabled.
+> >
+> > This is motivated by a recent bug that was due to faulty handling of
+> > userspace buffers backed by hugepages. This patch is a mitigation
+> > against problems like this in the future.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  ltp/fsx.c | 108 ++++++++++++++++++++++++++++++++++++++++++++++++------
+> >  1 file changed, 97 insertions(+), 11 deletions(-)
+> >
+>
+> [snip]
+>
+> > +static void *
+> > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
+> > +{
+> > +     void *buf;
+> > +     long buf_size =3D roundup(len, hugepage_size) + alignment;
+> > +
+> > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
+> > +             prterr("posix_memalign for buf");
+> > +             return NULL;
+> > +     }
+> > +     memset(buf, '\0', buf_size);
+> > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
+>
+> Hi Joanne,
+>
+> Sorry I have to drop this patchset from the "upcoming" release v2025.01.1=
+2. Due to
+> it cause a regression build error on older system, e.g. RHEL-9:
+>
+>     [CC]    fsx
+>  fsx.c: In function 'init_hugepages_buf':
+>  fsx.c:2935:36: error: 'MADV_COLLAPSE' undeclared (first use in this func=
+tion); did you mean 'MADV_COLD'?
+>   2935 |         if (madvise(buf, buf_size, MADV_COLLAPSE)) {
+>        |                                    ^~~~~~~~~~~~~
+>        |                                    MADV_COLD
+>  fsx.c:2935:36: note: each undeclared identifier is reported only once fo=
+r each function it appears in
+>  gmake[4]: *** [Makefile:51: fsx] Error 1
+>  gmake[4]: *** Waiting for unfinished jobs....
+>  gmake[3]: *** [include/buildrules:30: ltp] Error 2
+>
+> It might cause xfstests totally can't be used on downstream systems, so i=
+t can't
+> catch up the release of this weekend. Sorry about that, let's try to have=
+ it
+> in next release :)
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Hi Zorro,
+
+Thanks for the update. I'll submit a v3 of this patch that gates this
+function behind #ifdef MADV_COLLAPSE, and hopefully that should fix
+this issue.
+
+
+Thanks,
+Joanne
+
+>
+> Thanks,
+> Zorro
+>
+>
+> > +             prterr("madvise collapse for buf");
+> > +             free(buf);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     return buf;
+> > +}
+> > +
+> > +static void
+> > +init_buffers(void)
+> > +{
+> > +     int i;
+> > +
+> > +     original_buf =3D (char *) malloc(maxfilelen);
+> > +     for (i =3D 0; i < maxfilelen; i++)
+> > +             original_buf[i] =3D random() % 256;
+> > +     if (hugepages) {
+> > +             long hugepage_size =3D get_hugepage_size();
+> > +             if (hugepage_size =3D=3D -1) {
+> > +                     prterr("get_hugepage_size()");
+> > +                     exit(100);
+> > +             }
+> > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
+, writebdy);
+> > +             if (!good_buf) {
+> > +                     prterr("init_hugepages_buf failed for good_buf");
+> > +                     exit(101);
+> > +             }
+> > +
+> > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size, =
+readbdy);
+> > +             if (!temp_buf) {
+> > +                     prterr("init_hugepages_buf failed for temp_buf");
+> > +                     exit(101);
+> > +             }
+> > +     } else {
+> > +             unsigned long good_buf_len =3D maxfilelen + writebdy;
+> > +             unsigned long temp_buf_len =3D maxoplen + readbdy;
+> > +
+> > +             good_buf =3D (char *) malloc(good_buf_len);
+> > +             memset(good_buf, '\0', good_buf_len);
+> > +             temp_buf =3D (char *) malloc(temp_buf_len);
+> > +             memset(temp_buf, '\0', temp_buf_len);
+> > +     }
+> > +     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
+> > +     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
+> > +}
+> > +
+> >  static struct option longopts[] =3D {
+> >       {"replay-ops", required_argument, 0, 256},
+> >       {"record-ops", optional_argument, 0, 255},
+> > @@ -2883,7 +2974,7 @@ main(int argc, char **argv)
+> >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> >
+> >       while ((ch =3D getopt_long(argc, argv,
+> > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyAB=
+D:EFJKHzCILN:OP:RS:UWXZ",
+> > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyA=
+BD:EFJKHzCILN:OP:RS:UWXZ",
+> >                                longopts, NULL)) !=3D EOF)
+> >               switch (ch) {
+> >               case 'b':
+> > @@ -2916,6 +3007,9 @@ main(int argc, char **argv)
+> >               case 'g':
+> >                       filldata =3D *optarg;
+> >                       break;
+> > +             case 'h':
+> > +                     hugepages =3D 1;
+> > +                     break;
+> >               case 'i':
+> >                       integrity =3D 1;
+> >                       logdev =3D strdup(optarg);
+> > @@ -3229,15 +3323,7 @@ main(int argc, char **argv)
+> >                       exit(95);
+> >               }
+> >       }
+> > -     original_buf =3D (char *) malloc(maxfilelen);
+> > -     for (i =3D 0; i < maxfilelen; i++)
+> > -             original_buf[i] =3D random() % 256;
+> > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
+> > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
+> > -     memset(good_buf, '\0', maxfilelen);
+> > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
+> > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
+> > -     memset(temp_buf, '\0', maxoplen);
+> > +     init_buffers();
+> >       if (lite) {     /* zero entire existing file */
+> >               ssize_t written;
+> >
+> > --
+> > 2.47.1
+> >
+> >
+>
 
