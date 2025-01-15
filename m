@@ -1,60 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-39269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC4AA12061
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE99A12060
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863511688D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77921188908C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FE4248BC6;
-	Wed, 15 Jan 2025 10:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC1D1E98F7;
+	Wed, 15 Jan 2025 10:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VPCk4Fpy"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UXaL2Uoa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33DC248BAC;
-	Wed, 15 Jan 2025 10:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0D3248BA6;
+	Wed, 15 Jan 2025 10:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736937860; cv=none; b=H4jVGmcMtebwAbhgEBspRBJgZM9pfI69GZ9x8cA/KahE9vZkKPw4lURaOt56vRYIYNVDvPsMuOfG9wsCCsWq81t772u/eUz03EiDVjYUAnPcve27pN2a1XXbJWsvR73qDvKpaVUi7bj48oNmpKObly4f1Z3IA2P5VBy/gFl1AQI=
+	t=1736937863; cv=none; b=cVzLmRemL/O9vfodHBYPTai6lNI+UgHnwOK3QUcDdk/zOLkbewcPNiLtiPyRP9ftlKjgaP7UhaNWCmJfJsf4D17/Kr5O0E2Mgr1aMjR0RA2I7w0i+AfPMNz8piV23cAIZFeuHI9tGBx8JO85HvQCPDOh4u8CmQz4Gerf5GQUDLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736937860; c=relaxed/simple;
-	bh=4lZsvhy5OevP60JRvEHP5t+uOh7DrOOMg9mCuTzncHw=;
+	s=arc-20240116; t=1736937863; c=relaxed/simple;
+	bh=Kdxz0lyK8z7zX6L+U+/sPw/y8Tp+1OjDoriWgrtvo5I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZLsRZq5nHfBs71oIFrdCv631PBB6eFgmhX31GL0op/L+imFyOqkE39GJml/A8PsBPBgmmT6xG3QVSC9Na/EQnJOpAM3LECTjn5WjIfiaIFwG2Y5lfxaljc23ysTdqDdtBIJtitvE4I2HNgL7ElZt5aoQtIqrsVNha/6RPjsQ1Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VPCk4Fpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48242C4CEDF;
-	Wed, 15 Jan 2025 10:44:19 +0000 (UTC)
+	 MIME-Version; b=Gt4jzhpOiFjw3SD2ANDDpQ7TTBZ0bJ2MgXbV6NUkjdDyqnRBQWH3fy7nmle3Rh0FXwoJMH8AQDGcuND+rsCSXcA7VH1mQiEZnm3mXiuAhPbGWIJJi/F9m+1urgMU7Btz0pPBZPDE+zsVPZh+wiLL7c3SfJeA/mZSAX1WnO/MvAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UXaL2Uoa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D96C4CEE1;
+	Wed, 15 Jan 2025 10:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1736937859;
-	bh=4lZsvhy5OevP60JRvEHP5t+uOh7DrOOMg9mCuTzncHw=;
+	s=korg; t=1736937863;
+	bh=Kdxz0lyK8z7zX6L+U+/sPw/y8Tp+1OjDoriWgrtvo5I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VPCk4Fpyui+BkD98BHlK+m2BwROUwErHhfUbogUZUeQ+yUxn8zvyV34r7Lqmrjfi5
-	 LLxgSrDtJNzLJLYgF4ry15bqwEH95T6s3Z1jAag8hDl3/VV+3UnjdS40eLwRgjcLxk
-	 MCYd9YQRzsF29gQ53QOieqbagsMHxnM4J1jMNsv4=
+	b=UXaL2UoavBmn/x5S41BULnKnAn6ZjiQGJgAROkAG/Y7gEmrdNPMWYWpxzTBNGhiyr
+	 HSJMIk43KvEBPBONzbZHLlgeiX++roR+XlVTQL+w94rtm8N3O3KEpXGOCAj4oqZwWS
+	 UnCKyiAuZEkAnyl95nFoQb1w0k9CJJ0/OKml9HKg=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Max Kellermann <max.kellermann@ionos.com>,
 	David Howells <dhowells@redhat.com>,
 	Jeff Layton <jlayton@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
 	netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 013/189] netfs: Fix the (non-)cancellation of copy when cache is temporarily disabled
-Date: Wed, 15 Jan 2025 11:35:09 +0100
-Message-ID: <20250115103606.891121830@linuxfoundation.org>
+Subject: [PATCH 6.12 014/189] netfs: Fix is-caching check in read-retry
+Date: Wed, 15 Jan 2025 11:35:10 +0100
+Message-ID: <20250115103606.930204147@linuxfoundation.org>
 X-Mailer: git-send-email 2.48.0
 In-Reply-To: <20250115103606.357764746@linuxfoundation.org>
 References: <20250115103606.357764746@linuxfoundation.org>
@@ -75,60 +71,57 @@ Content-Transfer-Encoding: 8bit
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit d0327c824338cdccad058723a31d038ecd553409 ]
+[ Upstream commit d4e338de17cb6532bf805fae00db8b41e914009b ]
 
-When the caching for a cookie is temporarily disabled (e.g. due to a DIO
-write on that file), future copying to the cache for that file is disabled
-until all fds open on that file are closed.  However, if netfslib is using
-the deprecated PG_private_2 method (such as is currently used by ceph), and
-decides it wants to copy to the cache, netfs_advance_write() will just bail
-at the first check seeing that the cache stream is unavailable, and
-indicate that it dealt with all the content.
+netfs: Fix is-caching check in read-retry
 
-This means that we have no subrequests to provide notifications to drive
-the state machine or even to pin the request and the request just gets
-discarded, leaving the folios with PG_private_2 set.
+The read-retry code checks the NETFS_RREQ_COPY_TO_CACHE flag to determine
+if there might be failed reads from the cache that need turning into reads
+from the server, with the intention of skipping the complicated part if it
+can.  The code that set the flag, however, got lost during the read-side
+rewrite.
 
-Fix this by jumping directly to cancel the request if the cache is not
-available.  That way, we don't remove mark3 from the folio_queue list and
-netfs_pgpriv2_cancel() will clean up the folios.
-
-This was found by running the generic/013 xfstest against ceph with an
-active cache and the "-o fsc" option passed to ceph.  That would usually
-hang
+Fix the check to see if the cache_resources are valid instead.  The flag
+can then be removed.
 
 Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Reported-by: Max Kellermann <max.kellermann@ionos.com>
-Closes: https://lore.kernel.org/r/CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com/
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/20241213135013.2964079-11-dhowells@redhat.com
+Link: https://lore.kernel.org/r/3752048.1734381285@warthog.procyon.org.uk
 cc: Jeff Layton <jlayton@kernel.org>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Xiubo Li <xiubli@redhat.com>
 cc: netfs@lists.linux.dev
-cc: ceph-devel@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/read_pgpriv2.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/netfs/read_retry.c | 2 +-
+ include/linux/netfs.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index ba5af89d37fa..54d5004fec18 100644
---- a/fs/netfs/read_pgpriv2.c
-+++ b/fs/netfs/read_pgpriv2.c
-@@ -170,6 +170,10 @@ void netfs_pgpriv2_write_to_the_cache(struct netfs_io_request *rreq)
+diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
+index 0350592ea804..2701f7d45999 100644
+--- a/fs/netfs/read_retry.c
++++ b/fs/netfs/read_retry.c
+@@ -49,7 +49,7 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+ 	 * up to the first permanently failed one.
+ 	 */
+ 	if (!rreq->netfs_ops->prepare_read &&
+-	    !test_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags)) {
++	    !rreq->cache_resources.ops) {
+ 		struct netfs_io_subrequest *subreq;
  
- 	trace_netfs_write(wreq, netfs_write_trace_copy_to_cache);
- 	netfs_stat(&netfs_n_wh_copy_to_cache);
-+	if (!wreq->io_streams[1].avail) {
-+		netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
-+		goto couldnt_start;
-+	}
- 
- 	for (;;) {
- 		error = netfs_pgpriv2_copy_folio(wreq, folio);
+ 		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 5eaceef41e6c..474481ee8b7c 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -269,7 +269,6 @@ struct netfs_io_request {
+ 	size_t			prev_donated;	/* Fallback for subreq->prev_donated */
+ 	refcount_t		ref;
+ 	unsigned long		flags;
+-#define NETFS_RREQ_COPY_TO_CACHE	1	/* Need to write to the cache */
+ #define NETFS_RREQ_NO_UNLOCK_FOLIO	2	/* Don't unlock no_unlock_folio on completion */
+ #define NETFS_RREQ_DONT_UNLOCK_FOLIOS	3	/* Don't unlock the folios on completion */
+ #define NETFS_RREQ_FAILED		4	/* The request failed */
 -- 
 2.39.5
 
