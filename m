@@ -1,182 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-39340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D877A12DE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 22:47:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EB4A12EF7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 00:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46FE3A5A04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 21:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E5E16134F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 23:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966D31DA636;
-	Wed, 15 Jan 2025 21:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1C81DD525;
+	Wed, 15 Jan 2025 23:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NkgTlQtE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8aHguRy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696421D5CC7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 21:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D401DDC00;
+	Wed, 15 Jan 2025 23:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736977644; cv=none; b=hPpt8/F6zUtVWsf6il/dmaQ9tiYQRxVjKYg3vGjJ/spSvw9I94TK0h/wa36F66pSokbqr+c2N4LFHTDDBrrjBahLSILEEuCIdmcz1q5k+q8jyP869XwQRwGgO4DXNpKXeL7ASAz/goKlamhUD8M0FYtwTU9wIbdo/Fr5v36mJTo=
+	t=1736982269; cv=none; b=pmd0ZSI4A9kPOKoGszWtFAlPS8QTmDc1WKj1RN4mmQiIhN/O991fa5Xo0oZ//fckc7/1AeAp9dt0Iz2+Jasw5rGvkLxDCGXj0lb11+ES9RMBk/m4TdUJoR+0fvOYScKsTZrahrKbdklJCUCkhlp+DKlsRSeVghqgxgNnYnyBHFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736977644; c=relaxed/simple;
-	bh=45dVOnxBFMRIfoiWqTEIPP+1eu4bxw46dGNIwYgiuSU=;
+	s=arc-20240116; t=1736982269; c=relaxed/simple;
+	bh=28S+AUl8D3nIC+YEzfnoWZjB3/BI6MXQpDs5KkVnv2U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cX/ZOIpFhCajc60CkWRJmSzPk9OZu54MftzXCqfKxleXUXKv5zfhsenTOk0n+meYPzAQtUrns7kIjXtT9uiJP5D9vl5Xc/BceIaQAbL5PKA2NnN7dIzS7jYkwh89yRn3bIPadBuXbxzlWGsf6mGdw+nq4oYcH9EZ9BGCdPUXAMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NkgTlQtE; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86112ab1ad4so46733241.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 13:47:22 -0800 (PST)
+	 To:Cc:Content-Type; b=fH2QmO7EG/YRlbdbl2vHThxJ9XZZcuijYjuZsshPNeUGaCKfPUDag87tVpGewRGKnXsOfWkUQKR5VMFkqeyUNn6ryv26Opgwg96G4ZgIfCN8zEeA61ey7JJxmhfcm4mfiWrCwFxFnG11e7A/dZHrFCiJjZX2O4SlcUskjoz/4uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8aHguRy; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2f42992f608so531064a91.0;
+        Wed, 15 Jan 2025 15:04:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1736977641; x=1737582441; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1736982266; x=1737587066; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ltmn9Mm22yVt64ua+/2W5DkLu4FvUvXKpZxg/TWxbvY=;
-        b=NkgTlQtEkLYEBC10MzU4mdryhHYg4wsPquhFKN5WSKi6D3/wBiYHz8shmOjrG99ICt
-         bV94i4pPQ+7GX96/q8xi3Te2b/jjUQF7v3/5T5ewESQnFfP7W/U5pT5k8q317ihEKsm6
-         MhAy1VJYV67IO3IaD5WGlkG8ptdgvKPqxhl1/Swb+PsRxvGoWTjlgiKdTjchZSWjPk6V
-         QT7g602vVNm/k0J5dqM7dVCf1Z+YBgDxj1zhzQtP/qDcxFq0NR9ELxmr8749OukfcGLw
-         XywO/A4f6QVZI90+xc8fxTq5I9ctTPiZK0N1z1zj2J8MvJ6o+KKSe9T3OmHCxhmzsUpj
-         oRRA==
+        bh=OlXjhmu0DDd/wOdKu+MNFy7ulTErAkB+k2GStp1vimY=;
+        b=b8aHguRykSD6tdaum+NF97Hix8F8d4w/07gfoP6pmWpz4cPNXaI7OI7s5gNNWkqTjd
+         ePVF3LPHCL9I30DvNpr8cinLoDn17A2iFS9Bqid28VGHvBO6rfPqRypThHbg0dagREM5
+         eYAokBm1EYSB6i3fH8Vn8yfv7cWw2qUV8WYsrwesPU4p5lWsuFuUwPFBzD6iSNPrRUK7
+         Lrv0EvWlBljOnQ/TWhwOPpazgmrdZ3MH3dTtbjCKvlGQx4tLNc8ogINlgvHPTIdNzGoU
+         y0zjsHAUWT3iZVF1jeVqprbW0ldzXYZH4PtOPUqDdIthqIOMfHAFCWB/dIInTIUcJTjD
+         E8TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736977641; x=1737582441;
+        d=1e100.net; s=20230601; t=1736982266; x=1737587066;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ltmn9Mm22yVt64ua+/2W5DkLu4FvUvXKpZxg/TWxbvY=;
-        b=KTtmn+SpzEMAgmVyE9aoEhKIf9fLBgMVhiiagXtnfnlsEgpsEojyuPJsx3tRWJ/h2C
-         loey6+1+B//wPvNcXXnbTNbwf29KeN4WKCp3EaR4KSgQi9I6wuZ7GbgCTY08rJ/evvqy
-         W5yE0CXdznS9Rai8iWCo33CLO1+N5PNy00uXcAiZ2IvlW+mQaC3ZcNP/HM5YOKe6kUpm
-         EVkQzXMMKEppTIK/vW2a/LzdKkGQJ5ZH9lvKeXzo2HiazpISJa+G1yuwwOIP7BmA7v5i
-         oRBQS5zFwYdg9i/9ogyORXB3eSEQHoS9nh+be/K4GINaH5DMwwc4k7pMCGzTVdr5S3Pm
-         0xDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGsz7MG0484GbJCjcKM73vPlD4zZw6aScEIJqgcoBGmrMUbyTPQ6bHxF3489XJ9qs4iq0v215ICMGu+l2l@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiCttgghMQYORuE4UcMnHbAVrIMqtlhkwFcB2CYkG6/91rOAiC
-	BNMhoRKdu4n2nNY+pQGQudWhRKXUS+hu06LT+63Is/W6EYa58DP36lZTWCm7N+2F7mcMhC/LnjJ
-	ccRkGvJARpRdndmi++BHHDhXoqrm7mwWxEzSw
-X-Gm-Gg: ASbGncuYnemkZHngxFD6KDd66eW6sC62DiGAeSefnVhq6ykJzc0GMjy6CXQfBHV6pHu
-	85B4+WgM2YIem8UWd9KeDi2Cazwty9eFgrt929/lUOBbA1v5NkeUP4oEwkAbdcQyekmMt
-X-Google-Smtp-Source: AGHT+IHddxhJJTm91TzdAwSi6uafTRzEfEyn82rLSJiZKUTard4Bp+c3/yQxdvAEMnMOjsCchFbxw41UJMogIcZ05rQ=
-X-Received: by 2002:a05:6102:54a4:b0:4b0:ccec:c9de with SMTP id
- ada2fe7eead31-4b3d0ecc1ecmr29653773137.24.1736977641130; Wed, 15 Jan 2025
- 13:47:21 -0800 (PST)
+        bh=OlXjhmu0DDd/wOdKu+MNFy7ulTErAkB+k2GStp1vimY=;
+        b=iQmCxf9PNRNIo1gQO5ldJ8p7yo9yV9LO3tcCdwXezc3lHK3HsjxKcaT8tsQ248fsfj
+         ojvBAqCOT+rYBwuApC9yP3JLURmXTF5bNZd58qp50D+51+U/iCLTa+uyHl2yOvJFP4ge
+         g6XMXPv5PbgS2p7kXh3j1urbgTjjAV4GZ8E6Da3u2O6MtueiO8o8Cu6OjSViuauFxxN/
+         ZYaDRKguazffqWDoh4Hee/LhvnT3dHHfwG1LCSAhftPpGI/IikBIDQX/p6faxuNwcy5K
+         VV3piGLBW+G9SG+LNjE/C6FEWP2owEoRdHluFpODWFjWa1umvEvfkmERZjdxAtBdORGT
+         CBmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUahVoyrUaT3Y+cGDnqjTeb/XazgNUQtx7ympk95HLy5N3bOzSQpJ2+Fekwd97SOhBTIYGFY7xmfXpFpxRW@vger.kernel.org
+X-Gm-Message-State: AOJu0YysiRKBJw6yd7MRysn25m7GmlVDLSPF9qvGo/2uGX85vvITT843
+	bU4C8jggp+kUET4uzbkOjxMpsQXrKX/EhYL8qLzX7TYWQzDTjPLg+kSuTHphTBCFFqmcICIzxnF
+	tuCwV6i76TOUamTO27a7f0czp/ll/fJmN
+X-Gm-Gg: ASbGncv9Kbz/Xgqv4eSVkbHsc1iUy5wZhp675zz20lMNAV0FytGO9+0TFAGesHRZHe5
+	8tBH/KerVtKN6r3GwZ/E/9TU8jzSlLtrcwZ0ASQ==
+X-Google-Smtp-Source: AGHT+IG6qhoUZOKitarBW+pX9bxJ3ul3yZKEBysA+fsvulAH3bWoAx7pZznOJj2Zc3BxzWLxMd1hMcEjL6SpHLmbuIg=
+X-Received: by 2002:a17:90b:2f0e:b0:2f4:49d8:e718 with SMTP id
+ 98e67ed59e1d1-2f548eac0bfmr45834241a91.9.1736982266401; Wed, 15 Jan 2025
+ 15:04:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115093135.3288234-1-kirill.shutemov@linux.intel.com>
- <20250115093135.3288234-6-kirill.shutemov@linux.intel.com> <Z4gqJqcO8wau0sgN@casper.infradead.org>
-In-Reply-To: <Z4gqJqcO8wau0sgN@casper.infradead.org>
-From: Yu Zhao <yuzhao@google.com>
-Date: Wed, 15 Jan 2025 14:46:44 -0700
-X-Gm-Features: AbW1kvYmgQZAQoh1evl_F-cwT96TWCJNKl3oZphib0Y46aUVpuxrrUuhtwKH4hA
-Message-ID: <CAOUHufZ42ZV1SU+rGLM-2j2Hp43Q9eLY_yFYg8jsifOfcPHUgQ@mail.gmail.com>
-Subject: Re: [PATCHv2 05/11] mm/truncate: Use folio_set_dropbehind() instead
- of deactivate_file_folio()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti <andi.shyti@linux.intel.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	David Airlie <airlied@gmail.com>, David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>, 
-	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Yosry Ahmed <yosryahmed@google.com>, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org
+References: <9a168461fc4665edffde6d8606920a34312f8932.camel@ibm.com>
+In-Reply-To: <9a168461fc4665edffde6d8606920a34312f8932.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 16 Jan 2025 00:04:15 +0100
+X-Gm-Features: AbW1kvbkZe-BZ42_LcDKpvCIa0iOp9_gFIvLbx1ExKothJmm4FjkvDO5_WQU_PY
+Message-ID: <CAOi1vP9uiR_7R-sa7-5tBU853uNVo6wPBBHDpEib3CyRvWsqLQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: Introduce CONFIG_CEPH_LIB_DEBUG and CONFIG_CEPH_FS_DEBUG
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 15, 2025 at 2:35=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
+On Wed, Jan 15, 2025 at 1:41=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
 >
-> On Wed, Jan 15, 2025 at 11:31:29AM +0200, Kirill A. Shutemov wrote:
-> > -static void lru_deactivate_file(struct lruvec *lruvec, struct folio *f=
-olio)
-> > -{
-> > -     bool active =3D folio_test_active(folio) || lru_gen_enabled();
-> > -     long nr_pages =3D folio_nr_pages(folio);
-> > -
-> > -     if (folio_test_unevictable(folio))
-> > -             return;
-> > -
-> > -     /* Some processes are using the folio */
-> > -     if (folio_mapped(folio))
-> > -             return;
-> > -
-> > -     lruvec_del_folio(lruvec, folio);
-> > -     folio_clear_active(folio);
-> > -     folio_clear_referenced(folio);
-> > -
-> > -     if (folio_test_writeback(folio) || folio_test_dirty(folio)) {
-> > -             /*
-> > -              * Setting the reclaim flag could race with
-> > -              * folio_end_writeback() and confuse readahead.  But the
-> > -              * race window is _really_ small and  it's not a critical
-> > -              * problem.
-> > -              */
-> > -             lruvec_add_folio(lruvec, folio);
-> > -             folio_set_reclaim(folio);
-> > -     } else {
-> > -             /*
-> > -              * The folio's writeback ended while it was in the batch.
-> > -              * We move that folio to the tail of the inactive list.
-> > -              */
-> > -             lruvec_add_folio_tail(lruvec, folio);
-> > -             __count_vm_events(PGROTATED, nr_pages);
-> > -     }
-> > -
-> > -     if (active) {
-> > -             __count_vm_events(PGDEACTIVATE, nr_pages);
-> > -             __count_memcg_events(lruvec_memcg(lruvec), PGDEACTIVATE,
-> > -                                  nr_pages);
-> > -     }
-> > -}
+> Hello,
 >
-> > +++ b/mm/truncate.c
-> > @@ -486,7 +486,7 @@ unsigned long mapping_try_invalidate(struct address=
-_space *mapping,
-> >                        * of interest and try to speed up its reclaim.
-> >                        */
-> >                       if (!ret) {
-> > -                             deactivate_file_folio(folio);
-> > +                             folio_set_dropbehind(folio);
+> There are multiple cases of using BUG_ON() in the main logic of
+> CephFS kernel code. For example, ceph_msg_data_cursor_init() is
+> one of the example:
 >
-> brr.
+> void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+>                   struct ceph_msg *msg, size_t length)
+> {
+>     BUG_ON(!length);
+>     BUG_ON(length > msg->data_length);
+>     BUG_ON(!msg->num_data_items);
 >
-> This is a fairly substantial change in semantics, and maybe it's fine.
+> <skipped>
+> }
 >
-> At a high level, we're trying to remove pages from an inode that aren't
-> in use.  But we might find that some of them are in use (eg they're
-> mapped or under writeback).  If they are mapped, we don't currently
-> try to accelerate their reclaim, but now we're going to mark them
-> as dropbehind.  I think that's wrong.
+> Such approach is good for the case of debugging an issue.
+> But it is not user friendly approach because returning
+> and processing an error is more preferable than crashing
+> the kernel.
 >
-> If they're dirty or under writeback, then yes, mark them as dropbehind, b=
-ut
-> I think we need to be a little more surgical here.  Maybe preserve the
-> unevictable check too.
+> This patch introduces a special debug configuration option
+> for CephFS subsystems with the goal of error processing
+> in the case of release build and kernel crash in the case
+> of debug build:
+>
+> if CONFIG_CEPH_LIB_DEBUG
+>         BUG_ON();
+> else
+>         return <error code>;
+> endif
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> ---
+>  fs/ceph/Kconfig                | 13 +++++++++++
+>  include/linux/ceph/messenger.h |  2 +-
+>  net/ceph/Kconfig               | 13 +++++++++++
+>  net/ceph/messenger.c           | 16 +++++++++++--
+>  net/ceph/messenger_v1.c        | 27 +++++++++++++++-------
+>  net/ceph/messenger_v2.c        | 41 +++++++++++++++++++++++++---------
+>  6 files changed, 90 insertions(+), 22 deletions(-)
+>
+> diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+> index 7249d70e1a43..203fb5d1cdd4 100644
+> --- a/fs/ceph/Kconfig
+> +++ b/fs/ceph/Kconfig
+> @@ -50,3 +50,16 @@ config CEPH_FS_SECURITY_LABEL
+>
+>           If you are not using a security module that requires using
+>           extended attributes for file security labels, say N.
+> +
+> +config CEPH_FS_DEBUG
+> +       bool "Ceph client debugging"
+> +       depends on CEPH_FS
+> +       default n
+> +       help
+> +         If you say Y here, this option enables additional pre-
+> condition
+> +         and post-condition checks in functions. Also it could enable
+> +         BUG_ON() instead of returning the error code. This option
+> could
+> +         save more messages in system log and execute additional
+> computation.
+> +
+> +         If you are going to debug the code, then chose Y here.
+> +         If unsure, say N.
+> diff --git a/include/linux/ceph/messenger.h
+> b/include/linux/ceph/messenger.h
+> index 1717cc57cdac..acfab9052046 100644
+> --- a/include/linux/ceph/messenger.h
+> +++ b/include/linux/ceph/messenger.h
+> @@ -532,7 +532,7 @@ u32 ceph_get_global_seq(struct ceph_messenger
+> *msgr, u32 gt);
+>  void ceph_con_discard_sent(struct ceph_connection *con, u64 ack_seq);
+>  void ceph_con_discard_requeued(struct ceph_connection *con, u64
+> reconnect_seq);
+>
+> -void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+> +int ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+>                                struct ceph_msg *msg, size_t length);
+>  struct page *ceph_msg_data_next(struct ceph_msg_data_cursor *cursor,
+>                                 size_t *page_offset, size_t *length);
+> diff --git a/net/ceph/Kconfig b/net/ceph/Kconfig
+> index c5c4eef3a9ff..4248661669bd 100644
+> --- a/net/ceph/Kconfig
+> +++ b/net/ceph/Kconfig
+> @@ -45,3 +45,16 @@ config CEPH_LIB_USE_DNS_RESOLVER
+>           Documentation/networking/dns_resolver.rst
+>
+>           If unsure, say N.
+> +
+> +config CEPH_LIB_DEBUG
+> +       bool "Ceph core library debugging"
+> +       depends on CEPH_LIB
+> +       default n
+> +       help
+> +         If you say Y here, this option enables additional pre-
+> condition
+> +         and post-condition checks in functions. Also it could enable
+> +         BUG_ON() instead of returning the error code. This option
+> could
+> +         save more messages in system log and execute additional
+> computation.
+> +
+> +         If you are going to debug the code, then chose Y here.
+> +         If unsure, say N.
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index d1b5705dc0c6..42db34345572 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -1063,18 +1063,30 @@ static void __ceph_msg_data_cursor_init(struct
+> ceph_msg_data_cursor *cursor)
+>         cursor->need_crc =3D true;
+>  }
+>
+> -void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+> -                              struct ceph_msg *msg, size_t length)
+> +int ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+> +                             struct ceph_msg *msg, size_t length)
+>  {
+> +#ifdef CONFIG_CEPH_LIB_DEBUG
+>         BUG_ON(!length);
+>         BUG_ON(length > msg->data_length);
+>         BUG_ON(!msg->num_data_items);
+> +#else
+> +       if (!length)
+> +               return -EINVAL;
+> +
+> +       if (length > msg->data_length)
+> +               return -EINVAL;
+> +
+> +       if (!msg->num_data_items)
+> +               return -EINVAL;
+> +#endif /* CONFIG_CEPH_LIB_DEBUG */
 
-Right -- deactivate_file_folio() does make sure the folio is not
-unevictable or mapped. So probably something like below would the
-change in semantics be close enough?
+Hi Slava,
 
-  if (!folio_test_unevictable(folio) && !folio_mapped(folio))
-    folio_set_dropbehind(folio);
+I don't think this is a good idea.  I'm all for returning errors where
+it makes sense and is possible and such cases don't actually need to be
+conditioned on a CONFIG option.  Here, this EINVAL error would be
+raised very far away from the cause -- potentially seconds later and in
+a different thread or even a different kernel module.  It would still
+(eventually) hang the client because the messenger wouldn't be able to
+make progress for that connection/session.
+
+With this patch in place, in the scenario that you have been chasing
+where CephFS apparently asks to read X bytes but sets up a reply
+message with a data buffer that is smaller than X bytes, the messenger
+would enter a busy loop, endlessly reporting the new error, "faulting",
+reestablishing the session, resending the outstanding read request and
+attempting to fit the reply into the same (short) reply message.  I'd
+argue that an endless loop is worse than an easily identifiable BUG_ON
+in one of the kworker threads.
+
+There is no good way to process the new error, at least not with the
+current structure of the messenger.  In theory, the read request could
+be failed, but that would require wider changes and a bunch of special
+case code that would be there just to recover from what could have been
+a BUG_ON for an obvious programming error.
+
+Thanks,
+
+                Ilya
 
