@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-39222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2E5A11709
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 03:10:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAD1A1177A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 03:50:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757A6188B566
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 02:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D66D3A7DCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 02:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A6822DFB5;
-	Wed, 15 Jan 2025 02:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB4D22E40E;
+	Wed, 15 Jan 2025 02:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2sEHWVS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZX/aBcE4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E39222DF8A;
-	Wed, 15 Jan 2025 02:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36447846D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 02:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736907010; cv=none; b=rrdwqElvwE8VT/Q3aAUEAqTszr7cOgQAwmDf+JKvA3D6UIqoIckiEBt4CfvcWDUG+41g9molwDdOB+3o/xBQ75hNyPEcWOLzQe0llxemfQEsIM6gBiuSb4Tx6oNQ1MjLEnhBDBSuzbmWB9/B/zPzgvg5mSFi6l0XqL4kg1ha6GU=
+	t=1736909409; cv=none; b=FGGbRuRo+TTzf7kJB8e+7sjvfv7ROFdQ9WmZTQL5c/x9g/r+69wysR5GEhmOuVAAn4EcQ/pFF5QiLJEKj8THnIq3HVwbPmS+9uh4oJAT++c7Irs5HSVELSQMK7V83TLBeD7nC+H3nbIrdAhGIeT0b5xhuRzrd/nWFKpCdcHdEgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736907010; c=relaxed/simple;
-	bh=0of+rTg+LvFaFw8d6zhTmxYVB0urbY9S3+ltvXG8aYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRzu/U9MZUYlVBTG8xgHyBVvkwmC7MC3OEv9cxGda0nMD7Nwp5akrfHvSbwW+ZJE2CqfbA5GVW403rgOcsBVcg1BhfsWjAt6RTrkh28OcilNTl1+dm9Itcxq6p4cKyCql86wYAEoVfRoqiebmdwr1g5NzOojgR7hDLXfgUOzbyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2sEHWVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DDF6C4CEDF;
-	Wed, 15 Jan 2025 02:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736907010;
-	bh=0of+rTg+LvFaFw8d6zhTmxYVB0urbY9S3+ltvXG8aYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L2sEHWVS0lB3BOii/uosf0tH0kf5X8kQOqQSrcbHkh9ChH2EtYihN7BmfBkc7hchn
-	 NGPM+9vcaDAuHRgbVyMdzBlo1BSPPoFevU6p4Sztw7jLP0gZ01uQo7IfbY6unIFIKZ
-	 iK7xn9nmM+KyDhhT3sbiED0LmQRydbdAX4Cu/zBsahWlH5n3b6lRDP4q/12vb8VR0D
-	 YL3ZKq+SVozvc96mo9f+xboP6FbGIOnZXsktKKU55kV2+4n6ZM2KgpQM7xevgUUuwV
-	 9VAXcOOgU2pn9utFEpmzI5bE8aLsIjM+w24LzoElAT6cElRC7AWKOop9kI/py/3J+o
-	 /52I1bXYTR1eQ==
-Date: Tue, 14 Jan 2025 18:10:09 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Anna Schumaker <anna.schumaker@oracle.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Implementing the NFS v4.2 WRITE_SAME
- operation: VFS or NFS ioctl() ?
-Message-ID: <20250115021009.GE3561231@frogsfrogsfrogs>
-References: <f9ade3f0-6bfc-45da-a796-c22ceaeb4722@oracle.com>
+	s=arc-20240116; t=1736909409; c=relaxed/simple;
+	bh=bfxijhl//DPONmt/Ku162c1hQrG7+b7BLN9iPnPs9EU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MCwR8cADetkGmABjQLLJUpRNv45AT+G2V0boPEaqZuiBXOcCdQx953qSKFzTcFCTCfDN0/EixamGmW9K2WY1JhDb0ahhY1npr3xkg6tGF5Xh/t9QQ0GRtKB3Euqu+hSbgQSxK3D9/rlQaStrSG9IjYGwnAXfG7A7DVsvbcwSMmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZX/aBcE4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=jdYQIdvex2eMPatfajMsHu8Ei1r0p/FqHNtH/jwczb0=; b=ZX/aBcE4cvzPZjnBk68maDI7MW
+	UOes/8DOdOKuevv2xSogY+idGouQHVIqklgU9TUx5Yc1j28Z++syQ8cDV/kkyoAHV3hVDQiioYSWU
+	l/OSsJwWtZ9q8SRy436Zcgxfd7i6XMxpm4NRoOE38nNv8V40k6NyQpnco9QNafpPexr6zH609/A1R
+	lsk6InJEg+kEtHMS/R9kdgtxlXRsqp77e8Sn+GZerxCkK25zcdqRYV7tVHWqkLHMMgshK7/Ewgh82
+	vI/vcJpIHTIoCzVYAFm3SNZH7KPMkF7kNBjbQO3uqUsaC2fczJfNzD9TjonT9rDFMBxX5hsvA1eWz
+	KbjPj8LQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tXtTn-00000001Rua-01ij;
+	Wed, 15 Jan 2025 02:50:03 +0000
+Date: Wed, 15 Jan 2025 02:50:02 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Elizabeth Figura <zfigura@codeweavers.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] fix a file reference leak in drivers/misc/ntsync.c
+Message-ID: <20250115025002.GA1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,61 +59,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9ade3f0-6bfc-45da-a796-c22ceaeb4722@oracle.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Jan 14, 2025 at 04:38:03PM -0500, Anna Schumaker wrote:
-> I've seen a few requests for implementing the NFS v4.2 WRITE_SAME [1]
-> operation over the last few months [2][3] to accelerate writing
-> patterns of data on the server, so it's been in the back of my mind
-> for a future project. I'll need to write some code somewhere so NFS &
-> NFSD can handle this request. I could keep any implementation internal
-> to NFS / NFSD, but I'd like to find out if local filesystems would
-> find this sort of feature useful and if I should put it in the VFS
-> instead.
+	struct ntsync_obj contains a reference to struct file
+and that reference contributes to refcount - ntsync_alloc_obj()
+grabs it.  Normally the object is destroyed (and reference
+to obj->file dropped) in ntsync_obj_release().  However, in
+case of ntsync_obj_get_fd() failure the object is destroyed
+directly by its creator.
 
-It would help to know more about what exactly write same does on NFS.
-Is it like scsi's where you can pass a buffer and it'll write the same
-buffer over and over across the device?
+	That case should also drop obj->file; plain kfree(obj)
+is not enough there - it ends up leaking struct file * reference.
 
-> I was thinking I could keep it simple, and model a function call based
-> on write(3) / pwrite(3) to write some pattern N times starting at
-> either the file's current offset or at a user-provide offset.
-> Something like:
->     write_pattern(int filedes, const void *pattern, size_t nbytes, size_t count);
->     pwrite_pattern(int filedes, const void *pattern, size_t nbytes, size_t count, offset_t offset);
+	Take that logics into a helper (ntsync_free_obj()) and
+use it in both codepaths that destroy ntsync_obj instances.
 
-So yeah, it sounds similar.  Assuming nbytes is the size of *pattern,
-and offset/count are the range to be pwritten?
-
-> I could then construct a WRITE_SAME call in the NFS client using this
-> information. This seems "good enough" to me for what people have asked
-> for, at least as a client-side interface. It wouldn't really help the
-> server, which would still need to do several writes in a loop to be
-> spec-compliant with writing the pattern to an offset inside the
-> "application data block" [4] structure.
-
-I disagree, I think you just volunteered to plumb this pattern writing
-all the way through to the block layer. ;)
-
-> But maybe I'm simplifying this too much, and others would find the
-> additional application data block fields useful? Or should I keep it
-> all inside NFS, and call it with an ioctl instead of putting it into
-> the VFS?
-
-io_uring subcommand?
-
-But I'd want to know more about what people want to use this for.
-Assuming you don't just hook up FALLOC_FL_ZERO_RANGE to it and call it a
-day. :)
-
---D
-
-> Thoughts?
-> Anna
-> 
-> [1]: https://datatracker.ietf.org/doc/html/rfc7862#section-15.12
-> [2]: https://lore.kernel.org/linux-nfs/CAAvCNcByQhbxh9aq_z7GfHx+_=S8zVcr9-04zzdRVLpLbhxxSg@mail.gmail.com/
-> [3]: https://lore.kernel.org/linux-nfs/CALWcw=Gg33HWRLCrj9QLXMPME=pnuZx_tE4+Pw8gwutQM4M=vw@mail.gmail.com/
-> [4]: https://datatracker.ietf.org/doc/html/rfc7862#section-8.1
-> 
+Fixes: b46271ec40a05 "ntsync: Introduce NTSYNC_IOC_CREATE_SEM"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
+index 4954553b7baa..6eb00d625bd1 100644
+--- a/drivers/misc/ntsync.c
++++ b/drivers/misc/ntsync.c
+@@ -97,13 +97,15 @@ static int ntsync_sem_post(struct ntsync_obj *sem, void __user *argp)
+ 	return ret;
+ }
+ 
+-static int ntsync_obj_release(struct inode *inode, struct file *file)
++static void ntsync_free_obj(struct ntsync_obj *obj)
+ {
+-	struct ntsync_obj *obj = file->private_data;
+-
+ 	fput(obj->dev->file);
+ 	kfree(obj);
++}
+ 
++static int ntsync_obj_release(struct inode *inode, struct file *file)
++{
++	ntsync_free_obj(file->private_data);
+ 	return 0;
+ }
+ 
+@@ -183,7 +185,7 @@ static int ntsync_create_sem(struct ntsync_device *dev, void __user *argp)
+ 	sem->u.sem.max = args.max;
+ 	fd = ntsync_obj_get_fd(sem);
+ 	if (fd < 0) {
+-		kfree(sem);
++		ntsync_free_obj(sem);
+ 		return fd;
+ 	}
+ 
 
