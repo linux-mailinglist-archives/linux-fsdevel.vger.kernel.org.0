@@ -1,122 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-39276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CCEA120F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:51:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5CCA12103
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 11:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBAA16A897
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3805516A8C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2025 10:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE461E7C02;
-	Wed, 15 Jan 2025 10:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+eVJA1X"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445C1E98F0;
+	Wed, 15 Jan 2025 10:51:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A6248BBD;
-	Wed, 15 Jan 2025 10:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7787248BA1;
+	Wed, 15 Jan 2025 10:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736938275; cv=none; b=lOxxYNj3HvXOspjCF35poGJSDHPJRlU5b1whDaA5L68K5PBptxgUjiSdRz5QLN6t+cEJoVZc94xIt8+90OLPNSXr/LDfp1qfgpM7H58SGNyFWLOA86WUvjh4HJH/qdY1ZkTiQ64JHLelZcqTq3aNjDSEiSr6/85VmvMD/g3Xd38=
+	t=1736938307; cv=none; b=GqWeKjkUSOVg9z/M3Wy7pDSuV9KIOpk4E8FuUBXvY8zPB46hcO8b4or6FttkiL9ipxH+514BKVvfBnjpfUXs60MeLxMXtiRFepfRJS/Y04UZU5HKqPGrHmwVbuzEEhp+wG2ghWIAexOTrPOlFzyUPdrv5oX6+xBNfUrM0LHkAg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736938275; c=relaxed/simple;
-	bh=tkNahj98YF5Ew9ZYvQEGcyHo5n4Mx4vVJRfvbbR6VAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CTwq3XMDPqccOlBtVOx2/azHBWCqLLLps4KV+szSw6NXG1gnNrLMSART1+ApanpyCrflVZOrRYzkhAPUA7sKjYVOzm3uQC6gQXDEXAp6Jf9x6NRVhJgPdZUzBRE/dUekfBlQs10GKn6KTkluQ9XcMuP7+bYEB03uEAU8dCgWooM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+eVJA1X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4ACAC4CEDF;
-	Wed, 15 Jan 2025 10:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736938275;
-	bh=tkNahj98YF5Ew9ZYvQEGcyHo5n4Mx4vVJRfvbbR6VAw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U+eVJA1Xn4mqvlKFvP3aAWpettlbCeZhVUJ+1W3ZBg1FQ6GZv8GlDyPR+CvimRp+k
-	 kFnD0VnvN/EJDx+Kt5RMDFsaN6bcEbTG+GcXFjD2s4zrOw67SdJz3z0YgYfyEbnFgC
-	 qoTraY202N3uCwZEc9/bnx6MOxRdOsiKx4c4QeubRZktd3tfEvu/KuTDuIe1pAJwSl
-	 zuyCMTlepI8A1Spi6F2p+Df7dEPnd5AKWcjf1+is20UHiQyEhnwOezEuhQfuqQE5ux
-	 nwyZMg/Gme+ODf/VOH3q68EfkpHxzxTwSrlROY6eWOzludGZrgrPJHDnsctWsiPVi3
-	 i7A6EHHBe7i/w==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Gao Xiang <xiang@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	gfs2@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: lockref cleanups
-Date: Wed, 15 Jan 2025 11:50:52 +0100
-Message-ID: <20250115-pelzmantel-backen-53605f1b81d7@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250115094702.504610-1-hch@lst.de>
-References: <20250115094702.504610-1-hch@lst.de>
+	s=arc-20240116; t=1736938307; c=relaxed/simple;
+	bh=QRU8U5lXb2pp4lu+Afpob7QHF/SlW2QAmZnjqoFRw6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NPXJX8s5I92Ewl0H+5w7607scgKvsMWMEmfjiGmU5Yi7K7qhk9C+/ZW50PM8gI02uw2KZKJ9mJd2r15gwQFvbH1WPbdGQs/IfW5OY54bFtKA4oOCbcZsjFpR7Q0xm5zsm/E6U9QWlPopnD2Ciny9TU9F65/UYBZL8bvTFVP9shk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4YY2L516L9z9v7N7;
+	Wed, 15 Jan 2025 18:29:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 61B5F140451;
+	Wed, 15 Jan 2025 18:51:35 +0800 (CST)
+Received: from [10.45.149.44] (unknown [10.45.149.44])
+	by APP1 (Coremail) with SMTP id LxC2BwC3O0osk4dn7zysAA--.10045S2;
+	Wed, 15 Jan 2025 11:51:34 +0100 (CET)
+Message-ID: <85823922-0947-488e-ba95-f6c0e3132313@huaweicloud.com>
+Date: Wed, 15 Jan 2025 11:51:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2048; i=brauner@kernel.org; h=from:subject:message-id; bh=tkNahj98YF5Ew9ZYvQEGcyHo5n4Mx4vVJRfvbbR6VAw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS3T5beILDixlmx47P6j027NGvJ/jyxN3vuTHbPt3quK JHQKm39qKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi87kZ/pmfutv8qkHN2DUh 7aQx42Lbv1O+rryVyzWf/fEqVmkzfw+Gf8YzQs7/CjY/7Rb7YOFJF3W+F1GyUdPseh4ZfU91qZ0 5lxMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] ima: Ensure lock is held when setting iint pointer
+ in inode security blob
+To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>
+References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+ <20241128100621.461743-4-roberto.sassu@huaweicloud.com>
+ <3545a38326a5d3dff28b1089ab2149f1662a641b.camel@linux.ibm.com>
+Content-Language: en-US
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <3545a38326a5d3dff28b1089ab2149f1662a641b.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwC3O0osk4dn7zysAA--.10045S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr15Jw4xJFy8tr1fCFyfWFg_yoW5CFy5pa
+	n5ta4UG34jvFZ7Wr4Fva43uF1fK3ySgFWDGw45J3WvyFZrJr1qqr48Gry7ur15Gr4rA3Wv
+	vr1jg3sxu3WqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFf
+	HUUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBGeHXlMCcAADsQ
 
-On Wed, 15 Jan 2025 10:46:36 +0100, Christoph Hellwig wrote:
-> this series has a bunch of cosmetic cleanups for the lockref code I came up
-> with when reading the code in preparation of adding a new user of it.
+On 1/14/2025 3:20 PM, Mimi Zohar wrote:
+> On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
+>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>
+>> IMA stores a pointer of the ima_iint_cache structure, containing integrity
+>> metadata, in the inode security blob. However, check and assignment of this
+>> pointer is not atomic, and it might happen that two tasks both see that the
+>> iint pointer is NULL and try to set it, causing a memory leak.
+>>
+>> Ensure that the iint check and assignment is guarded, by adding a lockdep
+>> assertion in ima_inode_get().
 > 
-> Diffstat:
->  fs/dcache.c             |    3 --
->  fs/erofs/zdata.c        |    3 --
->  fs/gfs2/quota.c         |    3 --
->  include/linux/lockref.h |   26 ++++++++++++++------
->  lib/lockref.c           |   60 ++++++++++++------------------------------------
->  5 files changed, 36 insertions(+), 59 deletions(-)
+> -> is guarded by the ima_iint_cache_lock mutex, ...
+
+By the iint_lock mutex...
+
+>> Consequently, guard the remaining ima_inode_get() calls, in
+>> ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the lockdep
+>> warnings.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   security/integrity/ima/ima_iint.c |  2 ++
+>>   security/integrity/ima/ima_main.c | 14 ++++++++++++--
+>>   2 files changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
+>> index dcc32483d29f..fca9db293c79 100644
+>> --- a/security/integrity/ima/ima_iint.c
+>> +++ b/security/integrity/ima/ima_iint.c
+>> @@ -97,6 +97,8 @@ struct ima_iint_cache *ima_inode_get(struct inode *inode)
+>>   	if (!iint_lock)
+>>   		return NULL;
+>>   
+>> +	lockdep_assert_held(&iint_lock->mutex);
+>> +
 > 
-> [...]
+> lockdep_assert_held() doesn't actually "ensure" the lock is held, but emits a warning
+> when the lock is not held (if debugging is enabled).  Semantically "ensure" gives the
+> impression of enforcing.
 
-Looks good, thanks!
+I agree. I would replace ensure with detect.
 
----
+Thanks
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+Roberto
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> Mimi
+> 
+>>   	iint = iint_lock->iint;
+>>   	if (iint)
+>>   		return iint;
+>> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+>> index 05cfb04cd02b..1e474ff6a777 100644
+>> --- a/security/integrity/ima/ima_main.c
+>> +++ b/security/integrity/ima/ima_main.c
+>> @@ -705,14 +705,19 @@ static void ima_post_create_tmpfile(struct mnt_idmap *idmap,
+>>   	if (!must_appraise)
+>>   		return;
+>>   
+>> +	ima_iint_lock(inode);
+>> +
+>>   	/* Nothing to do if we can't allocate memory */
+>>   	iint = ima_inode_get(inode);
+>> -	if (!iint)
+>> +	if (!iint) {
+>> +		ima_iint_unlock(inode);
+>>   		return;
+>> +	}
+>>   
+>>   	/* needed for writing the security xattrs */
+>>   	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+>>   	iint->ima_file_status = INTEGRITY_PASS;
+>> +	ima_iint_unlock(inode);
+>>   }
+>>   
+>>   /**
+>> @@ -737,13 +742,18 @@ static void ima_post_path_mknod(struct mnt_idmap *idmap,
+>> struct dentry *dentry)
+>>   	if (!must_appraise)
+>>   		return;
+>>   
+>> +	ima_iint_lock(inode);
+>> +
+>>   	/* Nothing to do if we can't allocate memory */
+>>   	iint = ima_inode_get(inode);
+>> -	if (!iint)
+>> +	if (!iint) {
+>> +		ima_iint_unlock(inode);
+>>   		return;
+>> +	}
+>>   
+>>   	/* needed for re-opening empty files */
+>>   	iint->flags |= IMA_NEW_FILE;
+>> +	ima_iint_unlock(inode);
+>>   }
+>>   
+>>   /**
+> 
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
-
-[1/8] lockref: remove lockref_put_not_zero
-      https://git.kernel.org/vfs/vfs/c/74b5da771c89
-[2/8] lockref: improve the lockref_get_not_zero description
-      https://git.kernel.org/vfs/vfs/c/8c7568356d74
-[3/8] lockref: use bool for false/true returns
-      https://git.kernel.org/vfs/vfs/c/57bd981b2db7
-[4/8] lockref: drop superfluous externs
-      https://git.kernel.org/vfs/vfs/c/80e2823cbe59
-[5/8] lockref: add a lockref_init helper
-      https://git.kernel.org/vfs/vfs/c/5f0c395edf59
-[6/8] dcache: use lockref_init for d_lockref
-      https://git.kernel.org/vfs/vfs/c/24706068b7b6
-[7/8] erofs: use lockref_init for pcl->lockref
-      https://git.kernel.org/vfs/vfs/c/160a93170d53
-[8/8] gfs2: use lockref_init for qd_lockref
-      https://git.kernel.org/vfs/vfs/c/0ef3858b15e3
 
