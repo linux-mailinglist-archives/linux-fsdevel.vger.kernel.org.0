@@ -1,189 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-39442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BCAA142DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 21:15:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CB1A143BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 22:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E1B18841F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 20:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF5BE168158
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 21:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B6222DF8A;
-	Thu, 16 Jan 2025 20:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E805219E97C;
+	Thu, 16 Jan 2025 21:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGp1dLmi"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="TxKIadWS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510CF81727
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 20:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581E18B464
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 21:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737058503; cv=none; b=IBn1Psm7SuCdlM6/y1AOmPEjuZqXrHYU8xB/upCsFNV9K0HBqJVZk6rUS4vwUtfFjQg9l+E89mmk4PF9KBgRN/1qUpOAwp791yoBv4sMg94ucHe4ohAeM9+gkg2S6HrpR/PeacqjeKmUJ3gMs72MR78D/frVKKUMAQnUCA5G+kQ=
+	t=1737061762; cv=none; b=sKc9+YtStjlvibA+gtuCoN1HTS68ORKdjVnnmXz3yr00x97uqs6dL1KPtVlx23GuykBCt9HB/IgdmstvHfI5mDx4L1YYP7jExsdKr4V6aY50Bg5zC5SC8zZ3966ktBZD8R3ZImkaLG1cuYEU3BBrVLXdFq6Y5SlKesIsVqPkj+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737058503; c=relaxed/simple;
-	bh=//4ODmcKDWahdZyGwFv3QCAHNPbLRuGH8AVI9vujlf0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T6KUqbB1qippW30dcGZrYRsLgyYxbXAlmGEYllXH9ERQ8TaarE1xL5lA5RnnCdRK9XBsnS65NVHgFNRF0jqVdBGPv4wB/i5ZI5UhlpvLlCQDpPQoRNQFwz5s/IMxa7J45uQ9qCY5ibKK4teHnGfgrbIYZHqICdh4VuLTwL6btLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGp1dLmi; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-467918c360aso17038401cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 12:15:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737058500; x=1737663300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K1u06/6NefMqF/hqn0Wz6QaN/ufqBA3YdyfxR4C0J6I=;
-        b=YGp1dLmiI7uHI2KY9YnYLIEQCLOJlzqLhL2w4i9hOvLkXCsTgY+3ArrKs46oWlmqpu
-         ARE1YqE1lWdIt+XPmPf05w2cIVBTbjs+Ye9Lf+Nz2Fj62kCNGYpGTSMBAzWxTdOdciy3
-         ZfBy2PY/+nwN6VXA5qaLxh8sxfqGUSxA4mKHw3CV495QG7InqTRTz0A0WmMdCLpanKqj
-         wBfGP+46w1ZBFzpTIn8tMD9+GPo4W84FMOVwhcBb3HzvUYAciC7gMaJERFeRbFPOO54u
-         56kCIO6aZfG4D/qHPVOUAN83/fUW1yEuhVA/TC/ZDCiz2kCltcqy9xpZ/w59+IAOLw+9
-         fL+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737058500; x=1737663300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K1u06/6NefMqF/hqn0Wz6QaN/ufqBA3YdyfxR4C0J6I=;
-        b=wktiaqGlr/wKBjWotdG8C1jIrZfB0odamSTF4dvt85HOgj/evKeGXJYt3rz52pEo25
-         /lT+R3jLqNwoYfXgBS1NIVVDvprLvcG3ntd9uxunfQD3s4INN8WzOkYKU47OzNVUrYR7
-         f0/7PMgFjph7vBfYQ1rMAJBcdyMUs4EFSpfgmjnAIr02VtmUVlk7lIsNvYN55CttGAmh
-         1Q6k0i8leAT1l8AGFRG8vKUGyT2T4H83BvVbHT7cEgME5gy8AjtXWKqHLb5VnXWTqpab
-         u0ooOQR1qK/0JS/NksRe+MYrN/bFaaiJsYBmoOgaTLsdZ17iOQu7wgP7EYMotLAsODE9
-         bwlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaGvPtdw8JlGQjiYYGOb2wq7zoWV7MQIGoo9dEQL3DlSxR+ZhQ1TY/qU2eudUgEWsTd41QCCnh6j81tWNW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJfBu9ISWNYaamMQ/Pwa9dSn2zF9JobhMCL8FfhEA9b9gJ0dt2
-	3+KrB71sHd/bs5zfiht895eT5RxNmh9e9GVqgo0esJKQDGlDq7l23ov8zYiedqaxAPxnnkpVTuQ
-	aGTugT6wnMKDipgatlYcpTc5ytbM=
-X-Gm-Gg: ASbGncvIjR6kIkd1o+XRGhRuVQRopzAXaJqHR3Yl9s7B22oDFutcFh3IaFJZT9xQq8y
-	1q85unKPoNR5xeaMAK3lLBo2et6KQQ5u+7BzR2jM=
-X-Google-Smtp-Source: AGHT+IHjN7cES20yV4cclSrrmnbaK0fqWc6ccM3AGykYSVlbj1C3MTT7UhPU4hSgR40r01TigrqnT/OclkyhNYbG2E0=
-X-Received: by 2002:ac8:584e:0:b0:467:7295:b75f with SMTP id
- d75a77b69052e-46c71083e8amr587925221cf.38.1737058500158; Thu, 16 Jan 2025
- 12:15:00 -0800 (PST)
+	s=arc-20240116; t=1737061762; c=relaxed/simple;
+	bh=AdaGm0RD/ZKmpXz4JNADVF8EwqDJHk3KMyCJglTlExw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bfgzsMxXhlP7kGnVLa1KWIbi07I5cf/zeIwFhGwmdeF8jNS9D4sAJ8fvEWcEm7PrgSk3LYg7l6SZzFyozlGdRUOdErx1OaMDqhGY49lPfPT1H3P9iJkaqKQnrmmU2kmsRjSxOqPowav+TdQErif2wxpPcaiT/cey7EQ8r8dJ0eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=TxKIadWS; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1737061753; x=1737666553; i=quwenruo.btrfs@gmx.com;
+	bh=0g6F5ZIZOVT/PDcwH7raGOdtADPE4z6Fv+cER3+y/r0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TxKIadWSh43CMAMlurDls58sqLVoEH216ry65sB5p/bbwnHTyHlcX8JuuysSsMIx
+	 o5eZcMQxWxZte4lOuj+ABYDHMYQeL2GF1oSO7y5JL0gk60RimQ/bHpw7fpI1ehE4P
+	 OQDi0jxGcPh+jtro03/zHxiUQgbJhCS5oubUPVASurUAaUhXksZYomuUw0Pv4/8dJ
+	 8JSLVPZBxvNxyvPgF1OGFRyciCoyb1z0EL2uyEtfQ/cIDSJSGZz5Sc2khCyfSaLnO
+	 CSyot6jWOLoYKp9pXmJExeoRy9tWSkQRqFHmPjKTROvPPK/FlDKzyOIS3ARv6JNT1
+	 Weg/omM/bMeKYupgoQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MWAOQ-1u1ZTO3b46-00KVIz; Thu, 16
+ Jan 2025 22:09:13 +0100
+Message-ID: <98df4904-6b61-4ddb-8df2-706236afcd8e@gmx.com>
+Date: Fri, 17 Jan 2025 07:39:09 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
- <Z4cNoWIWnC7XwCT8@dread.disaster.area>
-In-Reply-To: <Z4cNoWIWnC7XwCT8@dread.disaster.area>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 16 Jan 2025 12:14:49 -0800
-X-Gm-Features: AbW1kvaRsQV9SGQM08TpPYtrvLDidDlX3gTwCZe3t_AMuuLA74Dez_9XFzMQ_8A
-Message-ID: <CAJnrk1aqHbR5j4VVU0RkuZfpBT7CTN3V71Cu4m95KHAdDZeZ1g@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Improving large folio writeback performance
-To: Dave Chinner <david@fromorbit.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Possible bug with open between unshare(CLONE_NEWNS) calls
+To: Christian Brauner <brauner@kernel.org>, Boris Burkov <boris@bur.io>
+Cc: linux-fsdevel@vger.kernel.org, daan.j.demeyer@gmail.com
+References: <20250115185608.GA2223535@zen.localdomain>
+ <20250116-audienz-wildfremd-04dc1c71a9c3@brauner>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20250116-audienz-wildfremd-04dc1c71a9c3@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eLSHb1cxfhCb9uAXsrSKQUNIUPzJGMvEHBK6RBRVcZAPmOy08nn
+ h6j7ddssVf4qO7mJMBnXeCNaM5V0lOLo/+7+tOCQ8ATchMAdzxzF2EkYX3qguRK0OVqzkfJ
+ PO8XxvUe7CxZmUN1rXf3aiS+nwQFpvwd7JnvcQjQRFc4hfXiZfrvin/4y+ylSQA3di99skP
+ Xz0SitU8SylUHKZzO80LA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dtPDH8z2zxQ=;PI3SK6D7X2icvA3phTnd74ZfYMA
+ VEOLYK5C58fMOBntxH5UWv6MA0k+UPD2+4aPELXcSQNy3u5wPJJr9Q2yVRle7OKrTDfIGD9y2
+ STYsK3LKlcwIG+WQQ4HR69mmrzVR/cCDFXTcyTPBBLAX85JWynAeM48VhBBoiatBfH2Zfi9mI
+ 8smkfWq+t29MMSXC735/JWyS+8NFA/PHcccFSNmterlOogkYS0IArr26hF6Wjk3I2voEImUhD
+ g2fOQAUZPaKf93bHTT57uFITzdO0x/pfPAQ2XAFvE0ijsjiKwMk1PEEh+Uh3QvfLTaJSongF6
+ ygFc0hjgCOU66ScurLWuSGZ1V00HctyHZud1NC4PFTGPRytQWwa/3htEFB4WOsE4gOjn9x418
+ ivk7ceJ3K1lUu35F8EXxLINMi4sDZDh8NN/Eio+vPPkmLUWtynRDdqhLl2OQz0z6TIH30DrZ5
+ XnyCrOvbZOnjEpovVpLR3cmysQ6RC9wTb6UqRjXHyAEl2eP3wJJkNL+T/+F70ygiVjozkKGWu
+ iPGg3nQ74Cmp+0ANFT5KovUgiUU1iWUt83U9DzxP+CDd6LxcJKFgRjnvlfKgRM/lAYsN64qo4
+ YXbGYx1FdfYVNPO5k5H0wMSQFWWLdMLVILL/znMvhxOw3yZCFHeFkoF6mF07A12xWtZeFCQ2c
+ 43ZvwrdgjRgC2bna+o7H2C3cuHmxkyRvcYZvaFgx0WHekMvew57ORdYzI5bZvO1darIVgap17
+ qx+4ejaL9bkLoNn3/+qVXtEAtZY76tT/f5RqpMChBtwq7eMKFK5z7e6wykv5G6LZEvLKdum+n
+ /kMRYC3LgKlIabTs9aKD+qAGaYus/m1KIpRNg2iWq+fhCAKscaWz6iV5eYFjfxEPMerYj4VIh
+ aor0VcXZO2fh6uOMGXQg/+u8Egrve4UJORXBe/Dnh70XG/4pHALLjbix3DeR8xxKW3zc9lDbe
+ jbo9yRN05WG/K02WT/Ejp/zjg53pgcL3D4bbavi40oqNv0p8m0Cr4tMhvJ1P9Z3DYqqVXVmKW
+ t4EUBNsXl4hffhLShcnBuFyNywRbMyABRdKUrodHJAL/JqHLL7hiTQQoVzLd7i6Z40xS9vlFQ
+ tXflHwQ67RPGfUVKffJUuRxQP9y9DzWKVqNnmJLP3TIGSstVDxa25NcixV592u8C0zM/zCZmb
+ immtvn5iB+7k4ILzxVXqZ01LREjXRVZ93znzAGyXy9g==
 
-On Tue, Jan 14, 2025 at 5:21=E2=80=AFPM Dave Chinner <david@fromorbit.com> =
-wrote:
->
-> On Tue, Jan 14, 2025 at 04:50:53PM -0800, Joanne Koong wrote:
-> > Hi all,
-> >
-> > I would like to propose a discussion topic about improving large folio
-> > writeback performance. As more filesystems adopt large folios, it
-> > becomes increasingly important that writeback is made to be as
-> > performant as possible. There are two areas I'd like to discuss:
-> >
-> >
-> > =3D=3D Granularity of dirty pages writeback =3D=3D
-> > Currently, the granularity of writeback is at the folio level. If one
-> > byte in a folio is dirty, the entire folio will be written back. This
-> > becomes unscalable for larger folios and significantly degrades
-> > performance, especially for workloads that employ random writes.
->
-> This sounds familiar, probably because we fixed this exact issue in
-> the iomap infrastructure some while ago.
->
-> commit 4ce02c67972211be488408c275c8fbf19faf29b3
-> Author: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Date:   Mon Jul 10 14:12:43 2023 -0700
->
->     iomap: Add per-block dirty state tracking to improve performance
->
->     When filesystem blocksize is less than folio size (either with
->     mapping_large_folio_support() or with blocksize < pagesize) and when =
-the
->     folio is uptodate in pagecache, then even a byte write can cause
->     an entire folio to be written to disk during writeback. This happens
->     because we currently don't have a mechanism to track per-block dirty
->     state within struct iomap_folio_state. We currently only track uptoda=
-te
->     state.
->
->     This patch implements support for tracking per-block dirty state in
->     iomap_folio_state->state bitmap. This should help improve the filesys=
-tem
->     write performance and help reduce write amplification.
->
->     Performance testing of below fio workload reveals ~16x performance
->     improvement using nvme with XFS (4k blocksize) on Power (64K pagesize=
-)
->     FIO reported write bw scores improved from around ~28 MBps to ~452 MB=
-ps.
->
->     1. <test_randwrite.fio>
->     [global]
->             ioengine=3Dpsync
->             rw=3Drandwrite
->             overwrite=3D1
->             pre_read=3D1
->             direct=3D0
->             bs=3D4k
->             size=3D1G
->             dir=3D./
->             numjobs=3D8
->             fdatasync=3D1
->             runtime=3D60
->             iodepth=3D64
->             group_reporting=3D1
->
->     [fio-run]
->
->     2. Also our internal performance team reported that this patch improv=
-es
->        their database workload performance by around ~83% (with XFS on Po=
-wer)
->
->     Reported-by: Aravinda Herle <araherle@in.ibm.com>
->     Reported-by: Brian Foster <bfoster@redhat.com>
->     Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->     Reviewed-by: Darrick J. Wong <djwong@kernel.org>
->
->
-> > One idea is to track dirty pages at a smaller granularity using a
-> > 64-bit bitmap stored inside the folio struct where each bit tracks a
-> > smaller chunk of pages (eg for 2 MB folios, each bit would track 32k
-> > pages), and only write back dirty chunks rather than the entire folio.
->
-> Have a look at how sub-folio state is tracked via the
-> folio->iomap_folio_state->state{} bitmaps.
->
-> Essentially it is up to the subsystem to track sub-folio state if
-> they require it; there is some generic filesystem infrastructure
-> support already in place (like iomap), but if that doesn't fit a
-> filesystem then it will need to provide it's own dirty/uptodate
-> tracking....
 
-Great, thanks for the info. I'll take a look at how the iomap layer does th=
-is.
+
+=E5=9C=A8 2025/1/16 21:16, Christian Brauner =E5=86=99=E9=81=93:
+> On Wed, Jan 15, 2025 at 10:56:08AM -0800, Boris Burkov wrote:
+>> Hello,
+>>
+>> If we run the following C code:
+>>
+>> unshare(CLONE_NEWNS);
+>> int fd =3D open("/dev/loop0", O_RDONLY)
+>> unshare(CLONE_NEWNS);
+>>
+>> Then after the second unshare, the mount hierarchy created by the first
+>> unshare is fully dereferenced and gets torn down, leaving the file
+>> pointed to by fd with a broken dentry.
+>>
+>> Specifically, subsequent calls to d_path on its path resolve to
+>> "/loop0". I was able to confirm this with drgn, and it has caused an
+>> unexpected failure in mkosi/systemd-repart attempting to mount a btrfs
+>> filesystem through such an fd, since btrfs uses d_path to resolve the
+>> source device file path fully.
+>>
+>> I confirmed that this is definitely due to the first unshare mount
+>> namespace going away by:
+>> 1. printks/bpftrace the copy_root path in the kernel
+>> 2. rewriting my test program to fork after the first unshare to keep
+>> that namespace referenced. In this case, the fd is not broken after the
+>> second unshare.
+>>
+>>
+>> My question is:
+>> Is this expected behavior with respect to mount reference counts and
+>> namespace teardown?
+>>
+>> If I mount a filesystem and have a running program with an open file
+>> descriptor in that filesystem, I would expect unmounting that filesyste=
+m
+>> to fail with EBUSY, so it stands to reason that the automatic unmount
+>> that happens from tearing down the mount namespace of the first unshare
+>> should respect similar semantics and either return EBUSY or at least
+>> have the lazy umount behavior and not wreck the still referenced mount
+>> objects.
+>>
+>> If this behavior seems like a bug to people better versed in the
+>> expected behavior of namespaces, I would be happy to work on a fix.
+>
+> It's expected as Al already said. And is_good_dev_path()
+> looks pretty hacky...
+>
+> Wouldn't something like:
+>
+> bool is_devtmpfs(const struct super_block *sb)
+> {
+>          return sb->s_type =3D=3D &dev_fs_type;
+> }
+>
+> and then:
+>
+>          ret =3D kern_path(dev_path, 0, &path);
+>          if (ret)
+>                  goto out;
+>
+> 	if (is_devtmpfs(path->mnt->mnt_sb))
+> 		// something something
+>
+> be enough? Or do you specifically need to care where devtmpfs is
+> mounted? The current check means that anything that mounts devtmpfs
+> somewhere other than /dev would fail that check.
+
+That above checks looks good.
 
 >
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+> Of course, any standard Linux distribution will mount devtmpfs at /dev
+> so it probably won't matter in practice. And contains may make /dev a
+> tmpfs mount and bind-mount device nodes in from the host's devtmpfs so
+> that would work too with this check.
+>
+> In other words, I don't get why the /dev prefix check gets you anything?
+> If you just verify that the device node is located on devtmpfs you
+> should be good.
+
+The original problem is that we can get very weird device path, like
+'/proc/<pid>/<fd>' or any blockdev node created by the end user, as
+mount source, which can cause various problems in mount_info for end users=
+.
+
+Although after v6.8 it looks like there are some other black magics
+involved to prevent such block device being passed in.
+I tried the same custom block device node, it always resolves to
+"/dev/mapper/test-scratch1" in my case (and not even "/dev/dm-3").
+
+
+However there is still another problem, related to get_canonical_dev_path(=
+).
+
+As it still goes d_path(), it will return the path inside the namespace.
+Which can be very different from root namespace.
+
+So I'm wondering if we should even bother the device path resolution at
+all inside btrfs?
+Or the latest fsconfig API is already resolving the path correctly?
+
+Thanks,
+Qu
 
