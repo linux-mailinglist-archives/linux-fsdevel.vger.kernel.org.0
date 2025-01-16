@@ -1,132 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-39392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72373A13767
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:07:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016A4A137D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251CF3A3CC6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EE718889EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA001DDA14;
-	Thu, 16 Jan 2025 10:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFFC1DDC23;
+	Thu, 16 Jan 2025 10:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="CoQX2n/3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bXDHPm5z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LL47gL66"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1FE139566;
-	Thu, 16 Jan 2025 10:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C4A19006B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 10:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737022016; cv=none; b=JI6ANWUCC/2ySNOVOBp/aozKzcWJ7PQGo97COU+JVP5I87cS1uka3YDS7a7ZPEYd6r6nOdewb1AIIJiR8W4ceN65o7ocZLk7Zlm1Mhemrgf+1PJMaExqhJDZOIM7EoXqHtA/bFScjUbp2Ovb7en189h6+5pK6HDW6Z8fPQScMec=
+	t=1737023342; cv=none; b=vCIAvqi+3vqPAsT73EaSUT865MUIHkBGIXEEQef4ut6Hfv32mygD2zDX1MAySs50R23QpJymMMlsK2G1Q2B9+EXCzDu+8FZtVzk0OE8Flk3dTd4gvPNxrNoyTWMsBMdS0mPQ+CYaoEo1Ldt3Y1HeOcIE/fUl5kxsvU5fi9FPE3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737022016; c=relaxed/simple;
-	bh=ONZeRXWc/Nx1tVZLhzzRuMw+B4S9+XF017oOd3rmmp0=;
+	s=arc-20240116; t=1737023342; c=relaxed/simple;
+	bh=aUuO6YD6RW/QPwki9pe+Wo8mysfSgZr4wZKzLZlh8c4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJt1R8C6iupNMOb5hq4noC08lSvAkYqPr4tE8mEwQkTpQWhYPvAwSqI37s49Ph5RFNhpbAsUznWCVdlTCGA/8ulFMsiCrnGPY1sAIq01PC/DPkCnms44ze2fESMy/m2VzkC6dhJgeLvzoADWCS5Ag0GJ5X+yaIlsRPi7jpU1Bds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=CoQX2n/3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bXDHPm5z; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id AD2701380214;
-	Thu, 16 Jan 2025 05:06:52 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Thu, 16 Jan 2025 05:06:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1737022012; x=
-	1737108412; bh=0tT892uhiL7QMNNvHnCjlXYfFshAz5dRIry0POq56XE=; b=C
-	oQX2n/32pWnZz50MDzqam/VZMacQY/NiecHDd2xQ3fAUso7LfHAoZh7VC6aq7sjv
-	GS0oVSjpiX4MH+hPUMyvMcAJ7ks71F7px/6pCPkYs6fuWA5PYSmVPTO0NktYcljP
-	DPxcFWYTBbC8+Mk5zmj+Vf4UDnuT4wB4uNSl4RodfxQ3kaIu3lLLOvr2ke8cY67x
-	DsM2E/4m/yJ4dtM7i+0yHYyKmUS1NRHdYwfci5F/fWrH5BYkvFrkY3owV4zobeUd
-	jrm6yB0/rtbA64sPpFByQN8+Z6eVsr2Im4jIZUGq5zF7ZwrNDGEhliUqGjA2/E2F
-	UvWcDyu8yeJ3R5YlJZrKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1737022012; x=1737108412; bh=0tT892uhiL7QMNNvHnCjlXYfFshAz5dRIry
-	0POq56XE=; b=bXDHPm5zajtaACaH3zDfKyXxpn1+WLfJymO5MTZmkb/pVzEch9i
-	TogC6FjcsCNk2VJTk9Sx4n4k2oc50KURarwUf4Ktj184raWF6pJ6S8oTBnvK41J3
-	rV489Ih9f/LSxb/YLSM0wfbebDUNhA+0YZBWgDlXCfAPIvTgdP5I+qbqzM2pj70K
-	mvu/56VL3Sgwccr3AImrpMDNKA+I8EEdmgbenBKaQhmdYVx3voMe3jjc0Lstbq7D
-	tutDt2UYUrncC5UWPI4ei33cTRD0xZCyTx3Sbfxw5fP0F/K+8ggxwa5KFAMY9bGQ
-	rlzwuxzuqkp0HmRQ45n6+Lpp4pCdvWAZA9A==
-X-ME-Sender: <xms:O9qIZwxpFDfKgUZu488kcFkGeQChyP8k6ZB9nWlrAn_lPJPXWNWnpw>
-    <xme:O9qIZ0SeF1FiyrYtivlA8833n6HPWfDxSVXeMiY0p9X549GWNUtAy0qJ5bkH_Bsq2
-    3H1vIVT14i_5aep_Wg>
-X-ME-Received: <xmr:O9qIZyXTT5WT0jYMFhwetp9aFrJJpa9o3lu8FHqF3ZUUuW7GgnYDBNnQFxuxxLEPsA6TxQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeiuddguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
-    pegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehkvh
-    grtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhrgh
-    dprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
-    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhihse
-    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsghfohhsthgvrhesrhgvughhrght
-    rdgtohhm
-X-ME-Proxy: <xmx:O9qIZ-iQr0u37Mqhiv9rZVHLdAJcOwaf_j9N4ywR0z5M7TM27ILOLQ>
-    <xmx:O9qIZyDnFPhucWWeh9RAedMvIxzz7r38wy-8Hpk3PLvMNyp8RsVNuw>
-    <xmx:O9qIZ_LE87pXg5_dI8u4L1cSXObB8_1mWcymnv4OkTFKrFi3fQSIeg>
-    <xmx:O9qIZ5DYcXoP6N18kTJTrKz3TOAI9fQ5TmdWJjA8-li1giN3d2-cBA>
-    <xmx:PNqIZ6u76lx4RBEHPr7Zkg8jyJ3Za8RiTKoy6bUgE6_uHzfOotOL2GFm>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Jan 2025 05:06:48 -0500 (EST)
-Date: Thu, 16 Jan 2025 12:06:45 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, bfoster@redhat.com
-Subject: Re: [PATCHSET v8 0/12] Uncached buffered IO
-Message-ID: <y77zzxdd523ozv2awanakiemd7m2fb4ktpsmlp2evpohnllusw@gcmleh7vpjkr>
-References: <20241220154831.1086649-1-axboe@kernel.dk>
- <20250107193532.f8518eb71a469b023b6a9220@linux-foundation.org>
- <3cba2c9e-4136-4199-84a6-ddd6ad302875@kernel.dk>
- <20250113164650.5dfbc4f77c4b294bb004804c@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tM/ZPOpgcG50UH6bwZLBJIXEF95TjtSNgFuQKJVyzmnzAzjMMgExrOBZ+MYvY8vzTPg3Tt8iaSbUBZRntAJgL58i02X/wTA5oAmXxDOEue4jVDEUhYn8cZtjCZp9pBr5CYij//jMOUh9bjUh326HaRAifjsocdInck/9p3QhQAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LL47gL66; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B8DC4CED6;
+	Thu, 16 Jan 2025 10:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737023341;
+	bh=aUuO6YD6RW/QPwki9pe+Wo8mysfSgZr4wZKzLZlh8c4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LL47gL66erUzikx+paAP+IMUCEsWwuXYMG500fv8OgZbXv3u63zQQxHFUs7gmO79M
+	 4zTxYTIjsaV7uw9O36V04+XLrVp46CE3kNbanK/GkY4LfU1qYDCOgxcz14cdGwCEbW
+	 P6nv1vRJcaTo3eDNSZnBLVABytJpGS4O51k7hx6z46Pq3pmNxRV8pjoZlP5V6v9GIh
+	 xZ9H/zhdr4FnTxjeBUZkEVH6nUEGWMXvUn0jyYFx0JEvbe6SX1lXa8Zhc8PVwgFG+6
+	 voTTNPxlZKr+lINtT2wnzfAKVsswSxg0slx/FgYgH61f35Tzn5coF72isMUZ5u878e
+	 GuExa/CZnr7Dg==
+Date: Thu, 16 Jan 2025 11:28:57 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>, 
+	Carine Braun-Heneault <cbraunhe@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: mount api: Q on behavior of mount_single vs. get_tree_single
+Message-ID: <20250116-erbeben-waren-2ad516da1343@brauner>
+References: <732c3de1-ef0b-49a9-b2c2-0c3c5e718a40@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250113164650.5dfbc4f77c4b294bb004804c@linux-foundation.org>
+In-Reply-To: <732c3de1-ef0b-49a9-b2c2-0c3c5e718a40@redhat.com>
 
-On Mon, Jan 13, 2025 at 04:46:50PM -0800, Andrew Morton wrote:
-> > > Also, consuming a new page flag isn't a minor thing.  It would be nice
-> > > to see some justification around this, and some decription of how many
-> > > we have left.
-> > 
-> > For sure, though various discussions on this already occurred and Kirill
-> > posted patches for unifying some of this already. It's not something I
-> > wanted to tackle, as I think that should be left to people more familiar
-> > with the page/folio flags and they (sometimes odd) interactions.
+On Wed, Jan 15, 2025 at 10:50:31AM -0600, Eric Sandeen wrote:
+> I was finally getting back to some more mount API conversions,
+> and was looking at pstore, which I thought would be straightforward.
 > 
-> Matthew & Kirill: are you OK with merging this as-is and then
-> revisiting the page-flag consumption at a later time?
+> I noticed that mount options weren't being accepted, and I'm fairly
+> sure that this is because there's some internal or hidden mount of
+> pstore, and mount is actually a remount due to it using a single
+> superblock. (looks like it was some sort of clone mount done under
 
-I have tried to find a way to avoid adding a new flag bit, but I have not
-found one. I am okay with merging it as it is.
+Yes, some legacy filesystems behave that way unforunately.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> the covers by various processes, still not sure.)
+> 
+> In any case, that led me to wonder:
+> 
+> Should get_tree_single() be doing an explicit reconfigure like
+> mount_single does?
+> 
+> mount_single() {
+> ...
+>         if (!s->s_root) {
+>                 error = fill_super(s, data, flags & SB_SILENT ? 1 : 0);
+>                 if (!error)
+>                         s->s_flags |= SB_ACTIVE;
+>         } else {
+>                 error = reconfigure_single(s, flags, data);
+>         }
+> ...
+> 
+> My pstore problem abovec reminded me of the recent issue with tracefs
+> after the mount api conversion, fixed with:
+> 
+> e4d32142d1de tracing: Fix tracefs mount options
+> 
+> and discussed at:
+> 
+> https://lore.kernel.org/lkml/20241030171928.4168869-2-kaleshsingh@google.com/
+> 
+> which in turn reminded me of:
+> 
+> a6097180d884 devtmpfs regression fix: reconfigure on each mount
+> 
+> so we've seen this difference in behavior with get_tree_single twice already,
+> and then I ran into it again on pstore.
+> 
+> Should get_tree_single() callers be fixing this up themselves ala devtmpfs
+> and tracefs, or should get_tree_single() be handling this internally?
+
+I would think we should make this the filesystems problem or add a
+get_tree_single_reconfigure() helper that the few filesystems that need
+this behavior can use. Thoughts?
 
