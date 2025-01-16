@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-39364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA3DA1326C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 06:24:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E50A1325F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 06:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C49A3A696B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1913A656C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BED7E107;
-	Thu, 16 Jan 2025 05:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A718D18C03B;
+	Thu, 16 Jan 2025 05:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="dJc8U299"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Z7/zL4Wx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7C313B58C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251127E107;
 	Thu, 16 Jan 2025 05:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737005003; cv=none; b=eOcaSoin2jFfBgnqaJXQ0is1aT7sudycbvD3s+SQIBA0MIX9buiVbVf6ENgNilPFtcqYNLSNV9uvxOyk4C+GGA//4XFKueNXVFAE7TgA6/di4+OKTWVLUQb+fi0G4AgFRQeBFoWJP5Vim51+wul7mGdvzg+D36B/wTthPNYm7mU=
+	t=1737005002; cv=none; b=ezrYlx4CkPyC4jrHuXGB3o3QrPg0DnBQkS25Ybc0Z/0VV/kpb0mVgqgbRzzn9+KK0kovwiR/ToOxK0zbNF8wi1g618vG2xWY5d5q8ObYv/RF+nmhU8H74BQqHvnx1DA1cz+yspRqsQWNgF0cWNFL5tAOTyt/bc4tqDlSURhrXYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737005003; c=relaxed/simple;
-	bh=zIxB/xfAqHlBcdiFDzVxYd4JOE7HAWWShfu+sT0UAAk=;
+	s=arc-20240116; t=1737005002; c=relaxed/simple;
+	bh=8awRkImTYl91l1kNrYLY3TKshTKPtGZTfFFccw4m7jg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZXgS6Ch8HoDi6hlbAQkBa/VgkMAyWL4vroTWklkcvhnZ6nM7WRPG82bswZci9eqCwpvsJMsdfEIUlKva2n5DQCQ2EZmjjR/v1gVnH06f/TsG70w6A7IYdBfywvjS8KqTxgVZ90mEiCroDtAvKPmtbHQSGF5BqIxU0dLiTngyicI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=dJc8U299; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=AfcqvfAYii01v0w5EVNO0NpimFF4uqnOoPFbeEhMzkPNZvm2ZcnVNi6AFegvj5NYCm2UtdTEfBo4x782bauRiw6UKL+nNq3ncNIIGVh9gl+bBToWYsfL4who/ceGv+If5CNHGYQWwMzDapB0HxhFrcMRuni6IxAtbkvGJmLRCKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Z7/zL4Wx; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=0buG/7OZs9jtxpEEdWaf0bfk6vfpuorY4d+pCDs2m78=; b=dJc8U299mNNn8jgx/YIKoRb837
-	e7dEF7nWCaO0UqeNv/HsIjhfID9i2ZXJqYerN8W3ECyON/EZKxEX5MGNLUX16G+2OGHVMVYgd4ZW7
-	U7Br+xTwL4yZK3cWNVonopYjLmvrXBmagpTHYvSX0DbdoXakK9bPmBicAB7b0lV3X8sXWd3nqESlQ
-	fs4EsNJ7j0KJJUqcxERjP5Y44lSQFOYYerVLFtEX7zyYjMRQRqx0isR74fHOkwL2YhnNMF+jZnz60
-	VTOaZeDQRbK6kJxNZywdVSDwp/WP5pzU3nCvZSZcbvMHFWPSrzdSWEzTxnGRQJWFbDk4ZmHRFG7pd
-	KSdps7CA==;
+	bh=a8AXKvJQ+lijUKcnn/INkIbApsK2wys4MtYXJIQl7Y4=; b=Z7/zL4Wxr6opMuethQ6+4MNb9S
+	xqXhdsmUIYDxOi2Cj1GJTWIQPzkLByanbHd+m0byCnLhp/hJbOz+p/f7RO3qZW40jQgPx41Hmk0MY
+	GXI47gRvWPZZGKATahPrs0ydZTH77pBclXH0MrIl6Ubb8/wWtq4JORsIdO2kYhOlEgDwnDcW7iFel
+	nk0LtHKMHmkcNCUibLQNANkZvtx6WvyIlN3edkSLLs/7OAv7ScisDd7cLSR5jLRfZQPeAcmxaQIOO
+	F1PLRjD/R8yunCRyFxMmE0cMsFjavJcwRNS29VnIlSHF/CmVbZJzbtLvh88PYNMN/LnO0Kxl056L7
+	XLY9hfXQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYILe-000000022Gb-26TO;
+	id 1tYILe-000000022Gd-2WYd;
 	Thu, 16 Jan 2025 05:23:18 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -57,9 +57,9 @@ Cc: agruenba@redhat.com,
 	linux-nfs@vger.kernel.org,
 	miklos@szeredi.hu,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 05/20] ext4 fast_commit: make use of name_snapshot primitives
-Date: Thu, 16 Jan 2025 05:23:02 +0000
-Message-ID: <20250116052317.485356-5-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 06/20] generic_ci_d_compare(): use shortname_storage
+Date: Thu, 16 Jan 2025 05:23:03 +0000
+Message-ID: <20250116052317.485356-6-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250116052317.485356-1-viro@zeniv.linux.org.uk>
 References: <20250116052103.GF1977892@ZenIV>
@@ -73,98 +73,57 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... rather than open-coding them.  As a bonus, that avoids the pointless
-work with extra allocations, etc. for long names.
+... and check the "name might be unstable" predicate
+the right way.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ext4/fast_commit.c | 29 +++++------------------------
- fs/ext4/fast_commit.h |  3 +--
- 2 files changed, 6 insertions(+), 26 deletions(-)
+ fs/libfs.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-index 26c4fc37edcf..da4263a14a20 100644
---- a/fs/ext4/fast_commit.c
-+++ b/fs/ext4/fast_commit.c
-@@ -322,9 +322,7 @@ void ext4_fc_del(struct inode *inode)
- 	WARN_ON(!list_empty(&ei->i_fc_dilist));
- 	spin_unlock(&sbi->s_fc_lock);
- 
--	if (fc_dentry->fcd_name.name &&
--		fc_dentry->fcd_name.len > DNAME_INLINE_LEN)
--		kfree(fc_dentry->fcd_name.name);
-+	release_dentry_name_snapshot(&fc_dentry->fcd_name);
- 	kmem_cache_free(ext4_fc_dentry_cachep, fc_dentry);
- 
- 	return;
-@@ -449,22 +447,7 @@ static int __track_dentry_update(handle_t *handle, struct inode *inode,
- 	node->fcd_op = dentry_update->op;
- 	node->fcd_parent = dir->i_ino;
- 	node->fcd_ino = inode->i_ino;
--	if (dentry->d_name.len > DNAME_INLINE_LEN) {
--		node->fcd_name.name = kmalloc(dentry->d_name.len, GFP_NOFS);
--		if (!node->fcd_name.name) {
--			kmem_cache_free(ext4_fc_dentry_cachep, node);
--			ext4_fc_mark_ineligible(sb, EXT4_FC_REASON_NOMEM, handle);
--			mutex_lock(&ei->i_fc_lock);
--			return -ENOMEM;
--		}
--		memcpy((u8 *)node->fcd_name.name, dentry->d_name.name,
--			dentry->d_name.len);
--	} else {
--		memcpy(node->fcd_iname, dentry->d_name.name,
--			dentry->d_name.len);
--		node->fcd_name.name = node->fcd_iname;
--	}
--	node->fcd_name.len = dentry->d_name.len;
-+	take_dentry_name_snapshot(&node->fcd_name, dentry);
- 	INIT_LIST_HEAD(&node->fcd_dilist);
- 	spin_lock(&sbi->s_fc_lock);
- 	if (sbi->s_journal->j_flags & JBD2_FULL_COMMIT_ONGOING ||
-@@ -832,7 +815,7 @@ static bool ext4_fc_add_dentry_tlv(struct super_block *sb, u32 *crc,
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 748ac5923154..3ad1b1b7fed6 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1789,7 +1789,7 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
  {
- 	struct ext4_fc_dentry_info fcd;
- 	struct ext4_fc_tl tl;
--	int dlen = fc_dentry->fcd_name.len;
-+	int dlen = fc_dentry->fcd_name.name.len;
- 	u8 *dst = ext4_fc_reserve_space(sb,
- 			EXT4_FC_TAG_BASE_LEN + sizeof(fcd) + dlen, crc);
+ 	const struct dentry *parent;
+ 	const struct inode *dir;
+-	char strbuf[DNAME_INLINE_LEN];
++	union shortname_store strbuf;
+ 	struct qstr qstr;
  
-@@ -847,7 +830,7 @@ static bool ext4_fc_add_dentry_tlv(struct super_block *sb, u32 *crc,
- 	dst += EXT4_FC_TAG_BASE_LEN;
- 	memcpy(dst, &fcd, sizeof(fcd));
- 	dst += sizeof(fcd);
--	memcpy(dst, fc_dentry->fcd_name.name, dlen);
-+	memcpy(dst, fc_dentry->fcd_name.name.name, dlen);
+ 	/*
+@@ -1809,22 +1809,23 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+ 	if (!dir || !IS_CASEFOLDED(dir))
+ 		return 1;
  
- 	return true;
- }
-@@ -1328,9 +1311,7 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
- 		list_del_init(&fc_dentry->fcd_dilist);
- 		spin_unlock(&sbi->s_fc_lock);
- 
--		if (fc_dentry->fcd_name.name &&
--			fc_dentry->fcd_name.len > DNAME_INLINE_LEN)
--			kfree(fc_dentry->fcd_name.name);
-+		release_dentry_name_snapshot(&fc_dentry->fcd_name);
- 		kmem_cache_free(ext4_fc_dentry_cachep, fc_dentry);
- 		spin_lock(&sbi->s_fc_lock);
++	qstr.len = len;
++	qstr.name = str;
+ 	/*
+ 	 * If the dentry name is stored in-line, then it may be concurrently
+ 	 * modified by a rename.  If this happens, the VFS will eventually retry
+ 	 * the lookup, so it doesn't matter what ->d_compare() returns.
+ 	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
+ 	 * string.  Therefore, we have to copy the name into a temporary buffer.
++	 * As above, len is guaranteed to match str, so the shortname case
++	 * is exactly when str points to ->d_shortname.
+ 	 */
+-	if (len <= DNAME_INLINE_LEN - 1) {
+-		memcpy(strbuf, str, len);
+-		strbuf[len] = 0;
+-		str = strbuf;
++	if (qstr.name == dentry->d_shortname.string) {
++		strbuf = dentry->d_shortname; // NUL is guaranteed to be in there
++		qstr.name = strbuf.string;
+ 		/* prevent compiler from optimizing out the temporary buffer */
+ 		barrier();
  	}
-diff --git a/fs/ext4/fast_commit.h b/fs/ext4/fast_commit.h
-index 2fadb2c4780c..3bd534e4dbbf 100644
---- a/fs/ext4/fast_commit.h
-+++ b/fs/ext4/fast_commit.h
-@@ -109,8 +109,7 @@ struct ext4_fc_dentry_update {
- 	int fcd_op;		/* Type of update create / unlink / link */
- 	int fcd_parent;		/* Parent inode number */
- 	int fcd_ino;		/* Inode number */
--	struct qstr fcd_name;	/* Dirent name */
--	unsigned char fcd_iname[DNAME_INLINE_LEN];	/* Dirent name string */
-+	struct name_snapshot fcd_name;	/* Dirent name */
- 	struct list_head fcd_list;
- 	struct list_head fcd_dilist;
- };
+-	qstr.len = len;
+-	qstr.name = str;
+ 
+ 	return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
+ }
 -- 
 2.39.5
 
