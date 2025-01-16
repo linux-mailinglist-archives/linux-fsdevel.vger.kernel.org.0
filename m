@@ -1,103 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-39391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A255A13765
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:06:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72373A13767
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85176188A391
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251CF3A3CC6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DF41DDA35;
-	Thu, 16 Jan 2025 10:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA001DDA14;
+	Thu, 16 Jan 2025 10:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MK4OtRqt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a7EWIuQJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MK4OtRqt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a7EWIuQJ"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="CoQX2n/3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bXDHPm5z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A621156C76;
-	Thu, 16 Jan 2025 10:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1FE139566;
+	Thu, 16 Jan 2025 10:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737021984; cv=none; b=FwBNJp7DBsTYtAGU8kDwOrwtzpbizWJYxyOsXFVrKf8UuQUF5Zy2F7sCYhix/vb1bXe/o3gmjTPxHLyyWGRvjYOUNYzdvr05yNBdIlBpG9QjdWSvjlXM3VUFNUkuDE4EFmMYgHpEAu5QUX/VsRS5P9WUdUWP/jDu3VTc7IfzJhM=
+	t=1737022016; cv=none; b=JI6ANWUCC/2ySNOVOBp/aozKzcWJ7PQGo97COU+JVP5I87cS1uka3YDS7a7ZPEYd6r6nOdewb1AIIJiR8W4ceN65o7ocZLk7Zlm1Mhemrgf+1PJMaExqhJDZOIM7EoXqHtA/bFScjUbp2Ovb7en189h6+5pK6HDW6Z8fPQScMec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737021984; c=relaxed/simple;
-	bh=kaFgQcnk6WlYe7pfq08jmdgw5+Z1z/+zioMakFLI9io=;
+	s=arc-20240116; t=1737022016; c=relaxed/simple;
+	bh=ONZeRXWc/Nx1tVZLhzzRuMw+B4S9+XF017oOd3rmmp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=laobbXVorr8LQUUk+dLDesOjyHcDeX3Ys7/M+T6lRJt4/j8hcTlGP92fmdQI3/ojXcqdYBhPMYvAC7g7saqE2tuU45pXOoFoUV3okPAHu9fknopsyr0t6M1XgGxIxS0JPYM0+SOwqZJ/dMKekSIK4ERA+41/iJGQp0FB81sdPd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MK4OtRqt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a7EWIuQJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MK4OtRqt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a7EWIuQJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DA2C211C7;
-	Thu, 16 Jan 2025 10:06:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737021980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
-	b=MK4OtRqtRx3QneHmrVf60GXFWHNz5LOnFSYkbJLWqi5ty3Qg5sRE5bzYWoEBG36zreoXVl
-	S2LJl+1OCCI/QLhhX1YSwHPoREAu4b/K8x2oPylYwSuBWGMQtLTeQSWsyjT545/wJzbClg
-	8uXwtOAXTlXoIXSV4qmDpxZ70On0knQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737021980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
-	b=a7EWIuQJS12/MogplZHAW00dFUdFG8jzuSJTerDWLuu4TpaHNJR4PoZuZXIIIjdegsjVQw
-	JtESwAjnKjM8DWDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737021980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
-	b=MK4OtRqtRx3QneHmrVf60GXFWHNz5LOnFSYkbJLWqi5ty3Qg5sRE5bzYWoEBG36zreoXVl
-	S2LJl+1OCCI/QLhhX1YSwHPoREAu4b/K8x2oPylYwSuBWGMQtLTeQSWsyjT545/wJzbClg
-	8uXwtOAXTlXoIXSV4qmDpxZ70On0knQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737021980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
-	b=a7EWIuQJS12/MogplZHAW00dFUdFG8jzuSJTerDWLuu4TpaHNJR4PoZuZXIIIjdegsjVQw
-	JtESwAjnKjM8DWDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7039D13A57;
-	Thu, 16 Jan 2025 10:06:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vHRZGxzaiGcmIAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 16 Jan 2025 10:06:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2F793A08E0; Thu, 16 Jan 2025 11:06:20 +0100 (CET)
-Date: Thu, 16 Jan 2025 11:06:20 +0100
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
-	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, linux-nfs@vger.kernel.org, 
-	miklos@szeredi.hu, torvalds@linux-foundation.org
-Subject: Re: [PATCH v2 04/20] dissolve external_name.u into separate members
-Message-ID: <p2e3b3ygbr6p2xxy62opacwspphbxaufdsaoyhmpzfeuqw7gzd@22tpnvoudooc>
-References: <20250116052103.GF1977892@ZenIV>
- <20250116052317.485356-1-viro@zeniv.linux.org.uk>
- <20250116052317.485356-4-viro@zeniv.linux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJt1R8C6iupNMOb5hq4noC08lSvAkYqPr4tE8mEwQkTpQWhYPvAwSqI37s49Ph5RFNhpbAsUznWCVdlTCGA/8ulFMsiCrnGPY1sAIq01PC/DPkCnms44ze2fESMy/m2VzkC6dhJgeLvzoADWCS5Ag0GJ5X+yaIlsRPi7jpU1Bds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=CoQX2n/3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bXDHPm5z; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id AD2701380214;
+	Thu, 16 Jan 2025 05:06:52 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 16 Jan 2025 05:06:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1737022012; x=
+	1737108412; bh=0tT892uhiL7QMNNvHnCjlXYfFshAz5dRIry0POq56XE=; b=C
+	oQX2n/32pWnZz50MDzqam/VZMacQY/NiecHDd2xQ3fAUso7LfHAoZh7VC6aq7sjv
+	GS0oVSjpiX4MH+hPUMyvMcAJ7ks71F7px/6pCPkYs6fuWA5PYSmVPTO0NktYcljP
+	DPxcFWYTBbC8+Mk5zmj+Vf4UDnuT4wB4uNSl4RodfxQ3kaIu3lLLOvr2ke8cY67x
+	DsM2E/4m/yJ4dtM7i+0yHYyKmUS1NRHdYwfci5F/fWrH5BYkvFrkY3owV4zobeUd
+	jrm6yB0/rtbA64sPpFByQN8+Z6eVsr2Im4jIZUGq5zF7ZwrNDGEhliUqGjA2/E2F
+	UvWcDyu8yeJ3R5YlJZrKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1737022012; x=1737108412; bh=0tT892uhiL7QMNNvHnCjlXYfFshAz5dRIry
+	0POq56XE=; b=bXDHPm5zajtaACaH3zDfKyXxpn1+WLfJymO5MTZmkb/pVzEch9i
+	TogC6FjcsCNk2VJTk9Sx4n4k2oc50KURarwUf4Ktj184raWF6pJ6S8oTBnvK41J3
+	rV489Ih9f/LSxb/YLSM0wfbebDUNhA+0YZBWgDlXCfAPIvTgdP5I+qbqzM2pj70K
+	mvu/56VL3Sgwccr3AImrpMDNKA+I8EEdmgbenBKaQhmdYVx3voMe3jjc0Lstbq7D
+	tutDt2UYUrncC5UWPI4ei33cTRD0xZCyTx3Sbfxw5fP0F/K+8ggxwa5KFAMY9bGQ
+	rlzwuxzuqkp0HmRQ45n6+Lpp4pCdvWAZA9A==
+X-ME-Sender: <xms:O9qIZwxpFDfKgUZu488kcFkGeQChyP8k6ZB9nWlrAn_lPJPXWNWnpw>
+    <xme:O9qIZ0SeF1FiyrYtivlA8833n6HPWfDxSVXeMiY0p9X549GWNUtAy0qJ5bkH_Bsq2
+    3H1vIVT14i_5aep_Wg>
+X-ME-Received: <xmr:O9qIZyXTT5WT0jYMFhwetp9aFrJJpa9o3lu8FHqF3ZUUuW7GgnYDBNnQFxuxxLEPsA6TxQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeiuddguddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
+    pegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehkvh
+    grtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhrgh
+    dprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhihse
+    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsghfohhsthgvrhesrhgvughhrght
+    rdgtohhm
+X-ME-Proxy: <xmx:O9qIZ-iQr0u37Mqhiv9rZVHLdAJcOwaf_j9N4ywR0z5M7TM27ILOLQ>
+    <xmx:O9qIZyDnFPhucWWeh9RAedMvIxzz7r38wy-8Hpk3PLvMNyp8RsVNuw>
+    <xmx:O9qIZ_LE87pXg5_dI8u4L1cSXObB8_1mWcymnv4OkTFKrFi3fQSIeg>
+    <xmx:O9qIZ5DYcXoP6N18kTJTrKz3TOAI9fQ5TmdWJjA8-li1giN3d2-cBA>
+    <xmx:PNqIZ6u76lx4RBEHPr7Zkg8jyJ3Za8RiTKoy6bUgE6_uHzfOotOL2GFm>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 Jan 2025 05:06:48 -0500 (EST)
+Date: Thu, 16 Jan 2025 12:06:45 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org, 
+	willy@infradead.org, bfoster@redhat.com
+Subject: Re: [PATCHSET v8 0/12] Uncached buffered IO
+Message-ID: <y77zzxdd523ozv2awanakiemd7m2fb4ktpsmlp2evpohnllusw@gcmleh7vpjkr>
+References: <20241220154831.1086649-1-axboe@kernel.dk>
+ <20250107193532.f8518eb71a469b023b6a9220@linux-foundation.org>
+ <3cba2c9e-4136-4199-84a6-ddd6ad302875@kernel.dk>
+ <20250113164650.5dfbc4f77c4b294bb004804c@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,127 +109,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250116052317.485356-4-viro@zeniv.linux.org.uk>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,redhat.com,gmail.com,kernel.org,omnibond.com,suse.cz,szeredi.hu,linux-foundation.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250113164650.5dfbc4f77c4b294bb004804c@linux-foundation.org>
 
-On Thu 16-01-25 05:23:01, Al Viro wrote:
-> kept separate from the previous commit to keep the noise separate
-> from actual changes...
+On Mon, Jan 13, 2025 at 04:46:50PM -0800, Andrew Morton wrote:
+> > > Also, consuming a new page flag isn't a minor thing.  It would be nice
+> > > to see some justification around this, and some decription of how many
+> > > we have left.
+> > 
+> > For sure, though various discussions on this already occurred and Kirill
+> > posted patches for unifying some of this already. It's not something I
+> > wanted to tackle, as I think that should be left to people more familiar
+> > with the page/folio flags and they (sometimes odd) interactions.
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Matthew & Kirill: are you OK with merging this as-is and then
+> revisiting the page-flag consumption at a later time?
 
-Looks good. Feel free to add:
+I have tried to find a way to avoid adding a new flag bit, but I have not
+found one. I am okay with merging it as it is.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/dcache.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index f387dc97df86..6f36d3e8c739 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -296,10 +296,8 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  }
->  
->  struct external_name {
-> -	struct {
-> -		atomic_t count;		// ->count and ->head can't be combined
-> -		struct rcu_head head;	// see take_dentry_name_snapshot()
-> -	} u;
-> +	struct rcu_head head;	// ->head and ->count can't be combined
-> +	atomic_t count;		// see take_dentry_name_snapshot()
->  	unsigned char name[];
->  };
->  
-> @@ -344,7 +342,7 @@ void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry
->  		struct external_name *p;
->  		p = container_of(s, struct external_name, name[0]);
->  		// get a valid reference
-> -		if (unlikely(!atomic_inc_not_zero(&p->u.count)))
-> +		if (unlikely(!atomic_inc_not_zero(&p->count)))
->  			goto retry;
->  		name->name.name = s;
->  	}
-> @@ -361,8 +359,8 @@ void release_dentry_name_snapshot(struct name_snapshot *name)
->  	if (unlikely(name->name.name != name->inline_name.string)) {
->  		struct external_name *p;
->  		p = container_of(name->name.name, struct external_name, name[0]);
-> -		if (unlikely(atomic_dec_and_test(&p->u.count)))
-> -			kfree_rcu(p, u.head);
-> +		if (unlikely(atomic_dec_and_test(&p->count)))
-> +			kfree_rcu(p, head);
->  	}
->  }
->  EXPORT_SYMBOL(release_dentry_name_snapshot);
-> @@ -400,7 +398,7 @@ static void dentry_free(struct dentry *dentry)
->  	WARN_ON(!hlist_unhashed(&dentry->d_u.d_alias));
->  	if (unlikely(dname_external(dentry))) {
->  		struct external_name *p = external_name(dentry);
-> -		if (likely(atomic_dec_and_test(&p->u.count))) {
-> +		if (likely(atomic_dec_and_test(&p->count))) {
->  			call_rcu(&dentry->d_u.d_rcu, __d_free_external);
->  			return;
->  		}
-> @@ -1681,7 +1679,7 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
->  			kmem_cache_free(dentry_cache, dentry); 
->  			return NULL;
->  		}
-> -		atomic_set(&p->u.count, 1);
-> +		atomic_set(&p->count, 1);
->  		dname = p->name;
->  	} else  {
->  		dname = dentry->d_shortname.string;
-> @@ -2774,15 +2772,15 @@ static void copy_name(struct dentry *dentry, struct dentry *target)
->  	if (unlikely(dname_external(dentry)))
->  		old_name = external_name(dentry);
->  	if (unlikely(dname_external(target))) {
-> -		atomic_inc(&external_name(target)->u.count);
-> +		atomic_inc(&external_name(target)->count);
->  		dentry->d_name = target->d_name;
->  	} else {
->  		dentry->d_shortname = target->d_shortname;
->  		dentry->d_name.name = dentry->d_shortname.string;
->  		dentry->d_name.hash_len = target->d_name.hash_len;
->  	}
-> -	if (old_name && likely(atomic_dec_and_test(&old_name->u.count)))
-> -		kfree_rcu(old_name, u.head);
-> +	if (old_name && likely(atomic_dec_and_test(&old_name->count)))
-> +		kfree_rcu(old_name, head);
->  }
->  
->  /*
-> -- 
-> 2.39.5
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+  Kiryl Shutsemau / Kirill A. Shutemov
 
