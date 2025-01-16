@@ -1,210 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-39422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1EDA14039
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 18:06:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00048A1403C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 18:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02762162135
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 17:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE193AB99D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 17:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCAB22D4E1;
-	Thu, 16 Jan 2025 17:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402ED22E40F;
+	Thu, 16 Jan 2025 17:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwB6iJlX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13FC1547FE;
-	Thu, 16 Jan 2025 17:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D8522C9F7;
+	Thu, 16 Jan 2025 17:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737047089; cv=none; b=rNiCeWS8KzaBgd7kpgyk9ILUQBFoojqMveHAkMyYg6nBd4WJrZ33OEwOEMWxoauS7K2UrcicD4dKMv91XZOw08r3e4jOfGCSaOnnNo0ZIyq+/2hZ7HqnVWoJ2Tn9LmfZ1EuUIS++Sw7RfOWZOKhBZGEHoNmivp7WQdk6AiLz63c=
+	t=1737047109; cv=none; b=JAENyoygshHrOtC4oF3UeycFTHweejrEinr47D3Ode715TQ/KBMuoO+Y5NeHvYkKlGrulZtkGOU25qdu4ZMG/GNr9EIbqPcuFyyKj6+uBk/Wu3XiWJ9zrSa8W917YXVQdElwoT8+lhEtPLY/ctJug8GFadPu23BDNxaitnSOkgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737047089; c=relaxed/simple;
-	bh=zBDXu0nIJGNTWyI7jqJS7KFZo3Hc9XU/2UYsRXjc/RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4d5t0E3y/gM5zyCHEXUbQcAYcqQZlCJgJ+1cxW31cLPE9LplJTYsOAs2ONAuNTQCNA3A5xrlu57cRvpVF9JG/SqIIxesOP+kb/cImGhFfxYdx2We+eibKzwIltG3mjCsrQOwnr/qa+dyVgJMLnVllth55XBdHlwJSFT6mn4D9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
+	s=arc-20240116; t=1737047109; c=relaxed/simple;
+	bh=bt9y7VMDd0fT8+5ucQ7LFgobPd/mUYZhUZBToLQTzzw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NaPSsMvz2c4Uw8Ak5/dEUrsW8jV+9fhcbNG3/ohTxWVinMrwt0/Wirt3S2duP1LXeqR9Zjhg/9fwRjnummFesnrZFWoVDMS91+Yzu6Purr5+gN9oOP2Drfdo0yrnR/rEykCciLmhY7pk6vS3duRHumaKTcZj/LD0Cr1i1bJ7jD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwB6iJlX; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6d896be3992so8985026d6.1;
-        Thu, 16 Jan 2025 09:04:47 -0800 (PST)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ef28f07dbaso1737991a91.2;
+        Thu, 16 Jan 2025 09:05:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737047107; x=1737651907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fnpCMEbA1t6ETGycFi8o/fEWUvj0t1FqGQCoyHe7flA=;
+        b=fwB6iJlXNcNTWpfWl6C1N2roLwK932b65H1gSHa8xdXVUAvX2TrRl0bMl7w+GD7Y/+
+         POBBfJZWrHJjYdxjvAXgCcQw9gBh7ALjE7fvvlOS8Azjkhg7nD4YrbWU0G3tmOB+xpWR
+         B7oPox47EFzWb6DjQSjxxq8EXIZHq2Gk4EfC6p4g/r8/sgIvUt5sSVCC8gFiRv+mAukg
+         kPCGCZaQ7i51TeZS40O+i7xzHbrUoPN+vd1EMFJWh2RCmfV3CHzRlqkYiHtBpx4YLFI4
+         kFSjhiaQ24VJubpa0PPSI0Xwaj1Wsdhh0gawjloGg/g7TYBNjYeKG6TShxhSwrEDrlyq
+         SuRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737047087; x=1737651887;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H0ItbpnNp/vbadPeHlv4wbai1YbJmLUEJ6P7GuBf1GQ=;
-        b=Kr513zWUCqwFJ2k7uw3abVXB6EXIp2nZZ6FUJUWSyN+v3bg3YUj6EDHpk4W3AsaIka
-         +cW4pYboMHQqb98CsysP7iGxv5Yydi8lwhmBHTJicjuD06oqfRf+W6nEQ60mjwfFFV5B
-         NyPsEpeNDB2Yaop1sT1xmC7fO+43AGPngzqrIBb4m0Moz566+EEp+Q+Agzh0FOXtfqff
-         GgydGvm8HhOJ4aeTq55mHxiMW1/riR4Wu2NH+qcIJLJJH29sS1/RbiUocTgsfRpRfU1H
-         QBFTu3m2mOTq4qe8mhG893bZOzF2hdpfnJf46oSy4B8YP5F0v+kVbkaCfrDArIRJ1dkV
-         SjMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkImSplobujzpOECR42Az9LipMrG0m8I44MrobnbbAxdZ8Mn44FT1L7Dw04CVOOoT4E3NDed1tNcB0uEiC@vger.kernel.org, AJvYcCWrM1RKXdnF6wjIdFQRnBt9HxyhsDEoCCkYNfpkqhckXQaux2GWa0vuBd5ZUsHXvQM5Q5VpOB9jwUWK+xgW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMoj71JpbkN+K3/F2FGrrQvXmLSkdYZYvpWQRokee7+V+04cyY
-	xBKIOEf3qECASGjVhL0wgRzNilfdrJaDuHkb0xdnpqTJZUd6z/AY
-X-Gm-Gg: ASbGnctZ14Vvf+SUcXvGmqTh2BrC8F3G5TGOucIWz8wLQKfq361YaOm0splwYfu8zRj
-	YyITiAy5OexyqpbzGycceE7RDno1ewnuQ7wGTZ2l7gJsou/zjVA1nbcnKWLNba/iek02zm51HrB
-	7CRWZ1Z+DdLmLVQiyaNtyLhE1NE3XUkEmdFiB7dhvtin/03VwSGPuD6hmdi/y+odXaFb/CmWwRZ
-	OwlJ7/c0tAZiEGQ/ew+U9zEwXD3PwoPFKug9INrbqZZj0+bnHBtj9Cf9geHpxk=
-X-Google-Smtp-Source: AGHT+IFf1ZSMof1IFnL99dQ8wtm729SOP4YbYpyj9N1PJK1Wn4HvIq1qLj6JoBsw9AssD2XGTQXlfg==
-X-Received: by 2002:a05:6214:1249:b0:6d8:b371:6a0f with SMTP id 6a1803df08f44-6df9b2d5c50mr578194806d6.31.1737047086881;
-        Thu, 16 Jan 2025 09:04:46 -0800 (PST)
-Received: from gmail.com ([192.159.180.233])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e1afce4129sm1682516d6.102.2025.01.16.09.04.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 09:04:46 -0800 (PST)
-Date: Thu, 16 Jan 2025 12:04:44 -0500
-From: Tavian Barnes <tavianator@tavianator.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coredump: allow interrupting dumps of large anonymous
- regions
-Message-ID: <Z4k68Clw4k2g2OgK@tachyon.localdomain>
-References: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
- <t2cucclkkxj65fk7nknzogbeobyq7tgx4klep77ptnnlfrv34e@vjkzxymgnr4r>
- <63wvjel64hsft4clgeayaorx3v7txvqh264mw7ionlbmmve7pj@eblpknd677zf>
- <CAGudoHFg4BgeygyKV8tY_2Dk4cv9zwQnU6-n7jSxjwyyXzau6g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1737047107; x=1737651907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fnpCMEbA1t6ETGycFi8o/fEWUvj0t1FqGQCoyHe7flA=;
+        b=fa/e4I8+fP43HAri8aynm0L7NxdRa2HUGvyOFAJgbZwBP/JjHsFUYx75b4AYXj0Thb
+         vh1quvBj27YrpVDVDDFDLtM68jnGej6/eVurzGJNi8F3gINkG5pzUjjxgfOfVo9j5EVR
+         VbK+kc0Zen0TISvp/XQmvXLUv47c03zG4CVMWvG4eF/osyMmGlZOxWgUDjJBHkOY9+Ly
+         zTZing8jZDfqeqvROHKYf92UJrh1f0af34vb+333m6tFEL6f+PxSwsZU3Q7sDIURDmlW
+         QW6v0nENOxFQaXBu07349SAaHfXpga9QWtWUvuu7ojc2w8F+xE1RkaeR4MUrjHmXKip3
+         l1qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSXcurdNwXLDdXiPt+7kIEBIq6yITmqZAJyGQ5JC3Lwf0h71N44xRPC0B8EQ+PeEdUACFB/tNvUHdGOlyK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGbEwEnPHYZSR20yMXCXuO/lFtZxgfaI8ZyNbopBmjTFHXJAhQ
+	Wpcbi5yCnsA2Wdlr0NlTlAF1QjxxLKXNEdhKzlhJUW0E7HehdS4oUYVJJtCnYTjL2Y/QmkhYm7t
+	D2dlhbGnHlQYdSWl4A7Gp2WgREOFdMB+J
+X-Gm-Gg: ASbGncs/Bvmrd0Tf5y6LRjgIz0m6KUAQGEuAiLw4JQPomlxqyck0Lto6UjkVQzcIss6
+	MnLko3XmmNDzabSAmS6rRf9E51NGLEDnVOz2RkQ==
+X-Google-Smtp-Source: AGHT+IEqp9NlkXPCINvC+Ma4YceyC/nQi+JWYo90oQd4Hq8BFTq0yAfo662i/zn1B/F5a2ledPo7J1qBRO3TlC9rBEA=
+X-Received: by 2002:a17:90b:5448:b0:2f4:f7f8:fc8b with SMTP id
+ 98e67ed59e1d1-2f548f1c430mr46508897a91.27.1737047107199; Thu, 16 Jan 2025
+ 09:05:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFg4BgeygyKV8tY_2Dk4cv9zwQnU6-n7jSxjwyyXzau6g@mail.gmail.com>
+References: <9a168461fc4665edffde6d8606920a34312f8932.camel@ibm.com>
+ <CAOi1vP9uiR_7R-sa7-5tBU853uNVo6wPBBHDpEib3CyRvWsqLQ@mail.gmail.com> <6d4a79f4f0ac82f9287168a55694b7768d5b235d.camel@ibm.com>
+In-Reply-To: <6d4a79f4f0ac82f9287168a55694b7768d5b235d.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 16 Jan 2025 18:04:55 +0100
+X-Gm-Features: AbW1kvYrcitg_iSqYwzYOXBFanVO8UXDVo_r08dfBB7Psr1-01ICgvn7Wff9E6k
+Message-ID: <CAOi1vP-J8Od5UQGPX6P=+SZw_YTa+yg+S=EBgKB5LRKCsdvW1A@mail.gmail.com>
+Subject: Re: [PATCH] ceph: Introduce CONFIG_CEPH_LIB_DEBUG and CONFIG_CEPH_FS_DEBUG
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 16, 2025 at 01:04:42PM +0100, Mateusz Guzik wrote:
-> On Thu, Jan 16, 2025 at 10:56 AM Jan Kara <jack@suse.cz> wrote:
+On Thu, Jan 16, 2025 at 3:01=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> Hi Ilya,
+>
+> On Thu, 2025-01-16 at 00:04 +0100, Ilya Dryomov wrote:
+> > On Wed, Jan 15, 2025 at 1:41=E2=80=AFAM Viacheslav Dubeyko
+> > <Slava.Dubeyko@ibm.com> wrote:
+> > >
+> > >
+>
+> <skipped>
+>
+> > >
+> > > -void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor
+> > > *cursor,
+> > > -                              struct ceph_msg *msg, size_t length)
+> > > +int ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+> > > +                             struct ceph_msg *msg, size_t length)
+> > >  {
+> > > +#ifdef CONFIG_CEPH_LIB_DEBUG
+> > >         BUG_ON(!length);
+> > >         BUG_ON(length > msg->data_length);
+> > >         BUG_ON(!msg->num_data_items);
+> > > +#else
+> > > +       if (!length)
+> > > +               return -EINVAL;
+> > > +
+> > > +       if (length > msg->data_length)
+> > > +               return -EINVAL;
+> > > +
+> > > +       if (!msg->num_data_items)
+> > > +               return -EINVAL;
+> > > +#endif /* CONFIG_CEPH_LIB_DEBUG */
 > >
-> > On Thu 16-01-25 08:46:48, Mateusz Guzik wrote:
-> > > On Wed, Jan 15, 2025 at 11:05:38PM -0500, Tavian Barnes wrote:
-> > > > dump_user_range() supports sparse core dumps by skipping anonymous pages
-> > > > which have not been modified.  If get_dump_page() returns NULL, the page
-> > > > is skipped rather than written to the core dump with dump_emit_page().
-> > > >
-> > > > Sadly, dump_emit_page() contains the only check for dump_interrupted(),
-> > > > so when dumping a very large sparse region, the core dump becomes
-> > > > effectively uninterruptible.  This can be observed with the following
-> > > > test program:
-> > > >
-> > > >     #include <stdlib.h>
-> > > >     #include <stdio.h>
-> > > >     #include <sys/mman.h>
-> > > >
-> > > >     int main(void) {
-> > > >         char *mem = mmap(NULL, 1ULL << 40, PROT_READ | PROT_WRITE,
-> > > >                 MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
-> > > >         printf("%p %m\n", mem);
-> > > >         if (mem != MAP_FAILED) {
-> > > >                 mem[0] = 1;
-> > > >         }
-> > > >         abort();
-> > > >     }
-> > > >
-> > > > The program allocates 1 TiB of anonymous memory, touches one page of it,
-> > > > and aborts.  During the core dump, SIGKILL has no effect.  It takes
-> > > > about 30 seconds to finish the dump, burning 100% CPU.
-> > > >
-> > >
-> > > While the patch makes sense to me, this should not be taking anywhere
-> > > near this much time and plausibly after unscrewing it will stop being a
-> > > factor.
-> > >
-> > > So I had a look with a profiler:
-> > > -   99.89%     0.00%  a.out
-> > >      entry_SYSCALL_64_after_hwframe
-> > >      do_syscall_64
-> > >      syscall_exit_to_user_mode
-> > >      arch_do_signal_or_restart
-> > >    - get_signal
-> > >       - 99.89% do_coredump
-> > >          - 99.88% elf_core_dump
-> > >             - dump_user_range
-> > >                - 98.12% get_dump_page
-> > >                   - 64.19% __get_user_pages
-> > >                      - 40.92% gup_vma_lookup
-> > >                         - find_vma
-> > >                            - mt_find
-> > >                                 4.21% __rcu_read_lock
-> > >                                 1.33% __rcu_read_unlock
-> > >                      - 3.14% check_vma_flags
-> > >                           0.68% vma_is_secretmem
-> > >                        0.61% __cond_resched
-> > >                        0.60% vma_pgtable_walk_end
-> > >                        0.59% vma_pgtable_walk_begin
-> > >                        0.58% no_page_table
-> > >                   - 15.13% down_read_killable
-> > >                        0.69% __cond_resched
-> > >                     13.84% up_read
-> > >                  0.58% __cond_resched
-> > >
-> > >
-> > > Almost 29% of time is spent relocking the mmap semaphore in
-> > > __get_user_pages. This most likely can operate locklessly in the fast
-> > > path. Even if somehow not, chances are the lock can be held across
-> > > multiple calls.
-> > >
-> > > mt_find spends most of it's time issuing a rep stos of 48 bytes (would
-> > > be faster to rep mov 6 times instead). This is the compiler being nasty,
-> > > I'll maybe look into it.
-> > >
-> > > However, I strongly suspect the current iteration method is just slow
-> > > due to repeat mt_find calls and The Right Approach(tm) would make this
-> > > entire thing finish within miliseconds by iterating the maple tree
-> > > instead, but then the mm folk would have to be consulted on how to
-> > > approach this and it may be time consuming to implement.
-> > >
-> > > Sorting out relocking should be an easily achievable & measurable win
-> > > (no interest on my end).
+> > Hi Slava,
 > >
-> > As much as I agree the code is dumb, doing what you suggest with mmap_sem
-> > isn't going to be easy. You cannot call dump_emit_page() with mmap_sem held
-> > as that will cause lock inversion between mmap_sem and whatever filesystem
-> > locks we have to take. So the fix would have to involve processing larger
-> > batches of address space at once (which should also somewhat amortize the
-> > __get_user_pages() setup costs). Not that hard to do but I wanted to spell
-> > it out in case someone wants to pick up this todo item :)
+> > I don't think this is a good idea.  I'm all for returning errors
+> > where
+> > it makes sense and is possible and such cases don't actually need to
+> > be
+> > conditioned on a CONFIG option.  Here, this EINVAL error would be
+> > raised very far away from the cause -- potentially seconds later and
+> > in
+> > a different thread or even a different kernel module.  It would still
+> > (eventually) hang the client because the messenger wouldn't be able
+> > to
+> > make progress for that connection/session.
 > >
-> 
-> Is the lock really needed to begin with?
-> 
-> Suppose it is.
-> 
-> In this context there are next to no pages found, but there is a
-> gazillion relocks as the entire VA is being walked.
+>
+> First of all, let's split the patch on two parts:
+> (1) CONFIG options suggestion;
+> (2) practical application of CONFIG option.
+>
+> I believe that such CONFIG option is useful for adding
+> pre-condition and post-condition checks in methods that
+> could be executed in debug compilation and it will be
+> excluded from release compilation for production case.
+>
+> Potentially, the first application of this CONFIG option
+> is not good enough. However, the kernel crash is good for
+> the problem investigation (debug compilation, for example),
+> but end-user would like to see working kernel but not crashed one.
+> And returning error is a way to behave in a nice way,
+> from my point of view.
 
-Do I understand correctly that all the relocks are to look up the VMA
-associated with each address, one page at a time?  That's especially
-wasteful as dump_user_range() is called separately for each VMA, so it's
-going to find the same VMA every time anyway.
+We can definitely consider such a CONFIG option where there is a good
+application for it.
 
-> Bare minimum patch which would already significantly help would start
-> with the lock held and only relock if there is a page to dump, should
-> be very easy to add.
+>
+> > With this patch in place, in the scenario that you have been chasing
+> > where CephFS apparently asks to read X bytes but sets up a reply
+> > message with a data buffer that is smaller than X bytes, the
+> > messenger
+> > would enter a busy loop, endlessly reporting the new error,
+> > "faulting",
+> > reestablishing the session, resending the outstanding read request
+> > and
+> > attempting to fit the reply into the same (short) reply message.  I'd
+> > argue that an endless loop is worse than an easily identifiable
+> > BUG_ON
+> > in one of the kworker threads.
+> >
+> > There is no good way to process the new error, at least not with the
+> > current structure of the messenger.  In theory, the read request
+> > could
+> > be failed, but that would require wider changes and a bunch of
+> > special
+> > case code that would be there just to recover from what could have
+> > been
+> > a BUG_ON for an obvious programming error.
+> >
+>
+> Yes, I totally see your point. But I believe that as kernel crash as
+> busy loop is wrong behavior. Ideally, we need to report the error and
+> continue to work without kernel crash or busy loop. Would we rework
+> the logic to be more user-friendly and to behave more nicely?
 
-That seems like a good idea.
+I'm not sure it would be worth the effort in this particular case.
 
-> I however vote for someone mm-savvy to point out an easy way (if any)
-> to just iterate pages which are there instead.
+> I don't quite follow why do we have busy loop even if we know that
+> request is failed? Generally speaking, failed request should be
+> discarded, from the common sense. :)
 
-It seems like some of the <linux/pagewalk.h> APIs might be relevant?
-Not sure which one has the right semantics.  Can we just use
-folio_walk_start()?
+The messenger assumes that most errors are transient, so it simply
+reestablishes the session and resends outstanding requests.  The main
+reason for this is that depending on how far in the message the error
+is raised, a corresponding request may not be known yet (consider
+a scenario where the error pops up before the messenger gets to the
+fields that identify the request, for example) or there may not be
+a external request to fail at all.  If the request is identified and
+the error is assumed to be permanent, the request can indeed be failed
+to the submitter, but currently there is no support for that.  There is
+something more crude where the OSD client can tell the messenger to
+skip the message and move on -- see get_reply() and @skip parameter
+in net/ceph/osd_client.c.  Normally it's used to skip over duplicate or
+misdirected messages, but it can also be used to skip a message on
+a would-be-permanent error that is associated with that particular
+message.  With that, the submitter is never going to see a reply to
+that request and would likely get stuck due to that at some point, but
+once again these are almost always basic logic errors.
 
-I guess the main complexity is every time we find a page, we have to
-stop the walk, unlock mmap_sem, call dump_emit_page(), and restart the
-walk from the next address.  Maybe an mm expert can weigh in.
+Thanks,
 
-> -- 
-> Mateusz Guzik <mjguzik gmail.com>
-> 
+                Ilya
 
