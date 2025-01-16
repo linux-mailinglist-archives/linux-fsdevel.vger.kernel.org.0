@@ -1,101 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-39390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBF6A1375E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:05:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A255A13765
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00193A131A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85176188A391
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1E51DDA14;
-	Thu, 16 Jan 2025 10:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DF41DDA35;
+	Thu, 16 Jan 2025 10:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pNUiIMTu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2rLBEvWR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fIEj4ViH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3b5AICxt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MK4OtRqt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a7EWIuQJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MK4OtRqt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a7EWIuQJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF5B156C76;
-	Thu, 16 Jan 2025 10:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A621156C76;
+	Thu, 16 Jan 2025 10:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737021921; cv=none; b=Iu83JUiolOP3qBmBCRUoPNfbhp9ea0q/eVcKahApDeqiJgFqXn+N8i/wN5lFvFsoKvx6l6RK33lL6whwlZHBZ9LC8ov6fHLy6iuu9TzwBZ2GydJJCwqmLL+wj7O9MThg3jUwdo+OPEjyptoKLsL+s9Myg7yr3MMgVZWRWvl717g=
+	t=1737021984; cv=none; b=FwBNJp7DBsTYtAGU8kDwOrwtzpbizWJYxyOsXFVrKf8UuQUF5Zy2F7sCYhix/vb1bXe/o3gmjTPxHLyyWGRvjYOUNYzdvr05yNBdIlBpG9QjdWSvjlXM3VUFNUkuDE4EFmMYgHpEAu5QUX/VsRS5P9WUdUWP/jDu3VTc7IfzJhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737021921; c=relaxed/simple;
-	bh=+wVPh5TPzlykFYiaVlpap3o1xfjYd+xQ49U84h3iYSg=;
+	s=arc-20240116; t=1737021984; c=relaxed/simple;
+	bh=kaFgQcnk6WlYe7pfq08jmdgw5+Z1z/+zioMakFLI9io=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILk/FTo3MCvtv9yBVx195XMbnvpHQInFZUKufFq0o6tnX2tSMDmD22XSMuxCc5tIql8Y6YfxVoVGeTqoT4udI8Kp7bSUpVSqe+xZweMtsQN22WNBbY+ybzQATn02tONAbLEFYECRN6HrFTK4le1J5HfzWux7pnCjsJa2xyrZLUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pNUiIMTu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2rLBEvWR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fIEj4ViH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3b5AICxt; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=laobbXVorr8LQUUk+dLDesOjyHcDeX3Ys7/M+T6lRJt4/j8hcTlGP92fmdQI3/ojXcqdYBhPMYvAC7g7saqE2tuU45pXOoFoUV3okPAHu9fknopsyr0t6M1XgGxIxS0JPYM0+SOwqZJ/dMKekSIK4ERA+41/iJGQp0FB81sdPd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MK4OtRqt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a7EWIuQJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MK4OtRqt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a7EWIuQJ; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 640601F799;
-	Thu, 16 Jan 2025 10:05:15 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DA2C211C7;
+	Thu, 16 Jan 2025 10:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737021916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1737021980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
-	b=pNUiIMTu2hdRUC3C2aqZbsqCio3cqy7n2A5+YiryOECheY3uwNb9xXFWFrc6gVikXPwUbd
-	tDKgdIr6oLmeH9cy8k8zrP/elsALU3lZuS5kBrTRQZR6Ci/tk8k0jLMbFlwmHPkzaRLrFQ
-	hXPMvuIBtjqXPEL0kyoFudiIHOBBMlI=
+	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
+	b=MK4OtRqtRx3QneHmrVf60GXFWHNz5LOnFSYkbJLWqi5ty3Qg5sRE5bzYWoEBG36zreoXVl
+	S2LJl+1OCCI/QLhhX1YSwHPoREAu4b/K8x2oPylYwSuBWGMQtLTeQSWsyjT545/wJzbClg
+	8uXwtOAXTlXoIXSV4qmDpxZ70On0knQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737021916;
+	s=susede2_ed25519; t=1737021980;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
-	b=2rLBEvWRnNnVDbmI67uovKO9bnc/1sGKkpJu1EHNfKcoa6ePg7vjfHZEUtKwZ9bdhiX7KC
-	jXK0FjnkHKhrxECA==
-Authentication-Results: smtp-out2.suse.de;
+	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
+	b=a7EWIuQJS12/MogplZHAW00dFUdFG8jzuSJTerDWLuu4TpaHNJR4PoZuZXIIIjdegsjVQw
+	JtESwAjnKjM8DWDA==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737021915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1737021980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
-	b=fIEj4ViHftHQl+5uZRf63YLPWP50ewUeIra3enBCkEWtzj5xOerbu04M7IsrLIS+n1vJTc
-	XMD397P/z9Uba8TmX3W8VFjTRL5KG6qR0UTZ6K1SxrS5u/3KSVa9BflLdOGm+rkA2mDYK3
-	H8mewZPqERs06AXzzZGqxr6kNcsWkRY=
+	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
+	b=MK4OtRqtRx3QneHmrVf60GXFWHNz5LOnFSYkbJLWqi5ty3Qg5sRE5bzYWoEBG36zreoXVl
+	S2LJl+1OCCI/QLhhX1YSwHPoREAu4b/K8x2oPylYwSuBWGMQtLTeQSWsyjT545/wJzbClg
+	8uXwtOAXTlXoIXSV4qmDpxZ70On0knQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737021915;
+	s=susede2_ed25519; t=1737021980;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
-	b=3b5AICxtWuJvDKJ+TRRzXLqPi8TfVe8/682+aRoW5H4xl+lIV3pqo42OPd0AsT3OkklDHb
-	vxk60MwIZ+iA8BBA==
+	bh=3kEdGUUt3mUFMDsvAmnmoM/6NwvZPX9RyXclX3IF7Tk=;
+	b=a7EWIuQJS12/MogplZHAW00dFUdFG8jzuSJTerDWLuu4TpaHNJR4PoZuZXIIIjdegsjVQw
+	JtESwAjnKjM8DWDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58D4D13A57;
-	Thu, 16 Jan 2025 10:05:15 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7039D13A57;
+	Thu, 16 Jan 2025 10:06:20 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ciCqFdvZiGf5CwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 16 Jan 2025 10:05:15 +0000
+	id vHRZGxzaiGcmIAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 16 Jan 2025 10:06:20 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1C1C0A08E0; Thu, 16 Jan 2025 11:05:07 +0100 (CET)
-Date: Thu, 16 Jan 2025 11:05:07 +0100
+	id 2F793A08E0; Thu, 16 Jan 2025 11:06:20 +0100 (CET)
+Date: Thu, 16 Jan 2025 11:06:20 +0100
 From: Jan Kara <jack@suse.cz>
-To: Tavian Barnes <tavianator@tavianator.com>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coredump: allow interrupting dumps of large anonymous
- regions
-Message-ID: <s5sympphh3hztthvypdrf6si5debskxfwcnsvrv5v7x5m6rvbc@2tyjjv3mpl52>
-References: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
+	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, linux-nfs@vger.kernel.org, 
+	miklos@szeredi.hu, torvalds@linux-foundation.org
+Subject: Re: [PATCH v2 04/20] dissolve external_name.u into separate members
+Message-ID: <p2e3b3ygbr6p2xxy62opacwspphbxaufdsaoyhmpzfeuqw7gzd@22tpnvoudooc>
+References: <20250116052103.GF1977892@ZenIV>
+ <20250116052317.485356-1-viro@zeniv.linux.org.uk>
+ <20250116052317.485356-4-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,108 +106,126 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
-X-Spam-Level: 
+In-Reply-To: <20250116052317.485356-4-viro@zeniv.linux.org.uk>
+X-Spam-Score: -3.80
 X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,redhat.com,gmail.com,kernel.org,omnibond.com,suse.cz,szeredi.hu,linux-foundation.org];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tavianator.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed 15-01-25 23:05:38, Tavian Barnes wrote:
-> dump_user_range() supports sparse core dumps by skipping anonymous pages
-> which have not been modified.  If get_dump_page() returns NULL, the page
-> is skipped rather than written to the core dump with dump_emit_page().
+On Thu 16-01-25 05:23:01, Al Viro wrote:
+> kept separate from the previous commit to keep the noise separate
+> from actual changes...
 > 
-> Sadly, dump_emit_page() contains the only check for dump_interrupted(),
-> so when dumping a very large sparse region, the core dump becomes
-> effectively uninterruptible.  This can be observed with the following
-> test program:
-> 
->     #include <stdlib.h>
->     #include <stdio.h>
->     #include <sys/mman.h>
-> 
->     int main(void) {
->         char *mem = mmap(NULL, 1ULL << 40, PROT_READ | PROT_WRITE,
->                 MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
->         printf("%p %m\n", mem);
->         if (mem != MAP_FAILED) {
->                 mem[0] = 1;
->         }
->         abort();
->     }
-> 
-> The program allocates 1 TiB of anonymous memory, touches one page of it,
-> and aborts.  During the core dump, SIGKILL has no effect.  It takes
-> about 30 seconds to finish the dump, burning 100% CPU.
-> 
-> This issue naturally arises with things like Address Sanitizer, which
-> allocate a large sparse region of virtual address space for their shadow
-> memory.
-> 
-> Fix it by checking dump_interrupted() explicitly in dump_user_pages().
-> 
-> Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Thanks for the patch! The idea looks good to me as a quick fix, one
-suggestion for improvement below:
+Looks good. Feel free to add:
 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index d48edb37bc35..fd29d3f15f1e 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -950,6 +950,10 @@ int dump_user_range(struct coredump_params *cprm, unsigned long start,
->  			}
->  		} else {
->  			dump_skip(cprm, PAGE_SIZE);
-> +			if (dump_interrupted()) {
-> +				dump_page_free(dump_page);
-> +				return 0;
-> +			}
-
-So rather than doing the check here, I'd do it before cond_resched() below
-and remove the check from dump_emit_page(). That way we have the
-interruption handling all in one place.
-
->  		}
->  		cond_resched();
->  	}
-
-Bonus points for unifying the exit paths from the loop (perhaps as a
-separate cleanup patch) like:
-
-		if (page)
-			ret = dump_emit_page(...)
-		else
-			dump_skip(...)
-		if (dump_interrupted())
-			ret = 0;
-		if (!ret)
-			break;
-		cond_resched();
-	}
-	dump_page_free(dump_page);
-	return ret;
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+> ---
+>  fs/dcache.c | 22 ++++++++++------------
+>  1 file changed, 10 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index f387dc97df86..6f36d3e8c739 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -296,10 +296,8 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
+>  }
+>  
+>  struct external_name {
+> -	struct {
+> -		atomic_t count;		// ->count and ->head can't be combined
+> -		struct rcu_head head;	// see take_dentry_name_snapshot()
+> -	} u;
+> +	struct rcu_head head;	// ->head and ->count can't be combined
+> +	atomic_t count;		// see take_dentry_name_snapshot()
+>  	unsigned char name[];
+>  };
+>  
+> @@ -344,7 +342,7 @@ void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry
+>  		struct external_name *p;
+>  		p = container_of(s, struct external_name, name[0]);
+>  		// get a valid reference
+> -		if (unlikely(!atomic_inc_not_zero(&p->u.count)))
+> +		if (unlikely(!atomic_inc_not_zero(&p->count)))
+>  			goto retry;
+>  		name->name.name = s;
+>  	}
+> @@ -361,8 +359,8 @@ void release_dentry_name_snapshot(struct name_snapshot *name)
+>  	if (unlikely(name->name.name != name->inline_name.string)) {
+>  		struct external_name *p;
+>  		p = container_of(name->name.name, struct external_name, name[0]);
+> -		if (unlikely(atomic_dec_and_test(&p->u.count)))
+> -			kfree_rcu(p, u.head);
+> +		if (unlikely(atomic_dec_and_test(&p->count)))
+> +			kfree_rcu(p, head);
+>  	}
+>  }
+>  EXPORT_SYMBOL(release_dentry_name_snapshot);
+> @@ -400,7 +398,7 @@ static void dentry_free(struct dentry *dentry)
+>  	WARN_ON(!hlist_unhashed(&dentry->d_u.d_alias));
+>  	if (unlikely(dname_external(dentry))) {
+>  		struct external_name *p = external_name(dentry);
+> -		if (likely(atomic_dec_and_test(&p->u.count))) {
+> +		if (likely(atomic_dec_and_test(&p->count))) {
+>  			call_rcu(&dentry->d_u.d_rcu, __d_free_external);
+>  			return;
+>  		}
+> @@ -1681,7 +1679,7 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+>  			kmem_cache_free(dentry_cache, dentry); 
+>  			return NULL;
+>  		}
+> -		atomic_set(&p->u.count, 1);
+> +		atomic_set(&p->count, 1);
+>  		dname = p->name;
+>  	} else  {
+>  		dname = dentry->d_shortname.string;
+> @@ -2774,15 +2772,15 @@ static void copy_name(struct dentry *dentry, struct dentry *target)
+>  	if (unlikely(dname_external(dentry)))
+>  		old_name = external_name(dentry);
+>  	if (unlikely(dname_external(target))) {
+> -		atomic_inc(&external_name(target)->u.count);
+> +		atomic_inc(&external_name(target)->count);
+>  		dentry->d_name = target->d_name;
+>  	} else {
+>  		dentry->d_shortname = target->d_shortname;
+>  		dentry->d_name.name = dentry->d_shortname.string;
+>  		dentry->d_name.hash_len = target->d_name.hash_len;
+>  	}
+> -	if (old_name && likely(atomic_dec_and_test(&old_name->u.count)))
+> -		kfree_rcu(old_name, u.head);
+> +	if (old_name && likely(atomic_dec_and_test(&old_name->count)))
+> +		kfree_rcu(old_name, head);
+>  }
+>  
+>  /*
+> -- 
+> 2.39.5
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
