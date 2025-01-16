@@ -1,73 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-39389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC9DA13753
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:04:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBF6A1375E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EE1165000
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00193A131A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEBE1DDC19;
-	Thu, 16 Jan 2025 10:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1E51DDA14;
+	Thu, 16 Jan 2025 10:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAgqR2f6"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pNUiIMTu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2rLBEvWR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fIEj4ViH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3b5AICxt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA3319259A;
-	Thu, 16 Jan 2025 10:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF5B156C76;
+	Thu, 16 Jan 2025 10:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737021843; cv=none; b=d4N9JCIUGro4IBgT5bbU2MOqgoOyZAYyIwqxPN20xNH/xU5NNKZk6BL6/7gqzN3YcQ/SwnQAOSMZv5H/JVuBN6gpyhIRwTGmto9xPbGBVCeuOZ9NcFfzMcBcB8G9/nPUI9cRGJOytLt1+Nyf+/sgrT63YxfwPQDlK6qnVoaj1dY=
+	t=1737021921; cv=none; b=Iu83JUiolOP3qBmBCRUoPNfbhp9ea0q/eVcKahApDeqiJgFqXn+N8i/wN5lFvFsoKvx6l6RK33lL6whwlZHBZ9LC8ov6fHLy6iuu9TzwBZ2GydJJCwqmLL+wj7O9MThg3jUwdo+OPEjyptoKLsL+s9Myg7yr3MMgVZWRWvl717g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737021843; c=relaxed/simple;
-	bh=vOWQM+I3YRBGjUYDIowHfBe+kql+W0wxpSJ3h1dp89U=;
+	s=arc-20240116; t=1737021921; c=relaxed/simple;
+	bh=+wVPh5TPzlykFYiaVlpap3o1xfjYd+xQ49U84h3iYSg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DTTt3fL1i6hDd/AeZSkB7i+ORX0KuUwxO0QEalyG/UhFginyJiToOZ5ry4DSe1Pvk0lnn7JSKM3q4oiWFRCqQWSI7JJO3tVpU+hJEX2f9A1bZxMHmDHJTzsb+YqKA4r2DMgYW7bCEqDq9mm2jOmTXqWTrh+IAU8+K3lnhn2vRAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAgqR2f6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8394EC4CED6;
-	Thu, 16 Jan 2025 10:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737021843;
-	bh=vOWQM+I3YRBGjUYDIowHfBe+kql+W0wxpSJ3h1dp89U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IAgqR2f66QLIyDnlJbSk0pURydWNxseM1FJspSLBkNINi0tBhfM9rafMRa8Fh7jXI
-	 X/IP3yQAnuTRRWVUMeZreOqI759pDr0UfGfwD6rxNXDM8bopEelBPpsrHjqB0dq8+Z
-	 f7INV4NNHfjOuSUxgJvNmSniqiSaAOd/F4iyTma5i6Vp7kMzpIK5WuY4DJjAJYUGV5
-	 SybOjcbKgQOt6adDDGmfohqQAh2Wurvyjc4q5ngWeI4K+I/El+T/pSa1BmM0z6vulg
-	 JaRJP2M2hymQq+cuTQPeXzoDhAFUTQvtWiPUncRVXrccXXxEnHYXgKekjrM1OSnKQS
-	 grprVO8ZExbiQ==
-Date: Thu, 16 Jan 2025 11:03:58 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: yukaixiong <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: Re: [PATCH v5 -next 00/16] sysctl: move sysctls from vm_table
- into its own files
-Message-ID: <lxskw5notxchwlmwl2bspjqsxl52yjd6gknfyssr6xggnj2nll@2nqm5b3itvjh>
-References: <20250111070751.2588654-1-yukaixiong@huawei.com>
- <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
- <a3b4dcf9-7055-33f9-396c-c90b8cfa68d6@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ILk/FTo3MCvtv9yBVx195XMbnvpHQInFZUKufFq0o6tnX2tSMDmD22XSMuxCc5tIql8Y6YfxVoVGeTqoT4udI8Kp7bSUpVSqe+xZweMtsQN22WNBbY+ybzQATn02tONAbLEFYECRN6HrFTK4le1J5HfzWux7pnCjsJa2xyrZLUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pNUiIMTu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2rLBEvWR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fIEj4ViH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3b5AICxt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 640601F799;
+	Thu, 16 Jan 2025 10:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1737021916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
+	b=pNUiIMTu2hdRUC3C2aqZbsqCio3cqy7n2A5+YiryOECheY3uwNb9xXFWFrc6gVikXPwUbd
+	tDKgdIr6oLmeH9cy8k8zrP/elsALU3lZuS5kBrTRQZR6Ci/tk8k0jLMbFlwmHPkzaRLrFQ
+	hXPMvuIBtjqXPEL0kyoFudiIHOBBMlI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1737021916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
+	b=2rLBEvWRnNnVDbmI67uovKO9bnc/1sGKkpJu1EHNfKcoa6ePg7vjfHZEUtKwZ9bdhiX7KC
+	jXK0FjnkHKhrxECA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1737021915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
+	b=fIEj4ViHftHQl+5uZRf63YLPWP50ewUeIra3enBCkEWtzj5xOerbu04M7IsrLIS+n1vJTc
+	XMD397P/z9Uba8TmX3W8VFjTRL5KG6qR0UTZ6K1SxrS5u/3KSVa9BflLdOGm+rkA2mDYK3
+	H8mewZPqERs06AXzzZGqxr6kNcsWkRY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1737021915;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZMdVoHTVDvwfQ1Z3Yz3nMwRWMw4l8IUr7XtNDf85j00=;
+	b=3b5AICxtWuJvDKJ+TRRzXLqPi8TfVe8/682+aRoW5H4xl+lIV3pqo42OPd0AsT3OkklDHb
+	vxk60MwIZ+iA8BBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58D4D13A57;
+	Thu, 16 Jan 2025 10:05:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ciCqFdvZiGf5CwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 16 Jan 2025 10:05:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1C1C0A08E0; Thu, 16 Jan 2025 11:05:07 +0100 (CET)
+Date: Thu, 16 Jan 2025 11:05:07 +0100
+From: Jan Kara <jack@suse.cz>
+To: Tavian Barnes <tavianator@tavianator.com>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coredump: allow interrupting dumps of large anonymous
+ regions
+Message-ID: <s5sympphh3hztthvypdrf6si5debskxfwcnsvrv5v7x5m6rvbc@2tyjjv3mpl52>
+References: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,65 +104,109 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a3b4dcf9-7055-33f9-396c-c90b8cfa68d6@huawei.com>
+In-Reply-To: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tavianator.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Wed, Jan 15, 2025 at 09:53:53AM +0800, yukaixiong wrote:
+On Wed 15-01-25 23:05:38, Tavian Barnes wrote:
+> dump_user_range() supports sparse core dumps by skipping anonymous pages
+> which have not been modified.  If get_dump_page() returns NULL, the page
+> is skipped rather than written to the core dump with dump_emit_page().
 > 
+> Sadly, dump_emit_page() contains the only check for dump_interrupted(),
+> so when dumping a very large sparse region, the core dump becomes
+> effectively uninterruptible.  This can be observed with the following
+> test program:
 > 
-> On 2025/1/14 21:50, Joel Granados wrote:
-> > On Sat, Jan 11, 2025 at 03:07:35PM +0800, Kaixiong Yu wrote:
-> > > This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> > > places where they actually belong, and do some related code clean-ups.
-> > > After this patch series, all sysctls in vm_table have been moved into its
-> > > own files, meanwhile, delete vm_table.
-> > > 
-> > > All the modifications of this patch series base on
-> > > linux-next(tags/next-20250110). To test this patch series, the code was
-> > > compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> > > x86_64 architectures. After this patch series is applied, all files
-> > > under /proc/sys/vm can be read or written normally.
-> > It is looking good! Here is how I think we should move it upstream:
-> > 
-> > 1. These should queued in for 6.15 instead of the next merge window.
-> >     It is too late in the current cycle and if we put it in now, it will
-> >     not properly tested in linux-next.
-> > 
-> > 2. I am putting this in sysctl-testing with the expectation of pushing this
-> >     up for the 6.15 merge window. Please tell me if you want this to go
-> >     through some other tree.
-> > 
-> > Thx for the contribution
-> > 
-> > Best
+>     #include <stdlib.h>
+>     #include <stdio.h>
+>     #include <sys/mman.h>
 > 
-> Thank you! I don't want this to go through some other tree.
-This was more for the mm, net and security maintainers :)
+>     int main(void) {
+>         char *mem = mmap(NULL, 1ULL << 40, PROT_READ | PROT_WRITE,
+>                 MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
+>         printf("%p %m\n", mem);
+>         if (mem != MAP_FAILED) {
+>                 mem[0] = 1;
+>         }
+>         abort();
+>     }
+> 
+> The program allocates 1 TiB of anonymous memory, touches one page of it,
+> and aborts.  During the core dump, SIGKILL has no effect.  It takes
+> about 30 seconds to finish the dump, burning 100% CPU.
+> 
+> This issue naturally arises with things like Address Sanitizer, which
+> allocate a large sparse region of virtual address space for their shadow
+> memory.
+> 
+> Fix it by checking dump_interrupted() explicitly in dump_user_pages().
+> 
+> Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
 
+Thanks for the patch! The idea looks good to me as a quick fix, one
+suggestion for improvement below:
 
-> 
-> Best ...
-> > > my test steps as below listed:
-> > > 
-> > > Step 1: Set CONFIG_SYSCTL to 'n' and compile the Linux kernel on the
-> > > arm64 architecture. The kernel compiles successfully without any errors
-> > > or warnings.
-> > > 
-> > ...
-> > >   mm/swap.c                          |  16 ++-
-> > >   mm/swap.h                          |   1 +
-> > >   mm/util.c                          |  67 +++++++--
-> > >   mm/vmscan.c                        |  23 +++
-> > >   mm/vmstat.c                        |  44 +++++-
-> > >   net/sunrpc/auth.c                  |   2 +-
-> > >   security/min_addr.c                |  11 ++
-> > >   23 files changed, 336 insertions(+), 312 deletions(-)
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> 
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index d48edb37bc35..fd29d3f15f1e 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -950,6 +950,10 @@ int dump_user_range(struct coredump_params *cprm, unsigned long start,
+>  			}
+>  		} else {
+>  			dump_skip(cprm, PAGE_SIZE);
+> +			if (dump_interrupted()) {
+> +				dump_page_free(dump_page);
+> +				return 0;
+> +			}
 
+So rather than doing the check here, I'd do it before cond_resched() below
+and remove the check from dump_emit_page(). That way we have the
+interruption handling all in one place.
+
+>  		}
+>  		cond_resched();
+>  	}
+
+Bonus points for unifying the exit paths from the loop (perhaps as a
+separate cleanup patch) like:
+
+		if (page)
+			ret = dump_emit_page(...)
+		else
+			dump_skip(...)
+		if (dump_interrupted())
+			ret = 0;
+		if (!ret)
+			break;
+		cond_resched();
+	}
+	dump_page_free(dump_page);
+	return ret;
+
+								Honza
 -- 
-
-Joel Granados
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
