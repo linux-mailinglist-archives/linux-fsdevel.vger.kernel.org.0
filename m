@@ -1,229 +1,383 @@
-Return-Path: <linux-fsdevel+bounces-39450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BE2A14468
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 23:12:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56125A1446A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 23:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEADF164213
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 22:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53823A0602
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 22:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2AA22CA1E;
-	Thu, 16 Jan 2025 22:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C32722BAC1;
+	Thu, 16 Jan 2025 22:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hjZVpF9E";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mk6tnywV"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ud9rr7/h";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ud9rr7/h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [104.223.66.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690AC155756;
-	Thu, 16 Jan 2025 22:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737065524; cv=fail; b=hfgd30F0Ze11juA6F4NBCmzaMax9SzNGw1cDjHQfKNHu+TJ0bF0flJI8U9wv5S4CN+Q1eMST0YukDma9xqJ0YPLTFNogc47aNnjib5NMcA2WubasKcUFKcYFQ9ovnay2B1Zs4s7/1GrlS/sH56qfGMbY6vC8PurKamsq61IX24E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737065524; c=relaxed/simple;
-	bh=fKqSUxT8bnk4V4Edi5R5/hj2avQoneMmU//uqVeB1hU=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=jNJGA3psrX9CyFUGjLW9UNeQP7PmxQEAVMQjOKzHIkpmamKX2d9SeV3UP1mlRtg/8BnR9D5jde4ZieThKhVe2DDHsQ1+Ti+Qk5Ms0TbBvjscX+qXJb0IVs3Dkqwf6VRoo+fvdWXzbhE7oazw7M2SV2WCGBeWrPz0z/yY9Dn5y6k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hjZVpF9E; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mk6tnywV; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50GMBtPE020062;
-	Thu, 16 Jan 2025 22:11:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=y3hE3mSqLhG2bN5c6k
-	DIlEwU9QLlO4z9Wmx0K9/K3MY=; b=hjZVpF9ESEF8v9MgvV5xRoIMCFVjE+BFuS
-	NUM6kAegPWAe5Rs64rgi6VHTGO8j1s33KuHPagJ0NPKHEragb0kTE2Cu/WnjgxWi
-	QHifEnKEeLJUmN5YarnIthN7FEaSjZHtBthnfVqWXAMEhpvLOKVoS5IK+tipFtiw
-	Yw61l/rVg8+QTIoPsCAN4jbboUMpWr9WaDbJcvMZ55c5dDvjLtA7T4XGT926FS0d
-	Ihy5weRUdw0Hk8wIab1Jk4OkUQ8D229etcfrLu/ILZPr1zKLs6TcYmHxhUbIRnld
-	rG7YE4VH7mKCoRnHZspDtFosBQ/PBfHq3Anj9xKvtKj/DpWGwSpw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 446912v0k1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Jan 2025 22:11:55 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 50GM5cJc004593;
-	Thu, 16 Jan 2025 22:11:46 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4473e5k93h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Jan 2025 22:11:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iEzbenIomfQlOjsQrslXZaZziSkNCqu7le/OqfmBKq8k1Sdrf0l0YS8zrXWyNFpy5QbePrgxFsAnZAHjVPWXfBFSgiXRUHC6WAl9zHfXgdRU4cdS7eM7jSphvGVTXafC8VsjsRmM0793XXIb8j6o1tC0ExlLuhOnZ1tCP0aPUrAKSMWjgJZgBEPZFApT1f1y8ewECLHpy3H0woL6bepmMN/Q1ulYJkXNhk4c7bzjw2Q+pcoE3kuj5vCdH1zNuArdA1cokalPdvh8rO4QKo2Q2Gh6tLAbS0WaMZYMMZce4x5HXdqNBvCpw9Rp7AXSwP9SUU9KybELAuQcjDuZMGtcZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y3hE3mSqLhG2bN5c6kDIlEwU9QLlO4z9Wmx0K9/K3MY=;
- b=M13+lXhnlaa1/deE2nPp8e01u3Zu9wYUxDkwhsiHg7S7d/Ps36/onaWb7UEN3lZ0qz2RoHT7pgW41lG6ai8+sFXW5t+TVjC1AXqmJmotMtOVu18Al3BwsYpbhxSXuR+OX/lVRGbpdBDgB8hb9ASrNTjxx3e5vFSTP3Er6/Yi7fXQVmboSQ+rN8UKwkcWS6crYTpoS7oTFrKsiLlPfSAYAm3uhzUbZ4bax3yIZmbiUsZDzKcTZ7FiiiE5b/rAhMT4YUHA45oFt6Q70aMCmdbYIpac6J7PVv55pF4x7dDUpYsrP4AQoL6QhFRLIF5tQcK6YXm3kZGWIBIOAzizr5Ik+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y3hE3mSqLhG2bN5c6kDIlEwU9QLlO4z9Wmx0K9/K3MY=;
- b=mk6tnywVGPLKlX7l1h7zKd1DDrl3dxxMf/jhEEpdarWfeDZQG6W8fLUk0zfEF4/uniVyRfo4XE2o87M2SqdV4EMGJxgdh+G8va7IBkKEzz2uK0Ft/2K/j/VSCqCMn+UHqNuY+pnf6ZYX9YvE9sys8pdQWxAGjkoMDzzkWjbK+Uc=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by IA0PR10MB7580.namprd10.prod.outlook.com (2603:10b6:208:490::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.18; Thu, 16 Jan
- 2025 22:11:44 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.8356.014; Thu, 16 Jan 2025
- 22:11:44 +0000
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-        Christoph Hellwig
- <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Anna Schumaker
- <anna.schumaker@oracle.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        Linux NFS Mailing List
- <linux-nfs@vger.kernel.org>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Implementing the NFS v4.2
- WRITE_SAME operation: VFS or NFS ioctl() ?
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250116173000.GA2479310@mit.edu> (Theodore Ts'o's message of
-	"Thu, 16 Jan 2025 12:30:00 -0500")
-Organization: Oracle Corporation
-Message-ID: <yq17c6uzao3.fsf@ca-mkp.ca.oracle.com>
-References: <f9ade3f0-6bfc-45da-a796-c22ceaeb4722@oracle.com>
-	<Z4bv8FkvCn9zwgH0@dread.disaster.area>
-	<Z4icRdIpG4v64QDR@infradead.org> <20250116133701.GB2446278@mit.edu>
-	<21c7789f-2d59-42ce-8fcc-fd4c08bcb06f@oracle.com>
-	<20250116153649.GC2446278@mit.edu>
-	<5fdc7575-aa3d-4b37-9848-77ecf8f0b7d6@oracle.com>
-	<20250116173000.GA2479310@mit.edu>
-Date: Thu, 16 Jan 2025 17:11:42 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR05CA0013.namprd05.prod.outlook.com
- (2603:10b6:a03:c0::26) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B172D155756;
+	Thu, 16 Jan 2025 22:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.223.66.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737065597; cv=none; b=S4QCcmFg5Hz4YhOrreHktKxNiogb7BrUVAHlD4PK6N3dodmFa9ys8lznOR/sauEp8UTzG0iKnNJhlThevEFxPmh37WMSeMSv4BMgUE942lneAt8H/Z18qp43ULDhpiY0nYozL6UbIpbeygmp3zkzLLCg9Zjyr8iJZI/JT9txyCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737065597; c=relaxed/simple;
+	bh=+R4t70xPWTSWdWWwI1JX1eVV0ZMqytdF7J5GxxAwIes=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aXpOjOkRubz7yQImXLrgLdPzKk4K76PbdrDyKLWYHeVf73Jg8G8CXyHAUhx4LEvU6L0Mp3NKKMd47DbRRbL1FCbkwyTfBueFrhqldX0fEiXHmTWzefEB3TCEoPySERtBef9WzwlDnagBs4KhSGomFEXi5XnBIaJaVZc5xKNOXaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ud9rr7/h; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ud9rr7/h; arc=none smtp.client-ip=104.223.66.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1737065587;
+	bh=+R4t70xPWTSWdWWwI1JX1eVV0ZMqytdF7J5GxxAwIes=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=ud9rr7/hS/vbpw6vjuK5dek+5XroiSY9xWdZ9vFbjkicUAD8CsJTrAeTTkzCqvY5E
+	 mfV2mQj2ed7A7OA6U0fQ2za7rXY3KYJeJUni8iqIqlNzE/xLJd+glAEAqzSitE5Niy
+	 E23KTIZMMBVZjbASlKKIvcSCVlmNY/vxrrsfg1EI=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id CDAC312818D9;
+	Thu, 16 Jan 2025 17:13:07 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id ReIesVbPk4oS; Thu, 16 Jan 2025 17:13:07 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1737065587;
+	bh=+R4t70xPWTSWdWWwI1JX1eVV0ZMqytdF7J5GxxAwIes=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=ud9rr7/hS/vbpw6vjuK5dek+5XroiSY9xWdZ9vFbjkicUAD8CsJTrAeTTkzCqvY5E
+	 mfV2mQj2ed7A7OA6U0fQ2za7rXY3KYJeJUni8iqIqlNzE/xLJd+glAEAqzSitE5Niy
+	 E23KTIZMMBVZjbASlKKIvcSCVlmNY/vxrrsfg1EI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 05D89128179E;
+	Thu, 16 Jan 2025 17:13:06 -0500 (EST)
+Message-ID: <ae267db4fe60f564c6aa0400dd2a7eef4fe9db18.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 4/6] efivarfs: move freeing of variable entry into
+ evict_inode
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, Ard Biesheuvel
+	 <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Christian Brauner
+	 <brauner@kernel.org>
+Date: Thu, 16 Jan 2025 17:13:05 -0500
+In-Reply-To: <0b770a342780510f1cd82a506bc67124752b170c.camel@HansenPartnership.com>
+References: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
+	 <20250107023525.11466-5-James.Bottomley@HansenPartnership.com>
+	 <20250116183643.GI1977892@ZenIV>
+	 <0b770a342780510f1cd82a506bc67124752b170c.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|IA0PR10MB7580:EE_
-X-MS-Office365-Filtering-Correlation-Id: bee5d542-a97e-446b-318c-08dd367ac345
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bvY3A1a9pO+Ol3FzDElMOziLG2uYjpAl6ITnityxoDG/6W1XDtcGcV5fqLA/?=
- =?us-ascii?Q?B4QOJPceK9EeV3hQLtW9X76e1i3R45JHOIMJwPVp20vh4nJKvnPjqQFWhd3C?=
- =?us-ascii?Q?6/tMkbF2buBcN5eJllAOlEtOoKUAOeE3ko3EfZTknJmd4SsOy6pR757hH8qB?=
- =?us-ascii?Q?WL8zgT6aZXHzEIJ1+d/J5/XJkmV7kCzhGMrL4iCTp73G9b9oqVYUUDfTjHfJ?=
- =?us-ascii?Q?AmY463BHsgrq+Jdg/yaWtEfOp+wOHPiG9QPvsfhIJmnIY72eQoGy/IGshWfB?=
- =?us-ascii?Q?2GJwPwCENrV0niEJXVTiahPkYL9DLzPIQqcrysJFvNJgE0jVxepWZP405S88?=
- =?us-ascii?Q?VUODIAPhFix2mmoe5c4MT8e2VJo4F/ndbI845/grWnopQoWnw95bQO++slyz?=
- =?us-ascii?Q?SYyLoXS0UtHTWpYFEtvMgU5MaitkLeJvXC5UrAndB0n4SOtGWn/Il1XXNhGm?=
- =?us-ascii?Q?7d3E70Zkpx6qC3j8503BdL/zmBlbHIWYiNhOjeQ2ZtiNh0skT6jrQzN91Sub?=
- =?us-ascii?Q?vHEj/1pNXlknL1JXs5cD6IJLdbWiKQWpbT4xddSa+8RHJnt+buBvXFdbxXE+?=
- =?us-ascii?Q?9xMoFj63zU3qU7fiCqL95pm5lOVAZpJz9ReSiKDHAgfpj11GoerSX8n8bNzZ?=
- =?us-ascii?Q?H6Vo+aIlGcijsgZN8YOZOUtIoIKCBWjWgsmGCToBrVdV9ysvEurGE1sJIClT?=
- =?us-ascii?Q?gmY47E9CageDMwmkMB9gblKDyyPT6H6pqf5nE97DROlh+Up7MT5Ad7I5zhiK?=
- =?us-ascii?Q?ckdWZcrkeyRr5t7cn2zPaYHwlPT5oqHZImd+y7MXJ7W6F6cvL3ShVWhGo1JY?=
- =?us-ascii?Q?KRS4TR+HXx1mhyb4Pb8bCuZZpoAd/S4c/3r9tRrrQgvYz1XSMtkMtj4N3dH5?=
- =?us-ascii?Q?5IxerxyS2B5CjeuM3oP+AS3+sZ37Rr8sfknSjRP79uBoVJCs+lFq7oY6F8Jy?=
- =?us-ascii?Q?YDks+Kq9LhsPu88TFjV6oFnnpPuCYht2v5s9f3PIMOLf5yZLLR1RJ4XJfVt6?=
- =?us-ascii?Q?NLDTH7hoq7ZD4+sA/HxMqAyepIGgRdfKgUxwNK03CassrKo8P1mfnPbq2Cug?=
- =?us-ascii?Q?z7R4gsKYomoOHBtZ92RJGcoL9H7477W9JJD6etGqgcGdvL6vIHx2Pm6FNRoM?=
- =?us-ascii?Q?sMOX+/5NTpB/vnbhct9j+7zuNZynz0cPgArXdLbpx4cv6fCm0fubriAtzsFA?=
- =?us-ascii?Q?rvEHhYYIJ1RHxtxk1zix1UQfS2dnet1R7AbqbVD2vOJwDziZ3eLfJkCJvSYo?=
- =?us-ascii?Q?ojrfp7AqSRs0UIcLdlLhml0q1CdyzyB8W5Iqb9c1R16dSU73ZLY+a1U7ECJx?=
- =?us-ascii?Q?WDKNi8N2kcbETTPDVZkdD6KiowDjzIbE96ZlAl0ovvSLRWvGCH5LrS52qF54?=
- =?us-ascii?Q?pgPpq574NePRFnBQjUfwxCOSiQY1?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?G04LGtSW5KF+2/TeWze9PQaCf5B6d1hKtM0iFdk7jK9Aot8Ula5q0Z4P5t3g?=
- =?us-ascii?Q?Hxeg29RHCEJEOOCFSOoqnM8wpuTeFOm+d4SWAg3H4SJ2OSdnrExHag2BrtXy?=
- =?us-ascii?Q?exz3EPdTe0B2vIHibkKXBDiTdXrZS/xuifU5JRVLMg7pBuErP3pCl+G+6u6K?=
- =?us-ascii?Q?9IdzVB/+2rBf3FEqliz4A7fxID80LQxEXlpH3zpML+b0abyibNyj3DqUWJdY?=
- =?us-ascii?Q?F2qEACPdDOwNQN3BPBcfh1IF90xzxk51k+D71cPz1flnUMFPtr1fuBXnstN/?=
- =?us-ascii?Q?DNhX/181xyBW09lIMlVY7qwzYJcV/luNqicJ0sXgpkzeEvWkyz1CskPMDem0?=
- =?us-ascii?Q?fgwOX/NbnGQgf4QtZZZm4/SNNeRrKhmferjK3DXB+JHnNmpkuXq5+h//JTlB?=
- =?us-ascii?Q?5WqGVnJEFJ+ZH3yOsXrB/ZhUk4ssmvnRJZc+wzYXM/OMpx8eDgJ2eoC9uxSw?=
- =?us-ascii?Q?mx4Zdk8Sf7YItYwLh5LX1WOwKw8vcQ2GBUNoddaQezEaXAUN4P4PXYyG1AX4?=
- =?us-ascii?Q?0HZaxXGMgdPRRAPOSsq5h+XXhoOPCQtLrhUPhYQtcxoerxuIzYRklR9et86B?=
- =?us-ascii?Q?/j/VeJKjvuWSRgW4UAJpHyH3dLCwsWllRgqmJwpQ+pfv5goCz0KzL1WC+DFP?=
- =?us-ascii?Q?a5hv9Tx14O7pCKko76d8pa8+2onihiO361229w6jfiiQNoG051+30cdROmvP?=
- =?us-ascii?Q?v/p/r8bbZXYjq9igB6SOX34Vm9Jgnxmpw7uJSDrHXXYr/Gu28OWng3ctIMgX?=
- =?us-ascii?Q?Djeg7HAH7jcsUY2W4IgY6WvphyzOGcbAnzoL9hwwkFuWtG1i1zrcK4MwJMdu?=
- =?us-ascii?Q?rwvLpr5UeCXFzvzXp8Gfca2aKMLMUPjuYfy33odZv5DXFVVruRUainNq54/r?=
- =?us-ascii?Q?UcEtYR+o14jp8CRT3hUncMu5mhB9F8jf4QgxlwpdUcIBb2+q/TKvZktdNcXj?=
- =?us-ascii?Q?Y+51/76k2G+HCSGCzj1Ax61grgYxGgqDIMxMbQ0xPPfemgW90MyUxjyibqDA?=
- =?us-ascii?Q?O7GsiLG/X82yUc4EZjHhbAkxh+tbq10SmLpMRbQFmmtUNyIxbqZ8aj358pDo?=
- =?us-ascii?Q?0p797GRl+TpaiFwbh2xuS3OJiHYhO1LEChAk2ZQIn/yt+XaMaWq5nOiaTOOv?=
- =?us-ascii?Q?Dfn+94uLlBI5AR82cR8YJ5hRJBfz2DZLp5y2zjuZXMwK1PBJ8hu9y8nP3vaU?=
- =?us-ascii?Q?IK2QaQ15hd+y47yLSjR2BYU+Z8yf9KyBkSBEJv48meFgFl1Kb+IOLf4F2CgD?=
- =?us-ascii?Q?5/setiMNxkPNIgPFJqp5lMTvjlQI9k6FzWQ1//ldhdmI6TZv1HOV5dfZt8ME?=
- =?us-ascii?Q?cjOJsKyVMSpSMId1vK28iUI0QqKbjMQK1AKy1Hf3TdarE/ELlTpz52mX7Sfu?=
- =?us-ascii?Q?CqfSlF+iWkHfG5A1yVWpmz3jnwLE5roynnNtKan4VE82rzj9jCHPcokDS+dd?=
- =?us-ascii?Q?mnl+TqXOzJZxqnGAUOTAtyJ6ysnVWVdQes/Ro/5oiyH/mOCXE52r9FjHBF8Y?=
- =?us-ascii?Q?12/LVmasyILGxD4sy1yJUlXsE3u1Jqw1+T2DGBY2N99hl+7Xlu34YBBFoHsl?=
- =?us-ascii?Q?SHYLEyxiR81E/gK6kZQje9xOi29PZzLW3uwkHfcV0SUKmVB6/bfOzlRq9vbF?=
- =?us-ascii?Q?Cg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	i4y9eGNf777BajFHJrJNkoRC1LEbE5xi4Y9fD2tHHfHuPFXfKOlK74BHhBVC6f8OihIOCNdFo87UeQQXIOmVaY04Qo7TjX7u4PVgsUBFJz8ApWTpfBZAxkuY7gOsuV+LTG5gfZTZ3IxzDiOx626VCliE4h9sLMBgqpyK7uCFvK5XY9EPPO+/5/CyoLXd6vftzUj/c2iUy0ZqGAH5nMlysxc9CMv8EoaIbqPkRpYvt83QIvy4x7gjQhwpYGeX7QSKn4iZS6wQnpkk8oVjsqFfPUQy6OSRRg5DdK4LBk+PlS4BIkbIdOsODZLjwHTWjq02af0QiUn2LedbIJglAhLwd7C570p41BZBDgxvWFNCN6JGnaqlEr0mIMdmWbqowP1lgr7qLYPBpvN0Hmyi1+pJXbMMex2QVJaG7PnMf4ZF7Ehm2YThDxUu9gc9Scd4bTSbea0dMJUrzSNIr9Dpv1tdHIcbnkoJc+jgyeCUEuxRAFME9T3ReUvpvroMuBuKYqvnhkbT52z0u1f+g3uMvlJp6N3f+kv5W4d/d2FhYKfg64tJjh9x5sUrPZ2eSN32FQzjZYvY4YRqh+K7PMivhRjj3uf/3P/8zxvf79iDfuNG6Fw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bee5d542-a97e-446b-318c-08dd367ac345
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2025 22:11:44.7635
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kay+ekP5ljxivqyEAEwyXi1oUqfF8cbuwoRV145S2INF+B+JVagAlCXjnRFYC3qgM4pVolteiH+sII6Iu3woAelYPvfYvAntLAF5nTQ4ci0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7580
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-16_09,2025-01-16_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 adultscore=0
- spamscore=0 mlxlogscore=987 suspectscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2501160163
-X-Proofpoint-ORIG-GUID: oiYeMaOdEE2w5OHTqqllpGS4_7_5Pkmg
-X-Proofpoint-GUID: oiYeMaOdEE2w5OHTqqllpGS4_7_5Pkmg
+Content-Transfer-Encoding: 8bit
 
+On Thu, 2025-01-16 at 14:05 -0500, James Bottomley wrote:
+> On Thu, 2025-01-16 at 18:36 +0000, Al Viro wrote:
+> > On Mon, Jan 06, 2025 at 06:35:23PM -0800, James Bottomley wrote:
+> > > Make the inodes the default management vehicle for struct
+> > > efivar_entry, so they are now all freed automatically if the file
+> > > is removed and on unmount in kill_litter_super().  Remove the now
+> > > superfluous iterator to free the entries after
+> > > kill_litter_super().
+> > > 
+> > > Also fixes a bug where some entry freeing was missing causing
+> > > efivarfs to leak memory.
+> > 
+> > Umm...  I'd rather coallocate struct inode and struct efivar_entry;
+> > that way once you get rid of the list you don't need -
+> > >evict_inode()
+> > anymore.
+> > 
+> > It's pretty easy - see e.g.
+> > https://lore.kernel.org/all/20250112080705.141166-1-viro@zeniv.linux.org.uk/
+> > for recent example of such conversion.
+> 
+> OK, I can do that.  Although I think since the number of variables is
+> usually around 150, it would probably be overkill to give it its own
+> inode cache allocator.
 
-Hi Ted!
+OK, this is what I've got.  As you can see from the diffstat it's about
+10 lines more than the previous; mostly because of the new allocation
+routine, the fact that the root inode has to be special cased for the
+list and the guid has to be parsed in efivarfs_create before we have
+the inode.
 
->    * DIF/DIX (although this is super expensive, so this has fallen out
->         of favor)
+Regards,
 
-Several cloud providers use T10 PI-capable storage in their backend. The
-interface is rarely exposed to customers, though.
+James
 
->    * In-line checksums in the database block; this approach is fairly
->         common for enterprise databases
+---
 
-Yep.
+ fs/efivarfs/file.c     |  6 +++---
+ fs/efivarfs/inode.c    | 27 +++++++++++----------------
+ fs/efivarfs/internal.h |  6 ++++++
+ fs/efivarfs/super.c    | 45 ++++++++++++++++++++++++++----------------
+---
+ 4 files changed, 46 insertions(+), 38 deletions(-)
 
-Also note that DIX/T10 PI are intended to prevent writing corrupted
-buffers or misdirected data to media. I.e. at WRITE time. Neither DIX,
-nor T10 PI offer any torn write guarantees. That's what the dedicated
-atomic write operations are for (and those do support PI).
+diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+index 23c51d62f902..176362b73d38 100644
+--- a/fs/efivarfs/file.c
++++ b/fs/efivarfs/file.c
+@@ -15,10 +15,10 @@
+ static ssize_t efivarfs_file_write(struct file *file,
+ 		const char __user *userbuf, size_t count, loff_t
+*ppos)
+ {
+-	struct efivar_entry *var = file->private_data;
+ 	void *data;
+ 	u32 attributes;
+ 	struct inode *inode = file->f_mapping->host;
++	struct efivar_entry *var = efivar_entry(inode);
+ 	unsigned long datasize = count - sizeof(attributes);
+ 	ssize_t bytes;
+ 	bool set = false;
+@@ -66,7 +66,8 @@ static ssize_t efivarfs_file_write(struct file *file,
+ static ssize_t efivarfs_file_read(struct file *file, char __user
+*userbuf,
+ 		size_t count, loff_t *ppos)
+ {
+-	struct efivar_entry *var = file->private_data;
++	struct inode *inode = file->f_mapping->host;
++	struct efivar_entry *var = efivar_entry(inode);
+ 	unsigned long datasize = 0;
+ 	u32 attributes;
+ 	void *data;
+@@ -107,7 +108,6 @@ static ssize_t efivarfs_file_read(struct file
+*file, char __user *userbuf,
+ }
+ 
+ const struct file_operations efivarfs_file_operations = {
+-	.open	= simple_open,
+ 	.read	= efivarfs_file_read,
+ 	.write	= efivarfs_file_write,
+ };
+diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+index ec23da8405ff..a13ffb01e149 100644
+--- a/fs/efivarfs/inode.c
++++ b/fs/efivarfs/inode.c
+@@ -82,26 +82,23 @@ static int efivarfs_create(struct mnt_idmap *idmap,
+struct inode *dir,
+ 	struct efivar_entry *var;
+ 	int namelen, i = 0, err = 0;
+ 	bool is_removable = false;
++	efi_guid_t vendor;
+ 
+ 	if (!efivarfs_valid_name(dentry->d_name.name, dentry-
+>d_name.len))
+ 		return -EINVAL;
+ 
+-	var = kzalloc(sizeof(struct efivar_entry), GFP_KERNEL);
+-	if (!var)
+-		return -ENOMEM;
+-
+ 	/* length of the variable name itself: remove GUID and
+separator */
+ 	namelen = dentry->d_name.len - EFI_VARIABLE_GUID_LEN - 1;
+ 
+-	err = guid_parse(dentry->d_name.name + namelen + 1, &var-
+>var.VendorGuid);
++	err = guid_parse(dentry->d_name.name + namelen + 1, &vendor);
+ 	if (err)
+ 		goto out;
+-	if (guid_equal(&var->var.VendorGuid,
+&LINUX_EFI_RANDOM_SEED_TABLE_GUID)) {
++	if (guid_equal(&vendor, &LINUX_EFI_RANDOM_SEED_TABLE_GUID)) {
+ 		err = -EPERM;
+ 		goto out;
+ 	}
+ 
+-	if (efivar_variable_is_removable(var->var.VendorGuid,
++	if (efivar_variable_is_removable(vendor,
+ 					 dentry->d_name.name,
+namelen))
+ 		is_removable = true;
+ 
+@@ -110,15 +107,15 @@ static int efivarfs_create(struct mnt_idmap
+*idmap, struct inode *dir,
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
++	var = efivar_entry(inode);
++
++	var->var.VendorGuid = vendor;
+ 
+ 	for (i = 0; i < namelen; i++)
+ 		var->var.VariableName[i] = dentry->d_name.name[i];
+ 
+ 	var->var.VariableName[i] = '\0';
+ 
+-	inode->i_private = var;
+-	kmemleak_ignore(var);
+-
+ 	err = efivar_entry_add(var, &info->efivarfs_list);
+ 	if (err)
+ 		goto out;
+@@ -126,17 +123,15 @@ static int efivarfs_create(struct mnt_idmap
+*idmap, struct inode *dir,
+ 	d_instantiate(dentry, inode);
+ 	dget(dentry);
+ out:
+-	if (err) {
+-		kfree(var);
+-		if (inode)
+-			iput(inode);
+-	}
++	if (err && inode)
++		iput(inode);
++
+ 	return err;
+ }
+ 
+ static int efivarfs_unlink(struct inode *dir, struct dentry *dentry)
+ {
+-	struct efivar_entry *var = d_inode(dentry)->i_private;
++	struct efivar_entry *var = efivar_entry(d_inode(dentry));
+ 
+ 	if (efivar_entry_delete(var))
+ 		return -EINVAL;
+diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
+index 8d82fc8bca31..fce7d5e5c763 100644
+--- a/fs/efivarfs/internal.h
++++ b/fs/efivarfs/internal.h
+@@ -29,8 +29,14 @@ struct efi_variable {
+ struct efivar_entry {
+ 	struct efi_variable var;
+ 	struct list_head list;
++	struct inode vfs_inode;
+ };
+ 
++static inline struct efivar_entry *efivar_entry(struct inode *inode)
++{
++	return container_of(inode, struct efivar_entry, vfs_inode);
++}
++
+ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long,
+void *,
+ 			    struct list_head *),
+ 		void *data, struct list_head *head);
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index d7facc99b745..cfead280534c 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -39,15 +39,25 @@ static int efivarfs_ops_notifier(struct
+notifier_block *nb, unsigned long event,
+ 	return NOTIFY_OK;
+ }
+ 
+-static void efivarfs_evict_inode(struct inode *inode)
++static struct inode *efivarfs_alloc_inode(struct super_block *sb)
+ {
+-	struct efivar_entry *entry = inode->i_private;
++	struct efivar_entry *entry = kzalloc(sizeof(*entry),
+GFP_KERNEL);
+ 
+-	if (entry)  {
++	if (!entry)
++		return NULL;
++
++	inode_init_once(&entry->vfs_inode);
++
++	return &entry->vfs_inode;
++}
++
++static void efivarfs_free_inode(struct inode *inode)
++{
++	struct efivar_entry *entry = efivar_entry(inode);
++
++	if (!is_root_inode(inode))
+ 		list_del(&entry->list);
+-		kfree(entry);
+-	}
+-	clear_inode(inode);
++	kfree(entry);
+ }
+ 
+ static int efivarfs_show_options(struct seq_file *m, struct dentry
+*root)
+@@ -112,7 +122,8 @@ static int efivarfs_statfs(struct dentry *dentry,
+struct kstatfs *buf)
+ static const struct super_operations efivarfs_ops = {
+ 	.statfs = efivarfs_statfs,
+ 	.drop_inode = generic_delete_inode,
+-	.evict_inode = efivarfs_evict_inode,
++	.alloc_inode = efivarfs_alloc_inode,
++	.free_inode = efivarfs_free_inode,
+ 	.show_options = efivarfs_show_options,
+ };
+ 
+@@ -233,21 +244,14 @@ static int efivarfs_callback(efi_char16_t
+*name16, efi_guid_t vendor,
+ 	if (guid_equal(&vendor, &LINUX_EFI_RANDOM_SEED_TABLE_GUID))
+ 		return 0;
+ 
+-	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+-	if (!entry)
+-		return err;
+-
+-	memcpy(entry->var.VariableName, name16, name_size);
+-	memcpy(&(entry->var.VendorGuid), &vendor, sizeof(efi_guid_t));
+-
+ 	name = efivar_get_utf8name(name16, &vendor);
+ 	if (!name)
+-		goto fail;
++		return err;
+ 
+ 	/* length of the variable name itself: remove GUID and
+separator */
+ 	len = strlen(name) - EFI_VARIABLE_GUID_LEN - 1;
+ 
+-	if (efivar_variable_is_removable(entry->var.VendorGuid, name,
+len))
++	if (efivar_variable_is_removable(vendor, name, len))
+ 		is_removable = true;
+ 
+ 	inode = efivarfs_get_inode(sb, d_inode(root), S_IFREG | 0644,
+0,
+@@ -255,6 +259,11 @@ static int efivarfs_callback(efi_char16_t *name16,
+efi_guid_t vendor,
+ 	if (!inode)
+ 		goto fail_name;
+ 
++	entry = efivar_entry(inode);
++
++	memcpy(entry->var.VariableName, name16, name_size);
++	memcpy(&(entry->var.VendorGuid), &vendor, sizeof(efi_guid_t));
++
+ 	dentry = efivarfs_alloc_dentry(root, name);
+ 	if (IS_ERR(dentry)) {
+ 		err = PTR_ERR(dentry);
+@@ -268,7 +277,6 @@ static int efivarfs_callback(efi_char16_t *name16,
+efi_guid_t vendor,
+ 	kfree(name);
+ 
+ 	inode_lock(inode);
+-	inode->i_private = entry;
+ 	i_size_write(inode, size + sizeof(__u32)); /* attributes +
+data */
+ 	inode_unlock(inode);
+ 	d_add(dentry, inode);
+@@ -279,8 +287,7 @@ static int efivarfs_callback(efi_char16_t *name16,
+efi_guid_t vendor,
+ 	iput(inode);
+ fail_name:
+ 	kfree(name);
+-fail:
+-	kfree(entry);
++
+ 	return err;
+ }
+ 
 
-In-line application block checksums are a solution for the problem of
-determining whether a database block read from media is intact. I.e.
-in-line checksums are effective at READ time.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
 
