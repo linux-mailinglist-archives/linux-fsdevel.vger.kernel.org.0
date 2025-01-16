@@ -1,284 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-39403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BF8A13A35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 13:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D36EA13A9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 14:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B37F16780D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 12:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474EC1691ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 13:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79491DE89C;
-	Thu, 16 Jan 2025 12:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C091F37C6;
+	Thu, 16 Jan 2025 13:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHnibYdF"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A7eWZjmZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A081DE4DC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 12:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D74519CC39;
+	Thu, 16 Jan 2025 13:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737031914; cv=none; b=q1biqvdxIy5m3oQCfcKRxEfWTtP0xDkKvYchbOdfaFTvOxUrMs6IftxxVWmkUJXCDCLdAtDklXWt2pjRUQTkp3ZsOHZDcfCf7gt9ylSrDxYrkWBrApq2+1FL4jPo2vxw0UVMDuaB0Q60tnCQNQj3rTXds8iByiOKv53UzV1/HTU=
+	t=1737033210; cv=none; b=kozCXg4o9ns1FcIfflSk1rkOb3Xkh8AUumIQluTw2LL04RWOVsT6GInMA7yc5wLSrE8FYyn4OTN8WLweyJnFQNFNiV4dkuCNqJ42woAiz8ouFL+TtqehiNp4iQifAzkjWTzcE4i44Vh1TfhIJkLvtwVDUZrr5WAGGWg6NM/rrQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737031914; c=relaxed/simple;
-	bh=xIYN2NHmo2QwDsyuOvZBbOqHbckP3HNGt4KEYakufmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3Dr/GsgAObKZrMCCsQ+EHLdidBf3tZpG7Zhdx8yGD67fYhgFC907FnCBDdTrrEDOJkagb0k5wqgBw2FBA61mQNnKZe+3hQTQuZdFhhSm94q4wS74Gi7eOqJg0MFedL2F5ETi+heFqXGyzzmSQ2KznPdXLYEwmgoUXih6xNiJ2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHnibYdF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737031911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bNsVzi0TwfaPei7liGwwgYrKVoL9iutt/ofjVR/+HzQ=;
-	b=gHnibYdFl7faLYBTFF4iVakcttKmA2al8sfSkEBaZH20+wUW4edl8lJ3xddCYCvaHRkdO6
-	7WzlLjxMQLgf/Mbj2O56hdj9TZqU1uzlun/1mf+4HXIZpqYpT/DX2Dau55uwwiYpD2Vm54
-	u+PQ8fRrmVKneawANdibNiBHeByGwVI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-280-_N-XIeH2ONqDh-Y6_vVBTQ-1; Thu,
- 16 Jan 2025 07:51:45 -0500
-X-MC-Unique: _N-XIeH2ONqDh-Y6_vVBTQ-1
-X-Mimecast-MFC-AGG-ID: _N-XIeH2ONqDh-Y6_vVBTQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8580F1956080;
-	Thu, 16 Jan 2025 12:51:44 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.118])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C06F81955F10;
-	Thu, 16 Jan 2025 12:51:42 +0000 (UTC)
-Date: Thu, 16 Jan 2025 07:53:54 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, fstests@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, nirjhar@linux.ibm.com,
-	zlang@redhat.com, kernel-team@meta.com
-Subject: Re: [PATCH v3 1/2] fsx: support reads/writes from buffers backed by
- hugepages
-Message-ID: <Z4kBYq0K919C9k4M@bfoster>
-References: <20250115183107.3124743-1-joannelkoong@gmail.com>
- <20250115183107.3124743-2-joannelkoong@gmail.com>
- <20250115213713.GE3557695@frogsfrogsfrogs>
- <CAJnrk1YXa++SrifrCfXf7WPQF34V20cet3+x+7wVuDf9CPoR7w@mail.gmail.com>
- <20250116005919.GK3557553@frogsfrogsfrogs>
+	s=arc-20240116; t=1737033210; c=relaxed/simple;
+	bh=a4FelPve24hx2H541JYRkMU/NzufVucHC49QLg/Y6nI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N/THiKubvfZFNb2rasLgFYcyQnKF0GqhGaYN9hIQtymf55JIUniNa4m02BWxpFCSbKyxPzx7O10Ln9piRqK1RdmfGECRXjbOmtUhafFUkkxGOAN5y4eupiJCij0wPQfqknB0jDOhEyg8m80iLkcivEPc8+pz6xZoTZB5mGahV+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A7eWZjmZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50G78xVM019751;
+	Thu, 16 Jan 2025 13:13:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BEbmGn
+	qQf1/62KTsvyxoe5FQYiW9lG/p4Gib5T766i8=; b=A7eWZjmZKL9H8DuPQs0Xg4
+	9tKBHhscO/XwQqEuPGZrcNj7RHAgVdxy3zBF+kGxNUvJSZDaNSNqdynbxA6QR5VE
+	4+cuR/G6b2G3k3BX+DJCZVLIw7T0X/D33r0TNsVpoTdrSgVwdG4NeK7TOg5GrHUf
+	CgubsLOQP4MCWkGVnBWDFL4olwodMMrJzqFXAo4kiGYXWDjEfwy2XEl5KdQ54u6Z
+	9fuMm9rdY166X9OL+Wpk+lzFEpMigifrzrhNuRy0wqX47J8B7KoyjxzRIOb6ppjr
+	55L0Gw6UD+o1ZVcP5Y2oE+ICYwe1EvaCenvH9N8XR8/Lxzp9wZ+w7SpkdCG+ZVJw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 446eg5wrk6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Jan 2025 13:13:03 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 50GDAgM0011301;
+	Thu, 16 Jan 2025 13:13:02 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 446eg5wrk3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Jan 2025 13:13:02 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50G9t5HB007385;
+	Thu, 16 Jan 2025 13:13:01 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4443yndykd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Jan 2025 13:13:01 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50GDD1iR29819634
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 16 Jan 2025 13:13:01 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 11D1458065;
+	Thu, 16 Jan 2025 13:13:01 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 17A6558057;
+	Thu, 16 Jan 2025 13:13:00 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.122.241])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 16 Jan 2025 13:13:00 +0000 (GMT)
+Message-ID: <71ef0b0abbb5cb9cfff7b8287542308b9a0b88d4.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 7/7] ima: Reset IMA_NONACTION_RULE_FLAGS after
+ post_setattr
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org
+Date: Thu, 16 Jan 2025 08:12:59 -0500
+In-Reply-To: <20241128100621.461743-8-roberto.sassu@huaweicloud.com>
+References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+	 <20241128100621.461743-8-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250116005919.GK3557553@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uDhFwdqcGNgLHe6QWTo2O8Z-H_B0tG1E
+X-Proofpoint-ORIG-GUID: n32nTXmeXhDBCBbzNnUbIzeTg-g9H8XU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-16_05,2025-01-16_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501160098
 
-On Wed, Jan 15, 2025 at 04:59:19PM -0800, Darrick J. Wong wrote:
-> On Wed, Jan 15, 2025 at 04:47:30PM -0800, Joanne Koong wrote:
-> > On Wed, Jan 15, 2025 at 1:37 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > >
-> > > On Wed, Jan 15, 2025 at 10:31:06AM -0800, Joanne Koong wrote:
-> > > > Add support for reads/writes from buffers backed by hugepages.
-> > > > This can be enabled through the '-h' flag. This flag should only be used
-> > > > on systems where THP capabilities are enabled.
-> > > >
-> > > > This is motivated by a recent bug that was due to faulty handling of
-> > > > userspace buffers backed by hugepages. This patch is a mitigation
-> > > > against problems like this in the future.
-> > > >
-> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > > > ---
-> > > >  ltp/fsx.c | 119 +++++++++++++++++++++++++++++++++++++++++++++++++-----
-> > > >  1 file changed, 108 insertions(+), 11 deletions(-)
-> > > >
-> > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > > index 41933354..8d3a2e2c 100644
-> > > > --- a/ltp/fsx.c
-> > > > +++ b/ltp/fsx.c
-> > > > @@ -190,6 +190,7 @@ int       o_direct;                       /* -Z */
-> > > >  int  aio = 0;
-> > > >  int  uring = 0;
-> > > >  int  mark_nr = 0;
-> > > > +int  hugepages = 0;                  /* -h flag */
-> > > >
-> > > >  int page_size;
-> > > >  int page_mask;
-> > > > @@ -2471,7 +2472,7 @@ void
-> > > >  usage(void)
-> > > >  {
-> > > >       fprintf(stdout, "usage: %s",
-> > > > -             "fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
-> > > > +             "fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> > > >          [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
-> > > >          [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
-> > > >          [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
-> > > > @@ -2484,6 +2485,7 @@ usage(void)
-> > > >       -e: pollute post-eof on size changes (default 0)\n\
-> > > >       -f: flush and invalidate cache after I/O\n\
-> > > >       -g X: write character X instead of random generated data\n\
-> > > > +     -h hugepages: use buffers backed by hugepages for reads/writes\n\
-> > >
-> > > If this requires MADV_COLLAPSE, then perhaps the help text shouldn't
-> > > describe the switch if the support wasn't compiled in?
-> > >
-> > > e.g.
-> > >
-> > >         -g X: write character X instead of random generated data\n"
-> > > #ifdef MADV_COLLAPSE
-> > > "       -h hugepages: use buffers backed by hugepages for reads/writes\n"
-> > > #endif
-> > > "       -i logdev: do integrity testing, logdev is the dm log writes device\n\
-> > >
-> > > (assuming I got the preprocessor and string construction goo right; I
-> > > might be a few cards short of a deck due to zombie attack earlier)
-> > 
-> > Sounds great, I'll #ifdef out the help text -h line. Hope you feel better.
-> > >
-> > > >       -i logdev: do integrity testing, logdev is the dm log writes device\n\
-> > > >       -j logid: prefix debug log messsages with this id\n\
-> > > >       -k: do not truncate existing file and use its size as upper bound on file size\n\
-> > [...]
-> > > > +}
-> > > > +
-> > > > +#ifdef MADV_COLLAPSE
-> > > > +static void *
-> > > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
-> > > > +{
-> > > > +     void *buf;
-> > > > +     long buf_size = roundup(len, hugepage_size) + alignment;
-> > > > +
-> > > > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
-> > > > +             prterr("posix_memalign for buf");
-> > > > +             return NULL;
-> > > > +     }
-> > > > +     memset(buf, '\0', buf_size);
-> > > > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
-> > >
-> > > If the fsx runs for a long period of time, will it be necessary to call
-> > > MADV_COLLAPSE periodically to ensure that reclaim doesn't break up the
-> > > hugepage?
-> > >
-> > 
-> > imo, I don't think so. My understanding is that this would be a rare
-> > edge case that happens when the system is constrained on memory, in
-> > which case subsequent calls to MADV_COLLAPSE would most likely fail
-> > anyways.
-> 
-> Hrmmm... well I /do/ like to run memory constrained VMs to prod reclaim
-> into stressing the filesystem more.  But I guess there's no good way for
-> fsx to know that something happened to it.  Unless there's some even
-> goofier way to force a hugepage, like shmem/hugetlbfs (ugh!) :)
-> 
-> Will have to ponder hugepage renewasl -- maybe we should madvise every
-> few thousand fsxops just to be careful?
-> 
+On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Commit 11c60f23ed13 ("integrity: Remove unused macro
+> IMA_ACTION_RULE_FLAGS") removed the IMA_ACTION_RULE_FLAGS mask, due to it
+> not being used after commit 0d73a55208e9 ("ima: re-introduce own integrit=
+y
+> cache lock").
+>=20
+> However, it seems that the latter commit mistakenly used the wrong mask
+> when moving the code from ima_inode_post_setattr() to
+> process_measurement(). There is no mention in the commit message about th=
+is
+> change and it looks quite important, since changing from IMA_ACTIONS_FLAG=
+S
+> (later renamed to IMA_NONACTION_FLAGS) to IMA_ACTION_RULE_FLAGS was done =
+by
+> commit 42a4c603198f0 ("ima: fix ima_inode_post_setattr").
+>=20
+> Restore the original change, but with new mask 0xfb000000 since the
+> policy-specific flags changed meanwhile, and rename IMA_ACTION_RULE_FLAGS
+> to IMA_NONACTION_RULE_FLAGS, to be consistent with IMA_NONACTION_FLAGS.
 
-I wonder.. is there test value in doing collapses to the target file as
-well, either as a standalone map/madvise command or a random thing
-hitched onto preexisting commands? If so, I could see how something like
-that could potentially lift the current init time only approach into
-something that occurs with frequency, which then could at the same time
-(again maybe randomly) reinvoke for internal buffers as well.
+Thanks, Roberto.  Please summarize the reason for reverting the change.  So=
+mething
+like:  Restore the original change to not reset the new file status after .=
+..
 
-All that said, this is new functionality and IIUC provides functional
-test coverage for a valid issue. IMO, it would be nice to get this
-merged as a baseline feature and explore these sort of enhancements as
-followon work. Just my .02.
+>=20
+> Cc: stable@vger.kernel.org=C2=A0# v4.16.x
+> Fixes: 11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAG=
+S")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Brian
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-> --D
-> 
-> > 
-> > Thanks,
-> > Joanne
-> > 
-> > > > +             prterr("madvise collapse for buf");
-> > > > +             free(buf);
-> > > > +             return NULL;
-> > > > +     }
-> > > > +
-> > > > +     return buf;
-> > > > +}
-> > > > +#else
-> > > > +static void *
-> > > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
-> > > > +{
-> > > > +     return NULL;
-> > > > +}
-> > > > +#endif
-> > > > +
-> > > > +static void
-> > > > +init_buffers(void)
-> > > > +{
-> > > > +     int i;
-> > > > +
-> > > > +     original_buf = (char *) malloc(maxfilelen);
-> > > > +     for (i = 0; i < maxfilelen; i++)
-> > > > +             original_buf[i] = random() % 256;
-> > > > +     if (hugepages) {
-> > > > +             long hugepage_size = get_hugepage_size();
-> > > > +             if (hugepage_size == -1) {
-> > > > +                     prterr("get_hugepage_size()");
-> > > > +                     exit(102);
-> > > > +             }
-> > > > +             good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy);
-> > > > +             if (!good_buf) {
-> > > > +                     prterr("init_hugepages_buf failed for good_buf");
-> > > > +                     exit(103);
-> > > > +             }
-> > > > +
-> > > > +             temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy);
-> > > > +             if (!temp_buf) {
-> > > > +                     prterr("init_hugepages_buf failed for temp_buf");
-> > > > +                     exit(103);
-> > > > +             }
-> > > > +     } else {
-> > > > +             unsigned long good_buf_len = maxfilelen + writebdy;
-> > > > +             unsigned long temp_buf_len = maxoplen + readbdy;
-> > > > +
-> > > > +             good_buf = calloc(1, good_buf_len);
-> > > > +             temp_buf = calloc(1, temp_buf_len);
-> > > > +     }
-> > > > +     good_buf = round_ptr_up(good_buf, writebdy, 0);
-> > > > +     temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> > > > +}
-> > > > +
-> > > >  static struct option longopts[] = {
-> > > >       {"replay-ops", required_argument, 0, 256},
-> > > >       {"record-ops", optional_argument, 0, 255},
-> > > > @@ -2883,7 +2980,7 @@ main(int argc, char **argv)
-> > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> > > >
-> > > >       while ((ch = getopt_long(argc, argv,
-> > > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > >                                longopts, NULL)) != EOF)
-> > > >               switch (ch) {
-> > > >               case 'b':
-> > > > @@ -2916,6 +3013,14 @@ main(int argc, char **argv)
-> > > >               case 'g':
-> > > >                       filldata = *optarg;
-> > > >                       break;
-> > > > +             case 'h':
-> > > > +                     #ifndef MADV_COLLAPSE
-> > >
-> > > Preprocessor directives should start at column 0, like most of the rest
-> > > of fstests.
-> > >
-> > > --D
-> > >
-> 
+> ---
+> =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> =C2=A0security/integrity/ima/ima_main.c | 2 +-
+> =C2=A02 files changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 22c3b87cfcac..32ffef2cc92a 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -141,6 +141,7 @@ struct ima_kexec_hdr {
+> =C2=A0
+> =C2=A0/* IMA iint policy rule cache flags */
+> =C2=A0#define IMA_NONACTION_FLAGS	0xff000000
+> +#define IMA_NONACTION_RULE_FLAGS	0xfb000000
+> =C2=A0#define IMA_DIGSIG_REQUIRED	0x01000000
+> =C2=A0#define IMA_PERMIT_DIRECTIO	0x02000000
+> =C2=A0#define IMA_NEW_FILE		0x04000000
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 712c3a522e6c..83e467ad18d4 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -277,7 +277,7 @@ static int process_measurement(struct file *file, con=
+st struct
+> cred *cred,
+> =C2=A0		/* reset appraisal flags if ima_inode_post_setattr was called */
+> =C2=A0		iint->flags &=3D ~(IMA_APPRAISE | IMA_APPRAISED |
+> =C2=A0				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> -				 IMA_NONACTION_FLAGS);
+> +				 IMA_NONACTION_RULE_FLAGS);
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Re-evaulate the file if either the xattr has changed or the
 
 
