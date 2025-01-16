@@ -1,109 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-39435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421ADA141E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 20:00:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA3AA141F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 20:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A529A188597E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 19:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B80C16A7D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 19:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9794022FDE9;
-	Thu, 16 Jan 2025 18:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA6F230D02;
+	Thu, 16 Jan 2025 19:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lMVJWM8+"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="GKbqlLA4";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cOoGKG+D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [104.223.66.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BD922FAC3;
-	Thu, 16 Jan 2025 18:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0614D230981;
+	Thu, 16 Jan 2025 19:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.223.66.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737053994; cv=none; b=sXX+ZovtNjPQ5hnCenFt3AVPr4Ce5F/MbWkS6gwYPjTn+x906XjwZHz2ysFETShZyRiT8L5ksCNHQwsTdN2GRX1yC2vIjmWVbEze4EqjCstADO38BGBbIFfmzuMAy2I/SVCfjci9T2u3wgSwwfAhnWJKl7OKJp3O+3E18+p0NPA=
+	t=1737054275; cv=none; b=M1VCA5heNqugqpZAfUqRWjDeQ4cdwx8chV9w3ec9OdlUXpmpAn+zhzGfBiEFcgHbt0ytXM2aoyRoKKBq4qvTHLIUrvRy3Q4hjYUbRw4UikPzE9DyonEWjabSe9rQFQJ0l63W2Z0qr9tsvkargVVk2mRXJ83din9fRdMXksiHUDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737053994; c=relaxed/simple;
-	bh=fiQbXu8bnouddMmlfWTTXD6V+eUXT2xKnq7PiHP49iE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gCx72gWBxeY0bcgMBQAAFpUDZHLs1VloVEOuPLJvYfuZUU4Fhr9zaGCH9kv5ffwfjXjb8uOSnqTEQTd3GqdeevZgUhMaqp46TjipamOB5+LNZkdSHlZIBpPCByFX/9mXx3hS6oBlt9t9CIr3crmqovtEDOcHA7Zl0GS8GBpc4tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lMVJWM8+; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=gayXrOv/ii/4l4tzYbPhb9aUtr4v6cPKWS3xNUAj/hE=; b=lMVJWM8+JhJRU2a/NVjIbXuwbs
-	6qLsY1I3qEZpw/EHL8HBkhiKsfGofGaqp93+Z565KDRD1TyMlw4mRZGJZA7TrKXHojyRtLIdpyVIW
-	fG7n6CXCAkdxsvz8LsptuVDnBygv00HfdQrAj/DUQIrl9Gap2SyvZ3BFz1PgqgUj4cUdx88Kxk1zy
-	renUKvczTHrNX5FJiNw6v5EPdjg8iPOGc92i0Hxaiw+wabV2BsHvKmw5V6kuXI03PHwIFop/MZ6Ci
-	TDYbfdkQEsRjdiGLP+eA+E4myroLtw5geOvRESqGTVGMcpgnTr6bht6fUc95AQonJ+qNzTxc8BOnT
-	XC2lyPcw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYV5q-00000002YrG-3CvI;
-	Thu, 16 Jan 2025 18:59:50 +0000
-Date: Thu, 16 Jan 2025 18:59:50 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Christian Brauner <brauner@kernel.org>
+	s=arc-20240116; t=1737054275; c=relaxed/simple;
+	bh=apqhxwSIhDmRC+8R+thsQYxqT6Ve/LhqdvUwNbqBgvU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OGATsb/DYhNJtIeLd0o2qJK1yJvcs14jOIE1oYplDyhKyOe06B+HueIRt6wisdUkr+DSgLANLNxXIAMK/98k6lNsSPhxU0JR9B5NJBEOnx6xYKgqx++vsW3fP5HodpVgtwPNkzvMgpyLGnFYuSifc/3xBTTwCvNIut1rckufBkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=GKbqlLA4; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cOoGKG+D; arc=none smtp.client-ip=104.223.66.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1737054273;
+	bh=apqhxwSIhDmRC+8R+thsQYxqT6Ve/LhqdvUwNbqBgvU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=GKbqlLA4JBZnfTnXrxOIwevi5bqQQFSNmd7ZGIRJLSnTaUcRSz1QpFN+bZvAMIfB8
+	 39MqYb76lyVtcgT5ohQ9hRt4Wh5ZZWNVFIrNjfbFOwU5KgLwHC/pIHJIiOScP/MaMn
+	 et5hR1RApao96iJaQMQ9gk1dn3qx3zMZaPUNEbVg=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1539012871E0;
+	Thu, 16 Jan 2025 14:04:33 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id ue6L5zeyBItq; Thu, 16 Jan 2025 14:04:33 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1737054272;
+	bh=apqhxwSIhDmRC+8R+thsQYxqT6Ve/LhqdvUwNbqBgvU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=cOoGKG+DjcGA8YAZVRPt9cFJIBu5wXXXs9IlL6CQzCdZzqMCgCbiVgac9hi6pvanh
+	 DEmSallIj8ToSU1GF4eGaFZpDbPxsANykxcOGnt29yt6/+CKQea7ZfdIakTs1Lb58O
+	 Qd454gIOL0lxtm8CJIuvldGXU7MHEIveCfh3By+U=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3772F12871CC;
+	Thu, 16 Jan 2025 14:04:32 -0500 (EST)
+Message-ID: <26411ea1c46a92cf3ac828b2ec09f26371959ed3.camel@HansenPartnership.com>
 Subject: Re: [PATCH v2 6/6] efivarfs: fix error on write to new variable
  leaving remnants
-Message-ID: <20250116185950.GL1977892@ZenIV>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, Ard Biesheuvel
+	 <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Christian Brauner
+	 <brauner@kernel.org>
+Date: Thu, 16 Jan 2025 14:04:27 -0500
+In-Reply-To: <20250116185950.GL1977892@ZenIV>
 References: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
- <20250107023525.11466-7-James.Bottomley@HansenPartnership.com>
- <20250116184517.GK1977892@ZenIV>
- <1d9e199d1b518a6661dee197bc767b2272acb318.camel@HansenPartnership.com>
+	 <20250107023525.11466-7-James.Bottomley@HansenPartnership.com>
+	 <20250116184517.GK1977892@ZenIV>
+	 <1d9e199d1b518a6661dee197bc767b2272acb318.camel@HansenPartnership.com>
+	 <20250116185950.GL1977892@ZenIV>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d9e199d1b518a6661dee197bc767b2272acb318.camel@HansenPartnership.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Jan 16, 2025 at 01:54:44PM -0500, James Bottomley wrote:
-> On Thu, 2025-01-16 at 18:45 +0000, Al Viro wrote:
-> > On Mon, Jan 06, 2025 at 06:35:25PM -0800, James Bottomley wrote:
+On Thu, 2025-01-16 at 18:59 +0000, Al Viro wrote:
+> On Thu, Jan 16, 2025 at 01:54:44PM -0500, James Bottomley wrote:
+> > On Thu, 2025-01-16 at 18:45 +0000, Al Viro wrote:
+> > > On Mon, Jan 06, 2025 at 06:35:25PM -0800, James Bottomley wrote:
+> > > 
+> > > > +Â Â Â Â Â Â Â inode_lock(inode);
+> > > > +Â Â Â Â Â Â Â if (d_unhashed(file->f_path.dentry)) {
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â /*
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  * file got removed; don't allow a set.Â  Caused by an
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  * unsuccessful create or successful delete write
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  * racing with us.
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  */
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â bytes = -EIO;
+> > > > +Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â goto out;
+> > > > +Â Â Â Â Â Â Â }
+> > > 
+> > > Wouldn't the check for zero ->i_size work here?Â  Would be easier
+> > > to follow...
 > > 
-> > > +       inode_lock(inode);
-> > > +       if (d_unhashed(file->f_path.dentry)) {
-> > > +               /*
-> > > +                * file got removed; don't allow a set.  Caused by
-> > > an
-> > > +                * unsuccessful create or successful delete write
-> > > +                * racing with us.
-> > > +                */
-> > > +               bytes = -EIO;
-> > > +               goto out;
-> > > +       }
+> > Unfortunately not.Â  The pathway for creating a variable involves a
+> > call to efivarfs_create() (create inode op) first, which would in
+> > itself create a zero length file, then a call to
+> > efivarfs_file_write(), so if we key here on zero length we'd never
+> > be able to create new variables.
 > > 
-> > Wouldn't the check for zero ->i_size work here?  Would be easier to
-> > follow...
+> > The idea behind the check is that delete could race with write and
+> > if so, we can't resurrect the variable once it's been unhashed from
+> > the directory, so we need to error out at that point.
 > 
-> Unfortunately not.  The pathway for creating a variable involves a call
-> to efivarfs_create() (create inode op) first, which would in itself
-> create a zero length file, then a call to efivarfs_file_write(), so if
-> we key here on zero length we'd never be able to create new variables.
+> D'oh...Â  Point, but it still feels as if you are misplacing the
+> object state here ;-/
 > 
-> The idea behind the check is that delete could race with write and if
-> so, we can't resurrect the variable once it's been unhashed from the
-> directory, so we need to error out at that point.
+> OK, so we have
+> Â Â Â Â Â Â Â Â * created, open but yet to be written into
+> Â Â Â Â Â Â Â Â * live
+> Â Â Â Â Â Â Â Â * removed
+> 
+> Might be better off with explicit state in efivar_entry...
 
-D'oh...  Point, but it still feels as if you are misplacing the object
-state here ;-/
+OK, that would get rid of the race in efivarfs_file_release I'd been
+worrying about where we can decide to remove the file under the inode
+lock but have to make it unhashed after dropping the inode lock.
 
-OK, so we have
-	* created, open but yet to be written into
-	* live
-	* removed
+Regards,
 
-Might be better off with explicit state in efivar_entry...
+James
+
 
