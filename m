@@ -1,223 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-39394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2921A1382D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:42:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDE7A13838
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92E81883304
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A745C1885BCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 10:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96DD1DC1A7;
-	Thu, 16 Jan 2025 10:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FE51DE2C1;
+	Thu, 16 Jan 2025 10:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="HHoZjXrx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7WMWJ3V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1F41DE2C1;
-	Thu, 16 Jan 2025 10:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6557E192598
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 10:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737024155; cv=none; b=it1S6mWIwzBobfr3HGErZuJ0y6njxMZ4q7jqqlXeznSA6sr7GbF+zgs8SDz3ED7RHxdbhQAqtD6CpXkPeJuAQsQk0U6la1zVGBj1XyxZ3smOeK3DJsRIfCahAaAHYG9eSzDVC8dXzf0zId0K3WrU+XGVwmKO8/9POKbwRNfz4R0=
+	t=1737024379; cv=none; b=FViV+HqNgVjXpnqxt30s5i++vcCoNot65noxst6HAq0OwXvvvq27eb01dli85ixNewEMbzWp9Vx8LxnuPcK/DnPx68UxPtc/VxTcbwBIzp8iTurWDZAN15+HU+EC15AsO8Ap854nhdYGjaAob1UE8GEyz011kWwiq3pLxOUMI/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737024155; c=relaxed/simple;
-	bh=ljXBir+tkLebuBt+s45VSYcoQpH6xDCBYRxZiTZ+OFc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=LbTZR4lpkDAUopMwu6WVtRGHqFHl5CF5XfoBuE3Bvq96Jj+MNJAVmri9p1Bz2L9gnXYVNZ4l9CC1Ssuz7Pgy9vATQ4RZGEPMNmOYCfDVVO39IEu7LfwQfCY2eabcH60HXU+ls+HjnG30q5+vj/xyFnyhI5ybBXwmH6oA28CvYdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=HHoZjXrx; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1737024100;
-	bh=AEphY/1E0HRc4k+GBMGTxIDD2L00khOeccwQ8JjbQSM=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=HHoZjXrxYND4wG52vjCgfopMJa5TX4Z4tAVEf2WDcs4aZL+mxf6x4jHrdJp13v0WT
-	 owEWm3HiNzRPD1iKd/l78y+cVq0WHYJ0KfmKsnOxk0CjU9OnoXm+HdqLg0vyPGgyjg
-	 51UQCO51ccZM2pMH+ns0T7+8z2KLxqcJwqDiT7J0=
-X-QQ-mid: bizesmtp86t1737024098t6lrccvf
-X-QQ-Originating-IP: BgU6dV1YvkbvRUVkEBEfVQE+oNOxQGxdHvWGJ35CHcw=
-Received: from smtpclient.apple ( [202.120.235.170])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 16 Jan 2025 18:41:36 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8883258136914962534
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1737024379; c=relaxed/simple;
+	bh=xNCqUeTOjkkz42A8NgpKowh84bSdOD64kR75mRv+k3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2qjXAhJhbF2pC1WMp5j6A3deie2QC160P+/ZEb06OXn0FxbNwJllevA35GChlD9Hb35P8Gk2mp196fuG7GxOVeRIEKE5AK00HCdlqgTofdkvnQz+cY5fQsMsmbbf5lpF49HsvHaZHq1rRS0CePkZYK/hkFWQcNBhZqXIUPjdL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7WMWJ3V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8905C4CED6;
+	Thu, 16 Jan 2025 10:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737024376;
+	bh=xNCqUeTOjkkz42A8NgpKowh84bSdOD64kR75mRv+k3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M7WMWJ3VQV86IV1z4d+TN5spH9ZO7YrqqNMzjDdtoC4urkQZUoXHFu1msThqqXlCg
+	 N3WZlWK+DszbQvZxUsGjxuP6M63TN17qHBdtf7elFG43rYgvwDo6WLHqPicplk6VDU
+	 4jXKLtLYptlLmiHMbReu4LScKXFb8qDSK57kbc5q6mhqEKZOitHZBB4vSA97YCxk/x
+	 rmkm6pDnt9FXJhuFh97bdbJavZNBZc9jBUcx2BOS63TvQmM3GlBfqEjSEeELGjvXSg
+	 H/036/nXQ2Zd0l9Dt9993UPLNwp4xUxAFfMXQHcKBtFRvL0Xiou6UipwKat3NsfIp+
+	 tQHXENNZrr7FA==
+Date: Thu, 16 Jan 2025 11:46:13 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Boris Burkov <boris@bur.io>
+Cc: linux-fsdevel@vger.kernel.org, daan.j.demeyer@gmail.com
+Subject: Re: Possible bug with open between unshare(CLONE_NEWNS) calls
+Message-ID: <20250116-audienz-wildfremd-04dc1c71a9c3@brauner>
+References: <20250115185608.GA2223535@zen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Bug: slab-out-of-bounds Write in __bh_read
-From: Kun Hu <huk23@m.fudan.edu.cn>
-In-Reply-To: <CAHc6FU63eqRqUnrPz0JHJdenfsCTWLgagX+2zywHNTcFoZA8XQ@mail.gmail.com>
-Date: Thu, 16 Jan 2025 18:41:26 +0800
-Cc: "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
- Andrew Price <anprice@redhat.com>,
- viro@zeniv.linux.org.uk,
- brauner@kernel.org,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- gfs2@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A184824F-B892-46D3-B086-556E9ACF4EA0@m.fudan.edu.cn>
-References: <F0E0E5DD-572E-4F05-8016-46D36682C8BB@m.fudan.edu.cn>
- <brheoinx2gsmonf6uxobqicuxnqpxnsum26c3hcuroztmccl3m@lnmielvfe4v7>
- <5757218E-52F8-49C7-95F1-9051EB51A2F3@m.fudan.edu.cn>
- <6yd5s7fxnr7wtmluqa667lok54sphgtg4eppubntulelwidvca@ffyohkeovnyn>
- <31A10938-C36E-40A2-8A1D-180BD95528DD@m.fudan.edu.cn>
- <xqx6qkwti3ouotgkq5teay3adsja37ypjinrhur4m3wzagf5ia@ippcgcsvem5b>
- <86F5589E-BC3A-49E5-824F-0E840F75F46D@m.fudan.edu.cn>
- <CAHc6FU5YgChLiiUtEmS8pJGHUUhHAK3eYrrGd+FaNMDLti786g@mail.gmail.com>
- <27DB604A-8C3B-4703-BB8A-CBC16B9C4969@m.fudan.edu.cn>
- <31f0da2e-4dd7-44eb-95ee-6d22d310a2d6@redhat.com>
- <CAHc6FU63eqRqUnrPz0JHJdenfsCTWLgagX+2zywHNTcFoZA8XQ@mail.gmail.com>
-To: Andreas Gruenbacher <agruenba@redhat.com>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NKqGW3WLFcbJOFYTed2wCI7In8kFqDmSvnZFdINycmkc69HHDSurUUuP
-	asbZz5wn5UQzqoC1rppVqE/5w9vzvbzNGKptP1qVZKQvO1qsULZ0ULvj5Z7OwsO10zUueSG
-	fo0mj/Hr6xaIo1Jhb1pTKhM9qj3akCSFynut50y4LBiM3e3ogvcxgHJ1IEkc2AVeBRmofnw
-	+qyIp7jstQehuT2QuTuZX3LMuVlimm2AoX9/vUbkKa8T3jjjIKoixo3uWRzrf76oUjOL/pT
-	ZOW9Elv98ZjqxPFkVIc4cWUiaD7pM81/Y2HqvhZ4gBPtGCDz7RefeG9FlrQZhGxWkRdy3lM
-	XRx3ERRzqCSomZfJR71lQuCMSuZ/6G3LLWJRopOe4C29Yg/HCMzi243vlGOOY+2oCyuHmHL
-	v8lKHFlBr65TteYa52Jz5onzcKYc6E+ZHTZ2CCR6Rai1QpGn9EcgDaOIGOF3dEQw1kKSB04
-	YIn9kPkdPLv0/od4lx4/s8ZLFKznIAi0chN1zH3OeVyXxrJCZSOexv6mKCk1VlTT33vDb/J
-	49gPoPC0tUcHI/yl3PeoJDEELdGrbdRz00CqStMf6as4IKKdBUR6LNe1mSaQdSwqDvj5rAF
-	4lLkQL/fZzCAp1OIbnoYQUa9sWinz5IE91XM2R7A78GJ1fkobYoOnp9t8eOWf2PIa5SNFj8
-	2Vf6I5YneTmHNU+NywkM1YZPGbteO5CUi8dNfPTVPQdhHTvN8AU6Qw9d8SbN6bOlYBzlvw5
-	IsYs3dTbGpUkJ3alxkfCXEawv4C8XfRQdB6RjIlJZz5re3+8XHItHHsBVuUNtcRXi29ZWBc
-	tkdb01WGa2zOzL1F4qEOdR0cWwbDJrU3RQoXqfvEEaOOvwUegvr9IyENNpdq/bZBORnKWIY
-	SYOsfJwPuaNb7FP84ygPYRfstX5cHu3C4umXcBEFDybC/RkvrOi8ljaqjng2Rtwr9/JZnVY
-	/TqhLRnxtvT0sqvaiYCXKMkEy0azTl5duNpg0VxcvQoCEKv1Ivf5H6tPx
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250115185608.GA2223535@zen.localdomain>
 
+On Wed, Jan 15, 2025 at 10:56:08AM -0800, Boris Burkov wrote:
+> Hello,
+> 
+> If we run the following C code:
+> 
+> unshare(CLONE_NEWNS);
+> int fd = open("/dev/loop0", O_RDONLY)
+> unshare(CLONE_NEWNS);
+> 
+> Then after the second unshare, the mount hierarchy created by the first
+> unshare is fully dereferenced and gets torn down, leaving the file
+> pointed to by fd with a broken dentry.
+> 
+> Specifically, subsequent calls to d_path on its path resolve to
+> "/loop0". I was able to confirm this with drgn, and it has caused an
+> unexpected failure in mkosi/systemd-repart attempting to mount a btrfs
+> filesystem through such an fd, since btrfs uses d_path to resolve the
+> source device file path fully.
+> 
+> I confirmed that this is definitely due to the first unshare mount
+> namespace going away by:
+> 1. printks/bpftrace the copy_root path in the kernel
+> 2. rewriting my test program to fork after the first unshare to keep
+> that namespace referenced. In this case, the fd is not broken after the
+> second unshare.
+> 
+> 
+> My question is:
+> Is this expected behavior with respect to mount reference counts and
+> namespace teardown?
+> 
+> If I mount a filesystem and have a running program with an open file
+> descriptor in that filesystem, I would expect unmounting that filesystem
+> to fail with EBUSY, so it stands to reason that the automatic unmount
+> that happens from tearing down the mount namespace of the first unshare
+> should respect similar semantics and either return EBUSY or at least
+> have the lazy umount behavior and not wreck the still referenced mount
+> objects.
+> 
+> If this behavior seems like a bug to people better versed in the
+> expected behavior of namespaces, I would be happy to work on a fix.
 
+It's expected as Al already said. And is_good_dev_path()
+looks pretty hacky...
 
-> 2025=E5=B9=B41=E6=9C=8815=E6=97=A5 02:05=EF=BC=8CAndreas Gruenbacher =
-<agruenba@redhat.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Mon, Jan 13, 2025 at 5:12=E2=80=AFPM Andrew Price =
-<anprice@redhat.com> wrote:
->> On 13/01/2025 15:54, Kun Hu wrote:
->>>=20
->>>>=20
->>>> 32generated_program.c memory maps the filesystem image, mounts it, =
-and
->>>> then modifies it through the memory map. It's those modifications =
-that
->>>> cause gfs2 to crash, so the test case is invalid.
->>>>=20
->>>> Is disabling CONFIG_BLK_DEV_WRITE_MOUNTED supposed to prevent that? =
-If
->>>> so, then it doesn't seem to be working.
->>>>=20
->>>> Thanks,
->>>> Andreas
->>>=20
->>>=20
->>>>  We have reproduced the crash with CONFIG_BLK_DEV_WRITE_MOUNTED =
-disabled to obtain the same crash log. The new crash log, along with C =
-and Syzlang reproducers are provided below:
->>>=20
->>>> Crash log: =
-https://drive.google.com/file/d/1FiCgo05oPheAt4sDQzRYTQwl0-CY6rvi/view?usp=
-=3Dsharing
->>>> C reproducer: =
-https://drive.google.com/file/d/1TTR9cquaJcMYER6vtYUGh3gOn_mROME4/view?usp=
-=3Dsharing
->>>> Syzlang reproducer: =
-https://drive.google.com/file/d/1R9QDUP2r7MI4kYMiT_yn-tzm6NqmcEW-/view?usp=
-=3Dsharing
->>>=20
->>> Hi Andreas,
->>>=20
->>> As per Jan's suggestion, we=E2=80=99ve successfully reproduced the =
-crash with CONFIG_BLK_DEV_WRITE_MOUNTED disabled. Should you require us =
-to test this issue again, we are happy to do so.
->>>=20
->> FWIW the reproducer boils down to
->>=20
->>   #include <fcntl.h>
->>   #include <unistd.h>
->>   #include <sys/ioctl.h>
->>   #include <linux/fs.h>
->>=20
->>   /*
->>      mkfs.gfs2 -b 2048 -p lock_nolock $DEV
->>      mount $DEV $MNT
->>      cd $MNT
->>      /path/to/this_test
->>    */
->>   int main(void)
->>   {
->>           unsigned flag =3D FS_JOURNAL_DATA_FL;
->>           char buf[4102] =3D {0};
->>           int fd;
->>=20
->>           /* Error checking omitted for clarity */
->>           fd =3D open("f", O_CREAT|O_RDWR);
->>           write(fd, buf, sizeof(buf));
->>           ioctl(fd, FS_IOC_SETFLAGS, &flag);
->>           write(fd, buf, sizeof(buf)); /* boom */
->>           close(fd);
->>           return 0;
->>   }
->>=20
->> So it's switching the file to journaled data mode between two writes.
->>=20
->> The size of the writes seems to be relevant and the fs needs to be
->> created with a 2K block size (I'm guessing it could reproduce with =
-other
->> combinations).
+Wouldn't something like:
 
-Hi Andy,
+bool is_devtmpfs(const struct super_block *sb)
+{
+        return sb->s_type == &dev_fs_type;
+}
 
-Thanks for the reporting. I was unable to run the C reproducer you =
-provided. I still reproduced the issue using syscall reproducer provided =
-by syzkaller.
+and then:
 
-Thanks,
+        ret = kern_path(dev_path, 0, &path);
+        if (ret)
+                goto out;
 
->=20
-> I've posted a fix and pushed it to for-next:
->=20
-> =
-https://lore.kernel.org/gfs2/20250114175949.1196275-1-agruenba@redhat.com/=
+	if (is_devtmpfs(path->mnt->mnt_sb))
+		// something something
 
->=20
-> Thanks for reporting!
->=20
-> Andreas
+be enough? Or do you specifically need to care where devtmpfs is
+mounted? The current check means that anything that mounts devtmpfs
+somewhere other than /dev would fail that check.
 
-> Syzlang reproducer: =
-https://drive.google.com/file/d/1R9QDUP2r7MI4kYMiT_yn-tzm6NqmcEW-/view?usp=
-=3Dsharing
+Of course, any standard Linux distribution will mount devtmpfs at /dev
+so it probably won't matter in practice. And contains may make /dev a
+tmpfs mount and bind-mount device nodes in from the host's devtmpfs so
+that would work too with this check.
 
-Hi Andreas,
-
-Thank you for the patch. I tested it using the syscall reproducer and =
-was still able to reproduce the issue.
-
-Crash log: Link: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E6%9C%AA%E6%8=
-A%A5%E5%91%8A/%E5%AE%8C%E5%85%A8%E6%97%A0%E8%AE%B0%E5%BD%95/32-KASAN_%20sl=
-ab-out-of-bounds%20Write%20in%20__bh_read/crashlog_0116_rc7%2Bpatch.txt
-
-Could you confirm if the patch is intended to fully resolve this issue, =
-or if additional changes might be required?
-
-=E2=80=94=E2=80=94=E2=80=94
-Thanks,
-Kun Hu
-
-
+In other words, I don't get why the /dev prefix check gets you anything?
+If you just verify that the device node is located on devtmpfs you
+should be good.
 
