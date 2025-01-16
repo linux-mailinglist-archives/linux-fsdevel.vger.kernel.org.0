@@ -1,135 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-39350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E692A131E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:06:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDF3A131EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3703A2481
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 04:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7775618876E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 04:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397113B792;
-	Thu, 16 Jan 2025 04:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E7F13D8B1;
+	Thu, 16 Jan 2025 04:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VxOjddEH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145228635F;
-	Thu, 16 Jan 2025 04:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FB278F30
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 04:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737000368; cv=none; b=p12hKr1Vgdr1ZKgO93HxAezw1oZIzxjwEevujIAiVCYUVWQQ6DvFV9UCrNCxWpfwnQp5CELdMRDKfyTNfq2nna1XnMTEPPlAKkwawqjBFx8TddCZZkCb0kHug5M1n2KRRypm1O7BUB0LZzu8HvOdAzRe01YexoaCG1PbUDv1q58=
+	t=1737000904; cv=none; b=o3IiNNOqrDvxhNfa3TPBHo8B30bVnyCo4EVyoKofb8Gqlo91Lnhik9fqRNBw6xIv9aL5zYJRLV9MzdMRWXHVRLcNrKxo6HPdfDWFvSs8F0k2YwX0Qw7GXs0HDrCdxAmRdFXdRrYXxEyOR2GbNQdK5VMwDiCO8cJ3H+I13A+lBIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737000368; c=relaxed/simple;
-	bh=LoZVtft/fWKMOFlop8+bH7To/FYlJo7ToYmTrf7kD2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K5HZIrivVjL6YYLcfA7fgNVPQnUeGYQqe+S2pMwvPTCrL/YU0zNA8SCMpQD6pcHCHRqBdRe6DMdbfD+r7r7Q2hDvsv1yvnqproMeHBtMo4hQlRxEaCeeCgD/KA2GDQpYf8GPar5otaRgNBgFgon5ppQy2DFyQ0fqrs4EavNdw5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46769b34cbfso8336421cf.0;
-        Wed, 15 Jan 2025 20:06:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737000366; x=1737605166;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U3vhwttkfjJiSjvN28GlypdNcRBATGkYOaW9TfWY3F8=;
-        b=c2+PWyavDhvwYLZr1EECatmS9MXXB1teKDKN0br6Q/ViYFy+QbN2FYczC1Uj044NW7
-         MrEQan0JOkOzvJWj3RVwVEk+VVFXdB17GjlBB5MUj6bHA4Uxxb4wRJ2RWPLAGMRygVlz
-         XHpuaVmQ8FfcOcQ2x0naWrDZTktPX/+YryYWMbODsepw5wmnWe2CrfhdCyaNbUyPwBHG
-         WThH/hhnKwA5V9FqOVPF0wjnvxVgDp0fpieHlPYzFWZ+ENvXzs7L654eKqv1iwk/OXsU
-         FXYH0NEmKoXR2NQ/QkjY9ZPhCbbtszqWVTuel41w9AfPf1s/94zVvAenu1YysRyYIto4
-         It+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXr/auvDaet0mcHpz2ezH36MIg5cYA19ZrfH+L5T56I3RooSBMeImFyEW2gMetUXizmoB4iMxkZFoHSsN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye9XYhKbXnG9kX47gnPHHoO4eHlQp4D3oX4RcEaAhN0s2G3Fc7
-	y9J6my4XwzOhfSsgW7wDRev3bg7rjuNQbcHvzi3mArpXK/lL0KbEByeI+M8i
-X-Gm-Gg: ASbGncuaKTxlXzP5826HDH6gVOvpG2fgXSSfyfotcs1lIN+wwxjj3mJZ0GGTdXLVESW
-	Kfv8mwk/81tYQFsaJKkJeCE0iLmfFDZO3q3Yj95wY+k6/mmZ6FoSAUwR6NfZg4sp6lYQ3l8Q4r2
-	0eK73/JB0u8JpOwO2s/IlJn3UWf3+Bk3lMGTTrN+X9aI/AA4/NiXOzBKwEOqPJpIqQwTGOAcvxP
-	OBP5CG05g15q7wilGvodrsjyM/vqLRKLGAibQ8kvcdN6oqTjc6Ez763u3l+YB3zD9yc8c8fDO8M
-	yemLr6s=
-X-Google-Smtp-Source: AGHT+IFMmOdiymzrHyKgzvn0vLDt0NBtS+/h2SXl6K37oWCcpapl1TaVT8AisbD1HbiQdl1ar11ShA==
-X-Received: by 2002:a05:622a:1a8d:b0:467:8765:51bb with SMTP id d75a77b69052e-46c7107e0a9mr567207911cf.37.1737000365693;
-        Wed, 15 Jan 2025 20:06:05 -0800 (PST)
-Received: from tachyon.tail92c87.ts.net ([192.159.180.233])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46c87340bbesm71336091cf.39.2025.01.15.20.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 20:06:05 -0800 (PST)
-From: Tavian Barnes <tavianator@tavianator.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Tavian Barnes <tavianator@tavianator.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] coredump: allow interrupting dumps of large anonymous regions
-Date: Wed, 15 Jan 2025 23:05:38 -0500
-Message-ID: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1737000904; c=relaxed/simple;
+	bh=hdojBk179TkhJ40ltx22MEfrcVb3pbpyB9kcModb0t8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIuEb3t2FWFjQcIxHLRfv7nJhzVAMbSMk8s1MqPNh3hp6IJsa+RAapLWoqKqVcier+FbHuOLe6d5J0nZhrZSigyvGUW/rqjuiRYyTD65VP7jECUz6sXRs+8aC4av44vJ+VDEWaCwQxDQTzKGoI1PiJVR+L/fAQd/YqUUep2uIhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VxOjddEH; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HVyBsPk7SGcJO9rbFT4YYY73ptq4vvgXLpzpisYTa6A=; b=VxOjddEHKpwjvUrMSj8QGjvlSD
+	lM/Tn7TqusxTJgja/ctzbB8Pu3AzLgSqCaLatRAPEFOrTf2ZLwk8bC8fD7T4zzZ2/xRx1BRaKAy6a
+	YwfnCCzPtBT5E7oEuc5dQ04iwJJ+nZFNMoHKr2H4Q+yPIHOn9auGqcMyqX3QFcgdRVaNwqMczeOop
+	wONdo9y8RP72BBa5JT9fQQK2fERXBNTis2r+cbqBteJTONMQYYNXiFWMkkId0NddLp8xt/skuN2Dl
+	9MdQR448HRzhXZUbYPJ7byil1EmgX7tug2eVPp3wNB1eZmDxAaf4fveFFzv9DTxDoVJkequjmtwt9
+	uLjnBpfQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYHHX-00000001z7n-0RSx;
+	Thu, 16 Jan 2025 04:14:59 +0000
+Date: Thu, 16 Jan 2025 04:14:59 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Boris Burkov <boris@bur.io>
+Cc: linux-fsdevel@vger.kernel.org, daan.j.demeyer@gmail.com
+Subject: Re: Possible bug with open between unshare(CLONE_NEWNS) calls
+Message-ID: <20250116041459.GC1977892@ZenIV>
+References: <20250115185608.GA2223535@zen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250115185608.GA2223535@zen.localdomain>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-dump_user_range() supports sparse core dumps by skipping anonymous pages
-which have not been modified.  If get_dump_page() returns NULL, the page
-is skipped rather than written to the core dump with dump_emit_page().
+On Wed, Jan 15, 2025 at 10:56:08AM -0800, Boris Burkov wrote:
+> Hello,
+> 
+> If we run the following C code:
+> 
+> unshare(CLONE_NEWNS);
+> int fd = open("/dev/loop0", O_RDONLY)
+> unshare(CLONE_NEWNS);
+> 
+> Then after the second unshare, the mount hierarchy created by the first
+> unshare is fully dereferenced and gets torn down, leaving the file
+> pointed to by fd with a broken dentry.
 
-Sadly, dump_emit_page() contains the only check for dump_interrupted(),
-so when dumping a very large sparse region, the core dump becomes
-effectively uninterruptible.  This can be observed with the following
-test program:
+No, it does not.  dentry is just fine and so's mount - it is not
+attached to anything, but it's alive and well.
 
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <sys/mman.h>
+> Specifically, subsequent calls to d_path on its path resolve to
+> "/loop0".
 
-    int main(void) {
-        char *mem = mmap(NULL, 1ULL << 40, PROT_READ | PROT_WRITE,
-                MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
-        printf("%p %m\n", mem);
-        if (mem != MAP_FAILED) {
-                mem[0] = 1;
-        }
-        abort();
-    }
+> My question is:
+> Is this expected behavior with respect to mount reference counts and
+> namespace teardown?
 
-The program allocates 1 TiB of anonymous memory, touches one page of it,
-and aborts.  During the core dump, SIGKILL has no effect.  It takes
-about 30 seconds to finish the dump, burning 100% CPU.
+Yes.  Again, mount is still alive; it is detached, but that's it.
 
-This issue naturally arises with things like Address Sanitizer, which
-allocate a large sparse region of virtual address space for their shadow
-memory.
+> If I mount a filesystem and have a running program with an open file
+> descriptor in that filesystem, I would expect unmounting that filesystem
+> to fail with EBUSY, so it stands to reason that the automatic unmount
+> that happens from tearing down the mount namespace of the first unshare
+> should respect similar semantics and either return EBUSY or at least
+> have the lazy umount behavior and not wreck the still referenced mount
+> objects.
 
-Fix it by checking dump_interrupted() explicitly in dump_user_pages().
-
-Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
----
- fs/coredump.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index d48edb37bc35..fd29d3f15f1e 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -950,6 +950,10 @@ int dump_user_range(struct coredump_params *cprm, unsigned long start,
- 			}
- 		} else {
- 			dump_skip(cprm, PAGE_SIZE);
-+			if (dump_interrupted()) {
-+				dump_page_free(dump_page);
-+				return 0;
-+			}
- 		}
- 		cond_resched();
- 	}
--- 
-2.48.1
-
+Lazy umount is precisely what is happening.  Referenced mount object is
+there as long as it is referenced.
 
