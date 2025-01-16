@@ -1,96 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-39354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92713A13224
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B10A13235
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 06:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6143A5B75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 04:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451CE3A6152
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CA513C8E8;
-	Thu, 16 Jan 2025 04:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5C8142E7C;
+	Thu, 16 Jan 2025 05:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="QpSTGUo6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gZf2x1Kj"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="v0paJONS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE62EC4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 04:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AF55661
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 05:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737003144; cv=none; b=rRueVx3Z4pmtO3XlTG7pOFWE29co350M6swWurliqNscpDpVPEt0FtvNqn6m4MzYowSGxKv/hDOyeAsdEIkj+/WDgia/UaKnQQAlsQpNG0d+SyxW5u2gWpYDLG5m5nD1ae0IUR5Yly2GyzFx6qUygeT06lnJOUuq8UjX+5/oTKI=
+	t=1737003837; cv=none; b=e23cc7zV7njpvTlmW4bEdvDPAtLh3kIAEPhcOBMpbfbYUec2T2HSW3lE6iU0SnFkA8BjMsOvG9O6cGzmz9iXIywayV2cUHJONz15n0MGjefpEwF9FUOykLRspzZBGF9OFyqs1Eda78qM7Cx5qcpVbGAJ+YVbCZX1cPq5/XoIdtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737003144; c=relaxed/simple;
-	bh=mN+JjihbRJcvGehK+OrqkbWr3ZX2MoSltuxkrGP8nC4=;
+	s=arc-20240116; t=1737003837; c=relaxed/simple;
+	bh=wELArgmung28UVW6a1djIOqJloxqOE5PObrjaTGmt24=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCpcOsoJRckOZ4nrM2HaBe2BII4UjR7Jwee4SlQ0GgTGY6ua1DmeFVORoNqrni3KaOpRDpAkZ1lU5U7+2d4NR2yD3qOcLCgkTkRwV/kscCCIueu5jQRB3OgNo7ZVBbBqTm7tnauagTvEzNGx3sm92dxeS5LFCLlBCPzqdFXfRbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=QpSTGUo6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gZf2x1Kj; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bur.io
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 96670114019F;
-	Wed, 15 Jan 2025 23:52:20 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Wed, 15 Jan 2025 23:52:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1737003140; x=1737089540; bh=dAImxP9kH7
-	wVJ/7YaTkljdT1vWhiUwfiwbjl4IwASmg=; b=QpSTGUo6MnWwWJ1wYBTLssKmBb
-	AJaNKUyiaRbcED4flnmxCI6/C1Yuj/R62wEX4FehREKuCpmEeQhtwx2Jths6DwfE
-	UKPQQlh11uuI2hoIPLmX/CDcO2KMpevr/5qhRu57rSBsRFhnxw2tVGLgebeFedEK
-	cShY9N6yCEtwItSqvUmxUDgZHeTTkIP24tuB0PDqltq7MhCULywQTAZWDMWrSZn8
-	BjqxggoswVyLnPj5jqNndJS3VqrMiEpdvCV6NLLAqhygJRKBFu6m25tSohQOvuX0
-	d4l8VK5/GXB4AvYUVxCrodlb5zRAUcQj0++t1qC4msoHQUsd1xsH6gvc12yA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1737003140; x=1737089540; bh=dAImxP9kH7wVJ/7YaTkljdT1vWhiUwfiwbj
-	l4IwASmg=; b=gZf2x1KjyIZ0xhtvvLoDIkz0ms/ijj9e2CVc9mDvB32U9C5EPZD
-	BuvuOU+bqQH/y6PFKcrsCi5IsB1l8JnD6ZwHbYTO5bFLnTD+UW+pPXO4WsLk78ST
-	EjXZSjYTBHb0Dsc9LF3kkDICFa/CnUAy9r7IbiLJB9IBDwctgop/QXHmX+bourIw
-	s93TqlEdWYvFXEci4O/1oTecyFC/tyyRamnjWpxxWPOokfRXQpxNpUYinu1d71Av
-	LHtf1pUcP9lYEmriRv/HPEacyLCRsUHL9lQ292M7VCsiCNMxxUrM2UGxXm88r7/0
-	DDmpYB4i9q2eaj4koX5Yy4w2siZekevVOfA==
-X-ME-Sender: <xms:hJCIZ4U4X1cT5PfFjqZFVYg0cakoigZgA1UE_oOEVOFQgS1-kDbitQ>
-    <xme:hJCIZ8mq5HjhPPetxTn1PX-BYJ6zT5GT6XRmSI3opcF_EUHiiMjMZ3gq9FGzUY2h9
-    fVlwwc-twgM4i1rEbI>
-X-ME-Received: <xmr:hJCIZ8aleaFlO7JL2qspZeFfaLaoQK_NqRh30ON9395R-rwJ6YWY5_NpQhQ2n7NMjizUFWVV7QF94vnhXOFqBtDeMS0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeitddgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehorhhishcuuehurhhkohhvuceosghorhhishessghurhdrihhoqeenuc
-    ggtffrrghtthgvrhhnpeehvdeugfdvheehteetieeiiedvieehhfeitedvledugeetgefh
-    ueeitdetlefggfenucffohhmrghinhepshhushgvrdgtohhmnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghorhhishessghurhdrihhopdhn
-    sggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehvihhroh
-    esiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhugidqfhhs
-    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurggrnhdrjh
-    druggvmhgvhigvrhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:hJCIZ3XlJtdFKVYzbMTAeO_slB5ghHcB5jDlQ5rUPpjGW01EqBrfTg>
-    <xmx:hJCIZymV1sfaoqfHsxuFIUjNmrScGhmDDmLU7d5o63OUM5nXgQai_w>
-    <xmx:hJCIZ8f0EnFeNwHwvjVi14nUl1Zd17mEY7i_0exxgJwLPIA60wljpQ>
-    <xmx:hJCIZ0GUDtkeF9M-qY2mmHeu1BBdIucA9qGlnD68B31Smnu3WzT7Aw>
-    <xmx:hJCIZ0iM5DjhJUaZI9HARy17VvX8f3mYdI4bkilQ-CHExpcJv4a8N4RP>
-Feedback-ID: i083147f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Jan 2025 23:52:19 -0500 (EST)
-Date: Wed, 15 Jan 2025 20:52:41 -0800
-From: Boris Burkov <boris@bur.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=daC9Hr+bjm/HdxR/HcRZ6fzPnai0h4QJbMZmDHK8PjiOZt2HnMdJCCkhOIIKbWO7jnsg/MexSQyLM1xwcvJN8t+MezzZWTgJWAtSRSxLiturx5RWpusV5/kx1t837UnNlIAVIH9+bjuzfz7Uerl+h4xLJMCpLB9k0vwoX8Anno4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=v0paJONS; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2163dc5155fso7608775ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2025 21:03:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1737003835; x=1737608635; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQtwcz66cRpnEOfOa/HyiuZRqWSGLaKRKp3+zlxh6e0=;
+        b=v0paJONShVSwTov0vlckCCKx166z0WlVMcBq0nm7xyn3POJk0Y9jS/Im2nI4/GOXhQ
+         csFjAZkT3QQI66xORHtTMnh85IBerAjVLvO5mm6QnbLs0IKsd0yYmmMqTj7hjbhbkBDS
+         SpPlrJVVpJMjWuwidRR7s86gSmShUXs3uaPpJhAc3Pf4h/UprFWOl+1OPQbszhj0d18M
+         zn9D0WMzjDnNxW8jbnSq3r0yryiR0ZZoRQvGbw0VYbPM1rUPGKOGBtIfM29oFE7PsLnf
+         Bi7yBtDxjeTAu2hiXoYBOFTXU15Hc3bBDCA2erw9Gp9QLr71cAI08CbHmv3CovAU3dMa
+         1aiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737003835; x=1737608635;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQtwcz66cRpnEOfOa/HyiuZRqWSGLaKRKp3+zlxh6e0=;
+        b=DKVfdQU2B9jWjPjWWDJaJVaWYBOngShFnnW13+zgab5RtYSNNVdJccMGaFTg16emmV
+         xZUZ186+TB2tw3y7Jm9rmkh4iLvueFmcrlbMpLrr3iCGgXF/fy5yOo6BXYkLcxYAiIQG
+         oCuMyOGDcJJ4PmB+Rd5CcTRbWyqxyk0lp9uEyfy1v4IcoToh4f3K42m2o54uevvWf7+q
+         yDPb0pMGsJiWDcxWhatYLLX0GDkfjNVeM9YEal1q6WHZbOnqyiX/e0Ohp39pWZnmENLY
+         O8gdDbxT/IhT3HlAF8iPioQqQ/7kRvY1jHIlV/IrvnW6z8fHxWa4lAzgzeqSjVzRNTDm
+         Hw0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+FT9lGRlA+dUOfy7N6udtdqjRequGOUjUzmzwL6MFaRn807SWJBoEE6rQtr3DGve8ByajCIx7wf2uWAE6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/zypf6hrjGFbL0XaRr+CcFCKoVkcLbAM0opcOaOOO4CGqrx4R
+	Vpo4yhKb97IpO3ACUFt2hyVrx6aXmot2o2cdtDZp/tYWIPkhKL9nPQc7y0gKt5Q=
+X-Gm-Gg: ASbGncsFOVbzyKCkvnGyb5W5AKeTsdb4WZB9/w4cuHfLGk/PB1KkXLoblE9IWNE0/ro
+	V2HS4UH5T+EbcDgaNqdtMapp7HpvDOgAsxLfLJDjUxQffsYIX0xxGfW+6sR278QxtzoAqt1NePW
+	+uk+/U6qMZfHDHoHZF9KI18NJ/thcHRFmBg4Eo2JW4eUtgUaPIvSRW8Jo9p+b1UTvVS/r6d9HIy
+	YfnBy3p5AZ83R31XEKzW/ll3The8thz5uQs+McbaxbfDBVl1snpFJfnno7piN40WbggzQTBTcs8
+	L6IvAi7ASgsSveIsvzJXqP+D2hxpeunp
+X-Google-Smtp-Source: AGHT+IGNOhZ2CDB3dC9ypPRx2+QFrztyTh30xO+H1dvtRXfxPIdj2LE0KDNO2Mwf1ivGr5YrWG2u9A==
+X-Received: by 2002:a05:6a20:244d:b0:1d9:fbc:457c with SMTP id adf61e73a8af0-1e88d0a4771mr34957994637.36.1737003834927;
+        Wed, 15 Jan 2025 21:03:54 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72d4067f72dsm10406495b3a.145.2025.01.15.21.03.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 21:03:54 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tYI2p-00000006SjT-2V99;
+	Thu, 16 Jan 2025 16:03:51 +1100
+Date: Thu, 16 Jan 2025 16:03:51 +1100
+From: Dave Chinner <david@fromorbit.com>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, daan.j.demeyer@gmail.com
-Subject: Re: Possible bug with open between unshare(CLONE_NEWNS) calls
-Message-ID: <20250116045241.GA2456181@zen.localdomain>
-References: <20250115185608.GA2223535@zen.localdomain>
- <20250116041459.GC1977892@ZenIV>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, gfs2@lists.linux.dev
+Subject: Re: [PATCH 6/8] dcache: use lockref_init for d_lockref
+Message-ID: <Z4iTN86x2SsTVOIY@dread.disaster.area>
+References: <20250115094702.504610-1-hch@lst.de>
+ <20250115094702.504610-7-hch@lst.de>
+ <Z4gW4wFx__n6fu0e@dread.disaster.area>
+ <20250115203024.GB1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,69 +99,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250116041459.GC1977892@ZenIV>
+In-Reply-To: <20250115203024.GB1977892@ZenIV>
 
-On Thu, Jan 16, 2025 at 04:14:59AM +0000, Al Viro wrote:
-> On Wed, Jan 15, 2025 at 10:56:08AM -0800, Boris Burkov wrote:
-> > Hello,
+On Wed, Jan 15, 2025 at 08:30:24PM +0000, Al Viro wrote:
+> On Thu, Jan 16, 2025 at 07:13:23AM +1100, Dave Chinner wrote:
+> > On Wed, Jan 15, 2025 at 10:46:42AM +0100, Christoph Hellwig wrote:
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > ---
+> > >  fs/dcache.c | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/dcache.c b/fs/dcache.c
+> > > index b4d5e9e1e43d..1a01d7a6a7a9 100644
+> > > --- a/fs/dcache.c
+> > > +++ b/fs/dcache.c
+> > > @@ -1681,9 +1681,8 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+> > >  	/* Make sure we always see the terminating NUL character */
+> > >  	smp_store_release(&dentry->d_name.name, dname); /* ^^^ */
+> > >  
+> > > -	dentry->d_lockref.count = 1;
+> > >  	dentry->d_flags = 0;
+> > > -	spin_lock_init(&dentry->d_lock);
 > > 
-> > If we run the following C code:
-> > 
-> > unshare(CLONE_NEWNS);
-> > int fd = open("/dev/loop0", O_RDONLY)
-> > unshare(CLONE_NEWNS);
-> > 
-> > Then after the second unshare, the mount hierarchy created by the first
-> > unshare is fully dereferenced and gets torn down, leaving the file
-> > pointed to by fd with a broken dentry.
+> > Looks wrong -  dentry->d_lock is not part of dentry->d_lockref...
 > 
-> No, it does not.  dentry is just fine and so's mount - it is not
-> attached to anything, but it's alive and well.
-> 
-> > Specifically, subsequent calls to d_path on its path resolve to
-> > "/loop0".
-> 
-> > My question is:
-> > Is this expected behavior with respect to mount reference counts and
-> > namespace teardown?
-> 
-> Yes.  Again, mount is still alive; it is detached, but that's it.
-> 
-> > If I mount a filesystem and have a running program with an open file
-> > descriptor in that filesystem, I would expect unmounting that filesystem
-> > to fail with EBUSY, so it stands to reason that the automatic unmount
-> > that happens from tearing down the mount namespace of the first unshare
-> > should respect similar semantics and either return EBUSY or at least
-> > have the lazy umount behavior and not wreck the still referenced mount
-> > objects.
-> 
-> Lazy umount is precisely what is happening.  Referenced mount object is
-> there as long as it is referenced.
+> include/linux/dcache.h:80:#define d_lock  d_lockref.lock
 
-Thank you for your reply and explanations.
+Ah, I missed that subtlety (obviously). Carry on!
 
-So in your opinion, what is the bug here?
-
-btrfs started using d_path and checking that the device source file was
-in /dev, to avoid putting nonsense like /proc/self/fd/3 into the mount
-table, where it makes userspace fall over. 
-(https://bugzilla.suse.com/show_bug.cgi?id=1230641)
-
-I'd be loathe to call the userspace program hitting the
-'unshare; open; unshare' sequence buggy, as we don't fail any of the
-syscalls in a particularly sensible way. And if you use unshare -m, you
-now have to vet the program you call doesn't use unshare itself?
-
-You've taught me that d_path is working as intended in the face of the
-namespace lifetime, so we can't rely on it to produce the "real"
-(original?) path, in general.
-
-So, to me, that leaves the bug as
-"btrfs shouldn't assume/validate that device files will be in /dev."
-
-We can do the d_path resolution thing anyway to cover the common case,
-in the bugzilla, but shouldn't fail on something like /loop0 when that
-is what we get out of d_path?
-
-Boris
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
