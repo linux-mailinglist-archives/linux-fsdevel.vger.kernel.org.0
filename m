@@ -1,169 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-39398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90CDA13982
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 12:53:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FACA139B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 13:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 282C23A6AD7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 11:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780D6188A151
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 12:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374C51DE4DF;
-	Thu, 16 Jan 2025 11:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC0B1DE4D7;
+	Thu, 16 Jan 2025 12:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YLPGhTQ/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2JcY/en"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BA71DE4EF;
-	Thu, 16 Jan 2025 11:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA1A24A7C2;
+	Thu, 16 Jan 2025 12:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737028368; cv=none; b=hZgFsbqZshxCAdBk1NW2j6eJ4mLwQKcxZx0qSmkXzOpNfeVauF5rcR6VHiWLeo75Ur9eh/JaIUX/zlcmBafsTGCivTmv+c3OoksZRWDh/NIPsvsKpi2yWXCPWWC49SjGJrwJcBQMp9YzV0gLyixKIS9Esx2RjxEEoss/vy3XXR4=
+	t=1737029098; cv=none; b=VzT2Jw9Lgl70PO6ZZLS61hrbXcEm0SrIKgrsKILWFC7Zrm9PbUj6j6kv6P8sFZNeaixKAAL+eo5tk+U2+LQ9lNuH9Q+JDOMCATYH4wO1z9c3vLDeJ0XHhdIdvzB+DPW4p5rNTL/7a68m60OPxTijM4QUKyq2NPrMxnz6HaHNmdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737028368; c=relaxed/simple;
-	bh=IIkgJW5uzFF+glFM/tgQ5XQXHbpkGyOEDF+vsD1oDY0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OWVObqkrNvukbQz/K5v/uo6cXLgthWbb9/1F81QZ5jX1noaHK+CpafMS2GXpKKNEL91lc7VaqViiIRevfZhxRy7tHFhsDvn/MaYEcokBlRMqi2nxDUU9bY7WC9MQ+vxhygjzwPbxDdwwjHMyf1clMoMeO1rxU9u2kQeeQZTQSls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YLPGhTQ/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50G85g94020410;
-	Thu, 16 Jan 2025 11:52:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=8N2eoZ
-	3YvYb/SFAyhdNqcY8Vat04k3vLluJ3ZnnVVm4=; b=YLPGhTQ/onE5PqfR+SwDxA
-	DfLdixm+6D0nsa5LrWiA28HY1aJ3ycqvsuzPQjC4DvGHKjYLSqKIbgxlT0V4B4BV
-	BNLdDluszzLAI0EMvhjFYd7W95JB+z3MecvgVqXYhZbs0JcCSqVPwkOzepKjT2rr
-	KTEX3E10yPngKBGDVIn8AXXlhO+4a+lEMbLv6YSgVUAlv+u22XV88joGBdGYco7p
-	07aeaqj7Zv5sV1VaOiplpECKMIvyjebBgqqyPoGy2uIFoEy0qtV74eOGDbYi5oJ2
-	bBJTv98ylPjvx563LvSWXkrw6nLB4QZ2zGnVD8YxQLrJHJXYDCPADLiH/rf5/3tg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 446xa391bn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Jan 2025 11:52:13 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 50GBkD7g028253;
-	Thu, 16 Jan 2025 11:52:13 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 446xa391bj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Jan 2025 11:52:13 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50GAk3J8001089;
-	Thu, 16 Jan 2025 11:52:12 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44456k5cyb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Jan 2025 11:52:12 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50GBqBtm29098512
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Jan 2025 11:52:11 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 802F45806D;
-	Thu, 16 Jan 2025 11:52:11 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 00BD658080;
-	Thu, 16 Jan 2025 11:52:10 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.131.6])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 Jan 2025 11:52:09 +0000 (GMT)
-Message-ID: <906089e5f4e24182dc776488959dc595c92a616c.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 6/7] ima: Discard files opened with O_PATH
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org
-Date: Thu, 16 Jan 2025 06:52:09 -0500
-In-Reply-To: <20241128100621.461743-7-roberto.sassu@huaweicloud.com>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-	 <20241128100621.461743-7-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1737029098; c=relaxed/simple;
+	bh=WRKcBrc9oLkV83bccyC5QHkyLyIAR4h86BkVAoZgLsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gQENQMbMXkm5sshsmL0QZNmiEgDOfxhZWAyRgCmS/afZPTSf3u95nSDVF82PqHz+b7DZggI75GLCeYVbFV/NELYhei0w5xwFG4/SyhHIUcVARnexMcqRgwii3bqSeMVuBybmpmUc+ji0Bah8KKF/+lLMJt8RkccSa5dRqDPBG4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2JcY/en; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5db6921ad3dso752736a12.2;
+        Thu, 16 Jan 2025 04:04:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737029095; x=1737633895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hHNpYGsjuL1p9B3DqvTgdGJ0uRwqhFcJCkZULgYXRBY=;
+        b=j2JcY/enhRahOVWMqV8FGXAw85n40MjIV8paEsKO5oGTR0rKkvecq4qyUKlgXBKb2n
+         fPL3f2LDalOz59anz8cLZDbHy73V8qEtmL2shyI9O7pXYahV5c4UWfQg/tvBZFgd827N
+         VsMAaQs8rUEYNC+WjfJijbCmYFM8ixrDH8LLtWKFRjZdNzbhxJjSf6+rxkg4im6UNqka
+         nktZNJIuVBzbOsj3IimXkmd0zkg7kiDVzXyz7dZaJxLRF2PHnqtnmFLTRrJa3Y4cVnhc
+         v+435++IDz9MlU9djZ/wXars0dYNQ9KqCmq56JFh28sbuXKLMCwgiIz1dUGAWkFabHXl
+         mABA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737029095; x=1737633895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hHNpYGsjuL1p9B3DqvTgdGJ0uRwqhFcJCkZULgYXRBY=;
+        b=VyXE/i69THniPlH7bURO1ev+aBZ4RaFu118i8gQqQSNsHTT81D5rY+SPxA2GuR0mDi
+         NynTUnZKwi7vtrzTBQk9mNd6bf7h+Ah2rvRAlEJqbpAG+ke1ffmirKMfsy6eg+Hfro3I
+         g+66C2SEQl8+ood61mdHjcu+Sd86Jpd81ZdA2DzVht+ksgqGkAckiqufy4LoVs6LbMwR
+         T18u/wOj4Va64yNyJvMBl9ERjXiEWag+MpHm1e6ToAt/YiShiQoJSwxinJqgj5IMuiNX
+         42pRygDzuCPR8oUXkpMwsAdta/HYh2oIVHrixYJadlJ4YGzGISSTA1slOHkxe/qPMIUa
+         7FIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWG2taiPRoCTMLtd1KzfK5/EkV9wTO8nWR8mZFtUwnltCKpLU5djtJB8CQQdjIz1+tqfgAV4du0bc2DgGJX@vger.kernel.org, AJvYcCXZ00lW9istC1RcN58DnBc1jrq03tWst7D4xu+zxpnIXnsqt7nGF17rpllDzY7vCPZjNSEH3S13zwyaHiIw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqknTWM4w2dn7qlFH79RNZS22eZBNxh3abvMGhmixx2tTR630p
+	6Qt8gmMHpiCtkjv9QZxrI3XbfUkbBjJbdFDx90tGAV9G7B5X0M5a4bWPqRDRg1zOa5WVI1f/XSy
+	YxZgXlgunn1P8l2qeYyRrwnyBae4=
+X-Gm-Gg: ASbGncsVmeAaF8YraBjqi7iBNshca2uv/1q9mZX+UMbi4LKgroVxgYg+j2y0rc3vJWm
+	JsQyetytadYfPa9ZKUcKEdKcOIhgb6iLjS3ssLA==
+X-Google-Smtp-Source: AGHT+IEOwAtfd0TYcSWLJWzicQQaKXtoOtZQwsBpXJnF5jGIAgKblkSQ1oBMmYhOa7TB6ERO6IykQWxhRYjk9n+1oMg=
+X-Received: by 2002:a05:6402:274c:b0:5d3:e766:6143 with SMTP id
+ 4fb4d7f45d1cf-5d972e7247cmr32515470a12.30.1737029094593; Thu, 16 Jan 2025
+ 04:04:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 1QLzUOACWmiCUstkNHBoWu8bxOFAwfe1
-X-Proofpoint-ORIG-GUID: tlsjCwY0L238jXouCxhTav_tXU-wJYhA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-16_05,2025-01-16_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- bulkscore=0 clxscore=1015 adultscore=0 mlxlogscore=861 priorityscore=1501
- suspectscore=0 spamscore=0 phishscore=0 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2501160086
+References: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
+ <t2cucclkkxj65fk7nknzogbeobyq7tgx4klep77ptnnlfrv34e@vjkzxymgnr4r> <63wvjel64hsft4clgeayaorx3v7txvqh264mw7ionlbmmve7pj@eblpknd677zf>
+In-Reply-To: <63wvjel64hsft4clgeayaorx3v7txvqh264mw7ionlbmmve7pj@eblpknd677zf>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 16 Jan 2025 13:04:42 +0100
+X-Gm-Features: AbW1kvYInUQnO_di3u-ws_OVaWs8W-sjqZtDsf4DS9wuucoRN9qyXOifTVN4gFw
+Message-ID: <CAGudoHFg4BgeygyKV8tY_2Dk4cv9zwQnU6-n7jSxjwyyXzau6g@mail.gmail.com>
+Subject: Re: [PATCH] coredump: allow interrupting dumps of large anonymous regions
+To: Jan Kara <jack@suse.cz>
+Cc: Tavian Barnes <tavianator@tavianator.com>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> According to man open.2, files opened with O_PATH are not really opened. =
-The
-> obtained file descriptor is used to indicate a location in the filesystem
-> tree and to perform operations that act purely at the file descriptor
-> level.
->=20
-> Thus, ignore open() syscalls with O_PATH, since IMA cares about file data=
+On Thu, Jan 16, 2025 at 10:56=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 16-01-25 08:46:48, Mateusz Guzik wrote:
+> > On Wed, Jan 15, 2025 at 11:05:38PM -0500, Tavian Barnes wrote:
+> > > dump_user_range() supports sparse core dumps by skipping anonymous pa=
+ges
+> > > which have not been modified.  If get_dump_page() returns NULL, the p=
+age
+> > > is skipped rather than written to the core dump with dump_emit_page()=
 .
->=20
-> Cc: stable@vger.kernel.org=C2=A0# v2.6.39.x
-> Fixes: 1abf0c718f15a ("New kind of open files - "location only".")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Sadly, dump_emit_page() contains the only check for dump_interrupted(=
+),
+> > > so when dumping a very large sparse region, the core dump becomes
+> > > effectively uninterruptible.  This can be observed with the following
+> > > test program:
+> > >
+> > >     #include <stdlib.h>
+> > >     #include <stdio.h>
+> > >     #include <sys/mman.h>
+> > >
+> > >     int main(void) {
+> > >         char *mem =3D mmap(NULL, 1ULL << 40, PROT_READ | PROT_WRITE,
+> > >                 MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
+> > >         printf("%p %m\n", mem);
+> > >         if (mem !=3D MAP_FAILED) {
+> > >                 mem[0] =3D 1;
+> > >         }
+> > >         abort();
+> > >     }
+> > >
+> > > The program allocates 1 TiB of anonymous memory, touches one page of =
+it,
+> > > and aborts.  During the core dump, SIGKILL has no effect.  It takes
+> > > about 30 seconds to finish the dump, burning 100% CPU.
+> > >
+> >
+> > While the patch makes sense to me, this should not be taking anywhere
+> > near this much time and plausibly after unscrewing it will stop being a
+> > factor.
+> >
+> > So I had a look with a profiler:
+> > -   99.89%     0.00%  a.out
+> >      entry_SYSCALL_64_after_hwframe
+> >      do_syscall_64
+> >      syscall_exit_to_user_mode
+> >      arch_do_signal_or_restart
+> >    - get_signal
+> >       - 99.89% do_coredump
+> >          - 99.88% elf_core_dump
+> >             - dump_user_range
+> >                - 98.12% get_dump_page
+> >                   - 64.19% __get_user_pages
+> >                      - 40.92% gup_vma_lookup
+> >                         - find_vma
+> >                            - mt_find
+> >                                 4.21% __rcu_read_lock
+> >                                 1.33% __rcu_read_unlock
+> >                      - 3.14% check_vma_flags
+> >                           0.68% vma_is_secretmem
+> >                        0.61% __cond_resched
+> >                        0.60% vma_pgtable_walk_end
+> >                        0.59% vma_pgtable_walk_begin
+> >                        0.58% no_page_table
+> >                   - 15.13% down_read_killable
+> >                        0.69% __cond_resched
+> >                     13.84% up_read
+> >                  0.58% __cond_resched
+> >
+> >
+> > Almost 29% of time is spent relocking the mmap semaphore in
+> > __get_user_pages. This most likely can operate locklessly in the fast
+> > path. Even if somehow not, chances are the lock can be held across
+> > multiple calls.
+> >
+> > mt_find spends most of it's time issuing a rep stos of 48 bytes (would
+> > be faster to rep mov 6 times instead). This is the compiler being nasty=
+,
+> > I'll maybe look into it.
+> >
+> > However, I strongly suspect the current iteration method is just slow
+> > due to repeat mt_find calls and The Right Approach(tm) would make this
+> > entire thing finish within miliseconds by iterating the maple tree
+> > instead, but then the mm folk would have to be consulted on how to
+> > approach this and it may be time consuming to implement.
+> >
+> > Sorting out relocking should be an easily achievable & measurable win
+> > (no interest on my end).
+>
+> As much as I agree the code is dumb, doing what you suggest with mmap_sem
+> isn't going to be easy. You cannot call dump_emit_page() with mmap_sem he=
+ld
+> as that will cause lock inversion between mmap_sem and whatever filesyste=
+m
+> locks we have to take. So the fix would have to involve processing larger
+> batches of address space at once (which should also somewhat amortize the
+> __get_user_pages() setup costs). Not that hard to do but I wanted to spel=
+l
+> it out in case someone wants to pick up this todo item :)
+>
 
-Thanks, Roberto.
+Is the lock really needed to begin with?
 
-Note: Ignoring open() with O_PATH impacts policies containing "func=3DFILE_=
-CHECK"
-rules.
+Suppose it is.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+In this context there are next to no pages found, but there is a
+gazillion relocks as the entire VA is being walked.
 
-> ---
-> =C2=A0security/integrity/ima/ima_main.c | 6 ++++--
-> =C2=A01 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index 50b37420ea2c..712c3a522e6c 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -202,7 +202,8 @@ static void ima_file_free(struct file *file)
-> =C2=A0	struct inode *inode =3D file_inode(file);
-> =C2=A0	struct ima_iint_cache *iint;
-> =C2=A0
-> -	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> +	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-> +	=C2=A0=C2=A0=C2=A0 (file->f_flags & O_PATH))
-> =C2=A0		return;
-> =C2=A0
-> =C2=A0	iint =3D ima_iint_find(inode);
-> @@ -232,7 +233,8 @@ static int process_measurement(struct file *file, con=
-st struct
-> cred *cred,
-> =C2=A0	enum hash_algo hash_algo;
-> =C2=A0	unsigned int allowed_algos =3D 0;
-> =C2=A0
-> -	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> +	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-> +	=C2=A0=C2=A0=C2=A0 (file->f_flags & O_PATH))
-> =C2=A0		return 0;
-> =C2=A0
-> =C2=A0	/* Return an IMA_MEASURE, IMA_APPRAISE, IMA_AUDIT action
+Bare minimum patch which would already significantly help would start
+with the lock held and only relock if there is a page to dump, should
+be very easy to add.
 
+I however vote for someone mm-savvy to point out an easy way (if any)
+to just iterate pages which are there instead.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
