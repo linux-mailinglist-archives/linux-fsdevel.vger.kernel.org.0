@@ -1,116 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-39402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74DBA13A34
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 13:50:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BF8A13A35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 13:52:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AE087A42BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 12:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B37F16780D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 12:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9801DE89E;
-	Thu, 16 Jan 2025 12:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79491DE89C;
+	Thu, 16 Jan 2025 12:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="S5flDUM6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHnibYdF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3091DE892
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 12:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A081DE4DC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 12:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737031815; cv=none; b=juZRuKD+/8YffcjdFznNDDy+10rV/y+S+VpuAgnjwl9J0wdKBdD+K4r1DcoVpHdsQfWUDRFAs7kVvsY63pNeVZl6z1LCWomTmuh7Uers1jBVNLqDtmQ4hNpPe4zpuiWQ7999MHpCJ0dBlGO5ag1bnnTeE8cbDBRc684DIqHBYb0=
+	t=1737031914; cv=none; b=q1biqvdxIy5m3oQCfcKRxEfWTtP0xDkKvYchbOdfaFTvOxUrMs6IftxxVWmkUJXCDCLdAtDklXWt2pjRUQTkp3ZsOHZDcfCf7gt9ylSrDxYrkWBrApq2+1FL4jPo2vxw0UVMDuaB0Q60tnCQNQj3rTXds8iByiOKv53UzV1/HTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737031815; c=relaxed/simple;
-	bh=cUAp7WUEbNcmPHqsSB2egxYTb5Myvc39NYPg9s9X79s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lUn8WslyhEQIoxh+Mc5AY7f1auJ3dlJDeo5YZztLHx25x7v+kQZcWJPcoF3M8XOLim2/q3ZOPihjVUsgBgZFprciliXepGrB9TbA7XzUtsYtFKHUBy9l1+RP2CNTnOjNdmj7redCF2jCOaLlLELVoUBxMss0XZSGheZf1Nq/SzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=S5flDUM6; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-108-26-156-113.bstnma.fios.verizon.net [108.26.156.113])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50GCnnFm019186
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Jan 2025 07:49:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1737031791; bh=huf9Ik1hje0HQYQhWKBTuB0nHn68Gol/moxeLj16d6o=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=S5flDUM6m8t/2Y7Qox8IFKNFz3YEbLwIJ4BenVzGoIqlojz7ADOJtH0ryPta3hGvR
-	 S/610GAIrE5clwssPaUilNLFiqytCSEiQ/WptqYnLG5YhJZGd1Todi3+k2WOQb+p8H
-	 YRHBcHuk0mUVuSChvchwTfdBKTGoir1QvgHC8/BZ/R4fWbxtFWEExzXTDSyYIFV06V
-	 wGqshAJPP/iPC3HGjUU2PecYSx6K7Tk8PzRwxByXh1I0nNX2ju5RmtlmVkSJgL/n/6
-	 Uvo1bzyg2X/+ijYIFMZ1Hw+g/PoudeUlE18LM9KqsEqcLTel7IS9j6sSC8WD+6hgam
-	 GXDXMXykPjW8A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 932E915C0108; Thu, 16 Jan 2025 07:49:49 -0500 (EST)
-Date: Thu, 16 Jan 2025 07:49:49 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: lsf-pc@lists.linux-foundation.org
-Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        bpf@vger.kernel.org
-Subject: [LSF/MM/BPF TOPIC] time to reconsider tracepoints in the vfs?
-Message-ID: <20250116124949.GA2446417@mit.edu>
+	s=arc-20240116; t=1737031914; c=relaxed/simple;
+	bh=xIYN2NHmo2QwDsyuOvZBbOqHbckP3HNGt4KEYakufmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3Dr/GsgAObKZrMCCsQ+EHLdidBf3tZpG7Zhdx8yGD67fYhgFC907FnCBDdTrrEDOJkagb0k5wqgBw2FBA61mQNnKZe+3hQTQuZdFhhSm94q4wS74Gi7eOqJg0MFedL2F5ETi+heFqXGyzzmSQ2KznPdXLYEwmgoUXih6xNiJ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHnibYdF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737031911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bNsVzi0TwfaPei7liGwwgYrKVoL9iutt/ofjVR/+HzQ=;
+	b=gHnibYdFl7faLYBTFF4iVakcttKmA2al8sfSkEBaZH20+wUW4edl8lJ3xddCYCvaHRkdO6
+	7WzlLjxMQLgf/Mbj2O56hdj9TZqU1uzlun/1mf+4HXIZpqYpT/DX2Dau55uwwiYpD2Vm54
+	u+PQ8fRrmVKneawANdibNiBHeByGwVI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-280-_N-XIeH2ONqDh-Y6_vVBTQ-1; Thu,
+ 16 Jan 2025 07:51:45 -0500
+X-MC-Unique: _N-XIeH2ONqDh-Y6_vVBTQ-1
+X-Mimecast-MFC-AGG-ID: _N-XIeH2ONqDh-Y6_vVBTQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8580F1956080;
+	Thu, 16 Jan 2025 12:51:44 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.118])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C06F81955F10;
+	Thu, 16 Jan 2025 12:51:42 +0000 (UTC)
+Date: Thu, 16 Jan 2025 07:53:54 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, fstests@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, nirjhar@linux.ibm.com,
+	zlang@redhat.com, kernel-team@meta.com
+Subject: Re: [PATCH v3 1/2] fsx: support reads/writes from buffers backed by
+ hugepages
+Message-ID: <Z4kBYq0K919C9k4M@bfoster>
+References: <20250115183107.3124743-1-joannelkoong@gmail.com>
+ <20250115183107.3124743-2-joannelkoong@gmail.com>
+ <20250115213713.GE3557695@frogsfrogsfrogs>
+ <CAJnrk1YXa++SrifrCfXf7WPQF34V20cet3+x+7wVuDf9CPoR7w@mail.gmail.com>
+ <20250116005919.GK3557553@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250116005919.GK3557553@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Historically, we have avoided adding tracepoints to the VFS because of
-concerns that tracepoints would be considered a userspace-level
-interface, and would therefore potentially constrain our ability to
-improve an interface which has been extremely performance critical.
+On Wed, Jan 15, 2025 at 04:59:19PM -0800, Darrick J. Wong wrote:
+> On Wed, Jan 15, 2025 at 04:47:30PM -0800, Joanne Koong wrote:
+> > On Wed, Jan 15, 2025 at 1:37 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > >
+> > > On Wed, Jan 15, 2025 at 10:31:06AM -0800, Joanne Koong wrote:
+> > > > Add support for reads/writes from buffers backed by hugepages.
+> > > > This can be enabled through the '-h' flag. This flag should only be used
+> > > > on systems where THP capabilities are enabled.
+> > > >
+> > > > This is motivated by a recent bug that was due to faulty handling of
+> > > > userspace buffers backed by hugepages. This patch is a mitigation
+> > > > against problems like this in the future.
+> > > >
+> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
+> > > > ---
+> > > >  ltp/fsx.c | 119 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+> > > >  1 file changed, 108 insertions(+), 11 deletions(-)
+> > > >
+> > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > > index 41933354..8d3a2e2c 100644
+> > > > --- a/ltp/fsx.c
+> > > > +++ b/ltp/fsx.c
+> > > > @@ -190,6 +190,7 @@ int       o_direct;                       /* -Z */
+> > > >  int  aio = 0;
+> > > >  int  uring = 0;
+> > > >  int  mark_nr = 0;
+> > > > +int  hugepages = 0;                  /* -h flag */
+> > > >
+> > > >  int page_size;
+> > > >  int page_mask;
+> > > > @@ -2471,7 +2472,7 @@ void
+> > > >  usage(void)
+> > > >  {
+> > > >       fprintf(stdout, "usage: %s",
+> > > > -             "fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
+> > > > +             "fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+> > > >          [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+> > > >          [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+> > > >          [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+> > > > @@ -2484,6 +2485,7 @@ usage(void)
+> > > >       -e: pollute post-eof on size changes (default 0)\n\
+> > > >       -f: flush and invalidate cache after I/O\n\
+> > > >       -g X: write character X instead of random generated data\n\
+> > > > +     -h hugepages: use buffers backed by hugepages for reads/writes\n\
+> > >
+> > > If this requires MADV_COLLAPSE, then perhaps the help text shouldn't
+> > > describe the switch if the support wasn't compiled in?
+> > >
+> > > e.g.
+> > >
+> > >         -g X: write character X instead of random generated data\n"
+> > > #ifdef MADV_COLLAPSE
+> > > "       -h hugepages: use buffers backed by hugepages for reads/writes\n"
+> > > #endif
+> > > "       -i logdev: do integrity testing, logdev is the dm log writes device\n\
+> > >
+> > > (assuming I got the preprocessor and string construction goo right; I
+> > > might be a few cards short of a deck due to zombie attack earlier)
+> > 
+> > Sounds great, I'll #ifdef out the help text -h line. Hope you feel better.
+> > >
+> > > >       -i logdev: do integrity testing, logdev is the dm log writes device\n\
+> > > >       -j logid: prefix debug log messsages with this id\n\
+> > > >       -k: do not truncate existing file and use its size as upper bound on file size\n\
+> > [...]
+> > > > +}
+> > > > +
+> > > > +#ifdef MADV_COLLAPSE
+> > > > +static void *
+> > > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
+> > > > +{
+> > > > +     void *buf;
+> > > > +     long buf_size = roundup(len, hugepage_size) + alignment;
+> > > > +
+> > > > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
+> > > > +             prterr("posix_memalign for buf");
+> > > > +             return NULL;
+> > > > +     }
+> > > > +     memset(buf, '\0', buf_size);
+> > > > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
+> > >
+> > > If the fsx runs for a long period of time, will it be necessary to call
+> > > MADV_COLLAPSE periodically to ensure that reclaim doesn't break up the
+> > > hugepage?
+> > >
+> > 
+> > imo, I don't think so. My understanding is that this would be a rare
+> > edge case that happens when the system is constrained on memory, in
+> > which case subsequent calls to MADV_COLLAPSE would most likely fail
+> > anyways.
+> 
+> Hrmmm... well I /do/ like to run memory constrained VMs to prod reclaim
+> into stressing the filesystem more.  But I guess there's no good way for
+> fsx to know that something happened to it.  Unless there's some even
+> goofier way to force a hugepage, like shmem/hugetlbfs (ugh!) :)
+> 
+> Will have to ponder hugepage renewasl -- maybe we should madvise every
+> few thousand fsxops just to be careful?
+> 
 
-I'd like to discuss whether in 2025, it's time to reconsider our
-reticence in adding tracepoints in the VFS layer.  First, while there
-has been a single incident of a tracepoint being used by programs that
-were distributed far and wide (powertop) such that we had to revert a
-change to a tracepoint that broke it --- that was ***14** years ago,
-in 2011.  Across multiple other subsystems, many of
-which have added an extensive number of tracepoints, there has been
-only a single problem in over a decade, so I'd like to suggest that
-this concern may have not have been as serious as we had first
-thought.
+I wonder.. is there test value in doing collapses to the target file as
+well, either as a standalone map/madvise command or a random thing
+hitched onto preexisting commands? If so, I could see how something like
+that could potentially lift the current init time only approach into
+something that occurs with frequency, which then could at the same time
+(again maybe randomly) reinvoke for internal buffers as well.
 
-In practice, most tracepoints are used by system administrators and
-they have to deal with enough changes that break backwards
-compatibility (e.g., bash 3 ->bash 4, bash 4 -> bash 5, python 2.7 ->
-python 3, etc.) that the ones who really care end up using an
-enterprise distribution, which goes to extreme length to maintain the
-stable ABI nonsense.  Maintaining tracepoints shouldn't be a big deal
-for them.
+All that said, this is new functionality and IIUC provides functional
+test coverage for a valid issue. IMO, it would be nice to get this
+merged as a baseline feature and explore these sort of enhancements as
+followon work. Just my .02.
 
-Secondly, we've had a very long time to let the dentry interface
-mature, and so (a) the fundamental architecture of the dcache hasn't
-been changing as much in the past few years, and (b) we should have
-enough understanding of the interface to understand where we could put
-tracepoints (e.g., close to the syscall interface) which would make it
-much less likely that there would be any need to make
-backwards-incompatible changes to tracepoints.
+Brian
 
-The benefits of this would be to make it much easier for users,
-developers, and kernel developers to use BPF to probe file
-system-related activities.  Today, people who want to do these sorts
-of things need to use fs-specific tracepoints (for example, ext4 has a
-very large number of tracepoints which can be used for this purpose)
-but this locks users into a single file system and makes it harder for
-them to switch to a different file system, or if they want to use
-different file systems for different use cases.
+> --D
+> 
+> > 
+> > Thanks,
+> > Joanne
+> > 
+> > > > +             prterr("madvise collapse for buf");
+> > > > +             free(buf);
+> > > > +             return NULL;
+> > > > +     }
+> > > > +
+> > > > +     return buf;
+> > > > +}
+> > > > +#else
+> > > > +static void *
+> > > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment)
+> > > > +{
+> > > > +     return NULL;
+> > > > +}
+> > > > +#endif
+> > > > +
+> > > > +static void
+> > > > +init_buffers(void)
+> > > > +{
+> > > > +     int i;
+> > > > +
+> > > > +     original_buf = (char *) malloc(maxfilelen);
+> > > > +     for (i = 0; i < maxfilelen; i++)
+> > > > +             original_buf[i] = random() % 256;
+> > > > +     if (hugepages) {
+> > > > +             long hugepage_size = get_hugepage_size();
+> > > > +             if (hugepage_size == -1) {
+> > > > +                     prterr("get_hugepage_size()");
+> > > > +                     exit(102);
+> > > > +             }
+> > > > +             good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy);
+> > > > +             if (!good_buf) {
+> > > > +                     prterr("init_hugepages_buf failed for good_buf");
+> > > > +                     exit(103);
+> > > > +             }
+> > > > +
+> > > > +             temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy);
+> > > > +             if (!temp_buf) {
+> > > > +                     prterr("init_hugepages_buf failed for temp_buf");
+> > > > +                     exit(103);
+> > > > +             }
+> > > > +     } else {
+> > > > +             unsigned long good_buf_len = maxfilelen + writebdy;
+> > > > +             unsigned long temp_buf_len = maxoplen + readbdy;
+> > > > +
+> > > > +             good_buf = calloc(1, good_buf_len);
+> > > > +             temp_buf = calloc(1, temp_buf_len);
+> > > > +     }
+> > > > +     good_buf = round_ptr_up(good_buf, writebdy, 0);
+> > > > +     temp_buf = round_ptr_up(temp_buf, readbdy, 0);
+> > > > +}
+> > > > +
+> > > >  static struct option longopts[] = {
+> > > >       {"replay-ops", required_argument, 0, 256},
+> > > >       {"record-ops", optional_argument, 0, 255},
+> > > > @@ -2883,7 +2980,7 @@ main(int argc, char **argv)
+> > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> > > >
+> > > >       while ((ch = getopt_long(argc, argv,
+> > > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > >                                longopts, NULL)) != EOF)
+> > > >               switch (ch) {
+> > > >               case 'b':
+> > > > @@ -2916,6 +3013,14 @@ main(int argc, char **argv)
+> > > >               case 'g':
+> > > >                       filldata = *optarg;
+> > > >                       break;
+> > > > +             case 'h':
+> > > > +                     #ifndef MADV_COLLAPSE
+> > >
+> > > Preprocessor directives should start at column 0, like most of the rest
+> > > of fstests.
+> > >
+> > > --D
+> > >
+> 
 
-I'd like to propose that we experiment with adding tracepoints in
-early 2025, so that at the end of the year the year-end 2025 LTS
-kernels will have tracepoints that we are confident will be fit for
-purpose for BPF users.
-
-Thanks,
-
-					- Ted
 
