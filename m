@@ -1,132 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-39349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B89A131A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 04:05:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E692A131E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 05:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77917165F66
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 03:04:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3703A2481
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 04:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BED813B298;
-	Thu, 16 Jan 2025 03:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397113B792;
+	Thu, 16 Jan 2025 04:06:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CB6156F3C;
-	Thu, 16 Jan 2025 03:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145228635F;
+	Thu, 16 Jan 2025 04:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736996686; cv=none; b=lrXQvekCIcbOEn/rUteDS/HULxzefaH7fzu56l0E24HTxCBM6gr++2/ICAYOl9gOIpJM+wVaabFmqpmALpI65ZFzR6/H7P6jZh31onc9hvVH3OwIXACaH1E7r6pXwZUL80Bdyz70eNF3qj7QpjXBfHZVknYfnz/bHut84/nzS0M=
+	t=1737000368; cv=none; b=p12hKr1Vgdr1ZKgO93HxAezw1oZIzxjwEevujIAiVCYUVWQQ6DvFV9UCrNCxWpfwnQp5CELdMRDKfyTNfq2nna1XnMTEPPlAKkwawqjBFx8TddCZZkCb0kHug5M1n2KRRypm1O7BUB0LZzu8HvOdAzRe01YexoaCG1PbUDv1q58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736996686; c=relaxed/simple;
-	bh=EBV0OW05/JxgCgTU9SnU/dFX3BjZl3agdkLEtQYLN4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGCdzJX9cYIPMmx7btjTb0oake4KhVI95WwF0/auANfWDicqrE5rnVc/qVaXYWcTiKC85NdHrDv7DD/Vi3KEaY2kUntfbQFrSjWDwr1hxCn7dfQFoY9ji+ExrbocDGxoNBXehb6UN+SzYudMWJ4LdcGbrir6p27AZHwfzXWJBvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YYSPs3q4lz4f3l26;
-	Thu, 16 Jan 2025 11:04:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2E1901A0E96;
-	Thu, 16 Jan 2025 11:04:39 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDHKl9Fd4hnGHdVBA--.30220S3;
-	Thu, 16 Jan 2025 11:04:38 +0800 (CST)
-Message-ID: <a8ea2143-0b10-43ba-a464-7ce3348bb5af@huaweicloud.com>
-Date: Thu, 16 Jan 2025 11:04:36 +0800
+	s=arc-20240116; t=1737000368; c=relaxed/simple;
+	bh=LoZVtft/fWKMOFlop8+bH7To/FYlJo7ToYmTrf7kD2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K5HZIrivVjL6YYLcfA7fgNVPQnUeGYQqe+S2pMwvPTCrL/YU0zNA8SCMpQD6pcHCHRqBdRe6DMdbfD+r7r7Q2hDvsv1yvnqproMeHBtMo4hQlRxEaCeeCgD/KA2GDQpYf8GPar5otaRgNBgFgon5ppQy2DFyQ0fqrs4EavNdw5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46769b34cbfso8336421cf.0;
+        Wed, 15 Jan 2025 20:06:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737000366; x=1737605166;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U3vhwttkfjJiSjvN28GlypdNcRBATGkYOaW9TfWY3F8=;
+        b=c2+PWyavDhvwYLZr1EECatmS9MXXB1teKDKN0br6Q/ViYFy+QbN2FYczC1Uj044NW7
+         MrEQan0JOkOzvJWj3RVwVEk+VVFXdB17GjlBB5MUj6bHA4Uxxb4wRJ2RWPLAGMRygVlz
+         XHpuaVmQ8FfcOcQ2x0naWrDZTktPX/+YryYWMbODsepw5wmnWe2CrfhdCyaNbUyPwBHG
+         WThH/hhnKwA5V9FqOVPF0wjnvxVgDp0fpieHlPYzFWZ+ENvXzs7L654eKqv1iwk/OXsU
+         FXYH0NEmKoXR2NQ/QkjY9ZPhCbbtszqWVTuel41w9AfPf1s/94zVvAenu1YysRyYIto4
+         It+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXr/auvDaet0mcHpz2ezH36MIg5cYA19ZrfH+L5T56I3RooSBMeImFyEW2gMetUXizmoB4iMxkZFoHSsN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye9XYhKbXnG9kX47gnPHHoO4eHlQp4D3oX4RcEaAhN0s2G3Fc7
+	y9J6my4XwzOhfSsgW7wDRev3bg7rjuNQbcHvzi3mArpXK/lL0KbEByeI+M8i
+X-Gm-Gg: ASbGncuaKTxlXzP5826HDH6gVOvpG2fgXSSfyfotcs1lIN+wwxjj3mJZ0GGTdXLVESW
+	Kfv8mwk/81tYQFsaJKkJeCE0iLmfFDZO3q3Yj95wY+k6/mmZ6FoSAUwR6NfZg4sp6lYQ3l8Q4r2
+	0eK73/JB0u8JpOwO2s/IlJn3UWf3+Bk3lMGTTrN+X9aI/AA4/NiXOzBKwEOqPJpIqQwTGOAcvxP
+	OBP5CG05g15q7wilGvodrsjyM/vqLRKLGAibQ8kvcdN6oqTjc6Ez763u3l+YB3zD9yc8c8fDO8M
+	yemLr6s=
+X-Google-Smtp-Source: AGHT+IFMmOdiymzrHyKgzvn0vLDt0NBtS+/h2SXl6K37oWCcpapl1TaVT8AisbD1HbiQdl1ar11ShA==
+X-Received: by 2002:a05:622a:1a8d:b0:467:8765:51bb with SMTP id d75a77b69052e-46c7107e0a9mr567207911cf.37.1737000365693;
+        Wed, 15 Jan 2025 20:06:05 -0800 (PST)
+Received: from tachyon.tail92c87.ts.net ([192.159.180.233])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46c87340bbesm71336091cf.39.2025.01.15.20.06.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 20:06:05 -0800 (PST)
+From: Tavian Barnes <tavianator@tavianator.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Tavian Barnes <tavianator@tavianator.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] coredump: allow interrupting dumps of large anonymous regions
+Date: Wed, 15 Jan 2025 23:05:38 -0500
+Message-ID: <049f0da40ed76d94c419f83dd42deb413d6afb44.1737000287.git.tavianator@tavianator.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/8] fallocate: introduce FALLOC_FL_WRITE_ZEROES
- flag
-To: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "hch@lst.de" <hch@lst.de>, "tytso@mit.edu" <tytso@mit.edu>,
- "djwong@kernel.org" <djwong@kernel.org>,
- "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
- "yukuai3@huawei.com" <yukuai3@huawei.com>,
- "yangerkun@huawei.com" <yangerkun@huawei.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-References: <20250115114637.2705887-1-yi.zhang@huaweicloud.com>
- <ccebada1-ac72-468e-8342-a9c645e5221e@nvidia.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <ccebada1-ac72-468e-8342-a9c645e5221e@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDHKl9Fd4hnGHdVBA--.30220S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFW8AryxWrW8Kr4xAw18Zrb_yoW8Aw43pF
-	WUXrZ8KrWkuF40yrnrua17u34fXw4xCr1fArWUWFyUZ3ZxAry7CanxK3yj9FW8uF9agF1j
-	vrW8JF9rCr4FyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	aFAJUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 2025/1/16 5:07, Chaitanya Kulkarni wrote:
-> On 1/15/25 03:46, Zhang Yi wrote:
->> Currently, we can use the fallocate command to quickly create a
->> pre-allocated file. However, on most filesystems, such as ext4 and XFS,
->> fallocate create pre-allocation blocks in an unwritten state, and the
->> FALLOC_FL_ZERO_RANGE flag also behaves similarly. The extent state must
->> be converted to a written state when the user writes data into this
->> range later, which can trigger numerous metadata changes and consequent
->> journal I/O. This may leads to significant write amplification and
->> performance degradation in synchronous write mode. Therefore, we need a
->> method to create a pre-allocated file with written extents that can be
->> used for pure overwriting. At the monent, the only method available is
->> to create an empty file and write zero data into it (for example, using
->> 'dd' with a large block size). However, this method is slow and consumes
->> a considerable amount of disk bandwidth, we must pre-allocate files in
->> advance but cannot add pre-allocated files while user business services
->> are running.
-> 
-> it will be very useful if we can get some blktests for scsi/nvme/dm.
-> Please note that this not a blocker to get this path series to be merged,
-> but this will help everyone including regular tests runs we do to ensure
-> the stability of new interface.
+dump_user_range() supports sparse core dumps by skipping anonymous pages
+which have not been modified.  If get_dump_page() returns NULL, the page
+is skipped rather than written to the core dump with dump_emit_page().
 
-Hello, Chaitanya,
+Sadly, dump_emit_page() contains the only check for dump_interrupted(),
+so when dumping a very large sparse region, the core dump becomes
+effectively uninterruptible.  This can be observed with the following
+test program:
 
-Thanks for your feedback! Yeah, the proposal for this series is still under
-discussion, I will add counterpart tests to both blktests and fstests once
-the solution is determined.
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <sys/mman.h>
 
-> 
-> if you do please CC and Shinichiro (added to CC list) to we can help those
-> tests review and potentially also can provide tested by tag tht can help
-> this work to move forward.
-> 
-Sure, this will be very helpful.
+    int main(void) {
+        char *mem = mmap(NULL, 1ULL << 40, PROT_READ | PROT_WRITE,
+                MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
+        printf("%p %m\n", mem);
+        if (mem != MAP_FAILED) {
+                mem[0] = 1;
+        }
+        abort();
+    }
 
-Thanks,
-Yi.
+The program allocates 1 TiB of anonymous memory, touches one page of it,
+and aborts.  During the core dump, SIGKILL has no effect.  It takes
+about 30 seconds to finish the dump, burning 100% CPU.
+
+This issue naturally arises with things like Address Sanitizer, which
+allocate a large sparse region of virtual address space for their shadow
+memory.
+
+Fix it by checking dump_interrupted() explicitly in dump_user_pages().
+
+Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
+---
+ fs/coredump.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index d48edb37bc35..fd29d3f15f1e 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -950,6 +950,10 @@ int dump_user_range(struct coredump_params *cprm, unsigned long start,
+ 			}
+ 		} else {
+ 			dump_skip(cprm, PAGE_SIZE);
++			if (dump_interrupted()) {
++				dump_page_free(dump_page);
++				return 0;
++			}
+ 		}
+ 		cond_resched();
+ 	}
+-- 
+2.48.1
 
 
