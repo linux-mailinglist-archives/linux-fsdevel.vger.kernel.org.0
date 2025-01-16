@@ -1,136 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-39427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78EAA140E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 18:30:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA24A140F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 18:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D070A167FF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 17:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9AB51881D11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 17:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C049D22CBC1;
-	Thu, 16 Jan 2025 17:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E307A154BE5;
+	Thu, 16 Jan 2025 17:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="cAdrVghH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbDD5oD8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352C9155756
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 17:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5A324A7C6;
+	Thu, 16 Jan 2025 17:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737048619; cv=none; b=BexHEg5Qd1cTUmSueg3ykgJLSDMS+4iR4Q6OLBr4M9jvtXG7j990S9WKST8JCcu2iSQp0RSmNU7ghFM0nNyW7x+RdPEfZEOIK1O8mGaccbJP2TedZGo82V/1x1oUSYJ4oiH/qqwwbBnnQ4wQL45/1c80LLL0R4A/k+9PwzRfU7Y=
+	t=1737048869; cv=none; b=nzmJQ6DoE2OmfBbxwRBuOmAtfovYkODvi1PFfaAl7fIHeRZlgMFF2FKyhQFfNTPsMhk8PUnF6Bw6OHQTK6tEzMSnJofW4xb3XxpY0O7u9VAYpsz+J8+iXbXiIe3QwOMo+n03AXdb9isrzCxZEPh/N1ruESpk64ogQ5uXupwrggY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737048619; c=relaxed/simple;
-	bh=EL5RVArMfSF1wd8a4V7Z7jeVW4UyC7B/aQNufHq+ovo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h3rawxu2c6lZo9YG8EoZKuSenh010VumiZ1oQZgT+Y/5O0aTkbvN/lemccXTwan5PTxMuOpZr8g4KjifuKJ4WIGD6ZUM2K7iNC2pL5dkAAEVKD7cNVvbGtoiwWmX+aKXlIulo4/+GqshMU+iTiGV53kIgE7KoWkhAlkKv/2KV9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=cAdrVghH; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-108-26-156-113.bstnma.fios.verizon.net [108.26.156.113])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50GHU0Fn009839
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Jan 2025 12:30:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1737048603; bh=H7ODOWazAZ9JZ+VnZvDHoa9w38yZBfcf2ECm7Co0svQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=cAdrVghHPGC8gAUyBmu+wPQc4pRH6TBYoN2iRTEUqeMvrWE1mLgtxeN7mzlhORhZA
-	 WZIiQzWsnkLtFBAH4Bz/dmjTsuMvbOD/1XqkTIi+g0+hB+NvQsMfQgxZUdNzJSCQkv
-	 cR0Zk6lECHMe/mlnxUM9vb7vyhEssH1Iz4OWtt2cR3/roAPbNh3ZTOv5vMDN94tfzc
-	 1nDCxd/fdrL9/yVFyLUqyzjOFl3mylZSil+r4WXbx85DLtn8O63G7YwfrVTiny8lXI
-	 drA8DTFK1PKBfz8iYj7azK7Uh23VOAn8AKI5goJptyBiqHfRxjQl/CufKNub5UCe/k
-	 FX0hQ3KMv/DEQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id AEDC015C0108; Thu, 16 Jan 2025 12:30:00 -0500 (EST)
-Date: Thu, 16 Jan 2025 12:30:00 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Dave Chinner <david@fromorbit.com>,
-        Anna Schumaker <anna.schumaker@oracle.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Implementing the NFS v4.2 WRITE_SAME
- operation: VFS or NFS ioctl() ?
-Message-ID: <20250116173000.GA2479310@mit.edu>
-References: <f9ade3f0-6bfc-45da-a796-c22ceaeb4722@oracle.com>
- <Z4bv8FkvCn9zwgH0@dread.disaster.area>
- <Z4icRdIpG4v64QDR@infradead.org>
- <20250116133701.GB2446278@mit.edu>
- <21c7789f-2d59-42ce-8fcc-fd4c08bcb06f@oracle.com>
- <20250116153649.GC2446278@mit.edu>
- <5fdc7575-aa3d-4b37-9848-77ecf8f0b7d6@oracle.com>
+	s=arc-20240116; t=1737048869; c=relaxed/simple;
+	bh=QdI/Oyw8R6iGT2ROakjIbjMZIwTzOMQIg8ekYLEo0x4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DCB/aIiM0WZknVFBk5HgQ3sHcxHn5KAx9cpEY+ccpNDXsCrJORa7x6jgBuQjDHc/LcCsBCtIG2Q2ZubB5qmPGLbaRvQNwBu+5i7JrpaX92OvzIO+TBkMF/sYviNnn/QIKYwQkPdyWHMHYpRoRR3oaaVJkbY6lhTEfK+7r8i12WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbDD5oD8; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ee46851b5eso1761820a91.1;
+        Thu, 16 Jan 2025 09:34:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737048867; x=1737653667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7e2H3NJynS8ASdQYVmMB/7/0U+sJgpPc8AydkCIPguM=;
+        b=BbDD5oD81vK/cgIYG8f2fpbqAYzt4AGcCaXWbzLxCkEiFyPmS5GZDhrYD1kv1aOFbc
+         oJAsFqgjqA40+fSqlqTXQsjqbNdd//+PajSYWvC9oqR/EGu2/l6TWLIM7I0p9vv04SL4
+         HrcJ6gUsFKuQQYgBW3j1Fq/pDnfmJyeGz8jZ/O3XxPsLVwVXqvJ1y6rDIpJXGqKLsVsV
+         jn0YrQqQG5MgtJZW7AWqkDlar9SFzKnu+Bq8BwBBjSsO5PBex+X08sGucdXoVs5q61Oh
+         cfXwslouFUwqylwqttKFuOa7v5HT18EfRVT7FqSzT0VNUstkbkmHtTQddA9R2+esrp9g
+         NIDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737048867; x=1737653667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7e2H3NJynS8ASdQYVmMB/7/0U+sJgpPc8AydkCIPguM=;
+        b=jO75RCFkbn9PyCl2chsW2ZQ1AKVc/kAfTwVx7vcDwhyGKwKkJUNzqeAaJSz1q0cBl2
+         TQVucLb3aPY1Tls465zg+ufP885yJj8AuwCyvd2/p67zHs6d2cLABfWB2CVpGtsMYI3d
+         eTK10D5+qyL5V4z82Yi1hkT8T1SLLRVvwy3WaovmPYHgmnA3nFuggeZ1+5xA7t5Vbe3y
+         N/dAkOotB0KoVnE8otdRlMfgrt/mmgKECdGWFhG88pd+GqMFIEI8tnv2g1U4elBt/GSm
+         OZWRNJdd1JzVoQU6zjcjW7MEYuI0r0XZ7Wp6Ek5T0+rppX9nl9qRHF5+UGM/dQjkhYU+
+         YkJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC4jpl8XeTV75k5LvtMB2Kz48pulY3W8LrDobmT9Efn+bP06Z32cIlyI2KmLaW/64O5oqoTQ8ZO4WcwjvO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnFvU4HyVAsTjb3hOtt1AGyJbBJ2NdkBaMx+1Q/ei4e3OgJDO5
+	i2HST1SBxuBigHCrlSGSpgUETQ23Nf7jcZqs7d7vKNtzZH34AjlHVp7wUJkhoaHyxwX1PtkefVY
+	4+kIy0IQBWRmESDJNmDaHFWoE6sM=
+X-Gm-Gg: ASbGncvrbEzP8ELlFeT0eMs86KWwDj6WkArEiO/6nE2h8kY8jtfQEtXpyudPRe8yhOb
+	QoPv1veyR5QMiWi09beacqYplpVl5djPdF+qIVQ==
+X-Google-Smtp-Source: AGHT+IFxUCpsfsSC4DP1ZN+ZjvL+2FJzfrLCFzmfzhhSSbXJpqzIZi8KJxxY7lWHhsT7E2tGPd9tW7HFnkARKQfiMIM=
+X-Received: by 2002:a17:90b:4d04:b0:2ee:aa95:6de9 with SMTP id
+ 98e67ed59e1d1-2f548f71e2bmr51924503a91.33.1737048867081; Thu, 16 Jan 2025
+ 09:34:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5fdc7575-aa3d-4b37-9848-77ecf8f0b7d6@oracle.com>
+References: <06b84c0f4c7c86881d5985f391f6d0daa9ee28dd.camel@ibm.com>
+ <CAOi1vP9A2MT2iaDGny0FY9cwxEN1Lvknemgxw1fL6PtYcsvqww@mail.gmail.com> <67ab883da6c54de228f133f06dbd32426573aacc.camel@ibm.com>
+In-Reply-To: <67ab883da6c54de228f133f06dbd32426573aacc.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 16 Jan 2025 18:34:15 +0100
+X-Gm-Features: AbW1kvbTDJ1w8_EXT8LCgq5YMq-JCOkGzw3lBZBzS3jqXm_TrbrlNcYdODGsI6k
+Message-ID: <CAOi1vP_qdq_UBAXxs7UmJK_ZR7HUFTixX7wVqnTsBYSAiKx5-Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] ceph: switch libceph on ratelimited messages
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 16, 2025 at 10:45:01AM -0500, Chuck Lever wrote:
-> 
-> Any database that uses a block size that is larger than the block
-> size of the underlying storage media is at risk of a torn write.
-> The purpose of WRITE_SAME is to demark the database blocks with
-> sentinels on each end of the database block containing a time
-> stamp or hash.
+On Thu, Jan 16, 2025 at 2:38=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> Hi Ilya,
+>
+> On Thu, 2025-01-16 at 00:21 +0100, Ilya Dryomov wrote:
+> > On Wed, Jan 15, 2025 at 9:53=E2=80=AFPM Viacheslav Dubeyko
+> > <Slava.Dubeyko@ibm.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > The libceph subsystem can generate enourmous amount of
+> > > messages in the case of error. As a result, system log
+> > > can be unreasonably big because of such messaging
+> > > policy. This patch switches on ratelimited version of
+> >
+> > Hi Slava,
+> >
+> > Do you have an example (which is not caused by a programming error)?
+> >
+>
+> Frankly speaking, there is no stable ground for definition
+> what is the programming error. :) And if end-user can see
+> some messages in the system log, then it's not always clear
+> what is the reason of it (faulty hardware, wrong configuration,
+> network issue, or programming error).
+>
+> Currently, I can see during running xfstests some sporadically
+> triggered issues (and I am going to investigate this). For example,
+> today I can reproduce it for generic/127 (but it passed successfully
+> multiple times before). The output of this issue is the infinite
+> sequence of messages in the system log:
+>
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.164299] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.164321] libceph: mon1
+> (2)127.0.0.1:40900 socket error on write
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.668314] libceph: mon1
+> (2)127.0.0.1:40900 socket error on write
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.668337] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 16:39:07 ceph-testing-0001 kernel: [ 4346.660371] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+>
+> <skipped>
+>
+> Jan 15 17:16:30 ceph-testing-0001 kernel: [ 6589.691303] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 17:16:31 ceph-testing-0001 kernel: [ 6590.907396] libceph: osd1
+> (2)127.0.0.1:6810 socket error on write
+> Jan 15 17:16:34 ceph-testing-0001 kernel: [ 6593.659370] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 17:16:37 ceph-testing-0001 kernel: [ 6597.051461] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+>
+> <continue to spam system log until the system restart>
 
-There are alternate solutions which various databases to address the
-torn write problem:
+If there is an infinite loop running in the background, one has
+a problem no matter whether the messages are ratelimited or not ;)
+A blanket change to impose a limit on all libceph messages isn't
+going help.
 
-   * DIF/DIX (although this is super expensive, so this has fallen out
-        of favor)
-   * In-line checksums in the database block; this approach is fairly
-        common for enterprise databases (interestingly, Google's cluster
-	file systems, which don't need to support mmap, do this as well)
-   * Double-buffered writes using a journal (this is what open source
-         databases tend to use)
-   * For software-defined cloud block devices (such as Google's
-       Persistent Disk, Amazon EBS, etc.) and some NVMe devices,
-       aligned writes can be guaranteed up to some write granularity
-       (typically up to 32k to 64k, although pretty much all database
-       pages today are 16k).  This is actively fielded as
-       customer-available products and/or in development in at least
-       two first-party cloud database products based on MySQL and/or
-       Postgres; and there are some active patches which John Garry
-       has been working on so that users can use this technique
-       without having to rely on first party cloud product teams
-       knowing implementation details of their cloud block devices.
-       (This has been discussed in past LSF/MM sessions.)
+>
+> > > pr_notice(), pr_info(), pr_warn(), and pr_err()
+> > > methods by means of introducing libceph_notice(),
+> > > libceph_info(), libceph_warn(), and libceph_err()
+> > > methods.
+> >
+> > Some of libceph messages are already ratelimited and standard
+> > pr_*_ratelimited macros are used for that.  They are few apart, so
+> > if there is a particular message that is too spammy, switching it to
+> > a ratelimited version shouldn't be a problem, but we won't take
+> > a blanket conversion like this.
+> >
+>
+> Yes, I agree that even ratelimited version of messaging cannot
+> solve the problem of spamming the system log by info, warning, or
+> error messages. As far as I can see, we have infinite cycle in
+> libceph core library that generates this never ending sequence of
+> messages. I believe that it's not user-friendly behavior and
+> we need to rework it somehow. I still don't quite follow why libceph
+> core library's logic is trying to repeat the same action and
+> reports the error if we already failed. Could we rework it somehow?
 
-> If, when read back, the sentinels match, the whole database
-> block is good to go. If they do not, then the block is torn
-> and recovery is necessary.
+I tried to elaborate on the premise in another thread:
 
-Are there some database teams that are actively working on a scheme
-based on WRITE SAME?  I have talked to open source developers on the
-MySQL and Postgres teams, as well as the first party cloud product
-teams at my company and some storage architects at competitor cloud
-companies, and no one has mentioned any efforts involving WRITE SAME.
-Of course, maybe I simply haven't come across such plans, especially
-if they are under some deep, dark NDA.  :-)
+    The messenger assumes that most errors are transient, so it simply
+    reestablishes the session and resends outstanding requests.  The main
+    reason for this is that depending on how far in the message the error
+    is raised, a corresponding request may not be known yet (consider
+    a scenario where the error pops up before the messenger gets to the
+    fields that identify the request, for example) or there may not be
+    a external request to fail at all.
 
-However, given that support for WRITE SAME is fairly rare (like
-DIF/DIX it's only available if you are willing to pay $$$$ for your
-storage, because it's a specialized feature that storage vendors like
-to change a lot for), I'm bit surprised that there are database groups
-that would be intersted in relying on such a feature, since it tends
-not be commonly available.
+It's also how the userspace messenger works, for the same reason.
 
-If there are real-world potential users, go wild, but at least for the
-use cases and databases that I'm aware of, the FALLOC_FL_WRITE_ZEROS
-and atomic writes patch series (it's really untorn writes but we seem
-to have lost that naming battle) is all that we need.
+> I believe that we have some wrong logic in current implementation.
 
-Cheers,
+AFAIR it's supposed to be looping with an exponential backoff, so it
+shouldn't busy loop.  If it gets into an actual busy loop on a vanilla
+kernel, that is something to look into.  The backoff factor and upper
+limit could probably be tweaked too, if needed.
 
-						- Ted
+Thanks,
+
+                Ilya
 
