@@ -1,110 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-39438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48F7A141F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 20:05:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832C2A141FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 20:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1984116A949
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 19:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE4E1886BD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2025 19:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02B622D4EB;
-	Thu, 16 Jan 2025 19:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17C522F16E;
+	Thu, 16 Jan 2025 19:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UKNMwt04";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UKNMwt04"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="PHHYUO+i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [104.223.66.194])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE00F1547E2;
-	Thu, 16 Jan 2025 19:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.223.66.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529AC1547E2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2025 19:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737054335; cv=none; b=E7yfndiAY/PoLlp+f62FjQNFHnRXFRFMBGb6oDtOhKA9OE0k1ZU+8zXRfqSnAnvAmErfdkNJk19ABGQaNbERnMdRpeAHQZMcBkVlbHLQGZ6sxLvPVonmhJBUFCxekbmY8FDiPD1+IjCEkEUkoMx/kbKWcATyHKo+GSWL3TX4+mY=
+	t=1737054528; cv=none; b=eh0bvBf2rVzv75Bl3YJVBmfXjEEykWeIHeQdpNtgLjBnThXQ82uYA23vickOguTL6nm0RoxIp9AdWqiepz6lTeW30QClpO0c2bIiAxoIqPB83geXqI84F1+5vyKZUJ7OgA1HvnxZCLMtWad/HfrSxLUkbfZOYfUW/RC9qXJaNNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737054335; c=relaxed/simple;
-	bh=aMWee4bs85azPLrRwi0ucbG8vhi2MwrOvF57x3qyBZc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qTlc70iq1eWVb6gTZBg8vEoe9+NjjfQSPVrErozAcWZZuSj4eoNPW5UbfnU/KC/65xTj2YH8tX7f8cIHx2EGQqZZTCWoSIXPPek2iOLAnfsOyNalcPJuigmT3wHtLYM4oud5CbHNef+SOdtnI0ZSzzOx5odILWUJvN8WSxcQhok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UKNMwt04; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UKNMwt04; arc=none smtp.client-ip=104.223.66.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1737054333;
-	bh=aMWee4bs85azPLrRwi0ucbG8vhi2MwrOvF57x3qyBZc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=UKNMwt04vM3v/DfCiFuQ6gzp2WGAVnfrPeMKQpVV3xR4nHkUqlR9OeSCOlAedYuH4
-	 uv5t/1z2/BpVF5gStWCwXVMnn2IOq85mtQN8GDV17Wcj6FgZ5poCc2eCv8wbZ5vnfL
-	 EQI0WGyOTpj77PZnM1hQIs5vxIYvl51vveOhIMg0=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4D8A212871E0;
-	Thu, 16 Jan 2025 14:05:33 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id VcQnKcZsY97u; Thu, 16 Jan 2025 14:05:33 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1737054333;
-	bh=aMWee4bs85azPLrRwi0ucbG8vhi2MwrOvF57x3qyBZc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=UKNMwt04vM3v/DfCiFuQ6gzp2WGAVnfrPeMKQpVV3xR4nHkUqlR9OeSCOlAedYuH4
-	 uv5t/1z2/BpVF5gStWCwXVMnn2IOq85mtQN8GDV17Wcj6FgZ5poCc2eCv8wbZ5vnfL
-	 EQI0WGyOTpj77PZnM1hQIs5vxIYvl51vveOhIMg0=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 746B712871CC;
-	Thu, 16 Jan 2025 14:05:32 -0500 (EST)
-Message-ID: <0b770a342780510f1cd82a506bc67124752b170c.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 4/6] efivarfs: move freeing of variable entry into
- evict_inode
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org, Ard Biesheuvel
-	 <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Christian Brauner
-	 <brauner@kernel.org>
-Date: Thu, 16 Jan 2025 14:05:31 -0500
-In-Reply-To: <20250116183643.GI1977892@ZenIV>
-References: <20250107023525.11466-1-James.Bottomley@HansenPartnership.com>
-	 <20250107023525.11466-5-James.Bottomley@HansenPartnership.com>
-	 <20250116183643.GI1977892@ZenIV>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1737054528; c=relaxed/simple;
+	bh=42k/0Jd3GCA5yOacH6AKiIGEesv+ylSJBbXS4mjZbRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZS8lwoVUc1vGx4YiCKOq42eC5ZfrF0IGuW6dUxJ8cURXfKAe+tO6u5Ry9MYiOez3e0PdVBUV4/HrXNZsNhv1d9Rtv+DJn93TCKhcbt+4lQZQ7TN+NK/YpuG7FlMknJ6kv4nJrwwsISvGUu/UHA0W0n0ni/8ghtWDgymFOy6Nrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=PHHYUO+i; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ljVgD/EUSEofm8eEFQ4Hj8fa+0vYKcKj4DfolD1N57w=; b=PHHYUO+iMCB1ukBqxSH43NGlgg
+	92dGJueOXOnLd0OTCMCXgro04/3V3FiMSd6HxECIT5bd/MBLYfXk1YnJGGJihgWn5ZROu0nhvpeQm
+	9S/EFxhVcTZZdVdlMrvfEZ1rJS+OnwttX5ZA1UuYlKEvAgUuz7WiVrxw6z5RZFclAf5khCus+xDa3
+	GQtaOECh0Ef9OCha2emrBeEtg/m/lIygtwmtvhddG4xSEHoGn9K+foRblDsMuyXTambcs/XCzyaN1
+	QxQ4EbOWTw/80jS202UJLsijeh/y4JotvJvauzdjlUECQHRrIM6VmE2GMExdScmO8IA/1HdU8QZer
+	JB9hV4Pw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYVES-00000002ZKL-2SCZ;
+	Thu, 16 Jan 2025 19:08:44 +0000
+Date: Thu, 16 Jan 2025 19:08:44 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [PATCH] ufs: convert ufs to the new mount API
+Message-ID: <20250116190844.GM1977892@ZenIV>
+References: <20250116184932.1084286-1-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250116184932.1084286-1-sandeen@redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 2025-01-16 at 18:36 +0000, Al Viro wrote:
-> On Mon, Jan 06, 2025 at 06:35:23PM -0800, James Bottomley wrote:
-> > Make the inodes the default management vehicle for struct
-> > efivar_entry, so they are now all freed automatically if the file
-> > is removed and on unmount in kill_litter_super().  Remove the now
-> > superfluous iterator to free the entries after kill_litter_super().
-> > 
-> > Also fixes a bug where some entry freeing was missing causing
-> > efivarfs to leak memory.
-> 
-> Umm...  I'd rather coallocate struct inode and struct efivar_entry;
-> that way once you get rid of the list you don't need ->evict_inode()
-> anymore.
-> 
-> It's pretty easy - see e.g.
-> https://lore.kernel.org/all/20250112080705.141166-1-viro@zeniv.linux.org.uk/
-> for recent example of such conversion.
+On Thu, Jan 16, 2025 at 12:49:32PM -0600, Eric Sandeen wrote:
 
-OK, I can do that.  Although I think since the number of variables is
-usually around 150, it would probably be overkill to give it its own
-inode cache allocator.
+> +	switch (opt) {
+> +	case Opt_type:
+> +		if (reconfigure &&
+> +		    (ctx->mount_options & UFS_MOUNT_UFSTYPE) != result.uint_32) {
+> +			pr_err("ufstype can't be changed during remount\n");
+> +			return -EINVAL;
+>  		}
+> +		ufs_clear_opt(ctx->mount_options, UFS_MOUNT_UFSTYPE);
+> +		ufs_set_opt(ctx->mount_options, result.uint_32);
+> +		break;
 
-Regards,
+Do we really want to support ufstype=foo,ufstype=bar?
 
-James
+> +static void ufs_free_fc(struct fs_context *fc)
+> +{
+> +	kfree(fc->fs_private);
+> +}
 
+Grr...  That's getting really annoying - we have way too many instances doing
+exactly that.  Helper, perhaps?
+
+> -#define ufs_set_opt(o,opt)	o |= UFS_MOUNT_##opt
+> -#define ufs_test_opt(o,opt)	((o) & UFS_MOUNT_##opt)
+> +#define ufs_clear_opt(o, opt)	(o &= ~(opt))
+> +#define ufs_set_opt(o, opt)	(o |= (opt))
+> +#define ufs_test_opt(o, opt)	((o) & opt)
+
+I wonder if we would be better off without those macros (note, BTW,
+that ufs_test_opt() is not used at all)...
 
