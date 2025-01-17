@@ -1,370 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-39559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEAFA15931
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 22:49:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8F3A15938
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 22:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AE361889587
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 21:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079663A8544
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 21:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2131AB525;
-	Fri, 17 Jan 2025 21:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867B81ABECA;
+	Fri, 17 Jan 2025 21:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8rH3WsQ"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="mEfoqriW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OwRT9boD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69952198851;
-	Fri, 17 Jan 2025 21:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0601A83EE;
+	Fri, 17 Jan 2025 21:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737150543; cv=none; b=Ktv9F8iiaQSssw28cmKgoe4y0VSYyZSdFXGOe5oHU5XrDyuhkvxc0orWzL5DfV0fwOi1gNff3W2hvE7hmgH3rSbnjeItallFa0UMWdtBygdYLNoQtpnMlK5CwirZji8cf0zHoB3T05ynmbQWfLzWYfPxK4g2a8PYcGVhL5l3FHg=
+	t=1737150780; cv=none; b=IIT+Rn1/bcVuLw9KuYS6HJdr6tIk/oNmVUGdlx1YcCtF3htXetbiNC2D79E1pcFdz4JnL1MfeBcJIvoB8COmmv+lO5ZWrYt8eILDtykC/T1HetLcV2FdGyOYyZ3cB9cmMT1ktsjd4zwYfjBT4rT2ifMkqRy3atdoOAHW3zGDi54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737150543; c=relaxed/simple;
-	bh=4jigLSEJFVbD/a2hmMrUeiv4rXTXbwNmjKc1DlE6G6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0fNyk9ofao7+IH9G10WLEO8w4T4nBDzwYf+S5qcy3PAc+yZ5FtQLMuLlXjikAyWio6RRo4KBiBc5qaUug5vvwHWujecEh/57X/fJft/S9upC26HJQjr+kDiK28g2+eAjVtTh6ymzeGOb8MIzqFrfRQ7MJ+9xk1va8k0px9AVUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8rH3WsQ; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b6ea711805so339948785a.1;
-        Fri, 17 Jan 2025 13:49:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737150540; x=1737755340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1cSY+xHpYD0e3UHKbkzRCl3028L18KOMw8aTJSfyAPc=;
-        b=W8rH3WsQhZqJuDiLt6/b7CsI+gFIdDyql26GZf18AGptYjRgtuXrmC4j93hhcWJ3MN
-         lgyGscK8edruDhmUvhFOSsffsRxFApy1BvDV1epIzHDff3jL+VWOZkQOcgRSOrMuwpPH
-         2UOkxyCQRFhAycFm8b+fR33cGJInnZijpcVV6tI3e+yGgt5WfWWlccaFFIN7QqrhT0B5
-         IJRLmBwvW5qToapL8TiuwIXwX5zNO+T+iKh9K+Zb8mpjwZm81oDs2Ry9YM4OtMhh3eLH
-         0IkavuLeZTSmXh2jUnbm7QEnedy/E5bKD2Vu59wmo5gFodwJI3fFPoROcqgvT5sYjuoE
-         jQ3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737150540; x=1737755340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1cSY+xHpYD0e3UHKbkzRCl3028L18KOMw8aTJSfyAPc=;
-        b=mN03Pipc8z51S82IuHlRyn4V2cRGAcxEtDc6UjQ36gN+pUbVz0mg1aqLyWKEPug1Dj
-         ZZUsPYi2nkwk98I+/TUU58EB3/oxM4Z2lTqRLxaNndmPk9vYx70wFqoUljEd5lGdSYQQ
-         pSBb+aM5QiIP5NZZ74sEaa4cdsL7e/TbLx5z3ijkgZ6JGG6LF0VoBnVcAS7uGGwc8fup
-         nehgGavVYTvouY7us4nQDg/s2giza4F0/FrTOArc0a5PGPkh5wyb2qI8LROx5jU7GHAx
-         qBDdVHotHdw43qCtGNVSz5oT50fr79sVHjTBfzJtC5nyPA7RYccxM5OI9secgt6V9sR8
-         ZuqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLPv2ZcNOZMiW+2c4CC01WKRyFVksmhmUMcCCv2slyKNE41cJCrYOUMZ1D/AL73V/AN7r5n2/CT1oIDPTj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztv05BTdpyvi99nT/o66Sj1GpD15yYIVVg8NG9JkWCUtHagV6E
-	2qMV72N7sG7Sh2GHIRgF4kC8lS94jva3ApgOnFmoYwejlkP463hA93UdoNUMyys3hZPmt9wttQk
-	49w+k4WZ5qa9o2xgnmBWzuuL3U00=
-X-Gm-Gg: ASbGnctsOg6AkdhTxVxa+NDpw5wy1FhjNhf8WKtZk6/4O0jjPaMeszpHj3rCaFlfqBi
-	EDP/sgtNZrbCEfzf3EixOb5zEpH8MKT+k/h1cAIh4e48Td0NZ652Zj/3vbpjZZqAtew==
-X-Google-Smtp-Source: AGHT+IEnkAwLMhE46nI6LTNP/yl2KMV9RDkVAr999qZK2UysD6UabgUUKoOJclk30OP4S0FuturT/hpEchrITEO/04A=
-X-Received: by 2002:a05:620a:2627:b0:7b6:d4a2:f11f with SMTP id
- af79cd13be357-7be63157d1fmr699256685a.0.1737150540088; Fri, 17 Jan 2025
- 13:49:00 -0800 (PST)
+	s=arc-20240116; t=1737150780; c=relaxed/simple;
+	bh=7x8MrntCVxpUApdt7UFioHhgzeVhp62ZtVq72wYVsOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WSYU5zzjSAA9HTjABY8n0mDwdLrFcJ7YW859lOl221D29TZLHEfnY1xpS25lA3xnp80oPaJG71sfABcU4WWMQ/JHBQ/avpnqPs10QAy6rhTRtyZG/QauV/UAVKKzMr8bhmid5H6LA2xV5TvLSWtwPiNqasjzy8XcORrxVH+/qZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=mEfoqriW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OwRT9boD; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id F0DBA1140122;
+	Fri, 17 Jan 2025 16:52:56 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Fri, 17 Jan 2025 16:52:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1737150776;
+	 x=1737237176; bh=wrUIT8nzmaxyullujPWvw6pCuUlYeJXU7sGZhYP0nHI=; b=
+	mEfoqriWeoMaQy4HEOKs8d4pJwFfEAlCn1PQEx04Lu5ogfapaT1/wvINdvmAWgD/
+	pL43KaRQR7JiZ1NzwFCqHy/WQzjWx73PNhyVRO9JKHJNAXtLADuc6BDmpH7EYEbx
+	vQ0nJC5Hxn5ngvWeLC9vRID8tWRNk5lwHwxaQHkhKUV8XlsNPSXTlYUM3TpMWUnK
+	gk0AT9Ha5sjF7BD/sMnsLZBXFZb8WGDeMXl7XWd9zNoCWyV9XtnmfsfX4vGPUrWY
+	DfnwFmZYZ69cdXpOqtua202hLJhHnUJqbnUcPu9t25euQGnyRhXH/5Shxn7IcsQO
+	EnhlQpYMIpfLJRveONZg3A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1737150776; x=
+	1737237176; bh=wrUIT8nzmaxyullujPWvw6pCuUlYeJXU7sGZhYP0nHI=; b=O
+	wRT9boDnaKIDbUm75Q36wRpF1rq3Ri6btkmh2CehugUtsfnPz5nB+gyPHU+k8Q/3
+	K6bSmVgSWkWxzJJcBVFqXOg+1dbvOe/i1aRt/X+3ef4eabJ+X9ArvPdMpooXDhfk
+	jsstLjOMtvE5cZSFUNumnKxIypqbr1pDJm1N1y54VKaTfqgODAlG9bLz9fs8ikIO
+	FFfOrSP/CLiSoblbG3lzHa6xMkSLTWGSjaU20lIBcxPjY3Aoie/FDp1InvqTuMAf
+	ry3KRG0R7h6MSgJGXiaZN9oPhxzkX2ZXwO02PYJ6ukrptcVzZtxrWevw1htiu7sl
+	cYslz/NeCJxLeDsTKyVrw==
+X-ME-Sender: <xms:N9GKZ3yvmKZu5X_i7HNdMlhFgj1xeH07dHVFJH1hB0wruzNsRyJa7g>
+    <xme:N9GKZ_Q78rLm_aWojwlaa2oxWp3kt93GpOpgVIvbvSIhyqWKQRTk58N9HDa89fVMJ
+    4uWYrxgRL38G1TO>
+X-ME-Received: <xmr:N9GKZxUXUadfUA77zA6Nsh8JP6ms-BknVRVOlqU7kSfCsdcGW7zBxegutfG1dh9zKQHEtC5uMxQQ_4VUAgSe-xHs99KvAuI3R7M8xQFE9am7fKAPOuXi>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeifedgudehvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleff
+    uedujefhheegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
+    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsshgthhhusg
+    gvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhh
+    uhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsmh
+    hlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhs
+    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquhhrih
+    hnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhho
+    ohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnh
+    gurgdrtghomhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:N9GKZxgeg9poRDMgA6MuepnTQbrtEiVEG0qBCQbWgXHoY4XYK_R4Sw>
+    <xmx:N9GKZ5AkQaEaetq6lXE1V3qWPFZ_cBdl49A3wDNe0fi8HFok5CBR8g>
+    <xmx:N9GKZ6KNPEVgSXshl4ErBi2CwycpzGyT3eBo4sRblvWHArBhfMOqDg>
+    <xmx:N9GKZ4Br_WHuq987yILVBESwT7NER9Ka8mWqYbCdburNh_QG_ooAOQ>
+    <xmx:ONGKZ-JMeTmCCZ3mIOf4YHqhRWkSpK-1HDpvezFkhCuH3LBPxh0v7rvi>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 Jan 2025 16:52:54 -0500 (EST)
+Message-ID: <5e394aa9-fc7f-43d6-a61a-d02c9e048717@bsbernd.com>
+Date: Fri, 17 Jan 2025 22:52:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115183107.3124743-1-joannelkoong@gmail.com>
- <20250115183107.3124743-2-joannelkoong@gmail.com> <20250115213713.GE3557695@frogsfrogsfrogs>
- <CAJnrk1YXa++SrifrCfXf7WPQF34V20cet3+x+7wVuDf9CPoR7w@mail.gmail.com>
- <20250116005919.GK3557553@frogsfrogsfrogs> <CAJnrk1ZpjnAL26x7KdX_33bgX7YdJN1hnPmn6zAgM38p4uBopw@mail.gmail.com>
- <20250117015724.GL3557553@frogsfrogsfrogs>
-In-Reply-To: <20250117015724.GL3557553@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 17 Jan 2025 13:48:49 -0800
-X-Gm-Features: AbW1kvaaPRnHN8Kv54Yiyl29WSjQchMpl9NSwfZKMLCxmMR0HE8BHUZEQVDkEgI
-Message-ID: <CAJnrk1ZuTKCvVUTWs2rQgg2OXtbJp+Ggcsg_A0Q093R8U=1=8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, bfoster@redhat.com, 
-	nirjhar@linux.ibm.com, zlang@redhat.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jan 16, 2025 at 5:57=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Thu, Jan 16, 2025 at 05:03:41PM -0800, Joanne Koong wrote:
-> > On Wed, Jan 15, 2025 at 4:59=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> > >
-> > > On Wed, Jan 15, 2025 at 04:47:30PM -0800, Joanne Koong wrote:
-> > > > On Wed, Jan 15, 2025 at 1:37=E2=80=AFPM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
-> > > > >
-> > > > > On Wed, Jan 15, 2025 at 10:31:06AM -0800, Joanne Koong wrote:
-> > > > > > Add support for reads/writes from buffers backed by hugepages.
-> > > > > > This can be enabled through the '-h' flag. This flag should onl=
-y be used
-> > > > > > on systems where THP capabilities are enabled.
-> > > > > >
-> > > > > > This is motivated by a recent bug that was due to faulty handli=
-ng of
-> > > > > > userspace buffers backed by hugepages. This patch is a mitigati=
-on
-> > > > > > against problems like this in the future.
-> > > > > >
-> > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > > > > > ---
-> > > > > >  ltp/fsx.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++=
-+++-----
-> > > > > >  1 file changed, 108 insertions(+), 11 deletions(-)
-> > > > > >
-> > > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > > > > index 41933354..8d3a2e2c 100644
-> > > > > > --- a/ltp/fsx.c
-> > > > > > +++ b/ltp/fsx.c
-> > > > > > @@ -190,6 +190,7 @@ int       o_direct;                       /=
-* -Z */
-> > > > > >  int  aio =3D 0;
-> > > > > >  int  uring =3D 0;
-> > > > > >  int  mark_nr =3D 0;
-> > > > > > +int  hugepages =3D 0;                  /* -h flag */
-> > > > > >
-> > > > > >  int page_size;
-> > > > > >  int page_mask;
-> > > > > > @@ -2471,7 +2472,7 @@ void
-> > > > > >  usage(void)
-> > > > > >  {
-> > > > > >       fprintf(stdout, "usage: %s",
-> > > > > > -             "fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
-> > > > > > +             "fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> > > > > >          [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j log=
-id]\n\
-> > > > > >          [-l flen] [-m start:end] [-o oplen] [-p progressinterv=
-al]\n\
-> > > > > >          [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
-> > > > > > @@ -2484,6 +2485,7 @@ usage(void)
-> > > > > >       -e: pollute post-eof on size changes (default 0)\n\
-> > > > > >       -f: flush and invalidate cache after I/O\n\
-> > > > > >       -g X: write character X instead of random generated data\=
-n\
-> > > > > > +     -h hugepages: use buffers backed by hugepages for reads/w=
-rites\n\
-> > > > >
-> > > > > If this requires MADV_COLLAPSE, then perhaps the help text should=
-n't
-> > > > > describe the switch if the support wasn't compiled in?
-> > > > >
-> > > > > e.g.
-> > > > >
-> > > > >         -g X: write character X instead of random generated data\=
-n"
-> > > > > #ifdef MADV_COLLAPSE
-> > > > > "       -h hugepages: use buffers backed by hugepages for reads/w=
-rites\n"
-> > > > > #endif
-> > > > > "       -i logdev: do integrity testing, logdev is the dm log wri=
-tes device\n\
-> > > > >
-> > > > > (assuming I got the preprocessor and string construction goo righ=
-t; I
-> > > > > might be a few cards short of a deck due to zombie attack earlier=
-)
-> > > >
-> > > > Sounds great, I'll #ifdef out the help text -h line. Hope you feel =
-better.
-> > > > >
-> > > > > >       -i logdev: do integrity testing, logdev is the dm log wri=
-tes device\n\
-> > > > > >       -j logid: prefix debug log messsages with this id\n\
-> > > > > >       -k: do not truncate existing file and use its size as upp=
-er bound on file size\n\
-> > > > [...]
-> > > > > > +}
-> > > > > > +
-> > > > > > +#ifdef MADV_COLLAPSE
-> > > > > > +static void *
-> > > > > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignm=
-ent)
-> > > > > > +{
-> > > > > > +     void *buf;
-> > > > > > +     long buf_size =3D roundup(len, hugepage_size) + alignment=
-;
-> > > > > > +
-> > > > > > +     if (posix_memalign(&buf, hugepage_size, buf_size)) {
-> > > > > > +             prterr("posix_memalign for buf");
-> > > > > > +             return NULL;
-> > > > > > +     }
-> > > > > > +     memset(buf, '\0', buf_size);
-> > > > > > +     if (madvise(buf, buf_size, MADV_COLLAPSE)) {
-> > > > >
-> > > > > If the fsx runs for a long period of time, will it be necessary t=
-o call
-> > > > > MADV_COLLAPSE periodically to ensure that reclaim doesn't break u=
-p the
-> > > > > hugepage?
-> > > > >
-> > > >
-> > > > imo, I don't think so. My understanding is that this would be a rar=
-e
-> > > > edge case that happens when the system is constrained on memory, in
-> > > > which case subsequent calls to MADV_COLLAPSE would most likely fail
-> > > > anyways.
-> > >
-> > > Hrmmm... well I /do/ like to run memory constrained VMs to prod recla=
-im
-> > > into stressing the filesystem more.  But I guess there's no good way =
-for
-> > > fsx to know that something happened to it.  Unless there's some even
-> > > goofier way to force a hugepage, like shmem/hugetlbfs (ugh!) :)
-> >
-> > I can't think of a better way to force a hugepage either. I believe
-> > shmem and hugetlbfs would both require root privileges to do so, and
-> > if i'm not mistaken, shmem hugepages are still subject to being broken
-> > up by reclaim.
-> >
-> > >
-> > > Will have to ponder hugepage renewasl -- maybe we should madvise ever=
-y
-> > > few thousand fsxops just to be careful?
-> >
-> > I can add this in, but on memory constrained VMs, would this be
-> > effective? To me, it seems like in the majority of cases, subsequent
->
-> They're not /so/ memory constrained that the initial collapsed page is
-> likely to get split/reclaimed before your regression test finishes...
->
-> > attempts at collapsing the broken pages back into a hugepage would
-> > fail due to memory still being constrained. In which case, I guess
-> > we'd exit the test altogether?
->
-> ...but I was starting to wonder if this is something we'd actually want
-> in a long soak test, just in case there are weird effects on the system
-> after fsx has been running for a few days?
->
-> >                                It kind of seems to me like if the user
-> > wants to test out hugepages functionality of their filesystem, then
-> > the onus is on them to run the test in an environment that can
-> > adequately and consistently support hugepages.
->
-> I guess the hard part about analyzing that is is that long soak tests
-> aren't usually supposed to die on account of memory fragmentation.
-> Hence me wondering if there's an "easy" way to get one huge page and not
-> let it go.
-
-For a long soak situation, I think the periodic collapses every few
-thousands ops makes sense. Where the "-h" flag is interpreted as
-best-effort (eg the test still continues on even if the subsequent
-collapses fail instead of exiting the test altogether, we just make a
-best effort at collapsing). I'll add this change to v4.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 13/17] fuse: Allow to queue fg requests through
+ io-uring
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
+ David Wei <dw@davidwei.uk>
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Thanks,
-Joanne
+> +/* queue a fuse request and send it if a ring entry is available */
+> +void fuse_uring_queue_fuse_req(struct fuse_iqueue *fiq, struct fuse_req *req)
+> +{
+> +	struct fuse_conn *fc = req->fm->fc;
+> +	struct fuse_ring *ring = fc->ring;
+> +	struct fuse_ring_queue *queue;
+> +	struct fuse_ring_ent *ent = NULL;
+> +	int err;
+> +
+> +	err = -EINVAL;
+> +	queue = fuse_uring_task_to_queue(ring);
+> +	if (!queue)
+> +		goto err;
+> +
+> +	if (req->in.h.opcode != FUSE_NOTIFY_REPLY)
+> +		req->in.h.unique = fuse_get_unique(fiq);
+> +
+> +	spin_lock(&queue->lock);
+> +	err = -ENOTCONN;
+> +	if (unlikely(queue->stopped))
+> +		goto err_unlock;
+> +
+> +	ent = list_first_entry_or_null(&queue->ent_avail_queue,
+> +				       struct fuse_ring_ent, list);
+> +	if (ent)
+> +		fuse_uring_add_req_to_ring_ent(ent, req);
+> +	else
+> +		list_add_tail(&req->list, &queue->fuse_req_queue);
+> +	spin_unlock(&queue->lock);
+> +
+> +	if (ent) {
+> +		struct io_uring_cmd *cmd = ent->cmd;
+> +
+> +		err = -EIO;
+> +		if (WARN_ON_ONCE(ent->state != FRRS_FUSE_REQ))
+> +			goto err;
 
->
-> Anyway don't let my blathering hold this up; I think once you fix the
-> help text and the #ifdef indenting around exit(86) this patch is good to
-> go.
->
-> --D
->
-> >
-> > Thanks,
-> > Joanne
-> >
-> > >
-> > > --D
-> > >
-> > > >
-> > > > Thanks,
-> > > > Joanne
-> > > >
-> > > > > > +             prterr("madvise collapse for buf");
-> > > > > > +             free(buf);
-> > > > > > +             return NULL;
-> > > > > > +     }
-> > > > > > +
-> > > > > > +     return buf;
-> > > > > > +}
-> > > > > > +#else
-> > > > > > +static void *
-> > > > > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignm=
-ent)
-> > > > > > +{
-> > > > > > +     return NULL;
-> > > > > > +}
-> > > > > > +#endif
-> > > > > > +
-> > > > > > +static void
-> > > > > > +init_buffers(void)
-> > > > > > +{
-> > > > > > +     int i;
-> > > > > > +
-> > > > > > +     original_buf =3D (char *) malloc(maxfilelen);
-> > > > > > +     for (i =3D 0; i < maxfilelen; i++)
-> > > > > > +             original_buf[i] =3D random() % 256;
-> > > > > > +     if (hugepages) {
-> > > > > > +             long hugepage_size =3D get_hugepage_size();
-> > > > > > +             if (hugepage_size =3D=3D -1) {
-> > > > > > +                     prterr("get_hugepage_size()");
-> > > > > > +                     exit(102);
-> > > > > > +             }
-> > > > > > +             good_buf =3D init_hugepages_buf(maxfilelen, hugep=
-age_size, writebdy);
-> > > > > > +             if (!good_buf) {
-> > > > > > +                     prterr("init_hugepages_buf failed for goo=
-d_buf");
-> > > > > > +                     exit(103);
-> > > > > > +             }
-> > > > > > +
-> > > > > > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepag=
-e_size, readbdy);
-> > > > > > +             if (!temp_buf) {
-> > > > > > +                     prterr("init_hugepages_buf failed for tem=
-p_buf");
-> > > > > > +                     exit(103);
-> > > > > > +             }
-> > > > > > +     } else {
-> > > > > > +             unsigned long good_buf_len =3D maxfilelen + write=
-bdy;
-> > > > > > +             unsigned long temp_buf_len =3D maxoplen + readbdy=
-;
-> > > > > > +
-> > > > > > +             good_buf =3D calloc(1, good_buf_len);
-> > > > > > +             temp_buf =3D calloc(1, temp_buf_len);
-> > > > > > +     }
-> > > > > > +     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > > > > > +     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > > > > > +}
-> > > > > > +
-> > > > > >  static struct option longopts[] =3D {
-> > > > > >       {"replay-ops", required_argument, 0, 256},
-> > > > > >       {"record-ops", optional_argument, 0, 255},
-> > > > > > @@ -2883,7 +2980,7 @@ main(int argc, char **argv)
-> > > > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered s=
-tdout */
-> > > > > >
-> > > > > >       while ((ch =3D getopt_long(argc, argv,
-> > > > > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t=
-:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > > > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:=
-t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > > > >                                longopts, NULL)) !=3D EOF)
-> > > > > >               switch (ch) {
-> > > > > >               case 'b':
-> > > > > > @@ -2916,6 +3013,14 @@ main(int argc, char **argv)
-> > > > > >               case 'g':
-> > > > > >                       filldata =3D *optarg;
-> > > > > >                       break;
-> > > > > > +             case 'h':
-> > > > > > +                     #ifndef MADV_COLLAPSE
-> > > > >
-> > > > > Preprocessor directives should start at column 0, like most of th=
-e rest
-> > > > > of fstests.
-> > > > >
-> > > > > --D
-> > > > >
+
+I noticed this - this is wrong, as ent would be in nirvana state if
+this condition would ever happen.
+
 
