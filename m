@@ -1,104 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-39463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4D1A148EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 05:37:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CD5A14A7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 08:56:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A5897A3CB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 04:37:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E2D1888BB8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 07:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F661F6690;
-	Fri, 17 Jan 2025 04:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E821F8663;
+	Fri, 17 Jan 2025 07:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnBhtfKo"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3g8uUr/z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E301F63C6;
-	Fri, 17 Jan 2025 04:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C981F6687;
+	Fri, 17 Jan 2025 07:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737088634; cv=none; b=XmUGbSmupmwA9ara011hSJIiKWGlN8dhVS9wbv9SvkRkJvu2WZ5DpQjyfsTaT9uBE/cPh/zU2kNEjJv99McayOBZKWcMQtyZh/nzGELLghKl7SbjtlqId2LDwpa0guTUhZSLv8ek36LDeaHYAZ15Tg7qy5uoamw+MtzAuGhnkL4=
+	t=1737100573; cv=none; b=tu2rtKfaR1DDE9RC8zEkKBbOgkYqMs3oLkQr4hOFNjRNF/yR8iUsTyeFacR2ccq9S1qvgwJt/6UkWVs7pPIOWN+R/XMvtuAuUOUukuD+eVrCiOtmh7GJHG0WsTbZ/NJ9h9CST/2sk7KkPOoTuSCV4QR6j/xq1x8qcl9hhizcil4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737088634; c=relaxed/simple;
-	bh=KVR2Fo1vempKV6r8+IgQZEmdoggjc5heNIzuYrjHh5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GVgSG5edT4X+u7b/57zGEq1IPmPeW0rvlHjECrdFwjo15mgWwmybm5gpJzx4M91brh7PYdO3q+0NO/BiMuOkY5sw+egMzLu5LmrBZl80jKZOEeZUoDVt5AuLc7fnbV/E+VRSdnWsZmnnzblwTNyXJQrpraGxflyw95GYryzykX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnBhtfKo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E237C4CEE0;
-	Fri, 17 Jan 2025 04:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737088633;
-	bh=KVR2Fo1vempKV6r8+IgQZEmdoggjc5heNIzuYrjHh5Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EnBhtfKowH+yMvyHAA83M+ZaH0+sl5M4dT/F5TrTaFruB65Ne5h9hURL+6KGv5X6o
-	 0/weoGQyU0eaGJ0AAQ31OxXtISF6UyUC+uKtk7N8VO+KaffA96hlXSDpaDnEWdX8f8
-	 GxTUmvuBfo9PFovJAN2+rveszkBx92rX3cSJ0I32FxlOIZhdI1ZIZ7s52uxIxk35+6
-	 NNbnxxbciaCG8WTafWVQ1bU9xv6Oo2VEMCtv1kXomqXtSvXFJQZ0MwwQ+NT6KWNLUk
-	 Mb/0klY5Fqf7tKP6JJP6ur9RSMdKPEoLQTqkgXZDrA9BNH7cL1DbgjuvlUqNXMWm04
-	 W+kE2vlr9H+Wg==
-From: Zorro Lang <zlang@kernel.org>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: [PATCH] fstests: workaround for gcc-15
-Date: Fri, 17 Jan 2025 12:37:09 +0800
-Message-ID: <20250117043709.2941857-1-zlang@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1737100573; c=relaxed/simple;
+	bh=vbsrK0oAOquXB6Qxnm6v5muRqOVJe9pjcUpbdG/aAbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQ2nTWjqY2ATG6ZzT669frGMnpIRjJKLddJJfKPnCfRtejnw+Co/N9CksEMWKgvl7EFPe+o7bWcd1/4dA/eFVrtOyRVGzIZFKmWCXaPCIz1QQVONW3k/+a7LJpftJFmnOOBQYdauHWwByi7KmlspPzMeNEu3l2Ox3aie3SJD6HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3g8uUr/z; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0xS4rzAwShP4fR0GmRf+Y/L+j7Nhbi6WmSe8J0Qupus=; b=3g8uUr/zQeamxBYJg5IR9w1nI5
+	4XFglwglcwD6Kg+PhuCwG7MVHgvS5R/Pv5qLbbjmqEPK6DcIdD8PqbKmKt2IqippGnsPrcU8W8Ymy
+	XYnki7fkGVODbJ/QGQkw95oNIYJRFIlp6gFu4h4wfGz+AXhghuLQOG4XlVtrU+INYLUoGcKddyaCm
+	q3GJGEWpcbQcUCO0eIRoTyJ1iV3dj8zetOQr9Rbg7SOb/YBakeHaz9vZ9YgflNRZZP5NVMotg68rR
+	6TGchrX0Hlb2sgEsRFJEjDaIE7qkOcAzCPou0RQ4xolbPR3/9ssMsF8+dP0kUVg/7qGKwYqvmaaHR
+	0EfZr12g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYhD7-0000000HGFi-3cg9;
+	Fri, 17 Jan 2025 07:56:09 +0000
+Date: Thu, 16 Jan 2025 23:56:09 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] f2fs: register inodes which is able to donate pages
+Message-ID: <Z4oNGYJrN-XGX87M@infradead.org>
+References: <20250115221814.1920703-1-jaegeuk@kernel.org>
+ <20250115221814.1920703-2-jaegeuk@kernel.org>
+ <Z4imEs-Se-VWcpBG@infradead.org>
+ <Z4k_nKT3V1xuhXGc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z4k_nKT3V1xuhXGc@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-GCC-15 does a big change, it changes the default language version for
-C compilation from -std=gnu17 to -std=gnu23. That cause lots of "old
-style" C codes hit build errors. On the other word, current xfstests
-can't be used with GCC-15. So -std=gnu17 can help that.
+On Thu, Jan 16, 2025 at 05:19:24PM +0000, Jaegeuk Kim wrote:
+> > mean a invalidate_inode_pages2_range.  Which is a strange use of the
+> > word.  what are the use cases?  Why is this queued up to a thread and
+> > not done inline?  Why is this in f2fs and not in common code.
+> 
+> The idea is let apps register some file ranges for page donation and admin
+> recliam such pages all togehter if they expect to see memory pressure soon.
+> We can rely on LRU, but this is more user-given trigger. I'm not sure whether
+> there's a need in general, hence, wanted to put it in f2fs first to get more
+> concrete use-cases beyond this Android case.
 
-Signed-off-by: Zorro Lang <zlang@kernel.org>
----
-
-Hi,
-
-I send this patch just for talking about this issue. The upcoming gcc-15
-does lots of changes, a big change is using C23 by default:
-
-  https://gcc.gnu.org/gcc-15/porting_to.html
-
-xfstests has many old style C codes, they hard to be built with gcc-15.
-So we have to either add -std=$old_version (likes this patch), or port
-the code to C23.
-
-This patch is just a workaround (and a reminder for someone might hit
-this issue with gcc-15 too). If you have any good suggestions or experience
-(for this kind of issue) to share, feel free to reply.
-
-Thanks,
-Zorro
-
- include/builddefs.in | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/builddefs.in b/include/builddefs.in
-index 5b5864278..ef124bb87 100644
---- a/include/builddefs.in
-+++ b/include/builddefs.in
-@@ -75,7 +75,7 @@ HAVE_RLIMIT_NOFILE = @have_rlimit_nofile@
- NEED_INTERNAL_XFS_IOC_EXCHANGE_RANGE = @need_internal_xfs_ioc_exchange_range@
- HAVE_FICLONE = @have_ficlone@
- 
--GCCFLAGS = -funsigned-char -fno-strict-aliasing -Wall
-+GCCFLAGS = -funsigned-char -fno-strict-aliasing -std=gnu17 -Wall
- SANITIZER_CFLAGS += @autovar_init_cflags@
- 
- ifeq ($(PKG_PLATFORM),linux)
--- 
-2.47.1
+Well, that's certainly not a file system feature.  Please build this
+as generic infrastucture and send it to the linux-mm list.
 
 
