@@ -1,55 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-39544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098DCA15791
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:52:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D9CA15798
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D688188C1B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:52:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA11188AF87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B81AA7AE;
-	Fri, 17 Jan 2025 18:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000C11D6DDA;
+	Fri, 17 Jan 2025 18:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geQjXpnk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhxoB819"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8C1A9B5E;
-	Fri, 17 Jan 2025 18:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5569B1AAA1A;
+	Fri, 17 Jan 2025 18:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737139737; cv=none; b=BwCGZIt4nhLqW+VTWIfFCG0c8OgpW+tCAa9hniwDUPAD3Myk8skEpi7mtoXq6m5QW8CJdJOCt6Sd7pY3P5xHJ6DhYmR0AVe4wp7ajMxlMV1Ef4GcPp7Vhb+xlD+ek4k+/peVJAYVbp6e9gJ4eN46bM5LYbW4ooFemw92GOd3v3Q=
+	t=1737139775; cv=none; b=nFKflwpUmqvKUpGx9uiBiYCYKmr7TEx7KIgjuHftz/CI6VZkUTLOZB/ulC/4Bviw7kmDrge89P4ssW2bbb1Lel6M69K4YvbkiA9fOfi6nzKwJcIM0CxqXxMXWOaFJZpkZcf+TPH248uJfj4Vi4+Gdu5GgHEAVlOAM70EKXJ244I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737139737; c=relaxed/simple;
-	bh=uSFr7uPxilQbgYq0+zdRZr9nXpg4EleYwwocnWKeN/8=;
+	s=arc-20240116; t=1737139775; c=relaxed/simple;
+	bh=zDdwjxZU/sF8rw75zRI/8i1HXIyyWGHyARyxnUpsYsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCs3Z+cp1hsvT5VgrF8Ya3rq6YrqplBA+xu2Mt2pZGZQxzoU3CZ4QCisvWA/8xPZw8goRbnJImU5Vmth54R0msdIErRsSjPvTabIVWCq0SeDiYzz/pCjz0b6KvsidzeggfZU1PagH4kvgxdRR6Y3PR30YhCKwrPkOU6w8gkSazM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geQjXpnk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20AEC4CEDD;
-	Fri, 17 Jan 2025 18:48:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJAzRrPov9H/aLaNNQbrU/h/yUp9LQlYQdGZ9pqPunJTuM3DN1RgrvsNpqpRAR+rRISC8zlwrygJYQc2GdhhYczLV7a1mltzwu11u7zYAEoZKugDzPZOqLqti8scJXD5O29zVNVnJgg5yWAdm4IwUcjxtEn/PgdhCrc7RZemvLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhxoB819; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB947C4CEDD;
+	Fri, 17 Jan 2025 18:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737139736;
-	bh=uSFr7uPxilQbgYq0+zdRZr9nXpg4EleYwwocnWKeN/8=;
+	s=k20201202; t=1737139774;
+	bh=zDdwjxZU/sF8rw75zRI/8i1HXIyyWGHyARyxnUpsYsM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=geQjXpnkhLCLWNLZMlbB0uJh57q6izf7cWViOO2F3QNL/ezvbGLWlZ6EfPWvlc2My
-	 rHe05QmuTuqLIidP4pipPlO48mWH7ktnfqpKLeeojkdVldgxvD7AaTKnc6uKPaXwIS
-	 ga3EUvvp6X7PGXDi+/0ClVy9SKTfFIrn4XXbPiPPy5b7Ktwd2JKbsetGBzUa3xElwx
-	 dd+7LrfnacEwWzKg9sfLTrUx2oHYSLZQJ1q/Tbb+sf7Kmt9ZGhbTzsUIslJc40j3zC
-	 f0bWxHKeluIzDMEMuQUUD5l7BGPRYAg3ihn1LbR3xYyrdCik1B+gSzMB+629x65BkD
-	 LE4h18DRFoGEw==
-Date: Fri, 17 Jan 2025 18:48:55 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v6] add ioctl/sysfs to donate file-backed pages
-Message-ID: <Z4qmF2n2pzuHqad_@google.com>
-References: <20250117164350.2419840-1-jaegeuk@kernel.org>
- <Z4qb9Pv-mEQZrrXc@casper.infradead.org>
+	b=fhxoB8196SJnzt8YHfRBi11hGbdssLESTCTL7/QcpsiKdwkh3XTs8k8oB2foRwFxz
+	 jewgRuzP7Bwt/1940pxoKSbI+UKZGvngWsy7EjDDtZoibl/TJFfunOFBixqn1sQOPg
+	 In2yQzNs1cSy5ZxDUytJGAWGVLeMbNXGoJ0frmQ2TH4YlqaqxtM1iH+ZPVyHWUtNmn
+	 b9YgR4IdvRUFdc1MRy0CI1VCI8O1yhUG3ua6beiIS/jdPWyrb7r3yAfVw7bWi9tTyf
+	 n1ZgQWLK5Eh3hyTxordQ4spwgCMSOJ9xbWJ6uTR/reLdWjo3BWMaMi8Zc7OF//nwmg
+	 SGIyOeS23SWmQ==
+Date: Fri, 17 Jan 2025 10:49:34 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Dave Chinner <david@fromorbit.com>,
+	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, ritesh.list@gmail.com,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
+Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
+Message-ID: <20250117184934.GI1611770@frogsfrogsfrogs>
+References: <20241204154344.3034362-1-john.g.garry@oracle.com>
+ <20241204154344.3034362-2-john.g.garry@oracle.com>
+ <Z1C9IfLgB_jDCF18@dread.disaster.area>
+ <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
+ <Z1IX2dFida3coOxe@dread.disaster.area>
+ <20241212013433.GC6678@frogsfrogsfrogs>
+ <Z4Xq6WuQpVOU7BmS@dread.disaster.area>
+ <20250114235726.GA3566461@frogsfrogsfrogs>
+ <20250116065225.GA25695@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,33 +68,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z4qb9Pv-mEQZrrXc@casper.infradead.org>
+In-Reply-To: <20250116065225.GA25695@lst.de>
 
-On 01/17, Matthew Wilcox wrote:
-> On Fri, Jan 17, 2025 at 04:41:16PM +0000, Jaegeuk Kim wrote:
-> > If users clearly know which file-backed pages to reclaim in system view, they
-> > can use this ioctl() to register in advance and reclaim all at once later.
+On Thu, Jan 16, 2025 at 07:52:25AM +0100, Christoph Hellwig wrote:
+> On Tue, Jan 14, 2025 at 03:57:26PM -0800, Darrick J. Wong wrote:
+> > Ok, let's do that then.  Just to be clear -- for any RWF_ATOMIC direct
+> > write that's correctly aligned and targets a single mapping in the
+> > correct state, we can build the untorn bio and submit it.  For
+> > everything else, prealloc some post EOF blocks, write them there, and
+> > exchange-range them.
 > > 
-> > To MM and others,
+> > Tricky questions: How do we avoid collisions between overlapping writes?
+> > I guess we find a free file range at the top of the file that is long
+> > enough to stage the write, and put it there?  And purge it later?
 > > 
-> > I'd like to propose this API in F2FS only, since
-> > 1) the use-case is quite limited in Android at the moment. Once it's generall
-> > accepted with more use-cases, happy to propose a generic API such as fadvise.
-> > Please chime in, if there's any needs.
-> > 
-> > 2) it's file-backed pages which requires to maintain the list of inode objects.
-> > I'm not sure this fits in MM tho, also happy to listen to any feedback.
+> > Also, does this imply that the maximum file size is less than the usual
+> > 8EB?
 > 
-> You didn't cc the patches to linux-mm, so that's a bad start.
+> I think literally using the exchrange code for anything but an
+> initial prototype is a bad idea for the above reasons.  If we go
+> beyond proving this is possible you'd want a version of exchrange
+> where the exchange partners is not a file mapping, but a cow staging
+> record.
 
-Because #1.
+The trouble is that the br_startoff attribute of cow staging mappings
+aren't persisted on disk anywhere, which is why exchange-range can't
+handle the cow fork.  You could open an O_TMPFILE and swap between the
+two files, though that gets expensive per-io unless you're willing to
+stash that temp file somewhere.
 
-> 
-> I don't understand how this is different from MADV_COLD.  Please
-> explain.
+At this point I think we should slap the usual EXPERIMENTAL warning on
+atomic writes through xfs and let John land the simplest multi-fsblock
+untorn write support, which only handles the corner case where all the
+stars are <cough> aligned; and then make an exchange-range prototype
+and/or all the other forcealign stuff.
 
-MADV_COLD is a vma range, while this is a file range. So, it's more close to
-fadvise(POSIX_FADV_DONTNEED) which tries to reclaim the file-backed pages
-at the time when it's called. The idea is to keep the hints only, and try to
-reclaim all later when admin expects system memory pressure soon.
+(Lifting in smaller pieces sounds a lot better than having John carry
+around an increasingly large patchset...)
+
+--D
 
