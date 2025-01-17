@@ -1,137 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-39511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCB2A1561D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:58:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD67A1563C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C17E1687E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 17:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEACF3A8337
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3671A2C27;
-	Fri, 17 Jan 2025 17:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF341A3BA1;
+	Fri, 17 Jan 2025 18:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2aHCO6F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acXOYVEe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467281A256B;
-	Fri, 17 Jan 2025 17:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125AB1A3A8F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 18:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737136688; cv=none; b=NK2EzxnSUMYL9fDWqoiQnxnO+m0/JeFWwqYZ1n6DyONAgbWag5StFanVdqWTUyR2i0eEIm7nW2Gd2L2WDVzykIHl9IGst2JCaOLWOaK/7FCyEfypkS6RlBT8SK4IpF4j4jxjLev1dfNEein0KZj2dOfVzC12RPlw28yQ+GtVxPU=
+	t=1737136925; cv=none; b=KLErq1s1sswAzWnpusmspgLtdpKCKfJlmevEzgbjQQ9JRtBuaz3B5MMCPhHERXq7Slt9DlNc7NXOb4VbP/GrjJKPDHnWOtGt0ET+nJZo8dOrVL1Q48jBvIs04RvjAqydThBonUYuzS0nFz4YAqbycHTQjFGzFBEdT7f0F/iJ57w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737136688; c=relaxed/simple;
-	bh=D69buqgF5oOQb5jbgGY82DkO1/lf34KohHgxJVdVMr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0h2ZhIlXHI/jV2BClrte88O0lZwHaDT2wPr1g+20+dduPA6xJyGYOterbsp4cyj/Z+Rkt2r4cIKU/aDdl/IBXqj8WSAI2/HL3N9wbIb8m6BSNnVv8G7HsTGpwW5nhyxmy9XpTJKHOZ6qQhF2YHA6L7F2F6ugD/QltyByN/5hhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2aHCO6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6047AC4CEDD;
-	Fri, 17 Jan 2025 17:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737136686;
-	bh=D69buqgF5oOQb5jbgGY82DkO1/lf34KohHgxJVdVMr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o2aHCO6FQEbvrxLiIzE+2oxYMK1RiCO77jdTx9Ujvo93F6liHyq7D+QK6qf35nZPS
-	 j9XIUi6i4fZ/8vv6KtGwREVB9wDdT8D6RbzbSd5GL991egImuliMohwDgyavn3EOvR
-	 MI9PPxc5MtDOp5+lYgqM7GmXMHdvebwePmSSCfdX5RPdIsHO1VZBV2rijEeXJzb1g3
-	 k4x4sJDmH75gkMe2vExjxWBNPUIWnCueQ1iLbD6f64PZqcnsx2IkHmVSK/pX34qO6D
-	 9xT8BPu4DOvzlWvhexTDo1qzciCm8n4X8S2ymHjPwpDXRpbkuL9qR/VCM28CmIbgu6
-	 CEIMWyUFcqW6Q==
-Received: by pali.im (Postfix)
-	id 768587A1; Fri, 17 Jan 2025 18:57:55 +0100 (CET)
-Date: Fri, 17 Jan 2025 18:57:55 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <20250117175755.lctf5ezhhtdznt6m@pali>
-References: <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com>
- <20250114211050.iwvxh7fon7as7sty@pali>
- <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
- <20250114215350.gkc2e2kcovj43hk7@pali>
- <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali>
- <20250114235925.GC3561231@frogsfrogsfrogs>
- <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
- <20250117173900.GN3557553@frogsfrogsfrogs>
- <CAH2r5mvCJ=fPt5BgwFubJ+HWo+a0EHOTNoXxTt0NOhMC=V+GcQ@mail.gmail.com>
+	s=arc-20240116; t=1737136925; c=relaxed/simple;
+	bh=2TVvvWKA9wwbtOPHp1glyXej8vReUZ/tQ3uOZTlboCk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mBky3GWGyK8KTeACtUesGJpDrOz1UIJFpK5zf/Ep1OXejM+Ak6KnXN8YHUzazmfuMBzVTD+HAx7RgS+7+R+G/8E7ffylH+zhmt43vEhnV+NILbfAOY/Fc1Br5p4BPVKzNyulB0zrRFNaqbQzVZlJsN3940u5kCykTP7sPLBMG+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acXOYVEe; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d3bbb0f09dso4017686a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 10:02:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737136922; x=1737741722; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ilvr+t2fmQAVnwiwuvMRyyaid0g17xjTtaEirLKnx1Y=;
+        b=acXOYVEeA5UFI61ePdkns/n/WDBY0yeVgRf1/2YUKQrcNTPlr/npShemYE2m/iuVAp
+         4k3Qy6Ap8pRUBQRgl7tk3YEWz4891UQY8eBwk4TVSLlkshY8CqKOGwZ1Es/eiBKMJSiQ
+         fZPf7vMUPrGkeZzLK0THM7NooAiuc493l/WhDnGzr+wYdIRJcA5iv5mM+vS9JcyNB03r
+         lwdj3Mdkgcb1PqKKP4cz7xMZ0teyIDMbGmQnVYQ1C4zlpmF/qpnST658863/jsajQuK7
+         T7aMk4hK9loV5XDhSZL3wFaNQhiPHo4ar2Ezojm0P5wvt5EotGBLiYsufuLERbXTG6Tz
+         wL7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737136922; x=1737741722;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ilvr+t2fmQAVnwiwuvMRyyaid0g17xjTtaEirLKnx1Y=;
+        b=frUAPjzUHozuYOSFYbOaBcSlbnjiw7ITpV7pJM7PLLxiGug0LxnQuf4pWN3UGfoxcr
+         j8XrYKEJs84hK6JgbaIPBtfFjLvfrA8HwMtsP/0yRWNUr32oGvhmpgo4RnVHB7thl/g0
+         +g28rYgd+LXnjq7m+bPCKSF/DnsRjT8oLQ3TuIK4ZznefjwsH6cC3YKQup0dxh/PxbCN
+         UsfGBK74vof74/gAhYVa2cr2MwdlrUHak7HsRU01JHKj+xQ4K817put00iIfuHP7hbnc
+         iUVuxw0W/CKpPYAVmSZ0MsCFRepJbCephkT2qj9ZipFfnWiwT7zvCmRWUY25IvgMHKe2
+         S+jw==
+X-Gm-Message-State: AOJu0YyP+sHIcKuaxpW049A1LyDOLUD/vT1VtL27elqBC1b+nMFr8TO1
+	jyOy3uP+ePtrOPEuJIEyOgiPOobfvDGPQEtfstFI813Cj/l1Jn4o/s4pNvE5gfHlIpqtYJbd6e9
+	1zUPEYRSubFG9hgWDJ5ruhmWPPwDa6ywG95Q=
+X-Gm-Gg: ASbGncs+L6voO+p3lgGqHEvM+GrVVqCeC/ObJfKFEH+TLrhetg+LZhsBprs85Z+gC7L
+	KWdHuchuhSHH+/ZkpBPqb7aP9uMkt+8WSMoNnZQ==
+X-Google-Smtp-Source: AGHT+IHsQT/baXVirWUr7vGzRHZvkrvYxJjLt+EDt0w30MEwtcmWKN62pqs8QNNS/t4ff4haOIEKZqmbNt9rpTyha8E=
+X-Received: by 2002:a17:906:794a:b0:ab3:ed0:ce7 with SMTP id
+ a640c23a62f3a-ab38b3ce74bmr325806966b.55.1737136921542; Fri, 17 Jan 2025
+ 10:02:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mvCJ=fPt5BgwFubJ+HWo+a0EHOTNoXxTt0NOhMC=V+GcQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 17 Jan 2025 19:01:50 +0100
+X-Gm-Features: AbW1kvZSCkD5dHAUxuVHHQ4ixVYLqFZB90NIy3557ZetMaGOTGK7yOa51D7Wo7w
+Message-ID: <CAOQ4uxj00D_fP3nRUBjAry6vwUCNjYuUpCZg2Uc8hwMk6n+2HA@mail.gmail.com>
+Subject: [LSF/MM/BPF TOPIC] vfs write barriers
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: lsf-pc <lsf-pc@lists.linux-foundation.org>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Friday 17 January 2025 11:51:54 Steve French wrote:
-> On Fri, Jan 17, 2025 at 11:39 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Fri, Jan 17, 2025 at 05:53:34PM +0100, Amir Goldstein wrote:
-> > > On Wed, Jan 15, 2025 at 12:59 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> <...>
-> > > Looking at the FILE_ATTRIBUTE_* flags defined in SMB protocol
-> > >  (fs/smb/common/smb2pdu.h) I wonder how many of them will be
-> > > needed for applications beyond the obvious ones that were listed.
-> >
-> > Well they only asked for seven of them. ;)
-> >
-> > I chatted with Ted about this yesterday, and ... some of the attributes
-> > (like read only) imply that you'd want the linux server to enforce no
-> > writing to the file; some like archive seem a little superfluous since
-> > on linux you can compare cmtime from the backup against what's in the
-> > file now; and still others (like hidden/system) might just be some dorky
-> > thing that could be hidden in some xattr because a unix filesystem won't
-> > care.
-> >
-> > And then there are other attrs like "integrity stream" where someone
-> > with more experience with windows would have to tell me if fsverity
-> > provides sufficient behaviors or not.
-> >
-> > But maybe we should start by plumbing one of those bits in?  I guess the
-> > gross part is that implies an ondisk inode format change or (gross)
-> > xattr lookups in the open path.
-> >
-> 
-> We have talked about some of these missing flags in the past, but the
-> obvious ones that would be helpful i (e.g. is used in other operating
-> systems when view directories in the equivalent of the "Files" GUI is
-> checking FILE_ATTRIBUTE_OFFLINE to determine whether to query icons,
-> and additional metadata for files).  In the past Unix used to have
-> various ways to determine this, but it is fairly common for files to
-> be tiered (where the data is in very slow storage offline - so should
-> only be opened and read by apps that really need to - not things like
-> GUIs browsing lists of files) so that attribute could be helpful.
-> 
-> The other two obvious ones (missing in Linux but that some other OS
-> have filesystems which support) discussed before were
-> FILE_ATTRIBUTE_INTEGRITY_STREAM which could be set for files that need
-> stronger data integrity guarantees (if a filesystem allows files to be
-> marked for stronger data integrity guarantees) , and
-> FILE_ATTRIBUTE_NO_SCRUB_DATA that indicates integrity checks can be
-> skipped for this particular file.
-> -- 
-> Thanks,
-> 
-> Steve
+Hi all,
 
-Thank you for information about integrity stream and these new things
-around. I have not included them into my initial list because I have not
-used them yet. That it why I listed only seven. But as I wrote in the
-other email, whatever API is chosen, it should be prepared for extending
-and integrity stream sounds like something could be included there.
+I would like to present the idea of vfs write barriers that was proposed by Jan
+and prototyped for the use of fanotify HSM change tracking events [1].
+
+The historical records state that I had mentioned the idea briefly at the end of
+my talk in LSFMM 2023 [2], but we did not really have a lot of time to discuss
+its wider implications at the time.
+
+The vfs write barriers are implemented by taking a per-sb srcu read side
+lock for the scope of {mnt,file}_{want,drop}_write().
+
+This could be used by users - in the case of the prototype - an HSM service -
+to wait for all in-flight write syscalls, without blocking new write syscalls
+as the stricter fsfreeze() does.
+
+This ability to wait for in-flight write syscalls is used by the prototype to
+implement a crash consistent change tracking method [3] without the
+need to use the heavy fsfreeze() hammer.
+
+For the prototype, there is no user API to enable write barriers
+or to wait for in-flight write syscalls, there is only an internal user
+(fanotify), so the user API is only the fanotify API, but the
+vfs infrastructure was written in a way that it could serve other
+subsystems or be exposed to user applications via a vfs API.
+
+I wanted to throw these questions to the crowd:
+- Can you think of other internal use cases for SRCU scope for
+  vfs write operations [*]? other vfs operations?
+- Would it be useful to export this API to userspace so applications
+  could make use of it?
+
+[*] "vfs write operations" in this context refer to any operation
+     that would block on a frozen fs.
+
+I recall that Jeff mentioned there could be some use case related
+to providing crash consistency to NFS change cookies, but I am
+not sure if this is still relevant after the multigrain ctime work.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/linux/commits/sb_write_barrier
+[2] https://lwn.net/Articles/932415/
+[3] https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#modified-files-query
 
