@@ -1,128 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-39512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD67A1563C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:02:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19BEA15649
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEACF3A8337
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:02:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 341D97A04C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF341A3BA1;
-	Fri, 17 Jan 2025 18:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFE91A2622;
+	Fri, 17 Jan 2025 18:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acXOYVEe"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wTSkYsV8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125AB1A3A8F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 18:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664C8A95C;
+	Fri, 17 Jan 2025 18:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737136925; cv=none; b=KLErq1s1sswAzWnpusmspgLtdpKCKfJlmevEzgbjQQ9JRtBuaz3B5MMCPhHERXq7Slt9DlNc7NXOb4VbP/GrjJKPDHnWOtGt0ET+nJZo8dOrVL1Q48jBvIs04RvjAqydThBonUYuzS0nFz4YAqbycHTQjFGzFBEdT7f0F/iJ57w=
+	t=1737137144; cv=none; b=uWl8YnDFXTekP3ZofVGH+LkVSgyxlkYi5PCioyByZ+KI6gm2o89c1WdK7BpsOY4MAxWh5R81C6L9/J5JnREAbvQmmJNnHduaGIVKggWD55KxmFzKO3mqIKazwN3as9Dpoo46MTpVkWwL6lpFI0sgimbo35ORov52SfNBeXTo5Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737136925; c=relaxed/simple;
-	bh=2TVvvWKA9wwbtOPHp1glyXej8vReUZ/tQ3uOZTlboCk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mBky3GWGyK8KTeACtUesGJpDrOz1UIJFpK5zf/Ep1OXejM+Ak6KnXN8YHUzazmfuMBzVTD+HAx7RgS+7+R+G/8E7ffylH+zhmt43vEhnV+NILbfAOY/Fc1Br5p4BPVKzNyulB0zrRFNaqbQzVZlJsN3940u5kCykTP7sPLBMG+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acXOYVEe; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d3bbb0f09dso4017686a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 10:02:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737136922; x=1737741722; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ilvr+t2fmQAVnwiwuvMRyyaid0g17xjTtaEirLKnx1Y=;
-        b=acXOYVEeA5UFI61ePdkns/n/WDBY0yeVgRf1/2YUKQrcNTPlr/npShemYE2m/iuVAp
-         4k3Qy6Ap8pRUBQRgl7tk3YEWz4891UQY8eBwk4TVSLlkshY8CqKOGwZ1Es/eiBKMJSiQ
-         fZPf7vMUPrGkeZzLK0THM7NooAiuc493l/WhDnGzr+wYdIRJcA5iv5mM+vS9JcyNB03r
-         lwdj3Mdkgcb1PqKKP4cz7xMZ0teyIDMbGmQnVYQ1C4zlpmF/qpnST658863/jsajQuK7
-         T7aMk4hK9loV5XDhSZL3wFaNQhiPHo4ar2Ezojm0P5wvt5EotGBLiYsufuLERbXTG6Tz
-         wL7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737136922; x=1737741722;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ilvr+t2fmQAVnwiwuvMRyyaid0g17xjTtaEirLKnx1Y=;
-        b=frUAPjzUHozuYOSFYbOaBcSlbnjiw7ITpV7pJM7PLLxiGug0LxnQuf4pWN3UGfoxcr
-         j8XrYKEJs84hK6JgbaIPBtfFjLvfrA8HwMtsP/0yRWNUr32oGvhmpgo4RnVHB7thl/g0
-         +g28rYgd+LXnjq7m+bPCKSF/DnsRjT8oLQ3TuIK4ZznefjwsH6cC3YKQup0dxh/PxbCN
-         UsfGBK74vof74/gAhYVa2cr2MwdlrUHak7HsRU01JHKj+xQ4K817put00iIfuHP7hbnc
-         iUVuxw0W/CKpPYAVmSZ0MsCFRepJbCephkT2qj9ZipFfnWiwT7zvCmRWUY25IvgMHKe2
-         S+jw==
-X-Gm-Message-State: AOJu0YyP+sHIcKuaxpW049A1LyDOLUD/vT1VtL27elqBC1b+nMFr8TO1
-	jyOy3uP+ePtrOPEuJIEyOgiPOobfvDGPQEtfstFI813Cj/l1Jn4o/s4pNvE5gfHlIpqtYJbd6e9
-	1zUPEYRSubFG9hgWDJ5ruhmWPPwDa6ywG95Q=
-X-Gm-Gg: ASbGncs+L6voO+p3lgGqHEvM+GrVVqCeC/ObJfKFEH+TLrhetg+LZhsBprs85Z+gC7L
-	KWdHuchuhSHH+/ZkpBPqb7aP9uMkt+8WSMoNnZQ==
-X-Google-Smtp-Source: AGHT+IHsQT/baXVirWUr7vGzRHZvkrvYxJjLt+EDt0w30MEwtcmWKN62pqs8QNNS/t4ff4haOIEKZqmbNt9rpTyha8E=
-X-Received: by 2002:a17:906:794a:b0:ab3:ed0:ce7 with SMTP id
- a640c23a62f3a-ab38b3ce74bmr325806966b.55.1737136921542; Fri, 17 Jan 2025
- 10:02:01 -0800 (PST)
+	s=arc-20240116; t=1737137144; c=relaxed/simple;
+	bh=9bjlHAMtCnylIU16xn1UJTwDeujlQLfWOon2BQrViE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f4XSE8TIhbzIaN3S8zbOYSoU/23lOj7DThKny4xYYj7GmXNqDA85B/t57OXK2V/jYZPGktGu7ZiN1OcuZuRE47Fp/EF90HjNihO2IPpJ5LeIYaoCEIwFUeXiKZwHa20LTpY9JQNrOXP4o8dRehP3id/OpVjQupt88EfdX3FkOcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wTSkYsV8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=crFctZGK1/RGRGxYEhsR3mb5wLIScLWaRkZC5BjZqXk=; b=wTSkYsV8/8R1DPP5PTZSUbjVKt
+	7SS02vKzNybTsz2f3gvUwRlTvGiIqDZDxf+2n/CMCjPNyVCHDRGMaKZITpxBfeLwIXHaE/UJF0lBz
+	GAThwEcXWIzsXt0qOaJgQM/YwROOAmwwccTqwBiRhP0mKcZWB8ViXJHTsVl8jB+hhXCgYzgz4vtmh
+	hKDEtcxTTdU3BvOkD8n7wEXkhElCCWVnPlmkI0HtoJGO3FDupKSC9hU1DiQOooccul5xicwqscQ3s
+	wQYZcQopSoGqedln7PIeVUAwtvLsvPoB+6/D92xP4ShbH1xO59NBPMx5E2OLv3l+RpsBSm4NSRTc2
+	nEieqEpQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYqiy-00000000UqK-17Vc;
+	Fri, 17 Jan 2025 18:05:40 +0000
+Date: Fri, 17 Jan 2025 18:05:40 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v6] add ioctl/sysfs to donate file-backed pages
+Message-ID: <Z4qb9Pv-mEQZrrXc@casper.infradead.org>
+References: <20250117164350.2419840-1-jaegeuk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 17 Jan 2025 19:01:50 +0100
-X-Gm-Features: AbW1kvZSCkD5dHAUxuVHHQ4ixVYLqFZB90NIy3557ZetMaGOTGK7yOa51D7Wo7w
-Message-ID: <CAOQ4uxj00D_fP3nRUBjAry6vwUCNjYuUpCZg2Uc8hwMk6n+2HA@mail.gmail.com>
-Subject: [LSF/MM/BPF TOPIC] vfs write barriers
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: lsf-pc <lsf-pc@lists.linux-foundation.org>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250117164350.2419840-1-jaegeuk@kernel.org>
 
-Hi all,
+On Fri, Jan 17, 2025 at 04:41:16PM +0000, Jaegeuk Kim wrote:
+> If users clearly know which file-backed pages to reclaim in system view, they
+> can use this ioctl() to register in advance and reclaim all at once later.
+> 
+> To MM and others,
+> 
+> I'd like to propose this API in F2FS only, since
+> 1) the use-case is quite limited in Android at the moment. Once it's generall
+> accepted with more use-cases, happy to propose a generic API such as fadvise.
+> Please chime in, if there's any needs.
+> 
+> 2) it's file-backed pages which requires to maintain the list of inode objects.
+> I'm not sure this fits in MM tho, also happy to listen to any feedback.
 
-I would like to present the idea of vfs write barriers that was proposed by Jan
-and prototyped for the use of fanotify HSM change tracking events [1].
+You didn't cc the patches to linux-mm, so that's a bad start.
 
-The historical records state that I had mentioned the idea briefly at the end of
-my talk in LSFMM 2023 [2], but we did not really have a lot of time to discuss
-its wider implications at the time.
-
-The vfs write barriers are implemented by taking a per-sb srcu read side
-lock for the scope of {mnt,file}_{want,drop}_write().
-
-This could be used by users - in the case of the prototype - an HSM service -
-to wait for all in-flight write syscalls, without blocking new write syscalls
-as the stricter fsfreeze() does.
-
-This ability to wait for in-flight write syscalls is used by the prototype to
-implement a crash consistent change tracking method [3] without the
-need to use the heavy fsfreeze() hammer.
-
-For the prototype, there is no user API to enable write barriers
-or to wait for in-flight write syscalls, there is only an internal user
-(fanotify), so the user API is only the fanotify API, but the
-vfs infrastructure was written in a way that it could serve other
-subsystems or be exposed to user applications via a vfs API.
-
-I wanted to throw these questions to the crowd:
-- Can you think of other internal use cases for SRCU scope for
-  vfs write operations [*]? other vfs operations?
-- Would it be useful to export this API to userspace so applications
-  could make use of it?
-
-[*] "vfs write operations" in this context refer to any operation
-     that would block on a frozen fs.
-
-I recall that Jeff mentioned there could be some use case related
-to providing crash consistency to NFS change cookies, but I am
-not sure if this is still relevant after the multigrain ctime work.
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/sb_write_barrier
-[2] https://lwn.net/Articles/932415/
-[3] https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#modified-files-query
+I don't understand how this is different from MADV_COLD.  Please
+explain.
 
