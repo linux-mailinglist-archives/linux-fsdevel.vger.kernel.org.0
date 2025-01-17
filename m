@@ -1,169 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-39487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A65A14EDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 12:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD8DA14EF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 13:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99A03A8CA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 11:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CBA4188A8D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 12:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857871FECA9;
-	Fri, 17 Jan 2025 11:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFED41FDE3A;
+	Fri, 17 Jan 2025 12:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3UgbRG7o";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uiD4CAmF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3UgbRG7o";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uiD4CAmF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjEf+Vcx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295B51FC7F4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 11:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900C0197A92;
+	Fri, 17 Jan 2025 12:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737115021; cv=none; b=Z56IqyWpm5RwOrzYNQRjB4nNHc6ynlOYFikbkzInYCUCABDPyr/2wXuWC9ZXN09wA1YhsSRDtwbxDgf8vEBCQV/Ye7C7t/fzL41bCgjTYV/ENp2PQpvSB+FY4tvzSOPthOOFlol+DwZMPJUAe/bIVbYmlejIdZPcu6jdlD4zuDg=
+	t=1737115242; cv=none; b=I+ohrv/KGgp4qDJg+2MV47aq8Pm+AgIiGugKl26kIsdbJGTeXQ4DfKU8HKFbiS9qd1yv+JiB6BeYkzUgo2/wxQVrG5JnT7BxW0wc1lXnCwJ9JCJoiXPAs5vyWVaod9FIrwUMUoYgN3cMO7A4oT9XNwVAmbsrQG1JhwpAXyhQQ6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737115021; c=relaxed/simple;
-	bh=oL/0US8WuTS9MxAkUHDpP7JTX2/DwOgnm22j3AbT1BQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQQZgtnB5Hx8sZxkfFHQ/RMTFunGNgzyLlAikp5I6fYkOiz4OU4oi+UnXb1A2oS3XIOMVI2r8VOD1RBRAO/4M6cOLO9vrH5maxa3pzeHFILJGpRxRkO9TwsW2mIMEjUovSyHOkAeYahFUoTQO/2vLvSyHohIXSDDebbMa1ZVSk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3UgbRG7o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uiD4CAmF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3UgbRG7o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uiD4CAmF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7F4DA1F387;
-	Fri, 17 Jan 2025 11:56:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737115017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQk416ztu0xlnc04InLVVMHFa3AHVndkY0HLuU+Vwqw=;
-	b=3UgbRG7ozwQrSRGX2s3pAQnNfScDVsmftEVqBiwA9Ni904NQJuar+d926T7wQw4IHVajCC
-	Q2DmTcWbC7OTOpxKag7Y1PJgFo1cDVm4VWKgKL0CkV0HNVLaj0NJqdATNjxXyryRcHgsZm
-	56mH80K2nhfltWg3XXb8eD6qW5JoTQo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737115017;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQk416ztu0xlnc04InLVVMHFa3AHVndkY0HLuU+Vwqw=;
-	b=uiD4CAmF47bmdG4ZC/xj16vFcpnhOKdDhtTCIFTus/0hcRkkNbEPSL+O4jVZdLM6HugoZX
-	zrsa/h7jcwXtoyBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737115017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQk416ztu0xlnc04InLVVMHFa3AHVndkY0HLuU+Vwqw=;
-	b=3UgbRG7ozwQrSRGX2s3pAQnNfScDVsmftEVqBiwA9Ni904NQJuar+d926T7wQw4IHVajCC
-	Q2DmTcWbC7OTOpxKag7Y1PJgFo1cDVm4VWKgKL0CkV0HNVLaj0NJqdATNjxXyryRcHgsZm
-	56mH80K2nhfltWg3XXb8eD6qW5JoTQo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737115017;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQk416ztu0xlnc04InLVVMHFa3AHVndkY0HLuU+Vwqw=;
-	b=uiD4CAmF47bmdG4ZC/xj16vFcpnhOKdDhtTCIFTus/0hcRkkNbEPSL+O4jVZdLM6HugoZX
-	zrsa/h7jcwXtoyBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EF2E139CB;
-	Fri, 17 Jan 2025 11:56:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id w3LPGolFimd+NwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 17 Jan 2025 11:56:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F24D9A08E0; Fri, 17 Jan 2025 12:56:52 +0100 (CET)
-Date: Fri, 17 Jan 2025 12:56:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Joanne Koong <joannelkoong@gmail.com>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Improving large folio writeback
- performance
-Message-ID: <t3zhbv6mui56wehxydtzr5mjb5wxqaapy7ndit7gigwrx5v4xf@jvl6jsxtohwd>
-References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
- <73eb82d2-1a43-4e88-a5e3-6083a04318c1@suse.cz>
+	s=arc-20240116; t=1737115242; c=relaxed/simple;
+	bh=sLc0NnNScDF/UzXd4n5fYH9FJ+ryoVqX+KAE60eTNf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OOfnTCBNOIpxFBApbnS1gHlUpoSbgjfkB6ybKHvYUIHUsPJdfvJ1TdJ7TCMH30ErfF+Xw8uPzN4g+MxgfXK2eMdQsfeDfWI7UldWTjPzXm1T1JkHQg1S+uUJKElGheiBk0McyzdZO5EICBX5DxSHZiLkBHJOnDmpISA7jCGqT1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mjEf+Vcx; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d414b8af7bso3768238a12.0;
+        Fri, 17 Jan 2025 04:00:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737115239; x=1737720039; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r71kH8voduAZ6erQ+OihOobxrBDi3PuPucngrLa88AE=;
+        b=mjEf+VcxkpgzVghMKCIycqPoPW93qHodeR3eW8/kMuiwVtAaUdXsiuabbtXp8lE1ej
+         Q4AewhI9QybKRHgX/Z7c+Q8TyY/g8eY3/r7pcssJcT5WA2BoLyTj/mk7giQ3bCY7EzMi
+         VVsw1FCORCGwkvzsyOj+NJoIbDDURBVpNzM0w4wbjA1Vhc8+Aczglm8XmK1d+oYtuF37
+         f7+pnjUNOAlOGrDItRSM1D9aF5JS06Egfb8e+RUiAEnfxVtd5c7cFnLk5X/31xfaMKBj
+         V1S+dyPjxO2fJg3QBKd9td+D0ZbsITyCbPX7SiqQk4mzw3Ok8ydM+vBXtCljWGykVe3A
+         DRyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737115239; x=1737720039;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r71kH8voduAZ6erQ+OihOobxrBDi3PuPucngrLa88AE=;
+        b=JYva99jpxAEQjUEoDn8ayTMvtfKOwe/M2Emci6mYyDYfwHi51Y/qck2mCY9P3/DoV+
+         wO5Zg2oKYn+N1K94W0mngYHVc8IjeTP592W2kqUt4wfSaS+LLAymXVz6kUY+Gjbfl4a5
+         NaIQzOyoauft7lQlSnj9Zb95tK4erxkw0/SDEUOKRAFP1GfCFzlP/5joCZ8o4nyPRrNx
+         ecyTWcjPaQ/gZ9jn7PKrp1EdstnVcVpvArJUjj+LivKrhLRHbZT4EO2Kbdi5e7rz1KRS
+         tBVxy+4pouTnucXG0Dc9zo9hL1hPvFGSi3LOc1R0XioldRaOGIAAJo3DzANqtPvdnDh3
+         q5fw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+TfRoR7kYoTn/aWCSQsrl77X3MujVsQ64LfNHhqo7HuZkijBrvA0yP0aLKptrtJkBjpeFsw59vguz7WukiA==@vger.kernel.org, AJvYcCXynM+J+PjP0y1qB98ejN4tA8HfUHoyVcCsExDgNdUno/QYV9kGSgvCZU01s2mJHbr/RYyVG4JjuA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe/LDntWEW2WdOJ4viMOPSfkDZ+/G2NT9+IBRh5K7FWngpJNM/
+	CsIZBr08d6kCcRDh4/GSe7IHdDALgWJ4HU3pAP1K9R+QB+G4DNwp
+X-Gm-Gg: ASbGncvAuos1hcn9LhwGow5mPDtl1ciezK+R/zyFtFjdxlLlbYBaLag7PJI1GoWpsiJ
+	p2kbGdF5VfipgmOtyQhlW73EVTZYbKKRBb5jdp1hDjIl3lKEpVTvRtZMu3PpGZvBtNISd+Lnmm9
+	N/3qkRl3eID+rPOxxr6vAE5P9HJVG6C5MJT7JnpQqzFU44y8q1JsvDHCxIShdZVOcAqy4T3hwN4
+	Ck0n6hnyz5Mlew7JSFN17m7CShIv6hhRQxgacGWaC7AHO5aDni9oAhCnTnejdggGHnseiBXf8FR
+	uIkEd8YtDOe20Q==
+X-Google-Smtp-Source: AGHT+IGFuQEpyk/8l4lmLmqs2XyjMHcktD9E1IHBLJbswlQHIDAxTeOGdsWcAMkAv237IL9eqmp07g==
+X-Received: by 2002:a17:907:7faa:b0:ab3:30c5:f6d3 with SMTP id a640c23a62f3a-ab38b0b7f5amr217112266b.9.1737115238658;
+        Fri, 17 Jan 2025 04:00:38 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:56de])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384fce017sm156801466b.182.2025.01.17.04.00.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2025 04:00:38 -0800 (PST)
+Message-ID: <16d59c17-1634-4b65-bddd-a24bc5ba2646@gmail.com>
+Date: Fri, 17 Jan 2025 12:01:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <73eb82d2-1a43-4e88-a5e3-6083a04318c1@suse.cz>
-X-Spam-Score: -7.80
-X-Spamd-Result: default: False [-7.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,lists.linux-foundation.org,vger.kernel.org,kvack.org,infradead.org];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring
+To: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Bernd Schubert <bschubert@ddn.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <CAJfpegvUamsi+UzQJm-iUUuHZFRBxDZpR0fiBGuv9QEkkFEnYQ@mail.gmail.com>
+ <3135725b-fe31-42bd-bb9b-d554ebb41494@bsbernd.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <3135725b-fe31-42bd-bb9b-d554ebb41494@bsbernd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri 17-01-25 12:40:15, Vlastimil Babka wrote:
-> On 1/15/25 01:50, Joanne Koong wrote:
-> > Hi all,
-> > 
-> > I would like to propose a discussion topic about improving large folio
-> > writeback performance. As more filesystems adopt large folios, it
-> > becomes increasingly important that writeback is made to be as
-> > performant as possible. There are two areas I'd like to discuss:
-> > 
-> > 
-> > == Granularity of dirty pages writeback ==
-> > Currently, the granularity of writeback is at the folio level. If one
-> > byte in a folio is dirty, the entire folio will be written back. This
-> > becomes unscalable for larger folios and significantly degrades
-> > performance, especially for workloads that employ random writes.
-> > 
-> > One idea is to track dirty pages at a smaller granularity using a
-> > 64-bit bitmap stored inside the folio struct where each bit tracks a
-> > smaller chunk of pages (eg for 2 MB folios, each bit would track 32k
-> > pages), and only write back dirty chunks rather than the entire folio.
-> 
-> I think this might be tricky in some cases? I.e. with 2 MB and pmd-mapped
-> folio, it's possible to write-protect only the whole pmd, not individual 32k
-> chunks in order to catch the first write to a chunk to mark it dirty.
+On 1/17/25 09:12, Bernd Schubert wrote:
+> On 1/17/25 10:07, Miklos Szeredi wrote:
+>> On Tue, 7 Jan 2025 at 01:25, Bernd Schubert <bschubert@ddn.com> wrote:
+>>>
+>>> This adds support for io-uring communication between kernel and
+>>> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+>>> approach was taken from ublk.
+>>
+>> I think this is in a good shape.   Let's pull v10 into
+>> fuse.git#for-next and maybe we can have go at v6.14.
+>>
+>> Any objections?
 
-Definitely. Once you map a folio through PMD entry, you have no other
-option than consider whole 2MB dirty. But with PTE mappings or
-modifications through syscalls you can do more fine-grained dirtiness
-tracking and there're enough cases like that that it pays off.
+Sounds right, io_uring adjacent bits look good. Bernd, feel free
+to stick to the series in general:
 
-								Honza
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # io_uring
+
+
+> Sounds great, I will have v10 in the next hours (got distracted all
+> week), there is a start up race fix I found in our branch with page
+> pinning (which slows down start up).
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
+
 
