@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-39528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B0BA1570F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:40:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9B0A15712
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 19:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AD63AAE8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4083D3AAB54
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EC51A8400;
-	Fri, 17 Jan 2025 18:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71301AAA2C;
+	Fri, 17 Jan 2025 18:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RPcLfNzJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SLnGsmD/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984671DF724
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 18:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391F01DF74B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 18:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737139016; cv=none; b=goymxeEiMhllkFxOW/TTFjmH/MZ62n6lhBNmm9cV248jg5bM1bIX8AtchRMvIq/mxgDZAJnkGuoCZQrFpEcqg8S/V3koZG6on7SYN0/OfbIZTh+ygIqN+iiqw4in3ZTwtHyYhOGKVzPjJcfBPLGuUzPWSJxoEcUSUc1krft6HQ8=
+	t=1737139020; cv=none; b=UYFwtuIuhQROvtxfZkTrPLgKlNiI6K+dHWnHXYXuaji1Z6+Rv2E8IlO+pH5/Ccj2h+5A2RcDXdgwXga1x2357ebh7JhPo06jX8s81c3NVcmjmHgpEAqsZ8lvTFWyl8RJiL43WJiIS2UfYpvj+UoOa7MyaUL+GKzyVMqAmxb7hUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737139016; c=relaxed/simple;
-	bh=tVczLNT8lWpncqRxty0a32GP7GAaDaqOiRdK7J7WNQA=;
+	s=arc-20240116; t=1737139020; c=relaxed/simple;
+	bh=y4KCaAmgvh/nKdxU2dRaIvTwtEZ2b3iTMe3SxeTpqII=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oot3dHTLzofLtp6lukeEsky2VU2B8EgCnwlkiwNfS9jXQTU/wtPrDONMMK8vDbW5Xyza2aJmkjHjnesituXh7fEzfTu59yp/zq74S4ANODfAvYRGX6lTgpJTw+AYvGvRWSDOl9JzzPMi5xOgtUMFeEUTRvEs95I2wseRgMsRX8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RPcLfNzJ; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=sfLNa1BBPea9VATQBNhaMmeb+6rlFVectPfuGKcXlCX2Ipr1VddVr0KsA3JSc0bG4OcaxlrGA7WJ2+jqDhM8ovm8gPD8tTlXhRJEOx0z0hPd6uoavMv1eam/5l91zAEfbOvwa0Jq6wXlhNl1tB4UyOC2zF6j3uKJMRKrv88c+gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SLnGsmD/; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737139012;
+	s=mimecast20190719; t=1737139017;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=41v02+WL6Bbu9Mm9XSmBoF987cHJ3zovZVS3Geg191E=;
-	b=RPcLfNzJLv0mVF90Rt4vqkgZEl3db0ej5i0le+rmRwFKMc9Lrodnu0m7qhsEVfe+jANKPt
-	cj4v4UpLlD7WEw+MB/iqHI3We/b+RhL46XNO6D2ZQhihthBeBSfba0wk7JlBznHzPNbLLc
-	2H9hoZ/MBGHN246aNSC3HAyxNxo4/es=
+	bh=T5UkyDyI9CHNVOpmnTeizIjJ7K8ZBSHH0K9Ac53V2uk=;
+	b=SLnGsmD/E4ab5xJF2ucWHzMkDQh7bveM0/UKqxConknGdiOpxaSzQTLeA4IN9DGiRYWjhu
+	m45E/xwp0fVY7+2sucIip+/5HVde97mKBUMB0kqA72RfVTyPhuI0GxK7qP6URYCUb3H6Qu
+	99YFL4jT4OwJR8SWmZwQ25GEy3k7hdA=
 Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-YbHY_uZaOiWxDIrMn5rpyw-1; Fri,
- 17 Jan 2025 13:36:49 -0500
-X-MC-Unique: YbHY_uZaOiWxDIrMn5rpyw-1
-X-Mimecast-MFC-AGG-ID: YbHY_uZaOiWxDIrMn5rpyw
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-WupYk3-1Mc--W_rEyV1kUg-1; Fri,
+ 17 Jan 2025 13:36:53 -0500
+X-MC-Unique: WupYk3-1Mc--W_rEyV1kUg-1
+X-Mimecast-MFC-AGG-ID: WupYk3-1Mc--W_rEyV1kUg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C8D01955F67;
-	Fri, 17 Jan 2025 18:36:46 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D85EF1956083;
+	Fri, 17 Jan 2025 18:36:51 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.5])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C545F1955F22;
-	Fri, 17 Jan 2025 18:36:41 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8F5B31955F10;
+	Fri, 17 Jan 2025 18:36:47 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	Chuck Lever <chuck.lever@oracle.com>
@@ -76,9 +76,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 10/24] crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
-Date: Fri, 17 Jan 2025 18:35:19 +0000
-Message-ID: <20250117183538.881618-11-dhowells@redhat.com>
+Subject: [RFC PATCH 11/24] crypto/krb5: Provide RFC3961 setkey packaging functions
+Date: Fri, 17 Jan 2025 18:35:20 +0000
+Message-ID: <20250117183538.881618-12-dhowells@redhat.com>
 In-Reply-To: <20250117183538.881618-1-dhowells@redhat.com>
 References: <20250117183538.881618-1-dhowells@redhat.com>
 Precedence: bulk
@@ -88,11 +88,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Implement the simplified crypto profile for Kerberos 5 rfc3961 with the
-pseudo-random function, PRF(), from section 5.3 and the key derivation
-function, DK() from section 5.1.
+Provide functions to derive keys according to RFC3961 (or load the derived
+keys for the selftester where only derived keys are available) and to
+package them up appropriately for passing to a krb5enc AEAD setkey or a
+hash setkey function.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Herbert Xu <herbert@gondor.apana.org.au>
@@ -108,458 +109,163 @@ cc: linux-nfs@vger.kernel.org
 cc: linux-crypto@vger.kernel.org
 cc: netdev@vger.kernel.org
 ---
- crypto/krb5/Makefile             |   3 +-
- crypto/krb5/internal.h           |   6 +
- crypto/krb5/rfc3961_simplified.c | 407 +++++++++++++++++++++++++++++++
- 3 files changed, 415 insertions(+), 1 deletion(-)
- create mode 100644 crypto/krb5/rfc3961_simplified.c
+ crypto/krb5/internal.h           |  20 ++++++
+ crypto/krb5/rfc3961_simplified.c | 116 +++++++++++++++++++++++++++++--
+ 2 files changed, 132 insertions(+), 4 deletions(-)
 
-diff --git a/crypto/krb5/Makefile b/crypto/krb5/Makefile
-index 8c2050af8fed..8dad8e3bf086 100644
---- a/crypto/krb5/Makefile
-+++ b/crypto/krb5/Makefile
-@@ -5,6 +5,7 @@
- 
- krb5-y += \
- 	krb5_kdf.o \
--	krb5_api.o
-+	krb5_api.o \
-+	rfc3961_simplified.o
- 
- obj-$(CONFIG_CRYPTO_KRB5) += krb5.o
 diff --git a/crypto/krb5/internal.h b/crypto/krb5/internal.h
-index 50abda5169c7..7d60977dc0c5 100644
+index 7d60977dc0c5..8418c23d5018 100644
 --- a/crypto/krb5/internal.h
 +++ b/crypto/krb5/internal.h
-@@ -5,6 +5,7 @@
-  * Written by David Howells (dhowells@redhat.com)
+@@ -136,3 +136,23 @@ int krb5_derive_Ki(const struct krb5_enctype *krb5, const struct krb5_buffer *TK
+  * rfc3961_simplified.c
   */
- 
-+#include <linux/scatterlist.h>
- #include <crypto/krb5.h>
- 
- /*
-@@ -130,3 +131,8 @@ int krb5_derive_Ke(const struct krb5_enctype *krb5, const struct krb5_buffer *TK
- 		   u32 usage, struct krb5_buffer *key, gfp_t gfp);
- int krb5_derive_Ki(const struct krb5_enctype *krb5, const struct krb5_buffer *TK,
- 		   u32 usage, struct krb5_buffer *key, gfp_t gfp);
+ extern const struct krb5_crypto_profile rfc3961_simplified_profile;
 +
-+/*
-+ * rfc3961_simplified.c
-+ */
-+extern const struct krb5_crypto_profile rfc3961_simplified_profile;
++int krb5enc_derive_encrypt_keys(const struct krb5_enctype *krb5,
++				const struct krb5_buffer *TK,
++				unsigned int usage,
++				struct krb5_buffer *setkey,
++				gfp_t gfp);
++int krb5enc_load_encrypt_keys(const struct krb5_enctype *krb5,
++			      const struct krb5_buffer *Ke,
++			      const struct krb5_buffer *Ki,
++			      struct krb5_buffer *setkey,
++			      gfp_t gfp);
++int rfc3961_derive_checksum_key(const struct krb5_enctype *krb5,
++				const struct krb5_buffer *TK,
++				unsigned int usage,
++				struct krb5_buffer *setkey,
++				gfp_t gfp);
++int rfc3961_load_checksum_key(const struct krb5_enctype *krb5,
++			      const struct krb5_buffer *Kc,
++			      struct krb5_buffer *setkey,
++			      gfp_t gfp);
 diff --git a/crypto/krb5/rfc3961_simplified.c b/crypto/krb5/rfc3961_simplified.c
-new file mode 100644
-index 000000000000..492ad85cdd56
---- /dev/null
+index 492ad85cdd56..d25fbd574dde 100644
+--- a/crypto/krb5/rfc3961_simplified.c
 +++ b/crypto/krb5/rfc3961_simplified.c
-@@ -0,0 +1,407 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/* rfc3961 Kerberos 5 simplified crypto profile.
-+ *
-+ * Parts borrowed from net/sunrpc/auth_gss/.
-+ */
+@@ -399,9 +399,117 @@ static int rfc3961_calc_PRF(const struct krb5_enctype *krb5,
+ 	return ret;
+ }
+ 
 +/*
-+ * COPYRIGHT (c) 2008
-+ * The Regents of the University of Michigan
-+ * ALL RIGHTS RESERVED
-+ *
-+ * Permission is granted to use, copy, create derivative works
-+ * and redistribute this software and such derivative works
-+ * for any purpose, so long as the name of The University of
-+ * Michigan is not used in any advertising or publicity
-+ * pertaining to the use of distribution of this software
-+ * without specific, written prior authorization.  If the
-+ * above copyright notice or any other identification of the
-+ * University of Michigan is included in any copy of any
-+ * portion of this software, then the disclaimer below must
-+ * also be included.
-+ *
-+ * THIS SOFTWARE IS PROVIDED AS IS, WITHOUT REPRESENTATION
-+ * FROM THE UNIVERSITY OF MICHIGAN AS TO ITS FITNESS FOR ANY
-+ * PURPOSE, AND WITHOUT WARRANTY BY THE UNIVERSITY OF
-+ * MICHIGAN OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
-+ * WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
-+ * REGENTS OF THE UNIVERSITY OF MICHIGAN SHALL NOT BE LIABLE
-+ * FOR ANY DAMAGES, INCLUDING SPECIAL, INDIRECT, INCIDENTAL, OR
-+ * CONSEQUENTIAL DAMAGES, WITH RESPECT TO ANY CLAIM ARISING
-+ * OUT OF OR IN CONNECTION WITH THE USE OF THE SOFTWARE, EVEN
-+ * IF IT HAS BEEN OR IS HEREAFTER ADVISED OF THE POSSIBILITY OF
-+ * SUCH DAMAGES.
++ * Derive the Ke and Ki keys and package them into a key parameter that can be
++ * given to the setkey of a krb5enc AEAD crypto object.
 + */
-+
-+/*
-+ * Copyright (C) 1998 by the FundsXpress, INC.
-+ *
-+ * All rights reserved.
-+ *
-+ * Export of this software from the United States of America may require
-+ * a specific license from the United States Government.  It is the
-+ * responsibility of any person or organization contemplating export to
-+ * obtain such a license before exporting.
-+ *
-+ * WITHIN THAT CONSTRAINT, permission to use, copy, modify, and
-+ * distribute this software and its documentation for any purpose and
-+ * without fee is hereby granted, provided that the above copyright
-+ * notice appear in all copies and that both that copyright notice and
-+ * this permission notice appear in supporting documentation, and that
-+ * the name of FundsXpress. not be used in advertising or publicity pertaining
-+ * to distribution of the software without specific, written prior
-+ * permission.  FundsXpress makes no representations about the suitability of
-+ * this software for any purpose.  It is provided "as is" without express
-+ * or implied warranty.
-+ *
-+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-+ */
-+
-+/*
-+ * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/slab.h>
-+#include <linux/lcm.h>
-+#include <crypto/skcipher.h>
-+#include <crypto/hash.h>
-+#include "internal.h"
-+
-+/* Maximum blocksize for the supported crypto algorithms */
-+#define KRB5_MAX_BLOCKSIZE  (16)
-+
-+static int rfc3961_do_encrypt(struct crypto_sync_skcipher *tfm, void *iv,
-+			      const struct krb5_buffer *in, struct krb5_buffer *out)
++int krb5enc_derive_encrypt_keys(const struct krb5_enctype *krb5,
++				const struct krb5_buffer *TK,
++				unsigned int usage,
++				struct krb5_buffer *setkey,
++				gfp_t gfp)
 +{
-+	struct scatterlist sg[1];
-+	u8 local_iv[KRB5_MAX_BLOCKSIZE] __aligned(KRB5_MAX_BLOCKSIZE) = {0};
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
++	struct krb5_buffer Ke, Ki;
++	__be32 *khdr = NULL;
 +	int ret;
 +
-+	if (WARN_ON(in->len != out->len))
-+		return -EINVAL;
-+	if (out->len % crypto_sync_skcipher_blocksize(tfm) != 0)
-+		return -EINVAL;
-+
-+	if (crypto_sync_skcipher_ivsize(tfm) > KRB5_MAX_BLOCKSIZE)
-+		return -EINVAL;
-+
-+	if (iv)
-+		memcpy(local_iv, iv, crypto_sync_skcipher_ivsize(tfm));
-+
-+	memcpy(out->data, in->data, out->len);
-+	sg_init_one(sg, out->data, out->len);
-+
-+	skcipher_request_set_sync_tfm(req, tfm);
-+	skcipher_request_set_callback(req, 0, NULL, NULL);
-+	skcipher_request_set_crypt(req, sg, sg, out->len, local_iv);
-+
-+	ret = crypto_skcipher_encrypt(req);
-+	skcipher_request_zero(req);
-+	return ret;
-+}
-+
-+/*
-+ * Calculate an unkeyed basic hash.
-+ */
-+static int rfc3961_calc_H(const struct krb5_enctype *krb5,
-+			  const struct krb5_buffer *data,
-+			  struct krb5_buffer *digest,
-+			  gfp_t gfp)
-+{
-+	struct crypto_shash *tfm;
-+	struct shash_desc *desc;
-+	size_t desc_size;
-+	int ret = -ENOMEM;
-+
-+	tfm = crypto_alloc_shash(krb5->hash_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return (PTR_ERR(tfm) == -ENOENT) ? -ENOPKG : PTR_ERR(tfm);
-+
-+	desc_size = crypto_shash_descsize(tfm) + sizeof(*desc);
-+
-+	desc = kzalloc(desc_size, gfp);
-+	if (!desc)
-+		goto error_tfm;
-+
-+	digest->len = crypto_shash_digestsize(tfm);
-+	digest->data = kzalloc(digest->len, gfp);
-+	if (!digest->data)
-+		goto error_desc;
-+
-+	desc->tfm = tfm;
-+	ret = crypto_shash_init(desc);
-+	if (ret < 0)
-+		goto error_digest;
-+
-+	ret = crypto_shash_finup(desc, data->data, data->len, digest->data);
-+	if (ret < 0)
-+		goto error_digest;
-+
-+	goto error_desc;
-+
-+error_digest:
-+	kfree_sensitive(digest->data);
-+error_desc:
-+	kfree_sensitive(desc);
-+error_tfm:
-+	crypto_free_shash(tfm);
-+	return ret;
-+}
-+
-+/*
-+ * This is the n-fold function as described in rfc3961, sec 5.1
-+ * Taken from MIT Kerberos and modified.
-+ */
-+static void rfc3961_nfold(const struct krb5_buffer *source, struct krb5_buffer *result)
-+{
-+	const u8 *in = source->data;
-+	u8 *out = result->data;
-+	unsigned long ulcm;
-+	unsigned int inbits, outbits;
-+	int byte, i, msbit;
-+
-+	/* the code below is more readable if I make these bytes instead of bits */
-+	inbits = source->len;
-+	outbits = result->len;
-+
-+	/* first compute lcm(n,k) */
-+	ulcm = lcm(inbits, outbits);
-+
-+	/* now do the real work */
-+	memset(out, 0, outbits);
-+	byte = 0;
-+
-+	/* this will end up cycling through k lcm(k,n)/k times, which
-+	 * is correct.
-+	 */
-+	for (i = ulcm-1; i >= 0; i--) {
-+		/* compute the msbit in k which gets added into this byte */
-+		msbit = (
-+			/* first, start with the msbit in the first,
-+			 * unrotated byte
-+			 */
-+			((inbits << 3) - 1) +
-+			/* then, for each byte, shift to the right
-+			 * for each repetition
-+			 */
-+			(((inbits << 3) + 13) * (i/inbits)) +
-+			/* last, pick out the correct byte within
-+			 * that shifted repetition
-+			 */
-+			((inbits - (i % inbits)) << 3)
-+			 ) % (inbits << 3);
-+
-+		/* pull out the byte value itself */
-+		byte += (((in[((inbits - 1) - (msbit >> 3)) % inbits] << 8) |
-+			  (in[((inbits)     - (msbit >> 3)) % inbits]))
-+			 >> ((msbit & 7) + 1)) & 0xff;
-+
-+		/* do the addition */
-+		byte += out[i % outbits];
-+		out[i % outbits] = byte & 0xff;
-+
-+		/* keep around the carry bit, if any */
-+		byte >>= 8;
-+	}
-+
-+	/* if there's a carry bit left over, add it back in */
-+	if (byte) {
-+		for (i = outbits - 1; i >= 0; i--) {
-+			/* do the addition */
-+			byte += out[i];
-+			out[i] = byte & 0xff;
-+
-+			/* keep around the carry bit, if any */
-+			byte >>= 8;
-+		}
-+	}
-+}
-+
-+/*
-+ * Calculate a derived key, DK(Base Key, Well-Known Constant)
-+ *
-+ * DK(Key, Constant) = random-to-key(DR(Key, Constant))
-+ * DR(Key, Constant) = k-truncate(E(Key, Constant, initial-cipher-state))
-+ * K1 = E(Key, n-fold(Constant), initial-cipher-state)
-+ * K2 = E(Key, K1, initial-cipher-state)
-+ * K3 = E(Key, K2, initial-cipher-state)
-+ * K4 = ...
-+ * DR(Key, Constant) = k-truncate(K1 | K2 | K3 | K4 ...)
-+ * [rfc3961 sec 5.1]
-+ */
-+static int rfc3961_calc_DK(const struct krb5_enctype *krb5,
-+			   const struct krb5_buffer *inkey,
-+			   const struct krb5_buffer *in_constant,
-+			   struct krb5_buffer *result,
-+			   gfp_t gfp)
-+{
-+	unsigned int blocksize, keybytes, keylength, n;
-+	struct krb5_buffer inblock, outblock, rawkey;
-+	struct crypto_sync_skcipher *cipher;
-+	int ret = -EINVAL;
-+
-+	blocksize = krb5->block_len;
-+	keybytes = krb5->key_bytes;
-+	keylength = krb5->key_len;
-+
-+	if (inkey->len != keylength || result->len != keylength)
-+		return -EINVAL;
-+	if (!krb5->random_to_key && result->len != keybytes)
-+		ret = -EINVAL;
-+
-+	cipher = crypto_alloc_sync_skcipher(krb5->derivation_enc, 0, 0);
-+	if (IS_ERR(cipher)) {
-+		ret = (PTR_ERR(cipher) == -ENOENT) ? -ENOPKG : PTR_ERR(cipher);
-+		goto err_return;
-+	}
-+	ret = crypto_sync_skcipher_setkey(cipher, inkey->data, inkey->len);
-+	if (ret < 0)
-+		goto err_free_cipher;
-+
-+	ret = -ENOMEM;
-+	inblock.data = kzalloc(blocksize * 2 + keybytes, gfp);
-+	if (!inblock.data)
-+		goto err_free_cipher;
-+
-+	inblock.len	= blocksize;
-+	outblock.data	= inblock.data + blocksize;
-+	outblock.len	= blocksize;
-+	rawkey.data	= outblock.data + blocksize;
-+	rawkey.len	= keybytes;
-+
-+	/* initialize the input block */
-+
-+	if (in_constant->len == inblock.len)
-+		memcpy(inblock.data, in_constant->data, inblock.len);
-+	else
-+		rfc3961_nfold(in_constant, &inblock);
-+
-+	/* loop encrypting the blocks until enough key bytes are generated */
-+	n = 0;
-+	while (n < rawkey.len) {
-+		rfc3961_do_encrypt(cipher, NULL, &inblock, &outblock);
-+
-+		if (keybytes - n <= outblock.len) {
-+			memcpy(rawkey.data + n, outblock.data, keybytes - n);
-+			break;
-+		}
-+
-+		memcpy(rawkey.data + n, outblock.data, outblock.len);
-+		memcpy(inblock.data, outblock.data, outblock.len);
-+		n += outblock.len;
-+	}
-+
-+	/* postprocess the key */
-+	if (!krb5->random_to_key) {
-+		/* Identity random-to-key function. */
-+		memcpy(result->data, rawkey.data, rawkey.len);
-+		ret = 0;
-+	} else {
-+		ret = krb5->random_to_key(krb5, &rawkey, result);
-+	}
-+
-+	kfree_sensitive(inblock.data);
-+err_free_cipher:
-+	crypto_free_sync_skcipher(cipher);
-+err_return:
-+	return ret;
-+}
-+
-+/*
-+ * Calculate single encryption, E()
-+ *
-+ *	E(Key, octets)
-+ */
-+static int rfc3961_calc_E(const struct krb5_enctype *krb5,
-+			  const struct krb5_buffer *key,
-+			  const struct krb5_buffer *in_data,
-+			  struct krb5_buffer *result,
-+			  gfp_t gfp)
-+{
-+	struct crypto_sync_skcipher *cipher;
-+	int ret;
-+
-+	cipher = crypto_alloc_sync_skcipher(krb5->derivation_enc, 0, 0);
-+	if (IS_ERR(cipher)) {
-+		ret = (PTR_ERR(cipher) == -ENOENT) ? -ENOPKG : PTR_ERR(cipher);
-+		goto err;
-+	}
-+
-+	ret = crypto_sync_skcipher_setkey(cipher, key->data, key->len);
-+	if (ret < 0)
-+		goto err_free;
-+
-+	ret = rfc3961_do_encrypt(cipher, NULL, in_data, result);
-+
-+err_free:
-+	crypto_free_sync_skcipher(cipher);
-+err:
-+	return ret;
-+}
-+
-+/*
-+ * Calculate the pseudo-random function, PRF().
-+ *
-+ *      tmp1 = H(octet-string)
-+ *      tmp2 = truncate tmp1 to multiple of m
-+ *      PRF = E(DK(protocol-key, prfconstant), tmp2, initial-cipher-state)
-+ *
-+ *      The "prfconstant" used in the PRF operation is the three-octet string
-+ *      "prf".
-+ *      [rfc3961 sec 5.3]
-+ */
-+static int rfc3961_calc_PRF(const struct krb5_enctype *krb5,
-+			    const struct krb5_buffer *protocol_key,
-+			    const struct krb5_buffer *octet_string,
-+			    struct krb5_buffer *result,
-+			    gfp_t gfp)
-+{
-+	static const struct krb5_buffer prfconstant = { 3, "prf" };
-+	struct krb5_buffer derived_key;
-+	struct krb5_buffer tmp1, tmp2;
-+	unsigned int m = krb5->block_len;
-+	void *buffer;
-+	int ret;
-+
-+	if (result->len != krb5->prf_len)
-+		return -EINVAL;
-+
-+	tmp1.len = krb5->hash_len;
-+	derived_key.len = krb5->key_bytes;
-+	buffer = kzalloc(round16(tmp1.len) + round16(derived_key.len), gfp);
-+	if (!buffer)
++	Ke.len  = krb5->Ke_len;
++	Ki.len  = krb5->Ki_len;
++	setkey->len = sizeof(__be32) * 3 + krb5->Ke_len + krb5->Ki_len;
++	setkey->data = kzalloc(setkey->len, GFP_KERNEL);
++	if (!setkey->data)
 +		return -ENOMEM;
 +
-+	tmp1.data = buffer;
-+	derived_key.data = buffer + round16(tmp1.len);
++	khdr = setkey->data;
++	Ke.data = setkey->data + 12;
++	Ki.data = setkey->data + 12 + Ke.len;
 +
-+	ret = rfc3961_calc_H(krb5, octet_string, &tmp1, gfp);
++	khdr[0] = htonl(1); /* Format 1 */
++	khdr[1] = htonl(Ke.len);
++	khdr[2] = htonl(Ki.len);
++
++	ret = krb5_derive_Ke(krb5, TK, usage, &Ke, gfp);
++	if (ret < 0) {
++		pr_err("get_Ke failed %d\n", ret);
++		return ret;
++	}
++	ret = krb5_derive_Ki(krb5, TK, usage, &Ki, gfp);
 +	if (ret < 0)
-+		goto err;
-+
-+	tmp2.len = tmp1.len & ~(m - 1);
-+	tmp2.data = tmp1.data;
-+
-+	ret = rfc3961_calc_DK(krb5, protocol_key, &prfconstant, &derived_key, gfp);
-+	if (ret < 0)
-+		goto err;
-+
-+	ret = rfc3961_calc_E(krb5, &derived_key, &tmp2, result, gfp);
-+
-+err:
-+	kfree_sensitive(buffer);
++		pr_err("get_Ki failed %d\n", ret);
 +	return ret;
 +}
 +
-+const struct krb5_crypto_profile rfc3961_simplified_profile = {
-+	.calc_PRF	= rfc3961_calc_PRF,
-+	.calc_Kc	= rfc3961_calc_DK,
-+	.calc_Ke	= rfc3961_calc_DK,
-+	.calc_Ki	= rfc3961_calc_DK,
-+};
++/*
++ * Package predefined Ke and Ki keys and into a key parameter that can be given
++ * to the setkey of a krb5enc AEAD crypto object.
++ */
++int krb5enc_load_encrypt_keys(const struct krb5_enctype *krb5,
++			      const struct krb5_buffer *Ke,
++			      const struct krb5_buffer *Ki,
++			      struct krb5_buffer *setkey,
++			      gfp_t gfp)
++{
++	__be32 *khdr = NULL;
++
++	setkey->len = sizeof(__be32) * 3 + Ke->len + Ki->len;
++	setkey->data = kzalloc(setkey->len, GFP_KERNEL);
++	if (!setkey->data)
++		return -ENOMEM;
++
++	khdr = setkey->data;
++	khdr[0] = htonl(1); /* Format 1 */
++	khdr[1] = htonl(Ke->len);
++	khdr[2] = htonl(Ki->len);
++	memcpy(setkey->data + 12, Ke->data, Ke->len);
++	memcpy(setkey->data + 12 + Ke->len, Ki->data, Ki->len);
++	return 0;
++}
++
++/*
++ * Derive the Kc key for checksum-only mode and package it into a key parameter
++ * that can be given to the setkey of a hash crypto object.
++ */
++int rfc3961_derive_checksum_key(const struct krb5_enctype *krb5,
++				const struct krb5_buffer *TK,
++				unsigned int usage,
++				struct krb5_buffer *setkey,
++				gfp_t gfp)
++{
++	int ret;
++
++	setkey->len = krb5->Kc_len;
++	setkey->data = kzalloc(setkey->len, GFP_KERNEL);
++	if (!setkey->data)
++		return -ENOMEM;
++
++	ret = krb5_derive_Kc(krb5, TK, usage, setkey, gfp);
++	if (ret < 0)
++		pr_err("get_Kc failed %d\n", ret);
++	return ret;
++}
++
++/*
++ * Package a predefined Kc key for checksum-only mode into a key parameter that
++ * can be given to the setkey of a hash crypto object.
++ */
++int rfc3961_load_checksum_key(const struct krb5_enctype *krb5,
++			      const struct krb5_buffer *Kc,
++			      struct krb5_buffer *setkey,
++			      gfp_t gfp)
++{
++	setkey->len = krb5->Kc_len;
++	setkey->data = kmemdup(Kc->data, Kc->len, GFP_KERNEL);
++	if (!setkey->data)
++		return -ENOMEM;
++	return 0;
++}
+ const struct krb5_crypto_profile rfc3961_simplified_profile = {
+-	.calc_PRF	= rfc3961_calc_PRF,
+-	.calc_Kc	= rfc3961_calc_DK,
+-	.calc_Ke	= rfc3961_calc_DK,
+-	.calc_Ki	= rfc3961_calc_DK,
++	.calc_PRF		= rfc3961_calc_PRF,
++	.calc_Kc		= rfc3961_calc_DK,
++	.calc_Ke		= rfc3961_calc_DK,
++	.calc_Ki		= rfc3961_calc_DK,
++	.derive_encrypt_keys	= krb5enc_derive_encrypt_keys,
++	.load_encrypt_keys	= krb5enc_load_encrypt_keys,
++	.derive_checksum_key	= rfc3961_derive_checksum_key,
++	.load_checksum_key	= rfc3961_load_checksum_key,
+ };
 
 
