@@ -1,111 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-39469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BDAA14B31
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC7BA14B48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A16188E742
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 08:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28AE31889233
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 08:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BED1F91FB;
-	Fri, 17 Jan 2025 08:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB501F91EC;
+	Fri, 17 Jan 2025 08:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G2tMDRGB"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D0LDn8W6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A991F91E4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 08:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31BD1F76D5;
+	Fri, 17 Jan 2025 08:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737102630; cv=none; b=eOe4vkFwSAA+R+thHg4kyjpPOMZGbtsNJsGhaNVlqPws94AsefKzEwEAoBbPF8ZPgB7iqrNVDvl44/6ID+GeCAql9kgTKEIGhm4eyA9bpnipt+OZ0llOT1gaxfmZoea5CuGURAmbc+7pUJIiRMCJPOgKfK+Jc2RB0DyC5AgnkQc=
+	t=1737103144; cv=none; b=sb8koOKMlclpIkSb3LlQEI4h7QCQk7PPNodXiRQYThM44MAUaZr1NN99rTmZPQ1jyp0TxL9bqJlwcw4WPiQCPfjT+uoV6mMwVryS4+unYBolXmTs9gtHPzsma6GsLyRjI6XbHH916aJkHpjV81l0hM/8hSz1iloZhFNhUTZ+tZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737102630; c=relaxed/simple;
-	bh=d/g53UtwtoeMdjaT+R1dbBcyNXXLezqX3/UcNtC6vm0=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=k6uMsimecwW1Uz8/1ZHsZk/AlsgE3EY/fYY4zKgVUd1dxel0Z6yKGKdPKlFGFPX4//fpehim2c2tDz4pIeoFMOj+46YsVyWktQdKtvr91ySWV9Rl3gr7jI4Yfci1zmUVicYBIkPpL1UZ/5LJ4zH3uPBA29dsSf6Wpzy6KUZ9wc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G2tMDRGB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737102628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HDiFi/c6f0Cw5829523ALaPbNuqbpB2s/qFVysdO5PY=;
-	b=G2tMDRGBYJLVXy+p6Gb75i7e6vGEG2z874Z8yTTBaWVUsUSlbzHsPcG+Ac3WQHi/8jr9vC
-	98OYLM01NTzSDq5BcacQi3uM6l2m7ZUD+AX+GNf9o9/lFx+AKshQnBiLeX7IP27JyX+X2z
-	UcWBpHpAWVkn7ezY/YmIiyKPfBaeHQA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-a2EhEHctOkyte2ur2SK5Cg-1; Fri,
- 17 Jan 2025 03:30:24 -0500
-X-MC-Unique: a2EhEHctOkyte2ur2SK5Cg-1
-X-Mimecast-MFC-AGG-ID: a2EhEHctOkyte2ur2SK5Cg
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2EFD51955D72;
-	Fri, 17 Jan 2025 08:30:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3B92C19560BF;
-	Fri, 17 Jan 2025 08:30:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <477969.1737101629@warthog.procyon.org.uk>
-References: <477969.1737101629@warthog.procyon.org.uk> <Z4Ds9NBiXUti-idl@gondor.apana.org.au> <20250110010313.1471063-1-dhowells@redhat.com> <20250110010313.1471063-3-dhowells@redhat.com>
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
-    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/8] crypto/krb5: Provide Kerberos 5 crypto through AEAD API
+	s=arc-20240116; t=1737103144; c=relaxed/simple;
+	bh=uy8BcdVQj4lUlt1pGtuypx5tRMlIIYJH4Xw1bOGn4lY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xt4l6Nq47EZQokXkkyZ9HpU8gWEbiKJKno3ULcNPqUdwNP7aYNJ9/CTglQSiwfq2Lob5Bfsc8o51Ura5Gch+8QU5H/kNjApAVgEJIBAmNrrzQ+Quw0xPcyQGWpvk9DiRb4lAFWcX+E8i9J5P9SB8DVf8Ay7jw3jpshqZqIjAcV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D0LDn8W6; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1737103143; x=1768639143;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=uy8BcdVQj4lUlt1pGtuypx5tRMlIIYJH4Xw1bOGn4lY=;
+  b=D0LDn8W6sj+DyiqevA8zlfTV1eR2KfOc1w2UdPDt9w/p45sGTyfE4lBe
+   BHekyc7+vP0+yI3jh3J4pk7aaINatin/Runo+dQmBnMln79U7K/WAB2ck
+   RnEcB2kHz6sv/U2nz7rz8b2mxcZBt/bUCJ/WXrUWYxZFsLU2jJkq5B8Db
+   t71PVCQcrfx/okV0bwahYWynloUDpFSm2So3EgWKwM5rnFeFQjvLhliPR
+   A8FS0Wx5CpdI5RIaLMAB/faeVu3zCe7BQ5Zm6N7h8NWYyFxSfS8xryaY7
+   zvmvNCe8MtN8QDNvWmJdzlIyghxdH6GJvkswgMcqfbn4ShXyb+P9CUQGt
+   w==;
+X-CSE-ConnectionGUID: POOfQKkzRzyO1CFX5BNKJw==
+X-CSE-MsgGUID: PlLEsL7ZS9i4hJuCA33n+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11317"; a="41294819"
+X-IronPort-AV: E=Sophos;i="6.13,211,1732608000"; 
+   d="scan'208";a="41294819"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 00:39:02 -0800
+X-CSE-ConnectionGUID: 61Goo4gqR2i2GCCEPc+/Kg==
+X-CSE-MsgGUID: +lDePOewTJmUoUeXzNRQJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="110381817"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 17 Jan 2025 00:38:54 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 2C8E610F; Fri, 17 Jan 2025 10:38:53 +0200 (EET)
+Date: Fri, 17 Jan 2025 10:38:53 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti <andi.shyti@linux.intel.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	David Airlie <airlied@gmail.com>, David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>, 
+	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Yosry Ahmed <yosryahmed@google.com>, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 05/11] mm/truncate: Use folio_set_dropbehind() instead
+ of deactivate_file_folio()k
+Message-ID: <yy55r5zwiwjgad52hgqclhg76p36jrnine37uffudmdmauxx5l@7jztoqpzscoj>
+References: <20250115093135.3288234-1-kirill.shutemov@linux.intel.com>
+ <20250115093135.3288234-6-kirill.shutemov@linux.intel.com>
+ <Z4gqJqcO8wau0sgN@casper.infradead.org>
+ <CAOUHufZ42ZV1SU+rGLM-2j2Hp43Q9eLY_yFYg8jsifOfcPHUgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <493306.1737102616.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 17 Jan 2025 08:30:16 +0000
-Message-ID: <493307.1737102616@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOUHufZ42ZV1SU+rGLM-2j2Hp43Q9eLY_yFYg8jsifOfcPHUgQ@mail.gmail.com>
 
-David Howells <dhowells@redhat.com> wrote:
+On Wed, Jan 15, 2025 at 02:46:44PM -0700, Yu Zhao wrote:
+> On Wed, Jan 15, 2025 at 2:35 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Wed, Jan 15, 2025 at 11:31:29AM +0200, Kirill A. Shutemov wrote:
+> > > -static void lru_deactivate_file(struct lruvec *lruvec, struct folio *folio)
+> > > -{
+> > > -     bool active = folio_test_active(folio) || lru_gen_enabled();
+> > > -     long nr_pages = folio_nr_pages(folio);
+> > > -
+> > > -     if (folio_test_unevictable(folio))
+> > > -             return;
+> > > -
+> > > -     /* Some processes are using the folio */
+> > > -     if (folio_mapped(folio))
+> > > -             return;
+> > > -
+> > > -     lruvec_del_folio(lruvec, folio);
+> > > -     folio_clear_active(folio);
+> > > -     folio_clear_referenced(folio);
+> > > -
+> > > -     if (folio_test_writeback(folio) || folio_test_dirty(folio)) {
+> > > -             /*
+> > > -              * Setting the reclaim flag could race with
+> > > -              * folio_end_writeback() and confuse readahead.  But the
+> > > -              * race window is _really_ small and  it's not a critical
+> > > -              * problem.
+> > > -              */
+> > > -             lruvec_add_folio(lruvec, folio);
+> > > -             folio_set_reclaim(folio);
+> > > -     } else {
+> > > -             /*
+> > > -              * The folio's writeback ended while it was in the batch.
+> > > -              * We move that folio to the tail of the inactive list.
+> > > -              */
+> > > -             lruvec_add_folio_tail(lruvec, folio);
+> > > -             __count_vm_events(PGROTATED, nr_pages);
+> > > -     }
+> > > -
+> > > -     if (active) {
+> > > -             __count_vm_events(PGDEACTIVATE, nr_pages);
+> > > -             __count_memcg_events(lruvec_memcg(lruvec), PGDEACTIVATE,
+> > > -                                  nr_pages);
+> > > -     }
+> > > -}
+> >
+> > > +++ b/mm/truncate.c
+> > > @@ -486,7 +486,7 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
+> > >                        * of interest and try to speed up its reclaim.
+> > >                        */
+> > >                       if (!ret) {
+> > > -                             deactivate_file_folio(folio);
+> > > +                             folio_set_dropbehind(folio);
+> >
+> > brr.
+> >
+> > This is a fairly substantial change in semantics, and maybe it's fine.
+> >
+> > At a high level, we're trying to remove pages from an inode that aren't
+> > in use.  But we might find that some of them are in use (eg they're
+> > mapped or under writeback).  If they are mapped, we don't currently
+> > try to accelerate their reclaim, but now we're going to mark them
+> > as dropbehind.  I think that's wrong.
+> >
+> > If they're dirty or under writeback, then yes, mark them as dropbehind, but
+> > I think we need to be a little more surgical here.  Maybe preserve the
+> > unevictable check too.
+> 
+> Right -- deactivate_file_folio() does make sure the folio is not
+> unevictable or mapped. So probably something like below would the
+> change in semantics be close enough?
+> 
+>   if (!folio_test_unevictable(folio) && !folio_mapped(folio))
+>     folio_set_dropbehind(folio);
 
-> > rfc8009 is basically the same as authenc.
-> =
+Okay, makes sense to me.
 
-> Actually, it's not quite the same :-/
-> =
-
-> rfc8009 chucks the IV from the encryption into the hash first, but authe=
-nc()
-> does not.  It may be possible to arrange the buffer so that the assoc da=
-ta is
-> also the IV buffer.
-
-Actually actually, it's the starting IV, so I just need to chuck in a bloc=
-k of
-zeroes.
-
-David
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
