@@ -1,137 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-39473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93033A14BDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 10:12:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE132A14C9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 10:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC2617A2F71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32671188BD20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1BA1F91E4;
-	Fri, 17 Jan 2025 09:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39AC1FCFC1;
+	Fri, 17 Jan 2025 09:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Ya+ZVQBY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BS4GCkf3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vR7rTmvc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9318A1F790B;
-	Fri, 17 Jan 2025 09:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196E01FBC99;
+	Fri, 17 Jan 2025 09:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737105163; cv=none; b=IE+iu5uZxj1ZMAZ48dW7PrV5B6IdGkEBkcVsWO30EPB3zfxDLF28P43cPQjpM21vYPRqDO/YIhXyXud6Xd1zwoZCkABOj9mdmQap73qeD/UMu2nAfTZuvCdrh5kLvrM5KFjy4nYJG77VEjM0XSykUogg9nhc22HqRS/UG004EYc=
+	t=1737107720; cv=none; b=HSjmaH5GtLOf03XrfwRR5qe7JkHTc8LvHHgu9A/PZK27Qni4FpUL6IRZITFw55V+r7Gke6jOA3FAjx0pcqspBogRwM/E8Wtb/xSJGbVUR+dQQyfvbZjpImPP1ZlQOyQZznvHdmuP4Xf8LEPOCpnlzKKeP2LUV74UirMMVmlF+ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737105163; c=relaxed/simple;
-	bh=YSI/TNIVJK/bhs/7Wtwsk4NeOwatTUT7X3bYHfX64j8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FN69TwuD5M7l6kNUAeKOzW+t/jYdjT0tsjv+YoJ4CJSrkcjrZFO0N3yJjTwYW5FIylkCfr3wQPBh11OOJecO0p7U8qZ9fvN6HycIOtfWdyM0rjkGLLxGACYgyouSlaPrkywTdw3vfT3HWkzwYSsbMe7up4DHN2qdIfa+qMVJNbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Ya+ZVQBY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BS4GCkf3; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 664A713801E7;
-	Fri, 17 Jan 2025 04:12:39 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Fri, 17 Jan 2025 04:12:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1737105159;
-	 x=1737191559; bh=HHPK2XxCcGaC6vn4FPLZzyhcNtuPp7llqs7Fxc1PV/o=; b=
-	Ya+ZVQBYLQCQX99RuEZ7yCrp/WX8hhfrw95zHZzvVR15jpO3OoRebX6IilUU2pZW
-	Gf9TZiwb+GdVeHmuh4pi2tM0r1s/NCLNOWkv3D1+xa9lYL49lFyujJosRFQuD7CI
-	2Cu+39bdTVgGM8Rac3Wty4XNuBWMQ0mLw2K0ea3FZbXHUXEjHyLMUwn9CsoVd2PH
-	WpAV1HAIN/wSe/oFTIl+W5VI+x0bqgXYoaVhn9km1JfIJHDG6WWHQ9xdOaJklbFu
-	pJ3ctHKaUKg/3mMGPFekUFRu4tolra88Wreg92d9vUz8Kz+WLNLDIBtSJNsSdqhc
-	SBbsJyClRqFbJO/KqOLhdw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1737105159; x=
-	1737191559; bh=HHPK2XxCcGaC6vn4FPLZzyhcNtuPp7llqs7Fxc1PV/o=; b=B
-	S4GCkf3RW6BOUgqK/MftfHqY6R3UOPE0EX79EQb1PW2wZ87bPljiRFCD30d10Y3d
-	nG0QgeLDxKSieICKxljGwd6qKmAob5tAAg3DpEbQFYtY0wMFMRFlGyNqaj/zp0Fe
-	naY8gWC4pZ6b4wWTv/WbTDUeC2NOXaUr8LCIFt5V4U7zH0PjoSjfKCHKRf2H4RgL
-	InRkuJTKEb/gSdA2SHKC8lnlpnyqZ5ouFjL2A2XVG4yvX5yM17fb2eFuhcNCTfpW
-	Zt0j9l6/cVYzn62jUdmKEU2fSn+/XMgUAaEYhMBLdRr/2nu1f3VUgF0VWq8asyJ8
-	CVdMyO/sEoVg2bJbNormg==
-X-ME-Sender: <xms:Bh-KZ_ESss6eT3_MKUn921LMRDfEmYkspy8TXUasr_1F10gt7n-ylg>
-    <xme:Bh-KZ8Wy-Lp2Ripe0sGUjr_KavwaKqP1K49HbQQ8-Wdu5k1fQgvcgOZkSIa4Al_oV
-    NhwE6TcWPl9O-Zi>
-X-ME-Received: <xmr:Bh-KZxJ0fafXOc7uEpxx0Oz17dwAKGqxS8Q_Ow4f5LvHYrt7aogy_YAFRcWpLKwgcCt0lIX5r7gLZDazEb5sJvxKzZOdv8ve4QC9fDSf3oIA_B4uXhuN>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeifecutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffrtefo
-    kffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsuc
-    dlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfh
-    rhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtg
-    homheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleffuedujefh
-    heegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthht
-    ohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhklhhoshesshiivg
-    hrvgguihdrhhhupdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgt
-    phhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsmhhlrdhsih
-    hlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquhhrihhnghesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghes
-    ghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtg
-    homhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:Bh-KZ9EDLuhKjMuYxRZUfjVE2M1YNS9pvNS_1eTA54ugyQO5Ija0uQ>
-    <xmx:Bh-KZ1Uq9TFXgyG5X5kWsQLcJzNMn252HJf9vemKUI4JLFAE1s2BTA>
-    <xmx:Bh-KZ4MArsZVOTbD6yQjy9RpUWLdlPIeKvWc0MlM8Yni5L4Q6k9Wgw>
-    <xmx:Bh-KZ0177XEY0W9Ov53Q3KOs--qQv6q_u9FX4DsDix_grSFrVcj2XQ>
-    <xmx:Bx-KZwM6IWj9T3txKslZUHWkdNvibPQn2fQJs21aYYHBUPq21ses-OfZ>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jan 2025 04:12:37 -0500 (EST)
-Message-ID: <3135725b-fe31-42bd-bb9b-d554ebb41494@bsbernd.com>
-Date: Fri, 17 Jan 2025 10:12:36 +0100
+	s=arc-20240116; t=1737107720; c=relaxed/simple;
+	bh=b2+5I4Ol2pXJvkBZ25q9n0ksWds8r5RzMGcUkZNXIng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMMUTgiQA0fOBYP+TcDzey7guNED6Za1VllrGmrkDlngth5FeeOZQIys/2yfQV6y+vv3NjL1Hd1/WSnw+YQHjKS9NXAodRuwyeJbUVg5AgigUwOSUye2muRzzl1dZqz87U4tl2PRSFK1tElJI7Y/l8Pyv74hcRVwGD0powZ6++8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vR7rTmvc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A99C4CEDD;
+	Fri, 17 Jan 2025 09:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737107719;
+	bh=b2+5I4Ol2pXJvkBZ25q9n0ksWds8r5RzMGcUkZNXIng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vR7rTmvchnyfzF5H2XyPp+s5v4UNzLMt8hLgNgt0BW9Av3EJtMTzYNgzU8yBYQf6O
+	 MJ2az8kCy+MMGnAQM3b0/4sOVDdU5hd4bwn+kCZRAcL9IIgc/L6LYaz0Jcac90tBUY
+	 XSiwKHtvtallUo+yeHR18MAlGtVbe84A4/kWJypY7x7QNSELNudlnMiqd95GL2WpyC
+	 nvjxxXZsVKR75XEyCu62Yp+i0UWzN9vrcIMM22DUkBDucC5HmEE9ABy4ZeFP/4awU2
+	 bNWXqLsaqYQFUf4U/ETOqNBv3TfJhoLm+PBLt7l5Sx1S4OiORnc1D+Yjs/J/CX8xG+
+	 2JiCJfr4mNPZQ==
+Date: Fri, 17 Jan 2025 10:55:14 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
+	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
+	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
+	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
+	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
+	wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v5 -next 11/16] sunrpc: simplify
+ rpcauth_cache_shrink_count()
+Message-ID: <cvhm3wxsuzptwhensumidxykuzgzzhp4u3ypwv4sicmssznxzk@xwfwpjclkzrf>
+References: <20250111070751.2588654-1-yukaixiong@huawei.com>
+ <20250111070751.2588654-12-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
- David Wei <dw@davidwei.uk>
-References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
- <CAJfpegvUamsi+UzQJm-iUUuHZFRBxDZpR0fiBGuv9QEkkFEnYQ@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegvUamsi+UzQJm-iUUuHZFRBxDZpR0fiBGuv9QEkkFEnYQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250111070751.2588654-12-yukaixiong@huawei.com>
 
-
-
-On 1/17/25 10:07, Miklos Szeredi wrote:
-> On Tue, 7 Jan 2025 at 01:25, Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> This adds support for io-uring communication between kernel and
->> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
->> approach was taken from ublk.
+On Sat, Jan 11, 2025 at 03:07:46PM +0800, Kaixiong Yu wrote:
+> It is inappropriate to use sysctl_vfs_cache_pressure here.
+> The sysctl is documented as: This percentage value controls
+> the tendency of the kernel to reclaim the memory which is used
+> for caching of directory and inode objects.
 > 
-> I think this is in a good shape.   Let's pull v10 into
-> fuse.git#for-next and maybe we can have go at v6.14.
+> So, simplify result of rpcauth_cache_shrink_count() to
+> "return number_cred_unused;".
 > 
-> Any objections?
+> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> v4:
+>  - Simplify result of rpcauth_cache_shrink_count().
+> ---
+> ---
+>  net/sunrpc/auth.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
+> index 04534ea537c8..5a827afd8e3b 100644
+> --- a/net/sunrpc/auth.c
+> +++ b/net/sunrpc/auth.c
+> @@ -489,7 +489,7 @@ static unsigned long
+>  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+>  
+>  {
+> -	return number_cred_unused * sysctl_vfs_cache_pressure / 100;
+> +	return number_cred_unused;
+This one is not related to the "moving sysctls out of kenrel/sysctl.c"
+but I'll keep it here because of the Acks received.
 
-Sounds great, I will have v10 in the next hours (got distracted all
-week), there is a start up race fix I found in our branch with page
-pinning (which slows down start up).
 
+>  }
+>  
+>  static void
+> -- 
+> 2.34.1
+> 
 
-Thanks,
-Bernd
+-- 
+
+Joel Granados
 
