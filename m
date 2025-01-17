@@ -1,116 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-39471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD572A14B5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:42:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B14A14BD4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 10:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32CC13A1FB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 08:42:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 422A07A3EC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A641F91CD;
-	Fri, 17 Jan 2025 08:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AB31F7914;
+	Fri, 17 Jan 2025 09:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDuxVj4e"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Y1tpCXbF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A481F754C;
-	Fri, 17 Jan 2025 08:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FFF1F790B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 09:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737103359; cv=none; b=Ht9SgNl04Qp4nCUr0IFSHmSCNlWn2sV901apNP9yQeE8UF/ll1uVxmKzPthNNM3y4EUhwvcWcwHhAhSOFXGLpdTkYY7zOYeja+nFgPV0x1RQK0a9dDU1fnc/uSnPzo6+FlzRQCKpAg9NpJl4jxMzTEakb6VKDBQVH5V6x0oIxs4=
+	t=1737104866; cv=none; b=XGIsQHE5LcyfO9T65dnzlppd7JTfg0LC7NkdZtbc+C+vI49oBMgJDOxPwiGIgEgkhCeOM0QyMzGvvp7hGcUizWR34XI9N/FkFXuq3je3/Gxk2kRpXZ0HwvSKi05vLUuNvuFg4S0dg/CxmxFmp4OIN2tFJaenzRS/MdpzFeutymk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737103359; c=relaxed/simple;
-	bh=28NiPYsFXE32MP2Q2BME0MlX1uv69uodnGAvgVz5KwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uJ1HNJ46HvZcojyFi9hUW3s1/Ks5Faf8pPUr+T0NfUSD/cTxn9hsgMlAR2e45KHxh4lVr42n9rN1xA7x9BYRKxdbLCeiua4dN53oyFwo8IsD1QJGgP/mS4FsDoAh7YD+jqphm5ANKpt5Oi2kbSdqQa/Lth9IQCTHs5iMErf+GPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDuxVj4e; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737103358; x=1768639358;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=28NiPYsFXE32MP2Q2BME0MlX1uv69uodnGAvgVz5KwQ=;
-  b=eDuxVj4eGvM2xsFyifJXkKdwMmvqVp/17ghbc9gfsInLKpHe6plo/N/j
-   F2lX9Et73vlE18RujZL1tgSjAdbi9YP1+m3T+X30vOmDTFP3hwzpTlrEt
-   0xaqL6S2Tjo2R6o6hGEVC9H3yEZvTWLVPc1rR6Gu5WC11bc9LDaQJF+OX
-   LYhHV6Lj6OqylZoql/mS/S2CV+ZIrRUNVDA6Tdfw8RrIAPipeAz5CPvAW
-   svm3xbn3W8lMlEnntwtxeGfSVa3EDuP72uZBA12YBfbEX1JlnZmGinQP6
-   aMQwBsUce//11u7ROmcJ/SH9gnJavy6e480MnGAQVB7RJZENPMqCQYjh0
-   g==;
-X-CSE-ConnectionGUID: tgOXEpEQSi+1OqMXQI2cJQ==
-X-CSE-MsgGUID: 7HY4Se5VRlC5/h7clGQh5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11317"; a="48923415"
-X-IronPort-AV: E=Sophos;i="6.13,211,1732608000"; 
-   d="scan'208";a="48923415"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 00:42:36 -0800
-X-CSE-ConnectionGUID: e1YD5/pBSvOBI/os6GkRkA==
-X-CSE-MsgGUID: 3A6q1Mm2TpybOA1rY5fzPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="106634486"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 17 Jan 2025 00:42:27 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 7B06510F; Fri, 17 Jan 2025 10:42:26 +0200 (EET)
-Date: Fri, 17 Jan 2025 10:42:26 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti <andi.shyti@linux.intel.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	David Airlie <airlied@gmail.com>, David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>, 
-	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 11/11] mm: Rename PG_dropbehind to PG_reclaim
-Message-ID: <w6x4k6mjv6x5kjiuxszdhl56ldrem5cfhygkjrko3u5vqufylo@krcva5mltyre>
-References: <20250115093135.3288234-1-kirill.shutemov@linux.intel.com>
- <20250115093135.3288234-12-kirill.shutemov@linux.intel.com>
- <Z4ikqJBQ-fBFM6UL@infradead.org>
+	s=arc-20240116; t=1737104866; c=relaxed/simple;
+	bh=UFZLFZVOSPFTwx7bGx9gIu1IzEKeA8HNkjx+6oyAzLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R43OkCF9ZP0gY2iiZewdQ/t0w2Ow8Qml8ILPbrRMrRcBB8rZcnTffjidKAQziFHIw1BacTszPoSq3IUsJRuaOtr4YpPXMpcBKg4jGOghyBSIOkqGud01UblGsvCnBqxIJh6dza/sZcdKrUmtAwgKN/Zt9pSFY2b1Hv+GYh1LDo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Y1tpCXbF; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46788c32a69so23437721cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 01:07:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1737104863; x=1737709663; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2D0doGdFPmRbwuIzISntkHAs9R4c9ifeS/tzPGrUjA=;
+        b=Y1tpCXbFr3tMpaeZw4ua7HxvfhOLkjznmWmv9NgMkQj4e5Yw+6Dj+LZg3xCvvyflWL
+         yBzrHFNsV07MrkRp//NOndsRdSHO5MqWoJzQ0zC/2f0CcS9y/H6BlNRyIg7o7Ccon6LR
+         +Ip4KVD8fMi19obD8Soj1LZJptO03GHteqOjI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737104863; x=1737709663;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n2D0doGdFPmRbwuIzISntkHAs9R4c9ifeS/tzPGrUjA=;
+        b=NWBROFjgReUZsTXMSKHbdMiDRPUxZZlnQeK00ib1wm9ZLRMnzCGot1ldijkXN633kt
+         of3SW24dm5VJR2S7FcJrzn4t3B1vy1pXiDdhWbutCLbYXlsgT98CJ4LIxXHfjN8uA/+n
+         35Wv0OpyrVh8eRWq+qAlUqN1akndQvr+Q0ubJc6mekT/8xpuCB8pZ7Oyu2xw+7lqj906
+         cxvbyhB72bqTf28Z2XAyKCO+IZEG2j9XoMybTjdxDXDAf1rdnmEpUW3lXld4zrqCvUm2
+         SR1U3PTwrgSx2S8fiDrlX0CMxqUw8eErs0cH7rlNszVnAn5Di2pcuELigkBBwepZ4GaE
+         kIBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3z1yZPDn7+VoEFthjgJYlS1JLVr/QeqE7p5BK9Z9HSwBW2PJhBqv0Ekw/zfPONJarprkqa/UmVmKw/vcC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmzfcSKtd2/uvf/qJC+djjF66z5ufkmRpxI9/8X3pfU5IvSBv5
+	Vnwdac0Kcievb9WVNMrn6UXT0Ju0WHKKe4coVZmjRJAQd6zYvoW3W0KMOEqb2p0wXBAkF2ePOJF
+	JTJtfwiWWy7GKyhSKMrGmJNPgJJSdZne/sdZVbo9h8R3Vvbt5ZEY=
+X-Gm-Gg: ASbGncsO2i2FKUr2cZ45B4zGMYGnD3mFmrVPzzkMcnuSRDcL6UbhDixAgJ8D8DXPrVi
+	/XmYMGsjbL+FYeCYA1g2/FaEzQSoiGf3jmLxp
+X-Google-Smtp-Source: AGHT+IGCDFXeS8ZzLEXccqU7GkD35tBBU4jVnwPVdQeOUlK2kDh1P+jQkHKBdM9rdPN3md+V9k3szdCmf8EjZ/p4ims=
+X-Received: by 2002:a05:622a:303:b0:466:954e:a89f with SMTP id
+ d75a77b69052e-46e12a60c6fmr30515191cf.14.1737104863020; Fri, 17 Jan 2025
+ 01:07:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z4ikqJBQ-fBFM6UL@infradead.org>
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 17 Jan 2025 10:07:32 +0100
+X-Gm-Features: AbW1kvaGPCBOasgyxU3CSVJGl8V-5w868NJSd-B2xqXvfntoT4JB3vfn4s7uhQs
+Message-ID: <CAJfpegvUamsi+UzQJm-iUUuHZFRBxDZpR0fiBGuv9QEkkFEnYQ@mail.gmail.com>
+Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
+	bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 15, 2025 at 10:18:16PM -0800, Christoph Hellwig wrote:
-> On Wed, Jan 15, 2025 at 11:31:35AM +0200, Kirill A. Shutemov wrote:
-> > Now as PG_reclaim is gone, its name can be reclaimed for better
-> > use :)
-> > 
-> > Rename PG_dropbehind to PG_reclaim and rename all helpers around it.
-> 
-> Why?  reclaim is completely generic and reclaim can mean many
-> different things.  dropbehind is much more specific.
+On Tue, 7 Jan 2025 at 01:25, Bernd Schubert <bschubert@ddn.com> wrote:
+>
+> This adds support for io-uring communication between kernel and
+> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> approach was taken from ublk.
 
-Dropbehind is somewhat obscure name. You need fair bit of context to
-understand what it does.
+I think this is in a good shape.   Let's pull v10 into
+fuse.git#for-next and maybe we can have go at v6.14.
 
-But I don't care that much. We can keep it as PG_dropbehind.
+Any objections?
 
-Anybody else has opinion on this?
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Thanks,
+Miklos
 
