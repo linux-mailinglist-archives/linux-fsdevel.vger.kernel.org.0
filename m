@@ -1,387 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-39503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778B4A15500
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 17:54:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4F0A1554B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 18:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A16188A1E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 16:54:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91BED161A81
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 17:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFE61A23AF;
-	Fri, 17 Jan 2025 16:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuTtOgMg"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1081A00FA;
+	Fri, 17 Jan 2025 17:06:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C412B19F47E;
-	Fri, 17 Jan 2025 16:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5512313B59B;
+	Fri, 17 Jan 2025 17:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737132832; cv=none; b=li/plrFHHPZeT3W8AWOC04BospvDnsmCdUEUw2z3HZU5YzHMb2XyzfPiSd9RoVSshx7sJKdtK663aQtyIny0DGLl5bGtApG2DRlJiNz4rqwlo1oGa2WSSvpaWEWyURPyX4Z6vwmbdqN4Y7DTBVY9ZYUhknx3lmFhLmxcDemb0Ow=
+	t=1737133593; cv=none; b=ARWf+3VFb5h0ei3FlUs9xyd/DRP/KFWUG/VuhEXwLmQCMI2I1p4UZVyvb0e6bCLAjxNpKzCzYUrcnWqQ3OyYFz9g8rd9ThOcS5/pvGlAqzh0UuYAvRVPDerCN3a6SptQFV+RXZog1ygK6wXkWFH59GfY8BHeooctT4gHMa6thYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737132832; c=relaxed/simple;
-	bh=hmaLS8kuDGNmqGOs7pm8xleBcHE16IVKOzPXlkl7kZM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKtMWtWn0019+voCHtZbJyF8SPPyIXaDfbPBjOPhwfTMDqpubVh30YvjuCBF8cVXFqzqchoiU1AUjIa2HOkmibZoPk9nJkkTP9uZy3kT328tHUsmi0XS7x6I32D1NnTim94TyLz7XnAuiPDtcDh4m7Lq7soesUxlg01MZhJdqkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuTtOgMg; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso3528375a12.3;
-        Fri, 17 Jan 2025 08:53:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737132829; x=1737737629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jtjVLiRTziusjYNBejGW7DraWbM4PTQdJe8LTGDHlIE=;
-        b=HuTtOgMgBMUpTVMXjCV5SfVhw4zw9NRjkmVYZjLI9DxR/Cf+wYt3pT/ND0Y6bFyZhg
-         vcdAAsxnM2TCoLg3LeB3wrhSwT8chUtz2UugH5qFbVR+2/KbsNinQgZblG5eamicIjGI
-         YLzZi3RN4k/WBPce0pPXOxlvrRbOyKY0ei2OuIy4/HR5ePWOjWTmtfkVYZufRNut8a5t
-         lJ0+/yKLR9HSGi536ueN3k1EvAL92SYzy1KhFcNEbBjIHhNT6aBR80s7OVDT7wM8YelH
-         qzTrIQTwCMiTW00R2EMfevG38I6QNi5C8khuvLE8XiC1TY/+PscHo3s4ywQZzidFBAyu
-         Fu0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737132829; x=1737737629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jtjVLiRTziusjYNBejGW7DraWbM4PTQdJe8LTGDHlIE=;
-        b=E1CT0sNNulgQ/9RVynIFQLDL+516i/wMkwJnNX3BWfo1yca/wN9ppTAjYaIhMsBACH
-         ig/uBuw4p96Yx78OMB8D20LkQWkWpNqNJoIFeJWpTrnEShQGJEhRsgR3Y8i/kmviBmgH
-         wjK6z0vTnFY+cTKDN/D8ZHdy51nLi/jLolQr4Lm59IaCDtJqGq90SDFceQW83/cdwund
-         ZimArlvJN4F+5NvnHDBJ9pFC+RF7hN1zsrt/T0ENI/nuwdepMQJqlEnZk7GNx2VCc73x
-         Ghs2Ttvwo8Zt0zXFa95dxKlOfif7rebNvOCyQ8MKPj70f07dZUcRK8UV2Gbeu90HAJQ3
-         jh7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrzZaIqL8CiTkAe4Ub2He72cEjkKf6FcvbSbnKd+74HIcegf8bA3XKSD6efhAkgW+OgXA7kujlmAba@vger.kernel.org, AJvYcCVLNdqns+r8LXGPDJohS5tnAhUNJYCOzLjvHbyV4VBGY7oZ/dz3XzXKDCU0MzJWH9Yce+ee9FMeTqxqQ8+O6Q==@vger.kernel.org, AJvYcCX/U+ZGeBc5JQXkkYe5Qmtva0NsBi32RnwrhxUmg0JUC+O9gQ+0gkYWnwtrnrM0uxsCfgXPwAOUnWXbv9td@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9RELV46uK6V4rSSVEa30sFjaHzYOfDrsL0H5rQ1mdO2L5NvGx
-	W/JEN5mwjk36DDc+kAjvOpVmaOXzczkoXaL1CQS2fp2B7Vucg1UmBiHIGty6vxT/5rI0tByiYLj
-	ARupvXkOz49kPfwjonsHoVblF5l6kz5pfG0g=
-X-Gm-Gg: ASbGncuGhhEcsbEkRUVvvRLyJEXoG199/xKivAoIzJenn7Ml4apAOyFwr8peYRixHw7
-	ptmlba81fMxSRcM9AmWlYsRzek8umzkmf13HGsQ==
-X-Google-Smtp-Source: AGHT+IEMcOrrQ14r5o1H8IuH8SMxyLXMN3cpvmG3Oy+UGaBJVNEXvqBnEHPuKhRn81kA2/YxIELqLTu0qOeOemzmBHQ=
-X-Received: by 2002:a05:6402:51c9:b0:5d9:a54:f8b4 with SMTP id
- 4fb4d7f45d1cf-5db7d2f88b1mr3206919a12.11.1737132827311; Fri, 17 Jan 2025
- 08:53:47 -0800 (PST)
+	s=arc-20240116; t=1737133593; c=relaxed/simple;
+	bh=in4JlROnQDHcP8GUZq+j4sVW3Duj8qwmyK5DwZ07WK8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GrsMk6yqxqtjN2hMbKttJSdh6qojLoDNtB5afhBEoinOd1UICsx/MmbF0S0tuSrdRY48iacVVC8Ww0udzWq/yIj8rrcM/Xtn6VtoKyLk+2mBxYX27RZpQpes8TByQC4raqdvNBjdtPrVwxtxwGSWjp5BJ9tTAxg8tnoCMddCWQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4YZQYb4JKtz9v7Vg;
+	Sat, 18 Jan 2025 00:44:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id DDCC81402C8;
+	Sat, 18 Jan 2025 01:06:21 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDnbEsCjopnGx7PAA--.40276S2;
+	Fri, 17 Jan 2025 18:06:21 +0100 (CET)
+Message-ID: <6f310cfc1a0f505cf5e07885728d8cbf783cd644.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 5/7] ima: Set security.ima on file close when
+ ima_appraise=fix
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk, 
+ brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com, 
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Date: Fri, 17 Jan 2025 18:06:06 +0100
+In-Reply-To: <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
+References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+	 <20241128100621.461743-6-roberto.sassu@huaweicloud.com>
+	 <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241227121508.nofy6bho66pc5ry5@pali> <ckqak3zq72lapwz5eozkob7tcbamrvafqxm4mp5rmevz7zsxh5@xytjbpuj6izz>
- <28f0aa2e-58d7-4b56-bc19-b1b3aa284d8f@oracle.com> <20250104-bonzen-brecheisen-8f7088db32b0@brauner>
- <cf0b8342-8a4b-4485-a5d1-0da20e6d14e7@oracle.com> <20250114211050.iwvxh7fon7as7sty@pali>
- <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com> <20250114215350.gkc2e2kcovj43hk7@pali>
- <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali> <20250114235925.GC3561231@frogsfrogsfrogs>
-In-Reply-To: <20250114235925.GC3561231@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 17 Jan 2025 17:53:34 +0100
-X-Gm-Features: AbW1kvbYc67E_AXaqt8CfQ_SYNuIgNzmzmSJ17Sb6q06A7GkNT7gYB3kM4f_vRE
-Message-ID: <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
-Subject: Re: Immutable vs read-only for Windows compatibility
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: ronnie sahlberg <ronniesahlberg@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	"Darrick J. Wong" <djwong@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:LxC2BwDnbEsCjopnGx7PAA--.40276S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xw4DGw1rAF43uw4UWrWUtwb_yoWxuryfpa
+	yvqa4UKryv9F97WFWvya13CayF93yjgF4DWws8J3WvvFnxZr10gr1rJr129Fy3Xrs5Jw1x
+	tr1jg3yUZa1vyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGeKAVIGRgAAsz
 
-On Wed, Jan 15, 2025 at 12:59=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Wed, Jan 15, 2025 at 12:55:47AM +0100, Pali Roh=C3=A1r wrote:
-> > On Wednesday 15 January 2025 09:29:14 ronnie sahlberg wrote:
-> > > On Wed, 15 Jan 2025 at 07:54, Pali Roh=C3=A1r <pali@kernel.org> wrote=
-:
-> > > >
-> > > > On Tuesday 14 January 2025 16:44:55 Chuck Lever wrote:
-> > > > > On 1/14/25 4:10 PM, Pali Roh=C3=A1r wrote:
-> > > > > > On Saturday 04 January 2025 10:30:26 Chuck Lever wrote:
-> > > > > > > On 1/4/25 3:52 AM, Christian Brauner wrote:
-> > > > > > > > On Thu, Jan 02, 2025 at 10:52:51AM -0500, Chuck Lever wrote=
-:
-> > > > > > > > > On 1/2/25 9:37 AM, Jan Kara wrote:
-> > > > > > > > > > Hello!
-> > > > > > > > > >
-> > > > > > > > > > On Fri 27-12-24 13:15:08, Pali Roh=C3=A1r wrote:
-> > > > > > > > > > > Few months ago I discussed with Steve that Linux SMB =
-client has some
-> > > > > > > > > > > problems during removal of directory which has read-o=
-nly attribute set.
-> > > > > > > > > > >
-> > > > > > > > > > > I was looking what exactly the read-only windows attr=
-ibute means, how it
-> > > > > > > > > > > is interpreted by Linux and in my opinion it is wrong=
-ly used in Linux at
-> > > > > > > > > > > all.
-> > > > > > > > > > >
-> > > > > > > > > > > Windows filesystems NTFS and ReFS, and also exported =
-over SMB supports
-> > > > > > > > > > > two ways how to present some file or directory as rea=
-d-only. First
-> > > > > > > > > > > option is by setting ACL permissions (for particular =
-or all users) to
-> > > > > > > > > > > GENERIC_READ-only. Second option is by setting the re=
-ad-only attribute.
-> > > > > > > > > > > Second option is available also for (ex)FAT filesyste=
-ms (first option via
-> > > > > > > > > > > ACL is not possible on (ex)FAT as it does not have AC=
-Ls).
-> > > > > > > > > > >
-> > > > > > > > > > > First option (ACL) is basically same as clearing all =
-"w" bits in mode
-> > > > > > > > > > > and ACL (if present) on Linux. It enforces security p=
-ermission behavior.
-> > > > > > > > > > > Note that if the parent directory grants for user del=
-ete child
-> > > > > > > > > > > permission then the file can be deleted. This behavio=
-r is same for Linux
-> > > > > > > > > > > and Windows (on Windows there is separate ACL for del=
-ete child, on Linux
-> > > > > > > > > > > it is part of directory's write permission).
-> > > > > > > > > > >
-> > > > > > > > > > > Second option (Windows read-only attribute) means tha=
-t the file/dir
-> > > > > > > > > > > cannot be opened in write mode, its metadata attribut=
-e cannot be changed
-> > > > > > > > > > > and the file/dir cannot be deleted at all. But anybod=
-y who has
-> > > > > > > > > > > WRITE_ATTRIBUTES ACL permission can clear this attrib=
-ute and do whatever
-> > > > > > > > > > > wants.
-> > > > > > > > > >
-> > > > > > > > > > I guess someone with more experience how to fuse togeth=
-er Windows & Linux
-> > > > > > > > > > permission semantics should chime in here but here are =
-my thoughts.
-> > > > > > > > > >
-> > > > > > > > > > > Linux filesystems has similar thing to Windows read-o=
-nly attribute
-> > > > > > > > > > > (FILE_ATTRIBUTE_READONLY). It is "immutable" bit (FS_=
-IMMUTABLE_FL),
-> > > > > > > > > > > which can be set by the "chattr" tool. Seems that the=
- only difference
-> > > > > > > > > > > between Windows read-only and Linux immutable is that=
- on Linux only
-> > > > > > > > > > > process with CAP_LINUX_IMMUTABLE can set or clear thi=
-s bit. On Windows
-> > > > > > > > > > > it can be anybody who has write ACL.
-> > > > > > > > > > >
-> > > > > > > > > > > Now I'm thinking, how should be Windows read-only bit=
- interpreted by
-> > > > > > > > > > > Linux filesystems drivers (FAT, exFAT, NTFS, SMB)? I =
-see few options:
-> > > > > > > > > > >
-> > > > > > > > > > > 0) Simply ignored. Disadvantage is that over network =
-fs, user would not
-> > > > > > > > > > >       be able to do modify or delete such file, even =
-as root.
-> > > > > > > > > > >
-> > > > > > > > > > > 1) Smartly ignored. Meaning that for local fs, it is =
-ignored and for
-> > > > > > > > > > >       network fs it has to be cleared before any writ=
-e/modify/delete
-> > > > > > > > > > >       operation.
-> > > > > > > > > > >
-> > > > > > > > > > > 2) Translated to Linux mode/ACL. So the user has some=
- ability to see it
-> > > > > > > > > > >       or change it via chmod. Disadvantage is that it=
- mix ACL/mode.
-> > > > > > > > > >
-> > > > > > > > > > So this option looks sensible to me. We clear all write=
- permissions in
-> > > > > > > > > > file's mode / ACL. For reading that is fully compatible=
-, for mode
-> > > > > > > > > > modifications it gets a bit messy (probably I'd suggest=
- to just clear
-> > > > > > > > > > FILE_ATTRIBUTE_READONLY on modification) but kind of cl=
-ose.
-> > > > > > > > >
-> > > > > > > > > IMO Linux should store the Windows-specific attribute inf=
-ormation but
-> > > > > > > > > otherwise ignore it. Modifying ACLs based seems like a ro=
-ad to despair.
-> > > > > > > > > Plus there's no ACL representation for OFFLINE and some o=
-f the other
-> > > > > > > > > items that we'd like to be able to support.
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > If I were king-for-a-day (tm) I would create a system xat=
-tr namespace
-> > > > > > > > > just for these items, and provide a VFS/statx API for con=
-sumers like
-> > > > > > > > > Samba, ksmbd, and knfsd to set and get these items. Each =
-local
-> > > > > > > > > filesystem can then implement storage with either the xat=
-tr or (eg,
-> > > > > > > > > ntfs) can store them directly.
-> > > > > > > >
-> > > > > > > > Introducing a new xattr namespace for this wouldn't be a pr=
-oblem imho.
-> > > > > > > > Why would this need a new statx() extension though? Wouldn'=
-t the regular
-> > > > > > > > xattr apis to set and get xattrs be enough?
-> > > > > > >
-> > > > > > > My thought was to have a consistent API to access these attri=
-butes, and
-> > > > > > > let the filesystem implementers decide how they want to store=
- them. The
-> > > > > > > Linux implementation of ntfs, for example, probably wants to =
-store these
-> > > > > > > on disk in a way that is compatible with the Windows implemen=
-tation of
-> > > > > > > NTFS.
-> > > > > > >
-> > > > > > > A common API would mean that consumers (like NFSD) wouldn't h=
-ave to know
-> > > > > > > those details.
-> > > > > > >
-> > > > > > >
-> > > > > > > --
-> > > > > > > Chuck Lever
-> > > > > >
-> > > > > > So, what about introducing new xattrs for every attribute with =
-this pattern?
-> > > > > >
-> > > > > > system.attr.readonly
-> > > > > > system.attr.hidden
-> > > > > > system.attr.system
-> > > > > > system.attr.archive
-> > > > > > system.attr.temporary
-> > > > > > system.attr.offline
-> > > > > > system.attr.not_content_indexed
-> > > > >
-> > > > > Yes, all of them could be stored as xattrs for file systems that =
-do
-> > > > > not already support these attributes.
-> > > > >
-> > > > > But I think we don't want to expose them directly to users, howev=
-er.
-> > > > > Some file systems, like NTFS, might want to store these on-disk i=
-n a way
-> > > > > that is compatible with Windows.
-> > > > >
-> > > > > So I think we want to create statx APIs for consumers like user s=
-pace
-> > > > > and knfsd, who do not care to know the specifics of how this info=
-rmation
-> > > > > is stored by each file system.
-> > > > >
-> > > > > The xattrs would be for file systems that do not already have a w=
-ay to
-> > > > > represent this information in their on-disk format.
-> > > > >
-> > > > >
-> > > > > > All those attributes can be set by user, I took names from SMB,=
- which
-> > > > > > matches NTFS and which subsets are used by other filesystems li=
-ke FAT,
-> > > > > > exFAT, NFS4, UDF, ...
-> > > > > >
-> > > > > > Every xattr would be in system.attr namespace and would contain=
- either
-> > > > > > value 0 or 1 based on that fact if is set or unset. If the file=
-system
-> > > > > > does not support particular attribute then xattr get/set would =
-return
-> > > > > > error that it does not exist.
-> > > > >
-> > > > > Or, if the xattr exists, then that means the equivalent Windows
-> > > > > attribute is asserted; and if it does not, the equivalent Windows
-> > > > > attribute is clear. But again, I think each file system should be
-> > > > > able to choose how they implement these, and that implementation =
-is
-> > > > > then hidden by statx.
-> > > > >
-> > > > >
-> > > > > > This would be possible to use by existing userspace getfattr/se=
-tfattr
-> > > > > > tools and also by knfsd/ksmbd via accessing xattrs directly.
-> > > > >
-> > > > >
-> > > > > --
-> > > > > Chuck Lever
-> > > >
-> > > > With this xattr scheme I mean that API would be xattr between fs an=
-d
-> > > > vfs/userspace/knfsd/smbd. So NTFS would take that xattr request and
-> > > > translate it to its own NTFS attributes. Other non-windows fs store=
+On Wed, 2025-01-15 at 08:46 -0500, Mimi Zohar wrote:
+> Please use "__fput()" rather than "file close".  Perhaps update the subje=
+ct line to
+> something like "ima: Defer fixing security.ima to __fput()".=20
+>=20
+> On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > IMA-Appraisal implements a fix mode, selectable from the kernel command
+> > line by specifying ima_appraise=3Dfix.
+> >=20
+> > The fix mode is meant to be used in a TOFU (trust on first use) model,
+> > where systems are supposed to work under controlled conditions before t=
+he
+> > real enforcement starts.
+> >=20
+> > Since the systems are under controlled conditions, it is assumed that t=
+he
+> > files are not corrupted, and thus their current data digest can be trus=
+ted,
+> > and written to security.ima.
+> >=20
+> > When IMA-Appraisal is switched to enforcing mode, the security.ima valu=
+e
+> > collected during the fix mode is used as a reference value, and a misma=
+tch
+> > with the current value cause the access request to be denied.
+> >=20
+> > However, since fixing security.ima is placed in ima_appraise_measuremen=
+t()
+> > during the integrity check, it requires the inode lock to be taken in
+> > process_measurement(), in addition to ima_update_xattr() invoked at fil=
+e
+> > close.
+> >=20
+> > Postpone the security.ima update to ima_check_last_writer(), by setting=
+ the
+> > new atomic flag IMA_UPDATE_XATTR_FIX in the inode integrity metadata, i=
+n
+> > ima_appraise_measurement(), if security.ima needs to be fixed. In this =
+way,
+> > the inode lock can be removed from process_measurement(). Also, set the
+> > cause appropriately for the fix operation and for allowing access to ne=
+w
+> > and empty signed files.
+> >=20
+> > Finally, update security.ima when IMA_UPDATE_XATTR_FIX is set, and when
+> > there wasn't a previous security.ima update, which occurs if the proces=
 s
-> > > > them as xattrs.
-> > >
-> > > I am not sure if for the cifs client doing this by emulating xattrs.
-> > > I have bad memories of the emulated xattrs.
-> > >
-> > > What about extending ioctl(FS_IOC_GETFLAGS)? There are plenty of spar=
-e
-> > > flags there
-> >
-> > Are FS_IOC_GETFLAGS/FS_IOC_SETFLAGS flags preserved across regular
-> > "cp -a" or "rsync -someflag" commands? I'm just worried to not invent
->
-> No, none of them are.  We should perhaps talk to the util-linux folks
-> about fixing cp.
->
+> > closing the file descriptor is the last writer. =20
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Roberto, I really like the idea of removing the inode_lock in process_mea=
+surement()
+> needed for writing xattrs, but I'm concerned about the delay being introd=
+uced.  For
+> example, does it interfere with labeling the filesystem with file signatu=
+res
+> (with/without EVM enabled)?
 
-I don't think it is a good idea to start copying these attributes with exis=
-ting
-cp -a without any opt-in with mount option or new cp command line option.
+There will be a difference when EVM is enabled, and inode metadata are
+corrupted.
 
-After all, smb client already exports the virtual xattr "smb3.dosattrib", b=
-ut
-it is not listed by listxattr, so cp -a does not pick it up anyway.
+In that case, currently IMA in fix mode is able to fix inode metadata
+as well, by writing security.ima. That happens because IMA ignores the
+result of evm_verifyxattr() and writes the xattr directly, causing EVM
+to update the HMAC to a valid one.
 
-You could just as well define a standard virtual xattr "system.fs.fsxattr"
-that implements an alternative interface for FS_IOC_FS[GS]ETXATTR
-but it would have to be opt-in to show up in listxattr().
+With the new patch, the EVM HMAC remains invalid until file close,
+meaning that it will not be possible for example to set xattr on the
+opened file descriptor. It works after closing the file though.
 
-> > new way how to get or set flags which would not be understood by
-> > existing backup or regular "copy" applications. Because the worst thing
-> > which can happen is adding new API which nobody would use and basically
-> > will not gain those benefits which should have them... Like if I move o=
-r
-> > copy file from one filesystem to another to not loose all those
-> > attributes.
-> >
-> > > and you even have NTFS.readonly ~=3D Linux.immutable so ... :-)
-> >
-> > I know it :-) I have not explicitly written it in the email, but put
-> > this information into one of the options what can be possible to do.
-> > The bad thing about this option for remote filesystems is that
-> > Linux.immutable can be cleared only by root (or process which privilege
-> > which nobody does not normally have), but on Windows system (and also
-> > when exported over SMB) it can be cleared by anybody who can modify fil=
-e
-> > (based on ACL). So with this Linux will start blocking to do some
-> > operation with file, which Windows fully allows. And this very user
-> > unfriendly, specially if also wine wants to benefit from it, as wine
-> > normally is not going to be run under root (or special capabilities).
-> >
-> > > To me to feels like the flags you want to implement would fit
-> > > "somewhat naturally" there.
-> >
-> > So thank you and others for this FS_IOC_GETFLAGS opinion. Maybe this
-> > looks like a better solution?
->
-> FS_IOC_FS[GS]ETXATTR captures a superset of file attributes from
-> FS_IOC_[GS]ETFLAGS, please use the former if available.
->
+Setting other LSMs xattrs will fail as well, if the EVM HMAC is
+invalid.
 
-I agree. Flags that you define in the FS_XFLAG_* namespace,
-should also be defined in the STATX_ATTR_* namepsace.
+If the problem is EVM, I would recommend setting evm=3Dfix as well, so
+that inode metadata can be properly fixed.
 
-Looking at the FILE_ATTRIBUTE_* flags defined in SMB protocol
- (fs/smb/common/smb2pdu.h) I wonder how many of them will be
-needed for applications beyond the obvious ones that were listed.
+I will update the documentation to describe the limitation introduced
+by this patch, and to suggest to use evm=3Dfix.
 
-Thanks,
-Amir.
+Thanks
+
+Roberto
+
+> > ---
+> > =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> > =C2=A0security/integrity/ima/ima_appraise.c |=C2=A0 7 +++++--
+> > =C2=A0security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0 | 18 ++=
++++++++++-------
+> > =C2=A03 files changed, 17 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.=
+h
+> > index b4eeab48f08a..22c3b87cfcac 100644
+> > --- a/security/integrity/ima/ima.h
+> > +++ b/security/integrity/ima/ima.h
+> > @@ -179,6 +179,7 @@ struct ima_kexec_hdr {
+> > =C2=A0#define IMA_CHANGE_ATTR		2
+> > =C2=A0#define IMA_DIGSIG		3
+> > =C2=A0#define IMA_MUST_MEASURE	4
+> > +#define IMA_UPDATE_XATTR_FIX	5
+> > =C2=A0
+> > =C2=A0/* IMA integrity metadata associated with an inode */
+> > =C2=A0struct ima_iint_cache {
+> > diff --git a/security/integrity/ima/ima_appraise.c
+> > b/security/integrity/ima/ima_appraise.c
+> > index 656c709b974f..94401de8b805 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -576,8 +576,10 @@ int ima_appraise_measurement(enum ima_hooks func, =
+struct
+> > ima_iint_cache *iint,
+> > =C2=A0		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+> > =C2=A0		=C2=A0=C2=A0=C2=A0 (!xattr_value ||
+> > =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 xattr_value->type !=3D EVM_IMA_XATTR_D=
+IGSIG)) {
+> > -			if (!ima_fix_xattr(dentry, iint))
+> > -				status =3D INTEGRITY_PASS;
+> > +			/* Fix by setting security.ima on file close. */
+> > +			set_bit(IMA_UPDATE_XATTR_FIX, &iint->atomic_flags);
+> > +			status =3D INTEGRITY_PASS;
+> > +			cause =3D "fix";
+> > =C2=A0		}
+> > =C2=A0
+> > =C2=A0		/*
+> > @@ -587,6 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, s=
+truct
+> > ima_iint_cache *iint,
+> > =C2=A0		if (inode->i_size =3D=3D 0 && iint->flags & IMA_NEW_FILE &&
+> > =C2=A0		=C2=A0=C2=A0=C2=A0 test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
+> > =C2=A0			status =3D INTEGRITY_PASS;
+> > +			cause =3D "new-signed-file";
+> > =C2=A0		}
+> > =C2=A0
+> > =C2=A0		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima=
+/ima_main.c
+> > index 1e474ff6a777..50b37420ea2c 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -158,13 +158,16 @@ static void ima_check_last_writer(struct ima_iint=
+_cache
+> > *iint,
+> > =C2=A0				=C2=A0 struct inode *inode, struct file *file)
+> > =C2=A0{
+> > =C2=A0	fmode_t mode =3D file->f_mode;
+> > -	bool update;
+> > +	bool update =3D false, update_fix;
+> > =C2=A0
+> > -	if (!(mode & FMODE_WRITE))
+> > +	update_fix =3D test_and_clear_bit(IMA_UPDATE_XATTR_FIX,
+> > +					&iint->atomic_flags);
+> > +
+> > +	if (!(mode & FMODE_WRITE) && !update_fix)
+> > =C2=A0		return;
+> > =C2=A0
+> > =C2=A0	ima_iint_lock(inode);
+> > -	if (atomic_read(&inode->i_writecount) =3D=3D 1) {
+> > +	if (atomic_read(&inode->i_writecount) =3D=3D 1 && (mode & FMODE_WRITE=
+)) {
+>=20
+> Probably better to reverse the "mode & FMODE_WRITE" and atomic_read() tes=
+t order.
+>=20
+> Mimi
+>=20
+> > =C2=A0		struct kstat stat;
+> > =C2=A0
+> > =C2=A0		update =3D test_and_clear_bit(IMA_UPDATE_XATTR,
+> > @@ -181,6 +184,10 @@ static void ima_check_last_writer(struct ima_iint_=
+cache *iint,
+> > =C2=A0				ima_update_xattr(iint, file);
+> > =C2=A0		}
+> > =C2=A0	}
+> > +
+> > +	if (!update && update_fix)
+> > +		ima_update_xattr(iint, file);
+> > +
+> > =C2=A0	ima_iint_unlock(inode);
+> > =C2=A0}
+> > =C2=A0
+> > @@ -378,13 +385,10 @@ static int process_measurement(struct file *file,=
+ const
+> > struct cred *cred,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 template_desc);
+> > =C2=A0	if (rc =3D=3D 0 && (action & IMA_APPRAISE_SUBMASK)) {
+> > =C2=A0		rc =3D ima_check_blacklist(iint, modsig, pcr);
+> > -		if (rc !=3D -EPERM) {
+> > -			inode_lock(inode);
+> > +		if (rc !=3D -EPERM)
+> > =C2=A0			rc =3D ima_appraise_measurement(func, iint, file,
+> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pathname, xattr_value,
+> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xattr_len, modsig);
+> > -			inode_unlock(inode);
+> > -		}
+> > =C2=A0		if (!rc)
+> > =C2=A0			rc =3D mmap_violation_check(func, file, &pathbuf,
+> > =C2=A0						=C2=A0 &pathname, filename);
+
 
