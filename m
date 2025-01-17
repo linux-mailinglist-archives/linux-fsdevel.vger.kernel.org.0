@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-39465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC0CA14A8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 08:58:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB95A14AB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 09:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A26316B03D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 07:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D04167270
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 08:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD781F8680;
-	Fri, 17 Jan 2025 07:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCF11F868A;
+	Fri, 17 Jan 2025 08:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vJiz8AY3"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JXegMKSu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC4A1F5619;
-	Fri, 17 Jan 2025 07:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BF61F6690
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 08:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737100701; cv=none; b=WxLnd7WB2zrCFXccwBJRTXli4yhRA6OlxPqwvAR/9sWfgUUiDAbhboTHu9lOQ7xBKUXNuNYPyltXT23559ipZc9PWjMnfHGitP2/SdoIWxEQ5dgu1LFbpRGkqFfzGTH1E4NLQ8p4V4mbWDpQkYhFvXoiBjgKpSeD1ZWKjkBm/Ko=
+	t=1737101501; cv=none; b=uk68KrsXhO+ud3/VoRi6214q/32BDE8eK9aBgGt273uIPcqE3rz0mAKku4UA/YWYpppsHG6Ml3heKdwsGDzpE0goOpFA9KX1YLd7CHJ2antXfptiMu9pEcaJ8wXQQ1YN74GQAxd/KGLCxlgvKRjhoiVzZW0jMR+sgqtqDrS/tO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737100701; c=relaxed/simple;
-	bh=wgAhS86ukCZP5I1u9ln4lS/rgMNaudnTaX59WdkOVrw=;
+	s=arc-20240116; t=1737101501; c=relaxed/simple;
+	bh=2+B+EJFY3irGQuVrtT+YtNf+ceaj/Ep7TTpVV4rDGhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ms1f38Zt4rfvzI4EjKWvdZmDSpcVQZIDcXGkdxiiaZlz8zKrouVKkRxoyB4VczScENxIxvyH/P4Ov+Q4A9onbsDDsacYZFm7pbJ0VxKasCaMRcSyTqH1HydELE7c+L909cczba3MQs1M1MU5xa6v15FD9HrZ2SZBxVuvld1KR/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vJiz8AY3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=YNROJDMl3eGUnBSIOyuAtV2kXJo0wgvH4PqX5G4cJbQizMEJDYbec9Kyu0BH74vxxUN/n5pEly3SiSkIEU3JkEgTOudrq+Qi4lXbHFaFYdA32T5JrDE5cQFwWl91Ahjv780KaVp3O4lPKXci19D8l6zUuFz8KL+eFcrEr6F1UW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JXegMKSu; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LQ42ND+TX3qpDyiAWyJ76CfupWCuVxganJhxdwzevX0=; b=vJiz8AY34X+KOCo0spNITWZaj4
-	nyqSeLwMHApV3IHW2rf1+oZmz4wulZukRDDfC57q4xe8ZAEdCPId6LmWtB5zHDCkM0zV3wja5zdZG
-	3ulpxzRWjwvJ5EQ2GxsNiZO9j3q9F+bACioDK3njoL2Gq0wo7ZIvSepj0Y2BYx9Xdh7wm0+lhE6xi
-	I58ckZ8qXgVy8KiD8VjwXqlOnKLvYY6a/T/5KT+RrrTQWDA38DQaXm3mis9s6BTUJUS7bPbRXxwyl
-	6J6WRy/82HDyHmHVVYBlxqN0j/XgcxZgrv10iOMJkpBWgRdIyz4XpYwT4B0Wnu78TafHiQXKRDvdY
-	V1FlrTIw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYhFE-0000000HGTr-04Lm;
-	Fri, 17 Jan 2025 07:58:20 +0000
-Date: Thu, 16 Jan 2025 23:58:19 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v5] add ioctl/sysfs to donate file-backed pages
-Message-ID: <Z4oNmx2xPkdzvkUd@infradead.org>
-References: <20250116172438.2143971-1-jaegeuk@kernel.org>
+	bh=kt0I1pZgmHGP+GRkHJ0PXR9kZGxrIxRC4EeUKokeiTk=; b=JXegMKSubtjMiFENB3IgzfiBE4
+	3Hr4h7iCfe3j9FChtWTp1GIbFANQvh80jdaZhVBqu5BvvE1G3rf5raW/jGF3D4bcG30gOre0nkQot
+	jb5NTOll+OcGCcCCk1PxVFpkemS1ZTGNkE9JgQTic2jHSJK91AfQIgI2+bFJSZd4r/1wJmP+RrPJK
+	zVjBq2ULDOgZbZooobIKCQq2dDYdqK+8YVHWF44IZplf234RRb/TsfhDsO9vGmpMXyWbjv1f45/HY
+	nkcGkPRilMei1/kV+qyAxsUdhGgKEO4ATjhC40RZi2JYV4f+lBdkpGUCbkAEs0lr5qeHKTIDQvQ6u
+	q3eU1Q+w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYhS4-000000033Gr-17sU;
+	Fri, 17 Jan 2025 08:11:36 +0000
+Date: Fri, 17 Jan 2025 08:11:36 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org
+Subject: Re: [PATCH] ufs: convert ufs to the new mount API
+Message-ID: <20250117081136.GP1977892@ZenIV>
+References: <20250116184932.1084286-1-sandeen@redhat.com>
+ <20250116190844.GM1977892@ZenIV>
+ <9f1435d3-5a40-405e-8e14-8cbdb49294f5@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,46 +62,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250116172438.2143971-1-jaegeuk@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <9f1435d3-5a40-405e-8e14-8cbdb49294f5@sandeen.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Still NAC for sneaking in an almost undocumented MM feature into
-a file system ioctl.  Especially while a discussion on that is still
-ongoin.
+On Thu, Jan 16, 2025 at 04:07:44PM -0600, Eric Sandeen wrote:
+> On 1/16/25 1:08 PM, Al Viro wrote:
+> > On Thu, Jan 16, 2025 at 12:49:32PM -0600, Eric Sandeen wrote:
+> > 
+> >> +	switch (opt) {
+> >> +	case Opt_type:
+> >> +		if (reconfigure &&
+> >> +		    (ctx->mount_options & UFS_MOUNT_UFSTYPE) != result.uint_32) {
+> >> +			pr_err("ufstype can't be changed during remount\n");
+> >> +			return -EINVAL;
+> >>  		}
+> >> +		ufs_clear_opt(ctx->mount_options, UFS_MOUNT_UFSTYPE);
+> >> +		ufs_set_opt(ctx->mount_options, result.uint_32);
+> >> +		break;
+> > 
+> > Do we really want to support ufstype=foo,ufstype=bar?
+> 
+> well, we already do that today. Old code was:
+> 
+>                 switch (token) {
+>                 case Opt_type_old:
+>                         ufs_clear_opt (*mount_options, UFSTYPE);
+>                         ufs_set_opt (*mount_options, UFSTYPE_OLD);
+>                         break; 
+>                 case Opt_type_sunx86:
+>                         ufs_clear_opt (*mount_options, UFSTYPE);
+>                         ufs_set_opt (*mount_options, UFSTYPE_SUNx86);
+>                         break;
+> ...
+> 
+> so I was going for a straight conversion for now so that the behavior
+> was exactly the same (i.e. keep the last-specified type. I know, it's
+> weird, who would do that? Still. Don't break userspace? And we've been
+> burned before.)
 
-And it's still bad that you don't even bother to Cc fsdevel on this,
-nor linux-api or in this case the mm list.
-
-On Thu, Jan 16, 2025 at 05:19:42PM +0000, Jaegeuk Kim wrote:
-> If users clearly know which file-backed pages to reclaim in system view, they
-> can use this ioctl() to register in advance and reclaim all at once later.
-> 
-> Change log from v4:
->  - fix range handling
-> 
-> Change log from v3:
->  - cover partial range
-> 
-> Change log from v2:
->  - add more boundary checks
->  - de-register the range, if len is zero
-> 
-> Jaegeuk Kim (1):
->   f2fs: add a sysfs entry to request donate file-backed pages
-> 
-> Yi Sun (1):
->   f2fs: Optimize f2fs_truncate_data_blocks_range()
-> 
->  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++++++
->  fs/f2fs/f2fs.h                          |  2 ++
->  fs/f2fs/file.c                          | 29 +++++++++++++++++++++----
->  fs/f2fs/shrinker.c                      | 27 +++++++++++++++++++++++
->  fs/f2fs/sysfs.c                         |  8 +++++++
->  5 files changed, 69 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.48.0.rc2.279.g1de40edade-goog
-> 
-> 
----end quoted text---
+FWIW, see viro/vfs.git #work.ufs - separating ufs flavour and on-error
+flags, dealing with -o ufstype conflicts, then your patch ported on
+top of that.
 
