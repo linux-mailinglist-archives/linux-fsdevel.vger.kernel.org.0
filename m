@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-39496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD070A152A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 16:18:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5B3A152BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 16:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32C8169654
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 15:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751203AED73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 15:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2474189B86;
-	Fri, 17 Jan 2025 15:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9A818B495;
+	Fri, 17 Jan 2025 15:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFR8CimS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfHfRM5h"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345C2B9B9;
-	Fri, 17 Jan 2025 15:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D167C2B9B9;
+	Fri, 17 Jan 2025 15:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737127115; cv=none; b=LYYt2grF4N2f38IpB9yWbfd1H0aVEp6pkzpFAymlbvzSdf2QLefurPUPymsqNPfDdysflmAoM7WmCDXS0Tq/ntsxkFO2+vn6UfiGdUoNo56ysJu7a94EN++MbhG30ZndIxqITOqX1xUjtkWGjf+btdljp94GcvP+bAhNI7b/5V8=
+	t=1737127241; cv=none; b=Po1dJ84+lSq30h7ck1Y2NoGgw/2AVwcQIzXMipEjEwlZWUTTgq6RPGm6Q/uebfaLSuAM/6K+sMcLfim7Jjlgx2NPkLkY81E0pDRgsaSmi22huKcIQGmjDWsGDlE81n/wdzft0O4n3dmQ2Tg9YbfzzQtoJHtTNeP3B9DcbLxOFpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737127115; c=relaxed/simple;
-	bh=sLRwbZuvTeeWQiVEXtGja8VeIV8csI9NUZuOsnoTG7I=;
+	s=arc-20240116; t=1737127241; c=relaxed/simple;
+	bh=3KTPboxEg/ukMvkgn/Hy+n3A72cMPX/f9UWQqWwyIyM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pisxp+LnW+neCsfVNUiBT3spehZfBF1dGqUgW/hQyU53zNvDCUob6M4sdd4+r2e+hK8Sw9FCiNjdePqCy8t2k/BB8fclbL/CFBroyVxVzD0Rtphz2IHLHC0sTCDVaD4be8yS8nEFPfUeZl3vl7pewDz1BA9et5YulCxGFo6PfE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFR8CimS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A911C4CEDD;
-	Fri, 17 Jan 2025 15:18:33 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Q+ARCvIWbg5BPrI+CgGUrzsHHYjEWsrFBhqpROuvsJFoF2R7uwvWJIYgbrAU2ZVgufz+JL82WcfK+jf094UuPWO41JXkTw9J5Z5RifaCYBPhwrpMD/yVHM79TnK4Rw4Ec028ww2LTKTlGf0dIy+xW0PBhOt4MEAbQTtpdp2uxU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfHfRM5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7A4C4CEDD;
+	Fri, 17 Jan 2025 15:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737127114;
-	bh=sLRwbZuvTeeWQiVEXtGja8VeIV8csI9NUZuOsnoTG7I=;
+	s=k20201202; t=1737127241;
+	bh=3KTPboxEg/ukMvkgn/Hy+n3A72cMPX/f9UWQqWwyIyM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=MFR8CimS8FgK7BkXLjVxlhjGzdjyya19rYtzUlZJ1toacCW2GzD/6rAq846EhwmLP
-	 1qUKEkzz1e6ZQ/NShfqwXVVhabEoKyU192US8QK9nj8e8fSXMv+NF6y0VinFVJUjIO
-	 6hCTNkK4EioFLplumYmmIdZ8KuukMSpZnfMyGtovVf5s5/jpBahqtqxmLL7PZhrIDM
-	 jF+VbLOf3M0BTk9+5QhkRFrzWgpHWf/x22M0xANzBTwYTskpw6D4qQsAZIy55TlTrZ
-	 mHvnbntWaCsB8UwgW94gmRwQKfhTzvW6hRFGQl63UjWuTHZd0ehponGmaQ2lH/SN+m
-	 QEcZoFB7AisDQ==
-Message-ID: <3b8dae56847994a80a6d3de4b4fe400069e74b93.camel@kernel.org>
-Subject: Re: [PATCH v2 14/20] fuse_dentry_revalidate(): use stable parent
- inode and name passed by caller
+	b=lfHfRM5h6oE7deAE7OHGmhr8bG7r18vtAWTiYQFWwmT3JT+Kpls41mkl0g4rF8M20
+	 TcURoJFtmr+S2SV3nDy+hS2wZzIWXD1xLj5FFHtFWlHtnFLxo+hNsI9TBAnG1Is0ST
+	 7DurM4SGvJdiRre2Cl+syeIuIkGze2cWTiFNI4HSQfQPzPIk0UD3a91s4xv1+T37oN
+	 1x+7iDROV5sg/tsjl6r16DFQ1fEnqI8TXdwhvn2k86UT+FHNkFvav/2MuHR8cvn1H2
+	 vsb072QjOOkpqXa29mgYfByU+4Smva6h/Tax9c1mTe1aQeRyfmOMshap2V3VbyvLws
+	 pQOUMHpWUMjEQ==
+Message-ID: <5d771ddf248edc671d8cce251ea1a594703ef2fa.camel@kernel.org>
+Subject: Re: [PATCH v2 11/20] fscrypt_d_revalidate(): use stable parent
+ inode passed by caller
 From: Jeff Layton <jlayton@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Cc: agruenba@redhat.com, amir73il@gmail.com, brauner@kernel.org, 
 	ceph-devel@vger.kernel.org, dhowells@redhat.com, hubcap@omnibond.com,
  jack@suse.cz, 	krisman@kernel.org, linux-nfs@vger.kernel.org,
  miklos@szeredi.hu, 	torvalds@linux-foundation.org
-Date: Fri, 17 Jan 2025 10:18:32 -0500
-In-Reply-To: <20250116052317.485356-14-viro@zeniv.linux.org.uk>
+Date: Fri, 17 Jan 2025 10:20:39 -0500
+In-Reply-To: <20250116052317.485356-11-viro@zeniv.linux.org.uk>
 References: <20250116052103.GF1977892@ZenIV>
 	 <20250116052317.485356-1-viro@zeniv.linux.org.uk>
-	 <20250116052317.485356-14-viro@zeniv.linux.org.uk>
+	 <20250116052317.485356-11-viro@zeniv.linux.org.uk>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -140,55 +140,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Thu, 2025-01-16 at 05:23 +0000, Al Viro wrote:
-> No need to mess with dget_parent() for the former; for the latter we real=
-ly should
-> not rely upon ->d_name.name remaining stable - it's a real-life UAF.
+> The only thing it's using is parent directory inode and we are already
+> given a stable reference to that - no need to bother with boilerplate.
 >=20
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  fs/fuse/dir.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
+>  fs/crypto/fname.c | 21 +++++----------------
+>  1 file changed, 5 insertions(+), 16 deletions(-)
 >=20
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index d9e9f26917eb..7e93a8470c36 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -196,7 +196,6 @@ static int fuse_dentry_revalidate(struct inode *dir, =
-const struct qstr *name,
->  				  struct dentry *entry, unsigned int flags)
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 389f5b2bf63b..010f9c0a4c2f 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -574,12 +574,10 @@ EXPORT_SYMBOL_GPL(fscrypt_fname_siphash);
+>   * Validate dentries in encrypted directories to make sure we aren't pot=
+entially
+>   * caching stale dentries after a key has been added.
+>   */
+> -int fscrypt_d_revalidate(struct inode *parent_dir, const struct qstr *na=
+me,
+> +int fscrypt_d_revalidate(struct inode *dir, const struct qstr *name,
+>  			 struct dentry *dentry, unsigned int flags)
 >  {
->  	struct inode *inode;
-> -	struct dentry *parent;
->  	struct fuse_mount *fm;
->  	struct fuse_inode *fi;
->  	int ret;
-> @@ -228,11 +227,9 @@ static int fuse_dentry_revalidate(struct inode *dir,=
- const struct qstr *name,
+> -	struct dentry *dir;
+>  	int err;
+> -	int valid;
 > =20
->  		attr_version =3D fuse_get_attr_version(fm->fc);
-> =20
-> -		parent =3D dget_parent(entry);
-> -		fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
-> -				 &entry->d_name, &outarg);
-> +		fuse_lookup_init(fm->fc, &args, get_node_id(dir),
-> +				 name, &outarg);
->  		ret =3D fuse_simple_request(fm, &args);
-> -		dput(parent);
->  		/* Zero nodeid is same as -ENOENT */
->  		if (!ret && !outarg.nodeid)
->  			ret =3D -ENOENT;
-> @@ -266,9 +263,7 @@ static int fuse_dentry_revalidate(struct inode *dir, =
+>  	/*
+>  	 * Plaintext names are always valid, since fscrypt doesn't support
+> @@ -592,30 +590,21 @@ int fscrypt_d_revalidate(struct inode *parent_dir, =
 const struct qstr *name,
->  			if (test_bit(FUSE_I_INIT_RDPLUS, &fi->state))
->  				return -ECHILD;
->  		} else if (test_and_clear_bit(FUSE_I_INIT_RDPLUS, &fi->state)) {
-> -			parent =3D dget_parent(entry);
-> -			fuse_advise_use_readdirplus(d_inode(parent));
-> -			dput(parent);
-> +			fuse_advise_use_readdirplus(dir);
->  		}
->  	}
->  	ret =3D 1;
+>  	/*
+>  	 * No-key name; valid if the directory's key is still unavailable.
+>  	 *
+> -	 * Although fscrypt forbids rename() on no-key names, we still must use
+> -	 * dget_parent() here rather than use ->d_parent directly.  That's
+> -	 * because a corrupted fs image may contain directory hard links, which
+> -	 * the VFS handles by moving the directory's dentry tree in the dcache
+> -	 * each time ->lookup() finds the directory and it already has a dentry
+> -	 * elsewhere.  Thus ->d_parent can be changing, and we must safely grab
+> -	 * a reference to some ->d_parent to prevent it from being freed.
+> +	 * Note in RCU mode we have to bail if we get here -
+> +	 * fscrypt_get_encryption_info() may block.
+>  	 */
+> =20
+>  	if (flags & LOOKUP_RCU)
+>  		return -ECHILD;
+> =20
+> -	dir =3D dget_parent(dentry);
+>  	/*
+>  	 * Pass allow_unsupported=3Dtrue, so that files with an unsupported
+>  	 * encryption policy can be deleted.
+>  	 */
+> -	err =3D fscrypt_get_encryption_info(d_inode(dir), true);
+> -	valid =3D !fscrypt_has_encryption_key(d_inode(dir));
+> -	dput(dir);
+> -
+> +	err =3D fscrypt_get_encryption_info(dir, true);
+>  	if (err < 0)
+>  		return err;
+> =20
+> -	return valid;
+> +	return !fscrypt_has_encryption_key(dir);
+>  }
+>  EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
