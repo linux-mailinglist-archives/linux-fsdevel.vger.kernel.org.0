@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-39497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5B3A152BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 16:21:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A866A152C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 16:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751203AED73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 15:20:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE63168752
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 15:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9A818B495;
-	Fri, 17 Jan 2025 15:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAEA18A6BD;
+	Fri, 17 Jan 2025 15:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfHfRM5h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mItDL7sn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D167C2B9B9;
-	Fri, 17 Jan 2025 15:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5042B9B9;
+	Fri, 17 Jan 2025 15:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737127241; cv=none; b=Po1dJ84+lSq30h7ck1Y2NoGgw/2AVwcQIzXMipEjEwlZWUTTgq6RPGm6Q/uebfaLSuAM/6K+sMcLfim7Jjlgx2NPkLkY81E0pDRgsaSmi22huKcIQGmjDWsGDlE81n/wdzft0O4n3dmQ2Tg9YbfzzQtoJHtTNeP3B9DcbLxOFpo=
+	t=1737127353; cv=none; b=BSaEn39fm4XDH2QI3r88PAaMxGEnZ0mlLyAqrnhVnlQyaLsC4MB1u5RuZ9pGNV7HzmaJUlVHUqdksAmlEi/lX9/i0GgvJTIyxDnl0gYDkDGgKSZoOQxDCcK1EDMRnC265iUpUTfJgSVneBCruEGRgBzxeqWUy4kLd/FFJ5d3zmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737127241; c=relaxed/simple;
-	bh=3KTPboxEg/ukMvkgn/Hy+n3A72cMPX/f9UWQqWwyIyM=;
+	s=arc-20240116; t=1737127353; c=relaxed/simple;
+	bh=01ZFtlbViQBQkXAlx3xlqDjabgA70IN9bX/ob2C1D2o=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q+ARCvIWbg5BPrI+CgGUrzsHHYjEWsrFBhqpROuvsJFoF2R7uwvWJIYgbrAU2ZVgufz+JL82WcfK+jf094UuPWO41JXkTw9J5Z5RifaCYBPhwrpMD/yVHM79TnK4Rw4Ec028ww2LTKTlGf0dIy+xW0PBhOt4MEAbQTtpdp2uxU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfHfRM5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7A4C4CEDD;
-	Fri, 17 Jan 2025 15:20:40 +0000 (UTC)
+	 Content-Type:MIME-Version; b=FLHRdw0Vy9z+N/NdBF2KIOLYdPlUWzfpkw18wxwhTgfDQjULOIgUh65zDQ+LwkB74+a0EmxDTzFxiushDA6iyzvaLkeYSJ3G1nFm65BXUh5KzT6B0KLzhz+XEYISuwj5xHopCpExbQpA2rIb7cOIXaKeQXChT6NdKq5dqAy79uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mItDL7sn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A097C4CEDD;
+	Fri, 17 Jan 2025 15:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737127241;
-	bh=3KTPboxEg/ukMvkgn/Hy+n3A72cMPX/f9UWQqWwyIyM=;
+	s=k20201202; t=1737127352;
+	bh=01ZFtlbViQBQkXAlx3xlqDjabgA70IN9bX/ob2C1D2o=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=lfHfRM5h6oE7deAE7OHGmhr8bG7r18vtAWTiYQFWwmT3JT+Kpls41mkl0g4rF8M20
-	 TcURoJFtmr+S2SV3nDy+hS2wZzIWXD1xLj5FFHtFWlHtnFLxo+hNsI9TBAnG1Is0ST
-	 7DurM4SGvJdiRre2Cl+syeIuIkGze2cWTiFNI4HSQfQPzPIk0UD3a91s4xv1+T37oN
-	 1x+7iDROV5sg/tsjl6r16DFQ1fEnqI8TXdwhvn2k86UT+FHNkFvav/2MuHR8cvn1H2
-	 vsb072QjOOkpqXa29mgYfByU+4Smva6h/Tax9c1mTe1aQeRyfmOMshap2V3VbyvLws
-	 pQOUMHpWUMjEQ==
-Message-ID: <5d771ddf248edc671d8cce251ea1a594703ef2fa.camel@kernel.org>
-Subject: Re: [PATCH v2 11/20] fscrypt_d_revalidate(): use stable parent
+	b=mItDL7snKvqClBPZp9gs6F6D+H5ih39XTGGwT9s34NW+GMGcUT0+JLC5P2b1esS7Y
+	 cWjMWNPefS0zT9a2q/vgHMAe9p1LPeVtbkgs249WFElaM61gflUxxZQ2Uo1ABYU7Bj
+	 aohAET43E9nsQ5LyIbtvo3FaJFCMIBiqqaqmb0Rp8WB9HA7lMMmqrlar2kNFT31ry6
+	 PtM1TMbIwrn0Nzyn80z4kj7UiPHy6exRpGUfIqmR5wH7tzIy3eE/99zoh91jcCb9Qx
+	 ZBov5+nmpnOEVHL8SdijPNSTX6Ru7eQYn632r9lKxuj42ocATR2xDyc5/gKVN1UOTJ
+	 C88WxeaGefWKw==
+Message-ID: <7991b091be0d614c156a847c878f5e9001ff8b41.camel@kernel.org>
+Subject: Re: [PATCH v2 13/20] vfat_revalidate{,_ci}(): use stable parent
  inode passed by caller
 From: Jeff Layton <jlayton@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
@@ -50,11 +50,11 @@ Cc: agruenba@redhat.com, amir73il@gmail.com, brauner@kernel.org,
 	ceph-devel@vger.kernel.org, dhowells@redhat.com, hubcap@omnibond.com,
  jack@suse.cz, 	krisman@kernel.org, linux-nfs@vger.kernel.org,
  miklos@szeredi.hu, 	torvalds@linux-foundation.org
-Date: Fri, 17 Jan 2025 10:20:39 -0500
-In-Reply-To: <20250116052317.485356-11-viro@zeniv.linux.org.uk>
+Date: Fri, 17 Jan 2025 10:22:30 -0500
+In-Reply-To: <20250116052317.485356-13-viro@zeniv.linux.org.uk>
 References: <20250116052103.GF1977892@ZenIV>
 	 <20250116052317.485356-1-viro@zeniv.linux.org.uk>
-	 <20250116052317.485356-11-viro@zeniv.linux.org.uk>
+	 <20250116052317.485356-13-viro@zeniv.linux.org.uk>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -140,70 +140,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Thu, 2025-01-16 at 05:23 +0000, Al Viro wrote:
-> The only thing it's using is parent directory inode and we are already
-> given a stable reference to that - no need to bother with boilerplate.
->=20
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  fs/crypto/fname.c | 21 +++++----------------
->  1 file changed, 5 insertions(+), 16 deletions(-)
+>  fs/fat/namei_vfat.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
 >=20
-> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> index 389f5b2bf63b..010f9c0a4c2f 100644
-> --- a/fs/crypto/fname.c
-> +++ b/fs/crypto/fname.c
-> @@ -574,12 +574,10 @@ EXPORT_SYMBOL_GPL(fscrypt_fname_siphash);
->   * Validate dentries in encrypted directories to make sure we aren't pot=
-entially
->   * caching stale dentries after a key has been added.
+> diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+> index f9cbd5c6f932..926c26e90ef8 100644
+> --- a/fs/fat/namei_vfat.c
+> +++ b/fs/fat/namei_vfat.c
+> @@ -43,14 +43,9 @@ static inline void vfat_d_version_set(struct dentry *d=
+entry,
+>   * If it happened, the negative dentry isn't actually negative
+>   * anymore.  So, drop it.
 >   */
-> -int fscrypt_d_revalidate(struct inode *parent_dir, const struct qstr *na=
-me,
-> +int fscrypt_d_revalidate(struct inode *dir, const struct qstr *name,
->  			 struct dentry *dentry, unsigned int flags)
+> -static int vfat_revalidate_shortname(struct dentry *dentry)
+> +static bool vfat_revalidate_shortname(struct dentry *dentry, struct inod=
+e *dir)
 >  {
-> -	struct dentry *dir;
->  	int err;
-> -	int valid;
-> =20
->  	/*
->  	 * Plaintext names are always valid, since fscrypt doesn't support
-> @@ -592,30 +590,21 @@ int fscrypt_d_revalidate(struct inode *parent_dir, =
-const struct qstr *name,
->  	/*
->  	 * No-key name; valid if the directory's key is still unavailable.
->  	 *
-> -	 * Although fscrypt forbids rename() on no-key names, we still must use
-> -	 * dget_parent() here rather than use ->d_parent directly.  That's
-> -	 * because a corrupted fs image may contain directory hard links, which
-> -	 * the VFS handles by moving the directory's dentry tree in the dcache
-> -	 * each time ->lookup() finds the directory and it already has a dentry
-> -	 * elsewhere.  Thus ->d_parent can be changing, and we must safely grab
-> -	 * a reference to some ->d_parent to prevent it from being freed.
-> +	 * Note in RCU mode we have to bail if we get here -
-> +	 * fscrypt_get_encryption_info() may block.
->  	 */
-> =20
->  	if (flags & LOOKUP_RCU)
->  		return -ECHILD;
-> =20
-> -	dir =3D dget_parent(dentry);
->  	/*
->  	 * Pass allow_unsupported=3Dtrue, so that files with an unsupported
->  	 * encryption policy can be deleted.
->  	 */
-> -	err =3D fscrypt_get_encryption_info(d_inode(dir), true);
-> -	valid =3D !fscrypt_has_encryption_key(d_inode(dir));
-> -	dput(dir);
-> -
-> +	err =3D fscrypt_get_encryption_info(dir, true);
->  	if (err < 0)
->  		return err;
-> =20
-> -	return valid;
-> +	return !fscrypt_has_encryption_key(dir);
+> -	int ret =3D 1;
+> -	spin_lock(&dentry->d_lock);
+> -	if (!inode_eq_iversion(d_inode(dentry->d_parent), vfat_d_version(dentry=
+)))
+> -		ret =3D 0;
+> -	spin_unlock(&dentry->d_lock);
+> -	return ret;
+> +	return inode_eq_iversion(dir, vfat_d_version(dentry));
 >  }
->  EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
+> =20
+>  static int vfat_revalidate(struct inode *dir, const struct qstr *name,
+> @@ -62,7 +57,7 @@ static int vfat_revalidate(struct inode *dir, const str=
+uct qstr *name,
+>  	/* This is not negative dentry. Always valid. */
+>  	if (d_really_is_positive(dentry))
+>  		return 1;
+> -	return vfat_revalidate_shortname(dentry);
+> +	return vfat_revalidate_shortname(dentry, dir);
+>  }
+> =20
+>  static int vfat_revalidate_ci(struct inode *dir, const struct qstr *name=
+,
+> @@ -99,7 +94,7 @@ static int vfat_revalidate_ci(struct inode *dir, const =
+struct qstr *name,
+>  	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
+>  		return 0;
+> =20
+> -	return vfat_revalidate_shortname(dentry);
+> +	return vfat_revalidate_shortname(dentry, dir);
+>  }
+> =20
+>  /* returns the length of a struct qstr, ignoring trailing dots */
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
+Al, you can also add my R-b to 1-12 too.
+
+Nice work!
 
