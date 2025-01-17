@@ -1,95 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-39481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2F0A14E96
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 12:40:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06E4A14EB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 12:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113D43A8A0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 11:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186371692C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 11:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3274B1FE451;
-	Fri, 17 Jan 2025 11:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284051FE45D;
+	Fri, 17 Jan 2025 11:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LcvQLdKg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+FsKBYIY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LcvQLdKg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+FsKBYIY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgpcnuJp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D21219992C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 11:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3F81FCD08;
+	Fri, 17 Jan 2025 11:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737114019; cv=none; b=VI6D+l73LagglT6Lw0LOqJFpzizRGSn17XwB+aMO15aTF+9/cdMcD7FbeTzf62fam5eVoaneqqfSe1q79MqBSFIWP4V1ULFB2V+iGYpsHe89jMFGWYKAHd9RVoDrGTTzA4z+yxCj4RXkdeIDm4PS0qvGb60f78t3pPZ69MTjKa4=
+	t=1737114395; cv=none; b=FSUwh05D/P4QjsWsJsd1G/Z6LRitOj1wddMCSoP3lz5/jPR8WGOunucsJ/mOFPgmmeYIvR9hVJ9PRwRdabKoRghoDYZ/TEDYV2haeTwqmOhufWr0qHZR1sDly1pUYNQGisq1CK+222LRGq6bQ1GEoh0764KobTJlhyw1fmvNrSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737114019; c=relaxed/simple;
-	bh=yDF6K/UJl4w/mlvAO6F9a79S+FzvKguRY+ufMaFrF4g=;
+	s=arc-20240116; t=1737114395; c=relaxed/simple;
+	bh=wy2sGlgkCHB8XoFf72DgQXzchRd6Dnj4sl3xWt2ivSc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u26OJi5r+jG0fVQDYxzpxHZY5Pq2keD+sFGg8H8KoHhhG7IkQQA0icSKxQyhQraOtidlgTovD0IIiiExi3ZsFlYaSMfYt/FIbticC9HLMwnlvTC+yuwpCcwhRkn7RLowm1z2v0dT/XdQfd2L58cW0/e3PkLBYVPZ766pUlJRYG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LcvQLdKg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+FsKBYIY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LcvQLdKg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+FsKBYIY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CB94C1F387;
-	Fri, 17 Jan 2025 11:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737114015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qk+MlsSzhydQRbKsTOiT8hCBIsqm8GiDAuTyUhXXqso=;
-	b=LcvQLdKgklVsXGu6NCwD8I5XfPbxO3FScNOvglWrxxNCaKRdTd8R3emDCKUebbY5vVJt6E
-	wiaiEIzSlv4DhqYUjKNO4HHZR7dddUklyYohINyObnl1Wr4qzEJPFje28SyCs5HKcUG0nj
-	I8BGEHbjJvufrWSaPoLXVzaxYEARGhI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737114015;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qk+MlsSzhydQRbKsTOiT8hCBIsqm8GiDAuTyUhXXqso=;
-	b=+FsKBYIYnlba3t/BMgsTSvCPvLTsahePapGeOHzgLWTByTgEtyGqmgcdrx6Oj1ZBXHWZiz
-	DdHjAEWsaN9AhwDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737114015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qk+MlsSzhydQRbKsTOiT8hCBIsqm8GiDAuTyUhXXqso=;
-	b=LcvQLdKgklVsXGu6NCwD8I5XfPbxO3FScNOvglWrxxNCaKRdTd8R3emDCKUebbY5vVJt6E
-	wiaiEIzSlv4DhqYUjKNO4HHZR7dddUklyYohINyObnl1Wr4qzEJPFje28SyCs5HKcUG0nj
-	I8BGEHbjJvufrWSaPoLXVzaxYEARGhI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737114015;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qk+MlsSzhydQRbKsTOiT8hCBIsqm8GiDAuTyUhXXqso=;
-	b=+FsKBYIYnlba3t/BMgsTSvCPvLTsahePapGeOHzgLWTByTgEtyGqmgcdrx6Oj1ZBXHWZiz
-	DdHjAEWsaN9AhwDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD863139CB;
-	Fri, 17 Jan 2025 11:40:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xtP2LZ9BimdGfAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 17 Jan 2025 11:40:15 +0000
-Message-ID: <73eb82d2-1a43-4e88-a5e3-6083a04318c1@suse.cz>
-Date: Fri, 17 Jan 2025 12:40:15 +0100
+	 In-Reply-To:Content-Type; b=CmBAWTNpHreq+OxmmoF7h1FnL/n9E7AEzwMtSGwpqc2Ffvry7cvzQ0FLsUo5mTe//KalouMaALKbd2+usXc/In9f7CeNv8Cbbu8NZbTiLOf/RWmwghPWb3olSGmgD4B36ZVTjJOq8ey3MH+d2LX+G7miTzw5uEBHCyaY5L8mFJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgpcnuJp; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso3949334a12.0;
+        Fri, 17 Jan 2025 03:46:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737114392; x=1737719192; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx3KHsMXHlOHH2FEIkfq59/+Y9ujoUpH+gbFLMORCwg=;
+        b=UgpcnuJpfhvPGuPW41pJmwCJDke8mTNaWjZEeKNIb8m43iTrcK/lxlfsalVJm9iew7
+         SaF0kNcqYIuD7TbJzE29/2ywWLIiEp+HJPCoc7fWDF6xAPx4MoqMKTK25/r3K889B0K1
+         kn7M7XJ6OAIom5iQs0a514jVE8pUvinX0reahPLNgvMuj7BZ3h3SIwazDK4fudWMS4z3
+         8D2k+uvwtOfSgAdOMOyITVBqeeBTMkIU2qk7BJZOe6iCCJs32YMaPiU5mRq7I0sfsxrB
+         KMOoMHjkamQQcRYCn5trITxbR4EBHL3dAnSGHmcnYDGgHBmJ2HPSpiNM3bDuTu+lNvT5
+         y82A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737114392; x=1737719192;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx3KHsMXHlOHH2FEIkfq59/+Y9ujoUpH+gbFLMORCwg=;
+        b=D3e82d7LE0CJcbGNRe4EcUJk3+qW43u1fbMRt9S7R18lRZRf4lUNfsfsXojHZUUwQ2
+         sfTn+U4N+v7YrgtW4NWxmfI2zdioK+SV6NE5xY0Eu6pvs6vsQCYHOTGYOgvm/9BNAXVo
+         F3SFkWOlJvEAoSxfNeEMSj6Qysdo8kjtcDwdHzD4C1CVz6qG6oAH6B5v/RBTo1X6sGCc
+         YXuHgvVrkobDiGuD8uw92dO9l+fSoyUP6hNKzOUdHT3xQ3zhv9IpAhTjSldf5iTvqoXQ
+         xxcVXKEmOEBuoG5SeYFPqjTHrxBe2FhQsLSTisvjgMsaltWKqwQ0gSgiBGNYqQn0+Pzt
+         /vBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0FSEWgtpJIQFgNfuebCQUfVpB0ZMmzFkqkuiKg2uS4WAO6ALc02Lmh0SbTVrOebgTxDOK8jUnPNfr2+Vqgw==@vger.kernel.org, AJvYcCXAnJy5oZdqvzQd/PaxM3o7a+03OuOl24CM4Udi4wuLdxHSg7zDavoLBskymGvir5tChsMLIZIdpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyrxh77ljHJmDZ63HnMRf2N8hyVBWmCZMKiNYhYnmuxqnDfhW+
+	NolF25VpK2NqUb+JZpOK4lU6GkunaqmGuuGdGQ8vo6ww3tS7MrTM
+X-Gm-Gg: ASbGncsgHJuAHMA+JzqCRNhbChL1Y+QUwrlStJNHFY6U9MDHoWNcj6ojFeLtDBfXJ1y
+	sbVyaVP0IR60Y2h7jjsSSP/IYJOxOUw438ov3kyh9UOI8WXph7B34DNqpWC8usZMT/sweUQ2wwp
+	9RKn/RBLyMXc5KWyEufPv+WgqYQnzJnRcy2teV8CRbVP6zNVu8bW7a3yDKBP1w5OUzFsiSmbQLf
+	iLIdvKvWd31OkfBZS/LqTmDW+Lx0e/lTFtw2dAUxB76tI2XljLEsQb4syEKznHFAlNnygQkrDu0
+	EolTq7RPLSYAvg==
+X-Google-Smtp-Source: AGHT+IFovGRiXvvOZKvsxXv/Tl/6arXE38x9R+vMzWWevtGXnm07GgBJcFQNKzcK+M604x1OYKpTCQ==
+X-Received: by 2002:a05:6402:2110:b0:5da:c38:b1cf with SMTP id 4fb4d7f45d1cf-5db7d2dc135mr1905328a12.3.1737114391896;
+        Fri, 17 Jan 2025 03:46:31 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:56de])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73eb769dsm1350228a12.50.2025.01.17.03.46.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2025 03:46:31 -0800 (PST)
+Message-ID: <946df966-b50b-483c-a8cf-e480e8f9b4c3@gmail.com>
+Date: Fri, 17 Jan 2025 11:47:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,62 +81,79 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] Improving large folio writeback performance
-To: Joanne Koong <joannelkoong@gmail.com>, lsf-pc@lists.linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
+Subject: Re: [PATCH v9 13/17] fuse: Allow to queue fg requests through
+ io-uring
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com,lists.linux-foundation.org];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_FIVE(0.00)[5]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
 
-On 1/15/25 01:50, Joanne Koong wrote:
-> Hi all,
-> 
-> I would like to propose a discussion topic about improving large folio
-> writeback performance. As more filesystems adopt large folios, it
-> becomes increasingly important that writeback is made to be as
-> performant as possible. There are two areas I'd like to discuss:
-> 
-> 
-> == Granularity of dirty pages writeback ==
-> Currently, the granularity of writeback is at the folio level. If one
-> byte in a folio is dirty, the entire folio will be written back. This
-> becomes unscalable for larger folios and significantly degrades
-> performance, especially for workloads that employ random writes.
-> 
-> One idea is to track dirty pages at a smaller granularity using a
-> 64-bit bitmap stored inside the folio struct where each bit tracks a
-> smaller chunk of pages (eg for 2 MB folios, each bit would track 32k
-> pages), and only write back dirty chunks rather than the entire folio.
+On 1/7/25 00:25, Bernd Schubert wrote:
+> This prepares queueing and sending foreground requests through
+> io-uring.
 
-I think this might be tricky in some cases? I.e. with 2 MB and pmd-mapped
-folio, it's possible to write-protect only the whole pmd, not individual 32k
-chunks in order to catch the first write to a chunk to mark it dirty.
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # io_uring
+
+
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>   fs/fuse/dev_uring.c   | 185 ++++++++++++++++++++++++++++++++++++++++++++++++--
+>   fs/fuse/dev_uring_i.h |  11 ++-
+>   2 files changed, 187 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 01a908b2ef9ada14b759ca047eab40b4c4431d89..89a22a4eee23cbba49bac7a2d2126bb51193326f 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -26,6 +26,29 @@ bool fuse_uring_enabled(void)
+>   	return enable_uring;
+>   }
+>  
+...
+> +
+> +/*
+> + * This prepares and sends the ring request in fuse-uring task context.
+> + * User buffers are not mapped yet - the application does not have permission
+> + * to write to it - this has to be executed in ring task context.
+> + */
+> +static void
+> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+> +			    unsigned int issue_flags)
+> +{
+> +	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+> +	struct fuse_ring_queue *queue = ent->queue;
+> +	int err;
+> +
+> +	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD)) {
+> +		err = -ECANCELED;
+> +		goto terminating;
+> +	}
+> +
+> +	err = fuse_uring_prepare_send(ent);
+> +	if (err)
+> +		goto err;
+> +
+> +terminating:
+> +	spin_lock(&queue->lock);
+> +	ent->state = FRRS_USERSPACE;
+> +	list_move(&ent->list, &queue->ent_in_userspace);
+> +	spin_unlock(&queue->lock);
+> +	io_uring_cmd_done(cmd, err, 0, issue_flags);
+> +	ent->cmd = NULL;
+
+Might be worth moving inside the critical section as well.
+
+
+-- 
+Pavel Begunkov
 
 
