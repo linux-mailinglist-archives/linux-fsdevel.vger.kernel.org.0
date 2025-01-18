@@ -1,61 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-39575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD856A15B3F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 04:37:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6747A15BCA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 08:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EA5188AE19
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 03:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444431889D9B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 07:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BFA5789D;
-	Sat, 18 Jan 2025 03:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C228614B942;
+	Sat, 18 Jan 2025 07:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JgJAPfHi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MmaBaIxe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3014F2F50;
-	Sat, 18 Jan 2025 03:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE8A13AA27
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 07:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737171449; cv=none; b=iXnhON8Y7LdmE1gySGWBiH3+97jWnF/qPXkjMlpK4Vo7C6bw9j/fuHMv9xso8Ax6GY8Cyq9ORnVmSbzfjCTel7yMkW1jwV+4RPAEHr5mxbvlS9sz8hTeQvav7KrIyqkSLneKz3wEWpcX9AbN0A8NeWa10L/C933GubNyGOPCLmg=
+	t=1737186583; cv=none; b=jz99pBHBvznRyOSoP5Jh/wZHpZQoRjVPuYEu0vBaBpkpe5GskdBVAP/UD5Dto4362cOZNLqb2BKZ3TMseaYVvP+94hmbiolkuAavOEm769AUhNX5n9z0WgNrV26LsNtqla8uYAze4B2dqiRK1uoJhyG1j6+vXWFwpnRUyYT4uAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737171449; c=relaxed/simple;
-	bh=QsmzEHN5VmX8x1BO/Et2sEKzyf1LM5z0luOb9m/Hgnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBMVq7Q0ekSDnOY1jNeCL4apvQQhtPKkUkjlLlEotXb6VC02ESzkvd8pf6c4vo8pRnWpk5E0c1NZjuEEkdtnxTeXDa8FKIkSX8KcpZgG6I2lUvy0EsSS6mYPxX3WasVJ0PH69KFt8OaFXQRcPhYwWt+KysSbTXxeAvWZI7fJ6ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JgJAPfHi; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sOnBT1FZVH1E3dZbLAV8Ykudv006fb56LW7qJ+ZnBq4=; b=JgJAPfHiQgn67/6q+E35BJM2xT
-	iWVzX9n2mROpuIhO/070UJVJhaxJCDf/YCFfe75lhTRin1BnIgjZc8NS0sVXjSrGeia+EAbruSFIg
-	Xk7gjxhhFljeVfXo2MExvasXzLdaxRJLKeFWpLgFpjQpkl1paACkwCmrHdYr2r+3CCa3tMTGTRvCH
-	ox4yAglqCcOJzawzMOiOMUQ4eVasBCjXq0jwmTJTztjXEU4x7p9w8NMtaVC7TG80r1j5N17asc/w5
-	gtEu+TDqtCs1wZJT3hBabrRKkT+g7HUEkIpjUD9V/nf70KU89JoDTIyFDiJFY9taDVgIDRqjDladv
-	dWbnGo0A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYzeF-00000003nHx-2cw8;
-	Sat, 18 Jan 2025 03:37:23 +0000
-Date: Sat, 18 Jan 2025 03:37:23 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
-	lsf-pc@lists.linux-foundation.org,
-	Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-	bpf@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] time to reconsider tracepoints in the vfs?
-Message-ID: <20250118033723.GV1977892@ZenIV>
-References: <20250116124949.GA2446417@mit.edu>
- <Z4l3rb11fJqNravu@dread.disaster.area>
- <oidb2ijfx64r4lgpf3ei7teexpa54ngnef3cmq5bsxsgxmtros@7pn2y34ud4l7>
+	s=arc-20240116; t=1737186583; c=relaxed/simple;
+	bh=naCV2a6hsdnVykBflCp49aRvepBykIAaOBcJl0QMnDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y/N0ZmGQbxUNNSNYDJOxSq4jwStdW1i6p0D+PJ9kcaEtyN+6ochipv8fZSvaFUsgvZ3RNv+TDEoLQdYUCMzUwUWQW4JyCnWSvLsieakncUcW0R4JOkX+Y59XvYrjjYOZbBJh8N35tZrHG2NLY04oF/yvAu6QNJDfcBob0Z9Q2MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MmaBaIxe; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1737186581; x=1768722581;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=naCV2a6hsdnVykBflCp49aRvepBykIAaOBcJl0QMnDc=;
+  b=MmaBaIxeNkdSCi5LS/090nXh9GIIocnk3LHqXlHUs/FOcfRUJTEkVbsh
+   72uUi1iUK0NVsSKWCbnuedah7+JHfumkMgXT64egjBNzd7+AJd/gjSdGI
+   9uVDEi1lk3D1dLBU5gXu7rRc8e97Qwt9NVBBqYVpUmyPeyrzNI15n7ylv
+   tSKr3EvqYg6Hg8R0wiYdA2uAn5k6TWKKMyYLd36I43N1+27J44ENj/n5m
+   92bzJzFwkTFCj+K23YCHmTx0S6ukLJDYxr6X1syRgWrZw6mSXuj0+KJSD
+   k9WlliFlS9hjK3JGtRwlaBr+7HslVQvwx1CMywTle4AQbGrSK00r+gjY1
+   Q==;
+X-CSE-ConnectionGUID: vVTk8kliTWGL7zP+lv/PbQ==
+X-CSE-MsgGUID: Ly7DbkJnQIyzQSTcpLimtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11318"; a="37533082"
+X-IronPort-AV: E=Sophos;i="6.13,214,1732608000"; 
+   d="scan'208";a="37533082"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 23:49:40 -0800
+X-CSE-ConnectionGUID: w6BZSUwESMCjLroxKTGWOQ==
+X-CSE-MsgGUID: sxi7UMVySxiQ38g/LJ/UmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,214,1732608000"; 
+   d="scan'208";a="105823258"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 17 Jan 2025 23:49:38 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tZ3aK-000UCN-0V;
+	Sat, 18 Jan 2025 07:49:36 +0000
+Date: Sat, 18 Jan 2025 15:48:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [viro-vfs:work.ufs 3/3] fs/ufs/super.c:1246:22: warning: variable
+ 'ufstype' set but not used
+Message-ID: <202501181533.2SkfgJga-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,46 +77,101 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <oidb2ijfx64r4lgpf3ei7teexpa54ngnef3cmq5bsxsgxmtros@7pn2y34ud4l7>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Jan 17, 2025 at 08:07:48PM -0700, Daniel Xu wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.ufs
+head:   d6ae2b2cfce0ae88189b7e6a2d2bf5109b5de0af
+commit: 8cfcc910ecb377c1be493019dc67c42fa783b734 [3/3] ufs: convert ufs to the new mount API
+config: csky-randconfig-002-20250118 (https://download.01.org/0day-ci/archive/20250118/202501181533.2SkfgJga-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250118/202501181533.2SkfgJga-lkp@intel.com/reproduce)
 
-> In addition to the points Andrii makes below, tracepoints also have a
-> nice documenting property. They tend to get added to "places of
-> interest". They're a great starting point for non kernel developers to
-> dig into kernel internals. Often times tracepoint naming (as well as the
-> exported fields) provide helpful hints.
-> 
-> At least for me, if I'm mucking around new places (mostly net/) I'll
-> tend to go look at the tracepoints to find the interesting codepaths.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501181533.2SkfgJga-lkp@intel.com/
 
-Here's one for you:
-        trace_ocfs2_file_splice_read(inode, in, in->f_path.dentry,
-                                     (unsigned long long)OCFS2_I(inode)->ip_blkno,
-                                     in->f_path.dentry->d_name.len,
-                                     in->f_path.dentry->d_name.name,
-                                     flags);
-The trouble is, what happens if your ->splice_read() races
-with rename()?  Yes, it is allowed to happen in parallel with
-splice(2).  Or with read(2), for that matter.  Or close(2) (and
-dup2(2) or exit(2) of something that happens to have the file
-opened).
+All warnings (new ones prefixed by >>):
 
-What happens is that
-	* you get len and name that might not match each other - you might
-see len being 200 and name pointing to 40-byte array inside dentry.
-	* you get name that is not guaranteed to be *there* - you might
-pick one before rename and have it freed and reused by the time you
-try to access it.
-	* you get name that points to a string that might be modified
-by another CPU right under you (for short names).
+   fs/ufs/super.c: In function 'ufs_reconfigure':
+>> fs/ufs/super.c:1246:22: warning: variable 'ufstype' set but not used [-Wunused-but-set-variable]
+    1246 |         unsigned int ufstype;
+         |                      ^~~~~~~
 
-Doing that inside ->mkdir() - sure, no problem, the name _is_ stable
-there.  Doing that inside ->lookup() - fine on the entry, may be not
-safe on the way out.
 
-In filesystems it's living dangerously, but as long as you know what
-you are doing you can get away with that (ocfs2 folks hadn't, but
-it's not just ocfs2 - similar tracepoints exist for nfs, etc.)...
+vim +/ufstype +1246 fs/ufs/super.c
+
+  1238	
+  1239	static int ufs_reconfigure(struct fs_context *fc)
+  1240	{
+  1241		struct ufs_sb_private_info * uspi;
+  1242		struct ufs_super_block_first * usb1;
+  1243		struct ufs_super_block_third * usb3;
+  1244		struct ufs_fs_context *ctx = fc->fs_private;
+  1245		struct super_block *sb = fc->root->d_sb;
+> 1246		unsigned int ufstype;
+  1247		unsigned int flags;
+  1248	
+  1249		sync_filesystem(sb);
+  1250		mutex_lock(&UFS_SB(sb)->s_lock);
+  1251		uspi = UFS_SB(sb)->s_uspi;
+  1252		flags = UFS_SB(sb)->s_flags;
+  1253		usb1 = ubh_get_usb_first(uspi);
+  1254		usb3 = ubh_get_usb_third(uspi);
+  1255		
+  1256		ufstype = UFS_SB(sb)->s_flavour;
+  1257	
+  1258		if ((bool)(fc->sb_flags & SB_RDONLY) == sb_rdonly(sb)) {
+  1259			UFS_SB(sb)->s_on_err = ctx->on_err;
+  1260			mutex_unlock(&UFS_SB(sb)->s_lock);
+  1261			return 0;
+  1262		}
+  1263		
+  1264		/*
+  1265		 * fs was mouted as rw, remounting ro
+  1266		 */
+  1267		if (fc->sb_flags & SB_RDONLY) {
+  1268			ufs_put_super_internal(sb);
+  1269			usb1->fs_time = ufs_get_seconds(sb);
+  1270			if ((flags & UFS_ST_MASK) == UFS_ST_SUN
+  1271			  || (flags & UFS_ST_MASK) == UFS_ST_SUNOS
+  1272			  || (flags & UFS_ST_MASK) == UFS_ST_SUNx86) 
+  1273				ufs_set_fs_state(sb, usb1, usb3,
+  1274					UFS_FSOK - fs32_to_cpu(sb, usb1->fs_time));
+  1275			ubh_mark_buffer_dirty (USPI_UBH(uspi));
+  1276			sb->s_flags |= SB_RDONLY;
+  1277		} else {
+  1278		/*
+  1279		 * fs was mounted as ro, remounting rw
+  1280		 */
+  1281	#ifndef CONFIG_UFS_FS_WRITE
+  1282			pr_err("ufs was compiled with read-only support, can't be mounted as read-write\n");
+  1283			mutex_unlock(&UFS_SB(sb)->s_lock);
+  1284			return -EINVAL;
+  1285	#else
+  1286			if (ufstype != UFS_MOUNT_UFSTYPE_SUN && 
+  1287			    ufstype != UFS_MOUNT_UFSTYPE_SUNOS &&
+  1288			    ufstype != UFS_MOUNT_UFSTYPE_44BSD &&
+  1289			    ufstype != UFS_MOUNT_UFSTYPE_SUNx86 &&
+  1290			    ufstype != UFS_MOUNT_UFSTYPE_UFS2) {
+  1291				pr_err("this ufstype is read-only supported\n");
+  1292				mutex_unlock(&UFS_SB(sb)->s_lock);
+  1293				return -EINVAL;
+  1294			}
+  1295			if (!ufs_read_cylinder_structures(sb)) {
+  1296				pr_err("failed during remounting\n");
+  1297				mutex_unlock(&UFS_SB(sb)->s_lock);
+  1298				return -EPERM;
+  1299			}
+  1300			sb->s_flags &= ~SB_RDONLY;
+  1301	#endif
+  1302		}
+  1303		UFS_SB(sb)->s_on_err = ctx->on_err;
+  1304		mutex_unlock(&UFS_SB(sb)->s_lock);
+  1305		return 0;
+  1306	}
+  1307	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
