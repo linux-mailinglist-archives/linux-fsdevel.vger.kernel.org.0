@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-39585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C50A15D1F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:07:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA13DA15D20
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B4FB7A2E51
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 13:07:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3878F188722D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 13:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6105B18DF7C;
-	Sat, 18 Jan 2025 13:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4777B18C92F;
+	Sat, 18 Jan 2025 13:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwgI96CR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apbtAnoe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA32188CA9;
-	Sat, 18 Jan 2025 13:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B7EA95C;
+	Sat, 18 Jan 2025 13:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737205626; cv=none; b=J+4IaTYfGzHo9OZEeNucoSDFXLzLIvucw/EtbeOPbEBzWQV/S4iE+rnqJJbVgAbP0/Dseyutcwfzs1xUJhXUrxiNFRHHeEX9iklrTH+sxuQXeF0Q7Inu9rqvYiQ4fAU+dshA8u6CTm1nb2dW5OrnHqtlz/V87zrifKmLqajGetY=
+	t=1737205702; cv=none; b=XXmSLsbh4UMYNJeDLM21lQ/BR8tHXRcSGVAYw687pOjjQusn68SxUxleLfnMochSwrPHNdCHhrFc5zrimBKfBD1FILi0ue2Us+32+5HCUc0jXvCWnJs9SSjoas+sHfR+ulnXaEt5tBXw3aHUFRQLWGCzKWJMedP0aaLB7s37W3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737205626; c=relaxed/simple;
-	bh=Dcy/a7olfidFEfGFtHKWE7q2/l9XxSdglrnJalOLZQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhNwKwiCl4fL0rMI3bRSXjHaCRZGh295TCEhfq6BhbW7q5pEOrmALxjoYpW2qZ5plSIRF/yVoc5IK1jlePuXX8ZXAp6+SCzmsP0kHzri+ObTbSc6YNROttIyLu2pWh0BGaI9EC//31y3igcKGgW+/RYRkzQPXlA7z4eJmgu2GIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwgI96CR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DACC4CED1;
-	Sat, 18 Jan 2025 13:07:04 +0000 (UTC)
+	s=arc-20240116; t=1737205702; c=relaxed/simple;
+	bh=DecL60QrxRCbb94xW104uUHzC8TLd8HIprT3p6DeGTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NfIQzcc3TWzvJHfcPThzLHHntQrvaOQi6ABM9H+13nuSTWy828vOTRsCIplIyGIF54JOXvvZpw8Cr+IuHOpUivN99a2ReN6Xpblgw35rrzWP3fC78BnhuKYp3/ovsoiuM7mNWRcDbb5NNUcUAoyeGDICrPzbZp949vO/L0NAPMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apbtAnoe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4526C4CED1;
+	Sat, 18 Jan 2025 13:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737205626;
-	bh=Dcy/a7olfidFEfGFtHKWE7q2/l9XxSdglrnJalOLZQY=;
+	s=k20201202; t=1737205702;
+	bh=DecL60QrxRCbb94xW104uUHzC8TLd8HIprT3p6DeGTM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=HwgI96CRBrBHUrml6nz+7FkDlY8hBx4FIapFoodsuJHNJnYnH1hlrbWmkjX3V3lCE
-	 b13x14LhywUbIEkrd/VmYUSE1p8fU5MkfMCgpaVVIduVcUC2ni/BtuKOk3grhWRlza
-	 fNAI5R3QCmw4VMJgD+Dt3blSu9Hl3z0ZFyWkK2EQLnkWMiyOU36kdx2rIdeZ0ZxSFj
-	 12XS1UDc1Z2zF/5EVS1P90WAQDHoXhJfJXoP+s2NBH1cAmswGMsNRkG345x2XtP4K5
-	 p/Ko5AXj9mWD37JEr/gzGkJzSqITYQ3pvJgwMZy1y9OySYAmJXDSvimepIVK9G+HvW
-	 JMqfndCVkIu+w==
+	b=apbtAnoetEN485XlIGC0afgffI5jeZYTXrP1na3IcMxy902xhqDuisDohCSQD5A1C
+	 k71W+dsF03ES1Jsh9+NicU3YEIhKtOTW3SVwDxr6LchtqCyvLg20BYKyR82Pm7Ff5h
+	 lz9UcMSdCizmmk1dL7GiiEb9XTFC+IhMH08VUIL0YeHdD50Wf+J02Vv5M5cXJCrcKs
+	 a8QB8j0E45ydxUCTgs6SkzgCEc0EE4p9kTPYP/ACjn/2mRnslC5LR6ePKEsvbHOr+v
+	 n892KR86EKL1OGmqVJDGKLAeT6btCeNkMKTFqwsLWE6kok11WeADGj/AYNyRGYNiLd
+	 Oro4Eu69ZzeZQ==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs mount
-Date: Sat, 18 Jan 2025 14:06:58 +0100
-Message-ID: <20250118-vfs-mount-bc855e2c7463@brauner>
+Subject: [GIT PULL] vfs libfs
+Date: Sat, 18 Jan 2025 14:08:14 +0100
+Message-ID: <20250118-vfs-libfs-675d6c542bcc@brauner>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6573; i=brauner@kernel.org; h=from:subject:message-id; bh=Dcy/a7olfidFEfGFtHKWE7q2/l9XxSdglrnJalOLZQY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR3Ly/hUrke7mhtWPlzJ8MfR9GoFwzWUz69SD75lJN5Q 5Dgj2X/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZiHcDwP//G6Sa+pAj9oM8b edMj3qjaLZ6yWrgy45J+zurPC8/symdk+LfwmCOnzF6jfd9/yPfu7i9UkyurDUxi8NMSeMcRKdX ODAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3808; i=brauner@kernel.org; h=from:subject:message-id; bh=DecL60QrxRCbb94xW104uUHzC8TLd8HIprT3p6DeGTM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR3L98vfParVXPB3g0fXp14dHWVudWUxfoaq1K6n2ake Mhe/fHYtKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BeAiKxkZXs+e0qKRcfuy6fb3 a3suru9QFZObtGX7O0/fbalCxx/vq2T4X/RJbYZYvcXcn3pzX7sprz1huDhHU18xtKAv3O/Mtpn 6rAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -63,58 +63,50 @@ Hey Linus,
 
 /* Summary */
 
-This contains mount update for this cycle:
+This improves the stable directory offset behavior in various ways.
+Stable offsets are needed so that NFS can reliably read directories on
+filesystems such as tmpfs:
 
-- Add a mountinfo program to demonstrate statmount()/listmount()
+- Improve the end-of-directory detection
 
-  Add a new "mountinfo" sample userland program that demonstrates how to
-  use statmount() and listmount() to get at the same info that
-  /proc/pid/mountinfo provides.
+  According to getdents(3), the d_off field in each returned directory
+  entry points to the next entry in the directory. The d_off field in
+  the last returned entry in the readdir buffer must contain a valid
+  offset value, but if it points to an actual directory entry, then
+  readdir/getdents can loop.
 
-- Remove pointless nospec.h include.
+  Introduce a specific fixed offset value that is placed in the d_off
+  field of the last entry in a directory. Some user space applications
+  assume that the EOD offset value is larger than the offsets of real
+  directory entries, so the largest valid offset value is reserved for
+  this purpose. This new value is never allocated by
+  simple_offset_add().
 
-- Prepend statmount.mnt_opts string with security_sb_mnt_opts()
+  When ->iterate_dir() returns, getdents{64} inserts the ctx->pos value
+  into the d_off field of the last valid entry in the readdir buffer.
+  When it hits EOD, offset_readdir() sets ctx->pos to the EOD offset
+  value so the last entry is updated to point to the EOD marker.
 
-  Currently these mount options aren't accessible via statmount().
+  When trying to read the entry at the EOD offset, offset_readdir()
+  terminates immediately.
 
-- Add new mount namespaces to mount namespace rbtree outside of the
-  namespace semaphore.
+- Rely on d_children to iterate stable offset directories
 
-- Lockless mount namespace lookup
+  Instead of using the mtree to emit entries in the order of their
+  offset values, use it only to map incoming ctx->pos to a starting
+  entry. Then use the directory's d_children list, which is already
+  maintained properly by the dcache, to find the next child to emit.
 
-  Currently we take the read lock when looking for a mount namespace to
-  list mounts in. We can make this lockless. The simple search case can
-  just use a sequence counter to detect concurrent changes to the
-  rbtree.
+- Narrow the range of directory offset values returned by
+  simple_offset_add() to 3 .. (S32_MAX - 1) on all platforms. This means
+  the allocation behavior is identical on 32-bit systems, 64-bit
+  systems, and 32-bit user space on 64-bit kernels. The new range still
+  permits over 2 billion concurrent entries per directory.
 
-  For walking the list of mount namespaces sequentially via nsfs we keep
-  a separate rcu list as rb_prev() and rb_next() aren't usable safely
-  with rcu. Currently there is no primitive for retrieving the previous
-  list member. To do this we need a new deletion primitive that doesn't
-  poison the prev pointer and a corresponding retrieval helper.
+- Return ENOSPC when the directory offset range is exhausted. Hitting
+  this error is almost impossible though.
 
-  Since creating mount namespaces is a relatively rare event compared
-  with querying mounts in a foreign mount namespace this is worth it.
-  Once libmount and systemd pick up this mechanism to list mounts in
-  foreign mount namespaces this will be used very frequently.
-
-  - Add extended selftests for lockless mount namespace iteration.
-
-  - Add a sample program to list all mounts on the system, i.e., in all
-    mount namespaces.
-
-- Improve mount namespace iteration performance
-
-  Make finding the last or first mount to start iterating the mount
-  namespace from an O(1) operation and add selftests for iterating the
-  mount table starting from the first and last mount.
-
-- Use an xarray for the old mount id
-
-  While the ida does use the xarray internally we can use it explicitly
-  which allows us to increment the unique mount id under the xa lock.
-  This allows us to remove the atomic as we're now allocating both ids
-  in one go.
+- Remove the simple_offset_empty() helper.
 
 /* Testing */
 
@@ -133,96 +125,41 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
-This will have a merge conflict with vfs-6.14.mount pull request sent in
-https://lore.kernel.org/r/20250118-vfs-pidfs-5921bfa5632a@brauner
-and it can be resolved as follows:
+No known conflicts.
 
-diff --cc fs/namespace.c
-index 64deda6f5b2c,371c860f49de..000000000000
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@@ -32,8 -32,6 +32,7 @@@
-  #include <linux/fs_context.h>
-  #include <linux/shmem_fs.h>
-  #include <linux/mnt_idmapping.h>
- +#include <linux/pidfs.h>
-- #include <linux/nospec.h>
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-  #include "pnode.h"
-  #include "internal.h"
-
-The following changes since commit 344bac8f0d73fe970cd9f5b2f132906317d29e8b:
-
-  fs: kill MNT_ONRB (2025-01-09 16:58:50 +0100)
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc1.mount
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc1.libfs
 
-for you to fetch changes up to f79e6eb84d4d2bff99e3ca6c1f140b2af827e904:
+for you to fetch changes up to a0634b457eca16b21a4525bc40cd2db80f52dadc:
 
-  samples/vfs/mountinfo: Use __u64 instead of uint64_t (2025-01-10 12:08:27 +0100)
+  Merge patch series "Improve simple directory offset wrap behavior" (2025-01-04 10:15:58 +0100)
 
-Please consider pulling these changes from the signed vfs-6.14-rc1.mount tag.
+Please consider pulling these changes from the signed vfs-6.14-rc1.libfs tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.14-rc1.mount
+vfs-6.14-rc1.libfs
 
 ----------------------------------------------------------------
-Christian Brauner (17):
-      mount: remove inlude/nospec.h include
-      fs: add mount namespace to rbtree late
-      Merge patch series "fs: listmount()/statmount() fix and sample program"
-      fs: lockless mntns rbtree lookup
-      rculist: add list_bidir_{del,prev}_rcu()
-      fs: lockless mntns lookup for nsfs
-      fs: simplify rwlock to spinlock
-      seltests: move nsfs into filesystems subfolder
-      selftests: add tests for mntns iteration
-      selftests: remove unneeded include
-      samples: add test-list-all-mounts
-      Merge patch series "fs: lockless mntns lookup"
-      fs: cache first and last mount
-      selftests: add listmount() iteration tests
-      Merge patch series "fs: tweak mntns iteration"
-      fs: use xarray for old mount id
-      fs: remove useless lockdep assertion
+Christian Brauner (1):
+      Merge patch series "Improve simple directory offset wrap behavior"
 
-Geert Uytterhoeven (1):
-      samples/vfs/mountinfo: Use __u64 instead of uint64_t
+Chuck Lever (5):
+      libfs: Return ENOSPC when the directory offset range is exhausted
+      Revert "libfs: Add simple_offset_empty()"
+      Revert "libfs: fix infinite directory reads for offset dir"
+      libfs: Replace simple_offset end-of-directory detection
+      libfs: Use d_children list to iterate simple_offset directories
 
-Jeff Layton (2):
-      samples: add a mountinfo program to demonstrate statmount()/listmount()
-      fs: prepend statmount.mnt_opts string with security_sb_mnt_opts()
-
- fs/mount.h                                         |  31 ++-
- fs/namespace.c                                     | 200 +++++++++------
- fs/nsfs.c                                          |   5 +-
- include/linux/rculist.h                            |  44 ++++
- samples/vfs/.gitignore                             |   2 +
- samples/vfs/Makefile                               |   2 +-
- samples/vfs/mountinfo.c                            | 273 +++++++++++++++++++++
- samples/vfs/test-list-all-mounts.c                 | 235 ++++++++++++++++++
- .../selftests/{ => filesystems}/nsfs/.gitignore    |   1 +
- .../selftests/{ => filesystems}/nsfs/Makefile      |   4 +-
- .../selftests/{ => filesystems}/nsfs/config        |   0
- .../selftests/filesystems/nsfs/iterate_mntns.c     | 149 +++++++++++
- .../selftests/{ => filesystems}/nsfs/owner.c       |   0
- .../selftests/{ => filesystems}/nsfs/pidns.c       |   0
- .../selftests/filesystems/statmount/Makefile       |   2 +-
- .../filesystems/statmount/listmount_test.c         |  66 +++++
- tools/testing/selftests/pidfd/pidfd.h              |   1 -
- 17 files changed, 918 insertions(+), 97 deletions(-)
- create mode 100644 samples/vfs/mountinfo.c
- create mode 100644 samples/vfs/test-list-all-mounts.c
- rename tools/testing/selftests/{ => filesystems}/nsfs/.gitignore (78%)
- rename tools/testing/selftests/{ => filesystems}/nsfs/Makefile (50%)
- rename tools/testing/selftests/{ => filesystems}/nsfs/config (100%)
- create mode 100644 tools/testing/selftests/filesystems/nsfs/iterate_mntns.c
- rename tools/testing/selftests/{ => filesystems}/nsfs/owner.c (100%)
- rename tools/testing/selftests/{ => filesystems}/nsfs/pidns.c (100%)
- create mode 100644 tools/testing/selftests/filesystems/statmount/listmount_test.c
+ fs/libfs.c         | 162 +++++++++++++++++++++++++----------------------------
+ include/linux/fs.h |   1 -
+ mm/shmem.c         |   4 +-
+ 3 files changed, 79 insertions(+), 88 deletions(-)
 
