@@ -1,158 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-39590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AD5A15D50
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 15:32:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81970A15D86
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 16:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674E11661B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F1E3A8375
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 15:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044D918FC67;
-	Sat, 18 Jan 2025 14:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA68191F7A;
+	Sat, 18 Jan 2025 15:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y/zVbDdp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="26AaB3l4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6D740849
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 14:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09717172BB9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 15:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737210747; cv=none; b=owL31cDF3wigvans9aW1WekhbL8+pSB4fDPyTWnBcjBIoBWti3njmU5k1I4+LeckbBZPBSoEiHdPHm7ug4Ya38FnWWf1d+YRGZ8C+iARFPAHPh3MxjBQ7AoFm2+J04GPLvyXMN5hX5X145HvFyx1KW9/80jrHvOB/e83TWAiygw=
+	t=1737212561; cv=none; b=qBVhM+3gGtrnNZLfmVYNd09CBYeHdU6G2lbFofJYfj3PRqanXoVfihg0UfpHz1QR23N7pRPUaqM3sdYlz0Y1IWIfEL8d6u3LwuVJzCNwIqHmQKvM2nUpXKR3L/+QKjk8L83FZ2OmttEbdQxopDjCGCGhNT2ytQLf63Kon5idyAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737210747; c=relaxed/simple;
-	bh=C8KVAQaMXjEuqRivlDHZFfrBDzsRlU3SVRcBlpwLGmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+u7AqMFRLayGl3sVwqgiYekq08oZCevZkBkg1/F2nPLdf6amTiOxd9ta0wsOZ1wn1yF52sLCLF+giD+knTMx5xUzNrcCGiHixaz3E2luJQYs68yR4JuSA3ncicc/OKkbCEHdKa/F0pGGX4vPdtr07h/njfdR21nR7iyx9QnME8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y/zVbDdp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737210744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KQynHqlXEbirZK19RGEZCQ1MvlBxDpmpsDCS7JVP8hI=;
-	b=Y/zVbDdpHvnXH8GCGv1IJRTXyHJCiZ6/vhtpvlv7WFptLn0zyxLpW4ZfJZgEtUPWNOpbL3
-	UWUIqpnhrGZOiGEI3i4lwt3B5TGJtIhXWal/A9jBEBkqMUYRMeqC0Low65KplDT/CnG+mx
-	jmjjQYDvk3l+N/fOmmWo4psDGnpmr8c=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-343-clsSHVF5M7uk33SgmUR-Dg-1; Sat, 18 Jan 2025 09:32:21 -0500
-X-MC-Unique: clsSHVF5M7uk33SgmUR-Dg-1
-X-Mimecast-MFC-AGG-ID: clsSHVF5M7uk33SgmUR-Dg
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-21648c8601cso54380805ad.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 06:32:20 -0800 (PST)
+	s=arc-20240116; t=1737212561; c=relaxed/simple;
+	bh=Ob0eexNFxLX/uszBPzKcXPy9tHfgF2F+/a4DmhBo8No=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AjYeZgMuurbpVszyb1IfwE57o9LWnsA63IwOzHyicNrpLVLeXJC7CLpM10ZPv/cezw1tefE+Zq2VMUCzU23H34ZKO6xJa8es5Kvgy4NkZ8SQ8eN1TIrFO5Iook3jKEq7Mm7KF3PXeRpht2IHSr/zi2TY9PVB8jAFPWeJ11GpsN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=26AaB3l4; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-844e394395aso93625339f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 07:02:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737212557; x=1737817357; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jCVGHiLOIHwhwiWmLRg6KlEVGdmx+jR4E4pD9bsH/Tg=;
+        b=26AaB3l4sYkacZZO5/54SdNLpzBr9aD7zvUZGfXBqJZRJJSXLOI4TSpioQkMWsY5Ad
+         muL83DZ2v/TPN1rLpf8gUWHCugww/G0fVmDOP8MuGi0IOlO5QODOIIclpbDvmSdnU6bB
+         EXTciJ9XmvFtBgqSB9SsKvkUyi83nb961sCib05o210/Q3rgzlUt+lCwbzBAzFd1k+X8
+         5rOAXMvBRW0M0W4Colse6ODb+Huud+QiE8G+GwXEpwuYG2YVDcX6YvixbqDyMjzQW5Hl
+         R8mloeiYKXfvG+QS8izOnsULMuTSNyp83cEmwClXlqvlVdCe/MCppxXpm2ljsNM0Uooy
+         ZNDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737210740; x=1737815540;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KQynHqlXEbirZK19RGEZCQ1MvlBxDpmpsDCS7JVP8hI=;
-        b=SNVv9mj//qDxQ7dvIc8oJ9TGtqsgf+rCw45jNgt4e6TDVt82gQ1EweQdNa+sCxSFPi
-         H7IgXHPAKzonSDJhFeO3+r15SNdb/i5ArkZ+wa9IKRero4vH+oR0hatNUH2lzh0p5f26
-         kXWLfxCvJE6BHGBfV4ivuxTXhFoin0EC/DaOoiNp2iipySfW5kRSo6dFvSDstuwis41+
-         xnYGs6gvZNYJi3ELNsobmAAz5uY4ZHN1teq0oAhg8FGfwrLG7831DshVvz3ouLnmDMvE
-         5UHfQJtqg/esmWzbHTfbCJAbE2yW1s/vfu6CdBAR6xWQt3u1ee5Rv2c4880SjIVfsnt0
-         IcNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWkwBEDjArcksY9q/bvhyKb2aEv7TJ9QtNyzz0IjlxG1xwffdOpnBFtgy5wVyA7xi2eNO1KMf3vGC1DK7t@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDCqIElqABTs7JRDAZeOQsxx4hT5e/q2CrK/YcOBiHJ7qqLkZp
-	DNEhzB45K1Sxeb41ch/k2YtqsfpKPd/32ZW4Xsi5uny6lN5TPjrEL5xhhIqEroCwYVOQUWISiKK
-	Gob21QlI7Qrq4AS8s/Zi+/jgNBZEeSS8G3did4BF6Q3LpWsHJEmhoNJ6DPp/Pk6i4rdWH4lrNFQ
-	==
-X-Gm-Gg: ASbGncs/28JXWqqMk7zuO6qogWS8pUzwX5OU6ZvqObc8RbRAhbMGts7Ci/f4OarTiSh
-	VpvfwZG/77ia4MauqxQM1NLnSefBAuZF0/q5d6uTo4cSWUOhF2JbIlXJpk+tB0PCEeXyAmC98D5
-	c1dceWX7hXUVGekmBWMssP/Y8iRhBPcc17+Q/+H3vEwrXf15yAmuSTdbXjqaKEc1MDIfaCdn4Oh
-	SJYOaD1rk2V5V5QIqLrQKUdc3pG4bmQR91juw3sKy1Xg0FtzDb1Gvqf3cfdymwyeoVWJxD1ECDb
-	vEMjPdemrrT9obsXAKjUCaainba/9NsApXI=
-X-Received: by 2002:a05:6a20:c87:b0:1eb:3414:5d20 with SMTP id adf61e73a8af0-1eb34146046mr2873570637.25.1737210739770;
-        Sat, 18 Jan 2025 06:32:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFE15VqHHb2DN4YrNVN9JdCv+BZW7I/pMv7aUgYfp8J+DXmS+Iu6fLBTlKBHRLukxoPnyrzaQ==
-X-Received: by 2002:a05:6a20:c87:b0:1eb:3414:5d20 with SMTP id adf61e73a8af0-1eb34146046mr2873545637.25.1737210739448;
-        Sat, 18 Jan 2025 06:32:19 -0800 (PST)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-a9bca47e6fbsm3658235a12.14.2025.01.18.06.32.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jan 2025 06:32:18 -0800 (PST)
-Date: Sat, 18 Jan 2025 22:32:14 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] fstests: workaround for gcc-15
-Message-ID: <20250118143214.gcrqvwfa4jnkawyj@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20250117043709.2941857-1-zlang@kernel.org>
- <20250117172736.GG1611770@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1737212557; x=1737817357;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jCVGHiLOIHwhwiWmLRg6KlEVGdmx+jR4E4pD9bsH/Tg=;
+        b=Kug/qvWlnjOTEruFy+0DG51XLdOiAFe0lcDkMQdTczt3aO6ROwNceuE5cKkqf5xEng
+         jJKx2M7XlDl7EnxJaP2vt42W+KoQzIuDETHpE7dH/Q91xL6kn7sHr5toAorLqZmjpVRd
+         1eqjGi5h41b7WOYcnWMc42Qo1XWA21Wcy4rH5J0MlPEkjA3n2BC/cG9dY97srWUsDQ50
+         A9D73GfnNyypPyb+KgjK1JW75gJ75JMfQOdGbc6adlv9zC9X3B+fxyHnLTU1khS495TL
+         Ik6miNG7maGCdV9VUSEqVDzoZrMORa9qx3OpSPYfo99D9oi8EGcIN1euKja1jfjRthHg
+         q0sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiP0tUIc0z7dFFi7/42GDV/giJaaJ75zhYQpVrUCbz7OfNO0F7mSYyLRB4yT50AXSX+ES7fhDTVBBGLWcT@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrHqQg6Nq1TNG7y9XAeAB9Ey9Twfw875YWO2IFcLvN8gLOUDCe
+	O6KvuFuYBQVe32LBk4Ual3CF55ZeErKSAwfPzMv8+tAULkgIWKbl/BAEQCLATVpaFh0dGyZxlKs
+	0
+X-Gm-Gg: ASbGncue5JIEt7vxPZhhd1RGmHjKfaHjlJ3dkVnu6Zm/GrapNTNTgbDHqefsRkU7nMw
+	0RbAPEuj8YNDNpcu7HXP1TBSXhITdcO6qWvOa1mT0QZbnSKYSJKeqnbIK1EvdwTw8X8+RHUCi5h
+	uFUR2W1pE4HKMdO9PIP2+qQqkNS0ofzLSMsPZAAsC1NTE7Nh5BNSvwr+0cgwKgWqDe7J7acYLKI
+	Z1k0ItNg/12UCzI2GuvgggdgwqV1X6YSkB0JREsPkwYC8fIDLJNFKMVm6fh2kr2K68=
+X-Google-Smtp-Source: AGHT+IG/G0F20vBCgcLgBLyQAt7AU7VvDlOWtwu1/dj16Rm+I+2RhznMyoeFB7hsHm/nGzUTg9R8/g==
+X-Received: by 2002:a05:6602:2b8a:b0:84c:b404:f21f with SMTP id ca18e2360f4ac-851b65226c5mr501759839f.13.1737212556699;
+        Sat, 18 Jan 2025 07:02:36 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-851b01f2c82sm120287739f.20.2025.01.18.07.02.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jan 2025 07:02:35 -0800 (PST)
+Message-ID: <cf13b64b-29fb-47b9-ae2d-1dcedd8cc415@kernel.dk>
+Date: Sat, 18 Jan 2025 08:02:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250117172736.GG1611770@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] fix io_uring_show_fdinfo() misuse of ->d_iname
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250118025717.GU1977892@ZenIV>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <20250118025717.GU1977892@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 17, 2025 at 09:27:36AM -0800, Darrick J. Wong wrote:
-> On Fri, Jan 17, 2025 at 12:37:09PM +0800, Zorro Lang wrote:
-> > GCC-15 does a big change, it changes the default language version for
-> > C compilation from -std=gnu17 to -std=gnu23. That cause lots of "old
-> > style" C codes hit build errors. On the other word, current xfstests
-> > can't be used with GCC-15. So -std=gnu17 can help that.
-> > 
-> > Signed-off-by: Zorro Lang <zlang@kernel.org>
-> > ---
-> > 
-> > Hi,
-> > 
-> > I send this patch just for talking about this issue. The upcoming gcc-15
-> > does lots of changes, a big change is using C23 by default:
-> > 
-> >   https://gcc.gnu.org/gcc-15/porting_to.html
-> > 
-> > xfstests has many old style C codes, they hard to be built with gcc-15.
-> > So we have to either add -std=$old_version (likes this patch), or port
-> > the code to C23.
-> > 
-> > This patch is just a workaround (and a reminder for someone might hit
-> > this issue with gcc-15 too). If you have any good suggestions or experience
-> > (for this kind of issue) to share, feel free to reply.
+On 1/17/25 7:57 PM, Al Viro wrote:
+> 	The output of io_uring_show_fdinfo() is crazy - for
+> each slot of io_uring file_table it produces either
+> INDEX: <none>
+> or
+> INDEX: NAME
+> where INDEX runs through all numbers from 0 to ctx->file_table.data.nr-1
+> and NAME is usually the last component of pathname of file in slot
+> #INDEX.  Usually == if it's no longer than 39 bytes.  If it's longer,
+> you get junk.  Oh, and if it contains newlines, you get several lines and
+> no way to tell that it has happened, them's the breaks.  If it's happens
+> to be /home/luser/<none>, well, what you see is indistinguishable from what
+> you'd get if it hadn't been there...
 > 
-> -std=gnu11 to match the kernel and xfsprogs?
+> According to Jens, it's *not* cast in stone, so we should be able to
+> change that to something saner.  I see two options:
+> 
+> 1) replace NAME with actual pathname of the damn file, quoted to reasonable
+> extent.
+> 
+> 2) same, and skip the INDEX: <none> lines.  It's not as if they contained
+> any useful information - the size of table is printed right before that,
+> so you'd get
+> 
+> ...
+> UserFiles:	16
+>     0: foo
+>    11: bar
+> UserBufs:	....
+> 
+> instead of
+> 
+> ...
+> UserFiles:	16
+>     0: foo
+>     1: <none>
+>     2: <none>
+>     3: <none>
+>     4: <none>
+>     5: <none>
+>     6: <none>
+>     7: <none>
+>     8: <none>
+>     9: <none>
+>    10: <none>
+>    11:	bar
+>    12: <none>
+>    13: <none>
+>    14: <none>
+>    15: <none>
+> UserBufs:	....
+> 
+> IMO the former is more useful for any debugging purposes.
+> 
+> The patch is trivial either way - (1) is
+> ------------------------
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index b214e5a407b5..1017249ae610 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -211,10 +211,12 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>  
+>  		if (ctx->file_table.data.nodes[i])
+>  			f = io_slot_file(ctx->file_table.data.nodes[i]);
+> +		seq_printf(m, "%5u: ", i);
+>  		if (f)
+> -			seq_printf(m, "%5u: %s\n", i, file_dentry(f)->d_iname);
+> +			seq_file_path(m, f, " \t\n\\<");
+>  		else
+> -			seq_printf(m, "%5u: <none>\n", i);
+> +			seq_puts(m, "<none>");
+> +		seq_puts(m, "\n");
+>  	}
+>  	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.nr);
+>  	for (i = 0; has_lock && i < ctx->buf_table.nr; i++) {
+> ------------------------
+> and (2) -
+> ------------------------
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index b214e5a407b5..f60d0a9d505e 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -211,10 +211,11 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>  
+>  		if (ctx->file_table.data.nodes[i])
+>  			f = io_slot_file(ctx->file_table.data.nodes[i]);
+> -		if (f)
+> -			seq_printf(m, "%5u: %s\n", i, file_dentry(f)->d_iname);
+> -		else
+> -			seq_printf(m, "%5u: <none>\n", i);
+> +		if (f) {
+> +			seq_printf(m, "%5u: ", i);
+> +			seq_file_path(m, f, " \t\n\\");
+> +			seq_puts(m, "\n");
+> +		}
+>  	}
+>  	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.nr);
+>  	for (i = 0; has_lock && i < ctx->buf_table.nr; i++) {
+> ------------------------
+> 
+> Preferences?  The difference in seq_printf() argument is due to the need
+> to quote < in filenames if we need to distinguish them from <none>;
+> whitespace and \ needs to be quoted in either case.
 
-So you prefer using a settled "-std=xxx" to changing codes to match "gnu23"?
+I like #2, there's no reason to dump the empty nodes. Thanks Al!
 
-> 
-> --D
-> 
-> > Thanks,
-> > Zorro
-> > 
-> >  include/builddefs.in | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/builddefs.in b/include/builddefs.in
-> > index 5b5864278..ef124bb87 100644
-> > --- a/include/builddefs.in
-> > +++ b/include/builddefs.in
-> > @@ -75,7 +75,7 @@ HAVE_RLIMIT_NOFILE = @have_rlimit_nofile@
-> >  NEED_INTERNAL_XFS_IOC_EXCHANGE_RANGE = @need_internal_xfs_ioc_exchange_range@
-> >  HAVE_FICLONE = @have_ficlone@
-> >  
-> > -GCCFLAGS = -funsigned-char -fno-strict-aliasing -Wall
-> > +GCCFLAGS = -funsigned-char -fno-strict-aliasing -std=gnu17 -Wall
-> >  SANITIZER_CFLAGS += @autovar_init_cflags@
-> >  
-> >  ifeq ($(PKG_PLATFORM),linux)
-> > -- 
-> > 2.47.1
-> > 
-> > 
-> 
-
+-- 
+Jens Axboe
 
