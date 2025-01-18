@@ -1,220 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-39567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF04A15A9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:48:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DED0A15ACC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 02:06:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DCB3A8DD7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 00:48:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DB6188BDEF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AE617C61;
-	Sat, 18 Jan 2025 00:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D69B67F;
+	Sat, 18 Jan 2025 01:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KL0/4wWo"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vRjB35G0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HA4AmZF+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vRjB35G0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HA4AmZF+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E8A2913;
-	Sat, 18 Jan 2025 00:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE94D2913
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 01:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737161295; cv=none; b=F24ZMAG/2AAQXOFLUg68vZflq3QPeQVIXBYkMrw3j/A0vhDeu6Iallnwq6LeSj02RAp0yZTNoN4dHJnPrmiEscu4+YcwdjCSAYocwHPArm2VjGUR8fRF2j08iHszE7hokqlwk7KRKShVwgIZzlsOFdgQLahVI66YBYMUFq2qSFU=
+	t=1737162406; cv=none; b=jx2jIh7D96bC1OPgpftvaCoVIgJOuzCVBSpjojxfrGGRDfAW6T6yGRvSRqhKqi8nE2glZJDR6fPm7dAza7g1Kr8T2OkYGd4zQhZxUfS/10QHyu3z1imcFFGA67UDKXxQwVKhV3Z/shVjFzfVlRkEf3Wxjtp8i2fQsGADd5qkzSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737161295; c=relaxed/simple;
-	bh=daBzD//cBkg5rogE6pEcC4+gYYpGqWl0biKOXvthShQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qXZCD7RUplPLWWemgU9w55PnGy8wCHt1KYNl4b3ASDZWqC3vqC1y9mK8my95YpeCFtfAj6Yiw/2vVa9tpWx4hWbY/SxevvIgGbk4bVq4ERUi1PcWePZmrTWXAINWMQNl9obcIP5+TdF257Csy8kKmgSg5jnGeHmZL1o+SzmeA9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KL0/4wWo; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e461015fbd4so4180989276.2;
-        Fri, 17 Jan 2025 16:48:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737161292; x=1737766092; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p90TONDalliPlYjPPsOYvMlU+K4gQUMKH3aG4J/s8yc=;
-        b=KL0/4wWodpGw34GgBHwccR88euAznJ7++rHNGYX3vIe4gv22pu02KMFs2M0BfFCC8p
-         JD8yvXZOGtEUUn5ogvvDhtM9Y1w8v9wdOrxXJFFPPT93JQ1rB0bEy7FRuX/+DKk5zkaG
-         XM4eIj+mM4LOtQKgsop8tby3fw4A+TOtHhM95wkFZnTnXuuZ3e1mW6k2yY9O7wrc2bv9
-         cA5+KIqywciOpV/8+ZyFghU7tol3RGnb4yvUSVDd9zfBfC4kAGjfjLPcgffrn+2H8Jjt
-         LxbtAG6IE6HWhljeJMwvZhw+WdBS6NwJcoNcCEnsy5ZH8UwKyTC9TW2vToMoKWhos9p1
-         6bkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737161292; x=1737766092;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p90TONDalliPlYjPPsOYvMlU+K4gQUMKH3aG4J/s8yc=;
-        b=fRFJQyD9ffsgPr3ltRbm4ovx5aUVmCXESjaFGFlq7R0aaJhI54wqbOJ/7rdP/kEBwH
-         vmM9LM8xYvDKDbvfsrPHAJ2pzNMEg1NQu2LULg2YY0X/qYt5/p49b3zTHpLWZujRqmGa
-         OmLsa1iseRa5ni3nOilBwg3aAVxSuMMit5sxdRA89KXP8ZgYFGm/BkquUgrIJLslXy8W
-         Yuig5jLWjv1EwdScU+PI3XQflteNmXK49wQE6nfM2JxRwlkUsu1Mzo8+pCVgSG6NGx0D
-         qS8kNKaTS4tCC/pSndZLyc9s5Ss1rMhhxSThpfPXXvIxW4k/wfJLhTbaG/sTbpYG1hLk
-         TBpA==
-X-Gm-Message-State: AOJu0YynXot5YaxMPzimVbQ+sYOhjTcFfwcHOMFS414HUWOSUsgmDI1p
-	jRaX3BllC+38oKlVa/IIQXyH8Kso+xpbm0PErii3L+JdU+NVJ334vmjeoA==
-X-Gm-Gg: ASbGnctx2q2m8r4tADiEcSebdERoJBVGCyg+Os20QMweu9p107rtppAwXiW0bDp24Io
-	t5KKCgO7sd006nU7IdhkC7y3Z0LwmKvcvRwI4tyi+AhRZ8/8OpLHCu31YcNZ7Y1hRWPoCLYFWi+
-	HJIF/CWc7eP6DXBMe4BjbIa+Pr4E63DUjHRQ2QBFtTFj13KhpZfnRKZkji6hC5Okn9bb4C0T+w0
-	23yU/C96Wi0K8Ea+WFY8NLp5um7iwWT8HAExGxB2miVLxnjvDPzjkA2A1Y7WShOV2U=
-X-Google-Smtp-Source: AGHT+IE2Vqy5z/eDdSfmsk6Si7xp1zWOne1XWU3hbGXwnMHdtMGCHHoLif4tCYLULGL/ELAFrpGllw==
-X-Received: by 2002:a05:690c:31a:b0:6ef:6f24:d080 with SMTP id 00721157ae682-6f6eb6490edmr41809017b3.7.1737161292712;
-        Fri, 17 Jan 2025 16:48:12 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:b::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e640bdd0sm6336707b3.45.2025.01.17.16.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2025 16:48:12 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	bfoster@redhat.com,
-	djwong@kernel.org,
-	nirjhar@linux.ibm.com,
-	zlang@redhat.com,
-	kernel-team@meta.com
-Subject: [PATCH v4 2/2] generic: add tests for read/writes from hugepages-backed buffers
-Date: Fri, 17 Jan 2025 16:47:59 -0800
-Message-ID: <20250118004759.2772065-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250118004759.2772065-1-joannelkoong@gmail.com>
-References: <20250118004759.2772065-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1737162406; c=relaxed/simple;
+	bh=orVIIie4w76FtKSMwRZPTK+/2w1TozZKibr+CNs+SWM=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=p1Ui4FeghVxR7kHJLrziGdAAPKdfzVR6L6thv+k6suoaBSCTog+i7rv4agISmEq/vv8ZPbffxeidlv8FtxNKcYVyq9s5E7FJrd3nKnfMRScmFrLtNdB/Ww2pYc9AnxAAmBycfhkQBedbpyixqaS62edk5VXRpNQFefPUeRk32M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vRjB35G0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HA4AmZF+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vRjB35G0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HA4AmZF+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C2F6C211B2;
+	Sat, 18 Jan 2025 01:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737162402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
+	b=vRjB35G0+SeaU/twcfVkyZKhsABa57048TM5LKFeBDO3Vys5A0k7by9VhN6zwDoQ2uLZ7F
+	UzU3yaiuc4wegVwLyCSK2XYH3uDroMaKM/KvvNkqoRY0scmnj5HyF+u6lz6iBjXZTvPzdh
+	9LH1Ymeg9vtyhe7w36x+pF7tjmAXprw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737162402;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
+	b=HA4AmZF+NkO4K2b67azEBlggq65YphiiCyAI82wKulR2bMwBrAvOKWemmaKXqAH0itYVht
+	rYfXOiaW/f3ixPCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737162402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
+	b=vRjB35G0+SeaU/twcfVkyZKhsABa57048TM5LKFeBDO3Vys5A0k7by9VhN6zwDoQ2uLZ7F
+	UzU3yaiuc4wegVwLyCSK2XYH3uDroMaKM/KvvNkqoRY0scmnj5HyF+u6lz6iBjXZTvPzdh
+	9LH1Ymeg9vtyhe7w36x+pF7tjmAXprw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737162402;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
+	b=HA4AmZF+NkO4K2b67azEBlggq65YphiiCyAI82wKulR2bMwBrAvOKWemmaKXqAH0itYVht
+	rYfXOiaW/f3ixPCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B6AD13332;
+	Sat, 18 Jan 2025 01:06:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6SPvN6D+imdGHAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sat, 18 Jan 2025 01:06:40 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: lsf-pc@lists.linuxfoundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] allowing parallel directory modifications at
+ the VFS layer
+In-reply-to: <f78f4a5e86c10d723fd60d51a52dd727924fed3a.camel@kernel.org>
+References: <f78f4a5e86c10d723fd60d51a52dd727924fed3a.camel@kernel.org>
+Date: Sat, 18 Jan 2025 12:06:30 +1100
+Message-id: <173716239018.22054.4624947284143971296@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add generic tests 758 and 759 for testing reads/writes from buffers
-backed by hugepages.
+On Sat, 18 Jan 2025, Jeff Layton wrote:
+> We've hit a number of cases in testing recently where the parent's
+> i_rwsem ends up being the bottleneck in heavy parallel create
+> workloads. Currently we have to take the parent's inode->i_rwsem
+> exclusively when altering a directory, which means that any directory-
+> morphing operations in the same directory are serialized.
+>=20
+> This is particularly onerous in the ->create codepath, since a
+> filesystem may have to do a number of blocking operations to create a
+> new file (allocate memory, start a transaction, etc.)
+>=20
+> Neil recently posted this RFC series, which allows parallel directory
+> modifying operations:
+>=20
+>     https://lore.kernel.org/linux-fsdevel/20241220030830.272429-1-neilb@sus=
+e.de/
+>=20
+> Al pointed out a number of problems in it, but the basic approach seems
+> sound. I'd like to have a discussion at LSF/MM about this.
+>=20
+> Are there any problems with the basic approach? Are there other
+> approaches that might be better? Are there incremental steps we could
+> do pave the way for this to be a reality?
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
----
- common/rc             | 13 +++++++++++++
- tests/generic/758     | 22 ++++++++++++++++++++++
- tests/generic/758.out |  4 ++++
- tests/generic/759     | 26 ++++++++++++++++++++++++++
- tests/generic/759.out |  4 ++++
- 5 files changed, 69 insertions(+)
- create mode 100755 tests/generic/758
- create mode 100644 tests/generic/758.out
- create mode 100755 tests/generic/759
- create mode 100644 tests/generic/759.out
+Thanks for raising this!
+There was at least one problem with the approach but I have a plan to
+address that.  I won't go into detail here.  I hope to get a new
+patch set out sometime in the coming week.
 
-diff --git a/common/rc b/common/rc
-index 1b2e4508..0c44d096 100644
---- a/common/rc
-+++ b/common/rc
-@@ -3016,6 +3016,19 @@ _require_xfs_io_command()
- 	fi
- }
- 
-+# check that the system supports transparent hugepages
-+_require_thp()
-+{
-+	if [ ! -e /sys/kernel/mm/transparent_hugepage/enabled ]; then
-+		_notrun "system doesn't support transparent hugepages"
-+	fi
-+
-+	thp_status=$(cat /sys/kernel/mm/transparent_hugepage/enabled)
-+	if [[ $thp_status == *"[never]"* ]]; then
-+		_notrun "system doesn't have transparent hugepages enabled"
-+	fi
-+}
-+
- # check that kernel and filesystem support direct I/O, and check if "$1" size
- # aligned (optional) is supported
- _require_odirect()
-diff --git a/tests/generic/758 b/tests/generic/758
-new file mode 100755
-index 00000000..e7cd8cdc
---- /dev/null
-+++ b/tests/generic/758
-@@ -0,0 +1,22 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# FS QA Test No. 758
-+#
-+# fsx exercising reads/writes from userspace buffers
-+# backed by hugepages
-+#
-+. ./common/preamble
-+_begin_fstest rw auto quick
-+
-+. ./common/filter
-+
-+_require_test
-+_require_thp
-+
-+run_fsx -N 10000            -l 500000 -h
-+run_fsx -N 10000  -o 8192   -l 500000 -h
-+run_fsx -N 10000  -o 128000 -l 500000 -h
-+
-+status=0
-+exit
-diff --git a/tests/generic/758.out b/tests/generic/758.out
-new file mode 100644
-index 00000000..af04bb14
---- /dev/null
-+++ b/tests/generic/758.out
-@@ -0,0 +1,4 @@
-+QA output created by 758
-+fsx -N 10000 -l 500000 -h
-+fsx -N 10000 -o 8192 -l 500000 -h
-+fsx -N 10000 -o 128000 -l 500000 -h
-diff --git a/tests/generic/759 b/tests/generic/759
-new file mode 100755
-index 00000000..514e7603
---- /dev/null
-+++ b/tests/generic/759
-@@ -0,0 +1,26 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# FS QA Test No. 759
-+#
-+# fsx exercising direct IO reads/writes from userspace buffers
-+# backed by hugepages
-+#
-+. ./common/preamble
-+_begin_fstest rw auto quick
-+
-+. ./common/filter
-+
-+_require_test
-+_require_odirect
-+_require_thp
-+
-+psize=`$here/src/feature -s`
-+bsize=`$here/src/min_dio_alignment $TEST_DIR $TEST_DEV`
-+
-+run_fsx -N 10000            -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+run_fsx -N 10000  -o 8192   -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+run_fsx -N 10000  -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+
-+status=0
-+exit
-diff --git a/tests/generic/759.out b/tests/generic/759.out
-new file mode 100644
-index 00000000..86bb66ef
---- /dev/null
-+++ b/tests/generic/759.out
-@@ -0,0 +1,4 @@
-+QA output created by 759
-+fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
--- 
-2.47.1
+My question to fs-devel is: is anyone willing to convert their fs (or
+advice me on converting?) to use the new interface and do some testing
+and be open to exploring any bugs that appear?
 
+I'd like to try ext4 using the patches that lustre maintains for
+parallel directory ops in ext4 but making them suitable for upstream
+doesn't look to be straight forward.
+
+  https://git.whamcloud.com/?p=3Dfs/lustre-release.git;a=3Dblob;f=3Dldiskfs/k=
+ernel_patches/patches/linux-6.5/ext4-pdirop.patch;h=3D208d9dc44f4860fbf27072e=
+d1969744131e30108;hb=3DHEAD
+
+NeilBrown
 
