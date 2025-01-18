@@ -1,113 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-39574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A68A15B38
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 04:29:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD856A15B3F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 04:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D84E18875A6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 03:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EA5188AE19
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 03:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B5254769;
-	Sat, 18 Jan 2025 03:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BFA5789D;
+	Sat, 18 Jan 2025 03:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Jp2WhVhP"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JgJAPfHi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836E013D8A0;
-	Sat, 18 Jan 2025 03:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3014F2F50;
+	Sat, 18 Jan 2025 03:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737170980; cv=none; b=kQSf48a9A+/Izww2SVOE42hQSFnqZZHvbTMBfUTfEw7qbCRc5PCKXofm+J31bIflM9cOhFi3tCxq0sG3g8VG3lZviMJaattxCb5R3/rb/VJHBZUlMTE2L/5dDMDi3wz2gimMa2DcESqut36B8NxNysi/AES7aeqZNRnA9t/oSIo=
+	t=1737171449; cv=none; b=iXnhON8Y7LdmE1gySGWBiH3+97jWnF/qPXkjMlpK4Vo7C6bw9j/fuHMv9xso8Ax6GY8Cyq9ORnVmSbzfjCTel7yMkW1jwV+4RPAEHr5mxbvlS9sz8hTeQvav7KrIyqkSLneKz3wEWpcX9AbN0A8NeWa10L/C933GubNyGOPCLmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737170980; c=relaxed/simple;
-	bh=GJOK3VKA6vQutwRnnwPPgaj1kuuscZciY9AVSbxrG3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYbS/W3QwRaMORKAZ8tCB+anFRoO15ELku/5oHvN35XSBaUQBVRMjPdJh41VRucUBrICa1E5ZTNdPDq8HxaqX89EwWPeO4NM2PuztnJ7Wkvxpj6gRX/Ie/D3cYHINDdsAYJwGDrzXMJh61ItSZUjFHSPr4su3/XK6aiWya/FPM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Jp2WhVhP; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1737170968; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=367ImpVEwmep7eE3O/hYvXrPuqpcxFBuOp5wnrMW828=;
-	b=Jp2WhVhPL9t3VaBKaxZBeMTF8l2DsIUdR+qixuf6r6r6feVWWv8Ik12Yl2e0BHFKteXV5ZErOm866HZ8L2mdlr/tF1jnkWReoUr+nDiUfyuBVZv/Jo3+Utk7jLpJ3rxkXC69W32NSHdTaOLjQ7n+YJew5HwpQ2HxETScTOryOJE=
-Received: from 30.221.144.93(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WNqQlY8_1737170967 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 18 Jan 2025 11:29:28 +0800
-Message-ID: <08fccb39-1405-4aa9-884b-b28a5f7aad59@linux.alibaba.com>
-Date: Sat, 18 Jan 2025 11:29:25 +0800
+	s=arc-20240116; t=1737171449; c=relaxed/simple;
+	bh=QsmzEHN5VmX8x1BO/Et2sEKzyf1LM5z0luOb9m/Hgnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBMVq7Q0ekSDnOY1jNeCL4apvQQhtPKkUkjlLlEotXb6VC02ESzkvd8pf6c4vo8pRnWpk5E0c1NZjuEEkdtnxTeXDa8FKIkSX8KcpZgG6I2lUvy0EsSS6mYPxX3WasVJ0PH69KFt8OaFXQRcPhYwWt+KysSbTXxeAvWZI7fJ6ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JgJAPfHi; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sOnBT1FZVH1E3dZbLAV8Ykudv006fb56LW7qJ+ZnBq4=; b=JgJAPfHiQgn67/6q+E35BJM2xT
+	iWVzX9n2mROpuIhO/070UJVJhaxJCDf/YCFfe75lhTRin1BnIgjZc8NS0sVXjSrGeia+EAbruSFIg
+	Xk7gjxhhFljeVfXo2MExvasXzLdaxRJLKeFWpLgFpjQpkl1paACkwCmrHdYr2r+3CCa3tMTGTRvCH
+	ox4yAglqCcOJzawzMOiOMUQ4eVasBCjXq0jwmTJTztjXEU4x7p9w8NMtaVC7TG80r1j5N17asc/w5
+	gtEu+TDqtCs1wZJT3hBabrRKkT+g7HUEkIpjUD9V/nf70KU89JoDTIyFDiJFY9taDVgIDRqjDladv
+	dWbnGo0A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYzeF-00000003nHx-2cw8;
+	Sat, 18 Jan 2025 03:37:23 +0000
+Date: Sat, 18 Jan 2025 03:37:23 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+	lsf-pc@lists.linux-foundation.org,
+	Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+	bpf@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] time to reconsider tracepoints in the vfs?
+Message-ID: <20250118033723.GV1977892@ZenIV>
+References: <20250116124949.GA2446417@mit.edu>
+ <Z4l3rb11fJqNravu@dread.disaster.area>
+ <oidb2ijfx64r4lgpf3ei7teexpa54ngnef3cmq5bsxsgxmtros@7pn2y34ud4l7>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/12] mm/filemap: drop streaming/uncached pages when
- writeback completes
-To: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org,
- willy@infradead.org, kirill@shutemov.name, bfoster@redhat.com
-References: <20241220154831.1086649-1-axboe@kernel.dk>
- <20241220154831.1086649-10-axboe@kernel.dk>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20241220154831.1086649-10-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <oidb2ijfx64r4lgpf3ei7teexpa54ngnef3cmq5bsxsgxmtros@7pn2y34ud4l7>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Fri, Jan 17, 2025 at 08:07:48PM -0700, Daniel Xu wrote:
 
-
-On 12/20/24 11:47 PM, Jens Axboe wrote:
-> If the folio is marked as streaming, drop pages when writeback completes.
-> Intended to be used with RWF_DONTCACHE, to avoid needing sync writes for
-> uncached IO.
+> In addition to the points Andrii makes below, tracepoints also have a
+> nice documenting property. They tend to get added to "places of
+> interest". They're a great starting point for non kernel developers to
+> dig into kernel internals. Often times tracepoint naming (as well as the
+> exported fields) provide helpful hints.
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  mm/filemap.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index dd563208d09d..aa0b3af6533d 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1599,6 +1599,27 @@ int folio_wait_private_2_killable(struct folio *folio)
->  }
->  EXPORT_SYMBOL(folio_wait_private_2_killable);
->  
-> +/*
-> + * If folio was marked as dropbehind, then pages should be dropped when writeback
-> + * completes. Do that now. If we fail, it's likely because of a big folio -
-> + * just reset dropbehind for that case and latter completions should invalidate.
-> + */
-> +static void folio_end_dropbehind_write(struct folio *folio)
-> +{
-> +	/*
-> +	 * Hitting !in_task() should not happen off RWF_DONTCACHE writeback,
-> +	 * but can happen if normal writeback just happens to find dirty folios
-> +	 * that were created as part of uncached writeback, and that writeback
-> +	 * would otherwise not need non-IRQ handling. Just skip the
-> +	 * invalidation in that case.
-> +	 */
-> +	if (in_task() && folio_trylock(folio)) {
-> +		if (folio->mapping)
-> +			folio_unmap_invalidate(folio->mapping, folio, 0);
-> +		folio_unlock(folio);
-> +	}
-> +}
+> At least for me, if I'm mucking around new places (mostly net/) I'll
+> tend to go look at the tracepoints to find the interesting codepaths.
 
-Sorry shouldn't folio_end_writeback() be called from IRQ context (of the
-block device) when the IO completes?  This may be a stupid question, but
-I just can't understand that...
+Here's one for you:
+        trace_ocfs2_file_splice_read(inode, in, in->f_path.dentry,
+                                     (unsigned long long)OCFS2_I(inode)->ip_blkno,
+                                     in->f_path.dentry->d_name.len,
+                                     in->f_path.dentry->d_name.name,
+                                     flags);
+The trouble is, what happens if your ->splice_read() races
+with rename()?  Yes, it is allowed to happen in parallel with
+splice(2).  Or with read(2), for that matter.  Or close(2) (and
+dup2(2) or exit(2) of something that happens to have the file
+opened).
 
--- 
-Thanks,
-Jingbo
+What happens is that
+	* you get len and name that might not match each other - you might
+see len being 200 and name pointing to 40-byte array inside dentry.
+	* you get name that is not guaranteed to be *there* - you might
+pick one before rename and have it freed and reused by the time you
+try to access it.
+	* you get name that points to a string that might be modified
+by another CPU right under you (for short names).
+
+Doing that inside ->mkdir() - sure, no problem, the name _is_ stable
+there.  Doing that inside ->lookup() - fine on the entry, may be not
+safe on the way out.
+
+In filesystems it's living dangerously, but as long as you know what
+you are doing you can get away with that (ocfs2 folks hadn't, but
+it's not just ocfs2 - similar tracepoints exist for nfs, etc.)...
 
