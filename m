@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-39566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31BFA15A9A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:48:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF04A15A9B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F621889265
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 00:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DCB3A8DD7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 00:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A301210A3E;
-	Sat, 18 Jan 2025 00:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AE617C61;
+	Sat, 18 Jan 2025 00:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7sIyE9f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KL0/4wWo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198C4A28;
-	Sat, 18 Jan 2025 00:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E8A2913;
+	Sat, 18 Jan 2025 00:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737161294; cv=none; b=InbVVvlZ3y/fMr/9tMDpQe5g8UQJqa/eiu5tSwS+/Q0rbWs+jYieH9LucgCIdKdMLsRj8cbAzV85qxl1LAU7qo/FEkcME81qtnpMYaK53kzRfo3Y7m0zgOJHBq+P6BU5FUqP1d4zj0K5mdtGx88QDGHRpyYmE0SGfHob2xrZlic=
+	t=1737161295; cv=none; b=F24ZMAG/2AAQXOFLUg68vZflq3QPeQVIXBYkMrw3j/A0vhDeu6Iallnwq6LeSj02RAp0yZTNoN4dHJnPrmiEscu4+YcwdjCSAYocwHPArm2VjGUR8fRF2j08iHszE7hokqlwk7KRKShVwgIZzlsOFdgQLahVI66YBYMUFq2qSFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737161294; c=relaxed/simple;
-	bh=cVs5HdLqrVfgrTTstmHEYNeQhksZsUTcDvsHgWAn2R8=;
+	s=arc-20240116; t=1737161295; c=relaxed/simple;
+	bh=daBzD//cBkg5rogE6pEcC4+gYYpGqWl0biKOXvthShQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vELihf8s4s9HQUABp9xUxVBUX1l4ksVzm+QpC3dXRSrmVAgB7DyQbdxfMRWoBmP2KU2ZTcSpLnYybfyWXX2AK12dfqO9EybyzAJ2LlCSXgn3lF98Hoi2ucuLjx5dJqbLnNpiQoa4y/pJgoyo+y8WrYjItWv6+ax1TrmGn5KX0tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k7sIyE9f; arc=none smtp.client-ip=209.85.219.172
+	 MIME-Version; b=qXZCD7RUplPLWWemgU9w55PnGy8wCHt1KYNl4b3ASDZWqC3vqC1y9mK8my95YpeCFtfAj6Yiw/2vVa9tpWx4hWbY/SxevvIgGbk4bVq4ERUi1PcWePZmrTWXAINWMQNl9obcIP5+TdF257Csy8kKmgSg5jnGeHmZL1o+SzmeA9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KL0/4wWo; arc=none smtp.client-ip=209.85.219.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e53ef7462b6so4466333276.3;
-        Fri, 17 Jan 2025 16:48:12 -0800 (PST)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e461015fbd4so4180989276.2;
+        Fri, 17 Jan 2025 16:48:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737161291; x=1737766091; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737161292; x=1737766092; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=03euZkMgladFKk/Tj75nvhR9d5dlD3L2rZrgtRkja/g=;
-        b=k7sIyE9fxMj5YczPmEt1SNdBQzBAZgfIkD5bLDbJJgaA6N3/ZXpghfvlslooR8H/2j
-         Kx63jd67JX96LJQyRTjuDToWXv5DXufuzO7T/fJuoN3AAZxwwZ4G7hm0Mzz10PCBZuUt
-         u3V4meiw5RNrtNCrK5P8MVrelwp0twDMb+e3Lgg36Bqi7iozYMEHirdMAJR04jIrcdip
-         eSbWW1HIU4/qB8w5GqsggM0uT9hEUDQk+mMV7eTfEz4OC4LIg1jYFJNyJzzKX069lVjE
-         aY6b9HE5BLpG3P28FfrqI0eoei24eI758fsWtJuqHExUMQfztfKG7n/JDr1cK6IqTGat
-         sX2w==
+        bh=p90TONDalliPlYjPPsOYvMlU+K4gQUMKH3aG4J/s8yc=;
+        b=KL0/4wWodpGw34GgBHwccR88euAznJ7++rHNGYX3vIe4gv22pu02KMFs2M0BfFCC8p
+         JD8yvXZOGtEUUn5ogvvDhtM9Y1w8v9wdOrxXJFFPPT93JQ1rB0bEy7FRuX/+DKk5zkaG
+         XM4eIj+mM4LOtQKgsop8tby3fw4A+TOtHhM95wkFZnTnXuuZ3e1mW6k2yY9O7wrc2bv9
+         cA5+KIqywciOpV/8+ZyFghU7tol3RGnb4yvUSVDd9zfBfC4kAGjfjLPcgffrn+2H8Jjt
+         LxbtAG6IE6HWhljeJMwvZhw+WdBS6NwJcoNcCEnsy5ZH8UwKyTC9TW2vToMoKWhos9p1
+         6bkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737161291; x=1737766091;
+        d=1e100.net; s=20230601; t=1737161292; x=1737766092;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=03euZkMgladFKk/Tj75nvhR9d5dlD3L2rZrgtRkja/g=;
-        b=fwVMi+G4ugFHpGi1Q/F8QZW3OhICpsrD9MIjdgN40CEYV3tlIbfxD7DVl8bEwxwsfo
-         5vubGfdn1SoHOzd0OI8bFUjuTxh4dNE+OUoNSRLZakgIjQnTn4ur0Y4Va4H5KSx3BBfB
-         bTxg7MvTBUOv7QKGLjVAZZa/JiqFwribT+G89kaTtI8FgK6DVWRJ7nazLtEzeepwDSt2
-         hiz41JNZ2vim8IlrYKB3x3cW0XcNosJhFoeqze95GqDcHvKzoeq1h2Nswmn/vece4u12
-         2FWiafBKou80DfrJWz6RE6vTtPwllLlbWa9P9RDfQJt4C3DuCuTfV62vIuSOwyKLo245
-         t69Q==
-X-Gm-Message-State: AOJu0YyP4h2ixm5/ZPZfLFP4REquZrS+bbsuNl85GJf5yYI7Th0JZNIn
-	72x7iFn2J1C+SrepVnT83deFUG5YIeyBk9rtitpctLA8Uc/qyW8UfT1wig==
-X-Gm-Gg: ASbGnctTr6g5w3kwMmV7j9U16T6IjfcMbQAixfGVR7gafk0w4e84fKhU3dzBQtIYmmU
-	siZKBe9YA0RnuHD5SM6nW6OvCzOKyduN+5u6gCVb5B3wTfr6L6LB36BW0lZ+GOP5GMn+0ArKMn0
-	gombeLtZoopP5ev2FDblxavhYyVxy6AwuvjCLdwIHKeE9HZjiCkXlN7rdhv3Q2GugDL/iF4erdc
-	bPBeZXsR29sZD+tD0xlrHiISm/urI271unoPNJmvYkoK+Oa5Uxhy1M+aTaKaiEGSAp1
-X-Google-Smtp-Source: AGHT+IGX+1+QSOl/DbKlaT7jqFc7VH06LfLiksDk6poqh9+HQqSwTYdx74FVlwwMdBg/v54+29sh+w==
-X-Received: by 2002:a05:690c:700c:b0:6ef:641a:2a73 with SMTP id 00721157ae682-6f6eb662901mr44114167b3.9.1737161291099;
-        Fri, 17 Jan 2025 16:48:11 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:71::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e64745f6sm6367517b3.52.2025.01.17.16.48.10
+        bh=p90TONDalliPlYjPPsOYvMlU+K4gQUMKH3aG4J/s8yc=;
+        b=fRFJQyD9ffsgPr3ltRbm4ovx5aUVmCXESjaFGFlq7R0aaJhI54wqbOJ/7rdP/kEBwH
+         vmM9LM8xYvDKDbvfsrPHAJ2pzNMEg1NQu2LULg2YY0X/qYt5/p49b3zTHpLWZujRqmGa
+         OmLsa1iseRa5ni3nOilBwg3aAVxSuMMit5sxdRA89KXP8ZgYFGm/BkquUgrIJLslXy8W
+         Yuig5jLWjv1EwdScU+PI3XQflteNmXK49wQE6nfM2JxRwlkUsu1Mzo8+pCVgSG6NGx0D
+         qS8kNKaTS4tCC/pSndZLyc9s5Ss1rMhhxSThpfPXXvIxW4k/wfJLhTbaG/sTbpYG1hLk
+         TBpA==
+X-Gm-Message-State: AOJu0YynXot5YaxMPzimVbQ+sYOhjTcFfwcHOMFS414HUWOSUsgmDI1p
+	jRaX3BllC+38oKlVa/IIQXyH8Kso+xpbm0PErii3L+JdU+NVJ334vmjeoA==
+X-Gm-Gg: ASbGnctx2q2m8r4tADiEcSebdERoJBVGCyg+Os20QMweu9p107rtppAwXiW0bDp24Io
+	t5KKCgO7sd006nU7IdhkC7y3Z0LwmKvcvRwI4tyi+AhRZ8/8OpLHCu31YcNZ7Y1hRWPoCLYFWi+
+	HJIF/CWc7eP6DXBMe4BjbIa+Pr4E63DUjHRQ2QBFtTFj13KhpZfnRKZkji6hC5Okn9bb4C0T+w0
+	23yU/C96Wi0K8Ea+WFY8NLp5um7iwWT8HAExGxB2miVLxnjvDPzjkA2A1Y7WShOV2U=
+X-Google-Smtp-Source: AGHT+IE2Vqy5z/eDdSfmsk6Si7xp1zWOne1XWU3hbGXwnMHdtMGCHHoLif4tCYLULGL/ELAFrpGllw==
+X-Received: by 2002:a05:690c:31a:b0:6ef:6f24:d080 with SMTP id 00721157ae682-6f6eb6490edmr41809017b3.7.1737161292712;
+        Fri, 17 Jan 2025 16:48:12 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:b::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e640bdd0sm6336707b3.45.2025.01.17.16.48.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2025 16:48:10 -0800 (PST)
+        Fri, 17 Jan 2025 16:48:12 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: fstests@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -78,9 +78,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	nirjhar@linux.ibm.com,
 	zlang@redhat.com,
 	kernel-team@meta.com
-Subject: [PATCH v4 1/2] fsx: support reads/writes from buffers backed by hugepages
-Date: Fri, 17 Jan 2025 16:47:58 -0800
-Message-ID: <20250118004759.2772065-2-joannelkoong@gmail.com>
+Subject: [PATCH v4 2/2] generic: add tests for read/writes from hugepages-backed buffers
+Date: Fri, 17 Jan 2025 16:47:59 -0800
+Message-ID: <20250118004759.2772065-3-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250118004759.2772065-1-joannelkoong@gmail.com>
 References: <20250118004759.2772065-1-joannelkoong@gmail.com>
@@ -92,250 +92,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for reads/writes from buffers backed by hugepages.
-This can be enabled through the '-h' flag. This flag should only be used
-on systems where THP capabilities are enabled.
-
-This is motivated by a recent bug that was due to faulty handling of
-userspace buffers backed by hugepages. This patch is a mitigation
-against problems like this in the future.
+Add generic tests 758 and 759 for testing reads/writes from buffers
+backed by hugepages.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 Reviewed-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- ltp/fsx.c | 165 +++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 152 insertions(+), 13 deletions(-)
+ common/rc             | 13 +++++++++++++
+ tests/generic/758     | 22 ++++++++++++++++++++++
+ tests/generic/758.out |  4 ++++
+ tests/generic/759     | 26 ++++++++++++++++++++++++++
+ tests/generic/759.out |  4 ++++
+ 5 files changed, 69 insertions(+)
+ create mode 100755 tests/generic/758
+ create mode 100644 tests/generic/758.out
+ create mode 100755 tests/generic/759
+ create mode 100644 tests/generic/759.out
 
-diff --git a/ltp/fsx.c b/ltp/fsx.c
-index 41933354..1513755f 100644
---- a/ltp/fsx.c
-+++ b/ltp/fsx.c
-@@ -190,6 +190,16 @@ int	o_direct;			/* -Z */
- int	aio = 0;
- int	uring = 0;
- int	mark_nr = 0;
-+int	hugepages = 0;                  /* -h flag */
-+
-+/* Stores info needed to periodically collapse hugepages */
-+struct hugepages_collapse_info {
-+	void *orig_good_buf;
-+	long good_buf_size;
-+	void *orig_temp_buf;
-+	long temp_buf_size;
-+};
-+struct hugepages_collapse_info hugepages_info;
- 
- int page_size;
- int page_mask;
-@@ -2471,7 +2481,7 @@ void
- usage(void)
- {
- 	fprintf(stdout, "usage: %s",
--		"fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
-+		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
- 	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
- 	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
- 	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
-@@ -2483,8 +2493,11 @@ usage(void)
- 	-d: debug output for all operations\n\
- 	-e: pollute post-eof on size changes (default 0)\n\
- 	-f: flush and invalidate cache after I/O\n\
--	-g X: write character X instead of random generated data\n\
--	-i logdev: do integrity testing, logdev is the dm log writes device\n\
-+	-g X: write character X instead of random generated data\n"
-+#ifdef MADV_COLLAPSE
-+"	-h hugepages: use buffers backed by hugepages for reads/writes\n"
-+#endif
-+"	-i logdev: do integrity testing, logdev is the dm log writes device\n\
- 	-j logid: prefix debug log messsages with this id\n\
- 	-k: do not truncate existing file and use its size as upper bound on file size\n\
- 	-l flen: the upper bound on file size (default 262144)\n\
-@@ -2833,11 +2846,40 @@ __test_fallocate(int mode, const char *mode_str)
- #endif
+diff --git a/common/rc b/common/rc
+index 1b2e4508..0c44d096 100644
+--- a/common/rc
++++ b/common/rc
+@@ -3016,6 +3016,19 @@ _require_xfs_io_command()
+ 	fi
  }
  
-+/*
-+ * Reclaim may break up hugepages, so do a best-effort collapse every once in
-+ * a while.
-+ */
-+static void
-+collapse_hugepages(void)
++# check that the system supports transparent hugepages
++_require_thp()
 +{
-+#ifdef MADV_COLLAPSE
-+	int interval = 1 << 14; /* 16k */
-+	int ret;
++	if [ ! -e /sys/kernel/mm/transparent_hugepage/enabled ]; then
++		_notrun "system doesn't support transparent hugepages"
++	fi
 +
-+	if (numops && (numops & (interval - 1)) == 0) {
-+		ret = madvise(hugepages_info.orig_good_buf,
-+			      hugepages_info.good_buf_size, MADV_COLLAPSE);
-+		if (ret)
-+			prt("collapsing hugepages for good_buf failed (numops=%llu): %s\n",
-+			     numops, strerror(errno));
-+		ret = madvise(hugepages_info.orig_temp_buf,
-+			      hugepages_info.temp_buf_size, MADV_COLLAPSE);
-+		if (ret)
-+			prt("collapsing hugepages for temp_buf failed (numops=%llu): %s\n",
-+			     numops, strerror(errno));
-+	}
-+#endif
++	thp_status=$(cat /sys/kernel/mm/transparent_hugepage/enabled)
++	if [[ $thp_status == *"[never]"* ]]; then
++		_notrun "system doesn't have transparent hugepages enabled"
++	fi
 +}
 +
- bool
- keep_running(void)
- {
- 	int ret;
- 
-+	if (hugepages)
-+	        collapse_hugepages();
+ # check that kernel and filesystem support direct I/O, and check if "$1" size
+ # aligned (optional) is supported
+ _require_odirect()
+diff --git a/tests/generic/758 b/tests/generic/758
+new file mode 100755
+index 00000000..e7cd8cdc
+--- /dev/null
++++ b/tests/generic/758
+@@ -0,0 +1,22 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++#
++# FS QA Test No. 758
++#
++# fsx exercising reads/writes from userspace buffers
++# backed by hugepages
++#
++. ./common/preamble
++_begin_fstest rw auto quick
 +
- 	if (deadline.tv_nsec) {
- 		struct timespec now;
- 
-@@ -2856,6 +2898,103 @@ keep_running(void)
- 	return numops-- != 0;
- }
- 
-+static long
-+get_hugepage_size(void)
-+{
-+	const char str[] = "Hugepagesize:";
-+	size_t str_len =  sizeof(str) - 1;
-+	unsigned int hugepage_size = 0;
-+	char buffer[64];
-+	FILE *file;
++. ./common/filter
 +
-+	file = fopen("/proc/meminfo", "r");
-+	if (!file) {
-+		prterr("get_hugepage_size: fopen /proc/meminfo");
-+		return -1;
-+	}
-+	while (fgets(buffer, sizeof(buffer), file)) {
-+		if (strncmp(buffer, str, str_len) == 0) {
-+			sscanf(buffer + str_len, "%u", &hugepage_size);
-+			break;
-+		}
-+	}
-+	fclose(file);
-+	if (!hugepage_size) {
-+		prterr("get_hugepage_size: failed to find "
-+			"hugepage size in /proc/meminfo\n");
-+		return -1;
-+	}
++_require_test
++_require_thp
 +
-+	/* convert from KiB to bytes */
-+	return hugepage_size << 10;
-+}
++run_fsx -N 10000            -l 500000 -h
++run_fsx -N 10000  -o 8192   -l 500000 -h
++run_fsx -N 10000  -o 128000 -l 500000 -h
 +
-+static void *
-+init_hugepages_buf(unsigned len, int hugepage_size, int alignment, long *buf_size)
-+{
-+	void *buf = NULL;
-+#ifdef MADV_COLLAPSE
-+	int ret;
-+	long size = roundup(len, hugepage_size) + alignment;
++status=0
++exit
+diff --git a/tests/generic/758.out b/tests/generic/758.out
+new file mode 100644
+index 00000000..af04bb14
+--- /dev/null
++++ b/tests/generic/758.out
+@@ -0,0 +1,4 @@
++QA output created by 758
++fsx -N 10000 -l 500000 -h
++fsx -N 10000 -o 8192 -l 500000 -h
++fsx -N 10000 -o 128000 -l 500000 -h
+diff --git a/tests/generic/759 b/tests/generic/759
+new file mode 100755
+index 00000000..514e7603
+--- /dev/null
++++ b/tests/generic/759
+@@ -0,0 +1,26 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++#
++# FS QA Test No. 759
++#
++# fsx exercising direct IO reads/writes from userspace buffers
++# backed by hugepages
++#
++. ./common/preamble
++_begin_fstest rw auto quick
 +
-+	ret = posix_memalign(&buf, hugepage_size, size);
-+	if (ret) {
-+		prterr("posix_memalign for buf");
-+		return NULL;
-+	}
-+	memset(buf, '\0', size);
-+	ret = madvise(buf, size, MADV_COLLAPSE);
-+	if (ret) {
-+		prterr("madvise collapse for buf");
-+		free(buf);
-+		return NULL;
-+	}
++. ./common/filter
 +
-+	*buf_size = size;
-+#endif
-+	return buf;
-+}
++_require_test
++_require_odirect
++_require_thp
 +
-+static void
-+init_buffers(void)
-+{
-+	int i;
++psize=`$here/src/feature -s`
++bsize=`$here/src/min_dio_alignment $TEST_DIR $TEST_DEV`
 +
-+	original_buf = (char *) malloc(maxfilelen);
-+	for (i = 0; i < maxfilelen; i++)
-+		original_buf[i] = random() % 256;
-+	if (hugepages) {
-+		long hugepage_size = get_hugepage_size();
-+		if (hugepage_size == -1) {
-+			prterr("get_hugepage_size()");
-+			exit(102);
-+		}
-+		good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy,
-+					      &hugepages_info.good_buf_size);
-+		if (!good_buf) {
-+			prterr("init_hugepages_buf failed for good_buf");
-+			exit(103);
-+		}
-+		hugepages_info.orig_good_buf = good_buf;
++run_fsx -N 10000            -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
++run_fsx -N 10000  -o 8192   -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
++run_fsx -N 10000  -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
 +
-+		temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy,
-+					      &hugepages_info.temp_buf_size);
-+		if (!temp_buf) {
-+			prterr("init_hugepages_buf failed for temp_buf");
-+			exit(103);
-+		}
-+		hugepages_info.orig_temp_buf = temp_buf;
-+	} else {
-+		unsigned long good_buf_len = maxfilelen + writebdy;
-+		unsigned long temp_buf_len = maxoplen + readbdy;
-+
-+		good_buf = calloc(1, good_buf_len);
-+		temp_buf = calloc(1, temp_buf_len);
-+	}
-+	good_buf = round_ptr_up(good_buf, writebdy, 0);
-+	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-+}
-+
- static struct option longopts[] = {
- 	{"replay-ops", required_argument, 0, 256},
- 	{"record-ops", optional_argument, 0, 255},
-@@ -2883,7 +3022,7 @@ main(int argc, char **argv)
- 	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
- 
- 	while ((ch = getopt_long(argc, argv,
--				 "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-+				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
- 				 longopts, NULL)) != EOF)
- 		switch (ch) {
- 		case 'b':
-@@ -2916,6 +3055,14 @@ main(int argc, char **argv)
- 		case 'g':
- 			filldata = *optarg;
- 			break;
-+		case 'h':
-+#ifndef MADV_COLLAPSE
-+				fprintf(stderr, "MADV_COLLAPSE not supported. "
-+					"Can't support -h\n");
-+				exit(86);
-+#endif
-+			hugepages = 1;
-+			break;
- 		case 'i':
- 			integrity = 1;
- 			logdev = strdup(optarg);
-@@ -3229,15 +3376,7 @@ main(int argc, char **argv)
- 			exit(95);
- 		}
- 	}
--	original_buf = (char *) malloc(maxfilelen);
--	for (i = 0; i < maxfilelen; i++)
--		original_buf[i] = random() % 256;
--	good_buf = (char *) malloc(maxfilelen + writebdy);
--	good_buf = round_ptr_up(good_buf, writebdy, 0);
--	memset(good_buf, '\0', maxfilelen);
--	temp_buf = (char *) malloc(maxoplen + readbdy);
--	temp_buf = round_ptr_up(temp_buf, readbdy, 0);
--	memset(temp_buf, '\0', maxoplen);
-+	init_buffers();
- 	if (lite) {	/* zero entire existing file */
- 		ssize_t written;
- 
++status=0
++exit
+diff --git a/tests/generic/759.out b/tests/generic/759.out
+new file mode 100644
+index 00000000..86bb66ef
+--- /dev/null
++++ b/tests/generic/759.out
+@@ -0,0 +1,4 @@
++QA output created by 759
++fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
++fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
++fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
 -- 
 2.47.1
 
