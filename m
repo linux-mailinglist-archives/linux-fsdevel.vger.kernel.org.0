@@ -1,115 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-39564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630B5A159D1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 00:09:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31FCA15A99
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A9C3A1EFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2025 23:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30BE168A44
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 00:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9045C1DD879;
-	Fri, 17 Jan 2025 23:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A4BB666;
+	Sat, 18 Jan 2025 00:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iMjPw57Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDB8ONge"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C981DED4A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2025 23:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE152913;
+	Sat, 18 Jan 2025 00:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737155358; cv=none; b=djA8Ow9secO8KIyvkYHuEDxmsco4nCxIGl+7bz/8NkVhI1XZWs/ZLxx1+pLMuMyjelxWe5TXOU+NwQjXlfwIuF70H2xtpjYrr3DFEMve5cwno/dYBQAT974gNCGmcga0Nm4HQwpfeYuz4z6JLXImH4rpM8lKPVHE2C4wy6bDzG8=
+	t=1737161292; cv=none; b=lB+M27YQJvroMDxbOnilkt+BFH5Q3zzAe9130UYTC3pxJLrE8dzb2nWIMHROBSNREotnQs2AeCWwGVnZw13pc9ujQAxb8IuMBWubdsFU4P9GoSHzC96p5io02ZEg3Jy90wKgGWY2qgBb/ANxGQbYUbLlhsbemNKRBOVxgeL79+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737155358; c=relaxed/simple;
-	bh=+HypI7P1kCU51C3kiGuz68ziek5mIfXwCkiWnKr6UKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NBcNYR1ELaqaEk7uyDuGWI12nkpBH4J7w2MBME2dR14CySxf5TF2BibCLuK6lhCLn8DKvdCW/ITVLyzRAA/HzVyerTaP2NfydaojsbvktHGrivfStSE6oYcqU2N647ybT+iuN/4OmuHgXCGTpQCLwv1wBPlZ+OxMH9bB0feiZdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iMjPw57Z; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=yIXkGQwnzX2BgXcnaBAeuJr3Wo+ssX64cIPy7lGG0mc=; b=iMjPw57ZPCfvaqvzLQExDjnVzG
-	/CWi/Zu1ZkJJx/xwctbWIoDaD4xSFav+klKYGzwi1mp/rRzcT0Ib0JqxB3r8grxD96r0fKetgSE05
-	YOfJwHSupgKjnvnokSBK7lIE3OZC/EKZf8m+GHEcT4/o0iUPpciuAcOV/O/uothYzcA0eVEv1utUl
-	GvhZYCa5BDZg/GJCPrkPjWuoGscTFYZ4qRzet0ll/SYjvtJ1cDbwe6hYDHwR9SWVU6OVMPe3GdYKd
-	bsVtPpP5YGYBUsu+XHH102neqE8bYSMWEYMMUuz0TnSdwz3M9RS0cICRnVp4mKQXY38g9G4LRnWRI
-	3BiTEmww==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYvSj-00000003egY-1fGT;
-	Fri, 17 Jan 2025 23:09:13 +0000
-Date: Fri, 17 Jan 2025 23:09:13 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-um@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] hostfs: fix string handling in __dentry_name()
-Message-ID: <20250117230913.GS1977892@ZenIV>
+	s=arc-20240116; t=1737161292; c=relaxed/simple;
+	bh=fbktfGWvSa4gEpcEF6whZwsRXScnycT3VcVG/O6fiYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMdeq7arFEZwwFd2tqJMUHiKdmi5ZAVX6D3XYVezE2GmrqfzKU5d3vuNxc/eJ4QVDaM1X8K4GI1TtUVwAb9r3jDOeBeRd+skp+IPTM/lcx0yEvO5BlmCZY48VOWqjLPQ4BH4tRAOK8sTA8VSgglPdX+eHXbOq/C6u2rYU2JS/RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NDB8ONge; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e455bf1f4d3so3830125276.2;
+        Fri, 17 Jan 2025 16:48:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737161290; x=1737766090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AF3bWaUPaYx/mr1WRWWM4MwXwG2ltNfjWEzCsL6n5xU=;
+        b=NDB8ONgeW54bi6fP9Wx4tXVjCbte0LEKOvmq2C6cpdwTkxToUI/HfXiRrBiV7hJ9dF
+         /nIruU37nQhwm9YK4Ip5+jAWCzARRq5rh2ER2XONbnysDZbaBwrJ7CTVlVd5S7Hj4SMR
+         ZFQNlsnc9ktc9HEL0MEy8/KbgIt5CyexBvMbufUeBXd5R4I4f0yhtkpsKGsiqoKjnoP2
+         VwBRnngawUfQJvcwKYhhI/UwUiUuGzwmHBJEItUaTNJY/41sOsz95nN0Ym0cyWEQb8Fg
+         E/NrqPH7i/t7Xz/qVArtRYNJSfxe/ECL8BaeGL4b5PdRwV94oAZwBKr4NqVx16RZXGB/
+         O1rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737161290; x=1737766090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AF3bWaUPaYx/mr1WRWWM4MwXwG2ltNfjWEzCsL6n5xU=;
+        b=spgLrRILDc0hhbz4IQsEALUka8S03bhF0PdEKfyZnMc77w0RMlpxTsDRau9iogijAA
+         pxpKAbJlN1wG6+Ujw2PFqHRu04No63S8chVFEiRqXgE4Jb+ZfzWo26Ak4Ldhsd88FRrQ
+         jwU8GKHn4jkqPuK4SW00ZyzRbqQXbR2GgujW5szbpSXLv80YFJgieHkE8Ns7NJeFMS1o
+         9EvKy4z6Ib7nzcvrJSi1HbMFoS1ZB6wqZrH4yqAzKJMkD/wQ1RbUAxubLmGbqNNp4+4G
+         bX+b+O97no/YzEFmDV6UVij5c9ctQtN4H2H6P3GEelqxle38v56syi5SOiaQQVtvwAMY
+         V4Gg==
+X-Gm-Message-State: AOJu0YzAJx/mLXIg+ZuGWiUWs1DM04um5Su17gnQTC6Lh7VVsoZOGu69
+	8UcNHlATspAOK8nkusTfMaAdX3rlCfIH3c5+fj4ZHFvqPfvSQE6FtmPfzQ==
+X-Gm-Gg: ASbGnctdD0L9WzY2rZISIssJ1Ypd/nDXsZwzGLGKsnnReHg7R0BCTt8VdN8mLR9L5MF
+	0U89I86UszGyriLKZGA04Y0Lh7X0WHLXecuLAHu9rim0TocqtPcL1vFReBC5Qf0lNhLOatNyu2F
+	IYvQ7c1/62PDpAjSgGmf4QPiGfLDxjmU5omftqqXRNLj9fezPXwKirj2hr10DKIkhmmfjNNhFF0
+	Dxn0+jazRXmaiueZx09gB7B1YTj+vcaY32I/8Ohz/f7cKjaXmVYxR0/ZExFT00HWd9N
+X-Google-Smtp-Source: AGHT+IHv+UEbmURBCr/anvkCgil0TBIeHiRvXkg7fJ8B2H0M/1ybsfATaH6hhWNzMi5WRSMhNVH0Ig==
+X-Received: by 2002:a05:690c:7346:b0:6f3:e027:bea3 with SMTP id 00721157ae682-6f6eb6971cdmr39365347b3.17.1737161289549;
+        Fri, 17 Jan 2025 16:48:09 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:70::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e63a8ccasm6561237b3.10.2025.01.17.16.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2025 16:48:09 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	bfoster@redhat.com,
+	djwong@kernel.org,
+	nirjhar@linux.ibm.com,
+	zlang@redhat.com,
+	kernel-team@meta.com
+Subject: [PATCH v4 0/2] fstests: test reads/writes from hugepages-backed buffers
+Date: Fri, 17 Jan 2025 16:47:57 -0800
+Message-ID: <20250118004759.2772065-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-[in viro/vfs.git#fixes, going to Linus unless anyone objects]
+There was a recent bug in rc1 [1] that was due to faulty handling for
+userspace buffers backed by hugepages.
 
-strcpy() should not be used with destination potentially overlapping
-the source; what's more, strscpy() in there is pointless - we already
-know the amount we want to copy; might as well use memcpy().
+This patchset adds generic tests for reads/writes from buffers backed by
+hugepages.
 
-Fixes: c278e81b8a02 "hostfs: Remove open coded strcpy()"
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 7e51d2cec64b..bd6503b73142 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -95,32 +95,17 @@ __uml_setup("hostfs=", hostfs_args,
- static char *__dentry_name(struct dentry *dentry, char *name)
- {
- 	char *p = dentry_path_raw(dentry, name, PATH_MAX);
--	char *root;
--	size_t len;
--	struct hostfs_fs_info *fsi;
--
--	fsi = dentry->d_sb->s_fs_info;
--	root = fsi->host_root_path;
--	len = strlen(root);
--	if (IS_ERR(p)) {
--		__putname(name);
--		return NULL;
--	}
--
--	/*
--	 * This function relies on the fact that dentry_path_raw() will place
--	 * the path name at the end of the provided buffer.
--	 */
--	BUG_ON(p + strlen(p) + 1 != name + PATH_MAX);
-+	struct hostfs_fs_info *fsi = dentry->d_sb->s_fs_info;
-+	char *root = fsi->host_root_path;
-+	size_t len = strlen(root);
- 
--	strscpy(name, root, PATH_MAX);
--	if (len > p - name) {
-+	if (IS_ERR(p) || len > p - name) {
- 		__putname(name);
- 		return NULL;
- 	}
- 
--	if (p > name + len)
--		strcpy(name + len, p);
-+	memcpy(name, root, len);
-+	memmove(name + len, p, name + PATH_MAX - p);
- 
- 	return name;
- }
+[1] https://lore.kernel.org/linux-fsdevel/p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw/
+
+Changelog:
+v3: https://lore.kernel.org/linux-fsdevel/20250115183107.3124743-1-joannelkoong@gmail.com/
+- Gate '-h' text behind MADVISE_COLLAPSE (Darrick)
+- Add periodic hugepages collapsing for memory constrained environments (Darrick)
+- Use tabs instead of spaces (Darrick)
+- Refactor #ifdef MADVISE_COLLAPSE placements
+
+v2: https://lore.kernel.org/linux-fsdevel/20241227193311.1799626-1-joannelkoong@gmail.com/
+- Gate -h and MADV_COLLAPSE usage to get it compatible on old systems (Zorro)
+- Use calloc instead of malloc/memset (Nirjhar)
+- Update exit codes in 1st patch
+- Add Brian's reviewed-bys
+
+v1: https://lore.kernel.org/linux-fsdevel/20241218210122.3809198-1-joannelkoong@gmail.com/
+- Refactor out buffer initialization (Brian)
+- Update commit messages of 1st patch (Brian)
+- Use << 10 instead of * 1024 (Nirjhar)
+- Replace CONFIG_TRANSPARENT_HUGEPAGE check with checking
+  'sys/kernel/mm/transparent_hugepage/' (Darrick)
+- Integrate readbdy and writebdy options 
+- Update options of generic/759 to include psize/bsize
+
+Joanne Koong (2):
+  fsx: support reads/writes from buffers backed by hugepages
+  generic: add tests for read/writes from hugepages-backed buffers
+
+ common/rc             |  13 ++++
+ ltp/fsx.c             | 165 ++++++++++++++++++++++++++++++++++++++----
+ tests/generic/758     |  22 ++++++
+ tests/generic/758.out |   4 +
+ tests/generic/759     |  26 +++++++
+ tests/generic/759.out |   4 +
+ 6 files changed, 221 insertions(+), 13 deletions(-)
+ create mode 100755 tests/generic/758
+ create mode 100644 tests/generic/758.out
+ create mode 100755 tests/generic/759
+ create mode 100644 tests/generic/759.out
+
+-- 
+2.47.1
+
 
