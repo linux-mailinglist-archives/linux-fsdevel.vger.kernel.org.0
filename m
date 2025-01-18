@@ -1,174 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-39568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DED0A15ACC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 02:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E50CA15AEC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 02:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DB6188BDEF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FDB188B726
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 01:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D69B67F;
-	Sat, 18 Jan 2025 01:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966CF3398B;
+	Sat, 18 Jan 2025 01:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vRjB35G0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HA4AmZF+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vRjB35G0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HA4AmZF+"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vnYCK/4C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE94D2913
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 01:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18821EED7
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jan 2025 01:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737162406; cv=none; b=jx2jIh7D96bC1OPgpftvaCoVIgJOuzCVBSpjojxfrGGRDfAW6T6yGRvSRqhKqi8nE2glZJDR6fPm7dAza7g1Kr8T2OkYGd4zQhZxUfS/10QHyu3z1imcFFGA67UDKXxQwVKhV3Z/shVjFzfVlRkEf3Wxjtp8i2fQsGADd5qkzSI=
+	t=1737164678; cv=none; b=XtbdKKaGOb9TSteVrhzmF31PjbAjMPC0l8KajNX18Bq+GMxcVCUr1jYmNS2HsGGFRNrpkCdh63KIt31TWdBf9ijZ+Rr+kVB5tHLoQl/H+zPL8ISIMwmVaXbOdo4pc8EtKXlDUBqDW/40APAkdwQ1OqT2byAhL+DML2kRX1iKtEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737162406; c=relaxed/simple;
-	bh=orVIIie4w76FtKSMwRZPTK+/2w1TozZKibr+CNs+SWM=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=p1Ui4FeghVxR7kHJLrziGdAAPKdfzVR6L6thv+k6suoaBSCTog+i7rv4agISmEq/vv8ZPbffxeidlv8FtxNKcYVyq9s5E7FJrd3nKnfMRScmFrLtNdB/Ww2pYc9AnxAAmBycfhkQBedbpyixqaS62edk5VXRpNQFefPUeRk32M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vRjB35G0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HA4AmZF+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vRjB35G0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HA4AmZF+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C2F6C211B2;
-	Sat, 18 Jan 2025 01:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737162402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
-	b=vRjB35G0+SeaU/twcfVkyZKhsABa57048TM5LKFeBDO3Vys5A0k7by9VhN6zwDoQ2uLZ7F
-	UzU3yaiuc4wegVwLyCSK2XYH3uDroMaKM/KvvNkqoRY0scmnj5HyF+u6lz6iBjXZTvPzdh
-	9LH1Ymeg9vtyhe7w36x+pF7tjmAXprw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737162402;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
-	b=HA4AmZF+NkO4K2b67azEBlggq65YphiiCyAI82wKulR2bMwBrAvOKWemmaKXqAH0itYVht
-	rYfXOiaW/f3ixPCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737162402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
-	b=vRjB35G0+SeaU/twcfVkyZKhsABa57048TM5LKFeBDO3Vys5A0k7by9VhN6zwDoQ2uLZ7F
-	UzU3yaiuc4wegVwLyCSK2XYH3uDroMaKM/KvvNkqoRY0scmnj5HyF+u6lz6iBjXZTvPzdh
-	9LH1Ymeg9vtyhe7w36x+pF7tjmAXprw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737162402;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pP3D6xjte2sz8UcOgt28FCbxF/C93FidDliHj1mxQHY=;
-	b=HA4AmZF+NkO4K2b67azEBlggq65YphiiCyAI82wKulR2bMwBrAvOKWemmaKXqAH0itYVht
-	rYfXOiaW/f3ixPCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B6AD13332;
-	Sat, 18 Jan 2025 01:06:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6SPvN6D+imdGHAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Sat, 18 Jan 2025 01:06:40 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1737164678; c=relaxed/simple;
+	bh=EMBY+cRvNJ+Dr/SNlVQ+h52dhVeCOd2ZCeLF3Xcx0+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=af0jpr0+YjPcDRT+JIG4bT7E0qc41hNO+11Gp5ytl/fNyIQ5wG7XV3wTnhxFaPGt34yS6TQHI2GhLjL1Av+sYq1flO2WK4eTcZaqH3sae04sLfPmKOOY0wf3jemohUVc5HdC7/8UvAG2QmFevq1Nnft5WJlZSP6g2Fr04YEW7fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vnYCK/4C; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=tS4GR78Zf1WYHN42B9f/TUnJcc/Q1/pdBpR9oVD43Js=; b=vnYCK/4C9brQMU2qaiJDtPclTV
+	7KY802457UP9Uh/OVjYUAfmrj2ZmwSAMTQp1a+xWjLr4/kgc9PcR8DAt2Jzt9f1fWhS3MCqD+EUpw
+	GCuwgWQaxokKIHEcA9EZdfm+yhN31jjmhdUQO5Q6xnyySHLEzA3AhymV/gi11OiNLBGstAe9OQgYu
+	0UF20bBOV0SE6vQJtwNG20e4OaBF5ngHu47dSRLyAvRuaHj6x3K0NWTzxG/Mlby9L3mTFZar3E34/
+	a1LhZ44kOZ/PytaimTUfuHJAbxFAGH6ZBBP0YRVM98Y6BKUmRlFAS/ZS21D51nfYuqVe5B9iAFf/j
+	wG6PbTTQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYxt4-00000003jlW-0tnh;
+	Sat, 18 Jan 2025 01:44:34 +0000
+Date: Sat, 18 Jan 2025 01:44:34 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH][RFC] make use of anon_inode_getfile_fmode()
+Message-ID: <20250118014434.GT1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: lsf-pc@lists.linuxfoundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] allowing parallel directory modifications at
- the VFS layer
-In-reply-to: <f78f4a5e86c10d723fd60d51a52dd727924fed3a.camel@kernel.org>
-References: <f78f4a5e86c10d723fd60d51a52dd727924fed3a.camel@kernel.org>
-Date: Sat, 18 Jan 2025 12:06:30 +1100
-Message-id: <173716239018.22054.4624947284143971296@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, 18 Jan 2025, Jeff Layton wrote:
-> We've hit a number of cases in testing recently where the parent's
-> i_rwsem ends up being the bottleneck in heavy parallel create
-> workloads. Currently we have to take the parent's inode->i_rwsem
-> exclusively when altering a directory, which means that any directory-
-> morphing operations in the same directory are serialized.
->=20
-> This is particularly onerous in the ->create codepath, since a
-> filesystem may have to do a number of blocking operations to create a
-> new file (allocate memory, start a transaction, etc.)
->=20
-> Neil recently posted this RFC series, which allows parallel directory
-> modifying operations:
->=20
->     https://lore.kernel.org/linux-fsdevel/20241220030830.272429-1-neilb@sus=
-e.de/
->=20
-> Al pointed out a number of problems in it, but the basic approach seems
-> sound. I'd like to have a discussion at LSF/MM about this.
->=20
-> Are there any problems with the basic approach? Are there other
-> approaches that might be better? Are there incremental steps we could
-> do pave the way for this to be a reality?
+["fallen through the cracks" misc stuff]
 
-Thanks for raising this!
-There was at least one problem with the approach but I have a plan to
-address that.  I won't go into detail here.  I hope to get a new
-patch set out sometime in the coming week.
-
-My question to fs-devel is: is anyone willing to convert their fs (or
-advice me on converting?) to use the new interface and do some testing
-and be open to exploring any bugs that appear?
-
-I'd like to try ext4 using the patches that lustre maintains for
-parallel directory ops in ext4 but making them suitable for upstream
-doesn't look to be straight forward.
-
-  https://git.whamcloud.com/?p=3Dfs/lustre-release.git;a=3Dblob;f=3Dldiskfs/k=
-ernel_patches/patches/linux-6.5/ext4-pdirop.patch;h=3D208d9dc44f4860fbf27072e=
-d1969744131e30108;hb=3DHEAD
-
-NeilBrown
+A bunch of anon_inode_getfile() callers follow it with adjusting
+->f_mode; we have a helper doing that now, so let's make use
+of it.
+    
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/arch/powerpc/platforms/pseries/papr-vpd.c b/arch/powerpc/platforms/pseries/papr-vpd.c
+index 1574176e3ffc..c86950d7105a 100644
+--- a/arch/powerpc/platforms/pseries/papr-vpd.c
++++ b/arch/powerpc/platforms/pseries/papr-vpd.c
+@@ -482,14 +482,13 @@ static long papr_vpd_create_handle(struct papr_location_code __user *ulc)
+ 		goto free_blob;
+ 	}
+ 
+-	file = anon_inode_getfile("[papr-vpd]", &papr_vpd_handle_ops,
+-				  (void *)blob, O_RDONLY);
++	file = anon_inode_getfile_fmode("[papr-vpd]", &papr_vpd_handle_ops,
++				  (void *)blob, O_RDONLY,
++				  FMODE_LSEEK | FMODE_PREAD);
+ 	if (IS_ERR(file)) {
+ 		err = PTR_ERR(file);
+ 		goto put_fd;
+ 	}
+-
+-	file->f_mode |= FMODE_LSEEK | FMODE_PREAD;
+ 	fd_install(fd, file);
+ 	return fd;
+ put_fd:
+diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
+index 49559605177e..c321d442f0da 100644
+--- a/drivers/vfio/group.c
++++ b/drivers/vfio/group.c
+@@ -266,24 +266,12 @@ static struct file *vfio_device_open_file(struct vfio_device *device)
+ 	if (ret)
+ 		goto err_free;
+ 
+-	/*
+-	 * We can't use anon_inode_getfd() because we need to modify
+-	 * the f_mode flags directly to allow more than just ioctls
+-	 */
+-	filep = anon_inode_getfile("[vfio-device]", &vfio_device_fops,
+-				   df, O_RDWR);
++	filep = anon_inode_getfile_fmode("[vfio-device]", &vfio_device_fops,
++				   df, O_RDWR, FMODE_PREAD | FMODE_PWRITE);
+ 	if (IS_ERR(filep)) {
+ 		ret = PTR_ERR(filep);
+ 		goto err_close_device;
+ 	}
+-
+-	/*
+-	 * TODO: add an anon_inode interface to do this.
+-	 * Appears to be missing by lack of need rather than
+-	 * explicitly prevented.  Now there's need.
+-	 */
+-	filep->f_mode |= (FMODE_PREAD | FMODE_PWRITE);
+-
+ 	/*
+ 	 * Use the pseudo fs inode on the device to link all mmaps
+ 	 * to the same address space, allowing us to unmap all vmas
+diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+index fe3de9ad57bf..d9bc67176128 100644
+--- a/fs/cachefiles/ondemand.c
++++ b/fs/cachefiles/ondemand.c
+@@ -317,8 +317,9 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
+ 		goto err_free_id;
+ 	}
+ 
+-	anon_file->file = anon_inode_getfile("[cachefiles]",
+-				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
++	anon_file->file = anon_inode_getfile_fmode("[cachefiles]",
++				&cachefiles_ondemand_fd_fops, object,
++				O_WRONLY, FMODE_PWRITE | FMODE_LSEEK);
+ 	if (IS_ERR(anon_file->file)) {
+ 		ret = PTR_ERR(anon_file->file);
+ 		goto err_put_fd;
+@@ -333,8 +334,6 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
+ 		goto err_put_file;
+ 	}
+ 
+-	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+-
+ 	load = (void *)req->msg.data;
+ 	load->fd = anon_file->fd;
+ 	object->ondemand->ondemand_id = object_id;
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 76129bfcd663..af42b2c7d235 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -406,14 +406,13 @@ static int do_eventfd(unsigned int count, int flags)
+ 	if (fd < 0)
+ 		goto err;
+ 
+-	file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx, flags);
++	file = anon_inode_getfile_fmode("[eventfd]", &eventfd_fops,
++					ctx, flags, FMODE_NOWAIT);
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(fd);
+ 		fd = PTR_ERR(file);
+ 		goto err;
+ 	}
+-
+-	file->f_mode |= FMODE_NOWAIT;
+ 	fd_install(fd, file);
+ 	return fd;
+ err:
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index d1a5f43ce466..d469782f97f4 100644
+--- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -277,15 +277,14 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+ 			return ufd;
+ 		}
+ 
+-		file = anon_inode_getfile("[signalfd]", &signalfd_fops, ctx,
+-				       O_RDWR | (flags & O_NONBLOCK));
++		file = anon_inode_getfile_fmode("[signalfd]", &signalfd_fops,
++					ctx, O_RDWR | (flags & O_NONBLOCK),
++					FMODE_NOWAIT);
+ 		if (IS_ERR(file)) {
+ 			put_unused_fd(ufd);
+ 			kfree(ctx);
+ 			return PTR_ERR(file);
+ 		}
+-		file->f_mode |= FMODE_NOWAIT;
+-
+ 		fd_install(ufd, file);
+ 	} else {
+ 		CLASS(fd, f)(ufd);
+diff --git a/fs/timerfd.c b/fs/timerfd.c
+index 9f7eb451a60f..753e22e83e0f 100644
+--- a/fs/timerfd.c
++++ b/fs/timerfd.c
+@@ -439,15 +439,15 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
+ 		return ufd;
+ 	}
+ 
+-	file = anon_inode_getfile("[timerfd]", &timerfd_fops, ctx,
+-				    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
++	file = anon_inode_getfile_fmode("[timerfd]", &timerfd_fops, ctx,
++			    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS),
++			    FMODE_NOWAIT);
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(ufd);
+ 		kfree(ctx);
+ 		return PTR_ERR(file);
+ 	}
+ 
+-	file->f_mode |= FMODE_NOWAIT;
+ 	fd_install(ufd, file);
+ 	return ufd;
+ }
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index de2c11dae231..0ba0ffc4abc9 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4222,15 +4222,14 @@ static int kvm_vcpu_ioctl_get_stats_fd(struct kvm_vcpu *vcpu)
+ 	if (fd < 0)
+ 		return fd;
+ 
+-	file = anon_inode_getfile(name, &kvm_vcpu_stats_fops, vcpu, O_RDONLY);
++	file = anon_inode_getfile_fmode(name, &kvm_vcpu_stats_fops, vcpu,
++					O_RDONLY, FMODE_PREAD);
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(fd);
+ 		return PTR_ERR(file);
+ 	}
+ 
+ 	kvm_get_kvm(vcpu->kvm);
+-
+-	file->f_mode |= FMODE_PREAD;
+ 	fd_install(fd, file);
+ 
+ 	return fd;
+@@ -4982,16 +4981,14 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+ 	if (fd < 0)
+ 		return fd;
+ 
+-	file = anon_inode_getfile("kvm-vm-stats",
+-			&kvm_vm_stats_fops, kvm, O_RDONLY);
++	file = anon_inode_getfile_fmode("kvm-vm-stats",
++			&kvm_vm_stats_fops, kvm, O_RDONLY, FMODE_PREAD);
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(fd);
+ 		return PTR_ERR(file);
+ 	}
+ 
+ 	kvm_get_kvm(kvm);
+-
+-	file->f_mode |= FMODE_PREAD;
+ 	fd_install(fd, file);
+ 
+ 	return fd;
 
