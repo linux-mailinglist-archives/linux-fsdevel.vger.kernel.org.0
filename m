@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-39583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6ECA15D18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:03:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C91A15D1C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:05:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDB4166372
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 13:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6C8188605B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 13:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97ADB18C00B;
-	Sat, 18 Jan 2025 13:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5844518C00B;
+	Sat, 18 Jan 2025 13:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko6wiFBQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzy6Qgqh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006AEA95C;
-	Sat, 18 Jan 2025 13:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10FDA95C;
+	Sat, 18 Jan 2025 13:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737205428; cv=none; b=VyiQ2qDetDeaOErMxbxxFgRRFtsNh98KltdDf9Lo6mm0KhMM5q9J+4kGHNdiJwAc31Dap2ekIEzGhJhbRFWIrdONYJ8JRqYn9hIFOg07Cu3KcYs0JGn2SB+UU2VDNvaxBzifDlOzlqsmGbMdgq6DQt3GRHbll90QsDMSPy/Be1Q=
+	t=1737205524; cv=none; b=PbK+peNk4rnXm8LmShc+5Wp5UKn3xl4zQzalofzioR4RLseBLaxMcutXe5iwqC+1CDvXEftkwYEyS4gXK5Qh6PRDd/86HltvhzfPta9QyS86xQUuPOyRxtqIbAlcQ26kSvbIBlCb6kCzqiv8dSyhnfxR/sbeCT9uxM7xSMv7E9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737205428; c=relaxed/simple;
-	bh=cDHojD1GVaAYB7nwWScX/ybK2GZPcod2nki3UGpJ6DE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jSA8JwNVU+B+sVu8nWGbDAzgsk9H/Ynzc79IWcaRTRKVSh6jOJmMPzHt5qf8CMKLOAjS9PnTfubzmrpoWUmpfO57wdjNhR41/RwaLS2JKKjc16KRz5Xowsx6YwaBOJ0OzxSnyPGgxrARGAi73+Fp5ebvZW/3ycxi4PKCRk8/cGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko6wiFBQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C671C4CED1;
-	Sat, 18 Jan 2025 13:03:45 +0000 (UTC)
+	s=arc-20240116; t=1737205524; c=relaxed/simple;
+	bh=kOo96Q5ZeoKL8kcavm9FQv8wUg/r+9DBcZykswn4f50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t205l1+q3UlVcf8KvSQAbg1d8pDbgDGKev/yyyQK+XYy/ojf77hCWk7NSPDCzxvCWphXldSfwej2XWc6Sut5HmD2wet9ODVvolqt7V1ZCgZ74yhw6uWjc0SxfufeBraylHpdh7Pws87HfDXeL/vGEfjJeDGwec1VwneT5WdJPh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzy6Qgqh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D2DC4CED1;
+	Sat, 18 Jan 2025 13:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737205427;
-	bh=cDHojD1GVaAYB7nwWScX/ybK2GZPcod2nki3UGpJ6DE=;
+	s=k20201202; t=1737205524;
+	bh=kOo96Q5ZeoKL8kcavm9FQv8wUg/r+9DBcZykswn4f50=;
 	h=From:To:Cc:Subject:Date:From;
-	b=ko6wiFBQH/G1gd7he1rN/6tAbR7iWuvNjq8VSvlxHi8eBvHrJjzszUuFY4zQA0RNX
-	 XkloUxEZDd3lp3NosCudw54IA88fufTcEM9cqJhDEhg7CQzJEFj8yg+rOjqP2Faifi
-	 dvv9AVvYJP1lisnYwl/fwojn9BjlK4ErLaDPKRrxi/gjHiiNgCfo6BDHyqjm/t1guu
-	 Z+lKvKwwVx8pdWn2aA9aMDXgUr0jZydOULRGScKdpmpBcalwyyu88qDGqGYpiEkXyJ
-	 zIrpOLcxzt1MR6ni/LN9RYLMRBN0zRbe3DLMXvTbj/vUO/oxDRfafE4/Tt/YG+mQBD
-	 oytpnbeFLnXXg==
+	b=qzy6QgqhoRqVMDwQHQhyaJ0TI7muNIjfM5sepSSmk4BAXewE9oQcf0F+SbHGDvxLz
+	 cOcpEnw+soxPD9ZoyXZ0wwNLUN4ckfsm2p6REqKAvQ471zyiZ6UJsQxmGdqPntyfi9
+	 9ObXrnoyWCZHiswZ/8fOVIx7mdkzp82ulpT5YTJTy+zgKz6vpZkmmXmXBLzxqRrxWv
+	 FbPLIwOUTOxnxegrrmL++g5ud3IuzdjMoPRKtZeUCd1i3vCTScBhXF2+Fn1YqTFkfi
+	 PjX7m8jFN4LDUwL/jTUtCTYwRTRwX5FpsbwXCHKA8zhl4t56qziSrwv4iREZVFbHYq
+	 7Y3e+EvjufJUw==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] cred
-Date: Sat, 18 Jan 2025 14:03:33 +0100
-Message-ID: <20250118-kernel-cred-bfe8c6c428d4@brauner>
+Subject: [GIT PULL] pid namespace
+Date: Sat, 18 Jan 2025 14:04:59 +0100
+Message-ID: <20250118-kernel-pid-ae69412addff@brauner>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4292; i=brauner@kernel.org; h=from:subject:message-id; bh=cDHojD1GVaAYB7nwWScX/ybK2GZPcod2nki3UGpJ6DE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR3L1uRsXmhvKvU/oTPUy1dD3EWnfrSaXdaTvrFk5l1Y WtMhVO1O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCZMLwh+f+Yc01hbYNrz/J 2+yv2Cn276bl1Yoi47mZn89+v5y37QMjw+zltbarNr9bP9u+fzd/EvdZ/cgTm7z6HwSl3uVazvX wNy8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5904; i=brauner@kernel.org; h=from:subject:message-id; bh=kOo96Q5ZeoKL8kcavm9FQv8wUg/r+9DBcZykswn4f50=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR3L2f9sfw2T3eQ+4HDniY+mZM2nJ+6R8XVzkM+y7K2Y pr54k/3O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyMJiR4dK0DB9Jj923UzIe WhnUrpqoeGiVrc1aKV/lY3M/TVhy4Asjw/vmx1vaNgmK835OMdV6aX7M9VBa3OqtUoXmooIPPq5 m5AcA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -63,14 +63,59 @@ Hey Linus,
 
 /* Summary */
 
-For the v6.13 cycle we switched overlayfs to a variant of
-override_creds() that doesn't take an extra reference. To this end the
-{override,revert}_creds_light() helpers were introduced.
+The pid_max sysctl is a global value. For a long time the default value
+has been 65535 and during the pidfd dicussions Linus proposed to bump
+pid_max by default (cf. [1]). Based on this discussion systemd started
+bumping pid_max to 2^22. So all new systems now run with a very high
+pid_max limit with some distros having also backported that change.
+The decision to bump pid_max is obviously correct. It just doesn't make
+a lot of sense nowadays to enforce such a low pid number. There's
+sufficient tooling to make selecting specific processes without typing
+really large pid numbers available.
 
-This series generalizes the idea behind {override,revert}_creds_light()
-to the {override,revert}_creds() helpers. Afterwards overriding and
-reverting credentials is reference count free unless the caller
-explicitly takes a reference. All caller's have been appropriately ported.
+In any case, there are workloads that have expections about how large
+pid numbers they accept. Either for historical reasons or architectural
+reasons. One concreate example is the 32-bit version of Android's bionic
+libc which requires pid numbers less than 65536. There are workloads
+where it is run in a 32-bit container on a 64-bit kernel. If the host
+has a pid_max value greater than 65535 the libc will abort thread
+creation because of size assumptions of pthread_mutex_t.
+
+That's a fairly specific use-case however, in general specific workloads
+that are moved into containers running on a host with a new kernel and a
+new systemd can run into issues with large pid_max values. Obviously
+making assumptions about the size of the allocated pid is suboptimal but
+we have userspace that does it.
+
+Of course, giving containers the ability to restrict the number of
+processes in their respective pid namespace indepent of the global limit
+through pid_max is something desirable in itself and comes in handy in
+general.
+
+Independent of motivating use-cases the existence of pid namespaces
+makes this also a good semantical extension and there have been prior
+proposals pushing in a similar direction.
+The trick here is to minimize the risk of regressions which I think is
+doable. The fact that pid namespaces are hierarchical will help us here.
+
+What we mostly care about is that when the host sets a low pid_max
+limit, say (crazy number) 100 that no descendant pid namespace can
+allocate a higher pid number in its namespace. Since pid allocation is
+hierarchial this can be ensured by checking each pid allocation against
+the pid namespace's pid_max limit. This means if the allocation in the
+descendant pid namespace succeeds, the ancestor pid namespace can reject
+it. If the ancestor pid namespace has a higher limit than the descendant
+pid namespace the descendant pid namespace will reject the pid
+allocation. The ancestor pid namespace will obviously not care about
+this.
+
+All in all this means pid_max continues to enforce a system wide limit
+on the number of processes but allows pid namespaces sufficient leeway
+in handling workloads with assumptions about pid values and allows
+containers to restrict the number of processes in a pid namespace
+through the pid_max interface.
+
+[1]: https://lore.kernel.org/linux-api/CAHk-=wiZ40LVjnXSi9iHLE_-ZBsWFGCgdmNiYZUXn1-V5YBg2g@mail.gmail.com
 
 /* Testing */
 
@@ -89,8 +134,32 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
-[1] linux-next: manual merge of the vfs-brauner tree with the nfs-anna tree
-    https://lore.kernel.org/linux-next/20250109084503.1e046ef7@canb.auug.org.au
+This will have a merge conflict with vfs-6.14.mount pull request sent in
+https://lore.kernel.org/r/20250118-vfs-pidfs-5921bfa5632a@brauner
+and it can be resolved as follows:
+
+diff --cc kernel/pid.c
+index aa2a7d4da455,ce3e94e26a0f..000000000000
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@@ -61,10 -60,13 +61,8 @@@ struct pid init_struct_pid =
+        }, }
+  };
+
+- int pid_max = PID_MAX_DEFAULT;
+-
+- int pid_max_min = RESERVED_PIDS + 1;
+- int pid_max_max = PID_MAX_LIMIT;
++ static int pid_max_min = RESERVED_PIDS + 1;
++ static int pid_max_max = PID_MAX_LIMIT;
+ -/*
+ - * Pseudo filesystems start inode numbering after one. We use Reserved
+ - * PIDs as a natural offset.
+ - */
+ -static u64 pidfs_ino = RESERVED_PIDS;
+
+  /*
+   * PID-map pages start out as NULL, they get allocated upon
 
 The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
@@ -98,66 +167,37 @@ The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.14-rc1.cred
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.14-rc1.pid
 
-for you to fetch changes up to a6babf4cbeaaa1c97a205382cdc958571f668ea8:
+for you to fetch changes up to c625aa276319f51e307ca10401baac4628bb25c2:
 
-  cred: fold get_new_cred_many() into get_cred_many() (2024-12-02 11:25:15 +0100)
+  Merge patch series "pid_namespace: namespacify sysctl kernel.pid_max" (2024-12-02 11:25:26 +0100)
 
-Please consider pulling these changes from the signed kernel-6.14-rc1.cred tag.
+Please consider pulling these changes from the signed kernel-6.14-rc1.pid tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-kernel-6.14-rc1.cred
+kernel-6.14-rc1.pid
 
 ----------------------------------------------------------------
-Christian Brauner (31):
-      tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
-      cred: return old creds from revert_creds_light()
-      tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
-      cred: remove old {override,revert}_creds() helpers
-      tree-wide: s/override_creds_light()/override_creds()/g
-      tree-wide: s/revert_creds_light()/revert_creds()/g
-      firmware: avoid pointless reference count bump
-      sev-dev: avoid pointless cred reference count bump
-      target_core_configfs: avoid pointless cred reference count bump
-      aio: avoid pointless cred reference count bump
-      binfmt_misc: avoid pointless cred reference count bump
-      coredump: avoid pointless cred reference count bump
-      nfs/localio: avoid pointless cred reference count bumps
-      nfs/nfs4idmap: avoid pointless reference count bump
-      nfs/nfs4recover: avoid pointless cred reference count bump
-      nfsfh: avoid pointless cred reference count bump
-      open: avoid pointless cred reference count bump
-      ovl: avoid pointless cred reference count bump
-      cifs: avoid pointless cred reference count bump
-      cifs: avoid pointless cred reference count bump
-      smb: avoid pointless cred reference count bump
-      io_uring: avoid pointless cred reference count bump
-      acct: avoid pointless reference count bump
-      cgroup: avoid pointless cred reference count bump
-      trace: avoid pointless cred reference count bump
-      dns_resolver: avoid pointless cred reference count bump
-      cachefiles: avoid pointless cred reference count bump
-      nfsd: avoid pointless cred reference count bump
-      cred: remove unused get_new_cred()
-      Merge patch series "cred: rework {override,revert}_creds()"
-      cred: fold get_new_cred_many() into get_cred_many()
+Christian Brauner (3):
+      pid: allow pid_max to be set per pid namespace
+      tests/pid_namespace: add pid_max tests
+      Merge patch series "pid_namespace: namespacify sysctl kernel.pid_max"
 
- Documentation/security/credentials.rst |  5 ----
- drivers/crypto/ccp/sev-dev.c           |  2 +-
- fs/backing-file.c                      | 20 +++++++-------
- fs/nfsd/auth.c                         |  3 +-
- fs/nfsd/filecache.c                    |  2 +-
- fs/nfsd/nfs4recover.c                  |  3 +-
- fs/nfsd/nfsfh.c                        |  1 -
- fs/open.c                              | 11 ++------
- fs/overlayfs/dir.c                     |  4 +--
- fs/overlayfs/util.c                    |  4 +--
- fs/smb/server/smb_common.c             | 10 ++-----
- include/linux/cred.h                   | 43 +++++------------------------
- kernel/cred.c                          | 50 ----------------------------------
- 13 files changed, 29 insertions(+), 129 deletions(-)
+ include/linux/pid.h                              |   3 -
+ include/linux/pid_namespace.h                    |  10 +-
+ kernel/pid.c                                     | 125 +++++++-
+ kernel/pid_namespace.c                           |  43 ++-
+ kernel/sysctl.c                                  |   9 -
+ kernel/trace/pid_list.c                          |   2 +-
+ kernel/trace/trace.h                             |   2 -
+ kernel/trace/trace_sched_switch.c                |   2 +-
+ tools/testing/selftests/pid_namespace/.gitignore |   1 +
+ tools/testing/selftests/pid_namespace/Makefile   |   2 +-
+ tools/testing/selftests/pid_namespace/pid_max.c  | 358 +++++++++++++++++++++++
+ 11 files changed, 521 insertions(+), 36 deletions(-)
+ create mode 100644 tools/testing/selftests/pid_namespace/pid_max.c
 
