@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-39584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C91A15D1C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:05:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C50A15D1F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 14:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6C8188605B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 13:05:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B4FB7A2E51
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2025 13:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5844518C00B;
-	Sat, 18 Jan 2025 13:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6105B18DF7C;
+	Sat, 18 Jan 2025 13:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzy6Qgqh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwgI96CR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10FDA95C;
-	Sat, 18 Jan 2025 13:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA32188CA9;
+	Sat, 18 Jan 2025 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737205524; cv=none; b=PbK+peNk4rnXm8LmShc+5Wp5UKn3xl4zQzalofzioR4RLseBLaxMcutXe5iwqC+1CDvXEftkwYEyS4gXK5Qh6PRDd/86HltvhzfPta9QyS86xQUuPOyRxtqIbAlcQ26kSvbIBlCb6kCzqiv8dSyhnfxR/sbeCT9uxM7xSMv7E9g=
+	t=1737205626; cv=none; b=J+4IaTYfGzHo9OZEeNucoSDFXLzLIvucw/EtbeOPbEBzWQV/S4iE+rnqJJbVgAbP0/Dseyutcwfzs1xUJhXUrxiNFRHHeEX9iklrTH+sxuQXeF0Q7Inu9rqvYiQ4fAU+dshA8u6CTm1nb2dW5OrnHqtlz/V87zrifKmLqajGetY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737205524; c=relaxed/simple;
-	bh=kOo96Q5ZeoKL8kcavm9FQv8wUg/r+9DBcZykswn4f50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t205l1+q3UlVcf8KvSQAbg1d8pDbgDGKev/yyyQK+XYy/ojf77hCWk7NSPDCzxvCWphXldSfwej2XWc6Sut5HmD2wet9ODVvolqt7V1ZCgZ74yhw6uWjc0SxfufeBraylHpdh7Pws87HfDXeL/vGEfjJeDGwec1VwneT5WdJPh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzy6Qgqh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D2DC4CED1;
-	Sat, 18 Jan 2025 13:05:22 +0000 (UTC)
+	s=arc-20240116; t=1737205626; c=relaxed/simple;
+	bh=Dcy/a7olfidFEfGFtHKWE7q2/l9XxSdglrnJalOLZQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhNwKwiCl4fL0rMI3bRSXjHaCRZGh295TCEhfq6BhbW7q5pEOrmALxjoYpW2qZ5plSIRF/yVoc5IK1jlePuXX8ZXAp6+SCzmsP0kHzri+ObTbSc6YNROttIyLu2pWh0BGaI9EC//31y3igcKGgW+/RYRkzQPXlA7z4eJmgu2GIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwgI96CR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DACC4CED1;
+	Sat, 18 Jan 2025 13:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737205524;
-	bh=kOo96Q5ZeoKL8kcavm9FQv8wUg/r+9DBcZykswn4f50=;
+	s=k20201202; t=1737205626;
+	bh=Dcy/a7olfidFEfGFtHKWE7q2/l9XxSdglrnJalOLZQY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=qzy6QgqhoRqVMDwQHQhyaJ0TI7muNIjfM5sepSSmk4BAXewE9oQcf0F+SbHGDvxLz
-	 cOcpEnw+soxPD9ZoyXZ0wwNLUN4ckfsm2p6REqKAvQ471zyiZ6UJsQxmGdqPntyfi9
-	 9ObXrnoyWCZHiswZ/8fOVIx7mdkzp82ulpT5YTJTy+zgKz6vpZkmmXmXBLzxqRrxWv
-	 FbPLIwOUTOxnxegrrmL++g5ud3IuzdjMoPRKtZeUCd1i3vCTScBhXF2+Fn1YqTFkfi
-	 PjX7m8jFN4LDUwL/jTUtCTYwRTRwX5FpsbwXCHKA8zhl4t56qziSrwv4iREZVFbHYq
-	 7Y3e+EvjufJUw==
+	b=HwgI96CRBrBHUrml6nz+7FkDlY8hBx4FIapFoodsuJHNJnYnH1hlrbWmkjX3V3lCE
+	 b13x14LhywUbIEkrd/VmYUSE1p8fU5MkfMCgpaVVIduVcUC2ni/BtuKOk3grhWRlza
+	 fNAI5R3QCmw4VMJgD+Dt3blSu9Hl3z0ZFyWkK2EQLnkWMiyOU36kdx2rIdeZ0ZxSFj
+	 12XS1UDc1Z2zF/5EVS1P90WAQDHoXhJfJXoP+s2NBH1cAmswGMsNRkG345x2XtP4K5
+	 p/Ko5AXj9mWD37JEr/gzGkJzSqITYQ3pvJgwMZy1y9OySYAmJXDSvimepIVK9G+HvW
+	 JMqfndCVkIu+w==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] pid namespace
-Date: Sat, 18 Jan 2025 14:04:59 +0100
-Message-ID: <20250118-kernel-pid-ae69412addff@brauner>
+Subject: [GIT PULL] vfs mount
+Date: Sat, 18 Jan 2025 14:06:58 +0100
+Message-ID: <20250118-vfs-mount-bc855e2c7463@brauner>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5904; i=brauner@kernel.org; h=from:subject:message-id; bh=kOo96Q5ZeoKL8kcavm9FQv8wUg/r+9DBcZykswn4f50=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR3L2f9sfw2T3eQ+4HDniY+mZM2nJ+6R8XVzkM+y7K2Y pr54k/3O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyMJiR4dK0DB9Jj923UzIe WhnUrpqoeGiVrc1aKV/lY3M/TVhy4Asjw/vmx1vaNgmK835OMdV6aX7M9VBa3OqtUoXmooIPPq5 m5AcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6573; i=brauner@kernel.org; h=from:subject:message-id; bh=Dcy/a7olfidFEfGFtHKWE7q2/l9XxSdglrnJalOLZQY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR3Ly/hUrke7mhtWPlzJ8MfR9GoFwzWUz69SD75lJN5Q 5Dgj2X/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZiHcDwP//G6Sa+pAj9oM8b edMj3qjaLZ6yWrgy45J+zurPC8/symdk+LfwmCOnzF6jfd9/yPfu7i9UkyurDUxi8NMSeMcRKdX ODAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -63,59 +63,58 @@ Hey Linus,
 
 /* Summary */
 
-The pid_max sysctl is a global value. For a long time the default value
-has been 65535 and during the pidfd dicussions Linus proposed to bump
-pid_max by default (cf. [1]). Based on this discussion systemd started
-bumping pid_max to 2^22. So all new systems now run with a very high
-pid_max limit with some distros having also backported that change.
-The decision to bump pid_max is obviously correct. It just doesn't make
-a lot of sense nowadays to enforce such a low pid number. There's
-sufficient tooling to make selecting specific processes without typing
-really large pid numbers available.
+This contains mount update for this cycle:
 
-In any case, there are workloads that have expections about how large
-pid numbers they accept. Either for historical reasons or architectural
-reasons. One concreate example is the 32-bit version of Android's bionic
-libc which requires pid numbers less than 65536. There are workloads
-where it is run in a 32-bit container on a 64-bit kernel. If the host
-has a pid_max value greater than 65535 the libc will abort thread
-creation because of size assumptions of pthread_mutex_t.
+- Add a mountinfo program to demonstrate statmount()/listmount()
 
-That's a fairly specific use-case however, in general specific workloads
-that are moved into containers running on a host with a new kernel and a
-new systemd can run into issues with large pid_max values. Obviously
-making assumptions about the size of the allocated pid is suboptimal but
-we have userspace that does it.
+  Add a new "mountinfo" sample userland program that demonstrates how to
+  use statmount() and listmount() to get at the same info that
+  /proc/pid/mountinfo provides.
 
-Of course, giving containers the ability to restrict the number of
-processes in their respective pid namespace indepent of the global limit
-through pid_max is something desirable in itself and comes in handy in
-general.
+- Remove pointless nospec.h include.
 
-Independent of motivating use-cases the existence of pid namespaces
-makes this also a good semantical extension and there have been prior
-proposals pushing in a similar direction.
-The trick here is to minimize the risk of regressions which I think is
-doable. The fact that pid namespaces are hierarchical will help us here.
+- Prepend statmount.mnt_opts string with security_sb_mnt_opts()
 
-What we mostly care about is that when the host sets a low pid_max
-limit, say (crazy number) 100 that no descendant pid namespace can
-allocate a higher pid number in its namespace. Since pid allocation is
-hierarchial this can be ensured by checking each pid allocation against
-the pid namespace's pid_max limit. This means if the allocation in the
-descendant pid namespace succeeds, the ancestor pid namespace can reject
-it. If the ancestor pid namespace has a higher limit than the descendant
-pid namespace the descendant pid namespace will reject the pid
-allocation. The ancestor pid namespace will obviously not care about
-this.
+  Currently these mount options aren't accessible via statmount().
 
-All in all this means pid_max continues to enforce a system wide limit
-on the number of processes but allows pid namespaces sufficient leeway
-in handling workloads with assumptions about pid values and allows
-containers to restrict the number of processes in a pid namespace
-through the pid_max interface.
+- Add new mount namespaces to mount namespace rbtree outside of the
+  namespace semaphore.
 
-[1]: https://lore.kernel.org/linux-api/CAHk-=wiZ40LVjnXSi9iHLE_-ZBsWFGCgdmNiYZUXn1-V5YBg2g@mail.gmail.com
+- Lockless mount namespace lookup
+
+  Currently we take the read lock when looking for a mount namespace to
+  list mounts in. We can make this lockless. The simple search case can
+  just use a sequence counter to detect concurrent changes to the
+  rbtree.
+
+  For walking the list of mount namespaces sequentially via nsfs we keep
+  a separate rcu list as rb_prev() and rb_next() aren't usable safely
+  with rcu. Currently there is no primitive for retrieving the previous
+  list member. To do this we need a new deletion primitive that doesn't
+  poison the prev pointer and a corresponding retrieval helper.
+
+  Since creating mount namespaces is a relatively rare event compared
+  with querying mounts in a foreign mount namespace this is worth it.
+  Once libmount and systemd pick up this mechanism to list mounts in
+  foreign mount namespaces this will be used very frequently.
+
+  - Add extended selftests for lockless mount namespace iteration.
+
+  - Add a sample program to list all mounts on the system, i.e., in all
+    mount namespaces.
+
+- Improve mount namespace iteration performance
+
+  Make finding the last or first mount to start iterating the mount
+  namespace from an O(1) operation and add selftests for iterating the
+  mount table starting from the first and last mount.
+
+- Use an xarray for the old mount id
+
+  While the ida does use the xarray internally we can use it explicitly
+  which allows us to increment the unique mount id under the xa lock.
+  This allows us to remove the atomic as we're now allocating both ids
+  in one go.
 
 /* Testing */
 
@@ -138,66 +137,92 @@ This will have a merge conflict with vfs-6.14.mount pull request sent in
 https://lore.kernel.org/r/20250118-vfs-pidfs-5921bfa5632a@brauner
 and it can be resolved as follows:
 
-diff --cc kernel/pid.c
-index aa2a7d4da455,ce3e94e26a0f..000000000000
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@@ -61,10 -60,13 +61,8 @@@ struct pid init_struct_pid =
-        }, }
-  };
+diff --cc fs/namespace.c
+index 64deda6f5b2c,371c860f49de..000000000000
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@@ -32,8 -32,6 +32,7 @@@
+  #include <linux/fs_context.h>
+  #include <linux/shmem_fs.h>
+  #include <linux/mnt_idmapping.h>
+ +#include <linux/pidfs.h>
+- #include <linux/nospec.h>
 
-- int pid_max = PID_MAX_DEFAULT;
--
-- int pid_max_min = RESERVED_PIDS + 1;
-- int pid_max_max = PID_MAX_LIMIT;
-+ static int pid_max_min = RESERVED_PIDS + 1;
-+ static int pid_max_max = PID_MAX_LIMIT;
- -/*
- - * Pseudo filesystems start inode numbering after one. We use Reserved
- - * PIDs as a natural offset.
- - */
- -static u64 pidfs_ino = RESERVED_PIDS;
+  #include "pnode.h"
+  #include "internal.h"
 
-  /*
-   * PID-map pages start out as NULL, they get allocated upon
+The following changes since commit 344bac8f0d73fe970cd9f5b2f132906317d29e8b:
 
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
-
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+  fs: kill MNT_ONRB (2025-01-09 16:58:50 +0100)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.14-rc1.pid
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc1.mount
 
-for you to fetch changes up to c625aa276319f51e307ca10401baac4628bb25c2:
+for you to fetch changes up to f79e6eb84d4d2bff99e3ca6c1f140b2af827e904:
 
-  Merge patch series "pid_namespace: namespacify sysctl kernel.pid_max" (2024-12-02 11:25:26 +0100)
+  samples/vfs/mountinfo: Use __u64 instead of uint64_t (2025-01-10 12:08:27 +0100)
 
-Please consider pulling these changes from the signed kernel-6.14-rc1.pid tag.
+Please consider pulling these changes from the signed vfs-6.14-rc1.mount tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-kernel-6.14-rc1.pid
+vfs-6.14-rc1.mount
 
 ----------------------------------------------------------------
-Christian Brauner (3):
-      pid: allow pid_max to be set per pid namespace
-      tests/pid_namespace: add pid_max tests
-      Merge patch series "pid_namespace: namespacify sysctl kernel.pid_max"
+Christian Brauner (17):
+      mount: remove inlude/nospec.h include
+      fs: add mount namespace to rbtree late
+      Merge patch series "fs: listmount()/statmount() fix and sample program"
+      fs: lockless mntns rbtree lookup
+      rculist: add list_bidir_{del,prev}_rcu()
+      fs: lockless mntns lookup for nsfs
+      fs: simplify rwlock to spinlock
+      seltests: move nsfs into filesystems subfolder
+      selftests: add tests for mntns iteration
+      selftests: remove unneeded include
+      samples: add test-list-all-mounts
+      Merge patch series "fs: lockless mntns lookup"
+      fs: cache first and last mount
+      selftests: add listmount() iteration tests
+      Merge patch series "fs: tweak mntns iteration"
+      fs: use xarray for old mount id
+      fs: remove useless lockdep assertion
 
- include/linux/pid.h                              |   3 -
- include/linux/pid_namespace.h                    |  10 +-
- kernel/pid.c                                     | 125 +++++++-
- kernel/pid_namespace.c                           |  43 ++-
- kernel/sysctl.c                                  |   9 -
- kernel/trace/pid_list.c                          |   2 +-
- kernel/trace/trace.h                             |   2 -
- kernel/trace/trace_sched_switch.c                |   2 +-
- tools/testing/selftests/pid_namespace/.gitignore |   1 +
- tools/testing/selftests/pid_namespace/Makefile   |   2 +-
- tools/testing/selftests/pid_namespace/pid_max.c  | 358 +++++++++++++++++++++++
- 11 files changed, 521 insertions(+), 36 deletions(-)
- create mode 100644 tools/testing/selftests/pid_namespace/pid_max.c
+Geert Uytterhoeven (1):
+      samples/vfs/mountinfo: Use __u64 instead of uint64_t
+
+Jeff Layton (2):
+      samples: add a mountinfo program to demonstrate statmount()/listmount()
+      fs: prepend statmount.mnt_opts string with security_sb_mnt_opts()
+
+ fs/mount.h                                         |  31 ++-
+ fs/namespace.c                                     | 200 +++++++++------
+ fs/nsfs.c                                          |   5 +-
+ include/linux/rculist.h                            |  44 ++++
+ samples/vfs/.gitignore                             |   2 +
+ samples/vfs/Makefile                               |   2 +-
+ samples/vfs/mountinfo.c                            | 273 +++++++++++++++++++++
+ samples/vfs/test-list-all-mounts.c                 | 235 ++++++++++++++++++
+ .../selftests/{ => filesystems}/nsfs/.gitignore    |   1 +
+ .../selftests/{ => filesystems}/nsfs/Makefile      |   4 +-
+ .../selftests/{ => filesystems}/nsfs/config        |   0
+ .../selftests/filesystems/nsfs/iterate_mntns.c     | 149 +++++++++++
+ .../selftests/{ => filesystems}/nsfs/owner.c       |   0
+ .../selftests/{ => filesystems}/nsfs/pidns.c       |   0
+ .../selftests/filesystems/statmount/Makefile       |   2 +-
+ .../filesystems/statmount/listmount_test.c         |  66 +++++
+ tools/testing/selftests/pidfd/pidfd.h              |   1 -
+ 17 files changed, 918 insertions(+), 97 deletions(-)
+ create mode 100644 samples/vfs/mountinfo.c
+ create mode 100644 samples/vfs/test-list-all-mounts.c
+ rename tools/testing/selftests/{ => filesystems}/nsfs/.gitignore (78%)
+ rename tools/testing/selftests/{ => filesystems}/nsfs/Makefile (50%)
+ rename tools/testing/selftests/{ => filesystems}/nsfs/config (100%)
+ create mode 100644 tools/testing/selftests/filesystems/nsfs/iterate_mntns.c
+ rename tools/testing/selftests/{ => filesystems}/nsfs/owner.c (100%)
+ rename tools/testing/selftests/{ => filesystems}/nsfs/pidns.c (100%)
+ create mode 100644 tools/testing/selftests/filesystems/statmount/listmount_test.c
 
