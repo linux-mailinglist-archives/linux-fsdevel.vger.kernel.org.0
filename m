@@ -1,91 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-39600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF850A1605C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2025 06:40:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32399A160F0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2025 10:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0316B7A3182
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2025 05:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAFA11886773
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2025 09:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B2A4964E;
-	Sun, 19 Jan 2025 05:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610E3199230;
+	Sun, 19 Jan 2025 09:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d5MkOQAq"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="L5fRt3N3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCBF2B9A5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jan 2025 05:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DC57FD
+	for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jan 2025 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737265200; cv=none; b=LXQFxBZj8GoYVGry/1dOAP1QJSQ56sLTZvsGAEmwalDaGZltyjwaWd5EkOzjw3kcymaaQQUVRcytNgBMF8o7tR0swYZ7gK8xv2zxcAfWXhR3oH6/D61GuMgi4MdKVkxzAxnr/CKPKSMHC5EIOUX89AXRqovOOyiJJ3oxuSZvjeA=
+	t=1737277427; cv=none; b=WR1hh98DUofSLhVeLYKxl9p1fe9Z+3/F2ixLumbInYicNNZ2ry3MMBuumV4oeXTHPScyemgdywY+76SpN16TOQ7nr/0ruRohKZsrYyyEHA6qOfIpRJqKItYEVyalM64Ijucq6j2jb1fHMReohQrbTWKf8eQS0KZ032p2DUUQHfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737265200; c=relaxed/simple;
-	bh=yeSv7A0RzVaNXUU5lrF5wmep8AjxlvTGl2rYY1N+tMc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Kgt6j88YYRPwSx06V2pOpRPvC9CjZqaze0y1VlO5ImP7Dgyv88KIQCBvuE5wUHVExuVZF6m591gqQtLm0sYYiSKevODJzJ4qQ1sXcS6s/1KKH0iJS1er/C+eWvXbs0awhXlleMv3ito9TCv+NU0ZyKOOg8RX1S34Z321OnsLYMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d5MkOQAq; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:To:From:Date:Reply-To:Cc:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=8KXq+2Wj9Eo48uZou9AkuO4xinFPXVYDFFPF56i6S6Q=; b=d5MkOQAqNpcv/rqaINrwYEn/gR
-	uSfJBgI/CFUrLiaY3Fzc+eQTRZB7ReAhhEYeWFACC4KqHHirwKC1F9JLA9Vps1gZNpKps7ciJe+pM
-	Qpfjt1BWqc3S53STM6VAhYAKuLv2T/NJbH3kht2ZiNvO1syN5fpil/Dq054bDFPLmxsvFNfj1iZ/L
-	sphGHXu2NIahQio0oPzcGJrTe2fIsBx/Ex2JY/zGDmYnzJEZjzIo9nNUwx/i2szf2bF2PZCOjNYSl
-	1MYkd6hpNwuS+0Eajleaew5bekPJ+5R0pQpG2QUXot9aDnLM5zqZBPyOFgnffA6yk8ocl5sAuFiDi
-	5SjPh1lw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tZO2O-00000004jHd-05ZA
-	for linux-fsdevel@vger.kernel.org;
-	Sun, 19 Jan 2025 05:39:56 +0000
-Date: Sun, 19 Jan 2025 05:39:56 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Subject: [RFC] EOPENSTALE handling in path_openat()
-Message-ID: <20250119053956.GX1977892@ZenIV>
+	s=arc-20240116; t=1737277427; c=relaxed/simple;
+	bh=LLsyvVTq/lQpx7WSJxhcgqPuH473y5oVsLvlG4BUBsI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ubQgZGVkwjQrjwsXUPbHZD5e9oqownxN6PGQOMhF+Ax2zGoMrKvFJHyGpERlOoGP3aiOKLOgyB8iD0op9N3Ks+U0PN5atCpaQYnVNeD8HTcSFwt6GFVNShniN8DjBjBK8nHNrStP2QsakazB1B3CVaao1L8do16TJvj6FeQA6FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=L5fRt3N3; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1737277427; x=1768813427;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rLNRn7MKObT8VVRyzXM2BM+WCKoEMORz64p4Pnt0om0=;
+  b=L5fRt3N3yN8367bMM23EVqbFY2lXaebPmw8uENWRxKjMTVyzV1ZEr7SY
+   LoS/vL5Cx1glhK2MiL014Qt/CLgXEaxR/IOUE2yl+1YdqmznIaYwUoAGe
+   1JxY8VZ3cs56mQHolK/I/vtDivIcLqHel3A8eV5q2wKxPQ0DhaDygkK3H
+   4=;
+X-IronPort-AV: E=Sophos;i="6.13,216,1732579200"; 
+   d="scan'208";a="264151599"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2025 09:03:45 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:61800]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.205:2525] with esmtp (Farcaster)
+ id e0f1e871-d852-487b-8b96-5104b82e7db7; Sun, 19 Jan 2025 09:03:43 +0000 (UTC)
+X-Farcaster-Flow-ID: e0f1e871-d852-487b-8b96-5104b82e7db7
+Received: from EX19D002AND002.ant.amazon.com (10.37.240.241) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Sun, 19 Jan 2025 09:03:43 +0000
+Received: from HND-5CG1082HRX.ant.amazon.com (10.37.244.8) by
+ EX19D002AND002.ant.amazon.com (10.37.240.241) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Sun, 19 Jan 2025 09:03:40 +0000
+From: Yuichiro Tsuji <yuichtsu@amazon.com>
+To: <linux-fsdevel@vger.kernel.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kuniyuki Iwashima
+	<kuniyu@amazon.com>, Yuichiro Tsuji <yuichtsu@amazon.com>
+Subject: [PATCH v1 vfs 0/2] Fix the return type of several functions from long to int
+Date: Sun, 19 Jan 2025 18:02:47 +0900
+Message-ID: <20250119090322.2598-1-yuichtsu@amazon.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWC002.ant.amazon.com (10.13.139.222) To
+ EX19D002AND002.ant.amazon.com (10.37.240.241)
 
-	We have something very odd in the end of path_openat():
+These patches fix the return type of several functions from long to int to
+match its actual behavior.
 
-        if (error == -EOPENSTALE) {
-		if (flags & LOOKUP_RCU)
-			error = -ECHILD;
-		else   
-			error = -ESTALE;
-	}
+Yuichiro Tsuji (2):
+  open: Fix return type of several functions from long to int
+  ioctl: Fix return type of several functions from long to int
 
-Note that *nothing* that may return EOPENSTALE is ever called in
-RCU mode, pretty much by definition - we must have done something
-blocking to have gotten that and in RCU mode that's not going to
-happen.
+ fs/internal.h            |  4 ++--
+ fs/ioctl.c               |  6 +++---
+ fs/open.c                | 18 +++++++++---------
+ include/linux/fs.h       |  6 +++---
+ include/linux/syscalls.h |  4 ++--
+ 5 files changed, 19 insertions(+), 19 deletions(-)
 
-This check does not look for RCU mode, though - it checks whether
-we'd *started* in RCU mode, ignoring any successful unlazy that
-might have landed us in non-RCU mode.  So this ECHILD is not
-a dead code.
+-- 
+2.43.5
 
-It really looks like it ought to have been - there's nothing
-a retry in non-RCU mode would have solved; the checks on ->d_seq
-should've guaranteed that there had been possible timings for
-just that tree traversal in non-RCU mode, hitting exact same
-dentries.  If they hadn't, we have a much worse problem there...
-
-Miklos, could you recall what was the original intent of that?
-Do we want to keep that logics there, or should it just turn into
-"map -ENOPENSTALE to -ESTALE??
 
