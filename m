@@ -1,392 +1,324 @@
-Return-Path: <linux-fsdevel+bounces-39748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF98A174BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 23:42:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C376BA174ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 00:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F46F168390
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 22:42:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F192B16919F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 23:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5779B1EE7BC;
-	Mon, 20 Jan 2025 22:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1941B81C1;
+	Mon, 20 Jan 2025 23:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="N0VGD85g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3hz21+qu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BdpQ280H";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="imH1oLk6"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OoF9juJQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="U7aIdhKK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OoF9juJQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="U7aIdhKK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634A64689
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 22:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D5F2F30;
+	Mon, 20 Jan 2025 23:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737412933; cv=none; b=lFprQHv5V1MTPGZosa3J8VO26JQlCoaZYbgJyteP71ZnOTPMLNXnaKhUNsFbZ7PnoG9XMjtlIqIl6Hxf8kW1bEvbYtsSj3Bq5tl05CJCtqlv4ZDu7InrwquN3NQkfhISS2CdyVOC12yCHZjBrYhIMfpD96D1Wd9rZ004YYbEafk=
+	t=1737414183; cv=none; b=ddUpwtwk7sDf6aEMRDTDkelaSYDW4/1Nd1G3PGxYqT5l6Iqa97go/jfLntyVSddD1FJOnXetn2TS4dplumGfbYFWO1i2VP2or1rVEQHqFOj6rErHJS2vaRNy7EbxtrnsMM3WVz3kTZB6J8Lf3DmCjE0VpYIB1GEXM0EzcIDiBa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737412933; c=relaxed/simple;
-	bh=yLOARplf0y3PzW5M3l6W/tSxnY57E8+bEDrueONgUV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kyDLKKIuBSX1yeGxzGyUliSky6mEeHDZjXs/M1aPzyxsK/fVkwpR/Tj3n9V3akyNJz1mA1nIXWPVduPJg25bRbyd7c7lDmCmgTTFyQfjfkLh+Ewc+/4kJV6e37RqAQZ3OOTcDPNXdrlju1GjEgptPa4vFahSJuKlOh5Pzv2ZF8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=N0VGD85g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3hz21+qu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BdpQ280H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=imH1oLk6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1737414183; c=relaxed/simple;
+	bh=UmHdWqf7mhQRao8Ro1O08vWRPBBghEEG3Wbj02yk9rE=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=SyeypMrYkf+5mxCWme/zMUoUs0BdFg/dXwgAZM7SF0QXwLrYUnvB0pQoExRimPYC/NCbkS4UGhDUhzHM91Toz6jXH+YzYtc/jFGJkPhE9OxLFm11IaBBvjklCtNTBFpZCFTXH7tYOn2ZavmCnjYInEtu9D6xwbt8JIfc/+C/dzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OoF9juJQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=U7aIdhKK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OoF9juJQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=U7aIdhKK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A1FA121158;
-	Mon, 20 Jan 2025 22:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737412922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A707A211C6;
+	Mon, 20 Jan 2025 23:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737414179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oYKJuPglaND0aCGEia4dXjUVlLraQdXkAEBvOtlme0Y=;
-	b=N0VGD85gkGgJYJtQNQyz4/WR84FielIDHmVkI9NP6NmKvvRMj4VYsyzneD7iOjLLaoPjEX
-	iX+qbtMRd/Kk+WsUx+hcRB7U8VqWuj9Fq/gX2BWcgmmCgc1RjgWsuLT9cpXGhmY9N74dVU
-	5pRtOWPfqb2Rjom2P+vAnv/hYxKZ9Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737412922;
+	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
+	b=OoF9juJQVNhz6w1XBLrWB5W2e/d7qumVtKs2E0ral1RYPxQpueM34I7JUEIoOkwSVzvzpT
+	0RsGbmloFyidfMoI/udNGEme5+kV6mZm6AwwBJJvcoEpSuarWakj9Quzqnb752nsdUjGJo
+	b2l2xNcoMwqGRTXwwJT3tDfRBxIJj/o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737414179;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oYKJuPglaND0aCGEia4dXjUVlLraQdXkAEBvOtlme0Y=;
-	b=3hz21+quumZ1UFBr3a90Q9soys9ELgyIUEM6FqiMosoDLKzBgA4MkuvKmBZnu/mYBBwWAA
-	tybKsghZ6Lr581BQ==
+	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
+	b=U7aIdhKKPre475VKhaehScCwqiGB23Iv9pCLtZMek7OS6qaBJppNumWG09E7eUYY3cZZ6q
+	gxHRYKJQ+QJgVsCA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BdpQ280H;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=imH1oLk6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737412921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737414179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oYKJuPglaND0aCGEia4dXjUVlLraQdXkAEBvOtlme0Y=;
-	b=BdpQ280HW04QNax/e8tI3+4ctKBsTEne8h7DC5ZJdSssxiMeXTMH8NFdwf/OUXuruZcN9y
-	YTSsBbTDAJwE7pjc54z97TeWGrQ1fQju2INeFhmzvzBuuxk9q7V2oQLF1ukV27CMKKvnuq
-	txPEzvilYfRsgY0UDCoA1vrmnq/9zKA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737412921;
+	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
+	b=OoF9juJQVNhz6w1XBLrWB5W2e/d7qumVtKs2E0ral1RYPxQpueM34I7JUEIoOkwSVzvzpT
+	0RsGbmloFyidfMoI/udNGEme5+kV6mZm6AwwBJJvcoEpSuarWakj9Quzqnb752nsdUjGJo
+	b2l2xNcoMwqGRTXwwJT3tDfRBxIJj/o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737414179;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oYKJuPglaND0aCGEia4dXjUVlLraQdXkAEBvOtlme0Y=;
-	b=imH1oLk6AWpk3rvWNR4gEz2lJSgV4RzdwwaptW7baGYl4udCt80p0JkqvIrjUcgUPIycXF
-	zuHwlE5f2UOojFCw==
+	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
+	b=U7aIdhKKPre475VKhaehScCwqiGB23Iv9pCLtZMek7OS6qaBJppNumWG09E7eUYY3cZZ6q
+	gxHRYKJQ+QJgVsCA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86CEE139CB;
-	Mon, 20 Jan 2025 22:42:01 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84138139CB;
+	Mon, 20 Jan 2025 23:02:57 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EtCaIDnRjmffcAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 20 Jan 2025 22:42:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1CCE7A081E; Mon, 20 Jan 2025 23:42:01 +0100 (CET)
-Date: Mon, 20 Jan 2025 23:42:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, lsf-pc@lists.linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Improving large folio writeback
- performance
-Message-ID: <xuf742w2v2rir6tfumuu5ll2ow3kgzzbhjgvu47vquc3vgrdxf@blrmpfwvre4y>
-References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
- <whipjvd65hrc7e5b5qsoj3la556s6dt6ckokn25qmciedmiwqa@rsitf37ibyjw>
- <CAJnrk1aZYpGe+x3=Fz0W30FfXB9RADutDpp+4DeuoBSVHp9XHA@mail.gmail.com>
- <kugnldi6l2rr4m2pcyh3ystyjsnwhcp3jrukqt7ni2ipnw3vpg@l7ieaeq3uosk>
- <CAJnrk1ZJ=mSMM8dP69QZBxLeorQXRjcBjOcVR4skhNcnNiDSAw@mail.gmail.com>
+	id MTK/DSHWjmdueAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 20 Jan 2025 23:02:57 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1ZJ=mSMM8dP69QZBxLeorQXRjcBjOcVR4skhNcnNiDSAw@mail.gmail.com>
-X-Rspamd-Queue-Id: A1FA121158
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
+From: "NeilBrown" <neilb@suse.de>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Trond Myklebust" <trondmy@hammerspace.com>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ "jlayton@kernel.org" <jlayton@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+Subject: Re: [PATCH] nfsd: map EBUSY for all operations
+In-reply-to:
+ <CAOQ4uxhXuHPsaqzH7SJ-W93dX4ZCJip3CN_P9ZY5f5eb95k6Qg@mail.gmail.com>
+References:
+ <>, <CAOQ4uxhXuHPsaqzH7SJ-W93dX4ZCJip3CN_P9ZY5f5eb95k6Qg@mail.gmail.com>
+Date: Tue, 21 Jan 2025 10:02:53 +1100
+Message-id: <173741417318.22054.17226687272828997971@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Fri 17-01-25 14:45:01, Joanne Koong wrote:
-> On Fri, Jan 17, 2025 at 3:53 AM Jan Kara <jack@suse.cz> wrote:
-> > On Thu 16-01-25 15:38:54, Joanne Koong wrote:
-> > I think tweaking min_pause is a wrong way to do this. I think that is just a
-> > symptom. Can you run something like:
+On Tue, 21 Jan 2025, Amir Goldstein wrote:
+> On Mon, Jan 20, 2025 at 8:29=E2=80=AFPM Trond Myklebust <trondmy@hammerspac=
+e.com> wrote:
 > >
-> > while true; do
-> >         cat /sys/kernel/debug/bdi/<fuse-bdi>/stats
-> >         echo "---------"
-> >         sleep 1
-> > done >bdi-debug.txt
+> > On Mon, 2025-01-20 at 20:14 +0100, Amir Goldstein wrote:
+> > > On Mon, Jan 20, 2025 at 7:45=E2=80=AFPM Trond Myklebust
+> > > <trondmy@hammerspace.com> wrote:
+> > > >
+> > > > On Mon, 2025-01-20 at 19:21 +0100, Amir Goldstein wrote:
+> > > > > On Mon, Jan 20, 2025 at 6:28=E2=80=AFPM Trond Myklebust
+> > > > > <trondmy@hammerspace.com> wrote:
+> > > > > >
+> > > > > > On Mon, 2025-01-20 at 18:20 +0100, Amir Goldstein wrote:
+> > > > > > > v4 client maps NFS4ERR_FILE_OPEN =3D> EBUSY for all operations.
+> > > > > > >
+> > > > > > > v4 server only maps EBUSY =3D> NFS4ERR_FILE_OPEN for
+> > > > > > > rmdir()/unlink()
+> > > > > > > although it is also possible to get EBUSY from rename() for
+> > > > > > > the
+> > > > > > > same
+> > > > > > > reason (victim is a local mount point).
+> > > > > > >
+> > > > > > > Filesystems could return EBUSY for other operations, so just
+> > > > > > > map
+> > > > > > > it
+> > > > > > > in server for all operations.
+> > > > > > >
+> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > > > > ---
+> > > > > > >
+> > > > > > > Chuck,
+> > > > > > >
+> > > > > > > I ran into this error with a FUSE filesystem and returns -
+> > > > > > > EBUSY
+> > > > > > > on
+> > > > > > > open,
+> > > > > > > but I noticed that vfs can also return EBUSY at least for
+> > > > > > > rename().
+> > > > > > >
+> > > > > > > Thanks,
+> > > > > > > Amir.
+> > > > > > >
+> > > > > > >  fs/nfsd/vfs.c | 10 ++--------
+> > > > > > >  1 file changed, 2 insertions(+), 8 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> > > > > > > index 29cb7b812d713..a61f99c081894 100644
+> > > > > > > --- a/fs/nfsd/vfs.c
+> > > > > > > +++ b/fs/nfsd/vfs.c
+> > > > > > > @@ -100,6 +100,7 @@ nfserrno (int errno)
+> > > > > > >               { nfserr_perm, -ENOKEY },
+> > > > > > >               { nfserr_no_grace, -ENOGRACE},
+> > > > > > >               { nfserr_io, -EBADMSG },
+> > > > > > > +             { nfserr_file_open, -EBUSY},
+> > > > > > >       };
+> > > > > > >       int     i;
+> > > > > > >
+> > > > > > > @@ -2006,14 +2007,7 @@ nfsd_unlink(struct svc_rqst *rqstp,
+> > > > > > > struct
+> > > > > > > svc_fh *fhp, int type,
+> > > > > > >  out_drop_write:
+> > > > > > >       fh_drop_write(fhp);
+> > > > > > >  out_nfserr:
+> > > > > > > -     if (host_err =3D=3D -EBUSY) {
+> > > > > > > -             /* name is mounted-on. There is no perfect
+> > > > > > > -              * error status.
+> > > > > > > -              */
+> > > > > > > -             err =3D nfserr_file_open;
+> > > > > > > -     } else {
+> > > > > > > -             err =3D nfserrno(host_err);
+> > > > > > > -     }
+> > > > > > > +     err =3D nfserrno(host_err);
+> > > > > > >  out:
+> > > > > > >       return err;
+> > > > > > >  out_unlock:
+> > > > > >
+> > > > > > If this is a transient error, then it would seem that
+> > > > > > NFS4ERR_DELAY
+> > > > > > would be more appropriate.
+> > > > >
+> > > > > It is not a transient error, not in the case of a fuse file open
+> > > > > (it is busy as in locked for as long as it is going to be locked)
+> > > > > and not in the case of failure to unlink/rename a local
+> > > > > mountpoint.
+> > > > > NFS4ERR_DELAY will cause the client to retry for a long time?
+> > > > >
+> > > > > > NFS4ERR_FILE_OPEN is not supposed to apply
+> > > > > > to directories, and so clients would be very confused about how
+> > > > > > to
+> > > > > > recover if you were to return it in this situation.
+> > > > >
+> > > > > Do you mean specifically for OPEN command, because commit
+> > > > > 466e16f0920f3 ("nfsd: check for EBUSY from vfs_rmdir/vfs_unink.")
+> > > > > added the NFS4ERR_FILE_OPEN response for directories five years
+> > > > > ago and vfs_rmdir can certainly return a non-transient EBUSY.
+> > > > >
+> > > >
+> > > > I'm saying that clients expect NFS4ERR_FILE_OPEN to be returned in
+> > > > response to LINK, REMOVE or RENAME only in situations where the
+> > > > error
+> > > > itself applies to a regular file.
+> > >
+> > > This is very far from what upstream nfsd code implements (since 2019)
+> > > 1. out of the above, only REMOVE returns NFS4ERR_FILE_OPEN
+> > > 2. NFS4ERR_FILE_OPEN is not limited to non-dir
+> > > 3. NFS4ERR_FILE_OPEN is not limited to silly renamed file -
+> > >     it will also be the response for trying to rmdir a mount point
+> > >     or trying to unlink a file which is a bind mount point
 > >
-> > while you are writing to the FUSE filesystem and share the output file?
-> > That should tell us a bit more about what's happening inside the writeback
-> > throttling. Also do you somehow configure min/max_ratio for the FUSE bdi?
-> > You can check in /sys/block/<fuse-bdi>/bdi/{min,max}_ratio . I suspect the
-> > problem is that the BDI dirty limit does not ramp up properly when we
-> > increase dirtied pages in large chunks.
-> 
-> This is the debug info I see for FUSE large folio writes where bs=1M
-> and size=1G:
-> 
-> 
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:            896 kB
-> DirtyThresh:            359824 kB
-> BackgroundThresh:       179692 kB
-> BdiDirtied:            1071104 kB
-> BdiWritten:               4096 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3596 kB
-> DirtyThresh:            359824 kB
-> BackgroundThresh:       179692 kB
-> BdiDirtied:            1290240 kB
-> BdiWritten:               4992 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3596 kB
-> DirtyThresh:            359824 kB
-> BackgroundThresh:       179692 kB
-> BdiDirtied:            1517568 kB
-> BdiWritten:               5824 kB
-> BdiWriteBandwidth:       25692 kBps
-> b_dirty:                     0
-> b_io:                        1
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       7
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3596 kB
-> DirtyThresh:            359824 kB
-> BackgroundThresh:       179692 kB
-> BdiDirtied:            1747968 kB
-> BdiWritten:               6720 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:            896 kB
-> DirtyThresh:            359824 kB
-> BackgroundThresh:       179692 kB
-> BdiDirtied:            1949696 kB
-> BdiWritten:               7552 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3612 kB
-> DirtyThresh:            361300 kB
-> BackgroundThresh:       180428 kB
-> BdiDirtied:            2097152 kB
-> BdiWritten:               8128 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> 
-> 
-> I didn't do anything to configure/change the FUSE bdi min/max_ratio.
-> This is what I see on my system:
-> 
-> cat /sys/class/bdi/0:52/min_ratio
-> 0
-> cat /sys/class/bdi/0:52/max_ratio
-> 1
-
-OK, we can see that BdiDirtyThresh stabilized more or less at 3.6MB.
-Checking the code, this shows we are hitting __wb_calc_thresh() logic:
-
-        if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
-                unsigned long limit = hard_dirty_limit(dom, dtc->thresh);
-                u64 wb_scale_thresh = 0;
-
-                if (limit > dtc->dirty)
-                        wb_scale_thresh = (limit - dtc->dirty) / 100;
-                wb_thresh = max(wb_thresh, min(wb_scale_thresh, wb_max_thresh /
-        }
-
-so BdiDirtyThresh is set to DirtyThresh/100. This also shows bdi never
-generates enough throughput to ramp up it's share from this initial value.
-
-> > Actually, there's a patch queued in mm tree that improves the ramping up of
-> > bdi dirty limit for strictlimit bdis [1]. It would be nice if you could
-> > test whether it changes something in the behavior you observe. Thanks!
+> > Fair enough. I believe the name given to this kind of server behaviour
+> > is "bug".
 > >
-> >                                                                 Honza
+> > >
+> > > > The protocol says that the client can expect this return value to
+> > > > mean
+> > > > it is dealing with a server with Windows-like semantics that
+> > > > doesn't
+> > > > allow these particular operations while the file is being held
+> > > > open. It
+> > > > says nothing about expecting the same behaviour for mountpoints,
+> > > > and
+> > > > since the latter have a very different life cycle than file open
+> > > > state
+> > > > does, you should not treat those cases as being the same.
+> > >
+> > > The two cases are currently indistinguishable in nfsd_unlink(), but
+> > > it could check DCACHE_NFSFS_RENAMED flag if we want to
+> > > limit NFS4ERR_FILE_OPEN to this specific case - again, this is
+> > > upstream code - nothing to do with my patch.
+> > >
+> > > FWIW, my observed behavior of Linux nfs client for this error
+> > > is about 1 second retries and failure with -EBUSY, which is fine
+> > > for my use case, but if you think there is a better error to map
+> > > EBUSY it's fine with me. nfsv3 maps it to EACCES anyway.
+> > >
+> > >
 > >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patche
-> > s/mm-page-writeback-consolidate-wb_thresh-bumping-logic-into-__wb_calc_thresh.pa
-> > tch
-> 
-> I still see the same results (~230 MiB/s throughput using fio) with
-> this patch applied, unfortunately. Here's the debug info I see with
-> this patch (same test scenario as above on FUSE large folio writes
-> where bs=1M and size=1G):
-> 
-> BdiWriteback:                0 kB
-> BdiReclaimable:           2048 kB
-> BdiDirtyThresh:           3588 kB
-> DirtyThresh:            359132 kB
-> BackgroundThresh:       179348 kB
-> BdiDirtied:              51200 kB
-> BdiWritten:                128 kB
-> BdiWriteBandwidth:      102400 kBps
-> b_dirty:                     1
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       5
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3588 kB
-> DirtyThresh:            359144 kB
-> BackgroundThresh:       179352 kB
-> BdiDirtied:             331776 kB
-> BdiWritten:               1216 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3588 kB
-> DirtyThresh:            359144 kB
-> BackgroundThresh:       179352 kB
-> BdiDirtied:             562176 kB
-> BdiWritten:               2176 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3588 kB
-> DirtyThresh:            359144 kB
-> BackgroundThresh:       179352 kB
-> BdiDirtied:             792576 kB
-> BdiWritten:               3072 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
-> BdiWriteback:               64 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:           3588 kB
-> DirtyThresh:            359144 kB
-> BackgroundThresh:       179352 kB
-> BdiDirtied:            1026048 kB
-> BdiWritten:               3904 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> ---------
+> > When doing LINK, RENAME, REMOVE on a mount point, I'd suggest returning
+> > NFS4ERR_XDEV, since that is literally a case of trying to perform the
+> > operation across a filesystem boundary.
+>=20
+> I would not recommend doing that. vfs hides those tests in vfs_rename(), etc
+> I don't think that nfsd should repeat them for this specialize interpretati=
+on,
+> because to be clear, this is specially not an EXDEV situation as far as vfs
+> is concerned.
+>=20
+> >
+> > Otherwise, since Linux doesn't implement Windows behaviour w.r.t. link,
+> > rename or remove, it would seem that NFS4ERR_ACCESS is indeed the most
+> > appropriate error, no? It's certainly the right behaviour for
+> > sillyrenamed files.
+>=20
+> If NFS4ERR_ACCESS is acceptable for sillyrenamed files, we can map
+> EBUSY to NFS4ERR_ACCESS always and be done with it, but TBH,
+> reading the explanation for the chosen error code, I tend to agree with it.
+> It is a very nice added benefit for me that the NFS clients get EBUSY when
+> the server gets an EBUSY, so I don't see what's the problem with that.
 
-Yeah, here the situation is really the same. As an experiment can you
-experiment with setting min_ratio for the FUSE bdi to 1, 2, 3, ..., 10 (I
-don't expect you should need to go past 10) and figure out when there's
-enough slack space for the writeback bandwidth to ramp up to a full speed?
-Thanks!
+I agreed with it when I wrote it :-) but now I find Trond's argument to
+be quite compelling.  Fomr rfc5661:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+15.1.4.5.  NFS4ERR_FILE_OPEN (Error Code 10046)
+
+   The operation is not allowed because a file involved in the operation
+   is currently open.  Servers may, but are not required to, disallow
+   linking-to, removing, or renaming open files.
+
+This doesn't seem to cover "rmdir" of a mountpoint.
+
+However NFS4ERR_XDEV is only permitted for LINK and RENAME, not for
+REMOVE, so we cannot use that.
+
+NFS4ERR_ACCESS says "Indicates permission denied" but there is no
+permission issue here.
+
+NFS4ERR_INVAL might be ok.  "The arguments for this operation are not
+valid for some reason" is suitably vague.
+
+NFS4ERR_NOTEMPTY "An attempt was made to remove a directory that was not
+empty." could be argued as it "contains" a mountpoint in some sense.
+
+I'd favour NFS4ERR_INVAL today.  I might change my mind again tomorrow.
+
+NeilBrown
 
