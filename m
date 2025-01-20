@@ -1,107 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-39691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2EBA16F8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 16:47:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085B2A16FB2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 16:51:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B77E3A4653
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 15:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09A9D7A19F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 15:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9F51E9904;
-	Mon, 20 Jan 2025 15:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1DC1E9B16;
+	Mon, 20 Jan 2025 15:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hp67LqiD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2771E98F9;
-	Mon, 20 Jan 2025 15:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5B71E9B0F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 15:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737388026; cv=none; b=GpXjFW7vBlmh529cVyW/p9N3pROWQbw3MwihjifUYNutR++GXtaNf3CRUjovf9idV2Bz06+CgKAuKJ0U5JfZTL/VamqenpTJCJy+DJzaBHqnxRsLmnuHV0aEYHix2avkYS5qo1yP5fGNTdiXW2ZtL9gfirgk+b2nAuos+mhicMs=
+	t=1737388247; cv=none; b=SkzKDdCkev7lXfL6/+XUdmZd9+T2JrHdzAIGzPx6+0gnD7b8VMCbXHt6MLeZ19U6jgSUEsL/SE4R/dglNVdO2q/eEl96N9kYRvOpzOe2VVps6uLJGnDOAImh1+X1OtpAmqyV0Ip7ToGMdmhxDz+KOkBnztX8gTsLPFaGSVaXrTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737388026; c=relaxed/simple;
-	bh=oCZTR3cwI0mWDZH/1tfsYDB4/1yx6sPjG3WKSht1uv4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUAk/rXrh/wu5D11/E5AfnH/GncJKuNaQkAa02/1yZKwby8uOR8h+eZk+GWEaZUd7AnB0PdsLADidOV+VWCIBjpKOYNjqttQFhh5PZwrQcxedK85w9VjkOsPehBTB2bVYQwJ1ndhvzbwVRMjLX/8DSMWi7zP+XiKfXTEnTyyv3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [220.197.236.33])
-	by APP-03 (Coremail) with SMTP id rQCowABHTlrsb45n6dNsCA--.50150S2;
-	Mon, 20 Jan 2025 23:46:55 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: "Darrick J . Wong" <djwong@kernel.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Allison Henderson <allison.henderson@oracle.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	Catherine Hoang <catherine.hoang@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] xfs: Add error handling for xfs_reflink_cancel_cow_range
-Date: Mon, 20 Jan 2025 23:46:24 +0800
-Message-ID: <20250120154624.1658-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1737388247; c=relaxed/simple;
+	bh=t1WUxRy4eGnpes0GZimQAD8XyfAQn+Z3KwMgxXq72QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0NeY/Ac+AiUB8yMahM/YnnPhZ0pJHgMmQLkRjXBq4UyTl+i1B+CKySNI5/C+cQLH8pLf0lrwFq2+aWavRDwwK88bNYV7KidvchmibtPX1m4J+T8MmaL1SvAJnRgBpGP8s1jUMHBr5qAekv1PVjxX4vhx2sCVo8QTttqNabSu+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hp67LqiD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737388243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tMAkoPEbp1X/1fbqmcjUBuRkyr/p8lqtKYU91SycHTM=;
+	b=hp67LqiDtfMtLN8SjHC3qIXTq5IdNWW4boj6LHH/NoR0CIvHDJsSGtUNm80S00QZ1GeRzQ
+	m+qImPDeO4m6BsPXjBX7GFuVG8FtzTjcjNWzYUkPJoxmQ3aVOi3NJuOch0t0A78AVxi8Cw
+	jW3sS1aqJCftzSXFkxsw+i1cYRaRjQM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-4zMjq5AaN9eRpyYE_hzzbQ-1; Mon,
+ 20 Jan 2025 10:50:41 -0500
+X-MC-Unique: 4zMjq5AaN9eRpyYE_hzzbQ-1
+X-Mimecast-MFC-AGG-ID: 4zMjq5AaN9eRpyYE_hzzbQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB80E1956062;
+	Mon, 20 Jan 2025 15:50:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.104])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 48A181956094;
+	Mon, 20 Jan 2025 15:50:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 20 Jan 2025 16:50:14 +0100 (CET)
+Date: Mon, 20 Jan 2025 16:50:10 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+	Christian Brauner <brauner@kernel.org>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [linux-next:master] [pipe_read]  aaec5a95d5:
+ stress-ng.poll.ops_per_sec 11.1% regression
+Message-ID: <20250120155009.GD7432@redhat.com>
+References: <202501201311.6d25a0b9-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHTlrsb45n6dNsCA--.50150S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrW3Kw4fZF18tw1rWw1kAFb_yoWDtFX_Aa
-	10gw10gw17Xr9rCws8Awn0yF1vkw4vkFn3Zr4IyFsxt348J3Z8JrWvyFW8Cr4rGwn09F95
-	Jr4Ivrs3tFyfAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
-	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
-	U==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwkIA2eOHwOwYAAAsg
+In-Reply-To: <202501201311.6d25a0b9-lkp@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-In xfs_inactive(), xfs_reflink_cancel_cow_range() is called
-without error handling, risking unnoticed failures and
-inconsistent behavior compared to other parts of the code.
+Again, I'll try to take another look tomorrow. Not sure I will find the
+explanation though...
 
-Fix this issue by adding an error handling for the
-xfs_reflink_cancel_cow_range(), improving code robustness.
+But can you help? I know nothing about stress-ng.
 
-Fixes: 6231848c3aa5 ("xfs: check for cow blocks before trying to clear them")
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- fs/xfs/xfs_inode.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Google finds a lot of stress-ng repositories, I've clone the 1st one
+https://github.com/ColinIanKing/stress-ng/blob/master/stress-poll.c
+hopefully this is what you used.
 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index c8ad2606f928..1ff514b6c035 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -1404,8 +1404,11 @@ xfs_inactive(
- 		goto out;
- 
- 	/* Try to clean out the cow blocks if there are any. */
--	if (xfs_inode_has_cow_data(ip))
--		xfs_reflink_cancel_cow_range(ip, 0, NULLFILEOFF, true);
-+	if (xfs_inode_has_cow_data(ip)) {
-+		error = xfs_reflink_cancel_cow_range(ip, 0, NULLFILEOFF, true);
-+		if (error)
-+			goto out;
-+	}
- 
- 	if (VFS_I(ip)->i_nlink != 0) {
- 		/*
--- 
-2.42.0.windows.2
+On 01/20, kernel test robot wrote:
+>
+>       9.45            -6.3        3.13 ±  9%  perf-profile.calltrace.cycles-pp.pipe_read.vfs_read.ksys_read.do_syscall_64.entry_SYSCALL_64_after_hwframe
+> ...
+>      10.00            -6.5        3.53 ±  9%  perf-profile.children.cycles-pp.pipe_read
+>       2.34            -1.3        1.07 ±  9%  perf-profile.children.cycles-pp.pipe_poll
+
+Could you explain what do these numbers mean and how there are calculated?
+
+"git-grep cycles-pp" find nothing in stress-ng/ and tools/perf/
+
+> kernel test robot noticed a 11.1% regression of stress-ng.poll.ops_per_sec on:
+
+same for ops_per_sec
+
+>       6150           -47.8%       3208        stress-ng.time.percent_of_cpu_this_job_got
+
+same for percent_of_cpu_this_job_got
+
+>       2993           -50.6%       1477        stress-ng.time.system_time
+>     711.20           -36.0%     454.85        stress-ng.time.user_time
+
+Is that what I think it is?? Does it run faster?
+
+Or it exits after some timeout and the decrease in system/user_time can be
+explained by the change in the mysterious 'percent_of_cpu_this_job_got' above?
+
+Oleg.
 
 
