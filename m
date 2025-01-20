@@ -1,107 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-39669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3105BA16C45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 13:23:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73090A16C55
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 13:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0FC3A1EA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 12:23:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C807A13A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 12:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901B11DF993;
-	Mon, 20 Jan 2025 12:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9801DFDA7;
+	Mon, 20 Jan 2025 12:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bwn5Xu+0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUtCVul2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753091DFFC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 12:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C191B6CEC;
+	Mon, 20 Jan 2025 12:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737375814; cv=none; b=NaFFLh9gV4GCtacO3HE9AmCvWm/9MSSrfpHTIvCTdkeT2r4JOqMAYfEUg5W9d6qriiXMFY7BWYVpZiwRDej4jqYY6u6u2z1yNMsGva9NDNZfhr/RxEmuidis9AOFjKGfm5sPfEPn7U0VeDCpHF/yZkOrr88bKOr26zD/5R0BoOg=
+	t=1737376012; cv=none; b=BDeWv7spKlkqF9rnmvhl+vndUTVTSPQC8W2l0H9qEyY50WTGN64pXdsqCVVPaBK02r74gnZOqJYsB3uzIX5Z5VxJdf+Jpp8/zTcpdDgGINW0RDbX92/hfs6WtJmqpcB6yg2kaVHeR4aaBCwthHDXQP+8R9xtudWHoN2D8rB1b/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737375814; c=relaxed/simple;
-	bh=UaTzTANVudPEZxpSfU2G4TBv9B+w00ZKRmEE6dV8LT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMVzPz8i0g+HAfmaY9ZFYdKF4CxIGWGuf98m+5t53fbAdwP8S4dDW4gUyChJdmxh6dJT681/3yBuvP31ERrAvGs+DW9DUohF7FzSrWqb9/mz6yo6EBeL/lxmfZlx7zHrIDUMjUiA9elnwMF6ftqTwbg9qR0xZ4Xn0rM3Lsff3SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bwn5Xu+0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737375811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UaTzTANVudPEZxpSfU2G4TBv9B+w00ZKRmEE6dV8LT8=;
-	b=Bwn5Xu+0cez+lW8jlmuwLV/tTW1RK7otoLhEOCmkymfFdsrKAuGkmERkNjbIpDs2ZuEKE8
-	9Nt3lp0yS9oeKtA+FKUl6qPfYAvLAmnrYj/ANKP9MJ6RQpleIdU45WbQJ9N+qM6csatSmv
-	JZTBE7ZxI+WuFqbeViwV6DtyguPofro=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-58-CMDVTjksPZOAiifCjJ6gMg-1; Mon,
- 20 Jan 2025 07:23:27 -0500
-X-MC-Unique: CMDVTjksPZOAiifCjJ6gMg-1
-X-Mimecast-MFC-AGG-ID: CMDVTjksPZOAiifCjJ6gMg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E0F97195605B;
-	Mon, 20 Jan 2025 12:23:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.104])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E142F3003FD9;
-	Mon, 20 Jan 2025 12:23:22 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 20 Jan 2025 13:23:00 +0100 (CET)
-Date: Mon, 20 Jan 2025 13:22:56 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Christian Brauner <brauner@kernel.org>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [linux-next:master] [pipe_read]  aaec5a95d5:
- stress-ng.poll.ops_per_sec 11.1% regression
-Message-ID: <20250120121928.GA7432@redhat.com>
-References: <202501201311.6d25a0b9-lkp@intel.com>
- <leot53sdd6es2xsnljub4rr4n3xgusft6huntr437wmaoo5rob@hhbtzrwgxel2>
+	s=arc-20240116; t=1737376012; c=relaxed/simple;
+	bh=jxBHHz5k43CrP4mrUh7VNmmhVx97L7CHCXcgWPqCJI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ct0b4OxsdkVvnWP18jeDtvI2b1ij80SYA00DE/boBwTDQU10/nUkQ+sMpmYYzF24IvnldrKZZy+0B+0dc8vw88yXkheiol8Nvf8QSZE9IU89wCyDGN7MonPLr8TGpCg2p6P19/6AZgXtcKlngO4ajv0rh1VYqopdvA0gYGyDFtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUtCVul2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 541C3C4CEDD;
+	Mon, 20 Jan 2025 12:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737376012;
+	bh=jxBHHz5k43CrP4mrUh7VNmmhVx97L7CHCXcgWPqCJI0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PUtCVul24UNVGjDMNeLXLDSpmWV0+dHMrVg3BR2VZNaDAdUoOr5Rr6RR/qL8ndrlu
+	 D7VndI3t+hPGGG865eWvP4bt3meNTJDH6dqvGYqewIlz5M7kDSUrdkITlC3ACfLQnV
+	 /m4vu9nR4vvuKv11yehPtu7pbvJqJb2/iRPbHQcacYPbke1swqGFpSjPe5sjrQ/Mu6
+	 Drv+9ZMAZ0NTTae20cUzHRiulAmNU2Szm38D3N0f5a8Z7PWXf5xQU+Ea9ALWrjS791
+	 t9Mx+eyN1UC6hBIjXOAOUsqj3TUrfs+evLUp1hnP490zdPLWT+CpAbxOoFT8RSV6Vm
+	 Jn4Ff03iN7aKQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs mount v2
+Date: Mon, 20 Jan 2025 13:26:39 +0100
+Message-ID: <20250120-vfs-mount-9c3c337e453d@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250120-erahnen-sticken-b925f5490f46@brauner>
+References: <20250120-erahnen-sticken-b925f5490f46@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <leot53sdd6es2xsnljub4rr4n3xgusft6huntr437wmaoo5rob@hhbtzrwgxel2>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7073; i=brauner@kernel.org; h=from:subject:message-id; bh=jxBHHz5k43CrP4mrUh7VNmmhVx97L7CHCXcgWPqCJI0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT3OTJ9E/7c3m344F3HuV/5yyQrt8nqfTX+c+JI+P9gX wHNZwwzOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYi3cjIMEGd5+jh9+1fLVnZ WI/bJxy/2GO6Z7o+z99lWdZvvswuDmD4X95R6MyqvmTvvqlMFoz3nr+Vb1l254x6ctPSkmChK2f n8AEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 01/20, Mateusz Guzik wrote:
->
-> Whatever the long term fate of the patch I think it would be prudent to
-> skip it in this merge window.
+Hey Linus,
 
-Perhaps... I'll try to take another look tomorrow.
+This is v2 of the vfs mount pull request to fix build warnings in the
+newly added sample userspace programs, i.e., not in actual kernel code.
+Still, it was unfortunately not noticed right away.
 
-Just one note right now.
+/* Summary */
 
-> First two notes:
-> 1. the change only considers performing a wake up if the current
-> source buf got depleted -- if there is a blocked writer and there is at
-> least one byte in the current buf nothing happens, which is where the
-> difference in results is coming from
+This contains mount update for this cycle:
 
-Sorry I don't understand. Unless this patch is buggy, pipe_read() must
-always wakeup a blocked writer if the writer can write at least one byte.
+- Add a mountinfo program to demonstrate statmount()/listmount()
 
-The writer can't write to "current" buf = pipe->bufs[tail & mask] if
-pipe_full() is still true.
+  Add a new "mountinfo" sample userland program that demonstrates how to
+  use statmount() and listmount() to get at the same info that
+  /proc/pid/mountinfo provides.
 
-Oleg.
+- Remove pointless nospec.h include.
 
+- Prepend statmount.mnt_opts string with security_sb_mnt_opts()
+
+  Currently these mount options aren't accessible via statmount().
+
+- Add new mount namespaces to mount namespace rbtree outside of the
+  namespace semaphore.
+
+- Lockless mount namespace lookup
+
+  Currently we take the read lock when looking for a mount namespace to
+  list mounts in. We can make this lockless. The simple search case can
+  just use a sequence counter to detect concurrent changes to the
+  rbtree.
+
+  For walking the list of mount namespaces sequentially via nsfs we keep
+  a separate rcu list as rb_prev() and rb_next() aren't usable safely
+  with rcu. Currently there is no primitive for retrieving the previous
+  list member. To do this we need a new deletion primitive that doesn't
+  poison the prev pointer and a corresponding retrieval helper.
+
+  Since creating mount namespaces is a relatively rare event compared
+  with querying mounts in a foreign mount namespace this is worth it.
+  Once libmount and systemd pick up this mechanism to list mounts in
+  foreign mount namespaces this will be used very frequently.
+
+  - Add extended selftests for lockless mount namespace iteration.
+
+  - Add a sample program to list all mounts on the system, i.e., in all
+    mount namespaces.
+
+- Improve mount namespace iteration performance
+
+  Make finding the last or first mount to start iterating the mount
+  namespace from an O(1) operation and add selftests for iterating the
+  mount table starting from the first and last mount.
+
+- Use an xarray for the old mount id
+
+  While the ida does use the xarray internally we can use it explicitly
+  which allows us to increment the unique mount id under the xa lock.
+  This allows us to remove the atomic as we're now allocating both ids
+  in one go.
+
+- Use a shared header for vfs sample programs.
+
+- Fix build warnings for new sample program to list all mounts.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+This will have a merge conflict with vfs-6.14.mount pull request sent in
+https://lore.kernel.org/r/20250118-vfs-pidfs-5921bfa5632a@brauner
+and it can be resolved as follows:
+
+diff --cc fs/namespace.c
+index 64deda6f5b2c,371c860f49de..000000000000
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@@ -32,8 -32,6 +32,7 @@@
+  #include <linux/fs_context.h>
+  #include <linux/shmem_fs.h>
+  #include <linux/mnt_idmapping.h>
+ +#include <linux/pidfs.h>
+- #include <linux/nospec.h>
+
+  #include "pnode.h"
+  #include "internal.h"
+
+The following changes since commit 344bac8f0d73fe970cd9f5b2f132906317d29e8b:
+
+  fs: kill MNT_ONRB (2025-01-09 16:58:50 +0100)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc1.mount.v2
+
+for you to fetch changes up to 68e6b7d98bc64bbf1a54d963ca85111432f3a0b4:
+
+  samples/vfs: fix build warnings (2025-01-20 13:14:21 +0100)
+
+Please consider pulling these changes from the signed vfs-6.14-rc1.mount.v2 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.14-rc1.mount.v2
+
+----------------------------------------------------------------
+Christian Brauner (19):
+      mount: remove inlude/nospec.h include
+      fs: add mount namespace to rbtree late
+      Merge patch series "fs: listmount()/statmount() fix and sample program"
+      fs: lockless mntns rbtree lookup
+      rculist: add list_bidir_{del,prev}_rcu()
+      fs: lockless mntns lookup for nsfs
+      fs: simplify rwlock to spinlock
+      seltests: move nsfs into filesystems subfolder
+      selftests: add tests for mntns iteration
+      selftests: remove unneeded include
+      samples: add test-list-all-mounts
+      Merge patch series "fs: lockless mntns lookup"
+      fs: cache first and last mount
+      selftests: add listmount() iteration tests
+      Merge patch series "fs: tweak mntns iteration"
+      fs: use xarray for old mount id
+      fs: remove useless lockdep assertion
+      samples/vfs: use shared header
+      samples/vfs: fix build warnings
+
+Geert Uytterhoeven (1):
+      samples/vfs/mountinfo: Use __u64 instead of uint64_t
+
+Jeff Layton (2):
+      samples: add a mountinfo program to demonstrate statmount()/listmount()
+      fs: prepend statmount.mnt_opts string with security_sb_mnt_opts()
+
+ fs/mount.h                                         |  31 ++-
+ fs/namespace.c                                     | 200 +++++++++------
+ fs/nsfs.c                                          |   5 +-
+ include/linux/rculist.h                            |  44 ++++
+ samples/vfs/.gitignore                             |   2 +
+ samples/vfs/Makefile                               |   2 +-
+ samples/vfs/mountinfo.c                            | 274 +++++++++++++++++++++
+ samples/vfs/samples-vfs.h                          | 241 ++++++++++++++++++
+ samples/vfs/test-list-all-mounts.c                 | 150 +++++++++++
+ .../selftests/{ => filesystems}/nsfs/.gitignore    |   1 +
+ .../selftests/{ => filesystems}/nsfs/Makefile      |   4 +-
+ .../selftests/{ => filesystems}/nsfs/config        |   0
+ .../selftests/filesystems/nsfs/iterate_mntns.c     | 149 +++++++++++
+ .../selftests/{ => filesystems}/nsfs/owner.c       |   0
+ .../selftests/{ => filesystems}/nsfs/pidns.c       |   0
+ .../selftests/filesystems/statmount/Makefile       |   2 +-
+ .../filesystems/statmount/listmount_test.c         |  66 +++++
+ tools/testing/selftests/pidfd/pidfd.h              |   1 -
+ 18 files changed, 1075 insertions(+), 97 deletions(-)
+ create mode 100644 samples/vfs/mountinfo.c
+ create mode 100644 samples/vfs/samples-vfs.h
+ create mode 100644 samples/vfs/test-list-all-mounts.c
+ rename tools/testing/selftests/{ => filesystems}/nsfs/.gitignore (78%)
+ rename tools/testing/selftests/{ => filesystems}/nsfs/Makefile (50%)
+ rename tools/testing/selftests/{ => filesystems}/nsfs/config (100%)
+ create mode 100644 tools/testing/selftests/filesystems/nsfs/iterate_mntns.c
+ rename tools/testing/selftests/{ => filesystems}/nsfs/owner.c (100%)
+ rename tools/testing/selftests/{ => filesystems}/nsfs/pidns.c (100%)
+ create mode 100644 tools/testing/selftests/filesystems/statmount/listmount_test.c
 
