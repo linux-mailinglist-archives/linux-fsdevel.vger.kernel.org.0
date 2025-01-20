@@ -1,418 +1,671 @@
-Return-Path: <linux-fsdevel+bounces-39697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61777A170C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 17:50:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E450A170CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 17:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339F516B1F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 16:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1C33A6E60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 16:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680B41EBFF9;
-	Mon, 20 Jan 2025 16:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAC91EBFFB;
+	Mon, 20 Jan 2025 16:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZSsHohf3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D641EB9E3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 16:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B69E1E9B37
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 16:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737391831; cv=none; b=favseMCj5Pxuf+qldJBOIcKq1R1SaNOeIhCWizjvVu9rgvc8dOb/ShUXHwFQciFq8G5iL0n/BcHXDFzecThKhT0PRp/5SUNmflz2beRTtfam1uI/Xo4M5x0mkEitDDdFGRpeVXWoLoQ6/ncPUz2O4/RA49phgc1AMMwQDyMWSMM=
+	t=1737391902; cv=none; b=qm82ERYrXO1mlUAb1YqofXToSX8I0BD3KDEZ69UZ9O3Ul0vR7xgDzE9WZOYn+a0hS1HEYpSDc4Wcsq9n2VjLFJ3FjyGjAxcfrK/BgWiMUJLwwu+DA3hgsOlC28dRf/QKfqjiglNDPs+b+3cO6wZt5IMO9uw2ynzV/0r48drXcxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737391831; c=relaxed/simple;
-	bh=66e33UUKuqz2jBevn7hTity0J+/B0V1MdB2IhVZ21GY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qczg620CAm1k75OiHwFOtxiUbbF9AnyuwKOs7/JQruYPD6HGH2CjyKrHmxUAfTUQ4C45HPhgZpCOcUZEK4ymKuehmuA4K0xHcfybYBLVXopk2/tNyALI5CaIer4TjzZsHwhXNAY2jNvamhZkxZs1a2I3ZJXto5uV8gAHcSV/gP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3cdd61a97easo30335065ab.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 08:50:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737391828; x=1737996628;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7gfknIDdjlUM/Ijl06JZos6xriIl/OMJu13vMcEnLJ8=;
-        b=k22CLuBO6Bono1KiUMkMwgSzDV72ujUzIiS8U5Gqr2I3PVzZAP+JIKr5g2ZKhMqCYw
-         6pjU3i0Z87f/J1AV3w9+1MKOj5gxL1GnyM4CoiZf8WgrCBSn3gH13QeryyqvfJHtJyvw
-         aPxVP14ybfyP2KPxvu7w5zSF6c6Pew3r+l6N3auilGscuNROljrO9mWEE4XNV773PrQf
-         YecXJOBqvTn7bFjMM17o/A/IAhXzOv+hMPWvq8ldnmRMLUXd5FCZAsZBVQpDodJRm6jx
-         1Tx4IymSS33JwKlF8vSfvxhL2IA9Oez3ZZM8a9jYMcpWuEgDtj5KApZNxi5KJCY74Wqi
-         qi4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUrTwf5/LHnsakVTRzId5BZoIwcyIrBBYG1pjt/tp9nZV3d8d3hAXlP8l40M2TggGfdQgQdgzQ/GVOnCgyv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6lRriN6YDvW/FMpDZEFlh/to69b/BafxKcuMfIr0dm9uQ97p0
-	zIRePEB/7MyQVOahoq9E0wJn9CuDH19VDza94CI7db8vJ6IH3laXaViOdpKfyGrURsTKpfzA7Ob
-	bO39Sx9jMQLjGY8WBqPKU2UWXJ7pNmSKmw5jw1SOsTCIZmmZ0BXbdFEI=
-X-Google-Smtp-Source: AGHT+IEQbLbR6t9CiIKBMTyeyeUdmab34NeR7w48hgSvnLJQnIwNP4arnVoKL5nauVs4e+EYNn/gDtuwXEDWu18gTkxDShbM50cP
+	s=arc-20240116; t=1737391902; c=relaxed/simple;
+	bh=MtOQyScdpgl87rTPRSaNAwoblQ021sFSnRzXVIMl3lU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EuaIaj6kB15OWyKh8m5gXOZXQyy9fY8CkvCTKmA/nrXz+vs7CNHKvKSUWDbhGoLTN/Kw9YnNhkh4kwWPKajWfxDInwjfC3pTiWt1Z++fcgnd29q2hJtoHCTU9fszZo78adHVL8fcgRWXiWCT2dfDczqPKfirFlFJE6+HVoKL9nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZSsHohf3; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 20 Jan 2025 11:51:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1737391882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=uAPahq4pTVvxI413PBBMGAiRHN8SXhO19xyfKH7COKo=;
+	b=ZSsHohf3FK1PiB7DbrJo/miu4qWmkxYunbb/kVB/J/ybADQdBDbW389MlZIzWabqAlzl45
+	6gXoAI1MPwcgKj9Lr7TRKGC3Vt0CSXuMpkJknQGy5jQTZhWVh03bIdTTmD8HvHtidtEALm
+	LVGOOS4jJZpD4gEoTJtwFhqwrTk+yQU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs changes for 6.14-rc1
+Message-ID: <mk2up66w3w4procezp2qeehkxq2ie5oyydvcowedd2fkltxbhh@yvuqt3jdjood>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:221d:b0:3ce:78e5:d36d with SMTP id
- e9e14a558f8ab-3cf744199c7mr119791855ab.12.1737391828179; Mon, 20 Jan 2025
- 08:50:28 -0800 (PST)
-Date: Mon, 20 Jan 2025 08:50:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <678e7ed4.050a0220.303755.0080.GAE@google.com>
-Subject: [syzbot] [fs?] possible deadlock in v2_read_dquot
-From: syzbot <syzbot+a90d1040934e15a19762@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+The following changes since commit 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8:
 
-syzbot found the following issue on:
+  Linux 6.13-rc3 (2024-12-15 15:58:23 -0800)
 
-HEAD commit:    5428dc1906dd Merge tag 'exfat-for-6.13-rc7' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14dc79c4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4ef22c4fce5135b4
-dashboard link: https://syzkaller.appspot.com/bug?extid=a90d1040934e15a19762
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+are available in the Git repository at:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-01-20
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/031c28a69d2f/disk-5428dc19.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba871b8b8623/vmlinux-5428dc19.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f1dd2b4ec40e/bzImage-5428dc19.xz
+for you to fetch changes up to 63db187a577599ddcbf569f905c930b2a52d063e:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a90d1040934e15a19762@syzkaller.appspotmail.com
+  locking debug (2025-01-19 21:43:14 -0500)
 
-EXT4-fs (loop9): revision level too high, forcing read-only mode
-EXT4-fs (loop9): orphan cleanup on readonly fs
-======================================================
-WARNING: possible circular locking dependency detected
-6.13.0-rc6-syzkaller-00006-g5428dc1906dd #0 Not tainted
-------------------------------------------------------
-syz.9.3881/16245 is trying to acquire lock:
-ffff8880604fc210 (&s->s_dquot.dqio_sem){++++}-{4:4}, at: v2_read_dquot+0x57/0x200 fs/quota/quota_v2.c:342
+----------------------------------------------------------------
+bcachefs updates for 6.14-rc1
 
-but task is already holding lock:
-ffff88805500c5e8 (&dquot->dq_lock){+.+.}-{4:4}, at: dquot_acquire+0x69/0x680 fs/quota/dquot.c:458
+Lots of scalability work, another big on disk format change. On disk
+format version goes from 1.13 to 1.20.
 
-which lock already depends on the new lock.
+Like 6.11, this is another big and expensive automatic/required on disk
+format upgrade. This is planned to be the last big on disk format
+upgrade before the experimental label comes off. There will be one more
+minor on disk format update for a few things that couldn't make this
+release.
 
+Headline improvements:
+- Fix mount time regression that some users encountered post the 6.11
+  disk accounting rewrite.
 
-the existing dependency chain (in reverse order) is:
+  Accounting keys were encoded little endian (typetag in the low bits) -
+  which didn't anticipate adding accounting keys for every inode, which
+  aren't stored in memory and we don't want to scan at mount time.
 
--> #8 (&dquot->dq_lock){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       wait_on_dquot fs/quota/dquot.c:354 [inline]
-       dqget+0x6e6/0xeb0 fs/quota/dquot.c:972
-       dquot_transfer+0x482/0x6d0 fs/quota/dquot.c:2154
-       ext4_setattr+0xb49/0x1da0 fs/ext4/inode.c:5400
-       notify_change+0xbcc/0xe90 fs/attr.c:552
-       chown_common+0x501/0x850 fs/open.c:778
-       do_fchownat+0x16a/0x240 fs/open.c:809
-       __do_sys_lchown fs/open.c:834 [inline]
-       __se_sys_lchown fs/open.c:832 [inline]
-       __x64_sys_lchown+0x85/0xa0 fs/open.c:832
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+- fsck time on large filesystems is improved by multiple orders of
+  magnitude. Previously, 100TB was about the practical max filesystem
+  size, where users were reporting fsck times of a day+. With the new
+  changes (which nearly eliminate backpointers fsck overhead), we fsck'd
+  a filesystem with 10PB of data in 1.5 hours.
 
--> #7 (&ei->xattr_sem){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       ext4_readpage_inline+0x36/0x590 fs/ext4/inline.c:518
-       ext4_read_folio+0x174/0x340 fs/ext4/inode.c:3185
-       filemap_read_folio+0x14a/0x3b0 mm/filemap.c:2357
-       filemap_create_folio mm/filemap.c:2488 [inline]
-       filemap_get_pages+0x1099/0x2080 mm/filemap.c:2546
-       filemap_read+0x452/0xf50 mm/filemap.c:2637
-       __kernel_read+0x515/0x9d0 fs/read_write.c:523
-       integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
-       ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-       ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
-       ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
-       process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
-       ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
-       security_file_post_open+0xb9/0x280 security/security.c:3121
-       do_open fs/namei.c:3830 [inline]
-       path_openat+0x2ccd/0x3590 fs/namei.c:3987
-       do_filp_open+0x27f/0x4e0 fs/namei.c:4014
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_openat fs/open.c:1433 [inline]
-       __se_sys_openat fs/open.c:1428 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  The problematic fsck passes were walking every extent and checking for
+  missing backpointers, and walking every backpointer to check for
+  dangling backpointers. As we've been adding more and more runtime self
+  healing there was no reason to keep around the backpointers -> extents
+  pass; dangling backpointers are just deleted, and we can do that when
+  using them - thus, backpointers -> extents is now only run in debug
+  mode.
 
--> #6 (mapping.invalidate_lock){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
-       page_cache_ra_unbounded+0x142/0x720 mm/readahead.c:226
-       do_async_mmap_readahead mm/filemap.c:3222 [inline]
-       filemap_fault+0x818/0x1490 mm/filemap.c:3321
-       __do_fault+0x137/0x390 mm/memory.c:4907
-       do_read_fault mm/memory.c:5322 [inline]
-       do_fault mm/memory.c:5456 [inline]
-       do_pte_missing mm/memory.c:3979 [inline]
-       handle_pte_fault+0x39eb/0x5ed0 mm/memory.c:5801
-       __handle_mm_fault mm/memory.c:5944 [inline]
-       handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
-       faultin_page mm/gup.c:1196 [inline]
-       __get_user_pages+0x1c82/0x49e0 mm/gup.c:1494
-       __get_user_pages_locked mm/gup.c:1760 [inline]
-       get_dump_page+0x155/0x2f0 mm/gup.c:2278
-       dump_user_range+0x14d/0x970 fs/coredump.c:943
-       elf_core_dump+0x3e9f/0x4790 fs/binfmt_elf.c:2129
-       do_coredump+0x229d/0x3100 fs/coredump.c:758
-       get_signal+0x140b/0x1750 kernel/signal.c:3002
-       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
-       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-       irqentry_exit_to_user_mode+0x7e/0x250 kernel/entry/common.c:231
-       exc_page_fault+0x590/0x8b0 arch/x86/mm/fault.c:1542
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+  extents -> backpointers does need to exist, since missing backpointers
+  would mean we can't find data to move it (for e.g. copygc, device
+  evacuate, scrub). But the new on disk format version makes possible a
+  new strategy where we sum up backpointers within a bucket and check it
+  against the bucket sector counts, and then only scan for missing
+  backpointers if the counts are off (and then, only for specific
+  buckets).
 
--> #5 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __might_fault+0xc6/0x120 mm/memory.c:6751
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
-       blk_trace_ioctl+0x1ad/0x9a0 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x40c/0x6a0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Full list of on disk format changes:
+- 1.14: backpointer_bucket_gen
+  Backpointers now have a field for the bucket generation number,
+  replacing the obsolete bucket_offset field. This is needed for the
+  new "sum up backpointers within a bucket" code, since backpointers use
+  the btree write buffer - meaning we will see stale reads, and this
+  runs online, with the filesystem in full rw mode.
 
--> #4 (&q->debugfs_mutex){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x3fa/0x830 block/blk-mq-sched.c:473
-       elevator_init_mq+0x20e/0x320 block/elevator.c:610
-       add_disk_fwnode+0x10d/0xf80 block/genhd.c:413
-       sd_probe+0xba6/0x1100 drivers/scsi/sd.c:4024
-       really_probe+0x2ba/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xaa/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f2/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+- 1.15: disk_accounting_big_endian
+  As previously described, fix the endianness of accounting keys so that
+  accounting keys with the same typetag sort together, and accounting
+  read can skip types it's not interested in.
 
--> #3 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       blk_queue_enter+0xe1/0x600 block/blk-core.c:328
-       blk_mq_alloc_request+0x4fa/0xaa0 block/blk-mq.c:652
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x177/0x1090 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x2b4/0x1450 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk+0x1013/0xbce0 drivers/scsi/sd.c:3734
-       sd_probe+0x9fa/0x1100 drivers/scsi/sd.c:4010
-       really_probe+0x2ba/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xaa/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f2/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+- 1.16: reflink_p_may_update_opts:
+  This version indicates that a new reflink pointer field is understood
+  and may be used; the field indicates whether the reflink pointer has
+  permissions to update IO path options (e.g. compression, replicas) may
+  be updated on the indirect extent it points to.
 
--> #2 (&q->limits_lock){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:947 [inline]
-       loop_reconfigure_limits+0x43f/0x900 drivers/block/loop.c:998
-       loop_set_block_size drivers/block/loop.c:1473 [inline]
-       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
-       lo_ioctl+0x1351/0x1f50 drivers/block/loop.c:1559
-       blkdev_ioctl+0x57f/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  This completes the rebalance/reflink data path option handling from
+  the 6.13 pull request.
 
--> #1 (&q->q_usage_counter(io)#23){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3090
-       __submit_bio+0x2c6/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       __ext4_read_bh fs/ext4/super.c:181 [inline]
-       ext4_read_bh+0x1d7/0x290 fs/ext4/super.c:206
-       ext4_bread+0x135/0x180 fs/ext4/inode.c:918
-       ext4_quota_read+0x1b8/0x2d0 fs/ext4/super.c:7239
-       read_blk fs/quota/quota_tree.c:61 [inline]
-       find_free_dqentry+0x1dc/0xc30 fs/quota/quota_tree.c:275
-       do_insert_tree+0x8ca/0x1490 fs/quota/quota_tree.c:400
-       do_insert_tree+0xbd6/0x1490 fs/quota/quota_tree.c:402
-       do_insert_tree+0xbd6/0x1490 fs/quota/quota_tree.c:402
-       do_insert_tree+0xb90/0x1490 fs/quota/quota_tree.c:402
-       dq_insert_tree fs/quota/quota_tree.c:432 [inline]
-       qtree_write_dquot+0x496/0x5b0 fs/quota/quota_tree.c:451
-       v2_write_dquot+0x17a/0x270 fs/quota/quota_v2.c:372
-       dquot_acquire+0x351/0x680 fs/quota/dquot.c:470
-       ext4_acquire_dquot+0x301/0x4c0 fs/ext4/super.c:6934
-       dqget+0x772/0xeb0 fs/quota/dquot.c:977
-       __dquot_initialize+0x468/0xec0 fs/quota/dquot.c:1505
-       ext4_xattr_set+0x109/0x3e0 fs/ext4/xattr.c:2544
-       __vfs_setxattr+0x46a/0x4a0 fs/xattr.c:200
-       __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
-       vfs_setxattr+0x221/0x430 fs/xattr.c:321
-       do_setxattr fs/xattr.c:636 [inline]
-       filename_setxattr+0x2af/0x430 fs/xattr.c:665
-       path_setxattrat+0x440/0x510 fs/xattr.c:713
-       __do_sys_setxattr fs/xattr.c:747 [inline]
-       __se_sys_setxattr fs/xattr.c:743 [inline]
-       __x64_sys_setxattr+0xbc/0xe0 fs/xattr.c:743
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+- 1.17: inode_depth
+  Add a new inode field, bi_depth, to accelerate the
+  check_directory_structure fsck path, which checks for loops in the
+  filesystem heirarchy.
 
--> #0 (&s->s_dquot.dqio_sem){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       v2_read_dquot+0x57/0x200 fs/quota/quota_v2.c:342
-       dquot_acquire+0x194/0x680 fs/quota/dquot.c:461
-       ext4_acquire_dquot+0x301/0x4c0 fs/ext4/super.c:6934
-       dqget+0x772/0xeb0 fs/quota/dquot.c:977
-       __dquot_initialize+0x2e3/0xec0 fs/quota/dquot.c:1505
-       ext4_process_orphan+0x57/0x2d0 fs/ext4/orphan.c:329
-       ext4_orphan_cleanup+0xb77/0x13d0 fs/ext4/orphan.c:474
-       __ext4_fill_super fs/ext4/super.c:5610 [inline]
-       ext4_fill_super+0x64dc/0x6e60 fs/ext4/super.c:5733
-       get_tree_bdev_flags+0x48e/0x5c0 fs/super.c:1636
-       vfs_get_tree+0x92/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  check_inodes and check_dirents check connectivity, so
+  check_directory_structure only has to check for loops - by walking
+  back up to the root from every directory.
 
-other info that might help us debug this:
+  But a path can't be a loop if it has a counter that increases
+  monotonically from root to leaf - adding a depth counter means that we
+  can check for loops with only local (parent -> child) checks. We might
+  need to occasionally renumber the depth field in fsck if directories
+  have been moved around, but then future fsck runs will be much faster.
 
-Chain exists of:
-  &s->s_dquot.dqio_sem --> &ei->xattr_sem --> &dquot->dq_lock
+- 1.18: persistent_inode_cursors
 
- Possible unsafe locking scenario:
+  Previously, the cursor used for inode allocation was only kept in
+  memory, which meant that users with large filesystems and lots of
+  files were reporting that the first create after mounting would take
+  awhile - since it had to scan from the start.
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&dquot->dq_lock);
-                               lock(&ei->xattr_sem);
-                               lock(&dquot->dq_lock);
-  rlock(&s->s_dquot.dqio_sem);
+  Inode allocation cursors are now persistent, and also include a
+  generation field (incremented on wraparound, which will only happen if
+  inode allocation is restricted to 32 bit inodes), so that we don't
+  have to leave inode_generation keys around after a delete.
 
- *** DEADLOCK ***
+  The option for 32 bit inode numbers may now also be set on individual
+  directories, and non-32 bit inode allocations are disallowed from
+  allocating from the 32 bit part of the inode number space.
 
-2 locks held by syz.9.3881/16245:
- #0: ffff8880604fc0e0 (&type->s_umount_key#27/1){+.+.}-{4:4}, at: alloc_super+0x221/0x9d0 fs/super.c:344
- #1: ffff88805500c5e8 (&dquot->dq_lock){+.+.}-{4:4}, at: dquot_acquire+0x69/0x680 fs/quota/dquot.c:458
+- 1.19: autofix_errors
 
-stack backtrace:
-CPU: 0 UID: 0 PID: 16245 Comm: syz.9.3881 Not tainted 6.13.0-rc6-syzkaller-00006-g5428dc1906dd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
- v2_read_dquot+0x57/0x200 fs/quota/quota_v2.c:342
- dquot_acquire+0x194/0x680 fs/quota/dquot.c:461
- ext4_acquire_dquot+0x301/0x4c0 fs/ext4/super.c:6934
- dqget+0x772/0xeb0 fs/quota/dquot.c:977
- __dquot_initialize+0x2e3/0xec0 fs/quota/dquot.c:1505
- ext4_process_orphan+0x57/0x2d0 fs/ext4/orphan.c:329
- ext4_orphan_cleanup+0xb77/0x13d0 fs/ext4/orphan.c:474
- __ext4_fill_super fs/ext4/super.c:5610 [inline]
- ext4_fill_super+0x64dc/0x6e60 fs/ext4/super.c:5733
- get_tree_bdev_flags+0x48e/0x5c0 fs/super.c:1636
- vfs_get_tree+0x92/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f55ffd874ca
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5600b1ce68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f5600b1cef0 RCX: 00007f55ffd874ca
-RDX: 0000000020000140 RSI: 0000000020000580 RDI: 00007f5600b1ceb0
-RBP: 0000000020000140 R08: 00007f5600b1cef0 R09: 0000000000008205
-R10: 0000000000008205 R11: 0000000000000246 R12: 0000000020000580
-R13: 00007f5600b1ceb0 R14: 0000000000000618 R15: 000000000000002c
- </TASK>
-EXT4-fs error (device loop9) in ext4_reserve_inode_write:5837: Corrupt filesystem
-EXT4-fs (loop9): Remounting filesystem read-only
-Quota error (device loop9): write_blk: dquota write failed
-Quota error (device loop9): write_blk: dquota write failed
-Quota error (device loop9): qtree_write_dquot: Error -28 occurred while creating quota
-Quota error (device loop9): v2_write_file_info: Can't write info structure
-EXT4-fs (loop9): 1 orphan inode deleted
-EXT4-fs (loop9): mounted filesystem 00000000-0000-0000-0000-000000000000 ro without journal. Quota mode: none.
+  Runtime self healing is now the default.o
 
+- 1.20: directory size (from Hongbo)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+  directory i_size is now meaningful, and not 0.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Release notes from the previous 6.13 pull request:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+- Self healing work:
+  Allocator and reflink now run the exact same check/repair code that
+  fsck does at runtime, where applicable.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+  The long term goal here is to remove inconsistent() errors (that cause
+  us to go emergency read only) by lifting fsck code up to normal
+  runtime paths; we should only go emergency read-only if we detect an
+  inconsistency that was due to a runtime bug - or truly catastrophic
+  damage (corrupted btree roots/interior nodes).
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+- Reflink repair no longer deletes reflink pointers: instead we flip an
+  error bit and log the error, and they can still be deleted by file
+  deletion. This means a temporary failure to find an indirect extent
+  (perhaps repaired later by btree node scan) won't result in
+  unnecessary data loss
 
-If you want to undo deduplication, reply with:
-#syz undup
+- Improvements to rebalance data path option handling: we can now
+  correctly apply changed filesystem-level io path options to pending
+  rebalance work, and soon we'll be able to apply file-level io path
+  option changes to indirect extents.
+
+----------------------------------------------------------------
+Alan Huang (8):
+      bcachefs: Delete dead code
+      Revert "bcachefs: Fix bch2_btree_node_upgrade()"
+      bcachefs: Merge the condition to avoid additional invocation
+      bcachefs: Do not allow no fail lock request to fail
+      bcachefs: Convert open-coded lock_graph_pop_all to helper
+      bcachefs: Introduce lock_graph_pop_from
+      bcachefs: Only abort the transactions in the cycle
+      bcachefs: Pop all the transactions from the abort one
+
+Colin Ian King (1):
+      bcachefs: remove superfluous ; after statements
+
+Dennis Lam (1):
+      docs: filesystems: bcachefs: fixed some spelling mistakes in the bcachefs coding style page
+
+Geert Uytterhoeven (1):
+      bcachefs: BCACHEFS_PATH_TRACEPOINTS should depend on TRACING
+
+Hongbo Li (5):
+      bcachefs: remove write permission for gc_gens_pos sysfs interface
+      bcachefs: use attribute define helper for sysfs attribute
+      bcachefs: add counter_flags for counters
+      bcachefs: make directory i_size meaningful
+      bcachefs: bcachefs_metadata_version_directory_size
+
+Integral (1):
+      bcachefs: add support for true/false & yes/no in bool-type options
+
+Kent Overstreet (267):
+      bcachefs: kill retry_estale() in bch2_ioctl_subvolume_create()
+      Merge branch 'bcachefs-kill-retry-estale' into HEAD
+      bcachefs: Fix racy use of jiffies
+      bcachefs: bch2_inode_should_have_bp -> bch2_inode_should_have_single_bp
+      bcachefs: remove_backpointer() now uses dirent_get_by_pos()
+      bcachefs: __bch2_key_has_snapshot_overwrites uses for_each_btree_key_reverse_norestart()
+      bcachefs: rcu_pending: don't invoke __call_rcu() under lock
+      bcachefs: bch_verbose_ratelimited
+      bcachefs: Pull disk accounting hooks out of trans_commit.c
+      bcachefs: Remove unnecessary peek_slot()
+      bcachefs: kill btree_trans_restart_nounlock()
+      bcachefs: add more path idx debug asserts
+      bcachefs: bch2_run_explicit_recovery_pass() returns different error when not in recovery
+      bcachefs: lru, accounting are alloc btrees
+      bcachefs: Add locking for bch_fs.curr_recovery_pass
+      bcachefs: bch2_btree_lost_data() now uses run_explicit_rceovery_pass_persistent()
+      bcachefs: improved bkey_val_copy()
+      bcachefs: Factor out jset_entry_log_msg_bytes()
+      bcachefs: better error message in check_snapshot_tree()
+      bcachefs: Avoid bch2_btree_id_str()
+      bcachefs: Refactor new stripe path to reduce dependencies on ec_stripe_head
+      bcachefs: -o norecovery now bails out of recovery earlier
+      bcachefs: bch2_journal_meta() takes ref on c->writes
+      bcachefs: Fix warning about passing flex array member by value
+      bcachefs: Add block plugging to read paths
+      bcachefs: Add version check for bch_btree_ptr_v2.sectors_written validate
+      bcachefs: avoid 'unsigned flags'
+      bcachefs: use bch2_data_update_opts_to_text() in trace_move_extent_fail()
+      bcachefs: bch2_io_opts_fixups()
+      bcachefs: small cleanup for extent ptr bitmasks
+      bcachefs: kill bch2_bkey_needs_rebalance()
+      bcachefs: kill __bch2_bkey_sectors_need_rebalance()
+      bcachefs: rename bch_extent_rebalance fields to match other opts structs
+      bcachefs: io_opts_to_rebalance_opts()
+      bcachefs: Add bch_io_opts fields for indicating whether the opts came from the inode
+      bcachefs: copygc_enabled, rebalance_enabled now opts.h options
+      bcachefs: bch2_prt_csum_opt()
+      bcachefs: New bch_extent_rebalance fields
+      bcachefs: bch2_write_inode() now checks for changing rebalance options
+      bcachefs: get_update_rebalance_opts()
+      bcachefs: Simplify option logic in rebalance
+      bcachefs: Improve trace_rebalance_extent
+      bcachefs: Move bch_extent_rebalance code to rebalance.c
+      bcachefs: Add assert for use of journal replay keys for updates
+      bcachefs: Kill BCH_TRANS_COMMIT_lazy_rw
+      bcachefs: Improved check_topology() assert
+      bcachefs: Fix unhandled transaction restart in evacuate_bucket()
+      bcachefs: Assert we're not in a restart in bch2_trans_put()
+      bcachefs: Better in_restart error
+      bcachefs: bch2_trans_verify_not_unlocked_or_in_restart()
+      bcachefs: Assert that we're not violating key cache coherency rules
+      bcachefs: Rename btree_iter_peek_upto() -> btree_iter_peek_max()
+      bcachefs: Simplify btree_iter_peek() filter_snapshots
+      bcachefs: Kill unnecessary iter_rewind() in bkey_get_empty_slot()
+      bcachefs: Move fsck ioctl code to fsck.c
+      bcachefs: Add support for FS_IOC_GETFSUUID
+      bcachefs: Add support for FS_IOC_GETFSSYSFSPATH
+      bcachefs: Don't use page allocator for sb_read_scratch
+      bcachefs: Fix shutdown message
+      bcachefs: delete dead code
+      bcachefs: bch2_btree_bit_mod_iter()
+      bcachefs: Delete dead code from bch2_discard_one_bucket()
+      bcachefs: lru errors are expected when reconstructing alloc
+      bcachefs: Kill FSCK_NEED_FSCK
+      bcachefs: Reserve 8 bits in bch_reflink_p
+      bcachefs: Reorganize reflink.c a bit
+      bcachefs: Don't delete reflink pointers to missing indirect extents
+      bcachefs: kill inconsistent err in invalidate_one_bucket()
+      bcachefs: rework bch2_bucket_alloc_freelist() freelist iteration
+      bcachefs: try_alloc_bucket() now uses bch2_check_discard_freespace_key()
+      bcachefs: bch2_bucket_do_index(): inconsistent_err -> fsck_err
+      bcachefs: discard_one_bucket() now uses need_discard_or_freespace_err()
+      bcachefs: Implement bch2_btree_iter_prev_min()
+      bcachefs: peek_prev_min(): Search forwards for extents, snapshots
+      bcachefs: Delete backpointers check in try_alloc_bucket()
+      bcachefs: Kill bch2_get_next_backpointer()
+      bcachefs: add missing BTREE_ITER_intent
+      bcachefs: compression workspaces should be indexed by opt, not type
+      bcachefs: Don't use a shared decompress workspace mempool
+      bcachefs: Don't BUG_ON() when superblock feature wasn't set for compressed data
+      bcachefs: kill bch2_journal_entries_free()
+      bcachefs: journal keys: sort keys for interior nodes first
+      bcachefs: btree_and_journal_iter: don't iterate over too many whiteouts when prefetching
+      bcachefs: fix O(n^2) issue with whiteouts in journal keys
+      bcachefs: Fix evacuate_bucket tracepoint
+      bcachefs: fix bp_pos_to_bucket_nodev_noerror
+      bcachefs: check for backpointers to invalid device
+      bcachefs: bucket_pos_to_bp_end()
+      bcachefs: Drop swab code for backpointers in alloc keys
+      bcachefs: bch_backpointer -> bkey_i_backpointer
+      bcachefs: Fix check_backpointers_to_extents range limiting
+      bcachefs: kill bch_backpointer.bucket_offset usage
+      bcachefs: New backpointers helpers
+      bcachefs: Can now block journal activity without closing cur entry
+      bcachefs: trivial btree write buffer refactoring
+      bcachefs: Bias reads more in favor of faster device
+      bcachefs: discard fastpath now uses bch2_discard_one_bucket()
+      bcachefs: btree_write_buffer_flush_seq() no longer closes journal
+      bcachefs: BCH_ERR_btree_node_read_error_cached
+      bcachefs: Use separate rhltable for bch2_inode_or_descendents_is_open()
+      bcachefs: errcode cleanup: journal errors
+      bcachefs: disk_accounting: bch2_dev_rcu -> bch2_dev_rcu_noerror
+      bcachefs: Fix accounting_read when we rewind
+      bcachefs: backpointer_to_missing_ptr is now autofix
+      bcachefs: Fix btree node scan when unknown btree IDs are present
+      bcachefs: Kill bch2_bucket_alloc_new_fs()
+      bcachefs: Bad btree roots are now autofix
+      bcachefs: Fix dup/misordered check in btree node read
+      bcachefs: Don't try to en/decrypt when encryption not available
+      bcachefs: Change "disk accounting version 0" check to commit only
+      bcachefs: Fix bch2_btree_node_update_key_early()
+      bcachefs: Go RW earlier, for normal rw mount
+      bcachefs: Fix null ptr deref in btree_path_lock_root()
+      bcachefs: Ignore empty btree root journal entries
+      bcachefs: struct bkey_validate_context
+      bcachefs: Make topology errors autofix
+      bcachefs: BCH_FS_recovery_running
+      bcachefs: Guard against journal seq overflow
+      bcachefs: Issue a transaction restart after commit in repair
+      bcachefs: Guard against backpointers to unknown btrees
+      bcachefs: Fix journal_iter list corruption
+      bcachefs: add missing printbuf_reset()
+      bcachefs: mark more errors AUTOFIX
+      bcachefs: Don't error out when logging fsck error
+      bcachefs: do_fsck_ask_yn()
+      bcachefs: Check for bucket journal seq in the future
+      bcachefs: Check for inode journal seq in the future
+      bcachefs: cryptographic MACs on superblock are not (yet?) supported
+      bcachefs: bch2_trans_relock() is trylock for lockdep
+      bcachefs: Check for extent crc uncompressed/compressed size mismatch
+      bcachefs: Don't recurse in check_discard_freespace_key
+      bcachefs: Fix fsck.c build in userspace
+      bcachefs: bch2_inum_to_path()
+      bcachefs: Convert write path errors to inum_to_path()
+      bcachefs: list_pop_entry()
+      bcachefs: bkey_fsck_err now respects errors_silent
+      bcachefs: If we did repair on a btree node, make sure we rewrite it
+      bcachefs: bch2_async_btree_node_rewrites_flush()
+      bcachefs: fix bch2_journal_key_insert_take() seq
+      bcachefs: Improve "unable to allocate journal write" message
+      bcachefs: Fix allocating too big journal entry
+      bcachefs: rcu_pending now works in userspace
+      bcachefs: logged ops only use inum 0 of logged ops btree
+      bcachefs: Simplify disk accounting validate late
+      bcachefs: Advance to next bp on BCH_ERR_backpointer_to_overwritten_btree_node
+      bcachefs: trace_accounting_mem_insert
+      bcachefs: Silence "unable to allocate journal write" if we're already RO
+      bcachefs: BCH_ERR_insufficient_journal_devices
+      bcachefs: Fix failure to allocate journal write on discard retry
+      bcachefs: dev_alloc_list.devs -> dev_alloc_list.data
+      bcachefs: Journal write path refactoring, debug improvements
+      bcachefs: Call bch2_btree_lost_data() on btree read error
+      bcachefs: Make sure __bch2_run_explicit_recovery_pass() signals to rewind
+      bcachefs: Don't call bch2_btree_interior_update_will_free_node() until after update succeeds
+      bcachefs: kill flags param to bch2_subvolume_get()
+      bcachefs: factor out str_hash.c
+      bcachefs: Journal space calculations should skip durability=0 devices
+      bcachefs: fix bch2_btree_node_header_to_text() format string
+      bcachefs: Mark more errors autofix
+      bcachefs: Minor bucket alloc optimization
+      lib min_heap: Switch to size_t
+      bcachefs: Use a heap for handling overwrites in btree node scan
+      bcachefs: Plumb bkey_validate_context to journal_entry_validate
+      bcachefs: Don't add unknown accounting types to eytzinger tree
+      bcachefs: Set bucket needs discard, inc gen on empty -> nonempty transition
+      bcachefs: bch2_journal_noflush_seq() now takes [start, end)
+      bcachefs: Fix reuse of bucket before journal flush on multiple empty -> nonempty transition
+      bcachefs: Don't start rewriting btree nodes until after journal replay
+      bcachefs: Kill unnecessary mark_lock usage
+      bcachefs: kill sysfs internal/accounting
+      bcachefs: Use proper errcodes for inode unpack errors
+      bcachefs: Don't BUG_ON() inode unpack error
+      bcachefs: bch2_str_hash_check_key() now checks inode hash info
+      bcachefs: bch2_check_key_has_snapshot() prints btree id
+      bcachefs: bch2_snapshot_exists()
+      bcachefs: trace_write_buffer_maybe_flush
+      bcachefs: Refactor c->opts.reconstruct_alloc
+      bcachefs: check_indirect_extents can run online
+      bcachefs: tidy up __bch2_btree_iter_peek()
+      bcachefs: tidy btree_trans_peek_journal()
+      bcachefs: Fix btree_trans_peek_key_cache() BTREE_ITER_all_snapshots
+      bcachefs: Fix key cache + BTREE_ITER_all_snapshots
+      bcachefs: alloc_data_type_set() happens in alloc trigger
+      bcachefs: Don't run overwrite triggers before insert
+      bcachefs: Kill equiv_seen arg to delete_dead_snapshots_process_key()
+      bcachefs: Snapshot deletion no longer uses snapshot_t->equiv
+      bcachefs: Kill snapshot_t->equiv
+      bcachefs: bch2_trans_log_msg()
+      bcachefs: Log message in journal for snapshot deletion
+      bcachefs: trace_key_cache_fill
+      bcachefs: bch2_btree_path_peek_slot() doesn't return errors
+      bcachefs: bcachefs_metadata_version_backpointer_bucket_gen
+      bcachefs: bcachefs_metadata_version_disk_accounting_big_endian
+      bcachefs: bch2_extent_ptr_to_bp() no longer depends on device
+      bcachefs: kill __bch2_extent_ptr_to_bp()
+      bcachefs: Add write buffer flush param to backpointer_get_key()
+      bcachefs: check_extents_to_backpointers() now only checks buckets with mismatches
+      bcachefs: bch2_backpointer_get_key() now repairs dangling backpointers
+      bcachefs: better backpointer_target_not_found() error message
+      bcachefs: Only run check_backpointers_to_extents in debug mode
+      bcachefs: BCH_SB_VERSION_INCOMPAT
+      bcachefs: bcachefs_metadata_version_reflink_p_may_update_opts
+      bcachefs: Option changes now get propagated to reflinked data
+      bcachefs: bcachefs_metadata_version_inode_depth
+      bcachefs: bcachefs_metadata_version_persistent_inode_cursors
+      bcachefs: bcachefs_metadata_version_autofix_errors
+      bcachefs: better check_bp_exists() error message
+      bcachefs: Drop racy warning
+      bcachefs: Drop redundant "read error" call from btree_gc
+      bcachefs: kill __bch2_btree_iter_flags()
+      bcachefs: Write lock btree node in key cache fills
+      bcachefs: Handle -BCH_ERR_need_mark_replicas in gc
+      bcachefs: Fix assert for online fsck
+      bcachefs: bch2_kvmalloc()
+      bcachefs: Don't rely on snapshot_tree.master_subvol for reattaching
+      bcachefs: Fixes for snapshot_tree.master_subvol
+      bcachefs: bch2_btree_node_write_trans()
+      bcachefs: fix bch2_btree_key_cache_drop()
+      bcachefs: btree_path_very_locks(): verify lock seq
+      bcachefs: bch2_inum_path() no longer returns an error for disconnected inums
+      bcachefs: bch2_inum_path() now crosses subvolumes correctly
+      bcachefs: Assert that btree write buffer only touches the right btrees
+      bcachefs: bch2_fs_btree_gc_init()
+      bcachefs: six locks: write locks can now be held recursively
+      bcachefs: btree_node_unlock() can now drop write locks
+      bcachefs: bch2_trans_unlock_write()
+      bcachefs: bch2_trans_node_drop()
+      bcachefs: Dropped superblock write is no longer a fatal error
+      bcachefs: Silence read-only errors when deleting snapshots
+      bcachefs: printbuf_reset() handles tabstops
+      bcachefs: __bch2_btree_pos_to_text()
+      bcachefs: Don't set btree_path to updtodate if we don't fill
+      bcachefs: bch2_btree_iter_peek_slot() handles navigating to nonexistent depth
+      bcachefs: Check for dirents to overwritten inodes
+      bcachefs: Don't use BTREE_ITER_cached when walking alloc btree during fsck
+      bcachefs: check_unreachable_inodes is not actually PASS_ONLINE yet
+      bcachefs: Fix self healing on read error
+      bcachefs: Document issue with bch_stripe layout
+      bcachefs: Fix check_inode_hash_info_matches_root()
+      bcachefs: bch2_moving_ctxt_to_text() -> bch2_moving_ctxt_to_text()
+      bcachefs: kill bch_read_bio.devs_have
+      bcachefs: Avoid holding btree locks when blocking on IO
+      bcachefs: x-macroize BCH_READ flags
+      bcachefs: Rename BCH_WRITE flags fer consistency with other x-macros enums
+      bcachefs: rbio_init_fragment()
+      bcachefs: rbio_init() cleanup
+      bcachefs: data_update now embeds bch_read_bio
+      bcachefs: promote_op uses embedded bch_read_bio
+      bcachefs: bch2_update_unwritten_extent() no longer depens on wbio
+      bcachefs: cleanup redundant code around data_update_op initialization
+      bcachefs: Be stricter in bch2_read_retry_nodecode()
+      bcachefs: Promotes should use BCH_WRITE_only_specified_devs
+      bcachefs: Self healing writes are BCH_WRITE_alloc_nowait
+      bcachefs: Rework init order in bch2_data_update_init()
+      bcachefs: Bail out early on alloc_nowait data updates
+      bcachefs: Don't start promotes from bch2_rbio_free()
+      bcachefs: Don't self-heal if a data update is already rewriting
+      bcachefs: Internal reads can now correct errors
+      bcachefs: fix trace_copygc
+      bcachefs: backpointer_get_key() doesn't pull in btree node
+      bcachefs: bch2_btree_node_rewrite_key()
+      bcachefs: bch2_move_data_phys()
+      bcachefs: __bch2_move_data_phys() now uses bch2_btree_node_rewrite_key()
+      bcachefs: bch2_bkey_pick_read_device() can now specify a device
+      bcachefs: bch2_btree_node_scrub()
+      bcachefs: Scrub
+      locking debug
+
+Nathan Chancellor (1):
+      bcachefs: Add empty statement between label and declaration in check_inode_hash_info_matches_root()
+
+Thomas Bertschinger (1):
+      bcachefs: move bch2_xattr_handlers to .rodata
+
+Thorsten Blum (6):
+      bcachefs: Remove duplicate included headers
+      bcachefs: Use FOREACH_ACL_ENTRY() macro to iterate over acl entries
+      bcachefs: Use str_write_read() helper function
+      bcachefs: Use str_write_read() helper in ec_block_endio()
+      bcachefs: Use str_write_read() helper in write_super_endio()
+      bcachefs: Annotate struct bucket_gens with __counted_by()
+
+Yang Li (1):
+      bcachefs: Add missing parameter description to bch2_bucket_alloc_trans()
+
+Youling Tang (4):
+      bcachefs: Correct the description of the '--bucket=size' options
+      bcachefs: Removes NULL pointer checks for __filemap_get_folio return values
+      bcachefs: Remove redundant initialization in bch2_vfs_inode_init()
+      bcachefs: Simplify code in bch2_dev_alloc()
+
+ Documentation/filesystems/bcachefs/CodingStyle.rst |   2 +-
+ fs/bcachefs/Kconfig                                |   2 +-
+ fs/bcachefs/Makefile                               |   1 +
+ fs/bcachefs/acl.c                                  |  11 +-
+ fs/bcachefs/alloc_background.c                     | 558 ++++++-------
+ fs/bcachefs/alloc_background.h                     |  18 +-
+ fs/bcachefs/alloc_background_format.h              |   4 +-
+ fs/bcachefs/alloc_foreground.c                     | 315 +++-----
+ fs/bcachefs/alloc_foreground.h                     |  21 +-
+ fs/bcachefs/backpointers.c                         | 864 +++++++++++++--------
+ fs/bcachefs/backpointers.h                         |  97 ++-
+ fs/bcachefs/bbpos.h                                |   2 +-
+ fs/bcachefs/bcachefs.h                             |  73 +-
+ fs/bcachefs/bcachefs_format.h                      | 106 ++-
+ fs/bcachefs/bcachefs_ioctl.h                       |  14 +-
+ fs/bcachefs/bkey.h                                 |   7 -
+ fs/bcachefs/bkey_methods.c                         |  29 +-
+ fs/bcachefs/bkey_methods.h                         |  15 +-
+ fs/bcachefs/bkey_types.h                           |  28 +
+ fs/bcachefs/btree_cache.c                          |  59 +-
+ fs/bcachefs/btree_cache.h                          |  14 +-
+ fs/bcachefs/btree_gc.c                             | 178 +----
+ fs/bcachefs/btree_gc.h                             |   4 +-
+ fs/bcachefs/btree_io.c                             | 414 ++++++++--
+ fs/bcachefs/btree_io.h                             |   9 +-
+ fs/bcachefs/btree_iter.c                           | 599 ++++++++------
+ fs/bcachefs/btree_iter.h                           | 134 ++--
+ fs/bcachefs/btree_journal_iter.c                   | 237 +++++-
+ fs/bcachefs/btree_journal_iter.h                   |  22 +-
+ fs/bcachefs/btree_journal_iter_types.h             |  36 +
+ fs/bcachefs/btree_key_cache.c                      |  75 +-
+ fs/bcachefs/btree_locking.c                        |  78 +-
+ fs/bcachefs/btree_locking.h                        |  55 +-
+ fs/bcachefs/btree_node_scan.c                      | 153 ++--
+ fs/bcachefs/btree_node_scan_types.h                |   1 -
+ fs/bcachefs/btree_trans_commit.c                   | 205 ++---
+ fs/bcachefs/btree_types.h                          |  42 +-
+ fs/bcachefs/btree_update.c                         |  70 +-
+ fs/bcachefs/btree_update.h                         |  29 +-
+ fs/bcachefs/btree_update_interior.c                | 313 ++++----
+ fs/bcachefs/btree_update_interior.h                |   7 +-
+ fs/bcachefs/btree_write_buffer.c                   |  83 +-
+ fs/bcachefs/buckets.c                              | 133 ++--
+ fs/bcachefs/buckets.h                              |  30 +-
+ fs/bcachefs/buckets_types.h                        |   2 +-
+ fs/bcachefs/chardev.c                              | 252 +-----
+ fs/bcachefs/checksum.c                             |  10 +-
+ fs/bcachefs/checksum.h                             |   2 +-
+ fs/bcachefs/compress.c                             |  96 ++-
+ fs/bcachefs/darray.h                               |   2 +-
+ fs/bcachefs/data_update.c                          | 254 ++++--
+ fs/bcachefs/data_update.h                          |  11 +-
+ fs/bcachefs/debug.c                                |   6 +-
+ fs/bcachefs/dirent.c                               |  10 +-
+ fs/bcachefs/dirent.h                               |   9 +-
+ fs/bcachefs/disk_accounting.c                      | 150 ++--
+ fs/bcachefs/disk_accounting.h                      |  73 +-
+ fs/bcachefs/ec.c                                   | 267 ++++---
+ fs/bcachefs/ec.h                                   |   5 +-
+ fs/bcachefs/ec_format.h                            |  17 +
+ fs/bcachefs/errcode.h                              |  27 +-
+ fs/bcachefs/error.c                                | 187 +++--
+ fs/bcachefs/error.h                                |  58 +-
+ fs/bcachefs/extent_update.c                        |   4 +-
+ fs/bcachefs/extents.c                              | 299 +++----
+ fs/bcachefs/extents.h                              |  20 +-
+ fs/bcachefs/extents_format.h                       |  15 +-
+ fs/bcachefs/fs-common.c                            | 119 ++-
+ fs/bcachefs/fs-common.h                            |   2 +
+ fs/bcachefs/fs-io-buffered.c                       |  68 +-
+ fs/bcachefs/fs-io-direct.c                         |  25 +-
+ fs/bcachefs/fs-io-pagecache.c                      |   4 +-
+ fs/bcachefs/fs-io.c                                |  54 +-
+ fs/bcachefs/fs-ioctl.c                             |   7 +-
+ fs/bcachefs/fs.c                                   | 101 ++-
+ fs/bcachefs/fs.h                                   |   1 +
+ fs/bcachefs/fsck.c                                 | 772 +++++++++++-------
+ fs/bcachefs/fsck.h                                 |  11 +
+ fs/bcachefs/inode.c                                | 169 ++--
+ fs/bcachefs/inode.h                                |  43 +-
+ fs/bcachefs/inode_format.h                         |  15 +-
+ fs/bcachefs/io_misc.c                              |  22 +-
+ fs/bcachefs/io_read.c                              | 733 ++++++++---------
+ fs/bcachefs/io_read.h                              | 103 ++-
+ fs/bcachefs/io_write.c                             | 182 +++--
+ fs/bcachefs/io_write.h                             |  29 +-
+ fs/bcachefs/io_write_types.h                       |   2 +-
+ fs/bcachefs/journal.c                              | 162 ++--
+ fs/bcachefs/journal.h                              |   9 +-
+ fs/bcachefs/journal_io.c                           | 221 +++---
+ fs/bcachefs/journal_io.h                           |   2 +-
+ fs/bcachefs/journal_reclaim.c                      |  19 +-
+ fs/bcachefs/journal_types.h                        |   5 +
+ fs/bcachefs/logged_ops.c                           |  11 +-
+ fs/bcachefs/logged_ops_format.h                    |   5 +
+ fs/bcachefs/lru.c                                  |   4 +-
+ fs/bcachefs/lru.h                                  |   2 +-
+ fs/bcachefs/move.c                                 | 497 +++++++-----
+ fs/bcachefs/move.h                                 |   5 +-
+ fs/bcachefs/move_types.h                           |  18 +-
+ fs/bcachefs/movinggc.c                             |  17 +-
+ fs/bcachefs/opts.c                                 |  26 +-
+ fs/bcachefs/opts.h                                 |  61 +-
+ fs/bcachefs/printbuf.h                             |  15 +-
+ fs/bcachefs/quota.c                                |   2 +-
+ fs/bcachefs/quota.h                                |   4 +-
+ fs/bcachefs/rcu_pending.c                          |  38 +-
+ fs/bcachefs/rebalance.c                            | 270 ++++++-
+ fs/bcachefs/rebalance.h                            |  10 +
+ fs/bcachefs/rebalance_format.h                     |  53 ++
+ fs/bcachefs/rebalance_types.h                      |   2 -
+ fs/bcachefs/recovery.c                             | 212 +++--
+ fs/bcachefs/recovery.h                             |   2 +-
+ fs/bcachefs/recovery_passes.c                      | 112 ++-
+ fs/bcachefs/recovery_passes.h                      |   1 +
+ fs/bcachefs/recovery_passes_types.h                |  92 ++-
+ fs/bcachefs/reflink.c                              | 496 +++++++++---
+ fs/bcachefs/reflink.h                              |  20 +-
+ fs/bcachefs/reflink_format.h                       |   7 +-
+ fs/bcachefs/sb-clean.c                             |   6 +-
+ fs/bcachefs/sb-counters_format.h                   | 165 ++--
+ fs/bcachefs/sb-downgrade.c                         |  28 +-
+ fs/bcachefs/sb-errors_format.h                     |  54 +-
+ fs/bcachefs/sb-members.h                           |  12 +
+ fs/bcachefs/six.c                                  |  27 +-
+ fs/bcachefs/six.h                                  |   1 +
+ fs/bcachefs/snapshot.c                             | 515 ++++++------
+ fs/bcachefs/snapshot.h                             |  17 +-
+ fs/bcachefs/str_hash.c                             | 295 +++++++
+ fs/bcachefs/str_hash.h                             |  28 +-
+ fs/bcachefs/subvolume.c                            |  68 +-
+ fs/bcachefs/subvolume.h                            |  19 +-
+ fs/bcachefs/subvolume_types.h                      |   2 +-
+ fs/bcachefs/super-io.c                             |  83 +-
+ fs/bcachefs/super-io.h                             |  21 +-
+ fs/bcachefs/super.c                                |  54 +-
+ fs/bcachefs/super.h                                |  10 -
+ fs/bcachefs/sysfs.c                                |  60 +-
+ fs/bcachefs/tests.c                                |  26 +-
+ fs/bcachefs/trace.h                                | 147 ++--
+ fs/bcachefs/util.h                                 |  32 +
+ fs/bcachefs/varint.c                               |   5 +-
+ fs/bcachefs/xattr.c                                |  13 +-
+ fs/bcachefs/xattr.h                                |   5 +-
+ fs/fs_parser.c                                     |   3 +-
+ include/linux/fs_parser.h                          |   2 +
+ include/linux/min_heap.h                           |   4 +-
+ 147 files changed, 8220 insertions(+), 5267 deletions(-)
+ create mode 100644 fs/bcachefs/btree_journal_iter_types.h
+ create mode 100644 fs/bcachefs/rebalance_format.h
+ create mode 100644 fs/bcachefs/str_hash.c
 
