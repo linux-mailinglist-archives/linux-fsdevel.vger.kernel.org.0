@@ -1,110 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-39735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3391A17350
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 20:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 395BBA17353
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 20:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8060D1889A06
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 19:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5551889B1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 19:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107D61F03C0;
-	Mon, 20 Jan 2025 19:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86E21EEA51;
+	Mon, 20 Jan 2025 19:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GPGIUb+m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFAM2srW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5D71EF0B9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 19:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D4A1EE007;
+	Mon, 20 Jan 2025 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737402630; cv=none; b=tp8PaOIC4G4++276HxRtug7Hs1+ASxFOH4qNu1pQCvIW5ihe8kroTvOTRhAtQVDCaovRM//+Hp8QSM4ynk2GHTEVj+WgDkFnIfPDEqeF8J1Xw0xXegjKep35JC5kUVMc+X0xJQBmZXNl1rnpNZZXONosHgsJ+0lgf+BE4jp/gt0=
+	t=1737402658; cv=none; b=BaItqmSoHd1RA/zIlnBjhHkTk+ziNMFhBi02uSo8uJ1HZ1Jz5TXkdMdMMXOylxHiC20FYHVrKpGR/BhjRNAXqN4cgrIrWRGxtqlIqv2vsGvBTN+bqyts6mqMm0zwt8J16e3qI3d7u4UTx71if0r6G7mX7pVeAa7Yk9f7fdGyzys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737402630; c=relaxed/simple;
-	bh=+yC97igTnAUGxKYY6ti7y91h3A77EOTvGMJgEtHNrUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUctnHrAVMhuhM1qMzIkbk+a73hSXz54ItZjhqM94/aEMAXoT6M/kuXhUf8F99fugLoTesuQVABEyj65fqJEJf3hPj2goFTre8Knkk/KvD+IcGPQLJsM1yPyimRDxPf+tbpH4d+cXKMKhM6xfGjkWxeBzydPrNYjuRKcI9/Nfck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GPGIUb+m; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaee0b309adso729939666b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 11:50:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1737402626; x=1738007426; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l4Q6wz1X73PCFp0PWUlpXQpQomHGAshPS4KN5fa55XQ=;
-        b=GPGIUb+myzjsCIxTTiY83lFbdY1aek1A4ycUpjYGnuS6Da6yPH6UT/iKIYX+TJZci6
-         /MMhGsyFn14u2O1UKcvmuvaPGOzEibqOk6dfM8OTC2TV8JJEn8nXkNzCUj8e09wZt4Ks
-         Zkq8au1yyybwesJk+J6jZxXyRvgnjuxS5ui3o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737402626; x=1738007426;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l4Q6wz1X73PCFp0PWUlpXQpQomHGAshPS4KN5fa55XQ=;
-        b=mjbOcGUc7Yj2W0Cu61OU9YFX+g9BlUhMqPCfRksTtGV8QDZ4V766bR59LHyQLwEHv8
-         rCAmEqFDVZ/QJ0o3b3UQ446gzbe6793L3MeJqHkNh6D7kD3xCNDw47WpkSPUMsZuRbDm
-         WOVKxrutxli0iuJxJj6sYMpVaTrniNQIkPaI5CH44TmHWuynpv0pdOojGRkbNgYbcbVW
-         /V2QKe9M175h59Td+wQnOFV0BXGaFEPaw5ezuYp853OT9lyFnNNjexZp2fnNB8uJulBm
-         XcG0Jl7RdgqJXRHYZSjkx6WPP+M09+R+mNQKwVd0m8fMMD99hcHx4O8k0e0kwXW8rbXD
-         ebEA==
-X-Gm-Message-State: AOJu0YylNSJz5j4BJoXfsmZJGW58KU/R1MpK87844/dCVnG8WKEMrebl
-	INHEt/f4osvej9CB4bYTmIFzGEXnGji3Aym/PRl6wrRSfY13h7nJ2HBOdLC67uPvuh13zvcZ6et
-	Rr3LaiQ==
-X-Gm-Gg: ASbGncugtarsD6gXjM+6M4lBFTJXx3ubJ4HwhonLEdypR8+m7dd/wkmjs3OfaKhar8U
-	4KLMVtFhl0rj7YWh/wD2yYKUAZ71VGt19eaqw0JYGUTNtFtDD/dn/ByLmYZBHBmBsdZ12RC5dua
-	D6Gv3dDKim/28yza+0/HUAlD5RZ6Vm/J2uHjZZZTbFyQ7Z8BSt8MO2ct/ESk/xh4j/11/G145WX
-	Arl8r95B7EDOH1R6WeBVMSwqaMOaRLsEw6V7yzY6pxSVmZgY2exF/vJKSRgQduTy5bzbZYj30Ou
-	/YRVoS8vKcYeTQbvADB6q3rfARme1ZBKr2bR3IudjcRP
-X-Google-Smtp-Source: AGHT+IHMGvGBC5Nnl5+5ST0ZFHJjw1QlEpG1MpuPreDh20WCJAn4a4HzKfLafq8Bz6kKAr22Jf2c6A==
-X-Received: by 2002:a17:907:72cf:b0:aa6:8676:3b33 with SMTP id a640c23a62f3a-ab38b3f8f45mr1231384966b.47.1737402626481;
-        Mon, 20 Jan 2025 11:50:26 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab398ac5879sm528144966b.162.2025.01.20.11.50.25
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jan 2025 11:50:26 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso822207866b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 11:50:25 -0800 (PST)
-X-Received: by 2002:a17:907:724d:b0:aaf:f32:cd34 with SMTP id
- a640c23a62f3a-ab38b10ba91mr407917266b.15.1737402625546; Mon, 20 Jan 2025
- 11:50:25 -0800 (PST)
+	s=arc-20240116; t=1737402658; c=relaxed/simple;
+	bh=diSgZAVrWj1CrBhmrx1aGmkMbpua0/iCb7cVyANPeTg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MmEl9VgBk/6wTR9KFZMIFrNwY3IlAJlHMALLdfI8PZ7YDEOKIRJWuNpxakolzoTh0yCOKWnzDkh91F9fLF/onaCwi6xjm3BG02EO6jrE67cBeuwXfAQKTJZgog8E/nF3Xl/pirE/JO0AEvvOVdf9ZKPiwTmjGdSXUmjeyOOYSMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFAM2srW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D35C4CEDD;
+	Mon, 20 Jan 2025 19:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737402658;
+	bh=diSgZAVrWj1CrBhmrx1aGmkMbpua0/iCb7cVyANPeTg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=IFAM2srWHgaIwbMPPREPzGZlzimv3j5w/jVqa7vj8UztRkmPmFU8C+uIHiHb216Wc
+	 DFJYd3LdoUXL3NomF9NjV32mTvnb00dBR8q4RP+Dy/QxOxyK9swC+KxaJ3oOKNHBvn
+	 aJeMRipyDoWpT5kMKbxKUlzd0+ge5Zn32KBrQN9teXAA7Y0NTAxMD4/4Dx7T/n9vme
+	 0TmfmSxMPuOe7s2/myvNWFGJGfPbhl/Kip544QCTXqfKZLkbB3kNEOBbwnZGbvyiXP
+	 0OoUKzoy/8B1o/EuvY7RjMGOGlDzub8ABnEkEqaLJNoQOgAiRN3gwdqJa5CkFjDvUo
+	 QiOCHToDkI1+g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340ED380AA62;
+	Mon, 20 Jan 2025 19:51:23 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs libfs
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250118-vfs-libfs-675d6c542bcc@brauner>
+References: <20250118-vfs-libfs-675d6c542bcc@brauner>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250118-vfs-libfs-675d6c542bcc@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc1.libfs
+X-PR-Tracked-Commit-Id: a0634b457eca16b21a4525bc40cd2db80f52dadc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7e587c20adab5b8da4c7b5573e711a8c808e0a2d
+Message-Id: <173740268189.3634157.10054246238991878576.pr-tracker-bot@kernel.org>
+Date: Mon, 20 Jan 2025 19:51:21 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250118-vfs-dio-3ca805947186@brauner> <CAHk-=wj+uVo3sJU3TKup0QfftWaEXcaiH4aBqnuM09eUDdo=og@mail.gmail.com>
- <20250120-narrte-spargel-6b0f052af8b6@brauner>
-In-Reply-To: <20250120-narrte-spargel-6b0f052af8b6@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 20 Jan 2025 11:50:09 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgdZJQFfBnKXQm2EZiej-KVk5=E1gOBhW72XnQ_SBZ=cQ@mail.gmail.com>
-X-Gm-Features: AbW1kvbtA8rTH_bf0K0Xc8TT16YmQaiHKcCezhU-SFr_zSCoJ4_Elt9ZztB37Jc
-Message-ID: <CAHk-=wgdZJQFfBnKXQm2EZiej-KVk5=E1gOBhW72XnQ_SBZ=cQ@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs dio
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 20 Jan 2025 at 11:38, Christian Brauner <brauner@kernel.org> wrote:
->
-> It is heavily used nowadays though because there's a few
-> additional bits in there that don't require calling into filesystems
-> but are heavily used.
+The pull request you sent on Sat, 18 Jan 2025 14:08:14 +0100:
 
-By "heavily used" you mean "there is probably a 1:1000 ratio between
-statx:stat in reality".
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc1.libfs
 
-Those "few additional bits" are all very specialized. No normal
-application cares about things like "mount ID" or subvolume data. I
-can't imagine what other fields you think are so important.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7e587c20adab5b8da4c7b5573e711a8c808e0a2d
 
-          Linus
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
