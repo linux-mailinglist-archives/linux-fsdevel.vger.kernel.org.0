@@ -1,99 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-39671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036DAA16C66
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 13:32:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13115A16C7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 13:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15A1188994A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 12:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15D11889865
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 12:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063591DFE11;
-	Mon, 20 Jan 2025 12:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FB51E0DB5;
+	Mon, 20 Jan 2025 12:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fy6+23Rt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dv6iEKv3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE24B1BBBDD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 12:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848261DFE14
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 12:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737376357; cv=none; b=YSu2sGtwaOOXl+wH1oQHWBeF4pSvT9lEu9WufJ26ix1GOuSY0SWVdDnrQcBkVAX8sZfiqUWgHRnxZyaS0OH6l4Dgtxlyn7GTUN+qJBmcbiIpOnGEakEiIvp9m1pvPgvfGiSJ+ZkpZM2RqjACU8YlINTACZswLJIzEagR9s4EuIc=
+	t=1737376970; cv=none; b=UMi09iZtSLh4ATBnmsOFtYGIluQwdff3YhQ6Tbxz4MeqLbjnFBX/FlFdREr1vDgGRmB7CtEVlfN57xyfIFcqeDXwKxZKyMSqnt3sUzOplx/7/3104Jm6WJ8BXygM/OHroZswF7l/t+W4gbzJArIqriX9C9zpbmST8i5LP7jG90k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737376357; c=relaxed/simple;
-	bh=+LwCxqVRPS+wr+2Tv84R2MAyCpcbym4LbR2Ue/sGWOk=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=PDPEgHUNat8mr6rMFZ9q2C+w3lHyJDMSS5j11l+plV3QiSs0/EIDmNXN31vb40B3gc3jFUXwkWRROaNk4PSRXIL+5E6mMP2fJ+Z+KklYW9CvQnHRkSQ3WgfTWeCA5Z7lQENwZNagg0GG8roEjxnxxog4XH9gG/JsD/lrjGaF+BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fy6+23Rt; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1737376970; c=relaxed/simple;
+	bh=ljOvUhnQMd/bR+2NO4+rfciOdIOy6YM2mR6nKravZng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPhYBejDGB9kezrvleg0dUZuHdzQCZW3WRbeRDRUiYfJBLkGAE4X7lxI3dQlHgsGG2rea4WQjyJhf7qCQKZuJ6Y0eIzSPaDflJXOck/fLs8Rk+vGwMMPy0HO0BxBsBbVcjkTXbDgkRJb7jKbWNgnet7M1qstHxqe9+N/WaXWoek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dv6iEKv3; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737376354;
+	s=mimecast20190719; t=1737376967;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=opcTe4i6eDAWBVL9dz77gDa+ZjIgR8GU9Qdfcu40y4s=;
-	b=fy6+23Rt7TeCoSOpm9dM5BFgqNfJWqqK2sWz9BI7BWUdN0BnXDpnXmN4kioetPzWPzhk9x
-	wrILwQuaawTFlJjEtnjY0JipqGzet2hpFIlEKLf/b2jRfMjtfZR58zV/6XywsrLj+4BKPg
-	V91q6baJ3yRjcOjnaAJFKxBCpUGOARE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ljOvUhnQMd/bR+2NO4+rfciOdIOy6YM2mR6nKravZng=;
+	b=Dv6iEKv3Nrco62GIP0rTxZJ3MKWxVtQ6QzGc+2BfNw/w0PMB4m9BfaxgpUJ8vIN/5G2ggv
+	I9nQH9kejzT2Tp4BzBJ/6q58T8tkrgpHqUoKhZbci2Kepw+FPMBV4T6bN8WtjNZfcueUSc
+	fPmNC6Lj2jUP5LnHjj9GHnK6Ab3ExLE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-OqGN2ih8O6a1pGYi9oKy9A-1; Mon,
- 20 Jan 2025 07:32:32 -0500
-X-MC-Unique: OqGN2ih8O6a1pGYi9oKy9A-1
-X-Mimecast-MFC-AGG-ID: OqGN2ih8O6a1pGYi9oKy9A
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-250-DuTuzjEFNteS6GqyxJJMrg-1; Mon,
+ 20 Jan 2025 07:42:42 -0500
+X-MC-Unique: DuTuzjEFNteS6GqyxJJMrg-1
+X-Mimecast-MFC-AGG-ID: DuTuzjEFNteS6GqyxJJMrg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE62719560B0;
-	Mon, 20 Jan 2025 12:32:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9972A19560BF;
-	Mon, 20 Jan 2025 12:32:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Eric Biggers <ebiggers@google.com>
-cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org
-Subject: Error in generic/397 test script?
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2BAD21955D89;
+	Mon, 20 Jan 2025 12:42:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.104])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 220E019560A3;
+	Mon, 20 Jan 2025 12:42:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 20 Jan 2025 13:42:15 +0100 (CET)
+Date: Mon, 20 Jan 2025 13:42:10 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, Christian Brauner <brauner@kernel.org>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [linux-next:master] [pipe_read]  aaec5a95d5:
+ stress-ng.poll.ops_per_sec 11.1% regression
+Message-ID: <20250120124209.GB7432@redhat.com>
+References: <202501201311.6d25a0b9-lkp@intel.com>
+ <leot53sdd6es2xsnljub4rr4n3xgusft6huntr437wmaoo5rob@hhbtzrwgxel2>
+ <20250120121928.GA7432@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1113698.1737376348.1@warthog.procyon.org.uk>
-Date: Mon, 20 Jan 2025 12:32:28 +0000
-Message-ID: <1113699.1737376348@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120121928.GA7432@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Eric,
+Forgot to mention...
 
-In the generic/397 test script, you placed:
+On 01/20, Oleg Nesterov wrote:
+>
+> On 01/20, Mateusz Guzik wrote:
+> >
+> > Whatever the long term fate of the patch I think it would be prudent to
+> > skip it in this merge window.
+>
+> Perhaps... I'll try to take another look tomorrow.
+>
+> Just one note right now.
+>
+> > First two notes:
+> > 1. the change only considers performing a wake up if the current
+> > source buf got depleted -- if there is a blocked writer and there is at
+> > least one byte in the current buf nothing happens, which is where the
+> > difference in results is coming from
+>
+> Sorry I don't understand. Unless this patch is buggy, pipe_read() must
+> always wakeup a blocked writer if the writer can write at least one byte.
+>
+> The writer can't write to "current" buf = pipe->bufs[tail & mask] if
+> pipe_full() is still true.
 
-	$XFS_IO_PROG -f $SCRATCH_MNT/edir/newfile |& _filter_scratch
-	$XFS_IO_PROG -f $SCRATCH_MNT/edir/0123456789abcdef |& _filter_scratch
+But I'll recheck this logic once again tomorrow, perhaps I misread
+pipe_write() when I made this patch.
 
-but neither of those lines actually has a command on it, and when I run it,
-I'm seeing xfs_io hang just waiting endlessly for someone to type commands on
-stdin.
-
-Would it be better to do:
-
-	echo >$SCRATCH_MNT/edir/newfile |& _filter_scratch
-	echo >$SCRATCH_MNT/edir/0123456789abcdef |& _filter_scratch
-
-instead?
-
-David?
+Oleg.
 
 
