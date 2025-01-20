@@ -1,324 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-39749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C376BA174ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 00:03:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F58AA174F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 00:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F192B16919F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 23:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8974188A867
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 23:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1941B81C1;
-	Mon, 20 Jan 2025 23:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BF61B414F;
+	Mon, 20 Jan 2025 23:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OoF9juJQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="U7aIdhKK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OoF9juJQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="U7aIdhKK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="biaknp+7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D5F2F30;
-	Mon, 20 Jan 2025 23:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45843383
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 23:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737414183; cv=none; b=ddUpwtwk7sDf6aEMRDTDkelaSYDW4/1Nd1G3PGxYqT5l6Iqa97go/jfLntyVSddD1FJOnXetn2TS4dplumGfbYFWO1i2VP2or1rVEQHqFOj6rErHJS2vaRNy7EbxtrnsMM3WVz3kTZB6J8Lf3DmCjE0VpYIB1GEXM0EzcIDiBa0=
+	t=1737414739; cv=none; b=KXYiKNJfSErGvPqzbOxlYfsAy2/7zkh1H8v03aeINnZLKPmcWze9ji1vu++rBy/fDWXBaoZRb2rzkZI1XpXZMN8bXyIADj5+bErV9yW31WMqYEItuo7sYq3i7kolzKvcoPsAW045POjeYSEBu/hYhqxYmLHCohAmSp0uAxeKgss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737414183; c=relaxed/simple;
-	bh=UmHdWqf7mhQRao8Ro1O08vWRPBBghEEG3Wbj02yk9rE=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=SyeypMrYkf+5mxCWme/zMUoUs0BdFg/dXwgAZM7SF0QXwLrYUnvB0pQoExRimPYC/NCbkS4UGhDUhzHM91Toz6jXH+YzYtc/jFGJkPhE9OxLFm11IaBBvjklCtNTBFpZCFTXH7tYOn2ZavmCnjYInEtu9D6xwbt8JIfc/+C/dzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OoF9juJQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=U7aIdhKK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OoF9juJQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=U7aIdhKK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1737414739; c=relaxed/simple;
+	bh=SBvenXYw8OtPipXuO7LE4YWvoIngH1jvhlR3/7YWChk=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=Ku1VmMZVj0k1Djbv+DF6HHnCHlE7VJBoCPrAy0LgYDZX/VvQ9pj7Dj3F3SDTB9NcTFsJKrxPxAN9oJ/PgKcJkNaCoH3PwkAUYZ9E2GRtuz4yGhJY1YVml6lyYmoyUg539Lc4zBwIhGpBePLyGOz4YaJw7HQYUXwyG7DkYcTHdkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=biaknp+7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737414735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIJQ5eR7pxgEx6HUdxvMLLK6G12t5XMgFVgt0W5+/MM=;
+	b=biaknp+7BvpxtAaNNP/wGd9UU8NE/UDpHj4lkv28cr2dx7K1bzuLwVTKl2yMmDTc607rnd
+	X6ain1cntx5+DlkMuE0HAZcAqnmzIVRVwT7sYoZ2bZn2Jwf4qknve1EQ4jqWPxgP3foHbo
+	o5jNMUnopmDDHdrFUDJfrrYncTAhkyw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-157-TiHGSjjiOXOfCzM4ZjoB9Q-1; Mon,
+ 20 Jan 2025 18:12:12 -0500
+X-MC-Unique: TiHGSjjiOXOfCzM4ZjoB9Q-1
+X-Mimecast-MFC-AGG-ID: TiHGSjjiOXOfCzM4ZjoB9Q
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A707A211C6;
-	Mon, 20 Jan 2025 23:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737414179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
-	b=OoF9juJQVNhz6w1XBLrWB5W2e/d7qumVtKs2E0ral1RYPxQpueM34I7JUEIoOkwSVzvzpT
-	0RsGbmloFyidfMoI/udNGEme5+kV6mZm6AwwBJJvcoEpSuarWakj9Quzqnb752nsdUjGJo
-	b2l2xNcoMwqGRTXwwJT3tDfRBxIJj/o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737414179;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
-	b=U7aIdhKKPre475VKhaehScCwqiGB23Iv9pCLtZMek7OS6qaBJppNumWG09E7eUYY3cZZ6q
-	gxHRYKJQ+QJgVsCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737414179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
-	b=OoF9juJQVNhz6w1XBLrWB5W2e/d7qumVtKs2E0ral1RYPxQpueM34I7JUEIoOkwSVzvzpT
-	0RsGbmloFyidfMoI/udNGEme5+kV6mZm6AwwBJJvcoEpSuarWakj9Quzqnb752nsdUjGJo
-	b2l2xNcoMwqGRTXwwJT3tDfRBxIJj/o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737414179;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gr53aNrrG8Hetxi8G7WxJqz9rZjtvNBevtS41fgCU38=;
-	b=U7aIdhKKPre475VKhaehScCwqiGB23Iv9pCLtZMek7OS6qaBJppNumWG09E7eUYY3cZZ6q
-	gxHRYKJQ+QJgVsCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84138139CB;
-	Mon, 20 Jan 2025 23:02:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MTK/DSHWjmdueAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 20 Jan 2025 23:02:57 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D93631955DB8;
+	Mon, 20 Jan 2025 23:12:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 004053003E7F;
+	Mon, 20 Jan 2025 23:12:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1201143.1737383111@warthog.procyon.org.uk>
+References: <1201143.1737383111@warthog.procyon.org.uk> <20250120135754.GX6206@kernel.org> <20250117183538.881618-1-dhowells@redhat.com> <20250117183538.881618-4-dhowells@redhat.com>
+Cc: dhowells@redhat.com, Simon Horman <horms@kernel.org>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>, Eric Biggers <ebiggers@kernel.org>,
+    Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+    linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 03/24] crypto: Add 'krb5enc' hash and cipher AEAD algorithm
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Trond Myklebust" <trondmy@hammerspace.com>,
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
- "jlayton@kernel.org" <jlayton@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "chuck.lever@oracle.com" <chuck.lever@oracle.com>
-Subject: Re: [PATCH] nfsd: map EBUSY for all operations
-In-reply-to:
- <CAOQ4uxhXuHPsaqzH7SJ-W93dX4ZCJip3CN_P9ZY5f5eb95k6Qg@mail.gmail.com>
-References:
- <>, <CAOQ4uxhXuHPsaqzH7SJ-W93dX4ZCJip3CN_P9ZY5f5eb95k6Qg@mail.gmail.com>
-Date: Tue, 21 Jan 2025 10:02:53 +1100
-Message-id: <173741417318.22054.17226687272828997971@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1434957.1737414722.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 20 Jan 2025 23:12:02 +0000
+Message-ID: <1434958.1737414722@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, 21 Jan 2025, Amir Goldstein wrote:
-> On Mon, Jan 20, 2025 at 8:29=E2=80=AFPM Trond Myklebust <trondmy@hammerspac=
-e.com> wrote:
-> >
-> > On Mon, 2025-01-20 at 20:14 +0100, Amir Goldstein wrote:
-> > > On Mon, Jan 20, 2025 at 7:45=E2=80=AFPM Trond Myklebust
-> > > <trondmy@hammerspace.com> wrote:
-> > > >
-> > > > On Mon, 2025-01-20 at 19:21 +0100, Amir Goldstein wrote:
-> > > > > On Mon, Jan 20, 2025 at 6:28=E2=80=AFPM Trond Myklebust
-> > > > > <trondmy@hammerspace.com> wrote:
-> > > > > >
-> > > > > > On Mon, 2025-01-20 at 18:20 +0100, Amir Goldstein wrote:
-> > > > > > > v4 client maps NFS4ERR_FILE_OPEN =3D> EBUSY for all operations.
-> > > > > > >
-> > > > > > > v4 server only maps EBUSY =3D> NFS4ERR_FILE_OPEN for
-> > > > > > > rmdir()/unlink()
-> > > > > > > although it is also possible to get EBUSY from rename() for
-> > > > > > > the
-> > > > > > > same
-> > > > > > > reason (victim is a local mount point).
-> > > > > > >
-> > > > > > > Filesystems could return EBUSY for other operations, so just
-> > > > > > > map
-> > > > > > > it
-> > > > > > > in server for all operations.
-> > > > > > >
-> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > > > ---
-> > > > > > >
-> > > > > > > Chuck,
-> > > > > > >
-> > > > > > > I ran into this error with a FUSE filesystem and returns -
-> > > > > > > EBUSY
-> > > > > > > on
-> > > > > > > open,
-> > > > > > > but I noticed that vfs can also return EBUSY at least for
-> > > > > > > rename().
-> > > > > > >
-> > > > > > > Thanks,
-> > > > > > > Amir.
-> > > > > > >
-> > > > > > >  fs/nfsd/vfs.c | 10 ++--------
-> > > > > > >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > > > > > > index 29cb7b812d713..a61f99c081894 100644
-> > > > > > > --- a/fs/nfsd/vfs.c
-> > > > > > > +++ b/fs/nfsd/vfs.c
-> > > > > > > @@ -100,6 +100,7 @@ nfserrno (int errno)
-> > > > > > >               { nfserr_perm, -ENOKEY },
-> > > > > > >               { nfserr_no_grace, -ENOGRACE},
-> > > > > > >               { nfserr_io, -EBADMSG },
-> > > > > > > +             { nfserr_file_open, -EBUSY},
-> > > > > > >       };
-> > > > > > >       int     i;
-> > > > > > >
-> > > > > > > @@ -2006,14 +2007,7 @@ nfsd_unlink(struct svc_rqst *rqstp,
-> > > > > > > struct
-> > > > > > > svc_fh *fhp, int type,
-> > > > > > >  out_drop_write:
-> > > > > > >       fh_drop_write(fhp);
-> > > > > > >  out_nfserr:
-> > > > > > > -     if (host_err =3D=3D -EBUSY) {
-> > > > > > > -             /* name is mounted-on. There is no perfect
-> > > > > > > -              * error status.
-> > > > > > > -              */
-> > > > > > > -             err =3D nfserr_file_open;
-> > > > > > > -     } else {
-> > > > > > > -             err =3D nfserrno(host_err);
-> > > > > > > -     }
-> > > > > > > +     err =3D nfserrno(host_err);
-> > > > > > >  out:
-> > > > > > >       return err;
-> > > > > > >  out_unlock:
-> > > > > >
-> > > > > > If this is a transient error, then it would seem that
-> > > > > > NFS4ERR_DELAY
-> > > > > > would be more appropriate.
-> > > > >
-> > > > > It is not a transient error, not in the case of a fuse file open
-> > > > > (it is busy as in locked for as long as it is going to be locked)
-> > > > > and not in the case of failure to unlink/rename a local
-> > > > > mountpoint.
-> > > > > NFS4ERR_DELAY will cause the client to retry for a long time?
-> > > > >
-> > > > > > NFS4ERR_FILE_OPEN is not supposed to apply
-> > > > > > to directories, and so clients would be very confused about how
-> > > > > > to
-> > > > > > recover if you were to return it in this situation.
-> > > > >
-> > > > > Do you mean specifically for OPEN command, because commit
-> > > > > 466e16f0920f3 ("nfsd: check for EBUSY from vfs_rmdir/vfs_unink.")
-> > > > > added the NFS4ERR_FILE_OPEN response for directories five years
-> > > > > ago and vfs_rmdir can certainly return a non-transient EBUSY.
-> > > > >
-> > > >
-> > > > I'm saying that clients expect NFS4ERR_FILE_OPEN to be returned in
-> > > > response to LINK, REMOVE or RENAME only in situations where the
-> > > > error
-> > > > itself applies to a regular file.
-> > >
-> > > This is very far from what upstream nfsd code implements (since 2019)
-> > > 1. out of the above, only REMOVE returns NFS4ERR_FILE_OPEN
-> > > 2. NFS4ERR_FILE_OPEN is not limited to non-dir
-> > > 3. NFS4ERR_FILE_OPEN is not limited to silly renamed file -
-> > >     it will also be the response for trying to rmdir a mount point
-> > >     or trying to unlink a file which is a bind mount point
-> >
-> > Fair enough. I believe the name given to this kind of server behaviour
-> > is "bug".
-> >
-> > >
-> > > > The protocol says that the client can expect this return value to
-> > > > mean
-> > > > it is dealing with a server with Windows-like semantics that
-> > > > doesn't
-> > > > allow these particular operations while the file is being held
-> > > > open. It
-> > > > says nothing about expecting the same behaviour for mountpoints,
-> > > > and
-> > > > since the latter have a very different life cycle than file open
-> > > > state
-> > > > does, you should not treat those cases as being the same.
-> > >
-> > > The two cases are currently indistinguishable in nfsd_unlink(), but
-> > > it could check DCACHE_NFSFS_RENAMED flag if we want to
-> > > limit NFS4ERR_FILE_OPEN to this specific case - again, this is
-> > > upstream code - nothing to do with my patch.
-> > >
-> > > FWIW, my observed behavior of Linux nfs client for this error
-> > > is about 1 second retries and failure with -EBUSY, which is fine
-> > > for my use case, but if you think there is a better error to map
-> > > EBUSY it's fine with me. nfsv3 maps it to EACCES anyway.
-> > >
-> > >
-> >
-> > When doing LINK, RENAME, REMOVE on a mount point, I'd suggest returning
-> > NFS4ERR_XDEV, since that is literally a case of trying to perform the
-> > operation across a filesystem boundary.
->=20
-> I would not recommend doing that. vfs hides those tests in vfs_rename(), etc
-> I don't think that nfsd should repeat them for this specialize interpretati=
-on,
-> because to be clear, this is specially not an EXDEV situation as far as vfs
-> is concerned.
->=20
-> >
-> > Otherwise, since Linux doesn't implement Windows behaviour w.r.t. link,
-> > rename or remove, it would seem that NFS4ERR_ACCESS is indeed the most
-> > appropriate error, no? It's certainly the right behaviour for
-> > sillyrenamed files.
->=20
-> If NFS4ERR_ACCESS is acceptable for sillyrenamed files, we can map
-> EBUSY to NFS4ERR_ACCESS always and be done with it, but TBH,
-> reading the explanation for the chosen error code, I tend to agree with it.
-> It is a very nice added benefit for me that the NFS clients get EBUSY when
-> the server gets an EBUSY, so I don't see what's the problem with that.
+David Howells <dhowells@redhat.com> wrote:
 
-I agreed with it when I wrote it :-) but now I find Trond's argument to
-be quite compelling.  Fomr rfc5661:
+> > Sparse complains that the second argument to krb5enc_verify_hash shoul=
+d be
+> > a pointer rather than an integer. So perhaps this would be slightly be=
+tter
+> > expressed as (completely untested!):
+> > =
 
-15.1.4.5.  NFS4ERR_FILE_OPEN (Error Code 10046)
+> > 	err =3D krb5enc_verify_hash(req, NULL);
+> =
 
-   The operation is not allowed because a file involved in the operation
-   is currently open.  Servers may, but are not required to, disallow
-   linking-to, removing, or renaming open files.
+> Actually, no.  It should be "ahreq->result + authsize" and
+> krb5enc_verify_hash() shouldn't calculate ihash, but use its hash parame=
+ter.
 
-This doesn't seem to cover "rmdir" of a mountpoint.
+Ah.  That's wrong also.  I'm going to drop the second parameter and just
+calculate the hash pointers directly.
 
-However NFS4ERR_XDEV is only permitted for LINK and RENAME, not for
-REMOVE, so we cannot use that.
+David
+---
+diff --git a/crypto/krb5enc.c b/crypto/krb5enc.c
+index 931387a8ee6f..e5cec47e7e42 100644
+--- a/crypto/krb5enc.c
++++ b/crypto/krb5enc.c
+@@ -230,7 +230,7 @@ static int krb5enc_encrypt(struct aead_request *req)
+ 	return krb5enc_dispatch_encrypt(req, aead_request_flags(req));
+ }
+ =
 
-NFS4ERR_ACCESS says "Indicates permission denied" but there is no
-permission issue here.
+-static int krb5enc_verify_hash(struct aead_request *req, void *hash)
++static int krb5enc_verify_hash(struct aead_request *req)
+ {
+ 	struct crypto_aead *krb5enc =3D crypto_aead_reqtfm(req);
+ 	struct aead_instance *inst =3D aead_alg_instance(krb5enc);
+@@ -238,11 +238,12 @@ static int krb5enc_verify_hash(struct aead_request *=
+req, void *hash)
+ 	struct krb5enc_request_ctx *areq_ctx =3D aead_request_ctx(req);
+ 	struct ahash_request *ahreq =3D (void *)(areq_ctx->tail + ictx->reqoff);
+ 	unsigned int authsize =3D crypto_aead_authsize(krb5enc);
+-	u8 *ihash =3D ahreq->result + authsize;
++	u8 *calc_hash =3D areq_ctx->tail;
++	u8 *msg_hash  =3D areq_ctx->tail + authsize;
+ =
 
-NFS4ERR_INVAL might be ok.  "The arguments for this operation are not
-valid for some reason" is suitably vague.
+-	scatterwalk_map_and_copy(ihash, req->src, ahreq->nbytes, authsize, 0);
++	scatterwalk_map_and_copy(msg_hash, req->src, ahreq->nbytes, authsize, 0)=
+;
+ =
 
-NFS4ERR_NOTEMPTY "An attempt was made to remove a directory that was not
-empty." could be argued as it "contains" a mountpoint in some sense.
+-	if (crypto_memneq(ihash, ahreq->result, authsize))
++	if (crypto_memneq(msg_hash, calc_hash, authsize))
+ 		return -EBADMSG;
+ 	return 0;
+ }
+@@ -254,7 +255,7 @@ static void krb5enc_decrypt_hash_done(void *data, int =
+err)
+ 	if (err)
+ 		return krb5enc_request_complete(req, err);
+ =
 
-I'd favour NFS4ERR_INVAL today.  I might change my mind again tomorrow.
+-	err =3D krb5enc_verify_hash(req, 0);
++	err =3D krb5enc_verify_hash(req);
+ 	krb5enc_request_complete(req, err);
+ }
+ =
 
-NeilBrown
+@@ -284,7 +285,7 @@ static int krb5enc_dispatch_decrypt_hash(struct aead_r=
+equest *req)
+ 	if (err < 0)
+ 		return err;
+ =
+
+-	return krb5enc_verify_hash(req, hash);
++	return krb5enc_verify_hash(req);
+ }
+ =
+
+ /*
+@@ -352,7 +353,7 @@ static int krb5enc_init_tfm(struct crypto_aead *tfm)
+ 	crypto_aead_set_reqsize(
+ 		tfm,
+ 		sizeof(struct krb5enc_request_ctx) +
+-		ictx->reqoff +
++		ictx->reqoff + /* Space for two checksums */
+ 		umax(sizeof(struct ahash_request) + crypto_ahash_reqsize(auth),
+ 		     sizeof(struct skcipher_request) + crypto_skcipher_reqsize(enc)));
+ =
+
+
 
