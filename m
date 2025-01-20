@@ -1,97 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-39675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDB3A16E60
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 15:22:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C84A16E6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 15:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5753A85E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 14:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0AA3A7C20
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 14:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584971E32CA;
-	Mon, 20 Jan 2025 14:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAF11DEFD4;
+	Mon, 20 Jan 2025 14:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btF4+XTF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5a+Ne4k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD07F13D531;
-	Mon, 20 Jan 2025 14:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E241E2847
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 14:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737382941; cv=none; b=tDECKvTrEwCPE1F0zqdu+B8li7yjYo2oh0A6qjfIEWi4UW8kuy8znYQg756uM1cdMz3LGrXeOVuzBoHWfxJnFuvcGC7/l68mF3a9AaCP9o9MpBgjCh6lWT9HCTIFRE7PmUkYtSN/GkRz0FHwhaPO0x9kJ7JBaR2a7w3C5SALG7g=
+	t=1737383127; cv=none; b=elMf8yyTy9au8umirJSWHiPva91SQWceIgxWCCkH51wjUjW5JXx5hYj6Ja3FAp4sZbPKohAbdMU8cugoyDee/I3olc9sq/1DNvwdBaCecbcNdTQQt41oazHHHCCg5RHGz+PrUPMq6LW2bZsDxPNfEZvGjUbIsUJM35QNYZtedWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737382941; c=relaxed/simple;
-	bh=Q/ah7Xad9Pkqp3TtguBsx5XKqUkR2Fz8GupvOx/hv9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjYov7FU33SR04Bi6AxjqKa+1bXiugrKAwEohvOk1dZCt+zNLJUjWzloJIdUmaZ4clExck/V53EgDF0ThV9FmK49IO46B/prmKzMDDfbCHkp8N6f8ZdHVklsROgl6WjUa8BGJUE4026k2VxB+2alaHL9qQ+Df5r7hRkPWWwbBGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btF4+XTF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5B3C4CEDD;
-	Mon, 20 Jan 2025 14:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737382941;
-	bh=Q/ah7Xad9Pkqp3TtguBsx5XKqUkR2Fz8GupvOx/hv9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=btF4+XTFOp0ga6T7d+3J8b/geuEwFuwnlTi+lf83vRcdKRoTVfYz+j7wryq5Tg4lu
-	 ZK3w9rFFY3hmH8PuksePlIqesvWZnTUqA5jg6XYq0s3ob+luFv7MtS9OMUIw9Fb+d1
-	 PpTguh1N6eFf7/CK1jWbCTnY1iq78Zvb3ZoUwJ2J9PeBxfNfaTQ1fh/lj/8M8/iUgY
-	 EHdLjEY/Swkp03kzxyfecr+1HAz3x7k6EHPdayAGuGa01d6bD/g5yKqk6R2xDjIVze
-	 ItO6SThpO9X9ifELiuv6JUqG2086TJNksTrRHaJ2VUjnGiHZkb8ogNz+vmlMHbJNkL
-	 Sy6xKQupyurPQ==
-Date: Mon, 20 Jan 2025 16:22:17 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: lsf-pc@lists.linux-foundation.org, John Hubbard <jhubbard@nvidia.com>,
-	Matthew Wilcox <willy@infradead.org>, brauner@kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Improving iov_iter - and replacing
- scatterlists
-Message-ID: <20250120142217.GA153811@unreal>
-References: <886959.1737148612@warthog.procyon.org.uk>
+	s=arc-20240116; t=1737383127; c=relaxed/simple;
+	bh=1jqY2F+d7VafsuCep+G9kl1oILdjWO4f+217zkn9+7c=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=QFj8cbFgXCxM8LHuBvnZBa/Dc4KoCkQGkjybyZHhLdGfw0eq6tGii7o8jv+G7ANNObqN7RybkVf6NpvAF7eJRSmQaHJaOqEkQEMYO/qIkkXw800z86O0f8IEqjehJV0Q2ulrfsiOPVhUl/xsiOAyhtZzH767HcUqoptNxqSkmV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5a+Ne4k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737383124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=91OCaOldgb4lF7g54QI98f4ovcpRBeXwcL2UnR4rY5s=;
+	b=g5a+Ne4k3jkQTwJlphEOAaTYql0a7kkDtrpK+7I6Jm+YKlP78Z4Y9VAA7NBMUxSIk3H09t
+	9mI4cnikY9hu7Sex14XMzjK13LMHsZgvDPS/aW0yUUuDzBeoBLyWOr2qZHFq2ZosRLPLxM
+	Xg/TSVRBQXGTdd8dHS12+R5Oyduv8p0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-324-_-yZFx4XPyGlmqzgG0ATIg-1; Mon,
+ 20 Jan 2025 09:25:20 -0500
+X-MC-Unique: _-yZFx4XPyGlmqzgG0ATIg-1
+X-Mimecast-MFC-AGG-ID: _-yZFx4XPyGlmqzgG0ATIg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CAE5B1955F79;
+	Mon, 20 Jan 2025 14:25:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2D22419560A3;
+	Mon, 20 Jan 2025 14:25:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250120135754.GX6206@kernel.org>
+References: <20250120135754.GX6206@kernel.org> <20250117183538.881618-1-dhowells@redhat.com> <20250117183538.881618-4-dhowells@redhat.com>
+To: Simon Horman <horms@kernel.org>
+Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>, Eric Biggers <ebiggers@kernel.org>,
+    Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+    linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 03/24] crypto: Add 'krb5enc' hash and cipher AEAD algorithm
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <886959.1737148612@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1201142.1737383111.1@warthog.procyon.org.uk>
+Date: Mon, 20 Jan 2025 14:25:11 +0000
+Message-ID: <1201143.1737383111@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Jan 17, 2025 at 09:16:52PM +0000, David Howells wrote:
-> Hi,
+Simon Horman <horms@kernel.org> wrote:
+
+> > +static void krb5enc_decrypt_hash_done(void *data, int err)
+> > +{
+> > +	struct aead_request *req = data;
+> > +
+> > +	if (err)
+> > +		return krb5enc_request_complete(req, err);
+> > +
+> > +	err = krb5enc_verify_hash(req, 0);
 > 
-> I'd like to propose a discussion of two things: firstly, how might we improve
-> iov_iter and, secondly, would it be possible to replace scatterlists.
-
-<...>
-
-> Rumour has it that John Hubbard may be working along similar lines, possibly
-> just in the area of bio_vecs and ITER_BVEC.
+> Hi David,
 > 
+> Sparse complains that the second argument to krb5enc_verify_hash should be
+> a pointer rather than an integer. So perhaps this would be slightly better
+> expressed as (completely untested!):
 > 
-> [*] Second: Can we replace the uses of scatterlist with iov_iter and reduce
-> the number of iterator classes we have?
+> 	err = krb5enc_verify_hash(req, NULL);
 
-<...>
+Actually, no.  It should be "ahreq->result + authsize" and
+krb5enc_verify_hash() shouldn't calculate ihash, but use its hash parameter.
 
-I would say yes to the questions.
+I wonder if the testmgr driver tests running the algorithms asynchronously...
 
-Regarding rumors, I don't know, but Christoph, Jason and I are working towards
-this goal. We proposed new DMA API which doesn't need scatterlists and allows
-callers to implement their own data-structures.
+Thanks,
+David
 
-See this "[PATCH v6 00/17] Provide a new two step DMA mapping API" series
-https://lore.kernel.org/all/cover.1737106761.git.leon@kernel.org
-and its block layer followup "[RFC PATCH 0/7] Block and NMMe PCI use of
-new DMA mapping API"
-https://lore.kernel.org/all/cover.1730037261.git.leon@kernel.org
-
-Thanks
 
