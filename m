@@ -1,174 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-39685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD78A16F42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 16:32:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AEEA16F50
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 16:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F66F3A70DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 15:32:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDE3164028
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 15:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4C01E7678;
-	Mon, 20 Jan 2025 15:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7969F1E8855;
+	Mon, 20 Jan 2025 15:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G4x7nehP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cmfxEUix";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G4x7nehP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cmfxEUix"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E56mUz61"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D30D1E411D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 15:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4971E8824
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 15:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737387137; cv=none; b=gSXpWshmXLqArpMqsy29xpZIS45+/nnR6fKFLo0PoBLatNbsId++UEVGH1D5KruiXAbEhXkSUJlGsmNcm47wrukW4AMweZdNdEbILsYNEIUMBuLhwIc1v0xRL/rL3G7QXvOrYVlKPITj1GgdkjS8E7BpEwy4oGXTflYTZ23Xaq4=
+	t=1737387478; cv=none; b=ZR3w2TcX7qHHKjI7uqB742HFvApvA88USj6/0hUXnOfmIabVdW729dpSkfvYP/xYmmSjn3gy/5Kbnwf3Owa7Akr8E0vxPbHUPJ9vscxdqkWfMBT2QRu714KdQDffNEFLHoDpktrJdGMuUe/7y0Y+1Cgy05qWlUYLUKFqq3pUFLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737387137; c=relaxed/simple;
-	bh=4ZQpPHbecc5NhxZz7Gttn8B4RN5ivDxDp18FLlxeYQ4=;
+	s=arc-20240116; t=1737387478; c=relaxed/simple;
+	bh=2x0EOTV2m/p7FsKzV0ZPtIaLhg7S8pMXED1YozmhD5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JqCGHiR0uLIyvVBHyihpL+7HUes4sTlAGu4J8o/QojaDPfr21pYGg4h6Gby3BGPwUqnOWTNnX/xfBXvJrDyyg7vcMSwxjxOgG5zcaib8Qfqhm/1KsX/zmSjBxOIo2ucrfLrLFTb2sbKQPTsGmPP2JZ6WUGNEo/Xmh1KpRTzcCzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G4x7nehP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cmfxEUix; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G4x7nehP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cmfxEUix; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 372122117C;
-	Mon, 20 Jan 2025 15:32:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737387134; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWo+OnZkpC5CZz7X4gQJSQuGi4VHj9JPgWXbX7uTVxw=;
-	b=G4x7nehPRnnrBGObgh0+0nS5ZR1SxaHywdOAvJzlx5avZAFyO2a2WVBcJy8MLB2DNVU9d+
-	UHXUJGrXsKXzliFQau5MmqOF+Cgqcv1RSnpfl/EItdZkPYU7HK5Xyteo2VzHFKLH3+7Xeu
-	T2yTLOzDI7UJ6/IP3fXTXffn9KcF5iU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737387134;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWo+OnZkpC5CZz7X4gQJSQuGi4VHj9JPgWXbX7uTVxw=;
-	b=cmfxEUixA8hlQOMBvxmRnvD7JHUQ9rLy+utbCk/3mkr9DZmE5sZJjK3f3XVgQM2MMXuV3w
-	4mo56iFpJqRLXZCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=G4x7nehP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cmfxEUix
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1737387134; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWo+OnZkpC5CZz7X4gQJSQuGi4VHj9JPgWXbX7uTVxw=;
-	b=G4x7nehPRnnrBGObgh0+0nS5ZR1SxaHywdOAvJzlx5avZAFyO2a2WVBcJy8MLB2DNVU9d+
-	UHXUJGrXsKXzliFQau5MmqOF+Cgqcv1RSnpfl/EItdZkPYU7HK5Xyteo2VzHFKLH3+7Xeu
-	T2yTLOzDI7UJ6/IP3fXTXffn9KcF5iU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1737387134;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWo+OnZkpC5CZz7X4gQJSQuGi4VHj9JPgWXbX7uTVxw=;
-	b=cmfxEUixA8hlQOMBvxmRnvD7JHUQ9rLy+utbCk/3mkr9DZmE5sZJjK3f3XVgQM2MMXuV3w
-	4mo56iFpJqRLXZCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F54F1393E;
-	Mon, 20 Jan 2025 15:32:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2YWhB35sjmd6cwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 20 Jan 2025 15:32:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C44C4A081E; Mon, 20 Jan 2025 16:31:58 +0100 (CET)
-Date: Mon, 20 Jan 2025 16:31:58 +0100
-From: Jan Kara <jack@suse.cz>
-To: Yuichiro Tsuji <yuichtsu@amazon.com>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: Re: [PATCH v1 vfs 0/2] Fix the return type of several functions from
- long to int
-Message-ID: <itcd5fl4jxbpxueeyr335wo2q3wvhauptcofqd3fnc3ktqljyz@2mvycuenzqd4>
-References: <20250119090322.2598-1-yuichtsu@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nP4h3HXYM6iR9/gSVvt2r7VTCQdcg6bxHYjqhKzENiAag+VY0r2A/7MEEunWkOc/q96xsNL0rattDK/PwvDTVj8WoGK9rt15hyUApWNmHk9BpZiXLHAHeTj9LXRhTRYerU80aFZd5LSs1s2eEbOLFImRvs4WT5prBfMmyQd7ZV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E56mUz61; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28EC5C4CEE2;
+	Mon, 20 Jan 2025 15:37:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737387478;
+	bh=2x0EOTV2m/p7FsKzV0ZPtIaLhg7S8pMXED1YozmhD5w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E56mUz61ilS5Hn0cd204AIJPDBDGSl0Scdo1asvTe8rO9XyMEteS53qVAGA4sdOt3
+	 SZOE7aWZOIWUqP0B8SZt0RwW3sAgtKH35cNNgcM6ksshLwEt7cHwZ2hX6glxGj+AKb
+	 3Beih4WvP8eph70oowwXA6hStyiY9XwdlfjDgajWnVX9WRr1GuuC7hVGlgfOW9i412
+	 eAQSrKrg8x3eW53wRSbQX73PRDSypVxvYXOevHHS937SNH+lBIJ+LLNoqTBS59QgmT
+	 tF9KnF29pJ9v3t/cuSaCAeZsB894TlyQJbLZgIdmjfab5BcrERDcT+4KsTSQ1M0Bbl
+	 DBK4N+mFqoa3A==
+Date: Mon, 20 Jan 2025 16:37:54 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Boris Burkov <boris@bur.io>, linux-fsdevel@vger.kernel.org, 
+	daan.j.demeyer@gmail.com
+Subject: Re: Possible bug with open between unshare(CLONE_NEWNS) calls
+Message-ID: <20250120-sparsam-maden-d2e02080360a@brauner>
+References: <20250115185608.GA2223535@zen.localdomain>
+ <20250116-audienz-wildfremd-04dc1c71a9c3@brauner>
+ <98df4904-6b61-4ddb-8df2-706236afcd8e@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250119090322.2598-1-yuichtsu@amazon.com>
-X-Rspamd-Queue-Id: 372122117C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <98df4904-6b61-4ddb-8df2-706236afcd8e@gmx.com>
 
-On Sun 19-01-25 18:02:47, Yuichiro Tsuji wrote:
-> These patches fix the return type of several functions from long to int to
-> match its actual behavior.
+On Fri, Jan 17, 2025 at 07:39:09AM +1030, Qu Wenruo wrote:
 > 
-> Yuichiro Tsuji (2):
->   open: Fix return type of several functions from long to int
->   ioctl: Fix return type of several functions from long to int
+> 
+> 在 2025/1/16 21:16, Christian Brauner 写道:
+> > On Wed, Jan 15, 2025 at 10:56:08AM -0800, Boris Burkov wrote:
+> > > Hello,
+> > > 
+> > > If we run the following C code:
+> > > 
+> > > unshare(CLONE_NEWNS);
+> > > int fd = open("/dev/loop0", O_RDONLY)
+> > > unshare(CLONE_NEWNS);
+> > > 
+> > > Then after the second unshare, the mount hierarchy created by the first
+> > > unshare is fully dereferenced and gets torn down, leaving the file
+> > > pointed to by fd with a broken dentry.
+> > > 
+> > > Specifically, subsequent calls to d_path on its path resolve to
+> > > "/loop0". I was able to confirm this with drgn, and it has caused an
+> > > unexpected failure in mkosi/systemd-repart attempting to mount a btrfs
+> > > filesystem through such an fd, since btrfs uses d_path to resolve the
+> > > source device file path fully.
+> > > 
+> > > I confirmed that this is definitely due to the first unshare mount
+> > > namespace going away by:
+> > > 1. printks/bpftrace the copy_root path in the kernel
+> > > 2. rewriting my test program to fork after the first unshare to keep
+> > > that namespace referenced. In this case, the fd is not broken after the
+> > > second unshare.
+> > > 
+> > > 
+> > > My question is:
+> > > Is this expected behavior with respect to mount reference counts and
+> > > namespace teardown?
+> > > 
+> > > If I mount a filesystem and have a running program with an open file
+> > > descriptor in that filesystem, I would expect unmounting that filesystem
+> > > to fail with EBUSY, so it stands to reason that the automatic unmount
+> > > that happens from tearing down the mount namespace of the first unshare
+> > > should respect similar semantics and either return EBUSY or at least
+> > > have the lazy umount behavior and not wreck the still referenced mount
+> > > objects.
+> > > 
+> > > If this behavior seems like a bug to people better versed in the
+> > > expected behavior of namespaces, I would be happy to work on a fix.
+> > 
+> > It's expected as Al already said. And is_good_dev_path()
+> > looks pretty hacky...
+> > 
+> > Wouldn't something like:
+> > 
+> > bool is_devtmpfs(const struct super_block *sb)
+> > {
+> >          return sb->s_type == &dev_fs_type;
+> > }
+> > 
+> > and then:
+> > 
+> >          ret = kern_path(dev_path, 0, &path);
+> >          if (ret)
+> >                  goto out;
+> > 
+> > 	if (is_devtmpfs(path->mnt->mnt_sb))
+> > 		// something something
+> > 
+> > be enough? Or do you specifically need to care where devtmpfs is
+> > mounted? The current check means that anything that mounts devtmpfs
+> > somewhere other than /dev would fail that check.
+> 
+> That above checks looks good.
+> 
+> > 
+> > Of course, any standard Linux distribution will mount devtmpfs at /dev
+> > so it probably won't matter in practice. And contains may make /dev a
+> > tmpfs mount and bind-mount device nodes in from the host's devtmpfs so
+> > that would work too with this check.
+> > 
+> > In other words, I don't get why the /dev prefix check gets you anything?
+> > If you just verify that the device node is located on devtmpfs you
+> > should be good.
+> 
+> The original problem is that we can get very weird device path, like
+> '/proc/<pid>/<fd>' or any blockdev node created by the end user, as
+> mount source, which can cause various problems in mount_info for end users.
+> 
+> Although after v6.8 it looks like there are some other black magics
+> involved to prevent such block device being passed in.
+> I tried the same custom block device node, it always resolves to
+> "/dev/mapper/test-scratch1" in my case (and not even "/dev/dm-3").
+> 
+> 
+> However there is still another problem, related to get_canonical_dev_path().
+> 
+> As it still goes d_path(), it will return the path inside the namespace.
+> Which can be very different from root namespace.
 
-The patches look good to me. Thanks! Feel free to add:
+I consider the source device as shown in mountinfo a hint and not more.
+It's entirely possible that someone does:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+mount /dev/sdd4 /mnt
+mv /dev/sdd4 /dev/foo
+mv /dev/sdd3 /dev/sdd4
 
-but you will need to provide your Signed-off-by tag (see
-Documentation/process/submitting-patches.rst, chapter "Sign your work - the
-Developer's Certificate of Origin") so that these patches can be merged. 
+That just usually doesn't happen because userspace isn't generally
+stupid and devtmpfs device nodes are mostly managed by the kernel.
 
-								Honza
+But in containers you can easily have an equivalent scenario and
+whatever shows up in /dev in the container can be something completely
+different than what you see in mountinfo.
+
+So really, relying on the path name is overall pretty useless.
+
+These mismatches between mountinfo and whatever is in /dev isn't
+anything new. Containers may use devpts devices that belong to the host
+devpts instance while also having a separate devpts instance mounted in
+the container. And the device names just accidently match.
+
+The container/host needs to take care to validate that the provided pty
+device it uses does actually belong to the devpts instance of the
+container/host and not to another instance to avoid being tricked into
+opening and allocating device nodes in another devpts instance.
 
 > 
->  fs/internal.h            |  4 ++--
->  fs/ioctl.c               |  6 +++---
->  fs/open.c                | 18 +++++++++---------
->  include/linux/fs.h       |  6 +++---
->  include/linux/syscalls.h |  4 ++--
->  5 files changed, 19 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.43.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> So I'm wondering if we should even bother the device path resolution at
+> all inside btrfs?
+
+I think that's misguided and will always lead to weird issues.
+
+> Or the latest fsconfig API is already resolving the path correctly?
+
+It wouldn't help with the above examples.
 
