@@ -1,108 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-39659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE6EA169D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 10:47:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879A9A169FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 10:52:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA823A2029
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 09:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A4016033A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 09:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29E31ACEC2;
-	Mon, 20 Jan 2025 09:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ABF1B0438;
+	Mon, 20 Jan 2025 09:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d2D/GsuR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NYmQ0WSl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8383B19995A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 09:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C37019995A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 09:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737366444; cv=none; b=teSC988cKWRrjuVhvr4kVRGmSpbEVvbst2hzOFg0myfl4oS0Mle++pdO3OOMy/IGJYUnuK3zszUdkz/O5XWh4W281OLfDfuazhmh4LCernmwHAQnCmNqRMYYQ0R1S2WwkWx87dd7Vwk8XWb0rDkuNhNwslLlvW7X03A/mwMQZiQ=
+	t=1737366716; cv=none; b=DlItgxwfaHK0RBN6wlf36vKhciXnDl5t0QFo7Nkp8k3wc34EkZNchO/w8R4TiJsD7GAzo9CciFo1jQDxVn9G1wtRfyMlXo38sOnZcSG8nCbrXFRx10tOUBV7ogo1vUw4/0GRBXUSEkKEdieGdEyFoT2M+92cNmwNP6zQA793OZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737366444; c=relaxed/simple;
-	bh=1iVJ777YiyLvJG1svDTDIkJijD4bk6V8CR6U63bquaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M0lpLKIPS0L3vkVKYEe3JfEhveP61nuPyisePBe34GeKMH4gLQFbJhDeLUq7GZek0DDSU2ZvYCZAINjh6Gwxks7r8qVoCF/4KgiTgJBRty1xYH60xECKiS2uPkccmw5Ky962sjVv2ilIVEC61KZCf/7Nx6QtAICog0RAWtytY98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d2D/GsuR; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1737366716; c=relaxed/simple;
+	bh=BOZ3s1t7hDYuX0/p3Oc5PPZqVuyuSG05BfhdZLtCcAw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=T2zbDqb3haAymNNRH7011KtJYeU8U6gZil1eTJ8pD7vlVIQxKr79EK0kf1KzMHgjOGT/FwV5k2q/yr46Iu194AgIR/r2Mo3ePRsDg+gD6jtNX+gkk5ChNxoVWuOrO0TCTBn9Qvi5enzKcZqyJveHHCjeMHuUFQUhApPxC7QIhEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NYmQ0WSl; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737366441;
+	s=mimecast20190719; t=1737366714;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XMIRS59aq0nWbPMSr4yt0OsmWKqGFD8zbWNTG+TDjbc=;
-	b=d2D/GsuRyqbxjQbHG2G1xoOGFTTNwz/Kh63bKmN8gn3dA2pjA05SNFISC77GgUos5rVbqt
-	E6ndiUaGI/oRKvjPLedmAWoBZJ64Exa12M0aNPuF4Nk6JFtDeY3LFpELp1JyIWf8k6CGzc
-	0SYx9taLrw2tyK2h6QCAzb9tJkmdols=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-169-HIs__OWeNbmDFsjdo6iK4Q-1; Mon, 20 Jan 2025 04:47:19 -0500
-X-MC-Unique: HIs__OWeNbmDFsjdo6iK4Q-1
-X-Mimecast-MFC-AGG-ID: HIs__OWeNbmDFsjdo6iK4Q
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5da15447991so3482757a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 01:47:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737366438; x=1737971238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XMIRS59aq0nWbPMSr4yt0OsmWKqGFD8zbWNTG+TDjbc=;
-        b=hoHOLmBEkPJORzy8BUvS38aJs7uqYZLmiHRrNv8JI3RexKhldzwJ48x+nmbCkxhBzG
-         H9wZdoNa4Hn5wCES7nzIuaVcS8dEGS7e/w0cECZy60zH2vo60/+Oy0EiCswl+A2KM8Gm
-         8Xa/pYe4fRHYKtSIITxI9opTHRsRQELvNz4s1eOU0D+LtEN0N0gxA2B7/XJQthNBPqNE
-         FBySeJltr0O0nVhqCFPQZD0pn/jaQntGwt1btnfLrY4x37f2UNnrGfzvCp3BZRsTma5t
-         klMkHRfABNiIRQJPoaL35es3v+0hsJA1HcrQybhB79WIuHUfud7wn6sLROTF9PD/bWpx
-         ez7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWw6rXjXQpO1690kJvrtyEQ+HUNSopsNS0Ag5u3hLwFKwKtacYLLbOl6EXAO1N53Ymy3hpxgHNZjj4KeLUw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSeuTYaZJRH8NpRF/LocfkOgd2Dp6jyXBGfPFe8zraFP9qT2um
-	TMn+MJxNmC4vLUehQKZV9+NuVvtgnhYLDeRJX0PnVRRvRZUZ2upIs0stCDxFulj3DOPiAz1+k+C
-	tdc36H7kOnqJCCz4D6lqguUR2YRorfRG853J4toDej72n4wH7u9iGi/gbdf26FXgLnlnyL47vii
-	H1EZZo1O6Cz79j+0djwRBI7Z6qtM7noZt+sr5TJw==
-X-Gm-Gg: ASbGncueojse9FVotq5EvnOSDSP1kd6mEeKHXUcQWV2R4ahDDuxLnO6cTtKuvuEN3U6
-	mGsOVZTO+aF2YHs4YRWwtw15APdPR2/a6g2GH0y3owmAPIv8W3g0=
-X-Received: by 2002:a05:6402:5246:b0:5d9:ad1:dafc with SMTP id 4fb4d7f45d1cf-5db7db073f1mr28328195a12.25.1737366438140;
-        Mon, 20 Jan 2025 01:47:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH8/pywkRtrHFW64kEGR6AF06UVXslrBiU03MiWk2as6N1vIWW4vX3Wyy4VobrCfoSXDwK0N33Eqa72WvKjZ7U=
-X-Received: by 2002:a05:6402:5246:b0:5d9:ad1:dafc with SMTP id
- 4fb4d7f45d1cf-5db7db073f1mr28328162a12.25.1737366437849; Mon, 20 Jan 2025
- 01:47:17 -0800 (PST)
+	bh=kpH1QAsie6Aj5+j+dKy2ZYT+MDiT5rB0nMJCwHs4fbU=;
+	b=NYmQ0WSlAjyNEFQD3eVZKRc8ajPBVfoYx57CjJ/RLRpHgFBLOrOwTLJrR9uTGfoacEeQjk
+	Xk+iqxuIeAphXATa9TW/Y71xfSemEWjkqhKxc1K9UE+yIk/vCcXq76RvF/YiJ9DCfb6/CF
+	H075WOnN0ehzcvxVcUQpENF7woMzi+0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-114-UUSWLKhiOCyZY9Hl_a3XUQ-1; Mon,
+ 20 Jan 2025 04:51:50 -0500
+X-MC-Unique: UUSWLKhiOCyZY9Hl_a3XUQ-1
+X-Mimecast-MFC-AGG-ID: UUSWLKhiOCyZY9Hl_a3XUQ
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 898ED19560AA;
+	Mon, 20 Jan 2025 09:51:46 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.2.16.54])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58E1019560A3;
+	Mon, 20 Jan 2025 09:51:39 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>,  Aleksa Sarai
+ <cyphar@cyphar.com>,  Ingo Molnar <mingo@redhat.com>,  Peter Zijlstra
+ <peterz@infradead.org>,  Juri Lelli <juri.lelli@redhat.com>,  Vincent
+ Guittot <vincent.guittot@linaro.org>,  Dietmar Eggemann
+ <dietmar.eggemann@arm.com>,  Steven Rostedt <rostedt@goodmis.org>,  Ben
+ Segall <bsegall@google.com>,  Mel Gorman <mgorman@suse.de>,  Valentin
+ Schneider <vschneid@redhat.com>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>,  Arnd Bergmann
+ <arnd@arndb.de>,  Shuah Khan <shuah@kernel.org>,  Kees Cook
+ <kees@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,
+  linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  libc-alpha@sourceware.org
+Subject: Re: [PATCH RFC v3 02/10] sched_getattr: port to copy_struct_to_user
+In-Reply-To: <b66580447aa94593136186a4046fd350e598943a.camel@xry111.site> (Xi
+	Ruoyao's message of "Mon, 20 Jan 2025 17:21:08 +0800")
+References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
+	<20241010-extensible-structs-check_fields-v3-2-d2833dfe6edd@cyphar.com>
+	<87y10nz9qo.fsf@oldenburg.str.redhat.com>
+	<20241211-gemsen-zuarbeiten-ae8d062ec251@brauner>
+	<82ee186ae5580548fe6b0edd2720359c18f6fa9a.camel@xry111.site>
+	<87jzaqdpfe.fsf@oldenburg.str.redhat.com>
+	<b66580447aa94593136186a4046fd350e598943a.camel@xry111.site>
+Date: Mon, 20 Jan 2025 10:51:36 +0100
+Message-ID: <87r04xdd93.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250117035044.23309-1-slava@dubeyko.com> <988267.1737365634@warthog.procyon.org.uk>
-In-Reply-To: <988267.1737365634@warthog.procyon.org.uk>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Mon, 20 Jan 2025 11:47:06 +0200
-X-Gm-Features: AbW1kvYo_PcQjA16UIVQAxxYVGTwqzpHKIw2jVbvvtE6SL51ZXZyXTdYCzS8GqM
-Message-ID: <CAO8a2SgkzNQN_S=nKO5QXLG=yQ=x-AaKpFvDoCKz3B_jwBuALQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: Fix kernel crash in generic/397 test
-To: David Howells <dhowells@redhat.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Easiest is to run xfstets. Ping me on slack I can show you, its simple.
+* Xi Ruoyao:
 
-On Mon, Jan 20, 2025 at 11:34=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
+>> > So should we drop the test before Glibc-2.41 release?=C2=A0 I'm seeing=
+ the
+>> > failure during my machine test.
+>> I was waiting for a verdict from the kernel developers.=C2=A0 I didn't e=
+xpect
+>> such a change to happen given the alleged UAPI policy.
 >
-> Is there a way for me to test this?  I have a ceph server set up and can =
-mount
-> a filesystem from it.  How do a make a file content-encrypted on ceph?
->
-> David
->
+> But 6.13 is already released without reverting the behavior change
+> now...  So is this the "final" verdict?
+
+I had originally missed the Linux 6.13 release.  I've submitted a glibc
+patch:
+
+  [PATCH] Linux: Do not check unused bytes after sched_getattr in
+  tst-sched_setattr
+  <https://inbox.sourceware.org/libc-alpha/87v7u9ddas.fsf@oldenburg.str.red=
+hat.com/>
+
+Thanks,
+Florian
 
 
