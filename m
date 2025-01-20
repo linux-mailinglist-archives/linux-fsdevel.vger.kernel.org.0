@@ -1,206 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-39729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D5AA17310
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 20:14:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA00A1731C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 20:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5596E1887F1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 19:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C7B1677F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2025 19:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91071EE7BB;
-	Mon, 20 Jan 2025 19:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928D11EEA56;
+	Mon, 20 Jan 2025 19:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGRoJos4"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MP4wkjqF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CDE8479;
-	Mon, 20 Jan 2025 19:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E736618E743
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 19:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737400475; cv=none; b=fmin2I7GxrvuSVteqo9xS73knKipEbsqtHZeWU9irXmwa5qi2PLcU5Z4FQElaXKzO19fFUXLr3GvyugsbW4gKzCUqnag0DqfcTy7cEFl6muhqDV+Mi1im88kcHe8Opn+WfG3yO/Vi1E9HMaAaWrqfi56XcEUlvwWh7tN3yKigew=
+	t=1737401118; cv=none; b=p3ORZ41qEirUog+XpPZnXngOkKUBSaV/7Qs5LAtOXQ1yaw3dmNNHg1hXDa1EuztIy1BUOEpUIyLdfewxI32GTk8SlJNwqfbxA7eHw2HyeLPLAcO+ETCEbezL1xdUl4AJtB2gO0bC03P23QGklVIdDk2dh5j/0xLDFPr/r/LxUJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737400475; c=relaxed/simple;
-	bh=m4Ir0aFuuHTuv48o3tLcKCv7Hgu6l0NGVoMxf6fCNuQ=;
+	s=arc-20240116; t=1737401118; c=relaxed/simple;
+	bh=N9JEuy5mMXz2AMptFUdFs9+Rhp/exv+/d/8MRvMK128=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T5VT++7yq109bYS6A2v+9stIqdRlSbbIw5DfE7QxLwNaXMAMj6okccFVbMVvFfHMC3NSbK6ZAuREkoK+6es0KXsoRTJppPImhIAzwNM0cTYgn2SxvAVqLQj89K+i1pYwXqerDXUm2+x0B/dD7Sb1SXQ/R5fQaOogPFf4GaaB99Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGRoJos4; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d90a5581fcso8531318a12.1;
-        Mon, 20 Jan 2025 11:14:33 -0800 (PST)
+	 To:Cc:Content-Type; b=tvbbF9eaoUDwUc5LVwNBCa1tWfsGIlWKbKpIzJEBd1GgTUyBbxQ+CSqfAMdThUAvd7LN6TXl+grVeNdEAMce6p8+zHJv6MvrCWKtYXqsqWyCTuscX1gP1K3sFk077Zz3CGPToJjB29zo9ZzMHuNcWTBDJk+1DyCbCHkDayEV+pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MP4wkjqF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso928927566b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 11:25:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737400472; x=1738005272; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8yRSs8e+6gxe23W24Ufx+7uDk4bOUzTVeUlOPZuxDCk=;
-        b=NGRoJos4LZnCbJd/zRZZHj1q+2IH9KU4hD1z5HZK4vqdiJ6tAP4ap7B8FxZyXaQ5Mx
-         HIh9jZJNvXFRNbnoz9GCfuTyK+F94jXLzfl+PXF5MZta7OgqhN6myzC+BKGOC/iBq5zw
-         +JadFQhRUwnWf2YUC97/FGlwQqTcs+BTIcoUfz8UA8USr6754yTU8zjOEzXxXiZLERO4
-         kQJzTI4Y7BgdZwIlsHdPEoNyIESZLB3Rfq7GXnFtlyhs/lIIcpNDqpTLmT7ocFEDcl23
-         8RBcKlqXufqSJsYmhOI+LU4vGtuL59FT/vIVwL12RnfOf60kvkZ7s+6qcdkxG53AGU8r
-         DQwA==
+        d=linux-foundation.org; s=google; t=1737401114; x=1738005914; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNz4sw+U7Buo+5PwR0gF7K0TxXOxn6SNF1fzfPj+TmA=;
+        b=MP4wkjqFSclGT2WbuuCvehVoLB10bOtvPb/Fgr1yF8L3RQQ6RqlW3bI9gH584Sa9iy
+         6BK6LzqU+3jecqUW/C99oyfc0PQaAI1PPB65hcleuFRwInIcjX6sS2KtsBF/x2EiQy0h
+         +HyfuB4BnFMEuymfazbd/GFt61cusbPToNn9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737400472; x=1738005272;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8yRSs8e+6gxe23W24Ufx+7uDk4bOUzTVeUlOPZuxDCk=;
-        b=R8dBaMYCIiILWzUPgnDZEMYjpWfQm9Gs93MvVsuc65nKY9Rdv0tbv+nQXbmSYA9mik
-         dnMo4VTEk1vRrdng5CbksPSNuy+7J+bp8t7OHvCWh040IpHFyX5sMREWM+3O/cEQFxnO
-         flUQhN/RaWLpfedhxsR4L/yGWOkF1wStobN33BdDTInCzPJjSPOI0eflH9DMXJnlnS7f
-         AmMZIiNrgKI5V7RU4VVKH3+qAIsWOAbJB0LKaNTAJafZ6cRqGYXBtIsAx6nLLG4p0Ks0
-         DC1Vb+NA0qpnRbGSFhxt8yY4XY/3HH5BUzA+XBCb/Yv4ovq1qNivsPmMeO/GGjLPopqB
-         oeJg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8ckqcF+s6AtGJYE4eSqtLxGQonOtjtqlTkw9KfgBEtYzYyGnw1DhBv6F0WFmM5klYO+G9B8hvpd574Vk2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7NTmzqr91PyCrHX37n/6h3ycnDt51DixJJg3oMrAP9d743S5M
-	2sMiZMLIqvxMHJ2HSNozEVql4GeQhDYdg/52Kmt5gmGm12YY0h0YD3z7FyMBfDv+2tWkwozlu+u
-	yfo2Ry9ff1fNWxgZ5fT0teSTHlZqLCSar9/Y=
-X-Gm-Gg: ASbGncv78atxxID2B7FLyCsYEFRyccIrrTIzdS8yoGzluGQ6ZWnbEkISmbPbLTHLuA0
-	OXCemxanzY0BlALUQAws8ZSW9+9+4k519QMuueLZGF8wp4TlUhkc=
-X-Google-Smtp-Source: AGHT+IFcUzPOoAUHgCBUbVYheLbbWbOEHUhSlHXtiLzahtxHeZ+6H69RA3C/pYKtmiooSqNWjVKNRIDCHvPl+6+/A4c=
-X-Received: by 2002:a17:906:478d:b0:aa6:8781:9909 with SMTP id
- a640c23a62f3a-ab38b17b91cmr1529469066b.29.1737400471211; Mon, 20 Jan 2025
- 11:14:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737401114; x=1738005914;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dNz4sw+U7Buo+5PwR0gF7K0TxXOxn6SNF1fzfPj+TmA=;
+        b=tCrBFj4oVaSZYBDOsXxGWpnB6qElxoU7jD2IaH4xtZCVrdE+qmTnEO+PwfkhN+v0q8
+         LiK2FKjSM4nYIolm/NeNk3pdOpvg4fmanYzVGo+yB21B87lLbnoGZsDNAv4HVodn4X0r
+         1/iZK4EFriPJr/udpQZPzV9yWb5DrCyEdTlmG90dYEun+MkJS0y16lP7IqFhjkMYNvXo
+         TIZ3rIWzstzMpN1RWR4vF2khrUe/APzeNEP44QJE1RMwToTugBf4u3RMwPtA3w0iAWwl
+         vuo74dS3jp4xB18UsqN+WUpHZRwTwp9qCU5evgyuapzevlOYcFQ6wB7FHsdao6cY0jf7
+         dAhg==
+X-Gm-Message-State: AOJu0Yz8hyq5w+GQP99mDdQ4TbBwNx4oh0YdcTwR1iglXAFohgJzoEKN
+	1/4hhvqKUhx3wFfg25TDEpZ9xYY5NYyeSWZUOlnmmM9BwI8Ghl5NKOg+v4vDdFRQh0rJtGBaDCB
+	lnKj1UA==
+X-Gm-Gg: ASbGncsdAUUmoZTofsk67GMMq3XjKa04o7tP/eh7LJX9tBxQvp2fc6YlSIf7yg054tC
+	FiZaEUkD4d0wtm+tz6IZO1zHcUN4WPRQ5JL2x1wzLPVc9sEvzXpoixzPbXuDly9kmWtwDeMI4W6
+	H7AxuMjCMLu2peERKUGgaFvU8NemPER6W23XjqO+g9p9QGLvdXhCon3uBR1PgCfzEAReFV9/1lR
+	zZOo2VMvvETQSPouLh6botEfH0e3Nuc/X6JW70Ff66NnnvZGYrGk1D4nm+h/97SM2urkw7o/rns
+	si+NiizLX7dN+4UELeY+/eXnUXotiLHCNJXTNiXPXSl2
+X-Google-Smtp-Source: AGHT+IGzpKQGhBCLYGfcrvgSvUqtAcxHh7oVt7p5Sg17+zP7Sl90HVdmfCsvbDWfwbjkgz6UzHfWag==
+X-Received: by 2002:a17:907:d03:b0:aa6:730c:acb with SMTP id a640c23a62f3a-ab38b0b7ee8mr1358734266b.8.1737401113917;
+        Mon, 20 Jan 2025 11:25:13 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384d2dee0sm654495566b.78.2025.01.20.11.25.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jan 2025 11:25:12 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab2c9b8aecaso760643166b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2025 11:25:12 -0800 (PST)
+X-Received: by 2002:a17:907:72d4:b0:ab3:84b2:4247 with SMTP id
+ a640c23a62f3a-ab38b3808fcmr1397152466b.40.1737401112445; Mon, 20 Jan 2025
+ 11:25:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250120172016.397916-1-amir73il@gmail.com> <c47d74711fc88bda03ef06c390ef342d00ca4cba.camel@hammerspace.com>
- <CAOQ4uxgQbEwww8QFHo2wHMm2K2XR+UmOL3qTbr-gJuxqZxqnsQ@mail.gmail.com> <9fc1d00dc27daad851f8152572764ae6fe604374.camel@hammerspace.com>
-In-Reply-To: <9fc1d00dc27daad851f8152572764ae6fe604374.camel@hammerspace.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 20 Jan 2025 20:14:20 +0100
-X-Gm-Features: AbW1kvYewwcZsXhqWHHda1Y2pzgvs4z5Bj6UV6fmgaZSU4g8VGXppi9q3wbnYR0
-Message-ID: <CAOQ4uxiLsfK0zRGdMCqsvUzsQ05gkvQCJbsUiRcrS3o-sCPf1A@mail.gmail.com>
-Subject: Re: [PATCH] nfsd: map EBUSY for all operations
-To: Trond Myklebust <trondmy@hammerspace.com>
-Cc: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "jlayton@kernel.org" <jlayton@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"chuck.lever@oracle.com" <chuck.lever@oracle.com>
+References: <20250118-vfs-dio-3ca805947186@brauner>
+In-Reply-To: <20250118-vfs-dio-3ca805947186@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 20 Jan 2025 11:24:56 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj+uVo3sJU3TKup0QfftWaEXcaiH4aBqnuM09eUDdo=og@mail.gmail.com>
+X-Gm-Features: AbW1kvYhzP2bJJ3Ph8xYqu3iB_SqliGiIv6xF0kucY6W1dKwdDARBRiuKzcDVdM
+Message-ID: <CAHk-=wj+uVo3sJU3TKup0QfftWaEXcaiH4aBqnuM09eUDdo=og@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs dio
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 20, 2025 at 7:45=E2=80=AFPM Trond Myklebust <trondmy@hammerspac=
-e.com> wrote:
+On Sat, 18 Jan 2025 at 05:09, Christian Brauner <brauner@kernel.org> wrote:
 >
-> On Mon, 2025-01-20 at 19:21 +0100, Amir Goldstein wrote:
-> > On Mon, Jan 20, 2025 at 6:28=E2=80=AFPM Trond Myklebust
-> > <trondmy@hammerspace.com> wrote:
-> > >
-> > > On Mon, 2025-01-20 at 18:20 +0100, Amir Goldstein wrote:
-> > > > v4 client maps NFS4ERR_FILE_OPEN =3D> EBUSY for all operations.
-> > > >
-> > > > v4 server only maps EBUSY =3D> NFS4ERR_FILE_OPEN for
-> > > > rmdir()/unlink()
-> > > > although it is also possible to get EBUSY from rename() for the
-> > > > same
-> > > > reason (victim is a local mount point).
-> > > >
-> > > > Filesystems could return EBUSY for other operations, so just map
-> > > > it
-> > > > in server for all operations.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > > >
-> > > > Chuck,
-> > > >
-> > > > I ran into this error with a FUSE filesystem and returns -EBUSY
-> > > > on
-> > > > open,
-> > > > but I noticed that vfs can also return EBUSY at least for
-> > > > rename().
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > > >
-> > > >  fs/nfsd/vfs.c | 10 ++--------
-> > > >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > > > index 29cb7b812d713..a61f99c081894 100644
-> > > > --- a/fs/nfsd/vfs.c
-> > > > +++ b/fs/nfsd/vfs.c
-> > > > @@ -100,6 +100,7 @@ nfserrno (int errno)
-> > > >               { nfserr_perm, -ENOKEY },
-> > > >               { nfserr_no_grace, -ENOGRACE},
-> > > >               { nfserr_io, -EBADMSG },
-> > > > +             { nfserr_file_open, -EBUSY},
-> > > >       };
-> > > >       int     i;
-> > > >
-> > > > @@ -2006,14 +2007,7 @@ nfsd_unlink(struct svc_rqst *rqstp, struct
-> > > > svc_fh *fhp, int type,
-> > > >  out_drop_write:
-> > > >       fh_drop_write(fhp);
-> > > >  out_nfserr:
-> > > > -     if (host_err =3D=3D -EBUSY) {
-> > > > -             /* name is mounted-on. There is no perfect
-> > > > -              * error status.
-> > > > -              */
-> > > > -             err =3D nfserr_file_open;
-> > > > -     } else {
-> > > > -             err =3D nfserrno(host_err);
-> > > > -     }
-> > > > +     err =3D nfserrno(host_err);
-> > > >  out:
-> > > >       return err;
-> > > >  out_unlock:
-> > >
-> > > If this is a transient error, then it would seem that NFS4ERR_DELAY
-> > > would be more appropriate.
-> >
-> > It is not a transient error, not in the case of a fuse file open
-> > (it is busy as in locked for as long as it is going to be locked)
-> > and not in the case of failure to unlink/rename a local mountpoint.
-> > NFS4ERR_DELAY will cause the client to retry for a long time?
-> >
-> > > NFS4ERR_FILE_OPEN is not supposed to apply
-> > > to directories, and so clients would be very confused about how to
-> > > recover if you were to return it in this situation.
-> >
-> > Do you mean specifically for OPEN command, because commit
-> > 466e16f0920f3 ("nfsd: check for EBUSY from vfs_rmdir/vfs_unink.")
-> > added the NFS4ERR_FILE_OPEN response for directories five years
-> > ago and vfs_rmdir can certainly return a non-transient EBUSY.
-> >
->
-> I'm saying that clients expect NFS4ERR_FILE_OPEN to be returned in
-> response to LINK, REMOVE or RENAME only in situations where the error
-> itself applies to a regular file.
+> Add a separate dio read align field to statx, as many out of place write
+> file systems can easily do reads aligned to the device sector size, but
+> require bigger alignment for writes.
 
-This is very far from what upstream nfsd code implements (since 2019)
-1. out of the above, only REMOVE returns NFS4ERR_FILE_OPEN
-2. NFS4ERR_FILE_OPEN is not limited to non-dir
-3. NFS4ERR_FILE_OPEN is not limited to silly renamed file -
-    it will also be the response for trying to rmdir a mount point
-    or trying to unlink a file which is a bind mount point
+I've pulled this, but it needs some fixing.
 
-> The protocol says that the client can expect this return value to mean
-> it is dealing with a server with Windows-like semantics that doesn't
-> allow these particular operations while the file is being held open. It
-> says nothing about expecting the same behaviour for mountpoints, and
-> since the latter have a very different life cycle than file open state
-> does, you should not treat those cases as being the same.
+You added the 'dio_read_offset_align' field to 'struct kstat', and
+that structure is *critical*, because it's used even for the real
+'stat()' calls that people actually use (as opposed to the statx side
+that is seldom a real issue).
 
-The two cases are currently indistinguishable in nfsd_unlink(), but
-it could check DCACHE_NFSFS_RENAMED flag if we want to
-limit NFS4ERR_FILE_OPEN to this specific case - again, this is
-upstream code - nothing to do with my patch.
+And that field was added in a way that causes the struct to grow due
+to alignment issues.  For no good reason, because there were existing
+holes in there.
 
-FWIW, my observed behavior of Linux nfs client for this error
-is about 1 second retries and failure with -EBUSY, which is fine
-for my use case, but if you think there is a better error to map
-EBUSY it's fine with me. nfsv3 maps it to EACCES anyway.
+So please just fix it.
 
-Thanks,
-Amir.
+I despise the whole statx thing exactly because it has (approximately)
+five specialized users, while slowing down regular stat/fstat that is
+used widely absolutely *evertwhere*.
+
+Of course, judging by past performance, I wouldn't be surprised if
+glibc has screwed the pooch, and decided to use 'statx()' to implement
+stat, together with extra pointless user space overhead to convert one
+into the other. Because that's the glibc way (ie the whole "turn
+fstat() into the much slower fstatat() call, just because").
+
+So here's the deal: 'statx()' is *not* an "improved stat". It's an
+actively worse stat() for people who need very unusual and specialized
+information, and it makes everything else worse.
+
+              Linus
 
