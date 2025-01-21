@@ -1,145 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-39758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279B5A17866
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 08:10:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BF1A1794D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 09:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7490188C68F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 07:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D28E1883774
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 08:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04CF17A5BE;
-	Tue, 21 Jan 2025 07:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062FB1B4254;
+	Tue, 21 Jan 2025 08:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="LqMu7qEJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChO0zs8g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A8619D06E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 07:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36821B218E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 08:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737443440; cv=none; b=ZV4yzRZnpoZnhkkfdwFYHmscLAj3rFBjKtVTZT2Txk1bmtiyAnWQbuV54Kq3zuYHcBXFt0Ri8ruEeoXL9qdcNtPs+FBTTTl5t9xXk62bsRC3pyUL5UeTk39Vp/f1XEUnUtnUwFRkUhpiXBZoriG96me0BfcnY7fJRUMIi9VLQa4=
+	t=1737448471; cv=none; b=GtTy9mCxmDP1YQ8DAT3ubY+Kw+TuRBcbxo/iowL00lVmivpaLHsx3wbttZGTMzlClq60iyYQ+4PsMw9kMBuT1z9dJfnaZd+KeP+KIeiERotoeajm7E6y4y3Dlwb9imegrgT4I0ctm+7mSfd0G7bNRRlfoUn33PHUgCia1A75Ygg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737443440; c=relaxed/simple;
-	bh=5s1j4CxvB/puxN4iOg5yPEPpFhOzDEoGmIaj01YvzL8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tb6IpQd/6w3M8KnILclCCEnsG/kQ4zDAiXTGwKuZ83oVXMpw9lKUStRut77WGrlFjfc9pUWlOkhlEqdtcstrLuaVPOomOtxlOSPoe/ubt58USWS9J7WATnKQsuOi9e0DPqW5Uze3USK3zUomFwBolxuHpEO3ZcTNFwPMrShV7n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=LqMu7qEJ; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1737448471; c=relaxed/simple;
+	bh=RLj3KDpzEkIKVoREDIAcTxJZGFfNW+lrgjUBjnV8FPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2k72WLLD2tNKbXh+wCCwRR7xcYnfjH3PTE062u/NLAFyJrfTMVkh+r+/DSx1Tbsj24sRf5w9q9PhX09wVBvVvdBrDZwBwkrrcRBFIUNtg1r81V59b3T85ssP5TErwq+0HmBgk9hIo1C3U/71pPRIiDEyBthu3qaUIAwbKAsh9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChO0zs8g; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso904724566b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 00:34:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1737443439; x=1768979439;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wwCSqpPmXH8LJCBo0nkSC9kBq6DLqSP2U+WHFW3Q9vo=;
-  b=LqMu7qEJ35q/hSBimuNRkABAnRJphMLplHKlyfsOC2vbr/t0A3B32zau
-   u8LaAsf+Jpczsd20DtjcQslbqdhHoe3MMfbBKogLXwQ+XqTOE9wV7Bn/2
-   TfxnGMe/z7wdQB1ROiREPIm6s+kiioZEwHRX08+q/UvaCS4WOufXDldpq
-   E=;
-X-IronPort-AV: E=Sophos;i="6.13,221,1732579200"; 
-   d="scan'208";a="370595599"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2025 07:10:38 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:39370]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.42.53:2525] with esmtp (Farcaster)
- id 5ec57bd5-bd1a-4393-8730-fdeb188d1334; Tue, 21 Jan 2025 07:10:36 +0000 (UTC)
-X-Farcaster-Flow-ID: 5ec57bd5-bd1a-4393-8730-fdeb188d1334
-Received: from EX19D002AND002.ant.amazon.com (10.37.240.241) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 21 Jan 2025 07:10:36 +0000
-Received: from HND-5CG1082HRX.ant.amazon.com (10.143.93.208) by
- EX19D002AND002.ant.amazon.com (10.37.240.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 21 Jan 2025 07:10:33 +0000
-From: Yuichiro Tsuji <yuichtsu@amazon.com>
-To: <linux-fsdevel@vger.kernel.org>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kuniyuki Iwashima
-	<kuniyu@amazon.com>, Yuichiro Tsuji <yuichtsu@amazon.com>
-Subject: [PATCH v3 vfs 2/2] ioctl: Fix return type of several functions from long to int
-Date: Tue, 21 Jan 2025 16:08:23 +0900
-Message-ID: <20250121070844.4413-3-yuichtsu@amazon.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250121070844.4413-1-yuichtsu@amazon.com>
-References: <20250121070844.4413-1-yuichtsu@amazon.com>
+        d=gmail.com; s=20230601; t=1737448468; x=1738053268; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VhEQMgRYYWKKMo0WUZ3tRkc2rCn0CcPE8FBKYD1eaJw=;
+        b=ChO0zs8g0UoXWT3u41/KfbMm9FpEicl65weuwWT3cMb5UcjDU0v152FB78gdYWaF/L
+         ah9dzmbG9QbaJu//OhRnQxvSozSpFdxM1nan9fzVAu4zK4hd00oqkcJyLE3++bMyG74j
+         vzWVry+HILyllLo+73sYz+QJ1UhOGFY6vnLCClxCeHs8CIiS46tM3hEB7oblT2/sQmMM
+         MeZxF4pi5jNiXhfES90HaXB9qtemnm4cSWUU21QRH8taBReSXLU4L1wX/Tqn5S6alFVO
+         dYH/jdzhiJ9iqIocyJThuTbmpVHnWsgA+PrJRsB5uD5ni4NvqC2X9LWjoy773t4apAos
+         9vrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737448468; x=1738053268;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VhEQMgRYYWKKMo0WUZ3tRkc2rCn0CcPE8FBKYD1eaJw=;
+        b=CBUtTI6JcVzhe45sexN2xc/Jy4Ygrbz+k34oUNrjDcCLB1crpa2R1l2UnN0otr+TZZ
+         iUutunHLhJ8/1cfoYkjKpZKwnZRQUTrCAmAxq4Vb3j9s3tGk03t183nIa4YbCxkdfLMo
+         6tP0qdLtogi8lpjG6P/qskGC3L5Q8LKAc50xNoCZ4R7iILvkPBmxgXmTJ/O1j8uHiIgV
+         AjZk5QnoI35l9jYPeSd2dJel8WThOMvhypOOujf8dBA9tTso9vJ9ldesamB+jYEEQzZ9
+         Qqxd3FLiC5Rr5iYbckeMkS/jYvgqMIy/wZHF0O8z7MVEiv7HZpMxxYWV4YfI0Q2IWh3B
+         jsOg==
+X-Gm-Message-State: AOJu0Ywl9yZRgwAaxhjlK00fuNcLXfeVIwK2FYHquq5rwTF0+5tY8XWr
+	1a+v9uGcBNHc6Y3fxyPJqDZFx02/HrOMrNVlS2tRuPB1ulJQ1pLZ
+X-Gm-Gg: ASbGncupVrXrj1RQ2KsmtzuMOpdNhfeAHj9VRSbqLw4wjj8QQZ7wK3QkBySIPY7ogZa
+	sDUEsF8+REPICYRiI6vN+teJywQKQ47v6eXDxjMkQ+/zhbj9hsGvMkG17Vg5nYGDAnzMmaEx2Nm
+	6bLsDETG5zdE1HIMV6kHIrXeuubW4dXIVorEgt9EEMwi5k9l15fDyIcm+lMcF6xhn80FTihS+/A
+	UNZOma6iJ/BFwLJ114gsrWgrN0Z0dhW/uCbEwa7Ccv4OtKfxrw0b6MESkTmQZhGPZXUbvoJBGrY
+	P4l79dAgwY0L6vMt8Dek
+X-Google-Smtp-Source: AGHT+IFgPidBCkTVImKo6n+6h3U2ss4G7Rdd10FTJGAWy7j/+zdwVe8NuaWhaqjeChIY6rQmbTpIhA==
+X-Received: by 2002:a17:907:d0f:b0:aa6:a9fe:46dd with SMTP id a640c23a62f3a-ab38b3aff9fmr1727563466b.38.1737448467687;
+        Tue, 21 Jan 2025 00:34:27 -0800 (PST)
+Received: from f (cst-prg-69-191.cust.vodafone.cz. [46.135.69.191])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384f8d3a0sm718133066b.158.2025.01.21.00.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2025 00:34:26 -0800 (PST)
+Date: Tue, 21 Jan 2025 09:34:17 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Nick Renner <nr2185@nyu.edu>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: Mutex free Pipes
+Message-ID: <dnoyvsmdp7o6vgolrehhogqdki2rwj5fl3jmxh632kifbej6wc@5tzkshyj4rd5>
+References: <CAPbsSE6vngGRM6UvKT3kvWpZmj2eg7yXUMu6Ow5PykdC7s7dBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D033UWA003.ant.amazon.com (10.13.139.42) To
- EX19D002AND002.ant.amazon.com (10.37.240.241)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAPbsSE6vngGRM6UvKT3kvWpZmj2eg7yXUMu6Ow5PykdC7s7dBQ@mail.gmail.com>
 
-Fix the return type of several functions from long to int to match its actu
-al behavior. These functions only return int values. This change improves
-type consistency across the filesystem code and aligns the function signatu
-re with its existing implementation and usage.
+On Mon, Jan 20, 2025 at 07:08:43PM -0500, Nick Renner wrote:
+> I've been conducting research using a libraryOS that I've designed
+> that uses a mutex free FIFO to implement pipes while adhering to
+> Linux's API. I found that this can increase throughput by close to 3X,
+> and that most of the overhead is due to the pipe's mutex preventing
+> concurrent writes and reads. I see that there is a similar
+> implementation to this used in the kernel provided in kfifo.h which
+> could possibly be used to improve this.
+> 
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Yuichiro Tsuji <yuichtsu@amazon.com>
----
- fs/ioctl.c         | 10 +++++-----
- include/linux/fs.h |  2 +-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+Most of the time when something was done it is either because it's a bad
+idea or (more likely) nobody sat down to do it.
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 638a36be31c1..c91fd2b46a77 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -41,7 +41,7 @@
-  *
-  * Returns 0 on success, -errno on error.
-  */
--long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	int error = -ENOTTY;
- 
-@@ -228,8 +228,8 @@ static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
- 	return error;
- }
- 
--static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
--			     u64 off, u64 olen, u64 destoff)
-+static int ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
-+			    u64 off, u64 olen, u64 destoff)
- {
- 	CLASS(fd, src_file)(srcfd);
- 	loff_t cloned;
-@@ -248,8 +248,8 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 	return ret;
- }
- 
--static long ioctl_file_clone_range(struct file *file,
--				   struct file_clone_range __user *argp)
-+static int ioctl_file_clone_range(struct file *file,
-+				  struct file_clone_range __user *argp)
- {
- 	struct file_clone_range args;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bdd36798ba5f..def100a6c575 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1992,7 +1992,7 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group);
- int vfs_fchmod(struct file *file, umode_t mode);
- int vfs_utimes(const struct path *path, struct timespec64 *times);
- 
--extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-+int vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
- 
- #ifdef CONFIG_COMPAT
- extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
--- 
-2.43.5
+Note that pipes allow for an arbitrary number of readers and writers.
+This is used in practice by make for example.
 
+kfifo code you are mentioning explicitly requires locking for that to
+work.
+
+Also note that consumers are allowed to perform arbitrarily sized ops.
+
+Maybe some hackery could be done to speed things up on this front
+(per-buffer locking or somehow detecting there can't be more than one
+reader and writer?), but I don't see a good way here.
+
+There is definitely performance left on the table, I just doubt
+something can be done to parallelize this in a sensible manner which
+helps in the real-world. Happy to be proven wrong. :)
+
+Can you show your code?
+
+That's my non-maintainer $0,03.
 
