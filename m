@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-39765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27923A17CA7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 12:08:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B3DA17CAA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 12:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1BC61884987
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 11:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C178216216D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 11:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7217F1F1317;
-	Tue, 21 Jan 2025 11:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8471F1529;
+	Tue, 21 Jan 2025 11:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy5f6ls1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZMgOZXC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0773F1EF0BA;
-	Tue, 21 Jan 2025 11:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF2A1B4137;
+	Tue, 21 Jan 2025 11:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737457706; cv=none; b=TLaStdL+5+rKH/gH2GzY71OaD5xNOHhsdAFRbGT9sgRX2QVGGFFcI2sdmSzlfE76aWXjN1plEwVpkFKHr65CToKUiryXaSFn9pOrYuyZBj5scoLpNE+lWI8iDG6l6ptIjoipUhRt/KoCYozaCYOaKbKgkXMpGiOGDOH25UDh3J4=
+	t=1737457707; cv=none; b=WyomTprp1uEbDtIpkB3jvCbg5ktuCYXZDUZBVElpAkElrUmmocU4991y5j4IpFY3hTHy0qtP7EnOMHBL6zAe/R2lwcJzc545asxv2Jhypott9Hmf++UDsO8wceQQ2/unfQKUQVFypcXHwbDnmBVmkUVqGPR2rff3Yiuf0G5whY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737457706; c=relaxed/simple;
-	bh=b2k2S+wI5xiH5715BF3rShaNjtPqryp7/Z7jvTHKn4s=;
+	s=arc-20240116; t=1737457707; c=relaxed/simple;
+	bh=IqNdaLNbz0YEh4i8b5tfBkuxskzb1iUgZOIQzKFIm9k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hDpwN48nAHafDkSQzdaD4TngIimC+JIJGaJlSAC2H/ft6WmCWMKIpGCMTX6I/DMciff00abA+tpKt/e3OixvS1Jm0KrLHEd6n2weEI3AtCVfvzKMgqUJrDhza39GONT7QC6Jz/6TfyMFCTxpVrTYxoR7tVffEAO6Uf/hFRyrm9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy5f6ls1; arc=none smtp.client-ip=209.85.208.47
+	 MIME-Version; b=gvFUHFmOKtFl0sbMRvpPY9/GYV2dWTUrfcKp54CbbaUMehIH5m4vrStZNaVY4omuYgYjwvJXxvpgnJ1NbSuB0eEuysjHc9Vg1lvu4KoV0Kpfpt6eeawsv1ABeIHCtsvhqcpg5ritlkmxVCUmUVsXWcfI+u0BH16oafwMnzm8u5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZMgOZXC; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d3e6274015so1875653a12.0;
-        Tue, 21 Jan 2025 03:08:24 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso11066533a12.0;
+        Tue, 21 Jan 2025 03:08:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737457703; x=1738062503; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737457704; x=1738062504; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hKlbeu4A1We+UcyBZC2G9WSyIvInqYg8mwICtl4YMBc=;
-        b=Hy5f6ls1BnA0tJyK87Nk6a3Qa1ikm2ml6w6VNLj9UxZhw9BGFsegRqRY1MrhdP0/DT
-         /ubCD7bRjfXH1zoLGIlieGNKUtFF98I9hHszCm44MhGnymfiv6BXw0H77u8sU6FwyeIw
-         yMJOC6udOAOyPkkAtvJiwaprKGSEbbpNGswh1fUJmirK+T6kqiCZvHzv0fUwCs0pE4Zn
-         R2o+yffOKIzVsF786W9OR2dfE0W4M8w6jQA2NaKoNY2DjUCmuE6sQWUIzeSbkVf9inXC
-         uT1TYYpS6FyT778W1A2ShJhqI82t5IOQisdydNnPL6afoKynV2ZAOE4oS8VW0p5pRe7r
-         aYqQ==
+        bh=yxwX7BPSuszkHp6D+XbucJtCVXIOlfH3y1QCR8ZPf3w=;
+        b=XZMgOZXC3OPRN+KjjCCobL47EVW3gG3c+PC5/cStPLlX9Bzg6POqwNCid4JDV4URu2
+         bnjnQEenZCwfOuCglhulTJHvfSrjQolLgMzjHPAWega0/2tqEulbUwzc+atdK2KS+j5w
+         1lg+5OXHEmYZWSPzoXtb0KhKL2rUO0VyPJnC45/kE4X2yeMwf6EvfVjF6QOyO5KM+qMb
+         ZmXt8mdQQXbY1sTc6BR/y2d2JTOyc2MpZZD+YSflQ4y3fI4+mSSmzQCTl+WYo1S/S2iQ
+         ZoTLJ+6aXqR5sAdE3FMCONyENW7KonZBIlCn/11/XmM8BFCQlAt3p+DAMrFqmiNFHrBa
+         4uzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737457703; x=1738062503;
+        d=1e100.net; s=20230601; t=1737457704; x=1738062504;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hKlbeu4A1We+UcyBZC2G9WSyIvInqYg8mwICtl4YMBc=;
-        b=SbmsNtxbna/sQR3OFB8LmP+cEpSREMkrpQXqDj1V0ZjteW+o/tmtuFJj4t9k8TYeTr
-         AqWqiB2BlxV8iF1voEOyCiZorPnWoU1yeI4JIluULWTu9O85pIyt4dldqSdftet5yC5G
-         u640CjPqaMyWRnFPe98Eni+6xu2HwzzggQCySkc3E48cPDYs98aWhQqO4CoCn3FW73kT
-         lR/XUNtGUGYvVRiw/v0OnphIfZ4V0KXkJkhlG0pzueu+zR52+MMBmnunyKPQLMFvy75g
-         QcrYbnLaCqkqwl8h1oskJ5Tihd1bwPFWXyU/mb55FWo5JheBXx4w1xyitSnbebGHHWII
-         5m1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZE1lX3p1jB9T+3SXgjETXRHarBG4xk4+KabsrrGu4LQTguRUnp47WmkkwPewiQ0Bkez0T3+xNEGN8AS8HbA==@vger.kernel.org, AJvYcCVBm+ZdMcRdOzT0q2O74blqUTfBA8RCwZS7mhYDMf8EaLkaoj1IZJqwYW4gSlzZuaEe23XWOX80@vger.kernel.org, AJvYcCWFB/vDyPPJYWd7CwLtwV8SOLOjqgoIqmHJyfVJbWwnS+17721MWxtZBnDTLylczcxQq2yQZCXyY78ylLB5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSADcNOuVAgGWpwtpmHw0dXOHlnedL/pwwQJ1cIX7px2ZbSL18
-	0HqxAua87nNCf+ECYpaqWOw3gUkwLvwB+j4vmnyC6FSViirmHNgX
-X-Gm-Gg: ASbGncsF743vCoVMSpYodAGi9tcXf8bzMCQjq010IfL1p9P5FV/bbYDxyFtMLBhC+1I
-	tZ5jXOSEfFPo5V6T+hUi4LnK5nae9MA+uMjmZy7DtrcSsKHx7fktXf4ayjrJJF4msbBearr/xxB
-	MRPidITu5wDKYXWcclvZNlSGr6f+rKJ0YbvKEDFh5zdphljEAAx5i49wymi47MARYeo1KJ+wjYY
-	532SIY7xmiGLfHPcXP50Y91geRMxj+GeB0UelBTZ0bkSQBovaf59vODd9CVBcZU5toDkRsavV6/
-	GPFvDQOUBe7RiJZHrfuohmaRBriOIVHro29DHj56sMantHUvSEJjNEeV+C9symPR2V0=
-X-Google-Smtp-Source: AGHT+IExh6oiUclInr3SeswnB/qMoXt9IMZvkHqJwRVzNRUboHJ+tVSoXkuNZW0g6m8kKe/k4CloqQ==
-X-Received: by 2002:a05:6402:254a:b0:5d2:8f70:75f6 with SMTP id 4fb4d7f45d1cf-5db7db12d0fmr16664098a12.30.1737457702748;
-        Tue, 21 Jan 2025 03:08:22 -0800 (PST)
+        bh=yxwX7BPSuszkHp6D+XbucJtCVXIOlfH3y1QCR8ZPf3w=;
+        b=tRx1+gjnsVxlpf1SfB64Ei48AkVzwHX91k43YPBaJhhpDiftYZxnIEtvH0sZinOVoC
+         +3hOw+P4VD5UDv7eSzAh9gSv+Z+zfIaifZyCIN2argFaYcnyzlv1pkIOpbP2lsd94lNv
+         xl7YQ3wykQp3D1/sZDgposIDNz+HuZVyNbz/Sby7exN8oVPyrtyBDh0s4fcqQ2Cbn862
+         QZsLT6WVy27zybBWYPv8LMsbbiOv19B0T9PTPbL1mgc22VKDYx0dFY+8uMlUqoT2phkT
+         7M2z1r06jfCL1XDKQNZ9Xpxm3NULh86Yg8JZtpzceqjonDyf0VFDAShMNLCDls7vrzaV
+         DUHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjarzu9pCeM3C3yTtHDzdtTIwkefMCEfp+CIRa2zon3iQ8pGAVGt4dk+L9o6PQkdlpkVuFGiPx@vger.kernel.org, AJvYcCUrqJJ5jAB1ECmpMZ72Mwd/vCMizW4i7PMBFml2SAY61efUz6xNqlHxcd3OPeeNpq/IMkCeaYpZsMy5AVaMQA==@vger.kernel.org, AJvYcCWwvN9i5WPkP7sQLIzTJ51WxXsYcMuOG22UWCVykmqmOv/59GotVMIGz4HmqD8Wh7+4G2aKy3AzP5gW85cl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkTOsZi4wd13PuWNOFCnVt3yOHBHR8W2tipIROJ6S6DKh/Fuws
+	Iy+lUD414IDulhCu9I0We23XOYrmfp927fMXmPAhhvlE8YiddHBu
+X-Gm-Gg: ASbGncvcWDL2Pl/J+Qa0iRkNd6tftyngk1EmK7eHmne99CHsvg0Jj23Qi+Q+pSA1NtP
+	nh+tTSqizVqG0QlZOcVUmfSXW7slhBALaArLMCRi91YwOuAGdtUPMo+kea4CuvSgFkwjaKyPcSW
+	n/f/T1voR2yo5QznCphDnUp2VgYHtjJQuJ5S5lRaP0NXkQpsd/ES288R8UQVKb7zzYjAYqwNZUG
+	zhtDfl/9SogyXZmCimkVCgDW2PbYLGNmalT7NSZ1m6GYu6LoqUAsM+ypx390GT4F7Jm/SpQHiiS
+	mtr46n5b48k10UiysSb+WFqA7kkArYdXwZTJfWNvXxMHfiZfV6q3dNzV0aOeHMoFqRI=
+X-Google-Smtp-Source: AGHT+IELsrdB1CQN2m+UnzgVC3Or0p2Dl8YBuYBjUSRZHoUx5TfI+wBdi58JW2SBSytuw2XO1WdB2Q==
+X-Received: by 2002:a05:6402:2792:b0:5da:105b:86c2 with SMTP id 4fb4d7f45d1cf-5db7db078b7mr13315810a12.20.1737457703905;
+        Tue, 21 Jan 2025 03:08:23 -0800 (PST)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73683d28sm7209841a12.40.2025.01.21.03.08.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 03:08:22 -0800 (PST)
+        Tue, 21 Jan 2025 03:08:23 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Sasha Levin <sashal@kernel.org>,
@@ -82,10 +82,11 @@ Cc: Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	stable@vger.kernel.org,
+	syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com,
 	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.6 2/3] ovl: support encoding fid from inode with no alias
-Date: Tue, 21 Jan 2025 12:08:14 +0100
-Message-Id: <20250121110815.416785-3-amir73il@gmail.com>
+Subject: [PATCH 6.6 3/3] fs: relax assertions on failure to encode file handles
+Date: Tue, 21 Jan 2025 12:08:15 +0100
+Message-Id: <20250121110815.416785-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250121110815.416785-1-amir73il@gmail.com>
 References: <20250121110815.416785-1-amir73il@gmail.com>
@@ -97,161 +98,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-[ Upstream commit c45beebfde34aa71afbc48b2c54cdda623515037 ]
+commit 974e3fe0ac61de85015bbe5a4990cf4127b304b2 upstream.
 
-Dmitry Safonov reported that a WARN_ON() assertion can be trigered by
-userspace when calling inotify_show_fdinfo() for an overlayfs watched
-inode, whose dentry aliases were discarded with drop_caches.
+Encoding file handles is usually performed by a filesystem >encode_fh()
+method that may fail for various reasons.
 
-The WARN_ON() assertion in inotify_show_fdinfo() was removed, because
-it is possible for encoding file handle to fail for other reason, but
-the impact of failing to encode an overlayfs file handle goes beyond
-this assertion.
+The legacy users of exportfs_encode_fh(), namely, nfsd and
+name_to_handle_at(2) syscall are ready to cope with the possibility
+of failure to encode a file handle.
 
-As shown in the LTP test case mentioned in the link below, failure to
-encode an overlayfs file handle from a non-aliased inode also leads to
-failure to report an fid with FAN_DELETE_SELF fanotify events.
+There are a few other users of exportfs_encode_{fh,fid}() that
+currently have a WARN_ON() assertion when ->encode_fh() fails.
+Relax those assertions because they are wrong.
 
-As Dmitry notes in his analyzis of the problem, ovl_encode_fh() fails
-if it cannot find an alias for the inode, but this failure can be fixed.
-ovl_encode_fh() seldom uses the alias and in the case of non-decodable
-file handles, as is often the case with fanotify fid info,
-ovl_encode_fh() never needs to use the alias to encode a file handle.
+The second linked bug report states commit 16aac5ad1fa9 ("ovl: support
+encoding non-decodable file handles") in v6.6 as the regressing commit,
+but this is not accurate.
 
-Defer finding an alias until it is actually needed so ovl_encode_fh()
-will not fail in the common case of FAN_DELETE_SELF fanotify events.
+The aforementioned commit only increases the chances of the assertion
+and allows triggering the assertion with the reproducer using overlayfs,
+inotify and drop_caches.
 
-Fixes: 16aac5ad1fa9 ("ovl: support encoding non-decodable file handles")
+Triggering this assertion was always possible with other filesystems and
+other reasons of ->encode_fh() failures and more particularly, it was
+also possible with the exact same reproducer using overlayfs that is
+mounted with options index=on,nfs_export=on also on kernels < v6.6.
+Therefore, I am not listing the aforementioned commit as a Fixes commit.
+
+Backport hint: this patch will have a trivial conflict applying to
+v6.6.y, and other trivial conflicts applying to stable kernels < v6.6.
+
+Reported-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+Tested-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-unionfs/671fd40c.050a0220.4735a.024f.GAE@google.com/
 Reported-by: Dmitry Safonov <dima@arista.com>
-Closes: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiie81voLZZi2zXS1BziXZCM24nXqPAxbu8kxXCUWdwOg@mail.gmail.com/
+Closes: https://lore.kernel.org/linux-fsdevel/CAGrbwDTLt6drB9eaUagnQVgdPBmhLfqqxAf3F+Juqy_o6oP8uw@mail.gmail.com/
+Cc: stable@vger.kernel.org
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Link: https://lore.kernel.org/r/20250105162404.357058-3-amir73il@gmail.com
+Link: https://lore.kernel.org/r/20241219115301.465396-1-amir73il@gmail.com
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/overlayfs/export.c | 46 +++++++++++++++++++++++--------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
+ fs/notify/fdinfo.c     | 4 +---
+ fs/overlayfs/copy_up.c | 5 ++---
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-index c56e4e0b8054c..3a17e4366f28c 100644
---- a/fs/overlayfs/export.c
-+++ b/fs/overlayfs/export.c
-@@ -181,35 +181,37 @@ static int ovl_connect_layer(struct dentry *dentry)
-  *
-  * Return 0 for upper file handle, > 0 for lower file handle or < 0 on error.
-  */
--static int ovl_check_encode_origin(struct dentry *dentry)
-+static int ovl_check_encode_origin(struct inode *inode)
- {
--	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
-+	struct ovl_fs *ofs = OVL_FS(inode->i_sb);
- 	bool decodable = ofs->config.nfs_export;
-+	struct dentry *dentry;
-+	int err;
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 5c430736ec12c..26655572975d3 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -51,10 +51,8 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+ 	size = f.handle.handle_bytes >> 2;
  
- 	/* No upper layer? */
- 	if (!ovl_upper_mnt(ofs))
- 		return 1;
+ 	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
+-	if ((ret == FILEID_INVALID) || (ret < 0)) {
+-		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
++	if ((ret == FILEID_INVALID) || (ret < 0))
+ 		return;
+-	}
  
- 	/* Lower file handle for non-upper non-decodable */
--	if (!ovl_dentry_upper(dentry) && !decodable)
-+	if (!ovl_inode_upper(inode) && !decodable)
- 		return 1;
+ 	f.handle.handle_type = ret;
+ 	f.handle.handle_bytes = size * sizeof(u32);
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index e97bcf15c689c..18e018cb18117 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -399,9 +399,8 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs, struct inode *realinode,
+ 	buflen = (dwords << 2);
  
- 	/* Upper file handle for pure upper */
--	if (!ovl_dentry_lower(dentry))
-+	if (!ovl_inode_lower(inode))
- 		return 0;
+ 	err = -EIO;
+-	if (WARN_ON(fh_type < 0) ||
+-	    WARN_ON(buflen > MAX_HANDLE_SZ) ||
+-	    WARN_ON(fh_type == FILEID_INVALID))
++	if (fh_type < 0 || fh_type == FILEID_INVALID ||
++	    WARN_ON(buflen > MAX_HANDLE_SZ))
+ 		goto out_err;
  
- 	/*
- 	 * Root is never indexed, so if there's an upper layer, encode upper for
- 	 * root.
- 	 */
--	if (dentry == dentry->d_sb->s_root)
-+	if (inode == d_inode(inode->i_sb->s_root))
- 		return 0;
- 
- 	/*
- 	 * Upper decodable file handle for non-indexed upper.
- 	 */
--	if (ovl_dentry_upper(dentry) && decodable &&
--	    !ovl_test_flag(OVL_INDEX, d_inode(dentry)))
-+	if (ovl_inode_upper(inode) && decodable &&
-+	    !ovl_test_flag(OVL_INDEX, inode))
- 		return 0;
- 
- 	/*
-@@ -218,17 +220,25 @@ static int ovl_check_encode_origin(struct dentry *dentry)
- 	 * ovl_connect_layer() will try to make origin's layer "connected" by
- 	 * copying up a "connectable" ancestor.
- 	 */
--	if (d_is_dir(dentry) && decodable)
--		return ovl_connect_layer(dentry);
-+	if (!decodable || !S_ISDIR(inode->i_mode))
-+		return 1;
-+
-+	dentry = d_find_any_alias(inode);
-+	if (!dentry)
-+		return -ENOENT;
-+
-+	err = ovl_connect_layer(dentry);
-+	dput(dentry);
-+	if (err < 0)
-+		return err;
- 
- 	/* Lower file handle for indexed and non-upper dir/non-dir */
- 	return 1;
- }
- 
--static int ovl_dentry_to_fid(struct ovl_fs *ofs, struct dentry *dentry,
-+static int ovl_dentry_to_fid(struct ovl_fs *ofs, struct inode *inode,
- 			     u32 *fid, int buflen)
- {
--	struct inode *inode = d_inode(dentry);
- 	struct ovl_fh *fh = NULL;
- 	int err, enc_lower;
- 	int len;
-@@ -237,7 +247,7 @@ static int ovl_dentry_to_fid(struct ovl_fs *ofs, struct dentry *dentry,
- 	 * Check if we should encode a lower or upper file handle and maybe
- 	 * copy up an ancestor to make lower file handle connectable.
- 	 */
--	err = enc_lower = ovl_check_encode_origin(dentry);
-+	err = enc_lower = ovl_check_encode_origin(inode);
- 	if (enc_lower < 0)
- 		goto fail;
- 
-@@ -257,8 +267,8 @@ static int ovl_dentry_to_fid(struct ovl_fs *ofs, struct dentry *dentry,
- 	return err;
- 
- fail:
--	pr_warn_ratelimited("failed to encode file handle (%pd2, err=%i)\n",
--			    dentry, err);
-+	pr_warn_ratelimited("failed to encode file handle (ino=%lu, err=%i)\n",
-+			    inode->i_ino, err);
- 	goto out;
- }
- 
-@@ -266,19 +276,13 @@ static int ovl_encode_fh(struct inode *inode, u32 *fid, int *max_len,
- 			 struct inode *parent)
- {
- 	struct ovl_fs *ofs = OVL_FS(inode->i_sb);
--	struct dentry *dentry;
- 	int bytes, buflen = *max_len << 2;
- 
- 	/* TODO: encode connectable file handles */
- 	if (parent)
- 		return FILEID_INVALID;
- 
--	dentry = d_find_any_alias(inode);
--	if (!dentry)
--		return FILEID_INVALID;
--
--	bytes = ovl_dentry_to_fid(ofs, dentry, fid, buflen);
--	dput(dentry);
-+	bytes = ovl_dentry_to_fid(ofs, inode, fid, buflen);
- 	if (bytes <= 0)
- 		return FILEID_INVALID;
- 
+ 	fh->fb.version = OVL_FH_VERSION;
 -- 
 2.34.1
 
