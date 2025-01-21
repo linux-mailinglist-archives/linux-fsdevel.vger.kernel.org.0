@@ -1,148 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-39793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D66EA181F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 17:28:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B66AA183CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 19:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93F3E3AAFF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 16:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087A33AAD98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 17:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020461F4726;
-	Tue, 21 Jan 2025 16:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618311F55F5;
+	Tue, 21 Jan 2025 17:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="So6dK0HQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mw2GF6yQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFB11F1527
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 16:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C3A1F55FA;
+	Tue, 21 Jan 2025 17:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737476921; cv=none; b=UceQ+RmR3LQTm1cZQbuG7w5S/CrxjnmvnxIZlFYEcAH5MmNIvPZ6bWov2//3lYCcAmbciOHgTzEwK3SyECAyBG/zIlo/QICB0FDjaBNmN1xIpKzfnTpByCmTKdT83jHagcoRuUKghTqS6kDeT/1qECJWBGD1pGdsIlnP71ow+KY=
+	t=1737482373; cv=none; b=Xre4VLuy9+WG+RV3aNkdRJ4vHc5VNEDv3tN2skPo6gdzFNRbNmNzNCEXQVvzCmiSPgq2fjmtzu2Yw1M4QMRIttuxdwxyxJu44xp3bVznmubMh4Jf1zuMaHuw2xfCFCsEDijQpS5LXy7qOTxqGhIIf1l/20PhVljKPmCVoDjYoJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737476921; c=relaxed/simple;
-	bh=xm7P2Xj9F0lX1TUn6zaultfqdKWfNMJP3gmWrDgoe7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fwjTlKCr38pQ+22gpMC+R+KsBxeX8FomKmH2rHrn7zR3hHFP0dKfN+yFRi+bzkIO6MGY90WsJnEwB8REqjYat4c3JaRwGkRGyxzNcKjcsUXYxXisc6mlKQJ96gli2In0DDiH5rlA3Jh3TBgl9ej81534B3JJJYrXvb3lwF6OVvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=So6dK0HQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737476918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=18AfannScfIY8EriR2EO/tvHIiDq19oOA7Fl7JCU7uk=;
-	b=So6dK0HQTFNZCjCdFB2LkeUeaxqXofMQ3kpC6NVD22VWgU+UjHbF4l0P3N0RHwlAflMngW
-	ZvWQs8jraOz44c5PH1vhvzG/oaTe6WJ7UB7ijwGaC+IgNMZMxlHyApLuoHVg65hzgsJGWe
-	CQq2724+akwQuQkyZdmOgcEYPbm20YY=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-85FXZSQRPL-wJJHVEOc_Kg-1; Tue, 21 Jan 2025 11:28:37 -0500
-X-MC-Unique: 85FXZSQRPL-wJJHVEOc_Kg-1
-X-Mimecast-MFC-AGG-ID: 85FXZSQRPL-wJJHVEOc_Kg
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aaf901a0ef9so451673666b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 08:28:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737476916; x=1738081716;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=18AfannScfIY8EriR2EO/tvHIiDq19oOA7Fl7JCU7uk=;
-        b=MEQU+jnULwoylaRkJpxUusQI71ENIBtLuB7N7Gu8NbFIy+aoR1uF9yBy7U5dP7z7rp
-         v+T9Dr7uHi7hdUilIHKOpwvA3Tr5B1T2SXSaca/yG3EqImh2WhY+af7YF4S+3HwfWPbn
-         4ZVwPHLj3wBmJt01r9zVnzc53zgY3FuU5EIuwFCuZ5C2cIRQT8mp8hUi8fpy9G79Opzk
-         maFpGibmIZsNSg77djkIRjlaEjHKfdiz9jrGO9wa0/897zuxqiWbECBcZSZqy01vUS6g
-         BAfwx1ba1P2908naB5V+n3rCwHd21qqWmlopg+GL+mWqYWByxXzenkq0aq0ubw3j1Awt
-         vyAA==
-X-Gm-Message-State: AOJu0YzDx7topkqkEI0++l4ubpyFsRZ3mTIHEV9HnZR1ySLLlryZ1PNs
-	t6yF9cgpqU9UT8VZwPBhqLQad0XvcB2VZl8zWoE/v2unbgu0fNWJjiRm6PuabBtyhNEStxOqy/h
-	+n37HqKea+MWugSDLhmnSM+HhYh3Ym8OOnPw5ck6BfNDjmdfgD7QLtT0bMRXZGvQ=
-X-Gm-Gg: ASbGnct1d21KCH5KyC+phSoDw3LSUKviXw2Q5HmTfDx6I7ylSfU1KhTD671aA1jy/sw
-	TZyGOjEILKB5CAeluYlqMavYNgzUZxtffucsr2xJ+vpBsFVXdhItFx9YSflCFKvnxow8R5sdHGN
-	39yrXFGRnUVGXSVOkN1UrkjXFZwehTkg5A/Jte6BVqTjeW/WBgzPzQnFMff78lZy0Zmhh2Qv0Fp
-	6BJi05LVfjqzEfAGKK7Cz1Za6y6vhSII2O2QZPmM+6jTgasAArnUEpZxe3qBMiKiaytupeBpDvk
-	9MlUm/plcAD+j75qOl6/hnsxKWrXQoE77RXHFADpFYYTJSM90pmGBZ9GCG0/FpOqv2wl1QBqVVS
-	BAOk8woDsOH1qsryhUmVMwmg3S5u0u3Hx+E7HEkpsrqWJ
-X-Received: by 2002:a17:907:7b9d:b0:aa6:8bb4:503b with SMTP id a640c23a62f3a-ab38b4c9a56mr1380321266b.55.1737476915846;
-        Tue, 21 Jan 2025 08:28:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEGjbp0Ky/GAOO7K7OUz99Kavj698xWxLY2zZiStonj4KktjESdUbpCmo1dejqrT0OSxw61NA==
-X-Received: by 2002:a17:907:7b9d:b0:aa6:8bb4:503b with SMTP id a640c23a62f3a-ab38b4c9a56mr1380319566b.55.1737476915450;
-        Tue, 21 Jan 2025 08:28:35 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384f87d86sm772274066b.146.2025.01.21.08.28.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2025 08:28:34 -0800 (PST)
-Message-ID: <a234cb8b-ace8-4edf-add4-5034aa53595b@redhat.com>
-Date: Tue, 21 Jan 2025 17:28:34 +0100
+	s=arc-20240116; t=1737482373; c=relaxed/simple;
+	bh=gdVZ7EZcFCxr50W/oFCdbTk/DmDd/OzTiv9J4k8k9ek=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G4sRTVbsM2yPFGMkXgW/ZWuJFcWPOxy/YiZzYdYgNtvganocUDD6FxWFf6PHdrOXXlGhSRtFsxpQt5DKdoGPIln1qIIdaSaq3k/mcXBiY9bpiKY08LLFsusBc77XKtPiXK1SaKST709XJOydHq5D1R+/s3/0jxNNF2PPLBEGDNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mw2GF6yQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8BF5C4CEDF;
+	Tue, 21 Jan 2025 17:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1737482373;
+	bh=gdVZ7EZcFCxr50W/oFCdbTk/DmDd/OzTiv9J4k8k9ek=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mw2GF6yQmFwwLSYac5bBFg/U3kRbfbd45KtG6AiCqNod7zYJ0WyPbt0qzDW5aoPXM
+	 P2JWqgf+KC32Nir/vjsc8mvxQPSutgBQvTDtn3SixoGk5tXxf4Gg6up5jmfn28W/BM
+	 7BAprG81+OMAd3xL+EXKmsC8V1maFdH242SuhhfE=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Shyam Prasad N <nspmangalore@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.12 054/122] netfs: Fix non-contiguous donation between completed reads
+Date: Tue, 21 Jan 2025 18:51:42 +0100
+Message-ID: <20250121174535.073498135@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250121174532.991109301@linuxfoundation.org>
+References: <20250121174532.991109301@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] vboxsf: fix building with GCC 15
-To: Brahmajit Das <brahmajit.xyz@gmail.com>, viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250121162648.1408743-1-brahmajit.xyz@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250121162648.1408743-1-brahmajit.xyz@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
-On 21-Jan-25 5:26 PM, Brahmajit Das wrote:
-> Building with GCC 15 results in build error
-> fs/vboxsf/super.c:24:54: error: initializer-string for array of ‘unsigned char’ is too long [-Werror=unterminated-string-initialization]
->    24 | static const unsigned char VBSF_MOUNT_SIGNATURE[4] = "\000\377\376\375";
->       |                                                      ^~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-> 
-> Due to GCC having enabled -Werror=unterminated-string-initialization[0]
-> by default. Separately initializing each array element of
-> VBSF_MOUNT_SIGNATURE to ensure NUL termination, thus satisfying GCC 15
-> and fixing the build error.
-> 
-> [0]: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wno-unterminated-string-initialization
-> 
-> Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
+------------------
 
-Thanks, patch looks good to me:
+From: David Howells <dhowells@redhat.com>
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+[ Upstream commit c8b90d40d5bba8e6fba457b8a7c10d3c0d467e37 ]
 
-Regards,
+When a read subrequest finishes, if it doesn't have sufficient coverage to
+complete the folio(s) covering either side of it, it will donate the excess
+coverage to the adjacent subrequests on either side, offloading
+responsibility for unlocking the folio(s) covered to them.
 
-Hans
+Now, preference is given to donating down to a lower file offset over
+donating up because that check is done first - but there's no check that
+the lower subreq is actually contiguous, and so we can end up donating
+incorrectly.
+
+The scenario seen[1] is that an 8MiB readahead request spanning four 2MiB
+folios is split into eight 1MiB subreqs (numbered 1 through 8).  These
+terminate in the order 1,6,2,5,3,7,4,8.  What happens is:
+
+	- 1 donates to 2
+	- 6 donates to 5
+	- 2 completes, unlocking the first folio (with 1).
+	- 5 completes, unlocking the third folio (with 6).
+	- 3 donates to 4
+	- 7 donates to 4 incorrectly
+	- 4 completes, unlocking the second folio (with 3), but can't use
+	  the excess from 7.
+	- 8 donates to 4, also incorrectly.
+
+Fix this by preventing downward donation if the subreqs are not contiguous
+(in the example above, 7 donates to 4 across the gap left by 5 and 6).
+
+Reported-by: Shyam Prasad N <nspmangalore@gmail.com>
+Closes: https://lore.kernel.org/r/CANT5p=qBwjBm-D8soFVVtswGEfmMtQXVW83=TNfUtvyHeFQZBA@mail.gmail.com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/r/526707.1733224486@warthog.procyon.org.uk/ [1]
+Link: https://lore.kernel.org/r/20241213135013.2964079-3-dhowells@redhat.com
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/netfs/read_collect.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index e70eb4ea21c03..a44132c986538 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -249,16 +249,17 @@ static bool netfs_consume_read_data(struct netfs_io_subrequest *subreq, bool was
+ 
+ 	/* Deal with the trickiest case: that this subreq is in the middle of a
+ 	 * folio, not touching either edge, but finishes first.  In such a
+-	 * case, we donate to the previous subreq, if there is one, so that the
+-	 * donation is only handled when that completes - and remove this
+-	 * subreq from the list.
++	 * case, we donate to the previous subreq, if there is one and if it is
++	 * contiguous, so that the donation is only handled when that completes
++	 * - and remove this subreq from the list.
+ 	 *
+ 	 * If the previous subreq finished first, we will have acquired their
+ 	 * donation and should be able to unlock folios and/or donate nextwards.
+ 	 */
+ 	if (!subreq->consumed &&
+ 	    !prev_donated &&
+-	    !list_is_first(&subreq->rreq_link, &rreq->subrequests)) {
++	    !list_is_first(&subreq->rreq_link, &rreq->subrequests) &&
++	    subreq->start == prev->start + prev->len) {
+ 		prev = list_prev_entry(subreq, rreq_link);
+ 		WRITE_ONCE(prev->next_donated, prev->next_donated + subreq->len);
+ 		subreq->start += subreq->len;
+-- 
+2.39.5
 
 
-
-> ---
->  fs/vboxsf/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index e95b8a48d8a0..1d94bb784108 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -21,7 +21,8 @@
->  
->  #define VBOXSF_SUPER_MAGIC 0x786f4256 /* 'VBox' little endian */
->  
-> -static const unsigned char VBSF_MOUNT_SIGNATURE[4] = "\000\377\376\375";
-> +static const unsigned char VBSF_MOUNT_SIGNATURE[4] = { '\000', '\377', '\376',
-> +						       '\375' };
->  
->  static int follow_symlinks;
->  module_param(follow_symlinks, int, 0444);
 
 
