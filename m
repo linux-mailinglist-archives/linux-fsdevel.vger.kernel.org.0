@@ -1,182 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-39766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B3DA17CAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 12:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9D2A17CCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 12:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C178216216D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 11:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE6B164355
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 11:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8471F1529;
-	Tue, 21 Jan 2025 11:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1EB1F151A;
+	Tue, 21 Jan 2025 11:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZMgOZXC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTzACL/u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF2A1B4137;
-	Tue, 21 Jan 2025 11:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFEF1F1514;
+	Tue, 21 Jan 2025 11:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737457707; cv=none; b=WyomTprp1uEbDtIpkB3jvCbg5ktuCYXZDUZBVElpAkElrUmmocU4991y5j4IpFY3hTHy0qtP7EnOMHBL6zAe/R2lwcJzc545asxv2Jhypott9Hmf++UDsO8wceQQ2/unfQKUQVFypcXHwbDnmBVmkUVqGPR2rff3Yiuf0G5whY0=
+	t=1737458083; cv=none; b=SlD5/Ch/sfpfbhsmx22RQzzPdaLcbinB5yGxV0DEwEt1eG28BqVhlVzAjvVao6XagBjvr6KmjtOxH+w6/Fc5HOY0qyEzZssRq4PbmU4Tyiy8Hl0STsrYO/wv5JkH8S5nlRdx6i5Ug3frls7iRvz/ceBt7fHjebNksMZnfQWhmW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737457707; c=relaxed/simple;
-	bh=IqNdaLNbz0YEh4i8b5tfBkuxskzb1iUgZOIQzKFIm9k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gvFUHFmOKtFl0sbMRvpPY9/GYV2dWTUrfcKp54CbbaUMehIH5m4vrStZNaVY4omuYgYjwvJXxvpgnJ1NbSuB0eEuysjHc9Vg1lvu4KoV0Kpfpt6eeawsv1ABeIHCtsvhqcpg5ritlkmxVCUmUVsXWcfI+u0BH16oafwMnzm8u5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZMgOZXC; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1737458083; c=relaxed/simple;
+	bh=irCW3h1QxLaI8q46pNPNTc+3wQCFUYHnIIDbFy1fLJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lVg3lTzl1Iz+fj+wA5Xcp0qiZbz0qUAEd96SvEmJX4lheCtChJzw84yqWpTc1jCgSV+V6joWytoXx4i1I76aY4YMeDyUqYCzyve8yZ2YhMhZKjIyO764+3NLIq7VHxhQKdgPCv3ay34/Ew85C0Pqd/lchwQPmTOHjlQq2Uo0s/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTzACL/u; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso11066533a12.0;
-        Tue, 21 Jan 2025 03:08:25 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso927806666b.1;
+        Tue, 21 Jan 2025 03:14:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737457704; x=1738062504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1737458079; x=1738062879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yxwX7BPSuszkHp6D+XbucJtCVXIOlfH3y1QCR8ZPf3w=;
-        b=XZMgOZXC3OPRN+KjjCCobL47EVW3gG3c+PC5/cStPLlX9Bzg6POqwNCid4JDV4URu2
-         bnjnQEenZCwfOuCglhulTJHvfSrjQolLgMzjHPAWega0/2tqEulbUwzc+atdK2KS+j5w
-         1lg+5OXHEmYZWSPzoXtb0KhKL2rUO0VyPJnC45/kE4X2yeMwf6EvfVjF6QOyO5KM+qMb
-         ZmXt8mdQQXbY1sTc6BR/y2d2JTOyc2MpZZD+YSflQ4y3fI4+mSSmzQCTl+WYo1S/S2iQ
-         ZoTLJ+6aXqR5sAdE3FMCONyENW7KonZBIlCn/11/XmM8BFCQlAt3p+DAMrFqmiNFHrBa
-         4uzA==
+        bh=dfL31C5SkfpnPUklSIvB0X0xW2/MmtrNueBSnIvz/YA=;
+        b=OTzACL/uV4GC3r+Z6kM3byTmxb5T4vBeYtfjrlQE8wQg+3TtY9TQikSeI05XWNIdOU
+         9Uj7tTWOoYkDrkbPR7RQZ2RJGacykIluh+shnJtOg180lU6s1DMtM3oXWGjelns008i2
+         RKuw1j8m8bDQlukb7+txPy0Wl0uPppA5cY3UXs3fuBjQNDRzZC2BoJsoZ3zylibR0oon
+         t4Frg+d+LeYf/Rb8FyCYLXxyaXywRGcIql1zoB/35e18pjwlnVso6TtHOsseQSe1U7u9
+         cVW49OFh0wBNxz6UTHDQHpdbLqpKpCqU8vIkHKdpf56aXdPntnbDG9fhGg7ThDv6pphg
+         OcvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737457704; x=1738062504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1737458079; x=1738062879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yxwX7BPSuszkHp6D+XbucJtCVXIOlfH3y1QCR8ZPf3w=;
-        b=tRx1+gjnsVxlpf1SfB64Ei48AkVzwHX91k43YPBaJhhpDiftYZxnIEtvH0sZinOVoC
-         +3hOw+P4VD5UDv7eSzAh9gSv+Z+zfIaifZyCIN2argFaYcnyzlv1pkIOpbP2lsd94lNv
-         xl7YQ3wykQp3D1/sZDgposIDNz+HuZVyNbz/Sby7exN8oVPyrtyBDh0s4fcqQ2Cbn862
-         QZsLT6WVy27zybBWYPv8LMsbbiOv19B0T9PTPbL1mgc22VKDYx0dFY+8uMlUqoT2phkT
-         7M2z1r06jfCL1XDKQNZ9Xpxm3NULh86Yg8JZtpzceqjonDyf0VFDAShMNLCDls7vrzaV
-         DUHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjarzu9pCeM3C3yTtHDzdtTIwkefMCEfp+CIRa2zon3iQ8pGAVGt4dk+L9o6PQkdlpkVuFGiPx@vger.kernel.org, AJvYcCUrqJJ5jAB1ECmpMZ72Mwd/vCMizW4i7PMBFml2SAY61efUz6xNqlHxcd3OPeeNpq/IMkCeaYpZsMy5AVaMQA==@vger.kernel.org, AJvYcCWwvN9i5WPkP7sQLIzTJ51WxXsYcMuOG22UWCVykmqmOv/59GotVMIGz4HmqD8Wh7+4G2aKy3AzP5gW85cl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkTOsZi4wd13PuWNOFCnVt3yOHBHR8W2tipIROJ6S6DKh/Fuws
-	Iy+lUD414IDulhCu9I0We23XOYrmfp927fMXmPAhhvlE8YiddHBu
-X-Gm-Gg: ASbGncvcWDL2Pl/J+Qa0iRkNd6tftyngk1EmK7eHmne99CHsvg0Jj23Qi+Q+pSA1NtP
-	nh+tTSqizVqG0QlZOcVUmfSXW7slhBALaArLMCRi91YwOuAGdtUPMo+kea4CuvSgFkwjaKyPcSW
-	n/f/T1voR2yo5QznCphDnUp2VgYHtjJQuJ5S5lRaP0NXkQpsd/ES288R8UQVKb7zzYjAYqwNZUG
-	zhtDfl/9SogyXZmCimkVCgDW2PbYLGNmalT7NSZ1m6GYu6LoqUAsM+ypx390GT4F7Jm/SpQHiiS
-	mtr46n5b48k10UiysSb+WFqA7kkArYdXwZTJfWNvXxMHfiZfV6q3dNzV0aOeHMoFqRI=
-X-Google-Smtp-Source: AGHT+IELsrdB1CQN2m+UnzgVC3Or0p2Dl8YBuYBjUSRZHoUx5TfI+wBdi58JW2SBSytuw2XO1WdB2Q==
-X-Received: by 2002:a05:6402:2792:b0:5da:105b:86c2 with SMTP id 4fb4d7f45d1cf-5db7db078b7mr13315810a12.20.1737457703905;
-        Tue, 21 Jan 2025 03:08:23 -0800 (PST)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73683d28sm7209841a12.40.2025.01.21.03.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 03:08:23 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sasha Levin <sashal@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Jan Kara <jack@suse.cz>,
-	Dmitry Safonov <dima@arista.com>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.6 3/3] fs: relax assertions on failure to encode file handles
-Date: Tue, 21 Jan 2025 12:08:15 +0100
-Message-Id: <20250121110815.416785-4-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250121110815.416785-1-amir73il@gmail.com>
-References: <20250121110815.416785-1-amir73il@gmail.com>
+        bh=dfL31C5SkfpnPUklSIvB0X0xW2/MmtrNueBSnIvz/YA=;
+        b=VFu13M9JBfVl3zuVFB9j4/PEQ9G/eRGgtzGiXHj+1+9xlVZ3+F9W3yVP33NFjpD9T+
+         Rs/mFyoyMCO7skV5OdLAzRIP6ksyyXHZFgMj6M4J8KKot7c01ipip/GbHvemVG0QzDox
+         AEp9WDRxBGj0mg/gMABUgjOmUzk5WTzG47JMiNwjNPuvQuz7TEG56hWu7qPzqn9yq3zS
+         Uu3ZNRRTa7IAFfezefZUDDornflN5ArkXVimok3cq9j1oz9Yy/88AUoR7buZJczqg5Fq
+         4yWfVZyvGjHA9a5MYuy1lPVNLVnrnjASgorQX2VUTrTtJKQp+pOml6KHhg/PRg1VlX0l
+         aF1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBBJhjZiQFPgwrgR4aJizT0vzLK0Z0xj6G45e+NW7oExaPXVXzsB+ziWCrH5chgConDawASqxYNMgiwctx@vger.kernel.org, AJvYcCX3gpVPSxFMdENa2JzNwbJAaRxMAfRPgFe9GYz171LbaPvg9WgHRrPs2BblE+QxDnE30kNc54tjMIXA58DJYA==@vger.kernel.org, AJvYcCXZnPkWrpsFYDndUaY+hIvH7mPUVASjUMIGBZE7E13aXnVwIay+pSl4WksqNNyNCzn3tBLtwMma@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9IYonUu7/dqFF7wkHqLv7kC9kbWv+LIBAAFDBGgifl9RBvDYt
+	K2ledHXB/EjueUVs8YezeXzmA8jwWxhhb32cgUN8CizM73zgeZctGrI2QoVeZ2KkNNaKQm09QDl
+	AqUsKb0GAP6izGuFtR+3gIUCxxes=
+X-Gm-Gg: ASbGncsjYGqSrCJ20iTR4oddoF+Db3jXfHoceiQSscH3cK6v2YmHSQDKQQy7k+Olm4E
+	jMABYI+f6T0VE+JCNN8wS72kZ322XRGm/flu7Uio1f+HndPXR3Y8=
+X-Google-Smtp-Source: AGHT+IFJIxWSVZE0dlP2IniBWyiO3x4ZjBobjyj7voUHXif4tJdvAl/FWXsgEg8Fy369LfQVWzoY++jE50xRxTzaZTs=
+X-Received: by 2002:a17:907:1c8b:b0:ab3:83c2:755a with SMTP id
+ a640c23a62f3a-ab38b402651mr1575817566b.49.1737458079107; Tue, 21 Jan 2025
+ 03:14:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250121110815.416785-1-amir73il@gmail.com>
+In-Reply-To: <20250121110815.416785-1-amir73il@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 21 Jan 2025 12:14:28 +0100
+X-Gm-Features: AbW1kvbNw22VX20HmoC_SNhy14TG3L-nywgI3RoArCS5Xpk4sf1STkqh6Wd08v8
+Message-ID: <CAOQ4uxj+LF602e3ypBHLpgWhO46CUaqn+sQ6Fcbq8r2cLJu8iA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 0/3] Manual backport of overlayfs fixes from v6.6.72
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sasha Levin <sashal@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	Dmitry Safonov <dima@arista.com>, Ignat Korchagin <ignat@cloudflare.com>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-commit 974e3fe0ac61de85015bbe5a4990cf4127b304b2 upstream.
+On Tue, Jan 21, 2025 at 12:08=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> Greg,
+>
+> Per your request, here is a manual backport of the overlayfs fixes that
+> were applied in v6.6.72 and reverted in v6.6.73.
+>
 
-Encoding file handles is usually performed by a filesystem >encode_fh()
-method that may fail for various reasons.
+Forgot to mention that I backported one extra patch from 6.12.y.
+It is not an overlayfs patch, but it fixes in a more generic way
+(removing an unneeded assertion) the same bug report that the
+overlayfs patches fix.
 
-The legacy users of exportfs_encode_fh(), namely, nfsd and
-name_to_handle_at(2) syscall are ready to cope with the possibility
-of failure to encode a file handle.
+Both fixes are needed, because the assertion could have been hit
+without overlayfs and because the overlayfs fixes are needed to
+fix bugs other than the assertion.
 
-There are a few other users of exportfs_encode_{fh,fid}() that
-currently have a WARN_ON() assertion when ->encode_fh() fails.
-Relax those assertions because they are wrong.
+Thanks,
+Amir.
 
-The second linked bug report states commit 16aac5ad1fa9 ("ovl: support
-encoding non-decodable file handles") in v6.6 as the regressing commit,
-but this is not accurate.
-
-The aforementioned commit only increases the chances of the assertion
-and allows triggering the assertion with the reproducer using overlayfs,
-inotify and drop_caches.
-
-Triggering this assertion was always possible with other filesystems and
-other reasons of ->encode_fh() failures and more particularly, it was
-also possible with the exact same reproducer using overlayfs that is
-mounted with options index=on,nfs_export=on also on kernels < v6.6.
-Therefore, I am not listing the aforementioned commit as a Fixes commit.
-
-Backport hint: this patch will have a trivial conflict applying to
-v6.6.y, and other trivial conflicts applying to stable kernels < v6.6.
-
-Reported-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Tested-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-unionfs/671fd40c.050a0220.4735a.024f.GAE@google.com/
-Reported-by: Dmitry Safonov <dima@arista.com>
-Closes: https://lore.kernel.org/linux-fsdevel/CAGrbwDTLt6drB9eaUagnQVgdPBmhLfqqxAf3F+Juqy_o6oP8uw@mail.gmail.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Link: https://lore.kernel.org/r/20241219115301.465396-1-amir73il@gmail.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fdinfo.c     | 4 +---
- fs/overlayfs/copy_up.c | 5 ++---
- 2 files changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 5c430736ec12c..26655572975d3 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -51,10 +51,8 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- 	size = f.handle.handle_bytes >> 2;
- 
- 	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
--	if ((ret == FILEID_INVALID) || (ret < 0)) {
--		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
-+	if ((ret == FILEID_INVALID) || (ret < 0))
- 		return;
--	}
- 
- 	f.handle.handle_type = ret;
- 	f.handle.handle_bytes = size * sizeof(u32);
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index e97bcf15c689c..18e018cb18117 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -399,9 +399,8 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs, struct inode *realinode,
- 	buflen = (dwords << 2);
- 
- 	err = -EIO;
--	if (WARN_ON(fh_type < 0) ||
--	    WARN_ON(buflen > MAX_HANDLE_SZ) ||
--	    WARN_ON(fh_type == FILEID_INVALID))
-+	if (fh_type < 0 || fh_type == FILEID_INVALID ||
-+	    WARN_ON(buflen > MAX_HANDLE_SZ))
- 		goto out_err;
- 
- 	fh->fb.version = OVL_FH_VERSION;
--- 
-2.34.1
-
+> For the record, this overlayfs series from v6.7 [2] changes subtle
+> internal semantics across overlayfs code, which are not detectable by
+> build error and therefore are a backporting landmine.
+>
+> This is exactly what happened with the automatic apply of dependecy
+> patch in v6.6.72.
+>
+> I will try to be extra diligent about review of auto backports below
+> v6.7 from now on.
+>
+> Luckily, the leaked mount reference was caught by a vfs assertion and
+> promptly reported by Ignat from Cloudflare team.
+>
+> Thanks!
+> Amir.
+>
+> [1] https://lore.kernel.org/stable/2025012123-cable-reburial-568e@gregkh/
+> [2] https://lore.kernel.org/linux-unionfs/20230816152334.924960-1-amir73i=
+l@gmail.com/
+>
+> Amir Goldstein (3):
+>   ovl: pass realinode to ovl_encode_real_fh() instead of realdentry
+>   ovl: support encoding fid from inode with no alias
+>   fs: relax assertions on failure to encode file handles
+>
+>  fs/notify/fdinfo.c       |  4 +---
+>  fs/overlayfs/copy_up.c   | 16 ++++++-------
+>  fs/overlayfs/export.c    | 49 ++++++++++++++++++++++------------------
+>  fs/overlayfs/namei.c     |  4 ++--
+>  fs/overlayfs/overlayfs.h |  2 +-
+>  5 files changed, 39 insertions(+), 36 deletions(-)
+>
+> --
+> 2.34.1
+>
 
