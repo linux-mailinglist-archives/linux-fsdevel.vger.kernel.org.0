@@ -1,220 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-39803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A30A1878B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:58:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6FCA187F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 23:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B4C93A531B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3353A56E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3381F8ACB;
-	Tue, 21 Jan 2025 21:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E951F8EE9;
+	Tue, 21 Jan 2025 22:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5GdrBI4"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z1243yu1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0O+Gu05j";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z1243yu1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0O+Gu05j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F081F8913;
-	Tue, 21 Jan 2025 21:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F091F8901;
+	Tue, 21 Jan 2025 22:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737496681; cv=none; b=enF4Bx24ZrfF4gnFcB7/8ZRN8KcTYlAgvIeBHufxoyADy1GpcxU0nWdAKI2+LMcVBFJmixk65ZBFiV2ImRuA78xe4N0xxKJ3JxoJOojVJUSkRFOvIaqo1OXmP1g14H/o7NhcNKO5bcIbjRxC6zZIvX2HaOF8mniqhxuX5aKo7w8=
+	t=1737500364; cv=none; b=ucHUC3iXMxhKBIzUSfaz/8tL94eDC6EIQDH2mn6QrxnGYM/Et6XKVmJ0Ng9JF4xrdUDpAfWnyfG3Yfn77/7+SsuWrv6vZy402RpTiYiwu7kIXxk5EkeoElYeQBIzzvWyTRfehSq14Hpt8fpxq08DMWgoBGQeUcH4uDYSibDWN1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737496681; c=relaxed/simple;
-	bh=daBzD//cBkg5rogE6pEcC4+gYYpGqWl0biKOXvthShQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UsLSjLcwtnMsFbuCARmtN4m9PvUaw4y4OnQChVVskkaf/11dvgs8ItuOK6FeEtF77q0GYC2HznO5ByYbTCbVIBixFRk3HOeHtr+Ph2NR7rtmCUuxTRoFFMUVh0aNqDrmetY+KixoX2AFxlk0hY1rntmz3ijUTgXT+ufOASvzTnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5GdrBI4; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e46c6547266so8954263276.3;
-        Tue, 21 Jan 2025 13:57:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737496678; x=1738101478; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p90TONDalliPlYjPPsOYvMlU+K4gQUMKH3aG4J/s8yc=;
-        b=D5GdrBI47vsUAWgRQBY9UatEjAM2/SZdRnQHAI1RvwwJsDg++ZVkrnUQNV6g/RjZj/
-         pM4sGJgnaCDLDvlhIuDwhGHg1Sdlyhl7T6m+f3Kr6YXiC9ob+Z1L/MymYA/ydjnpO2CO
-         BY4f0WsERBdbBgcgTkVGMC/gndmzqBwxoX+XVHGsQm74YQxH6NkLXlj/u4EgiAjcqO21
-         3SquKmuUYS3tdAKkBZwcSKszIu1QD+jUUjjZSgcrxRcpcaq5U2YUB8xbILwmt7PD3+wQ
-         kfl+NUTvBhN5QTOULpzPLAUmQtcQbC1ZrMAYx4fFRJETUbPdTvy3aQezwpS36I4aeNVy
-         MsHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737496678; x=1738101478;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p90TONDalliPlYjPPsOYvMlU+K4gQUMKH3aG4J/s8yc=;
-        b=KbuDQZcm23Za8zzYgLQT+oEp669PQR4hHdYPu62nDFzE9o6NqxEnviKV93ekvVDD9c
-         7HqaqSYYsvqY4kFVH5PUKM/n11cWQmXRB3sdfAzMQuQoCNE70CjPAy198Msw+u2SgWao
-         JgYJHVCHnPXzy0qi3xNgJOXR7eckJClHnfu3peqGnQ6U2nQRAqTtkjOaSVjeAB7t56Xk
-         ElBt0rnt9crWi7/rPLA1cFDZZLC4IaGSqGyRAOo5QM/w5Cl4e6IPJPs6SkMUkwJiZJq+
-         NeSBzVFfslJQBr49YNnDimq2YvJWt25CIZOvmvoAzZfykQVIvlmOy/bsE9VX38xmer3m
-         d5cg==
-X-Gm-Message-State: AOJu0YwnmG1Fc4tRdhsaK0BE7hr/8aYu5hyo+RtcZrD3iZykjNPN4EwA
-	RkpIyYHnBy31v5XaeAWO9uUc9nhr8WsxU7KBwWUHDHz1j+9VECKGxMal4Q==
-X-Gm-Gg: ASbGnctfMQ7H1tYXNTWF9qpUJ0/64GWEv7XnFk0k1WAWCc+3bOwpf6RZXHm5N+2SgQW
-	8Zs1pvXtbv6EpNLtC2hgXryEpCfO1EwzQyXwVkAFZMVpdvbe6iXBwisInq969ENXgAefaKBrsNt
-	oWGuy7GSkg0MjMETsu1RWOwERYmONaYRsofVUK3pijJRjpyVFIZnBH+LL0DPctJY1xtrp3LIMqn
-	ArzPo1cWd+dcE3cuKphEuobu763jVUqD/CfdYT4VQA4kBR491uPFDZZN4D8jXVjJcI=
-X-Google-Smtp-Source: AGHT+IFmvaCmmiQ82v5xYu6S4f5vefDSLrJUTgNzpkacFGYkawWwEP3UxMXw+8/a/x37kHBGoekXgA==
-X-Received: by 2002:a05:690c:c83:b0:6db:c847:c8c5 with SMTP id 00721157ae682-6f6eb67bca1mr172803707b3.16.1737496678480;
-        Tue, 21 Jan 2025 13:57:58 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:3::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e66f8dc7sm18206407b3.116.2025.01.21.13.57.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 13:57:58 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	bfoster@redhat.com,
-	djwong@kernel.org,
-	nirjhar@linux.ibm.com,
-	zlang@redhat.com,
-	kernel-team@meta.com
-Subject: [PATCH v5 2/2] generic: add tests for read/writes from hugepages-backed buffers
-Date: Tue, 21 Jan 2025 13:56:41 -0800
-Message-ID: <20250121215641.1764359-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250121215641.1764359-1-joannelkoong@gmail.com>
-References: <20250121215641.1764359-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1737500364; c=relaxed/simple;
+	bh=NE1K7/EfR0OLAbsoFsB66+lGGFQK2Cqa6U3NJXbQgwA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Ckrs/zpF3HRhDrXFWmiI+1IbP0M052DHlJJiX9J0zbN6L0oztgdx/L6BI9RgZD6MY+G16bZ0+048Q+tFKc08yIdIPsKolmk2p0WojxUzuv2PruUTp31nq83wfchX9iOPLKdKQSxYiYiUNEE0gW7zPhfM/LGKeFw00pLJfkeNzOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z1243yu1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0O+Gu05j; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z1243yu1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0O+Gu05j; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4716F1F391;
+	Tue, 21 Jan 2025 22:59:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737500358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPFZqVyR8tMuCZQo63k6WvpkcMgpQEahSeqcjs/1/zs=;
+	b=z1243yu13wsjkyPJMMIiuWEukNof9b8vM3wwAf0eIH7y1KmLzAc7+tkeQ6ezlFikltuPN5
+	qDK2W4Pz48HDnDHO5wKxo7DvcmF6L/2C46v6MEJiseqiT/RT/hKE5RgVHske/FXTLNZF8O
+	XQhkBuAR9hYZNRUMyaFsH1BiYjXlVMw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737500358;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPFZqVyR8tMuCZQo63k6WvpkcMgpQEahSeqcjs/1/zs=;
+	b=0O+Gu05jZfdMPHlt+wiNs+V/p878vufoGmLu/NZXWY/5nCOAGj5JDgjgYDC2tyMjEbMPxe
+	EIit9fKrOBd+54Aw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=z1243yu1;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0O+Gu05j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737500358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPFZqVyR8tMuCZQo63k6WvpkcMgpQEahSeqcjs/1/zs=;
+	b=z1243yu13wsjkyPJMMIiuWEukNof9b8vM3wwAf0eIH7y1KmLzAc7+tkeQ6ezlFikltuPN5
+	qDK2W4Pz48HDnDHO5wKxo7DvcmF6L/2C46v6MEJiseqiT/RT/hKE5RgVHske/FXTLNZF8O
+	XQhkBuAR9hYZNRUMyaFsH1BiYjXlVMw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737500358;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPFZqVyR8tMuCZQo63k6WvpkcMgpQEahSeqcjs/1/zs=;
+	b=0O+Gu05jZfdMPHlt+wiNs+V/p878vufoGmLu/NZXWY/5nCOAGj5JDgjgYDC2tyMjEbMPxe
+	EIit9fKrOBd+54Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1C9C41387C;
+	Tue, 21 Jan 2025 22:59:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iFatL8MmkGe4HAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 21 Jan 2025 22:59:15 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ "Trond Myklebust" <trondmy@hammerspace.com>
+Subject: Re: [PATCH v2] nfsd: map EBUSY to NFS4ERR_ACCESS for all operations
+In-reply-to:
+ <CAOQ4uxh4PS0d6HuHCM_GTfNDpkM1EJ5G55Fs83tDRW0bGu2v-A@mail.gmail.com>
+References:
+ <>, <CAOQ4uxh4PS0d6HuHCM_GTfNDpkM1EJ5G55Fs83tDRW0bGu2v-A@mail.gmail.com>
+Date: Wed, 22 Jan 2025 09:59:08 +1100
+Message-id: <173750034870.22054.1620003974639602049@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 4716F1F391
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add generic tests 758 and 759 for testing reads/writes from buffers
-backed by hugepages.
+On Wed, 22 Jan 2025, Amir Goldstein wrote:
+> On Tue, Jan 21, 2025 at 8:45=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
+> wrote:
+> >
+> > Please send patches To: the NFSD reviewers listed in MAINTAINERS and
+> > Cc: linux-nfs and others. Thanks!
+> >
+> >
+> > On 1/21/25 5:39 AM, Amir Goldstein wrote:
+> > > Commit 466e16f0920f3 ("nfsd: check for EBUSY from vfs_rmdir/vfs_unink.")
+> > > mapped EBUSY host error from rmdir/unlink operation to avoid unknown
+> > > error server warning.
+> >
+> > > The same reason that casued the reported EBUSY on rmdir() (dir is a
+> > > local mount point in some other bind mount) could also cause EBUSY on
+> > > rename and some filesystems (e.g. FUSE) can return EBUSY on other
+> > > operations like open().
+> > >
+> > > Therefore, to avoid unknown error warning in server, we need to map
+> > > EBUSY for all operations.
+> > >
+> > > The original fix mapped EBUSY to NFS4ERR_FILE_OPEN in v4 server and
+> > > to NFS4ERR_ACCESS in v2/v3 server.
+> > >
+> > > During the discussion on this issue, Trond claimed that the mapping
+> > > made from EBUSY to NFS4ERR_FILE_OPEN was incorrect according to the
+> > > protocol spec and specifically, NFS4ERR_FILE_OPEN is not expected
+> > > for directories.
+> >
+> > NFS4ERR_FILE_OPEN might be incorrect when removing certain types of
+> > file system objects. Here's what I find in RFC 8881 Section 18.25.4:
+> >
+> >  > If a file has an outstanding OPEN and this prevents the removal of the
+> >  > file's directory entry, the error NFS4ERR_FILE_OPEN is returned.
+> >
+> > It's not normative, but it does suggest that any object that cannot be
+> > associated with an OPEN state ID should never cause REMOVE to return
+> > NFS4ERR_FILE_OPEN.
+> >
+> >
+> > > To keep things simple and consistent and avoid the server warning,
+> > > map EBUSY to NFS4ERR_ACCESS for all operations in all protocol versions.
+> >
+> > Generally a "one size fits all" mapping for these status codes is
+> > not going to cut it. That's why we have nfsd3_map_status() and
+> > nfsd_map_status() -- the set of permitted status codes for each
+> > operation is different for each NFS version.
+> >
+> > NFSv3 has REMOVE and RMDIR. You can't pass a directory to NFSv3 REMOVE.
+> >
+> > NFSv4 has only REMOVE, and it removes the directory entry for the
+> > object no matter its type. The set of failure modes is different for
+> > this operation compared to NFSv3 REMOVE.
+> >
+> > Adding a specific mapping for -EBUSY in nfserrno() is going to have
+> > unintended consequences for any VFS call NFSD might make that returns
+> > -EBUSY.
+> >
+> > I think I prefer that the NFSv4 cases be dealt with in nfsd4_remove(),
+> > nfsd4_rename(), and nfsd4_link(), and that -EBUSY should continue to
+> > trigger a warning.
+> >
+> >
+>=20
+> Sorry, I didn't understand what you are suggesting.
+>=20
+> FUSE can return EBUSY for open().
+> What do you suggest to do when nfsd encounters EBUSY on open()?
+>=20
+> vfs_rename() can return EBUSY.
+> What do you suggest to do when nfsd v3 encounters EBUSY on rename()?
+>=20
+> This sort of assertion:
+>         WARN_ONCE(1, "nfsd: non-standard errno: %d\n", errno);
+>=20
+> Is a code assertion for a situation that should not be possible in the
+> code and certainly not possible to trigger by userspace.
+>=20
+> Both cases above could trigger the warning from userspace.
+> If you want to leave the warning it should not be a WARN_ONCE()
+> assertion, but I must say that I did not understand the explanation
+> for not mapping EBUSY by default to NFS4ERR_ACCESS in nfserrno().
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
----
- common/rc             | 13 +++++++++++++
- tests/generic/758     | 22 ++++++++++++++++++++++
- tests/generic/758.out |  4 ++++
- tests/generic/759     | 26 ++++++++++++++++++++++++++
- tests/generic/759.out |  4 ++++
- 5 files changed, 69 insertions(+)
- create mode 100755 tests/generic/758
- create mode 100644 tests/generic/758.out
- create mode 100755 tests/generic/759
- create mode 100644 tests/generic/759.out
+My answer to this last question is that it isn't obvious that EBUSY
+should map to NFS4ERR_ACCESS.
+I would rather that nfsd explicitly checked the error from unlink/rmdir and
+mapped EBUSY to NFS4ERR_ACCESS (if we all agree that is best) with a
+comment (like we have now) explaining why it is best.
+And nfsd should explicitly check the error from open() and map EBUSY to
+whatever seems appropriate.  Maybe that is also NS4ERR_ACCESS but if it
+is, the reason is likely different to the reason that it is best for
+rmdir.
+So again, I would like a comment in the code explaining the choice with
+a reference to FUSE.
 
-diff --git a/common/rc b/common/rc
-index 1b2e4508..0c44d096 100644
---- a/common/rc
-+++ b/common/rc
-@@ -3016,6 +3016,19 @@ _require_xfs_io_command()
- 	fi
- }
- 
-+# check that the system supports transparent hugepages
-+_require_thp()
-+{
-+	if [ ! -e /sys/kernel/mm/transparent_hugepage/enabled ]; then
-+		_notrun "system doesn't support transparent hugepages"
-+	fi
-+
-+	thp_status=$(cat /sys/kernel/mm/transparent_hugepage/enabled)
-+	if [[ $thp_status == *"[never]"* ]]; then
-+		_notrun "system doesn't have transparent hugepages enabled"
-+	fi
-+}
-+
- # check that kernel and filesystem support direct I/O, and check if "$1" size
- # aligned (optional) is supported
- _require_odirect()
-diff --git a/tests/generic/758 b/tests/generic/758
-new file mode 100755
-index 00000000..e7cd8cdc
---- /dev/null
-+++ b/tests/generic/758
-@@ -0,0 +1,22 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# FS QA Test No. 758
-+#
-+# fsx exercising reads/writes from userspace buffers
-+# backed by hugepages
-+#
-+. ./common/preamble
-+_begin_fstest rw auto quick
-+
-+. ./common/filter
-+
-+_require_test
-+_require_thp
-+
-+run_fsx -N 10000            -l 500000 -h
-+run_fsx -N 10000  -o 8192   -l 500000 -h
-+run_fsx -N 10000  -o 128000 -l 500000 -h
-+
-+status=0
-+exit
-diff --git a/tests/generic/758.out b/tests/generic/758.out
-new file mode 100644
-index 00000000..af04bb14
---- /dev/null
-+++ b/tests/generic/758.out
-@@ -0,0 +1,4 @@
-+QA output created by 758
-+fsx -N 10000 -l 500000 -h
-+fsx -N 10000 -o 8192 -l 500000 -h
-+fsx -N 10000 -o 128000 -l 500000 -h
-diff --git a/tests/generic/759 b/tests/generic/759
-new file mode 100755
-index 00000000..514e7603
---- /dev/null
-+++ b/tests/generic/759
-@@ -0,0 +1,26 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# FS QA Test No. 759
-+#
-+# fsx exercising direct IO reads/writes from userspace buffers
-+# backed by hugepages
-+#
-+. ./common/preamble
-+_begin_fstest rw auto quick
-+
-+. ./common/filter
-+
-+_require_test
-+_require_odirect
-+_require_thp
-+
-+psize=`$here/src/feature -s`
-+bsize=`$here/src/min_dio_alignment $TEST_DIR $TEST_DEV`
-+
-+run_fsx -N 10000            -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+run_fsx -N 10000  -o 8192   -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+run_fsx -N 10000  -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+
-+status=0
-+exit
-diff --git a/tests/generic/759.out b/tests/generic/759.out
-new file mode 100644
-index 00000000..86bb66ef
---- /dev/null
-+++ b/tests/generic/759.out
-@@ -0,0 +1,4 @@
-+QA output created by 759
-+fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-+fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
--- 
-2.47.1
+Then if some other function that we haven't thought about starts
+returning EBUSY, we'll get warning and have a change to think about it.
+
+Thanks,
+NeilBrown
 
 
