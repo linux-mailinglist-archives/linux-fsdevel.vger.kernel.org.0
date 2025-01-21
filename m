@@ -1,52 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-39777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A7CA17E8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 14:10:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247E7A17F08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 14:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA887163735
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 13:09:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0AFA7A12CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 13:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5151F2399;
-	Tue, 21 Jan 2025 13:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EC61F37D4;
+	Tue, 21 Jan 2025 13:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qe8yIPES"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XXJc1fjY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C15F1F1308;
-	Tue, 21 Jan 2025 13:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E391119A;
+	Tue, 21 Jan 2025 13:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737464972; cv=none; b=fgbwWXACbwR9TuSk5H0XbNft1SGDpWCnhQ39q73Gwwg8cTAgYCmV98H0uinzgMA2MrD8RAQdixR8uJJeDqzTFVeUzc0CbjslblFTRMvebqb2ngXcKlJhUfhU5889dqIIGpZ8JdLVuA9Vr/ABcXzL3vYnwuvA/P2cYnmaIe7roIo=
+	t=1737466858; cv=none; b=bJQoNIMjC/ZXVoJ9wiufPCSv5ONcgARl1wWqraDdni4qk1GowmVhzTHL6R998R8EqbzgTlSvgGzEZlCYymJCYngaqJ0SXqrrIhxezLxr2xByS2OncKC/RsC8VRnyt47GMNuAI5uxtioi9uIDm14kjd45oLvhwocHzVQ4q/+2rSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737464972; c=relaxed/simple;
-	bh=tOhnY1NQ7j95wqrQH6ObAODTprbfEenFUqc3H25LPb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=U2x/QxQaw52zK1QAeff5TQqfh3ycxKRuW9ZfLIQxBP6TK8+t3cH5nZcU2iFYIPbD6yEpJmJckXY+tJ9+GsFKbPWkZYkX86gxQQ/SBgV/2PP1UM+f1BCZafXguqzpJSe5l6epl0UoTmEd2Ldr/MuQZqp84PIj4xvfNxxYXNGDddM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qe8yIPES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7C52C4CEDF;
-	Tue, 21 Jan 2025 13:09:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737464972;
-	bh=tOhnY1NQ7j95wqrQH6ObAODTprbfEenFUqc3H25LPb8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Qe8yIPESYrz78wWu1HVRTKBYo5O0R2vz1ILVWX4+y3DyBLYYAfHjH4lWEsNPXWGxF
-	 CzW+gKgdk7DWfpIiekfLVvkouedbS7AuLmiDR9YLBzg7HE/o0O3VlkX92tMf57IUrH
-	 yUSmxh0f2OCVRICj83UXc110vVydpy3QiWNrVyXuyoKSEHQ7UuhGHtulb+uFnx5qM9
-	 P0Upl9Qz4rJldxBHZ9qejRnW8PhEqSshpEGBWpPJjkRPeNMrR0+tOmUDYuUjs3aZh4
-	 Ma3qZJjQRo7NG4da+Yp7XqeLJBF917Jy7N+FFXA1gJ+Oo3Y+FUzIHuFCRjT1gDliUs
-	 V5szF/1sInsIw==
-Date: Tue, 21 Jan 2025 14:09:27 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: xfs: new code for 6.14
-Message-ID: <i6yf5ledzs4qdt5zhrpg7nz5neyygktthupap6uulpuojcx7un@phdanup4alqb>
+	s=arc-20240116; t=1737466858; c=relaxed/simple;
+	bh=O6UDpyy68BQo7X626NvkAmSzVuRiTAwo5GjYO1FKjts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEQwzI8gOlpxKvmAG5rEfLCFl3QaHckMVAjI5Qbbgr4hNKX7uuOo8DAHBjFUMyQU0qjpKhxAxpFG5zZ9VVeS8VVvzYJwFYfVmgQyFpWy4z/+SgRVlBJvhROJWQm0JcpvL70u98TRZpKvMYUSvw0amTkvcpyZ6mIXFj1TysfDmYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XXJc1fjY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50LBcWDl021758;
+	Tue, 21 Jan 2025 13:40:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=1XuHjAhe+6crgeyPxGiThULHkHEa/Q
+	wDtL3yiBvZqn4=; b=XXJc1fjY1LEte8uWYOHY0rVlVq4wX9PCcoXpIbn1EYs9EL
+	OD4/8pPTNQ9wGah7zwpokGzeZLvKhyS2XwyswSQynQSvx4Pq0nVXT5v0PMm1KdzN
+	F6FmU2v9zN3MF0dGtVIr8337iz/SeaELL+AkChcaIBTAfjVK9Q1TKCVQHZUYF4b8
+	lkEmavTZcGG7bcRDLLuw9HOFrKWm+iyEw+rBb1iDcR2ksQakFyzbWZB9l+0n9NZH
+	7bFXS3CXhWJ3qAfxFUQeEb9d90I2xBmDXS8qIuY9SsKjzzFL1VStL4eYIhJR/WhB
+	kacwVPn3TvuRt93neu9S0HZxZA9oxnhjkLM3qkFg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44a1n9b0sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Jan 2025 13:40:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50LAtOsq021012;
+	Tue, 21 Jan 2025 13:40:19 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 448sb1b14q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Jan 2025 13:40:19 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50LDeIWj60031254
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Jan 2025 13:40:18 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 25C3B2004B;
+	Tue, 21 Jan 2025 13:40:18 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7FD1A20040;
+	Tue, 21 Jan 2025 13:40:17 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 21 Jan 2025 13:40:17 +0000 (GMT)
+Date: Tue, 21 Jan 2025 14:40:16 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+        codalist@coda.cs.cmu.edu, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+        io-uring@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: Re: [PATCH v2] treewide: const qualify ctl_tables where applicable
+Message-ID: <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,321 +106,131 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mWjZL4Eizm--6YwnTI2RlL8astD0-e-i
+X-Proofpoint-GUID: mWjZL4Eizm--6YwnTI2RlL8astD0-e-i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-21_05,2025-01-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 clxscore=1011 priorityscore=1501
+ spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2501210112
+
+On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
+
+Hi Joel,
+
+> Add the const qualifier to all the ctl_tables in the tree except for
+> watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+> loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+> drivers/inifiniband dirs). These are special cases as they use a
+> registration function with a non-const qualified ctl_table argument or
+> modify the arrays before passing them on to the registration function.
+> 
+> Constifying ctl_table structs will prevent the modification of
+> proc_handler function pointers as the arrays would reside in .rodata.
+> This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> constify the ctl_table argument of proc_handlers") constified all the
+> proc_handlers.
+
+I could identify at least these occurences in s390 code as well:
+
+diff --git a/arch/s390/appldata/appldata_base.c b/arch/s390/appldata/appldata_base.c
+index dd7ba7587dd5..9b83c318f919 100644
+--- a/arch/s390/appldata/appldata_base.c
++++ b/arch/s390/appldata/appldata_base.c
+@@ -204,7 +204,7 @@ appldata_timer_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int timer_active = appldata_timer_active;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &timer_active,
+ 		.maxlen		= sizeof(int),
+@@ -237,7 +237,7 @@ appldata_interval_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int interval = appldata_interval;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &interval,
+ 		.maxlen		= sizeof(int),
+@@ -269,7 +269,7 @@ appldata_generic_handler(const struct ctl_table *ctl, int write,
+ 	struct list_head *lh;
+ 	int rc, found;
+ 	int active;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.data		= &active,
+ 		.maxlen		= sizeof(int),
+ 		.extra1		= SYSCTL_ZERO,
+diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+index 7857a7e8e56c..7d0ba16085c1 100644
+--- a/arch/s390/kernel/hiperdispatch.c
++++ b/arch/s390/kernel/hiperdispatch.c
+@@ -273,7 +273,7 @@ static int hiperdispatch_ctl_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int hiperdispatch;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &hiperdispatch,
+ 		.maxlen		= sizeof(int),
+diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+index 6691808bf50a..26e50de83d80 100644
+--- a/arch/s390/kernel/topology.c
++++ b/arch/s390/kernel/topology.c
+@@ -629,7 +629,7 @@ static int topology_ctl_handler(const struct ctl_table *ctl, int write,
+ 	int enabled = topology_is_enabled();
+ 	int new_mode;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &enabled,
+ 		.maxlen		= sizeof(int),
+@@ -658,7 +658,7 @@ static int polarization_ctl_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int polarization;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &polarization,
+ 		.maxlen		= sizeof(int),
+diff --git a/arch/s390/mm/cmm.c b/arch/s390/mm/cmm.c
+index 939e3bec2db7..8e354c90a3dd 100644
+--- a/arch/s390/mm/cmm.c
++++ b/arch/s390/mm/cmm.c
+@@ -263,7 +263,7 @@ static int cmm_pages_handler(const struct ctl_table *ctl, int write,
+ 			     void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	long nr = cmm_get_pages();
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &nr,
+ 		.maxlen		= sizeof(long),
+@@ -283,7 +283,7 @@ static int cmm_timed_pages_handler(const struct ctl_table *ctl, int write,
+ 				   loff_t *ppos)
+ {
+ 	long nr = cmm_get_timed_pages();
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &nr,
+ 		.maxlen		= sizeof(long),
 
 
-Hi Linus,
+> Best regards,
+> -- 
+> Joel Granados <joel.granados@kernel.org>
 
-could you please pull the patches below?
-
-This pull request are mostly focused on the implementation of reflink
-and reverse-mapping support for XFS's real-time devices.
-This also includes several bugfixes.
-
-The patches are in linux-next for a few days already, and a trial
-merge just now, against your TOT didn't show any conflicts.
-
-Thanks,
-Carlos.
-
-The following changes since commit 111d36d6278756128b7d7fab787fdcbf8221cd98:
-
-  xfs: lock dquot buffer before detaching dquot from b_li_list (2025-01-10 10:12:48 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-merge-6.14
-
-for you to fetch changes up to ee10f6fcdb961e810d7b16be1285319c15c78ef6:
-
-  xfs: fix buffer lookup vs release race (2025-01-16 10:19:59 +0100)
-
-----------------------------------------------------------------
-New XFS code for 6.14
-
-* Implement reflink support for the realtime device
-* Implement reverse-mapping support for the realtime device
-* Several bug fixes and cleanups
-
-Signed-off-by: Carlos Maiolino <cem@kernel.org>
-
-----------------------------------------------------------------
-Carlos Maiolino (5):
-      Merge tag 'xfs-6.13-fixes_2024-12-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into for-next
-      Merge tag 'btree-ifork-records_2024-12-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into for-next
-      Merge tag 'reserve-rt-metadata-space_2024-12-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into for-next
-      Merge tag 'realtime-rmap_2024-12-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into for-next
-      Merge tag 'realtime-reflink_2024-12-23' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into for-next
-
-Christoph Hellwig (25):
-      xfs: refactor xfs_reflink_find_shared
-      xfs: mark xfs_dir_isempty static
-      xfs: remove XFS_ILOG_NONCORE
-      xfs: remove the t_magic field in struct xfs_trans
-      xfs: fix the comment above xfs_discard_endio
-      xfs: don't take m_sb_lock in xfs_fs_statfs
-      xfs: refactor xfs_fs_statfs
-      xfs: constify feature checks
-      xfs: fix a double completion for buffers on in-memory targets
-      xfs: remove the incorrect comment above xfs_buf_free_maps
-      xfs: remove the incorrect comment about the b_pag field
-      xfs: move xfs_buf_iowait out of (__)xfs_buf_submit
-      xfs: simplify xfs_buf_delwri_pushbuf
-      xfs: remove xfs_buf_delwri_submit_buffers
-      xfs: move write verification out of _xfs_buf_ioapply
-      xfs: move in-memory buftarg handling out of _xfs_buf_ioapply
-      xfs: simplify buffer I/O submission
-      xfs: move invalidate_kernel_vmap_range to xfs_buf_ioend
-      xfs: remove the extra buffer reference in xfs_buf_submit
-      xfs: always complete the buffer inline in xfs_buf_submit
-      xfs: simplify xfsaild_resubmit_item
-      xfs: move b_li_list based retry handling to common code
-      xfs: add a b_iodone callback to struct xfs_buf
-      xfs: check for dead buffers in xfs_buf_find_insert
-      xfs: fix buffer lookup vs release race
-
-Darrick J. Wong (91):
-      xfs: don't over-report free space or inodes in statvfs
-      xfs: tidy up xfs_iroot_realloc
-      xfs: release the dquot buf outside of qli_lock
-      xfs: refactor the inode fork memory allocation functions
-      xfs: make xfs_iroot_realloc take the new numrecs instead of deltas
-      xfs: make xfs_iroot_realloc a bmap btree function
-      xfs: tidy up xfs_bmap_broot_realloc a bit
-      xfs: hoist the node iroot update code out of xfs_btree_new_iroot
-      xfs: hoist the node iroot update code out of xfs_btree_kill_iroot
-      xfs: add some rtgroup inode helpers
-      xfs: prepare rmap btree cursor tracepoints for realtime
-      xfs: prepare to reuse the dquot pointer space in struct xfs_inode
-      xfs: simplify the xfs_rmap_{alloc,free}_extent calling conventions
-      xfs: support storing records in the inode core root
-      xfs: allow inode-based btrees to reserve space in the data device
-      xfs: introduce realtime rmap btree ondisk definitions
-      xfs: realtime rmap btree transaction reservations
-      xfs: add realtime rmap btree operations
-      xfs: prepare rmap functions to deal with rtrmapbt
-      xfs: add a realtime flag to the rmap update log redo items
-      xfs: support recovering rmap intent items targetting realtime extents
-      xfs: pretty print metadata file types in error messages
-      xfs: support file data forks containing metadata btrees
-      xfs: add realtime reverse map inode to metadata directory
-      xfs: add metadata reservations for realtime rmap btrees
-      xfs: wire up a new metafile type for the realtime rmap
-      xfs: wire up rmap map and unmap to the realtime rmapbt
-      xfs: create routine to allocate and initialize a realtime rmap btree inode
-      xfs: wire up getfsmap to the realtime reverse mapping btree
-      xfs: check that the rtrmapbt maxlevels doesn't increase when growing fs
-      xfs: report realtime rmap btree corruption errors to the health system
-      xfs: allow queued realtime intents to drain before scrubbing
-      xfs: scrub the realtime rmapbt
-      xfs: cross-reference realtime bitmap to realtime rmapbt scrubber
-      xfs: cross-reference the realtime rmapbt
-      xfs: scan rt rmap when we're doing an intense rmap check of bmbt mappings
-      xfs: scrub the metadir path of rt rmap btree files
-      xfs: walk the rt reverse mapping tree when rebuilding rmap
-      xfs: online repair of realtime file bmaps
-      xfs: repair inodes that have realtime extents
-      xfs: repair rmap btree inodes
-      xfs: online repair of realtime bitmaps for a realtime group
-      xfs: support repairing metadata btrees rooted in metadir inodes
-      xfs: online repair of the realtime rmap btree
-      xfs: create a shadow rmap btree during realtime rmap repair
-      xfs: hook live realtime rmap operations during a repair operation
-      xfs: don't shut down the filesystem for media failures beyond end of log
-      xfs: react to fsdax failure notifications on the rt device
-      xfs: enable realtime rmap btree
-      xfs: prepare refcount btree cursor tracepoints for realtime
-      xfs: namespace the maximum length/refcount symbols
-      xfs: introduce realtime refcount btree ondisk definitions
-      xfs: realtime refcount btree transaction reservations
-      xfs: add realtime refcount btree operations
-      xfs: prepare refcount functions to deal with rtrefcountbt
-      xfs: add a realtime flag to the refcount update log redo items
-      xfs: support recovering refcount intent items targetting realtime extents
-      xfs: add realtime refcount btree block detection to log recovery
-      xfs: add realtime refcount btree inode to metadata directory
-      xfs: add metadata reservations for realtime refcount btree
-      xfs: wire up a new metafile type for the realtime refcount
-      xfs: wire up realtime refcount btree cursors
-      xfs: create routine to allocate and initialize a realtime refcount btree inode
-      xfs: update rmap to allow cow staging extents in the rt rmap
-      xfs: compute rtrmap btree max levels when reflink enabled
-      xfs: refactor reflink quota updates
-      xfs: enable CoW for realtime data
-      xfs: enable sharing of realtime file blocks
-      xfs: allow inodes to have the realtime and reflink flags
-      xfs: recover CoW leftovers in the realtime volume
-      xfs: fix xfs_get_extsz_hint behavior with realtime alwayscow files
-      xfs: apply rt extent alignment constraints to CoW extsize hint
-      xfs: enable extent size hints for CoW operations
-      xfs: check that the rtrefcount maxlevels doesn't increase when growing fs
-      xfs: report realtime refcount btree corruption errors to the health system
-      xfs: scrub the realtime refcount btree
-      xfs: cross-reference checks with the rt refcount btree
-      xfs: allow overlapping rtrmapbt records for shared data extents
-      xfs: check reference counts of gaps between rt refcount records
-      xfs: allow dquot rt block count to exceed rt blocks on reflink fs
-      xfs: detect and repair misaligned rtinherit directory cowextsize hints
-      xfs: scrub the metadir path of rt refcount btree files
-      xfs: don't flag quota rt block usage on rtreflink filesystems
-      xfs: check new rtbitmap records against rt refcount btree
-      xfs: walk the rt reference count tree when rebuilding rmap
-      xfs: capture realtime CoW staging extents when rebuilding rt rmapbt
-      xfs: online repair of the realtime refcount btree
-      xfs: repair inodes that have a refcount btree in the data fork
-      xfs: check for shared rt extents when rebuilding rt file's data fork
-      xfs: fix CoW forks for realtime files
-      xfs: enable realtime reflink
-
-Long Li (4):
-      xfs: fix mount hang during primary superblock recovery failure
-      xfs: clean up xfs_end_ioend() to reuse local variables
-      xfs: remove redundant update for ticket->t_curr_res in xfs_log_ticket_regrant
-      xfs: remove bp->b_error check in xfs_attr3_root_inactive
-
-Mirsad Todorovac (1):
-      xfs/libxfs: replace kmalloc() and memcpy() with kmemdup()
-
- fs/xfs/Makefile                      |    6 +
- fs/xfs/libxfs/xfs_ag_resv.c          |    3 +
- fs/xfs/libxfs/xfs_attr.c             |    4 +-
- fs/xfs/libxfs/xfs_bmap.c             |   34 +-
- fs/xfs/libxfs/xfs_bmap_btree.c       |  111 ++++
- fs/xfs/libxfs/xfs_bmap_btree.h       |    3 +
- fs/xfs/libxfs/xfs_btree.c            |  411 +++++++++++---
- fs/xfs/libxfs/xfs_btree.h            |   28 +-
- fs/xfs/libxfs/xfs_btree_mem.c        |    1 +
- fs/xfs/libxfs/xfs_btree_staging.c    |   10 +-
- fs/xfs/libxfs/xfs_defer.h            |    2 +
- fs/xfs/libxfs/xfs_dir2.c             |    9 +-
- fs/xfs/libxfs/xfs_dir2.h             |    1 -
- fs/xfs/libxfs/xfs_errortag.h         |    4 +-
- fs/xfs/libxfs/xfs_exchmaps.c         |    4 +-
- fs/xfs/libxfs/xfs_format.h           |   51 +-
- fs/xfs/libxfs/xfs_fs.h               |   10 +-
- fs/xfs/libxfs/xfs_health.h           |    6 +-
- fs/xfs/libxfs/xfs_inode_buf.c        |   65 ++-
- fs/xfs/libxfs/xfs_inode_fork.c       |  201 +++----
- fs/xfs/libxfs/xfs_inode_fork.h       |    6 +-
- fs/xfs/libxfs/xfs_log_format.h       |   16 +-
- fs/xfs/libxfs/xfs_log_recover.h      |    4 +
- fs/xfs/libxfs/xfs_metadir.c          |    4 +
- fs/xfs/libxfs/xfs_metafile.c         |  223 ++++++++
- fs/xfs/libxfs/xfs_metafile.h         |   13 +
- fs/xfs/libxfs/xfs_ondisk.h           |    4 +
- fs/xfs/libxfs/xfs_refcount.c         |  278 +++++++--
- fs/xfs/libxfs/xfs_refcount.h         |   23 +-
- fs/xfs/libxfs/xfs_rmap.c             |  178 ++++--
- fs/xfs/libxfs/xfs_rmap.h             |   12 +-
- fs/xfs/libxfs/xfs_rtbitmap.c         |    2 +-
- fs/xfs/libxfs/xfs_rtbitmap.h         |    9 +
- fs/xfs/libxfs/xfs_rtgroup.c          |   74 ++-
- fs/xfs/libxfs/xfs_rtgroup.h          |   58 +-
- fs/xfs/libxfs/xfs_rtrefcount_btree.c |  757 +++++++++++++++++++++++++
- fs/xfs/libxfs/xfs_rtrefcount_btree.h |  189 +++++++
- fs/xfs/libxfs/xfs_rtrmap_btree.c     | 1035 ++++++++++++++++++++++++++++++++++
- fs/xfs/libxfs/xfs_rtrmap_btree.h     |  210 +++++++
- fs/xfs/libxfs/xfs_sb.c               |   14 +
- fs/xfs/libxfs/xfs_shared.h           |   21 +
- fs/xfs/libxfs/xfs_trans_resv.c       |   37 +-
- fs/xfs/libxfs/xfs_trans_space.h      |   13 +
- fs/xfs/libxfs/xfs_types.h            |    7 +
- fs/xfs/scrub/agheader_repair.c       |    2 +-
- fs/xfs/scrub/alloc_repair.c          |    5 +-
- fs/xfs/scrub/bmap.c                  |  126 ++++-
- fs/xfs/scrub/bmap_repair.c           |  148 ++++-
- fs/xfs/scrub/common.c                |  170 +++++-
- fs/xfs/scrub/common.h                |   26 +-
- fs/xfs/scrub/cow_repair.c            |  180 +++++-
- fs/xfs/scrub/health.c                |    2 +
- fs/xfs/scrub/inode.c                 |   41 +-
- fs/xfs/scrub/inode_repair.c          |  193 ++++++-
- fs/xfs/scrub/metapath.c              |    6 +
- fs/xfs/scrub/newbt.c                 |   42 ++
- fs/xfs/scrub/newbt.h                 |    1 +
- fs/xfs/scrub/quota.c                 |    8 +-
- fs/xfs/scrub/quota_repair.c          |    2 +-
- fs/xfs/scrub/reap.c                  |  288 +++++++++-
- fs/xfs/scrub/reap.h                  |    9 +
- fs/xfs/scrub/refcount.c              |    2 +-
- fs/xfs/scrub/refcount_repair.c       |    6 +-
- fs/xfs/scrub/repair.c                |  197 +++++++
- fs/xfs/scrub/repair.h                |   24 +
- fs/xfs/scrub/rgb_bitmap.h            |   37 ++
- fs/xfs/scrub/rgsuper.c               |    6 +-
- fs/xfs/scrub/rmap_repair.c           |   91 ++-
- fs/xfs/scrub/rtb_bitmap.h            |   37 ++
- fs/xfs/scrub/rtbitmap.c              |   77 ++-
- fs/xfs/scrub/rtbitmap.h              |   55 ++
- fs/xfs/scrub/rtbitmap_repair.c       |  451 ++++++++++++++-
- fs/xfs/scrub/rtrefcount.c            |  661 ++++++++++++++++++++++
- fs/xfs/scrub/rtrefcount_repair.c     |  783 +++++++++++++++++++++++++
- fs/xfs/scrub/rtrmap.c                |  323 +++++++++++
- fs/xfs/scrub/rtrmap_repair.c         | 1006 +++++++++++++++++++++++++++++++++
- fs/xfs/scrub/rtsummary.c             |   17 +-
- fs/xfs/scrub/rtsummary_repair.c      |    3 +-
- fs/xfs/scrub/scrub.c                 |   18 +-
- fs/xfs/scrub/scrub.h                 |   28 +-
- fs/xfs/scrub/stats.c                 |    2 +
- fs/xfs/scrub/tempexch.h              |    2 +-
- fs/xfs/scrub/tempfile.c              |   21 +-
- fs/xfs/scrub/trace.c                 |    1 +
- fs/xfs/scrub/trace.h                 |  280 ++++++++-
- fs/xfs/xfs_aops.c                    |    2 +-
- fs/xfs/xfs_attr_inactive.c           |    5 -
- fs/xfs/xfs_buf.c                     |  606 ++++++++------------
- fs/xfs/xfs_buf.h                     |   11 +-
- fs/xfs/xfs_buf_item.h                |    5 -
- fs/xfs/xfs_buf_item_recover.c        |   19 +-
- fs/xfs/xfs_discard.c                 |    2 +-
- fs/xfs/xfs_dquot.c                   |   26 +-
- fs/xfs/xfs_dquot.h                   |    3 +
- fs/xfs/xfs_drain.c                   |   20 +-
- fs/xfs/xfs_drain.h                   |    7 +-
- fs/xfs/xfs_error.c                   |    3 +
- fs/xfs/xfs_exchrange.c               |    3 +
- fs/xfs/xfs_fsmap.c                   |  193 ++++++-
- fs/xfs/xfs_fsops.c                   |   30 +
- fs/xfs/xfs_health.c                  |    2 +
- fs/xfs/xfs_inode.c                   |   19 +-
- fs/xfs/xfs_inode.h                   |   16 +-
- fs/xfs/xfs_inode_item.c              |   30 +-
- fs/xfs/xfs_inode_item_recover.c      |   48 +-
- fs/xfs/xfs_ioctl.c                   |   21 +-
- fs/xfs/xfs_log.c                     |    2 -
- fs/xfs/xfs_log_recover.c             |    4 +
- fs/xfs/xfs_mount.c                   |   14 +
- fs/xfs/xfs_mount.h                   |   25 +-
- fs/xfs/xfs_notify_failure.c          |  230 +++++---
- fs/xfs/xfs_notify_failure.h          |   11 +
- fs/xfs/xfs_qm.c                      |   10 +-
- fs/xfs/xfs_qm_bhv.c                  |   26 +-
- fs/xfs/xfs_quota.h                   |    5 -
- fs/xfs/xfs_refcount_item.c           |  240 +++++++-
- fs/xfs/xfs_reflink.c                 |  321 ++++++++---
- fs/xfs/xfs_reflink.h                 |    4 +-
- fs/xfs/xfs_rmap_item.c               |  216 ++++++-
- fs/xfs/xfs_rtalloc.c                 |  121 +++-
- fs/xfs/xfs_rtalloc.h                 |   20 +
- fs/xfs/xfs_stats.c                   |    5 +-
- fs/xfs/xfs_stats.h                   |    3 +
- fs/xfs/xfs_super.c                   |  142 +++--
- fs/xfs/xfs_super.h                   |    1 -
- fs/xfs/xfs_trace.h                   |  270 ++++++---
- fs/xfs/xfs_trans.c                   |    6 +-
- fs/xfs/xfs_trans.h                   |    1 -
- fs/xfs/xfs_trans_ail.c               |    9 +-
- fs/xfs/xfs_trans_buf.c               |    8 +-
- fs/xfs/xfs_trans_dquot.c             |    8 +-
- 131 files changed, 10861 insertions(+), 1440 deletions(-)
- create mode 100644 fs/xfs/libxfs/xfs_rtrefcount_btree.c
- create mode 100644 fs/xfs/libxfs/xfs_rtrefcount_btree.h
- create mode 100644 fs/xfs/libxfs/xfs_rtrmap_btree.c
- create mode 100644 fs/xfs/libxfs/xfs_rtrmap_btree.h
- create mode 100644 fs/xfs/scrub/rgb_bitmap.h
- create mode 100644 fs/xfs/scrub/rtb_bitmap.h
- create mode 100644 fs/xfs/scrub/rtrefcount.c
- create mode 100644 fs/xfs/scrub/rtrefcount_repair.c
- create mode 100644 fs/xfs/scrub/rtrmap.c
- create mode 100644 fs/xfs/scrub/rtrmap_repair.c
- create mode 100644 fs/xfs/xfs_notify_failure.h
+Thanks!
 
