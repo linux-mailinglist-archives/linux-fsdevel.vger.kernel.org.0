@@ -1,86 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-39768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192DEA17CF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 12:22:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EDFA17D81
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 13:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FDE3A6213
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 11:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF2A16B7AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 12:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3189F1F192A;
-	Tue, 21 Jan 2025 11:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0AA1F1902;
+	Tue, 21 Jan 2025 12:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vsbfQ1dV"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="K1JNRrfd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8331F0E44;
-	Tue, 21 Jan 2025 11:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3585C219E0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 12:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737458512; cv=none; b=txPBk6k94ZRt++5L2Rv0RLHrIeyZSNpBgn1gwyCLwu+uHp3UTJ9QWvGmxzOgpfkoMCWdvGJFJkEV9TwX9MDN7wleqvbfC7mKnWUNKmdWmkX500R3oOuEctZe2mRmlH5FiY0AQG/cNu4QI/ktXErHaiTQL3xNDZ1EaL2A0D4NQZ8=
+	t=1737461272; cv=none; b=iNlYCwtemMDCtohhQ2EZU0B9y31djctG56v1RQAw0efsvwzHbsaSJQCmGsQ9mzpsQUeQLDY7qWeMiiv4THJ50eJeo69x8yl3xf5Osf3OwXhEkuMXgjmVFGV9f2/BtkVXKANpg3aUM6ubtEO3XOXf2W4vMuK+g/FRvzHL1LFP3zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737458512; c=relaxed/simple;
-	bh=M7EkcgoOPFSUknlNP5qJ44eOOhuypxTHsUp1OrncfhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u88Ikfaaq2eOp6g4rY1sfml8OdcFSKUOek4FEYlYomk/sz8XAKToOezWrIkcd6aZ2OzFVCGFi6h9m1h5IqSzZXfHpO0p8nYEGYiIBl/XKui6LFWCyVIPMYlAsgxwXxOsfxZQIfUejlitszhprgEpTyvVAd3uRp089uyJDtDcvYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vsbfQ1dV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EBE8C4CEDF;
-	Tue, 21 Jan 2025 11:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1737458512;
-	bh=M7EkcgoOPFSUknlNP5qJ44eOOhuypxTHsUp1OrncfhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vsbfQ1dVwPq9KOtHBp6U6lQRaZL4piNqljyV9VHB15NAM4YmWWwkO9a1LKhzdYbaO
-	 rcqdQ/ws55vt3tJUdPICBtK0Vac1QxuswcRA3RWf7yNeeyQSvyJL8ALArRStkox1D9
-	 7FlWZ9tqfSq74OoZHGr3Ru7n7b/9f5ZwR9XdVmMs=
-Date: Tue, 21 Jan 2025 12:21:48 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Sasha Levin <sashal@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
-	Jan Kara <jack@suse.cz>, Dmitry Safonov <dima@arista.com>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 6.6 0/3] Manual backport of overlayfs fixes from v6.6.72
-Message-ID: <2025012133-gradually-unsteady-6783@gregkh>
-References: <20250121110815.416785-1-amir73il@gmail.com>
- <CAOQ4uxj+LF602e3ypBHLpgWhO46CUaqn+sQ6Fcbq8r2cLJu8iA@mail.gmail.com>
+	s=arc-20240116; t=1737461272; c=relaxed/simple;
+	bh=LyeCGga5mFiOTeKMNJd54mF2vFHyUNSbrw5kiar1daE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hLume1zGjXKcy2ZScb22xPxE0izPB/Izaqi9kZRSzbfVpIfGO8VdXDsV/+XM1czUqrro5GR+WMOmVae3i21nlbJzP71muajJ2RWmNLKTseyIAVt8DTblVlhFB9S0lHyMLj8JIB7WLsl0kU8g3ZDVUxviPpn4VkHawKwf69f2xCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=K1JNRrfd; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-467bc28277eso47851101cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 04:07:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1737461269; x=1738066069; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ALusIztD91eWA27jWtx8UKeHq3oU3JooAPr/0Pdlaag=;
+        b=K1JNRrfdiWut5WraxX/SsH/fSk3mwVWNkl5nSnUkAP1HpWDUav+PnhsXQPy/qG/B1s
+         xa7/evO8kgtkulft087+1DRDkW3fB/FcYnT2MMkGsulxk89fWtIZYe4FEJ5KpkgzMloO
+         AqwuCg9uw+GqBb1uL1IhkB9jT9PvDOEaowSkI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737461269; x=1738066069;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ALusIztD91eWA27jWtx8UKeHq3oU3JooAPr/0Pdlaag=;
+        b=e8PBjGCoJDvgotyWTnferJSxR9f6HcfQO6PVo9nPEpqKInFYZqVclEcsy0mqP2XPxy
+         jY8bsNPa0RAfxoHRheViWaEWZjpELQApGYa4RxflmXwNV2z5FIy7O6LztkK7o61l25dD
+         nx1m6FansJBr5DyFEjiJXkFSj3mTbNQMP8FpTVPvegV98DcJfB7M3widcerHawEjbxuC
+         6Sg+CIe+Bc9qp8wqATUV+zzLkEnoIymgeZfbtHaodQrhe7O3RBwszeDsTRgXbDZhsNF3
+         Mkx6LsiUdPcxIiWql2AICMZfgrXrBisIVOj/Sv5QKzXpYC+IfOgeXvZexGxTiRH76lN0
+         sj5w==
+X-Gm-Message-State: AOJu0Yzh14bMQ0uy4ETKZvJDmzeoiLVOTCHsVsuF4Uo9ePNomcz0YLX1
+	d1w+X5o6uFHp5h81WxB2HHnrzKYjnEmUoh1P4UtviU1C0jW7cXWSUIqnIpt/zTmyKIEvzWRZgLx
+	XZnHLLKZ3nqljhw7KnzRiT7k8t45tDuaGPTC7uQ==
+X-Gm-Gg: ASbGnct+u24u9VcgZUOJ0hcAXCOe75V+UPfoBfvV9ptI7QyDppSagV8QR0YAJBd+D51
+	DfI7RT1QErtOeVSTGv3OYvVq1eb3Suf6klIoOdF3Qz5m4NwvA8Hs=
+X-Google-Smtp-Source: AGHT+IGovuN9Kh3r84i3WVXRHrWeDqWRbbGUGz97SmGRnq4bnqBOfUs3U58Gwdwd6IQ9D+EKY33Szn1MEw0VOg2tDSI=
+X-Received: by 2002:ac8:538d:0:b0:46e:25ed:1601 with SMTP id
+ d75a77b69052e-46e25ed17cbmr137410741cf.14.1737461268992; Tue, 21 Jan 2025
+ 04:07:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj+LF602e3ypBHLpgWhO46CUaqn+sQ6Fcbq8r2cLJu8iA@mail.gmail.com>
+References: <20250119053956.GX1977892@ZenIV>
+In-Reply-To: <20250119053956.GX1977892@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 21 Jan 2025 13:07:38 +0100
+X-Gm-Features: AbW1kvYZTvh6KANjtK43ZF8p3FKtbeJRYesjO2s1ckbH0bZiwRverz-tb3X_UPQ
+Message-ID: <CAJfpegtxKLYe_-mkv31Ww_PD984YZyPsDuwS=46gbmEKq4-5yg@mail.gmail.com>
+Subject: Re: [RFC] EOPENSTALE handling in path_openat()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jan 21, 2025 at 12:14:28PM +0100, Amir Goldstein wrote:
-> On Tue, Jan 21, 2025 at 12:08 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > Greg,
-> >
-> > Per your request, here is a manual backport of the overlayfs fixes that
-> > were applied in v6.6.72 and reverted in v6.6.73.
-> >
-> 
-> Forgot to mention that I backported one extra patch from 6.12.y.
-> It is not an overlayfs patch, but it fixes in a more generic way
-> (removing an unneeded assertion) the same bug report that the
-> overlayfs patches fix.
-> 
-> Both fixes are needed, because the assertion could have been hit
-> without overlayfs and because the overlayfs fixes are needed to
-> fix bugs other than the assertion.
+On Sun, 19 Jan 2025 at 06:40, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-No worries, looks good, thanks for the backports, I'll go queue them up
-right now.
+> Miklos, could you recall what was the original intent of that?
+> Do we want to keep that logics there, or should it just turn into
+> "map -ENOPENSTALE to -ESTALE??
 
-greg k-h
+I think the intent was to prevent a full LOOKUP_REVAL if this happened
+on the first try in do_filp_open().  I still think that makes sense,
+but needs a comment since it's not obvious.
+
+Thanks,
+Miklos
 
