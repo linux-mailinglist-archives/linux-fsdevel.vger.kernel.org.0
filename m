@@ -1,345 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-39800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771B8A1877F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:51:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33988A18789
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABC901615F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:50:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A6E1627ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B51F868C;
-	Tue, 21 Jan 2025 21:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2F01F8911;
+	Tue, 21 Jan 2025 21:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8Umma9M"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h55JmBMR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0711B85C5;
-	Tue, 21 Jan 2025 21:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BB91B85C5;
+	Tue, 21 Jan 2025 21:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737496254; cv=none; b=Cg0F7RoB1k8OYXF4mdTr/dVX4oQiis/EQQbA91aDiIh1ii9ZdWneOJPCwJ8EhD6aPYPzLu7RmM/ZLg4BkQvzMm/yNeHR8C02THOstjNq3aOMsWgoykRsODjdlLD09kz1jd5EAFa84f1gwBqxiOQ88x74zOqxwFh2og82JdoyBFQ=
+	t=1737496679; cv=none; b=svH69zSl2+aWUp85cz0p8yllgIxPAhaB1yWskd0bikSGEyEnXf/oxZYVSUNdZLjSAW3ZQSXGODY/oy/PkbDrPG9reOFAA21lZ5hhkrdSwOWc2FojOWQAOriq/g5b2561HF6e6akbd7QjHopNbV+IB0QdPkpFn6kMB2+AjAmH7Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737496254; c=relaxed/simple;
-	bh=gky7iobCYT9Wn0S0WyZR7GOedaSJClP3bB7sLe/+FQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z7J2IQwFa1BToXRadKmgE9fvwvNBQPCMCFFzPInccC3N8eyFM/sFjubFRhAg+VijpfU0lafOOZo/8/WBQAm+fKzm69054KhOfkmOSLJrX2sKvOkxM1hIPSuPDIqJndvz+JgAjH5Z/3xPrCHXRT8VShT9eiw7oSQ1QCJNQTASOc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8Umma9M; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1737496679; c=relaxed/simple;
+	bh=iwQAYmSv6mOcGDLGhF4ALj3QqFyyNnVW+bor9nF76FY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IFpTTtFR9/4SJsj2VhYMwB7xMIL1lhwqYdfiohjn16gKB8sYHUQ3lsJOlI9yQC9PICG9jDNjLnTJWbN79SX9F6q8Bf0xv3vKPYpU+XFjYvHQnKXpMJtmjULvF+G9nm9FX9LsEE/aCLfGoYZjloXDL6QVQEtWf7idLg5+lrA5oN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h55JmBMR; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6dce7263beaso55630146d6.3;
-        Tue, 21 Jan 2025 13:50:52 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3978c00a5aso9733608276.1;
+        Tue, 21 Jan 2025 13:57:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737496251; x=1738101051; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6BdGZUBK50zU3Op0FjauNvbMjwAEUW58/YPkyPzQ+4Y=;
-        b=f8Umma9MCsGg9HFKNVs5xxWAMYiPk9nORiKmeEMCBNne/uqr9cM7JyDZgm1BnzVAFj
-         Kt0Mjhum4GopdQ5XjzQIHBcLIuVmY5D4Jpyg823fNk/ykNVTJF8RgCc14Gi+WTf9tF46
-         BwSOYwvZnkuKTI0bO+O+r/JTUPs070g2IBWGaL/0DXtCBdQrjIKsd+cUkfiiSZ94aLVG
-         ka/k20gld72oR/dQA/ITsrR9C1dVf4afTwAOjfShlKBBDU79Fs4t5p0oHM5Y741A3L1j
-         sTMBUz4iFU7na7+CXq+DJAcm2jm2avEqePG0Fqy92K0qSKpbxz8LRviPMwKHIEZS1i0r
-         F1PA==
+        d=gmail.com; s=20230601; t=1737496676; x=1738101476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RwGWgkyJc1Uae+zIgBxQ+sZTkevS05BbKjYiRoid0bs=;
+        b=h55JmBMRN7MP5Wznes45eyvdzz7YTJVfrEwwWxxanUCN2Yv3n/ZDjaXTR6nBR67STM
+         ZnpTN3QlsbUAM8SYr5FY7JjLc2Z7z5bPVQca3BG2dBEpdkfW++xfF+/t0W/RqYfLv9vh
+         uafaMu3RTa/GFMRZDevVN1wLKWTGUQ0Zd0XL/cDTgehfpop+pLe8C9MGeMOfqpyBIwEP
+         GcJMbYVu9oYb/zZ8Fs/plG/zaREtkO0QFweCC9K0BamQ6/smlZ4d3xEZNSfericCcroS
+         Lz1PawYJg7bVTfW+8MBT1TczrceoFFrg7aRXq6b5IOHYsNKGFLAAeXaz5Qql2eEk5jRH
+         tcyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737496251; x=1738101051;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6BdGZUBK50zU3Op0FjauNvbMjwAEUW58/YPkyPzQ+4Y=;
-        b=cvqPCguFsCjlugh6eeSUoT+YOx8bbMZVG4pKeY9CQVTPE2525i65gbBqXr75swYajp
-         jE6E26r4UELo4ID8rSzNEjoXzFFgxyv7EXqqLIo/tsy4gY4HcBb3aM9EpaQDG8aQ4cWJ
-         I0iyTK2wWs2aBb2fZlwVifghnjwNT3hjMmQna9jb/Jd9isoUkI0LVHDsG9iBefAo3p0r
-         vliXFQgD62PX+MAHfXeR858tsfjXgZa+dG2LeQsAgepwvge+CJdV3sCmJ3WrBsw4F0SY
-         xJp9EwfJdHiyvYmZeeDGr+hNNuO+5ED30TeLwrQasrdJHmq1jLCTom9Zg0JtiGTWyzEt
-         2zGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSpVUKKOG/np+U0tL/7mnMWLKqCi51vwykS+pLQywsX8OToZVmBWxWEefeyKoH1d929Vg2OCOAb8Hb6kJZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJJSkeWpCUO43D0NaZG0bsVrV+FiTO4PHMAVfKYpT2nkegtVbZ
-	V59o/SFW+1/4ei7jI4H/Dazum/NiX5jGZTtdFzReWZxPTz2TqLv+KO6yy5U9l6k1fI/RRIQSwUy
-	N4k1z1h9zzWOzUbkX+20q2eUmtgI=
-X-Gm-Gg: ASbGncuyIkqCo3WR5i7CrDfKAevGrC+4QFTj0aDj507S/X9fHpUwkbQOuT2Qc25zUOJ
-	HQptD9hALVsYvBEmJUHYWeD7kcJ4vUS6Cs8dLWwLfj4NnjYHqvav2
-X-Google-Smtp-Source: AGHT+IEqgzwqM1Dm48aZvM/u5rgQ1F70joaYYuEMM6bmvEmrHzltHetOUMndi34lRlvuBHL/QTWKYc4sQu2NUf1C3T4=
-X-Received: by 2002:ad4:5fcd:0:b0:6d8:812e:1fd0 with SMTP id
- 6a1803df08f44-6e1b217a34dmr298999706d6.15.1737496251373; Tue, 21 Jan 2025
- 13:50:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737496676; x=1738101476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RwGWgkyJc1Uae+zIgBxQ+sZTkevS05BbKjYiRoid0bs=;
+        b=dZuD+dEmP6eXVY5m9ag9pQY30xcmQlYeNWLXor1FAgCbWPo3llZdNl4gVNMTlE6Tx2
+         qsEWCRDiVQxzTvYBTxchvlJ50tKOpag4qFhU+xNKT+oGG3QsdqIP8i+4IqpAWHV9Ujp2
+         UYK42gkVDu796anDM4pSKEJE9DR89Hxulxr76uMgxpElh66/rbxeaoawAfX7z4iGjagH
+         SHvoHYwpaL6kED4Ws9sAFyiKjiIqAYSJAk3/NtMUmc59k4LrsDlSEZOX4r53Es9RmIhU
+         MwzaFo/YMuh1YUCXZuLu0AXMPrNIZ9hWDwq4Qh4a+Tp/aUf0k42nfW93zWyzB3OBUhkL
+         Y+wQ==
+X-Gm-Message-State: AOJu0Yyy0RIDwqTOXYaOZsFv/1GGPSaf2szuxMtqn/rohxoanMngINUl
+	3L+NuKZ2dAjk/HscFglzPXZ2Qps0mRtdrHCNnrrPJDCRHKvbo8uMNiNzLA==
+X-Gm-Gg: ASbGncviW2rmair4qm6ZFgHWRLYBh+N+t11ZB9rYQuJyK9loaO7oHykV75c0BvTIKrD
+	PklH445C2cWXmao4g9yGF9Y9mOY0O3Au8K5YNAIcJvr+6TUnfbX57ZRlJpO2TUcaRMxF8oTKFQH
+	2qd/UwssNJi2g76nzYWJZLmTmYfdRUhnPf2jgro8KXff9TLExo0dugJQ5SUSCsm1kTxNc1LWJHV
+	lYYKo7YRj16OzUWsBTap5mSs38/QJv5BgE1motScQ+aSaGhirrJm6aqR8uwfV8JKcg=
+X-Google-Smtp-Source: AGHT+IGlCCew5tkRBsy1h32UTgfarbnZhgkktGCKrJKx6isUy7+tBaX3wZMhtlaHckULERnHnQXfMg==
+X-Received: by 2002:a05:690c:f90:b0:6ea:f3d5:e6d8 with SMTP id 00721157ae682-6f6eb66bbe3mr148544857b3.11.1737496676024;
+        Tue, 21 Jan 2025 13:57:56 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:6::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e63ab29esm18318017b3.15.2025.01.21.13.57.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2025 13:57:55 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	bfoster@redhat.com,
+	djwong@kernel.org,
+	nirjhar@linux.ibm.com,
+	zlang@redhat.com,
+	kernel-team@meta.com
+Subject: [PATCH v5 0/2] fstests: test reads/writes from hugepages-backed buffers
+Date: Tue, 21 Jan 2025 13:56:39 -0800
+Message-ID: <20250121215641.1764359-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250118004759.2772065-1-joannelkoong@gmail.com>
- <20250118004759.2772065-2-joannelkoong@gmail.com> <20250118201720.GK3557695@frogsfrogsfrogs>
-In-Reply-To: <20250118201720.GK3557695@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 21 Jan 2025 13:50:40 -0800
-X-Gm-Features: AbW1kvaGrAwVqkHFuueItcxYvMqXJ9_8RI-WugYrnGnFl1CtuGwoJP-PVPDKeI4
-Message-ID: <CAJnrk1YfiZkCM9es3SP7G8KKoSzKR7BexW2vbzXxwHStHyXLYw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, bfoster@redhat.com, 
-	nirjhar@linux.ibm.com, zlang@redhat.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jan 18, 2025 at 12:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Fri, Jan 17, 2025 at 04:47:58PM -0800, Joanne Koong wrote:
-> > Add support for reads/writes from buffers backed by hugepages.
-> > This can be enabled through the '-h' flag. This flag should only be use=
-d
-> > on systems where THP capabilities are enabled.
-> >
-> > This is motivated by a recent bug that was due to faulty handling of
-> > userspace buffers backed by hugepages. This patch is a mitigation
-> > against problems like this in the future.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  ltp/fsx.c | 165 +++++++++++++++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 152 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > index 41933354..1513755f 100644
-> > --- a/ltp/fsx.c
-> > +++ b/ltp/fsx.c
-> > @@ -2833,11 +2846,40 @@ __test_fallocate(int mode, const char *mode_str=
-)
-> >  #endif
-> >  }
-> >
-> > +/*
-> > + * Reclaim may break up hugepages, so do a best-effort collapse every =
-once in
-> > + * a while.
-> > + */
-> > +static void
-> > +collapse_hugepages(void)
-> > +{
-> > +#ifdef MADV_COLLAPSE
-> > +     int interval =3D 1 << 14; /* 16k */
-> > +     int ret;
-> > +
-> > +     if (numops && (numops & (interval - 1)) =3D=3D 0) {
->
-> I wonder if this could be collapsed to:
->
->         /* re-collapse every 16k fsxops after we start */
->         if (!numops || (numops & ((1U << 14) - 1)))
->                 return;
->
->         ret =3D madvise(...);
->
-> But my guess is that the compiler is smart enough to realize that
-> interval never changes and fold it into the test expression?
->
-> <shrug> Not that passionate either way. :)
+There was a recent bug in rc1 [1] that was due to faulty handling for
+userspace buffers backed by hugepages.
 
-Sounds good, I will change it to this and fix the indentation below for v5.
+This patchset adds generic tests for reads/writes from buffers backed by
+hugepages.
 
-Thanks,
-Joanne
+[1] https://lore.kernel.org/linux-fsdevel/p3iss6hssbvtdutnwmuddvdadubrhfkdoosgmbewvo674f7f3y@cwnwffjqltzw/
 
->
-> > +             ret =3D madvise(hugepages_info.orig_good_buf,
-> > +                           hugepages_info.good_buf_size, MADV_COLLAPSE=
-);
-> > +             if (ret)
-> > +                     prt("collapsing hugepages for good_buf failed (nu=
-mops=3D%llu): %s\n",
-> > +                          numops, strerror(errno));
-> > +             ret =3D madvise(hugepages_info.orig_temp_buf,
-> > +                           hugepages_info.temp_buf_size, MADV_COLLAPSE=
-);
-> > +             if (ret)
-> > +                     prt("collapsing hugepages for temp_buf failed (nu=
-mops=3D%llu): %s\n",
-> > +                          numops, strerror(errno));
-> > +     }
-> > +#endif
-> > +}
-> > +
-> >  bool
-> >  keep_running(void)
-> >  {
-> >       int ret;
-> >
-> > +     if (hugepages)
-> > +             collapse_hugepages();
-> > +
-> >       if (deadline.tv_nsec) {
-> >               struct timespec now;
-> >
-> > @@ -2856,6 +2898,103 @@ keep_running(void)
-> >       return numops-- !=3D 0;
-> >  }
-> >
-> > +static long
-> > +get_hugepage_size(void)
-> > +{
-> > +     const char str[] =3D "Hugepagesize:";
-> > +     size_t str_len =3D  sizeof(str) - 1;
-> > +     unsigned int hugepage_size =3D 0;
-> > +     char buffer[64];
-> > +     FILE *file;
-> > +
-> > +     file =3D fopen("/proc/meminfo", "r");
-> > +     if (!file) {
-> > +             prterr("get_hugepage_size: fopen /proc/meminfo");
-> > +             return -1;
-> > +     }
-> > +     while (fgets(buffer, sizeof(buffer), file)) {
-> > +             if (strncmp(buffer, str, str_len) =3D=3D 0) {
-> > +                     sscanf(buffer + str_len, "%u", &hugepage_size);
-> > +                     break;
-> > +             }
-> > +     }
-> > +     fclose(file);
-> > +     if (!hugepage_size) {
-> > +             prterr("get_hugepage_size: failed to find "
-> > +                     "hugepage size in /proc/meminfo\n");
-> > +             return -1;
-> > +     }
-> > +
-> > +     /* convert from KiB to bytes */
-> > +     return hugepage_size << 10;
-> > +}
-> > +
-> > +static void *
-> > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment, lon=
-g *buf_size)
-> > +{
-> > +     void *buf =3D NULL;
-> > +#ifdef MADV_COLLAPSE
-> > +     int ret;
-> > +     long size =3D roundup(len, hugepage_size) + alignment;
-> > +
-> > +     ret =3D posix_memalign(&buf, hugepage_size, size);
-> > +     if (ret) {
-> > +             prterr("posix_memalign for buf");
-> > +             return NULL;
-> > +     }
-> > +     memset(buf, '\0', size);
-> > +     ret =3D madvise(buf, size, MADV_COLLAPSE);
-> > +     if (ret) {
-> > +             prterr("madvise collapse for buf");
-> > +             free(buf);
-> > +             return NULL;
-> > +     }
-> > +
-> > +     *buf_size =3D size;
-> > +#endif
-> > +     return buf;
-> > +}
-> > +
-> > +static void
-> > +init_buffers(void)
-> > +{
-> > +     int i;
-> > +
-> > +     original_buf =3D (char *) malloc(maxfilelen);
-> > +     for (i =3D 0; i < maxfilelen; i++)
-> > +             original_buf[i] =3D random() % 256;
-> > +     if (hugepages) {
-> > +             long hugepage_size =3D get_hugepage_size();
-> > +             if (hugepage_size =3D=3D -1) {
-> > +                     prterr("get_hugepage_size()");
-> > +                     exit(102);
-> > +             }
-> > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
-, writebdy,
-> > +                                           &hugepages_info.good_buf_si=
-ze);
-> > +             if (!good_buf) {
-> > +                     prterr("init_hugepages_buf failed for good_buf");
-> > +                     exit(103);
-> > +             }
-> > +             hugepages_info.orig_good_buf =3D good_buf;
-> > +
-> > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size, =
-readbdy,
-> > +                                           &hugepages_info.temp_buf_si=
-ze);
-> > +             if (!temp_buf) {
-> > +                     prterr("init_hugepages_buf failed for temp_buf");
-> > +                     exit(103);
-> > +             }
-> > +             hugepages_info.orig_temp_buf =3D temp_buf;
-> > +     } else {
-> > +             unsigned long good_buf_len =3D maxfilelen + writebdy;
-> > +             unsigned long temp_buf_len =3D maxoplen + readbdy;
-> > +
-> > +             good_buf =3D calloc(1, good_buf_len);
-> > +             temp_buf =3D calloc(1, temp_buf_len);
-> > +     }
-> > +     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > +     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > +}
-> > +
-> >  static struct option longopts[] =3D {
-> >       {"replay-ops", required_argument, 0, 256},
-> >       {"record-ops", optional_argument, 0, 255},
-> > @@ -2883,7 +3022,7 @@ main(int argc, char **argv)
-> >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> >
-> >       while ((ch =3D getopt_long(argc, argv,
-> > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyAB=
-D:EFJKHzCILN:OP:RS:UWXZ",
-> > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyA=
-BD:EFJKHzCILN:OP:RS:UWXZ",
-> >                                longopts, NULL)) !=3D EOF)
-> >               switch (ch) {
-> >               case 'b':
-> > @@ -2916,6 +3055,14 @@ main(int argc, char **argv)
-> >               case 'g':
-> >                       filldata =3D *optarg;
-> >                       break;
-> > +             case 'h':
-> > +#ifndef MADV_COLLAPSE
-> > +                             fprintf(stderr, "MADV_COLLAPSE not suppor=
-ted. "
-> > +                                     "Can't support -h\n");
-> > +                             exit(86);
->
-> Excessive indenting here.
->
-> With those fixed up,
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
->
-> --D
->
-> > +#endif
-> > +                     hugepages =3D 1;
-> > +                     break;
-> >               case 'i':
-> >                       integrity =3D 1;
-> >                       logdev =3D strdup(optarg);
-> > @@ -3229,15 +3376,7 @@ main(int argc, char **argv)
-> >                       exit(95);
-> >               }
-> >       }
-> > -     original_buf =3D (char *) malloc(maxfilelen);
-> > -     for (i =3D 0; i < maxfilelen; i++)
-> > -             original_buf[i] =3D random() % 256;
-> > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
-> > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > -     memset(good_buf, '\0', maxfilelen);
-> > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
-> > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > -     memset(temp_buf, '\0', maxoplen);
-> > +     init_buffers();
-> >       if (lite) {     /* zero entire existing file */
-> >               ssize_t written;
-> >
-> > --
-> > 2.47.1
-> >
-> >
+Changelog:
+v4: 
+https://lore.kernel.org/linux-fsdevel/20250118004759.2772065-1-joannelkoong@gmail.com/
+- Fix identationand and if logic structure for collapses (Darrick)
+
+v3:
+https://lore.kernel.org/linux-fsdevel/20250115183107.3124743-1-joannelkoong@gmail.com/
+- Gate '-h' text behind MADVISE_COLLAPSE (Darrick)
+- Add periodic hugepages collapsing for memory constrained environments (Darrick)
+- Use tabs instead of spaces (Darrick)
+- Refactor #ifdef MADVISE_COLLAPSE placements
+
+v2:
+https://lore.kernel.org/linux-fsdevel/20241227193311.1799626-1-joannelkoong@gmail.com/
+- Gate -h and MADV_COLLAPSE usage to get it compatible on old systems (Zorro)
+- Use calloc instead of malloc/memset (Nirjhar)
+- Update exit codes in 1st patch
+- Add Brian's reviewed-bys
+
+v1:
+https://lore.kernel.org/linux-fsdevel/20241218210122.3809198-1-joannelkoong@gmail.com/
+- Refactor out buffer initialization (Brian)
+- Update commit messages of 1st patch (Brian)
+- Use << 10 instead of * 1024 (Nirjhar)
+- Replace CONFIG_TRANSPARENT_HUGEPAGE check with checking
+  'sys/kernel/mm/transparent_hugepage/' (Darrick)
+- Integrate readbdy and writebdy options 
+- Update options of generic/759 to include psize/bsize
+
+Joanne Koong (2):
+  fsx: support reads/writes from buffers backed by hugepages
+  generic: add tests for read/writes from hugepages-backed buffers
+
+ common/rc             |  13 ++++
+ ltp/fsx.c             | 166 ++++++++++++++++++++++++++++++++++++++----
+ tests/generic/758     |  22 ++++++
+ tests/generic/758.out |   4 +
+ tests/generic/759     |  26 +++++++
+ tests/generic/759.out |   4 +
+ 6 files changed, 222 insertions(+), 13 deletions(-)
+ create mode 100755 tests/generic/758
+ create mode 100644 tests/generic/758.out
+ create mode 100755 tests/generic/759
+ create mode 100644 tests/generic/759.out
+
+-- 
+2.47.1
+
 
