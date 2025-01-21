@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-39775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80429A17E81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 14:08:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AF6A17E89
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 14:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992BF3A387F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 13:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A179D18821C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 13:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202CF1F239D;
-	Tue, 21 Jan 2025 13:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FCF1F2C27;
+	Tue, 21 Jan 2025 13:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ctaGWRbZ"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="PC15QJAp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazolkn19011020.outbound.protection.outlook.com [52.103.32.20])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazolkn19013070.outbound.protection.outlook.com [52.103.32.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24361F192B;
-	Tue, 21 Jan 2025 13:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061981F1308;
+	Tue, 21 Jan 2025 13:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737464910; cv=fail; b=mKAkLg1nstsK7JGxHl9t7ImdqMAy8pSQEKg1vBkwXIbYL3muT+2Xotn8P3/W6rVGdzcJ646UTwobihNOksZiSwS2C6iMWadd5aZip5dxVC+tYQiBevoISeLVWlS2Krq1oIsDrbLpGiKRilWGrEKPNfEgXI68vJMGdIoz0IXYcGY=
+	t=1737464952; cv=fail; b=YGgmOb6ea7NWL66GH4Co64IKhsiExOcidwGszQ7vL67Ku87ZWpGDcItG78KsmDSsQrwldtd30LUTbHf0W0qzk7jnnwXOf6yFHm9Q0V2q7Zxwl5ADqDnCurg5UobhUfuqSAS6URv6tws0Dw20F4BjwAkHnP7uAcOW0UCeBZGE8LA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737464910; c=relaxed/simple;
-	bh=KIxnMIr3pjygOZQfnbAT4gl8laW2esmTBi9+dragCrw=;
+	s=arc-20240116; t=1737464952; c=relaxed/simple;
+	bh=Z98SlYswvTOLTJ5U4HYyJYif+T6I9OmR1MD/gfOdJ0I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZHUsNXU0pi8zSP5bpNK/w2Zk3wjotK17rlTuPVikGBquzVoFNTstTk9QqfvCitXM9jBx8U4lsSRh5rxgz4QuBEiwql9HIEdCr++Gjo14N0Nw7bpv0zqhlNm8XeqzSFu3iYc7t4qFSYyt3ZFi/2An1xpJZ5tmqSIgO9A4JgHl+ZQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ctaGWRbZ; arc=fail smtp.client-ip=52.103.32.20
+	 Content-Type:MIME-Version; b=oLEhaBnExnW4eePyVEXyVKR6JnAcwayXL1joeiFfSOiVprFyTLnaZ0Zm9hgl3XPD/OP5iKpmFC038vJhCEqZkuKidPHfb/C6Le7MepQENb8/KwlVddF0PXn0LotSb+Jk4reMmt4fbAfVfPegMAoUMsVsMtY2+aOzq5YTRRgXk4w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=PC15QJAp; arc=fail smtp.client-ip=52.103.32.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BzeowbuIX10La/FWPihtGRVTFE8LMfsCB9OuojYwTBovm5/dZk/Gl+56LRyHKkBLO8lwHOCFfqJ3wDJIVzcnZ0Qln3vhShbwtjp89cmUG+EbUAkoTnu6aC5oGNSy/2nNziwveVBrW91v4dZrlBfWoZpXK5lPJTRkAZtfc2dlDwqExAr4TdX2o99yY6DuUBCrcVNL/oYD6nJjtbb2oeHp4N5EfC0HLxhZjpn5LPNHw1xBeJyYh1Opmon/d1I3AgvtZ1UJP3ExBGd/ewvAqf8ZXAZyrUvQ9jSV1IoFHtKRGops5PWps4Q0Iad1W2WYKIzNWdfp3/Csg67NwIB9WdG3jw==
+ b=MXuQ7WTqrnBl+ynN1HqdYRiqxmltwjnFh6cBpsG9NdQhI9vX20lcY6NgwJv+QWJsQqd/cfzcO8JI390rpCOLPQYl2YEBdVfsxO7n9gOBX3OCipPaBRz+4BcFvlb5pjyF7Ihu7KSCMUEiBU/sXqFaoZcztYMasiODrf3HVk/fQ1tKwtAoM4/cjb0FAJGGr1Yk0KDn2gp//9NZopPTjpekxDeuTtr3WyUVrMsAJCbKI7q/8Q6Kt+TJwQYIK8GjWA1AjtyoTFKITyq7G+gwVjTMORkc6k27nyAJbACM9QxxReUmqbNbc6/7aqRzLQaa/zUHxRsFdq5m5m1Jo/82MylOXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QRVV0jX1KjzggGbvz87UhS2xPIc9n8VFZ0MWXdCk1fc=;
- b=kGvxiTPrqerHDu+IN98dZeVUruPkvY9tPJ3LQkwk6JsfG+mLl5anzOr6C0EULk9MPeLLPpn5p8LqoHvaKaKd1b+8RAD37n/e0gLRCJuag5vQPZZ2q2zkD0Ju2Zjt2k7YvoRfF7keEGIkzDsVRHymsOCfys2mY2BpADfsuKriCvSIhsJ9FcZWMmiImr/s5YnnpJxF2djXOxi0nVWBT50GVKRX0PLrFluutgwucV/X90dUjKCG7R9cyfvf0xonKJOjJQxacTPMKtN+sOW5SDTm+xY9gCg91/4cTkClw8r7iANwv/Fd4+bSCNnuKfU3y2X/FsFpfDD/KvT0Zq33oWPbjQ==
+ bh=mu9z6Ffs6fZx0FXVek680VNLVqR8w6Pgi3x/k1UoQWE=;
+ b=P3PxuENITwnK5r6bwx48RVcx2DH7YKMVaJGhZ5kBySl+KahVdhtqGUksNbCHUDqsLouryC17F0iB6d57nb698T2RSL30pvoZqfMn6vQ+AIOgKt1lHiU2zvO0VhqAs5tk1Szk8nQAWcnUoCh+vmUOn9idOi6RQAmmFeGAu6tIhEcsinbQDOtM9frdPFZoRd/J+A3KCDOAval7SYGyRWwvMSiLnzi0SpiUximsaec0InzZ2e+O1FQlHSzdcZ/WYu5oFso4ELPC/ugLuMnTGH2c9s+X5M9WOzyfEP4MK70yPLY9j2hm05X1YopJ/5jFoI5PaQL8p7+e7stEcq0JgtDtlA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QRVV0jX1KjzggGbvz87UhS2xPIc9n8VFZ0MWXdCk1fc=;
- b=ctaGWRbZjzAix5gfN1H4fhvw01w/QziTqpYutnm+pI8xucORZ1+5xV7A1Zr6FTFLeT0drJoZasTfgsoQ5GuXSFLRMUWaAKh4FDfT3Ke2qnL9qbpYxf/MdU3v79LIMCiooxo7Lc+voSnTQn88UoJ3OZ7tsdNRoAustG6R44uCQcWmwsEwt3VrY30iyLdamjWmvJ7h57vf+zyvA26m4YlN5m0cRgvoaHLLOS4NmTygt+Vufof7HoyGm+SqC4YYPXTYzCCZaVw4O5OXB9InNRoUBKMnfQZ7xslVkp/nPQ+HqtV0Qs1M6UWKgUSRbRaoIU68MzUYU0LceOjKQGtJkHigKw==
+ bh=mu9z6Ffs6fZx0FXVek680VNLVqR8w6Pgi3x/k1UoQWE=;
+ b=PC15QJApAtoYKRKY1NvN6i/b6N3RTfHyXEenqVtJo1TjpiPSYs0MjW40mjBeEG4to1AbhWl/W6xF3Q9eJo0aOJ1o7HRBxZ4771XSxjxFkig/rCQvIl2arU57BdxddTCxNVXogrF9lSDqyFOFs90x1t6/N1oH28Va4MdnS8AHegXcoFsUUddSMzcTOlx5tu+A4TeOHBuoT/8SRkX4imTI6I6LZCztiQLYk8/LghiM2v+FmFhIe4jYRLOuB2PGHV+zOfs803GMV623yORdH9DwM3Ut/ZMJyxH2cJp7FGzTstIY2trLkNS5qbpL1vnXWxjBhqxd3HLGyi/AUR35jsStmw==
 Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
  by DBAPR03MB6407.eurprd03.prod.outlook.com (2603:10a6:10:192::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.22; Tue, 21 Jan
- 2025 13:08:26 +0000
+ 2025 13:09:08 +0000
 Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
  ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
  ([fe80::a16:9eb8:6868:f6d8%3]) with mapi id 15.20.8356.020; Tue, 21 Jan 2025
- 13:08:26 +0000
+ 13:09:08 +0000
 From: Juntong Deng <juntong.deng@outlook.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -73,10 +73,10 @@ To: ast@kernel.org,
 Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v7 3/5] bpf: Add bpf_fget_task() kfunc
-Date: Tue, 21 Jan 2025 13:03:04 +0000
+Subject: [PATCH bpf-next v7 4/5] bpf: Make fs kfuncs available for SYSCALL program type
+Date: Tue, 21 Jan 2025 13:03:05 +0000
 Message-ID:
- <AM6PR03MB508083A4354A88B0B6A219CD99E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <AM6PR03MB508004527B8B38AAF18D763399E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
 References: <AM6PR03MB508004527B8B38AAF18D763399E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
@@ -86,7 +86,7 @@ X-ClientProxiedBy: LO4P265CA0260.GBRP265.PROD.OUTLOOK.COM
  (2603:10a6:600:37c::11) To AM6PR03MB5080.eurprd03.prod.outlook.com
  (2603:10a6:20b:90::20)
 X-Microsoft-Original-Message-ID:
- <20250121130306.90527-3-juntong.deng@outlook.com>
+ <20250121130306.90527-4-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -96,58 +96,58 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|DBAPR03MB6407:EE_
-X-MS-Office365-Filtering-Correlation-Id: fabba333-6ed9-44ec-c311-08dd3a1cb0fe
+X-MS-Office365-Filtering-Correlation-Id: 92e0d518-a491-49a9-c155-08dd3a1cca47
 X-Microsoft-Antispam:
 	BCL:0;ARA:14566002|19110799003|8060799006|15080799006|461199028|5072599009|440099028|3412199025|41001999003;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5vSyT68aa2r1CSuQwJSpgZnXjtgjKkcrMVBNJ8i1+9rlQCcohsQTGXHvd7Sj?=
- =?us-ascii?Q?NpIw5utM7LwISLT2/rW25AY9mwsD6hRrHwFo4H7Pt0GZHVTViid+qhjvbcqf?=
- =?us-ascii?Q?9TCAiC9UCBMj2h3DX9LV2fBFiuCu/hzx7ww9iY0a/0doa55SdEDedDGCaDtK?=
- =?us-ascii?Q?blMotw7FrYe0lZKrGCxYr155aC9vDxiCXwywfS25T45A3CYV97k4o/2x8Eyp?=
- =?us-ascii?Q?Hq33iod5CI6Y4gknWc8T3fTlyZcXx5tTLGCygtw3uBuS7kMq0xMbXdeIlLDi?=
- =?us-ascii?Q?AXCZB6oh+fNIEIsZz0tOZBWxyqEkL4HPIVseGxJaX3QNG+qzFZ9AI/dGDtXK?=
- =?us-ascii?Q?P/a0qZF/pWNIY2pjijf2pt4qphFR9gW6CEkwdCqcXac2+iifZNLTm22IG8Yz?=
- =?us-ascii?Q?SzEaTLkiltMI+08j1at2nfrK7hdQboujLRqkYksWdC0lH5wyq2rU03ZpsDMi?=
- =?us-ascii?Q?JlJnM8smtlyvgyli6pow4QXTTQbIxZeLa6JsDET3URtIpdOUPc5PD5YUDsQo?=
- =?us-ascii?Q?qZgaefmkczbnpC3cpPerPml0gtl/m485G8nZkbRHtEtiGozMKr8Amw9s08Fs?=
- =?us-ascii?Q?2Z9e8OQUjtuowuv6aMz4zlwBjQUlLmjFt4WJI0PK4qKew3Vsg01tFdd5gwQS?=
- =?us-ascii?Q?clnQ7eL4Qua6S5VW0BnOG60yz6cZXsue0cEswkjaMCHxhQQ9l8Zhe5Rf6bt4?=
- =?us-ascii?Q?wLnhdgLmlXyNuqfgf84IUlgS2VoVjOD5MKUlR+UXH9WgqWhEAnVAwV5mNKaa?=
- =?us-ascii?Q?JHp1LAuinWQbA6+93iXOw/Nkdp3jq/Ez0ZZPtqNxh63o0WXhSEX55RXqq6cc?=
- =?us-ascii?Q?SDwmNEDYdMMYOPwGYfs9l9aO2/Mqc0dFXYaB05kyWCnpUhr36aeOTK+bFgSz?=
- =?us-ascii?Q?q4+A8zPMMe3v0/dqmaNK630zlJxv0yv0AkdOhqIMAnsVrmT4RpPozFeXtom/?=
- =?us-ascii?Q?e0eQQ7hDhkVBJGsuVfoGPRb1TagO/aYESbSJX5Zj/WEPUzphlT16fwPw1jKm?=
- =?us-ascii?Q?R+rPp8hiAFi9OK5OcDYmEnapoH90JLr9iQtmGljKitQhdBmD8EWOYeK7leEw?=
- =?us-ascii?Q?7pMf4YQTWip10kDodfeyZ9w56Ytxbw=3D=3D?=
+	=?us-ascii?Q?HhRbYjK/Wh0FG+HiPplL5TccPhsqpFS3ntLi+F4YVi6N/LCEMcOZPm+7Wpth?=
+ =?us-ascii?Q?xN/Yy7+EH0vhu6+8YoIHHP4pjT+yFwqEuiHweaDSdtj1+aDdSSRhVOYn1hlz?=
+ =?us-ascii?Q?SSOtZe9ajPx2uj4ytL20o+DCuqJ8OvfBmpEKfSAm1xdl3emwFZ+J8UVpgu2Y?=
+ =?us-ascii?Q?Kz8GgGFBzyIrKkBQqJZYewhR1g8V21Ll6WwuRhUW041MCWAzR3TkGGPf8ch2?=
+ =?us-ascii?Q?PCs4y4ogdjhGRlaZqH1BQzU4ZLCUd6eoPBJn5GXR0hfmvyEis++ymTMxhCWI?=
+ =?us-ascii?Q?71yCKULTR0oXjzwesTxcQa+qChalntv3nH8J8xa5pH1wXndImgzN2jRGFy1M?=
+ =?us-ascii?Q?WX0HqeKPRhHl52ispA0sQMmNZazxx0Xczn4XLQ2PpeI9bOyeJPacDZI+Rm53?=
+ =?us-ascii?Q?apx2q6UkuTZwIEpkSUysqbOtXObEc6XPDDyC86tAdlB84w8kX4uYZC0DpAGh?=
+ =?us-ascii?Q?Tecc9NkZ3PekFeLSAixpujwOeuJBEJwjvFkemeayBCmfnqTE0bpOkiaPYnz4?=
+ =?us-ascii?Q?7MisdyFS8gn9LttSMFvOGF+ec2ihFAjCtUD0VZW5bwbUngVOw04y+gi6EC5V?=
+ =?us-ascii?Q?43NRii4Wh0BFqCj0wqreT8aG4OGdWrhYBmVv2IXWv02e7DxDclfNeD/WiFa1?=
+ =?us-ascii?Q?VY24Rsxq1v1YVCrkUA3ypJZItNdWhDuAw0ko1/mRFd03qMmTW4B5Vm5NaTi7?=
+ =?us-ascii?Q?gn+fDC5qjKro+u4sxmC+4Zv3mPbWQ1GvP7akMKh3HO4a36LlHVPZN/n8Kj0A?=
+ =?us-ascii?Q?gv+vxASV3cp2ultlgVr8i6GzFcJITzwJ0oCMKM/p8P0wR2pM2nPUvH0w4hxo?=
+ =?us-ascii?Q?Cm3kekzAkrh67FsvnKLpRRmQLFVuKKumVKE+1UowWX6TXtrEdqxAwAG4d7zN?=
+ =?us-ascii?Q?cIzC8w+kZvK1Z2jyKm7c+cJAVTBRm5jKdWAw79i8F32THZL7Hkg36n4qzS4W?=
+ =?us-ascii?Q?P43XkfxvV59CQLuSdOh24Tp2dfHHqqWo18RJ4IGFFI7RvlgeYfPZqk0dzygW?=
+ =?us-ascii?Q?YTtUf72GEeKUVwzAml7TlBoSUQ7O3su1u5JbbgLmXrq/JUVHmD5theo766oh?=
+ =?us-ascii?Q?dXiLevVRjdR88juggMGPjymQLyY0sQ=3D=3D?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gMgPA3L2rU9xnujOZV8iNM8y8bzn2qWXgvdTLG/qHysLR3ddm7u7KpNHeDCi?=
- =?us-ascii?Q?nChz9e3UW+h8InMl+eLl+GFWDl5DuCBTuSziyUuzmYo/uyeWxQIAuk5VjNvl?=
- =?us-ascii?Q?fL9HMIJyuVkCq3It/0GRE6flx514P57O8hico2tjvs2Xlr3ONTqUQlBJsV8d?=
- =?us-ascii?Q?CZ7aK6jgPPp2/BwqK6tP9G8+nfonV80+7Ok0MDpYH5PAUkQWIaE20Lh3dUHQ?=
- =?us-ascii?Q?ANLox9ppcSYqsWld500CyTYhLpT+MmtXx1x4ULPlNEnNznaXe1qqveCDuna7?=
- =?us-ascii?Q?dwdZ1xZOzbS0MeVKN5uvJvjJykMQAI3vqwlByx5sMR2gUUHmYyGMvVYmZ84c?=
- =?us-ascii?Q?6LsHmorSXm1wvTEpaZ/j13hUSpf5gz8Zf2ov37as8GhEmU87B7C8oJUks1dT?=
- =?us-ascii?Q?Nq3Db5id4YWBiqB+r5T1sHX5FTWIlEHfKDAEkQitb9fBcO78rfLyoq0Y5XXO?=
- =?us-ascii?Q?PdmmObf3wzv9IzzrcWJoFwscrzbUqsSQM/LuQup7NXXA9assEZFL+YwpvNfH?=
- =?us-ascii?Q?hGEAv08YdLNx4cUDYbbZWo2R/XcZhP4hKS0M+6W5Xs5+6DL5vLVs6x38US5b?=
- =?us-ascii?Q?VGqMBVG1BB1IG9mWbMKFwJPgZ5MiTJkS1dx6DVUrC6goZ8f4ZmEzH0bmIoBU?=
- =?us-ascii?Q?xBLcDxoHvRzrqx8EnmLXW8UKIyyLDmnw53BCJtOFMAFMy7rzqZe68uVcrEQq?=
- =?us-ascii?Q?5iQa6BIw2a7IUNXtUW7a4ongPOM1FuIbFRlAOD43S8CDBXOkWy40YfNdRhZr?=
- =?us-ascii?Q?j1TB6/xDvNr5aljLcBAdB/0auElsJYULoHChGMRSWDyzurQi8qETeT23vrsj?=
- =?us-ascii?Q?KQmxLHMis9W7Su9JnOd2hCiHq1FrLltny2lPHEaY3LgVHottwBGK1EV5OmDg?=
- =?us-ascii?Q?9WAvrxtBijSduk42KygQVcHcTIXcd2UYne8Ak+SZBU5jRZy9lGbBx+4CnNlF?=
- =?us-ascii?Q?JxupT7zs0US0tmIzATUbxwYPbToGZVh8DAVOWBPtjwIJ9jmb7FBqC4M17dpS?=
- =?us-ascii?Q?8HKnymSoth86kT6+0BWKA99zizRsayfzncAhXALaUXWCXD8O7CzvDpk0///O?=
- =?us-ascii?Q?8CbBGZgw6K6lNC4J0UdDYr+gLgq9oLhzi35AlZ7HaJLW7N3yqbTMALwAUecq?=
- =?us-ascii?Q?d/Jpmb4NEbM2ezaGVVQjpYn04nuedJv9UlgvVXI1FqoiQ+AfyTJ6xkpUHupK?=
- =?us-ascii?Q?MYUX+hksLXXzhJgayMTQADy0D8Db/yoXSlH1Yza4csVrRrEOAaX8oQcBcqO6?=
- =?us-ascii?Q?aUvPGYawZUnmfRx/ea5m?=
+	=?us-ascii?Q?BEq3crvzyDsuiTeBMtj/VFCgOUSySHTJrintkwQTxDuULGmle+uW3Euzdh3P?=
+ =?us-ascii?Q?2nG3K1MAnUPpL5MTSINFmPNJ/9xH3aHgo9dTS+ntpQ+3f2CVPvoGV6fq4e1w?=
+ =?us-ascii?Q?UlK4ftcRTTxJ8IZgDQtg4+9wPDWFDekdNQvZPx14uy2QigDhHYnD0J8Zk67v?=
+ =?us-ascii?Q?szlQ3lLu6GIX6kDM6MGuJflQvIJcB+c/ZH9s0HlgXD7YOQiRGG1QQiHzaNWs?=
+ =?us-ascii?Q?W0BIAwqG9SmSYX+fwAV4Hx1wziaAWmwLV853CzGOa9EzUd/kaGQXMRSuYgXk?=
+ =?us-ascii?Q?Gtts56cHYEqifuB70gIft7RhYD9th6yj8dhJ7+rLd42FzwXF0Viy3WeQQohm?=
+ =?us-ascii?Q?NVa3Yg2I02s55cMrTZRpQtLKRl3piWd9PXNZfN/71dvx+dF+IlBWekITJB8S?=
+ =?us-ascii?Q?GArZXc0cqz/Mz0Y4JO5w7oQbFm9lZCf4lGJDmsDYcatF0kK195DlpECGh0gx?=
+ =?us-ascii?Q?I/u3HrHFHdWFlcwyeWpzl6jFnHRzuxJ5faoPEORfz2fC6xPQCLZmaJ+ozbVK?=
+ =?us-ascii?Q?lHxN/UYA6kbfgxTZtrCLrFnXXjsVOc6ninKbKrXKOB7n2v7Bqp9/9gkkZXas?=
+ =?us-ascii?Q?LpQ7W8VKGzz18fBxMpw3Cu1gzC1Vvxi4B/uP2aSGgRWdqo7fDHjgdJYcDGec?=
+ =?us-ascii?Q?HMrptVYvPpDWK+QtyvolLVnj/lYByVOe6wQsRWJZ26UqRElEoZx3NL9b6X8E?=
+ =?us-ascii?Q?Vxl2WRNYr9CPT25ZXLbR8IX+eTh7eIACxVkKotp64bWItD2oTivvX3BTRuc6?=
+ =?us-ascii?Q?AIJkMEikjwB9DLQG3QwgBmNa8sy14Nu8Gye/n8ahKC1RV4pU71gXPEIUxdPX?=
+ =?us-ascii?Q?F59YGEjkMv83eePLtHQAQjijWXw56Xtuym2zs3fKDjhF0UZT36fZBV7PI68Z?=
+ =?us-ascii?Q?Gm4GnyO5lMO9D7qtuhMLm2W0bSKpCQHyGsvZ1/6YiBzltsiV7h9/nl8H9SJh?=
+ =?us-ascii?Q?BxiWh7sX9Wo2AteInuAX8nhIIBJ5Rh1ahbx9J/90rQd9TfeJ0w5mUO6ZAZkG?=
+ =?us-ascii?Q?+aPo/GCUS5Z+oKzsahoM2952drf9Fi6khG2gFvNFuypuL2YYA80IZO7IJorx?=
+ =?us-ascii?Q?IL0wthokx/WUcFw1a13YrtHwzXSbSjI/LMAhJ765/cti34KxJ+vJbnlwRN3d?=
+ =?us-ascii?Q?VOO7F+ZlzYVAhpMZtWmHMaov/aBZfex+gyCrBA8garxT8w3KoJBLFTajt8nO?=
+ =?us-ascii?Q?4K+bJkb3B8sKmIL6mDcjsoOmySNTjiWRxAAVeJYG6SZohYpv9TLpF/WjQ+r2?=
+ =?us-ascii?Q?RQkbj8iZUsZoJv035Q+C?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fabba333-6ed9-44ec-c311-08dd3a1cb0fe
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92e0d518-a491-49a9-c155-08dd3a1cca47
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2025 13:08:26.1777
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2025 13:09:08.5885
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -155,53 +155,89 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR03MB6407
 
-This patch adds bpf_fget_task() kfunc.
+Currently fs kfuncs are only available for LSM program type, but fs
+kfuncs are generic and useful for scenarios other than LSM.
 
-bpf_fget_task() is used to get a pointer to the struct file
-corresponding to the task file descriptor. Note that this function
-acquires a reference to struct file.
+This patch makes fs kfuncs available for SYSCALL program type.
 
 Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 ---
- fs/bpf_fs_kfuncs.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/bpf_fs_kfuncs.c                                 | 14 ++++++--------
+ .../selftests/bpf/progs/verifier_vfs_reject.c      | 10 ----------
+ 2 files changed, 6 insertions(+), 18 deletions(-)
 
 diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 3fe9f59ef867..4a810046dcf3 100644
+index 4a810046dcf3..8a7e9ed371de 100644
 --- a/fs/bpf_fs_kfuncs.c
 +++ b/fs/bpf_fs_kfuncs.c
-@@ -152,6 +152,23 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
- 	return bpf_get_dentry_xattr(dentry, name__str, value_p);
+@@ -26,8 +26,6 @@ __bpf_kfunc_start_defs();
+  * acquired by this BPF kfunc will result in the BPF program being rejected by
+  * the BPF verifier.
+  *
+- * This BPF kfunc may only be called from BPF LSM programs.
+- *
+  * Internally, this BPF kfunc leans on get_task_exe_file(), such that calling
+  * bpf_get_task_exe_file() would be analogous to calling get_task_exe_file()
+  * directly in kernel context.
+@@ -49,8 +47,6 @@ __bpf_kfunc struct file *bpf_get_task_exe_file(struct task_struct *task)
+  * passed to this BPF kfunc. Attempting to pass an unreferenced file pointer, or
+  * any other arbitrary pointer for that matter, will result in the BPF program
+  * being rejected by the BPF verifier.
+- *
+- * This BPF kfunc may only be called from BPF LSM programs.
+  */
+ __bpf_kfunc void bpf_put_file(struct file *file)
+ {
+@@ -70,8 +66,6 @@ __bpf_kfunc void bpf_put_file(struct file *file)
+  * reference, or else the BPF program will be outright rejected by the BPF
+  * verifier.
+  *
+- * This BPF kfunc may only be called from BPF LSM programs.
+- *
+  * Return: A positive integer corresponding to the length of the resolved
+  * pathname in *buf*, including the NUL termination character. On error, a
+  * negative integer is returned.
+@@ -184,7 +178,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
+ static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
+ {
+ 	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
+-	    prog->type == BPF_PROG_TYPE_LSM)
++	    prog->type == BPF_PROG_TYPE_LSM ||
++	    prog->type == BPF_PROG_TYPE_SYSCALL)
+ 		return 0;
+ 	return -EACCES;
+ }
+@@ -197,7 +192,10 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
+ 
+ static int __init bpf_fs_kfuncs_init(void)
+ {
+-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
++	int ret;
++
++	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
++	return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &bpf_fs_kfunc_set);
  }
  
-+/**
-+ * bpf_fget_task() - Get a pointer to the struct file corresponding to
-+ * the task file descriptor
-+ *
-+ * Note that this function acquires a reference to struct file.
-+ *
-+ * @task: the specified struct task_struct
-+ * @fd: the file descriptor
-+ *
-+ * @returns the corresponding struct file pointer if found,
-+ * otherwise returns NULL
-+ */
-+__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsigned int fd)
-+{
-+	return fget_task(task, fd);
-+}
-+
- __bpf_kfunc_end_defs();
+ late_initcall(bpf_fs_kfuncs_init);
+diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+index d6d3f4fcb24c..5aab75fd2fa5 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
++++ b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+@@ -148,14 +148,4 @@ int BPF_PROG(path_d_path_kfunc_invalid_buf_sz, struct file *file)
+ 	return 0;
+ }
  
- BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-@@ -161,6 +178,7 @@ BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
- BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_fget_task, KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
- BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
- 
- static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
+-SEC("fentry/vfs_open")
+-__failure __msg("calling kernel function bpf_path_d_path is not allowed")
+-int BPF_PROG(path_d_path_kfunc_non_lsm, struct path *path, struct file *f)
+-{
+-	/* Calling bpf_path_d_path() from a non-LSM BPF program isn't permitted.
+-	 */
+-	bpf_path_d_path(path, buf, sizeof(buf));
+-	return 0;
+-}
+-
+ char _license[] SEC("license") = "GPL";
 -- 
 2.39.5
 
