@@ -1,240 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-39797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B77A1875E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:34:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74770A18777
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3444188B4DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:34:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D30F16207D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827C91F7912;
-	Tue, 21 Jan 2025 21:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFF81F8908;
+	Tue, 21 Jan 2025 21:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QASuOhid"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NR+cz3yM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9291B6D15
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 21:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65DE1F78E8;
+	Tue, 21 Jan 2025 21:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737495239; cv=none; b=fjNtojQks5iJgQ0osTFiq5+jPt5csoODnXK227YUn50AU+mzron4NNdihRbwKCX6Ytoq0c1XwMw3TgSTCfikc8gmBnvWGfwQxao9TLE3Az9z42VbcJPLskmuCRh/L3WZyQaGFQ1c7xEMm5PD0mLrqe0K8lmRgLMZYj7seP/QuAc=
+	t=1737495878; cv=none; b=iXQxrI76BqiS5EorCl4d6/syecD3aG3hjlrSZ5dfkI3S6ivvMwcdqtv1f8z8g9FswCe89oVFgTSY+GBbkPyl3eVOU/gI65UZAhlAI1bNj1xOeMRIAadA/Bjwh8dbSuGUrPYzFN4IFaeheILwyRQ4JK3lqhJvV+rUX1JuwGPH7zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737495239; c=relaxed/simple;
-	bh=j9mfr5koioTby3/tUifc65Ljs53QQLJY14KEMb7PWJc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aUcHDU6OmqVl3XVCtKkzAGPfkyywQrtyRxWxFyGuXMy+0LpfjicdE02N21YVdriFmMq3ASXyEzfFZ/m3ZWwsJ7KQ4fG6+vJHLC+bxVzuRbFXXdC/NSHRQKLCWpFgTK2oBTJqyiQFWIkHGt8M3N7LiHrwWui1zv2WCLYAogmfeic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jsperbeck.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QASuOhid; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jsperbeck.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2166855029eso119666665ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 13:33:57 -0800 (PST)
+	s=arc-20240116; t=1737495878; c=relaxed/simple;
+	bh=HQ2fQltf0cvoSqUKK/4C9OZeu8bqSVsXMu1ELJoxhF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KIeccCfIwmdgM1gRdSeDrrN2Jp07JfrMPCnEvxWAno6UYC3JQpkG98LB/5p14f8UY70MOFACTeEiJxhN4GFNnLHpwHFw6iZcNDY3Lu0EJpcuPREu2SRBebaUz+sfvJiUP3e47H4fTGRvR9a8uKZkTaeI7NUvIwXpndJy0TNm0yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NR+cz3yM; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d3d0205bd5so10004002a12.3;
+        Tue, 21 Jan 2025 13:44:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1737495237; x=1738100037; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPdLhS8IQQK2j1DaMybmQ+gf3rSfK4h9TZPjXQjXUUU=;
-        b=QASuOhidA1fAGAAEk1bucrNmsQYafUZDeT5U0AjZxmwcjdaZkXnzb6NdZz1cyGtbZ5
-         Ivf2VALkFQ3WqSOW7QIwbl0tEGSCwR35g7SuVhKuKKDuHPaBoktS+kAXMlgu9xmDQQxg
-         cQDEtIAgm4I7EW3pXqId0B4izb+LVhpzY/92V78ESz0wr0BFaaQaX7OrEp9NXMy+T5ny
-         GbU5uOLV8HOMFzRhu5lKHyMIh7q6gzPOfGzkZJEXsP9/TLkGHgbvMTlMMiyDL1MKAzJq
-         0/qSN13dMEL2ppeIjrBLLJV4b6d+vPKSeEE3aYSRZutOQeP5eJEN7ibe2YaCBSNPd/yS
-         YIWg==
+        d=gmail.com; s=20230601; t=1737495875; x=1738100675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HGa8GGEi2xoA7dETBROw5QhceFKF0tNSzjx0PsmP81Q=;
+        b=NR+cz3yMly+ZVWZaiXg0xP3KsTUhhvFFF3j0SOBnuBKW83ewpj7k2LKSirQ0IgYJuV
+         40hVJPO9ztMcLGmoNA2lUe6/3ot9Om/4cDeEM2Mx8nqWWaz8JOyuAykNTRWk6RAuIEqh
+         MVkLUeEe8TnEIVn03vL0sd5rQgbio517lyc5RqXt1SFWj0wBn5yG7RiZ70liB2AuFstD
+         pIB7bR3exXBJ48eZePpJl6siJmjaut1D0PPZ7Jkax+bg5GslQqYmV6sR91MMmOCgrCoX
+         fpS2HsSl9KT3e2epz3vbJLtVUljJ23UaXjF7awF49aXV/rl7mqEP+h9/sIsU5Y/XSltE
+         IFMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737495237; x=1738100037;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPdLhS8IQQK2j1DaMybmQ+gf3rSfK4h9TZPjXQjXUUU=;
-        b=bl6sG4BJ5gqzVzg2v4IthmekVt+CCl11I4rgDoE0MqRDSukBRbOLlv3Lu+tpaMjPRx
-         ZPMCEvyrrVs7KEnB2yjphk1pxrWshwIsmB/2U5uKPKwvTOhQOBp5uJlIzHL/8HdjELY+
-         JtZvdwt0J93EVrAQXxKgn/lf1kWrB+MT/NGGxHl0G322Z0KEjRP/x/TlIGvOIz4jkrjL
-         3speqOvHf4s7zERO2AUNNAk0RQIA6+5gOCt11022r5awH7HRx8N+N/OYJvUog1rkcE9E
-         vDJCaw4cDze6fXKxCW6Qt3Il8znkot+A2V7LjBBewX7Cb0Of5pjVZksLmaKimxoWt6AC
-         AlCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKOx+P6A5HDeeg48HbRfY8tvuCZLmualvLObPGTwbktytz+FcLHawuWdxjoYQZudV1WZdFcTZ7+JsXIUDO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9HcXk8XkGusTY7jTqeA51eVPWin4A9XJWGUXxYEb5umCDfCnI
-	vyfQJnKhwz1vW0ju6ntNskvp3Cok2+fF9PjerA+MSqg23P8a0xYdfkuPOqn6sjPamyedB9COQ77
-	aI2vOFLLI8xbQ4w==
-X-Google-Smtp-Source: AGHT+IFiDkxn5i7xWlFVIef6/ANncFLIl56Tu2eMWwJUdQJ5Mr/jz+g6Z6uver8vSDvXcLsAYVWBq+gb9G4g61M=
-X-Received: from plblw11.prod.google.com ([2002:a17:903:2acb:b0:212:4557:e89b])
- (user=jsperbeck job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e5ca:b0:215:b473:1dc9 with SMTP id d9443c01a7336-21c355fa313mr231478045ad.46.1737495236719;
- Tue, 21 Jan 2025 13:33:56 -0800 (PST)
-Date: Tue, 21 Jan 2025 13:33:53 -0800
-In-Reply-To: <202501182003.Gfi63jzH-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1737495875; x=1738100675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HGa8GGEi2xoA7dETBROw5QhceFKF0tNSzjx0PsmP81Q=;
+        b=CilAXRcMluSrr/50NmC/MwCPXpEExpW10Tkod95ZX1/olz+X98OmStDaI/iHAy9CBX
+         6oUkbUWXtSmX3nNQqPghNRhIXC4X4Vp0fOjiKK/nFqwQX+axQuHn9H2cKpt178bBN1Yi
+         gDOX3nLXiz7WEE8CoSHUdOJEEKDmx/pOJ25beQJNFi9O0uhHnQXJpg3/2fpVUTieKsHl
+         bBjrAeX3ln5hSsf/Of/xQwT0gxWGbFljX3oQymk9B1zOE2hOgmGJpIu38xoco4lop9pW
+         bc5Eyw3jV5a124RFtScRAM/czbi3PuxvvhVCW2eXtsd+AI7ag4U4twKOpy5oU/cJUPzU
+         kNcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBBbI73TToul5t5g23nE0DmCh1+V6XAm6PA1weusjARpfbfF/Wj5GssoS2FM+/wnxuR1JohBEyW09G+jDD@vger.kernel.org, AJvYcCXPCYDDu1Fpqp5PmNaDSaDV6wlAp9vyADVqEzZfnW3OIzZAXc/ceMrPkKVDCSthS+cOxgmSm+fR0Wi6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDKMW9vop8uPOK2TZwzk5hwV8rQqNjNEiSflqp/k9LgFpyxj/Q
+	zp2lbUK2+qR6XAF9xCG2siIHqErkEtIwUkaMteItumFZrOmnwAVbX+SToun/2z52lJLAlLMcisz
+	F7ir9wHze0eGPEWLjWDCQ0ugJS0Y=
+X-Gm-Gg: ASbGncveHDRVWO2Pfdmij4OBTNsgU8i5JSL2Zp/NqtWlr+0S90/3bUjx5CG6AOt36bl
+	Zrw8Sb4Q4louzIK7vBDoOE+o6tuys8Rx0ZZexYMWeQ8XFTOSo/4o=
+X-Google-Smtp-Source: AGHT+IG1laRnncd4S5WR1QMv9Sw2KujDsk/j1Btblhy+3PmCDOaT1Vhe+IGLBg1Mr2jtSmH90s2Fyy39KMB7YaT1e3Q=
+X-Received: by 2002:a05:6402:2808:b0:5d3:bab1:513f with SMTP id
+ 4fb4d7f45d1cf-5db7d3009b3mr20280388a12.18.1737495874704; Tue, 21 Jan 2025
+ 13:44:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <202501182003.Gfi63jzH-lkp@intel.com>
-X-Mailer: git-send-email 2.48.0.rc2.279.g1de40edade-goog
-Message-ID: <20250121213354.3775644-1-jsperbeck@google.com>
-Subject: [PATCH v4] sysctl: expose sysctl_check_table for unit testing and use it
-From: John Sperbeck <jsperbeck@google.com>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: John Sperbeck <jsperbeck@google.com>, Kees Cook <kees@kernel.org>, Wen Yang <wen.yang@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+MIME-Version: 1.0
+References: <20250121103954.415462-1-amir73il@gmail.com> <7d2299dc-b91a-4e23-924a-f3462b69d4bc@oracle.com>
+In-Reply-To: <7d2299dc-b91a-4e23-924a-f3462b69d4bc@oracle.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 21 Jan 2025 22:44:23 +0100
+X-Gm-Features: AbW1kvZWQK1N22pKr1M6Maf7lNUDnPRzWVsNHZ8c5ADP67ZkmebSWLxUsgWG4jU
+Message-ID: <CAOQ4uxh4PS0d6HuHCM_GTfNDpkM1EJ5G55Fs83tDRW0bGu2v-A@mail.gmail.com>
+Subject: Re: [PATCH v2] nfsd: map EBUSY to NFS4ERR_ACCESS for all operations
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, Trond Myklebust <trondmy@hammerspace.com>, 
+	NeilBrown <neilb@suse.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In commit b5ffbd139688 ("sysctl: move the extra1/2 boundary check
-of u8 to sysctl_check_table_array"), a kunit test was added that
-registers a sysctl table.  If the test is run as a module, then a
-lingering reference to the module is left behind, and a 'sysctl -a'
-leads to a panic.
+On Tue, Jan 21, 2025 at 8:45=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
+> wrote:
+>
+> Please send patches To: the NFSD reviewers listed in MAINTAINERS and
+> Cc: linux-nfs and others. Thanks!
+>
+>
+> On 1/21/25 5:39 AM, Amir Goldstein wrote:
+> > Commit 466e16f0920f3 ("nfsd: check for EBUSY from vfs_rmdir/vfs_unink."=
+)
+> > mapped EBUSY host error from rmdir/unlink operation to avoid unknown
+> > error server warning.
+>
+> > The same reason that casued the reported EBUSY on rmdir() (dir is a
+> > local mount point in some other bind mount) could also cause EBUSY on
+> > rename and some filesystems (e.g. FUSE) can return EBUSY on other
+> > operations like open().
+> >
+> > Therefore, to avoid unknown error warning in server, we need to map
+> > EBUSY for all operations.
+> >
+> > The original fix mapped EBUSY to NFS4ERR_FILE_OPEN in v4 server and
+> > to NFS4ERR_ACCESS in v2/v3 server.
+> >
+> > During the discussion on this issue, Trond claimed that the mapping
+> > made from EBUSY to NFS4ERR_FILE_OPEN was incorrect according to the
+> > protocol spec and specifically, NFS4ERR_FILE_OPEN is not expected
+> > for directories.
+>
+> NFS4ERR_FILE_OPEN might be incorrect when removing certain types of
+> file system objects. Here's what I find in RFC 8881 Section 18.25.4:
+>
+>  > If a file has an outstanding OPEN and this prevents the removal of the
+>  > file's directory entry, the error NFS4ERR_FILE_OPEN is returned.
+>
+> It's not normative, but it does suggest that any object that cannot be
+> associated with an OPEN state ID should never cause REMOVE to return
+> NFS4ERR_FILE_OPEN.
+>
+>
+> > To keep things simple and consistent and avoid the server warning,
+> > map EBUSY to NFS4ERR_ACCESS for all operations in all protocol versions=
+.
+>
+> Generally a "one size fits all" mapping for these status codes is
+> not going to cut it. That's why we have nfsd3_map_status() and
+> nfsd_map_status() -- the set of permitted status codes for each
+> operation is different for each NFS version.
+>
+> NFSv3 has REMOVE and RMDIR. You can't pass a directory to NFSv3 REMOVE.
+>
+> NFSv4 has only REMOVE, and it removes the directory entry for the
+> object no matter its type. The set of failure modes is different for
+> this operation compared to NFSv3 REMOVE.
+>
+> Adding a specific mapping for -EBUSY in nfserrno() is going to have
+> unintended consequences for any VFS call NFSD might make that returns
+> -EBUSY.
+>
+> I think I prefer that the NFSv4 cases be dealt with in nfsd4_remove(),
+> nfsd4_rename(), and nfsd4_link(), and that -EBUSY should continue to
+> trigger a warning.
+>
+>
 
-This can be reproduced with these kernel config settings:
+Sorry, I didn't understand what you are suggesting.
 
-    CONFIG_KUNIT=y
-    CONFIG_SYSCTL_KUNIT_TEST=m
+FUSE can return EBUSY for open().
+What do you suggest to do when nfsd encounters EBUSY on open()?
 
-Then run these commands:
+vfs_rename() can return EBUSY.
+What do you suggest to do when nfsd v3 encounters EBUSY on rename()?
 
-    modprobe sysctl-test
-    rmmod sysctl-test
-    sysctl -a
+This sort of assertion:
+        WARN_ONCE(1, "nfsd: non-standard errno: %d\n", errno);
 
-The panic varies but generally looks something like this:
+Is a code assertion for a situation that should not be possible in the
+code and certainly not possible to trigger by userspace.
 
-    BUG: unable to handle page fault for address: ffffa4571c0c7db4
-    #PF: supervisor read access in kernel mode
-    #PF: error_code(0x0000) - not-present page
-    PGD 100000067 P4D 100000067 PUD 100351067 PMD 114f5e067 PTE 0
-    Oops: Oops: 0000 [#1] SMP NOPTI
-    ... ... ...
-    RIP: 0010:proc_sys_readdir+0x166/0x2c0
-    ... ... ...
-    Call Trace:
-     <TASK>
-     iterate_dir+0x6e/0x140
-     __se_sys_getdents+0x6e/0x100
-     do_syscall_64+0x70/0x150
-     entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Both cases above could trigger the warning from userspace.
+If you want to leave the warning it should not be a WARN_ONCE()
+assertion, but I must say that I did not understand the explanation
+for not mapping EBUSY by default to NFS4ERR_ACCESS in nfserrno().
 
-Instead of fully registering a sysctl table, expose the underlying
-checking function and use it in the unit test.
-
-Fixes: b5ffbd139688 ("sysctl: move the extra1/2 boundary check of u8 to sysctl_check_table_array")
-Signed-off-by: John Sperbeck <jsperbeck@google.com>
----
-
-The Change from v3 to v4 is to make sure sysctl_check_table_test_helper_sz()
-is defined in the unusual case that the sysctl kunit test is enabled, but 
-CONFIG_SYSCTL is disabled.
-
- fs/proc/proc_sysctl.c  | 22 +++++++++++++++++-----
- include/linux/sysctl.h | 17 +++++++++++++++++
- kernel/sysctl-test.c   |  9 ++++++---
- 3 files changed, 40 insertions(+), 8 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 27a283d85a6e..2d3272826cc2 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1137,11 +1137,12 @@ static int sysctl_check_table_array(const char *path, const struct ctl_table *ta
- 	return err;
- }
- 
--static int sysctl_check_table(const char *path, struct ctl_table_header *header)
-+static int sysctl_check_table(const char *path, const struct ctl_table *table,
-+			      size_t table_size)
- {
--	const struct ctl_table *entry;
-+	const struct ctl_table *entry = table;
- 	int err = 0;
--	list_for_each_table_entry(entry, header) {
-+	for (size_t i = 0 ; i < table_size; ++i, entry++) {
- 		if (!entry->procname)
- 			err |= sysctl_err(path, entry, "procname is null");
- 		if ((entry->proc_handler == proc_dostring) ||
-@@ -1173,6 +1174,16 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
- 	return err;
- }
- 
-+#if IS_ENABLED(CONFIG_KUNIT)
-+int sysctl_check_table_test_helper_sz(const char *path,
-+				      const struct ctl_table *table,
-+				      size_t table_size)
-+{
-+	return sysctl_check_table(path, table, table_size);
-+}
-+EXPORT_SYMBOL(sysctl_check_table_test_helper_sz);
-+#endif /* CONFIG_KUNIT */
-+
- static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_header *head)
- {
- 	struct ctl_table *link_table, *link;
-@@ -1372,6 +1383,9 @@ struct ctl_table_header *__register_sysctl_table(
- 	struct ctl_dir *dir;
- 	struct ctl_node *node;
- 
-+	if (sysctl_check_table(path, table, table_size))
-+		return NULL;
-+
- 	header = kzalloc(sizeof(struct ctl_table_header) +
- 			 sizeof(struct ctl_node)*table_size, GFP_KERNEL_ACCOUNT);
- 	if (!header)
-@@ -1379,8 +1393,6 @@ struct ctl_table_header *__register_sysctl_table(
- 
- 	node = (struct ctl_node *)(header + 1);
- 	init_header(header, root, set, node, table, table_size);
--	if (sysctl_check_table(path, header))
--		goto fail;
- 
- 	spin_lock(&sysctl_lock);
- 	dir = &set->dir;
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 40a6ac6c9713..02acd3670bd2 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -288,4 +288,21 @@ static inline bool sysctl_is_alias(char *param)
- int sysctl_max_threads(const struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos);
- 
-+#if IS_ENABLED(CONFIG_KUNIT)
-+#define sysctl_check_table_test_helper(path, table)	\
-+	sysctl_check_table_test_helper_sz(path, table, ARRAY_SIZE(table))
-+#ifdef CONFIG_SYSCTL
-+int sysctl_check_table_test_helper_sz(const char *path,
-+				      const struct ctl_table *table,
-+				      size_t table_size);
-+#else /* CONFIG_SYSCTL */
-+static inline int sysctl_check_table_test_helper_sz(const char *path,
-+				      const struct ctl_table *table,
-+				      size_t table_size)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_SYSCTL */
-+#endif /* CONFIG_KUNIT */
-+
- #endif /* _LINUX_SYSCTL_H */
-diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
-index 3ac98bb7fb82..247dd8536fc7 100644
---- a/kernel/sysctl-test.c
-+++ b/kernel/sysctl-test.c
-@@ -410,9 +410,12 @@ static void sysctl_test_register_sysctl_sz_invalid_extra_value(
- 		},
- 	};
- 
--	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_foo));
--	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_bar));
--	KUNIT_EXPECT_NOT_NULL(test, register_sysctl("foo", table_qux));
-+	KUNIT_EXPECT_EQ(test, -EINVAL,
-+			sysctl_check_table_test_helper("foo", table_foo));
-+	KUNIT_EXPECT_EQ(test, -EINVAL,
-+			sysctl_check_table_test_helper("foo", table_bar));
-+	KUNIT_EXPECT_EQ(test, 0,
-+			sysctl_check_table_test_helper("foo", table_qux));
- }
- 
- static struct kunit_case sysctl_test_cases[] = {
--- 
-2.48.0.rc2.279.g1de40edade-goog
-
+Thanks,
+Amir.
 
