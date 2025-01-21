@@ -1,312 +1,345 @@
-Return-Path: <linux-fsdevel+bounces-39799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F01A18778
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 771B8A1877F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 22:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C42162890
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:45:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABC901615F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 21:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8CD1F8674;
-	Tue, 21 Jan 2025 21:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B51F868C;
+	Tue, 21 Jan 2025 21:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MoLSitJH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8Umma9M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C47188CAE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 21:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0711B85C5;
+	Tue, 21 Jan 2025 21:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737495954; cv=none; b=bI08Y8VMgVsoxc2ykBhOjg3tBzuNKZgnlKmXZ38b4az+OlZSwy9M58Ep8cse0yGan3VpAsxpoFV593X3F/VPv9T0QqyHZ2LLDi0AqlAyvBXu3G/Rw8n+Kv5bpNMAJ32o27Hu/HmXzX/WZ52PntctPdHl4M4nmvLn2EFN/F7nb48=
+	t=1737496254; cv=none; b=Cg0F7RoB1k8OYXF4mdTr/dVX4oQiis/EQQbA91aDiIh1ii9ZdWneOJPCwJ8EhD6aPYPzLu7RmM/ZLg4BkQvzMm/yNeHR8C02THOstjNq3aOMsWgoykRsODjdlLD09kz1jd5EAFa84f1gwBqxiOQ88x74zOqxwFh2og82JdoyBFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737495954; c=relaxed/simple;
-	bh=MdelfwhRVSlyuiMYo7TZFBdCeacX1jO9e/qmO8vEwS8=;
+	s=arc-20240116; t=1737496254; c=relaxed/simple;
+	bh=gky7iobCYT9Wn0S0WyZR7GOedaSJClP3bB7sLe/+FQs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u743v+BqgtF9lnxVS9QB74znXl85lNAmIl5xjXTSM5HfuQjQPlgdPFgpMIXA6kUNNfl1MGdT2ipLUzOdvdR4xKoxBk3m9wjaW/r68U616/pSRsgJW716LnuFWFrHdRWPOIEyaVecGDUHSNnfijK4IKIzGxT9UJRls+7GBnra7y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MoLSitJH; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4368a290e0dso4205e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 13:45:51 -0800 (PST)
+	 To:Cc:Content-Type; b=Z7J2IQwFa1BToXRadKmgE9fvwvNBQPCMCFFzPInccC3N8eyFM/sFjubFRhAg+VijpfU0lafOOZo/8/WBQAm+fKzm69054KhOfkmOSLJrX2sKvOkxM1hIPSuPDIqJndvz+JgAjH5Z/3xPrCHXRT8VShT9eiw7oSQ1QCJNQTASOc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8Umma9M; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6dce7263beaso55630146d6.3;
+        Tue, 21 Jan 2025 13:50:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1737495950; x=1738100750; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737496251; x=1738101051; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cB+n+UwMfOQKwDrhAEMfJsdUytMHaeQlkJXVZX3WDwU=;
-        b=MoLSitJH3j7qcvK+QqZ1lRY0XwQZk/K8oOdCxZWSJFVSzUkclR4qP0oVQ+RCnMb8iM
-         QIlvWYuH1rHcityvXWnnPDdYnelS4+QY1MLSuwJuaTWtt89cK+wa7bE03VQG0ZsID893
-         K1+93Rsw9/9QJUtTMUoCFETecEJw1Ym6c1mGLOs8+dRNbvOqFTRRdgGkXFR421kFt1qY
-         gjXDUiMXcRRd4EcyskAK0L5JVPf3Bfj3gBkVwm9KiSLc+sHg1ZPKcmVc+5j0lZsz2vQ3
-         HDQHz82XVdqRJm+Il1Nmp5lNYY5k7qG1E3EnIK8lXXLAEJjQNegAg5jg76XU/zrWTAJp
-         wqow==
+        bh=6BdGZUBK50zU3Op0FjauNvbMjwAEUW58/YPkyPzQ+4Y=;
+        b=f8Umma9MCsGg9HFKNVs5xxWAMYiPk9nORiKmeEMCBNne/uqr9cM7JyDZgm1BnzVAFj
+         Kt0Mjhum4GopdQ5XjzQIHBcLIuVmY5D4Jpyg823fNk/ykNVTJF8RgCc14Gi+WTf9tF46
+         BwSOYwvZnkuKTI0bO+O+r/JTUPs070g2IBWGaL/0DXtCBdQrjIKsd+cUkfiiSZ94aLVG
+         ka/k20gld72oR/dQA/ITsrR9C1dVf4afTwAOjfShlKBBDU79Fs4t5p0oHM5Y741A3L1j
+         sTMBUz4iFU7na7+CXq+DJAcm2jm2avEqePG0Fqy92K0qSKpbxz8LRviPMwKHIEZS1i0r
+         F1PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737495950; x=1738100750;
+        d=1e100.net; s=20230601; t=1737496251; x=1738101051;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cB+n+UwMfOQKwDrhAEMfJsdUytMHaeQlkJXVZX3WDwU=;
-        b=T7bJ0FPoGgsTxcvi50f8C4fv/jjB2jk+ODNtbMQ+LBML+pN3vHvGjxv5q8ALcvtzwJ
-         scvGSvZfb9vmO2IMfyp0lYNaeL9eH2TTPQhlobewg6G7KhQi4UkpTWQtaejskaniKFLO
-         SC+gLEbx0lf7Nw52sukrnXkD2A1ld6ytpBJFbwONTuh/8s+846kHpTCBwEQcCTYUtXAK
-         Rcpo+Gzsaml6nCobMrQZCWVeKtDH9ugxFboRdKB2gUplLKgEC3ABIEDKrWqwCnuVg9Pe
-         wgaoPBziq3BevRz3iXnix/z6/JgfRsJgRo+MDRwvw+r0OkO1ZwPtpbfBa7zyaQLa4Fmj
-         yhoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmrPHPHVPmnUb60hCB05BofGRjAeKourx1K8nPnPuquRGsLUv/Hb/mkACkVNPlgiMEe17wbYpAkpZBH/ve@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbuBL13jbgNUVeufGW0fDVC68wxwZBACK9bSEsEkSC2/pv3/EB
-	rLwFtm9PaxvpBPebWDUh7bE7JzcykG9W8u2H07x0TCgMb7qgxNTNU6NPDQO7CmEWs7e+r9kph9M
-	HfnANSPZL5dDk6vzsH+nz3xwDtqQeQOsTm8Qy
-X-Gm-Gg: ASbGncvZZA+rVguIEZH/LxAMSgCZqoTinkHiMADXXsOuipa8xPHfQ/uN8tN2cSLLuyp
-	FOHGp9C8sCUq1uFSEYYiFV6NabbJTYMh7hk9nhKfQG3HbrK0PwAbwKr8vnGh5S3S/YZ7TdNZbZb
-	7Oy1JRZ24Hy0i5fsyF
-X-Google-Smtp-Source: AGHT+IH80POj0hbosYX61iNSRjHaP12pPVexa8wrDuJ3S0IOQG/dVdndrqqXXCuLXrtM4NwDvMUJLbrro+bva/MntBE=
-X-Received: by 2002:a05:600c:231a:b0:434:9e1d:44ef with SMTP id
- 5b1f17b1804b1-438b2dc5bd8mr42875e9.7.1737495950175; Tue, 21 Jan 2025 13:45:50
- -0800 (PST)
+        bh=6BdGZUBK50zU3Op0FjauNvbMjwAEUW58/YPkyPzQ+4Y=;
+        b=cvqPCguFsCjlugh6eeSUoT+YOx8bbMZVG4pKeY9CQVTPE2525i65gbBqXr75swYajp
+         jE6E26r4UELo4ID8rSzNEjoXzFFgxyv7EXqqLIo/tsy4gY4HcBb3aM9EpaQDG8aQ4cWJ
+         I0iyTK2wWs2aBb2fZlwVifghnjwNT3hjMmQna9jb/Jd9isoUkI0LVHDsG9iBefAo3p0r
+         vliXFQgD62PX+MAHfXeR858tsfjXgZa+dG2LeQsAgepwvge+CJdV3sCmJ3WrBsw4F0SY
+         xJp9EwfJdHiyvYmZeeDGr+hNNuO+5ED30TeLwrQasrdJHmq1jLCTom9Zg0JtiGTWyzEt
+         2zGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSpVUKKOG/np+U0tL/7mnMWLKqCi51vwykS+pLQywsX8OToZVmBWxWEefeyKoH1d929Vg2OCOAb8Hb6kJZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJJSkeWpCUO43D0NaZG0bsVrV+FiTO4PHMAVfKYpT2nkegtVbZ
+	V59o/SFW+1/4ei7jI4H/Dazum/NiX5jGZTtdFzReWZxPTz2TqLv+KO6yy5U9l6k1fI/RRIQSwUy
+	N4k1z1h9zzWOzUbkX+20q2eUmtgI=
+X-Gm-Gg: ASbGncuyIkqCo3WR5i7CrDfKAevGrC+4QFTj0aDj507S/X9fHpUwkbQOuT2Qc25zUOJ
+	HQptD9hALVsYvBEmJUHYWeD7kcJ4vUS6Cs8dLWwLfj4NnjYHqvav2
+X-Google-Smtp-Source: AGHT+IEqgzwqM1Dm48aZvM/u5rgQ1F70joaYYuEMM6bmvEmrHzltHetOUMndi34lRlvuBHL/QTWKYc4sQu2NUf1C3T4=
+X-Received: by 2002:ad4:5fcd:0:b0:6d8:812e:1fd0 with SMTP id
+ 6a1803df08f44-6e1b217a34dmr298999706d6.15.1737496251373; Tue, 21 Jan 2025
+ 13:50:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250118231549.1652825-1-jiaqiyan@google.com> <20250120172626.GO5556@nvidia.com>
-In-Reply-To: <20250120172626.GO5556@nvidia.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Tue, 21 Jan 2025 13:45:38 -0800
-X-Gm-Features: AbW1kvbNFTqyJFDZKnImh5XWoL6jWAktGiJggZRRRKZ8MreCoDvxFC5bNOYgKiU
-Message-ID: <CACw3F531Mdmvf1mxUCU_7mwhmHA5VrM4wrereTxHq3ACG49fJA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: nao.horiguchi@gmail.com, linmiaohe@huawei.com, tony.luck@intel.com, 
-	wangkefeng.wang@huawei.com, willy@infradead.org, jane.chu@oracle.com, 
-	akpm@linux-foundation.org, osalvador@suse.de, rientjes@google.com, 
-	duenwen@google.com, jthoughton@google.com, ankita@nvidia.com, 
-	peterx@redhat.com, sidhartha.kumar@oracle.com, david@redhat.com, 
-	dave.hansen@linux.intel.com, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20250118004759.2772065-1-joannelkoong@gmail.com>
+ <20250118004759.2772065-2-joannelkoong@gmail.com> <20250118201720.GK3557695@frogsfrogsfrogs>
+In-Reply-To: <20250118201720.GK3557695@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 21 Jan 2025 13:50:40 -0800
+X-Gm-Features: AbW1kvaGrAwVqkHFuueItcxYvMqXJ9_8RI-WugYrnGnFl1CtuGwoJP-PVPDKeI4
+Message-ID: <CAJnrk1YfiZkCM9es3SP7G8KKoSzKR7BexW2vbzXxwHStHyXLYw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] fsx: support reads/writes from buffers backed by hugepages
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, bfoster@redhat.com, 
+	nirjhar@linux.ibm.com, zlang@redhat.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks Jason, your comments are very much appreciated. I replied to
-some of them, and need more thoughts for the others.
+On Sat, Jan 18, 2025 at 12:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> On Fri, Jan 17, 2025 at 04:47:58PM -0800, Joanne Koong wrote:
+> > Add support for reads/writes from buffers backed by hugepages.
+> > This can be enabled through the '-h' flag. This flag should only be use=
+d
+> > on systems where THP capabilities are enabled.
+> >
+> > This is motivated by a recent bug that was due to faulty handling of
+> > userspace buffers backed by hugepages. This patch is a mitigation
+> > against problems like this in the future.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > Reviewed-by: Brian Foster <bfoster@redhat.com>
+> > ---
+> >  ltp/fsx.c | 165 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 152 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > index 41933354..1513755f 100644
+> > --- a/ltp/fsx.c
+> > +++ b/ltp/fsx.c
+> > @@ -2833,11 +2846,40 @@ __test_fallocate(int mode, const char *mode_str=
+)
+> >  #endif
+> >  }
+> >
+> > +/*
+> > + * Reclaim may break up hugepages, so do a best-effort collapse every =
+once in
+> > + * a while.
+> > + */
+> > +static void
+> > +collapse_hugepages(void)
+> > +{
+> > +#ifdef MADV_COLLAPSE
+> > +     int interval =3D 1 << 14; /* 16k */
+> > +     int ret;
+> > +
+> > +     if (numops && (numops & (interval - 1)) =3D=3D 0) {
+>
+> I wonder if this could be collapsed to:
+>
+>         /* re-collapse every 16k fsxops after we start */
+>         if (!numops || (numops & ((1U << 14) - 1)))
+>                 return;
+>
+>         ret =3D madvise(...);
+>
+> But my guess is that the compiler is smart enough to realize that
+> interval never changes and fold it into the test expression?
+>
+> <shrug> Not that passionate either way. :)
 
-On Mon, Jan 20, 2025 at 9:26=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Sat, Jan 18, 2025 at 11:15:46PM +0000, Jiaqi Yan wrote:
-> > In the experimental case, all the setups are identical to the baseline
-> > case, however 25% of the guest memory is split from THP to 4K pages due
-> > to the memory failure recovery triggered by MADV_HWPOISON. I made some
-> > minor changes in the kernel so that the MADV_HWPOISON-ed pages are
-> > unpoisoned, and afterwards the in-guest MemCycle is still able to read
-> > and write its data. The final aggregate rate is 16,355.11, which is
-> > decreased by 5.06% compared to the baseline case. When 5% of the guest
-> > memory is split after MADV_HWPOISON, the final aggregate rate is
-> > 16,999.14, a drop of 1.20% compared to the baseline case.
->
-> I think it was mentioned in one of the calls, but this is good data on
-> the CPU side, but for VMs doing IO, the IO performance is impacted
-> also. IOTLB miss on (random) IO performance, especially with two
-> dimensional IO paging, tends to have a performance curve that drops
-> off a cliff once the IOTLB is too small for the workload.
->
-> Specifically, systems seem to be designed to require high IOTLB hit
-> rate to maintain their target performance and IOTLB miss is much more
-> expensive than CPU TLB miss.
->
-> So, I would view MemCycle as something of a best case work load that
-> is not as sensitive to TLB size. A worst case is a workload that just
-> fits inside the TLB and reducing the page sizes pushes it to no longer
-> fit.
+Sounds good, I will change it to this and fix the indentation below for v5.
 
-I think a guest IO benchmarking could be valuable (I wasn't able to
-conduct it along with the MemCycler experiment due to resource reason)
-so it is added to my TODO list. I think if the number comes out really
-bad, it may affect the default behavior of MFR, or at least people's
-preference.
-
-Do you know if there is an existing benchmark like memcycler that I
-can run in VM, and that exercises the two dimensional IO paging?
-
->
-> > Per-memfd MFR Policy associates the userspace MFR policy with a memfd
-> > instance. This approach is promising for the following reasons:
-> > 1. Keeping memory with UE mapped to a process has risks if the process
-> >    does not do its duty to prevent itself from repeatedly consuming UER=
-.
-> >    The MFR policy can be associated with a memfd to limit such risk to =
-a
-> >    particular memory space owned by a particular process that opts in
-> >    the policy. This is much preferable than the Global MFR Policy
-> >    proposed in the initial RFC, which provides no granularity
-> >    whatsoever.
->
-> Yes, very much agree
->
-> > 3. Although MFR policy allows the userspace process to keep memory UE
-> >    mapped, eventually these HWPoison-ed folios need to be dealt with by
-> >    the kernel (e.g. split into smallest chunk and isolated from
-> >    future allocation). For memfd once all references to it are dropped,
-> >    it is automatically released from userspace, which is a perfect
-> >    timing for the kernel to do its duties to HWPoison-ed folios if any.
-> >    This is also a big advantage to the Global MFR Policy, which breaks
-> >    kernel=E2=80=99s protection to HWPoison-ed folios.
->
-> iommufd will hold the memory pinned for the life of the VM, is that OK
-> for this plan?
-
-At appearance, pinned memory (i.e. folio_maybe_dma_pinned=3Dtrue) by
-definition should not be offlined / reclaimed in many places,
-including the handling of HWPoison at any stage.
+Thanks,
+Joanne
 
 >
-> > 4. Given memfd=E2=80=99s anonymous semantic, we don=E2=80=99t need to w=
-orry about that
-> >    different threads can have different and conflicting MFR policies. I=
-t
-> >    allows a simpler implementation than the Per-VMA MFR Policy in the
-> >    initial RFC [1].
+> > +             ret =3D madvise(hugepages_info.orig_good_buf,
+> > +                           hugepages_info.good_buf_size, MADV_COLLAPSE=
+);
+> > +             if (ret)
+> > +                     prt("collapsing hugepages for good_buf failed (nu=
+mops=3D%llu): %s\n",
+> > +                          numops, strerror(errno));
+> > +             ret =3D madvise(hugepages_info.orig_temp_buf,
+> > +                           hugepages_info.temp_buf_size, MADV_COLLAPSE=
+);
+> > +             if (ret)
+> > +                     prt("collapsing hugepages for temp_buf failed (nu=
+mops=3D%llu): %s\n",
+> > +                          numops, strerror(errno));
+> > +     }
+> > +#endif
+> > +}
+> > +
+> >  bool
+> >  keep_running(void)
+> >  {
+> >       int ret;
+> >
+> > +     if (hugepages)
+> > +             collapse_hugepages();
+> > +
+> >       if (deadline.tv_nsec) {
+> >               struct timespec now;
+> >
+> > @@ -2856,6 +2898,103 @@ keep_running(void)
+> >       return numops-- !=3D 0;
+> >  }
+> >
+> > +static long
+> > +get_hugepage_size(void)
+> > +{
+> > +     const char str[] =3D "Hugepagesize:";
+> > +     size_t str_len =3D  sizeof(str) - 1;
+> > +     unsigned int hugepage_size =3D 0;
+> > +     char buffer[64];
+> > +     FILE *file;
+> > +
+> > +     file =3D fopen("/proc/meminfo", "r");
+> > +     if (!file) {
+> > +             prterr("get_hugepage_size: fopen /proc/meminfo");
+> > +             return -1;
+> > +     }
+> > +     while (fgets(buffer, sizeof(buffer), file)) {
+> > +             if (strncmp(buffer, str, str_len) =3D=3D 0) {
+> > +                     sscanf(buffer + str_len, "%u", &hugepage_size);
+> > +                     break;
+> > +             }
+> > +     }
+> > +     fclose(file);
+> > +     if (!hugepage_size) {
+> > +             prterr("get_hugepage_size: failed to find "
+> > +                     "hugepage size in /proc/meminfo\n");
+> > +             return -1;
+> > +     }
+> > +
+> > +     /* convert from KiB to bytes */
+> > +     return hugepage_size << 10;
+> > +}
+> > +
+> > +static void *
+> > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment, lon=
+g *buf_size)
+> > +{
+> > +     void *buf =3D NULL;
+> > +#ifdef MADV_COLLAPSE
+> > +     int ret;
+> > +     long size =3D roundup(len, hugepage_size) + alignment;
+> > +
+> > +     ret =3D posix_memalign(&buf, hugepage_size, size);
+> > +     if (ret) {
+> > +             prterr("posix_memalign for buf");
+> > +             return NULL;
+> > +     }
+> > +     memset(buf, '\0', size);
+> > +     ret =3D madvise(buf, size, MADV_COLLAPSE);
+> > +     if (ret) {
+> > +             prterr("madvise collapse for buf");
+> > +             free(buf);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     *buf_size =3D size;
+> > +#endif
+> > +     return buf;
+> > +}
+> > +
+> > +static void
+> > +init_buffers(void)
+> > +{
+> > +     int i;
+> > +
+> > +     original_buf =3D (char *) malloc(maxfilelen);
+> > +     for (i =3D 0; i < maxfilelen; i++)
+> > +             original_buf[i] =3D random() % 256;
+> > +     if (hugepages) {
+> > +             long hugepage_size =3D get_hugepage_size();
+> > +             if (hugepage_size =3D=3D -1) {
+> > +                     prterr("get_hugepage_size()");
+> > +                     exit(102);
+> > +             }
+> > +             good_buf =3D init_hugepages_buf(maxfilelen, hugepage_size=
+, writebdy,
+> > +                                           &hugepages_info.good_buf_si=
+ze);
+> > +             if (!good_buf) {
+> > +                     prterr("init_hugepages_buf failed for good_buf");
+> > +                     exit(103);
+> > +             }
+> > +             hugepages_info.orig_good_buf =3D good_buf;
+> > +
+> > +             temp_buf =3D init_hugepages_buf(maxoplen, hugepage_size, =
+readbdy,
+> > +                                           &hugepages_info.temp_buf_si=
+ze);
+> > +             if (!temp_buf) {
+> > +                     prterr("init_hugepages_buf failed for temp_buf");
+> > +                     exit(103);
+> > +             }
+> > +             hugepages_info.orig_temp_buf =3D temp_buf;
+> > +     } else {
+> > +             unsigned long good_buf_len =3D maxfilelen + writebdy;
+> > +             unsigned long temp_buf_len =3D maxoplen + readbdy;
+> > +
+> > +             good_buf =3D calloc(1, good_buf_len);
+> > +             temp_buf =3D calloc(1, temp_buf_len);
+> > +     }
+> > +     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
+> > +     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
+> > +}
+> > +
+> >  static struct option longopts[] =3D {
+> >       {"replay-ops", required_argument, 0, 256},
+> >       {"record-ops", optional_argument, 0, 255},
+> > @@ -2883,7 +3022,7 @@ main(int argc, char **argv)
+> >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> >
+> >       while ((ch =3D getopt_long(argc, argv,
+> > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyAB=
+D:EFJKHzCILN:OP:RS:UWXZ",
+> > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyA=
+BD:EFJKHzCILN:OP:RS:UWXZ",
+> >                                longopts, NULL)) !=3D EOF)
+> >               switch (ch) {
+> >               case 'b':
+> > @@ -2916,6 +3055,14 @@ main(int argc, char **argv)
+> >               case 'g':
+> >                       filldata =3D *optarg;
+> >                       break;
+> > +             case 'h':
+> > +#ifndef MADV_COLLAPSE
+> > +                             fprintf(stderr, "MADV_COLLAPSE not suppor=
+ted. "
+> > +                                     "Can't support -h\n");
+> > +                             exit(86);
 >
-> Your policy is per-memfd right?
-
-Yes, basically per-memfd, no VMA involved.
-
+> Excessive indenting here.
 >
-> > However, the affected memory will be immediately protected and isolated
-> > from future use by both kernel and userspace once the owning memfd is
-> > gone or the memory is truncated. By default MFD_MF_KEEP_UE_MAPPED is no=
-t
-> > set, and kernel hard offlines memory having UEs. Kernel immediately
-> > poisons the folios for both cases.
+> With those fixed up,
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 >
-> I'm reading this and thinking that today we don't have any callback
-> into the iommu to force offline the memory either, so a guest can
-> still do DMA to it.
+> --D
 >
-> > Part2: When a AS_MF_KEEP_UE_MAPPED memfd is about to be released, or
-> > when the userspace process truncates a range of memory pages belonging
-> > to a AS_MF_KEEP_UE_MAPPED memfd:
-> > * When the in-memory file system is evicting the inode corresponding to
-> >   the memfd, it needs to prepare the HWPoison-ed folios that are easily
-> >   identifiable with the PG_HWPOISON flag. This operation is implemented
-> >   by populate_memfd_hwp_folios and is exported to file systems.
-> > * After the file system removes all the folios, there is nothing else
-> >   preventing MFR from dealing with HWPoison-ed folios, so the file
-> >   system forwards them to MFR. This step is implemented by
-> >   offline_memfd_hwp_folios and is exported to file systems.
->
-> As above, iommu won't release its refcount after truncate or zap.
-
-Due to the pinning behavior, or something else? Then I think not
-offlining the HWPoison folio (i.e. no op) after truncate is expected
-behavior, or a return of EBUSY from offline_memfd_hwp_folios.
-
-Taking HugeTLB as an example, I used to think the folio will be
-dissovled into 4k pages after truncate. However, it seems today the
-huge folio is just isolated from freed and reused[*], like a hugepage
-is "leaked" (after truncation, nr_hugepages is not decreased, but
-free_hugepages is reduced, as if the exit process or mm still hold
-that hugepage).
-
-[*] https://lore.kernel.org/linux-mm/20250119180608.2132296-3-jiaqiyan@goog=
-le.com/T/#m54be295de1144eead4ab73c3cc9077b6dd14050f
-
->
-> > * MFR has been holding refcount(s) of each HWPoison-ed folio. After
-> >   dropping the refcounts, a HWPoison-ed folio should become free and ca=
-n
-> >   be disposed of.
->
-> So you have to deal with "should" being "won't" in cases where VFIO is
-> being used...
->
-> > In V2 I can probably offline each folio as they get remove, instead of
-> > doing this in batch. The advantage is we can get rid of
-> > populate_memfd_hwp_folios and the linked list needed to store poisoned
-> > folios. One way is to insert filemap_offline_hwpoison_folio into
-> > somewhere in folio_batch_release, or into per file system's free_folio
-> > handler.
->
-> That sounds more workable given the above, though we keep getting into
-> cases where people want to hook free_folio..
->
-> > 2. In react to later fault to any part of the HWPoison-ed folio, guest
-> >    memfd returns KVM_PFN_ERR_HWPOISON, and KVM sends SIGBUS to VMM. Thi=
-s
-> >    is good enough for actual hardware corrupted PFN backed GFNs, but no=
-t
-> >    ideal for the healthy PFNs =E2=80=9Cofflined=E2=80=9D together with =
-the error PFNs.
-> >    The userspace MFR policy can be useful if VMM wants KVM to 1. Keep
-> >    these GFNs mapped in the stage-2 page table 2. In react to later
-> >    access to the actual hardware corrupted part of the HWPoison-ed
-> >    folio, there is going to be a (repeated) poison consumption event,
-> >    and KVM returns KVM_PFN_ERR_HWPOISON for the actual poisoned PFN.
->
-> I feel like the guestmemfd version of this is not about userspace
-> mappings but about what is communicated to the secure world.
->
-> If normal memfd would leave these pages mapped to the VMA then I'd
-> think the guestmemfd version would be to leave the pages mapped to the
-> secure world?
->
-> Keep in mind that guestmemfd is more complex that kvm today as several
-> of the secure world implementations are sharing the stage2/ept
-> translation between CPU and IOMMU HW. So you can't just unmap 1G of
-> memory without completely breaking the guest.
->
-> > This RFC [4] proposes a MFR framework for VFIO device managed userspace
-> > memory (i.e. memory regions mapped by remap_pfn_region). The userspace
-> > MFR policy can instruct the device driver to keep all PFN mapped in a
-> > VMA (i.e. don=E2=80=99t unmap_mapping_range).
->
-> Ankit has some patches that cause the MFR framework to send the
-> poision events for non-struct page memory to the device driver that
-> owns the memory.
-
-But it seems the driver itself has not yet been in charge of unmapping
-or not. Instead, MFR framework made the call. I think it is probably
-fine the MFR framework can just continue to make the call with a piece
-of new info, mapping_mf_keep_ue_mapped/AS_MF_KEEP_UE_MAPPED (in RFC
-PATCH 1/3).
-
->
-> > * IOCTL to the VFIO Device File. The device driver usually expose a
-> >   file-like uAPI to its managed device memory (e.g. PCI MMIO BAR)
-> >   directly with the file to the VFIO device. AS_MF_KEEP_UE_MAPPED can b=
-e
-> >   placed in the address_space of the file to the VFIO device. Device
-> >   driver can implement a specific IOCTL to the VFIO device file for
-> >   userspace to set AS_MF_KEEP_UE_MAPPED.
->
-> I don't think address spaces are involved in the MFR path after Ankit's
-> patch? The dispatch is done entirely on phys_addr_t.
-
-I think strictly speaking Ankit's patch is built around
-pfn_address_space[*], and the driver does include address_space when
-it registers to core mm. So if the driver wants to be the one make the
-call of unmapping or not, it should still be able to access
-AS_MF_KEEP_UE_MAPPED.
-
-[*] https://lore.kernel.org/lkml/20231123003513.24292-2-ankita@nvidia.com/
-
->
-> What happens will be up to the driver that owns the memory.
->
-> You could have a VFIO feature that specifies one behavior or the
-
-Do you mean a new one under the VFIO_DEVICE_FEATURE IOCTL?
-
-> other, but perhaps VFIO just always keeps things mapped. I don't know.
-
-I think a proper VFIO guest benchmarking can help tell which behavior is be=
-tter.
-
->
-> Jason
+> > +#endif
+> > +                     hugepages =3D 1;
+> > +                     break;
+> >               case 'i':
+> >                       integrity =3D 1;
+> >                       logdev =3D strdup(optarg);
+> > @@ -3229,15 +3376,7 @@ main(int argc, char **argv)
+> >                       exit(95);
+> >               }
+> >       }
+> > -     original_buf =3D (char *) malloc(maxfilelen);
+> > -     for (i =3D 0; i < maxfilelen; i++)
+> > -             original_buf[i] =3D random() % 256;
+> > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
+> > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
+> > -     memset(good_buf, '\0', maxfilelen);
+> > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
+> > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
+> > -     memset(temp_buf, '\0', maxoplen);
+> > +     init_buffers();
+> >       if (lite) {     /* zero entire existing file */
+> >               ssize_t written;
+> >
+> > --
+> > 2.47.1
+> >
+> >
 
