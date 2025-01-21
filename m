@@ -1,176 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-39785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E411A18139
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 16:37:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2439A1814D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 16:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18E5188B4C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 15:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC649188423C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2025 15:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E0D1F470E;
-	Tue, 21 Jan 2025 15:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969461F4E44;
+	Tue, 21 Jan 2025 15:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="S0LLOpIb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VpbSXK+c"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Msrxffw+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIh2KbiP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Msrxffw+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIh2KbiP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF971F426C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 15:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7BE1F470E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 15:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737473850; cv=none; b=ilVHiE+6RmsgYuIZAQqDTWNcqUBe4VRqSd+jzTOtNkDzSyVwjlzF7Dn8ozL9YQgX6dlfF0TanFQX6rBy1CiYVrbCdrLgBjK9s+hi4zzaNavW4Zg1i7YfGX82rVsyDCdVpnrEt1dQ+PsG0Zt8mEelBQXDCI02NJMkz8pYcPcMOHA=
+	t=1737474295; cv=none; b=Tjn5Gf15kFMGpgMGHfa5oO/jOSBNKCB5pEi4bE4m6Jg1Am8yLQ8FIgLCnR9+eT5Bw8dYvQzECzRwKEFM7kO7j9cribeTOZd2WgDpjqvaM4/GBRGDkgdm4PTk0D0ru6tS0CzoIlMgVDP/zgJxyVTvNVlSbJOm3SDy/sYcVarP9AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737473850; c=relaxed/simple;
-	bh=tX+YPpWoVX/BBx4WgU8lfjzyzvUv/qYN3udcBuBtUOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=osrUI6Fu5ywTrURmaeCBQ0qm8S2sYistUF5Vzh47Z61f/xIItdQZ8feuJjIfC6hFGreE/sxDJgLyHpCJO6OyiFYMcZIMaCZoipwjGYPMJesH4oVn+j8NacoFvZa3ekGoQutr17/x+Md6ISxzhWrnyn5dewcDkESymxTe0/oLWKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=S0LLOpIb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VpbSXK+c; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 611C0138028B;
-	Tue, 21 Jan 2025 10:37:27 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 21 Jan 2025 10:37:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to; s=fm1; t=1737473847; x=
-	1737560247; bh=xbL9lsOWNyj+ZMZCvHUrP0+oYiKL45CTNakFaAo52wQ=; b=S
-	0LLOpIb5WuM2RaNyiP7Zcc4SJkXsEIXHIQqRX9ITLAdfc5+Od0SwGhUsvm/pOhK+
-	aotH6YW+epsIy0fwfyXmXxcTI8JBRlEm1RTVDsZ8EVeJjWsGodqesLjCPXC/HhLU
-	ndN1sqXCuZViEjUBqDq8v3OH74auJHI3XIab4htqCqArHcKakdwkQ7LQRxXWCUIH
-	Fx/euDcbguDfKTAekYzcIGrHz0zBYtvFOUCz4C3MOvR8/oIktFtJGm/01GwHVpPW
-	hPbazQkonz7f10u1CXXno/7lVvY2rcQpUVB4glHz/DGXN2mA+BoyyPLvd8JrJnMS
-	l5PMMTa0JKovRv1BTItrw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1737473847; x=1737560247; bh=xbL9lsOWNyj+ZMZCvHUrP0+oYiKL
-	45CTNakFaAo52wQ=; b=VpbSXK+cwzc9USPUz+g5OYJ4SBOWwZ3sumSNEkbnK2Ql
-	GzNeWdQUHsBzlG9vXsCdXJNjtWXFK0+TtEecy8WXQ27thOMcz0FHrabC6rdyIGg1
-	y572v9gLizwFTP37gWAI5KaIficBXVMtlBotHWQZ10cn0x5rBW6f5HwxBJu/niXD
-	ziH+cFunMepLYAESfbGykwgdccgnLoyLQBMLvvSFm6YgIzF7f7Lbdks38iPg6CqZ
-	jKVGTK/bd2pJqPSnXWBtzrVNLvqcoz3HhDwbpAAOBb02G12/QlZserFsZoHTwWvV
-	H6G5M+IiVN63XIePq8NK7pWaA9AkEP1SuDRoE32P/w==
-X-ME-Sender: <xms:Nr-PZ2QtcMPTNlv-TW-Qn7Gdf0IKJ1GCn_G6z8CATIhMCH-mOG27-w>
-    <xme:Nr-PZ7xHsdf-RiYIlwoOmVHeAOjAQ7WbUhP25DKq_-wN03CPFtqpDjx8yVXXP3Vpe
-    LjhvkWlUj8hU4Rs0Ys>
-X-ME-Received: <xmr:Nr-PZz3Lnj3meMTjnsAqYD5d-LC48GfzpPrZ9X9N_4ijrZk_dFL3-kq7F0JVV210LEEfGfyJkFiLx0x-A0Kb9uY3zqgzl5_zSnDlEAP6mXD9Z0E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudejvddggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecu
-    hfhrohhmpeffrghvihguucftvggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrhdrtg
-    homheqnecuggftrfgrthhtvghrnhepieetueeivedvfefhuedthfdtveevffegveeuudfg
-    leehhfegjeekueejvdffgeegnecuffhomhgrihhnpehlfihnrdhnvghtpdhkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehmvgesuggrvhhiughrvggrvhgvrhdrtghomhdpnhgspghrtghpthhtohepuddtpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgu
-    rghtihhonhdrohhrghdprhgtphhtthhopehtjheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepmhgvsegurghvihgurhgvrghvvghrrdgtohhmpdhrtghpthhtoheprhhoshhtvggu
-    thesghhoohgumhhishdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-    pdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepjhgrmhgvsh
-    drsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomhdprhgt
-    phhtthhopehkjhhlgiesthgvmhhplhgvohhfshhtuhhpihgurdgtohhm
-X-ME-Proxy: <xmx:Nr-PZyDDVG4d34UtBWKVeuKoH1yrVkC_HuW7CA90T8hY-vl5p8Vuzg>
-    <xmx:Nr-PZ_iYKf_PztgOID6rhj6zBNsJucsa9UVup8nwYVIk4sCqqBK21w>
-    <xmx:Nr-PZ-qNq5nUynwqvaKVVDuL2VIC2U8P3pOZuxCNJ4uEE7_gSxmWZw>
-    <xmx:Nr-PZyg64cEwGousYUERX2BCV92Kq0HhoA4S3G0TCqbB_WZn9hC8fw>
-    <xmx:N7-PZ0ZZiP1PEymuU6AB85z5wBhItOWQUlrCUr6FNVkUUvRJSpcR49cC>
-Feedback-ID: i67e946c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Jan 2025 10:37:25 -0500 (EST)
-From: David Reaver <me@davidreaver.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>
-Cc: David Reaver <me@davidreaver.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Krister Johansen <kjlx@templeofstupid.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/5] samples/kernfs: Add a pseudo-filesystem to demonstrate kernfs usage
-Date: Tue, 21 Jan 2025 07:36:34 -0800
-Message-ID: <20250121153646.37895-1-me@davidreaver.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1737474295; c=relaxed/simple;
+	bh=qpAnQmLvax83w5pVEYXymxzu3/UF6EhkDzwN6+hg2a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=X0fba5fXOjFMJT5yFODM4wapf9y6ZKUYpqCbRQ8Mq2jmhMPBDKEmDp0L2Fdo+8+FvDylYomlitUbCywRtd/s7O6sqG1r1VnpsqHUAvgzI368lDGEpm21Nz4Fh0Tbl4eTxGPOxnnNHRuAqPJb1muacRl1qv70mD3KdkcPw1Afhkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Msrxffw+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIh2KbiP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Msrxffw+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIh2KbiP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D630E21172;
+	Tue, 21 Jan 2025 15:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1737474290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=2EAr0JdRwiTzY1ZYousgtAIDHX2SbemQDyM+V2uO6Go=;
+	b=Msrxffw+/QVaC98FfLZppPRVhivX9Qu+5oHfatk1ml+lhPWqPLpnF3pYUQTzJnQYDbFDoE
+	Jag8hyNbDKiw6aVODtlm1ZltgGT7FbTyOX/kxk14fOcn6B/7cMUrES2vz0DXsX5bGzAPT8
+	2aOfB3cTBJnpdCkDhUMdPdZx3xkzkdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1737474290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=2EAr0JdRwiTzY1ZYousgtAIDHX2SbemQDyM+V2uO6Go=;
+	b=EIh2KbiPI8NA1VyOvGBaNTp2I5GLEwFlHsxQRSXZp2ljbQxG4o/rZJb5XJkl+bSNbEEVwZ
+	ynQ0Ifhr98Cm4QAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1737474290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=2EAr0JdRwiTzY1ZYousgtAIDHX2SbemQDyM+V2uO6Go=;
+	b=Msrxffw+/QVaC98FfLZppPRVhivX9Qu+5oHfatk1ml+lhPWqPLpnF3pYUQTzJnQYDbFDoE
+	Jag8hyNbDKiw6aVODtlm1ZltgGT7FbTyOX/kxk14fOcn6B/7cMUrES2vz0DXsX5bGzAPT8
+	2aOfB3cTBJnpdCkDhUMdPdZx3xkzkdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1737474290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=2EAr0JdRwiTzY1ZYousgtAIDHX2SbemQDyM+V2uO6Go=;
+	b=EIh2KbiPI8NA1VyOvGBaNTp2I5GLEwFlHsxQRSXZp2ljbQxG4o/rZJb5XJkl+bSNbEEVwZ
+	ynQ0Ifhr98Cm4QAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C5EDF13963;
+	Tue, 21 Jan 2025 15:44:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9esLMPLAj2egVgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 21 Jan 2025 15:44:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 715DDA0889; Tue, 21 Jan 2025 16:44:46 +0100 (CET)
+Date: Tue, 21 Jan 2025 16:44:46 +0100
+From: Jan Kara <jack@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>
+Subject: [GIT PULL] Fsnotify pre-content events for 6.14-rc1
+Message-ID: <uuxkzulie4wewcbfdtdn6sx75ncm7tbhg3ptj3jpu2sh6q4lx3@zuahiyvmnigl>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-This patch series creates a toy pseudo-filesystem built on top of kernfs in
-samples/kernfs/.
+  Hello Linus,
 
-kernfs underpins the sysfs and cgroup filesystems. Many kernel developers have
-considered kernfs for other pseudo-filesystems [1][2] and a draft patch was
-proposed to investigate moving tracefs to kernfs [3]. One reason kernfs isn't
-used more is it is almost entirely undocumented; I certainly had to read almost
-all of the kernfs code to implement this toy filesystem. This sample aims to
-improve kernfs documentation by way of an example.
+  could you please pull from
 
-The README.rst file in the first patch describes how sample_kernfs works from a
-user's perspective. Summary: the filesystem automatically populates directories
-with counter files that increment every time they are read. Users can adjust the
-increment via inc files. Counter files can be reset by writing a new value to
-them.
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_hsm_for_v6.14-rc1
 
-Subsequent patches build the rest of the filesystem. The commits are structured
-to guide readers in learning kernfs components and adapting them to build their
-own filesystems. If reviewers would prefer this all to be in one commit, I'm
-happy to do that too. Initially, I included a more complex example where you
-could read the sum of all child directory counters in a parent directory, but I
-didn't want to complicate the sample too much and distract from kernfs. I’m
-happy to remove the inc file if reviewers feel it's unnecessary. It is funny how
-even a toy can suffer from feature creep :)
+to get support for fsnotify pre-content (or HSM) event. Let me quickly sum
+up what the feature is about:
 
-This is my first substantial kernel patch, so I welcome feedback on any trivial
-errors. I tested this filesystem with all of the CONFIG_DEBUG_* and similar
-options I could find and I ensured none of them report any issues. They were
-particularly useful when debugging a deadlock that required replacing
-kernfs_remove() with kernfs_remove_self(), and discovering a memory leak fixed
-with kernfs_put().
+The patches introduce new fsnotify event (FS_PRE_ACCESS) that gets
+generated before a file contents is accessed. The event is synchronous so
+if there is listener for this event, the kernel waits for reply. On success
+the execution continues as usual, on failure we propagate the error to
+userspace. This allows userspace to fill in file content on demand from
+slow storage. The context in which the events are generated has been
+picked so that we don't hold any locks and thus there's no risk of a
+deadlock for the userspace handler.
 
-In the future, I hope to contribute further by writing documentation for kernfs
-and exploring the possibility of porting debugfs and/or tracefs to kernfs (like
-completing the draft in [3]). I'm curious if the reviewers feel any of those
-ideas are worth doing right now.
+The new pre-content event is available only for users with global
+CAP_SYS_ADMIN capability (similarly to other parts of fanotify
+functionality) and it is an administrator responsibility to make sure the
+userspace event handler doesn't do stupid stuff that can DoS the system.
 
-Link: https://lwn.net/Articles/960088/ [1]
-Link: https://lwn.net/Articles/981155/ [2]
-Link: https://lore.kernel.org/all/20240131-tracefs-kernfs-v1-0-f20e2e9a8d61@kernel.org/ [3]
+Based on your feedback from the last submission, fsnotify code has been
+improved and now file->f_mode encodes whether pre-content event needs to be
+generated for the file so the fast path when nobody wants pre-content event
+for the file just grows the additional file->f_mode check. As a bonus this
+also removes the checks whether the old FS_ACCESS event needs to be
+generated from the fast path. Also the place where the event is generated
+during page fault has been moved so now filemap_fault() generates the event
+if and only if there is no uptodate folio in the page cache. 
 
-David Reaver (5):
-  samples/kernfs: Adds boilerplate/README for sample_kernfs
-  samples/kernfs: Make filesystem mountable
-  samples/kernfs: Add counter file to each directory
-  samples/kernfs: Allow creating and removing directories
-  samples/kernfs: Add inc file to allow changing counter increment
+Also we have dropped FS_PRE_MODIFY event as current real-world users of the
+pre-content functionality don't really use it so let's start with the
+minimal useful feature set.
 
- MAINTAINERS                    |   1 +
- samples/Kconfig                |   6 +
- samples/Makefile               |   1 +
- samples/kernfs/Makefile        |   3 +
- samples/kernfs/README.rst      |  55 ++++++
- samples/kernfs/sample_kernfs.c | 321 +++++++++++++++++++++++++++++++++
- 6 files changed, 387 insertions(+)
- create mode 100644 samples/kernfs/Makefile
- create mode 100644 samples/kernfs/README.rst
- create mode 100644 samples/kernfs/sample_kernfs.c
+Top of the tree is 0c0214df28f0. The full shortlog is:
 
+Al Viro (1):
+      fs: get rid of __FMODE_NONOTIFY kludge
 
-base-commit: fda5e3f284002ea55dac1c98c1498d6dd684046e
+Amir Goldstein (11):
+      fsnotify: opt-in for permission events at file open time
+      fsnotify: check if file is actually being watched for pre-content events on open
+      fanotify: rename a misnamed constant
+      fanotify: reserve event bit of deprecated FAN_DIR_MODIFY
+      fsnotify: introduce pre-content permission events
+      fsnotify: pass optional file access range in pre-content event
+      fsnotify: generate pre-content permission event on truncate
+      fanotify: introduce FAN_PRE_ACCESS permission event
+      fanotify: report file range info with pre-content events
+      fanotify: allow to set errno in FAN_DENY permission response
+      fs: don't block write during exec on pre-content watched files
+
+Jan Kara (2):
+      ext4: add pre-content fsnotify hook for DAX faults
+      fanotify: Fix crash in fanotify_init(2)
+
+Josef Bacik (7):
+      fanotify: don't skip extra event info if no info_mode is set
+      fanotify: disable readahead if we have pre-content watches
+      mm: don't allow huge faults for files with pre content watches
+      fsnotify: generate pre-content permission event on page fault
+      xfs: add pre-content fsnotify hook for DAX faults
+      btrfs: disable defrag on pre-content watched files
+      fs: enable pre-content events on supported file systems
+
+The diffstat is
+
+ fs/binfmt_elf.c                    |   4 +-
+ fs/binfmt_elf_fdpic.c              |   4 +-
+ fs/btrfs/ioctl.c                   |   9 +++
+ fs/btrfs/super.c                   |   2 +-
+ fs/exec.c                          |   8 +-
+ fs/ext4/file.c                     |   3 +
+ fs/ext4/super.c                    |   3 +
+ fs/fcntl.c                         |   4 +-
+ fs/notify/fanotify/fanotify.c      |  31 ++++++--
+ fs/notify/fanotify/fanotify.h      |  15 ++++
+ fs/notify/fanotify/fanotify_user.c | 150 +++++++++++++++++++++++++++++--------
+ fs/notify/fsnotify.c               |  83 +++++++++++++++++++-
+ fs/open.c                          |  62 +++++++++++----
+ fs/xfs/xfs_file.c                  |  13 ++++
+ fs/xfs/xfs_super.c                 |   2 +-
+ include/linux/fanotify.h           |  18 +++--
+ include/linux/fs.h                 |  72 ++++++++++++++++--
+ include/linux/fsnotify.h           |  78 ++++++++++++++-----
+ include/linux/fsnotify_backend.h   |  53 ++++++++++++-
+ include/linux/mm.h                 |   1 +
+ include/uapi/asm-generic/fcntl.h   |   1 -
+ include/uapi/linux/fanotify.h      |  18 +++++
+ kernel/fork.c                      |  12 +--
+ mm/filemap.c                       |  86 +++++++++++++++++++++
+ mm/memory.c                        |  19 +++++
+ mm/nommu.c                         |   7 ++
+ mm/readahead.c                     |  14 ++++
+ security/selinux/hooks.c           |   3 +-
+ 28 files changed, 669 insertions(+), 106 deletions(-)
+
+							Thanks
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
