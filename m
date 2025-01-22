@@ -1,191 +1,420 @@
-Return-Path: <linux-fsdevel+bounces-39873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0DCA19A97
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 22:58:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E2EA19AC6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:17:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B111694BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 21:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227C83AA99D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 22:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDCE1C9DC6;
-	Wed, 22 Jan 2025 21:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB331C5D6E;
+	Wed, 22 Jan 2025 22:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gOUa9sVf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJ4OdVIR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FBB1C8FD6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 21:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2064C9F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 22:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737583113; cv=none; b=Bn413RAkiInyZlu97BOIekyXPclKoh0HArw7mJQaiQ++rkWvl+3iLeR1wi1TpPg2J5gunGPPlRXiaoXz+Min6Ea20REKWeVXAV5NJJ179wwXasIYWZfGGmjGMagkCTFbj6SS3m/bc+beqV5bsdTax4g9vmA5vTCfAXLJAftt+Ck=
+	t=1737584236; cv=none; b=PLVpnpKyIan8nSu4BZ/AFAERxKVK2RxRDKn7TKnbcUSQavyHhoB18aDGonpW+CL1zMsArTrHcTErd/fFChTXHM7K11vTxQkeh15J82Rue2NbA7yypad9V+ousfe/qZNYBJD+Z181JPC2/aFPqBP6c0Wz8PMLWmH+ncU/mfJ8xKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737583113; c=relaxed/simple;
-	bh=3SYl4+g1NDV+Zn9PgqRX7HmhqCL6eecegckdXkGBGQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Adw7hHjcJFheUivIRvJzxNxBxzM3j/svnzajZ9MPQoQxPT9uCMlNAZ6F3flYKX2DpU4NUWVL6ZvdA3rSEbJvkRAq+F8F+2O6S95WLTEG249MJNJe9W63aw8GaCEId84RXzOQHmROAwCyMtFjx3zg54l9fILjPg/f8WTCikqt0Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=gOUa9sVf; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2165cb60719so3038895ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 13:58:31 -0800 (PST)
+	s=arc-20240116; t=1737584236; c=relaxed/simple;
+	bh=KAJglO9X1adxuFoh3QTldxNhR/T49SiZKprL6k/K5pQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WCbw75WqYGMa+yf4tljPbU1kEEeqn8nIeeYja0ruJR8cSwPICy6MY1NzvCSbID616mo+/VLQad6UBArimGyIrOj17lSpTmhXp3uUjSFc9gInXNzdmJqN1hsYFc1Th8q+0W0aeFwUf9XNwrC0sU0+DF3YoRPNajk5tJso6rOEq0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJ4OdVIR; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4678cce3d60so2509751cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 14:17:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1737583111; x=1738187911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HXvn1GAZum62eGt9FVKhSYNWM9rpkSfE7ZuGmpHTELc=;
-        b=gOUa9sVf5VRMOjtstH4vTAcj5r0I91w7O1Ywz/O8Hu/hiWAy4xsv0Nr8rMIAZsd1+R
-         uCd9Xx/ywuT5Bh5Gp3l8qTEXsv4iGCtN+HSoYU8mWfk+zwu4E/3hyijmnSi2YvA0fAs2
-         UvM/9xBgE+1idJ48qwqrnOKL0GkruArS3w6GyQfTBNUJouU2qhsodKX9CBpgEPkScgEl
-         Rv5Y0A4yRHJcV99fu4jG8XtO6SlHrQs3/zVpiCoo1abZyyjNKIGyuZulV5/T+PFxQ5mg
-         PUpPHeh0yGQdXQLxplgmIZ+cGy4JTIXqzComc2/aAuMKOl1woOxt2S1patGtZaEQllTl
-         jmfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737583111; x=1738187911;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1737584233; x=1738189033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HXvn1GAZum62eGt9FVKhSYNWM9rpkSfE7ZuGmpHTELc=;
-        b=dpJ4uiC7FBNcfHQ3WKGymFtBR16JctNtGzURmeRmIzWPnuYxfhj+nM2uAyIfnLqbyt
-         so0u9GGHzxqcjyfakVIxO6dwbSZoXH+WpvYUlz/njfN07AYWMdkCiLX9xfWPM9szDY63
-         ldIyKVj7LB2iDB9SXA9FkHpjASs5yV5tFQjqReiv9mEE1HV1t/HM0OR5PjOOObyxWDsm
-         3swatveoSrYhh8/qEeXNwHetrvY4e0oyxW79DIaZDye5MtZWciVTLISJYTze7XqXaWDI
-         L1XbYjzIKXrA8L1q160HHXZH3h30MWBtC8uFivys8VmSapDjqYGT8V8Cz5NzsLbobeb7
-         pZsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZJFrZMVal3j2lsFFgZUrW/h2kRchax3PYjI+9b1QG+VeYwG766FzJ5OBH+mdFtO9yolFMbUtNOxB3wG90@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWRGp+NntuNXTYSACSgYX7dhh8b/raEzHBxGNpzrDbFFOE9clH
-	e0E6Q9BBEmBe3KX5ayhHPyOhGhiIKWSwDtBdLbZ0qQKuXgoCjr0lZasdBVyJYj8=
-X-Gm-Gg: ASbGnct6Ph26xkwZzUn2PD0mtqN5rhsOru4wU1n7lMe9pe0/V7+j5Bfy87+XxAVPay4
-	lNHWqDYYm7UWiRdt2tqlngEKqofdb9ZV0VfjbmLOvum6Z9UNWtF63yZsOBZIHLL+yYspfHu3sdu
-	eWEpaXeHkfXb5h7F4EO1v+O4fEc8ym0KavxutJbsR2CeTQGiMfPkiv+13Se4+a4sKd9cova/ncd
-	y9FR9pCI1bzl0kvA/FwqgaofaWE/cmVF8q+7Rx0LuJf4v5T0Q6iogylReqJ0zey5kKXltao6ssJ
-	trw3/70ujz82zbDmoisZrv6woYcLHR/ybDq6eh96IiyW3w==
-X-Google-Smtp-Source: AGHT+IHpNXzEDizxXUaP+qhVhDGM/6CzcfsTvz8bGC6/q51aZ4HDAeIaKSo3aEqGYpR6Eyp0UlrLWg==
-X-Received: by 2002:a05:6a20:a10c:b0:1d9:6c9c:75ea with SMTP id adf61e73a8af0-1eb21470203mr34616403637.5.1737583109417;
-        Wed, 22 Jan 2025 13:58:29 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72daba48cd0sm11735376b3a.131.2025.01.22.13.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2025 13:58:28 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1taijy-00000009FSe-1SgK;
-	Thu, 23 Jan 2025 08:58:26 +1100
-Date: Thu, 23 Jan 2025 08:58:26 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: djwong@kernel.org, hch@lst.de, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: xfs_repair after data corruption (not caused by xfs, but by
- failing nvme drive)
-Message-ID: <Z5FqAgxiLbqI6gmz@dread.disaster.area>
-References: <20250120-hackbeil-matetee-905d32a04215@brauner>
+        bh=EopwUpr8CDIdHSlkl8ERszZCKxp0DkS1X7x5GPG61x8=;
+        b=TJ4OdVIRnKrEDCMbtACR8G/h9ea9mH6R6DiiHPOWbEJM5b2Vf5xO8MU6MOJWLReG1+
+         DQltR7hFeUrm33K6RRJvaRF5jbejkGeIpPEI8/Pf/uiSRmyb5/9aTB7hxBl5T0Mt84Sj
+         +QfENuTkfa5vWLddM6OlqNMozFQD2nSTCp1iRDcMm4tXpA8dIHr16eKRFfHjUv+kTiTp
+         MC/1AF3dykMnoidbT+Wka4T5i+nfpTb/hH8fun9wtD1UpOaYQ1ll5L2FFdY0SuHRUbV9
+         ZRzS09xxhSgzM3iQQsrNE5YZIYBRJCu2g5UoNt2rEA92uruGp54e53HcFYyngt5MchGq
+         HLlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737584233; x=1738189033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EopwUpr8CDIdHSlkl8ERszZCKxp0DkS1X7x5GPG61x8=;
+        b=i3hJY3Ogous5Y/+IjeL6KHGYyXIiyNF1tLG1G79IS6Tvv+pm2ZFi0XCF92sd9AAinA
+         bFEfmVGn8VddRKVlGgDLMmKT2Y0WoELldHz/PpxyeRUBZd82DIbBcW3ZZd1zy8mHjAA9
+         +lP2PiP7THGeVHnEetcmrUyb7Ge0wcjEpkroP4uDsoR33OblPgcv2WMj0JUP6SNBO+I6
+         lg81dEOGNdXwmOd/rnJH0gfvXE+ZgHmE786AqBEycGLNwhKf9g12zzo1MFu9A7Dj6QhF
+         8JvRAkbVA+cleNS5c/UPp74btk3fcUfY7jluJf6EVqtn19AwHtTfOKX3Hnl60g826NIN
+         vUpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyQ2sXNZs9T7VX98Bi/6wX2tkWhA1xQeqW1SRwi/VQO2q/tfNhUwO8euiEAMAckZOy1/4SCbogm5CE/z/B@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxqN2D0klOJ3yK5zbsvGTp1e1aCLbOrLSlsINXQddCJmyGkst7
+	VF7cVnyC1fsUWRMNWcTk3kbVZJOGU7bhLuKj8elsCM6BpOVWdkTGppNphlEVswRClmO5Bndj7hh
+	yXSh4wr/U7kouJKnshCfwmZP+NXM=
+X-Gm-Gg: ASbGncs//sVEZGv3dpqleAldU9yYR6eZsfINIYPolSRKhBWjIxZvZL4Xeqp3kq3Jc00
+	b4uIUiY1kXKqZISnjV06886YWpYVHFqQ+xFB+RBIYKOdzmZyE03Pn
+X-Google-Smtp-Source: AGHT+IFVpHrQO8rLRJ4cZJ73Sg56MIzb8x9r+g0pBlODP+qwNn+E2LawfxrujXY95+uhKbTFM2EDtXQ6ksG0KM1VXOU=
+X-Received: by 2002:a05:622a:1817:b0:467:b1b4:2b6 with SMTP id
+ d75a77b69052e-46e12b7bf21mr365983451cf.38.1737584233233; Wed, 22 Jan 2025
+ 14:17:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250120-hackbeil-matetee-905d32a04215@brauner>
+References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
+ <whipjvd65hrc7e5b5qsoj3la556s6dt6ckokn25qmciedmiwqa@rsitf37ibyjw>
+ <CAJnrk1aZYpGe+x3=Fz0W30FfXB9RADutDpp+4DeuoBSVHp9XHA@mail.gmail.com>
+ <kugnldi6l2rr4m2pcyh3ystyjsnwhcp3jrukqt7ni2ipnw3vpg@l7ieaeq3uosk>
+ <CAJnrk1ZJ=mSMM8dP69QZBxLeorQXRjcBjOcVR4skhNcnNiDSAw@mail.gmail.com>
+ <xuf742w2v2rir6tfumuu5ll2ow3kgzzbhjgvu47vquc3vgrdxf@blrmpfwvre4y>
+ <CAJnrk1Z21NU0GCjj+GzsudyT1LAKx3TNqHt2oO22u1MZAZ4Lug@mail.gmail.com> <tglgxjxcs3wpm4msgxlvzk3hebzcguhuu752hs3eefku6wj4zv@2ixuho7rxbah>
+In-Reply-To: <tglgxjxcs3wpm4msgxlvzk3hebzcguhuu752hs3eefku6wj4zv@2ixuho7rxbah>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 22 Jan 2025 14:17:02 -0800
+X-Gm-Features: AbW1kvZO2izQxpQVm3b1L-accBighurtrGC3qBVA0hBEbsKjAYmQzn6TZIWDe4Y
+Message-ID: <CAJnrk1YXYD4f0NZWzC+DzQ4Wpoqr2XzBE-kkYk8sUozAce+UPA@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Improving large folio writeback performance
+To: Jan Kara <jack@suse.cz>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 20, 2025 at 04:15:00PM +0100, Christian Brauner wrote:
-> Hey,
-> 
-> so last week I got a nice surprise when my (relatively new) nvme drive
-> decided to tell me to gf myself. I managed to recover by now and get
-> pull requests out and am back in a working state.
-> 
-> I had to reboot and it turned out that my LUKS encrypted xfs filesystem
-> got corrupted. I booted a live image and did a ddrescue to an external
-> drive in the hopes of recovering the things that hadn't been backed up
-> and also I didn't want to have to go and setup my laptop again.
-> 
-> The xfs filesystem was mountable with:
-> 
-> mount -t xfs -o norecovery,ro /dev/mapper/dm4 /mnt
-> 
-> and I was able to copy out everything without a problem.
-> 
-> However, I was curious whether xfs_repair would get me anything and so I
-> tried it (with and without the -L option and with and without the -o
-> force_geometry option).
-> 
-> What was surprising to me is that xfs_repair failed at the first step
-> finding a usable superblock:
-> 
-> > sudo xfs_repair /dev/mapper/dm-sdd4
-> Phase 1 - find and verify superblock...
-> couldn't verify primary superblock - not enough secondary superblocks with matching geometry !!!
-> 
-> attempting to find secondary superblock...
-> ..found candidate secondary superblock...
-> unable to verify superblock, continuing...
-> ....found candidate secondary superblock...
-> unable to verify superblock, continuing...
+On Wed, Jan 22, 2025 at 1:22=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 21-01-25 16:29:57, Joanne Koong wrote:
+> > On Mon, Jan 20, 2025 at 2:42=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > > On Fri 17-01-25 14:45:01, Joanne Koong wrote:
+> > > > On Fri, Jan 17, 2025 at 3:53=E2=80=AFAM Jan Kara <jack@suse.cz> wro=
+te:
+> > > > > On Thu 16-01-25 15:38:54, Joanne Koong wrote:
+> > > > > I think tweaking min_pause is a wrong way to do this. I think tha=
+t is just a
+> > > > > symptom. Can you run something like:
+> > > > >
+> > > > > while true; do
+> > > > >         cat /sys/kernel/debug/bdi/<fuse-bdi>/stats
+> > > > >         echo "---------"
+> > > > >         sleep 1
+> > > > > done >bdi-debug.txt
+> > > > >
+> > > > > while you are writing to the FUSE filesystem and share the output=
+ file?
+> > > > > That should tell us a bit more about what's happening inside the =
+writeback
+> > > > > throttling. Also do you somehow configure min/max_ratio for the F=
+USE bdi?
+> > > > > You can check in /sys/block/<fuse-bdi>/bdi/{min,max}_ratio . I su=
+spect the
+> > > > > problem is that the BDI dirty limit does not ramp up properly whe=
+n we
+> > > > > increase dirtied pages in large chunks.
+> > > >
+> > > > This is the debug info I see for FUSE large folio writes where bs=
+=3D1M
+> > > > and size=3D1G:
+> > > >
+> > > >
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:            896 kB
+> > > > DirtyThresh:            359824 kB
+> > > > BackgroundThresh:       179692 kB
+> > > > BdiDirtied:            1071104 kB
+> > > > BdiWritten:               4096 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3596 kB
+> > > > DirtyThresh:            359824 kB
+> > > > BackgroundThresh:       179692 kB
+> > > > BdiDirtied:            1290240 kB
+> > > > BdiWritten:               4992 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3596 kB
+> > > > DirtyThresh:            359824 kB
+> > > > BackgroundThresh:       179692 kB
+> > > > BdiDirtied:            1517568 kB
+> > > > BdiWritten:               5824 kB
+> > > > BdiWriteBandwidth:       25692 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        1
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       7
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3596 kB
+> > > > DirtyThresh:            359824 kB
+> > > > BackgroundThresh:       179692 kB
+> > > > BdiDirtied:            1747968 kB
+> > > > BdiWritten:               6720 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:            896 kB
+> > > > DirtyThresh:            359824 kB
+> > > > BackgroundThresh:       179692 kB
+> > > > BdiDirtied:            1949696 kB
+> > > > BdiWritten:               7552 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3612 kB
+> > > > DirtyThresh:            361300 kB
+> > > > BackgroundThresh:       180428 kB
+> > > > BdiDirtied:            2097152 kB
+> > > > BdiWritten:               8128 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > >
+> > > >
+> > > > I didn't do anything to configure/change the FUSE bdi min/max_ratio=
+.
+> > > > This is what I see on my system:
+> > > >
+> > > > cat /sys/class/bdi/0:52/min_ratio
+> > > > 0
+> > > > cat /sys/class/bdi/0:52/max_ratio
+> > > > 1
+> > >
+> > > OK, we can see that BdiDirtyThresh stabilized more or less at 3.6MB.
+> > > Checking the code, this shows we are hitting __wb_calc_thresh() logic=
+:
+> > >
+> > >         if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+> > >                 unsigned long limit =3D hard_dirty_limit(dom, dtc->th=
+resh);
+> > >                 u64 wb_scale_thresh =3D 0;
+> > >
+> > >                 if (limit > dtc->dirty)
+> > >                         wb_scale_thresh =3D (limit - dtc->dirty) / 10=
+0;
+> > >                 wb_thresh =3D max(wb_thresh, min(wb_scale_thresh, wb_=
+max_thresh /
+> > >         }
+> > >
+> > > so BdiDirtyThresh is set to DirtyThresh/100. This also shows bdi neve=
+r
+> > > generates enough throughput to ramp up it's share from this initial v=
+alue.
+> > >
+> > > > > Actually, there's a patch queued in mm tree that improves the ram=
+ping up of
+> > > > > bdi dirty limit for strictlimit bdis [1]. It would be nice if you=
+ could
+> > > > > test whether it changes something in the behavior you observe. Th=
+anks!
+> > > > >
+> > > > >                                                                 H=
+onza
+> > > > >
+> > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.g=
+it/tree/patche
+> > > > > s/mm-page-writeback-consolidate-wb_thresh-bumping-logic-into-__wb=
+_calc_thresh.pa
+> > > > > tch
+> > > >
+> > > > I still see the same results (~230 MiB/s throughput using fio) with
+> > > > this patch applied, unfortunately. Here's the debug info I see with
+> > > > this patch (same test scenario as above on FUSE large folio writes
+> > > > where bs=3D1M and size=3D1G):
+> > > >
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:           2048 kB
+> > > > BdiDirtyThresh:           3588 kB
+> > > > DirtyThresh:            359132 kB
+> > > > BackgroundThresh:       179348 kB
+> > > > BdiDirtied:              51200 kB
+> > > > BdiWritten:                128 kB
+> > > > BdiWriteBandwidth:      102400 kBps
+> > > > b_dirty:                     1
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       5
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3588 kB
+> > > > DirtyThresh:            359144 kB
+> > > > BackgroundThresh:       179352 kB
+> > > > BdiDirtied:             331776 kB
+> > > > BdiWritten:               1216 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3588 kB
+> > > > DirtyThresh:            359144 kB
+> > > > BackgroundThresh:       179352 kB
+> > > > BdiDirtied:             562176 kB
+> > > > BdiWritten:               2176 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:                0 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3588 kB
+> > > > DirtyThresh:            359144 kB
+> > > > BackgroundThresh:       179352 kB
+> > > > BdiDirtied:             792576 kB
+> > > > BdiWritten:               3072 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > > > BdiWriteback:               64 kB
+> > > > BdiReclaimable:              0 kB
+> > > > BdiDirtyThresh:           3588 kB
+> > > > DirtyThresh:            359144 kB
+> > > > BackgroundThresh:       179352 kB
+> > > > BdiDirtied:            1026048 kB
+> > > > BdiWritten:               3904 kB
+> > > > BdiWriteBandwidth:           0 kBps
+> > > > b_dirty:                     0
+> > > > b_io:                        0
+> > > > b_more_io:                   0
+> > > > b_dirty_time:                0
+> > > > bdi_list:                    1
+> > > > state:                       1
+> > > > ---------
+> > >
+> > > Yeah, here the situation is really the same. As an experiment can you
+> > > experiment with setting min_ratio for the FUSE bdi to 1, 2, 3, ..., 1=
+0 (I
+> > > don't expect you should need to go past 10) and figure out when there=
+'s
+> > > enough slack space for the writeback bandwidth to ramp up to a full s=
+peed?
+> > > Thanks!
+> > >
+> > >                                                                 Honza
+> >
+> > When locally testing this, I'm seeing that the max_ratio affects the
+> > bandwidth more so than min_ratio (eg the different min_ratios have
+> > roughly the same bandwidth per max_ratio). I'm also seeing somewhat
+> > high variance across runs which makes it hard to gauge what's
+> > accurate, but on average this is what I'm seeing:
+> >
+> > max_ratio=3D1 --- bandwidth=3D ~230 MiB/s
+> > max_ratio=3D2 --- bandwidth=3D ~420 MiB/s
+> > max_ratio=3D3 --- bandwidth=3D ~550 MiB/s
+> > max_ratio=3D4 --- bandwidth=3D ~653 MiB/s
+> > max_ratio=3D5 --- bandwidth=3D ~700 MiB/s
+> > max_ratio=3D6 --- bandwidth=3D ~810 MiB/s
+> > max_ratio=3D7 --- bandwidth=3D ~1040 MiB/s (and then a lot of times, 56=
+1
+> > MiB/s on subsequent runs)
+>
+> Ah, sorry. I actually misinterpretted your reply from previous email that=
+:
+>
+> > > > cat /sys/class/bdi/0:52/max_ratio
+> > > > 1
+>
+> This means the amount of dirty pages for the fuse filesystem is indeed
+> hard-capped at 1% of dirty limit which happens to be ~3MB on your machine=
+.
+> Checking where this is coming from I can see that fuse_bdi_init() does
+> this by:
+>
+>         bdi_set_max_ratio(sb->s_bdi, 1);
+>
+> So FUSE restricts itself and with only 3MB dirty limit and 2MB dirtying
+> granularity it is not surprising that dirty throttling doesn't work well.
+>
+> I'd say there needs to be some better heuristic within FUSE that balances
+> maximum folio size and maximum dirty limit setting for the filesystem to =
+a
+> sensible compromise (so that there's space for at least say 10 dirty
+> max-sized folios within the dirty limit).
+>
+> But I guess this is just a shorter-term workaround. Long-term, finer
+> grained dirtiness tracking within FUSE (and writeback counters tracking i=
+n
+> MM) is going to be a more effective solution.
+>
 
-Yeah, so it's a 4 AG filesystem so it has 1 primary superblock and 2
-secondary superblocks. Two of the 3 secondary superblocks are trash,
-and repair needs 2 of the secondary superblocks to match the primary
-for it to validate the primary as a good superblock.
+Thanks for taking a look, Jan. I'll play around with the bdi limits,
+though I don't think we'll be able to up this for unprivileged FUSE
+servers. I'm planning to add finer grained diritiness tracking to FUSE
+and the associated mm writeback counter changes but even then, having
+full writes be that much slower is probably a no-go, so I'll
+experiment with limiting the fgf order.
 
-xfs_repair considers this situation as "too far gone to reliably
-repair" and so aborts.
 
-I did notice a pattern to the corruption, though. while sb 1 is
-trashed, the adjacent sector (agf 1) is perfectly fine. So is agi 1.
-But then agfl 1 is trash. But then the first filesystem block after
-these (a free space btree block) is intact. In the case of sb 3,
-it's just a single sector that is gone.
+Thanks,
+Joanne
 
-To find if there were any other metadata corruptions, I copied the
-primary superblock over the corrupted one in AG 1:
-
-xfs_db> sb 1
-Superblock has bad magic number 0xa604f4c6. Not an XFS filesystem?
-xfs_db> daddr
-datadev daddr is 246871552
-xfs_db> q
-$ dd if=t.img of=t.img oseek=246871552 bs=512 count=1 conv=notrunc
-...
-
-and then ran repair on it again. This time repair ran (after zeroing
-the log) and there were no corruptions other than what I'd expect
-from zeroing the log (e.g. unlinked inode lists were populated,
-some free space mismatches, etc).
-
-Hence there doesn't appear to be any other metadata corruptions
-outside of the 3 bad sectors already identified. Two of those
-sectors were considered critical by repair, hence it's failure.
-
-What I suspect happened is that the drive lost the first page that
-data was ever written to - mkfs lays down the AG headers first, so
-there is every chance that the FTL has put them in the same physical
-page. the primary superblock, all the AGI, AGF and AGFL headers get
-rewritten all the time, so the current versions of them will be
-immediately moved to some other page. hence if the original page is
-lost, the contents of those sectors will still be valid. However,
-the superblocks never get rewritten, so only they get lost.
-
-Journal recovery failed on the AGFL sector in AG 1 that was also
-corrupted - that had been rewritten many times, so it's possible
-that the drive lost multiple flash pages. It is also possible that
-garbage collection had recently relocated the secondary superblocks
-and that AGFL into the same page and that was lost. This is only
-speculation, though.
-
-That said, Christian, I wouldn't trust any of the recovered data to
-be perfectly intact - there's every chance random files have random
-data corruption in them. Even though the filesystem was recovered,
-it is worth checking the validity of the data as much as you can...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
