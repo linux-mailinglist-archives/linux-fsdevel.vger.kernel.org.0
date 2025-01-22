@@ -1,375 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-39881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7B2A19B5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:11:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B1AA19B6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E72081882250
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:11:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E877A4649
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830251CBEAC;
-	Wed, 22 Jan 2025 23:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6861CAA67;
+	Wed, 22 Jan 2025 23:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="h59vDn9e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJxl+wQW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2070.outbound.protection.outlook.com [40.92.90.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D591C5F39;
-	Wed, 22 Jan 2025 23:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737587480; cv=fail; b=SyZ9kLa5VCohWr3Borl/uZMfDgcF4ndvUH4BD6DoZ0AjOMh9nuruwtZb23qKFL1UbvQ6S0EXIFomKceN3v4Ei8zW2Ii5Nv/xzIWjpzXQygrhM/sFzNesOll5YnIQZpvl6VgtYlHi1H/QJoTWmu/r/ma2UFNg+7dnuxgxrSPf/6o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737587480; c=relaxed/simple;
-	bh=wK3FzXuQpDXmaSzr0vURQaYKg0fxON8Sw/uCWWRLeiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sEweCPOprskAgmyTStyfUXEsTxFOEY9YRLKP3xuSsG/dY02NAsmJjTHOZ1drqbvvw56n9meMEjZl0kqMm6sfN/gSJ3DhAPHJT3JM0qEMRC74kN7k9TmFDn+B2aYJASfvM5kJAUJPISDU7Xkqd40aCIBaJp2B/HvZg4eD700cMf4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=h59vDn9e; arc=fail smtp.client-ip=40.92.90.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fgmJzZYNrrwJCRFWGQYaTEPDTeDO8UN38j06L9twt8kMgqX1lvUCF1sGCu6D10nvL0wm9/uGvUiLaQx0s1dK0eQitCb1wWqbMDvpSuuSztCEpknWKnkmtwsUwimnuFLgUCQTC+gCJfRIYVQ9MpAJx6NJWiN4rPCmTVeAgA+gC0DXieR8EmcS/OINJ7+R/Q5+bEFhh0w0EErOL0k7a+bvkf5HWnqHamOJjttcr9hQk4lzZmQjV4E9Wy4h0wMltwRniSHUmM1lq9WkSJI0IOkAUGnabworivb3ijtfTn69x0U2dbIe1bdfsWyyy+WeemxBuXgbmunDJ752IJXAcTRjtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yaoaGdtKnNqICPXFl5gVmGgFsml4c7tLCw2b/4JCy3k=;
- b=qdXLFzDbGFdkqTwxFiEdyHJrnY5deNWAz+buyvVd3axa9hglvVCLimHzNP3+4SMcmGS6tGhif2UqJq92Mkk/2jgXhi12n36RxBLxlhSP99/Z20pXzVb+cfT0SVFve0wYtDDQNhh1i6JPyl2biJ6MxltcyFQoRKXpKJTTnqMQZUqUfolXmu+Lq5i57+s9GOEDDzPga8NTosT1gnwUUnuEo4Nw/Ecg8CyOXl5mb/y/6lu8Etjw1bb+Y/xUjZ6COYEEm5OIICjUEYEVdu4kGAid2cjj2XuWBAYQbrfMscBV3qoymQ5KK4mj04mSjnJdk+bA94PRNGV/+BJXNEyg0Hgpkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yaoaGdtKnNqICPXFl5gVmGgFsml4c7tLCw2b/4JCy3k=;
- b=h59vDn9e06288fLEYezV3/xVBMxMlCyjngGu6MbydMiJDJi/TvPCCD+z/mNGY6QKiRsKCILV5E6WGGwFzI8RG2UO+GPbjxOmbQ9Xchdt+RMk5g9TSNxmceZyEAtN9JzwScVpnDjDeZ9IXBpcd6fJAvLjjyNGrSpyYvrAB+Bs1xUjBgsopADWUcadZJex3BdwpRjUdQcoFkNCb2IgR3HdS7b2k/T13WmZ3ouk7MoSWEIan/X3hP9ZyMJlD1sfRZZUVhkuaMx8m2Up2jU5tVNIrsvauGhD/Ou0uDbi0Cm4ur4489tdB4wzGy2hpC/Na9bQ/ssEKIJYn/NLgHmdNVMtzw==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by DU2PR03MB7958.eurprd03.prod.outlook.com (2603:10a6:10:2d9::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.10; Wed, 22 Jan
- 2025 23:11:16 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%3]) with mapi id 15.20.8356.020; Wed, 22 Jan 2025
- 23:11:16 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com,
-	brauner@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v8 5/5] selftests/bpf: Add tests for bpf_fget_task() kfunc
-Date: Wed, 22 Jan 2025 23:04:51 +0000
-Message-ID:
- <AM6PR03MB508011569947E4698E46596599E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <AM6PR03MB50806D2E13B3C81B0ECDB5B299E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
-References: <AM6PR03MB50806D2E13B3C81B0ECDB5B299E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P123CA0049.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1::13) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <20250122230451.35719-5-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15FE1C3C1A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 23:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737588201; cv=none; b=SvrbDHT2v926MF6fdwv4rx/FBoWtIurwc4Xq/8tl+Md+ThU/M7pNVXAGNf/eO83niRXQ5k+A8jPx7EkC6Oe46c9hxMhab69RtOWnGt4BVFhMBcXIaPJ0QkDhF17J1X/HkTtZbqtN9J+e+Xx5VqX0h120Q5H8zcHeL5Sv5Z90ovg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737588201; c=relaxed/simple;
+	bh=s1alVnADfkMQnLzTZVHUk1KP0xKaA4nfPAReSGPPbXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=trQw7mLfWtTiN+z0LkyymZolPHmMpjQ4NSHW0XGIxDDbF6gIF5bmXEO9FC28VbI49k4Yuv+KVQGtvpQWeR1z1zM2o2re56fksm9Vq/5Y3wkIdSa259QLYezWvS7brYLMZM4cLFxOyV/WgxOXcsQrDqLopzNWqKdCuWFZw+5vxLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJxl+wQW; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6dce7263beaso3763926d6.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 15:23:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737588199; x=1738192999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ys/e6UxQtsLFgLg7ZJ5CA6/h091ZID30tEusgU/NGd8=;
+        b=QJxl+wQW/I7yNFaj808OcvBTZJ7wc05KwEqScKEdhPrlz5vBe6adtRTqrOFWw60oI0
+         zwQes1Cs9+rTkJOlwGa+EfZLMVQkOh46+AHtusmsqZWwXRwVxD9y6qNRBcjV21bJfoFt
+         iGp04Fyw/derTx3rJDHw/1otexOn8igERwWT8wKo5Ji2XONh6fIT7vQu74ZbXg3yCSmz
+         FWRgfTJh0WtvimSZdvOXuhqqpLMZpZuDyOyhwgt75MYbLWCUpXAIhGnDrwWFiFcrQ/0V
+         nUOhToSYKVtRUlUDZMeWOQ1ozO15fbseynbaPuO1IzjmtCZjXKJZm0SWc2mGknUuSqtT
+         kknA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737588199; x=1738192999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ys/e6UxQtsLFgLg7ZJ5CA6/h091ZID30tEusgU/NGd8=;
+        b=ooeAEbY23EFRf6LMZa2A2FevQH/a5RHQw+KIGlLaKaKji5AlhBotc9L/RyNXkJMJvo
+         xbDxCesU3TUYCQVl4MmckMmtWY9Q64hanY3KRuJ21UBTZQQdhD63m6Oj3QmEypY4MzG8
+         r4scPcIEP8JT6d7wP2A7vRyhTMniw7hUoN0oiYGM4zQaVJar0TNwIus08tOUSB2KVLfs
+         zlNthyGLiujfHY0ia6zupXutEaJbD/2ayTt0/if8jpbGwLMH/E+InqRwffP+UrYQ3n3d
+         vGXM/RFgDTgeQYfeOeE+eZuDo02cbKyedWK0+gtDn46fuC425hYb5ucNNEDs8QNZHcsD
+         ANlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY+G4d3y/NokAKLK0k0xpjwl3uapvs6eO2qOInDJyX4FxMczF+nanY8Yi4AVcO1O56G901xAewS+4Aq5OF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXa6dNG+N0w3pHbymH+SH8LCzS3U6ZVt36CGD0OccK6TMxwGl5
+	Fz/g1YgGDwMH9ystJ9iM5KE9Lb2WOu2FFS8rqHC8OX45ZA/nIRLGcZch4okuyyHawUp8EHJiT/Y
+	ZwUyMkJhRLBhcXsEkPldS/D6KBJLaHmzUbc4=
+X-Gm-Gg: ASbGncsLp8bKbaCut7AMZUaAYWTdQ0qG/uUYwMgTOojuRqC5ByabjErOw+1bUC4ZZwH
+	U8SCs6D1Rlohc51io/zJLgXUPU8qLxWrKH4Szr8ZegVK6vodTIxJH
+X-Google-Smtp-Source: AGHT+IElM7qy8SvFjVn5ndUeHH1XPe3+f3dTF/lI7J023JvBdpbhgyRIxxZO831GG8wLor3khirT4MwDqnEHAhh8iLs=
+X-Received: by 2002:a05:6214:5349:b0:6d4:2910:7f13 with SMTP id
+ 6a1803df08f44-6e1b2213dd2mr396406936d6.32.1737588198649; Wed, 22 Jan 2025
+ 15:23:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|DU2PR03MB7958:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50f6a17d-db32-42cc-1214-08dd3b3a123c
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|5072599009|15080799006|19110799003|440099028|3412199025|41001999003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0Clj7diGiGCgheyCF3HL5AMDuefj3tf53P++7kVxj/3i5U+WqUOQtqLTn4n5?=
- =?us-ascii?Q?CpTY1hhqe6cUib0NQm9+8MbR4kqOuIBRcnMLRfwBlLTdNPhlthabgM4oKORc?=
- =?us-ascii?Q?MyUtqYaIgzDxCzEtGmJRTRNDPd+Ox2UPWUjXwl7XJpJCjXRWEu4JzfwAPGnZ?=
- =?us-ascii?Q?3SudNFoLw0UZdR9U1iTIrKHDXva/XAwxNKGgY4DHdjLhSCFQGskEdigwne38?=
- =?us-ascii?Q?kgnhJZOPxlhiTj8ZLZ+80v2CsenOfAi3XrHf4KL6Wn8WXMWE2LNx5dhajZ3w?=
- =?us-ascii?Q?GW0GkRrUqU+MXwL6wPsLcXRlNQsApswWGY/jLEQArvieT5lkPRfvMJFuDK7/?=
- =?us-ascii?Q?SZulU4+eqNcVo3FQHrH0DNZfu3lI43Iekykah6Zpcb4K8euX4IGb128GVt7c?=
- =?us-ascii?Q?ENnpC4fJH5MuTlE2RPQvm2MpcmeQjMzadB7qy5GP8aaaScG4CxjgMyouW5Jp?=
- =?us-ascii?Q?7voFImjeH5qw6vlxIAr3Dca2yiCThuZCSF3z06K5Md6yzZFHqFhQNpHCstee?=
- =?us-ascii?Q?pQDxYm7Uu2X3HWxOf3i/mbmr5JytQBYBFTlAYQcfdUBlDVlfYn3hCn9ihGGm?=
- =?us-ascii?Q?uVhTekpuyUzrTpFSaUGgC9ioirhL1KlHCtmaVlrT26RSIISVOEgqloPqGL+i?=
- =?us-ascii?Q?uRJq23dCiIrA0zqlrvK2Q7vWbFDeP2p0Iux39RQlsOFi38N82Mac0EFcwpqq?=
- =?us-ascii?Q?72Vm8BVtmyo8NciuPRx60CYDe8I4t/3LzP66vVweKVnTGuSWOd/Lc19nPDcm?=
- =?us-ascii?Q?eyKphZuVm1OrE6tjvywE73RX/Xt9eM01W2fW+n9vRI81T4KpVP6Xv6FqF7tv?=
- =?us-ascii?Q?JAEZqCpfH/XUilUXsi3IasCbO+ZCBmg9IWK4u8+tAD/wUSYZONyZ4WUwkghD?=
- =?us-ascii?Q?BnHz2Gzvn3eGQxQFKZuq8OpyL2oyR7TTJpT1fa5Cjh0tS5oLmeGotVDU7mKG?=
- =?us-ascii?Q?jF79cX9Z1d7tIisYQAb76Sgp2JhXsuAE4jfvD3PjjIKZ+oTLyJDd8PauAACr?=
- =?us-ascii?Q?BwTkhS4TrDd5dyyt6xHm2YdAI2gq5zoPf/RuGNZEy34nMkn9OPIYIekzqvph?=
- =?us-ascii?Q?XasWvWfayid+/5QqYmF9H1kbslg0DA=3D=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Jv1aB0c0GQ02lVPrJ0e9Yqlj74M8aFxprFXlNU9o03I5eSBAXJDUfA44bwKq?=
- =?us-ascii?Q?uZ6M+3TVRc9m+bLwUGy9DXuNO3rJnqYGrp+UzPsBtmdtFOQYcKIwiR7wk36z?=
- =?us-ascii?Q?LC9k4pnzudI92LjPBC1xUNNnSwyckhnm3FEOY+kj5tPJp3nkYiEfu8unuvGB?=
- =?us-ascii?Q?AxHgMOwuptGPzu1ZK86C/9QlSnMwpu1OF6NeIURMXmKip5VoGE+RwPg+i2o1?=
- =?us-ascii?Q?OY0hs63Y15vCRs4KcGW3q6EHfFVWPpnyf98fDhKf2E6zowxSxcfwPuJ8rV3B?=
- =?us-ascii?Q?xbympAElLUzmCWTXa/YGw81TcWm9ShpfML6enhEHp+VG1Q4fmNsBq6ZEAB7s?=
- =?us-ascii?Q?5ri/gXj9yLkl3Rq1xpbVEJ9d6fcqedGXQri09eqyrC3dG94WsweHPJZYM+ZC?=
- =?us-ascii?Q?PTE3jeKpbt/lYWBoQ2HDot1aoNISDuF8P5D1/y5Rt05Mzc7qRwzLsiUbxcx/?=
- =?us-ascii?Q?qO41FEn+z1Wi0TQr/70dCptCWB2B/6UyQFXuRtl7KTLCiHUTFGh2ari/Ef08?=
- =?us-ascii?Q?u3BYr5z2ywN3gnBZaXYzMEc0u57B0GBHRdTlw3xUpMOoso7Q0rtjRcL7JLk5?=
- =?us-ascii?Q?W6lKm02Il1op/s9UbnhqRhqmEcH+kdQ8XMmfDoy90JHzj5vq/p/ttc7HZtbh?=
- =?us-ascii?Q?kYHloIa/emrr8XVvmrYmBD5X1pzFKZtObbUQOH1h2b8etpFLXShqtAYwhq6y?=
- =?us-ascii?Q?hBeF3GrKG9AwZa3dkgbM1FHOivogzSGn1p7oFQuI/1VfVxqu0wBSI7vLLElY?=
- =?us-ascii?Q?3GMSK20DWng+0GHsfgFRmq+A4unqMhbVMv7Z16MSUnCgAKWNQfnTTDY48nGV?=
- =?us-ascii?Q?pgCdHJO8U2X7vBsamaIdijtz2jQRYaJ6PPqdGSC75J3Ns2EiA3Sgbn+jB/dV?=
- =?us-ascii?Q?PSkpHX/KzQyLnHj5PdGMHUVt/2xsYdUodaZlHSf813faHTc/3/7R7YNViXhk?=
- =?us-ascii?Q?hrbRDhR4U7bwNPhzJX6Q13RsKess62IJ9NnjPbVfkl+GjJhCcP5VLK/cZuJu?=
- =?us-ascii?Q?N6R8GsMvdzSKmxZVJki+RdUofYq7uzytD3DgpF1ev22UHxOQOmcnP/83+fNW?=
- =?us-ascii?Q?4nlQRkKKdWMDRD7qixldQd3YvszBwzTqKojGQ1m4fxuQmZX+h7xbuxgmd+EP?=
- =?us-ascii?Q?gJBeNq0sFigYK3EIm332swU7hkQMdDHYmupsafR/tBSIYd3dR4xnOwwIjnzy?=
- =?us-ascii?Q?LCKeBXvtJqU7GHaBemCXBgU4NtDoLShpK7eA4GVjI5PZJ2hUo5p10LQO5n97?=
- =?us-ascii?Q?EYSqvYrnudodlmpDEaNm?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50f6a17d-db32-42cc-1214-08dd3b3a123c
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2025 23:11:15.9505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR03MB7958
+References: <20241213221818.322371-1-joannelkoong@gmail.com>
+In-Reply-To: <20241213221818.322371-1-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 22 Jan 2025 15:23:08 -0800
+X-Gm-Features: AbW1kvb2BRX8ODQ2Y78eMaBI88k08TxUto3L5fr58fe7mMkCGGb8DNb2O033HG0
+Message-ID: <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] fuse: support large folios
+To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, willy@infradead.org, 
+	jefflexu@linux.alibaba.com, shakeel.butt@linux.dev, jlayton@kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds test cases for bpf_fget_task() kfunc.
+On Fri, Dec 13, 2024 at 2:23=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> This patchset adds support for folios larger than one page size in FUSE.
+>
+> This patchset is rebased on top of the (unmerged) patchset that removes t=
+emp
+> folios in writeback [1]. This patchset was tested by running it through f=
+stests
+> on passthrough_hp.
+>
+> Please note that writes are still effectively one page size. Larger write=
+s can
+> be enabled by setting the order on the fgp flag passed in to __filemap_ge=
+t_folio()
+> but benchmarks show this significantly degrades performance. More investi=
+gation
+> needs to be done into this. As such, buffered writes will be optimized in=
+ a
+> future patchset.
+>
+> Benchmarks show roughly a ~45% improvement in read throughput.
+>
+> Benchmark setup:
+>
+> -- Set up server --
+>  ./libfuse/build/example/passthrough_hp --bypass-rw=3D1 ~/libfuse
+> ~/mounts/fuse/ --nopassthrough
+> (using libfuse patched with https://github.com/libfuse/libfuse/pull/807)
+>
+> -- Run fio --
+>  fio --name=3Dread --ioengine=3Dsync --rw=3Dread --bs=3D1M --size=3D1G
+> --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
+> --directory=3Dmounts/fuse/
+>
+> Machine 1:
+>     No large folios:     ~4400 MiB/s
+>     Large folios:        ~7100 MiB/s
+>
+> Machine 2:
+>     No large folios:     ~3700 MiB/s
+>     Large folios:        ~6400 MiB/s
+>
+>
+> [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannel=
+koong@gmail.com/
+>
 
-test_bpf_fget_task is used to test obtaining struct file based on
-the file descriptor in the current process.
+A couple of updates on this:
+* I'm going to remove the writeback patch (patch 11/12) in this series
+and resubmit, and leave large folios writeback to be done as a
+separate future patchset. Getting writeback to work with large folios
+has a dependency on [1], which unfortunately does not look like it'll
+be resolved anytime soon. If we cannot remove tmp pages, then we'll
+likely need to use a different data structure than the rb tree to
+account for large folios w/ tmp pages. I believe we can still enable
+large folios overall even without large folios writeback, as even with
+the inode->i_mapping set to a large folio order range, writeback will
+still only operate on 4k folios until fgf_set_order() is explicitly
+set in fuse_write_begin() for the __filemap_get_folio() call.
 
-bpf_fget_task_null_task and bpf_fget_task_untrusted_task are used to
-test the failure cases of passing NULL or untrusted pointer as argument.
+* There's a discussion here [2] about perf degradation for writeback
+writes on large folios due to writeback throttling when balancing
+dirty pages. This is due to fuse enabling bdi strictlimit. More
+experimentation will be needed to figure out what a good folio order
+is, and whether it's possible to do something like remove the
+strictlimit for privileged servers.
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
- .../testing/selftests/bpf/bpf_experimental.h  |  8 +++
- .../selftests/bpf/prog_tests/fs_kfuncs.c      | 46 ++++++++++++++
- .../selftests/bpf/progs/fs_kfuncs_failure.c   | 33 ++++++++++
- .../selftests/bpf/progs/test_fget_task.c      | 63 +++++++++++++++++++
- 4 files changed, 150 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_fget_task.c
+* Writeback on FUSE will need support for more granular dirty
+tracking, so that we don't have to write back the entire large folio
+if only a few pages in it are dirtied. I'm planning to take a look at
+iomap and netfs and see if maybe FUSE can hook into that for it.
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index ce1520c56b55..e0c9e7d9ba0a 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -221,6 +221,14 @@ extern void bpf_put_file(struct file *file) __ksym;
-  */
- extern int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz) __ksym;
- 
-+/* Description
-+ *	Get a pointer to the struct file corresponding to the task file descriptor
-+ *	Note that this function acquires a reference to struct file.
-+ * Returns
-+ *	The corresponding struct file pointer if found, otherwise returns NULL
-+ */
-+extern struct file *bpf_fget_task(struct task_struct *task, unsigned int fd) __ksym;
-+
- /* This macro must be used to mark the exception callback corresponding to the
-  * main program. For example:
-  *
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 5a0b51157451..89f5e09672b3 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -9,6 +9,8 @@
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
- #include "test_fsverity.skel.h"
-+#include "test_fget_task.skel.h"
-+#include "fs_kfuncs_failure.skel.h"
- 
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
- 
-@@ -139,6 +141,45 @@ static void test_fsverity(void)
- 	remove(testfile);
- }
- 
-+static void test_fget_task(void)
-+{
-+	int pipefd[2], prog_fd, err;
-+	struct test_fget_task *skel;
-+	struct bpf_program *prog;
-+
-+	skel = test_fget_task__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-+		return;
-+
-+	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
-+		goto cleanup_skel;
-+
-+	prog = bpf_object__find_program_by_name(skel->obj, "test_bpf_fget_task");
-+	if (!ASSERT_OK_PTR(prog, "find_program_by_name"))
-+		goto cleanup_skel;
-+
-+	prog_fd = bpf_program__fd(prog);
-+	if (!ASSERT_GT(prog_fd, -1, "bpf_program__fd"))
-+		goto cleanup_skel;
-+
-+	if (pipe(pipefd) < 0)
-+		goto cleanup_skel;
-+
-+	skel->bss->test_fd1 = pipefd[0];
-+	skel->bss->test_fd2 = pipefd[1];
-+
-+	err = bpf_prog_test_run_opts(prog_fd, NULL);
-+	if (!ASSERT_OK(err, "prog_test_run"))
-+		goto cleanup_pipe;
-+
-+	ASSERT_OK(skel->bss->err, "run_bpf_fget_task_test_failure");
-+cleanup_pipe:
-+	close(pipefd[0]);
-+	close(pipefd[1]);
-+cleanup_skel:
-+	test_fget_task__destroy(skel);
-+}
-+
- void test_fs_kfuncs(void)
- {
- 	if (test__start_subtest("xattr"))
-@@ -146,4 +187,9 @@ void test_fs_kfuncs(void)
- 
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
-+
-+	if (test__start_subtest("fget_task"))
-+		test_fget_task();
-+
-+	RUN_TESTS(fs_kfuncs_failure);
- }
-diff --git a/tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c b/tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
-new file mode 100644
-index 000000000000..57aa6d2787ac
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+SEC("syscall")
-+__failure __msg("Possibly NULL pointer passed to trusted arg0")
-+int bpf_fget_task_null_task(void *ctx)
-+{
-+	struct task_struct *task = NULL;
-+
-+	bpf_fget_task(task, 1);
-+
-+	return 0;
-+}
-+
-+SEC("syscall")
-+__failure __msg("R1 must be referenced or trusted")
-+int bpf_fget_task_untrusted_task(void *ctx)
-+{
-+	struct task_struct *task;
-+
-+	task = bpf_get_current_task_btf()->parent;
-+
-+	bpf_fget_task(task, 1);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_fget_task.c b/tools/testing/selftests/bpf/progs/test_fget_task.c
-new file mode 100644
-index 000000000000..fee5d5e1244a
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_fget_task.c
-@@ -0,0 +1,63 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+#include "task_kfunc_common.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+int err, test_fd1, test_fd2;
-+
-+extern const void pipefifo_fops __ksym;
-+
-+SEC("syscall")
-+int test_bpf_fget_task(void *ctx)
-+{
-+	struct task_struct *task;
-+	struct file *file;
-+
-+	task = bpf_get_current_task_btf();
-+	if (task == NULL) {
-+		err = 1;
-+		return 0;
-+	}
-+
-+	file = bpf_fget_task(task, test_fd1);
-+	if (file == NULL) {
-+		err = 2;
-+		return 0;
-+	}
-+
-+	if (file->f_op != &pipefifo_fops) {
-+		err = 3;
-+		bpf_put_file(file);
-+		return 0;
-+	}
-+
-+	bpf_put_file(file);
-+
-+	file = bpf_fget_task(task, test_fd2);
-+	if (file == NULL) {
-+		err = 4;
-+		return 0;
-+	}
-+
-+	if (file->f_op != &pipefifo_fops) {
-+		err = 5;
-+		bpf_put_file(file);
-+		return 0;
-+	}
-+
-+	bpf_put_file(file);
-+
-+	file = bpf_fget_task(task, 9999);
-+	if (file != NULL) {
-+		err = 6;
-+		bpf_put_file(file);
-+	}
-+
-+	return 0;
-+}
--- 
-2.39.5
 
+Thanks,
+Joanne
+
+[1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelko=
+ong@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8=
+KY47XfOsYHj=3DN2wxAg@mail.gmail.com/
+
+> Changelog:
+> v2: https://lore.kernel.org/linux-fsdevel/20241125220537.3663725-1-joanne=
+lkoong@gmail.com/
+> v2 -> v3:
+> * Fix direct io parsing to check each extracted page instead of assuming =
+all
+>   pages in a large folio will be used (Matthew)
+>
+> v1: https://lore.kernel.org/linux-fsdevel/20241109001258.2216604-1-joanne=
+lkoong@gmail.com/
+> v1 -> v2:
+> * Change naming from "non-writeback write" to "writethrough write"
+> * Fix deadlock for writethrough writes by calling fault_in_iov_iter_reada=
+ble()
+> * first
+>   before __filemap_get_folio() (Josef)
+> * For readahead, retain original folio_size() for descs.length (Josef)
+> * Use folio_zero_range() api in fuse_copy_folio() (Josef)
+> * Add Josef's reviewed-bys
+>
+> Joanne Koong (12):
+>   fuse: support copying large folios
+>   fuse: support large folios for retrieves
+>   fuse: refactor fuse_fill_write_pages()
+>   fuse: support large folios for writethrough writes
+>   fuse: support large folios for folio reads
+>   fuse: support large folios for symlinks
+>   fuse: support large folios for stores
+>   fuse: support large folios for queued writes
+>   fuse: support large folios for readahead
+>   fuse: optimize direct io large folios processing
+>   fuse: support large folios for writeback
+>   fuse: enable large folios
+>
+>  fs/fuse/dev.c  | 128 ++++++++++++++++++++++---------------------
+>  fs/fuse/dir.c  |   8 +--
+>  fs/fuse/file.c | 144 +++++++++++++++++++++++++++++++++----------------
+>  3 files changed, 166 insertions(+), 114 deletions(-)
+>
+> --
+> 2.43.5
+>
 
