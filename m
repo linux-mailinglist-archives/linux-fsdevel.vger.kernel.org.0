@@ -1,368 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-39808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCF3A188F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:30:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09F7A18912
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F061674A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 00:30:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A1D7A4442
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 00:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7E23FD4;
-	Wed, 22 Jan 2025 00:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60E242AA5;
+	Wed, 22 Jan 2025 00:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EftQ3m6L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Adogl/c3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2669463
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 00:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4543917BA2;
+	Wed, 22 Jan 2025 00:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737505811; cv=none; b=U3DVccwv3HPHNg1lgbWlaRP8hQNRiLjhBP53IZw74WzfPVDLpg4EtcyvdKWrc7bWmAbJqY9tUYhg9SukqljEQxiBcdZk4uxfauoHErHO3UOYpLN3t5cZ7/QU3/5xIwRIN1lxaXDiSae5DjGPHULEX/KUW6Uvhw6EK79zsCeWxks=
+	t=1737506654; cv=none; b=B+B3S7AbIymEB3txbz8rYHjrrrVMRWxuxt4yUv6ciFEnUOdn/ecCp6JcQs1yIZVdnLPB2XqfdHG06cMRCjFo1F5EvV/79Pd9/ZunhrPIUcc75amo//DikiJLx9aaBuQsjQZ9d+mRRwWxvxBHtdZkiWKstuG6tdM7mfmNxU3P3R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737505811; c=relaxed/simple;
-	bh=VhDybvbmTTLfvD9JQlw5GX4s+VRQHNwSoB2o3gJHa+4=;
+	s=arc-20240116; t=1737506654; c=relaxed/simple;
+	bh=bHrkhl9T8OM/4LzjT2l3HaGzlPn+DxogdOXXkY9iDhk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kR7ofw3vh4NQA7YkzHSz/1MTQ5AEJHRlyZE5vz4KKb8/kJpR9Ox98i388t/maFbzuHHJt21D0wZ1QvDlwr+7Qh8VBdGYHcn6vhujQusisZ8I+lnf5bEMkQryOstYkOLELuyT6hyVCBYYn/Q/cZ2FRTrmR7+RWJsvebx7fS0gi5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EftQ3m6L; arc=none smtp.client-ip=209.85.160.172
+	 To:Cc:Content-Type; b=ByFPlcJvHpV2kPCIeGvWednOKwkvJXxDlTPVnEviD6tQ8Vl8dcnHx0ZOe2HkHP5bpJBc6wBqJIYfWfC8rEYae+Jvn0Q4Tz6n1hrA6mwtf/TfMAp1S7PC71ew2d1PyW7QcUu1KlG7REV+Jd03dTdbDsuk/VvRzyH/I/rN0ayfMWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Adogl/c3; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467838e75ffso81078991cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 16:30:09 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-436341f575fso69472435e9.1;
+        Tue, 21 Jan 2025 16:44:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737505808; x=1738110608; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737506650; x=1738111450; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=97ThALrZNXsHnY1PGvooVdFPHPlqCyzRVm/X1v+Brcc=;
-        b=EftQ3m6LADg32ox9fZEHvXHlpUeUwbl5fYmpSK80WRfNrBoSGDRux9B3IItqXjTZqY
-         0rcNx3EMjYCIl8JXd7yAatULOdnz2MX6u+Evz980eaKJmNDSLCyDC5GRw1CHSe8tBQtO
-         Ehj3rlKvRmhtfqCHipYbxEd+ttemnY1ArMj8T2l8HD4SPzV4mBQ4MWmrDxDO7xAe/kbV
-         DNWz9Ml0GUf8lszGWQc2bD2Jn3KxycqIYKnw/wmpL1v+SKm2Bn54HLkEy+3qzwpPZ9Gp
-         4Xw54EJhpv8Egj5jOJoXc6irGi/Kkv+xzbvFNFDaa7VEL5M6jzvodkdaNHObi+QE2ImX
-         vETw==
+        bh=k4R81WZYHwRRJmKdu7KdOG2Sv4xkPqtcKbni1I78ENU=;
+        b=Adogl/c3OcynqqcDxcnHZ11ZMDXMM4FiW7M59PNniPCJoC5SSuWNdB8xGYvpcVo5tE
+         zoTdmhMlnCw+i6JHPh4dc2oQOjKFaEZZagUZ4RNPM4VXwr4K0L9DM3HmRIuoeHLe3W6h
+         nc1KNTEhsuPlmj07B6eGJY8D7i+8DUqfbBhKyN8eC4JqYERnhSDQ+ydbLMWrQcbZt8LH
+         lje8zG7XAy0Rs6PRqobSnwpVvxx+n+2UORMi42AAE/hYIgruWnKmY+4oSmuBNjQgWqIM
+         dMB+qaF5TZmr6O3xP8dUR/0zAekl82K0m6NmksEmdp8YHRn610lnUhVkVzYBLGH8PT1r
+         Ty9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737505808; x=1738110608;
+        d=1e100.net; s=20230601; t=1737506650; x=1738111450;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=97ThALrZNXsHnY1PGvooVdFPHPlqCyzRVm/X1v+Brcc=;
-        b=hYQ4Fafo5+fMNIrvggUG4xfYRJqu3PK0qck+hlF6HboAWHWOiHhaXJBC74fOSIVFd7
-         GW3IsuTB4cF29lppgd0NQsf6Czpzw/GYNyNhra+Pm17sOT6Xmq3YI1BxKMEMIR6rqMY/
-         Bjb1QIT2TqerISY/I13DLhSP5xX4sR+1EGtFUFL0fODe+jGbPhsGUEVmoAnN+dp6OTsH
-         wRWBXXDKrebSUcOjirsNsJN6zf5CIYWJ7UbPhDYuqKkfI6eoJ7UDFYJ512uHO5D74L1o
-         El3CU+KWflMhYRe8rENrhWEPJTTTGhuC8sUkfBQUtyuvOKDtJCiG3nnqaXopIA2cI42f
-         1Owg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9pkK8oTvQACcqzMnfuXsCkp0nx/Y955Yb2WFBN+BvwLvY7e2+O6LNCAbOYg1Fqra+/iKGuBkh22GTQLTk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9j+AN6HFxDh8y0c6vSSBObS0+tj/OnRmJjXwGh0OBij9oTqWH
-	XnseZGAnsrtu9PbaribMYVD2T5Sgt+HBqNdZp6k2SSNub4d4dO7Q6tiG3gOZY7FC1TtJGNA7+jo
-	MZDTxj7k2x5dOQo6fhQ4q7RdlBgE=
-X-Gm-Gg: ASbGnctUQdyH6o9nN/vCDFd3Y+yUJApwYH/Ajwy7iV5EUz7aIt+KxblQJj7bC9UmWJk
-	KleWyjtHSZ+zTzD+e3tL+AYI0Bdg9P85BdKwDzMc8W1UXOPtQNfqC
-X-Google-Smtp-Source: AGHT+IH5nTFPA591H1OlXts/g9XE5/8uhTkuyL2Ws7WJN1mnCWLP+2QryIcbOTJ08EwF6a1kANUqV8Y5/SrqLYc4lBA=
-X-Received: by 2002:a05:622a:292:b0:467:b7de:da8a with SMTP id
- d75a77b69052e-46e12a2c4e7mr297758521cf.6.1737505808541; Tue, 21 Jan 2025
- 16:30:08 -0800 (PST)
+        bh=k4R81WZYHwRRJmKdu7KdOG2Sv4xkPqtcKbni1I78ENU=;
+        b=RIQMCN5bqJkvsgJQHK3AXn7Yiy5V8c9qqQHuSuubqH6nzI4+xm25YJyCHhbNmSz0hH
+         2bthvKhTvS6H+kAxB399rGXaRGz+dIf7/bFepZjpzz45+EwJKPxeOG4+yQ1IGr1uVJip
+         Aef1FvcY/D6Rpq4QdFMVBTUt4C0Ejb/FzpTklYVG1VK9Ida7+ntW2HIYde+kDSSrH3p5
+         bLShLkACoDiepYVDp5UfBme4iiGlnZ5fT8Rzm2Fta7Vg5UN7T/M1avl/Q2lC6WviPl/h
+         esASOeR8oAgStx9eZ5ZJaYrguSVC2MYIs3vCiGYzS8H49gpcbKg8m1AqEki4Bo/MM5H1
+         uJmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwhBhXNESLrG/6BYkVD9Vi5AMtWnvK0z205TTEhPOQfsYkNW5wuHZtegGVGOeVn23ErRwYXVIhyM7JjSZh/A==@vger.kernel.org, AJvYcCWFr4gO9zYTF7HOtkwmUzZ2Z1DHsRE4gbqyaV5YH38EwfEVqGRjgrfYPwnEp9ywTuRErRRV0oXhCT7JBzs+@vger.kernel.org, AJvYcCWp7UPMoFsbUkRbOyp/qfLBG+Gn2pX8DtBCUzYd9L5NYwzoeRE2ZmA0+PpiI5QpwvQhVeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU8FoF7CAzVCPfYP58ymK7S/nKFNGPGW2tDMdAYl2zpWYEdrLY
+	FMw7HYwzKBqyg1CimVhHj+jl1JiRAavX9CRbQWdbntejeWDOW2vXp8dcnxM1pKDC3LqP6vy3oeO
+	c5BuKQib8f40EcwijS4G64kKjZwM=
+X-Gm-Gg: ASbGncvixFJJHfAH2f5svlGjoJNczW89GjydRKjwRQspfNqcV+nfwfk1JuDfPzfV4Ku
+	6nKaDIBOIW90aXpAx2KMAu7yy0ylZmLAfoCuiFZZKGw1gIV40Xrx7Z66GPPKc3VDqQ5Td+rLl08
+	rPbzehCsM=
+X-Google-Smtp-Source: AGHT+IEEKwyzfXKUc4b9e8LFNOvjsybVi9uCE47AFpHQRzIdQNOeCiOUsTOnv2HivtJMPQWkUhNNMQ9gOBSPV55lW7I=
+X-Received: by 2002:adf:f48c:0:b0:385:f996:1b8e with SMTP id
+ ffacd0b85a97d-38bf5659a94mr15406679f8f.16.1737506650271; Tue, 21 Jan 2025
+ 16:44:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
- <whipjvd65hrc7e5b5qsoj3la556s6dt6ckokn25qmciedmiwqa@rsitf37ibyjw>
- <CAJnrk1aZYpGe+x3=Fz0W30FfXB9RADutDpp+4DeuoBSVHp9XHA@mail.gmail.com>
- <kugnldi6l2rr4m2pcyh3ystyjsnwhcp3jrukqt7ni2ipnw3vpg@l7ieaeq3uosk>
- <CAJnrk1ZJ=mSMM8dP69QZBxLeorQXRjcBjOcVR4skhNcnNiDSAw@mail.gmail.com> <xuf742w2v2rir6tfumuu5ll2ow3kgzzbhjgvu47vquc3vgrdxf@blrmpfwvre4y>
-In-Reply-To: <xuf742w2v2rir6tfumuu5ll2ow3kgzzbhjgvu47vquc3vgrdxf@blrmpfwvre4y>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 21 Jan 2025 16:29:57 -0800
-X-Gm-Features: AbW1kvbWQM79afxBZzxgDAO1WFzzF2GFqqHOkYKREu-1WlvKLkiUoAlrD8Ow-9M
-Message-ID: <CAJnrk1Z21NU0GCjj+GzsudyT1LAKx3TNqHt2oO22u1MZAZ4Lug@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Improving large folio writeback performance
-To: Jan Kara <jack@suse.cz>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>
+References: <AM6PR03MB508004527B8B38AAF18D763399E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 21 Jan 2025 16:43:59 -0800
+X-Gm-Features: AbW1kvbeUP-oYfk3F8-ZGfSsh6jW_eY-R2uftHwYT1pCbWeFVLAlklm0dLw_LfI
+Message-ID: <CAADnVQLk6w+AkpoWERoid54xZh_FeiV0q1_sVU2o-oMBkP2Y7w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v7 4/5] bpf: Make fs kfuncs available for SYSCALL
+ program type
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
+	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 20, 2025 at 2:42=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Tue, Jan 21, 2025 at 5:09=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
 >
-> On Fri 17-01-25 14:45:01, Joanne Koong wrote:
-> > On Fri, Jan 17, 2025 at 3:53=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
-> > > On Thu 16-01-25 15:38:54, Joanne Koong wrote:
-> > > I think tweaking min_pause is a wrong way to do this. I think that is=
- just a
-> > > symptom. Can you run something like:
-> > >
-> > > while true; do
-> > >         cat /sys/kernel/debug/bdi/<fuse-bdi>/stats
-> > >         echo "---------"
-> > >         sleep 1
-> > > done >bdi-debug.txt
-> > >
-> > > while you are writing to the FUSE filesystem and share the output fil=
-e?
-> > > That should tell us a bit more about what's happening inside the writ=
-eback
-> > > throttling. Also do you somehow configure min/max_ratio for the FUSE =
-bdi?
-> > > You can check in /sys/block/<fuse-bdi>/bdi/{min,max}_ratio . I suspec=
-t the
-> > > problem is that the BDI dirty limit does not ramp up properly when we
-> > > increase dirtied pages in large chunks.
-> >
-> > This is the debug info I see for FUSE large folio writes where bs=3D1M
-> > and size=3D1G:
-> >
-> >
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:            896 kB
-> > DirtyThresh:            359824 kB
-> > BackgroundThresh:       179692 kB
-> > BdiDirtied:            1071104 kB
-> > BdiWritten:               4096 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3596 kB
-> > DirtyThresh:            359824 kB
-> > BackgroundThresh:       179692 kB
-> > BdiDirtied:            1290240 kB
-> > BdiWritten:               4992 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3596 kB
-> > DirtyThresh:            359824 kB
-> > BackgroundThresh:       179692 kB
-> > BdiDirtied:            1517568 kB
-> > BdiWritten:               5824 kB
-> > BdiWriteBandwidth:       25692 kBps
-> > b_dirty:                     0
-> > b_io:                        1
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       7
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3596 kB
-> > DirtyThresh:            359824 kB
-> > BackgroundThresh:       179692 kB
-> > BdiDirtied:            1747968 kB
-> > BdiWritten:               6720 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:            896 kB
-> > DirtyThresh:            359824 kB
-> > BackgroundThresh:       179692 kB
-> > BdiDirtied:            1949696 kB
-> > BdiWritten:               7552 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3612 kB
-> > DirtyThresh:            361300 kB
-> > BackgroundThresh:       180428 kB
-> > BdiDirtied:            2097152 kB
-> > BdiWritten:               8128 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> >
-> >
-> > I didn't do anything to configure/change the FUSE bdi min/max_ratio.
-> > This is what I see on my system:
-> >
-> > cat /sys/class/bdi/0:52/min_ratio
-> > 0
-> > cat /sys/class/bdi/0:52/max_ratio
-> > 1
+> Currently fs kfuncs are only available for LSM program type, but fs
+> kfuncs are generic and useful for scenarios other than LSM.
 >
-> OK, we can see that BdiDirtyThresh stabilized more or less at 3.6MB.
-> Checking the code, this shows we are hitting __wb_calc_thresh() logic:
+> This patch makes fs kfuncs available for SYSCALL program type.
 >
->         if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
->                 unsigned long limit =3D hard_dirty_limit(dom, dtc->thresh=
-);
->                 u64 wb_scale_thresh =3D 0;
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
+>  fs/bpf_fs_kfuncs.c                                 | 14 ++++++--------
+>  .../selftests/bpf/progs/verifier_vfs_reject.c      | 10 ----------
+>  2 files changed, 6 insertions(+), 18 deletions(-)
 >
->                 if (limit > dtc->dirty)
->                         wb_scale_thresh =3D (limit - dtc->dirty) / 100;
->                 wb_thresh =3D max(wb_thresh, min(wb_scale_thresh, wb_max_=
-thresh /
->         }
+> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> index 4a810046dcf3..8a7e9ed371de 100644
+> --- a/fs/bpf_fs_kfuncs.c
+> +++ b/fs/bpf_fs_kfuncs.c
+> @@ -26,8 +26,6 @@ __bpf_kfunc_start_defs();
+>   * acquired by this BPF kfunc will result in the BPF program being rejec=
+ted by
+>   * the BPF verifier.
+>   *
+> - * This BPF kfunc may only be called from BPF LSM programs.
+> - *
+>   * Internally, this BPF kfunc leans on get_task_exe_file(), such that ca=
+lling
+>   * bpf_get_task_exe_file() would be analogous to calling get_task_exe_fi=
+le()
+>   * directly in kernel context.
+> @@ -49,8 +47,6 @@ __bpf_kfunc struct file *bpf_get_task_exe_file(struct t=
+ask_struct *task)
+>   * passed to this BPF kfunc. Attempting to pass an unreferenced file poi=
+nter, or
+>   * any other arbitrary pointer for that matter, will result in the BPF p=
+rogram
+>   * being rejected by the BPF verifier.
+> - *
+> - * This BPF kfunc may only be called from BPF LSM programs.
+>   */
+>  __bpf_kfunc void bpf_put_file(struct file *file)
+>  {
+> @@ -70,8 +66,6 @@ __bpf_kfunc void bpf_put_file(struct file *file)
+>   * reference, or else the BPF program will be outright rejected by the B=
+PF
+>   * verifier.
+>   *
+> - * This BPF kfunc may only be called from BPF LSM programs.
+> - *
+>   * Return: A positive integer corresponding to the length of the resolve=
+d
+>   * pathname in *buf*, including the NUL termination character. On error,=
+ a
+>   * negative integer is returned.
+> @@ -184,7 +178,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
+>  static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_i=
+d)
+>  {
+>         if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
+> -           prog->type =3D=3D BPF_PROG_TYPE_LSM)
+> +           prog->type =3D=3D BPF_PROG_TYPE_LSM ||
+> +           prog->type =3D=3D BPF_PROG_TYPE_SYSCALL)
+>                 return 0;
+>         return -EACCES;
+>  }
+> @@ -197,7 +192,10 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_se=
+t =3D {
 >
-> so BdiDirtyThresh is set to DirtyThresh/100. This also shows bdi never
-> generates enough throughput to ramp up it's share from this initial value=
-.
+>  static int __init bpf_fs_kfuncs_init(void)
+>  {
+> -       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc=
+_set);
+> +       int ret;
+> +
+> +       ret =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfun=
+c_set);
+> +       return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &b=
+pf_fs_kfunc_set);
+>  }
 >
-> > > Actually, there's a patch queued in mm tree that improves the ramping=
- up of
-> > > bdi dirty limit for strictlimit bdis [1]. It would be nice if you cou=
-ld
-> > > test whether it changes something in the behavior you observe. Thanks=
-!
-> > >
-> > >                                                                 Honza
-> > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/t=
-ree/patche
-> > > s/mm-page-writeback-consolidate-wb_thresh-bumping-logic-into-__wb_cal=
-c_thresh.pa
-> > > tch
-> >
-> > I still see the same results (~230 MiB/s throughput using fio) with
-> > this patch applied, unfortunately. Here's the debug info I see with
-> > this patch (same test scenario as above on FUSE large folio writes
-> > where bs=3D1M and size=3D1G):
-> >
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:           2048 kB
-> > BdiDirtyThresh:           3588 kB
-> > DirtyThresh:            359132 kB
-> > BackgroundThresh:       179348 kB
-> > BdiDirtied:              51200 kB
-> > BdiWritten:                128 kB
-> > BdiWriteBandwidth:      102400 kBps
-> > b_dirty:                     1
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       5
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3588 kB
-> > DirtyThresh:            359144 kB
-> > BackgroundThresh:       179352 kB
-> > BdiDirtied:             331776 kB
-> > BdiWritten:               1216 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3588 kB
-> > DirtyThresh:            359144 kB
-> > BackgroundThresh:       179352 kB
-> > BdiDirtied:             562176 kB
-> > BdiWritten:               2176 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:                0 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3588 kB
-> > DirtyThresh:            359144 kB
-> > BackgroundThresh:       179352 kB
-> > BdiDirtied:             792576 kB
-> > BdiWritten:               3072 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
-> > BdiWriteback:               64 kB
-> > BdiReclaimable:              0 kB
-> > BdiDirtyThresh:           3588 kB
-> > DirtyThresh:            359144 kB
-> > BackgroundThresh:       179352 kB
-> > BdiDirtied:            1026048 kB
-> > BdiWritten:               3904 kB
-> > BdiWriteBandwidth:           0 kBps
-> > b_dirty:                     0
-> > b_io:                        0
-> > b_more_io:                   0
-> > b_dirty_time:                0
-> > bdi_list:                    1
-> > state:                       1
-> > ---------
+>  late_initcall(bpf_fs_kfuncs_init);
+> diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c b/to=
+ols/testing/selftests/bpf/progs/verifier_vfs_reject.c
+> index d6d3f4fcb24c..5aab75fd2fa5 100644
+> --- a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+> +++ b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+> @@ -148,14 +148,4 @@ int BPF_PROG(path_d_path_kfunc_invalid_buf_sz, struc=
+t file *file)
+>         return 0;
+>  }
 >
-> Yeah, here the situation is really the same. As an experiment can you
-> experiment with setting min_ratio for the FUSE bdi to 1, 2, 3, ..., 10 (I
-> don't expect you should need to go past 10) and figure out when there's
-> enough slack space for the writeback bandwidth to ramp up to a full speed=
-?
-> Thanks!
->
->                                                                 Honza
+> -SEC("fentry/vfs_open")
+> -__failure __msg("calling kernel function bpf_path_d_path is not allowed"=
+)
+> -int BPF_PROG(path_d_path_kfunc_non_lsm, struct path *path, struct file *=
+f)
+> -{
+> -       /* Calling bpf_path_d_path() from a non-LSM BPF program isn't per=
+mitted.
+> -        */
+> -       bpf_path_d_path(path, buf, sizeof(buf));
+> -       return 0;
+> -}
 
-When locally testing this, I'm seeing that the max_ratio affects the
-bandwidth more so than min_ratio (eg the different min_ratios have
-roughly the same bandwidth per max_ratio). I'm also seeing somewhat
-high variance across runs which makes it hard to gauge what's
-accurate, but on average this is what I'm seeing:
-
-max_ratio=3D1 --- bandwidth=3D ~230 MiB/s
-max_ratio=3D2 --- bandwidth=3D ~420 MiB/s
-max_ratio=3D3 --- bandwidth=3D ~550 MiB/s
-max_ratio=3D4 --- bandwidth=3D ~653 MiB/s
-max_ratio=3D5 --- bandwidth=3D ~700 MiB/s
-max_ratio=3D6 --- bandwidth=3D ~810 MiB/s
-max_ratio=3D7 --- bandwidth=3D ~1040 MiB/s (and then a lot of times, 561
-MiB/s on subsequent runs)
-
-
-Thanks,
-Joanne
-
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+A leftover from previous versions?
+This test should still be rejected by the verifier.
 
