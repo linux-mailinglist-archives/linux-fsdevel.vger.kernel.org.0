@@ -1,175 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-39883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F548A19B73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:27:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0314DA19B95
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749E916C860
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:27:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E3516B50F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9381CDA09;
-	Wed, 22 Jan 2025 23:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87561CDFBC;
+	Wed, 22 Jan 2025 23:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1q2kd5w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D4F1CAA96
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 23:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375AE1CAA86;
+	Wed, 22 Jan 2025 23:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737588442; cv=none; b=kLCeKjJFQzsZFUXWpGTwTFHw5P9BW5FXVBb8ZabuepijxiqlahQual2EaepKu1QToq9GuH+KIu9S/nna17JOYShh96F9J9DDIMYNp94yqgZfOZkBJnlIkklP2xzLhSlq8JClAiC1UyVQFkMOV8YSQXHQEwySNcCEXL2BCWQbxN4=
+	t=1737589757; cv=none; b=f2ReD45/P9JC7g99FELuZMzqFWSoTO/+//9BAMnfGUItYr63Td5RvN4mqnznHVCUR860Fs/NsERgkeCf1GpUBkeQJv4ePHIIpYJTmr7bPmegs7TFWjYY8VPNG0/rk0bV5XtxnZ3b8InHca+SuJuDfRPafjuQdXrdnqG7jWxpXZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737588442; c=relaxed/simple;
-	bh=t34vYmG4ermwOVueidHoCUcjEDyWUMrynYw5pxZnZhE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pkzrFXUHG9fIEMAYwrfmHxpcT8bzUCd3Mvf8bzNwkkYRIk1Rq0yhtoHrteSxfJ4YTE3F1Cv+XHw2N4lGFB217EtOo9AzreIUnesEZJwJeUZpJt7DUm8Jjjp2HK01lvLnWcSAiai4YSnqC1bdkMbz/xCurm5r2A647+SRYtKd7kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3cfb20d74b5so2104045ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 15:27:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737588440; x=1738193240;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OqMC+G6rwK87UaS7Zs1/0KnA34jqKav2Ciavl8IbR+I=;
-        b=Z3RIHZATosSPayZFbdox3M8VsmtIFKzxNyBh5XWKfx+ezIgDeScKqRjJLI1z3baiAo
-         0JWAndrF3sPnq76dsssE8ZB7WoCAtHB368IxEwii0TS6VTgiYSusSMUN2Tqn1YlJynaN
-         cnr8363N3w9BcaYGUZNB77bVXQHBnv8YurA/Hh7Y5E4B7rtT/JHN+Sjz6a4OLV8d5wu7
-         D2DOUPF5tPWvwJY0MKCQZAB7C3Jn9ATwm0+E8A3rxnlIrzDsRqCm/N7voZXBGIi+HUdq
-         At0zeoH2pDKtViYBCCxGb6XDHL3gZP74bVTs2N4Q2DSKwkll99S1Cfuws6uv0v7fb5jH
-         Vxkw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8iyJgpk/xJVA6lQEWEPEEUf/hUa5muZ67L3BqVMqndc7Xn3K8YtM8t+Hfh3vlN/SwfD0WMe0YIRgeOx32@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkaC3mHmmaP/GA9ZVt3uvowbHqYoZm/Rhx9RpjSn4wn818YoWx
-	03il8Uylh/B7zNV33AyJ0OMHwpsiRnqXmZz3jyMC333yF+WTvUnDenu1Lzv2q787KEidpbI6cbO
-	42cIsroIRbj2Hvkl6PRcc64yOCprYHy+HMxtV1tCTuRONAgdsQbnrwGA=
-X-Google-Smtp-Source: AGHT+IGZ2JlrsJ9DEVAXeCMysgWQpjYiv+Yzwd6bBU3hFrx6rDmqZ6PtUmJycAzdIw8dYpn5CB7TlA6bjORSJslQ8If6Ai1jbLSV
+	s=arc-20240116; t=1737589757; c=relaxed/simple;
+	bh=knU8Gb3CdvkSEet5faVhn1gPZtISfXDqOx7vpI3Dd2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PBVPVediqgyjRQgSRlwy5dxI9MQoJ1wPFjm9Sl1QrvfPsK4voLuMxe14i0Ye4/J3dXoyWfHIqTt01l6WVht7VzflvZTohcfyi5EHDBK5LqGG0Y8Vlxwa3Uvraj6TPNF2s07KJTLxQ/S/ZRvOMLxebfb8rDQPoQfgvCh8LppUqOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1q2kd5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8380C4CEE3;
+	Wed, 22 Jan 2025 23:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737589756;
+	bh=knU8Gb3CdvkSEet5faVhn1gPZtISfXDqOx7vpI3Dd2k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B1q2kd5wpykV33KapdmKwzsKBYSgxv7Mx3Yyzrf6nDU7vJcc4TDUL+vWg9kKA4aDP
+	 5AupA2AEzCvsuIWlbmiq6+PVB+WLI6O9DkOq8jE0TRM55zcpicau7uMja7ftpU1KfH
+	 kpcutyqIHVJeb39lMIteKODJan6z7KuKX5h9qjdYht0HnAXJlPLnPH9ssN8UwfeJBc
+	 q1b0ua9ZGZm/PzuqpWeEaxO9JZdeOkiuuGtfZjzf44nEsVlCj+5fsQbCpZSGYyAvis
+	 95NRhJFRuCWM0PKqQtTc+DG51kdKgzc7D9g1ho1w/ajQ/MhXoDPSuPNpA83593a9Tw
+	 4jPRztV9yvNiQ==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3eb790888c6so98900b6e.2;
+        Wed, 22 Jan 2025 15:49:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUm77AzJs/mre+uuZSGtIGjwEZHqEFtFt9HiHTviJ84II1wRtzICy0h28Nw4doP6qFrx4zO9mTdwF+cMdNA@vger.kernel.org, AJvYcCWTf/WvQdVjPTRrT7dsHI8cL9IpsajG1r6Qm4HlBzh0+uvFTi9fLRUTzeeBTj/B7ilmhPvRQkFZQ5VyGc+8@vger.kernel.org
+X-Gm-Message-State: AOJu0YybFmj06EIwht5NT5alE93yjnn+JtBbZir64+aiKOOtkKpgB4c3
+	9Rd06OqsAXgS5432aUW/5i6N/rZ51tLJGJfALZlSpKXh8usuESDDlwG6ivIoExpOUdbt4/H2rfE
+	Rn7RweShIG3xNCpv9rVl/e0VQJnw=
+X-Google-Smtp-Source: AGHT+IGaFRdxFjJzs39uci0qiDE0VPxhsx4BPJpByGZpoLIH3d2rku9XooiQ/2aWnb95Ls5gqdBdrY2nfDnRumf2NYw=
+X-Received: by 2002:a05:6808:1b90:b0:3e4:d4ca:2774 with SMTP id
+ 5614622812f47-3f19fca5ff1mr15639036b6e.20.1737589755954; Wed, 22 Jan 2025
+ 15:49:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa8:b0:3cf:6d33:d40d with SMTP id
- e9e14a558f8ab-3cf742812e4mr186744515ab.0.1737588440204; Wed, 22 Jan 2025
- 15:27:20 -0800 (PST)
-Date: Wed, 22 Jan 2025 15:27:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67917ed8.050a0220.15cac.02eb.GAE@google.com>
-Subject: [syzbot] [fs?] BUG: corrupted list in remove_wait_queue (2)
-From: syzbot <syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
+ <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn> <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
+ <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn> <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
+ <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn>
+In-Reply-To: <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 23 Jan 2025 08:49:04 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_ebG4L_mRwCqoGgt9kQ6BxcCf6M5UUJ1djnbMkBLUbgg@mail.gmail.com>
+X-Gm-Features: AbW1kvau7LagfwQw705K4p4RwkzIMOW-a_a1W6Ejg6EDHvd1frLmKkQgp2YWnss
+Message-ID: <CAKYAXd_ebG4L_mRwCqoGgt9kQ6BxcCf6M5UUJ1djnbMkBLUbgg@mail.gmail.com>
+Subject: Re: Bug: soft lockup in exfat_clear_bitmap
+To: Kun Hu <huk23@m.fudan.edu.cn>
+Cc: Sungjong Seo <sj1557.seo@samsung.com>, "Yuezhang.Mo" <yuezhang.mo@sony.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jjtan24@m.fudan.edu.cn
+Content-Type: multipart/mixed; boundary="0000000000002b98ed062c54246a"
+
+--0000000000002b98ed062c54246a
+Content-Type: multipart/alternative; boundary="0000000000002b98ea062c542468"
+
+--0000000000002b98ea062c542468
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jan 15, 2025 at 10:16=E2=80=AFPM Kun Hu <huk23@m.fudan.edu.cn> wrot=
+e:
+>
+>
+> > This is an already known issue and the relevant patch has been applied.
+> > Please make sure that the following patch is applied to the kernel you
+tested.
+> >
+> > a5324b3a488d exfat: fix the infinite loop in __exfat_free_cluster()
+> >
+> > or try to reproduce it with linux-6.13-rc7.
+>
+> Hi Namjae,
+Hi Kun,
+>
+> We still successfully reproduced it on the v6.13-rc7. Firstly, I
+apologize for taking up your time, I=E2=80=99m not sure if this is a signif=
+icant
+issue since from the reproducer it kind of looks like it=E2=80=99s caused v=
+ia fault
+injection.
+>
+>
+> The syz_mount_image in the syscall reproducer mounts a randomly generated
+image and also has the potential to trigger an abnormal path to the file
+system. Specifically, the . /file0 file is crafted to contain invalid FAT
+table or bitmap information, it is possible to cause abnormal cyclic
+behavior in __exfat_free_cluster.
+>
+> Because p_chain->size is artificially constructed, if it has a large
+value, then exfat_clear_bitmap will be called frequently. As the call stack
+shows, the program eventually deadlocks in the loop in __exfat_free_cluster=
+.
+>
+> This link is a link to our crash log in the rc7 kernel tree:
+>
+> Link:
+https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E6%9C%AA%E6%8A=
+%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4%A2%E8%AE%B0%E5%BD%9=
+5/39-BUG_%20soft%20lockup%20in%20sys_unlink/crashlog0115_rc7.txt
+>
+> As I said earlier, I'm still consistently reporting the crash I found to
+you guys now because I'm not sure if this issue is useful to you. If it is
+not useful, please ignore it. I hope it doesn't take up too much of your
+time.
+Can you check an attached patch ?
 
-syzbot found the following issue on:
+Thanks.
+>
+> =E2=80=94=E2=80=94=E2=80=94
+> Kun Hu
+>
+>
 
-HEAD commit:    fda5e3f28400 Merge tag 'trace-v6.13-rc7-2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1117e024580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5e182416a4b418f
-dashboard link: https://syzkaller.appspot.com/bug?extid=4e21d5f67b886a692b55
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177959df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1288d1f8580000
+--0000000000002b98ea062c542468
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cd46ddd4b381/disk-fda5e3f2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f7cf021f77f5/vmlinux-fda5e3f2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/12cb03ba7d7e/bzImage-fda5e3f2.xz
+<div dir=3D"auto">On Wed, Jan 15, 2025 at 10:16=E2=80=AFPM Kun Hu &lt;<a hr=
+ef=3D"mailto:huk23@m.fudan.edu.cn" target=3D"_blank" rel=3D"noreferrer">huk=
+23@m.fudan.edu.cn</a>&gt; wrote:<br>
+&gt;<br>
+&gt;<br>
+&gt; &gt; This is an already known issue and the relevant patch has been ap=
+plied.<br>
+&gt; &gt; Please make sure that the following patch is applied to the kerne=
+l you tested.<br>
+&gt; &gt;<br>
+&gt; &gt; a5324b3a488d exfat: fix the infinite loop in __exfat_free_cluster=
+()<br>
+&gt; &gt;<br>
+&gt; &gt; or try to reproduce it with linux-6.13-rc7.<br>
+&gt;<br>
+&gt; Hi Namjae,<br>
+Hi Kun,<br>
+&gt;<br>
+&gt; We still successfully reproduced it on the v6.13-rc7. Firstly, I apolo=
+gize for taking up your time, I=E2=80=99m not sure if this is a significant=
+ issue since from the reproducer it kind of looks like it=E2=80=99s caused =
+via fault injection.<br>
+&gt;<br>
+&gt;<br>
+&gt; The syz_mount_image in the syscall reproducer mounts a randomly genera=
+ted image and also has the potential to trigger an abnormal path to the fil=
+e system. Specifically, the . /file0 file is crafted to contain invalid FAT=
+ table or bitmap information, it is possible to cause abnormal cyclic behav=
+ior in __exfat_free_cluster.<br>
+&gt;<br>
+&gt; Because p_chain-&gt;size is artificially constructed, if it has a larg=
+e value, then exfat_clear_bitmap will be called frequently. As the call sta=
+ck shows, the program eventually deadlocks in the loop in __exfat_free_clus=
+ter.<br>
+&gt;<br>
+&gt; This link is a link to our crash log in the rc7 kernel tree:<br>
+&gt;<br>
+&gt; Link: <a href=3D"https://github.com/pghk13/Kernel-Bug/blob/main/0103_6=
+.13rc5_%E6%9C%AA%E6%8A%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%=
+B4%A2%E8%AE%B0%E5%BD%95/39-BUG_%20soft%20lockup%20in%20sys_unlink/crashlog0=
+115_rc7.txt" rel=3D"noreferrer noreferrer" target=3D"_blank">https://github=
+.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E6%9C%AA%E6%8A%A5%E5%91%8A/%=
+E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4%A2%E8%AE%B0%E5%BD%95/39-BUG_%20so=
+ft%20lockup%20in%20sys_unlink/crashlog0115_rc7.txt</a><br>
+&gt;<br>
+&gt; As I said earlier, I&#39;m still consistently reporting the crash I fo=
+und to you guys now because I&#39;m not sure if this issue is useful to you=
+. If it is not useful, please ignore it. I hope it doesn&#39;t take up too =
+much of your time.<br>
+Can you check an attached patch ?<br>
+<br>
+Thanks.<br>
+&gt;<br>
+&gt; =E2=80=94=E2=80=94=E2=80=94<br>
+&gt; Kun Hu<br>
+&gt;<br>
+&gt;<br></div>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com
+--0000000000002b98ea062c542468--
+--0000000000002b98ed062c54246a
+Content-Type: application/x-patch; name="0001-exfat-fix-infinite-loop.patch"
+Content-Disposition: attachment; 
+	filename="0001-exfat-fix-infinite-loop.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m66mrtnm0>
+X-Attachment-Id: f_m66mrtnm0
 
-list_del corruption. prev->next should be ffffc90003377b98, but was ffff88802a2585c8. (prev=ffff88802a2585c8)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:62!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 9290 Comm: syz-executor367 Not tainted 6.13.0-rc7-syzkaller-00191-gfda5e3f28400 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:__list_del_entry_valid_or_report+0x12c/0x1c0 lib/list_debug.c:62
-Code: e8 19 db da fc 90 0f 0b 48 89 ca 48 c7 c7 00 a0 b1 8b e8 07 db da fc 90 0f 0b 48 89 c2 48 c7 c7 60 a0 b1 8b e8 f5 da da fc 90 <0f> 0b 48 89 d1 48 c7 c7 e0 a0 b1 8b 48 89 c2 e8 e0 da da fc 90 0f
-RSP: 0018:ffffc90003377880 EFLAGS: 00010086
-RAX: 000000000000006d RBX: ffffc90003377b80 RCX: ffffffff8178e449
-RDX: 0000000000000000 RSI: ffffffff81798bd6 RDI: 0000000000000005
-RBP: ffff88802a258588 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000001 R11: 0000000000000001 R12: 0000000000000286
-R13: ffffc90003377b98 R14: ffffc90003377ba0 R15: ffffc90003377b70
-FS:  0000555578a00380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f687b8542b0 CR3: 0000000073a90000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del include/linux/list.h:229 [inline]
- __remove_wait_queue include/linux/wait.h:207 [inline]
- remove_wait_queue+0x30/0x180 kernel/sched/wait.c:55
- free_poll_entry fs/select.c:132 [inline]
- poll_freewait+0xd5/0x250 fs/select.c:141
- do_sys_poll+0x6f7/0xde0 fs/select.c:1010
- __do_sys_poll fs/select.c:1074 [inline]
- __se_sys_poll fs/select.c:1062 [inline]
- __x64_sys_poll+0x1a8/0x450 fs/select.c:1062
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f687b7d8809
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb8bb93f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000007
-RAX: ffffffffffffffda RBX: 00307276642f3072 RCX: 00007f687b7d8809
-RDX: 0000000000000106 RSI: 0000000000000005 RDI: 0000000020000080
-RBP: 0000000000000000 R08: 00007ffdb8bb8f60 R09: 00007ffdb8bb8f60
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdb8bb941c
-R13: 00007ffdb8bb9430 R14: 00007ffdb8bb9470 R15: 0000000000000359
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x12c/0x1c0 lib/list_debug.c:62
-Code: e8 19 db da fc 90 0f 0b 48 89 ca 48 c7 c7 00 a0 b1 8b e8 07 db da fc 90 0f 0b 48 89 c2 48 c7 c7 60 a0 b1 8b e8 f5 da da fc 90 <0f> 0b 48 89 d1 48 c7 c7 e0 a0 b1 8b 48 89 c2 e8 e0 da da fc 90 0f
-RSP: 0018:ffffc90003377880 EFLAGS: 00010086
-RAX: 000000000000006d RBX: ffffc90003377b80 RCX: ffffffff8178e449
-RDX: 0000000000000000 RSI: ffffffff81798bd6 RDI: 0000000000000005
-RBP: ffff88802a258588 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000001 R11: 0000000000000001 R12: 0000000000000286
-R13: ffffc90003377b98 R14: ffffc90003377ba0 R15: ffffc90003377b70
-FS:  0000555578a00380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f687b8542b0 CR3: 0000000073a90000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+RnJvbSAwYmIyNmFjNmFhNjVjOWQ5ZDQxZjE5YWYzMDVmYjcyYzQ4MGZkMWQ2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
+YXRlOiBXZWQsIDIyIEphbiAyMDI1IDAwOjI0OjMxICswOTAwClN1YmplY3Q6IFtQQVRDSF0gZXhm
+YXQ6IGZpeCBpbmZpbml0ZSBsb29wCgpTaWduZWQtb2ZmLWJ5OiBOYW1qYWUgSmVvbiA8bGlua2lu
+amVvbkBrZXJuZWwub3JnPgotLS0KIGZzL2V4ZmF0L2JhbGxvYy5jICAgfCAxMCArKysrKysrKy0t
+CiBmcy9leGZhdC9leGZhdF9mcy5oIHwgIDIgKy0KIGZzL2V4ZmF0L2ZhdGVudC5jICAgfCAgOCAr
+KysrKy0tLQogMyBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygt
+KQoKZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2JhbGxvYy5jIGIvZnMvZXhmYXQvYmFsbG9jLmMKaW5k
+ZXggY2U5YmU5NWM5MTcyLi45ZmY4MjVmMTUwMmQgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L2JhbGxv
+Yy5jCisrKyBiL2ZzL2V4ZmF0L2JhbGxvYy5jCkBAIC0xNDEsNyArMTQxLDcgQEAgaW50IGV4ZmF0
+X3NldF9iaXRtYXAoc3RydWN0IGlub2RlICppbm9kZSwgdW5zaWduZWQgaW50IGNsdSwgYm9vbCBz
+eW5jKQogCXJldHVybiAwOwogfQogCi12b2lkIGV4ZmF0X2NsZWFyX2JpdG1hcChzdHJ1Y3QgaW5v
+ZGUgKmlub2RlLCB1bnNpZ25lZCBpbnQgY2x1LCBib29sIHN5bmMpCitpbnQgZXhmYXRfY2xlYXJf
+Yml0bWFwKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHVuc2lnbmVkIGludCBjbHUsIGJvb2wgc3luYykK
+IHsKIAlpbnQgaSwgYjsKIAl1bnNpZ25lZCBpbnQgZW50X2lkeDsKQEAgLTE1MCwxMyArMTUwLDE3
+IEBAIHZvaWQgZXhmYXRfY2xlYXJfYml0bWFwKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHVuc2lnbmVk
+IGludCBjbHUsIGJvb2wgc3luYykKIAlzdHJ1Y3QgZXhmYXRfbW91bnRfb3B0aW9ucyAqb3B0cyA9
+ICZzYmktPm9wdGlvbnM7CiAKIAlpZiAoIWlzX3ZhbGlkX2NsdXN0ZXIoc2JpLCBjbHUpKQotCQly
+ZXR1cm47CisJCXJldHVybiAtRUlPOwogCiAJZW50X2lkeCA9IENMVVNURVJfVE9fQklUTUFQX0VO
+VChjbHUpOwogCWkgPSBCSVRNQVBfT0ZGU0VUX1NFQ1RPUl9JTkRFWChzYiwgZW50X2lkeCk7CiAJ
+YiA9IEJJVE1BUF9PRkZTRVRfQklUX0lOX1NFQ1RPUihzYiwgZW50X2lkeCk7CiAKKwlpZiAoIXRl
+c3RfYml0X2xlKGIsIHNiaS0+dm9sX2FtYXBbaV0tPmJfZGF0YSkpCisJCXJldHVybiAtRUlPOwor
+CiAJY2xlYXJfYml0X2xlKGIsIHNiaS0+dm9sX2FtYXBbaV0tPmJfZGF0YSk7CisKIAlleGZhdF91
+cGRhdGVfYmgoc2JpLT52b2xfYW1hcFtpXSwgc3luYyk7CiAKIAlpZiAob3B0cy0+ZGlzY2FyZCkg
+ewpAQCAtMTcxLDYgKzE3NSw4IEBAIHZvaWQgZXhmYXRfY2xlYXJfYml0bWFwKHN0cnVjdCBpbm9k
+ZSAqaW5vZGUsIHVuc2lnbmVkIGludCBjbHUsIGJvb2wgc3luYykKIAkJCW9wdHMtPmRpc2NhcmQg
+PSAwOwogCQl9CiAJfQorCisJcmV0dXJuIDA7CiB9CiAKIC8qCmRpZmYgLS1naXQgYS9mcy9leGZh
+dC9leGZhdF9mcy5oIGIvZnMvZXhmYXQvZXhmYXRfZnMuaAppbmRleCA3OGJlNjk2NGE4YTAuLmQz
+MGNlMThhODhiNyAxMDA2NDQKLS0tIGEvZnMvZXhmYXQvZXhmYXRfZnMuaAorKysgYi9mcy9leGZh
+dC9leGZhdF9mcy5oCkBAIC00NTYsNyArNDU2LDcgQEAgaW50IGV4ZmF0X2NvdW50X251bV9jbHVz
+dGVycyhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLAogaW50IGV4ZmF0X2xvYWRfYml0bWFwKHN0cnVj
+dCBzdXBlcl9ibG9jayAqc2IpOwogdm9pZCBleGZhdF9mcmVlX2JpdG1hcChzdHJ1Y3QgZXhmYXRf
+c2JfaW5mbyAqc2JpKTsKIGludCBleGZhdF9zZXRfYml0bWFwKHN0cnVjdCBpbm9kZSAqaW5vZGUs
+IHVuc2lnbmVkIGludCBjbHUsIGJvb2wgc3luYyk7Ci12b2lkIGV4ZmF0X2NsZWFyX2JpdG1hcChz
+dHJ1Y3QgaW5vZGUgKmlub2RlLCB1bnNpZ25lZCBpbnQgY2x1LCBib29sIHN5bmMpOworaW50IGV4
+ZmF0X2NsZWFyX2JpdG1hcChzdHJ1Y3QgaW5vZGUgKmlub2RlLCB1bnNpZ25lZCBpbnQgY2x1LCBi
+b29sIHN5bmMpOwogdW5zaWduZWQgaW50IGV4ZmF0X2ZpbmRfZnJlZV9iaXRtYXAoc3RydWN0IHN1
+cGVyX2Jsb2NrICpzYiwgdW5zaWduZWQgaW50IGNsdSk7CiBpbnQgZXhmYXRfY291bnRfdXNlZF9j
+bHVzdGVycyhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLCB1bnNpZ25lZCBpbnQgKnJldF9jb3VudCk7
+CiBpbnQgZXhmYXRfdHJpbV9mcyhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZnN0cmltX3Jh
+bmdlICpyYW5nZSk7CmRpZmYgLS1naXQgYS9mcy9leGZhdC9mYXRlbnQuYyBiL2ZzL2V4ZmF0L2Zh
+dGVudC5jCmluZGV4IDllNTQ5MmFjNDA5Yi4uOGQ3OGIzMDMwNTc1IDEwMDY0NAotLS0gYS9mcy9l
+eGZhdC9mYXRlbnQuYworKysgYi9mcy9leGZhdC9mYXRlbnQuYwpAQCAtMTc1LDYgKzE3NSw3IEBA
+IHN0YXRpYyBpbnQgX19leGZhdF9mcmVlX2NsdXN0ZXIoc3RydWN0IGlub2RlICppbm9kZSwgc3Ry
+dWN0IGV4ZmF0X2NoYWluICpwX2NoYWluCiAJCUJJVE1BUF9PRkZTRVRfU0VDVE9SX0lOREVYKHNi
+LCBDTFVTVEVSX1RPX0JJVE1BUF9FTlQoY2x1KSk7CiAKIAlpZiAocF9jaGFpbi0+ZmxhZ3MgPT0g
+QUxMT0NfTk9fRkFUX0NIQUlOKSB7CisJCWludCBlcnI7CiAJCXVuc2lnbmVkIGludCBsYXN0X2Ns
+dXN0ZXIgPSBwX2NoYWluLT5kaXIgKyBwX2NoYWluLT5zaXplIC0gMTsKIAkJZG8gewogCQkJYm9v
+bCBzeW5jID0gZmFsc2U7CkBAIC0xODksNyArMTkwLDkgQEAgc3RhdGljIGludCBfX2V4ZmF0X2Zy
+ZWVfY2x1c3RlcihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZXhmYXRfY2hhaW4gKnBfY2hh
+aW4KIAkJCQljdXJfY21hcF9pID0gbmV4dF9jbWFwX2k7CiAJCQl9CiAKLQkJCWV4ZmF0X2NsZWFy
+X2JpdG1hcChpbm9kZSwgY2x1LCAoc3luYyAmJiBJU19ESVJTWU5DKGlub2RlKSkpOworCQkJZXJy
+ID0gZXhmYXRfY2xlYXJfYml0bWFwKGlub2RlLCBjbHUsIChzeW5jICYmIElTX0RJUlNZTkMoaW5v
+ZGUpKSk7CisJCQlpZiAoZXJyKQorCQkJCWJyZWFrOwogCQkJY2x1Kys7CiAJCQludW1fY2x1c3Rl
+cnMrKzsKIAkJfSB3aGlsZSAobnVtX2NsdXN0ZXJzIDwgcF9jaGFpbi0+c2l6ZSk7CkBAIC0yMTUs
+NyArMjE4LDcgQEAgc3RhdGljIGludCBfX2V4ZmF0X2ZyZWVfY2x1c3RlcihzdHJ1Y3QgaW5vZGUg
+Kmlub2RlLCBzdHJ1Y3QgZXhmYXRfY2hhaW4gKnBfY2hhaW4KIAkJCW51bV9jbHVzdGVycysrOwog
+CiAJCQlpZiAoZXJyKQotCQkJCWdvdG8gZGVjX3VzZWRfY2x1czsKKwkJCQlicmVhazsKIAogCQkJ
+aWYgKG51bV9jbHVzdGVycyA+PSBzYmktPm51bV9jbHVzdGVycyAtIEVYRkFUX0ZJUlNUX0NMVVNU
+RVIpIHsKIAkJCQkvKgpAQCAtMjI5LDcgKzIzMiw2IEBAIHN0YXRpYyBpbnQgX19leGZhdF9mcmVl
+X2NsdXN0ZXIoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGV4ZmF0X2NoYWluICpwX2NoYWlu
+CiAJCX0gd2hpbGUgKGNsdSAhPSBFWEZBVF9FT0ZfQ0xVU1RFUik7CiAJfQogCi1kZWNfdXNlZF9j
+bHVzOgogCXNiaS0+dXNlZF9jbHVzdGVycyAtPSBudW1fY2x1c3RlcnM7CiAJcmV0dXJuIDA7CiB9
+Ci0tIAoyLjI1LjEKCg==
+--0000000000002b98ed062c54246a--
 
