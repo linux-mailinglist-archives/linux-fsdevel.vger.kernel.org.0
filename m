@@ -1,205 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-39809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09F7A18912
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:44:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC01AA18917
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A1D7A4442
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 00:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E669188D10B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 00:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60E242AA5;
-	Wed, 22 Jan 2025 00:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A824E17591;
+	Wed, 22 Jan 2025 00:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Adogl/c3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9KMJTbg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4543917BA2;
-	Wed, 22 Jan 2025 00:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77527175BF;
+	Wed, 22 Jan 2025 00:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737506654; cv=none; b=B+B3S7AbIymEB3txbz8rYHjrrrVMRWxuxt4yUv6ciFEnUOdn/ecCp6JcQs1yIZVdnLPB2XqfdHG06cMRCjFo1F5EvV/79Pd9/ZunhrPIUcc75amo//DikiJLx9aaBuQsjQZ9d+mRRwWxvxBHtdZkiWKstuG6tdM7mfmNxU3P3R0=
+	t=1737506721; cv=none; b=KZYIdS9xwtqK67TzWU6AP0IYqsZv2QWU+88P82AJde7itOOpBB6WsgX1bl8/3KyPpH3Al9hLmb7uVhC+bzT2eUK4H8PCAxJJl6Kg1pe72GPxyFSMIaXLPJ5NeCMJ3iiYP2jk+SfuCZdq5uO6g9cZvNvQMN8pRya4rArQVyTM5Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737506654; c=relaxed/simple;
-	bh=bHrkhl9T8OM/4LzjT2l3HaGzlPn+DxogdOXXkY9iDhk=;
+	s=arc-20240116; t=1737506721; c=relaxed/simple;
+	bh=21RUJtcN1WGkOHf+6aenCuOoTsiL+1Qu0JcXFGYTsRE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ByFPlcJvHpV2kPCIeGvWednOKwkvJXxDlTPVnEviD6tQ8Vl8dcnHx0ZOe2HkHP5bpJBc6wBqJIYfWfC8rEYae+Jvn0Q4Tz6n1hrA6mwtf/TfMAp1S7PC71ew2d1PyW7QcUu1KlG7REV+Jd03dTdbDsuk/VvRzyH/I/rN0ayfMWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Adogl/c3; arc=none smtp.client-ip=209.85.128.49
+	 To:Cc:Content-Type; b=WzhjZU44zZ/9lGSkXIRJuj1C93bRATOMgQdPP4rrGWJwVMtqWD0SmIneUIM/kw5iOGvMj09jCkswReez5JDRRHZAjKreod3XxLgyKa6OHB6nvEAaerBSxfxtb2LVhbPKjw+1R++aNSAA/dr81l2/LQuBIuHZPnlg5N7MYW0yaxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9KMJTbg; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-436341f575fso69472435e9.1;
-        Tue, 21 Jan 2025 16:44:11 -0800 (PST)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-46901d01355so59852011cf.0;
+        Tue, 21 Jan 2025 16:45:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737506650; x=1738111450; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737506718; x=1738111518; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k4R81WZYHwRRJmKdu7KdOG2Sv4xkPqtcKbni1I78ENU=;
-        b=Adogl/c3OcynqqcDxcnHZ11ZMDXMM4FiW7M59PNniPCJoC5SSuWNdB8xGYvpcVo5tE
-         zoTdmhMlnCw+i6JHPh4dc2oQOjKFaEZZagUZ4RNPM4VXwr4K0L9DM3HmRIuoeHLe3W6h
-         nc1KNTEhsuPlmj07B6eGJY8D7i+8DUqfbBhKyN8eC4JqYERnhSDQ+ydbLMWrQcbZt8LH
-         lje8zG7XAy0Rs6PRqobSnwpVvxx+n+2UORMi42AAE/hYIgruWnKmY+4oSmuBNjQgWqIM
-         dMB+qaF5TZmr6O3xP8dUR/0zAekl82K0m6NmksEmdp8YHRn610lnUhVkVzYBLGH8PT1r
-         Ty9A==
+        bh=lQ78OaPb/ksNLbM+9kzkydl6w2SMJZ/0TbYhf3drCos=;
+        b=C9KMJTbglZp8ZyH7o1jbxRI6xWWEEgT3vfVbx/pW0XKsee08A6JYIoIW3Mzfl+gHs2
+         4FM3ZXbnIRVG/7dTmV/Ssrb0u7Oc98QyB2F/jI4Wv5Yakc9yPuOC++jwSVv5ppPU+5j+
+         ntSHvumDrzjdqgN7+qoJe0LfnF+sWHCzxUHBpB5Ya1clO0Q+BKtnmmTQFwftstuCz82R
+         SYbYGqcvyp3c19L4zeUID6mSxBk7sVYfPI74OS87QzFpJur9gmMjiv5tMhuzGmwrSBQY
+         ba2hE7YQ5oc8TiROOmf408E8ix2DCxy8/hYWc7RhGAmhw4lS9gKnztx/pVyVGUjcF59l
+         caRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737506650; x=1738111450;
+        d=1e100.net; s=20230601; t=1737506718; x=1738111518;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k4R81WZYHwRRJmKdu7KdOG2Sv4xkPqtcKbni1I78ENU=;
-        b=RIQMCN5bqJkvsgJQHK3AXn7Yiy5V8c9qqQHuSuubqH6nzI4+xm25YJyCHhbNmSz0hH
-         2bthvKhTvS6H+kAxB399rGXaRGz+dIf7/bFepZjpzz45+EwJKPxeOG4+yQ1IGr1uVJip
-         Aef1FvcY/D6Rpq4QdFMVBTUt4C0Ejb/FzpTklYVG1VK9Ida7+ntW2HIYde+kDSSrH3p5
-         bLShLkACoDiepYVDp5UfBme4iiGlnZ5fT8Rzm2Fta7Vg5UN7T/M1avl/Q2lC6WviPl/h
-         esASOeR8oAgStx9eZ5ZJaYrguSVC2MYIs3vCiGYzS8H49gpcbKg8m1AqEki4Bo/MM5H1
-         uJmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwhBhXNESLrG/6BYkVD9Vi5AMtWnvK0z205TTEhPOQfsYkNW5wuHZtegGVGOeVn23ErRwYXVIhyM7JjSZh/A==@vger.kernel.org, AJvYcCWFr4gO9zYTF7HOtkwmUzZ2Z1DHsRE4gbqyaV5YH38EwfEVqGRjgrfYPwnEp9ywTuRErRRV0oXhCT7JBzs+@vger.kernel.org, AJvYcCWp7UPMoFsbUkRbOyp/qfLBG+Gn2pX8DtBCUzYd9L5NYwzoeRE2ZmA0+PpiI5QpwvQhVeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU8FoF7CAzVCPfYP58ymK7S/nKFNGPGW2tDMdAYl2zpWYEdrLY
-	FMw7HYwzKBqyg1CimVhHj+jl1JiRAavX9CRbQWdbntejeWDOW2vXp8dcnxM1pKDC3LqP6vy3oeO
-	c5BuKQib8f40EcwijS4G64kKjZwM=
-X-Gm-Gg: ASbGncvixFJJHfAH2f5svlGjoJNczW89GjydRKjwRQspfNqcV+nfwfk1JuDfPzfV4Ku
-	6nKaDIBOIW90aXpAx2KMAu7yy0ylZmLAfoCuiFZZKGw1gIV40Xrx7Z66GPPKc3VDqQ5Td+rLl08
-	rPbzehCsM=
-X-Google-Smtp-Source: AGHT+IEEKwyzfXKUc4b9e8LFNOvjsybVi9uCE47AFpHQRzIdQNOeCiOUsTOnv2HivtJMPQWkUhNNMQ9gOBSPV55lW7I=
-X-Received: by 2002:adf:f48c:0:b0:385:f996:1b8e with SMTP id
- ffacd0b85a97d-38bf5659a94mr15406679f8f.16.1737506650271; Tue, 21 Jan 2025
- 16:44:10 -0800 (PST)
+        bh=lQ78OaPb/ksNLbM+9kzkydl6w2SMJZ/0TbYhf3drCos=;
+        b=Kgn8pLGhU6wnRIQoeFxwxPYq4xLtqxnBPwXeVAsoM2oeuUc1RKmEP9oLeVZWZz2kkZ
+         MAEqbqYcLSMBFGQmhhhhEmyYNqGyDd3AJR2fyw+FuHqswrcMKnPKI59yqL5MP3YaGuEZ
+         zEChMF6VnsU/4Gs2mhRpXlSMSmW3DS/ncB8hxOqKAnlX9p9OaTs0smRt5qTXT2ElniBK
+         eEgdP4pUu2N4v6yNMtqSxTzmqTeEp4pp3bvS9SAHUePlwqrEGTBTnwPugGROipEC/JD6
+         ksC78kmCBjUuEqxM+tmI4jWmUP0IJGWcKt7v3YnNio2gmqJPoWJhlqBJ1b2TJGghonL6
+         BFTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK2yAJXg+B4EsWqddIiYo+OJNSaorAwDaY1rHfOV38W7LK0o14gBEewBgCI2aLZFptVhtekCcKE5uBnW3q5w==@vger.kernel.org, AJvYcCWwkIobQkqbGadD0Gpq+JCtjBx+F8InPIT0iJ5A6/yNAzUmgbdUSSgE0N9b+a4BOHkUjELUuDpNMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxceLT7SzD8Tug2BZWvJturwHdlz9aaQYENcxkv2AyVU24f/Ts1
+	iqcLSmvScxYxcgkioQetRX8dJUvhObZPK5eBGnmMPtPOrVoNgNQtSNJ7P3V8dAi2WPbUbR0+/IB
+	LNombICn4hoDNNiuu5M+Qy+FbRQs=
+X-Gm-Gg: ASbGncvwiP/te09I7gb1Xk/OhQ5/KDtHwow27biMOfgcEAF302LFxKYUmBT0zQSo2Ro
+	mOI/N+FI9e+/d2SvLxbFSXfZaQMwX0RrZwT76JQgCTZgGvzDOzqD7oJERuBC3DBg=
+X-Google-Smtp-Source: AGHT+IHqcA++GDYDFxIFFPF2zBEk0d8ip3zuE3o+451QfC0Izm+0PQXGhA7OnDMzYPz1OYleDZl0+jfFqmo7DKAixkw=
+X-Received: by 2002:a05:622a:292:b0:467:b7de:da8a with SMTP id
+ d75a77b69052e-46e12a2c4e7mr298398491cf.6.1737506718094; Tue, 21 Jan 2025
+ 16:45:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB508004527B8B38AAF18D763399E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 21 Jan 2025 16:43:59 -0800
-X-Gm-Features: AbW1kvbeUP-oYfk3F8-ZGfSsh6jW_eY-R2uftHwYT1pCbWeFVLAlklm0dLw_LfI
-Message-ID: <CAADnVQLk6w+AkpoWERoid54xZh_FeiV0q1_sVU2o-oMBkP2Y7w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v7 4/5] bpf: Make fs kfuncs available for SYSCALL
- program type
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-10-9c786f9a7a9d@ddn.com>
+ <CAJnrk1afYmo+GNRb=OF7CUQzY5ocEus0h=93ax8usA9oa_qM4Q@mail.gmail.com>
+ <eafad58d-07ec-4e7f-9482-26f313f066cc@bsbernd.com> <CAJnrk1asVwkm8kG-Rfmgi-gPXjYxA8HcA_vauqVi+zjuPNtaJQ@mail.gmail.com>
+ <605815bc-40ca-49c1-a727-a36f961b8ad6@bsbernd.com>
+In-Reply-To: <605815bc-40ca-49c1-a727-a36f961b8ad6@bsbernd.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 21 Jan 2025 16:45:07 -0800
+X-Gm-Features: AbW1kvbTPSeb5tKkNEomPZ6-3WQ-LWeuvO7_P_uPyiKrU9IhlxoekiLZvcPsux4
+Message-ID: <CAJnrk1bg_ZwuV1w8x6to50_LYk+o6=HAzC_eQ_U4QGLkyXVwsA@mail.gmail.com>
+Subject: Re: [PATCH v9 10/17] fuse: Add io-uring sqe commit and fetch support
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 21, 2025 at 5:09=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
+On Tue, Jan 21, 2025 at 4:18=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
 >
-> Currently fs kfuncs are only available for LSM program type, but fs
-> kfuncs are generic and useful for scenarios other than LSM.
->
-> This patch makes fs kfuncs available for SYSCALL program type.
->
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
->  fs/bpf_fs_kfuncs.c                                 | 14 ++++++--------
->  .../selftests/bpf/progs/verifier_vfs_reject.c      | 10 ----------
->  2 files changed, 6 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 4a810046dcf3..8a7e9ed371de 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -26,8 +26,6 @@ __bpf_kfunc_start_defs();
->   * acquired by this BPF kfunc will result in the BPF program being rejec=
-ted by
->   * the BPF verifier.
->   *
-> - * This BPF kfunc may only be called from BPF LSM programs.
-> - *
->   * Internally, this BPF kfunc leans on get_task_exe_file(), such that ca=
-lling
->   * bpf_get_task_exe_file() would be analogous to calling get_task_exe_fi=
-le()
->   * directly in kernel context.
-> @@ -49,8 +47,6 @@ __bpf_kfunc struct file *bpf_get_task_exe_file(struct t=
-ask_struct *task)
->   * passed to this BPF kfunc. Attempting to pass an unreferenced file poi=
-nter, or
->   * any other arbitrary pointer for that matter, will result in the BPF p=
-rogram
->   * being rejected by the BPF verifier.
-> - *
-> - * This BPF kfunc may only be called from BPF LSM programs.
->   */
->  __bpf_kfunc void bpf_put_file(struct file *file)
->  {
-> @@ -70,8 +66,6 @@ __bpf_kfunc void bpf_put_file(struct file *file)
->   * reference, or else the BPF program will be outright rejected by the B=
-PF
->   * verifier.
->   *
-> - * This BPF kfunc may only be called from BPF LSM programs.
-> - *
->   * Return: A positive integer corresponding to the length of the resolve=
+...
+> >>
+> >>>
+> >>>> +
+> >>>> +       err =3D fuse_ring_ent_set_commit(ring_ent);
+> >>>> +       if (err !=3D 0) {
+> >>>> +               pr_info_ratelimited("qid=3D%d commit_id %llu state %=
+d",
+> >>>> +                                   queue->qid, commit_id, ring_ent-=
+>state);
+> >>>> +               spin_unlock(&queue->lock);
+> >>>> +               return err;
+> >>>> +       }
+> >>>> +
+> >>>> +       ring_ent->cmd =3D cmd;
+> >>>> +       spin_unlock(&queue->lock);
+> >>>> +
+> >>>> +       /* without the queue lock, as other locks are taken */
+> >>>> +       fuse_uring_commit(ring_ent, issue_flags);
+> >>>> +
+> >>>> +       /*
+> >>>> +        * Fetching the next request is absolutely required as queue=
 d
->   * pathname in *buf*, including the NUL termination character. On error,=
- a
->   * negative integer is returned.
-> @@ -184,7 +178,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
->  static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_i=
-d)
->  {
->         if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
-> -           prog->type =3D=3D BPF_PROG_TYPE_LSM)
-> +           prog->type =3D=3D BPF_PROG_TYPE_LSM ||
-> +           prog->type =3D=3D BPF_PROG_TYPE_SYSCALL)
->                 return 0;
->         return -EACCES;
->  }
-> @@ -197,7 +192,10 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_se=
-t =3D {
+> >>>> +        * fuse requests would otherwise not get processed - committ=
+ing
+> >>>> +        * and fetching is done in one step vs legacy fuse, which ha=
+s separated
+> >>>> +        * read (fetch request) and write (commit result).
+> >>>> +        */
+> >>>> +       fuse_uring_next_fuse_req(ring_ent, queue, issue_flags);
+> >>>
+> >>> If there's no request ready to read next, then no request will be
+> >>> fetched and this will return. However, as I understand it, once the
+> >>> uring is registered, userspace should only be interacting with the
+> >>> uring via FUSE_IO_URING_CMD_COMMIT_AND_FETCH. However for the case
+> >>> where no request was ready to read, it seems like userspace would hav=
+e
+> >>> nothing to commit when it wants to fetch the next request?
+> >>
+> >> We have
+> >>
+> >> FUSE_IO_URING_CMD_REGISTER
+> >> FUSE_IO_URING_CMD_COMMIT_AND_FETCH
+> >>
+> >>
+> >> After _CMD_REGISTER the corresponding ring-entry is ready to get fuse
+> >> requests and waiting. After it gets a request assigned and handles it
+> >> by fuse server the _COMMIT_AND_FETCH scheme applies. Did you possibly
+> >> miss that _CMD_REGISTER will already have it waiting?
+> >>
+> >
+> > Sorry for the late reply. After _CMD_REGISTER and _COMMIT_AND_FETCH,
+> > it seems possible that there is no fuse request waiting until a later
+> > time? This is the scenario I'm envisioning:
+> > a) uring registers successfully and fetches request through _CMD_REGIST=
+ER
+> > b) server replies to request and fetches new request through _COMMIT_AN=
+D_FETCH
+> > c) server replies to request, tries to fetch new request but no
+> > request is ready, through _COMMIT_AND_FETCH
+> >
+> > maybe I'm missing something in my reading of the code, but how will
+> > the server then fetch the next request once the request is ready? It
+> > will have to commit something in order to fetch it since there's only
+> > _COMMIT_AND_FETCH which requires a commit, no?
+> >
 >
->  static int __init bpf_fs_kfuncs_init(void)
->  {
-> -       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc=
-_set);
-> +       int ret;
-> +
-> +       ret =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfun=
-c_set);
-> +       return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &b=
-pf_fs_kfunc_set);
->  }
+> The right name would be '_COMMIT_AND_FETCH_OR_WAIT'. Please see
+> fuse_uring_next_fuse_req().
 >
->  late_initcall(bpf_fs_kfuncs_init);
-> diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c b/to=
-ols/testing/selftests/bpf/progs/verifier_vfs_reject.c
-> index d6d3f4fcb24c..5aab75fd2fa5 100644
-> --- a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
-> +++ b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
-> @@ -148,14 +148,4 @@ int BPF_PROG(path_d_path_kfunc_invalid_buf_sz, struc=
-t file *file)
->         return 0;
->  }
+> retry:
+>         spin_lock(&queue->lock);
+>         fuse_uring_ent_avail(ent, queue);           --> entry available
+>         has_next =3D fuse_uring_ent_assign_req(ent);
+>         spin_unlock(&queue->lock);
 >
-> -SEC("fentry/vfs_open")
-> -__failure __msg("calling kernel function bpf_path_d_path is not allowed"=
-)
-> -int BPF_PROG(path_d_path_kfunc_non_lsm, struct path *path, struct file *=
-f)
-> -{
-> -       /* Calling bpf_path_d_path() from a non-LSM BPF program isn't per=
-mitted.
-> -        */
-> -       bpf_path_d_path(path, buf, sizeof(buf));
-> -       return 0;
-> -}
+>         if (has_next) {
+>                 err =3D fuse_uring_send_next_to_ring(ent, issue_flags);
+>                 if (err)
+>                         goto retry;
+>         }
+>
+>
+> If there is no available request, the io-uring cmd stored in ent->cmd is
+> just queued/available.
 
-A leftover from previous versions?
-This test should still be rejected by the verifier.
+Could you point me to where the wait happens?  I think that's the part
+I'm missing. In my reading of the code, if there's no available
+request (eg queue->fuse_req_queue is empty), then I see that has_next
+will return false and fuse_uring_next_fuse_req() /
+fuse_uring_commit_fetch() returns without having fetched anything.
+Where does the "if there is no available request, the io-uring cmd is
+just queued/available" happen?
+
+>
+> Btw, Miklos added it to linux-next.
+>
+
+Awesome, can't wait to use it.
+
+Thanks,
+Joanne
+>
+> Cheers,
+> Bernd
+>
 
