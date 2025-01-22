@@ -1,214 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-39882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B1AA19B6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:23:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F548A19B73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E877A4649
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749E916C860
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6861CAA67;
-	Wed, 22 Jan 2025 23:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJxl+wQW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9381CDA09;
+	Wed, 22 Jan 2025 23:27:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15FE1C3C1A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 23:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D4F1CAA96
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 23:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737588201; cv=none; b=SvrbDHT2v926MF6fdwv4rx/FBoWtIurwc4Xq/8tl+Md+ThU/M7pNVXAGNf/eO83niRXQ5k+A8jPx7EkC6Oe46c9hxMhab69RtOWnGt4BVFhMBcXIaPJ0QkDhF17J1X/HkTtZbqtN9J+e+Xx5VqX0h120Q5H8zcHeL5Sv5Z90ovg=
+	t=1737588442; cv=none; b=kLCeKjJFQzsZFUXWpGTwTFHw5P9BW5FXVBb8ZabuepijxiqlahQual2EaepKu1QToq9GuH+KIu9S/nna17JOYShh96F9J9DDIMYNp94yqgZfOZkBJnlIkklP2xzLhSlq8JClAiC1UyVQFkMOV8YSQXHQEwySNcCEXL2BCWQbxN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737588201; c=relaxed/simple;
-	bh=s1alVnADfkMQnLzTZVHUk1KP0xKaA4nfPAReSGPPbXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=trQw7mLfWtTiN+z0LkyymZolPHmMpjQ4NSHW0XGIxDDbF6gIF5bmXEO9FC28VbI49k4Yuv+KVQGtvpQWeR1z1zM2o2re56fksm9Vq/5Y3wkIdSa259QLYezWvS7brYLMZM4cLFxOyV/WgxOXcsQrDqLopzNWqKdCuWFZw+5vxLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJxl+wQW; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6dce7263beaso3763926d6.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 15:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737588199; x=1738192999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ys/e6UxQtsLFgLg7ZJ5CA6/h091ZID30tEusgU/NGd8=;
-        b=QJxl+wQW/I7yNFaj808OcvBTZJ7wc05KwEqScKEdhPrlz5vBe6adtRTqrOFWw60oI0
-         zwQes1Cs9+rTkJOlwGa+EfZLMVQkOh46+AHtusmsqZWwXRwVxD9y6qNRBcjV21bJfoFt
-         iGp04Fyw/derTx3rJDHw/1otexOn8igERwWT8wKo5Ji2XONh6fIT7vQu74ZbXg3yCSmz
-         FWRgfTJh0WtvimSZdvOXuhqqpLMZpZuDyOyhwgt75MYbLWCUpXAIhGnDrwWFiFcrQ/0V
-         nUOhToSYKVtRUlUDZMeWOQ1ozO15fbseynbaPuO1IzjmtCZjXKJZm0SWc2mGknUuSqtT
-         kknA==
+	s=arc-20240116; t=1737588442; c=relaxed/simple;
+	bh=t34vYmG4ermwOVueidHoCUcjEDyWUMrynYw5pxZnZhE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pkzrFXUHG9fIEMAYwrfmHxpcT8bzUCd3Mvf8bzNwkkYRIk1Rq0yhtoHrteSxfJ4YTE3F1Cv+XHw2N4lGFB217EtOo9AzreIUnesEZJwJeUZpJt7DUm8Jjjp2HK01lvLnWcSAiai4YSnqC1bdkMbz/xCurm5r2A647+SRYtKd7kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3cfb20d74b5so2104045ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 15:27:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737588199; x=1738192999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ys/e6UxQtsLFgLg7ZJ5CA6/h091ZID30tEusgU/NGd8=;
-        b=ooeAEbY23EFRf6LMZa2A2FevQH/a5RHQw+KIGlLaKaKji5AlhBotc9L/RyNXkJMJvo
-         xbDxCesU3TUYCQVl4MmckMmtWY9Q64hanY3KRuJ21UBTZQQdhD63m6Oj3QmEypY4MzG8
-         r4scPcIEP8JT6d7wP2A7vRyhTMniw7hUoN0oiYGM4zQaVJar0TNwIus08tOUSB2KVLfs
-         zlNthyGLiujfHY0ia6zupXutEaJbD/2ayTt0/if8jpbGwLMH/E+InqRwffP+UrYQ3n3d
-         vGXM/RFgDTgeQYfeOeE+eZuDo02cbKyedWK0+gtDn46fuC425hYb5ucNNEDs8QNZHcsD
-         ANlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVY+G4d3y/NokAKLK0k0xpjwl3uapvs6eO2qOInDJyX4FxMczF+nanY8Yi4AVcO1O56G901xAewS+4Aq5OF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXa6dNG+N0w3pHbymH+SH8LCzS3U6ZVt36CGD0OccK6TMxwGl5
-	Fz/g1YgGDwMH9ystJ9iM5KE9Lb2WOu2FFS8rqHC8OX45ZA/nIRLGcZch4okuyyHawUp8EHJiT/Y
-	ZwUyMkJhRLBhcXsEkPldS/D6KBJLaHmzUbc4=
-X-Gm-Gg: ASbGncsLp8bKbaCut7AMZUaAYWTdQ0qG/uUYwMgTOojuRqC5ByabjErOw+1bUC4ZZwH
-	U8SCs6D1Rlohc51io/zJLgXUPU8qLxWrKH4Szr8ZegVK6vodTIxJH
-X-Google-Smtp-Source: AGHT+IElM7qy8SvFjVn5ndUeHH1XPe3+f3dTF/lI7J023JvBdpbhgyRIxxZO831GG8wLor3khirT4MwDqnEHAhh8iLs=
-X-Received: by 2002:a05:6214:5349:b0:6d4:2910:7f13 with SMTP id
- 6a1803df08f44-6e1b2213dd2mr396406936d6.32.1737588198649; Wed, 22 Jan 2025
- 15:23:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737588440; x=1738193240;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OqMC+G6rwK87UaS7Zs1/0KnA34jqKav2Ciavl8IbR+I=;
+        b=Z3RIHZATosSPayZFbdox3M8VsmtIFKzxNyBh5XWKfx+ezIgDeScKqRjJLI1z3baiAo
+         0JWAndrF3sPnq76dsssE8ZB7WoCAtHB368IxEwii0TS6VTgiYSusSMUN2Tqn1YlJynaN
+         cnr8363N3w9BcaYGUZNB77bVXQHBnv8YurA/Hh7Y5E4B7rtT/JHN+Sjz6a4OLV8d5wu7
+         D2DOUPF5tPWvwJY0MKCQZAB7C3Jn9ATwm0+E8A3rxnlIrzDsRqCm/N7voZXBGIi+HUdq
+         At0zeoH2pDKtViYBCCxGb6XDHL3gZP74bVTs2N4Q2DSKwkll99S1Cfuws6uv0v7fb5jH
+         Vxkw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8iyJgpk/xJVA6lQEWEPEEUf/hUa5muZ67L3BqVMqndc7Xn3K8YtM8t+Hfh3vlN/SwfD0WMe0YIRgeOx32@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkaC3mHmmaP/GA9ZVt3uvowbHqYoZm/Rhx9RpjSn4wn818YoWx
+	03il8Uylh/B7zNV33AyJ0OMHwpsiRnqXmZz3jyMC333yF+WTvUnDenu1Lzv2q787KEidpbI6cbO
+	42cIsroIRbj2Hvkl6PRcc64yOCprYHy+HMxtV1tCTuRONAgdsQbnrwGA=
+X-Google-Smtp-Source: AGHT+IGZ2JlrsJ9DEVAXeCMysgWQpjYiv+Yzwd6bBU3hFrx6rDmqZ6PtUmJycAzdIw8dYpn5CB7TlA6bjORSJslQ8If6Ai1jbLSV
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213221818.322371-1-joannelkoong@gmail.com>
-In-Reply-To: <20241213221818.322371-1-joannelkoong@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 22 Jan 2025 15:23:08 -0800
-X-Gm-Features: AbW1kvb2BRX8ODQ2Y78eMaBI88k08TxUto3L5fr58fe7mMkCGGb8DNb2O033HG0
-Message-ID: <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] fuse: support large folios
-To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, willy@infradead.org, 
-	jefflexu@linux.alibaba.com, shakeel.butt@linux.dev, jlayton@kernel.org, 
-	kernel-team@meta.com
+X-Received: by 2002:a05:6e02:1aa8:b0:3cf:6d33:d40d with SMTP id
+ e9e14a558f8ab-3cf742812e4mr186744515ab.0.1737588440204; Wed, 22 Jan 2025
+ 15:27:20 -0800 (PST)
+Date: Wed, 22 Jan 2025 15:27:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67917ed8.050a0220.15cac.02eb.GAE@google.com>
+Subject: [syzbot] [fs?] BUG: corrupted list in remove_wait_queue (2)
+From: syzbot <syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 2:23=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> This patchset adds support for folios larger than one page size in FUSE.
->
-> This patchset is rebased on top of the (unmerged) patchset that removes t=
-emp
-> folios in writeback [1]. This patchset was tested by running it through f=
-stests
-> on passthrough_hp.
->
-> Please note that writes are still effectively one page size. Larger write=
-s can
-> be enabled by setting the order on the fgp flag passed in to __filemap_ge=
-t_folio()
-> but benchmarks show this significantly degrades performance. More investi=
-gation
-> needs to be done into this. As such, buffered writes will be optimized in=
- a
-> future patchset.
->
-> Benchmarks show roughly a ~45% improvement in read throughput.
->
-> Benchmark setup:
->
-> -- Set up server --
->  ./libfuse/build/example/passthrough_hp --bypass-rw=3D1 ~/libfuse
-> ~/mounts/fuse/ --nopassthrough
-> (using libfuse patched with https://github.com/libfuse/libfuse/pull/807)
->
-> -- Run fio --
->  fio --name=3Dread --ioengine=3Dsync --rw=3Dread --bs=3D1M --size=3D1G
-> --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
-> --directory=3Dmounts/fuse/
->
-> Machine 1:
->     No large folios:     ~4400 MiB/s
->     Large folios:        ~7100 MiB/s
->
-> Machine 2:
->     No large folios:     ~3700 MiB/s
->     Large folios:        ~6400 MiB/s
->
->
-> [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannel=
-koong@gmail.com/
->
+Hello,
 
-A couple of updates on this:
-* I'm going to remove the writeback patch (patch 11/12) in this series
-and resubmit, and leave large folios writeback to be done as a
-separate future patchset. Getting writeback to work with large folios
-has a dependency on [1], which unfortunately does not look like it'll
-be resolved anytime soon. If we cannot remove tmp pages, then we'll
-likely need to use a different data structure than the rb tree to
-account for large folios w/ tmp pages. I believe we can still enable
-large folios overall even without large folios writeback, as even with
-the inode->i_mapping set to a large folio order range, writeback will
-still only operate on 4k folios until fgf_set_order() is explicitly
-set in fuse_write_begin() for the __filemap_get_folio() call.
+syzbot found the following issue on:
 
-* There's a discussion here [2] about perf degradation for writeback
-writes on large folios due to writeback throttling when balancing
-dirty pages. This is due to fuse enabling bdi strictlimit. More
-experimentation will be needed to figure out what a good folio order
-is, and whether it's possible to do something like remove the
-strictlimit for privileged servers.
+HEAD commit:    fda5e3f28400 Merge tag 'trace-v6.13-rc7-2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1117e024580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5e182416a4b418f
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e21d5f67b886a692b55
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177959df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1288d1f8580000
 
-* Writeback on FUSE will need support for more granular dirty
-tracking, so that we don't have to write back the entire large folio
-if only a few pages in it are dirtied. I'm planning to take a look at
-iomap and netfs and see if maybe FUSE can hook into that for it.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cd46ddd4b381/disk-fda5e3f2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f7cf021f77f5/vmlinux-fda5e3f2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/12cb03ba7d7e/bzImage-fda5e3f2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com
+
+list_del corruption. prev->next should be ffffc90003377b98, but was ffff88802a2585c8. (prev=ffff88802a2585c8)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:62!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 9290 Comm: syz-executor367 Not tainted 6.13.0-rc7-syzkaller-00191-gfda5e3f28400 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+RIP: 0010:__list_del_entry_valid_or_report+0x12c/0x1c0 lib/list_debug.c:62
+Code: e8 19 db da fc 90 0f 0b 48 89 ca 48 c7 c7 00 a0 b1 8b e8 07 db da fc 90 0f 0b 48 89 c2 48 c7 c7 60 a0 b1 8b e8 f5 da da fc 90 <0f> 0b 48 89 d1 48 c7 c7 e0 a0 b1 8b 48 89 c2 e8 e0 da da fc 90 0f
+RSP: 0018:ffffc90003377880 EFLAGS: 00010086
+RAX: 000000000000006d RBX: ffffc90003377b80 RCX: ffffffff8178e449
+RDX: 0000000000000000 RSI: ffffffff81798bd6 RDI: 0000000000000005
+RBP: ffff88802a258588 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 0000000000000001 R12: 0000000000000286
+R13: ffffc90003377b98 R14: ffffc90003377ba0 R15: ffffc90003377b70
+FS:  0000555578a00380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f687b8542b0 CR3: 0000000073a90000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del include/linux/list.h:229 [inline]
+ __remove_wait_queue include/linux/wait.h:207 [inline]
+ remove_wait_queue+0x30/0x180 kernel/sched/wait.c:55
+ free_poll_entry fs/select.c:132 [inline]
+ poll_freewait+0xd5/0x250 fs/select.c:141
+ do_sys_poll+0x6f7/0xde0 fs/select.c:1010
+ __do_sys_poll fs/select.c:1074 [inline]
+ __se_sys_poll fs/select.c:1062 [inline]
+ __x64_sys_poll+0x1a8/0x450 fs/select.c:1062
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f687b7d8809
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb8bb93f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000007
+RAX: ffffffffffffffda RBX: 00307276642f3072 RCX: 00007f687b7d8809
+RDX: 0000000000000106 RSI: 0000000000000005 RDI: 0000000020000080
+RBP: 0000000000000000 R08: 00007ffdb8bb8f60 R09: 00007ffdb8bb8f60
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdb8bb941c
+R13: 00007ffdb8bb9430 R14: 00007ffdb8bb9470 R15: 0000000000000359
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x12c/0x1c0 lib/list_debug.c:62
+Code: e8 19 db da fc 90 0f 0b 48 89 ca 48 c7 c7 00 a0 b1 8b e8 07 db da fc 90 0f 0b 48 89 c2 48 c7 c7 60 a0 b1 8b e8 f5 da da fc 90 <0f> 0b 48 89 d1 48 c7 c7 e0 a0 b1 8b 48 89 c2 e8 e0 da da fc 90 0f
+RSP: 0018:ffffc90003377880 EFLAGS: 00010086
+RAX: 000000000000006d RBX: ffffc90003377b80 RCX: ffffffff8178e449
+RDX: 0000000000000000 RSI: ffffffff81798bd6 RDI: 0000000000000005
+RBP: ffff88802a258588 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 0000000000000001 R12: 0000000000000286
+R13: ffffc90003377b98 R14: ffffc90003377ba0 R15: ffffc90003377b70
+FS:  0000555578a00380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f687b8542b0 CR3: 0000000073a90000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-Thanks,
-Joanne
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelko=
-ong@gmail.com/
-[2] https://lore.kernel.org/linux-fsdevel/CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8=
-KY47XfOsYHj=3DN2wxAg@mail.gmail.com/
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> Changelog:
-> v2: https://lore.kernel.org/linux-fsdevel/20241125220537.3663725-1-joanne=
-lkoong@gmail.com/
-> v2 -> v3:
-> * Fix direct io parsing to check each extracted page instead of assuming =
-all
->   pages in a large folio will be used (Matthew)
->
-> v1: https://lore.kernel.org/linux-fsdevel/20241109001258.2216604-1-joanne=
-lkoong@gmail.com/
-> v1 -> v2:
-> * Change naming from "non-writeback write" to "writethrough write"
-> * Fix deadlock for writethrough writes by calling fault_in_iov_iter_reada=
-ble()
-> * first
->   before __filemap_get_folio() (Josef)
-> * For readahead, retain original folio_size() for descs.length (Josef)
-> * Use folio_zero_range() api in fuse_copy_folio() (Josef)
-> * Add Josef's reviewed-bys
->
-> Joanne Koong (12):
->   fuse: support copying large folios
->   fuse: support large folios for retrieves
->   fuse: refactor fuse_fill_write_pages()
->   fuse: support large folios for writethrough writes
->   fuse: support large folios for folio reads
->   fuse: support large folios for symlinks
->   fuse: support large folios for stores
->   fuse: support large folios for queued writes
->   fuse: support large folios for readahead
->   fuse: optimize direct io large folios processing
->   fuse: support large folios for writeback
->   fuse: enable large folios
->
->  fs/fuse/dev.c  | 128 ++++++++++++++++++++++---------------------
->  fs/fuse/dir.c  |   8 +--
->  fs/fuse/file.c | 144 +++++++++++++++++++++++++++++++++----------------
->  3 files changed, 166 insertions(+), 114 deletions(-)
->
-> --
-> 2.43.5
->
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
