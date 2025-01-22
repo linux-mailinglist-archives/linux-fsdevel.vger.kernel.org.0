@@ -1,321 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-39872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BABA19A93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 22:57:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0DCA19A97
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 22:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F2B1889371
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 21:57:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B111694BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 21:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DDF1C9DE5;
-	Wed, 22 Jan 2025 21:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDCE1C9DC6;
+	Wed, 22 Jan 2025 21:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNB5UZP6"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gOUa9sVf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F411C6889
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 21:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FBB1C8FD6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 21:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737583020; cv=none; b=X5mlZBv0vjEVZWNc/VHMELpvoU+c7S5H8Cwd6gty+PdSwi2LK1xUKXPxjnqkOi3rkjEvMcBrDbNMzh/LOytAqOEP8lMsq2S26rfHGd6142RXbltc8BcU5RUTrja3cVTmqL/RMjH91cy04LP+F/OsnKAAI9hkvSU6YK5IrZCMRV4=
+	t=1737583113; cv=none; b=Bn413RAkiInyZlu97BOIekyXPclKoh0HArw7mJQaiQ++rkWvl+3iLeR1wi1TpPg2J5gunGPPlRXiaoXz+Min6Ea20REKWeVXAV5NJJ179wwXasIYWZfGGmjGMagkCTFbj6SS3m/bc+beqV5bsdTax4g9vmA5vTCfAXLJAftt+Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737583020; c=relaxed/simple;
-	bh=g13YcPeDhhq2NuW90MaLFbqQrlXt2F5RYHMRQMyAhzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mZmGvIQNeC7MbithpBXvadwic6hftqIBhb/IvDjod6SQmyO7NLe09dkwck47avQioJ5XJARB89ovJwlEQ3hbFYrXKj+sHv1pOdkHzRfxa4MduiNOBEq4CZ6nk3+Q6TDXcQ2z80othcYZak6jxxU0xyNKWzcKFSfjX9RoNJfd16g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WNB5UZP6; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5447fae695so416724276.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 13:56:58 -0800 (PST)
+	s=arc-20240116; t=1737583113; c=relaxed/simple;
+	bh=3SYl4+g1NDV+Zn9PgqRX7HmhqCL6eecegckdXkGBGQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Adw7hHjcJFheUivIRvJzxNxBxzM3j/svnzajZ9MPQoQxPT9uCMlNAZ6F3flYKX2DpU4NUWVL6ZvdA3rSEbJvkRAq+F8F+2O6S95WLTEG249MJNJe9W63aw8GaCEId84RXzOQHmROAwCyMtFjx3zg54l9fILjPg/f8WTCikqt0Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=gOUa9sVf; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2165cb60719so3038895ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 13:58:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737583017; x=1738187817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ms24zaSLaQOivVyWKgDydjCdhS+914WXBy/w4wzVD6o=;
-        b=WNB5UZP6HnAleX3xHE8B0a+4fW1vwNGaahj6aOdyTPjM1RT+hQa7qUeC8IWcV7hORd
-         B4O20elHcWQsRH3z/FHiOSn3G3eBQiuKdd0oJA0Y4c4uD4s5mIw0TggFhMcTM5deQapR
-         7oFuABgFaLJXBEGhxaZqBkm5qbD6+qQernMEMfIMqTcP1J3QrZkWqgUwuWmktlwaFeoQ
-         mfXrPIXK/98YtObSNFrt0y1Fh2yRdFMqQSgsobqZMHUFaJz16xJG+Z0Zio3DZGI92KuO
-         ERHsUc9UOyYOdl2pY+yL+Wi1Buv+X2jfEfKxTvzOSihWH126OXmYWEbnzRQCB/EjbPwM
-         KV3A==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1737583111; x=1738187911; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HXvn1GAZum62eGt9FVKhSYNWM9rpkSfE7ZuGmpHTELc=;
+        b=gOUa9sVf5VRMOjtstH4vTAcj5r0I91w7O1Ywz/O8Hu/hiWAy4xsv0Nr8rMIAZsd1+R
+         uCd9Xx/ywuT5Bh5Gp3l8qTEXsv4iGCtN+HSoYU8mWfk+zwu4E/3hyijmnSi2YvA0fAs2
+         UvM/9xBgE+1idJ48qwqrnOKL0GkruArS3w6GyQfTBNUJouU2qhsodKX9CBpgEPkScgEl
+         Rv5Y0A4yRHJcV99fu4jG8XtO6SlHrQs3/zVpiCoo1abZyyjNKIGyuZulV5/T+PFxQ5mg
+         PUpPHeh0yGQdXQLxplgmIZ+cGy4JTIXqzComc2/aAuMKOl1woOxt2S1patGtZaEQllTl
+         jmfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737583017; x=1738187817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ms24zaSLaQOivVyWKgDydjCdhS+914WXBy/w4wzVD6o=;
-        b=rrTS8mLKhnE+WUhjBGxb9mFUBp1L8yVz5MGC4FBZ7wo6aTrDZ7cAdQ9FN2h2Q4AbiX
-         Urlm40AxJPqwpnrvFfubAQXvkbLOJ+qf3oIqWm/qOmEfsexDo0Hdl53JG8DOHDW6jUa3
-         TDGPdHvsi/wkmLYWrTTYyku1vwEflMD3ok9LoWcxASAUBVdHR+bZ5xjC5eVPylTfALOS
-         woM8GeMbYhRdEQllSg01R5WdSxhf7klQiCO/cM4FvpTkCHW6ZqWJRZ/6CaQHy0L2hiHy
-         tpB/ciHj7wMGHEb8Vf8hfA9qmmoHr/ksLZGeFzCeFMHBUeFz84Zdzw15TPPgL8bsc/a3
-         7r8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUzyLoxys5143Z1TAXp6aBJd17pb7Qnp8uHPwHSjTZUMTtqCCiCTh9E/CV+1Ze3fwfDdQhdAKLxr6TLpGfC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5MSeDBkLWCPZ5HDHvzaNMC9huWSOmr9JlMwG6W/OmmICDBkMG
-	cNMAAIvrt3KwV/wu0L6vcooN1INpdj4KGOMeRQDWgugoKWxVqi1bZxOWJg==
-X-Gm-Gg: ASbGncsb8+FaYBcDAcJ04iWS804Cx2+Yw40yyDKC7u/oWximU241BMHvX6V7IASddqa
-	QuJlk7HazqUAOs4vbdMz/ZwvcKFc5s0GklCyKpSwpI0+h0lB1h/kSR5f17DifOcGyp3j+rTWSgX
-	GNa/xHAWgYLdaXtzbBqqod+9XsKGEOT4i+OYl+TchwEEVNYm/iJUY81qmDA/0XYl/lMr+F0crA0
-	MDupu9kQZIjAGjQPEgyyB2qLFaZNUrReWFh7SCTCyqAeIaHhEWTD73M1vfrB7ikNLmu
-X-Google-Smtp-Source: AGHT+IG94HQHk4aSn3lHe/A1wGLNFWOfEQ380QsrIENQ+feF7pU2jDse3I8AwqcLsb/jzlvwVtrsuw==
-X-Received: by 2002:a05:690c:6806:b0:6ef:5cd2:49bb with SMTP id 00721157ae682-6f6eb9296a5mr193679377b3.30.1737583017459;
-        Wed, 22 Jan 2025 13:56:57 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:70::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e63fd612sm21863167b3.28.2025.01.22.13.56.57
+        d=1e100.net; s=20230601; t=1737583111; x=1738187911;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HXvn1GAZum62eGt9FVKhSYNWM9rpkSfE7ZuGmpHTELc=;
+        b=dpJ4uiC7FBNcfHQ3WKGymFtBR16JctNtGzURmeRmIzWPnuYxfhj+nM2uAyIfnLqbyt
+         so0u9GGHzxqcjyfakVIxO6dwbSZoXH+WpvYUlz/njfN07AYWMdkCiLX9xfWPM9szDY63
+         ldIyKVj7LB2iDB9SXA9FkHpjASs5yV5tFQjqReiv9mEE1HV1t/HM0OR5PjOOObyxWDsm
+         3swatveoSrYhh8/qEeXNwHetrvY4e0oyxW79DIaZDye5MtZWciVTLISJYTze7XqXaWDI
+         L1XbYjzIKXrA8L1q160HHXZH3h30MWBtC8uFivys8VmSapDjqYGT8V8Cz5NzsLbobeb7
+         pZsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZJFrZMVal3j2lsFFgZUrW/h2kRchax3PYjI+9b1QG+VeYwG766FzJ5OBH+mdFtO9yolFMbUtNOxB3wG90@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWRGp+NntuNXTYSACSgYX7dhh8b/raEzHBxGNpzrDbFFOE9clH
+	e0E6Q9BBEmBe3KX5ayhHPyOhGhiIKWSwDtBdLbZ0qQKuXgoCjr0lZasdBVyJYj8=
+X-Gm-Gg: ASbGnct6Ph26xkwZzUn2PD0mtqN5rhsOru4wU1n7lMe9pe0/V7+j5Bfy87+XxAVPay4
+	lNHWqDYYm7UWiRdt2tqlngEKqofdb9ZV0VfjbmLOvum6Z9UNWtF63yZsOBZIHLL+yYspfHu3sdu
+	eWEpaXeHkfXb5h7F4EO1v+O4fEc8ym0KavxutJbsR2CeTQGiMfPkiv+13Se4+a4sKd9cova/ncd
+	y9FR9pCI1bzl0kvA/FwqgaofaWE/cmVF8q+7Rx0LuJf4v5T0Q6iogylReqJ0zey5kKXltao6ssJ
+	trw3/70ujz82zbDmoisZrv6woYcLHR/ybDq6eh96IiyW3w==
+X-Google-Smtp-Source: AGHT+IHpNXzEDizxXUaP+qhVhDGM/6CzcfsTvz8bGC6/q51aZ4HDAeIaKSo3aEqGYpR6Eyp0UlrLWg==
+X-Received: by 2002:a05:6a20:a10c:b0:1d9:6c9c:75ea with SMTP id adf61e73a8af0-1eb21470203mr34616403637.5.1737583109417;
+        Wed, 22 Jan 2025 13:58:29 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72daba48cd0sm11735376b3a.131.2025.01.22.13.58.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2025 13:56:57 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
+        Wed, 22 Jan 2025 13:58:28 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1taijy-00000009FSe-1SgK;
+	Thu, 23 Jan 2025 08:58:26 +1100
+Date: Thu, 23 Jan 2025 08:58:26 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: djwong@kernel.org, hch@lst.de, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Cc: bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com,
-	jlayton@kernel.org,
-	senozhatsky@chromium.org,
-	tfiga@chromium.org,
-	bgeffon@google.com,
-	etmartin4313@gmail.com,
-	kernel-team@meta.com,
-	Bernd Schubert <bschubert@ddn.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v12 2/2] fuse: add default_request_timeout and max_request_timeout sysctls
-Date: Wed, 22 Jan 2025 13:55:28 -0800
-Message-ID: <20250122215528.1270478-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250122215528.1270478-1-joannelkoong@gmail.com>
-References: <20250122215528.1270478-1-joannelkoong@gmail.com>
+Subject: Re: xfs_repair after data corruption (not caused by xfs, but by
+ failing nvme drive)
+Message-ID: <Z5FqAgxiLbqI6gmz@dread.disaster.area>
+References: <20250120-hackbeil-matetee-905d32a04215@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120-hackbeil-matetee-905d32a04215@brauner>
 
-Introduce two new sysctls, "default_request_timeout" and
-"max_request_timeout". These control how long (in seconds) a server can
-take to reply to a request. If the server does not reply by the timeout,
-then the connection will be aborted. The upper bound on these sysctl
-values is 65535.
+On Mon, Jan 20, 2025 at 04:15:00PM +0100, Christian Brauner wrote:
+> Hey,
+> 
+> so last week I got a nice surprise when my (relatively new) nvme drive
+> decided to tell me to gf myself. I managed to recover by now and get
+> pull requests out and am back in a working state.
+> 
+> I had to reboot and it turned out that my LUKS encrypted xfs filesystem
+> got corrupted. I booted a live image and did a ddrescue to an external
+> drive in the hopes of recovering the things that hadn't been backed up
+> and also I didn't want to have to go and setup my laptop again.
+> 
+> The xfs filesystem was mountable with:
+> 
+> mount -t xfs -o norecovery,ro /dev/mapper/dm4 /mnt
+> 
+> and I was able to copy out everything without a problem.
+> 
+> However, I was curious whether xfs_repair would get me anything and so I
+> tried it (with and without the -L option and with and without the -o
+> force_geometry option).
+> 
+> What was surprising to me is that xfs_repair failed at the first step
+> finding a usable superblock:
+> 
+> > sudo xfs_repair /dev/mapper/dm-sdd4
+> Phase 1 - find and verify superblock...
+> couldn't verify primary superblock - not enough secondary superblocks with matching geometry !!!
+> 
+> attempting to find secondary superblock...
+> ..found candidate secondary superblock...
+> unable to verify superblock, continuing...
+> ....found candidate secondary superblock...
+> unable to verify superblock, continuing...
 
-"default_request_timeout" sets the default timeout if no timeout is
-specified by the fuse server on mount. 0 (default) indicates no default
-timeout should be enforced. If the server did specify a timeout, then
-default_request_timeout will be ignored.
+Yeah, so it's a 4 AG filesystem so it has 1 primary superblock and 2
+secondary superblocks. Two of the 3 secondary superblocks are trash,
+and repair needs 2 of the secondary superblocks to match the primary
+for it to validate the primary as a good superblock.
 
-"max_request_timeout" sets the max amount of time the server may take to
-reply to a request. 0 (default) indicates no maximum timeout. If
-max_request_timeout is set and the fuse server attempts to set a
-timeout greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. Similarly, if default_request_timeout
-is greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. If the server does not request a
-timeout and default_request_timeout is set to 0 but max_request_timeout
-is set, then the timeout will be max_request_timeout.
+xfs_repair considers this situation as "too far gone to reliably
+repair" and so aborts.
 
-Please note that these timeouts are not 100% precise. The request may
-take roughly an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max
-timeout due to how it's internally implemented.
+I did notice a pattern to the corruption, though. while sb 1 is
+trashed, the adjacent sector (agf 1) is perfectly fine. So is agi 1.
+But then agfl 1 is trash. But then the first filesystem block after
+these (a free space btree block) is intact. In the case of sb 3,
+it's just a single sector that is gone.
 
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
+To find if there were any other metadata corruptions, I copied the
+primary superblock over the corrupted one in AG 1:
 
-$ echo 65536 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
+xfs_db> sb 1
+Superblock has bad magic number 0xa604f4c6. Not an XFS filesystem?
+xfs_db> daddr
+datadev daddr is 246871552
+xfs_db> q
+$ dd if=t.img of=t.img oseek=246871552 bs=512 count=1 conv=notrunc
+...
 
-$ echo 65535 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-65535
+and then ran repair on it again. This time repair ran (after zeroing
+the log) and there were no corruptions other than what I'd expect
+from zeroing the log (e.g. unlinked inode lists were populated,
+some free space mismatches, etc).
 
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 65535
+Hence there doesn't appear to be any other metadata corruptions
+outside of the 3 bad sectors already identified. Two of those
+sectors were considered critical by repair, hence it's failure.
 
-$ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-0
+What I suspect happened is that the drive lost the first page that
+data was ever written to - mkfs lays down the AG headers first, so
+there is every chance that the FTL has put them in the same physical
+page. the primary superblock, all the AGI, AGF and AGFL headers get
+rewritten all the time, so the current versions of them will be
+immediately moved to some other page. hence if the original page is
+lost, the contents of those sectors will still be valid. However,
+the superblocks never get rewritten, so only they get lost.
 
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
+Journal recovery failed on the AGFL sector in AG 1 that was also
+corrupted - that had been rewritten many times, so it's possible
+that the drive lost multiple flash pages. It is also possible that
+garbage collection had recently relocated the secondary superblocks
+and that AGFL into the same page and that was lost. This is only
+speculation, though.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- Documentation/admin-guide/sysctl/fs.rst | 25 ++++++++++++++++++++++
- fs/fuse/fuse_i.h                        | 10 +++++++++
- fs/fuse/inode.c                         | 28 +++++++++++++++++++++++--
- fs/fuse/sysctl.c                        | 24 +++++++++++++++++++++
- 4 files changed, 85 insertions(+), 2 deletions(-)
+That said, Christian, I wouldn't trust any of the recovered data to
+be perfectly intact - there's every chance random files have random
+data corruption in them. Even though the filesystem was recovered,
+it is worth checking the validity of the data as much as you can...
 
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index f5ec6c9312e1..35aeb30bed8b 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -347,3 +347,28 @@ filesystems:
- ``/proc/sys/fs/fuse/max_pages_limit`` is a read/write file for
- setting/getting the maximum number of pages that can be used for servicing
- requests in FUSE.
-+
-+``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
-+setting/getting the default timeout (in seconds) for a fuse server to
-+reply to a kernel-issued request in the event where the server did not
-+specify a timeout at mount. If the server set a timeout,
-+then default_request_timeout will be ignored.  The default
-+"default_request_timeout" is set to 0. 0 indicates no default timeout.
-+The maximum value that can be set is 65535.
-+
-+``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-+setting/getting the maximum timeout (in seconds) for a fuse server to
-+reply to a kernel-issued request. A value greater than 0 automatically opts
-+the server into a timeout that will be set to at most "max_request_timeout",
-+even if the server did not specify a timeout and default_request_timeout is
-+set to 0. If max_request_timeout is greater than 0 and the server set a timeout
-+greater than max_request_timeout or default_request_timeout is set to a value
-+greater than max_request_timeout, the system will use max_request_timeout as the
-+timeout. 0 indicates no max request timeout. The maximum value that can be set
-+is 65535.
-+
-+For timeouts, if the server does not respond to the request by the time
-+the set timeout elapses, then the connection to the fuse server will be aborted.
-+Please note that the timeouts are not 100% precise (eg you may set 60 seconds but
-+the timeout may kick in after 70 seconds). The upper margin of error for the
-+timeout is roughly FUSE_TIMEOUT_TIMER_FREQ seconds.
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 1321cc4ed2ab..e5114831798f 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -49,6 +49,16 @@ extern const unsigned long fuse_timeout_timer_freq;
- 
- /** Maximum of max_pages received in init_out */
- extern unsigned int fuse_max_pages_limit;
-+/*
-+ * Default timeout (in seconds) for the server to reply to a request
-+ * before the connection is aborted, if no timeout was specified on mount.
-+ */
-+extern unsigned int fuse_default_req_timeout;
-+/*
-+ * Max timeout (in seconds) for the server to reply to a request before
-+ * the connection is aborted.
-+ */
-+extern unsigned int fuse_max_req_timeout;
- 
- /** List of active connections */
- extern struct list_head fuse_conn_list;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 79ebeb60015c..4e36d99fae52 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -37,6 +37,9 @@ DEFINE_MUTEX(fuse_mutex);
- static int set_global_limit(const char *val, const struct kernel_param *kp);
- 
- unsigned int fuse_max_pages_limit = 256;
-+/* default is no timeout */
-+unsigned int fuse_default_req_timeout = 0;
-+unsigned int fuse_max_req_timeout = 0;
- 
- unsigned max_user_bgreq;
- module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
-@@ -1268,6 +1271,24 @@ static void set_request_timeout(struct fuse_conn *fc, unsigned int timeout)
- 			   fuse_timeout_timer_freq);
- }
- 
-+static void init_server_timeout(struct fuse_conn *fc, unsigned int timeout)
-+{
-+	if (!timeout && !fuse_max_req_timeout && !fuse_default_req_timeout)
-+		return;
-+
-+	if (!timeout)
-+		timeout = fuse_default_req_timeout;
-+
-+	if (fuse_max_req_timeout) {
-+		if (timeout)
-+			timeout = min(fuse_max_req_timeout, timeout);
-+		else
-+			timeout = fuse_max_req_timeout;
-+	}
-+
-+	set_request_timeout(fc, timeout);
-+}
-+
- struct fuse_init_args {
- 	struct fuse_args args;
- 	struct fuse_init_in in;
-@@ -1286,6 +1307,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 		ok = false;
- 	else {
- 		unsigned long ra_pages;
-+		unsigned int timeout = 0;
- 
- 		process_init_limits(fc, arg);
- 
-@@ -1404,14 +1426,16 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 			if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
- 				fc->io_uring = 1;
- 
--			if ((flags & FUSE_REQUEST_TIMEOUT) && arg->request_timeout)
--				set_request_timeout(fc, arg->request_timeout);
-+			if (flags & FUSE_REQUEST_TIMEOUT)
-+				timeout = arg->request_timeout;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
- 			fc->no_flock = 1;
- 		}
- 
-+		init_server_timeout(fc, timeout);
-+
- 		fm->sb->s_bdi->ra_pages =
- 				min(fm->sb->s_bdi->ra_pages, ra_pages);
- 		fc->minor = arg->minor;
-diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
-index b272bb333005..3d542ef9d889 100644
---- a/fs/fuse/sysctl.c
-+++ b/fs/fuse/sysctl.c
-@@ -13,6 +13,12 @@ static struct ctl_table_header *fuse_table_header;
- /* Bound by fuse_init_out max_pages, which is a u16 */
- static unsigned int sysctl_fuse_max_pages_limit = 65535;
- 
-+/*
-+ * fuse_init_out request timeouts are u16.
-+ * This goes up to ~18 hours, which is plenty for a timeout.
-+ */
-+static unsigned int sysctl_fuse_req_timeout_limit = 65535;
-+
- static struct ctl_table fuse_sysctl_table[] = {
- 	{
- 		.procname	= "max_pages_limit",
-@@ -23,6 +29,24 @@ static struct ctl_table fuse_sysctl_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= &sysctl_fuse_max_pages_limit,
- 	},
-+	{
-+		.procname	= "default_request_timeout",
-+		.data		= &fuse_default_req_timeout,
-+		.maxlen		= sizeof(fuse_default_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_req_timeout_limit,
-+	},
-+	{
-+		.procname	= "max_request_timeout",
-+		.data		= &fuse_max_req_timeout,
-+		.maxlen		= sizeof(fuse_max_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_req_timeout_limit,
-+	},
- };
- 
- int fuse_sysctl_register(void)
+-Dave.
 -- 
-2.43.5
-
+Dave Chinner
+david@fromorbit.com
 
