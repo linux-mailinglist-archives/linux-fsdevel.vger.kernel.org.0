@@ -1,222 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-39859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2F2A19824
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 18:59:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B99BA198D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 19:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78EC63A9A4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 17:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A9C1881EE1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 18:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD4F21519B;
-	Wed, 22 Jan 2025 17:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1854215792;
+	Wed, 22 Jan 2025 18:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFjoVkMs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BaKuLSFh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196062147F0;
-	Wed, 22 Jan 2025 17:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C71215166;
+	Wed, 22 Jan 2025 18:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737568788; cv=none; b=EYmUm4PpQe483hLbo34HGtEHYhhA+pOwr+ewr6z0mr71ti59xgMcrLLHJe2dZ2+bb9sNhlXZLq9oAoB20QpuqwzCnpW2tGXWaylTBekmfkpclIOlVCchHmFm8qTI8ACBkJmtSTNNIyggPnX1OgkQPFwzxaiMGXV+4j2eGULYn94=
+	t=1737572024; cv=none; b=dn+LoOm+to3Ftfj2o9KnN6lXNF+VEeEt6L2/ZNZodE6TVU+N3KcFzY77zeMeZX2fZ8xVWha3o9Mt4Ip4WGTQZGaCCq5Z7eit2qzkCnIoTLBwOs/yPuo5a87Exxdm5Ubq6pz6sgk23OkHEDIjyycjrwwqYoHilTZTaePFwJjnWug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737568788; c=relaxed/simple;
-	bh=H/gAGW5mUg9X7OZvlovBl0Z1G3QkMWlVoJ3zKYxdsiI=;
+	s=arc-20240116; t=1737572024; c=relaxed/simple;
+	bh=6lkaNw8QxvHTPmA+G7VVF+NulwF+SEA37Tdn2huntXw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NZqyFvI7FQyb2ST/rsxgGGAX5USroc3I3c+r0YZ2ToO8w0sNEznlxV9eeF6g8MRP02JmYwuYgPQ/MdhoxscJ0Fvjzysj3C02tm/hbEjhx6EKWsvuSzlFVf4HrkbCOFPjfhc3hB48U02MTsCROkM0xm1NNttv9IHlMCXa+YHndbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFjoVkMs; arc=none smtp.client-ip=209.85.221.41
+	 To:Cc:Content-Type; b=rHDra1NSheg1uzodckF8TuvN598ESpnizihd7a9A3Chm2dWhC5oRhZX0RDQIHgiSSCaGw3U/k5SR0ZXu8bnmbpbQmHTEt8iAxQBpC302o5Bh0bi+kTyajGu7KoovoQojnYJ6B7RZ0HQFYbbcBF2069zPjcJn5HSjOHeVmflWOT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BaKuLSFh; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385f06d0c8eso3882582f8f.0;
-        Wed, 22 Jan 2025 09:59:46 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab651f1dd36so26325766b.0;
+        Wed, 22 Jan 2025 10:53:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737568785; x=1738173585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tjGhE/Pv/KpTN1+mcyUldkY6LGoiejB+r+xA1Qw55mo=;
-        b=bFjoVkMsviBLB8XAsKNJoqx9ktKIpbKjZzd6a/2fZFWSzmTjClaLTPnzLOq5+csCCR
-         w4gT40HlZFxX1GkB/7dWVgEzO7g96USaFt28r6yj3umbW0H9uiMcsgfwLlzuP753Q6Mx
-         tZsHEUhyuHsMoacxNKVGeeOxhYZW6C1EwLp89YJaAzOOpLDhTLVOwkiZfShjJRB7HpeB
-         eziBuc/eHBcK/vxFHawqRS2J5CiFUeW8nf4xgVXn49ILJiza0dLUIZFoB6ttGqAVifJQ
-         e499TPOz1o/otRS5QI/2KrzbWkWEdNKYuiVWMH8ZnSBueT0dY2llY5PTLheA9JjnnjY1
-         QWeg==
+        d=gmail.com; s=20230601; t=1737572021; x=1738176821; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJ5sZs+6TaySGO3RPSE9eCNoBfNNb/HbNo21ute/ZHU=;
+        b=BaKuLSFhldOGKrx8MKdM2dqvuRFFe7ewv0RX7R7aMtOflUFpA+BUv4gx/832mIAiiO
+         uigEnteB4R6VlHsgjG5V8gdX+awyHOiI2vp2SVoRq+II6iTq0SaLA2zqscGz2Jts3atA
+         Sb7kPDCaDA2DE+NEbaC4WptJkf1VLdA/32qAMdCQfiebL1FcEgi2TiyMgxgxIjTesCti
+         txgPA+kBIlrDUjywOYRn7uqHj/O7yNkMoNFVN0dFYq9m0crgMMZHfJb6c+AG8d+ssEet
+         RG3gGZ70XFwKyFiz+uTWL3m5InS6zjgLZm2TGOEgXclX9y9srNIRC/305s4m8i9MmQ/Y
+         VMhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737568785; x=1738173585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tjGhE/Pv/KpTN1+mcyUldkY6LGoiejB+r+xA1Qw55mo=;
-        b=hRsIXI30SeGY3lhITjHCaM7GFMpqGW4s/r+ub4PN7aobMsTEDQG7k3eGPp4K3bNRyU
-         557Znud3p256Yx7x+riZ6eMC2ib3kBYao27H1cvhETszOFdyZTr3fl60S/W0sWjh+FZz
-         R17pEQ4d8sH/1TXqqorx7bb3Zdy9D7xV0WxiSWtwIfURkaYGd4C9Pct1fdnayZUN+P7f
-         ZUuKd9OBCiV8hr9XXsMDKX56OkvPHqAt3nWFcsXaXibFq+5Wt2w7pzfEnhnPmAv4U+Ru
-         GhpEjCv2uOuozIFMkyhuWdpSAoldQUDc3tO++n/UFcjrIdlIXKu078MDz5jkfb6fLAIa
-         HmPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW1qiSXyfRYVULU1vO6dsI/XQ+LUPoNgTVQiBdBJyXUJYGMcdVS/DoUCM8ivTjAU8TZHtnGvuQNA34WI0N@vger.kernel.org, AJvYcCVZXLrmWIZTFSnbqnYYu7ajYcSrOD2yik79OIfX6pIoqoD61vWXOGll0sFwsgVpyZFYXobuI/w5DQEhtm4lyQ==@vger.kernel.org, AJvYcCW6f4MeIBluluVW7y8yXELyKu5vaVgrmCddfaB8F3teESVoFQmMEgeNuHNdpq7fTNuqbyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyTQtcrfmTHxTY7aM04ovvlBkasVsZEXJzTx4q24UqufgrCzXu
-	XOHvEVHkKvjBqT0arFAFS14iHVWZ/HmfWxb0SefVMiwYT+eMd3kB3c2X5sTkqhodKcfv5qZhWGR
-	RWE7+lcXhd0+gf6GZ+MQ7UiTuGNo=
-X-Gm-Gg: ASbGncuBGwRzAVpy2cp4zAqvrH49rWSNKsNdzhdJ+79R9yicAhMt6al+YMTTHDtZP0T
-	f7v2GXn8NsBZvO771rso48XCo4vlQeXqh7CrDcb0ch7CwxSNzk52kjaJCoCKq90PCFU3sxLbcUi
-	c4oLC1tPs=
-X-Google-Smtp-Source: AGHT+IFxCXkzhpwgpdx7eCvc2wDO2gfqmMA00YgIOs2a9LuaEY3zZyJrEdtNsS/9JrQr9Bk+OHjxwKHXZd2HupYDbL8=
-X-Received: by 2002:a5d:614b:0:b0:385:f13c:570f with SMTP id
- ffacd0b85a97d-38bf57a1e51mr17279523f8f.33.1737568785087; Wed, 22 Jan 2025
- 09:59:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737572021; x=1738176821;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iJ5sZs+6TaySGO3RPSE9eCNoBfNNb/HbNo21ute/ZHU=;
+        b=EMTGrRnVfCm1Eg76AQEVYkj8zTRU2lmXD99A1JCmlqnSg3GUC/uWmU3vATeBvjA627
+         8SkhLzS9bxOyEpgmZ9XpXZUdlSdF+cGH3en9ZXZuth6dAwnKip6bO2Bu4E/h/QF1EfdL
+         0eczM0vrbFFVyfxofERA98mDi4eI9L7/wypH6cUscpF64KmGRZ8y1Kny1qCt3ErzzE0q
+         6/tTIT9k3183RRDHKfTkCfe7MaSy28l1l7yZZ5LQ5Sd3rjNtgtW19/UdVqeEaiv6JOJL
+         Z7X9xmn0mCQZObw5FYFdqEh+w5+qoleVD9qzxLE4rLZXOyZeTgzjw06PQdb7g6o4+l78
+         xk9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5IKGl3ZdP8PH2bXdyo/JjnheuWft3Ep7Q7JUySSN/cwL139AXiD+DGmIo9qH8VEwYxXNk/Har3rJGSXmt@vger.kernel.org, AJvYcCXGUaUUTD7kXwVbLMDAr/wv81egVyv/5FQRfO/pwV8F39eZxEskjEZ7B7WS1RtsPKY+yM3xIQ0BrLdC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSdcNcKy13k++ls2bnDE2f29/oI/w4FUg1sV3jj6YeWCE1KQEZ
+	bIhEROFTx3ij2+Ir1AOZ76uoQIUNUd0/kKoFbhXB9rc/R3pmzaaKvdvFx5YROTuNs+23Jlrum+Z
+	1A0OnWSmlsorSQGT2o7YUEZVp0ug=
+X-Gm-Gg: ASbGncueo3bdPg7uGn7ZG4M+Motq9NmOUKSrA+ccnItiVycU3CXCGaSLL8/dn6kPz15
+	1pbR2GRYaKmo0MSh4OZ1XkAk4pa2xP+RJmvD+/mGztpOAqNIvDSo=
+X-Google-Smtp-Source: AGHT+IEalPkZChw6AcZLgevhrn3pNRowLBVy27Pnl7AdXloTuPCPHaL/IBPSqSuGOQaBtXbrxsGMgu294cHNUUsFaGU=
+X-Received: by 2002:a17:906:6a26:b0:aa6:873b:ed8a with SMTP id
+ a640c23a62f3a-ab38b4aa1aemr1909040866b.47.1737572020592; Wed, 22 Jan 2025
+ 10:53:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB508004527B8B38AAF18D763399E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLk6w+AkpoWERoid54xZh_FeiV0q1_sVU2o-oMBkP2Y7w@mail.gmail.com> <AM6PR03MB5080CDA2F6336B1BA2FDF2C199E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB5080CDA2F6336B1BA2FDF2C199E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 22 Jan 2025 09:59:34 -0800
-X-Gm-Features: AWEUYZkWeDZQredRuCv2R--gyu_IN3k2c_gHpYLrL79tHyNkx1ZN0P2rvqIGFls
-Message-ID: <CAADnVQKkaWkSHLapcUe83YQcmhO+S=2w+1rB_NzUbt=TOW9WFw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v7 4/5] bpf: Make fs kfuncs available for SYSCALL
- program type
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAOQ4uxh4PS0d6HuHCM_GTfNDpkM1EJ5G55Fs83tDRW0bGu2v-A@mail.gmail.com>
+ <173750034870.22054.1620003974639602049@noble.neil.brown.name>
+ <CAOQ4uxiXC8Xa7zEKYeJ0pADg3Mq19jpA6uEtZfG1QORzuZy9gQ@mail.gmail.com>
+ <c2401cbe-eae9-44ab-b36c-5f91b42c430d@oracle.com> <CAOQ4uxi3=tLsRNyoJk4WPWK5fZrZG=o_8wYBM6f4Cc5Y48DbrA@mail.gmail.com>
+ <50c4f76e-0d5b-41a7-921e-32c812bd92f3@oracle.com>
+In-Reply-To: <50c4f76e-0d5b-41a7-921e-32c812bd92f3@oracle.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 22 Jan 2025 19:53:29 +0100
+X-Gm-Features: AWEUYZl9AsmnMiSSa5gRC4g6-j4zUfXV71i1azOd7R7MILWRjLqo4_2FjGz8l_I
+Message-ID: <CAOQ4uxiVLTv94=Xkiqw4NJHa8RysE3bGDx64TLuLF+nxkOh-Eg@mail.gmail.com>
+Subject: Re: [PATCH v2] nfsd: map EBUSY to NFS4ERR_ACCESS for all operations
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: NeilBrown <neilb@suse.de>, Jeff Layton <jlayton@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, Trond Myklebust <trondmy@hammerspace.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 22, 2025 at 5:34=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
+> > I am fine with handling EBUSY in unlink/rmdir/rename/open
+> > only for now if that is what everyone prefers.
 >
-> On 2025/1/22 00:43, Alexei Starovoitov wrote:
-> > On Tue, Jan 21, 2025 at 5:09=E2=80=AFAM Juntong Deng <juntong.deng@outl=
-ook.com> wrote:
-> >>
-> >> Currently fs kfuncs are only available for LSM program type, but fs
-> >> kfuncs are generic and useful for scenarios other than LSM.
-> >>
-> >> This patch makes fs kfuncs available for SYSCALL program type.
-> >>
-> >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> >> ---
-> >>   fs/bpf_fs_kfuncs.c                                 | 14 ++++++------=
---
-> >>   .../selftests/bpf/progs/verifier_vfs_reject.c      | 10 ----------
-> >>   2 files changed, 6 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> >> index 4a810046dcf3..8a7e9ed371de 100644
-> >> --- a/fs/bpf_fs_kfuncs.c
-> >> +++ b/fs/bpf_fs_kfuncs.c
-> >> @@ -26,8 +26,6 @@ __bpf_kfunc_start_defs();
-> >>    * acquired by this BPF kfunc will result in the BPF program being r=
-ejected by
-> >>    * the BPF verifier.
-> >>    *
-> >> - * This BPF kfunc may only be called from BPF LSM programs.
-> >> - *
-> >>    * Internally, this BPF kfunc leans on get_task_exe_file(), such tha=
-t calling
-> >>    * bpf_get_task_exe_file() would be analogous to calling get_task_ex=
-e_file()
-> >>    * directly in kernel context.
-> >> @@ -49,8 +47,6 @@ __bpf_kfunc struct file *bpf_get_task_exe_file(struc=
-t task_struct *task)
-> >>    * passed to this BPF kfunc. Attempting to pass an unreferenced file=
- pointer, or
-> >>    * any other arbitrary pointer for that matter, will result in the B=
-PF program
-> >>    * being rejected by the BPF verifier.
-> >> - *
-> >> - * This BPF kfunc may only be called from BPF LSM programs.
-> >>    */
-> >>   __bpf_kfunc void bpf_put_file(struct file *file)
-> >>   {
-> >> @@ -70,8 +66,6 @@ __bpf_kfunc void bpf_put_file(struct file *file)
-> >>    * reference, or else the BPF program will be outright rejected by t=
-he BPF
-> >>    * verifier.
-> >>    *
-> >> - * This BPF kfunc may only be called from BPF LSM programs.
-> >> - *
-> >>    * Return: A positive integer corresponding to the length of the res=
-olved
-> >>    * pathname in *buf*, including the NUL termination character. On er=
-ror, a
-> >>    * negative integer is returned.
-> >> @@ -184,7 +178,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
-> >>   static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfu=
-nc_id)
-> >>   {
-> >>          if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
-> >> -           prog->type =3D=3D BPF_PROG_TYPE_LSM)
-> >> +           prog->type =3D=3D BPF_PROG_TYPE_LSM ||
-> >> +           prog->type =3D=3D BPF_PROG_TYPE_SYSCALL)
-> >>                  return 0;
-> >>          return -EACCES;
-> >>   }
-> >> @@ -197,7 +192,10 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc=
-_set =3D {
-> >>
-> >>   static int __init bpf_fs_kfuncs_init(void)
-> >>   {
-> >> -       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kf=
-unc_set);
-> >> +       int ret;
-> >> +
-> >> +       ret =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_k=
-func_set);
-> >> +       return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,=
- &bpf_fs_kfunc_set);
-> >>   }
-> >>
-> >>   late_initcall(bpf_fs_kfuncs_init);
-> >> diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c b=
-/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
-> >> index d6d3f4fcb24c..5aab75fd2fa5 100644
-> >> --- a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
-> >> +++ b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
-> >> @@ -148,14 +148,4 @@ int BPF_PROG(path_d_path_kfunc_invalid_buf_sz, st=
-ruct file *file)
-> >>          return 0;
-> >>   }
-> >>
-> >> -SEC("fentry/vfs_open")
-> >> -__failure __msg("calling kernel function bpf_path_d_path is not allow=
-ed")
-> >> -int BPF_PROG(path_d_path_kfunc_non_lsm, struct path *path, struct fil=
-e *f)
-> >> -{
-> >> -       /* Calling bpf_path_d_path() from a non-LSM BPF program isn't =
-permitted.
-> >> -        */
-> >> -       bpf_path_d_path(path, buf, sizeof(buf));
-> >> -       return 0;
-> >> -}
-> >
-> > A leftover from previous versions?
-> > This test should still be rejected by the verifier.
+> As far as I can tell, NFSv2 and NFSv3 REMOVE/RMDIR are working
+> correctly. NFSv4 REMOVE needs to return a status code that depends
+> on whether the target object is a file or not. Probably not much more
+> than something like this:
 >
-> Thanks for your reply.
+>         status = vfs_unlink( ... );
+> +       /* RFC 8881 Section 18.25.4 paragraph 5 */
+> +       if (status == nfserr_file_open && !S_ISREG(...))
+> +               status = nfserr_access;
 >
-> Not a leftover.
->
-> bpf_path_d_path can be called from SYSCALL program type, not only LSM
-> program type, so it seems a bit weird to keep this test case?
+> added to nfsd4_remove().
 
-How is it weird?
-How is this related to syscall prog?
-It's a check that fentry prog cannot call it.
+Don't you think it's a bit awkward mapping back and forth like this?
+Don't you think something like this is a more sane way to keep the
+mapping rules in one place:
+
+@@ -111,6 +111,26 @@ nfserrno (int errno)
+        return nfserr_io;
+ }
+
++static __be32
++nfsd_map_errno(int host_err, int may_flags, int type)
++{
++       switch (host_err) {
++       case -EBUSY:
++               /*
++                * According to RFC 8881 Section 18.25.4 paragraph 5,
++                * removal of regular file can fail with NFS4ERR_FILE_OPEN.
++                * For failure to remove directory we return NFS4ERR_ACCESS,
++                * same as NFS4ERR_FILE_OPEN is mapped in v3 and v2.
++                */
++               if (may_flags == NFSD_MAY_REMOVE && type == S_IFREG)
++                       return nfserr_file_open;
++               else
++                       return nfserr_acces;
++       }
++
++       return nfserrno(host_err);
++}
++
+ /*
+  * Called from nfsd_lookup and encode_dirent. Check if we have crossed
+  * a mount point.
+@@ -2006,14 +2026,7 @@ nfsd_unlink(struct svc_rqst *rqstp, struct
+svc_fh *fhp, int type,
+ out_drop_write:
+        fh_drop_write(fhp);
+ out_nfserr:
+-       if (host_err == -EBUSY) {
+-               /* name is mounted-on. There is no perfect
+-                * error status.
+-                */
+-               err = nfserr_file_open;
+-       } else {
+-               err = nfserrno(host_err);
+-       }
++       err = nfsd_map_errno(host_err, NFSD_MAY_REMOVE, type);
+ out:
+        return err;
+
+>
+> Let's visit RENAME once that is addressed.
+
+And then next patch would be:
+
+@@ -1828,6 +1828,7 @@ nfsd_rename(struct svc_rqst *rqstp, struct
+svc_fh *ffhp, char *fname, int flen,
+        __be32          err;
+        int             host_err;
+        bool            close_cached = false;
++       int             type;
+
+        err = fh_verify(rqstp, ffhp, S_IFDIR, NFSD_MAY_REMOVE);
+        if (err)
+@@ -1922,8 +1923,10 @@ nfsd_rename(struct svc_rqst *rqstp, struct
+svc_fh *ffhp, char *fname, int flen,
+  out_dput_new:
+        dput(ndentry);
+  out_dput_old:
++       type = d_inode(odentry)->i_mode & S_IFMT;
+        dput(odentry);
+  out_nfserr:
+-        err = nfserrno(host_err);
++       err = nfsd_map_errno(host_err, NFSD_MAY_REMOVE, type);
+
+>
+> Then handle OPEN as a third patch, because I bet we are going to meet
+> some complications there.
+>
+>
+
+Did you think of anything better to do for OPEN other than NFS4ERR_ACCESS?
+
+Thanks,
+Amir.
 
