@@ -1,73 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-39820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D9FA18BAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 07:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C153A18C3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 07:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409213ABDFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 06:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480233A555E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 06:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9899191F99;
-	Wed, 22 Jan 2025 06:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hDP9PhoZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDD51B424F;
+	Wed, 22 Jan 2025 06:42:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E132EAE6;
-	Wed, 22 Jan 2025 06:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0912F9FE;
+	Wed, 22 Jan 2025 06:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737525944; cv=none; b=ATYJG8dNNBygWIz811VJ2DD275yDzR97Yc1Op6QrC+sGfDa3DgMsSLlnjw/O8Pv6MbBSPINS1pkAH/nqfFNKL97aWcmb5VZUKcgLBV9E8Pk5GGi34KI7/ySbyvG4TX3fdVeq25ODIfNqEY9zp6Gcu2TLeWL8Be2q9H7cZBtke+g=
+	t=1737528177; cv=none; b=oicRH1ARHphbleje4/OmbGmNe35DX1PPGApWxHcHyXfYLWpw+67HNOGZUBpgyYRTTs6l3FvgG/NP5bJ5krdVZQicJF6Lw10OEh9Trd1Jujik+mE9vFumD8gvhWazy4YHdetUWF3WzVjGDJYLS/FjQDd3+SrFPXxAAmgtDIgrc60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737525944; c=relaxed/simple;
-	bh=C8xb2q2wb/qdNRvZ0IIAZ7pc/kza8Ocaz92/GhCLNwI=;
+	s=arc-20240116; t=1737528177; c=relaxed/simple;
+	bh=hX70D7WdNRS7aPubcE9xEUk9h8mRyAgO857Km96gTig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdC2DYT2z1HKxtOqsP4e66ZHaE5tYjzqY6I9S1WqoYtF275zrp9xY82hC52hKkqehXtSfq1DnQ12VGHyqIfZQSAT1q0kiwIuxh6kDhCaohkRS8a9IWU/0MuRivgqxNECCM+incxTKOXo17dCOlPiNBE3MOGcZJltncM9hBqi0tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hDP9PhoZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3c8fMqRFp7W4ULSrZsyUXZR7MWnLpaFuVa0XgO+nrMw=; b=hDP9PhoZChUBnCxrL+JSAFsrWX
-	/P+Dbvdoc7eyiClKSj8lwaqnsubYlmbrZ6odfGTnbtuwv37WZdODDe7ByFOYTn10igIu5tSJEglpm
-	/65H80ETFBmMyQDZ8BNX8lWA9S7F5Uq4+svVIQXs1t+mgXuijJsJCJ9Tuj4isTO3VidloFkendZTn
-	HEKVnMTo4oRAH8iNABuprQ0bW92KR5cej8YwmcimXvyDZVpiMdaTcI1KRKTx90os2GPj7Me7uk6w9
-	Vknc21524ThrgQDVw26dMdkv7xgZyQbHwVMD8EKI0Bc4GQiyrZ4caWrUkNoE/vfErnIdZmEQyDrTf
-	rLkhjRqQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1taTrw-00000009SGL-1UrO;
-	Wed, 22 Jan 2025 06:05:40 +0000
-Date: Tue, 21 Jan 2025 22:05:40 -0800
-From: Christoph Hellwig <hch@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeB8QvAkLdBXbl6K7r8qDP55UaonqIOgFVgZ3BiuqQcYyoLfUCEjCYgwtyXIu9mYFTSBsERHTfwsrm7eUqo1qwf1t55fuPyRugT9slESQ0sH4fBFFHMa37PCVzChaD7ZhVqxSvehPwPFTfCnLpU1GTmqZFHTBKNUUYFMziNxkuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 45E0068D45; Wed, 22 Jan 2025 07:42:48 +0100 (CET)
+Date: Wed, 22 Jan 2025 07:42:47 +0100
+From: Christoph Hellwig <hch@lst.de>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	xfs <linux-xfs@vger.kernel.org>
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <Z5CKtOwB8ZsbX4N4@infradead.org>
-References: <20250114211050.iwvxh7fon7as7sty@pali>
- <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
- <20250114215350.gkc2e2kcovj43hk7@pali>
- <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali>
- <20250114235925.GC3561231@frogsfrogsfrogs>
- <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
- <20250117173900.GN3557553@frogsfrogsfrogs>
- <CAOQ4uxhh1LDz5zXzqFENPhJ9k851AL3E7Xc2d7pSVVYX4Fu9Jw@mail.gmail.com>
- <20250117202112.GH3561231@frogsfrogsfrogs>
+Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, ritesh.list@gmail.com,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
+Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
+Message-ID: <20250122064247.GA31374@lst.de>
+References: <20241204154344.3034362-1-john.g.garry@oracle.com> <20241204154344.3034362-2-john.g.garry@oracle.com> <Z1C9IfLgB_jDCF18@dread.disaster.area> <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com> <Z1IX2dFida3coOxe@dread.disaster.area> <20241212013433.GC6678@frogsfrogsfrogs> <Z4Xq6WuQpVOU7BmS@dread.disaster.area> <20250114235726.GA3566461@frogsfrogsfrogs> <20250116065225.GA25695@lst.de> <20250117184934.GI1611770@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,19 +50,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250117202112.GH3561231@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250117184934.GI1611770@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Jan 17, 2025 at 12:21:12PM -0800, Darrick J. Wong wrote:
-> > Full disclosure - I have an out of tree xfs patch that implements
-> > ioctls XFS_IOC_[GS]ETDOSATTRAT and stashes these
-> > attributes in the unused di_dmevmask space.
-> 
-> [cc linux-xfs]
-> 
-> Urrrrk, please don't fork the xfs ondisk format!
+On Fri, Jan 17, 2025 at 10:49:34AM -0800, Darrick J. Wong wrote:
+> The trouble is that the br_startoff attribute of cow staging mappings
+> aren't persisted on disk anywhere, which is why exchange-range can't
+> handle the cow fork.  You could open an O_TMPFILE and swap between the
+> two files, though that gets expensive per-io unless you're willing to
+> stash that temp file somewhere.
 
-Yeah, adding your own bits to any file system on-disk format is a huge
-no-go.
+Needing another inode is better than trying to steal ranges from the
+actual inode we're operating on.  But we might just need a different
+kind of COW staging for that.
+
+> 
+> At this point I think we should slap the usual EXPERIMENTAL warning on
+> atomic writes through xfs and let John land the simplest multi-fsblock
+> untorn write support, which only handles the corner case where all the
+> stars are <cough> aligned; and then make an exchange-range prototype
+> and/or all the other forcealign stuff.
+
+That is the worst of all possible outcomes.  Combing up with an
+atomic API that fails for random reasons only on aged file systems
+is literally the worst thing we can do.  NAK.
 
 
