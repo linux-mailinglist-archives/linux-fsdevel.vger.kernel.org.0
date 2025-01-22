@@ -1,298 +1,368 @@
-Return-Path: <linux-fsdevel+bounces-39807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7112A188DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:22:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCF3A188F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE2D7A3C34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 00:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F061674A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 00:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B74EACD;
-	Wed, 22 Jan 2025 00:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7E23FD4;
+	Wed, 22 Jan 2025 00:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Dt+UqwcK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EftQ3m6L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1178EBE4F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 00:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2669463
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 00:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737505328; cv=none; b=kOsMu3vEfQhnDGyjb3F9uJGvJGrIvN4p/rXx+h34mNOZyg1k6V9FuSxdYneQinfHCAE5LgUHtxFUUFBu+RxRe+Du/JtCQV/tFrCIs/iIXe3hbgYeWq6nZUORcEVtPk+d5X9q25hOIYMMv4fmi884934tbVf/5OxXH++RJ+CRk2E=
+	t=1737505811; cv=none; b=U3DVccwv3HPHNg1lgbWlaRP8hQNRiLjhBP53IZw74WzfPVDLpg4EtcyvdKWrc7bWmAbJqY9tUYhg9SukqljEQxiBcdZk4uxfauoHErHO3UOYpLN3t5cZ7/QU3/5xIwRIN1lxaXDiSae5DjGPHULEX/KUW6Uvhw6EK79zsCeWxks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737505328; c=relaxed/simple;
-	bh=+KuLylpFcjYIjwKuNqNOwcqfwohJ82fuUTCPXq6xVxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fypB3bvK7l5prFOQheVju9ryaOTLMBJ3wm5CireAcnS+WSjhfULCb0iGLWiL4n3HyTdvE83XZ5XfSsdC15iBPPodtU1laSFziwpibDVmEQ+q4X7JTvxe3nbcHE08E0MhLLIpruIrHyGCDfByfrHIBbUbnykacbTUw9kl0uSaCAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Dt+UqwcK; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21669fd5c7cso112885265ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 16:22:06 -0800 (PST)
+	s=arc-20240116; t=1737505811; c=relaxed/simple;
+	bh=VhDybvbmTTLfvD9JQlw5GX4s+VRQHNwSoB2o3gJHa+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kR7ofw3vh4NQA7YkzHSz/1MTQ5AEJHRlyZE5vz4KKb8/kJpR9Ox98i388t/maFbzuHHJt21D0wZ1QvDlwr+7Qh8VBdGYHcn6vhujQusisZ8I+lnf5bEMkQryOstYkOLELuyT6hyVCBYYn/Q/cZ2FRTrmR7+RWJsvebx7fS0gi5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EftQ3m6L; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467838e75ffso81078991cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 16:30:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1737505326; x=1738110126; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SR7n4KskjSTuOYRkxgE7MFfrptNyS9LAKXIiGx5Bmt4=;
-        b=Dt+UqwcKVlc4cgqAJmS7JEGDPCfZIvkk47YZCVEYwPC5AiCaGtIgGkwXT5dW/kBgbk
-         IirBRapqS2WbN58OT0ti72CjsGVujAA0AI683H5QYlucrAD3ReqMcObnuBcqB74nIktx
-         xvKkZZhtx7zG3kY6ngQ9CUPx5P1kvKGsOPmqQ9FYnXU4CXHJTrEuFSN/ob3NFBylCdtn
-         qXIgiE9gmF1i1W7JEOY10Ra11WrDnUs4EikO0lxxlSwd+T+vzjITtfZtVbPUjR3upFhz
-         CmETv7mqMVFZkARO8UGSph3h2i0jn28sXOVx17YSzMKfa1Qcx9qy+P3AQtP2/tK34UXQ
-         hKTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737505326; x=1738110126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1737505808; x=1738110608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SR7n4KskjSTuOYRkxgE7MFfrptNyS9LAKXIiGx5Bmt4=;
-        b=uI1gJJm3YYo0PnK6hsZFPPmhp6doSbMEKaOvkhx+CbvQWEq3S9oUWNT11ddIuuZXmO
-         X8h8psN/ScmPmdcyGq3KeucLWyPHKJII4n1/DnPmSgdr3UwEper7Bg3jJUddnrhTX1eJ
-         zYxPi/B+ZfMUAJjK+/A1lyxCCyEZEOnazZbx0WLnFuY8e0OHqzWat33wg5lihoa2kflM
-         mIc4XB73geBYeo9tlUEpK5A3JEHQ3JJJ2gVQpiGM9JUO/mEHP1ONUz7001fPG67pXL5H
-         oBdlz++E1J2jy/vkUpm1CVhKfeKnTReHn2Q2ASwDr8XxC9ZaA+aulqHx9r22ulZ+MpsV
-         yrIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTV78m9BCZ+w2GYs5Fz70caQR1KBZnn8Jn6eLeo5fHwv1bhbkr+N0kP14rbkkLiVVS1y38Ck9wwmoyr3bI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoFpEYk47DQzdvqfQuKaL+ie0esj9LzfToe0ODPoRpsroZh7c6
-	DADYEd8rIQu95kqQwBM76GRq2t1Br+blmnXUxWXkhBGovV+7mZK6pO8G6t8tJXY=
-X-Gm-Gg: ASbGncshIeDJ/mwbGodUVI2qNj7j1xuexjJGm/a0Lpc+LB2ZBeYq2CI3su7HjlH30+s
-	gNAFq5XZ8pLM69o8LvxTI5/vaJJaDFuPHBETCnc9edG7QAeaOId4lvGGCeo4+oIgWDiVWmWwHIf
-	ETmi8HJQS5QUfxsLXGPLPGsMu1TFezTaY+cbxfrpMYzsjgKKbltrahIu0S2Jk72iCOXLFeMogIr
-	tEEMne3y6yldyI3kmIhx+RyYgI+kwunf1VhHmbo1xvo6S7+gavsIjnfO6VKDlCIrtYQWLHbOtAf
-	cdR92yUJJDVL/H2ksgLofJM/bPGYLbauYyDYuFLGjmRFSw==
-X-Google-Smtp-Source: AGHT+IHt9XgKKUgtNwhFp8SV1V8qVjA2QyMa0i7SAcFMmofUC3lb1VUV5kC5/gPBYmxldXhYGmzCHA==
-X-Received: by 2002:a05:6a20:3943:b0:1e1:c03c:b420 with SMTP id adf61e73a8af0-1eb21587174mr33209594637.31.1737505326090;
-        Tue, 21 Jan 2025 16:22:06 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72dab8173d0sm10087925b3a.58.2025.01.21.16.22.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 16:22:05 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1taOVO-00000008rtC-1ZIb;
-	Wed, 22 Jan 2025 11:22:02 +1100
-Date: Wed, 22 Jan 2025 11:22:02 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neilb@suse.de>, lsf-pc@lists.linuxfoundation.org,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] allowing parallel directory modifications at
- the VFS layer
-Message-ID: <Z5A6KtmOMoWk20xM@dread.disaster.area>
-References: <>
- <Z41z9gKyyVMiRZnB@dread.disaster.area>
- <173732553757.22054.12851849131700067664@noble.neil.brown.name>
- <Z472VjIvT78DskGv@dread.disaster.area>
- <2aa2cea5a36dd1250134706e31fd0fa42cdf0fd4.camel@kernel.org>
+        bh=97ThALrZNXsHnY1PGvooVdFPHPlqCyzRVm/X1v+Brcc=;
+        b=EftQ3m6LADg32ox9fZEHvXHlpUeUwbl5fYmpSK80WRfNrBoSGDRux9B3IItqXjTZqY
+         0rcNx3EMjYCIl8JXd7yAatULOdnz2MX6u+Evz980eaKJmNDSLCyDC5GRw1CHSe8tBQtO
+         Ehj3rlKvRmhtfqCHipYbxEd+ttemnY1ArMj8T2l8HD4SPzV4mBQ4MWmrDxDO7xAe/kbV
+         DNWz9Ml0GUf8lszGWQc2bD2Jn3KxycqIYKnw/wmpL1v+SKm2Bn54HLkEy+3qzwpPZ9Gp
+         4Xw54EJhpv8Egj5jOJoXc6irGi/Kkv+xzbvFNFDaa7VEL5M6jzvodkdaNHObi+QE2ImX
+         vETw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737505808; x=1738110608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=97ThALrZNXsHnY1PGvooVdFPHPlqCyzRVm/X1v+Brcc=;
+        b=hYQ4Fafo5+fMNIrvggUG4xfYRJqu3PK0qck+hlF6HboAWHWOiHhaXJBC74fOSIVFd7
+         GW3IsuTB4cF29lppgd0NQsf6Czpzw/GYNyNhra+Pm17sOT6Xmq3YI1BxKMEMIR6rqMY/
+         Bjb1QIT2TqerISY/I13DLhSP5xX4sR+1EGtFUFL0fODe+jGbPhsGUEVmoAnN+dp6OTsH
+         wRWBXXDKrebSUcOjirsNsJN6zf5CIYWJ7UbPhDYuqKkfI6eoJ7UDFYJ512uHO5D74L1o
+         El3CU+KWflMhYRe8rENrhWEPJTTTGhuC8sUkfBQUtyuvOKDtJCiG3nnqaXopIA2cI42f
+         1Owg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9pkK8oTvQACcqzMnfuXsCkp0nx/Y955Yb2WFBN+BvwLvY7e2+O6LNCAbOYg1Fqra+/iKGuBkh22GTQLTk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9j+AN6HFxDh8y0c6vSSBObS0+tj/OnRmJjXwGh0OBij9oTqWH
+	XnseZGAnsrtu9PbaribMYVD2T5Sgt+HBqNdZp6k2SSNub4d4dO7Q6tiG3gOZY7FC1TtJGNA7+jo
+	MZDTxj7k2x5dOQo6fhQ4q7RdlBgE=
+X-Gm-Gg: ASbGnctUQdyH6o9nN/vCDFd3Y+yUJApwYH/Ajwy7iV5EUz7aIt+KxblQJj7bC9UmWJk
+	KleWyjtHSZ+zTzD+e3tL+AYI0Bdg9P85BdKwDzMc8W1UXOPtQNfqC
+X-Google-Smtp-Source: AGHT+IH5nTFPA591H1OlXts/g9XE5/8uhTkuyL2Ws7WJN1mnCWLP+2QryIcbOTJ08EwF6a1kANUqV8Y5/SrqLYc4lBA=
+X-Received: by 2002:a05:622a:292:b0:467:b7de:da8a with SMTP id
+ d75a77b69052e-46e12a2c4e7mr297758521cf.6.1737505808541; Tue, 21 Jan 2025
+ 16:30:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2aa2cea5a36dd1250134706e31fd0fa42cdf0fd4.camel@kernel.org>
+References: <CAJnrk1a38pv3OgFZRfdTiDMXuPWuBgN8KY47XfOsYHj=N2wxAg@mail.gmail.com>
+ <whipjvd65hrc7e5b5qsoj3la556s6dt6ckokn25qmciedmiwqa@rsitf37ibyjw>
+ <CAJnrk1aZYpGe+x3=Fz0W30FfXB9RADutDpp+4DeuoBSVHp9XHA@mail.gmail.com>
+ <kugnldi6l2rr4m2pcyh3ystyjsnwhcp3jrukqt7ni2ipnw3vpg@l7ieaeq3uosk>
+ <CAJnrk1ZJ=mSMM8dP69QZBxLeorQXRjcBjOcVR4skhNcnNiDSAw@mail.gmail.com> <xuf742w2v2rir6tfumuu5ll2ow3kgzzbhjgvu47vquc3vgrdxf@blrmpfwvre4y>
+In-Reply-To: <xuf742w2v2rir6tfumuu5ll2ow3kgzzbhjgvu47vquc3vgrdxf@blrmpfwvre4y>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 21 Jan 2025 16:29:57 -0800
+X-Gm-Features: AbW1kvbWQM79afxBZzxgDAO1WFzzF2GFqqHOkYKREu-1WlvKLkiUoAlrD8Ow-9M
+Message-ID: <CAJnrk1Z21NU0GCjj+GzsudyT1LAKx3TNqHt2oO22u1MZAZ4Lug@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Improving large folio writeback performance
+To: Jan Kara <jack@suse.cz>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 21, 2025 at 08:04:46AM -0500, Jeff Layton wrote:
-> On Tue, 2025-01-21 at 12:20 +1100, Dave Chinner wrote:
-> > On Mon, Jan 20, 2025 at 09:25:37AM +1100, NeilBrown wrote:
-> > > On Mon, 20 Jan 2025, Dave Chinner wrote:
-> > > > On Sat, Jan 18, 2025 at 12:06:30PM +1100, NeilBrown wrote:
-> > > > > 
-> > > > > My question to fs-devel is: is anyone willing to convert their fs (or
-> > > > > advice me on converting?) to use the new interface and do some testing
-> > > > > and be open to exploring any bugs that appear?
-> > > > 
-> > > > tl;dr: You're asking for people to put in a *lot* of time to convert
-> > > > complex filesystems to concurrent directory modifications without
-> > > > clear indication that it will improve performance. Hence I wouldn't
-> > > > expect widespread enthusiasm to suddenly implement it...
-> > > 
-> > > Thanks Dave!
-> > > Your point as detailed below seems to be that, for xfs at least, it may
-> > > be better to reduce hold times for exclusive locks rather than allow
-> > > concurrent locks.  That seems entirely credible for a local fs but
-> > > doesn't apply for NFS as we cannot get a success status before the
-> > > operation is complete.
-> > 
-> > How is that different from a local filesystem? A local filesystem
-> > can't return from open(O_CREAT) with a struct file referencing a
-> > newly allocated inode until the VFS inode is fully instantiated (or
-> > failed), either...
-> > 
-> > i.e. this sounds like you want concurrent share-locked dirent ops so
-> > that synchronously processed operations can be issued concurrently.
-> > 
-> > Could the NFS client implement asynchronous directory ops, keeping
-> > track of the operations in flight without needing to hold the parent
-> > i_rwsem across each individual operation? This basically what I've
-> > been describing for XFS to minimise parent dir lock hold times.
-> > 
-> 
-> Yes, basically. The protocol and NFS client have no requirement to
-> serialize directory operations. We'd be happy to spray as many at the
-> server in parallel as we can get away with. We currently don't do that
-> today, largely because the VFS prohibits it.
+On Mon, Jan 20, 2025 at 2:42=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> The NFS server, or exported filesystem may have requirements that
-> serialize these operations though.
+> On Fri 17-01-25 14:45:01, Joanne Koong wrote:
+> > On Fri, Jan 17, 2025 at 3:53=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> > > On Thu 16-01-25 15:38:54, Joanne Koong wrote:
+> > > I think tweaking min_pause is a wrong way to do this. I think that is=
+ just a
+> > > symptom. Can you run something like:
+> > >
+> > > while true; do
+> > >         cat /sys/kernel/debug/bdi/<fuse-bdi>/stats
+> > >         echo "---------"
+> > >         sleep 1
+> > > done >bdi-debug.txt
+> > >
+> > > while you are writing to the FUSE filesystem and share the output fil=
+e?
+> > > That should tell us a bit more about what's happening inside the writ=
+eback
+> > > throttling. Also do you somehow configure min/max_ratio for the FUSE =
+bdi?
+> > > You can check in /sys/block/<fuse-bdi>/bdi/{min,max}_ratio . I suspec=
+t the
+> > > problem is that the BDI dirty limit does not ramp up properly when we
+> > > increase dirtied pages in large chunks.
+> >
+> > This is the debug info I see for FUSE large folio writes where bs=3D1M
+> > and size=3D1G:
+> >
+> >
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:            896 kB
+> > DirtyThresh:            359824 kB
+> > BackgroundThresh:       179692 kB
+> > BdiDirtied:            1071104 kB
+> > BdiWritten:               4096 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3596 kB
+> > DirtyThresh:            359824 kB
+> > BackgroundThresh:       179692 kB
+> > BdiDirtied:            1290240 kB
+> > BdiWritten:               4992 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3596 kB
+> > DirtyThresh:            359824 kB
+> > BackgroundThresh:       179692 kB
+> > BdiDirtied:            1517568 kB
+> > BdiWritten:               5824 kB
+> > BdiWriteBandwidth:       25692 kBps
+> > b_dirty:                     0
+> > b_io:                        1
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       7
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3596 kB
+> > DirtyThresh:            359824 kB
+> > BackgroundThresh:       179692 kB
+> > BdiDirtied:            1747968 kB
+> > BdiWritten:               6720 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:            896 kB
+> > DirtyThresh:            359824 kB
+> > BackgroundThresh:       179692 kB
+> > BdiDirtied:            1949696 kB
+> > BdiWritten:               7552 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3612 kB
+> > DirtyThresh:            361300 kB
+> > BackgroundThresh:       180428 kB
+> > BdiDirtied:            2097152 kB
+> > BdiWritten:               8128 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> >
+> >
+> > I didn't do anything to configure/change the FUSE bdi min/max_ratio.
+> > This is what I see on my system:
+> >
+> > cat /sys/class/bdi/0:52/min_ratio
+> > 0
+> > cat /sys/class/bdi/0:52/max_ratio
+> > 1
+>
+> OK, we can see that BdiDirtyThresh stabilized more or less at 3.6MB.
+> Checking the code, this shows we are hitting __wb_calc_thresh() logic:
+>
+>         if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+>                 unsigned long limit =3D hard_dirty_limit(dom, dtc->thresh=
+);
+>                 u64 wb_scale_thresh =3D 0;
+>
+>                 if (limit > dtc->dirty)
+>                         wb_scale_thresh =3D (limit - dtc->dirty) / 100;
+>                 wb_thresh =3D max(wb_thresh, min(wb_scale_thresh, wb_max_=
+thresh /
+>         }
+>
+> so BdiDirtyThresh is set to DirtyThresh/100. This also shows bdi never
+> generates enough throughput to ramp up it's share from this initial value=
+.
+>
+> > > Actually, there's a patch queued in mm tree that improves the ramping=
+ up of
+> > > bdi dirty limit for strictlimit bdis [1]. It would be nice if you cou=
+ld
+> > > test whether it changes something in the behavior you observe. Thanks=
+!
+> > >
+> > >                                                                 Honza
+> > >
+> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/t=
+ree/patche
+> > > s/mm-page-writeback-consolidate-wb_thresh-bumping-logic-into-__wb_cal=
+c_thresh.pa
+> > > tch
+> >
+> > I still see the same results (~230 MiB/s throughput using fio) with
+> > this patch applied, unfortunately. Here's the debug info I see with
+> > this patch (same test scenario as above on FUSE large folio writes
+> > where bs=3D1M and size=3D1G):
+> >
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:           2048 kB
+> > BdiDirtyThresh:           3588 kB
+> > DirtyThresh:            359132 kB
+> > BackgroundThresh:       179348 kB
+> > BdiDirtied:              51200 kB
+> > BdiWritten:                128 kB
+> > BdiWriteBandwidth:      102400 kBps
+> > b_dirty:                     1
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       5
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3588 kB
+> > DirtyThresh:            359144 kB
+> > BackgroundThresh:       179352 kB
+> > BdiDirtied:             331776 kB
+> > BdiWritten:               1216 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3588 kB
+> > DirtyThresh:            359144 kB
+> > BackgroundThresh:       179352 kB
+> > BdiDirtied:             562176 kB
+> > BdiWritten:               2176 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3588 kB
+> > DirtyThresh:            359144 kB
+> > BackgroundThresh:       179352 kB
+> > BdiDirtied:             792576 kB
+> > BdiWritten:               3072 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+> > BdiWriteback:               64 kB
+> > BdiReclaimable:              0 kB
+> > BdiDirtyThresh:           3588 kB
+> > DirtyThresh:            359144 kB
+> > BackgroundThresh:       179352 kB
+> > BdiDirtied:            1026048 kB
+> > BdiWritten:               3904 kB
+> > BdiWriteBandwidth:           0 kBps
+> > b_dirty:                     0
+> > b_io:                        0
+> > b_more_io:                   0
+> > b_dirty_time:                0
+> > bdi_list:                    1
+> > state:                       1
+> > ---------
+>
+> Yeah, here the situation is really the same. As an experiment can you
+> experiment with setting min_ratio for the FUSE bdi to 1, 2, 3, ..., 10 (I
+> don't expect you should need to go past 10) and figure out when there's
+> enough slack space for the writeback bandwidth to ramp up to a full speed=
+?
+> Thanks!
+>
+>                                                                 Honza
 
-Sure, 
-> 
-> > What would VFS support for that look like? Is that of similar
-> > complexity to implementing shared locking support so that concurrent
-> > blocking directory operations can be issued? Is async processing a
-> > better model to move the directory ops towards so we can tie
-> > userspace directly into it via io_uring?
-> 
-> Given that the VFS requires an exclusive lock today for directory
-> morphing ops, moving to a model where we can take a shared lock on the
-> directory instead seems like a nice, incremental approach to dealing
-> with this problem.
+When locally testing this, I'm seeing that the max_ratio affects the
+bandwidth more so than min_ratio (eg the different min_ratios have
+roughly the same bandwidth per max_ratio). I'm also seeing somewhat
+high variance across runs which makes it hard to gauge what's
+accurate, but on average this is what I'm seeing:
 
-I understand this, but it's not really "incremental" in that it
-entrenches the "concurrency is only possible for synchronous
-processing models" that shared locking across the entire operation
-entails.
+max_ratio=3D1 --- bandwidth=3D ~230 MiB/s
+max_ratio=3D2 --- bandwidth=3D ~420 MiB/s
+max_ratio=3D3 --- bandwidth=3D ~550 MiB/s
+max_ratio=3D4 --- bandwidth=3D ~653 MiB/s
+max_ratio=3D5 --- bandwidth=3D ~700 MiB/s
+max_ratio=3D6 --- bandwidth=3D ~810 MiB/s
+max_ratio=3D7 --- bandwidth=3D ~1040 MiB/s (and then a lot of times, 561
+MiB/s on subsequent runs)
 
-i.e. we can't hand the shared lock to another thread to release on
-completion (e.g. an async processing pipeline) because lockdep will
-get upset about that and {down,up}_read_non_owner() is very much
-discouraged and {down,up}_write_non_owner() doesn't even exist.
 
-> That said, I get your objection. Not being able to upgrade a rwsem
-> makes that shared lock kind of nasty for filesystems that actually do
-> rely on it for some parts of their work today.
+Thanks,
+Joanne
 
-It's more than that - the use of a rwsem for exclusion basically
-forces us into "task that takes the lock must release the lock"
-model, and so if the VFS expects the entire operation to be done
-under a down_read() context then we must complete the entire
-operation before handing back the completion to the original task.
-
-That's why I'm pushing back against a "whole task" centric shared
-locking model as it is ultimately unfriendly to efficient async
-dispatch and completion of background tasks.
-
-> The usual method of dealing with that would be to create a new XFS-only
-> per-inode lock that would take over that serialization. The nice thing
-> there is that you could (over time) reduce its scope.
-
-As I've already said: we already have an internal per-inode rwsem in
-XFS for protecting physical directory operations against races.
-Suggesting this is the solution is missing the point I was trying to
-make: that it doesn't actually solve anything and the better
-solution for filesystems like XFS is to decouple the front end VFS
-serialisation requirements from the back end filesystem
-implementation.
-
-That's kinda my point: this isn't an "XFS-only" problem - it's
-something that almost every filesystem we have is going to have
-problems with. I very much doubt btrfs will be able to do concurrent
-directory mods due to it's namespace btree exclusion model, and I
-suspect that bcachefs is going to have the same issues, too.
-
-Hence I think shared locking is fundamentally the wrong model here -
-the problem that we need to address is the excessive latency of
-synchronous back end FS ops, not the lack of concurrency in
-processing directory modifications. Yes, a lack of back end
-filesytsem concurrency contributes to the excessive latency of
-synchronous directory modification, but that doesn't mean that the
-best solution to the problem is to change the concurrency model.
-
-i.e. If we have to make the same mods to every filesystem to do
-background async processing to take any sort of advantage of shared
-locking, and those background processing mods don't actually require
-a shared locking model to realise the performance benefits, then why
-add the complexity of a "shared lock for modification" model in the
-first place?
-
-[snip stuff about how to decouple VFS/fs serialisation]
-
-> So maybe we'd have something like:
-> 
-> struct mkdir_context {
-> 	struct mnt_idmap	*idmap;	// current args to mkdir op
-> 	struct inode		*dir;
-> 	struct dentry		*dentry;
-> 	umode_t			mode;
-> 	int			status		// return status
-> 	struct completion	complete;	// when done -- maybe this would be completion callback function?
-> };
-> 
-> ...and an inode operation like:
-> 
-> 	int (*mkdir_begin)(struct mkdir_context *ctx);
-> 
-> Then the fs could just pass a pointer to that around, and when the
-> operation is done, complete the variable, which would make the original
-> task that called mkdir() finalize the results of the op?
-
-That's still serial/synchronous task processing of the entire
-operation and does nothing to hide the latency of the operation from
-the user.
-
-As I've already explained, this is not the model I've been talking
-about.
-
-Yes, we'd need a dynamically allocated control structure that
-defines the inode instantiation task that needs completing, but
-there's no need for completions within it as the caller can call
-wait_on_inode() to wait for the async inode instantiation to
-complete.
-
-If the instantiation fails, then we mark the inode bad, stash the
-errno somewhere in the inode, and the waiter then grabs the errno
-and tears down the inode to clean up the mess.
-
-> My worry here would be that dealing with the workqueue and context
-> switching would be a performance killer in the simple cases that do it
-> all in a single thread today.
-
-Catch-22.
-
-The premise behind shared locking is that mkdir operations block
-(i.e. context switch multiple times) and so have high latency and
-long lock hold times. Therefore we need shared locking to be able to
-issue lots of them concurrently to get bulk directory performance.
-
-The argument now being made is that adding context switches to mkdir
-operations that -don't block- (i.e. the opposite behaviour that
-shared locking is trying to adress) will cause performance problems.
-
-i.e. The "simple cases that do it all in a single thread today" are
-blocking and taking multiple context switches on every operation.
-e.g. nfs client submits to the server, has to wait for reply, so
-there's two context switches per operation.
-
-This misses the point of doing async background processing: it
-removes the blocking from the foreground task until it is absolutely
-necessary, hence helping the foreground process *not block* whilst
-holding the parent directory lock and so reduce lock hold times and
-increase the number of ops that can be done under that exclusive
-lock.
-
-Using shared locking doesn't change the context switch overhead.
-Using async processing doesn't make the context switch overhead
-worse.  What changes is where those context switches occur and how
-much foreground task and lock latency they result in. And in some
-cases, async processing drastically reduces context switch overhead
-because it allows for subsystems to batch process pending
-operations.
-
-Anyone who has been following io_uring development should know all
-these things about async processing already. There's a reason that
-that infrastructure exists: async processing is more efficient and
-faster than the concurrent synchronous processing model being
-proposed here....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
