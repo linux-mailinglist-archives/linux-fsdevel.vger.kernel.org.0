@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-39817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40666A18A92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 04:21:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57345A18A97
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 04:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71193A3437
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 03:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F36F3A262C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 03:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB0115575D;
-	Wed, 22 Jan 2025 03:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF182155C97;
+	Wed, 22 Jan 2025 03:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+syXFs6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laI9VX5D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2133481B1;
-	Wed, 22 Jan 2025 03:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546C961FF2;
+	Wed, 22 Jan 2025 03:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737516078; cv=none; b=t4xlxSYqFeCE8oC2ouH0FOLLckR2q5/L4zBRxntujPkH55lTT27lm1H5ZqR2FhE4tpyrnuxnIFp6raLP/ordYB0DOvIgK5JFqJ77APE8Nd/XxkR2nOFfyzyDzWKmuCEKGR5Z4dsDOvq6CICfAjU/ET/xx4AG8VB6q8pAUUObG2U=
+	t=1737516305; cv=none; b=CXL+OyjLPAgFmqHFyoc8sE9i1sdVEtfBfxdP4p7+k5SsoYAn2QvLw9rwIdMZCywNfSFl1bwJ1oue3xJU11ifMoKs5nLFIzMiPHTtRuLrlYFZdYl92QnQfWG0U2um5ViGVuW8ymwC57iIeGsUGDujU5p2zNgAkcHMElbgY/oHFbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737516078; c=relaxed/simple;
-	bh=g3kGjyEah7u+jJiqBdmrMK486PvH1xv43roG5vWbXs4=;
+	s=arc-20240116; t=1737516305; c=relaxed/simple;
+	bh=3Ta6CT92zMNQ4Nxc5RAR29X4+UfnvsqCJEC4+UdxP3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVG1KsBqzWJRlwq+/m2+mtbJqeF42JGOkJ5PWWavec5+/82A65tBWifpPSSonio1Q/xVAHOYyW9FVSu1DdMWnV0j1oFGZFum1F80LWmyMEaP43Flp/tW8YGMKtBoKBCKozRF8dfglE4gbsARalpoA7kHK9ePy1x2v9CtbkSX1DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+syXFs6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0DCC4CEDF;
-	Wed, 22 Jan 2025 03:21:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXo141Mtb+cimS4pRVwPmwNajWQhK+yrPJjZDhSw4lWv3lg24jCLb0UmXVb2aWetOociOVbF6Ac+31z/VOOrfoaAmWl63yBLLuP0p5rznle6Yi/dNAoibhOg4tDY3UWJVFciX2zebC6uQV4nQh2mUTBN4WkkqK5FULrkTdtW/uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laI9VX5D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4E7C4CED6;
+	Wed, 22 Jan 2025 03:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737516078;
-	bh=g3kGjyEah7u+jJiqBdmrMK486PvH1xv43roG5vWbXs4=;
+	s=k20201202; t=1737516304;
+	bh=3Ta6CT92zMNQ4Nxc5RAR29X4+UfnvsqCJEC4+UdxP3s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L+syXFs6VvOCoMdlcPylFKjNUJl17coEGeZkgdYBwpmgIp+PyhLvLdX8g9gdTD7sg
-	 T33aUZZofJvOq1gGcGeCrILb8pRlg6siarEoTVp5NT2BTQdI1Es/jq6X9bj35j3rI8
-	 jNJ6OAHmBG2oNpFfyb1ZyD+TpV1ZG/EmYFRX80s2nVhIY6n7r5guB5BG39rD2YsxDx
-	 BrBx1ELVwic2ruYQ6lJQcmpJRNTQhqczraOxQr/Ad5EIXNxm+bQEPHDFibGXTWE9UP
-	 1gIenhebJAml9AOHQ4YTfhUaP63CMFgW39eegEhKMKdkOjYSIobyT1KNxkrCHx8Ueo
-	 NUCvBbEWxqTVQ==
-Date: Tue, 21 Jan 2025 19:21:17 -0800
+	b=laI9VX5DpMZPJl0ecGT30VVHd2vHRStcPz+uvDNZdX3gbPZ12ay31XJwbwdhXqHnw
+	 VwPFdpfIAewoOwgqXFR37O0zTmV06N3JILCaMzl+nn/++5XlBejBIcZ3Ox0J3sya59
+	 36HPKkgBGjVlvKDqcFuh9gAowvJ4EdvmCDRCpKT8R2tGGMDXoSCywxdSQCpr3C2mdb
+	 DJqHGFs9n1esuzZx9g9x6RbGJpF+C8Ep7O67d2/17MT+ia9RSX6wAg8awcUOjDkCTc
+	 kMrAk7sC1sjs3B8H1Yn4t97lz1CgIpmJjtrbPpct7uv4Vnsrev7eKPWZGKFuC2LkYJ
+	 XOKOjg6mUt1ZQ==
+Date: Tue, 21 Jan 2025 19:25:04 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Allison Henderson <allison.henderson@oracle.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	Catherine Hoang <catherine.hoang@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] xfs: Add error handling for xfs_reflink_cancel_cow_range
-Message-ID: <20250122032117.GS3557553@frogsfrogsfrogs>
-References: <20250120154624.1658-1-vulab@iscas.ac.cn>
+Cc: chandanbabu@kernel.org, cem@kernel.org, brauner@kernel.org,
+	dchinner@redhat.com, yi.zhang@huawei.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: Propagate errors from xfs_reflink_cancel_cow_range
+ in xfs_dax_write_iomap_end
+Message-ID: <20250122032504.GT3557553@frogsfrogsfrogs>
+References: <20250120160907.1751-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,54 +59,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250120154624.1658-1-vulab@iscas.ac.cn>
+In-Reply-To: <20250120160907.1751-1-vulab@iscas.ac.cn>
 
-On Mon, Jan 20, 2025 at 11:46:24PM +0800, Wentao Liang wrote:
-> In xfs_inactive(), xfs_reflink_cancel_cow_range() is called
-> without error handling, risking unnoticed failures and
-> inconsistent behavior compared to other parts of the code.
+On Tue, Jan 21, 2025 at 12:09:06AM +0800, Wentao Liang wrote:
+> In xfs_dax_write_iomap_end(), directly return the result of
+> xfs_reflink_cancel_cow_range() when !written, ensuring proper
+> error propagation and improving code robustness.
 > 
-> Fix this issue by adding an error handling for the
-> xfs_reflink_cancel_cow_range(), improving code robustness.
-> 
-> Fixes: 6231848c3aa5 ("xfs: check for cow blocks before trying to clear them")
+> Fixes: ea6c49b784f0 ("xfs: support CoW in fsdax mode")
 > Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 > ---
->  fs/xfs/xfs_inode.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  fs/xfs/xfs_iomap.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index c8ad2606f928..1ff514b6c035 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1404,8 +1404,11 @@ xfs_inactive(
->  		goto out;
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 50fa3ef89f6c..d61460309a78 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -976,10 +976,8 @@ xfs_dax_write_iomap_end(
+>  	if (!xfs_is_cow_inode(ip))
+>  		return 0;
 >  
->  	/* Try to clean out the cow blocks if there are any. */
-> -	if (xfs_inode_has_cow_data(ip))
-> -		xfs_reflink_cancel_cow_range(ip, 0, NULLFILEOFF, true);
-> +	if (xfs_inode_has_cow_data(ip)) {
-> +		error = xfs_reflink_cancel_cow_range(ip, 0, NULLFILEOFF, true);
-> +		if (error)
-> +			goto out;
+> -	if (!written) {
+> -		xfs_reflink_cancel_cow_range(ip, pos, length, true);
+> -		return 0;
+> -	}
+> +	if (!written)
+> +		return xfs_reflink_cancel_cow_range(ip, pos, length, true);
 
-If memory serves, we ignored the error return here on the grounds that
-the worst that can happen is that we leak some cow staging reservations,
-so we should continue freeing the file in the ondisk metadata.
+Ouch.  Yeah, that's clearly wrong.  Please add my tags:
 
-That said, I /think/ the error case corresponds to the log being shut
-down or going down due to a corruption error during the cow blocks
-cancellation.  So I guess this can go ahead with:
-
-Cc: <stable@vger.kernel.org> # v4.17
+Cc: <stable@vger.kernel.org> # v6.0
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> +	}
 >  
->  	if (VFS_I(ip)->i_nlink != 0) {
->  		/*
+>  	return xfs_reflink_end_cow(ip, pos, written);
+>  }
 > -- 
 > 2.42.0.windows.2
 > 
