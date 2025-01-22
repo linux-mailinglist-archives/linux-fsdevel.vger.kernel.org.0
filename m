@@ -1,234 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-39814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD22A1899C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 02:37:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57122A189CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 03:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650D01881961
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 01:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82FF616B552
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 02:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD62839F4;
-	Wed, 22 Jan 2025 01:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DB7137775;
+	Wed, 22 Jan 2025 02:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LuTIDFyd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwW2LiGy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4724315A;
-	Wed, 22 Jan 2025 01:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068E817BB6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 02:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737509869; cv=none; b=q21uyb7mhnxd0lcSy1P+UyRZkMGsHxMASrJMWbhb7CBWbGfMwcaNZ1eR1WSn0f6IncjSvSReEdaSAFX7swTR89iCMqsX9KPLkuIIgtVAwUVCQ24Fe20TvmK9m00O+xUww6V29785yOeW2aDZ/RLV2WtoltZ1KrfDj/jsFGWGQtk=
+	t=1737511762; cv=none; b=IltOKOfdzuf02Q2f6E02nLIuBskmpW/we20fAaicoAUOv6YAVKH/kM8mJGW23vdePYj2WS470YoPbAVHFkGYurFCE6B0X0AObWyg1420rMCRs44NHZ+bc5IhJ+uhFNvDJoewd4qkeedv9kbB5Ow/Kr60FZxc7hWKrdLBMDBOuJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737509869; c=relaxed/simple;
-	bh=ijBgCnXP6XfghHIoBcu6fcXatbTuRqiF5wZxfYYPW+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSxhl6HMU/DnxcsLKJbjqxXsOI+B+dSZRAX37OVbdny1SpkmWSODtjwfAD0vLHr7sJInhAxUdEMNUR8I4p3y6mVAo5hxrrZlo8MY9DEsVX7U+1KLMcwtP7NfTvhPNrTw+ZQWfgKZujlLvpabG4atgEeaF/tTY7oncWM27JGFy7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LuTIDFyd; arc=none smtp.client-ip=209.85.160.175
+	s=arc-20240116; t=1737511762; c=relaxed/simple;
+	bh=wKnNYNQonzIXr9EES+JmSueZ6uZOiK0Rx65Pro1OFXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gQL1Wly3ZmNi7JS5W3jsJLNgJrNRanbk008fqySiR5sJ+RtaMeUoc7vTC8R/j2c5NffUq9i0QRVcLArXijkVAweWdWnuu9bpzKCOHK0G0NXqKg2DHQ+37cqls4m6juOZcOw8II52WCXaxipDMB9DknYkZPQQwPahJKaFxZPz5a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwW2LiGy; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-467a3f1e667so38587081cf.0;
-        Tue, 21 Jan 2025 17:37:47 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6ddcff5a823so49781636d6.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2025 18:09:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737509867; x=1738114667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RTzeSI7yleXf8qYiMIfn95qzeF+jMIAd/tmzeH52K4s=;
-        b=LuTIDFydkcLTZ3TY95E6E0cQK/ycYYC2dTIOotCPlF5doiQ7ymhnM4bjXNNiy/iiHZ
-         YTQrm8ODWk5/I6TRkPcSKHMP1PANoyGWxhOrVMKFCVWveEAuBCBNGE5hqlt0C/4lyOax
-         eBKjqHpwuFsoMrG/ICYOUjaoc4L3A8H5cxVCVEWtEyLIIIvYZHJQJyfBFhG1x0NtNuCV
-         pPl90PRrIKg1JTirJ59Jx55e0gHHdM+QrrieqqH/H7UYdLZDfWyUCHUPEoMmo6546szr
-         ijl+DMIM+FjIN1jK00YbesDtYieBrVMISmEG9tIe3ifyuW9a5brDcU718YmiEqueOyoN
-         cvaQ==
+        d=gmail.com; s=20230601; t=1737511760; x=1738116560; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnVRXcC+aPHbUl8fbMQchZlA9SXRnElohEoGC9Z3Wa8=;
+        b=cwW2LiGyCz3ZjMM8Kcs97Fq0FdS7enGT93Bh/N5Q4yvDXnVBYQM9AMbVOnC1HcTRaQ
+         sR+Ab/g+SQ86kWXFivF7ag3C8SB8XLvaS8eLjX7ktguDRSd1oL1cINlaZtYdvG6+OcSS
+         fI8C5Xg3xAsaknASrokNDf47pewGEyLX12VpU6XyM6EYqE6Y/GvL6Nzu8B6ljBcDU/E1
+         fa2fSAmBRgZrYcqyrpk2bxxeF3SSsQ9EeEkWDjEKBamR5NqaRiLcWsKQ6S80pjBNphLw
+         TWp/xD3ODjh7FT9rcPcT8KC0QtxqDTn6mDaU6x022cQSdzym92eQ5wppCbqKxofZ9Tsm
+         mcZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737509867; x=1738114667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RTzeSI7yleXf8qYiMIfn95qzeF+jMIAd/tmzeH52K4s=;
-        b=LLVz/e+LaMtAUjQACUGrDeR6DSId7YQg2GKvAE0lu/cd/iYPEu4ZzBQLzkAb0tcsg4
-         /PrerS+e3zPGbOAjAlqKofC+QLFQbwnyNwd24KPCoW/mfXFE+VAsBvgzILaIaHnCAUqp
-         3LBfUOizrCzMpgkmluT/pPUhmCoz22bOylI2FoqTF3DEJ4p3o/XjU1yFJ0rKqfL+Ngja
-         IjlkAlU3wke4NLTqroZVvM1boRvq+AkVM0rOq4fNXVU0HXi9AFdQmNOThcZHaTlKYTA0
-         pljY/k2MoK/j6mjDyC5vccBO2E9j/scJpG9b9Ae2J2hXxDDILT8Dvzh3+oveLTx68Fb0
-         8+jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUF+ALiD0+RZ44jVLJdKw7cmEmH2w702ZOOP2eUsTfAeDqhMvxaOeyJzl5lB78RN8roVeE8Tm0TwA==@vger.kernel.org, AJvYcCXtCQC4n9rl+I1z8hH+oyLyWmmGE1Eho5+GqppYCJv48yUd686QwWaf/bTTFWdmYUBMiF5wuu4K5IDmD+IICw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2/cuy2W2sZJYg7fPfFqccexcY/Nw6w2TcyD6oDpEwvGltCmP8
-	l7vpqYEcECj90S559RE+bvb7KUIOf/Y23kUECEK76T3NHrgIen6mddQd8SYW9h3XQvXnY3t7Mpo
-	h7UuBlw7tRVbgkP4OSLwn7xnfzZo=
-X-Gm-Gg: ASbGncuj+CBnoJZTSD1ejgnvzQCqYoJnON4DEz9KnITnGIU4rf2/mqlANrwdRALc/Yu
-	QAsDnHhl37C301Tp42U8p7+g1Gg+e7cVvWGaQhG7KVwZzCUR/uarw
-X-Google-Smtp-Source: AGHT+IEkJNCrmlEG13jy4BmryZRTQGBPV1jIvtsJPeiRrekW2MfSR4nCE1A7MSHs5IBv6VATNiDVxPI9NngWXAJ5Rec=
-X-Received: by 2002:a05:622a:3cb:b0:467:86fa:6b72 with SMTP id
- d75a77b69052e-46e12a5549bmr298772581cf.12.1737509866878; Tue, 21 Jan 2025
- 17:37:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737511760; x=1738116560;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jnVRXcC+aPHbUl8fbMQchZlA9SXRnElohEoGC9Z3Wa8=;
+        b=ub4WNm33D8zY251Ct/DTcQezL3X1abmmEvH2H32Zb2hgvl4yQmmMooyME4ogwGnCnG
+         /cgIRcrGL6vRYr+5lXhta63Z/tOOY1UtemTimz2GFwUzFm/8FfJOn/Lr7DxyYMr75Q0a
+         HRE0R0PTOhqHV0s/4GAyQ/GxbhNeScwThUI74ox9XoZs7qCp/7Yu6UoG7LsJP3yuRyMU
+         3axeAlsaDypCVJvNxfMDyiZfsHcObZgpb0U07cYBZDt9tUpGYDrHtnNDLmvr+GbNDCch
+         Fxunu5EBl/O/RRB4+Ki5Hi/N2Z0pTwZRwXtqFjDJWusREbt72HamIau4YnV4V9rCebXw
+         LMyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcvqRs1NlrnTTaiQZITamgvNJZv+M2cxWEfl8k2j0O4uA4hYvUVxWAyCV9RhHkt3MF/cOMuOPER4QzXvwD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz8CUatgOrKJAjCp+YFRprjnZJtFkk28Lmx4wzarGPbYD0XVRX
+	/sve9Sppgjg/U1ZZHByzSRPVXRHrPfNnn04D1QTFiKEoqtmAI2gM
+X-Gm-Gg: ASbGncslvQthGAc6uYSzHbevD8QsUWBim0FJ+ZgFwMYC4cjqHpdBN0xHDf2JaTlSlXs
+	BSPSir0jcnrAgK3kHyrZZS1TCECXuidAOSIMY3nlsQ4iE6ihiTjjpang0SLuuTqHg49oYKIRSUC
+	8klbCRgEW9FdkyubHTeH9pw/74b7UhIjnyiWuQDfNFl6uuTpaqwhN0+1KNQZhfWJCTFDFeAI6wq
+	Ej9bSQONHcyTd+svZrc/QPfF7oKtPv+0nO7ckUK4Hr8wjfQqyfZTbbLSlRzfUkawRjz06XeMq5Z
+	Zk9pB+pScx64FiXT44gwghhemzKc1SeU7LDgJz+afow=
+X-Google-Smtp-Source: AGHT+IE5zmLMRm+6iMr1/viBo0XnM1xJC5fBExYAqXg9S9PyLk7nlK5B4onGNBAAGsFc3D8kMoQFkw==
+X-Received: by 2002:a05:6214:5d87:b0:6d8:9ab7:adcc with SMTP id 6a1803df08f44-6e1b218a45emr315820006d6.22.1737511759784;
+        Tue, 21 Jan 2025 18:09:19 -0800 (PST)
+Received: from kir-tp1.redhat.com (c-73-221-161-193.hsd1.wa.comcast.net. [73.221.161.193])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e1e64ca517sm10307516d6.41.2025.01.21.18.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2025 18:09:19 -0800 (PST)
+From: Kir Kolyshkin <kolyshkin@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: Kir Kolyshkin <kolyshkin@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrei Vagin <avagin@google.com>
+Subject: Bug with splice to a pipe preventing a process exit
+Date: Tue, 21 Jan 2025 18:08:41 -0800
+Message-ID: <20250122020850.2175427-1-kolyshkin@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
- <20250107-fuse-uring-for-6-10-rfc4-v9-10-9c786f9a7a9d@ddn.com>
- <CAJnrk1afYmo+GNRb=OF7CUQzY5ocEus0h=93ax8usA9oa_qM4Q@mail.gmail.com>
- <eafad58d-07ec-4e7f-9482-26f313f066cc@bsbernd.com> <CAJnrk1asVwkm8kG-Rfmgi-gPXjYxA8HcA_vauqVi+zjuPNtaJQ@mail.gmail.com>
- <605815bc-40ca-49c1-a727-a36f961b8ad6@bsbernd.com> <CAJnrk1bg_ZwuV1w8x6to50_LYk+o6=HAzC_eQ_U4QGLkyXVwsA@mail.gmail.com>
- <48989a7f-0536-496b-8880-71bfc5da5c19@bsbernd.com> <2ccdb79c-fb2a-46be-8e3d-ac92a19e32f1@bsbernd.com>
-In-Reply-To: <2ccdb79c-fb2a-46be-8e3d-ac92a19e32f1@bsbernd.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 21 Jan 2025 17:37:36 -0800
-X-Gm-Features: AbW1kvaG5tkzvEZXTDoqstyzd6yk3HTJN4vBWdAaEavn0t5OH5PaF31yOSd9A04
-Message-ID: <CAJnrk1ZchvBpaith-ALN2jG=SQB1YELvdG-4cVJZR5uB3domtQ@mail.gmail.com>
-Subject: Re: [PATCH v9 10/17] fuse: Add io-uring sqe commit and fetch support
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 21, 2025 at 4:55=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
-wrote:
->
->
->
-> On 1/22/25 01:49, Bernd Schubert wrote:
-> >
-> >
-> > On 1/22/25 01:45, Joanne Koong wrote:
-> >> On Tue, Jan 21, 2025 at 4:18=E2=80=AFPM Bernd Schubert <bernd@bsbernd.=
-com> wrote:
-> >>>
-> >> ...
-> >>>>>
-> >>>>>>
-> >>>>>>> +
-> >>>>>>> +       err =3D fuse_ring_ent_set_commit(ring_ent);
-> >>>>>>> +       if (err !=3D 0) {
-> >>>>>>> +               pr_info_ratelimited("qid=3D%d commit_id %llu stat=
-e %d",
-> >>>>>>> +                                   queue->qid, commit_id, ring_e=
-nt->state);
-> >>>>>>> +               spin_unlock(&queue->lock);
-> >>>>>>> +               return err;
-> >>>>>>> +       }
-> >>>>>>> +
-> >>>>>>> +       ring_ent->cmd =3D cmd;
-> >>>>>>> +       spin_unlock(&queue->lock);
-> >>>>>>> +
-> >>>>>>> +       /* without the queue lock, as other locks are taken */
-> >>>>>>> +       fuse_uring_commit(ring_ent, issue_flags);
-> >>>>>>> +
-> >>>>>>> +       /*
-> >>>>>>> +        * Fetching the next request is absolutely required as qu=
-eued
-> >>>>>>> +        * fuse requests would otherwise not get processed - comm=
-itting
-> >>>>>>> +        * and fetching is done in one step vs legacy fuse, which=
- has separated
-> >>>>>>> +        * read (fetch request) and write (commit result).
-> >>>>>>> +        */
-> >>>>>>> +       fuse_uring_next_fuse_req(ring_ent, queue, issue_flags);
-> >>>>>>
-> >>>>>> If there's no request ready to read next, then no request will be
-> >>>>>> fetched and this will return. However, as I understand it, once th=
-e
-> >>>>>> uring is registered, userspace should only be interacting with the
-> >>>>>> uring via FUSE_IO_URING_CMD_COMMIT_AND_FETCH. However for the case
-> >>>>>> where no request was ready to read, it seems like userspace would =
-have
-> >>>>>> nothing to commit when it wants to fetch the next request?
-> >>>>>
-> >>>>> We have
-> >>>>>
-> >>>>> FUSE_IO_URING_CMD_REGISTER
-> >>>>> FUSE_IO_URING_CMD_COMMIT_AND_FETCH
-> >>>>>
-> >>>>>
-> >>>>> After _CMD_REGISTER the corresponding ring-entry is ready to get fu=
-se
-> >>>>> requests and waiting. After it gets a request assigned and handles =
-it
-> >>>>> by fuse server the _COMMIT_AND_FETCH scheme applies. Did you possib=
-ly
-> >>>>> miss that _CMD_REGISTER will already have it waiting?
-> >>>>>
-> >>>>
-> >>>> Sorry for the late reply. After _CMD_REGISTER and _COMMIT_AND_FETCH,
-> >>>> it seems possible that there is no fuse request waiting until a late=
-r
-> >>>> time? This is the scenario I'm envisioning:
-> >>>> a) uring registers successfully and fetches request through _CMD_REG=
-ISTER
-> >>>> b) server replies to request and fetches new request through _COMMIT=
-_AND_FETCH
-> >>>> c) server replies to request, tries to fetch new request but no
-> >>>> request is ready, through _COMMIT_AND_FETCH
-> >>>>
-> >>>> maybe I'm missing something in my reading of the code, but how will
-> >>>> the server then fetch the next request once the request is ready? It
-> >>>> will have to commit something in order to fetch it since there's onl=
-y
-> >>>> _COMMIT_AND_FETCH which requires a commit, no?
-> >>>>
-> >>>
-> >>> The right name would be '_COMMIT_AND_FETCH_OR_WAIT'. Please see
-> >>> fuse_uring_next_fuse_req().
-> >>>
-> >>> retry:
-> >>>         spin_lock(&queue->lock);
-> >>>         fuse_uring_ent_avail(ent, queue);           --> entry availab=
-le
-> >>>         has_next =3D fuse_uring_ent_assign_req(ent);
-> >>>         spin_unlock(&queue->lock);
-> >>>
-> >>>         if (has_next) {
-> >>>                 err =3D fuse_uring_send_next_to_ring(ent, issue_flags=
-);
-> >>>                 if (err)
-> >>>                         goto retry;
-> >>>         }
-> >>>
-> >>>
-> >>> If there is no available request, the io-uring cmd stored in ent->cmd=
- is
-> >>> just queued/available.
-> >>
-> >> Could you point me to where the wait happens?  I think that's the part
-> >> I'm missing. In my reading of the code, if there's no available
-> >> request (eg queue->fuse_req_queue is empty), then I see that has_next
-> >> will return false and fuse_uring_next_fuse_req() /
-> >> fuse_uring_commit_fetch() returns without having fetched anything.
-> >> Where does the "if there is no available request, the io-uring cmd is
-> >> just queued/available" happen?
-> >>
-> >
-> > You need to read it the other way around, without "has_next" the
-> > avail/queued entry is not removed from the list - it is available
-> > whenever a new request comes in. Looks like we either need refactoring
-> > or at least a comment.
->
-> It also not the current task operation that waits - that happens in
-> io-uring with 'io_uring_submit_and_wait' and wait-nr > 0. In fuse is is
-> really just _not_ running io_uring_cmd_done() that make ent->cmd to be
-> available.
+While checking if the tool I'm co-maintaining [1] works OK when compiled
+with the future release of golang (1.24, tested with go1.24rc2), I found
+out it's not [2], and the issue is caused by Go using sendfile more [3].
 
-Oh I see, the io_uring_cmd_done handles it internally. It's the
-.send_req =3D fuse_uring_queue_fuse_req -> fuse_uring_send_req_in_task()
--> io_uring_cmd_done() that gets triggered and signals to userspace
-that a fetch is ready when a new request is available later on. It
-makes sense to me now, thanks.
+I came up with the following simple reproducer:
 
->
-> Does it help?
->
->
-> Thanks,
-> Bernd
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/sendfile.h>
+#include <sys/wait.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+
+int main() {
+	int sks[2];
+	int pipefd[2];
+	if (pipe(pipefd) == -1) {
+		perror("pipe");
+		exit(1);
+	}
+
+	pid_t pid = fork();
+	if (pid == -1) {
+		perror("fork");
+		exit(1);
+	}
+
+	if (pid == 0) {
+		// Child process.
+		close(pipefd[1]); // Close write end.
+
+		// Minimal process that just exits after some time.
+		sleep(1);
+
+		_exit(0); // <-- The child hangs here.
+	}
+
+	// Parent process.
+	close(pipefd[0]);  // Close read end.
+
+	printf("PID1=%d\n", getpid());
+	printf("PID2=%d\n", pid);
+	printf("ps -f  -p $PID1,$PID2\n");
+	printf("sudo tail /proc/{$PID1,$PID2}/{stack,syscall}\n");
+
+#ifdef TEST_USE_STDIN
+	int in_fd = STDIN_FILENO;
+#else
+	socketpair(AF_UNIX, SOCK_STREAM, 0, sks);
+	int in_fd = sks[0];
+#endif
+	// Copy from in_fd to pipe.
+	ssize_t ret = sendfile(pipefd[1], in_fd, 0, 1 << 22);
+	if (ret == -1) {
+		perror("sendfile");
+	}
+
+	// Wait for child
+	int status;
+	waitpid(pid, &status, 0);
+
+	close(pipefd[1]); // Close write end.
+	return 0;
+}
+
+To reproduce, compile and run the above code, and when it hangs (instead
+of exiting), copy its output to a shell in another terminal. Here's what
+I saw:
+
+[kir@kir-tp1 linux]$ PID1=2174401
+PID2=2174402
+ps -f  -p $PID1,$PID2
+sudo tail /proc/{$PID1,$PID2}/{stack,syscall}
+UID          PID    PPID  C STIME TTY          TIME CMD
+kir      2174401   63304  0 17:34 pts/1    00:00:00 ./repro
+kir      2174402 2174401  0 17:34 pts/1    00:00:00 [repro]
+==> /proc/2174401/stack <==
+[<0>] unix_stream_read_generic+0x792/0xc90
+[<0>] unix_stream_splice_read+0x6f/0xb0
+[<0>] splice_file_to_pipe+0x65/0xd0
+[<0>] do_sendfile+0x176/0x440
+[<0>] __x64_sys_sendfile64+0xb3/0xd0
+[<0>] do_syscall_64+0x82/0x160
+[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+==> /proc/2174401/syscall <==
+40 0x4 0x3 0x0 0x400000 0x64 0xfffffff9 0x7fff2ab3fc58 0x7f265ed6ca3e
+
+==> /proc/2174402/stack <==
+[<0>] pipe_release+0x1f/0x100
+[<0>] __fput+0xde/0x2a0
+[<0>] task_work_run+0x59/0x90
+[<0>] do_exit+0x309/0xab0
+[<0>] do_group_exit+0x30/0x80
+[<0>] __x64_sys_exit_group+0x18/0x20
+[<0>] x64_sys_call+0x14b4/0x14c0
+[<0>] do_syscall_64+0x82/0x160
+[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+==> /proc/2174402/syscall <==
+231 0x0 0xffffffffffffff88 0xe7 0x0 0x0 0x7f265eea01a0 0x7fff2ab3fc58 0x7f265ed43acd
+
+Presumably, what happens here is the child process is stuck in the
+exit_group syscall, being blocked by parent's splice which holds the
+lock to the pipe (in splice_file_to_pipe).
+
+To me, the code above looks valid, and the kernel behavior seems to
+be a bug. In particular, if the process is exiting, the pipe it was
+using is now being closed, and splice (or sendfile) should return.
+
+If this is not a kernel bug, then the code above is not correct; in
+this case, please suggest how to fix it.
+
+Regards,
+  Kir.
+
+----
+[1]: https://github.com/opencontainers/runc
+[2]: https://github.com/opencontainers/runc/pull/4598
+[3]: https://go-review.googlesource.com/c/go/+/603295
 
