@@ -1,62 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-39831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BC9A191F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 13:59:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1963AA19290
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 14:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8211658AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 12:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810113A69D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 13:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CA2212FA6;
-	Wed, 22 Jan 2025 12:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E370238DF9;
+	Wed, 22 Jan 2025 13:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUCNwC3o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlSHPHio"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF35D211A18;
-	Wed, 22 Jan 2025 12:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5064E1CA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 13:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737550780; cv=none; b=hL35+7SpRqAfeQaUgBbtljPVrH1270MIiD1/hsiNgVy3t9g1v7AaLkhn37UQvhCH6meF6vGaINtm2e+PYZW8+J6xiDVFy1MVcQH98Y5JV8HSmyngs76OgFAQUPwDZP9iZzYGmTkJ1ncR7V2TvU/klMO2aiwTgFP4ba+gca0LqCc=
+	t=1737552700; cv=none; b=kHqbOVMUwAZI/59ZxQwt3xiyD7jZb0YAm1lRDatDyC8dUpRVOJJio4SxezNezKdV/yVAoXcPM+IHFHDqnxKprnm5C50pAJzFmmriZW5i/WQkj2wlZTf3NKpwPn+b60dhVSqR6en/0Qdla1bCSunsb3htRy2DbXwXMuJoIosdaJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737550780; c=relaxed/simple;
-	bh=1O7EjoRi0846T1wB/xCHnXnCV0yisP9eHE9Wd/n21TY=;
+	s=arc-20240116; t=1737552700; c=relaxed/simple;
+	bh=YP/ngZMQ8vdSb0pFgVM4TvVl9qohNjo+HbHs4kxc0DU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/Vt6LJzBfLxIwbcSsOjZw/B4ESuvYPq9ikYp3rDJRzcoWiNIM5kQw4LB5wEziy/Q5dDuJ1m3KJ3nD4o0OOis1eC2XpgLrJ8kY0cPl1IN4M8/Z8QIX8yPe1hzsG00C4lQKIlkjwNfdEl2/JtcGYd1XN++B+UlSQAifAFiz/bwS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUCNwC3o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF56C4CED6;
-	Wed, 22 Jan 2025 12:59:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nr+xhMz3mqb6iY1qvqHwaHU8dcKbJ/d+nk1gQkSXNDiqU+picXIxeak/U2rnrUq3kmAaNZTKeYP2Xk870tbzqeNmOEdaog/eMWTFa3vYmDTVcYJpFyZ+Kv9ThGyboVIgwEfi6pqytCltYh9NO5oRY48aX9Lw/SQo/3DK/miLnuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlSHPHio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC10EC4CED6;
+	Wed, 22 Jan 2025 13:31:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737550780;
-	bh=1O7EjoRi0846T1wB/xCHnXnCV0yisP9eHE9Wd/n21TY=;
+	s=k20201202; t=1737552699;
+	bh=YP/ngZMQ8vdSb0pFgVM4TvVl9qohNjo+HbHs4kxc0DU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eUCNwC3od4iDd3W1bJWmIdrRBnggFd1cAG0nRXhKvP88WXWPW54fSQjpH82E08Ltj
-	 Ukb0gr5Y6gkYkqzCRXZB86NkRuDqsgjX/Yr5eqC09T87m1N7yNl05mEIqmAQ4OhSlJ
-	 8cck40kthlsp8r5MDUibtrlwOh0fJ1q9SMUZZSfdY8zMMnqE2AXwTmCvhN8buQhCrD
-	 8VdkBN+Dj0xUlna+oNwACJ7nBnWA8/kr7WKCXYPEXVMziL+QWrJREHHH5CJa/YOz18
-	 96O3EpUC/57gfoOKg72l7P6FRxCfJs3+mLL/w94w/g+fcG6Ms/86DbnioCShDMP++b
-	 Dh+pNuKqwCpLw==
-Date: Wed, 22 Jan 2025 13:59:34 +0100
+	b=jlSHPHioMdKeqaC/ZGi1lZkWHwneKwwcNguipmcR25kU/8jZ8dhhljhAbWyeDILB5
+	 1xw8pOVgvADQkHsrqnNIkn2cqBZYnFLTwPKPCwrnnH76C+SgZREeYpoRkXsaOWlpqG
+	 EzVGKrqEiTn0ZmxWNSkbT7yK9m5ntoagOYnG3rkGgsRMYdQ6hohhiO2x6PjWWsVE+r
+	 wWU/y0M13x49peJ8FTvQ6+xXJYZ8a4/ajjYA9rRQkabnlp/QInxd0/gwvDOzH3EcqB
+	 ZgQWqTwI+vegHyiZDzSspYlCBAmGA+iCuXt32uCVU9v7v/Uyt4s+moT2oj9Afwm8eL
+	 sUA4EIe4110/Q==
+Date: Wed, 22 Jan 2025 14:31:35 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, gfs2@lists.linux.dev
-Subject: Re: [PATCH 8/8] gfs2: use lockref_init for qd_lockref
-Message-ID: <20250122-juckreiz-weiden-ee15107fd277@brauner>
-References: <20250116043226.GA23137@lst.de>
- <20250115094702.504610-1-hch@lst.de>
- <20250115094702.504610-9-hch@lst.de>
- <CAHc6FU58eBO0i8er5+gK--eAMVHULCzHPnJ9H5oN12fr=AAnbg@mail.gmail.com>
- <20250117160352.1881139-1-agruenba@redhat.com>
- <20250120-tragbar-ertrinken-24f2bbc2beb4@brauner>
- <CAHc6FU6EpaAyzFPdJUa97ZZP76PHxJb-vP8+tzcZFRYT5bZeGQ@mail.gmail.com>
+To: Kir Kolyshkin <kolyshkin@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrei Vagin <avagin@google.com>
+Subject: Re: Bug with splice to a pipe preventing a process exit
+Message-ID: <20250122-lenkung-gasthaus-faf0b8609790@brauner>
+References: <20250122020850.2175427-1-kolyshkin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,42 +58,145 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHc6FU6EpaAyzFPdJUa97ZZP76PHxJb-vP8+tzcZFRYT5bZeGQ@mail.gmail.com>
+In-Reply-To: <20250122020850.2175427-1-kolyshkin@gmail.com>
 
-On Mon, Jan 20, 2025 at 04:44:59PM +0100, Andreas Gruenbacher wrote:
-> On Mon, Jan 20, 2025 at 4:25 PM Christian Brauner <brauner@kernel.org> wrote:
-> > On Fri, Jan 17, 2025 at 05:03:51PM +0100, Andreas Gruenbacher wrote:
-> > > On Thu, 16 Jan 2025 05:32:26 +0100, Christoph Hellwig <hch@lst.de> wrote:
-> > > > Well, if you can fix it to start with 1 we could start out with 1
-> > > > as the default.  FYI, I also didn't touch the other gfs2 lockref
-> > > > because it initialize the lock in the slab init_once callback and
-> > > > the count on every initialization.
-> > >
-> > > Sure, can you add the below patch before the lockref_init conversion?
-> > >
-> > > Thanks,
-> > > Andreas
-> > >
-> > > --
-> > >
-> > > gfs2: Prepare for converting to lockref_init
-> > >
-> > > First, move initializing the glock lockref spin lock from
-> > > gfs2_init_glock_once() to gfs2_glock_get().
-> > >
-> > > Second, in qd_alloc(), initialize the lockref count to 1 to cover the
-> > > common case.  Compensate for that in gfs2_quota_init() by adjusting the
-> > > count back down to 0; this case occurs only when mounting the filesystem
-> > > rw.
-> > >
-> > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> > > ---
-> >
-> > Can you send this as a proper separae patch, please?
+On Tue, Jan 21, 2025 at 06:08:41PM -0800, Kir Kolyshkin wrote:
+> While checking if the tool I'm co-maintaining [1] works OK when compiled
+> with the future release of golang (1.24, tested with go1.24rc2), I found
+> out it's not [2], and the issue is caused by Go using sendfile more [3].
 > 
-> Do you want this particular version which applies before Christoph's
-> patches or something that applies on top of Christoph's patches?
+> I came up with the following simple reproducer:
+> 
+> #define _GNU_SOURCE
+> #include <fcntl.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <sys/sendfile.h>
+> #include <sys/wait.h>
+> #include <sys/socket.h>
+> #include <sys/un.h>
+> 
+> int main() {
+> 	int sks[2];
+> 	int pipefd[2];
+> 	if (pipe(pipefd) == -1) {
+> 		perror("pipe");
+> 		exit(1);
+> 	}
+> 
+> 	pid_t pid = fork();
+> 	if (pid == -1) {
+> 		perror("fork");
+> 		exit(1);
+> 	}
+> 
+> 	if (pid == 0) {
+> 		// Child process.
+> 		close(pipefd[1]); // Close write end.
+> 
+> 		// Minimal process that just exits after some time.
+> 		sleep(1);
+> 
+> 		_exit(0); // <-- The child hangs here.
+> 	}
+> 
+> 	// Parent process.
+> 	close(pipefd[0]);  // Close read end.
+> 
+> 	printf("PID1=%d\n", getpid());
+> 	printf("PID2=%d\n", pid);
+> 	printf("ps -f  -p $PID1,$PID2\n");
+> 	printf("sudo tail /proc/{$PID1,$PID2}/{stack,syscall}\n");
+> 
+> #ifdef TEST_USE_STDIN
+> 	int in_fd = STDIN_FILENO;
+> #else
+> 	socketpair(AF_UNIX, SOCK_STREAM, 0, sks);
+> 	int in_fd = sks[0];
+> #endif
+> 	// Copy from in_fd to pipe.
+> 	ssize_t ret = sendfile(pipefd[1], in_fd, 0, 1 << 22);
+> 	if (ret == -1) {
+> 		perror("sendfile");
+> 	}
+> 
+> 	// Wait for child
+> 	int status;
+> 	waitpid(pid, &status, 0);
+> 
+> 	close(pipefd[1]); // Close write end.
+> 	return 0;
+> }
+> 
+> To reproduce, compile and run the above code, and when it hangs (instead
+> of exiting), copy its output to a shell in another terminal. Here's what
+> I saw:
+> 
+> [kir@kir-tp1 linux]$ PID1=2174401
+> PID2=2174402
+> ps -f  -p $PID1,$PID2
+> sudo tail /proc/{$PID1,$PID2}/{stack,syscall}
+> UID          PID    PPID  C STIME TTY          TIME CMD
+> kir      2174401   63304  0 17:34 pts/1    00:00:00 ./repro
+> kir      2174402 2174401  0 17:34 pts/1    00:00:00 [repro]
+> ==> /proc/2174401/stack <==
+> [<0>] unix_stream_read_generic+0x792/0xc90
+> [<0>] unix_stream_splice_read+0x6f/0xb0
+> [<0>] splice_file_to_pipe+0x65/0xd0
+> [<0>] do_sendfile+0x176/0x440
+> [<0>] __x64_sys_sendfile64+0xb3/0xd0
+> [<0>] do_syscall_64+0x82/0x160
+> [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> ==> /proc/2174401/syscall <==
+> 40 0x4 0x3 0x0 0x400000 0x64 0xfffffff9 0x7fff2ab3fc58 0x7f265ed6ca3e
+> 
+> ==> /proc/2174402/stack <==
+> [<0>] pipe_release+0x1f/0x100
+> [<0>] __fput+0xde/0x2a0
+> [<0>] task_work_run+0x59/0x90
+> [<0>] do_exit+0x309/0xab0
+> [<0>] do_group_exit+0x30/0x80
+> [<0>] __x64_sys_exit_group+0x18/0x20
+> [<0>] x64_sys_call+0x14b4/0x14c0
+> [<0>] do_syscall_64+0x82/0x160
+> [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> ==> /proc/2174402/syscall <==
+> 231 0x0 0xffffffffffffff88 0xe7 0x0 0x0 0x7f265eea01a0 0x7fff2ab3fc58 0x7f265ed43acd
+> 
+> Presumably, what happens here is the child process is stuck in the
+> exit_group syscall, being blocked by parent's splice which holds the
+> lock to the pipe (in splice_file_to_pipe).
 
-On top, if you don't mind. Thank you!
+Splice is notoriously problematic when interacting with pipes due to how
+it holds the pipe lock. We've had handwavy discussions how to improve
+this but nothing ever materialized.
+
+The gist here seems to me that unix_stream_read_generic() is waiting on
+data to read from the write-side of the socketpair(). Until you close
+that fd or provide data you'll simply hang forever.
+
+Similar with STDIN_FILENO fwiw. If you never enter any character you
+simply hang forever waiting for input.
+
+So imho the way the program is written is buggy.
+But Jens might be able to provide more details.
+
+> 
+> To me, the code above looks valid, and the kernel behavior seems to
+> be a bug. In particular, if the process is exiting, the pipe it was
+> using is now being closed, and splice (or sendfile) should return.
+> 
+> If this is not a kernel bug, then the code above is not correct; in
+> this case, please suggest how to fix it.
+> 
+> Regards,
+>   Kir.
+> 
+> ----
+> [1]: https://github.com/opencontainers/runc
+> [2]: https://github.com/opencontainers/runc/pull/4598
+> [3]: https://go-review.googlesource.com/c/go/+/603295
 
