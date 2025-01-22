@@ -1,148 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-39858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2293AA197A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 18:27:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2F2A19824
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 18:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A7C188E4AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 17:28:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78EC63A9A4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 17:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864652165EF;
-	Wed, 22 Jan 2025 17:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD4F21519B;
+	Wed, 22 Jan 2025 17:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFjoVkMs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF0B2163B3;
-	Wed, 22 Jan 2025 17:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196062147F0;
+	Wed, 22 Jan 2025 17:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737566776; cv=none; b=V218HmTnYOXtlwwAFWr4rtqS1qt6cqPRg+8jbAyU2KG6RYE6PRoDfZFJiuxZ4VjkJF6Z6YGKHuWU8CSKbtAimWLtC6gb2mMJntYRYprYzcvjL5H+OH/odvNC3O3sVl4yOQ79bAkLE+RnnR8i6V/k6HEAg4mnIy/3i+t+NIOrQtg=
+	t=1737568788; cv=none; b=EYmUm4PpQe483hLbo34HGtEHYhhA+pOwr+ewr6z0mr71ti59xgMcrLLHJe2dZ2+bb9sNhlXZLq9oAoB20QpuqwzCnpW2tGXWaylTBekmfkpclIOlVCchHmFm8qTI8ACBkJmtSTNNIyggPnX1OgkQPFwzxaiMGXV+4j2eGULYn94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737566776; c=relaxed/simple;
-	bh=+G54zyLYx4ceeWfGoCy64lc7WrHPNoQcsdY8qK53ikE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bJPum4dLrV7b8gLl6MB7zbUH6Hp07WA+Xv+c1xwlFi2hXT115nw7VKqUvLss+DHcnqimnXUXU78fSGjnn1tdi87quvAgPTcOfERBNsLHMZYsSWFSpbVTObXLCq30xzQPLyQDP5DZBGx0UPqgOGvAo5vDWjkjAiALx1bIMptcCX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4YdVc466Yzz9v7JQ;
-	Thu, 23 Jan 2025 00:57:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id ED4E3140521;
-	Thu, 23 Jan 2025 01:26:05 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDnbEvkKZFnsGscAQ--.5068S8;
-	Wed, 22 Jan 2025 18:26:05 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 6/6] ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
-Date: Wed, 22 Jan 2025 18:24:32 +0100
-Message-Id: <20250122172432.3074180-7-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
-References: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1737568788; c=relaxed/simple;
+	bh=H/gAGW5mUg9X7OZvlovBl0Z1G3QkMWlVoJ3zKYxdsiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZqyFvI7FQyb2ST/rsxgGGAX5USroc3I3c+r0YZ2ToO8w0sNEznlxV9eeF6g8MRP02JmYwuYgPQ/MdhoxscJ0Fvjzysj3C02tm/hbEjhx6EKWsvuSzlFVf4HrkbCOFPjfhc3hB48U02MTsCROkM0xm1NNttv9IHlMCXa+YHndbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFjoVkMs; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385f06d0c8eso3882582f8f.0;
+        Wed, 22 Jan 2025 09:59:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737568785; x=1738173585; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tjGhE/Pv/KpTN1+mcyUldkY6LGoiejB+r+xA1Qw55mo=;
+        b=bFjoVkMsviBLB8XAsKNJoqx9ktKIpbKjZzd6a/2fZFWSzmTjClaLTPnzLOq5+csCCR
+         w4gT40HlZFxX1GkB/7dWVgEzO7g96USaFt28r6yj3umbW0H9uiMcsgfwLlzuP753Q6Mx
+         tZsHEUhyuHsMoacxNKVGeeOxhYZW6C1EwLp89YJaAzOOpLDhTLVOwkiZfShjJRB7HpeB
+         eziBuc/eHBcK/vxFHawqRS2J5CiFUeW8nf4xgVXn49ILJiza0dLUIZFoB6ttGqAVifJQ
+         e499TPOz1o/otRS5QI/2KrzbWkWEdNKYuiVWMH8ZnSBueT0dY2llY5PTLheA9JjnnjY1
+         QWeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737568785; x=1738173585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tjGhE/Pv/KpTN1+mcyUldkY6LGoiejB+r+xA1Qw55mo=;
+        b=hRsIXI30SeGY3lhITjHCaM7GFMpqGW4s/r+ub4PN7aobMsTEDQG7k3eGPp4K3bNRyU
+         557Znud3p256Yx7x+riZ6eMC2ib3kBYao27H1cvhETszOFdyZTr3fl60S/W0sWjh+FZz
+         R17pEQ4d8sH/1TXqqorx7bb3Zdy9D7xV0WxiSWtwIfURkaYGd4C9Pct1fdnayZUN+P7f
+         ZUuKd9OBCiV8hr9XXsMDKX56OkvPHqAt3nWFcsXaXibFq+5Wt2w7pzfEnhnPmAv4U+Ru
+         GhpEjCv2uOuozIFMkyhuWdpSAoldQUDc3tO++n/UFcjrIdlIXKu078MDz5jkfb6fLAIa
+         HmPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVW1qiSXyfRYVULU1vO6dsI/XQ+LUPoNgTVQiBdBJyXUJYGMcdVS/DoUCM8ivTjAU8TZHtnGvuQNA34WI0N@vger.kernel.org, AJvYcCVZXLrmWIZTFSnbqnYYu7ajYcSrOD2yik79OIfX6pIoqoD61vWXOGll0sFwsgVpyZFYXobuI/w5DQEhtm4lyQ==@vger.kernel.org, AJvYcCW6f4MeIBluluVW7y8yXELyKu5vaVgrmCddfaB8F3teESVoFQmMEgeNuHNdpq7fTNuqbyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyTQtcrfmTHxTY7aM04ovvlBkasVsZEXJzTx4q24UqufgrCzXu
+	XOHvEVHkKvjBqT0arFAFS14iHVWZ/HmfWxb0SefVMiwYT+eMd3kB3c2X5sTkqhodKcfv5qZhWGR
+	RWE7+lcXhd0+gf6GZ+MQ7UiTuGNo=
+X-Gm-Gg: ASbGncuBGwRzAVpy2cp4zAqvrH49rWSNKsNdzhdJ+79R9yicAhMt6al+YMTTHDtZP0T
+	f7v2GXn8NsBZvO771rso48XCo4vlQeXqh7CrDcb0ch7CwxSNzk52kjaJCoCKq90PCFU3sxLbcUi
+	c4oLC1tPs=
+X-Google-Smtp-Source: AGHT+IFxCXkzhpwgpdx7eCvc2wDO2gfqmMA00YgIOs2a9LuaEY3zZyJrEdtNsS/9JrQr9Bk+OHjxwKHXZd2HupYDbL8=
+X-Received: by 2002:a5d:614b:0:b0:385:f13c:570f with SMTP id
+ ffacd0b85a97d-38bf57a1e51mr17279523f8f.33.1737568785087; Wed, 22 Jan 2025
+ 09:59:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwDnbEvkKZFnsGscAQ--.5068S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr1UCFWUuFWxWry7urW3Jrb_yoW5Jw48pa
-	9a9FyUGr10qFW0krn3J3W3Ca4rK39F9FWUXa15Aw1vyFnxZr1jqFyDtr17CF98Wr1SkFy2
-	qF9IvryYya1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-	C2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-	7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-	kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GF
-	v_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvE
-	c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-	pf9x07jIPfQUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBGeQmNQFOgAAsR
+References: <AM6PR03MB508004527B8B38AAF18D763399E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50806C5D9B5314E55D4204A499E62@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQLk6w+AkpoWERoid54xZh_FeiV0q1_sVU2o-oMBkP2Y7w@mail.gmail.com> <AM6PR03MB5080CDA2F6336B1BA2FDF2C199E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5080CDA2F6336B1BA2FDF2C199E12@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 22 Jan 2025 09:59:34 -0800
+X-Gm-Features: AWEUYZkWeDZQredRuCv2R--gyu_IN3k2c_gHpYLrL79tHyNkx1ZN0P2rvqIGFls
+Message-ID: <CAADnVQKkaWkSHLapcUe83YQcmhO+S=2w+1rB_NzUbt=TOW9WFw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v7 4/5] bpf: Make fs kfuncs available for SYSCALL
+ program type
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
+	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Jan 22, 2025 at 5:34=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
+>
+> On 2025/1/22 00:43, Alexei Starovoitov wrote:
+> > On Tue, Jan 21, 2025 at 5:09=E2=80=AFAM Juntong Deng <juntong.deng@outl=
+ook.com> wrote:
+> >>
+> >> Currently fs kfuncs are only available for LSM program type, but fs
+> >> kfuncs are generic and useful for scenarios other than LSM.
+> >>
+> >> This patch makes fs kfuncs available for SYSCALL program type.
+> >>
+> >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> >> ---
+> >>   fs/bpf_fs_kfuncs.c                                 | 14 ++++++------=
+--
+> >>   .../selftests/bpf/progs/verifier_vfs_reject.c      | 10 ----------
+> >>   2 files changed, 6 insertions(+), 18 deletions(-)
+> >>
+> >> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> >> index 4a810046dcf3..8a7e9ed371de 100644
+> >> --- a/fs/bpf_fs_kfuncs.c
+> >> +++ b/fs/bpf_fs_kfuncs.c
+> >> @@ -26,8 +26,6 @@ __bpf_kfunc_start_defs();
+> >>    * acquired by this BPF kfunc will result in the BPF program being r=
+ejected by
+> >>    * the BPF verifier.
+> >>    *
+> >> - * This BPF kfunc may only be called from BPF LSM programs.
+> >> - *
+> >>    * Internally, this BPF kfunc leans on get_task_exe_file(), such tha=
+t calling
+> >>    * bpf_get_task_exe_file() would be analogous to calling get_task_ex=
+e_file()
+> >>    * directly in kernel context.
+> >> @@ -49,8 +47,6 @@ __bpf_kfunc struct file *bpf_get_task_exe_file(struc=
+t task_struct *task)
+> >>    * passed to this BPF kfunc. Attempting to pass an unreferenced file=
+ pointer, or
+> >>    * any other arbitrary pointer for that matter, will result in the B=
+PF program
+> >>    * being rejected by the BPF verifier.
+> >> - *
+> >> - * This BPF kfunc may only be called from BPF LSM programs.
+> >>    */
+> >>   __bpf_kfunc void bpf_put_file(struct file *file)
+> >>   {
+> >> @@ -70,8 +66,6 @@ __bpf_kfunc void bpf_put_file(struct file *file)
+> >>    * reference, or else the BPF program will be outright rejected by t=
+he BPF
+> >>    * verifier.
+> >>    *
+> >> - * This BPF kfunc may only be called from BPF LSM programs.
+> >> - *
+> >>    * Return: A positive integer corresponding to the length of the res=
+olved
+> >>    * pathname in *buf*, including the NUL termination character. On er=
+ror, a
+> >>    * negative integer is returned.
+> >> @@ -184,7 +178,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
+> >>   static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfu=
+nc_id)
+> >>   {
+> >>          if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
+> >> -           prog->type =3D=3D BPF_PROG_TYPE_LSM)
+> >> +           prog->type =3D=3D BPF_PROG_TYPE_LSM ||
+> >> +           prog->type =3D=3D BPF_PROG_TYPE_SYSCALL)
+> >>                  return 0;
+> >>          return -EACCES;
+> >>   }
+> >> @@ -197,7 +192,10 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc=
+_set =3D {
+> >>
+> >>   static int __init bpf_fs_kfuncs_init(void)
+> >>   {
+> >> -       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kf=
+unc_set);
+> >> +       int ret;
+> >> +
+> >> +       ret =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_k=
+func_set);
+> >> +       return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,=
+ &bpf_fs_kfunc_set);
+> >>   }
+> >>
+> >>   late_initcall(bpf_fs_kfuncs_init);
+> >> diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c b=
+/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+> >> index d6d3f4fcb24c..5aab75fd2fa5 100644
+> >> --- a/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+> >> +++ b/tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+> >> @@ -148,14 +148,4 @@ int BPF_PROG(path_d_path_kfunc_invalid_buf_sz, st=
+ruct file *file)
+> >>          return 0;
+> >>   }
+> >>
+> >> -SEC("fentry/vfs_open")
+> >> -__failure __msg("calling kernel function bpf_path_d_path is not allow=
+ed")
+> >> -int BPF_PROG(path_d_path_kfunc_non_lsm, struct path *path, struct fil=
+e *f)
+> >> -{
+> >> -       /* Calling bpf_path_d_path() from a non-LSM BPF program isn't =
+permitted.
+> >> -        */
+> >> -       bpf_path_d_path(path, buf, sizeof(buf));
+> >> -       return 0;
+> >> -}
+> >
+> > A leftover from previous versions?
+> > This test should still be rejected by the verifier.
+>
+> Thanks for your reply.
+>
+> Not a leftover.
+>
+> bpf_path_d_path can be called from SYSCALL program type, not only LSM
+> program type, so it seems a bit weird to keep this test case?
 
-Commit 11c60f23ed13 ("integrity: Remove unused macro
-IMA_ACTION_RULE_FLAGS") removed the IMA_ACTION_RULE_FLAGS mask, due to it
-not being used after commit 0d73a55208e9 ("ima: re-introduce own integrity
-cache lock").
-
-However, it seems that the latter commit mistakenly used the wrong mask
-when moving the code from ima_inode_post_setattr() to
-process_measurement(). There is no mention in the commit message about this
-change and it looks quite important, since changing from IMA_ACTIONS_FLAGS
-(later renamed to IMA_NONACTION_FLAGS) to IMA_ACTION_RULE_FLAGS was done by
-commit 42a4c603198f0 ("ima: fix ima_inode_post_setattr").
-
-Restore the original change of resetting only the policy-specific flags and
-not the new file status, but with new mask 0xfb000000 since the
-policy-specific flags changed meanwhile. Also rename IMA_ACTION_RULE_FLAGS
-to IMA_NONACTION_RULE_FLAGS, to be consistent with IMA_NONACTION_FLAGS.
-
-Cc: stable@vger.kernel.org # v4.16.x
-Fixes: 11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAGS")
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h      | 1 +
- security/integrity/ima/ima_main.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index e1a3d1239bee..615900d4150d 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -141,6 +141,7 @@ struct ima_kexec_hdr {
- 
- /* IMA iint policy rule cache flags */
- #define IMA_NONACTION_FLAGS	0xff000000
-+#define IMA_NONACTION_RULE_FLAGS	0xfb000000
- #define IMA_DIGSIG_REQUIRED	0x01000000
- #define IMA_PERMIT_DIRECTIO	0x02000000
- #define IMA_NEW_FILE		0x04000000
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 46adfd524dd8..7173dca20c23 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -275,7 +275,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 		/* reset appraisal flags if ima_inode_post_setattr was called */
- 		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
--				 IMA_NONACTION_FLAGS);
-+				 IMA_NONACTION_RULE_FLAGS);
- 
- 	/*
- 	 * Re-evaulate the file if either the xattr has changed or the
--- 
-2.34.1
-
+How is it weird?
+How is this related to syscall prog?
+It's a check that fentry prog cannot call it.
 
