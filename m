@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-39906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B396CA19C6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 02:48:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35B3A19C73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 02:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BDEB3AD8EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:48:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5EE3AD88B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C43D146A79;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FE3148FF6;
 	Thu, 23 Jan 2025 01:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Dm86EaJT"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SJAgvUs3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F86E1EA65;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BC01EB2E;
 	Thu, 23 Jan 2025 01:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737596808; cv=none; b=HndlS2/BR/JKGTObUwXPF3wxm17x79XchazNYYz/U6YJvjE4/4gSLTVrjlkgXbCkM4UP6oP85z0e2OGYcutgp5UYwgw2Po3Va8I43TCDG4qXJQZgUSnYVx+dGyiZ2a58tyojHbDiwkgY54Ed+bFEHRC0TZbPTtfDk+nTKgUSmaM=
+	t=1737596808; cv=none; b=NG1myKwq6+Ugdyh4XchjRJTnEr9kiZgYoAOyUXb5H2Re7VPP43ohbbFHJtF0VFdK58fbIBxU84StkS+c5/9/rXoGv9pqE60nmxYsdmAEkRD2jI6L1Zc2/N0CZcDwXlN8iz1hrx1d4Acx+H6yY7lTXv+5FKsZG9kD6yapq4Vae18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1737596808; c=relaxed/simple;
-	bh=kqFfX1nPZXJZNNKbEnE+/GNLUWhf5phXSz/N3PFAcVo=;
+	bh=cjipL1GFfa83oqYsqi4CaR1CZyDh3FOlsTUDb2/+ndQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qm9Zi7oaz7Si/M7il905jgHVZ1TCJRA5U5vqZ6bAIesAaCyDMyl8W1NdReJP6UGF6tWRawuSg8sTt5ATV3APQwXn6PcxonKFgLWP227k+YnDWtmrIM1EdEuuwCahwTBEWvyOfxPFyqJ72gMiMH/RNwXNcRyS2aA2s7BV6Hhfcd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Dm86EaJT; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=mxTs31/ISAkl3P7BweLBxooUTzuv4nRfj6GTlJMfs4VnVrAq8kQ0cBhGlh1ZPG9Jb0Zo6Fvuum8dhvntkdp1nXGAr5zUPp4KSAOiUxxQnehwu67UQjsw00O4R1R+ItCb2enoc15Jlmkhg3mYxtKdT5mAt1h9HZ7nkiUUgjtqLwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SJAgvUs3; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=/KyGJPYFIJ6kdYhT9qcSpG/tCgyIASfflXizlRjFIS0=; b=Dm86EaJTGI2difOy5rxiE3bmCb
-	Qp1Hog/PaaGU3REU2eI4PNKlrhQGpMBrPCRCTy4Pf37LfVGAi9S2TdFeuqrWE+2X5dfBhPXkI7lFb
-	k0Z+cIuBEuvcxdmsDbK4NjPrkKs5EbH4IPkcgzLj6Gx/6pUbMXlOjIkynd5VSazs3jVgi4thHlBxc
-	z4fKsV6vRzaQ1vhjfoXEhKTbMGNuNhHo81VQ8y7r/Cw6TW0swHIeMIxualzV9jMHW9ekZWHYDkYBo
-	/bMsx19Cm7LL0jGwYo/mBK2pWhTuD9Pw+IMonIxgSG8zydn00I+cZALn1oCLR8E2f4n7rOuxBbqIf
-	20BSZ+CA==;
+	bh=WFTtoUbcp0ZRRyHtoXjPYLRMoe7qetYd1rA2yNEqMGU=; b=SJAgvUs3SvW9cyXku2rob79bRF
+	XL5e6+2WYeKhL1b0VXcW1gkXhN6/kVNjMEAtbpnRned7VjooMFfcMQziFWZIaq2hOwjnJ1BMBfIz3
+	WefTNLDu3a37+g/WSSxQWtnyw8naLfYr+rHFIaHyc+cM1Ku/lijNmMTYODiuuQolOMWlpH0wDhVH9
+	3xdrzasZt/7gYH+psI2r99aLfRHSWe7HPIMHRvye1vGZxGiIdgNe2R0M2GTYqkdgQ5A/PU48uV7zt
+	EA+iyulyE1H6drGzvc+hYrRwwTpE7KK/bqbGkOsuyYUIUtMiYyviNervwyoAIb7B3zRe5mpJI/iNb
+	FT1AEwgg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tamIv-00000008F2r-00XY;
+	id 1tamIv-00000008F30-0J32;
 	Thu, 23 Jan 2025 01:46:45 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -57,9 +57,9 @@ Cc: agruenba@redhat.com,
 	linux-nfs@vger.kernel.org,
 	miklos@szeredi.hu,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 12/20] exfat_d_revalidate(): use stable parent inode passed by caller
-Date: Thu, 23 Jan 2025 01:46:35 +0000
-Message-ID: <20250123014643.1964371-12-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 13/20] vfat_revalidate{,_ci}(): use stable parent inode passed by caller
+Date: Thu, 23 Jan 2025 01:46:36 +0000
+Message-ID: <20250123014643.1964371-13-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250123014643.1964371-1-viro@zeniv.linux.org.uk>
 References: <20250123014511.GA1962481@ZenIV>
@@ -73,40 +73,51 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... no need to bother with ->d_lock and ->d_parent->d_inode.
-
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/exfat/namei.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ fs/fat/namei_vfat.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index e3b4feccba07..61c7164b85b3 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -34,8 +34,6 @@ static inline void exfat_d_version_set(struct dentry *dentry,
- static int exfat_d_revalidate(struct inode *dir, const struct qstr *name,
- 			      struct dentry *dentry, unsigned int flags)
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index f9cbd5c6f932..926c26e90ef8 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -43,14 +43,9 @@ static inline void vfat_d_version_set(struct dentry *dentry,
+  * If it happened, the negative dentry isn't actually negative
+  * anymore.  So, drop it.
+  */
+-static int vfat_revalidate_shortname(struct dentry *dentry)
++static bool vfat_revalidate_shortname(struct dentry *dentry, struct inode *dir)
  {
--	int ret;
--
- 	if (flags & LOOKUP_RCU)
- 		return -ECHILD;
+-	int ret = 1;
+-	spin_lock(&dentry->d_lock);
+-	if (!inode_eq_iversion(d_inode(dentry->d_parent), vfat_d_version(dentry)))
+-		ret = 0;
+-	spin_unlock(&dentry->d_lock);
+-	return ret;
++	return inode_eq_iversion(dir, vfat_d_version(dentry));
+ }
  
-@@ -59,11 +57,7 @@ static int exfat_d_revalidate(struct inode *dir, const struct qstr *name,
+ static int vfat_revalidate(struct inode *dir, const struct qstr *name,
+@@ -62,7 +57,7 @@ static int vfat_revalidate(struct inode *dir, const struct qstr *name,
+ 	/* This is not negative dentry. Always valid. */
+ 	if (d_really_is_positive(dentry))
+ 		return 1;
+-	return vfat_revalidate_shortname(dentry);
++	return vfat_revalidate_shortname(dentry, dir);
+ }
+ 
+ static int vfat_revalidate_ci(struct inode *dir, const struct qstr *name,
+@@ -99,7 +94,7 @@ static int vfat_revalidate_ci(struct inode *dir, const struct qstr *name,
  	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
  		return 0;
  
--	spin_lock(&dentry->d_lock);
--	ret = inode_eq_iversion(d_inode(dentry->d_parent),
--			exfat_d_version(dentry));
--	spin_unlock(&dentry->d_lock);
--	return ret;
-+	return inode_eq_iversion(dir, exfat_d_version(dentry));
+-	return vfat_revalidate_shortname(dentry);
++	return vfat_revalidate_shortname(dentry, dir);
  }
  
- /* returns the length of a struct qstr, ignoring trailing dots if necessary */
+ /* returns the length of a struct qstr, ignoring trailing dots */
 -- 
 2.39.5
 
