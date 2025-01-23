@@ -1,267 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-39997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02111A1A9C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 19:45:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB19EA1AA79
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 20:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344311667BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 18:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B8816AADA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 19:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38649170A30;
-	Thu, 23 Jan 2025 18:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573EE1B6CE4;
+	Thu, 23 Jan 2025 19:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3PgfTFo4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y7a7t2oz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE7014BF87
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 18:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177A71741D2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 19:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737657952; cv=none; b=nnTH/SGDtrYIOdCX5y7J+pMZB5Krj3P7IaOhNqeyghTbJC4ee+2GKrNaqHAOfKLMpz5KmvYDb0BNwulCCcB9FLKJXG6F6kkkwP7go57QzHQUbIzSIqsVmnv9Qw75FPlr9bkuNWcVFh0qXDl+fFOhEX11ebWbA9p3yPYfaHLHsPE=
+	t=1737661276; cv=none; b=HzIkaXK+kGueQCTSIpb6caMVsUqTxb8RbAS4bVgFcY8roysFeShkNQC+RfpwcokjL3k6wq0mgGztp9zKTTGfI81vg/BtOH1qj+iD8vzE84RwgD+aB+HQIT8NtAowzlFRBcEFul9a3PHe90DTWbEiuTsSWC+9D6HNSdVZ8l2e8Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737657952; c=relaxed/simple;
-	bh=eXy3XZPOf4rqphTH/PQRd13MhXg9t6SD8vkgOy35dJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=jZ9fyX3MJ1QGO4o8KGKuR8vYuzizfPRLZAzapjVBo39zVSZb7HTbZoYcE8ELOaFhuhB1mlFbIXfB3zl+scAAjRFe4urQzMndmUjPlWOBj81H5f2XWcHGVMeLKm6lXnsbKFNYfvw/wm+qdWycNbQgPHBiU39IRfL34OTCOgqF3fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3PgfTFo4; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4679b5c66d0so25651cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 10:45:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1737657950; x=1738262750; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QzTal6iWSgRdob0bIKRNXXhtdn3zJnxk/3GyL7XVhOY=;
-        b=3PgfTFo4/5a7jnfMihwCmPhELlVA+FsjDLn2oPQUQmIzFWdNrho+QMv0r/HjCdVn4H
-         VphFA8YSjKKXIZNbJ26YY79TGCOMN/+z1Kus+e241eFvL+ItQAaZdborpg8bBMoFeS5k
-         BE5X2UCOWZ68cv9byncUIQYdBCSJJn+yeha79glmHId6XTdUMlnADfNsnSpYQjfvszns
-         6b3ktMyyFVvsLDT8hU/Rq7HQUgzqV1p8u3b1e8Cm0m6arBtHPjep5X40MvYiww+aConq
-         9sDsfmqdx7dGjM9zVWF0kh8Dhh3OqyvgJSShnmtWgcxPZSxxCewC85KY/5yO087+4tBo
-         vlsQ==
+	s=arc-20240116; t=1737661276; c=relaxed/simple;
+	bh=crfRQrn6rJNEgnAzDpUaAC4avkLkEg1kUUwBWVgapks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dsM+hQZj0yHAon1e7d9H5zBGkx0JKrU4QkZ02TBQtDws8ny0A1qt0UsepBahn/MNbyABAv9P7zNH6duE5mdsZEih39duRYTHVL8NGR03pMAuzc9PO/jV7rUPUK/QNgVzRAr9R4M6JJkmDaKtsW81ufcqmlwXhWNGJB6gQDHYUwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y7a7t2oz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737661273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pMjEfd15YaPnS3m1kK+tJc0UvrQqQ2bQdv285PmS/eo=;
+	b=Y7a7t2ozYru9bezcyLQ2gfJN6hp716PIdA57zBFp3iN1ISzYMCn9AJEATo+JK4U+u4nGnw
+	1pwZ8rlVBNGn1vfvcTNTNcx5FjQn4Yz+Vi2j/jiJvWjvW9yPvSOKFKwc3HBUUMIvQ0Cc2s
+	1sJ+39oidOMHYC93bRO6LKho7ord69E=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-68-xbo4OwR4MUO1QeHG1Akxcg-1; Thu, 23 Jan 2025 14:41:12 -0500
+X-MC-Unique: xbo4OwR4MUO1QeHG1Akxcg-1
+X-Mimecast-MFC-AGG-ID: xbo4OwR4MUO1QeHG1Akxcg
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-436289a570eso9520375e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 11:41:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737657950; x=1738262750;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QzTal6iWSgRdob0bIKRNXXhtdn3zJnxk/3GyL7XVhOY=;
-        b=sZYIff0/Ol2KDTUBl85/d+Tmx9u+l2nW/YRcgTCFDxE6QrmbkqEsWdBLa0sm7f/Fyi
-         oEsbjxSwA2PeZ9POfrzCGc/jBasNedmfihhP2D0xQ8JxVF20SVXTQFeA2oY2FHSjT0bI
-         rjexFpRevQpqC7Rl8N89Oj7leGsdVKihPCP20pHwT2hHHRRPd83OxpvJvcopftTKJ4zU
-         4/LGpCCa28ffW7tghdT2XZtSNQQJ7HeiGZw9laI9v/4iqewIaKjGYa+Gm7H4txIMYEtV
-         ZFvPir6fgWGKSa3o4b96//5UT4xIns/579Gt++l85VnkaifFcEaPUbtrEuJniJVjNhhG
-         eJOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCU8aqN649lntQQ4IjlD9jRxT+JZ90iyrMEdoGY3BUGMr5s57emL9DVlmUr1WMfppCnoGJ3B7M9wfXKeZ1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW9Tc8mWRNFkMvKm+Wog4aHIqcYVpri8oTH/a8RA02mTW8eheG
-	tzkSquvOGdO+THfvUp4HONraGxFLEfNy+fRz0tlsg8901oBRMYB5wpqMW+VeDz166IBf1KBPvaS
-	HKdNyKe42RkDOYhBzmrkX8x8NWAmP9S+bsN/Y
-X-Gm-Gg: ASbGncu6JowbNh+/G8X/xqRxIQYDvpfdo+2gSmrN4lTElsmXvLU6Lp+YCl5+rfgrNh1
-	UZSRryM9Xq6xGJoQPSVk+53cqFFrrkkFqjSxeb3MgPeJZ3PVVoJvv6bhKko6WHiZWEW9o/trXw7
-	GNpi8aqQTlWMksb/EL
-X-Google-Smtp-Source: AGHT+IG4V8k2kiWVwIIq8NqKoAcpRM90sfY7xSa2fqPnbG4bspmvURYYLtxVVkgmjdUEevT7QXUIGyQvs+SL5p4eq/g=
-X-Received: by 2002:a05:622a:10a:b0:467:8416:d99e with SMTP id
- d75a77b69052e-46e5dad8c0amr4346531cf.21.1737657949428; Thu, 23 Jan 2025
- 10:45:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737661271; x=1738266071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pMjEfd15YaPnS3m1kK+tJc0UvrQqQ2bQdv285PmS/eo=;
+        b=g5YPEr93EhSB+JsYxMJxs2+M0JOAkHAEjNzlsUkpM3mjjcD9Q4tSPukD/0TSV2wupK
+         5mY2s06ck3almY/N8b9fyy4ynU4z+8e1CAkfOzPacFNt09hJbMb1/fCfpS5V4AOktMz8
+         zPwRFeLsqaWa0rYnUOJLwKGxALCO4737PpmWVcidY1sPYVgSlNJeN2VFz+0icE9NytQw
+         x3xhEfJqz28lUaGZ7f2q5Jse6d1zL9PGQsSUSSjJ+HFtBvWIM2y2IRAeOwYgGOgLkYXD
+         jG2ANO+q1goQFm5U8YNLRWJkn8dk8UKbyHvjl7dlgP/S1lRWRBSKuZMiQIl67DUiRNcV
+         tCuA==
+X-Gm-Message-State: AOJu0Ywt19ewPFC67yxWwPlSmjmdOmSNBjj1SLzSY2c1cjTmlvVIgXdI
+	nG8Wi0chwFXZQ2lgh3xhjtDHg2fUPQ+pfo3rup9fsUzpnbERSWmy854FVl8gvjdnoq3Y4GK0jRc
+	jOug26x1yyQBudRUgtwGYLDRDQi1RFEKqwa1LfF93AZszKSy97hTg4Rlg2TX65CJEAYE5kYSIXN
+	MUx6BvvCtsAiaSH758ds0CaN7jIxMDEhsYrLZFoNpBgSKJ1+4b3g==
+X-Gm-Gg: ASbGncsgg2a3hzGxmrS6tIuyDikVxI0OjCXXfIm3OumJ90+z/WMbWn6jfdBpKfEQQfx
+	7NvcKorrxfypLCQ+XNih1m+zhlfY9hjQucEp97+JlZoPSDHepbLg1GQHcBJgbkVC7hsR9X5RyZ9
+	g6CsqrW2zUxRISUvmYRSIBKWL+xkx/L618vRWyvzQzJQQs+ssbnqN1ig7QxFD4HREwR6tUUDRNa
+	MR2IS6uZUic6ap48L2gHZsZ0FQT3dB8cH1FsHSZFk1iY8NDhQFGvFlohLFwsYRCX6PFRRUmVK5N
+	M75QmwzVmUoZgmlMKAySVxL6i+MVlsNfg7jvhTLPk9Yh2g==
+X-Received: by 2002:a05:600c:1386:b0:434:f739:7cd9 with SMTP id 5b1f17b1804b1-438913cf349mr240199995e9.9.1737661270806;
+        Thu, 23 Jan 2025 11:41:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHoz2j+PwNk/UXtmsGls7bCH6WnDcHXmR9rN/MaKVJjM3lXOBp6m6yVukwzhUxjrjYNsdB93A==
+X-Received: by 2002:a05:600c:1386:b0:434:f739:7cd9 with SMTP id 5b1f17b1804b1-438913cf349mr240199745e9.9.1737661270368;
+        Thu, 23 Jan 2025 11:41:10 -0800 (PST)
+Received: from maszat.piliscsaba.szeredi.hu (91-82-183-41.pool.digikabel.hu. [91.82.183.41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd507e46sm1687245e9.21.2025.01.23.11.41.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2025 11:41:09 -0800 (PST)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Karel Zak <kzak@redhat.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Ian Kent <raven@themaw.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v4 0/4] mount notification
+Date: Thu, 23 Jan 2025 20:41:03 +0100
+Message-ID: <20250123194108.1025273-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240215182756.3448972-5-lokeshgidra@google.com>
- <20250123041427.1987-1-21cnbao@gmail.com> <rb7qajtpmmntvvqq2ckzjqs76mflxyuingixx3v7q63jd7xqfm@v7hm5aqhe23z>
-In-Reply-To: <rb7qajtpmmntvvqq2ckzjqs76mflxyuingixx3v7q63jd7xqfm@v7hm5aqhe23z>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Thu, 23 Jan 2025 10:45:37 -0800
-X-Gm-Features: AWEUYZnxP3hHn1SCq9RZ8V68AJ7A6aXxrkeYLIAPk8QrC-9p9GGZ0p-pls4mfwA
-Message-ID: <CA+EESO64boFPfXqZ7c6nQe6U8K4T-4acVC+RKRQWwHP_+0YTQA@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] userfaultfd: use per-vma locks in userfaultfd operations
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Barry Song <21cnbao@gmail.com>, lokeshgidra@google.com, 
-	aarcange@redhat.com, akpm@linux-foundation.org, axelrasmussen@google.com, 
-	bgeffon@google.com, david@redhat.com, jannh@google.com, 
-	kaleshsingh@google.com, kernel-team@android.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, ngeoffray@google.com, peterx@redhat.com, rppt@kernel.org, 
-	ryan.roberts@arm.com, selinux@vger.kernel.org, surenb@google.com, 
-	timmurray@google.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 23, 2025 at 8:52=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Barry Song <21cnbao@gmail.com> [250122 23:14]:
-> > > All userfaultfd operations, except write-protect, opportunistically u=
-se
-> > > per-vma locks to lock vmas. On failure, attempt again inside mmap_loc=
-k
-> > > critical section.
-> > >
-> > > Write-protect operation requires mmap_lock as it iterates over multip=
-le
-> > > vmas.
-> > h
-> > Hi Lokesh,
-> >
-> > Apologies for reviving this old thread. We truly appreciate the excelle=
-nt work
-> > you=E2=80=99ve done in transitioning many userfaultfd operations to per=
--VMA locks.
-> >
-> > However, we=E2=80=99ve noticed that userfaultfd still remains one of th=
-e largest users
-> > of mmap_lock for write operations, with the other=E2=80=94binder=E2=80=
-=94having been recently
-> > addressed by Carlos Llamas's "binder: faster page installations" series=
-:
-> >
-> > https://lore.kernel.org/lkml/20241203215452.2820071-1-cmllamas@google.c=
-om/
-> >
-> > The HeapTaskDaemon(Java GC) might frequently perform userfaultfd_regist=
-er()
-> > and userfaultfd_unregister() operations, both of which require the mmap=
-_lock
-> > in write mode to either split or merge VMAs. Since HeapTaskDaemon is a
-> > lower-priority background task, there are cases where, after acquiring =
-the
-> > mmap_lock, it gets preempted by other tasks. As a result, even high-pri=
-ority
-> > threads waiting for the mmap_lock =E2=80=94 whether in writer or reader=
- mode=E2=80=94can
-> > end up experiencing significant delays=EF=BC=88The delay can reach seve=
-ral hundred
-> > milliseconds in the worst case.=EF=BC=89
+Addressed all comments, and split up patch into three pieces (fsnotify,
+fanotify, namespace) and added a fourth patch for mount changes.
 
-Do you happen to have some trace that I can take a look at?
->
-> This needs an RFC or proposal or a discussion - certainly not a reply to
-> an old v7 patch set.  I'd want neon lights and stuff directing people to
-> this topic.
->
-> >
-> > We haven=E2=80=99t yet identified an ideal solution for this. However, =
-the Java heap
-> > appears to behave like a "volatile" vma in its usage. A somewhat simpli=
-stic
-> > idea would be to designate a specific region of the user address space =
-as
-> > "volatile" and restrict all "volatile" VMAs to this isolated region.
->
-> I'm going to assume the uffd changes are in the volatile area?  But
-> really, maybe you mean the opposite..  I'll just assume I guessed
-> correct here.  Because, both sides of this are competing for the write
-> lock.
->
-> >
-> > We may have a MAP_VOLATILE flag to mmap. VMA regions with this flag wil=
-l be
-> > mapped to the volatile space, while those without it will be mapped to =
-the
-> > non-volatile space.
-> >
-> >          =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90TASK_SIZE
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82mmap VOLATILE
-> >          =E2=94=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=A4
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82default mmap
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=82            =E2=94=82
-> >          =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
->
-> No, this is way too complicated for what you are trying to work around.
->
-> You are proposing a segmented layout of the virtual memory area so that
-> an optional (userfaultfd) component can avoid a lock - which already has
-> another optional (vma locking) workaround.
->
-> I think we need to stand back and look at what we're doing here in
-> regards to userfaultfd and how it interacts with everything.  Things
-> have gotten complex and we're going in the wrong direction.
->
-> I suggest there is an easier way to avoid the contention, and maybe try
-> to rectify some of the uffd code to fit better with the evolved use
-> cases and vma locking.
->
-> >
-> > VMAs in the volatile region are assigned their own volatile_mmap_lock,
-> > which is independent of the mmap_lock for the non-volatile region.
-> > Additionally, we ensure that no single VMA spans the boundary between
-> > the volatile and non-volatile regions. This separation prevents the
-> > frequent modifications of a small number of volatile VMAs from blocking
-> > other operations on a large number of non-volatile VMAs.
-> >
-> > The implementation itself wouldn=E2=80=99t be overly complex, but the d=
-esign
-> > might come across as somewhat hacky.
+There's only one FIXME remaining in selinux_path_notify().  The path passed
+to fanotify_mark() and subsequently to ->path_notify() is a namespace file,
+and comes from nsfs (i.e. /proc/$$/ns/mnt).  Does this need to be handled
+specially by selinux?
 
-I agree with others. Your proposal sounds too radical and doesn't seem
-necessary to me. I'd like to see the traces and understand how
-real/frequent the issue is.
-> >
-> > Lastly, I have two questions:
-> >
-> > 1. Have you observed similar issues where userfaultfd continues to
-> > cause lock contention and priority inversion?
+Paul, can you please review this change?
 
-We haven't seen any such cases so far. But due to some other reasons,
-we are seriously considering temporarily increasing the GC-thread's
-priority when it is running stop-the-world pause.
-> >
-> > 2. If so, do you have any ideas or suggestions on how to address this
-> > problem?
+Thanks,
+Miklos
 
-There are userspace solutions possible to reduce/eliminate the number
-of times userfaultfd register/unregister are done during a GC. I
-didn't do it due to added complexity it would introduce to the GC's
-code.
->
-> These are good questions.
->
-> I have a few of my own about what you described:
->
-> - What is causing your application to register/unregister so many uffds?
+---
+v4:
+  - add notification on attribute change
+  - deal with two FIXMEs
+  - move data and code to #ifdef CONFIG_FSNOTIFY regions
+  - function renames for more consistentcy (Christian)
+  - explanation comment in umount_tree() (Christian)
+  - style cleanups in fanotify (Amir, Jan)
+  - changed FAN_MNT_* values (Amir)
 
-In every GC invocation, we have two userfaultfd_register() + mremap()
-in a stop-the-world pause, and then two userfaultfd_unregister() at
-the end of GC. The problematic ones ought to be the one in the pause
-as we want to keep it as short as possible. The reason we want to
-register/unregister the heap during GC is so that the overhead of
-userfaults can be avoided when GC is not active.
+v3:
+  - use a global list protected for temporarily storing (Christian)
+  - move fsnotify_* calls to namespace_unlock() (Christian)
+  - downgrade namespace_sem to read for fsnotify_* calls (Christian)
+  - add notification for reparenting in propagate_umount (Christian)
+  - require nsfs file (/proc/PID/ns/mnt) in fanotify_mark(2) (Christian)
+  - cleaner check for fsnotify being initialized (Amir)
+  - fix stub __fsnotify_mntns_delete (kernel test robot)
+  - don't add FANOTIFY_MOUNT_EVENTS to FANOTIFY_FD_EVENTS (Amir)
 
->
-> - Does the writes to the vmas overlap the register/unregsiter area
->   today?  That is, do you have writes besides register/unregister going
->   into your proposed volatile area or uffd modifications happening in
->   the 'default mmap' area you specify above?
+v2:
+  - notify for whole namespace as this seems to be what people prefer
+  - move fsnotify() calls outside of mount_lock
+  - only report mnt_id, not parent_id
 
-That shouldn't be the case. The access to uffd registered VMAs should
-start *after* registration. That's the reason it is done in a pause.
-AFAIK, the source of contention is if some native (non-java) thread,
-which is not participating in the pause, does a mmap_lock write
-operation (mmap/munmap/mprotect/mremap/mlock etc.) elsewhere in the
-address space. The heap can't be involved.
->
-> Barry, this is a good LSF topic - will you be there?  I hope to attend.
->
-> Something along the lines of "Userfualtfd contention, interactions, and
-> mitigations".
->
-> Thanks,
-> Liam
->
+
+Miklos Szeredi (4):
+  fsnotify: add mount notification infrastructure
+  fanotify: notify on mount attach and detach
+  vfs: add notifications for mount attach and detach
+  vfs: add notifications for mount attribute change
+
+ fs/mount.h                         |  26 +++++++
+ fs/namespace.c                     | 120 ++++++++++++++++++++++++++++-
+ fs/notify/fanotify/fanotify.c      |  38 ++++++++-
+ fs/notify/fanotify/fanotify.h      |  18 +++++
+ fs/notify/fanotify/fanotify_user.c |  86 +++++++++++++++++----
+ fs/notify/fdinfo.c                 |   5 ++
+ fs/notify/fsnotify.c               |  47 +++++++++--
+ fs/notify/fsnotify.h               |  11 +++
+ fs/notify/mark.c                   |  14 +++-
+ fs/pnode.c                         |   4 +-
+ include/linux/fanotify.h           |  12 ++-
+ include/linux/fsnotify.h           |  25 ++++++
+ include/linux/fsnotify_backend.h   |  43 ++++++++++-
+ include/uapi/linux/fanotify.h      |  11 +++
+ security/selinux/hooks.c           |   4 +
+ 15 files changed, 428 insertions(+), 36 deletions(-)
+
+-- 
+2.47.1
+
 
