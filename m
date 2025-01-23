@@ -1,116 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-39927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CACCA1A1B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 11:16:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAB8A1A234
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 11:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0309E188C84E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 10:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2664216D38E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 10:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9056220D4FD;
-	Thu, 23 Jan 2025 10:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A708620E001;
+	Thu, 23 Jan 2025 10:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ia+SSfkS"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="U3V3zBmQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4354D194A74
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 10:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758EE20D516
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 10:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737627399; cv=none; b=FmUTHjksktnkXlll25qZOoPrJyXOVGdb5sfiEa8DwQMLjIbtClWD1tyz225DeWT7VfP8wegZbaNTHQoT4wAIFyvUFfFbyg5nZw1cnZ1SH8rIJGAQQiqjnY+tVzCloHi9H4NZnHL4zVzIMw7++3y+OM7nHrY/aeDauKpO6lKhA6Q=
+	t=1737629521; cv=none; b=KW6TqDpaKVys/ssibM81sEYVk+Cw5VObdEzLMOA4u1IEtIC9y0rcB5UsSGhuY0nJg+joRpcnkv+/0yc9cSHEkALVwiX17hH/d7j78gSuJF/LoYhLYNvChl2UYgpHvOOfhD5xE25jzMcXgpsTCFkXd33ZAE0XWqZSed5ZcQwkQKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737627399; c=relaxed/simple;
-	bh=oyiBUXpxwjadGkH/BfywnZJ42SK5qUCKgXDrhpe47d0=;
+	s=arc-20240116; t=1737629521; c=relaxed/simple;
+	bh=64ZBKi3fVrhSq4jQLlJiPHRsTHqirJcl7b5Uyt/7Vj8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k+R3/v8eQgcGCgY+WqBsPrzoEJwnRbJTAH37PgHFaOzg5dMromyhgTUkFaTGuAH7vkMr5JTNwGzu6lH4IfC3tRrFgEkwak0tAwGX+gR1g6Yq72yZXZK+ZEp7wW3SAsaQmVyTRqxhddolmOIJbRZ7m9+ksiJ7Pk+4ZKoepAdTh+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ia+SSfkS; arc=none smtp.client-ip=209.85.222.171
+	 To:Cc:Content-Type; b=hpHrPWm+iSOgH9ar2gKU6psA9Dvekjkl+7GkVerszmqoLHvWE9VMcvc2S6vu5MINtoSK3B3Mhe3e1mlG7GrlkX2ZmLT5BkmHt/HtFi4kv/Su/7NTz+sV2IkKxMZPSkBl0kQe8x/0+goQKrYHNjaxYePZmcNPyjYODkU+aCU6Zhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=U3V3zBmQ; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b9ad0e84e6so83112385a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 02:16:34 -0800 (PST)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-467a3f1e667so4561201cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 02:51:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1737627394; x=1738232194; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1737629518; x=1738234318; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fNIhMFoevwrK3tsrVxzp/SBrpbQ2kdIaXlVM8sgTWOc=;
-        b=ia+SSfkSkZOjrhhBnwe2bhsTYVef4yPPzlNxbMTuKOGTXM2eOhIOUz6pC3XznPw5EI
-         e11u1PjoIuoLWO3ETKqQnjQ+HbRKEG5nvOBapTLYLOWWdMxpwBi9sVa9YQd8q9Njwsld
-         z/9QePPRkP5uDKe2GjKXwAKVMaZp16Q5DSA28=
+        bh=64ZBKi3fVrhSq4jQLlJiPHRsTHqirJcl7b5Uyt/7Vj8=;
+        b=U3V3zBmQHOTOpVC7or+WO2kDmdiy1umbmtyf9HzbO9ZB3abrNB9/u9geByO9JgSc2b
+         zF7iE4v41JOvOfTkwMpBJDHshs7W+3h0P9qz634hVaxkzP08wB9Q60hGe66gvDlmPDV6
+         nL93y/R9E+77hrxXFDiuOmzAIp1rzsH6/LRG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737627394; x=1738232194;
+        d=1e100.net; s=20230601; t=1737629518; x=1738234318;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fNIhMFoevwrK3tsrVxzp/SBrpbQ2kdIaXlVM8sgTWOc=;
-        b=Gu80bsa14o6O1gJ89rHkK83mURY+hDBZELGaS44vfkjvb99N7nsLqidIOp8Igr3brF
-         KfioVuq0NowAZ7UC1+4hocLLXjeCnjDFUmqc1Ig3umVzsCM/U23dRhp//3h7jkUEZaUp
-         tpsJ2ylZ8ebZQaOD4e7whRxBrzY6zCMIuzBJwcfiW42YbHMnjNrecCdEUp4Eao0coNtD
-         en/CkJtZmi9NEAxd4SaDHBt+nSmxBlxNiVwmNxK5TsZjfDyH0JJgG2//q2tAXRiooycz
-         gJR4HHAF0VXYTzH63kh37NNYXvaxbU4D1fqMkXVDN+UU6614hfSMRPjNZdBZL65ba1Bz
-         n6pA==
-X-Gm-Message-State: AOJu0YxUZsnOuJYXUdIltTJ+Eq2Q65UhYEj0ImMx25bFlIa6Omr8G5xH
-	pL7sZVLcQnfKKCZx6k2W1vl6MPvZmWJtDTHVx4kL9gah4DClF8sh34yKJvRRbXRtPCVJEk0lItt
-	8dBhakGT0uHnnogaRYK/lj5SowiefPJ7KrOUPVcTllbQJK8isbfw=
-X-Gm-Gg: ASbGncvAVPz6HGxJgKnHt3ANVcgwtn7FUHct0CAB+ZpYMiEooqeiqY/CTcWn+1MIjrC
-	Q54V9PUPVQr7m/YUx8YvPmm7uy1oql+AMBy4d4P+CrrUsc+YwSYrWwDSCLQe4
-X-Google-Smtp-Source: AGHT+IFpOeSgdOsTAg8qk2Xyp8BnlDFdbzPPQVcj9H3xQcRTgah8/Vc0cMMPvsIqYwGeEOxUg1B5MDY2jP8J6m+dBEI=
-X-Received: by 2002:a05:622a:1314:b0:467:79b4:a103 with SMTP id
- d75a77b69052e-46e12bc61c8mr343367921cf.51.1737627393946; Thu, 23 Jan 2025
- 02:16:33 -0800 (PST)
+        bh=64ZBKi3fVrhSq4jQLlJiPHRsTHqirJcl7b5Uyt/7Vj8=;
+        b=bGXyezcpHoH2j9crXekb2Zk9jhcaa4XsGE4+c5vAOfBc/CRY63KikN7HuGd6Vwo5lR
+         sihQ/EICHqwPVZDj5v5ce3Alz1eweGl3ABAj1ewEaA122Mthk1hv2+L93RAVpivdXwOY
+         5OB3ZtqUllpO0cBgdZLKnUhljQVauxA1WermqDV3WiJRedyMvIfRvEKYQ//j6RE9rPU1
+         hyVaNHdQuQDv7cCIWYA9nWwz0lfS7YfN44VejqZ98lAKInnmEPkXa3faLDG+DfyGdFQ0
+         YNztnM2QRfFx4g8aOmcVoaw0LMuINK/AAhsn234BlY7e175v1LDwZyIAePdxmCrLXJxe
+         DmNg==
+X-Gm-Message-State: AOJu0Yy9VfpVONrOHnD50jVFKFdRLTeOlYGQOIY9m4b8mMxztGby+rqu
+	9+IM5ZZ4wT89vj4hMkAlUOODlc5RJVf4K8xbv1lkkPDr6ECBHG17Gl/FWbRXPQy8VScZ/ktrJWs
+	yDu0VYgoMtOAN8UBWhiuU4W7FgqZZtmj1Se44/Q==
+X-Gm-Gg: ASbGncvFSyisJwD3eyKjlYSHk81mUjiCZfd2VDa86eRE5/Y1ToeiWTnUnOphQd3bsO5
+	vVYww8zBTrF0lW6yOVlF88pUcLsA7NyHGDJdoEvjoy42VO7RuRvwlTF0I8ldh
+X-Google-Smtp-Source: AGHT+IFCQv++QsFYdqvxqu76Xx1xUMCKFnqfO8lf/2kvforDl+fXpZU9BR8rgm0yfLlAmV0bkMzjZHDetx/fmDmECiM=
+X-Received: by 2002:a05:622a:1986:b0:467:76cc:622d with SMTP id
+ d75a77b69052e-46e12a1ca9amr403239251cf.11.1737629518280; Thu, 23 Jan 2025
+ 02:51:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250119053956.GX1977892@ZenIV> <CAJfpegtxKLYe_-mkv31Ww_PD984YZyPsDuwS=46gbmEKq4-5yg@mail.gmail.com>
- <20250123020327.GB1977892@ZenIV>
-In-Reply-To: <20250123020327.GB1977892@ZenIV>
+References: <20250123014511.GA1962481@ZenIV> <20250123014643.1964371-1-viro@zeniv.linux.org.uk>
+ <20250123014643.1964371-14-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250123014643.1964371-14-viro@zeniv.linux.org.uk>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 23 Jan 2025 11:16:23 +0100
-X-Gm-Features: AbW1kvaXFT3Wr5d48yv2WGM69Plbgk2Wfl2ZmzSHgQGYv-yu0kbD_PJ50Fss8Tk
-Message-ID: <CAJfpeguNxcJo1J9UMa_h=PM-fUDdeBUo0QeTUPyPxxXgHJqB-g@mail.gmail.com>
-Subject: Re: [RFC] EOPENSTALE handling in path_openat()
+Date: Thu, 23 Jan 2025 11:51:47 +0100
+X-Gm-Features: AbW1kvYw7DfXtx9K2u0kuT28cS6RFX0PZCipXj87ydRxCQYYo5Hopzm-X6v7khg
+Message-ID: <CAJfpegvCUt3uUbbe4Y_-OHUYxP1xdgEE7F+3ecNFU-o0wh_aUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 14/20] fuse_dentry_revalidate(): use stable parent
+ inode and name passed by caller
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
+	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, 
+	linux-nfs@vger.kernel.org, torvalds@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 23 Jan 2025 at 03:03, Al Viro <viro@zeniv.linux.org.uk> wrote:
-
-> What's the point of re-walking the same trajectory in dcache again
-> and why would it yield something different this time around?
-
-Nfs4 skips revalidate on last component and returns EOPENSTALE from
-its ->open() if it turned out to be wrong.  All components leading up
-to that were revalidated and the invalid dentry dropped, so what's
-really needed is just redoing the last component.
-
-There was an optimization which tried to do this bug eventually got
-removed because it was buggy (fac7d1917dfd ("fix EOPENSTALE bug in
-do_last()")).   That leaves the choice of redoing the cached lookup
-(which should succeed again) or starting from scratch.  I see no point
-in doing the latter, although the rarity of this event probably means
-that no one would ever notice the difference.
-
-> IDGI.  We *can't* get to open callback without having already dealt
-> with leaving RCU mode - any chance of having walked into the wrong
-> place due to lack of locking has already been excluded when we'd
-> successfully left RCU mode; otherwise we would've gotten to that
-> check with error already equal to -ECHILD.
-
-Right.  The point is to not do LOOKUP_REVALIDATE unless we really need
-to.   Otherwise EOPENSTALE would just be equivalent to ESTALE.
-
-Thanks,
-Miklos
-
-
-
+On Thu, 23 Jan 2025 at 02:46, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> What sequence of events do you have in mind?
+> No need to mess with dget_parent() for the former; for the latter we really should
+> not rely upon ->d_name.name remaining stable - it's a real-life UAF.
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
 
