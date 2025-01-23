@@ -1,100 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-39885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC74CA19B98
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:51:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57376A19BD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 029A116B5D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2025 23:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D2A188AC0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 00:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16181CAA94;
-	Wed, 22 Jan 2025 23:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E921F46B5;
+	Thu, 23 Jan 2025 00:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ll0q/DmU"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="btnU79mn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95D01CAA86
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 23:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AE9C2C8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 00:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737589901; cv=none; b=ZI9ZtGO/MRCDsWp/BVSHkoar7JtQXOu38oZKXzz3KNk/4DZx5WOAY/7l/c7IJHca/4lR9DCx45KOZdoPSJTBH+TYgjTjceEfHkqpkqD9uWehMgxkF9tBIHs43esKrooeEUx+AjFHSo/MdMl9J/B6TjLkaavGbefvzmDFRXsYp8s=
+	t=1737592476; cv=none; b=imXcVx1xIk/yKXcZyGfx6w6JcPe8ECLbTunGL8UOXKgUe/vKvzyiUkr2+aW9nbTuUjDKdUZzMRDIbut05CKMB8EdHljWq+A2AgxP5w0iqBbZaZuaDIdgqRyKl0GrMr1CWRjKKb7w9kjyo35tILgaQRAtFJD1matqMMmggSx1kPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737589901; c=relaxed/simple;
-	bh=eGyA3rqoqd93cwyl2S8laa78snBew5qe12qSM3/if9I=;
+	s=arc-20240116; t=1737592476; c=relaxed/simple;
+	bh=bknF+F6hJjkpcpiprBKum1f0ewgxp6jtN6VBf5aWc4w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpOUvnOWpErf+/VyGn5tXdp6AcczGYJ4ID8VPHjSjkegVJTuZ8OQ38CQgmrJcyY/H+Vx8QFWq1ctVOe+zEkb2lp5dqCK8BJaBn+Oae83NQQ/DU8o/y4EA2aQOZ4tnli39GN3WaIM9EqWovwZeW40oFb/7lkuSCcH39wDh1o6+Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ll0q/DmU; arc=none smtp.client-ip=209.85.214.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDXrNx52j8wlExDIYjWrX3mgRP6MIARz7cgmVN4h1dGPeAmm0zEtIcjgCfJZLlYH9EeEWR5qj9RtzvIr2cd6A+HhDdVpZHHCx0sZTv3n9B/pSRqyp1lwvloEfP5i9gALVyL5wQyNLTNwIPCRjJhL9SWFYQ+Xj/qaj83UZVVSFdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=btnU79mn; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21654fdd5daso4015215ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 15:51:39 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2eec9b3a1bbso556680a91.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 16:34:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1737589899; x=1738194699; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1737592474; x=1738197274; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CR+WSCo7rNY6An/Jr/D/lBMugrGIQSBj95/AQbGzEws=;
-        b=ll0q/DmUqAwQgzmwylfUOP15kXQOJGX9txIC/fk7vIBACtzNT1z7Hh0OM92fSsL+O+
-         MisJcySLzV7gV/HXa7Ohts94n2u5SU6G8Ld3+jUkKn9bI/YPiZb8F7/mQ4w9ZfRJhlKp
-         zUcyZSE8und3UUmhXtcknXtA6zVEnz5GFzJkuIic4+IZ3KOpdyq4VxwDLfbIj8Nt69a0
-         CUPtas/TDfHZXfl0wGLbr5N2NHC/WZE4M1Bfp+DfCFgZ3GBEQ7v+UllyB+/9aK8M2W64
-         /X5gmlvzTTxh/Zfs/fY5GLJnE1HZ15l2HYkgNjo4HGsu8Ie1x9ar7HrWSP/y36wWZTET
-         papw==
+        bh=dusBtIDb1zHz9mahnqvDoTZ2ySOe70WADNygx/H3Yww=;
+        b=btnU79mnSEmk7ppNSwc5kkEEVa1aw1LwA9i7MrWK9JWGBmZl9NPtR2OHgQ3c5ZdXxN
+         vk64MJEwmZ/oCWTazoYaRY7oUQ/fdXA3FlBPX+vKVWXku9188+2+dBS1w79pDCYARRz9
+         lo9sejp7MaH1nc8ZH9IOWUuJJzBBsTS7+wrETbnB+NDdsGQArQQFll4lomPLNEEA0DVT
+         lR7Rdng2ZOACfLBpzWP2dj9TLl58BIUy/xzNb5iJdwSElVj8fG3t2+NcvihM3J7uhhDJ
+         n3IIDwOI+zxIP/cnu6U0q3sYQynkNK1fc9msX9QoQJ1kW+ghJx2CBTIiArk4PZYVpflr
+         21mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737589899; x=1738194699;
+        d=1e100.net; s=20230601; t=1737592474; x=1738197274;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CR+WSCo7rNY6An/Jr/D/lBMugrGIQSBj95/AQbGzEws=;
-        b=Zn9wKqVFpod+ev1Ec4WHaIXll2rVmSQb4UFlHNvqW5kmTs012qIx0DEmMdejQMuxXK
-         1yLcC5wifcgOLHVP1iXNpT7RF3zi7fQK6zPa3LFJEOec4Dm/3n59M2EfkHM7sNaePcNG
-         fAx0DBaqVa4eygDDilLVR2lmHdDKAR7QXYXIYTa2yebNjdyivIqh9eTW6PjKWWIg5pzB
-         Rf95hWf2JLRHRmrSGcNbke5+Hi5FMRnnqEkiAaN9ADQaOwmW+ucS3Xwf8LeK+IC1dCID
-         OaDTbvPZSzpt839Kr3ySzAuaDpZ5qy3+oBn++dDGXhcie1ZESznHDEtPBss2j/CEYlPJ
-         abEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdAE/rzFJCe/lQv1OWGGPJxrosTVDc2efl3uWAax/bNVMoZsMhNyG68CxJVplUq1856KtenOVP0Wk10h/K@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ3fB1s3nwkpYggk8ZPAAyhxQcP/vqgRgt99QOyQ5dGKgRQ65k
-	lf+gQTuVRI6MOG73qdkGLTH3RM/ltWt1xPF60gjs2iu1DLHs7Woc1uY98Vq1ePM=
-X-Gm-Gg: ASbGncvkTwiLZd6W/l7/plFKdWSbLbPNBkpRdNGAARw5iAayxshlUdybEt+uMowM1qf
-	Dac2c5TanZuI3Cse0G6FElbnzLG3xOJDy9c/D/dNyw9KZweDbbVCSrRDGGbPavnGInoSEg8oQQQ
-	t70gol0jQGpbqYz5iwUMHWfAOYpJw1Rluxikj6+WLQobLUYCSd08RgZ6QUMMiabNs+YrccuxPp2
-	0LYGMW95U3uM0GiI0a88agBBllbxWwH1PIQv6uZ3F83DQ5nfrpSW0zBqFJFwK3HocNNs2P8Jivh
-	G+WcbH7oAHJkcY0TTLPwQiagRQqkmY5uxjuiPwI0KRgAeQ==
-X-Google-Smtp-Source: AGHT+IHaMy+6xBIMYG0uehZ3fvKU97NG0GIFdN8l4dmBBBi9bUHzdTceyQ6RVgjQiPgM5S1jdX6YCA==
-X-Received: by 2002:a17:902:ce0c:b0:21c:e34:c8c3 with SMTP id d9443c01a7336-21c35540560mr416546775ad.24.1737589898928;
-        Wed, 22 Jan 2025 15:51:38 -0800 (PST)
+        bh=dusBtIDb1zHz9mahnqvDoTZ2ySOe70WADNygx/H3Yww=;
+        b=BPVuPi4oeqsoetyXfgePmHEf8xgPl0NUyqurdeivz60ChaVnB561D+7TTAI/+iWK6m
+         UjHUsKYf3KGpQ2IjGxj9AKlX+yamblqKWOdKtLGtloBE+HmpTC3oe/GrGuZ1SNNGbE2o
+         JkmlWc9+ixds4EMSIVplgcTDWNIFWDjfDqt9YHeNArdf3w3IUa8ZQsGFeRcA+RDPeKVi
+         1kjFdTMG1MWQbkKOeqKP0FlBd0y9/sSQ1dl3TRYqFiSegDWMAmf7p6d1CQzyfFAGz9Ba
+         No8sVxk1IfC6NE+lcy2JZ3R01DBGSGiRYtqbfdYef93xrb3XDfkW9vRbQysShjCO2f5e
+         2V1Q==
+X-Gm-Message-State: AOJu0YwOB1BbXICP0C0HywFMozEwtKjVkSNSZdtn+5/h1oGDqr5U/L7y
+	/1ZrQ2dXZMEYgxbk9p81TG9F7QOg8ZPLbFbvK6MuZX0lQT+hJGKEaT2YcxQwRqs=
+X-Gm-Gg: ASbGnctmEUAWpOa2r5vvCchU+D4cDeRX9MRMWhEyJwMcyvnEtnCxNQ6hNuVM11qyAtD
+	Dvzf4pSbgZucnbVEbhM1Gld6aUC2wahQmqE8iQfNZcZtgEEEb9rWrBxac8ZqObHWTvMbdTZngz5
+	q6dt4vuscUAzDSdrDtTOh/V3Ed2Fw/H399H+ezFStX1FhEmzUfU0wnRFJFhQQEt70fXK2RQ3zHy
+	oqbINQX46ojvyqG8Xkjypy5cGxkO7iB9PNbs8p43yQSsYuUlKpXesaDrzfeoXfjVd132MH039PY
+	fp8qSFO9EEVdhG1I9u0YqXLRz9DKkBGcimU=
+X-Google-Smtp-Source: AGHT+IG+FhwAy1JK5rfDJ9EuiJEFKorMvJUyqFqgU1WgQXv/IXKf5RiyuXR/fbKToKNgkcmu8ldDYg==
+X-Received: by 2002:a05:6a00:be0:b0:72f:59d8:43ed with SMTP id d2e1a72fcca58-72f59d84743mr10338020b3a.14.1737592473779;
+        Wed, 22 Jan 2025 16:34:33 -0800 (PST)
 Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2d42cb87sm100450515ad.254.2025.01.22.15.51.38
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72daba535casm11789678b3a.151.2025.01.22.16.34.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2025 15:51:38 -0800 (PST)
+        Wed, 22 Jan 2025 16:34:33 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.98)
 	(envelope-from <david@fromorbit.com>)
-	id 1takVT-00000009HMD-2x8v;
-	Thu, 23 Jan 2025 10:51:35 +1100
-Date: Thu, 23 Jan 2025 10:51:35 +1100
+	id 1talAz-00000009IFd-3WFC;
+	Thu, 23 Jan 2025 11:34:29 +1100
+Date: Thu, 23 Jan 2025 11:34:29 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
-	brauner@kernel.org, cem@kernel.org, dchinner@redhat.com,
-	ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
-Message-ID: <Z5GEh0XA3Nt_4K2f@dread.disaster.area>
-References: <Z1C9IfLgB_jDCF18@dread.disaster.area>
- <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
- <Z1IX2dFida3coOxe@dread.disaster.area>
- <20241212013433.GC6678@frogsfrogsfrogs>
- <Z4Xq6WuQpVOU7BmS@dread.disaster.area>
- <20250114235726.GA3566461@frogsfrogsfrogs>
- <20250116065225.GA25695@lst.de>
- <20250117184934.GI1611770@frogsfrogsfrogs>
- <20250122064247.GA31374@lst.de>
- <0c0753fb-8a35-42a6-8698-b141b1e561ca@oracle.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	lsf-pc <lsf-pc@lists.linux-foundation.org>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] vfs write barriers
+Message-ID: <Z5GOlVQpN47LLmo1@dread.disaster.area>
+References: <CAOQ4uxj00D_fP3nRUBjAry6vwUCNjYuUpCZg2Uc8hwMk6n+2HA@mail.gmail.com>
+ <Z41rfVwqp6mmgOt9@dread.disaster.area>
+ <CAOQ4uxgYERCmPrTXjuM4Q3HdWK_HxuOkkpAEnesDHCAD=9fsOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,73 +95,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0c0753fb-8a35-42a6-8698-b141b1e561ca@oracle.com>
+In-Reply-To: <CAOQ4uxgYERCmPrTXjuM4Q3HdWK_HxuOkkpAEnesDHCAD=9fsOg@mail.gmail.com>
 
-On Wed, Jan 22, 2025 at 10:45:34AM +0000, John Garry wrote:
-> On 22/01/2025 06:42, Christoph Hellwig wrote:
-> > On Fri, Jan 17, 2025 at 10:49:34AM -0800, Darrick J. Wong wrote:
-> > > The trouble is that the br_startoff attribute of cow staging mappings
-> > > aren't persisted on disk anywhere, which is why exchange-range can't
-> > > handle the cow fork.  You could open an O_TMPFILE and swap between the
-> > > two files, though that gets expensive per-io unless you're willing to
-> > > stash that temp file somewhere.
-> > 
-> > Needing another inode is better than trying to steal ranges from the
-> > actual inode we're operating on.  But we might just need a different
-> > kind of COW staging for that.
-> > 
-> > > 
-> > > At this point I think we should slap the usual EXPERIMENTAL warning on
-> > > atomic writes through xfs and let John land the simplest multi-fsblock
-> > > untorn write support, which only handles the corner case where all the
-> > > stars are <cough> aligned; and then make an exchange-range prototype
-> > > and/or all the other forcealign stuff.
-> > 
-> > That is the worst of all possible outcomes.  Combing up with an
-> > atomic API that fails for random reasons only on aged file systems
-> > is literally the worst thing we can do.  NAK.
-> > 
-> > 
+On Mon, Jan 20, 2025 at 12:41:33PM +0100, Amir Goldstein wrote:
+> For the HSM prototype, we track changes to a filesystem during
+> a given time period by handling pre-modify vfs events and recording
+> the file handles of changed objects.
 > 
-> I did my own quick PoC to use CoW for misaligned blocks atomic writes
-> fallback.
+> sb_write_barrier(sb) provides an (internal so far) vfs API to wait
+> for in-flight syscalls that can be still modifying user visible in-core
+> data/metadata, without blocking new syscalls.
+
+Yes, I get this part. What I don't understand is how it is in any
+way useful....
+
+> The method described in the HSM prototype [3] uses this API
+> to persist the state that all the changes until time T were "observed".
 > 
-> I am finding that the block allocator is often giving misaligned blocks wrt
-> atomic write length, like this:
+> > This proposed write barrier does not seem capable of providing any
+> > sort of physical data or metadata/data write ordering guarantees, so
+> > I'm a bit lost in how it can be used to provide reliable "crash
+> > consistent change tracking" when there is no relationship between
+> > the data/metadata in memory and data/metadata on disk...
+> 
+> That's a good question. A bit hard to explain but I will try.
+> 
+> The short answer is that the vfs write barrier does *not* by itself
+> provide the guarantee for "crash consistent change tracking".
+> 
+> In the prototype, the "crash consistent change tracking" guarantee
+> is provided by the fact that the change records are recorded as
+> as metadata in the same filesystem, prior to the modification and
+> those metadata records are strictly ordered by the filesystem before
+> the actual change.
 
-Of course - I'm pretty sure this needs force-align to ensure that
-the large allocated extent is aligned to file offset and hardware
-atomic write alignment constraints....
+This doesn't make any sense to me - you seem to be making
+assumptions that I know an awful lot about how your HSM prototype
+works.
 
-> Since we are not considering forcealign ATM, can we still consider some
-> other alignment hint to the block allocator? It could be similar to how
-> stripe alignment is handled.
+What's in a change record, when does it get written, what is it's
+persistence semantics, what filesystem metadata is it being written
+to? how does this relate to the actual dirty data that is
+resident in the page cache that hasn't been written to stable
+storage yet? Is there a another change record to say the data the
+first change record tracks has been written to persistent storage?
 
-Perhaps we should finish off the the remaining bits needed to make
-force-align work everywhere before going any further?
+> The vfs write barrier allows to partition the change tracking records
+> into overlapping time periods in a way that allows the *consumer* of
+> the changes to consume the changes in a "crash consistent manner",
+> because:
 
-> Some other thoughts:
-> - I am not sure what atomic write unit max we would now use.
+> 1. All the in-core changes recorded before the barrier are fully
+>     observable after the barrier
+> 2. All the in-core changes that started after the barrier, will be recorded
+>     for the future change query
+> 
+> I would love to discuss the merits and pitfalls of this method, but the
+> main thing I wanted to get feedback on is whether anyone finds the
+> described vfs API useful for anything other that the change tracking
+> system that I described.
 
-What statx exposes should be the size/alignment for hardware offload
-to take place (i.e. no change), regardless of what the filesystem
-can do software offloads for. i.e. like statx->stx_blksize is the
-"preferred block size for efficient IO", the atomic write unit
-information is the "preferred atomic write size and alignment for
-efficient IO", not the maximum sizes supported...
-
-> - Anything written back with CoW/exchange range will need FUA to ensure that
-> the write is fully persisted.
-
-I don't think so. The journal commit for the exchange range
-operation will issue a cache flush before the journal IO is
-submitted. that will make the new data stable before the first
-xchgrange transaction becomes stable.
-
-Hence we get the correct data/metadata ordering on stable storage
-simply by doing the exchange-range operation at data IO completion.
-This the same data/metadata ordering semantics that unwritten extent
-conversion is based on....
+This seems like a very specialised niche use case right now, but I
+still have no clear idea how the application using this proposed
+write barrier actually works to acheive the stated functionality
+this feature provides it with...
 
 -Dave.
 -- 
