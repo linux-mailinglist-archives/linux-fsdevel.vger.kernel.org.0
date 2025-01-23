@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-39916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F9FA19C83
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 02:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B891A19C70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 02:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD385188E38D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA50188DF2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5249B170A1A;
-	Thu, 23 Jan 2025 01:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D001474A5;
+	Thu, 23 Jan 2025 01:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Wsivcfnt"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="N2pxPUrh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD371E871;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEDA1E884;
 	Thu, 23 Jan 2025 01:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737596809; cv=none; b=LxiSQm0tF5O0REO96MOReKq4uoNM2uvC8SB3Fw7Vima4JdfEVPQdMT4KHkr9EINlNV7eLxgs5stnq0CfmNobKQXaXUgQe8uC4mb1XOSqDYuK+bNI+5dDIsq3gmSeA7TWtgeTny6eMpDPENUu8gw3fHDKCPNgrlIweBrpag7QHR4=
+	t=1737596808; cv=none; b=ago+lGcN+/itZ72Pv2k8LgBkAed/P+0S+IJLVKjv5l/j/TTJAj6h6qqtcBfqtG+uLC/Jq5gb82l/f+g344PnYQkCGA0+ly8T/a/RV7xQemOiXXp43uKzbr2+4OwVp9THMa4TiB+HQr5K5+PXsEvcq0CC0pqaaA8aNGK+F+D4HmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737596809; c=relaxed/simple;
-	bh=OvsCYac6VREQ9DwhL1y7feV26RFKLeShf5vlrlSidkk=;
+	s=arc-20240116; t=1737596808; c=relaxed/simple;
+	bh=ohOYnw6tlRfdgicbOWnY1f5MqOkoI0fvvDz1mVRdz/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Luj8RCo+zov5x6CIg3cjyGkDipbSLI1F8hE0TTPaDo3P7Jh2GQebg6yGlUHZAL/S/mgMsiTvULXp6X6S5Jt0DpbFStRxUi1DR2eio/GED+jHaC86eX3BFqaIThZG8c7GeLD2lqfvS3Ci0Z2vNAxy3qGJfQ9jjJmeT8CJBZxiCBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Wsivcfnt; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=J6HDvSPq0jo4HAEygb+xC9hZhkrVWPkAfrrcIjmPMDb5LGW3IYlLDaDbjKy4iXsYvXLEahbvvr58N1ThNcoAGGqnlQiv+T8RWUEAXM310CdNp1lJXd/bS2LRzol7fCg4TjSkBMYcvNjhUauhExGK+8X5FpuYIvXT5+fnbvUmH3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=N2pxPUrh; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ct/u613PzDWPcdGjSLq5vJ5UW9GDE+E/FU7hcfHVMnI=; b=WsivcfntNw5OS0CZEs0d7U0aJn
-	SqZJ1INki+mnIFjGRm8wsxFPy9F4Rj3YIxO6HwpF51/tNTUJaRRZkeX0SrnmICW+PpwxKUWmptvAg
-	MYXkj8sSZhwIUN2ufBeySQpS0mN+oF+e4eIXJG3W1b0l5eMOfGDo9euLO69V/63BLBKmHp9xgodc/
-	OUzBtLcEykvRO61haPWGmDhU0W8BSCtfJnmrmzJ4qHgLJpZst3N/UTDFo2QVFJqRKWa5ZtYw45LbS
-	Pa58aajZuor+GnBJaRKbeIGieuU9wiLuXJd2FMMrX4GzKfvwkINk4Ypi8YwRtEF4uxyceUKMwvuo3
-	LY68910A==;
+	bh=cXASIXjSdWp91MQCljYZ9undpY/fYnrkMTrfy8G1o+U=; b=N2pxPUrhKiGj6lA+ALaP5oVcxm
+	0VAkGjsqOdX+CFD/k7PgGeeznYEy/2MSFbmHuqzAIsXJgWJSENnM7H7zIs2oP0rz6eQBSHQ485o40
+	1Gjah+7+qVBzpaNfaG68MPqJPR6KUPIebo9RIBKw5CEGpCib9jIgPeGTxVOmcMS//RaYYJUVyH2wR
+	VnSNqLRmbjWzRfP1fTmvUTFiWh7z0kT9PEpDPHEUtSbd1IULNeSE6ag5H1m/fXPGLZTa3uGrvtH4u
+	6G8uLlW7bDP1ZeuCtZHKpcAaNnI+eXDjPzacnWnWZ3wQ8UIk8oPUgazQzF/rIy1SoH4ZNbcOsAt83
+	WAGjVQDQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tamIu-00000008F2Y-3DI4;
+	id 1tamIu-00000008F2l-3sgp;
 	Thu, 23 Jan 2025 01:46:44 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -57,9 +57,9 @@ Cc: agruenba@redhat.com,
 	linux-nfs@vger.kernel.org,
 	miklos@szeredi.hu,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 10/20] ceph_d_revalidate(): propagate stable name down into request encoding
-Date: Thu, 23 Jan 2025 01:46:33 +0000
-Message-ID: <20250123014643.1964371-10-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 11/20] fscrypt_d_revalidate(): use stable parent inode passed by caller
+Date: Thu, 23 Jan 2025 01:46:34 +0000
+Message-ID: <20250123014643.1964371-11-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250123014643.1964371-1-viro@zeniv.linux.org.uk>
 References: <20250123014511.GA1962481@ZenIV>
@@ -73,83 +73,68 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Currently get_fscrypt_altname() requires ->r_dentry->d_name to be stable
-and it gets that in almost all cases.  The only exception is ->d_revalidate(),
-where we have a stable name, but it's passed separately - dentry->d_name
-is not stable there.
-
-Propagate it down to get_fscrypt_altname() as a new field of struct
-ceph_mds_request - ->r_dname, to be used instead ->r_dentry->d_name
-when non-NULL.
+The only thing it's using is parent directory inode and we are already
+given a stable reference to that - no need to bother with boilerplate.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ceph/dir.c        | 2 ++
- fs/ceph/mds_client.c | 9 ++++++---
- fs/ceph/mds_client.h | 2 ++
- 3 files changed, 10 insertions(+), 3 deletions(-)
+ fs/crypto/fname.c | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index dc5f55bebad7..62e99e65250d 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1998,6 +1998,8 @@ static int ceph_d_revalidate(struct inode *dir, const struct qstr *name,
- 			req->r_parent = dir;
- 			ihold(dir);
- 
-+			req->r_dname = name;
-+
- 			mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
- 			if (ceph_security_xattr_wanted(dir))
- 				mask |= CEPH_CAP_XATTR_SHARED;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 219a2cc2bf3c..3b766b984713 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2621,6 +2621,7 @@ static u8 *get_fscrypt_altname(const struct ceph_mds_request *req, u32 *plen)
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 389f5b2bf63b..010f9c0a4c2f 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -574,12 +574,10 @@ EXPORT_SYMBOL_GPL(fscrypt_fname_siphash);
+  * Validate dentries in encrypted directories to make sure we aren't potentially
+  * caching stale dentries after a key has been added.
+  */
+-int fscrypt_d_revalidate(struct inode *parent_dir, const struct qstr *name,
++int fscrypt_d_revalidate(struct inode *dir, const struct qstr *name,
+ 			 struct dentry *dentry, unsigned int flags)
  {
- 	struct inode *dir = req->r_parent;
- 	struct dentry *dentry = req->r_dentry;
-+	const struct qstr *name = req->r_dname;
- 	u8 *cryptbuf = NULL;
- 	u32 len = 0;
- 	int ret = 0;
-@@ -2641,8 +2642,10 @@ static u8 *get_fscrypt_altname(const struct ceph_mds_request *req, u32 *plen)
- 	if (!fscrypt_has_encryption_key(dir))
- 		goto success;
+-	struct dentry *dir;
+ 	int err;
+-	int valid;
  
--	if (!fscrypt_fname_encrypted_size(dir, dentry->d_name.len, NAME_MAX,
--					  &len)) {
-+	if (!name)
-+		name = &dentry->d_name;
-+
-+	if (!fscrypt_fname_encrypted_size(dir, name->len, NAME_MAX, &len)) {
- 		WARN_ON_ONCE(1);
- 		return ERR_PTR(-ENAMETOOLONG);
- 	}
-@@ -2657,7 +2660,7 @@ static u8 *get_fscrypt_altname(const struct ceph_mds_request *req, u32 *plen)
- 	if (!cryptbuf)
- 		return ERR_PTR(-ENOMEM);
+ 	/*
+ 	 * Plaintext names are always valid, since fscrypt doesn't support
+@@ -592,30 +590,21 @@ int fscrypt_d_revalidate(struct inode *parent_dir, const struct qstr *name,
+ 	/*
+ 	 * No-key name; valid if the directory's key is still unavailable.
+ 	 *
+-	 * Although fscrypt forbids rename() on no-key names, we still must use
+-	 * dget_parent() here rather than use ->d_parent directly.  That's
+-	 * because a corrupted fs image may contain directory hard links, which
+-	 * the VFS handles by moving the directory's dentry tree in the dcache
+-	 * each time ->lookup() finds the directory and it already has a dentry
+-	 * elsewhere.  Thus ->d_parent can be changing, and we must safely grab
+-	 * a reference to some ->d_parent to prevent it from being freed.
++	 * Note in RCU mode we have to bail if we get here -
++	 * fscrypt_get_encryption_info() may block.
+ 	 */
  
--	ret = fscrypt_fname_encrypt(dir, &dentry->d_name, cryptbuf, len);
-+	ret = fscrypt_fname_encrypt(dir, name, cryptbuf, len);
- 	if (ret) {
- 		kfree(cryptbuf);
- 		return ERR_PTR(ret);
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 38bb7e0d2d79..7c9fee9e80d4 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -299,6 +299,8 @@ struct ceph_mds_request {
- 	struct inode *r_target_inode;       /* resulting inode */
- 	struct inode *r_new_inode;	    /* new inode (for creates) */
+ 	if (flags & LOOKUP_RCU)
+ 		return -ECHILD;
  
-+	const struct qstr *r_dname;	    /* stable name (for ->d_revalidate) */
-+
- #define CEPH_MDS_R_DIRECT_IS_HASH	(1) /* r_direct_hash is valid */
- #define CEPH_MDS_R_ABORTED		(2) /* call was aborted */
- #define CEPH_MDS_R_GOT_UNSAFE		(3) /* got an unsafe reply */
+-	dir = dget_parent(dentry);
+ 	/*
+ 	 * Pass allow_unsupported=true, so that files with an unsupported
+ 	 * encryption policy can be deleted.
+ 	 */
+-	err = fscrypt_get_encryption_info(d_inode(dir), true);
+-	valid = !fscrypt_has_encryption_key(d_inode(dir));
+-	dput(dir);
+-
++	err = fscrypt_get_encryption_info(dir, true);
+ 	if (err < 0)
+ 		return err;
+ 
+-	return valid;
++	return !fscrypt_has_encryption_key(dir);
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
 -- 
 2.39.5
 
