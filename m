@@ -1,60 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-39990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F49FA1A97C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 19:19:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADDBA1A99E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 19:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB8616A059
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 18:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71A2188E9F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 18:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74C8170A30;
-	Thu, 23 Jan 2025 18:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D42F1ADC80;
+	Thu, 23 Jan 2025 18:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RPof37F8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CwNzVJyj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC0C16EC19
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 18:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362131ADC6B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 18:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737656339; cv=none; b=cg3O8R0S6Uh2OiPLG7dwSuJpqcc7mRZjfme02+H8tO1WUFJ2giWOHMRiHGhjtgS1CgTcxKxpUp6hYrE4WggBZNwHmV5XL9onEqEOAn1B69sswsr4Ff/jsizrJn5L9c63FE+1XQpjLAXtR27azYEWyw77D4OsxwnK1GJse+BBrbI=
+	t=1737656669; cv=none; b=YmRzrGZJwmKH4tBK8YIybo8ptzE4IHcZ2L9Kn7rz3yiWzY944g7uZ6/jne6dajk/Z4oUiiyzQmRGrKrlgzhBFIM1b7yJJx0YtdxdLOokkCsBVksjkMPuu0pFLDrLLHYy2aHFYqy2Gv6kSdn+HW+gTCjYxdtBWEpbWfHYSNEjnPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737656339; c=relaxed/simple;
-	bh=laOmoopLfj7f3LAWFETRklK/y8kNdSp/jqCjiZNaq7k=;
+	s=arc-20240116; t=1737656669; c=relaxed/simple;
+	bh=3X+Szd815VSNNIJsgs3yntBxmNAVRhZ40UzUIUsT8kg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBl8SG0LvO2vzXpGn+nA0N72RKwzG5fLWofhkRv63PSP8bW6eZPJjaCAMbWAaeOR8BiJJopCRve10WZ1SdQ+saoJQPciBlAYF7xlWpMlvULOVPp+3X4deuZ3RTfzR3HjFJVs1MgMj6+RrVyIefKg1i5D6hIlYkym2VtZpLfxz+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RPof37F8; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=szg+uJZGJDzgS8IkgXg/RsS7yD4etZjEhbfKHe+VyNZMZi5vIuw7hxVd9fpRqBJISOtX73LCfmBIj0Fw65VieoMFbcdx+WIZx4lIbBIcDK9UAhjEF7MbjqfW9CgW4yk3Y2+FpZ69QrVeICLCNCfZg9pjWWyGByC+vwECoCbO3ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CwNzVJyj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dUIhvDzfyx6DZiieDRrmXrYPXvuQKjnVvYWf8/UJhYg=; b=RPof37F8PUWbZ8CLf/8/4///7c
-	fJK5I6gcZR8qFUFYL5fLdOmZ+SDYzOZcURCwvh+9cYMyCEEh0KY9b35Y7buHToqzttGlCOfrOD2q0
-	CBKmSnJs3oaPt0ZjxB+AtDGL9APRVEUk0UwOUDzWJ8B3VP72rJBfCnibT8MN8haig8/PEpb0sdObo
-	KpCV93cXvr+0u78GQUINTQlRZicotvl7cSX7H5UceSk4CvJmYlOzbSif8XKq2L3LHNbjJLYJk5fkG
-	1sh7zuKP39ZQAlisCgsMS5pyE7THkxGdAuLp6be5uE8N8wlIZBiRZ6GyAQxd6rZF782/rC6p1fch5
-	m+7W6NIw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tb1n3-000000092eO-1ti5;
-	Thu, 23 Jan 2025 18:18:53 +0000
-Date: Thu, 23 Jan 2025 18:18:53 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
-Cc: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>,
-	"Saarinen, Jani" <jani.saarinen@intel.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Regression on linux-next (next-20250120)
-Message-ID: <20250123181853.GC1977892@ZenIV>
-References: <SJ1PR11MB6129D7DA59A733AD38E081E3B9E02@SJ1PR11MB6129.namprd11.prod.outlook.com>
+	bh=ntBPn0EcpAEGSOSnRP5O3Iafq8TgV9z+O9aCnXNsGrA=; b=CwNzVJyjLG+zWuM2PXIo5yW1uT
+	oTtFXZF6bJpL9mSAbqkWnYkWz++2+TpPterGMfeLiRr0+2MY7bWUNu7iM9CpE26EGZkj9LUFaKh7q
+	ca1MjlJIWHtmIifKGcvwA+aajugw/sCkAVzuCmCAQM4g3LGo2gy4zoio7fjSbmbXfSjhlcxC6vtJY
+	3UZ4fY/4L5eXTvuRRGBjPUiDZthdk4V7oxliomrXUj+eMF51WCXFZsV0MsVeC+VDBTfEXu0qhkV1k
+	zbmW+RDCCv2YLm+WZ3VRJExhcqsPGQDduoQtC2kZHbtFeRAyMt7bc5oifZx0e2fqZFJFgI+iltHv9
+	cCcj0PYw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tb1sM-00000009xmA-1UGj;
+	Thu, 23 Jan 2025 18:24:22 +0000
+Date: Thu, 23 Jan 2025 18:24:22 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
+	shakeel.butt@linux.dev, jlayton@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 00/12] fuse: support large folios
+Message-ID: <Z5KJVtXwNsLdzLSz@casper.infradead.org>
+References: <20241213221818.322371-1-joannelkoong@gmail.com>
+ <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,21 +62,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6129D7DA59A733AD38E081E3B9E02@SJ1PR11MB6129.namprd11.prod.outlook.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com>
 
-On Thu, Jan 23, 2025 at 03:41:08PM +0000, Borah, Chaitanya Kumar wrote:
-> Hello Al,
-> 
-> Hope you are doing well. I am Chaitanya from the linux graphics team in Intel.
-> 
-> This mail is regarding a regression we are seeing in our CI runs[1] on linux-next repository.
-> 
-> Since the version next-20250120 [2], we are seeing the following regression
+On Wed, Jan 22, 2025 at 03:23:08PM -0800, Joanne Koong wrote:
+> * I'm going to remove the writeback patch (patch 11/12) in this series
+> and resubmit, and leave large folios writeback to be done as a
+> separate future patchset. Getting writeback to work with large folios
+> has a dependency on [1], which unfortunately does not look like it'll
+> be resolved anytime soon. If we cannot remove tmp pages, then we'll
+> likely need to use a different data structure than the rb tree to
+> account for large folios w/ tmp pages. I believe we can still enable
+> large folios overall even without large folios writeback, as even with
+> the inode->i_mapping set to a large folio order range, writeback will
+> still only operate on 4k folios until fgf_set_order() is explicitly
+> set in fuse_write_begin() for the __filemap_get_folio() call.
 
-Ugh...  To narrow the things down, could you see if replacing
-                fsd = kmalloc(sizeof(*fsd), GFP_KERNEL);
-with
-                fsd = kzalloc(sizeof(*fsd), GFP_KERNEL);
-in fs/debugfs/file.c:__debugfs_file_get() affects the test?
+Maybe you already understand this and just expressed yourself badly,
+but what you've said isn't true.
+
+The fgf_set_order() call is about creating large folios during write().
+If instead you do a large read() (or do consecutive read() calls which
+get turned into large readaheads), you'll get large clean folios.
+If you then dirty those folios, we won't split them.  Writeback will
+still see large folios in this case.
+
+It depends on your workload how common a scenario this is.
 
