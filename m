@@ -1,135 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-39888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417F9A19C2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 02:24:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A365BA19C30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 02:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749E77A44F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4E81887C1E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 01:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762101C2BD;
-	Thu, 23 Jan 2025 01:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DCE1C2BD;
+	Thu, 23 Jan 2025 01:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oVIv/CQx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChUPk2yU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E04B1805A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 01:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD45A4A1D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 01:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737595476; cv=none; b=tV7A/tnorc+1OVnTPfzUFc4fPJMVDkIP4kQueFBQCsb6MnVs1ygxCN95F3ovaKdYJzylrL3bVJsgvaBkYmCy1fT8rEC+hZT3DKq5k5PmI0Tul/6E8pePGUl/9/3BW4j6PUVwd41qAkcyGFOvqh9SqQwAM+JYQPck5LcCD07cdoQ=
+	t=1737595687; cv=none; b=U0/gz7VabGkL2uxZgM/A4ptQLBdfGwgaVrefGEf5QXcPjlKxaZT/yGzam8oGwIfNULMmVzoCzGGFqP16Qbnjo+EeSGWbg5vqzBz+VNeFXaSGWXtjHb33kaAwHGns5eLHrmIR3/xwE4dGOGnCxK3WELG1EC4mirqha+vVcctMFjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737595476; c=relaxed/simple;
-	bh=V9uqSNRBgyQX0zzdPjRdJ60HRm0wStI4onI9OmOTI6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqg/RaksPQE/XlsmCQkTE5DlNWRhiR6ViuBv7ydX8pbiYJFmR95KRxlzkussrWmbXV0dl9z0i1/4D91XI2Od0H8cIAb7vSSAQoflm6PmzAOXduqHJ7uXlTyonj7/9NkY/dgISonr++TBMil+JrklMxdgTGusrTIGX705I9SNm0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oVIv/CQx; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1737595467; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=8JOjcv31AzQsNF8SwSAz4bMvJ9ueePL7wgmYiMDSRqc=;
-	b=oVIv/CQxKaPnjBureWo01AFCnMyaswKYhtiWF5rFWiFBZNxIgJcNcoe7dFEoj+yzYGcJUY1JgNIn41gOIe8Ejk9QuVg483bTEUhfSFBw/Iw3i8IuBNKq3owTKf3mA/py4MJ9DdC7W3LnGyFqC8xgojUw0HZdb5ERHg5Lp3cXPI0=
-Received: from 30.221.144.200(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WO9sosD_1737595463 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 23 Jan 2025 09:24:26 +0800
-Message-ID: <ff59b715-efa7-4ede-8f82-313af11c51f2@linux.alibaba.com>
-Date: Thu, 23 Jan 2025 09:24:21 +0800
+	s=arc-20240116; t=1737595687; c=relaxed/simple;
+	bh=/EvZmbqVD2b4ubFmLbs8qdT+8ZMGWUzWPisXDWRux44=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W6//qgAtxYZFknQoDZJ20X0jY2c/lyBotU3I5rskGUAWagV7XbpZPbSA/ROUeU2rjAzUds7zNG1GQp6CJR1tCxfxLKmHJ4UodkK7Diss8BBp+yCWiEysRICFEq+tG97qbMJf8+dJdOPCAjVTpsTPqoNDLs1zunN0ZFb7zZ/DHZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChUPk2yU; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3a0acba5feso559595276.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2025 17:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737595685; x=1738200485; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1SffMDP8hctL8iW83FGsySI3SG3kMmGukXzIy4Yw39A=;
+        b=ChUPk2yUY69CGPvpFm2xlnJse9SXkyQf9Ybr1fYwlTa0HNZvKC+50go85oetjxI2Qb
+         zCfLFtoafIcx680L0uKrv8FkDwXKdIbQ5GFGEnjZlN/y2aHY67z3qP5VXi/vh9Qi4uOu
+         D/ozZfdYHkg4OrkTrkEPyINmbyrQDXiNzypbAmiFBDxM7rIlJEnOi9CDaj/QwEK+xyuu
+         JQILev82OVwyrjioWXOXbSE4PkIO+oOG67h84P4+KcY3jXaPqNtCyiwrN2wtaoWvvhBC
+         z89keCxyfHtDwIwArFim3Iko51kIk4oOBa9yhmEOX/i5Cgxmy5QgJqoSWImb1tbOgmnF
+         mQcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737595685; x=1738200485;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1SffMDP8hctL8iW83FGsySI3SG3kMmGukXzIy4Yw39A=;
+        b=rD1nsjpii1Zn7KwSlWeubtvXvI4Ruih9cK6pQsfmEu+ovP5zlhdxbkrr8RuiNTyYTD
+         RXlhoAvsEHuWHisMwpfGOioi6NirI8FyZMCq5rwUf4aE7MdbJcBcl+H2nbSDiLp3LR9Z
+         Elf5Ej/aVpnTzGn75uTaE2W0nfqMMqqMs1Xdl4No+n0cR5EeP/M2/YHbOZ1Cudh9QHlj
+         iTpcdNnpA7JyINzKRNUEw4tzHYROGLwlTgaCGX0LpaH5sSWkn11846qh+YBNiRSDXASA
+         VG3BSZVSsHGGUgsPg8Vsb+Wsto5dp5sDTkFOYfv3jz9hTB2+aOPWWGntXr0st5BkR/2S
+         AogA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBBDs6/NwaUT5VJabQecM19LEu8mrsC8/CRTwgFIQm3PgHQEBkZ8ryumHT2AeQUQ3vBQ+6uqFB+2kJhwZh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWkkDR52riqfaEdXQluZo72FT08+E7cWrT+NRs09JKbp7Dfytc
+	YjRJZRnJUOhoX6snVSgHaMvqZ36Je9MHL4uXRpAPvqTeqd8Pvh9R
+X-Gm-Gg: ASbGncssusFlZqn5rARCVNkFpFm7n3tlBvNwVAB2NxZZQM7+Xwug2e7pZ2Km5oE6Zuq
+	76kEp0JZX5db8ObdjQ1gO5VVxsVf+jcyMZrDWD1nQU100nO4ULFlEg+vjZFwffuKdQqIyjtvuXo
+	fj1F1ot+Q+m95IEwBwRxG3bqgHBe+LN5zsOzzoO0QQMeShe3tYLrWTIN9d3U4mfYdg6xXIBg8kV
+	3werzXKSOn8mD9+QYKHs8tI/M5ooWlIY6wDf90L3i2Bo/YWBcs3CJcoU1TTv6A6WKKGQjA93+wh
+	cg==
+X-Google-Smtp-Source: AGHT+IHU4A7m6K5Rb9Ias/6XazTAm1cbT+vkHhflLkQv3xYGevH2aFRUn20xSwKvbpUQFBTMF6crvQ==
+X-Received: by 2002:a05:690c:6a04:b0:6ef:4a1f:36b7 with SMTP id 00721157ae682-6f6eb908ed8mr181625447b3.25.1737595684709;
+        Wed, 22 Jan 2025 17:28:04 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:d::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f6e63ab39bsm22319017b3.4.2025.01.22.17.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2025 17:28:04 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com,
+	bernd.schubert@fastmail.fm,
+	willy@infradead.org,
+	jefflexu@linux.alibaba.com,
+	shakeel.butt@linux.dev,
+	jlayton@kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH v4 00/10] fuse: support large folios
+Date: Wed, 22 Jan 2025 17:24:38 -0800
+Message-ID: <20250123012448.2479372-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/12] fuse: support large folios
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, willy@infradead.org,
- shakeel.butt@linux.dev, jlayton@kernel.org, kernel-team@meta.com
-References: <20241213221818.322371-1-joannelkoong@gmail.com>
- <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+This patchset adds support for folios larger than one page size in FUSE.
+This does not yet enable large folios, as that requires one last piece, which
+is for writeback to support large folios. Large folios for writeback will be
+done separately in a future patchset. Please see this [1] for more details, as
+well as benchmarks we can expect from enabling large folios.
 
+[1] https://lore.kernel.org/linux-fsdevel/CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com/ 
 
-On 1/23/25 7:23 AM, Joanne Koong wrote:
-> On Fri, Dec 13, 2024 at 2:23 PM Joanne Koong <joannelkoong@gmail.com> wrote:
->>
->> This patchset adds support for folios larger than one page size in FUSE.
->>
->> This patchset is rebased on top of the (unmerged) patchset that removes temp
->> folios in writeback [1]. This patchset was tested by running it through fstests
->> on passthrough_hp.
->>
->> Please note that writes are still effectively one page size. Larger writes can
->> be enabled by setting the order on the fgp flag passed in to __filemap_get_folio()
->> but benchmarks show this significantly degrades performance. More investigation
->> needs to be done into this. As such, buffered writes will be optimized in a
->> future patchset.
->>
->> Benchmarks show roughly a ~45% improvement in read throughput.
->>
->> Benchmark setup:
->>
->> -- Set up server --
->>  ./libfuse/build/example/passthrough_hp --bypass-rw=1 ~/libfuse
->> ~/mounts/fuse/ --nopassthrough
->> (using libfuse patched with https://github.com/libfuse/libfuse/pull/807)
->>
->> -- Run fio --
->>  fio --name=read --ioengine=sync --rw=read --bs=1M --size=1G
->> --numjobs=2 --ramp_time=30 --group_reporting=1
->> --directory=mounts/fuse/
->>
->> Machine 1:
->>     No large folios:     ~4400 MiB/s
->>     Large folios:        ~7100 MiB/s
->>
->> Machine 2:
->>     No large folios:     ~3700 MiB/s
->>     Large folios:        ~6400 MiB/s
->>
->>
->> [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
->>
-> 
-> A couple of updates on this:
-> * I'm going to remove the writeback patch (patch 11/12) in this series
-> and resubmit, and leave large folios writeback to be done as a
-> separate future patchset. Getting writeback to work with large folios
-> has a dependency on [1], which unfortunately does not look like it'll
-> be resolved anytime soon. If we cannot remove tmp pages, then we'll
-> likely need to use a different data structure than the rb tree to
-> account for large folios w/ tmp pages. I believe we can still enable
-> large folios overall even without large folios writeback, as even with
-> the inode->i_mapping set to a large folio order range, writeback will
-> still only operate on 4k folios until fgf_set_order() is explicitly
-> set in fuse_write_begin() for the __filemap_get_folio() call.
-> 
-> * There's a discussion here [2] about perf degradation for writeback
-> writes on large folios due to writeback throttling when balancing
-> dirty pages. This is due to fuse enabling bdi strictlimit. More
-> experimentation will be needed to figure out what a good folio order
-> is, and whether it's possible to do something like remove the
-> strictlimit for privileged servers.
+Changelog:
+v3:
+https://lore.kernel.org/linux-fsdevel/20241213221818.322371-1-joannelkoong@gmail.com/
+v3 -> v4:
+* Add Jeff's reviewed-bys
+* Drop writeback large folios changes, drop turning large folios on. These
+  will be part of a separate future patchset
 
-FYI the sysadmin can already disable strictlimit for FUSE through
-/sys/class/bdi/<bdi>/strict_limit knob[*].
+v2:
+https://lore.kernel.org/linux-fsdevel/20241125220537.3663725-1-joannelkoong@gmail.com/
+v2 -> v3:
+* Fix direct io parsing to check each extracted page instead of assuming all
+  pages in a large folio will be used (Matthew)
 
-[*] https://lore.kernel.org/all/20221119005215.3052436-1-shr@devkernel.io/
+v1:
+https://lore.kernel.org/linux-fsdevel/20241109001258.2216604-1-joannelkoong@gmail.com/
+v1 -> v2:
+* Change naming from "non-writeback write" to "writethrough write"
+* Fix deadlock for writethrough writes by calling fault_in_iov_iter_readable()
+* first
+  before __filemap_get_folio() (Josef)
+* For readahead, retain original folio_size() for descs.length (Josef)
+* Use folio_zero_range() api in fuse_copy_folio() (Josef)
+* Add Josef's reviewed-bys
+
+Joanne Koong (10):
+  fuse: support copying large folios
+  fuse: support large folios for retrieves
+  fuse: refactor fuse_fill_write_pages()
+  fuse: support large folios for writethrough writes
+  fuse: support large folios for folio reads
+  fuse: support large folios for symlinks
+  fuse: support large folios for stores
+  fuse: support large folios for queued writes
+  fuse: support large folios for readahead
+  fuse: optimize direct io large folios processing
+
+ fs/fuse/dev.c        | 126 +++++++++++++++++++++--------------------
+ fs/fuse/dir.c        |   8 +--
+ fs/fuse/file.c       | 130 +++++++++++++++++++++++++++++--------------
+ fs/fuse/fuse_dev_i.h |   2 +-
+ 4 files changed, 156 insertions(+), 110 deletions(-)
 
 -- 
-Thanks,
-Jingbo
+2.43.5
+
 
