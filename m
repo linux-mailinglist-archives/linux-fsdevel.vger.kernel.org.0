@@ -1,124 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-39958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C77FA1A64C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 15:53:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7A0A1A650
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 15:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89A83A58E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 14:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CF9188959A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 14:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70452116EC;
-	Thu, 23 Jan 2025 14:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9EF211495;
+	Thu, 23 Jan 2025 14:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="ONgH7q7n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MZ4psVHC"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Ym0FcOBZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7222A20FAB7;
-	Thu, 23 Jan 2025 14:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E53F2101B5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 14:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737644010; cv=none; b=kNnErioBIZzowzP0HWCt+AO0CGIBSK/Wi1MtulpzK98Ovw7jmzvQjg/x4Bi2FesL1r2ro3lBSXeQrcRSI4sS1fUF+dnTttu5X3Kk/HilWQE0CauZGaiHJyn9DAhmGyUFcIKxiBaXNf6Lqf837sZAQOalxE3mdgaWxNeQ7KAR1Go=
+	t=1737644061; cv=none; b=gk1elZ06O2YUVFEAZN4T0wD0S+7a4d3ghbwOglK9HL8B50BlKcYTTEBpc/woauKuWNcCaQTS41DoNKCZYk5QXCuaGJQH24X5YVXTGmWLMYYsmHqxS9NMxHqtr79UtdIifBphTWefE4nQkBL49GOK0utf8jzxpAAjo7DWDo07wgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737644010; c=relaxed/simple;
-	bh=sGw5YsIctgSBZq7lju/LXN+/XHi1lwJtDpccxoDmoxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MUaKI4GdmRQTxJPOULk/HlJTQxJnqDtQndiNFD9exFg4TPnFpkcR1ZvhbV6cnasctBH7chYfYhf6nbMsFOP0N7Lds1MXAi0lGjA1FvJ6kYZOQKpSQahy2khFaQFz2YQihykfS9eyM37RwnLgvrGPBhshGVTOIuD6/PVeG/gYEBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=ONgH7q7n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MZ4psVHC; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 64C3D1140096;
-	Thu, 23 Jan 2025 09:53:27 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Thu, 23 Jan 2025 09:53:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1737644007;
-	 x=1737730407; bh=sGw5YsIctgSBZq7lju/LXN+/XHi1lwJtDpccxoDmoxk=; b=
-	ONgH7q7nxuQU7ESO8PDIXForL2wCE9qbIuU0rE6oAPaPhSwvwYDjzvswTxr1T13H
-	G5MFwsrdHAKRPTYk7qXoHNo6wTBkimgHu6aUe72ZJDdOnUX9Z/aC4pE6RpP6vngO
-	yFvKdoETXY+/HohLcKf+s3hJDozjHtWTDwJ5uTlLZmUd2uF75bzfScOM5VVGR44f
-	1bbZdOtQwwHRj7Y9sHWWBfQM9v+DRkSflXhx99qKPtPQ42E+O6Yk+hgR8bQcOPW1
-	Z9LDvD02+CuRekso72nAIruq+FWUcbKHi7td38qOP8lwTlxIGNrDy0XieA2EDk8q
-	+E2bglhbq19VVH3ST3E3mQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1737644007; x=
-	1737730407; bh=sGw5YsIctgSBZq7lju/LXN+/XHi1lwJtDpccxoDmoxk=; b=M
-	Z4psVHCM4Vvu/ciy6tMcKp4IIN5KLQfczMXMHllJfHY3zLSTliHRg1tVmI8qWgTB
-	PxfL196IWEZ8WaZg561MYz2xAbWg68OPCLlVUahSCDvMyCfNteNjqxpqeoDBmZpp
-	bzjs2Ngt8izoT0QXZ165SIRjv9JLBY+lqw3fNC1/hHvZ1zuM/mu5WhjlkcrdzOwI
-	4j3htIQHkN/jI79tXT2JEbdR+8vVEqefP0hkj9/NS9vZjrU9rHq5dEWyE/Zai57V
-	BQyK9PdUzrMltzwsO/CyIpR8eJnWtezhO+8KDhpqDdFmMOCSHL2DapdBarC0JFjD
-	9+/4AoLss18smlnn88bCw==
-X-ME-Sender: <xms:5leSZxVhwJEl8Rs8mNU0-27ulCucB-oMDpb_asWm8mLaGffHvO-_7g>
-    <xme:5leSZxlQdOOyoUUnxwQnSO9hWeiS_uAgkUFPbY59Jbxao89YWU8Q30QS5C_nUSZFf
-    S67PzZ4rk2DYf23>
-X-ME-Received: <xmr:5leSZ9bo6NQaK4PG94wmmbj9RsI3buMx2b8go0b657fYUIhypJlAq2Eid05qm8_sS4aj5gDl275B5kBpEfwQ0lCzDUU-eMLDY4Sdq8Hne0PhPj_4L191>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudejgedgudelhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
-    hnugdrtghomheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleff
-    uedujefhheegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
-    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsshgthhhusg
-    gvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhh
-    uhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsmh
-    hlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhs
-    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquhhrih
-    hnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhho
-    ohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnh
-    gurgdrtghomhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:5leSZ0XThmYvnwHZrjZIuniaqUZ1sgXcSWd7Es-qCX9IpmNk0np0tA>
-    <xmx:5leSZ7m2F5_FWPQ2u8h2kXC7Nd1daX4A78V6-YzkUX-mP-LTLkV9ew>
-    <xmx:5leSZxeftWxGvcaCtnWHEJwMzc22mbtIIt4Yenl8KHROhyLbxk8q_g>
-    <xmx:5leSZ1H4FIRf7jdC6r2K1cUQsNdeDTGJXi36r6S1XX_HH-okPPJckQ>
-    <xmx:51eSZw_6-6iRDHNtMKB9F0MGUC3xKnF1G-fzdv41ZtxwLGPuZF3CR1SS>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Jan 2025 09:53:24 -0500 (EST)
-Message-ID: <9516f61a-1335-4e2b-a6e7-140a0c5c123d@bsbernd.com>
-Date: Thu, 23 Jan 2025 15:53:23 +0100
+	s=arc-20240116; t=1737644061; c=relaxed/simple;
+	bh=SVntw8cO5WFdmDrG6+8oeaizUlVIhtRZHPs88gnzbME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kjYsjCipCBApx7wk+bIOmcoXM4X1G2JziwxfN5ye/4aPESlrUYb1iyDSCd7ObhpDjtflzJz4NZralhmO4if3Q9FcuuC/5Q5kxMLeu9+5lN0cDv8DUBpcSyuWOU6eOxDFXhkC1FP04JjpD9yjxz1Rr+So2pIBvorSuVddv6fvu0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Ym0FcOBZ; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-467bc28277eso8350421cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 06:54:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1737644059; x=1738248859; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=urQbPLdaGtTTF/fkN+ugVTqTil7Se2gZDVPlYtiAL8k=;
+        b=Ym0FcOBZsBY+stlK71kRSUNxvWMKwq+gHeqDQd1jKwvN0pjDkSmFZAhLwspoKVihqb
+         nUXTFNttTAJcxW/9VEWKWg0wSloTG7ImEFwICHqF147J8ijTDHuCkswRkhTRLmt9yeuo
+         Sh6IbzPPWHS13Kl3339uX8ZiWnHm0C+tba/w0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737644059; x=1738248859;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=urQbPLdaGtTTF/fkN+ugVTqTil7Se2gZDVPlYtiAL8k=;
+        b=O0TRDzunYc6QsPVdslcp1zqaYotKaNCSv5F0PC++xmnnOjhNAIkjoDvqGhlflhp7iN
+         2B7vFRGdPTUbC+gecS332UjR4uGeJhf/nCRkScpi+yS2X2TR3K39W1OMqGCF6JjG3ErQ
+         5xZVr/HkWlCWC/k9icr0iKCM/qnJMuHJPlm1I3HJGp88rnwdHdELbc4vkagKU7GHHD/m
+         AVMRJpZOUXL9V2fmMcd+pDP2HzVNAkEg8DSywJ61nKAbxzTvSzn9OFse4gauZZ5KDKRy
+         Bfxu66YKEPJbK2/gU5eejBp7H5Q2bdruexIKmIbqTyGjtKTQuR+irRoOqW2u1HW+R/KB
+         1dhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzrTgI9sKTq2Gbbgtz7PKm2ocz9UULi0oQRs8CZUPENP9+sOx5iGJAk0xkNzRB4LKDFpGj5DltFC6+0MyW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw126qNTcQqOKIjrIrmb8Knjx26ZXuqG4eck7aP1a5lS34AzoK3
+	3otXF6GQUmhFUfbDNRd3ibLz6Un0mEBjHaB/+xvN1CdNlZ9VUxBueO4JMRzHLWsa20HI8GM70Ah
+	xlp2rJU8TdapLq/0vF6m1QAjmB/KQGiExxxbFqA==
+X-Gm-Gg: ASbGncuticlXuBh/p3bNhFlSWnVU1HVvNgEAq+/Unbap/X/zcOw7oQLQF3IUyu9U3vl
+	cQQaaYtUHiBuWs7TIyGyli9Z34PvVQpE2TL9+nxlgik8shGUOYzlW+FdsIgQs
+X-Google-Smtp-Source: AGHT+IE7ZyX1OC5YYjR1PA1qvIDHMExe2nbrxBYw8WKcHPBBRCMMOfT22J0nG37lG5QlrTJdJIMNThSk8MFe5VoIFHo=
+X-Received: by 2002:ac8:5a93:0:b0:463:5cd7:ddd3 with SMTP id
+ d75a77b69052e-46e12a0c12emr455908881cf.11.1737644058987; Thu, 23 Jan 2025
+ 06:54:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/18] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
- David Wei <dw@davidwei.uk>, Luis Henriques <luis@igalia.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Miklos Szeredi <mszeredi@redhat.com>
-References: <20250123-fuse-uring-for-6-10-rfc4-v11-0-11e9cecf4cfb@ddn.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250123-fuse-uring-for-6-10-rfc4-v11-0-11e9cecf4cfb@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250122215528.1270478-1-joannelkoong@gmail.com>
+ <20250122215528.1270478-3-joannelkoong@gmail.com> <87ikq5x4ws.fsf@igalia.com>
+ <CAJfpegtNrTrGUNrEKrcxEc-ecybetAqQ9fF60bCf7-==9n_1dg@mail.gmail.com> <9248bca5-9b16-4b5c-b1b2-b88325429bbe@ddn.com>
+In-Reply-To: <9248bca5-9b16-4b5c-b1b2-b88325429bbe@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 23 Jan 2025 15:54:07 +0100
+X-Gm-Features: AbW1kvYwhTKo1-iRy4Y1j7RaDupXlGT6XCsNR_aVYNTCLcL_7t0VLjMFfdDes7s
+Message-ID: <CAJfpegsP2C-RgGqY9Wd2D_C2vdWGtcN1JOcwdGxYx29DCm=eVA@mail.gmail.com>
+Subject: Re: [PATCH v12 2/2] fuse: add default_request_timeout and
+ max_request_timeout sysctls
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	jlayton@kernel.org, senozhatsky@chromium.org, tfiga@chromium.org, 
+	bgeffon@google.com, etmartin4313@gmail.com, kernel-team@meta.com, 
+	Josef Bacik <josef@toxicpanda.com>, Luis Henriques <luis@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Miklos,
+On Thu, 23 Jan 2025 at 15:41, Bernd Schubert <bschubert@ddn.com> wrote:
 
-or shall I send you a fix-patch instead of resending the entire series?
+> I don't think the timeouts do work with io-uring yet, I'm not sure
+> yet if I have time to work on that today or tomorrow (on something
+> else right now, I can try, but no promises).
+>
+> How shall we handle it, if I don't manage in time?
 
+Okay.  Let's just put the timeout patches on hold until this is resolved.
 
 Thanks,
-Bernd
+Miklos
 
