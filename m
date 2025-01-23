@@ -1,188 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-39987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-39988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F5BA1A95B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 19:05:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A2EA1A95D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 19:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C1816704B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 18:05:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42CC97A1917
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 18:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E508154C07;
-	Thu, 23 Jan 2025 18:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8836154C07;
+	Thu, 23 Jan 2025 18:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jq2uA637"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="CwhVWvj5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QuuaC0di"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B81713AD03
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 18:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062EE13AD03
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 18:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737655533; cv=none; b=ecJJcHpaNubXOD1avJkCQ+GmxtXkeM7oMZlIy0jWwZLPJIsJndPn0WRS6x77oSjZJdMYWfyqZvnFW1iTpnTv6ho+1SoouooOryXYcDaBldPNgJR1dIRvJJ7vSYz5WWWGOrjehrUEvKWCOkmi3tL96pGRvtEeTnxbaH1ymwDW/mA=
+	t=1737655616; cv=none; b=uBE78jDygT4NVUrut1hzzRlDRghoT0Yt6Q64+p7/mjNFr0hqwANp7mZD41poP8o6V9wqc6v7JeBntIm21tvwS2+IJNFV+1Bf1tho7KJXtrocDbTDa/TfHvPoJCUxXVpZoROKzMZ5hE5o/+F78qwymwCHv4NhXASHrmQzKovEwPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737655533; c=relaxed/simple;
-	bh=85uuGF1ZZwCtI1Oqudsd4c0uLyJVU+z4ey2J4aqLBb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CbJFbbQk0z+meTMO/O4nrVVCGZ+K55EyjMxw8L6EogUFxCgfVN2czORs6zylXqG6zRIBGVCOOLetia5nrC0jLGxrUHh7qjxrmUazaG192xROqAtlw1mpE+u/NvwdeCnKlB//T+LRH7m5ZmkOKxltI7y9Nv2Kuk96D9Mt293usrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jq2uA637; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-467b086e0easo7086701cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 10:05:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737655531; x=1738260331; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ctbnxoaK1/jv2I7AXFfYfSypaMrvWAbdKCkPsiBThCc=;
-        b=Jq2uA637COf+GL9+p8TRR7QjAR0AyQJtWNS8MVEH8XR7q3UoADtmPuTd38jk/xcL5Y
-         AvPGmqqoW+aGWjcpxRrVxxdk//DNAcj7VBeEB8xWqvLPrDjk98zUu4du+nopU8mkMSAq
-         0h12ZfRnEVWEMrlyQw4DhnptFUi/jWM5UntVXLIaNMGTuHjOqO9Ne7Xso1c9XTR176cu
-         VzGfDKn2KfrcBR+3ICHWRY/BP2+3olrKOgBj/dFQMoQLfUamDaL0xYbW0JG9P5Ex8Y8/
-         1VYYnKtB2/WhK2m2pONKq7PHHauH7vW3T03y7dLAxSo5CrO6oeQqyk+XjQFyIIFx0voX
-         dY+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737655531; x=1738260331;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ctbnxoaK1/jv2I7AXFfYfSypaMrvWAbdKCkPsiBThCc=;
-        b=GxGntO+uku0uuX+PoaJP4tJpFay3ADu3V5Yf3RcawTW7PaQLHFjO6d8W7nEM6fxDXG
-         gfzT7Gs1zyBnwhKujyC5oJsVsMEiZpH/rvhpbL5efKxLQBYs2b+6y+moij0+eoFsol0D
-         Lq6CrqhWRScXAvV+fj8wT80PW0x6YxQGHe6T2FhogWnavsvHhIKRB4WhtJYBgIpjP4Bw
-         8P/VuGNg/V26T6TpcXBr0tuw7OB6/BDQFIfQKoX667sBKDixWzmNb5Z2L4wrTx6l7XfM
-         +KO8BOnpJs3wwGjzNc/I8d96Uozv4Vt/+V4hqYPl+MNLQvbufWpZn70pznEAv85hAoSx
-         V69w==
-X-Forwarded-Encrypted: i=1; AJvYcCUy/vN4IYgAMu8lqrbycrsm08hX6af/wsYkWMZPxXaFg5UMtw4YgmsMaePwKNOqZ/Axqm/MIC1PDLS/hc5o@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVRU8LLxlvAgDCmxFCDWVo0NgL8nL6GobugAdz+RFVgAAlIYsn
-	EIUhywE00lXirqWkTI+hZaz5gfC8MqEewRBPnHM2YS0cfVa9OfzKzD8bcdDeh7zqDiSP44kXaSG
-	IQSMPg8jVmmVlOTvJ07mqE3g2iEQ=
-X-Gm-Gg: ASbGncslh0hVFdkUdoHUwbsJsfA1y4z10U79S0Gb1phZnb8bFzNJqKdNMbY8uhfVQ90
-	eaUdNlKjUXqwVJSAw3Vwt+qvWe+k42qSCijaWO3KIWlBeOvy7LUjjCt+KePCoP6n1/+uoRh2q1I
-	ry3Q==
-X-Google-Smtp-Source: AGHT+IF65c/FvNQk0NLRYnGs6KoJ7lPgfSsKrU+y7Iu41FXW8PkrTU/dUKa+BWxrqxv8XVteBDNkauoPJe31b67LRuE=
-X-Received: by 2002:a05:622a:647:b0:46c:9f53:4a45 with SMTP id
- d75a77b69052e-46e12bb320emr356183341cf.43.1737655531019; Thu, 23 Jan 2025
- 10:05:31 -0800 (PST)
+	s=arc-20240116; t=1737655616; c=relaxed/simple;
+	bh=g0AvpfSlWd+TXj8Uyfvr7WHwZeVDAcKPdQUhRf+I6Tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQHHhMg5ik/FqvblvF0fL9FIoxoR4l6EtLNWCqlOb54h5lIh6wD5xwNuLXAWRqAivzLZOgcdVcDzF/OA7lhQz8oWja/y2c0oQe0keyCjiaZWR7tsf8ifvluL2kjQGhb8YKppnC1CKCQBcMbyeGPQ0fVlkyDdiaBYb2rEEN3JGVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=CwhVWvj5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QuuaC0di; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id BD91E11400BF;
+	Thu, 23 Jan 2025 13:06:53 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Thu, 23 Jan 2025 13:06:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1737655613;
+	 x=1737742013; bh=m9iclX3Fi9r/kGrs6o769OftzHlFezggHmPimC5oQso=; b=
+	CwhVWvj5ri+0IucfGNqovCRlIWyALS16WkL4dsZ/YuRp5dP62ilJucLanKIwPRRI
+	I1zYjt8f4E6wYQ7kO5he4sBDs3YGNDdrnU3fWY6JeeRObf9dVTqg9Ie8IAgeColn
+	ZM4RRAUMLEPJx/pHhP54YUAJHhKX/bKcz78FJsDmlk1dHhcc/Rq4SqStUyFtSXl4
+	Fo+NodgjWHCM7/iEH1UGCtg8odGXupIywwChs5bwsyT2vYSFxLDIWOZJWca5OUr3
+	i0mFH279q/jUP+9yJ5CzoZXGs/3buIfEApW5tqHe28OiQfJpzwSPoY9rpArVKGqe
+	1bac8jccJC29Mnd18qB/4g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1737655613; x=
+	1737742013; bh=m9iclX3Fi9r/kGrs6o769OftzHlFezggHmPimC5oQso=; b=Q
+	uuaC0diwaysVz/IQNV0TEZ3AUeYWfBja/rpn/yzWO9KnxPVi/Ufk1WxnS1YX+GEK
+	eJYzDO9ksw0i0ARN3DtLlEgK2mwASUvvccvLHeOHlnDXGaaBIxScBu8W4PWY2wOU
+	iVbZC4F+K6WduNFK3f872o79XovFbLbhBE1gQ/LEb1X/Y8uVCbjez7ktoH4SZm3M
+	+IYxM61EentcF3MSWMgBHLoGlaqQO66aJMvlrsNMiskOdYg9ek8khp7+ZTAC9ONL
+	7lrWW3Kit3zWYFfrUQYmys+iP3Jsmla05TJ2JhEwVhjztq5wYwnMgEEO6LNdeVm+
+	AKFsSdmNPUVflIlvjX0/g==
+X-ME-Sender: <xms:O4WSZz1jjBPV-xmRlLpi_-fLuFxC7jNSkYyFLJ2LD_zOQGCfDHxZKA>
+    <xme:O4WSZyErIR7cdBzl0yfmzbSEYTnlsKrrrpIDhpMeBM7T6cwJ_TXvFOw6xQ-o5tf4e
+    Za8PTMnZ7ekUHkL>
+X-ME-Received: <xmr:O4WSZz5bq_jqa-j4dRQpjQogygRG87984f4ofE35qG2FpgP6UnllR2r7tYJ8CSYPfumVF7aUCO6bSj1nDYX1NEYV6otQj5zbY7I90wCL9JkGEvTUNDuM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudejgedgvdeffecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeduleefvdduvedu
+    veelgeelffffkedukeegveelgfekleeuvdehkeehheehkefhfeenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
+    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
+    rhgtphhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikh
+    hlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgvfhhflhgvgihusehlih
+    hnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtoheplhgrohgrrhdrshhhrghosehg
+    mhgrihhlrdgtohhmpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepshgvnhhoiihhrghtshhkhiestghhrhhomhhiuhhmrdhorhhgpdhrtghp
+    thhtohepthhfihhgrgestghhrhhomhhiuhhmrdhorhhg
+X-ME-Proxy: <xmx:O4WSZ435-vpvI19s5jsdNAl0mD_r655LNCOdDTid2sWZT-CjxO6sVQ>
+    <xmx:O4WSZ2GzUOmHrqiNZyF45h-HxdqbUBsivQ7CRvRlDCndjQveoOsTQw>
+    <xmx:O4WSZ58i2NQfnTI1nIzqCedyYzVdSXKg93Lc8x-BKwduhdjT2YVUoQ>
+    <xmx:O4WSZzkpUw7MeQmNYCFGrRq_Vu8N0_8Cu9QOTS1SoK5b-fx6iRUXfA>
+    <xmx:PYWSZzczjVBgJg9YluoeWM7qeooCk9vlOYQXp-379G_xjwQUlmkWcekY>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Jan 2025 13:06:50 -0500 (EST)
+Message-ID: <325b214c-4c7b-4826-a1b9-382f5a988286@fastmail.fm>
+Date: Thu, 23 Jan 2025 19:06:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213221818.322371-1-joannelkoong@gmail.com>
- <CAJnrk1a8fP7JQRWNhq7uvM=k=RbKrW+V9bOj1CQo=v4ZoNGQ3w@mail.gmail.com> <ff59b715-efa7-4ede-8f82-313af11c51f2@linux.alibaba.com>
-In-Reply-To: <ff59b715-efa7-4ede-8f82-313af11c51f2@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 23 Jan 2025 10:05:20 -0800
-X-Gm-Features: AbW1kvZVEb5hOzZi0uKSrYukAwhVvF3kc55UbWISN5TMsXt4Mwhzmx-i95vkl34
-Message-ID: <CAJnrk1YGq2dDjrn06J2-mpGSUKBT7tfP5wfsunK0rqY+e7PvcA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] fuse: support large folios
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, willy@infradead.org, shakeel.butt@linux.dev, 
-	jlayton@kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/2] fuse: add default_request_timeout and
+ max_request_timeout sysctls
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
+ laoar.shao@gmail.com, jlayton@kernel.org, senozhatsky@chromium.org,
+ tfiga@chromium.org, bgeffon@google.com, etmartin4313@gmail.com,
+ kernel-team@meta.com, Josef Bacik <josef@toxicpanda.com>,
+ Luis Henriques <luis@igalia.com>
+References: <20250122215528.1270478-1-joannelkoong@gmail.com>
+ <20250122215528.1270478-3-joannelkoong@gmail.com> <87ikq5x4ws.fsf@igalia.com>
+ <CAJfpegtNrTrGUNrEKrcxEc-ecybetAqQ9fF60bCf7-==9n_1dg@mail.gmail.com>
+ <9248bca5-9b16-4b5c-b1b2-b88325429bbe@ddn.com>
+ <CAJnrk1bbvfxhYmtxYr58eSQpxR-fsQ0O8BBohskKwCiZSN4XWg@mail.gmail.com>
+ <4f642283-d529-4e5f-b0ba-190aa9bf888c@fastmail.fm>
+ <CAJnrk1YDFcF5GPR23GPuWnxt2WeGzf8_bc4cJG8Z-DHvbRNkFA@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1YDFcF5GPR23GPuWnxt2WeGzf8_bc4cJG8Z-DHvbRNkFA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 22, 2025 at 5:24=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
->
->
->
-> On 1/23/25 7:23 AM, Joanne Koong wrote:
-> > On Fri, Dec 13, 2024 at 2:23=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> >>
-> >> This patchset adds support for folios larger than one page size in FUS=
-E.
-> >>
-> >> This patchset is rebased on top of the (unmerged) patchset that remove=
-s temp
-> >> folios in writeback [1]. This patchset was tested by running it throug=
-h fstests
-> >> on passthrough_hp.
-> >>
-> >> Please note that writes are still effectively one page size. Larger wr=
-ites can
-> >> be enabled by setting the order on the fgp flag passed in to __filemap=
-_get_folio()
-> >> but benchmarks show this significantly degrades performance. More inve=
-stigation
-> >> needs to be done into this. As such, buffered writes will be optimized=
- in a
-> >> future patchset.
-> >>
-> >> Benchmarks show roughly a ~45% improvement in read throughput.
-> >>
-> >> Benchmark setup:
-> >>
-> >> -- Set up server --
-> >>  ./libfuse/build/example/passthrough_hp --bypass-rw=3D1 ~/libfuse
-> >> ~/mounts/fuse/ --nopassthrough
-> >> (using libfuse patched with https://github.com/libfuse/libfuse/pull/80=
-7)
-> >>
-> >> -- Run fio --
-> >>  fio --name=3Dread --ioengine=3Dsync --rw=3Dread --bs=3D1M --size=3D1G
-> >> --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
-> >> --directory=3Dmounts/fuse/
-> >>
-> >> Machine 1:
-> >>     No large folios:     ~4400 MiB/s
-> >>     Large folios:        ~7100 MiB/s
-> >>
-> >> Machine 2:
-> >>     No large folios:     ~3700 MiB/s
-> >>     Large folios:        ~6400 MiB/s
-> >>
-> >>
-> >> [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joan=
-nelkoong@gmail.com/
-> >>
-> >
-> > A couple of updates on this:
-> > * I'm going to remove the writeback patch (patch 11/12) in this series
-> > and resubmit, and leave large folios writeback to be done as a
-> > separate future patchset. Getting writeback to work with large folios
-> > has a dependency on [1], which unfortunately does not look like it'll
-> > be resolved anytime soon. If we cannot remove tmp pages, then we'll
-> > likely need to use a different data structure than the rb tree to
-> > account for large folios w/ tmp pages. I believe we can still enable
-> > large folios overall even without large folios writeback, as even with
-> > the inode->i_mapping set to a large folio order range, writeback will
-> > still only operate on 4k folios until fgf_set_order() is explicitly
-> > set in fuse_write_begin() for the __filemap_get_folio() call.
-> >
-> > * There's a discussion here [2] about perf degradation for writeback
-> > writes on large folios due to writeback throttling when balancing
-> > dirty pages. This is due to fuse enabling bdi strictlimit. More
-> > experimentation will be needed to figure out what a good folio order
-> > is, and whether it's possible to do something like remove the
-> > strictlimit for privileged servers.
->
-> FYI the sysadmin can already disable strictlimit for FUSE through
-> /sys/class/bdi/<bdi>/strict_limit knob[*].
->
-> [*] https://lore.kernel.org/all/20221119005215.3052436-1-shr@devkernel.io=
-/
 
-Oh cool, thanks for pointing this out! AFAICT, this means the sysadmin
-would have to do this individually for every fuse server that gets
-run. I wonder if we should do something like a) have fuse only enforce
-the strictlimit for unprivileged servers or b) add a fuse sysctl that
-sysadmins can set more easily for removing strictlimit for any server
-that gets run instead of having to do it individually
+
+On 1/23/25 18:48, Joanne Koong wrote:
+> On Thu, Jan 23, 2025 at 9:19 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>> Hi Joanne,
+>>
+>>>>> Thanks, applied and pushed with some cleanups including Luis's clamp idea.
+>>>>
+>>>> Hi Miklos,
+>>>>
+>>>> I don't think the timeouts do work with io-uring yet, I'm not sure
+>>>> yet if I have time to work on that today or tomorrow (on something
+>>>> else right now, I can try, but no promises).
+>>>
+>>> Hi Bernd,
+>>>
+>>> What are your thoughts on what is missing on the io-uring side for
+>>> timeouts? If a request times out, it will abort the connection and
+>>> AFAICT, the abort logic should already be fine for io-uring, as users
+>>> can currently abort the connection through the sysfs interface and
+>>> there's no internal difference in aborting through sysfs vs timeouts.
+>>>
+>>
+>> in fuse_check_timeout() it iterates over each fud and then fpq.
+>> In dev_uring.c fpq is is per queue but unrelated to fud. In current
+>> fuse-io-uring fud is not cloned anymore - using fud won't work.
+>> And Requests are also not queued at all on the other list
+>> fuse_check_timeout() is currently checking.
+> 
+> In the io-uring case, there still can be fuds and their associated
+> fpqs given that /dev/fuse can be used still, no? So wouldn't the
+> io-uring case still need this logic in fuse_check_timeout() for
+> checking requests going through /dev/fuse?
+
+Yes, these need to be additionally checked.
+
+> 
+>>
+>> Also, with a ring per core, maybe better to use
+>> a per queue check that is core bound? I.e. zero locking overhead?
+> 
+> How do you envision a queue check that bypasses grabbing the
+> queue->lock? The timeout handler could be triggered on any core, so
+> I'm not seeing how it could be core bound.
+
+I don't want to bypass it, but maybe each queue could have its own
+workq and timeout checker? And then use queue_delayed_work_on()?
+
+
+> 
+>> And I think we can also avoid iterating over hash lists (queue->fpq),
+>> but can use the 'ent_in_userspace' list.
+>>
+>> We need to iterate over these other entry queues anyway:
+>>
+>> ent_w_req_queue
+>> fuse_req_bg_queue
+>> ent_commit_queue
+>>
+> 
+> Why do we need to iterate through the ent lists (ent_w_req_queue and
+> ent_commit_queue)? AFAICT, in io-uring a request is either on the
+> fuse_req_queue/fuse_req_bg_queue or on the fpq->processing list. Even
+> when an entry has been queued to ent_w_req_queue or ent_commit_queue,
+> the request itself is still queued on
+> fuse_req_queue/fuse_req_bg_queue/fpq->processing. I'm not sure I
+> understand why we still need to look at the ent lists?
+
+Yeah you are right, we could avoid ent_w_req_queue and ent_commit_queue
+if we use fpq->processing, but processing consists of 256 lists -
+overhead is much smaller by using the entry lists?
+
+
+> 
+>>
+>> And we also need to iterate over
+>>
+>> fuse_req_queue
+>> fuse_req_bg_queue
+> 
+> Why do we need to iterate through fuse_req_queue and
+> fuse_req_bg_queue? fuse_uring_request_expired() checks the head of
+> fuse_req_queue and fuse_req_bg_queue and given that requests are added
+> to fuse_req_queue/fuse_req_bg_queue sequentially (eg added to the tail
+> of these lists), why isn't this enough?
+
+I admit I'm a bit lost with that question. Aren't you pointing out
+the same lists as I do?
+
+> 
+> 
+> If it's helpful, I can resubmit this patch series so that the io-uring
+> changes are isolated to its own patch (eg have patch 1 and 2 from the
+> original series and then have patch 3 be the io-uring changes).
+
+Sounds good to me.
+
 
 Thanks,
-Joanne
-
->
-> --
-> Thanks,
-> Jingbo
+Bernd
 
