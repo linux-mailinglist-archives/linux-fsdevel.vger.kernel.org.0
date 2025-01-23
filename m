@@ -1,188 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-40019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B31A1ADAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 00:53:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBCEA1ADB1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 00:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D45C3A2533
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 23:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F7D3A827E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2025 23:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD301D5AB9;
-	Thu, 23 Jan 2025 23:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286941D5AD4;
+	Thu, 23 Jan 2025 23:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJK4rPr4"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yhu3qTUe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE581BDAB5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 23:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62591D5AAE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 23:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737676394; cv=none; b=PwGkqiNYKxzLuLtoBoFTF/HO5FJMS2+L4Rbr2lz7vwVuwNajsCxvtWxs1AaOHhJm6Ao9nMdJGUTmM+iQncd4oyudZ4jDVLqa7++/vxDghuSeNnVZ/oCQsfuR/rD4iP8et8HlTQd2ALlSToSN8QfCESrA6ZKUNjfdS4nJKXsRqAM=
+	t=1737676545; cv=none; b=GAJ0lD8Q1QnMcesldOWIpsT9CS3L+Jdo3z5Oxbj3pLYwxojaslZCKycFU+5UDoGxrCDJ+IVaZHT7MmJx7A37X6aFmdqhq1kq0mOc3akB1nnd5s3yr/7MO6nK49Gm3smlkkxl42Oiga53tTuvqe3xgBTSrjWxAaFhDggest9qjx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737676394; c=relaxed/simple;
-	bh=dItczH8xCjgIBdMP0B0DxjT3jrx6jIrHcMrRAh9gufA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ohY7LK4h4SQVGLc2a2DO4rNROcm3MzYcuuPN2GOnuNA9ZjfAO7AKoRdvuvDS1TZU3FeDSO++x3eReLUIgPThX4gjrgKQAL9JjQ3vJdGq6PDHKS+YjgKRHj6meLHxfiJZ60lmnM1CnCxeaEhqVIekbcyzly5spj6rethliSDpRtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJK4rPr4; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e46ebe19489so2141361276.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 15:53:12 -0800 (PST)
+	s=arc-20240116; t=1737676545; c=relaxed/simple;
+	bh=v0FggTfs25V/GAY+T15aZ5RkSzmN+aC2OxF418iX4Oo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5oLzck5hOBBxB/SH5BLnEYEHJD9KXOy9cZJZLGhkuVFlJKYb/b7LF6LK0apv2RNrh+00ieXOsjkuVfiq7kiaRss9qG/FdHXFT2QsjFCVDeCw3L40tSh/OUdgKTWzBlSc3tBFLP0n84frQN+8CoeEK7OPoHvQZi3akfSIGv1X6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yhu3qTUe; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d3e638e1b4so1406a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2025 15:55:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737676391; x=1738281191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p16f8fwizrsUqDiaK4oklmN7p9+QV/wME/Xi61xxXE4=;
-        b=bJK4rPr4i05uWlaMZwQp3SYaIICTzh4uy0HONH1YhYVKAMf+kLjJzzEldXWtnF0+36
-         DYrtAYD7gl+U1uNPHtOV+uUwngy1NNt9NOSfzmP0DDzB4/86NLPpunN+GbFFK0eQXDo/
-         dEWMHUf5rAzJw7uNAPeizjaQq/36BugJj/fdISAhz84iMQnnKzgKp6UbmDqHxBOTK2Yj
-         f9fNm/D1TxEbOuVDkcih+DOB+FlhSEML2/zTEt0lRQFjfO2j6EUiYLA6pu/+OZ+7hH5R
-         aBdA3nIfKDAUDR52Jdy8Jv71iu62QYFB7IUaqvxV1eWXKcJE65DhtjrNZ5rVm7AbyvlU
-         udEw==
+        d=google.com; s=20230601; t=1737676542; x=1738281342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z9Ragv1x82SwxtUpkVXr3TYFZXEnZuc/EWqFgnlmJDc=;
+        b=Yhu3qTUePzeBcY3fMbOsBt4j2R2Pgeyz6sDyaDJ4iUaRQeGEw/bZ88CsmiwTt3gVoS
+         hzKMtwFLQwb/uhzAECFSlwiTZKSt8Hxa1934cIM2Hzz0uUGP4viOd0K1E/tyVKHEtj77
+         E/2zrU5x8wAFWlNYT46Tl45LvE/HQy9PARLITQtdfTqLP9Cg2o0uXQyO1bo0AAqxjnZ0
+         dOFbbE860vLCm98vb6lig2rlernr9cLFlim2OgOYJbfZr4nyDug08KN2BVm4zjJW2wmW
+         j/JkBuxgbbKTHMugT2aes9+LR84NXNPellHds80Rw1Hm9Z35XFmjeCKAL+psNgjBJfR8
+         wxlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737676391; x=1738281191;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p16f8fwizrsUqDiaK4oklmN7p9+QV/wME/Xi61xxXE4=;
-        b=eKr6UYN5cS+WPJ+0Hfd5HShaF9FQmyjXfy+OZ9c1DPOyDetpxXDZPEwXZjOb3VQtN/
-         h3OlnJPrmoMrjcUZ6vNUObaTmdvMCp1jiWO62E5zViaT+UTJH4ve+n8MEv3u30OTL87f
-         wrlMW3KPqKuTLM7oK+M1f9gKqV3NZM6A7gsSMjccQGsaeRC+bDMFhpL+2jKu2h4Swy04
-         1KzCJ0uMGIaBQxfOKpSRoCnl7LO7WAgVAiZFTK1KsjwbrVpavGN/eKVb5oYR+tORzwoq
-         K1/fMsUWTjEG3qQaiszMKfInJEB2EuKSeCg8RMlS6emDO7+PxppUrqCPTqSl/TVw5gvC
-         KMcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+/Owtd/gZWYEiybkudrU6sRzpmKc3Ji5LkklpuFgfz93SYmFPjfMSyt1NwcjJRtemxKlZ15Q8N+DdiOBa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqH3K2PytHTXDyfye1yIeYswfVVWXuMSKgPkodHDaMDmfhL+s3
-	rDY7rB6g2SIBncoFXcX++M4aKoaYnBDtQxovF9BwRn67c70fiaOk
-X-Gm-Gg: ASbGncvYewW6OshRWdH8LbYpfEeP3fBiES4sUpYWRM3cEU+tJTxnhYT+w9/Dj3yS9uP
-	chmzYot99CaSiXZ8L823yAZfnpNmIbn24c5QNm09kcRv2GdeSvaQyvQNPXSmtEqLeXwkwjECkrn
-	/5epLiOSw09nZ6CX5vaO9bSLKuTwenTBgNAmAEpvj3wJxAtcZYPfgAexaphflUIA85wma4kT3EP
-	jSoeQFCVoUt5MgSITC6rS0nVOXi03QZ7AkV+sqdv7xEQnE050jPblu72yp96KOk/wD3afw5CwUo
-	EYE=
-X-Google-Smtp-Source: AGHT+IGA6kO1axOFbzWuvIJ915PdveEuCRsq2tqoUFwYlysssruaxrZQYGUefwFB+jybCiEvS4J3gw==
-X-Received: by 2002:a05:690c:6c83:b0:6ef:4696:f1d0 with SMTP id 00721157ae682-6f6eb67bcadmr227847617b3.12.1737676391349;
-        Thu, 23 Jan 2025 15:53:11 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:74::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e583b88db9bsm135338276.48.2025.01.23.15.53.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 15:53:11 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: bernd.schubert@fastmail.fm,
-	kernel-team@meta.com
-Subject: [PATCH v1] fuse: optimize over-io-uring request expiration check
-Date: Thu, 23 Jan 2025 15:52:51 -0800
-Message-ID: <20250123235251.1139078-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
+        d=1e100.net; s=20230601; t=1737676542; x=1738281342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z9Ragv1x82SwxtUpkVXr3TYFZXEnZuc/EWqFgnlmJDc=;
+        b=OWv8gBWep1ueUNySWzpLWmme7m6juZUQoXsPqVPkDkNJmTg217fIED1OiNDhVmvJTo
+         CdkTkB0XqBSmek8f6IdcUyacy9v3vRKv0M8bRWvDNJwY2qT3x58B87pP4d3Iyvr1cKvr
+         XJ4LRgyw3+2robsndiSMeEle51j+BHcL57LeIAzBxoyCdl0mr1KqrukLAi5XU+lEdB0E
+         MLGBEQohk6FgVZnM00CtCHbV7rYOZd9OHpbsjquJ+jx7NV/zFI3nSXbjlaKhX+wGm6WS
+         spWGMibvAzDbZvEfCW+oIjh2Zxd1JRoBz/KCoTmdEgByhVevzevXQElT7a4IenhyBv+/
+         4I9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlWRYp39O42rKAUvYhOkPbKJo4zka9jjh0WR8oA2p5Rv7V5CVeASKa2P+KwyS7lJH11J5nkc519d1FykJt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwusaZqx3NEGdNVBjagCl/gOh49NOBkkNN6c46/4rovVlwVcvbk
+	MojHE9MGayPeEBuMxz+Hpcv9OJnvcQ0a98YqdRv8fsXwbEz4kL0sKKKIBse+LvpAmuaFAoEInYa
+	4xfcLItipJTJ8bWqvyaybLLcTtk1zyIpuYH4W
+X-Gm-Gg: ASbGncuuJsb0wcDUZAHGvIwQhoETdWcX3wYHdtGweq2anA/RUga0LzECjKPQXNKQTZ2
+	QVPN8QcN2cHFkQ8vuUXMlLlvCf9DfVg2f6vJeehjE6bOL5zu/+8qMrtBUwj5EftfGRhxDqxsQzD
+	n/QVHrz6/ijHB2
+X-Google-Smtp-Source: AGHT+IFGTCYC1Urp8sKTGkSi5p5S/Fc8SFTFb532XbOtDnLlTcDCvS5l/1/sYkHDNjZYgiEvQM+eMoDylP2iU6QViPQ=
+X-Received: by 2002:a50:9b0e:0:b0:5db:e8ed:5741 with SMTP id
+ 4fb4d7f45d1cf-5dc0c9ed5fcmr146053a12.7.1737676541342; Thu, 23 Jan 2025
+ 15:55:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250123214342.4145818-1-andrii@kernel.org> <CAJuCfpE9QOo-xmDpk_FF=gs3p=9Zzb-Q5yDaKAEChBCnpogmQg@mail.gmail.com>
+ <202501231526.A3C13EC5@keescook>
+In-Reply-To: <202501231526.A3C13EC5@keescook>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 24 Jan 2025 00:55:05 +0100
+X-Gm-Features: AWEUYZkNff3Q26T9o9EX_TQ_KWMgeFo0Eqakd0uRwk5keM2gA1CnvXc-g9_3J_s
+Message-ID: <CAG48ez1TXEJH3mFmm-QZbbmr_YupnoLA0WQx6WgxKQSHP3jPSA@mail.gmail.com>
+Subject: Re: [PATCH] mm,procfs: allow read-only remote mm access under CAP_PERFMON
+To: Kees Cook <kees@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, Andrii Nakryiko <andrii@kernel.org>, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	kernel-team@meta.com, rostedt@goodmis.org, peterz@infradead.org, 
+	mingo@kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, shakeel.butt@linux.dev, rppt@kernel.org, 
+	liam.howlett@oracle.com, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, when checking whether a request has timed out, we check
-fpq processing, but fuse-over-io-uring has one fpq per core and 256
-entries in the processing table. For systems where there are a
-large number of cores, this may be too much overhead.
+On Fri, Jan 24, 2025 at 12:47=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+> On Thu, Jan 23, 2025 at 01:52:52PM -0800, Suren Baghdasaryan wrote:
+> > On Thu, Jan 23, 2025 at 1:44=E2=80=AFPM Andrii Nakryiko <andrii@kernel.=
+org> wrote:
+> > >
+> > > It's very common for various tracing and profiling toolis to need to
+> > > access /proc/PID/maps contents for stack symbolization needs to learn
+> > > which shared libraries are mapped in memory, at which file offset, et=
+c.
+> > > Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless w=
+e
+> > > are looking at data for our own process, which is a trivial case not =
+too
+> > > relevant for profilers use cases).
+> > >
+> > > Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
+> > > discover memory layout of another process: it allows to fully control
+> > > arbitrary other processes. This is problematic from security POV for
+> > > applications that only need read-only /proc/PID/maps (and other simil=
+ar
+> > > read-only data) access, and in large production settings CAP_SYS_PTRA=
+CE
+> > > is frowned upon even for the system-wide profilers.
+> > >
+> > > On the other hand, it's already possible to access similar kind of
+> > > information (and more) with just CAP_PERFMON capability. E.g., settin=
+g
+> > > up PERF_RECORD_MMAP collection through perf_event_open() would give o=
+ne
+> > > similar information to what /proc/PID/maps provides.
+> > >
+> > > CAP_PERFMON, together with CAP_BPF, is already a very common combinat=
+ion
+> > > for system-wide profiling and observability application. As such, it'=
+s
+> > > reasonable and convenient to be able to access /proc/PID/maps with
+> > > CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
+> > >
+> > > For procfs, these permissions are checked through common mm_access()
+> > > helper, and so we augment that with cap_perfmon() check *only* if
+> > > requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn't=
+ be
+> > > permitted by CAP_PERFMON.
+> > >
+> > > Besides procfs itself, mm_access() is used by process_madvise() and
+> > > process_vm_{readv,writev}() syscalls. The former one uses
+> > > PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PERF=
+MON
+> > > seems like a meaningful allowable capability as well.
+> > >
+> > > process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level o=
+f
+> > > permissions (though for readv PTRACE_MODE_READ seems more reasonable,
+> > > but that's outside the scope of this change), and as such won't be
+> > > affected by this patch.
+> >
+> > CC'ing Jann and Kees.
+> >
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  kernel/fork.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > index ded49f18cd95..c57cb3ad9931 100644
+> > > --- a/kernel/fork.c
+> > > +++ b/kernel/fork.c
+> > > @@ -1547,6 +1547,15 @@ struct mm_struct *get_task_mm(struct task_stru=
+ct *task)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(get_task_mm);
+> > >
+> > > +static bool can_access_mm(struct mm_struct *mm, struct task_struct *=
+task, unsigned int mode)
+> > > +{
+> > > +       if (mm =3D=3D current->mm)
+> > > +               return true;
+> > > +       if ((mode & PTRACE_MODE_READ) && perfmon_capable())
+> > > +               return true;
+> > > +       return ptrace_may_access(task, mode);
+> > > +}
+>
+> nit: "may" tends to be used more than "can" for access check function nam=
+ing.
+>
+> So, this will bypass security_ptrace_access_check() within
+> ptrace_may_access(). CAP_PERFMON may be something LSMs want visibility
+> into.
+>
+> It also bypasses the dumpability check in __ptrace_may_access(). (Should
+> non-dumpability block visibility into "maps" under CAP_PERFMON?)
+>
+> This change provides read access for CAP_PERFMON to:
+>
+> /proc/$pid/maps
+> /proc/$pid/smaps
+> /proc/$pid/mem
+> /proc/$pid/environ
+> /proc/$pid/auxv
+> /proc/$pid/attr/*
+> /proc/$pid/smaps_rollup
+> /proc/$pid/pagemap
+>
+> /proc/$pid/mem access seems way out of bounds for CAP_PERFMON. environ
+> and auxv maybe too much also. The "attr" files seem iffy. pagemap may be
+> reasonable.
 
-Instead of checking the fpq processing list, check ent_w_req_queue,
-ent_in_userspace, and ent_commit_queue.
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/fuse/dev.c        |  2 +-
- fs/fuse/dev_uring.c  | 23 ++++++++++++++++++++---
- fs/fuse/fuse_dev_i.h |  1 -
- 3 files changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 3c03aac480a4..80a11ef4b69a 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -45,7 +45,7 @@ bool fuse_request_expired(struct fuse_conn *fc, struct list_head *list)
- 	return time_is_before_jiffies(req->create_time + fc->timeout.req_timeout);
- }
- 
--bool fuse_fpq_processing_expired(struct fuse_conn *fc, struct list_head *processing)
-+static bool fuse_fpq_processing_expired(struct fuse_conn *fc, struct list_head *processing)
- {
- 	int i;
- 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 5c9b5a5fb7f7..dfa6c5337bbf 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -90,6 +90,7 @@ static void fuse_uring_req_end(struct fuse_ring_ent *ent, int error)
- 		fuse_uring_flush_bg(queue);
- 		spin_unlock(&fc->bg_lock);
- 	}
-+	ent->fuse_req = NULL;
- 
- 	spin_unlock(&queue->lock);
- 
-@@ -97,8 +98,7 @@ static void fuse_uring_req_end(struct fuse_ring_ent *ent, int error)
- 		req->out.h.error = error;
- 
- 	clear_bit(FR_SENT, &req->flags);
--	fuse_request_end(ent->fuse_req);
--	ent->fuse_req = NULL;
-+	fuse_request_end(req);
- }
- 
- /* Abort all list queued request on the given ring queue */
-@@ -140,6 +140,21 @@ void fuse_uring_abort_end_requests(struct fuse_ring *ring)
- 	}
- }
- 
-+static bool ent_list_request_expired(struct fuse_conn *fc, struct list_head *list)
-+{
-+	struct fuse_ring_ent *ent;
-+	struct fuse_req *req;
-+
-+	list_for_each_entry(ent, list, list) {
-+		req = ent->fuse_req;
-+		if (req)
-+			return time_is_before_jiffies(req->create_time +
-+						      fc->timeout.req_timeout);
-+	}
-+
-+	return false;
-+}
-+
- bool fuse_uring_request_expired(struct fuse_conn *fc)
- {
- 	struct fuse_ring *ring = fc->ring;
-@@ -157,7 +172,9 @@ bool fuse_uring_request_expired(struct fuse_conn *fc)
- 		spin_lock(&queue->lock);
- 		if (fuse_request_expired(fc, &queue->fuse_req_queue) ||
- 		    fuse_request_expired(fc, &queue->fuse_req_bg_queue) ||
--		    fuse_fpq_processing_expired(fc, queue->fpq.processing)) {
-+		    ent_list_request_expired(fc, &queue->ent_w_req_queue) ||
-+		    ent_list_request_expired(fc, &queue->ent_in_userspace) ||
-+		    ent_list_request_expired(fc, &queue->ent_commit_queue)) {
- 			spin_unlock(&queue->lock);
- 			return true;
- 		}
-diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-index 3c4ae4d52b6f..19c29c6000a7 100644
---- a/fs/fuse/fuse_dev_i.h
-+++ b/fs/fuse/fuse_dev_i.h
-@@ -63,7 +63,6 @@ void fuse_dev_queue_forget(struct fuse_iqueue *fiq,
- void fuse_dev_queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req);
- 
- bool fuse_request_expired(struct fuse_conn *fc, struct list_head *list);
--bool fuse_fpq_processing_expired(struct fuse_conn *fc, struct list_head *processing);
- 
- #endif
- 
--- 
-2.43.5
-
+FWIW, my understanding is that if you can use perf_event_open() on a
+process, you can also grab large amounts of stack memory contents from
+that process via PERF_SAMPLE_STACK_USER/sample_stack_user. (The idea
+there is that stack unwinding for userspace stacks is complicated, so
+it's the profiler's job to turn a pile of raw stack contents and a
+register snapshot into a stack trace.) So _to some extent_ I think it
+is already possible to read memory of another process via CAP_PERFMON.
+Whether that is desirable or not I don't know, though I guess it's
+hard to argue that there's a qualitative security difference between
+reading register contents and reading stack memory...
 
