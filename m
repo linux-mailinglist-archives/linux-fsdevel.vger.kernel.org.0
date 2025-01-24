@@ -1,114 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-40029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86AE5A1B246
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 10:03:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626EAA1B260
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 10:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2662A3AB095
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 09:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB94188F575
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 09:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72A1D47BD;
-	Fri, 24 Jan 2025 09:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB911DB372;
+	Fri, 24 Jan 2025 09:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="icMT7CvG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4k3viE5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6111D7E57
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2025 09:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E41D5AC6;
+	Fri, 24 Jan 2025 09:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737709258; cv=none; b=faf1IWF6Hk5XXfc6ppsldwZgRQcdNxy3q+39oVQf7tayRFOH8rHvhe+fKtxGo1hqfOsrWqKD+GtjK2RATP3ZvIkFJBumixQ56cAMzToj3n7Y8UDHA8uJ9NWjrPBhf25GpWgBy79NoRcFqugn67L2YwpiP391w2rh52/KVwZJwhI=
+	t=1737709813; cv=none; b=ktZ2G4AXaH76j+Bix4ijLXZOk3Smhb3h0UIQDFm919kRk8MVq19IBrsJ+2bT2HWa3lnrMZVbz8xCzfHBXl3po6Ev08EshObhlyTl4F45q4Ct2/1mk5egmpicdjlEvH/6rXP80ZtD25zJjEqYRXaHjOCjurDvON3oqQkGSsyQ8+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737709258; c=relaxed/simple;
-	bh=r7y9kvHFrJSdDEshIygkowJG8CJkzlY5IB33RVcATLM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MWCgPVSg+GHQ0ip0C51Bzjw45AwRWoHZ5spDS1eAHNqFKutRt3SxrBn1hYjj+BAmbvfftpOgIptrSOW4g3fbW18267oQDkZ3jXpaY0TpIOVQjPzCebx6Q3LHbRvcmU+D28JOKyC32Lq/OLjwmF5zALBXO0rX/eaDlyIjC2vf0kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=icMT7CvG; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ePVAqKPWX+uZMmYzgNGEMJp/gOOdVvd8y5OvN0MxCQY=; b=icMT7CvGMoNjOordRUvpQy9YGj
-	TDrJBfwYBi4AJHE+ct19jJbq5ucvU1dQppy8DD3pfMNkKg4obN0oqeJ5KdKB/VQhXaHqpQaEoG+Yn
-	k8q+ibF8btzrXxK1PtOW84AijQuo37ol+FaoT6YnyfHo/C3gDzMXbRA5yTlGhKiyi9HgHWsIRQheN
-	JQ9nOrP+Abim2NxS0IiQK1U2eFfm3tOxDrvNqVbQEbY+NVJeZE3R8ADiHRU7snK/WYr3pq8fHVzvc
-	OypZwC5F+NI2iR1qPVtyHUP6T3Gd9BpGycmPb428M5VNqyPuKoJpA1tFcJ0/EUoQzVPL8dg9DBBs6
-	XhOjInZg==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tbFYR-001h3j-WC; Fri, 24 Jan 2025 10:00:43 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Dan Carpenter
- <dan.carpenter@linaro.org>,  Joanne Koong <joannelkoong@gmail.com>,
-  linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] fuse: over-io-uring fixes
-In-Reply-To: <20250123-fuse-uring-for-6-14-incremental-to-v10-v1-0-8aee9f27c066@ddn.com>
-	(Bernd Schubert's message of "Thu, 23 Jan 2025 17:55:29 +0100")
-References: <20250123-fuse-uring-for-6-14-incremental-to-v10-v1-0-8aee9f27c066@ddn.com>
-Date: Fri, 24 Jan 2025 08:59:53 +0000
-Message-ID: <8734h8poxi.fsf@igalia.com>
+	s=arc-20240116; t=1737709813; c=relaxed/simple;
+	bh=xk3kG0BCXcqkU0VbfYJ5fN8Nbwynu9/+rHAyME6dPeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gmQNv/5WcNiwFbhjuYYRChVGsfpnbX2ScRt9bznFSIhf+iVoMIA7y/nfYAqpvEUCo4xYDMh+H9Pe+gmc7KMmO5KJUV//nkKPKL5RNCnASwhr6lwxuZplJAgJP2/YEWYW92dgjo+xEoPTuepeZYSSRdeY515s75dg9MHuwDklKdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4k3viE5; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3dce16a3dso3599914a12.1;
+        Fri, 24 Jan 2025 01:10:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737709810; x=1738314610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PebFCz8wHywlT4G0ONoQK1ioBzzlxVw1mqYjoRgT2S4=;
+        b=Q4k3viE5/+T5X6CZR2TtBX/ZVOzgJgHnXweDZimXYNlKzD4516R/Q/equ7IXbTvslu
+         4W89bGP0XYoRfaSDwmc5NOpGgVsOGhA3mKr2BF86lnKugs74O9ZZo+EZmg4/O+diox08
+         +QwshLltICq41BnFPjl+pruBtEsE2CQS/d5cNXMNFq4Fw2/CLrseDKqAhIsjftiVfGeH
+         oSp1XDNC5pTRfqKH1kK+o6EdFMA0VtSipzUCRsZUOdqlhoyFEoqMvgJx4YBBU02iErdx
+         3kAuFfOAXcZf0au5TPhsLcrPluY6T6/ZavtpzgVJQGRfs+ABvBgTHn/jpuaggwVHzIDf
+         Nclg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737709810; x=1738314610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PebFCz8wHywlT4G0ONoQK1ioBzzlxVw1mqYjoRgT2S4=;
+        b=MfegGQebc7Qd0/w7wv0VS2hpmvLoFpdKO+aciyoAjwOYbOeiK1FDXpMTdGZK72gZ9s
+         9GAv+KgQ/nGk7ivDG/5oCPzC+StbLB4/c7js6INNny8TG44K8eaDqKY8cydmQrI2TqHb
+         CIVECpZli5wHddapTkWksTaCrKSdAac7z+IEZ8rf1qLPETS3UkkyYbOiaDmSeZ1S/LY8
+         19ESaiyda0L36GuLm4oeA7KLyEmHtjTktKIQIpiPQkHpAGj9qZVYwu6ttDIsYBTRSuJF
+         XkvzP+OIuKWdFCXCbkMdmThr4yRupyj5zeA5hPGoj3c3BE6yBKay0bFJQgr2+r9C1Nnd
+         2E8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMJ73+rXbXNcHQE2fEYcSUbdYxvZudaYD02QVGfjU4wMuLUw+sqJoZGw7kFi/Z/fHPxWamEkZaQxdPVFJ2j+QwO5MNGLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ZVM76ZHb+/eevVG4lxf3BjVQ66JtqY22NJi0tc0x4C9Z4gET
+	nGrO9PhiLE7x3uA18dANc5GpRqn9fwOrmUXVtuG89gRnirndYf55eVstAJAwd+JmNk6oNVgMnlj
+	wgewkr6KvJXEenHu8XKCwtA1sbYlKTaAqpfE=
+X-Gm-Gg: ASbGnct6jCyqVQx4dYD8sd9+7e997it4fbjabfJ/Kp+OESeOkuKemm7RD0188s9lkzL
+	f2Gl5cVPEjQ+OCRZ9nEzQsPNNbpKMph/YN7PrTDWmJ28n6diXjf447GHxyfP0nA==
+X-Google-Smtp-Source: AGHT+IFrA7ABUjmPfjXLWyi0xqf+53fo9KMh4gxsb50I3VlPpKc6LfbT3fGBAeb3/9pKd6sRzjbrrmxv4fyFIjZyeps=
+X-Received: by 2002:a05:6402:40c6:b0:5dc:6c5:69d5 with SMTP id
+ 4fb4d7f45d1cf-5dc17fed20cmr2451343a12.3.1737709809236; Fri, 24 Jan 2025
+ 01:10:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-5-mszeredi@redhat.com>
+In-Reply-To: <20250123194108.1025273-5-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 24 Jan 2025 10:09:57 +0100
+X-Gm-Features: AWEUYZlLUDlIG7daVyXQpAi5HxQSypgWDfM6ySPrJ_GWQXveV6CRHuRSyqGwdr0
+Message-ID: <CAOQ4uxhmL5P2WVMPQLjNnMD8+jqvkJD7_QVBKU9GEArdGw-7nw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bernd,
-
-On Thu, Jan 23 2025, Bernd Schubert wrote:
-
-> This is a list of fixes that came up from review of Luis
-> and smatch run from Dan.
-> I didn't put in commit id in the "Fixes:" line, as it is
-> fuse-io-uring is in linux next only and might get rebases
-> with new IDs.
-
-Thank you for this, Bernd.  And sorry for the extra work -- I should have
-sent these patches myself instead of simply sending review comments. :-(
-
-Anyway, they all look good, and probably they should simply be squashed
-into the respective patches they are fixing.  If they are kept separately,
-feel free to add my
-
-Reviewed-by: Luis Henriques <luis@igalia.com>
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+On Thu, Jan 23, 2025 at 8:41=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com=
+> wrote:
+>
+> Notify when mount flags, propagation or idmap changes.
+>
+> Just like attach and detach, no details are given in the notification, on=
+ly
+> the mount ID.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
-> Bernd Schubert (5):
->       fuse: Fix copy_from_user error return code in fuse_uring_commit
->       fuse: Remove an err=3D assignment and move a comment
->       fuse: prevent disabling io-uring on active connections
->       fuse: Remove unneeded include in fuse_dev_i.h
->       fuse: Fix the struct fuse_args->in_args array size
+
+My only nit this time is that I prefer the fsnotify/fanotify bits here
+to be in patches 1,2
+which as you write, only add the infrastructure to be used later.
+
+[...]
+
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -471,7 +471,7 @@ static inline bool fanotify_is_error_event(u32 mask)
 >
->  fs/fuse/dev_uring.c  | 23 ++++++++++++-----------
->  fs/fuse/fuse_dev_i.h |  1 -
->  fs/fuse/fuse_i.h     |  2 +-
->  3 files changed, 13 insertions(+), 13 deletions(-)
-> ---
-> base-commit: a5ca7ba2e604b5d4eb54e1e2746851fdd5d9e98f
-> change-id: 20250123-fuse-uring-for-6-14-incremental-to-v10-b6b916b77720
+>  static inline bool fanotify_is_mnt_event(u32 mask)
+>  {
+> -       return mask & (FAN_MNT_ATTACH | FAN_MNT_DETACH);
+> +       return mask & FANOTIFY_MOUNT_EVENTS;
+>  }
 >
-> Best regards,
-> --=20
-> Bernd Schubert <bschubert@ddn.com>
+
+This should have used the macro from the first use in patch 2.
+
+[...]
+
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
+ckend.h
+> index 6c3e3a4a7b10..54e01803e309 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -58,6 +58,8 @@
 >
+>  #define FS_MNT_ATTACH          0x01000000      /* Mount was attached */
+>  #define FS_MNT_DETACH          0x02000000      /* Mount was detached */
+> +#define FS_MNT_CHANGE          0x04000000      /* Mount was changed */
+> +
+>  #define FS_MNT_MOVE            (FS_MNT_ATTACH | FS_MNT_DETACH)
+>
+>  /*
+> @@ -106,7 +108,8 @@
+>                              FS_EVENTS_POSS_ON_CHILD | \
+>                              FS_DELETE_SELF | FS_MOVE_SELF | \
+>                              FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED |=
+ \
+> -                            FS_ERROR | FS_MNT_ATTACH | FS_MNT_DETACH)
+> +                            FS_ERROR | \
+> +                            FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANG=
+E )
+
+Please add those bits as a group in patch 1:
+
+@@ -80,6 +80,9 @@
+  */
+ #define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE |
+FS_RENAME)
+
++/* Mount namespace events */
++#define FSNOTIFY_MNT_EVENTS (FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANGE=
+)
++
+ /* Content events can be used to inspect file content */
+ #define FSNOTIFY_CONTENT_PERM_EVENTS (FS_OPEN_PERM | FS_OPEN_EXEC_PERM | \
+                                      FS_ACCESS_PERM)
+@@ -108,6 +111,7 @@
+
+ /* Events that can be reported to backends */
+ #define ALL_FSNOTIFY_EVENTS (ALL_FSNOTIFY_DIRENT_EVENTS | \
++                            FSNOTIFY_MNT_EVENTS | \
+                             FS_EVENTS_POSS_ON_CHILD | \
+
+I am aware of the inconsistency of the names ALL_FSNOTIFY_* and FSNOTIFY_*
+but if you look at master as of last night you will find:
+
+FSNOTIFY_CONTENT_PERM_EVENTS and FSNOTIFY_PRE_CONTENT_EVENTS
+
+(please rebase)
+
+One day we may cleanup ALL_FSNOTIFY_DIRENT_EVENTS and
+ALL_FSNOTIFY_PERM_EVENTS to conform.
+
+Thanks,
+Amir.
 
