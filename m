@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-40080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D06FA1BD7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 21:31:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFACA1BD82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 21:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D414A7A2728
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 20:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E343A5493
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 20:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF76226173;
-	Fri, 24 Jan 2025 20:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF91DFD8B;
+	Fri, 24 Jan 2025 20:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6LnTqC/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyneSq5r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560F12253E9;
-	Fri, 24 Jan 2025 20:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938ED1DB36B;
+	Fri, 24 Jan 2025 20:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737750596; cv=none; b=n/Z95ByBaC/C0Y7lx3ZZC5PwAxAQg9mEx22ig6fPCfZ7MaujevK1OTN3g+P+KJDu6JyRDOIRrCJ7RXve/6EL+6KLtAv3q3byRliUFE2E9QMo4f0cRInbpG/b9o4jMsytyQNC18UqQqL2Y4e7I2DbXUfHETTa4vSKyVH0Lbxg6iQ=
+	t=1737750603; cv=none; b=oEB4zoFGmeHDzh5fdKxD2JBMb371jEZXnPPhSVZwMrhojfMQGDwUF4zSfIQn4njn8/K4OVwF8LaKOeVVJjlTxzGylkoic0zGP26megOEuchlI9YhT9WwaqgHSro6zBn1nhohrMIXzXRqt35mKAMJywCoQX+FZR3HLPNPAIoB8yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737750596; c=relaxed/simple;
-	bh=OBPQ5SKmmy0ZOEOGw96BY8LT51fU4Blsyn80lC+xbLA=;
+	s=arc-20240116; t=1737750603; c=relaxed/simple;
+	bh=bnZrm3/Hb1nIJZ7r0LF83ktCbGI3OtlCz4w9SdkVqrc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cQuBR1gePEuRgQxpYp0j1a3EllT6qTiMQgyXWQeXjD6SYU4xRzkfOIHTbygyvvmawhMenjSHVlmOtAzsQHmtpTnh2riaSO74yEg3r/oUE778PvLtV9qfKb5tDz1ABa5FxCfCotbZfm2SpdpiqUD0K0s9W+Mx8aLMihuI9grhmSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6LnTqC/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDC1C4CED2;
-	Fri, 24 Jan 2025 20:29:52 +0000 (UTC)
+	 MIME-Version; b=Lj1ZvFjA83nfYFlqf6ma6a/7KU4qvA5Dga1qgSxeNSeADQQ3g3f/F6p1AP9pS9fzKtyiLi10Xmr83KqQ4QJyZhBLfqxla5c7z6nndp9iyckujqY5gh2pcaWSE6cNTgSPHLbyxb/4TCIVW4GJZ1phIzSEC32MxrzU09/wtdZQiJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyneSq5r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379D0C4CEDF;
+	Fri, 24 Jan 2025 20:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737750595;
-	bh=OBPQ5SKmmy0ZOEOGw96BY8LT51fU4Blsyn80lC+xbLA=;
+	s=k20201202; t=1737750603;
+	bh=bnZrm3/Hb1nIJZ7r0LF83ktCbGI3OtlCz4w9SdkVqrc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S6LnTqC/l+oEi+rewcdgwmOjBBK/GZdN02ylc/nhsSaVNaZU8s8vxLpS+O1dyzZMI
-	 jWxQib9MqeOjWySAiinPgdMZ+QA8n3FMjjnMOUzIiMupOh9fjA2cHjkqTMXoYsq9I8
-	 U6Kgzj1qAFatjJrv1jr5Gvoq/nqhaYbE2HLwoVTKxEJhipXAB5Xwzzfs87q+60G+gq
-	 utpX4v47mLFJn2TTEbwYF03xN0a4cE9URnbCoYAzl7IBqsYW4pDUoE8ULXires9P0E
-	 SDoGk3VXcPk4KeIXxtkIv+YhGwIZFZRI9JxzAb8ppHjQ2z3pv29xojeyJD2jChwQP+
-	 r4S8LAUpO5Rag==
+	b=hyneSq5rxTKDXlsaOc/L7Vzu1IdZEJN9H751Yde8vSJ3idmPnQW0WINvJI8QeX6d/
+	 Y5RZDUjOiU6fuAwsZL93Ew9hDyXvb91DcA7QMAGOjFJ0H5b+5jSSgGwWUTwxmpVkbQ
+	 L4PDJJBh8SwzQlnmDUe9dHLp7X4sTrBdbOEtDlRzyPv/M7uZJcnoPNX8blzyMmHsce
+	 mHLEYRpzWNWn0Cun8E4rwomrI113ydS6FcOAblBHJZvydubVf+c+KsjA+pJR+7PU9s
+	 Hc09EPoxx79zvPOSWzlTUzbe2/nGtJjefjwobXl5r2KkVrO1D/ka765KdXStsyFsg9
+	 cGvEi5I0S1RrQ==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc: kernel-team@meta.com,
 	liamwisehart@meta.com,
 	shankaran@meta.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH v10 bpf-next 4/7] bpf: Extend btf_kfunc_id_set to handle kfunc polymorphism
-Date: Fri, 24 Jan 2025 12:29:08 -0800
-Message-ID: <20250124202911.3264715-5-song@kernel.org>
+Subject: [PATCH v10 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic for bpf_dynptr_from_skb
+Date: Fri, 24 Jan 2025 12:29:09 -0800
+Message-ID: <20250124202911.3264715-6-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250124202911.3264715-1-song@kernel.org>
 References: <20250124202911.3264715-1-song@kernel.org>
@@ -74,359 +74,176 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Polymorphism exists in kernel functions, BPF helpers, as well as kfuncs.
-When called from different contexts, it is necessary to pick the right
-version of a kfunc. One of such example is bpf_dynptr_from_skb vs.
-bpf_dynptr_from_skb_rdonly.
+btf_kfunc_id_set.remap can pick proper version of a kfunc for the calling
+context. Use this logic to select bpf_dynptr_from_skb or
+bpf_dynptr_from_skb_rdonly. This will make the verifier simpler.
 
-To avoid the burden on the users, the verifier can inspect the calling
-context and select the right version of kfunc. However, with more kfuncs
-being added to the kernel, it is not scalable to push all these logic
-to the verifiler.
-
-Extend btf_kfunc_id_set to handle kfunc polymorphism. Specifically,
-a list of kfuncs, "hidden_set", and a new method "remap" is added to
-btf_kfunc_id_set. kfuncs in hidden_set do not have BTF_SET8_KFUNCS flag,
-and are not exposed in vmlinux.h. The remap method is used to inspect
-the calling context, and when necessary, remap the user visible kfuncs
-(for example, bpf_dynptr_from_skb), to its hidden version (for example,
-bpf_dynptr_from_skb_rdonly).
-
-The verifier calls in these remap logic via the new btf_kfunc_id_remap()
-API, and picks the right kfuncs for the context.
+Unfortunately, btf_kfunc_id_set.remap cannot cover the DYNPTR_TYPE_SKB
+logic in check_kfunc_args(). This can be addressed later.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- include/linux/btf.h     |  20 +++++++
- include/linux/btf_ids.h |   4 ++
- kernel/bpf/btf.c        | 117 ++++++++++++++++++++++++++++++++++------
- kernel/bpf/verifier.c   |   6 ++-
- 4 files changed, 128 insertions(+), 19 deletions(-)
+ kernel/bpf/verifier.c | 25 ++++++----------------
+ net/core/filter.c     | 49 +++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 51 insertions(+), 23 deletions(-)
 
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index 2a08a2b55592..065c374c4372 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -114,11 +114,23 @@ struct btf_id_set;
- struct bpf_prog;
- 
- typedef int (*btf_kfunc_filter_t)(const struct bpf_prog *prog, u32 kfunc_id);
-+typedef u32 (*btf_kfunc_remap_t)(const struct bpf_prog *prog, u32 kfunc_id);
- 
- struct btf_kfunc_id_set {
- 	struct module *owner;
- 	struct btf_id_set8 *set;
-+
-+	/* *hidden_set* contains kfuncs that are not exposed as kfunc in
-+	 * vmlinux.h. These kfuncs are usually a variation of a kfunc
-+	 * in *set*.
-+	 */
-+	struct btf_id_set8 *hidden_set;
- 	btf_kfunc_filter_t filter;
-+
-+	/* *remap* method remaps kfuncs in *set* to proper version in
-+	 * *hidden_set*.
-+	 */
-+	btf_kfunc_remap_t remap;
- };
- 
- struct btf_id_dtor_kfunc {
-@@ -575,6 +587,8 @@ u32 *btf_kfunc_is_modify_return(const struct btf *btf, u32 kfunc_btf_id,
- int register_btf_kfunc_id_set(enum bpf_prog_type prog_type,
- 			      const struct btf_kfunc_id_set *s);
- int register_btf_fmodret_id_set(const struct btf_kfunc_id_set *kset);
-+u32 btf_kfunc_id_remap(const struct btf *btf, u32 kfunc_btf_id,
-+		       const struct bpf_prog *prog);
- s32 btf_find_dtor_kfunc(struct btf *btf, u32 btf_id);
- int register_btf_id_dtor_kfuncs(const struct btf_id_dtor_kfunc *dtors, u32 add_cnt,
- 				struct module *owner);
-@@ -637,6 +651,12 @@ static inline u32 *btf_kfunc_id_set_contains(const struct btf *btf,
- {
- 	return NULL;
- }
-+static inline u32 btf_kfunc_id_remap(const struct btf *btf, u32 kfunc_btf_id,
-+				     const struct bpf_prog *prog)
-+{
-+	return kfunc_btf_id;
-+}
-+
- static inline int register_btf_kfunc_id_set(enum bpf_prog_type prog_type,
- 					    const struct btf_kfunc_id_set *s)
- {
-diff --git a/include/linux/btf_ids.h b/include/linux/btf_ids.h
-index 139bdececdcf..0744b84e64a9 100644
---- a/include/linux/btf_ids.h
-+++ b/include/linux/btf_ids.h
-@@ -212,6 +212,9 @@ extern struct btf_id_set8 name;
- #define BTF_KFUNCS_START(name)				\
- __BTF_SET8_START(name, local, BTF_SET8_KFUNCS)
- 
-+#define BTF_HIDDEN_KFUNCS_START(name)			\
-+__BTF_SET8_START(name, local, 0)
-+
- #define BTF_KFUNCS_END(name)				\
- BTF_SET8_END(name)
- 
-@@ -230,6 +233,7 @@ BTF_SET8_END(name)
- #define BTF_SET8_START(name) static struct btf_id_set8 __maybe_unused name = { 0 };
- #define BTF_SET8_END(name)
- #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
-+#define BTF_HIDDEN_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
- #define BTF_KFUNCS_END(name)
- 
- #endif /* CONFIG_DEBUG_INFO_BTF */
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 8396ce1d0fba..0ffe99205e9c 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -226,6 +226,7 @@ enum {
- 	BTF_KFUNC_SET_MAX_CNT = 256,
- 	BTF_DTOR_KFUNC_MAX_CNT = 256,
- 	BTF_KFUNC_FILTER_MAX_CNT = 16,
-+	BTF_KFUNC_REMAP_MAX_CNT = 16,
- };
- 
- struct btf_kfunc_hook_filter {
-@@ -233,9 +234,15 @@ struct btf_kfunc_hook_filter {
- 	u32 nr_filters;
- };
- 
-+struct btf_kfunc_hook_remap {
-+	btf_kfunc_remap_t remaps[BTF_KFUNC_REMAP_MAX_CNT];
-+	u32 nr_remaps;
-+};
-+
- struct btf_kfunc_set_tab {
- 	struct btf_id_set8 *sets[BTF_KFUNC_HOOK_MAX];
- 	struct btf_kfunc_hook_filter hook_filters[BTF_KFUNC_HOOK_MAX];
-+	struct btf_kfunc_hook_remap hook_remaps[BTF_KFUNC_HOOK_MAX];
- };
- 
- struct btf_id_dtor_kfunc_tab {
-@@ -8372,16 +8379,35 @@ static int btf_check_kfunc_protos(struct btf *btf, u32 func_id, u32 func_flags)
- 
- /* Kernel Function (kfunc) BTF ID set registration API */
- 
-+static void btf_add_kfunc_to_set(struct btf *btf, struct btf_id_set8 *set,
-+				 struct btf_id_set8 *add_set)
-+{
-+	u32 i;
-+
-+	if (!add_set)
-+		return;
-+	/* Concatenate the two sets */
-+	memcpy(set->pairs + set->cnt, add_set->pairs, add_set->cnt * sizeof(set->pairs[0]));
-+	/* Now that the set is copied, update with relocated BTF ids */
-+	for (i = set->cnt; i < set->cnt + add_set->cnt; i++)
-+		set->pairs[i].id = btf_relocate_id(btf, set->pairs[i].id);
-+
-+	set->cnt += add_set->cnt;
-+
-+	sort(set->pairs, set->cnt, sizeof(set->pairs[0]), btf_id_cmp_func, NULL);
-+}
-+
- static int btf_populate_kfunc_set(struct btf *btf, enum btf_kfunc_hook hook,
- 				  const struct btf_kfunc_id_set *kset)
- {
- 	struct btf_kfunc_hook_filter *hook_filter;
--	struct btf_id_set8 *add_set = kset->set;
-+	struct btf_kfunc_hook_remap *hook_remap;
- 	bool vmlinux_set = !btf_is_module(btf);
- 	bool add_filter = !!kset->filter;
-+	bool add_remap = !!kset->remap;
- 	struct btf_kfunc_set_tab *tab;
- 	struct btf_id_set8 *set;
--	u32 set_cnt, i;
-+	u32 set_cnt, add_cnt, i;
- 	int ret;
- 
- 	if (hook >= BTF_KFUNC_HOOK_MAX) {
-@@ -8389,14 +8415,16 @@ static int btf_populate_kfunc_set(struct btf *btf, enum btf_kfunc_hook hook,
- 		goto end;
- 	}
- 
--	if (!add_set->cnt)
-+	add_cnt = kset->set->cnt;
-+	if (kset->hidden_set)
-+		add_cnt += kset->hidden_set->cnt;
-+
-+	if (!add_cnt)
- 		return 0;
- 
- 	tab = btf->kfunc_set_tab;
- 
- 	if (tab && add_filter) {
--		u32 i;
--
- 		hook_filter = &tab->hook_filters[hook];
- 		for (i = 0; i < hook_filter->nr_filters; i++) {
- 			if (hook_filter->filters[i] == kset->filter) {
-@@ -8411,6 +8439,21 @@ static int btf_populate_kfunc_set(struct btf *btf, enum btf_kfunc_hook hook,
- 		}
- 	}
- 
-+	if (tab && add_remap) {
-+		hook_remap = &tab->hook_remaps[hook];
-+		for (i = 0; i < hook_remap->nr_remaps; i++) {
-+			if (hook_remap->remaps[i] == kset->remap) {
-+				add_remap = false;
-+				break;
-+			}
-+		}
-+
-+		if (add_remap && hook_remap->nr_remaps == BTF_KFUNC_REMAP_MAX_CNT) {
-+			ret = -E2BIG;
-+			goto end;
-+		}
-+	}
-+
- 	if (!tab) {
- 		tab = kzalloc(sizeof(*tab), GFP_KERNEL | __GFP_NOWARN);
- 		if (!tab)
-@@ -8439,19 +8482,19 @@ static int btf_populate_kfunc_set(struct btf *btf, enum btf_kfunc_hook hook,
- 	 */
- 	set_cnt = set ? set->cnt : 0;
- 
--	if (set_cnt > U32_MAX - add_set->cnt) {
-+	if (set_cnt > U32_MAX - add_cnt) {
- 		ret = -EOVERFLOW;
- 		goto end;
- 	}
- 
--	if (set_cnt + add_set->cnt > BTF_KFUNC_SET_MAX_CNT) {
-+	if (set_cnt + add_cnt > BTF_KFUNC_SET_MAX_CNT) {
- 		ret = -E2BIG;
- 		goto end;
- 	}
- 
- 	/* Grow set */
- 	set = krealloc(tab->sets[hook],
--		       offsetof(struct btf_id_set8, pairs[set_cnt + add_set->cnt]),
-+		       offsetof(struct btf_id_set8, pairs[set_cnt + add_cnt]),
- 		       GFP_KERNEL | __GFP_NOWARN);
- 	if (!set) {
- 		ret = -ENOMEM;
-@@ -8463,20 +8506,18 @@ static int btf_populate_kfunc_set(struct btf *btf, enum btf_kfunc_hook hook,
- 		set->cnt = 0;
- 	tab->sets[hook] = set;
- 
--	/* Concatenate the two sets */
--	memcpy(set->pairs + set->cnt, add_set->pairs, add_set->cnt * sizeof(set->pairs[0]));
--	/* Now that the set is copied, update with relocated BTF ids */
--	for (i = set->cnt; i < set->cnt + add_set->cnt; i++)
--		set->pairs[i].id = btf_relocate_id(btf, set->pairs[i].id);
--
--	set->cnt += add_set->cnt;
--
--	sort(set->pairs, set->cnt, sizeof(set->pairs[0]), btf_id_cmp_func, NULL);
-+	btf_add_kfunc_to_set(btf, set, kset->set);
-+	btf_add_kfunc_to_set(btf, set, kset->hidden_set);
- 
- 	if (add_filter) {
- 		hook_filter = &tab->hook_filters[hook];
- 		hook_filter->filters[hook_filter->nr_filters++] = kset->filter;
- 	}
-+
-+	if (add_remap) {
-+		hook_remap = &tab->hook_remaps[hook];
-+		hook_remap->remaps[hook_remap->nr_remaps++] = kset->remap;
-+	}
- 	return 0;
- end:
- 	btf_free_kfunc_set_tab(btf);
-@@ -8511,6 +8552,28 @@ static u32 *__btf_kfunc_id_set_contains(const struct btf *btf,
- 	return id + 1;
- }
- 
-+static u32 __btf_kfunc_id_remap(const struct btf *btf,
-+				enum btf_kfunc_hook hook,
-+				u32 kfunc_btf_id,
-+				const struct bpf_prog *prog)
-+{
-+	struct btf_kfunc_hook_remap *hook_remap;
-+	u32 i, remap_id = 0;
-+
-+	if (hook >= BTF_KFUNC_HOOK_MAX)
-+		return 0;
-+	if (!btf->kfunc_set_tab)
-+		return 0;
-+	hook_remap = &btf->kfunc_set_tab->hook_remaps[hook];
-+
-+	for (i = 0; i < hook_remap->nr_remaps; i++) {
-+		remap_id = hook_remap->remaps[i](prog, kfunc_btf_id);
-+		if (remap_id)
-+			break;
-+	}
-+	return remap_id;
-+}
-+
- static int bpf_prog_type_to_kfunc_hook(enum bpf_prog_type prog_type)
- {
- 	switch (prog_type) {
-@@ -8579,6 +8642,26 @@ u32 *btf_kfunc_id_set_contains(const struct btf *btf,
- 	return __btf_kfunc_id_set_contains(btf, hook, kfunc_btf_id, prog);
- }
- 
-+/* Reference to the module (obtained using btf_try_get_module)
-+ * corresponding to the struct btf *MUST* be held when calling this
-+ * function from the verifier
-+ */
-+u32 btf_kfunc_id_remap(const struct btf *btf, u32 kfunc_btf_id,
-+		       const struct bpf_prog *prog)
-+{
-+	enum bpf_prog_type prog_type = resolve_prog_type(prog);
-+	enum btf_kfunc_hook hook;
-+	u32 remap_id;
-+
-+	remap_id = __btf_kfunc_id_remap(btf, BTF_KFUNC_HOOK_COMMON, kfunc_btf_id, prog);
-+	if (remap_id)
-+		return remap_id;
-+
-+	hook = bpf_prog_type_to_kfunc_hook(prog_type);
-+	remap_id = __btf_kfunc_id_remap(btf, hook, kfunc_btf_id, prog);
-+	return remap_id ?: kfunc_btf_id;
-+}
-+
- u32 *btf_kfunc_is_modify_return(const struct btf *btf, u32 kfunc_btf_id,
- 				const struct bpf_prog *prog)
- {
 diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 9971c03adfd5..2188b6674266 100644
+index 2188b6674266..55e710e318e5 100644
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -3030,13 +3030,14 @@ static struct btf *find_kfunc_desc_btf(struct bpf_verifier_env *env, s16 offset)
- 	return btf_vmlinux ?: ERR_PTR(-ENOENT);
+@@ -11750,6 +11750,7 @@ enum special_kfunc_type {
+ 	KF_bpf_rbtree_add_impl,
+ 	KF_bpf_rbtree_first,
+ 	KF_bpf_dynptr_from_skb,
++	KF_bpf_dynptr_from_skb_rdonly,
+ 	KF_bpf_dynptr_from_xdp,
+ 	KF_bpf_dynptr_slice,
+ 	KF_bpf_dynptr_slice_rdwr,
+@@ -11785,6 +11786,7 @@ BTF_ID(func, bpf_rbtree_add_impl)
+ BTF_ID(func, bpf_rbtree_first)
+ #ifdef CONFIG_NET
+ BTF_ID(func, bpf_dynptr_from_skb)
++BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+ BTF_ID(func, bpf_dynptr_from_xdp)
+ #endif
+ BTF_ID(func, bpf_dynptr_slice)
+@@ -11816,10 +11818,12 @@ BTF_ID(func, bpf_rbtree_add_impl)
+ BTF_ID(func, bpf_rbtree_first)
+ #ifdef CONFIG_NET
+ BTF_ID(func, bpf_dynptr_from_skb)
++BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+ BTF_ID(func, bpf_dynptr_from_xdp)
+ #else
+ BTF_ID_UNUSED
+ BTF_ID_UNUSED
++BTF_ID_UNUSED
+ #endif
+ BTF_ID(func, bpf_dynptr_slice)
+ BTF_ID(func, bpf_dynptr_slice_rdwr)
+@@ -12741,7 +12745,8 @@ static int check_kfunc_args(struct bpf_verifier_env *env, struct bpf_kfunc_call_
+ 			if (is_kfunc_arg_uninit(btf, &args[i]))
+ 				dynptr_arg_type |= MEM_UNINIT;
+ 
+-			if (meta->func_id == special_kfunc_list[KF_bpf_dynptr_from_skb]) {
++			if (meta->func_id == special_kfunc_list[KF_bpf_dynptr_from_skb] ||
++			    meta->func_id == special_kfunc_list[KF_bpf_dynptr_from_skb_rdonly]) {
+ 				dynptr_arg_type |= DYNPTR_TYPE_SKB;
+ 			} else if (meta->func_id == special_kfunc_list[KF_bpf_dynptr_from_xdp]) {
+ 				dynptr_arg_type |= DYNPTR_TYPE_XDP;
+@@ -20898,9 +20903,7 @@ static void specialize_kfunc(struct bpf_verifier_env *env,
+ 			     u32 func_id, u16 offset, unsigned long *addr)
+ {
+ 	struct bpf_prog *prog = env->prog;
+-	bool seen_direct_write;
+ 	void *xdp_kfunc;
+-	bool is_rdonly;
+ 
+ 	if (bpf_dev_bound_kfunc_id(func_id)) {
+ 		xdp_kfunc = bpf_dev_bound_resolve_kfunc(prog, func_id);
+@@ -20910,22 +20913,6 @@ static void specialize_kfunc(struct bpf_verifier_env *env,
+ 		}
+ 		/* fallback to default kfunc when not supported by netdev */
+ 	}
+-
+-	if (offset)
+-		return;
+-
+-	if (func_id == special_kfunc_list[KF_bpf_dynptr_from_skb]) {
+-		seen_direct_write = env->seen_direct_write;
+-		is_rdonly = !may_access_direct_pkt_data(env, NULL, BPF_WRITE);
+-
+-		if (is_rdonly)
+-			*addr = (unsigned long)bpf_dynptr_from_skb_rdonly;
+-
+-		/* restore env->seen_direct_write to its original value, since
+-		 * may_access_direct_pkt_data mutates it
+-		 */
+-		env->seen_direct_write = seen_direct_write;
+-	}
  }
  
--static int add_kfunc_call(struct bpf_verifier_env *env, u32 func_id, s16 offset)
-+static int add_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn, s16 offset)
+ static void __fixup_collection_insert_kfunc(struct bpf_insn_aux_data *insn_aux,
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 2ec162dd83c4..6416689e3976 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -12062,10 +12062,8 @@ __bpf_kfunc int bpf_sk_assign_tcp_reqsk(struct __sk_buff *s, struct sock *sk,
+ #endif
+ }
+ 
+-__bpf_kfunc_end_defs();
+-
+-int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 flags,
+-			       struct bpf_dynptr *ptr__uninit)
++__bpf_kfunc int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 flags,
++					   struct bpf_dynptr *ptr__uninit)
  {
- 	const struct btf_type *func, *func_proto;
- 	struct bpf_kfunc_btf_tab *btf_tab;
- 	struct bpf_kfunc_desc_tab *tab;
- 	struct bpf_prog_aux *prog_aux;
- 	struct bpf_kfunc_desc *desc;
-+	u32 func_id = insn->imm;
- 	const char *func_name;
- 	struct btf *desc_btf;
- 	unsigned long call_imm;
-@@ -3095,6 +3096,7 @@ static int add_kfunc_call(struct bpf_verifier_env *env, u32 func_id, s16 offset)
- 		return PTR_ERR(desc_btf);
- 	}
+ 	struct bpf_dynptr_kern *ptr = (struct bpf_dynptr_kern *)ptr__uninit;
+ 	int err;
+@@ -12079,10 +12077,16 @@ int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 flags,
+ 	return 0;
+ }
  
-+	func_id = insn->imm = btf_kfunc_id_remap(desc_btf, insn->imm, env->prog);
- 	if (find_kfunc_desc(env->prog, func_id, offset))
- 		return 0;
++__bpf_kfunc_end_defs();
++
+ BTF_KFUNCS_START(bpf_kfunc_check_set_skb)
+ BTF_ID_FLAGS(func, bpf_dynptr_from_skb, KF_TRUSTED_ARGS)
+ BTF_KFUNCS_END(bpf_kfunc_check_set_skb)
  
-@@ -3228,7 +3230,7 @@ static int add_subprog_and_kfunc(struct bpf_verifier_env *env)
- 		if (bpf_pseudo_func(insn) || bpf_pseudo_call(insn))
- 			ret = add_subprog(env, i + insn->imm + 1);
- 		else
--			ret = add_kfunc_call(env, insn->imm, insn->off);
-+			ret = add_kfunc_call(env, insn, insn->off);
++BTF_HIDDEN_KFUNCS_START(bpf_kfunc_check_hidden_set_skb)
++BTF_ID_FLAGS(func, bpf_dynptr_from_skb_rdonly, KF_TRUSTED_ARGS)
++BTF_KFUNCS_END(bpf_kfunc_check_hidden_set_skb)
++
+ BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
+ BTF_ID_FLAGS(func, bpf_dynptr_from_xdp)
+ BTF_KFUNCS_END(bpf_kfunc_check_set_xdp)
+@@ -12095,9 +12099,46 @@ BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
+ BTF_ID_FLAGS(func, bpf_sk_assign_tcp_reqsk, KF_TRUSTED_ARGS)
+ BTF_KFUNCS_END(bpf_kfunc_check_set_tcp_reqsk)
  
- 		if (ret < 0)
- 			return ret;
++BTF_ID_LIST(bpf_dynptr_from_skb_list)
++BTF_ID(func, bpf_dynptr_from_skb)
++BTF_ID(func, bpf_dynptr_from_skb_rdonly)
++
++static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 kfunc_id)
++{
++	if (kfunc_id != bpf_dynptr_from_skb_list[0])
++		return 0;
++
++	switch (resolve_prog_type(prog)) {
++	/* Program types only with direct read access go here! */
++	case BPF_PROG_TYPE_LWT_IN:
++	case BPF_PROG_TYPE_LWT_OUT:
++	case BPF_PROG_TYPE_LWT_SEG6LOCAL:
++	case BPF_PROG_TYPE_SK_REUSEPORT:
++	case BPF_PROG_TYPE_FLOW_DISSECTOR:
++	case BPF_PROG_TYPE_CGROUP_SKB:
++		return bpf_dynptr_from_skb_list[1];
++
++	/* Program types with direct read + write access go here! */
++	case BPF_PROG_TYPE_SCHED_CLS:
++	case BPF_PROG_TYPE_SCHED_ACT:
++	case BPF_PROG_TYPE_XDP:
++	case BPF_PROG_TYPE_LWT_XMIT:
++	case BPF_PROG_TYPE_SK_SKB:
++	case BPF_PROG_TYPE_SK_MSG:
++	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
++		return kfunc_id;
++
++	default:
++		break;
++	}
++	return bpf_dynptr_from_skb_list[1];
++}
++
+ static const struct btf_kfunc_id_set bpf_kfunc_set_skb = {
+ 	.owner = THIS_MODULE,
+ 	.set = &bpf_kfunc_check_set_skb,
++	.hidden_set = &bpf_kfunc_check_hidden_set_skb,
++	.remap = &bpf_kfunc_set_skb_remap,
+ };
+ 
+ static const struct btf_kfunc_id_set bpf_kfunc_set_xdp = {
 -- 
 2.43.5
 
