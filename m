@@ -1,64 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-40043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FFEA1B7A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 15:15:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FD2A1B96F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 16:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E1D3AB2DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 14:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2AA188CADB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 15:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA07D4317E;
-	Fri, 24 Jan 2025 14:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D30155CBF;
+	Fri, 24 Jan 2025 15:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hsW++UxL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQZWwMYl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29613594D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2025 14:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E6D130A73;
+	Fri, 24 Jan 2025 15:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737728131; cv=none; b=duPrskF5BrG0KPBWCR4jVO1/7+SqImeLHOO6voPG0RFBHoLENgk/lNAlA7285umKWE3/83f9CdJRG0CZdmGlI+brPuazw8TrZpw3r3NixDjhDKjmwrLTFEZ2ioUIvsiV76Dn6vmpP1z9BEfyAGpBYlksg8Cnik2nOn/RL8Ioak4=
+	t=1737733112; cv=none; b=sj5Ddz8XUkJdo/SI5usMqyijX74deV0iet3vrFyEIrFkt+weXzYadlKHayDFXIxS9s40kYikL4cAaf+7oky/AeM05/N8edhibsZX1O7vHWZcW9QOr37bHL/CqH7pcZe1+n0U7SoSY3OumlzP4GBma3ZU/ikju9Pn2LNIIXAqzh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737728131; c=relaxed/simple;
-	bh=97MJ8WWFxVaC9jMfNKxXdHuK3OSkHDNx8EhDQX7AUi4=;
+	s=arc-20240116; t=1737733112; c=relaxed/simple;
+	bh=0Q3+ZDPqlVznH2DBnB+hCmTQTK5hnVFuCIBqHXWe9m8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BS0xoYRnegwrAh7RUo+6oMXtySP/hbooiBu5PzGd46mnqvdx2/bFyLlepfhOOaGQcZUcMW5XuIxpF8TNRfMp2yDv/l/oqauABO0WU/Bpwa1J5TFC7MafEUJfGkKf0hH7AoMiF2xIx4+3BV8RuhIFJ+PMNVMdMOi6mI18hIF3uEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hsW++UxL; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 24 Jan 2025 09:15:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1737728121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5lq+QTPSqU8loPhhXwi6+gC/RNqRQ4ydTXYqFQWqu6Y=;
-	b=hsW++UxLxW0TE+E5Izw29VEuVJU5JI3G0mIR+u3GsCeQyK93KZM/5ZxEGT0NxQ2vgQ8NJi
-	lRMQzn1vJJYPcjNXJtxK8dVFS6cg9n8nfOAgKJ02fb0GcF7WXtLAOrzAEpns/pupd+Vo8x
-	WxEuyhi/MdUKIcq+rN+Y0TD3NZL9yLg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Kun Hu <huk23@m.fudan.edu.cn>
-Cc: Dmitry Vyukov <dvyukov@google.com>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Subject: Re: Bug: INFO_ task hung in lock_two_nondirectories
-Message-ID: <iiebhi7ijlyo54zq4mtqnbw6253ysnhia5qpdek2hyyby3ls7e@pko7dnzi77fk>
-References: <42BD15B5-3C6C-437E-BF52-E22E6F200513@m.fudan.edu.cn>
- <gwgec4tknjmjel4e37myyichugheuba3sy7cxkdqqj2raaglf5@n7uttxolimpa>
- <ftg6ukiq5secljpfloximhor2mjvda7qssydeqky4zcv4dpxxw@jadua4pcalva>
- <CACT4Y+ZtHUhXpETW+x8FpNbvN=xtKGZ1sBUQDr3TtKM+=7-xcg@mail.gmail.com>
- <D067012D-7E8D-4AD9-A0CA-66B397110989@m.fudan.edu.cn>
- <xxpizgm5l66ru5n23ejgiyw5xbq4mf4sxwfgj63b4xgr5ot2sh@iqzwriqmwjg3>
- <5BCDEDB6-7A92-4401-A0A8-A12EF2F27ED0@m.fudan.edu.cn>
- <tkfjnls4rms7r7ajdwj3n4yxyexufrdunhgvzalegz6j35zbxm@fexthq26w7lr>
- <900A37C1-9A21-46DF-8416-B8ABF1D0667C@m.fudan.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaXzMrfasInZ8MiQaP+5NWAODi8OxWb7v+knnMb6owQJLRxx+Rca3HsPchEAdzRL73+5LjnD2dOOrXfn1ASs3zN4o+oNnW8CXOeoXPTOnW4syyYZ2qDauqTuupJkSHoIElf3wdsU5MN6ikk7L2VC0DA8qJm/FP2RPz13KW41/9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQZWwMYl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEA4C4CED2;
+	Fri, 24 Jan 2025 15:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737733112;
+	bh=0Q3+ZDPqlVznH2DBnB+hCmTQTK5hnVFuCIBqHXWe9m8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eQZWwMYlCEGLWHIPE8yWeUZUgZC+DJEXUSLseR58B8f++aqPNhjf0aMYLgkmdQbRS
+	 zIzEtI8scp9h5R85cNXzGtt5/LMHDm6MrzjT0k9m1XPymsBzikIn/IwraY1bGCbNJR
+	 UQCpjuJcpwme819TOAtK1xHO6SLC8+lLNFmfPDOlqrFQMDAucslQSceVm4T+D8MgK5
+	 oAkscLynL9+ZdYSuM9RfgCjT67NAoycLzHXnGFrEUHibW+iZPddvlSj1N2EAqtfbB5
+	 vla9ZmGapnfwZcuQGi7S9edwCrqY1cgsoS9nHYvP3+QXgy8THMWEWhJW7Bz/sZ3Cbq
+	 E4udTKgN3hlQA==
+Date: Fri, 24 Jan 2025 16:38:25 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
+Message-ID: <20250124-abklopfen-orbit-287ed6b59c61@brauner>
+References: <20250123194108.1025273-1-mszeredi@redhat.com>
+ <20250123194108.1025273-5-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,63 +60,210 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <900A37C1-9A21-46DF-8416-B8ABF1D0667C@m.fudan.edu.cn>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250123194108.1025273-5-mszeredi@redhat.com>
 
-On Fri, Jan 24, 2025 at 08:22:57PM +0800, Kun Hu wrote:
+On Thu, Jan 23, 2025 at 08:41:07PM +0100, Miklos Szeredi wrote:
+> Notify when mount flags, propagation or idmap changes.
 > 
-> > 
-> > Again: the standard mantra is "work wth upstream". If you forked syzbot
-> > and you're working on fuzzing, syzbot is your upstream, not the kernel.
-> > 
-> > If you work with the syzbot people on getting your fuzz testing
-> > improvements merged, the process of reporting the bugs fuzzing finds to
-> > us kernel folks won't be on your plate anymore, and you get to focus on
-> > the stuff you actually want to be doing. :)
-> > 
-> >> Link: https://github.com/google/syzkaller/blob/master/docs/linux/reporting_kernel_bugs.md
-> >> 
-> >> It is often suggested that researchers collaborate with syzbot. What
-> >> should such collaboration look like in terms of form and content? From
-> >> a maintainer's perspective, how would you prefer to see researchers
-> >> who report bugs work with syzbot? Since I’m new to this field, I’m not
-> >> very familiar with the process and would greatly appreciate your
-> >> guidance.
-> > 
-> > Talk to the syzbot folks, they're a friendly bunch :)
-> > 
-> > The main thing to keep in mind is that it's never _just_ about getting
-> > your code merged, you need to spend some time learning the lay of the
-> > land so you can understand where your work fits in, and what people need
-> > and are interested in - you want to make sure that you're not
-> > duplicating work, and you want your code to be as maintainable and
-> > broadly useful to everone else as it can be.
-> > 
-> > Have you shared with them what your research interests are?
+> Just like attach and detach, no details are given in the notification, only
+> the mount ID.
 > 
-> 
-> Sorry for late. Thank you very much for your advice, we’ll try to work with the syzbot community. 
-> 
-> But an interesting interaction relationship is that for researchers
-> from academia to prove the advanced technology of their fuzzer, they
-> seem to need to use their personal finding of real-world bugs as an
-> important experimental metric. I think that's why you get reports that
-> are modeled after syzbot (the official description of syzkaller
-> describes the process for independent reports). If the quality of the
-> individual reports is low, it does affect the judgment of the
-> maintainer, but also it is also a waste of everyone's time.
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
 
-Ah, metrics and TPS reports. Symptoms of MBA culture, "we just want to
-manage by watching the numbers and making sure they go up - deep
-expertise in the thing we're managing? what's that?"
+I think this is a good next step but I would first go with the minimal
+functionality of notifying about mount topology changes for v6.15.
 
-Push back on that mindset wherever you can and your life will be less
-nonsensical and frustrating :)
+Btw, if we notify in do_remount() on the mount that triggered
+superblock reconfiguration then we also need to trigger in
+vfs_cmd_reconfigure() aka fsconfig(FSCONFIG_CMD_RECONFIGURE) but the
+mount that was used to change superblock options is only available in
+fspick() currently. That would need to be handled.
 
-Maybe see if you can find some other way of showing the value of your
-work? Things like patches accepted into upstream syzbot, public
-feedback from the syzbot maintainers, or just describing your work
-yourself to your higher ups instead of relying on metrics - or see if
-you can help them come up with some better metrics.
+But I think this patch makes more sense in follow-up releases.
+
+>  fs/namespace.c                   | 27 +++++++++++++++++++++++++++
+>  fs/notify/fanotify/fanotify.c    |  2 +-
+>  fs/notify/fanotify/fanotify.h    |  2 +-
+>  fs/notify/fsnotify.c             |  2 +-
+>  include/linux/fanotify.h         |  2 +-
+>  include/linux/fsnotify.h         |  5 +++++
+>  include/linux/fsnotify_backend.h |  5 ++++-
+>  include/uapi/linux/fanotify.h    |  1 +
+>  8 files changed, 41 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 948348a37f6c..9b9b13665dce 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2807,6 +2807,9 @@ static int do_change_type(struct path *path, int ms_flags)
+>  		change_mnt_propagation(m, type);
+>  	unlock_mount_hash();
+>  
+> +	for (m = mnt; m; m = (recurse ? next_mnt(m, mnt) : NULL))
+> +		fsnotify_mnt_change(m->mnt_ns, &m->mnt);
+> +
+>   out_unlock:
+>  	namespace_unlock();
+>  	return err;
+> @@ -3089,6 +3092,12 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+>  	unlock_mount_hash();
+>  	up_read(&sb->s_umount);
+>  
+> +	if (!ret) {
+> +		down_read(&namespace_sem);
+> +		fsnotify_mnt_change(mnt->mnt_ns, &mnt->mnt);
+> +		up_read(&namespace_sem);
+> +	}
+> +
+>  	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+>  
+>  	return ret;
+> @@ -3141,6 +3150,13 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+>  		up_write(&sb->s_umount);
+>  	}
+>  
+> +	if (!err) {
+> +		down_read(&namespace_sem);
+> +		fsnotify_mnt_change(mnt->mnt_ns, &mnt->mnt);
+> +		up_read(&namespace_sem);
+> +	}
+> +
+> +
+>  	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+>  
+>  	put_fs_context(fc);
+> @@ -4708,6 +4724,8 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+>  				return err;
+>  			}
+>  		}
+> +	} else {
+> +		down_read(&namespace_sem);
+>  	}
+>  
+>  	err = -EINVAL;
+> @@ -4743,10 +4761,19 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+>  out:
+>  	unlock_mount_hash();
+>  
+> +	if (!err) {
+> +		struct mount *m;
+> +
+> +		for (m = mnt; m; m = kattr->recurse ? next_mnt(m, mnt) : NULL)
+> +			fsnotify_mnt_change(m->mnt_ns, &m->mnt);
+> +	}
+> +
+>  	if (kattr->propagation) {
+>  		if (err)
+>  			cleanup_group_ids(mnt, NULL);
+>  		namespace_unlock();
+> +	} else {
+> +		up_read(&namespace_sem);
+>  	}
+>  
+>  	return err;
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index b1937f92f105..c7ddd145f3d8 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -934,7 +934,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+>  	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
+>  	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
+>  
+> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 23);
+> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 24);
+>  
+>  	mask = fanotify_group_event_mask(group, iter_info, &match_mask,
+>  					 mask, data, data_type, dir);
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index f1a7cbedc9e3..8d6289da06f1 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -471,7 +471,7 @@ static inline bool fanotify_is_error_event(u32 mask)
+>  
+>  static inline bool fanotify_is_mnt_event(u32 mask)
+>  {
+> -	return mask & (FAN_MNT_ATTACH | FAN_MNT_DETACH);
+> +	return mask & FANOTIFY_MOUNT_EVENTS;
+>  }
+>  
+>  static inline const struct path *fanotify_event_path(struct fanotify_event *event)
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 2b2c3fd907c7..5872dd27172d 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -660,7 +660,7 @@ static __init int fsnotify_init(void)
+>  {
+>  	int ret;
+>  
+> -	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
+> +	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 26);
+>  
+>  	ret = init_srcu_struct(&fsnotify_mark_srcu);
+>  	if (ret)
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index fc142be2542d..61e112d25303 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -100,7 +100,7 @@
+>  /* Events that can only be reported with data type FSNOTIFY_EVENT_ERROR */
+>  #define FANOTIFY_ERROR_EVENTS	(FAN_FS_ERROR)
+>  
+> -#define FANOTIFY_MOUNT_EVENTS	(FAN_MNT_ATTACH | FAN_MNT_DETACH)
+> +#define FANOTIFY_MOUNT_EVENTS	(FAN_MNT_ATTACH | FAN_MNT_DETACH | FAN_MNT_CHANGE)
+>  
+>  /* Events that user can request to be notified on */
+>  #define FANOTIFY_EVENTS		(FANOTIFY_PATH_EVENTS | \
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index ea998551dd0d..ba3e05c69aaa 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -483,4 +483,9 @@ static inline void fsnotify_mnt_move(struct mnt_namespace *ns, struct vfsmount *
+>  	fsnotify_mnt(FS_MNT_MOVE, ns, mnt);
+>  }
+>  
+> +static inline void fsnotify_mnt_change(struct mnt_namespace *ns, struct vfsmount *mnt)
+> +{
+> +	fsnotify_mnt(FS_MNT_CHANGE, ns, mnt);
+> +}
+> +
+>  #endif	/* _LINUX_FS_NOTIFY_H */
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 6c3e3a4a7b10..54e01803e309 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -58,6 +58,8 @@
+>  
+>  #define FS_MNT_ATTACH		0x01000000	/* Mount was attached */
+>  #define FS_MNT_DETACH		0x02000000	/* Mount was detached */
+> +#define FS_MNT_CHANGE		0x04000000	/* Mount was changed */
+> +
+>  #define FS_MNT_MOVE		(FS_MNT_ATTACH | FS_MNT_DETACH)
+>  
+>  /*
+> @@ -106,7 +108,8 @@
+>  			     FS_EVENTS_POSS_ON_CHILD | \
+>  			     FS_DELETE_SELF | FS_MOVE_SELF | \
+>  			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
+> -			     FS_ERROR | FS_MNT_ATTACH | FS_MNT_DETACH)
+> +			     FS_ERROR | \
+> +			     FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANGE )
+>  
+>  /* Extra flags that may be reported with event or control handling of events */
+>  #define ALL_FSNOTIFY_FLAGS  (FS_ISDIR | FS_EVENT_ON_CHILD | FS_DN_MULTISHOT)
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index 69340e483ae7..256fc5755b45 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -27,6 +27,7 @@
+>  #define FAN_OPEN_EXEC_PERM	0x00040000	/* File open/exec in perm check */
+>  #define FAN_MNT_ATTACH		0x01000000	/* Mount was attached */
+>  #define FAN_MNT_DETACH		0x02000000	/* Mount was detached */
+> +#define FAN_MNT_CHANGE		0x04000000	/* Mount was changed */
+>  
+>  #define FAN_EVENT_ON_CHILD	0x08000000	/* Interested in child events */
+>  
+> -- 
+> 2.47.1
+> 
 
