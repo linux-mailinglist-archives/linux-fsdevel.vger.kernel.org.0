@@ -1,199 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-40052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38700A1BB7B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 18:32:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFCAA1BBD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 19:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C924F3A898D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 17:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18625188FDBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2025 18:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DFF1D5CEB;
-	Fri, 24 Jan 2025 17:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C18121C165;
+	Fri, 24 Jan 2025 17:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9bsOePr"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="JIbIB9RK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F9D3224;
-	Fri, 24 Jan 2025 17:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF5D1FDE1B;
+	Fri, 24 Jan 2025 17:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737739927; cv=none; b=b/V4/7kJt4v7NPjRys4Fe0sSR0z4/o2DEN9zTWpoYWuXuRJOUAgF2scYhtYYlqLZHu/Z0q3PwspttQK0HvlORCM4xJkp0fdaS4msMzOM6YbioU1o++79IoFT9XvX3aCmVldM0zpBleUTNrUCT101dSwdrvztwqkNuMYzCdZxkd4=
+	t=1737741598; cv=none; b=YaIab6WBVVXTJxzgyog9onaBmRUS1VURC9UQDYjInfFnNS+hGkc8zjbarQEehqAjWHIrM3pZDCNqdVWybDHwstfzpV44giHOOnO+ksX6HRpsf62qOz/7K32l+gyxRTsxzqC8Ze/SA9xkG3aJmolx1v2QeVmEesLpwOwtxyax/jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737739927; c=relaxed/simple;
-	bh=ZHirykXIdW6YxKqRyZObTukCRsmD57QlDckLNyrix/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=azepZRMB7XcIGK05l7LIoqpDqzaMNILNfrecY2McdIMlqO3vXB4YpHs/dXRzDTiqId7Hc6YUzXZnWSkKpwDMTJ1H/NndR4U2abHSOaKhSR7ldTvuQHbBUaRxgrbT063yoywNrWJObedDYMTVOl3joIopfA+GF4irUeJ03fE1iA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9bsOePr; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f441791e40so3389636a91.3;
-        Fri, 24 Jan 2025 09:32:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737739925; x=1738344725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P9tU465r4veHmtQGjcmCOL+KaVRkBXBk0y82tXRvmPg=;
-        b=G9bsOePrxjZ/aYOBxf0pL/bUW3d9FW/7wzbaVPVUtJLLNJMnsRW1JOi81oSkl0wq1t
-         vXzIqIOzGypBRiiXntG0V34gv1u0JQhVbFVwg/pTgDzlQsjxUrulKesp5UGHdadbrGV6
-         RXyI2XMnI+frs9QZYLyPlqOQXO/mCBDsK1Ps0cFWMNDCZu4cuOY15T2FuShgChdnioxu
-         znhupj11MT9i2MAJ927+ty0KMT4+aGQCguxl5ejEduVZMKiWmzSSC4sM3XdtmjNaSmfE
-         mwvrrZzh+IZWg+QxdjYfgGISeTT6HjsPW/wRyR8QD49c7lGmVi0QUQY5tlGkkDUhbYu8
-         +JFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737739925; x=1738344725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P9tU465r4veHmtQGjcmCOL+KaVRkBXBk0y82tXRvmPg=;
-        b=cYzvVNfYRT3IzCydiKjXuwxeVvd/kqOZmI4uZq/EgPBjVsYuV40YOBPT3xcaUi0Mbs
-         2kB9HMZtlkXz2ESjBbCS/HGLyQFVjYu4Y08SxOM9b0ukMpSxQfQEv6rOBymChM41+K+/
-         m3+W8RmREnYHOyFLOUrqkKFxQ2/ZXu5iaPOjJkCNdjRyNbWHqIzjVh6/MpwNqHJWPq01
-         TyOzRULjTz45pcKx0TBTrOUauqnY9+rhh4Aq3JQ59oopgIEhEEbvdICRp0UNu2Wtdbow
-         EgH8QKYwGs1ZLbRYapIs3uLvKPudIxeIW+e+CkMuukAUqRcDosuRQ0EuHJ2Q6OVDzMuu
-         T/Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx/7gSFhCyG7HZ4trSploQ53zCpTmlioZw5WBUV042/0qVryjWkcPVLATc5q3e3k4PI3y/48ZQHnyOl5TA1n+IrKuS@vger.kernel.org, AJvYcCVxCbmURnYQ+c4OApdqwOwSKtP3ACbAH9wTYswgdlYPZ9yaJa6f35nluqDCNiYogw8kJiPmHc8cKr7t6vB0fA==@vger.kernel.org, AJvYcCVyowdoe5UEBwzQfr+SrL+nIHdUyvaN0xbFzVeqVSJ2a8mATOaloAvwBozOdfKwR1c8zeQ=@vger.kernel.org, AJvYcCWOCqt3LMsJpoH9JXTDCTNQqanB0KjUcDuwrAl+da2PmIHqrpPLENn/i3xhhWGQHiSYhBR4VeAXEsjGrjOoRoMTuw==@vger.kernel.org, AJvYcCXtwugj28GrefFpmTAlEkh6VTVhHbw2tVn3tWefUwj5bDhYs5gR6Bje11ETAzvz5azFHN4bSk7QubDGgNps@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweq0kK/xEo6UmV8H2URw0YyJbKR1qsJaEQwtERDO+tHnTBHoh8
-	AXxRLE/+t7B6nZKwJwuA91xWDk0ihj/d/8c8OTlOt0vpDvEFI3syPXmBVCyi+sXziyyTa/ei8j9
-	GR/4yaH2sE0EZI2+H50xSMBO6a5c=
-X-Gm-Gg: ASbGncvr9EgKEaqQL90xSqYR32B8NxkJij3Pxxpz4cYcmDp24qI4fS3ouTkfEqV14eZ
-	LHTpQ8upEnGH2EJvHoc9C5RbdyJYzlGCE3bU9fwvYLivdLs7pX2q9kKTGsut964vR4aSmMEFaVJ
-	gh/w==
-X-Google-Smtp-Source: AGHT+IHv177rknNWtVl10ZByeW9NL8yl4cw9RJrKhUy4O48kbuJiw1c2KWX22rSEvTe1hGREuZSZr4B6zTzN2smJdUs=
-X-Received: by 2002:a05:6a00:84f:b0:725:df1a:288 with SMTP id
- d2e1a72fcca58-72dafaf8ab3mr52503267b3a.24.1737739925486; Fri, 24 Jan 2025
- 09:32:05 -0800 (PST)
+	s=arc-20240116; t=1737741598; c=relaxed/simple;
+	bh=BXEp/Ifx1dkFW+s6C1bLT7iPr5FF0eKvtB+OTekdsY0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ENXO8vJB+N+TWZYcbv7YCyxZNPfvUVyha7ej4TU/97LYW7S3utIvs2MF/La1POGjayyLVMTnt5xz4GBMqWKWkpvK5r1vDD8cH5jrm0+gE6DYTAoqBm6G5X7bGAG3F1L6zhmLLtY89PhxTHFSOzsZqNmbLGBimSeKXwnjIn/JqSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=JIbIB9RK; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1737741587; x=1738000787;
+	bh=4rrjsE+MvicrrQ6Y6gD9cIT/HyQUToaWe+K01zQPoq8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=JIbIB9RK1AoMS0k9EJR6pJxIvCsuc8wWj0+M0dglHO9q1JpdzdAmkHasYCrL6Xtg3
+	 yZLr3M62KQpW6QElSB9M+pcd4aMm0HT2wqw0UCCvPmLAHp0lzj3Ee1K42YrTJnD1ZJ
+	 iMniNpaAOj+ZqKs0nfS4IhVd194HyBZ9cNCQm9XctxK4WpskYdAABH7CX2J5lBkY13
+	 e0IfEJyknM5ANHMu9Kt8dKBp9jMsb84bURnBlrw52rQdtq+69a5McLcAQtpO65sGdt
+	 41iS4elHgn1exDbKEeUD8x2Poaxtujd+Vr2jIZyVsNGCPiSgDJOwnEXYL+xEoaLsuF
+	 mLAK+CeNGGy/w==
+Date: Fri, 24 Jan 2025 17:59:39 +0000
+To: David Howells <dhowells@redhat.com>
+From: Ihor Solodrai <ihor.solodrai@pm.me>
+Cc: Christian Brauner <christian@brauner.io>, Steve French <smfrench@gmail.com>, Matthew Wilcox <willy@infradead.org>, Jeff Layton <jlayton@kernel.org>, Gao Xiang <hsiangkao@linux.alibaba.com>, Dominique Martinet <asmadeus@codewreck.org>, Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH v5 27/32] netfs: Change the read result collector to only use one work item
+Message-ID: <a7x33d4dnMdGTtRivptq6S1i8btK70SNBP2XyX_xwDAhLvgQoPox6FVBOkifq4eBinfFfbZlIkMZBe3QarlWTxoEtHZwJCZbNKtaqrR7PvI=@pm.me>
+In-Reply-To: <20241216204124.3752367-28-dhowells@redhat.com>
+References: <20241216204124.3752367-1-dhowells@redhat.com> <20241216204124.3752367-28-dhowells@redhat.com>
+Feedback-ID: 27520582:user:proton
+X-Pm-Message-ID: 2d63f4f4ff77fa7cfd9219388b78b772c9c2eebe
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123214342.4145818-1-andrii@kernel.org> <20250124-zander-restaurant-7583fe1634b9@brauner>
-In-Reply-To: <20250124-zander-restaurant-7583fe1634b9@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 24 Jan 2025 09:31:53 -0800
-X-Gm-Features: AWEUYZki9vGi1HFUl8Dz1x-Ht8YaCMiKiPorW6F6sk3BICcrwFMYNypBn50mLzw
-Message-ID: <CAEf4BzbGZHAmBYkPVHFH-M60p3Z4DyrZFeh6ZKZ7+isu+RmdqA@mail.gmail.com>
-Subject: Re: [PATCH] mm,procfs: allow read-only remote mm access under CAP_PERFMON
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com, 
-	rostedt@goodmis.org, peterz@infradead.org, mingo@kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	shakeel.butt@linux.dev, rppt@kernel.org, liam.howlett@oracle.com, 
-	surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 24, 2025 at 1:45=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Jan 23, 2025 at 01:43:42PM -0800, Andrii Nakryiko wrote:
-> > It's very common for various tracing and profiling toolis to need to
-> > access /proc/PID/maps contents for stack symbolization needs to learn
-> > which shared libraries are mapped in memory, at which file offset, etc.
-> > Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless we
-> > are looking at data for our own process, which is a trivial case not to=
-o
-> > relevant for profilers use cases).
-> >
-> > Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
-> > discover memory layout of another process: it allows to fully control
-> > arbitrary other processes. This is problematic from security POV for
-> > applications that only need read-only /proc/PID/maps (and other similar
-> > read-only data) access, and in large production settings CAP_SYS_PTRACE
-> > is frowned upon even for the system-wide profilers.
-> >
-> > On the other hand, it's already possible to access similar kind of
-> > information (and more) with just CAP_PERFMON capability. E.g., setting
-> > up PERF_RECORD_MMAP collection through perf_event_open() would give one
-> > similar information to what /proc/PID/maps provides.
-> >
-> > CAP_PERFMON, together with CAP_BPF, is already a very common combinatio=
-n
-> > for system-wide profiling and observability application. As such, it's
-> > reasonable and convenient to be able to access /proc/PID/maps with
-> > CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
-> >
-> > For procfs, these permissions are checked through common mm_access()
-> > helper, and so we augment that with cap_perfmon() check *only* if
-> > requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn't b=
-e
-> > permitted by CAP_PERFMON.
-> >
-> > Besides procfs itself, mm_access() is used by process_madvise() and
-> > process_vm_{readv,writev}() syscalls. The former one uses
-> > PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PERFMO=
-N
-> > seems like a meaningful allowable capability as well.
-> >
-> > process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level of
-> > permissions (though for readv PTRACE_MODE_READ seems more reasonable,
-> > but that's outside the scope of this change), and as such won't be
-> > affected by this patch.
-> >
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  kernel/fork.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index ded49f18cd95..c57cb3ad9931 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -1547,6 +1547,15 @@ struct mm_struct *get_task_mm(struct task_struct=
- *task)
-> >  }
-> >  EXPORT_SYMBOL_GPL(get_task_mm);
-> >
-> > +static bool can_access_mm(struct mm_struct *mm, struct task_struct *ta=
-sk, unsigned int mode)
-> > +{
-> > +     if (mm =3D=3D current->mm)
-> > +             return true;
-> > +     if ((mode & PTRACE_MODE_READ) && perfmon_capable())
-> > +             return true;
->
-> Just fyi, I suspect that this will trigger new audit denials if the task
-> doesn't have CAP_SYS_ADMIN or CAP_PERFORM in the initial user namespace
-> but where it would still have access through ptrace_may_access(). Such
-> changes have led to complaints before.
->
-> I'm not sure how likely that is but it might be noticable. If that's the
-> case ns_capable_noaudit(&init_user_ns, ...) would help.
+On Monday, December 16th, 2024 at 12:41 PM, David Howells <dhowells@redhat.=
+com> wrote:
 
-Yep, thanks. Not sure if this is the problem, but I'm open to changing
-this. I can also switch the order and do perfmon_capable() check after
-ptrace_may_access() to mitigate this problem? I guess that's what I'm
-going to do in v2.
+> Change the way netfslib collects read results to do all the collection fo=
+r
+> a particular read request using a single work item that walks along the
+> subrequest queue as subrequests make progress or complete, unlocking foli=
+os
+> progressively rather than doing the unlock in parallel as parallel reques=
+ts
+> come in.
+>=20
+> The code is remodelled to be more like the write-side code, though only
+> using a single stream. This makes it more directly comparable and thus
+> easier to duplicate fixes between the two sides.
+>=20
+> This has a number of advantages:
+>=20
+> (1) It's simpler. There doesn't need to be a complex donation mechanism
+> to handle mismatches between the size and alignment of subrequests and
+> folios. The collector unlocks folios as the subrequests covering each
+> complete.
+>=20
+> (2) It should cause less scheduler overhead as there's a single work item
+> in play unlocking pages in parallel when a read gets split up into a
+> lot of subrequests instead of one per subrequest.
+>=20
+> Whilst the parallellism is nice in theory, in practice, the vast
+> majority of loads are sequential reads of the whole file, so
+> committing a bunch of threads to unlocking folios out of order doesn't
+> help in those cases.
+>=20
+> (3) It should make it easier to implement content decryption. A folio
+> cannot be decrypted until all the requests that contribute to it have
+> completed - and, again, most loads are sequential and so, most of the
+> time, we want to begin decryption sequentially (though it's great if
+> the decryption can happen in parallel).
+>=20
+> There is a disadvantage in that we're losing the ability to decrypt and
+> unlock things on an as-things-arrive basis which may affect some
+> applications.
+>=20
+> Signed-off-by: David Howells dhowells@redhat.com
+>=20
+> cc: Jeff Layton jlayton@kernel.org
+>=20
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+> fs/9p/vfs_addr.c | 3 +-
+> fs/afs/dir.c | 8 +-
+> fs/ceph/addr.c | 9 +-
+> fs/netfs/buffered_read.c | 160 ++++----
+> fs/netfs/direct_read.c | 60 +--
+> fs/netfs/internal.h | 21 +-
+> fs/netfs/main.c | 2 +-
+> fs/netfs/objects.c | 34 +-
+> fs/netfs/read_collect.c | 716 ++++++++++++++++++++---------------
+> fs/netfs/read_pgpriv2.c | 203 ++++------
+> fs/netfs/read_retry.c | 207 +++++-----
+> fs/netfs/read_single.c | 37 +-
+> fs/netfs/write_collect.c | 4 +-
+> fs/netfs/write_issue.c | 2 +-
+> fs/netfs/write_retry.c | 14 +-
+> fs/smb/client/cifssmb.c | 2 +
+> fs/smb/client/smb2pdu.c | 5 +-
+> include/linux/netfs.h | 16 +-
+> include/trace/events/netfs.h | 79 +---
+> 19 files changed, 819 insertions(+), 763 deletions(-)
 
->
-> > +     return ptrace_may_access(task, mode);
-> > +}
-> > +
-> >  struct mm_struct *mm_access(struct task_struct *task, unsigned int mod=
-e)
-> >  {
-> >       struct mm_struct *mm;
-> > @@ -1559,7 +1568,7 @@ struct mm_struct *mm_access(struct task_struct *t=
-ask, unsigned int mode)
-> >       mm =3D get_task_mm(task);
-> >       if (!mm) {
-> >               mm =3D ERR_PTR(-ESRCH);
-> > -     } else if (mm !=3D current->mm && !ptrace_may_access(task, mode))=
- {
-> > +     } else if (!can_access_mm(mm, task, mode)) {
-> >               mmput(mm);
-> >               mm =3D ERR_PTR(-EACCES);
-> >       }
-> > --
-> > 2.43.5
-> >
+Hello David.
+
+After recent merge from upstream BPF CI started consistently failing
+with a task hanging in v9fs_evict_inode. I bisected the failure to
+commit e2d46f2ec332, pointing to this patch.
+
+Reverting the patch seems to have helped:
+https://github.com/kernel-patches/vmtest/actions/runs/12952856569
+
+Could you please investigate?
+
+Examples of failed jobs:
+  * https://github.com/kernel-patches/bpf/actions/runs/12941732247
+  * https://github.com/kernel-patches/bpf/actions/runs/12933849075
+
+A log snippet:
+
+    2025-01-24T02:15:03.9009694Z [  246.932163] INFO: task ip:1055 blocked =
+for more than 122 seconds.
+    2025-01-24T02:15:03.9013633Z [  246.932709]       Tainted: G           =
+OE      6.13.0-g2bcb9cf535b8-dirty #149
+    2025-01-24T02:15:03.9018791Z [  246.933249] "echo 0 > /proc/sys/kernel/=
+hung_task_timeout_secs" disables this message.
+    2025-01-24T02:15:03.9025896Z [  246.933802] task:ip              state:=
+D stack:0     pid:1055  tgid:1055  ppid:1054   flags:0x00004002
+    2025-01-24T02:15:03.9028228Z [  246.934564] Call Trace:
+    2025-01-24T02:15:03.9029758Z [  246.934764]  <TASK>
+    2025-01-24T02:15:03.9032572Z [  246.934937]  __schedule+0xa91/0xe80
+    2025-01-24T02:15:03.9035126Z [  246.935224]  schedule+0x41/0xb0
+    2025-01-24T02:15:03.9037992Z [  246.935459]  v9fs_evict_inode+0xfe/0x17=
+0
+    2025-01-24T02:15:03.9041469Z [  246.935748]  ? __pfx_var_wake_function+=
+0x10/0x10
+    2025-01-24T02:15:03.9043837Z [  246.936101]  evict+0x1ef/0x360
+    2025-01-24T02:15:03.9046624Z [  246.936340]  __dentry_kill+0xb0/0x220
+    2025-01-24T02:15:03.9048855Z [  246.936610]  ? dput+0x3a/0x1d0
+    2025-01-24T02:15:03.9051128Z [  246.936838]  dput+0x114/0x1d0
+    2025-01-24T02:15:03.9053548Z [  246.937069]  __fput+0x136/0x2b0
+    2025-01-24T02:15:03.9056154Z [  246.937305]  task_work_run+0x89/0xc0
+    2025-01-24T02:15:03.9058593Z [  246.937571]  do_exit+0x2c6/0x9c0
+    2025-01-24T02:15:03.9061349Z [  246.937816]  do_group_exit+0xa4/0xb0
+    2025-01-24T02:15:03.9064401Z [  246.938090]  __x64_sys_exit_group+0x17/=
+0x20
+    2025-01-24T02:15:03.9067235Z [  246.938390]  x64_sys_call+0x21a0/0x21a0
+    2025-01-24T02:15:03.9069924Z [  246.938672]  do_syscall_64+0x79/0x120
+    2025-01-24T02:15:03.9072746Z [  246.938941]  ? clear_bhb_loop+0x25/0x80
+    2025-01-24T02:15:03.9075581Z [  246.939230]  ? clear_bhb_loop+0x25/0x80
+    2025-01-24T02:15:03.9079275Z [  246.939510]  entry_SYSCALL_64_after_hwf=
+rame+0x76/0x7e
+    2025-01-24T02:15:03.9081976Z [  246.939875] RIP: 0033:0x7fb86f66f21d
+    2025-01-24T02:15:03.9087533Z [  246.940153] RSP: 002b:00007ffdb3cf93f8 =
+EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+    2025-01-24T02:15:03.9092590Z [  246.940689] RAX: ffffffffffffffda RBX: =
+00007fb86f785fa8 RCX: 00007fb86f66f21d
+    2025-01-24T02:15:03.9097722Z [  246.941201] RDX: 00000000000000e7 RSI: =
+ffffffffffffff80 RDI: 0000000000000000
+    2025-01-24T02:15:03.9102762Z [  246.941705] RBP: 00007ffdb3cf9450 R08: =
+00007ffdb3cf93a0 R09: 0000000000000000
+    2025-01-24T02:15:03.9107940Z [  246.942215] R10: 00007ffdb3cf92ff R11: =
+0000000000000202 R12: 0000000000000001
+    2025-01-24T02:15:03.9113002Z [  246.942723] R13: 0000000000000000 R14: =
+0000000000000000 R15: 00007fb86f785fc0
+    2025-01-24T02:15:03.9114614Z [  246.943244]  </TASK>
+    2025-01-24T02:15:03.9115895Z [  246.943415]
+    2025-01-24T02:15:03.9119326Z [  246.943415] Showing all locks held in t=
+he system:
+    2025-01-24T02:15:03.9122278Z [  246.943865] 1 lock held by khungtaskd/3=
+2:
+    2025-01-24T02:15:03.9128640Z [  246.944162]  #0: ffffffffa9195d90 (rcu_=
+read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180
+    2025-01-24T02:15:03.9131426Z [  246.944792] 2 locks held by kworker/0:2=
+/86:
+    2025-01-24T02:15:03.9132752Z [  246.945102]
+    2025-01-24T02:15:03.9136561Z [  246.945222] =3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+It's worth noting that that the hanging does not happen on *every*
+test run, but often enough to fail the CI pipeline.
+
+You may try reproducing with a container I used for bisection:
+
+    docker pull ghcr.io/theihor/bpf:v9fs_evict_inode-repro
+    docker run -d --privileged --device=3D/dev/kvm --cap-add ALL -v /path/t=
+o/your/kernel/source:/ci/workspace ghcr.io/theihor/bpf:v9fs_evict_inode-rep=
+ro
+    docker exec -it <container_id_or_name> /bin/bash
+    /ci/run.sh # in the container shell
+
+Note that inside the container it's an "ubuntu" user, and you might
+have to run `chown -R ubuntu:ubuntu /ci/workspace` first, or switch to
+root.
+
+> [...]
+
 
