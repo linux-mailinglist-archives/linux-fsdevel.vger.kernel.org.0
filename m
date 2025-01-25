@@ -1,72 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-40099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4053A1BFD5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2025 01:33:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE74CA1BFE2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2025 01:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B68923AF863
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2025 00:33:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3271615AA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2025 00:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC65142659;
-	Sat, 25 Jan 2025 00:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1F75CB8;
+	Sat, 25 Jan 2025 00:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1KitjkE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d27you7r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0030C13635C
-	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jan 2025 00:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B4217991
+	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jan 2025 00:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737765087; cv=none; b=MXIth8dqZSR7s0XFMbAistD8dwOS8QK6NHmEk/ik0LxSF2hkzROy7kOxC68M/e/9o5Frdy3t6UWv/81yx60eSa5TnNQFhmgZpPtJlt8B3ya9foHIfOwZPO0GitKATUP19jViorxu42z1sL9XacftA9YzsxKknbYKK6Msg0Q+QkM=
+	t=1737765452; cv=none; b=eP6JTswDywZ4KQ09Dv85oSSJRRuSSWcdzJv22icb629FVANtTHmI5Ct9KZXFADpA5OElK29SmTPdj5c8da4L+dLEXl4j41a5X9DjtWiveFo5ivMDVl9y8gqkM0ASuotmcokOLtvZyzqJyrtX/OW87npBG8v0dgE2AFOoeXJLe+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737765087; c=relaxed/simple;
-	bh=SR6XKn8q34cHwqxA32rhgrCgP+50FgBg5tC7UPX6uWo=;
+	s=arc-20240116; t=1737765452; c=relaxed/simple;
+	bh=0MTH9Sj+lAW8Fq2EpCpoeH94r85m1Dc1k1NA0sPKm+8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OZcnpKRPBBdfFFGiGGgqb1aEURh2nzBbvEmlfwPlxZyOZORSIKcGIqcWIpOdCzN7Od4nVsOC74co69X76DAfdQ0A9EDZtL5VMZ3VelwzQ5c+ck+PfoUegZNEoBQPg/oYZkCggCBZ/T6BmfDMuPzZf5fo+Z3T0YZOIsOZl9ccEl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1KitjkE; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=iF5euEnOQ+IA2QWuElUPb39GvfiN9AeL1U+R26vf1pL28N51hH4ADaxlhAy94GotZrrP4Q+0F8PRfIV7Gs1WqUyLHIAOurwC/NIfcvqgUZ547imqXTjMfbdKnwEqPfomkebL0cLu4ljxfxarq4FLaXHGpce/CzBGGGtZKTdHnE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d27you7r; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46b1d40ac6bso24730621cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2025 16:31:25 -0800 (PST)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4679eacf2c5so26670111cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2025 16:37:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737765085; x=1738369885; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737765449; x=1738370249; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lAIykMngroBde0Ow2HrUHH6TGSFcAQUM7lMr4FFBt7I=;
-        b=W1KitjkExz2EQrTIZe0W5ZR7N8InZq2TURKt46esN7zD9idrMMaK/quIBgz353cpns
-         Ee2P1Ih8LkjV/4u2TFJ+zTSLRtdMljn8fC30289a3r8b5J10yeX3/dnJXClEe4D5GxdE
-         wJyfLTRapbZS0Madifrw3PTfKBlDzTGI/X6qS1uiHVNRgH7uHOxWYShfP2tu2NKF5ouW
-         3Q323+dl2+4dmuzU/NbKtBohmMChDVps9sgB3k66byGXSJF4ENgYqbMWzHnAUSdzXKAp
-         Phd/jFhmUnn9ST8Zz7v4IpjqiTGGdBnc8lBUuJqc+6UsTrZ08bATKYaNi2WYWVKV8UOx
-         qBWA==
+        bh=oYg1XfbIthKforMXXSuHq2DMtHDb0qAUfQUDcKpK7tM=;
+        b=d27you7r4YWjvgP0BvxcoE+XtiVXrxH6AwG6FPJUu/L0zIwIch2TGzz56/utptX29U
+         8Z9rMPL/KwC3Im0QCSV57wL0Krk4RM7dFyfJZkrGanOtbEYlWGeCqjZqfXg9NGkobhus
+         w8Ilq3+8fdS5R6VgmCeDZceFt01j74MpzLWXdfoZ57SpYOwQUA2nagY8Pm98PvPQ/0Wh
+         liXAUTgLe2lCnDFjTtb2f6MS+v/A8unFHfIAngH8wA0aQmlDr5fH+7yWgCx9LflGi4WQ
+         Ob/uyzWV6cT0yX1ixNSfGgi2jWIntMkvAWqIWNicDUjDP5eEXMBYOktQ8PDKtLx7PTdM
+         8DHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737765085; x=1738369885;
+        d=1e100.net; s=20230601; t=1737765449; x=1738370249;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lAIykMngroBde0Ow2HrUHH6TGSFcAQUM7lMr4FFBt7I=;
-        b=mcntF03/JolB64tmqNnn6WHrx5Jrz3/Nxj2ymu3mUyA7oldgR93bUAfEN5Pg5kVdBk
-         9CNxM2PEgrQzVIdr5k1rNeRF5k0p91beHNG0jmtp7tyNLiKvqAs1uMLnW+I96hPrGKQ+
-         LrpyfJsvgl24T0NDurYcl2jqHqF6nY57QvtqkWV492L5zIvFq8r7EZgRzC8hkIgvUFx+
-         i5lT/hnZFa8XNrbO4Jfj/mXfu4Xkl4FBWxNHLGBBlNpNbD9oid9HJYxVD1nJ8yHb80Up
-         g6rU6g7Cq0lRv4eiw1DnGIR/xes+3L9I9B+aLvwNPi6X9Pd1hP+6aZ/gYmpNIy9liwFi
-         S+ag==
-X-Forwarded-Encrypted: i=1; AJvYcCULbqmnGf44nECefeJmAubBsECAuIypUPyIu9AAa6gwFRqkm9lV4mGXcdh3DvcJpiBZguRllBOKRA4MD+2u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg8XLPpFU9iDXyk2txZt4tDGT0iTGelbWEhjZv31MhCFG+qQUa
-	rldi9Q/zT0GWzfHjefDpTAMe0nHaptJUY/8O7nQo0qOOfWlXFgCzYJD6ulkGi71ry0W9hAXWBDj
-	0oM5/nZ8W822fgoCBK2PQtqX11/o=
-X-Gm-Gg: ASbGncv4TkYj9fTwYyfpGxq98sMLUdM92gEd+ctbVDTCrwLpY1esNBdKtF2SEQs4p2w
-	Mv0PwU1CbqRC2jxaEXe3a0cvZIm4mxaTWL587+NvH+9TGBcIH4+BaHSQsZid12b8=
-X-Google-Smtp-Source: AGHT+IH3b+tjBc/+dNMvgxefji+P1a+dB0j4nDumAOsyueC9svHBwLjrTk78q2paaPabjEwugVP1D1gwQq6fW0BDrwY=
-X-Received: by 2002:ac8:57c2:0:b0:467:59d5:b20b with SMTP id
- d75a77b69052e-46e66feae90mr77319641cf.4.1737765084713; Fri, 24 Jan 2025
- 16:31:24 -0800 (PST)
+        bh=oYg1XfbIthKforMXXSuHq2DMtHDb0qAUfQUDcKpK7tM=;
+        b=Gewpi5YfyoLsv0yMFPoOnqMaeFmx69TDaI/sxklJBhW4/+sBCyQv+Iji1H+WysJ3u1
+         NWWtXwzgdcgRduKBAbT0a00A/9bv7wkr1fqqNV2WtWofkV2vQ0H1cge2SYLC419qbBZE
+         jsoKlDXqqFn7fgYgc4ko1gVzVYCQQiHduBCjX/67cMweldkr5qvyERHd+UpBhTjNhzUK
+         22bPLzit+bqgBDnsi3OaH7MaE4Xe0t9abHX1fBi+qMdLIxlnE/pUUiZ61mLj291ErcNS
+         RP1vk81JTw8M+iLD2UOT07S9FfeJvRig2nH5S7pQJ1COL3Eq2mWm5XFkEbNvBd3+c/5v
+         soJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMkzezGZON77ca9otFsziJUZsXl+ot21LTa9VijFqY/Mo7RONpc9BexclM3FWjsPw0CAydy/jiQUlInq4g@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYmRjbDjZE175kFr49c0yPWc0d0QzskgJYnq57/hwZ6qeaI3WR
+	fAha6HMGR9BEFoMkkxBXiB0aygxuqweb44gkiG4prv3CMkhg4ca8TxBpw7UUBkEOT1GQG5x3uzP
+	HI5GpHmnqWaNdOGbg1FcjiicB5xo=
+X-Gm-Gg: ASbGnctXBufgBMJwR6o35GhnchfOx5hD3UMPbibGsjeuhbZwVaHZcwuTmaIdqmeQIpr
+	J2n0+3Ox5SCMd+Yb8CE2DOgVqGkZkEsUP1/3QqtbeDCofSRZfDAE/64MvlcGqBYde/OmWlPD0ug
+	==
+X-Google-Smtp-Source: AGHT+IHEGEbOw0FLWtuH39I14O3FGMe5nPkiwdhyBxPYPqQwzqSbsFFiELH9bbmmvmGR4oc+Q2wpV3iCMU+wYdvWtKE=
+X-Received: by 2002:ac8:7d13:0:b0:46c:7252:927f with SMTP id
+ d75a77b69052e-46e12a1ff3cmr445847701cf.6.1737765449405; Fri, 24 Jan 2025
+ 16:37:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,13 +75,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250124-optimize-fuse-uring-req-timeouts-v1-0-b834b5f32e85@ddn.com>
- <20250124-optimize-fuse-uring-req-timeouts-v1-1-b834b5f32e85@ddn.com>
-In-Reply-To: <20250124-optimize-fuse-uring-req-timeouts-v1-1-b834b5f32e85@ddn.com>
+ <20250124-optimize-fuse-uring-req-timeouts-v1-2-b834b5f32e85@ddn.com>
+In-Reply-To: <20250124-optimize-fuse-uring-req-timeouts-v1-2-b834b5f32e85@ddn.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 24 Jan 2025 16:31:14 -0800
-X-Gm-Features: AWEUYZm0ZrocRz0CnwTGfpLbvpeh44JeRZ-_ZgzFTMQSzMlV5tfGdCx3NBNu2Vk
-Message-ID: <CAJnrk1aDH0kPdXOrEh4=ApW4biNzOtkCKKT=57-T64=ZO1BEUg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] fuse: {io-uring} Use READ_ONCE in fuse_uring_send_in_task
+Date: Fri, 24 Jan 2025 16:37:18 -0800
+X-Gm-Features: AWEUYZngHxeRHJwK6GGxrIkJYrB2ywiYsepz0DhMFzvDLPy7k_nBKfegYBTiezs
+Message-ID: <CAJnrk1ZB0u6jb3=oReHex=C=f1chEQ0RdPu9LxG=o7OeAk1qGw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] fuse: {io-uring} Access entries with queue lock in fuse_uring_entry_teardown
 To: Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Pavel Begunkov <asml.silence@gmail.com>, 
 	Luis Henriques <luis@igalia.com>, linux-fsdevel@vger.kernel.org
@@ -90,62 +91,78 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Jan 24, 2025 at 8:47=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> =
 wrote:
 >
-> The value is read from another task without, while the task that
-> had set the value was holding queue->lock. Better use READ_ONCE
-> to ensure the compiler cannot optimize the read.
+> This ensures that ent->cmd and ent->fuse_req are accessed in
+> fuse_uring_entry_teardown while holding the queue lock.
 >
-> Fixes: 284985711dc5 ("fuse: Allow to queue fg requests through io-uring")
+> Fixes: a4bdb3d786c0 ("fuse: enable fuse-over-io-uring")
 > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 > ---
->  fs/fuse/dev_uring.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  fs/fuse/dev_uring.c | 27 +++++++++++++++++++--------
+>  1 file changed, 19 insertions(+), 8 deletions(-)
 >
 > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 5c9b5a5fb7f7539149840378e224eb640cf8ef08..1834c1933d2bbab0342257fde=
-4b030f06506c55d 100644
+> index 1834c1933d2bbab0342257fde4b030f06506c55d..87bb89994c311f435c370f789=
+84be060fcb8036f 100644
 > --- a/fs/fuse/dev_uring.c
 > +++ b/fs/fuse/dev_uring.c
-> @@ -1202,10 +1202,12 @@ static void fuse_uring_send_in_task(struct io_uri=
-ng_cmd *cmd,
+> @@ -315,14 +315,20 @@ static void fuse_uring_stop_fuse_req_end(struct fus=
+e_ring_ent *ent)
+>   */
+>  static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
 >  {
->         struct fuse_ring_ent *ent =3D uring_cmd_to_ring_ent(cmd);
->         struct fuse_ring_queue *queue =3D ent->queue;
+> -       struct fuse_ring_queue *queue =3D ent->queue;
+> -       if (ent->cmd) {
+> -               io_uring_cmd_done(ent->cmd, -ENOTCONN, 0, IO_URING_F_UNLO=
+CKED);
+> -               ent->cmd =3D NULL;
+> -       }
 > +       struct fuse_req *req;
->         int err;
+> +       struct io_uring_cmd *cmd;
 >
->         if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
-> -               err =3D fuse_uring_prepare_send(ent);
-> +               req =3D READ_ONCE(ent->fuse_req);
-> +               err =3D fuse_uring_prepare_send(ent, req);
+> -       if (ent->fuse_req)
+> -               fuse_uring_stop_fuse_req_end(ent);
+> +       struct fuse_ring_queue *queue =3D ent->queue;
+> +
+> +       spin_lock(&queue->lock);
+> +       ent->fuse_req =3D NULL;
+> +
+> +       req =3D ent->fuse_req;
 
-Hi Bernd,  did you mean something like this?:
-
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 5c9b5a5fb7f7..692e97f9870d 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -676,7 +676,7 @@ static int fuse_uring_copy_to_ring(struct
-fuse_ring_ent *ent,
-
- static int fuse_uring_prepare_send(struct fuse_ring_ent *ent)
- {
--       struct fuse_req *req =3D ent->fuse_req;
-+       struct fuse_req *req =3D READ_ONCE(ent->fuse_req);
-        int err;
-
-        err =3D fuse_uring_copy_to_ring(ent, req);
-
-I'm on top of the for-next tree but I'm not seeing where
-fuse_uring_prepare_send() takes in req as an arg.
-
+I think you meant here to switch these two lines? otherwise i think
+req will alwyas be null here.
 
 Thanks,
 Joanne
 
->                 if (err) {
->                         fuse_uring_next_fuse_req(ent, queue, issue_flags)=
+> +       if (req)
+> +               list_del_init(&req->list);
+> +
+> +       cmd =3D ent->cmd;
+> +       ent->cmd =3D NULL;
+>
+>         /*
+>          * The entry must not be freed immediately, due to access of dire=
+ct
+> @@ -330,10 +336,15 @@ static void fuse_uring_entry_teardown(struct fuse_r=
+ing_ent *ent)
+>          * of race between daemon termination (which triggers IO_URING_F_=
+CANCEL
+>          * and accesses entries without checking the list state first
+>          */
+> -       spin_lock(&queue->lock);
+>         list_move(&ent->list, &queue->ent_released);
+>         ent->state =3D FRRS_RELEASED;
+>         spin_unlock(&queue->lock);
+> +
+> +       if (cmd)
+> +               io_uring_cmd_done(cmd, -ENOTCONN, 0, IO_URING_F_UNLOCKED)=
 ;
->                         return;
+> +
+> +       if (req)
+> +               fuse_uring_stop_fuse_req_end(req);
+>  }
+>
+>  static void fuse_uring_stop_list_entries(struct list_head *head,
 >
 > --
 > 2.43.0
