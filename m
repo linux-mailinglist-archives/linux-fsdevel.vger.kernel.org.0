@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-40127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413EAA1C8A0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2025 15:52:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D975AA1C8CE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2025 15:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890E3166259
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2025 14:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B773A76FC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2025 14:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEC419D080;
-	Sun, 26 Jan 2025 14:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01BA1A0BED;
+	Sun, 26 Jan 2025 14:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENg3tkJk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1HbLkxx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41BA15E5D4;
-	Sun, 26 Jan 2025 14:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0445016F288;
+	Sun, 26 Jan 2025 14:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737902951; cv=none; b=QSBr/Rsyo+W3GDrIqMCQYleVFBmT9dwgfW0AQZB0n5xd/5WDpxErxk2dcXqrBrn0RM7Drp6MOz8ozkGr9Vl3Ba/prfy0Tk6PD2cU9NkAQtqpseY5fFXYqEvyqv4eOSDk2abwX/nSB29bvTs/v2pmno9H3T42KB3MrFI4ZXmR60k=
+	t=1737902963; cv=none; b=DvAT5FI3UDNJr3DBXdgdsOhaJwrPQIaMZgB4oUZSI62LgvMYlw50Bvm4zveekTPXfoeSkBjF+cmQgZPfOASGAXWh12LqBmly44XlnmIKKAqC0fJSckQOpi0Yx8PbQdrgFWBIykUCINvSr+7sBkr1F0bi69H0LJ/GjhDWzbd7bEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737902951; c=relaxed/simple;
-	bh=zhtN49e0yQxVBN/iIZ28eZPRpCySibQixtPUROJQi0w=;
+	s=arc-20240116; t=1737902963; c=relaxed/simple;
+	bh=EPqnee7cbUOCvKH/WkCn+vS3lvEN/aBPimSGlOlniKk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rIVfQWUdBEtxW1ZrNv9GYcqDvVaQuW8hxPqfbNIx2Vn9IrKNnbsoNT7YpMH91h9R3S0HE/pAsvcZMaQs3RPko75MCGKZcYTeFFKKaYWV9pMjceK8Z7OrgOpBUL09ZRqzuHNVR4WQUJKYt1zxf8IF8YiXjPFU+wsdIMs/hFG1nrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENg3tkJk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1D7C4CEE2;
-	Sun, 26 Jan 2025 14:49:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Wvw/mlgynzkLKRd0on8+6o+AFXpGV6t2upYbU5NMpKrnxoReXhqIUhheeHDjfuKQ+BHDhp4fJSXDu1aCGGGzwe9csX9w19u6tKx5Q8qiYFfVXsP9Wv2haRdo2Hn+bireI7EWK4aWu+w92+brLl1xCMl36Sd82ZESk/ddfVYRf1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1HbLkxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C37AC4CED3;
+	Sun, 26 Jan 2025 14:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737902951;
-	bh=zhtN49e0yQxVBN/iIZ28eZPRpCySibQixtPUROJQi0w=;
+	s=k20201202; t=1737902962;
+	bh=EPqnee7cbUOCvKH/WkCn+vS3lvEN/aBPimSGlOlniKk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ENg3tkJkpvMbDswfjoWUb5MDsBW/k1K5QgBVxQOpGzOJewLzDAHzurQatbuWf/tB4
-	 n1nTDE0mVrlcuaCvsEdKgicr+1EvJJ5ZHtJyO8iGi/GQtLoFLHArfhhL2VwhxDyGWK
-	 EuJneKKWU7BgJhG1j2B37N0K/gF8EcsjvX84Aetkb/jTRzZmMK+PaFxR1gnXvaDqwf
-	 jJJMy5FnW6/zjs/mCHHm1j4krlCFnrSKTcsd8ALMrh8K4DV5SyWH/2JTzTr1CMnGW7
-	 WKQdRyuJ7vKNwRMNVRyoqvIV+H8yhPXZRDdl70bsuCqbpHxyIixWNetjoDQ2vfCeYo
-	 tXHT6RO6eMuJA==
+	b=P1HbLkxx8xcYbgUw3U45+QBkw8e9SetgG3+5SCgYte0UMCNIz9X1Ra1oB8uSs9v1x
+	 5/vuCoU+rPFI5B+k4tX7WJE7VoRdxdsMT3yVybvDGE5RAGXQRoRghorB7l7CAv5chP
+	 SEgF7j/Bo1ftglFu2b0AcgTtkTF6bWNmF7YfruVIRm6sQGW56Fa4v4GSAZjxJT3j1Z
+	 AoHzVAjEVHoMEvKOQN0HQHIFxP0P/pMNG7gbimmv4hZSxB8n9ORp/xvfbZm93jgD8A
+	 c7PSswAB3FTadQRugKgWDwbJhHlQgVefxKj3CZVV/B1HTd8NRHWPM5kAEHDw9TcWpk
+	 JtPkUL16Xvl5Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -52,14 +52,14 @@ Cc: Kees Cook <kees@kernel.org>,
 	Aleksa Sarai <cyphar@cyphar.com>,
 	Sasha Levin <sashal@kernel.org>,
 	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 6.6 2/5] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
-Date: Sun, 26 Jan 2025 09:49:03 -0500
-Message-Id: <20250126144906.925468-2-sashal@kernel.org>
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 2/4] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
+Date: Sun, 26 Jan 2025 09:49:15 -0500
+Message-Id: <20250126144918.925549-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250126144906.925468-1-sashal@kernel.org>
-References: <20250126144906.925468-1-sashal@kernel.org>
+In-Reply-To: <20250126144918.925549-1-sashal@kernel.org>
+References: <20250126144918.925549-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,7 +69,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.74
+X-stable-base: Linux 6.1.127
 Content-Transfer-Encoding: 8bit
 
 From: Kees Cook <kees@kernel.org>
@@ -107,7 +107,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 29 insertions(+), 4 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 7776209d98c10..4a6255aa4ea7f 100644
+index a42c9b8b070d7..2039414cc6621 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -1362,7 +1362,28 @@ int begin_new_exec(struct linux_binprm * bprm)
