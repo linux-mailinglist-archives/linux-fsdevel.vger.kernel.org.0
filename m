@@ -1,131 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-40141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADFAA1D707
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 14:41:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99334A1D77E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 14:55:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC1718823FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 13:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0255E165E04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 13:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18651FF7CC;
-	Mon, 27 Jan 2025 13:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3E120101D;
+	Mon, 27 Jan 2025 13:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="NmM/c1JJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1Dy0LGi9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITreSYYk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8D1FDA84
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2025 13:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9505E1FFC68;
+	Mon, 27 Jan 2025 13:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737985297; cv=none; b=EL/HjvvoXpTbtN8kgzTibMjZ1xnjix2j+z15nGFyv+/jvcAVguIVU6bSGCPumpB/QWomMcytL6rl1+8dCSFwZk3UmIYTqCOpS24tBCBL1vy5ek7Gsn3XrzraVOWR9uzymYUpjDbwIfu4boojWyzwwza29y8MmC/Y28M+ke/aw+8=
+	t=1737985801; cv=none; b=F7MeqUMwDh9AqnAbz9VTF0CPfrtHPsda2VMB/wELMoluxT+jFHPryUKSs55sirg/JaTbiKeoQpZC3XaV1emjPPZwTa8TM8aRf86wN60F8WHhSeBnTDqVBvObJDdcZ4JhtUPpTYgZMMl2hmaEjlJP4yTS7NtSLLMEC6CGc9+GtpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737985297; c=relaxed/simple;
-	bh=ouGAJ6qZsiAsqOFNw49is1ctFHcMrSyhX1wya9HIr5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n27iBWKtMljt7zuzRLDdZfg6l93kEiSs9ijRLnSY2yzXxVad8lZrt8PDz0KuKBrywziteQbg4qx4jCFncB5CVGhSVuhZUASSar4zNX6NkTc2L1g3NmbHKSCe3Xqe9v0X0q8vywVdSNQ1TF+w2oK9duCUa5b6gXugb3/dQ13vSJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=NmM/c1JJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=1Dy0LGi9; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3938B11400CC;
-	Mon, 27 Jan 2025 08:41:33 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 27 Jan 2025 08:41:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1737985293;
-	 x=1738071693; bh=YkHoIYMh1ucQr1euCNFqtGABREJ0tzwKmcvOBFJoae0=; b=
-	NmM/c1JJ0EtLnYazFfa9uZfs68x+6EBBxhk9AhAvXmq5GeG0GjNdwqev7hStp7x4
-	vD5eOFsjMIiuUAvoUmH8Q/ZKIhPooa10G5pUyF2MEbB2VKbnPVmI3HCTkSjhnw6Y
-	chyQXE60wfZT90/xHCYzWtlPXBVy3OBL2D5Foi2Az/vw7uZekTXi78yPajlGDfAW
-	FTUspe+fZoHlRczVO/P+cQvJ0qUhYEkV3jlheoOJ3+O0NkkNHxXSJ9juGwEQoS97
-	1suLe9VozsaX+mpTmWa+/ML+2TUjwKUwbcNuR9qQ+LCVNRj7fZMDd9wTuFEMdXIe
-	4GIFN53pPN1bzPaBH529YA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1737985293; x=
-	1738071693; bh=YkHoIYMh1ucQr1euCNFqtGABREJ0tzwKmcvOBFJoae0=; b=1
-	Dy0LGi93XGIACSD5D+MgBBYI5JGcinf23SPsgc6h63uN+boR2HZ56PvQPfmHtDQX
-	8dAt9wrcDsm5b6raGVU1QqQ1D96h4YN0EUz/erisCFDreRxneR/6I32lMyKpGCeN
-	bX0zQcSzbBy8MzMMd/JPiIOa4HJhmSQSgMJn/Hl3s41E7RuT3FJFlrf/ViceZvZy
-	LXquRnKLI8EKLeLzE/tr4I/sS00sWReoBQF/q6rUOSVGayM4imNuGHtqmaK8cx20
-	gAA97xRlEQ60g/0Ph5drOC1u0ueqZmqpiXQPwG8VsGm5ZG47pmBuRzybzmbdR5xs
-	fYkdigMLLlW7OstjdPqJA==
-X-ME-Sender: <xms:DI2XZ9z-WXk50AMbLyLsTBnU77WeCmlY3lIEttIB1ZFavbVlxYDqxg>
-    <xme:DI2XZ9RHEYmzLouhI2U9bondcp4USldpFOKfQavh24ehhZxaifaJSQVR-jVc0QCA1
-    Y5w-jWlk3NZd5IE>
-X-ME-Received: <xmr:DI2XZ3VltOlEH8lWA-xd3K_BSUQxlTljcRIY6Dqi4F2_76EAcdXjjhPE6WvajSxn7W9v0XzxP8ZqtWo7WxE9fx-QSz2dtwiKTRSkY3s5OMKDsg0kQclX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudejgedgudeffedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
-    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdel
-    ffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggp
-    rhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhklhhosh
-    esshiivghrvgguihdrhhhupdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtgho
-    mhdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtph
-    htthhopehluhhishesihhgrghlihgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhs
-    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvg
-    hlkhhoohhnghesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:DI2XZ_i8tddzEAH989g-CABboZ1QbGZv_i4zg5UnVIAXPVti_uaqiw>
-    <xmx:DI2XZ_AJDKHFekyX30cp6crwJzOfNocrx8QhZq66x3Qmo67pcZ269A>
-    <xmx:DI2XZ4J3NC082GbbCQg0jyOO57QTejHFbUF_wM-vTc2cKU7-1Uldpw>
-    <xmx:DI2XZ-A_K72ZXheQati4-1x6aZbaq27M8qRgPf039qNUHDqjBxuq_A>
-    <xmx:DY2XZx3T9CoYN-SMDSMQtpywRAeUI9HbhL6YpqyeiJxoJfbO1aacGM18>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Jan 2025 08:41:31 -0500 (EST)
-Message-ID: <4a771695-a198-4ee5-8fc7-0c8cc87c48bc@bsbernd.com>
-Date: Mon, 27 Jan 2025 14:41:30 +0100
+	s=arc-20240116; t=1737985801; c=relaxed/simple;
+	bh=laZX1iWKmTFe6EBXe6dQ6V5dBHky9feUPubV8bbHYy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMORzqWZio7hChDXr3/Qm5jAoxmn3zfTl1CgvY0LxIyhoT2v86KB7bEl152QlrUFCUzkwCK29e3++AnjuJnmM48HlKCBcmgXNkS2Mxz1JA1n2RJFuhe8lXQwgO9o9FcUCrsk0Ls4rQo8d942Fvsaj2FBbZIzb3I4Q4SunH6SlLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITreSYYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881ACC4CED2;
+	Mon, 27 Jan 2025 13:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737985800;
+	bh=laZX1iWKmTFe6EBXe6dQ6V5dBHky9feUPubV8bbHYy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ITreSYYkYqJo0yzT/NmeCNaU8ylN9fF82uixbVQhbAMNhn/x1ksvsdeN2BZIjx7Av
+	 6jRzLOfnz1KOiZ8BN/+a6yzSKjX86nOzP6ewnKK12LbyYoLRgr6MitIVZMs+Q9nRjt
+	 1O56sOuQWf9/oW9JBeL1K1Ep9SPnbGRY0gAqf1BfWdrmsV6P6rbrAzrEzJaWATIpCg
+	 PxgyGHOSh+1Dp+na/sGNdWcGsgzNCRs4/nnMHS16Kt8UOkwJO9cYsDiIOKruHAZkDs
+	 tuJVwo0MPlNeiRHuQkLVgJEWRQ8mSboCfx8PwGZonQ0+bdJkEjI8BLPDWS5oZchNDY
+	 iBi9Q4ViZ4cfA==
+Date: Mon, 27 Jan 2025 14:49:55 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Jani Nikula <jani.nikula@intel.com>, 
+	Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+Message-ID: <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] fuse: Use READ_ONCE in fuse_uring_send_in_task
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Luis Henriques
- <luis@igalia.com>, linux-fsdevel@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>
-References: <20250125-optimize-fuse-uring-req-timeouts-v2-0-7771a2300343@ddn.com>
- <20250125-optimize-fuse-uring-req-timeouts-v2-4-7771a2300343@ddn.com>
- <CAJfpegsN3nybf6iTbMPUJJ6Tdv61ngG8qfTwQ+8UYucHA3XQPg@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegsN3nybf6iTbMPUJJ6Tdv61ngG8qfTwQ+8UYucHA3XQPg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
 
-
-
-On 1/27/25 14:16, Miklos Szeredi wrote:
-> On Sat, 25 Jan 2025 at 18:45, Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> The value is read from another task without, while the task that
->> had set the value was holding queue->lock. Better use READ_ONCE
->> to ensure the compiler cannot optimize the read.
+On Wed, Jan 22, 2025 at 01:41:35PM +0100, Ard Biesheuvel wrote:
+> On Wed, 22 Jan 2025 at 13:25, Joel Granados <joel.granados@kernel.org> wrote:
+> >
+> > On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
+> > > On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
+> > >
+> > > Hi Joel,
+> > >
+> > > > Add the const qualifier to all the ctl_tables in the tree except for
+> > > > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+> > > > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+> > > > drivers/inifiniband dirs). These are special cases as they use a
+> > > > registration function with a non-const qualified ctl_table argument or
+> > > > modify the arrays before passing them on to the registration function.
+> > > >
+> > > > Constifying ctl_table structs will prevent the modification of
+> > > > proc_handler function pointers as the arrays would reside in .rodata.
+> > > > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> > > > constify the ctl_table argument of proc_handlers") constified all the
+> > > > proc_handlers.
+> > >
+> > > I could identify at least these occurences in s390 code as well:
+> > Hey Alexander
+> >
+> > Thx for bringing these to my attention. I had completely missed them as
+> > the spatch only deals with ctl_tables outside functions.
+> >
+> > Short answer:
+> > These should not be included in the current patch because they are a
+> > different pattern from how sysctl tables are usually used. So I will not
+> > include them.
+> >
+> > With that said, I think it might be interesting to look closer at them
+> > as they seem to be complicating the proc_handler (I have to look at them
+> > closer).
+> >
+> > I see that they are defining a ctl_table struct within the functions and
+> > just using the data (from the incoming ctl_table) to forward things down
+> > to proc_do{u,}intvec_* functions. This is very odd and I have only seen
+> > it done in order to change the incoming ctl_table (which is not what is
+> > being done here).
+> >
+> > I will take a closer look after the merge window and circle back with
+> > more info. Might take me a while as I'm not very familiar with s390
+> > code; any additional information on why those are being used inside the
+> > functions would be helpfull.
+> >
 > 
-> I do not think this is necessary.  The ordering should be ensured by
-> the io_uring infrastructure, no?
+> Using const data on the stack is not as useful, because the stack is
+> always mapped writable.
+> 
+> Global data structures marked 'const' will be moved into an ELF
+> section that is typically mapped read-only in its entirely, and so the
+> data cannot be modified by writing to it directly. No such protection
+> is possible for the stack, and so the constness there is only enforced
+> at compile time.
+I completely agree with you. No reason to use const within those
+functions. But why define those ctl_tables in function to begin with.
+Can't you just use the ones that are defined outside the functions?
 
-Yes, definitely ordered, as it is called only when ent->fuse_req was set
-before. So yeah, you are right, we can skip this patch.
+Best
 
 
-Thanks,
-Bernd
+-- 
+
+Joel Granados
 
