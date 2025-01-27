@@ -1,116 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-40155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F04EA1DD75
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 21:37:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A65DA1DD7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 21:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32C4165D25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 20:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1726D3A4FC0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 20:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09051991B2;
-	Mon, 27 Jan 2025 20:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E9C198857;
+	Mon, 27 Jan 2025 20:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="eW0JzDk3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZbD8sm/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD407198E78;
-	Mon, 27 Jan 2025 20:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5192194C9E;
+	Mon, 27 Jan 2025 20:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738010257; cv=none; b=TYomR7Xeh+4Ti9r1vfKOaRksltkv428D5hLmD3cALut6/udp7vF5SsPGkBN8/wHiq3DycCkSfSFzhGVMyP55vhrC7azFIKE7ay8LZkWKs1Yk8p/UplPWjvsObs0lrGia7yFS+MJdUFkXONGCAB1S3pCkDxZNQYz9/o9et0oquog=
+	t=1738010336; cv=none; b=CU/W7fb8XA8Yzjdb51F12Z2AUOA3Gmc0O1Lt8W9kwpcB7uzmily0WNbOlLzBng8deL7dbsJJR8RZs5CyhHGVcQgyO4gr0N1mOWEfPr9UPmklAHLFnwAB+kfn3gdkLF7Pe80oQemxsR3A3Jh9+KSM50YEYLqOMMMgKQoz+Xon/Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738010257; c=relaxed/simple;
-	bh=iMbcZUv69qQvAjEYoxxnkH2qpTd+VBLZnLSwdYtvLMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V2E7uafay1397hRWLOeT6aWWAgcEY+xLHlrzKhXPhTO/FHGOzaNIRQiJFEoPZk5TYWH9x5h5WVNyTmUHoTDo4tkWZntQM0juH5jA5e6oMwHf+P8hcgobN6z7K7VYOCCc2D1kovg9ZOQLXj3V8Pcasu/428MPPXEPyE+mAvzvX88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=eW0JzDk3; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4YhgG11mbVzlgVnf;
-	Mon, 27 Jan 2025 20:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1738010245; x=1740602246; bh=iwV0z46Fzz4t3t3BKlYgt+TU
-	1vyw8sZZQDFU149GUSk=; b=eW0JzDk3S2MIClpec4GGxqObmhdcV3aSh1m507+8
-	FDO98Kofern8SdTViikFGsg+cGfvquWgNW+2UtF+QQBJJThakWoSyInE72/9E0Yb
-	hVSr6O3LqmrwSBfZFtFt6a1h+0tjUZaKrYWAH4uzsfF76EedwppH6Ge3Rj//MnKC
-	R3gkf7kh82UCvMwAYbkCXEJEKJdByEAoV0KM2nad5XAqH2CLHGQkc47pkIf1C8uE
-	Z8g0Io4J64oMr56hO+tUiuwjYrQgmoD+SNXDh8kcdxj1JFRcVFBpECQrgn+EtvdQ
-	c9pYbA6JJAtNLTQvxmBUm9I6Jxf4yKB+EOYmMyasuIJGsw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id S9W6UBpvI2BN; Mon, 27 Jan 2025 20:37:25 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4YhgFv0DG4zlgTWM;
-	Mon, 27 Jan 2025 20:37:22 +0000 (UTC)
-Message-ID: <833b054b-f179-4bc8-912b-dad057d193cd@acm.org>
-Date: Mon, 27 Jan 2025 12:37:21 -0800
+	s=arc-20240116; t=1738010336; c=relaxed/simple;
+	bh=9tjZPyiG0CmH9pRlCoosP8bUzk3qx59WBw4tH4dadiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hyYJfgB+1FA5HEpAuSbuIJ+FGZzOP8kO8/SMHHilwbIcMe/KP7+kAPYzHvecXhXWi5UGv5+umQb84uoRZ6+AZxA+m9wlgzn/yDZpuvqVRhmqFR2K5p2MnDkDd/sMfxMs7E/cEy+ppuSoUQcMYz5m2O75RiRn9dHbT6KCqpnq3uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZbD8sm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E69C4CED2;
+	Mon, 27 Jan 2025 20:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738010335;
+	bh=9tjZPyiG0CmH9pRlCoosP8bUzk3qx59WBw4tH4dadiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pZbD8sm/enLtb50S3/sC87UUtXcxRREEbj/loA72eJZLsVWJaPpOa01XYxNP8XBKg
+	 bCUJ9cbj3U7i4WYN8SD/nxDaPWzWhAt4rBT0JX4ii0vsRGem/4gt3i9iph5edPpMG9
+	 cRXoMdrD9784ZythEXhabCuQ3NH2oi22zSMXyt9uV7WTXC/zPoUHv/8sY5OtLQDc/5
+	 eqntQjr0H0hpBNAeWXiUG3DNnHOM08VE5mXSey1c64xFG89EVqISiyuPCOEpqEM9Uu
+	 99jbjYzpFMVv87SiLQ/Zz0FropeXA5ShOBi5Aa1YDe2cb7s+p8AScOoi4fVpXpznU5
+	 vlXFolXXRZ5ZQ==
+Date: Mon, 27 Jan 2025 20:38:50 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sasha Levin <sashal@kernel.org>, kernelci@lists.linux.dev,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [git pull] d_revalidate pile
+Message-ID: <804bea31-973e-40b6-974a-0d7c6e16ac29@sirena.org.uk>
+References: <20250127044721.GD1977892@ZenIV>
+ <Z5fAOpnFoXMgpCWb@lappy>
+ <CAHk-=wh=PVSpnca89fb+G6ZDBefbzbwFs+CG23+WGFpMyOHkiw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] Generalized data temperature estimation
- framework
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "slava@dubeyko.com" <slava@dubeyko.com>,
- "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Greg Farnum <gfarnum@ibm.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "javier.gonz@samsung.com" <javier.gonz@samsung.com>
-References: <20250123203319.11420-1-slava@dubeyko.com>
- <39de3063-a1c8-4d59-8819-961e5a10cbb9@acm.org>
- <0fbbd5a488cdbd4e1e1d1d79ea43c39582569f5a.camel@ibm.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <0fbbd5a488cdbd4e1e1d1d79ea43c39582569f5a.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sjhhmSXafkPDKpEd"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh=PVSpnca89fb+G6ZDBefbzbwFs+CG23+WGFpMyOHkiw@mail.gmail.com>
+X-Cookie: Printed on recycled paper.
 
-On 1/24/25 1:11 PM, Viacheslav Dubeyko wrote:
-> On Fri, 2025-01-24 at 12:44 -0800, Bart Van Assche wrote:
->> On 1/23/25 12:33 PM, Viacheslav Dubeyko wrote:
->>> I would like to discuss a generalized data "temperature"
->>> estimation framework.
->>
->> Is data available that shows the effectiveness of this approach and
->> that compares this approach with existing approaches?
-> 
-> Yes, I did the benchmarking. I can see the quantitative estimation of
-> files' temperature.
 
-What has been measured in these benchmarks?
+--sjhhmSXafkPDKpEd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Which existing approaches would you like to compare?
+On Mon, Jan 27, 2025 at 11:12:11AM -0800, Linus Torvalds wrote:
+> On Mon, 27 Jan 2025 at 09:19, Sasha Levin <sashal@kernel.org> wrote:
 
-F2FS has a built-in algorithm for assigning data temperatures.
+> > With this pulled on top of Linus's tree, LKFT is managing to trigger
+> > kfence warnings:
 
-> And what could we imply by effectiveness of the approach? Do you have
-> a vision how we can estimate the effectiveness? :)
+> > <3>[   62.180289] BUG: KFENCE: out-of-bounds read in d_same_name+0x4c/0xd0
+> > <3>[   62.180289]
+> > <3>[   62.182647] Out-of-bounds read at 0x00000000eedd4b55 (64B right of kfence-#174):
+> > <4>[   62.184178]  d_same_name+0x4c/0xd0
 
-Isn't the goal of providing data temperature information to the device
-to reduce write amplification (W.A.)? I think that W.A. data would be
-useful but I'm not sure whether such data is easy to extract from a
-storage device.
+> Bah. I've said this before, but I really wish LKFT would use debug
+> builds and run the warnings through scripts/decode_stacktrace.sh.
 
-Thanks,
+> Getting filenames and line numbers (and inlining information!) for
+> stack traces can be really really useful.
 
-Bart.
+> I think you are using KernelCI builds (at least that was the case last
+> time), and apparently they are non-debug builds. And that's possibly
+> due to just resource issues (the debug info does take a lot more disk
+> space and makes link times much longer too). So it might not be easily
+> fixable.
+
+They're not, they're using their own builds done with their tuxsuite
+service which is a cloud front end for their tuxmake tool, that does
+have the ability to save the vmlinux.  Poking around the LKFT output it
+does look like they're doing that for the LKFT builds:
+
+   https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.13-rc7-8584-gd4639f3659ae/testrun/27027254/suite/build/test/gcc-13-tinyconfig/details/
+   https://storage.tuxsuite.com/public/linaro/lkft/builds/2sDW1jDhjHPNl1XNezFhsjSlvpI/
+
+so hopefully the information is all there and it's just a question of
+people doing the decode when reporting issues from LKFT.
+
+> But let's see if it might be an option to get this capability. So I'm
+> adding the kernelci list to see if somebody goes "Oh, that was just an
+> oversight" and might easily be made to happen. Fingers crossed.
+
+The issue with KernelCI has been that it's not storing the vmlinux, this
+was indeed done due to space issues like you suggest.  With the new
+infrastructure that's been rolled out as part of the KernelCI 2.0 revamp
+the storage should be a lot more scaleable and so this should hopefully
+be a cost issue rather than actual space limits like it used to be so
+more tractable.  AFAICT we haven't actually revisited making the
+required changes to include the vmlinux in the stored output though, I
+filed a ticket:
+
+   https://github.com/kernelci/kernelci-project/issues/509
+
+The builds themselves are generally using standard defconfigs and
+derivatives of that so will normally have enough debug info for
+decode_stacktrace.sh.  Where they don't we should probably just change
+that upstream.
+
+--sjhhmSXafkPDKpEd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeX7toACgkQJNaLcl1U
+h9Bl1wf9Fadxqmm7XmkrjT1PLaIqtE/38tRkeeggPdC7tWcWp1hXzsP9qtaBuIuE
+VM7QqeKyG2kEFH0tAI1m9T6PDxGduwm5mPHg0fBDl812K6IuM2IhkhR5t6NVL9lb
+8KPk8WsoIbLVBgLS83MKi9HAMKgDeCwukoq2Np7U6xbHpRTd5G+MU5/bB+iG5Zcl
+7mi+mELt4NUi4PX5u/cVGxXT4Fa9VKUmdQ6NMbyoU3XtALcZtz76nY26qU85NIwB
+FwPibKc5uabpnNBq3vVp2JxrLs5MZka2ZRtSlWKHwaC+22cODiwNB92oy0FfIswK
+smPi+2HS2jokfcL0PejZ5sCuHgmojA==
+=FysA
+-----END PGP SIGNATURE-----
+
+--sjhhmSXafkPDKpEd--
 
