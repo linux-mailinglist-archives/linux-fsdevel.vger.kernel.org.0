@@ -1,102 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-40160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE4CA1FFF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 22:35:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64074A20010
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 22:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1568B164CCA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 21:35:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 752917A3FAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 21:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCC41D8DE0;
-	Mon, 27 Jan 2025 21:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725AF1D89F8;
+	Mon, 27 Jan 2025 21:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ka4dEF5i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ig22jNs5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE23A1D86E4;
-	Mon, 27 Jan 2025 21:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF31190664
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2025 21:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738013701; cv=none; b=ZE5MQZ4/4GNbXfC3/V7x/8QZ5b+1tYcZpcLDR7gQcQJJunij209VyUBjWuP+4FqX0sSzk46SqH0Cev2GqOFdN8zXP92zw4eTygkJNDe9w/abtvOlBrcMMOzeu4yXRaA5yU0uJJGs/UPtB6H08Kr+Jp8rUkn7ez7Elc2V9vW+udw=
+	t=1738014268; cv=none; b=V1pb/8XAVb9Vu/QZfQ21TWlt46Asdik90Yg+16apE2UlH79zm14O1kMFfnFzqPtQLTlJb295IRmhCPSJ21vN575VvZCaHRFFphTmWdaUh3ddC7sVpdDmw9VwE3sqRGIZ5gkgG8GjbH3BpRIap+HOwBBQQguKWx24LKT54Nwv/Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738013701; c=relaxed/simple;
-	bh=bzf3eP/hx12Q/Oq7crlV3VD/Iv44XwJs0M5NNG4MXAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Al7n3Flcxw9cX/F8MguBuvJ2dosNELtGH89+AOW2b2Cr73ANJo8urcwavxUMTsD2YTmW5pEnHHG3uP6hgDp17AKoneA+hF3snmfAjhzU0i6c5gUzGOvwsbt2XMchMUlpoJl+hNcO/d3eRfqWw6bxArtkCjyAEs9IabXYTWe5rDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ka4dEF5i; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LOqGsxpfvMFfGSZWiUjA5lsBKHDYMh9CnwjENFtBomM=; b=ka4dEF5iaXBN9EgttmEQKLMIcd
-	ln7ITZw91HlXdFQaJCDxpZi1NvW3flbtvy+McUybvAzFWF6zlNO14QW9GOj8FiLxksdxNWClfOo9o
-	DJqVReb3/5hU5+DGpoZStQaS3APyuhmW56t2c4O7aCeKne12VbOpU8Su3keZdrz+bTUDzvhv6rwtX
-	Bp54UTxEyTx3tQIFin+h+5lju1+jUrdcqkGuJhrtNLrlzzMhuY7k+Y6K+KYENXNwH3w2GBH60li/7
-	Niht4FMc2Qpnf+EwnOlP54u1HwX6s65B2/b+0zDG3rEXNaYzjkQ3MrHoQZQBlbZruiVZiNQ/+NaIw
-	cgQYw19A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tcWky-0000000DhCH-3hNM;
-	Mon, 27 Jan 2025 21:34:56 +0000
-Date: Mon, 27 Jan 2025 21:34:56 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [git pull] d_revalidate pile
-Message-ID: <20250127213456.GH1977892@ZenIV>
-References: <20250127044721.GD1977892@ZenIV>
- <Z5fAOpnFoXMgpCWb@lappy>
- <20250127173634.GF1977892@ZenIV>
- <Z5fyAPnvtNPPF5L3@lappy>
+	s=arc-20240116; t=1738014268; c=relaxed/simple;
+	bh=O55sA32SfjNTeJyXWsvc33ttxoikQbgYnz/eFvivVQM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=HPdj+A2hEmmLDyBIi1sFbtvgFiNhiidatrA9XxslgU5+jJeqgXlznbMCFaOnLaaIMIETukgfn13AELMK9fyzu5DPQAOsrjqtUxnsRXkQLG+DK1O9GI8uUlixo8Sf1ThgBXvtPLfo6HEyAWsfgweGpxPH7d/J0hpX9FacsjIGVs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ig22jNs5; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6dd5c544813so52051346d6.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2025 13:44:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738014266; x=1738619066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hNuU6XYKqsSBZpxrR31dc8+TD28Irl+E3HMcwk8S+8=;
+        b=ig22jNs5iMkqQt+pN2aeU9Gh6SGwBGNUWRiXblsNL3uRgPTa7HWXp7OmwqMTspA2uh
+         1NRXSAzi9uTTnbDTkmuBISRWDoSmUmBtoMtL0rfnfUNNEl3NBgQbej3oy3C/nCT05NaF
+         PYnxyM278H7Mis5XoJGcmAdz6boD3UCBDXeiA6BeznBOFtbUKuetdLaxpCwEsok0jv1o
+         FBoGdqgMQpgomex2zhjOn70fMVwmJ8VzShVT0hxO7ADNvWQSl0I7NUMYyEqsAQlq+n1D
+         hJXu+f8c/TSnMgru5QTDXElsi62WPq+CYZKH2bCBiPYqO4Ih5wbIBLhjxRp3ODP5VofU
+         xroA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738014266; x=1738619066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8hNuU6XYKqsSBZpxrR31dc8+TD28Irl+E3HMcwk8S+8=;
+        b=tw6oCXctoEsrltECX5+Ar1r+R57bZQdQDkCh27qaILIER+6en6bTpx4N62t4ZTpQgH
+         1WoJWrnWMBTFfV0tEcXi3hI4o+omTi+MbK47AYycWhU40N1T0EO6nRLzi46zKUOuf9GZ
+         U1vX//QVVo520tANoi6cCzYt9DiVSNZ3vZ/GDmSB7+XrBeR9RpKPbP/1PfOQ66mzHNpx
+         uZX3l+u6/jLxE6nR6aAY36HXdwy72NSRjZ2LfT07Nx8RP4OVT3L/du9VIerpsAofE7dp
+         fnCym/wQp0lOihTD36Uxa6YL9HOrKgZQEZ/xpxyxlUk0WN8GbiiPs6xg/OImy1xTBgUM
+         K7Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1XPjXQuB+iTel7MXvoeXbIw0cSl6NksOVThMnIxGTksAMwPncDd2Ck5HgM18xyH91KOSULEBAi5Dl89LM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5yv9PwxMApvojcMm5Gm8UfG+qiUIqv1Syjc+UB4/Llx0QMKxw
+	KVPO2NkEl1Qz7xy//n+r28MfNoPDwkK4jeKAAc2h7cLLYP4Xya/h+6h97ifi33+GEQCpTCsomtb
+	OYTQmne2E6MSTolk7TUgRtiIuzKA=
+X-Gm-Gg: ASbGnctV2TczH9Rho9KFsinNaAD/uwtsAcaUtR8pEnv5EejgiEVD7Wi6nQL9rA9M50v
+	1hhsOmlHLJCUrivvq1cGMMDtpFWqgJUjCBVqFHxKczge3IiypcnZ3wEoempXtzGzKf0yw5da8we
+	a3zQ==
+X-Google-Smtp-Source: AGHT+IEQ8vKuyyf2mG/jjIsA/ly7e4AIarZWWSsZgK5R5utcTu00EJcMG8QB++bbDmpJdXeg8blvHURCy/bbPneE4kE=
+X-Received: by 2002:a05:6214:5b8a:b0:6d8:8416:9c54 with SMTP id
+ 6a1803df08f44-6e1b217d47fmr676285846d6.16.1738014266144; Mon, 27 Jan 2025
+ 13:44:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z5fyAPnvtNPPF5L3@lappy>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 27 Jan 2025 13:44:15 -0800
+X-Gm-Features: AWEUYZnRKGk-LonU_X84Mc2NKHyemXCdtXKIFkAmCIi-bbUgdT8cuz8EFMktLnQ
+Message-ID: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
+Subject: [LSF/MM/BPF TOPIC] Removing writeback temp pages in FUSE
+To: lsf-pc@lists.linux-foundation.org
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, David Hildenbrand <david@redhat.com>, 
+	Bernd Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 27, 2025 at 03:52:16PM -0500, Sasha Levin wrote:
-> On Mon, Jan 27, 2025 at 05:36:34PM +0000, Al Viro wrote:
-> > On Mon, Jan 27, 2025 at 12:19:54PM -0500, Sasha Levin wrote:
-> > 
-> > > The full log is at: https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.13-rc7-8584-gd4639f3659ae/testrun/27028572/suite/log-parser-test/test/kfence-bug-kfence-out-of-bounds-read-in-d_same_name/log
-> > > 
-> > > LMK if I should attempt a bisection.
-> > 
-> > Could you try your setup on 58cf9c383c5c "dcache: back inline names
-> > with a struct-wrapped array of unsigned long"?
-> 
-> It looks like we didn't trigger a warnings on that commit, but I'm not
-> sure if the issue reproduces easily.
-> 
-> I'll start a bisection and see where it takes me...
+Hi all,
 
-Interesting...  The thing is, that's the only commit that goes anywhere
-near ->d_name reassignments.  That access smells like access just one
-byte past struct external_name...  wait a minute.
+Recently, there was a long discussion upstream [1] on a patchset that
+removes temp pages when handling writeback in FUSE. Temp pages are the
+main bottleneck for write performance in FUSE and local benchmarks
+showed approximately a 20% and 45% improvement in throughput for 4K
+and 1M block size writes respectively when temp pages were removed.
+More information on how FUSE uses temp pages can be found here [2].
 
-Could that be load_unaligned_zeropad() stepping just over the end of
-external name?
+In the discussion, there were concerns from mm regarding the
+possibility of untrusted malicious or buggy fuse servers never
+completing writeback, which would impede migration for those pages.
 
-If so, then
-	a) it's a false positive (and IIRC, it's not the first time
-kfence gets confused by that)
-	b) your bisection will probably converge to bdd9951f60f9
-"dissolve external_name.u into separate members" which is where we'd
-ended up with offsetof(struct external_name, name) being 4 modulo 8.
+It would be great to continue this discussion at LSF/MM and align on a
+solution that removes FUSE temp pages altogether while satisfying mm=E2=80=
+=99s
+expectations for page migration. These are the most promising options
+so far:
 
-As a quick test, try to flip the order of head and count in
-struct external_name and see if that makes the warning go away.
-If it does, I'm pretty certain that theory above is correct.
+a) Kill untrusted fuse servers that do not reply to writeback requests
+by a certain amount of time (where that time can be configurable
+through a sysctl) as a safeguard for system resources
+
+b) Use unmovable pages for untrusted fuse servers
+
+If there are no acceptable solutions, it might also be worth
+considering whether there could be mm options that could sufficiently
+mitigate this problem. One potential idea is co-locating FUSE folio
+allocations to the same page block so that the worst-case
+malicious/buggy server scenario only hampers migration of one page
+block.
+
+If there is no way to remove temp pages altogether, then it would be
+useful to discuss:
+a) how skipping temp pages should be gated:
+    i) unprivileged servers default to always using temp pages while
+privileged servers skip temp pages
+    ii) splice defaults to using temp pages and writeback for non-temp
+pages get canceled if migration is initiated
+    iii) skip temp pages if a sufficient enough request timeout is set
+
+b) how to support large FUSE folios for writeback. Currently FUSE uses
+an rb tree to track writeback state of temp pages but with large
+folios, this gets unsustainable if concurrent writebacks happen on the
+same page indices but are part of different sized folios, eg the
+following scenario
+      i)  writeback on a large folio is issued
+     ii) the folio is copied to a tmp folio and writeback is cleared,
+we add this writeback request to the rb tree
+     iii) the folio in the pagecache is evicted
+     iv) another write occurs on a larger range that encompasses the
+range in the writeback in i) or on a subset of it
+It seems likely that we will need to align on another data structure
+instead of the rb tree to sufficiently handle this.
+
+
+Thanks,
+Joanne
+
+[1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-5-joannelko=
+ong@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelko=
+ong@gmail.com/
 
