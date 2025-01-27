@@ -1,206 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-40148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96689A1DA68
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 17:21:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EB8A1DB28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 18:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65FF161772
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 16:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9F03A4EFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 17:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49233155CB3;
-	Mon, 27 Jan 2025 16:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B5D18A6C1;
+	Mon, 27 Jan 2025 17:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="karK3ybi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231384039;
-	Mon, 27 Jan 2025 16:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2208418A6A9;
+	Mon, 27 Jan 2025 17:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737994905; cv=none; b=ldgsWSnGQvEgjIrDmjdn7psa38LNU3Q7xdI6vzDEqtaLQMTLZeMCzoFH1sFpqsOoDzCLSTG5dgTG10FWzqI1OUfIWkQABcXSMxmWdLVODybktw5/4SJoPe17viBtNOwMQsgLh+/v/jt2ZUiJPQyCVzHvmRPp+WBe3voWzAjxw30=
+	t=1737998396; cv=none; b=f3lKYR4xu/YftqEiitRsi4ur+IkK/awtKeq3LsBDXPAaci5QuL+Mh0rwy4ATBAREC8J+w9w8c7Db5TGNoGpbefEqxzlyBZtpJl6KNK/hd+jWvRKOAW4upaHUsklaxoTDRDToTbH6GWw6kK85/BYkSOXZI0TXZsPj3HH6iV1BOBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737994905; c=relaxed/simple;
-	bh=9zboAYYsia2n4IduI3z/U3t1jmKc8HJmonBTt/8Myc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SuawFIvMf44HSjNVX4cWHpPiI4rFTk6By7s5pwupxyzfIeBPy5CGYUzdhiLIYYX/MEbWAukEd29GjnWMaD0HVzhwILIiHeLX/4dd7r4ytKnDAwUKqNTs+W33ZEYeUUqQ+HCiEHmIMj2LxYAEAD5QjEbFe7ewmjSVCNM519qr3GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-467a6ecaa54so40822321cf.0;
-        Mon, 27 Jan 2025 08:21:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737994900; x=1738599700;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45OoBPJoV8zGfJClLFYbCrAaSSdq0Hy4HHZ9q0U58K4=;
-        b=KdCugZ6YBwqqHNL1xLet9gmq5xIDRo97D8W8hqokI/+/wVDoF02CTEAlSEjWF7DMMQ
-         NFSaGdmWfPZnxv7zFoZQYaxqsjgbg3lnZahSHkIif38rQsKv7z6kq52LlnpjppdTZfFY
-         GyMfAhEsunGP1Kac7L20B/yScUMgz7/GJ09MlW9d8XQo/qvj3keRUqCimUushTZhhw2m
-         5ZqKaMfZ92pnkHSPcWD5Wu0RkwG5dDl3Akel4mLwLcdq1PNVGGkRD4lwePeTqe5JUQg4
-         dbhI2bACW7sAReNF9m4SBs/DRKRUNDnlNmYVmQQ8WU5OZTGL+vRiQr74ltb5NUcdfbAM
-         V1GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+ddYyO+1rUmUB/KfrslxkpXIAfPN4iM8esjoK5SYZk/MHeUixaqJL4vR9SPsRbphmzfL0kbh/iMB6@vger.kernel.org, AJvYcCU1WakF9Nplj9zFmBvCH297LwBOpNLH7eLM3ll0++KpVckBQeE2wsZnuuIwCzB7DvQ71NGMzUi6XjIvcb2g@vger.kernel.org, AJvYcCWFlY7iP0a9QqgWQ3d8T/g3gUE5sKakB+8SXBEqgzUeDTuT+3JjGMyVQRt62U6a8mSqrnLteDDaIGkICSDx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqYVdCBlIz/tPu05hVngEI7v2LTjm5ypMZsG0rIOLQrV2g5VPX
-	+osniF0FUAVBIeP4qX6crCoZLUcPWEXbI93KgZUgZkfATm223PO/5raOswl9py8=
-X-Gm-Gg: ASbGncsjPoWKk8jpS5nvc+4aPJ6ivcaKa0V8G7uHxM87aj1/VKTWn77CuVad1IGcwPk
-	gVJbQiImEiKacoZW3eq20SzR6LIuGSVDpz4IsqrwGQC1NOnvxqo/xgZfhvV+pNipE+CoYAry+Is
-	OExSztBv2m6gDcLA9mhjsxjMxnuxi6MNQDy2foiPieFml84n3nhD6csEjrTpI/r05bwdeq58rpk
-	RZXuptc/xX2RXLbXQ6eRYwDSGUhjHBrBQ9uan+Wx2uEvMUQkWXg11itQmx/xDHTEaQ98wuVc5Fe
-	ZKqBNim4B9/vkhG2FGSDxkk29H1u4RS+k+aEeDEkeOI=
-X-Google-Smtp-Source: AGHT+IEU//eglgKBNLQafGMcPTTdPkcn01iNy1hchCAILCc/3V6z1Y0Yb5wy2qDJ/okZDUkB+jheUQ==
-X-Received: by 2002:ac8:7fcb:0:b0:466:a51b:6281 with SMTP id d75a77b69052e-46e12a9a6c2mr609961921cf.26.1737994900305;
-        Mon, 27 Jan 2025 08:21:40 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-864a9c176f0sm1962251241.23.2025.01.27.08.21.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2025 08:21:40 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-85c5a913cffso2613910241.0;
-        Mon, 27 Jan 2025 08:21:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVzRcGM/+CnxEVdD+WSCuqxRWgQ57k0SFRqvUc7sWtVgCH48Oxx51Jcl9X3TqKe5FjA4aFJjBy2JT0N@vger.kernel.org, AJvYcCWY3VoJWgASw5xA/Qte1S627buC5gBX6/Zg4++IwUOFeZZ+M2DfqOgbmlS3Ti9crWjBNkQJpsjrQ5fTDhP2@vger.kernel.org, AJvYcCXjvlandxAcxF7gJylllFwkxUBOK7o9SEvCoq7WW8Ql2D3je715Q4jZuNhfT1hUp0CVa6d81tjKkcwhrQ5I@vger.kernel.org
-X-Received: by 2002:a05:6102:370e:b0:4b1:1a24:e19c with SMTP id
- ada2fe7eead31-4b690bb53cbmr34951549137.7.1737994899878; Mon, 27 Jan 2025
- 08:21:39 -0800 (PST)
+	s=arc-20240116; t=1737998396; c=relaxed/simple;
+	bh=PPuVm5iqXgCC+CCHxuaTuqVzBe+G9i8rsvk4NZjU2ec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pOM4wL/MWnJO5ZrzZ2+LzwrTZ0LC2qao1WuVaYaBr8f8nftCPx7ATMHS5tVAK4zZBA0YiElPSIiboNfKnX/GO7JUUwrfYLspgobtpZ1BzQ2VCk0eEJemVVVBM8vt8TOEaro4uChXn49ALoYhuMpss6bFBvPkfc43JwPMfRroFQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=karK3ybi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DF0C4CED2;
+	Mon, 27 Jan 2025 17:19:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737998395;
+	bh=PPuVm5iqXgCC+CCHxuaTuqVzBe+G9i8rsvk4NZjU2ec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=karK3ybiX18sZMYT7Z/J4ytZgHabC0takYIJozK06KAcHesPBSgCJ+BveW7GlvSqC
+	 Z6lSCf5xqV4tYiwRVG+5LIMAHOmg/H285BYRtNwOEj1Ta5RUatrvBxrPc2tVXHMKUx
+	 H+NcTbeS2Nobknyd6PLelWIekhP6okSFr+MnOXzipiH9Q3VtXj/ZZj55EpAtOIONTK
+	 Kn0GeDYfrGoFQVvvwg0zhOSAfGN4SRPMr36G1Qs/hXlcUf251Sy+iyqpV1gbRRdCFf
+	 /uBmRBVGA+btTyeEWSmmKpRUMULia8DC5CXEf9FjtIy+NIh/WqTOmlQ51xN7Rk7g65
+	 sbpxAYU6rjenw==
+Date: Mon, 27 Jan 2025 12:19:54 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [git pull] d_revalidate pile
+Message-ID: <Z5fAOpnFoXMgpCWb@lappy>
+References: <20250127044721.GD1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218154613.58754-1-shikemeng@huaweicloud.com> <20241218154613.58754-3-shikemeng@huaweicloud.com>
-In-Reply-To: <20241218154613.58754-3-shikemeng@huaweicloud.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 Jan 2025 17:21:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU_bfadUO=0OZ=AoQ9EAmQPA4wsLCBqohXR+QCeCKRn4A@mail.gmail.com>
-X-Gm-Features: AWEUYZm3QsghWJGgtE4-bBJDpa8L-HpWyQPtWRVnePo0_2YvMLY_Y47k7OF49o4
-Message-ID: <CAMuHMdU_bfadUO=0OZ=AoQ9EAmQPA4wsLCBqohXR+QCeCKRn4A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] Xarray: move forward index correctly in xas_pause()
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250127044721.GD1977892@ZenIV>
 
-Hi Kemeng,
-
-On Wed, 18 Dec 2024 at 07:58, Kemeng Shi <shikemeng@huaweicloud.com> wrote:
-> After xas_load(), xas->index could point to mid of found multi-index entry
-> and xas->index's bits under node->shift maybe non-zero. The afterward
-> xas_pause() will move forward xas->index with xa->node->shift with bits
-> under node->shift un-masked and thus skip some index unexpectedly.
+On Mon, Jan 27, 2025 at 04:47:21AM +0000, Al Viro wrote:
+>->d_revalidate() series, along with ->d_iname preliminary work.
+>One trivial conflict in fs/afs/dir.c - afs_do_lookup_one() has lost
+>one argument in mainline and switched another from dentry to qstr
+>in this series.
 >
-> Consider following case:
-> Assume XA_CHUNK_SHIFT is 4.
-> xa_store_range(xa, 16, 31, ...)
-> xa_store(xa, 32, ...)
-> XA_STATE(xas, xa, 17);
-> xas_for_each(&xas,...)
-> xas_load(&xas)
-> /* xas->index = 17, xas->xa_offset = 1, xas->xa_node->xa_shift = 4 */
-> xas_pause()
-> /* xas->index = 33, xas->xa_offset = 2, xas->xa_node->xa_shift = 4 */
-> As we can see, index of 32 is skipped unexpectedly.
+>The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 >
-> Fix this by mask bit under node->xa_shift when move forward index in
-> xas_pause().
+>  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 >
-> For now, this will not cause serious problems. Only minor problem
-> like cachestat return less number of page status could happen.
+>are available in the Git repository at:
 >
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-
-Thanks for your patch, which is now commit c9ba5249ef8b080c ("Xarray:
-move forward index correctly in xas_pause()") upstream.
-
-> --- a/lib/test_xarray.c
-> +++ b/lib/test_xarray.c
-> @@ -1448,6 +1448,41 @@ static noinline void check_pause(struct xarray *xa)
->         XA_BUG_ON(xa, count != order_limit);
+>  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-revalidate
 >
->         xa_destroy(xa);
-> +
-> +       index = 0;
-> +       for (order = XA_CHUNK_SHIFT; order > 0; order--) {
-> +               XA_BUG_ON(xa, xa_store_order(xa, index, order,
-> +                                       xa_mk_index(index), GFP_KERNEL));
-> +               index += 1UL << order;
-> +       }
-> +
-> +       index = 0;
-> +       count = 0;
-> +       xas_set(&xas, 0);
-> +       rcu_read_lock();
-> +       xas_for_each(&xas, entry, ULONG_MAX) {
-> +               XA_BUG_ON(xa, entry != xa_mk_index(index));
-> +               index += 1UL << (XA_CHUNK_SHIFT - count);
-> +               count++;
-> +       }
-> +       rcu_read_unlock();
-> +       XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
-> +
-> +       index = 0;
-> +       count = 0;
-> +       xas_set(&xas, XA_CHUNK_SIZE / 2 + 1);
-> +       rcu_read_lock();
-> +       xas_for_each(&xas, entry, ULONG_MAX) {
-> +               XA_BUG_ON(xa, entry != xa_mk_index(index));
-> +               index += 1UL << (XA_CHUNK_SHIFT - count);
-> +               count++;
-> +               xas_pause(&xas);
-> +       }
-> +       rcu_read_unlock();
-> +       XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
-> +
-> +       xa_destroy(xa);
-> +
->  }
+>for you to fetch changes up to a8ea90bfec66b239dad9a478fc444aa32d3961bc:
+>
+>  9p: fix ->rename_sem exclusion (2025-01-25 11:51:57 -0500)
+>
+>----------------------------------------------------------------
+>Provide stable parent and name to ->d_revalidate() instances
+>
+>Most of the filesystem methods where we care about dentry name
+>and parent have their stability guaranteed by the callers;
+>->d_revalidate() is the major exception.
+>
+>It's easy enough for callers to supply stable values for
+>expected name and expected parent of the dentry being
+>validated.  That kills quite a bit of boilerplate in
+>->d_revalidate() instances, along with a bunch of races
+>where they used to access ->d_name without sufficient
+>precautions.
+>
+>Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-On m68k, the last four XA_BUG_ON() checks above are triggered when
-running the test.  With extra debug prints added:
+Hey Al,
 
-    entry = 00000002 xa_mk_index(index) = 000000c1
-    entry = 00000002 xa_mk_index(index) = 000000e1
-    entry = 00000002 xa_mk_index(index) = 000000f1
-    ...
-    entry = 000000e2 xa_mk_index(index) = fffff0ff
-    entry = 000000f9 xa_mk_index(index) = fffff8ff
-    entry = 000000f2 xa_mk_index(index) = fffffcff
-    count = 63 XA_CHUNK_SHIFT = 6
-    entry = 00000081 xa_mk_index(index) = 00000001
-    entry = 00000002 xa_mk_index(index) = 00000081
-    entry = 00000002 xa_mk_index(index) = 000000c1
-    ...
-    entry = 000000e2 xa_mk_index(index) = ffffe0ff
-    entry = 000000f9 xa_mk_index(index) = fffff0ff
-    entry = 000000f2 xa_mk_index(index) = fffff8ff
-     count = 62 XA_CHUNK_SHIFT = 6
+With this pulled on top of Linus's tree, LKFT is managing to trigger
+kfence warnings:
 
-On arm32, the test succeeds, so it's probably not a 32-vs-64-bit issue.
-Perhaps a big-endian or alignment issue (alignof(int/long) = 2)?
+<3>[   62.180289] BUG: KFENCE: out-of-bounds read in d_same_name+0x4c/0xd0
+<3>[   62.180289]
+<3>[   62.182647] Out-of-bounds read at 0x00000000eedd4b55 (64B right of kfence-#174):
+<4>[   62.184178]  d_same_name+0x4c/0xd0
+<4>[   62.184717]  d_lookup+0x40/0x78
+<4>[   62.185378]  lookup_dcache+0x34/0xb0
+<4>[   62.185980]  lookup_one_qstr_excl+0x2c/0xe0
+<4>[   62.186523]  do_renameat2+0x324/0x568
+<4>[   62.186948]  __arm64_sys_renameat+0x58/0x78
+<4>[   62.187484]  invoke_syscall+0x50/0x120
+<4>[   62.188220]  el0_svc_common.constprop.0+0x48/0xf0
+<4>[   62.189031]  do_el0_svc_compat+0x24/0x48
+<4>[   62.189635]  el0_svc_compat+0x34/0xd0
+<4>[   62.190018]  el0t_32_sync_handler+0xb0/0x138
+<4>[   62.190537]  el0t_32_sync+0x19c/0x1a0
+<3>[   62.190946]
+<4>[   62.191399] kfence-#174: 0x0000000012d508d5-0x0000000023355f7e, size=64, cache=kmalloc-rcl-64
+<4>[   62.191399]
+<4>[   62.192260] allocated by task 1 on cpu 0 at 62.177313s (0.014839s ago):
+<4>[   62.193504]  __d_alloc+0x15c/0x1d0
+<4>[   62.193925]  d_alloc+0x24/0x90
+<4>[   62.194204]  lookup_one_qstr_excl+0x68/0xe0
+<4>[   62.194741]  filename_create+0xc0/0x1b0
+<4>[   62.195129]  do_symlinkat+0x68/0x150
+<4>[   62.195657]  __arm64_sys_symlinkat+0x50/0x70
+<4>[   62.195954]  invoke_syscall+0x50/0x120
+<4>[   62.196461]  el0_svc_common.constprop.0+0x48/0xf0
+<4>[   62.197053]  do_el0_svc_compat+0x24/0x48
+<4>[   62.197411]  el0_svc_compat+0x34/0xd0
+<4>[   62.197849]  el0t_32_sync_handler+0xb0/0x138
+<4>[   62.198422]  el0t_32_sync+0x19c/0x1a0
+<3>[   62.198857]
+<3>[   62.199577] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0 #1
+<3>[   62.200435] Hardware name: linux,dummy-virt (DT)
 
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -1147,6 +1147,7 @@ void xas_pause(struct xa_state *xas)
->                         if (!xa_is_sibling(xa_entry(xas->xa, node, offset)))
->                                 break;
->                 }
-> +               xas->xa_index &= ~0UL << node->shift;
->                 xas->xa_index += (offset - xas->xa_offset) << node->shift;
->                 if (xas->xa_index == 0)
->                         xas->xa_node = XAS_BOUNDS;
+The full log is at: https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.13-rc7-8584-gd4639f3659ae/testrun/27028572/suite/log-parser-test/test/kfence-bug-kfence-out-of-bounds-read-in-d_same_name/log
 
-Gr{oetje,eeting}s,
+LMK if I should attempt a bisection.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Thanks,
+Sasha
 
