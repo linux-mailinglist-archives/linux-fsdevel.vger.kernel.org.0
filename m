@@ -1,177 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-40139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC263A1D1CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 08:52:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B916A1D672
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 14:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C2547A2CEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 07:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A371885E59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 13:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3CA1FC7F3;
-	Mon, 27 Jan 2025 07:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A005E1FF1AD;
+	Mon, 27 Jan 2025 13:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yosWjN2y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pWQ1oK4R";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yosWjN2y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pWQ1oK4R"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="p53ldGLM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE7025A65E;
-	Mon, 27 Jan 2025 07:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8471FE476
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2025 13:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737964333; cv=none; b=H1OxkqGIYfsKYbRjOFb0jCjsxleWMqlUKyfV3G8lNQ2+rBuDobSG175Lc6AT0SsSFKc0bA5uwDhEu/EoDFF4SXe9gxBp78n2bCs7rICwFrqsgVY01GxmwVZkBjCPsb+T7D6pvhFnPLV4Koz2ApNVLpNNEV9e8V1su+KywH5vm2A=
+	t=1737983811; cv=none; b=u3IMDxMcnJMnRB/FpOWFflcclyu59w4+yBAU3OIidby0AWCYc47rh5UCPudYcZWtyuQuegdGtxRW/JzbF/knThfUx67xTNLpOekPQqQb3L919/JDBwF03NKjv/m7JTkfiwyVEiJImsQamwJ8Wnkg2X/DEJQcf9dE+MJq0N4IXMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737964333; c=relaxed/simple;
-	bh=eX8UEoc4fFngshTtGs9aGW8k3YdKYCh1ppa0H21yKDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJmX4pgK4xL/n/HPFod3eG8+bo1FCG3BpmnJgNSqLu45Ggg4NQ4R637VrC7wY5uktmEb4hKBSgmUGaogMlTl0TqHs3z9ev5SvzAijXqUXW6aA0qbRUr/foWfrNgeEtUrZ5LKP8VLv4Fx7L0/V48dtDu02+NRc0lxznQ8MV3dvEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yosWjN2y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pWQ1oK4R; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yosWjN2y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pWQ1oK4R; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7BBFB21114;
-	Mon, 27 Jan 2025 07:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737964328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOVLpoaZTDnha9bY1uEyVw6fbwPqCer/OmqkPcifpwU=;
-	b=yosWjN2yiUpKSokwv6E86cYpWLnbfQn9y/k/zaf0+ve0aGaQpOcXJ68hH7LlhzlwlmZTU6
-	lgUIj0LB9JjskMX6ZN0ULJcH5mTI0wQFIt8hdsD9nPbo7r9YjXysS5UOomF5ieHFhvjNdn
-	mQlCgoMkWpNskcdf7e7ghXj5IQXLk0A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737964328;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOVLpoaZTDnha9bY1uEyVw6fbwPqCer/OmqkPcifpwU=;
-	b=pWQ1oK4RzhvLPISTPnIcdtlRoLklOfNkpMuFhnWcZ/yTlxOenlhj6hkCcb8yHQbbHs9QeR
-	RCiG+wvfe980twCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737964328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOVLpoaZTDnha9bY1uEyVw6fbwPqCer/OmqkPcifpwU=;
-	b=yosWjN2yiUpKSokwv6E86cYpWLnbfQn9y/k/zaf0+ve0aGaQpOcXJ68hH7LlhzlwlmZTU6
-	lgUIj0LB9JjskMX6ZN0ULJcH5mTI0wQFIt8hdsD9nPbo7r9YjXysS5UOomF5ieHFhvjNdn
-	mQlCgoMkWpNskcdf7e7ghXj5IQXLk0A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737964328;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOVLpoaZTDnha9bY1uEyVw6fbwPqCer/OmqkPcifpwU=;
-	b=pWQ1oK4RzhvLPISTPnIcdtlRoLklOfNkpMuFhnWcZ/yTlxOenlhj6hkCcb8yHQbbHs9QeR
-	RCiG+wvfe980twCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33E69137C0;
-	Mon, 27 Jan 2025 07:52:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KX7KCig7l2faMQAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 27 Jan 2025 07:52:08 +0000
-Message-ID: <8a7b1eb9-6b9b-4883-9813-401cabf669da@suse.de>
-Date: Mon, 27 Jan 2025 08:52:07 +0100
+	s=arc-20240116; t=1737983811; c=relaxed/simple;
+	bh=G8PJm+hThbliVSLtcEBZD25D4KwFF1De8y45qsXNmHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n+zJ7AK4L6sWBxlEVGWYqzyFin5pAq4uXqcMbx0VXAl36YSJggeJOJ1yUPv35YK3JdUFj0rESimzvsbg6hTXIc2uO6OamqHVUXxhVTWESkQ0oDV040yKJP+8omIrP1m61fppOSY2d/2qXZ3JA9gfucscc5agr6hZTk7HOO4WqT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=p53ldGLM; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467a17055e6so48509791cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2025 05:16:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1737983807; x=1738588607; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aeAUBHAxqRHwtw2HenMgr9XFFNr09LE3fgqcZM8fhdI=;
+        b=p53ldGLMoouHUxdczIj/K8rswSSZFII1Pn+AhjbNEAyFuC8PCFVDC1WIw9ETxaB27/
+         mwdWPhXCCMUiQeghPHtqKd8O700cYdgYXDrWnFndCrthz7dgFMqxi6uSBuaMHG0HSFXk
+         1XN9jSGAz0Pr9eXqfM2Lgye4wZuoTvypdrXO4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737983807; x=1738588607;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aeAUBHAxqRHwtw2HenMgr9XFFNr09LE3fgqcZM8fhdI=;
+        b=rWdhIXjkjhnRsrCWbQm1YISTyqL/MpMYDbQng9/EudZhpeFU0WKZXb/y3zVBzqtXpV
+         gd2z8uIftv9CplQGTeQI4vPdHmagCzQrob7ccKNVUM5NRlUvcDzue21C4Woo2+lZhFW7
+         jUt/degH+guSaxAqhcxhL0RAAstfCfr2os2HtErnb8yOyJY4V3erbCYM5ZOkAHrmutex
+         KnlVcuqN+rhTCN5KOWxwDyLuslccMo5ydb2pWD7TdoYIscHdIGkjxL1i341adDHp3M3h
+         YhM76STxdUPJ+aac4hMumXVruWomEGEPqbeKr5DYkhk90tP7T1yrUueWECb3v2wzfbPG
+         9iog==
+X-Forwarded-Encrypted: i=1; AJvYcCVdS9ceS+msbbiw8+W39ACtQSmXRqHpJiQCE3q18dZKludUNoAQO+03Eb+Rax2/Qzwl27O8s9XQ3eNHUXjH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvwGSCv0WNgVKKAAXPQGH8K0yjyYgPIEesCvZ5uy1DNxf7BrDR
+	am1HskTihZYQrA6ziyD/dZuPdM8FtFyqZxsDZIyATafo4AO5SItaqYE+PEvsuLovWL/RWgsFrEV
+	+1QKiAPipMLMxCKF2tfYgryS5AnxtonQZgvazFg==
+X-Gm-Gg: ASbGnctpHLkc/IB3+cmgrI8uRwzEZ8EpV/krJhFkgy7B894W9wqeMFNQ7MqjULiL7IW
+	U+slPY+tHL5FCR/JX99e0Sb8GjIu94TBeVvz+jptz2fNwSxcFTzEUQhj+2BRfELE=
+X-Google-Smtp-Source: AGHT+IHeTUtNHYgzQhBWDBSZZKYKIcZeNPnC4ZnEFmxdUV+qMVJ7HNJtLvTBq3pue9xFQHL/OI016x5biChO0gamMaw=
+X-Received: by 2002:a05:622a:1455:b0:467:6710:bbf5 with SMTP id
+ d75a77b69052e-46e12b57378mr671148961cf.41.1737983807626; Mon, 27 Jan 2025
+ 05:16:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: Skip the folio lock if the folio is already dirty
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Andres Freund <andres@anarazel.de>
-References: <20250124224832.322771-1-willy@infradead.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250124224832.322771-1-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250125-optimize-fuse-uring-req-timeouts-v2-0-7771a2300343@ddn.com>
+ <20250125-optimize-fuse-uring-req-timeouts-v2-4-7771a2300343@ddn.com>
+In-Reply-To: <20250125-optimize-fuse-uring-req-timeouts-v2-4-7771a2300343@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 27 Jan 2025 14:16:36 +0100
+X-Gm-Features: AWEUYZlJq4GDrwL5agnog5_pFn20z8A2-GIRjRK2JM3sjJQ3H2Dk4d33wS-jeO4
+Message-ID: <CAJfpegsN3nybf6iTbMPUJJ6Tdv61ngG8qfTwQ+8UYucHA3XQPg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] fuse: Use READ_ONCE in fuse_uring_send_in_task
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Luis Henriques <luis@igalia.com>, 
+	linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/24/25 23:48, Matthew Wilcox (Oracle) wrote:
-> Postgres sees significant contention on the hashed folio waitqueue lock
-> when performing direct I/O to 1GB hugetlb pages.  This is because we
-> mark the destination pages as dirty, and the locks end up 512x more
-> contended with 1GB pages than with 2MB pages.
-> 
-> We can skip the locking if the folio is already marked as dirty.
-> The writeback path clears the dirty flag before commencing writeback,
-> if we see the dirty flag set, the data written to the folio will be
-> written back.
-> 
-> In one test, throughput increased from 18GB/s to 20GB/s and moved the
-> bottleneck elsewhere.
-> 
-> Reported-by: Andres Freund <andres@anarazel.de>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   block/bio.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index f0c416e5931d..e8d18a0fecb5 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1404,6 +1404,8 @@ void bio_set_pages_dirty(struct bio *bio)
->   	struct folio_iter fi;
->   
->   	bio_for_each_folio_all(fi, bio) {
-> +		if (folio_test_dirty(folio))
-> +			continue;
->   		folio_lock(fi.folio);
->   		folio_mark_dirty(fi.folio);
->   		folio_unlock(fi.folio);
+On Sat, 25 Jan 2025 at 18:45, Bernd Schubert <bschubert@ddn.com> wrote:
+>
+> The value is read from another task without, while the task that
+> had set the value was holding queue->lock. Better use READ_ONCE
+> to ensure the compiler cannot optimize the read.
 
-The same reasoning can probably applied to __bio_release_pages().
+I do not think this is necessary.  The ordering should be ensured by
+the io_uring infrastructure, no?
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Thanks,
+Miklos
 
