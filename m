@@ -1,55 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-40135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9016DA1D06F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 05:47:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20A6A1D093
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 06:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF42D166042
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 04:47:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239D73A6EC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 05:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE081FC0E4;
-	Mon, 27 Jan 2025 04:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426BF154BE5;
+	Mon, 27 Jan 2025 05:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rJA0XLgd"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jYMJ3F/j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81F4433CE;
-	Mon, 27 Jan 2025 04:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37196282EE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2025 05:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737953247; cv=none; b=KBeOfIGH14+y31xq8LUEu/UEjrmbDiG3UPYy66wFkClsc0GofisLYE1z7okJQd5ySAUMQNcKtmOvFBsE0CUknWqtoddK+i/UAJtcOw17dfidJL6xMZIqm6DsITmdt0CX89vFPNMcF3ArzRQ0NHfHy5bF+Df3LSfHQSlHGMpcE70=
+	t=1737954262; cv=none; b=lF4cO9RlMVk2SfKHNI+HgcBnfSQOul5fINUek+JOMLNShHlgackunumtfxf2+u/xHNi0+6dU4Luc5UBvme6JgauZ/lNXgP6ObPRrzWKqy2HSmUZBbdMPNDURYkWJYe36/v8CKdkShfG0mZr23xZH1lLgW/Zu+LU0aMrieQ1WV/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737953247; c=relaxed/simple;
-	bh=WOET3+WbZGbtQ7sJs0e9MZLjGBT6cIOmHPs605LSAXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D9PKDu/Yirk0MCPvQRyuDDxMErok7dMe8Pj0hhHqoc5nqmn3Es2blWMOb0GRS49X0Im3bjuPpxa9Mu0DIynpBycGydytBIw/lJ7dGktAtvEmiRMf603P7WG95L9wfwWL5BZdgTjDg5ARZzzaTSLbzE0y7/L7879F0rgw+b+KBzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rJA0XLgd; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1737954262; c=relaxed/simple;
+	bh=xBNoXLXvaTldBWNpNe24PdMvQe0Wu6XrWuUeZyrVQ4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gV7Z1fa7HpV+2UlvGcpOpF9RWqU5dfzds7/Wjn9YTQvSLywFYolawuDZImhaVA1JIFvsaaDmChlYDq2AItagrx6BZxBqDHlBD3mmE1LyjCYbBmkFi1wKcCroZEBv8FnkJ4/FKGk3hgF4eDQxlEfLivYaT8PNmvmJx+SuK7hDljg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jYMJ3F/j; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=ev8TnygpaDr4yF2/c3TBKgTbR9Cd9AXaLDIlqoNiskk=; b=rJA0XLgdWoELLv7dg3BNlKDpff
-	8SaO86t4OAn9RptOrwxvcnC0WGwO5bQo+7oBO6rVYwKrsoHHz9kuIp+IuFghNOrMttUtJcsg4T1dc
-	m6RoXzTebeNKfrvpa4Vr9OVU7WIFCYlXQ0//7m1dNlVuxk3gPrNrzgI49QMpk7AZN4l3/Qgo0g0Qw
-	KIijIdJuQuaWUEcaf5H2ch0hGTt4GVLXHN/guOIK1hyN1rell7KkVUUYO+2IHsKOVSzRzJtai8Czf
-	xwDBZAR1iNQ/GAFsE94TVBv6zEmBtC9ek/x68zgaut61W32BQvb9h4tyb9Hram7AoM45QKnboyPWo
-	k7TPcAew==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xT9F/RFdKtk5OzK8AQYzsZ/3h+Z8KyH5het+sIQGzCQ=; b=jYMJ3F/j2kGZiATTBD4dvFqwds
+	jNwOhE53FvO6ss+ikAuDcFyZ3ZdaXPfu741xu7ZqTPjeWNoyI3cBzRdN26FgVpWIylhpx6zvMQdlS
+	U4qonSMd4H6zF02WZud0iQUiL/o8nL9ng2n8MFgwL+U3KU5IKX5CFUnF46qNyXe3hhRabBSI3tFep
+	WBDl9tQL4qvaM88srg5gfnvfi/fTJqAaFzAFO8zcbwQnU7THHgcQ3Xpq2z7CeuNE+amtgA6Fex87F
+	O33JgG/xDlCCtgTQO3mZLXJMc0nVpr6qHrrxI1PKiI460lJpeOTqtePRND8z8RWfB3cRJvEZIB+yH
+	fPIiolXA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tcH1t-0000000CsDn-109Z;
-	Mon, 27 Jan 2025 04:47:21 +0000
-Date: Mon, 27 Jan 2025 04:47:21 +0000
+	id 1tcHIG-0000000Ct3Q-3b0i;
+	Mon, 27 Jan 2025 05:04:16 +0000
+Date: Mon, 27 Jan 2025 05:04:16 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] d_revalidate pile
-Message-ID: <20250127044721.GD1977892@ZenIV>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>,
+	"Saarinen, Jani" <jani.saarinen@intel.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: Regression on linux-next (next-20250120)
+Message-ID: <20250127050416.GE1977892@ZenIV>
+References: <SJ1PR11MB6129D7DA59A733AD38E081E3B9E02@SJ1PR11MB6129.namprd11.prod.outlook.com>
+ <20250123181853.GC1977892@ZenIV>
+ <Z5Zazwd0nto-v-RS@tuxmaker.boeblingen.de.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,106 +67,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Z5Zazwd0nto-v-RS@tuxmaker.boeblingen.de.ibm.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-->d_revalidate() series, along with ->d_iname preliminary work.
-One trivial conflict in fs/afs/dir.c - afs_do_lookup_one() has lost
-one argument in mainline and switched another from dentry to qstr
-in this series.
+On Sun, Jan 26, 2025 at 04:54:55PM +0100, Alexander Gordeev wrote:
 
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+> > > Since the version next-20250120 [2], we are seeing the following regression
+> > 
+> > Ugh...  To narrow the things down, could you see if replacing
+> >                 fsd = kmalloc(sizeof(*fsd), GFP_KERNEL);
+> > with
+> >                 fsd = kzalloc(sizeof(*fsd), GFP_KERNEL);
+> > in fs/debugfs/file.c:__debugfs_file_get() affects the test?
+> 
+> This change fixes lots of the below failures in our CI. FWIW:
+> 
+> Tested-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+The real fix follows:
 
-are available in the Git repository at:
+[PATCH] Fix the missing initializations in __debugfs_file_get()
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-revalidate
+both method table pointers in debugfs_fsdata need to be initialized,
+obviously...
 
-for you to fetch changes up to a8ea90bfec66b239dad9a478fc444aa32d3961bc:
-
-  9p: fix ->rename_sem exclusion (2025-01-25 11:51:57 -0500)
-
-----------------------------------------------------------------
-Provide stable parent and name to ->d_revalidate() instances
-
-Most of the filesystem methods where we care about dentry name
-and parent have their stability guaranteed by the callers;
-->d_revalidate() is the major exception.
-
-It's easy enough for callers to supply stable values for
-expected name and expected parent of the dentry being
-validated.  That kills quite a bit of boilerplate in
-->d_revalidate() instances, along with a bunch of races
-where they used to access ->d_name without sufficient
-precautions.
-
+Fixes: 41a0ecc0997c "debugfs: get rid of dynamically allocation proxy_ops"
+Fucked-up-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-----------------------------------------------------------------
-Al Viro (20):
-      make sure that DNAME_INLINE_LEN is a multiple of word size
-      dcache: back inline names with a struct-wrapped array of unsigned long
-      make take_dentry_name_snapshot() lockless
-      dissolve external_name.u into separate members
-      ext4 fast_commit: make use of name_snapshot primitives
-      generic_ci_d_compare(): use shortname_storage
-      Pass parent directory inode and expected name to ->d_revalidate()
-      afs_d_revalidate(): use stable name and parent inode passed by caller
-      ceph_d_revalidate(): use stable parent inode passed by caller
-      ceph_d_revalidate(): propagate stable name down into request encoding
-      fscrypt_d_revalidate(): use stable parent inode passed by caller
-      exfat_d_revalidate(): use stable parent inode passed by caller
-      vfat_revalidate{,_ci}(): use stable parent inode passed by caller
-      fuse_dentry_revalidate(): use stable parent inode and name passed by caller
-      gfs2_drevalidate(): use stable parent inode and name passed by caller
-      nfs{,4}_lookup_validate(): use stable parent inode passed by caller
-      nfs: fix ->d_revalidate() UAF on ->d_name accesses
-      ocfs2_dentry_revalidate(): use stable parent inode and name passed by caller
-      orangefs_d_revalidate(): use stable parent inode and name passed by caller
-      9p: fix ->rename_sem exclusion
-
- Documentation/filesystems/locking.rst        |  7 +-
- Documentation/filesystems/porting.rst        | 16 +++++
- Documentation/filesystems/vfs.rst            | 24 ++++++-
- fs/9p/v9fs.h                                 |  2 +-
- fs/9p/vfs_dentry.c                           | 26 +++++++-
- fs/afs/dir.c                                 | 40 ++++--------
- fs/ceph/dir.c                                | 25 ++------
- fs/ceph/mds_client.c                         |  9 ++-
- fs/ceph/mds_client.h                         |  2 +
- fs/coda/dir.c                                |  3 +-
- fs/crypto/fname.c                            | 22 ++-----
- fs/dcache.c                                  | 95 ++++++++++++++++------------
- fs/ecryptfs/dentry.c                         | 18 ++++--
- fs/exfat/namei.c                             | 11 +---
- fs/ext4/fast_commit.c                        | 29 ++-------
- fs/ext4/fast_commit.h                        |  3 +-
- fs/fat/namei_vfat.c                          | 19 +++---
- fs/fuse/dir.c                                | 20 +++---
- fs/gfs2/dentry.c                             | 31 ++++-----
- fs/hfs/sysdep.c                              |  3 +-
- fs/jfs/namei.c                               |  3 +-
- fs/kernfs/dir.c                              |  3 +-
- fs/libfs.c                                   | 15 +++--
- fs/namei.c                                   | 18 +++---
- fs/nfs/dir.c                                 | 62 ++++++++----------
- fs/nfs/namespace.c                           |  2 +-
- fs/nfs/nfs3proc.c                            |  5 +-
- fs/nfs/nfs4proc.c                            | 20 +++---
- fs/nfs/proc.c                                |  6 +-
- fs/ocfs2/dcache.c                            | 14 ++--
- fs/orangefs/dcache.c                         | 22 +++----
- fs/overlayfs/super.c                         | 22 ++++++-
- fs/proc/base.c                               |  6 +-
- fs/proc/fd.c                                 |  3 +-
- fs/proc/generic.c                            |  6 +-
- fs/proc/proc_sysctl.c                        |  3 +-
- fs/smb/client/dir.c                          |  3 +-
- fs/tracefs/inode.c                           |  3 +-
- fs/vboxsf/dir.c                              |  3 +-
- include/linux/dcache.h                       | 23 +++++--
- include/linux/fscrypt.h                      |  7 +-
- include/linux/nfs_xdr.h                      |  2 +-
- tools/testing/selftests/bpf/progs/find_vma.c |  2 +-
- 43 files changed, 352 insertions(+), 306 deletions(-)
+---
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index e33cc77699cd..212cd8128e1f 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -111,6 +111,7 @@ static int __debugfs_file_get(struct dentry *dentry, enum dbgfs_get_mode mode)
+ 				fsd->methods |= HAS_READ;
+ 			if (ops->write)
+ 				fsd->methods |= HAS_WRITE;
++			fsd->real_fops = NULL;
+ 		} else {
+ 			const struct file_operations *ops;
+ 			ops = fsd->real_fops = DEBUGFS_I(inode)->real_fops;
+@@ -124,6 +125,7 @@ static int __debugfs_file_get(struct dentry *dentry, enum dbgfs_get_mode mode)
+ 				fsd->methods |= HAS_IOCTL;
+ 			if (ops->poll)
+ 				fsd->methods |= HAS_POLL;
++			fsd->short_fops = NULL;
+ 		}
+ 		refcount_set(&fsd->active_users, 1);
+ 		init_completion(&fsd->active_users_drained);
 
