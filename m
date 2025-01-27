@@ -1,174 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-40145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B236A1D8E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 15:56:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F11A1D949
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 16:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC34B18874E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 14:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB5D13A81B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2025 15:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB5213BADF;
-	Mon, 27 Jan 2025 14:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F41A165F01;
+	Mon, 27 Jan 2025 15:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVed1oKV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQYX/YYG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4538DE9;
-	Mon, 27 Jan 2025 14:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EFE13CA81;
+	Mon, 27 Jan 2025 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737989776; cv=none; b=V5GBqUkDNOeZWitYA2XfvQY+fSpuuSzJX10edxhXNQQRk/IdKek95ROewjYlFbQw3WbBtSyfITVYEY0iqeD1KfbBVNzl0SiIi8c7WAzuMqNcrCdJzQm/FviB1MVhnv1AYeGxAGKENg/3q140Y3ph94OMeVJTeZnLlB/jAL3K5L8=
+	t=1737990878; cv=none; b=PngE0+OPqFujXhoZjyRH3HFRUQn2rUS2ILreYvAdPH86s0XcqJOT5M5zZTcMoyzQI7QIJZAwnRKYaWzDxYEnf05691uIqJeXrxHEcLMn09FgY1kAevfi9wnZ4aUHAJLOGH/pvoxAEAyjAPr/YNpGWl6UZPv3lJYWrr8GLcHu4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737989776; c=relaxed/simple;
-	bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qESKVxqOrAXe9OgMwi4km3msue6Z+bStm5HR/sKuHk705JFMXZO/XF4UIO2wht6UtiU7QZzQmMSPdFyJ0eJKeisPSCmuESl0ZAL5Xo8WCRf0A7gE1UM7D9hrBwdkvYeoN/jxu7Qa37qygysMiCtB8+/QlkTDXAc5mWlqoKi8VnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVed1oKV; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737989775; x=1769525775;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
-  b=WVed1oKVFkzK/oETPO0J8VpsIwi4ypJTg0lX+AcJEgqH+erXdJNaC/zx
-   vwuxJ5EvFrKw8crBjfrH3OrZkmYyiIBfNFMF7HidrQkt6uq0J8zqSAp/C
-   45ZUNEiKIjk56k4gUxBaq3cmZw4dCPXjJfc0nYZR7zJGhVo2kmA6NEUXR
-   0KWBG3Cls9htsZqhlU+aXWYz+V2nSgl8rO7BSXBFLVrHPboFTM4jos7U7
-   sXSVvlfFUG6DsyEBbPRooxxmuhyYGXhs3SfVRgtB3m5OhDLEzWHgORxHb
-   nG6Ys7jT0v1Ol5wgE5vgBrxk+WOrx/f94U1RMMbUu5Eo/yUWua9d7E6Dh
-   w==;
-X-CSE-ConnectionGUID: 6HP7/vAvQ/yiDPBSiq3Asw==
-X-CSE-MsgGUID: yhqiLSZiQVmyFVnUzK1mOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11328"; a="49104680"
-X-IronPort-AV: E=Sophos;i="6.13,238,1732608000"; 
-   d="scan'208";a="49104680"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:13 -0800
-X-CSE-ConnectionGUID: Z9Coz29cQ6uqfPwc/L4sHg==
-X-CSE-MsgGUID: XE2pskZGQO2Q6A9y4rThjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113598177"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.14])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:01 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: Joel Granados <joel.granados@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9F?=
- =?utf-8?Q?schuh?=
- <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-crypto@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
- codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev,
- linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
- kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, Song Liu
- <song@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
- applicable
-In-Reply-To: <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
-Date: Mon, 27 Jan 2025 16:55:58 +0200
-Message-ID: <87jzag9ugx.fsf@intel.com>
+	s=arc-20240116; t=1737990878; c=relaxed/simple;
+	bh=VpiVbnqCOrmY5SGmdXwaKYWHrqAFlTK+vn/3gB4wpMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=krM0XAQHswFsnMxWZw797y3T7K/p3NEDa7+dlaJAo6+jq1K4VTAYsdC8XjxLkAdIvnf9FZ+aOZlP9a285wNDa6tDIphd6o/lc8+iiwIgWiQ3xyDQ/GfnKaDQXEggPS3VJrprpf22D+/S7X4XE7IFriu4OSjEoEK64btpZle1BGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQYX/YYG; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee8e8e29f6so6028832a91.0;
+        Mon, 27 Jan 2025 07:14:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737990877; x=1738595677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wblQpx+6gffsbQIq400BrdsSaygTfoWvxOhkC4R2KVE=;
+        b=CQYX/YYGlYc349nUhJS1wDnAp7U79d/CdqYauF4hwqgws+HhlgP9ixIMQ8cmAz5v9K
+         oKUf48aR78L+LWO1RtYAlRpFmc626Owwlp9Bq0QojCCT9aLozkvwHI7pQiAgUBcah56p
+         sxKh0Xj2pYyV37V920WnnBQD5MBSBdxx/hyfmHNOYvYnOcrLNwKjKtDQoq5Guc380g3N
+         Ky/xHKdTfBQ0qYOcG9jaUjo51BB2MCuJGf8HMxD0eYrdJ9DVfZVDOKWFzFmfPd98jqpb
+         sYeQHPkLTqcGCJroLaX9JARTInlclRfxmPcqDrhU9Ma7qxBbz+ODieRU9J5L8CpxYEbu
+         E7mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737990877; x=1738595677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wblQpx+6gffsbQIq400BrdsSaygTfoWvxOhkC4R2KVE=;
+        b=EVYbud7VkOHOaD3xQtySj089AeSD4ll9NQBgHbg4CSbOqgRVW/uioZDha62v10R9Sy
+         7NwZPhmV2qSXag01nvKh3xTG273ZbVUs6QUgYgIPpE1jj/VF9ED/vHy9zdWyYAjBzWPN
+         lFuqzBr3kY3JZnfc9BvU1D5wKKFNIaGkFFFlRZuqLGOK5tjFCsNsglNeG/VtlIM0XVWW
+         SO9kUHqSVbbbPW9bCxdk/MNNJVS6gEPcOGL9CMFX/ovRMoKfNVfSHTdO1/p3uRIkKwnO
+         pJnQoCeSpx0jqvHWePpUmbyNqt7jY6dnmYDGDehx+TwdkZZVbRUFcLfdNYjQhitbAvpX
+         rDEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmmlACq4Ex4Vn6Dfo0DV8Cva26ELWPUaks1X1QX5rX+qYNcMq3ZiHrP+ibrdRuXxGNrSF3MQzjJwyLHsuYqg==@vger.kernel.org, AJvYcCWa6bQhTq9kQtxiq3RT9s0SUpAvvjAEiNxAVyPlNo6LxKeZnJSSJ/6D5spttEdQwfZXgRbH+mccOzmI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi5Roq3M/6zTcHrCINVsq8WOuwz/KJs464tNb/x6p9bHuxQj3q
+	R0xb9P9rdr93bgRtAvF5pu5HZQ+2AGepBGlt55/jGUtlDKTkkw+9sPjcwQOaEC0PG7RMFts3lMI
+	rCwocONcpIAR5VwsviP9Z2f/nsCU=
+X-Gm-Gg: ASbGncuwwqZEJymZgHxqhebndxaPVsWUjfm8IxgMc7dl3gF+hO/lrlJT4JCZWhDkD7c
+	04aLGcY2xPxtt4NVc2QfPqCOpG7mEkwaOHRFmVdr5CULM6bEANxhl0Nsay07SlAkKseq+LKWQ
+X-Google-Smtp-Source: AGHT+IGIYyCARvHHsfi1J8eavFeyhi7AzrtICHwY7kYCRUMbKR28JO0C0SQ0E60YxTVi0c1hFfx9eb5KZanEOjk/jZQ=
+X-Received: by 2002:a17:90a:d00b:b0:2ee:a4f2:b311 with SMTP id
+ 98e67ed59e1d1-2f782c907ffmr58799523a91.8.1737990876522; Mon, 27 Jan 2025
+ 07:14:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250124194623.19699-1-slava@dubeyko.com> <CA+2bHPbkATtMp_BgX=ySuPZkMSqd5EwjoRdsAsoOOxuoN3wzTw@mail.gmail.com>
+In-Reply-To: <CA+2bHPbkATtMp_BgX=ySuPZkMSqd5EwjoRdsAsoOOxuoN3wzTw@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 27 Jan 2025 16:14:24 +0100
+X-Gm-Features: AWEUYZnoZBGM4f_u-5-f5T3tgI-x62QjVA1JmrZiVXOvXF7O4E8Z4SUEl88Gr1E
+Message-ID: <CAOi1vP8B9Js4ZwG++TJnRfmsnCFW2qftFKqL0gG+LUYZNjQJGQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: exchange hardcoded value on NAME_MAX
+To: Patrick Donnelly <pdonnell@redhat.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, amarkuze@redhat.com, Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Jan 2025, Joel Granados <joel.granados@kernel.org> wrote:
-> On Wed, Jan 22, 2025 at 01:41:35PM +0100, Ard Biesheuvel wrote:
->> On Wed, 22 Jan 2025 at 13:25, Joel Granados <joel.granados@kernel.org> wrote:
->> >
->> > On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
->> > > On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
->> > >
->> > > Hi Joel,
->> > >
->> > > > Add the const qualifier to all the ctl_tables in the tree except for
->> > > > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
->> > > > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
->> > > > drivers/inifiniband dirs). These are special cases as they use a
->> > > > registration function with a non-const qualified ctl_table argument or
->> > > > modify the arrays before passing them on to the registration function.
->> > > >
->> > > > Constifying ctl_table structs will prevent the modification of
->> > > > proc_handler function pointers as the arrays would reside in .rodata.
->> > > > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
->> > > > constify the ctl_table argument of proc_handlers") constified all the
->> > > > proc_handlers.
->> > >
->> > > I could identify at least these occurences in s390 code as well:
->> > Hey Alexander
->> >
->> > Thx for bringing these to my attention. I had completely missed them as
->> > the spatch only deals with ctl_tables outside functions.
->> >
->> > Short answer:
->> > These should not be included in the current patch because they are a
->> > different pattern from how sysctl tables are usually used. So I will not
->> > include them.
->> >
->> > With that said, I think it might be interesting to look closer at them
->> > as they seem to be complicating the proc_handler (I have to look at them
->> > closer).
->> >
->> > I see that they are defining a ctl_table struct within the functions and
->> > just using the data (from the incoming ctl_table) to forward things down
->> > to proc_do{u,}intvec_* functions. This is very odd and I have only seen
->> > it done in order to change the incoming ctl_table (which is not what is
->> > being done here).
->> >
->> > I will take a closer look after the merge window and circle back with
->> > more info. Might take me a while as I'm not very familiar with s390
->> > code; any additional information on why those are being used inside the
->> > functions would be helpfull.
->> >
->> 
->> Using const data on the stack is not as useful, because the stack is
->> always mapped writable.
->> 
->> Global data structures marked 'const' will be moved into an ELF
->> section that is typically mapped read-only in its entirely, and so the
->> data cannot be modified by writing to it directly. No such protection
->> is possible for the stack, and so the constness there is only enforced
->> at compile time.
-> I completely agree with you. No reason to use const within those
-> functions. But why define those ctl_tables in function to begin with.
-> Can't you just use the ones that are defined outside the functions?
+On Fri, Jan 24, 2025 at 9:51=E2=80=AFPM Patrick Donnelly <pdonnell@redhat.c=
+om> wrote:
+>
+> On Fri, Jan 24, 2025 at 2:46=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko=
+.com> wrote:
+> >
+> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> >
+> > Initially, ceph_fs_debugfs_init() had temporary
+> > name buffer with hardcoded length of 80 symbols.
+> > Then, it was hardcoded again for 100 symbols.
+> > Finally, it makes sense to exchange hardcoded
+> > value on properly defined constant and 255 symbols
+> > should be enough for any name case.
+> >
+> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > ---
+> >  fs/ceph/debugfs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> > index fdf9dc15eafa..fdd404fc8112 100644
+> > --- a/fs/ceph/debugfs.c
+> > +++ b/fs/ceph/debugfs.c
+> > @@ -412,7 +412,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client =
+*fsc)
+> >
+> >  void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+> >  {
+> > -       char name[100];
+> > +       char name[NAME_MAX];
+> >
+> >         doutc(fsc->client, "begin\n");
+> >         fsc->debugfs_congestion_kb =3D
+> > --
+> > 2.48.0
+> >
+> >
+>
+> Reviewed-by: Patrick Donnelly <pdonnell@ibm.com>
 
-You could have static const within functions too. You get the rodata
-protection and function local scope, best of both worlds?
+Applied.
 
-BR,
-Jani.
+Thanks,
 
-
--- 
-Jani Nikula, Intel
+                Ilya
 
