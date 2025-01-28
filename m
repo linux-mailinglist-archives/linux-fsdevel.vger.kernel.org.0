@@ -1,129 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-40245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A81A21074
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 19:09:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1A4A21086
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 19:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5096F3A9F5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 18:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281EF188341C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 18:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66C21DED44;
-	Tue, 28 Jan 2025 17:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F6A1DE889;
+	Tue, 28 Jan 2025 18:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zib/B+pI"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JHf1gzxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C991DE89D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 17:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DDE1C5F1D;
+	Tue, 28 Jan 2025 18:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738087025; cv=none; b=uZgWlylqR/tJjLx7h9PEEPd6i87mWoKrywNFKgnmdWPYGhQ3vmOdUFZuJ8sIbL8ecHgkc/f+vY7ew4vRk8z3TF5co/+g4O8tsSIMGsX2jIHyzo3JV0CyWn5+PzVziSTWz3y6jk31W6KnIZ3P4d+HDBstdwFPrV9K5x9WiTwlAbc=
+	t=1738087875; cv=none; b=Id2eEhbZBCskM81ldcSk95hBGtaPo8LZJBLHS70yIytiubiQfXU7SJvDcY79LiRFdpEyVLdMtvrADn/jdUSOAHzmaawuNzTExM5umG8kp7uCjCvPsDhVKIy/h4PGLXBeRzT0UQZgUNB3qS0VYHGec5ZlWfmQNKTMoKw70ruWV/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738087025; c=relaxed/simple;
-	bh=bqo/f4KOeEu70x09sbwjCLOoL4y8IE677pL9B41drLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmqU5+tivRQjko3t3rOymB2m2ZJYMzUkrQeqHA0rS3NKE9/MH9tLzckx+YB1TnsiAESzwSQUnprNun5OAb/+L21mlNOoCL9VBDr7eUZ6zT08gIYZrCAiUAzMI0cHupPlCF1DRxoeq1YTSEmy12wZPVXvu6Dq/io5C4wrL6k3ZfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zib/B+pI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738087022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Atyyl7qbwygGo2BM9ZwbTcnDUCO9u7XINYpNimiJjNg=;
-	b=Zib/B+pIuDp+hxctCEZVfAfGUN9IG20B5Z4RcIB1OsOcQ/4AsdIYPJPpUDLLwuUIEQPzE6
-	B5ODuyWPYQwtraklgx9OyZX1mWXP8aG7ZCzt+1fG7FPHonEr7f5Ip6RTb+y9r3u7M9sZzz
-	dLltETRqlmu0H+KMoHitG2an0XQEBDw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-315-8X8ud5u3PD65UZVwYqdJCw-1; Tue,
- 28 Jan 2025 12:56:58 -0500
-X-MC-Unique: 8X8ud5u3PD65UZVwYqdJCw-1
-X-Mimecast-MFC-AGG-ID: 8X8ud5u3PD65UZVwYqdJCw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AEACE1801887;
-	Tue, 28 Jan 2025 17:56:57 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.118])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E96A5195608E;
-	Tue, 28 Jan 2025 17:56:56 +0000 (UTC)
-Date: Tue, 28 Jan 2025 12:59:09 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] iomap: advance the iter directly on unshare range
-Message-ID: <Z5ka7TYWr7Y9TrYO@bfoster>
-References: <20250122133434.535192-1-bfoster@redhat.com>
- <20250122133434.535192-7-bfoster@redhat.com>
- <Z5htdTPrS58_QKsc@infradead.org>
+	s=arc-20240116; t=1738087875; c=relaxed/simple;
+	bh=wkev7egS7kp6JWAonVtAN1YQdZFEhTl6S0waZCYIo/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ENsXcl0dFNQQRa1XdcJIGGN0ktOaqden1rxctdGMBzvAUAlyrnF6mSqFkjjjc8j3fZFITY8HG9kXWSysnF0JxamEvhzmZ5aim6aBvBdmjk146cURl1nFyW5r3XU0NV2fxSeOlKXYKIPPB7v0Kd8i9TSjQYKDqL+rt+z0sZrQSh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JHf1gzxm; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.1.13] (pool-96-241-22-207.washdc.fios.verizon.net [96.241.22.207])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 568862037175;
+	Tue, 28 Jan 2025 10:11:12 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 568862037175
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1738087873;
+	bh=SQG+2pT80CTArfkB8iOnQFuePfZpq5596HdRBdP/6dY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JHf1gzxm4v2Wu5xI4HmnWnBbUiydERz1sakq86P0O03Tz7pl5jvc8gSRZ0yJ60ZxH
+	 5abHUpB2LfR3QOjAC2YxTbl4vm0QrCUOG0Ec9PAKnudyMZIVNYuiaSZiY7221xslV/
+	 tKZIz+an2PUwKl6GSaW2jFSluch4LM0dYNTexOQY=
+Message-ID: <e530f146-6412-4287-85ad-9e459f462797@linux.microsoft.com>
+Date: Tue, 28 Jan 2025 13:11:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z5htdTPrS58_QKsc@infradead.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
+To: Paul Moore <paul@paul-moore.com>, Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+ Karel Zak <kzak@redhat.com>, Lennart Poettering <lennart@poettering.net>,
+ Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+ selinux-refpolicy@vger.kernel.org
+References: <20250123194108.1025273-1-mszeredi@redhat.com>
+ <20250123194108.1025273-3-mszeredi@redhat.com>
+ <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Burgener <dburgener@linux.microsoft.com>
+In-Reply-To: <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 27, 2025 at 09:39:01PM -0800, Christoph Hellwig wrote:
-> On Wed, Jan 22, 2025 at 08:34:33AM -0500, Brian Foster wrote:
-> > +	size_t bytes = iomap_length(iter);
+> If I understand the commit description correctly,
+> security_path_notify(path, mask, FSNOTIFY_OBJ_TYPE_MNTNS) indicates a
+> change in the mount namespace indicated by the @path parameter, with
+> the initial mntns changes being limited to attach/detach and possibly
+> some other attributes (see patch 4/4), although the latter looks like
+> it will probably happen at a later date.
 > 
-> > +		bytes = min_t(u64, SIZE_MAX, bytes);
+> My initial thinking is that if we limit ourselves to existing SELinux
+> policy permissions, this is much more of FILE__WATCH_MOUNT operation
+> rather than a FILE__WATCH operation as while the /proc/PID/ns/mnt file
+> specified in @path is simply a file, it represents much more than
+> that.  However, it we want to consider adding a new SELinux policy
+> permission (which is easy to do), we may want to consider adding a new
+> mount namespace specific permission, e.g. FILE__WATCH_MOUNTNS, this
+> would make it easier for policy developers to distinguish between
+> watching a traditional mount point and a mount namespace (although
+> given the common approaches to labeling this may not be very
+> significant).  I'd personally like to hear from the SELinux policy
+> folks on this (the SELinux reference policy has also been CC'd).
 > 
-> bytes needs to be a u64 for the min logic to work on 32-bit systems.
+> If we reuse the file/watch_mount permission the policy rule would look
+> something like below where <subject> is the SELinux domain of the
+> process making the change, and <mntns_label> is the label of the
+> /proc/PID/ns/mnt file:
+> 
+>    allow <subject> <mntns_label>:file { watch_mount };
+> 
+> If we add a new file/watch_mountns permission the policy rule would
+> look like this:
+> 
+>    allow <subject> <mntns_label>:file { watch_mountns };
 > 
 
-Err.. I think there's another bug here. I changed iomap_iter_advance()
-to return s64 so it could return length or an error, but never changed
-bytes over from size_t.
+I've gone back and forth on this a few times.  If I understand it 
+correctly, I think we might really want to have a new permission here, 
+which is sad, because in my humble opinion, the watch_* permissions are 
+already more complicated than I like.
 
-But that raises another question. I'd want bytes to be s64 here to
-support the current factoring, but iomap_length() returns a u64. In
-poking around a bit I _think_ this is practically safe because the high
-level operations are bound by loff_t (int64_t), so IIUC that means we
-shouldn't actually see a length that doesn't fit in s64.
+"watch" does seem to be the wrong thing because this grants more than 
+just changes to the specific file.  However, "watch_mount" is a very 
+highly privileged operation.  Allowing watch on all reads and writes in 
+the whole file hierarchy from a mount point is a substantial amount of 
+access, and seems quite a bit more substantial than just watching new 
+mounts being attached and detached (and similar) within a given mount 
+namespace.
 
-That said, that still seems a bit grotty. Perhaps one option could be to
-tweak iomap_length() to return something like this:
+FWIW I do think the assumption that different labeling between /proc/pid 
+files and mountpoints generally does make this not a problem in 
+practice.  But in my opinion overloading watch_mount for this case seems 
+different from the existing watch_mount permission to warrant not doing 
+it.  Particularly with watch_mount being such a privileged operation.
 
-	min_t(u64, SSIZE_MAX, end);
-
-... to at least makes things explicit.
-
-Another option could be to rework advance back to something like:
-
-	int iomap_iter_advance(..., u64 *count);
-
-... but where it returns 0 or -EIO and advances/updates *count directly.
-That would mean I'd have to tweak some of the loop factoring and lift
-out the error passthru assignment logic from iomap_iter(). The latter
-doesn't seem like a big deal. It's mostly pointless after these changes.
-I'd guess the (i.e. iomap_file_unshare()) loop logic would look more
-like:
-
-	do {
-		...
-		ret = iomap_iter_advance(iter, &bytes);
-	} while (!ret && bytes > 0);
-
-	return ret;
-
-Hmm.. now that I write it out that doesn't seem so bad. It does clean up
-the return path a bit. I think I'll play around with that, but let me
-know if there are other thoughts or ideas..
-
-Brian
-
+-Daniel
 
