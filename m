@@ -1,117 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-40227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7A1A20AB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 481F9A20AB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA04167C85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8730168880
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAF1A2544;
-	Tue, 28 Jan 2025 12:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16151A2554;
+	Tue, 28 Jan 2025 12:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OKUl7Q1q"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="toD9BBdb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C291A00F2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 12:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D551A00F2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 12:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738068177; cv=none; b=R04oFbnbgP6hKVUMC4/36Dipajr72n9ETeumhkzysRX+Rx4AF9QD5K8XbKryYITWMjz2GMgsH9F5bMmPd+II89q7QAV6EKaeBnE4GM0dlFDIyssFgJ7F2UHT+VC1aQP27JDwXnfC2+PfHxjqrRMScq0OBpd6+okWlaUClKFEABw=
+	t=1738068233; cv=none; b=dIDFeNqpoxF9CPuigJDCdRz++6Amj6x4xJZX8rJxYL3GA6iMLk5TUVMdCwmyvevfYJBw/ygDhIbVvSxyqI86Uyvd6FEpXpK+lXGHFIzpoTI5KUgSWNGvv9xPwewBdI0IGWTTjqiGI9yoSh96P5WK9zRm9HrdELbDyUiPsQFFXLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738068177; c=relaxed/simple;
-	bh=i4Ih4yOsCitMuKZsbd4LjFylOAQUX1g8j4CPdMxyPDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c0Xmh4aqUHDvqbT665SA1ntRV53Eav21GG3EqiyQKtDaSZPCON05Ryfmjtd/TXtPOv1ZdKfZVyQ089HdoUODFqo4NTX1JMMOvxdLCgfZ7Fldh9HXmDEvhHbvFm8NGtxMr2LSy8jOXiYjNhjg3hVTKxmS5Gass+ppj6pYvc3Q+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OKUl7Q1q; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6dd1b895541so112953056d6.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 04:42:54 -0800 (PST)
+	s=arc-20240116; t=1738068233; c=relaxed/simple;
+	bh=q8Er4qI4ahI2S5C3hn8Eausgk4LAf76H/o7/smjFzjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q37ezzglVRi/Wi4AKE+5Ya4KnDZ9IxjR80aODTFmVE0O1o98Apn9szFt16vjY5Z/HSjXYViab98a0NhML1G0auHK4I9dkfUgHz6N9/iVNTR+S0AyFktaA4uv5Yu3g/jagFUgrcU288qUOotM2yBW8Oax1vjNkSOpbpKk+En6myw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=toD9BBdb; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43625c4a50dso36750735e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 04:43:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738068174; x=1738672974; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P9Hjz/HBikG9/lKNWOcgvjSfQzXvtdwqalUBjRJ0K+I=;
-        b=OKUl7Q1qkBRpl6L88ox9Yk92wtAsOuVo5IayOUU/hzGVgf3Rjjecryl2WT1lZFfS+E
-         35FcxVpBKuvDaSdC7AJdwWVFVzBNhQqmFJAiwmz0BfFiNYgIRVTYuRuHS49codimYGWh
-         YOqM3wAb0i8y6dAuFhqKpLnsBaAxtDrfuqFOQ=
+        d=linaro.org; s=google; t=1738068230; x=1738673030; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2npVkOuOv04Tel6DkNspjpRnmGdY5QLsfu3aoyjOBac=;
+        b=toD9BBdbhIF0GcZCtbJ3Tw3KsiPxcG0sVvCcr0NxO/kgcm4Ic/7jxzdq1Hv0FbiYZU
+         jal1+RCZDah5Udh88V3OY34ctqk1nRBASyjIbpFpuPtqwe9lp5iFTcE8u2xG82TKPpuY
+         MbTry9YtpDmH+04+HXN8GqquIxCEjwH6E7G2tN0yzubwJoVElp38x5dW1Nb2k+qE4/0m
+         VuIbrdudODy78o8CDRBY7SBrgr8qzOb6um6xlsSL78FNiYbnaCUUbBDGzaFELRLHtRhx
+         pnMMYfzwUwwWVWl9EAe8dKbM/a8ikHryg62v89p9mWEQoVH01SgJ4O1MZpT/OCfWGVSh
+         U9gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738068174; x=1738672974;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P9Hjz/HBikG9/lKNWOcgvjSfQzXvtdwqalUBjRJ0K+I=;
-        b=o/uSOwzefuoQOOHxcNjaY29LRkSUTVFv8AMM+XaSTKzc5mxJhpAGIv6TfatWBNjKgE
-         3BIS9HwPwxNmrnW69g732msLCuWJ1E6hEHdj+2kaB3V2Jc8EZxfTr1wAZ0Adq79LXBP0
-         jfDi5D79HOo2o/xdwXq7ee/djfWIVEu9ZsTEjHZmYW8eFoFFRMOC9rxEq7JX8LbgnJf6
-         JfEplnmGPdKkS0chuIxsli19V1NidzXgs8VC62zZ15watR66RrjJcUTAvElCkRTMZJH1
-         MccdpSWfQP2/aPbMukKg5+9H3FfxoIS1av5ZAGfLM8xvrstjd23F4okyGvf2tfKyDvUO
-         t2BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnwXTgfyzxzOWsri1+G5SrCjr9HVhm/dtGI5/HXxmHW1+F3gGv0cJyCSakm59+hGdjYYHCn9jCmsXGClSS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw6CemPb8EBjHFcQBVj71uyCvDH6hWckJLXuLBhN4KWReXnqzV
-	ACTmE0TiwijBQrOR1JoXzuHLfXBdR//0DS7pn2b+Y/N5gDTWUKVHkkGfEPmiHUOQRRG1Jplf1lb
-	gW/K+EiVPaKE9AHRMj9UyCXP8VDS7HltMZwr7Bw==
-X-Gm-Gg: ASbGncsoVc7LAJaDpbYK0GOhUm5h4uVWdIjAEpTMr2Sm0WuZccdvqo9mlWLnonrx0/4
-	xekVnQWTQFl+xJyvopSNDFCUlXehg3Zi6Lqt4K/dJTe2ftS/ziefwUfNDrtl8B0wbm+zZF18=
-X-Google-Smtp-Source: AGHT+IFHqb1dD1KZwsa+gpNM1NJUXqlXL4Uhb8XNRH7U63qw4cN6AM1D6ndQnVoLZlpWFWSgCzZ1R+5zN2z1g9INqw8=
-X-Received: by 2002:a05:6214:590a:b0:6d4:22d4:f5b0 with SMTP id
- 6a1803df08f44-6e1b220a5abmr649661266d6.33.1738068174227; Tue, 28 Jan 2025
- 04:42:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738068230; x=1738673030;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2npVkOuOv04Tel6DkNspjpRnmGdY5QLsfu3aoyjOBac=;
+        b=qEwzyWxcrzArJBSlZ0mt9yXdtMX5hWMINEgenAj7OzK77wMpR/bX+9sSFMTtfInuN4
+         4rPqrkOCpQkj3xqlKguwW5hPZcMJn3u5YLc2P+0YOtqZuKP5UXXatOWBcRe7rYLAR0uO
+         4E3jZJmkjKzmHNuGNFZwOgAuB9hqFbPkZOlwmV9ucT5HAgiOFTNT+WX7hIywi5rS2R/m
+         jKrTywWIYDUyuzXGSi6Svm6EC0qG9/tGkuI0tAFW0wqh+UUUaR0pVTWM8FoE3zAPzU4/
+         joQlKGev77eb0UdS0I8c0pu9PUY31MHjiCrPvB9lIoCaOmYPTkuqHOveA0prvR3S9Jvs
+         AswQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7DMyRiKKfJKoEJdosHAIUAp977aiLZMeWEFcKeX6BB++I+A/gpgiS4509m83ucL2tCME+qnL+z+5Rfj47@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV3+0zM0g2ZNPb16yijjs/lwxm3OgOQ8BONpT7efTu6e5z6R0t
+	erCAm8ETDH+MdlRCDVsqYMBVL77Jj708XRF8UziqTLcmMk0DDfC1QYUdjh02wng=
+X-Gm-Gg: ASbGncs2wQyeP83pZMNta3v1gPA1v3qHc5BFDyh6K0qOubo3jIJ8/ZPnce2kV472BFG
+	H37+BcolxhcEcf+pDuIe8+lhkQgkCjHBANvQV45tHu3xFZP2mz1HHfAk/yhK93cgfaLzJRmhNEa
+	yBY5UHDc6sVSJ1AgqHsEx1arWf2xWposqHzc6ZYvrFt2xidUt/iWVX7bPTceEXkA1KdkxYi81DH
+	IMiVxKvMmwHRvzmTH56rL5e/2XAtZZcegg2xncJ8W2gwWNSmFNohMMHKGTJ9eQ96EnaGv/vnlf8
+	YvssX0ecbTaPUDWqzT6Y1AxvO/K8oCE=
+X-Google-Smtp-Source: AGHT+IEi1DubB0W4MOkD9qS8FRtXR4Q8D8HYzqTNZ2v21+5bX3PonF8dkrWl5tvWlJEytvuJGxKttA==
+X-Received: by 2002:a05:600c:5486:b0:434:a10f:c3 with SMTP id 5b1f17b1804b1-438913cae48mr369108575e9.9.1738068229824;
+        Tue, 28 Jan 2025 04:43:49 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd4857b8sm166100695e9.15.2025.01.28.04.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2025 04:43:49 -0800 (PST)
+Date: Tue, 28 Jan 2025 15:43:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	kernelci@lists.linux.dev, Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lkft@linaro.org
+Subject: Re: [git pull] d_revalidate pile
+Message-ID: <bef98fe7-6310-4d24-aacc-3e629fd786eb@stanley.mountain>
+References: <20250127044721.GD1977892@ZenIV>
+ <Z5fAOpnFoXMgpCWb@lappy>
+ <CAHk-=wh=PVSpnca89fb+G6ZDBefbzbwFs+CG23+WGFpMyOHkiw@mail.gmail.com>
+ <804bea31-973e-40b6-974a-0d7c6e16ac29@sirena.org.uk>
+ <Z5gJcnAPTXMoKwEr@lappy>
+ <3770d3ed-e261-4093-9a41-90f0dfdd393b@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-3-mszeredi@redhat.com>
- <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com> <2041942.usQuhbGJ8B@xev>
-In-Reply-To: <2041942.usQuhbGJ8B@xev>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 28 Jan 2025 13:42:43 +0100
-X-Gm-Features: AWEUYZncrMihch-xJFLSWbspT9bam0hgksBqzvIpiATyQ_1noZ-r1ZsPAgPon9U
-Message-ID: <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
-To: russell@coker.com.au
-Cc: Miklos Szeredi <mszeredi@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3770d3ed-e261-4093-9a41-90f0dfdd393b@sirena.org.uk>
 
-On Sat, 25 Jan 2025 at 02:17, Russell Coker <russell@coker.com.au> wrote:
+On Tue, Jan 28, 2025 at 12:14:07PM +0000, 'Mark Brown' via lkft wrote:
+> I'm able to decode (just feeding a random log message in, no idea what
+> specific build generated the log message so the line number is almost
+> certainly wrong):
+> 
 
-> What's the benefit in watching mount being separate from watching a namespace
-> mount?
+All the kernels that we're planning to boot have the DEBUG_INFO enabled.
+Here is the config and the vmlinux.xz for this one.
 
-1)
-fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,  FAN_OPEN,
-AT_FDCWD, "/proc/self/ns/mnt");
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2sDW1u8fB268uU3L32J8FqAxYYR/
 
-This notifies on mount and unmount events in the current mount namespace.
+I don't want to explain how to find this URL because I've filed a ticket
+to make it prominent so the instructions will change soon.  And ideally
+we would just have the line numbers on the webpage dmesg itself.
 
-2)
-fanotify_mark(fan, FAN_MARK_ADD | FAN_MARK_MOUNT, FAN_OPEN, AT_FDCWD,
-"/proc/self/ns/mnt");
+regards,
+dan carpenter
 
-This notifies on open events within the nsfs mount (proc uses a kernel
-private nsfs mount, so all accesses through proc will trigger this).
-
-The latter doesn't really make sense (these files are not openable),
-but it's doable with current kernels and events on the failed opens do
-get generated.
-
-So overloading FILE__WATCH_MOUNT might work, but it is also very
-confusing, since watching a mount namespace and watching a mount mean
-completely different things.
-
-Thanks,
-Miklos
 
