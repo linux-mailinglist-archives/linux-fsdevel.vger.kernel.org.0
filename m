@@ -1,133 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-40230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65375A20B4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 14:27:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF12A20B59
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 14:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAA818864ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4750E3A66AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4951A83E2;
-	Tue, 28 Jan 2025 13:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8BA1A83EF;
+	Tue, 28 Jan 2025 13:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVI6Fg6s"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BM/I/aVo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2A119CCEC;
-	Tue, 28 Jan 2025 13:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072981A2567
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 13:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738070812; cv=none; b=Qc++a7foynUyrzQwUxpNyZ0RYYil7BJu4ClsArqOOp49MhYPlBu8N0iJBFpihrT8CJYVw4JQ+o/fzK16RRy3CDJOF8BBFz+fcRwt9yC8jCr1SCDjhKlP4CrBL0tiSmdqm6Xv/VnsC95vBO8TS5CW08/6rJmRHPPbyQflX+F7f20=
+	t=1738071434; cv=none; b=YlG8gZPR+k/Ukkcij+MfXOZW/KPYzbKdrmkABIHvazwqmxYuHcZA6Okmy/Ncd/siowXfVNU/cYQySDg51LsZKoE8BVlLI6iy9QqWg7vCH2ID8qjH1jzJea73cULp+82LHiIrwxxs9lbO5ZPyi0QYV3W15xQVVcLPFpJNcHgt9Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738070812; c=relaxed/simple;
-	bh=xmGvAmLs1TOKoZKF82mBR3UUIuOtx8OIOiBL6BHICNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kEO4/qTm481bhAID+Ph0kuKrufEtB9wW87jn2bfXAwgHmQcfZD5Hnk04cbL92Sad5YZJ9LbTax8DFdl/9/yVJNd+9wOAAw2Fudj3A/Zk896n7y5DpYSff2joGO2SUm9QQmNBsePSxULYBqW6SmTnuLRaXcJe/snDYmsPtkqt7s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVI6Fg6s; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738070810; x=1769606810;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xmGvAmLs1TOKoZKF82mBR3UUIuOtx8OIOiBL6BHICNA=;
-  b=YVI6Fg6svocztwLqVVZ5pfh5Zoazne6thkiMrDln0LXjDZ66lmMInc0+
-   wc3X5pa/BgeMlY+wjzDnUcIC+DHRJN1PXKMPaQM+mA14asNCB1kZEnijv
-   XtOMFYed1huyoZBXKSsu3MWsHK20is/nokkq0u/KRjJVSyRw6q8mBBHCy
-   Y3cVB0JUJgH2314AXX9/rYaJVRhjlZisVak0nPPHhrWkKiYjGBz9gyduL
-   geJxtJfU/SLVNoZ9f27Y9zaKj7/Zfz4S2HFzLSoyIH+dFArcvVg11VNTR
-   q3leGFqijj1AyuH/4mjra01PlCD2VnYOAgxnZnN0mzL8bNz3IQuKmocr0
-   A==;
-X-CSE-ConnectionGUID: 6gnsWMMBQFW42LYKvms+rw==
-X-CSE-MsgGUID: ZlbWSDXrQCildycYlXS/PA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11329"; a="38436933"
-X-IronPort-AV: E=Sophos;i="6.13,241,1732608000"; 
-   d="scan'208";a="38436933"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2025 05:26:50 -0800
-X-CSE-ConnectionGUID: CKzHCSaeQOy95cF6W4m0eg==
-X-CSE-MsgGUID: IKTe+aODSjie6BgVH6N5aw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,241,1732608000"; 
-   d="scan'208";a="108841878"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2025 05:26:48 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tclc6-000000064Z4-0wfn;
-	Tue, 28 Jan 2025 15:26:46 +0200
-Date: Tue, 28 Jan 2025 15:26:46 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-Message-ID: <Z5jbFiB1UzfChk0r@smile.fi.intel.com>
-References: <20230830102434.xnlh66omhs6ninet@quack3>
- <ZS5hhpG97QSvgYPf@smile.fi.intel.com>
- <9ba95b5e-72cb-445a-99b7-54dad4dab148@leemhuis.info>
- <5884527d-a4a2-44e2-96bc-4b300c9e2fb8@leemhuis.info>
- <ZWDTkmQZ7uojegiS@smile.fi.intel.com>
+	s=arc-20240116; t=1738071434; c=relaxed/simple;
+	bh=za4jWSIXiWnx1/PtIdrlQUWfgRWi88/FEbsBClDq++Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NbOl1s3n/i92pAuw1mNcs3q1Kzb2d9khNgR3Wt9SZDySsg8VmeH6GxVTRKfprIRcRPSpviCQRUKgzJat0Ya3lnvrHH141feKbL1ocvibLopGeb71g5zAocHejP1HSzR7MzlZA033eRDGMbUkz11gE462I1fN25gDEzAapx+phAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BM/I/aVo; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46df3fc7176so51169731cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 05:37:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1738071432; x=1738676232; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cEBqaIaDwYzpAfJb0Xza7F8apQH4HtqaJ+JjUwM8mEQ=;
+        b=BM/I/aVopvQmXAAU9Lx1lLYfIsFez4u45iXCOilKTl7APoK/QCR33ZVougxbmZ2gci
+         TW171voLB67P7eFXO54deYTFS2jCJ+VRUj7eNV1ZJS2fV++Ldaw73t7+w1eywC/EUeKm
+         eH/YKXNOz+nYR/rWsYV+53sm75gtKTIAmL3PA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738071432; x=1738676232;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cEBqaIaDwYzpAfJb0Xza7F8apQH4HtqaJ+JjUwM8mEQ=;
+        b=kYJfUvgl+Nv3sISnYP5mXNb5rwUVzBv58t0BFzsjlKhGHCA100yJwoVVaW9FfmQlmb
+         rss3JQJESca5PnAjZe+RI7FPJnuqUicn227jIVqZT8XUYonIGem05tALKeT2rcx17sJ5
+         PbuOXhF6m+8a4kAdFGl1Fe7YrwG1WKZg0CsC9rmcYlLDge+YEDOdl4JfCp53P6fI0goj
+         lqF5XflH+5Tp4Dben5p2OE2cZVaZKNH2ZCiY1beuPSd6HuwjiRVKycfSCvt7jykfySqS
+         DQ2PValpZScATfzTuRy9u8/ukcjjcqdM/mYFsHziac7ZpejWUZ4e8ZoFXadM6V2XfHEh
+         4Psg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSQWEZfJfBqKkQLjo2VIAHL5KTwM6FKK19YFawcerHVS2kQVqrkbnpjqzDYtrGi3La6TM75w2s+/kbl6ng@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1riL79I4lfxlD4fd+QcPh60wWO9uRxSAleYTEs6bzyzMQRlsP
+	vi2QYzv4FYDSL3b3VUNuOJQ7neobbTilvfxqUCtveesxrHh0qPyZ+n4swrWsnDNS3Y3873MgkYQ
+	CCY8g2WujIqQfNjcMqB5/HgQa963fhTlDiUCQEg==
+X-Gm-Gg: ASbGnctIdgQepf7G5ybcaPuJg5XtTnkln2HSOCF/LAjDdLcfc6VnQRRcFZXK0kaiSDA
+	aATIfo6Oqbjm3jUEY42bpnb0Y6kAOLpmb1QJDFMd6POipIa8gKOvs2D4Yt7u5ts1+gLkKm3c=
+X-Google-Smtp-Source: AGHT+IFWTIAnK+5eL7HyrGG7lpTg04Tgrx5YKQ2A5MNEXhLez1EsL/JNf1CxyLCjHr2w2Q9lyVqeWMCdUDReSZN1y/4=
+X-Received: by 2002:a05:622a:1311:b0:467:5eb6:5153 with SMTP id
+ d75a77b69052e-46e12a3f746mr729277911cf.19.1738071431912; Tue, 28 Jan 2025
+ 05:37:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZWDTkmQZ7uojegiS@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-3-mszeredi@redhat.com>
+ <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
+ <2041942.usQuhbGJ8B@xev> <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
+In-Reply-To: <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 28 Jan 2025 14:37:00 +0100
+X-Gm-Features: AWEUYZmizeJU0a7RXrBJlqhjTqK1mNWtSBDQH9Nt1-ZaM-h_jUVyMC5_wxbnhOg
+Message-ID: <CAJfpegs7n5eO6yOms+_TqeXGrN=OaJbjRB9qVm4VsW7JpWG5Xg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
+To: russell@coker.com.au
+Cc: Miklos Szeredi <mszeredi@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 24, 2023 at 06:47:14PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 22, 2023 at 09:15:06AM +0100, Linux regression tracking #update (Thorsten Leemhuis) wrote:
-> > On 22.10.23 15:46, Linux regression tracking #adding (Thorsten Leemhuis)
-> > wrote:
-> > > On 17.10.23 12:27, Andy Shevchenko wrote:
-> > >> On Wed, Aug 30, 2023 at 12:24:34PM +0200, Jan Kara wrote:
-> > >>>   Hello Linus,
-> > >>>
-> > >>>   could you please pull from
-> > >>>
-> > >>> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v6.6-rc1
-> > >>
-> > >> This merge commit (?) broke boot on Intel Merrifield.
-> > >> It has earlycon enabled and only what I got is watchdog
-> > >> trigger without a bit of information printed out.
-> > >>
-> > >> I tried to give a two bisects with the same result.
-> > > 
-> > > #regzbot ^introduced 024128477809f8
-> > > #regzbot title quota: boot on Intel Merrifield after merge commit
-> > > 1500e7e0726e
-> > > #regzbot ignore-activity
-> > 
-> > Removing this from the tracking. To quote Linus from
-> > https://lore.kernel.org/all/CAHk-=wgEHNFHpcvnp2X6-fjBngrhPYO=oHAR905Q_qk-njV31A@mail.gmail.com/
-> > 
-> > """
-> > The quota thing remains unexplained, and honestly seems like a timing
-> > issue that just happens to hit Andy. Very strange, but I suspect that
-> > without more reports (that may or may not ever happen), we're stuck.
-> > """
-> > 
-> > No other reports showed up afaik.
-> 
-> Yeah, have no time to dig into this more... Maybe later, who knows?
+On Tue, 28 Jan 2025 at 13:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-FYI: Just shared all my findings and the root cause analysis here:
-https://lore.kernel.org/r/Z5jahxEopW5ixuFz@smile.fi.intel.com
+> fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,  FAN_OPEN,
+> AT_FDCWD, "/proc/self/ns/mnt");
 
-TL;DR: there is no bug in this PR.
+Sorry, this should have been:
 
--- 
-With Best Regards,
-Andy Shevchenko
+1)
+fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MNTNS, FAN_MNT_ATTACH |
+FAN_MNT_DETACH, AT_FDCWD, "/proc/self/ns/mnt");
 
-
+This notifies on mount and unmount events in the current mount namespace.
 
