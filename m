@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-40194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793FEA2033D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 04:07:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A26A203F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 06:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 731FF7A4068
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 03:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F091886F32
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 05:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FB5171658;
-	Tue, 28 Jan 2025 03:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52CD18CBEC;
+	Tue, 28 Jan 2025 05:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="S3k5tb7T"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ACkcBpMd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDD679D0;
-	Tue, 28 Jan 2025 03:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871FE290F;
+	Tue, 28 Jan 2025 05:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738033652; cv=none; b=JQXNY2YG83Fuxq2g8VZy08/y7GH8sbIy37rBm4B/RoA/yFdfzwd3B453+UPKMFF5DYm8RYPEO1LZLFfM5myEQdksyYhYTLtHXkEuoMAAvVDyO+vg6Dp93mWtm7rowLpLdP5s92jUt6U+yx52o58/3UvJmkT9VBwfp4A019Nql5g=
+	t=1738041978; cv=none; b=u4AZuI1o9yEIK2kFqJG17oZB2/eWVGmd446Xdk97a1L11LaDwcdVFMhYhoDhmhct0W8YFWa34FiYwIAfo9H2IfSAH35ri76pP4D+/1ZXHGmB4eS6SN1wefyuSthU2WZOg49QoHLPkm8s0uF6hByjysj9k2mBgZlySGiOAjqyhH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738033652; c=relaxed/simple;
-	bh=1XnMySzV3V3/Wl3zEmYuPWbrjzS0vj3TwNs/FGgGUVU=;
+	s=arc-20240116; t=1738041978; c=relaxed/simple;
+	bh=ICq0/EgtLw9V4S1TZycRu6L9gTGWUfsYpnKHxw8grUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uC8R8Gfp4rJVoMWw5Z6Wor6LVHK2NlMjLwUZqfH7L487VsqD67+YK9Rqp2hK9WcdOOPTX5FZKuxgV+9usAeH4AUgQj8DH6ZOKmtlzoExRK8hrgXixclY75j38bNgVOj+lE20j+bne5xi+C226mWh4UpIzI6GF0WT+y4i7lZose0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=S3k5tb7T; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=d+IIcSeKwcvvvFcx4VDuRc0rftrhc2LbIOnGcuMRk4FVc0caBjCFXnria/w44Qs6pijL4zOVL/mKdoXl2MuQbnENIfE7JRcaovOTvkAEpQFzVYFdFaR4WKNw7EQgrAOWNpR5chyPqhE/2dOVpOqKoTqK/ESvUJsNqpifKxZ/NaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ACkcBpMd; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MbuaY6XvLxlfLLl236lmUxpSJWGWV82QFfRKdy3fMjY=; b=S3k5tb7TPvM5IUFxHkCDLbd3qD
-	0LN13s5cBiqTFvZVjY4u/zu/sTbAXOFBK1K+YtQith9ptMYEVIofLhhkUhDOXBL+E4PvGO6oICbLU
-	x+GGq8zBpAbwiu7N6SShlSa0gLMCZtzexcVTcbedRZKI8yXk8WaIZEzCReXRqbIqP7nBIHssDXfav
-	isIEemsYw8tUxtWSzBhQub26keOeqosCiv4OrUwyRx/C9ItStohRyWQN8MWI70jSstFy/Nqxnjsf6
-	/+nr8KrQbTyMAOXqC4Ry1AlaoewUIprnQEMWCoJoebU1/Q6oMWm2oj+74KqjuBDR6pG1JYBB7PL+a
-	UdHNZjiw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tcbwm-0000000DtjJ-1MiS;
-	Tue, 28 Jan 2025 03:07:28 +0000
-Date: Tue, 28 Jan 2025 03:07:28 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com,
-	amarkuze@redhat.com, Slava.Dubeyko@ibm.com
-Subject: Re: [PATCH] ceph: is_root_ceph_dentry() cleanup
-Message-ID: <20250128030728.GN1977892@ZenIV>
-References: <20250128011023.55012-1-slava@dubeyko.com>
+	bh=kJzMLo0mdcPHa/7Sslr7vaeEy+8b7UA/ygDih5Q5ymY=; b=ACkcBpMdxi19O50pMHmK6kc/sF
+	n0mKUsU5mKvm/UVIt1t6r0cfzUb67fjzp30tNLu1liI2qdYJd0GsqgXINy6JZqRYW9aaV1LcapWgn
+	RbgH2aJr8XA10PjNug0jdsjfuhzIf1sSwmL0wxQpOkyDCh33Qix3QkR3/lkiVnd8eb1F6pOIRoEMo
+	h/JJCsbIPMKhHfhQgHIwvOnk8R3eYynMawIYw8H3JoD2HmliWI+ODdSempmksrv0r/mCtM8Vp0XJw
+	8kBQMaWpvUR09z1TVIETJJAQuh+oZzET29jtdZiDjxfAKjCasQf8Ykiuu+D14Il2DCcEP+hpqk6hG
+	BnxO7x0g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tce76-000000049gX-048H;
+	Tue, 28 Jan 2025 05:26:16 +0000
+Date: Mon, 27 Jan 2025 21:26:15 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] iomap: factor out iomap length helper
+Message-ID: <Z5hqd31L6Ww6TT_a@infradead.org>
+References: <20250122133434.535192-1-bfoster@redhat.com>
+ <20250122133434.535192-3-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,29 +60,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250128011023.55012-1-slava@dubeyko.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250122133434.535192-3-bfoster@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jan 27, 2025 at 05:10:23PM -0800, Viacheslav Dubeyko wrote:
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> 
-> This patch introduces CEPH_HIDDEN_DIR_NAME. It
-> declares name of the hidden directory .ceph in
-> the include/linux/ceph/ceph_fs.h instead of hiding
-> it in dir.c file. Also hardcoded length of the name
-> is changed on strlen(CEPH_HIDDEN_DIR_NAME).
+> +static inline u64 iomap_length_trim(const struct iomap_iter *iter, loff_t pos,
+> +		u64 len)
+> +{
+> +	u64 end = iter->iomap.offset + iter->iomap.length;
+> +
+> +	if (iter->srcmap.type != IOMAP_HOLE)
+> +		end = min(end, iter->srcmap.offset + iter->srcmap.length);
+> +	return min(len, end - pos);
 
-Hmm...
+Does this helper warrant a kerneldoc comment similar to iomap_length?
 
-Speaking of that area
-	* how the hell could ceph_lookup() ever be called with dentry
-that is *NOT* negative?  VFS certainly won't do that; I'm not sure about
-ceph_handle_notrace_create(), but it doesn't look like that's possible
-without server being malicious (if it's possible at all).
+Otherwise looks good:
 
-	* speaking of malicious servers, what happens if
-it gets CEPH_MDS_OP_LOOKUP and it returns a normal reply to positive
-lookup, but with cpu_to_le32(-ENOENT) shoved into head->result?
-	AFAICS, ceph_handle_snapdir() will be called with dentry
-that is already made positive; results will not be pretty...
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+
 
