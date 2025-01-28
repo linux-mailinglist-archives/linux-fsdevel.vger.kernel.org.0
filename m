@@ -1,117 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-40223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D25CA20945
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:10:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160DBA2099F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA55F16919E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 11:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04810188A800
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 11:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C3519F133;
-	Tue, 28 Jan 2025 11:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E7A1A23BD;
+	Tue, 28 Jan 2025 11:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hUVWDsEh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foTouGKI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53845192B96
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 11:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE501A072A;
+	Tue, 28 Jan 2025 11:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738062618; cv=none; b=ZSdC75mFPSRS1iRDzLG13bzkdpSJSj+pOpGaplqhJvKKqlduqoL3ClW06R+cYO35pKdDGX6e9Sbg9kFvS29lv0EpyiYHMU4Xn2U1yYwiSJwkK5UT8OKmPi5YIVHZME31y7u6uo3ng3fk4SbRfgib4U0+j9LomiNwN/8y9Di9MZg=
+	t=1738063363; cv=none; b=WIed3RYgYQwzRJ8kptd6WG0A7azbhd6tlAJ8xEBUaWX2ov0kUBy04gQIi6BbWu8tMFYNKl75YN8czkWDvn+WWRj8QIwQhjvvqbNMsrA3L5EA19mI/kH3RDJIhN/o6fCHiQgk2PAGt6/tbb88ey/PRCR2gcvdGF3miENGXU3HHl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738062618; c=relaxed/simple;
-	bh=3oULPZbl6SYi+kh54HeGfCc84Epi14tEzErsX5vxNd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nAqBQMeFYvuUOHOwPzBV48MI03N4I9fNX0Cud00lGHdnvo+FN+aBdXnNJBKnnl6NU/odTpWqdWSTNeOT0mKOsFa091rhcYIZp4e0pZ9zpiQTkWgy/ZT9NSQc7+E50NxxLFDYuc5IQrVOWP0qIvSuRfST5o+H8zmj9DbxyNZiPus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=hUVWDsEh; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-467b74a1754so75199641cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 03:10:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738062615; x=1738667415; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXfcJSbYIEXHvis+eDtYUcwI9MKzdFKCQdMTtghttUE=;
-        b=hUVWDsEhvj48HfStvpvFykLEL4OJO6gBmNqPjat+H6Ed8VLlb3vdBHcnM4T+JPrgWr
-         QdE/kABiD4qwLw9Bfx42v95un7Ui7qMGGeIBSoOcicflxFm4senGIkq5HQn2pHtuwC35
-         SeIKrOWt/CzKh+AceuJHqx8v0rrZdevlsY5xI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738062615; x=1738667415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aXfcJSbYIEXHvis+eDtYUcwI9MKzdFKCQdMTtghttUE=;
-        b=gUK74wVCGwsh5cKG8TJ2m1VkqYZOa0ev8Ra+s53Wa9E/S9hIGG6GYONqzIAEEEueri
-         eD7jtX6+N9o6EcclbolTyQ6C5JcDb6zEJA8Y/sxcfqznqj6uHpSMOfgHPe8Rg6WsLNst
-         Ws7K9MKwjHlQhcTVzRfgp2INs/WCVhOQFlwH4ugEMbidHzLT1PdU48cPB5608Xww6Ky4
-         UcSovW54Xvj4bh5uIR10JoHxFrmuClmlVmCVLLgk/tend6m8ypRloPpsgjWwfOpkrVRg
-         1AiL8GoOBWybe/tbpn5o3+D5knrWCKCLx56lKudYsjPJHnSaPe3NtF/CTC9Juxd0EWja
-         YM5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJNiKeREam//NUzvDa6Yi6g573iJM5Av5IgBJ4OBBYQMI/Nyfqfmu4qjXveBZPdtNpBO4v4BCWhECkZlof@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsCsx6CW4iP2HUSQUeqbWcjxZWXF7jikhcnKx42v0fHbWn+UVV
-	mDWqyhISsKsSKDF1TFTTq89Kkf2VTUZ+MDD+FmWNs9Tf736gkjwbcOQKZgEPQ6KAVyFfpDAyo26
-	nhsnYez8E/Paq/pjrwgfV3UWY1ByY0mAcZF1QeQ==
-X-Gm-Gg: ASbGncuKcux+UOuTIuN4TkOhqm0liwAnFC90r5Lgflvcr8KR93wcbCNFTg5gTsstoXc
-	MVdrAJOKcs7+WXxRK0tiIgsLCi/bx2JHWQ7rXlKiuZKEax6rWp4c8gl8aRrNtANsQixqr0tw=
-X-Google-Smtp-Source: AGHT+IG0X5eZAjYfHNcC0rTaJ2o5BIVw20eNeFDkW5RJ6OIA73cZlJ5HaJWsBE9kPV6U1o+SVrDIyyD6osB7Qjok7bQ=
-X-Received: by 2002:a05:622a:15c8:b0:45d:8be9:b0e6 with SMTP id
- d75a77b69052e-46e12bdc8bemr722253051cf.43.1738062614970; Tue, 28 Jan 2025
- 03:10:14 -0800 (PST)
+	s=arc-20240116; t=1738063363; c=relaxed/simple;
+	bh=AJfDJn9pFkPItjs+l9CjDlC33TdlTCE01Kr4mfJIOJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+cCyGb2/fsQowQreYNLg9qSUrLirXR7MS1CsgJTWL5oNhbhe1swUVk/CwSswe8PDryMSusPUfNKlrWUa3532e8R+YEEmmA4oN6QzpCINKU580mS3vkG99WHUT1yexgg3lDas9CYY6cW1AeZPm219ztniPyeJErJcq9Nc2Lg5xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foTouGKI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98109C4CEDF;
+	Tue, 28 Jan 2025 11:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738063362;
+	bh=AJfDJn9pFkPItjs+l9CjDlC33TdlTCE01Kr4mfJIOJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=foTouGKI5Xpt6DiifiySGU1Px4B0JlxynZkL/A+4GJ+F1wUAFkM/N4G83a9sI8N06
+	 lsMHA2F0I+BGkV1h4oylhwmSeJznMzbN+UJy9qwbYRK5QlpfqNfv8Msq/ndA/iDm4I
+	 JYp3P2GR22dNEIcBnZOOATJGYPU+gMIFK9XfLLma3B24+UKToDLZL/ZLBF6bwp16qy
+	 HMKr9svtYad8MrCuOMMF5t2I0WLB8bGS9HGYMu9w94+SD6sanYCztaTmP2cubx4D+F
+	 lhSPEntAtoYhJR/j92VqRwE5MifEf7tNzvj9NQnTwv0sbHofELHMou005/QzH1lonP
+	 yczCENnq4hKEA==
+Date: Tue, 28 Jan 2025 12:22:37 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+Message-ID: <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
+ <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+ <87jzag9ugx.fsf@intel.com>
+ <Z5epb86xkHQ3BLhp@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 28 Jan 2025 12:10:04 +0100
-X-Gm-Features: AWEUYZlou_HSj_vIwGYfmdUvl5vdt3G3Z8bQbbfrklXlKMzbTqhlXB-VzrRMYdw
-Message-ID: <CAJfpegsDkQL3-zP9dhMEYGmaQQ7STBgpLtkB3S=V2=PqDe9k-w@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Removing writeback temp pages in FUSE
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: lsf-pc@lists.linux-foundation.org, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Jeff Layton <jlayton@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z5epb86xkHQ3BLhp@casper.infradead.org>
 
-On Mon, 27 Jan 2025 at 22:44, Joanne Koong <joannelkoong@gmail.com> wrote:
->
-> Hi all,
->
-> Recently, there was a long discussion upstream [1] on a patchset that
-> removes temp pages when handling writeback in FUSE. Temp pages are the
-> main bottleneck for write performance in FUSE and local benchmarks
-> showed approximately a 20% and 45% improvement in throughput for 4K
-> and 1M block size writes respectively when temp pages were removed.
-> More information on how FUSE uses temp pages can be found here [2].
->
-> In the discussion, there were concerns from mm regarding the
-> possibility of untrusted malicious or buggy fuse servers never
-> completing writeback, which would impede migration for those pages.
->
-> It would be great to continue this discussion at LSF/MM and align on a
-> solution that removes FUSE temp pages altogether while satisfying mm=E2=
-=80=99s
-> expectations for page migration. These are the most promising options
-> so far:
+On Mon, Jan 27, 2025 at 03:42:39PM +0000, Matthew Wilcox wrote:
+> On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
+> > You could have static const within functions too. You get the rodata
+> > protection and function local scope, best of both worlds?
+> 
+> timer_active is on the stack, so it can't be static const.
+> 
+> Does this really need to be cc'd to such a wide distribution list?
+That is a very good question. I removed 160 people from the original
+e-mail and left the ones that where previously involved with this patch
+and left all the lists for good measure. But it seems I can reduce it
+even more.
 
-This is more than just temp pages.  The same issue exists for
-->readahead().  This needs to be approached from both directions.
+How about this: For these treewide efforts I just leave the people that
+are/were involved in the series and add two lists: linux-kernel and
+linux-hardening.
 
-This year I'll skip LSF but definitely interested in the discussion.
-So I'll watch LWN for any updates :)
+Unless someone screams, I'll try this out on my next treewide.
 
-Thanks,
-Miklos
+Thx for the feedback
+
+Best
+
+-- 
+
+Joel Granados
 
