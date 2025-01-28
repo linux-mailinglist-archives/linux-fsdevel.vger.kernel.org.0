@@ -1,85 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-40222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB7EA20908
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 11:53:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D25CA20945
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34781887667
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 10:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA55F16919E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 11:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB9719F111;
-	Tue, 28 Jan 2025 10:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C3519F133;
+	Tue, 28 Jan 2025 11:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4s8OZHu"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hUVWDsEh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D245A1991CA;
-	Tue, 28 Jan 2025 10:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53845192B96
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 11:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738061618; cv=none; b=JERxMGU0I7C+svqDuSesk17lEhQhvB3RNMXWWDscRnhakHTucAdk/VSwAiLSn4fLeYgaMyAVH9y+Eqh/kDeM6h1PF9oQqhBghLZCHIERMIYb08zc2+ETQc6K1BLM9P4fpTHRCqdUDf2D47+x0g6TmUmudGA6AQfn8sxuBwERbEY=
+	t=1738062618; cv=none; b=ZSdC75mFPSRS1iRDzLG13bzkdpSJSj+pOpGaplqhJvKKqlduqoL3ClW06R+cYO35pKdDGX6e9Sbg9kFvS29lv0EpyiYHMU4Xn2U1yYwiSJwkK5UT8OKmPi5YIVHZME31y7u6uo3ng3fk4SbRfgib4U0+j9LomiNwN/8y9Di9MZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738061618; c=relaxed/simple;
-	bh=00eIms3w6U/reCylURdKda0TahrnMkOHRbYdkatctdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSbP9NeTF4Q+9egs7+UKv5kpWdU8YB7gqCs8OH26fOHl/8ahhP42++8dB+DZ4bA0nCjiqmEb+ut8ngc/NLfyMX7xcH+xq+7L4q/VX1bAzU4qW8pB/SPBPhsP9UEKCH+tEZpuUtxaraBm8wJtbN7fr9/N7x7pTuaxvwfZ0jJGN4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4s8OZHu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AEE4C4CED3;
-	Tue, 28 Jan 2025 10:53:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738061617;
-	bh=00eIms3w6U/reCylURdKda0TahrnMkOHRbYdkatctdE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r4s8OZHu2pJ4xxPGZG1zYttv9xsXTbwec5J0uUh79tk2z0BfgMXUkpgRgVphdmSoa
-	 YF/R2WauChtdo13cbpda+mENBj7z0yTqnbXiL1Ic9IqQ1bVCwwrCcUFBFlWwsbIzby
-	 ckKv/tIU+JcMfI6JcVM9JPfR89dKzDabsyzpyEoA2mnI1cHMhKWZ3TrDDrIv4wbrfT
-	 YGR4niztdkPBf66B78geVWSvsY1iM/4x8DE3ZeTPOKWU2jXfoP4dJ/l6uZoKJcyOJu
-	 i7Tu/dWKCMVLc9zu7TRsUWDzfGNdsTS1Wq+OcNUz3umJ1KznoQ/X5rmlFpsbDtkhxn
-	 pllQ9p5cShsLw==
-Date: Tue, 28 Jan 2025 11:53:30 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, liamwisehart@meta.com, shankaran@meta.com
-Subject: Re: [PATCH v10 bpf-next 6/7] bpf: fs/xattr: Add BPF kfuncs to set
- and remove xattrs
-Message-ID: <20250128-hochhalten-ankam-6dcb5832a316@brauner>
-References: <20250124202911.3264715-1-song@kernel.org>
- <20250124202911.3264715-7-song@kernel.org>
+	s=arc-20240116; t=1738062618; c=relaxed/simple;
+	bh=3oULPZbl6SYi+kh54HeGfCc84Epi14tEzErsX5vxNd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nAqBQMeFYvuUOHOwPzBV48MI03N4I9fNX0Cud00lGHdnvo+FN+aBdXnNJBKnnl6NU/odTpWqdWSTNeOT0mKOsFa091rhcYIZp4e0pZ9zpiQTkWgy/ZT9NSQc7+E50NxxLFDYuc5IQrVOWP0qIvSuRfST5o+H8zmj9DbxyNZiPus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=hUVWDsEh; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-467b74a1754so75199641cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 03:10:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1738062615; x=1738667415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aXfcJSbYIEXHvis+eDtYUcwI9MKzdFKCQdMTtghttUE=;
+        b=hUVWDsEhvj48HfStvpvFykLEL4OJO6gBmNqPjat+H6Ed8VLlb3vdBHcnM4T+JPrgWr
+         QdE/kABiD4qwLw9Bfx42v95un7Ui7qMGGeIBSoOcicflxFm4senGIkq5HQn2pHtuwC35
+         SeIKrOWt/CzKh+AceuJHqx8v0rrZdevlsY5xI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738062615; x=1738667415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aXfcJSbYIEXHvis+eDtYUcwI9MKzdFKCQdMTtghttUE=;
+        b=gUK74wVCGwsh5cKG8TJ2m1VkqYZOa0ev8Ra+s53Wa9E/S9hIGG6GYONqzIAEEEueri
+         eD7jtX6+N9o6EcclbolTyQ6C5JcDb6zEJA8Y/sxcfqznqj6uHpSMOfgHPe8Rg6WsLNst
+         Ws7K9MKwjHlQhcTVzRfgp2INs/WCVhOQFlwH4ugEMbidHzLT1PdU48cPB5608Xww6Ky4
+         UcSovW54Xvj4bh5uIR10JoHxFrmuClmlVmCVLLgk/tend6m8ypRloPpsgjWwfOpkrVRg
+         1AiL8GoOBWybe/tbpn5o3+D5knrWCKCLx56lKudYsjPJHnSaPe3NtF/CTC9Juxd0EWja
+         YM5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJNiKeREam//NUzvDa6Yi6g573iJM5Av5IgBJ4OBBYQMI/Nyfqfmu4qjXveBZPdtNpBO4v4BCWhECkZlof@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsCsx6CW4iP2HUSQUeqbWcjxZWXF7jikhcnKx42v0fHbWn+UVV
+	mDWqyhISsKsSKDF1TFTTq89Kkf2VTUZ+MDD+FmWNs9Tf736gkjwbcOQKZgEPQ6KAVyFfpDAyo26
+	nhsnYez8E/Paq/pjrwgfV3UWY1ByY0mAcZF1QeQ==
+X-Gm-Gg: ASbGncuKcux+UOuTIuN4TkOhqm0liwAnFC90r5Lgflvcr8KR93wcbCNFTg5gTsstoXc
+	MVdrAJOKcs7+WXxRK0tiIgsLCi/bx2JHWQ7rXlKiuZKEax6rWp4c8gl8aRrNtANsQixqr0tw=
+X-Google-Smtp-Source: AGHT+IG0X5eZAjYfHNcC0rTaJ2o5BIVw20eNeFDkW5RJ6OIA73cZlJ5HaJWsBE9kPV6U1o+SVrDIyyD6osB7Qjok7bQ=
+X-Received: by 2002:a05:622a:15c8:b0:45d:8be9:b0e6 with SMTP id
+ d75a77b69052e-46e12bdc8bemr722253051cf.43.1738062614970; Tue, 28 Jan 2025
+ 03:10:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250124202911.3264715-7-song@kernel.org>
+References: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
+In-Reply-To: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 28 Jan 2025 12:10:04 +0100
+X-Gm-Features: AWEUYZlou_HSj_vIwGYfmdUvl5vdt3G3Z8bQbbfrklXlKMzbTqhlXB-VzrRMYdw
+Message-ID: <CAJfpegsDkQL3-zP9dhMEYGmaQQ7STBgpLtkB3S=V2=PqDe9k-w@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Removing writeback temp pages in FUSE
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: lsf-pc@lists.linux-foundation.org, Shakeel Butt <shakeel.butt@linux.dev>, 
+	David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, Zi Yan <ziy@nvidia.com>, 
+	Jingbo Xu <jefflexu@linux.alibaba.com>, Jeff Layton <jlayton@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 24, 2025 at 12:29:10PM -0800, Song Liu wrote:
-> Add the following kfuncs to set and remove xattrs from BPF programs:
-> 
->   bpf_set_dentry_xattr
->   bpf_remove_dentry_xattr
->   bpf_set_dentry_xattr_locked
->   bpf_remove_dentry_xattr_locked
-> 
-> The _locked version of these kfuncs are called from hooks where
-> dentry->d_inode is already locked. Instead of requiring the user
-> to know which version of the kfuncs to use, the verifier will pick
-> the proper kfunc based on the calling hook.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
+On Mon, 27 Jan 2025 at 22:44, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> Hi all,
+>
+> Recently, there was a long discussion upstream [1] on a patchset that
+> removes temp pages when handling writeback in FUSE. Temp pages are the
+> main bottleneck for write performance in FUSE and local benchmarks
+> showed approximately a 20% and 45% improvement in throughput for 4K
+> and 1M block size writes respectively when temp pages were removed.
+> More information on how FUSE uses temp pages can be found here [2].
+>
+> In the discussion, there were concerns from mm regarding the
+> possibility of untrusted malicious or buggy fuse servers never
+> completing writeback, which would impede migration for those pages.
+>
+> It would be great to continue this discussion at LSF/MM and align on a
+> solution that removes FUSE temp pages altogether while satisfying mm=E2=
+=80=99s
+> expectations for page migration. These are the most promising options
+> so far:
 
-Seems ok to me,
-Acked-by: Christian Brauner <brauner@kernel.org>
+This is more than just temp pages.  The same issue exists for
+->readahead().  This needs to be approached from both directions.
+
+This year I'll skip LSF but definitely interested in the discussion.
+So I'll watch LWN for any updates :)
+
+Thanks,
+Miklos
 
