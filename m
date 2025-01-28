@@ -1,110 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-40224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160DBA2099F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:23:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA9DA20A6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04810188A800
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 11:23:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205161883C38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 12:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E7A1A23BD;
-	Tue, 28 Jan 2025 11:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5F81A841B;
+	Tue, 28 Jan 2025 12:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foTouGKI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aexm+d10"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE501A072A;
-	Tue, 28 Jan 2025 11:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5D21A83FB;
+	Tue, 28 Jan 2025 12:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738063363; cv=none; b=WIed3RYgYQwzRJ8kptd6WG0A7azbhd6tlAJ8xEBUaWX2ov0kUBy04gQIi6BbWu8tMFYNKl75YN8czkWDvn+WWRj8QIwQhjvvqbNMsrA3L5EA19mI/kH3RDJIhN/o6fCHiQgk2PAGt6/tbb88ey/PRCR2gcvdGF3miENGXU3HHl8=
+	t=1738066452; cv=none; b=O91Jz66G2wKcqhXOlaqHFz90egEN4ES05fg8zG+1/pdxI9mec4SDXVHM4/W0C3yj9PIgHZnBzaKRxtkOLYua5QAqZNPMr9rtXx8vAVQGo9LxunFa6/y00CfBAiC1t5CMYeQE2t1C+J8HnKo4vevE8AkhyXn7zjY9yQWix0vbw4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738063363; c=relaxed/simple;
-	bh=AJfDJn9pFkPItjs+l9CjDlC33TdlTCE01Kr4mfJIOJE=;
+	s=arc-20240116; t=1738066452; c=relaxed/simple;
+	bh=VPmQMeTKshQi8BLPiBnU+quZcCNk2gBWVueKbAAt7hw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+cCyGb2/fsQowQreYNLg9qSUrLirXR7MS1CsgJTWL5oNhbhe1swUVk/CwSswe8PDryMSusPUfNKlrWUa3532e8R+YEEmmA4oN6QzpCINKU580mS3vkG99WHUT1yexgg3lDas9CYY6cW1AeZPm219ztniPyeJErJcq9Nc2Lg5xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foTouGKI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98109C4CEDF;
-	Tue, 28 Jan 2025 11:22:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=P8zm7HiUpAXDK8bJ6DVWqjWtx2yB2q4m5aO/nFceE6LIzSht1KDqFiAYn1B23JKiXgp/2wuwPW/0/RrALScTZbw7QOD6MAioqt6UVWSnqlZX493IMcQNPB9p7WAxuv5lmNns2acoL2UeGym9LYSRB5rAoSt/52lYDcYjuESs2Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aexm+d10; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE60C4CED3;
+	Tue, 28 Jan 2025 12:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738063362;
-	bh=AJfDJn9pFkPItjs+l9CjDlC33TdlTCE01Kr4mfJIOJE=;
+	s=k20201202; t=1738066451;
+	bh=VPmQMeTKshQi8BLPiBnU+quZcCNk2gBWVueKbAAt7hw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=foTouGKI5Xpt6DiifiySGU1Px4B0JlxynZkL/A+4GJ+F1wUAFkM/N4G83a9sI8N06
-	 lsMHA2F0I+BGkV1h4oylhwmSeJznMzbN+UJy9qwbYRK5QlpfqNfv8Msq/ndA/iDm4I
-	 JYp3P2GR22dNEIcBnZOOATJGYPU+gMIFK9XfLLma3B24+UKToDLZL/ZLBF6bwp16qy
-	 HMKr9svtYad8MrCuOMMF5t2I0WLB8bGS9HGYMu9w94+SD6sanYCztaTmP2cubx4D+F
-	 lhSPEntAtoYhJR/j92VqRwE5MifEf7tNzvj9NQnTwv0sbHofELHMou005/QzH1lonP
-	 yczCENnq4hKEA==
-Date: Tue, 28 Jan 2025 12:22:37 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
- applicable
-Message-ID: <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
- <87jzag9ugx.fsf@intel.com>
- <Z5epb86xkHQ3BLhp@casper.infradead.org>
+	b=aexm+d10gkwLafsjApxGoJimfTgljfCLIWi4xLssNjuUuWMcp+PBzVxu8tHd2EKyx
+	 rGqKog1ElS3/OEQDRcD82z/oZezg9Kj6iwBRxVr1t0ual+2v+Dsz+U0w+PGaEZqoJU
+	 D/wuOF955EfwSZU5N6M2UxeWFV2adrYgc5ULhfXsLJEsUQv78GuJH3GayfG9YBQy0W
+	 JpUZ3da5vaPYEeUbgCxswlXP7AM/ISxcp3Wq8MhtIjogU3ayc+CRIPe+07W3m5cur+
+	 zJ75NRTfRh38WdcLevujaJWPQQVkYgn5FrqZKeh0Zbs1iaJ4bSM67/i5IswRyfjmv8
+	 GWaTtd2gVwZOg==
+Date: Tue, 28 Jan 2025 12:14:07 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	kernelci@lists.linux.dev, Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lkft@linaro.org
+Subject: Re: [git pull] d_revalidate pile
+Message-ID: <3770d3ed-e261-4093-9a41-90f0dfdd393b@sirena.org.uk>
+References: <20250127044721.GD1977892@ZenIV>
+ <Z5fAOpnFoXMgpCWb@lappy>
+ <CAHk-=wh=PVSpnca89fb+G6ZDBefbzbwFs+CG23+WGFpMyOHkiw@mail.gmail.com>
+ <804bea31-973e-40b6-974a-0d7c6e16ac29@sirena.org.uk>
+ <Z5gJcnAPTXMoKwEr@lappy>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aZFSBvZRh7wr7T/o"
+Content-Disposition: inline
+In-Reply-To: <Z5gJcnAPTXMoKwEr@lappy>
+X-Cookie: I never did it that way before.
+
+
+--aZFSBvZRh7wr7T/o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z5epb86xkHQ3BLhp@casper.infradead.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 27, 2025 at 03:42:39PM +0000, Matthew Wilcox wrote:
-> On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
-> > You could have static const within functions too. You get the rodata
-> > protection and function local scope, best of both worlds?
-> 
-> timer_active is on the stack, so it can't be static const.
-> 
-> Does this really need to be cc'd to such a wide distribution list?
-That is a very good question. I removed 160 people from the original
-e-mail and left the ones that where previously involved with this patch
-and left all the lists for good measure. But it seems I can reduce it
-even more.
+On Mon, Jan 27, 2025 at 05:32:18PM -0500, Sasha Levin wrote:
+> [ Adding in the LKFT folks ]
 
-How about this: For these treewide efforts I just leave the people that
-are/were involved in the series and add two lists: linux-kernel and
-linux-hardening.
+Oops, sorry - didn't realise they weren't already on the report since it
+was on LKFT or I'd have done the same.
 
-Unless someone screams, I'll try this out on my next treewide.
+> On Mon, Jan 27, 2025 at 08:38:50PM +0000, Mark Brown wrote:
 
-Thx for the feedback
+> > have the ability to save the vmlinux.  Poking around the LKFT output it
+> > does look like they're doing that for the LKFT builds:
 
-Best
+> My understanding was that becuase CONFIG_DEBUG_INFO_NONE=3Dy is set, we
+> actually don't have enough info to resolve line numbers.
 
--- 
+The arm64 and arm defconfigs which are the main ones I'd end up looking
+at both set CONFIG_DEBUG_INFO (_REDUCED in the case of arm64), the trace
+you posted was from arm64 so unless it was some config that overrode
+things there ought to be info.  x86_64 which I guess you might use more
+indeed doesn't have it.
 
-Joel Granados
+> I've tried running decode_stacktrace.sh on the vmlinux image linked
+> above, and indeed we can't get line numbers.
+
+That was a random build I pulled out which turns out to be a tinyconfig
+rather than the specific build that was used - if we look at an arm64
+defconfig (your trace looked to be from arm64):
+
+    https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.13-rc7-85=
+84-gd4639f3659ae/testrun/27028517/suite/build/test/clang-nightly-defconfig-=
+40bc7ee5/details/
+    https://storage.tuxsuite.com/public/linaro/lkft/builds/2sDW1oYDQrsEOOs4=
+L6yoysbu9aS/
+
+I'm able to decode (just feeding a random log message in, no idea what
+specific build generated the log message so the line number is almost
+certainly wrong):
+
+   $ echo [   62.184178]  d_same_name+0x4c/0xd0 | ./scripts/decode_stacktra=
+ce.sh /tmp/vmlinux
+   [   62.184178] d_same_name (fs/dcache.c:2127) =20
+
+--aZFSBvZRh7wr7T/o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeYyg4ACgkQJNaLcl1U
+h9ABLwgAhnkclVNICA/aHT+23arfK9S3L44hGHHrDVOokd5JPC5CibjVlNYz2UM+
+U+ZLTV1r6XJlKPI0tgmNhjyrmBSNqwz3BcjPlldwGBJRiDkD04sFjfaVYh+5Rlun
+iAQ0QYQvft1v0gquWilwLZ1TrGlI6x81hk2c7Q/b84HIG9zpz7JA+/7Xe4gr99Wi
+v2/eFlc2Y/NpacFMJnLPTt+KtugL3TllfyHU/Oh5USO4j7oZyYU9i9PGG89O/9oh
+hKkFzlD8/aYhngT8QYGN75uAFZm1fgmkdCv8cLpmJft3OM9zkw8CyJf2zO5J+T9w
+KmhavpIYql2a088i5rZnrtnYwnqgaA==
+=2o/n
+-----END PGP SIGNATURE-----
+
+--aZFSBvZRh7wr7T/o--
 
