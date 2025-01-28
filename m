@@ -1,102 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-40231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF12A20B59
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 14:37:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B23A20B5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 14:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4750E3A66AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B33A3A66DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2025 13:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8BA1A83EF;
-	Tue, 28 Jan 2025 13:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602661A83EF;
+	Tue, 28 Jan 2025 13:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BM/I/aVo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nl5I/2nW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072981A2567
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 13:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343151A23B6;
+	Tue, 28 Jan 2025 13:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738071434; cv=none; b=YlG8gZPR+k/Ukkcij+MfXOZW/KPYzbKdrmkABIHvazwqmxYuHcZA6Okmy/Ncd/siowXfVNU/cYQySDg51LsZKoE8BVlLI6iy9QqWg7vCH2ID8qjH1jzJea73cULp+82LHiIrwxxs9lbO5ZPyi0QYV3W15xQVVcLPFpJNcHgt9Nw=
+	t=1738071549; cv=none; b=JNaF/GIrEzdHbIQVaT/EPDoB6hXifZyyunJmtbmszBvaYCExtsegC+OV+NWdi7423DGMLECEA4pB2pUChadQGsxibU6pFKa0/s18ECxkjWygnIcS2swLLdf/DmKPl6EnSzhnZ6a/DEm0jGnV3duydBbHLoz20otGid6OoyjW3/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738071434; c=relaxed/simple;
-	bh=za4jWSIXiWnx1/PtIdrlQUWfgRWi88/FEbsBClDq++Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NbOl1s3n/i92pAuw1mNcs3q1Kzb2d9khNgR3Wt9SZDySsg8VmeH6GxVTRKfprIRcRPSpviCQRUKgzJat0Ya3lnvrHH141feKbL1ocvibLopGeb71g5zAocHejP1HSzR7MzlZA033eRDGMbUkz11gE462I1fN25gDEzAapx+phAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BM/I/aVo; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46df3fc7176so51169731cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2025 05:37:12 -0800 (PST)
+	s=arc-20240116; t=1738071549; c=relaxed/simple;
+	bh=H0gmNTrTx7YtG/f4y5i6XlfQ0gWJCDAignL3fROT1yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFDIEzUkiVAjuSL7mKPyq+oXouW6dAaOBEmkPfSbPPnkRFB5iBM+XHfRBgQ0uhQrjnHhUhJd26cZar62lYpPHD9GNoy81EKpekMgkstot2N+qOtlqFGID/5qdA0NXULtJq5xXU8ElkeL3HLrY/rQHyPnXlsN/IQzyy0ui3ggNIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nl5I/2nW; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa684b6d9c7so139588966b.2;
+        Tue, 28 Jan 2025 05:39:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738071432; x=1738676232; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cEBqaIaDwYzpAfJb0Xza7F8apQH4HtqaJ+JjUwM8mEQ=;
-        b=BM/I/aVopvQmXAAU9Lx1lLYfIsFez4u45iXCOilKTl7APoK/QCR33ZVougxbmZ2gci
-         TW171voLB67P7eFXO54deYTFS2jCJ+VRUj7eNV1ZJS2fV++Ldaw73t7+w1eywC/EUeKm
-         eH/YKXNOz+nYR/rWsYV+53sm75gtKTIAmL3PA=
+        d=gmail.com; s=20230601; t=1738071546; x=1738676346; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TzaDT6E8ldXsPjOp4GLG1ShZZeCtmJHlgKtEwqC9QvM=;
+        b=Nl5I/2nW9tbPn3Xofy9rVwIKCXdQMUzPSHc6EWhpZslaRlnhF1BWp3RuIgZ8GPwCLL
+         jp17Gr+LaGZOL729I8ivk2tH9I6mOO1zO4ZPxpwTUzgbkGRPm1EVW51577qUpm4pmV2u
+         sEXQU3uaBO1UWJHgRZqrJeALNYvd2YLqfv9Vbj+SYFgDBNPltP2ofMTcS5jNvotBsMWu
+         qAsS6TRFVOLryAUrytGQaRasQS1AgAqwjjXEga2y+BLCy3l45YIVKcoEMzlYcWPV8r3a
+         Qpz2rCULhRsSnHMjO3tSEvUUbRjSJUSaexZyW5YJ6v1q6b84oMfR3cPnssPtwobEjni1
+         Y+zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738071432; x=1738676232;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cEBqaIaDwYzpAfJb0Xza7F8apQH4HtqaJ+JjUwM8mEQ=;
-        b=kYJfUvgl+Nv3sISnYP5mXNb5rwUVzBv58t0BFzsjlKhGHCA100yJwoVVaW9FfmQlmb
-         rss3JQJESca5PnAjZe+RI7FPJnuqUicn227jIVqZT8XUYonIGem05tALKeT2rcx17sJ5
-         PbuOXhF6m+8a4kAdFGl1Fe7YrwG1WKZg0CsC9rmcYlLDge+YEDOdl4JfCp53P6fI0goj
-         lqF5XflH+5Tp4Dben5p2OE2cZVaZKNH2ZCiY1beuPSd6HuwjiRVKycfSCvt7jykfySqS
-         DQ2PValpZScATfzTuRy9u8/ukcjjcqdM/mYFsHziac7ZpejWUZ4e8ZoFXadM6V2XfHEh
-         4Psg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSQWEZfJfBqKkQLjo2VIAHL5KTwM6FKK19YFawcerHVS2kQVqrkbnpjqzDYtrGi3La6TM75w2s+/kbl6ng@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1riL79I4lfxlD4fd+QcPh60wWO9uRxSAleYTEs6bzyzMQRlsP
-	vi2QYzv4FYDSL3b3VUNuOJQ7neobbTilvfxqUCtveesxrHh0qPyZ+n4swrWsnDNS3Y3873MgkYQ
-	CCY8g2WujIqQfNjcMqB5/HgQa963fhTlDiUCQEg==
-X-Gm-Gg: ASbGnctIdgQepf7G5ybcaPuJg5XtTnkln2HSOCF/LAjDdLcfc6VnQRRcFZXK0kaiSDA
-	aATIfo6Oqbjm3jUEY42bpnb0Y6kAOLpmb1QJDFMd6POipIa8gKOvs2D4Yt7u5ts1+gLkKm3c=
-X-Google-Smtp-Source: AGHT+IFWTIAnK+5eL7HyrGG7lpTg04Tgrx5YKQ2A5MNEXhLez1EsL/JNf1CxyLCjHr2w2Q9lyVqeWMCdUDReSZN1y/4=
-X-Received: by 2002:a05:622a:1311:b0:467:5eb6:5153 with SMTP id
- d75a77b69052e-46e12a3f746mr729277911cf.19.1738071431912; Tue, 28 Jan 2025
- 05:37:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738071546; x=1738676346;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TzaDT6E8ldXsPjOp4GLG1ShZZeCtmJHlgKtEwqC9QvM=;
+        b=cZPuDdC+Hh1+W+v0Yw+Jogiol1pTVTjGBCPc8Uqy1wnXl6REVRVe8sz/Z56xSF1O5q
+         pxMLFQtCh4xjGg4PVXA879wfEcNWrn4QUu9dJYBDbysvYonkwdsq8jThjHmjwtZ7RqWF
+         U+h8BQye0yYMkgjMawdSAeaHDktpfLX7RHNEGOTyP6AOo0k9kffE71DO5UkbUPuooADv
+         ycQpxDGSOPvXe1gY5P2kSY0uM0b6IPbBwQ0WLdZagvJ/FUGC/FkuePaPn4LbzwA4fm+5
+         6Mkuj17nStTxs/3qlUNSB/3KuTJ76RLG8GJ/N070ny9tykJ8lOeNC9nrafVPAJj1xktP
+         5wnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUph6945OwppsDb1M25STUjOKPcPW0hHkblJLRZx9akJMav7nk4IDnQeZZjDO/DSuQhD9sOiX65Kq5Jb3Ev@vger.kernel.org, AJvYcCVKaQriLysgbW4obeu1NFONyEahReeGv1YfuvGISBHY0NGEH/DIH1AH0QLYSm22PcjuEOySwo9XyWwDnaaH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSECNwLdKQ0pQRCZtDnX6DQpot6xduSbjNUtXFbWUUl4sfLAc6
+	qAiAx7CQbfS7Kg+RmoPJh/93LzdjKiQ9a1MV17vKhoTyYA9DaFr2Iy01xg==
+X-Gm-Gg: ASbGnctDlkERqL0pic2eBgvnOJysh3MkczWjv+YS8jD+2ovP43V0IZ1aDrLvBwh6tzv
+	OT45WS8WMerU83jUsscqIfk3DNmQkQOAAKuM15YMjkm3+1rOL3LY1ethuckdnizuARGhsgGDnDm
+	ZgWXlmhGfz7+f5tMYrzFziCJCjpCxAHD304vump3HUxRckX6U8nLPTYc5DBmcv4kfUaSPy5g5tV
+	u2/rvERnnavUR0Mx3uigtmETxahPUMOA4c47j572kT7jOMslp1Y97s9/ZmsFHs5TG+DwSCJ/LD5
+	lTy+rdEPQK9Np9h9X6VjjvPw4CJQ
+X-Google-Smtp-Source: AGHT+IHo+zkHKoDYgw5qXmmn54Y2fsEOyqbvIazuQC8g8pTWN30QWn/GP1YEgVNWZmTa5ehq0AlGzg==
+X-Received: by 2002:a17:907:9802:b0:ab6:949f:c52f with SMTP id a640c23a62f3a-ab6949fccf2mr935422666b.28.1738071546128;
+        Tue, 28 Jan 2025 05:39:06 -0800 (PST)
+Received: from f (cst-prg-69-60.cust.vodafone.cz. [46.135.69.60])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6c7366dd0sm81505966b.8.2025.01.28.05.39.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2025 05:39:05 -0800 (PST)
+Date: Tue, 28 Jan 2025 14:38:57 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [linus:master] [pidfs]  16ecd47cb0:  stress-ng.fstat.ops_per_sec
+ 12.6% regression
+Message-ID: <ea7fq465sidc3gonlqcd33s64tzjogdo2lhnye5tau22pbs4d5@426xzgsios3q>
+References: <202501272257.a95372bc-lkp@intel.com>
+ <20250128-machart-bemessen-edd873223e02@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-3-mszeredi@redhat.com>
- <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
- <2041942.usQuhbGJ8B@xev> <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
-In-Reply-To: <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 28 Jan 2025 14:37:00 +0100
-X-Gm-Features: AWEUYZmizeJU0a7RXrBJlqhjTqK1mNWtSBDQH9Nt1-ZaM-h_jUVyMC5_wxbnhOg
-Message-ID: <CAJfpegs7n5eO6yOms+_TqeXGrN=OaJbjRB9qVm4VsW7JpWG5Xg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
-To: russell@coker.com.au
-Cc: Miklos Szeredi <mszeredi@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250128-machart-bemessen-edd873223e02@brauner>
 
-On Tue, 28 Jan 2025 at 13:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Tue, Jan 28, 2025 at 11:51:49AM +0100, Christian Brauner wrote:
+> On Mon, Jan 27, 2025 at 10:32:11PM +0800, kernel test robot wrote:
+> > 
+> > 
+> > Hello,
+> > 
+> > kernel test robot noticed a 12.6% regression of stress-ng.fstat.ops_per_sec on:
+> 
+> I'm confused about how this would affect stat performance given that it
+> has absolutely nothing to do with stat. Is this stating pidfds at least?
+> 
+> 
 
-> fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,  FAN_OPEN,
-> AT_FDCWD, "/proc/self/ns/mnt");
+stress-ng is issuing the "claimed" syscall in some capacity, but it also
+mixes in other stuff.
 
-Sorry, this should have been:
+In this particular case the test continuously creates and destroys
+threads.
 
-1)
-fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MNTNS, FAN_MNT_ATTACH |
-FAN_MNT_DETACH, AT_FDCWD, "/proc/self/ns/mnt");
+This in turn runs into pid alloc/dealloc code you modified.
 
-This notifies on mount and unmount events in the current mount namespace.
+I verified with bpftrace that contention around pid alloc *is seen*.
+
+one-liner: bpftrace -e 'kprobe:__pv_queued_spin_lock_slowpath { @[kstack()] = count(); }'
+
+@[
+    __pv_queued_spin_lock_slowpath+5
+    _raw_spin_lock_irqsave+49
+    free_pid+44
+    release_task+609
+    do_exit+1717
+    __x64_sys_exit+27
+    x64_sys_call+4654
+    do_syscall_64+82
+    entry_SYSCALL_64_after_hwframe+118
+]: 472350
+@[
+    __pv_queued_spin_lock_slowpath+5
+    _raw_spin_lock_irq+42
+    alloc_pid+390
+    copy_process+6112
+    kernel_clone+155
+    __do_sys_clone3+194
+    do_syscall_64+82
+    entry_SYSCALL_64_after_hwframe+118
+]: 568447
+
+there is of course tons more
+
+So the new code is plausibly slower to alloc/dealloc and is lowering
+throughput as a result.
+
+I'll note though that thread creation/destruction has pretty horrid
+scalability as is.
 
