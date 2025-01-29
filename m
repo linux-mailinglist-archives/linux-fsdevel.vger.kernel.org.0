@@ -1,204 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-40344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5FCA225A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 22:26:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E9AA225DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 22:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 703F21886E1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 21:26:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5442188733E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 21:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785481E376E;
-	Wed, 29 Jan 2025 21:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5121E3793;
+	Wed, 29 Jan 2025 21:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HWIcm2I6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kj8yJsPq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DC71946A1;
-	Wed, 29 Jan 2025 21:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A170122619;
+	Wed, 29 Jan 2025 21:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738185983; cv=none; b=iEbiqEXTZLW6WEr3hrh7xZdr82Qauz28hk+xawu3oc/i4hlEeSsmwmvH9t4W4NZbExXJD+piDQoq7xJsWhwi27YtdCcrt9ucQiAlFeUNWjkHuvT+j5nv+vyKFkbMcL1DY+Dcz6MTG2WxXEoxyVRB/l1H2VfhNKD8tM+f9G/EgJs=
+	t=1738186271; cv=none; b=JPWoAs72cjLYWvwvSiigHocClhc+PTj4FLxqLSWB06Xxa9ln4vV/r19dktVn0/dDu62Q2AcM4kFE7dcOBPy3VycI/iQP4+mNJ5MkOaM9OJdAkP3+CsH/t6LGv/1XUI3dJRWC61LprK7+s8L0x7bUmInBimc82lDY0TdxqfMvjCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738185983; c=relaxed/simple;
-	bh=byvzvZ4nrjtenuUX2lDK4vlgPILOmRf2eNio8SV79iM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m56z3JHV8rhXK/2RbgJgBKwxGcs9QVysCdtCOfsh2jiMY+8WxH95BJ10jqps3EIUyw9zqWQR0PYZxAHOL1/vTWOL/aVp9kfBE5sgzdRmKtqDJ0j27B4kGA9ZXYRuDGAR5NkEv5bDQN0IZ91HC+WGc6dNuhGVHg5FXR24k/dodHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HWIcm2I6; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=uiFP+ASZV/Dz+L0pnEo/cVSLCLFclGVt8Lwa+muaxSk=; b=HWIcm2I6bfgY58V7B67PhpBptQ
-	wjvnbTVxQqTuZO7mV0HBV3mkMx5FsnWssRKh5bezQ0pMD3SwIDnPaQ+lezRvu4PzkvdiD56G4qIwj
-	ekrMnQflqhlDi+KxCXzzQEiI5sxEmYuPwFTAjpKPti6zHYVESIX8f+I1kQ12/cgXsfEW54voUW742
-	luAWM7bCYxDIHQSO2y5gshWsvRG/yaj4nP6Eei968sr1JohwlYC1TUz45lWtlloNX6h4CR0a0WCO7
-	1bIdb0P4LXtJ+8QSYH93ELsXgrnyKw9Llj1aRpCLp8QhX3n+RqdwgI20bvWD0NRGVz/YRms/eSmZ7
-	0z61h4Vg==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tdFZY-000lpn-VB; Wed, 29 Jan 2025 22:26:14 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Teng Qin <tqin@jumptrading.com>
-Subject: Re: [RFC PATCH] fuse: fix race in fuse_notify_store()
-In-Reply-To: <efba1076-d14c-488b-954a-856e0427f917@bsbernd.com> (Bernd
-	Schubert's message of "Wed, 29 Jan 2025 20:30:56 +0100")
-References: <20250129184420.28417-1-luis@igalia.com>
-	<efba1076-d14c-488b-954a-856e0427f917@bsbernd.com>
-Date: Wed, 29 Jan 2025 21:26:14 +0000
-Message-ID: <87ldut5n2h.fsf@igalia.com>
+	s=arc-20240116; t=1738186271; c=relaxed/simple;
+	bh=XOPhAyMINDBxOdOWfa8NSmmOFwzOegM22M4vc+Ci4pA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDlK2DMY3dfOlzSRfId8es9Du/oLYZxPmtH51GPC7RIL5AdCaaF8bjmfSGU/KXvmqPhIw6w4ECcSrEfnMy7E2OWFbqNYKSmtHfDYE9XJ9gKm+13Y7Aq5SrnNFhwtpfQdrBDW85NUp5++dtsmQwq5QHpJzziDQrUEFC5l9yHb2Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kj8yJsPq; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5439a6179a7so60187e87.1;
+        Wed, 29 Jan 2025 13:31:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738186268; x=1738791068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KmQghTxrSNZIJicf8St9hkhO8RNvDDXNdb0xqgUBNEQ=;
+        b=kj8yJsPqaLn3iStmp4b8g2FndvG8wpLgJGBq43Zc1ZMKCT4RpRkJZKHV4sPuNTOx87
+         +a8C59mp313F7Zd354KnxC9a972QC/c5Ua32E7d0qQayFRKsCSPWcGY9+UEN+8Q1aLKm
+         qqi7hvqW95ZvZtHJ/OjOBrsuVMpEIYvn2YaR6ZeJIWROk6C5iqpgU2uqxSANCLUhkiUU
+         vF+n3zGv7IxQd24AJ9pOEPQNMQFPMWoHR8/WsgSmyOxtbReqiQt9Ylto4rexEPXnFPV/
+         i+feGmvEl6UYHKlAXLOdH1Sf6zBImb6+EGxiwEm46NlI0Q9HQ21ubTa6Mnt5i7UCi2jb
+         FXpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738186268; x=1738791068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KmQghTxrSNZIJicf8St9hkhO8RNvDDXNdb0xqgUBNEQ=;
+        b=O5vplB57vU+KezRDomccp0ICd0v6THXM8XzR7/IBfnjmIZZmTcFzWVlObNwRKQt0Py
+         jLAuAxOyJKG6lMDVhdbcCVhgGywR7+4gp9xy1QTV87e+zIQYjJJOaQCezb5ZS9tCSnL3
+         4fHjXMLlt/zD9tcsH6Xd+rA2swODDf75/B9fFnRNq2QvBYqCu7aWY7D7rJekGnulDKmI
+         7kRBpx/LtUHnLyzIF8btO+KwmaqKywk7N23cfQmVaAPLjQ+2WQCfSPsq4RIQwaf7AFaE
+         xVjGngiPduBb5aDBAu41lLKODEGQFiCTr9ebmZ4+BuevahjU3FsL4qHz5dvJVM834Cbj
+         KixA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoVRSdWgtbaC+yH5OCUhhkJaFJ1j5PXk6BcBO7xTV3qwqcpEVkCsExkaAD9AxDHDaNRkrYT4sY5Ny2pllcKw==@vger.kernel.org, AJvYcCXKhXdY5I/t9rAB+DrCk4Co/iMFsGK6jwcA29wPy5jg79GKRGNw306j6nrae1/XokfhlQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbjPD7OUPG3oVrsj41uZ0mhjpcARpihFhGvaKNlFNqmm4xfsrQ
+	pDDFZWi/reqZDx2lDtHPV7/KY9mxMh8J+D8Nz93nDGMMxrCSOHAIPAl0WuVDC9YrnlI9Y+4jv3Q
+	QNE3x8Ptu2mocVPpERQScMo+aMnJnQ9Hh
+X-Gm-Gg: ASbGnctuuXvRuSTsYV2l2jJcBb49njVkN1FJgmHT2e3tIR53lS7eXWT0hpanB03E8oJ
+	9LYaAo3dsSpfci8YPXqFxIS+dL/dIE9E8dJFM3StfEH+A5LG9GQHJJLtyfFR1OkxPyRyiPG2p
+X-Google-Smtp-Source: AGHT+IEBGwB23rborskxzA4KFILlvubMz9LTFxq7qUdNdXQohhHPpB7ObVSyC3+3goPahJXRZTfTGeYV2c+uaP+vEus=
+X-Received: by 2002:a05:6512:104b:b0:543:e4de:3e12 with SMTP id
+ 2adb3069b0e04-543ea3fa8f9mr283827e87.18.1738186267536; Wed, 29 Jan 2025
+ 13:31:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <CAPhsuW4psFtCVqHe2wK4RO2boCbcyPtfsGzHzzNU_1D0gsVoaA@mail.gmail.com>
+ <itmqbpdn3zpsuz3epmwq3lhjmxkzsmjyw4obizuxy63uo6rofz@pckf7rtngzm7> <CAOQ4uxhgiUw3b2i7JYm5qZX1qPvYJshrCWy_i0BkPVtmzKo1AA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhgiUw3b2i7JYm5qZX1qPvYJshrCWy_i0BkPVtmzKo1AA@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 29 Jan 2025 15:30:56 -0600
+X-Gm-Features: AWEUYZmV6e0eAXyKiyCo4qRehtAjNyn3DW8G2A8fcAPW2dyfbmWc7iZoU1McASU
+Message-ID: <CAH2r5muKu3p6jgjMeQHe=Jq_v0dhpNGWQSS=5u+rzYPb152RRA@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] fanotify filter
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	lsf-pc@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bernd,
-
-On Wed, Jan 29 2025, Bernd Schubert wrote:
-
-> Hi Luis,
+On Thu, Jan 16, 2025 at 8:42=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> On 1/29/25 19:44, Luis Henriques wrote:
->> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index 27ccae63495d..9a0cd88a9bb9 100644
->> --- a/fs/fuse/dev.c
->> +++ b/fs/fuse/dev.c
->> @@ -1630,6 +1630,7 @@ static int fuse_notify_store(struct fuse_conn *fc,=
- unsigned int size,
->>  	unsigned int num;
->>  	loff_t file_size;
->>  	loff_t end;
->> +	int fgp_flags =3D FGP_LOCK | FGP_ACCESSED | FGP_CREAT;
->>=20=20
->>  	err =3D -EINVAL;
->>  	if (size < sizeof(outarg))
->> @@ -1645,6 +1646,9 @@ static int fuse_notify_store(struct fuse_conn *fc,=
- unsigned int size,
->>=20=20
->>  	nodeid =3D outarg.nodeid;
->>=20=20
->> +	if (outarg.flags & FUSE_NOTIFY_STORE_NOWAIT)
->> +		fgp_flags |=3D FGP_NOWAIT;
->> +
->>  	down_read(&fc->killsb);
->>=20=20
->>  	err =3D -ENOENT;
->> @@ -1668,14 +1672,25 @@ static int fuse_notify_store(struct fuse_conn *f=
-c, unsigned int size,
->>  		struct page *page;
->>  		unsigned int this_num;
->>=20=20
->> -		folio =3D filemap_grab_folio(mapping, index);
->> -		err =3D PTR_ERR(folio);
->> -		if (IS_ERR(folio))
->> -			goto out_iput;
->> +		folio =3D __filemap_get_folio(mapping, index, fgp_flags,
->> +					    mapping_gfp_mask(mapping));
->> +		err =3D PTR_ERR_OR_ZERO(folio);
->> +		if (err) {
->> +			if (!(outarg.flags & FUSE_NOTIFY_STORE_NOWAIT))
->> +				goto out_iput;
->> +			page =3D NULL;
->> +			/* XXX */
+> On Thu, Jan 16, 2025 at 12:46=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >
+> > Hi!
+> >
+> > On Tue 14-01-25 11:41:06, Song Liu via Lsf-pc wrote:
+> > > At LSF/MM/BPF 2025, I would like to continue the discussion on enabli=
+ng
+> > > in-kernel fanotify filter, with kernel modules or BPF programs.There =
+are a
+> > > few rounds of RFC/PATCH for this work:[1][2][3].
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Motivation =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >
+> > > Currently, fanotify sends all events to user space, which is expensiv=
+e. If the
+> > > in-kernel filter can handle some events, it will be a clear win.
+> > >
+> > > Tracing and LSM BPF programs are always global. For systems that use
+> > > different rules on different files/directories, the complexity and ov=
+erhead
+> > > of these tracing/LSM programs may grow linearly with the number of
+> > > rules. fanotify, on the other hand, only enters the actual handlers f=
+or
+> > > matching fanotify marks. Therefore, fanotify-bpf has the potential to=
+ be a
+> > > more scalable alternative to tracing/LSM BPF programs.
+> > >
+> > > Monitoring of a sub-tree in the VFS has been a challenge for both fan=
+otify
+> > > [4] and BPF LSM [5]. One of the key motivations of this work is to pr=
+ovide a
+> > > more efficient solution for sub-tree monitoring.
+> > >
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Challenge =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >
+> > > The latest proposal for sub-tree monitoring is to have a per filesyst=
+em
+> > > fanotify mark and use the filter function (in a kernel module or a BP=
+F
+> > > program) to filter events for the target sub-tree. This approach is n=
+ot
+> > > scalable for multiple rules within the same file system, and thus has
+> > > little benefit over existing tracing/LSM BPF programs. A better appro=
+ach
+> > > would be use per directory fanotify marks. However, it is not yet cle=
+ar
+> > > how to manage these marks. A naive approach for this is to employ
+> > > some directory walking mechanism to populate the marks to all sub
+> > > directories in the sub-tree at the beginning; and then on mkdir, the
+> > > child directory needs to inherit marks from the parent directory. I h=
+ope
+> > > we can discuss the best solution for this in LSF/MM/BPF.
+> >
+> > Obviously, I'm interested in this :). We'll see how many people are
+> > interested in this topic but I'll be happy to discuss this also in some
+> > break / over beer in a small circle.
 >
-> What is the XXX for?=20
+> Yeh, count me in :)
 
-Right, I guess I should have added extra info there.  I just wanted to
-point out that I'm not sure about the value to use for the min_t():
 
-  - If we have a folio, I believe it's clear that we should use
-    (offset will always be '0' except for the first iteration);
-  - If we don't have a folio, I'm using PAGE_SIZE
+I am also interested in this topic, especially how we can better
+handle fanotify for network fs
+(or perhaps cluster fs as well) that already support notify at the
+protocol level.  I had
+added fs specific ioctls for allowing apps to be notified about remote
+changes (SMB3.1.1 change notify
+e.g.) but was interested in how to make it easier to wait on changes
+(e.g. to make it possible
+for fanotify/inotify to work for network fs)
 
-I *think* that's the correct value.  But I may be wrong.
-
-> Also, I think you want to go to "skip" only on -EAGAIN? And if so, need
-> to unset err?=20
-
-Ah, good point!  Thanks!  So, something like this should fix it:
-
-		if (!(outarg.flags & FUSE_NOTIFY_STORE_NOWAIT) || err !=3D -EAGAIN)
-			goto out_iput;
-
-I'll wait until tomorrow before sending v2 because I was hoping to also
-have some feedback on the idea of completely dropping the use of the
-NOWAIT flag.  Not sure you have some opinion about it, or maybe Miklos, as
-this patch was originally from him.
-
-Cheers,
 --=20
-Lu=C3=ADs
+Thanks,
 
->> +			this_num =3D min_t(unsigned int, num, PAGE_SIZE - offset);
->> +		} else {
->> +			page =3D &folio->page;
->> +			this_num =3D min_t(unsigned int, num,
->> +					 folio_size(folio) - offset);
->> +		}
->>=20=20
->> -		page =3D &folio->page;
->> -		this_num =3D min_t(unsigned, num, folio_size(folio) - offset);
->>  		err =3D fuse_copy_page(cs, &page, offset, this_num, 0);
->> +		if (!page)
->> +			goto skip;
->> +
->>  		if (!folio_test_uptodate(folio) && !err && offset =3D=3D 0 &&
->>  		    (this_num =3D=3D folio_size(folio) || file_size =3D=3D end)) {
->>  			folio_zero_segment(folio, this_num, folio_size(folio));
->> @@ -1683,7 +1698,7 @@ static int fuse_notify_store(struct fuse_conn *fc,=
- unsigned int size,
->>  		}
->>  		folio_unlock(folio);
->>  		folio_put(folio);
->> -
->> +skip:
->>  		if (err)
->>  			goto out_iput;
->>=20=20
->> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
->> index e9e78292d107..59725f89340e 100644
->> --- a/include/uapi/linux/fuse.h
->> +++ b/include/uapi/linux/fuse.h
->> @@ -576,6 +576,12 @@ struct fuse_file_lock {
->>   */
->>  #define FUSE_EXPIRE_ONLY		(1 << 0)
->>=20=20
->> +/**
->> + * notify_store flags
->> + * FUSE_NOTIFY_STORE_NOWAIT: skip locked pages
->> + */
->> +#define FUSE_NOTIFY_STORE_NOWAIT	(1 << 0)
->> +
->>  /**
->>   * extension type
->>   * FUSE_MAX_NR_SECCTX: maximum value of &fuse_secctx_header.nr_secctx
->> @@ -1075,7 +1081,7 @@ struct fuse_notify_store_out {
->>  	uint64_t	nodeid;
->>  	uint64_t	offset;
->>  	uint32_t	size;
->> -	uint32_t	padding;
->> +	uint32_t	flags;
->>  };
->>=20=20
->>  struct fuse_notify_retrieve_out {
->>=20
->
-> Thanks,
-> Bernd
->
+Steve
 
