@@ -1,166 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-40319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61C9A222B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:20:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B49A223B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 19:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2B61884392
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 17:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F9E3164414
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A7D1E0B86;
-	Wed, 29 Jan 2025 17:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597951E1C3A;
+	Wed, 29 Jan 2025 18:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tdcLNM04";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7NcLMcMH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tdcLNM04";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7NcLMcMH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XhgSWf2R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58F11DF742;
-	Wed, 29 Jan 2025 17:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91881917D9;
+	Wed, 29 Jan 2025 18:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738171215; cv=none; b=bg/3b6X+/wqIu8oefnjXKD1J7gX64HDYV4ema0tgV+xyDnQalB0N9TwreIO0+jfTPm29DefO8o1b/KMtHgYRryf654rUkFqxXE1aUpnDQxeG3D2fK8UcgNFImM8L8NJG7jfq6qj78ohBk6Zb/M6erycotn/d7VPWmuwp1a5fXqE=
+	t=1738174673; cv=none; b=FW5MCg4tginJnKAcYuaM3V9LjTJMtHLDljDjK5E8uWoDt4QEDjsDlfp+WWQT8dUrNQOC2OvZso5FumJnu5dUZ9bx6yL765EpqmijKdURyBqOwrrZefonDf76bIJiRoHi6VYLMVIOnoXaQKCYegq/Wi9LSOk/sjWfeCdsXB8gOy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738171215; c=relaxed/simple;
-	bh=gIhxg0cAPjdLLZCbQoxAKYUV/FgS44R6EUSdwCqMXVU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A/YyqMQXvc1sMB61XT9qOGFu+4KiXGrHlB8RIyZIOGF0g3anM93L0kLtLZm4fa3awT2wRQZSkzWdfyLnXkX9jlxGh6ft4KhXd8fidGeSu3z6DLeOUnsc02BNY/mPVulPebBpBgpRT6I3wDPYpD6BGh9Nc+x8h1bEhHXrAauztv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tdcLNM04; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7NcLMcMH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tdcLNM04; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7NcLMcMH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from hawking.nue2.suse.org (unknown [10.168.4.11])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 19CA11F365;
-	Wed, 29 Jan 2025 17:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738171212; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8PVjeOTkMBSAcHcY2G8sb0Gayt/prH91RL5Rc6LjVwc=;
-	b=tdcLNM04Cqj+90LwHPVXU9pD7aEcIG0dz44MyQoHcPJ1RHkL7YdkQe4sJrCEP5w7EOw6iV
-	SjKu9vm7rTmQ0lomV3p/o0Z1sS0rCn84O7m2vRQxISNeeOAkZELuSz4d9ao9W7b+ihn10W
-	HBr34EZ9mxmW26uPhIwenHhiw+sXbX4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738171212;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8PVjeOTkMBSAcHcY2G8sb0Gayt/prH91RL5Rc6LjVwc=;
-	b=7NcLMcMH+mw0wonQIjB2h7Ygzbns9AdLEGyOVYKp/gC3mPlgG1PGA6H9bIgtW00RfCNo6u
-	tEDcdyzHDLR3/8AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738171212; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8PVjeOTkMBSAcHcY2G8sb0Gayt/prH91RL5Rc6LjVwc=;
-	b=tdcLNM04Cqj+90LwHPVXU9pD7aEcIG0dz44MyQoHcPJ1RHkL7YdkQe4sJrCEP5w7EOw6iV
-	SjKu9vm7rTmQ0lomV3p/o0Z1sS0rCn84O7m2vRQxISNeeOAkZELuSz4d9ao9W7b+ihn10W
-	HBr34EZ9mxmW26uPhIwenHhiw+sXbX4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738171212;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8PVjeOTkMBSAcHcY2G8sb0Gayt/prH91RL5Rc6LjVwc=;
-	b=7NcLMcMH+mw0wonQIjB2h7Ygzbns9AdLEGyOVYKp/gC3mPlgG1PGA6H9bIgtW00RfCNo6u
-	tEDcdyzHDLR3/8AQ==
-Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
-	id 05E514AAD7B; Wed, 29 Jan 2025 18:20:12 +0100 (CET)
-From: Andreas Schwab <schwab@suse.de>
-To: linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org
-Subject: Re: Multigrain timestamps do not work on RISC-V
-In-Reply-To: <mvmv7ty3pd8.fsf@suse.de> (Andreas Schwab's message of "Wed, 29
-	Jan 2025 11:07:15 +0100")
-References: <mvmv7ty3pd8.fsf@suse.de>
-Date: Wed, 29 Jan 2025 18:20:11 +0100
-Message-ID: <mvmikpx4jw4.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1738174673; c=relaxed/simple;
+	bh=/XvFYnnOViFH3OGSlL8qyvNFJbMFSdz5+hQNIUYyXgc=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=siwKy5lGUTi156Zt1vb5GQ2+oaZWFFku45u1v48C9xSLqaNuG1AUdr4X3UcYvTuqMZr6OBeE9c6Nr2zHvoZsia6HCrJvQusu9e11xlpPiQ6OdzctwVxetU1x7MFT1XKUXYmQyZy9OP6u9rbSGQu7qXLeDF9Kd1ET70DcfACe0ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XhgSWf2R; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1738174672; x=1769710672;
+  h=subject:to:cc:from:date:message-id;
+  bh=/XvFYnnOViFH3OGSlL8qyvNFJbMFSdz5+hQNIUYyXgc=;
+  b=XhgSWf2RYjmkTBt8lnhf67z9Qy62jlQeXCNursWCPy0M77gvUkLToaec
+   SyzhIC50aCCkvLdmW74B0eqMGRDsxjkN431Kx+AF3XWOuxQiASlsD0bPk
+   vfe88NqK0ULAR6LI9i7huQE+oAppINxduEd/PLiNEWzKdjQjsaYoCIeUK
+   jQkUy7T8hG21KN+zok7p3cfHkulID1bD5cSoAhuf/rwmIR4DEez8Ptlah
+   aTTGlDYsufIu82jwFseuw/H6zOSayjfalkqmPX+9Tf+3pfryumLztPy1N
+   aQndpeLCfeMZR9D0Xw17OFEUzd77ORXsoiLwlszHerjY+odoAsP+RiA6G
+   A==;
+X-CSE-ConnectionGUID: 8ORp0KlhRqGL+qgMDURCOQ==
+X-CSE-MsgGUID: 3o3vEdc2TwevYOutv9R0oA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11330"; a="38963239"
+X-IronPort-AV: E=Sophos;i="6.13,244,1732608000"; 
+   d="scan'208";a="38963239"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2025 10:17:50 -0800
+X-CSE-ConnectionGUID: w4WrpUeqRruo5DQNnArK+g==
+X-CSE-MsgGUID: WzaeOTwdRtquOnIPieU5dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,244,1732608000"; 
+   d="scan'208";a="109660676"
+Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
+  by fmviesa010.fm.intel.com with ESMTP; 29 Jan 2025 10:17:49 -0800
+Subject: [PATCH 0/7] Move prefaulting into write slow paths
+To: linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,Ted Ts'o <tytso@mit.edu>,Christian Brauner <brauner@kernel.org>,Darrick J. Wong <djwong@kernel.org>,Matthew Wilcox (Oracle) <willy@infradead.org>,Al Viro <viro@zeniv.linux.org.uk>,linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,almaz.alexandrovich@paragon-software.com,ntfs3@lists.linux.dev,miklos@szeredi.hu,kent.overstreet@linux.dev,linux-bcachefs@vger.kernel.org,clm@fb.com,josef@toxicpanda.com,dsterba@suse.com,linux-btrfs@vger.kernel.org,dhowells@redhat.com,jlayton@kernel.org,netfs@lists.linux.dev
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Wed, 29 Jan 2025 10:17:49 -0800
+Message-Id: <20250129181749.C229F6F3@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.20
-X-Spamd-Result: default: False [-4.20 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	RCVD_NO_TLS_LAST(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ONE(0.00)[1];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Jan 29 2025, Andreas Schwab wrote:
+tl;dr: The VFS and several filesystems have some suspect prefaulting
+code. It is unnecessarily slow for the common case where a write's
+source buffer is resident and does not need to be faulted in.
 
-> My guess would be that something in inode_set_ctime_current is going
-> wrong.
+Move these "prefaulting" operations to slow paths where they ensure
+forward progress but they do not slow down the fast paths. This
+optimizes the fast path to touch userspace once instead of twice.
 
-The bug is in the arch_cmpxchg macros in <asm/cmpxchg.h>, they mishandle
-atomic exchange of u32 values:
+Also update somewhat dubious comments about the need for prefaulting.
 
-    # fs/inode.c:2802: 	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
-    #NO_APP
-            ld	a5,-96(s0)		# _33, now.tv_nsec
-    # fs/inode.c:2802: 	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
-            slli	a4,s2,32	#, _49, cns
-            srli	a4,a4,32	#, _49, _49
-    # fs/inode.c:2802: 	if (cns == now.tv_nsec && inode->i_ctime_sec == now.tv_sec) {
-            beq	a4,a5,.L1248	#, _49, _33,
-    .L1205:
-            addi	a3,s1,120	#, __ai_ptr, inode
-    .L1221:
-    # fs/inode.c:2809: 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
-    #APP
-    # 2809 "fs/inode.c" 1
-            0:	lr.w a2, 0(a3)	# __ret, *__ai_ptr_20
-            bne  a2, a4, 1f	# __ret, _49
+This has been very lightly tested. I have not tested any of the fs/
+code explicitly.
 
-Here the unsigned extended value of cur (a4) is compared with the sign
-extended value of inode->i_ctime_nsec (a2).  They cannot match if cur
-has I_CTIME_QUERIED set (the sign bit).  The lr/sc loop is exited before
-the store conditional is executed.
+I started by just trying to deal with generic_perform_write() and
+looked at a few more cases after Dave Chinner mentioned there was
+some apparent proliferation of its pattern across the tree.
 
-            sc.w.rl a1, a5, 0(a3)	# __rc, _33, *__ai_ptr_20
-            bnez a1, 0b	# __rc
-            fence rw,rw
-    1:
+I think the first patch is probably OK for 6.14. If folks are OK
+with other ones, perhaps they can just them up individually for
+their trees.
 
-    # 0 "" 2
-    #NO_APP
-            sext.w	a5,a2	# __ret, __ret
+--
 
-A redundant sign extension of the current contents of inode->i_ctime_nsec.
+More detailed cover letter below.
 
-    # fs/inode.c:2809: 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
-            bne	a5,s2,.L1211	#, __ret, cns,
+There are logically two pieces of data involved in a write operation:
+a source that is read from and a target which is written to, like:
 
-Here the sign extended value of inode->i_ctime_nsec (a5) is compared
-with the sign extended expected value (s2).  They match, and try_cmpxchg
-returns true, but the store never happend.
+	sys_write(target_fd, &source, len);
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+This is implemented in generic VFS code and several filesystems
+with loops that look something like this:
+
+	do {
+		fault_in_iov_iter_readable(source)
+		// lock target folios
+		copy_folio_from_iter_atomic()
+		// unlock target folios
+	} while(iov_iter_count(iter))
+
+They fault in the source first and then proceed to do the write.  This
+fault is ostensibly done for a few reasons:
+
+ 1. Deadlock avoidance if the source and target are the same
+    folios.
+ 2. To check the user address that copy_folio_from_iter_atomic()
+    will touch because atomic user copies do not check the address.
+ 3. "Optimization"
+
+I'm not sure any of these are actually valid reasons.
+
+The "atomic" user copy functions disable page fault handling because
+page faults are not very atomic. This makes them naturally resistant
+to deadlocking in page fault handling. They take the page fault
+itself but short-circuit any handling.
+
+copy_folio_from_iter_atomic() also *does* have user address checking.
+I get a little lost in the iov_iter code, but it does know when it's
+dealing with userspace versus kernel addresses and does seem to know
+when to do things like copy_from_user_iter() (which does access_ok())
+versus memcpy_from_iter().[1]
+
+The "optimization" is for the case where 'source' is not faulted in.
+It can avoid the cost of a "failed" page fault (it will fail to be
+handled because of the atomic copy) and then needing to drop locks and
+repeat the fault.
+
+But the common case is surely one where 'source' *is* faulted in.
+Usually, a program will put some data in a buffer and then write it to
+a file in very short order. Think of something as simple as:
+
+	sprintf(buf, "Hello world");
+	write(fd, buf, len);
+
+In this common case, the fault_in_iov_iter_readable() incurs the cost
+of touching 'buf' in userspace twice.  On x86, that means at least an
+extra STAC/CLAC pair.
+
+Optimize for the case where the source buffer has already been faulted
+in. Ensure forward progress by doing the fault in slow paths when the
+atomic copies are not making progress.
+
+That logically changes the above loop to something more akin to:
+
+	do {
+		// lock target folios
+		copied = copy_folio_from_iter_atomic()
+		// unlock target folios
+
+		if (unlikely(!copied))
+			fault_in_iov_iter_readable(source)
+	} while(iov_iter_count(iter))
+
+1. The comment about atomic user copies not checking addresses seems
+   to have originated in 08291429cfa6 ("mm: fix pagecache write
+   deadlocks") circa 2007. It was true then, but is no longer true.
+
+ fs/bcachefs/fs-io-buffered.c |   30 ++++++++++--------------------
+ fs/btrfs/file.c              |   20 +++++++++++---------
+ fs/fuse/file.c               |   14 ++++++++++----
+ fs/iomap/buffered-io.c       |   24 +++++++++---------------
+ fs/netfs/buffered_write.c    |   13 +++----------
+ fs/ntfs3/file.c              |   17 ++++++++++++-----
+ mm/filemap.c                 |   26 +++++++++++++++-----------
+ 7 files changed, 70 insertions(+), 74 deletions(-)
+
+Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org
+Cc: Chris Mason <clm@fb.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: netfs@lists.linux.dev
 
