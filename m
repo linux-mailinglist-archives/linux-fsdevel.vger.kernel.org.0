@@ -1,216 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-40286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C2AA21AEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 11:23:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA82A21B0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 11:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259B73A532F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 10:23:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E249418881EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 10:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF85E1B0435;
-	Wed, 29 Jan 2025 10:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FFE1B395F;
+	Wed, 29 Jan 2025 10:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b="vcwYiBEa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bA7iT9ap"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5644316C854
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 10:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A6A1B042F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 10:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738146195; cv=none; b=CQvjDjFzdLkzahLhkLpMjd88p4lw787NWqc10ZhxXE+uD8b5RfAqLlMG9u9vL9XDgf3ulAt3v9vs1uugJS3pFXNDA4jLq3h/EV6F64Vvw7C7I2LzPKddFxQmloiHGAdRxCSolW+uVa7L9kMBzlnzGu8nW8n9dPBt79Y55UEsaHA=
+	t=1738147199; cv=none; b=FkOeMeP0GGuNwllZF8QKNM9zBK8LRB1sXRoCQsa1V/CPLWTEwhoGV9YtsH2VRAZMbjCeMmB6jmcGo/PT569m6qgttNLXn1y7t6gw7YCoduT7hguWJz3w0zh5060VHOTEG9gviE2KN7Au379SbzUwa2ZgHCLyu3q0CjXJnVRmQ40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738146195; c=relaxed/simple;
-	bh=xgwRc/1ONSozeehQ8z3TORPSjFcNWEWiOPwPnGU/SB0=;
+	s=arc-20240116; t=1738147199; c=relaxed/simple;
+	bh=vssPK0nD1/h5wGO8AnO890UZ0NQ26xozx/LpQDg4W+k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h2ZaNk1pwbtr58PhCXMMVxkiQko3Sgvv28ZPNPlzERpn/pMHy/Tv2Jk7GQeaKKDSyyCSukXyQtwfLsgoHTRuWeNaTNJRmbNte3qkjUM01GfABJ0D6mJfE0GEATdb72LIdmyndUnfWuj6K3z8SYHgJMK3Q+kjTDcrBW52fGD45D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com; spf=none smtp.mailfrom=owltronix.com; dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b=vcwYiBEa; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=owltronix.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaef00ab172so1042739266b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 02:23:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20230601.gappssmtp.com; s=20230601; t=1738146191; x=1738750991; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xgwRc/1ONSozeehQ8z3TORPSjFcNWEWiOPwPnGU/SB0=;
-        b=vcwYiBEamZNhpZTtknPzd6skzIwKDnVtQYHN+VtxtHaFRvLZ2JcOdsZFj9je1GsrRP
-         DDyJFJZRofv38i+1FWh5dpnItiN3qS6yWly1/QK4cMm3kgC5jhla9obmhZWdKBNZ7rnT
-         A/Ysg/kxZ5pORyX2eACd4TtXMQpeeKpkGwACZqQERiEwHhKy0miVC16z8JuZC45Q9YHf
-         zCzw6anr8jbScwKJs88iF8Gpc7h2YvHrZdMO0sxyDbgAitCOvl63WK4tDmWcRWKvvQYj
-         2m1nIEe0d5aZhSEGo4qHbIyhGQFKULTrUVaYUHsiBVlox5eLHg0UG0GNfltyl90+SJav
-         Gm+g==
+	 To:Cc:Content-Type; b=BdVTKnwNWm9nZHNsi2qye04HRTzKB/OpGPG8qKvkJmr5W+iR0ZDWjDukm3N2dSnSMasTDTPtwBVi2uLSX8zxlqSDnc0doB3skyspZPY1oyDA4DrdszQ1q2p4uxOmXc9Gkdx2+1KlB2lJlLrc69iOrJouq76W6GUS6h+hEMGCl54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bA7iT9ap; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738147196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dqKdBaU8AgySuUL42mOJp5CyJnEGefGCIQtaqxiKjds=;
+	b=bA7iT9apCWniMgLf79eqWCM3Vv8ozX4LRinSLl6MlvuCBVwt8rffQpifJAbJZgsdpZgXLb
+	YulLlYUsqWgs6eZ3pU4QUZC2yBCJqFIpMDR5TiHzOiSVSf6GtEk8TrflZlyugeH3nvBxgK
+	neHNTDtu8/pkqsjlsn7miAt3W1b/f0k=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-446-zVrGCSfgNSqYY1yXQ3_Xfg-1; Wed, 29 Jan 2025 05:39:54 -0500
+X-MC-Unique: zVrGCSfgNSqYY1yXQ3_Xfg-1
+X-Mimecast-MFC-AGG-ID: zVrGCSfgNSqYY1yXQ3_Xfg
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aafc90962ffso576727966b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 02:39:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738146191; x=1738750991;
+        d=1e100.net; s=20230601; t=1738147193; x=1738751993;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xgwRc/1ONSozeehQ8z3TORPSjFcNWEWiOPwPnGU/SB0=;
-        b=L0iUwx547DmV8vP4IN/YpJe+K4/Hz5u8oJVqg0EreLn62s2NyNRkNopiCaWvqIiHlK
-         Da5Xw9xSjLsa+dr7OOMT1oijc9RwTwn+X4kTlVnoh/OKT6bPv9K7xnBBMvTaXUEGMk+P
-         sNGlLDgpEJnjD+sOMu8FyYanoxjoNkhiU1k2mpJWATHUqU0UTHCAlmhbgpSZeDPsxzNP
-         cDm9BpHeumalSFtPFWqOQQoFO9cxdiwVtzUS/wqgaG3bGKXZrWaxd99q4yXwu0dzhEAa
-         z6JLnWM04jMym5z8Wq9dsA7UYNCOIskhCkRv1Rue6gcgxOkoBK5zcZ3vhCLM6ntBciOe
-         r6gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9e4TZubZzie117MT5h6Wgc9fG4355hVjAHFNR0g3j88z0ChKwa+F4DzrBVYnGESHvWOKpR7rAtHoViYjc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtJZVoOuOuQIoW7W9EkWpaqbyBZJmmAp6kbUFrST/DrLpPn4VI
-	5MZOntWZLdT1LsJTLgYbOZjp1VNs4NUcQm2TifoVZ2T8Yz9ib3zRhjHMneTQKoCv8NcktcjgQVG
-	8yhYk88lj9MyxC9OGlmBvftAKLFuqbI9BTbeHDQ==
-X-Gm-Gg: ASbGnctQvdNgY7KcP1xyzZSJYGVblR9N1gXzTTJdszFNqlFh7bf0Usa77vla+UD544h
-	+0pUn2CVK4Khceg+glcYkd4IVbyhuGl6O/0pCTIGV/srqc2yrk28cqqUrEVFGTJR05y8JHvo=
-X-Google-Smtp-Source: AGHT+IE9d6LfbcU0wDNpEcTGDR9ln7RBsLHKBWG3fVvfG4lMTfyh+rEGVDJcsyB23DOFtvLGf0bQ9pubsFprQiPoUFc=
-X-Received: by 2002:a05:6402:4311:b0:5db:f5e9:6760 with SMTP id
- 4fb4d7f45d1cf-5dc5efa8bcdmr5710865a12.2.1738146191373; Wed, 29 Jan 2025
- 02:23:11 -0800 (PST)
+        bh=dqKdBaU8AgySuUL42mOJp5CyJnEGefGCIQtaqxiKjds=;
+        b=otohez0TXdRM5WAkp1IpSBjexPse8iErLXYH/NdJIs2yKLmBBucQh7VQGsC4WZuL9h
+         mEFaj8FV+s5PNGJwrnLxkU7bgfSNH8OZ0HPwf6Dy+GdJWPqJfJzoiIFNWE01jedcrw2g
+         YfwX8fSkNWuLP7O7RnnMdV2luEzGz+Ny2z/S11CkIpF6oSHJPhnQywHM3wEgBIfjJwXM
+         AjUOjvBrA5C8jpSoAOI/1clL6H3VIaOKr/RREPwlP42LQGZlsXGazpIbQx2FQEsxd6qu
+         5fujrVO9IES5RvCdl/vn1hbq82uAaleFVV2Ii8Qu0iblR5i35SjgBW5I3CIRJDAijKoF
+         DtmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUilUzkr2EM9nzd7F7zdhxDvx5LPBUCX8PuecUzIWLrUXCOxKf/vGFOuZ7NldP2rPetbOWnMmnGtFwdgwiH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ0DsMcLIunKYap17hpIoNqMdW+a5I5Ro5g9CLNPQIfy6n6vyd
+	FMBCVHC1xYD5aDZ5frJXAPqdI5nG6EI6Ch9JpsawgIRNDIRxyfysn8cAfb1dCcJy5MZjTmRK1Dz
+	QNNAPMw6VKbiTX0xnZ0rCtC+psQJUBj4KFGBaxlr5SF+7LNqFteJwN4K/oGzTsrdwGA8r3DqfeH
+	qQREyfmzDBhOxbNMxaTPnb0ZkdEiQqvpP0lIWTug==
+X-Gm-Gg: ASbGncsqDTI5F13iTLO41O1Z03IIHOXk0mjnBxHFuaVI4ejoZstxAQdBJvpZcvB/2Ku
+	ANvhu5WTEn6z6Jn7HVt/ybZglTjomsh2afBYTXzEiF9d/pDWowSknI6IahDBg6w==
+X-Received: by 2002:a17:907:7e9b:b0:ab3:8a8a:d1f2 with SMTP id a640c23a62f3a-ab6cfcec5b3mr255752266b.30.1738147193563;
+        Wed, 29 Jan 2025 02:39:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFyFzyC2+HvmiMTx04zDA2PVOfmL5xBeKfn9//agHjDTMjpjdsGqF9ldi9QNee/dMv8uaKgQRWKq8je6TuELi4=
+X-Received: by 2002:a17:907:7e9b:b0:ab3:8a8a:d1f2 with SMTP id
+ a640c23a62f3a-ab6cfcec5b3mr255750866b.30.1738147193239; Wed, 29 Jan 2025
+ 02:39:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123202455.11338-1-slava@dubeyko.com> <fd012640-5107-4d44-9572-4dffb2fd4665@wdc.com>
- <f44878932fd26bb273c7948710b23b0e2768852a.camel@ibm.com> <CANr-nt2+Yk5fVVjU2zs+F1ZrLZGBBy3HwNOuYOK9smDeoZV9Rg@mail.gmail.com>
- <063856b9c67289b1dd979a12c8cfe8d203786acc.camel@ibm.com> <CANr-nt2bbienm=L48uEgjmuLqMnFBXUfHVZfEo3VBFwUsutE6A@mail.gmail.com>
- <a09665a84d11c3d184346b1f55515ac912b061c3.camel@ibm.com>
-In-Reply-To: <a09665a84d11c3d184346b1f55515ac912b061c3.camel@ibm.com>
-From: Hans Holmberg <hans@owltronix.com>
-Date: Wed, 29 Jan 2025 11:23:00 +0100
-X-Gm-Features: AWEUYZnrsXzP2Xt_ZlJzA9oa1fTRpVosixwgwed2gSRg-PlOoBVS6lq-K17iGac
-Message-ID: <CANr-nt0nRZp=g2kbUqd5PoNbH-m9MWd_4x+LmR6x-gTT92MoVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] Introduce generalized data temperature estimation framework
+References: <d81a04646f76e0b65cd1e075ab3d410c4b9c3876.camel@ibm.com>
+ <3469649.1738083455@warthog.procyon.org.uk> <3406497.1738080815@warthog.procyon.org.uk>
+ <c79589542404f2b73bcdbdc03d65aed0df17d799.camel@ibm.com> <20250117035044.23309-1-slava@dubeyko.com>
+ <988267.1737365634@warthog.procyon.org.uk> <CAO8a2SgkzNQN_S=nKO5QXLG=yQ=x-AaKpFvDoCKz3B_jwBuALQ@mail.gmail.com>
+ <3532744.1738094469@warthog.procyon.org.uk> <3541166.1738103654@warthog.procyon.org.uk>
+ <dbf086dc3113448cb4efaeee144ad01d39d83ea3.camel@ibm.com>
+In-Reply-To: <dbf086dc3113448cb4efaeee144ad01d39d83ea3.camel@ibm.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 29 Jan 2025 12:39:42 +0200
+X-Gm-Features: AWEUYZkVowFG0DSSVKfP0k9iLKhZDVEpVrcbNliuzS_T00BMUs422_jSDRIbFek
+Message-ID: <CAO8a2SjrDL5TqW70P3yyqv8X-B5jfQRg-eMTs9Nbntr8=Mwbog@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: Fix kernel crash in generic/397 test
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "Johannes.Thumshirn@wdc.com" <Johannes.Thumshirn@wdc.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+Cc: David Howells <dhowells@redhat.com>, "idryomov@gmail.com" <idryomov@gmail.com>, 
 	"slava@dubeyko.com" <slava@dubeyko.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
-	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 28, 2025 at 11:31=E2=80=AFPM Viacheslav Dubeyko
+FYI, This the set of fscrypt of tests that keep failing, w/o this patch.
+Many of these revoke keys mid I/O.
+generic/397
+generic/421  #Test revoking an encryption key during concurrent I/O.
+generic/429. #Test revoking an encryption key during concurrent I/O.
+And additional fscrypt races
+generic/440. #Test revoking an encryption key during concurrent I/O.
+generic/580  #Testing the different keyring policies - also revokes
+keys on open files
+generic/593  #Test adding a key to a filesystem's fscrypt keyring via
+an "fscrypt-provisioning" keyring key.
+generic/595  #Test revoking an encryption key during concurrent I/O.
+
+p.s
+generic/650 is yanking CPUs mid run so may also sporadically fail.
+unrelated to fscrypt.
+
+On Wed, Jan 29, 2025 at 12:37=E2=80=AFAM Viacheslav Dubeyko
 <Slava.Dubeyko@ibm.com> wrote:
 >
-> On Tue, 2025-01-28 at 09:45 +0100, Hans Holmberg wrote:
-> > On Mon, Jan 27, 2025 at 9:59=E2=80=AFPM Viacheslav Dubeyko
-> > <Slava.Dubeyko@ibm.com> wrote:
-> > >
-> > > On Mon, 2025-01-27 at 15:19 +0100, Hans Holmberg wrote:
-> > > > On Fri, Jan 24, 2025 at 10:03=E2=80=AFPM Viacheslav Dubeyko
-> > > > <Slava.Dubeyko@ibm.com> wrote:
-> > > > >
-> > > > >
-> > >
-> > > > So what I am asking myself is if this framework is added, who would
-> > > > benefit? Without any benchmark results it's a bit hard to tell :)
-> > > >
-> > >
-> > > Which benefits would you like to see? I assume we would like: (1) pro=
-long device
-> > > lifetime, (2) improve performance, (3) decrease GC burden. Do you mea=
-n these
-> > > benefits?
+> On Tue, 2025-01-28 at 22:34 +0000, David Howells wrote:
+> > Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 > >
-> > Yep, decreased write amplification essentially.
+> > > And even after solving these two issues, I can see dirty memory pages=
+ after
+> > > unmount finish. Something wrong yet in ceph_writepages_start() logic.=
+ So, I am
+> > > trying to figure out what I am missing here yet.
+> >
+> > Do you want me to push a branch with my tracepoints that I'm using some=
+where
+> > that you can grab it?
 > >
 >
-> The important point here that the suggested framework offers only means t=
-o
-> estimate temperature. But only file system technique can decrease or incr=
-ease
-> write amplification. So, we need to compare apples with apples. As far as=
- I
-> know, F2FS has algorithm of estimation and employing temperature. Do you =
-imply
-> F2FS or how do you see the way of estimation the write amplification decr=
-easing?
-> Because, every file system should have own way to employ temperature.
-
-If you could show that this framework can decrease write amplification
-in ssdfs, f2fs or
-any other file system, I think that would be a good start.
-
-Compare using your generated temperatures vs not using the temperature info=
-.
-
+> Sounds good! Maybe it can help me. :)
 >
-> > >
-> > > As far as I can see, different file systems can use temperature in di=
-fferent
-> > > way. And this is slightly complicates the benchmarking. So, how can w=
-e define
-> > > the effectiveness here and how can we measure it? Do you have a visio=
-n here? I
-> > > am happy to make more benchmarking.
-> > >
-> > > My point is that the calculated file's temperature gives the quantita=
-tive way to
-> > > distribute even user data among several temperature groups ("baskets"=
-). And
-> > > these baskets/segments/anything-else gives the way to properly group =
-data. File
-> > > systems can employ the temperature in various ways, but it can defini=
-tely helps
-> > > to elaborate proper data placement policy. As a result, GC burden can=
- be
-> > > decreased, performance can be improved, and lifetime device can be pr=
-olong. So,
-> > > how can we benchmark these points? And which approaches make sense to=
- compare?
-> > >
-> >
-> > To start off, it would be nice to demonstrate that write amplification
-> > decreases for some workload when the temperature is taken into
-> > account. It would be great if the workload would be an actual
-> > application workload or a synthetic one mimicking some real-world-like
-> > use case.
-> > Run the same workload twice, measure write amplification and compare re=
-sults.
-> >
+> Thanks,
+> Slava.
 >
-> Another trouble here. What is the way to measure write amplification, fro=
-m your
-> point of view? Which benchmarking tool or framework do you suggest for wr=
-ite
-> amplification estimation?
-
-FDP drives expose this information. You can retrieve the stats using
-the nvme cli.
-If you are using zoned storage, you can add write amp metrics inside
-the file system
-or just measure the amount of blocks written to the device using iostat.
-
-> > > > Also, is there a good reason for only supporting buffered io? Direc=
-t
-> > > > IO could benefit in the same way, right?
-> > > >
-> > >
-> > > I think that Direct IO could benefit too. The question here how to ac=
-count dirty
-> > > memory pages and updated memory pages. Currently, I am using
-> > > folio_account_dirtied() and folio_clear_dirty_for_io() to implement t=
-he
-> > > calculation the temperature. As far as I can see, Direct IO requires =
-another
-> > > methods of doing this. The rest logic can be the same.
-> >
-> > It's probably a good idea to cover direct IO as well then as this is
-> > intended to be a generalized framework.
->
-> To cover Direct IO is a good point. But even page cache based approach ma=
-kes
-> sense because LFS and GC based file systems needs to manage data in effic=
-ient
-> way. By the way, do you have a vision which methods can be used for the c=
-ase of
-> Direct IO to account dirty and updated memory pages?
 >
 
-Temperature feedback could instead be provided by file systems that
-would actually
-care about using the information.
 
