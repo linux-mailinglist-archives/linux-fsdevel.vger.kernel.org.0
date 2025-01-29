@@ -1,143 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-40303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722BBA22079
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 16:33:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9C1A220BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 16:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7FE16486C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 15:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DD31888F1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 15:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0551DE2B6;
-	Wed, 29 Jan 2025 15:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="agsT9HAk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D1D1DED6A;
+	Wed, 29 Jan 2025 15:42:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47421D90A5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 15:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4351DDC2D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 15:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738164817; cv=none; b=YX4ncgl3tXHKEHELGB0u/tXKO3p7m6skj3/ZwJNNIlO170eu5eDi6prHKDpv4KP8nXx3YCUE6DxnFrWkg8OaVJUwvA0vqi6YhWi2jNL0SVs1bmwlBjYKgisON76vKtJ3PfaMKa+R+3GhRfypm+AD5kRYGf6l18j2aynaIAS+cAU=
+	t=1738165344; cv=none; b=BkJahdqq9FfDmk+JrM8PZFBqYhRuxbmf+CVaVMJJFvptG9NQG2UPH3azd+FC+SBwIlfhrKKyaWb5FYeVx0Hjw4fkO3PoOr0I94B9VhehbJhH0FP6Q5Y0ag9prw5RpJMGhhiRirNbqhaKtoP3mkuuWv2oPqlUU8idxzjKQNQuld4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738164817; c=relaxed/simple;
-	bh=8BiKjvbno05SupIueqD9EmsRFfhnudabDEeI2RrgBGw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tmFrt5guWjyRSR9xTNhsK8H8gG04SzuoVV3GsywPPq8SD4F3eZiU8EJ6Aa6uA3IwXOfbQbGD4SUQFuA2MdqViDJV3zd9maxySVR4ZZrUAoAt5dsueRVmQ9Icc4j7wn0rPURvLmUDKk44ZH8JCumgHiTKAvUEmRfsST5ENxws2N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=agsT9HAk; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4678afeb133so7385381cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 07:33:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738164813; x=1738769613; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yIKG94g7FCq+SUOP4lYoS+T6cgI8wATeaYm8im0Vc8k=;
-        b=agsT9HAkEOyIU0KWTO/FtC/UxTI690u4YspFKUb/p2zOCZPf6/3WXYqt++Qs+wAWxA
-         2lVgiMFumHLwKEV+hRkJyVn1MG5C/AO6npBZgQSLISCf8tC7B1YJLJCcg7tjCkZ82jm4
-         OTlFTGzJrSs1OTGmtuvqqQyhhCDDDFAB5ENtg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738164813; x=1738769613;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yIKG94g7FCq+SUOP4lYoS+T6cgI8wATeaYm8im0Vc8k=;
-        b=PCaVEyf/PAQlts4KYfuSJsndk8t0BnqnKgSAnyHE+c0PkCU7ygRVV0d/HDs+G9xZy3
-         oCcS2vKSgkp8XikTwUf4aPL12Rjo1AjHmn4ti586UKSkwLiu5GsOTqy24UpesmQO5sdM
-         Z+pwHpF2g+D7bpJ1b2TfMQrvK9G8IrbRdBx63fPD9vql1se2+WxheuaYbtrVuMHs1jUo
-         y6A0P5OGjrQvKOdmlhQGsb/8b4TS1TGTsnM2mckl1x2gFdXHxdNKqgSwOcjl4gNrmoOH
-         nWjrlpC/jcITWcy+D7pF55FG0Jou8eLKuwc9q/aOlbtNlzQrXqoJvuJQwAHglwCdqRlc
-         rYRw==
-X-Gm-Message-State: AOJu0YwP+6OF+0RqLedac+38Y0QW8Vr15Mtm5mSuds0uXk0+MPy+H4iD
-	b2/x8lvoBX8pu4eTcN4EBVPgVWJBfx0fqQoxObYECfZMsU0M5kZJnO+WV1KEKfLbxPB3NsBgF+k
-	1C2sxy/guFBh+bljPCuGBLIRXpDH/uE5YlUYJQQ==
-X-Gm-Gg: ASbGncuV9iXcrcVNoDXkKhrw9gD7NWciFQiPZqHO6IEZj/H0mUWev2tCNg442BgdjG2
-	HriYkbILndeL8OcHpWSTuk5rogjNZEMTzxbFkiYmIJEnUuWKSNd7aD3FoGRQjZa+Evi+vw3g=
-X-Google-Smtp-Source: AGHT+IHB9G7DbwB9OrRuKm3hVYuw5Gvp7CHRScVBPRb7229T2Hy/vNcWr0ng7Z/5b4SzB8x0tuENvMPSAFYuKhjSWuk=
-X-Received: by 2002:ac8:5fd1:0:b0:467:531f:10d6 with SMTP id
- d75a77b69052e-46fd07c81e5mr64927831cf.15.1738164813385; Wed, 29 Jan 2025
- 07:33:33 -0800 (PST)
+	s=arc-20240116; t=1738165344; c=relaxed/simple;
+	bh=CUaMAJOWKUbREYdc4K/sKCxCM5oP+S1FQnJgXJn8nxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJCqYZdse37kUDHTi33PEOYhSeEUjbk+23t1z6/Gq9zdjgOElfLpdzeEBVYxLwS4fzkey1ZiabaWd3bocb99JkHcJhk9Q3DQ8YfFak+RbexgKH4bmaR26Tcp6e7/BJeIfy7mfkZz3hefCuW0rrliM1q2a2Sc986DxdCG/LMHMfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5037968D07; Wed, 29 Jan 2025 16:42:18 +0100 (CET)
+Date: Wed, 29 Jan 2025 16:42:18 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Kundan Kumar <kundan.kumar@samsung.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	anuj20.g@samsung.com, mcgrof@kernel.org, joshi.k@samsung.com,
+	david@fromorbit.com, axboe@kernel.dk, clm@meta.com, hch@lst.de,
+	willy@infradead.org, gost.dev@samsung.com
+Subject: Re: [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
+Message-ID: <20250129154218.GA7369@lst.de>
+References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com> <20250129102627.161448-1-kundan.kumar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 29 Jan 2025 16:33:21 +0100
-X-Gm-Features: AWEUYZn3FupY-UEwMXh2ZRqxPs_FAvESvFTzUlsOC8flQ3pzV3VmsGEhDvnQ22E
-Message-ID: <CAJfpegvZoxFLWkFzHPw71FsVxoGMwg+P_iz9eeyU54+D4KG4ow@mail.gmail.com>
-Subject: [GIT PULL] fuse update for 6.14
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250129102627.161448-1-kundan.kumar@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Linus,
+On Wed, Jan 29, 2025 at 03:56:27PM +0530, Kundan Kumar wrote:
+> and b_more_io lists have also been modified to be per-CPU. When an inode needs
+> to be added to the b_dirty list, we select the next CPU (in a round-robin
+> fashion) and schedule the per-CPU writeback work on the selected CPU.
 
-Please pull from:
+I don't think per-cpu is the right shard here.  You want to write
+related data together.  A fіrst approximation might be inodes.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-tags/fuse-update-6.14
+FYI, a really good "benchmark" is if you can use this parallel writeback
+code to replace the btrfs workqueue threads spawned to handle checksumming
+and compression.
 
-Add support for io-uring communication between kernel and userspace
-using IORING_OP_URING_CMD (Bernd Schubert).  Following features enable
-gains in performance compared to the regular interface:
-
-- Allow processing multiple requests with less syscall overhead
-
-- Combine commit of old and fetch of new fuse request
-
-- CPU/NUMA affinity of queues
-
-Patches were reviewed by several people, including Pavel Begunkov,
-io-uring co-maintainer.
-
-Thanks,
-Miklos
----
-
-Bernd Schubert (18):
-      fuse: rename to fuse_dev_end_requests and make non-static
-      fuse: Move fuse_get_dev to header file
-      fuse: Move request bits
-      fuse: Add fuse-io-uring design documentation
-      fuse: make args->in_args[0] to be always the header
-      fuse: {io-uring} Handle SQEs - register commands
-      fuse: Make fuse_copy non static
-      fuse: Add fuse-io-uring handling into fuse_copy
-      fuse: {io-uring} Make hash-list req unique finding functions non-static
-      fuse: Add io-uring sqe commit and fetch support
-      fuse: {io-uring} Handle teardown of ring entries
-      fuse: {io-uring} Make fuse_dev_queue_{interrupt,forget} non-static
-      fuse: Allow to queue fg requests through io-uring
-      fuse: Allow to queue bg requests through io-uring
-      fuse: {io-uring} Prevent mount point hang on fuse-server termination
-      fuse: block request allocation until io-uring init is complete
-      fuse: enable fuse-over-io-uring
-      fuse: prevent disabling io-uring on active connections
-
----
- Documentation/filesystems/fuse-io-uring.rst |   99 ++
- Documentation/filesystems/index.rst         |    1 +
- fs/fuse/Kconfig                             |   12 +
- fs/fuse/Makefile                            |    1 +
- fs/fuse/dax.c                               |   11 +-
- fs/fuse/dev.c                               |  127 +--
- fs/fuse/dev_uring.c                         | 1319 +++++++++++++++++++++++++++
- fs/fuse/dev_uring_i.h                       |  205 +++++
- fs/fuse/dir.c                               |   32 +-
- fs/fuse/fuse_dev_i.h                        |   66 ++
- fs/fuse/fuse_i.h                            |   32 +-
- fs/fuse/inode.c                             |   14 +-
- fs/fuse/xattr.c                             |    7 +-
- include/uapi/linux/fuse.h                   |   76 +-
- 14 files changed, 1924 insertions(+), 78 deletions(-)
- create mode 100644 Documentation/filesystems/fuse-io-uring.rst
- create mode 100644 fs/fuse/dev_uring.c
- create mode 100644 fs/fuse/dev_uring_i.h
- create mode 100644 fs/fuse/fuse_dev_i.h
 
