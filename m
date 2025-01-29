@@ -1,201 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-40328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107A3A22423
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 19:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E80AA22443
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 19:48:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09BCB1882E9B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8AB1888494
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40471E1C1F;
-	Wed, 29 Jan 2025 18:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B979D1E0DFE;
+	Wed, 29 Jan 2025 18:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nil8+TCi"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XzCoJoN4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3085518FDC5;
-	Wed, 29 Jan 2025 18:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155891E2848
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 18:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738176281; cv=none; b=i8AcRNXD6kk9EsTzBSwUlvDf/dMTrT7XytDxwLZqbENpJybComgeeGL6dnZbqpmk327mhOWU/0A5AXZaCzoDoNhnVXbiRFve/HomO2185PODrvWSxuNM5MPptdjOAgxjT2jpTLqgtLASoehxyL4k+rtxQsMJAlvmx3HWEnruzUo=
+	t=1738176503; cv=none; b=lJtSzOd/hjF9p3/TE4/09aJnD9P3ZSLnPq2L2DGOABtNHTEIZzhW59Qte9aoirTS9xFi44Fcbs1cuaesmFbBDEVrcr1lsT8UO97T79PaApbdfBwPOtIxmpe+Phy38AieNGCZPdqkUqJY167aZ6pyGK+EfTo0eKx5LGt4mkEllQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738176281; c=relaxed/simple;
-	bh=Ut+u/BkghibRCg6WC/EafaFzkHC5LZJoyj6kdsD537M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nxfrw7yQkes7lObsfN7+TV6hWcCRf+zA9XlgNcoIohxCYcBXioVSrHWItIla3436d8WKnXieiNbo5Zx3/bGYLulZA8dWcmoXoZTJQJnrGPO7uqsqz6YJQPGVva2OxUMO2Z0Tsj0jGaOPKaT92vN8EmcgOOS7XM1EaP9X4Mgv0iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nil8+TCi; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=OGdOG3Q9V4PrJNPGFlWOlSIJqfpT6i27AEwfO3lbbWQ=; b=nil8+TCiLuCxkyQ5sycHDYXRpW
-	XzrknXAppAxQgkC6YQuF6dVMraOHJwKBCeGf39QSn5ns1MWBz0pZDKze+zNcRK8+dsV24qJgA/TDk
-	nO7KLFpzPM7LgobaUyt4kcRy0tUvRKyUiLaFWBlU7P5+QPNWCwnMUtGuiM3JQsYZgdjRt0z1nHe4j
-	1XuVshYkoC5bPw8f6Xs9k/lo4UCHWwzGGDF9Y1X+QvmEPiBa5O4pC3MNOHUM/uOVuixph9nX08kXO
-	EVCZoJZyUSdVusv3r7w36Ki068nduW1WAvoCzpUf/FE94NhGFd+GHA2aylGaUh8x3yGJxoSiB9/U+
-	UBzyqj9g==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tdD34-000ibk-UJ; Wed, 29 Jan 2025 19:44:32 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>,
-	Teng Qin <tqin@jumptrading.com>
-Subject: [RFC PATCH] fuse: fix race in fuse_notify_store()
-Date: Wed, 29 Jan 2025 18:44:20 +0000
-Message-ID: <20250129184420.28417-1-luis@igalia.com>
+	s=arc-20240116; t=1738176503; c=relaxed/simple;
+	bh=v7t/b1bseEGT07c3FY8utGzEJPHu0vgEf5zHyuSLnLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MMIc2zUZWIfgWVTkmJzfz0sDkYD0srg0xpiVUlI4jPBqGHV3JFxaCHfAzmEclKIqlWywPqZxWHLrCFmwzY497eBkA2fjIJtTKO9TicHc2dHy7e3OqWrmAdKoz0NSgcKGSeY80TQGofiEFXuG3ke0VRCZoZviP1ttGTSuJRi5rhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XzCoJoN4; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab39f84cbf1so3477066b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 10:48:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1738176499; x=1738781299; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=h8bf4DZJPP2rSwdY+pwJS8gO4tmZtY2U6WvRvjgGimU=;
+        b=XzCoJoN4uhKQoB9+JTgA6ocIJs0Iq6EVGW3dTAqvh0NPSLPa8tYP0QX3Nh6JLYndyc
+         dWCDWwg9CIkS7/LFGh3C8KutiFHMYNng1mo//ZHqeDPstWDcGbNJzauVoFtSftGMuA3D
+         49/ylYx1bpmTkx6GN/6mCsjgydE7vXuR4iYY4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738176499; x=1738781299;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h8bf4DZJPP2rSwdY+pwJS8gO4tmZtY2U6WvRvjgGimU=;
+        b=dxMuJFFwU3bWRF5ElLX+N6cRe70eFAnLeKx+d559UYoxK2uU3oUSVBKpsrtlxOjxrm
+         pdsDTpwtJg2DqGslsrbOWf6bX06kHUpF7gGr+p3WMecpurrQkdjLFAGzrQ7M1qg2NopK
+         jHel5hae6CyNS0M3avWUpUWwRhsP+uLN4TQkA/0BuKTCsTSGCxm2OvjOxqG2+GMADxzj
+         px0glvQQcdSswMW3GNaWXcTP/xJqjLKY306OS/2cYe58gqerS9S8S9Ylx+8xI/NLXk0e
+         FoElAwVwgahSUswCzQVap1oUs0K9T2WhFJGfc58nnMBWtGnhVUIP18vr5j8R9+xobMoc
+         667A==
+X-Forwarded-Encrypted: i=1; AJvYcCVHo199Sk0nAh4dzVNchHW4lcOZYrFgCN327WcNFWYfUeo9AIGvDRDysW3EzRuH3JsgFJQWMQFxn65xJxzt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKlL9xxhVCjynk7NWe1dzIccVP8HFmkq5XykJ9NhAT6GYGWtkZ
+	e2eXmeKhoTf7itNmrvLxFRHMttu1TXQpN8akcNaOKzSfxBg3X5imwEOrdjfo3Fq33kVIiF4lub0
+	ls+U=
+X-Gm-Gg: ASbGncsakT4aPfam8N6Zrasp/OWbToeJUdpUa9l6zzx0zDty2XExc/2bSDPKZWlQOXI
+	FQrwNPhdvvvzq19zYDkjcxJAL8SKIQoXJw6VRkPktHMZxaE83sIATQUZ4avX7h3vle5avr3ju0e
+	HKKlms7tT6sgzsBdZfg4Xhpba6SwwCkN25EcxOy7GSGQZ4wiUPE5BrkJWzBFP25TUvuu1jl2o6e
+	yq8oHPMpH2D+euys7OGHT5mO+hErDELZjLD5TSYntwjQ4rTHDVjkSQoY2PRADtZ8aeMoQKEW08A
+	vKC6tfuwUvSuEp8uRhApbVR4orfO7lmhIUde4NF7GYO95J7KcmZ8O1gkc4sk6HsMPw==
+X-Google-Smtp-Source: AGHT+IEmzDsObSSfxVd82vsDzI5kd9BIm3ALy8iWu4LSgiH5G40DkiEMfFjB04GI+vh/6htPdbdYiQ==
+X-Received: by 2002:a17:906:6a0f:b0:ab3:974:3d45 with SMTP id a640c23a62f3a-ab6cfcc680bmr412087366b.1.1738176499304;
+        Wed, 29 Jan 2025 10:48:19 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6d8e25707sm90177366b.22.2025.01.29.10.48.19
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2025 10:48:19 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab39f84cbf1so3474666b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 10:48:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUb0dNhX81Cp2FZDYk5rzx0YkyQK5IKWv/IcNLR6CVuqBjNGyNXrL7pK054q9ITO+zEFU6AzN6vg5X/6283@vger.kernel.org
+X-Received: by 2002:a17:906:da85:b0:ab6:9d92:6d6 with SMTP id
+ a640c23a62f3a-ab6cfd0d35dmr415053566b.26.1738176498692; Wed, 29 Jan 2025
+ 10:48:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <kndlh7lx2gfmz5m3ilwzp7fcsmimsnjgh434hnaro2pmy7evl6@jfui76m22kig>
+In-Reply-To: <kndlh7lx2gfmz5m3ilwzp7fcsmimsnjgh434hnaro2pmy7evl6@jfui76m22kig>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 29 Jan 2025 10:48:02 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgNwJ57GtPM_ZUCGeVN5iJt0pxDf96dRwp0KhuVV4Hjpw@mail.gmail.com>
+X-Gm-Features: AWEUYZlqaMWdacM1L6lq7K7jLmz8nrxtrZnee6xpSEfGqjffsjadL1gFNvtIh-4
+Message-ID: <CAHk-=wgNwJ57GtPM_ZUCGeVN5iJt0pxDf96dRwp0KhuVV4Hjpw@mail.gmail.com>
+Subject: Re: [GIT PULL] sysctl constification changes for v6.14-rc1
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, 
+	Baoquan He <bhe@redhat.com>, "Bill O'Donnell" <bodonnel@redhat.com>, 
+	Corey Minyard <cminyard@mvista.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Jani Nikula <jani.nikula@intel.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Song Liu <song@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>, Kees Cook <kees@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Userspace filesystems can push data for a specific inode without it being
-explicitly requested.  This can be accomplished by using NOTIFY_STORE.  However,
-this may race against another process performing different operations on the
-same inode.
+On Wed, 29 Jan 2025 at 00:14, Joel Granados <joel.granados@kernel.org> wrote:
+>
+>   All ctl_table declared outside of functions and that remain unmodified after
+>   initialization are const qualified.
 
-If, for example, there is a process reading from it, it may happen that it will
-block waiting for data to be available (locking the folio), while the FUSE
-server will also block trying to lock the same folio to update it with the inode
-data.
+Hmm. A quick grep shows
 
-The easiest solution, as suggested by Miklos, is to allow the userspace
-filesystem to skip locked folios.
+    static struct ctl_table alignment_tbl[5] = {
 
-Link: https://lore.kernel.org/CH2PR14MB41040692ABC50334F500789ED6C89@CH2PR14MB4104.namprd14.prod.outlook.com
-Reported-by: Teng Qin <tqin@jumptrading.com>
-Originally-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
-Hi!
+in arch/csky/abiv1/alignment.c that didn't get converted.
 
-Instead of sending the usual 'ping' to the original thread, I've decided to
-resend the patch as an RFC.
+And a couple of rdma drivers (iwcm_ctl_table and ucma_ctl_table), but
+maybe those weren't converted due to being in the "net" address space?
 
-As I mentioned before, this is an attempt to forward port the original patch
-from Miklos to the folios world.  Also, the same question:
+Anyway, taken as-is, I'm just noting the lacking cases.
 
-if we fail to get a folio and need to skip it, 'this_num' needs to be
-updated; but I'm not 100% sure if it's OK to use PAGE_SIZE in that case.
-
-Obviously, libfuse will need to support this new NOWAIT flag (I can look at
-that, of course).  But I was wondering if the NOTIFY_STORE behaviour
-shouldn't *always* skip locked folios instead of doing it only when the flag
-is set.
-
-(By the way, I'm not sure if I'm using the 'Originally-by:' tag correctly;
-I just want to make sure the authorship is preserved.  Please let me know if
-that's not correct.)
-
-Cheers,
--- 
-Luis
-
- fs/fuse/dev.c             | 29 ++++++++++++++++++++++-------
- include/uapi/linux/fuse.h |  8 +++++++-
- 2 files changed, 29 insertions(+), 8 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 27ccae63495d..9a0cd88a9bb9 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1630,6 +1630,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
- 	unsigned int num;
- 	loff_t file_size;
- 	loff_t end;
-+	int fgp_flags = FGP_LOCK | FGP_ACCESSED | FGP_CREAT;
- 
- 	err = -EINVAL;
- 	if (size < sizeof(outarg))
-@@ -1645,6 +1646,9 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
- 
- 	nodeid = outarg.nodeid;
- 
-+	if (outarg.flags & FUSE_NOTIFY_STORE_NOWAIT)
-+		fgp_flags |= FGP_NOWAIT;
-+
- 	down_read(&fc->killsb);
- 
- 	err = -ENOENT;
-@@ -1668,14 +1672,25 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
- 		struct page *page;
- 		unsigned int this_num;
- 
--		folio = filemap_grab_folio(mapping, index);
--		err = PTR_ERR(folio);
--		if (IS_ERR(folio))
--			goto out_iput;
-+		folio = __filemap_get_folio(mapping, index, fgp_flags,
-+					    mapping_gfp_mask(mapping));
-+		err = PTR_ERR_OR_ZERO(folio);
-+		if (err) {
-+			if (!(outarg.flags & FUSE_NOTIFY_STORE_NOWAIT))
-+				goto out_iput;
-+			page = NULL;
-+			/* XXX */
-+			this_num = min_t(unsigned int, num, PAGE_SIZE - offset);
-+		} else {
-+			page = &folio->page;
-+			this_num = min_t(unsigned int, num,
-+					 folio_size(folio) - offset);
-+		}
- 
--		page = &folio->page;
--		this_num = min_t(unsigned, num, folio_size(folio) - offset);
- 		err = fuse_copy_page(cs, &page, offset, this_num, 0);
-+		if (!page)
-+			goto skip;
-+
- 		if (!folio_test_uptodate(folio) && !err && offset == 0 &&
- 		    (this_num == folio_size(folio) || file_size == end)) {
- 			folio_zero_segment(folio, this_num, folio_size(folio));
-@@ -1683,7 +1698,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
- 		}
- 		folio_unlock(folio);
- 		folio_put(folio);
--
-+skip:
- 		if (err)
- 			goto out_iput;
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index e9e78292d107..59725f89340e 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -576,6 +576,12 @@ struct fuse_file_lock {
-  */
- #define FUSE_EXPIRE_ONLY		(1 << 0)
- 
-+/**
-+ * notify_store flags
-+ * FUSE_NOTIFY_STORE_NOWAIT: skip locked pages
-+ */
-+#define FUSE_NOTIFY_STORE_NOWAIT	(1 << 0)
-+
- /**
-  * extension type
-  * FUSE_MAX_NR_SECCTX: maximum value of &fuse_secctx_header.nr_secctx
-@@ -1075,7 +1081,7 @@ struct fuse_notify_store_out {
- 	uint64_t	nodeid;
- 	uint64_t	offset;
- 	uint32_t	size;
--	uint32_t	padding;
-+	uint32_t	flags;
- };
- 
- struct fuse_notify_retrieve_out {
+            Linus
 
