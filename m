@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-40347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47426A226B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 00:03:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2702CA226BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 00:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C4B3A3970
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 23:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366983A54A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 23:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0BD1B393A;
-	Wed, 29 Jan 2025 23:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850031DFE02;
+	Wed, 29 Jan 2025 23:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tms7RdzM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byzcS6Bi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF72218FDCE;
-	Wed, 29 Jan 2025 23:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BFF1AC42B;
+	Wed, 29 Jan 2025 23:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738191821; cv=none; b=fhePq3ONMbW9bnQevFq9T1Ek/hkKd0C0CN+1fhsE6x89MlXjtKuLdFV0mCAQXOp3U5HWZvaciNAPE9fHDrS5g5dT4nZ/eFvqMlYHfOax5Dqzrd+hesZRwYHloYbXcuTAIn3R+zEFPFidgXyJizqbGpv3tjTvhDMAizUb4/lU5lg=
+	t=1738191978; cv=none; b=c3iMnLAC3cHTrwkaFQuPs1rC4NI0mkOU+70S/K/Gs4SSqpyZDmIycsu3z7urqO9NWUHpoIym7CjW0IkwtdTeAPTyEZ4PED11u9mErqMJBN5rq3MgwCWRC41zakeVQOb3S2/kBJieKxzu3oBsROreT+3nXinyATAilcIjPTyHIGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738191821; c=relaxed/simple;
-	bh=DnBs/c57gTqdpWP75OItXgwuRYg/4fzsHcSFgQrEO5I=;
+	s=arc-20240116; t=1738191978; c=relaxed/simple;
+	bh=s+Mrndf6Yl0y5Rur+6u0vijc/6dsHvUWSBKZS0amwFQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JRSnufGBta84UvBr79jMTxE+Bir1MdY1yacKW0JWcf//nkmSz0VYtH3D72ZeZPeeJ7NTbdv3CcxFnLjX773jRgxOmo8wE51SL3dxlS+xKO6yGBX0nkxSMEgFcM3PfsgZY+IsFZkwrNg4KL0UEewhMpJgPsdCVbggu82UW16VrvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tms7RdzM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3738C4CED1;
-	Wed, 29 Jan 2025 23:03:39 +0000 (UTC)
+	 Content-Type:MIME-Version; b=FEnrR6/5FhpuWQz46PHbcAKTbGUMst3PPbuBWQdaF7l7bnKIO7lnVQw0sAPMU9y9o4h/L0AJSeHpIBgiDrPpn1UMQLWvTQwp/C1g2BEVw+ocdLP9uWSWbAG1mteHhXr03iF3Ny3QxWYTwLiFAsIZjXe7JKPehJqeEs2h7nOcm9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byzcS6Bi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E0FC4CED1;
+	Wed, 29 Jan 2025 23:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738191820;
-	bh=DnBs/c57gTqdpWP75OItXgwuRYg/4fzsHcSFgQrEO5I=;
+	s=k20201202; t=1738191976;
+	bh=s+Mrndf6Yl0y5Rur+6u0vijc/6dsHvUWSBKZS0amwFQ=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Tms7RdzMGIa5FtXsetmCkKbIvQelWoEBToY4gfpfE4JyIzZ0zzcGcZAuTOlf3bHp6
-	 ws4qBQNba817tu5KdusGU6FbGlH5ZuptAvDssJwqcjfLmr/sokodQUs0pjK7urp4ge
-	 VsGYr8ya+Lclxst3V4JGy0v9U2QRHDE8gX5TrwBbZ1nD6JioT3mBNr+fBO4hX/FTD9
-	 lnjicovsg3z60eIj+QnXUVO0W18rKJWxJNtKU/oYFcjIxAZOkaxIRfp0WecRL8LGJF
-	 VEdKcCebNL3J4PCuBIzrIFPdE8FgPfBprr3f1fkE1jYDc3T1oTdZHGCCfAquW37SvT
-	 eqvuRXieVU9bw==
-Message-ID: <930797ecabdfe52d698bed64c6ebed0a1235a18b.camel@kernel.org>
+	b=byzcS6Bi/nuVOsOUMgK6cl9fahYuDKZfZI6+Lr9K8ciuI2JKiJ8iyeZDwEmSD+fmY
+	 HScuFBzdqSUCM/fVLom+HHF8Vt93vNKHDcC2KatskRXRX0K+fH5Z0o3Ao0WVbiF5wb
+	 qkZZWprAKi3UGUzqblj3rW+J+iJJWsR9CA1EFvXL5RZt4Gw4ELIeb99mVQJgrs8DOY
+	 ++7wThbKgdOy97jPiPxZFfZGs+HgU6vmosw5fnE+fi+16WMfVatj9dBeDnmNN8e9jQ
+	 2LQ7o/gt3XNyZgg657NIZy4I9L+RLRwTL+F4neHjoHjl7O8yYXgRLrVpI78iwij91f
+	 esA6Km1iqp/vQ==
+Message-ID: <f704b0c40c393d1c326f13d043505960924f879a.camel@kernel.org>
 Subject: Re: Multigrain timestamps do not work on RISC-V
 From: Jeff Layton <jlayton@kernel.org>
 To: Andreas Schwab <schwab@suse.de>, linux-riscv@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date: Wed, 29 Jan 2025 18:03:38 -0500
-In-Reply-To: <mvmv7ty3pd8.fsf@suse.de>
-References: <mvmv7ty3pd8.fsf@suse.de>
+Date: Wed, 29 Jan 2025 18:06:14 -0500
+In-Reply-To: <mvmikpx4jw4.fsf@suse.de>
+References: <mvmv7ty3pd8.fsf@suse.de> <mvmikpx4jw4.fsf@suse.de>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -133,45 +133,64 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-01-29 at 11:07 +0100, Andreas Schwab wrote:
-> The statx06 test in the LTP testsuite fails since the multigrain
-> timestamp feature was merged:
+On Wed, 2025-01-29 at 18:20 +0100, Andreas Schwab wrote:
+> On Jan 29 2025, Andreas Schwab wrote:
 >=20
-> https://openqa.opensuse.org/tests/4800409#step/statx06/7
+> > My guess would be that something in inode_set_ctime_current is going
+> > wrong.
 >=20
-> The issue is that the nsec part of ctime does not change from the time
-> the file is created:
+> The bug is in the arch_cmpxchg macros in <asm/cmpxchg.h>, they mishandle
+> atomic exchange of u32 values:
 >=20
-> $ touch xx
-> $ stat -c $'mtime %y\nctime %z' xx
-> mtime 2025-01-29 09:43:44.677442605 +0100
-> ctime 2025-01-29 09:43:44.677442605 +0100
-> $ touch xx
-> $ stat -c $'mtime %y\nctime %z' xx
-> mtime 2025-01-29 09:43:51.641581658 +0100
-> ctime 2025-01-29 09:43:51.677442605 +0100
->
-> My guess would be that something in inode_set_ctime_current is going
-> wrong.
+>     # fs/inode.c:2802: 	if (cns =3D=3D now.tv_nsec && inode->i_ctime_sec =
+=3D=3D now.tv_sec) {
+>     #NO_APP
+>             ld	a5,-96(s0)		# _33, now.tv_nsec
+>     # fs/inode.c:2802: 	if (cns =3D=3D now.tv_nsec && inode->i_ctime_sec =
+=3D=3D now.tv_sec) {
+>             slli	a4,s2,32	#, _49, cns
+>             srli	a4,a4,32	#, _49, _49
+>     # fs/inode.c:2802: 	if (cns =3D=3D now.tv_nsec && inode->i_ctime_sec =
+=3D=3D now.tv_sec) {
+>             beq	a4,a5,.L1248	#, _49, _33,
+>     .L1205:
+>             addi	a3,s1,120	#, __ai_ptr, inode
+>     .L1221:
+>     # fs/inode.c:2809: 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.t=
+v_nsec)) {
+>     #APP
+>     # 2809 "fs/inode.c" 1
+>             0:	lr.w a2, 0(a3)	# __ret, *__ai_ptr_20
+>             bne  a2, a4, 1f	# __ret, _49
+>=20
+> Here the unsigned extended value of cur (a4) is compared with the sign
+> extended value of inode->i_ctime_nsec (a2).  They cannot match if cur
+> has I_CTIME_QUERIED set (the sign bit).  The lr/sc loop is exited before
+> the store conditional is executed.
+>=20
+>             sc.w.rl a1, a5, 0(a3)	# __rc, _33, *__ai_ptr_20
+>             bnez a1, 0b	# __rc
+>             fence rw,rw
+>     1:
+>=20
+>     # 0 "" 2
+>     #NO_APP
+>             sext.w	a5,a2	# __ret, __ret
+>=20
+> A redundant sign extension of the current contents of inode->i_ctime_nsec=
+.
+>=20
+>     # fs/inode.c:2809: 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.t=
+v_nsec)) {
+>             bne	a5,s2,.L1211	#, __ret, cns,
+>=20
+> Here the sign extended value of inode->i_ctime_nsec (a5) is compared
+> with the sign extended expected value (s2).  They match, and try_cmpxchg
+> returns true, but the store never happend.
 >=20
 
-Thanks for the bug report, Andreas.
+Wow, nice catch! Had me worried there for a bit!
 
-I assume you're seeing this across different filesystems (i.e. tmpfs,
-ext4, etc.)? It almost looks like this try_cmpxchg() is returning true
-without actually doing the swap:
-
-        if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
-                /* If swap occurred, then we're (mostly) done */
-                inode->i_ctime_sec =3D now.tv_sec;
-                trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
-                mgtime_counter_inc(mg_ctime_swaps);
-        } else {
-
-It might also be interesting to see the output of that tracepoint over
-this test, if you're able.
-
-Thanks,
 --=20
 Jeff Layton <jlayton@kernel.org>
 
