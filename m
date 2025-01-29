@@ -1,261 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-40282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0DDA218B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 09:14:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C73A2195D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 09:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1ED1659CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 08:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADDC3A254D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 08:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D1B19CC3C;
-	Wed, 29 Jan 2025 08:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B440A1AB6F1;
+	Wed, 29 Jan 2025 08:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlW9ZHp9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+6QRneb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD3C19A28D;
-	Wed, 29 Jan 2025 08:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F62D627;
+	Wed, 29 Jan 2025 08:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738138480; cv=none; b=sY/doN0hPMeYTXyyAgl/Af4Gy4obwOKpfS2JAA2YluJ4ROM0OYWjbTujQwfLxcc3kIZW1PXEvHsapI34Q0xHdBeGAw1rAr8gCVOiC4owJiTh3EBLGek+2j6ICIzktoByyiSiL6QEITGnrRkJGll0EWCT/XziruehHfBo4IdvRyM=
+	t=1738140560; cv=none; b=dMzd52IIQTon1xJXbCdXqpfMDcWb2IeXuH9R1SgKanZxacguMprU/Hg7Ll5XYR4ivg3F+1Wv4+aQokMcFTAhcDq4d+nCOB+GPhKIr9OyAgUzDX1zwvcylPdEDf6K7+ZZGzDaSeP8oSXRTqSftjkJMNnYcr8F1auxuXh1eYeMYL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738138480; c=relaxed/simple;
-	bh=Iw3ppgBY5sLOi1990ConwcQ4ZKtsA/u/PoORWMqt+Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vEs0t8gvLHfhMewMRbpGUHlMpfqKFaa6B8S40Io4NLIDcnyi8mvgBhh555w2RDegYZCj+vF/l3pl9jMOgiiIAqTg2L0/088WbHtgvc+YTq6WYoODJ1OGMZbAtOG1eya1SRU/7QdS2p4VXolm+ooUZoDwC7zXVYCJkpwaRgLzxLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlW9ZHp9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D2B1C4CED3;
-	Wed, 29 Jan 2025 08:14:38 +0000 (UTC)
+	s=arc-20240116; t=1738140560; c=relaxed/simple;
+	bh=bkecGghn49Q0kcBr4/Q4RAYEqTU2lzStxg+kMBkUviM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EF0OhxvyF0kaEvrafy1BX3zzWeBuyJSo+qySUHfcv1VSkqFwetU/NmqcRTdUSpAfFwY+MEF00yXvJWaX+n8YqoVny+ir4VpKtsuf6BjmHCrLXTyravxLj1Ov8tO5WrOXCEBSoXa9YI4i3vBsifIaEYj1uHKWsH044/ity2GPCKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+6QRneb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAFA1C4CED3;
+	Wed, 29 Jan 2025 08:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738138479;
-	bh=Iw3ppgBY5sLOi1990ConwcQ4ZKtsA/u/PoORWMqt+Lo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NlW9ZHp9VudwHkBpLCWjJBuDBOM5xiUGC07cPz+1W1pid4cQ3A23aWksXQ737B9sR
-	 QDd52umKF10CvZNhYGFYGei1XAHJseyQp0LyDmsSJsoDYAfzEbofL8X6KHSGEPCc26
-	 2W+9RofmVoDPUoLquZpvDHK14QBda+WL+OAQDLjkinLqC5/Koi4mthsxs5t8jg6CYo
-	 pxXpX75EIxi2Dghm6JTtfA10LL/+lPRb/7AF6Nn7xCmcP9VisB1AnBBhWx2wV9X9nB
-	 OvNjbL/K8y+RshuTeRQbLlQis7opaZApWFpYMNFLPZACBc1TNefz3hA3mgeQYZxdm6
-	 3ObqC2JV6LywA==
-Date: Wed, 29 Jan 2025 09:14:20 +0100
+	s=k20201202; t=1738140558;
+	bh=bkecGghn49Q0kcBr4/Q4RAYEqTU2lzStxg+kMBkUviM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D+6QRnebTmdCsTn/fBIyawZ8F2h5FOi1VkBceKjrJE9gQqYhsE4MpI+DUnmOyvn9r
+	 jy2STn2XFJrPEPFrh+vO/ZWYbctxdvY6UR3Ry6YZK+y8a1MhcK6ynlBs1p1BMMkJ1P
+	 w6gLTDQPv35AYJJgnh4TzBlS6e9ascDPFne+p1YDjEpGVHG5PR2AxRH9J1o9Q9BPKi
+	 anvTB+Oa86UvplOCcaBDT4qhHCCSJO/P11ip4o+2DBjUNcnkNIz/KxsEnezLq+wofc
+	 pmlKCTkKHhEdUE5jBQ13DTAnVV4ZlV/QW5dr1RzqeBZB57C+fkYnuuFh6jqnxMpijz
+	 QxNX1fm0X2YKQ==
+Date: Wed, 29 Jan 2025 09:49:13 +0100
 From: Joel Granados <joel.granados@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Anna Schumaker <anna.schumaker@oracle.com>, 
-	Ashutosh Dixit <ashutosh.dixit@intel.com>, Baoquan He <bhe@redhat.com>, 
-	Bill O'Donnell <bodonnel@redhat.com>, Corey Minyard <cminyard@mvista.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Jani Nikula <jani.nikula@intel.com>, 
-	Joel Granados <joel.granados@kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Song Liu <song@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>, Kees Cook <kees@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [GIT PULL] sysctl constification changes for v6.14-rc1
-Message-ID: <kndlh7lx2gfmz5m3ilwzp7fcsmimsnjgh434hnaro2pmy7evl6@jfui76m22kig>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Jani Nikula <jani.nikula@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables
+ where applicable
+Message-ID: <umk5gfo7iq7krppvqsal57hlzds26bdqd3g7kccjzuudjikdws@k2oknd6zx6g7>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
+ <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+ <87jzag9ugx.fsf@intel.com>
+ <Z5epb86xkHQ3BLhp@casper.infradead.org>
+ <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
+ <CAHC9VhQnB_bsQaezBfAcA0bE7Zoc99QXrvO1qjpHA-J8+_doYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQnB_bsQaezBfAcA0bE7Zoc99QXrvO1qjpHA-J8+_doYg@mail.gmail.com>
 
-Linus:
+On Tue, Jan 28, 2025 at 10:43:10AM -0500, Paul Moore wrote:
+> On Tue, Jan 28, 2025 at 6:22 AM Joel Granados <joel.granados@kernel.org> wrote:
+> > On Mon, Jan 27, 2025 at 03:42:39PM +0000, Matthew Wilcox wrote:
+> > > On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
+> > > > You could have static const within functions too. You get the rodata
+> > > > protection and function local scope, best of both worlds?
+> > >
+> > > timer_active is on the stack, so it can't be static const.
+> > >
+> > > Does this really need to be cc'd to such a wide distribution list?
+> > That is a very good question. I removed 160 people from the original
+> > e-mail and left the ones that where previously involved with this patch
+> > and left all the lists for good measure. But it seems I can reduce it
+> > even more.
+> >
+> > How about this: For these treewide efforts I just leave the people that
+> > are/were involved in the series and add two lists: linux-kernel and
+> > linux-hardening.
+> >
+> > Unless someone screams, I'll try this out on my next treewide.
+> 
+> I'm not screaming about it :) but anything that touches the LSM,
+I'll consider it as a scream :) So I'll keep my previous approach of
+leaving only personal mails that are involved, but leaving all the lists
+that b4 suggests.
 
-This is a continuation of the ctl_table constification work started in
-commit 78eb4ea25cd5 ("sysctl: treewide: constify the ctl_table argument
-of proc_handlers"). That commit allows the const qualifying of the
-ctl_tables; with a few exceptions listed in the commit.
+> SELinux, or audit code (or matches the regex in MAINTAINERS) I would
+> prefer to see on the associated mailing list.
 
-As with previous large tree-wide PRs [1], I'm sending it at the end of
-the merge window to try to avoid unnecessary conflicts. I have rebased
-it on top of what I see as your latest master (6d61a53dd6f5), but I can
-rebase it again later if you prefer.
-
-Testing was done in 0-day to avoid generating unnecessary merge
-conflicts in linux-next. I do not expect any error/regression given that
-all changes contained in this PR are non-functional.
-
-Finally, if you need to regenerate it do:
-  1. Run the spatch [2] with the coccichekck command [3].
-  2. Run the sed command [4]
+General comment sent to the void:
+It is tricky to know exactly who wants to be informed of all this and
+who thinks its useless. I think that if we want more focus it should
+come from automated tools like b4. Maybe some string in MAINTAINERS
+stating that the list should not be used in cases of tree-wide commits?
 
 Best
-
-[1] https://lore.kernel.org/all/20240724210014.mc6nima6cekgiukx@joelS2.panther.com/
-[2] Spatch:
-      virtual patch
-
-      @
-      depends on !(file in "net")
-      disable optional_qualifier
-      @
-
-      identifier table_name != {
-        watchdog_hardlockup_sysctl,
-        iwcm_ctl_table,
-        ucma_ctl_table,
-        memory_allocation_profiling_sysctls,
-        loadpin_sysctl_table
-      };
-      @@
-
-      + const
-      struct ctl_table table_name [] = { ... };
-
-[3] Spatch command:
-      make coccicheck MODE=patch \
-        SPFLAGS="--in-place --include-headers --smpl-spacing --jobs=16" \
-        COCCI=PATCH_FILE
-
-[4] sed:
-      sed --in-place \
-        -e "s/struct ctl_table .table = &uts_kern/const struct ctl_table *table = \&uts_kern/" \
-        kernel/utsname_sysctl.c
-
-The following changes since commit 6d61a53dd6f55405ebcaea6ee38d1ab5a8856c2c:
-
-  Merge tag 'f2fs-for-6.14-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2025-01-27 20:58:58 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/constfy-sysctl-6.14-rc1
-
-for you to fetch changes up to 1751f872cc97f992ed5c4c72c55588db1f0021e1:
-
-  treewide: const qualify ctl_tables where applicable (2025-01-28 13:48:37 +0100)
-
-----------------------------------------------------------------
-Summary:
-
-  All ctl_table declared outside of functions and that remain unmodified after
-  initialization are const qualified. This prevents unintended modifications to
-  proc_handler function pointers by placing them in the .rodata section. This is
-  a continuation of the tree-wide effort started a few releases ago with the
-  constification of the ctl_table struct arguments in the sysctl API done in
-  78eb4ea25cd5 ("sysctl: treewide: constify the ctl_table argument of
-  proc_handlers")
-
-Testing:
-
-  Testing was done on 0-day and sysctl selftests in x86_64. The linux-next
-  branch was not used for such a big change in order to avoid unnecessary merge
-  conflicts
-
-----------------------------------------------------------------
-Joel Granados (1):
-      treewide: const qualify ctl_tables where applicable
-
- arch/arm/kernel/isa.c                         | 2 +-
- arch/arm64/kernel/fpsimd.c                    | 4 ++--
- arch/arm64/kernel/process.c                   | 2 +-
- arch/powerpc/kernel/idle.c                    | 2 +-
- arch/powerpc/platforms/pseries/mobility.c     | 2 +-
- arch/riscv/kernel/process.c                   | 2 +-
- arch/riscv/kernel/vector.c                    | 2 +-
- arch/s390/appldata/appldata_base.c            | 2 +-
- arch/s390/kernel/debug.c                      | 2 +-
- arch/s390/kernel/hiperdispatch.c              | 2 +-
- arch/s390/kernel/topology.c                   | 2 +-
- arch/s390/mm/cmm.c                            | 2 +-
- arch/s390/mm/pgalloc.c                        | 2 +-
- arch/x86/entry/vdso/vdso32-setup.c            | 2 +-
- arch/x86/kernel/cpu/bus_lock.c                | 2 +-
- crypto/fips.c                                 | 2 +-
- drivers/base/firmware_loader/fallback_table.c | 2 +-
- drivers/cdrom/cdrom.c                         | 2 +-
- drivers/char/hpet.c                           | 2 +-
- drivers/char/ipmi/ipmi_poweroff.c             | 2 +-
- drivers/char/random.c                         | 2 +-
- drivers/gpu/drm/i915/i915_perf.c              | 2 +-
- drivers/gpu/drm/xe/xe_observation.c           | 2 +-
- drivers/hv/hv_common.c                        | 2 +-
- drivers/md/md.c                               | 2 +-
- drivers/misc/sgi-xp/xpc_main.c                | 4 ++--
- drivers/perf/arm_pmuv3.c                      | 2 +-
- drivers/perf/riscv_pmu_sbi.c                  | 2 +-
- drivers/scsi/scsi_sysctl.c                    | 2 +-
- drivers/scsi/sg.c                             | 2 +-
- drivers/tty/tty_io.c                          | 2 +-
- drivers/xen/balloon.c                         | 2 +-
- fs/aio.c                                      | 2 +-
- fs/cachefiles/error_inject.c                  | 2 +-
- fs/coda/sysctl.c                              | 2 +-
- fs/coredump.c                                 | 2 +-
- fs/dcache.c                                   | 2 +-
- fs/devpts/inode.c                             | 2 +-
- fs/eventpoll.c                                | 2 +-
- fs/exec.c                                     | 2 +-
- fs/file_table.c                               | 2 +-
- fs/fuse/sysctl.c                              | 2 +-
- fs/inode.c                                    | 2 +-
- fs/lockd/svc.c                                | 2 +-
- fs/locks.c                                    | 2 +-
- fs/namei.c                                    | 2 +-
- fs/namespace.c                                | 2 +-
- fs/nfs/nfs4sysctl.c                           | 2 +-
- fs/nfs/sysctl.c                               | 2 +-
- fs/notify/dnotify/dnotify.c                   | 2 +-
- fs/notify/fanotify/fanotify_user.c            | 2 +-
- fs/notify/inotify/inotify_user.c              | 2 +-
- fs/ocfs2/stackglue.c                          | 2 +-
- fs/pipe.c                                     | 2 +-
- fs/quota/dquot.c                              | 2 +-
- fs/sysctls.c                                  | 2 +-
- fs/userfaultfd.c                              | 2 +-
- fs/verity/init.c                              | 2 +-
- fs/xfs/xfs_sysctl.c                           | 2 +-
- init/do_mounts_initrd.c                       | 2 +-
- io_uring/io_uring.c                           | 2 +-
- ipc/ipc_sysctl.c                              | 2 +-
- ipc/mq_sysctl.c                               | 2 +-
- kernel/acct.c                                 | 2 +-
- kernel/bpf/syscall.c                          | 2 +-
- kernel/delayacct.c                            | 2 +-
- kernel/exit.c                                 | 2 +-
- kernel/hung_task.c                            | 2 +-
- kernel/kexec_core.c                           | 2 +-
- kernel/kprobes.c                              | 2 +-
- kernel/latencytop.c                           | 2 +-
- kernel/locking/lockdep.c                      | 2 +-
- kernel/panic.c                                | 2 +-
- kernel/pid.c                                  | 2 +-
- kernel/pid_namespace.c                        | 2 +-
- kernel/pid_sysctl.h                           | 2 +-
- kernel/printk/sysctl.c                        | 2 +-
- kernel/reboot.c                               | 2 +-
- kernel/sched/autogroup.c                      | 2 +-
- kernel/sched/core.c                           | 2 +-
- kernel/sched/deadline.c                       | 2 +-
- kernel/sched/fair.c                           | 2 +-
- kernel/sched/rt.c                             | 2 +-
- kernel/sched/topology.c                       | 2 +-
- kernel/seccomp.c                              | 2 +-
- kernel/signal.c                               | 2 +-
- kernel/stackleak.c                            | 2 +-
- kernel/sysctl-test.c                          | 6 +++---
- kernel/sysctl.c                               | 4 ++--
- kernel/time/timer.c                           | 2 +-
- kernel/trace/ftrace.c                         | 2 +-
- kernel/trace/trace_events_user.c              | 2 +-
- kernel/umh.c                                  | 2 +-
- kernel/utsname_sysctl.c                       | 4 ++--
- kernel/watchdog.c                             | 2 +-
- lib/test_sysctl.c                             | 6 +++---
- mm/compaction.c                               | 2 +-
- mm/hugetlb.c                                  | 2 +-
- mm/hugetlb_vmemmap.c                          | 2 +-
- mm/memory-failure.c                           | 2 +-
- mm/oom_kill.c                                 | 2 +-
- mm/page-writeback.c                           | 2 +-
- mm/page_alloc.c                               | 2 +-
- security/apparmor/lsm.c                       | 2 +-
- security/keys/sysctl.c                        | 2 +-
- security/yama/yama_lsm.c                      | 2 +-
- 106 files changed, 114 insertions(+), 114 deletions(-)
 
 -- 
 
