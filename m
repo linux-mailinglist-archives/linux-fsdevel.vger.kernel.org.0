@@ -1,104 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-40317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C92A22283
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:05:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02CDA222B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF933A2641
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 17:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B6E1656F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 17:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CE81DF255;
-	Wed, 29 Jan 2025 17:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9686C1E0B8A;
+	Wed, 29 Jan 2025 17:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NetKKcJK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/aK2qEx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E021DDC19
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 17:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5779C1DE3A4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 17:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738170320; cv=none; b=kpBw07alyfpKiNtp2Kn0BzHE/Fa/48QNuCaKPZN8ezfABqnXPMDMTVX+N4F9nzPL8rsPIFkGFylY/654mOaF45tcLdEWJbkM8tw+5Sn7oi6TGzyTDDKyVMTN4NWI7FH5hxHn6wblXNKm/SY+2aT3amKPZZIfrVFlQHy7eg6Pkcw=
+	t=1738171197; cv=none; b=MhSbo9afSWQl/N5NpAOkagepcBZpUh9T/o2JI1eXfCpybFHzeKFYYFxfjOzgZsEmrYa7Zpt5zj5vC67tVTX8FKpRdbzljwZtq33GpTD9IXUqEVR/a3PHhHeCvX+SzDdFPwfZ0HMl5r9uCqvfQI5suu20kUlsuFvIirFjmtr11to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738170320; c=relaxed/simple;
-	bh=HLMiW8ZmME+x3YSqFpYYA4nE6Pg/LL0aigwIfwylVkc=;
+	s=arc-20240116; t=1738171197; c=relaxed/simple;
+	bh=3iaxX73XD6lAe5qkay4u9FZLV/j1SD0tFzq+pKK1qKk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DrGa00Q5hPFxiRiIePgUzMZeehVgoFjCRTFHYVGC0ZTXtE63RddYDxRrVpOB6i+UMnQzPRXUtx3GqZrPqezwZDFsgy9J+K3HGW5KFU4E/BRGWFLRuhK+kWvgkB4kVXcggXwcOCjxKel1lVve+Arw3klw2eezK6wIQaS7SWPG1ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NetKKcJK; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaee0b309adso386593966b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 09:05:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1738170316; x=1738775116; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRowOtlKRVvp38uK4zXnKaXEy5jEK577Ja0lVdjBles=;
-        b=NetKKcJK9T2AHBD06XIbdE5GWY+KYonllZfYf6SiBir4sxXsBrT0EsPlcRzR+4Vb6S
-         Cf7Tk5a1/2hjnmfMlw/QBx16aW3ZbF0aoEHThPoa6VLOiwdN3Knh2NR0SgtFsUfZRsAT
-         JDCOFR4C9F+zC1/Qlfj3Aq12NqbPwaUizvOVg=
+	 To:Cc:Content-Type; b=akHHv9VJbQwx7tT4aKCXH4gQ/gIc5hHuClZEn/p3kyVNFOYS5SdJsCV+wbQ4fnLVj9qQi4c5roZZfFFnpqSkjemDHtV5fAsQsS7+C2SmC4o+HHrNZkMGB+NJ2RTs784BZLISl5PCnw5wmTC1jQRwVb0GhSYJPVLJAsW2uED6dqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/aK2qEx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738171194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3iaxX73XD6lAe5qkay4u9FZLV/j1SD0tFzq+pKK1qKk=;
+	b=J/aK2qEx8WPEJIsd0+W4wLODR+CiwTEBPWRdRUgpbWggniD9ADDDIqiFZb6aGQD3gPoyl8
+	FH3UaD88hfqJT0FU7l4wf7kbMyEpwWvjIshwbxpbwr57e8FE2QXFH4ZCw4PXHrmSVf2PER
+	ETIjU+d97ENoUPrPVvHEoRhFjbrw04I=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-112-zCNnNWUKNui97pYy-U8LCg-1; Wed, 29 Jan 2025 12:19:52 -0500
+X-MC-Unique: zCNnNWUKNui97pYy-U8LCg-1
+X-Mimecast-MFC-AGG-ID: zCNnNWUKNui97pYy-U8LCg
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-21dcc9f3c8aso36141795ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 09:19:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738170316; x=1738775116;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gRowOtlKRVvp38uK4zXnKaXEy5jEK577Ja0lVdjBles=;
-        b=cqMXbM+xQpi4qRVcAtFjg23aVojRDQhNu4V/3+ds8ctvzpsmAsI+jqpvgKbKscTXqv
-         9lwrgkbikbTEcL2KEIXM4tJZFo75yLAkgvo2EkTI6EmNHmd5g7ZCl9dtMouQHpD9jnsW
-         W4TcOnhbDU95WDdMTykdn/AfDRyuSYKM1iYWVhIDoKMNQ7xbmQoquN8+9AQJ9Bv33a/j
-         tznrVpQQ+dm4HC25TybvYGqmHSLM2ShNZVCOhqUDfGibFuSTTAPtvUPy99I11JSBcmMg
-         nqYHSbCVoAvRJxoPPvF6nBUtM/ADBUxWZ1XoHytUCWUpqlAS4WhmQvotxdb+KT1FdW92
-         iV4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW9w/D8bGNW/xeWfmJM/QOScJhqkgyexxtkrS6TpHd0YMhQ+f5VFNBeas7hd4hZRCkx3OwtU5WL8pBgNkXg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ7HfQZMILIdBh+XO+LZkrxnzzzILGlMHaG7lO95UQwoHC2wP7
-	90LSXbW82ylCEx1Pqm6lnJp5xhnhbEVSFEZWpjlErxHxIvj0snoLsLs2TSBOcdYc1l8L9BnmY34
-	eQdI=
-X-Gm-Gg: ASbGnct2cyasH93CTW9pFmvthb7Ih8hzb9vVX9LStBF35UCqHSqcSf0FFuG/7LxhInF
-	cjlO3wKUJzYXrps36W8lfG/arv84HM5Zq6v7T/iILxMEW5D/yRy5yhqSrJUuZpOwbnkVtfGmBZT
-	Nc6XouG/GdaqohqJtx9PTmQVkMqxuKU0cHF6EjyLgek5m2PIVsRzQUn+gTPHJhXSVCiNxfBpeNQ
-	+gavsLCavb3+Jn+VXcw1Y498oNK82WKkQQD6Y7nR7yoJOqDLmMFbE9qYqah2ccLcwrBGXnEV/VI
-	A5+/RNvbpNxYeU82epfoelrioOGp29qjrmYcePJL/9suDsB9XAUYJL8j4cweeldf8Q==
-X-Google-Smtp-Source: AGHT+IH9PX9MuKSm7QYPzolNt7FJGKkSuCHUT2a3ovK5/1Q0/ziBjQ/Rtl8vcof1ihSIQG57WMy9wg==
-X-Received: by 2002:a17:907:2d8c:b0:aa6:5201:7ae3 with SMTP id a640c23a62f3a-ab6cfdbbc25mr397353866b.40.1738170316029;
-        Wed, 29 Jan 2025 09:05:16 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760ab237sm986318966b.120.2025.01.29.09.05.15
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2025 09:05:15 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaee0b309adso386588766b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 09:05:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVRrpxoX1a4IqtZZUBPDp2CsRDLwNqOpxXq0rNTok6D3yJBAcNlLUw08ezAl/hspOUS3S53yQd0QBPajI0N@vger.kernel.org
-X-Received: by 2002:a17:906:a3d3:b0:ab6:d9f7:fd71 with SMTP id
- a640c23a62f3a-ab6d9f83783mr173530066b.51.1738170314791; Wed, 29 Jan 2025
- 09:05:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738171191; x=1738775991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3iaxX73XD6lAe5qkay4u9FZLV/j1SD0tFzq+pKK1qKk=;
+        b=sDWzZVzejiAauHn3fTbo2+0hK95M/LPbW1APYbULBIi2vWYS6NeMLaZ5mTZZDv44/l
+         BjFlq25791LbG2I6YeFM+qDULAbEgzPfFOni6kwKclEbxveFVEiHYiOCrjHSJls2yO19
+         xPGpRhJaw8dQ/WK5iAik5ZuG43kE09BG6kbgGNxJX9K31WbEZAVegU2LHwdD3iZXcz2N
+         2i6SFRNtAlv2i0X3N0kr+/tJl+1GeBqgnWJ7muaguECJAsaLvV4HTnfNGlxMJlTE6dOD
+         Jo1IY/rm8IqaMVDrB16g/ueYQkRs+AL1dQEMIYqt3+NzAi4F/q3cBt/VVWaZ9kbCMfSB
+         SRVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFChRLNcZidqNrQu3LlxS8zUSiifxr2B2peehk6vT19ckDBj8DlbqCIJoy9KX3XLrXvexxS3szIPrVGov6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0q/ohyMXr11X5jBv2jgrW6kakrT28/kiUZsKLNxRnvqtlZ3Z/
+	cXoN661jImJuCov/QiXanp/5XHZmr7CTojOuXyxD6nj6sH7MtruxVLr5DzjgV8eY7VyRxNOY7hd
+	P1F0h/xXoxnGrcqgkpuQZwO5DM/mrTsL9imFMKCYb3GAV7tqCiv6mnGAciMNxx+kQtdt+4TA2SW
+	2L8Wq54MAFDEMLxsy+k9y4rTMQnEssrXvI0lpgTw==
+X-Gm-Gg: ASbGnctDP1ooVZRt0W64OrNkgB08lK/PUq+YO+jIje6g7TBDqVyprOjLSVoo+vSs4cx
+	OAfWCLatTg1r6SWt6BrDRmf3cIyGWFnp8blepw3re+UU6ej2uCBMUIN8HD+fB
+X-Received: by 2002:a17:903:2343:b0:216:1ad4:d8fd with SMTP id d9443c01a7336-21dd7c4994amr48816475ad.8.1738171191605;
+        Wed, 29 Jan 2025 09:19:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFfABnFfbgeBzDXWCj85MsPaV0ByB2T2rXUb7QjeIORDiHfVnWfBRCYeARi2+5kL4J3zYcmv97e5BnDL5BYRu8=
+X-Received: by 2002:a17:903:2343:b0:216:1ad4:d8fd with SMTP id
+ d9443c01a7336-21dd7c4994amr48816125ad.8.1738171191101; Wed, 29 Jan 2025
+ 09:19:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129063757.778827-1-hch@lst.de>
-In-Reply-To: <20250129063757.778827-1-hch@lst.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 29 Jan 2025 09:04:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjEWCChmYPWd_EPOOF7m+JZoRnEocmjj5sPptptc3AwYw@mail.gmail.com>
-X-Gm-Features: AWEUYZmwC1Ald9WqBF-Cp_KN0JvExAOdAcs4cXM5XixwhG0EIDgjw-cpPqX7yFw
-Message-ID: <CAHk-=wjEWCChmYPWd_EPOOF7m+JZoRnEocmjj5sPptptc3AwYw@mail.gmail.com>
-Subject: Re: [PATCH] fs: pack struct kstat better
+References: <20250129143353.1892423-1-agruenba@redhat.com> <20250129143353.1892423-4-agruenba@redhat.com>
+ <20250129154413.GD7369@lst.de>
+In-Reply-To: <20250129154413.GD7369@lst.de>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Wed, 29 Jan 2025 18:19:39 +0100
+X-Gm-Features: AWEUYZk_2Z3s2dY_kkWVLcQgmXKJk2VDezt4d-YIgTtz0UQr4V5Xf2wIXyjUrQM
+Message-ID: <CAHc6FU47ToGhxxO1MzcdyL=Mcqrf-E+Wh3dwMiuL365pXSfKsg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] lockref: remove count argument of lockref_init
 To: Christoph Hellwig <hch@lst.de>
-Cc: brauner@kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 28 Jan 2025 at 22:38, Christoph Hellwig <hch@lst.de> wrote:
+On Wed, Jan 29, 2025 at 4:44=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+> Maybe the lockref_init kerneldoc now needs to say that it's initialized
+> to a hold count of 1?
+
+I always feel a bit guilty when adding a comment like "Initializes
+@lockref->count to 1" and five lines further down in the code, it says
+'lockref->count =3D 1'. But okay.
+
+> Otherwise looks good:
 >
-> Move the change_cookie and subvol up to avoid two 4 byte holes.
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>
 
-I applied this directly to my tree since I was the one asking for this change.
+Thanks,
+Andreas
 
-         Linus
 
