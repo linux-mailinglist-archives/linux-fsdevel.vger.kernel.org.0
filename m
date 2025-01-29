@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-40326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428FBA223C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 19:21:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAC9A223CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 19:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9803168575
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:21:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E077F188916D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 18:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717471E9B01;
-	Wed, 29 Jan 2025 18:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B405E1EE00B;
+	Wed, 29 Jan 2025 18:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCVekLBU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TnMaWOHx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549211E9B06;
-	Wed, 29 Jan 2025 18:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7531EBA05;
+	Wed, 29 Jan 2025 18:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738174682; cv=none; b=luHg/v1PpCtESBH/cAfEGzR1EKBEidSeKesWgpq+ES4ohy+qxMGV+I0GzdvSQZq90yE6QAol5tJEKc9cZb8M2CU2XZ+aQc/g+we04o2F4NuIBEhoqKaWX5WehaUed17JrNeSChiDPrdf6KBqT0K9h72lFq/1fO6m6AL3JrE0s0Y=
+	t=1738174685; cv=none; b=lWRSvmIFXQMz8N1ggJbWoseAOonJu6rYSO3MEQ9O4EVpkXv0msX4UUXf1AHGdH4bfp56Fo74d4ZCcB9VFzkFBZDYTWbm18FG7zAs6od+34S2Yg3U7yZe0lymgajlgGLvLehLR/11Lj08b9O5TfcyOKO2lDxOJLO5vUnp9nbhX6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738174682; c=relaxed/simple;
-	bh=ukQZNAO8hWvIF2SoL2m9NYJM3TAt2Q5qsnN0OoflgdY=;
-	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=HBf1Jazk05yHuSJT0o7DStTqGYa3z2aA5BJRMKjS2nIV6iI9tu89VE9zq5eMDmC2QEDKV2qMI4buWhWAeAkXrIFup7bmAyLOGLtXGxztv8oKuzD3XPOLB3ttR5q9CSS5p8x2ecnvqeDsqwObCxxg243TCAEcnuiPU2G9VmDgGYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCVekLBU; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1738174685; c=relaxed/simple;
+	bh=9HMpAKh/G4dXrhwsbs3yhGRxyGR4nQmn1BXXS8DWYsE=;
+	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=MlSIpcmmcmwFAzAstpcDH0rnczEIC2bStu4J2jKKOHZSjlbrIPxkZbg2b4rANamZBzA2J0BS0YAQ6j5LGhkKE36OWtYrsWFcLizitnYtGlk5Iz9lIhme7NZ5niKKypIpuoZlECKXH52IQPTluAcqhjQEaSi3oyj0q/LT4d1HAjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TnMaWOHx; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738174682; x=1769710682;
+  t=1738174684; x=1769710684;
   h=subject:to:cc:from:date:references:in-reply-to:
    message-id;
-  bh=ukQZNAO8hWvIF2SoL2m9NYJM3TAt2Q5qsnN0OoflgdY=;
-  b=jCVekLBUyXn9BgRQ3mhCo7Vzvpoy1E8/IRZfEEM9z6bZkZBrZX4NnNr2
-   WnIfR+FsI5Onojb3x6d4oaLUMRBDc6cF6EPMgbK8YMzaEweUFbQsQcr4/
-   t41HFUW5yzTG+bcIdh2JAa77L+brrZ04mG70YYjyqVk/NWH0VGbOHEr/L
-   HSxkWFyjSqJmsbJrPXk0XSvE7VyiCSxERDkkvN79VPiIABPKyUCrlCM5Z
-   xbkoiV+ytnHDqYGH9v7QsgmRSHqMr6WE5Q4S+IvhKIAV30DBS5rOqZqW4
-   W90L8R+z66Ijyb814BVYtcMzp8Ofxv8Zi3jNNX2cyE6qr+zrhfGw5akrp
-   w==;
-X-CSE-ConnectionGUID: AkHdJNWRSKqUb2BIttlBiA==
-X-CSE-MsgGUID: gxBI1l+MRfqx+6kogdwpgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11330"; a="38963301"
+  bh=9HMpAKh/G4dXrhwsbs3yhGRxyGR4nQmn1BXXS8DWYsE=;
+  b=TnMaWOHxyAe4ENoSZvC+i6KPCsti1e1nS6DP5xZE9Oe0ymbqcBIubzFY
+   9x6TFS8Tvf6pe/2NJmpMkrGjeWPsjn0UsFvHyehdLU73MF5xdThHLX4D9
+   sybgieatb4S+JJ126pc6LGc/G/z6wMCL3vyhBhIKs0CZeJBk4rCrQUlty
+   gYMNkAncfxShlqYDIlAZj9HwGLrFv2f+EoZ+BX24iCwEbH3fHoLMoNsXB
+   dWayiqLmJRFs/vdAHlfCrTJjtYWEz1NhCxTbaW9+jkXNG9op4qKP+tluV
+   xVq3lNfXBnQznhif6OXGqGH79MvVbCNAxOGyCEI1h43rxXcwQesY7sWkw
+   Q==;
+X-CSE-ConnectionGUID: YIYHpa4gQPm94xF5loQhjg==
+X-CSE-MsgGUID: fw1m8w2nSAeiAaJ6CZ/WXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11330"; a="38963322"
 X-IronPort-AV: E=Sophos;i="6.13,244,1732608000"; 
-   d="scan'208";a="38963301"
+   d="scan'208";a="38963322"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2025 10:18:01 -0800
-X-CSE-ConnectionGUID: sF2snHVmRsS0zc8iAi9uMw==
-X-CSE-MsgGUID: qBudLyCSRzexcU+0aByGXw==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2025 10:18:03 -0800
+X-CSE-ConnectionGUID: hsjZ6/uvRziZN2sfKstoGg==
+X-CSE-MsgGUID: l/QrJ4vaTxCyPyjoeQ16lQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,244,1732608000"; 
-   d="scan'208";a="109660711"
+   d="scan'208";a="109660718"
 Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Jan 2025 10:18:00 -0800
-Subject: [PATCH 6/7] btrfs: Move prefaulting out of hot write path
+  by fmviesa010.fm.intel.com with ESMTP; 29 Jan 2025 10:18:02 -0800
+Subject: [PATCH 7/7] netfs: Remove outdated comments about prefaulting
 To: linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,Ted Ts'o <tytso@mit.edu>,Christian Brauner <brauner@kernel.org>,Darrick J. Wong <djwong@kernel.org>,Matthew Wilcox (Oracle) <willy@infradead.org>,Al Viro <viro@zeniv.linux.org.uk>,linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,clm@fb.com,josef@toxicpanda.com,dsterba@suse.com,linux-btrfs@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,Ted Ts'o <tytso@mit.edu>,Christian Brauner <brauner@kernel.org>,Darrick J. Wong <djwong@kernel.org>,Matthew Wilcox (Oracle) <willy@infradead.org>,Al Viro <viro@zeniv.linux.org.uk>,linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,dhowells@redhat.com,jlayton@kernel.org,netfs@lists.linux.dev
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Wed, 29 Jan 2025 10:18:00 -0800
+Date: Wed, 29 Jan 2025 10:18:02 -0800
 References: <20250129181749.C229F6F3@davehans-spike.ostc.intel.com>
 In-Reply-To: <20250129181749.C229F6F3@davehans-spike.ostc.intel.com>
-Message-Id: <20250129181800.ADD26AB5@davehans-spike.ostc.intel.com>
+Message-Id: <20250129181802.6E1E4149@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,57 +74,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Prefaulting the write source buffer incurs an extra userspace access
-in the common fast path. Make btrfs_buffered_write() consistent with
-generic_perform_write(): only touch userspace an extra time when
-copy_folio_from_iter_atomic() has failed to make progress.
+I originally set out to make netfs_perform_write() behavior more
+consistent with generic_perform_write(). However, netfs currently
+treats a failure to make forward progress as a hard error and does not
+retry where the generic code will loop around and retry.
+
+Instead of a major code restructuring, just focus on improving the
+comments.
+
+The comment refers to a possible deadlock and to userspace address
+checks. Neither of those things are a concern when using
+copy_folio_from_iter_atomic() for atomic usercopies. It prevents
+deadlocks by disabling page faults and it leverages user copy
+functions that have their own access_ok() checks.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: netfs@lists.linux.dev
 ---
 
- b/fs/btrfs/file.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ b/fs/netfs/buffered_write.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff -puN fs/btrfs/file.c~btrfs-postfault fs/btrfs/file.c
---- a/fs/btrfs/file.c~btrfs-postfault	2025-01-29 09:03:36.927756510 -0800
-+++ b/fs/btrfs/file.c	2025-01-29 09:03:36.935757176 -0800
-@@ -1164,15 +1164,6 @@ ssize_t btrfs_buffered_write(struct kioc
- 		int extents_locked;
- 		bool force_page_uptodate = false;
+diff -puN fs/netfs/buffered_write.c~netfs-postfault fs/netfs/buffered_write.c
+--- a/fs/netfs/buffered_write.c~netfs-postfault	2025-01-29 09:03:38.167859749 -0800
++++ b/fs/netfs/buffered_write.c	2025-01-29 09:03:38.171860082 -0800
+@@ -152,16 +152,9 @@ ssize_t netfs_perform_write(struct kiocb
+ 		offset = pos & (max_chunk - 1);
+ 		part = min(max_chunk - offset, iov_iter_count(iter));
  
--		/*
--		 * Fault pages before locking them in prepare_one_folio()
--		 * to avoid recursive lock
--		 */
--		if (unlikely(fault_in_iov_iter_readable(i, write_bytes))) {
--			ret = -EFAULT;
--			break;
--		}
--
- 		only_release_metadata = false;
- 		sector_offset = pos & (fs_info->sectorsize - 1);
- 
-@@ -1314,6 +1305,17 @@ again:
- 
- 		cond_resched();
- 
-+		/*
-+		 * Fault pages in a slow path after dropping folio
-+		 * lock. This avoids the chance of deadlocking in
-+		 * the fault handler.
-+		 */
-+		if (unlikely(copied == 0) &&
-+		    (fault_in_iov_iter_readable(i, write_bytes) == write_bytes)) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+
- 		pos += copied;
- 		num_written += copied;
- 	}
+-		/* Bring in the user pages that we will copy from _first_ lest
+-		 * we hit a nasty deadlock on copying from the same page as
+-		 * we're writing to, without it being marked uptodate.
+-		 *
+-		 * Not only is this an optimisation, but it is also required to
+-		 * check that the address is actually valid, when atomic
+-		 * usercopies are used below.
+-		 *
+-		 * We rely on the page being held onto long enough by the LRU
+-		 * that we can grab it below if this causes it to be read.
++		/* Bring in the user folios that are copied from before taking
++		 * locks on the mapping folios. This helps ensure forward
++		 * progress if they are the same folios.
+ 		 */
+ 		ret = -EFAULT;
+ 		if (unlikely(fault_in_iov_iter_readable(iter, part) == part))
 _
 
