@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-40342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE72A22568
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 22:02:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBA1A22566
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 22:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591843A7B9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 21:01:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF9A18877E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 21:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DBE1E98ED;
-	Wed, 29 Jan 2025 21:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FA21E9B11;
+	Wed, 29 Jan 2025 21:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9wo4ldU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRKfG7lh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC71E3DD6;
-	Wed, 29 Jan 2025 21:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C3142A92;
+	Wed, 29 Jan 2025 21:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738184450; cv=none; b=PV/zljkVwRSfWJts4uGFBYqJqscaA7yg9hQKbPqVYPUapNqnE0nFYcplU6t0KOESOBwrFWLVgY5jqPeCH5eJVfOKm8iCxgIP/bdQQYIk/p/q4bakwoHVFhLKBKioMGSX7z0WH2cy6lpL9QdhlBxGHLqsjPWz64nZ5XtRkolgHuU=
+	t=1738184457; cv=none; b=OozPCdb3G+4fuuau/zM3QGtwFZsatBAnRui81ikkffPzhsd7UIcWNy21rrZVGWVnLwleFMKCS5RE6zI2iRLdO79MZbxnE2kp5C8KR2AI+WA1X/EDjMSJ4lQ4GdB+M98OqHmOtB2LJlne+1tCNMOPX4d4dE+TW4/gDfw/83SbOdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738184450; c=relaxed/simple;
-	bh=8KhsLZmomqOeXvthUdnsQx7/pBB2xxXMEyMOTVnTU6c=;
+	s=arc-20240116; t=1738184457; c=relaxed/simple;
+	bh=fuGYW/1zNIvvDw4pAzEC/dfR1GTOdiw8eWV8eiTYGLY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RtlFL/o7xVSl7HA+Yvq3UHp9ZO3fzUchXD6hJ7ACYIOScs+JTDSf+VH1S6mScXn3XGk37MVCmji66W5csnDZsSyjV2l7crFrx0gVIl3gF43b1xEXYkOSBwLPNQOUGgtVcnmX4l8WaZ1rdFp+eVraTcz4RRId3BPbICyqs0fJn4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9wo4ldU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0D0EC4CED1;
-	Wed, 29 Jan 2025 21:00:46 +0000 (UTC)
+	 MIME-Version; b=Eob7PVFXvhCrhZ6ytcjjjdHwnkT1KUKdkrfcSk3fyMHnzHp5OPQNEcxgsEzbKL2I2QjS8KKnJ0JsrL//A2IS5qsK6E4lQ1Z2yLEnNXyTGaxQZvKqN7iIrNbLIiO2rIPUu9h1nbDmP0WIUTSopd+34gT/MH6jRYi4/oKfyHbOnbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRKfG7lh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2241AC4CED3;
+	Wed, 29 Jan 2025 21:00:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738184449;
-	bh=8KhsLZmomqOeXvthUdnsQx7/pBB2xxXMEyMOTVnTU6c=;
+	s=k20201202; t=1738184457;
+	bh=fuGYW/1zNIvvDw4pAzEC/dfR1GTOdiw8eWV8eiTYGLY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V9wo4ldUZ6+1+EwN7p7XkB0wXqUPqmgmvl8t8yXVF8KwdfWV59Qv8lk95Pcw4nwEK
-	 44JJOJZWEvYv9Y3oFcKR+GiH5jGHhcx8lBoK/g1vgkpmJvLvyeRvX8p3qCQ0Ae+IFj
-	 pJP7y/AiKF6zzc+2nGWCu0wkIIJYXwp7hZKnWm9AeTN7qu1oRg3oWuZcJeasBY1QG9
-	 CkmxqiFxKlMeoFpZHctTssjC7es24cwc34ZPzZD+Y0orbjRsaZXEa9AxdB+bNn9guQ
-	 FSOrcSfBngFrs55KYVIMdCG9q7lxRAuNmU4dzkSWDrEOiaLiUUApPLsf3QVZMO776V
-	 8oHNh7ntRSPhw==
+	b=tRKfG7lhcfDktvoJFu8lUh3H3v12FASpRFD0Gs/eKdy3VQfCDgWoTsUJ+yFWS58Ob
+	 VWjAxYd5pjqD64CZlll6NVbBIVdKwF6mPI7oiac3sSb1mdIb/uI8ezq9bgpyQwNKd5
+	 uGzIu+tDcZaNarkYJ9rf7oAFFaoSZA2umzTT8rx/rbck1/mjSwSziVNeAeGIIJY44c
+	 dtaaDMJhVxD9pXFW/opXROzWoFao/rIUVibJy0ZgixELrOIDnJesr9cRkHJEjdxU5i
+	 vvSsYJEIiYk0IYUMGfNT2AAgWHFaItpfbw+tPRxyGYAYpZJp5vt/vtNT1641TfNqlW
+	 Jrr6CySjRibWA==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc: kernel-team@meta.com,
 	liamwisehart@meta.com,
 	shankaran@meta.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH v11 bpf-next 6/7] bpf: fs/xattr: Add BPF kfuncs to set and remove xattrs
-Date: Wed, 29 Jan 2025 12:59:56 -0800
-Message-ID: <20250129205957.2457655-7-song@kernel.org>
+Subject: [PATCH v11 bpf-next 7/7] selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
+Date: Wed, 29 Jan 2025 12:59:57 -0800
+Message-ID: <20250129205957.2457655-8-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250129205957.2457655-1-song@kernel.org>
 References: <20250129205957.2457655-1-song@kernel.org>
@@ -74,305 +74,327 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the following kfuncs to set and remove xattrs from BPF programs:
+Two sets of tests are added to exercise the not _locked and _locked
+version of the kfuncs. For both tests, user space accesses xattr
+security.bpf.foo on a testfile. The BPF program is triggered by user
+space access (on LSM hook inode_[set|get]_xattr) and sets or removes
+xattr security.bpf.bar. Then user space then validates that xattr
+security.bpf.bar is set or removed as expected.
 
-  bpf_set_dentry_xattr
-  bpf_remove_dentry_xattr
-  bpf_set_dentry_xattr_locked
-  bpf_remove_dentry_xattr_locked
-
-The _locked version of these kfuncs are called from hooks where
-dentry->d_inode is already locked. Instead of requiring the user
-to know which version of the kfuncs to use, the verifier will pick
-the proper kfunc based on the calling hook.
+Note that, in both tests, the BPF programs use the not _locked kfuncs.
+The verifier picks the proper kfuncs based on the calling context.
 
 Signed-off-by: Song Liu <song@kernel.org>
-Acked-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/bpf_fs_kfuncs.c      | 219 +++++++++++++++++++++++++++++++++++++++-
- include/linux/bpf_lsm.h |   2 +
- 2 files changed, 219 insertions(+), 2 deletions(-)
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 125 ++++++++++++++++
+ .../bpf/progs/test_set_remove_xattr.c         | 133 ++++++++++++++++++
+ 3 files changed, 263 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 8a65184c8c2c..28a0ec5516af 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -2,10 +2,12 @@
- /* Copyright (c) 2024 Google LLC. */
+diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
+index 2eb3483f2fb0..8215c9b3115e 100644
+--- a/tools/testing/selftests/bpf/bpf_kfuncs.h
++++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+@@ -87,4 +87,9 @@ struct dentry;
+  */
+ extern int bpf_get_dentry_xattr(struct dentry *dentry, const char *name,
+ 			      struct bpf_dynptr *value_ptr) __ksym __weak;
++
++extern int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__str,
++				const struct bpf_dynptr *value_p, int flags) __ksym __weak;
++extern int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str) __ksym __weak;
++
+ #endif
+diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+index 419f45b56472..43a26ec69a8e 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
++++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+@@ -8,6 +8,7 @@
+ #include <unistd.h>
+ #include <test_progs.h>
+ #include "test_get_xattr.skel.h"
++#include "test_set_remove_xattr.skel.h"
+ #include "test_fsverity.skel.h"
  
- #include <linux/bpf.h>
-+#include <linux/bpf_lsm.h>
- #include <linux/btf.h>
- #include <linux/btf_ids.h>
- #include <linux/dcache.h>
- #include <linux/fs.h>
-+#include <linux/fsnotify.h>
- #include <linux/file.h>
- #include <linux/mm.h>
- #include <linux/xattr.h>
-@@ -161,6 +163,156 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
- 	return bpf_get_dentry_xattr(dentry, name__str, value_p);
+ static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
+@@ -72,6 +73,127 @@ static void test_get_xattr(const char *name, const char *value, bool allow_acces
+ 	remove(testfile);
  }
  
-+static int bpf_xattr_write_permission(const char *name, struct inode *inode)
++/* xattr value we will set to security.bpf.foo */
++static const char value_foo[] = "hello";
++
++static void read_and_validate_foo(struct test_set_remove_xattr *skel)
 +{
-+	if (WARN_ON(!inode))
-+		return -EINVAL;
++	char value_out[32];
++	int err;
 +
-+	/* Only allow setting and removing security.bpf. xattrs */
-+	if (!match_security_bpf_prefix(name))
-+		return -EPERM;
-+
-+	return inode_permission(&nop_mnt_idmap, inode, MAY_WRITE);
++	err = getxattr(testfile, skel->rodata->xattr_foo, value_out, sizeof(value_out));
++	ASSERT_EQ(err, sizeof(value_foo), "getxattr size foo");
++	ASSERT_EQ(strncmp(value_out, value_foo, sizeof(value_foo)), 0, "strncmp value_foo");
 +}
 +
-+/**
-+ * bpf_set_dentry_xattr_locked - set a xattr of a dentry
-+ * @dentry: dentry to get xattr from
-+ * @name__str: name of the xattr
-+ * @value_p: xattr value
-+ * @flags: flags to pass into filesystem operations
-+ *
-+ * Set xattr *name__str* of *dentry* to the value in *value_ptr*.
-+ *
-+ * For security reasons, only *name__str* with prefix "security.bpf."
-+ * is allowed.
-+ *
-+ * The caller already locked dentry->d_inode.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+__bpf_kfunc int bpf_set_dentry_xattr_locked(struct dentry *dentry, const char *name__str,
-+					    const struct bpf_dynptr *value_p, int flags)
++static void set_foo(struct test_set_remove_xattr *skel)
 +{
++	ASSERT_OK(setxattr(testfile, skel->rodata->xattr_foo, value_foo, strlen(value_foo) + 1, 0),
++		  "setxattr foo");
++}
 +
-+	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
-+	struct inode *inode = d_inode(dentry);
-+	const void *value;
-+	u32 value_len;
-+	int ret;
++static void validate_bar_match(struct test_set_remove_xattr *skel)
++{
++	char value_out[32];
++	int err;
 +
-+	value_len = __bpf_dynptr_size(value_ptr);
-+	value = __bpf_dynptr_data(value_ptr, value_len);
-+	if (!value)
-+		return -EINVAL;
++	err = getxattr(testfile, skel->rodata->xattr_bar, value_out, sizeof(value_out));
++	ASSERT_EQ(err, sizeof(skel->data->value_bar), "getxattr size bar");
++	ASSERT_EQ(strncmp(value_out, skel->data->value_bar, sizeof(skel->data->value_bar)), 0,
++		  "strncmp value_bar");
++}
 +
-+	ret = bpf_xattr_write_permission(name__str, inode);
-+	if (ret)
-+		return ret;
++static void validate_bar_removed(struct test_set_remove_xattr *skel)
++{
++	char value_out[32];
++	int err;
 +
-+	ret = __vfs_setxattr(&nop_mnt_idmap, dentry, inode, name__str,
-+			     value, value_len, flags);
-+	if (!ret) {
-+		fsnotify_xattr(dentry);
++	err = getxattr(testfile, skel->rodata->xattr_bar, value_out, sizeof(value_out));
++	ASSERT_LT(err, 0, "getxattr size bar should fail");
++}
 +
-+		/* This xattr is set by BPF LSM, so we do not call
-+		 * security_inode_post_setxattr. Otherwise, we would
-+		 * risk deadlocks by calling back to the same kfunc.
-+		 *
-+		 * This is the same as security_inode_setsecurity().
-+		 */
++static void test_set_remove_xattr(void)
++{
++	struct test_set_remove_xattr *skel = NULL;
++	int fd = -1, err;
++
++	fd = open(testfile, O_CREAT | O_RDONLY, 0644);
++	if (!ASSERT_GE(fd, 0, "create_file"))
++		return;
++
++	close(fd);
++	fd = -1;
++
++	skel = test_set_remove_xattr__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "test_set_remove_xattr__open_and_load"))
++		return;
++
++	/* Set security.bpf.foo to "hello" */
++	err = setxattr(testfile, skel->rodata->xattr_foo, value_foo, strlen(value_foo) + 1, 0);
++	if (err && errno == EOPNOTSUPP) {
++		printf("%s:SKIP:local fs doesn't support xattr (%d)\n"
++		       "To run this test, make sure /tmp filesystem supports xattr.\n",
++		       __func__, errno);
++		test__skip();
++		goto out;
 +	}
-+	return ret;
++
++	if (!ASSERT_OK(err, "setxattr"))
++		goto out;
++
++	skel->bss->monitored_pid = getpid();
++	err = test_set_remove_xattr__attach(skel);
++	if (!ASSERT_OK(err, "test_set_remove_xattr__attach"))
++		goto out;
++
++	/* First, test not _locked version of the kfuncs with getxattr. */
++
++	/* Read security.bpf.foo and trigger test_inode_getxattr. This
++	 * bpf program will set security.bpf.bar to "world".
++	 */
++	read_and_validate_foo(skel);
++	validate_bar_match(skel);
++
++	/* Read security.bpf.foo and trigger test_inode_getxattr again.
++	 * This will remove xattr security.bpf.bar.
++	 */
++	read_and_validate_foo(skel);
++	validate_bar_removed(skel);
++
++	ASSERT_TRUE(skel->bss->set_security_bpf_bar_success, "set_security_bpf_bar_success");
++	ASSERT_TRUE(skel->bss->remove_security_bpf_bar_success, "remove_security_bpf_bar_success");
++	ASSERT_TRUE(skel->bss->set_security_selinux_fail, "set_security_selinux_fail");
++	ASSERT_TRUE(skel->bss->remove_security_selinux_fail, "remove_security_selinux_fail");
++
++	/* Second, test _locked version of the kfuncs, with setxattr */
++
++	/* Set security.bpf.foo and trigger test_inode_setxattr. This
++	 * bpf program will set security.bpf.bar to "world".
++	 */
++	set_foo(skel);
++	validate_bar_match(skel);
++
++	/* Set security.bpf.foo and trigger test_inode_setxattr again.
++	 * This will remove xattr security.bpf.bar.
++	 */
++	set_foo(skel);
++	validate_bar_removed(skel);
++
++	ASSERT_TRUE(skel->bss->locked_set_security_bpf_bar_success,
++		    "locked_set_security_bpf_bar_success");
++	ASSERT_TRUE(skel->bss->locked_remove_security_bpf_bar_success,
++		    "locked_remove_security_bpf_bar_success");
++	ASSERT_TRUE(skel->bss->locked_set_security_selinux_fail,
++		    "locked_set_security_selinux_fail");
++	ASSERT_TRUE(skel->bss->locked_remove_security_selinux_fail,
++		    "locked_remove_security_selinux_fail");
++
++out:
++	close(fd);
++	test_set_remove_xattr__destroy(skel);
++	remove(testfile);
 +}
 +
-+/**
-+ * bpf_set_dentry_xattr - set a xattr of a dentry
-+ * @dentry: dentry to get xattr from
-+ * @name__str: name of the xattr
-+ * @value_p: xattr value
-+ * @flags: flags to pass into filesystem operations
-+ *
-+ * Set xattr *name__str* of *dentry* to the value in *value_ptr*.
-+ *
-+ * For security reasons, only *name__str* with prefix "security.bpf."
-+ * is allowed.
-+ *
-+ * The caller has not locked dentry->d_inode.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+__bpf_kfunc int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__str,
-+				     const struct bpf_dynptr *value_p, int flags)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	int ret;
-+
-+	inode_lock(inode);
-+	ret = bpf_set_dentry_xattr_locked(dentry, name__str, value_p, flags);
-+	inode_unlock(inode);
-+	return ret;
-+}
-+
-+/**
-+ * bpf_remove_dentry_xattr_locked - remove a xattr of a dentry
-+ * @dentry: dentry to get xattr from
-+ * @name__str: name of the xattr
-+ *
-+ * Rmove xattr *name__str* of *dentry*.
-+ *
-+ * For security reasons, only *name__str* with prefix "security.bpf."
-+ * is allowed.
-+ *
-+ * The caller already locked dentry->d_inode.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+__bpf_kfunc int bpf_remove_dentry_xattr_locked(struct dentry *dentry, const char *name__str)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	int ret;
-+
-+	ret = bpf_xattr_write_permission(name__str, inode);
-+	if (ret)
-+		return ret;
-+
-+	ret = __vfs_removexattr(&nop_mnt_idmap, dentry, name__str);
-+	if (!ret) {
-+		fsnotify_xattr(dentry);
-+
-+		/* This xattr is removed by BPF LSM, so we do not call
-+		 * security_inode_post_removexattr. Otherwise, we would
-+		 * risk deadlocks by calling back to the same kfunc.
-+		 */
-+	}
-+	return ret;
-+}
-+
-+/**
-+ * bpf_remove_dentry_xattr - remove a xattr of a dentry
-+ * @dentry: dentry to get xattr from
-+ * @name__str: name of the xattr
-+ *
-+ * Rmove xattr *name__str* of *dentry*.
-+ *
-+ * For security reasons, only *name__str* with prefix "security.bpf."
-+ * is allowed.
-+ *
-+ * The caller has not locked dentry->d_inode.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+__bpf_kfunc int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	int ret;
-+
-+	inode_lock(inode);
-+	ret = bpf_remove_dentry_xattr_locked(dentry, name__str);
-+	inode_unlock(inode);
-+	return ret;
-+}
-+
- __bpf_kfunc_end_defs();
+ #ifndef SHA256_DIGEST_SIZE
+ #define SHA256_DIGEST_SIZE      32
+ #endif
+@@ -161,6 +283,9 @@ void test_fs_kfuncs(void)
+ 	if (test__start_subtest("security_selinux_xattr_error"))
+ 		test_get_xattr("security.selinux", "hello", false);
  
- BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-@@ -170,20 +322,83 @@ BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
- BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
- 
-+BTF_HIDDEN_KFUNCS_START(bpf_fs_kfunc_hidden_set_ids)
-+BTF_ID_FLAGS(func, bpf_set_dentry_xattr_locked, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_remove_dentry_xattr_locked, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_KFUNCS_END(bpf_fs_kfunc_hidden_set_ids)
++	if (test__start_subtest("set_remove_xattr"))
++		test_set_remove_xattr();
 +
- static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
- {
--	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
--	    prog->type == BPF_PROG_TYPE_LSM)
-+	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) &&
-+	    !btf_id_set8_contains(&bpf_fs_kfunc_hidden_set_ids, kfunc_id))
-+		return 0;
-+	if (prog->type == BPF_PROG_TYPE_LSM)
- 		return 0;
- 	return -EACCES;
+ 	if (test__start_subtest("fsverity"))
+ 		test_fsverity();
  }
- 
-+/* bpf_[set|remove]_dentry_xattr.* hooks have KF_TRUSTED_ARGS and
-+ * KF_SLEEPABLE, so they are only available to sleepable hooks with
-+ * dentry arguments.
-+ *
-+ * Setting and removing xattr requires exclusive lock on dentry->d_inode.
-+ * Some hooks already locked d_inode, while some hooks have not locked
-+ * d_inode. Therefore, we need different kfuncs for different hooks.
-+ * Specifically, hooks in the following list (d_inode_locked_hooks)
-+ * should call bpf_[set|remove]_dentry_xattr_locked; while other hooks
-+ * should call bpf_[set|remove]_dentry_xattr.
-+ */
-+BTF_SET_START(d_inode_locked_hooks)
-+BTF_ID(func, bpf_lsm_inode_post_removexattr)
-+BTF_ID(func, bpf_lsm_inode_post_setattr)
-+BTF_ID(func, bpf_lsm_inode_post_setxattr)
-+BTF_ID(func, bpf_lsm_inode_removexattr)
-+BTF_ID(func, bpf_lsm_inode_rmdir)
-+BTF_ID(func, bpf_lsm_inode_setattr)
-+BTF_ID(func, bpf_lsm_inode_setxattr)
-+BTF_ID(func, bpf_lsm_inode_unlink)
-+#ifdef CONFIG_SECURITY_PATH
-+BTF_ID(func, bpf_lsm_path_unlink)
-+BTF_ID(func, bpf_lsm_path_rmdir)
-+#endif /* CONFIG_SECURITY_PATH */
-+BTF_SET_END(d_inode_locked_hooks)
+diff --git a/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c b/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+new file mode 100644
+index 000000000000..6a612cf168d3
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
 +
-+static bool bpf_lsm_has_d_inode_locked(const struct bpf_prog *prog)
++#include "vmlinux.h"
++#include <errno.h>
++#include <bpf/bpf_tracing.h>
++#include "bpf_kfuncs.h"
++#include "bpf_misc.h"
++
++char _license[] SEC("license") = "GPL";
++
++__u32 monitored_pid;
++
++const char xattr_foo[] = "security.bpf.foo";
++const char xattr_bar[] = "security.bpf.bar";
++static const char xattr_selinux[] = "security.selinux";
++char value_bar[] = "world";
++char read_value[32];
++
++bool set_security_bpf_bar_success;
++bool remove_security_bpf_bar_success;
++bool set_security_selinux_fail;
++bool remove_security_selinux_fail;
++
++char name_buf[32];
++
++static inline bool name_match_foo(const char *name)
 +{
-+	return btf_id_set_contains(&d_inode_locked_hooks, prog->aux->attach_btf_id);
++	bpf_probe_read_kernel(name_buf, sizeof(name_buf), name);
++
++	return !bpf_strncmp(name_buf, sizeof(xattr_foo), xattr_foo);
 +}
 +
-+BTF_ID_LIST(not_locked_fs_kfuncs)
-+BTF_ID(func, bpf_set_dentry_xattr)
-+BTF_ID(func, bpf_remove_dentry_xattr)
-+
-+BTF_ID_LIST(locked_fs_kfuncs)
-+BTF_ID(func, bpf_set_dentry_xattr_locked)
-+BTF_ID(func, bpf_remove_dentry_xattr_locked)
-+
-+static u32 bpf_fs_kfunc_remap(const struct bpf_prog *prog, u32 kfunc_id)
++/* Test bpf_set_dentry_xattr and bpf_remove_dentry_xattr */
++SEC("lsm.s/inode_getxattr")
++int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
 +{
-+	if (!bpf_lsm_has_d_inode_locked(prog))
++	struct bpf_dynptr value_ptr;
++	__u32 pid;
++	int ret;
++
++	pid = bpf_get_current_pid_tgid() >> 32;
++	if (pid != monitored_pid)
 +		return 0;
 +
-+	if (kfunc_id == not_locked_fs_kfuncs[0])
-+		return locked_fs_kfuncs[0];
-+	if (kfunc_id == not_locked_fs_kfuncs[1])
-+		return locked_fs_kfuncs[1];
++	/* Only do the following for security.bpf.foo */
++	if (!name_match_foo(name))
++		return 0;
++
++	bpf_dynptr_from_mem(read_value, sizeof(read_value), 0, &value_ptr);
++
++	/* read security.bpf.bar */
++	ret = bpf_get_dentry_xattr(dentry, xattr_bar, &value_ptr);
++
++	if (ret < 0) {
++		/* If security.bpf.bar doesn't exist, set it */
++		bpf_dynptr_from_mem(value_bar, sizeof(value_bar), 0, &value_ptr);
++
++		ret = bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
++		if (!ret)
++			set_security_bpf_bar_success = true;
++		ret = bpf_set_dentry_xattr(dentry, xattr_selinux, &value_ptr, 0);
++		if (ret)
++			set_security_selinux_fail = true;
++	} else {
++		/* If security.bpf.bar exists, remove it */
++		ret = bpf_remove_dentry_xattr(dentry, xattr_bar);
++		if (!ret)
++			remove_security_bpf_bar_success = true;
++
++		ret = bpf_remove_dentry_xattr(dentry, xattr_selinux);
++		if (ret)
++			remove_security_selinux_fail = true;
++	}
 +
 +	return 0;
 +}
 +
- static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
- 	.owner = THIS_MODULE,
- 	.set = &bpf_fs_kfunc_set_ids,
-+	.hidden_set = &bpf_fs_kfunc_hidden_set_ids,
- 	.filter = bpf_fs_kfuncs_filter,
-+	.remap = bpf_fs_kfunc_remap,
- };
- 
- static int __init bpf_fs_kfuncs_init(void)
-diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-index aefcd6564251..f4ab0dc1df69 100644
---- a/include/linux/bpf_lsm.h
-+++ b/include/linux/bpf_lsm.h
-@@ -48,6 +48,7 @@ void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func)
- 
- int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
- 			     struct bpf_retval_range *range);
++bool locked_set_security_bpf_bar_success;
++bool locked_remove_security_bpf_bar_success;
++bool locked_set_security_selinux_fail;
++bool locked_remove_security_selinux_fail;
 +
- #else /* !CONFIG_BPF_LSM */
- 
- static inline bool bpf_lsm_is_sleepable_hook(u32 btf_id)
-@@ -86,6 +87,7 @@ static inline int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
- {
- 	return -EOPNOTSUPP;
- }
++/* Test bpf_set_dentry_xattr_locked and bpf_remove_dentry_xattr_locked.
++ * It not necessary to differentiate the _locked version and the
++ * not-_locked version in the BPF program. The verifier will fix them up
++ * properly.
++ */
++SEC("lsm.s/inode_setxattr")
++int BPF_PROG(test_inode_setxattr, struct mnt_idmap *idmap,
++	     struct dentry *dentry, const char *name,
++	     const void *value, size_t size, int flags)
++{
++	struct bpf_dynptr value_ptr;
++	__u32 pid;
++	int ret;
 +
- #endif /* CONFIG_BPF_LSM */
- 
- #endif /* _LINUX_BPF_LSM_H */
++	pid = bpf_get_current_pid_tgid() >> 32;
++	if (pid != monitored_pid)
++		return 0;
++
++	/* Only do the following for security.bpf.foo */
++	if (!name_match_foo(name))
++		return 0;
++
++	bpf_dynptr_from_mem(read_value, sizeof(read_value), 0, &value_ptr);
++
++	/* read security.bpf.bar */
++	ret = bpf_get_dentry_xattr(dentry, xattr_bar, &value_ptr);
++
++	if (ret < 0) {
++		/* If security.bpf.bar doesn't exist, set it */
++		bpf_dynptr_from_mem(value_bar, sizeof(value_bar), 0, &value_ptr);
++
++		ret = bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
++		if (!ret)
++			locked_set_security_bpf_bar_success = true;
++		ret = bpf_set_dentry_xattr(dentry, xattr_selinux, &value_ptr, 0);
++		if (ret)
++			locked_set_security_selinux_fail = true;
++	} else {
++		/* If security.bpf.bar exists, remove it */
++		ret = bpf_remove_dentry_xattr(dentry, xattr_bar);
++		if (!ret)
++			locked_remove_security_bpf_bar_success = true;
++
++		ret = bpf_remove_dentry_xattr(dentry, xattr_selinux);
++		if (ret)
++			locked_remove_security_selinux_fail = true;
++	}
++
++	return 0;
++}
 -- 
 2.43.5
 
