@@ -1,275 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-40346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB404A2266B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 23:51:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47426A226B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 00:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EDE71885112
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 22:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C4B3A3970
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 23:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015651A8F97;
-	Wed, 29 Jan 2025 22:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0BD1B393A;
+	Wed, 29 Jan 2025 23:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="tVoupXV0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tms7RdzM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737761FC8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 22:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF72218FDCE;
+	Wed, 29 Jan 2025 23:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738191111; cv=none; b=sRTCaHC5wrOqmZ6MSYUnBYCYh7PFLJ1bpAA6iFf/2Ux5Kl3pmSzBFvXTprvjrzts5BGaDc4tj0yiSOCXVXdFHwzX12AYrXQS8lAOw6FytSfaL8RzkUZyS+NDnG8BWrVgjGiXX/cy3vm3DOoCbzDXuEjGjbWYrRYv/zjG0mqE2z4=
+	t=1738191821; cv=none; b=fhePq3ONMbW9bnQevFq9T1Ek/hkKd0C0CN+1fhsE6x89MlXjtKuLdFV0mCAQXOp3U5HWZvaciNAPE9fHDrS5g5dT4nZ/eFvqMlYHfOax5Dqzrd+hesZRwYHloYbXcuTAIn3R+zEFPFidgXyJizqbGpv3tjTvhDMAizUb4/lU5lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738191111; c=relaxed/simple;
-	bh=8R54uij/jN5iUIesVBKs2OcapsaJq3c2VULyhoI1t1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amAzGyK5oBjL8Oo48PALyW769B27VeBcLCvZz09Ct30VyanPcLtB2INS4ALf8JQQmZRl2bPvr7S32C0wHvy2sYQJUPME27FAD7LoBdvhXDAmR3dDnGwp4tft8evAzdHYFap+8I3ZCUO4vw/fsmsL3l1UbfbNASeHYJW5zCqeaic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=tVoupXV0; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21c2f1b610dso3783105ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2025 14:51:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1738191109; x=1738795909; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gdA3SF6gQNAs06i6iNYN/iuwcc83pq3fxX701ndED2U=;
-        b=tVoupXV0KUmBgJ0fYXKcfdcyzpJJjrx50dhACI6nKu0fx5VOxtdm/BN6A92FJcNVkp
-         C/lHeuPWo3chcPxRHFqI3WjyluJJrK4HzeXO1nr0AwKYVmhxUlA16LXsZUPX8c6l2hPy
-         iQ27Q++5Ufucow8WcOD+gNEhlelQj9k+e9wlWdo2IahdJjsvVA77nX2eNhKnVStU61Pe
-         D9GyR1yqUh0H7yzP4xW9hNQVz+iPGaWK/6M9Rw0KhoI7Q8h+ew3gpjurHl7GY7v0wOCf
-         TwDy7zxSG83XvXEb1jrCBJCPumObCRQyrFdOIetCKD6P7XJQuBAVJESlsuyQBtaojsU5
-         DNIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738191109; x=1738795909;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gdA3SF6gQNAs06i6iNYN/iuwcc83pq3fxX701ndED2U=;
-        b=KtC3gsnqcht/QsXGd84KnObVsWbx+lxVsLnW17HdxjTAFDv8+sq6LUGWlAnsiATAGv
-         xt36gB7S4D3L0BFHAxocIN+rdj7C22aN7Q3FeqSGCCuma40MqUgK6MQBns55KyMs6Dwd
-         HO1NhDXBoZD/FplaPkIvKFRqvjFONKHr7mQxWRoqS8uWVyyVMFAe6KyqfARSMC7zMEXS
-         5fIO4BcKJqpn1jgUj9rIdFrVNhMsFwauf7rikNZxoMfJMoZE82EtW4hle1Dpqx6fzG/K
-         ILJoL1aSfpwGM0gvxvK2PSIBcSgEpZLzBHeLKNe4ajx243/OsSGeyyBcu0gfBOiL5pSR
-         rReA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmkxCS7KtuEcYWW/1vcro+TonmQbsCoW/6uQDueELgP8Wnrv8u+/JnMhkEoRRjzepDcU8zqUo22NFvgi1W@vger.kernel.org
-X-Gm-Message-State: AOJu0YwynyBhioeXdV/jpZ5u+Cr2avps90/ciW/EzJX8yrDwAZ3I7Gds
-	JcgneU7f6rMPWWBmk953hjEgcdTzU96nyKGtVh3WpcYrsHC2ZbqDBywuSgkzTkc=
-X-Gm-Gg: ASbGncsysDTBSVNgOON6XwbuPwxon0ookoOOCvAlKAAryi9bL7DIuJ5AJ3HxKTIFGFl
-	6evF43QWU9bM9+0K2QJHFjcJ7yrd2VMocaylpET/VEGwglnCXxD9694KtlDBVWfzE5v1sX24pvX
-	/jlLDFAxoDCk9DkazopbJPXuhBi6YlChobZrJVHRm4g8uIpNAbAc5Msprun7mevKJ2Un9+RlqZr
-	gENkJSqf9J/psbBVfZe/c1YKMW+G6LwyVI2fCu7eThN57Q+/HLnLQWUNBi5YHsiuJTaCB//6zMU
-	1Tk4vZa7eA7dOLprrFG5Lur913+lvCtGf9GBXuzfDX4oODyFEpiXJM/20L34KMn3As4=
-X-Google-Smtp-Source: AGHT+IEzjQs5XZtyAiwb3Yq2ePZlDwgh93j0WicwmhEOLkB/9GHcRitPgqlAj2mZjc7b/EeuVA3r0w==
-X-Received: by 2002:a17:903:22ce:b0:216:56c7:98a7 with SMTP id d9443c01a7336-21dd7df5fb7mr77862605ad.53.1738191108637;
-        Wed, 29 Jan 2025 14:51:48 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de3303f8csm1097505ad.206.2025.01.29.14.51.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 14:51:47 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tdGuN-0000000CBHR-05cQ;
-	Thu, 30 Jan 2025 09:51:43 +1100
-Date: Thu, 30 Jan 2025 09:51:43 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	anuj20.g@samsung.com, mcgrof@kernel.org, joshi.k@samsung.com,
-	axboe@kernel.dk, clm@meta.com, hch@lst.de, willy@infradead.org,
-	gost.dev@samsung.com
-Subject: Re: [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
-Message-ID: <Z5qw_1BOqiFum5Dn@dread.disaster.area>
-References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com>
- <20250129102627.161448-1-kundan.kumar@samsung.com>
+	s=arc-20240116; t=1738191821; c=relaxed/simple;
+	bh=DnBs/c57gTqdpWP75OItXgwuRYg/4fzsHcSFgQrEO5I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JRSnufGBta84UvBr79jMTxE+Bir1MdY1yacKW0JWcf//nkmSz0VYtH3D72ZeZPeeJ7NTbdv3CcxFnLjX773jRgxOmo8wE51SL3dxlS+xKO6yGBX0nkxSMEgFcM3PfsgZY+IsFZkwrNg4KL0UEewhMpJgPsdCVbggu82UW16VrvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tms7RdzM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3738C4CED1;
+	Wed, 29 Jan 2025 23:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738191820;
+	bh=DnBs/c57gTqdpWP75OItXgwuRYg/4fzsHcSFgQrEO5I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Tms7RdzMGIa5FtXsetmCkKbIvQelWoEBToY4gfpfE4JyIzZ0zzcGcZAuTOlf3bHp6
+	 ws4qBQNba817tu5KdusGU6FbGlH5ZuptAvDssJwqcjfLmr/sokodQUs0pjK7urp4ge
+	 VsGYr8ya+Lclxst3V4JGy0v9U2QRHDE8gX5TrwBbZ1nD6JioT3mBNr+fBO4hX/FTD9
+	 lnjicovsg3z60eIj+QnXUVO0W18rKJWxJNtKU/oYFcjIxAZOkaxIRfp0WecRL8LGJF
+	 VEdKcCebNL3J4PCuBIzrIFPdE8FgPfBprr3f1fkE1jYDc3T1oTdZHGCCfAquW37SvT
+	 eqvuRXieVU9bw==
+Message-ID: <930797ecabdfe52d698bed64c6ebed0a1235a18b.camel@kernel.org>
+Subject: Re: Multigrain timestamps do not work on RISC-V
+From: Jeff Layton <jlayton@kernel.org>
+To: Andreas Schwab <schwab@suse.de>, linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date: Wed, 29 Jan 2025 18:03:38 -0500
+In-Reply-To: <mvmv7ty3pd8.fsf@suse.de>
+References: <mvmv7ty3pd8.fsf@suse.de>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250129102627.161448-1-kundan.kumar@samsung.com>
 
-On Wed, Jan 29, 2025 at 03:56:27PM +0530, Kundan Kumar wrote:
-> Greetings everyone,
-> 
-> Anuj and I would like to present our proposal for implementing parallel
-> writeback at LSF/MM. This approach could address the writeback performance
-> issue discussed by Luis last year [1].
-> 
-> Currently, the pagecache writeback is executed in a single-threaded manner.
-> Inodes are added to the dirty list, and the delayed writeback is scheduled.
-> The single-threaded writeback then iterates through the dirty list and performs
-> the writeback operations.
-> 
-> We have developed a prototype implementation of parallel writeback, where we
-> have made the writeback process per-CPU-based. The b_io, b_dirty, b_dirty_time,
-> and b_more_io lists have also been modified to be per-CPU. When an inode needs
-> to be added to the b_dirty list, we select the next CPU (in a round-robin
-> fashion) and schedule the per-CPU writeback work on the selected CPU.
-
-My own experiments and experience tell me that per-cpu is not
-the right architecture for expanding writeback concurrency.
-
-The actual writeback parallelism that can be acheived is determined
-by the underlying filesystem architecture and geometry, not the CPU
-layout of the machine.
-
-I think some background info on writeback concurrency is also
-necessary before we go any further.
-
-If we go back many years to before we had the current
-write throttling architecture, we go back to an age where balance_dirty_pages()
-throttled by submitting foreground IO itself. It was throttled by
-the block layer submission queue running out of slots rather than
-any specific performance measurement. Under memory pressure, this
-lead highly concurrent dispatch of dirty pages, but very poor
-selection of dirty inodes/pages to dispatch. The result was that
-this foreground submission would often dispatch single page IOs,
-and issue tens of them concurrently across all user processes that
-were trying to write data. IOWs, throttling caused "IO breakdown"
-where the IO pattern ended up being small random IO exactly when
-we need to perform bulk cleaning of dirty pages. We needed bulk
-page cleaning throughput, not random dirty page shootdown.
-
-When we moved to "writeback is only done by the single BDI flusher
-thread" architecture, we significantly improved system behaviour
-under heavy load because writeback now had a tight focus issuing IO
-from a single inode at a time as efficiently as possible. i.e.  when
-we had large sequential dirty file regions, the writeback IO was all
-large sequential IO, and that didn't get chopped up by another
-hundred processes issuing IO from random other inodes at the same
-time.
-
-IOWs, having too much parallelism in writeback for the underlying
-storage and/or filesystem can be far more harmful to system
-performance under load than having too little parallelism to drive
-the filesystem/hardware to it's maximum performance.
-
-This is an underlying constraint that everyone needs to understand
-before discussing writeback concurrency changes: excessive
-writeback concurrency can result in worse outcomes than having no
-writeback concurrency under sustained heavy production loads....
-
-> With the per-CPU threads handling the writeback, we have observed a significant
-> increase in IOPS. Here is a test and comparison between the older writeback and
-> the newer parallel writeback, using XFS filesystem:
-> https://github.com/kundanthebest/parallel_writeback/blob/main/README.md
-
-What kernel is that from?
-
-> In our tests, we have found that with this implementation the buffered I/O
-> IOPS surpasses the DIRECT I/O. We have done very limited testing with NVMe
-> (Optane) and PMEM.
-
-Buffered IO often goes faster than direct for these workloads
-because the buffered IO is aggregated in memory to much larger, less
-random sequential IOs at writeback time.  Writing the data in fewer,
-larger, better ordered IOs is almost always faster (at both the
-filesystem and storage hardware layers) than a pure 4kB random IO
-submission pattern.
-
-i.e. with enough RAM, this random write workload using buffered IO
-is pretty much guaranteed to outperform direct IO regardless of the
-underlying writeback concurrency.
-
-> There are a few items that we would like to discuss:
-> 
-> During the implementation, we noticed several ways in which the writeback IOs
-> are throttled:
-> A) balance_dirty_pages
-> B) writeback_chunk_size
-> C) wb_over_bg_thresh
-> Additionally, there are delayed writeback executions in the form of
-> dirty_writeback_centisecs and dirty_expire_centisecs.
+On Wed, 2025-01-29 at 11:07 +0100, Andreas Schwab wrote:
+> The statx06 test in the LTP testsuite fails since the multigrain
+> timestamp feature was merged:
+>=20
+> https://openqa.opensuse.org/tests/4800409#step/statx06/7
+>=20
+> The issue is that the nsec part of ctime does not change from the time
+> the file is created:
+>=20
+> $ touch xx
+> $ stat -c $'mtime %y\nctime %z' xx
+> mtime 2025-01-29 09:43:44.677442605 +0100
+> ctime 2025-01-29 09:43:44.677442605 +0100
+> $ touch xx
+> $ stat -c $'mtime %y\nctime %z' xx
+> mtime 2025-01-29 09:43:51.641581658 +0100
+> ctime 2025-01-29 09:43:51.677442605 +0100
 >
-> With the introduction of per-CPU writeback, we need to determine the
-> appropriate way to adjust the throttling and delayed writeback settings.
+> My guess would be that something in inode_set_ctime_current is going
+> wrong.
+>=20
 
-Yup, that's kinda my point - residency of the dirty data set in the
-page cache influences throughput in a workload like this more than
-writeback parallelism does.
+Thanks for the bug report, Andreas.
 
-> Lock contention:
-> We have observed that the writeback list_lock and the inode->i_lock are the
-> locks that are most likely to cause contention when we make the thread per-CPU.
+I assume you're seeing this across different filesystems (i.e. tmpfs,
+ext4, etc.)? It almost looks like this try_cmpxchg() is returning true
+without actually doing the swap:
 
-You clearly aren't driving the system hard enough with small IOs. :)
+        if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
+                /* If swap occurred, then we're (mostly) done */
+                inode->i_ctime_sec =3D now.tv_sec;
+                trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
+                mgtime_counter_inc(mg_ctime_swaps);
+        } else {
 
-Once you load up the system with lots of small files (e.g.  with
-fsmark to create millions of 4kB files concurrently) and use
-flush-on-close writeback semantics to drive writeback IO submission
-concurrency, the profiles are typically dominated by folio
-allocation and freeing in the page cache and XFS journal free space
-management (i.e. transaction reservation management around timestamp
-updates, block allocation and unwritten extent conversion.)
+It might also be interesting to see the output of that tracepoint over
+this test, if you're able.
 
-That is, writeback parallelism in XFS is determined by the
-underlying allocation parallelism of the filesystem and journal
-size/throughput because it uses delayed allocation (same goes for
-ext4 and btrfs). In the case of XFS, allocation parallelism is
-determined by the filesytem geometry - the number of allocation
-groups created at mkfs time.
-
-So if you have 4 allocation groups (AGs) in XFS (typical default for
-small filesystems), then you can only be doing 4 extent allocation
-operations at once. Hence it doesn't matter how many concurrent
-writeback contexts the system has, the filesystem will limit
-concurrency in many workloads to just 4. i.e. the filesystem
-geometry determines writeback concurrency, not the number of CPUs in
-the system.
-
-Not every writeback will require allocation in XFS (specualtive
-delalloc beyond EOF greatly reduces this overhead) but when you have
-hundreds of thousands of small files that each require allocation
-(e.g. cloning or untarring a large source tree), then writeback has
-a 1:1 ratio between per-inode writeback and extent allocation. This
-is the case where filesystem writeback concurrency really matters...
-
-> Our next task will be to convert the writeback list_lock to a per-CPU lock.
-> Another potential improvement could be to assign a specific CPU to an inode.
-
-As I mentioned above, per-cpu writeback doesn't seem like the right
-architecture to me.
-
-IMO, we need writeback to be optimised for is asynchronous IO
-dispatch through each filesystems; our writeback IOPS problems in
-XFS largely stem from the per-IO cpu overhead of block allocation in
-the filesystems (i.e. delayed allocation).
-
-Because of the way we do allocation locality in XFS, we always try
-to allocate data extents in the same allocation group as the inode
-is located.  Hence if we have a writeback context per AG, and we
-always know what AG an inode is located in, we always know which
-writeback context is should belong to.
-
-Hence what a filesystem like XFS needs is the ability to say to the
-writeback infrastructure "I need N writeback contexts" and then have
-the ability to control which writeback context an inode is attached
-to.
-
-A writeback context would be an entirely self contained object with
-dirty lists, locks to protect the lists, a (set of) worker threads
-that does the writeback dispatch, etc.
-
-Then the VFS will naturally write back all the inodes in a given AG
-indepedently to the inodes in any other AG, and there will be almost
-no serialisation on allocation or IO submission between writeback
-contexts. And there won't be any excessive writeback concurrency at
-the filesystem layer so contention problems during writeback go
-away, too.
-
-IOWs, for XFS we really don't want CPU aligned writeback lists, we
-want filesystem geometry aligned writeback contexts...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
 
