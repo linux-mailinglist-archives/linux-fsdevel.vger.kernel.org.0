@@ -1,153 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-40413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D60A23279
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 18:08:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BEFA232C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 18:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90B327A21DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 17:07:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918911886B8B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 17:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B3B1F03D3;
-	Thu, 30 Jan 2025 17:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71D11F03E5;
+	Thu, 30 Jan 2025 17:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FgjNEAPY"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MtG2vsIX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D2A1EF082
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 17:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117101F03D0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 17:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738256870; cv=none; b=u3WL6XrSzaVtK+yFA2V5rjvg3Q81AVFlFMntYocX3lwa+nGPrv/3JNY4XjyVduNLyKiT0rFgLhLqpkRzi+CippCqIA2guLOVSqbhF5LhGj4eqfV4yXFqsuy2qlf6QO/LUnBzBoUKvN4w53ngUqA9dOV3TYeOcizWVdW1SOWvm5M=
+	t=1738257896; cv=none; b=haWjqFAvckCJzsbUQqR45WT1L3QlLj4TPenUeWiSdD0kP1LWKh1WmPdB9WeZjniEaQlq9joWNrz7aRZQ5HrH7LRurShVuDLgMj7/JFRR2Ajn85ROUf8mb9SE8oZVU0AMh3PV8Cb33z5Am6NSonraXz3gUlwEZttSWqS4bEVco8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738256870; c=relaxed/simple;
-	bh=L2mmDyh9vSnF5kPYcuSSCXwYdATDMPPUCAXCq1dipV8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=di/YO+MC5I5yYCYNlEBDo95oQ76f/L705igPYMUVOLzvxWes3Zhs9a0YhhM016bx/a+cZDoEifLLYertnZ5OBhCgsZ5da8gBFSS3Uaw/sliQ2quljrnYjObTOJjXXaNXw/ADXlfRXjg8dolytW6MrhhscmO6BObCc2EA0jQd+Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FgjNEAPY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738256866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CJEIx2LIRNUN4l5wUAEOnQB79yzRujfzjRc/PncFlt4=;
-	b=FgjNEAPYYsgWv8Fm5e8QbbRhi8mwSDj0SBN3k4zvzjfPIwN/LTy8maI47Q98hubtzapG5l
-	oD5sXgS23Z5d8QkTdVhfQxiS1mdYE7xaKX7Key20WRxX3bDhDvExOfNVt2RU8uhSA94pqR
-	4AR7hOQQQyjcGOTN3eiCQ3jZUJFjQtg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-6ACNbWsoNhuFF1WDXtdw7A-1; Thu,
- 30 Jan 2025 12:07:44 -0500
-X-MC-Unique: 6ACNbWsoNhuFF1WDXtdw7A-1
-X-Mimecast-MFC-AGG-ID: 6ACNbWsoNhuFF1WDXtdw7A
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E7E921956087;
-	Thu, 30 Jan 2025 17:07:43 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.80.113])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 278163003FD1;
-	Thu, 30 Jan 2025 17:07:43 +0000 (UTC)
-From: Brian Foster <bfoster@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v3 7/7] iomap: advance the iter directly on zero range
-Date: Thu, 30 Jan 2025 12:09:48 -0500
-Message-ID: <20250130170949.916098-8-bfoster@redhat.com>
-In-Reply-To: <20250130170949.916098-1-bfoster@redhat.com>
-References: <20250130170949.916098-1-bfoster@redhat.com>
+	s=arc-20240116; t=1738257896; c=relaxed/simple;
+	bh=6Qv+A4MOLBB/p2x+2LfQiWLMn2cpLrsE9gu4CYycDTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GZ0MeeqKX52jKVseBtxXY9zWu9YyzbiB9fKAfuLOiH+cmuOMR15mojgs0CZn0HoHr7ORka7oue9roL6MgHpt2piQqu2yVv6rq6TuXVXQZGwzxFwM7BJO3WG1i1RfXrAL2ie3OztP5gpnmjIkmwFG8dqNUXNHzlJdOofwTckH/Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MtG2vsIX; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab2bb0822a4so235119866b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 09:24:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1738257892; x=1738862692; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=umZKRxEZDIyFeupwQbUpP1kTluqmkTf2dFfPuk8gQnc=;
+        b=MtG2vsIX3sw8qqco0qnSqGewfzt2E+/oKI0NHiT/tdZCeUAZTxB/7yN4/lvQyCefe+
+         SAbqtHkjO4hi4jv0esJo3Wypzo7RWR/Ip07UH/kz/dbUcuAZpi/LYBOLSq0b+vr1/ac4
+         nmpitxW8UOy6GNZD/eDdjWjhHG5L07dl1Tzl8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738257892; x=1738862692;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=umZKRxEZDIyFeupwQbUpP1kTluqmkTf2dFfPuk8gQnc=;
+        b=QMPlQebCIn9FWxZWdpgb8KEcLoDZ/8H8KgH7nj1FSmpTscB/8EZLaSLZg/X/stR8qn
+         PcbvfbwjuD3LD9XrPX3lSmTAJrPGxQfljTGyZMNzFyS6juvAbw42HtNilnC58sJUQ5jI
+         SGXOhSSN+c3bhxQOx8AmORH5MPMrjIuMvN8L0FjWhWkFvIhwFIMgJTeN6ZZFmrizmDJo
+         /hUm9LZ3l3Jed8yOoWZGynerz6pcEAWnR7GPQyzqRUIvyosqpfUWAHm5nZSBYywqLrT8
+         VOrSFCE09ERRpdft50tHpwKXRqfehFAZSfOIkBm87HmJP2MMt9u0IiV7O1yT+SGeRNk0
+         C0bQ==
+X-Gm-Message-State: AOJu0Yw2cEmnhrkxSwjs/6p02i/yY0iKQGque4gJC8GumLp7xkNA7S7s
+	XdjMe+JVrssjTVE5bh9jql6/CEwX3+BiZZwfIHX0p26DgrCJLoBe5KcN4Wq6jo/FoM3B4JynZl4
+	AHTI=
+X-Gm-Gg: ASbGncu2GPHCmSMc8M7ruMrFNbNTDoEveGlXVWavFsPWMtIlDzHgVn1Sv9NnSZEmC9i
+	F8bf1Fw9YlmNGT7odYBWtNJaoK/DrBwDpOb1MSuqDAJ2abJIEjNIoUWIaMIyexmMAeM8Ln30OSE
+	6JSBxoCu1jllJLRoMB324852DV1NnM7GerNelCoQet2af4VmKmNmyoR+zyTT/4W/uVNE/di0HBH
+	R56QW20GSJg1sBm5xyRY0kw/hJbuPoXfkd26607nCEBdvDDYa0Ks8MvTmm1Dlg/4lnQmtaCi2b9
+	L6kCp37m7NpityqkHqjvo2NDOFFn3owXiIydzH6DV8HWKYe2C6ogXxACUQEqfEJS0Q==
+X-Google-Smtp-Source: AGHT+IEC51OYjVhkkL7uNmxbIk9oBEr1JZgYarrAU2s7mOpZxnKEzLPPKGvEALDCVRhAni6IcMrkTw==
+X-Received: by 2002:a17:907:da0:b0:ab2:f8e9:723c with SMTP id a640c23a62f3a-ab6cfcc50bcmr916812066b.5.1738257891922;
+        Thu, 30 Jan 2025 09:24:51 -0800 (PST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e49ffe44sm151001766b.113.2025.01.30.09.24.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2025 09:24:50 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso233227566b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 09:24:50 -0800 (PST)
+X-Received: by 2002:a17:906:da85:b0:aab:d8de:217e with SMTP id
+ a640c23a62f3a-ab6cfd0db3emr759038866b.26.1738257890447; Thu, 30 Jan 2025
+ 09:24:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250127044721.GD1977892@ZenIV> <Z5fAOpnFoXMgpCWb@lappy>
+ <20250127173634.GF1977892@ZenIV> <Z5fyAPnvtNPPF5L3@lappy> <20250127213456.GH1977892@ZenIV>
+ <20250127224059.GI1977892@ZenIV> <Z5gWQnUDMyE5sniC@lappy> <20250128002659.GJ1977892@ZenIV>
+ <20250128003155.GK1977892@ZenIV> <20250130043707.GT1977892@ZenIV>
+In-Reply-To: <20250130043707.GT1977892@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 30 Jan 2025 09:24:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjKkZBM6w+Kc+nufJVdnBzzXwPiNdzWieN3c7dEq9bMaQ@mail.gmail.com>
+X-Gm-Features: AWEUYZmTt2mTlIxYn9aBQ5TkH5IgcjClwxwxOG9VfCpa_i04bqh6yE87LV0ZQs4
+Message-ID: <CAHk-=wjKkZBM6w+Kc+nufJVdnBzzXwPiNdzWieN3c7dEq9bMaQ@mail.gmail.com>
+Subject: Re: [git pull] d_revalidate pile (v2)
+To: Al Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Modify zero range to advance the iter directly. Replace the local pos
-and length calculations with direct advances and loop based on iter
-state instead.
+On Wed, 29 Jan 2025 at 20:37, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> ->d_revalidate() series, along with ->d_iname preliminary work.
+> One trivial conflict in fs/afs/dir.c - afs_do_lookup_one() has lost
+> one argument in mainline and switched another from dentry to qstr
+> in this series.
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/iomap/buffered-io.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+Actually, I had a conflict in fs/fuse/dir.c, and it was less trivial.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index f953bf66beb1..ec227b45f3aa 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1345,17 +1345,16 @@ static inline int iomap_zero_iter_flush_and_stale(struct iomap_iter *i)
- 
- static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- {
--	loff_t pos = iter->pos;
--	loff_t length = iomap_length(iter);
--	loff_t written = 0;
-+	u64 bytes = iomap_length(iter);
-+	int status;
- 
- 	do {
- 		struct folio *folio;
--		int status;
- 		size_t offset;
--		size_t bytes = min_t(u64, SIZE_MAX, length);
-+		loff_t pos = iter->pos;
- 		bool ret;
- 
-+		bytes = min_t(u64, SIZE_MAX, bytes);
- 		status = iomap_write_begin(iter, pos, bytes, &folio);
- 		if (status)
- 			return status;
-@@ -1376,14 +1375,14 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
--		pos += bytes;
--		length -= bytes;
--		written += bytes;
--	} while (length > 0);
-+		status = iomap_iter_advance(iter, &bytes);
-+		if (status)
-+			break;
-+	} while (bytes > 0);
- 
- 	if (did_zero)
- 		*did_zero = true;
--	return written;
-+	return status;
- }
- 
- int
-@@ -1436,11 +1435,14 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
- 
- 		if (srcmap->type == IOMAP_HOLE ||
- 		    srcmap->type == IOMAP_UNWRITTEN) {
--			loff_t proc = iomap_length(&iter);
-+			s64 proc;
- 
- 			if (range_dirty) {
- 				range_dirty = false;
- 				proc = iomap_zero_iter_flush_and_stale(&iter);
-+			} else {
-+				u64 length = iomap_length(&iter);
-+				proc = iomap_iter_advance(&iter, &length);
- 			}
- 			iter.processed = proc;
- 			continue;
--- 
-2.47.1
+The d_revalidate() change means that the stable name passed in might
+come from the path lookup, which means that it isn't NUL-terminated.
 
+So the code that did
+
+        args->in_numargs = 1;
+        args->in_args[0].size = name->len + 1;
+        args->in_args[0].value = name->name;
+
+in fuse_lookup_init() is no longer valid for revalidate, and  instead
+you made it do the NUL termination as the next arg:
+
+        args->in_numargs = 2;
+        args->in_args[0].size = name->len;
+        args->in_args[0].value = name->name;
+        args->in_args[1].size = 1;
+        args->in_args[1].value = "";
+
+Fine, no problem. Except it clashes with commit 7ccd86ba3a48 ("fuse:
+make args->in_args[0] to be always the header"), which made in_args[0]
+be that empty case, and moved in_args[0] up to be arg[1].
+
+So my resolution continues on that, and ends up with three in_args, like this:
+
+        args->in_numargs = 3;
+        fuse_set_zero_arg0(args);
+        args->in_args[1].size = name->len;
+        args->in_args[1].value = name->name;
+        args->in_args[2].size = 1;
+        args->in_args[2].value = "";
+
+which looks straightforward enough, but I have not tested this AT ALL.
+
+Miklos, can you please check and confirm that my resolution is ok? It
+*looks* trivial, but there may be some reason why it causes issues. I
+don't know the fuse code enough to really be able to tell what
+implications this has (if there are people adding other args
+afterwards, maybe we now have too many? Things like that)
+
+               Linus
 
