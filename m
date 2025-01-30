@@ -1,61 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-40399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1950A230F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB79A23106
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71AB518893AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 15:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F9D1888FFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 15:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323C21EBFF9;
-	Thu, 30 Jan 2025 15:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1191E9B3F;
+	Thu, 30 Jan 2025 15:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW+rZwmM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="toOCjX0p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E0E1E9B3F;
-	Thu, 30 Jan 2025 15:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8613E499;
+	Thu, 30 Jan 2025 15:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738250412; cv=none; b=Var1toKtvx81UFy2PE+513/xFQxgo+cGjv00xDA28AGsOQ7cMYmtn+jCM24PkIyYXmeWY6rbu6T3iFjxsqBjIr7un3pdXk6nVmJ+nkb+cq2YDKiRhqHUE90zIV2W5aZB2yG6fudatEbKszkOjDtn/5kOHSdAKMSiu+59YmasYoU=
+	t=1738251138; cv=none; b=QU90aqAAjpOhGtqOC/eKLbJrECO3wrnjLB/qyIDhTe7WWYLboGZpag0wfbetf7NLWGzKMod9re/j9mg3aFK8B65Omf/x5u+/T1t3lVkfjh9DKMPn1YSHMZa1rTPgn8845g0x/sTEGDcyeYYTdjQaxKYHm3ahv9uTnvJF7gh5lp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738250412; c=relaxed/simple;
-	bh=LzJikOHTQrKhiSfwSHwXbPkw3fyrXwxEDOZFzZUeWWU=;
+	s=arc-20240116; t=1738251138; c=relaxed/simple;
+	bh=zEl4qnOpi+U24VlyUxMcMK6bSBm/AbufVlVyWaK6Fx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUxasOC6w62oMSKuB3MOufb7qdSNZTmi5D1LgWDbrC77qMHbXUOofK0hnsErO27+qI1eYfLxPPcWkYcN+Edr9MgXJYztYsU9jS6Ct4h/w1lR0YoC0AqHdVD15XUOVXsQ/F5vqvevGxc+2EfdCybIwJjWLa0b8jwM5eUbAN+mgI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW+rZwmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57258C4CED2;
-	Thu, 30 Jan 2025 15:20:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MwIFB8mcJpoFW8/5N4MaBPipR56IhlrG1J1Mohn8Ft048MO0F6OeddU0CKoFSQC4NebzfwRCeaRTDZlO6S8QHaS/EboXGprGu9l4vId84xZCGADKM7ddWmyN5Mm8NsdTR23Vh8QthYdDCQOleYfAooKR36QL6buReyflszprmZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=toOCjX0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25A4C4CED2;
+	Thu, 30 Jan 2025 15:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738250412;
-	bh=LzJikOHTQrKhiSfwSHwXbPkw3fyrXwxEDOZFzZUeWWU=;
+	s=k20201202; t=1738251137;
+	bh=zEl4qnOpi+U24VlyUxMcMK6bSBm/AbufVlVyWaK6Fx0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OW+rZwmMF9dPYRDw7+8Pu8ODOo9lCCF9S9P1aYZNpd20WyCl4ax7Az98braP/Vw0r
-	 cgcpXs9oQsBOlLFbMNjs1nryS9QfwQ+2xowT3uxz3DNDXH8pVse0jSm20CNEI2OYtV
-	 EYd4YjIHfkEN34M9S5TWCdL4Zamtgdh3TK2zyPlOau4X2s5Hqy77ZvprC4R99AgAXJ
-	 tWFfI5COyFLEf30LJbSr43O/yqmH0oWJBiKMkKwXwW2CMdAPjop15kz5QJSW+spd5+
-	 C2bSTvMJsW1UCWxEb6O7eCjl1R5lmaBLMjC4qFSaWaasUo8WfI1tpZLtldN1UzfqXj
-	 VgpuQv0KAiHsw==
-Date: Thu, 30 Jan 2025 16:20:04 +0100
+	b=toOCjX0pdb0EGhs4UOV9QWhikIu7/gXt8HGMRNsjr8duUGRMKVkkdl+eiv0jxJyJQ
+	 cMnq4lrD3/Ymd071DI0verf9xK5Nib3uAhP3yM2fxlkf9YExbI+kHzWTFisPUsgcMz
+	 s1H/3qdRuYZRqnG4zZNnaZ0GFessbr3qeL3lIZHe/q7/ePENEI8WOYV4sLPeK7ip4J
+	 x2VOKNtaIgwmp13DZHRBoGtv4M3Ic936I9SnCDh7h5bncn5e02nTotq8vcMzk/xVxD
+	 1sTmcCyt+S3HBVyTKVdaAoB136gCfALanXzER+4BD13gKZd8LgJuE0GsmhCoYCUvD1
+	 UOEGatBDdFc6g==
+Date: Thu, 30 Jan 2025 16:32:11 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, liamwisehart@meta.com, 
-	shankaran@meta.com
-Subject: Re: [PATCH v11 bpf-next 1/7] fs/xattr: bpf: Introduce security.bpf.
- xattr name prefix
-Message-ID: <20250130-erklimmen-erstversorgung-93daf77c9dc4@brauner>
-References: <20250129205957.2457655-1-song@kernel.org>
- <20250129205957.2457655-2-song@kernel.org>
- <Z5tbH13qK6rLJVUI@google.com>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v9 4/5] bpf: Make fs kfuncs available for
+ SYSCALL program type
+Message-ID: <20250130-dauer-stich-21e0f1f09568@brauner>
+References: <AM6PR03MB50801990BD93BFA2297A123599EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50809BB6156BF239C4AC28C799EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,71 +62,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z5tbH13qK6rLJVUI@google.com>
+In-Reply-To: <AM6PR03MB50809BB6156BF239C4AC28C799EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-On Thu, Jan 30, 2025 at 10:57:35AM +0000, Matt Bobrowski wrote:
-> On Wed, Jan 29, 2025 at 12:59:51PM -0800, Song Liu wrote:
-> > Introduct new xattr name prefix security.bpf., and enable reading these
-> > xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
-> > 
-> > As we are on it, correct the comments for return value of
-> > bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
-> > success.
+On Mon, Jan 27, 2025 at 11:46:53PM +0000, Juntong Deng wrote:
+> Currently fs kfuncs are only available for LSM program type, but fs
+> kfuncs are general and useful for scenarios other than LSM.
 > 
-> Reviewed-by: Matt Bobrowski <mattbobrowski@google.com>
+> This patch makes fs kfuncs available for SYSCALL program type.
 > 
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > Acked-by: Christian Brauner <brauner@kernel.org>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
-> >  include/uapi/linux/xattr.h |  4 ++++
-> >  2 files changed, 18 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> > index 3fe9f59ef867..8a65184c8c2c 100644
-> > --- a/fs/bpf_fs_kfuncs.c
-> > +++ b/fs/bpf_fs_kfuncs.c
-> > @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
-> >  	return len;
-> >  }
-> >  
-> > +static bool match_security_bpf_prefix(const char *name__str)
-> > +{
-> > +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
-> > +}
-> 
-> I think this can also just be match_xattr_prefix(const char
-> *name__str, const char *prefix, size_t len) such that we can do the
-> same checks for aribitrary xattr prefixes i.e. XATTR_USER_PREFIX,
-> XATTR_NAME_BPF_LSM.
-> 
-> >  /**
-> >   * bpf_get_dentry_xattr - get xattr of a dentry
-> >   * @dentry: dentry to get xattr from
-> > @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
-> >   *
-> >   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
-> >   *
-> > - * For security reasons, only *name__str* with prefix "user." is allowed.
-> > + * For security reasons, only *name__str* with prefix "user." or
->       	  	   	    	 	     	  ^ prefixes
-> 						  
-> > + * "security.bpf." is allowed.
->                       ^ are
-> 
-> Out of curiosity, what is the security reasoning here? This isn't
-> obvious to me, and I'd like to understand this better. Is it simply
-> frowned upon to read arbitrary xattr values from the context of a BPF
-> LSM program, or has it got something to do with the backing xattr
-> handler that ends up being called once we step into __vfs_getxattr()
-> and such?  Also, just so that it's clear, I don't have anything
-> against this allow listing approach either, I just genuinely don't
-> understand the security implications.
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
 
-I've explained this at lenghts in multiple threads. The gist is various
-xattrs require you to have access to properties that are carried by
-objects you don't have access to (e.g., the mount) or can't guarantee
-that you're in the correct context and interpreting those xattrs without
-this information is either meaningless or actively wrong.
+I still have a hard time understanding what syscall program types do and
+why we should want to allow the usage of all current fs functions that
+were added for LSMs specifically to such program types. I can't say
+anything about this until I have a rough understanding what a syscall
+bpf program allows you to do and what it's used for. Preferably some
+example.
+
+>  fs/bpf_fs_kfuncs.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> index 4a810046dcf3..8a7e9ed371de 100644
+> --- a/fs/bpf_fs_kfuncs.c
+> +++ b/fs/bpf_fs_kfuncs.c
+> @@ -26,8 +26,6 @@ __bpf_kfunc_start_defs();
+>   * acquired by this BPF kfunc will result in the BPF program being rejected by
+>   * the BPF verifier.
+>   *
+> - * This BPF kfunc may only be called from BPF LSM programs.
+> - *
+>   * Internally, this BPF kfunc leans on get_task_exe_file(), such that calling
+>   * bpf_get_task_exe_file() would be analogous to calling get_task_exe_file()
+>   * directly in kernel context.
+> @@ -49,8 +47,6 @@ __bpf_kfunc struct file *bpf_get_task_exe_file(struct task_struct *task)
+>   * passed to this BPF kfunc. Attempting to pass an unreferenced file pointer, or
+>   * any other arbitrary pointer for that matter, will result in the BPF program
+>   * being rejected by the BPF verifier.
+> - *
+> - * This BPF kfunc may only be called from BPF LSM programs.
+>   */
+>  __bpf_kfunc void bpf_put_file(struct file *file)
+>  {
+> @@ -70,8 +66,6 @@ __bpf_kfunc void bpf_put_file(struct file *file)
+>   * reference, or else the BPF program will be outright rejected by the BPF
+>   * verifier.
+>   *
+> - * This BPF kfunc may only be called from BPF LSM programs.
+> - *
+>   * Return: A positive integer corresponding to the length of the resolved
+>   * pathname in *buf*, including the NUL termination character. On error, a
+>   * negative integer is returned.
+> @@ -184,7 +178,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
+>  static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
+>  {
+>  	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
+> -	    prog->type == BPF_PROG_TYPE_LSM)
+> +	    prog->type == BPF_PROG_TYPE_LSM ||
+> +	    prog->type == BPF_PROG_TYPE_SYSCALL)
+>  		return 0;
+>  	return -EACCES;
+>  }
+> @@ -197,7 +192,10 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
+>  
+>  static int __init bpf_fs_kfuncs_init(void)
+>  {
+> -	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
+> +	int ret;
+> +
+> +	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
+> +	return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &bpf_fs_kfunc_set);
+>  }
+>  
+>  late_initcall(bpf_fs_kfuncs_init);
+> -- 
+> 2.39.5
+> 
 
