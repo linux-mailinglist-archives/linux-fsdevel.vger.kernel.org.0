@@ -1,105 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-40424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21D9A234AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:31:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B97A234BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6AC164F9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 19:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E4E3A6547
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 19:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EEE1F03F5;
-	Thu, 30 Jan 2025 19:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE6A1EF081;
+	Thu, 30 Jan 2025 19:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jqnMymBM"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQnmABSd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6631E522
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 19:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7FE1E522
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 19:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738265486; cv=none; b=ZRq1awACC/usoUVEkaV8rGSJEb5yd/FVEAcsQZ3W7yQMhvRqEY4XwJO/0o4b1A/N/t6bMD+9QT1+UIp4TOReOL7ZaLsNbRlH5payzbgCehCEFd0OZ/hVQ+U7JJLTBQ77GznLQMaz0MhI0wVhvqR9owV+oWUWyHpXdHF0fpFx3lg=
+	t=1738265983; cv=none; b=umt91R3QbLBOysca8+JffNIszXE8ZQxtijJy1kmodYwLJIFyl3nll6WP5BKJaWmTarqKl5URgpsZxecCJUe0EzRPxBm18/9Q0U+try1XiWTWl8lrK7L0+61+hSW/+IbqPeo7Q4RKWjcZCKUen0KQozXm4yQHQSGjRdqa8w1CI6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738265486; c=relaxed/simple;
-	bh=d1rgKVEl8OUlaljZGhdwTW0BxXvvCP6MoRAeb84p26k=;
+	s=arc-20240116; t=1738265983; c=relaxed/simple;
+	bh=YYTR6rXZKCuinMW1yjrx0nf3HNV/krug3GDdTcW3CGI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sg5+PPaLQKRmoEZbNOqhbXrXfEsH3S7uCbhcXTUVbfnFOEtJ76U9wELjAxhsmVFNgKjIKH+LkVcgc2aIaKWU2EaXmDBuVwCWqn/aNse+ewg7W3DniUvu3GUgr/nERc2mNThOa+MkViLtOTuN57ehuenwSe6zbG2kYEi+Lhi4vWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jqnMymBM; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46c7855df10so19403401cf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 11:31:24 -0800 (PST)
+	 To:Cc:Content-Type; b=dlQEIG3VvdYbl6IP+3YKD+g0xCwy/1lWbYkDZOJXnUbDs7/EDBX7IFBUVU5XOzfWsTDXQsLavxQrmlDF931H9r3eMjVAEScVdluT+kNJAp5Y1oDJ22r+geLyAfMZrOMflEMfErV8JqJAQzrRJb3DmNRLGyiKehoiRaxccDp01E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vQnmABSd; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4679b5c66d0so31741cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 11:39:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738265483; x=1738870283; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hNJlrraj+NS8urRTPwYhzJT1Z4ljAUAGM1uhK6PJJ3A=;
-        b=jqnMymBMH1bJBANsLKsvFqomsqJqevG68UmxOpNw+qsZbLfIhhLYsNL9HIIWHFD5Ie
-         H7NsxOrExeCXB09tM9IZDyMv1/MeMW3IDrDOw5aejoWZbT2yZh7jfsSm8LaAqAAxMted
-         x349UmqoEST9WPLdvJ/AtYROgi/mpgrMravXk=
+        d=google.com; s=20230601; t=1738265981; x=1738870781; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YYTR6rXZKCuinMW1yjrx0nf3HNV/krug3GDdTcW3CGI=;
+        b=vQnmABSdOlWnkXPSHcbsEW8UscW1X9qwYtpfjCeKbIzAB0dqM8AVJBbacG7g0oHQug
+         1HyDJ34MhzA/bVJvkvX73FN5FqQKar/3mWi6C3wYNWA+awG+IonidvItjvCI3qtaM/Wx
+         nWOUxWy54o6GbIgerlKKymvinC8+f+hrGuZJ5q0P14g0MFtwpm6x1M12pk4RzKWILOry
+         +Yr0IxoU+a1hsHnf7qOygk0IFj+vQ8NMvZiLMdFI2OQmFVo8Lwu0Iza569//J4lt0QbT
+         /2IhPgebvvb0KTc9H06vj4Xw6ucpIU24MCFpvBB+XqEW5Q/h/mzvEa1NbyDr0NVvt7at
+         1I0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738265483; x=1738870283;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hNJlrraj+NS8urRTPwYhzJT1Z4ljAUAGM1uhK6PJJ3A=;
-        b=pROUY7KV/Jpc1RQX054BOIW710c/PXNWX8avnk5cR4bTyxRUFcEZEmu6o34z1nBzlq
-         yagnrr+srWuFoY4CsseCL1o3gw0MwzGpaVzwoZttS/e190O4rVv4YonAAiJoqacwQZ4Q
-         Bo8hVSJSGNb1Tgiwv8Mi/MXjdkvllgoGls8fxLHdJBWLWrJZeqEklGSZc7K5DO65t4vI
-         Y+Itt7WfQjbZ0y5Rh1/XTZSTbM+LwANgrlGxpamuL51Daods3zfjvAZpsDiqHfgYR9A3
-         d+yfG3+U3n5WmMyynBnjDyPNfQyuwg0Myw7IHBi94mHKw0JiDli8BtCSyke7hOTKt/17
-         y4oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTB1mPe9+M8mdiEhzf0qBXPdy9ZNIZui0NF/A4YtO0Jkgy8bWNlOdsJ+YuqLhwYrh6VcvWjpq7Gpw5qNCm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlNjmXZD7Ma/TiKWZqGTsfkeFRhb6RFQ0ehEZoY6uHthJ797aw
-	BmIRzQ+6b4oyrIToPpMvlHPsuDrK0v+4R4Zy0wnb/BgHp5o8+gFgl0z6iIaQn/gi6Xn9TP2j6oV
-	2h55qe7DSSvIWMIXyWbfWqhF1VS3iCpGhp2Z+Tg==
-X-Gm-Gg: ASbGncvt3zU22vS332Y/62x7r/MQUn0dQm6yNapM0qoW/etaGOokBPhUB+O/ouvilro
-	bvgKbiuwXe2ipnbVQXz80YsEA0r/cSPelR0V3g0LC5w2rlu0FjVD4WpJPwPy42n3hSqHcbk8=
-X-Google-Smtp-Source: AGHT+IFl4CMUaxxoTAkD3ytGkNPTgdcXl7FHT5IGxpTES0qvo6U1WEtsDKa/o+LlYiHbMpSzEfndZl4dXRo18XfEkb8=
-X-Received: by 2002:a05:622a:1e92:b0:467:6226:bfc1 with SMTP id
- d75a77b69052e-46fd0adcbeamr143067151cf.29.1738265483293; Thu, 30 Jan 2025
- 11:31:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738265981; x=1738870781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YYTR6rXZKCuinMW1yjrx0nf3HNV/krug3GDdTcW3CGI=;
+        b=qrejQ8SgGks/EQPa7nr4yROKfCQstJy5T6KMCeohkvoUqHoSoAVmnitgmuy89XB6EK
+         urvtSESHuhmtP4ZH5JO54GnN++8e3fKpXXdADRdw98KmY6b3hsS45uvR62pxSYOpWpyT
+         goYILJrrDbIupE+uwwsd/Nnc/v+BXpaQ6rkOCiZepBpfs6eVaDbte7zIseJBoodNrrE3
+         DH1c+tGhsE2cxjGcssJPsUrKyRSniNHdueftnbSYyniQa7i6GTCCAgj4QFRGDW5nVBCX
+         tPRzPBMBOhQktxArEtkR9sPsVChD3aEmYJzXImx5I3ZSvJqO9g6Y+zsUe0URPUQfIkmU
+         P08Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXNyoxyyKHfEQaY64Ya0KPu/JOdRVAt2orC1WlkJMJPxW4/k+5auJiycncgUsNgWrDqtsP6MG8NW1EEEdrS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE6B66MpRYk23eifHhukt4sLYCZDk/ejvHA6q0nzBaR2vRL0zo
+	xNa+hIYlJVhMS8/8dppAdoKFBnWCW/LXbf4y8CWAiKngJIgk4kvt0ai9dU24LN2a+EZn9OewHaH
+	gzhdI9GobIIodg7lcQUaGD9P4l6LoW9+8sm8V4yQkKro1nWSwUw==
+X-Gm-Gg: ASbGncvn1QsvDPz0YykiwcRcViWpCWwZlxQVcxQ4Ul4gTNzWjhQr4OyF11x3y7YNAM4
+	oui3xtYDCGkQ4VPEnrrhq4WNcx4D4SsIiTj1VOsob+nzNZQ8d3CGVkoirjzAg864oRYTvZw==
+X-Google-Smtp-Source: AGHT+IHhKBd7dNubRiwyGndNcsiaFwetl/eM0V1Kf3Op4HcqGv3uLGgg1Y37PP3XKrjCj0ShSAdSCry7Oyv/CyMjvS4=
+X-Received: by 2002:a05:622a:181f:b0:46c:78e4:a9cc with SMTP id
+ d75a77b69052e-46feb0d5af2mr179561cf.25.1738265980886; Thu, 30 Jan 2025
+ 11:39:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127044721.GD1977892@ZenIV> <Z5fAOpnFoXMgpCWb@lappy>
- <20250127173634.GF1977892@ZenIV> <Z5fyAPnvtNPPF5L3@lappy> <20250127213456.GH1977892@ZenIV>
- <20250127224059.GI1977892@ZenIV> <Z5gWQnUDMyE5sniC@lappy> <20250128002659.GJ1977892@ZenIV>
- <20250128003155.GK1977892@ZenIV> <20250130043707.GT1977892@ZenIV> <CAHk-=wjKkZBM6w+Kc+nufJVdnBzzXwPiNdzWieN3c7dEq9bMaQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjKkZBM6w+Kc+nufJVdnBzzXwPiNdzWieN3c7dEq9bMaQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 30 Jan 2025 20:31:12 +0100
-X-Gm-Features: AWEUYZktgPbha6NuweUOoTEq2caO0ElwB8qKM3f-z5Cb9qH4_d_KA6x5j2Uvctk
-Message-ID: <CAJfpegs+Lnp=zw1auUhVrahTg08RvK8eEFTK1R6jMfMAUNRg2Q@mail.gmail.com>
-Subject: Re: [git pull] d_revalidate pile (v2)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <882b566c-34d6-4e68-9447-6c74a0693f18@redhat.com>
+In-Reply-To: <882b566c-34d6-4e68-9447-6c74a0693f18@redhat.com>
+From: Frank van der Linden <fvdl@google.com>
+Date: Thu, 30 Jan 2025 11:39:29 -0800
+X-Gm-Features: AWEUYZlTkvH928Ha5DSmcYuBqPngMiE6zModhb0fpz3OEznPldEh7lpaOmc5cEk
+Message-ID: <CAPTztWbVjObmLc9=WXPx6fAfuVT3B7+gts7gQmGseWjS37atvg@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Migrating the un-migratable
+To: David Hildenbrand <david@redhat.com>
+Cc: "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Jeff Layton <jlayton@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Joanne Koong <joannelkoong@gmail.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 30 Jan 2025 at 18:25, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-
-> So my resolution continues on that, and ends up with three in_args, like this:
+On Wed, Jan 29, 2025 at 8:10=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
->         args->in_numargs = 3;
->         fuse_set_zero_arg0(args);
->         args->in_args[1].size = name->len;
->         args->in_args[1].value = name->name;
->         args->in_args[2].size = 1;
->         args->in_args[2].value = "";
+> Hi,
 >
-> which looks straightforward enough, but I have not tested this AT ALL.
+> ___GFP_MOVABLE allocations are supposed to be movable -> migratable: the
+> page allocator can place them on
+> MIGRATE_CMA/ZONE_MOVABLE/MIGRATE_MOVABLE areas: areas where the
+> expectation is that allocations can be migrated (somewhat reliably) to
+> different memory areas on demand.
+>
+> Mechanisms that turn such allocations unmigratable, such as long-term
+> page pinning (FOLL_LONGTERM), migrate these allocations at least out of
+> MIGRATE_CMA/ZONE_MOVABLE areas first.
+>
+> Ideally, we'd only perform this migration if really required (e.g.,
+> long-term pinning), and rather "fix" other cases to not turn allocations
+> unmigratable.
+>
+> However, we have some rather obscure cases that can turn migratable
+> allocations effectively unmigratable for a long/indeterminate time,
+> possibly controlled by unprivileged user space.
+>
+> Possible effects include:
+> * CMA allocations failing
+> * Memory hotunplug not making progress
+> * Memory compaction not working as expected
+>
+> Some cases I can fix myself [1], others are harder to tackle.
+>
+> As one example, in context of FUSE we recently discovered that folios
+> that are under writeback cannot be migrated, and user space in control
+> of when writeback will end. Something similar can happen ->readahead()
+> where user space is in charge of supplying page content. Networking
+> filesystems in general seem to be prone to this as well.
+>
+> As another example, failing to split large folios can prevent migration
+> if memory is fragmented. XFS (IOMAP in general) refuses to split folios
+> that are dirty [3]. Splitting of folios and page migration have a lot in
+> common.
+>
+> This session is to collect cases that are known to be problematic, and
+> to start discussing possible approaches to make some of these
+> un-migratable allocations migratable, or alternative strategies to deal
+> with this.
+>
+>
+> [1] https://lkml.kernel.org/r/20250129115411.2077152-1-david@redhat.com
+> [2]
+> https://lkml.kernel.org/r/CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZ=
+FqJg@mail.gmail.com
+> [3]
+> https://lkml.kernel.org/r/4febc035-a4ff-4afe-a9a0-d127826852a9@redhat.com
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+>
 
-Yes, this works fine.
+We have run in to the same issues (especially the writeback one), so a
+definite +1 on this topic from me.
 
-Thanks,
-Miklos
+- Frank
 
