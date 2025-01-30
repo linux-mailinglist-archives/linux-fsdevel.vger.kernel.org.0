@@ -1,86 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-40453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836ADA23750
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 23:38:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6DF3A23753
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 23:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41AC43A6A9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 22:37:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2985B7A374D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 22:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA5A1F130B;
-	Thu, 30 Jan 2025 22:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC16B1B87DA;
+	Thu, 30 Jan 2025 22:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="qhz+CEhX"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="unbgh1eG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716993987D;
-	Thu, 30 Jan 2025 22:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B343987D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 22:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738276676; cv=none; b=Ye6jMtcIyli/UlU8zMA/qr6UR0QuNpfDDDByOH0ZoY/DRGfCYB+C4ZsEOYLWRZepS9o4ywZTg2wupPENQqK3YHeJJO/SWepht6KR06cRVYTYMcbV0nkwA4UgI/nBDazIZT7CGcb1c6Qc7BMyRBu9CopU7jbCfhj0Rz7WQNK6zKQ=
+	t=1738276815; cv=none; b=YrXmFF9JSXLNVb6BbzKvqi8xxPj4ivxTXFvf5CbUxjyl9PYrqcQMJ+85PZtvVLAfdhOH3ZKZTOsH3hHIV4G9PBbEneJ9pfRHNNOfGWWz30E80u/EEHcBR9cDCgMYhp2x2RcSUgxFHssLJq7pviDP/M+iXDqw8Dmy9ZeQI3/MyJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738276676; c=relaxed/simple;
-	bh=RsT+cN+IqZrca/sfcUXS4hAuAouyjftXrA3xfHri/m8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lu6NzDLcVebsfV249LefiSTTB/r4mMMAxPdX049CxT8QmdpgIP4oR671kaV33UAkp6/l0qwsOM2qoYQOeZSTkasQKGjncumv/72mhcPQ84Dg+k5YqrFDY+j545Iq1/BFCL4/2wYqg7ZnpnGyoZjcFQZ79rZFJxayV3nCOu6eEac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=qhz+CEhX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D887C4CED2;
-	Thu, 30 Jan 2025 22:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1738276675;
-	bh=RsT+cN+IqZrca/sfcUXS4hAuAouyjftXrA3xfHri/m8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qhz+CEhXICkn0jM8lJT8fdw57VIsg72Lz0XhZHpDVAWpeM2PKCSs1x7elh59mqcJU
-	 vXJwfAUj/PYIeBgmH7lalHq3R2muaTnviixMFnft70NgqqKKJbxOr6d/DbMoV3Oi22
-	 kOFWUI8NEtokisuK+fCLAVpZ4LpfVx/d8Zp4kbnQ=
-Date: Thu, 30 Jan 2025 14:37:54 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan
- <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Sang
- <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny
- <mkoutny@suse.com>, Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v7 0/6] introduce PIDFD_SELF* sentinels
-Message-Id: <20250130143754.1b8bb87bfb15175dd434529b@linux-foundation.org>
-In-Reply-To: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
-References: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1738276815; c=relaxed/simple;
+	bh=/xmtAIi+Gic70PlfOU2/it6S5SJ181lW+hojsfW/Zn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8+Xs288NYpGYRa7+tB9tRhYWvKuDpmYymWfGXZmYvUJRf1TMAK7cZsTEWz5LKNaao8WoqhKpsZsy+MyJhauodJl0T0te3RzRfJ5vqNwfxt1pGpgWCvBC7Wa5amRr+nicU8YdHwG5ZZS3vMUtZ1mE8QYlQVhvvttr+XxlpQArTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=unbgh1eG; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ef72924e53so2365786a91.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 14:40:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1738276813; x=1738881613; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=99gvy7HNxTIGDfawMmDwoHuX+F4tR3KBo57dn0qAtok=;
+        b=unbgh1eGU4HcxpnEs4Cme0HS6HjjjKOk4lO9/m2G+SViR99Fq6qPCP+PG16pjzs+4E
+         81jZi05vQclZVIB0u612ztutsP8DQBxqvHTmIzY9X6uGnw5PJPt15MXAaPwMXOVXKRAd
+         jfCF/SGGmUUGAycsBBth2/jPrlvSnP1J5BNdmMBe2jQIlS1WYdS9IZIHfde7yszilWSW
+         EgXViPDN9YPhL+W8ppd4CBdspeswKNJlU+ggn8jJdg06V5X/5O2A1D58bBdN1QVF/pYu
+         6z/nTctiBK7LxU46AJrp3CRLC5xmbkzrcbqKFAm1HpebhscJZy5/wGVC9bxsJaZuNvWy
+         rFGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738276813; x=1738881613;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=99gvy7HNxTIGDfawMmDwoHuX+F4tR3KBo57dn0qAtok=;
+        b=YnoZbbP2QVNCzKtKkwSCHFNKkBe2gdB657p7eMavK/Eg0e5tRhQjO3kH8/H5dII6+v
+         WnX8dk0KFz0Tjd9V5fk2tPu6B1Bb0DhCJ0W+0dz26TZ/7pFg0z3RMOZrH5WJxluQYavq
+         VXgSEAlrBzzyTFEvAB3OWSyGb77MoTpoTHTrBcs9Wflj6I1BJ/dmjdXLP3rGT+4Jo27n
+         lXCKG1HlzYABWfQc+yo41fUy3Ig1b4y4PWX4r3vitOsxTIUScGCz2t/w55Z2SOxHVpSj
+         l8o61WaJi3QZvxqbz7y38kk6O500ZYtkcJEPwDQKJDuIAnkTR/1R5kXbXKeriQB8PXSn
+         EhtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRjcK6rILOMk6yc+64vKgABfGfCnt7fCFpb74PfZufLp9jYZIV7zNv/mDEHqAYlF7zbv+yBhFY5en4gAhe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs4m5L1y1YBz9U0AMhg/MOG76r0aBzrHhp8AXByc7LwgB0pHoL
+	avufcFczDtkLJrtzf2QbOfJTaiCbAcFefzuaDIMfK9T7W9kZodEjrNDblD1XWdM=
+X-Gm-Gg: ASbGncuU/WaqJ8z85erbOzRtJes2GIxSEFipWfv7o8xoqtvciUuBIzmssnjEwr7A2Fr
+	blw+BMWP/eFa9+/KivIf+Vsb1ujFp5qHMO9X3KNUqp84YUk6D5a1Fa/5IHsCZw5qTpXbiqKocqA
+	S4wyFVw9cL8Z+WV4X1WP0kbleFYii3GMBesP9iK4HOiG5ceEWf21fG+gejKxHjIIXiNTausWp0z
+	DxjNk803rcDS3AOigoemhpyvVbwEiUqMeDaNA46+AjhC/2/IanetPKLJFejuDCs/TiJaoIkv4bI
+	hbW0qcyh2mhNSVq+glGDepObQuMkzLjR7+wEIRJ8SJP+lgdCZ18diQ==
+X-Google-Smtp-Source: AGHT+IF1aj+X6bEut9rmnVa2uRkwuaGmzri5vD7oRY/p5fNntcbicDZrAZcN1OJnMarAqaUoEKaXEA==
+X-Received: by 2002:a17:90b:288a:b0:2ee:d35c:3996 with SMTP id 98e67ed59e1d1-2f83ac8371amr12362329a91.31.1738276812900;
+        Thu, 30 Jan 2025 14:40:12 -0800 (PST)
+Received: from ?IPV6:2a03:83e0:1156:1:18cb:90d0:372a:99ae? ([2620:10d:c090:500::7:ba76])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21edc84fcb7sm4903785ad.205.2025.01.30.14.40.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2025 14:40:12 -0800 (PST)
+Message-ID: <9872aaae-d6dd-4d62-a9c2-12938628a4ae@davidwei.uk>
+Date: Thu, 30 Jan 2025 14:40:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] FUSE io_uring zero copy
+Content-Language: en-GB
+To: Keith Busch <kbusch@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ Bernd Schubert <bschubert@ddn.com>, Ming Lei <ming.lei@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+ Joanne Koong <joannelkoong@gmail.com>
+References: <dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk>
+ <Z5v7uJF7TPPEe6TI@kbusch-mbp>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <Z5v7uJF7TPPEe6TI@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 30 Jan 2025 20:40:25 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On 2025-01-30 14:22, Keith Busch wrote:
+> On Thu, Jan 30, 2025 at 01:28:55PM -0800, David Wei wrote:
+>> Hi folks, I want to propose a discussion on adding zero copy to FUSE
+>> io_uring in the kernel. The source is some userspace buffer or device
+>> memory e.g. GPU VRAM. The destination is FUSE server in userspace, which
+>> will then either forward it over the network or to an underlying
+>> FS/block device. The FUSE server may want to read the data.
+>>
+>> My goal is to eliminate copies in this entire data path, including the
+>> initial hop between the userspace client and the kernel. I know Ming and
+>> Keith are working on adding ublk zero copy but it does not cover this
+>> initial hop and it does not allow the ublk/FUSE server to read the data.
+> 
+> If the server side has to be able to access the data for whatever
+> reason, copying does appear to be the best option for compatibility. But
+> if the server doesn't need to see the data, it's very efficient to reuse
+> the iov from the original IO without bringing it into a different
+> process' address space.
 
-> If you wish to utilise a pidfd interface to refer to the current process or
-> thread it is rather cumbersome, requiring something like:
-> 
-> 	int pidfd = pidfd_open(getpid(), 0 or PIDFD_THREAD);
-> 
-> 	...
-> 
-> 	close(pidfd);
-> 
-> Or the equivalent call opening /proc/self. It is more convenient to use a
-> sentinel value to indicate to an interface that accepts a pidfd that we
-> simply wish to refer to the current process thread.
-> 
+For a write operation, the server may want to optionally _read_ the
+data. Does this force pages to be pulled into the cache anyway so we may
+as well copy? If so - then I can look into removing this read
+requirement, which then makes it possible to use your work ublk zero
+copy. That is, make whoever generating the data to do the work that FUSE
+server was going to do _before_ shoving it into the zero copy data
+pipeline.
 
-The above code sequence doesn't seem at all onerous.  I'm not
-understanding why it's worth altering the kernel to permit this little
-shortcut?
+> 
+>> My idea is to use shared memory or dma-buf, i.e. the source data is
+>> encapsulated in an mmap()able fd. The client and FUSE server exchange
+>> this fd through a back channel with no kernel involvement. The FUSE
+>> server maps the fd into its address space and registers the fd with
+>> io_uring via the io_uring_register() infra. When the client does e.g. a
+>> DIO write, the pages are pinned and forwarded to FUSE kernel, which does
+>> a lookup and understands that the pages belong to the fd that was
+>> registered from the FUSE server. Then io_uring tells the FUSE server
+>> that the data is in the fd it registered, so there is no need to copy
+>> anything at all.
+>>
+>> I would like to discuss this and get feedback from the community. My top
+>> question is why do this in the kernel at all? It is entirely possible to
+>> bypass the kernel entirely by having the client and FUSE server exchange
+>> the fd and then do the I/O purely through IPC.
+> 
+> This kind of sounds like "paravirtual" features, in that both sides need
+> to cooperate to make use of the enhancement. Interesting thought that if
+> everyone is going this far to bypass memory copies, it doesn't look like
+> much more of a heavy lift to just bypass the kernel too. There's
+> probably value in retaining the filesystem semantics, though.
+
+Right, sorry I didn't phrase well in my initial email. I _want_ to put
+it in the kernel because I want it to be in the open and I want it to be
+generically useful to others. But _is it_ generically useful enough to
+codify it in the kernel? I have one use case in mind but I think it
+would be a bad kernel API if it _only_ worked for my case! That's why I
+want to lead a discussion on this at LSFMMBPF to gather feedback.
 
