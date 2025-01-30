@@ -1,213 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-40379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81094A22C0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 11:57:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C113A22CDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 13:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD50F168F21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 10:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EA167A314A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 12:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3507B1BEF9A;
-	Thu, 30 Jan 2025 10:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEB51E3772;
+	Thu, 30 Jan 2025 12:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gXB+OxBF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JUrJhA2z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72B11BEF7D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 10:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC9B1E376C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 12:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738234664; cv=none; b=jyNduwqwaigHLQVtuk0BY1I2CoPk1U8PtvFj3vJmJr7J2GzW8dmyLOgg3x6nwv2+siWQPUU2jNWxuoTbtUkbHVqjJgsmMAg+qJWjiH7+fGmaVZnGYXdk0kS2SrJtG6sjFKfMgOSr1yMZnuUcEvgazYGnknjxeZUJUS0rBlYHMG0=
+	t=1738239308; cv=none; b=LcejlDPQBz7TNd0cP6zPOfhlhZTf++Q9+/jJLi6c4hBC1zTNjqZlVreBeeK+D4nKYAbM9YpZYUxNcTr2S6rJa/kjcelHhbtyc8stPEGUtiyXWTR8rm+NcA85POyYKMYQiyjEdb3rDLCc+cDccFcGovlwaxYqobos1XvIpYhJN70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738234664; c=relaxed/simple;
-	bh=nNu9Wao+7prXi/lZmkqsyM/BD7Vjd0eXW4mg6ypLdK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhvyjh5ezsFliKApLOfnn1+r6k6fYGIhv3aBnEk/ux1bwvMvBlRIFlvWlLr5HW/S7ZSvQhOB1SLhXPaU4jd4Cb4HZkBwJzrVTAe7KJu6t8fMJTnF11Lq8bBqRrzZ0VlpXdaG0K+WhlqR0km/wq5knYC3cFUjuGuiKQwxs1U3uXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gXB+OxBF; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso144139066b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 02:57:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1738234661; x=1738839461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4buYOzRn3STaO6q6gOT5tyrD4opUgcG/7dM/VZkAIwU=;
-        b=gXB+OxBFJi6AUs+RjuIWleNEHOJI5ToBBhj7tAFTZFT+uLl3uY3O5TAQrhPLZCNpAD
-         CIddkVjlXfGiNwL5dgRxaxBpG/aooAGPaRircb3uLcjZ9bcsTQwYd2VHXhwMAWxIqPtH
-         ukYK6VdxWx/gUi/wnJEoyO95sAwH94A6bwhu0RpnlcWW9zYx2aYmEZnN94eErUqKpGMd
-         Hx1JFS9/rrRLFG+5RhG200NEsvnuLfivsRm5/xu/R6iy8I9EfuzUiqjb269UOKd3QV1U
-         kKeropsbO5cR0NJ7czMWJXo3J4g3ef4VKUIuR4nRGH5DS77t0LOs9NYUSopdrkEAPuI2
-         13Pw==
+	s=arc-20240116; t=1738239308; c=relaxed/simple;
+	bh=L/HzaWK+Mf5oCl5UzPJt7+ry9UO4teQWCL9KurqGKVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sktviigN3l+HkLorQTdN5uFRnWWykeTzBDcH+mpmlhGA3mrpMc+4+DaQDjmO4ICSLVvHF9uhaeo6b8icZ5tLr+xpfk4/6jXyCEC5jst849VLk+MXgb/neUxxVS9xXANZTylGpGmP3mThZ293FEdcl9LOYD9W1xeJrv58VT+V4LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JUrJhA2z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738239305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OiusD3begRRW7APeSFSQ6Arycu2IGY+MUliMR9kuAdI=;
+	b=JUrJhA2zVM1c7onUE6LO+3CLgXqSaedTyd5uo4orYOksHYcW2aOUMlAPjaFvRl10eA1tfn
+	CUN1mxP5NyqtopZ8EJ3+96pj0W4e8mnGH9W8zf1QPpQZSG7NI7cyxDJSSQBCPNrlt5mBVm
+	rmFV/mTYKR/Fz4+5LE8UshSGrYJpSJA=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-461-LBFKnF97N3m6-3wlLGMu2Q-1; Thu, 30 Jan 2025 07:15:03 -0500
+X-MC-Unique: LBFKnF97N3m6-3wlLGMu2Q-1
+X-Mimecast-MFC-AGG-ID: LBFKnF97N3m6-3wlLGMu2Q
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ab6d5363a4bso113927866b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 04:15:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738234661; x=1738839461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4buYOzRn3STaO6q6gOT5tyrD4opUgcG/7dM/VZkAIwU=;
-        b=wwAgwA53ZN1kkdH5N5bOrU6v2haUzj9pkdzcJiRC60diRWUDb8iWGWNSzCBGc5iBkG
-         TdCQpdZtbBueylk/d4YzjMSChJIlnNwmOqvtEamW94cgoTIY9o7Alrv3ra2DSqqSDAYk
-         pceQnZi/0rkCZuwBdgM8UN2BqfVJsuTbq/iuox82BSkCLMRdLUEhCfKoIxlfHiM+NGSD
-         EA9MVZXo6L6tF8QHhh4XipZ/ldESjRtLMSugdHfAjugZu59VAlorNhjnS46SaQDlZ9Bp
-         aGG/g1DqoMTYBu+110qw0jS5ScGUSNFSYS93urQX29Q8NfG94Uv8G+616dk/sGCkvP5j
-         +Lcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXitLSjX6nuja/DxifXuFSF00SwUkSwVaBA4N9zxnv/WJIBP6Pek7JF5m7IiU0Pg3nfc686c6nCwp1u7Wvf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXnok/4o3a2ULhZqzZr66fY47p+5gcl1uqoWxt+jysfsg9GXGV
-	4+vq7eJK4RmFRVmEcPU3YBs6AmatzT/NG1zqy5VtlrIeHLJ78WKXDqpV1DUX+w==
-X-Gm-Gg: ASbGncsRzTmIRu541C7loh1MLSynqDRk2vTjLTwgSfuhy5QreinQPasrC/5H1Wqu9Dg
-	f3WlmxSiCREzqGqH4k5LxQWkg7XGNLsjYbGmDP99j24MlP1a+watk0kN6n1d4K7a8c5tFr7DKrQ
-	U08Ai6qsWIsvbBVbhaAAbGtN3cH8eaPoJS1YjJ6rhpJB7meXepU18Dx7ZfiNKqj/yjTeVbWKkSx
-	MhIb4kisb4HLa1GqSTnHUS+RqhX3zyTp0en32TIotfuA+ySH9DhpR9zsd/N9jFqaScpOaOec1GI
-	0yuFvqWoj5jFKljEkEy44V+56Vz/ggiHP2TMGph7GDfGKYhCGiiZCdLLRA==
-X-Google-Smtp-Source: AGHT+IFtF+henE/8ZRauZhMwrPj3UgPcvyIRaqNYReNS1dcsHzGE0KZapxpRvfWEVPtVflrXOmEgNw==
-X-Received: by 2002:a17:907:94cd:b0:ab6:3633:13e with SMTP id a640c23a62f3a-ab6cfdbd071mr781688366b.41.1738234660778;
-        Thu, 30 Jan 2025 02:57:40 -0800 (PST)
-Received: from google.com (201.31.90.34.bc.googleusercontent.com. [34.90.31.201])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc723efc45sm871854a12.32.2025.01.30.02.57.39
+        d=1e100.net; s=20230601; t=1738239302; x=1738844102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OiusD3begRRW7APeSFSQ6Arycu2IGY+MUliMR9kuAdI=;
+        b=O8wrmLJuA54vxDl9xBy33nwuMJ8kxiewTChE/998kTja93Mj943DdfRKu8XHPVywav
+         rJwMJBLPn9WN7NZdhUbtRkeWYNjv0jlkxsiSi4UfCg97ombCp2Mh5Brue07p3EG8d4Iu
+         +roru4QPCiwxTWC/d4iqrNv9t5WfMglqX4BIHwUDrgsDMAop6fJHipow6eyVcjdFCRO3
+         p6+Lm1zzGZpw+jzCBRLzWhXmt/iMyR4Si6qC1L4Rt3c/9reglMGPkO7CKQ155tWU1lpB
+         8U4VYxu+YvieeyuAnKNo0uW41MuBeR3MWOYxT0wjmOhkxKmb3cqlD5Gnh056MVx9IPCU
+         B84g==
+X-Gm-Message-State: AOJu0YyvdcHfVMiyAmRIbcUQZHC7mJ/8ZwllvDOkI8DV2tU4BP8mJIbK
+	BXF24NVtjircGXXls3q3iwz7BRzV1fUQyx33BZoAc0mmaDMHeTenIrsvWxcUkGXiEkDtxpCc0Qm
+	tXLpDUC3HyrKVQgYYwbeax9Y4BEEx0kp9I4Jd7k1CufWlWIVEwY755YqfTCBgChUPqUsfAGeMB8
+	a/yCeC+EewKfLhpLR/kFUZr3Igdm1xopv4CIxRNKkRPvkkJBazjg==
+X-Gm-Gg: ASbGncvjkhzYCBowwqZ9mwaa62Qb4cfFeoq3EozYxpnRBGDoIIIKKdTZ6QYZyNaVYPs
+	J2SCd5nv9+hMROkvawoG/+lw66lvGFiAeEyQoZZATv3ylt4eM1N+17JeyNqb3/l0ZFJPf/1OJg9
+	JXK0EB7cfWc4QTUhiVNrOkFtM+NlgS/PfwJdAGutL2USKX4UaMqg/mkJqZBaUi6fdjSQx7Bg4Jk
+	mctTLjqtIHSkj8Q/BYiSi80PaVDAWVO4mx/8xI6UteNepwl9o76n4TMkEzZ5T6ibtwybnc2fqWS
+	vtSA1ARLfzHecp3Ppr34afR1W9qE8XauMrD2Y2aOIiUIMMKkJMzDegWI
+X-Received: by 2002:a17:907:96a9:b0:aaf:ada2:181e with SMTP id a640c23a62f3a-ab6cfd06362mr638300066b.26.1738239302341;
+        Thu, 30 Jan 2025 04:15:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFQy5RJ5hPlEs9JHVwni7wmhgnbKCW4s3FKsL50YonKScgJxob2fSBerQ8vbb9GFkTt/hMe2Q==
+X-Received: by 2002:a17:907:96a9:b0:aaf:ada2:181e with SMTP id a640c23a62f3a-ab6cfd06362mr638298066b.26.1738239301944;
+        Thu, 30 Jan 2025 04:15:01 -0800 (PST)
+Received: from maszat.piliscsaba.szeredi.hu (87-97-14-196.pool.digikabel.hu. [87.97.14.196])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47a7fd9sm111699066b.34.2025.01.30.04.15.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2025 02:57:40 -0800 (PST)
-Date: Thu, 30 Jan 2025 10:57:35 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	kpsingh@kernel.org, liamwisehart@meta.com, shankaran@meta.com
-Subject: Re: [PATCH v11 bpf-next 1/7] fs/xattr: bpf: Introduce security.bpf.
- xattr name prefix
-Message-ID: <Z5tbH13qK6rLJVUI@google.com>
-References: <20250129205957.2457655-1-song@kernel.org>
- <20250129205957.2457655-2-song@kernel.org>
+        Thu, 30 Jan 2025 04:15:01 -0800 (PST)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH] statmount: let unset strings be empty
+Date: Thu, 30 Jan 2025 13:15:00 +0100
+Message-ID: <20250130121500.113446-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250129205957.2457655-2-song@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 29, 2025 at 12:59:51PM -0800, Song Liu wrote:
-> Introduct new xattr name prefix security.bpf., and enable reading these
-> xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
-> 
-> As we are on it, correct the comments for return value of
-> bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
-> success.
+Just like it's normal for unset values to be zero, unset strings should be
+empty instead of containing random values.
 
-Reviewed-by: Matt Bobrowski <mattbobrowski@google.com>
+It seems to be a typical mistake that the mask returned by statmount is not
+checked, which can result in various bugs.
 
-> Signed-off-by: Song Liu <song@kernel.org>
-> Acked-by: Christian Brauner <brauner@kernel.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
->  include/uapi/linux/xattr.h |  4 ++++
->  2 files changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 3fe9f59ef867..8a65184c8c2c 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
->  	return len;
->  }
->  
-> +static bool match_security_bpf_prefix(const char *name__str)
-> +{
-> +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
-> +}
+With this fix, these bugs are prevented, since it is highly likely that
+userspace would just want to turn the missing mask case into an empty
+string anyway (most of the recently found cases are of this type).
 
-I think this can also just be match_xattr_prefix(const char
-*name__str, const char *prefix, size_t len) such that we can do the
-same checks for aribitrary xattr prefixes i.e. XATTR_USER_PREFIX,
-XATTR_NAME_BPF_LSM.
+Link: https://lore.kernel.org/all/CAJfpegsVCPfCn2DpM8iiYSS5DpMsLB8QBUCHecoj6s0Vxf4jzg@mail.gmail.com/
+Fixes: 68385d77c05b ("statmount: simplify string option retrieval")
+Fixes: 46eae99ef733 ("add statmount(2) syscall")
+Cc: <stable@vger.kernel.org> # v6.8
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/namespace.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
->  /**
->   * bpf_get_dentry_xattr - get xattr of a dentry
->   * @dentry: dentry to get xattr from
-> @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
->   *
->   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
->   *
-> - * For security reasons, only *name__str* with prefix "user." is allowed.
-> + * For security reasons, only *name__str* with prefix "user." or
-      	  	   	    	 	     	  ^ prefixes
-						  
-> + * "security.bpf." is allowed.
-                      ^ are
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a3ed3f2980cb..9c4d307a82cd 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5191,39 +5191,45 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 	size_t kbufsize;
+ 	struct seq_file *seq = &s->seq;
+ 	struct statmount *sm = &s->sm;
+-	u32 start = seq->count;
++	u32 start, *offp;
++
++	/* Reserve an empty string at the beginning for any unset offsets */
++	if (!seq->count)
++		seq_putc(seq, 0);
++
++	start = seq->count;
+ 
+ 	switch (flag) {
+ 	case STATMOUNT_FS_TYPE:
+-		sm->fs_type = start;
++		offp = &sm->fs_type;
+ 		ret = statmount_fs_type(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_ROOT:
+-		sm->mnt_root = start;
++		offp = &sm->mnt_root;
+ 		ret = statmount_mnt_root(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_POINT:
+-		sm->mnt_point = start;
++		offp = &sm->mnt_point;
+ 		ret = statmount_mnt_point(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_OPTS:
+-		sm->mnt_opts = start;
++		offp = &sm->mnt_opts;
+ 		ret = statmount_mnt_opts(s, seq);
+ 		break;
+ 	case STATMOUNT_OPT_ARRAY:
+-		sm->opt_array = start;
++		offp = &sm->opt_array;
+ 		ret = statmount_opt_array(s, seq);
+ 		break;
+ 	case STATMOUNT_OPT_SEC_ARRAY:
+-		sm->opt_sec_array = start;
++		offp = &sm->opt_sec_array;
+ 		ret = statmount_opt_sec_array(s, seq);
+ 		break;
+ 	case STATMOUNT_FS_SUBTYPE:
+-		sm->fs_subtype = start;
++		offp = &sm->fs_subtype;
+ 		statmount_fs_subtype(s, seq);
+ 		break;
+ 	case STATMOUNT_SB_SOURCE:
+-		sm->sb_source = start;
++		offp = &sm->sb_source;
+ 		ret = statmount_sb_source(s, seq);
+ 		break;
+ 	default:
+@@ -5251,6 +5257,7 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 
+ 	seq->buf[seq->count++] = '\0';
+ 	sm->mask |= flag;
++	*offp = start;
+ 	return 0;
+ }
+ 
+-- 
+2.48.1
 
-Out of curiosity, what is the security reasoning here? This isn't
-obvious to me, and I'd like to understand this better. Is it simply
-frowned upon to read arbitrary xattr values from the context of a BPF
-LSM program, or has it got something to do with the backing xattr
-handler that ends up being called once we step into __vfs_getxattr()
-and such?  Also, just so that it's clear, I don't have anything
-against this allow listing approach either, I just genuinely don't
-understand the security implications.
-
-> - * Return: 0 on success, a negative value on error.
-> + * Return: length of the xattr value on success, a negative value on error.
->   */
->  __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__str,
->  				     struct bpf_dynptr *value_p)
-> @@ -117,7 +123,9 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
->  	if (WARN_ON(!inode))
->  		return -EINVAL;
->  
-> -	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-> +	/* Allow reading xattr with user. and security.bpf. prefix */
-> +	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN) &&
-> +	    !match_security_bpf_prefix(name__str))
-
-I think it would be cleaner to have single function
-i.e. is_allowed_xattr_prefix(const char *name__str) which simply
-checks all the allowed xattr prefixes that can be read by this BPF
-kfunc.
-
->  		return -EPERM;
->  
->  	value_len = __bpf_dynptr_size(value_ptr);
-> @@ -139,9 +147,10 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
->   *
->   * Get xattr *name__str* of *file* and store the output in *value_ptr*.
->   *
-> - * For security reasons, only *name__str* with prefix "user." is allowed.
-> + * For security reasons, only *name__str* with prefix "user." or
-      	  	   	    	 	     	  ^ prefixes
-
-> + * "security.bpf." is allowed.
-      		      ^ are
-
-> - * Return: 0 on success, a negative value on error.
-> + * Return: length of the xattr value on success, a negative value on error.
->   */
->  __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
->  				   struct bpf_dynptr *value_p)
-> diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
-> index 9854f9cff3c6..c7c85bb504ba 100644
-> --- a/include/uapi/linux/xattr.h
-> +++ b/include/uapi/linux/xattr.h
-> @@ -83,6 +83,10 @@ struct xattr_args {
->  #define XATTR_CAPS_SUFFIX "capability"
->  #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
->  
-> +#define XATTR_BPF_LSM_SUFFIX "bpf."
-> +#define XATTR_NAME_BPF_LSM (XATTR_SECURITY_PREFIX XATTR_BPF_LSM_SUFFIX)
-> +#define XATTR_NAME_BPF_LSM_LEN (sizeof(XATTR_NAME_BPF_LSM) - 1)
-> +
->  #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
->  #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
->  #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
-> -- 
-> 2.43.5
-> 
 
