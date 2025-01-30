@@ -1,213 +1,308 @@
-Return-Path: <linux-fsdevel+bounces-40354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBDCA226ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 00:28:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F084A227AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 03:32:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F89C3A17FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2025 23:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AED831886D65
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 02:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBADF1E3DD8;
-	Wed, 29 Jan 2025 23:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6B512C499;
+	Thu, 30 Jan 2025 02:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHXCb/Ov"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhpl1QU8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51164191F6A;
-	Wed, 29 Jan 2025 23:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF5D1D52B;
+	Thu, 30 Jan 2025 02:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738193318; cv=none; b=cRgrBPsifrWcSU0WgWHXP73LVMx0CyBcGcGc8Fm4n/x/otl7ysyXSD64aB72FcGEj89y28teQccX3HCuBhBDKiH2voqtWBKPjonNh6nNagoTLdDCTa8GdWoMNXolA42IdsMW8VYDO66vZNIDEewn4MXuJIc3RDpGYbQvgqAemWM=
+	t=1738204338; cv=none; b=Gi4/vEVX84ZPucjvHXuW3iFosZt1a5Utoj232l9TInX0SV13ys7axJYT7dK4uLUUYa8QrikhAob6VmVuJ+KzxN8uTXrT3QITRlFxxH67sTYu0nnyNX+n9QQgHBf2unpzM7zfj7WcNKP/SE5u2MWV3FPpt1WAS2YZMBBq1bIthlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738193318; c=relaxed/simple;
-	bh=fbMzY2Z+t1cYmvMFD9g32OtU6/uJSnbJN5PrOM9htjM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PO0+CCcf6sexIPkPr0W1NwXJjlcSPVTDfUoO1mJxAMc/cttAr0k7wYOE3t3ZEbES8MUAHJntyhXJ0Twk0GXSeuAvgMfEwYBok2jrKqWPFJx1zhLScZUqpYEsoI7JcQ9a6VRDZF1J9IDrUlZTu7h4EmpW4EB0S8URhz8LDdf1liI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHXCb/Ov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC4EBC4CED1;
-	Wed, 29 Jan 2025 23:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738193318;
-	bh=fbMzY2Z+t1cYmvMFD9g32OtU6/uJSnbJN5PrOM9htjM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=gHXCb/OvL7vocFCjOzTdIu5QQWBp2QTWT56wpO/EjefiVNQ45gvGEAyEULPU7oFyw
-	 +JCfOWIJEnkGcQ75fMtG4LDD0sjoygmSKxn2zUdqolS0uZwbVqZ0EzJ3AJ6/cFNjDY
-	 11n2nebIhJ2VXVC5jh5LpklQz5jp/Lpc9F55TDz35jEpr6i0P3fYfCqnaHYfGSA4At
-	 nQsKg3aRS4X5dZ13DPHpKmeWiVXroupPQX670w+d1cuxjFX11QoaSeTdtaXaVblr8g
-	 45dQyjlyMCRYAOS38n6AGQnKohcCcKWImxb3t5jk5lVBevd3yDdZszTdUQDyL1MWRJ
-	 BIPCupLCjZPxA==
-Message-ID: <fe719cdf52e9fc48955f116ea2e23ea8136e4d87.camel@kernel.org>
-Subject: Re: Multigrain timestamps do not work on RISC-V
-From: Jeff Layton <jlayton@kernel.org>
-To: Andreas Schwab <schwab@suse.de>, linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date: Wed, 29 Jan 2025 18:28:36 -0500
-In-Reply-To: <f704b0c40c393d1c326f13d043505960924f879a.camel@kernel.org>
-References: <mvmv7ty3pd8.fsf@suse.de> <mvmikpx4jw4.fsf@suse.de>
-	 <f704b0c40c393d1c326f13d043505960924f879a.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1738204338; c=relaxed/simple;
+	bh=v0Pleq58QNnh7XauPGPset9KHyOkCN5P87RRWbzCFqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eNdvkpnieHFtGvAXd4YHgfmT6/PJfhBsM/dXoBXd+mmq+/lfF66RruV9cimyENdLMzhwMy4qR4KBOoB3dfw5ORMQCr7FxkJxSSjhzz8Zckmh1xe4QYUknCzVmOiwnoXHo7zxQyaJLlIxGqvkh8YtAoBYoY0OP0JYnWYmr1QpgAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uhpl1QU8; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38be3bfb045so1010724f8f.0;
+        Wed, 29 Jan 2025 18:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738204334; x=1738809134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YVOeKubTpots4CB4SvdanKa5SO+1C9gTy1lOl/7fozA=;
+        b=Uhpl1QU8JpKc9I0o+wn6AYl3AhUbb+0MSQ5W/sS5rWzggruag+vunUfKQlQQWf/8G9
+         Lr3FEpRitTXi7gUT6sIf50Am0lUbU3YCSRrDHlH0YhPh8IlPOlnBbZGSEH1fCpOLZvt7
+         XUsNtoVrK4ZNjwtEzhdqoh/bY6Nc/SzfYZd9KGws9glwEpxffbQMqk1pnOLwPlNURg28
+         m87VH2chqqnNlLxq7wIw7RrXQb+pW6zRD7m129pFuyKg9FwTyXX4kzQEKYrfbgxtQDCY
+         eA3bmoLy9e/XfdR1TTVWiaMYJqGbAl2V8yUSjRY2879MjrlzZ5R0rhizw7IxU7R8zZM6
+         Ivvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738204334; x=1738809134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVOeKubTpots4CB4SvdanKa5SO+1C9gTy1lOl/7fozA=;
+        b=tKXn/VUFuWiGt/2jdOWp1EkK5Pe8h2C+oVD5A3dAZ3h+KiKGHhH2LDyrQ3HV0XuKOc
+         K9FovXAhkHDnVnuFovPVeFYw9LUD3zblL59vQGPPUKqkgCnR72UV2EivfRpIh/P8LG2O
+         loGbe4VQ0DlOHfuA/yqE+RwkhXI41GfGIy8XMxWQWtInyCSKEhYIwHt+oi46Jck+neHj
+         O9c4e1tGZsib1PkkwgUDiyDOhkGZGTJsbpeT4ElEIaIH2RCkif4j+snZzUOXKXVCRRhP
+         NT3UTps+JeFPKS/tCN9G7ipg25DUZywBIkFXL9isYnT/fJE50Ow1d36wFpKFs3lkdHlw
+         JZGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8tzJWolRPmoD0x0IkFCw1s41kI0L5g2bZi2hmQ6qUX38KYTRM6GgMl5Vz1PBLHNsGbJ+X+uPG+OGIBqNEBivqrRNufmd/@vger.kernel.org, AJvYcCVFQbHhsERfuSDdpPrcOici+OoyB4XPqFzjtAwfYdxZi/oXnevAOdaQZrytkUcDflQ6sEud+XrOFurhvD9z@vger.kernel.org, AJvYcCXzsazsPovpebMW1eXS1wVapZzsPi9VOk1PpXXS2pbvabWP0s9JZuD5miQp7WtxvjYQ+u1d7GCU5UbKeviu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi9zqNrh1eAhXchq7HsnNiXUFZfKbQeZeOadcv15xWAxePOSNT
+	xq7eZfvhIp/Uw+aUuefJmUAL3+qEPj3bzOdIqL1Q+jWWiGFBzHL9D4bWzdilu4UAITJmXic6U/m
+	u/W/Y8Kg1x43jUxRBaudh901Z9AM=
+X-Gm-Gg: ASbGncv60O7mk+Fcecx/dRfHr643W3SHN4Fd2D1B4oQgeMCu41KFC6LujjpsIS8spq6
+	Jjj0ZKZ2gFfIxI/TXCySycF8SKFwnw5o+eK9ZePtbneAGfAheltL+T7We81KucEsdCtg87YVZ1b
+	1+Bnh7SQAjsR+l3+J9Hz2MhRjmqsB2
+X-Google-Smtp-Source: AGHT+IGVldXlUyrAW4PfnbO2DYAtquJ700zbZin57AbxNYkHbXeYShFDnczIS3xHpFxjygPmEtxT5HdPyLbk/LCaQJg=
+X-Received: by 2002:a05:6000:1a89:b0:385:df17:2148 with SMTP id
+ ffacd0b85a97d-38c5a9e8018mr1272334f8f.20.1738204333716; Wed, 29 Jan 2025
+ 18:32:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250129205957.2457655-1-song@kernel.org> <20250129205957.2457655-6-song@kernel.org>
+In-Reply-To: <20250129205957.2457655-6-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 29 Jan 2025 18:32:02 -0800
+X-Gm-Features: AWEUYZnLJm5ClxjX2wB7choGp3nDXn_DjJuD5Zr2sHSL_AT1tWpIjeV8i15S41E
+Message-ID: <CAADnVQ+1Woq_mh_9iz+Dhdhw1TuXZgVrx38+aHn-bGZBVa5_uw@mail.gmail.com>
+Subject: Re: [PATCH v11 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
+ for bpf_dynptr_from_skb
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, liamwisehart@meta.com, shankaran@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-01-29 at 18:06 -0500, Jeff Layton wrote:
-> On Wed, 2025-01-29 at 18:20 +0100, Andreas Schwab wrote:
-> > On Jan 29 2025, Andreas Schwab wrote:
-> >=20
-> > > My guess would be that something in inode_set_ctime_current is going
-> > > wrong.
-> >=20
-> > The bug is in the arch_cmpxchg macros in <asm/cmpxchg.h>, they mishandl=
-e
-> > atomic exchange of u32 values:
-> >=20
-> >     # fs/inode.c:2802: 	if (cns =3D=3D now.tv_nsec && inode->i_ctime_se=
-c =3D=3D now.tv_sec) {
-> >     #NO_APP
-> >             ld	a5,-96(s0)		# _33, now.tv_nsec
-> >     # fs/inode.c:2802: 	if (cns =3D=3D now.tv_nsec && inode->i_ctime_se=
-c =3D=3D now.tv_sec) {
-> >             slli	a4,s2,32	#, _49, cns
-> >             srli	a4,a4,32	#, _49, _49
-> >     # fs/inode.c:2802: 	if (cns =3D=3D now.tv_nsec && inode->i_ctime_se=
-c =3D=3D now.tv_sec) {
-> >             beq	a4,a5,.L1248	#, _49, _33,
-> >     .L1205:
-> >             addi	a3,s1,120	#, __ai_ptr, inode
-> >     .L1221:
-> >     # fs/inode.c:2809: 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now=
-.tv_nsec)) {
-> >     #APP
-> >     # 2809 "fs/inode.c" 1
-> >             0:	lr.w a2, 0(a3)	# __ret, *__ai_ptr_20
-> >             bne  a2, a4, 1f	# __ret, _49
-> >=20
-> > Here the unsigned extended value of cur (a4) is compared with the sign
-> > extended value of inode->i_ctime_nsec (a2).  They cannot match if cur
-> > has I_CTIME_QUERIED set (the sign bit).  The lr/sc loop is exited befor=
-e
-> > the store conditional is executed.
-> >=20
-> >             sc.w.rl a1, a5, 0(a3)	# __rc, _33, *__ai_ptr_20
-> >             bnez a1, 0b	# __rc
-> >             fence rw,rw
-> >     1:
-> >=20
-> >     # 0 "" 2
-> >     #NO_APP
-> >             sext.w	a5,a2	# __ret, __ret
-> >=20
-> > A redundant sign extension of the current contents of inode->i_ctime_ns=
-ec.
-> >=20
-> >     # fs/inode.c:2809: 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now=
-.tv_nsec)) {
-> >             bne	a5,s2,.L1211	#, __ret, cns,
-> >=20
-> > Here the sign extended value of inode->i_ctime_nsec (a5) is compared
-> > with the sign extended expected value (s2).  They match, and try_cmpxch=
-g
-> > returns true, but the store never happend.
-> >=20
->=20
-> Wow, nice catch! Had me worried there for a bit!
->=20
+On Wed, Jan 29, 2025 at 1:00=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> btf_kfunc_id_set.remap can pick proper version of a kfunc for the calling
+> context. Use this logic to select bpf_dynptr_from_skb or
+> bpf_dynptr_from_skb_rdonly. This will make the verifier simpler.
+>
+> Unfortunately, btf_kfunc_id_set.remap cannot cover the DYNPTR_TYPE_SKB
+> logic in check_kfunc_args(). This can be addressed later.
+>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  kernel/bpf/verifier.c | 25 ++++++----------------
+>  net/core/filter.c     | 49 +++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 51 insertions(+), 23 deletions(-)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 2188b6674266..55e710e318e5 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -11750,6 +11750,7 @@ enum special_kfunc_type {
+>         KF_bpf_rbtree_add_impl,
+>         KF_bpf_rbtree_first,
+>         KF_bpf_dynptr_from_skb,
+> +       KF_bpf_dynptr_from_skb_rdonly,
+>         KF_bpf_dynptr_from_xdp,
+>         KF_bpf_dynptr_slice,
+>         KF_bpf_dynptr_slice_rdwr,
+> @@ -11785,6 +11786,7 @@ BTF_ID(func, bpf_rbtree_add_impl)
+>  BTF_ID(func, bpf_rbtree_first)
+>  #ifdef CONFIG_NET
+>  BTF_ID(func, bpf_dynptr_from_skb)
+> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+>  BTF_ID(func, bpf_dynptr_from_xdp)
+>  #endif
+>  BTF_ID(func, bpf_dynptr_slice)
+> @@ -11816,10 +11818,12 @@ BTF_ID(func, bpf_rbtree_add_impl)
+>  BTF_ID(func, bpf_rbtree_first)
+>  #ifdef CONFIG_NET
+>  BTF_ID(func, bpf_dynptr_from_skb)
+> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+>  BTF_ID(func, bpf_dynptr_from_xdp)
+>  #else
+>  BTF_ID_UNUSED
+>  BTF_ID_UNUSED
+> +BTF_ID_UNUSED
+>  #endif
+>  BTF_ID(func, bpf_dynptr_slice)
+>  BTF_ID(func, bpf_dynptr_slice_rdwr)
+> @@ -12741,7 +12745,8 @@ static int check_kfunc_args(struct bpf_verifier_e=
+nv *env, struct bpf_kfunc_call_
+>                         if (is_kfunc_arg_uninit(btf, &args[i]))
+>                                 dynptr_arg_type |=3D MEM_UNINIT;
+>
+> -                       if (meta->func_id =3D=3D special_kfunc_list[KF_bp=
+f_dynptr_from_skb]) {
+> +                       if (meta->func_id =3D=3D special_kfunc_list[KF_bp=
+f_dynptr_from_skb] ||
+> +                           meta->func_id =3D=3D special_kfunc_list[KF_bp=
+f_dynptr_from_skb_rdonly]) {
+>                                 dynptr_arg_type |=3D DYNPTR_TYPE_SKB;
+>                         } else if (meta->func_id =3D=3D special_kfunc_lis=
+t[KF_bpf_dynptr_from_xdp]) {
+>                                 dynptr_arg_type |=3D DYNPTR_TYPE_XDP;
+> @@ -20898,9 +20903,7 @@ static void specialize_kfunc(struct bpf_verifier_=
+env *env,
+>                              u32 func_id, u16 offset, unsigned long *addr=
+)
+>  {
+>         struct bpf_prog *prog =3D env->prog;
+> -       bool seen_direct_write;
+>         void *xdp_kfunc;
+> -       bool is_rdonly;
+>
+>         if (bpf_dev_bound_kfunc_id(func_id)) {
+>                 xdp_kfunc =3D bpf_dev_bound_resolve_kfunc(prog, func_id);
+> @@ -20910,22 +20913,6 @@ static void specialize_kfunc(struct bpf_verifier=
+_env *env,
+>                 }
+>                 /* fallback to default kfunc when not supported by netdev=
+ */
+>         }
+> -
+> -       if (offset)
+> -               return;
+> -
+> -       if (func_id =3D=3D special_kfunc_list[KF_bpf_dynptr_from_skb]) {
+> -               seen_direct_write =3D env->seen_direct_write;
+> -               is_rdonly =3D !may_access_direct_pkt_data(env, NULL, BPF_=
+WRITE);
+> -
+> -               if (is_rdonly)
+> -                       *addr =3D (unsigned long)bpf_dynptr_from_skb_rdon=
+ly;
+> -
+> -               /* restore env->seen_direct_write to its original value, =
+since
+> -                * may_access_direct_pkt_data mutates it
+> -                */
+> -               env->seen_direct_write =3D seen_direct_write;
+> -       }
+>  }
+>
+>  static void __fixup_collection_insert_kfunc(struct bpf_insn_aux_data *in=
+sn_aux,
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index 2ec162dd83c4..6416689e3976 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -12062,10 +12062,8 @@ __bpf_kfunc int bpf_sk_assign_tcp_reqsk(struct _=
+_sk_buff *s, struct sock *sk,
+>  #endif
+>  }
+>
+> -__bpf_kfunc_end_defs();
+> -
+> -int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 flags,
+> -                              struct bpf_dynptr *ptr__uninit)
+> +__bpf_kfunc int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 fl=
+ags,
+> +                                          struct bpf_dynptr *ptr__uninit=
+)
+>  {
+>         struct bpf_dynptr_kern *ptr =3D (struct bpf_dynptr_kern *)ptr__un=
+init;
+>         int err;
+> @@ -12079,10 +12077,16 @@ int bpf_dynptr_from_skb_rdonly(struct __sk_buff=
+ *skb, u64 flags,
+>         return 0;
+>  }
+>
+> +__bpf_kfunc_end_defs();
+> +
+>  BTF_KFUNCS_START(bpf_kfunc_check_set_skb)
+>  BTF_ID_FLAGS(func, bpf_dynptr_from_skb, KF_TRUSTED_ARGS)
+>  BTF_KFUNCS_END(bpf_kfunc_check_set_skb)
+>
+> +BTF_HIDDEN_KFUNCS_START(bpf_kfunc_check_hidden_set_skb)
+> +BTF_ID_FLAGS(func, bpf_dynptr_from_skb_rdonly, KF_TRUSTED_ARGS)
+> +BTF_KFUNCS_END(bpf_kfunc_check_hidden_set_skb)
+> +
+>  BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
+>  BTF_ID_FLAGS(func, bpf_dynptr_from_xdp)
+>  BTF_KFUNCS_END(bpf_kfunc_check_set_xdp)
+> @@ -12095,9 +12099,46 @@ BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
+>  BTF_ID_FLAGS(func, bpf_sk_assign_tcp_reqsk, KF_TRUSTED_ARGS)
+>  BTF_KFUNCS_END(bpf_kfunc_check_set_tcp_reqsk)
+>
+> +BTF_ID_LIST(bpf_dynptr_from_skb_list)
+> +BTF_ID(func, bpf_dynptr_from_skb)
+> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+> +
+> +static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 kfun=
+c_id)
+> +{
+> +       if (kfunc_id !=3D bpf_dynptr_from_skb_list[0])
+> +               return 0;
+> +
+> +       switch (resolve_prog_type(prog)) {
+> +       /* Program types only with direct read access go here! */
+> +       case BPF_PROG_TYPE_LWT_IN:
+> +       case BPF_PROG_TYPE_LWT_OUT:
+> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
+> +       case BPF_PROG_TYPE_SK_REUSEPORT:
+> +       case BPF_PROG_TYPE_FLOW_DISSECTOR:
+> +       case BPF_PROG_TYPE_CGROUP_SKB:
 
-For the record:=20
+This copy pastes the logic from may_access_direct_pkt_data(),
+so any future change to that helper would need to update
+this one as well.
 
-Bit 30 is also unused. When I wrote these patches, I considered using
-that instead of the sign bit since I wasn't sure whether I might run
-into problems using the sign bit.
+> +               return bpf_dynptr_from_skb_list[1];
 
-Obviously, fixing the macro seems like the better solution, but if
-fixing this efficiently is a problem, then moving I_CTIME_QUERIED to
-bit 30 is also an option.
+The [0] and [1] stuff is quite error prone.
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+> +
+> +       /* Program types with direct read + write access go here! */
+> +       case BPF_PROG_TYPE_SCHED_CLS:
+> +       case BPF_PROG_TYPE_SCHED_ACT:
+> +       case BPF_PROG_TYPE_XDP:
+> +       case BPF_PROG_TYPE_LWT_XMIT:
+> +       case BPF_PROG_TYPE_SK_SKB:
+> +       case BPF_PROG_TYPE_SK_MSG:
+> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
+> +               return kfunc_id;
+> +
+> +       default:
+> +               break;
+> +       }
+> +       return bpf_dynptr_from_skb_list[1];
+> +}
+> +
+>  static const struct btf_kfunc_id_set bpf_kfunc_set_skb =3D {
+>         .owner =3D THIS_MODULE,
+>         .set =3D &bpf_kfunc_check_set_skb,
+> +       .hidden_set =3D &bpf_kfunc_check_hidden_set_skb,
+
+If I'm reading it correctly the hidden_set serves no additional purpose.
+It splits the set into two, but patch 4 just adds them together.
+
+> +       .remap =3D &bpf_kfunc_set_skb_remap,
+
+I'm not a fan of callbacks in general.
+The makes everything harder to follow.
+
+For all these reasons I don't like this approach.
+This "generality" doesn't make it cleaner or easier to extend.
+For the patch 6... just repeat what specialize_kfunc()
+currently does for dynptr ?
+
+
+pw-bot: cr
 
