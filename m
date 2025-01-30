@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-40381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1865A22CE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 13:22:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44B7A22D03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 13:37:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364AB16423F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 12:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2915A1888EDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 12:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5B51DF73C;
-	Thu, 30 Jan 2025 12:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880641D88DB;
+	Thu, 30 Jan 2025 12:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDZHHb/5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXi2AH24"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DF81B425D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 12:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7F31EEE6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 12:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738239765; cv=none; b=sA+Vd/QFi0raBQ9JJYSOyTvyAcYG0zjQPzdEdEmEglLejB3DSjILVVNJW9slZV1b8BwoU5LeBtIx2vxyH5ikS5jEfsD6wpt42lyLUWi8NeGRTM92CLsqGbxnVIWMgjNuFqtIS0kEmhrJ5g3DANFZLAA8omuGlkOwbzpK+VCmHxE=
+	t=1738240658; cv=none; b=RXbI8vnKZ/1vRJQYshJ4hd6Eax1/LvnbJeR8fFs8We/OGddjRBweCp6qdFIX3nTpJLjsxR/jmzFZGad70hs8pM52+v+OiZBfIF/BqkMcirti08gIEeuOZXNo6AoRDcHQ4yBXVQN+lrHDyZM/oOLrSj/Ohib+n8s75ijx/hnZ2Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738239765; c=relaxed/simple;
-	bh=WCoVNOWIyYRqdtHLXm90C3zvFltZ1qxSGBwQEYJLQPY=;
+	s=arc-20240116; t=1738240658; c=relaxed/simple;
+	bh=k6R1Q4zpwVXM8eSkbtak8n4hkEL+XBToRJIFriNI0rM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TNrjH15MXaS/FOCDSt6Jd4aA10YOheRSJvcKe8j4KeqQnBSu+w1McDYrSFt1A0NpIkE8Ombk+ZViku+NE5eY12NOvMRvVxksEf/d1ODUB9zcPP5R0L1ncQZ82knTzTcyHHYaLaUQjMspHlEYnBbQz8ujD+A+objuX9gNqd/zZdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDZHHb/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD41DC4CEE5;
-	Thu, 30 Jan 2025 12:22:43 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Pu2H8jS0ndWqbzFAj8uwkZKIbFKWDanyaG5YZ3fpWJDnVMYitlcpMSLspaM7qqgdwOS4ljxmJQFucqVDl3LeisZ3LcA8Rtw4eCz94AgCgl+UfNMigwkGoTibH3fJwdR/90mFRVPWo8MSdNHXS6IwZmPYqMkbnJ/PBsi9v/KSQuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXi2AH24; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC69C4CED2;
+	Thu, 30 Jan 2025 12:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738239764;
-	bh=WCoVNOWIyYRqdtHLXm90C3zvFltZ1qxSGBwQEYJLQPY=;
+	s=k20201202; t=1738240657;
+	bh=k6R1Q4zpwVXM8eSkbtak8n4hkEL+XBToRJIFriNI0rM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VDZHHb/5f6kq7fGK0/7bHxQs6t86WY7siAFvIkOUJP0OJ0YUKKfwimVt4eGXwBIVc
-	 hpB/A/Gmwd4Xu/9AuxPv+ajKRcksAV3V/tVfUshFUGvlpA0OuqK3nDHwpw7xoSZ3Mh
-	 2YQBFURcaEyQ3wRYpk97GpqiBPpHBTGqxoJK1Tb7sflqgKpGWYi0eZkBViwHPnIvwu
-	 iL5k71ybzDeDDP2/XbY8NtGaP/yDQLUGG10sHNHIWEETOrEUiYc8W3jtJuQUt2VBzY
-	 QHsowQqIcLPc2UUeDROoctsV6BvLYAHSL/2QL3Chp1XJiRGmb7xWh1lu+BfGQ3sb05
-	 gNIvtsVPWyV0w==
-Message-ID: <09e3c398d484de2721ac00b7fa2d0026062f7c0c.camel@kernel.org>
-Subject: Re: [PATCH 0/4] statmount: allow to retrieve idmappings
+	b=gXi2AH24IKpLVOYMuvnKNjxuyOxRQAt/BsnkdprN89kqBSqBhegHrL1fR3Cq5RIDO
+	 F69TU3XWfSM6Oke08MWiKH0SynucXJ0sS+de5sx7pSxy25/ObfGIbaU/CfEU9/chEG
+	 USOS6dcMSvYb68lvnqJQ0Y8n2iR65QwCdxTVGBQSMl0GJLvEBKCYkNzrCJB7oIhXXx
+	 cugUI+uh7PfIPI45ZYN7Sq443c9GHDA530la1xsl7lZTYyrzgXawPZjtdR8dcW49gx
+	 pmXLGdrLoqyJx/6sFQFJD7ug67FVvFyZtKHobyYDcq06TUqGJ4hTQw/RBe7Z1X/phV
+	 UyDmJQT9k/DLw==
+Message-ID: <e5d90fbe3b8d569e11b5968c8b02f13536021f69.camel@kernel.org>
+Subject: Re: [PATCH 2/4] statmount: allow to retrieve idmappings
 From: Jeff Layton <jlayton@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Cc: Josef Bacik <josef@toxicpanda.com>, Lennart Poettering
 	 <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, Seth
  Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 30 Jan 2025 07:22:42 -0500
-In-Reply-To: <20250130-work-mnt_idmap-statmount-v1-0-d4ced5874e14@kernel.org>
+Date: Thu, 30 Jan 2025 07:37:35 -0500
+In-Reply-To: <20250130-work-mnt_idmap-statmount-v1-2-d4ced5874e14@kernel.org>
 References: <20250130-work-mnt_idmap-statmount-v1-0-d4ced5874e14@kernel.org>
+	 <20250130-work-mnt_idmap-statmount-v1-2-d4ced5874e14@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -173,10 +174,6 @@ ol=3D/
 >     mnt_gidmap[1]: 2000 2000 1
 >     mnt_gidmap[2]: 3000 3000 1
 >=20
-
-nit: any reason not to separate the fields with ':' like the mount
-option syntax?
-
 > But the idmappings might not always be resolvablein the caller's user
 > namespace. For example:
 >=20
@@ -202,16 +199,6 @@ ol=3D/
 >     mnt_gidmap[1]: 2000 4294967295 1
 >     mnt_gidmap[2]: 3000 4294967295 1
 >=20
-
-From a UI standpoint, this behavior is pretty ugly. What if we
-(hypothetically) move to 64-bit uids one day? Maybe it'd be better to
-note an inability to resolve with more distinct output? Like a '?'
-instead of a -1 cast to unsigned?
-
-If I can't resolve the range, maybe it'd be better to just not return
-the info at all? Are the first and third fields of any value without
-the second?
-
 > Note that statmount() requires that the whole range must be resolvable
 > in the caller's user namespace. If a subrange fails to map it will still
 > list the map as not resolvable. This is a practical compromise to avoid
@@ -233,26 +220,225 @@ the second?
 >=20
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
-> Christian Brauner (4):
->       uidgid: add map_id_range_up()
->       statmount: allow to retrieve idmappings
->       samples/vfs: check whether flag was raised
->       samples/vfs: add STATMOUNT_MNT_{G,U}IDMAP
->=20
->  fs/internal.h                      |  1 +
->  fs/mnt_idmapping.c                 | 49 ++++++++++++++++++++++++++++++++=
+>  fs/internal.h              |  1 +
+>  fs/mnt_idmapping.c         | 49 ++++++++++++++++++++++++++++++++++++++++=
 ++++++
->  fs/namespace.c                     | 43 ++++++++++++++++++++++++++++++++=
--
->  include/linux/uidgid.h             |  6 +++++
->  include/uapi/linux/mount.h         |  8 ++++++-
->  kernel/user_namespace.c            | 26 +++++++++++++-------
->  samples/vfs/samples-vfs.h          | 14 ++++++++++-
->  samples/vfs/test-list-all-mounts.c | 35 ++++++++++++++++++++++-----
->  8 files changed, 164 insertions(+), 18 deletions(-)
-> ---
-> base-commit: 6d61a53dd6f55405ebcaea6ee38d1ab5a8856c2c
-> change-id: 20250129-work-mnt_idmap-statmount-e57f258fef8e
+>  fs/namespace.c             | 43 +++++++++++++++++++++++++++++++++++++++-
+>  include/uapi/linux/mount.h |  8 +++++++-
+>  4 files changed, 99 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/internal.h b/fs/internal.h
+> index e7f02ae1e098..db6094d5cb0b 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -338,3 +338,4 @@ static inline bool path_mounted(const struct path *pa=
+th)
+>  	return path->mnt->mnt_root =3D=3D path->dentry;
+>  }
+>  void file_f_owner_release(struct file *file);
+> +int statmount_mnt_idmap(struct mnt_idmap *idmap, struct seq_file *seq, b=
+ool uid_map);
+> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+> index 7b1df8cc2821..4aca8e3ba97e 100644
+> --- a/fs/mnt_idmapping.c
+> +++ b/fs/mnt_idmapping.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/mnt_idmapping.h>
+>  #include <linux/slab.h>
+>  #include <linux/user_namespace.h>
+> +#include <linux/seq_file.h>
+> =20
+>  #include "internal.h"
+> =20
+> @@ -334,3 +335,51 @@ void mnt_idmap_put(struct mnt_idmap *idmap)
+>  		free_mnt_idmap(idmap);
+>  }
+>  EXPORT_SYMBOL_GPL(mnt_idmap_put);
+> +
+> +int statmount_mnt_idmap(struct mnt_idmap *idmap, struct seq_file *seq, b=
+ool uid_map)
+> +{
+> +	struct uid_gid_map *map, *map_up;
+> +
+> +	if (idmap =3D=3D &nop_mnt_idmap || idmap =3D=3D &invalid_mnt_idmap)
+> +		return 0;
+> +
+> +	/*
+> +	 * Idmappings are shown relative to the caller's idmapping.
+> +	 * This is both the most intuitive and most useful solution.
+> +	 */
+> +	if (uid_map) {
+> +		map =3D &idmap->uid_map;
+> +		map_up =3D &current_user_ns()->uid_map;
+> +	} else {
+> +		map =3D &idmap->gid_map;
+> +		map_up =3D &current_user_ns()->gid_map;
+> +	}
+> +
+> +	for (u32 idx =3D 0; idx < map->nr_extents; idx++) {
+> +		uid_t lower;
+> +		struct uid_gid_extent *extent;
+> +
+> +		if (map->nr_extents <=3D UID_GID_MAP_MAX_BASE_EXTENTS)
+> +			extent =3D &map->extent[idx];
+> +		else
+> +			extent =3D &map->forward[idx];
+> +
+> +		/*
+> +		 * Verify that the whole range of the mapping can be
+> +		 * resolved in the caller's idmapping. If it cannot be
+> +		 * resolved 1/4294967295 will be shown as the target of
+
+nit: I think you mean '-1/4294967295'.
+
+> +		 * the mapping. The source and range are shown as a hint
+> +		 * to the caller.
+> +		 */
+> +		lower =3D map_id_range_up(map_up, extent->lower_first, extent->count);
+> +		if (lower =3D=3D (uid_t) -1)
+> +			seq_printf(seq, "%u %u %u", extent->first, -1, extent->count);
+> +		else
+> +			seq_printf(seq, "%u %u %u", extent->first, lower, extent->count);
+
+Again, I think a different syntax for an unresolveable range would be
+better. Another idea -- if you separate the fields by ':', you could
+just leave out the middle field when it can't be resolved -- e.g.
+"1000::1000".
+
+> +		seq->count++; /* mappings are separated by \0 */
+> +		if (seq_has_overflowed(seq))
+> +			return -EAGAIN;
+> +	}
+> +
+> +	return map->nr_extents;
+> +}
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 4013fbac354a..535e4829061f 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -4915,6 +4915,7 @@ struct kstatmount {
+>  	struct statmount __user *buf;
+>  	size_t bufsize;
+>  	struct vfsmount *mnt;
+> +	struct mnt_idmap *idmap;
+>  	u64 mask;
+>  	struct path root;
+>  	struct statmount sm;
+> @@ -5185,6 +5186,30 @@ static int statmount_opt_sec_array(struct kstatmou=
+nt *s, struct seq_file *seq)
+>  	return 0;
+>  }
+> =20
+> +static inline int statmount_mnt_uidmap(struct kstatmount *s, struct seq_=
+file *seq)
+> +{
+> +	int ret;
+> +
+> +	ret =3D statmount_mnt_idmap(s->idmap, seq, true);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	s->sm.mnt_uidmap_num =3D ret;
+> +	return 0;
+> +}
+> +
+> +static inline int statmount_mnt_gidmap(struct kstatmount *s, struct seq_=
+file *seq)
+> +{
+> +	int ret;
+> +
+> +	ret =3D statmount_mnt_idmap(s->idmap, seq, false);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	s->sm.mnt_gidmap_num =3D ret;
+> +	return 0;
+> +}
+> +
+>  static int statmount_string(struct kstatmount *s, u64 flag)
+>  {
+>  	int ret =3D 0;
+> @@ -5226,6 +5251,14 @@ static int statmount_string(struct kstatmount *s, =
+u64 flag)
+>  		sm->sb_source =3D start;
+>  		ret =3D statmount_sb_source(s, seq);
+>  		break;
+> +	case STATMOUNT_MNT_UIDMAP:
+> +		sm->mnt_uidmap =3D start;
+> +		ret =3D statmount_mnt_uidmap(s, seq);
+> +		break;
+> +	case STATMOUNT_MNT_GIDMAP:
+> +		sm->mnt_gidmap =3D start;
+> +		ret =3D statmount_mnt_gidmap(s, seq);
+> +		break;
+>  	default:
+>  		WARN_ON_ONCE(true);
+>  		return -EINVAL;
+> @@ -5350,6 +5383,7 @@ static int do_statmount(struct kstatmount *s, u64 m=
+nt_id, u64 mnt_ns_id,
+>  		return err;
+> =20
+>  	s->root =3D root;
+> +	s->idmap =3D mnt_idmap(s->mnt);
+>  	if (s->mask & STATMOUNT_SB_BASIC)
+>  		statmount_sb_basic(s);
+> =20
+> @@ -5383,6 +5417,12 @@ static int do_statmount(struct kstatmount *s, u64 =
+mnt_id, u64 mnt_ns_id,
+>  	if (!err && s->mask & STATMOUNT_SB_SOURCE)
+>  		err =3D statmount_string(s, STATMOUNT_SB_SOURCE);
+> =20
+> +	if (!err && s->mask & STATMOUNT_MNT_UIDMAP)
+> +		err =3D statmount_string(s, STATMOUNT_MNT_UIDMAP);
+> +
+> +	if (!err && s->mask & STATMOUNT_MNT_GIDMAP)
+> +		err =3D statmount_string(s, STATMOUNT_MNT_GIDMAP);
+> +
+>  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+>  		statmount_mnt_ns_id(s, ns);
+> =20
+> @@ -5406,7 +5446,8 @@ static inline bool retry_statmount(const long ret, =
+size_t *seq_size)
+>  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT |=
+ \
+>  			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
+>  			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE | \
+> -			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY)
+> +			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY | \
+> +			      STATMOUNT_MNT_UIDMAP | STATMOUNT_MNT_GIDMAP)
+> =20
+>  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *=
+kreq,
+>  			      struct statmount __user *buf, size_t bufsize,
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index c07008816aca..0be6ac4c1624 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -179,7 +179,11 @@ struct statmount {
+>  	__u32 opt_array;	/* [str] Array of nul terminated fs options */
+>  	__u32 opt_sec_num;	/* Number of security options */
+>  	__u32 opt_sec_array;	/* [str] Array of nul terminated security options =
+*/
+> -	__u64 __spare2[46];
+> +	__u32 mnt_uidmap_num;	/* Number of uid mappings */
+> +	__u32 mnt_uidmap;	/* [str] Array of uid mappings (as seen from callers =
+namespace) */
+> +	__u32 mnt_gidmap_num;	/* Number of gid mappings */
+> +	__u32 mnt_gidmap;	/* [str] Array of gid mappings (as seen from callers =
+namespace) */
+> +	__u64 __spare2[44];
+>  	char str[];		/* Variable size part containing strings */
+>  };
+> =20
+> @@ -217,6 +221,8 @@ struct mnt_id_req {
+>  #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
+>  #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
+>  #define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
+> +#define STATMOUNT_MNT_UIDMAP		0x00001000U	/* Want/got uidmap... */
+> +#define STATMOUNT_MNT_GIDMAP		0x00002000U	/* Want/got gidmap... */
+> =20
+>  /*
+>   * Special @mnt_id values that can be passed to listmount
 >=20
 
 --=20
