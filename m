@@ -1,159 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-40362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847A1A229CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 09:46:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654B6A22A32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 10:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953F13A6FEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 08:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F51885645
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 09:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2671AF0D5;
-	Thu, 30 Jan 2025 08:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F31B4C35;
+	Thu, 30 Jan 2025 09:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xnwpdgmH"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lUaPnMXY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA50A1922D8;
-	Thu, 30 Jan 2025 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8344D1AB53A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 09:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738226754; cv=none; b=YGrvocQUy6h8XVKxeRvnhXWmQ9kBtc3WFeHRzKFc2oTeAN0KbiAEKn4Ky8oQJ1S/zOiKtdZGe79AbnT5hM8K8Z1I1HUd5XZJRpWWb+n74FVmF1SEk7sIRIgnKFjlFPlVkWOR9jBfEiKF/RYODtoDmg3VB0PfwkGcj8CTVa8so/g=
+	t=1738229050; cv=none; b=iqiB87JSVpK8eM2UurCTY+9wQVuvi1jsKvy58aLQ1xuQJaUlZ/8aDJP54gVqWCzeaDaRad2I/OqVV9lDEgSjNfUA8YFTzLO0ZeyBSw7g+zqxJFi7xyQCDFjP5MjcN922u7AmbQqoRs7Hg85JChwjUvoZr/800SDjoB3t7dRS80c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738226754; c=relaxed/simple;
-	bh=djFUHlqqBU4Ge326CrqKtMAMUPAMqHeV9r8/sraYo20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqNo/Zb++F8lShBPJ8v+WhVRlmHhzZllKoyA2joMGPD/55c28jv4hgDIbQXVNpGcztD+e2kBdamQUwC5WOqZE9jkSicg/FvHI4MK/PQsWmgsKk5vkoDMaT+XZRiU0VwvLfdVGti81Vm/IMqVXncKpVRE3UxXfW609NmFI4DT9ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xnwpdgmH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4FCC4CED3;
-	Thu, 30 Jan 2025 08:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1738226754;
-	bh=djFUHlqqBU4Ge326CrqKtMAMUPAMqHeV9r8/sraYo20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xnwpdgmH3I+l2oXpAng0G6RWNv1jj5tqt3nT6X3qUUGAxPg6lT9dOIwaCMg3ApTpg
-	 Q6udNWxYeJvPfu6vBJFpO489lo5ptBPDXvtaZHV/djU+MhqdYN7HEq4/LrmNzmJN7t
-	 lVBBCwt45TVCpqYF8Jq05ZL13hFIsxkXd+tOzQ94=
-Date: Thu, 30 Jan 2025 09:45:51 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Hugh Dickins <hughd@google.com>,
-	Andrew Morten <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-	linux-mm@kvack.org, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [RFC PATCH v6.6 00/10] Address CVE-2024-46701
-Message-ID: <2025013057-lagged-anointer-8b77@gregkh>
-References: <20250124191946.22308-1-cel@kernel.org>
- <50585d23-a0c1-4810-9e94-09506245f413@oracle.com>
- <2025012937-unsaddle-movable-4dae@gregkh>
- <69d8e9dd-59d1-4eb2-be93-1402dba12f34@oracle.com>
- <2025012924-shelter-disk-2fe1@gregkh>
- <9130c4f0-ad6b-4b6f-a395-33c7a6b21cbe@oracle.com>
+	s=arc-20240116; t=1738229050; c=relaxed/simple;
+	bh=HL2b46SyDwrvkIWYoi81OvrWq4Eysr5AGb4a/UeMMQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=htFTrKq03r6cVm8GQ5NEwJX0OolxRKUVSdheqOYB21pB7eqmhH6vTC3ibTufSVqS8Hzl31FDdrTZPQDTrhPkY49p5xvp6/rm2r8c1UZq21s8eQ1mmZCO4Xxw8TTdbXeGrOjhdwt/MP0BcS2M8RU1cRpzq3Tw+bWAbjWeKxTXtDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lUaPnMXY; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250130092406epoutp01fc7afe5230652bdc718c5f9659995180~fbhuzfUQg0323203232epoutp01v
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 09:24:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250130092406epoutp01fc7afe5230652bdc718c5f9659995180~fbhuzfUQg0323203232epoutp01v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1738229046;
+	bh=HL2b46SyDwrvkIWYoi81OvrWq4Eysr5AGb4a/UeMMQM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=lUaPnMXYhwNeMB8B+YvsrITQIJrKbrlkCr9EpJRcxNHCAomubdC1iCeTRKajiMnuH
+	 gs9JzyLYDFCp/OHawbKziR4PV584ZDp35mNGqXKmDsRB6SkK7YPAKggJpGid/O6y+B
+	 bCmWeiO+7kuDEFc12RjKBgsp7JWsIXZ7c3fnvm+g=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250130092405epcas5p42d70c6889f2557bcd170da527a833ecb~fbht1lcYn2236122361epcas5p4C;
+	Thu, 30 Jan 2025 09:24:05 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4YkD9X71gxz4x9Pv; Thu, 30 Jan
+	2025 09:24:00 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C2.02.19710.0354B976; Thu, 30 Jan 2025 18:24:00 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824~fbhpUXIOC0519205192epcas5p1M;
+	Thu, 30 Jan 2025 09:24:00 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250130092400epsmtrp159a78ca4d56e861a43ca4208e9e92dd8~fbhpTsRQ82911429114epsmtrp1Y;
+	Thu, 30 Jan 2025 09:24:00 +0000 (GMT)
+X-AuditID: b6c32a44-36bdd70000004cfe-cf-679b4530db53
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	48.92.18729.0354B976; Thu, 30 Jan 2025 18:24:00 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250130092359epsmtip26e09c636698aef1a63ab7522eb163c66~fbhoPBJSn2717827178epsmtip2Z;
+	Thu, 30 Jan 2025 09:23:59 +0000 (GMT)
+From: Kanchan Joshi <joshi.k@samsung.com>
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [LSF/MM/BPF TOPIC] File system checksum offload
+Date: Thu, 30 Jan 2025 14:45:45 +0530
+Message-Id: <20250130091545.66573-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9130c4f0-ad6b-4b6f-a395-33c7a6b21cbe@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7bCmpq6B6+x0g20/zS3+PDS0OPr/LZvF
+	3lvaFpcer2C32LP3JIvF/GVP2S32vd7L7MDusXlJvcfkG8sZPfq2rGL0mLB5I6vH501yAaxR
+	2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QDcoKZQl
+	5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz
+	5j/9yFgwg73i6t4PrA2MH1i7GDk5JARMJI4dO8YCYgsJ7GaUWDC/uIuRC8j+xCjR8aWRHcL5
+	xihxuPErXMfHY3dZIRJ7GSVmvr8O5XxmlFi8cANTFyMHB5uApsSFyaUgDSICqhJ/1x8BW8Es
+	sItRYkVHNIgtLGAhcWzVdTYQmwWoZsGJU2CtvEDxpo3KELvkJWZe+s4OYvMKCEqcnPkEaoy8
+	RPPW2cwgayUETrFLnN39jRmiwUVi4ZmfUIcKS7w6voUdwpaSeNnfBmVnSzx49IAFwq6R2LG5
+	D6reXqLhzw1WkBuYgc5fv0sfYhefRO/vJ2CnSQjwSnS0CUFUK0rcm/QUqlNc4uGMJVC2h8Sl
+	VZuZIAEaK7H19hnGCYxys5B8MAvJB7MQli1gZF7FKJlaUJybnppsWmCYl1oOj8nk/NxNjOC0
+	p+Wyg/HG/H96hxiZOBgPMUpwMCuJ8Maem5EuxJuSWFmVWpQfX1Sak1p8iNEUGKoTmaVEk/OB
+	iTevJN7QxNLAxMzMzMTS2MxQSZy3eWdLupBAemJJanZqakFqEUwfEwenVAPT1o6dD7cfaIj3
+	YJNi3LWx7I2n7Lqpl7LLDrZUmtoXJTR1/S6Ve2b90HGndH4n6/vSoDutnmXv+/N/7Ns5VZB1
+	Tlte4uqN0iuV821n3+aXsvXtVy2bPSNo42+eOhmTvHVCt/b/Unpw7mFmCbvh4XvZlxU0oyz+
+	LjmgEDo/4NTBuPceUlysNR++u8bl7w4Ibn5yV2lBlOvMeBud/lm8bLkhFgs02Rdc/XJV5E5q
+	58ZNH92bjZRnhe14Ud6X9Y1R9pbCbLnFEUxXZzSaBdzIF3jSabt28tqfFt1hJRsVkqdlLVr1
+	wymN4wv7IZNF55LebhCZueRIXerTU2xpwddZK9dxcc/rnBft72q+wnDNmntKLMUZiYZazEXF
+	iQCARAMXBAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSvK6B6+x0g87LchZ/HhpaHP3/ls1i
+	7y1ti0uPV7Bb7Nl7ksVi/rKn7Bb7Xu9ldmD32Lyk3mPyjeWMHn1bVjF6TNi8kdXj8ya5ANYo
+	LpuU1JzMstQifbsEroz5Tz8yFsxgr7i69wNrA+MH1i5GTg4JAROJj8fuAtlcHEICuxklPq6+
+	yAKREJdovvaDHcIWllj57zk7RNFHRom/fa1AHRwcbAKaEhcml4LUiAioSvxdf4QFpIZZ4ACj
+	RPOWNcwgCWEBC4ljq66zgdgsQEULTpxiAunlBYo3bVSGmC8vMfPSd7BdvAKCEidnPgG7gRko
+	3rx1NvMERr5ZSFKzkKQWMDKtYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIDk8tzR2M
+	21d90DvEyMTBeIhRgoNZSYQ39tyMdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK84i96U4QE0hNL
+	UrNTUwtSi2CyTBycUg1MwRL/d3u1eHc9mm25Lb3OWae9cMmSo6ZCPLWqN5glX+xPXLkjatZT
+	46rth+fLzk5cNemC6mzV/IolZ+t3cvB3zBHhv9S/pv/3si39tgEX5q7zeKfq4Wwm+G/drV0z
+	OxMYMgsKcnnSEqwTd2X+qPl53Hqh516R4FOfbr8Xmnh2Tt6j/KWbfFc1Hc5cc2V67AP+lCWd
+	d88mZRiGrX7AoRtnP3dRnMy8kMaPnofmefXdvuTMxHJdSbVR4881B37+u0WT6yLce15fLzxg
+	/WP+vJwsy85nPPEVXWUqyjPv3G16d9r2+9w+3pZ3otV7jGUeMNy8p9bQVHZp/6Mcpiull665
+	Rh2YyGY68/7fzorU9WeOKrEUZyQaajEXFScCAKrFmE++AgAA
+X-CMS-MailID: 20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824
+References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
 
-On Wed, Jan 29, 2025 at 11:37:51AM -0500, Chuck Lever wrote:
-> On 1/29/25 10:21 AM, Greg Kroah-Hartman wrote:
-> > On Wed, Jan 29, 2025 at 10:06:49AM -0500, Chuck Lever wrote:
-> > > On 1/29/25 9:50 AM, Greg Kroah-Hartman wrote:
-> > > > On Wed, Jan 29, 2025 at 08:55:15AM -0500, Chuck Lever wrote:
-> > > > > On 1/24/25 2:19 PM, cel@kernel.org wrote:
-> > > > > > From: Chuck Lever <chuck.lever@oracle.com>
-> > > > > > 
-> > > > > > This series backports several upstream fixes to origin/linux-6.6.y
-> > > > > > in order to address CVE-2024-46701:
-> > > > > > 
-> > > > > >      https://nvd.nist.gov/vuln/detail/CVE-2024-46701
-> > > > > > 
-> > > > > > As applied to origin/linux-6.6.y, this series passes fstests and the
-> > > > > > git regression suite.
-> > > > > > 
-> > > > > > Before officially requesting that stable@ merge this series, I'd
-> > > > > > like to provide an opportunity for community review of the backport
-> > > > > > patches.
-> > > > > > 
-> > > > > > You can also find them them in the "nfsd-6.6.y" branch in
-> > > > > > 
-> > > > > >      https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
-> > > > > > 
-> > > > > > Chuck Lever (10):
-> > > > > >      libfs: Re-arrange locking in offset_iterate_dir()
-> > > > > >      libfs: Define a minimum directory offset
-> > > > > >      libfs: Add simple_offset_empty()
-> > > > > >      libfs: Fix simple_offset_rename_exchange()
-> > > > > >      libfs: Add simple_offset_rename() API
-> > > > > >      shmem: Fix shmem_rename2()
-> > > > > >      libfs: Return ENOSPC when the directory offset range is exhausted
-> > > > > >      Revert "libfs: Add simple_offset_empty()"
-> > > > > >      libfs: Replace simple_offset end-of-directory detection
-> > > > > >      libfs: Use d_children list to iterate simple_offset directories
-> > > > > > 
-> > > > > >     fs/libfs.c         | 177 +++++++++++++++++++++++++++++++++------------
-> > > > > >     include/linux/fs.h |   2 +
-> > > > > >     mm/shmem.c         |   3 +-
-> > > > > >     3 files changed, 134 insertions(+), 48 deletions(-)
-> > > > > > 
-> > > > > 
-> > > > > I've heard no objections or other comments. Greg, Sasha, shall we
-> > > > > proceed with merging this patch series into v6.6 ?
-> > > > 
-> > > > Um, but not all of these are in a released kernel yet, so we can't take
-> > > > them all yet.
-> > > 
-> > > Hi Greg -
-> > > 
-> > > The new patches are in v6.14 now. I'm asking stable to take these
-> > > whenever you are ready. Would that be v6.14-rc1? I can send a reminder
-> > > if you like.
-> > 
-> > Yes, we have to wait until changes are in a -rc release unless there are
-> > "real reasons to take it now" :)
-> > 
-> > > > Also what about 6.12.y and 6.13.y for those commits that
-> > > > will be showing up in 6.14-rc1?  We can't have regressions for people
-> > > > moving to those releases from 6.6.y, right?
-> > > 
-> > > The upstream commits have Fixes tags. I assumed that your automation
-> > > will find those and apply them to those kernels -- the upstream versions
-> > > of these patches I expect will apply cleanly to recent LTS.
-> > 
-> > "Fixes:" are never guaranteed to show up in stable kernels, they are
-> > only a "maybe when we get some spare cycles and get around to it we
-> > might do a simple pass to see what works or doesn't."
-> > 
-> > If you KNOW a change is a bugfix for stable kernels, please mark it as
-> > such!  "Fixes:" is NOT how to do that, and never has been.  It's only
-> > additional meta-data that helps us out.
-> > 
-> > So please send us a list of the commits that need to go to 6.12.y and
-> > 6.13.y, we have to have that before we could take the 6.6.y changes.
-> 
-> 903dc9c43a15 ("libfs: Return ENOSPC when the directory offset range is
-> exhausted")
-> d7bde4f27cee ("Revert "libfs: Add simple_offset_empty()"")
-> b662d858131d ("Revert "libfs: fix infinite directory reads for offset dir"")
-> 68a3a6500314 ("libfs: Replace simple_offset end-of-directory detection")
-> b9b588f22a0c ("libfs: Use d_children list to iterate simple_offset
-> directories")
+Hi All,
 
-Cool, thanks for the list (and not all were marked with fixes, i.e.
-those reverts, I guess we need to start checking for reverts better.  I
-have tooling set up for that but not integrated yet...)
+I would like to propose a discussion on employing checksum offload in
+filesystems.
+It would be good to co-locate this with the storage track, as the
+finer details lie in the block layer and NVMe driver.
 
-I'll just queue them all up now.
+For Btrfs, I had a fleeting chat with Joseph during the last LSFMM.
+It seemed there will be value in optimizing writes induced by the
+separate checksum tree.
+Anuj and I have developed an RFC. This may help us have a clearer
+discussion and decide the path forward.
 
-greg k-h
+https://lore.kernel.org/linux-block/20250129140207.22718-1-joshi.k@samsung.com/
+
+The proposed RFC maintains a generic infrastructure, allowing other
+filesystems to adopt it easily.
+XFS/Ext4 have native checksumming for metadata but not for data.
+With this approach, they could just instruct the SSD to checksum the
+data.
+But I am unsure if there are FS-specific trade-offs. Maybe that can
+also be up for the discussion.
 
