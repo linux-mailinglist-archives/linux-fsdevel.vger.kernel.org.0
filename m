@@ -1,131 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-40426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD23A234CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:47:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF3AA23508
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F483A5BB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 19:47:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6080E164526
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CBE1946C8;
-	Thu, 30 Jan 2025 19:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1AF1F1306;
+	Thu, 30 Jan 2025 20:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="dolMIwmg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tNb6eZXp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRlkk74m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2F187848
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 19:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A64A35;
+	Thu, 30 Jan 2025 20:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738266440; cv=none; b=GtzN1Uln0pUzZiBqxEym0y1jxLwKUeL0uiCdN8kXVoL7Q7yPU9DkUW0WAe5f5/TvpX1yYQs3RxaRBMYxGtTol7p92xUw8GRwVnDbJxh63X9kmjmXduNqVSBQx+3dNijHHPXh3N8TjbH9k9oBzSuX8bbgAD4FhxgUtImq0yE9WeE=
+	t=1738268648; cv=none; b=kjPkUmAuIT9uYCvbuNabB8BxXMUDAigEOWQy4FouJtKF4NtyPmt0tEQBE5MJ0mvHyd5yAYwPISYiikmf7cK240BYaJClMtB3NFl+nwcqmHWSAtoaBYBXYPvwQKbWnRWQGH2IDNx5HPkD6ThxDLE/x252QMzHD5QZtByiOl2oYGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738266440; c=relaxed/simple;
-	bh=YDGfL2vBAvh8cN5KzXud7dZ//q3UrIiUMzeOREuUzAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFUPYjqQ78B0mUKSVuUQb2dB08LdxWkl/rIRvXpr28LYCXkggW9vHjto0y60hET0IreD3A2K7srwkEMN83cGo7Qzxefe6ABCjhwArfcI1BTdn6/dT/xo+5jGgX2NtOGGnVFd7tnimKIh8hCuFjuSFpGrEtq1IYizRzGhvn3AMOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=dolMIwmg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tNb6eZXp; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id E4C1D114009F;
-	Thu, 30 Jan 2025 14:47:17 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Thu, 30 Jan 2025 14:47:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1738266437;
-	 x=1738352837; bh=JKfZaLmKgYiHTwPm7G4Pxs1FSPHViKKG6RMcFmXvpg4=; b=
-	dolMIwmgv/mu680TpGYgM67pXOOc/CCtEyu0nzaJcdFuylZPnuEOC4cr+eRLET1t
-	G91TYSHr9bRXfqfnvUuKR/xbPkS9lgU1jAsFB4d3gl24tZBDWEadF+gU31LrBQw0
-	k51aIt59kfzE6/VpNiV8AP9Fg+at5X8xuVnt7vuzgqDABbz0hIHALA3vC1ck0K5o
-	WuISL4Un3ROdmi+YbCQdQk2fpZU9dl0nI+TUlmwRdL5nxuEg+rk8EhogcGIOkmKR
-	5+nFlkHhTI9OV5R1UqSrlG7idfDlI9wreFv+BObeI49k+uol2/tfn2+ZGUbl+inH
-	itQnvryMN3/IsDwK2hR62w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738266437; x=
-	1738352837; bh=JKfZaLmKgYiHTwPm7G4Pxs1FSPHViKKG6RMcFmXvpg4=; b=t
-	Nb6eZXpjEzKB1llPxX5EAJkbWHhMIW7g2tVx42iBe4+vVOGPLAti+6rj5Jwsur/A
-	pDKLGJLTmuc5pnIEvGy/X1/RNbU2aHRqcDQztDei2uoMLlr/MURXXLWOy5psUwPJ
-	kF/K8Pc8jn5qq2RM7sCvWxf7+/TGc8/juTlGZ8K+jUFDmF/zRFUsGgonLj7+UKGi
-	t2ojIFo2c608y/P8tELgwkQG5/wF12A7FJyPSjWrONS6XvCp/jKgbwuotEQhlaLO
-	r6pmH5aItPd4wULj7fh3Jdq0WpElere5lucaIrp1DqQCeL4Zn+tP/xq9RNVJ1JWM
-	3FtnZV4EIK62s1yW55ujA==
-X-ME-Sender: <xms:RdebZ7V9TSUdjBncBos4vXxE9NgmluTQY8K0of8OPa2hwSXYpEReYQ>
-    <xme:RdebZzlAwaGo3PkE8xGFzQSfWRKLpiM4yW55mN5IZ8JTsPkrZgzR8YJhR3ivZ9HZ3
-    o-Y31X3ihG0fD58oq4>
-X-ME-Received: <xmr:RdebZ3bm5xibe0yLUKjKpqYZ3RO7YiPnTNGlTLD9LrH6iZG-R6bzYDWj4XRf4rKMbgfMyJ7YvaPTVDw-Q8iswNKhPztU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpefgrhhitgcuufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnuggvvg
-    hnrdhnvghtqeenucggtffrrghtthgvrhhnpeevieekueetfeeujedtheeffedvgeffiedv
-    jeejleffhfeggeejuedtjeeulefhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsrghnuggvvghnsehsrghnuggvvghnrdhnvghtpdhnsggp
-    rhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruhhnvg
-    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghnuggvvghnsehrvgguhhgrthdr
-    tghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgt
-    phhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-ME-Proxy: <xmx:RdebZ2WQdgEJyWFDkUW4XXspDA6bBZc39Pn46NlFwJlBI_BqTinomQ>
-    <xmx:RdebZ1n9lRRVxWLh1EcpQQkV8iY4B2yItVe4bXOXGYhi1rZNMxHnmw>
-    <xmx:RdebZzdxbcKv9GjMZ0gcYsLTXXEuqAsOD3ZdBU0sOaOnWgITUCmNSA>
-    <xmx:RdebZ_Evop-oYTbiutRI8V-SeZT_rTyzKcT2TvCBH3qiqVBqT5zF3g>
-    <xmx:RdebZ4sks0Q9lMko8ZBSIP31t7DaOqWgYghb6SUHQbr9llWxnrug-Qsi>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Jan 2025 14:47:16 -0500 (EST)
-Message-ID: <483844a5-cb74-4dd0-befa-0f4139b75fe2@sandeen.net>
-Date: Thu, 30 Jan 2025 13:47:16 -0600
+	s=arc-20240116; t=1738268648; c=relaxed/simple;
+	bh=fcVzhnqBbO27IvJ9WownzhHG6Rj7fo3UL/gsFbTqje8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P71VBgco/v+hGabtWrLAkHFGKWLDuQryCcojLK+C/ajPAhjxRB6mec1bQRpSzPumasaUrfkrqjxYjLHc8oGQmv1b9E8BgbabFKJEQ3kaxCArS2M6ooUZbsnoCpV2MM/We0uj79NLGUCy0/unS3BAIV7/BTKJxLWmrLkkChlQceo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRlkk74m; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3863703258fso1539443f8f.1;
+        Thu, 30 Jan 2025 12:24:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738268645; x=1738873445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xV+2ASZNLztOoZlL3PTiOudYi7XA5OszIeYYPdoNj+s=;
+        b=DRlkk74mTF2GsGqMXSpR3vj+j3M/9ui1TPBZ03yf7xw+0/2fxHBkHM9HTESULhy2Lt
+         oGirF3yzJUaX9Lhl7Ze8u5newYzMOBsWE5TUoW63KPjjQWUnS4oQ1jkR3P1RRTBIGAdI
+         XdLB3tUyyINzmzf1jKfhjmwBpGwhaS8qDxu5k7Xz9dDz29Pd00xkxSMuWhpw22evVOVM
+         EKxHQgj+mq8jBSxya12rLOh8mhfWQ6ZCANzkKG/34VVnlj6nix/MTKER43930Yk0Hnl6
+         cReEfxPkG9/JgpNV/EEIeXxpLl318LvksfeuI0AxTpUXBE14rFsAmvb4qwJUwfr2vsNK
+         STWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738268645; x=1738873445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xV+2ASZNLztOoZlL3PTiOudYi7XA5OszIeYYPdoNj+s=;
+        b=xQ/sq/6Y9oFo7PKDs0D6LYcrfwuNt1sLhgwjWDhb/jfdAQ3cG7QB8UK+LWrEgZUOGb
+         IDpsTBEO5fOjq+dwum0YOd8txWRbs7wyn7GX33kOKOhU58Xkn/LSCb/r24Hw7erhXk81
+         A55po8g9Hmz0GdXC0MoCRf4u4mxiJ+9oJxodRDqUOk6vHkBtXFk46gAJ+P0nsJBU4U7o
+         k3b7YKFu6bU5M40mvnADRtVqon2MpbtNiTUL6E3nOaZ9BtVv65Fd8f+F3ss34JH6H10y
+         bGQYHvTtSZO5tZNVAP++Qoi7GWKtYGXILXIQkWPyLXhzIP0G1HdXF3HzxTxqwUcyKW77
+         1ZKw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1wvFisYK7oYSYbgLIRbqVtFND+MsM9AxbJmb9wsnp08sSDJ/OHwm6pNinWCvnna2/Z+4twW065d/oclwP@vger.kernel.org, AJvYcCVdKAzWMbp2crW+WZvkxHftAsVHpYgBCiAYtwrU0+bNdMbxd58LA/WxOsi8u+0JONV+bRoTcGl/FoMrYBcXSw==@vger.kernel.org, AJvYcCVwUie2uFVjP/uv7jKuTdhGEaiAP9NHox78ybMXXqhWTTrwtvAbVl3xMMLj4Cfu/7niGYP49TTJAkh1APuic6gDaGEkyIZb@vger.kernel.org, AJvYcCWDcrXvAOPnS+hJ9DxWl6B/y6tshmjnWa1aFs3Wx/528ofgmnO8e1eWXqz85fXDgc6Lg8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywng7m4FgNZCIhp/saYcKr7JWikwIlU2F7CgKAHWqTfsMBpqmSL
+	Me/s/Hf6lG3TKo5M/dJad804Gqr8MI1WffEalaaPvMqdO941NkuyXUc8GD0B+xyK9ix5jmn7/kI
+	gWptx0TBAsmgEjvYALy0D7uCe7vc=
+X-Gm-Gg: ASbGncsiEsg/yxDAh9kVdKIWNI/SszDOQFrI5atVuJ1xGT2wzaP4Lx9w/pn7/8K58Zc
+	alCA6cfk7PDuji+wRF8uBXca5IK10GO/9ZMQojRUSRw6ys2lE3F+l/K4/Q0/yb1GYWafjuuQR
+X-Google-Smtp-Source: AGHT+IFY02Fh9zFX1R5GIBuszCAimxxCsMAyxTddZA8UoFzTX5lo9Jl4O/3oYK9N+WgwYxNJeKpaVeeATA8PccpYr4g=
+X-Received: by 2002:a05:6000:1a85:b0:38b:ee01:a5b with SMTP id
+ ffacd0b85a97d-38c5a98de08mr4507429f8f.15.1738268644516; Thu, 30 Jan 2025
+ 12:24:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: mount api: Q on behavior of mount_single vs. get_tree_single
-To: Christian Brauner <brauner@kernel.org>, Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>
-References: <732c3de1-ef0b-49a9-b2c2-0c3c5e718a40@redhat.com>
- <20250116-erbeben-waren-2ad516da1343@brauner>
- <efb93d2c-c48f-4b72-b9fd-09151d2e74d6@redhat.com>
- <20250120-klappen-peitschen-824d2eb8b953@brauner>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20250120-klappen-peitschen-824d2eb8b953@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250129205957.2457655-1-song@kernel.org> <20250129205957.2457655-6-song@kernel.org>
+ <CAADnVQ+1Woq_mh_9iz+Dhdhw1TuXZgVrx38+aHn-bGZBVa5_uw@mail.gmail.com> <58833120-DD06-4024-B7F5-E255AC9261E6@fb.com>
+In-Reply-To: <58833120-DD06-4024-B7F5-E255AC9261E6@fb.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 30 Jan 2025 12:23:53 -0800
+X-Gm-Features: AWEUYZkkB50lvEISP2yfaCc8Z9aDGSq3hqMxf2vZ8lIYrimfx1QglBOlzd77btw
+Message-ID: <CAADnVQLa97RqLONmcrfBWckGRWD+OKOFY0FMEu4_pSsoALtdgQ@mail.gmail.com>
+Subject: Re: [PATCH v11 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
+ for bpf_dynptr_from_skb
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Liam Wisehart <liamwisehart@meta.com>, 
+	Shankaran Gnanashanmugam <shankaran@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/20/25 5:23 AM, Christian Brauner wrote:
+On Thu, Jan 30, 2025 at 9:49=E2=80=AFAM Song Liu <songliubraving@meta.com> =
+wrote:
+>
+> Hi Alexei,
+>
+> Thanks for the review!
+>
+> > On Jan 29, 2025, at 6:32=E2=80=AFPM, Alexei Starovoitov <alexei.starovo=
+itov@gmail.com> wrote:
+>
+> [...]
+>
+> >>
+> >> +BTF_ID_LIST(bpf_dynptr_from_skb_list)
+> >> +BTF_ID(func, bpf_dynptr_from_skb)
+> >> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+> >> +
+> >> +static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 k=
+func_id)
+> >> +{
+> >> +       if (kfunc_id !=3D bpf_dynptr_from_skb_list[0])
+> >> +               return 0;
+> >> +
+> >> +       switch (resolve_prog_type(prog)) {
+> >> +       /* Program types only with direct read access go here! */
+> >> +       case BPF_PROG_TYPE_LWT_IN:
+> >> +       case BPF_PROG_TYPE_LWT_OUT:
+> >> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
+> >> +       case BPF_PROG_TYPE_SK_REUSEPORT:
+> >> +       case BPF_PROG_TYPE_FLOW_DISSECTOR:
+> >> +       case BPF_PROG_TYPE_CGROUP_SKB:
+> >
+> > This copy pastes the logic from may_access_direct_pkt_data(),
+> > so any future change to that helper would need to update
+> > this one as well.
+>
+> We can probably improve this with some helpers/macros.
+>
+> >
+> >> +               return bpf_dynptr_from_skb_list[1];
+> >
+> > The [0] and [1] stuff is quite error prone.
+> >
+> >> +
+> >> +       /* Program types with direct read + write access go here! */
+> >> +       case BPF_PROG_TYPE_SCHED_CLS:
+> >> +       case BPF_PROG_TYPE_SCHED_ACT:
+> >> +       case BPF_PROG_TYPE_XDP:
+> >> +       case BPF_PROG_TYPE_LWT_XMIT:
+> >> +       case BPF_PROG_TYPE_SK_SKB:
+> >> +       case BPF_PROG_TYPE_SK_MSG:
+> >> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
+> >> +               return kfunc_id;
+> >> +
+> >> +       default:
+> >> +               break;
+> >> +       }
+> >> +       return bpf_dynptr_from_skb_list[1];
+> >> +}
+> >> +
+> >> static const struct btf_kfunc_id_set bpf_kfunc_set_skb =3D {
+> >>        .owner =3D THIS_MODULE,
+> >>        .set =3D &bpf_kfunc_check_set_skb,
+> >> +       .hidden_set =3D &bpf_kfunc_check_hidden_set_skb,
+> >
+> > If I'm reading it correctly the hidden_set serves no additional purpose=
+.
+> > It splits the set into two, but patch 4 just adds them together.
+>
+> hidden_set does not have BTF_SET8_KFUNCS, so pahole will not export
+> these kfuncs to vmlinux.h.
+>
+> >
+> >> +       .remap =3D &bpf_kfunc_set_skb_remap,
+> >
+> > I'm not a fan of callbacks in general.
+> > The makes everything harder to follow.
+>
+> This motivation here is to move polymorphism logic from verifier
+> core to kfuncs owners. I guess we will need some callback to
+> achieve this goal. Of course, we don't have to do it in this set.
+>
+>
+> > For all these reasons I don't like this approach.
+> > This "generality" doesn't make it cleaner or easier to extend.
+> > For the patch 6... just repeat what specialize_kfunc()
+> > currently does for dynptr ?
+>
+> Yes, specialize_kfunc() can handle this. But we will need to use
+> d_inode_locked_hooks from 6/7 in specialize_kfunc(). It works,
+> but it is not clean (to me).
 
-...
+I'm missing why that would be necessary to cross the layers
+so much. I guess the code will tell.
+Pls send an rfc to illustrate the unclean part.
 
->> While it seems odd to me that mounting any "_single" sb filesystem would
->> reconfigure all of its current mounts on a new mount, that's the way it
->> used to work for everyone, as far as I can tell, so I was assuming that
->> we'd need to keep the behavior. But if it's a question of just fixing it
->> up per-filesystem, I don't mind going that route either.
-> 
-> So far it hasn't lead to any regressions and we had the new behavior for
-> quite a while.
+> I will revise this set so that the polymorphism logic in handled
+> in specialize_kfunc(). For longer term, maybe we should discuss
+> "move some logic from verifier core to kfuncs" in the upcoming
+> LSF/MM/BPF?
 
-Well, it regressed tracefs & devtmpfs so far. *shrug* Working on pstore now,
-which also ends up with diff. behavior by default. But I'll just work around
-it for that patch, I suppose.
-
-Thanks,
--Eric
+imo such topic is too narrow and detail oriented.
+There is not much to gain from discussing it at lsfmm.
+email works well for such discussions.
 
