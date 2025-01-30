@@ -1,63 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-40390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F644A23029
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 15:29:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46438A2304A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 15:30:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67DB97A10C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 14:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84F1168EF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 14:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DBA1E9B00;
-	Thu, 30 Jan 2025 14:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1181E5020;
+	Thu, 30 Jan 2025 14:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="L59Kx8DF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLWnpGyf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A3E1E9916
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 14:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86198BFF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 14:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738247358; cv=none; b=BHEg7JnwrVvOocfdxSX7BDAHJ4dQ0kN8F+yKkpiTDAn4FIPIVpZu3HUFqxwhbyEI01yNVZGqVxhgoM9fbEMbVDhBm9LE0Bavc+6Xa3sri+QNCc1UHAKLY3fds4CzJC/FH4Vpfw7rH6IkrTP/5htktFk3wKMHjJT1MbUk0skdk6I=
+	t=1738247447; cv=none; b=A7RSR307BkMxfqqvIpRTcJ6nHh5dmicpmJ+maJispYRKi/V56kMBWI6DzJR8idr5sAHxZi95LRRP7eZUp3vhP2k+FTkZLBr+xyaJeNKi4pn6wwI980sUnDHMgqHX+IMnu6j3lBq/+OJDa1m3kuL6q81YViDHAc+R16n8AyxW+gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738247358; c=relaxed/simple;
-	bh=TB8rkidUprAZce/0uRE2RtxtIg2DEg5hLYqfvl4yowk=;
+	s=arc-20240116; t=1738247447; c=relaxed/simple;
+	bh=XIUHc9EIO9gnv+/Qx1QF3VjBQiy0o82ITQYvSu6UdPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxdcBlew4sFBHTTatXAH5UC4vTPrFUmb+MWJ34bqUNTdoNHbF/W9bDAD06tc9mVuNllvQbFm8VZckDmI+bbEtcC7oJQqigeQOnlgBuOilI4c+0hm54s/dhpaINCDLTTE7a+WcpG4Wu1LJVE2w9lATQpjKCLYUsadn8URTua3/8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=L59Kx8DF; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([12.221.73.181])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50UESvQI005998
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Jan 2025 09:28:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1738247341; bh=qsthqpO7eT/PN4h6zfRCZRC0k8LPYXxQFOt5Xt6pPl8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=L59Kx8DF9Ed5Y2eTvdXfoE/6o8wmClyKDv+ynISKDMYdJvTiGCf5SwK9vP8TtFcjR
-	 WOA+q+/DMs6ngERetvncxFYIvZtCmnkzEz+v+GI7l4LGPN0A8F9G//O3IUx/T68N9a
-	 tnTlWQmplKXqq+Spsb0PGzkJIshxphZkfmF1wj+iLHTtgvH2BBGcTqx0Q4e45tLtEd
-	 oICFQ+Apmxkny8WRh7ZKQbYDygSz8m2LMTabL3utUTeWHDChwCutrvflMkBt6jeO/6
-	 F+o4GDxFWHf2fXs+oLbhZ5G9OHnOio1+RQ9aYy84/0mQwOi1EKDp9sMPyym2of0jPk
-	 Rs9z+Az+1jz3Q==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 0C9853404C7; Thu, 30 Jan 2025 06:28:57 -0800 (PST)
-Date: Thu, 30 Jan 2025 06:28:57 -0800
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, josef@toxicpanda.com
-Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
-Message-ID: <20250130142857.GB401886@mit.edu>
-References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
- <20250130091545.66573-1-joshi.k@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYT6Z9/GmX7c/2XuabKclWegaSpq9U8YPwq7CfhP3Ry/+iMmzXYSXXv6m8RujWyfMDtrPN+g3CchdrSKkpWCvK9wLWvjneMIV9eLnr18qQ812tP7rfYG4RWvKeMnmWo7DT+QhtSC1NYChg9ipDnHEvQByDLx9purkmj669bwpTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLWnpGyf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B729C4CED2;
+	Thu, 30 Jan 2025 14:30:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738247447;
+	bh=XIUHc9EIO9gnv+/Qx1QF3VjBQiy0o82ITQYvSu6UdPI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eLWnpGyfwEpNX5V19XaJjR2/1bMygP+r44bAguZtiqnH+eZvgUZQFcK3E8PnuO/Bp
+	 2zhMELvGj16usVBotQXIsBIuoiowaceCURfMRMpTVesoHQf2KK8Pa43L582kO3Ce9Q
+	 YbrAPsNbtsriBCPRWWFQDorWejKObJgQDmEFnVSYyNma841tgEdgYovTKgqbhcz6rl
+	 zta76z4YxP+tKOIMEVLhPwrmzV/caPzt2WYRWZcrO7kHfu8Hm0mObCmP/p0LbAYVKh
+	 FQLyQ3emC3s+bnAxkIalOo+4WDmwTF5T64AIgvFSXqsffaggA8yjioRGTT5sceCWV5
+	 wQ2oc1OPXSByg==
+Date: Thu, 30 Jan 2025 08:30:46 -0600
+From: Seth Forshee <sforshee@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/5] fs: allow changing idmappings
+Message-ID: <Z5uNFoz_wMUVU4da@do-x1carbon>
+References: <20250128-work-mnt_idmap-update-v2-v1-0-c25feb0d2eb3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,44 +62,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250130091545.66573-1-joshi.k@samsung.com>
+In-Reply-To: <20250128-work-mnt_idmap-update-v2-v1-0-c25feb0d2eb3@kernel.org>
 
-On Thu, Jan 30, 2025 at 02:45:45PM +0530, Kanchan Joshi wrote:
-> I would like to propose a discussion on employing checksum offload in
-> filesystems.
-> It would be good to co-locate this with the storage track, as the
-> finer details lie in the block layer and NVMe driver.
+On Tue, Jan 28, 2025 at 11:33:38AM +0100, Christian Brauner wrote:
+> /* solution */
+> 
+> So, to avoid all of these pitfalls creating an idmapped mount from an
+> already idmapped mount will be done atomically, i.e., a new detached
+> mount is created and a new set of mount properties applied to it without
+> it ever having been exposed to userspace at all.
+> 
+> This can be done in two ways. A new flag to open_tree() is added
+> OPEN_TREE_CLEAR_IDMAP that clears the old idmapping and returns a mount
+> that isn't idmapped. And then it is possible to set mount attributes on
+> it again including creation of an idmapped mount.
+> 
+> This has the consequence that a file descriptor must exist in userspace
+> that doesn't have any idmapping applied and it will thus never work in
+> unpriviledged scenarios. As a container would be able to remove the
+> idmapping of the mount it has been given. That should be avoided.
+> 
+> Instead, we add open_tree_attr() which works just like open_tree() but
+> takes an optional struct mount_attr parameter. This is useful beyond
+> idmappings as it fills a gap where a mount never exists in userspace
+> without the necessary mount properties applied.
+> 
+> This is particularly useful for mount options such as
+> MOUNT_ATTR_{RDONLY,NOSUID,NODEV,NOEXEC}.
+> 
+> To create a new idmapped mount the following works:
+> 
+> // Create a first idmapped mount
+> struct mount_attr attr = {
+>         .attr_set = MOUNT_ATTR_IDMAP
+>         .userns_fd = fd_userns
+> };
+> 
+> fd_tree = open_tree(-EBADF, "/", OPEN_TREE_CLONE, &attr, sizeof(attr));
+> move_mount(fd_tree, "", -EBADF, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> 
+> // Create a second idmapped mount from the first idmapped mount
+> attr.attr_set = MOUNT_ATTR_IDMAP;
+> attr.userns_fd = fd_userns2;
+> fd_tree2 = open_tree(-EBADF, "/mnt", OPEN_TREE_CLONE, &attr, sizeof(attr));
+> 
+> // Create a second non-idmapped mount from the first idmapped mount:
+> memset(&attr, 0, sizeof(attr));
+> attr.attr_clr = MOUNT_ATTR_IDMAP;
+> fd_tree2 = open_tree(-EBADF, "/mnt", OPEN_TREE_CLONE, &attr, sizeof(attr));
 
-I wouldn't call this "file system offload".  Enabling the data
-integrity feature or whatever you want to call it is really a block
-layer issue.  The file system doesn't need to get involved at all.
-Indeed, looking the patch, the only reason why the file system is
-getting involved is because (a) you've added a mount option, and (b)
-the mount option flips a bit in the bio that gets sent to the block
-layer.
+This approach seems reasonable to me, and the patches look good.
 
-But this could also be done by adding a queue specific flag, at which
-point the file system doesn't need to be involved at all.  Why would
-you want to enable the data ingregity feature on a per block I/O
-basis, if the device supports it?
-
-We can debate whether it should be defaulted to on if the device
-supports it, or whether the needs to be explicitly enabled.  It's true
-that relative to not doing checksumming at all, it it's not "free".
-The CPU has to calculate the checksum, so there are power, CPU, and
-memory bandwidth costs.  I'd still tend to lean towards defaulting it
-to on, so that the user doesn't need do anything special if they have
-hardware is capable of supporting the data integrity feature.
-
-It would be enlightening to measure the performance and power using
-some file system benchmark with and without the block layer data
-integrity enabled, with no other changes in the file system.  If
-there's no difference, then enabling it queue-wide, for any file
-system, would be a no-brainer.  If we discover that there is a
-downside to enabling it, then we might decide how we want to enable
-it.
-
-Cheers,
-
-					- Ted
+Reviewed-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 
