@@ -1,83 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-40435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850DAA23540
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:41:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E599CA23536
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8A218881B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:41:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C0F3A656B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEF91F236A;
-	Thu, 30 Jan 2025 20:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605461F130E;
+	Thu, 30 Jan 2025 20:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OL0oXIj0";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mkb8IEAh"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cSUjufBz";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CNZOPnrS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566CE1F1529;
-	Thu, 30 Jan 2025 20:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43531865FA;
+	Thu, 30 Jan 2025 20:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738269665; cv=fail; b=HaIWYRTAUg4FFe37Fc5FUw0bu2lreoOcb+9GrSKhW4GRPuel96aMBvdb8SBSqFCEgEEHhW3SITgFu7ErJEFrNaMNJjFIDgWXTsJJs8CfKafm+JXVlXQiW+8px9CoTNrxMKFFoHYtIx+aig+YrJ7fujEuzh1OTWnsCUJIQ1qiC90=
+	t=1738269660; cv=fail; b=L3gPgpx2872de24uIYhnpc7FBItZ5ExU/6+h7vholDk+cqClmAI+lfdg4ogrKnUvuDvTdTSfcP5WayphUEvOBorznjoKtgJbRLYhF20Isry9i+6bTHM/ku8luPgyZn4JM113T3LYxp4Yirq08Pe29IbyPNTnJ13O83AYe7++Pd8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738269665; c=relaxed/simple;
-	bh=eMIAbWrfjkbz+N14lia3pRzYZMjPla5GBVRG+TCF7tU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uvI0yQSb7tJqGj8Ipl0gteKS3plXD1qNTf/aZF7XqCgiZHh/K4wPnC/6XvbVuTTnEWEbFNyhxNL32A03OT87V9nFL1+uJZ94Zkk7hTQPDE5rR71CDhTUKtlKiSmNtU5nWo3QoIzVagmKXp9R3GE7bj0du2rg0rFMssvZOtebQ9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OL0oXIj0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mkb8IEAh; arc=fail smtp.client-ip=205.220.177.32
+	s=arc-20240116; t=1738269660; c=relaxed/simple;
+	bh=m5wKuZc/o5q82xoXlZ54wBtQ0wf6sI7qR0FEW5ZPekQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bUs8GCgCG0HzKtbrP2PZbxJn+94ISf8iXpUcSDXUrY4IbqPh8EELl2IoA01RadoUOKgAVz4G35NG4+hpCjhI/CB90QGlM0rLDE9V2Z2AiSXuksy8VN/06NTN05FXBp3LZReHDWks1WVA00IChu2hMtknHH6/y6GeEs4ZDdVuQG4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cSUjufBz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CNZOPnrS; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50UKR4iY017776;
-	Thu, 30 Jan 2025 20:40:39 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50UKRLGI017901;
+	Thu, 30 Jan 2025 20:40:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=L00qtDzmUzGxMTkI
-	0LyhcGt7pq1eF/vG2DHjBw8OijY=; b=OL0oXIj0hVqizisqMyDjfZ27/H9daxiJ
-	3EKWIq7+j7x6/0otpo0TT4ezK7BcgCgO9+iRMr/IeIB6lm3z6JiFaHMO/2n+mvqu
-	V4B9y99TpKrTxwzZOXDnTuW2IwjlQBOB1jxC11YHZgV9VisvdDntrqlULggu+Z0E
-	n/UjHez2BBmvZ2MvEezPMIrXL7EZiQ6zUIPGLRPhcawrRmeyJhD3CtArXGU9mGhk
-	fmu1HyBWA1RmtH+oviOvrr8OOn76q47oi4pJAwefCJVVp2Pzw+sYO/LJfILyjc00
-	GBMwfzRzy2nCM61o2LaY6BwYQ6SUFY++Vp6ApqUMumIVQuntHeMv1w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44ggfe80sn-1
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=Yu0MZDnQfvbXkRCLn1QIAGNaeqNkSXsLqXii1oY4jYw=; b=
+	cSUjufBzr/z7im1vcdy51O02ivljRPYGaBZkzjS02BonSF9uQyX3SxWkSgXYflBT
+	OmdIKr38lRrGEsDVQJgMwyZ+3f6epstHszeCZU+uoIZ/ifNK1Zl1NC2ub7liVHVx
+	7kwtAONSLLolkHkH56eMJkpSzFyIAR8WehK6ajZQ46a9j8ZP43d9ntS64x3lY5Pe
+	OBSAF0hJkdziQn7iPAYucqJmdkzZSAPhkH68vorfcPp7XslTykqEHg41/9AO4TLT
+	lA+LcLwYy5wZguKglHSyxJcGDvvdEGHlMVXqqDsKXh/NOnh1BbHm0KqM05TbCTtL
+	sYF3fn9Jr5U7MyhQ1XUFrg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44ggfe80sr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Jan 2025 20:40:38 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 50UKQDPP028176;
-	Thu, 30 Jan 2025 20:40:38 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2045.outbound.protection.outlook.com [104.47.57.45])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44g0vbm97k-1
+	Thu, 30 Jan 2025 20:40:41 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 50UJv1wN009118;
+	Thu, 30 Jan 2025 20:40:40 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2048.outbound.protection.outlook.com [104.47.58.48])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44gg1fhtae-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Jan 2025 20:40:38 +0000
+	Thu, 30 Jan 2025 20:40:40 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PUoTflH5EU7f+sFLZnhMCT8rdRecNpThpVptWrGGqNvJNX7LAu2qzJ0HKzGogbbtp68PiHRqATScJrNv9Vjbv1PsnB+8/lw+gQtVTWzxufHX/mTLZJJyl7TQGSv7vN4t4R1VVk/w/jGG/PbNbXbQ+LYpmoVkpUaTStUzWi3sp+3B5oPL/RN05qY54reoNpmYxPcB46/Cv5riRXgysfuJvTnW358ly2auec+AN11b9LQ8Incsi/9f70B3nFmXJ7g/dM66qn7Frfxeoyl2K8G+Ranu8WWFYbNLzmvlBWrQzLhIDo3j2TvKpsNqTjQ94J63gSLjP5D4v7rIZotmwAKnzw==
+ b=u1O9vNEb//zxZy8ejEYQK3uj+pT4q3pFJGnFAfk+THzSNh6vknWYNd6uWQeySE421/rEWk50+41vD/hUKyKB2jtG0tgAMA/fvHwpLehjFqIRVY/9L2ep+Fiux+tCzqC35GCADAIZsrhrEb19Vfscj5HVPOlyIrSwDhlgduQP1yRS86M2ZP2pxvdgxGNhV7q3kKIuBgchw6Mjy5BHQ8PyTshPvp8zONKlGZ7g7QjS+C6IACjXqKI6QvGmNT+WQnpU+TG7QtlaL1mR6wleuAsPh0p2zDQ/+TQ8sB+DtIitTtXPaAlTvv7YTJLv+InMSsl+UL8p9mU6NzOb2npmNH0kQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L00qtDzmUzGxMTkI0LyhcGt7pq1eF/vG2DHjBw8OijY=;
- b=wFLUPgCMGbxCLuIAx5WmeyxPx5e/Qty1DwhmCb/72/XLXnOcq+2GrwUSu2+ELtXevJbUlyi79o7iE7MoY0ZGFAP4BW/Up9QMNoh8zu0qdyvnsi/0p0ECh8rcMLGsYVqwlVbGtLLh9vHVeg2ROEt411yCM33yQprOWLysxwbFQJ/axHHGRaXPoQ7McAi2KLiI6F4bUGwvJo88x20sJ3BfqUTxYij1UrPQYgng5Y0STs9DAgF7XJ7ySkj42lbshHofwX+wiJy8pv35OeWj9nNQ5bmI2SIl4zDj2nxxFWbHQ50wlZSWfbB4ypOa0QSXSgK33avxxCn9IA8/TG2+V0oTfg==
+ bh=Yu0MZDnQfvbXkRCLn1QIAGNaeqNkSXsLqXii1oY4jYw=;
+ b=FD3/IjW3Dy86KqgDBRXBKYztoBiahizHCZ8fCP/SSPnOJcsRYL/TJEhdis2A0OhkbkxB/swPasdaBW2aLqL2qfTa2ZE+WKDzpSYTv7rEdDqU+4jWwslY1qxfhpt6N2f8GD8jwsBPjDqq/GkhVSnCbdh9/dXQoQ+VksrazEzyznSGyxJInJQSB7rlfgL1RfShC3ItKMu0SKie5E52x1manwRvd5ODR4DFKAvZ2QkNkLHOmPWJUPuV7xD1TJKQcknrcA4mk+GnumHJlfAcUuBH1AeGHfgGsmrYlkZ6BTNxr04f04LMy1DVWymoNIHCd96DdyN1FrWPSMgSFIUFpAMivg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L00qtDzmUzGxMTkI0LyhcGt7pq1eF/vG2DHjBw8OijY=;
- b=mkb8IEAhq1FCYE1sg9TkteJ6mrYV/JcgTdFRtm5t5/ykrjwVJD6Xd7pZA9futgNxo2X5qsjajYpdhKwpDUE7cvWw0sDk+wr0uMwHtIPCb25rymbsFiaMRuty7ncxv269pnRAU7D7xRT9ZzPm65lJcbaoZxUaRyEZrOIgk+GRQYY=
+ bh=Yu0MZDnQfvbXkRCLn1QIAGNaeqNkSXsLqXii1oY4jYw=;
+ b=CNZOPnrStNcTqbBDs92H01xB6MOzUTus7ZT2ossy38MNCd3i4mPkSswHpuKAcX1hnGInxwYLumPG2P33NLdbr11EIoHFZAEIEtz60OzVjpYj+Zb5TXg571cz0xdME8rN1AKrjf0YCcjRacOAP5sfR0XJIEGzxdBuUHvq9LBAiZI=
 Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
  by MW4PR10MB6396.namprd10.prod.outlook.com (2603:10b6:303:1e9::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.17; Thu, 30 Jan
- 2025 20:40:35 +0000
+ 2025 20:40:37 +0000
 Received: from BYAPR10MB3366.namprd10.prod.outlook.com
  ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
  ([fe80::baf2:dff1:d471:1c9%6]) with mapi id 15.20.8398.018; Thu, 30 Jan 2025
- 20:40:35 +0000
+ 20:40:37 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Christian Brauner <christian@brauner.io>
 Cc: Shuah Khan <shuah@kernel.org>,
@@ -91,14 +93,16 @@ Cc: Shuah Khan <shuah@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Shakeel Butt <shakeel.butt@linux.dev>
-Subject: [PATCH v7 0/6] introduce PIDFD_SELF* sentinels
-Date: Thu, 30 Jan 2025 20:40:25 +0000
-Message-ID: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH v7 1/6] pidfd: add PIDFD_SELF* sentinels to refer to own thread/process
+Date: Thu, 30 Jan 2025 20:40:26 +0000
+Message-ID: <24315a16a3d01a548dd45c7515f7d51c767e954e.1738268370.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
+References: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0057.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:153::8) To BYAPR10MB3366.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0376.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18e::21) To BYAPR10MB3366.namprd10.prod.outlook.com
  (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -108,224 +112,333 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|MW4PR10MB6396:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9375a2f-5581-4716-8dd6-08dd416e58e2
+X-MS-Office365-Filtering-Correlation-Id: 65dc80c1-6978-4c52-7187-08dd416e5a7d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BoXQiCOJxEQc3gZKZ1LmY1ojn15cG5vjs1NC5osITEv1JiQcFJnlUNeSaymS?=
- =?us-ascii?Q?CnSaHlbieSxhihSSIjQSNioJzMDr/Xj33vS/lT0Vf+SLuKeTmJC7Lc5qollq?=
- =?us-ascii?Q?fht5rjKqtmqrXWicZOHbY5+uguvpLgtr64BXS6E1LMFd+qzlK0lczfbw1NDt?=
- =?us-ascii?Q?rsbpkN8j1OUY4oWgJtiPZEcXRPrVQGneCiH4uP3iYnOp3WfcKzwzDH642U9U?=
- =?us-ascii?Q?HX8Dp5yHR2bot2v9TxsTrkX44PUPXLObaC75M1O9GOyuNGA7SEmlToYrwwly?=
- =?us-ascii?Q?FtIB84COy/eEll2Ols0mafpxs7DAbJDM/lWIqvjQqEvltphfBcEtZlQsPUi6?=
- =?us-ascii?Q?AdxkgqAOhkZy262ZvxYiEvq+XIoqBvqwN07Ofuv7dSb4Ook3uVEVatNzVIfx?=
- =?us-ascii?Q?2oIfV1VACFN57g6+QcNT9n6h9QKiKWAvk6C3ABYbAdHG7MmN0dOLag+OGU1Q?=
- =?us-ascii?Q?8UZDb1NQbF9aP9onAOMytLKEqzEcz3GysigmO7H/aj1Or4WOrhEHvrWS2JEi?=
- =?us-ascii?Q?kZtmADVccEO6Pqk/ObbqT1ZkdvceQUOwBgvxyC8ZIz1/TM907/1RfU9Gn0q/?=
- =?us-ascii?Q?AbP1jJ6hv5n9I/n5mtNS6v8AVV3rqx9OA3SpgOpzmgPN+ZmEO4E2LMdxgOuO?=
- =?us-ascii?Q?4a6sJ6OenYhL4U5M1ZWZBESUg51n6FWvx+zfO0/VGZqvkYe6ys7NsJTCak+w?=
- =?us-ascii?Q?SbKUkfTMK6sZEsVr77XZC3V4XzaFDo7gaRotnfz5QkXw8RRXB4HD+WdrINnq?=
- =?us-ascii?Q?TNHSEolIfQhdDAjlOF90nRBZpmy8qXAt4uhxIoRXFWNg3o5XDlvTwHPJny5Q?=
- =?us-ascii?Q?MenGYIvaYZR816v+kEIgVo9Zn4zVM11oIqCn6ZWuGpZKqizknFmQpMnYOln6?=
- =?us-ascii?Q?2Mlo2y7k5LKMal8ZsqMLQcrS0uD4dtxyW/xB70Xq5vy2kYQv4IBEjcuBnxto?=
- =?us-ascii?Q?tXjNF5GRtbRGy+wbF8ciBimChwInaA2kYqGKnfsma5p5BSZJmLeqLSthIGkN?=
- =?us-ascii?Q?Z9KYTCW76zH+iyWCck7z1HeLnF1mXWOhqiGvN9hxb8CaL9LC7SFhwKr3IvDQ?=
- =?us-ascii?Q?r4u7SQN9Jq933Fsd8jeO3ETbkuj6CEbKa/JwLb7zsd9UMKgsi/4pcBchVf9u?=
- =?us-ascii?Q?fGUw/waB6S9Yi/yqPAbx3vaxF5tMRy0miNqGXlcm2k4e1tvJKZcPkwRNaeiw?=
- =?us-ascii?Q?WWiILB0DvuRPD6VpgQRuTg8YONuHvIa5FQjQO+RS3OdufBYhtlDt04Aw7xVK?=
- =?us-ascii?Q?tXeHJkT20LHvILUUvsQO4OuSE4QPHcbjsJwl7hZ+qOpiPel5biGLmHctvwrW?=
- =?us-ascii?Q?lIl4kDrmwG5e7KY/B10SyFKAYPwsg/GYPv2vnkUAJnq8qg=3D=3D?=
+	=?us-ascii?Q?IuwPZHRCdPvHuearGp9PiYB6obM1LIniOATK6E31y3nkaW7sctZNQScwPxmX?=
+ =?us-ascii?Q?2bRXoq+YaOkIzbDCIePJCcLrxLBsF7z3c7ngPik6/HG7fAY8mHot36ZANT8N?=
+ =?us-ascii?Q?lenSmgkz/3kM3LTJz1mwjXCrwd7Ci3BPT67GRNhCWK4R1+MBbMtwsVWKGOIY?=
+ =?us-ascii?Q?p5yNccVeRGPPdJ+FiF9VhXWD9ZWKmX9/8DKc15QDxi1xoi7HThhH7XCq9RZR?=
+ =?us-ascii?Q?N8B0HOLfFUk2rROq+M3MCE8qNXvvedGUlaJU82n3O+76KBr480vzglMtk0yS?=
+ =?us-ascii?Q?scrWMxt/jwijYbnJBvdi421lruce108mLY138q8fFCReAA57+6bivKe9/+Wo?=
+ =?us-ascii?Q?VU6HwKKU81YARnAj5Z2n+pswPrkJ44chO4DoWeKUX+zfTSjfVVxjRu9GdWNF?=
+ =?us-ascii?Q?E7kSVA5RRr7dqAA5Jp0hHiKaOUzQkoTB/zfTgH/vF201niOAv7GZ3EvCxV93?=
+ =?us-ascii?Q?BUmkZJktl1pvxXxTrE+oMfXOVxsSGRWVmIIym9jtXKINe1JSIis7b1G12bcg?=
+ =?us-ascii?Q?BtNEJvkXgj5LvdU37Rd02Wj1F2WC6aQL3HyMSaDM99OAbHLfExUAcjRy3bKj?=
+ =?us-ascii?Q?rLLPsr/aIb0VHEvsgUAwcPNiwgDjPPqKEb76llLMdOPy5h+pSrlFqBwUaby/?=
+ =?us-ascii?Q?0I26rJqiBDFF8PH7p6X81zJfAAZ0TZ6XwIgOhX90TtTayNBLUjrey4gQLwf7?=
+ =?us-ascii?Q?4yQRtwOeJBNambpc2wdFLKxg6sqjey1aTSV9jQhSAzWbKMkRY7UuIYLWAvEx?=
+ =?us-ascii?Q?dtw+kEeGHah3ohYPssVpJZ2DuAzG0Fr2X8NO/Eh/TSkehUkmNJEcHZoAIwpV?=
+ =?us-ascii?Q?WtTPzYKENInh1sjFfvNam2UilQADsNQ5/F37k4aOBlY9xxyRB/TtBRzmC2MY?=
+ =?us-ascii?Q?zxY1nn5LWXY5sT1yv3QCKNG/Jk7O/QyqAio5yls6ptyQl3TXlNwD1SSpA1Ru?=
+ =?us-ascii?Q?3kI8o00Gu/F9UHTeB0s7FFYFISUxWqNeeM09qgwacEH0dsP+MWoZVLjVDTBh?=
+ =?us-ascii?Q?e7Vm0LEeYikE1Fj5OIdNW5dN4rwKmfQGVyUA8IkAhUPdriQBk3Oi0jiwdDYx?=
+ =?us-ascii?Q?FB4hCO28nAK8eAbtUlILDM6Xw0CYHWLzvN6p/f4nDZo6iVNPQHos6Gosk6Oh?=
+ =?us-ascii?Q?A/jxMJkvFhlmUHpHv1dKF0pt4i/1HGO//bP57/DKkNljTkparB3L7jmLYE9K?=
+ =?us-ascii?Q?OaYGxyhJD2vD5gm+/ODBvsYax0W89KvSdEK3Qit1wYeSBnAU1nIBupSLMpMk?=
+ =?us-ascii?Q?ITOI9uzVQ86Nx/1AfCybcL/+4804wsZScLjyeDYLvYnG8iQt1M0LyP0vMhh5?=
+ =?us-ascii?Q?a7CsvykPjjBnsmGC60NKmpMGPOFpVjbjHkHHFhif81/Vbgi3mgWZcs0F2f5K?=
+ =?us-ascii?Q?0MjuNalQJMaNfkDCTI0U98C4CwWY?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ytaw1eorUkzXs7ZbeGypsMPAXg/BJVvjYIUkO3G7gArtHQsvCc7a3d/baKXE?=
- =?us-ascii?Q?TF67U9tRuGIgNPqqk82hqUhmwgDiu/1RCB7FAwroog7HkOqENw/W6kka8pKA?=
- =?us-ascii?Q?bIPirI4RBxfFSOkol6BJXrWu+3Owe6EpDWGB5EYhPboPyXcsEZKHKFcI2n4x?=
- =?us-ascii?Q?DTFA/AvTBY1+9A2SPtq1uMDS8Y1ajQVswmUCPLFxncIUN2+2R/Q3M6szSFcV?=
- =?us-ascii?Q?rVhEd8ltYpsMFL5QUBnQLE+Eq7sbA1FtlZ5ffLmojHSY1wkEZWGniLGLpxuz?=
- =?us-ascii?Q?KsMNZkixY4BYXHOyvPw5pIJW0v3bBM35tXUk/F+q/Iu2cTJbvYEiOG9/g/DG?=
- =?us-ascii?Q?gb69l/VFOxuOtI+Z4iIngo9CIFfCxpNEPqcvuTG+bkFvJE9Sbn97hYHQvfCk?=
- =?us-ascii?Q?jlSbQF2Z+NqAZtHe8wrgTTqLmQDTtKX5xHR6dio7MyJEAm62dwXj1jZ9EbKJ?=
- =?us-ascii?Q?ArtB+Vz2pVNtdnhUHm727XAMYHzZ5xGwIRJzsbtdUm7rjauPJSi6aY8s4caU?=
- =?us-ascii?Q?oDnt1Md8p1VNYPvyJTc7zMQk7QscTHIyJvuHCHyMoAy0rOT8yuOLctC+J1DM?=
- =?us-ascii?Q?jQ5Cs6Jf5DbCyL/hDLQBvLpupQukvz0uDmY9tt10x420OEBqgCjy0HE0JA6+?=
- =?us-ascii?Q?OE7eUMigT5b/IpTkiIGfCg7yvN8zWZUzzEOyTagS36VUe6f4CTGSMKVPMvfR?=
- =?us-ascii?Q?rbkiSbujaXEvOYRXS19QvBwYM3UmohYmrm7pyrliEuY13Zl5W3pf/n2JrJMj?=
- =?us-ascii?Q?GaQknB5jW9KZQpM7+e28LDyncmqVrrGcyLHQ00BlRIg3x/YPQX3WLATXw/Lt?=
- =?us-ascii?Q?Zt1MMDMQSeP2u5Go7dHfUCPQ3ZC1u32wde5hvp1uMVluaT+7pGzzYWnc45wa?=
- =?us-ascii?Q?FI+7Q2Y/5MXqi1+H5R/3xbEnDLvTUYM+vyJbKbLx32StGSmZfhYjwhRnyKQ9?=
- =?us-ascii?Q?kPF08Up7f/dgi5qIfx/gR1SDRtMou74c1r//ZAV17CstdhgQ9A4AJo1s0SqR?=
- =?us-ascii?Q?o/630VqRND87EzqvVbp+dpH1ZiTu/6PRTIK1CtvDBgDorjyoUBCtHV7DuXrk?=
- =?us-ascii?Q?g2I3fZ6KcNDlIIUS8xv6skkrQ7UxNtYXX7xeT6sj2iYhmat3pr5ypS3MuYeT?=
- =?us-ascii?Q?CELJEDAT6zkbWSM2zrRzCAlLoabYC0ksp3OP9vLMp7QgnwkO8CJmdQQtuYXl?=
- =?us-ascii?Q?zTccMu+2X/hT1jZtTqURBOw/zerqyj8Ip63S11qI/fSXlPRhJAg7nJs4fU4L?=
- =?us-ascii?Q?6ZjHASWr6hxpsg0zVnfKYT/c3gJKtd0jvUPnNbsjW3YPOlSIaQkeCO9nJ1iD?=
- =?us-ascii?Q?v8r4y8UAZ8lNctfiThSHs9d1q+vPMnn9YF+gg9QwW06p8k+Q+mTY94LUBJBS?=
- =?us-ascii?Q?TpxvYL20Fg2lngeKGES4TZNfyC9O25IzGQ/Umoc1TcCygn0BeF8r6rPQ+AZl?=
- =?us-ascii?Q?j6ZRzcdncDEYW+dLIsYFRskKBFuuoPVuNI7jV+ODIRvSdm6x+SBzFEj1lDzF?=
- =?us-ascii?Q?mIgWusRycbEHWwXRFrwkrgRbZOIquq/BehEbIFYhWIDnSF+q+dXLJ7j7mQt4?=
- =?us-ascii?Q?4SsQkbMPMgwsh3jctyosjSGjmaNj67rA43KgOeJ2Xtao698jBAOy4hZAn6R/?=
- =?us-ascii?Q?nA=3D=3D?=
+	=?us-ascii?Q?+5crm2XRRqOCFWssgrmTVurfHQm37jSG/jIdvejtC5UzUQ0LXNMovijdxerC?=
+ =?us-ascii?Q?pwnX7D65JLKufHbr7Q50Fi7eAeF6WHYxTw1aMNeeV/SgHQz0tepicDG+O/UX?=
+ =?us-ascii?Q?6HRsrGOC90J4nZlI9a0bIGLQ0FBi3eogmJjPeIJfAe6oIHgR/yk//XIgiLv5?=
+ =?us-ascii?Q?zrGv5HETCyYVKfXawVEF20r3oMmIZaQm5OUhIQCN7HbUxlYm549J9AitFGIE?=
+ =?us-ascii?Q?IjJSkqKL6vjphGkDlLc3D3ARDnwAYZfF8I3GIFOTpyfc5YrrXu9yK/0aYiLF?=
+ =?us-ascii?Q?oM4lJ482aRN08GBkhaP3+QvIitZT2l43cCWLY3Leqn8IkW21CIfJTGY/TFcY?=
+ =?us-ascii?Q?ahPvOKVN9uLP2i92fT3NiMaRV2f/J01Qh3Ynjo+wTkAMbym9KSJtu8clGLkD?=
+ =?us-ascii?Q?oGO0exmejfoa8g0PZQyC5RJyj4ddHa7rdrhvZuG80zA9tF2FHTCFitbF6zm8?=
+ =?us-ascii?Q?pIk3gZSdtDeF6OIuQ8XF0g5dsXYezMPWZIXQ7h33PcVal7IlF8t89E86BGn0?=
+ =?us-ascii?Q?ZkBocgQ0c5yWhN/uzxW7xYHQZysqxwfve94w++o1Opc6EqPSJBrRspmoGozb?=
+ =?us-ascii?Q?XvgSjHIq+bCZCPLETsRy97hNYD2b/tA7BC+uaaMbNzZGBQ8IOaWRPFGj+sIT?=
+ =?us-ascii?Q?p7DvxEKnVm0OyF8g32hzn325sHyx85eu6plqvrDmuPnmBPe+dfMfX7WXjIDG?=
+ =?us-ascii?Q?vQbikdSBecAtuBPEyMQXPm6MphCc8UMJy+v19Lj2Ff8q9ThdjvTah9FQ3gHZ?=
+ =?us-ascii?Q?KmyoV+7VF4kmiNjEfOAB1rFdZntclzE2znMmVLCHwtSRtzzeungIuJ+uJqiT?=
+ =?us-ascii?Q?fR2UNFoy2Mtsfuc61LCEwwVRFv6726Pj6YN/+3PbVJggszzFPsK3I08rIsDd?=
+ =?us-ascii?Q?s3QL+aN6YlYxc/I3PVxT9j8X7StcCz+s5/0Lbk1CTgF/4R7GxvZUXF7S3OAX?=
+ =?us-ascii?Q?46Xk+tIG0cLbkHYUHTXVqeSmTq2m6I03Yv+B5PFRXcXXPoBHasb/uwus375S?=
+ =?us-ascii?Q?XfqfYx/pToYXq7dKTLp3GGpBnEJB8SnGPubLcCYssKvE+8YOEppEhja8OZoo?=
+ =?us-ascii?Q?c2AeG8Z23qFBZLsySua+X9Zq937iTqNYxN9gFptY9RR45yOB2uuWbCqo5TsH?=
+ =?us-ascii?Q?cRsbV3SNh+1CKg9978CMYCI5/jzfthItKJyHcKY/pCiKfAkPuyjzH+5/tvjT?=
+ =?us-ascii?Q?3vzw4EZDhfSXADtxFZL4vBOafrKqNvvl5It7vzdN7RC/uz9Lp2GNMbMpzFRb?=
+ =?us-ascii?Q?TZsRc4IPQuxX6jv5FUtEzM6uAitq3FyPw9J7jlVB+VwPmeB0FAh0ddX28M6Q?=
+ =?us-ascii?Q?QI7HQjM0Cc6WY19i358o7eqbvxlakxeWIjClvQkm+r6ATFieiCfevnpScIbv?=
+ =?us-ascii?Q?uqODsL6ZUttHjYPJ2TcoTwA8RRbDBZVmr+Hcn22tleTAH0IhVoZr/0yqLfHA?=
+ =?us-ascii?Q?rMNI84kc/ngZP/cMb32yP9GQd94+51ErOJfSXWZwD8Cew8cYzNYgqFz35yhU?=
+ =?us-ascii?Q?8l62xw4YWEAJoyFnetGBOXQWwY3988WvSLxcupvRxLk22MwFVs83M0G0pcGg?=
+ =?us-ascii?Q?e+5dufPhryBqWKse8+KG+ThzBLGlGxONlWIhC30SCeE5z0XifGrzUR8ehjI/?=
+ =?us-ascii?Q?XQ=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	QNeY3Gq1etDtbjp58yPnCyY4Q6eK5aKXgTI6RSrBc5Pr+TCU/+OkpcSfvpCCv4iOs11X5dljIUkT/ZRFtd+jmOKbCy6KuyExVWYwMtTjhGoGAcPZWnsfISTfvaVNerRD1VKvSVc3ej1O4WEnG+ckBLjPknSl/pAy8sxRuI8vZamCe1sIsY27ULfnNH8kb0jXChF3PlDDLpKCeCRQOgtuHe0KTDVrDeuqDOHkcAh25VVXXEXDNc10xIBqpTLR+gXKuwvtcPqAFttJaRpFiOEJrV3ojzOX1bPCju3V97eU29jbRtSjYxk5m/Cybv+k7GQ2MutnLvqsraojut5Nv1welWHtIJ6JPY7nbsIe82e+9E5fSacp5LuFVL4q/FOI0tpJcVGWTJIe0TvKG5mJFWurtG+yWV9AbUumn+RAV/BGEJMaM4c27EPNrh0ptUNXu6q9pHvdHvuCvdQlNis8UXt5wBbEusNIDSM1gNY9wZyYHdAfrdnh3mqgfFdbndyBBRFCS4/uL4fwJN0uPfDBOXKCEx/lNsYEzOVj1J0x7Kh459Wul7EZjjUHhIS14y7AuEl83FjrJCNrv3XHrsTf0WHx/5GSZ9fQUuzZglgCY6sAGVg=
+	31Bd1alZ2d8S7nZjwWbeHACxmq/bNhrZRMQM///f0wZ6EjyX0+raMAis6Z16ZUt7ma8q1xAJtL5cf2iRPQHvfNtm5AVQK5I/Vf/Awhxortd4oADk8T58DfTZWAtlVtEUsB3lVL9Y7pqB+v/OGr8C2YKooLfdSVqyYyd60gGvbDyqiGIbyKgGxu1AM0Qwa6oQ+Qi/37IpsTU/yJZWglf8Hq1/6XI+99vHGDgjjeabN8VsdolqpdJwwyswCi3d6iF5YLnPIwsbrYde5BS2JACbMro795JkaHyXTexaFuuPyJxoQ8In9w7tzu7BTHpindsIZatcqm0FpAyfVIuce/eCpynLBLvHCI37g7tPvLdTZfkyOEQm1VS6l5yLR1V3UEGEn+y09F+JIS8ey2f3CyWkcgSByOhBXUvTF2QEXSxCJ38w3kdxGN5CTHJa0D3bssHru1Jn9hDoaUCBmHRdf+chO7Xd2hn2axMAekz/91vs1qMi8ot+LKaD2Hz2AGfKzYTF2toO4nmOKeo05kItzMgtnQ5dbh0yhXaMv9HY9+Zq2MRQfIwTveB8R7BBwqZI7YGLBgHf+O3zjt2z3viBh21DD9AQ4nk9Bwj3FKizSCQTVB4=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9375a2f-5581-4716-8dd6-08dd416e58e2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65dc80c1-6978-4c52-7187-08dd416e5a7d
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2025 20:40:35.1085
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2025 20:40:37.8119
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vVxGwUuZbB1fANQ3yNYmNXUeyrK6yG2xyftMk44rFsSSUe9mLtecAziszGzSGjkg2BCwLL+FYI+IqB/0Y+kQGiCQHGRdQUdbHyrvZMn7QYg=
+X-MS-Exchange-CrossTenant-UserPrincipalName: AVG89ec46YLgPsK69Xg1uyQnJUH1BDsBRjl72h8Zp+tpz0BiuLYW3VmPdvMjCCAT48O1k4wNGYfhVZ2Y9w3PoH0v84N0yEIpMSrZySvi7dg=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6396
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-01-30_09,2025-01-30_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
- phishscore=0 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2501170000
  definitions=main-2501300158
-X-Proofpoint-GUID: NZt6wwGBdk7Uo-SRMw9U-WiRCsM7ega7
-X-Proofpoint-ORIG-GUID: NZt6wwGBdk7Uo-SRMw9U-WiRCsM7ega7
+X-Proofpoint-GUID: DD5Vine1Yoy130ljATcxiIRFhX_RybCV
+X-Proofpoint-ORIG-GUID: DD5Vine1Yoy130ljATcxiIRFhX_RybCV
 
-If you wish to utilise a pidfd interface to refer to the current process or
-thread it is rather cumbersome, requiring something like:
+It is useful to be able to utilise the pidfd mechanism to reference the
+current thread or process (from a userland point of view - thread group
+leader from the kernel's point of view).
 
-	int pidfd = pidfd_open(getpid(), 0 or PIDFD_THREAD);
+Therefore introduce PIDFD_SELF_THREAD to refer to the current thread, and
+PIDFD_SELF_THREAD_GROUP to refer to the current thread group leader.
 
-	...
+For convenience and to avoid confusion from userland's perspective we alias
+these:
 
-	close(pidfd);
+* PIDFD_SELF is an alias for PIDFD_SELF_THREAD - This is nearly always what
+  the user will want to use, as they would find it surprising if for
+  instance fd's were unshared()'d and they wanted to invoke pidfd_getfd()
+  and that failed.
 
-Or the equivalent call opening /proc/self. It is more convenient to use a
-sentinel value to indicate to an interface that accepts a pidfd that we
-simply wish to refer to the current process thread.
+* PIDFD_SELF_PROCESS is an alias for PIDFD_SELF_THREAD_GROUP - Most users
+  have no concept of thread groups or what a thread group leader is, and
+  from userland's perspective and nomenclature this is what userland
+  considers to be a process.
 
-This series introduces sentinels for this purposes which can be passed as
-the pidfd in this instance rather than having to establish a dummy fd for
-this purpose.
-
-It is useful to refer to both the current thread from the userland's
-perspective for which we use PIDFD_SELF, and the current process from the
-userland's perspective, for which we use PIDFD_SELF_PROCESS.
-
-There is unfortunately some confusion between the kernel and userland as to
-what constitutes a process - a thread from the userland perspective is a
-process in userland, and a userland process is a thread group (more
-specifically the thread group leader from the kernel perspective). We
-therefore alias things thusly:
-
-* PIDFD_SELF_THREAD aliased by PIDFD_SELF - use PIDTYPE_PID.
-* PIDFD_SELF_THREAD_GROUP alised by PIDFD_SELF_PROCESS - use PIDTYPE_TGID.
-
-In all of the kernel code we refer to PIDFD_SELF_THREAD and
-PIDFD_SELF_THREAD_GROUP. However we expect users to use PIDFD_SELF and
-PIDFD_SELF_PROCESS.
-
-This matters for cases where, for instance, a user unshare()'s FDs or does
-thread-specific signal handling and where the user would be hugely confused
-if the FDs referenced or signal processed referred to the thread group
-leader rather than the individual thread.
-
-For now we only adjust pidfd_get_task() and the pidfd_send_signal() system
-call with specific handling for this, implementing this functionality for
+We adjust pidfd_get_task() and the pidfd_send_signal() system call with
+specific handling for this, implementing this functionality for
 process_madvise(), process_mrelease() (albeit, using it here wouldn't
 really make sense) and pidfd_send_signal().
 
-We defer making further changes, as this would require a significant rework
-of the pidfd mechanism.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ include/uapi/linux/pidfd.h |  24 +++++++++
+ kernel/pid.c               |  24 +++++++--
+ kernel/signal.c            | 106 ++++++++++++++++++++++---------------
+ 3 files changed, 107 insertions(+), 47 deletions(-)
 
-The motivating case here is to support PIDFD_SELF in process_madvise(), so
-this suffices for immediate uses. Moving forward, this can be further
-expanded to other uses.
+diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+index 4540f6301b8c..e0abd0b18841 100644
+--- a/include/uapi/linux/pidfd.h
++++ b/include/uapi/linux/pidfd.h
+@@ -23,6 +23,30 @@
 
-v7:
-* Reworked implementation according to Christian's requirements. We now
-  only support process_madvise() and pidfd_send_signal() system calls with
-  PIDFD_SELF as specified.
-* Updated tests to account for broken pidfd_open_test.c implementation.
-* Fixed missing includes in pidfd self tests.
-* Removed tests relating to functionality no longer supported.
-* Update guard pages test to use PIDFD_SELF.
+ #define PIDFD_INFO_SIZE_VER0		64 /* sizeof first published struct */
 
-v6:
-* Avoid static inline in UAPI header as suggested by Pedro.
-* Place PIDFD_SELF values out of range of errors and any other sentinel as
-  suggested by Pedro.
-https://lore.kernel.org/linux-mm/cover.1729926229.git.lorenzo.stoakes@oracle.com/
++/*
++ * The concept of process and threads in userland and the kernel is a confusing
++ * one - within the kernel every thread is a 'task' with its own individual PID,
++ * however from userland's point of view threads are grouped by a single PID,
++ * which is that of the 'thread group leader', typically the first thread
++ * spawned.
++ *
++ * To cut the Gideon knot, for internal kernel usage, we refer to
++ * PIDFD_SELF_THREAD to refer to the current thread (or task from a kernel
++ * perspective), and PIDFD_SELF_THREAD_GROUP to refer to the current thread
++ * group leader...
++ */
++#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
++#define PIDFD_SELF_THREAD_GROUP		-20000 /* Current thread group leader. */
++
++/*
++ * ...and for userland we make life simpler - PIDFD_SELF refers to the current
++ * thread, PIDFD_SELF_PROCESS refers to the process thread group leader.
++ *
++ * For nearly all practical uses, a user will want to use PIDFD_SELF.
++ */
++#define PIDFD_SELF		PIDFD_SELF_THREAD
++#define PIDFD_SELF_PROCESS	PIDFD_SELF_THREAD_GROUP
++
+ struct pidfd_info {
+ 	/*
+ 	 * This mask is similar to the request_mask in statx(2).
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 3a10a7b6fcf8..1d2fc59d64fc 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -564,15 +564,29 @@ struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
+  */
+ struct task_struct *pidfd_get_task(int pidfd, unsigned int *flags)
+ {
+-	unsigned int f_flags;
++	unsigned int f_flags = 0;
+ 	struct pid *pid;
+ 	struct task_struct *task;
++	enum pid_type type;
 
-v5:
-* Fixup self test dependencies on pidfd/pidfd.h.
-https://lore.kernel.org/linux-mm/cover.1729848252.git.lorenzo.stoakes@oracle.com/
+-	pid = pidfd_get_pid(pidfd, &f_flags);
+-	if (IS_ERR(pid))
+-		return ERR_CAST(pid);
++	switch (pidfd) {
++	case  PIDFD_SELF_THREAD:
++		type = PIDTYPE_PID;
++		pid = get_task_pid(current, type);
++		break;
++	case  PIDFD_SELF_THREAD_GROUP:
++		type = PIDTYPE_TGID;
++		pid = get_task_pid(current, type);
++		break;
++	default:
++		pid = pidfd_get_pid(pidfd, &f_flags);
++		if (IS_ERR(pid))
++			return ERR_CAST(pid);
++		type = PIDTYPE_TGID;
++		break;
++	}
 
-v4:
-* Avoid returning an fd in the __pidfd_get_pid() function as pointed out by
-  Christian, instead simply always pin the pid and maintain fd scope in the
-  helper alone.
-* Add wrapper header file in tools/include/linux to allow for import of
-  UAPI pidfd.h header without encountering the collision between system
-  fcntl.h and linux/fcntl.h as discussed with Shuah and John.
-* Fixup tests to import the UAPI pidfd.h header working around conflicts
-  between system fcntl.h and linux/fcntl.h which the UAPI pidfd.h imports,
-  as reported by Shuah.
-* Use an int for pidfd_is_self_sentinel() to avoid any dependency on
-  stdbool.h in userland.
-https://lore.kernel.org/linux-mm/cover.1729198898.git.lorenzo.stoakes@oracle.com/
+-	task = get_pid_task(pid, PIDTYPE_TGID);
++	task = get_pid_task(pid, type);
+ 	put_pid(pid);
+ 	if (!task)
+ 		return ERR_PTR(-ESRCH);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index a2afd54303f0..1e8f792f88de 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -4009,6 +4009,46 @@ static struct pid *pidfd_to_pid(const struct file *file)
+ 	(PIDFD_SIGNAL_THREAD | PIDFD_SIGNAL_THREAD_GROUP | \
+ 	 PIDFD_SIGNAL_PROCESS_GROUP)
 
-v3:
-* Do not fput() an invalid fd as reported by kernel test bot.
-* Fix unintended churn from moving variable declaration.
-https://lore.kernel.org/linux-mm/cover.1729073310.git.lorenzo.stoakes@oracle.com/
++static int do_pidfd_send_signal(struct pid *pid, int sig, enum pid_type type,
++				siginfo_t __user *info, unsigned int flags)
++{
++	kernel_siginfo_t kinfo;
++
++	switch (flags) {
++	case PIDFD_SIGNAL_THREAD:
++		type = PIDTYPE_PID;
++		break;
++	case PIDFD_SIGNAL_THREAD_GROUP:
++		type = PIDTYPE_TGID;
++		break;
++	case PIDFD_SIGNAL_PROCESS_GROUP:
++		type = PIDTYPE_PGID;
++		break;
++	}
++
++	if (info) {
++		int ret = copy_siginfo_from_user_any(&kinfo, info);
++
++		if (unlikely(ret))
++			return ret;
++
++		if (unlikely(sig != kinfo.si_signo))
++			return -EINVAL;
++
++		/* Only allow sending arbitrary signals to yourself. */
++		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
++		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
++			return -EPERM;
++	} else {
++		prepare_kill_siginfo(sig, &kinfo, type);
++	}
++
++	if (type == PIDTYPE_PGID)
++		return kill_pgrp_info(sig, &kinfo, pid);
++
++	return kill_pid_info_type(sig, &kinfo, pid, type);
++}
++
+ /**
+  * sys_pidfd_send_signal - Signal a process through a pidfd
+  * @pidfd:  file descriptor of the process
+@@ -4028,7 +4068,6 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ {
+ 	int ret;
+ 	struct pid *pid;
+-	kernel_siginfo_t kinfo;
+ 	enum pid_type type;
 
-v2:
-* Fix tests as reported by Shuah.
-* Correct RFC version lore link.
-https://lore.kernel.org/linux-mm/cover.1728643714.git.lorenzo.stoakes@oracle.com/
+ 	/* Enforce flags be set to 0 until we add an extension. */
+@@ -4040,54 +4079,37 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 		return -EINVAL;
 
-Non-RFC v1:
-* Removed RFC tag - there seems to be general consensus that this change is
-  a good idea, but perhaps some debate to be had on implementation. It
-  seems sensible then to move forward with the RFC flag removed.
-* Introduced PIDFD_SELF_THREAD, PIDFD_SELF_THREAD_GROUP and their aliases
-  PIDFD_SELF and PIDFD_SELF_PROCESS respectively.
-* Updated testing accordingly.
-https://lore.kernel.org/linux-mm/cover.1728578231.git.lorenzo.stoakes@oracle.com/
+ 	CLASS(fd, f)(pidfd);
+-	if (fd_empty(f))
+-		return -EBADF;
 
-RFC version:
-https://lore.kernel.org/linux-mm/cover.1727644404.git.lorenzo.stoakes@oracle.com/
+-	/* Is this a pidfd? */
+-	pid = pidfd_to_pid(fd_file(f));
+-	if (IS_ERR(pid))
+-		return PTR_ERR(pid);
++	switch (pidfd) {
++	case PIDFD_SELF_THREAD:
++		pid = get_task_pid(current, PIDTYPE_PID);
++		type = PIDTYPE_PID;
++		break;
++	case PIDFD_SELF_THREAD_GROUP:
++		pid = get_task_pid(current, PIDTYPE_TGID);
++		type = PIDTYPE_TGID;
++		break;
++	default:
++		if (fd_empty(f))
++			return -EBADF;
 
+-	if (!access_pidfd_pidns(pid))
+-		return -EINVAL;
++		/* Is this a pidfd? */
++		pid = pidfd_to_pid(fd_file(f));
++		if (IS_ERR(pid))
++			return PTR_ERR(pid);
 
-Lorenzo Stoakes (6):
-  pidfd: add PIDFD_SELF* sentinels to refer to own thread/process
-  selftests/pidfd: add missing system header imcludes to pidfd tests
-  tools: testing: separate out wait_for_pid() into helper header
-  selftests: pidfd: add pidfd.h UAPI wrapper
-  selftests: pidfd: add tests for PIDFD_SELF_*
-  selftests/mm: use PIDFD_SELF in guard pages test
+-	switch (flags) {
+-	case 0:
++		if (!access_pidfd_pidns(pid))
++			return -EINVAL;
+ 		/* Infer scope from the type of pidfd. */
+ 		if (fd_file(f)->f_flags & PIDFD_THREAD)
+ 			type = PIDTYPE_PID;
+ 		else
+ 			type = PIDTYPE_TGID;
+ 		break;
+-	case PIDFD_SIGNAL_THREAD:
+-		type = PIDTYPE_PID;
+-		break;
+-	case PIDFD_SIGNAL_THREAD_GROUP:
+-		type = PIDTYPE_TGID;
+-		break;
+-	case PIDFD_SIGNAL_PROCESS_GROUP:
+-		type = PIDTYPE_PGID;
+-		break;
+-	}
+-
+-	if (info) {
+-		ret = copy_siginfo_from_user_any(&kinfo, info);
+-		if (unlikely(ret))
+-			return ret;
+-
+-		if (unlikely(sig != kinfo.si_signo))
+-			return -EINVAL;
+-
+-		/* Only allow sending arbitrary signals to yourself. */
+-		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
+-		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
+-			return -EPERM;
+-	} else {
+-		prepare_kill_siginfo(sig, &kinfo, type);
+ 	}
 
- include/uapi/linux/pidfd.h                    |  24 ++++
- kernel/pid.c                                  |  24 +++-
- kernel/signal.c                               | 106 +++++++++++-------
- tools/include/linux/pidfd.h                   |  14 +++
- tools/testing/selftests/cgroup/test_kill.c    |   2 +-
- tools/testing/selftests/mm/Makefile           |   4 +
- tools/testing/selftests/mm/guard-pages.c      |  15 +--
- .../pid_namespace/regression_enomem.c         |   2 +-
- tools/testing/selftests/pidfd/Makefile        |   3 +-
- tools/testing/selftests/pidfd/pidfd.h         |  28 +----
- .../selftests/pidfd/pidfd_fdinfo_test.c       |   1 +
- tools/testing/selftests/pidfd/pidfd_helpers.h |  39 +++++++
- .../testing/selftests/pidfd/pidfd_open_test.c |   6 +-
- .../selftests/pidfd/pidfd_setns_test.c        |   1 +
- tools/testing/selftests/pidfd/pidfd_test.c    |  76 +++++++++++--
- 15 files changed, 242 insertions(+), 103 deletions(-)
- create mode 100644 tools/include/linux/pidfd.h
- create mode 100644 tools/testing/selftests/pidfd/pidfd_helpers.h
-
+-	if (type == PIDTYPE_PGID)
+-		return kill_pgrp_info(sig, &kinfo, pid);
+-	else
+-		return kill_pid_info_type(sig, &kinfo, pid, type);
++	ret = do_pidfd_send_signal(pid, sig, type, info, flags);
++	if (fd_empty(f))
++		put_pid(pid);
++	return ret;
+ }
 --
 2.48.1
 
