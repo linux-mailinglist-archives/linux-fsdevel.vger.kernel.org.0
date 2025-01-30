@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-40395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A881DA230BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:03:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0D0A230C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37F0163B9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 15:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87CF51888E70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 15:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8E1E9B1D;
-	Thu, 30 Jan 2025 15:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE8C1E9B23;
+	Thu, 30 Jan 2025 15:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfjzJj1q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mT5YyaRH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E1713FEE;
-	Thu, 30 Jan 2025 15:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B771513FEE;
+	Thu, 30 Jan 2025 15:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738249391; cv=none; b=SHOk9dt3UwUWdS7eH8FDjFOAkzUHHwBCafkr9+l0aJ2zYGIW9rHO6SyU7Ygfcq0CSyV+2YD/84ltZxMtvyYf+HFD+9ZpIGQBVCVL/HlSR6i7vbxFPktC4t/AwiRfgMmpKXNwhQwGe/FOuWkWNnXwRG04/BT94SzV2uoUbo6HENw=
+	t=1738249525; cv=none; b=Yww+uuL7R0EkvZwwymB5io4Uc9G58bjtnwjuA+Ec8+kJrRAHGnlu1YXJIIMyrUScI3zZ8njbXnd+9TT8tN1OliwmNqAvuUoj788knNnxdQbfJTENQyb2aSl3BYpzqeUm/4258/knDfhjYLwGmSrqBSeh7Rfy4Nuq94+SdIt9haw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738249391; c=relaxed/simple;
-	bh=4YCm8eXSm6M4ZzJXQwVpKFjSlTUpF0dxjV4icC56dQ8=;
+	s=arc-20240116; t=1738249525; c=relaxed/simple;
+	bh=W6TKfvND7EqWTCe8ancliVKFScotTosqQ5uAmvm2iy4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L5jx/gjnaH3DcqJ5BZXgpuM+UzM6CEeEhBaExTShT0RzED64rMyEEImLpITsliJSqaVnpm8PK45taq3eyJagukNGer1hgSAqqc0HedEyHdBWJpyJ69sq/wzDsuWXEnQpcpjSKwF/vNFiSxBYGI/ICuV/7FMBeiQgYL0Szw+JaRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfjzJj1q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4980C4CED2;
-	Thu, 30 Jan 2025 15:03:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YoPvuHUbErCYf0MugbjDd/uQ71LsOOvMJCOhVmjLXVUcBAQfPaq2rWjt9RCBe7/u/PkZV+J5e3OgvStA6sX6lCtlFAc+QObvI4Kk8Uqekkoue9oj4r6z0s7uJ41Mq9nDWFArxe/9pesb78owyd1FO122MH49c7t9Ob6Uzt1Vggs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mT5YyaRH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5456AC4CED2;
+	Thu, 30 Jan 2025 15:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738249390;
-	bh=4YCm8eXSm6M4ZzJXQwVpKFjSlTUpF0dxjV4icC56dQ8=;
+	s=k20201202; t=1738249525;
+	bh=W6TKfvND7EqWTCe8ancliVKFScotTosqQ5uAmvm2iy4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LfjzJj1qw9pN+iIAdmUxQqArHNJKApF/Xpq7gqs23TcdFPEEV2eUbW/ar79NiuwmG
-	 OIanSaYk8NtEjxyRiS8yuxOtAhOT/aFJtUeH2ZUpXBIe2MmaZO+AMzaiJn9DMrxXpO
-	 iFyFQTM0UIrBe03+oxL5vM+8rm7n9wCIehmsuMResiWPgdx/0QZbfbU9zMEKcJE4If
-	 tBOB+7KKrMkwu/xwEdh789uHig+wD3sWr5P7nr/tWIJeJ0dWKuSogBaGwQnnkcX6UN
-	 D9ClOslxJELZzhMMkZrTFhYWJsDICjraXIHkgkIZZ13AiiSKldKRJOtVBu+jd5cyeW
-	 R4KYuhqDZ+84g==
+	b=mT5YyaRHIcU9nsvJsfCMPsuynIjPN1WFyUDPIUMBtmSv6YfwDQs6vKzYXWD84OVnP
+	 EYqyDjilZydCt3O5YDyES0NskENt1BiL1gvUb3JJDD+RdDAcPlXWFThleieQXxQyzm
+	 QorJ4Wmve58eGF49SnoFthHu1OpeMn92rYbG6Pq0BBq2iVtQNbUQwgg+KnD/T/b4G3
+	 ydaaQGKas34UBxGaRpEMq9xaaEnfeTTwd11vrbFuG2l8Rb9Qypl531wqiVTCE1TDct
+	 zlbbPExlpBrhmx6cO6nRV/GVHEdeSVJkR+7XdfipJvjTh6/v3XE06lTwfqx3K7jnur
+	 mWzbTKkjW0h0Q==
 From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Miklos Szeredi <mszeredi@redhat.com>
+To: Andreas Gruenbacher <agruenba@redhat.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] statmount: let unset strings be empty
-Date: Thu, 30 Jan 2025 16:03:03 +0100
-Message-ID: <20250130-nackt-anwendbar-698474ff2a4a@brauner>
+	Christoph Hellwig <hch@lst.de>,
+	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] further lockref cleanups
+Date: Thu, 30 Jan 2025 16:05:18 +0100
+Message-ID: <20250130-breitengrad-bergregion-ab2caff08b56@brauner>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250130121500.113446-1-mszeredi@redhat.com>
-References: <20250130121500.113446-1-mszeredi@redhat.com>
+In-Reply-To: <20250130135624.1899988-1-agruenba@redhat.com>
+References: <20250130135624.1899988-1-agruenba@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,20 +61,17 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1299; i=brauner@kernel.org; h=from:subject:message-id; bh=4YCm8eXSm6M4ZzJXQwVpKFjSlTUpF0dxjV4icC56dQ8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTPnrIyf6oHj3chs83/Ww5qgV7B32tawmcVxagaH1+uH /kgec7OjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIksKGL477/ejDXtgNLkY9Pr oqeu1Xxr6hmU+OgF264PQpxzamdlr2RkmNGif6Ptg8MiKWudN2KmFpP2bNcQXLL6lX3AwyXFXus +cgMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1197; i=brauner@kernel.org; h=from:subject:message-id; bh=W6TKfvND7EqWTCe8ancliVKFScotTosqQ5uAmvm2iy4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTPnqr/8XSLwo/gR3tElzE9zlbb/HXPUhvV1zecT2/WP Jkp79m7uKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiIfYM/72885RncP0UblN/ Isyc+Vm042zJ7ao7t6bOlt6Xyyg9TZCR4dzVz7lfGb44O6c+Xh2k5ZOaLXLxZsXs/ZrmM4zeL26 axQUA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 30 Jan 2025 13:15:00 +0100, Miklos Szeredi wrote:
-> Just like it's normal for unset values to be zero, unset strings should be
-> empty instead of containing random values.
+On Thu, 30 Jan 2025 14:56:20 +0100, Andreas Gruenbacher wrote:
+> Here's an updated version with:
 > 
-> It seems to be a typical mistake that the mask returned by statmount is not
-> checked, which can result in various bugs.
+> * An additional comment saying that lockref_init() initializes
+>   count to 1.
 > 
-> With this fix, these bugs are prevented, since it is highly likely that
-> userspace would just want to turn the missing mask case into an empty
-> string anyway (most of the recently found cases are of this type).
+> * Reviewed-by tags from Christoph.
 > 
 > [...]
 
@@ -91,6 +90,10 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] statmount: let unset strings be empty
-      https://git.kernel.org/vfs/vfs/c/756060a7cc55
+[1/3] gfs2: use lockref_init for gl_lockref
+      https://git.kernel.org/vfs/vfs/c/6c789b8e0913
+[2/3] gfs2: switch to lockref_init(..., 1)
+      https://git.kernel.org/vfs/vfs/c/69469b7ad4a4
+[3/3] lockref: remove count argument of lockref_init
+      https://git.kernel.org/vfs/vfs/c/24239add174c
 
