@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-40451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EDDA2372D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 23:22:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A1AA23748
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 23:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBE81629C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 22:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADAED3A534F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 22:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4541B4156;
-	Thu, 30 Jan 2025 22:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D1A1F151A;
+	Thu, 30 Jan 2025 22:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElrzF0TD"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZgfJNtQp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B9812E7E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 22:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEE51E4B2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 22:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738275772; cv=none; b=Hqe7IHe/kyGGuEIGYpKXIFSpk1cfn2cho1zuUwKJFBREtUfiKGvIGtAQMGHqUlJXOt7qEkQ2+KyI9ygxo5Agae2l4V+mtUuSUheXIfwI71CqcFQKzowUNztloi7wAJ4FHFO2g3yi6PqQKRBSZhF1VKWbza0Swen+3RVhFqTJGk8=
+	t=1738276451; cv=none; b=BJP6rVJYil8UbbD2pwzBzggaCcvVWRpBaaMm1yO+3jixRz4iBh8qaFJlCNtXF4Tf4z2zze8ERTmNN5YB43kKAXNInVhz5fVn54v1nbCc07dXsE5zl4yewIxrSZkC7t5IpyBKqZmfTPZoNPFeAFLcetuXz2RAjHKdI8Md+gVFlM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738275772; c=relaxed/simple;
-	bh=s5QSv/a6s53rsvZ2R0YdTIm1T5Ooq72fFr/hbYtrXC4=;
+	s=arc-20240116; t=1738276451; c=relaxed/simple;
+	bh=QUXRcH3PvItOfGNCN9WXABWY5dRu8YXB41G5R1l310k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XLGYR7IdcANqarI9h0CBEShXS6XjndCxBWHxpBu8xixbQRGTtbWNAx4YAt5/G+MhtIxTJSmtNXUY/FC55pCwUW23GtkI/oQs0ta1T0CZH5uGzwsDUfi9dBXBl4ko+5lX3zAkwxJt7XTgu4erIGjLagT9rhAYUdmxEtR3Zok1wxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElrzF0TD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B3CC4CED2;
-	Thu, 30 Jan 2025 22:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738275771;
-	bh=s5QSv/a6s53rsvZ2R0YdTIm1T5Ooq72fFr/hbYtrXC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ElrzF0TDmiHG/x75Iq6BKvxy/uAy8t4LmczKD5qHSv8fTlEMVGIaFnsoq1FusnRgr
-	 moZ1pmPpJbHm2lAjQzvFOBmcEBVzIokiNioPKXSEJqt30DvTrrbKDavMdG+ZWXr1XC
-	 eXakH7mFELxT1d/JgFycfxaYO6VS+Y6ee7t/1i1U80rIX7LpKFgmT67A+AUszD9QNs
-	 UsrdggeAM3JGbOTzKdAIwZh0LrdwPXQ7pKWDNn9W98ybt3zQWBGm2xFv5/OR7FBT/4
-	 QiBNs+hxMjQST4fEAcRAHWzwQvTzGLRvOw6g7TyrnbbYLyMiP02qSdHekZdCJ8qXxn
-	 S66lIzb4e1opw==
-Date: Thu, 30 Jan 2025 15:22:48 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: David Wei <dw@davidwei.uk>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	Bernd Schubert <bschubert@ddn.com>, Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
-	Joanne Koong <joannelkoong@gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] FUSE io_uring zero copy
-Message-ID: <Z5v7uJF7TPPEe6TI@kbusch-mbp>
-References: <dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5gKhZNMwBAl0xx4Nd4iAn3OtPsW2ZkItw5a5bHjce8YMisdhcQj4HG10eztIVoAOdDRRk1TRs5tZYllFtJKxruFdXJv64j1vonFrYqVGzva3A/qEjcR/FOTV5hrjEEZ87wX7xKqjPYbaPlYk6nTOsaTS1sFA6fgrl6dsWGM8B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZgfJNtQp; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 30 Jan 2025 14:33:56 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1738276441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lqDBs28UY+vyMRF9P3GmfFSE5VYbAkGtu2cFiNCq+E4=;
+	b=ZgfJNtQpuW6OR2UioMpO3e+CRls1HBx9yWGOI3OtHc0bNhd+TDyT4v5WiOA1/OLtqXFzHB
+	TTIZQHcpckr5e43+tbYVmaVI8Xl97n+PcaKNQPzsFJ2/cK8g/4NTdxFTov8FaN/fOWdHYT
+	19fbbhiZexxJNl6sqdofqRKVY0z8pQ8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>, 
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Jeff Layton <jlayton@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [LSF/MM/BPF TOPIC] Migrating the un-migratable
+Message-ID: <euzurxcimhegubx7cisr7rh7z2jymd2zkc65zy6x2t2dv44ycz@m6skjuezgup3>
+References: <882b566c-34d6-4e68-9447-6c74a0693f18@redhat.com>
+ <Z5vzuii9-zS-WsCH@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,45 +60,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk>
+In-Reply-To: <Z5vzuii9-zS-WsCH@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jan 30, 2025 at 01:28:55PM -0800, David Wei wrote:
-> Hi folks, I want to propose a discussion on adding zero copy to FUSE
-> io_uring in the kernel. The source is some userspace buffer or device
-> memory e.g. GPU VRAM. The destination is FUSE server in userspace, which
-> will then either forward it over the network or to an underlying
-> FS/block device. The FUSE server may want to read the data.
+On Thu, Jan 30, 2025 at 09:48:42PM +0000, Matthew Wilcox wrote:
+> On Wed, Jan 29, 2025 at 05:10:03PM +0100, David Hildenbrand wrote:
+> > As one example, in context of FUSE we recently discovered that folios that
+> > are under writeback cannot be migrated, and user space in control of when
+> > writeback will end. Something similar can happen ->readahead() where user
+> > space is in charge of supplying page content. Networking filesystems in
+> > general seem to be prone to this as well.
 > 
-> My goal is to eliminate copies in this entire data path, including the
-> initial hop between the userspace client and the kernel. I know Ming and
-> Keith are working on adding ublk zero copy but it does not cover this
-> initial hop and it does not allow the ublk/FUSE server to read the data.
-
-If the server side has to be able to access the data for whatever
-reason, copying does appear to be the best option for compatibility. But
-if the server doesn't need to see the data, it's very efficient to reuse
-the iov from the original IO without bringing it into a different
-process' address space.
-
-> My idea is to use shared memory or dma-buf, i.e. the source data is
-> encapsulated in an mmap()able fd. The client and FUSE server exchange
-> this fd through a back channel with no kernel involvement. The FUSE
-> server maps the fd into its address space and registers the fd with
-> io_uring via the io_uring_register() infra. When the client does e.g. a
-> DIO write, the pages are pinned and forwarded to FUSE kernel, which does
-> a lookup and understands that the pages belong to the fd that was
-> registered from the FUSE server. Then io_uring tells the FUSE server
-> that the data is in the fd it registered, so there is no need to copy
-> anything at all.
+> You're not wrong.  The question is whether we're willing to put the
+> asterisk on "In the presence of a misbehaving server (network or fuse),
+> our usual guarantees do not apply".  I'm not sure it's a soluble
+> problem, though.  Normally writeback (or, as you observed, readahead)
+> completes just fine and we don't need to use non-movable pages for them.
 > 
-> I would like to discuss this and get feedback from the community. My top
-> question is why do this in the kernel at all? It is entirely possible to
-> bypass the kernel entirely by having the client and FUSE server exchange
-> the fd and then do the I/O purely through IPC.
+> But if someone trips over the network cable, anything in flight becomes
+> unmovable until someone plugs it back in.  We've given the DMA address
+> of the memory to a network adapter, and that's generally a non-revokable
+> step (maybe the iommu could save us, but at what cost?)
+> 
 
-This kind of sounds like "paravirtual" features, in that both sides need
-to cooperate to make use of the enhancement. Interesting thought that if
-everyone is going this far to bypass memory copies, it doesn't look like
-much more of a heavy lift to just bypass the kernel too. There's
-probably value in retaining the filesystem semantics, though.
+My position is more aligned with Willy's. We definitely should discuss
+if we can solve the general problem of (im)movability due to writeback
+or readahead but I think targeting precise problem will be more
+fruitful. Untrusted fuse server deliberatly causing immovable memory is
+a real problem as anyone can run fuse server and mount fuse without any
+permissions. At least to me a misbehaving but trusted server is less of
+an (practical) issue. (Please correct me if I miss something like this
+is also a real issue in multi-tenancy world).
+
+Joanne has some ideas [1] on fuse specific solution but having a
+discussion on general solution would be beneficial as well.
+
+[1] https://lore.kernel.org/all/CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com/
 
