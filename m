@@ -1,121 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-40441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60F8A236AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 22:29:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B20AA236C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 22:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE95163E82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EE763A79E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE35319DF60;
-	Thu, 30 Jan 2025 21:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ED01F1531;
+	Thu, 30 Jan 2025 21:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="Z4SE22L0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KV9EP0q+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B0F1EE7C6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 21:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6527114A099;
+	Thu, 30 Jan 2025 21:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738272540; cv=none; b=cDQY2U+vnvj6oVpAek3hD76UI4Gy64LjYc2PA8wwVQFRiXjuZviPtO5wB0mhWZWOc6fzJ/mujS5wWQc4RztEF2z38lP94BwVZqtDY7Py44J+pGo7o7PUcrtP2MMzmVd+IHlPVWQII3RfCB0Z8UERmmzD0WVFpjkFR0QxBvHsp9A=
+	t=1738272965; cv=none; b=AD26ck1KyHFqO4/+jtbSeKQqx9GLQDoapgU6bHxWDWfAEf2StrVjOTzaEBC302nTEr8UFUcjUncCnDLRdGq8OTWOcoygOxARx3WfT8FknPNO+ULwtHRnRkz/HpkDURS5VXgvp19UYO3Bx7KLnCDx8nvKDCK5UU5zov0cQnmwzks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738272540; c=relaxed/simple;
-	bh=UWDg6CCmzLtCB1hcWaV07L06mjDBLFBIWsBB0+LOFn8=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=n+KhA7TvMuVoCrk1iqMysAs9OOigCQwDbvJ0LHv6MebwUt1+1ZTZctQbHml8FEOT33khyKPqR7Nh68B55eEhc2hqucoGPTrS5+x/tRvAs9MkjwBNLL0e2N6k0hhFkx1tjbvSlP/g34sdb/Xb+tGJfnaykZmYI0oJYKGsRpt0uxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=Z4SE22L0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21bc1512a63so24688755ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 13:28:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1738272538; x=1738877338; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UWDg6CCmzLtCB1hcWaV07L06mjDBLFBIWsBB0+LOFn8=;
-        b=Z4SE22L0RJZvotCutcPI7VOBbWGaO6WZcHbMPOsUld0CuZMlER1MfDvmO8vC4Vlkli
-         STomQF9efM9aydS3fevBykOTNT51kiB5Ck54/WnpFKu1r3rUfArpDNM6JAFNFjDgGTFs
-         evUJPwH4y3XZarPtVCFfxm1J6XpLscs/EEUEaVzJP0GfWxTPsKWOC2W0+ij419X9Ie0G
-         WsSoSqWBBwUqF4Md0jGBHuNQU8m9weo5QzqXiA6vCqArUIbXXEk3vw+F2JHcvF6c7IPR
-         mkpjV3Yb9lV8MBUr5Bv1AYnXcZtMHg6D5lJT6aRVtKxRgYwgawemHHOipyktS8gGEAwJ
-         6aiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738272538; x=1738877338;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UWDg6CCmzLtCB1hcWaV07L06mjDBLFBIWsBB0+LOFn8=;
-        b=Dl/LhG+Od6FlzSYA5keqOCMcYcPgpB+BAXP1ExiHp1WxL/NctDEevMxwuSa/jjanoz
-         cuE11UnyAwOEm3JN/4AtwLobHSYk522UmKS/BE/7FEOBvVpl86UPnsmQl2Ji7bJx77ne
-         zkB9kNgCGwFEYvzC8cARmB+6p8jfIdVBB2qIl+9mFUylCaFLF0ZIQJuG10/VEQWfmiUc
-         RE4MHnRGWnGWruO528nhgArT4xU0aDHAsD3vCYrk8onTnMzSXhldV7aO6ambj27hS4we
-         jo9DICtPOczdIxfOU1GvLc2ldIbZNBXO29oHda7cxCKE/gcINwIgJyMWjuaV7IeBsh7m
-         XJKQ==
-X-Gm-Message-State: AOJu0Yww/g1nLW2e8vQeOMMhNC3xBqyslVCoxAJL5fU07rcqqSgCn+O3
-	g9f5ZM+BOumbS2LCdQbT1HzriZ2gOR+bT+/Obw4UZ+RToc6cj6Bl4U5pNfc4zGA=
-X-Gm-Gg: ASbGncvWukulARuF+ITk2txXPaAXJdrUzsZvNckMY1F+CZAO+4OXAufEVHlaNWLX0qk
-	q5qfG8GeGTukNJwcuElmGk5I22xu3BUN7jejDJC63ovG+Mb6ft7gIRaHtpFya5rhHswz4q3pejp
-	r3nBngrQFK7hGWfowmbpAXdAMcb3x2touUSSm66HS0KbDCqvsfxvK+lHqdGlYAvCHlCy3NyyOAB
-	B22JS6KGeFZ78Ktd2nwYymgKHZUkN+7Tz1FwwlVr8cfZY6C+r1oBG67+8TrK5GG9F9MKFja6zvF
-	BKYB342uuTDWVoMpFNMHWMxsmXQnbgK+SWIxm0qC6qbCKBSFQ4BgiiKMw+A=
-X-Google-Smtp-Source: AGHT+IFjBbTaUJWfqLNF7bEQ1rciYemN0V7YWHnjgLKPHzY+UwDe2+h32D/Go/IaX8uSs4pFJUMcyg==
-X-Received: by 2002:a17:902:da85:b0:215:a18f:88a8 with SMTP id d9443c01a7336-21dd7df9041mr120961155ad.51.1738272537897;
-        Thu, 30 Jan 2025 13:28:57 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1156:1:18cb:90d0:372a:99ae? ([2620:10d:c090:500::7:ba76])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de3303a8fsm18476935ad.197.2025.01.30.13.28.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2025 13:28:57 -0800 (PST)
-Message-ID: <dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk>
-Date: Thu, 30 Jan 2025 13:28:55 -0800
+	s=arc-20240116; t=1738272965; c=relaxed/simple;
+	bh=04bgzPYghxlrr/nMaCFaNzbMVutdsIq6AIdqRh/W7KM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2ZQQEIt0pk2MyrCG8OQ7TdHA9DC+Wc/YlH+MX8ojglSA6+FM9WoosrKRnJ/IYvyeZJigKbaK71/Nmpte0xn6mlXZTq1prHzZAIwHEZdg+R7Wz1czeyFUw4+mQt2xhC83u1czLpxdcNI56bjdRLXjr1seT9CMfeOCRKWEGV8/pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KV9EP0q+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D763C4CED2;
+	Thu, 30 Jan 2025 21:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738272964;
+	bh=04bgzPYghxlrr/nMaCFaNzbMVutdsIq6AIdqRh/W7KM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KV9EP0q+tts3PkS2Yn4SUlYWDthNh6cMt1d7jWdXWeJnXIle/aq9/i4pKojwKNant
+	 +3TINxGalKJscUkpuPemKgGGArqvKENm0/+Srul7axjoesNpTYmqkRfI9Xzh6oVLsP
+	 GyiqT7AToV8o6jhnaYFVPaAl2GqTYo1VrWR6P7SkyMDR3EWE3A62/KZhS/G3Oo2G8+
+	 UP+RKNKH/FA7nSbX30wztUViWGC9D/T//9lyfLAHjd8HZx79v1beNiagRvqg/+o1DB
+	 bFsJHQYGaVlzhwt/1Lx0VgjSlpzHszmbrX4PIxVQtFe0byCobOsFGrh40YxuNVDHQ/
+	 ztERkCGX8+6SQ==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	liamwisehart@meta.com,
+	shankaran@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v12 bpf-next 0/5] Enable writing xattr from BPF programs
+Date: Thu, 30 Jan 2025 13:35:44 -0800
+Message-ID: <20250130213549.3353349-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
-To: lsf-pc@lists.linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
- Keith Busch <kbusch@kernel.org>, Ming Lei <ming.lei@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
- Joanne Koong <joannelkoong@gmail.com>
-Subject: [LSF/MM/BPF TOPIC] FUSE io_uring zero copy
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi folks, I want to propose a discussion on adding zero copy to FUSE
-io_uring in the kernel. The source is some userspace buffer or device
-memory e.g. GPU VRAM. The destination is FUSE server in userspace, which
-will then either forward it over the network or to an underlying
-FS/block device. The FUSE server may want to read the data.
+Add support to set and remove xattr from BPF program. Also add
+security.bpf. xattr name prefix.
 
-My goal is to eliminate copies in this entire data path, including the
-initial hop between the userspace client and the kernel. I know Ming and
-Keith are working on adding ublk zero copy but it does not cover this
-initial hop and it does not allow the ublk/FUSE server to read the data.
+kfuncs are added to set and remove xattrs with security.bpf. name
+prefix. Update kfuncs bpf_get_[file|dentry]_xattr to read xattrs
+with security.bpf. name prefix. Note that BPF programs can read
+user. xattrs, but not write and remove them.
 
-My idea is to use shared memory or dma-buf, i.e. the source data is
-encapsulated in an mmap()able fd. The client and FUSE server exchange
-this fd through a back channel with no kernel involvement. The FUSE
-server maps the fd into its address space and registers the fd with
-io_uring via the io_uring_register() infra. When the client does e.g. a
-DIO write, the pages are pinned and forwarded to FUSE kernel, which does
-a lookup and understands that the pages belong to the fd that was
-registered from the FUSE server. Then io_uring tells the FUSE server
-that the data is in the fd it registered, so there is no need to copy
-anything at all.
+To pick the right version of kfunc to use, a remap logic is added to
+btf_kfunc_id_set. This helps move some kfunc specific logic off the
+verifier core code. Also use this remap logic to select
+bpf_dynptr_from_skb or bpf_dynptr_from_skb_rdonly.
 
-I would like to discuss this and get feedback from the community. My top
-question is why do this in the kernel at all? It is entirely possible to
-bypass the kernel entirely by having the client and FUSE server exchange
-the fd and then do the I/O purely through IPC.
 
-David
+Cover letter of v1 and v2:
+
+Follow up discussion in LPC 2024 [1], that we need security.bpf xattr
+prefix. This set adds "security.bpf." xattr name prefix, and allows
+bpf kfuncs bpf_get_[file|dentry]_xattr() to read these xattrs.
+
+[1] https://lpc.events/event/18/contributions/1940/
+
+---
+
+Changes v11 => v12:
+1. Drop btf_kfunc_id_set.remap and changes for bpf_dynptr_from_skb.
+   (Alexei)
+2. Minor refactoring in patch 1. (Matt Bobrowski)
+
+v11: https://lore.kernel.org/bpf/20250129205957.2457655-1-song@kernel.org/
+
+Changes v10 => v11:
+
+1. Add Acked-by from Christian Brauner.
+2. Fix selftests build error like this one:
+   https://github.com/kernel-patches/bpf/actions/runs/13022268618/job/36325472992
+3. Rename some variables in the selftests.
+
+v10: https://lore.kernel.org/bpf/20250124202911.3264715-1-song@kernel.org/
+
+Changes v9 => v10:
+1. Refactor bpf_[set|remove]_dentry_xattr[_locked]. (Christian Brauner).
+
+v9: https://lore.kernel.org/bpf/20250110011342.2965136-1-song@kernel.org/
+
+Changes v8 => v9
+1. Fix build for CONFIG_DEBUG_INFO_BTF=n case. (kernel test robot)
+
+v8: https://lore.kernel.org/bpf/20250108225140.3467654-1-song@kernel.org/
+
+Changes v7 => v8
+1. Rebase and resolve conflicts.
+
+v7: https://lore.kernel.org/bpf/20241219221439.2455664-1-song@kernel.org/
+
+Changes v6 => v7
+1. Move btf_kfunc_id_remap() to the right place. (Bug reported by CI)
+
+v6: https://lore.kernel.org/bpf/20241219202536.1625216-1-song@kernel.org/
+
+Changes v5 => v6
+1. Hide _locked version of the kfuncs from vmlinux.h (Alexei)
+2. Add remap logic to btf_kfunc_id_set and use that to pick the correct
+   version of kfuncs to use.
+3. Also use the remap logic for bpf_dynptr_from_skb[|_rdonly].
+
+v5: https://lore.kernel.org/bpf/20241218044711.1723221-1-song@kernel.org/
+
+Changes v4 => v5
+1. Let verifier pick proper kfunc (_locked or not _locked)  based on the
+   calling context. (Alexei)
+2. Remove the __failure test (6/6 of v4).
+
+v4: https://lore.kernel.org/bpf/20241217063821.482857-1-song@kernel.org/
+
+Changes v3 => v4
+1. Do write permission check with inode locked. (Jan Kara)
+2. Fix some source_inline warnings.
+
+v3: https://lore.kernel.org/bpf/20241210220627.2800362-1-song@kernel.org/
+
+Changes v2 => v3
+1. Add kfuncs to set and remove xattr from BPF programs.
+
+v2: https://lore.kernel.org/bpf/20241016070955.375923-1-song@kernel.org/
+
+Changes v1 => v2
+1. Update comment of bpf_get_[file|dentry]_xattr. (Jiri Olsa)
+2. Fix comment for return value of bpf_get_[file|dentry]_xattr.
+
+v1: https://lore.kernel.org/bpf/20241002214637.3625277-1-song@kernel.org/
+
+Song Liu (5):
+  fs/xattr: bpf: Introduce security.bpf. xattr name prefix
+  selftests/bpf: Extend test fs_kfuncs to cover security.bpf. xattr
+    names
+  bpf: lsm: Add two more sleepable hooks
+  bpf: fs/xattr: Add BPF kfuncs to set and remove xattrs
+  selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
+
+ fs/bpf_fs_kfuncs.c                            | 225 +++++++++++++++++-
+ include/linux/bpf_lsm.h                       |  18 ++
+ include/uapi/linux/xattr.h                    |   4 +
+ kernel/bpf/bpf_lsm.c                          |   2 +
+ kernel/bpf/verifier.c                         |  21 ++
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 162 ++++++++++++-
+ .../selftests/bpf/progs/test_get_xattr.c      |  28 ++-
+ .../bpf/progs/test_set_remove_xattr.c         | 133 +++++++++++
+ 9 files changed, 573 insertions(+), 25 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+
+--
+2.43.5
 
