@@ -1,112 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-40406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E57EA2325A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 17:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38D1A2326D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 18:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37C63A5123
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4FA188679F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 17:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11AA1EE7CB;
-	Thu, 30 Jan 2025 16:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B8C1EEA4B;
+	Thu, 30 Jan 2025 17:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="XY+Lo9sy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V+97Ds2/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAD91EE01A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 16:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427F52770C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 17:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738256229; cv=none; b=eIbJXWyBV9hTOYlXkDJlDqwxC/VeZbMsvjYlUOCt8gyXqeellBYt9jW0mYfLDAbrHjc0yprd15Xi80Q74mnajvhwJc/auoMk/NTICWZxqGvteVAYnHI75qi7MYptlMdsE0Jiwpu/ghCEafsGr7KOdlCxECyCmMRpRSjBu9BNzh8=
+	t=1738256862; cv=none; b=HyHB/zrbysyLb3WvCXtytEYY3v7Z+efJDwU9b9sQcziwVAmpLn+KsgcIMdK09z0Py35JPw4jJxpu5ZDVYvxHYdoQQwj1f76msKnuQsGXMj2moqzBjrwdjGmdp2vhpL0lBFwlNupdXuTU/dzwaAHgjNF+BiIX83Ff1O3U8VFKAno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738256229; c=relaxed/simple;
-	bh=qNsZZOVVt9T4yIfLD+iVbIMfvQv1WoQGzFy9F7Hzs30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjwL+gvsVI7+OzFZpZQe3w4cX6avm6BNsjVV8wDyETHhv1wkqnfZFkS0jOwwh75V3IT2LrwEwxLaiQ1Anp6/mtWO1XAZFE+zqQb0xeB2hsmXT3uNbS2YYQUswLIuM7+q6r+oAHysRMlEPqx1VG+Vb7xB0JQyjfEx6zCcTfkYYdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=XY+Lo9sy; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (guestnat-104-133-8-96.corp.google.com [104.133.8.96] (may be forged))
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 50UGuhDm004150
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Jan 2025 11:56:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1738256206; bh=7NvQXWafKj9Oe6SW4odCfOJB5cwhQial8Uh3QOR63VQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=XY+Lo9sylbLMqvfp+s7hfNYUoja4l00Jm6s3+HpXVI6FnDlFLCbqqjGtMY7QJnEWk
-	 P7amA2YuLbjJHG5dickm/k3d3pIXy/LVBypqBdvS1KFFKFYFVn3qP4o5zjHdKcHTiW
-	 QLczO1G1vALkXtdJJgM8x06uJhAYIvOA+5meFqjvSWJ+WQoFTGlT8hqo6l97mqFDmV
-	 al4z4iX+uk1gpjcFz2QUAQrBuNZKRfsdpM4lT/BwSAuMX9NK6dwbFOX7gHz4MEBUkB
-	 RJUs6yqPNLZBKz17EEUY4AJXLCA/+z+Yi5jw27X8lZGkeX3OUgVtBP8JlRaN7j+/pC
-	 SBKrBQZ8ePSMA==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id B373F3404C7; Thu, 30 Jan 2025 08:56:42 -0800 (PST)
-Date: Thu, 30 Jan 2025 08:56:42 -0800
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: "Day, Timothy" <timday@amazon.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "jsimmons@infradead.org" <jsimmons@infradead.org>,
-        Andreas Dilger <adilger@ddn.com>, "neilb@suse.de" <neilb@suse.de>
-Subject: Re: [LSF/MM/BPF TOPIC] Lustre filesystem upstreaming
-Message-ID: <20250130165642.GA416991@mit.edu>
-References: <5A3D5719-1705-466D-9A86-96DAFD7EAABD@amazon.com>
- <Z5h1wmTawx6P8lfK@infradead.org>
- <DD162239-D4B3-433C-A7C1-2DBEBFA881EC@amazon.com>
- <20250130142820.GA401886@mit.edu>
- <0E992E6A-AF0D-4DFB-A014-5A08184821CD@amazon.com>
+	s=arc-20240116; t=1738256862; c=relaxed/simple;
+	bh=T/ZKadxqlT/WPKi7ENfkXyDqONHLjXhZfgWmAfvTXt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FaLT+EA9sL+TGHwz+g77iv6hokBA4gWH+QY1aVIpH01cvOHubrHJ0WthrJxr8SL5rqUEvKh7cKKMmz4XY7bAPZPUveTDz4m5D6HbBbhnmv7rpMQxpJw/FkCHa8N+i/DNS8rmuGLV1GtX4Hve80pKRRB0fPq4x5LV2Hs0NvarWCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V+97Ds2/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738256860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PyqssSTExJ7uhqBsvsQDF+KWc9uqtax77RL1lFKD9r0=;
+	b=V+97Ds2/Pp7gEmYcqYwxqOZ1wNSeWfigAwDU4RN7qRHH8P05Rre33BU/+bgR6i3wWKfwHz
+	a7D16cQjMclBWPgrBS7EzZqJY55J2zxXMlZFk0sptl8R2AEGNtBn3kaQwYtvsDxXnWFD2i
+	Gd1QfNrbtevQ09BBTq/e/5DiV6rN3bQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-209-Nhqgw7G7PC-y9g9ekdjDgg-1; Thu,
+ 30 Jan 2025 12:07:37 -0500
+X-MC-Unique: Nhqgw7G7PC-y9g9ekdjDgg-1
+X-Mimecast-MFC-AGG-ID: Nhqgw7G7PC-y9g9ekdjDgg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 21FF41955D81;
+	Thu, 30 Jan 2025 17:07:36 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.80.113])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 286A030001BE;
+	Thu, 30 Jan 2025 17:07:35 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v3 0/7] iomap: incremental per-operation iter advance
+Date: Thu, 30 Jan 2025 12:09:41 -0500
+Message-ID: <20250130170949.916098-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0E992E6A-AF0D-4DFB-A014-5A08184821CD@amazon.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Jan 30, 2025 at 04:18:29PM +0000, Day, Timothy wrote:
-> 
-> Lustre has a lot of usage and development outside of DDN/Whamcloud
-> [1][2].  HPE, AWS, SuSe, Azure, etc. And at least at AWS, we use
-> Lustre on fairly up-to-date kernels [3][4]. And I think this is
-> becoming more common - although I don't have solid data on that.
+Hi all,
 
-I agree that I am seeing more use/interest of Lustre in various Cloud
-deployments, and to the extent that Cloud clients tend to use newer
-Linux kernels (e.g., commonly, the the LTS from the year before) that
-certainly does make them use kernels newer than a typical RHEL kernel.
+Here's v3 of the iomap incremental advance series. The most notable
+changes in this version are some type fixups that lead to a tweak of
+iomap_iter_advance() semantics and folding in a couple more advances in
+unshare and zero range that were missed previously.
 
-It's probably inherent in the nature of cluster file systems that they
-won't be of interest for home users who aren't going to be paying the
-cost of a dozen or so Cloud VM's being up on a more-or-less continuous
-basis.  However, the reality is that more likely than not, developers
-who are most likely to be using the latest upstream kernel, or maybe
-even Linux-next, are not going to be using cloud VM's.
+I also briefly considered a new iomap_iter_advance_full() or some such
+helper for cases that have no use for the length variable, but I'm
+deferring that because switching back to an s64 return for
+iomap_iter_advance() would probably eliminate the need for that.
 
-> And if you have dedicated hardware - setting up a small filesystem over
-> TCP/IP isn't much harder than an NFS server IMHO. Just a mkfs and
-> mount per storage target. With a single MDS and OSS, you only need two
-> disks. So I think we have everything we need to enable upstream
-> users/devs to use Lustre without too much hassle. I think it's mostly a
-> matter of documentation and scripting.
+Christoph,
 
-Hmm... would it be possible to set up a simple toy Lustre file system
-using a single system running in qemu --- i.e., using something like a
-kvm-xfstests[1] test appliance?  TCP/IP over loopback might be
-interesting, if it's posssible to run the Lustre MDS, OSS, and client
-on the same kernel.  This would make repro testing a whole lot easier,
-if all someone had to do was run the command "kvm-xfstests -c lustre smoke".
+I dropped the R-b tag for patch 3 because the code changed enough that
+it might be worth a second look, but otherwise I don't think the logic
+has really changed. With the error passthru removed I think the advance
+call from iomap_iter() can ultimately go away when remaining ops are
+switched over. This should be able to eventually just check for an error
+return, a (non-stale) failure to advance, or otherwise proceed or not
+based on iter->len.
 
-[1] https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
+Thoughts, reviews, flames appreciated.
 
-							- Ted
+Brian
+
+v3:
+- Code style and comment fixups.
+- Variable type fixups and rework of iomap_iter_advance() to return
+  error/length separately.
+- Advance the iter on unshare and zero range skip cases instead of
+  returning length.
+v2: https://lore.kernel.org/linux-fsdevel/20250122133434.535192-1-bfoster@redhat.com/
+- More refactoring of iomap_iter[_advance]() logic. Lifted out iter
+  continuation and stale logic and improved comments.
+- Renamed some poorly named helpers and variables.
+- Return remaining length for current iter from _iter_advance() and use
+  appropriately.
+v1: https://lore.kernel.org/linux-fsdevel/20241213143610.1002526-1-bfoster@redhat.com/
+- Reworked and fixed a bunch of functional issues.
+RFC: https://lore.kernel.org/linux-fsdevel/20241125140623.20633-1-bfoster@redhat.com/
+
+Brian Foster (7):
+  iomap: split out iomap check and reset logic from iter advance
+  iomap: factor out iomap length helper
+  iomap: refactor iter and advance continuation logic
+  iomap: support incremental iomap_iter advances
+  iomap: advance the iter directly on buffered writes
+  iomap: advance the iter directly on unshare range
+  iomap: advance the iter directly on zero range
+
+ fs/iomap/buffered-io.c |  67 +++++++++++++--------------
+ fs/iomap/iter.c        | 103 ++++++++++++++++++++++++++---------------
+ include/linux/iomap.h  |  27 +++++++++--
+ 3 files changed, 120 insertions(+), 77 deletions(-)
+
+-- 
+2.47.1
+
 
