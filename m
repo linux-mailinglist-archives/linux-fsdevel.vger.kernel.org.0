@@ -1,202 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-40427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF3AA23508
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:24:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3054A23521
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 21:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6080E164526
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550EE18880B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 20:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1AF1F1306;
-	Thu, 30 Jan 2025 20:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FEC1F1305;
+	Thu, 30 Jan 2025 20:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRlkk74m"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0SDAGsb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A64A35;
-	Thu, 30 Jan 2025 20:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76271922F8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 20:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738268648; cv=none; b=kjPkUmAuIT9uYCvbuNabB8BxXMUDAigEOWQy4FouJtKF4NtyPmt0tEQBE5MJ0mvHyd5yAYwPISYiikmf7cK240BYaJClMtB3NFl+nwcqmHWSAtoaBYBXYPvwQKbWnRWQGH2IDNx5HPkD6ThxDLE/x252QMzHD5QZtByiOl2oYGg=
+	t=1738269305; cv=none; b=UDCXWd8xKQu3vLr3MIE+Mtzb11c4fPRbf8/n56B2hZxYIjNJMTHTuSAivbj17OmgmOb4+yuJf6hBoGxWgyRhjNJs30S8CtoqmYGGb5Zq2ZSY4VJ05qkn8ORu7REFBZyQDZtRKBbJ1IVUfi1UlMfbMljZA/1SHXhEBtmYC+LD880=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738268648; c=relaxed/simple;
-	bh=fcVzhnqBbO27IvJ9WownzhHG6Rj7fo3UL/gsFbTqje8=;
+	s=arc-20240116; t=1738269305; c=relaxed/simple;
+	bh=i90LZEJP39KZzuaancmUFtDGdMy9w3zyTcWopQWmg60=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P71VBgco/v+hGabtWrLAkHFGKWLDuQryCcojLK+C/ajPAhjxRB6mec1bQRpSzPumasaUrfkrqjxYjLHc8oGQmv1b9E8BgbabFKJEQ3kaxCArS2M6ooUZbsnoCpV2MM/We0uj79NLGUCy0/unS3BAIV7/BTKJxLWmrLkkChlQceo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRlkk74m; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3863703258fso1539443f8f.1;
-        Thu, 30 Jan 2025 12:24:06 -0800 (PST)
+	 To:Cc:Content-Type; b=RRqLDFpZRsIJfPN5DJ8wFxyKPfKp3t3OqsKTAYW7YAkBNBF/kYV5AQumUkjbC2nEB+QtAwLAXSE2Qv48ZJ8gBZGXWfiIE2I5n+D0hONGLy1wBm93HQPPa0fIZl/o6FVvlQOk5bcSea8xc6Fvyo2+rLsgm424a+bsyrBjMzMPvRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C0SDAGsb; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab6da1bb1a8so89110866b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 12:35:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738268645; x=1738873445; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1738269301; x=1738874101; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xV+2ASZNLztOoZlL3PTiOudYi7XA5OszIeYYPdoNj+s=;
-        b=DRlkk74mTF2GsGqMXSpR3vj+j3M/9ui1TPBZ03yf7xw+0/2fxHBkHM9HTESULhy2Lt
-         oGirF3yzJUaX9Lhl7Ze8u5newYzMOBsWE5TUoW63KPjjQWUnS4oQ1jkR3P1RRTBIGAdI
-         XdLB3tUyyINzmzf1jKfhjmwBpGwhaS8qDxu5k7Xz9dDz29Pd00xkxSMuWhpw22evVOVM
-         EKxHQgj+mq8jBSxya12rLOh8mhfWQ6ZCANzkKG/34VVnlj6nix/MTKER43930Yk0Hnl6
-         cReEfxPkG9/JgpNV/EEIeXxpLl318LvksfeuI0AxTpUXBE14rFsAmvb4qwJUwfr2vsNK
-         STWw==
+        bh=i90LZEJP39KZzuaancmUFtDGdMy9w3zyTcWopQWmg60=;
+        b=C0SDAGsb6aoxiIDl26VA28h6nEEWfzLSputwGsqgRGp/0q5KH4/B0nVzCAlLlQ45kA
+         mN27ySAI//VFOz0+FNnTkUwbQNNdOLZIO6f+58MDqB9qvURN4cxEQp2//QNJaPcdosWn
+         Oyqt3gMx+3wQRAy6cyLn5M3n8YAYPO3wycteGkxICxwACC+EIEBdpHR1x83ZE4mO0BCM
+         nDKq7N8vxhABhZTuLruzsQZSlTOtuMhffpkL7orZXpr+0Q2FWb8vs8M6uQPkI4yLzfuC
+         YrnebunTh0M+I3HUOy8VP31rUceAu8O1dyrmzNa8T/HrvgJT5IZ+pgQZrrrPT9y9Z2zU
+         xQZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738268645; x=1738873445;
+        d=1e100.net; s=20230601; t=1738269301; x=1738874101;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xV+2ASZNLztOoZlL3PTiOudYi7XA5OszIeYYPdoNj+s=;
-        b=xQ/sq/6Y9oFo7PKDs0D6LYcrfwuNt1sLhgwjWDhb/jfdAQ3cG7QB8UK+LWrEgZUOGb
-         IDpsTBEO5fOjq+dwum0YOd8txWRbs7wyn7GX33kOKOhU58Xkn/LSCb/r24Hw7erhXk81
-         A55po8g9Hmz0GdXC0MoCRf4u4mxiJ+9oJxodRDqUOk6vHkBtXFk46gAJ+P0nsJBU4U7o
-         k3b7YKFu6bU5M40mvnADRtVqon2MpbtNiTUL6E3nOaZ9BtVv65Fd8f+F3ss34JH6H10y
-         bGQYHvTtSZO5tZNVAP++Qoi7GWKtYGXILXIQkWPyLXhzIP0G1HdXF3HzxTxqwUcyKW77
-         1ZKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1wvFisYK7oYSYbgLIRbqVtFND+MsM9AxbJmb9wsnp08sSDJ/OHwm6pNinWCvnna2/Z+4twW065d/oclwP@vger.kernel.org, AJvYcCVdKAzWMbp2crW+WZvkxHftAsVHpYgBCiAYtwrU0+bNdMbxd58LA/WxOsi8u+0JONV+bRoTcGl/FoMrYBcXSw==@vger.kernel.org, AJvYcCVwUie2uFVjP/uv7jKuTdhGEaiAP9NHox78ybMXXqhWTTrwtvAbVl3xMMLj4Cfu/7niGYP49TTJAkh1APuic6gDaGEkyIZb@vger.kernel.org, AJvYcCWDcrXvAOPnS+hJ9DxWl6B/y6tshmjnWa1aFs3Wx/528ofgmnO8e1eWXqz85fXDgc6Lg8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywng7m4FgNZCIhp/saYcKr7JWikwIlU2F7CgKAHWqTfsMBpqmSL
-	Me/s/Hf6lG3TKo5M/dJad804Gqr8MI1WffEalaaPvMqdO941NkuyXUc8GD0B+xyK9ix5jmn7/kI
-	gWptx0TBAsmgEjvYALy0D7uCe7vc=
-X-Gm-Gg: ASbGncsiEsg/yxDAh9kVdKIWNI/SszDOQFrI5atVuJ1xGT2wzaP4Lx9w/pn7/8K58Zc
-	alCA6cfk7PDuji+wRF8uBXca5IK10GO/9ZMQojRUSRw6ys2lE3F+l/K4/Q0/yb1GYWafjuuQR
-X-Google-Smtp-Source: AGHT+IFY02Fh9zFX1R5GIBuszCAimxxCsMAyxTddZA8UoFzTX5lo9Jl4O/3oYK9N+WgwYxNJeKpaVeeATA8PccpYr4g=
-X-Received: by 2002:a05:6000:1a85:b0:38b:ee01:a5b with SMTP id
- ffacd0b85a97d-38c5a98de08mr4507429f8f.15.1738268644516; Thu, 30 Jan 2025
- 12:24:04 -0800 (PST)
+        bh=i90LZEJP39KZzuaancmUFtDGdMy9w3zyTcWopQWmg60=;
+        b=AU2e4lsWoxaGm/OFUcp3+r8Dz2k+Ij+5P3X071D19nkmJnr4i1YN3r0O8QWixnhkwf
+         uZsUiFb8PqYLQmNHYsgPT3WJzWDnGaYI/EUsq5DB4HtPdgczR2YuTQS3UBY/qoZbJI6Y
+         kZo+sDCvP8QmPU1GhbL8HTmDPAXELZ8DasJQOmVfB00ux3ErpJbfd7+M1DN8R3f+Wjko
+         5zzVAO/0p8V+WnuK+6SVEzi2oVNdErSd5g7d+ccK0q2kCqFCnrbz3xF3zrKakKn6yeda
+         oKzOTMfsqqbuf942zuJyRV0q9vwjdhpeRoZgb8K1TCflUkjI0mzY1Bft6Zmph0zY44Cj
+         OzyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6bpXX6ttkDcy+vGVnCqmyPzWxH9DBAtta9ogypuShV43dQhQ+bddH38CCb81prcs4D4WIVttM7L9UtmlF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7AnjsYiG86vLhnq86i3ULT2uSw3oOIx7tnn5alaAAACazsquC
+	R1/t1Vmxoz2m+yovpZWhlGGbz4jk2c5WG6EyL1EJKl9p3yxGLHE1MQIzRihUdIrOcY9uaLOQx7x
+	LELErTf1G7L7hcLIRGua8jBhYbklRiXJ2dF8q
+X-Gm-Gg: ASbGnctoRV90Zje0o0zNXx6tuhzesCMZOgM5u/G5LkvpY6gYNsAnMixW4OMUPc+ZfPV
+	DsBgIqARDhqnO5XsvE2WzTA4J/bENXBU0xY/pFMy/2E4sCbwO3UtrkpTANomH3FtCV5NmBRrrTT
+	oFuoVAGHkFddQfxnbZg+Gf20q9FcclXA==
+X-Google-Smtp-Source: AGHT+IGECMPAgyniOqYNB21R66I8EdMyOHzZpuuSW7CxtAKNGfo7YHvttie355d+QCVHN1qEbYdE+9qUUvFsylnBIlM=
+X-Received: by 2002:a17:907:1c0e:b0:aab:8ca7:43df with SMTP id
+ a640c23a62f3a-ab6cfe11fa5mr941990066b.39.1738269300801; Thu, 30 Jan 2025
+ 12:35:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129205957.2457655-1-song@kernel.org> <20250129205957.2457655-6-song@kernel.org>
- <CAADnVQ+1Woq_mh_9iz+Dhdhw1TuXZgVrx38+aHn-bGZBVa5_uw@mail.gmail.com> <58833120-DD06-4024-B7F5-E255AC9261E6@fb.com>
-In-Reply-To: <58833120-DD06-4024-B7F5-E255AC9261E6@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 30 Jan 2025 12:23:53 -0800
-X-Gm-Features: AWEUYZkkB50lvEISP2yfaCc8Z9aDGSq3hqMxf2vZ8lIYrimfx1QglBOlzd77btw
-Message-ID: <CAADnVQLa97RqLONmcrfBWckGRWD+OKOFY0FMEu4_pSsoALtdgQ@mail.gmail.com>
-Subject: Re: [PATCH v11 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
- for bpf_dynptr_from_skb
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Liam Wisehart <liamwisehart@meta.com>, 
-	Shankaran Gnanashanmugam <shankaran@meta.com>
+References: <20250130100050.1868208-1-kirill.shutemov@linux.intel.com> <20250130100050.1868208-6-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20250130100050.1868208-6-kirill.shutemov@linux.intel.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 30 Jan 2025 13:34:24 -0700
+X-Gm-Features: AWEUYZl3-5-D2vyBu6SH4C2leVIlg1PIhkFjDOkk3Xxy6Plb6I0iqOiSPQjOIdU
+Message-ID: <CAOUHufbZAp9jJb7AA_LF2sS9TbN-T4ssSrp2GbqWSAbf5rUCVg@mail.gmail.com>
+Subject: Re: [PATCHv3 05/11] mm/truncate: Use folio_set_dropbehind() instead
+ of deactivate_file_folio()
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti <andi.shyti@linux.intel.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	David Airlie <airlied@gmail.com>, David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>, 
+	Oscar Salvador <osalvador@suse.de>, Ran Xiaokai <ran.xiaokai@zte.com.cn>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Yosry Ahmed <yosryahmed@google.com>, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 30, 2025 at 9:49=E2=80=AFAM Song Liu <songliubraving@meta.com> =
-wrote:
+On Thu, Jan 30, 2025 at 3:01=E2=80=AFAM Kirill A. Shutemov
+<kirill.shutemov@linux.intel.com> wrote:
 >
-> Hi Alexei,
+> The recently introduced PG_dropbehind allows for freeing folios
+> immediately after writeback. Unlike PG_reclaim, it does not need vmscan
+> to be involved to get the folio freed.
 >
-> Thanks for the review!
+> The new flag allows to replace whole deactivate_file_folio() machinery
+> with simple folio_set_dropbehind().
 >
-> > On Jan 29, 2025, at 6:32=E2=80=AFPM, Alexei Starovoitov <alexei.starovo=
-itov@gmail.com> wrote:
->
-> [...]
->
-> >>
-> >> +BTF_ID_LIST(bpf_dynptr_from_skb_list)
-> >> +BTF_ID(func, bpf_dynptr_from_skb)
-> >> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
-> >> +
-> >> +static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 k=
-func_id)
-> >> +{
-> >> +       if (kfunc_id !=3D bpf_dynptr_from_skb_list[0])
-> >> +               return 0;
-> >> +
-> >> +       switch (resolve_prog_type(prog)) {
-> >> +       /* Program types only with direct read access go here! */
-> >> +       case BPF_PROG_TYPE_LWT_IN:
-> >> +       case BPF_PROG_TYPE_LWT_OUT:
-> >> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
-> >> +       case BPF_PROG_TYPE_SK_REUSEPORT:
-> >> +       case BPF_PROG_TYPE_FLOW_DISSECTOR:
-> >> +       case BPF_PROG_TYPE_CGROUP_SKB:
-> >
-> > This copy pastes the logic from may_access_direct_pkt_data(),
-> > so any future change to that helper would need to update
-> > this one as well.
->
-> We can probably improve this with some helpers/macros.
->
-> >
-> >> +               return bpf_dynptr_from_skb_list[1];
-> >
-> > The [0] and [1] stuff is quite error prone.
-> >
-> >> +
-> >> +       /* Program types with direct read + write access go here! */
-> >> +       case BPF_PROG_TYPE_SCHED_CLS:
-> >> +       case BPF_PROG_TYPE_SCHED_ACT:
-> >> +       case BPF_PROG_TYPE_XDP:
-> >> +       case BPF_PROG_TYPE_LWT_XMIT:
-> >> +       case BPF_PROG_TYPE_SK_SKB:
-> >> +       case BPF_PROG_TYPE_SK_MSG:
-> >> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-> >> +               return kfunc_id;
-> >> +
-> >> +       default:
-> >> +               break;
-> >> +       }
-> >> +       return bpf_dynptr_from_skb_list[1];
-> >> +}
-> >> +
-> >> static const struct btf_kfunc_id_set bpf_kfunc_set_skb =3D {
-> >>        .owner =3D THIS_MODULE,
-> >>        .set =3D &bpf_kfunc_check_set_skb,
-> >> +       .hidden_set =3D &bpf_kfunc_check_hidden_set_skb,
-> >
-> > If I'm reading it correctly the hidden_set serves no additional purpose=
-.
-> > It splits the set into two, but patch 4 just adds them together.
->
-> hidden_set does not have BTF_SET8_KFUNCS, so pahole will not export
-> these kfuncs to vmlinux.h.
->
-> >
-> >> +       .remap =3D &bpf_kfunc_set_skb_remap,
-> >
-> > I'm not a fan of callbacks in general.
-> > The makes everything harder to follow.
->
-> This motivation here is to move polymorphism logic from verifier
-> core to kfuncs owners. I guess we will need some callback to
-> achieve this goal. Of course, we don't have to do it in this set.
->
->
-> > For all these reasons I don't like this approach.
-> > This "generality" doesn't make it cleaner or easier to extend.
-> > For the patch 6... just repeat what specialize_kfunc()
-> > currently does for dynptr ?
->
-> Yes, specialize_kfunc() can handle this. But we will need to use
-> d_inode_locked_hooks from 6/7 in specialize_kfunc(). It works,
-> but it is not clean (to me).
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-I'm missing why that would be necessary to cross the layers
-so much. I guess the code will tell.
-Pls send an rfc to illustrate the unclean part.
-
-> I will revise this set so that the polymorphism logic in handled
-> in specialize_kfunc(). For longer term, maybe we should discuss
-> "move some logic from verifier core to kfuncs" in the upcoming
-> LSF/MM/BPF?
-
-imo such topic is too narrow and detail oriented.
-There is not much to gain from discussing it at lsfmm.
-email works well for such discussions.
+Acked-by: Yu Zhao <yuzhao@google.com>
 
