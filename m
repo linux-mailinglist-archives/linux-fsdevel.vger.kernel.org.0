@@ -1,138 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-40404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A96A231AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 17:18:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA41CA23225
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 17:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3A883A772F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525A718821D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2025 16:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E11B1EBFF5;
-	Thu, 30 Jan 2025 16:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5FF1EE039;
+	Thu, 30 Jan 2025 16:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="NN807k+y"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DkL0LmWb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6871E9B3A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 16:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713E51E9B3F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 16:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738253912; cv=none; b=Q+t25nEzeUHHUQH28+iwQDs4qgRBfyQq53TNt9ihFIhmgzVaaufHo4c3lAea98gsfgkyNR5Xm9TyKs9acPJYzUETehata/VkecJhogIsp2Tbf2Qvl6XIaElO6ittySAqFuqcLMaID7iiwtCJMdSbL/x/XzIeIHKIlcDiccTnhvI=
+	t=1738255425; cv=none; b=RQwfr3dlL1lq1+SjsztkF3UYSDxfqzSIufI4O2WaoYyxX1XHz2Voq1a+yutlCET7StttNpPKm0l9AqKmtvqImzjd9fww84W2YqeB+sSLeg3ImndWpGU8XTkY5cHxiTx0XpRQJKQ7BnbeTcWGW2hsFiAna7UyWOzRMH8EVGR4N18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738253912; c=relaxed/simple;
-	bh=UuTVasloS+4IPS6W9HnNa2RwA4nkKrtMzBVAWVrkZdM=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=F1KAR9NW1KtI5Ip95E/HytbMTcY3i4nDwgyzfIiKzayCnB9/YBLazxflo/7fC+1Xc/wYIbmZbSwEFTUa5pNoHG3QfgTP4HkxOJkBsG8H1oxd3t0u7OehOi4GNeAeU784kyywOcIrdk8EQqERAYAG4Ny+4cFre/oS+klLX/D3FwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=NN807k+y; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1738255425; c=relaxed/simple;
+	bh=wm/GjTYZmSoQIdMarvhxBrtJ0uNjvcCc+5oIO1kYldE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cXzbh58G3awzS+2fXK6R4S9MlNEiAxdK0pGOa4B319Pgtil+EDAgOdjrhK3L9r5o0DFtmEMrbsUJXSkX8QQhjFqdgWlqOkMFSb6DeCw5941g64yJUSWj+mk59R77hXKoR5P4e6lRbTb9BzWc7J2LCHnlHTyOs8qdEKHA6YxBO3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DkL0LmWb; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dc149e14fcso1807552a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 08:43:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1738253911; x=1769789911;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=UuTVasloS+4IPS6W9HnNa2RwA4nkKrtMzBVAWVrkZdM=;
-  b=NN807k+yUy5RA1MKClmy+8P0QajGkhDPgZu9jbyjoZu5ccuGhgOxzEJl
-   9szjhYAeo9Sf1MGGU+h7PPRIc44oo1MfL1mU8k/46Ls0wIzBWGv7mSoS7
-   AVwGY49rImIN0qqk6nYEXJhS275zwPQ1S1iVw8OH5C333/f1dZykShEMi
-   k=;
-X-IronPort-AV: E=Sophos;i="6.13,245,1732579200"; 
-   d="scan'208";a="165529826"
-Subject: Re: [LSF/MM/BPF TOPIC] Lustre filesystem upstreaming
-Thread-Topic: [LSF/MM/BPF TOPIC] Lustre filesystem upstreaming
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2025 16:18:30 +0000
-Received: from EX19MTAUEB002.ant.amazon.com [10.0.29.78:56773]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.87.35:2525] with esmtp (Farcaster)
- id 1a476b3a-57da-4392-9d79-bc38b1caf41e; Thu, 30 Jan 2025 16:18:29 +0000 (UTC)
-X-Farcaster-Flow-ID: 1a476b3a-57da-4392-9d79-bc38b1caf41e
-Received: from EX19D017UEA002.ant.amazon.com (10.252.134.77) by
- EX19MTAUEB002.ant.amazon.com (10.252.135.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 30 Jan 2025 16:18:29 +0000
-Received: from EX19D017UEA001.ant.amazon.com (10.252.134.93) by
- EX19D017UEA002.ant.amazon.com (10.252.134.77) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 30 Jan 2025 16:18:29 +0000
-Received: from EX19D017UEA001.ant.amazon.com ([fe80::bffb:623f:af5e:ebed]) by
- EX19D017UEA001.ant.amazon.com ([fe80::bffb:623f:af5e:ebed%3]) with mapi id
- 15.02.1258.039; Thu, 30 Jan 2025 16:18:29 +0000
-From: "Day, Timothy" <timday@amazon.com>
-To: Theodore Ts'o <tytso@mit.edu>
-CC: Christoph Hellwig <hch@infradead.org>, "lsf-pc@lists.linux-foundation.org"
-	<lsf-pc@lists.linux-foundation.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "jsimmons@infradead.org"
-	<jsimmons@infradead.org>, Andreas Dilger <adilger@ddn.com>, "neilb@suse.de"
-	<neilb@suse.de>
-Thread-Index: AQHbbqGKPQGkNCnWmkGOpAnSPDKrX7MruoAAgABZxoCAA1TiAP//yvQA
-Date: Thu, 30 Jan 2025 16:18:29 +0000
-Message-ID: <0E992E6A-AF0D-4DFB-A014-5A08184821CD@amazon.com>
-References: <5A3D5719-1705-466D-9A86-96DAFD7EAABD@amazon.com>
- <Z5h1wmTawx6P8lfK@infradead.org>
- <DD162239-D4B3-433C-A7C1-2DBEBFA881EC@amazon.com>
- <20250130142820.GA401886@mit.edu>
-In-Reply-To: <20250130142820.GA401886@mit.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3DFF9C487E55254F8EC4649067AA1334@amazon.com>
-Content-Transfer-Encoding: base64
+        d=linux-foundation.org; s=google; t=1738255419; x=1738860219; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fuEDpAnG1sazTNLQRV+DgH04oKDY04Gu9xv5BY6PwaA=;
+        b=DkL0LmWb84hKpz8kFVQwe7WATu8w2oG4kLIF5cvA9T98NfSGgcAmw7v9elHfRlo/H9
+         2U4xfPetb4QRmN/xGcwy+Fve+crr4AvhVh+8K3ZROWR8uy8366JieeNFwqtBejFr1H4j
+         p/KNNE7QfkW2hcdBkVhGD3cFS0VoMZ2635kVY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738255419; x=1738860219;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fuEDpAnG1sazTNLQRV+DgH04oKDY04Gu9xv5BY6PwaA=;
+        b=cnYn9GY81GWKeVOv/28LM5G9GTrnZmJ7QIZ7UBzSVmPC/6QYAc0MDJQLGac2lc/alz
+         N2+no6cSPqDTzRkBPtJIRzAUYdcRAg8gACaypV5sFerFbQChtrrcNtsvN3/RUjQ5wovw
+         lhJR/zIAe11wAe5WhqOUjo8yvMwupYPbCxzZpncugtpKGFTblN5COKWZTFsqSAoUyLjo
+         uOBNFJdYErCYjf3ojuO6GOEKy+vXGChdig1JNHfslKSiCpbpKw9vj7nge3Hvyx/cTNsP
+         TQAB64LVj3y1D8UKCRG7X8hS28UcjVwnUdkKA9gPh5i9vuX27GaQMfH/a0vj28aSY/x0
+         AmKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7O+SIB5GHkjQvVPssbyC9nuvF9kTAFErHf90R1SoN1slxJ+xgyzh6PMS/2tHoz3uS96HAVTVB4bzglMcN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd2UuB0B3z7frP0/kikgloafK6QByM/shnZtiOQfpNC07dco5g
+	L7Glh+mhDQAKVXufqEAjlViTZuyvrMdRsluOrbOKbcNcVqP7qbOpM9NA3CgqogiSJVonIPyecux
+	WzWs=
+X-Gm-Gg: ASbGncu50Vof0AtIzIVA8pQsmzHvGCxXbFXEAsnSjAnj2fjKZGwPIBne1nQzjnjEhek
+	Kv7gO0u8zz8w3EVDU7+8mqo34eGdCNTQsg1wgNHUTshbURTf1wPPt/dWAD8ZmoVmuAC71tGG4gg
+	KVwBybngLkdGxT8/VNcqIkgg5NYsHyS5y9Xi968Hu+f13p+z0jQXPuaAd2fmmyHf8cRFSzXj2h6
+	/Wx7dCzi2DOZvo0fkBLmsve28G12P/PTAgKoK+OZIze49Z4UVTmdd/B9QOKsqQJZp8KiiZvfubL
+	Z6nbvXCoBPkTCQdaJ+NTiOrddu/lO7JPIkkO8xWrRlPZmN2+Yvwjn2qcCm15PkqCpQ==
+X-Google-Smtp-Source: AGHT+IHadOcdzYvrcmgAiWxNO5ClbUPf7fQfssURnA9hLKgOXGbl+QcQCi1nt/U3CP/WQEcypocWyA==
+X-Received: by 2002:a05:6402:84d:b0:5d0:bdc1:75df with SMTP id 4fb4d7f45d1cf-5dc5efebbb2mr6808706a12.24.1738255419644;
+        Thu, 30 Jan 2025 08:43:39 -0800 (PST)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc724aa0e8sm1310190a12.49.2025.01.30.08.43.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2025 08:43:39 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab651f1dd36so218791566b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2025 08:43:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWLyetbPyF5Eq+JkxDIlYXLTk+0HdXo3qUKGZTx25vvwtvvH1goUNbeFQnu39a19cbYAggbPD42WiPJ62R5@vger.kernel.org
+X-Received: by 2002:a05:6402:50c9:b0:5db:e7eb:1b4a with SMTP id
+ 4fb4d7f45d1cf-5dc5efbd32amr6334804a12.10.1738254929601; Thu, 30 Jan 2025
+ 08:35:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <AM6PR03MB50801990BD93BFA2297A123599EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50802EA81C89D22791CCF09099EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <20250130-hautklinik-quizsendung-d36d8146bc7b@brauner>
+In-Reply-To: <20250130-hautklinik-quizsendung-d36d8146bc7b@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 30 Jan 2025 08:35:13 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjLWFa3i6+Tab67gnNumTYipj_HuheXr2RCq4zn0tCTzA@mail.gmail.com>
+X-Gm-Features: AWEUYZneNxaHhpPSYfPAUA_rUTrk891uuSVIWZIkTE-aPADGZkPCsAjzruuXyrc
+Message-ID: <CAHk-=wjLWFa3i6+Tab67gnNumTYipj_HuheXr2RCq4zn0tCTzA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v9 1/5] bpf: Introduce task_file open-coded
+ iterator kfuncs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Juntong Deng <juntong.deng@outlook.com>, Alexander Viro <viro@zeniv.linux.org.uk>, ast@kernel.org, 
+	daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-T24gMS8zMC8yNSwgOToyOCBBTSwgIlRoZW9kb3JlIFRzJ28iIDx0eXRzb0BtaXQuZWR1IDxtYWls
-dG86dHl0c29AbWl0LmVkdT4+IHdyb3RlOg0KPiBPbiBUdWUsIEphbiAyOCwgMjAyNSBhdCAwNDoz
-NTo0NlBNICswMDAwLCBEYXksIFRpbW90aHkgd3JvdGU6DQo+ID4gTXkgYmlnZ2VzdCBxdWVzdGlv
-biBmb3IgTFNGIGlzIGFyb3VuZCBkZXZlbG9wbWVudCBtb2RlbDoNCj4gPiBPdXIgY3VycmVudCBk
-ZXZlbG9wbWVudCBtb2RlbCBpcyBzdGlsbCBvcnRob2dvbmFsIHRvIHdoYXQNCj4gPiBtb3N0IG90
-aGVyIHN1YnN5c3RlbXMvZHJpdmVycyBkby4gQnV0IGFzIHdlIGV2b2x2ZSwgaG93IGRvDQo+ID4g
-d2UgZGVtb25zdHJhdGUgdGhhdCBvdXIgZGV2ZWxvcG1lbnQgbW9kZWwgaXMgcmVhc29uYWJsZT8N
-Cj4gPiBTZW5kaW5nIHRoZSBpbml0aWFsIHBhdGNoZXMgaXMgb25lIHRoaW5nLiBDb252aW5jaW5n
-IGV2ZXJ5b25lDQo+ID4gdGhhdCB0aGUgbW9kZWwgaXMgc3VzdGFpbmFibGUgaXMgYW5vdGhlci4N
-Cj4NCj4gSSBzdXNwZWN0IG9uZSBvZiB0aGUgcmVhc29ucyB3aHkgbW9zdCBkZXZlbG9wbWVudCBp
-cyBoYXBwZW5pbmcgb3V0LW9mLXRyZWUNCj4gaXMgcHJldHR5IG11Y2ggYWxsIG9mIHRoZSB1c2Vy
-cyBvZiBMdXN0cmUgYXJlIHVzaW5nIGRpc3RybyAoYW5kIHZlcnkNCj4gb2Z0ZW4sIEVudGVycHJp
-c2UpIGtlcm5lbHMuIEFyZSB0aGVyZSBhbnkgcGVvcGxlIG91dHNpZGUgb2YgdGhlIGNvcmUNCj4g
-THVzdHJlIHRlYW0gKG1vc3Qgb2Ygd2hvbSBhcmUgcHJvYmFibHkgd29ya2luZyBmb3IgREROPykg
-dGhhdCB1c2UNCj4gTHVzdHJlIG9yIGNhbiBldmVuIHRlc3QgTHVzdHJlIHVzaW5nIHRoZSB1cHN0
-cmVhbSBrZXJuZWw/DQoNCkx1c3RyZSBoYXMgYSBsb3Qgb2YgdXNhZ2UgYW5kIGRldmVsb3BtZW50
-IG91dHNpZGUgb2YgREROL1doYW1jbG91ZCBbMV1bMl0uDQpIUEUsIEFXUywgU3VTZSwgQXp1cmUs
-IGV0Yy4gQW5kIGF0IGxlYXN0IGF0IEFXUywgd2UgdXNlIEx1c3RyZSBvbiBmYWlybHkNCnVwLXRv
-LWRhdGUga2VybmVscyBbM11bNF0uIEFuZCBJIHRoaW5rIHRoaXMgaXMgYmVjb21pbmcgbW9yZSBj
-b21tb24gLSBhbHRob3VnaA0KSSBkb24ndCBoYXZlIHNvbGlkIGRhdGEgb24gdGhhdC4NCg0KWzFd
-IGh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0x1c3RyZV8oZmlsZV9zeXN0ZW0pI0NvbW1l
-cmNpYWxfdGVjaG5pY2FsX3N1cHBvcnQNClsyXSBodHRwczovL3lvdXR1LmJlL0JFLS15U1ZRYjJN
-P3NpPVlNSGl0SmZjRTRBU1dRY0UmdD05NjANClszXSBBTDIwMjMgNi4xIC0gaHR0cHM6Ly9naXRo
-dWIuY29tL2FtYXpvbmxpbnV4L2xpbnV4L2NvbW1pdC9lZjk2NjAwOTE3MTJmYTllZGQxMzcxODBi
-ODkyNWVhNjMxNmM4MDQzDQpbNF0gQUwyMDIzIDYuMTIgKFNvb24pIC0gaHR0cHM6Ly9naXRodWIu
-Y29tL2FtYXpvbmxpbnV4L2xpbnV4L2NvbW1pdHMvYW1hem9uLTYuMTIueS9tYWlubGluZS8NCg0K
-PiBJJ2xsIGxldCBBbmRyZWFzIHRvIGNvbW1lbnQgZnVydGhlciwgYnV0IGZyb20gbXkgcGVyc3Bl
-Y3RpdmUsIGlmIHdlDQo+IHdhbnQgdG8gdXBzdHJlYW1pbmcgTHVzdHJlIHRvIGJlIHN1Y2Nlc3Nm
-dWwsIHBlcmhhcHMgb25lIHN0cmF0ZWd5DQo+IHdvdWxkIGJlIHRvIG1ha2UgaXQgZWFzaWVyIGZv
-ciB1cHN0cmVhbSB1c2VycyBhbmQgZGV2ZWxvcGVycyB0byB1c2UNCj4gTHVzdHJlLCBwZXJoYXBz
-IGluIGEgc21hbGxlciBzY2FsZSB0aGFuIHdoYXQgYSB0eXBpY2FsIERETiBjdXN0b21lcg0KPiB3
-b3VsZCB0eXBpY2FsbHkgdXNlLg0KDQpJZiB3ZSB1cHN0cmVhbWVkIHRoZSBzZXJ2ZXIgYWxvbmdz
-aWRlIHRoZSBjbGllbnQgLSBpdCdkIGJlIGVhc3kgZW5vdWdoDQpmb3IgdXBzdHJlYW0gZGV2ZWxv
-cGVycyB0byBzZXR1cCBhIGNvbGxvY2F0ZWQgTHVzdHJlIGNsaWVudC9zZXJ2ZXINCmFuZCBydW4g
-eGZzdGVzdHMgYXQgbGVhc3QuIEF0IHNvbWUgcG9pbnQgKGluIHRoZSBuZWFyLWlzaCBmdXR1cmUp
-LCBJIHdhbnQNCnRvIHB1dCB0b2dldGhlciBhIHBhdGNoIHNlcmllcyBmb3IgeGZzdGVzdHMvTHVz
-dHJlIHN1cHBvcnQuDQoNCkFuZCBpZiB5b3UgaGF2ZSBkZWRpY2F0ZWQgaGFyZHdhcmUgLSBzZXR0
-aW5nIHVwIGEgc21hbGwgZmlsZXN5c3RlbSBvdmVyDQpUQ1AvSVAgaXNuJ3QgbXVjaCBoYXJkZXIg
-dGhhbiBhbiBORlMgc2VydmVyIElNSE8uIEp1c3QgYSBta2ZzIGFuZA0KbW91bnQgcGVyIHN0b3Jh
-Z2UgdGFyZ2V0LiBXaXRoIGEgc2luZ2xlIE1EUyBhbmQgT1NTLCB5b3Ugb25seSBuZWVkIHR3bw0K
-ZGlza3MuIFNvIEkgdGhpbmsgd2UgaGF2ZSBldmVyeXRoaW5nIHdlIG5lZWQgdG8gZW5hYmxlIHVw
-c3RyZWFtDQp1c2Vycy9kZXZzIHRvIHVzZSBMdXN0cmUgd2l0aG91dCB0b28gbXVjaCBoYXNzbGUu
-IEkgdGhpbmsgaXQncyBtb3N0bHkgYQ0KbWF0dGVyIG9mIGRvY3VtZW50YXRpb24gYW5kIHNjcmlw
-dGluZy4NCg0KVGltIERheQ0KDQo=
+On Thu, 30 Jan 2025 at 08:04, Christian Brauner <brauner@kernel.org> wrote:
+>
+> I deeply dislike that this allows bpf programs to iterate through
+> another tasks files more than what is already possible with the
+> task_file_seq_* bpf api.
+
+Ack. This needs to just die.
+
+There is no excuse for this, and no, CRIU is absolutely *not* that excuse.
+
+In fact, CRIU is a huge red flag, and has caused endless issues before.
+
+We should absolutely not add special BPF interfaces for CRIU. It only
+leads to pain and misery.
+
+           Linus
 
