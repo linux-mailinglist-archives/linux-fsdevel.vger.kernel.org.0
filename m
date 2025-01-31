@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-40466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E25A2396D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 06:52:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34FCA23970
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 06:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14F5167E68
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 05:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9111889CE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 05:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED5E1487D1;
-	Fri, 31 Jan 2025 05:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3335146D6A;
+	Fri, 31 Jan 2025 05:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VEKQLkPM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HAMe/ln+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF392BB15;
-	Fri, 31 Jan 2025 05:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39AA819;
+	Fri, 31 Jan 2025 05:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738302758; cv=none; b=Ohp25FwGWzQE3W0Bd1pWU52sDjbhA2k5uUUnoQbqOzG/zutFQwfU7fL9RCuClv3l9aXzFZojJNo/+dbNHo/Vq1v8mXqnprZAYR7VMav9u0IoR/q2mzoaquPm1BWzSwswI9nDBV+ivJJMdy6KLxaY/tAG/vyKHfAWSt9g7qAe/74=
+	t=1738302990; cv=none; b=MqWh8K9PllwdbyVeRDISS18HVz/wftV6LrQVUg7OyZaQTWZ7mKAiE90DpNQuop08PlfytbjOHV6r2Ch199iijtu4++mL7JlZ/SqmxZqFiaNBWXkBlp4X5ATrT+/HOKWLMo97Mcsf05nhGic0DHzq5pOu0QOmQS3nRqnl9sjAwS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738302758; c=relaxed/simple;
-	bh=jsAufOypY4+CND/oEdprhwzj0AePJlafWUKjr3HHNUE=;
+	s=arc-20240116; t=1738302990; c=relaxed/simple;
+	bh=r00FRpJjzWBP7EYAZesRXkjGtKa/7vSsn2owKD+Oxn0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJE43qyHt/GrWk8WCVU+H3559KbT8qoVC0DgYsN14pEdH/dhgUa7F7n38TAhCr1bLQtfGmeteBFLNKBmxd6ymdIyDE5J6d+w2e3Y/6niTr86y0lwtDel3DQDNxzPJCDt7TWHFbg8fn8BEagzzTkB+9vsGqA7p2lKOg5CP79brvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VEKQLkPM; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=XAYFPACAHXbuEQi1150eTCmlDl1mMdkAaPZbrqlR48UTcKwf0SkY6/cEJkVg0try8XCE+fnkmZh1G9NtwaDOyKjP1HgoIL6Luqmw+uUmexzJDsJN4eTd0fh1YZJwk86WdvOnq85zyVAavsEhV6AN2Q36a4gNL/tUt6VxDzTvAfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HAMe/ln+; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YP7Ph251aPlz8ytKTvX8+YWjsU796xkIpvw7rMOPVoM=; b=VEKQLkPM+28nERb05FgDMiZ9t0
-	Vq9jD6kOUwNCScSLNf7ys9OrwYSkclFy73YinxXmMGm5QO4QZ85nevcKGzo4rHnq/tjXoU/A+ch9K
-	jCl7fwagIWsjNVAWSxOsHotmLJviLqbs6q+MgSMr3DEux1ycgXD1FbMFv/aUVOLuBEM+CrG/CwqAi
-	NJFaOPJ9zW7gz+edxpaaLSfRNkQ64Vnw4A2OhPtFQ8gtdWTOHmI5Ru98clp5XgOXDjhgLAg7t3u6m
-	NtKmtpvFvLSr6wosHF3NffNo6Vt3QsxUugl3dIZJ9ihko+uq62Vq24a/xNkiHJ2hMjZbvkomQpIJW
-	NvH+piUg==;
+	bh=I/5Gxht1LmYuOme3EAnZYzqy/1eU0bnMxD4WHKQW5WQ=; b=HAMe/ln+MLWxRzKh5IrSYVOudj
+	0VJnOWcOXOMrZZpD08rIF3uoDb7xrH+4gNtoymYFSaUgXmN08aDIvLumO0UDCwQdMEIY9gaL/5/1Z
+	h1e5Qolls5dPYVbHeuLPHio/xPAltOOO7MKLJ/HdytgyErkPFhoTnqZE57m2w2PDgZgh2VdL/WNvT
+	bf3sW8R03kQtsifsYPIEu7EfOgKKk3KzxXXpoT/ED3npZKFpVZJloNi1smNt/jkNIajhyM9eXWHLo
+	4ybcdmiOzJVfAnTgwRUK09geTuU13fPP5PcobFpAiCxNT34YXBvnLruMuwKn7X2mjfO8aYCs7+JI+
+	7r+5cvJg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tdjx5-0000000Ggqn-22av;
-	Fri, 31 Jan 2025 05:52:27 +0000
-Date: Fri, 31 Jan 2025 05:52:27 +0000
+	id 1tdk0v-0000000GgzS-3I7f;
+	Fri, 31 Jan 2025 05:56:25 +0000
+Date: Fri, 31 Jan 2025 05:56:25 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Juntong Deng <juntong.deng@outlook.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, ast@kernel.org,
-	daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com,
-	snorcht@gmail.com, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v9 1/5] bpf: Introduce task_file open-coded
- iterator kfuncs
-Message-ID: <20250131055227.GU1977892@ZenIV>
-References: <AM6PR03MB50801990BD93BFA2297A123599EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB50802EA81C89D22791CCF09099EC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <20250130-hautklinik-quizsendung-d36d8146bc7b@brauner>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [git pull] d_revalidate pile (v2)
+Message-ID: <20250131055625.GV1977892@ZenIV>
+References: <Z5fAOpnFoXMgpCWb@lappy>
+ <20250127173634.GF1977892@ZenIV>
+ <Z5fyAPnvtNPPF5L3@lappy>
+ <20250127213456.GH1977892@ZenIV>
+ <20250127224059.GI1977892@ZenIV>
+ <Z5gWQnUDMyE5sniC@lappy>
+ <20250128002659.GJ1977892@ZenIV>
+ <20250128003155.GK1977892@ZenIV>
+ <20250130043707.GT1977892@ZenIV>
+ <CAHk-=wjKkZBM6w+Kc+nufJVdnBzzXwPiNdzWieN3c7dEq9bMaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,28 +69,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250130-hautklinik-quizsendung-d36d8146bc7b@brauner>
+In-Reply-To: <CAHk-=wjKkZBM6w+Kc+nufJVdnBzzXwPiNdzWieN3c7dEq9bMaQ@mail.gmail.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Jan 30, 2025 at 05:04:42PM +0100, Christian Brauner wrote:
-
-> I'm also not at all swayed by the fact that this is coming out of an
-> effort to move CRIU into bpf just to make things easier. Not a selling
-> point as we do have CRIU and I don't think we need to now put more CRIU
-> related stuff into the kernel.
+On Thu, Jan 30, 2025 at 09:24:34AM -0800, Linus Torvalds wrote:
+> On Wed, 29 Jan 2025 at 20:37, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > ->d_revalidate() series, along with ->d_iname preliminary work.
+> > One trivial conflict in fs/afs/dir.c - afs_do_lookup_one() has lost
+> > one argument in mainline and switched another from dentry to qstr
+> > in this series.
 > 
-> So this will not get an ACK from me. I'm putting Al and Linus here as
-> well as they might have opinions on this and might disagree with me.
+> Actually, I had a conflict in fs/fuse/dir.c, and it was less trivial.
+> 
+> The d_revalidate() change means that the stable name passed in might
+> come from the path lookup, which means that it isn't NUL-terminated.
+> 
+> So the code that did
+> 
+>         args->in_numargs = 1;
+>         args->in_args[0].size = name->len + 1;
+>         args->in_args[0].value = name->name;
+> 
+> in fuse_lookup_init() is no longer valid for revalidate, and  instead
+> you made it do the NUL termination as the next arg:
+> 
+>         args->in_numargs = 2;
+>         args->in_args[0].size = name->len;
+>         args->in_args[0].value = name->name;
+>         args->in_args[1].size = 1;
+>         args->in_args[1].value = "";
+> 
+> Fine, no problem. Except it clashes with commit 7ccd86ba3a48 ("fuse:
+> make args->in_args[0] to be always the header"), which made in_args[0]
+> be that empty case, and moved in_args[0] up to be arg[1].
+> 
+> So my resolution continues on that, and ends up with three in_args, like this:
+> 
+>         args->in_numargs = 3;
+>         fuse_set_zero_arg0(args);
+>         args->in_args[1].size = name->len;
+>         args->in_args[1].value = name->name;
+>         args->in_args[2].size = 1;
+>         args->in_args[2].value = "";
 
-Strongly seconded.  While we are at it, one thing I really hate about
-BPF access to descriptor tables is the idiotic idea of using descriptor
-table as private data structure.  Sure, when talking to userland it's
-perfectly fine to stash your object into descriptor table and use
-descriptors for marshalling that.  Doing that kernel-side is inherently
-racy, especially if you end up assuming that underlying object won't
-go away until your skel_closenz() - or that it will go away as soon
-as that thing is called.  And judging by experience with regular
-kernel code, that's an assumption that gets made again and again;
-see anon_inode_getfile() callers that used to be anon_inode_getfd() -
-a lot of those appeared while whacking those moles...
+*nod*
+
+My apologies - that did show up in -next (obviously), with the same
+resolution you went for, everyone nodded and agreed that it was obviously
+the right fix.  Should've mentioned that when updating pull request
+message (that wasn't an issue in the first variant, since that had
+been prior to fuse merge).  Sorry about missing that...
 
