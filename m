@@ -1,237 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-40502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE19A24114
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 17:53:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D763A2411D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 17:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCF3188446E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 16:53:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C10FE163F85
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 16:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6DD1EE7D6;
-	Fri, 31 Jan 2025 16:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8384F1EE039;
+	Fri, 31 Jan 2025 16:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KBpSDWRb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZJy6y91"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1BA1C5D63;
-	Fri, 31 Jan 2025 16:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ACC13213E;
+	Fri, 31 Jan 2025 16:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738342374; cv=none; b=BdaG4+2o/fIWy53ChJAUzsKS0r3pvfKizwpi4VDLAwUNJUY475Rfr3ge9X+sdZHEdCRIvIew3JNxcRjvrUkkVcy/5auLB48I7O7Y4P2WOcGb43HC5pf/9Ufx68E4KsKkbeIjQHShpu1pUBZobzm7oZHuz2Tl9oLLoFx0W6cQPhU=
+	t=1738342474; cv=none; b=XbVwwXli3qb7IFJ0TDYQNRflCRw66/DlyHdJ8DsWWFsBjwHdLGKiqh3fzuelkxFUExKrl0jhMyK05+tBx0EPAxe9cDbSs6XvmLr9bXP3b2TK3S7o7gD8is7NalKR0k5/K33PPeAyTAqLjxHxjVfeo2zTRMdM4Ri3nuCIHeykUjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738342374; c=relaxed/simple;
-	bh=0GT4/+LlBqIUtZ7pp3RVNcFmSCoL/LN3iyCtSxaQQRA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qj+xKI+PlfrZt4XOuJcVR5HhK2fkvcLsIbXF1dNhXWa8GWhcW8HuZZD37T3SvkJ+rQLr53o63FUs2586xx6Gj5emE5jk/fHK1pjtC2tQaVb+JzW7EGZXvX+TGMxKlf/eLtKH8G3oKjmD5wE3c4YPXKAD8LgjcEoQv3oVwXmgQGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KBpSDWRb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50VGii85010526;
-	Fri, 31 Jan 2025 16:52:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=laejTw
-	/J93FIpv8zpyFVltvFqqr8hmZZuzZLCRPS94Y=; b=KBpSDWRb34HwLPFamsc/dm
-	8qVij7dR2ANkYM0mmnmBmHquHxyVR8nSia+qbwesKcH5aQGJS0uEQwftUXV0YICe
-	WYYFEU+ghy1JHyzk1TMqjDP8Jb2bRoXltpel32CqdLhd5StQGtwT6qcS/Maizj/f
-	EaKKMnn/QSVjdB858NMjPKvdc4RF272+7zAUm3RKIsH6SLk/udVLfh+vuijn3fEg
-	SOq5v/idgt2QAweAL7yuVI/Z5AOHcDE6V8qV/QHPde+TD4TtTjGL2PGhjMUUusYL
-	I6l+hSYLXmfX97CCjTYuNxrQb5PJBEHOKe/wIyNxQnBLw54PHSfe02g6w5Dd6szg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44gt7nachj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 Jan 2025 16:52:22 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 50VGmbT1002833;
-	Fri, 31 Jan 2025 16:52:21 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44gt7nachf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 Jan 2025 16:52:21 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50VGSqNi024524;
-	Fri, 31 Jan 2025 16:52:20 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44gf914fyw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 Jan 2025 16:52:20 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50VGqKqG19136812
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 Jan 2025 16:52:20 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 02B1258062;
-	Fri, 31 Jan 2025 16:52:20 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E49F58059;
-	Fri, 31 Jan 2025 16:52:19 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.73.176])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 31 Jan 2025 16:52:19 +0000 (GMT)
-Message-ID: <574ab3058a019c0536c29f54516c48fdae82af12.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 5/6] ima: Defer fixing security.ima to __fput()
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Fri, 31 Jan 2025 11:52:18 -0500
-In-Reply-To: <20250122172432.3074180-6-roberto.sassu@huaweicloud.com>
-References: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
-	 <20250122172432.3074180-6-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1738342474; c=relaxed/simple;
+	bh=7Hl3GljDjAhtN6pmOcEy1UlbVLzmS0WmXIW/DQQ3PiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDuGJPaKg0xArXY+lsKRwmAUFEzsDmHjUJjwTR9OEpuqQdZcdg9bGHRFuQ63CmecSx1ReKnTlpcBZZJhY7Vj3qPIsXZySzP10dcbAHg2COO/JatGfQYSHSwsySOLh4mjNvHr4StoaOoUa+Csl6IQVBhMoMUlIEawxtMDp9CD/RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZJy6y91; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1622C4CED3;
+	Fri, 31 Jan 2025 16:54:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738342473;
+	bh=7Hl3GljDjAhtN6pmOcEy1UlbVLzmS0WmXIW/DQQ3PiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AZJy6y91Vv1HZtJR8WflihFkJ/rqTfbZ1FKuyaSEsO+rRESNkufWToIr8vsIyAHPn
+	 iwrqhMfTwhvqTIbu+//DqynolEY2R0aLQFRbOcBoKCiJ2Ty/5vAWrVr613mMbUtPPu
+	 kFfrYqU5XYVpxevgUR0q2B5wmXt9IsyUPoLZYNYeMhMw6gHiC9uXwgyap60f3S73H4
+	 Fx+/dvKi/JkmRKx+wjGdYX1Rk84gtiELgf+Bn0Uq+VMCB3DkLMxmlcJvzNRU1beS2r
+	 NWCfBhVu7I+3u2eKAXDNofdgeG9l8XlbCva8bcmzs1OOZXdNlcbR5RyIHLSD4xCDom
+	 fOgS0LcUDS1mQ==
+Date: Fri, 31 Jan 2025 08:54:31 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: hare@suse.de, dave@stgolabs.net, david@fromorbit.com, djwong@kernel.org,
+	kbusch@kernel.org, john.g.garry@oracle.com, hch@lst.de,
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
+Subject: Re: [PATCH 0/5] fs/buffer: strack reduction on async read
+Message-ID: <Z50AR0RKSKmsumFN@bombadil.infradead.org>
+References: <20241218022626.3668119-1-mcgrof@kernel.org>
+ <Z2MrCey3RIBJz9_E@casper.infradead.org>
+ <Z2OEmALBGB8ARLlc@bombadil.infradead.org>
+ <Z2OYRkpRcUFIOFog@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: yGtW4jrvmsBMwDt-hPQYRRevwsyhlf-B
-X-Proofpoint-ORIG-GUID: mn4jY_xc0QbmeTeMxX8t1_qZEjLIKbti
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-31_05,2025-01-31_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- clxscore=1015 mlxscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2501310127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z2OYRkpRcUFIOFog@casper.infradead.org>
 
-On Wed, 2025-01-22 at 18:24 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> IMA-Appraisal implements a fix mode, selectable from the kernel command
-> line by specifying ima_appraise=3Dfix.
->=20
-> The fix mode is meant to be used in a TOFU (trust on first use) model,
-> where systems are supposed to work under controlled conditions before the
-> real enforcement starts.
->=20
-> Since the systems are under controlled conditions, it is assumed that the
-> files are not corrupted, and thus their current data digest can be truste=
-d,
-> and written to security.ima.
->=20
-> When IMA-Appraisal is switched to enforcing mode, the security.ima value
-> collected during the fix mode is used as a reference value, and a mismatc=
-h
-> with the current value cause the access request to be denied.
->=20
-> However, since fixing security.ima is placed in ima_appraise_measurement(=
-)
-> during the integrity check, it requires the inode lock to be taken in
-> process_measurement(), in addition to ima_update_xattr() invoked at file
-> close.
->=20
-> Postpone the security.ima update to ima_check_last_writer(), by setting t=
-he
-> new atomic flag IMA_UPDATE_XATTR_FIX in the inode integrity metadata, in
-> ima_appraise_measurement(), if security.ima needs to be fixed. In this wa=
-y,
-> the inode lock can be removed from process_measurement(). Also, set the
-> cause appropriately for the fix operation and for allowing access to new
-> and empty signed files.
->=20
-> Finally, update security.ima when IMA_UPDATE_XATTR_FIX is set, and when
-> there wasn't a previous security.ima update, which occurs if the process
-> closing the file descriptor is the last writer.
->=20
-> Deferring fixing security.ima has a side effect: metadata of files with a=
-n
-> invalid EVM HMAC cannot be updated until the file is close. In alternativ=
-e
-> to waiting, it is also recommended to add 'evm=3Dfix' in the kernel comma=
-nd
-> line to handle this case (recommendation added to kernel-parameters.txt a=
-s
-> well).
->=20
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
+On Thu, Dec 19, 2024 at 03:51:34AM +0000, Matthew Wilcox wrote:
+> On Wed, Dec 18, 2024 at 06:27:36PM -0800, Luis Chamberlain wrote:
+> > On Wed, Dec 18, 2024 at 08:05:29PM +0000, Matthew Wilcox wrote:
+> > > On Tue, Dec 17, 2024 at 06:26:21PM -0800, Luis Chamberlain wrote:
+> > > > This splits up a minor enhancement from the bs > ps device support
+> > > > series into its own series for better review / focus / testing.
+> > > > This series just addresses the reducing the array size used and cleaning
+> > > > up the async read to be easier to read and maintain.
+> > > 
+> > > How about this approach instead -- get rid of the batch entirely?
+> > 
+> > Less is more! I wish it worked, but we end up with a null pointer on
+> > ext4/032 (and indeed this is the test that helped me find most bugs in
+> > what I was working on):
+> 
+> Yeah, I did no testing; just wanted to give people a different approach
+> to consider.
+> 
+> > [  106.034851] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > [  106.046300] RIP: 0010:end_buffer_async_read_io+0x11/0x90
+> > [  106.047819] Code: f2 ff 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 8b 47 10 48 89 fb 48 8b 40 18 <48> 8b 00 f6 40 0d 40 74 0d 0f b7 00 66 25 00 f0 66 3d 00 80 74 09
+> 
+> That decodes as:
+> 
+>    5:	53                   	push   %rbx
+>    6:	48 8b 47 10          	mov    0x10(%rdi),%rax
+>    a:	48 89 fb             	mov    %rdi,%rbx
+>    d:	48 8b 40 18          	mov    0x18(%rax),%rax
+>   11:*	48 8b 00             	mov    (%rax),%rax		<-- trapping instruction
+>   14:	f6 40 0d 40          	testb  $0x40,0xd(%rax)
+> 
+> 6: bh->b_folio
+> d: b_folio->mapping
+> 11: mapping->host
+> 
+> So folio->mapping is NULL.
+> 
+> Ah, I see the problem.  end_buffer_async_read() uses the buffer_async_read
+> test to decide if all buffers on the page are uptodate or not.  So both
+> having no batch (ie this patch) and having a batch which is smaller than
+> the number of buffers in the folio can lead to folio_end_read() being
+> called prematurely (ie we'll unlock the folio before finishing reading
+> every buffer in the folio).
 
-[ ... ]
+But:
 
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -158,13 +158,16 @@ static void ima_check_last_writer(struct ima_iint_c=
-ache
-> *iint,
-> =C2=A0				=C2=A0 struct inode *inode, struct file *file)
-> =C2=A0{
-> =C2=A0	fmode_t mode =3D file->f_mode;
-> -	bool update;
-> +	bool update =3D false, update_fix;
-> =C2=A0
-> -	if (!(mode & FMODE_WRITE))
-> +	update_fix =3D test_and_clear_bit(IMA_UPDATE_XATTR_FIX,
-> +					&iint->atomic_flags);
+a) all batched buffers are locked in the old code, we only unlock
+   the currently evaluated buffer, the buffers from our pivot are locked
+   and should also have the async flag set. That fact that buffers ahead
+   should have the async flag set should prevent from calling
+   folio_end_read() prematurely as I read the code, no?
+
+b) In the case we're evaluting the last buffer, we can unlock and call
+   folio_end_read(), but that seems fine given the previous batch work
+   was in charge of finding candidate buffers which need a read, so in
+   this case there should be no pending read.
+
+So I don't see how we yet can call folio_end_read() prematurely.
+
+We do however unlock the buffer in end_buffer_async_read(), but in case
+of an inconsistency we simply bail on the loop, and since we only called
+end_buffer_async_read() in case of the buffer being up to date, the only
+iconsistency we check for is if (!buffer_uptodate(tmp)) in which case
+the folio_end_read() will be called but without a success being annoted.
+
+> Once the folio is unlocked, it can be truncated.  That's a second-order
+> problem, but it's the one your test happened to hit.
+> 
+> 
+> This should fix the problem; we always have at least one BH held in
+> the submission path with the async_read flag set, so
+> end_buffer_async_read() will not end it prematurely.
+
+But this alternative does not call end_buffer_async_read(), in fact
+we only call folio_end_read() in case of no pending reads being needed.
+
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index cc8452f60251..fd2633e4a5d2 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2361,9 +2361,9 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>  {
+>  	struct inode *inode = folio->mapping->host;
+>  	sector_t iblock, lblock;
+> -	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
+> +	struct buffer_head *bh, *head, *prev = NULL;
+>  	size_t blocksize;
+> -	int nr, i;
+> +	int i;
+>  	int fully_mapped = 1;
+>  	bool page_error = false;
+>  	loff_t limit = i_size_read(inode);
+> @@ -2380,7 +2380,6 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>  	iblock = div_u64(folio_pos(folio), blocksize);
+>  	lblock = div_u64(limit + blocksize - 1, blocksize);
+>  	bh = head;
+> -	nr = 0;
+>  	i = 0;
+>  
+>  	do {
+> @@ -2411,40 +2410,33 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>  			if (buffer_uptodate(bh))
+>  				continue;
+>  		}
+> -		arr[nr++] = bh;
 > +
-> +	if (!(mode & FMODE_WRITE) && !update_fix)
-> =C2=A0		return;
-> =C2=A0
-> =C2=A0	ima_iint_lock(inode);
-> -	if (atomic_read(&inode->i_writecount) =3D=3D 1) {
-> +	if ((mode & FMODE_WRITE) && atomic_read(&inode->i_writecount) =3D=3D 1)=
- {
-> =C2=A0		struct kstat stat;
-> =C2=A0
-> =C2=A0		update =3D test_and_clear_bit(IMA_UPDATE_XATTR,
-> @@ -181,6 +184,10 @@ static void ima_check_last_writer(struct ima_iint_ca=
-che *iint,
-> =C2=A0				ima_update_xattr(iint, file);
-> =C2=A0		}
-> =C2=A0	}
+> +		lock_buffer(bh);
+> +		if (buffer_uptodate(bh)) {
+> +			unlock_buffer(bh);
+> +			continue;
+> +		}
 > +
-> +	if (!update && update_fix)
-> +		ima_update_xattr(iint, file);
+> +		mark_buffer_async_read(bh);
+> +		if (prev)
+> +			submit_bh(REQ_OP_READ, prev);
+> +		prev = bh;
+>  	} while (i++, iblock++, (bh = bh->b_this_page) != head);
+>  
+>  	if (fully_mapped)
+>  		folio_set_mappedtodisk(folio);
+>  
+> -	if (!nr) {
+> -		/*
+> -		 * All buffers are uptodate or get_block() returned an
+> -		 * error when trying to map them - we can finish the read.
+> -		 */
+> -		folio_end_read(folio, !page_error);
+> -		return 0;
+> -	}
+> -
+> -	/* Stage two: lock the buffers */
+> -	for (i = 0; i < nr; i++) {
+> -		bh = arr[i];
+> -		lock_buffer(bh);
+> -		mark_buffer_async_read(bh);
+> -	}
+> -
+>  	/*
+> -	 * Stage 3: start the IO.  Check for uptodateness
+> -	 * inside the buffer lock in case another process reading
+> -	 * the underlying blockdev brought it uptodate (the sct fix).
+> +	 * All buffers are uptodate or get_block() returned an error
+> +	 * when trying to map them - we must finish the read because
+> +	 * end_buffer_async_read() will never be called on any buffer
+> +	 * in this folio.
+
+Do we want to keep mentioning end_buffer_async_read() here?
+
+>  	 */
+> -	for (i = 0; i < nr; i++) {
+> -		bh = arr[i];
+> -		if (buffer_uptodate(bh))
+> -			end_buffer_async_read(bh, 1);
+> -		else
+> -			submit_bh(REQ_OP_READ, bh);
+> -	}
+> +	if (prev)
+> +		submit_bh(REQ_OP_READ, prev);
+> +	else
+> +		folio_end_read(folio, !page_error);
 > +
-> =C2=A0	ima_iint_unlock(inode);
-> =C2=A0}
-> =C2=A0
-> @@ -378,13 +385,10 @@ static int process_measurement(struct file *file, c=
-onst
-> struct cred *cred,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 template_desc);
-> =C2=A0	if (rc =3D=3D 0 && (action & IMA_APPRAISE_SUBMASK)) {
-> =C2=A0		rc =3D ima_check_blacklist(iint, modsig, pcr);
-> -		if (rc !=3D -EPERM) {
-> -			inode_lock(inode);
-> +		if (rc !=3D -EPERM)
-> =C2=A0			rc =3D ima_appraise_measurement(func, iint, file,
-> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pathname, xattr_value,
-> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xattr_len, modsig);
-> -			inode_unlock(inode);
-> -		}
-> =C2=A0		if (!rc)
-> =C2=A0			rc =3D mmap_violation_check(func, file, &pathbuf,
-> =C2=A0						=C2=A0 &pathname, filename);
+>  	return 0;
 
-In ima_appraise_measurement() IMA calls EVM to verify the file metadata
-(evm_verifyxattr). One would think that since IMA is not "fixing" security.=
-ima, EVM
-would not require the inode lock to be taken by IMA.  However, in addition =
-to
-verifying the file metdata, EVM converts the original file metadata signatu=
-re to an
-HMAC.  This does require the inode lock. Perhaps the EVM conversion from a =
-signature
-to an HMAC needs to be deferred as well.
+Becuase we only call folio_end_read() in the above code in case we had
+no pending read IO determined. In case we had to at least issue one read
+for one buffer we never call folio_end_read(). We didn't before unless
+we ran into a race where a pending batched read coincided with a read
+being issued and updating our buffer by chance, and we determined we
+either completed that read fine or with an error.
 
-Mimi
+Reason I'm asking these things is I'm trying to determine if there was
+an issue before we're trying to fix other than the simplification with
+the new un-batched strategy. I don't see it yet. If we're fixing
+something here, it is still a bit obscure to me and I'd like to make
+sure we document it properly.
 
+  Luis
 
