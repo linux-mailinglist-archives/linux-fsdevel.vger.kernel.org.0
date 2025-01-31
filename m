@@ -1,98 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-40508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20C7A2418C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 18:06:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF01A241F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 18:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C84163D7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 17:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EDFB3A31BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 17:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B28A1E883E;
-	Fri, 31 Jan 2025 17:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FBD1EEA44;
+	Fri, 31 Jan 2025 17:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbFnsLBm"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sd3WfeB7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D521EE00B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 17:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656A71F1313
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 17:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738343192; cv=none; b=ONlmmYJuaNkNEWIuzpPujea4t7Hhp+FtskGB1p4YU/R2e1o5u5Vlh3VxjE09RbgrnePrsf02mY3JzX040/vvfOFwJR7KrVlCT9Z3b7fhEfFQU4xChGc07cXb8S+weNDeUMtWvZ/ftdsuLYI+SjY8OAD6sDB00hocGB2Sr/Q5jkA=
+	t=1738344959; cv=none; b=eKkYO9pAtjBx+fxxaRCsN77MiTritoNP2TrBddKMy/J3oFdXj+UoLefi7fetNfGaQLKvEvVmDIW1It/lRVlZXSDNLjMozTyRwtFdcdIrLTc4OJFdmHM0ndydmpCgXirOXptFhd8riLw7+c4gOXHsvE79FGOkaU0xWd5oFKfS+gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738343192; c=relaxed/simple;
-	bh=39axAhy0T2z8BXdixq7iLVH4wVXl+kEXDkWjvRAqRQg=;
+	s=arc-20240116; t=1738344959; c=relaxed/simple;
+	bh=7tFMd94XrNV2Cv0ba9mt04yYUrLg9TaClHoJK93oO2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BsUZjOT/Ymfh/PXWrthiR+7Laiqz+4A40Sf88umBSJ4vqxxQsF+Z0kJxA8cbglst0xqsnnORDHKKpAFEu59/V2DcMhqeSYql516YbGnQHLJ40lR+wXulqY5s2phq+ZjLoYQNWK9k1OOXBiCI5c+eC0EUUMEi8kmk7tqf6kyPSbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbFnsLBm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 110DEC4CED1;
-	Fri, 31 Jan 2025 17:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738343192;
-	bh=39axAhy0T2z8BXdixq7iLVH4wVXl+kEXDkWjvRAqRQg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EExSHuVlCgaBeaSyYa+kAx36O6k27hUIS7//p9CQi2/MNMcBoRFgPKrNHiw60uBxca97nMrX3QoS+7k47Zu8RpaKH7va8IuFWNiVPaRKBw/zfPzAYN5Mqa0yDot6cAJO7FkrX1zG4znbYlAC4+XX3gWGVIAuNd4aDg75ZhT6Pcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sd3WfeB7; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yl32d2k5Qzrj4;
+	Fri, 31 Jan 2025 18:35:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1738344953;
+	bh=JQNxKR9dbJjG5bam5n/mwVoP3e4BSTQ5f1tiApN5rcs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YbFnsLBmPu7JgsHRLvde9cS8wx7EYpb892hAi+Znb04og01r+9pRmV8L5IMdGX7o5
-	 DI+mRMYsdiGbcYMZgEjclVBWQT3mm35jg0fL7XJ0pYlKiZOyu3EndCRF171b3DpZH4
-	 q1r2I9OR4veOIHsW+65X2tAhWMx0HWtjtKpiuMyk50dmUdivAdCX30u4ZjoqQtOzIJ
-	 P+Zx/fTNvyGT5UrNQuhofj3LBw7/urGFRrBpr3WdltpLcAmUdq1vCaLqTBK5JQVGAW
-	 OOW+Z4Wey5AOL8MDHylFMheZrR6lC+GgevoCSyg8kjmNbyTBLpcsdkm1vx/Mz4p+iQ
-	 6+uwy2sfSAGFw==
-Date: Fri, 31 Jan 2025 09:06:30 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: Dave Chinner <david@fromorbit.com>, lsf-pc@lists.linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, anuj20.g@samsung.com,
-	joshi.k@samsung.com, axboe@kernel.dk, clm@meta.com, hch@lst.de,
-	willy@infradead.org, gost.dev@samsung.com,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
-Message-ID: <Z50DFhRseVlI8E4E@bombadil.infradead.org>
-References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com>
- <20250129102627.161448-1-kundan.kumar@samsung.com>
- <Z5qw_1BOqiFum5Dn@dread.disaster.area>
- <20250131093209.6luwm4ny5kj34jqc@green245>
+	b=sd3WfeB7FkxYwSUsLyqF80fmYo23XXoWRTEyKyWwSnRlODArcXk9VwRI1pWstO7x2
+	 TvtAzY2cFSZ5e9VgTAypRbTdjJtfQZF01kGaYawHIP9fh18ipHGrrVMEJcapjqMMSk
+	 C45FtTyK0elHkFt6vtxhUSbMfAa04ZYzjXHVW+/A=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yl32b73zqzHLJ;
+	Fri, 31 Jan 2025 18:35:51 +0100 (CET)
+Date: Fri, 31 Jan 2025 18:35:49 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Charles Zaffery <czaffery@roblox.com>, 
+	Daniel Burgener <dburgener@linux.microsoft.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Kees Cook <kees@kernel.org>, Luca Boccassi <luca.boccassi@gmail.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
+	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
+	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, containers@lists.linux.dev
+Subject: Re: [RFC PATCH v1 0/3] Expose Landlock domain IDs via pidfd
+Message-ID: <20250131.baePeenoo2ik@digikod.net>
+References: <20250131163447.1140564-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250131093209.6luwm4ny5kj34jqc@green245>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250131163447.1140564-1-mic@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jan 31, 2025 at 03:02:09PM +0530, Kundan Kumar wrote:
-> > IOWs, having too much parallelism in writeback for the underlying
-> > storage and/or filesystem can be far more harmful to system
-> > performance under load than having too little parallelism to drive
-> > the filesystem/hardware to it's maximum performance.
+On Fri, Jan 31, 2025 at 05:34:44PM +0100, Mickaël Salaün wrote:
+> Hi,
 > 
-> With increasing speed of devices we would like to improve the performance of
-> buffered IO as well. This will help the applications(DB, AI/ML) using buffered
-> I/O. If more parallelism is causing side effect, we can reduce it using some
-> factor like:
-> 1) writeback context per NUMA node.
-> 2) Fixed number of writeback contexts, say min(10, numcpu).
-> 3) NUMCPU/N number of writeback contexts.
+> Landlock enables users to create unprivileged nested security sandboxes
+> (i.e. domains).  Each of these domains get a unique ID, which is used to
+> identify and compare different domains.  With the audit support, these
+> IDs will be used in logs, but users also need a way to map these IDs to
+> processes and directly read domain IDs of arbitrary tasks.
+> 
+> pidfd is a reference to a task that enables users to interact with it
+> and read some of its properties with the PIDFD_GET_INFO IOCTL.  This
+> patch series extend this interface with two new properties:
+> PIDFD_INFO_LANDLOCK_LAST_DOMAIN and PIDFD_INFO_LANDLOCK_FIRST_DOMAIN.
+> 
+> Being able to read tasks' domain IDs is useful for telemetry, debugging, and
+> tests.  It enables users:
+> - to know if a task is well sandboxed;
+> - to know which tasks are part of the same sandbox;
+> - to map Landlock audit logs to running processes.
+> 
+> Furthermore, thanks to recvmsg(2)'s SCM_PIDFD, it is also possible to reliably
+> identify a peer's sandbox.
+> 
+> This patch series is based on the audit support patch series v5:
+> https://lore.kernel.org/all/20250108154338.1129069-1-mic@digikod.net/
 
-Based on Dave's feedback, it would seem not using 4) can in the worst
-case make things worse in certain heavy workloads. So an opt-in rather
-than default would probably be best for 1-3.
+That was the v4, here is the v5:
+https://lore.kernel.org/all/20250131163059.1139617-1-mic@digikod.net/
 
-> 4) Writeback context based on FS geometry like per AG for XFS, as per your
->   suggestion.
-
-To this later point 4):
-
-This is not the first time having the ability to gather filesystem topology
-somehow comes up for more interesting enhancements, FDP being the other one.
-I don't think we have a generic way to gather this information today, and so
-do we want a way to at least allow internal users to query for something like
-this?
-
-  Luis
+> 
+> I'll talk about this feature at FOSDEM:
+> https://fosdem.org/2025/schedule/event/fosdem-2025-6071-sandbox-ids-with-landlock/
+> 
+> Regards,
+> 
+> Mickaël Salaün (3):
+>   landlock: Add landlock_read_domain_id()
+>   pidfd: Extend PIDFD_GET_INFO with PIDFD_INFO_LANDLOCK_*_DOMAIN
+>   samples/landlock: Print domain ID
+> 
+>  fs/pidfs.c                   | 24 +++++++++++-
+>  include/linux/landlock.h     | 26 +++++++++++++
+>  include/uapi/linux/pidfd.h   |  4 ++
+>  samples/landlock/sandboxer.c | 29 +++++++++++++-
+>  security/landlock/Makefile   | 12 ++++--
+>  security/landlock/domain.c   |  2 -
+>  security/landlock/domain.h   |  8 ++--
+>  security/landlock/ruleset.c  |  2 +
+>  security/landlock/syscalls.c | 75 ++++++++++++++++++++++++++++++++++++
+>  9 files changed, 169 insertions(+), 13 deletions(-)
+>  create mode 100644 include/linux/landlock.h
+> 
+> 
+> base-commit: a4b76d5e6800121372b88c85628a7867a5fdc707
+> -- 
+> 2.48.1
+> 
+> 
 
