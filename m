@@ -1,111 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-40495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6430FA23F02
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 15:13:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0AEA23F0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 15:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3FB07A255E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 14:12:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 253FB3A65DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 14:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF821CAA92;
-	Fri, 31 Jan 2025 14:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAD71CEAD5;
+	Fri, 31 Jan 2025 14:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8ZuO3j9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GcI+YDUi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD78E1CAA8F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 14:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38752EAC6;
+	Fri, 31 Jan 2025 14:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738332818; cv=none; b=Yi6lu71URdlv0wLeXpfeYTFB4m0juoKqiQAzIpHylruEuDUUL5yEPk3a3kflStGalr9i5/Z7q4EEDsbGvn4rodOfFIiLRwZJVMogItxBiEB5jazr/VFGERAnkzu7eUFepyqe6nz7CLdmdoZyIqf3NNxLg1ywkzP4M9J24nzwogM=
+	t=1738333306; cv=none; b=k1DvFfCEFPIgUkTHcFbW6TGASlNoJqGTECiv+Aqu0Uj1iVPTGExmDBvZSBJFSp4quXDUZERuh3kdviOF551lTTyA6xgRqGq4On6bt5qD8JHqQ5U9fNAi8FxxCpqtyk2LxRUI+jZANv11e3CdQOedco8KMdraj7+LAeLLNmAVWh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738332818; c=relaxed/simple;
-	bh=HDsbtP43ez2FetVb2B+hPM0c9da4FH7bKgAu+7KHljs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OZ9QJJxobU8Yr48CKGjsm8EJIXq3lMTx5S6IgDzGddKfdTSsI4WjB34yz2VR/mT3W89n9SofdJHovxHHHi/vjgI/sZ5KuHEbWGpQcBBYfLyb26r9w1kU24Q9it7ifg17XVdKBLut+GqieEqOlXZsCH2ftG+PxuKeVWZrmKjRXDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8ZuO3j9; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d932eac638so3565326a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 06:13:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738332815; x=1738937615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HDsbtP43ez2FetVb2B+hPM0c9da4FH7bKgAu+7KHljs=;
-        b=a8ZuO3j9dbfKpHu7rsueUM9jUPeMSAaDS8XgDKhSK5YR59J0+bBpcMfPTyo8z8knBd
-         beGZNZmvOSyOgkPi0A16k84SJ1An1vsboPwopHLyZfHm21ZrFzW7UnDtaG8d3waTkx5U
-         17a9G5gSasHJovWyeDP1IzVNDikBzaKElAH0SAP3hz3htHK8F+KvQGN9EZLK5MD7s3hZ
-         eUZlNypJdLf8iayOR/kc3LVE1RbzvRH83LcmhflK/XPMcxur2nX7bO+egMe5KRAk5Xc5
-         QzWjkZkQauJwrUNACP8kbqcDKpunzFVTrDW5ltrBFv68hzyBno31J9BhiqzeoDcxgYqx
-         80Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738332815; x=1738937615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HDsbtP43ez2FetVb2B+hPM0c9da4FH7bKgAu+7KHljs=;
-        b=l0OrPVr7r0Ot7zgC2l6tDUm1OX76SfSGWxbmePkzZDNLgAqrfboqzSW2m82OXmHcK8
-         +y3gqcg8iE1oW3b5Zu2laiQCiczvb80usWRzrtA8qkkFdBtgwANurSb4fJ3jCTPi3RT5
-         54ZvheMJSUvUDyypS16tn5vHryXiv5+b9NPSDECjp385677avS6wOaO56BLNIVx72anb
-         UtjF7k5jMy2q3U0/D1xP3OTfOmBti0EyMgknlpTsdLFLHQsyrIhAKfAyvBqJz/QFh7Q3
-         MTfmItGNnwwD7zM2tiKkpnl2ftsgOAzFYhKcGr6iDvFcTLu3l/n2ZvqjLcCdvY/fd7yh
-         Ll1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWLZxCQl3iJDFcMkdBwxzAhVqePJ4fhaeKX7duzxuTPqRoLWYZbhjAKWp4IIl9DTYbXpFHdBXrFC3jEpnsF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY2QiGC4NZwUVBH4BrZGSPH4aRxRJ7aX50ELGJJPnGInxusslK
-	VmpAnEihffmjTYdaRmPJ3O8RWOkT2gb/wINnq1z064LrOnwf8ryx8I0qC/mfV1vS9m+T6X8qOE4
-	Nna/0QHO0KzTw3y56tMh1u2jwU2U=
-X-Gm-Gg: ASbGncvhtxQ1gsWLi2/R/Glv3g8SXqX3WuEUMu4yNgJPOUD1fH4bKZ5zOvWFxRfqQ+l
-	N5ZJoceOjjKDMmLtc4+7XNAkzuPDlxv8LVrZSf8QE3L9dNvHleYFHs8q0vdKV+CjMRnG1eFeg
-X-Google-Smtp-Source: AGHT+IFLF3DufGNQzHwWIGiZfzJP0e81FZu4BLhvEtYDEzjRXjmrqZQYzD3bgIz9G3cE7DB8AcKdx9OTx0rZRVaN4Ew=
-X-Received: by 2002:a05:6402:3595:b0:5d4:320:ee66 with SMTP id
- 4fb4d7f45d1cf-5dc5f031385mr10968986a12.31.1738332814512; Fri, 31 Jan 2025
- 06:13:34 -0800 (PST)
+	s=arc-20240116; t=1738333306; c=relaxed/simple;
+	bh=f24bChgj7REtNaoNkH2tAqocNhxOhtVih4QvozTv6m0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jQoI+E1D9iMCf+kU0rwR4iGPN/U7Ix9RjkdtkBlkESPUbbCmbKq5j4/Q4+hfJTlRYKjx9H2iECUiDKQgFwNrGnBXkJ9ZfA8oMepkQweBSe1PgYUaDh+FEcWOnUTsSi1XAudKIb/Bs0gXT8CKefq1CMuuJ8+FN+4gNw9BRTHY9Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GcI+YDUi; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gn6ROdhimfH2SlxaFG9S9wImJavIsJGvPsiITl9Tyxg=; b=GcI+YDUi42q8wWLAaliLPMiJCL
+	jC3vbx12pAXO2Q4jttDBHLad6PFrI8gKFC3UGsAmD9CGyvTct74eea7pwBUi30YOPI6ohMHsELXRa
+	WTkZKm4FPDerhWo7QwIC3sY8fg06rYWHQ+C/HxXpwV2FZ1kAuXRRCAg1UfEL2sqGk4RbLj6BuD2qa
+	NQw6KWjJxuVhMY3rwD/NiDfpZcCBes6Wo+8nK9PgbM5Tqg7/Fr0zPXey2d2H8QVOORFMWSgoJTKjk
+	/JriUdLVUEli8ufJKmilaBRGPP2FpKCWfAuKk2Ubz4QxzjU62JGSWjoLnj8bempgYL3036hFSGCmw
+	xa5KYQwA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tdrtX-0000000EmeT-34tM;
+	Fri, 31 Jan 2025 14:21:19 +0000
+Date: Fri, 31 Jan 2025 14:21:19 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	David Airlie <airlied@gmail.com>,
+	David Hildenbrand <david@redhat.com>, Hao Ge <gehao@kylinos.cn>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miklos Szeredi <miklos@szeredi.hu>, Nhat Pham <nphamcs@gmail.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Ran Xiaokai <ran.xiaokai@zte.com.cn>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 02/11] drm/i915/gem: Convert __shmem_writeback() to
+ folios
+Message-ID: <Z5zcXyYfXSI0PYBY@casper.infradead.org>
+References: <20250130100050.1868208-1-kirill.shutemov@linux.intel.com>
+ <20250130100050.1868208-3-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk> <a3741a38-967c-44ad-9e73-64628048027e@ddn.com>
-In-Reply-To: <a3741a38-967c-44ad-9e73-64628048027e@ddn.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 31 Jan 2025 15:13:21 +0100
-X-Gm-Features: AWEUYZlHRkvQe4TG55Xzo65_q6TEKZbCf4qhSXciqAwSmpZdr7V_aWc5SYs5XkI
-Message-ID: <CAOQ4uxg+4xrdCFgkvKHCvdbKwS9yi5_CPjM0Lwprfa5YZn0UEA@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] FUSE io_uring zero copy
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: David Wei <dw@davidwei.uk>, 
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Keith Busch <kbusch@kernel.org>, 
-	Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250130100050.1868208-3-kirill.shutemov@linux.intel.com>
 
-On Thu, Jan 30, 2025 at 11:06=E2=80=AFPM Bernd Schubert <bschubert@ddn.com>=
- wrote:
->
-> Hi David,
->
-> I would love to participate in this discussion and the page
-> migration/tmp-page discussions, but I don't think I can make it to LSF/MM=
-.
->
+On Thu, Jan 30, 2025 at 12:00:40PM +0200, Kirill A. Shutemov wrote:
+> Use folios instead of pages.
+> 
+> This is preparation for removing PG_reclaim.
 
-Bernd,
+Well, this is a horrid little function.  Rather than iterating just the
+dirty folios, it iterates all folios, then locks them before checking
+whether they're dirty.
 
-We will do our best to make sure that you can participate in this discussio=
-n.
-Worst case, we can take a small room and call you with one of the laptops
-as you guys added me into the FUSE meeting in Plumbers ;-)
+I don't know whether the comments are correct or the code is correct.
+This comment doesn't match with setting PageReclaim:
 
-Thanks,
-Amir.
+         * Leave mmapings intact (GTT will have been revoked on unbinding,
+         * leaving only CPU mmapings around) and add those pages to the LRU
+         * instead of invoking writeback so they are aged and paged out
+         * as normal.
+
+so I wonder if Chris was confused about what PageReclaim actually does.
+Let's find out if he still remembers what he thought it did!
 
