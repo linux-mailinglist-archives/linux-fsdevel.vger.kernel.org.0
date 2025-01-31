@@ -1,55 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-40477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17186A23AAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 09:33:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5C7A23AB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 09:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E6D16122C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 08:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E731687C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 08:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41060175D47;
-	Fri, 31 Jan 2025 08:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD4917B50A;
+	Fri, 31 Jan 2025 08:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jd2c71Iv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oCjnKWSn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01788156F4A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 08:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB973D66
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 08:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738312326; cv=none; b=maxnsM1XO75AK/mDYzCu1Ztk+0ioNgJVsAN1uD4qgz3JNdL/XgQEA/y5TCzcP7J2S2a1tHkNDXcsRpn78wNXcuww+WzgZkEWk7r2LVwo7UOhci6/fghVqMvBp9sWKNWY0DSVPmuF6aCuE6zUfRKeHUKROnG+MSL2pJHfyL+M8D8=
+	t=1738312385; cv=none; b=D6eMLnkZ2ByqYYxsa73HKIuj8QcwcncB1ozTx1LpLPLpLZEe01SRYwff44oC7g6NzWCqNBL3kk+cs7bl7+oodJh0w2Se+5su832SAz42u/RneqwnIW8bxKHjuS9oVlDfDrQ4f7/MLlA5nfPbPgYjUyAkInMg7Ui+ZL3vDxJwRYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738312326; c=relaxed/simple;
-	bh=UW1zjzg2YPbjnF479AmdYdZPh+fEZ5hScTteyavV/C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SHTPx816fMdIo62Iwx7D/QhZWXY+W5w+2fyxvmfsd+EKFJJrIE0FU6iKXQrIJhOF4dVSQ31wshxaq329DWgg8e4XiYKszX1LleLGlYLtXLJgmQNSBCf/4BqXk/V7jwcpX5POtxvC5LE1Q2MjNMeV+U1oaCotCp+dlv2ZXYoIx2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jd2c71Iv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=q8jbhfFbtRj2uZz8XTwG6+lJXtiJ43wtLaPHHw8jI+w=; b=jd2c71Ivus4WSmoeHqM0ZfDg3s
-	PKkh/vv7w9pxJJfgSuVuMgHSEDXyPhedNzXOVYPakeopVRCq5P3x+ZD+VZ7k1WcKdiDW1gVBVa4aK
-	kszDUImyPI7aYNoivwAFytmHNKedTM2MZG/PqvQrOu05ZN/64tPzb9dpDRnZCfOFhWddaNSWLUT/G
-	0H1Sncaah86FnbilMjJqMI55hgxYslLeAE4S9+b2cnV5w/SVhLo5ATn2/kkVl4Dg/2es9xmh6qorA
-	a/5R8mB07UHJ7gSZjNA1Q7RJaQAkHdgIZGZhGve8K0JPiGoXwtf8UkNtX9FGmFcQHaw8uNcuaJKpg
-	/gueYxdQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tdmRV-0000000Gm35-3oNy;
-	Fri, 31 Jan 2025 08:32:01 +0000
-Date: Fri, 31 Jan 2025 08:32:01 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH][RFC] add a string-to-qstr constructor
-Message-ID: <20250131083201.GX1977892@ZenIV>
+	s=arc-20240116; t=1738312385; c=relaxed/simple;
+	bh=sdw8l8+NwkV6INk3+hpf0YRFmqr5W8dwp/CmE3pzgZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ek4jrGVQwQ0MtdWC7PSCYCBKl3Nmxcc73Bx9Y4MhcuaDFNcSudxT7pOtcIStz3R+nk4lQvY5E0Ntq73zfXPLGWQyIzQrn0Y3ABoFW7pi49el+sKQJatUcRiaJMGCLkkeN9d0XxrlebMby3mIGDWHSiih+WVoV/91gn50zyEOIz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oCjnKWSn; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaec111762bso439409266b.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 00:33:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1738312380; x=1738917180; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=egqRvUyLfakli10+ggYKvwxMdmYV8I7LQkQH/AIbN90=;
+        b=oCjnKWSnw0xz3XdYd0AUlrrzmdINHwwUmy5LAVsB5tzVjuacFz7dBVgD8ARiDae1Uu
+         b3tHfbI+ODwOE+ua8eQOWJg+KjVFVLx5ebHS6ldiAXX+i2HZvrdft4cVkv/8McyjOQ9J
+         3a/lEG5AvYvSaUcKXJ+mn0ylCDkjoJ0PfMIYVJfPjIvj4+hH37cEW/sJcaCoXK+CY4ZI
+         /73I8f4Kr9VCVMD46DfqkLzv855mSo0ucs0sNk78EQKQ9HpyByYx9U0yyOfKJIWZ5jcK
+         eHIZtKqnYl5jyVcow/euGp/iwowUSRh4tUI5sO+hF1mTLKuma00FEfsZEpb1S9GnnEy/
+         eVHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738312380; x=1738917180;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=egqRvUyLfakli10+ggYKvwxMdmYV8I7LQkQH/AIbN90=;
+        b=AVTpLz3D7tX1zyRsu5rjZTOZT6OzC873QPl/Tv9DD0ZL7M/R1cjOM8bl9Mg3f/Z2Yc
+         zv3LMEOzOPUKlQH2upwCUlxaGd7ihXAPOMPUBaTXZjxHRa2rioWZeJuc9b/TbgXvt0Vi
+         f/WazCr1/B/6MP5zSVVeKSxdhdKZZoQl+070DicEXbDopKv1ZqFnQpMxvUsrN/fgD+N6
+         4OLf+kN8o1T7CC8Mw8ucmGl7fuMaSGRXGSU1M9YLdb/wClL3+hWdmnOBfvBRrgv50e2e
+         vo8tu1rFc7zfkX3Es0jalMWo7SQ/QPAHln1M8l+z9kyDf69JanrhCfRA8bXJ/iqZGjAA
+         QJKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWubKprJsKkVz8KdDqFLuFFsUVumUvn5KBBd3HrzIHS54Y1OvG/IrbzxV6D9lnnV5jVWN0nfuEdfeQMAb2z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOacfSJ3+UszTtAVvw1si7+Ep+0O3rU5VDRYgSUNIucaf6gt3U
+	hARb+BX4gBsh0t8lmr8q6rhu7DSO1frZVCVr18LPqL1dovnb8zXRnTJHG6No6J9/N03S0yAEYHm
+	ll1Sm
+X-Gm-Gg: ASbGncstA25HvvzbbX4I+3s0yGurxUXF5H0bQUoFin1Y5FIY25wkUkv+TZj5in2J6v1
+	R0dS+8C8g/579gZqnsYwwHyyeJ5hC346/jjbOtE+jnOGNDggOruMnxieho25oAs720d4P6BrYkB
+	v3MtCPawFMzU0Wy1kdOlvJ6OvRt+JfFU1e9iuXXLId9Pd/BdF3fat+43KxAanKkeO88Ct96A2as
+	zMHNMF8Qex9h+yIgSyH3YIyL/sp7+rK+8aYsAYbZZJW6cQiYiZhcgLItWuFU/RNiLHGkdBNFXAc
+	QtVYUoOERdISoy4sQVHaw1OUzZQfV7vsaFJuo0oESoMYz61+6yQ8tdnCfw==
+X-Google-Smtp-Source: AGHT+IFEGaNvReG5vJZPY7iYHQObTDw/0zJqyBDYrLORPticbg6pyTqk9VcPWTbvbKqoh+zEKTKFpg==
+X-Received: by 2002:a17:907:7fa6:b0:ab6:b848:2ab with SMTP id a640c23a62f3a-ab6cfcdf2a3mr922586166b.16.1738312380051;
+        Fri, 31 Jan 2025 00:33:00 -0800 (PST)
+Received: from google.com (201.31.90.34.bc.googleusercontent.com. [34.90.31.201])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e4a5635bsm253140566b.164.2025.01.31.00.32.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jan 2025 00:32:59 -0800 (PST)
+Date: Fri, 31 Jan 2025 08:32:55 +0000
+From: Matt Bobrowski <mattbobrowski@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+	jack@suse.cz, kpsingh@kernel.org, liamwisehart@meta.com,
+	shankaran@meta.com
+Subject: Re: [PATCH v11 bpf-next 1/7] fs/xattr: bpf: Introduce security.bpf.
+ xattr name prefix
+Message-ID: <Z5yKtyJN3xLQRUNH@google.com>
+References: <20250129205957.2457655-1-song@kernel.org>
+ <20250129205957.2457655-2-song@kernel.org>
+ <Z5tbH13qK6rLJVUI@google.com>
+ <20250130-erklimmen-erstversorgung-93daf77c9dc4@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,227 +97,74 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250130-erklimmen-erstversorgung-93daf77c9dc4@brauner>
 
-[that thing sat in -next for a while, but hadn't been posted yet;
-mea culpa.  Some followups for the next cycle are using it, and
-it would be more convenient to get it before the next merge
-window; if it gets any objections, I'll drop it from pull request
-for #work.next, but it would be nice to have it in -rc1]
+On Thu, Jan 30, 2025 at 04:20:04PM +0100, Christian Brauner wrote:
+> On Thu, Jan 30, 2025 at 10:57:35AM +0000, Matt Bobrowski wrote:
+> > On Wed, Jan 29, 2025 at 12:59:51PM -0800, Song Liu wrote:
+> > > Introduct new xattr name prefix security.bpf., and enable reading these
+> > > xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
+> > > 
+> > > As we are on it, correct the comments for return value of
+> > > bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
+> > > success.
+> > 
+> > Reviewed-by: Matt Bobrowski <mattbobrowski@google.com>
+> > 
+> > > Signed-off-by: Song Liu <song@kernel.org>
+> > > Acked-by: Christian Brauner <brauner@kernel.org>
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > ---
+> > >  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
+> > >  include/uapi/linux/xattr.h |  4 ++++
+> > >  2 files changed, 18 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> > > index 3fe9f59ef867..8a65184c8c2c 100644
+> > > --- a/fs/bpf_fs_kfuncs.c
+> > > +++ b/fs/bpf_fs_kfuncs.c
+> > > @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
+> > >  	return len;
+> > >  }
+> > >  
+> > > +static bool match_security_bpf_prefix(const char *name__str)
+> > > +{
+> > > +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
+> > > +}
+> > 
+> > I think this can also just be match_xattr_prefix(const char
+> > *name__str, const char *prefix, size_t len) such that we can do the
+> > same checks for aribitrary xattr prefixes i.e. XATTR_USER_PREFIX,
+> > XATTR_NAME_BPF_LSM.
+> > 
+> > >  /**
+> > >   * bpf_get_dentry_xattr - get xattr of a dentry
+> > >   * @dentry: dentry to get xattr from
+> > > @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
+> > >   *
+> > >   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
+> > >   *
+> > > - * For security reasons, only *name__str* with prefix "user." is allowed.
+> > > + * For security reasons, only *name__str* with prefix "user." or
+> >       	  	   	    	 	     	  ^ prefixes
+> > 						  
+> > > + * "security.bpf." is allowed.
+> >                       ^ are
+> > 
+> > Out of curiosity, what is the security reasoning here? This isn't
+> > obvious to me, and I'd like to understand this better. Is it simply
+> > frowned upon to read arbitrary xattr values from the context of a BPF
+> > LSM program, or has it got something to do with the backing xattr
+> > handler that ends up being called once we step into __vfs_getxattr()
+> > and such?  Also, just so that it's clear, I don't have anything
+> > against this allow listing approach either, I just genuinely don't
+> > understand the security implications.
+> 
+> I've explained this at lenghts in multiple threads. The gist is various
+> xattrs require you to have access to properties that are carried by
+> objects you don't have access to (e.g., the mount) or can't guarantee
+> that you're in the correct context and interpreting those xattrs without
+> this information is either meaningless or actively wrong.
 
-Quite a few places want to build a struct qstr by given string;
-it would be convenient to have a primitive doing that, rather
-than open-coding it via QSTR_INIT().
-
-The closest approximation was in bcachefs, but that expands to
-initializer list - {.len = strlen(string), .name = string}.
-It would be more useful to have it as compound literal -
-(struct qstr){.len = strlen(string), .name = string}.
-
-Unlike initializer list it's a valid expression.  What's more,
-it's a valid lvalue - it's an equivalent of anonymous local
-variable with such initializer, so the things like
-	path->dentry = d_alloc_pseudo(mnt->mnt_sb, &QSTR(name));
-are valid.  It can also be used as initializer, with identical
-effect -
-	struct qstr x = (struct qstr){.name = s, .len = strlen(s)};
-is equivalent to
-	struct qstr anon_variable = {.name = s, .len = strlen(s)};
-	struct qstr x = anon_variable;
-	// anon_variable is never used after that point
-and any even remotely sane compiler will manage to collapse that
-into
-	struct qstr x = {.name = s, .len = strlen(s)};
-
-What compound literals can't be used for is initialization of
-global variables, but those are covered by QSTR_INIT().
-
-This commit lifts definition(s) of QSTR() into linux/dcache.h,
-converts it to compound literal (all bcachefs users are fine
-with that) and converts assorted open-coded instances to using
-that.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 42bd1cb7c9cd..583ac81669c2 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -60,14 +60,14 @@ static struct inode *anon_inode_make_secure_inode(
- 	const struct inode *context_inode)
- {
- 	struct inode *inode;
--	const struct qstr qname = QSTR_INIT(name, strlen(name));
- 	int error;
- 
- 	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
- 	if (IS_ERR(inode))
- 		return inode;
- 	inode->i_flags &= ~S_PRIVATE;
--	error =	security_inode_init_security_anon(inode, &qname, context_inode);
-+	error =	security_inode_init_security_anon(inode, &QSTR(name),
-+						  context_inode);
- 	if (error) {
- 		iput(inode);
- 		return ERR_PTR(error);
-diff --git a/fs/bcachefs/fsck.c b/fs/bcachefs/fsck.c
-index 75c8a97a6954..7b3b63ed747c 100644
---- a/fs/bcachefs/fsck.c
-+++ b/fs/bcachefs/fsck.c
-@@ -405,7 +405,7 @@ static int reattach_inode(struct btree_trans *trans, struct bch_inode_unpacked *
- 		return ret;
- 
- 	struct bch_hash_info dir_hash = bch2_hash_info_init(c, &lostfound);
--	struct qstr name = (struct qstr) QSTR(name_buf);
-+	struct qstr name = QSTR(name_buf);
- 
- 	inode->bi_dir = lostfound.bi_inum;
- 
-diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-index 3c7f941dde39..ebabba296882 100644
---- a/fs/bcachefs/recovery.c
-+++ b/fs/bcachefs/recovery.c
-@@ -32,8 +32,6 @@
- #include <linux/sort.h>
- #include <linux/stat.h>
- 
--#define QSTR(n) { { { .len = strlen(n) } }, .name = n }
--
- void bch2_btree_lost_data(struct bch_fs *c, enum btree_id btree)
- {
- 	if (btree >= BTREE_ID_NR_MAX)
-diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
-index fb02c1c36004..a27f4b84fe77 100644
---- a/fs/bcachefs/util.h
-+++ b/fs/bcachefs/util.h
-@@ -647,8 +647,6 @@ static inline int cmp_le32(__le32 l, __le32 r)
- 
- #include <linux/uuid.h>
- 
--#define QSTR(n) { { { .len = strlen(n) } }, .name = n }
--
- static inline bool qstr_eq(const struct qstr l, const struct qstr r)
- {
- 	return l.len == r.len && !memcmp(l.name, r.name, l.len);
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index a90d7d649739..60d2cf26e837 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -407,7 +407,7 @@ int erofs_getxattr(struct inode *inode, int index, const char *name,
- 	}
- 
- 	it.index = index;
--	it.name = (struct qstr)QSTR_INIT(name, strlen(name));
-+	it.name = QSTR(name);
- 	if (it.name.len > EROFS_NAME_LEN)
- 		return -ERANGE;
- 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 976736be47cb..a329623d0b42 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -351,9 +351,7 @@ static struct file *alloc_file(const struct path *path, int flags,
- static inline int alloc_path_pseudo(const char *name, struct inode *inode,
- 				    struct vfsmount *mnt, struct path *path)
- {
--	struct qstr this = QSTR_INIT(name, strlen(name));
--
--	path->dentry = d_alloc_pseudo(mnt->mnt_sb, &this);
-+	path->dentry = d_alloc_pseudo(mnt->mnt_sb, &QSTR(name));
- 	if (!path->dentry)
- 		return -ENOMEM;
- 	path->mnt = mntget(mnt);
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index 8502ef68459b..0eb320617d7b 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -927,7 +927,7 @@ static void kernfs_notify_workfn(struct work_struct *work)
- 		if (!inode)
- 			continue;
- 
--		name = (struct qstr)QSTR_INIT(kn->name, strlen(kn->name));
-+		name = QSTR(kn->name);
- 		parent = kernfs_get_parent(kn);
- 		if (parent) {
- 			p_inode = ilookup(info->sb, kernfs_ino(parent));
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index bff956f7b2b9..3d53a6014591 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -57,6 +57,7 @@ struct qstr {
- };
- 
- #define QSTR_INIT(n,l) { { { .len = l } }, .name = n }
-+#define QSTR(n) (struct qstr)QSTR_INIT(n, strlen(n))
- 
- extern const struct qstr empty_name;
- extern const struct qstr slash_name;
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 399552814fd0..1b0a214ee558 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -195,14 +195,13 @@ static struct file *secretmem_file_create(unsigned long flags)
- 	struct file *file;
- 	struct inode *inode;
- 	const char *anon_name = "[secretmem]";
--	const struct qstr qname = QSTR_INIT(anon_name, strlen(anon_name));
- 	int err;
- 
- 	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 
--	err = security_inode_init_security_anon(inode, &qname, NULL);
-+	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
- 	if (err) {
- 		file = ERR_PTR(err);
- 		goto err_free_inode;
-diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index 7ce3721c06ca..eadc00410ebc 100644
---- a/net/sunrpc/rpc_pipe.c
-+++ b/net/sunrpc/rpc_pipe.c
-@@ -630,7 +630,7 @@ static int __rpc_rmpipe(struct inode *dir, struct dentry *dentry)
- static struct dentry *__rpc_lookup_create_exclusive(struct dentry *parent,
- 					  const char *name)
- {
--	struct qstr q = QSTR_INIT(name, strlen(name));
-+	struct qstr q = QSTR(name);
- 	struct dentry *dentry = d_hash_and_lookup(parent, &q);
- 	if (!dentry) {
- 		dentry = d_alloc(parent, &q);
-@@ -1190,8 +1190,7 @@ static const struct rpc_filelist files[] = {
- struct dentry *rpc_d_lookup_sb(const struct super_block *sb,
- 			       const unsigned char *dir_name)
- {
--	struct qstr dir = QSTR_INIT(dir_name, strlen(dir_name));
--	return d_hash_and_lookup(sb->s_root, &dir);
-+	return d_hash_and_lookup(sb->s_root, &QSTR(dir_name));
- }
- EXPORT_SYMBOL_GPL(rpc_d_lookup_sb);
- 
-@@ -1300,11 +1299,9 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
- 	struct dentry *gssd_dentry;
- 	struct dentry *clnt_dentry = NULL;
- 	struct dentry *pipe_dentry = NULL;
--	struct qstr q = QSTR_INIT(files[RPCAUTH_gssd].name,
--				  strlen(files[RPCAUTH_gssd].name));
- 
- 	/* We should never get this far if "gssd" doesn't exist */
--	gssd_dentry = d_hash_and_lookup(root, &q);
-+	gssd_dentry = d_hash_and_lookup(root, &QSTR(files[RPCAUTH_gssd].name));
- 	if (!gssd_dentry)
- 		return ERR_PTR(-ENOENT);
- 
-@@ -1314,9 +1311,8 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
- 		goto out;
- 	}
- 
--	q.name = gssd_dummy_clnt_dir[0].name;
--	q.len = strlen(gssd_dummy_clnt_dir[0].name);
--	clnt_dentry = d_hash_and_lookup(gssd_dentry, &q);
-+	clnt_dentry = d_hash_and_lookup(gssd_dentry,
-+					&QSTR(gssd_dummy_clnt_dir[0].name));
- 	if (!clnt_dentry) {
- 		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
- 		pipe_dentry = ERR_PTR(-ENOENT);
+Oh, right, I see. Thank you Christian!
 
