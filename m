@@ -1,146 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-40462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A3BA23879
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 02:07:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C89A238A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 02:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB2C188906F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 01:07:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ED927A117E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2025 01:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D741EB44;
-	Fri, 31 Jan 2025 01:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9277433C8;
+	Fri, 31 Jan 2025 01:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RTG1alsl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGNZKdvb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B130182BD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2025 01:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3DE28377;
+	Fri, 31 Jan 2025 01:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738285616; cv=none; b=iqhg4C1vjMZXkWBbnrbV3zBM74QSzyDOejm2S5jX7pHf1tdGxFcL8UcoTBS+HJXpfnuZFu+4Qlp+Ri3yA6s4gTwtH6N/St/GtLc7OGc/+zO25Me4hE0+qrZid0pu8cD7clAhg0772HKvFAUNdsY0Dzm71vvtOVNxtzzRCrejjU0=
+	t=1738287260; cv=none; b=aElXmQNON5xQpspbOXuyLU85x/fvIILm3NL5fp5b2TG5kUiFSLHKiF8hHrtbMKN8Hhcim00AbmSf9uAO9OR7WGo4MzRBakLVM70ISMdxbdG+S8A8+AHR2ouxCDUMmRSTqKlQvte9x1/2TWGNptcMzAXRdRZbEVZ9LNYJYkdgAWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738285616; c=relaxed/simple;
-	bh=llWgEmUm0MfKWLzatNT3tW9v2W7HOdvboys9fFGzUqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqfZ3jiQEHGbxMMYxE1BmrutPFugxdUcLqN/jrEjA9xRo58j8FEyiv9Rap+tdbuaDqsEYaqk8s9GdUVfrhhut9ldZIHpVUj7jPatNyEW9JnQV4ge8MP6sNFpPdI44BwDw5KI0uPNXqQ64TS9oRUioBJiy5ASaq1Pi0XegXF5ytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RTG1alsl; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 30 Jan 2025 20:06:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1738285601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIIpTB72Yll8nCHH7rurXHugZD6Z4U2oOU17E7ajD2g=;
-	b=RTG1alsl5aQ1FjLxWnlJl0A3Lyt7+hXs6ym/ZE/sHn15oXdtMcqkbKFvAn/CVoOH/DXuep
-	2vn7Wgq93+o6Y8X1MThejTholXrpjG6pbmDGkadFS2zJmr06xm+Dl1m27XN14wfXn9ppsl
-	OMYVRdS+dFcv7Pu39lfzAy24+MPJD/4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Ted Ts'o <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev, miklos@szeredi.hu, 
-	linux-bcachefs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, dhowells@redhat.com, jlayton@kernel.org, netfs@lists.linux.dev
-Subject: Re: [PATCH 0/7] Move prefaulting into write slow paths
-Message-ID: <ncewetc7vpijallpvplti4ham7m3dmver6jkymabdedid4iedb@muodfjq2io3m>
-References: <20250129181749.C229F6F3@davehans-spike.ostc.intel.com>
- <qpeao3ezywdn5ojpcvchaza7gd6qeb57kvvgbxt2j4qsk4qoey@vrf4oy2icixd>
- <f35aa9a2-edac-4ada-b10b-8a560460d358@intel.com>
- <Z5vw3SBNkD-CTuVE@dread.disaster.area>
+	s=arc-20240116; t=1738287260; c=relaxed/simple;
+	bh=aVGXiC4y4nMQNLzoXl1Kn6ix+nBLlrDRS2onLeXP7cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DcD5hsdRlio40UQpC3MIGzxoZIytQqOLnNB7xrO+OwedGgrHSyBNE/JtJYrMOUCsPf4LjXDq2sY298cTOOzCqD8TYX/74QXLYjyp5dVHQd0DfwfqZW/4trlX6MiGlZQEckNL24DKNFQEdGsZHGGgtE0pqp+hCmSLQfHYouAbqtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGNZKdvb; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1738287257; x=1769823257;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aVGXiC4y4nMQNLzoXl1Kn6ix+nBLlrDRS2onLeXP7cg=;
+  b=IGNZKdvbJMCVhFDLo1s5yVu/sS9U3oFv172yYFdIVJCeaMSQ/i8FNF6h
+   tWGGdSRwRHrE5QFYmhpyPEDc37m35Y7/+cVkzROHHhEUvliOlWUjvfKwT
+   kQhK7jocXcUsPyYpjSkkPSogAJ8UIcxTkq2DG2KIEwKhzC69v2qWh0C5r
+   uwEWcAsA0karPnU22WkUxqnyc/TDdAriXYirgwpB+FP1ZBjj0reAduwRb
+   62qk/tw3GTn3fo2VuhUE7j1Wf1EG7lCHDFDGcre145EDZEjbMu1felgsu
+   KopoVReNIzvo0oLZACAlaf6tCQ4SE+3uMdR5BDshunULKKcnw8dP5yu7F
+   w==;
+X-CSE-ConnectionGUID: 1Ec0InDzQ76NcD4vL/VPhQ==
+X-CSE-MsgGUID: aAnsZTUYTbuaBfV9LzdGfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11331"; a="61326561"
+X-IronPort-AV: E=Sophos;i="6.13,247,1732608000"; 
+   d="scan'208";a="61326561"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2025 17:34:16 -0800
+X-CSE-ConnectionGUID: pT6CSxBYT3aZyZhH5ZtypA==
+X-CSE-MsgGUID: bP5fE04RTLuh87xyvRLPCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="146682500"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.108.230]) ([10.125.108.230])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2025 17:34:16 -0800
+Message-ID: <562e4bdc-d0f3-4a4d-8443-174c716daaa0@intel.com>
+Date: Thu, 30 Jan 2025 17:34:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z5vw3SBNkD-CTuVE@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Move prefaulting into write slow paths
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, Ted Ts'o <tytso@mit.edu>,
+ Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
+ <djwong@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev,
+ miklos@szeredi.hu, linux-bcachefs@vger.kernel.org, clm@fb.com,
+ josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
+ dhowells@redhat.com, jlayton@kernel.org, netfs@lists.linux.dev
+References: <20250129181749.C229F6F3@davehans-spike.ostc.intel.com>
+ <qpeao3ezywdn5ojpcvchaza7gd6qeb57kvvgbxt2j4qsk4qoey@vrf4oy2icixd>
+ <f35aa9a2-edac-4ada-b10b-8a560460d358@intel.com>
+ <t7rjw6a462k5sm2tdviyd7sq6n44uxb3haai566m4hm7dvvlpi@btt3blanouck>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <t7rjw6a462k5sm2tdviyd7sq6n44uxb3haai566m4hm7dvvlpi@btt3blanouck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 31, 2025 at 08:36:29AM +1100, Dave Chinner wrote:
-> On Thu, Jan 30, 2025 at 08:04:49AM -0800, Dave Hansen wrote:
-> > On 1/29/25 23:44, Kent Overstreet wrote:
-> > > On Wed, Jan 29, 2025 at 10:17:49AM -0800, Dave Hansen wrote:
-> > >> tl;dr: The VFS and several filesystems have some suspect prefaulting
-> > >> code. It is unnecessarily slow for the common case where a write's
-> > >> source buffer is resident and does not need to be faulted in.
-> > >>
-> > >> Move these "prefaulting" operations to slow paths where they ensure
-> > >> forward progress but they do not slow down the fast paths. This
-> > >> optimizes the fast path to touch userspace once instead of twice.
-> > >>
-> > >> Also update somewhat dubious comments about the need for prefaulting.
-> > >>
-> > >> This has been very lightly tested. I have not tested any of the fs/
-> > >> code explicitly.
-> > > 
-> > > Q: what is preventing us from posting code to the list that's been
-> > > properly tested?
-> > > 
-> > > I just got another bcachefs patch series that blew up immediately when I
-> > > threw it at my CI.
-> > > 
-> > > This is getting _utterly ridiculous_.
+On 1/30/25 16:56, Kent Overstreet wrote:
+> On Thu, Jan 30, 2025 at 08:04:49AM -0800, Dave Hansen wrote:...
+>> Any suggestions for fully describing the situation? I tried to sprinkle
+>> comments liberally but I'm also painfully aware that I'm not doing a
+>> perfect job of talking about the fs code.
 > 
-> That's a bit of an over-reaction, Kent.
+> The critical thing to cover is the fact that mmap means that page faults
+> can recurse into arbitrary filesystem code, thus blowing a hole in all
+> our carefully crafted lock ordering if we allow that while holding
+> locks - you didn't mention that at all.
+
+What I've got today is this:
+
+              /*
+               * This needs to be atomic because actually handling page
+               * faults on 'i' can deadlock if the copy targets a
+               * userspace mapping of 'folio'.
+               */
+	      copied = copy_folio_from_iter_atomic(...);
+
+Are you saying you'd prefer that this be something more like:
+
+		/*
+		 * Faults here on mmap()s can recurse into arbitrary
+		 * filesystem code. Lots of locks are held that can
+		 * deadlock. Use an atomic copy to avoid deadlocking
+		 * in page fault handling.
+		 */
+
+?
+
+>>> I do agree on moving it to the slowpath - I think we can expect the case
+>>> where the process's immediate workingset is faulted out while it's
+>>> running to be vanishingly small.
+>>
+>> Great! I'm glad we're on the same page there.
+>>
+>> For bcachefs specifically, how should we move forward? If you're happy
+>> with the concept, would you prefer that I do some manual bcachefs
+>> testing? Or leave a branch sitting there for a week and pray the robots
+>> test it?
 > 
-> IMO, the developers and/or maintainers of each filesystem have some
-> responsibility to test changes like this themselves as part of their
-> review process.
+> No to the sit and pray. If I see one more "testing? that's something
+> other people do" conversation I'll blow another gasket.
 > 
-> That's what you have just done, Kent. Good work!
+> xfstests supports bcachefs, and if you need a really easy way to run it
+> locally on all the various filesystems, I have a solution for that:
 > 
-> However, it is not OK to rant about how the proposed change failed
-> because it was not exhaustively tested on every filesytem before it
-> was posted.
-
-This is just tone policing.
-
-> I agree with Dave - it is difficult for someone to test widepsread
-> changes in code outside their specific expertise. In many cases, the
-> test infrastructure just doesn't exist or, if it does, requires
-> specialised knowledge and tools to run.
-
-No, it exists - I built it.
-
-> In such cases, we have to acknowledge that best effort testing is
-> about as good as we can do without overly burdening the author of
-> such a change. In these cases, it is best left to the maintainer of
-> that subsystem to exhaustively test the change to their
-> subsystem....
-
-I keep having the same conversations in code review:
-"Did you test this?"
-"No really, did you test this?"
-"See that error path you modified, that our automated tests definitely
-don't cover? You need to test that manually".
-
-Developers don't think enough about testing - and if the excuse is that
-the tools suck, then we need to address that. I'm not going to babysit
-and do a bunch of manual work - I spend quite enough of my day staring
-at test dashboards already, thank you very much.
-
-> > For bcachefs specifically, how should we move forward? If you're happy
-> > with the concept, would you prefer that I do some manual bcachefs
-> > testing? Or leave a branch sitting there for a week and pray the robots
-> > test it?
+> https://evilpiepirate.org/git/ktest.git/
 > 
-> The public automated test robots are horribly unreliable with their
-> coverage of proposed changes. Hence my comment above about the
-> subsystem maintainers bearing some responsibility to test the code
-> as part of their review process....
+> If you want access to my CI that runs all that in parallel across 120
+> VMs with the nice dashboard - shoot me an email and I'll outline server
+> costs and we can work something out.
 
-AFAIK the public test robots don't run xfstests at all.
+That _sounds_ a bit heavyweight to me for this patch:
+
+ b/fs/bcachefs/fs-io-buffered.c |   30 ++++++++++--------------------
+ 1 file changed, 10 insertions(+), 20 deletions(-)
+
+Is that the the kind of testing (120 VMs) that is needed to get a patch
+into bcachefs?
+
+Or are you saying that running xfstests on bcachefs with this patch
+applied would be sufficient?
+
+On the x86 side, I'm usually pretty happy to know that someone has
+compiled a patch and at least executed the code at runtime a time or
+two. So this process is a bit unfamiliar to me.
 
