@@ -1,154 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-40538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE60FA24AD7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 17:54:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481DCA24B55
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 18:59:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07BEC7A2D46
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 16:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1881C3A5C80
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 17:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63BA1C5F3B;
-	Sat,  1 Feb 2025 16:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E1B1CAA7D;
+	Sat,  1 Feb 2025 17:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nszgTuo/"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sxdzRIEt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6C9208A9;
-	Sat,  1 Feb 2025 16:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE681CB53D
+	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Feb 2025 17:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738428840; cv=none; b=MhSDETU2kE/AjQ4XbZ4pwPOWVTCOeQUa5hCaVZWPSC0nhdCskVc/BIVJ1PsGuldueu4Ib8Ku0bMpDAzzG7dZTw+X5ecUip0ThhYa7EpfvcGrGfJCxm/107wGGQLHnisxfd0pkVN75iVnh8IHQs20DrmM25uIbYiJCbigFQcSpug=
+	t=1738432746; cv=none; b=jDus8jfN8Y5hNrbZIysPlzraD2Mjrkp3+LB3MwPsNvKJQKkPkOv+94i83nW5yI5zrRYIvoQz3z24FXOUvtuG2a6I7qr9JOHHYtFRYbI3SqrywBPzRZrBA7ZEeptONSHXe1gCAIau8+8Gt9a7xMHRIZfNtcy4/Kri/jghj9tRFPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738428840; c=relaxed/simple;
-	bh=EpQjIwpiqwLbhZDDirRysP8q/HUWGCIYpEHuKsU2DTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E5RJMTwUAO7DXr7PBryUxYtjEwvV8NYc/Xns2O0Y+dSRU6aqRJCYYSE8Y3tVnDlMAEbKEA4pXp49KJ2P8ZdO3J0A22cU1D+u0fOOo8mNilQcFDQslvLmE5md+Kns91NNnCC9+zOS9oM6BnQjFCIsyysoUptQD3W9NqCMS4lVKj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nszgTuo/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 511DS93K010152;
-	Sat, 1 Feb 2025 16:53:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=dNGVTebc8on0ImUIEjF3PdUCyfFNtktTD0RQty9whBI=; b=nszgTuo/
-	cFjttmP6xB+b6eO1skhflXOG4NCzT3c81T5zXvxZOPqMqY/kvQclxVhT0n5SWtvx
-	J+H5fWB8vxAofO6+t2nVMfZyXNM8gm6C8uKKVP6uMhkMpgMsOx2110ShE5QzQQub
-	Pc9cciK+xMjIO4M+0LL4LjZU5SNLkXx1uQjj5GuMtMJzzZwMjS0Bt0tGT4trHjdo
-	6XinAQ52qkh/bZ7TX0hjYHb4KEt7bkA1S/41PSb/1Kt8x7AqL7rpl3TQIhu7mfDV
-	+tph3uqhd9baGQW8dkZyBH41iwpgxbp60cmZ8m8ZI2xT+JhIl0tXeABz/AHJzKdx
-	MCNv59/iozaL0w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44hd8k1hyu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Feb 2025 16:53:40 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 511GreP6026762;
-	Sat, 1 Feb 2025 16:53:40 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44hd8k1hys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Feb 2025 16:53:39 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 511FwGaW008671;
-	Sat, 1 Feb 2025 16:53:38 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44hdawswh7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Feb 2025 16:53:38 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 511Gra7C37749188
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 1 Feb 2025 16:53:36 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8764F2006A;
-	Sat,  1 Feb 2025 16:53:36 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B750120067;
-	Sat,  1 Feb 2025 16:53:33 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.17.225])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat,  1 Feb 2025 16:53:33 +0000 (GMT)
-Date: Sat, 1 Feb 2025 22:23:29 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: lsf-pc@lists.linux-foundation.org
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        djwong@kernel.org, dchinner@redhat.com, ritesh.list@gmail.com,
-        jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org,
-        nirjhar.roy.lists@gmail.com, zlang@kernel.org
-Subject: [LSF/MM/BPF TOPIC] xfstests: Centralizing filesystem configs and
- device configs
-Message-ID: <Z55RXUKB5O5l8QjM@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1738432746; c=relaxed/simple;
+	bh=QEanhHjmGPxKCVSP1f0d92Od/Xl4SxoMICBSAMYJAr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IfKY5yXEnA1QF+pfbSn7MocggdtFtiaJxQrzGUSvbCsL2VgUggP2t2kfuzGYR81oFPfMOA6fYrqsOGyvDZT4WtYpVWg8d2w137B/AvHZen18M/cG13lAl/MSRjDTqD0gHzLYrB65ajqd6BpO7RUnzDEWIni6NGoZklzMQJ4QRt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sxdzRIEt; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1738432730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HkIr39KDpZ6NakWJJimSPaackvHlLSjkIRgMP8fQyoU=;
+	b=sxdzRIEt6DCMeD8JJ3XqWV19N2c8cNvECwn7GZKXI4gGPYo0A7twQzJyBHv71CAc0gPkIX
+	sHV0wpK0/wt1o0eGoCbQFrQ/Gva7gYKRwG3HAGJ2uv1Av3nPMPcROfyXODmX4oJDYG/vy9
+	GN8vJxnpuxn0dMI/CfNw6QxZovYTBD0=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Subject: [PATCH] bcachefs docs: SubmittingPatches.rst
+Date: Sat,  1 Feb 2025 12:58:34 -0500
+Message-ID: <20250201175834.686165-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: gtMQaCfMySc79GNShiqDKBnCXXY9E1Q8
-X-Proofpoint-GUID: fk5DmC9NxPP_CQ7sH2pdR8zYwdtJXnCK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-01_07,2025-01-31_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502010143
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Greetings,
+Add an (initial?) patch submission checklist, focusing mainly on
+testing.
 
-This proposal is on behalf of Me, Nirjhar and Ritesh. We would like to submit
-a proposal on centralizing filesystem and device configurations within xfstests
-and maybe a further discussion on some of the open ideas listed by Ted here [3].
-More details are mentioned below.
+Yes, all patches must be tested, and that starts (but does not end) with
+the patch author.
 
-** Background ** 
-There was a discussion last year at LSFMM [1] about creating a central fs-config
-store, that can then be used by anyone for testing different FS
-features/configurations. This can also bring an awareness among other developers
-and testers on what is being actively maintained by FS maintainers. We recently
-posted an RFC [2] for centralizing filesystem configuration which is under
-review. The next step we are considering is to centralize device configurations
-within xfstests itself. In line with this, Ted also suggested a similar idea (in
-point A) [3], where he proposed specifying the device size for the TEST and
-SCRATCH devices to reduce costs (especially when using cloud infrastructure) and
-improve the overall runtime of xfstests.
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+---
+ .../bcachefs/SubmittingPatches.rst            | 76 +++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 Documentation/filesystems/bcachefs/SubmittingPatches.rst
 
-Recently Dave introduced a feature [4] to run the xfs and generic tests in
-parallel. This patch creates the TEST and SCRATCH devices at runtime without
-requiring them to be specified in any config file. However, at this stage, the
-automatic device initialization appears to be somewhat limited. We believe that
-centralizing device configuration could help enhance this functionality as well.
+diff --git a/Documentation/filesystems/bcachefs/SubmittingPatches.rst b/Documentation/filesystems/bcachefs/SubmittingPatches.rst
+new file mode 100644
+index 000000000000..5e4615620c4a
+--- /dev/null
++++ b/Documentation/filesystems/bcachefs/SubmittingPatches.rst
+@@ -0,0 +1,76 @@
++Submitting patches to bcachefs:
++===============================
++
++Patches must be tested before being submitted, either with the xfstests suite
++[0], or the full bcachefs test suite in ktest [1], depending on what's being
++touched. Note that ktest wraps xfstests and will be an easier method to running
++it for most users; it includes single-command wrappers for all the mainstream
++in-kernel local filesystems.
++
++Patches will undergo more testing after being merged (including
++lockdep/kasan/preempt/etc. variants), these are not generally required to be
++run by the submitter - but do put some thought into what you're changing and
++which tests might be relevant, e.g. are you dealing with tricky memory layout
++work? kasan, are you doing locking work? then lockdep; and ktest includes
++single-command variants for the debug build types you'll most likely need.
++
++The exception to this rule is incomplete WIP/RFC patches: if you're working on
++something nontrivial, it's encouraged to send out a WIP patch to let people
++know what you're doing and make sure you're on the right track. Just make sure
++it includes a brief note as to what's done and what's incomplete, to avoid
++confusion.
++
++Rigorous checkpatch.pl adherence is not required (many of its warnings are
++considered out of date), but try not to deviate too much without reason.
++
++Focus on writing code that reads well and is organized well; code should be
++aesthetically pleasing.
++
++CI:
++===
++
++Instead of running your tests locally, when running the full test suite it's
++prefereable to let a server farm do it in parallel, and then have the results
++in a nice test dashboard (which can tell you which failures are new, and
++presents results in a git log view, avoiding the need for most bisecting).
++
++That exists [2], and community members may request an account. If you work for
++a big tech company, you'll need to help out with server costs to get access -
++but the CI is not restricted to running bcachefs tests: it runs any ktest test
++(which generally makes it easy to wrap other tests that can run in qemu).
++
++Other things to think about:
++============================
++
++- How will we debug this code? Is there sufficient introspection to diagnose
++  when something starts acting wonky on a user machine?
++
++- Does it make the codebase more or less of a mess? Can we also try to do some
++  organizing, too?
++
++- Do new tests need to be written? New assertions? How do we know and verify
++  that the code is correct, and what happens if something goes wrong?
++
++- Does it need to be performance tested? Should we add new peformance counters?
++
++- If it's a new on disk format feature - have upgrades and downgrades been
++  tested? (Automated tests exists but aren't in the CI, due to the hassle of
++  disk image management; coordinate to have them run.)
++
++Mailing list, IRC:
++==================
++
++Patches should hit the list [3], but much discussion and code review happens on
++IRC as well [4]; many people appreciate the more conversational approach and
++quicker feedback.
++
++Additionally, we have a lively user community doing excellent QA work, which
++exists primarily on IRC. Please make use of that resource; user feedback is
++important for any nontrivial feature, and documenting it in commit messages
++would be a good idea.
++
++[0]: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
++[1]: https://evilpiepirate.org/git/ktest.git/
++[2]: https://evilpiepirate.org/~testdashboard/ci/
++[3]: linux-bcachefs@vger.kernel.org
++[4]: irc.oftc.net#bcache, #bcachefs-dev
+-- 
+2.45.2
 
-** Proposal ** 
-We would like to propose a discussion at LSFMM on two key features: central
-fsconfig and central device-config within xfstests. We can explore how the
-fsconfig feature can be utilized, and by then, we aim to have a PoC for central
-device-config feature, which we think can also be discussed in more detail. At
-this point, we are hoping to get a PoC working with loop devices by default. It
-will be good to hear from other developers, maintainers, and testers about their
-thoughts and suggestions on these two features.
-
-Additionally, we would like to thank Ted for listing several features he uses in
-his custom kvm-xfstests and gce-xfstests [3]. If there is an interest in further
-reducing the burden of maintaining custom test scripts and wrappers around
-xfstests, we can also discuss essential features that could be integrated
-directly into xfstests, whether from Ted's list or suggestions from others.
-
-Thoughts and suggestions are welcome.
-
-** References **
-[1] https://lore.kernel.org/all/87h6h4sopf.fsf@doe.com/
-[2] https://lore.kernel.org/all/9a6764237b900f40e563d8dee2853f1430245b74.1736496620.git.nirjhar.roy.lists@gmail.com/
-[3] https://lore.kernel.org/all/20250110163859.GB1514771@mit.edu/
-[4] https://lore.kernel.org/all/20241127045403.3665299-1-david@fromorbit.com/
 
