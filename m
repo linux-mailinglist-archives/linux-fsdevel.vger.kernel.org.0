@@ -1,157 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-40539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481DCA24B55
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 18:59:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D423A24BD3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 21:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1881C3A5C80
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 17:59:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0815164ADE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 20:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E1B1CAA7D;
-	Sat,  1 Feb 2025 17:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B81CEADC;
+	Sat,  1 Feb 2025 20:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sxdzRIEt"
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="qeXkitTI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE681CB53D
-	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Feb 2025 17:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB264502A;
+	Sat,  1 Feb 2025 20:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738432746; cv=none; b=jDus8jfN8Y5hNrbZIysPlzraD2Mjrkp3+LB3MwPsNvKJQKkPkOv+94i83nW5yI5zrRYIvoQz3z24FXOUvtuG2a6I7qr9JOHHYtFRYbI3SqrywBPzRZrBA7ZEeptONSHXe1gCAIau8+8Gt9a7xMHRIZfNtcy4/Kri/jghj9tRFPY=
+	t=1738443090; cv=none; b=sBFYjrJeTyHV7Mkdo3S0aFyZzumktS4/VugKqGmLU1C+TUKdHlTQ/wodidqCKeDLQ88r8A8lFJepBaAQLNkqTi0OBDaVR+IF08QSPwHvRAVJ7WiPhv2NMdQFFgq0k6g89x+V3gT/iqgq4XFJpO3cN1tJFgFrytG64u89Ucb3Iac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738432746; c=relaxed/simple;
-	bh=QEanhHjmGPxKCVSP1f0d92Od/Xl4SxoMICBSAMYJAr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IfKY5yXEnA1QF+pfbSn7MocggdtFtiaJxQrzGUSvbCsL2VgUggP2t2kfuzGYR81oFPfMOA6fYrqsOGyvDZT4WtYpVWg8d2w137B/AvHZen18M/cG13lAl/MSRjDTqD0gHzLYrB65ajqd6BpO7RUnzDEWIni6NGoZklzMQJ4QRt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sxdzRIEt; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1738432730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HkIr39KDpZ6NakWJJimSPaackvHlLSjkIRgMP8fQyoU=;
-	b=sxdzRIEt6DCMeD8JJ3XqWV19N2c8cNvECwn7GZKXI4gGPYo0A7twQzJyBHv71CAc0gPkIX
-	sHV0wpK0/wt1o0eGoCbQFrQ/Gva7gYKRwG3HAGJ2uv1Av3nPMPcROfyXODmX4oJDYG/vy9
-	GN8vJxnpuxn0dMI/CfNw6QxZovYTBD0=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1738443090; c=relaxed/simple;
+	bh=/9KROOA7f0hl5qdYHY27d9wiQ7eLsfWMe/sY9xLIldY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=toylEIdI7JIYnzgrMoq4LTSea7V7hJP3yfUiJcfazEBZOtd1ehztnp2P7OjnDlFnJZ7TaAyKFtm9Qkv9dq3DCajnFKE0susuYYomMtzwXkFyYrOnSRV1nd+r0mfNDhSSFVaajQmzRe3qcoAhpj0YTyRa4lSx+Bn01VjXyBTR/Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=qeXkitTI; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 98F00177202; Sat,  1 Feb 2025 20:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1738443087; bh=/9KROOA7f0hl5qdYHY27d9wiQ7eLsfWMe/sY9xLIldY=;
+	h=Date:From:To:Subject:From;
+	b=qeXkitTI/7GFZ2FApdi/I9o2ZxgaYoH70FCsBLOH1baRAqKZKT7+0gwEb0YLGT4jI
+	 KVXvUQsuijo6ZQDDenaXV1aFp9vyh4opM66OZHNTpFVXpVfsp1dz7A3PkV876OdpTK
+	 Eq1Hzt4tQbnHFbge0rSoc+I1o4kiXVT1VMsu4TT7lzPR/gIgJfYupST+09bOaP8VVu
+	 UaqTfsplSnlRy03yOV4RxeRMlzG2OIdnTbeqFVp48OxJe0jwhUL52fGrRZvEi2eSwn
+	 IquOzirA5eC0Z5C3NZugT6DG3cMGM5y2ZoqrZQypefYJlYOqrVCw8bzWxm0LkFYJg/
+	 JwIhhHATc1dbw==
+Date: Sat, 1 Feb 2025 20:51:27 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kees@kernel.org, ebiederm@xmission.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH] bcachefs docs: SubmittingPatches.rst
-Date: Sat,  1 Feb 2025 12:58:34 -0500
-Message-ID: <20250201175834.686165-1-kent.overstreet@linux.dev>
+Subject: [PATCH] exec: improve clarity of comment regarding pid save-asides
+Message-ID: <20250201205127.GA1191798@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add an (initial?) patch submission checklist, focusing mainly on
-testing.
+Problem: Current comment regarding saving aside the old pid and old vpid
+is very vague, especially when considering that it is unexpected that
+execve can actually kill the current process.
 
-Yes, all patches must be tested, and that starts (but does not end) with
-the patch author.
+Solution: Improve the description of the comment explaining more
+in-depth the reasoning behind.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Suggested-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
 ---
- .../bcachefs/SubmittingPatches.rst            | 76 +++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 Documentation/filesystems/bcachefs/SubmittingPatches.rst
+ fs/exec.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/bcachefs/SubmittingPatches.rst b/Documentation/filesystems/bcachefs/SubmittingPatches.rst
-new file mode 100644
-index 000000000000..5e4615620c4a
---- /dev/null
-+++ b/Documentation/filesystems/bcachefs/SubmittingPatches.rst
-@@ -0,0 +1,76 @@
-+Submitting patches to bcachefs:
-+===============================
-+
-+Patches must be tested before being submitted, either with the xfstests suite
-+[0], or the full bcachefs test suite in ktest [1], depending on what's being
-+touched. Note that ktest wraps xfstests and will be an easier method to running
-+it for most users; it includes single-command wrappers for all the mainstream
-+in-kernel local filesystems.
-+
-+Patches will undergo more testing after being merged (including
-+lockdep/kasan/preempt/etc. variants), these are not generally required to be
-+run by the submitter - but do put some thought into what you're changing and
-+which tests might be relevant, e.g. are you dealing with tricky memory layout
-+work? kasan, are you doing locking work? then lockdep; and ktest includes
-+single-command variants for the debug build types you'll most likely need.
-+
-+The exception to this rule is incomplete WIP/RFC patches: if you're working on
-+something nontrivial, it's encouraged to send out a WIP patch to let people
-+know what you're doing and make sure you're on the right track. Just make sure
-+it includes a brief note as to what's done and what's incomplete, to avoid
-+confusion.
-+
-+Rigorous checkpatch.pl adherence is not required (many of its warnings are
-+considered out of date), but try not to deviate too much without reason.
-+
-+Focus on writing code that reads well and is organized well; code should be
-+aesthetically pleasing.
-+
-+CI:
-+===
-+
-+Instead of running your tests locally, when running the full test suite it's
-+prefereable to let a server farm do it in parallel, and then have the results
-+in a nice test dashboard (which can tell you which failures are new, and
-+presents results in a git log view, avoiding the need for most bisecting).
-+
-+That exists [2], and community members may request an account. If you work for
-+a big tech company, you'll need to help out with server costs to get access -
-+but the CI is not restricted to running bcachefs tests: it runs any ktest test
-+(which generally makes it easy to wrap other tests that can run in qemu).
-+
-+Other things to think about:
-+============================
-+
-+- How will we debug this code? Is there sufficient introspection to diagnose
-+  when something starts acting wonky on a user machine?
-+
-+- Does it make the codebase more or less of a mess? Can we also try to do some
-+  organizing, too?
-+
-+- Do new tests need to be written? New assertions? How do we know and verify
-+  that the code is correct, and what happens if something goes wrong?
-+
-+- Does it need to be performance tested? Should we add new peformance counters?
-+
-+- If it's a new on disk format feature - have upgrades and downgrades been
-+  tested? (Automated tests exists but aren't in the CI, due to the hassle of
-+  disk image management; coordinate to have them run.)
-+
-+Mailing list, IRC:
-+==================
-+
-+Patches should hit the list [3], but much discussion and code review happens on
-+IRC as well [4]; many people appreciate the more conversational approach and
-+quicker feedback.
-+
-+Additionally, we have a lively user community doing excellent QA work, which
-+exists primarily on IRC. Please make use of that resource; user feedback is
-+important for any nontrivial feature, and documenting it in commit messages
-+would be a good idea.
-+
-+[0]: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-+[1]: https://evilpiepirate.org/git/ktest.git/
-+[2]: https://evilpiepirate.org/~testdashboard/ci/
-+[3]: linux-bcachefs@vger.kernel.org
-+[4]: irc.oftc.net#bcache, #bcachefs-dev
+diff --git a/fs/exec.c b/fs/exec.c
+index 506cd411f4ac..343c435b00ee 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1792,7 +1792,14 @@ static int exec_binprm(struct linux_binprm *bprm)
+ 	pid_t old_pid, old_vpid;
+ 	int ret, depth;
+ 
+-	/* Need to fetch pid before load_binary changes it */
++	/*
++	 * Need to save aside the current thread pid and vpid
++	 * since if the current thread is not a thread group leader
++	 * the logic in de_thread kills the current thread and all
++	 * other threads in the current thread group, except the leader.
++	 * The new program will execute in the leader, with the leader pid
++	 * ("man 2 clone" CLONE_THREAD flag for more info)
++	 */
+ 	old_pid = current->pid;
+ 	rcu_read_lock();
+ 	old_vpid = task_pid_nr_ns(current, task_active_pid_ns(current->parent));
 -- 
-2.45.2
+2.39.5
 
 
