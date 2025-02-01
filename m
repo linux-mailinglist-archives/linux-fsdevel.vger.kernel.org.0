@@ -1,105 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-40541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8E3A24BF7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 23:57:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09327A24C23
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2025 00:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33563A531B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 22:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DEAF188500A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2025 23:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2930F153BF8;
-	Sat,  1 Feb 2025 22:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7400D1C32FE;
+	Sat,  1 Feb 2025 23:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Xdfg0DXp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkFOQY0m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FD813D502
-	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Feb 2025 22:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAD6147C86
+	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Feb 2025 23:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738450617; cv=none; b=kRBFR4o04jZf/nfGUM+WlAX1kTjsG9rbdiXPAtZsAd1yS3nuaptwbxhUuFBVKYKi9e/FHQZfWynJnvByHBZXmOfA07oZAKe/kKtl/Rjpv63VXKf/13t4+fjRtbpbXPUHhe0FShCxJ+FZI0EFQPSTYqbA1DN5RSK2Cc88KmKVW3Y=
+	t=1738452289; cv=none; b=bdRJRaJjAM8FhGQpDi31NEzMzYGlF/tkh/mzbi7KE20M7guOx1UECRqMrwYzxJMvhMwHbcFCxMHUBwuAn89iMZs5XQn0f0ErqCqGN7ihGVtXmuUg8PiPVbXrt/EftXx5YhxdIzYpjHksx5PoEZ2QJ8P1qj5O+inMJbC4iMeQOis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738450617; c=relaxed/simple;
-	bh=VW+IkI/nqRPUix2rDIsMZ5CV9itcjRxcmeaKcSIKQgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HPWMfPJbCLRreP+KtalXVo+1RCvwOo2hUeEix7ydwhGCLg6vXrXICV2p1RaHuvTlEe59BpCtcJIXG7Rd7VyrF3k1csp1ayH+/uYjmVz3neD6RxEtw/Xbt+LqkGHoLUshfiu0TilT6E64I8cYivLUYhFiQF3kmdDGJJospBnJxfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Xdfg0DXp; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=gWIpgwd7WtlTAVS67eOfADMnDimWkdslvHIx5fF8hVA=; b=Xdfg0DXpou9/DiHA8/hhz36WRL
-	OfaLnI0qh2aRKhtYINFF88OI7xWafKUOXglFMdAZA7gAMFz1U4tIFCewRR1yDwJZ2WYLP/ThSI40u
-	a9uybiBQMtT4xoMnAQd5b6Fpf97li4BG/PTKQApX5NOwkENpxsUcrSGUZQG29+CDpYXr1acJSkv9R
-	M1f7tstCOjjXeJ8Hh9ExrvYTmp2a9kIEwoGz/Eg2ixhktRnO2IIFLYlj6kntRAOmKps7EGBOIp8np
-	+HIAjTY1JK4RuLtDtc94ZNzqjlT9V2flAQWQ88OsqYvZKNLTKAEx2o8ltdebOiveijI4bkvoJNVIz
-	9NGBR4fA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1teMPz-00000000SEF-1Px0;
-	Sat, 01 Feb 2025 22:56:51 +0000
-Date: Sat, 1 Feb 2025 22:56:51 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [git pull] a couple of misc vfs patches
-Message-ID: <20250201225651.GZ1977892@ZenIV>
+	s=arc-20240116; t=1738452289; c=relaxed/simple;
+	bh=BbZN86kcXIVCff1sJfypdEBGu0T/mbJbgMGGFOcTqp4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VM03NS3FNoDCRGdsxpVn/cQNPliYab0HsbwfVlliNJ2rU5DHVocDjT/HY7YJ4/880hgRsLLv6DoafzG+UymYFiZ6yFXMZpyta49+ktOLxtgiHDhHVTSVlEBLiOK2sCB6aZjHlFBSyPgljTgqaodlVBui2hNCrB33m8v2Fc32fFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkFOQY0m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F278C4CED3;
+	Sat,  1 Feb 2025 23:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738452289;
+	bh=BbZN86kcXIVCff1sJfypdEBGu0T/mbJbgMGGFOcTqp4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=JkFOQY0mHxww3yYGwD4ODe1KzCY2GBqo7NU2xxZkU1bPDD2JtR3Gafupo9QDcM55j
+	 sPbEX4O3GbUpQfglF9uIFvIDyQetw40Z+MQdJ6d9ReQn2wbhXreviJedg3ek9xOizr
+	 k4Mbg5qa733C+qus7oE83dJtn3YJX0/30pKG8UKPqVxzz7EM79khS6s4mnDn1afWK3
+	 SavdblNyfAyumlCJxChf/K0/nbhTgxdU2ZZh3rqA8Z/73EWt2w90W2yG7bsMp4HkFm
+	 k80r1OgGlSdE6EJr59U5+mM0ESOF4aYT5U7z92QqTkqxjTRJUm3KbKlb+sz5ntc414
+	 +bMPAYwXJK4CA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34597380AA68;
+	Sat,  1 Feb 2025 23:25:17 +0000 (UTC)
+Subject: Re: [git pull] a couple of misc vfs patches
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250201225651.GZ1977892@ZenIV>
+References: <20250201225651.GZ1977892@ZenIV>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250201225651.GZ1977892@ZenIV>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
+X-PR-Tracked-Commit-Id: c1feab95e0b2e9fce7e4f4b2739baf40d84543af
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a86bf2283d2c9769205407e2b54777c03d012939
+Message-Id: <173845231580.2011566.5476457243107589549.pr-tracker-bot@kernel.org>
+Date: Sat, 01 Feb 2025 23:25:15 +0000
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-A couple of unrelated patches - one is a removal of long-obsolete
-include in overlayfs (it used to need fs/internal.h, but the extern
-it wanted has been moved back to include/linux/namei.h) and another
-introduces convenience helper constructing struct qstr by
-a NUL-terminated string.
+The pull request you sent on Sat, 1 Feb 2025 22:56:51 +0000:
 
-One trivial conflict in fs/bcachefs/recovery.c - in mainline
-bch2_btree_lost_data() goes from returning void to returning int,
-in this branch a #define two lines before that point is removed.
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
 
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a86bf2283d2c9769205407e2b54777c03d012939
 
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+Thank you!
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
-
-for you to fetch changes up to c1feab95e0b2e9fce7e4f4b2739baf40d84543af:
-
-  add a string-to-qstr constructor (2025-01-27 19:25:45 -0500)
-
-----------------------------------------------------------------
-assorted stuff for this merge window
-
-----------------------------------------------------------------
-Al Viro (2):
-      fs/overlayfs/namei.c: get rid of include ../internal.h
-      add a string-to-qstr constructor
-
- fs/anon_inodes.c       |  4 ++--
- fs/bcachefs/fsck.c     |  2 +-
- fs/bcachefs/recovery.c |  2 --
- fs/bcachefs/util.h     |  2 --
- fs/erofs/xattr.c       |  2 +-
- fs/file_table.c        |  4 +---
- fs/kernfs/file.c       |  2 +-
- fs/overlayfs/namei.c   |  2 --
- include/linux/dcache.h |  1 +
- mm/secretmem.c         |  3 +--
- net/sunrpc/rpc_pipe.c  | 14 +++++---------
- 11 files changed, 13 insertions(+), 25 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
