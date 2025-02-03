@@ -1,381 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-40667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA942A265D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:41:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE8FA265DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505F8162B6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 21:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 723261630C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 21:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FDD20FAA1;
-	Mon,  3 Feb 2025 21:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A11210F5A;
+	Mon,  3 Feb 2025 21:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abIQkgv+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3zfGIOU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E3F20FA80;
-	Mon,  3 Feb 2025 21:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA25A1E0B9C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 21:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738618853; cv=none; b=H/jSv0wIgJmALumDfJ5ZOg/FZIjjs+vO+4COnSA+UgzQXGOKBnco9SXz7es+TFbZOmVkPZi2jx0JpVkDYQQ0VPKkVrlv3/+fd31AkAjw6/kUVoPHWusAduUg5I7aZcWdEuc9PjJ4ubA05y6+RlgIoTX4qhaRXiLgB1ik73mFyU4=
+	t=1738618905; cv=none; b=njsUQzT+LEbN2u2R6NYNJjX19jaVZJVACAw1L+2R6toLQHzUVMUDuJtEP+14O3EuVPKzsQhhN6AP5+oncC498Ziu6fNboEYuTthTvW/xnlc7ITac9AbPcLmroFpE6VSB6PzcdRJx9MMy9jiEBElq8f6MEWQXv2hdnPQuK1yXM1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738618853; c=relaxed/simple;
-	bh=sxx4WQ1GZmEaNn0cUR8e8RHJC7x+3YmEaVoQjtBdgb8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUqJUvp3iOS0uR9BRCFwXzbfpOJVe4krCQVwXD2JERNgxCMaI5rol6fYUhOpp9wqLWIS1tlOctjRdrimko/NHl7LCieaCCnMY1gXLGjFnRKaUB8NgadkaInge1bmwcXCHbY3wTzfZIrYFOxsA4KoSUhLdo3f193PYWf+JAmWNLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abIQkgv+; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46e28597955so44612201cf.0;
-        Mon, 03 Feb 2025 13:40:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738618850; x=1739223650; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rcx7OVdhxzaE6m1Yvxm97i2zJjqZm8p3llVaXLA/SyM=;
-        b=abIQkgv+YWFxzoKIoTN5MOjgfx2GJ3CDyX5zU/RF8rUMBBzHSg9T8z75s6CQtFHbRg
-         AMxoZ+w+om51IeVxyzEB+WxMOLmpJf5PDE8F1a2raEzK2ZxcBqLzeQ6yWA4z2Q0PMzBM
-         WNeqT4tuQa4I0t91otlV+YsnuaxErbnbgw+fqdlfmjWy9IJ/k60PPG9FlYbinsSk4VBq
-         Q6tkMTxDYf/0vuTt3QaLXcBrm7v0O1LWHkuSAAozKBi26G7jILFsRGgJkzKfnO8BnRQ7
-         e4IzkIjzBBHL26UnZ7AY+9Rxrsn1IMVIrIEfXm2OaCMn+Jjlgd2hGz5b7U7WGPVfGh6R
-         827w==
+	s=arc-20240116; t=1738618905; c=relaxed/simple;
+	bh=C/fAeZ5TjmlI2KBA/ql0cvqz3EukqX062ySDXg862Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DwXDsqBshfrpdXvQckTEUmSTP/eUHmiLLwwhOu35bRwUse3mxrguKTw8aTsxTflsUvLGkiPZxUEeb68zzpqUvuoMD1db25WUium4dt6QU4T7C+5ij+7v9ixkubjOpsJ93ZEEJzqN1eceAXAd4s1eMHPeFvkWNXVKypL+TL3GLRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H3zfGIOU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738618901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fedZlQnodJAwktFWZrs8j+jy0xji0943zmwbFDXd7UQ=;
+	b=H3zfGIOUIN3tIPNyJvr6QhWOZWLhFcN6iaP9U2OeiHHQWjS2AY9VK/r/VNUvW1mjqrF546
+	P4MA5UXCzjBi4PddE0WXQDz+KgZKmU79oqfk5XlQbtF+BYAeeUOGIpTvPcBZVbSin4mRXM
+	kZ5k6BAMYzj3wGyiTkj4RdFyuudBP0k=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-156-egEhfBMuOXaEhYLhBi80eg-1; Mon, 03 Feb 2025 16:41:40 -0500
+X-MC-Unique: egEhfBMuOXaEhYLhBi80eg-1
+X-Mimecast-MFC-AGG-ID: egEhfBMuOXaEhYLhBi80eg
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-844ebc11477so25922839f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 13:41:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738618850; x=1739223650;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1738618899; x=1739223699;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rcx7OVdhxzaE6m1Yvxm97i2zJjqZm8p3llVaXLA/SyM=;
-        b=JowaUoTn+iNrt1xKpfvYQPtKXDjvNRg0UIB799jXsJvK+Kb4/Mbh+SynEBd/ETR4kt
-         koMpErUGE+oOOAqGLzQNIn0pUNeql3Lu/FEPjDxb3YW+yRwNBHI2NIifj1Zcol/dXsZ4
-         3dBUYPi0D3jTywsB4U+DsJDQj7tb8rz5zpc8JZgEtVc/57nK6ALyXUFcJT4tMDmbmqY6
-         a73aYDrBupah9VQ9jydhOraA0tLAFcm5DNRExUg948FYoH8i1t1X3we3I+2FRU+zTVNc
-         kfM9cMLv+LwxprJG/amYx1Akc3nlFF4q7ku2JMMmLPHFXY1Mm2uVfu7ApncFBM84mKD7
-         86Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVADM91onV0ibNu6lpt7Dv6icK4lxBZmT44GTnAdLSgADf1vFSwAw5FH8SmQE4hg4qAsms5v9cjS1W0IAlydQ==@vger.kernel.org, AJvYcCWYOGkfGRUBwzTYM++kecVd560rm9jVLsScZVCeIQ0uDJqL2GNvYyajqEEXXSVco2IRmlHZBU0s@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjOf5ihrFoIrPtDhIeyvbghGwpozezxga4QcMNZ57pzss5XE7X
-	DaSZGVhkPKPdltH/6A+EwBrkxfrinxJEcPPwsk1poqK2mrD/X/W3Ggr3Q6mRMLVyqXwW8WnRV+s
-	aEnZofRCi+j2n17bBxIg/AsgaQLk=
-X-Gm-Gg: ASbGncsyUs2YBOmMZEWtA2fZfeK+L1mbGrEoyQZy7UALAwVKe9UdhEhF3xyXMSreb0o
-	1rYHJI5Sw9RvHjDurzAEptKVTOgzRjkkfbcDArJsLt0r9Ywl4QJ7xCpaKO8ipB8uRHo8vsrR/nz
-	pO6OosiqK/p47d
-X-Google-Smtp-Source: AGHT+IEFbPdy70iJTglq8HqOIu7Cuec/rK6vSJCH+BwGYyPl7rPQSioUL9u5FracyfW6fcMBvdytTx1d+SXOKrpdUYI=
-X-Received: by 2002:a05:622a:13d2:b0:46e:59a3:6db7 with SMTP id
- d75a77b69052e-46fd0aa2a98mr384354691cf.23.1738618850155; Mon, 03 Feb 2025
- 13:40:50 -0800 (PST)
+        bh=fedZlQnodJAwktFWZrs8j+jy0xji0943zmwbFDXd7UQ=;
+        b=q4yDIX5lj8vTdT8nFzyUyQLXO3dSIRb8oSJP1PVADTsuJvpOBUshEnlkhMV8n4QOi4
+         jxJJFOThD7bi7Vn5WGleNQuhz7EDMz4BBe7HS4LxRCNjIDttevMHGZJo++vA0q2v/smQ
+         xoqOyeWu2YFIJORG13xwW51K2zKl+y8UYYG0qKcRjamXwre7beIj7WmsN+/9lq3e/IcJ
+         /OR2x1U4jBMrAuHSYnAj/qopDc0mDTzTV+JN9Uc4RPBGCeAnn5vei49Cq5K0fY+xGGgT
+         oTPdWs8rue0XVSZhhFZajNyNAlaSRo0C2fZxSFrE+Kw0zMENTdlm0Ha30cN/hVZNRVxW
+         plqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvbRBgEo4hJhaI3nZ//WOnJhZsflK3kPkO+2wqPUU8bMnl6SbrphlZ+DIR626DzlUQ+js2eOtIiV3srAd9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2jiSPbs9QKMHZwDHK1z42tvSD/HO7n4fTZ9NcR+X2etA0yn5l
+	1hL23gNLDCEDqrXqBa8wj735qD8LUtVJ2UU9Xt4mHhE8PIYuiSxbmsGLmvDbrDmeHJwBh4sDZjb
+	jhT5Nsf+1vKrbfMen6ViTLKhFfypyOSZuL01YWJjUvGzn3WJ0p8eyaP+zkDdYTf8=
+X-Gm-Gg: ASbGncu1qQFoIinTkIpAhmu6ERVI8YcaMQKKWDdMav4lkS9oYug+cUlu7Mz9OiFdHph
+	NCG4GLwYEq67RbNoLNHFrrrj/40UX5FAM2abHXw/cdPFHG1h44+l0X6I4wSasPZeXQdgDczvvgI
+	RY1pWBh3h03zLKrlKFcGrk5SXUtRj3DVvfXS5/VNmFdks3Hi+RxHHn8wo7LcXsdSahed1Q2djP3
+	SwpWTLAx7zbPqn8Hm/NdbgCsWb65GQh74Mx9j/728vOetDa6o9Ymdoga6pdt0YDpAHcX/XZD1n2
+	mydb3419
+X-Received: by 2002:a05:6602:6082:b0:84a:51e2:9f79 with SMTP id ca18e2360f4ac-854dd94f875mr40833039f.2.1738618899343;
+        Mon, 03 Feb 2025 13:41:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHYIf7YEdjPvXGZacVgVVZyr+JMryxDDsVGKfxamFm+EdtMLtHIq0nEP3iBHBmyVlkBf0g9sw==
+X-Received: by 2002:a05:6602:6082:b0:84a:51e2:9f79 with SMTP id ca18e2360f4ac-854dd94f875mr40831539f.2.1738618898981;
+        Mon, 03 Feb 2025 13:41:38 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec7469ef2dsm2425558173.97.2025.02.03.13.41.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 13:41:38 -0800 (PST)
+Date: Mon, 3 Feb 2025 14:41:35 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+ Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+ linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+ linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [REGRESSION] Re: [PATCH v8 15/19] mm: don't allow huge faults
+ for files with pre content watches
+Message-ID: <20250203144135.1caef6c3.alex.williamson@redhat.com>
+In-Reply-To: <CAOQ4uxg63JR2jsy_xA63Zkh_6wzsy_2c30Z_05kZ=cHsRC_UzQ@mail.gmail.com>
+References: <cover.1731684329.git.josef@toxicpanda.com>
+	<9035b82cff08a3801cef3d06bbf2778b2e5a4dba.1731684329.git.josef@toxicpanda.com>
+	<20250131121703.1e4d00a7.alex.williamson@redhat.com>
+	<CAHk-=wjMPZ7htPTzxtF52-ZPShfFOQ4R-pHVxLO+pfOW5avC4Q@mail.gmail.com>
+	<Z512mt1hmX5Jg7iH@x1.local>
+	<20250201-legehennen-klopfen-2ab140dc0422@brauner>
+	<CAHk-=wi2pThSVY=zhO=ZKxViBj5QCRX-=AS2+rVknQgJnHXDFg@mail.gmail.com>
+	<CAOQ4uxjVTir-mmx05zh231BpEN1XbXpooscZyfNUYmVj32-d3w@mail.gmail.com>
+	<20250202-abbauen-meerrettich-912513202ce4@brauner>
+	<l5apiabdjosyy4gfuenr4oqdfio3zdiajzxoekdgtsohzpn3mj@dcmvayncbye4>
+	<CAOQ4uxg63JR2jsy_xA63Zkh_6wzsy_2c30Z_05kZ=cHsRC_UzQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250121215641.1764359-1-joannelkoong@gmail.com>
- <20250121215641.1764359-2-joannelkoong@gmail.com> <20250202142518.r3xvf7mvfo2nhb7t@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <CAJnrk1YwBJQnFwYBcO50Xy2dA6df_SqQsHdpLux4wa-Yw5rXdg@mail.gmail.com>
- <20250203185948.GB134532@frogsfrogsfrogs> <CAJnrk1bX27KAOxChMs5pRNmrjjuxjYu11GG==vTN0sa8Qf2Uqw@mail.gmail.com>
- <20250203194147.GA134498@frogsfrogsfrogs> <CAJnrk1Y_eDFOnob3N78O3jcRoHy6Y0jaxnXbgVT0okBjwJue3g@mail.gmail.com>
- <20250203200149.GC134490@frogsfrogsfrogs>
-In-Reply-To: <20250203200149.GC134490@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 3 Feb 2025 13:40:39 -0800
-X-Gm-Features: AWEUYZmQ51z0UEvwL2zRzFgGYLUc2TBgs3SFvUgdZFbkCAdNZIY0aMHvVJypeFQ
-Message-ID: <CAJnrk1apX266i33s8CA4JwCv0z9sNmGm=+EXt0kSESvzicEhJQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, bfoster@redhat.com, nirjhar@linux.ibm.com, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 3, 2025 at 12:01=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Mon, Feb 03, 2025 at 11:57:23AM -0800, Joanne Koong wrote:
-> > On Mon, Feb 3, 2025 at 11:41=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> > >
-> > > On Mon, Feb 03, 2025 at 11:23:20AM -0800, Joanne Koong wrote:
-> > > > On Mon, Feb 3, 2025 at 10:59=E2=80=AFAM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
+On Mon, 3 Feb 2025 21:39:27 +0100
+Amir Goldstein <amir73il@gmail.com> wrote:
+
+> On Mon, Feb 3, 2025 at 1:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Sun 02-02-25 11:04:02, Christian Brauner wrote: =20
+> > > On Sun, Feb 02, 2025 at 08:46:21AM +0100, Amir Goldstein wrote: =20
+> > > > On Sun, Feb 2, 2025 at 1:58=E2=80=AFAM Linus Torvalds
+> > > > <torvalds@linux-foundation.org> wrote: =20
 > > > > >
-> > > > > On Mon, Feb 03, 2025 at 10:04:04AM -0800, Joanne Koong wrote:
-> > > > > > On Sun, Feb 2, 2025 at 6:25=E2=80=AFAM Zorro Lang <zlang@redhat=
-.com> wrote:
-> > > > > > >
-> > > > > > > On Tue, Jan 21, 2025 at 01:56:40PM -0800, Joanne Koong wrote:
-> > > > > > > > Add support for reads/writes from buffers backed by hugepag=
-es.
-> > > > > > > > This can be enabled through the '-h' flag. This flag should=
- only be used
-> > > > > > > > on systems where THP capabilities are enabled.
-> > > > > > > >
-> > > > > > > > This is motivated by a recent bug that was due to faulty ha=
-ndling of
-> > > > > > > > userspace buffers backed by hugepages. This patch is a miti=
-gation
-> > > > > > > > against problems like this in the future.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > > > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > > > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > > > > > ---
-> > > > > > >
-> > > > > > > Those two test cases fail on old system which doesn't support
-> > > > > > > MADV_COLLAPSE:
-> > > > > > >
-> > > > > > >    fsx -N 10000 -l 500000 -h
-> > > > > > >   -fsx -N 10000 -o 8192 -l 500000 -h
-> > > > > > >   -fsx -N 10000 -o 128000 -l 500000 -h
-> > > > > > >   +MADV_COLLAPSE not supported. Can't support -h
-> > > > > > >
-> > > > > > > and
-> > > > > > >
-> > > > > > >    fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W=
- -h
-> > > > > > >   -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE =
--Z -R -W -h
-> > > > > > >   -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZ=
-E -Z -R -W -h
-> > > > > > >   +mapped writes DISABLED
-> > > > > > >   +MADV_COLLAPSE not supported. Can't support -h
-> > > > > > >
-> > > > > > > I'm wondering ...
-> > > > > > >
-> > > > > > > >  ltp/fsx.c | 166 ++++++++++++++++++++++++++++++++++++++++++=
-+++++++-----
-> > > > > > > >  1 file changed, 153 insertions(+), 13 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > > > > > > index 41933354..3be383c6 100644
-> > > > > > > > --- a/ltp/fsx.c
-> > > > > > > > +++ b/ltp/fsx.c
-> > > > > > > >  static struct option longopts[] =3D {
-> > > > > > > >       {"replay-ops", required_argument, 0, 256},
-> > > > > > > >       {"record-ops", optional_argument, 0, 255},
-> > > > > > > > @@ -2883,7 +3023,7 @@ main(int argc, char **argv)
-> > > > > > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffer=
-ed stdout */
-> > > > > > > >
-> > > > > > > >       while ((ch =3D getopt_long(argc, argv,
-> > > > > > > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr=
-:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > > > > > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:q=
-r:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > > > > > >                                longopts, NULL)) !=3D EOF)
-> > > > > > > >               switch (ch) {
-> > > > > > > >               case 'b':
-> > > > > > > > @@ -2916,6 +3056,14 @@ main(int argc, char **argv)
-> > > > > > > >               case 'g':
-> > > > > > > >                       filldata =3D *optarg;
-> > > > > > > >                       break;
-> > > > > > > > +             case 'h':
-> > > > > > > > +#ifndef MADV_COLLAPSE
-> > > > > > > > +                     fprintf(stderr, "MADV_COLLAPSE not su=
-pported. "
-> > > > > > > > +                             "Can't support -h\n");
-> > > > > > > > +                     exit(86);
-> > > > > > > > +#endif
-> > > > > > > > +                     hugepages =3D 1;
-> > > > > > > > +                     break;
-> > > > > > >
-> > > > > > > ...
-> > > > > > > if we could change this part to:
-> > > > > > >
-> > > > > > > #ifdef MADV_COLLAPSE
-> > > > > > >         hugepages =3D 1;
-> > > > > > > #endif
-> > > > > > >         break;
-> > > > > > >
-> > > > > > > to avoid the test failures on old systems.
-> > > > > > >
-> > > > > > > Or any better ideas from you :)
+> > > > > On Sat, 1 Feb 2025 at 06:38, Christian Brauner <brauner@kernel.or=
+g> wrote: =20
 > > > > > >
-> > > > > > Hi Zorro,
+> > > > > > Ok, but those "device fds" aren't really device fds in the sens=
+e that
+> > > > > > they are character fds. They are regular files afaict from:
 > > > > > >
-> > > > > > It looks like MADV_COLLAPSE was introduced in kernel version 6.=
-1. What
-> > > > > > do you think about skipping generic/758 and generic/759 if the =
-kernel
-> > > > > > version is older than 6.1? That to me seems more preferable tha=
-n the
-> > > > > > paste above, as the paste above would execute the test as if it=
- did
-> > > > > > test hugepages when in reality it didn't, which would be mislea=
-ding.
+> > > > > > vfio_device_open_file(struct vfio_device *device)
+> > > > > >
+> > > > > > (Well, it's actually worse as anon_inode_getfile() files don't =
+have any
+> > > > > > mode at all but that's beside the point.)?
+> > > > > >
+> > > > > > In any case, I think you're right that such files would (accide=
+ntly?)
+> > > > > > qualify for content watches afaict. So at least that should pro=
+bably get
+> > > > > > FMODE_NONOTIFY. =20
 > > > > >
-> > > > > Now that I've gotten to try this out --
+> > > > > Hmm. Can we just make all anon_inodes do that? I don't think you =
+can
+> > > > > sanely have pre-content watches on anon-inodes, since you can't r=
+eally
+> > > > > have access to them to _set_ the content watch from outside anywa=
+y..
 > > > > >
-> > > > > There's a couple of things going on here.  The first is that gene=
-ric/759
-> > > > > and 760 need to check if invoking fsx -h causes it to spit out th=
-e
-> > > > > "MADV_COLLAPSE not supported" error and _notrun the test.
-> > > > >
-> > > > > The second thing is that userspace programs can ensure the existe=
-nce of
-> > > > > MADV_COLLAPSE in multiple ways.  The first way is through sys/mma=
-n.h,
-> > > > > which requires that the underlying C library headers are new enou=
-gh to
-> > > > > include a definition.  glibc 2.37 is new enough, but even things =
-like
-> > > > > Debian 12 and RHEL 9 aren't new enough to have that.  Other C lib=
-raries
-> > > > > might not follow glibc's practice of wrapping and/or redefining s=
-ymbols
-> > > > > in a way that you hope is the same as...
-> > > > >
-> > > > > The second way is through linux/mman.h, which comes from the kern=
-el
-> > > > > headers package; and the third way is for the program to define i=
-t
-> > > > > itself if nobody else does.
-> > > > >
-> > > > > So I think the easiest way to fix the fsx.c build is to include
-> > > > > linux/mman.h in addition to sys/mman.h.  Sorry I didn't notice th=
-ese
+> > > > > In fact, maybe do it in alloc_file_pseudo()?
+> > > > > =20
 > > > >
-> > > > Thanks for your input. Do we still need sys/mman.h if linux/mman.h =
-is added?
+> > > > The problem is that we cannot set FMODE_NONOTIFY -
+> > > > we tried that once but it regressed some workloads watching
+> > > > write on pipe fd or something. =20
 > > >
-> > > Yes, because glibc provides the mmap() function that wraps
-> > > syscall(__NR_mmap, ...);
+> > > Ok, that might be true. But I would assume that most users of
+> > > alloc_file_pseudo() or the anonymous inode infrastructure will not ca=
+re
+> > > about fanotify events. I would not go for a separate helper. It'd be
+> > > nice to keep the number of file allocation functions low.
 > > >
-> > > > For generic/758 and 759, does it suffice to gate this on whether th=
-e
-> > > > kernel version if 6.1+ and _notrun if not? My understanding is that
-> > > > any kernel version 6.1 or newer will have MADV_COLLAPSE in its kern=
-el
-> > > > headers package and support the feature.
-> > >
-> > > No, because some (most?) vendors backport new features into existing
-> > > kernels without revving the version number of that kernel.
+> > > I'd rather have the subsystems that want it explicitly opt-in to
+> > > fanotify watches, i.e., remove FMODE_NONOTIFY. Because right now we h=
+ave
+> > > broken fanotify support for e.g., nsfs already. So make the subsystems
+> > > think about whether they actually want to support it. =20
 > >
-> > Oh okay, I see. That makes sense, thanks for the explanation.
+> > Agreed, that would be a saner default.
+> > =20
+> > > I would disqualify all anonymous inodes and see what actually does
+> > > break. I naively suspect that almost no one uses anonymous inodes +
+> > > fanotify. I'd be very surprised.
+> > >
+> > > I'm currently traveling (see you later btw) but from a very cursory
+> > > reading I would naively suspect the following:
+> > >
+> > > // Suspects for FMODE_NONOTIFY
+> > > drivers/dma-buf/dma-buf.c:      file =3D alloc_file_pseudo(inode, dma=
+_buf_mnt, "dmabuf",
+> > > drivers/misc/cxl/api.c: file =3D alloc_file_pseudo(inode, cxl_vfs_mou=
+nt, name,
+> > > drivers/scsi/cxlflash/ocxl_hw.c:        file =3D alloc_file_pseudo(in=
+ode, ocxlflash_vfs_mount, name,
+> > > fs/anon_inodes.c:       file =3D alloc_file_pseudo(inode, anon_inode_=
+mnt, name,
+> > > fs/hugetlbfs/inode.c:           file =3D alloc_file_pseudo(inode, mnt=
+, name, O_RDWR,
+> > > kernel/bpf/token.c:     file =3D alloc_file_pseudo(inode, path.mnt, B=
+PF_TOKEN_INODE_NAME, O_RDWR, &bpf_token_fops);
+> > > mm/secretmem.c: file =3D alloc_file_pseudo(inode, secretmem_mnt, "sec=
+retmem",
+> > > block/bdev.c:   bdev_file =3D alloc_file_pseudo_noaccount(BD_INODE(bd=
+ev),
+> > > drivers/tty/pty.c: static int ptmx_open(struct inode *inode, struct f=
+ile *filp)
+> > >
+> > > // Suspects for ~FMODE_NONOTIFY
+> > > fs/aio.c:       file =3D alloc_file_pseudo(inode, aio_mnt, "[aio]", =
+=20
 > >
-> > >
-> > > Maybe the following fixes things?
-> > >
-> > > --D
-> > >
-> > > generic/759,760: fix MADV_COLLAPSE detection and inclusion
-> > >
-> > > On systems with "old" C libraries such as glibc 2.36 in Debian 12, th=
-e
-> > > MADV_COLLAPSE flag might not be defined in any of the header files
-> > > pulled in by sys/mman.h, which means that the fsx binary might not ge=
-t
-> > > built with any of the MADV_COLLAPSE code.  If the kernel supports THP=
-,
-> > > the test will fail with:
-> > >
-> > > >  QA output created by 760
-> > > >  fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-> > > > -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W=
- -h
-> > > > -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R =
--W -h
-> > > > +mapped writes DISABLED
-> > > > +MADV_COLLAPSE not supported. Can't support -h
-> > >
-> > > Fix both tests to detect fsx binaries that don't support MADV_COLLAPS=
-E,
-> > > then fix fsx.c to include the mman.h from the kernel headers (aka
-> > > linux/mman.h) so that we can actually test IOs to and from THPs if th=
-e
-> > > kernel is newer than the rest of userspace.
-> > >
-> > > Cc: <fstests@vger.kernel.org> # v2025.02.02
-> > > Fixes: 627289232371e3 ("generic: add tests for read/writes from hugep=
-ages-backed buffers")
-> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > > ---
-> > >  ltp/fsx.c         |    1 +
-> > >  tests/generic/759 |    3 +++
-> > >  tests/generic/760 |    3 +++
-> > >  3 files changed, 7 insertions(+)
-> > >
-> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > index 634c496ffe9317..cf9502a74c17a7 100644
-> > > --- a/ltp/fsx.c
-> > > +++ b/ltp/fsx.c
-> > > @@ -20,6 +20,7 @@
-> > >  #include <strings.h>
-> > >  #include <sys/file.h>
-> > >  #include <sys/mman.h>
-> > > +#include <linux/mman.h>
-> > >  #include <sys/uio.h>
-> > >  #include <stdbool.h>
-> > >  #ifdef HAVE_ERR_H
-> > > diff --git a/tests/generic/759 b/tests/generic/759
-> > > index 6c74478aa8a0e0..3549c5ed6a9299 100755
-> > > --- a/tests/generic/759
-> > > +++ b/tests/generic/759
-> > > @@ -14,6 +14,9 @@ _begin_fstest rw auto quick
-> > >  _require_test
-> > >  _require_thp
-> > >
-> > > +$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE not su=
-pported' && \
-> > > +       _notrun "fsx binary does not support MADV_COLLAPSE"
-> > > +
-> > >  run_fsx -N 10000            -l 500000 -h
-> > >  run_fsx -N 10000  -o 8192   -l 500000 -h
-> > >  run_fsx -N 10000  -o 128000 -l 500000 -h
-> > > diff --git a/tests/generic/760 b/tests/generic/760
-> > > index c71a196222ad3b..2fbd28502ae678 100755
-> > > --- a/tests/generic/760
-> > > +++ b/tests/generic/760
-> > > @@ -15,6 +15,9 @@ _require_test
-> > >  _require_odirect
-> > >  _require_thp
-> > >
-> > > +$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE not su=
-pported' && \
-> > > +       _notrun "fsx binary does not support MADV_COLLAPSE"
-> > > +
+> > This is just a helper file for managing aio context so I don't think any
+> > notification makes sense there (events are not well defined). So I'd say
+> > FMODE_NONOTIFY here as well.
+> > =20
+> > > fs/pipe.c:      f =3D alloc_file_pseudo(inode, pipe_mnt, "",
+> > > mm/shmem.c:             res =3D alloc_file_pseudo(inode, mnt, name, O=
+_RDWR, =20
 > >
-> > I tried this out locally and it works for me:
+> > This is actually used for stuff like IPC SEM where notification doesn't
+> > make sense. It's also used when mmapping /dev/zero but that struct file
+> > isn't easily accessible to userspace so overall I'd say this should be
+> > FMODE_NONOTIFY as well. =20
+>=20
+> I think there is another code path that the audit missed for getting these
+> pseudo files not via alloc_file_pseudo():
+> ipc/shm.c:      file =3D alloc_file_clone(base, f_flags,
+>=20
+> which does not copy f_mode as far as I can tell.
+>=20
+> > =20
+> > > // Unsure:
+> > > fs/nfs/nfs4file.c:      filep =3D alloc_file_pseudo(r_ino, ss_mnt, re=
+ad_name, O_RDONLY, =20
 > >
-> > generic/759 8s ... [not run] fsx binary does not support MADV_COLLAPSE
-> > Ran: generic/759
-> > Not run: generic/759
-> > Passed all 1 tests
+> > AFAICS this struct file is for copy offload and doesn't leave the kerne=
+l.
+> > Hence FMODE_NONOTIFY should be fine.
+> > =20
+> > > net/socket.c:   file =3D alloc_file_pseudo(SOCK_INODE(sock), sock_mnt=
+, dname, =20
 > >
-> > SECTION       -- fuse
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> > Ran: generic/759
-> > Not run: generic/759
-> > Passed all 1 tests
->
-> Does the test actually run if you /do/ have kernel/libc headers that
-> define MADV_COLLAPSE?  And if so, does that count as a Tested-by?
->
+> > In this case I think we need to be careful. It's a similar case as pipe=
+s so
+> > probably we should use ~FMODE_NONOTIFY here from pure caution.
+> > =20
+>=20
+> I tried this approach with patch:
+> "fsnotify: disable notification by default for all pseudo files"
+>=20
+> But I also added another patch:
+> "fsnotify: disable pre-content and permission events by default"
+>=20
+> So that code paths that we missed such as alloc_file_clone()
+> will not have pre-content events enabled.
+>=20
+> Alex,
+>=20
+> Can you please try this branch:
+>=20
+> https://github.com/amir73il/linux/commits/fsnotify-fixes/
+>=20
+> and verify that it fixes your issue.
+>=20
+> The branch contains one prep patch:
+> "fsnotify: use accessor to set FMODE_NONOTIFY_*"
+> and two independent Fixes patches.
+>=20
+> Assuming that it fixes your issue, can you please test each of the
+> Fixes patches individually, because every one of them should be fixing
+> the issue independently and every one of them could break something,
+> so we may end up reverting it later on.
 
-I'm not sure if I fully understand the subtext of your question but
-yes, the test runs on my system when MADV_COLLAPSE is defined in the
-kernel/libc headers.
-For sanity checking the inverse case, (eg MADV_COLLAPSE not defined),
-I tried this out by modifying the ifdef/ifndef checks in fsx to
-MADV_COLLAPSE_ to see if the '$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 |
-grep -q 'MADV_COLLAPSE not supported'' line catches that.
+Test #1:
 
+fsnotify: disable pre-content and permission events by default
+fsnotify: disable notification by default for all pseudo files
+fsnotify: use accessor to set FMODE_NONOTIFY_*
 
-> --D
->
-> >
-> > Thanks,
-> > Joanne
-> >
-> > >  psize=3D`$here/src/feature -s`
-> > >  bsize=3D`$here/src/min_dio_alignment $TEST_DIR $TEST_DEV`
-> > >
-> >
+Result: Pass, vfio-pci huge_fault observed
+
+Test #2:
+
+fsnotify: disable notification by default for all pseudo files
+fsnotify: use accessor to set FMODE_NONOTIFY_*
+
+Result: Pass, vfio-pci huge_fault observed
+
+Test #3:
+
+fsnotify: disable pre-content and permission events by default
+fsnotify: use accessor to set FMODE_NONOTIFY_*
+
+Result: Pass, vfio-pci huge_fault observed
+
+Test #4 (control):
+
+fsnotify: use accessor to set FMODE_NONOTIFY_*
+
+Result: Fail, no vfio-pci huge_fault observed
+
+For any combination of the Fixes patches:
+
+Tested-by: Alex Williamson <alex.williamson@redhat.com>
+
+Thanks!
+Alex
+
 
