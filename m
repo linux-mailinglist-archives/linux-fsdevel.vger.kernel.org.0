@@ -1,230 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-40684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFD3A266EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:41:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C383EA2677D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 00:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28ADF1881E89
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FD7E7A3517
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5848B212FA9;
-	Mon,  3 Feb 2025 22:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8CF212FA8;
+	Mon,  3 Feb 2025 23:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="hFlAdqE0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZ21Lo7M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC45B2116EA
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 22:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A525212B3A;
+	Mon,  3 Feb 2025 23:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738622368; cv=none; b=TYsFpcXAkZMqYAe2BkTLfhaaBlJwSH4UgTuegVA7x8xlUZ8UJkd4Oi5iIVXGuzMEFFvhgEKdXpJtSnZ19OUYK7jup5uZnxv7holo/cPnbUPD0cxBIdj/QowL5Ni/erd0IUFBCMmNxa3rxDthay7bCOb/xFnp3RaTfa3MNMkm8Vw=
+	t=1738623784; cv=none; b=vEA8A3OEjyA0p/kxYFOvcV5Fn6kPAhaFL/k62HdeWXdmPtqcCun8OKjJk5ekZ0uvlbXe0p+vLvVNKF6kxWuh7VzBRo6edMcBRESgL/9LZziGVhJpfya8roBnbyx4S8qe8gOzttY84YVc4yMOWXCLtmiyXshX8NfP7+KszA4S7D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738622368; c=relaxed/simple;
-	bh=K1VNqIvXyYYBViLsvU7jTEwkBNtEo6tSllkcYykAnC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRiil2jJKVWVD9vmHaKJJNRNkU8BOTGkwcfa+y6BochFjB1na+MO3/GnGJYUBLwKfl+A3wyGTGUHNyrnSEpiqeZJq1iegM7qOzbb6nMMRBfGTuO0TYj0hBissdHeJ8vLbFCJI/93GZdDMAi6hqVslwPLxiZW6iZdNUgjCDx56j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=hFlAdqE0; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ee9a780de4so6316629a91.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 14:39:25 -0800 (PST)
+	s=arc-20240116; t=1738623784; c=relaxed/simple;
+	bh=EjOexnXMgQJzxYHOLu3OeempPRS8bOp4JLgbpD0HMsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wslg4hCULt/oM0BqXghHibx0L8DAlI2sYJs+34P+d1Fuuv3EOnejZXV8wICIbyCbjG5djEIkY5+qY+uHTYeouypt/4m9j6GMuJcy4mIkZCzHqAWn/31k1zkVc5pT8t2MeiVoMcP4540MhpMNMX3aTqhPYFeVBUTVADs7zFezm9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZ21Lo7M; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d0d32cd31aso7102368a12.0;
+        Mon, 03 Feb 2025 15:02:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1738622365; x=1739227165; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7KpVGyJ2q1bc5O6QMLcMEUWtGlTAt/NvAxettw3RvKg=;
-        b=hFlAdqE0Ps+xBkFt/kwvpqEmDliL7EctUd/lDWrFGs76+zatNRa050WXpvHmGvp/lW
-         lzXS+vE3Xrngsrv5Ais3d9tXAHJlivO1592p0Wucl8P5hd4Vu0KuL8Wn50wpwQHWqwij
-         pnAQ5892Q6/5uG5MnhlLvAoOYH10UlfQ89VAhVhoZbDOMWpEXZz/cpSJlCfC864pURqH
-         e7Z4BlE5pe8TTi8/Zq04avhEDMyTfmTVVayxLYqw7OjXt7PG10Cy8JJFbm2WpNYZnwNq
-         Cyhk4kXMTz105AI5BKxMgpUgj5EMOUTOFa7izZgfR0WXQyJ2R5FrnFkicFuOaEjKicZd
-         0iIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738622365; x=1739227165;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1738623776; x=1739228576; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7KpVGyJ2q1bc5O6QMLcMEUWtGlTAt/NvAxettw3RvKg=;
-        b=wQiTyIayqlndQ00S49ndrGwQAXMetkF7OU2TTX3oN3NygK6x+/froyAov2J5q7oGzw
-         V+BMSzMD+uylfaBz7V92JunwpBwV+jzgHuy/ZfXq+vlTthxeTwrQsHFp1nXnwj/ZeMyf
-         n/9SFnYp8JB1N855olOZLRMcsOOcKFeceR9Bz8uM3Z8xC59D34Epf6U2Iqeu08g+OHO2
-         uoVDkmrbPnrvCWuIYSuQnVf0KMGkf0YRg4tmP1oJirv/lv0XxDv4sd86sIVvhP0SyeQx
-         gxnprUgP//MD/CNb9zta5dav5rinMqUI12HWTVn3s60eghZ7vRxya7/2pcCEfdNGVWro
-         4zig==
-X-Forwarded-Encrypted: i=1; AJvYcCXdy2KyCimaB/f0oZK3BDSOMRi+QIA0yvwD87zit8oszg4IUbvlXI0RUUu9SKkp2i/iQcY1Eazq7ZQfoEvC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJJrnP6jgtS7s+OfbplXRWv9VeGF7KYOg/yG2yNIlSglxqjf4/
-	pKthAzAzKfZjaMZ3l1K/wPIoEoV8LOOZ6c6Y7rULkh+pnpY4tYSbDqf9xALu7s8=
-X-Gm-Gg: ASbGncuVbY/qLnhNsC0JOyEdmlar+LQo7LbJI1pQu/4fYk3p1xA97/ud71JCs0pwlzH
-	NEzh0C8HiKibbAPxArI08Xh2TRlDW9IMI1hoGF63qfGGGa0YrH1Zo8jaWMLFRLbsShwlh20NLEx
-	AvO7Tn0R7lJVANeKwvAgWh7KOUkhZCOyAnk6VyOStikO6gASC+D2oFPR2cTXbAYOhUiVZH5f8TX
-	hVo/9fGoH4UJJAsf+ZIyGIEvJIX/+RCnONqNXvmzQ55r5ZvN3mHXEqjOb7tKeypu9JjOW0Ya2ws
-	iraivFWHusQDNJmqiEOap96/AJEGxgYlMhX/iED2z52dKx+hDAaTcOCG04y8kCPQo80=
-X-Google-Smtp-Source: AGHT+IEPTrAiWBg1qg9Pn7U4MfER2lZWbpMPOOLGPLK2BHWop9OkWWimId0qcnZrm79vDgsDbkrIXg==
-X-Received: by 2002:a17:90b:524a:b0:2ee:5691:774e with SMTP id 98e67ed59e1d1-2f83ab8baf8mr37128948a91.2.1738622364086;
-        Mon, 03 Feb 2025 14:39:24 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de32ebabasm82038825ad.129.2025.02.03.14.39.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2025 14:39:23 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tf567-0000000EGx6-3IMd;
-	Tue, 04 Feb 2025 09:39:19 +1100
-Date: Tue, 4 Feb 2025 09:39:19 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-	dchinner@redhat.com, ritesh.list@gmail.com, jack@suse.cz,
-	tytso@mit.edu, linux-ext4@vger.kernel.org,
-	nirjhar.roy.lists@gmail.com, zlang@kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] xfstests: Centralizing filesystem configs and
- device configs
-Message-ID: <Z6FFlxFEPfJT0h_P@dread.disaster.area>
-References: <Z55RXUKB5O5l8QjM@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+        bh=JBdmQ5wtRHJ8W3Dokaw4p9hk2ntwY4Hw01yfpGgGPh4=;
+        b=NZ21Lo7MAVI7/0nJ6I3NyNLWbZxoJ2fXWlrubAlHF/vBTZJfX3LOa0TPeoNMuySG9u
+         0D2LjDGPRj9ZZeJlxbLZ1OQ2A9yzVkKkhuI/8vOW7jrU65p9Ljy2tJeMIKFoEi3i1WIX
+         9PVRffVDSpztjCJGcetiem3o+7ZHPOfzLpKOIAwbaZ/1xoF3IuYl4U89ZO3RxZAjfXZY
+         Cj5jGfCHKCwRStEIyJnLktTxKd9cUYSRb+vhpkKbG/F9HqGxp3Ro7qIQJ6l8Rp/Zy83O
+         sW9shQVScNIDnYbQSdY8Cha+XcL2eAFGqKMkpfxRsaSW15n03yWzjrxcx/cLfpgMwm2Y
+         ek/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738623776; x=1739228576;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JBdmQ5wtRHJ8W3Dokaw4p9hk2ntwY4Hw01yfpGgGPh4=;
+        b=gabDpctxJM7qvUP9QAcrOxt2XdmpRXpVoVMOAMg1Z1QG9vKfafp5SwbW7W4gbIZdFM
+         Qyc2OTu7+Mk8PBRDzytJGv7HU/6uDNjIRFnUB7w0KBWxbIYgie3rn+9bhd93edONzHhv
+         SpbWP8OmMVl3OcjGWf6Yb+d+lK7xwl5Vao0FviEnNNngUS04mNblMFclZaC2BFjuPmQg
+         lCyVkLamAZGbuBEHCCFj4GdrSJvHSOLCZOs/xE9w5FZ/3cIoGV3KVn1P0ZR5HxyIzSgd
+         v/E9EoKCRJgeD2iY+oPwPRdpCnG6eRsEbvJsrd7qmh9ja44OJfJQgb6ALbi6XwIDdlR/
+         rseg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2sJH2Mpvo1u6SBOT15JTHKkHa3Sf+fxzEDESGROL8If1iiH25xBfLpK3JjDKggz4px9hTg2OiAda5@vger.kernel.org, AJvYcCXQ4lvwSvFw7RE1lN18NZEO3s6pcypSEyOslgZvGPbv8kubaa0j/jFci3qhZaBlZpoFQ40EF3EF9r9Tx6yBdg==@vger.kernel.org, AJvYcCXW/ecjcjqpCAVF+3hmlnNkYcH7/B3Lb9nBBA4Oul+d9CCLzN56kPI0y9PfHAEdU4mBkvtXJ8LImQr6LFUg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq/E2VJS6ot8UPCnvfCRXHvT0kLKPDGTtU00Rljfefod3AeXDt
+	r90ts7hbZSnm6tgR+qksSugxdkFy+x6kSGiJqr6kZe/AE+DoHuj7rR01ae5HMhCyQ8b/KHPav3f
+	klCKSIGceCnAQsSZcwh0Q+CLmJgg=
+X-Gm-Gg: ASbGncs2HlrfKIrTK9edlUW7JKzOnMVLUaSa6NmydlGk/uYgu5bFFiNM/R4P31zED1u
+	7t7ypIchcTRxaXvYRvzF73CzxYE0YsuqsjKbJGf1VtxWxPveyaVZJfnzjAGabHgfLxZXSZu8k
+X-Google-Smtp-Source: AGHT+IGgP4sJZkbGL8t2nWMqhmaVSSoUQdeHG+eSyBSt3KQAtZyiCq3bIwAca8RXUKXL88AmRHbSP8gtBq5IrmNLFpA=
+X-Received: by 2002:a05:6402:a001:b0:5dc:7374:261d with SMTP id
+ 4fb4d7f45d1cf-5dc737427bfmr36454533a12.7.1738623775777; Mon, 03 Feb 2025
+ 15:02:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z55RXUKB5O5l8QjM@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20250114215350.gkc2e2kcovj43hk7@pali> <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
+ <20250114235547.ncqaqcslerandjwf@pali> <20250114235925.GC3561231@frogsfrogsfrogs>
+ <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
+ <20250117173900.GN3557553@frogsfrogsfrogs> <CAOQ4uxhh1LDz5zXzqFENPhJ9k851AL3E7Xc2d7pSVVYX4Fu9Jw@mail.gmail.com>
+ <20250117185947.ylums2dhmo3j6hol@pali> <20250202152343.ahy4hnzbfuzreirz@pali>
+ <CAOQ4uxgjbHTyQ53u=abWhyQ81ATL4cqSeWKDfOjz-EaR0NGmug@mail.gmail.com> <20250203221955.bgvlkp273o3wnzmf@pali>
+In-Reply-To: <20250203221955.bgvlkp273o3wnzmf@pali>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 4 Feb 2025 00:02:44 +0100
+X-Gm-Features: AWEUYZnOwZ4U1beNz39Ac2tUKLBO7cnKL8_kgLUmUrLVb43HdIN1Xm7feEx8ftQ
+Message-ID: <CAOQ4uxhkB6oTJm7DvQxFbxkQ1u_KMUFEL0eWKVYf39hnuYrnfQ@mail.gmail.com>
+Subject: Re: Immutable vs read-only for Windows compatibility
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 01, 2025 at 10:23:29PM +0530, Ojaswin Mujoo wrote:
-> Greetings,
-> 
-> This proposal is on behalf of Me, Nirjhar and Ritesh. We would like to submit
-> a proposal on centralizing filesystem and device configurations within xfstests
-> and maybe a further discussion on some of the open ideas listed by Ted here [3].
-> More details are mentioned below.
-> 
-> ** Background ** 
-> There was a discussion last year at LSFMM [1] about creating a central fs-config
-> store, that can then be used by anyone for testing different FS
-> features/configurations. This can also bring an awareness among other developers
-> and testers on what is being actively maintained by FS maintainers. We recently
-> posted an RFC [2] for centralizing filesystem configuration which is under
-> review. The next step we are considering is to centralize device configurations
-> within xfstests itself. In line with this, Ted also suggested a similar idea (in
-> point A) [3], where he proposed specifying the device size for the TEST and
-> SCRATCH devices to reduce costs (especially when using cloud infrastructure) and
-> improve the overall runtime of xfstests.
-> 
-> Recently Dave introduced a feature [4] to run the xfs and generic tests in
-> parallel. This patch creates the TEST and SCRATCH devices at runtime without
-> requiring them to be specified in any config file. However, at this stage, the
-> automatic device initialization appears to be somewhat limited. We believe that
-> centralizing device configuration could help enhance this functionality as well.
+On Mon, Feb 3, 2025 at 11:20=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> On Monday 03 February 2025 22:59:46 Amir Goldstein wrote:
+> > On Sun, Feb 2, 2025 at 4:23=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org=
+> wrote:
+> > > And there is still unresolved issue with FILE_ATTRIBUTE_READONLY.
+> > > Its meaning is similar to existing Linux FS_IMMUTABLE_FL, just
+> > > FILE_ATTRIBUTE_READONLY does not require root / CAP_LINUX_IMMUTABLE.
+> > >
+> > > I think that for proper support, to enforce FILE_ATTRIBUTE_READONLY
+> > > functionality, it is needed to introduce new flag e.g.
+> > > FS_IMMUTABLE_FL_USER to allow setting / clearing it also for normal
+> > > users without CAP_LINUX_IMMUTABLE. Otherwise it would be unsuitable f=
+or
+> > > any SMB client, SMB server or any application which would like to use
+> > > it, for example wine.
+> > >
+> > > Just to note that FreeBSD has two immutable flags SF_IMMUTABLE and
+> > > UF_IMMUTABLE, one settable only by superuser and second for owner.
+> > >
+> > > Any opinion?
+> >
+> > For filesystems that already support FILE_ATTRIBUTE_READONLY,
+> > can't you just set S_IMMUTABLE on the inode and vfs will do the correct
+> > enforcement?
+> >
+> > The vfs does not control if and how S_IMMUTABLE is set by filesystems,
+> > so if you want to remove this vfs flag without CAP_LINUX_IMMUTABLE
+> > in smb client, there is nothing stopping you (I think).
+>
+> Function fileattr_set_prepare() checks for CAP_LINUX_IMMUTABLE when
+> trying to change FS_IMMUTABLE_FL bit. This function is called from
+> ioctl(FS_IOC_SETFLAGS) and also from ioctl(FS_IOC_FSSETXATTR).
+> And when function fileattr_set_prepare() fails then .fileattr_set
+> callback is not called at all. So I think that it is not possible to
+> remove the IMMUTABLE flag from userspace without capability for smb
+> client.
+>
 
-Right, the point of check-parallel is to take away the need to
-specify devices completely.  I've already added support for the
-LOGWRITES_DEV, and I'm in the process of adding LOGDEV and RTDEV
-support for both test and scratch devices. At this point, the need
-for actual actual device specification in the config files goes
-away.
+You did not understand what I meant.
 
-What I am expecting to need is a set of fields that specify the
-*size* of the devices so that the hard-coded image file sizes in
-the check-parallel script go away.
+You cannot relax the CAP_LINUX_IMMUTABLE for setting FS_IMMUTABLE_FL
+and there is no reason that you will need to relax it.
 
-From there, I intend to have check-parallel iterate config file run
-sections itself, rather than have it run them internally to check.
-That way check is only ever invoked by check-parallel with all the
-devices completely set up.
+The vfs does NOT enforce permissions according to FS_IMMUTABLE_FL
+The vfs enforces permissions according to the S_IMMUTABLE in-memory
+inode flag.
 
-Hence a typical host independent config file would look like:
+There is no generic vfs code that sets S_IMMUTABLE inode flags, its
+the filesystems that translate the on-disk FS_IMMUTABLE_FL to
+in-memory S_IMMUTABLE inode flag.
 
-TEST_DEV_SIZE=10g
-TEST_RTDEV_size=10g
-TEST_LOGDEV_SIZE=128m
-SCRATCH_DEV_SIZE=20g
-SCRATCH_RTDEV_size=20g
-SCRATCH_LOGDEV_SIZE=512m
-LOGWRITES_DEV_SIZE=2g
+So if a filesystem already has an internal DOSATTRIB flags set, this
+filesystem can set the in-memory S_IMMUTABLE inode flag according
+to its knowledge of the DOSATTRIB_READONLY flag and the
+CAP_LINUX_IMMUTABLE rules do not apply to the DOSATTRIB_READONLY
+flag, which is NOT the same as the FS_IMMUTABLE_FL flag.
 
-[xfs]
-FSTYP=xfs
-MKFS_OPTIONS="-b size=4k"
-TEST_FS_MOUNT_OPTIONS=
-MOUNT_OPTIONS=
-USE_EXTERNAL=
+> And it would not solve this problem for local filesystems (ntfs or ext4)
+> when Samba server or wine would want to set this bit.
+>
 
-[xfs-rmapbt]
-MKFS_OPTIONS="-b size=4k -m rmapbt=1"
+The Samba server would use the FS_IOC_FS[GS]ETXATTR ioctl
+API to get/set dosattrib, something like this:
 
-[xfs-noreflink]
-MKFS_OPTIONS="-b size=4k -m reflink=0"
+struct fsxattr fsxattr;
+ret =3D ioctl_get_fsxattr(fd, &fsxattr);
+if (!ret && fsxattr.fsx_xflags & FS_XFLAG_HASDOSATTR) {
+    fsxattr.fsx_dosattr |=3D FS_DOSATTRIB_READONLY;
+    ret =3D ioctl_set_fsxattr(fd, &fsxattr);
+}
 
-[xfs-n64k]
-MKFS_OPTIONS="-b size=4k -n size=64k"
+For ntfs/ext4, you will need to implement on-disk support for
+set/get the dosattrib flags.
 
-[xfs-ext]
-MKFS_OPTIONS="-b size=4k"
-USE_EXTERNAL=yes
+I can certainly not change the meaning of existing on-disk
+flag of FS_IMMUTABLE_FL to a flag that can be removed
+without CAP_LINUX_IMMUTABLE. that changes the meaning
+of the flag.
 
-[ext4]
-FSTYP="ext4"
-MKFS_OPTIONS=
-USE_EXTERNAL=
+If ext4 maintainers agrees, you may be able to reuse some
+old unused on-disk flags (e.g.  EXT4_UNRM_FL) as storage
+place for FS_DOSATTRIB_READONLY, but that would be
+quite hackish.
 
-[btrfs]
-FSTYP="btrfs"
-.....
+> > How about tackling this one small step at a time, not in that order
+> > necessarily:
+> >
+> > 1. Implement the standard API with FS_IOC_FS[GS]ETXATTR ioctl
+> >     and with statx to get/set some non-controversial dosattrib flags on
+> >     ntfs/smb/vfat
+> > 2. Wire some interesting dosattrib flags (e.g. compr/enrypt) to local
+> >     filesystems that already support storing those bits
+> > 3. Wire network servers (e.g. Samba) to use the generic API if supporte=
+d
+> > 4. Add on-disk support for storing the dosattrib flags to more local fs
+> > 5. Update S_IMMUTABLE inode flag if either FS_XFLAG_IMMUTABLE
+> >     or FS_DOSATTRIB_READONLY are set on the file
+> >
+> > Thoughts?
+> >
 
+Anything wrong with the plan above?
+It seems that you are looking for shortcuts and I don't think that
+it is a good way to make progress.
 
-IOWs, all that is different from system to system is the device size
-setup. The actual config sections under test (e.g. [xfs]) never need
-to change from host to host, nor environment to environment. i.e.
-"xfs-n64k" runs the same config filesystem test on every system,
-everywhere...
-
-> ** Proposal ** 
-> We would like to propose a discussion at LSFMM on two key features: central
-
-I'm not going to be at LSFMM, so please discuss this on the list via
-email as we'd normally do so. LSFMM discussions are exclusionary
-whilst, OTOH, the mailing list is inclusive...
-
-> fsconfig and central device-config within xfstests. We can explore how the
-> fsconfig feature can be utilized, and by then, we aim to have a PoC for central
-> device-config feature, which we think can also be discussed in more detail. At
-> this point, we are hoping to get a PoC working with loop devices by default. It
-> will be good to hear from other developers, maintainers, and testers about their
-> thoughts and suggestions on these two features.
-
-I don't really see a need for a new centralised config setup. With
-the above, we can acheived a "zero-config" goal with the existing
-config file formats and infrastructure. All that we need to do is
-update the default config file in the repo to contain a section for
-each of the "standard" test configs we want to define....
-
-> Additionally, we would like to thank Ted for listing several features he uses in
-> his custom kvm-xfstests and gce-xfstests [3]. If there is an interest in further
-> reducing the burden of maintaining custom test scripts and wrappers around
-> xfstests, we can also discuss essential features that could be integrated
-> directly into xfstests, whether from Ted's list or suggestions from others.
-
-On of my goals with check-parallel is to completely remove the need
-for end users to configure fstests. i.e. all you need to do is point
-it at a directory, tell it which filesystem to test, and it "just
-runs" with all the defaults that come direct from the fstests
-repository...
-
-It is also worth keeping in mind that check-parallel can be run with
-a single runner thread, in which case a single check instance runs
-all tests serially. i.e. we can make check-parallel emulate existing
-check behaviour exactly, except it uses all the
-auto-config/auto-setup stuff that comes along with check-parallel...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Amir.
 
