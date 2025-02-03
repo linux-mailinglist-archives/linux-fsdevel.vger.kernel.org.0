@@ -1,248 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-40589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091E2A2599F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 13:42:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BBDA25ADA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 14:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926981886D17
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 12:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7054D18833AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 13:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EB9204C09;
-	Mon,  3 Feb 2025 12:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA4120550C;
+	Mon,  3 Feb 2025 13:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NAjCFwx7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IwoVcn/E";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qz20zXWG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9Dk0qYu"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tuq1iIzY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FCB288B1;
-	Mon,  3 Feb 2025 12:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3F4205503
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 13:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738586517; cv=none; b=YiOVriaTW5z0jTs1vuRt23R0vrA4PobD1QdfGgLHBmhuP2fAH3gKGaEAb01U4G8rizNUs4sxU+0FcFuyoBVS83ooMBDCBxEwp8yZJN3Fe0EQ9ki/+2ATn/dspAgWxlj4pfslHUbU2BgAsNr1uTPLZtu5segEnKQa1VtxrJ5IsBg=
+	t=1738589242; cv=none; b=HFUmrTwfE/PKiXpwC4VH7qEul6/3OiU3aSA1TJRJHaPNnN6hY9iVIoLAyLV10ah+QWew1qJfVU9MZ23tBPem1AWMAMbTVC8B+jCBx5xQdegwHBYGauDZXIEBjGAUe9hygZEemTcddDaeJOLZtdwlmLhKKX58sP3hfXj6xSHTNFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738586517; c=relaxed/simple;
-	bh=V6Yamc+lCnqaifwCprEs2WCPVpEwMY6/zN8f4bDoo2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uCJleXs8db9e9x1FCirGDOB5kyURx1vb7KFSMnO3ycQoLAkWxi9GPZL2f62ZlgLQU5T3wzcajZB2RKspeYCDB3iupBCDYXwZAvG866PslAb7HtcXZInRFtlETDADx5upcamo+4rinIWyhyFy9gEs6NRVxJhTGX0C45foAS+WvtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NAjCFwx7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IwoVcn/E; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qz20zXWG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9Dk0qYu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8CE3D21164;
-	Mon,  3 Feb 2025 12:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738586509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJWjAyc38HgmMq7RG5PMlvFu0+nk7azvrMUFHWZiO7E=;
-	b=NAjCFwx77MhrjumkrQSkgqr644JSzmfBTwNJz+HfFhQzApp/0kXZ7w+dyXIDXe5TqgoA3n
-	Ir+14AAQ0j09IfzBwbrUgzuv5/Qg0Vc/Fr36ttXNgyAU6MxOhdeBoO9oibmK5kxUPs2x5P
-	PilwBNXj+BVnKS2cX+2C31fWfNElH3k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738586509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJWjAyc38HgmMq7RG5PMlvFu0+nk7azvrMUFHWZiO7E=;
-	b=IwoVcn/ENnXitQ/oz5HqHn7NhLsERCl+5oGrOyOSiwk7Zc43g66hTmRUE/ADIMSD9L3pSv
-	o6Zc7MM/ERGL7WBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Qz20zXWG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w9Dk0qYu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738586505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJWjAyc38HgmMq7RG5PMlvFu0+nk7azvrMUFHWZiO7E=;
-	b=Qz20zXWG/jrWaw6ARmvtRiISjA3T7XBikeog7A91unNXyPHqCR/+lUQ+Wgv74cm08ZjSH8
-	fFe2lTQWyj+AtDILBrIxUEHbJojee5UDowgSsKVC/7FXOwYqjNy7nER/HYzw5ZSk9Bnh/q
-	gtKupnjRIAwMdlDN0Won2MwMY+vvOfU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738586505;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJWjAyc38HgmMq7RG5PMlvFu0+nk7azvrMUFHWZiO7E=;
-	b=w9Dk0qYuqnOaeeXtGnx9wC58jQXmqaDZ37q9PG1Qk0nZzLJJMQVptS1CzAOgndg1zOCywT
-	LHcIPAEppTyK2iDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A32F13795;
-	Mon,  3 Feb 2025 12:41:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VnvJHYm5oGclIAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Feb 2025 12:41:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 211EBA28E5; Mon,  3 Feb 2025 13:41:45 +0100 (CET)
-Date: Mon, 3 Feb 2025 13:41:45 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Alex Williamson <alex.williamson@redhat.com>, Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, 
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [REGRESSION] Re: [PATCH v8 15/19] mm: don't allow huge faults
- for files with pre content watches
-Message-ID: <l5apiabdjosyy4gfuenr4oqdfio3zdiajzxoekdgtsohzpn3mj@dcmvayncbye4>
-References: <cover.1731684329.git.josef@toxicpanda.com>
- <9035b82cff08a3801cef3d06bbf2778b2e5a4dba.1731684329.git.josef@toxicpanda.com>
- <20250131121703.1e4d00a7.alex.williamson@redhat.com>
- <CAHk-=wjMPZ7htPTzxtF52-ZPShfFOQ4R-pHVxLO+pfOW5avC4Q@mail.gmail.com>
- <Z512mt1hmX5Jg7iH@x1.local>
- <20250201-legehennen-klopfen-2ab140dc0422@brauner>
- <CAHk-=wi2pThSVY=zhO=ZKxViBj5QCRX-=AS2+rVknQgJnHXDFg@mail.gmail.com>
- <CAOQ4uxjVTir-mmx05zh231BpEN1XbXpooscZyfNUYmVj32-d3w@mail.gmail.com>
- <20250202-abbauen-meerrettich-912513202ce4@brauner>
+	s=arc-20240116; t=1738589242; c=relaxed/simple;
+	bh=LN7G7tj7ziwXYWVmbHqdWrd5F4xkNX4yYkpEgeDsj1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=fJQINHmm2rsFdeFzmkD3bHRWEmTCc049XBsu5vuun++dc8SAzhEJh0LN+vJqxGBlTY6z3cz8dUjMwZcbt2q9IxNIaDX+mRPW4iMVlHBDvGtSr3AVU3u9MvWfraTN3fSuZ/MY80nGtIxcKNbqS0XSyY10Pux4E+42n/hC47+defQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tuq1iIzY; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250203132718epoutp01bf9118443a142ec95fe4177d128e92c7~gtbOF9msh1502915029epoutp01h
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 13:27:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250203132718epoutp01bf9118443a142ec95fe4177d128e92c7~gtbOF9msh1502915029epoutp01h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1738589238;
+	bh=7qRQVpC595G5pF4zWhHkaT239k+7+Iqrs0Hw5ybb7b8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=tuq1iIzYFn92F1kUzsAVpqGM1Dw3TO1guw2a/o27AbDS+ruIiClTIcLl+KA4Hzk0D
+	 tmt5TpHARe2HWyomER0QTMDaAdR1QpNIEqScOkUwzuVXP+1jNwhzbqZR3gZWNa9lXd
+	 rU8MIBm5lcd7Y/3jeXAW0V36FLHLGiR6QD7R2JA0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20250203132718epcas5p10bbd54d4c74a90f6b24582b2631401a1~gtbNsnEIj2389723897epcas5p1N;
+	Mon,  3 Feb 2025 13:27:18 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4YmnNN3YSdz4x9Pq; Mon,  3 Feb
+	2025 13:27:16 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	00.CB.19933.434C0A76; Mon,  3 Feb 2025 22:27:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250203132715epcas5p29dbf773b56a348fec46b65dfaafd5a2f~gtbLckemg1482914829epcas5p2_;
+	Mon,  3 Feb 2025 13:27:15 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250203132715epsmtrp282d9f63bd9406aed23744e3a0a1cb382~gtbLb6SzK3251132511epsmtrp29;
+	Mon,  3 Feb 2025 13:27:15 +0000 (GMT)
+X-AuditID: b6c32a4a-c1fda70000004ddd-18-67a0c43432df
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	89.76.18729.334C0A76; Mon,  3 Feb 2025 22:27:15 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250203132714epsmtip20bd1b67654ac22c879b34fd5f4e1ab7d~gtbJ1wywv0712307123epsmtip2Z;
+	Mon,  3 Feb 2025 13:27:14 +0000 (GMT)
+Message-ID: <cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
+Date: Mon, 3 Feb 2025 18:57:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250202-abbauen-meerrettich-912513202ce4@brauner>
-X-Rspamd-Queue-Id: 8CE3D21164
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,redhat.com,toxicpanda.com,fb.com,vger.kernel.org,suse.cz,zeniv.linux.org.uk,kvack.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
+To: Qu Wenruo <wqu@suse.com>, Johannes Thumshirn
+	<Johannes.Thumshirn@wdc.com>, "hch@infradead.org" <hch@infradead.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, "lsf-pc@lists.linux-foundation.org"
+	<lsf-pc@lists.linux-foundation.org>, "linux-btrfs@vger.kernel.org"
+	<linux-btrfs@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmhq7JkQXpBl8OiVucnrCIyeJv1z0m
+	iz8PDS323tK2uPR4BbvFnr0nWSzmL3vKbrHv9V5mi9aen+wWa9Z9ZHfg8ti8Qstj85J6j8k3
+	ljN6NJ05yuyxfstVFo8JmzeyenzeJOfRfqCbKYAjKtsmIzUxJbVIITUvOT8lMy/dVsk7ON45
+	3tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hAJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmt
+	UmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xvXrW9gK9rFXHHyxiL2BsZmti5GTQ0LA
+	RGL3zfNANheHkMBuRomLa1axQzifGCUWXpwNlfnGKNF7bypcS2/Dc2aIxF5GiXlTDkJVvWWU
+	eLLiChNIFa+AncTdpp8sIDaLgIrEtR9zWCHighInZz4Bi4sKyEvcvzWDHcQWFrCR6N51CGyD
+	iECFRPfOl6wgQ5kFFjJL3J22DyzBLCAucevJfKAFHBxsApoSFyaXgoQ5gXoX773LAlEiL7H9
+	7Ryw6yQEtnBIXPx6nBnibBeJyTd3skLYwhKvjm9hh7ClJD6/2wv1WrbEg0cPWCDsGokdm/ug
+	6u0lGv7cYAXZywy0d/0ufYhdfBK9v5+AnSMhwCvR0SYEUa0ocW/SU6hOcYmHM5ZA2R4Sl1Zt
+	ZoKE1RxmiQNnlrJOYFSYhRQss5B8OQvJO7MQNi9gZFnFKJlaUJybnlpsWmCUl1oOj/Hk/NxN
+	jOAErOW1g/Hhgw96hxiZOBgPMUpwMCuJ8J7eviBdiDclsbIqtSg/vqg0J7X4EKMpMH4mMkuJ
+	JucDc0BeSbyhiaWBiZmZmYmlsZmhkjhv886WdCGB9MSS1OzU1ILUIpg+Jg5OqQam2dlPl9jb
+	nQ3yitCcp8NWG/ivbNmXPtGo25/PfpoeuOaQipvV3YcCudW7kp/Uh4fMvLojXPj2idRyz9OM
+	rSo8Ot8EFmyp133DnuJ0ry6r0yp58t2NgluMLjJejTWZ6sdkfeS6jyW3qJjxN5aVe6dsXHNA
+	Kz+2Mf1ftTrXFm5l4RMMK084Szi5tLkVy7yTTEgI3dhbLJ0nH2Wq37Z5x1+/rnt5n3zvH141
+	J/3y8xdTJavbZIJmzP3vdb3RkqPjkcNl4Zu8xbUnrrMXy2k685wv8baNOvnTeoplH1/I75dH
+	405win+P+vrZX/ropLorF70y1uxvCuJrEnh5T0XA9PDk/D08C4+zqpsevs/GrKHEUpyRaKjF
+	XFScCAA+OxaZSQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSvK7xkQXpBttmGFmcnrCIyeJv1z0m
+	iz8PDS323tK2uPR4BbvFnr0nWSzmL3vKbrHv9V5mi9aen+wWa9Z9ZHfg8ti8Qstj85J6j8k3
+	ljN6NJ05yuyxfstVFo8JmzeyenzeJOfRfqCbKYAjissmJTUnsyy1SN8ugSvj+vUtbAX72CsO
+	vljE3sDYzNbFyMkhIWAi0dvwnLmLkYtDSGA3o8SV5cvZIRLiEs3XfkDZwhIr/z1nhyh6zSix
+	qa2LFSTBK2AncbfpJwuIzSKgInHtxxyouKDEyZlPwOKiAvIS92/NABskLGAj0b3rENhmEYEK
+	ifuPHrCBDGUWWMws8fvJQ1aIDXOYJbZ1/GYEqWIGOuPWk/lMXYwcHGwCmhIXJpeChDmBBi3e
+	e5cFosRMomtrF1S5vMT2t3OYJzAKzUJyxywkk2YhaZmFpGUBI8sqRsnUguLc9NxiwwLDvNRy
+	veLE3OLSvHS95PzcTYzgaNPS3MG4fdUHvUOMTByMhxglOJiVRHhPb1+QLsSbklhZlVqUH19U
+	mpNafIhRmoNFSZxX/EVvipBAemJJanZqakFqEUyWiYNTqoGpin+rudS78zOmLnJRWS6TtGpq
+	BPvsyLcfH03slU15pLmUf/KbSXJpfyeY7b1nYbtOiKew+PvJTI91hWavY/fOC3Sbc8Oh+PnX
+	GOkPfB9PhwdHLis7uFGOv3iK7y/bzkPLKuWLU6S2z+0pNu3inmp7UHDf/8sKy1pe5+7bsmPX
+	8uKyzvnl/7tVCs+t2bhx67bwk8vlrUsl327KL6yRvxz4JSDq6JJ4RuGFhTr3b+2LP/RFx8oy
+	+MzJrqniOzdHNV45tS/FqvfxscR/p2uyTFiXmXTwz/lwQpbhWtUP64zYYzE9LJIh98y4gyRk
+	P8fyy9YdtpF9w+mY7M/+I3mq0qVpu8+eCWJNeTnBbee6bSa2SizFGYmGWsxFxYkARSa90CUD
+	AAA=
+X-CMS-MailID: 20250203132715epcas5p29dbf773b56a348fec46b65dfaafd5a2f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824
+References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
+	<20250130091545.66573-1-joshi.k@samsung.com>
+	<20250130142857.GB401886@mit.edu>
+	<97f402bc-4029-48d4-bd03-80af5b799d04@samsung.com>
+	<b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
+	<Z6B2oq_aAaeL9rBE@infradead.org>
+	<bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
+	<eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
 
-On Sun 02-02-25 11:04:02, Christian Brauner wrote:
-> On Sun, Feb 02, 2025 at 08:46:21AM +0100, Amir Goldstein wrote:
-> > On Sun, Feb 2, 2025 at 1:58 AM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > On Sat, 1 Feb 2025 at 06:38, Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > Ok, but those "device fds" aren't really device fds in the sense that
-> > > > they are character fds. They are regular files afaict from:
-> > > >
-> > > > vfio_device_open_file(struct vfio_device *device)
-> > > >
-> > > > (Well, it's actually worse as anon_inode_getfile() files don't have any
-> > > > mode at all but that's beside the point.)?
-> > > >
-> > > > In any case, I think you're right that such files would (accidently?)
-> > > > qualify for content watches afaict. So at least that should probably get
-> > > > FMODE_NONOTIFY.
-> > >
-> > > Hmm. Can we just make all anon_inodes do that? I don't think you can
-> > > sanely have pre-content watches on anon-inodes, since you can't really
-> > > have access to them to _set_ the content watch from outside anyway..
-> > >
-> > > In fact, maybe do it in alloc_file_pseudo()?
-> > >
-> > 
-> > The problem is that we cannot set FMODE_NONOTIFY -
-> > we tried that once but it regressed some workloads watching
-> > write on pipe fd or something.
+On 2/3/2025 1:46 PM, Qu Wenruo wrote:
+>> ell for the WAF part, it'll save us 32 Bytes per FS sector (typically
+>> 4k) in the btrfs case, that's ~0.8% of the space.
 > 
-> Ok, that might be true. But I would assume that most users of
-> alloc_file_pseudo() or the anonymous inode infrastructure will not care
-> about fanotify events. I would not go for a separate helper. It'd be
-> nice to keep the number of file allocation functions low.
+> You forgot the csum tree COW part.
 > 
-> I'd rather have the subsystems that want it explicitly opt-in to
-> fanotify watches, i.e., remove FMODE_NONOTIFY. Because right now we have
-> broken fanotify support for e.g., nsfs already. So make the subsystems
-> think about whether they actually want to support it.
-
-Agreed, that would be a saner default.
-
-> I would disqualify all anonymous inodes and see what actually does
-> break. I naively suspect that almost no one uses anonymous inodes +
-> fanotify. I'd be very surprised.
+> Updating csum tree is pretty COW heavy and that's going to cause quite 
+> some wearing.
 > 
-> I'm currently traveling (see you later btw) but from a very cursory
-> reading I would naively suspect the following:
-> 
-> // Suspects for FMODE_NONOTIFY
-> drivers/dma-buf/dma-buf.c:      file = alloc_file_pseudo(inode, dma_buf_mnt, "dmabuf",
-> drivers/misc/cxl/api.c: file = alloc_file_pseudo(inode, cxl_vfs_mount, name,
-> drivers/scsi/cxlflash/ocxl_hw.c:        file = alloc_file_pseudo(inode, ocxlflash_vfs_mount, name,
-> fs/anon_inodes.c:       file = alloc_file_pseudo(inode, anon_inode_mnt, name,
-> fs/hugetlbfs/inode.c:           file = alloc_file_pseudo(inode, mnt, name, O_RDWR,
-> kernel/bpf/token.c:     file = alloc_file_pseudo(inode, path.mnt, BPF_TOKEN_INODE_NAME, O_RDWR, &bpf_token_fops);
-> mm/secretmem.c: file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
-> block/bdev.c:   bdev_file = alloc_file_pseudo_noaccount(BD_INODE(bdev),
-> drivers/tty/pty.c: static int ptmx_open(struct inode *inode, struct file *filp)
-> 
-> // Suspects for ~FMODE_NONOTIFY
-> fs/aio.c:       file = alloc_file_pseudo(inode, aio_mnt, "[aio]",
+> Thus although I do not think the RFC patch makes much sense compared to 
+> just existing NODATASUM mount option, I'm interesting in the hardware 
+> csum handling.
 
-This is just a helper file for managing aio context so I don't think any
-notification makes sense there (events are not well defined). So I'd say
-FMODE_NONOTIFY here as well.
+But, patches do exactly that i.e., hardware cusm support. And posted 
+numbers [*] are also when hardware is checksumming the data blocks.
 
-> fs/pipe.c:      f = alloc_file_pseudo(inode, pipe_mnt, "",
-> mm/shmem.c:             res = alloc_file_pseudo(inode, mnt, name, O_RDWR,
+NODATASUM forgoes the data cums at Btrfs level, but its scope of 
+control/influence ends there, as it knows nothing about what happens 
+underneath.
+Proposed option (DATASUM_OFFLOAD) ensures that the [only] hardware 
+checksums the data blocks.
 
-This is actually used for stuff like IPC SEM where notification doesn't
-make sense. It's also used when mmapping /dev/zero but that struct file
-isn't easily accessible to userspace so overall I'd say this should be
-FMODE_NONOTIFY as well.
-
-> // Unsure:
-> fs/nfs/nfs4file.c:      filep = alloc_file_pseudo(r_ino, ss_mnt, read_name, O_RDONLY,
-
-AFAICS this struct file is for copy offload and doesn't leave the kernel.
-Hence FMODE_NONOTIFY should be fine.
-
-> net/socket.c:   file = alloc_file_pseudo(SOCK_INODE(sock), sock_mnt, dname,
-
-In this case I think we need to be careful. It's a similar case as pipes so
-probably we should use ~FMODE_NONOTIFY here from pure caution.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[*] 
+https://lore.kernel.org/linux-block/20250129140207.22718-1-joshi.k@samsung.com/
 
