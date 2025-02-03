@@ -1,67 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-40645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD20FA262A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 19:41:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D395DA26304
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 19:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC50165D57
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 18:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CFD160FF1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 18:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1834515C158;
-	Mon,  3 Feb 2025 18:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1426D194AEC;
+	Mon,  3 Feb 2025 18:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Oh1LcRbb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kw8Jaw9L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCCB770E2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 18:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F51192D96
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 18:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738608110; cv=none; b=Pbv3XthCrjFguWQz2be53/u3tI/qSpp8eRFpIe+lkxdrZ5Y+y0frRNfRN2eWmqNsg7sUn/vwHBUWU2AWZRWGyVNw4Lcm9Xk59Fi2ax22pVeWXiTkWJfvCcLvbGIounne8FmX10VHXgKpznE0lTp+zTwHfkaZgKLBe83U2xbKBw8=
+	t=1738608652; cv=none; b=EO281yVZsFAQwkT1fOr34kdBBwRq7zx3rS49xv/NvvadpHGqPVuTva9Djli5tJ7A/WxWLm8pajYjcJ7xVJTChfa+D9dcgv1Q0TmOQQ7Jg0b5a0Kr1u5Km5Oc8ABAo/eB61FNHbfSSa9+MN9oMmP/qCprXT6NBtKpg+vzeZIyu7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738608110; c=relaxed/simple;
-	bh=jGBOyTMxd9LBptAGrMlxqGFgBEc8xTnk1LL6MSBn3dc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n37J9QFwg8bNsAke2oZjeh/mwccMKfW3lPdAo6gHeGVym5s3TuA7K9BVKixlqKJiQOaUORJbNAiSCFNn2/2cbv+00bylGeZhdjhMZoIlzC/UIljO5xm7mzA2Mo4PVU/GAB0KBSVUEzsPIPb8iz/EW9eVtmX2yPcgTWfNF34SZs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Oh1LcRbb; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-	by m0089730.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 513IHqS9006896
-	for <linux-fsdevel@vger.kernel.org>; Mon, 3 Feb 2025 10:41:47 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2021-q4; bh=KMmG5gJPTqu1RsuNuX
-	10Ml6gX7oOZqPZjeqbhOhxPB4=; b=Oh1LcRbbUPxefNDABEAQXrYS0O5V3SFY+5
-	x776MigOcbrj8bT3C9IRiYTShwSWg9tKoPOiFgTmjcf0HUXoCQFmQntKfW0pxAp3
-	JN1BLRIoBXGJsM1aEztEcBOSQhWMQTOYuP3jg60luPC3kkSfcfpQGFPIiUi52DZI
-	x8kWzP141SYy0FhAy/hxgPGXA6+xVBOk1tyFgNyV4UCU/8otm3qa9F2jis9SKO0r
-	ISyXY/FRL0K1kfUIVjg+fX0O6gZC5kLpwi5A1Cc4yhk6Kgo0rTI0GzCt1tSlVxuH
-	012vXwEeJfDJXMFzKpHk0a23rg/p3Tpg3zk5YOwiJMc/OhSxOHsA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by m0089730.ppops.net (PPS) with ESMTPS id 44k21sgqqb-6
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 10:41:47 -0800 (PST)
-Received: from twshared29376.33.frc3.facebook.com (2620:10d:c0a8:1c::1b) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Mon, 3 Feb 2025 18:41:43 +0000
-Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id E8684179C261F; Mon,  3 Feb 2025 10:41:30 -0800 (PST)
-From: Keith Busch <kbusch@meta.com>
-To: <linux-nvme@lists.infradead.org>, <io-uring@vger.kernel.org>,
-        <linux-block@vger.kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>, <asml.silence@gmail.com>,
-        <axboe@kernel.dk>, <hch@lst.de>, <sagi@grimberg.me>,
-        Keith Busch
-	<kbusch@kernel.org>
-Subject: [PATCHv2 00/11] block write streams with nvme fdp
-Date: Mon, 3 Feb 2025 10:41:18 -0800
-Message-ID: <20250203184129.1829324-1-kbusch@meta.com>
+	s=arc-20240116; t=1738608652; c=relaxed/simple;
+	bh=BFD59uvDnR+GOkU5rLWbMQqOyJ2+gcCRx0M9yXxqYpE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cw2mzoJURsl2TdiDk14mQAxiqdrGjwkR7DhcgdL63IplZ74E7CLWEFrqCyl40bFnjcqsWiuP0kC+1rm18Lm3eqI7hsoA9AsswZTDQ2CbKkelhspId+lCtAo+th6uUpmVfCWKK2yHL66Y8aOiUDbw4zSWhdw2w1qsapBYkM/Tffc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kw8Jaw9L; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f6cc13d103so25718277b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 10:50:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738608650; x=1739213450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=htLW/KOelIjWDkTafZY5V1VR8T+j+68LA8yYQyGMNyw=;
+        b=Kw8Jaw9LBn4aOifr7XUBZrtU2D+ljUOjDaLfqAx63llyoi1EhFqx+n+Y0zSkaZ3mTE
+         P74B+5R41qudYcOeFNNHCutLL5VxQFlofZRAFzX8BAHrjB3YjvcKhGsvLuHYNSVkjdv7
+         1fUwKZLqNFj0H+Tdv1SwO29L8wTsXOc3iTX8ENBc/f5NA7p5/PZoAlSkbKBALggVJvh+
+         7/btcBie/2zU/aFaBjELQM8U1dDWy6St+/obVEwrXBiLGjT5agCFiktovApyzBkbkkTJ
+         V0BfKEPlwS2jfOwCm89PNIpShGR3ijRniOGRLa1wxGx56OBtXHzQLlVbZQN2mryz9OPA
+         hZTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738608650; x=1739213450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=htLW/KOelIjWDkTafZY5V1VR8T+j+68LA8yYQyGMNyw=;
+        b=UywjsOUJ6BbMe7GHyS9FvrGE6JSBnneNyKRVVLOeKvmhn2l4D605kervR5RS0HZF5+
+         f0czom3h3tih7DcY/ZRXAcrE64opUEoFcb5Ma7hgcrv5b2IlS8DBS/F7/GbxpJLpirKD
+         cl14g6UQf61xs7DMcEttGGtf42sfslaJBkaax6VoY4Pryea3iSSvTFmEinEP8XpoZ77A
+         aF2WH2zdtCu3kG/Tm219cxeLwFQhv6gszIIiK2LPG9n+NnFFclFo4nx9a2IFEtLpzkjF
+         XIDujOHNKVosU11SzjEHb+DBrqqdpemHKAnlXszDO6oo7szmRPggt2EWstf7XQJNcM9t
+         285A==
+X-Forwarded-Encrypted: i=1; AJvYcCUvPDETEy2eUiUn6x0JleAHfLb/8aZFb2Pt4z431M/UVv0C47g16yMrNvhxX6zF7kbNUo31kvedIsn7maO6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpkiYrIfSoiBAIffC0E7tWJXFjB9hIIkHnDiXa/7sC8Kmp+dba
+	Xt/ZFuqLVYllsrrS3CY/ieUfn7Pyec9a4VXR//9JjygzeId3t+JHT9yXuw==
+X-Gm-Gg: ASbGncvUuy3NFqgyGp1vzJG4Qd4ZZTOoGHHScClOwawgmKuFqI1bcv/hgVasgr6jHlL
+	aQx0nZfwL8EBjc6QHJriuv/oCmVmWZbt0Eq3gvM3p14O+5uGojtjK4sKi+6T72UUMUA1Mp91RNx
+	uGHMYR1fLF+nGd85nWjhekDAizV1MF5ZsCNdelWxbvNrtVIrNqT0wc2BD+0WILWcpAfMcg+VHTe
+	MUi3zj/4dd/LgEXoqhkkF4UkQ2CejyLn4gZ8KxmVBMe2/3CNe3w0/PTM4rIZs3Wb7kKYwWpZQ8z
+	3UXvzjE0Ab40
+X-Google-Smtp-Source: AGHT+IFC6Av7/3412uHVnoUlD0Xvqq4vpXk5Pv4oPVcUFzOcm5oR5X6oBmKBWyXqKV5v4f74f6hFXA==
+X-Received: by 2002:a05:690c:6603:b0:6f7:598d:34c2 with SMTP id 00721157ae682-6f7a8444231mr172687467b3.24.1738608649650;
+        Mon, 03 Feb 2025 10:50:49 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:1::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f8c465baddsm22510347b3.63.2025.02.03.10.50.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 10:50:49 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: bernd.schubert@fastmail.fm,
+	kernel-team@meta.com
+Subject: [PATCH] fuse: clear FR_PENDING without holding fiq lock for uring requests
+Date: Mon,  3 Feb 2025 10:50:40 -0800
+Message-ID: <20250203185040.2365113-1-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -69,57 +85,33 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 8Y-xEXcjlg4c_lx18JXKxFZEVTg6Seid
-X-Proofpoint-GUID: 8Y-xEXcjlg4c_lx18JXKxFZEVTg6Seid
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-03_08,2025-01-31_02,2024-11-22_01
+Content-Transfer-Encoding: 8bit
 
-From: Keith Busch <kbusch@kernel.org>
+req->flags is set/tested/cleared atomically in fuse. When the FR_PENDING
+bit is cleared from the request flags when assigning a request to a
+uring entry, the fiq->lock does not need to be held.
 
-Changes since v14:
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Fixes: c090c8abae4b6 ("fuse: Add io-uring sqe commit and fetch support")
+---
+ fs/fuse/dev_uring.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-  Merged to latest nvme, block, and io_uring trees
-
-  Replaced vmalloc with kvmalloc (Christoph)
-
-Christoph Hellwig (7):
-  fs: add a write stream field to the kiocb
-  block: add a bi_write_stream field
-  block: introduce a write_stream_granularity queue limit
-  block: expose write streams for block device nodes
-  nvme: add a nvme_get_log_lsi helper
-  nvme: pass a void pointer to nvme_get/set_features for the result
-  nvme: add FDP definitions
-
-Keith Busch (4):
-  block: introduce max_write_streams queue limit
-  io_uring: enable per-io write streams
-  nvme: register fdp parameters with the block layer
-  nvme: use fdp streams if write stream is provided
-
- Documentation/ABI/stable/sysfs-block |  15 +++
- block/bio.c                          |   2 +
- block/blk-crypto-fallback.c          |   1 +
- block/blk-merge.c                    |   4 +
- block/blk-sysfs.c                    |   6 +
- block/bounce.c                       |   1 +
- block/fops.c                         |  23 ++++
- drivers/nvme/host/core.c             | 191 ++++++++++++++++++++++++++-
- drivers/nvme/host/nvme.h             |   7 +-
- include/linux/blk_types.h            |   1 +
- include/linux/blkdev.h               |  10 ++
- include/linux/fs.h                   |   1 +
- include/linux/nvme.h                 |  77 +++++++++++
- include/uapi/linux/io_uring.h        |   4 +
- io_uring/io_uring.c                  |   2 +
- io_uring/rw.c                        |   1 +
- 16 files changed, 340 insertions(+), 6 deletions(-)
-
---=20
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index ab8c26042aa8..42389d3e7235 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -764,9 +764,7 @@ static void fuse_uring_add_req_to_ring_ent(struct fuse_ring_ent *ent,
+ 			ent->state);
+ 	}
+ 
+-	spin_lock(&fiq->lock);
+ 	clear_bit(FR_PENDING, &req->flags);
+-	spin_unlock(&fiq->lock);
+ 	ent->fuse_req = req;
+ 	ent->state = FRRS_FUSE_REQ;
+ 	list_move(&ent->list, &queue->ent_w_req_queue);
+-- 
 2.43.5
 
 
