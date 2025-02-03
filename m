@@ -1,126 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-40622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12E1A25EA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE94A25F82
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 17:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1228E3A23AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 15:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75D43AA27A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D807205E1C;
-	Mon,  3 Feb 2025 15:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D7020A5F5;
+	Mon,  3 Feb 2025 16:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJTlejNh"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="WnY+bkcZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14C6201270
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 15:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0110E14F12D;
+	Mon,  3 Feb 2025 16:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738596227; cv=none; b=goacIpWwLOJ7y5PObwwtBrR7YYghfiU3p+GX4qMhunhNW1Ui/k8I+Rmv5WXHhRv3aXk/ymWo0tcY54kMYt+qfpxTFqlzc/SvDYwW53pRzwj7dLdarHn9vq6XZrNHu0uAXBJqcKvAv1TVmoCommyEe+15kGcZiBgBYgT0WTsYoXI=
+	t=1738598806; cv=none; b=phyhUHpMBMPW+48Gv7Gu8MhswOR/WCqILbZU5OPNDRUxYn8aEsFKln3J+o9DaeDTQS91BKYZRc413U8QnEgI9cvXAt01/peeK/fyscIKqGYPpFYA1RfgvEzxWtSF3J5qHcjQ76hc0v7YxE7Q8K5rfWTfzxrzrxmWopL0LoAwamM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738596227; c=relaxed/simple;
-	bh=5v9+ClyC3GPkP/8ybDSEdTxX6vJZvWdUAtDY5DUeo3E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qzozw8L3dNeOrWZJCzx6oSFNAz5BVis4ZwJDIPMlliKHSpIXcGFvHLmzmgY25rf83EG7fOnfSbHUuIYXUyuxQROr4SihqMEGoSaQl/IV2C9CT7AG/q9IfHeigydCPXI3R/DzrNZOriyk8Wlqeysxz26CV6umnnFyAt1P9i2gDvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJTlejNh; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3cf094768so8378484a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 07:23:45 -0800 (PST)
+	s=arc-20240116; t=1738598806; c=relaxed/simple;
+	bh=ASpeFHlAwWPzlEHXtgluofyW8ICp0Ap3azBZoh+U3Xg=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NcVyfiGulYzF+pD5cBwcZ6vt03d05fHDW9Rd021CU/Ma+P1Emk0LC32lUQcbTfbE36M72YEpAbTIKESO98VB5NV9tBGC3bQ1YTIg4pzfDRXg7SZNRWpcDukqg+PRLtH9UMfpogxmGfPl4AX3YfBWaydL3yYawE8il1LVocsP72Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=WnY+bkcZ; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738596224; x=1739201024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UFG8TExcpVbvaTjy9CO9XEfVDyRvQvnWDqpblTf2WNo=;
-        b=jJTlejNh38qoSgQLIsloVu3nIZ1+I4/Pd5dXYCh4Udnn23z32VtGLCvhE4SGWUxQ8f
-         zAMfTZ8/DkbbLUmqGHudEGPyTXg200e/wC9QSigjCmJjt79Hd2zuqUGGw/hHlqKVIBaW
-         wOaUO0S9ux8AvOjz0yeQzMwzaxgrKqoRq/TP8lu5gmFS2yQFgywOPgUfLYukxIOyx+Cv
-         RWOxJVoXKgVTJx8184GcJhYsmjuL9ClH2+q+FY5sP4Rjd+H7HqiytIdQo/1lDV/KjaRH
-         YxNHSIMUkfQxvIfmm7WnT53cL6lBjc6HfUf+sU4fFeq/EvGdKvd5jWHWfDrqviungM0H
-         1cCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738596224; x=1739201024;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UFG8TExcpVbvaTjy9CO9XEfVDyRvQvnWDqpblTf2WNo=;
-        b=lG/uXX694YAmztQJ4axKBUjJ4gtJCX+rKqsYimV6z0ZBi/9uygBGniSRX91QY9NiD/
-         hu3G5FRGPgdscfZgF2xNCyIZ513c7lQGOLH79f70urJDEiU7ohT0K2weTX5GJ5CvJuG/
-         kAXv+cWGT8lrnz+ijir4+jURRRg17n3BfLqotZX2D2l5//xzq4ImqRV3z0+JNmy9JeOz
-         lnwLQavkOd46hBbRBEkdq6bSESR8xtswUyao51h9T4/rpB7W11TV2788XTsBe2rjWXQY
-         2Nz1pX0iY9JT6w+G0XnHFqR5r8zlpPJfITO5Iz9jMlbbhUx8MOZ0CQ5PPKg0OgrAOa03
-         ONQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWeZfmQcx9AQYjDcV0CCeSYmGyGGndA5bj/s6UwS0Ymm6Rfo3qbblqZUdkcz8tNjPA9OHTrz8q9UqKui3c@vger.kernel.org
-X-Gm-Message-State: AOJu0YydvEuXXsDq6iChFDedebEi+k8jLQ4IO6Pp1RriKg9Nry7ntp53
-	30t5KnseMNJT54jR7O89o/49heQbaw4iD44JshQoErTLFD36m31VD7yGySmh1Ik=
-X-Gm-Gg: ASbGncsfWXw/t4Zl7gFku7jLksHPdMfN0QpbAP/izkXCbA3uc04rymRkf9Oz2TD1ZlE
-	3OYbyaR4IbsmeiIKRbpfjJQMr3Rb2YNagWINRWR/hIbKgzngnhdO6ZVtEvZ2H9nnLihaq79yOOV
-	eYEW3bOFv3ElK0DyIXOs9A0G9s19B0ASM55gRNRghyCp0MiXa/KfFBCLUo67d5LS9GUVh2XcpFz
-	5yQkashQUpqW8Vhrx5AcsCTZmfanARyKWqWvxerLnNQivl/zZ6un3rJjqUuYSv2ga3BxN/osRue
-	JNR3y/pHIddb+2I2i2o=
-X-Google-Smtp-Source: AGHT+IFiXdFr8dXjSrNeuaeUpC6oqIN2FGm3JDnLEeGYmit0sxj285Ud7mctF12dFFzclyWSD9gCLw==
-X-Received: by 2002:a17:907:7255:b0:ab7:e71:adb5 with SMTP id a640c23a62f3a-ab70e71b1bcmr1011960766b.35.1738596223093;
-        Mon, 03 Feb 2025 07:23:43 -0800 (PST)
-Received: from [10.22.100.77] ([62.212.134.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e49ff719sm770696066b.114.2025.02.03.07.23.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Feb 2025 07:23:42 -0800 (PST)
-Message-ID: <bf6e5729-8e68-4135-8946-66bf3acafc69@gmail.com>
-Date: Mon, 3 Feb 2025 16:23:42 +0100
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1738598805; x=1770134805;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=ASpeFHlAwWPzlEHXtgluofyW8ICp0Ap3azBZoh+U3Xg=;
+  b=WnY+bkcZMfhqyB57FrZelnCVmotLcuSCLd+nDX1rhgiKiS2zG0RnCWBE
+   yCgpa4nnPgdRjJcuaI/UOC2d4qNSTKy6rforVJpcRBgCMe6xPVQIwyApp
+   1p6lEgQcHnBz4CYvUCIZw9VFcdb2mVjYlsCxG2dnGjk4rILZH6EXVr/Xa
+   w=;
+X-IronPort-AV: E=Sophos;i="6.13,256,1732579200"; 
+   d="scan'208";a="715636252"
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Lustre filesystem upstreaming
+Thread-Topic: [Lsf-pc] [LSF/MM/BPF TOPIC] Lustre filesystem upstreaming
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 16:06:44 +0000
+Received: from EX19MTAUEB002.ant.amazon.com [10.0.44.209:38164]
+ by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.6.110:2525] with esmtp (Farcaster)
+ id da1aaf85-21e0-49d7-8ade-09ae5f607307; Mon, 3 Feb 2025 16:06:43 +0000 (UTC)
+X-Farcaster-Flow-ID: da1aaf85-21e0-49d7-8ade-09ae5f607307
+Received: from EX19D017UEA002.ant.amazon.com (10.252.134.77) by
+ EX19MTAUEB002.ant.amazon.com (10.252.135.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Mon, 3 Feb 2025 16:06:43 +0000
+Received: from EX19D017UEA001.ant.amazon.com (10.252.134.93) by
+ EX19D017UEA002.ant.amazon.com (10.252.134.77) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Mon, 3 Feb 2025 16:06:43 +0000
+Received: from EX19D017UEA001.ant.amazon.com ([fe80::bffb:623f:af5e:ebed]) by
+ EX19D017UEA001.ant.amazon.com ([fe80::bffb:623f:af5e:ebed%3]) with mapi id
+ 15.02.1258.039; Mon, 3 Feb 2025 16:06:43 +0000
+From: "Day, Timothy" <timday@amazon.com>
+To: Christoph Hellwig <hch@infradead.org>, Theodore Ts'o <tytso@mit.edu>
+CC: Zorro Lang <zlang@redhat.com>, Amir Goldstein <amir73il@gmail.com>,
+	Andreas Dilger <adilger@ddn.com>, "lsf-pc@lists.linux-foundation.org"
+	<lsf-pc@lists.linux-foundation.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "jsimmons@infradead.org"
+	<jsimmons@infradead.org>, "neilb@suse.de" <neilb@suse.de>, fstests
+	<fstests@vger.kernel.org>
+Thread-Index: AQHbdC0lJT0shTaEGUaJ4/a5JPi6tbMxK+qAgAEbT4CAADNcgIABqrgAgAEAcwCAAElOAA==
+Date: Mon, 3 Feb 2025 16:06:43 +0000
+Message-ID: <DA452751-79D7-4B9B-B831-F073197B5ABB@amazon.com>
+References: <20250201135911.tglbjox4dx7htrco@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20250202152045.GA12129@macsyma-2.local> <Z6BlxO4YjsjPQyuY@infradead.org>
+In-Reply-To: <Z6BlxO4YjsjPQyuY@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6E2BCD5DF0C11A4C915F342CC79FF02E@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] Design challenges for a new file system that
- needs to support multiple billions of file
-From: Ric Wheeler <ricwheeler@gmail.com>
-To: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org
-Cc: Zach Brown <zab@zabbo.net>
-References: <048dc2db-3d1f-4ada-ac4b-b54bf7080275@gmail.com>
-Content-Language: en-US
-In-Reply-To: <048dc2db-3d1f-4ada-ac4b-b54bf7080275@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-
-On 2/2/25 10:39 PM, RIc Wheeler wrote:
->
-> I have always been super interested in how much we can push the 
-> scalability limits of file systems and for the workloads we need to 
-> support, we need to scale up to supporting absolutely ridiculously 
-> large numbers of files (a few billion files doesn't meet the need of 
-> the largest customers we support).
->
-> Zach Brown is leading a new project on ngnfs (FOSDEM talk this year 
-> gave a good background on this - 
-> https://www.fosdem.org/2025/schedule/speaker/zach_brown/).  We are 
-> looking at taking advantage of modern low latency NVME devices and 
-> today's networks to implement a distributed file system that provides  
-> better concurrency that high object counts need and still have the 
-> bandwidth needed to support the backend archival systems we feed.
->
-> ngnfs as a topic would go into the coherence design (and code) that 
-> underpins the increased concurrency it aims to deliver.
->
-> Clear that the project is in early days compared to most of the 
-> proposed content, but it can be useful to spend some of the time on 
-> new ideas.
->
-Just adding that all of this work is GPL'ed and we aspire to getting it 
-upstream.
-
-This is planned to be a core part of future shipping products, so we 
-intend to fully maintain it going forward.
-
-
+T24gMi8zLzI1LCAxOjQ0IEFNLCAiQ2hyaXN0b3BoIEhlbGx3aWciIDxoY2hAaW5mcmFkZWFkLm9y
+ZyA8bWFpbHRvOmhjaEBpbmZyYWRlYWQub3JnPj4gd3JvdGU6DQo+IE9uIFN1biwgRmViIDAyLCAy
+MDI1IGF0IDEwOjI2OjI4QU0gLTA1MDAsIFRoZW9kb3JlIFRzJ28gd3JvdGU6DQo+ID4gV2VsbCwg
+aW4gdGhlIHBhc3QgSSBhdHRlbXB0ZWQgdG8gbGFuZCBhICJsb2NhbCIgZmlsZSBzeXN0ZW0gdHlw
+ZSB0aGF0DQo+ID4gY291bGQgYmUgdXNlZCBmb3IgZmlsZSBzeXN0ZW1zIHRoYXQgd2VyZSBhdmFp
+bGFibGUgdmlhIGRvY2tlciAoYW5kIHNvDQo+ID4gdGhlcmUgd2FzIG5vIGJsb2NrIGRldmljZSB0
+byBtb3VudCBhbmQgdW5tb3VudCkuIFRoaXMgd2FzIHVzZWZ1bCBmb3INCj4gPiB0ZXN0aW5nIGdW
+aXNvclsxXSBhbmQgY291bGQgYWxzbyBiZSB1c2VkIGZvciB0ZXN0aW5nIFdpbmRvd3MgU3Vic3lz
+dGVtDQo+ID4gZm9yIExpbnV4IHYxLiBBcyBJIHJlY2FsbCwgZWl0aGVyIERhdmUgb3IgQ3Jpc3Rv
+cGggb2JqZWN0ZWQsIGV2ZW4NCj4gPiB0aG91Z2ggdGhlIGRpZmZzdGF0IHdhcyArNzMsIC00IGxp
+bmVzIGluIGNvbW1vbi9yYy4NCj4NCj4gWWVzLCB4ZnN0ZXN0cyBzaG91bGQganVzdCBzdXBwb3J0
+IHVwc3RyZWFtIGNvZGUuIEV2ZW4gZm9yIHRoaW5ncyB3aGVyZQ0KPiB3ZSB0aHJvdWdoIGl0IHdv
+dWxkIGdldCB1cHN0cmVhbSBBU0FQIGxpa2UgdGhlIFhGUw0KPiBydHJtYXAvcmVmbGluay9tZXRh
+ZGlyIHdvcmsgKHdoaWNoIGZpbmFsbHkgZGlkIGdldCB1cHN0cmVhbSBub3cpIGhhdmluZw0KPiB0
+aGUgaGFsZi1maW5pc2hlZCBzdXBwb3J0IGluIHhmc3Rlc3RzIHdpdGhvdXQgYWN0dWFsbHkgbGFu
+ZGluZyB0aGUgcmVzdA0KPiBjYXVzZWQgbW9yZSB0aGFuIGVub3VnaCBwcm9ibGVtcy4NCg0KVGhh
+dOKAmXMgZmFpci4gRnJvbSB0aGUgcGVyc3BlY3RpdmUgb2Ygc29tZW9uZSBtYWtpbmcgY2hhbmdl
+cyB0byB4ZnN0ZXN0cywNCml0J2QgcHJvYmFibHkgYmUgaGFyZCB0byBjaGFuZ2UgYW55IG9mIHRo
+ZSBMdXN0cmUgc3R1ZmYgd2l0aG91dCBhbiBlYXN5DQp3YXkgdG8gdmFsaWRhdGUgdGhhdCB0aGUg
+dGVzdHMgYXJlIHN0aWxsIHdvcmtpbmcgY29ycmVjdGx5Lg0KDQpCdXQgSSBnYXZlIGl0IGFub3Ro
+ZXIgbG9vayB5ZXN0ZXJkYXkgLSB0aGUgY2hhbmdlcyBuZWVkIHRvIHN1cHBvcnQNCkx1c3RyZSBh
+cmUgcHJldHR5IG1pbmltYWwuIGZzdGVzdHMgYXNzdW1lcyB0aGF0IGFueSBtaXNjZWxsYW5lb3Vz
+IGZpbGVzeXN0ZW0NCmlzIGRpc2sgYmFzZWQuIFNvIGVpdGhlciByZWxheGluZyB0aGF0IGFzc3Vt
+cHRpb24gb3IgYWRkaW5nIGFuIGV4cGxpY2l0IEx1c3RyZQ0KJEZTVFlQRSBpcyBlbm91Z2guIE9m
+IGNvdXJzZSwgaW4gdGhlIGZ1bGxuZXNzIG9mIHRpbWUgLSBMdXN0cmUgb3VnaHQgdG8gaGF2ZQ0K
+aXRzIG93biB0ZXN0cyBleGVyY2lzaW5nIHN0cmlwaW5nIGFuZCBzdWNoLiBXZSBoYXZlIG91ciBv
+d24gdGVzdCBzY3JpcHRzIHRvDQpjb3ZlciB0aGlzIC0gYnV0IHBvcnRpbmcgYSBzdWJzZXQgdG8g
+ZnN0ZXN0cyB3b3VsZCBiZSBoZWxwZnVsLiBCdXQgdGhlIGluaXRpYWwNCnN1cHBvcnQgZG9lc24n
+dCBuZWVkIGFsbCB0aGF0Lg0KDQpCdXQgSSBzdXBwb3NlIEkgY291bGQga2VlcCB0aGlzIGFsbCBk
+b3duc3RyZWFtIHVudGlsIEx1c3RyZSBnZXRzIGNsb3Nlcg0KdG8gYWNjZXB0YW5jZS4NCg0KPiBT
+b21ldGhpbmcgbGlrZSBsdXN0cmUgdGhhdCBoYXMNCj4gaGlzdG9yaWNhbGx5IGJlZW4gYSBjb21w
+bGV0ZSB0cmFpbndyZWNrIGFuZCB3aGVyZSBJIGhhdmUgc3Ryb25nIGRvdWJ0cw0KPiB0aGF0IHRo
+ZSBtYWludGFpbmVycyBnZXQgdGhlaXIgYWN0IHRvZ2V0aGVyIGlzIGV2ZW4gd29yc2UuDQoNCkRp
+ZCB5b3UgaGF2ZSBhbnkgc3BlY2lmaWMgZG91YnRzLCBiZXlvbmQgdGhlIGRldmVsb3BtZW50IG1v
+ZGVsIGFuZA0KZGlzay93aXJlIHByb3RvY29sIHN0YWJpbGl0eT8gSW4gb3RoZXIgd29yZHMsIGlz
+IHRoZSBkZXZlbG9wbWVudCBtb2RlbA0KdGhlIHByaW1hcnkgY29uY2Vybj8gT3IgYXJlIHRoZXJl
+IHRlY2huaWNhbCBjb25jZXJucyB3aXRoIEx1c3RyZSBpdHNlbGY/DQoNClRpbSBEYXkNCg0K
 
