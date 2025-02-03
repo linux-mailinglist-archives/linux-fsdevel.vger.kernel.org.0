@@ -1,396 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-40648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1369A26332
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 20:00:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04543A2635F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 20:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03D618869AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 19:00:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E3F188386C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 19:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005F1CAA63;
-	Mon,  3 Feb 2025 18:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40501209F22;
+	Mon,  3 Feb 2025 19:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4QcMkTh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3K67Zhr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6AE1ADC98;
-	Mon,  3 Feb 2025 18:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C418B1D54E2;
+	Mon,  3 Feb 2025 19:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738609189; cv=none; b=t1a8iMeQUkKW6WizI6Igbn1w7I5wVlheAyH2hMqUyP9bi3+pN+dNiIX9HdZsjET/RpnXpula46fBYTfMlSIlqjencLXH8ciNhfaeYsc/X84MCGV/ZT2T0OXk2DRfrUKAc6WO93akRiWLIslRIsrLt9U3hCWJ702u6+xJN0g63Yo=
+	t=1738609995; cv=none; b=uerEIc9X5Nr2nSa+gpsIcbNJwU0KsBwndJ6elYUxrz55WnyfFXPLFzGDUwiAuy+RNG2Q0jia7hS3ECXsDrsLhbBvbgKsFNqMxrtFy5VRQ2W6+l9RnDNAm/+mPO/ZFJGHbSJ6a9FdJ8ZJ+lm4eJk6NjV7dLcCvzPkTfq67mZkjoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738609189; c=relaxed/simple;
-	bh=qsuhz0QxD5DdLwuhG3U2qre9n+6uOa2G3UJ6fhCLvYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CplqaSDFNy625pKsn/VBYPwH72wY3NECsAis1BdZB88umNuVkJqmJa8GZiZsPLnWrmEZqex70Be50KXPTwJIqnCctHvtWFQTYgxsVhXy4pQmfH/X8bG1qfFU8HRSaJ3QlnPTJSPV2S3Xg2xeOanUUfeNCnRSkployKT0dRYw7wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4QcMkTh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49B9C4CED2;
-	Mon,  3 Feb 2025 18:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738609188;
-	bh=qsuhz0QxD5DdLwuhG3U2qre9n+6uOa2G3UJ6fhCLvYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e4QcMkThqxk9+Xt7EIYtHDPtZVD7PkKL2TFcDdkXGMPy8pwZ4Fkx8vvn3+JAjCdr2
-	 cBlLluy2M+LVFJnzYlxJryHNDH+o4Lez31MfDCPeVO3mErZSNJAbjDySKnKCY5Fjz0
-	 D+bviEqpI4TMG2pNq7QtGk7AST3+x9FYQZcu03oug4SosOQRNha4psnpNxoa363gQ/
-	 tfEfRqll2mLe6LvkuedMXQVbygdCaNJ6I0VbmzcRbqwbfKrHARmUDOSRhQyKUNv64m
-	 rGq2/DgQ4W7Du/Obnav0jgeZXA8EYVGnxtvEUFn7/5pe+/dEgdQzlcCVuhYzXfTm8l
-	 NZ2xec0+sRBOg==
-Date: Mon, 3 Feb 2025 10:59:48 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, bfoster@redhat.com,
-	nirjhar@linux.ibm.com, kernel-team@meta.com
-Subject: Re: [PATCH v5 1/2] fsx: support reads/writes from buffers backed by
- hugepages
-Message-ID: <20250203185948.GB134532@frogsfrogsfrogs>
-References: <20250121215641.1764359-1-joannelkoong@gmail.com>
- <20250121215641.1764359-2-joannelkoong@gmail.com>
- <20250202142518.r3xvf7mvfo2nhb7t@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <CAJnrk1YwBJQnFwYBcO50Xy2dA6df_SqQsHdpLux4wa-Yw5rXdg@mail.gmail.com>
+	s=arc-20240116; t=1738609995; c=relaxed/simple;
+	bh=+1ApW4IlAm2vszV6c8fXzisqnz+/2CfL7ImesJHt21o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RRRgJgrFm+NgORHsiCRNIBJq0tFSA9I8Datc1D1zTlijxWb715aZtX5Jp3+Jb8APXiFT76A8kHYkQeR/zGV1c46QG474LnKNJv+wpnGSefRo76MRk49lECZGdjoAbQLtRXT6WnZy6Yv2oAebTOB/NoEhmAGCfOkVZGBSy1WQA1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3K67Zhr; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so10270101a12.2;
+        Mon, 03 Feb 2025 11:13:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738609992; x=1739214792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ATR9LxFA3KoC/fdAoLngmiNQOq725F3mvwwXFxD3H8=;
+        b=b3K67ZhrLo6DTNTZLwjAG6axdhNweZt7CI/zEcLFrvfZt3h3YntievSDb/ekSLFzUn
+         sAVn33I9LpH1MiPPm4/DtDyZ8ARvtuEN1WBvc81wvjbZOIgQ81UJ57HIJlTMN3PreVYH
+         7FxLhOur4kCmLD4Gyg9KlLwlPE9M6Rp/izzlQp3EAODcIVSBwcTF+FJCM+rX+Yg3SSM2
+         ShIbLLiX51+6qp6ma45q7+ofBwOpUc3Xflrtm84nJGlOpxao4e0amtCt7+4UtlX9Hw0g
+         30bsq4RTyEW62AzI9P7nGcUc9jIVJZiqayx9U9tb9ywVwUFlYfiA5JGjUri5kDBCoz/P
+         MJIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738609992; x=1739214792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8ATR9LxFA3KoC/fdAoLngmiNQOq725F3mvwwXFxD3H8=;
+        b=oTcVwLcURzmLo7mR539Hf02uDqgtme04fGOaFCwSahFjjFbk96g4Uj+V4UdB06CMyl
+         2AC3/PUtZgHunyfRRLkhHpiIenotS6gZKBFSXORwZaVMJGECBcKEO6VZo3H8mtrzXwh0
+         MSs7HX3nImeyvOiuZitKBjH7I4nuFL+Wgcs7xrKnOI3gpUkEROTRHS2v6TZTCEKIZI6N
+         BV0bCtjWEZvNJJ28d/bjzlXqNEx/nirwp+iTAkadWkoZ5Nx7Hvt5vK6Mmw2FatcixXrg
+         xg37aWBE/K2b/F9L5Y8MJH0pYzJuQ6njECOMqEH9D8i9d7XBQ3ZQz8Wpi6d1hS2QVxeN
+         DHGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvuWAUkJaHjj80QUkCXa8aYSlwFtaumZcTXXFzXdkGTVx0yZNuT+QWW4c5PU5SNZ94W5ZNyvRQ@vger.kernel.org, AJvYcCXzdvt8VrgFFWbOGB8Xf/rDHl5iyaTUkA095HrU7fAym2Zfh6dyL7bif4UQvnKv/svULmMMp57eOvw6OkKblg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiEZalqD0eeRz9ch/BznAZXSl5CGY3XXnfZoN0/qrBfQeVL6D2
+	jIxCOr47jsZuTU40AYVgA8zeYlVT388nGeLxYqSsL9uz0jPZPjr0oC18CarzkgROH5hyRu+W96c
+	fxK91H04TDg88wQotB9a4VM7ulhI=
+X-Gm-Gg: ASbGncsNYZF9kmyzjbznXJ07AX8mdZgqBjMMq/7vclbBrayqxx5wSTQX4+jQF6fHhA7
+	UKPxBxFqzA2B827BC3T7AvZG+83CQ3FflnmwBwa/ribEFIxu/2dfLKkWvOiRO9RXHPa/5Dj7l
+X-Google-Smtp-Source: AGHT+IHoUcc/NEfy0zrtKJNLB/LJ11pg9p2CpWwrLlAv/hvy8PdAb9v8V+vQ7xlB4K/Be7095Dm8pBwgxwdDeUjg9/4=
+X-Received: by 2002:a17:907:2d08:b0:ab6:99b2:ad0c with SMTP id
+ a640c23a62f3a-ab6cfe1753dmr2384632166b.50.1738609991340; Mon, 03 Feb 2025
+ 11:13:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YwBJQnFwYBcO50Xy2dA6df_SqQsHdpLux4wa-Yw5rXdg@mail.gmail.com>
+References: <20250203185519.GA2888598@zen.localdomain>
+In-Reply-To: <20250203185519.GA2888598@zen.localdomain>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 3 Feb 2025 20:12:59 +0100
+X-Gm-Features: AWEUYZlBvrMbmjcMOb9YHHR7LGTSALu84kO5NmJa7V_r_sKmEyHsZYSx4qSObRc
+Message-ID: <CAOQ4uxjiYQHUVkYnv5owPHHvs6BP128Zvuf_LGciENjyJkLa6w@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Long Duration Stress Testing Filesystems
+To: Boris Burkov <boris@bur.io>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	fstests <fstests@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 03, 2025 at 10:04:04AM -0800, Joanne Koong wrote:
-> On Sun, Feb 2, 2025 at 6:25 AM Zorro Lang <zlang@redhat.com> wrote:
-> >
-> > On Tue, Jan 21, 2025 at 01:56:40PM -0800, Joanne Koong wrote:
-> > > Add support for reads/writes from buffers backed by hugepages.
-> > > This can be enabled through the '-h' flag. This flag should only be used
-> > > on systems where THP capabilities are enabled.
-> > >
-> > > This is motivated by a recent bug that was due to faulty handling of
-> > > userspace buffers backed by hugepages. This patch is a mitigation
-> > > against problems like this in the future.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > ---
-> >
-> > Those two test cases fail on old system which doesn't support
-> > MADV_COLLAPSE:
-> >
-> >    fsx -N 10000 -l 500000 -h
-> >   -fsx -N 10000 -o 8192 -l 500000 -h
-> >   -fsx -N 10000 -o 128000 -l 500000 -h
-> >   +MADV_COLLAPSE not supported. Can't support -h
-> >
-> > and
-> >
-> >    fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-> >   -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-> >   -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-> >   +mapped writes DISABLED
-> >   +MADV_COLLAPSE not supported. Can't support -h
-> >
-> > I'm wondering ...
-> >
-> > >  ltp/fsx.c | 166 +++++++++++++++++++++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 153 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > index 41933354..3be383c6 100644
-> > > --- a/ltp/fsx.c
-> > > +++ b/ltp/fsx.c
-> > > @@ -190,6 +190,16 @@ int      o_direct;                       /* -Z */
-> > >  int  aio = 0;
-> > >  int  uring = 0;
-> > >  int  mark_nr = 0;
-> > > +int  hugepages = 0;                  /* -h flag */
-> > > +
-> > > +/* Stores info needed to periodically collapse hugepages */
-> > > +struct hugepages_collapse_info {
-> > > +     void *orig_good_buf;
-> > > +     long good_buf_size;
-> > > +     void *orig_temp_buf;
-> > > +     long temp_buf_size;
-> > > +};
-> > > +struct hugepages_collapse_info hugepages_info;
-> > >
-> > >  int page_size;
-> > >  int page_mask;
-> > > @@ -2471,7 +2481,7 @@ void
-> > >  usage(void)
-> > >  {
-> > >       fprintf(stdout, "usage: %s",
-> > > -             "fsx [-dfknqxyzBEFHIJKLORWXZ0]\n\
-> > > +             "fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> > >          [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
-> > >          [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
-> > >          [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
-> > > @@ -2483,8 +2493,11 @@ usage(void)
-> > >       -d: debug output for all operations\n\
-> > >       -e: pollute post-eof on size changes (default 0)\n\
-> > >       -f: flush and invalidate cache after I/O\n\
-> > > -     -g X: write character X instead of random generated data\n\
-> > > -     -i logdev: do integrity testing, logdev is the dm log writes device\n\
-> > > +     -g X: write character X instead of random generated data\n"
-> > > +#ifdef MADV_COLLAPSE
-> > > +"    -h hugepages: use buffers backed by hugepages for reads/writes\n"
-> > > +#endif
-> > > +"    -i logdev: do integrity testing, logdev is the dm log writes device\n\
-> > >       -j logid: prefix debug log messsages with this id\n\
-> > >       -k: do not truncate existing file and use its size as upper bound on file size\n\
-> > >       -l flen: the upper bound on file size (default 262144)\n\
-> > > @@ -2833,11 +2846,41 @@ __test_fallocate(int mode, const char *mode_str)
-> > >  #endif
-> > >  }
-> > >
-> > > +/*
-> > > + * Reclaim may break up hugepages, so do a best-effort collapse every once in
-> > > + * a while.
-> > > + */
-> > > +static void
-> > > +collapse_hugepages(void)
-> > > +{
-> > > +#ifdef MADV_COLLAPSE
-> > > +     int ret;
-> > > +
-> > > +     /* re-collapse every 16k fsxops after we start */
-> > > +     if (!numops || (numops & ((1U << 14) - 1)))
-> > > +             return;
-> > > +
-> > > +     ret = madvise(hugepages_info.orig_good_buf,
-> > > +                   hugepages_info.good_buf_size, MADV_COLLAPSE);
-> > > +     if (ret)
-> > > +             prt("collapsing hugepages for good_buf failed (numops=%llu): %s\n",
-> > > +                  numops, strerror(errno));
-> > > +     ret = madvise(hugepages_info.orig_temp_buf,
-> > > +                   hugepages_info.temp_buf_size, MADV_COLLAPSE);
-> > > +     if (ret)
-> > > +             prt("collapsing hugepages for temp_buf failed (numops=%llu): %s\n",
-> > > +                  numops, strerror(errno));
-> > > +#endif
-> > > +}
-> > > +
-> > >  bool
-> > >  keep_running(void)
-> > >  {
-> > >       int ret;
-> > >
-> > > +     if (hugepages)
-> > > +             collapse_hugepages();
-> > > +
-> > >       if (deadline.tv_nsec) {
-> > >               struct timespec now;
-> > >
-> > > @@ -2856,6 +2899,103 @@ keep_running(void)
-> > >       return numops-- != 0;
-> > >  }
-> > >
-> > > +static long
-> > > +get_hugepage_size(void)
-> > > +{
-> > > +     const char str[] = "Hugepagesize:";
-> > > +     size_t str_len =  sizeof(str) - 1;
-> > > +     unsigned int hugepage_size = 0;
-> > > +     char buffer[64];
-> > > +     FILE *file;
-> > > +
-> > > +     file = fopen("/proc/meminfo", "r");
-> > > +     if (!file) {
-> > > +             prterr("get_hugepage_size: fopen /proc/meminfo");
-> > > +             return -1;
-> > > +     }
-> > > +     while (fgets(buffer, sizeof(buffer), file)) {
-> > > +             if (strncmp(buffer, str, str_len) == 0) {
-> > > +                     sscanf(buffer + str_len, "%u", &hugepage_size);
-> > > +                     break;
-> > > +             }
-> > > +     }
-> > > +     fclose(file);
-> > > +     if (!hugepage_size) {
-> > > +             prterr("get_hugepage_size: failed to find "
-> > > +                     "hugepage size in /proc/meminfo\n");
-> > > +             return -1;
-> > > +     }
-> > > +
-> > > +     /* convert from KiB to bytes */
-> > > +     return hugepage_size << 10;
-> > > +}
-> > > +
-> > > +static void *
-> > > +init_hugepages_buf(unsigned len, int hugepage_size, int alignment, long *buf_size)
-> > > +{
-> > > +     void *buf = NULL;
-> > > +#ifdef MADV_COLLAPSE
-> > > +     int ret;
-> > > +     long size = roundup(len, hugepage_size) + alignment;
-> > > +
-> > > +     ret = posix_memalign(&buf, hugepage_size, size);
-> > > +     if (ret) {
-> > > +             prterr("posix_memalign for buf");
-> > > +             return NULL;
-> > > +     }
-> > > +     memset(buf, '\0', size);
-> > > +     ret = madvise(buf, size, MADV_COLLAPSE);
-> > > +     if (ret) {
-> > > +             prterr("madvise collapse for buf");
-> > > +             free(buf);
-> > > +             return NULL;
-> > > +     }
-> > > +
-> > > +     *buf_size = size;
-> > > +#endif
-> > > +     return buf;
-> > > +}
-> > > +
-> > > +static void
-> > > +init_buffers(void)
-> > > +{
-> > > +     int i;
-> > > +
-> > > +     original_buf = (char *) malloc(maxfilelen);
-> > > +     for (i = 0; i < maxfilelen; i++)
-> > > +             original_buf[i] = random() % 256;
-> > > +     if (hugepages) {
-> > > +             long hugepage_size = get_hugepage_size();
-> > > +             if (hugepage_size == -1) {
-> > > +                     prterr("get_hugepage_size()");
-> > > +                     exit(102);
-> > > +             }
-> > > +             good_buf = init_hugepages_buf(maxfilelen, hugepage_size, writebdy,
-> > > +                                           &hugepages_info.good_buf_size);
-> > > +             if (!good_buf) {
-> > > +                     prterr("init_hugepages_buf failed for good_buf");
-> > > +                     exit(103);
-> > > +             }
-> > > +             hugepages_info.orig_good_buf = good_buf;
-> > > +
-> > > +             temp_buf = init_hugepages_buf(maxoplen, hugepage_size, readbdy,
-> > > +                                           &hugepages_info.temp_buf_size);
-> > > +             if (!temp_buf) {
-> > > +                     prterr("init_hugepages_buf failed for temp_buf");
-> > > +                     exit(103);
-> > > +             }
-> > > +             hugepages_info.orig_temp_buf = temp_buf;
-> > > +     } else {
-> > > +             unsigned long good_buf_len = maxfilelen + writebdy;
-> > > +             unsigned long temp_buf_len = maxoplen + readbdy;
-> > > +
-> > > +             good_buf = calloc(1, good_buf_len);
-> > > +             temp_buf = calloc(1, temp_buf_len);
-> > > +     }
-> > > +     good_buf = round_ptr_up(good_buf, writebdy, 0);
-> > > +     temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> > > +}
-> > > +
-> > >  static struct option longopts[] = {
-> > >       {"replay-ops", required_argument, 0, 256},
-> > >       {"record-ops", optional_argument, 0, 255},
-> > > @@ -2883,7 +3023,7 @@ main(int argc, char **argv)
-> > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> > >
-> > >       while ((ch = getopt_long(argc, argv,
-> > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > >                                longopts, NULL)) != EOF)
-> > >               switch (ch) {
-> > >               case 'b':
-> > > @@ -2916,6 +3056,14 @@ main(int argc, char **argv)
-> > >               case 'g':
-> > >                       filldata = *optarg;
-> > >                       break;
-> > > +             case 'h':
-> > > +#ifndef MADV_COLLAPSE
-> > > +                     fprintf(stderr, "MADV_COLLAPSE not supported. "
-> > > +                             "Can't support -h\n");
-> > > +                     exit(86);
-> > > +#endif
-> > > +                     hugepages = 1;
-> > > +                     break;
-> >
-> > ...
-> > if we could change this part to:
-> >
-> > #ifdef MADV_COLLAPSE
-> >         hugepages = 1;
-> > #endif
-> >         break;
-> >
-> > to avoid the test failures on old systems.
-> >
-> > Or any better ideas from you :)
-> 
-> Hi Zorro,
-> 
-> It looks like MADV_COLLAPSE was introduced in kernel version 6.1. What
-> do you think about skipping generic/758 and generic/759 if the kernel
-> version is older than 6.1? That to me seems more preferable than the
-> paste above, as the paste above would execute the test as if it did
-> test hugepages when in reality it didn't, which would be misleading.
+CC fstests
 
-Now that I've gotten to try this out --
-
-There's a couple of things going on here.  The first is that generic/759
-and 760 need to check if invoking fsx -h causes it to spit out the
-"MADV_COLLAPSE not supported" error and _notrun the test.
-
-The second thing is that userspace programs can ensure the existence of
-MADV_COLLAPSE in multiple ways.  The first way is through sys/mman.h,
-which requires that the underlying C library headers are new enough to
-include a definition.  glibc 2.37 is new enough, but even things like
-Debian 12 and RHEL 9 aren't new enough to have that.  Other C libraries
-might not follow glibc's practice of wrapping and/or redefining symbols
-in a way that you hope is the same as...
-
-The second way is through linux/mman.h, which comes from the kernel
-headers package; and the third way is for the program to define it
-itself if nobody else does.
-
-So I think the easiest way to fix the fsx.c build is to include
-linux/mman.h in addition to sys/mman.h.  Sorry I didn't notice these
-details when I reviewed your patch; I'm a little attention constrained
-ATM trying to get a large pile of bugfixes and redesigns reviewed so
-for-next can finally move forward again.
-
---D
-
-> 
+On Mon, Feb 3, 2025 at 7:54=E2=80=AFPM Boris Burkov <boris@bur.io> wrote:
+>
+> At Meta, we currently primarily rely on fstests 'auto' runs for
+> validating Btrfs as a general purpose filesystem for all of our root
+> drives. While this has obviously proven to be a very useful test suite
+> with rich collaboration across teams and filesystems, we have observed a
+> recent trend in our production filesystem issues that makes us question
+> if it is sufficient.
+>
+> Over the last few years, we have had a number of issues (primarily in
+> Btrfs, but at least one notable one in Xfs) that have been detected in
+> production, then reproduced with an unreliable non-specific stressor
+> that takes hours or even days to trigger the issue.
+> Examples:
+> - Btrfs relocation bugs
+> https://lore.kernel.org/linux-btrfs/68766e66ed15ca2e7550585ed09434249db91=
+2a2.1727212293.git.josef@toxicpanda.com/
+> https://lore.kernel.org/linux-btrfs/fc61fb63e534111f5837c204ec341c876637a=
+f69.1731513908.git.josef@toxicpanda.com/
+> - Btrfs extent map merging corruption
+> https://lore.kernel.org/linux-btrfs/9b98ba80e2cf32f6fb3b15dae9ee92507a9d5=
+9c7.1729537596.git.boris@bur.io/
+> - Btrfs dio data corruptions from bio splitting
+> (mostly our internal errors trying to make minimal backports of
+> https://lore.kernel.org/linux-btrfs/cover.1679512207.git.boris@bur.io/
+> and Christoph's related series)
+> - Xfs large folios
+> https://lore.kernel.org/linux-fsdevel/effc0ec7-cf9d-44dc-aee5-56394224252=
+2@meta.com/
+>
+> In my view, the common threads between these are that:
+> - we used fstests to validate these systems, in some cases even with
+>   specific regression tests for highly related bugs, but still missed
+>   the bugs until they hit us during our production release process. In
+>   all cases, we had passing 'fstests -g auto' runs.
+> - were able to reproduce the bugs with a predictable concoction of "run
+>   a workload and some known nasty btrfs operations in parallel". The most
+>   common form of this was running 'fsstress' and 'btrfs balance', but it
+>   wasn't quite universal. Sometimes we needed reflink threads, or
+>   drop_caches, or memory pressure, etc. to trigger a bug.
+> - The relatively generic stressing reproducers took hours or days to
+>   produce an issue then the investigating engineer could try to tweak and
+>   tune it by trial and error to bring that time down for a particular bug=
+.
+>
+> This leads me to the conclusion that there is some room for improvement i=
+n
+> stress testing filesystems (at least Btrfs).
+>
+> I attempted to study the prior art on this and so far have found:
+> - fsstress/fsx and the attendant tests in fstests/. There are ~150-200
+>   tests using fsstress and fsx in fstests/. Most of them are xfs and
+>   btrfs tests following the aforementioned pattern of racing fsstress
+>   with some scary operations. Most of them tend to run for 30s, though
+>   some are longer (and of course subject to TIME_FACTOR configuration)
+> - Similar duration error injection tests in fstests (e.g. generic/475)
+> - The NFSv4 Test Project
+>   https://www.kernel.org/doc/ols/2006/ols2006v2-pages-275-294.pdf
+>   A choice quote regarding stress testing:
+>   "One year after we started using FSSTRESS (in April 2005) Linux NFSv4
+>   was able to sustain the concurrent load of 10 processes during 24
+>   hours, without any problem. Three months later, NFSv4 reached 72 hours
+>   of stress under FSSTRESS, without any bugs. From this date, NFSv4
+>   filesystem tree manipulation is considered to be stable."
+>
+>
+> I would like to discuss:
+> - Am I missing other strategies people are employing? Apologies if there
+>   are obvious ones, but I tried to hunt around for a few days :)
+> - What is the universe of interesting stressors (e.g., reflink, scrub,
+>   online repair, balance, etc.)
+> - What is the universe of interesting validation conditions (e.g.,
+>   kernel panic, read only fs, fsck failure, data integrity error, etc.)
+> - Is there any interest in automating longer running fsstress runs? Are
+>   people already doing this with varying TIME_FACTOR configurations in
+>   fstests?
+> - There is relatively less testing with fsx than fsstress in fstests.
+>   I believe this creates gaps for data corruption bugs rather than
+>   "feature logic" issues that the fsstress feature set tends to hit.
+> - Can we standardize on some modular "stressors" and stress durations
+>   to run to validate file systems?
+>
+> In the short term, I have been working on these ideas in a separate
+> barebones stress testing framework which I am happy to share, but isn't
+> particularly interesting in and of itself. It is basically just a
+> skeleton for concurrently running some concurrent "stressors" and then
+> validating the fs with some generic "validators". I plan to run it
+> internally just to see if I can get some useful results on our next few
+> major kernel releases.
+>
+> And of course, I would love to discuss anything else of interest to
+> people who like stress testing filesystems!
+>
 > Thanks,
-> Joanne
-> 
-> >
-> > Thanks,
-> > Zorro
-> >
-> > >               case 'i':
-> > >                       integrity = 1;
-> > >                       logdev = strdup(optarg);
-> > > @@ -3229,15 +3377,7 @@ main(int argc, char **argv)
-> > >                       exit(95);
-> > >               }
-> > >       }
-> > > -     original_buf = (char *) malloc(maxfilelen);
-> > > -     for (i = 0; i < maxfilelen; i++)
-> > > -             original_buf[i] = random() % 256;
-> > > -     good_buf = (char *) malloc(maxfilelen + writebdy);
-> > > -     good_buf = round_ptr_up(good_buf, writebdy, 0);
-> > > -     memset(good_buf, '\0', maxfilelen);
-> > > -     temp_buf = (char *) malloc(maxoplen + readbdy);
-> > > -     temp_buf = round_ptr_up(temp_buf, readbdy, 0);
-> > > -     memset(temp_buf, '\0', maxoplen);
-> > > +     init_buffers();
-> > >       if (lite) {     /* zero entire existing file */
-> > >               ssize_t written;
-> > >
-> > > --
-> > > 2.47.1
-> > >
-> >
+> Boris
+>
 
