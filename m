@@ -1,69 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-40565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358C1A2538B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 09:07:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0246A2542B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 09:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EB03A4741
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 08:06:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4983161127
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 08:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB211FAC4B;
-	Mon,  3 Feb 2025 08:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136561FBCAD;
+	Mon,  3 Feb 2025 08:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yZWM63HM"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Msunbk40"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED461F91C5;
-	Mon,  3 Feb 2025 08:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5DC78F5D;
+	Mon,  3 Feb 2025 08:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738570009; cv=none; b=bAn+A39xc+AD1lY6dBmomQyHYOsMvYmbil7DQHbph1vM6etUSkKZdSVB3KiWJgQ8U56iU9TMV9sKz1Z7tcxztfzw0fnQnrjT6HHEJiEJ8Ndoge8Qx6kgYamAqwv6Uo10Zll2ZQjKW5EjZkQbQjEY86/+PCGrHBfQQfZRRp0k5s4=
+	t=1738570553; cv=none; b=TnPN1/zCNw5hPHAf9cGJLqztxPU3u+7MHZ3o5b38Vl4lecEGWagr0Vnagbsw82H3Tts6Wox3LW0MDtzWZuKKwCt1YpgPaUVkCXsFh/6mb0gzMbwLQezyLb7kh2NxVXLHPYJ6GctJg0icqhDIshzSqgTYBnPdV1W6GrLXz2fzXIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738570009; c=relaxed/simple;
-	bh=9f6Ab6tq2/THWPNFqctaV85Q+DUkFgaVBJK6UYBOMrc=;
+	s=arc-20240116; t=1738570553; c=relaxed/simple;
+	bh=mjJkCqwk1WqWxuLu0BgfdANNFd5gCR4A8HpbqdNYGvo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3zbgd73iJFfquqyUfawn8aB5RFc/D9bPMKlIqNZAqqzRpWdX8osOManRrTLj2DMdp5GDka3y/O0rk3kDSY6YeqVL5m/zUt9p4q7014uI4Q+MPmwjs5rRropcT3mJ1xUfMgv9swv7cDBuoW670Cc8+39jjHqOPRRCfCyeL8LTcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yZWM63HM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=r1r6plQaRoAy1Nxbdg0BWrNM7QAkG9cm/NIMqGIem9Y=; b=yZWM63HMplkQd9jjGoEVajgvTU
-	wk8XerzMhuuMUkMYuQFTrHN2AqJnjAdGFrJyqqHip67hvx3XcNfqMIheNLk4Y+So9JSf3CBMhoTZy
-	PT4r+CCYZiuEUUR9m80LQ18o+Hccuv9YrCjM/PAaC+I6wUmVYQcoPO2GqDO8vWfMrYBfqU8PIq5j9
-	8T8iu5JGjnyT+bzTbobALbTCdOVWui2CkTLCc6Dw5Fd6nLE07M3osVSuvUc9kbG+i3pdTGC7RhxxK
-	H5NA2DFwsybhY4mmSg5fDtNVeBqP/ANf9VBd/x79Wy8GXn8qCIx6G9Qvi/7oBse1sUkc90Vs2MpHa
-	WlLeJ+2Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1terTh-0000000ElsK-1hgZ;
-	Mon, 03 Feb 2025 08:06:45 +0000
-Date: Mon, 3 Feb 2025 00:06:45 -0800
-From: "hch@infradead.org" <hch@infradead.org>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: "hch@infradead.org" <hch@infradead.org>,
-	Kanchan Joshi <joshi.k@samsung.com>, Theodore Ts'o <tytso@mit.edu>,
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>
-Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
-Message-ID: <Z6B5FdXwhXs76B5H@infradead.org>
-References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
- <20250130091545.66573-1-joshi.k@samsung.com>
- <20250130142857.GB401886@mit.edu>
- <97f402bc-4029-48d4-bd03-80af5b799d04@samsung.com>
- <b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
- <Z6B2oq_aAaeL9rBE@infradead.org>
- <bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3SF1NYLQOC8Vbgc94YvWLgTKXl92t+aKsj+0aW62sYvOPtoc7ACS0LnkV4eS1xDX5r1V4kbXsPGXpnAm259QIYI4XzQP3Q2ykNa4E4zLCrPJDfNxVeuM145PHoYiLUYtq1zraIyJDTUOqslGxcBMUV4YD+CUItnrLR71QTdDRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Msunbk40; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8EDCC4CEE2;
+	Mon,  3 Feb 2025 08:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1738570552;
+	bh=mjJkCqwk1WqWxuLu0BgfdANNFd5gCR4A8HpbqdNYGvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Msunbk40aaABEbyOg8lvujb8fVBdf02nTqsld0rGl/8SxCOUvaIFAu9JBxH2hKqOK
+	 tbVvq/ETrJKNZtCQ7XXeWp8n/g7wtD1RPUGGeNN3pnmmDqf3ns1v7RgBD05G7qvpW6
+	 oC3LwZdAeuCjqSOioUhWpDAHhD32+TyFwDpHFz1Y=
+Date: Mon, 3 Feb 2025 09:14:51 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+8928e473a91452caca2f@syzkaller.appspotmail.com, dakr@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] debugfs: add fsd's methods initialization
+Message-ID: <2025020345-breath-comma-4097@gregkh>
+References: <679f72f6.050a0220.48cbc.000d.GAE@google.com>
+ <tencent_8D66623CFF36BA96EE36FE4B7474B1778509@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,16 +56,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <tencent_8D66623CFF36BA96EE36FE4B7474B1778509@qq.com>
 
-On Mon, Feb 03, 2025 at 08:04:42AM +0000, Johannes Thumshirn wrote:
-> Well for the WAF part, it'll save us 32 Bytes per FS sector (typically 
-> 4k) in the btrfs case, that's ~0.8% of the space.
+On Mon, Feb 03, 2025 at 11:27:56AM +0800, Edward Adam Davis wrote:
+> syzbot reported a uninit-value in full_proxy_unlocked_ioctl. [1]
+> 
+> The newly created fsd does not initialize methods, and increases the
+> initialization of methods for fsd.
+> 
+> [1]
+> BUG: KMSAN: uninit-value in full_proxy_unlocked_ioctl+0xed/0x3a0 fs/debugfs/file.c:399
+>  full_proxy_unlocked_ioctl+0xed/0x3a0 fs/debugfs/file.c:399
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:906 [inline]
+>  __se_sys_ioctl+0x246/0x440 fs/ioctl.c:892
+>  __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:892
+>  x64_sys_call+0x19f0/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:17
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Fixes: 41a0ecc0997c ("debugfs: get rid of dynamically allocation proxy_ops")
+> Reported-by: syzbot+8928e473a91452caca2f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=8928e473a91452caca2f
+> Tested-by: syzbot+8928e473a91452caca2f@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  fs/debugfs/file.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-It saves you from the cascading btree updates.  With nocow this could
-actually allow btrfs to write with WAF=1 for pure overwrites.  But even
-with data cow it will reduce a lot of churn, especially for O_SYNC
-writes.
+Is this still an issue on 6.14-rc1, specifically after commit
+57b314752ec0 ("debugfs: Fix the missing initializations in
+__debugfs_file_get()")?
 
+thanks,
+
+greg k-h
 
