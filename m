@@ -1,135 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-40674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF441A26672
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:20:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB000A26678
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 975B57A1DF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BA318857DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB38120FA9C;
-	Mon,  3 Feb 2025 22:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B367E210F58;
+	Mon,  3 Feb 2025 22:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uV8PxFX+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lL6OEyBl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DCE1F92A;
-	Mon,  3 Feb 2025 22:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC091F92A;
+	Mon,  3 Feb 2025 22:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738621208; cv=none; b=ddHSogAMuqqBaVOhjUw58JJwTCs3ISQNsHxwxmu3fubxgK3yuVb4nfzGADOQVoFQQzUWNRaOtw2szbjtzXwY/gw0IuN/nF285ehwncoujuw2HECLIQgN48wLMzjNvL23lk2Td+V/MMW4Kroy5qQkPAjIW5dbKghdSpRy8cTaRXk=
+	t=1738621232; cv=none; b=COZe6QUaY7IwOQwwqwRerqOWw+fmOhumU7WUkHuEAKsbgZnBioEmTNhd4X0YZkoUKZNRn6FwbJInR7nnM6RRQRyFdXaz1Tei3IYN7HyZuVzekVqLav5NlJDEJLFoGtIy7Y87sV94gH61uOUa9wquYnHmRTkpozvH/BIV1ahepjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738621208; c=relaxed/simple;
-	bh=PA3NMuBem5rghZcWHiQ2TdTBORSdonrgrgLMvz81NXw=;
+	s=arc-20240116; t=1738621232; c=relaxed/simple;
+	bh=HjtBYQodTOz3gezl/0WAePfk1RhSSlgDX8xMVStQOwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i44mYKmQ8eCxR8Aek3rLlprMMJtNPZ7WXUIZWvzXr4Q0a6HIQ5NMPaU1FueHUXPVzYFLSPb2aQwSlxmFaJdIcBRgAGvUJyFX9MGMv0bc++jrscVIf7msyrPwBoNcxI3/QaBx9tt9rbXzMf12B/joPh048rqoXWWEQCpsSi3jV78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uV8PxFX+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F19C4CED2;
-	Mon,  3 Feb 2025 22:20:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OF5FVJOLxdqCE4YIZ88oDX3YzAKYCE1wABIg1FvigCEN6AnhRpe8/2fs36BsDH9G1RNyOCr8rpfRC2HuemQT4UaFQUnzToWKgeP1oriacFSsEWgn6Cu7CrEnKIW6khup3SQnE/7WBOdxMfbKrV0cxfFGmduPLLjw1ww4WSQdb2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lL6OEyBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7E9C4CED2;
+	Mon,  3 Feb 2025 22:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738621207;
-	bh=PA3NMuBem5rghZcWHiQ2TdTBORSdonrgrgLMvz81NXw=;
+	s=k20201202; t=1738621231;
+	bh=HjtBYQodTOz3gezl/0WAePfk1RhSSlgDX8xMVStQOwA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uV8PxFX+0xSQ6NwnaPRgFM0DwO+ZRuyyseury023GWNcQC4mDKxQgJXHitgTu3q0G
-	 mLXsEBO27HUnJ1BPj6RPKnYUxMk0LhnANNGvit2Fuax9pcwcU6mT12SrzvVx54+iFT
-	 Fc7zaj8CbnchFUPRYf6bUivWEC7YrL0q6a0JIvAlMrWi6jmNybwqhQf7mTWNfj9rBL
-	 yeMuuGnxxafmTFInPXwvJci8YSCSRxEMs+TseDe2+9dO8FXvCqa8lHF7KIyl8T+AfN
-	 OJ3/YmsCSTs2IjvrjU4DbDirxJorPu6nu1VPUQHIZ0hnwVygTMekbYr8/pqtmS+e/f
-	 SiW111rD7pfHQ==
-Received: by pali.im (Postfix)
-	id 8B8EA7CA; Mon,  3 Feb 2025 23:19:55 +0100 (CET)
-Date: Mon, 3 Feb 2025 23:19:55 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <20250203221955.bgvlkp273o3wnzmf@pali>
-References: <20250114215350.gkc2e2kcovj43hk7@pali>
- <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali>
- <20250114235925.GC3561231@frogsfrogsfrogs>
- <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
- <20250117173900.GN3557553@frogsfrogsfrogs>
- <CAOQ4uxhh1LDz5zXzqFENPhJ9k851AL3E7Xc2d7pSVVYX4Fu9Jw@mail.gmail.com>
- <20250117185947.ylums2dhmo3j6hol@pali>
- <20250202152343.ahy4hnzbfuzreirz@pali>
- <CAOQ4uxgjbHTyQ53u=abWhyQ81ATL4cqSeWKDfOjz-EaR0NGmug@mail.gmail.com>
+	b=lL6OEyBlLjA5c5UCjZjNuisUsVwTe2hTAtkMizkoBjOtc0UprdSYnPB9umZuFFu1n
+	 /TKHMJQCxn+JxbAQHmPJihHVbL0wvDDrcMFbvrg4yRITLDQ0RZCuyXMtcqsZPVndJ5
+	 JIry62Zz8VcTI0pCxt0TdS+7iK/H1B5FN00q4UavbfqiueBnEaV4W64TwD+2b8a+ht
+	 jfw4PYvXdcTq/c74ECIxWCJrd7pg3wXYy0qfyfkEtHQS3kETx8XDo71bE1b/lMXOZk
+	 liGPIpPoRUusmzqPTtj+gDkMETDwQCH3k3dQoOpPfQhzVMMquoLHag7XWBkU+uds/8
+	 7BLu84/l77heg==
+Date: Mon, 3 Feb 2025 14:20:31 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Kanchan Joshi <joshi.k@samsung.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	Qu Wenruo <wqu@suse.com>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 7/7] xfs: implement block-metadata based data checksums
+Message-ID: <20250203222031.GB134507@frogsfrogsfrogs>
+References: <20250203094322.1809766-1-hch@lst.de>
+ <20250203094322.1809766-8-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgjbHTyQ53u=abWhyQ81ATL4cqSeWKDfOjz-EaR0NGmug@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20250203094322.1809766-8-hch@lst.de>
 
-On Monday 03 February 2025 22:59:46 Amir Goldstein wrote:
-> On Sun, Feb 2, 2025 at 4:23 PM Pali Rohár <pali@kernel.org> wrote:
-> > And there is still unresolved issue with FILE_ATTRIBUTE_READONLY.
-> > Its meaning is similar to existing Linux FS_IMMUTABLE_FL, just
-> > FILE_ATTRIBUTE_READONLY does not require root / CAP_LINUX_IMMUTABLE.
-> >
-> > I think that for proper support, to enforce FILE_ATTRIBUTE_READONLY
-> > functionality, it is needed to introduce new flag e.g.
-> > FS_IMMUTABLE_FL_USER to allow setting / clearing it also for normal
-> > users without CAP_LINUX_IMMUTABLE. Otherwise it would be unsuitable for
-> > any SMB client, SMB server or any application which would like to use
-> > it, for example wine.
-> >
-> > Just to note that FreeBSD has two immutable flags SF_IMMUTABLE and
-> > UF_IMMUTABLE, one settable only by superuser and second for owner.
-> >
-> > Any opinion?
-> 
-> For filesystems that already support FILE_ATTRIBUTE_READONLY,
-> can't you just set S_IMMUTABLE on the inode and vfs will do the correct
-> enforcement?
-> 
-> The vfs does not control if and how S_IMMUTABLE is set by filesystems,
-> so if you want to remove this vfs flag without CAP_LINUX_IMMUTABLE
-> in smb client, there is nothing stopping you (I think).
+On Mon, Feb 03, 2025 at 10:43:11AM +0100, Christoph Hellwig wrote:
+> This is a quick hack to demonstrate how data checksumming can be
+> implemented when it can be stored in the out of line metadata for each
+> logical block.  It builds on top of the previous PI infrastructure
+> and instead of generating/verifying protection information it simply
+> generates and verifies a crc32c checksum and stores it in the non-PI
 
-Function fileattr_set_prepare() checks for CAP_LINUX_IMMUTABLE when
-trying to change FS_IMMUTABLE_FL bit. This function is called from
-ioctl(FS_IOC_SETFLAGS) and also from ioctl(FS_IOC_FSSETXATTR).
-And when function fileattr_set_prepare() fails then .fileattr_set
-callback is not called at all. So I think that it is not possible to
-remove the IMMUTABLE flag from userspace without capability for smb
-client.
+PI can do crc32c now?  I thought it could only do that old crc16 from
+like 15 years ago and crc64?  If we try to throw crc32c at a device,
+won't it then reject the "incorrect" checksums?  Or is there some other
+magic in here where it works and I'm just too out of date to know?
 
-And it would not solve this problem for local filesystems (ntfs or ext4)
-when Samba server or wine would want to set this bit.
+<shrug>
 
-> How about tackling this one small step at a time, not in that order
-> necessarily:
+The crc32c generation and validation looks decent though we're
+definitely going to want an inode flag so that we're not stuck with
+stable page writes.
+
+--D
+
+> metadata.  It misses a feature bit in the superblock, checking that
+> enough size is available in the metadata and many other things.
 > 
-> 1. Implement the standard API with FS_IOC_FS[GS]ETXATTR ioctl
->     and with statx to get/set some non-controversial dosattrib flags on
->     ntfs/smb/vfat
-> 2. Wire some interesting dosattrib flags (e.g. compr/enrypt) to local
->     filesystems that already support storing those bits
-> 3. Wire network servers (e.g. Samba) to use the generic API if supported
-> 4. Add on-disk support for storing the dosattrib flags to more local fs
-> 5. Update S_IMMUTABLE inode flag if either FS_XFLAG_IMMUTABLE
->     or FS_DOSATTRIB_READONLY are set on the file
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/xfs_data_csum.c | 79 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 76 insertions(+), 3 deletions(-)
 > 
-> Thoughts?
+> diff --git a/fs/xfs/xfs_data_csum.c b/fs/xfs/xfs_data_csum.c
+> index d9d3620654b1..862388803398 100644
+> --- a/fs/xfs/xfs_data_csum.c
+> +++ b/fs/xfs/xfs_data_csum.c
+> @@ -14,6 +14,73 @@
+>  #include <linux/blk-integrity.h>
+>  #include <linux/bio-integrity.h>
+>  
+> +static inline void *xfs_csum_buf(struct bio *bio)
+> +{
+> +	return bvec_virt(bio_integrity(bio)->bip_vec);
+> +}
+> +
+> +static inline __le32
+> +xfs_data_csum(
+> +	void			*data,
+> +	unsigned int		len)
+> +{
+> +	return xfs_end_cksum(crc32c(XFS_CRC_SEED, data, len));
+> +}
+> +
+> +static void
+> +__xfs_data_csum_generate(
+> +	struct bio		*bio)
+> +{
+> +	unsigned int		ssize = bdev_logical_block_size(bio->bi_bdev);
+> +	__le32			*csum_buf = xfs_csum_buf(bio);
+> +	struct bvec_iter_all	iter;
+> +	struct bio_vec		*bv;
+> +	int			c = 0;
+> +
+> +	bio_for_each_segment_all(bv, bio, iter) {
+> +		void		*p;
+> +		unsigned int	off;
+> +
+> +		p = bvec_kmap_local(bv);
+> +		for (off = 0; off < bv->bv_len; off += ssize)
+> +			csum_buf[c++] = xfs_data_csum(p + off, ssize);
+> +		kunmap_local(p);
+> +	}
+> +}
+> +
+> +static int
+> +__xfs_data_csum_verify(
+> +	struct bio		*bio,
+> +	struct xfs_inode	*ip,
+> +	xfs_off_t		file_offset)
+> +{
+> +	unsigned int		ssize = bdev_logical_block_size(bio->bi_bdev);
+> +	__le32			*csum_buf = xfs_csum_buf(bio);
+> +	int			c = 0;
+> +	struct bvec_iter_all	iter;
+> +	struct bio_vec		*bv;
+> +
+> +	bio_for_each_segment_all(bv, bio, iter) {
+> +		void		*p;
+> +		unsigned int	off;
+> +
+> +		p = bvec_kmap_local(bv);
+> +		for (off = 0; off < bv->bv_len; off += ssize) {
+> +			if (xfs_data_csum(p + off, ssize) != csum_buf[c++]) {
+> +				kunmap_local(p);
+> +				xfs_warn(ip->i_mount,
+> +"checksum mismatch at inode 0x%llx offset %lld",
+> +					ip->i_ino, file_offset);
+> +				return -EFSBADCRC;
+> +			}
+> +			file_offset += ssize;
+> +		}
+> +		kunmap_local(p);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  void *
+>  xfs_data_csum_alloc(
+>  	struct bio		*bio)
+> @@ -53,11 +120,14 @@ xfs_data_csum_generate(
+>  {
+>  	struct blk_integrity	*bi = blk_get_integrity(bio->bi_bdev->bd_disk);
+>  
+> -	if (!bi || !bi->csum_type)
+> +	if (!bi)
+>  		return;
+>  
+>  	xfs_data_csum_alloc(bio);
+> -	blk_integrity_generate(bio);
+> +	if (!bi->csum_type)
+> +		__xfs_data_csum_generate(bio);
+> +	else
+> +		blk_integrity_generate(bio);
+>  }
+>  
+>  int
+> @@ -67,7 +137,10 @@ xfs_data_csum_verify(
+>  	struct bio		*bio = &ioend->io_bio;
+>  	struct blk_integrity	*bi = blk_get_integrity(bio->bi_bdev->bd_disk);
+>  
+> -	if (!bi || !bi->csum_type)
+> +	if (!bi)
+>  		return 0;
+> +	if (!bi->csum_type)
+> +		return __xfs_data_csum_verify(&ioend->io_bio,
+> +				XFS_I(ioend->io_inode), ioend->io_offset);
+>  	return blk_integrity_verify_all(bio, ioend->io_sector);
+>  }
+> -- 
+> 2.45.2
 > 
-> Thanks,
-> Amir.
+> 
 
