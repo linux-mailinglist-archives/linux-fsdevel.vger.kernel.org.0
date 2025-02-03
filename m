@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-40580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04838A25618
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 10:44:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B30A2561D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 10:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5193A8E78
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 09:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140373A93FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 09:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FCC200127;
-	Mon,  3 Feb 2025 09:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B53200B95;
+	Mon,  3 Feb 2025 09:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zSaQmeB5"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x+VTF81G"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D51FFC67;
-	Mon,  3 Feb 2025 09:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B311FF619;
+	Mon,  3 Feb 2025 09:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738575813; cv=none; b=evrJD/VE35rOzF3FDwJB0C8iGCkf0tmcIXCxFKlQyoR5/7G+ZD85IPLF1HFMkmklu5BsMC/4DPhKX3FVAk081hC642klzTSYrC6y/n4LgTusVp+yMqoq1mfk8Y4V1jvP0tKo5jjQqw28pHtExNNrF/plUfEsubNLAJiNyvhmC/s=
+	t=1738575817; cv=none; b=h55CrgQzI/oDS3XvShWHXI7WKUlrMTEBqLgNsM4oSr1yJc2vjkSWktWZQf2q2uaaPlBC1vL41Og6ZTzrC9Q207RoHSravLxFiMyFoftVvPc7hxRLM8HvoVXiQYtgztrUj6XutmduXRfTc3BiOo1T6AE4r0NXtjlSQ+RBEGptub4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738575813; c=relaxed/simple;
-	bh=v2FHne68+jEpTvz5Rqg+6S/DvY9pyEXy6/nHNsd2irE=;
+	s=arc-20240116; t=1738575817; c=relaxed/simple;
+	bh=WbPOZY/3NRfUnKFn1TQ7znkwH2q8Lwcv2m9OLFIL/k8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WizIJJg03xAD/Jq1d90nGWnk0KzRKVhULpLAJcBLjWVkTWJ1N1glo/Ny0AT/ifCN8FKAsIWliVBEFbFOlL2v1USWVgvwp9Ch9S2vTUsPKemKAkS+PBcKLK5jCOD4qG0oSNOzjEFlzkrBTE5WWVHr7VGU8n3sT0TOT9sLIXDiYQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zSaQmeB5; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=MNHeuEDzgspJ771ESXd6Dh9Qb/wREmHBngOgH6U/dPw/vYWAttmB/7lOgYk3uiQwxmAWZghqW8EOfViz55kSAGPuA37HOgy9UQePyfX5aM2j8lm3hMmeL8EX22cDt5KzEimlb1asdicYqhDRUjiBQ/HBmkaurSnHSYv6UxNyRfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=x+VTF81G; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=VmoVu1qBS/xDcNr5Y2OBKuc12ztCJfDEnl6CgejjiPQ=; b=zSaQmeB5IDRvQFUdClCaEr/+90
-	J7RakJyZU2ewghkPhz8mpCcZ7jgFQv8DFm40fVgl7QBm6vzoLct+bp12TKAgV/xU94fb0vJqAhNu0
-	O7NON7HRrvhCe/Q9LvWaAxWTlzIqyQ3XwPS1ttgf26eUmdMJmHOWNd4blPuGpDJ3GRpK2flUPss1O
-	2Gd2lPN7+4caWI+SJrmJRkYAMOVhTStVW7Zhh10Olgxc8c2p7zKM8WUwXMIMgEkBvz4l2be7AA5GF
-	/Uc3/SJL+awnkYZSxt8jXGKkn71WyRjIQVKw/Rrjg2B6RuPGtRsMOAh/FH+ckA8CQpc/qT2n8yTNP
-	o405fgSQ==;
+	bh=j8azhDW1wfzhNKmZcgt1wCHCrfjnFNGdrafHVpplpj8=; b=x+VTF81GFTJNz7eyf2mP2toROZ
+	SHEpdIriXlpHPjfR2H/lPizBozCUfb47JUEMZYI6xe8RskjjGa6izSkNFGDYFctDd5iJv0eYJ0Acm
+	vIiRA839HuJ3RBflsi7Sw2fldHGeysVYxkUy4UvLa9TdbTNGpxBugQ2YtgzDFGvdrWoAIlOfNUU+2
+	LDC4fGCPtHfP0Okq5wfskXbXoBlxkpNGxO0cXCUsU4QDmUbq2yfua7DQxjSRIQiWm4ERI8i2IkOM3
+	uLSdGv8pfbTbbGyIadvaZh/tgCbLNsQPBhm5QcgdIJ0xZ7HQSNTAmRlJOsMAo10ZD71iYzVfpVHEZ
+	MJAodGUQ==;
 Received: from 2a02-8389-2341-5b80-b79f-eb9e-0b40-3aae.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:b79f:eb9e:b40:3aae] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1teszK-0000000F1hF-0hMi;
-	Mon, 03 Feb 2025 09:43:30 +0000
+	id 1teszM-0000000F1hg-2CwK;
+	Mon, 03 Feb 2025 09:43:32 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Kanchan Joshi <joshi.k@samsung.com>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>
@@ -54,9 +54,9 @@ Cc: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
 	linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: [PATCH 2/7] iomap: introduce iomap_read_folio_ops
-Date: Mon,  3 Feb 2025 10:43:06 +0100
-Message-ID: <20250203094322.1809766-3-hch@lst.de>
+Subject: [PATCH 3/7] iomap: add bioset in iomap_read_folio_ops for filesystems to use own bioset
+Date: Mon,  3 Feb 2025 10:43:07 +0100
+Message-ID: <20250203094322.1809766-4-hch@lst.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250203094322.1809766-1-hch@lst.de>
 References: <20250203094322.1809766-1-hch@lst.de>
@@ -71,254 +71,108 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-iomap_read_folio_ops provide additional functions to allocate or submit
-the bio. Filesystems such as btrfs have additional operations with bios
-such as verifying data checksums. Creating a bio submission hook allows
-the filesystem to process and verify the bio.
+Allocate the bio from the bioset provided in iomap_read_folio_ops.
+If no bioset is provided, fs_bio_set is used which is the standard
+bioset for filesystems.
 
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-[hch: add a helper, pass file offset to ->submit_io]
+[hch: factor out two helpers]
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/fops.c           |  4 ++--
- fs/erofs/data.c        |  4 ++--
- fs/gfs2/aops.c         |  4 ++--
- fs/iomap/buffered-io.c | 27 ++++++++++++++++++++++-----
- fs/xfs/xfs_aops.c      |  4 ++--
- fs/zonefs/file.c       |  4 ++--
- include/linux/iomap.h  | 16 ++++++++++++++--
- 7 files changed, 46 insertions(+), 17 deletions(-)
+ fs/iomap/buffered-io.c | 51 ++++++++++++++++++++++++++++--------------
+ include/linux/iomap.h  |  6 +++++
+ 2 files changed, 40 insertions(+), 17 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index be9f1dbea9ce..f4c971311c6c 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -505,12 +505,12 @@ const struct address_space_operations def_blk_aops = {
- #else /* CONFIG_BUFFER_HEAD */
- static int blkdev_read_folio(struct file *file, struct folio *folio)
- {
--	return iomap_read_folio(folio, &blkdev_iomap_ops);
-+	return iomap_read_folio(folio, &blkdev_iomap_ops, NULL);
- }
- 
- static void blkdev_readahead(struct readahead_control *rac)
- {
--	iomap_readahead(rac, &blkdev_iomap_ops);
-+	iomap_readahead(rac, &blkdev_iomap_ops, NULL);
- }
- 
- static int blkdev_map_blocks(struct iomap_writepage_ctx *wpc,
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 0cd6b5c4df98..b0f0db855971 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -370,12 +370,12 @@ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-  */
- static int erofs_read_folio(struct file *file, struct folio *folio)
- {
--	return iomap_read_folio(folio, &erofs_iomap_ops);
-+	return iomap_read_folio(folio, &erofs_iomap_ops, NULL);
- }
- 
- static void erofs_readahead(struct readahead_control *rac)
- {
--	return iomap_readahead(rac, &erofs_iomap_ops);
-+	return iomap_readahead(rac, &erofs_iomap_ops, NULL);
- }
- 
- static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 68fc8af14700..f0debbe048a6 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -422,7 +422,7 @@ static int gfs2_read_folio(struct file *file, struct folio *folio)
- 
- 	if (!gfs2_is_jdata(ip) ||
- 	    (i_blocksize(inode) == PAGE_SIZE && !folio_buffers(folio))) {
--		error = iomap_read_folio(folio, &gfs2_iomap_ops);
-+		error = iomap_read_folio(folio, &gfs2_iomap_ops, NULL);
- 	} else if (gfs2_is_stuffed(ip)) {
- 		error = stuffed_read_folio(ip, folio);
- 	} else {
-@@ -497,7 +497,7 @@ static void gfs2_readahead(struct readahead_control *rac)
- 	else if (gfs2_is_jdata(ip))
- 		mpage_readahead(rac, gfs2_block_map);
- 	else
--		iomap_readahead(rac, &gfs2_iomap_ops);
-+		iomap_readahead(rac, &gfs2_iomap_ops, NULL);
- }
- 
- /**
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4abff64998fe..804527dcc9ba 100644
+index 804527dcc9ba..eaffa23eb8e4 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -320,7 +320,9 @@ struct iomap_readpage_ctx {
- 	struct folio		*cur_folio;
- 	bool			cur_folio_in_bio;
- 	struct bio		*bio;
-+	loff_t			bio_start_pos;
- 	struct readahead_control *rac;
-+	const struct iomap_read_folio_ops *ops;
- };
- 
- /**
-@@ -362,6 +364,15 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
+@@ -364,6 +364,39 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
  		pos >= i_size_read(iter->inode);
  }
  
-+static void iomap_read_submit_bio(const struct iomap_iter *iter,
-+		struct iomap_readpage_ctx *ctx)
++static struct bio_set *iomap_read_bio_set(struct iomap_readpage_ctx *ctx)
 +{
-+	if (ctx->ops && ctx->ops->submit_io)
-+		ctx->ops->submit_io(iter->inode, ctx->bio, ctx->bio_start_pos);
-+	else
-+		submit_bio(ctx->bio);
++	if (ctx->ops && ctx->ops->bio_set)
++		return ctx->ops->bio_set;
++	return &fs_bio_set;
 +}
 +
- static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx, loff_t offset)
++static struct bio *iomap_read_alloc_bio(const struct iomap_iter *iter,
++		struct iomap_readpage_ctx *ctx, loff_t length)
++{
++	unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
++	struct block_device *bdev = iter->iomap.bdev;
++	struct bio_set *bio_set = iomap_read_bio_set(ctx);
++	gfp_t gfp = mapping_gfp_constraint(iter->inode->i_mapping, GFP_KERNEL);
++	gfp_t orig_gfp = gfp;
++	struct bio *bio;
++
++	if (ctx->rac) /* same as readahead_gfp_mask */
++		gfp |= __GFP_NORETRY | __GFP_NOWARN;
++
++	bio = bio_alloc_bioset(bdev, bio_max_segs(nr_vecs), REQ_OP_READ, gfp,
++			bio_set);
++
++	/*
++	 * If the bio_alloc fails, try it again for a single page to avoid
++	 * having to deal with partial page reads.  This emulates what
++	 * do_mpage_read_folio does.
++	 */
++	if (!bio)
++		bio = bio_alloc_bioset(bdev, 1, REQ_OP_READ, orig_gfp, bio_set);
++	return bio;
++}
++
+ static void iomap_read_submit_bio(const struct iomap_iter *iter,
+ 		struct iomap_readpage_ctx *ctx)
  {
-@@ -405,8 +416,9 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
- 
+@@ -411,27 +444,11 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	if (!ctx->bio ||
+ 	    bio_end_sector(ctx->bio) != sector ||
+ 	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
+-		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
+-		gfp_t orig_gfp = gfp;
+-		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
+-
  		if (ctx->bio)
--			submit_bio(ctx->bio);
-+			iomap_read_submit_bio(iter, ctx);
+ 			iomap_read_submit_bio(iter, ctx);
  
-+		ctx->bio_start_pos = offset;
- 		if (ctx->rac) /* same as readahead_gfp_mask */
- 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
-@@ -455,7 +467,8 @@ static loff_t iomap_read_folio_iter(const struct iomap_iter *iter,
- 	return done;
- }
- 
--int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
-+int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
-+		const struct iomap_read_folio_ops *read_folio_ops)
- {
- 	struct iomap_iter iter = {
- 		.inode		= folio->mapping->host,
-@@ -464,6 +477,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- 	};
- 	struct iomap_readpage_ctx ctx = {
- 		.cur_folio	= folio,
-+		.ops		= read_folio_ops,
- 	};
- 	int ret;
- 
-@@ -473,7 +487,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- 		iter.processed = iomap_read_folio_iter(&iter, &ctx);
- 
- 	if (ctx.bio) {
--		submit_bio(ctx.bio);
-+		iomap_read_submit_bio(&iter, &ctx);
- 		WARN_ON_ONCE(!ctx.cur_folio_in_bio);
- 	} else {
- 		WARN_ON_ONCE(ctx.cur_folio_in_bio);
-@@ -518,6 +532,7 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
-  * iomap_readahead - Attempt to read pages from a file.
-  * @rac: Describes the pages to be read.
-  * @ops: The operations vector for the filesystem.
-+ * @read_folio_ops: Function hooks for filesystems for special bio submissions
-  *
-  * This function is for filesystems to call to implement their readahead
-  * address_space operation.
-@@ -529,7 +544,8 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
-  * function is called with memalloc_nofs set, so allocations will not cause
-  * the filesystem to be reentered.
-  */
--void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
-+void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops,
-+		const struct iomap_read_folio_ops *read_folio_ops)
- {
- 	struct iomap_iter iter = {
- 		.inode	= rac->mapping->host,
-@@ -538,6 +554,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- 	};
- 	struct iomap_readpage_ctx ctx = {
- 		.rac	= rac,
-+		.ops	= read_folio_ops,
- 	};
- 
- 	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
-@@ -546,7 +563,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- 		iter.processed = iomap_readahead_iter(&iter, &ctx);
- 
- 	if (ctx.bio)
--		submit_bio(ctx.bio);
-+		iomap_read_submit_bio(&iter, &ctx);
- 	if (ctx.cur_folio) {
- 		if (!ctx.cur_folio_in_bio)
- 			folio_unlock(ctx.cur_folio);
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 8e60ceeb1520..3e42a684cce1 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -522,14 +522,14 @@ xfs_vm_read_folio(
- 	struct file		*unused,
- 	struct folio		*folio)
- {
--	return iomap_read_folio(folio, &xfs_read_iomap_ops);
-+	return iomap_read_folio(folio, &xfs_read_iomap_ops, NULL);
- }
- 
- STATIC void
- xfs_vm_readahead(
- 	struct readahead_control	*rac)
- {
--	iomap_readahead(rac, &xfs_read_iomap_ops);
-+	iomap_readahead(rac, &xfs_read_iomap_ops, NULL);
- }
- 
- static int
-diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-index 35166c92420c..a70fa1cecef8 100644
---- a/fs/zonefs/file.c
-+++ b/fs/zonefs/file.c
-@@ -112,12 +112,12 @@ static const struct iomap_ops zonefs_write_iomap_ops = {
- 
- static int zonefs_read_folio(struct file *unused, struct folio *folio)
- {
--	return iomap_read_folio(folio, &zonefs_read_iomap_ops);
-+	return iomap_read_folio(folio, &zonefs_read_iomap_ops, NULL);
- }
- 
- static void zonefs_readahead(struct readahead_control *rac)
- {
--	iomap_readahead(rac, &zonefs_read_iomap_ops);
-+	iomap_readahead(rac, &zonefs_read_iomap_ops, NULL);
- }
- 
- /*
+ 		ctx->bio_start_pos = offset;
+-		if (ctx->rac) /* same as readahead_gfp_mask */
+-			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+-		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
+-				     REQ_OP_READ, gfp);
+-		/*
+-		 * If the bio_alloc fails, try it again for a single page to
+-		 * avoid having to deal with partial page reads.  This emulates
+-		 * what do_mpage_read_folio does.
+-		 */
+-		if (!ctx->bio) {
+-			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
+-					     orig_gfp);
+-		}
++		ctx->bio = iomap_read_alloc_bio(iter, ctx, length);
+ 		if (ctx->rac)
+ 			ctx->bio->bi_opf |= REQ_RAHEAD;
+ 		ctx->bio->bi_iter.bi_sector = sector;
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index b4be07e8ec94..2930861d1ef1 100644
+index 2930861d1ef1..304be88ecd23 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -303,8 +303,20 @@ static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
- 
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops, void *private);
--int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
--void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+@@ -311,6 +311,12 @@ struct iomap_read_folio_ops {
+ 	 */
+ 	void (*submit_io)(struct inode *inode, struct bio *bio,
+ 			  loff_t file_offset);
 +
-+struct iomap_read_folio_ops {
 +	/*
-+	 * Optional, allows the filesystem to perform a custom submission of
-+	 * bio, such as csum calculations or multi-device bio split
++	 * Optional, allows filesystem to specify own bio_set, so new bio's
++	 * can be allocated from the provided bio_set.
 +	 */
-+	void (*submit_io)(struct inode *inode, struct bio *bio,
-+			  loff_t file_offset);
-+};
-+
-+int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
-+		const struct iomap_read_folio_ops *);
-+void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops,
-+		const struct iomap_read_folio_ops *);
- bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
- struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
- bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
++	struct bio_set *bio_set;
+ };
+ 
+ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
 -- 
 2.45.2
 
