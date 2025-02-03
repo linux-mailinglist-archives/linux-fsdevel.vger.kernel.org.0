@@ -1,184 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-40679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8550FA2668A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:24:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2B1A2669C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F9F16599F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801351659EC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9C5210187;
-	Mon,  3 Feb 2025 22:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D42D20F06B;
+	Mon,  3 Feb 2025 22:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZqPGyk3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkkVc5UX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC1C1D5CD4;
-	Mon,  3 Feb 2025 22:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442FF1FF5EF
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 22:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738621444; cv=none; b=K2y9sd+1c5BtCsor1T9myWPFLAgHoUQoWhzmZsfHxCDRZZPhtokQc+zsLk2knVhRmQxVrV7CU4XiiVdiLtgd33yLLWIQCGBYH46KcRuBGxR47e4C8HqweklTThq7gsv7XPPMF3JXgiCLHACIlHqodoy1pD0vS4KwwEoJC7/mn0E=
+	t=1738621934; cv=none; b=EpuMijshSUEoA6i4yq9yVoK2QhvCayQ1NsOwWVe9frOpSUg//wSDcIlRBNGjz4dmUZ6pjdmOCHkRUAqqIyuUEXbj+vtqoliGj4bwNUwGI3ppLAovfGlGDSiLYtt3S7Cn6wyGqQYuIRfRinKm1VasU69crobgCc5FL7+c0oNK3kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738621444; c=relaxed/simple;
-	bh=rCjWPNB05DV0xd5MlwqQGxqqfurR4768Ko5+/xGn9Pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mc1E6BmXa6A+lJdtRBiN/+l2NbSORMXu95rJNFE2AdlBOj+DaPznkLlNbifeEOsN4OtMasnRZFfb7w2Eku44O7X+i9SGOO8GleoXmpKVZC1TGQcQDy8LJqZTcwOokbHsE7DzpZ2b4wmU+c9+cHqqRUv7T2JZdaHMJHPpWX32fXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZqPGyk3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F69C4CED2;
-	Mon,  3 Feb 2025 22:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738621444;
-	bh=rCjWPNB05DV0xd5MlwqQGxqqfurR4768Ko5+/xGn9Pw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UZqPGyk3iqlUz0v3r1Lny0TwNufY5ERxMFMOpZg6lkV4SBIZlcpDhh7OupZmHyo6P
-	 bYvz9Bxpy8Mtr4HdK05tTgkJF5OOfiLdFnAxKXgEeARP+xaoVQYiLiiYh2maAgEKGY
-	 wo2F9thM72jkmJzSCVoELlfIKZB/BDEdyFx/hEUfsZeGDATnKKg2+a/8sdYPjH1Oq6
-	 0+kZX6esz0DJRbHwrzHEbjo4e+72UholC0QaI4Z1558MjWMGfePwEw3IP3kCxEojN6
-	 VjCoST3p8L5Tl60tNLAljRE0aINMr3ytE3k0XiusIMW59k88PRUD+oBCifL6Ki1573
-	 MFBfI5jLmOPBg==
-Date: Mon, 3 Feb 2025 14:24:03 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Kanchan Joshi <joshi.k@samsung.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-	Qu Wenruo <wqu@suse.com>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 4/7] iomap: support ioends for reads
-Message-ID: <20250203222403.GF134507@frogsfrogsfrogs>
-References: <20250203094322.1809766-1-hch@lst.de>
- <20250203094322.1809766-5-hch@lst.de>
+	s=arc-20240116; t=1738621934; c=relaxed/simple;
+	bh=JFkgfJCrkb7EH1m1AesPeGONSf+yn0H59ISBObBD5wA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cSLUDwNG3A3IX7kE30ojv7Vv5YK1ubtJ6O+7GbZNU3bSYnuDl70IhbgmuSLSPjHfoJuRaWyYNaq5+SQXkKefaoY5hvA9UWyncOMV+GdHP0CGS/suSrEQtowjNIWIYGIe54FcWwDvucLmT4iYI11G5wSWWKJqst+3INmQH6tQiZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkkVc5UX; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5db6890b64eso9518754a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 14:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738621931; x=1739226731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1cCAu8RQEgpaNrRcNNb2CfmjkqDb/C9813jMwVPLNFA=;
+        b=dkkVc5UX8H6N2r1G+Qa5DY6qLkfmimZ2kpe92oy1yK2eG2hXRfP74MmHHnxERNO1FP
+         yFUF0ltWmZPOWsisjbmm4ueT0RXOaXo5nNlAWrUJpSplhTi5iYbmVox/blzV1hWADAIe
+         lt/R4MrlvYUqB8oUjOojfFj1nf86N7/9q2JmN+n1bRefJs+TQYUIu2ixiTCxI7AgODqE
+         bOK1xPc+D0J5prKwHUd4NCeAL8ydlOxTqeexYWfcLZOYuBhTeVPaqu3cphXv003IAsat
+         /sJ7bXrxUSEeecW0JmZ9Y64RRZr3PlMhIWLj3gHDKhygD731crBDd1GRlyQZOzkp+N9G
+         g5wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738621931; x=1739226731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1cCAu8RQEgpaNrRcNNb2CfmjkqDb/C9813jMwVPLNFA=;
+        b=QLdvJoYYNK2z9zJeH7uJPrzXH4Q/Vj83EbAVXuLFG9absbeHPCK8f1LcrfP9MXu418
+         bCuOMaS7no9PttXm/0QMujXy78BcjmpWfGXLh/A2kH/dPZ4PPMcAwj90bpCzg0uFX0WO
+         H/V5+1iv/YL2CTapk+Jdl+646qXiJXP3XIpV1buvtKRlU+i9Us+M1no0zZJxh/iNPfyr
+         cNqz49BeP9c1DXWZnJeljzxV2doJkGFvGZ+7/TF0pP6mGSzyp3Z0JwNxvdearc1cW4E9
+         BKPTRMbXtO9S7oTY3NYnMFh9lvaKlIPF8XvdfPhRSETuqbklxl4jGy1HVaqZ4MEqKkzG
+         PgMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUclyB9mF+SKDxEAGThiIPyjJtt8swQT0v6v1MkJSHyZP+TQWYANP1Z6vtQ2bYixA+Z3nTd471rzWlyhIv4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKKqXx9nRpocvsh9kG7KQc07aJTCWe6rOWeSbudE0dFHUFOjZ2
+	nDR8J5c0xdGHvL1ecTdal40J37wywhmi4+tPgVnoxfedkpWJU+2z
+X-Gm-Gg: ASbGnctYGN2WKVhGw4fCgB6VOKRvMPPGZSwn3YC6Rr86WRMNOGeaf8ukdZu6W9E5U1C
+	5ocOdLk8EPX5TtdeeBcGcUK+DjWGpf3jA30a1Cl4QNV1De7YuSTw0Fn7D7KCJsoOWV9lqP+7PRW
+	jPiWYLiiU7DsYrweNmsA3iaCwNUZROzuii8/KXBfpVyo+35v+cArgsK3NxuPpCfDY0unZ+Mv2J2
+	W6jitPu6XmEXdQmeiWlMWeVM2vnOpaKwBAHXTz8E1dQ8pyjRZWtPgZQ9S5cFN3Yt0b0noOdzM3b
+	dl1zlj8V6rJBR1gm4Lxj6BxpVSlIrXvk+CdEBjZ9z0uz5ejVUOWjpLYVYkKSDFII9xbBB2nSYRL
+	SiAFttdMHeQC0
+X-Google-Smtp-Source: AGHT+IEj7bk7eCOJgmH7MVwANklLvcQfAiHwoa6wxFiEhQDT0KF/sJGAsplvxfzOzZATfeGs6hqDLg==
+X-Received: by 2002:a05:6402:390c:b0:5dc:8ff2:8b67 with SMTP id 4fb4d7f45d1cf-5dc8ff28d4emr14668741a12.27.1738621931004;
+        Mon, 03 Feb 2025 14:32:11 -0800 (PST)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc724a9c5fsm8339651a12.54.2025.02.03.14.32.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 14:32:10 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] Fix for huge faults regression
+Date: Mon,  3 Feb 2025 23:32:02 +0100
+Message-Id: <20250203223205.861346-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250203094322.1809766-5-hch@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 03, 2025 at 10:43:08AM +0100, Christoph Hellwig wrote:
-> Support using the ioend structure to defer I/O completion for
-> reads in addition to writes.  This requires a check for the operation
-> to not merge reads and writes, and for buffere I/O a call into the
+Christian,
 
-                                         buffered
+I thought these fixes could go through your tree, because they are
+mostly vfs/file related.
 
-> buffered read I/O completion handler from iomap_finish_ioend.  For
-> direct I/O the existing call into the direct I/O completion handler
-> handles reads just fine already.
+Hoping that Jan could provide an ACK.
 
-Otherwise everything looks ok to me.
+The two Fix patches have been tested by Alex together and each one
+independently.
 
---D
+I also verified that they pass the LTP inoityf/fanotify tests.
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/iomap/buffered-io.c | 23 ++++++++++++++++++-----
->  fs/iomap/internal.h    |  3 ++-
->  fs/iomap/ioend.c       |  6 +++++-
->  3 files changed, 25 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index eaffa23eb8e4..06990e012884 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -306,14 +306,27 @@ static void iomap_finish_folio_read(struct folio *folio, size_t off,
->  		folio_end_read(folio, uptodate);
->  }
->  
-> -static void iomap_read_end_io(struct bio *bio)
-> +static u32 __iomap_read_end_io(struct bio *bio, int error)
->  {
-> -	int error = blk_status_to_errno(bio->bi_status);
->  	struct folio_iter fi;
-> +	u32 folio_count = 0;
->  
-> -	bio_for_each_folio_all(fi, bio)
-> +	bio_for_each_folio_all(fi, bio) {
->  		iomap_finish_folio_read(fi.folio, fi.offset, fi.length, error);
-> +		folio_count++;
-> +	}
->  	bio_put(bio);
-> +	return folio_count;
-> +}
-> +
-> +static void iomap_read_end_io(struct bio *bio)
-> +{
-> +	__iomap_read_end_io(bio, blk_status_to_errno(bio->bi_status));
-> +}
-> +
-> +u32 iomap_finish_ioend_buffered_read(struct iomap_ioend *ioend)
-> +{
-> +	return __iomap_read_end_io(&ioend->io_bio, ioend->io_error);
->  }
->  
->  struct iomap_readpage_ctx {
-> @@ -1568,7 +1581,7 @@ static void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
->   * state, release holds on bios, and finally free up memory.  Do not use the
->   * ioend after this.
->   */
-> -u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
-> +u32 iomap_finish_ioend_buffered_write(struct iomap_ioend *ioend)
->  {
->  	struct inode *inode = ioend->io_inode;
->  	struct bio *bio = &ioend->io_bio;
-> @@ -1600,7 +1613,7 @@ static void iomap_writepage_end_bio(struct bio *bio)
->  	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
->  
->  	ioend->io_error = blk_status_to_errno(bio->bi_status);
-> -	iomap_finish_ioend_buffered(ioend);
-> +	iomap_finish_ioend_buffered_write(ioend);
->  }
->  
->  /*
-> diff --git a/fs/iomap/internal.h b/fs/iomap/internal.h
-> index f6992a3bf66a..c824e74a3526 100644
-> --- a/fs/iomap/internal.h
-> +++ b/fs/iomap/internal.h
-> @@ -4,7 +4,8 @@
->  
->  #define IOEND_BATCH_SIZE	4096
->  
-> -u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend);
-> +u32 iomap_finish_ioend_buffered_read(struct iomap_ioend *ioend);
-> +u32 iomap_finish_ioend_buffered_write(struct iomap_ioend *ioend);
->  u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend);
->  
->  #endif /* _IOMAP_INTERNAL_H */
-> diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
-> index 18894ebba6db..2dd29403dc10 100644
-> --- a/fs/iomap/ioend.c
-> +++ b/fs/iomap/ioend.c
-> @@ -44,7 +44,9 @@ static u32 iomap_finish_ioend(struct iomap_ioend *ioend, int error)
->  		return 0;
->  	if (ioend->io_flags & IOMAP_IOEND_DIRECT)
->  		return iomap_finish_ioend_direct(ioend);
-> -	return iomap_finish_ioend_buffered(ioend);
-> +	if (bio_op(&ioend->io_bio) == REQ_OP_READ)
-> +		return iomap_finish_ioend_buffered_read(ioend);
-> +	return iomap_finish_ioend_buffered_write(ioend);
->  }
->  
->  /*
-> @@ -83,6 +85,8 @@ EXPORT_SYMBOL_GPL(iomap_finish_ioends);
->  static bool iomap_ioend_can_merge(struct iomap_ioend *ioend,
->  		struct iomap_ioend *next)
->  {
-> +	if (bio_op(&ioend->io_bio) != bio_op(&next->io_bio))
-> +		return false;
->  	if (ioend->io_bio.bi_status != next->io_bio.bi_status)
->  		return false;
->  	if (next->io_flags & IOMAP_IOEND_BOUNDARY)
-> -- 
-> 2.45.2
-> 
-> 
+Thanks,
+Amir.
+
+Amir Goldstein (3):
+  fsnotify: use accessor to set FMODE_NONOTIFY_*
+  fsnotify: disable notification by default for all pseudo files
+  fsnotify: disable pre-content and permission events by default
+
+ drivers/tty/pty.c        |  2 +-
+ fs/file_table.c          | 16 ++++++++++++++++
+ fs/notify/fsnotify.c     | 18 ++++++++++++------
+ fs/open.c                | 11 ++++++-----
+ fs/pipe.c                |  6 ++++++
+ include/linux/fs.h       |  9 ++++++++-
+ include/linux/fsnotify.h |  4 ++--
+ net/socket.c             |  5 +++++
+ 8 files changed, 56 insertions(+), 15 deletions(-)
+
+-- 
+2.34.1
+
 
