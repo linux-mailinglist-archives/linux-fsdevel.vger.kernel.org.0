@@ -1,381 +1,298 @@
-Return-Path: <linux-fsdevel+bounces-40672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B3FA26645
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A32BA26657
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ABC316339C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:00:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841841650B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 22:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA5520FA80;
-	Mon,  3 Feb 2025 22:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C730210F45;
+	Mon,  3 Feb 2025 22:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjElYM2T"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDWAgBhk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2411E1FECC5;
-	Mon,  3 Feb 2025 22:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12459182B4;
+	Mon,  3 Feb 2025 22:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738620003; cv=none; b=cXrkBxunqg4XJrUaYZZjBybQ5Adv5Ww/cyE63qV8ONRJt881flaWwtV998ebC8x5CBGWFGtW874DUnMFTnPbVvNxAZWlqkNTVGpd9r6+eH0XXRe3P+NtV+M4HnePHJY7sfVdaZXsPvlImayvDsdvmwsmIxis8LeyaB7kIt8ZdA0=
+	t=1738620309; cv=none; b=K3D5vbYvuOI0zCAPVW5ri6PabyFrWPEzDx8LgPX2yS9dlmvP6nssNGqdUxVWMqV2j2bLjRqHFVGy/7BYiKpf41Zuzj8OI34wfJdPUWyqv/rIIfZ8MsfZ0veNzh6BUp/ROOS4kmGWN3r9phhrRpgjZE3dxr5G3xd07dwjA4Oaa3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738620003; c=relaxed/simple;
-	bh=nKbdvlknh9xvuHEj2EHobhDIpXP98S9iujf6sQqrlzU=;
+	s=arc-20240116; t=1738620309; c=relaxed/simple;
+	bh=ufoZtdzqAXNiU6MS5es6W1qsJw4Ka4IgUyF7ZD8Rlng=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ORHtf0EojqY2+aXDH1/IOV8ZAhR9i7N2+yVHFpHlfIdNj814PUJv8kHj9waSC50wRuXbyBQqJmz03ZGX0iiQPYUYnn4MK9bgAn+oIEoN9AhgH/K94qdI6QmwF17e2To1MkCJHX1GGVmcMcAEPu8h9W33smR+dLiOAWjlp7kiZNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjElYM2T; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=pdEUVavdgsIohxKWLH4xZwGSZto1MjeT2RoZ8w8XCXquNxCbr2qCrZTz4YIkEd3RGO7qeyknykghCNkW4/eyLgiinC7P0PPA/ElanvbyPRxrvrls6Xn7eV8wludbzCV8bQb476cyjF2jB5VrB3eN7BwyB4e/kOR86FmDiBorrak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDWAgBhk; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3e9a88793so7843077a12.1;
-        Mon, 03 Feb 2025 14:00:00 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3f57582a2so11756685a12.1;
+        Mon, 03 Feb 2025 14:05:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738619999; x=1739224799; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738620305; x=1739225105; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wtsGW9PB1wpCiIIPEt1wXd6qbNcB38wF7JGWRe3Braw=;
-        b=FjElYM2T6BfBoRrNEr8gCXWwbCmppsgjV+7dqXRYWccQlzWXkoxGLk7KXZ90RfW8UR
-         frQgPtAuHmh1osScX5Y3o114R6/31m1KJIkvnjdYn8beYXdkz7frh6ESyMWeuhLoZcpB
-         A1GiuYAQvb733TnmlW28OBfBrIo2zIZ6pN3g7xYxeda4Vge2SZ27OraqRz8hb6eH3vlW
-         RTikJq5vF9FDQzpetiJILWTjQoy5j1scHv7Z0nxg3Fsia8XycuAYJZ318autuZEfXt1f
-         at6NMCXohwd5evaLh++cUV71ilIqAIUL5eTNY9k1t7ckpFghvZLi56W4tngK427TV8Lb
-         tCQg==
+        bh=LfWPhz+INVJNiVKqXovLTadhCIqvZ16J6qdYwJ+KXTc=;
+        b=RDWAgBhkLpIVFQ+yTZBWox2uIWNC1F614HTg431wcHwcgXjT0C5RNWMTOxajkvPvog
+         AKvd74gpOf6lA9zd30C23HFX62+r4tse6zuw8vV14LytXQG5PRoNQ8HPdXWYEz6IGUUn
+         IZC0EpZzp1Hz6SVkMk04sfQfroV5RZdCXh7RLkncIm8IK+boC6BhIANSu42uwjn8aTfv
+         vDUSLWdmzMBaSbJtZhx/4Y9jOGaVGtwx59FX8li/Ra1HdDQ3QoVuwRD8SDop5WSR7GQm
+         MkhPGZjhR5oWjnpeSdw6/f5ZMVbM3UWMO2C6qoiL+uW2vHRzWH2R+sr333soQJyA4eqr
+         HKcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738619999; x=1739224799;
+        d=1e100.net; s=20230601; t=1738620305; x=1739225105;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wtsGW9PB1wpCiIIPEt1wXd6qbNcB38wF7JGWRe3Braw=;
-        b=bGAvKlJI+kHNLwkQBuKJ7Ik/rw7xpjABN3zVbYU0ftgNbRq09JEoipFvSEqhbdMtJc
-         /fo/KTw6p05MN3CjGjNyghLBdrGs18PDryBJvP1eDnMb0wdgsXMDBIzO9e5rhtfylESs
-         VB+KPDC/xXV6vMuGadfLHk5rTnxE13WJrZnQPml+ptX/Wqkv+DW/q13pSrjvp6ebZzMb
-         CbO7KRRftHINxBP1oeJZp8txrFAJGMVbwNZ3yFuuMrKzBGscEPtBJBMlq14DV3G2M/u/
-         bU5dZlwjtwYuXtOt831fXMDgQqAKaoZ9c2GMrWmTiQoy/9muYniDOS+2wW0iGik7DX63
-         ONpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF1TrExf3rjzDeQELlpbZgXZ50YagKJ91y9pCqmJbqaPn2v3pyDP5uYOOikx4RCbjbWbMrfFuORNqy0I35Rg==@vger.kernel.org, AJvYcCWLqOWURR2GFX4G+eOp+LcRCOVhVVxwWByHPpLJINQOpnekeZdj1lmlXQS+gHST2qRe7jvZHKp4JzKWABub@vger.kernel.org, AJvYcCX88NaR7F2CAMBcXNBp5gxerbsE95nJxf6IL50KrEAoo0T3wLsgQ1xzFeNgUuiYoLQyxXYZBQWVxMoz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUmngXp4XnsaNF9t3eamBiHZGZwhRjxmcX1Dxhx8zER/VEwBeH
-	4L95N20SaSHjVbkpXZ1vFLwfd7cp3yAAGFnknYO1m0856H+c/F0SQg5P+MaTUQmgONf9NalYKXB
-	nebIoMbyR9l3Gm7cTXMEEfhxAq7s=
-X-Gm-Gg: ASbGncszjXwDODb1Q2Gb34MZat1ZUH8/y2XZqST8ieCT7XrIFvoSo0mlRiyhcsWrcdL
-	Sq6aw1YcAq2MjpzlmbOGUVQmTRwQxNGXgSPT6XWjEA17ro0VKlmSedCW3us3MFatbGeNedVWl
-X-Google-Smtp-Source: AGHT+IE0KNpGmPjxMRKW7eAgI8PDwZGzZJy+s1RFjEaudwm4Ci/el7pY+Fb3fUoUosAWpev3xlHPenZ8UXSKhWChZtE=
-X-Received: by 2002:a05:6402:e96:b0:5dc:74f1:8a32 with SMTP id
- 4fb4d7f45d1cf-5dc74f18bebmr19468036a12.28.1738619998707; Mon, 03 Feb 2025
- 13:59:58 -0800 (PST)
+        bh=LfWPhz+INVJNiVKqXovLTadhCIqvZ16J6qdYwJ+KXTc=;
+        b=mbi7boZ0bKXUDFBS+oUrqJW2B10nWt+Nr7dM2uKp2hebfNp9PI0RQhr4AKBH3BUn0N
+         cgbweZLkg52gqZE6W4B+FfU02imJrEYKJDLoqGfIth4JHasBXAEx3Y1DGvuKCRecNQSD
+         GLqSIPC+GxS9BrUrTuDGiO54Enn9ofoSiKA99f2217kGfuuuuDksoB/c6QXRhs2okW4b
+         Y4+wG9I7YKLdyjc/rSkaSkbSOPM4JiRoj+AOB74AQCtH8YBFw1ffeo9PWEzPHLGxX4TE
+         mGPRPb/51ArlNL7sHiM8ofikLEKYKrfyNHAKPkUiJlCieXgLqWaTu4tA+BYWo6eeStcR
+         u1Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3rskhH2JPkcmk+RXuU7saB+GcxfkbThYTXTlr7Gf1UIVd1nHkK0OJxFIZetbKZZUrsK45CMiJZGfG@vger.kernel.org, AJvYcCVLaSGgN+U7o1pwMgR4dzmUk3/bUWdevLZxHXGJ5oMLQSKh0xT1T5NezpGCg5bSXTa1SOpmFGW5AUgJ9g==@vger.kernel.org, AJvYcCVvFv3Ad5uNXY+kHWGnoKyH/RBYu37mDK+FbVTI1TR76frYphnOsHC9JaOpzi/bpvwcUbU=@vger.kernel.org, AJvYcCWcLprHyKCx+dGSgRIZ3UZX3TT4jYDEafa4B3i9Yr5CqRp8K35fiafnXkCHCtP7L5Yd5ZWJ06+zR3BM6kjBGA==@vger.kernel.org, AJvYcCX0si5UIF9OTLgMPJid2sRJqt34DXZnKD+B0cYHWQxc5039d1P21bCfT8E7uYz+/EOQSZISW7mS3XZM5MQ3@vger.kernel.org, AJvYcCXK/8Us3OymNQ2oVNIO3DV4q1PPjXmYoSdL1q5ozY3qTxgjNjjrAbueif56SsK5Z3X+/guAPAzcQ80aUZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOK5TO0zBBBx7iEg/dvwMxPA/Pw7OKNaHZVnqYoMieyuGs5LdL
+	5ikrHphh4D03WZ8kcaYraErbwmwsmmg01PtBsEiytX7dVCxtmogp0VnwDIFUBAYmUUB9ngEJAM/
+	n4YwpE2JwbZfHGeTsagTL7nvfT/Q=
+X-Gm-Gg: ASbGnctaABttaL7/ujRICX1Etzxpzcu3c2kODq1G1M1uBvsBgo4nteRktKU2T7/MWjH
+	tLCf5v644MveJNxYJyb3lxwxJ6PowNwyN9qVrFo6W8tv+t2G1zeGkPjgW/W+HNyo8MgNDR6Xc
+X-Google-Smtp-Source: AGHT+IEBK110MqEEHGqul3TiQcmes0hYTWLnCbKjzyx7fAeU1bAn7xW39fRuNMB1W3Z9Juvhf087o643m1E06cI4MgU=
+X-Received: by 2002:a05:6402:13d2:b0:5db:7353:2b5c with SMTP id
+ 4fb4d7f45d1cf-5dcc14db066mr910803a12.11.1738620304633; Mon, 03 Feb 2025
+ 14:05:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250114211050.iwvxh7fon7as7sty@pali> <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
- <20250114215350.gkc2e2kcovj43hk7@pali> <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali> <20250114235925.GC3561231@frogsfrogsfrogs>
- <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
- <20250117173900.GN3557553@frogsfrogsfrogs> <CAOQ4uxhh1LDz5zXzqFENPhJ9k851AL3E7Xc2d7pSVVYX4Fu9Jw@mail.gmail.com>
- <20250117185947.ylums2dhmo3j6hol@pali> <20250202152343.ahy4hnzbfuzreirz@pali>
-In-Reply-To: <20250202152343.ahy4hnzbfuzreirz@pali>
+References: <cover.1731684329.git.josef@toxicpanda.com> <9035b82cff08a3801cef3d06bbf2778b2e5a4dba.1731684329.git.josef@toxicpanda.com>
+ <20250131121703.1e4d00a7.alex.williamson@redhat.com> <CAHk-=wjMPZ7htPTzxtF52-ZPShfFOQ4R-pHVxLO+pfOW5avC4Q@mail.gmail.com>
+ <Z512mt1hmX5Jg7iH@x1.local> <20250201-legehennen-klopfen-2ab140dc0422@brauner>
+ <CAHk-=wi2pThSVY=zhO=ZKxViBj5QCRX-=AS2+rVknQgJnHXDFg@mail.gmail.com>
+ <CAOQ4uxjVTir-mmx05zh231BpEN1XbXpooscZyfNUYmVj32-d3w@mail.gmail.com>
+ <20250202-abbauen-meerrettich-912513202ce4@brauner> <l5apiabdjosyy4gfuenr4oqdfio3zdiajzxoekdgtsohzpn3mj@dcmvayncbye4>
+ <CAOQ4uxg63JR2jsy_xA63Zkh_6wzsy_2c30Z_05kZ=cHsRC_UzQ@mail.gmail.com> <20250203144135.1caef6c3.alex.williamson@redhat.com>
+In-Reply-To: <20250203144135.1caef6c3.alex.williamson@redhat.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 3 Feb 2025 22:59:46 +0100
-X-Gm-Features: AWEUYZkxitPsbJ_xWnv6ezksvTaV6VVg1DBYY48BrZ4ODZ3H29B40-qR5P69PMs
-Message-ID: <CAOQ4uxgjbHTyQ53u=abWhyQ81ATL4cqSeWKDfOjz-EaR0NGmug@mail.gmail.com>
-Subject: Re: Immutable vs read-only for Windows compatibility
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 3 Feb 2025 23:04:53 +0100
+X-Gm-Features: AWEUYZluDUNL1TbMXt-rEN5-evy5A4JQDjuv20638mpd-F-mrLwQ5eRV4vDdsoY
+Message-ID: <CAOQ4uxg2kmwftGGMYPLWgsixVcFEV9+0ZoBTGDJDDX7GmCAmCA@mail.gmail.com>
+Subject: Re: [REGRESSION] Re: [PATCH v8 15/19] mm: don't allow huge faults for
+ files with pre content watches
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 2, 2025 at 4:23=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> wr=
-ote:
+On Mon, Feb 3, 2025 at 10:41=E2=80=AFPM Alex Williamson
+<alex.williamson@redhat.com> wrote:
 >
-> On Friday 17 January 2025 19:59:47 Pali Roh=C3=A1r wrote:
-> > On Friday 17 January 2025 19:46:30 Amir Goldstein wrote:
-> > > > > Looking at the FILE_ATTRIBUTE_* flags defined in SMB protocol
-> > > > >  (fs/smb/common/smb2pdu.h) I wonder how many of them will be
-> > > > > needed for applications beyond the obvious ones that were listed.
-> > > >
-> > > > Well they only asked for seven of them. ;)
-> > > >
-> > > > I chatted with Ted about this yesterday, and ... some of the attrib=
-utes
-> > > > (like read only) imply that you'd want the linux server to enforce =
-no
-> > > > writing to the file; some like archive seem a little superfluous si=
-nce
-> > > > on linux you can compare cmtime from the backup against what's in t=
-he
-> > > > file now; and still others (like hidden/system) might just be some =
-dorky
-> > > > thing that could be hidden in some xattr because a unix filesystem =
-won't
-> > > > care.
-> > > >
-> > > > And then there are other attrs like "integrity stream" where someon=
-e
-> > > > with more experience with windows would have to tell me if fsverity
-> > > > provides sufficient behaviors or not.
-> > > >
-> > > > But maybe we should start by plumbing one of those bits in?  I gues=
-s the
-> > > > gross part is that implies an ondisk inode format change or (gross)
-> > > > xattr lookups in the open path.
-> > > >
+> On Mon, 3 Feb 2025 21:39:27 +0100
+> Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > On Mon, Feb 3, 2025 at 1:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 > > >
-> > > I may be wrong, but I think there is a confusion in this thread.
-> > > I don't think that Pali was looking for filesystems to implement
-> > > storing those attributes. I read his email as a request to standardiz=
+> > > On Sun 02-02-25 11:04:02, Christian Brauner wrote:
+> > > > On Sun, Feb 02, 2025 at 08:46:21AM +0100, Amir Goldstein wrote:
+> > > > > On Sun, Feb 2, 2025 at 1:58=E2=80=AFAM Linus Torvalds
+> > > > > <torvalds@linux-foundation.org> wrote:
+> > > > > >
+> > > > > > On Sat, 1 Feb 2025 at 06:38, Christian Brauner <brauner@kernel.=
+org> wrote:
+> > > > > > >
+> > > > > > > Ok, but those "device fds" aren't really device fds in the se=
+nse that
+> > > > > > > they are character fds. They are regular files afaict from:
+> > > > > > >
+> > > > > > > vfio_device_open_file(struct vfio_device *device)
+> > > > > > >
+> > > > > > > (Well, it's actually worse as anon_inode_getfile() files don'=
+t have any
+> > > > > > > mode at all but that's beside the point.)?
+> > > > > > >
+> > > > > > > In any case, I think you're right that such files would (acci=
+dently?)
+> > > > > > > qualify for content watches afaict. So at least that should p=
+robably get
+> > > > > > > FMODE_NONOTIFY.
+> > > > > >
+> > > > > > Hmm. Can we just make all anon_inodes do that? I don't think yo=
+u can
+> > > > > > sanely have pre-content watches on anon-inodes, since you can't=
+ really
+> > > > > > have access to them to _set_ the content watch from outside any=
+way..
+> > > > > >
+> > > > > > In fact, maybe do it in alloc_file_pseudo()?
+> > > > > >
+> > > > >
+> > > > > The problem is that we cannot set FMODE_NONOTIFY -
+> > > > > we tried that once but it regressed some workloads watching
+> > > > > write on pipe fd or something.
+> > > >
+> > > > Ok, that might be true. But I would assume that most users of
+> > > > alloc_file_pseudo() or the anonymous inode infrastructure will not =
+care
+> > > > about fanotify events. I would not go for a separate helper. It'd b=
 e
-> > > a user API to get/set those attributes for the filesystems that
-> > > already support them and possibly for vfs to enforce some of them
-> > > (e.g. READONLY) in generic code.
+> > > > nice to keep the number of file allocation functions low.
+> > > >
+> > > > I'd rather have the subsystems that want it explicitly opt-in to
+> > > > fanotify watches, i.e., remove FMODE_NONOTIFY. Because right now we=
+ have
+> > > > broken fanotify support for e.g., nsfs already. So make the subsyst=
+ems
+> > > > think about whether they actually want to support it.
+> > >
+> > > Agreed, that would be a saner default.
+> > >
+> > > > I would disqualify all anonymous inodes and see what actually does
+> > > > break. I naively suspect that almost no one uses anonymous inodes +
+> > > > fanotify. I'd be very surprised.
+> > > >
+> > > > I'm currently traveling (see you later btw) but from a very cursory
+> > > > reading I would naively suspect the following:
+> > > >
+> > > > // Suspects for FMODE_NONOTIFY
+> > > > drivers/dma-buf/dma-buf.c:      file =3D alloc_file_pseudo(inode, d=
+ma_buf_mnt, "dmabuf",
+> > > > drivers/misc/cxl/api.c: file =3D alloc_file_pseudo(inode, cxl_vfs_m=
+ount, name,
+> > > > drivers/scsi/cxlflash/ocxl_hw.c:        file =3D alloc_file_pseudo(=
+inode, ocxlflash_vfs_mount, name,
+> > > > fs/anon_inodes.c:       file =3D alloc_file_pseudo(inode, anon_inod=
+e_mnt, name,
+> > > > fs/hugetlbfs/inode.c:           file =3D alloc_file_pseudo(inode, m=
+nt, name, O_RDWR,
+> > > > kernel/bpf/token.c:     file =3D alloc_file_pseudo(inode, path.mnt,=
+ BPF_TOKEN_INODE_NAME, O_RDWR, &bpf_token_fops);
+> > > > mm/secretmem.c: file =3D alloc_file_pseudo(inode, secretmem_mnt, "s=
+ecretmem",
+> > > > block/bdev.c:   bdev_file =3D alloc_file_pseudo_noaccount(BD_INODE(=
+bdev),
+> > > > drivers/tty/pty.c: static int ptmx_open(struct inode *inode, struct=
+ file *filp)
+> > > >
+> > > > // Suspects for ~FMODE_NONOTIFY
+> > > > fs/aio.c:       file =3D alloc_file_pseudo(inode, aio_mnt, "[aio]",
+> > >
+> > > This is just a helper file for managing aio context so I don't think =
+any
+> > > notification makes sense there (events are not well defined). So I'd =
+say
+> > > FMODE_NONOTIFY here as well.
+> > >
+> > > > fs/pipe.c:      f =3D alloc_file_pseudo(inode, pipe_mnt, "",
+> > > > mm/shmem.c:             res =3D alloc_file_pseudo(inode, mnt, name,=
+ O_RDWR,
+> > >
+> > > This is actually used for stuff like IPC SEM where notification doesn=
+'t
+> > > make sense. It's also used when mmapping /dev/zero but that struct fi=
+le
+> > > isn't easily accessible to userspace so overall I'd say this should b=
+e
+> > > FMODE_NONOTIFY as well.
 > >
-> > Yes, you understood it correctly. I was asking for standardizing API ho=
-w
-> > to get/set these attributes from userspace. And Chuck wrote that would
-> > like to have also standardized it for kernel consumers like nfsd or
-> > ksmbd. Which makes sense.
+> > I think there is another code path that the audit missed for getting th=
+ese
+> > pseudo files not via alloc_file_pseudo():
+> > ipc/shm.c:      file =3D alloc_file_clone(base, f_flags,
 > >
-> > > Nevertheless, I understand the confusion because I know there
-> > > is also demand for storing those attributes by file servers in a
-> > > standard way and for vfs to respect those attributes on the host.
+> > which does not copy f_mode as far as I can tell.
 > >
-> > Userspace fileserver, like Samba, would just use that standardized
-> > userspace API for get/set attributes. And in-kernel fileservers like
-> > nfsd or ksmbd would like to use that API too.
+> > >
+> > > > // Unsure:
+> > > > fs/nfs/nfs4file.c:      filep =3D alloc_file_pseudo(r_ino, ss_mnt, =
+read_name, O_RDONLY,
+> > >
+> > > AFAICS this struct file is for copy offload and doesn't leave the ker=
+nel.
+> > > Hence FMODE_NONOTIFY should be fine.
+> > >
+> > > > net/socket.c:   file =3D alloc_file_pseudo(SOCK_INODE(sock), sock_m=
+nt, dname,
+> > >
+> > > In this case I think we need to be careful. It's a similar case as pi=
+pes so
+> > > probably we should use ~FMODE_NONOTIFY here from pure caution.
+> > >
 > >
-> > And there were some proposals how filesystems without native
-> > support for these attributes could store and preserve these attributes.
-> > So this can be a confusion in this email thread discussion.
+> > I tried this approach with patch:
+> > "fsnotify: disable notification by default for all pseudo files"
+> >
+> > But I also added another patch:
+> > "fsnotify: disable pre-content and permission events by default"
+> >
+> > So that code paths that we missed such as alloc_file_clone()
+> > will not have pre-content events enabled.
+> >
+> > Alex,
+> >
+> > Can you please try this branch:
+> >
+> > https://github.com/amir73il/linux/commits/fsnotify-fixes/
+> >
+> > and verify that it fixes your issue.
+> >
+> > The branch contains one prep patch:
+> > "fsnotify: use accessor to set FMODE_NONOTIFY_*"
+> > and two independent Fixes patches.
+> >
+> > Assuming that it fixes your issue, can you please test each of the
+> > Fixes patches individually, because every one of them should be fixing
+> > the issue independently and every one of them could break something,
+> > so we may end up reverting it later on.
 >
-> So to recap, for set-API there are possible options:
+> Test #1:
 >
-> 1) extending FS_IOC_FSSETXATTR / FS_IOC_SETFLAGS for each individual bit
+> fsnotify: disable pre-content and permission events by default
+> fsnotify: disable notification by default for all pseudo files
+> fsnotify: use accessor to set FMODE_NONOTIFY_*
 >
-> 2) creating one new xattr in system namespace which will contain all bit
->    flags in one structure
+> Result: Pass, vfio-pci huge_fault observed
 >
-> 3) creating new xattr in system namespace for each individual flag
+> Test #2:
 >
-> Disadvantages for option 1) is that "cp -a" or "rsync -a" does not
-> preserve them. If in option 2) or 3) those xattrs would be visible in
-> listxattr() call then this can be advantage, as all flags are properly
-> preserved when doing "archive" backup.
+> fsnotify: disable notification by default for all pseudo files
+> fsnotify: use accessor to set FMODE_NONOTIFY_*
 >
-> Do you have any preference which of those options should be used?
+> Result: Pass, vfio-pci huge_fault observed
 >
-
-Darrick said in this thread twice:
-statx/FS_IOC_FSGETXATTR to retrieve and FS_IOC_FSSETXATTR to set.
-(NOT FS_IOC_SETFLAGS)
-and I wrote that I agree with him.
-
-I suggest that you let go of the cp -a out-of-the-box requirement.
-It is not going to pass muster - maybe for a specific filesystem but
-as a filesystem agnostic feature, unless you change cp tool.
-
+> Test #3:
 >
-> And how many bit flags are needed? I have done some investigation. Lets
-> start with table which describes all 32 possible bit flags which are
-> used by Windows system and also by filesystems FAT / exFAT / NTFS / ReFS
-> and also by SMB over network:
+> fsnotify: disable pre-content and permission events by default
+> fsnotify: use accessor to set FMODE_NONOTIFY_*
 >
-> bit / attrib.exe flag / SDK constant / description
+> Result: Pass, vfio-pci huge_fault observed
 >
->  0 - R - FILE_ATTRIBUTE_READONLY              - writing to file or deleti=
-ng it is disallowed
->  1 - H - FILE_ATTRIBUTE_HIDDEN                - inode is hidden
->  2 - S - FILE_ATTRIBUTE_SYSTEM                - inode is part of operatin=
-g system
->  3 -   - FILE_ATTRIBUTE_VOLUME                - inode is the disk volume =
-label entry
->  4 -   - FILE_ATTRIBUTE_DIRECTORY             - inode is directory
->  5 - A - FILE_ATTRIBUTE_ARCHIVE               - inode was not archived ye=
-t (when set)
->  6 -   - FILE_ATTRIBUTE_DEVICE                - inode represents  in-memo=
-ry device (e.g. C:\), flag not stored on filesystem
->  7 -   - FILE_ATTRIBUTE_NORMAL                - no other flag is set (val=
-ue 0 means to not change flags, bit 7 means to clear all flags)
->  8 -   - FILE_ATTRIBUTE_TEMPORARY             - inode data do not have to=
- be flushed to disk
->  9 -   - FILE_ATTRIBUTE_SPARSE_FILE           - file is sparse with holes
-> 10 -   - FILE_ATTRIBUTE_REPARSE_POINT         - inode has attached repars=
-e point (symlink is also reparse point)
-> 11 -   - FILE_ATTRIBUTE_COMPRESSED            - file is compressed, for d=
-irectories it means that newly created inodes would have this flag set
-> 12 - O - FILE_ATTRIBUTE_OFFLINE               - HSM - inode is used by HS=
-M
-> 13 - I - FILE_ATTRIBUTE_NOT_CONTENT_INDEXED   - inode will not be indexed=
- by content indexing service
-> 14 -   - FILE_ATTRIBUTE_ENCRYPTED             - file is encrypted, for di=
-rectories it means that newly created inodes would have this flag set
-> 15 - V - FILE_ATTRIBUTE_INTEGRITY_STREAM      - fs does checksumming of d=
-ata and metadata when reading inode, read-only
-> 16 -   - FILE_ATTRIBUTE_VIRTUAL               - inode is in %LocalAppData=
-%\VirtualStore, flag not stored on filesystem
-> 17 - X - FILE_ATTRIBUTE_NO_SCRUB_DATA         - do not use scrubber (proa=
-ctive background data integrity scanner) on this file, for directories it m=
-eans that newly created inodes would have this flag set
-> 18 -   - FILE_ATTRIBUTE_EA                    - inode has xattrs, (not in=
- readdir output, shares same bit with FILE_ATTRIBUTE_RECALL_ON_OPEN)
-> 18 -   - FILE_ATTRIBUTE_RECALL_ON_OPEN        - HSM - inode is not stored=
- locally (only in readdir output, shares same bit with FILE_ATTRIBUTE_EA)
-> 19 - P - FILE_ATTRIBUTE_PINNED                - HSM - inode data content =
-must be always stored on locally
-> 20 - U - FILE_ATTRIBUTE_UNPINNED              - HSM - inode data content =
-can be removed from local storage
-> 21 -   -                                      - reserved
-> 22 -   - FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS - HSM - inode data content =
-is not stored locally
-> 23 -   -                                      - reserved
-> 24 -   -                                      - reserved
-> 25 -   -                                      - reserved
-> 26 -   -                                      - reserved
-> 27 -   -                                      - reserved
-> 28 -   -                                      - reserved
-> 29 - B - FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL   - SMR Blob, unknown meaning=
-, read-only
-> 30 -   -                                      - reserved
-> 31 -   -                                      - reserved
+> Test #4 (control):
+>
+> fsnotify: use accessor to set FMODE_NONOTIFY_*
+>
+> Result: Fail, no vfio-pci huge_fault observed
+>
+> For any combination of the Fixes patches:
+>
+> Tested-by: Alex Williamson <alex.williamson@redhat.com>
 >
 
-I suspect that we need to reserve expansion for more than 7 bits if we
-design a proper API.
-The fsx_xflags field is already too crowded for adding so many flags
-We can use the padding at the end of fsxattr to add __u32 fsx_dosattrib
-or fsx_dosflags field.
+That was fast.
+I will post the patches.
 
-> (HSM means Hierarchical Storage Management software, which uses reparse
-> points to make some remote file/folder available on the local
-> filesystem, for example OneDrive or DropBox)
->
-
-I am quite interested in supporting those HSM flags for fanotify.
-
-> From above list only following bit flags are suitable for modification
-> over some Linux API:
-> - FILE_ATTRIBUTE_READONLY
-> - FILE_ATTRIBUTE_HIDDEN
-> - FILE_ATTRIBUTE_SYSTEM
-> - FILE_ATTRIBUTE_ARCHIVE
-> - FILE_ATTRIBUTE_TEMPORARY
-> - FILE_ATTRIBUTE_COMPRESSED
-> - FILE_ATTRIBUTE_OFFLINE
-> - FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
-> - FILE_ATTRIBUTE_ENCRYPTED
-> - FILE_ATTRIBUTE_NO_SCRUB_DATA
-> - FILE_ATTRIBUTE_PINNED
-> - FILE_ATTRIBUTE_UNPINNED
->
-> And if I'm looking correctly the FILE_ATTRIBUTE_COMPRESSED can be
-> already mapped to Linux FS_COMPR_FL / STATX_ATTR_COMPRESSED, which has
-> same meaning. Also FILE_ATTRIBUTE_ENCRYPTED can be mapped to
-> FS_ENCRYPT_FL / STATX_ATTR_ENCRYPTED. Note that these two flags cannot
-> be set over WinAPI or SMB directly and it is required to use special
-> WinAPI or SMB ioctl.
->
-
-There is a standard way to map from fileattr::flags
-to fileattr::fsx_xflags, so that you could set/get COMPR,ENCRYPT using
-FS_IOC_FS[GS]ETXATTR ioctl.
-see fileattr_fill_flags/fileattr_fill_xflags.
-but I think that xfs_fileattr_set() will need to have a supported xflags ma=
-sk
-check if you start adding xflags that xfs does not currently support and
-other filesystems do support.
-
-> So totally are needed 10 new bit flags. And for future there are 9
-> reserved bits which could be introduced by MS in future.
->
-> Additionally there are get-only attributes which can be useful for statx
-> purposes (for example exported by cifs.ko SMB client):
-> - FILE_ATTRIBUTE_REPARSE_POINT
-> - FILE_ATTRIBUTE_INTEGRITY_STREAM
-> - FILE_ATTRIBUTE_RECALL_ON_OPEN
-> - FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
-> - FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL
->
-> From the above list of flags suitable for modification, following bit
-> flags have no meaning for kernel and it is up to userspace how will use
-> them. What is needed from kernel and/or filesystem driver is to preserve
-> those bit flags.
-> - FILE_ATTRIBUTE_HIDDEN
-> - FILE_ATTRIBUTE_SYSTEM
-> - FILE_ATTRIBUTE_ARCHIVE
-> - FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
->
-> Following are bit flags which kernel / VFS / fsdriver would have to
-> handle specially, to provide enforcement or correct behavior of them:
-> - FILE_ATTRIBUTE_READONLY - enforce that data modification or unlink is d=
-isallowed when set
-> - FILE_ATTRIBUTE_COMPRESSED - enforce compression on filesystem when set
-> - FILE_ATTRIBUTE_ENCRYPTED - enforce encryption on filesystem when set
->
-> Then there are HSM flags which for local filesystem would need some
-> cooperation with userspace synchronization software. For network
-> filesystems (SMB / NFS4) they need nothing special, just properly
-> propagating them over network:
-> - FILE_ATTRIBUTE_OFFLINE
-> - FILE_ATTRIBUTE_PINNED
-> - FILE_ATTRIBUTE_UNPINNED
->
-> About following 2 flags, I'm not sure if the kernel / VFS / fs driver
-> has to do something or it can just store bits to fs:
-> - FILE_ATTRIBUTE_TEMPORARY
-> - FILE_ATTRIBUTE_NO_SCRUB_DATA
->
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> And there is still unresolved issue with FILE_ATTRIBUTE_READONLY.
-> Its meaning is similar to existing Linux FS_IMMUTABLE_FL, just
-> FILE_ATTRIBUTE_READONLY does not require root / CAP_LINUX_IMMUTABLE.
->
-> I think that for proper support, to enforce FILE_ATTRIBUTE_READONLY
-> functionality, it is needed to introduce new flag e.g.
-> FS_IMMUTABLE_FL_USER to allow setting / clearing it also for normal
-> users without CAP_LINUX_IMMUTABLE. Otherwise it would be unsuitable for
-> any SMB client, SMB server or any application which would like to use
-> it, for example wine.
->
-> Just to note that FreeBSD has two immutable flags SF_IMMUTABLE and
-> UF_IMMUTABLE, one settable only by superuser and second for owner.
->
-> Any opinion?
-
-For filesystems that already support FILE_ATTRIBUTE_READONLY,
-can't you just set S_IMMUTABLE on the inode and vfs will do the correct
-enforcement?
-
-The vfs does not control if and how S_IMMUTABLE is set by filesystems,
-so if you want to remove this vfs flag without CAP_LINUX_IMMUTABLE
-in smb client, there is nothing stopping you (I think).
-
-How about tackling this one small step at a time, not in that order
-necessarily:
-
-1. Implement the standard API with FS_IOC_FS[GS]ETXATTR ioctl
-    and with statx to get/set some non-controversial dosattrib flags on
-    ntfs/smb/vfat
-2. Wire some interesting dosattrib flags (e.g. compr/enrypt) to local
-    filesystems that already support storing those bits
-3. Wire network servers (e.g. Samba) to use the generic API if supported
-4. Add on-disk support for storing the dosattrib flags to more local fs
-5. Update S_IMMUTABLE inode flag if either FS_XFLAG_IMMUTABLE
-    or FS_DOSATTRIB_READONLY are set on the file
-
-Thoughts?
-
-Thanks,
+Thanks!
 Amir.
 
