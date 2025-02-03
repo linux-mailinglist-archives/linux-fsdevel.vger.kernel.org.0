@@ -1,206 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-40685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C383EA2677D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 00:05:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AADA267BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 00:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FD7E7A3517
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5D5165037
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 23:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8CF212FA8;
-	Mon,  3 Feb 2025 23:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42019211494;
+	Mon,  3 Feb 2025 23:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZ21Lo7M"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IbxWm5ZX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A525212B3A;
-	Mon,  3 Feb 2025 23:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE071FFC7D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 23:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738623784; cv=none; b=vEA8A3OEjyA0p/kxYFOvcV5Fn6kPAhaFL/k62HdeWXdmPtqcCun8OKjJk5ekZ0uvlbXe0p+vLvVNKF6kxWuh7VzBRo6edMcBRESgL/9LZziGVhJpfya8roBnbyx4S8qe8gOzttY84YVc4yMOWXCLtmiyXshX8NfP7+KszA4S7D4=
+	t=1738624651; cv=none; b=MUsNgdB0zgkRVrHTqNz/0MR20jWNYT6cDc4bOGLarlKyL0RvQ7LNgkYV4px8+aTUGqZYPHlAB82Vwy298R66UF6XSmIh4HU33SVvXpMrspVrR60Cp0zKGU3o4T4z3uGoxqNfYpNv2hMUyAsICZ3Y+6CZANHIs3EiPgPtT4qGYz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738623784; c=relaxed/simple;
-	bh=EjOexnXMgQJzxYHOLu3OeempPRS8bOp4JLgbpD0HMsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wslg4hCULt/oM0BqXghHibx0L8DAlI2sYJs+34P+d1Fuuv3EOnejZXV8wICIbyCbjG5djEIkY5+qY+uHTYeouypt/4m9j6GMuJcy4mIkZCzHqAWn/31k1zkVc5pT8t2MeiVoMcP4540MhpMNMX3aTqhPYFeVBUTVADs7zFezm9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZ21Lo7M; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d0d32cd31aso7102368a12.0;
-        Mon, 03 Feb 2025 15:02:57 -0800 (PST)
+	s=arc-20240116; t=1738624651; c=relaxed/simple;
+	bh=ZfihIFeXaHAv+Yso24Hc+CVyQM0cZMIc4s4N+P02Xf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=erAd96rqXTpHoY5uHrUI1L3d9IffmqH+6kNtaN6XEGiGQs3vXXX4H+PGUXFFMlvxyUKCaPeFYQBMtlgDrCbfKmEdDY8wYw0n4j1JYX1CZbyfFk6UMfyiAWi4pqQhjwM7lRXlUvBWkuI1qEDw4awjgOFaSs9J4vmn1/JUZzzfcwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IbxWm5ZX; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3863c36a731so3815600f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 15:17:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738623776; x=1739228576; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JBdmQ5wtRHJ8W3Dokaw4p9hk2ntwY4Hw01yfpGgGPh4=;
-        b=NZ21Lo7MAVI7/0nJ6I3NyNLWbZxoJ2fXWlrubAlHF/vBTZJfX3LOa0TPeoNMuySG9u
-         0D2LjDGPRj9ZZeJlxbLZ1OQ2A9yzVkKkhuI/8vOW7jrU65p9Ljy2tJeMIKFoEi3i1WIX
-         9PVRffVDSpztjCJGcetiem3o+7ZHPOfzLpKOIAwbaZ/1xoF3IuYl4U89ZO3RxZAjfXZY
-         Cj5jGfCHKCwRStEIyJnLktTxKd9cUYSRb+vhpkKbG/F9HqGxp3Ro7qIQJ6l8Rp/Zy83O
-         sW9shQVScNIDnYbQSdY8Cha+XcL2eAFGqKMkpfxRsaSW15n03yWzjrxcx/cLfpgMwm2Y
-         ek/Q==
+        d=suse.com; s=google; t=1738624648; x=1739229448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=M20UpxnCCjF4g6dYJIAZ+fZHXwpgnatL1DQuqP4O2ps=;
+        b=IbxWm5ZXP6JlEa6U4bAS83UFKMgF+jCCfmtfAON8CdzPIqWBvj1CACz3HyLPSQM1M+
+         iGgeYzGkQXq67BvEFQOSUAEPlPbrwvNJMRdL+vXf8qFlVNQcfcmX7EPJ5k/B1zaouGWD
+         fi4FXq+sz99rm+vuXyy6trp4GTEyJVFhbuxkmwaeIAV1JgE3h9J5fPvpE4ZqIs0QL3Ep
+         e7N9NclZWMp6Rtr2yrNM3ViceGrLxEhyFSsnNXiX8KEzbq/krnyg0XgARJz4VRdvALJ0
+         VUnGDS990kjZUX9yO01q61hXuNY7TzqxFoJcQEwo1rZWE0IEZfjP2WkhkeqQ9Vdc5h7X
+         hLZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738623776; x=1739228576;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JBdmQ5wtRHJ8W3Dokaw4p9hk2ntwY4Hw01yfpGgGPh4=;
-        b=gabDpctxJM7qvUP9QAcrOxt2XdmpRXpVoVMOAMg1Z1QG9vKfafp5SwbW7W4gbIZdFM
-         Qyc2OTu7+Mk8PBRDzytJGv7HU/6uDNjIRFnUB7w0KBWxbIYgie3rn+9bhd93edONzHhv
-         SpbWP8OmMVl3OcjGWf6Yb+d+lK7xwl5Vao0FviEnNNngUS04mNblMFclZaC2BFjuPmQg
-         lCyVkLamAZGbuBEHCCFj4GdrSJvHSOLCZOs/xE9w5FZ/3cIoGV3KVn1P0ZR5HxyIzSgd
-         v/E9EoKCRJgeD2iY+oPwPRdpCnG6eRsEbvJsrd7qmh9ja44OJfJQgb6ALbi6XwIDdlR/
-         rseg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2sJH2Mpvo1u6SBOT15JTHKkHa3Sf+fxzEDESGROL8If1iiH25xBfLpK3JjDKggz4px9hTg2OiAda5@vger.kernel.org, AJvYcCXQ4lvwSvFw7RE1lN18NZEO3s6pcypSEyOslgZvGPbv8kubaa0j/jFci3qhZaBlZpoFQ40EF3EF9r9Tx6yBdg==@vger.kernel.org, AJvYcCXW/ecjcjqpCAVF+3hmlnNkYcH7/B3Lb9nBBA4Oul+d9CCLzN56kPI0y9PfHAEdU4mBkvtXJ8LImQr6LFUg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq/E2VJS6ot8UPCnvfCRXHvT0kLKPDGTtU00Rljfefod3AeXDt
-	r90ts7hbZSnm6tgR+qksSugxdkFy+x6kSGiJqr6kZe/AE+DoHuj7rR01ae5HMhCyQ8b/KHPav3f
-	klCKSIGceCnAQsSZcwh0Q+CLmJgg=
-X-Gm-Gg: ASbGncs2HlrfKIrTK9edlUW7JKzOnMVLUaSa6NmydlGk/uYgu5bFFiNM/R4P31zED1u
-	7t7ypIchcTRxaXvYRvzF73CzxYE0YsuqsjKbJGf1VtxWxPveyaVZJfnzjAGabHgfLxZXSZu8k
-X-Google-Smtp-Source: AGHT+IGgP4sJZkbGL8t2nWMqhmaVSSoUQdeHG+eSyBSt3KQAtZyiCq3bIwAca8RXUKXL88AmRHbSP8gtBq5IrmNLFpA=
-X-Received: by 2002:a05:6402:a001:b0:5dc:7374:261d with SMTP id
- 4fb4d7f45d1cf-5dc737427bfmr36454533a12.7.1738623775777; Mon, 03 Feb 2025
- 15:02:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738624648; x=1739229448;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M20UpxnCCjF4g6dYJIAZ+fZHXwpgnatL1DQuqP4O2ps=;
+        b=L8LvU+mIlym/eXhfHFTA4GoxNMQhQHMBwZO3Lf36iVsRqDoMbrrDbAAB92XYb/PYiA
+         fcA8y70UoPu5wmvUTZKQqLLf+3HySYpfduffe5M3ZKaaRA+TcZxR7POwALHxeapU5s9f
+         M0twe6vRcf8tD7qdO7Zo1Q2wwpx5FTnMSWuE9tb2AgvFVUq9LQUPxPXVj5jEe4u5AdnA
+         6hGKxVxxB5qNYgtfQCfk4hBfdX24jrTvN+3xWQTDQQd4hOaMcfwmUWe4yx4s3JQAtzmB
+         cWuVtjSM4kFG+1JW0tTwh+tUExRyFCd331I4Gogh3Fr4S8dF7JCxPOfWeo+XpPv1EocP
+         4iRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXq87Tx5oZyxaLe9dnUUZTG6XQSS0r/MFYP90sZSPcbIpZ0eQQwl86o+MGIZ/crB2C36Om/A0gG9xFBLLjd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeaE9P4YBES0ruE8Tu5CB8sCktu/Kv3l+37FaWIizpWLwmVNZv
+	OCUulekUNLCCXHcuTv/6LoW/mbhvs5sekuRGYk83SBTMLX3XCPkQRs638zPgFJU=
+X-Gm-Gg: ASbGnctHuWZ3nU0YMsMv72Ip6ctpoMujkycBxUYyeD6ls8TFIjL9A7VfB8H7ufvaPPW
+	1U8EPdJwD8wZm1XemzYcvrevrnC3LkV/GAxQ0hxALW7vrZGyA6NAwsTq0ki32fUWl4NDT5sB1EW
+	UjxV3Ry6PKpfrEENYHCxOB4YTjWzqajXXVHItt2iHg2/roHiNS4Xj5A0al0/L3plfqxMuytg/jj
+	nCgzvst40BJJvFbX/h8KGbMpobOKMp7lJRy0q1kLUSZq77kPQrCdMBMU4gqr3skxF641zyurH76
+	lWy0ho5br6lg830Xsb25+WmSzJk4c8x4dB9MUKusOQU=
+X-Google-Smtp-Source: AGHT+IHKDskR6a298u6J7mhd/9DgYRSdntqz5BbexE9oUnoXAFWMJ9T+mniIRnDNpv7LfLg/ZQDLWg==
+X-Received: by 2002:a5d:588d:0:b0:38a:68f4:66a2 with SMTP id ffacd0b85a97d-38c51b600f7mr18788353f8f.31.1738624647383;
+        Mon, 03 Feb 2025 15:17:27 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-acec0a666ddsm7087129a12.73.2025.02.03.15.17.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2025 15:17:26 -0800 (PST)
+Message-ID: <df9c2b85-612d-4ca3-ad3f-5c2e2467b83f@suse.com>
+Date: Tue, 4 Feb 2025 09:47:20 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250114215350.gkc2e2kcovj43hk7@pali> <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali> <20250114235925.GC3561231@frogsfrogsfrogs>
- <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
- <20250117173900.GN3557553@frogsfrogsfrogs> <CAOQ4uxhh1LDz5zXzqFENPhJ9k851AL3E7Xc2d7pSVVYX4Fu9Jw@mail.gmail.com>
- <20250117185947.ylums2dhmo3j6hol@pali> <20250202152343.ahy4hnzbfuzreirz@pali>
- <CAOQ4uxgjbHTyQ53u=abWhyQ81ATL4cqSeWKDfOjz-EaR0NGmug@mail.gmail.com> <20250203221955.bgvlkp273o3wnzmf@pali>
-In-Reply-To: <20250203221955.bgvlkp273o3wnzmf@pali>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 4 Feb 2025 00:02:44 +0100
-X-Gm-Features: AWEUYZnOwZ4U1beNz39Ac2tUKLBO7cnKL8_kgLUmUrLVb43HdIN1Xm7feEx8ftQ
-Message-ID: <CAOQ4uxhkB6oTJm7DvQxFbxkQ1u_KMUFEL0eWKVYf39hnuYrnfQ@mail.gmail.com>
-Subject: Re: Immutable vs read-only for Windows compatibility
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
+To: Kanchan Joshi <joshi.k@samsung.com>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ "hch@infradead.org" <hch@infradead.org>
+Cc: Theodore Ts'o <tytso@mit.edu>,
+ "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+ "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "josef@toxicpanda.com" <josef@toxicpanda.com>
+References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
+ <20250130091545.66573-1-joshi.k@samsung.com>
+ <20250130142857.GB401886@mit.edu>
+ <97f402bc-4029-48d4-bd03-80af5b799d04@samsung.com>
+ <b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
+ <Z6B2oq_aAaeL9rBE@infradead.org>
+ <bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
+ <eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
+ <cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 3, 2025 at 11:20=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Monday 03 February 2025 22:59:46 Amir Goldstein wrote:
-> > On Sun, Feb 2, 2025 at 4:23=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org=
-> wrote:
-> > > And there is still unresolved issue with FILE_ATTRIBUTE_READONLY.
-> > > Its meaning is similar to existing Linux FS_IMMUTABLE_FL, just
-> > > FILE_ATTRIBUTE_READONLY does not require root / CAP_LINUX_IMMUTABLE.
-> > >
-> > > I think that for proper support, to enforce FILE_ATTRIBUTE_READONLY
-> > > functionality, it is needed to introduce new flag e.g.
-> > > FS_IMMUTABLE_FL_USER to allow setting / clearing it also for normal
-> > > users without CAP_LINUX_IMMUTABLE. Otherwise it would be unsuitable f=
-or
-> > > any SMB client, SMB server or any application which would like to use
-> > > it, for example wine.
-> > >
-> > > Just to note that FreeBSD has two immutable flags SF_IMMUTABLE and
-> > > UF_IMMUTABLE, one settable only by superuser and second for owner.
-> > >
-> > > Any opinion?
-> >
-> > For filesystems that already support FILE_ATTRIBUTE_READONLY,
-> > can't you just set S_IMMUTABLE on the inode and vfs will do the correct
-> > enforcement?
-> >
-> > The vfs does not control if and how S_IMMUTABLE is set by filesystems,
-> > so if you want to remove this vfs flag without CAP_LINUX_IMMUTABLE
-> > in smb client, there is nothing stopping you (I think).
->
-> Function fileattr_set_prepare() checks for CAP_LINUX_IMMUTABLE when
-> trying to change FS_IMMUTABLE_FL bit. This function is called from
-> ioctl(FS_IOC_SETFLAGS) and also from ioctl(FS_IOC_FSSETXATTR).
-> And when function fileattr_set_prepare() fails then .fileattr_set
-> callback is not called at all. So I think that it is not possible to
-> remove the IMMUTABLE flag from userspace without capability for smb
-> client.
->
 
-You did not understand what I meant.
 
-You cannot relax the CAP_LINUX_IMMUTABLE for setting FS_IMMUTABLE_FL
-and there is no reason that you will need to relax it.
+在 2025/2/3 23:57, Kanchan Joshi 写道:
+> On 2/3/2025 1:46 PM, Qu Wenruo wrote:
+>>> ell for the WAF part, it'll save us 32 Bytes per FS sector (typically
+>>> 4k) in the btrfs case, that's ~0.8% of the space.
+>>
+>> You forgot the csum tree COW part.
+>>
+>> Updating csum tree is pretty COW heavy and that's going to cause quite
+>> some wearing.
+>>
+>> Thus although I do not think the RFC patch makes much sense compared to
+>> just existing NODATASUM mount option, I'm interesting in the hardware
+>> csum handling.
+> 
+> But, patches do exactly that i.e., hardware cusm support. And posted
+> numbers [*] are also when hardware is checksumming the data blocks.
+> 
+> NODATASUM forgoes the data cums at Btrfs level, but its scope of
+> control/influence ends there, as it knows nothing about what happens
+> underneath.
+> Proposed option (DATASUM_OFFLOAD) ensures that the [only] hardware
+> checksums the data blocks.
 
-The vfs does NOT enforce permissions according to FS_IMMUTABLE_FL
-The vfs enforces permissions according to the S_IMMUTABLE in-memory
-inode flag.
+My understanding is, if the hardware supports the extra payload, it's 
+better to let the user to configure it.
 
-There is no generic vfs code that sets S_IMMUTABLE inode flags, its
-the filesystems that translate the on-disk FS_IMMUTABLE_FL to
-in-memory S_IMMUTABLE inode flag.
+Btrfs already has the way to disable its data checksum. It's the end 
+users' choice to determine if they want to trust the hardware.
 
-So if a filesystem already has an internal DOSATTRIB flags set, this
-filesystem can set the in-memory S_IMMUTABLE inode flag according
-to its knowledge of the DOSATTRIB_READONLY flag and the
-CAP_LINUX_IMMUTABLE rules do not apply to the DOSATTRIB_READONLY
-flag, which is NOT the same as the FS_IMMUTABLE_FL flag.
+The only thing that btrfs may want to interact with this hardware csum 
+is metadata.
+Doing the double checksum may waste extra writes, thus disabling either 
+the metadata csum or the hardware one looks more reasonable.
 
-> And it would not solve this problem for local filesystems (ntfs or ext4)
-> when Samba server or wine would want to set this bit.
->
+Otherwise we're pushing for a policy (btrfs' automatic csum behavior 
+change), not a mechanism (the existing btrfs nodatacsum mount 
+option/per-inode flag).
 
-The Samba server would use the FS_IOC_FS[GS]ETXATTR ioctl
-API to get/set dosattrib, something like this:
-
-struct fsxattr fsxattr;
-ret =3D ioctl_get_fsxattr(fd, &fsxattr);
-if (!ret && fsxattr.fsx_xflags & FS_XFLAG_HASDOSATTR) {
-    fsxattr.fsx_dosattr |=3D FS_DOSATTRIB_READONLY;
-    ret =3D ioctl_set_fsxattr(fd, &fsxattr);
-}
-
-For ntfs/ext4, you will need to implement on-disk support for
-set/get the dosattrib flags.
-
-I can certainly not change the meaning of existing on-disk
-flag of FS_IMMUTABLE_FL to a flag that can be removed
-without CAP_LINUX_IMMUTABLE. that changes the meaning
-of the flag.
-
-If ext4 maintainers agrees, you may be able to reuse some
-old unused on-disk flags (e.g.  EXT4_UNRM_FL) as storage
-place for FS_DOSATTRIB_READONLY, but that would be
-quite hackish.
-
-> > How about tackling this one small step at a time, not in that order
-> > necessarily:
-> >
-> > 1. Implement the standard API with FS_IOC_FS[GS]ETXATTR ioctl
-> >     and with statx to get/set some non-controversial dosattrib flags on
-> >     ntfs/smb/vfat
-> > 2. Wire some interesting dosattrib flags (e.g. compr/enrypt) to local
-> >     filesystems that already support storing those bits
-> > 3. Wire network servers (e.g. Samba) to use the generic API if supporte=
-d
-> > 4. Add on-disk support for storing the dosattrib flags to more local fs
-> > 5. Update S_IMMUTABLE inode flag if either FS_XFLAG_IMMUTABLE
-> >     or FS_DOSATTRIB_READONLY are set on the file
-> >
-> > Thoughts?
-> >
-
-Anything wrong with the plan above?
-It seems that you are looking for shortcuts and I don't think that
-it is a good way to make progress.
+And inside kernels, we always provides a mechanism, not a policy.
 
 Thanks,
-Amir.
+Qu
+> 
+> [*]
+> https://lore.kernel.org/linux-block/20250129140207.22718-1-joshi.k@samsung.com/
+
 
