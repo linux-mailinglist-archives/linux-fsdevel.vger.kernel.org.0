@@ -1,84 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-40628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD62A26011
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 17:31:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5008DA2600E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 17:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2133A255C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:31:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF77B7A1654
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D9820B20C;
-	Mon,  3 Feb 2025 16:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EEC20B204;
+	Mon,  3 Feb 2025 16:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AxU0maFE"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xS0XDYZJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F5E20B1ED
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 16:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D132B9BB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 16:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738600285; cv=none; b=f8AIj++noztZ6yH1MkzpqsI7ZJ5C9x8S3QlXzNzAG2Oubp90WVJaVbqcYyy6kI4Dfv/TF/9ZfLxtzYztZhcAqTqhxBJ3jPpapgCsgQ4hCMoeGWaMnguCkJid2Qb6QPnbIzig86yi9D0Z7qQJr5LX5cMUSCaP6NTbkU2FOSRn8D0=
+	t=1738600287; cv=none; b=o2DUmS4VoCKXPKMPMQyDZ8I91Bwz/RVBHZBI+PvEbt+MRoEzeLSrt720Q5zXDlODN49HeSXVo0OHwEIGRlNtQIMlp+EfzFh3ooJOroJ0MBPwBls3ei/qn/VNkNp8ubsCQfqAAetsQUgsYLlKe8Si2ot+FDfHj0X/05pP7ZNy8gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738600285; c=relaxed/simple;
-	bh=HCmSTkxKH/HdcO7Uglkp2F2gW3Sb8auKNqzvPdoBqxk=;
+	s=arc-20240116; t=1738600287; c=relaxed/simple;
+	bh=FfOsgqQUbrqMBseqWoxvdeHMXbEwUwBb1lrRINWoyNY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kpre9PC7uRxRbh7cnb6TWgeDmaq+On/DC3x0rSpOY/FE2yhsQno62mrF97UiEwxIGwSZ57SjQl8DbFCBHyigcymc5od/ERX0lOOwT4gSwV4+O2ifRUqn0qjpzk1cSlMDByeszeVlzQSAKtUy9JrIATWn7XNLl/PVTUXMw6YCvrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AxU0maFE; arc=none smtp.client-ip=209.85.166.49
+	 MIME-Version; b=F4YlBHYHaNQZ9QvOr6Ucrn8GlN/VosHSP3/Atsw9fxjV9jeRHQK+yDYX4nsYXKBdjx3p/ICELibCClyv8/khvMrZlf29jEJ7vArond3fAQJz2lSmQ0b8xNElnYkgK/gnRBbU+JhAP/VPht7DzPRu0pica5NQfz5VYaRhUa0yDX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xS0XDYZJ; arc=none smtp.client-ip=209.85.166.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-84cdacbc3dbso17692039f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 08:31:23 -0800 (PST)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-844e12f702dso116215939f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 08:31:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738600283; x=1739205083; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738600285; x=1739205085; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z+1svFbJCvXV9Zr5117Ph4lZhgiz5rV+2RtGExbCLLw=;
-        b=AxU0maFEL3t1q4p6/lMeAJCdV8HTmJyy8G4YxU7WhQ4TGs3ORt4ICLaXexYUFRl3Bf
-         L2taCK7BhuMo7V0Vjs2Tgpf0NMocTdKQOENhe/U0I7xctCinju03lI5AxFCGdhmbIUkt
-         9ttJqeRW1Qst5Hqsfw3FRyFd2ETQTEpov3TNd1QPD97BFlhZ3CPKVJ+8n2L7Kmtzo5NT
-         RgDRZGKMI6IuNtkXO0lZ+jCtJESDYrIPKGmVfUJP6PT7Zz4ai1Sot5kNFB4DapjyIhmw
-         2vHxXxmEFda9j0+RxUA7yJvA/Q3gRnqg028zVZC7DHknzXKYPUiUmH5NEfN29HsaS7bT
-         0HNA==
+        bh=W4mLZ0JfeLifQ8U+aoK/TU8xkbtkVLx+Q+iBJc1yFPs=;
+        b=xS0XDYZJGSQsc1jmdPJAujMEG29Ae0LJe6kTyP0wXMeX1DCf7UQ0kOb09f9L1Dh2W7
+         OfuzcbgvEtwEHKXE3Bymam7SStC3PV89f92xizEtv8JutTDGFujpIs8hr7FzmZiG5YKY
+         TEHaUkqtuB6p6vrHufGWMGFrPmX/niFSrc0uQTwipB08mtJMxEx+f2WQItDqy0NQu6xl
+         1FH+zF7AWO7jArUQ/YUN/TEpBvPCv/NMlZY9fukVLdzFZJWoToQEKczNxWWxOjgEFGNt
+         p31nj7EVGjWhhsf+mD/aFLLbOJlBXlOYfPDaT/rW0pRXSwUJOoY4nz9jq4H2Owscaj6w
+         MTCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738600283; x=1739205083;
+        d=1e100.net; s=20230601; t=1738600285; x=1739205085;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z+1svFbJCvXV9Zr5117Ph4lZhgiz5rV+2RtGExbCLLw=;
-        b=L74kld3R2YEIR8FC7oaFxdnOQfPkj/Ckt1wgSls26ttJeDQtP0h9ClIvxbp2rNp7+H
-         Eg7kAPrNrhUxIJZcjna5tHzjonfv65WswrYafnkC4IuHS9Lzk3GcvtnqW6kMYf7vppmm
-         IkCT1ddOZK57/4pKV7wDwD/zTSf2hyu11TRIoUTeMxt/mqbkGcq0dU/pnu5S2bSuNZRR
-         ih8/0ANtKt6dTfS+IM3f7S0EavpC8s7FAkE7wjKcRIDN+PCdQG5p5HFToOZ3UJqPjc0c
-         9W2sOb0sOlB5MatpCRyFYrEhM8PvjOM2dUbvfGvXgS6Rp2WURO/D7xXlKImLfWhCZR/4
-         y1Ew==
-X-Gm-Message-State: AOJu0Yw9VsMuL3MbHXxrg1Q2lD8rgrDUmrWKx8cFnWNVupCZwnS3FPkL
-	0tUiV40drPkUxIjNUvsUa3nMhybRf6L0qUGBXZPgzX9OSZDbf++srJR83uvtOj0=
-X-Gm-Gg: ASbGncuxO7T7lXDxcCHytrZaB0k9WlQTi5tmyMtBs2EsKtViwGdDVaQSPGQ9CRTebUn
-	BVL2ZG9kJS37a+i+cRwkk7aFGdA6l/rRxC2h1o4vsVa3lrvBaqAUrXYzm0CSNn/tuYdJ6wc/dTh
-	eGfNJSPzhMGPRRNh+FSwAGfRTiknVuQ+jKqVBw4Z8Ec5donaxP60SsAQb/v5ht9pQ2KDWfjdDnX
-	jfWtRUAI9LOetaXd+XjqH5BZfC8xlmfK9kspJsyp4tXlQrHrYdMr7TNctD/ILIDosWexaSzkulv
-	gZdEFZH6ROFbH93uats=
-X-Google-Smtp-Source: AGHT+IEPqq+G0h4VYNXvxcyNE35GywbajeWSs01Mm7MyH0q/0gNnCdTL/T/DNkoK0+JZYY8PlpjbgQ==
-X-Received: by 2002:a05:6602:2c8c:b0:852:5e4:7d9e with SMTP id ca18e2360f4ac-85427de4d4dmr2047201539f.1.1738600283057;
-        Mon, 03 Feb 2025 08:31:23 -0800 (PST)
+        bh=W4mLZ0JfeLifQ8U+aoK/TU8xkbtkVLx+Q+iBJc1yFPs=;
+        b=aztBqwmPUN77TFWJOcIFNIr75E3f8hXDJbcVoYiUpFfPCfKB1GHxHhA9EfIOW2YuW1
+         HMRazKn4p8tFwep8ZspiU1pYBHfk/51XMsRiy29FbPgzh40bnf5Az1phRUEI1ZVkYd/y
+         JYF5acxkHEKyz09MKXSSA19AAbA7jrPYSBicRysOItuT20U9SWhuD2S1nVMAQMkplpx2
+         u0LkI8LqRUNHBXjFrz+eWYjadgJ1+jEhlGaCAxV+USbq9t3oN4CrKigFmQ9BDHonbqbY
+         M3qM74ppNI8SdSmtO2L4sJmIDaUo9OQyeqL0tpmodAJO/cugesMfN1lpbB7/6NAEu9nn
+         y1HA==
+X-Gm-Message-State: AOJu0Ywu75a7UtPLBuHfVeilclYTB5ivRrOm1WfSzkOj+LlNEaL12pC+
+	MYIMpsiqIvsRx3aSKUWRdiafptbXgPC3gddJ8hALLwe3hK9sT5NV/4bOUuJvL8OXR7PLh8QqodW
+	rwZg=
+X-Gm-Gg: ASbGnctwfdHPLwFKnm8qjgvcszV1mKYqM9uLvidYjg5Zy92zLLMth1WyydRNsYLT9Yv
+	H73yG8G0Dl5CPqme5b2iaQMqJc81N4rY85wne0cAVPh4uhFiIIAzHqOHTsnRuxzySgYnxQCML/0
+	uNzg8G4JWOJPryy7EhmSavYOOVHBLtneZXZMkzeLnm1bTlJr9SR+hAfvnSlIB+1qRVR0zdQKDbW
+	55Wkm4Lf3ze3fmF9iWJRQ1pru9Dg5j2SujlQv3/tVyB32vCa2+kMkNhppStdMIxQc2upd6tD7+i
+	YjNMgp6AuGeD+d5u20U=
+X-Google-Smtp-Source: AGHT+IETQZ/yuBJk5CL2/5U1LafOvbuk9WK74Yfijq5HcWNEsU4+WLjYmeWSufJ5PT3mU+sEDNWO3Q==
+X-Received: by 2002:a05:6602:4183:b0:84a:5201:41ff with SMTP id ca18e2360f4ac-85427de977emr2164108339f.3.1738600284728;
+        Mon, 03 Feb 2025 08:31:24 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854a16123c6sm243748139f.24.2025.02.03.08.31.21
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854a16123c6sm243748139f.24.2025.02.03.08.31.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2025 08:31:22 -0800 (PST)
+        Mon, 03 Feb 2025 08:31:23 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/9] eventpoll: add helper to remove wait entry from wait queue head
-Date: Mon,  3 Feb 2025 09:23:40 -0700
-Message-ID: <20250203163114.124077-3-axboe@kernel.dk>
+Subject: [PATCH 3/9] eventpoll: abstract out ep_try_send_events() helper
+Date: Mon,  3 Feb 2025 09:23:41 -0700
+Message-ID: <20250203163114.124077-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250203163114.124077-1-axboe@kernel.dk>
 References: <20250203163114.124077-1-axboe@kernel.dk>
@@ -90,107 +91,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__epoll_wait_remove() is the core helper, it kills a given
-wait_queue_entry from the eventpoll wait_queue_head. Use it internally,
-and provide an overall helper, epoll_wait_remove(), which takes a struct
-file and provides the same functionality.
+In preparation for reusing this helper in another epoll setup helper,
+abstract it out.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/eventpoll.c            | 58 +++++++++++++++++++++++++--------------
- include/linux/eventpoll.h |  3 ++
- 2 files changed, 40 insertions(+), 21 deletions(-)
+ fs/eventpoll.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 73b639caed3d..01edbee5c766 100644
+index 01edbee5c766..3cbd290503c7 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -1980,6 +1980,42 @@ static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
- 	return ret;
+@@ -2016,6 +2016,22 @@ int epoll_wait_remove(struct file *file, struct wait_queue_entry *wait)
+ 	return -EINVAL;
  }
  
-+static int __epoll_wait_remove(struct eventpoll *ep,
-+			       struct wait_queue_entry *wait, int timed_out)
++static int ep_try_send_events(struct eventpoll *ep,
++			      struct epoll_event __user *events, int maxevents)
 +{
-+	int eavail;
++	int res;
 +
 +	/*
-+	 * We were woken up, thus go and try to harvest some events. If timed
-+	 * out and still on the wait queue, recheck eavail carefully under
-+	 * lock, below.
++	 * Try to transfer events to user space. In case we get 0 events and
++	 * there's still timeout left over, we go trying again in search of
++	 * more luck.
 +	 */
-+	eavail = 1;
-+
-+	if (!list_empty_careful(&wait->entry)) {
-+		write_lock_irq(&ep->lock);
-+		/*
-+		 * If the thread timed out and is not on the wait queue, it
-+		 * means that the thread was woken up after its timeout expired
-+		 * before it could reacquire the lock. Thus, when wait.entry is
-+		 * empty, it needs to harvest events.
-+		 */
-+		if (timed_out)
-+			eavail = list_empty(&wait->entry);
-+		__remove_wait_queue(&ep->wq, wait);
-+		write_unlock_irq(&ep->lock);
-+	}
-+
-+	return eavail;
-+}
-+
-+int epoll_wait_remove(struct file *file, struct wait_queue_entry *wait)
-+{
-+	if (is_file_epoll(file))
-+		return __epoll_wait_remove(file->private_data, wait, false);
-+	return -EINVAL;
++	res = ep_send_events(ep, events, maxevents);
++	if (res > 0)
++		ep_suspend_napi_irqs(ep);
++	return res;
 +}
 +
  /**
   * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
   *           event buffer.
-@@ -2100,27 +2136,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 							      HRTIMER_MODE_ABS);
- 		__set_current_state(TASK_RUNNING);
+@@ -2067,17 +2083,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
  
--		/*
--		 * We were woken up, thus go and try to harvest some events.
--		 * If timed out and still on the wait queue, recheck eavail
--		 * carefully under lock, below.
--		 */
--		eavail = 1;
--
--		if (!list_empty_careful(&wait.entry)) {
--			write_lock_irq(&ep->lock);
+ 	while (1) {
+ 		if (eavail) {
 -			/*
--			 * If the thread timed out and is not on the wait queue,
--			 * it means that the thread was woken up after its
--			 * timeout expired before it could reacquire the lock.
--			 * Thus, when wait.entry is empty, it needs to harvest
--			 * events.
+-			 * Try to transfer events to user space. In case we get
+-			 * 0 events and there's still timeout left over, we go
+-			 * trying again in search of more luck.
 -			 */
--			if (timed_out)
--				eavail = list_empty(&wait.entry);
--			__remove_wait_queue(&ep->wq, &wait);
--			write_unlock_irq(&ep->lock);
--		}
-+		eavail = __epoll_wait_remove(ep, &wait, timed_out);
- 	}
- }
+-			res = ep_send_events(ep, events, maxevents);
+-			if (res) {
+-				if (res > 0)
+-					ep_suspend_napi_irqs(ep);
++			res = ep_try_send_events(ep, events, maxevents);
++			if (res)
+ 				return res;
+-			}
+ 		}
  
-diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
-index f37fea931c44..1301fc74aca0 100644
---- a/include/linux/eventpoll.h
-+++ b/include/linux/eventpoll.h
-@@ -29,6 +29,9 @@ void eventpoll_release_file(struct file *file);
- int epoll_wait(struct file *file, struct epoll_event __user *events,
- 	       int maxevents, struct timespec64 *to);
- 
-+/* Remove wait entry */
-+int epoll_wait_remove(struct file *file, struct wait_queue_entry *wait);
-+
- /*
-  * This is called from inside fs/file_table.c:__fput() to unlink files
-  * from the eventpoll interface. We need to have this facility to cleanup
+ 		if (timed_out)
 -- 
 2.47.2
 
