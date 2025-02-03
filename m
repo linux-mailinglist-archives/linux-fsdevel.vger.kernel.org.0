@@ -1,122 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-40558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE63FA251BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 04:41:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74B8A25295
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 07:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB6E1625A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 03:41:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B3F7A21C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 06:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C279B4501A;
-	Mon,  3 Feb 2025 03:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBD51D88D0;
+	Mon,  3 Feb 2025 06:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yw9fTVe4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Aqa5/RnF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CCF29A5;
-	Mon,  3 Feb 2025 03:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA74502F;
+	Mon,  3 Feb 2025 06:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738554092; cv=none; b=Z+X8y8j1hnA0ISLEpxaogLxjqCsA3BX0AkqT+n4aOwLrF24KUmy5pJivfMQrsF3YebZukX8S3AJo16llsokvv3bkOrAwNqqbBdbaWCx5uoHxWgN+bS2vwBm//Z6WD3FKp+buUwcen9qTcyw8LBLZv9sMm9L85x88+6sTXAIrpl4=
+	t=1738565068; cv=none; b=sCfEvUNcwOpLTAMkiJeIfVmXcvtsahYIht/A4NZq7IORFtjYnE5fN3OpJnOZNmzDfuzcSa1aOUGXQjoD2qiGRKbykhXDfF2/7sksZSCjXAUyWGiQTayD8qesPnt85Wu1psCoEihwHb2zcPO6RlmzN8SDK3ctoUU5t0naCDncf0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738554092; c=relaxed/simple;
-	bh=2QjPEXJ8qS247NeodoMw7CC7n+N0uXp4G4AAD3qW77Q=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=JZyF3y+owPSOIQ1IViLvlHuHCz4OPR9v1aN/zrT0l8938Gf3teWFtZv5cdWUkv1mpiHohhO4OQV7ePJ9wKXfj5+HxUHYZO7jvaWO1II3p12Bb2uMZBBwMDi09jZIfQkjN57g/v+QObjWmF6EG80c4qYvK63m2OQRkhMl/NsO4yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yw9fTVe4; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1738554079; bh=NYnGRtdhOhOsIpPhQadV8J5ByKmTraTOgY6+AzSZqPk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=yw9fTVe4sK93aJbsvUHoV4hbwlX1Q2SRq85uaAKON8FsJmpydXhwFQ2z/lRoOLmrc
-	 wXtfFZdpAO3PJBVhqqorq+hPYQZ6ixt3X+pJO3CQoKjDGUopkjhf0KGE/wBdpOwa75
-	 ycWNvdcXEY+NsEOBxwUp3XF/0wHcnaNHRrokqozo=
-Received: from pek-lxu-l1.wrs.com ([2408:8435:9910:167a:8cb3:3b5b:faa2:1ccb])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 6F7BBA9B; Mon, 03 Feb 2025 11:27:55 +0800
-X-QQ-mid: xmsmtpt1738553275t2pg1fiph
-Message-ID: <tencent_8D66623CFF36BA96EE36FE4B7474B1778509@qq.com>
-X-QQ-XMAILINFO: Ny9b0zP53WzJy+lbJ0qZAmwf362UUI/jsREqewRS4BvBnoXk7sAs4KrUcm8Lyw
-	 Lny045v31BUDNhQsh9gHF+jvewaA4y7msrpgcZJFFgqgTRkJ1pSx0xuoFnA19QXhB0alQV2l1gUM
-	 rRTbjXFkpNTGOJD2/qSgPLggZvn0p50mqxyqlWXK76jQXRKKVWKhgwEKooAtYNQd6nZIVtHSIpi1
-	 euxMJQ+9EuTN2NqjOlASsLjqCP+QP/UmUb0TYO3FtCDyOww3lardHhz71RicGhVTCmLAIPnOpj8o
-	 TKLvYl0m1eOgl7dUysLlkRRya01wLPvx62RghEkX23EFRCmecp+OkERkBhYZTkYHplHfSfY1DWvL
-	 zAsbw87IKnR2Aj6lQXyeZu0Or3iQXW2Aevyc/yuzN997N2GB5B0F63df9sxc2lZjgpqBADYVE0GL
-	 KOa4uLCPG4QV7pT31ZTcWppibKkR1kGe57BYW1H/lZOkfGDTs5AHgse2YyNZrdVxYWj3O3pJBqvm
-	 Q9kFCIkz+/jMlixLnojZ61xmEgn+ebWuLRBpk7I8tan8gk87yZZBPxh9XIhWknrgpP2PtO59LxZ4
-	 SP38lZPMIm2DPHh7J3XDTLhfvPb9Tj3r6jyaSZliqgMPR5cz1EPjPirpX/Ano+1oGziHUB/fUtGx
-	 0/IXkUNat98X2wesDU5t9J95F+wMEELDV+QOnYa5XpivrUVTnMTxUXzWaEj9eD6YTuBvuki8dunO
-	 L5fN43sJRjoC8s4z9aumFuGtX2qSm5CZ/p1mFHcw53RcJvH2vuCHOcdQ59Zi+ITAJk2PQablClsE
-	 +IUWpLjj6Znehn9MyJuZAWy465gN5dhcfZowCeaIe8jmj5n4rXpSwaV5JxwuY1HjK5wXw9FmX4PA
-	 7jGkiEgA5UaN/tRW0lrGkm1GbwaLHQTijFn6R7CVFR
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+8928e473a91452caca2f@syzkaller.appspotmail.com
-Cc: dakr@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] debugfs: add fsd's methods initialization
-Date: Mon,  3 Feb 2025 11:27:56 +0800
-X-OQ-MSGID: <20250203032755.1430494-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <679f72f6.050a0220.48cbc.000d.GAE@google.com>
-References: <679f72f6.050a0220.48cbc.000d.GAE@google.com>
+	s=arc-20240116; t=1738565068; c=relaxed/simple;
+	bh=HQKDYOCdHKaakHGV0eqzsWVJdOSGEfM5T8DAjKSLviE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WsTSKvRTEO19L2BVHRQ+IDBTzXnzvCvTXYxegCIdwWj55BNadFAefd2DdbsEh78pDThoyMZrlqDkioKV7S0dKesvC+/NszAc0hkz3vzAom8UAmhRPGVXtu+TWeUx7naR7glk8k5yuWlghUCLv9Gi8q6fWRssVgIcDMKf/B7vkGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Aqa5/RnF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=s8X/jA+kTlWlpDDzux2Wj/CLtctKj+eXpCkO2gIJEKI=; b=Aqa5/RnFXfV5vtOdf4273dOiCn
+	CRbMZfqUSS8aBWNoGks2hdqyxZNxtCr4SLVs+/gmyZgg7ZnIE3uLeXBDKMy65s86pMXnKlN5MmzR9
+	/xudR9kFE7GvxPb6+PuiC/XXGvwu8N6ARkgD6NPw1mKCdRgjsF8mpjNdTrMtXKwsnKv+aiP1bq2n6
+	xRv1Ard42TE3bfcPiNthogUpbr+6S/1bwqPPyEqieuZyagmRXPRgG/XtKcyD7+9M7LBvm8ALtuuvm
+	Cb5B/+ahPzpYs623D+oNsUFwquc+1yTjGpJ6RKdn/yjSEk6Miu38RdvZhpAX7o5w7eUwE8dDCNxC9
+	AfNlh2iw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1teqBw-0000000EfQ2-2ueZ;
+	Mon, 03 Feb 2025 06:44:20 +0000
+Date: Sun, 2 Feb 2025 22:44:20 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Zorro Lang <zlang@redhat.com>, Amir Goldstein <amir73il@gmail.com>,
+	"Day, Timothy" <timday@amazon.com>,
+	Andreas Dilger <adilger@ddn.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"jsimmons@infradead.org" <jsimmons@infradead.org>,
+	"neilb@suse.de" <neilb@suse.de>, fstests <fstests@vger.kernel.org>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Lustre filesystem upstreaming
+Message-ID: <Z6BlxO4YjsjPQyuY@infradead.org>
+References: <20250201135911.tglbjox4dx7htrco@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20250202152045.GA12129@macsyma-2.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250202152045.GA12129@macsyma-2.local>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-syzbot reported a uninit-value in full_proxy_unlocked_ioctl. [1]
+On Sun, Feb 02, 2025 at 10:26:28AM -0500, Theodore Ts'o wrote:
+> Well, in the past I attempted to land a "local" file system type that
+> could be used for file systems that were available via docker (and so
+> there was no block device to mount and unmount).  This was useful for
+> testing gVisor[1] and could also be used for testing Windows Subsystem
+> for Linux v1.  As I recall, either Dave or Cristoph objected, even
+> though the diffstat was +73, -4 lines in common/rc.
 
-The newly created fsd does not initialize methods, and increases the
-initialization of methods for fsd.
-
-[1]
-BUG: KMSAN: uninit-value in full_proxy_unlocked_ioctl+0xed/0x3a0 fs/debugfs/file.c:399
- full_proxy_unlocked_ioctl+0xed/0x3a0 fs/debugfs/file.c:399
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0x246/0x440 fs/ioctl.c:892
- __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:892
- x64_sys_call+0x19f0/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Fixes: 41a0ecc0997c ("debugfs: get rid of dynamically allocation proxy_ops")
-Reported-by: syzbot+8928e473a91452caca2f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=8928e473a91452caca2f
-Tested-by: syzbot+8928e473a91452caca2f@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/debugfs/file.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index e33cc77699cd..5fbefce2b372 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -102,6 +102,7 @@ static int __debugfs_file_get(struct dentry *dentry, enum dbgfs_get_mode mode)
- 		if (!fsd)
- 			return -ENOMEM;
- 
-+		fsd->methods = 0;
- 		if (mode == DBGFS_GET_SHORT) {
- 			const struct debugfs_short_fops *ops;
- 			ops = fsd->short_fops = DEBUGFS_I(inode)->short_fops;
--- 
-2.43.0
-
+Yes, xfstests should just support upstream code.  Even for things where
+we through it would get upstream ASAP like the XFS
+rtrmap/reflink/metadir work (which finally did get upstream now) having
+the half-finished support in xfstests without actually landing the rest
+caused more than enough problems.  Something like lustre that has
+historically been a complete trainwreck and where I have strong doubts
+that the maintainers get their act together is even worse.
 
