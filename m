@@ -1,255 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-40635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC97A26023
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 17:32:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1889A26049
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 17:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B003A43FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552F1166DFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFCF20C46A;
-	Mon,  3 Feb 2025 16:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9058D20AF7A;
+	Mon,  3 Feb 2025 16:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eDun3atx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJ6BmngV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F6A20B80A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 16:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79A720B213;
+	Mon,  3 Feb 2025 16:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738600296; cv=none; b=iLC1fiK/uQXzD0AvuKyXlZSzj2+BJEuTAKisvrTEAB5JNobEjaBxHSyBf7qEFipzlYYlevtbjZWjd64L2kGVoBH/wHrqGrC8qbK1VqAkZ3QLk+HC5ddYEYr0Jq0zxNGRbMpJpapDSlJBNa+OsrVnDZjNNRQr2qx3DV+bBV4nR+s=
+	t=1738600641; cv=none; b=AMYAgEfqT8Q4IBqHB7DEBP7En4VyoBo5qAh8PUSdxylf3utWO7K57NI0XHWs3I9bgWbVSzSpvahXiwSvCNdcpEUiN8Wt6d7HxCSSM5s4GqKjOj5Ibqd3/dAEwUgR8s4ldIgiu9Ok/ZAVhR1lsnHQKBHfU1t/nkcVXaIOE0tlIMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738600296; c=relaxed/simple;
-	bh=SiJFHOGW3I3zFqN3kp56SHJQkVmhHehxUSx0Yzr7T3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SNM8XI4r1pueeut53xXcnsH1RGeBtlQuPlBEiXfVrp35oTiSvqK/AG7Kw4149Fe6JjwsQKVifaVBKexSFYLwobNZqvO3C3yQPhc3tBYc3YBGJoCj85R1ZBJHVJwCiJc9+l7dba9HjdxEe8tbTVHXSN53kAF7EstGbe5bRG6MePI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eDun3atx; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-844ef6275c5so114463239f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2025 08:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738600294; x=1739205094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0/fjiuRElsEUMm3xq1l9P9axtS1BBAUWMYirAwWU00g=;
-        b=eDun3atxS7vxUznNqvzlHscmKmp+culWjhLBvNJamQbJNI3zSSllnwE6H20E5RhVlC
-         GdeexBEgDdaMRNCM0Rp/xsAiKCBkwWytUDtmeOf2qjZjDClIS86rNr7jCmP9m3ThkGAD
-         adgOQ+QR+e+dKkHlVgbT2H67SmahIgrsqwb9k7hFeB/HZSJJkEYywJAC9x+DKMbNhw95
-         8wkvfAy10YfwYLhmM+FvoT1up2XAi/FoX6I93aWMYrr/8NyxiYRy6iPpCSfrO5dS6Dru
-         ylXEMNStmLLB4J1BgnhhXJy7PoJayyYxNNKHoX0VSpb0KzFwEgDZTYvF78m3dt+sg9UK
-         bq+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738600294; x=1739205094;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0/fjiuRElsEUMm3xq1l9P9axtS1BBAUWMYirAwWU00g=;
-        b=r387JNf/F6KUPjqB9Kdty+nHZExmHSi7RxxtaPqA/tqXhXbaVtirkHZX0xXrBKTx0d
-         jauRrxLv9aAV8G4URCpq+RQ8KgfD67IUVQWH1HBj94IpU8WibvefATPXDkZ9/7pJCeuy
-         4SF0yqtQfSKm7JAQRL+2c9vZbc4UVVhrP0p5EUWHRkpcsfkLojds1k/Zq9sJ6NsF8Ymi
-         mXPgYoCIPef37DJWHKaPNsGBQJs1y2WJCyQd8WFHsW7gbmimPOl8/mbk+jqf2MvHtoUd
-         z6giVmudIBEzhVM9lcwiKFA8C+fwpxlLN0hOOJmx7C87brFUBnmz6ODu8Z/JjUgvVf2q
-         TL4w==
-X-Gm-Message-State: AOJu0YxiIzPDHth1G/GT9W4SkoFEaTuc/jpQ5DzwlmiyLA/zTshqdfKI
-	DrQurnolcqirGH5T06YnXhJIR+o2xDvzHpQ5VCoYljCgZfwchqpxpSf89+jHezQ=
-X-Gm-Gg: ASbGncva44jAo85arzuwT5Z2gKf4nTKwMEHjEXl2g7xcxTQyOjbsnqHAgaQfsmDPbOG
-	gjlK/ioJUaXyvTbYLonBOWYHCQRB5mtptVkYsS3itNoaqpct3HTuxTm46MmiJNaDRj/vOjHBX1c
-	jF1y4SlXinbPOv1NM2ITE+QWALsn6cXqSgrJhWwWomo3aqkqp2p5CqE4WJVUkGLjgQwYVQ2ZdvY
-	SKCpcbudW3jG8FV4NTQa841ex+7nouW2uJJ8g/TvI5cVO4FCdhXVJFPDK3yUKlvGLw7LgLlBVGG
-	vv1/q3yVdVFeEPx6Lm4=
-X-Google-Smtp-Source: AGHT+IH2wV2mJH512YPftlISVyZWUOTcz9QVi4y2nD/702D7EXmTUdDrOmfIKi7tAhOGaOpiBEGhqg==
-X-Received: by 2002:a05:6602:3990:b0:844:debf:24dc with SMTP id ca18e2360f4ac-85411111991mr2269268639f.5.1738600292695;
-        Mon, 03 Feb 2025 08:31:32 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854a16123c6sm243748139f.24.2025.02.03.08.31.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2025 08:31:31 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 9/9] io_uring/epoll: add multishot support for IORING_OP_EPOLL_WAIT
-Date: Mon,  3 Feb 2025 09:23:47 -0700
-Message-ID: <20250203163114.124077-10-axboe@kernel.dk>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250203163114.124077-1-axboe@kernel.dk>
-References: <20250203163114.124077-1-axboe@kernel.dk>
+	s=arc-20240116; t=1738600641; c=relaxed/simple;
+	bh=PTEQg+KoPw4rUZvEINnJWwcR+6Sxha5H214W4w+bQv4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=knRxtv5iQnFJRsFYDCCelONlj7lq/lRSpEisRbDOqLGB7yPv2+5SV9T4jS12GT4KraPr3oHs0HVGe8lgqjP0OAe7/NwcuDaJCcy1zCjRL/T6rbnVVCwN5IlYlYhQWmufL5wNZ3GXWwLqJZm/4O0QQhilTy7ui+UPJGhBPeTNTq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJ6BmngV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E53C4CEE3;
+	Mon,  3 Feb 2025 16:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738600640;
+	bh=PTEQg+KoPw4rUZvEINnJWwcR+6Sxha5H214W4w+bQv4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZJ6BmngV7dhkxhhYKl2ceQ/+uvGAWgmgReWG7Fahpdsypf741KkJ+SUod9tFS/gvq
+	 JTmvF+x9waHH1KMbQyg4eVVrWfa35BacZoDsPPLIoyyAWkE9GjA1rNybf1+mdHFCih
+	 P4HbZelvaVYYZqvG8sk/LDnP+pf1RSDiMm7UYEJUd4lS2Jb2EMP7Oaix/vSI2mMZsr
+	 o/hgIELi2qMSPkPIfM6u7DY5DUbywPPZ91HHcwte1IiF52wrbfgELyz0BhMlDMj5a/
+	 E9axXnk5N1d3XLbZIn6/QlvDwgWc7ikbmtZkTPuAgNXVYfXjzli8khi9NETsUCjsR4
+	 GB+HQLEfUFaAA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 03 Feb 2025 11:37:06 -0500
+Subject: [PATCH] fuse: add a new "connections" file to show longest waiting
+ reqeust
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250203-fuse-sysfs-v1-1-36faa01f2338@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALHwoGcC/x3MMQqAMAxA0auUzAbSli5eRRykppqlSoOilN7d4
+ viG/ysoF2GF0VQofIvKkTvsYCDuS94YZe0GRy6QI4/pUkZ9NSlG9sGulkJMBD04Cyd5/tk0t/Y
+ B7lQEGVwAAAA=
+X-Change-ID: 20250203-fuse-sysfs-ce351d105cf0
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4220; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PTEQg+KoPw4rUZvEINnJWwcR+6Sxha5H214W4w+bQv4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnoPC4BprHsPxU60mfjU3S6jKFJj9kmsLN+GvL7
+ ggMSdHHgzaJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ6DwuAAKCRAADmhBGVaC
+ FdzsEACVDqbBrb8Z5INcw5Wp3DpjKBTNJPgHzNGJePMG17qx9XRC6Egpsw6hJ7uxbaQzbq0t0hG
+ 6L5/fUU+CYXcnzMFjwjmL1u/jtrenAOB+OpwPCb8bbWceUUJKgB8Yh0s765a2BmZl2DpTD6Mpqd
+ oe3nil5bVvMDg0xhhUdZi+dGZt+OR2TVXPKbPHSLUVdxsyW6XE3h+uLNubMe/TKWqk5kXjQ/qCu
+ tZMc4n1QnOvOkXAqGWJlRjwV8RLKJciGERfC+U6s//vo7vZ0GUtv7O/0OQ8pR5hkPBS+6076fil
+ KilqaXXRz2HareOCY+rQ+ESRYVLgZWXpEvDfB08S0spj87oi3tZxXdBs4TOyO2GraBDQFTOtbl5
+ KTAnvwo2kC4YgkvckHKOx4iOGnLp6uwwTn7FlJUjWUBHqQaH/vAh+eFuGrT+DJNO2vCUuBW2YOg
+ AowckWUOv36X9yF1Auudhdsk1Fx1gdLvHDyzdy4n/ZUSMWL3Uju18sKm7NfZzccNUH/TlRpq1Pt
+ ne+OfPgEv7r41yrnG2rQdmcbD3tvBaOqPTVPoTfHJNR7bIKbGC66as2OJkXvsbp5QHHqP/KnyCN
+ GYfaNzE6zYbfgzQO8fP7k0hrz3GhVmNUbNDpV5DxdtgnTaj2GI8/0pVeCHkQUq11H+Wv5zACE2S
+ 6VuGt6+sqz/BwfA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-As with other multishot requests, submitting a multishot epoll wait
-request will keep it re-armed post the initial trigger. This allows
-multiple epoll wait completions per request submitted, every time
-events are available. If more completions are expected for this
-epoll wait request, then IORING_CQE_F_MORE will be set in the posted
-cqe->flags.
+Add a new file to the "connections" directory that shows how long (in
+seconds) the oldest fuse_req in the processing hash or pending queue has
+been waiting.
 
-For multishot, the request remains on the epoll callback waitqueue
-head. This means that epoll doesn't need to juggle the ep->lock
-writelock (and disable/enable IRQs) for each invocation of the
-reaping loop. That should translate into nice efficiency gains.
-
-Use by setting IORING_EPOLL_WAIT_MULTISHOT in the sqe->epoll_flags
-member.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/uapi/linux/io_uring.h |  6 ++++++
- io_uring/epoll.c              | 40 ++++++++++++++++++++++++++---------
- 2 files changed, 36 insertions(+), 10 deletions(-)
+This is based on top of Joanne's work, as it requires the "create_time"
+field in fuse_req.  We have some internal detection of hung fuse server
+processes that relies on seeing elevated values in the "waiting" sysfs
+file. The problem with that method is that it can't detect when highly
+serialized workloads on a FUSE mount are hung. This adds another metric
+that we can use to detect when fuse mounts are hung.
+---
+ fs/fuse/control.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/fuse_i.h  |  2 +-
+ 2 files changed, 57 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index a559e1e1544a..93f504b6d4ec 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -73,6 +73,7 @@ struct io_uring_sqe {
- 		__u32		futex_flags;
- 		__u32		install_fd_flags;
- 		__u32		nop_flags;
-+		__u32		epoll_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -405,6 +406,11 @@ enum io_uring_op {
- #define IORING_ACCEPT_DONTWAIT	(1U << 1)
- #define IORING_ACCEPT_POLL_FIRST	(1U << 2)
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 2a730d88cc3bdb50ea1f8a3185faad5f05fc6e74..b213db11a2d7d85c4403baa61f9f7850fed150a8 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -180,6 +180,55 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+ 	return ret;
+ }
  
-+/*
-+ * epoll_wait flags, stored in sqe->epoll_flags
-+ */
-+#define IORING_EPOLL_WAIT_MULTISHOT	(1U << 0)
++/* Show how long (in s) the oldest request has been waiting */
++static ssize_t fuse_conn_oldest_read(struct file *file, char __user *buf,
++				      size_t len, loff_t *ppos)
++{
++	char tmp[32];
++	size_t size;
++	unsigned long oldest = jiffies;
 +
- /*
-  * IORING_OP_MSG_RING command types, stored in sqe->addr
-  */
-diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-index 2a9c679516c8..730f4b729f5b 100644
---- a/io_uring/epoll.c
-+++ b/io_uring/epoll.c
-@@ -24,6 +24,7 @@ struct io_epoll {
- struct io_epoll_wait {
- 	struct file			*file;
- 	int				maxevents;
-+	int				flags;
- 	struct epoll_event __user	*events;
- 	struct wait_queue_entry		wait;
- };
-@@ -145,12 +146,15 @@ static void io_epoll_retry(struct io_kiocb *req, struct io_tw_state *ts)
- 	io_req_task_submit(req, ts);
- }
- 
--static int io_epoll_execute(struct io_kiocb *req)
-+static int io_epoll_execute(struct io_kiocb *req, __poll_t mask)
- {
- 	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
- 
- 	if (io_poll_get_ownership(req)) {
--		list_del_init_careful(&iew->wait.entry);
-+		if (mask & EPOLL_URING_WAKE)
-+			req->flags &= ~REQ_F_APOLL_MULTISHOT;
-+		if (!(req->flags & REQ_F_APOLL_MULTISHOT))
-+			list_del_init_careful(&iew->wait.entry);
- 		req->io_task_work.func = io_epoll_retry;
- 		io_req_task_work_add(req);
- 		return 1;
-@@ -159,13 +163,13 @@ static int io_epoll_execute(struct io_kiocb *req)
- 	return 0;
- }
- 
--static __cold int io_epoll_pollfree_wake(struct io_kiocb *req)
-+static __cold int io_epoll_pollfree_wake(struct io_kiocb *req, __poll_t mask)
- {
- 	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
- 
- 	io_poll_mark_cancelled(req);
- 	list_del_init_careful(&iew->wait.entry);
--	io_epoll_execute(req);
-+	io_epoll_execute(req, mask);
- 	return 1;
- }
- 
-@@ -176,18 +180,23 @@ static int io_epoll_wait_fn(struct wait_queue_entry *wait, unsigned mode,
- 	__poll_t mask = key_to_poll(key);
- 
- 	if (unlikely(mask & POLLFREE))
--		return io_epoll_pollfree_wake(req);
-+		return io_epoll_pollfree_wake(req, mask);
- 
--	return io_epoll_execute(req);
-+	return io_epoll_execute(req, mask);
- }
- 
- int io_epoll_wait_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
- 
--	if (sqe->off || sqe->rw_flags || sqe->buf_index || sqe->splice_fd_in)
-+	if (sqe->off || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 
-+	iew->flags = READ_ONCE(sqe->epoll_flags);
-+	if (iew->flags & ~IORING_EPOLL_WAIT_MULTISHOT)
-+		return -EINVAL;
-+	else if (iew->flags & IORING_EPOLL_WAIT_MULTISHOT)
-+		req->flags |= REQ_F_APOLL_MULTISHOT;
- 	iew->maxevents = READ_ONCE(sqe->len);
- 	iew->events = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 
-@@ -195,6 +204,7 @@ int io_epoll_wait_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	iew->wait.private = req;
- 	iew->wait.func = io_epoll_wait_fn;
- 	INIT_LIST_HEAD(&iew->wait.entry);
-+	INIT_HLIST_NODE(&req->hash_node);
- 	atomic_set(&req->poll_refs, 0);
- 	return 0;
- }
-@@ -205,9 +215,11 @@ int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
--	io_ring_submit_lock(ctx, issue_flags);
--	hlist_add_head(&req->hash_node, &ctx->epoll_list);
--	io_ring_submit_unlock(ctx, issue_flags);
-+	if (hlist_unhashed(&req->hash_node)) {
-+		io_ring_submit_lock(ctx, issue_flags);
-+		hlist_add_head(&req->hash_node, &ctx->epoll_list);
-+		io_ring_submit_unlock(ctx, issue_flags);
++	if (!*ppos) {
++		struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
++		struct fuse_iqueue *fiq = &fc->iq;
++		struct fuse_dev *fud;
++		struct fuse_req *req;
++
++		if (!fc)
++			return 0;
++
++		spin_lock(&fc->lock);
++		list_for_each_entry(fud, &fc->devices, entry) {
++			struct fuse_pqueue *fpq = &fud->pq;
++			int i;
++
++			spin_lock(&fpq->lock);
++			for (i = 0; i < FUSE_PQ_HASH_SIZE; i++) {
++				if (list_empty(&fpq->processing[i]))
++					continue;
++				/*
++				 * Only check the first request in the queue. The
++				 * assumption is that the one at the head of the list
++				 * will always be the oldest.
++				 */
++				req = list_first_entry(&fpq->processing[i], struct fuse_req, list);
++				if (req->create_time < oldest)
++					oldest = req->create_time;
++			}
++			spin_unlock(&fpq->lock);
++		}
++		if (!list_empty(&fiq->pending)) {
++			req = list_first_entry(&fiq->pending, struct fuse_req, list);
++			if (req->create_time < oldest)
++				oldest = req->create_time;
++		}
++		spin_unlock(&fc->lock);
++		fuse_conn_put(fc);
 +	}
++	size = sprintf(tmp, "%ld\n", (jiffies - oldest)/HZ);
++	return simple_read_from_buffer(buf, len, ppos, tmp, size);
++}
++
+ static const struct file_operations fuse_ctl_abort_ops = {
+ 	.open = nonseekable_open,
+ 	.write = fuse_conn_abort_write,
+@@ -202,6 +251,11 @@ static const struct file_operations fuse_conn_congestion_threshold_ops = {
+ 	.write = fuse_conn_congestion_threshold_write,
+ };
  
- 	/*
- 	 * Timeout is fake here, it doesn't indicate any kind of sleep time.
-@@ -219,9 +231,17 @@ int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags)
- 		return IOU_ISSUE_SKIP_COMPLETE;
- 	else if (ret < 0)
- 		req_set_fail(req);
++static const struct file_operations fuse_ctl_oldest_ops = {
++	.open = nonseekable_open,
++	.read = fuse_conn_oldest_read,
++};
 +
-+	if (ret >= 0 && req->flags & REQ_F_APOLL_MULTISHOT &&
-+	    io_req_post_cqe(req, ret, IORING_CQE_F_MORE))
-+		return IOU_ISSUE_SKIP_COMPLETE;
-+
- 	io_ring_submit_lock(ctx, issue_flags);
- 	hlist_del_init(&req->hash_node);
- 	io_ring_submit_unlock(ctx, issue_flags);
- 	io_req_set_res(req, ret, 0);
-+
-+	if (issue_flags & IO_URING_F_MULTISHOT)
-+		return IOU_STOP_MULTISHOT;
- 	return IOU_OK;
- }
+ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
+ 					  struct fuse_conn *fc,
+ 					  const char *name,
+@@ -264,6 +318,8 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+ 
+ 	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400, 1,
+ 				 NULL, &fuse_ctl_waiting_ops) ||
++	    !fuse_ctl_add_dentry(parent, fc, "oldest", S_IFREG | 0400, 1,
++				 NULL, &fuse_ctl_oldest_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200, 1,
+ 				 NULL, &fuse_ctl_abort_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "max_background", S_IFREG | 0600,
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index dcc1c327a0574b1fd1adda4b7ca047aa353b6a0a..b46c26bc977ad2d75d10fb306d3ecc4caf2c53bd 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -42,7 +42,7 @@
+ #define FUSE_NAME_MAX 1024
+ 
+ /** Number of dentries for each connection in the control filesystem */
+-#define FUSE_CTL_NUM_DENTRIES 5
++#define FUSE_CTL_NUM_DENTRIES 6
+ 
+ /* Frequency (in seconds) of request timeout checks, if opted into */
+ #define FUSE_TIMEOUT_TIMER_FREQ 15
+
+---
+base-commit: 9afd7336f3acbe5678cca3b3bc5baefb51ce9564
+change-id: 20250203-fuse-sysfs-ce351d105cf0
+
+Best regards,
 -- 
-2.47.2
+Jeff Layton <jlayton@kernel.org>
 
 
