@@ -1,97 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-40619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA20A25DB9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:01:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E459DA25DFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 16:09:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2796B167014
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 14:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07E17162488
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 15:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FCB209F46;
-	Mon,  3 Feb 2025 14:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B4208962;
+	Mon,  3 Feb 2025 15:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aZwPak+4"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WbhdVjLP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0292208965
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 14:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EE2205E32
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 15:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738594284; cv=none; b=e7Z13WMzD6pknd2jWSa2uDjimsPIlCoTJppHClbE3GPW2VNNIHyryUQeDCw3cahEQCZnFMOEb4A2B2Xw3xPOINP+3SZ0kuWYXv1sLFmCjvhpZmjxDzyPQHHH/mhCD+GayYRdD8EFjHbVmNY+Xiu9xV1xW34l3DMucHAva47O5DQ=
+	t=1738595121; cv=none; b=K9k3BVFHls/NfaGwyW6fyY69g8usvc32HDWgyZSOD8QCYXOpbI6XFswCswOou0/4A7S8iNbgDeea5X5VRwFd3PYC8jcgiW34b8bCdaj4P4bq6K58sWTGoTRC76Y15Q1bQKg2tNHnXqAT5BLHW53XvctUtoIWjnLXfRawSgYy3tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738594284; c=relaxed/simple;
-	bh=uc9jPXSOkJumH2MlKMyRP4Ub4Dtbc0RCc9o6JV0zI/I=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=m5KizBJzXo7EaykSO9MC8MvtGEa+VvAAuGVyVV+pYPmv+bMSZFaUiNpJ1BasWi9ZyQ0/KORuBwNnsEzHUD/G/gkc644PgMUAoIuniF752XIqeWH6rpdkQMTz1fjhYQmul9/jFohipL7rdO1YkLxhnC1vhW23Lztc78yV1LaAIu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aZwPak+4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738594282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=263/793DicuReYm8n6LPz47U+pOenJtRCwlDeJnQaDk=;
-	b=aZwPak+4vM7bBAwxaRapJGvJYtuOBtXUWslssuOg7wGq6IfTPtbyHSfeVEYMLoCGuIDODe
-	LMUAtWEiMufJlPQGeiRKZrmo8RlfnUczuXrMXrkw1JWLuYKz5AXCbKJf7wg/oI3RPE9XQC
-	YqoRyCVxLcUhB/on+WvwNMXGzBQOjgg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-nfZ4DFVIMHum5Xd7-j1IbA-1; Mon,
- 03 Feb 2025 09:51:18 -0500
-X-MC-Unique: nfZ4DFVIMHum5Xd7-j1IbA-1
-X-Mimecast-MFC-AGG-ID: nfZ4DFVIMHum5Xd7-j1IbA
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 872951956080;
-	Mon,  3 Feb 2025 14:51:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 439391956094;
-	Mon,  3 Feb 2025 14:51:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250203142343.248839-1-dhowells@redhat.com>
-References: <20250203142343.248839-1-dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S.
- Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    Simon Horman <horms@kernel.org>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
-    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 00/24] net/rxrpc, crypto: Add Kerberos crypto lib and AF_RXRPC GSSAPI security class
+	s=arc-20240116; t=1738595121; c=relaxed/simple;
+	bh=y96G8i+2lpn6HM/qLoEH/mCnBd4vskBwM1j67112IVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcQJB0qXiNRzuFxTZ3UyPc9Ei9I6II989YSyj3dS2PBTmjFFQPjtBMdvh0HLceBpOLJQIYUnCOX+xoXBExkZKhDzffPmCunZjTHx2XlUW+rTnaHNrn+L/PfD/AG5VLZ54xPuDyXyX1In+Civ9jFhT30DvCq7Iax3x06Gn+EjEhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WbhdVjLP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9111C4CEE0;
+	Mon,  3 Feb 2025 15:05:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1738595120;
+	bh=y96G8i+2lpn6HM/qLoEH/mCnBd4vskBwM1j67112IVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WbhdVjLPvNaBvLBo4WxkbXMJb25li1ZDJwCfEnotQzpGgmJ/sK5B8D19TGkxnR8lE
+	 f0tPlBAfzx/+f4skcaHxAGHGLTS3jsTWxdrJ63ofdcg/KkYTkAtVgJXDEnFHeLmiIj
+	 cVR+ZRmOnJCHE/JmSypgHc1SmXq+x653LGotYf00=
+Date: Mon, 3 Feb 2025 16:05:17 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tejun Heo <tj@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Reaver <me@davidreaver.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Krister Johansen <kjlx@templeofstupid.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] samples/kernfs: Add a pseudo-filesystem to
+ demonstrate kernfs usage
+Message-ID: <2025020304-mango-preheated-1560@gregkh>
+References: <20250121153646.37895-1-me@davidreaver.com>
+ <Z5h0Xf-6s_7AH8tf@infradead.org>
+ <20250128102744.1b94a789@gandalf.local.home>
+ <CAHk-=wjEK-Ymmw8KYA_tENpDr_RstYxbXH=akjiUwxhkUzNx0Q@mail.gmail.com>
+ <20250128174257.1e20c80f@gandalf.local.home>
+ <Z5lfg4jjRJ2H0WTm@slm.duckdns.org>
+ <20250128182957.55153dfc@gandalf.local.home>
+ <Z5lqguLX-XeoktBa@slm.duckdns.org>
+ <20250128190224.635a9562@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <252339.1738594267.1@warthog.procyon.org.uk>
-Date: Mon, 03 Feb 2025 14:51:07 +0000
-Message-ID: <252340.1738594267@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250128190224.635a9562@gandalf.local.home>
 
-Oops.  This should have been tagged for net-next, not for net.
+On Tue, Jan 28, 2025 at 07:02:24PM -0500, Steven Rostedt wrote:
+> On Tue, 28 Jan 2025 13:38:42 -1000
+> Tejun Heo <tj@kernel.org> wrote:
+> 
+> > On Tue, Jan 28, 2025 at 06:29:57PM -0500, Steven Rostedt wrote:
+> > > What I did for eventfs, and what I believe kernfs does, is to create a
+> > > small descriptor to represent the control data and reference them like what
+> > > you would have on disk. That is, the control elements (like an trace event
+> > > descriptor) is really what is on "disk". When someone does an "ls" to the
+> > > pseudo file system, there needs to be a way for the VFS layer to query the
+> > > control structures like how a normal file system would query that data
+> > > stored on disk, and then let the VFS layer create the dentry and inodes
+> > > when referenced, and more importantly, free them when they are no longer
+> > > referenced and there's memory pressure.  
+> > 
+> > Yeap, that's exactly what kernfs does.
+> 
+> And eventfs goes one step further. Because there's a full directory layout
+> that's identical for every event, it has a single descriptor for directory
+> and not for file. As there can be over 10 files per directory/event I
+> didn't want to waste even that memory. This is why I couldn't use kernfs
+> for eventfs, as I was able to still save a couple of megabytes by not
+> having the files have any descriptor representing them (besides a single
+> array for all events).
 
-David
+Ok, that's fine, but the original point of "are you sure you want to use
+kernfs for anything other than what we have today" remains.  It's only a
+limited set of use cases that kernfs is good for, libfs is still the
+best place to start out for a virtual filesystem.  The fact that the
+majority of our "fake" filesystems are using libfs and not kernfs is
+semi-proof of that?
 
+Or is it proof that kernfs is just too undocumented that no one wants to
+move to it?  I don't know, but adding samples like this really isn't the
+answer to that, the answer would be moving an existing libfs
+implementation to use kernfs and then that patch series would be the
+example to follow for others.
+
+thanks,
+
+greg k-h
 
