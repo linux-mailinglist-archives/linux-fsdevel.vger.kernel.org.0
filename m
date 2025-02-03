@@ -1,210 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-40555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842DBA25109
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 02:14:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBEFA25111
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 02:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A9A07A15D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 01:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1883A4B74
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 01:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8706FC0E;
-	Mon,  3 Feb 2025 01:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CBC1804A;
+	Mon,  3 Feb 2025 01:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WcJKnUHW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D32EEB2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 01:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655213C2F;
+	Mon,  3 Feb 2025 01:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738545268; cv=none; b=iTzaJJTt4gU9WOZW5LFKOyKMaOXcZhTifjKyYSHQXQfpLN86O1jVqn1J3L2oZGP8ZAjXQFAU6dH04/lBugyTHJ3RblSxmdmJtV3FBti1qDZFopRMIyerj1sk5udzmXlgC7AEvdXIU39MYwRhqO1VpvCfghFGDgIwtgZqv/rB4FE=
+	t=1738546315; cv=none; b=Vw3pGhHG1SG8jrFX+qYYXGRIBaH/apo3TQNHgAaz6XmFGX3uBVvpwu5J3LHXO+edgnxiFh8PE3f10QeLZ6Pyj/Rvu8NfjKzh81IGXrDLarHDGaQswlp5XauDpKf18YJB3ybuwyQReGuWI0/nx+awQEC4lNXxcJSjFnuhpJlheJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738545268; c=relaxed/simple;
-	bh=7C6aZiOjkJMNbWW86XPFHFzkm5BO3AM9qJCo7hC1kF8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=towt+Uy0Zc6NmebXQxo2WqITIOK1YeCIRCZqRRHEeenVDklVDC6/yrCJ5r6ZxTu5wPKR9OGAK2bivAdMJdrg7ii3XZV9y3XPe68t6umFksRDrHB6tuI5q1HovdtwcY9YyGFKX9YHD75f9bL3q0kCKwlc+uL/vY6D6MLaDzPAL38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-84730592e44so259140239f.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Feb 2025 17:14:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738545266; x=1739150066;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i3U/vo0rAmOJFD7fReCHJuGGTPXG4g3RIEc673RAyRs=;
-        b=UlE5egyenrr6DoAlJZju3LXDgfKvHgSIn/mB/eggS9fsPAe4A7s/FnhBdFogCpPS+l
-         EQP/UV7S7kdU/Lug9MbhLqlxQEqDgHDuogDShcckd7oU6doB06YiGYEBEYF4oymnd1Pe
-         VFbi17NCrAEf60rGwj79UkntVfMqyJi+fXJNsEYTQQBrTUy+Omb/vK4tN+waTiLXUwVV
-         fv1Jr6v8fVAkd00aCCiDJgbMla3+Y1CCSXTFJO2i8ZpRIEw9VTQIve1WaEewG4VFBA0s
-         k/TmvBnCTSRoP3ftGjOMdxnXW7E2iiR9LlNrtK9i7teYwCytEdiKzMk7/P4yueqljOBY
-         Djug==
-X-Forwarded-Encrypted: i=1; AJvYcCV7F+SLaXfltxx6xYN6TYXVyFbdo+2phESaEwh8Cu979UFVmfpJa7rIWRWOrVnm2y5b0071J1Kt7A2Q+pNL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx54LH1cNtrTuufy7F5AKKBoPfOxItAMKnUiAFidH/WGw1btqIf
-	GAZ9g4oduS4kSUzvi/evLIqhdF+zpgDWSZLTVgJL1Z4m+LhJlK72lk0fPZ5ANs5ArGnJkK8Ih2c
-	GE0pF3JzSV2QKjwk1bPuOI/m5cEdgRCmqttji5giGpsfk3vSLt8S1k28=
-X-Google-Smtp-Source: AGHT+IHf4wRVucgy2K1rID2uMUXSz432zb8Dm1TszfL2Dyu7/iRKgxbm6N7YeYcfQk71c+gt/JbRit8DJMi5EZH8gUGEPuAeNs42
+	s=arc-20240116; t=1738546315; c=relaxed/simple;
+	bh=TGDXhA9VFUOBW0nUR/5s5rwPA+aY4v4jgiKejMQ3o/w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MKtQIlhutZ9EgwiM7EL/mGUcaE2RTVEFItpr4rd85D0DFf+EMSN3FNrZDqSAPwik1Blb1NImgaE5fwJSNO+g8c5s2TCgmY6O4nFxl7SJPKTwPnj6q5Z1z1vAnZvDJ9u9s2bq4n9P3QvrGjmKp9W/B9jUInA4uC8Ektz0PIHVcOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WcJKnUHW; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 512Bt595015380;
+	Mon, 3 Feb 2025 01:31:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kjxtf4
+	7CKNtSchjNhx+lVCQZ7est2gEQwyCLkceGQhQ=; b=WcJKnUHWyMsH86R3gehVOc
+	3YwRh0hayDnxFdDGo1bRMPfL4nveP9Er5tzc0TC426W+ypv4q4LiGkQDePQDEVsU
+	6QQHB+SjFu3upkC9I8si3ioTuAh+9KbWhJWsrre/v/hQHw5mShyJZ+mMXjuukYhA
+	bjKHBm1L0ZcnQXuH4m9NaNg66jHVsVtAEDxKhMfl+JUY6lIn7O48mXSo5WxWbm99
+	HbHPuUD2BVLt8k2wZOaYRbW/vuLn7ZrjTQtPocqHCGWG5xYzyXoKpvmP2wpCO/zM
+	yjF5GDugKHXfksFtbQUtnjmTqhzlm3asMIudYLDy22Spz50qH2yReV/N9siSoTJw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44j2h7b2nn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Feb 2025 01:31:13 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5131VCk6026537;
+	Mon, 3 Feb 2025 01:31:12 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44j2h7b2nj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Feb 2025 01:31:12 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51305aci005258;
+	Mon, 3 Feb 2025 01:31:11 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44j05jktxk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Feb 2025 01:31:11 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5131VAKY21889644
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Feb 2025 01:31:10 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AC1E15804B;
+	Mon,  3 Feb 2025 01:31:10 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 22A3E58063;
+	Mon,  3 Feb 2025 01:31:09 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.68.214])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  3 Feb 2025 01:31:09 +0000 (GMT)
+Message-ID: <e93596a3f7696bfe4912f6ec91152e8969bb1192.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 6/6] ima: Reset IMA_NONACTION_RULE_FLAGS after
+ post_setattr
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>, stable@vger.kernel.org
+Date: Sun, 02 Feb 2025 20:31:08 -0500
+In-Reply-To: <20250122172432.3074180-7-roberto.sassu@huaweicloud.com>
+References: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
+	 <20250122172432.3074180-7-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e2:b0:3cf:b3ab:584d with SMTP id
- e9e14a558f8ab-3cffe3f6221mr149843195ab.13.1738545265901; Sun, 02 Feb 2025
- 17:14:25 -0800 (PST)
-Date: Sun, 02 Feb 2025 17:14:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67a01871.050a0220.d7c5a.007b.GAE@google.com>
-Subject: [syzbot] [fs?] KMSAN: uninit-value in full_proxy_poll
-From: syzbot <syzbot+a84ce0b8e1f3da037bf7@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: t7kdbocf0x0rsMPmREaRiai9DjIdcEvh
+X-Proofpoint-GUID: WIU-qrlO92XxGySXJmSX2cnXAh44zW33
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-02_11,2025-01-31_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 phishscore=0 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 clxscore=1015 adultscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502030011
 
-Hello,
+On Wed, 2025-01-22 at 18:24 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Commit 11c60f23ed13 ("integrity: Remove unused macro
+> IMA_ACTION_RULE_FLAGS") removed the IMA_ACTION_RULE_FLAGS mask, due to it
+> not being used after commit 0d73a55208e9 ("ima: re-introduce own integrit=
+y
+> cache lock").
+>=20
+> However, it seems that the latter commit mistakenly used the wrong mask
+> when moving the code from ima_inode_post_setattr() to process_measurement=
+(). There
+> is no mention in the commit message about this
+> change and it looks quite important, since changing from IMA_ACTIONS_FLAG=
+S
+> (later renamed to IMA_NONACTION_FLAGS) to IMA_ACTION_RULE_FLAGS was done =
+by
+> commit 42a4c603198f0 ("ima: fix ima_inode_post_setattr").
 
-syzbot found the following issue on:
+Roberto, thank you for the detailed explanation.  Could we summarize the pr=
+oblem as:=20
 
-HEAD commit:    b4b0881156fb Merge tag 'docs-6.14-2' of git://git.lwn.net/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=146c5ddf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7d0bb5e08cf54aa2
-dashboard link: https://syzkaller.appspot.com/bug?extid=a84ce0b8e1f3da037bf7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cb8518580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122a0b24580000
+Commit 0d73a55208e9 ("ima: re-introduce own integrity cache lock") mistaken=
+ly
+reverted the performance improvement introduced in commit 42a4c603198f0 ("i=
+ma: fix
+ima_inode_post_setattr").  The unused bit mask was subsequently removed by =
+commit
+11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAGS").
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4dbe3cd3dcb8/disk-b4b08811.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/592d90859f86/vmlinux-b4b08811.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4cfde2b63c7f/bzImage-b4b08811.xz
+>=20
+> Restore the original change of resetting only the policy-specific flags a=
+nd
+> not the new file status, but with new mask 0xfb000000 since the
+> policy-specific flags changed meanwhile. Also rename IMA_ACTION_RULE_FLAG=
+S
+> to IMA_NONACTION_RULE_FLAGS, to be consistent with IMA_NONACTION_FLAGS.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a84ce0b8e1f3da037bf7@syzkaller.appspotmail.com
+Instead of restoring the bit mask that is used only once, consider inlining=
+ the
+correct bit mask (e.g. IMA_NONACTION_FLAGS & ~IMA_NEW_FILE) and expanding t=
+he
+existing comment.
 
-=====================================================
-BUG: KMSAN: uninit-value in full_proxy_poll+0xdf/0x3b0 fs/debugfs/file.c:411
- full_proxy_poll+0xdf/0x3b0 fs/debugfs/file.c:411
- vfs_poll include/linux/poll.h:82 [inline]
- ep_item_poll fs/eventpoll.c:1060 [inline]
- ep_insert+0x19c7/0x2740 fs/eventpoll.c:1736
- do_epoll_ctl+0xd83/0x17f0 fs/eventpoll.c:2394
- __do_sys_epoll_ctl fs/eventpoll.c:2445 [inline]
- __se_sys_epoll_ctl fs/eventpoll.c:2436 [inline]
- __x64_sys_epoll_ctl+0x1b5/0x210 fs/eventpoll.c:2436
- x64_sys_call+0x1658/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:234
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> Cc: stable@vger.kernel.org=C2=A0# v4.16.x
+> Fixes: 11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAG=
+S")
 
-Uninit was stored to memory at:
- __debugfs_file_get+0xe86/0xef0 fs/debugfs/file.c:122
- full_proxy_open_regular+0x67/0xa00 fs/debugfs/file.c:447
- do_dentry_open+0x1bdd/0x26b0 fs/open.c:955
- vfs_open+0x53/0x5b0 fs/open.c:1085
- do_open fs/namei.c:3830 [inline]
- path_openat+0x56a1/0x6250 fs/namei.c:3989
- do_filp_open+0x268/0x600 fs/namei.c:4016
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1427
- do_sys_open fs/open.c:1442 [inline]
- __do_sys_openat fs/open.c:1458 [inline]
- __se_sys_openat fs/open.c:1453 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1453
- x64_sys_call+0x36f5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Please update the Fixes tag to refer to commit 0d73a55208e9.
 
-Uninit was stored to memory at:
- __debugfs_file_get+0xe59/0xef0 fs/debugfs/file.c:120
- full_proxy_open_regular+0x67/0xa00 fs/debugfs/file.c:447
- do_dentry_open+0x1bdd/0x26b0 fs/open.c:955
- vfs_open+0x53/0x5b0 fs/open.c:1085
- do_open fs/namei.c:3830 [inline]
- path_openat+0x56a1/0x6250 fs/namei.c:3989
- do_filp_open+0x268/0x600 fs/namei.c:4016
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1427
- do_sys_open fs/open.c:1442 [inline]
- __do_sys_openat fs/open.c:1458 [inline]
- __se_sys_openat fs/open.c:1453 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1453
- x64_sys_call+0x36f5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Uninit was stored to memory at:
- __debugfs_file_get+0xdff/0xef0 fs/debugfs/file.c:118
- full_proxy_open_regular+0x67/0xa00 fs/debugfs/file.c:447
- do_dentry_open+0x1bdd/0x26b0 fs/open.c:955
- vfs_open+0x53/0x5b0 fs/open.c:1085
- do_open fs/namei.c:3830 [inline]
- path_openat+0x56a1/0x6250 fs/namei.c:3989
- do_filp_open+0x268/0x600 fs/namei.c:4016
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1427
- do_sys_open fs/open.c:1442 [inline]
- __do_sys_openat fs/open.c:1458 [inline]
- __se_sys_openat fs/open.c:1453 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1453
- x64_sys_call+0x36f5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ---
+> =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> =C2=A0security/integrity/ima/ima_main.c | 2 +-
+> =C2=A02 files changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index e1a3d1239bee..615900d4150d 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -141,6 +141,7 @@ struct ima_kexec_hdr {
+> =C2=A0
+> =C2=A0/* IMA iint policy rule cache flags */
+> =C2=A0#define IMA_NONACTION_FLAGS	0xff000000
+> +#define IMA_NONACTION_RULE_FLAGS	0xfb000000
+> =C2=A0#define IMA_DIGSIG_REQUIRED	0x01000000
+> =C2=A0#define IMA_PERMIT_DIRECTIO	0x02000000
+> =C2=A0#define IMA_NEW_FILE		0x04000000
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 46adfd524dd8..7173dca20c23 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -275,7 +275,7 @@ static int process_measurement(struct file *file, con=
+st struct
+> cred *cred,
+> =C2=A0		/* reset appraisal flags if ima_inode_post_setattr was called */
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4121 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- __kmalloc_cache_noprof+0x8e3/0xdf0 mm/slub.c:4320
- kmalloc_noprof include/linux/slab.h:901 [inline]
- __debugfs_file_get+0x31d/0xef0 fs/debugfs/file.c:101
- full_proxy_open_regular+0x67/0xa00 fs/debugfs/file.c:447
- do_dentry_open+0x1bdd/0x26b0 fs/open.c:955
- vfs_open+0x53/0x5b0 fs/open.c:1085
- do_open fs/namei.c:3830 [inline]
- path_openat+0x56a1/0x6250 fs/namei.c:3989
- do_filp_open+0x268/0x600 fs/namei.c:4016
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1427
- do_sys_open fs/open.c:1442 [inline]
- __do_sys_openat fs/open.c:1458 [inline]
- __se_sys_openat fs/open.c:1453 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1453
- x64_sys_call+0x36f5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Update the comment based on the original commit 42a4c603198f ("ima: fix
+ima_inode_post_setattr") patch description.
 
-CPU: 0 UID: 0 PID: 5778 Comm: syz-executor303 Not tainted 6.13.0-syzkaller-09585-gb4b0881156fb #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-=====================================================
+thanks,
 
+Mimi
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> =C2=A0		iint->flags &=3D ~(IMA_APPRAISE | IMA_APPRAISED |
+> =C2=A0				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> -				 IMA_NONACTION_FLAGS);
+> +				 IMA_NONACTION_RULE_FLAGS);
+> =C2=A0	/*
+> =C2=A0	 * Re-evaulate the file if either the xattr has changed or the
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
