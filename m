@@ -1,200 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-40659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA3AA26416
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 20:53:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A285A26424
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 20:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4307E1884A60
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 19:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087371884E85
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2025 19:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AD8209684;
-	Mon,  3 Feb 2025 19:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF2820AF96;
+	Mon,  3 Feb 2025 19:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RspWVIQf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnNa8T7D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD0F7081E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Feb 2025 19:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F0D2C859;
+	Mon,  3 Feb 2025 19:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738612425; cv=none; b=U5OE4oWI7n/cj6QITFCE/CP70dUfnri+icYjmPizfr2EMu7y3Tlr/RieuwxjITL1TOrOtZjNYIn6ZzpMvdNSoKRR41fE2IHvVEdbtcvDe/OXoT+wpGWN4E6DPFNCgN94IMyIveA6LKfBG9IBezGuv3r0mVtWhRVP+N9P7giP3hY=
+	t=1738612634; cv=none; b=KqAcQKAbKSs8fGAHuJiAmOQHl/Tr+G4tdBI4+zXrw0iQM8rLx5juqCDORwh9Lvj9TPxKR6fQ8LpnojSaCK0SDLBx6rakv2kM8KVuxuqQLuk/49QuPekP8pzKY0ll7zwxBYFrEC6PQ7LYe9opA8+j3c68Uj8X1OY7xLDg4IkBS4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738612425; c=relaxed/simple;
-	bh=jbqQHOSdR3Z/E8p0gviyYU2szm3iBUXIVmM7BT5qRDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpP69ISsn1eULGuMrb6MBqXy1Gg0slPE9f5MI4zc7/iDA2XSqAID/M31f5ymI6CQf6xhV2k+frk78mTO8pfmdeR/5bF8k8IBOG5gzasEhWjZm/xOjsFpCTNpAs+58mOMSASaFKMinkdxq5xe2rAEm84CpxBGOpVBQH7jFUi7ddY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RspWVIQf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99499C4CED2;
-	Mon,  3 Feb 2025 19:53:44 +0000 (UTC)
+	s=arc-20240116; t=1738612634; c=relaxed/simple;
+	bh=MbZhQXOcBuoGHwEHZVCayiszN6qkd0BnW0Ck/i551cE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=H2kYuiPS5LQRP4vU78/M6c01yzqFKz1R0i2ByiwwHYrigvtoF2dXAcLq2SRVS+/vEYfLW41W3+YCMBvI5OBqyscWPuc5K5K6g3w9zr04qrPyxozcT/VxNuVpScvVLxvOHk+3Qcw+MJZlHz5Mj4GFXvonOewk6glspTk420gZydk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnNa8T7D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC6DC4CED2;
+	Mon,  3 Feb 2025 19:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738612424;
-	bh=jbqQHOSdR3Z/E8p0gviyYU2szm3iBUXIVmM7BT5qRDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RspWVIQf/hb7gijabGwCeepC+rtl0KexsgE1wUBvfn4HuygX4F8fC9Abu/7Pdy7Mj
-	 LZwQDg9XNiFyZ2pWrldLbtRUBkPbRbr2nVRsRPr9/2G9dtI/99vZWv82400F05J+TL
-	 GXt6sZe1NZBXzFVVwE8BLmNsyfZyaH8BgbZJOgywzS2xpHcVYDkzvEEBFIugs1ZIw2
-	 ylWSuSAUXNGkmkLcUdW612kuhTUalMhYkB7YgcQbEx0FWcOPJp8HjVcV80wI6EVQJa
-	 KKd2qC6vplVpHX9wb2x6+RiTk7fBYQgIO5n5ga12rAjbMvWV0KqDZoBPzG3xca+x2h
-	 AOI8fjgmTyxiQ==
-Date: Mon, 3 Feb 2025 11:53:43 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Boris Burkov <boris@bur.io>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Long Duration Stress Testing Filesystems
-Message-ID: <20250203195343.GA134490@frogsfrogsfrogs>
-References: <20250203185519.GA2888598@zen.localdomain>
+	s=k20201202; t=1738612634;
+	bh=MbZhQXOcBuoGHwEHZVCayiszN6qkd0BnW0Ck/i551cE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=EnNa8T7D5UccSRM+wCdcFk/UdgG8Kq3/Ra+Ldl2K6wsXea8HAWxPJnYC0i1JgrPNf
+	 pSVoZ4YWyuAZLg6bddK314m6Q3ktup8xMVdyRs7DMdmtA8n83Lo/2QraqRkoquSPuO
+	 WjPzYpPVids1sGJtVssXe8iA6jWsKMsL6NrNIDZ5N9JwsZHaE7W/N5VaLTG0gpxtja
+	 RcsHTvzRjlh9sHt0hMloLZX8x1kOEgH/LtJ8BpTC2cL0gPVKnLsUWNBcgxDHrb9ghG
+	 pAbZ1f/LSEVAfMIpmtjARO5Ldz14snWQPL/RyQkiQ5UJ1W/sDu0n+W+u14xR3It6u1
+	 tp6QAaD6B2c4A==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 03 Feb 2025 14:56:52 -0500
+Subject: [PATCH v2] fuse: add a new "connections" file to show longest
+ waiting reqeust
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250203185519.GA2888598@zen.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250203-fuse-sysfs-v2-1-b94d199435a7@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIQfoWcC/23MywrCMBCF4Vcps3YkFyLiyveQLkI60wYlkYwGS
+ 8m7G7t2+R843wZCJZLAZdigUI0Sc+phDgOExaeZME69wSjjlFEW+S2EsgoLBrJOT1q5wAr64Vm
+ I42fHbmPvJcorl3W3q/6tf5mqUaM9sfdKs7H2fL1TSfQ45jLD2Fr7AjwFelClAAAA
+X-Change-ID: 20250203-fuse-sysfs-ce351d105cf0
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4657; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=MbZhQXOcBuoGHwEHZVCayiszN6qkd0BnW0Ck/i551cE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnoR+VLf3jCrACcbHnMQYJrH2XeCxw/FYMOG/oP
+ 00+gwxOoeyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ6EflQAKCRAADmhBGVaC
+ FSFmD/4nYnAZPP4BwuBzwQJpuYc4ksGZRpzs4TtZxFoBQIpyhncnWnNlod08gLGgkVbr2UVImzn
+ viiOwuht6xkkpvsuW3rzie5WaEo0UL9v7/cSdoVO6Dwe4mf1vFPX2mDIwGoUc9oDsoBiK21D4W8
+ SNnYDXEWcbC+tfeVJ92SZ84KQ++mgrl31zITMkxEHcE/b1r0B4jLtCOFdKl/c3Y29LlyBeoQ8uR
+ x1bKOAiBaOE1JkFpA/eoQ2/YlyJN36M8kBsBkKNyt5TXvBtmjfPeqvIDhigiVsWGjhHR0gJQ2RF
+ p2u3Y6YinoLspmwzd5pWA69HYflpAaMVguMnDz4rwM3Nw/hGUoPB+j8Ukitb3YV/VmF+6lQkRPD
+ GOKnzat+luOCsndHmYct2A+Prs1D914rA/b+5sRNJJ1zZxYFxe4ZTezZMpQ9qrz/9YrupG6CVlD
+ QurSkI9+izwXNJL/cn9T3rkO6mIaUzCDCEwZcavxjkjNiymiUU1HylHwKSyO3giBvfPFPhlgog1
+ 472QXhaZjR33azVwemEF2WNNgFprEHtx/EpxuB4SU/MTjW7s5cgT7DpBpnLpyJ61he0ORv5WP/C
+ xSTwIKzVvQOQvFHzR4lRCmvYd+E0Dz6emGJUuqtPc3dlSkSIJkFmsRw/p/M4cdPFbOA52PHlIfu
+ v1PeREPGhIHyYuA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Mon, Feb 03, 2025 at 10:55:19AM -0800, Boris Burkov wrote:
-> At Meta, we currently primarily rely on fstests 'auto' runs for
-> validating Btrfs as a general purpose filesystem for all of our root
-> drives. While this has obviously proven to be a very useful test suite
-> with rich collaboration across teams and filesystems, we have observed a
-> recent trend in our production filesystem issues that makes us question
-> if it is sufficient.
-> 
-> Over the last few years, we have had a number of issues (primarily in
-> Btrfs, but at least one notable one in Xfs) that have been detected in
-> production, then reproduced with an unreliable non-specific stressor
-> that takes hours or even days to trigger the issue.
-> Examples:
-> - Btrfs relocation bugs
-> https://lore.kernel.org/linux-btrfs/68766e66ed15ca2e7550585ed09434249db912a2.1727212293.git.josef@toxicpanda.com/
-> https://lore.kernel.org/linux-btrfs/fc61fb63e534111f5837c204ec341c876637af69.1731513908.git.josef@toxicpanda.com/
-> - Btrfs extent map merging corruption
-> https://lore.kernel.org/linux-btrfs/9b98ba80e2cf32f6fb3b15dae9ee92507a9d59c7.1729537596.git.boris@bur.io/
-> - Btrfs dio data corruptions from bio splitting
-> (mostly our internal errors trying to make minimal backports of
-> https://lore.kernel.org/linux-btrfs/cover.1679512207.git.boris@bur.io/
-> and Christoph's related series)
-> - Xfs large folios 
-> https://lore.kernel.org/linux-fsdevel/effc0ec7-cf9d-44dc-aee5-563942242522@meta.com/
-> 
-> In my view, the common threads between these are that:
-> - we used fstests to validate these systems, in some cases even with
->   specific regression tests for highly related bugs, but still missed
->   the bugs until they hit us during our production release process. In
->   all cases, we had passing 'fstests -g auto' runs.
-> - were able to reproduce the bugs with a predictable concoction of "run
->   a workload and some known nasty btrfs operations in parallel". The most
->   common form of this was running 'fsstress' and 'btrfs balance', but it
->   wasn't quite universal. Sometimes we needed reflink threads, or
->   drop_caches, or memory pressure, etc. to trigger a bug.
-> - The relatively generic stressing reproducers took hours or days to
->   produce an issue then the investigating engineer could try to tweak and
->   tune it by trial and error to bring that time down for a particular bug.
-> 
-> This leads me to the conclusion that there is some room for improvement in
-> stress testing filesystems (at least Btrfs).
-> 
-> I attempted to study the prior art on this and so far have found:
-> - fsstress/fsx and the attendant tests in fstests/. There are ~150-200
->   tests using fsstress and fsx in fstests/. Most of them are xfs and
->   btrfs tests following the aforementioned pattern of racing fsstress
->   with some scary operations. Most of them tend to run for 30s, though
->   some are longer (and of course subject to TIME_FACTOR configuration)
-> - Similar duration error injection tests in fstests (e.g. generic/475)
-> - The NFSv4 Test Project
->   https://www.kernel.org/doc/ols/2006/ols2006v2-pages-275-294.pdf 
->   A choice quote regarding stress testing:
->   "One year after we started using FSSTRESS (in April 2005) Linux NFSv4
->   was able to sustain the concurrent load of 10 processes during 24
->   hours, without any problem. Three months later, NFSv4 reached 72 hours
->   of stress under FSSTRESS, without any bugs. From this date, NFSv4
->   filesystem tree manipulation is considered to be stable."
-> 
-> 
-> I would like to discuss:
-> - Am I missing other strategies people are employing? Apologies if there
->   are obvious ones, but I tried to hunt around for a few days :)
+Add a new file to the "connections" directory that shows how long (in
+seconds) the oldest fuse_req in the processing hash or pending queue has
+been waiting.
 
-At the moment I start six VMs per "configuration", which each run one of:
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This is based on top of Joanne's timeout patches, as it requires the
+"create_time" field in fuse_req.  We have some internal detection of
+hung fuse server processes that relies on seeing elevated values in the
+"waiting" sysfs file. The problem with that method is that it can't
+detect when highly serialized workloads on a FUSE mount are hung. This
+adds another metric that we can use to detect this situation.
+---
+Changes in v2:
+- use list_first_entry_or_null() when checking hash lists
+- take fiq->lock when checking pending list
+- ensure that if there are no waiting reqs, that the output will be 0
+- use time_before() to compare jiffies values
+- no need to hold fc->lock when walking pending queue
+- Link to v1: https://lore.kernel.org/r/20250203-fuse-sysfs-v1-1-36faa01f2338@kernel.org
+---
+ fs/fuse/control.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/fuse_i.h  |  2 +-
+ 2 files changed, 59 insertions(+), 1 deletion(-)
 
-generic/521	(directio)
-generic/522	(bufferedio)
-generic/476	(fsstress)
-generic/388	(fsstress + log recovery)
-xfs/285		(online fsck)
-xfs/286		(online metadata rebuild)
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 2a730d88cc3bdb50ea1f8a3185faad5f05fc6e74..b27f2120499826040af77d7662d2dad0e9f37ee6 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -180,6 +180,57 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+ 	return ret;
+ }
+ 
++/* Show how long (in s) the oldest request has been waiting */
++static ssize_t fuse_conn_oldest_read(struct file *file, char __user *buf,
++				      size_t len, loff_t *ppos)
++{
++	char tmp[32];
++	size_t size;
++	unsigned long now = jiffies;
++	unsigned long oldest = now;
++
++	if (!*ppos) {
++		struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
++		struct fuse_iqueue *fiq = &fc->iq;
++		struct fuse_dev *fud;
++		struct fuse_req *req;
++
++		if (!fc)
++			return 0;
++
++		spin_lock(&fc->lock);
++		list_for_each_entry(fud, &fc->devices, entry) {
++			struct fuse_pqueue *fpq = &fud->pq;
++			int i;
++
++			spin_lock(&fpq->lock);
++			for (i = 0; i < FUSE_PQ_HASH_SIZE; i++) {
++				/*
++				 * Only check the first request in the queue. The
++				 * assumption is that the one at the head of the list
++				 * will always be the oldest.
++				 */
++				req = list_first_entry_or_null(&fpq->processing[i],
++							       struct fuse_req, list);
++				if (req && time_before(req->create_time, oldest))
++					oldest = req->create_time;
++			}
++			spin_unlock(&fpq->lock);
++		}
++		spin_unlock(&fc->lock);
++
++		spin_lock(&fiq->lock);
++		req = list_first_entry_or_null(&fiq->pending, struct fuse_req, list);
++		if (req && time_before(req->create_time, oldest))
++			oldest = req->create_time;
++		spin_unlock(&fiq->lock);
++
++		fuse_conn_put(fc);
++	}
++	size = sprintf(tmp, "%ld\n", (now - oldest)/HZ);
++	return simple_read_from_buffer(buf, len, ppos, tmp, size);
++}
++
+ static const struct file_operations fuse_ctl_abort_ops = {
+ 	.open = nonseekable_open,
+ 	.write = fuse_conn_abort_write,
+@@ -202,6 +253,11 @@ static const struct file_operations fuse_conn_congestion_threshold_ops = {
+ 	.write = fuse_conn_congestion_threshold_write,
+ };
+ 
++static const struct file_operations fuse_ctl_oldest_ops = {
++	.open = nonseekable_open,
++	.read = fuse_conn_oldest_read,
++};
++
+ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
+ 					  struct fuse_conn *fc,
+ 					  const char *name,
+@@ -264,6 +320,8 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+ 
+ 	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400, 1,
+ 				 NULL, &fuse_ctl_waiting_ops) ||
++	    !fuse_ctl_add_dentry(parent, fc, "oldest", S_IFREG | 0400, 1,
++				 NULL, &fuse_ctl_oldest_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200, 1,
+ 				 NULL, &fuse_ctl_abort_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "max_background", S_IFREG | 0600,
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index dcc1c327a0574b1fd1adda4b7ca047aa353b6a0a..b46c26bc977ad2d75d10fb306d3ecc4caf2c53bd 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -42,7 +42,7 @@
+ #define FUSE_NAME_MAX 1024
+ 
+ /** Number of dentries for each connection in the control filesystem */
+-#define FUSE_CTL_NUM_DENTRIES 5
++#define FUSE_CTL_NUM_DENTRIES 6
+ 
+ /* Frequency (in seconds) of request timeout checks, if opted into */
+ #define FUSE_TIMEOUT_TIMER_FREQ 15
 
-with SOAK_DURATION=6.5d so that they wrap up right around the time that
-each rc release drops.  I also set FSSTRESS_AVOID="-m 16" so that we
-don't end up with gigantic quota files.
+---
+base-commit: 9afd7336f3acbe5678cca3b3bc5baefb51ce9564
+change-id: 20250203-fuse-sysfs-ce351d105cf0
 
-There are two "configurations" per kernel tree.  The dot product of them
-are:
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-djwong-dev:
--m metadir=1,autofsck=1,uquota,gquota,pquota,
--m metadir=1,autofsck=1,uquota,gquota,pquota, -d rtinherit=1,
-
-tot mainline:
--m autofsck=1, -d rtinherit=1,
--m autofsck=1,
-
-for-next:
--m metadir=1,autofsck=1,uquota,gquota,pquota,
--m metadir=1,autofsck=1,uquota,gquota,pquota, -d rtinherit=1,
-
-Actually, I just realized that with 6.14 I need to update the tot
-mainline configuration to have metadir=1.
-
-> - What is the universe of interesting stressors (e.g., reflink, scrub,
->   online repair, balance, etc.)
-
-Prodding djwong and everyone else into loading up fsx/fsstress with
-all their weird new file io calls. ;)
-
-> - What is the universe of interesting validation conditions (e.g.,
->   kernel panic, read only fs, fsck failure, data integrity error, etc.)
-> - Is there any interest in automating longer running fsstress runs? Are
->   people already doing this with varying TIME_FACTOR configurations in
->   fstests?
-
-I don't run with SOAK_DURATION > 14 days because I generally haven't
-found larger values to be useful in finding bugs.  However, these weekly
-long soak tests runs have been going since 2016.
-
-FWIW that actually started because we had a lot of customer complaints
-in that era about log recovery failures in xfs, and only later did I
-spread it beyond generic/388 to the six profiles above.
-
-> - There is relatively less testing with fsx than fsstress in fstests.
->   I believe this creates gaps for data corruption bugs rather than
->   "feature logic" issues that the fsstress feature set tends to hit.
-
-Probably.  I wonder how much we're really flexing io_uring?
-
---D
-
-> - Can we standardize on some modular "stressors" and stress durations
->   to run to validate file systems?
-> 
-> In the short term, I have been working on these ideas in a separate
-> barebones stress testing framework which I am happy to share, but isn't
-> particularly interesting in and of itself. It is basically just a
-> skeleton for concurrently running some concurrent "stressors" and then
-> validating the fs with some generic "validators". I plan to run it
-> internally just to see if I can get some useful results on our next few
-> major kernel releases.
-> 
-> And of course, I would love to discuss anything else of interest to
-> people who like stress testing filesystems!
-> 
-> Thanks,
-> Boris
-> 
 
