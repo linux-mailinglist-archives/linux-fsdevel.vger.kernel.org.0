@@ -1,162 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-40787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316FCA278E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 18:44:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941E4A27A1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 19:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D9D3A4BAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 17:44:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C7797A1534
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 18:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E02C216E08;
-	Tue,  4 Feb 2025 17:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0F02185B3;
+	Tue,  4 Feb 2025 18:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JgSiuWpb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLOf/bb1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BCF21660A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9E1217707;
+	Tue,  4 Feb 2025 18:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738691027; cv=none; b=kbRiRJBxqcNECVQICrp2EjpRt3XshmQDzI5VBg0XbnOImr+gfKP+cxU12bwuc5/w9Bi8goB44mrVLnff5e1UrJ9isPWxL62+ZgzKVzmVpaFALRAZKSBpMv6OFRzzEKs2r1qCuJ6O/wq5DacVE2P6DOX4gtF52cjLrsUd+mjVE/4=
+	t=1738694212; cv=none; b=LQzRdS8xs6h7r0HLBNpIOqx2zgREaXMmuctAk2uUObje+Tes0GA+pQYAVzDmgiYpygJg+7YXo1Mh8Toaz6zLVWmJSfa1efj38L+OM6IdElJV/zN9upeMZHyAMT9BMmumqBgIscYZLaWGIJ5dmjBeGk8s9oo8w9+OH5yj+xeWWGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738691027; c=relaxed/simple;
-	bh=RI516KF8KlF5wuxKhvy14BxpgtxjsqHgb9vmRE+RH8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6SdcL2mrBXw/MxPlEBsNEJXINtVMPGZOBbIUhQXPZAblV7lvHGxOU/FyyLo5ur6zLmGpprUqKilDFd/mc2u68X37wcMoeIbdJYiJ00zvHdlvBWaPzl6U7WQ3x3W3V8Qih7Z9Ipt79mhigxuDbZJaBKMfxt856gWQomXCzFGzZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JgSiuWpb; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-467abce2ef9so334671cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 09:43:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1738691024; x=1739295824; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EmE2lFz8a65MIXFo9x5Yc1zrZ1Lc4zxxKH4CPUa2jU4=;
-        b=JgSiuWpb+YML86EJyQ2/R0EZyW8W5JETWLI3LrOJ51FIvCEAwwIly+HFiTpAgCePJA
-         vm6MXrMO2k0MWYXUSlPiUeULVXSXaWBKabT6P6wjtDNJyWj3UF1F/e8Svc4k47mA2Iea
-         72dGJmmXDbhk+9kBDG3FbVX68ayh5oCoUnIvdznsGVdcb0bHcZfgFjqMNwuTVWiraD+Y
-         E+L0xHWR8k/VC5+Ntv8XEWw1KkasaMOEKGWYWThxtAqzcQS8cofSTFW3bmb+UdE4aTmw
-         /Xtd2TRLIvikBUVr0qyfgqii6Wegi88qm8OrswFl+5LJWokLzp827YroXGaSlM6YaV3b
-         EhEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738691024; x=1739295824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EmE2lFz8a65MIXFo9x5Yc1zrZ1Lc4zxxKH4CPUa2jU4=;
-        b=Tq3SJ6CNl+lMmSLC6EV8DJUflFsZAL+FoXnLQWf6JrFU2QgmJEHpnjI/7WMW8vH3Px
-         9LKhU/C/+e8J73JibcwNp8HMlYytz4jafGSJuOhwkZpawximRqV3KUoEAG/17ussAhra
-         PIPSxkRVg5dQgppvD9RmTr6cdjHzmS7C8SJlE2p0CFTMs9giwd3UT54dqR/Kz6UrvDS1
-         BKkTXOKiBBEYpAt2MNlNWA+HmFChMDpxFbMo2I1c1nSKoRjNDQMmF4VCsFmtC11Jgao2
-         s2vBn1cbRIHInyei4Rk5hOYWCwAB3y7g1r2/Sy5FiCos3jTKbsWQ8BWF3WQMevIoOXQf
-         ne7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKsCPsLy476VaGI2YafeBz2uJXN7TltDVTA7mGx9e0inSIJbvKAAF3lUqL3D6kS2Nqp8PuWB0p9TPrpoVG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX0ONXJzgpN4/eMVNJbUh5+Y0JbB9AfJG5RBQwBNqTrcLmR/BK
-	PaBBj2CGP2czZpaUHNy3ZNMoMErVh7Z+LaHbisWvCP05ojnX96voV3ASFcW7LqpuC62ViRkkwRf
-	ZDleoLUNC3+PgCV592fIoDLnmy9BbHJp+xXBy
-X-Gm-Gg: ASbGncuppx6FM3f+schCsq3j/IS51G3dRxqxXHP5TPw6om1mL6ha3sUUlx3eK/Ysvth
-	mkLwvOD4G3D5LuB4DIYTgn6CtL0ADBHdk0FU915NIgXsdtzt9lTSneOie4DYO0FTWinYnEniQCD
-	nyljOQI49BkHssrmB+rFyPJY7FV/c=
-X-Google-Smtp-Source: AGHT+IEakkqdUEODQS4oUhl0P6nM6vpIAMS/AXypUyD79wEUNQXqWMLpkJCIqWEzIzpizWIXImCaCf1Qfn+0Gv6ysdI=
-X-Received: by 2002:a05:622a:4296:b0:466:9af1:5a35 with SMTP id
- d75a77b69052e-4701901f667mr4483511cf.10.1738691023583; Tue, 04 Feb 2025
- 09:43:43 -0800 (PST)
+	s=arc-20240116; t=1738694212; c=relaxed/simple;
+	bh=quUNLBlosc32+78MWTyF54MMroopCuPFrWDVXPPH3x8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7gmomS5WHY4GjBDRUaXIaao/S3aZZwzSayigSGZHg9I6emrf/R02jXa9L2ky0G2oOLjaVA1LdwXBB02BG/prpNMD0eVw/xQPztAceFOlhugkvAaiXgRRRvY4wJqly3z3jXA2/QWdaaX+Er3/kcfo1XRzzt77D/GSIIUb/3rRLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLOf/bb1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CB3C4CEDF;
+	Tue,  4 Feb 2025 18:36:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738694211;
+	bh=quUNLBlosc32+78MWTyF54MMroopCuPFrWDVXPPH3x8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLOf/bb1CBB7uKxvYlajqdhCufhfMVu0ui/h+gkYO8eOX2WT/MhcI5kv4MHPP0qXA
+	 e/sQXUpc76uZd8gean96KBEwTEvSsy6LXNgHe57LS0noBGaTJVgSi9ELmXegAkEnWk
+	 bWt7FmYAke6oycVZl4LjG7TBOxxE32OYvpfpKSUM9xGgE/YlFbkkDvk+EvxGsKiPPL
+	 njwMdajMUFgzZ8bXcDiJ+FidVCZAYW59am3JBsqUqkeFJJHrAgjwrz6BF1wNBZ7WJb
+	 Mlllw2G88ktq4FjDfmwIBBfztSOeWIESqT+oEO/XhBhYVz6k8AT7EO9EuqD1+/6AUW
+	 LT3TUOLJdsPAg==
+Date: Tue, 4 Feb 2025 10:36:51 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Kanchan Joshi <joshi.k@samsung.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	Qu Wenruo <wqu@suse.com>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 7/7] xfs: implement block-metadata based data checksums
+Message-ID: <20250204183651.GA21791@frogsfrogsfrogs>
+References: <20250203094322.1809766-1-hch@lst.de>
+ <20250203094322.1809766-8-hch@lst.de>
+ <20250203222031.GB134507@frogsfrogsfrogs>
+ <20250204050025.GE28103@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
- <20250204-joggen-buddeln-29e5ca75abb7@brauner> <7a8a1719-466f-4e10-b1eb-9e9e1ef8ad52@lucifer.local>
-In-Reply-To: <7a8a1719-466f-4e10-b1eb-9e9e1ef8ad52@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 4 Feb 2025 09:43:31 -0800
-X-Gm-Features: AWEUYZl7RlmyhEU99QQ-tyghSf0sZ-KKDjjpT9EgshNSpko_7zG64QXhfE_k9kk
-Message-ID: <CAJuCfpEUusRt_ss7RtxRPP9q_LRwi+Lw+SOq32EUA58s3JOx1A@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] introduce PIDFD_SELF* sentinels
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>, 
-	John Hubbard <jhubbard@nvidia.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250204050025.GE28103@lst.de>
 
-On Tue, Feb 4, 2025 at 2:01=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Tue, Feb 04, 2025 at 10:46:35AM +0100, Christian Brauner wrote:
-> > On Thu, 30 Jan 2025 20:40:25 +0000, Lorenzo Stoakes wrote:
-> > > If you wish to utilise a pidfd interface to refer to the current proc=
-ess or
-> > > thread it is rather cumbersome, requiring something like:
-> > >
-> > >     int pidfd =3D pidfd_open(getpid(), 0 or PIDFD_THREAD);
-> > >
-> > >     ...
-> > >
-> > > [...]
-> >
-> > Updated merge message. I've slightly rearranged pidfd_send_signal() so
-> > we don't have to call CLASS(fd, f)(pidfd) unconditionally anymore.
->
-> Sounds good and thank you! Glad to get this in :)
+On Tue, Feb 04, 2025 at 06:00:25AM +0100, Christoph Hellwig wrote:
+> On Mon, Feb 03, 2025 at 02:20:31PM -0800, Darrick J. Wong wrote:
+> > On Mon, Feb 03, 2025 at 10:43:11AM +0100, Christoph Hellwig wrote:
+> > > This is a quick hack to demonstrate how data checksumming can be
+> > > implemented when it can be stored in the out of line metadata for each
+> > > logical block.  It builds on top of the previous PI infrastructure
+> > > and instead of generating/verifying protection information it simply
+> > > generates and verifies a crc32c checksum and stores it in the non-PI
+> > 
+> > PI can do crc32c now?  I thought it could only do that old crc16 from
+> > like 15 years ago and crc64?
+> 
+> NVMe has a protection information format with a crc32c, but it's not
+> supported by Linux yet.
 
-Sorry, a bit late to the party...
+Ah.  Missed that!
 
-We were discussing MADV_GUARD_INSTALL use with Android Bionic team and
-the possibility of caching pidfd_open() result for reuse when
-installing multiple guards, however doing that in libraries would pose
-issues as we can't predict the user behavior, which can fork() in
-between such calls. That would be an additional reason why having
-these sentinels is beneficial.
+> > If we try to throw crc32c at a device,
+> > won't it then reject the "incorrect" checksums?  Or is there some other
+> > magic in here where it works and I'm just too out of date to know?
+> 
+> This patch implements XFS-level data checksums on devices that implement
+> non-PI metadata, that is the device allows to store extra data with the
+> LBA, but doesn't actually interpret and verify it іn any way.
 
+Ohhhhh.  So the ondisk metadata /would/ need to capture the checksum
+type and which inodes are participating.
 
->
-> >
-> > ---
-> >
-> > Applied to the vfs-6.15.pidfs branch of the vfs/vfs.git tree.
-> > Patches in the vfs-6.15.pidfs branch should appear in linux-next soon.
-> >
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> >
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> >
-> > Note that commit hashes shown below are subject to change due to rebase=
-,
-> > trailer updates or similar. If in doubt, please check the listed branch=
-.
-> >
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs-6.15.pidfs
-> >
-> > [1/6] pidfd: add PIDFD_SELF* sentinels to refer to own thread/process
-> >       https://git.kernel.org/vfs/vfs/c/e6e4ed42f8d8
-> > [2/6] selftests/pidfd: add missing system header imcludes to pidfd test=
-s
-> >       https://git.kernel.org/vfs/vfs/c/c9f04f4a251d
-> > [3/6] tools: testing: separate out wait_for_pid() into helper header
-> >       https://git.kernel.org/vfs/vfs/c/fb67fe44116e
-> > [4/6] selftests: pidfd: add pidfd.h UAPI wrapper
-> >       https://git.kernel.org/vfs/vfs/c/ac331e56724d
-> > [5/6] selftests: pidfd: add tests for PIDFD_SELF_*
-> >       https://git.kernel.org/vfs/vfs/c/881a3515c191
-> > [6/6] selftests/mm: use PIDFD_SELF in guard pages test
-> >       https://git.kernel.org/vfs/vfs/c/b4703f056f42
+> > The crc32c generation and validation looks decent though we're
+> > definitely going to want an inode flag so that we're not stuck with
+> > stable page writes.
+> 
+> Yeah, support the NOCOW flag, have a sb flag to enable the checksums,
+> maybe even a field about what checksum to use, yodda, yodda.
+
+Why do we need nocow?  Won't the block contents and the PI data get
+written in an untorn fashion?
+
+--D
 
