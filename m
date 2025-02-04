@@ -1,329 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-40786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC455A278B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 18:38:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316FCA278E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 18:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4513A1751
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 17:37:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D9D3A4BAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 17:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787BB217704;
-	Tue,  4 Feb 2025 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E02C216E08;
+	Tue,  4 Feb 2025 17:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qwz1b2hT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JgSiuWpb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B61A21764F;
-	Tue,  4 Feb 2025 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BCF21660A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 17:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738690591; cv=none; b=kk7WgP6QIUYvLEJvNry6tyL2CJ2l20nHTLmCxml8oKnCupnPPTQbXwa4sbDJY36bPAZGLyfwLHOWmIUSu1lNZ5s2m90Xf9Hyi6iiK2CZHFKWpPn/5exIWXo5lhsAxiv1QIE15RlWRxrcaR7jdqh85IkDAkIEoHA5MkiJnC/3LEw=
+	t=1738691027; cv=none; b=kbRiRJBxqcNECVQICrp2EjpRt3XshmQDzI5VBg0XbnOImr+gfKP+cxU12bwuc5/w9Bi8goB44mrVLnff5e1UrJ9isPWxL62+ZgzKVzmVpaFALRAZKSBpMv6OFRzzEKs2r1qCuJ6O/wq5DacVE2P6DOX4gtF52cjLrsUd+mjVE/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738690591; c=relaxed/simple;
-	bh=mJoRNT/c0ha8OMPTHba0V8u4uxTClqTRzrhJOlFH2Pc=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=deaQ3Ddzknk+9RCxE/70LfNHC3SAdrG+mTHThTfT5W1fSWghnNhANH7rAIXW3OcnU3EcAsAgs/kWWYN6NYTUUyXVYK1usRDpyc0I1913II3xugROVALIHgM3C8LWGid2SA52fgZstaD+IOXzoFG5eiXQ9DMh6F75nRvpdt5WaG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qwz1b2hT; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21619108a6bso99672425ad.3;
-        Tue, 04 Feb 2025 09:36:29 -0800 (PST)
+	s=arc-20240116; t=1738691027; c=relaxed/simple;
+	bh=RI516KF8KlF5wuxKhvy14BxpgtxjsqHgb9vmRE+RH8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l6SdcL2mrBXw/MxPlEBsNEJXINtVMPGZOBbIUhQXPZAblV7lvHGxOU/FyyLo5ur6zLmGpprUqKilDFd/mc2u68X37wcMoeIbdJYiJ00zvHdlvBWaPzl6U7WQ3x3W3V8Qih7Z9Ipt79mhigxuDbZJaBKMfxt856gWQomXCzFGzZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JgSiuWpb; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-467abce2ef9so334671cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 09:43:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738690589; x=1739295389; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fBTd+QKws5bL0u6aVraqPtVTxCvfaWJHWL05QjdevL8=;
-        b=Qwz1b2hTuINduJRw7PyPChNK3Dyty+US5mf/JB1xaDSAeHD6+3iwVC37rB2eJJWUZJ
-         Ac8PMG5UGBMiQ3a0Y4PPmiTE/sg0llKxscBJGEgZAjdMY9RqyhmllevH57qQPrw7KyWW
-         HzfzMgJHQnMP8GsgE5QCMJhJyJE2w9zk1KwXFCZEGLhWR+k8WF8NqXzX/jxNZUrug0B2
-         95Vtm+kiZBeyS9J8jh1fG9V4VDkTQiRjaELHc25zbZdneZlObsX6OtGwkxJUjXscPyrM
-         1ZQEZ4f6e2LzsF9Uud38t08vrD2WBnEv3mL5i7eRXc3CUAmJiSkRd77DeeJSwadMTYAH
-         msaQ==
+        d=google.com; s=20230601; t=1738691024; x=1739295824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EmE2lFz8a65MIXFo9x5Yc1zrZ1Lc4zxxKH4CPUa2jU4=;
+        b=JgSiuWpb+YML86EJyQ2/R0EZyW8W5JETWLI3LrOJ51FIvCEAwwIly+HFiTpAgCePJA
+         vm6MXrMO2k0MWYXUSlPiUeULVXSXaWBKabT6P6wjtDNJyWj3UF1F/e8Svc4k47mA2Iea
+         72dGJmmXDbhk+9kBDG3FbVX68ayh5oCoUnIvdznsGVdcb0bHcZfgFjqMNwuTVWiraD+Y
+         E+L0xHWR8k/VC5+Ntv8XEWw1KkasaMOEKGWYWThxtAqzcQS8cofSTFW3bmb+UdE4aTmw
+         /Xtd2TRLIvikBUVr0qyfgqii6Wegi88qm8OrswFl+5LJWokLzp827YroXGaSlM6YaV3b
+         EhEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738690589; x=1739295389;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fBTd+QKws5bL0u6aVraqPtVTxCvfaWJHWL05QjdevL8=;
-        b=ehQ9kmzk3bQIp/Nwb6NUxQx1Uqh/TRfL9TEJsJGlRNs7z0FgraFF0vKQR/BCm4DbF8
-         38c1dHXM2Bhlrg4B4TRwXzlXy4AHj1rOySKuPrX0DhiUGo6yqt3JmJsqWPzr35HkwwaC
-         4N/WWG2gODzLaQHIsVHda79eOrKfMkbAdE4vRZZzZxhLROo0zjYgCqjzD6m2LGIdvo9U
-         E/q996Q481C8nMDgsaCvAWKIgnL/5ZImGajBPAbvK7ALMyZfdA4Q24CWOyqKGYM+59Q4
-         uw2lrodwV2pOQyPZ4jRvWv48pL1Xbh+mYSPKZ3+Gh1sTEu7SWuZXfjqxJ7QCiaPCvTgD
-         6LzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzBLLnkPNGKoCWXXP7pGZs3Lgd5PuLxU1rqeT1gzS6JD9nuY1sOBjw1edufgrh0sMXTr4uTPQswjMBBWk+Zg==@vger.kernel.org, AJvYcCXI7mJUB8MKeUzKnd4QBWkJyFQwIZFCk9W2EPkR4C2Zayb2o2OykT9z8/h0mWIq23jmYFfha6rYLR+U@vger.kernel.org, AJvYcCXLGK3okx5KyKodHGCi/xvssuvLcdXSbBZq4UE/ptq/nosxAzfbeZZ5VPzZnMgmIT4ZszrhIyMkfK0z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKZoNTBiB08N6EcW60gXyuPwlzZJw13OKVRH0jKeIFLrA+Vhal
-	FFzkis5GR6ng45PyDYnDlByGxiaXNSNiRj27z38Qu3UO/ZPbzd67
-X-Gm-Gg: ASbGncuVwyLE3O5mw2CDFqdE7U3AIrW6qniVcKW5NFwgkge6iing/d79WDg/Q6oH5o1
-	3f0ezUmk4VCxFAOFZZ8rTrHl/OYogyKYwWDENwBjxkouEtBh9B0fCFzw95UzpTX46KBb01duHgT
-	uRvolfLH5HbuPfAn1VaVT8IK2i26AI2pFOW0nw01aK1NTHUy9XRa1JUcIVk/uUCzHe8uINPPVHy
-	IW9Adk+Hm2SS5ROdFY3KWQxGRHMPkjy7QBHYFZig2yVbqlHR3yENWKHgXPBfGXadSSSiHaN3cIp
-	9U7PWwcz
-X-Google-Smtp-Source: AGHT+IFt+GHa7BXc/6mtnMTCsNzN7apr1kW66uEGf5H/QpgvNqot84o+EjiUboQmXI8W5ZHtrZT/8w==
-X-Received: by 2002:a17:902:e742:b0:215:a97a:c6bb with SMTP id d9443c01a7336-21dd7c65891mr432206515ad.12.1738690589126;
-        Tue, 04 Feb 2025 09:36:29 -0800 (PST)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de31f5f4esm100365155ad.69.2025.02.04.09.36.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 09:36:28 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Dave Chinner <david@fromorbit.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, djwong@kernel.org, dchinner@redhat.com, jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org, nirjhar.roy.lists@gmail.com, zlang@kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] xfstests: Centralizing filesystem configs and device configs
-In-Reply-To: <Z6FFlxFEPfJT0h_P@dread.disaster.area>
-Date: Tue, 04 Feb 2025 12:44:00 +0530
-Message-ID: <87ed0erxl3.fsf@gmail.com>
-References: <Z55RXUKB5O5l8QjM@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <Z6FFlxFEPfJT0h_P@dread.disaster.area>
+        d=1e100.net; s=20230601; t=1738691024; x=1739295824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EmE2lFz8a65MIXFo9x5Yc1zrZ1Lc4zxxKH4CPUa2jU4=;
+        b=Tq3SJ6CNl+lMmSLC6EV8DJUflFsZAL+FoXnLQWf6JrFU2QgmJEHpnjI/7WMW8vH3Px
+         9LKhU/C/+e8J73JibcwNp8HMlYytz4jafGSJuOhwkZpawximRqV3KUoEAG/17ussAhra
+         PIPSxkRVg5dQgppvD9RmTr6cdjHzmS7C8SJlE2p0CFTMs9giwd3UT54dqR/Kz6UrvDS1
+         BKkTXOKiBBEYpAt2MNlNWA+HmFChMDpxFbMo2I1c1nSKoRjNDQMmF4VCsFmtC11Jgao2
+         s2vBn1cbRIHInyei4Rk5hOYWCwAB3y7g1r2/Sy5FiCos3jTKbsWQ8BWF3WQMevIoOXQf
+         ne7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKsCPsLy476VaGI2YafeBz2uJXN7TltDVTA7mGx9e0inSIJbvKAAF3lUqL3D6kS2Nqp8PuWB0p9TPrpoVG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX0ONXJzgpN4/eMVNJbUh5+Y0JbB9AfJG5RBQwBNqTrcLmR/BK
+	PaBBj2CGP2czZpaUHNy3ZNMoMErVh7Z+LaHbisWvCP05ojnX96voV3ASFcW7LqpuC62ViRkkwRf
+	ZDleoLUNC3+PgCV592fIoDLnmy9BbHJp+xXBy
+X-Gm-Gg: ASbGncuppx6FM3f+schCsq3j/IS51G3dRxqxXHP5TPw6om1mL6ha3sUUlx3eK/Ysvth
+	mkLwvOD4G3D5LuB4DIYTgn6CtL0ADBHdk0FU915NIgXsdtzt9lTSneOie4DYO0FTWinYnEniQCD
+	nyljOQI49BkHssrmB+rFyPJY7FV/c=
+X-Google-Smtp-Source: AGHT+IEakkqdUEODQS4oUhl0P6nM6vpIAMS/AXypUyD79wEUNQXqWMLpkJCIqWEzIzpizWIXImCaCf1Qfn+0Gv6ysdI=
+X-Received: by 2002:a05:622a:4296:b0:466:9af1:5a35 with SMTP id
+ d75a77b69052e-4701901f667mr4483511cf.10.1738691023583; Tue, 04 Feb 2025
+ 09:43:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
+ <20250204-joggen-buddeln-29e5ca75abb7@brauner> <7a8a1719-466f-4e10-b1eb-9e9e1ef8ad52@lucifer.local>
+In-Reply-To: <7a8a1719-466f-4e10-b1eb-9e9e1ef8ad52@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 4 Feb 2025 09:43:31 -0800
+X-Gm-Features: AWEUYZl7RlmyhEU99QQ-tyghSf0sZ-KKDjjpT9EgshNSpko_7zG64QXhfE_k9kk
+Message-ID: <CAJuCfpEUusRt_ss7RtxRPP9q_LRwi+Lw+SOq32EUA58s3JOx1A@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] introduce PIDFD_SELF* sentinels
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>, 
+	John Hubbard <jhubbard@nvidia.com>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dave Chinner <david@fromorbit.com> writes:
-
-> On Sat, Feb 01, 2025 at 10:23:29PM +0530, Ojaswin Mujoo wrote:
->> Greetings,
->> 
->> This proposal is on behalf of Me, Nirjhar and Ritesh. We would like to submit
->> a proposal on centralizing filesystem and device configurations within xfstests
->> and maybe a further discussion on some of the open ideas listed by Ted here [3].
->> More details are mentioned below.
->> 
->> ** Background ** 
->> There was a discussion last year at LSFMM [1] about creating a central fs-config
->> store, that can then be used by anyone for testing different FS
->> features/configurations. This can also bring an awareness among other developers
->> and testers on what is being actively maintained by FS maintainers. We recently
->> posted an RFC [2] for centralizing filesystem configuration which is under
->> review. The next step we are considering is to centralize device configurations
->> within xfstests itself. In line with this, Ted also suggested a similar idea (in
->> point A) [3], where he proposed specifying the device size for the TEST and
->> SCRATCH devices to reduce costs (especially when using cloud infrastructure) and
->> improve the overall runtime of xfstests.
->> 
->> Recently Dave introduced a feature [4] to run the xfs and generic tests in
->> parallel. This patch creates the TEST and SCRATCH devices at runtime without
->> requiring them to be specified in any config file. However, at this stage, the
->> automatic device initialization appears to be somewhat limited. We believe that
->> centralizing device configuration could help enhance this functionality as well.
+On Tue, Feb 4, 2025 at 2:01=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> Right, the point of check-parallel is to take away the need to
-> specify devices completely.  I've already added support for the
-> LOGWRITES_DEV, and I'm in the process of adding LOGDEV and RTDEV
-> support for both test and scratch devices. At this point, the need
-> for actual actual device specification in the config files goes
-> away.
+> On Tue, Feb 04, 2025 at 10:46:35AM +0100, Christian Brauner wrote:
+> > On Thu, 30 Jan 2025 20:40:25 +0000, Lorenzo Stoakes wrote:
+> > > If you wish to utilise a pidfd interface to refer to the current proc=
+ess or
+> > > thread it is rather cumbersome, requiring something like:
+> > >
+> > >     int pidfd =3D pidfd_open(getpid(), 0 or PIDFD_THREAD);
+> > >
+> > >     ...
+> > >
+> > > [...]
+> >
+> > Updated merge message. I've slightly rearranged pidfd_send_signal() so
+> > we don't have to call CLASS(fd, f)(pidfd) unconditionally anymore.
 >
-> What I am expecting to need is a set of fields that specify the
-> *size* of the devices so that the hard-coded image file sizes in
-> the check-parallel script go away.
->
-> From there, I intend to have check-parallel iterate config file run
-> sections itself, rather than have it run them internally to check.
-> That way check is only ever invoked by check-parallel with all the
-> devices completely set up.
+> Sounds good and thank you! Glad to get this in :)
 
-Yes, this sounds good. This is what we were anticipating too.
-Thanks for sharing.
+Sorry, a bit late to the party...
 
->
-> Hence a typical host independent config file would look like:
-
-The work being proposed by us here was to make this config file
-centralized within xfstests itself for both fsconfig and device-config.
-This saves us from defining each of this section within local.config file
-and can be used by passing cmdling arguments to invoke a given section
-directly. 
-
-e.g.
-
-    ./check -c configs/xfs/64k -g auto
-
-There have been cases where testers and others have requested info to
-know about - 
-- What different FS config options to test,
-- What gets tested by the Maintainers,  
-- Is there a common place where I can find MKFS and MOUNT options which
-  I should be testing for my FS/feature testing. 
-
-That is the reason, I think, centralizing fsconfig option can be
-helpful. I remember bringing this idea in our last LSFMM-2024, where you
-mentioned that - let's see the RFC [1] and maybe then we can discuss more :).
-Here is the RFC for the same. There are some additional improvements in
-that series, but it mainly adds fsconfig option.
-
-[1]: https://lore.kernel.org/fstests/cover.1736496620.git.nirjhar.roy.lists@gmail.com/
-
->
-> TEST_DEV_SIZE=10g
-> TEST_RTDEV_size=10g
-> TEST_LOGDEV_SIZE=128m
-> SCRATCH_DEV_SIZE=20g
-> SCRATCH_RTDEV_size=20g
-> SCRATCH_LOGDEV_SIZE=512m
-> LOGWRITES_DEV_SIZE=2g
->
-
-For centralizing device-configs idea, I was hoping we could mention above
-in "configs/devices/loop" config file. This can be picked up by ./check
-too if local.config hasn't been provided with these options.
-
-> [xfs]
-> FSTYP=xfs
-> MKFS_OPTIONS="-b size=4k"
-> TEST_FS_MOUNT_OPTIONS=
-> MOUNT_OPTIONS=
-> USE_EXTERNAL=
->
-> [xfs-rmapbt]
-> MKFS_OPTIONS="-b size=4k -m rmapbt=1"
->
-> [xfs-noreflink]
-> MKFS_OPTIONS="-b size=4k -m reflink=0"
->
-> [xfs-n64k]
-> MKFS_OPTIONS="-b size=4k -n size=64k"
->
-> [xfs-ext]
-> MKFS_OPTIONS="-b size=4k"
-> USE_EXTERNAL=yes
->
-> [ext4]
-> FSTYP="ext4"
-> MKFS_OPTIONS=
-> USE_EXTERNAL=
->
-> [btrfs]
-> FSTYP="btrfs"
-> .....
-
-Above all fs configs could be added to configs/{ext4|xfs|btrfs}/... 
-Than this can be used in 2 ways.. 
-
-1. ./check -c configs/xfs/4k,configs/xfs/rmapbt,configs/ext4/4k ... 
-
-2. Or we may still pass fsconfig via local.config file.. e.g. 
-
-# both configs/xfs/4k or xfs/4k can be used here
-[xfs]
-FS_CONFIG_OPTION=configs/xfs/4k
-
-[xfs-rmapbt]
-FS_CONFIG_OPTION=xfs/rmapbt
-
-[xfs-noreflink]
-FS_CONFIG_OPTION=xfs/noreflink
-
-[xfs-n64k]
-FS_CONFIG_OPTION=xfs/64k
-
-[xfs-ext]
-FS_CONFIG_OPTION=xfs/4k
-USE_EXTERNAL=yes
-
-[ext4]
-FS_CONFIG_OPTION=ext4/4k
+We were discussing MADV_GUARD_INSTALL use with Android Bionic team and
+the possibility of caching pidfd_open() result for reuse when
+installing multiple guards, however doing that in libraries would pose
+issues as we can't predict the user behavior, which can fork() in
+between such calls. That would be an additional reason why having
+these sentinels is beneficial.
 
 
 >
->
-> IOWs, all that is different from system to system is the device size
-> setup. The actual config sections under test (e.g. [xfs]) never need
-> to change from host to host, nor environment to environment. i.e.
-> "xfs-n64k" runs the same config filesystem test on every system,
-> everywhere...
->
-
-Right. So it's also useful if those configs can stay in configs/<fs>/**
-as well.
-
-
->> ** Proposal ** 
->> We would like to propose a discussion at LSFMM on two key features: central
->
-> I'm not going to be at LSFMM, so please discuss this on the list via
-> email as we'd normally do so. LSFMM discussions are exclusionary
-> whilst, OTOH, the mailing list is inclusive...
->
-
-Sure I am happy to discuss this on mailing list too! It will be good to
-know from others as well, who do FS testing from time to time, on whether
-having a central fsconfig store makes their life easy or not? 
-And from other FS maintainers, on whether adding their test fsconfigs to
-configs/<fs>/** will save them from maintaining it in their custom CI
-wrappers or not? 
-
->> fsconfig and central device-config within xfstests. We can explore how the
->> fsconfig feature can be utilized, and by then, we aim to have a PoC for central
->> device-config feature, which we think can also be discussed in more detail. At
->> this point, we are hoping to get a PoC working with loop devices by default. It
->> will be good to hear from other developers, maintainers, and testers about their
->> thoughts and suggestions on these two features.
->
-> I don't really see a need for a new centralised config setup. With
-> the above, we can acheived a "zero-config" goal with the existing
-> config file formats and infrastructure. All that we need to do is
-> update the default config file in the repo to contain a section for
-> each of the "standard" test configs we want to define....
->
-
-Could you please take look at the shared RFC [1] once? I believe it will
-be useful to have this central to xfstests for reasons I mentioned
-above. This also gets us to zero-config setup with almost no need to
-configure anything. This helps other testers & subsystem maintainers to
-know what configs are being tested by maintainers, which they can use
-for their FS feature testing too.
-We can than directly issue -
-
-           ./check -c <fs>/<config> -g quick
-
-[1]: https://lore.kernel.org/fstests/cover.1736496620.git.nirjhar.roy.lists@gmail.com/
-
-
->> Additionally, we would like to thank Ted for listing several features he uses in
->> his custom kvm-xfstests and gce-xfstests [3]. If there is an interest in further
->> reducing the burden of maintaining custom test scripts and wrappers around
->> xfstests, we can also discuss essential features that could be integrated
->> directly into xfstests, whether from Ted's list or suggestions from others.
->
-> On of my goals with check-parallel is to completely remove the need
-> for end users to configure fstests. i.e. all you need to do is point
-> it at a directory, tell it which filesystem to test, and it "just
-> runs" with all the defaults that come direct from the fstests
-> repository...
->
-
-Right. Centralizing fsconfigs & device configs is also doing the same.
-In fact once we have configs/devices/loop config file, then we don't
-need to even create local.config file (for most cases I believe).
-
-./check and ./check_parallel can be passed these config files and
-xfstests infra will create loop devices, run the tests and later do the
-cleanups.
-
-e.g. maybe something like this... 
-      ./check -c configs/<fs>/config>,configs/devices/loop -g quick
-
-OR
-      ./check -c <fs>/config>,devices/loop -g quick
-    
-
-
-> It is also worth keeping in mind that check-parallel can be run with
-> a single runner thread, in which case a single check instance runs
-> all tests serially. i.e. we can make check-parallel emulate existing
-> check behaviour exactly, except it uses all the
-> auto-config/auto-setup stuff that comes along with check-parallel...
->
-
-Sure thanks Dave for the review.
-
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> >
+> > ---
+> >
+> > Applied to the vfs-6.15.pidfs branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.15.pidfs branch should appear in linux-next soon.
+> >
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> >
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> >
+> > Note that commit hashes shown below are subject to change due to rebase=
+,
+> > trailer updates or similar. If in doubt, please check the listed branch=
+.
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.15.pidfs
+> >
+> > [1/6] pidfd: add PIDFD_SELF* sentinels to refer to own thread/process
+> >       https://git.kernel.org/vfs/vfs/c/e6e4ed42f8d8
+> > [2/6] selftests/pidfd: add missing system header imcludes to pidfd test=
+s
+> >       https://git.kernel.org/vfs/vfs/c/c9f04f4a251d
+> > [3/6] tools: testing: separate out wait_for_pid() into helper header
+> >       https://git.kernel.org/vfs/vfs/c/fb67fe44116e
+> > [4/6] selftests: pidfd: add pidfd.h UAPI wrapper
+> >       https://git.kernel.org/vfs/vfs/c/ac331e56724d
+> > [5/6] selftests: pidfd: add tests for PIDFD_SELF_*
+> >       https://git.kernel.org/vfs/vfs/c/881a3515c191
+> > [6/6] selftests/mm: use PIDFD_SELF in guard pages test
+> >       https://git.kernel.org/vfs/vfs/c/b4703f056f42
 
