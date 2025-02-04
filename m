@@ -1,72 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-40796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DE1A27BD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:47:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3D6A27C3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7BA3A15F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 19:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD4516233D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 19:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42251547D8;
-	Tue,  4 Feb 2025 19:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44A021A457;
+	Tue,  4 Feb 2025 19:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JBT6x5Qw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oArsMZp8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777F22045A8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 19:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A74A204F7F;
+	Tue,  4 Feb 2025 19:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738698397; cv=none; b=MT2HMiJl/V5RABz7nkGnkAOkWoMKwZm23YcPsbzsvlX70Fwqbb07sRtuw+iAbc5zsj+bzodctqN8k6uwNIcs9+w5waEaPGDfhIuR1FXOdGOu9e8lvwItOLxQzXg1q+Vt4VQ/t8w+irDFE+LtHTm+7EwDtydOnev2QIEduzMlCes=
+	t=1738698742; cv=none; b=IQPjN9ZLxz7EbGbwRLf7zGasupX2gosPIeM7QNcCwR5jkLeOZN0Fnne8zlMOy3ktRgoBRPkEeVEfmgGTe4embFqTK2tjIxLACz+GQpJMtycPAROL1xA0n3f4q/lGQbbQ2gj03cjMgeo+FIdZ/EsCJ8p10zKKt4zhf1fZ+U0NzHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738698397; c=relaxed/simple;
-	bh=31njNMVaG7WaLHJQ97kDvHDfCOIKYLVTuULO4m5nTb4=;
+	s=arc-20240116; t=1738698742; c=relaxed/simple;
+	bh=8wzxGNV7ip+iLOJg7XVsZXSg2+EaqkKL3tac0+ZElt8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQr3VGhkvv+zgWMkP5UoTwZulk+spFjoWoKkwpMtQxjRHuT2rjETRlAG+ytFR1ciQp0vnE3VLIrk9iPBASBTcfaNWr/TB7fNkE+E97QezM46JMOPUi1VptywyjNVd4BdBt331SxdBSUeUYtBhVsguPOTIianDdvXfvOxBQPblqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JBT6x5Qw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738698394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4AkiawKxictVEYAq65vSjLKXW3LKyZTiWo/d+bW5bCc=;
-	b=JBT6x5QwUemYe75bxMMGnjxPa+TvnHA3/mtQMV5VWJCOnSo4fWWFHlVmud1+MkZjzRBmmh
-	eKN+Ilf5VerFvWHn8/sQKaJbeVnb0zuNA+MSz1QwnkM33HNsWkG0N4WX7UzRAg+KoZWKJn
-	vT1LYrqHFMOHCClycCsa4sf3F3MnkTE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-439-x7fU8232NJSenZEStsO8JQ-1; Tue,
- 04 Feb 2025 14:46:29 -0500
-X-MC-Unique: x7fU8232NJSenZEStsO8JQ-1
-X-Mimecast-MFC-AGG-ID: x7fU8232NJSenZEStsO8JQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5619C19560BA;
-	Tue,  4 Feb 2025 19:46:28 +0000 (UTC)
-Received: from bfoster (unknown [10.22.88.48])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D894195608E;
-	Tue,  4 Feb 2025 19:46:26 +0000 (UTC)
-Date: Tue, 4 Feb 2025 14:48:52 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCe0RAnM8cZHlWkq8B3VqCgZvpV/OplQwbq9+6eN9WMPaSeyT5f2BYWESqUAJjDCnZhB/6fBqA86h4QFFO93uxmvm/gVRJR4S5t2VcG22sfOGsWPSRMHE+pbvrw9wusp2fiOzN50KORfeyUwBU/mGIfIRCqXCn22uy9N9OYv+lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oArsMZp8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99E8CC4CEDF;
+	Tue,  4 Feb 2025 19:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738698741;
+	bh=8wzxGNV7ip+iLOJg7XVsZXSg2+EaqkKL3tac0+ZElt8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oArsMZp8DbMBUI+0tBWPNWxsceM1lcKE9Fr6RBtgHGS0xKQORURpfuHRe+5U0Lwrh
+	 2OOHKonQDbI4EVUQtOER1TZalHXV7c60aHK1ZHrwH5KZuZLYvjgJRHkNZQsw8g+Ghx
+	 o2pmqzNuEWB2wclWNoB/KalXnrdh232jBGsowFBkmUZNRV4TpNaKvELcjxLOr73Xa2
+	 LEVI7ZclqKjfXO85NVkySdleO9iP+HeICZTThLhn40awh2OiY+uqgQRHk21Azisn0T
+	 cJmpiJY810r/HDK3dfjzgqW0xlACO2d0LJ/PAPjOUuQrEZFiCu4PtnIeLd5BAf1Dtv
+	 f9d8S5IZZPh7Q==
+Date: Tue, 4 Feb 2025 11:52:20 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v4 04/10] iomap: lift error code check out of
+Subject: Re: [PATCH v4 05/10] iomap: lift iter termination logic from
  iomap_iter_advance()
-Message-ID: <Z6JvJK7_0JZJ1Ki9@bfoster>
+Message-ID: <20250204195220.GE21808@frogsfrogsfrogs>
 References: <20250204133044.80551-1-bfoster@redhat.com>
- <20250204133044.80551-5-bfoster@redhat.com>
- <20250204192353.GC21808@frogsfrogsfrogs>
+ <20250204133044.80551-6-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,62 +59,105 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250204192353.GC21808@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250204133044.80551-6-bfoster@redhat.com>
 
-On Tue, Feb 04, 2025 at 11:23:53AM -0800, Darrick J. Wong wrote:
-> On Tue, Feb 04, 2025 at 08:30:38AM -0500, Brian Foster wrote:
-> > The error code is only used to check whether iomap_iter() should
-> > terminate due to an error returned in iter.processed. Lift the check
-> > out of iomap_iter_advance() in preparation to make it more generic.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  fs/iomap/iter.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-> > index a2ae99fe6431..fcc8d75dd22f 100644
-> > --- a/fs/iomap/iter.c
-> > +++ b/fs/iomap/iter.c
-> > @@ -30,8 +30,6 @@ static inline int iomap_iter_advance(struct iomap_iter *iter, s64 count)
-> >  	bool stale = iter->iomap.flags & IOMAP_F_STALE;
-> >  	int ret = 1;
-> >  
-> > -	if (count < 0)
-> > -		return count;
-> >  	if (WARN_ON_ONCE(count > iomap_length(iter)))
-> >  		return -EIO;
-> >  	iter->pos += count;
-> > @@ -86,6 +84,11 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
-> >  			return ret;
-> >  	}
-> >  
-> > +	if (iter->processed < 0) {
-> > +		iomap_iter_reset_iomap(iter);
-> > +		return iter->processed;
+On Tue, Feb 04, 2025 at 08:30:39AM -0500, Brian Foster wrote:
+> The iter termination logic in iomap_iter_advance() is only needed by
+> iomap_iter() to determine whether to proceed with the next mapping
+> for an ongoing operation. The old logic sets ret to 1 and then
+> terminates if the operation is complete (iter->len == 0) or the
+> previous iteration performed no work and the mapping has not been
+> marked stale. The stale check exists to allow operations to
+> retry the current mapping if an inconsistency has been detected.
 > 
-> Doesn't iomap_iter_reset_iomap reset iter->processed to zero?
+> To further genericize iomap_iter_advance(), lift the termination
+> logic into iomap_iter() and update the former to return success (0)
+> or an error code. iomap_iter() continues on successful advance and
+> non-zero iter->len or otherwise terminates in the no progress (and
+> not stale) or error cases.
 > 
-
-Urgh.. factoring breakage. Patches 3-6 were all one patch in v3 and for
-some reason I left the processed = iter->processed assignment that
-avoids this problem for patch 6. That should probably get pulled back to
-here. I'll fix that up in v5.
-
-Brian
-
-> --D
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  fs/iomap/iter.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
 > 
-> > +	}
-> > +
-> >  	/* advance and clear state from the previous iteration */
-> >  	ret = iomap_iter_advance(iter, iter->processed);
-> >  	iomap_iter_reset_iomap(iter);
-> > -- 
-> > 2.48.1
-> > 
-> > 
-> 
+> diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+> index fcc8d75dd22f..04bd39ee5d47 100644
+> --- a/fs/iomap/iter.c
+> +++ b/fs/iomap/iter.c
+> @@ -27,17 +27,11 @@ static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
+>   */
+>  static inline int iomap_iter_advance(struct iomap_iter *iter, s64 count)
+>  {
+> -	bool stale = iter->iomap.flags & IOMAP_F_STALE;
+> -	int ret = 1;
+> -
+>  	if (WARN_ON_ONCE(count > iomap_length(iter)))
+>  		return -EIO;
+>  	iter->pos += count;
+>  	iter->len -= count;
+> -	if (!iter->len || (!count && !stale))
+> -		ret = 0;
+> -
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static inline void iomap_iter_done(struct iomap_iter *iter)
+> @@ -69,6 +63,7 @@ static inline void iomap_iter_done(struct iomap_iter *iter)
+>   */
+>  int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+>  {
+> +	bool stale = iter->iomap.flags & IOMAP_F_STALE;
+>  	int ret;
+>  
+>  	trace_iomap_iter(iter, ops, _RET_IP_);
+> @@ -89,8 +84,18 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+>  		return iter->processed;
+>  	}
+>  
+> -	/* advance and clear state from the previous iteration */
+> +	/*
+> +	 * Advance the iter and clear state from the previous iteration. Use
+> +	 * iter->len to determine whether to continue onto the next mapping.
+> +	 * Explicitly terminate in the case where the current iter has not
+> +	 * advanced at all (i.e. no work was done for some reason) unless the
+> +	 * mapping has been marked stale and needs to be reprocessed.
+> +	 */
+>  	ret = iomap_iter_advance(iter, iter->processed);
+> +	if (!ret && iter->len > 0)
+> +		ret = 1;
+> +	if (ret > 0 && !iter->processed && !stale)
 
+How can ret be greater than zero here other than the previous line
+setting it?  I /think/ this is the same as:
+
+	if (!ret && iter->len > 0) {
+		if (iter->processed || stale)
+			ret = 1;
+	}
+
+but then I wonder if it's really necessary to reset the iter state on
+error, or if we've finished the whole thing, or if we've done no work
+and didn't set STALE?  What do you think about:
+
+	ret = iomap_iter_advance(...);
+	if (ret || !iter->len)
+		return ret;
+	if (!iter->processed && !stale)
+		return 0;
+
+	iomap_iter_reset_iomap(iter);
+	ret = ops->iomap_begin(...);
+
+--D
+
+> +		ret = 0;
+>  	iomap_iter_reset_iomap(iter);
+>  	if (ret <= 0)
+>  		return ret;
+> -- 
+> 2.48.1
+> 
+> 
 
