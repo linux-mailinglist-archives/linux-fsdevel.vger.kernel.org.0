@@ -1,388 +1,435 @@
-Return-Path: <linux-fsdevel+bounces-40822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D93A27D6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 22:31:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6349A27D6A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 22:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3211886B44
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50209165E4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0966021A94F;
-	Tue,  4 Feb 2025 21:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D311921A449;
+	Tue,  4 Feb 2025 21:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="HwedS1+e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GyOiulYj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJU7euv8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CFD2036FD
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 21:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38830207A0C;
+	Tue,  4 Feb 2025 21:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738704683; cv=none; b=n2ySYi24HO24lk59WLrLxqzEF75DzqFYKkc7p+GNqXJdiknSFHD+kz/sQcSeUVD6/FhH8I/LOyLc8ZlpHaMHbv9nvxAiuNmZmxAJG0dFFCvHDR4snN9YekSseEzg79tdslDSgNBp6BxWmoag8nQ28XZbBN6ZmslxtLx8ryKzNMk=
+	t=1738704681; cv=none; b=RFzX5MI45Gmre/2YnOmaMck7bU8IlcjQQfzzsPYN6BBtcMaqmWccnPKMVyYKPEPEQVpuPrEjwDpFFWJy5/YJexHJvC38okZBrAm1KiuhnuRA/dH2QBrsf99erQgz7uFFyVn5Xx7rordW8eEMDIiaYFvnh8kXvT9w85s2ZUf8rko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738704683; c=relaxed/simple;
-	bh=aVRwtDzMU13GuNTmHyqWmR8PnjuwWSWQ9Oauy6YhoA0=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:Cc:
-	 References:In-Reply-To; b=QylPHrK8S4dVY+9MqA9yH7KWwtWY5/ruZdFLCLoF0LW94mUEM3eVdc5oY/fVJ26AmlMEt60oE1sRTLosf8xrnGiL24NVX3DwSapnoc2yBHJRuF+VjIQnhSxHw+KwTZax0VMYVr82bn5JU8FZBGkzEP32qmbj4YR1XzeihKhwKyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=HwedS1+e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GyOiulYj; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 1B58A25400FB;
-	Tue,  4 Feb 2025 16:31:19 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Tue, 04 Feb 2025 16:31:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1738704678; x=1738791078; bh=7EJEcnhypQ
-	R40RgN4ELn70s4N+Xm9c/ONSON/mQIj08=; b=HwedS1+e3A8bstndMZ7AkVR0zx
-	njzFP8DJiQ+8rarvK8p5OxzElyDRJSseBy9lekzjClMLLlivkm24Ebw6R7JqAG8n
-	GkxOssHMotciKdYfSP57+zhUvMxvD64Iby4V8/9Ce0vLiAnian6hduis04etWZHo
-	wTkOpo0vv/tdPGLnshF843QTDCwkIddwQWoCTgHqp0gC/p1EwPzJkRuz2uzuFiHC
-	Z7d9y7ny8SD02vDzYK+E6skq7l34/xkc+zSxWBV9w7cHwt13gSZASquESFVC9/2h
-	Mkif5ATLYc945f9iHb3MoHYSswk313vOp0qLQLtZcp5YdDkwDMMQpCq/R8Dg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1738704678; x=1738791078; bh=7EJEcnhypQR40RgN4ELn70s4N+Xm9c/ONSO
-	N/mQIj08=; b=GyOiulYjgK6UcSHPJAyhEl/7n4NQFDJZVqOoxev6COkQ0Tv+3Ix
-	4cIRi7m1dGAJZfEx6JphNmNm3hUSsopNokEDSn5r+Qwv7aI0OrYoNDna8Eo5c7DN
-	LZVwldyJJidIXwxEv1DeUeehSf/Ccw6SRzgV4m8f0ZNVNEYnAYn3NxxooS8wbFhV
-	yNNUko25oAZXAZOwFnLXVWLNgU2ByJPnOd+UQQ1hhQeoQIwOeiIr8HyojETD064a
-	OikQbJ4LKca6yqVHrqNasFOQewGCmU9hzijx+Sz1YEoljxrhLr65IbV8Eo99MRl9
-	eAqbnXOd/5K54ZcMXjyrDDpMX8pNhoF0Axw==
-X-ME-Sender: <xms:JoeiZxM-2LWpc0v5Gi7ueAnnh47CWWDw6MxJz5OnUZScHtEsY5jVYQ>
-    <xme:JoeiZz-cUbDrXvK5zGBN90fMrgoe3dvcr_npt4_QomKbXLIWYcFHvXaxwx7DChTFj
-    UfUvM938YFlzT3b>
-X-ME-Received: <xmr:JoeiZwR5lAgyGdsEwmfkqtqm71nZ5WcT6GzM9ZUQlqIiMor4SCOtXureLj6YIpfleCGtDHZx26vJSvaZUUPDfEwT5w4lPU-gUGI61QNdUH8KVKcOM6Xa>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudeivdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpegtkfffgggfuffhvfevfhgjsehmtderredtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepleelheevueelfedu
-    tedvtdfgteetheduvdegueevjeefgfekheehiedvtdejkeegnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugi
-    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghr
-    nhgvlhdqthgvrghmsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:JoeiZ9uKhFj38h7MRL_OKM_SA_CA32xiXIvD3bSn_6XgNkAT-ulvLg>
-    <xmx:JoeiZ5elV-20Sgb5RWW_IZFj1nQISyUPZ9meBTDCQB-U9L26505eUw>
-    <xmx:JoeiZ53HMeeC04pMIrOQywRP9cZGF3EXBHPYjwK2sPvQGx82djtpPw>
-    <xmx:JoeiZ1-d4sbphArr4zTuBo5EdaxaG58Rxx1pc4l-nXchwwtquYwcrw>
-    <xmx:JoeiZw7ZoHel5Y5u0KUS2Jx4ENQyKV7dFamiYLF05EE2t3-6rJB0JUDB>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Feb 2025 16:31:17 -0500 (EST)
-Content-Type: multipart/mixed; boundary="------------dZCoxxMHxiafGvjZ8HaOw7qL"
-Message-ID: <e3da9d0c-39df-4994-91d2-a90b9ec7c627@fastmail.fm>
-Date: Tue, 4 Feb 2025 22:31:16 +0100
+	s=arc-20240116; t=1738704681; c=relaxed/simple;
+	bh=C5XLlT+WCJhJAT3elBxZZLB2/5919HnBWJ2CJxrwF1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qyvdWvdsifCYE43I6owoCu55LWkWhOidR8FP94S6GMorSXJxhbDFF9BG7PxbhVXwb84UTcLvK9Z4L53uNsASkq5IS7mPFpvbdeYwNcFTyKXUAKIkWWpIN82lClFxat8btBRoU0vxl7CRsQyGf+2RZKSB+m28WwCVdsuP0uQJebE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJU7euv8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901E8C4CEE3;
+	Tue,  4 Feb 2025 21:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738704679;
+	bh=C5XLlT+WCJhJAT3elBxZZLB2/5919HnBWJ2CJxrwF1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SJU7euv8riM1RSAxNAKzABIMrDfb85AiJP4EmcB+JkFar1BFw48efxF9cogeCZMmT
+	 8pARimE/lHi3s32SpP9QWe6Ai1gxoDpTy6mogmbosA8IhQqFNgO2MoBXGQHwvaKMUs
+	 eG3wuodg4LOis+K7W4kHg+CGqzxp5sQVlOHm/jedtl5RWlyK0fi668F1P+C2AwbYRm
+	 1/91UiHtd2AIWJCt30J4BhjgA9VsdXQ3vruXnCXWddJvmyJc8uo22fC6GBD5STgGQT
+	 NLdRjGXuA64SRSW8dJa0HSwgcJKq4OgWyZnAV8i7mo6TiR/jaiQdG5aA2Cc/m+ejcs
+	 0sKMr8qoC8hGQ==
+Date: Tue, 4 Feb 2025 13:31:19 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, bfoster@redhat.com,
+	nirjhar@linux.ibm.com, kernel-team@meta.com
+Subject: Re: [PATCH v5 1/2] fsx: support reads/writes from buffers backed by
+ hugepages
+Message-ID: <20250204213119.GE21799@frogsfrogsfrogs>
+References: <CAJnrk1YwBJQnFwYBcO50Xy2dA6df_SqQsHdpLux4wa-Yw5rXdg@mail.gmail.com>
+ <20250203185948.GB134532@frogsfrogsfrogs>
+ <CAJnrk1bX27KAOxChMs5pRNmrjjuxjYu11GG==vTN0sa8Qf2Uqw@mail.gmail.com>
+ <20250203194147.GA134498@frogsfrogsfrogs>
+ <CAJnrk1Y_eDFOnob3N78O3jcRoHy6Y0jaxnXbgVT0okBjwJue3g@mail.gmail.com>
+ <20250203200149.GC134490@frogsfrogsfrogs>
+ <CAJnrk1apX266i33s8CA4JwCv0z9sNmGm=+EXt0kSESvzicEhJQ@mail.gmail.com>
+ <20250203215432.GC134532@frogsfrogsfrogs>
+ <20250204042136.GA21799@frogsfrogsfrogs>
+ <CAJnrk1bTpOvZG=PHW1LeoQ8xCb276X6At8gm8=M9UdinaVY1+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: clear FR_PENDING without holding fiq lock for uring
- requests
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-References: <20250203185040.2365113-1-joannelkoong@gmail.com>
- <ff73c955-2267-4c77-8dca-0e4181d8e8b4@fastmail.fm>
- <CAJnrk1YfPU9qgaq=3KtO8dWxEqwpX-TJ-BD4vjUHsqtAqT859Q@mail.gmail.com>
- <74a5f0ea-e7dc-440b-82c6-5755dea98fa4@fastmail.fm>
- <CAJnrk1ZgHNb78dz-yfNTpxmW7wtT88A=m-zF0ZoLXKLUHRjNTw@mail.gmail.com>
- <bc801a5c-8150-4b6c-b7b6-b587d556d99b@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <bc801a5c-8150-4b6c-b7b6-b587d556d99b@fastmail.fm>
-
-This is a multi-part message in MIME format.
---------------dZCoxxMHxiafGvjZ8HaOw7qL
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1bTpOvZG=PHW1LeoQ8xCb276X6At8gm8=M9UdinaVY1+Q@mail.gmail.com>
 
+On Tue, Feb 04, 2025 at 12:50:04PM -0800, Joanne Koong wrote:
+> On Mon, Feb 3, 2025 at 8:21 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Mon, Feb 03, 2025 at 01:54:32PM -0800, Darrick J. Wong wrote:
+> > > On Mon, Feb 03, 2025 at 01:40:39PM -0800, Joanne Koong wrote:
+> > > > On Mon, Feb 3, 2025 at 12:01 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > >
+> > > > > On Mon, Feb 03, 2025 at 11:57:23AM -0800, Joanne Koong wrote:
+> > > > > > On Mon, Feb 3, 2025 at 11:41 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Mon, Feb 03, 2025 at 11:23:20AM -0800, Joanne Koong wrote:
+> > > > > > > > On Mon, Feb 3, 2025 at 10:59 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, Feb 03, 2025 at 10:04:04AM -0800, Joanne Koong wrote:
+> > > > > > > > > > On Sun, Feb 2, 2025 at 6:25 AM Zorro Lang <zlang@redhat.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > On Tue, Jan 21, 2025 at 01:56:40PM -0800, Joanne Koong wrote:
+> > > > > > > > > > > > Add support for reads/writes from buffers backed by hugepages.
+> > > > > > > > > > > > This can be enabled through the '-h' flag. This flag should only be used
+> > > > > > > > > > > > on systems where THP capabilities are enabled.
+> > > > > > > > > > > >
+> > > > > > > > > > > > This is motivated by a recent bug that was due to faulty handling of
+> > > > > > > > > > > > userspace buffers backed by hugepages. This patch is a mitigation
+> > > > > > > > > > > > against problems like this in the future.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > > > > > > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
+> > > > > > > > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > > > > > > > > > > ---
+> > > > > > > > > > >
+> > > > > > > > > > > Those two test cases fail on old system which doesn't support
+> > > > > > > > > > > MADV_COLLAPSE:
+> > > > > > > > > > >
+> > > > > > > > > > >    fsx -N 10000 -l 500000 -h
+> > > > > > > > > > >   -fsx -N 10000 -o 8192 -l 500000 -h
+> > > > > > > > > > >   -fsx -N 10000 -o 128000 -l 500000 -h
+> > > > > > > > > > >   +MADV_COLLAPSE not supported. Can't support -h
+> > > > > > > > > > >
+> > > > > > > > > > > and
+> > > > > > > > > > >
+> > > > > > > > > > >    fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
+> > > > > > > > > > >   -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
+> > > > > > > > > > >   -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
+> > > > > > > > > > >   +mapped writes DISABLED
+> > > > > > > > > > >   +MADV_COLLAPSE not supported. Can't support -h
+> > > > > > > > > > >
+> > > > > > > > > > > I'm wondering ...
+> > > > > > > > > > >
+> > > > > > > > > > > >  ltp/fsx.c | 166 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+> > > > > > > > > > > >  1 file changed, 153 insertions(+), 13 deletions(-)
+> > > > > > > > > > > >
+> > > > > > > > > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > > > > > > > > > > index 41933354..3be383c6 100644
+> > > > > > > > > > > > --- a/ltp/fsx.c
+> > > > > > > > > > > > +++ b/ltp/fsx.c
+> > > > > > > > > > > >  static struct option longopts[] = {
+> > > > > > > > > > > >       {"replay-ops", required_argument, 0, 256},
+> > > > > > > > > > > >       {"record-ops", optional_argument, 0, 255},
+> > > > > > > > > > > > @@ -2883,7 +3023,7 @@ main(int argc, char **argv)
+> > > > > > > > > > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> > > > > > > > > > > >
+> > > > > > > > > > > >       while ((ch = getopt_long(argc, argv,
+> > > > > > > > > > > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > > > > > > > > > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > > > > > > > > > >                                longopts, NULL)) != EOF)
+> > > > > > > > > > > >               switch (ch) {
+> > > > > > > > > > > >               case 'b':
+> > > > > > > > > > > > @@ -2916,6 +3056,14 @@ main(int argc, char **argv)
+> > > > > > > > > > > >               case 'g':
+> > > > > > > > > > > >                       filldata = *optarg;
+> > > > > > > > > > > >                       break;
+> > > > > > > > > > > > +             case 'h':
+> > > > > > > > > > > > +#ifndef MADV_COLLAPSE
+> > > > > > > > > > > > +                     fprintf(stderr, "MADV_COLLAPSE not supported. "
+> > > > > > > > > > > > +                             "Can't support -h\n");
+> > > > > > > > > > > > +                     exit(86);
+> > > > > > > > > > > > +#endif
+> > > > > > > > > > > > +                     hugepages = 1;
+> > > > > > > > > > > > +                     break;
+> > > > > > > > > > >
+> > > > > > > > > > > ...
+> > > > > > > > > > > if we could change this part to:
+> > > > > > > > > > >
+> > > > > > > > > > > #ifdef MADV_COLLAPSE
+> > > > > > > > > > >         hugepages = 1;
+> > > > > > > > > > > #endif
+> > > > > > > > > > >         break;
+> > > > > > > > > > >
+> > > > > > > > > > > to avoid the test failures on old systems.
+> > > > > > > > > > >
+> > > > > > > > > > > Or any better ideas from you :)
+> > > > > > > > > >
+> > > > > > > > > > Hi Zorro,
+> > > > > > > > > >
+> > > > > > > > > > It looks like MADV_COLLAPSE was introduced in kernel version 6.1. What
+> > > > > > > > > > do you think about skipping generic/758 and generic/759 if the kernel
+> > > > > > > > > > version is older than 6.1? That to me seems more preferable than the
+> > > > > > > > > > paste above, as the paste above would execute the test as if it did
+> > > > > > > > > > test hugepages when in reality it didn't, which would be misleading.
+> > > > > > > > >
+> > > > > > > > > Now that I've gotten to try this out --
+> > > > > > > > >
+> > > > > > > > > There's a couple of things going on here.  The first is that generic/759
+> > > > > > > > > and 760 need to check if invoking fsx -h causes it to spit out the
+> > > > > > > > > "MADV_COLLAPSE not supported" error and _notrun the test.
+> > > > > > > > >
+> > > > > > > > > The second thing is that userspace programs can ensure the existence of
+> > > > > > > > > MADV_COLLAPSE in multiple ways.  The first way is through sys/mman.h,
+> > > > > > > > > which requires that the underlying C library headers are new enough to
+> > > > > > > > > include a definition.  glibc 2.37 is new enough, but even things like
+> > > > > > > > > Debian 12 and RHEL 9 aren't new enough to have that.  Other C libraries
+> > > > > > > > > might not follow glibc's practice of wrapping and/or redefining symbols
+> > > > > > > > > in a way that you hope is the same as...
+> > > > > > > > >
+> > > > > > > > > The second way is through linux/mman.h, which comes from the kernel
+> > > > > > > > > headers package; and the third way is for the program to define it
+> > > > > > > > > itself if nobody else does.
+> > > > > > > > >
+> > > > > > > > > So I think the easiest way to fix the fsx.c build is to include
+> > > > > > > > > linux/mman.h in addition to sys/mman.h.  Sorry I didn't notice these
+> > > > > > > >
+> > > > > > > > Thanks for your input. Do we still need sys/mman.h if linux/mman.h is added?
+> > > > > > >
+> > > > > > > Yes, because glibc provides the mmap() function that wraps
+> > > > > > > syscall(__NR_mmap, ...);
+> > > > > > >
+> > > > > > > > For generic/758 and 759, does it suffice to gate this on whether the
+> > > > > > > > kernel version if 6.1+ and _notrun if not? My understanding is that
+> > > > > > > > any kernel version 6.1 or newer will have MADV_COLLAPSE in its kernel
+> > > > > > > > headers package and support the feature.
+> > > > > > >
+> > > > > > > No, because some (most?) vendors backport new features into existing
+> > > > > > > kernels without revving the version number of that kernel.
+> > > > > >
+> > > > > > Oh okay, I see. That makes sense, thanks for the explanation.
+> > > > > >
+> > > > > > >
+> > > > > > > Maybe the following fixes things?
+> > > > > > >
+> > > > > > > --D
+> > > > > > >
+> > > > > > > generic/759,760: fix MADV_COLLAPSE detection and inclusion
+> > > > > > >
+> > > > > > > On systems with "old" C libraries such as glibc 2.36 in Debian 12, the
+> > > > > > > MADV_COLLAPSE flag might not be defined in any of the header files
+> > > > > > > pulled in by sys/mman.h, which means that the fsx binary might not get
+> > > > > > > built with any of the MADV_COLLAPSE code.  If the kernel supports THP,
+> > > > > > > the test will fail with:
+> > > > > > >
+> > > > > > > >  QA output created by 760
+> > > > > > > >  fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
+> > > > > > > > -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
+> > > > > > > > -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
+> > > > > > > > +mapped writes DISABLED
+> > > > > > > > +MADV_COLLAPSE not supported. Can't support -h
+> > > > > > >
+> > > > > > > Fix both tests to detect fsx binaries that don't support MADV_COLLAPSE,
+> > > > > > > then fix fsx.c to include the mman.h from the kernel headers (aka
+> > > > > > > linux/mman.h) so that we can actually test IOs to and from THPs if the
+> > > > > > > kernel is newer than the rest of userspace.
+> > > > > > >
+> > > > > > > Cc: <fstests@vger.kernel.org> # v2025.02.02
+> > > > > > > Fixes: 627289232371e3 ("generic: add tests for read/writes from hugepages-backed buffers")
+> > > > > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > > > > ---
+> > > > > > >  ltp/fsx.c         |    1 +
+> > > > > > >  tests/generic/759 |    3 +++
+> > > > > > >  tests/generic/760 |    3 +++
+> > > > > > >  3 files changed, 7 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > > > > > index 634c496ffe9317..cf9502a74c17a7 100644
+> > > > > > > --- a/ltp/fsx.c
+> > > > > > > +++ b/ltp/fsx.c
+> > > > > > > @@ -20,6 +20,7 @@
+> > > > > > >  #include <strings.h>
+> > > > > > >  #include <sys/file.h>
+> > > > > > >  #include <sys/mman.h>
+> > > > > > > +#include <linux/mman.h>
+> > > > > > >  #include <sys/uio.h>
+> > > > > > >  #include <stdbool.h>
+> > > > > > >  #ifdef HAVE_ERR_H
+> > > > > > > diff --git a/tests/generic/759 b/tests/generic/759
+> > > > > > > index 6c74478aa8a0e0..3549c5ed6a9299 100755
+> > > > > > > --- a/tests/generic/759
+> > > > > > > +++ b/tests/generic/759
+> > > > > > > @@ -14,6 +14,9 @@ _begin_fstest rw auto quick
+> > > > > > >  _require_test
+> > > > > > >  _require_thp
+> > > > > > >
+> > > > > > > +$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE not supported' && \
+> > > > > > > +       _notrun "fsx binary does not support MADV_COLLAPSE"
+> > > > > > > +
+> > > > > > >  run_fsx -N 10000            -l 500000 -h
+> > > > > > >  run_fsx -N 10000  -o 8192   -l 500000 -h
+> > > > > > >  run_fsx -N 10000  -o 128000 -l 500000 -h
+> > > > > > > diff --git a/tests/generic/760 b/tests/generic/760
+> > > > > > > index c71a196222ad3b..2fbd28502ae678 100755
+> > > > > > > --- a/tests/generic/760
+> > > > > > > +++ b/tests/generic/760
+> > > > > > > @@ -15,6 +15,9 @@ _require_test
+> > > > > > >  _require_odirect
+> > > > > > >  _require_thp
+> > > > > > >
+> > > > > > > +$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE not supported' && \
+> > > > > > > +       _notrun "fsx binary does not support MADV_COLLAPSE"
+> > > > > > > +
+> > > > > >
+> > > > > > I tried this out locally and it works for me:
+> > > > > >
+> > > > > > generic/759 8s ... [not run] fsx binary does not support MADV_COLLAPSE
+> > > > > > Ran: generic/759
+> > > > > > Not run: generic/759
+> > > > > > Passed all 1 tests
+> > > > > >
+> > > > > > SECTION       -- fuse
+> > > > > > =========================
+> > > > > > Ran: generic/759
+> > > > > > Not run: generic/759
+> > > > > > Passed all 1 tests
+> > > > >
+> > > > > Does the test actually run if you /do/ have kernel/libc headers that
+> > > > > define MADV_COLLAPSE?  And if so, does that count as a Tested-by?
+> > > > >
+> > > >
+> > > > I'm not sure if I fully understand the subtext of your question but
+> > > > yes, the test runs on my system when MADV_COLLAPSE is defined in the
+> > > > kernel/libc headers.
+> > >
+> > > Yep, you understood me correctly. :)
+> > >
+> > > > For sanity checking the inverse case, (eg MADV_COLLAPSE not defined),
+> > > > I tried this out by modifying the ifdef/ifndef checks in fsx to
+> > > > MADV_COLLAPSE_ to see if the '$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 |
+> > > > grep -q 'MADV_COLLAPSE not supported'' line catches that.
+> > >
+> > > <nod> Sounds good then; I'll add this to my test clod and run it
+> > > overnight.
+> >
+> > The arm64 vms with 64k base pages spat out this:
+> >
+> > --- /run/fstests/bin/tests/generic/759.out      2025-02-02 08:36:28.007248055 -0800
+> > +++ /var/tmp/fstests/generic/759.out.bad        2025-02-03 16:51:34.862964640 -0800
+> > @@ -1,4 +1,5 @@
+> >  QA output created by 759
+> >  fsx -N 10000 -l 500000 -h
+> > -fsx -N 10000 -o 8192 -l 500000 -h
+> > -fsx -N 10000 -o 128000 -l 500000 -h
+> > +Seed set to 1
+> > +madvise collapse for buf: Cannot allocate memory
+> > +init_hugepages_buf failed for good_buf: Cannot allocate memory
+> >
+> > Note that it was trying to create a 512M page(!) on a VM with 8G of
+> > memory.  Normally one doesn't use large base page size in low memory
+> > environments, but this /is/ fstestsland. 8-)
+> >
+> > From commit 7d8faaf155454f ("mm/madvise: introduce MADV_COLLAPSE sync
+> > hugepage collapse") :
+> >
+> >         ENOMEM  Memory allocation failed or VMA not found
+> >         EBUSY   Memcg charging failed
+> >         EAGAIN  Required resource temporarily unavailable.  Try again
+> >                 might succeed.
+> >         EINVAL  Other error: No PMD found, subpage doesn't have Present
+> >                 bit set, "Special" page no backed by struct page, VMA
+> >                 incorrectly sized, address not page-aligned, ...
+> >
+> > It sounds like ENOMEM/EBUSY/EINVAL should result in
+> > _notrun "Could not generate hugepage" ?  What are your thoughts?
+> >
+> 
+> Thanks for running it overnight. This sounds good to me, but will this
+> be robust against false negatives? For example, if it succeeds when
+> we're doing the
+> 
+> $here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE not
+> supported' &&  _notrun "fsx binary does not support MADV_COLLAPSE"
+> 
+> check, does that guarantee that the actual run won't error out with
+> ENOMEM/EBUSY/EINVAL?
 
+Nope.  That code only checks that the fsx binary was built with
+MADV_COLLAPSE support, not that any of it actually works.
 
-On 2/4/25 21:38, Bernd Schubert wrote:
+>                      It seems like there could be the case where it
+> passes the check but then when it actually runs, the system state
+> memory state may have changed and now memcg charging or the memory
+> allocation fails?
+
+Indeed, I think the error I saw is exactly this happening.
+
+In the end I turned the fsx -h invocation into a helper that checks for
+any of those three errors (ENOMEM/BUSY/INVAL) and _notruns the test if
+we can't even get a hugepage at the start.
+
+# Run fsx with -h(ugepage buffers).  If we can't set up a hugepage then skip
+# the test, but if any other error occurs then exit the test.
+_run_hugepage_fsx() {
+	_run_fsx "$@" -h &> $tmp.hugepage_fsx
+	local res=$?
+	if [ $res -eq 103 ]; then
+		# According to the MADV_COLLAPSE manpage, these three errors
+		# can happen if the kernel could not collapse a collection of
+		# pages into a single huge page.
+		grep -q -E ' for hugebuf: (Cannot allocate memory|Device or resource busy|Resource temporarily unavailable)' $tmp.hugepage_fsx && \
+			_notrun "Could not set up huge page for test"
+	fi
+	cat $tmp.hugepage_fsx
+	rm -f $tmp.hugepage_fsx
+	test $res -ne 0 && exit 1
+	return 0
+}
+
+Note that it won't prevent or paper over subsequent MADV_COLLAPSE
+failures once the process is up and running, though as long as nothing
+else in fsx fails or corrupts the file, the collapse failures won't be
+reported.  (As is the case now).
+
+Anyway I'll send patches for both issues.
+
+> allocation fails? EAGAIN seems a bit iffy to me - hopefully this
+> doesn't happen often but if it does, it would likely be a false
+> negative fail for the generic test?
+> 
+> Maybe instead of "$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q
+> 'MADV_COLLAPSE not supported' &&  _notrun "fsx binary does not support
+> MADV_COLLAPSE"", we should run the test and then if the output to the
+> .out file is "MADV_COLLAPSE not supported", then we deem that a
+> pass/success? Not sure if this is possible in the fstest
+> infrastructure though for checking against two possible outputs in the
+> .out file. What are your thoughts?
+
+You ... can switch the .out(put) dynamically, but the mechanism to do it
+is underdocumented and quirky; and it makes understanding what the test
+does rather difficult.  See _link_out_file in xfs/614 if you want to
+open that Pandora's box.
+
+--D
+
 > 
 > 
-> On 2/4/25 21:29, Joanne Koong wrote:
->> On Tue, Feb 4, 2025 at 12:00 PM Bernd Schubert
->> <bernd.schubert@fastmail.fm> wrote:
->>>
->>>
->>>
->>> On 2/4/25 20:26, Joanne Koong wrote:
->>>> Hi Bernd,
->>>>
->>>> On Tue, Feb 4, 2025 at 3:03 AM Bernd Schubert
->>>> <bernd.schubert@fastmail.fm> wrote:
->>>>>
->>>>> Hi Joanne,
->>>>>
->>>>> On 2/3/25 19:50, Joanne Koong wrote:
->>>>>> req->flags is set/tested/cleared atomically in fuse. When the FR_PENDING
->>>>>> bit is cleared from the request flags when assigning a request to a
->>>>>> uring entry, the fiq->lock does not need to be held.
->>>>>>
->>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>> Fixes: c090c8abae4b6 ("fuse: Add io-uring sqe commit and fetch support")
->>>>>> ---
->>>>>>  fs/fuse/dev_uring.c | 2 --
->>>>>>  1 file changed, 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->>>>>> index ab8c26042aa8..42389d3e7235 100644
->>>>>> --- a/fs/fuse/dev_uring.c
->>>>>> +++ b/fs/fuse/dev_uring.c
->>>>>> @@ -764,9 +764,7 @@ static void fuse_uring_add_req_to_ring_ent(struct fuse_ring_ent *ent,
->>>>>>                       ent->state);
->>>>>>       }
->>>>>>
->>>>>> -     spin_lock(&fiq->lock);
->>>>>>       clear_bit(FR_PENDING, &req->flags);
->>>>>> -     spin_unlock(&fiq->lock);
->>>>>>       ent->fuse_req = req;
->>>>>>       ent->state = FRRS_FUSE_REQ;
->>>>>>       list_move(&ent->list, &queue->ent_w_req_queue);
->>>>>
->>>>> I think that would have an issue in request_wait_answer(). Let's say
->>>>>
->>>>>
->>>>> task-A, request_wait_answer(),
->>>>>                 spin_lock(&fiq->lock);
->>>>>                 /* Request is not yet in userspace, bail out */
->>>>>                 if (test_bit(FR_PENDING, &req->flags)) {  // ========> if passed
->>>>>                         list_del(&req->list);  // --> removes from the list
->>>>>
->>>>> task-B,
->>>>> fuse_uring_add_req_to_ring_ent()
->>>>>         clear_bit(FR_PENDING, &req->flags);
->>>>>         ent->fuse_req = req;
->>>>>         ent->state = FRRS_FUSE_REQ;
->>>>>         list_move_tail(&ent->list, &queue->ent_w_req_queue);
->>>>>         fuse_uring_add_to_pq(ent, req);  // ==> Add to list
->>>>>
->>>>>
->>>>>
->>>>> What I mean is, task-A passes the if, but is then slower than task-B. I.e.
->>>>> task-B runs fuse_uring_add_to_pq() before task-B does the list_del.
->>>>>
->>>>
->>>> Is this race condition possible given that fiq->ops->send_req() is
->>>> called (and completed) before request_wait_answer() is called? The
->>>> path I see is this:
->>>>
->>>> __fuse_simple_request()
->>>>     __fuse_request_send()
->>>>         fuse_send_one()
->>>>             fiq->ops->send_req()
->>>>                   fuse_uring_queue_fuse_req()
->>>>                       fuse_uring_add_req_to_ring_ent()
->>>>                            clear FR_PENDING bit
->>>>                            fuse_uring_add_to_pq()
->>>>         request_wait_answer()
->>>>
->>>> It doesn't seem like task A can call request_wait_answer() while task
->>>> B is running fuse_uring_queue_fuse_req() on the same request while the
->>>> request still has the FR_PENDING bit set.
->>>>
->>>> This case of task A running request_wait_answer() while task B is
->>>> executing fuse_uring_add_req_to_ring_ent() can happen through
->>>> fuse_uring_commit_fetch() ->  fuse_uring_add_req_to_ring_ent(), but at
->>>> that point the FR_PENDING flag will have already been cleared on the
->>>> request, so this would bypass the "if (test_bit(FR_PENDING,...))"
->>>> check in request_wait_answer().
->>>
->>> I mean this case. I don't think FR_PENDING is cleared - why should it?
->>> And where? The request is pending state, waiting to get into 'FR_SENT'?
->>>
->>>>
->>>> Is there something I'm missing? I think if this race condition is
->>>> possible, then we also have a bigger problem where the request can be
->>>> freed out in this request_wait_answer() ->  if (test_bit(FR_PENDING,
->>>> &req->flags))...  case while fuse_uring_add_req_to_ring_ent() ->
->>>> fuse_uring_add_to_pq() dereferences it still.
->>>
->>> I don't think so, if we take the lock.
->>>
->>
->> the path I'm looking at is this:
->>
->> task A -
->> __fuse_simple_request()
->>     fuse_get_req() -> request is allocated (req refcount is 1)
->>     __fuse_request_send()
->>         __fuse_get_request() -> req refcount is 2
->>         fuse_send_one() -> req gets sent to uring
->>         request_wait_answer()
->>                ...
->>                hits the interrupt case, goes into "if
->> test_bit(FR_PENDING, ...)" case which calls __fuse_put_request(), req
->> refcount is now 1
->>     fuse_put_request() -> req refcount is dropped to 0, request is freed
->>
->> while in task B -
->> fuse_uring_commit_fetch()
->>     fuse_uring_next_fuse_req()
->>         fuse_uring_ent_assign_req()
->>             gets req off fuse_req_queue
->>             fuse_uring_add_req_to_ring_ent()
->>                  clear FR_PENDING
->>                  fuse_uring_add_to_pq()
->>                      dereferences req
->>
->> if task A hits the interrupt case in request_wait_answer() and then
->> calls fuse_put_request() before task B clears the pending flag (and
->> after it's gotten the request from the fuse_req_queue in
->> fuse_uring_ent_assign_req()), then I think we hit this case, no?
->>
+> Thanks,
+> Joanne
 > 
-> Oh no, yes, you are right. It is a bit ugly to use fiq lock for list
-> handling. I think I'm going to add uring handler for that to
-> request_wait_answer. In general, basically request_wait_answer
-> is currently operating on the wrong list - it assumes fiq, but that
-> is not where the request it waiting on.
-
-Please see the attached patch, I need to think about a way to test this
-and will send out properly tomorrow. So far it is only basically
-compilation tested.
-
-
-Thanks,
-Bernd
-
---------------dZCoxxMHxiafGvjZ8HaOw7qL
-Content-Type: text/plain; charset=UTF-8; name="req-cancellation-race"
-Content-Disposition: attachment; filename="req-cancellation-race"
-Content-Transfer-Encoding: base64
-
-ZnVzZToge2lvLXVyaW5nfSBGaXggYSBwb3NzaWJsZSByZXEgY2FuY2VsbGF0aW9uIHJhY2UK
-CkZyb206IEJlcm5kIFNjaHViZXJ0IDxic2NodWJlcnRAZGRuLmNvbT4KCnRhc2stQSAoYXBw
-bGljYXRpb24pIG1pZ2h0IGJlIGluIHJlcXVlc3Rfd2FpdF9hbnN3ZXIgYW5kCnRyeSB0byBy
-ZW1vdmUgdGhlIHJlcXVlc3Qgd2hlbiBpdCBoYXMgRlJfUEVORElORyBzZXQuCgp0YXNrLUIg
-KGEgZnVzZS1zZXJ2ZXIgaW8tdXJpbmcgdGFzaykgbWlnaHQgaGFuZGxlIHRoaXMKcmVxdWVz
-dCB3aXRoIEZVU0VfSU9fVVJJTkdfQ01EX0NPTU1JVF9BTkRfRkVUQ0gsIHdoZW4KZmV0Y2hp
-bmcgdGhlIG5leHQgcmVxdWVzdCBhbmQgYWNjZXNzZWQgdGhlIHJlcSBmcm9tCnRoZSBwZW5k
-aW5nIGxpc3QgaW4gZnVzZV91cmluZ19lbnRfYXNzaWduX3JlcSgpLgpUaGF0IGNvZGUgcGF0
-aCB3YXMgbm90IHByb3RlY3RlZCBieSBmaXEtPmxvY2sgYW5kIHNvCm1pZ2h0IHJhY2Ugd2l0
-aCB0YXNrLUEuCgpGb3Igc2NhbGluZyByZWFzb25zIHdlIGJldHRlciBkb24ndCB1c2UgZmlx
-LT5sb2NrLCBidXQKYWRkIGEgaGFuZGxlciB0byByZW1vdmUgY2FuY2VsZWQgcmVxdWVzdHMg
-ZnJvbSB0aGUgcXVldWUuCgpGaXhlczogYzA5MGM4YWJhZTRiICgiZnVzZTogQWRkIGlvLXVy
-aW5nIHNxZSBjb21taXQgYW5kIGZldGNoIHN1cHBvcnQiKQpSZXBvcnRlZC1ieTogSm9hbm5l
-IEtvb25nIDxqb2FubmVsa29vbmdAZ21haWwuY29tPgpDbG9zZXM6IGh0dHBzOi8vbG9yZS5r
-ZXJuZWwub3JnL2FsbC9DQUpucmsxWmdITmI3OGR6LXlmTlRweG1XN3d0VDg4QT1tLXpGMFpv
-TFhLTFVIUmpOVHdAbWFpbC5nbWFpbC5jb20vClNpZ25lZC1vZmYtYnk6IEJlcm5kIFNjaHVi
-ZXJ0IDxic2NodWJlcnRAZGRuLmNvbT4KCi0tCkNvbXBpbGF0aW9uIHRlc3RlZCBvbmx5Ci0t
-LQogZnMvZnVzZS9kZXYuYyAgICAgICAgIHwgICAyNSArKysrKysrKysrKysrKysrLS0tLS0t
-LS0tCiBmcy9mdXNlL2Rldl91cmluZy5jICAgfCAgIDI1ICsrKysrKysrKysrKysrKysrKysr
-Ky0tLS0KIGZzL2Z1c2UvZGV2X3VyaW5nX2kuaCB8ICAgIDYgKysrKysrCiBmcy9mdXNlL2Z1
-c2VfZGV2X2kuaCAgfCAgICAyICsrCiBmcy9mdXNlL2Z1c2VfaS5oICAgICAgfCAgICAyICsr
-CiA1IGZpbGVzIGNoYW5nZWQsIDQ3IGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9ucygtKQoK
-ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGV2LmMgYi9mcy9mdXNlL2Rldi5jCmluZGV4IDgwYTEx
-ZWY0YjY5YS4uMDQ5NGVhNDc4OTNhIDEwMDY0NAotLS0gYS9mcy9mdXNlL2Rldi5jCisrKyBi
-L2ZzL2Z1c2UvZGV2LmMKQEAgLTE1Nyw3ICsxNTcsNyBAQCBzdGF0aWMgdm9pZCBfX2Z1c2Vf
-Z2V0X3JlcXVlc3Qoc3RydWN0IGZ1c2VfcmVxICpyZXEpCiB9CiAKIC8qIE11c3QgYmUgY2Fs
-bGVkIHdpdGggPiAxIHJlZmNvdW50ICovCi1zdGF0aWMgdm9pZCBfX2Z1c2VfcHV0X3JlcXVl
-c3Qoc3RydWN0IGZ1c2VfcmVxICpyZXEpCit2b2lkIF9fZnVzZV9wdXRfcmVxdWVzdChzdHJ1
-Y3QgZnVzZV9yZXEgKnJlcSkKIHsKIAlyZWZjb3VudF9kZWMoJnJlcS0+Y291bnQpOwogfQpA
-QCAtNTI5LDE2ICs1MjksMjMgQEAgc3RhdGljIHZvaWQgcmVxdWVzdF93YWl0X2Fuc3dlcihz
-dHJ1Y3QgZnVzZV9yZXEgKnJlcSkKIAkJaWYgKCFlcnIpCiAJCQlyZXR1cm47CiAKLQkJc3Bp
-bl9sb2NrKCZmaXEtPmxvY2spOwotCQkvKiBSZXF1ZXN0IGlzIG5vdCB5ZXQgaW4gdXNlcnNw
-YWNlLCBiYWlsIG91dCAqLwotCQlpZiAodGVzdF9iaXQoRlJfUEVORElORywgJnJlcS0+Zmxh
-Z3MpKSB7Ci0JCQlsaXN0X2RlbCgmcmVxLT5saXN0KTsKKwkJaWYgKHRlc3RfYml0KEZSX1VS
-SU5HLCAmcmVxLT5mbGFncykpIHsKKwkJCWJvb2wgcmVtb3ZlZCA9IGZ1c2VfdXJpbmdfcmVt
-b3ZlX3BlbmRpbmdfcmVxKHJlcSk7CisKKwkJCWlmIChyZW1vdmVkKQorCQkJCXJldHVybjsK
-KwkJfSBlbHNlIHsKKwkJCXNwaW5fbG9jaygmZmlxLT5sb2NrKTsKKwkJCS8qIFJlcXVlc3Qg
-aXMgbm90IHlldCBpbiB1c2Vyc3BhY2UsIGJhaWwgb3V0ICovCisJCQlpZiAodGVzdF9iaXQo
-RlJfUEVORElORywgJnJlcS0+ZmxhZ3MpKSB7CisJCQkJbGlzdF9kZWwoJnJlcS0+bGlzdCk7
-CisJCQkJc3Bpbl91bmxvY2soJmZpcS0+bG9jayk7CisJCQkJX19mdXNlX3B1dF9yZXF1ZXN0
-KHJlcSk7CisJCQkJcmVxLT5vdXQuaC5lcnJvciA9IC1FSU5UUjsKKwkJCQlyZXR1cm47CisJ
-CQl9CiAJCQlzcGluX3VubG9jaygmZmlxLT5sb2NrKTsKLQkJCV9fZnVzZV9wdXRfcmVxdWVz
-dChyZXEpOwotCQkJcmVxLT5vdXQuaC5lcnJvciA9IC1FSU5UUjsKLQkJCXJldHVybjsKIAkJ
-fQotCQlzcGluX3VubG9jaygmZmlxLT5sb2NrKTsKIAl9CiAKIAkvKgpkaWZmIC0tZ2l0IGEv
-ZnMvZnVzZS9kZXZfdXJpbmcuYyBiL2ZzL2Z1c2UvZGV2X3VyaW5nLmMKaW5kZXggMWUyYmNl
-YjRmZjFlLi5mOWFiZGNmNWY3ZTYgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZGV2X3VyaW5nLmMK
-KysrIGIvZnMvZnVzZS9kZXZfdXJpbmcuYwpAQCAtNzcxLDggKzc3MSw2IEBAIHN0YXRpYyB2
-b2lkIGZ1c2VfdXJpbmdfYWRkX3JlcV90b19yaW5nX2VudChzdHJ1Y3QgZnVzZV9yaW5nX2Vu
-dCAqZW50LAogCQkJCQkgICBzdHJ1Y3QgZnVzZV9yZXEgKnJlcSkKIHsKIAlzdHJ1Y3QgZnVz
-ZV9yaW5nX3F1ZXVlICpxdWV1ZSA9IGVudC0+cXVldWU7Ci0Jc3RydWN0IGZ1c2VfY29ubiAq
-ZmMgPSByZXEtPmZtLT5mYzsKLQlzdHJ1Y3QgZnVzZV9pcXVldWUgKmZpcSA9ICZmYy0+aXE7
-CiAKIAlsb2NrZGVwX2Fzc2VydF9oZWxkKCZxdWV1ZS0+bG9jayk7CiAKQEAgLTc4Miw5ICs3
-ODAsNyBAQCBzdGF0aWMgdm9pZCBmdXNlX3VyaW5nX2FkZF9yZXFfdG9fcmluZ19lbnQoc3Ry
-dWN0IGZ1c2VfcmluZ19lbnQgKmVudCwKIAkJCWVudC0+c3RhdGUpOwogCX0KIAotCXNwaW5f
-bG9jaygmZmlxLT5sb2NrKTsKIAljbGVhcl9iaXQoRlJfUEVORElORywgJnJlcS0+ZmxhZ3Mp
-OwotCXNwaW5fdW5sb2NrKCZmaXEtPmxvY2spOwogCWVudC0+ZnVzZV9yZXEgPSByZXE7CiAJ
-ZW50LT5zdGF0ZSA9IEZSUlNfRlVTRV9SRVE7CiAJbGlzdF9tb3ZlX3RhaWwoJmVudC0+bGlz
-dCwgJnF1ZXVlLT5lbnRfd19yZXFfcXVldWUpOwpAQCAtMTI4NSw2ICsxMjgxLDggQEAgdm9p
-ZCBmdXNlX3VyaW5nX3F1ZXVlX2Z1c2VfcmVxKHN0cnVjdCBmdXNlX2lxdWV1ZSAqZmlxLCBz
-dHJ1Y3QgZnVzZV9yZXEgKnJlcSkKIAlpZiAodW5saWtlbHkocXVldWUtPnN0b3BwZWQpKQog
-CQlnb3RvIGVycl91bmxvY2s7CiAKKwlzZXRfYml0KEZSX1VSSU5HLCAmcmVxLT5mbGFncyk7
-CisJcmVxLT5yaW5nX3F1ZXVlID0gcXVldWU7CiAJZW50ID0gbGlzdF9maXJzdF9lbnRyeV9v
-cl9udWxsKCZxdWV1ZS0+ZW50X2F2YWlsX3F1ZXVlLAogCQkJCSAgICAgICBzdHJ1Y3QgZnVz
-ZV9yaW5nX2VudCwgbGlzdCk7CiAJaWYgKGVudCkKQEAgLTEzMjMsNiArMTMyMSw4IEBAIGJv
-b2wgZnVzZV91cmluZ19xdWV1ZV9icV9yZXEoc3RydWN0IGZ1c2VfcmVxICpyZXEpCiAJCXJl
-dHVybiBmYWxzZTsKIAl9CiAKKwlzZXRfYml0KEZSX1VSSU5HLCAmcmVxLT5mbGFncyk7CisJ
-cmVxLT5yaW5nX3F1ZXVlID0gcXVldWU7CiAJbGlzdF9hZGRfdGFpbCgmcmVxLT5saXN0LCAm
-cXVldWUtPmZ1c2VfcmVxX2JnX3F1ZXVlKTsKIAogCWVudCA9IGxpc3RfZmlyc3RfZW50cnlf
-b3JfbnVsbCgmcXVldWUtPmVudF9hdmFpbF9xdWV1ZSwKQEAgLTEzNTMsNiArMTM1MywyMyBA
-QCBib29sIGZ1c2VfdXJpbmdfcXVldWVfYnFfcmVxKHN0cnVjdCBmdXNlX3JlcSAqcmVxKQog
-CXJldHVybiB0cnVlOwogfQogCitib29sIGZ1c2VfdXJpbmdfcmVtb3ZlX3BlbmRpbmdfcmVx
-KHN0cnVjdCBmdXNlX3JlcSAqcmVxKQoreworCXN0cnVjdCBmdXNlX3JpbmdfcXVldWUgKnF1
-ZXVlID0gcmVxLT5yaW5nX3F1ZXVlOworCisJc3Bpbl9sb2NrKCZxdWV1ZS0+bG9jayk7CisJ
-aWYgKHRlc3RfYml0KEZSX1BFTkRJTkcsICZyZXEtPmZsYWdzKSkgeworCQlsaXN0X2RlbCgm
-cmVxLT5saXN0KTsKKwkJc3Bpbl91bmxvY2soJnF1ZXVlLT5sb2NrKTsKKwkJX19mdXNlX3B1
-dF9yZXF1ZXN0KHJlcSk7CisJCXJlcS0+b3V0LmguZXJyb3IgPSAtRUlOVFI7CisJCXJldHVy
-biB0cnVlOworCX0KKwlzcGluX3VubG9jaygmcXVldWUtPmxvY2spOworCisJcmV0dXJuIGZh
-bHNlOworfQorCiBzdGF0aWMgY29uc3Qgc3RydWN0IGZ1c2VfaXF1ZXVlX29wcyBmdXNlX2lv
-X3VyaW5nX29wcyA9IHsKIAkvKiBzaG91bGQgYmUgc2VuZCBvdmVyIGlvLXVyaW5nIGFzIGVu
-aGFuY2VtZW50ICovCiAJLnNlbmRfZm9yZ2V0ID0gZnVzZV9kZXZfcXVldWVfZm9yZ2V0LApk
-aWZmIC0tZ2l0IGEvZnMvZnVzZS9kZXZfdXJpbmdfaS5oIGIvZnMvZnVzZS9kZXZfdXJpbmdf
-aS5oCmluZGV4IGEzNzk5MWQxN2QzNC4uODYwNzE3NTg2MjhmIDEwMDY0NAotLS0gYS9mcy9m
-dXNlL2Rldl91cmluZ19pLmgKKysrIGIvZnMvZnVzZS9kZXZfdXJpbmdfaS5oCkBAIC0xNDMs
-NiArMTQzLDcgQEAgaW50IGZ1c2VfdXJpbmdfY21kKHN0cnVjdCBpb191cmluZ19jbWQgKmNt
-ZCwgdW5zaWduZWQgaW50IGlzc3VlX2ZsYWdzKTsKIHZvaWQgZnVzZV91cmluZ19xdWV1ZV9m
-dXNlX3JlcShzdHJ1Y3QgZnVzZV9pcXVldWUgKmZpcSwgc3RydWN0IGZ1c2VfcmVxICpyZXEp
-OwogYm9vbCBmdXNlX3VyaW5nX3F1ZXVlX2JxX3JlcShzdHJ1Y3QgZnVzZV9yZXEgKnJlcSk7
-CiBib29sIGZ1c2VfdXJpbmdfcmVxdWVzdF9leHBpcmVkKHN0cnVjdCBmdXNlX2Nvbm4gKmZj
-KTsKK2Jvb2wgZnVzZV91cmluZ19yZW1vdmVfcGVuZGluZ19yZXEoc3RydWN0IGZ1c2VfcmVx
-ICpyZXEpOwogCiBzdGF0aWMgaW5saW5lIHZvaWQgZnVzZV91cmluZ19hYm9ydChzdHJ1Y3Qg
-ZnVzZV9jb25uICpmYykKIHsKQEAgLTIwNiw2ICsyMDcsMTEgQEAgc3RhdGljIGlubGluZSBi
-b29sIGZ1c2VfdXJpbmdfcmVxdWVzdF9leHBpcmVkKHN0cnVjdCBmdXNlX2Nvbm4gKmZjKQog
-CXJldHVybiBmYWxzZTsKIH0KIAorc3RhdGljIGlubGluZSBib29sIGZ1c2VfdXJpbmdfcmVt
-b3ZlX3BlbmRpbmdfcmVxKHN0cnVjdCBmdXNlX3JlcSAqcmVxKQoreworCXJldHVybiBmYWxz
-ZTsKK30KKwogI2VuZGlmIC8qIENPTkZJR19GVVNFX0lPX1VSSU5HICovCiAKICNlbmRpZiAv
-KiBfRlNfRlVTRV9ERVZfVVJJTkdfSV9IICovCmRpZmYgLS1naXQgYS9mcy9mdXNlL2Z1c2Vf
-ZGV2X2kuaCBiL2ZzL2Z1c2UvZnVzZV9kZXZfaS5oCmluZGV4IDE5YzI5YzYwMDBhNy4uMzZi
-OTA5MjA2MWVhIDEwMDY0NAotLS0gYS9mcy9mdXNlL2Z1c2VfZGV2X2kuaAorKysgYi9mcy9m
-dXNlL2Z1c2VfZGV2X2kuaApAQCAtNDksNiArNDksOCBAQCBzdGF0aWMgaW5saW5lIHN0cnVj
-dCBmdXNlX2RldiAqZnVzZV9nZXRfZGV2KHN0cnVjdCBmaWxlICpmaWxlKQogdW5zaWduZWQg
-aW50IGZ1c2VfcmVxX2hhc2godTY0IHVuaXF1ZSk7CiBzdHJ1Y3QgZnVzZV9yZXEgKmZ1c2Vf
-cmVxdWVzdF9maW5kKHN0cnVjdCBmdXNlX3BxdWV1ZSAqZnBxLCB1NjQgdW5pcXVlKTsKIAor
-dm9pZCBfX2Z1c2VfcHV0X3JlcXVlc3Qoc3RydWN0IGZ1c2VfcmVxICpyZXEpOworCiB2b2lk
-IGZ1c2VfZGV2X2VuZF9yZXF1ZXN0cyhzdHJ1Y3QgbGlzdF9oZWFkICpoZWFkKTsKIAogdm9p
-ZCBmdXNlX2NvcHlfaW5pdChzdHJ1Y3QgZnVzZV9jb3B5X3N0YXRlICpjcywgaW50IHdyaXRl
-LApkaWZmIC0tZ2l0IGEvZnMvZnVzZS9mdXNlX2kuaCBiL2ZzL2Z1c2UvZnVzZV9pLmgKaW5k
-ZXggZGNjMWMzMjdhMDU3Li4yOWE3YTZlNTc1NzcgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZnVz
-ZV9pLmgKKysrIGIvZnMvZnVzZS9mdXNlX2kuaApAQCAtNDA4LDYgKzQwOCw3IEBAIGVudW0g
-ZnVzZV9yZXFfZmxhZyB7CiAJRlJfRklOSVNIRUQsCiAJRlJfUFJJVkFURSwKIAlGUl9BU1lO
-QywKKwlGUl9VUklORywKIH07CiAKIC8qKgpAQCAtNDU3LDYgKzQ1OCw3IEBAIHN0cnVjdCBm
-dXNlX3JlcSB7CiAKICNpZmRlZiBDT05GSUdfRlVTRV9JT19VUklORwogCXZvaWQgKnJpbmdf
-ZW50cnk7CisJdm9pZCAqcmluZ19xdWV1ZTsKICNlbmRpZgogCS8qKiBXaGVuIChpbiBqaWZm
-aWVzKSB0aGUgcmVxdWVzdCB3YXMgY3JlYXRlZCAqLwogCXVuc2lnbmVkIGxvbmcgY3JlYXRl
-X3RpbWU7Cg==
-
---------------dZCoxxMHxiafGvjZ8HaOw7qL--
+> > --D
+> >
+> > > --D
+> > >
+> > > >
+> > > > > --D
+> > > > >
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Joanne
+> > > > > >
+> > > > > > >  psize=`$here/src/feature -s`
+> > > > > > >  bsize=`$here/src/min_dio_alignment $TEST_DIR $TEST_DEV`
+> > > > > > >
+> > > > > >
+> > >
+> 
 
