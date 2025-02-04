@@ -1,106 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-40768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294DEA2748B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 15:40:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D428A274C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 15:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1831884CF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 14:40:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40FFB1633B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 14:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64807213E92;
-	Tue,  4 Feb 2025 14:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7542139B6;
+	Tue,  4 Feb 2025 14:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MAyTjb8/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sTRjoPse"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0C62135B6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 14:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C18A2135D1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 14:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738679985; cv=none; b=eZOWQOEHBXEtBT/9/FFjk3bxw4tQ9EnyzYTTpwSWUFsuxtGR0UTAkS00JHuHJj1v/cR/Xmrnxy3XT1/b7A6ar+sp4XjTc4kEkb+eeAY2AYKG9830J5a9QJkrtGeR5+J1QplrVJZgJAlWBaKpNclqyKmZB558sdFNQW16De2GeNs=
+	t=1738680471; cv=none; b=Mp+sIuGMa2r3eApEeKBSNNHyPDYezlJadI2SwAkA5R0wmXryFYWDYEOOQ0cRqzEqEBswh8ZJXAB6lA+ysJhI2Kjak0ECMi8BqEhkXCrBPyM2DVNCDInz5SdShEwhQmFJT11WE78qGjlc08bInbpPNu4FhD06sypBshYs4o/Cuo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738679985; c=relaxed/simple;
-	bh=NK6U2eAdcsCFFLkWKaca2nbec36RdO4wjEij8v3CPvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEnh3k9BnLZ1jrBvcVI/xlO9UxWPe9zg1yAoSg59GXxUyt5txptdTlNGUBZi5H8Y19888avBgB9FwJUEPklS3/wi9i1n8OcwqnI0MCA4z08I8nnnU/UDnY2cSbPIhmwNdGbpvVdWT+QSYl3KsdAGL9XX1NyDHV7vNkvCElaW4rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MAyTjb8/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738679982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sQWJz8pfF5VlA3eUj44/2CtOhMxwtbJLSsIHRwy6GfU=;
-	b=MAyTjb8/DZN+Kwezq1K2a8IMPKKjsrRdvstRTnOM7Sp8v+KnFqnOL0+HsNzEN8VPOUzGbi
-	Ic+Nb6m2jNndLQPB0yNZMltkENoY8Fw/1IkiBtcxA+uUbddXiCUm5ULejG+zHLSPStxsVY
-	Z2n8rQdqu4b4tJVt1vldjhdiEj2MK9E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-iVU-Q94ANmmGe9zTuvdGkQ-1; Tue,
- 04 Feb 2025 09:39:39 -0500
-X-MC-Unique: iVU-Q94ANmmGe9zTuvdGkQ-1
-X-Mimecast-MFC-AGG-ID: iVU-Q94ANmmGe9zTuvdGkQ
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46A971955DD0;
-	Tue,  4 Feb 2025 14:39:37 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.214])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A02CF1800358;
-	Tue,  4 Feb 2025 14:39:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  4 Feb 2025 15:39:10 +0100 (CET)
-Date: Tue, 4 Feb 2025 15:39:05 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Oliver Sang <oliver.sang@intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe: don't update {a,c,m}time for anonymous pipes
-Message-ID: <20250204143904.GC6031@redhat.com>
-References: <20250204132153.GA20921@redhat.com>
- <CAGudoHGptAB1C+vKpfoYo+S9tU2Ow2LWbQeyHKwBpzy9Xh_b=w@mail.gmail.com>
+	s=arc-20240116; t=1738680471; c=relaxed/simple;
+	bh=oE4QU3PPtsAJQ4G2P1RTlCw8H+CMDJW6wqA0hhTxZUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YVrtSWyoO5P6MtfXtJVlM2VnxEzZ5DqKPtB4HHpM6Qe+e2HEKM0jHs8s/BE8aiCHkrRgBbVI+FHCl5BnJ2nV7a6pPi2LELlUthtJcwA59W2pb3ZKek45Gj/1/LKwfKSgz/jj1FO+m1+koCukAtfGF4Cy9w5aQcvacFcQtOJU3V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sTRjoPse; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so9824a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 06:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1738680468; x=1739285268; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oE4QU3PPtsAJQ4G2P1RTlCw8H+CMDJW6wqA0hhTxZUg=;
+        b=sTRjoPseG9HrykGS74MsmqQI99cQte3pIhv/HNb7cNIjxKd0KqDiL5gFuzHJzHnEI4
+         0KP0rfTILp/pvcyGrWRegWUZCBnFU71aJUgpTehMw6bvuP0bC2dhWVHiMit7E+v6uyvl
+         sTgLzUrvYruIIGZRmFVgd/DAE/9li1I2OW0QhZJDxPgdAWWJqBxOq8fK9ufJxfnI0KTB
+         7KabTtP7btjPdCxMJ7TphC2Cu+Q24vU6T2FBQGne2Ai5CJbCmYOpeNTNZsRyjpbFfzxc
+         THxNib3XtCK++gUQA2puc/CL/uk4WUbsl6NrJyBJASkw+h8EvsN+wiumdU9auSSVAmfa
+         bQ7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738680468; x=1739285268;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oE4QU3PPtsAJQ4G2P1RTlCw8H+CMDJW6wqA0hhTxZUg=;
+        b=T2hf55+h2nhmVKj1z5/SDiT3hIDqbyu04HmE/NFu5Nkpgwqns0buNFcRAdh11xQ2Nz
+         xkdkoqheWwlkU1ydTw/h0c1/bPe3P6fhyIjK2LMmOVnyIi1ekbibzxR/rIQcEZlVl4lK
+         5990moEUvnOiDdjXXSc5OObjH/5mMM1keXTFgdlkXrtw9vbYEV7wexkBZ3Vl5Aq81FQo
+         WIREuPkshXD9HlQ5zJadTUMmZkTfJB1Ua6KcFWzLlJO4a0HN8BvbIy7jsDwu5CTGEuOv
+         NRZiWnLlWX4a8hXDrh4wuxcvElWTim6S+hmg1AtAQOQ64Nlp0s3zSBHfFuO8sdv+1kwE
+         Gd8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXiIYixzpcwX2rLIw8WD0gZO5DnzQU5aVDbF1oUkmzySvWW+Az71Obc5ESVeUhl2KGchSB/Xi7dVLkTvKh0@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn4VtBSrzyoOcWdaYiVwRzGpSeEG7nyj/UAPN9gzODDf/gSd2Z
+	5hTSM7WwrtLImqZ62g2AHbIKiJiCP2pe0RLIgyShNIDdYh8Ev7ZY17gj2ImI9aQCxNP1lIPqH+E
+	0g2D7rAOzm6jo4nWlScsIpa+k+kBb90HcR71l
+X-Gm-Gg: ASbGncsQNNYJmPLayx23BnwMrNtfg3Why85XSVms4f6XbW700XxzC33IAOW5dPw7llw
+	IgSql8WIUVljtWfx8ncdTZivG7MjlQZAiOVMEwYxjnjYV7nWqZYWGLpQuND/htECNY+W/96M55t
+	5n2JFQMVqwtl7vq5sQVAvuIC7l
+X-Google-Smtp-Source: AGHT+IHpUVbkwPej9K+Dlnsjsfxe5J6A8lGTV4hhIFKe9AxZm0DQVeZZQF0YTYdrn4VQ2w9nMXN2sTyauiQxpeIsE0s=
+X-Received: by 2002:a50:ab55:0:b0:5db:689c:cab9 with SMTP id
+ 4fb4d7f45d1cf-5dcc25411bdmr105621a12.6.1738680468027; Tue, 04 Feb 2025
+ 06:47:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHGptAB1C+vKpfoYo+S9tU2Ow2LWbQeyHKwBpzy9Xh_b=w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250204-work-pidfs-ioctl-v1-1-04987d239575@kernel.org>
+In-Reply-To: <20250204-work-pidfs-ioctl-v1-1-04987d239575@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 4 Feb 2025 15:47:11 +0100
+X-Gm-Features: AWEUYZl6Qivkx551CaKDtXrd_BRbJ72ewinSBW6Wih4vXJvTWtkxDxYDRb1ACy8
+Message-ID: <CAG48ez0y=ZwotbWDSR4kG4RJjV8+_VJ-LHbfAEDRKT5kZm3yvQ@mail.gmail.com>
+Subject: Re: [PATCH] pidfs: improve ioctl handling
+To: Christian Brauner <brauner@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Luca Boccassi <luca.boccassi@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/04, Mateusz Guzik wrote:
+On Tue, Feb 4, 2025 at 2:51=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> Pidfs supports extensible and non-extensible ioctls. The extensible
+> ioctls need to check for the ioctl number itself not just the ioctl
+> command otherwise both backward- and forward compatibility are broken.
 >
-> > +       if (ret > 0 && !is_pipe_inode(file_inode(filp))) {
->
-> Total nit in case there is a v2:
->
-> ret is typically > 0 and most of the time this is going to be an
-> anonymous pipe, so I would swap these conditions around.
->
-> A not nit is that "is_pipe_inode" is imo misleading -- a named pipe
-> inode is also a pipe inode. How about "is_anon_pipe"?
+> The pidfs ioctl handler also needs to look at the type of the ioctl
+> command to guard against cases where "[...] a daemon receives some
+> random file descriptor from a (potentially less privileged) client and
+> expects the FD to be of some specific type, it might call ioctl() on
+> this FD with some type-specific command and expect the call to fail if
+> the FD is of the wrong type; but due to the missing type check, the
+> kernel instead performs some action that userspace didn't expect."
+> (cf. [1]]
 
-OK, I'll wait for other reviews and send v2 with the changes you suggest.
-
-Oleg.
-
+Thanks, this looks good to me.
 
