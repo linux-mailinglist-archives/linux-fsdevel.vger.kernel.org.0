@@ -1,74 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-40700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BA5A26B83
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 06:48:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5146A26B86
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 06:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0973A74BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 05:48:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47D341650AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 05:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCF11FF1CE;
-	Tue,  4 Feb 2025 05:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7BE1FDA76;
+	Tue,  4 Feb 2025 05:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xw/ixOPl"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2teENuLy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E83D158558;
-	Tue,  4 Feb 2025 05:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71796158558;
+	Tue,  4 Feb 2025 05:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738648086; cv=none; b=iC/2g2Mxw/pbidTsVvHTYtV4dtQhvY5eslCV2zoSEPW98rfVrqdRpfaUuJ0Ua8YMPMiHIokQJqotmF4NtFAspZqERdDhxtauCjRVIk3D9UNYeYWMER8w5eX2jrj7TlJEOcflIAdtJTj6pqzUv+XuLZFfLgZ84RQTYxuRpFS9Bvo=
+	t=1738648173; cv=none; b=Y5gpd4/+LbUzL75iTSj8BpUVhGWu5B474pb79NpLFi9TlybujjOitqTYxegww1uzyKK5OC1dWJxuQAVErFEWvg+5w5CAeYDEzetMkIEy/c6XRegrqIiHQKUA74ronVqBdbLq5Ms5Rn7q9o0rj/CUwOhVltidH1fzzVJNrXT5ExI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738648086; c=relaxed/simple;
-	bh=1qcJuEWlYhdOVNQk8D1T49twEcTNrzd2Jl5XU96g98A=;
+	s=arc-20240116; t=1738648173; c=relaxed/simple;
+	bh=VfrDKszgCGQNMPThCU1m1LdrTkJwwAUTR6fauYVQjEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgpE1Nv9tlGIJ604NTH+Qu/ZtqXqgacCZAMyVi24tV8ODJU/K/f4idwkzGj+HHSDPA73Jad4IxmxjYJ0dC/nHRvSX7nL3NYugf6GcfuGH1JBoqebJYL7ZI5obxS4+zVbQ4h9GAyzHPeOV6N86JIfXQ/Q8+0UgEyCxns+MM7hi/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xw/ixOPl; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCSy/ZmGLjLiouJP5SS2HHpHYcUORSbYho3VNZBBRl8OScUW40ar1VDHGY+5b8RbhxixVUXg50on4LbkCm/tseXQ3ld+WHGSt4d5LYe9IaAoyqYFoTlJB1dWKdm93RG8ZTKxKrOjtYUFRAoBzapK8lDsvdmGJuNQXjoHQZp9xFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2teENuLy; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1qcJuEWlYhdOVNQk8D1T49twEcTNrzd2Jl5XU96g98A=; b=Xw/ixOPlobdnt3U6vUyjEZkQJt
-	uB6vzgMYbhM93Del2iz9itiE0LMLj+uL8WnERPmkxihAROo5jXEhPPWrlSU+BucZgUn+2MXm41Npo
-	e19QKU7xCx8t8OHvLKRtRtIwdryNUtCMSM5VQKsaiQHra3Ou7u7tBcXxkOZo+CKctkQvuoFChzTNt
-	mkEuEE5FEM4ZqSCljuNIxb0YWfrOj9PKNF74ulFB5y/ouJt4uA9Z03B6T2pSiU8MfaRZaxh6qt34f
-	pw11Kge9pSYv/p+HLU4zw9DUZVPlJ4Xn3qSHSsN6tspCRQqsN1PTa/fYEIFko4SGRd6QDQbq/6a9A
-	1uEg5syA==;
+	bh=s5Zhk5Xv/to3IdCo2qfEM3Rd+KIEFauoYnzDJ0mZZUM=; b=2teENuLyXvCrs6O7KUZeOOB4IB
+	Bn2GJi+MbkopSRPect/FNTGL5iDJOzvTmAoo0YT3ykWhkSffKRAZdI2SL9SPX3PfcKh9fCpWcmN4d
+	W+K9CnK+Qb7vzSYoz9fB4ZyA2+6QnfieF+7nheA1bWJ1Wid2Cs/PU5NqTptK7SYqS2w+5X4xBc/fS
+	mnfThaeA2Xm3zjtcU25OnvMxrhrsD4F1kBYMXY3lLX2X1NEcdfMqZnWbqS883n5GeNzNlasdXmudK
+	8uUsWqpbESK+d8HEyHAPmiPoaTqjf7d5mgO/eQ52PqS2rmEZvpziJMquLjq0xEfLeiT61Nnx7ULit
+	yCIzlXZg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tfBn0-0000000HIqd-3H2A;
-	Tue, 04 Feb 2025 05:48:02 +0000
-Date: Mon, 3 Feb 2025 21:48:02 -0800
-From: "hch@infradead.org" <hch@infradead.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Kanchan Joshi <joshi.k@samsung.com>,
-	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-	"hch@infradead.org" <hch@infradead.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>
-Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
-Message-ID: <Z6GqEt9IrFHxGz_Y@infradead.org>
-References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
- <20250130091545.66573-1-joshi.k@samsung.com>
- <20250130142857.GB401886@mit.edu>
- <97f402bc-4029-48d4-bd03-80af5b799d04@samsung.com>
- <b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
- <Z6B2oq_aAaeL9rBE@infradead.org>
- <bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
- <eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
- <cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
- <df9c2b85-612d-4ca3-ad3f-5c2e2467b83f@suse.com>
+	id 1tfBoS-0000000HIzb-0ClL;
+	Tue, 04 Feb 2025 05:49:32 +0000
+Date: Mon, 3 Feb 2025 21:49:32 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-mm@kvack.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v8] add ioctl/sysfs to donate file-backed pages
+Message-ID: <Z6GqbJxJAsRPQ4uQ@infradead.org>
+References: <20250131222914.1634961-1-jaegeuk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,22 +61,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df9c2b85-612d-4ca3-ad3f-5c2e2467b83f@suse.com>
+In-Reply-To: <20250131222914.1634961-1-jaegeuk@kernel.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Feb 04, 2025 at 09:47:20AM +1030, Qu Wenruo wrote:
-> Btrfs already has the way to disable its data checksum. It's the end users'
-> choice to determine if they want to trust the hardware.
+On Fri, Jan 31, 2025 at 10:27:55PM +0000, Jaegeuk Kim wrote:
+> Note, let me keep improving this patch set, while trying to get some feedbacks
+> from MM and API folks from [1].
 
-Yes.
+Please actually drive it instead of only interacting once after
+I told you to.  The feedback is clearly that it is a MM thing, so please
+drive it forward instead of going back to the hacky file system version.
 
-> The only thing that btrfs may want to interact with this hardware csum is
-> metadata.
-> Doing the double checksum may waste extra writes, thus disabling either the
-> metadata csum or the hardware one looks more reasonable.
-
-Note that the most common (and often only supported) PI checksum
-algorithm is significantly less strong than the default btrfs checksum
-algorithm.
-
+> 
+> If users clearly know which file-backed pages to reclaim in system view, they
+> can use this ioctl() to register in advance and reclaim all at once later.
+> 
+> I'd like to propose this API in F2FS only, since
+> 1) the use-case is quite limited in Android at the moment. Once it's generall
+> accepted with more use-cases, happy to propose a generic API such as fadvise.
+> Please chime in, if there's any needs.
+> 
+> 2) it's file-backed pages which requires to maintain the list of inode objects.
+> I'm not sure this fits in MM tho, also happy to listen to any feedback.
+> 
+> [1] https://lore.kernel.org/lkml/Z4qmF2n2pzuHqad_@google.com/
+> 
+> Change log from v7:
+>  - change the sysfs entry to reclaim pages in all f2fs mounts
+> 
+> Change log from v6:
+>  - change sysfs entry name to reclaim_caches_kb
+> 
+> Jaegeuk Kim (2):
+>   f2fs: register inodes which is able to donate pages
+>   f2fs: add a sysfs entry to request donate file-backed pages
+> 
+> Jaegeuk Kim (2):
+>   f2fs: register inodes which is able to donate pages
+>   f2fs: add a sysfs entry to request donate file-backed pages
+> 
+>  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++
+>  fs/f2fs/debug.c                         |  3 +
+>  fs/f2fs/f2fs.h                          | 14 +++-
+>  fs/f2fs/file.c                          | 60 +++++++++++++++++
+>  fs/f2fs/inode.c                         | 14 ++++
+>  fs/f2fs/shrinker.c                      | 90 +++++++++++++++++++++++++
+>  fs/f2fs/super.c                         |  1 +
+>  fs/f2fs/sysfs.c                         | 63 +++++++++++++++++
+>  include/uapi/linux/f2fs.h               |  7 ++
+>  9 files changed, 258 insertions(+), 1 deletion(-)
+> 
+> -- 
+> 2.48.1.362.g079036d154-goog
+> 
+> 
+---end quoted text---
 
