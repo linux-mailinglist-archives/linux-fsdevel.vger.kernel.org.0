@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-40770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E26A274D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 15:49:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2302BA274DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 15:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40C6B7A4156
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 14:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 970407A2262
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 14:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B8C2139CE;
-	Tue,  4 Feb 2025 14:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51392139D2;
+	Tue,  4 Feb 2025 14:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvAVUreY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxqXBcOp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4088A20C014;
-	Tue,  4 Feb 2025 14:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471B6182B4;
+	Tue,  4 Feb 2025 14:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738680538; cv=none; b=HWS9S/hum/yooX/4eL5/j29mPTPM0g0Asq6hTQ99b6tcMHheTGFzxhi//s27mPL5pJUmjijrJU9ctsJwef1GcZs4JDfgn5bd5Q8MkjIGhXff0y5DsuYZpENEbgQnKn+HgIgx+XLz58Iyw7AkD9WHc+rfjW/HZx3/FfGAgrmNfLs=
+	t=1738680796; cv=none; b=N0F3emFMaOUfRt9CWBeYUcdQjmKg1X6l2ZQKS3/YOYyqDY8SLtE8dckL0bSUuoWpEz6JnImh8oxKc+f+AUY6+bOyc9T/5Mt3wogE3YXNPfaZuIEZ4RUhk0BlSoENAcyS7DH6q6Egz/EfFclqzWocpAozgv0YK9eVGu7rMSDKQPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738680538; c=relaxed/simple;
-	bh=8UPki2O89znKK64fQOKi00U1JhOnxcQxvDewxo2cwkA=;
+	s=arc-20240116; t=1738680796; c=relaxed/simple;
+	bh=cS+KYmTiDZbvQ/qAiqt3v7VU67F5RKNkSobPiQTuc20=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c0dxuQhINGMkyBOrCcRm9X4vgTqPvYHfFZbQgMXF90CSQLp9pkkygHRPA9VlEmodXoY2KSd/qvQajEt6rjGvr7KmSoitYNO0RtlLCZ/Y5gL1a9KiG4M1He/QI7QEP0n/l24ZBU3Q2xAPtk0t5sAtx7niGdKyDU8mOLh6T8d8Jk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvAVUreY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE5EC4CEDF;
-	Tue,  4 Feb 2025 14:48:56 +0000 (UTC)
+	 Content-Type:MIME-Version; b=QnYmWGrRwUSXagyrt5eoUpDexoja2Kyfp10SwtfZCtwQTZ8phCIien6+JLGvXpQdt2iV6cLBTUUo8PkFAiU37UI9Gq3RzjS1eecj86XWjSNZcSc/kXJz+wxgazRH4YMKoXlkAUjWcJR52pz/MUPNESfVDNJb89iNBPQZqrsVo4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxqXBcOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C2EC4CEDF;
+	Tue,  4 Feb 2025 14:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738680537;
-	bh=8UPki2O89znKK64fQOKi00U1JhOnxcQxvDewxo2cwkA=;
+	s=k20201202; t=1738680795;
+	bh=cS+KYmTiDZbvQ/qAiqt3v7VU67F5RKNkSobPiQTuc20=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=TvAVUreYdkXXN2V15uobIUlY51bO9tIunH5XkK6TDQ4Yajq+E3BHaGvaYHDRW+hq5
-	 2ssRy3p7otaN5x6CtQDtqIPi+fWyCev8ev1/pYDEzUFir2dTWQ8aUP6qO8HuK1y1q5
-	 9FLCA7fHdG1JLl6NgocIOEV0xFgpfEjuArrSoaInFqekTJeyz8dPyUPKAfYySxlAt8
-	 MJwSOnh9zBmp/6FZ480na8uFIDZnmTuKdKFDYhC5E1i/G0HQD/XNAeVBkZMeunANts
-	 HG8DZBEJXW4b86gUPVeLogLgaQYLC0OSXKIb7okrT5+voPxRteZwGYjmvRkIpyvgjH
-	 V+Yxi7RDy477Q==
-Message-ID: <5687dcbf58279aa719224c25c887041d2f5a367e.camel@kernel.org>
+	b=XxqXBcOpNlD5G+7XbC1+c+VcasdfeyjKlXtF4JkSu+4hwyFOzpMK9zaSF9p7/avJr
+	 7DnGyblqKnI8RUm5QvWKoDhXMSMwJHcPRGlQuR4jsq0DhRffzkZ21b1oa36i3Rv72f
+	 a9daKNmZTDTgZjJxv5+NoANKDMCADlhnat9cDfgN6Nlkfz/xEay4R5zT41SWuWWrLU
+	 /KOxZLuMPpe+jnDfjrbDJcG6BDxO4wS58FjPTfF/r+MvEtzdhRG2YDx5deizIEQj6B
+	 eulkktWJbHrJI6/YbrV6UUSAJAgxhZp1+vkekRgdtFqhBOa86XWqhjzjpVRqyUUOq9
+	 7CGnfgVk76bXA==
+Message-ID: <10981ed475d3b7d2d0bef73ea6286bc60aa484b2.camel@kernel.org>
 Subject: Re: [PATCH] pipe: don't update {a,c,m}time for anonymous pipes
 From: Jeff Layton <jlayton@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>, Christian Brauner <brauner@kernel.org>,
@@ -52,7 +52,7 @@ Cc: David Howells <dhowells@redhat.com>, "Gautham R. Shenoy"
  Oliver Sang	 <oliver.sang@intel.com>, Swapnil Sapkal
  <swapnil.sapkal@amd.com>, WangYuli	 <wangyuli@uniontech.com>,
  linux-fsdevel@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Tue, 04 Feb 2025 09:48:55 -0500
+Date: Tue, 04 Feb 2025 09:53:13 -0500
 In-Reply-To: <20250204132153.GA20921@redhat.com>
 References: <20250204132153.GA20921@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
@@ -248,11 +248,6 @@ ipe_inode_info *pipe,
 >  	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
 > -	if (ret > 0)
 > +	if (ret > 0 && !is_pipe_inode(file_inode(filp)))
-
-pipe_read and pipe_write are the read_iter / write_iter ops for pipefs
-inodes. Is there ever a situation where is_pipe_inode() will be false
-here?
-
 >  		file_accessed(filp);
 >  	return ret;
 >  }
@@ -268,9 +263,6 @@ m)
 > -			ret =3D err;
 > -		sb_end_write(file_inode(filp)->i_sb);
 > +	if (ret > 0 && !is_pipe_inode(file_inode(filp))) {
-
-Ditto.
-
 > +		if (sb_start_write_trylock(file_inode(filp)->i_sb)) {
 > +			int err =3D file_update_time(filp);
 > +			if (err)
@@ -287,13 +279,11 @@ Ditto.
 >  	struct pipe_inode_info *pipe;
 > -	bool is_pipe =3D inode->i_sb->s_magic =3D=3D PIPEFS_MAGIC;
 > +	bool is_pipe =3D is_pipe_inode(inode);
-
-Same here: In what case is is_pipe() ever false here?
-
 >  	int ret;
 > =20
 >  	filp->f_pipe =3D 0;
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Oh _anonymous_ pipes. You can disregard my earlier questions:
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
