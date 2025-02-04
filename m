@@ -1,305 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-40743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6410EA271B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 13:21:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE22A271CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 13:30:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06B0162BAD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 12:20:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C637161404
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 12:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E597E20DD59;
-	Tue,  4 Feb 2025 12:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB58420D51F;
+	Tue,  4 Feb 2025 12:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ofdV5L93";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nn3gicBp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+ypL2qi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718211DC745;
-	Tue,  4 Feb 2025 12:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738671648; cv=fail; b=dXUbeamGK+SCqe1MQQjt+LFrlDVDnys7qPcqyD8iwmfPMe+1jyuivoOgZGJTMy3uH05qtl+SWClUMuizgbvhT3jzz1Lhh5ZdOYrsjJ9f6LcOH0NM23SC9J0OHKjuNgwiV1QHOJunBYUf7UwdGGPOKCtj8iNncxVnkTx/xakMKCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738671648; c=relaxed/simple;
-	bh=FKj1AjMmL64MIjvwgAqoLIrV0nvgomfNmeqIE8irGLM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ngnVXwgT91v8NhiT5BLSYSpH4r20xhYDVOmFiwFx29bBfQtQVPzXo6LJgQ2ItYZzPogMXSFGXzX6IB8vetHmeJQ+Tigbe2ZvUgwKXVGClfGYtN/kdqEZTVug5PiPbH5nC5vi3+WXw6XZOO3vIaV0VHe9V0j4MQSk/EEyxmBbZ9o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ofdV5L93; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nn3gicBp; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 514BfVNK013676;
-	Tue, 4 Feb 2025 12:20:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=zS4jHZ2kt23wEDE+AD09Ak+wiMQ78Zn1s/A9gAKsP0w=; b=
-	ofdV5L93gvJ399rvUmWqZ/cbomPqE4fHMFairsqLI6EbSBKcfIFmvEtnnJ9cpq/J
-	DCmArta66PyO7PKnPIEsMSXM18/vCo+i94IzSVfXCE2UgNxU3EOmZCK5eKzYUX5Y
-	r2Q11EKBAg/psIVvNmKpUGTEGgLybFmgIYdhb9ZrG6HQWaCpxORR5AnFW4hBuSB2
-	oXM4iBS77w4YyZAbZRbs+35uHIQvH2VTRqWKoC2oIj8FRgdsyPOKUN1g93T88U0n
-	mGZOqva86shQC1+51Y1thoaLmJgqiw3vw0fdMkdLkUHzkZJcEepolTQbniufeBqM
-	/WgV1lKuZLJu0RRovKPGZA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44hhsv4qny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 04 Feb 2025 12:20:32 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 514AUpfl030645;
-	Tue, 4 Feb 2025 12:20:31 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2171.outbound.protection.outlook.com [104.47.57.171])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44j8dm60p4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 04 Feb 2025 12:20:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jcQBb5UgKGXupAjChF1EjfFOLp4L+wf4yNdB8uvyTBp5G9b6DikkfHBrVf7e3A4oMCmCWhe2NvqhB6+GL6YvSl3wH3uyB1y+tvGiUm3B4IgjE5C1b57LHzsyzhWto/r1OS/caLZFyixQ5xgVQ9FlHhVdxVdMJIv6oycYlMmHy21sQWYpKj0Wmo+Dbowt1NlNToL8TI2FNG4bhw9vnSJysTHO62HYEuTjPZ9UtHUY3SVq0Q8GZ9YC53M6/PfEmt6kayHcDQwmWHz193myeXfXOraql6aizFKumP4JNPghYlDT/SYN2NpUEngZdk3sBsuz5FNJqsRCnHDXM0rjSom3rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zS4jHZ2kt23wEDE+AD09Ak+wiMQ78Zn1s/A9gAKsP0w=;
- b=GlwtTlfncgYj3kxRpo/xTH9HsMuMPbqDh434CSmFnVnzgIsn+0kO/rKSue+E4X5UlFLSqZHOF/mibiUGAq/Yk983JVTSTZbDAkt72iT/OPblasqhMQwJEcIzFPQGbueaBOKWGcqqRPAJGF7OrIemPqCvLKEJtCNgPhUe32VniQENLwScDsNqbCclYMljwtcf6vDrahzrylTQ9wDC3n1gg9FavhsfEN0RQP2WEgZcLH25nmrTGLbOUpUtkbHyVjNooqnxRO45KYtYd4uKLwljmlBQbQI9qUjVQ8Iq0f0WRLl/Zi5aMcpRofHRsRvPyN1LkwKS5s9xai/eJw4QylJqTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zS4jHZ2kt23wEDE+AD09Ak+wiMQ78Zn1s/A9gAKsP0w=;
- b=nn3gicBphlw2SEpnMwTBzBFj0Q9/JQOEnZ4/MDGPrHwPOB6Eql/dwMmu70K9MSZZ4pw8eZUI+3jEgdyX00SB9whq24v9X2kBfnabKn8Ik8JP1FQ/N0R5X4iJtgab/6s95NJg6gKN97MOG0UTCYxTRDzIZSgXBrA26sh/XJnEVx0=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by IA0PR10MB6817.namprd10.prod.outlook.com (2603:10b6:208:43a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.18; Tue, 4 Feb
- 2025 12:20:29 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8398.021; Tue, 4 Feb 2025
- 12:20:29 +0000
-Message-ID: <4a492767-ee83-469c-abd1-484d0e3b46cb@oracle.com>
-Date: Tue, 4 Feb 2025 12:20:25 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] extsize and forcealign design in filesystems
- for atomic writes
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org, dchinner@redhat.com,
-        hch@lst.de, ritesh.list@gmail.com, jack@suse.cz, tytso@mit.edu,
-        linux-ext4@vger.kernel.org
-References: <Z5nTaQgLGdD6hSvL@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <35939b19-088b-450e-8fa6-49165b95b1d3@oracle.com>
- <Z5pRzML2jkjL01F5@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <e00bac5d-5b6c-4763-8a76-e128f34dee12@oracle.com>
- <Z53JVhAzF9s1qJcr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <Z53JVhAzF9s1qJcr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0009.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:150::14) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2C620A5D0;
+	Tue,  4 Feb 2025 12:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738672103; cv=none; b=Q/7ShnbK3Ub2YOvKEmRnhEDNHM14D0bFuiz0bOAXlkDAXpNlRuhXeFowMcfQpBKAqWsC8T3ZqVmHlMnvTVXyp6d+mT2aWhkcOhEKMoRQcgZchlP90NyBsWqeGCG2f6eKLj7A61VAccJMQUSD+EVsVAN0sVGj2Tmo4m1+0VCwo9s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738672103; c=relaxed/simple;
+	bh=PrYQfhT2RuH9yd+Sv7uPwqcaS+g0XNLJoYaDU2PrgPM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sK2fonIfACk7lDVKnvFJYgbU3QU5lMH+1ARRJRRsMo1hGKKHwatWZsr9vgozi0xHSXZzd4jE0FXJR/j9MmuxoRncvJQ2xME3lJD8JEoyanNRmk5ppyaavvKcxJ23E6UeqexfRbf0vb8340eo5ggcrsZ79uqaTZ2bnB54agQAG4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+ypL2qi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C255C4CEE6;
+	Tue,  4 Feb 2025 12:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738672102;
+	bh=PrYQfhT2RuH9yd+Sv7uPwqcaS+g0XNLJoYaDU2PrgPM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=g+ypL2qikykNH6SX2ZDCkJZpGBDmYaFY3x1oA7RK+DZOzyyIHPmpkIZZNwc+NrHCu
+	 hAQYDm/clSGO54UvZTa3acUfQWf3JCyPanrjk8CyRbVbZz+fZ8dW6p0Rnj9dD89YUu
+	 d5S+wb2lZkBk0DFA1G7unvClIYbPVZ260ELWdNQcWmEQv2Ur82/4HLIrmWned2gn5V
+	 ALsOj0p6RRLPU1XeYqbb/Ob6IaMx2PkhozP/RPWh0g1+rcztfFTEHEAUBq4F+Fp1BX
+	 OqguEdK4HEsikN2wwmf57ANBLkKzPNxtZOHt+l+9R/5OEoiYLYjj7kpFPOz7jUnU/g
+	 C3+zJWkEH7oXA==
+Message-ID: <8d07cfbab7b1d70b6fc381ad065d55773f73d93f.camel@kernel.org>
+Subject: Re: [PATCH] statmount: add a new supported_mask field
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 04 Feb 2025 07:28:20 -0500
+In-Reply-To: <20250204-stengel-lodern-8e6ce624cf77@brauner>
+References: <20250203-statmount-v1-1-871fa7e61f69@kernel.org>
+	 <20250204-stengel-lodern-8e6ce624cf77@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA0PR10MB6817:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54a69719-c0e0-4921-3b36-08dd45165012
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2M5M292MTQ0c2NBaHRQVk9BMjkzRmFkY3AyZmZLcm9XR1YyNXJDeFNYaHZ1?=
- =?utf-8?B?d2RtSnR0U3dOem9YWWNqaHU5V0JVN2xib3J5ak9SNHdReTNld3dQUzZhVzY1?=
- =?utf-8?B?YitsdmlKYVlUMDBuSWJXbzhMZ0NXaCtEbFBvbmJRS2lxYkRXMytGeC9KY0hv?=
- =?utf-8?B?NTVqNlRBeDhFT1FiU1ZjOXBBeU5JNHZkenZBQTRKSTNlZTg1SzJlU2VNbmVu?=
- =?utf-8?B?RjMyN25RWjB5R0hiT3VvMnRHbURBQ1hZTUljMEUzZFl2STJtcnVlNWxpQmUx?=
- =?utf-8?B?b1AzenNaeWpxbUZYaHNYbGNqTlFuWnNNM25NQXJGOWF4TlNnZG42V3dkdmlW?=
- =?utf-8?B?UmUzbW9aM1FzZlZqN1BJVC9QV0I5UjRqRC9hYytweW1sUmR6UnllODN1eWlp?=
- =?utf-8?B?TG1KZGw1R2p5dXRiRFhEcEwwbXZTbDc2SWoyM1d2MzAxL1hpdmdjVmxpL3Z6?=
- =?utf-8?B?ajlLS0N6NnNMcEdITmpqKzFSR1NMT0lpTkw1elkxYXNFbUtlOFRKVFNYYWE5?=
- =?utf-8?B?UE5PNk16WmtJaVltQS9XMVpvNlNHbk5TR3Zrb0d0eFVjNzdJNUhvTm9PODNX?=
- =?utf-8?B?bER0QjNyckdFZHgzVGQwT05NbkRlWm5GYjZNbEZSejlqaEk1SDdzQlVwajBQ?=
- =?utf-8?B?WXFOSE1jT2ppSG9udEM1S2tJTlpIVjQ4TXduVHBiWSs5QTg4dTNlaE51Uy9h?=
- =?utf-8?B?c2xtUEQveG1NM2kvK2FDd2pWa3ZDaE1zUFdlQlZ5Z2FlcXA1bXU3aFVPVnl6?=
- =?utf-8?B?RDA1MFJpQThVVW92KzV4bzdUTDRNRTg2cDV3cXdQbDNMYVNtNStrUnNxVDZw?=
- =?utf-8?B?cEhBU1hJNTlZWDJ6dVNqQ0lZNDNDdW5LZkw5NEczVElRSXQ0MW4wNXgyM0dU?=
- =?utf-8?B?WDViNjEvYStEU3ZqTjJZYzNZMEh2dEFaeHVUZW5KTVllQWlBWmJhUDZLendB?=
- =?utf-8?B?RUdmL0dDaGdBVmJkRFlaMzB0emhrOVBvdjd3ak54cGUrajBlM1JlMG9qNTRs?=
- =?utf-8?B?V24weVdDM3VWOStUOFBEak1JSHdjQU9iNndGOFFNbVpCbytTSmh3T2hwUlVP?=
- =?utf-8?B?cGdnWVRob2JxbStGajQzOThqTGNaekR3NnZoS1RTQ0dIR1FYUHN6WFNtS01l?=
- =?utf-8?B?UHpaOGZpQ1RUOXh6cElscXIwdUVMOGFqM2VhdEVCSU1paEplL0IwVUkvSTZI?=
- =?utf-8?B?cVdwOEVOZkNTQ2t5TndEbEExeEVNazFWZEZBK1c0WWwyakFDM2MwL3FobFFs?=
- =?utf-8?B?OXdNTUxobUowRUhpN0g5S3VOdk1FVVU3K2hXZERlMjl2MWRJcURtRGQvYXR1?=
- =?utf-8?B?RnNmNml3aERHZWE1eU1NR0RzK1VvaVIwc3Q0VzhWdExPajYvSlZOVmp6YUh6?=
- =?utf-8?B?dzZmZFhFb1FGb0xtUEpEa0c2NFV5NVNoc1l4TkZodlNNaUNLZ21zS01jSUxK?=
- =?utf-8?B?WnFoVVM2THowY2x1d3gvYlR5MUlkUW1ZZWEwRytmK3BmY0VwcCtaQWxoZVJ6?=
- =?utf-8?B?STdlRGJyU1RwUVpXWDU0VStQbFpSNVBYdHFuVWwxWm8wNDNETisvWGFYd29j?=
- =?utf-8?B?YWFNcWZMK05BYjFvUFJNRDRLQ3lkSFdKc1FMU3hLWUt5MlF6cU1aRlpZcnMz?=
- =?utf-8?B?UmlvNldsK04vUTVFdUZneG05QlgwM1pDYUhvZWZselRjL0ozVVVWQW41UDhm?=
- =?utf-8?B?TEZ4My9VT0piWlBHaUx5Z1ZSRks2dGVsbHJ1L1FYS25DSHNMTFNuU1JzU05k?=
- =?utf-8?B?TElwZUYzZVBkY2VMa2ZlWDlhRmEwdnVrMGdtMGJCVHE1UHAzalM3YVA0T2Zr?=
- =?utf-8?B?NG5qYlZhMFZ5SG9XU09LcGUwYUdjck1MREcyMThEVUJsVjA0ZnFNbE9HTVJ4?=
- =?utf-8?Q?hI3m7K4zjunAD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OXdQUm1pZ01LTDEvNy9kUE8rZlcwRUZGWjFTalYyS2tWaitTaGFnZDd5bWVL?=
- =?utf-8?B?QmowS1czeFYrR1JYeXl1VWdHMkZMczlVazFSR0JhUmFUSVpLcXdCSWJCR0Rz?=
- =?utf-8?B?SkR4L1NVKzVCdzZMSFIxRGFIZTgrZWFkbmp0QnVzZGJVZzJ5U0JNUmZSdnhH?=
- =?utf-8?B?Y3BGeGVBMDQ2RkpFb2lvNDJHTjB6aGgzTDMwVEZzaFpDOUkwN0haTUJYTWhm?=
- =?utf-8?B?ZHEveDFZdjVSd2dhRnhEZ1ZHcHl1ZUpGRXBPSFFEa1c5UzU2UE44WE4zSWVh?=
- =?utf-8?B?SDF3cURjeWlMa2ZwZFRzK0dZbzQyYnpPeXpEd1VueDE1SlI5QWpabThMbmZs?=
- =?utf-8?B?Z0pmU2pvYTNtN0RVNEY2RU80WjVYb0lvUEtnQ1dTYXNRZGMvNkpUajlZVFI2?=
- =?utf-8?B?UitIR3pEOVFtbThNa2cyMGhzdXRseVNoaGJhRVdDbStWTzdxOHJ3N2t3UVdL?=
- =?utf-8?B?bXhxZ2NDT2dwUnI4NmpveEloVy91UGExU01jUGl4azFEd3NTaHJVMFAyV2Z2?=
- =?utf-8?B?RnFybCtOcHhSQjNxUHNNOFFPUXNHelY2ZGVjV2o4eU50Y21ZUlo0OWI3K1dY?=
- =?utf-8?B?SnNoNGlzbzVHbStMdTFKZEl0c29ENytoN0w1bXROajhqNXJZTGtINlpGY2FK?=
- =?utf-8?B?b2Y1RitoVXZkU3IrYkMrdXBxcnFaSzZKYllWZlRqaWlxOGV2VSt5bmQvUFFD?=
- =?utf-8?B?dmFYNXBoL0Q1SVp1SzFxaXZVZ3c2cGxLeENMTU9FWjgzT2RLM0orWTVpb3NR?=
- =?utf-8?B?TzZHRVU2YmVoSEM0T3lwWTRPeGxpUTZGeXFqcG5STHNJZWlVRHh4clRYcm9C?=
- =?utf-8?B?elN1ekQ3SWQ4bEJlRVhiM28vcVMyVVR5Z0p3SW0zNk5FWk5CYVZUNlRoMXky?=
- =?utf-8?B?aXhQZ1BWZ1UzV3ZFMW1WcUN5d3JnbVAvUFFPRExHNzVaSnEydUVGRjB5cUtj?=
- =?utf-8?B?TkJpZEV3TkF5NmlSNGVVaVB5VUR4YnFWeTVrU2MvdDl0TEhOeExGc01RRlox?=
- =?utf-8?B?dXVUajBSZmdha0dVM3RpLzZtQXZJaDdmZzFUK3FYSmd1WE1CeWdaVTdadms2?=
- =?utf-8?B?SDlERCtSOWJnWW1GQlpVTllXL0Z2c0RYVDhEdHJVNnY3SVh6b3hNdmpiSVBH?=
- =?utf-8?B?empZQ2FWenRxdVF6V2FwbzA3ZnB1WEQxa2FHVFI2TWxwSDU3SW9rVklHaXlx?=
- =?utf-8?B?K3FPcUtyQnR3cHlSS3V5TUhmNzdSWWxqMjUyWkRjMm94eHh2cE1sMC9EdmZ2?=
- =?utf-8?B?RnJacHJHUHpaUFRwK29ZSXlnL1NUM0RsVmhvNEdnVmhIQjJ3UkdyQ1Y3WnVJ?=
- =?utf-8?B?OEh0a0hjS01HcFI1bVRYZ3hVY21qd3BBNDBSNnN3NXZQQ1pXSmNoV0R1SS9J?=
- =?utf-8?B?OHZwRGZvMHhhT0N4V0FlMklCTS9jOXNQUWFKSzlrV1FwR05IQnRYNWJ6ZDZh?=
- =?utf-8?B?U1dKTCtDTEJyMFpKR3VDYnhXOEh6ZU01TWUyMmFJRktwUHRpMCtmcVhqMm5m?=
- =?utf-8?B?eHZaMFlaVlBaR3J0YjcwV0lXMFRxUUFyaUx5cGR1cFp3NVhjYngwd2g5WjhX?=
- =?utf-8?B?V2hzV01UWGRKQmE4UngyR3lHaDhRMnpSb1ZBdlRFbkhWRkJmanA2bFRxcVdN?=
- =?utf-8?B?NDByeVhmUkVBQ0RSUFNPWmc0cVltTUUrK1Q1cDd0eTdzb01JcVhWWjVsYUhZ?=
- =?utf-8?B?c0VOZGRrZGNhQWI1VVVRMHlrQkM2N0tkNGZNZXJwSHV0QlJ1NVpQM1VnbUFO?=
- =?utf-8?B?L0pGTHRXQ3lET1hsV3dwQVBEcllUaklsRDlJSCtBRFBVQ0xoeGVYNWl0bU4v?=
- =?utf-8?B?ZlZUTDZhMlAwK25CbGlFbTBSVnYyODREVWxNMjdQYjdxUWpnc0VwOGRrK3Vw?=
- =?utf-8?B?KzY0Z09qZ1V1YXZYeHNKYkRDTkpxTk9hc2NkSW9MdkN5RzM1T3Rod1FiQW0x?=
- =?utf-8?B?RFB1NEZrVHM2REppNjR1emJWcG40NFdBNDBwcDBnN3MrcEE5YmxXVlVlQnZN?=
- =?utf-8?B?VXJIanZjU3puQ2NieEpMdmFkSE5oSnU5R05PaWJXTVRlYXlwc1Y1a2RHM2tU?=
- =?utf-8?B?KzVlSzZaSnNBUWNBUE5PMFdBYzR2QW1hVjlUK0NYYWV4WittKzVVM0JadFRr?=
- =?utf-8?B?T1ROZXdkZ0VCMng4THlwNXQxWjBDTkUvYTdHS0lacTlWdTVJT1BGNnZ6aEw4?=
- =?utf-8?B?blE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	tpIgsZIyQXADK1ZMCummKe42cbnMkt85uwGPtTUaC0SbFMiYdgQ83k1ikjAS9U1bnV+iBepSGnWJBR/ZGQZUq5H1ZUM9lIVHhcvha2uRc4fwGM3vNlB8HMchsjwKJYBiShQUZ1fV28UKeNWz87trfav/UQwAB1d2xiz9e6HXTN4rvHsaWVdHBDzvi0TPpr7KOOZumj0D1wuOc9Kl7VSsTMhakIvgGKyew6SFJiDsxJFzwooYAihrpfjxk4hCMAOE0mVp5uaLLcpLu3ISm0AhUM5RVQYxwvYnPcxwO2aksY2HQ37W1pDQ/tduMjbeAU9M0kuEBogBsvRxwkoiNgHH97csEkL88JzFn30EpMs1mNOY+9/RujvtPPL/tVVBxkkfzAreabVoseVgcIbTl0GyoJrAGO7A+/PHHS2lcFp36p9cCZM39m/XtWNbC9gQcF41M7aw/f4sPCwT6hTE5coeNE9msQeZAR6d/KnzcSBTZFXrYx5m60s9BFzuC1zdCPJ/hhoMbzR4njszrYj4O178/K7AMG5k3/IQuI48vZAdznP+n9srjNUe+GnbN6RlEeP6+ykREPYCoSFuzq9YWxg1dD7dz1QpDGhlYPdyzapUvB0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54a69719-c0e0-4921-3b36-08dd45165012
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2025 12:20:29.4243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 04CrbuVZiYAuQNwSFqKTWybrLuaT+5GlSM2ePNZKayDICnJFUk3Go0OeCrS5A8nhXmEJJXgKDynlz9vmBVjtPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6817
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-04_06,2025-01-31_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2501170000
- definitions=main-2502040098
-X-Proofpoint-GUID: qFytuKrQVqU8mNRQwH2v1yk_8wYErhLK
-X-Proofpoint-ORIG-GUID: qFytuKrQVqU8mNRQwH2v1yk_8wYErhLK
 
-On 01/02/2025 07:12, Ojaswin Mujoo wrote:
+On Tue, 2025-02-04 at 12:07 +0100, Christian Brauner wrote:
+> On Mon, Feb 03, 2025 at 12:09:48PM -0500, Jeff Layton wrote:
+> > Some of the fields in the statmount() reply can be optional. If the
+> > kernel has nothing to emit in that field, then it doesn't set the flag
+> > in the reply. This presents a problem: There is currently no way to
+> > know what mask flags the kernel supports since you can't always count o=
+n
+> > them being in the reply.
+> >=20
+> > Add a new STATMOUNT_SUPPORTED_MASK flag and field that the kernel can
+> > set in the reply. Userland can use this to determine if the fields it
+> > requires from the kernel are supported. This also gives us a way to
+> > deprecate fields in the future, if that should become necessary.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> > I ran into this problem recently. We have a variety of kernels running
+> > that have varying levels of support of statmount(), and I need to be
+> > able to fall back to /proc scraping if support for everything isn't
+> > present. This is difficult currently since statmount() doesn't set the
+> > flag in the return mask if the field is empty.
+> > ---
+> >  fs/namespace.c             | 18 ++++++++++++++++++
+> >  include/uapi/linux/mount.h |  4 +++-
+> >  2 files changed, 21 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index a3ed3f2980cbae6238cda09874e2dac146080eb6..7ec5fc436c4ff300507c4ed=
+71a757f5d75a4d520 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -5317,6 +5317,21 @@ static int grab_requested_root(struct mnt_namesp=
+ace *ns, struct path *root)
+> >  	return 0;
+> >  }
+> > =20
+> > +/* This must be updated whenever a new flag is added */
+> > +#define STATMOUNT_SUPPORTED (STATMOUNT_SB_BASIC | \
+> > +			     STATMOUNT_MNT_BASIC | \
+> > +			     STATMOUNT_PROPAGATE_FROM | \
+> > +			     STATMOUNT_MNT_ROOT | \
+> > +			     STATMOUNT_MNT_POINT | \
+> > +			     STATMOUNT_FS_TYPE | \
+> > +			     STATMOUNT_MNT_NS_ID | \
+> > +			     STATMOUNT_MNT_OPTS | \
+> > +			     STATMOUNT_FS_SUBTYPE | \
+> > +			     STATMOUNT_SB_SOURCE | \
+> > +			     STATMOUNT_OPT_ARRAY | \
+> > +			     STATMOUNT_OPT_SEC_ARRAY | \
+> > +			     STATMOUNT_SUPPORTED_MASK)
+>=20
+> Hm, do we need a separate bit for STATMOUNT_SUPPORTED_MASK? Afaiu, this
+> is more of a convenience thing but then maybe we just do:
+>=20
+> #define STATMOUNT_SUPPORTED_MASK STATMOUNT_MNT_BASIC
+>=20
+> and be done with it?
+>=20
+> Otherwise I think it is worth having support for this.
+>=20
 
-Hi Ojaswin,
+Are you suggesting that we should just add the ->supported_mask field
+without a declaring a bit for it? If so, how would that work on old
+kernels? You'd never know if you could trust the contents of that field
+since the return mask wouldn't indicate any difference.
 
->> For my test case, I am trying 16K atomic writes with 4K FS block size, so I
->> expect the software fallback to not kick in often after running the system
->> for a while (as eventually we will get an aligned allocations). I am
->> concerned of prospect of heavily fragmented files, though.
-> Yes that's true, if the FS is up long enough there is bound to be
-> fragmentation eventually which might make it harder for extsize to
-> get the blocks.
-> 
-> With software fallback, there's again the point that many FSes will need
-> some sort of COW/exchange_range support before they can support anything
-> like that.
-> 
-> Although I;ve not looked at what it will take to add that to
-> ext4 but I'm assuming it will not be trivial at all.
+> > +
+> >  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_i=
+d,
+> >  			struct mnt_namespace *ns)
+> >  {
+> > @@ -5386,6 +5401,9 @@ static int do_statmount(struct kstatmount *s, u64=
+ mnt_id, u64 mnt_ns_id,
+> >  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+> >  		statmount_mnt_ns_id(s, ns);
+> > =20
+> > +	if (!err && s->mask & STATMOUNT_SUPPORTED_MASK)
+> > +		s->sm.supported_mask =3D STATMOUNT_SUPPORTED_MASK;
+> > +
+> >  	if (err)
+> >  		return err;
+> > =20
+> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> > index c07008816acae89cbea3087caf50d537d4e78298..c553dc4ba68407ee38c2723=
+8e9bdec2ebf5e2457 100644
+> > --- a/include/uapi/linux/mount.h
+> > +++ b/include/uapi/linux/mount.h
+> > @@ -179,7 +179,8 @@ struct statmount {
+> >  	__u32 opt_array;	/* [str] Array of nul terminated fs options */
+> >  	__u32 opt_sec_num;	/* Number of security options */
+> >  	__u32 opt_sec_array;	/* [str] Array of nul terminated security option=
+s */
+> > -	__u64 __spare2[46];
+> > +	__u64 supported_mask;	/* Mask flags that this kernel supports */
+> > +	__u64 __spare2[45];
+> >  	char str[];		/* Variable size part containing strings */
+> >  };
+> > =20
+> > @@ -217,6 +218,7 @@ struct mnt_id_req {
+> >  #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
+> >  #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
+> >  #define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
+> > +#define STATMOUNT_SUPPORTED_MASK	0x00001000U	/* Want/got supported mas=
+k flags */
+> > =20
+> >  /*
+> >   * Special @mnt_id values that can be passed to listmount
+> >=20
+> > ---
+> > base-commit: 57c64cb6ddfb6c79a6c3fc2e434303c40f700964
+> > change-id: 20250203-statmount-f7da9bec0f23
+> >=20
+> > Best regards,
+> > --=20
+> > Jeff Layton <jlayton@kernel.org>
+> >=20
 
-Sure, but then again you may not have issues with getting forcealign 
-support accepted for ext4. However, I would have thought that bigalloc 
-was good enough to use initially.
-
-> 
->>> I agree that forcealign is not the only way we can have atomic writes
->>> work but I do feel there is value in having forcealign for FSes and
->>> hence we should have a discussion around it so we can get the interface
->>> right.
->>>
->> I thought that the interface for forcealign according to the candidate xfs
->> implementation was quite straightforward. no?
-> As mentioned in the original proposal, there are still a open problems
-> around extsize and forcealign.
-> 
-> - The allocation and deallocation semantics are not completely clear to
-> 	me for example we allow operations like unaligned punch_hole but not
-> 	unaligned insert and collapse range, and I couldn't see that
-> 	documented anywhere.
-
-For xfs, we were imposing the same restrictions as which we have for 
-rtextsize > 1.
-
-If you check the following:
-https://lore.kernel.org/linux-xfs/20240813163638.3751939-9-john.g.garry@oracle.com/
-
-You can see how the large allocunit value is affected by forcealign, and 
-then check callers of xfs_is_falloc_aligned() -> 
-xfs_inode_alloc_unitsize() to see how this affects some fallocate modes.
-
-> 
-> - There are challenges in extsize with delayed allocation as well as how
-> 	the tooling should handle forcealigned inodes.
-
-Yeah, maybe. I was only testing my xfs forcealign solution for dio (and 
-no delayed alloc).
-
-> 
-> - How are FSes supposed to behave when forcealign/extsize is used with
-> 	other FS features that change the allocation granularity like bigalloc
-> 	or rtvol.
-
-As you would expect, they need to be aligned with one another.
-
-For example, in the case of xfs rtvol, rextsize needs to be a multiple 
-of extsize when forcealign is enabled. Or the other way around, I forget 
-now..
-
-> 
-> I agree that XFS's implementation is a good reference but I'm
-> sure as I continue working on the same from ext4 perspective we will have
-> more points of discussion. So I definitely feel that its worth
-> discussing this at LSFMM.
-
-Understood, but I wait to see what happens to my CoW-based method for 
-XFS to see where that goes before commenting on what needs to be 
-discussed for xfs
-
-> 
->> What was not clear was the age-old issue of how to issue an atomic write of
->> mixed extents, which is really an atomic write issue.
-> Right, btw are you planning any talk for atomic writes at LSFMM?
-
-I hadn't planned on it, but I guess that Martin will add something to 
-the agenda.
-
-Thanks,
-John
-
+--=20
+Jeff Layton <jlayton@kernel.org>
 
