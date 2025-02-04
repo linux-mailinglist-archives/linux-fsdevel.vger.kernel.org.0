@@ -1,244 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-40712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B8EA26F93
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:51:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BC1A26F98
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDFA1885077
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 10:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA10C1886ADA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 10:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34A920B1E0;
-	Tue,  4 Feb 2025 10:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9E220B1E8;
+	Tue,  4 Feb 2025 10:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F/xJp6SL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m9NoxGYd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F/xJp6SL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m9NoxGYd"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Cilpea9s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C9120AF69
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 10:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184DC20ADEE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 10:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738666298; cv=none; b=cw4JHkb2BOa1+ZJ/IK0sKc2vpxbLGAh8JbRRe8MZROhU9XNR+FvuNZXlbvcNLJTjdMS4b7dcHz9/QuX0ZVcrzVrHkWprDejlRHkphy+cd7a6f+VIhHKmDtuuKMTukSAqjYRsVgN8ReLDAX4o40q8YVEc/o6ZajLse9n6mlvp4PA=
+	t=1738666428; cv=none; b=kZGlxyfxplLxUClTVLqyC6HHCvDWRdGOx8FaCL5H8JxmXTXCqGCSF7U0hhm12mBAChfJE8MjT5Zf9goZYKoskhm8hEPSPHZlg8vHgnA5mMXtOfuVapeNf+QxRDcTX3fDmqjp9faxdbCc33yJmK/BW+UoibWp56GL1cu5/39yXTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738666298; c=relaxed/simple;
-	bh=HJR/sbLwekjmFUNqqIMVtCe+qXSxh5w7BpcXe6fRLFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awlN3RjrXYBWR/pWzNkc4kqFgLdCk4AWpRfmrFjop1ArkGYHF8TU9RmCOnCyETopj7eUEkxqdSnlHcJ8S/e8b8cIOYq5791uUu53jqEQ+39BlE83atzjFSO+LUD2goe04pI3zX495hX8v9/HiXZdsqyPECVb+8R5igRv6HnVBFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F/xJp6SL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m9NoxGYd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F/xJp6SL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m9NoxGYd; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9AC8D1F387;
-	Tue,  4 Feb 2025 10:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738666294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
-	b=F/xJp6SLc3m7LL+BJPfCuNFSwD9AAWUkkiMrwM//GRatr2tEQfU5zjQyhqA8njbPAYa4Ke
-	jOuxQ5e9GmiYfvgdvx2HbF++3ALm7K6LVImS8ZScNY3OPeo5x4hTXqXP4eSj7mvKeIqacg
-	5F+SC+p2u3q+jyJUQrafqJFAulCFbsA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738666294;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
-	b=m9NoxGYdATOHbeL6J98ZhV+l8SuXFXIt+nlqZZ5myRjXU8z4RXBzZm9olVK2cbc1lg5hll
-	1qotO8adJu/CLhCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="F/xJp6SL";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=m9NoxGYd
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738666294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
-	b=F/xJp6SLc3m7LL+BJPfCuNFSwD9AAWUkkiMrwM//GRatr2tEQfU5zjQyhqA8njbPAYa4Ke
-	jOuxQ5e9GmiYfvgdvx2HbF++3ALm7K6LVImS8ZScNY3OPeo5x4hTXqXP4eSj7mvKeIqacg
-	5F+SC+p2u3q+jyJUQrafqJFAulCFbsA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738666294;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
-	b=m9NoxGYdATOHbeL6J98ZhV+l8SuXFXIt+nlqZZ5myRjXU8z4RXBzZm9olVK2cbc1lg5hll
-	1qotO8adJu/CLhCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 888FE13795;
-	Tue,  4 Feb 2025 10:51:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +EtOITbxoWcXHgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Feb 2025 10:51:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C8E9DA082D; Tue,  4 Feb 2025 11:51:29 +0100 (CET)
-Date: Tue, 4 Feb 2025 11:51:29 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, 
-	lsf-pc@lists.linux-foundation.org, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Zi Yan <ziy@nvidia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Removing writeback temp pages in FUSE
-Message-ID: <aeszroqwtyj2drpxkoc3o6x6y56rltirgpbimg2qmgsr6jkzii@ntdx7xrpplhk>
-References: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
- <43474a67d1af7ec03e2fade9e83c7702b74fe66b.camel@kernel.org>
+	s=arc-20240116; t=1738666428; c=relaxed/simple;
+	bh=5IY+P5cvvOpmoevl77jfAm+Tjt6iQdqDrk+JprcVQc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=JnLYMMmwgZdkTRHkMUbxkU2sdDqF74dddfVwYhLjefmIhTyGhRXLLdA3SMkCKm7D/7qpPdXDytZ7SYvW4XtTNkU7GWwq51qX5vTiUZoHC7w15zDdrqqvIzRfkS9pbHq1KYdGsSbHoGNC4WL/fF6e/yKDKCIpJxSNDUQibYkKVIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Cilpea9s; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250204105343epoutp0293e7e34ad9054d23ddae85f2fd592a1c~g__aS9jMq0557405574epoutp02D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 10:53:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250204105343epoutp0293e7e34ad9054d23ddae85f2fd592a1c~g__aS9jMq0557405574epoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1738666423;
+	bh=5IY+P5cvvOpmoevl77jfAm+Tjt6iQdqDrk+JprcVQc0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Cilpea9sF1PlRXlcCfvvkHw/HsIREfS18FMxMMu3PVHH3HpT+MmKZJb4W+Wkae3Fb
+	 SKatJaTVQjexZUtVFbcYUDSw9AjVxhQkAKNEWthKtXXKBGhiRzMoRnN64QN8vJQZbi
+	 KhsBzvvhWXI0nLHzptNnTXYssEELQUDM55trVsEA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20250204105343epcas5p22c70911c1350040eb7811b81f28b2eb7~g__Z7Nm_j1951519515epcas5p2C;
+	Tue,  4 Feb 2025 10:53:43 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4YnKwj0vQLz4x9QC; Tue,  4 Feb
+	2025 10:53:41 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7F.FF.19956.4B1F1A76; Tue,  4 Feb 2025 19:53:40 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250204105340epcas5p2d1e3cdd81a6a7f8d1f6b024c8e6f5cc0~g__XYZzOx1263412634epcas5p2b;
+	Tue,  4 Feb 2025 10:53:40 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250204105340epsmtrp1e06af5afd505e400e0e2fe38febe3194~g__XXuceC0308503085epsmtrp1r;
+	Tue,  4 Feb 2025 10:53:40 +0000 (GMT)
+X-AuditID: b6c32a4b-fd1f170000004df4-5b-67a1f1b421bb
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C0.CC.18729.4B1F1A76; Tue,  4 Feb 2025 19:53:40 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250204105333epsmtip1faa77cbe5a0c3ca9bcaf28eba0c6db82~g__QfsJCz0166901669epsmtip1T;
+	Tue,  4 Feb 2025 10:53:32 +0000 (GMT)
+Message-ID: <94569e4b-f27a-425a-ad63-6a4f5bb4fb7d@samsung.com>
+Date: Tue, 4 Feb 2025 16:23:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43474a67d1af7ec03e2fade9e83c7702b74fe66b.camel@kernel.org>
-X-Rspamd-Queue-Id: 9AC8D1F387
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_ENVRCPT(0.00)[fastmail.fm,gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,lists.linux-foundation.org,linux.dev,redhat.com,fastmail.fm,nvidia.com,szeredi.hu,linux.alibaba.com,vger.kernel.org,meta.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 00/11] block write streams with nvme fdp
+To: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, asml.silence@gmail.com, axboe@kernel.dk,
+	hch@lst.de, sagi@grimberg.me, Keith Busch <kbusch@kernel.org>
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20250203184129.1829324-1-kbusch@meta.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmlu6WjwvTDX722VjMWbWN0WL13X42
+	i5WrjzJZvGs9x2Ix6dA1RoszVxeyWOy9pW2xZ+9JFov5y56yW6x7/Z7Fgctj56y77B7n721k
+	8bh8ttRj06pONo/NS+o9dt9sYPM4d7HC4/MmuQCOqGybjNTElNQihdS85PyUzLx0WyXv4Hjn
+	eFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKADlRTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2
+	SqkFKTkFJgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGd8XnmQrKKjY9fwbUwNjbBcjJ4eEgInE
+	krY7TF2MXBxCArsZJWZf6WKBcD4xSmx9eI8ZwvnGKLGg5wIjTMuGWcugqvYySjw8/QOq/y2j
+	xNPzT1lBqngF7CRObDgB1sEioCLx6XU7C0RcUOLkzCdgtqiAvMT9WzPYQWxhoPoDS9Yyg9gi
+	AlUSf/pXs4EMZRboZpQ4Mf8qE0iCWUBc4taT+UA2BwebgKbEhcmlIGFOAXOJh0t62CFK5CW2
+	v50DdraEwBYOiWU/+5ghznaROLrqLxuELSzx6vgWdghbSuJlfxuUnS3x4NEDFgi7RmLH5j5W
+	CNteouHPDVaQvcxAe9fv0ofYxSfR+/sJ2DkSArwSHW1CENWKEvcmPYXqFJd4OGMJK0SJh8T8
+	qQmQoOpilLj1cxbbBEaFWUihMgvJk7OQfDMLYfECRpZVjJKpBcW56anFpgXGeanl8OhOzs/d
+	xAhOvVreOxgfPfigd4iRiYPxEKMEB7OSCO/p7QvShXhTEiurUovy44tKc1KLDzGaAqNnIrOU
+	aHI+MPnnlcQbmlgamJiZmZlYGpsZKonzNu9sSRcSSE8sSc1OTS1ILYLpY+LglGpguuo14f/V
+	+ZP8b+59kX+x7Ljr01+df6Zr9y3p6mSdc/L4kcQe9UWm2s9u/GSK6xXoUF0wka9y7TSWQ2mv
+	s54aST3Rc3cN5zF6cYX1h6eDc5FBVdYN3YUT7+5S98mKb/isanmhrfdZDcP+3AXHOnvf7roy
+	R//g9VmfVVZ27Z5wU9JNKWjl7R/1t3cJyUudrmrKvfElfKusZuQHl85jcleeWbF5LptXuoN/
+	UxFvX6pUDu//7Y4dc77U/X9oybWhVWj2Jhev0inb/xbZvF2RJDr1sqn/ihN+8R/5ne04G3qO
+	/f+iLpVxd2e8x5387Tm8IZLCl7X2SbNVnQx0y2OV4cvXtP6vUsZuUnV1qvTMc+c1lFiKMxIN
+	tZiLihMBnv+K/EYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSnO6WjwvTDV5PUrWYs2obo8Xqu/1s
+	FitXH2WyeNd6jsVi0qFrjBZnri5ksdh7S9tiz96TLBbzlz1lt1j3+j2LA5fHzll32T3O39vI
+	4nH5bKnHplWdbB6bl9R77L7ZwOZx7mKFx+dNcgEcUVw2Kak5mWWpRfp2CVwZ3xeeZCsoqNj1
+	/BtTA2NsFyMnh4SAicSGWctYuhi5OIQEdjNK7Ll6gAkiIS7RfO0HO4QtLLHy33N2iKLXjBKv
+	Hh0DK+IVsJM4seEEI4jNIqAi8el1OwtEXFDi5MwnYLaogLzE/VszwAYJA9UfWLKWGcQWEaiS
+	ePn1OxvIUGaBbkaJXW0TmSE2dDFKLD3ZwgZSxQx0xq0n84G2cXCwCWhKXJhcChLmFDCXeLik
+	hx2ixEyia2sXI4QtL7H97RzmCYxCs5DcMQvJpFlIWmYhaVnAyLKKUTK1oDg3PbfYsMAwL7Vc
+	rzgxt7g0L10vOT93EyM40rQ0dzBuX/VB7xAjEwfjIUYJDmYlEd7T2xekC/GmJFZWpRblxxeV
+	5qQWH2KU5mBREucVf9GbIiSQnliSmp2aWpBaBJNl4uCUamCa3i/7oLq60EVt+ZHWKTNEulff
+	E11x2UhPR+aY9/aVzwKD4iTyX16Mb9w8fZvsSo6Tfy2DI27sNC2NtllyaFPaamFWbja+vM+X
+	Vsws8JiT8f3Z1B3K/HoztNgTPq4yWr1fXrIiNvMEb2Jx755W8752t1u73ARl5T9bHGhje6l5
+	SDmq80hGwFW+N5dmvltQyuxV9GKD5WKVh8L8B5Zfn7jwIqtovajQLa+/fIotXdoHF+f9uz8t
+	5FBypiRfpfuJSukqyzbLE/s4/vcd01ls63PlYO3PvtteS/4pTP706MDG3TUCZ1eZr3i45Eem
+	zeIELT+TtyKsQp6nfaZNeLtpWlDfz8XnzeY7zDQxvFu+tC5ViaU4I9FQi7moOBEAyrv6DyMD
+	AAA=
+X-CMS-MailID: 20250204105340epcas5p2d1e3cdd81a6a7f8d1f6b024c8e6f5cc0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250203201839epcas5p3b6f5bc0331202b3248431b338267bfb1
+References: <CGME20250203201839epcas5p3b6f5bc0331202b3248431b338267bfb1@epcas5p3.samsung.com>
+	<20250203184129.1829324-1-kbusch@meta.com>
 
-On Tue 28-01-25 14:59:37, Jeff Layton via Lsf-pc wrote:
-> On Mon, 2025-01-27 at 13:44 -0800, Joanne Koong wrote:
-> > Recently, there was a long discussion upstream [1] on a patchset that
-> > removes temp pages when handling writeback in FUSE. Temp pages are the
-> > main bottleneck for write performance in FUSE and local benchmarks
-> > showed approximately a 20% and 45% improvement in throughput for 4K
-> > and 1M block size writes respectively when temp pages were removed.
-> > More information on how FUSE uses temp pages can be found here [2].
-> > 
-> > In the discussion, there were concerns from mm regarding the
-> > possibility of untrusted malicious or buggy fuse servers never
-> > completing writeback, which would impede migration for those pages.
-> > 
-> > It would be great to continue this discussion at LSF/MM and align on a
-> > solution that removes FUSE temp pages altogether while satisfying mm’s
-> > expectations for page migration. These are the most promising options
-> > so far:
-> > 
-> > a) Kill untrusted fuse servers that do not reply to writeback requests
-> > by a certain amount of time (where that time can be configurable
-> > through a sysctl) as a safeguard for system resources
-> > 
-> > b) Use unmovable pages for untrusted fuse servers
-> > 
-> > If there are no acceptable solutions, it might also be worth
-> > considering whether there could be mm options that could sufficiently
-> > mitigate this problem. One potential idea is co-locating FUSE folio
-> > allocations to the same page block so that the worst-case
-> > malicious/buggy server scenario only hampers migration of one page
-> > block.
-> > 
-> > If there is no way to remove temp pages altogether, then it would be
-> > useful to discuss:
-> > a) how skipping temp pages should be gated:
-> >     i) unprivileged servers default to always using temp pages while
-> > privileged servers skip temp pages
-> >     ii) splice defaults to using temp pages and writeback for non-temp
-> > pages get canceled if migration is initiated
-> >     iii) skip temp pages if a sufficient enough request timeout is set
-> > 
-> 
-> We might also consider coupling the above measures with a new limit on
-> the number of unprivileged FUSE mounts a user is allowed to have. IIUC,
-> a single unprivileged FUSE mount is only allowed a certain amount of
-> dirty pages, but there is no real cap on the number of mounts that an
-> unprivileged user can spawn.
-> 
-> A tunable hard cap on the number mounts allowed per uid would be a
-> reasonable thing to consider. Most users won't need more than 32 or 64
-> or so.
+I remember doing this but maybe twice is better than once:
 
-Yes, this might be interesting for general system management but I don't
-think this is a definitive answer for the issue here. IMO it would be too
-cumbersome to tune this (sometimes even small probability of migration
-failure or similar issues is going to bite at times).
-
-> > b) how to support large FUSE folios for writeback. Currently FUSE uses
-> > an rb tree to track writeback state of temp pages but with large
-> > folios, this gets unsustainable if concurrent writebacks happen on the
-> > same page indices but are part of different sized folios, eg the
-> > following scenario
-> >       i)  writeback on a large folio is issued
-> >      ii) the folio is copied to a tmp folio and writeback is cleared,
-> > we add this writeback request to the rb tree
-> >      iii) the folio in the pagecache is evicted
-> >      iv) another write occurs on a larger range that encompasses the
-> > range in the writeback in i) or on a subset of it
-> > It seems likely that we will need to align on another data structure
-> > instead of the rb tree to sufficiently handle this.
-> > 
-> > 
-> > Thanks,
-> > Joanne
-> > 
-> > [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-5-joannelkoong@gmail.com/
-> > [2] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
-> 
-> 
-> Miklos' has a good point about reads being a problem too. In fact, it
-> might be simpler to start by dealing with reads.
-> 
-> While limiting what we can do with FUSE is all well and good, I wonder
-> too if we might be able to allow pages to be migrated while reads or
-> writeback is going on.
-
-Yes, this sounds as an intriguing idea. Generally when we hand physical
-addresses to the HW, we cannot touch the pages. But with FUSE we are giving
-them to userspace and there's MMU there anyway. So at least from the first
-look it should be possible to actually safely migrate these pages although
-they have been handed to userspace server for IO.
-
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
 
