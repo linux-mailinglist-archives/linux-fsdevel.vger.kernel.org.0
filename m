@@ -1,55 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-40711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6010CA26F6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:43:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B8EA26F93
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F1F1887CE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 10:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDFA1885077
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 10:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7984320AF72;
-	Tue,  4 Feb 2025 10:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34A920B1E0;
+	Tue,  4 Feb 2025 10:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnLkkpC7"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F/xJp6SL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m9NoxGYd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F/xJp6SL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m9NoxGYd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D9A20125D
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 10:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C9120AF69
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 10:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738665798; cv=none; b=jyp9YMgfzu49kgpltel083n5PkndQYcRgywJ2Rrk1b39dV7TwJ3dgRKPQPX7YcoA7074msKHADR8ihgz6IdlZkkzQOvmokI+cnQ7qG59+hiQ0KJZY9buysGxoVgMymHq66JPzQrcvTW3B2+EdR4oAmSSJFhrZSbAYLDru2i+SK8=
+	t=1738666298; cv=none; b=cw4JHkb2BOa1+ZJ/IK0sKc2vpxbLGAh8JbRRe8MZROhU9XNR+FvuNZXlbvcNLJTjdMS4b7dcHz9/QuX0ZVcrzVrHkWprDejlRHkphy+cd7a6f+VIhHKmDtuuKMTukSAqjYRsVgN8ReLDAX4o40q8YVEc/o6ZajLse9n6mlvp4PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738665798; c=relaxed/simple;
-	bh=UpVbAl7P1Ua0K442GKMlHj/+68phudtF935ZTmKbB9Y=;
+	s=arc-20240116; t=1738666298; c=relaxed/simple;
+	bh=HJR/sbLwekjmFUNqqIMVtCe+qXSxh5w7BpcXe6fRLFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlwZdYdYGkcfwBnMR/5xI3Zzhs9n77pvtLjy7ZnroY9q+3rK2Job9UnMnCheKcfsStfEP5xN4+xtaBcc+v8cBR3dvQJQGEVYdmPVhtkG9heeyGSSVI6lZhAo2aQtKp9VceAfU9KfHEx1+115xwuCXwRTwqFBtd/9nWM19VZ+Pn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnLkkpC7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FBCC4CEDF;
-	Tue,  4 Feb 2025 10:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738665796;
-	bh=UpVbAl7P1Ua0K442GKMlHj/+68phudtF935ZTmKbB9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UnLkkpC7oFEoVAfYT9Izm5X8fImNxi0CzPQIqkN5kRwrzQjX7ahmMNIoh1Xk4Zy17
-	 gNuqhDEuK+XPF3sPRYS46WbPhRm6FJJLC48nTegLgksrd535KRwIhweV6NaQ3OUIiT
-	 SroYxZ50rzRiUorfJJvRi+lSB2Cqp/qUC9dDMvxjBhYCiiH51r8kD9w+QOUhkRYRTL
-	 f/nsMpIs+TP5+fD/FOygMwP2WcoPys4pXJMhO+F8F2QCW6S8252vJzmR6pMBDq8f2N
-	 IBZ5qdnw37a6ZmZJogJvpQjykGaXo9fwiNQETteCSMVXNA7SYsMLPXvW2i3lT7ihwn
-	 k+VbsA6CFHUYA==
-Date: Tue, 4 Feb 2025 11:43:11 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Alex Williamson <alex.williamson@redhat.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fsnotify: use accessor to set FMODE_NONOTIFY_*
-Message-ID: <20250204-drehleiter-kehlkopf-ebfb51587558@brauner>
-References: <20250203223205.861346-1-amir73il@gmail.com>
- <20250203223205.861346-2-amir73il@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=awlN3RjrXYBWR/pWzNkc4kqFgLdCk4AWpRfmrFjop1ArkGYHF8TU9RmCOnCyETopj7eUEkxqdSnlHcJ8S/e8b8cIOYq5791uUu53jqEQ+39BlE83atzjFSO+LUD2goe04pI3zX495hX8v9/HiXZdsqyPECVb+8R5igRv6HnVBFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F/xJp6SL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m9NoxGYd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F/xJp6SL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m9NoxGYd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9AC8D1F387;
+	Tue,  4 Feb 2025 10:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738666294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
+	b=F/xJp6SLc3m7LL+BJPfCuNFSwD9AAWUkkiMrwM//GRatr2tEQfU5zjQyhqA8njbPAYa4Ke
+	jOuxQ5e9GmiYfvgdvx2HbF++3ALm7K6LVImS8ZScNY3OPeo5x4hTXqXP4eSj7mvKeIqacg
+	5F+SC+p2u3q+jyJUQrafqJFAulCFbsA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738666294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
+	b=m9NoxGYdATOHbeL6J98ZhV+l8SuXFXIt+nlqZZ5myRjXU8z4RXBzZm9olVK2cbc1lg5hll
+	1qotO8adJu/CLhCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="F/xJp6SL";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=m9NoxGYd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738666294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
+	b=F/xJp6SLc3m7LL+BJPfCuNFSwD9AAWUkkiMrwM//GRatr2tEQfU5zjQyhqA8njbPAYa4Ke
+	jOuxQ5e9GmiYfvgdvx2HbF++3ALm7K6LVImS8ZScNY3OPeo5x4hTXqXP4eSj7mvKeIqacg
+	5F+SC+p2u3q+jyJUQrafqJFAulCFbsA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738666294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJbsvQr2WeVJ+c+4x96qbpV3fVNBXtHHVF2mU+pdzUc=;
+	b=m9NoxGYdATOHbeL6J98ZhV+l8SuXFXIt+nlqZZ5myRjXU8z4RXBzZm9olVK2cbc1lg5hll
+	1qotO8adJu/CLhCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 888FE13795;
+	Tue,  4 Feb 2025 10:51:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +EtOITbxoWcXHgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 04 Feb 2025 10:51:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C8E9DA082D; Tue,  4 Feb 2025 11:51:29 +0100 (CET)
+Date: Tue, 4 Feb 2025 11:51:29 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, 
+	lsf-pc@lists.linux-foundation.org, Shakeel Butt <shakeel.butt@linux.dev>, 
+	David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Zi Yan <ziy@nvidia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Removing writeback temp pages in FUSE
+Message-ID: <aeszroqwtyj2drpxkoc3o6x6y56rltirgpbimg2qmgsr6jkzii@ntdx7xrpplhk>
+References: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
+ <43474a67d1af7ec03e2fade9e83c7702b74fe66b.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,194 +111,134 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250203223205.861346-2-amir73il@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <43474a67d1af7ec03e2fade9e83c7702b74fe66b.camel@kernel.org>
+X-Rspamd-Queue-Id: 9AC8D1F387
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[fastmail.fm,gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,lists.linux-foundation.org,linux.dev,redhat.com,fastmail.fm,nvidia.com,szeredi.hu,linux.alibaba.com,vger.kernel.org,meta.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Feb 03, 2025 at 11:32:03PM +0100, Amir Goldstein wrote:
-> The FMODE_NONOTIFY_* bits are a 2-bits mode.  Open coding manipulation
-> of those bits is risky.  Use an accessor file_set_fsnotify_mode() to
-> set the mode.
+On Tue 28-01-25 14:59:37, Jeff Layton via Lsf-pc wrote:
+> On Mon, 2025-01-27 at 13:44 -0800, Joanne Koong wrote:
+> > Recently, there was a long discussion upstream [1] on a patchset that
+> > removes temp pages when handling writeback in FUSE. Temp pages are the
+> > main bottleneck for write performance in FUSE and local benchmarks
+> > showed approximately a 20% and 45% improvement in throughput for 4K
+> > and 1M block size writes respectively when temp pages were removed.
+> > More information on how FUSE uses temp pages can be found here [2].
+> > 
+> > In the discussion, there were concerns from mm regarding the
+> > possibility of untrusted malicious or buggy fuse servers never
+> > completing writeback, which would impede migration for those pages.
+> > 
+> > It would be great to continue this discussion at LSF/MM and align on a
+> > solution that removes FUSE temp pages altogether while satisfying mm’s
+> > expectations for page migration. These are the most promising options
+> > so far:
+> > 
+> > a) Kill untrusted fuse servers that do not reply to writeback requests
+> > by a certain amount of time (where that time can be configurable
+> > through a sysctl) as a safeguard for system resources
+> > 
+> > b) Use unmovable pages for untrusted fuse servers
+> > 
+> > If there are no acceptable solutions, it might also be worth
+> > considering whether there could be mm options that could sufficiently
+> > mitigate this problem. One potential idea is co-locating FUSE folio
+> > allocations to the same page block so that the worst-case
+> > malicious/buggy server scenario only hampers migration of one page
+> > block.
+> > 
+> > If there is no way to remove temp pages altogether, then it would be
+> > useful to discuss:
+> > a) how skipping temp pages should be gated:
+> >     i) unprivileged servers default to always using temp pages while
+> > privileged servers skip temp pages
+> >     ii) splice defaults to using temp pages and writeback for non-temp
+> > pages get canceled if migration is initiated
+> >     iii) skip temp pages if a sufficient enough request timeout is set
+> > 
 > 
-> Rename file_set_fsnotify_mode() => file_set_fsnotify_mode_from_watchers()
-> to make way for the simple accessor name.
+> We might also consider coupling the above measures with a new limit on
+> the number of unprivileged FUSE mounts a user is allowed to have. IIUC,
+> a single unprivileged FUSE mount is only allowed a certain amount of
+> dirty pages, but there is no real cap on the number of mounts that an
+> unprivileged user can spawn.
 > 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  drivers/tty/pty.c        |  2 +-
->  fs/notify/fsnotify.c     | 18 ++++++++++++------
->  fs/open.c                |  7 ++++---
->  include/linux/fs.h       |  9 ++++++++-
->  include/linux/fsnotify.h |  4 ++--
->  5 files changed, 27 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
-> index df08f13052ff4..8bb1a01fef2a1 100644
-> --- a/drivers/tty/pty.c
-> +++ b/drivers/tty/pty.c
-> @@ -798,7 +798,7 @@ static int ptmx_open(struct inode *inode, struct file *filp)
->  	nonseekable_open(inode, filp);
->  
->  	/* We refuse fsnotify events on ptmx, since it's a shared resource */
-> -	filp->f_mode |= FMODE_NONOTIFY;
-> +	file_set_fsnotify_mode(filp, FMODE_NONOTIFY);
->  
->  	retval = tty_alloc_file(filp);
->  	if (retval)
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 8ee495a58d0ad..77a1521335a10 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -648,7 +648,7 @@ EXPORT_SYMBOL_GPL(fsnotify);
->   * Later, fsnotify permission hooks do not check if there are permission event
->   * watches, but that there were permission event watches at open time.
->   */
-> -void file_set_fsnotify_mode(struct file *file)
-> +void file_set_fsnotify_mode_from_watchers(struct file *file)
->  {
->  	struct dentry *dentry = file->f_path.dentry, *parent;
->  	struct super_block *sb = dentry->d_sb;
-> @@ -665,7 +665,7 @@ void file_set_fsnotify_mode(struct file *file)
->  	 */
->  	if (likely(!fsnotify_sb_has_priority_watchers(sb,
->  						FSNOTIFY_PRIO_CONTENT))) {
-> -		file->f_mode |= FMODE_NONOTIFY_PERM;
-> +		file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
->  		return;
->  	}
->  
-> @@ -676,7 +676,7 @@ void file_set_fsnotify_mode(struct file *file)
->  	if ((!d_is_dir(dentry) && !d_is_reg(dentry)) ||
->  	    likely(!fsnotify_sb_has_priority_watchers(sb,
->  						FSNOTIFY_PRIO_PRE_CONTENT))) {
-> -		file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> +		file_set_fsnotify_mode(file, FMODE_NONOTIFY_HSM);
->  		return;
->  	}
->  
-> @@ -686,19 +686,25 @@ void file_set_fsnotify_mode(struct file *file)
->  	 */
->  	mnt_mask = READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
->  	if (unlikely(fsnotify_object_watched(d_inode(dentry), mnt_mask,
-> -				     FSNOTIFY_PRE_CONTENT_EVENTS)))
-> +				     FSNOTIFY_PRE_CONTENT_EVENTS))) {
-> +		/* Enable pre-content events */
-> +		file_set_fsnotify_mode(file, 0);
->  		return;
-> +	}
->  
->  	/* Is parent watching for pre-content events on this file? */
->  	if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
->  		parent = dget_parent(dentry);
->  		p_mask = fsnotify_inode_watches_children(d_inode(parent));
->  		dput(parent);
-> -		if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)
-> +		if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS) {
-> +			/* Enable pre-content events */
-> +			file_set_fsnotify_mode(file, 0);
->  			return;
-> +		}
->  	}
->  	/* Nobody watching for pre-content events from this file */
-> -	file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> +	file_set_fsnotify_mode(file, FMODE_NONOTIFY_HSM);
->  }
->  #endif
->  
-> diff --git a/fs/open.c b/fs/open.c
-> index 932e5a6de63bb..3fcbfff8aede8 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -905,7 +905,8 @@ static int do_dentry_open(struct file *f,
->  	f->f_sb_err = file_sample_sb_err(f);
->  
->  	if (unlikely(f->f_flags & O_PATH)) {
-> -		f->f_mode = FMODE_PATH | FMODE_OPENED | FMODE_NONOTIFY;
-> +		f->f_mode = FMODE_PATH | FMODE_OPENED;
-> +		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
->  		f->f_op = &empty_fops;
->  		return 0;
->  	}
-> @@ -938,7 +939,7 @@ static int do_dentry_open(struct file *f,
->  	 * If FMODE_NONOTIFY was already set for an fanotify fd, this doesn't
->  	 * change anything.
->  	 */
-> -	file_set_fsnotify_mode(f);
-> +	file_set_fsnotify_mode_from_watchers(f);
->  	error = fsnotify_open_perm(f);
->  	if (error)
->  		goto cleanup_all;
-> @@ -1122,7 +1123,7 @@ struct file *dentry_open_nonotify(const struct path *path, int flags,
->  	if (!IS_ERR(f)) {
->  		int error;
->  
-> -		f->f_mode |= FMODE_NONOTIFY;
-> +		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
->  		error = vfs_open(path, f);
->  		if (error) {
->  			fput(f);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index be3ad155ec9f7..e73d9b998780d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -206,6 +206,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->   * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) events.
->   * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content events.
->   */
-> +#define FMODE_NONOTIFY_HSM \
-> +	(FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
+> A tunable hard cap on the number mounts allowed per uid would be a
+> reasonable thing to consider. Most users won't need more than 32 or 64
+> or so.
 
-After this patch series this define is used exactly twice and it's
-currently identical to FMODE_FSNOTIFY_HSM. I suggest to remove it and
-simply pass FMODE_NONOTIFY | FMODE_NONOTIFY_PERM in the two places it's
-used. I can do this myself though so if Jan doesn't have other comments
-don't bother resending.
+Yes, this might be interesting for general system management but I don't
+think this is a definitive answer for the issue here. IMO it would be too
+cumbersome to tune this (sometimes even small probability of migration
+failure or similar issues is going to bite at times).
 
->  #define FMODE_FSNOTIFY_MASK \
->  	(FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
->  
-> @@ -222,7 +224,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define FMODE_FSNOTIFY_HSM(mode)	0
->  #endif
->  
-> -
->  /*
->   * Attribute flags.  These should be or-ed together to figure out what
->   * has been changed!
-> @@ -3140,6 +3141,12 @@ static inline void exe_file_allow_write_access(struct file *exe_file)
->  	allow_write_access(exe_file);
->  }
->  
-> +static inline void file_set_fsnotify_mode(struct file *file, fmode_t mode)
-> +{
-> +	file->f_mode &= ~FMODE_FSNOTIFY_MASK;
-> +	file->f_mode |= mode;
-> +}
-> +
->  static inline bool inode_is_open_for_write(const struct inode *inode)
->  {
->  	return atomic_read(&inode->i_writecount) > 0;
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index 1a9ef8f6784dd..6a33288bd6a1f 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -129,7 +129,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
->  
->  #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
->  
-> -void file_set_fsnotify_mode(struct file *file);
-> +void file_set_fsnotify_mode_from_watchers(struct file *file);
->  
->  /*
->   * fsnotify_file_area_perm - permission hook before access to file range
-> @@ -213,7 +213,7 @@ static inline int fsnotify_open_perm(struct file *file)
->  }
->  
->  #else
-> -static inline void file_set_fsnotify_mode(struct file *file)
-> +static inline void file_set_fsnotify_mode_from_watchers(struct file *file)
->  {
->  }
->  
-> -- 
-> 2.34.1
+> > b) how to support large FUSE folios for writeback. Currently FUSE uses
+> > an rb tree to track writeback state of temp pages but with large
+> > folios, this gets unsustainable if concurrent writebacks happen on the
+> > same page indices but are part of different sized folios, eg the
+> > following scenario
+> >       i)  writeback on a large folio is issued
+> >      ii) the folio is copied to a tmp folio and writeback is cleared,
+> > we add this writeback request to the rb tree
+> >      iii) the folio in the pagecache is evicted
+> >      iv) another write occurs on a larger range that encompasses the
+> > range in the writeback in i) or on a subset of it
+> > It seems likely that we will need to align on another data structure
+> > instead of the rb tree to sufficiently handle this.
+> > 
+> > 
+> > Thanks,
+> > Joanne
+> > 
+> > [1] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-5-joannelkoong@gmail.com/
+> > [2] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
 > 
+> 
+> Miklos' has a good point about reads being a problem too. In fact, it
+> might be simpler to start by dealing with reads.
+> 
+> While limiting what we can do with FUSE is all well and good, I wonder
+> too if we might be able to allow pages to be migrated while reads or
+> writeback is going on.
+
+Yes, this sounds as an intriguing idea. Generally when we hand physical
+addresses to the HW, we cannot touch the pages. But with FUSE we are giving
+them to userspace and there's MMU there anyway. So at least from the first
+look it should be possible to actually safely migrate these pages although
+they have been handed to userspace server for IO.
+
+									Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
