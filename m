@@ -1,256 +1,471 @@
-Return-Path: <linux-fsdevel+bounces-40816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AF5A27CDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:38:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611B8A27CED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBDC3A6073
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C4718859FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15AC21A425;
-	Tue,  4 Feb 2025 20:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B11021A43A;
+	Tue,  4 Feb 2025 20:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="NGkEEzqN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="igKGe3Yn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OINE8KwX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B31A2046B1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 20:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856EC206F16;
+	Tue,  4 Feb 2025 20:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738701507; cv=none; b=mItqXiALriYDh4ZsJo/zYk6/gNERp8msCygIQngZpXRRDbeNudELg/dsmjaD4MI3i4Xaws0kf+sMPS9rew1CB9SXn6/USTIZPYQN9y5wiOYPiGzPcud91nuG1MScBPqrlShJcaqixGJQdrLfB9y/M/lcPXWUkBpsJzlw6KoSv0g=
+	t=1738702218; cv=none; b=UlCAlmyfOn7wrX4zdcdzcC4VtK6lW/V/Hm4FQ9l0aw+eG+Cp2g9rseAav5/WB7u65OQSfUUmLJmK2IIGA40DiFFJMB3ZAwKivUvxsyTrpp09ACgRM10UDcg+4b1/j7YrtE5I/tArGMI/R6n7V9M9C/dUfAK1qF1A49Yq9DZ9Z7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738701507; c=relaxed/simple;
-	bh=0LzZRFEegukC9csBCV3VR755x/ldL9XOpP5cQ3/vmgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fO+wEEigQQ6+5z+hFwpM5XHlplcbpRdCwakHUfdk+Z2WQc59a9/tP90V1U4A+CXImLFh8wOqbfIZWddfZK2d6lqRxAU0wb/0UXkwiCFb3Iu6df0uLkSbVp8TpAkFKWXclAmBTaiGyyYHuBvyE59yaTy3hEG7JRy3uCXRwPCbBOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=NGkEEzqN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=igKGe3Yn; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 91F632540182;
-	Tue,  4 Feb 2025 15:38:24 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 04 Feb 2025 15:38:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1738701504;
-	 x=1738787904; bh=aC/xKI9hMjzhwTYgoEcpUeuy/PjsjPZvnArmdieLqPU=; b=
-	NGkEEzqNozUCIS0+POm760pnIKYmVs56UE+vuJvWebbyE6mrUJtZyXeX6MRVXUr2
-	pXZWtCluHkLWrG/V0mTeayzBi5EjFtovj4eaPSViu89aTPoj7cSJOk6nE7XMeZGa
-	InBOopOE4edYmUUiSrnvvfMaCBKI5RDCQQeC9qPYwbOFrwWmnQF0LHtzCP5N/WsV
-	BxzEJtKJKaAOEOt4pJ4n1Gu/aqtpqusZAQ+UMZTyA0ibvkp8hRtYkYdjdMRHCJtY
-	Hh7PYw9+j45zSZpiVSrrjTiCf+UTgUscZnBWw2dqx+boZFGGYKViTm4p0Z/ZLe2j
-	dh4uhRAJxHghRaH88dYb7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738701504; x=
-	1738787904; bh=aC/xKI9hMjzhwTYgoEcpUeuy/PjsjPZvnArmdieLqPU=; b=i
-	gKGe3Ynd5SeRwAfaxWO2Xxzv20YDaREOabH6OY+mS69GSbqlYiG0ZzGLhbXMlidO
-	prxl4iPD/1dBr0Wb7DVo94F+gaX0XfmLuVjDFFFm4Cojl33oLiFfssWEEGP4rMpd
-	YxONOt54JxNR2L6AMj93i+c4JBDkSjhHfxt34rysr8e6tOkPzC0Zplz4KbYnyy3f
-	lbi2JZZife6ZHw0FD2D4mCTrxdet+fh/WdZUA2GPpxay7yLJvE83O4LlvDmeFm3C
-	53FfcQu8gAWylYoaXJhn1e35pR04xDwCbHG/p6hi+DQVBOQFZNb6ojlduzy574bu
-	4pxT5nBijV7xGy4Vv/S0A==
-X-ME-Sender: <xms:v3qiZ6W4-vnu4CuZTlIp5BqmPaEX6Anf-nkCsqDYnLCjhRabCLL8PQ>
-    <xme:v3qiZ2n4tke_dLWexXxfdJhgGCmlcdlNfUJNRRd0x2nVkxZQYohXcY4TY5UXWzWtH
-    Z-JXE4hQtOgNAjo>
-X-ME-Received: <xmr:v3qiZ-ZyQvKnY3pn4s_m7XtXx4lGAdfiVtunZzIxljgOnDEva_vDQkPh1P9ov2yeuaEpc2BZCpDXEeoLSrKJT7FyBXvpmSAeInvb4VKiqT6O1uwJMP1G>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudehudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
-    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeduleefvdduvedu
-    veelgeelffffkedukeegveelgfekleeuvdehkeehheehkefhfeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
-    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuh
-    igqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgv
-    rhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
-X-ME-Proxy: <xmx:v3qiZxX8cH4Y_5PENh4mlqZRoEcW9nc-X_BFT9yETx88PU1-g1Jg0Q>
-    <xmx:v3qiZ0n3NS6fwtnf2SZ39MbU_hXSgrjF-_wwGenYlBZfsi-wfQwnbg>
-    <xmx:v3qiZ2d8WO_lxgDTB6WNDEKQCvF4DoaLYORxyXukn2lhQ_oswx30kg>
-    <xmx:v3qiZ2ETA9xKLwoWrWevl8IaAGZb6tA9IfOxbR2BzRVWyPJalPIFyg>
-    <xmx:wHqiZ1BNZabG9l_1xiIxPcODZKLgESQm1NMgW7tEgxUbDY1REA0GiHBE>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Feb 2025 15:38:22 -0500 (EST)
-Message-ID: <bc801a5c-8150-4b6c-b7b6-b587d556d99b@fastmail.fm>
-Date: Tue, 4 Feb 2025 21:38:22 +0100
+	s=arc-20240116; t=1738702218; c=relaxed/simple;
+	bh=EfqotukzcpDCV3ZSYISIXnSxcW8AW7Syyg0OUHOrIpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gl7PPVY+s+x8rr41KTHNGXc/NIpnwsC2R+aj1F+QeonJzOfqibDI73742sH8Y7p1rXrlhjeqkYZQa03vBdTxKRF/5D9cjzqkrNLC7g97GCWkq61mZe/5yPo93U1+gmor/h89WXf56cchKcoowU5X/8l5SAydviFsjqxUQr9MxJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OINE8KwX; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46c8474d8daso43088761cf.3;
+        Tue, 04 Feb 2025 12:50:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738702215; x=1739307015; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J3q/9LTOK1m2RNFGy8txqtDxvIMl4dVGU30eFdIrCIo=;
+        b=OINE8KwXCAXVqNOF3aD9lYj0ITyN7kSpjQmWeGfXJcL+pCWzeZdQLA7G5UzGGI3dSI
+         C/ApeIBl1XmcTxXdvzi2PFpCO9SDaX5Nzqqqii2NaEPWpwua9b8ZiUld60ZxIJ9I+VkS
+         8+gdkGlhJ78SOQ0p7tGAkCOP6T+n0sIUd6u4cqlMZcZmRRFulk8hDCUZvOQ8xSidDNc3
+         QFoJB8njEcO4vUMlmxDE9fgQAGrA4tC3wmgpB04kCOw2dOFfa4Up4KCS1G7XjlyyyFpH
+         kisqkINwre/qHN5w26byLAFCE3N7qkRx7bXD5yEMipPcNxSUuvHh1Ix/Bkf25p9GcJaz
+         459g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738702215; x=1739307015;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J3q/9LTOK1m2RNFGy8txqtDxvIMl4dVGU30eFdIrCIo=;
+        b=SYTgNOtRqCjBKC1V0czhgNP6wRbMfsue9SgS1bMIU7myZM58axB5mTZyNy2S9nM6Xr
+         Guq5AP3CpeuDgnbSBkp/tRuFwpegCcahUy6ZnGkMuKW3FL91heNITLwq1tc2NwNhi5pL
+         lwvymWwCzWvIsmpGoLIoUCvEu7vPbUftk+QBF0gZHAc+6O0a/RF0IIzN5MLKQ02h7Gos
+         x2Syj3oUTrVtmtke9K1p2vtyzFzF3seTcRFlCMoROgzErw5tJQNNT+Et4VzaXjO8REQ3
+         BIRAaOoZMoCIUg4Mbrv/klEJI0fV0cPHjmbT0DMpm8EOsOICCJ19zyF5JcdU7o9KzJx9
+         96ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRDRSWw3USlCQepY0wXPoX9RT/Mfal5EnGXOJCldLoq8/qnsIV6wbcMDZfCkh4dK4mCqD+YRN2@vger.kernel.org, AJvYcCX5hvm7hBkMq72BJrJQ53VUHFcYGuqBAYa5dImsQ8jSzFWIfiN+nFtD/XgbdQ+pdFYx2Uti/hPMYKyTnjDT/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmd97Ihl5NI2w5eFqLVy05q7QiywIwk50zDkvuAOgqFzQSK6Nn
+	qzuczGD5Utlq3F2/pIv2p6MXKRgzgVVOLS0nLl84zV7GRz7OfF16G9RgBJ/tov7ZjwLIUOneiqo
+	4oC25n3XUv811x6DfwnFJxSWTTlo=
+X-Gm-Gg: ASbGncudIcWXbZqpfHcYLWTYTGpWWleNAxQ+b0ZDnOs04DjA83uxGM6UmPRnm93Avhy
+	wLn/iCUW9vXOIAR4aulVMJJG368225HpbRV/3t/uxOFiKLRYG4EteAqv59HwXSwOjZ+DdrGMwDg
+	==
+X-Google-Smtp-Source: AGHT+IHTTlTAo8kEiZjjPF6urEJAekmCPdZzPK5XWZGbtPyNP4jLgbbbRpKGXvYX9ftdXGHLaejfT74EsC3Ize1dgUo=
+X-Received: by 2002:a05:622a:6099:b0:467:613d:9a1 with SMTP id
+ d75a77b69052e-4702831f49cmr1129861cf.48.1738702214969; Tue, 04 Feb 2025
+ 12:50:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: clear FR_PENDING without holding fiq lock for uring
- requests
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-References: <20250203185040.2365113-1-joannelkoong@gmail.com>
- <ff73c955-2267-4c77-8dca-0e4181d8e8b4@fastmail.fm>
- <CAJnrk1YfPU9qgaq=3KtO8dWxEqwpX-TJ-BD4vjUHsqtAqT859Q@mail.gmail.com>
- <74a5f0ea-e7dc-440b-82c6-5755dea98fa4@fastmail.fm>
- <CAJnrk1ZgHNb78dz-yfNTpxmW7wtT88A=m-zF0ZoLXKLUHRjNTw@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1ZgHNb78dz-yfNTpxmW7wtT88A=m-zF0ZoLXKLUHRjNTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250121215641.1764359-2-joannelkoong@gmail.com>
+ <20250202142518.r3xvf7mvfo2nhb7t@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <CAJnrk1YwBJQnFwYBcO50Xy2dA6df_SqQsHdpLux4wa-Yw5rXdg@mail.gmail.com>
+ <20250203185948.GB134532@frogsfrogsfrogs> <CAJnrk1bX27KAOxChMs5pRNmrjjuxjYu11GG==vTN0sa8Qf2Uqw@mail.gmail.com>
+ <20250203194147.GA134498@frogsfrogsfrogs> <CAJnrk1Y_eDFOnob3N78O3jcRoHy6Y0jaxnXbgVT0okBjwJue3g@mail.gmail.com>
+ <20250203200149.GC134490@frogsfrogsfrogs> <CAJnrk1apX266i33s8CA4JwCv0z9sNmGm=+EXt0kSESvzicEhJQ@mail.gmail.com>
+ <20250203215432.GC134532@frogsfrogsfrogs> <20250204042136.GA21799@frogsfrogsfrogs>
+In-Reply-To: <20250204042136.GA21799@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 4 Feb 2025 12:50:04 -0800
+X-Gm-Features: AWEUYZlr6Dfog9k_k-e0VnMxSCkNginETTtcDTi82kIPLIR-rrLoPjnIRneXzrU
+Message-ID: <CAJnrk1bTpOvZG=PHW1LeoQ8xCb276X6At8gm8=M9UdinaVY1+Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] fsx: support reads/writes from buffers backed by hugepages
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, bfoster@redhat.com, nirjhar@linux.ibm.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Feb 3, 2025 at 8:21=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
+wrote:
+>
+> On Mon, Feb 03, 2025 at 01:54:32PM -0800, Darrick J. Wong wrote:
+> > On Mon, Feb 03, 2025 at 01:40:39PM -0800, Joanne Koong wrote:
+> > > On Mon, Feb 3, 2025 at 12:01=E2=80=AFPM Darrick J. Wong <djwong@kerne=
+l.org> wrote:
+> > > >
+> > > > On Mon, Feb 03, 2025 at 11:57:23AM -0800, Joanne Koong wrote:
+> > > > > On Mon, Feb 3, 2025 at 11:41=E2=80=AFAM Darrick J. Wong <djwong@k=
+ernel.org> wrote:
+> > > > > >
+> > > > > > On Mon, Feb 03, 2025 at 11:23:20AM -0800, Joanne Koong wrote:
+> > > > > > > On Mon, Feb 3, 2025 at 10:59=E2=80=AFAM Darrick J. Wong <djwo=
+ng@kernel.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Feb 03, 2025 at 10:04:04AM -0800, Joanne Koong wrot=
+e:
+> > > > > > > > > On Sun, Feb 2, 2025 at 6:25=E2=80=AFAM Zorro Lang <zlang@=
+redhat.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Tue, Jan 21, 2025 at 01:56:40PM -0800, Joanne Koong =
+wrote:
+> > > > > > > > > > > Add support for reads/writes from buffers backed by h=
+ugepages.
+> > > > > > > > > > > This can be enabled through the '-h' flag. This flag =
+should only be used
+> > > > > > > > > > > on systems where THP capabilities are enabled.
+> > > > > > > > > > >
+> > > > > > > > > > > This is motivated by a recent bug that was due to fau=
+lty handling of
+> > > > > > > > > > > userspace buffers backed by hugepages. This patch is =
+a mitigation
+> > > > > > > > > > > against problems like this in the future.
+> > > > > > > > > > >
+> > > > > > > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > > > > > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
+> > > > > > > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > > > > > > > > > ---
+> > > > > > > > > >
+> > > > > > > > > > Those two test cases fail on old system which doesn't s=
+upport
+> > > > > > > > > > MADV_COLLAPSE:
+> > > > > > > > > >
+> > > > > > > > > >    fsx -N 10000 -l 500000 -h
+> > > > > > > > > >   -fsx -N 10000 -o 8192 -l 500000 -h
+> > > > > > > > > >   -fsx -N 10000 -o 128000 -l 500000 -h
+> > > > > > > > > >   +MADV_COLLAPSE not supported. Can't support -h
+> > > > > > > > > >
+> > > > > > > > > > and
+> > > > > > > > > >
+> > > > > > > > > >    fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z=
+ -R -W -h
+> > > > > > > > > >   -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w =
+BSIZE -Z -R -W -h
+> > > > > > > > > >   -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -=
+w BSIZE -Z -R -W -h
+> > > > > > > > > >   +mapped writes DISABLED
+> > > > > > > > > >   +MADV_COLLAPSE not supported. Can't support -h
+> > > > > > > > > >
+> > > > > > > > > > I'm wondering ...
+> > > > > > > > > >
+> > > > > > > > > > >  ltp/fsx.c | 166 ++++++++++++++++++++++++++++++++++++=
++++++++++++++-----
+> > > > > > > > > > >  1 file changed, 153 insertions(+), 13 deletions(-)
+> > > > > > > > > > >
+> > > > > > > > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > > > > > > > > > index 41933354..3be383c6 100644
+> > > > > > > > > > > --- a/ltp/fsx.c
+> > > > > > > > > > > +++ b/ltp/fsx.c
+> > > > > > > > > > >  static struct option longopts[] =3D {
+> > > > > > > > > > >       {"replay-ops", required_argument, 0, 256},
+> > > > > > > > > > >       {"record-ops", optional_argument, 0, 255},
+> > > > > > > > > > > @@ -2883,7 +3023,7 @@ main(int argc, char **argv)
+> > > > > > > > > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line =
+buffered stdout */
+> > > > > > > > > > >
+> > > > > > > > > > >       while ((ch =3D getopt_long(argc, argv,
+> > > > > > > > > > > -                              "0b:c:de:fg:i:j:kl:m:n=
+o:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > > > > > > > > > +                              "0b:c:de:fg:hi:j:kl:m:=
+no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > > > > > > > > > >                                longopts, NULL)) !=3D =
+EOF)
+> > > > > > > > > > >               switch (ch) {
+> > > > > > > > > > >               case 'b':
+> > > > > > > > > > > @@ -2916,6 +3056,14 @@ main(int argc, char **argv)
+> > > > > > > > > > >               case 'g':
+> > > > > > > > > > >                       filldata =3D *optarg;
+> > > > > > > > > > >                       break;
+> > > > > > > > > > > +             case 'h':
+> > > > > > > > > > > +#ifndef MADV_COLLAPSE
+> > > > > > > > > > > +                     fprintf(stderr, "MADV_COLLAPSE =
+not supported. "
+> > > > > > > > > > > +                             "Can't support -h\n");
+> > > > > > > > > > > +                     exit(86);
+> > > > > > > > > > > +#endif
+> > > > > > > > > > > +                     hugepages =3D 1;
+> > > > > > > > > > > +                     break;
+> > > > > > > > > >
+> > > > > > > > > > ...
+> > > > > > > > > > if we could change this part to:
+> > > > > > > > > >
+> > > > > > > > > > #ifdef MADV_COLLAPSE
+> > > > > > > > > >         hugepages =3D 1;
+> > > > > > > > > > #endif
+> > > > > > > > > >         break;
+> > > > > > > > > >
+> > > > > > > > > > to avoid the test failures on old systems.
+> > > > > > > > > >
+> > > > > > > > > > Or any better ideas from you :)
+> > > > > > > > >
+> > > > > > > > > Hi Zorro,
+> > > > > > > > >
+> > > > > > > > > It looks like MADV_COLLAPSE was introduced in kernel vers=
+ion 6.1. What
+> > > > > > > > > do you think about skipping generic/758 and generic/759 i=
+f the kernel
+> > > > > > > > > version is older than 6.1? That to me seems more preferab=
+le than the
+> > > > > > > > > paste above, as the paste above would execute the test as=
+ if it did
+> > > > > > > > > test hugepages when in reality it didn't, which would be =
+misleading.
+> > > > > > > >
+> > > > > > > > Now that I've gotten to try this out --
+> > > > > > > >
+> > > > > > > > There's a couple of things going on here.  The first is tha=
+t generic/759
+> > > > > > > > and 760 need to check if invoking fsx -h causes it to spit =
+out the
+> > > > > > > > "MADV_COLLAPSE not supported" error and _notrun the test.
+> > > > > > > >
+> > > > > > > > The second thing is that userspace programs can ensure the =
+existence of
+> > > > > > > > MADV_COLLAPSE in multiple ways.  The first way is through s=
+ys/mman.h,
+> > > > > > > > which requires that the underlying C library headers are ne=
+w enough to
+> > > > > > > > include a definition.  glibc 2.37 is new enough, but even t=
+hings like
+> > > > > > > > Debian 12 and RHEL 9 aren't new enough to have that.  Other=
+ C libraries
+> > > > > > > > might not follow glibc's practice of wrapping and/or redefi=
+ning symbols
+> > > > > > > > in a way that you hope is the same as...
+> > > > > > > >
+> > > > > > > > The second way is through linux/mman.h, which comes from th=
+e kernel
+> > > > > > > > headers package; and the third way is for the program to de=
+fine it
+> > > > > > > > itself if nobody else does.
+> > > > > > > >
+> > > > > > > > So I think the easiest way to fix the fsx.c build is to inc=
+lude
+> > > > > > > > linux/mman.h in addition to sys/mman.h.  Sorry I didn't not=
+ice these
+> > > > > > >
+> > > > > > > Thanks for your input. Do we still need sys/mman.h if linux/m=
+man.h is added?
+> > > > > >
+> > > > > > Yes, because glibc provides the mmap() function that wraps
+> > > > > > syscall(__NR_mmap, ...);
+> > > > > >
+> > > > > > > For generic/758 and 759, does it suffice to gate this on whet=
+her the
+> > > > > > > kernel version if 6.1+ and _notrun if not? My understanding i=
+s that
+> > > > > > > any kernel version 6.1 or newer will have MADV_COLLAPSE in it=
+s kernel
+> > > > > > > headers package and support the feature.
+> > > > > >
+> > > > > > No, because some (most?) vendors backport new features into exi=
+sting
+> > > > > > kernels without revving the version number of that kernel.
+> > > > >
+> > > > > Oh okay, I see. That makes sense, thanks for the explanation.
+> > > > >
+> > > > > >
+> > > > > > Maybe the following fixes things?
+> > > > > >
+> > > > > > --D
+> > > > > >
+> > > > > > generic/759,760: fix MADV_COLLAPSE detection and inclusion
+> > > > > >
+> > > > > > On systems with "old" C libraries such as glibc 2.36 in Debian =
+12, the
+> > > > > > MADV_COLLAPSE flag might not be defined in any of the header fi=
+les
+> > > > > > pulled in by sys/mman.h, which means that the fsx binary might =
+not get
+> > > > > > built with any of the MADV_COLLAPSE code.  If the kernel suppor=
+ts THP,
+> > > > > > the test will fail with:
+> > > > > >
+> > > > > > >  QA output created by 760
+> > > > > > >  fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -=
+h
+> > > > > > > -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z=
+ -R -W -h
+> > > > > > > -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE =
+-Z -R -W -h
+> > > > > > > +mapped writes DISABLED
+> > > > > > > +MADV_COLLAPSE not supported. Can't support -h
+> > > > > >
+> > > > > > Fix both tests to detect fsx binaries that don't support MADV_C=
+OLLAPSE,
+> > > > > > then fix fsx.c to include the mman.h from the kernel headers (a=
+ka
+> > > > > > linux/mman.h) so that we can actually test IOs to and from THPs=
+ if the
+> > > > > > kernel is newer than the rest of userspace.
+> > > > > >
+> > > > > > Cc: <fstests@vger.kernel.org> # v2025.02.02
+> > > > > > Fixes: 627289232371e3 ("generic: add tests for read/writes from=
+ hugepages-backed buffers")
+> > > > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > > > ---
+> > > > > >  ltp/fsx.c         |    1 +
+> > > > > >  tests/generic/759 |    3 +++
+> > > > > >  tests/generic/760 |    3 +++
+> > > > > >  3 files changed, 7 insertions(+)
+> > > > > >
+> > > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > > > > index 634c496ffe9317..cf9502a74c17a7 100644
+> > > > > > --- a/ltp/fsx.c
+> > > > > > +++ b/ltp/fsx.c
+> > > > > > @@ -20,6 +20,7 @@
+> > > > > >  #include <strings.h>
+> > > > > >  #include <sys/file.h>
+> > > > > >  #include <sys/mman.h>
+> > > > > > +#include <linux/mman.h>
+> > > > > >  #include <sys/uio.h>
+> > > > > >  #include <stdbool.h>
+> > > > > >  #ifdef HAVE_ERR_H
+> > > > > > diff --git a/tests/generic/759 b/tests/generic/759
+> > > > > > index 6c74478aa8a0e0..3549c5ed6a9299 100755
+> > > > > > --- a/tests/generic/759
+> > > > > > +++ b/tests/generic/759
+> > > > > > @@ -14,6 +14,9 @@ _begin_fstest rw auto quick
+> > > > > >  _require_test
+> > > > > >  _require_thp
+> > > > > >
+> > > > > > +$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE =
+not supported' && \
+> > > > > > +       _notrun "fsx binary does not support MADV_COLLAPSE"
+> > > > > > +
+> > > > > >  run_fsx -N 10000            -l 500000 -h
+> > > > > >  run_fsx -N 10000  -o 8192   -l 500000 -h
+> > > > > >  run_fsx -N 10000  -o 128000 -l 500000 -h
+> > > > > > diff --git a/tests/generic/760 b/tests/generic/760
+> > > > > > index c71a196222ad3b..2fbd28502ae678 100755
+> > > > > > --- a/tests/generic/760
+> > > > > > +++ b/tests/generic/760
+> > > > > > @@ -15,6 +15,9 @@ _require_test
+> > > > > >  _require_odirect
+> > > > > >  _require_thp
+> > > > > >
+> > > > > > +$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE =
+not supported' && \
+> > > > > > +       _notrun "fsx binary does not support MADV_COLLAPSE"
+> > > > > > +
+> > > > >
+> > > > > I tried this out locally and it works for me:
+> > > > >
+> > > > > generic/759 8s ... [not run] fsx binary does not support MADV_COL=
+LAPSE
+> > > > > Ran: generic/759
+> > > > > Not run: generic/759
+> > > > > Passed all 1 tests
+> > > > >
+> > > > > SECTION       -- fuse
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> > > > > Ran: generic/759
+> > > > > Not run: generic/759
+> > > > > Passed all 1 tests
+> > > >
+> > > > Does the test actually run if you /do/ have kernel/libc headers tha=
+t
+> > > > define MADV_COLLAPSE?  And if so, does that count as a Tested-by?
+> > > >
+> > >
+> > > I'm not sure if I fully understand the subtext of your question but
+> > > yes, the test runs on my system when MADV_COLLAPSE is defined in the
+> > > kernel/libc headers.
+> >
+> > Yep, you understood me correctly. :)
+> >
+> > > For sanity checking the inverse case, (eg MADV_COLLAPSE not defined),
+> > > I tried this out by modifying the ifdef/ifndef checks in fsx to
+> > > MADV_COLLAPSE_ to see if the '$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 |
+> > > grep -q 'MADV_COLLAPSE not supported'' line catches that.
+> >
+> > <nod> Sounds good then; I'll add this to my test clod and run it
+> > overnight.
+>
+> The arm64 vms with 64k base pages spat out this:
+>
+> --- /run/fstests/bin/tests/generic/759.out      2025-02-02 08:36:28.00724=
+8055 -0800
+> +++ /var/tmp/fstests/generic/759.out.bad        2025-02-03 16:51:34.86296=
+4640 -0800
+> @@ -1,4 +1,5 @@
+>  QA output created by 759
+>  fsx -N 10000 -l 500000 -h
+> -fsx -N 10000 -o 8192 -l 500000 -h
+> -fsx -N 10000 -o 128000 -l 500000 -h
+> +Seed set to 1
+> +madvise collapse for buf: Cannot allocate memory
+> +init_hugepages_buf failed for good_buf: Cannot allocate memory
+>
+> Note that it was trying to create a 512M page(!) on a VM with 8G of
+> memory.  Normally one doesn't use large base page size in low memory
+> environments, but this /is/ fstestsland. 8-)
+>
+> From commit 7d8faaf155454f ("mm/madvise: introduce MADV_COLLAPSE sync
+> hugepage collapse") :
+>
+>         ENOMEM  Memory allocation failed or VMA not found
+>         EBUSY   Memcg charging failed
+>         EAGAIN  Required resource temporarily unavailable.  Try again
+>                 might succeed.
+>         EINVAL  Other error: No PMD found, subpage doesn't have Present
+>                 bit set, "Special" page no backed by struct page, VMA
+>                 incorrectly sized, address not page-aligned, ...
+>
+> It sounds like ENOMEM/EBUSY/EINVAL should result in
+> _notrun "Could not generate hugepage" ?  What are your thoughts?
+>
+
+Thanks for running it overnight. This sounds good to me, but will this
+be robust against false negatives? For example, if it succeeds when
+we're doing the
+
+$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q 'MADV_COLLAPSE not
+supported' &&  _notrun "fsx binary does not support MADV_COLLAPSE"
+
+check, does that guarantee that the actual run won't error out with
+ENOMEM/EBUSY/EINVAL? It seems like there could be the case where it
+passes the check but then when it actually runs, the system state
+memory state may have changed and now memcg charging or the memory
+allocation fails? EAGAIN seems a bit iffy to me - hopefully this
+doesn't happen often but if it does, it would likely be a false
+negative fail for the generic test?
+
+Maybe instead of "$here/ltp/fsx -N 0 -h $TEST_DIR 2>&1 | grep -q
+'MADV_COLLAPSE not supported' &&  _notrun "fsx binary does not support
+MADV_COLLAPSE"", we should run the test and then if the output to the
+.out file is "MADV_COLLAPSE not supported", then we deem that a
+pass/success? Not sure if this is possible in the fstest
+infrastructure though for checking against two possible outputs in the
+.out file. What are your thoughts?
 
 
+Thanks,
+Joanne
 
-On 2/4/25 21:29, Joanne Koong wrote:
-> On Tue, Feb 4, 2025 at 12:00 PM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>
->>
->>
->> On 2/4/25 20:26, Joanne Koong wrote:
->>> Hi Bernd,
->>>
->>> On Tue, Feb 4, 2025 at 3:03 AM Bernd Schubert
->>> <bernd.schubert@fastmail.fm> wrote:
->>>>
->>>> Hi Joanne,
->>>>
->>>> On 2/3/25 19:50, Joanne Koong wrote:
->>>>> req->flags is set/tested/cleared atomically in fuse. When the FR_PENDING
->>>>> bit is cleared from the request flags when assigning a request to a
->>>>> uring entry, the fiq->lock does not need to be held.
->>>>>
->>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>> Fixes: c090c8abae4b6 ("fuse: Add io-uring sqe commit and fetch support")
->>>>> ---
->>>>>  fs/fuse/dev_uring.c | 2 --
->>>>>  1 file changed, 2 deletions(-)
->>>>>
->>>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->>>>> index ab8c26042aa8..42389d3e7235 100644
->>>>> --- a/fs/fuse/dev_uring.c
->>>>> +++ b/fs/fuse/dev_uring.c
->>>>> @@ -764,9 +764,7 @@ static void fuse_uring_add_req_to_ring_ent(struct fuse_ring_ent *ent,
->>>>>                       ent->state);
->>>>>       }
->>>>>
->>>>> -     spin_lock(&fiq->lock);
->>>>>       clear_bit(FR_PENDING, &req->flags);
->>>>> -     spin_unlock(&fiq->lock);
->>>>>       ent->fuse_req = req;
->>>>>       ent->state = FRRS_FUSE_REQ;
->>>>>       list_move(&ent->list, &queue->ent_w_req_queue);
->>>>
->>>> I think that would have an issue in request_wait_answer(). Let's say
->>>>
->>>>
->>>> task-A, request_wait_answer(),
->>>>                 spin_lock(&fiq->lock);
->>>>                 /* Request is not yet in userspace, bail out */
->>>>                 if (test_bit(FR_PENDING, &req->flags)) {  // ========> if passed
->>>>                         list_del(&req->list);  // --> removes from the list
->>>>
->>>> task-B,
->>>> fuse_uring_add_req_to_ring_ent()
->>>>         clear_bit(FR_PENDING, &req->flags);
->>>>         ent->fuse_req = req;
->>>>         ent->state = FRRS_FUSE_REQ;
->>>>         list_move_tail(&ent->list, &queue->ent_w_req_queue);
->>>>         fuse_uring_add_to_pq(ent, req);  // ==> Add to list
->>>>
->>>>
->>>>
->>>> What I mean is, task-A passes the if, but is then slower than task-B. I.e.
->>>> task-B runs fuse_uring_add_to_pq() before task-B does the list_del.
->>>>
->>>
->>> Is this race condition possible given that fiq->ops->send_req() is
->>> called (and completed) before request_wait_answer() is called? The
->>> path I see is this:
->>>
->>> __fuse_simple_request()
->>>     __fuse_request_send()
->>>         fuse_send_one()
->>>             fiq->ops->send_req()
->>>                   fuse_uring_queue_fuse_req()
->>>                       fuse_uring_add_req_to_ring_ent()
->>>                            clear FR_PENDING bit
->>>                            fuse_uring_add_to_pq()
->>>         request_wait_answer()
->>>
->>> It doesn't seem like task A can call request_wait_answer() while task
->>> B is running fuse_uring_queue_fuse_req() on the same request while the
->>> request still has the FR_PENDING bit set.
->>>
->>> This case of task A running request_wait_answer() while task B is
->>> executing fuse_uring_add_req_to_ring_ent() can happen through
->>> fuse_uring_commit_fetch() ->  fuse_uring_add_req_to_ring_ent(), but at
->>> that point the FR_PENDING flag will have already been cleared on the
->>> request, so this would bypass the "if (test_bit(FR_PENDING,...))"
->>> check in request_wait_answer().
->>
->> I mean this case. I don't think FR_PENDING is cleared - why should it?
->> And where? The request is pending state, waiting to get into 'FR_SENT'?
->>
->>>
->>> Is there something I'm missing? I think if this race condition is
->>> possible, then we also have a bigger problem where the request can be
->>> freed out in this request_wait_answer() ->  if (test_bit(FR_PENDING,
->>> &req->flags))...  case while fuse_uring_add_req_to_ring_ent() ->
->>> fuse_uring_add_to_pq() dereferences it still.
->>
->> I don't think so, if we take the lock.
->>
-> 
-> the path I'm looking at is this:
-> 
-> task A -
-> __fuse_simple_request()
->     fuse_get_req() -> request is allocated (req refcount is 1)
->     __fuse_request_send()
->         __fuse_get_request() -> req refcount is 2
->         fuse_send_one() -> req gets sent to uring
->         request_wait_answer()
->                ...
->                hits the interrupt case, goes into "if
-> test_bit(FR_PENDING, ...)" case which calls __fuse_put_request(), req
-> refcount is now 1
->     fuse_put_request() -> req refcount is dropped to 0, request is freed
-> 
-> while in task B -
-> fuse_uring_commit_fetch()
->     fuse_uring_next_fuse_req()
->         fuse_uring_ent_assign_req()
->             gets req off fuse_req_queue
->             fuse_uring_add_req_to_ring_ent()
->                  clear FR_PENDING
->                  fuse_uring_add_to_pq()
->                      dereferences req
-> 
-> if task A hits the interrupt case in request_wait_answer() and then
-> calls fuse_put_request() before task B clears the pending flag (and
-> after it's gotten the request from the fuse_req_queue in
-> fuse_uring_ent_assign_req()), then I think we hit this case, no?
-> 
-
-Oh no, yes, you are right. It is a bit ugly to use fiq lock for list
-handling. I think I'm going to add uring handler for that to
-request_wait_answer. In general, basically request_wait_answer
-is currently operating on the wrong list - it assumes fiq, but that
-is not where the request it waiting on.
-
-
-Thanks for pointing this out!
-
+> --D
+>
+> > --D
+> >
+> > >
+> > > > --D
+> > > >
+> > > > >
+> > > > > Thanks,
+> > > > > Joanne
+> > > > >
+> > > > > >  psize=3D`$here/src/feature -s`
+> > > > > >  bsize=3D`$here/src/min_dio_alignment $TEST_DIR $TEST_DEV`
+> > > > > >
+> > > > >
+> >
 
