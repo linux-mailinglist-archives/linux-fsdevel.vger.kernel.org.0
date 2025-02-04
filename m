@@ -1,173 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-40814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAA3A27C93
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:13:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566C9A27CCE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F2C1665F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:13:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43543A45A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E3A219A74;
-	Tue,  4 Feb 2025 20:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54CE219A80;
+	Tue,  4 Feb 2025 20:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EQnxeMBj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXJroEng"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B5B218AA2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 20:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C9420A5DA
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 20:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738699968; cv=none; b=qVaNYULQKI9XYUy/kQYACe5+3W8Gm75qqZkTz5dF5/136UxgbUgbvDNi3+N/ZwUhnnEns/VdoEZ4R9HyJPwRYfe8HQUK8yJn+9v8RcVjxqMuPPNQwfY1Kqkjtr4id/cjf5y6d2RthH/yZL54fn2ZlW7aCeqfsJxT4h2n98ACWlg=
+	t=1738700975; cv=none; b=Ge4ldtrlkkQDqEP/pMqSTBjKG5pCB3pWM8hoDRAbI/XZveTnozTanL64nHWSlBOwkZo1NjRIjoFQNEh6Ae8u33Mvbr1HQtOofFU79+C144MMVF1waxtQ+ujMJnaNo5+rwnWaRNvb2X6M3paV5pYUQYkHGUt+/QZ4XHq6DMvdjrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738699968; c=relaxed/simple;
-	bh=ZNpDW47ZwJRfd5juonz+KhxN5D0K/9JonKH7PFYBTXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrZFCpGZVvr7pjvBn5fWXcllVrhkvMnm/x3ePjTLn+ZwBbo6l5BacpfHNzTBZVvBFvt3t/3s6rJgiRccH6+tlFtmsJ2C4n2zs0r3bLn2MpLJd4mTI5n+0U2zfxIrvPDlpxzq/fNaq8zerGckOYQKVBmlR47jAX+nNP4T5Z5y2KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EQnxeMBj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738699965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mIyppWYvJ3bM7feOJ1OCGhytewxAHTi+RJR0pVnCasU=;
-	b=EQnxeMBj8XjNj6khkjCrJSGjtvwI6T5EvFWxXzZNOXypetzZwuyT0gMqgUu8F2AAcGpjDU
-	4mIXpQEFzU7DcdPBVmbcMjqw6CCV4P5A4lf2fFL3M7R2Q4UVe2+bdEaNko/nhY7ImLcTLR
-	a+uik7t/pqLaucXu9sJVbFTKIGsgUBM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-689QQHlRP9OKopZdsXcnnw-1; Tue,
- 04 Feb 2025 15:12:41 -0500
-X-MC-Unique: 689QQHlRP9OKopZdsXcnnw-1
-X-Mimecast-MFC-AGG-ID: 689QQHlRP9OKopZdsXcnnw
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3BB3119560BB;
-	Tue,  4 Feb 2025 20:12:40 +0000 (UTC)
-Received: from bfoster (unknown [10.22.88.48])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B5A030001BE;
-	Tue,  4 Feb 2025 20:12:38 +0000 (UTC)
-Date: Tue, 4 Feb 2025 15:15:04 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v4 05/10] iomap: lift iter termination logic from
- iomap_iter_advance()
-Message-ID: <Z6J1SJCM1wpjxBpL@bfoster>
-References: <20250204133044.80551-1-bfoster@redhat.com>
- <20250204133044.80551-6-bfoster@redhat.com>
- <20250204195220.GE21808@frogsfrogsfrogs>
+	s=arc-20240116; t=1738700975; c=relaxed/simple;
+	bh=wcuDD8n7x39WKFmwJBCUOTdwUyh1/Ql7mX+S07B/g+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pv3zBiw2JIyCAefa/HQahTUxnBVullXVrSJmFHSxue/uDoQFxHsZ30Lbo8DGci4p3f8gEgO6waLCEHBHMMzDomvB9Ucyonahu6Cjavc6y3wZT4yOSQEBUI8Y9XLXk1iXZQyvbdLW7Ukcc3WtcKy6xf/nH4az2kFgDlC/fTu9rpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXJroEng; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-467a6ecaa54so45616881cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 12:29:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738700972; x=1739305772; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n9d2LmXiXp9XgeFwSRW79+9wD+ceyS39+5wCN9tOA/8=;
+        b=MXJroEngDH+oa4pouBlUCnq4dBWVQZr6s8oe4bFKY/dnCKKT/4BepA7dws9hp0ajgh
+         4t8JqnATbytG+ZEIB1NbM0l4c3nGT/Esi6DEtP5MshOLn6CPGvoNw+zTLr8xIsOS/aSC
+         ixYwO+bnbNRSzadkAFKV+s52SR1PKq4UkSgMPEliv7umEp+o2tqUmbMvm8Np2kw+puE7
+         I5wDVDUG/9CrQq4cFU28yJRBxRYiSPTbrsIE9Tb3SsvLxM0Z/N4zRLRs5QeH0RQxdyS8
+         VvESK0JZyMWdRmnozGSXFU3g2aE5jqHmlSxl8rk6ZK1OT68bOIHj6Bb7AMhtkZl6gvoM
+         q9WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738700972; x=1739305772;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n9d2LmXiXp9XgeFwSRW79+9wD+ceyS39+5wCN9tOA/8=;
+        b=Oq+CuglrUcYTYGNIo7vB/Cg3s8MabmwTmNdRhFAVOsdtCG7N/kufN/CErBgvHbq20o
+         siAYuYTUfr0ONt8ZG5ynxFRERWFCdi6Ui3EtTXs0jbRJeXYLvtD/Ax+ihG80nM0BtM5c
+         /GAjO8ucWsM63uV1YyI10yjvZNVTrOobzn4p0/8UvDoYU4mk9tuWKpNzPxBd1qHEpoav
+         JEAsgn9M+rIteiVtXKGwxLjVO4Zl7v0ZtLqLso3pE71jMwVfNSRaPdLNHlZSHoF3VSoZ
+         nAE9/KsSMi3bqWMtmf4RKc/tKYi0xOiquKRn0YAWbtKJGi6gmrJZmkKFMJqe6vE3emFa
+         GmBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhOaVf6IZEw8n1OOEAVYtaB4p3LG9HrXaaUlsQM55jq+Qubl0k0vQKeaZ5V0pgm1kFzyxufJPlQb9iURjr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4oOSKREpSb7J2CB3na2ZUsXBViJvBqBulhfYs2jstp1cujEG5
+	YR55I/uBjIcp/4XAEzvV+7a3boj73bt5ojYBoNuOuCMUz2tCqDozKSl/0I1sgU9bAbQENmMou/B
+	egJYVKSSRJhAoPX/dFmtiuLEgGJ4=
+X-Gm-Gg: ASbGncuGP1jl/iPQK6WiJH5R0QVtMbZQf5aVCVuF7bV4L231AIP6KasZnaBfERIaUH1
+	Hlgap76XssgnAMNk8QjS6Yg13IJXGCtSnWebVTdB+pL6L39w9/4PytyFCYceTJefmgtqJHCVrTw
+	==
+X-Google-Smtp-Source: AGHT+IEAoD4roSs8AjISfBVrxofBuZVakFr9r/2+dFFVIvRhHm1+vk8vpiRoYIpFqh/qIjh2DIRuv/b8PcUPe9kdJkg=
+X-Received: by 2002:a05:622a:260b:b0:46a:3579:d137 with SMTP id
+ d75a77b69052e-470282b8b9dmr624441cf.43.1738700970930; Tue, 04 Feb 2025
+ 12:29:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250204195220.GE21808@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250203185040.2365113-1-joannelkoong@gmail.com>
+ <ff73c955-2267-4c77-8dca-0e4181d8e8b4@fastmail.fm> <CAJnrk1YfPU9qgaq=3KtO8dWxEqwpX-TJ-BD4vjUHsqtAqT859Q@mail.gmail.com>
+ <74a5f0ea-e7dc-440b-82c6-5755dea98fa4@fastmail.fm>
+In-Reply-To: <74a5f0ea-e7dc-440b-82c6-5755dea98fa4@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 4 Feb 2025 12:29:19 -0800
+X-Gm-Features: AWEUYZmyslhKuXlyXW2e4yh_i10g_GUIhjWt7x-SjN8U-S6z-lIwgyw89SeA27Q
+Message-ID: <CAJnrk1ZgHNb78dz-yfNTpxmW7wtT88A=m-zF0ZoLXKLUHRjNTw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: clear FR_PENDING without holding fiq lock for uring requests
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 04, 2025 at 11:52:20AM -0800, Darrick J. Wong wrote:
-> On Tue, Feb 04, 2025 at 08:30:39AM -0500, Brian Foster wrote:
-> > The iter termination logic in iomap_iter_advance() is only needed by
-> > iomap_iter() to determine whether to proceed with the next mapping
-> > for an ongoing operation. The old logic sets ret to 1 and then
-> > terminates if the operation is complete (iter->len == 0) or the
-> > previous iteration performed no work and the mapping has not been
-> > marked stale. The stale check exists to allow operations to
-> > retry the current mapping if an inconsistency has been detected.
-> > 
-> > To further genericize iomap_iter_advance(), lift the termination
-> > logic into iomap_iter() and update the former to return success (0)
-> > or an error code. iomap_iter() continues on successful advance and
-> > non-zero iter->len or otherwise terminates in the no progress (and
-> > not stale) or error cases.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  fs/iomap/iter.c | 21 +++++++++++++--------
-> >  1 file changed, 13 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-> > index fcc8d75dd22f..04bd39ee5d47 100644
-> > --- a/fs/iomap/iter.c
-> > +++ b/fs/iomap/iter.c
-...
-> > @@ -89,8 +84,18 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
-> >  		return iter->processed;
-> >  	}
-> >  
-> > -	/* advance and clear state from the previous iteration */
-> > +	/*
-> > +	 * Advance the iter and clear state from the previous iteration. Use
-> > +	 * iter->len to determine whether to continue onto the next mapping.
-> > +	 * Explicitly terminate in the case where the current iter has not
-> > +	 * advanced at all (i.e. no work was done for some reason) unless the
-> > +	 * mapping has been marked stale and needs to be reprocessed.
-> > +	 */
-> >  	ret = iomap_iter_advance(iter, iter->processed);
-> > +	if (!ret && iter->len > 0)
-> > +		ret = 1;
-> > +	if (ret > 0 && !iter->processed && !stale)
-> 
-> How can ret be greater than zero here other than the previous line
-> setting it?  I /think/ this is the same as:
-> 
-> 	if (!ret && iter->len > 0) {
-> 		if (iter->processed || stale)
-> 			ret = 1;
-> 	}
-> 
-> but then I wonder if it's really necessary to reset the iter state on
-> error, or if we've finished the whole thing, or if we've done no work
-> and didn't set STALE?  What do you think about:
-> 
-> 	ret = iomap_iter_advance(...);
-> 	if (ret || !iter->len)
-> 		return ret;
-> 	if (!iter->processed && !stale)
-> 		return 0;
-> 
-> 	iomap_iter_reset_iomap(iter);
-> 	ret = ops->iomap_begin(...);
-> 
+On Tue, Feb 4, 2025 at 12:00=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 2/4/25 20:26, Joanne Koong wrote:
+> > Hi Bernd,
+> >
+> > On Tue, Feb 4, 2025 at 3:03=E2=80=AFAM Bernd Schubert
+> > <bernd.schubert@fastmail.fm> wrote:
+> >>
+> >> Hi Joanne,
+> >>
+> >> On 2/3/25 19:50, Joanne Koong wrote:
+> >>> req->flags is set/tested/cleared atomically in fuse. When the FR_PEND=
+ING
+> >>> bit is cleared from the request flags when assigning a request to a
+> >>> uring entry, the fiq->lock does not need to be held.
+> >>>
+> >>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> >>> Fixes: c090c8abae4b6 ("fuse: Add io-uring sqe commit and fetch suppor=
+t")
+> >>> ---
+> >>>  fs/fuse/dev_uring.c | 2 --
+> >>>  1 file changed, 2 deletions(-)
+> >>>
+> >>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> >>> index ab8c26042aa8..42389d3e7235 100644
+> >>> --- a/fs/fuse/dev_uring.c
+> >>> +++ b/fs/fuse/dev_uring.c
+> >>> @@ -764,9 +764,7 @@ static void fuse_uring_add_req_to_ring_ent(struct=
+ fuse_ring_ent *ent,
+> >>>                       ent->state);
+> >>>       }
+> >>>
+> >>> -     spin_lock(&fiq->lock);
+> >>>       clear_bit(FR_PENDING, &req->flags);
+> >>> -     spin_unlock(&fiq->lock);
+> >>>       ent->fuse_req =3D req;
+> >>>       ent->state =3D FRRS_FUSE_REQ;
+> >>>       list_move(&ent->list, &queue->ent_w_req_queue);
+> >>
+> >> I think that would have an issue in request_wait_answer(). Let's say
+> >>
+> >>
+> >> task-A, request_wait_answer(),
+> >>                 spin_lock(&fiq->lock);
+> >>                 /* Request is not yet in userspace, bail out */
+> >>                 if (test_bit(FR_PENDING, &req->flags)) {  // =3D=3D=3D=
+=3D=3D=3D=3D=3D> if passed
+> >>                         list_del(&req->list);  // --> removes from the=
+ list
+> >>
+> >> task-B,
+> >> fuse_uring_add_req_to_ring_ent()
+> >>         clear_bit(FR_PENDING, &req->flags);
+> >>         ent->fuse_req =3D req;
+> >>         ent->state =3D FRRS_FUSE_REQ;
+> >>         list_move_tail(&ent->list, &queue->ent_w_req_queue);
+> >>         fuse_uring_add_to_pq(ent, req);  // =3D=3D> Add to list
+> >>
+> >>
+> >>
+> >> What I mean is, task-A passes the if, but is then slower than task-B. =
+I.e.
+> >> task-B runs fuse_uring_add_to_pq() before task-B does the list_del.
+> >>
+> >
+> > Is this race condition possible given that fiq->ops->send_req() is
+> > called (and completed) before request_wait_answer() is called? The
+> > path I see is this:
+> >
+> > __fuse_simple_request()
+> >     __fuse_request_send()
+> >         fuse_send_one()
+> >             fiq->ops->send_req()
+> >                   fuse_uring_queue_fuse_req()
+> >                       fuse_uring_add_req_to_ring_ent()
+> >                            clear FR_PENDING bit
+> >                            fuse_uring_add_to_pq()
+> >         request_wait_answer()
+> >
+> > It doesn't seem like task A can call request_wait_answer() while task
+> > B is running fuse_uring_queue_fuse_req() on the same request while the
+> > request still has the FR_PENDING bit set.
+> >
+> > This case of task A running request_wait_answer() while task B is
+> > executing fuse_uring_add_req_to_ring_ent() can happen through
+> > fuse_uring_commit_fetch() ->  fuse_uring_add_req_to_ring_ent(), but at
+> > that point the FR_PENDING flag will have already been cleared on the
+> > request, so this would bypass the "if (test_bit(FR_PENDING,...))"
+> > check in request_wait_answer().
+>
+> I mean this case. I don't think FR_PENDING is cleared - why should it?
+> And where? The request is pending state, waiting to get into 'FR_SENT'?
+>
+> >
+> > Is there something I'm missing? I think if this race condition is
+> > possible, then we also have a bigger problem where the request can be
+> > freed out in this request_wait_answer() ->  if (test_bit(FR_PENDING,
+> > &req->flags))...  case while fuse_uring_add_req_to_ring_ent() ->
+> > fuse_uring_add_to_pq() dereferences it still.
+>
+> I don't think so, if we take the lock.
+>
 
-Two thoughts come to mind...
+the path I'm looking at is this:
 
-The first is that I'm really trying to be as incremental as possible
-here to minimize possibility of subtle issues that might come along with
-subtle changes (i.e. like when we do or don't reset, etc.). If you
-wanted to tack this on as a followon cleanup, I'd have no issue with it
-in general. But that leads to...
+task A -
+__fuse_simple_request()
+    fuse_get_req() -> request is allocated (req refcount is 1)
+    __fuse_request_send()
+        __fuse_get_request() -> req refcount is 2
+        fuse_send_one() -> req gets sent to uring
+        request_wait_answer()
+               ...
+               hits the interrupt case, goes into "if
+test_bit(FR_PENDING, ...)" case which calls __fuse_put_request(), req
+refcount is now 1
+    fuse_put_request() -> req refcount is dropped to 0, request is freed
 
-The second is that I have a followup series to convert the rest of the
-iomap ops to use iter_advance(), after which the iomap_iter() advance in
-the logic above goes away. So it might be best to defer this sort of
-reset and continuation logic cleanup to after that..
+while in task B -
+fuse_uring_commit_fetch()
+    fuse_uring_next_fuse_req()
+        fuse_uring_ent_assign_req()
+            gets req off fuse_req_queue
+            fuse_uring_add_req_to_ring_ent()
+                 clear FR_PENDING
+                 fuse_uring_add_to_pq()
+                     dereferences req
 
-Brian
+if task A hits the interrupt case in request_wait_answer() and then
+calls fuse_put_request() before task B clears the pending flag (and
+after it's gotten the request from the fuse_req_queue in
+fuse_uring_ent_assign_req()), then I think we hit this case, no?
 
-> --D
-> 
-> > +		ret = 0;
-> >  	iomap_iter_reset_iomap(iter);
-> >  	if (ret <= 0)
-> >  		return ret;
-> > -- 
-> > 2.48.1
-> > 
-> > 
-> 
 
+Thanks,
+Joanne
+>
+> Thanks,
+> Bernd
+>
 
