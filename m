@@ -1,253 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-40818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F7EA27CF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:54:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD6EA27D17
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 22:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459011885917
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 20:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 857537A2D5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 21:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D442E21A432;
-	Tue,  4 Feb 2025 20:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13A421A453;
+	Tue,  4 Feb 2025 21:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hsAtfFeG"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="SkCQBDvr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D7619E83E;
-	Tue,  4 Feb 2025 20:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD4D21A43A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 21:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738702485; cv=none; b=L94KQAw+ksUzDfMBRhrBPSy4NPgZh9R1fcIFI1OJPjDi2XgksGZliWZINwwHlyQeRcZScR5kGBASdSHslR30kR2pQoLf1fnanmWMKnPN0gZyseQ79G+PCcGybk3SYlKSThWoCWueqAh/ezZUh38Y4KhGQt8Ea8QNlF9gXFuCqjM=
+	t=1738703655; cv=none; b=tTso7IHp0RgqmSSwI2xDcisEBve3zqjVWoKNPhz3aA7OYmEIUugtQQu0sLZtd07vqxdOl+hczWReWAh7cn/hIj4v+iitntwSrnwRouUeWWqclYqkrJ7/hUlTXs/l1HxUpqtMfdR9CiqiqQ4ul1fqVeoDdFfKFo944Ww1I57qf/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738702485; c=relaxed/simple;
-	bh=LbaKGIxZ5Lk9tk2lyFHAqcJ1LYr8y+4ojj6wkCb/LZs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HMYAo5MP00CwAZ855x+LJ+UsgDCtc/vMYCDUzYqZYC1GhlWY8921f+JHNMnQh+Q5EDMmLoRIjI7+LctlEVYvBN03hPQAmMJ1Z71DYnRrULCLrMWBoEEoEIoRq/tSKu6w8ihpU/BYFGOTwDXxlewFgsuN8uWSIQjyefuY5gRhQwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hsAtfFeG; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53e389d8dc7so6019763e87.0;
-        Tue, 04 Feb 2025 12:54:43 -0800 (PST)
+	s=arc-20240116; t=1738703655; c=relaxed/simple;
+	bh=4Ylt8Ia7CQKA49AbgNdndRrwDPWJoIPKiRBrhvirnls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFhLEf9G5HWU1+fo+6XpcZyzJ2CeyPfQF8IBMH4s+1p61I+/DtgdBr6BXY6VLHOmW0/DmG+nsFeVjIBn9tznRTJbzYJiambMg9lQFFzJ7qDlOGCpdxja3f5F/MdffeD8Ee99hyCfWIk1mTQIlDW0YjVKsdMXaQ6FvLX6ZoiqIEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=SkCQBDvr; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-216426b0865so106368915ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 13:14:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738702481; x=1739307281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p87g+lwP0D9PBNYzNfr4k0//n62le703ASsZ3eKF7W8=;
-        b=hsAtfFeGyJ0FkCxQ1HcOpoZZhXEsfv/irjoyUJQuuzEzPidLNzFF2QU/eheN82hifR
-         l5NZohPhB/ZUZDSl5U55c9/BIh7Qb4RzTfWWUAw/ZtOgN5RI0NGehak938vz+xebl6Qt
-         0l+YYbfYhp4oNFd7aOb+ucPUioPvrDZeAyuLt4biYJkdO+OPBjmr9yyr2MZ6a8QaMdoq
-         pwPCWsJ4K6yhxGC9J6c/N5/cPgbw9/0SVREefGz2UhUJc9OGq7Hp/duwv6jbKlIpeeu0
-         rvq0n5kMjbFMlth64Ax88FotCmIr8LNAtfK96VFtAZ15KLkh4yslbyvAmCtnBytcbtAI
-         ZwNg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1738703652; x=1739308452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dTURmX0OMFrWDWZM1e7A94oGdcNwV3azk+DcaUDav5s=;
+        b=SkCQBDvrHmpse+WZwaL1V+XZaxQIA5C4kJwlbTowY2sBDXB9QF1DjVlE9W3zhjRwBh
+         rQ5febU23wSNSUG7IVctSUhDpd8j7SVILky708qBScKXHqbrFsntGZROZTsn0Tdp446I
+         yqaxZOoBrMGvwAkYZ1OINRQwHiAri9MR/lQ8+PLShGKGiPhgd2Ta8iDQNcUJWdV6Jhlb
+         HETKWez9z42jdzbLoAhWCa3KTVBQzkgvduS6ZCae0iwKiwlLMsm3TiT4u+TQWa80yt0w
+         I+XBF1shdD6T0IGNVx6wqbW6ZcksjiGXRV0AyvlMXc5hfduoSWQPkGqe2LryoJfos3XB
+         hlsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738702481; x=1739307281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p87g+lwP0D9PBNYzNfr4k0//n62le703ASsZ3eKF7W8=;
-        b=O2KIHw1p9CHFcbvrzGlh7p84R9OTdoNJM5Y45g9Fg2cUygSITUlEnmchNhZJeFCza9
-         UWLS9Ls9JVyhV7kHAZbsHdfZHkVO6Tv9x5/S5ThrSeI+rmhRVYPWyZF0YIrMHgCD4yJb
-         vm7/5yMuFmWDEN7ChyILlXuGFEi1KsELbVSl3JQVpCPtYTakSmoC1cgvSmedAW3TO3Hx
-         xPJ8gK++0Ityns8IlPo4lExbFR3epBFfHW3Qr0I0VFWJLBSUYTFBar3N9FlBAg8320+G
-         ePE6T94QHxLDwFNcQYMeOG0T2Vkm4A8M8+bJFFKAgMGjjUagFMAqAQBIh90Njgsjn62d
-         +j5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVixfiXhqV6R7e6w9poMqpexZ3hrqpCcoPiatx7BwcZJPFCHMF+yPQx/I5U9uth8nFqStvMf84+ODgQl2ZB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDgYhb35R6u09ogoDGx9EWxEstcSH6K1ngZS1lSeB97yRXOeus
-	ihGK3CFEeH9EM51SnzfgbQ8ApckxEJTuoO8yYbU2x9zIkF0TvrTCoxOsGpLlBbaS1UYNf2qZTtN
-	NZwCOEAQcZujff6GiIc4eT39OgCI=
-X-Gm-Gg: ASbGnctSv0kInTm22gCLiKf1r+m2z/rqpvdQu44lqQK4t7qAiXCH0N+vEdD8iqil330
-	pHIeTi+duDuKhs8VqEeDmKQaMeLXFxJf3hoGm+IZLy6DC3ahNBBMILzkr1wDF0ubmF0uosf00BA
-	==
-X-Google-Smtp-Source: AGHT+IGOxBtv0RA3eC4ClYqHczWkU2FDb2ou4bP3JrNOIjWtubDSMBZJOvbXdkuMZIeCmbXsMt/ndk4cniH9j77KUG4=
-X-Received: by 2002:a05:6512:3f14:b0:540:3579:db34 with SMTP id
- 2adb3069b0e04-544059fcfeemr57194e87.2.1738702481006; Tue, 04 Feb 2025
- 12:54:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738703652; x=1739308452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dTURmX0OMFrWDWZM1e7A94oGdcNwV3azk+DcaUDav5s=;
+        b=r49VdI4WOrfqsvEdxB7VUENz6V0lw5haz4Re8EG9/Or8yq9m/9NWdKQgWoGNO26EWS
+         U0Tt1tcpGOLRtW4mLBnXD5ycn57CIzZDzou6z691xKAdvLPDtJx5NObFkOz7Lzq7usCD
+         4qn6iANvP0Ir2c8FoKaAli/l9VoDQFVUtS7g6YWn+hhJK3/6fYoPhjXk3JVG8j0Tf+kA
+         ZaJi2Du8+hAPBStBi1Ztqf5fNy2WM0I8Z7JUIrGtOO+Hk2fUCdMijAvy2FDSEbrCOq2F
+         IvQmnnbqNC2jqO74296mHsrZfe7aVXjOjNTMoiR/Iu5eSf7Toqu2NloPrcwwjzWWlRxb
+         +Pjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWl7oJZjDFZvsd9rt/rvgkVrLzAI8Wj50hUol+EGtH69Ge6cIRSjT7flJldvnpZTyyLy+8LtPSah1ioiQHG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9H8O7uNa5sUgC4qQFJ70A9/iVRLL7/yNktDCW/+P5oEtJxJ02
+	tZ/dZKVs+DGPqhSFmsIp2aS2+DHkSDHyPyIFVp7Lmybv0h3GMXQgLsLDVv2rsCpiXUUZ2MG+r1K
+	r
+X-Gm-Gg: ASbGncuu9qgS1p57bysq/+URDmM0rQKKMaSk079+nbEPAS+dOBgflqry0MYchj4vlc6
+	XoHqNV/6YuKZJ8EDk3RnCJVkdd4idYQibkGWCXtn1Out4c6ivV9FDNOOy+IruwfY+YtzLqYeFWF
+	eNlkdV70T8VexA3O7AENxsz/i6vbP8dfCLO6EhCGsobRQSG0yH1INUOzvdNUd2jdHREUveEI6v1
+	yRX9q8yDyxc92qunxosrlz8auPjjBo8tvMFZ4x6wU94eJ7aj4OxvmVIi0V6x651fDa1+lr20E1g
+	JIyksRGiO+vXPPdTjB+Wk1bauqpYR5XYf9urZJBl+ErqRbQsdvASS+5j
+X-Google-Smtp-Source: AGHT+IEeR++U0VebrZO3gKxUGf8OR+3CkpknBHWLWvvPOg70iSSUyhxQnEM//n5EmVFVV6MHIxL4qg==
+X-Received: by 2002:a17:902:ccca:b0:216:431b:e577 with SMTP id d9443c01a7336-21f17ed2f4fmr5463175ad.51.1738703652539;
+        Tue, 04 Feb 2025 13:14:12 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de32ea893sm102752915ad.127.2025.02.04.13.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 13:14:11 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tfQFF-0000000EfRd-1LO2;
+	Wed, 05 Feb 2025 08:14:09 +1100
+Date: Wed, 5 Feb 2025 08:14:09 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Boris Burkov <boris@bur.io>
+Cc: Amir Goldstein <amir73il@gmail.com>, lsf-pc@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, fstests <fstests@vger.kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Long Duration Stress Testing Filesystems
+Message-ID: <Z6KDIZ1theZm9rox@dread.disaster.area>
+References: <20250203185519.GA2888598@zen.localdomain>
+ <CAOQ4uxjiYQHUVkYnv5owPHHvs6BP128Zvuf_LGciENjyJkLa6w@mail.gmail.com>
+ <Z6Fl5d34STRzC3K2@dread.disaster.area>
+ <20250204195846.GB3657803@zen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250121215641.1764359-1-joannelkoong@gmail.com>
- <20250121215641.1764359-2-joannelkoong@gmail.com> <20250202142518.r3xvf7mvfo2nhb7t@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <CAJnrk1YwBJQnFwYBcO50Xy2dA6df_SqQsHdpLux4wa-Yw5rXdg@mail.gmail.com> <20250204170541.hmk6guovolh5ohbx@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-In-Reply-To: <20250204170541.hmk6guovolh5ohbx@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 4 Feb 2025 12:54:24 -0800
-X-Gm-Features: AWEUYZn6NG4WBbF7zN4rp-ZmEUn2nBTuQLwNsn6cebcmL8a1gPSO_jpmjN3_540
-Message-ID: <CAJnrk1ap-tw3KVdByBY2-c0oDAA4XE8FkRx8qoE6ughjdzVJew@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] fsx: support reads/writes from buffers backed by hugepages
-To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, bfoster@redhat.com, 
-	djwong@kernel.org, nirjhar@linux.ibm.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250204195846.GB3657803@zen.localdomain>
 
-On Tue, Feb 4, 2025 at 9:05=E2=80=AFAM Zorro Lang <zlang@redhat.com> wrote:
->
-> On Mon, Feb 03, 2025 at 10:04:04AM -0800, Joanne Koong wrote:
-> > On Sun, Feb 2, 2025 at 6:25=E2=80=AFAM Zorro Lang <zlang@redhat.com> wr=
-ote:
-> > >
-> > > On Tue, Jan 21, 2025 at 01:56:40PM -0800, Joanne Koong wrote:
-> > > > Add support for reads/writes from buffers backed by hugepages.
-> > > > This can be enabled through the '-h' flag. This flag should only be=
- used
-> > > > on systems where THP capabilities are enabled.
-> > > >
-> > > > This is motivated by a recent bug that was due to faulty handling o=
-f
-> > > > userspace buffers backed by hugepages. This patch is a mitigation
-> > > > against problems like this in the future.
-> > > >
-> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > ---
-> > >
-> > > Those two test cases fail on old system which doesn't support
-> > > MADV_COLLAPSE:
-> > >
-> > >    fsx -N 10000 -l 500000 -h
-> > >   -fsx -N 10000 -o 8192 -l 500000 -h
-> > >   -fsx -N 10000 -o 128000 -l 500000 -h
-> > >   +MADV_COLLAPSE not supported. Can't support -h
-> > >
-> > > and
-> > >
-> > >    fsx -N 10000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W -h
-> > >   -fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R -W=
- -h
-> > >   -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z -R =
--W -h
-> > >   +mapped writes DISABLED
-> > >   +MADV_COLLAPSE not supported. Can't support -h
-> > >
-> > > I'm wondering ...
-> > >
-> > > >  ltp/fsx.c | 166 +++++++++++++++++++++++++++++++++++++++++++++++++-=
-----
-> > > >  1 file changed, 153 insertions(+), 13 deletions(-)
-> > > >
-> > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > > index 41933354..3be383c6 100644
-> > > > --- a/ltp/fsx.c
-> > > > +++ b/ltp/fsx.c
-> > > > @@ -190,6 +190,16 @@ int      o_direct;                       /* -Z=
- */
-> > > > +
-> > > >  static struct option longopts[] =3D {
-> > > >       {"replay-ops", required_argument, 0, 256},
-> > > >       {"record-ops", optional_argument, 0, 255},
-> > > > @@ -2883,7 +3023,7 @@ main(int argc, char **argv)
-> > > >       setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdou=
-t */
-> > > >
-> > > >       while ((ch =3D getopt_long(argc, argv,
-> > > > -                              "0b:c:de:fg:i:j:kl:m:no:p:qr:s:t:uw:=
-xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > > +                              "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw=
-:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > > >                                longopts, NULL)) !=3D EOF)
-> > > >               switch (ch) {
-> > > >               case 'b':
-> > > > @@ -2916,6 +3056,14 @@ main(int argc, char **argv)
-> > > >               case 'g':
-> > > >                       filldata =3D *optarg;
-> > > >                       break;
-> > > > +             case 'h':
-> > > > +#ifndef MADV_COLLAPSE
-> > > > +                     fprintf(stderr, "MADV_COLLAPSE not supported.=
- "
-> > > > +                             "Can't support -h\n");
-> > > > +                     exit(86);
-> > > > +#endif
-> > > > +                     hugepages =3D 1;
-> > > > +                     break;
-> > >
-> > > ...
-> > > if we could change this part to:
-> > >
-> > > #ifdef MADV_COLLAPSE
-> > >         hugepages =3D 1;
-> > > #endif
-> > >         break;
-> > >
-> > > to avoid the test failures on old systems.
-> > >
-> > > Or any better ideas from you :)
-> >
-> > Hi Zorro,
-> >
-> > It looks like MADV_COLLAPSE was introduced in kernel version 6.1. What
-> > do you think about skipping generic/758 and generic/759 if the kernel
-> > version is older than 6.1? That to me seems more preferable than the
-> > paste above, as the paste above would execute the test as if it did
-> > test hugepages when in reality it didn't, which would be misleading.
->
-> Hi Joanne,
->
-> Sorry I'm still on my holiday, reply a bit late and hastily. At first,
-> your patch has been merged, the merged case numbers are g/759 and g/760,
-> you can rebase to latest for-next branch and write new fix patch :)
+On Tue, Feb 04, 2025 at 11:58:46AM -0800, Boris Burkov wrote:
+> On Tue, Feb 04, 2025 at 11:57:09AM +1100, Dave Chinner wrote:
+> > > > - were able to reproduce the bugs with a predictable concoction of "run
+> > > >   a workload and some known nasty btrfs operations in parallel". The most
+> > > >   common form of this was running 'fsstress' and 'btrfs balance', but it
+> > > >   wasn't quite universal. Sometimes we needed reflink threads, or
+> > > >   drop_caches, or memory pressure, etc. to trigger a bug.
+> > 
+> > That's pretty much what check-parallel does to a system. Loads of
+> > tests run things like drop_caches, memory compaction, CPU hotplug,
+> > etc. check-parallel essentially exposes every test to these sorts
+> > of background perturbations rather than just the one test that is
+> > running that perturbation. IOWs, even the most basic correctness
+> > test now gets exercised while cpu hotplug and memory compaction are
+> > going on in the background....
+> > 
+> > Eventually, I plan to implement these background perturbations as
+> > separate control tasks for check-parallel so we don't need specific
+> > tests that run a background perturbation whilst the rest of the
+> > system is under test.
+> 
+> I think that a framework for introducing background perturbations while
+> running tests is definitely what I'm getting at. If check-parallel is a
+> good version of that, then that sounds great to me. I am particularly
+> excited about your point that it will smash together *every* stimulus
+> with *every* test. I do have some questions in my head about how that
+> would work in practice.
+> 
+> My main questions/concerns are:
+> 
+> How much do you randomize the interleaving of tests? Does
+> check-parallel run them in a random order?
 
-Hi Zorro,
+Same as check - the "-r" option will randomise the test run order.
 
-No worries at all. Thanks for your work on this.
+The test run order is also somewhat randomised by default in that
+it sorts the test run order based on the runtime of each test in
+the previous test run. Hence test run order is not static - it
+generally runs long running tests before slow running tests, but the
+exact order is not fixed.
 
->
-> Then, you're right, above code change is bit rough;) Maybe there's a way
-> to _notrun if MADV_COLLAPSE isn't supported?
+> Similarly, their durations are not at all tuned to maximize
+> interesting interactions. If test X and test Y would collide on some
+> faulty interaction, but test X runs once in 1 second, then you would
+> likely never see test X interfere with some interesting moment during
+> test Y. Are you considering feeding the tests back into the run-queue
+> as they finish for these stress style runs?
 
-I'll (or Darrick if we go with his solution) make sure to submit a fix
-for this so that it doesn't break the older systems.
+Not yet - the infrastructure to directly manage and run tests from
+check-parallel is not yet in place. It currently generates a test
+list for each runner thread then executes that via a check instance
+per runner thread.
 
-Thanks,
-Joanne
+I plan to have check-parallel execute tests individually itself by
+factoring the run loop out of check (similar to how I'm doing the
+test list parsing). Once there is direct control of the test
+execution, stuff like dynamic test queues where runners just pull
+the next test to run off the queue and they keep going until the
+queue is empty will be possible.
 
->
-> Thanks,
-> Zorro
->
-> >
-> >
-> > Thanks,
-> > Joanne
-> >
-> > >
-> > > Thanks,
-> > > Zorro
-> > >
-> > > >               case 'i':
-> > > >                       integrity =3D 1;
-> > > >                       logdev =3D strdup(optarg);
-> > > > @@ -3229,15 +3377,7 @@ main(int argc, char **argv)
-> > > >                       exit(95);
-> > > >               }
-> > > >       }
-> > > > -     original_buf =3D (char *) malloc(maxfilelen);
-> > > > -     for (i =3D 0; i < maxfilelen; i++)
-> > > > -             original_buf[i] =3D random() % 256;
-> > > > -     good_buf =3D (char *) malloc(maxfilelen + writebdy);
-> > > > -     good_buf =3D round_ptr_up(good_buf, writebdy, 0);
-> > > > -     memset(good_buf, '\0', maxfilelen);
-> > > > -     temp_buf =3D (char *) malloc(maxoplen + readbdy);
-> > > > -     temp_buf =3D round_ptr_up(temp_buf, readbdy, 0);
-> > > > -     memset(temp_buf, '\0', maxoplen);
-> > > > +     init_buffers();
-> > > >       if (lite) {     /* zero entire existing file */
-> > > >               ssize_t written;
-> > > >
-> > > > --
-> > > > 2.47.1
-> > > >
-> > >
-> >
->
+> It seems that the two objectives of the test harness are sort of in
+> tension with using check-parallel to stress things. On one hand you
+> want tests to independently succeed or fail and on the other hand you
+> want noise from one test to disturb the other.
+
+Yes. Tests are largely written such that they don't interfere with
+each other.
+
+> I fear more of the
+> failures will turn out to be "Oh, well, when THAT happens, we would
+> expect this condition to be violated". Especially for the more "unit
+> test" style fstests that carefully use sync to check specific conditions
+> during a run.
+
+That's why I currently have a "unreliable_in_parallel" test group
+definition and check-parallel excludes that test group. There's
+about 20 tests I've classified this way, most of them xfs specific
+tests that are reliant on exact fragmentation patterns being
+created. This tests are perturbed by things like sync(1) calls from
+other tests which results in a different fragmentation pattern than
+the test expects to see.
+
+In each case, there is a comment in the test explaining the
+condition that makes the test unreliable in parallel, and so we
+have some idea of what needs fixing to be able to remove it from the
+unreliable_in_parallel group.
+
+Essentially, I'm using this as a marker and note for future
+improvements once all the (more important) infrastructure work is
+done and solid.
+
+> This variant also feels like it would be at the extreme of difficulty
+> for attempting to distill a failure into a reproducer.
+
+It's pretty obvious when a test is doing something that is
+influenced by an outside event. The biggest problem for debugging
+them comes when the test failures appear to be real bugs (e.g. all
+the weird and whacky off-by-one quota failures that check-parallel
+triggers on XFS) but they cannot be reproduced when the tests are
+run serially.
+
+.....
+
+> > > > And of course, I would love to discuss anything else of interest to
+> > > > people who like stress testing filesystems!
+> > 
+> > Filesystem stress testing by itself isn't really interesting to me.
+> > Using filesystem correctness tests to create massively stressful
+> > workloads, OTOH, attacks the problem from multiple angles and
+> > exercises the system well outside the bounds of just filesystem
+> > code.
+> 
+> From what I see, today we have a handful of tests which race fsx or
+> fsstress with 0-2 operations under test, and you are proposing using
+> check-parallel to hammer the computer with the entirety of all 1000
+> tests in parallel (awesome).
+
+It's currently running one test per CPU in parallel, not all at
+once. Many tests run lots of stuff in parallel themselves, too, and
+some of them hammer large CPU count machines really hard just by
+themselves, let alone when there's another 63 tests running
+concurrently....
+
+> I think I am proposing something in between
+> where we run fsx AND fsstress AND ~10 known scary operations.
+
+Write a set of tests that do this for btrfs and put them in the
+auto/stress/soak groups. Then run 'check-parallel -g soak,stress
+....'
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
