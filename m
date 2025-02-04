@@ -1,61 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-40708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A84FA26F04
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:07:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B40A26F32
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0DF3A1E5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 10:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE101629B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 10:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC5A2080E1;
-	Tue,  4 Feb 2025 10:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3CE20A5CA;
+	Tue,  4 Feb 2025 10:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBtgUd0K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/yH3coF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337BC1547C5;
-	Tue,  4 Feb 2025 10:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66D5204F63;
+	Tue,  4 Feb 2025 10:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738663658; cv=none; b=QHf8NT5YRjchjbVzf76Me7ToXc5/U5BMgtOKpD8miXpVK3wX3Y94mfpybbxZD2fOEUB35t5Tj43q4MaRRl4DbP79uHG1HeA8xNydl7gYi9NsCfRJSd19czJDoX7O+lzH8vHL/KbUJ+tVjsPSlhEHLEa4Q2jvL/U+apeUU4aNkYw=
+	t=1738664379; cv=none; b=O6x6oHyBF2vn0hbKHxcvy/wLA+Cdk52vKvf5nneHg4w7fjWN8WDYNVve6siFninNMneyOFwodNGh0ff1UpKGmFFdsz68xKwX5egfpZAxbKANwMe0Ivuqzpq1LJPLS4wTw+jhoGBPFV7kfvMPyyriYSI/rABV0bSTceKuUbGhE5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738663658; c=relaxed/simple;
-	bh=X6YYsQzMBZlfPhE2lzhckYnWMCNyVdl8+F/ZdpE5GkE=;
+	s=arc-20240116; t=1738664379; c=relaxed/simple;
+	bh=IcLyDp+AE/73I2O8HDqueGfkOguuz+XwBxXf2C11ZC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nQCK2/uOX24PDhZmZNiH+9Xd+YIaCk8I3pzsw9GQ1iUS2UtLQpoNNZPL9lQ9PrKM50yY3QqDgepSj7kumyIVpBxNAKpZGS6l9u5y4zFzc9p2/Ju7sTzYegoCcCn8kVxUytgYVbwps7ICHJPbG8PyH477c9uDjE5qo1WvJvIYxfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBtgUd0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0253EC4CEDF;
-	Tue,  4 Feb 2025 10:07:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWAITVLs29NKepOBJqB7COxSKEB+fATwWAJ/F1RkaZz/TT0ZWlvmRXAF15WWjW0zzRbw+8iwKeA6YwfMXglfMhIOzbXe3OC+rvHoKG3cwz6sYUT5aF5+PCsF8/M0Jhkv23WgtIoAAckgHX/8lM86DfdSytcKds9vzP2CZiVKfLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/yH3coF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A7BC4CEDF;
+	Tue,  4 Feb 2025 10:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738663657;
-	bh=X6YYsQzMBZlfPhE2lzhckYnWMCNyVdl8+F/ZdpE5GkE=;
+	s=k20201202; t=1738664379;
+	bh=IcLyDp+AE/73I2O8HDqueGfkOguuz+XwBxXf2C11ZC8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EBtgUd0K4rexLyqU4eQnjG8JQ5Rl3gShCEN19Ms7NacPzu67XrKkcrwGYNPRoben9
-	 BOhzWv21DKI+I8AVFgaxjBUY+PbBJAjK46efbe+TL4zBQP3U894oIFQSwaJg5xfQyj
-	 Vneg3MOnUGyfjsburl4YsUwtOUc2iDdAtPzlzWK4A1Fmtymaol1zUhxvhozuKjBKj2
-	 l+Krqa3yDpxTccWskcY4cVOGwki8tZ1OQzwgvklcqP5OjpQWp/Bk5Ue8aRCC2Ccw3M
-	 Prhdpvvdmt0sEldEfu5hZJiBC4vzEmlfDpc3o+wPnSD+uVjQj8bGF+Sw5dSpXTVprR
-	 8wDVnM/gumeDw==
-Date: Tue, 4 Feb 2025 11:07:30 +0100
+	b=t/yH3coFHATf5cM6si0OtMcBtV3YDQaoQTTW1aATvGYhoyaZDDsw09qpEbdBuVg7N
+	 KoM+XFamiB3WPViCEAl+Q2+enQGR/s4qBSK4wvakeqwQCpx+vbXub/ow+H/MtSuuLT
+	 zye1mX4len1PO8DLVpIhjl030EfuqHDTTfytz8zbD6R1cgOS+jprkRML7VyvbXe/H0
+	 /TnbCB3PY4ixeZOci7eckY7MOZocmK9HbsBflP5imK8q+vplCsnEUnSr87A/uC/f48
+	 L0JUC8Pbr58xfuF8ZGAwcvUesov7Kb3tw4Y4n2g/q0OLRgzEDhdoct4E0kwW1Ijz5m
+	 5kHYuCcIt36iA==
+Date: Tue, 4 Feb 2025 11:19:32 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
 	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
 	Alexander Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	selinux-refpolicy@vger.kernel.org
 Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-Message-ID: <20250204-gepachtet-mehrmalig-debca5265df8@brauner>
+Message-ID: <20250204-empfahl-feinmechaniker-fbfdee97f4bd@brauner>
 References: <20250129165803.72138-1-mszeredi@redhat.com>
  <20250129165803.72138-3-mszeredi@redhat.com>
  <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
- <20250131-durften-weitblick-075d05e8f616@brauner>
- <CAHC9VhTSt-UoGOZvez8WPLxv4s6UQqJgDb5M4hWeTUeJY2oz3w@mail.gmail.com>
+ <CAJfpegu3N9T4cTQ5z+a_nsTpK1KFNDL-NduhMp15stB3O31=+Q@mail.gmail.com>
+ <CAHC9VhR+zEms9XQk1HWNWG9cF9606g5KP83pbRQa4XesyORaBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,53 +66,111 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTSt-UoGOZvez8WPLxv4s6UQqJgDb5M4hWeTUeJY2oz3w@mail.gmail.com>
+In-Reply-To: <CAHC9VhR+zEms9XQk1HWNWG9cF9606g5KP83pbRQa4XesyORaBA@mail.gmail.com>
 
-On Fri, Jan 31, 2025 at 09:39:31AM -0500, Paul Moore wrote:
-> On Fri, Jan 31, 2025 at 7:09 AM Christian Brauner <brauner@kernel.org> wrote:
-> > On Thu, Jan 30, 2025 at 04:05:53PM -0500, Paul Moore wrote:
+On Fri, Jan 31, 2025 at 09:28:31AM -0500, Paul Moore wrote:
+> On Fri, Jan 31, 2025 at 5:53 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > On Thu, 30 Jan 2025 at 22:06, Paul Moore <paul@paul-moore.com> wrote:
+> > > On Wed, Jan 29, 2025 at 11:58 AM Miklos Szeredi <mszeredi@redhat.com> wrote:
+> > > >
+> > > > Add notifications for attaching and detaching mounts.  The following new
+> > > > event masks are added:
+> > > >
+> > > >   FAN_MNT_ATTACH  - Mount was attached
+> > > >   FAN_MNT_DETACH  - Mount was detached
+> > > >
+> > > > If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
+> > > > FAN_MNT_DETACH).
+> > > >
+> > > > These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containing
+> > > > these fields identifying the affected mounts:
+> > > >
+> > > >   __u64 mnt_id    - the ID of the mount (see statmount(2))
+> > > >
+> > > > FAN_REPORT_MNT must be supplied to fanotify_init() to receive these events
+> > > > and no other type of event can be received with this report type.
+> > > >
+> > > > Marks are added with FAN_MARK_MNTNS, which records the mount namespace from
+> > > > an nsfs file (e.g. /proc/self/ns/mnt).
+> > > >
+> > > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > > ---
+> > > >  fs/mount.h                         |  2 +
+> > > >  fs/namespace.c                     | 14 +++--
+> > > >  fs/notify/fanotify/fanotify.c      | 38 +++++++++++--
+> > > >  fs/notify/fanotify/fanotify.h      | 18 +++++++
+> > > >  fs/notify/fanotify/fanotify_user.c | 87 +++++++++++++++++++++++++-----
+> > > >  fs/notify/fdinfo.c                 |  5 ++
+> > > >  include/linux/fanotify.h           | 12 +++--
+> > > >  include/uapi/linux/fanotify.h      | 10 ++++
+> > > >  security/selinux/hooks.c           |  4 ++
+> > > >  9 files changed, 167 insertions(+), 23 deletions(-)
 > > >
-> > > Now back to the merge into the VFS tree ... I was very surprised to
-> > > open this patchset and see that Christian had merged v5 after less
-> > > than 24 hours (at least according to the email timestamps that I see)
-> > > and without an explicit ACK for the SELinux changes.  I've mentioned
-> > > this to you before Christian, please do not merge any SELinux, LSM
-> > > framework, or audit related patches without an explicit ACK.  I
+> > > ...
+> > >
+> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > > index 7b867dfec88b..06d073eab53c 100644
+> > > > --- a/security/selinux/hooks.c
+> > > > +++ b/security/selinux/hooks.c
+> > > > @@ -3395,6 +3395,10 @@ static int selinux_path_notify(const struct path *path, u64 mask,
+> > > >         case FSNOTIFY_OBJ_TYPE_INODE:
+> > > >                 perm = FILE__WATCH;
+> > > >                 break;
+> > > > +       case FSNOTIFY_OBJ_TYPE_MNTNS:
+> > > > +               /* Maybe introduce FILE__WATCH_MOUNTNS? */
+> > > > +               perm = FILE__WATCH_MOUNT;
+> > > > +               break;
+> > > >         default:
+> > > >                 return -EINVAL;
+> > > >         }
+> > >
+> > > Ignoring for a moment that this patch was merged without an explicit
+> > > ACK for the SELinux changes, let's talk about these SELinux changes
+> > > ...
+> > >
+> > > I understand that you went with the "simpler version" because you
+> > > didn't believe the discussion was converging, which is fair, however,
+> > > I believe Daniel's argument is convincing enough to warrant the new
+> > > permission.
 > >
-> > Things go into the tree for testing when the VFS side is ready for
-> > testing. We're at v5 and the patchset has gone through four iterations
-> > over multiple months. It will go into linux-next and fs-next now for as
-> > much expsure as possible.
+> > Fine, I'll work on this.
+> 
+> Great, thanks.
+> 
+> > >  Yes, it has taken me approximately two days to find the
+> > > time to revisit this topic and reply with some clarity, but personally
+> > > I feel like that is not an unreasonable period of time, especially for
+> > > a new feature discussion occurring during the merge window.
 > >
-> > I'm not sure what the confusion between merging things into a tree and
-> > sending things upstream is. I have explained this to you before. The
-> > application message is also pretty clear about that.
+> > Definitely not.
+> >
+> > Christian is definitely very responsive and quick to queue things up,
+> > and that can have drawbacks.   In this he made it clear that he wants
+> > to get this queued ASAP regardless of whether there's decision on the
+> > SELinux side or not.
 > 
-> I'm not sure what the confusion is around my explicit request that you
-> refrain from merging anything that touches the LSM framework, SELinux,
-> or the audit subsystem without an explicit ACK.  I have explained this
-> to you before.
+> When one merges code that affects another subsystem without an
+> explicit ACK from the affected subsystem when the maintainer has asked
+> for others to clear the code change with an ACK, it's hard to see that
+> as anything but bad behavior at its best and reckless behavior at its
+> worst.  It is doubly troubling in cases like this where the code
+> change is user visible.
 > 
-> For the record, your application/merge email makes no statement about
-> only sending patches to Linus that have been ACK'd by all relevant
-> parties.  The only statement I can see in your email that remotely
-> relates to ACKs is this:
+> > What I think might be a good thing if Christian could record
+> > conditional NAKs such as this one from you, that need to be worked on
+> > before sending a feature upstream.  That would prevent wrong code
+> > being sent upstream due to lack of attention.
 > 
->   "It's encouraged to provide Acked-bys and Reviewed-bys
->    even though the patch has now been applied. If possible
->    patch trailers will be updated."
+> Christian's merge notification email already has this section:
 > 
-> ... which once again makes no claims about holding back changes that
-> have not been properly ACK'd.
+>   "Please report any outstanding bugs that were missed
+>    during review in a new review to the original patch series
+>    allowing us to drop it."
+> 
+> ... and to be fair, the vfs-6.15.mount branch mentioned in the
+> notification does appear to be gone.
 
-If seems you're having difficulties understanding that included patches
-are subject to be updated from this content. You might want to remember
-that this is similar for the various mm trees where this isn't even
-mentioned. In other words this isn't a novel concept.
-
-Anyway, VFS patch series will continue to appear in testing trees when
-they are ready from the VFS side.
-
-Going forward it might be best to add the required LSM integration via
-the LSM subsystem.
+The branch is very much alive but it has never been public for very
+obvious reasons: new patches don't appear in -next or elsewhere until
+the merge window is closed. They will be pushed out today.
 
