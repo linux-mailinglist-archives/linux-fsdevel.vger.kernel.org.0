@@ -1,166 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-40781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F55A27780
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 17:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A10D0A27790
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 17:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9661A3A649D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 16:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E253A6483
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 16:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68C421577A;
-	Tue,  4 Feb 2025 16:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D8D21639A;
+	Tue,  4 Feb 2025 16:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0ws8ySX"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fJP35hjO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4130917BEBF;
-	Tue,  4 Feb 2025 16:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356DD21577F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 16:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738687538; cv=none; b=uDqAnOwD1c4nrZcwYxs6ciSursUqLuNyeuvyqhpQ45u89HXCyPv5ZcQSoMyBRSdLCapExyU83P194hF68Zp2FDeaznK/jV2EGKojNi5dXAGXKHwHIdADGdpON3uVNNgB1s6NQd+/IJu74Wv1+pJKM4guju2jGCv0H0YXFfwG+PQ=
+	t=1738687819; cv=none; b=iWW++NjW3fn0P9kh8rGN390P5EU+5UcYRuuseHVBJustzH9NWTv0GkdHvRIJsoXvra8U175KbupsPjojHGoh6KBbhuB/OPSyvayRqwtF99VXHHEcM6nTPn3fgqTKEow6UEg5+i7sc6j7mZqSVMDfArIHilKr/zjSyGheq9iDxxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738687538; c=relaxed/simple;
-	bh=UbhOxZiqrETevcfz6PoIcX6N+DtmOII92Z+RrlGk0Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUrsySAIIihtdEkepbA5NfAIOs4CjMHvcXu9Aouil+DzRunOhO0abXpGr4g2OwS//BOjlPmWKX49hBib/zPMxpg5xCN0O07P8j7xoat3Ki3HKOJL/pnDr7fYbmEGvU8vfAec7yx+oGv+epG/NCYvAoytBG88K1vrS7ZyiogapPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0ws8ySX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3057CC4CEDF;
-	Tue,  4 Feb 2025 16:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738687537;
-	bh=UbhOxZiqrETevcfz6PoIcX6N+DtmOII92Z+RrlGk0Cg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I0ws8ySXbVJi4z6MWVoQdREXoi1DnEHADrKRiq0yo5uTE+AaPVpsoNRh7ncG51FMQ
-	 cXj6LFtQwoCyEE54zxekn/eAe2LEkre7bavTstEg1UpVZo0cTCKfCTLDNQ4x4GABTa
-	 67dIby/cn5Eta/+U+/AwrBcVt7pHRaE5M6zv3YlFhuuX1fW4YIiZT4pFG0kM9SH8/6
-	 R5b8Ssw7/BzyDqdkoE5N3w1ah6fEuMp0iZczdB8y4gMpBt3uwTNLWmmJ4yhjGbd+nY
-	 VetBmnmlYDU6Elai9mUydO47QADGg69TvtMbFHP96tGh8ma1hs/33hQIXm73LtkmYD
-	 3UVXK3dBwqEeQ==
-Date: Tue, 4 Feb 2025 17:45:33 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] statmount: add a new supported_mask field
-Message-ID: <20250204-keimzelle-reibt-84877b62936c@brauner>
-References: <20250203-statmount-v1-1-871fa7e61f69@kernel.org>
- <20250204-stengel-lodern-8e6ce624cf77@brauner>
- <8d07cfbab7b1d70b6fc381ad065d55773f73d93f.camel@kernel.org>
- <20250204-vintage-sozusagen-33df0d66bd6c@brauner>
- <3a139a0cca7772935dbc7e376d19547191143ce5.camel@kernel.org>
+	s=arc-20240116; t=1738687819; c=relaxed/simple;
+	bh=sVVXxPDM3J5k20ScDkP4lDTsX5f6d+e7XClPzHlZnyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s0eJUMpj5QSQ7h53HCLuAZuVgyLs45VHhi9UfbzmJjT5F/edWl8rkzPIjiu3MgZk4XPT/c85Oghxx+HszetbC/dRrqDqgf5gD12CfsHdJ1a1AN6oLHGpgd+OXUtHmcWdEy396MATSDrtfga5sxhj5+9zCLVAGnYAOsI09FxrxVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fJP35hjO; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab6fb1851d4so830785366b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 08:50:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1738687815; x=1739292615; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MXig0vFmla99DEaZtnnvMhOZoyypf4UMNoK7jl84rTU=;
+        b=fJP35hjONH/zHydGw/WPQo/c34ItcMxn+LlzCWCnUBhrRgmMWUawExvdkVZWVseSP+
+         bm/KqPUTBu30Q4XH3ydbSlv5WCZE3yxImQIzWmnJoehQVn25FK+EGcqe7mR59dxApYK2
+         ISKCOr22BsUuXTz+NpEsT1yDAOlVXNw/YVwnk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738687815; x=1739292615;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MXig0vFmla99DEaZtnnvMhOZoyypf4UMNoK7jl84rTU=;
+        b=Ng2GYa+HPiDD07nzHJCtLo6boZc2FeL1rVdmOWC1QZxBSov/270RFJ8fQzAvtpSgbU
+         d/zlkB7g0md9UzOmWSgXZrZBUtbe0BtccAnVZUua5GqCBpyey/t8rNXkXQx15d3pkQ/2
+         Q6FxYFMqaqZNY0/RZzIRe1+PxpCUuo06tI2x0+oQ4HHw00/xrLxe6tJ2h3+0TfBIhPvX
+         lkrHP42ROCUOTSM/1tx0t3hS3eZGXn4r0+ZJlX8XjllUz0pokqKWRet8zO07Pu7qK+cJ
+         ff37Cs24+I7Q3o7r9tgM4+1Lmd7jIlYMRpz7eY//lhYCSWqF6IGobhBDqGjwRe1myNAQ
+         EuuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU0VL/73q08wu9ekBBNXDJ5EAzt5dFOa4dhQOrkAQyedcz/dzfAvZeZIk2rNURZLUQjsg5oXrkER/7JF1V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj7tZnGlXAZV1n/eRiCsUHNtvnBe7/85OpT66xpTj94j04X3pd
+	AS54y5Glf7vkv5sanaKA5GuQVStbrw0a3xIHuFxNWIjnsp1y9wrrIFSV4KfD/mzZo/jZaOyPMnA
+	6OEQ=
+X-Gm-Gg: ASbGncsA0KOphmD5tQ3+O5G+9COxTM66DeS53LOG1C/Wy1sB2gPwQUWBJf9M77pRBWG
+	qnwefjucrv15HMXR5+TbXDYYi/MAZhZAiq63UldREMoLjvbAAgp3lB9K3q0jhbOaxfEK2dGdF4u
+	OweCVyXGrI7dvhMlJ+rUjaLf5K/HKgMbDaWoCCyEwIgLWHJmrSgRNVa4Uvd2Fjifi4RdvZ5sqjP
+	hr6o27zv+I/ALBFAh47vE/EwGGg0YJf7oI7u6I0VQb5rACBK0etZEnX61ucSigMAWrk94oC2RLY
+	nECD82S7+6QRZeqGjY5eBJwa8Lv51Op1hAcIzaOApl1fDn/gG5UkTrpakZwU8nHeOg==
+X-Google-Smtp-Source: AGHT+IG+PQ3iSgf78pHT//0icwtB9uMwpZoWqZ6EfCsZLlE8nwMhYCXHyTaBadGZDvLQHcjM91dgWg==
+X-Received: by 2002:a17:907:6090:b0:ab6:e04e:b29 with SMTP id a640c23a62f3a-ab7483cf04amr400860766b.3.1738687815153;
+        Tue, 04 Feb 2025 08:50:15 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7001e4056sm746777266b.73.2025.02.04.08.50.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Feb 2025 08:50:14 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab6fb1851d4so830777666b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 08:50:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW0c+0TxQP1RudsrTpymdFHJyFhoaWHdSjuN2kJzHJFUmaNQBLP2BkGfe5BQ5g49txAwKp3+gAQSGrbe6wQ@vger.kernel.org
+X-Received: by 2002:a17:907:97c8:b0:ab7:462d:77a5 with SMTP id
+ a640c23a62f3a-ab7483f9eecmr421592366b.7.1738687813567; Tue, 04 Feb 2025
+ 08:50:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3a139a0cca7772935dbc7e376d19547191143ce5.camel@kernel.org>
+References: <20250204132153.GA20921@redhat.com> <CAGudoHGptAB1C+vKpfoYo+S9tU2Ow2LWbQeyHKwBpzy9Xh_b=w@mail.gmail.com>
+ <20250204-autohandel-gebastelt-0ca4424b697b@brauner>
+In-Reply-To: <20250204-autohandel-gebastelt-0ca4424b697b@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Feb 2025 08:49:57 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whetxWT58ACKO3aGPZQAb_CCpono6U_siynPuvDs2J6rg@mail.gmail.com>
+X-Gm-Features: AWEUYZlKVSy7A-MdCfhCcqwKNd9dWUldBuyPBz5QZ5ZLAI0s9CnsJBESrgH_bs8
+Message-ID: <CAHk-=whetxWT58ACKO3aGPZQAb_CCpono6U_siynPuvDs2J6rg@mail.gmail.com>
+Subject: Re: [PATCH] pipe: don't update {a,c,m}time for anonymous pipes
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Oleg Nesterov <oleg@redhat.com>, 
+	David Howells <dhowells@redhat.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, 
+	Oliver Sang <oliver.sang@intel.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 04, 2025 at 10:57:39AM -0500, Jeff Layton wrote:
-> On Tue, 2025-02-04 at 16:09 +0100, Christian Brauner wrote:
-> > On Tue, Feb 04, 2025 at 07:28:20AM -0500, Jeff Layton wrote:
-> > > On Tue, 2025-02-04 at 12:07 +0100, Christian Brauner wrote:
-> > > > On Mon, Feb 03, 2025 at 12:09:48PM -0500, Jeff Layton wrote:
-> > > > > Some of the fields in the statmount() reply can be optional. If the
-> > > > > kernel has nothing to emit in that field, then it doesn't set the flag
-> > > > > in the reply. This presents a problem: There is currently no way to
-> > > > > know what mask flags the kernel supports since you can't always count on
-> > > > > them being in the reply.
-> > > > > 
-> > > > > Add a new STATMOUNT_SUPPORTED_MASK flag and field that the kernel can
-> > > > > set in the reply. Userland can use this to determine if the fields it
-> > > > > requires from the kernel are supported. This also gives us a way to
-> > > > > deprecate fields in the future, if that should become necessary.
-> > > > > 
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > > I ran into this problem recently. We have a variety of kernels running
-> > > > > that have varying levels of support of statmount(), and I need to be
-> > > > > able to fall back to /proc scraping if support for everything isn't
-> > > > > present. This is difficult currently since statmount() doesn't set the
-> > > > > flag in the return mask if the field is empty.
-> > > > > ---
-> > > > >  fs/namespace.c             | 18 ++++++++++++++++++
-> > > > >  include/uapi/linux/mount.h |  4 +++-
-> > > > >  2 files changed, 21 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > > index a3ed3f2980cbae6238cda09874e2dac146080eb6..7ec5fc436c4ff300507c4ed71a757f5d75a4d520 100644
-> > > > > --- a/fs/namespace.c
-> > > > > +++ b/fs/namespace.c
-> > > > > @@ -5317,6 +5317,21 @@ static int grab_requested_root(struct mnt_namespace *ns, struct path *root)
-> > > > >  	return 0;
-> > > > >  }
-> > > > >  
-> > > > > +/* This must be updated whenever a new flag is added */
-> > > > > +#define STATMOUNT_SUPPORTED (STATMOUNT_SB_BASIC | \
-> > > > > +			     STATMOUNT_MNT_BASIC | \
-> > > > > +			     STATMOUNT_PROPAGATE_FROM | \
-> > > > > +			     STATMOUNT_MNT_ROOT | \
-> > > > > +			     STATMOUNT_MNT_POINT | \
-> > > > > +			     STATMOUNT_FS_TYPE | \
-> > > > > +			     STATMOUNT_MNT_NS_ID | \
-> > > > > +			     STATMOUNT_MNT_OPTS | \
-> > > > > +			     STATMOUNT_FS_SUBTYPE | \
-> > > > > +			     STATMOUNT_SB_SOURCE | \
-> > > > > +			     STATMOUNT_OPT_ARRAY | \
-> > > > > +			     STATMOUNT_OPT_SEC_ARRAY | \
-> > > > > +			     STATMOUNT_SUPPORTED_MASK)
-> > > > 
-> > > > Hm, do we need a separate bit for STATMOUNT_SUPPORTED_MASK? Afaiu, this
-> > > > is more of a convenience thing but then maybe we just do:
-> > > > 
-> > > > #define STATMOUNT_SUPPORTED_MASK STATMOUNT_MNT_BASIC
-> > > > 
-> > > > and be done with it?
-> > > > 
-> > > > Otherwise I think it is worth having support for this.
-> > > > 
-> > > 
-> > > Are you suggesting that we should just add the ->supported_mask field
-> > > without a declaring a bit for it? If so, how would that work on old
-> > > kernels? You'd never know if you could trust the contents of that field
-> > > since the return mask wouldn't indicate any difference.
-> > 
-> > What I didn't realize because I hadn't read carefully enough in your
-> > patch was that STATMOUNT_SUPPORTED_MASK is raised in ->mask and only
-> > then is ->supported_mask filled in.
-> > 
-> > My thinking had been that ->supported_mask will simply always be filled
-> > in by the kernel going forward. Which is arguably not ideal but would
-> > work:
-> > 
-> > So the kernel guarantees since the introduction of statmount() that when
-> > we copy out to userspace that anything the kernel doesn't know will be
-> > copied back zeroed. So any unknown fields are zero.
-> > 
-> > (1) Say userspace passes a struct statmount with ->supported_mask to the
-> >     kernel - even if it has put garbage in there or intentionally raised
-> >     valid flags in there - the old kernel will copy over this and set it
-> >     to zero.
-> > 
-> > (2) If you're on a new kernel but pass an old struct the kernel will
-> >     fill in ->supported_mask. Imho, that's fine. Userspace simply will
-> >     not know about it.
-> > 
-> > But we can leave the explicit request in!
-> > 
-> 
-> 
-> I can respin without STATMOUNT_SUPPORTED_MASK. I was thinking it left
-> that part of the return buffer untouched, but if it's zeroed, then that
-> works as well.
-> 
-> If you see a supported_mask of 0, you know the kernel didn't fill it in
-> (since it should at least support _something_). That'll need to be
-> carefully documented though.
+On Tue, 4 Feb 2025 at 08:34, Christian Brauner <brauner@kernel.org> wrote:
+>
+> So really that mnt_get_write_access() should be pointless for
+> anonymous pipes. In other words, couldn't this also just be:
 
-It's probably easier for userspace if that flag must be specifically raised.
+I bet you'll find that even just inode_update_times() isn't all that cheap.
+
+Yes, the silly "get writability" thing is pointless for pipes, but the
+"get current time" really isn't a no-op either. There's all the crazy
+"coarse time vs fine time" crud, there's justv a *lot* of overhead.
+
+That's not really noticeable on a "real" file where you never access
+just one byte anyway, and where any write costs are elsewhere. But
+pipes can be very cheap, so the silly overheads really show up.
+
+                 Linus
 
