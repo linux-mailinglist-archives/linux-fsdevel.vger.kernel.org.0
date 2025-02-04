@@ -1,97 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-40719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480CEA2701D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 12:20:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45B6A2702E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 12:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE101885AC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74EFC1887A4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 11:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D7E20ADD6;
-	Tue,  4 Feb 2025 11:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB220C02C;
+	Tue,  4 Feb 2025 11:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4WIWnQg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9GPFugK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D262920127B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 11:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC9F206F1B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 11:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738667995; cv=none; b=ExpcbD8ayfDBS2KNpCvYZwMOWCTb0VWbElDVQmYEyx1oFBUB9QfChnSMBQKT9QrZPNB2UIZVL5z9NwrFWwwktduum7NvIv+aZQBpMLX+rK/xl1ff1WPxuSV6mbOs9wVzmic/5kcY8wJ+2G7duk6UqwzF0LPB4jCd9ARvgR5mLYU=
+	t=1738668483; cv=none; b=HdeWyRqHZpI5Z3kRnJDbxjwtBT/pVZh9wzHUF6P7k7wJSSe7Q6lIDrVfHISGvX5C65YMigz/GV2KS8wnDfBRAliKZ5gRvvD91efWnd062hwk3KMB8hUkxvFvNh2WJDdYGNjfSgm7bYBFqv59UYljDbX5b0vVjDjATInoi7BvzVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738667995; c=relaxed/simple;
-	bh=Aiu0gdOIT+paF770yAsSuocUe5gSQw4u7zqlPQ8FDhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2gWWUQRgD/AXMSvPz/mO46n3gJg+YZ16AbC4AWz/Rmn7I8syFo3+hgiW8FRqJM816PfAcxxvg0U0AlhhRai81h1DPPZKpkcld7KJ70nu8lbipWi5TyDdVGYpXoH+fZn4E4lpksIFmdEk3oNH6OTa+gp20ggkMNjjvSuZfx+iSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4WIWnQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103FEC4CEDF;
-	Tue,  4 Feb 2025 11:19:51 +0000 (UTC)
+	s=arc-20240116; t=1738668483; c=relaxed/simple;
+	bh=xkHkkJnMEQc5PL5bXpAoqoQePstddOLJAQCZevn8JKY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fVza1GnyswaqB+UReLmxQlMiZcvSfjEo+OHrYn/phF6cM21a6iljebgzFiobqF/B/5ySiedN+TiGjDKN960NBn1+C5eJJ7STXvgIQ0cnUR+l9i64V78xjahw0pIpaADIB3Q4dXmtEmkRPKkD4QeW31VU+WKfzoScYlxhY+3n0bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9GPFugK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC5FC4CEDF;
+	Tue,  4 Feb 2025 11:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738667995;
-	bh=Aiu0gdOIT+paF770yAsSuocUe5gSQw4u7zqlPQ8FDhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o4WIWnQgZSPVLrNy+Eo2Q7FQvXFGjf15wOtpn63tPhqukwiePdloLObiECehs3/Da
-	 dMVNT6DwtEIi27Ldj1icS5qOye/+JJP2PJSQHZIbFr3jjasYNLTUku5zDRGdXB3z5H
-	 8ck9URz0Z3kMcn3yDQjyQ5ae//sAUUqSfUSkHgoBiE8hlPwNkwJK8NmvEaSQkfUkVO
-	 zESpyFv9I4FqeW2eGCdwFbMP7Y9cYKwQ+ijuYZQ7lBW7IuPOpZTl8X1Wqj197VNV3x
-	 px45ZvU9qFljqetZfFkjPE8dd6DI1CkWcFQPaqo/JcUYCDytsZf8GyOvVM+bSz28Mc
-	 Jw6LjGIP9GuIg==
-Date: Tue, 4 Feb 2025 12:19:49 +0100
+	s=k20201202; t=1738668482;
+	bh=xkHkkJnMEQc5PL5bXpAoqoQePstddOLJAQCZevn8JKY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=N9GPFugKxdOTjAZlzYls2j2GxeaGqcFH6Gzc7UL7bRHj4NdEY49eyPmosMwhjuiRq
+	 UAGOA61LayavmTU8gi88srEEpx27Azb4NQGdOFyl+u0N8bCIoDSLxm5A6I21kLqiCF
+	 gwHmDGr/LKxcByRZLExudeQLm4P0r0+gGiuVihWNwHYpZ8qAeNhd0FCx0lrH22BF76
+	 CVCnQcDsoBETI2P4frIqR36RNOw2q/JI8MuKz/hk6ViD4dohrdvm91aWPrVZ7uITRT
+	 R+hugoVxnXVasDCgb8gnj5TXrPTwg6Rr/m+4K6gyFg4bRleD1CobTn+cVWMfaTP9s+
+	 YUkh1mdZl903w==
 From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Joanne Koong <joannelkoong@gmail.com>, 
-	lsf-pc@lists.linux-foundation.org, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Zi Yan <ziy@nvidia.com>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [LSF/MM/BPF TOPIC] Removing writeback temp pages in FUSE
-Message-ID: <20250204-lerngruppen-wohltat-9556f80a0089@brauner>
-References: <CAJnrk1ZCgff6ZWmqKzBXFq5uAEbms46OexA1axWS5v-PCZFqJg@mail.gmail.com>
- <CAJfpegsDkQL3-zP9dhMEYGmaQQ7STBgpLtkB3S=V2=PqDe9k-w@mail.gmail.com>
+Subject: [PATCH v2 0/4] statmount: allow to retrieve idmappings
+Date: Tue, 04 Feb 2025 12:27:45 +0100
+Message-Id: <20250204-work-mnt_idmap-statmount-v2-0-007720f39f2e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJfpegsDkQL3-zP9dhMEYGmaQQ7STBgpLtkB3S=V2=PqDe9k-w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALH5oWcC/3WOwQ6CMBAFf4X07JK2gqAn/8MQU8oCDbYl24oaw
+ r8LxKvHOcybN7OAZDCwSzIzwskE490K8pAw3SvXIZhmZSa5zLmQZ3h5GsC6eDeNVSOEqKL1Txc
+ B86KVedliWyJb9ZGwNe99+latXKuAUJNyut8GrQoRKZ1OqciAtNiU3oTo6bOfmcQm/rpH/r87C
+ eDQZBqbvCwyFNl1QHL4SD11rFqW5QvEp54Z5AAAAA==
+X-Change-ID: 20250129-work-mnt_idmap-statmount-e57f258fef8e
+To: linux-fsdevel@vger.kernel.org
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ Seth Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-d23a9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4228; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=xkHkkJnMEQc5PL5bXpAoqoQePstddOLJAQCZevn8JKY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQv/HnA4PVPZ/YtzCvdw3d3Zuc1LsjaLOqk6cl/zUn8c
+ cD7WuXcjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIncX8Dw31uudcaajLeH2P8y
+ 8kUGnNrXcCHhU9bnxsM5Ta6mt80PBDAyHHn6sfD744pJ0i9uNX16fPUQ38FTiydyPL5p+eypy81
+ PflwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue, Jan 28, 2025 at 12:10:04PM +0100, Miklos Szeredi wrote:
-> On Mon, 27 Jan 2025 at 22:44, Joanne Koong <joannelkoong@gmail.com> wrote:
-> >
-> > Hi all,
-> >
-> > Recently, there was a long discussion upstream [1] on a patchset that
-> > removes temp pages when handling writeback in FUSE. Temp pages are the
-> > main bottleneck for write performance in FUSE and local benchmarks
-> > showed approximately a 20% and 45% improvement in throughput for 4K
-> > and 1M block size writes respectively when temp pages were removed.
-> > More information on how FUSE uses temp pages can be found here [2].
-> >
-> > In the discussion, there were concerns from mm regarding the
-> > possibility of untrusted malicious or buggy fuse servers never
-> > completing writeback, which would impede migration for those pages.
-> >
-> > It would be great to continue this discussion at LSF/MM and align on a
-> > solution that removes FUSE temp pages altogether while satisfying mm’s
-> > expectations for page migration. These are the most promising options
-> > so far:
-> 
-> This is more than just temp pages.  The same issue exists for
-> ->readahead().  This needs to be approached from both directions.
-> 
-> This year I'll skip LSF but definitely interested in the discussion.
-> So I'll watch LWN for any updates :)
+This adds the STATMOUNT_MNT_UIDMAP and STATMOUNT_MNT_GIDMAP options.
+It allows the retrieval of idmappings via statmount().
 
-We can figure something out so that if you want to you can try and
-attend that session virtually provided it's not an insane timezone issue
-for you. Just offering, no pressure.
+Currently it isn't possible to figure out what idmappings are applied to
+an idmapped mount. This information is often crucial. Before statmount()
+the only realistic options for an interface like this would have been to
+add it to /proc/<pid>/fdinfo/<nr> or to expose it in
+/proc/<pid>/mountinfo. Both solution would have been pretty ugly and
+would've shown information that is of strong interest to some
+application but not all. statmount() is perfect for this.
+
+The idmappings applied to an idmapped mount are shown relative to the
+caller's user namespace. This is the most useful solution that doesn't
+risk leaking information or confuse the caller.
+
+For example, an idmapped mount might have been created with the
+following idmappings:
+
+    mount --bind -o X-mount.idmap="0:10000:1000 2000:2000:1 3000:3000:1" /srv /opt
+
+Listing the idmappings through statmount() in the same context shows:
+
+    mnt_id:        2147485088
+    mnt_parent_id: 2147484816
+    fs_type:       btrfs
+    mnt_root:      /srv
+    mnt_point:     /opt
+    mnt_opts:      ssd,discard=async,space_cache=v2,subvolid=5,subvol=/
+    mnt_uidmap[0]: 0 10000 1000
+    mnt_uidmap[1]: 2000 2000 1
+    mnt_uidmap[2]: 3000 3000 1
+    mnt_gidmap[0]: 0 10000 1000
+    mnt_gidmap[1]: 2000 2000 1
+    mnt_gidmap[2]: 3000 3000 1
+
+But the idmappings might not always be resolvable in the caller's user
+namespace. For example:
+
+    unshare --user --map-root
+
+In this case statmount() will skip any mappings that fil to resolve in
+the caller's idmapping:
+
+    mnt_id:        2147485087
+    mnt_parent_id: 2147484016
+    fs_type:       btrfs
+    mnt_root:      /srv
+    mnt_point:     /opt
+    mnt_opts:      ssd,discard=async,space_cache=v2,subvolid=5,subvol=/
+
+The caller can differentiate between a mount not being idmapped and a
+mount that is idmapped but where all mappings fail to resolve in the
+caller's idmapping by check for the STATMOUNT_MNT_{G,U}IDMAP flag being
+raised but the number of mappings in ->mnt_{g,u}idmap_num being zero.
+
+Note that statmount() requires that the whole range must be resolvable
+in the caller's user namespace. If a subrange fails to map it will still
+list the map as not resolvable. This is a practical compromise to avoid
+having to find which subranges are resovable and wich aren't.
+
+Idmappings are listed as a string array with each mapping separated by
+zero bytes. This allows to retrieve the idmappings and immediately use
+them for writing to e.g., /proc/<pid>/{g,u}id_map and it also allow for
+simple iteration like:
+
+    if (stmnt->mask & STATMOUNT_MNT_UIDMAP) {
+            const char *idmap = stmnt->str + stmnt->mnt_uidmap;
+
+            for (size_t idx = 0; idx < stmnt->mnt_uidmap_nr; idx++) {
+                    printf("mnt_uidmap[%lu]: %s\n", idx, idmap);
+                    idmap += strlen(idmap) + 1;
+            }
+    }
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20250130-work-mnt_idmap-statmount-v1-0-d4ced5874e14@kernel.org
+
+---
+Christian Brauner (4):
+      uidgid: add map_id_range_up()
+      statmount: allow to retrieve idmappings
+      samples/vfs: check whether flag was raised
+      samples/vfs: add STATMOUNT_MNT_{G,U}IDMAP
+
+ fs/internal.h                      |  1 +
+ fs/mnt_idmapping.c                 | 51 ++++++++++++++++++++++++++++++++
+ fs/namespace.c                     | 59 +++++++++++++++++++++++++++++++++++++-
+ include/linux/mnt_idmapping.h      |  5 ++++
+ include/linux/uidgid.h             |  6 ++++
+ include/uapi/linux/mount.h         |  8 +++++-
+ kernel/user_namespace.c            | 26 +++++++++++------
+ samples/vfs/samples-vfs.h          | 14 ++++++++-
+ samples/vfs/test-list-all-mounts.c | 35 ++++++++++++++++++----
+ 9 files changed, 187 insertions(+), 18 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250129-work-mnt_idmap-statmount-e57f258fef8e
+
 
