@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-40972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F871A29A0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:22:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AEECA29A4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:41:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07B6163537
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223313A4F89
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72961FECCE;
-	Wed,  5 Feb 2025 19:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B71520CCE6;
+	Wed,  5 Feb 2025 19:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5BUfGP2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihLYjEE4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531B138F82
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 19:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B051FF1B3;
+	Wed,  5 Feb 2025 19:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738783366; cv=none; b=H+CKu14Ur2imF6BVJEGZ83GmyrmgT1kfJhqbwvR47YuMZ8vqaDRYBckyws84kqAPJFyJ7QTWUZEVCvYwoyKqveHXiIGO4gENayX9dtdCbM0qqEJuMHhgFH1sLARkfoY7R9TwjcGZVE9s6yF/7z5tKgcEVRoKPhLM3JgytEaWXxA=
+	t=1738784476; cv=none; b=oIkR14Q0rB29tzDD6lmMbZa0zZIagVoi/g1MI2GnqPr4JS6mk4aOl/u/Wld+x2MeO19q9PnIG7Dw8UYBIXfIL03ZIxk5CZ0j1fkNOh4DNQvYxkaNGiFNEq5uz3eIWFm2aHy1IVnHS/Hnswu5SelhxWgCMQj17bkVNP1u8DP6sio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738783366; c=relaxed/simple;
-	bh=AZJ+5H+7pZAjHth2evw+ihco8ZiF2H+Vxf73iWhg7uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VzCRsaS93XV6ylymQeD5uykkq7X5LNdNzXJPF7W0CwWpp0Vwxm0HsduUUhDcWme/4H/VwSSIton7r3N+1m8fzymBQLrFPisIm6qBba037w9wfZWzY2r1Zq60BllLuBUmOdgX8/vvp8UggZdeyZoXgtUn1NI/qHDXSYVwwfN5Xxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5BUfGP2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69EA2C4CED1;
-	Wed,  5 Feb 2025 19:22:45 +0000 (UTC)
+	s=arc-20240116; t=1738784476; c=relaxed/simple;
+	bh=tcEf6pqZXHe0649V64+se/suLl6l3L1c0i+UHic/c6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqHmW5n4X1A8cJXfKm+K4GTiOozF9+7NO0Ev3liJB/jLaPqs00KLtW5sEGMRhBICCtc/i5shIQC7QpAZ1APKX/OCo4OLy1LCFuVsXDq85tkdvG9rkNbSdy7DjbhskUekIBsHWcxPHEROhVz/F8aSRbdjMHrpAWOO5L+QPr9+Rvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihLYjEE4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10307C4CED1;
+	Wed,  5 Feb 2025 19:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738783365;
-	bh=AZJ+5H+7pZAjHth2evw+ihco8ZiF2H+Vxf73iWhg7uo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=D5BUfGP2jWwgtJdakmdP0Dsxlr4Sw96qM/fmBdWuDth25IU5oDlLwb5iEiZuY29nB
-	 fCFpTE+qBoPYPWS0fVZxueQe6Zbs0Bw6I6xrTu9jhyw9CSq7aqtRldEruwpzWeKnlM
-	 ONBXY4ObV7sG8YCHXLLBMHiFQE6x1IPRNBufgYKfmatVYcUmTVW44dAhmHBpFO40bX
-	 Ig45BK/BLTOtGFQ2WwvEn8PaG4It3JJekTuNKgx8h1wPhIBcG4pwKsDBHCz8B68QXH
-	 INr0Tdrme/m/Gs7w0elVIIh49ydfLUZCOrTwk+hZ4hWjteUVIcAVz1kndUG4pw+1Qh
-	 cXnOxFQxIQVEg==
-Date: Wed, 5 Feb 2025 11:22:43 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-Cc: lsf-pc@lists.linux-foundation.org, Theodore Ts'o <tytso@mit.edu>,
-	Dave Chinner <david@fromorbit.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	John Garry <john.g.garry@oracle.com>, Jens Axboe <axboe@kernel.dk>,
-	Matthew Wilcox <willy@infradead.org>, mcgrof@kernel.org
-Subject: [LSF/MM/BPF TOPIC] buffered IO atomic writes
-Message-ID: <Z6O6g4pCu-pXJql5@bombadil.infradead.org>
+	s=k20201202; t=1738784476;
+	bh=tcEf6pqZXHe0649V64+se/suLl6l3L1c0i+UHic/c6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ihLYjEE4cmMwggMUtdjZbED4XDjgEagBYqamcx6RwwTSlgSMkflxeww6LkGrVCJQJ
+	 9BJ5uM7dzJNr831EC6SNR0HtFc3zzX9/axxByrH80SkdNP6rdVuJ7qQ9fGTyd7P4Vl
+	 cbSmq0gN0zVKpk9+2D3fhCLi4/efabOINoYDkZp+uSRo0fImOM5+5gIn03Ne94RgIo
+	 ZZ34V3ui+U5WMD0SEFBwYkwAHySijqKqU4DyteAyjJFxB4D/y4E79m4Q4QZq+OVvPH
+	 3ytc8wK+aGCsdczEpYdDs0/hGhw3fP9U6AXTZTfGFSgJsuqqDSL+Hbb4gIkjPKRpyV
+	 E5AuKSBHNe3wg==
+Date: Wed, 5 Feb 2025 11:41:15 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH RFC 09/10] xfs: Update atomic write max size
+Message-ID: <20250205194115.GV21808@frogsfrogsfrogs>
+References: <20250204120127.2396727-1-john.g.garry@oracle.com>
+ <20250204120127.2396727-10-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,44 +60,135 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250204120127.2396727-10-john.g.garry@oracle.com>
 
-On v6.13 XFS got atomics write support through LBS. We have validated the
-value of large atomics on databases and provided initial automation
-for it through kdevops [0]. This requires direct IO today and there
-are impressive confirmed results with it such as the ones Theodore Ts'o had
-hinted at last year's LSFMM such as 3x-5x TPS variability gains. However the
-results we have observed for buffered IO in PostgreSQL are even more
-impressive: 14x-18x in TPS variability gains.
+On Tue, Feb 04, 2025 at 12:01:26PM +0000, John Garry wrote:
+> Now that CoW-based atomic writes are supported, update the max size of an
+> atomic write.
+> 
+> For simplicity, limit at the max of what the mounted bdev can support in
+> terms of atomic write limits. Maybe in future we will have a better way
+> to advertise this optimised limit.
+> 
+> In addition, the max atomic write size needs to be aligned to the agsize.
+> Currently when attempting to use HW offload, we  just check that the
+> mapping startblock is aligned. However, that is just the startblock within
+> the AG, and the AG may not be properly aligned to the underlying block
+> device atomic write limits.
+> 
+> As such, limit atomic writes to the greatest power-of-2 which fits in an
+> AG, so that aligning to the startblock will be mean that we are also
+> aligned to the disk block.
 
-At least year's LSFMM we discused atomic buffered IO support, and if my
-memory serves me correctly the conclusions where:
+I don't understand this sentence -- what are we "aligning to the
+startblock"?  I think you're saying that you want to limit the size of
+untorn writes to the greatest power-of-two factor of the agsize so that
+allocations for an untorn write will always be aligned compatibly with
+the alignment requirements of the storage for an untorn write?
 
-a) The PostgreSQL need for buffered IO due to lack of Direct IO is observed
-   as a PostgreSQL mis-feature. So it is not a reason to add buffered IO
-   atomic support
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_iops.c  |  7 ++++++-
+>  fs/xfs/xfs_mount.c | 28 ++++++++++++++++++++++++++++
+>  fs/xfs/xfs_mount.h |  1 +
+>  3 files changed, 35 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index ea79fb246e33..95681d6c2bcd 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -606,12 +606,17 @@ xfs_get_atomic_write_attr(
+>  	unsigned int		*unit_min,
+>  	unsigned int		*unit_max)
+>  {
+> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +
+>  	if (!xfs_inode_can_atomicwrite(ip)) {
+>  		*unit_min = *unit_max = 0;
+>  		return;
+>  	}
+>  
+> -	*unit_min = *unit_max = ip->i_mount->m_sb.sb_blocksize;
+> +	*unit_min = ip->i_mount->m_sb.sb_blocksize;
+> +	*unit_max =  min_t(unsigned int, XFS_FSB_TO_B(mp, mp->awu_max),
+> +					target->bt_bdev_awu_max);
+>  }
+>  
+>  static void
+> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> index 477c5262cf91..4e60347f6b7e 100644
+> --- a/fs/xfs/xfs_mount.c
+> +++ b/fs/xfs/xfs_mount.c
+> @@ -651,6 +651,32 @@ xfs_agbtree_compute_maxlevels(
+>  	levels = max(levels, mp->m_rmap_maxlevels);
+>  	mp->m_agbtree_maxlevels = max(levels, mp->m_refc_maxlevels);
+>  }
+> +static inline void
+> +xfs_mp_compute_awu_max(
 
-b) Near-writehrough buffered IO support would be good
+xfs_compute_awu_max() ?
 
-c) Parallelizing writeback would be good
+> +	struct xfs_mount	*mp)
+> +{
+> +	xfs_agblock_t		agsize = mp->m_sb.sb_agblocks;
+> +	xfs_agblock_t		awu_max;
+> +
+> +	if (!xfs_has_reflink(mp)) {
+> +		mp->awu_max = 1;
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * Find highest power-of-2 evenly divisible into agsize and which
+> +	 * also fits into an unsigned int field.
+> +	 */
+> +	awu_max = 1;
+> +	while (1) {
+> +		if (agsize % (awu_max * 2))
+> +			break;
+> +		if (XFS_FSB_TO_B(mp, awu_max * 2) > UINT_MAX)
+> +			break;
+> +		awu_max *= 2;
+> +	}
+> +	mp->awu_max = awu_max;
 
-In so far as a) is concerned WiredTiger db is an example database which
-although it supports both direct IO and buffered IO it strongly perfers
-buffered IO. And so its an example of database which its users do
-explicitly prefer buffered IO.
+I think you need two awu_maxes here -- one for the data device, and
+another for the realtime device.  The rt computation is probably more
+complex since I think it's the greatest power of two that fits in the rt
+extent size if it isn't a power of two; or the greatest power of two
+that fits in the rtgroup if rtgroups are enabled; or probably just no
+limit otherwise.
 
-In so far as b) we now have RWF_DONTCACHE merged on v6.14-rc1. Will that
-suffice? If not what are we missing?
+--D
 
-And with regards to c) Kundan has suggested he's been working on parallelizing
-writeback and its a sugested topic for LSFMM [1].
-
-We have not re-tested PostgreSQL atomics benefits with RWF_DONTCACHE and
-parallelizing writeback, however I suspect that may improve results even
-further. So it seems to be a good time to ask, what else do we need for
-buffered IO atomics?
-
-[0] https://github.com/linux-kdevops/kdevops/blob/main/docs/sysbench/sysbench.md
-[1] https://lore.kernel.org/all/20250129102627.161448-1-kundan.kumar@samsung.com/
-
-  Luis
+> +}
+>  
+>  /* Compute maximum possible height for realtime btree types for this fs. */
+>  static inline void
+> @@ -736,6 +762,8 @@ xfs_mountfs(
+>  	xfs_agbtree_compute_maxlevels(mp);
+>  	xfs_rtbtree_compute_maxlevels(mp);
+>  
+> +	xfs_mp_compute_awu_max(mp);
+> +
+>  	/*
+>  	 * Check if sb_agblocks is aligned at stripe boundary.  If sb_agblocks
+>  	 * is NOT aligned turn off m_dalign since allocator alignment is within
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index fbed172d6770..34286c87ac4a 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -198,6 +198,7 @@ typedef struct xfs_mount {
+>  	bool			m_fail_unmount;
+>  	bool			m_finobt_nores; /* no per-AG finobt resv. */
+>  	bool			m_update_sb;	/* sb needs update in mount */
+> +	xfs_extlen_t		awu_max;	/* max atomic write */
+>  
+>  	/*
+>  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
+> -- 
+> 2.31.1
+> 
+> 
 
