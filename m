@@ -1,149 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-40860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFD0A27FCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 00:52:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8EC7A27FE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 01:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678CD7A2CC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2025 23:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C5F1887CA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 00:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BB421C190;
-	Tue,  4 Feb 2025 23:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F4B29A9;
+	Wed,  5 Feb 2025 00:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fXNPe+6o"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="BLYuSqA2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E0621B1B5
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Feb 2025 23:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41E337160
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 00:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738713152; cv=none; b=frpq7xdkOjFFRj9djdW22v4oxsnofqHXZhjAB2SuWc7pDnh//jJZlslvrEwwIwxtxCSdubeOIBWqlHh5c++mY5sWOsrHt2Ls6A/km707Em9tikuAldxuXNyuvnTGQAA3/hhNHsjIs6qwHuWB3IlVp8YbeyfLnwmsIiU4m0dvGhU=
+	t=1738713803; cv=none; b=PKRN2hezyCal8iBR+0eGPfVGuheEwVyRHlPEagluGWBYuRZXIkYgD3oK3xZTVTEj/8QdlDl3Dj0OMBGzFMVfEYEM2je76iy0N4JdIVw/T7kxoGsYvMLPPJcNFICd09yqJJAOcKBU+pSD3YyauPPx8dTSM9Re67YMjGbUQkwWbJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738713152; c=relaxed/simple;
-	bh=5l6ADnv5b2mbmvX0rsybSYCtEF2u5mxcpaeARc7J5ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oA0enT3JV2JgN1PFqTGZ0mzixT74K9g0mEneeLPUPmHzxubBzxfyclzEy726uqOkajLzClRZ0wbZyxdrE39Kh1YriPP5WyqWDYql0QPmY3cQvhymVY3M3+Mogqd/eOhOXZCychwuPQgRMUdq5Kn7ikrg/3iS6/qz3N2EL9LACVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fXNPe+6o; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6ca9a3425so43311107b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 15:52:30 -0800 (PST)
+	s=arc-20240116; t=1738713803; c=relaxed/simple;
+	bh=ixl7ahAl4oMNhD6gpgqBEifAw7bPZagK2y8eV75KGM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s9A4EyI2wjlr6Vfe8S5IxHR5msjkT/++Y4rcMU3z9gNZm6oCpJuC/vBRYFsyV9NhLDkVeRcV41cIm23C8mMdKF+9TwFloGpEHXPdSg+i5ouus6xTRn72SUi5cbUvtnHLQiKt4vRoQ6vaTIK1xqoInBJHB1k+leKp27W8dCel2o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=BLYuSqA2; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5fa3714d4bbso2758199eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2025 16:03:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1738713149; x=1739317949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l36A6AVJMDU9uRJ7DIwtIfqpyZuenOjv0s0yyt1jqr8=;
-        b=fXNPe+6oaCfzKwi7DVu4dKmQ4cYlGMJjkxSFIdH3VjRVTiB4WqFkd/TMIcfrQl4GvP
-         v5+piVlvipXBcUH74Fq08T0njLjXJq1qkkN1pgymJPArOJYF+sC/HvEtpOgATdTiNpIt
-         x7h7u6X9TA4WY6lhbQpxmCFp41j1FzyHD0q4z7nEJqwmQlEltlP1BsqpjlsOqzmOvSK7
-         gBz75tEA3wD2LedSWqjq16CZPOmDDyPLsESIGFRmPUao7jCr69wJfsp3e3wnBDsh9b6r
-         RKk0lbTDVHKjtsxYWjOpcIG31tPawJk9QDHD2S6o7vBJa7Jcde2+RXfjEDx0irB7hupQ
-         GIbg==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1738713800; x=1739318600; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MyZU/vc53X8rNmbLu1lnkOpnySbfnmZzmZEGSFD8U1U=;
+        b=BLYuSqA2j/KJ4WH7BQ9w4LoFU/lVD1Jc1iASl8STB8a6+EfG7Q49vDghckoLOEY8Xv
+         6oAsBJ90KoWPeUKRvUooCFVgD+OJIa3QMMZzL4rdNHI5A3dW0RPfu1FD+LHhG/dRa2Cl
+         DfY9I4VQKglaSvJ2rHxGZ1nuXQUWGUohWS6JidJwosu/y03iwRwMRPh8/FHBZ2BKDsV6
+         V9W3YlaFyuAeU21f7MFSpSOFkhH5kIWHz5xp9gEiJV6vZwLMsfvnTnfT6e3in7cKQ0yV
+         3B0s6bS0Fy7ZcJVmYraL2P859JxP6TL+5+Z5lv3luwAb5M8uCgrVsk73Jpm974HRIJcB
+         rg0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738713149; x=1739317949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l36A6AVJMDU9uRJ7DIwtIfqpyZuenOjv0s0yyt1jqr8=;
-        b=c0WzpeckOxGgRziyj2aOkWQXDGp74ImfmTNIaFlsjJEZg0TLa/XE+A5d0WwoJk+h+S
-         rmIqu8gHgPxsaGyF7hpp7NGrp0sdgdUxe70weRrABK4u2zbU4ggPQb9hosi9qmak1Iex
-         Gw8XEntevVpOqXcHRqhC4ywoINPoeFbxXP9qoxfe2K/Z+bzq6kDdCFiA4lLfYp/2EuP1
-         M9ls456v3MQ+HjTNS20UI87+Gsg9lNTYHTEtnAdMwqXF1IwZD8tLFo7xyGI0iZVxA1Jg
-         88m+NchMzP5OUdoUAkb+bzJD3Igthr3GzSraJ3pGCn1LIqFsMAbn2OjqjG2CUwnUMMXL
-         G8qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU44QT0g/2Ncf7J2Hb70lKWSJysd/Vda71TT8xRtKfAAH9hKXpKYj41QgPo1GSXjUpRyr3SbO/8oMKwNPD@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEEykFT4qrtsPuAEAUQ/TTRl2tX7m70WdfklGeyyHX9TLawqNP
-	BVkF7IBqrA/wk2j13iDpTsbiw881uiOVctzw+XPvsOGJRgTvVDQoDWrXlpGnYMvzlDokmKmwdH9
-	7roD0aB30Io6gVdf5G6mL58AIG/Sp1XBYg3SU
-X-Gm-Gg: ASbGnctrQjCOIUfI6QYFgwnGiR0mNvn6k6vIaZ1xjSoyofpSZlQJpw9RDf8WYF1K9Fd
-	PPIlrfthSPC3OZOONjn5bOx+mMue9ofhkZqB9RGk+02mRl//8c+ksUqIX0T8F8QIblBJG8CE=
-X-Google-Smtp-Source: AGHT+IFzPuhfJtcZSLnDRJaPSXwwbf5Qw3rSKr99Mir42c38+Xcm1tFlPBf1odITUXjMtibTW9GpBvgZPvyOhQyyssI=
-X-Received: by 2002:a05:690c:48c3:b0:6f6:cad0:9ddd with SMTP id
- 00721157ae682-6f989ee68bbmr7768737b3.18.1738713149315; Tue, 04 Feb 2025
- 15:52:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738713800; x=1739318600;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MyZU/vc53X8rNmbLu1lnkOpnySbfnmZzmZEGSFD8U1U=;
+        b=XcGmupDsa3C44xoSFv9l7K3Q2YHll73SoUcdAciUgW2otZF3hzwqg8HqCIDD75Uk4g
+         fBG9QmZU3glb68ciH/jwrLf0IbqHfodt4CspWaYc4x5ZPsFHYjopHRCu1tfMR2+voZxG
+         9LV4Boce+6TpMQo72iAeQRPEVHOeDswHnbR5oCMwkLhVo2pFLQLk1lTSWy5xMAjeDGh/
+         Kchl3RXJLQ+KMRKy79voXQiM7OUWgSiUZzcdoZkZbS7t+V6vfJp2JVMk7uuLyvGYnnhr
+         i9XRtl5Li/XlehtfdyE/cfyRuPC5rAui79bHp5RJqoaWKx7UyC1OU9KTjhfM/C63kbIL
+         OYcA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/p3L+cgbEeT2tpWjUuJ0fTQMn2z7xi5aahQgymVuTUpc9DCiGWnjaCxwIvvuOUopEvzTTvJ8COOIyUZZm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6Eidb7drwmGthxxDcSF7Kx3WzNiHusVrjwR1MZ1w7+Z+1hPXF
+	N8Sg1kenj+USc+t1M+FM5EQQxpiihRGXS5ly00/CDFFq+Q/WRFB1o6TLygb2hKOukpd1qddbV3h
+	8BaaL7cVp
+X-Gm-Gg: ASbGnct3vx6e9IJ4U0SbxaFbvReci5s+04JjDovFiGy8rAWGNiMwvXVu0C4V4ooA7De
+	E9BQzlr9IkSxBIa9QVDMpL8C0XK60rr4pv5tu/Pjzh23fSEB3lW5Cxb+vljctwHBNUDWZWUHhWp
+	r4ewcft9AGLjscD7hpn5FTsb8DuTp4MlPBGNUeNWzMhII8NzKI720TJCUAkipxdgUFMRtEG0ZEm
+	Xi57qHYcN9SAx9md7ODG1wndGs+SK/TVOMPcsOwTLlTmdWyZ99V9GAlrFDgOO2gRpIdkzN1frTD
+	AGUOkZODbgOrhtoRsDzY4taeSmsbqHUO
+X-Google-Smtp-Source: AGHT+IF14s2ebYWvUrNXnPVtHlswt83W9rlwJ5uNu6oFydj9Vz3g1CgGQ+Qp5/2AyXb3dREGnQfNBQ==
+X-Received: by 2002:a05:6820:290f:b0:5fa:5c7d:db42 with SMTP id 006d021491bc7-5fc47790ac4mr776356eaf.0.1738713799833;
+        Tue, 04 Feb 2025 16:03:19 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:d53:ebfc:fe83:43f5])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-726617eb64csm3666413a34.37.2025.02.04.16.03.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 16:03:18 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	dhowells@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [RFC PATCH 0/4] ceph: fix generic/421 test failure
+Date: Tue,  4 Feb 2025 16:02:45 -0800
+Message-ID: <20250205000249.123054-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
- <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
- <20250131-durften-weitblick-075d05e8f616@brauner> <CAHC9VhTSt-UoGOZvez8WPLxv4s6UQqJgDb5M4hWeTUeJY2oz3w@mail.gmail.com>
- <20250204-gepachtet-mehrmalig-debca5265df8@brauner>
-In-Reply-To: <20250204-gepachtet-mehrmalig-debca5265df8@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 4 Feb 2025 18:52:18 -0500
-X-Gm-Features: AWEUYZmxvU9YBBRFSC9Dc7RTfcn4AC_OBYzlikGSwACt4guDBQ0naNT9F1dVLSY
-Message-ID: <CAHC9VhSSxaYKj6J_HxY+cEbeea==_WgwPXH2APcZ0YQg+RhC9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 4, 2025 at 5:07=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
-> On Fri, Jan 31, 2025 at 09:39:31AM -0500, Paul Moore wrote:
-> > On Fri, Jan 31, 2025 at 7:09=E2=80=AFAM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > > On Thu, Jan 30, 2025 at 04:05:53PM -0500, Paul Moore wrote:
-> > > >
-> > > > Now back to the merge into the VFS tree ... I was very surprised to
-> > > > open this patchset and see that Christian had merged v5 after less
-> > > > than 24 hours (at least according to the email timestamps that I se=
-e)
-> > > > and without an explicit ACK for the SELinux changes.  I've mentione=
-d
-> > > > this to you before Christian, please do not merge any SELinux, LSM
-> > > > framework, or audit related patches without an explicit ACK.  I
-> > >
-> > > Things go into the tree for testing when the VFS side is ready for
-> > > testing. We're at v5 and the patchset has gone through four iteration=
-s
-> > > over multiple months. It will go into linux-next and fs-next now for =
-as
-> > > much expsure as possible.
-> > >
-> > > I'm not sure what the confusion between merging things into a tree an=
-d
-> > > sending things upstream is. I have explained this to you before. The
-> > > application message is also pretty clear about that.
-> >
-> > I'm not sure what the confusion is around my explicit request that you
-> > refrain from merging anything that touches the LSM framework, SELinux,
-> > or the audit subsystem without an explicit ACK.  I have explained this
-> > to you before.
-> >
-> > For the record, your application/merge email makes no statement about
-> > only sending patches to Linus that have been ACK'd by all relevant
-> > parties.  The only statement I can see in your email that remotely
-> > relates to ACKs is this:
-> >
-> >   "It's encouraged to provide Acked-bys and Reviewed-bys
-> >    even though the patch has now been applied. If possible
-> >    patch trailers will be updated."
-> >
-> > ... which once again makes no claims about holding back changes that
-> > have not been properly ACK'd.
->
-> If seems you're having difficulties understanding that included patches
-> are subject to be updated from this content.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-I'm having difficulties reconciling the inconsistencies between what
-you've said here (which is presumably your actual policy/behavior?)
-and what you've said in your merge emails.
+The generic/421 fails to finish because of the issue:
 
---=20
-paul-moore.com
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.894678] INFO: task kworker/u48:0:11 blocked for more than 122 seconds.
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.895403] Not tainted 6.13.0-rc5+ #1
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.895867] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.896633] task:kworker/u48:0 state:D stack:0 pid:11 tgid:11 ppid:2 flags:0x00004000
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.896641] Workqueue: writeback wb_workfn (flush-ceph-24)
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897614] Call Trace:
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897620] <TASK>
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897629] __schedule+0x443/0x16b0
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897637] schedule+0x2b/0x140
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897640] io_schedule+0x4c/0x80
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897643] folio_wait_bit_common+0x11b/0x310
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897646] ? _raw_spin_unlock_irq+0xe/0x50
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897652] ? __pfx_wake_page_function+0x10/0x10
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897655] __folio_lock+0x17/0x30
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897658] ceph_writepages_start+0xca9/0x1fb0
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897663] ? fsnotify_remove_queued_event+0x2f/0x40
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897668] do_writepages+0xd2/0x240
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897672] __writeback_single_inode+0x44/0x350
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897675] writeback_sb_inodes+0x25c/0x550
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897680] wb_writeback+0x89/0x310
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897683] ? finish_task_switch.isra.0+0x97/0x310
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897687] wb_workfn+0xb5/0x410
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897689] process_one_work+0x188/0x3d0
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897692] worker_thread+0x2b5/0x3c0
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897694] ? __pfx_worker_thread+0x10/0x10
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897696] kthread+0xe1/0x120
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897699] ? __pfx_kthread+0x10/0x10
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897701] ret_from_fork+0x43/0x70
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897705] ? __pfx_kthread+0x10/0x10
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897707] ret_from_fork_asm+0x1a/0x30
+Jan 3 14:25:27 ceph-testing-0001 kernel: [ 369.897711] </TASK>
+
+There are several issues here:
+(1) ceph_kill_sb() doesn't wait ending of flushing
+all dirty folios/pages because of racy nature of
+mdsc->stopping_blockers. As a result, mdsc->stopping
+becomes CEPH_MDSC_STOPPING_FLUSHED too early.
+(2) The ceph_inc_osd_stopping_blocker(fsc->mdsc) fails
+to increment mdsc->stopping_blockers. Finally,
+already locked folios/pages are never been unlocked
+and the logic tries to lock the same page second time.
+(3) The folio_batch with found dirty pages by
+filemap_get_folios_tag() is not processed properly.
+And this is why some number of dirty pages simply never
+processed and we have dirty folios/pages after unmount
+anyway.
+
+This patchset is refactoring the ceph_writepages_start()
+method and it fixes the issues by means of:
+(1) introducing dirty_folios counter and flush_end_wq
+waiting queue in struct ceph_mds_client;
+(2) ceph_dirty_folio() increments the dirty_folios
+counter;
+(3) writepages_finish() decrements the dirty_folios
+counter and wake up all waiters on the queue
+if dirty_folios counter is equal or lesser than zero;
+(4) adding in ceph_kill_sb() method the logic of
+checking the value of dirty_folios counter and
+waiting if it is bigger than zero;
+(5) adding ceph_inc_osd_stopping_blocker() call in the
+beginning of the ceph_writepages_start() and
+ceph_dec_osd_stopping_blocker() at the end of
+the ceph_writepages_start() with the goal to resolve
+the racy nature of mdsc->stopping_blockers.
+
+sudo ./check generic/421
+FSTYP         -- ceph
+PLATFORM      -- Linux/x86_64 ceph-testing-0001 6.13.0+ #137 SMP PREEMPT_DYNAMIC Mon Feb  3 20:30:08 UTC 2025
+MKFS_OPTIONS  -- 127.0.0.1:40551:/scratch
+MOUNT_OPTIONS -- -o name=fs,secret=<secret>,ms_mode=crc,nowsync,copyfrom 127.0.0.1:40551:/scratch /mnt/scratch
+
+generic/421 7s ...  4s
+Ran: generic/421
+Passed all 1 tests
+
+Viacheslav Dubeyko (4):
+  ceph: extend ceph_writeback_ctl for ceph_writepages_start()
+    refactoring
+  ceph: introduce ceph_process_folio_batch() method
+  ceph: introduce ceph_submit_write() method
+  ceph: fix generic/421 test failure
+
+ fs/ceph/addr.c       | 1110 +++++++++++++++++++++++++++---------------
+ fs/ceph/mds_client.c |    2 +
+ fs/ceph/mds_client.h |    3 +
+ fs/ceph/super.c      |   11 +
+ 4 files changed, 746 insertions(+), 380 deletions(-)
+
+-- 
+2.48.0
+
 
