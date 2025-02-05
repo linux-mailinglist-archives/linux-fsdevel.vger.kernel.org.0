@@ -1,140 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-40984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66788A29B6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 21:47:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E140FA29BEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 22:40:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F360F165532
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AA718888BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 21:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AB92147E3;
-	Wed,  5 Feb 2025 20:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B93D21505D;
+	Wed,  5 Feb 2025 21:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="acSko5Pc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vvm7yBb8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-40136.proton.ch (mail-40136.proton.ch [185.70.40.136])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D481EE7B3
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 20:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E0523CE
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 21:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738788464; cv=none; b=rhA/uTXACvEb/kdBljXowPv61w6PMTi+EAMOu5KFvAKnmeSaiLKrQrdxwK8zB5d4mPUdSm4M7jwX8X/tIfXg0IKwXtlWgDueGYjFF7U/uL/DopZPRXkp2mayeboXVX3U7x3JnQtkqnNRwwzYU6k+o64u6Cg87Ioh5J0CMEeiAgY=
+	t=1738791612; cv=none; b=FvEoFR6mlKAM4qHY2n3nXxJ9lNZ5mGhkptyMig9cr73x5qMxpAmbVWWLWBfz1khuRwT33RhhBShHhvsYz64UnFNsqPzrxDCPZR09giO7eBp775NdlZlNyXB39bRRdMRIXlREmhBN8hO/lTkl567kkq8cI+zZcsSXgiLQjcp3Y+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738788464; c=relaxed/simple;
-	bh=OMfQHNHB/80r6eS3wpbY3NXufO3OZxJRL26txj/dVVM=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CeA9Hopjg4zLR3jqSBZ+j+9NwRJk91NS/2qL/BbdvevQ0Axc4HKotoQqp8pgZsZS6GwTDfYxPh5A7ULRx+XgaA5LiR98xliClnp44FKEU1IBg+SwSCwCqCOxWvrHBQEV6NH/MVL4Lpmv10UbTARlN3f7f8dZCEn9raDkAD6Ofi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=acSko5Pc; arc=none smtp.client-ip=185.70.40.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
-	s=protonmail2; t=1738788452; x=1739047652;
-	bh=OMfQHNHB/80r6eS3wpbY3NXufO3OZxJRL26txj/dVVM=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=acSko5PcgTpSp9e6wVuJo77+pZf62hXpDafNmRelFvwVYDjPFM5jbx5BGqHKmvuYg
-	 E/1W3zzMFVAbwYOO9lmuIHrzW09/26VHR0ZgEIG/KppdhYNmS7Fd1wDveOSOtOXznl
-	 opu4RuBKSCp+TxEnRZ52YcKXubKDkQNvhb1M3pbsJo0y3/lGmCMfKRQBqCiI4hBP5V
-	 xeALwxGJD7AzDGf9XYsEG39SRCqVJG8RVnSewfNINa1dGkYU9b0/+225fBammnzAlq
-	 RRm+aCR7vkcrfxDiH3ZLilz6Y0Q19WLCKEm/lROTohaCkXzyHuFH40CeY3brhRs4Ab
-	 xmYX02J0zAylw==
-Date: Wed, 05 Feb 2025 20:47:23 +0000
-To: linux-fsdevel@vger.kernel.org
-From: Mike Yuan <me@yhndnzj.com>
-Cc: Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, =?utf-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, Christian Brauner <brauner@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH] fs/xattr: actually support O_PATH fds in *xattrat() syscalls
-Message-ID: <20250205204628.49607-1-me@yhndnzj.com>
-Feedback-ID: 102487535:user:proton
-X-Pm-Message-ID: fb475632d93aef10901c3530d8491305e77698c7
+	s=arc-20240116; t=1738791612; c=relaxed/simple;
+	bh=p19U8mO6OOoqPEZr+0BIgQs569D/QJnlO9E6zfbWCx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DnSaBmRh7BPBhGEV5uFxCmDZ93ywbzts1edmqLfTYOfy/K6JmO6Hhikfp8kblc56ic/1s3uxtDV7sACbg4PROMi6gD+x8Yp+giVx1cys3/Rum4/EFt2Smyu6EP6Ntx15BCAvmljJotVhsNKf75nYG+GlvP5NzICS4rcpJZGj9Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vvm7yBb8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738791609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KQZJa6Aff1+CJwLmZWFTHMec/5G6wl4KmI4ceY4ir/Q=;
+	b=Vvm7yBb8rKPg6krd16ORHnZRv1heTKhknVV3rpRgWfZEJPrb+EUVN83dnqkvd5fNNxsqlQ
+	BybMb7sZk2nWVvdlKbrsSEOtxphVRGYb7WllHWlmW00+lC5PwJ013XFWE1uwm0Hn/pSsUt
+	om4c8XO07f1DCXh4tmnuwmEkZuKCljM=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-yU30ypcHOMahHaxdvg_jGg-1; Wed, 05 Feb 2025 16:40:08 -0500
+X-MC-Unique: yU30ypcHOMahHaxdvg_jGg-1
+X-Mimecast-MFC-AGG-ID: yU30ypcHOMahHaxdvg_jGg
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-851fda72550so53383339f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2025 13:40:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738791607; x=1739396407;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KQZJa6Aff1+CJwLmZWFTHMec/5G6wl4KmI4ceY4ir/Q=;
+        b=f9GsYqI4D4DDLftyfLPCVouJe6XrhhoJqD1JFoUgdXol3JLG5blyE9TBXSd/Cy6iTv
+         f2KHX0TVL4smJ3thcjo+C7eOgaei71epJM5ZdQ7r0nCLLswwBQ3P9p34ufokEd+/3BU7
+         PML64bh2sm7zDYi8TUAxYZ35e+IawUfCT2hzhyxAMjL4jSKFVTqQYU29tRYy/0Dbfh9Z
+         EFTCsCnETHH5Jtw3oEpLpQ0Lpuko3EnSoGcNMTL6MU6WDYqK6Jl6VS+HatsQjzyFrslo
+         +Zyb5aICDU+q8AY3PQwYxogmnIZPx9AEhFu1zGfSOTW/QR/QAZeo05a8p0/dF1Uh0rDe
+         ie8A==
+X-Gm-Message-State: AOJu0YwdckT4p8xRZtHOcBJ276G2KyvUmENPib8VOCQR8dNlzmqxgYre
+	i9zFIJwbWwNaSVzNlbOimNtTq5Z5L9GsgA+KkAKWLiX7pl/lWg/vGLQ8ZVJpcR1Yq4rtvdGYFy5
+	QXL9ysRxAZIN+siUPDqXPC3+mpLQw/ftKpn1Jn2fWxXjvRIQtijBufstQzhIaQ+CdJ7ZHr+LhnE
+	uWxIX16QniwPpSwrLaC5m+gYVN4FtPaJv/tzV9To5hCc78vHLM
+X-Gm-Gg: ASbGnct67DvJgvrxAsff/n/02krSuCDJXQ/ARLk4sP7KgF4zj0e2J9/X32hS9scygiJ
+	C+pfvS5tyTDOlHK/1UMb44MTRZzQFGRJnlk8frkF8Zi/01C962lQejx8A/GLR7QGbtAeli6YxyU
+	bwTRhqGOci0kuepS7u0F4egBsB3IJx/1b4nR8DehItXEnsNmF7Bg71YQtXdkIWdoPyb82pfDT82
+	dyDRoehG5dY4bjpO5tpRYs9o8UK3ftMTeEo2hQlJC2ZmWNZQaciVgsOYQGiMS1TOuOmatDPChzs
+	150jszRQkBb80gh74iNf7NAL8wbOJgpSg7BPVXIiboo596OgZ7v7Rw==
+X-Received: by 2002:a05:6602:3e91:b0:84a:7902:d424 with SMTP id ca18e2360f4ac-854ea351931mr477937839f.0.1738791607409;
+        Wed, 05 Feb 2025 13:40:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGrCXnSMJixvqUjYFEbU9k45b0a2t+hiYmDkSSyAUPMIjZzaIvJA8lljpjeDIbToKuG1nonfw==
+X-Received: by 2002:a05:6602:3e91:b0:84a:7902:d424 with SMTP id ca18e2360f4ac-854ea351931mr477935439f.0.1738791607065;
+        Wed, 05 Feb 2025 13:40:07 -0800 (PST)
+Received: from fedora-rawhide.sandeen.net (97-116-166-216.mpls.qwest.net. [97.116.166.216])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854a1717863sm368050839f.36.2025.02.05.13.40.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2025 13:40:05 -0800 (PST)
+From: Eric Sandeen <sandeen@redhat.com>
+To: linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	neilb@suse.de,
+	ebiederm@xmission.com,
+	kees@kernel.org,
+	tony.luck@intel.com
+Subject: [PATCH 0/4] fs: last of the pseudofs mount api conversions
+Date: Wed,  5 Feb 2025 15:34:28 -0600
+Message-ID: <20250205213931.74614-1-sandeen@redhat.com>
+X-Mailer: git-send-email 2.48.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Cited from commit message of original patch [1]:
+Notes:
 
-> One use case will be setfiles(8) setting SELinux file contexts
-> ("security.selinux") without race conditions and without a file
-> descriptor opened with read access requiring SELinux read permission.
+pstore used mount_single, which used to transparently do a
+remount operation on a fresh mount of an existing superblock.
+The new get_tree_single does not do this, but prior discussion
+on fsdevel seems to indicate that this isn't expected to be a
+problem. We can watch for issues.
 
-Also, generally all *at() syscalls operate on O_PATH fds, unlike
-f*() ones. Yet the O_PATH fds are rejected by *xattrat() syscalls
-in the final version merged into tree. Instead, let's switch things
-to CLASS(fd_raw).
+devpts is just a forward port from work dhowells did already, and it
+seems straightforward. I left error messages as they are rather than
+converting to the mount API message channel for now.
 
-Note that there's one side effect: f*xattr() starts to work with
-O_PATH fds too. It's not clear to me whether this is desirable
-(e.g. fstat() accepts O_PATH fds as an outlier).
+devtmpfs was already converted, but left a .mount in place, rather
+than using .get_tree. The solution to this is ... unique so some
+scrutiny is probably wise. 
 
-[1] https://lore.kernel.org/all/20240426162042.191916-1-cgoettsche@seltendo=
-of.de/
+The last patch removes reconfigure_single, mount_single, and
+compare_single because no users remain, but we could also wait until
+all conversions are done, and remove all infrastructure at that time
+instead, if desired.
 
-Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
-Signed-off-by: Mike Yuan <me@yhndnzj.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: <stable@vger.kernel.org>
----
- fs/xattr.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 02bee149ad96..15df71e56187 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -704,7 +704,7 @@ static int path_setxattrat(int dfd, const char __user *=
-pathname,
-=20
- =09filename =3D getname_maybe_null(pathname, at_flags);
- =09if (!filename) {
--=09=09CLASS(fd, f)(dfd);
-+=09=09CLASS(fd_raw, f)(dfd);
- =09=09if (fd_empty(f))
- =09=09=09error =3D -EBADF;
- =09=09else
-@@ -848,7 +848,7 @@ static ssize_t path_getxattrat(int dfd, const char __us=
-er *pathname,
-=20
- =09filename =3D getname_maybe_null(pathname, at_flags);
- =09if (!filename) {
--=09=09CLASS(fd, f)(dfd);
-+=09=09CLASS(fd_raw, f)(dfd);
- =09=09if (fd_empty(f))
- =09=09=09return -EBADF;
- =09=09return file_getxattr(fd_file(f), &ctx);
-@@ -978,7 +978,7 @@ static ssize_t path_listxattrat(int dfd, const char __u=
-ser *pathname,
-=20
- =09filename =3D getname_maybe_null(pathname, at_flags);
- =09if (!filename) {
--=09=09CLASS(fd, f)(dfd);
-+=09=09CLASS(fd_raw, f)(dfd);
- =09=09if (fd_empty(f))
- =09=09=09return -EBADF;
- =09=09return file_listxattr(fd_file(f), list, size);
-@@ -1079,7 +1079,7 @@ static int path_removexattrat(int dfd, const char __u=
-ser *pathname,
-=20
- =09filename =3D getname_maybe_null(pathname, at_flags);
- =09if (!filename) {
--=09=09CLASS(fd, f)(dfd);
-+=09=09CLASS(fd_raw, f)(dfd);
- =09=09if (fd_empty(f))
- =09=09=09return -EBADF;
- =09=09return file_removexattr(fd_file(f), &kname);
-
-base-commit: a86bf2283d2c9769205407e2b54777c03d012939
---=20
-2.48.1
+Thanks,
+Eric
 
 
 
