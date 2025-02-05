@@ -1,163 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-40908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B3AA289E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 13:07:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F90A289F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 13:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB98166827
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 12:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596F11885212
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 12:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3E222B8CD;
-	Wed,  5 Feb 2025 12:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6D522CBC4;
+	Wed,  5 Feb 2025 12:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="mHkbXXkz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6iZxNrx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8162288C3;
-	Wed,  5 Feb 2025 12:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141E022B8D0;
+	Wed,  5 Feb 2025 12:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738757219; cv=none; b=P6GgjTuatdoMPcxGpwiIzirt4WE8O8OiDxbN2DsqdhbIW3GhdRSrSBkP9in4T9zA8Brmjk1OJezI+FqPEFagZfIIsqSz6hd/S8zXa30PxCmIgtELOTNyg+M5USH69pyYKSVPp4Vox+fYXDHrXG8+oJ9hF5uc2ABXkqtziWw75HE=
+	t=1738757571; cv=none; b=Uy77gCd+Z85S3JZUazXZhMnShRPscufSdfWocuAHJ8RRiHWDZdDSFVYoe9lTKv1psXYR1829wwzOe9QhAtVm52yqWlZ7Hj3zb62x/GnlPPOLKHoB9hUpv95ZkOsWOteCmvJrGjyaPb1y9xc+gim0vNP3gKSjmJLOGT7cP/k4hQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738757219; c=relaxed/simple;
-	bh=5qBs+P9AcN2m3Xi249ox5NyNN05CkU/eenHuRZqTRX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d15SahHK6dBCeUfkluEgywceWq8r4t8jYElB9hq0Oj3DfE2VyjIRtYwbhtWXGQmKPWjkNUlUKvcn9nBJZjrfxwtHh/QQAAhS80XRBbeQrxXoNt5bupvfUzAv/7zSe9FEIialR0mQgohjYXGd6BMsHqN+4+5Iqt7EHmBAq0af8/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=mHkbXXkz; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1738757193; x=1739361993; i=ps.report@gmx.net;
-	bh=dnTeU+z2cXOaBIAYpMXZCpU4QPCN35HyNl14tHHflaY=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mHkbXXkzg+e2vfh+vudSJJbn1FW0aFHHIZT45Shmuf8/mKnScem8ptAwNNHFG+8+
-	 g2kx6qXWkIDcW+HK+5nPbAYvrZVkZ9P16QklVUCGVt3CxnHunLyl2yoIOwG0FFt5k
-	 ibdKM+ZFj570TEUo963BoRNOS2UWv+kBmECmI7hmr8KYkBeUJlaPlA7JzQRjIc91q
-	 Fma/hTe9SYv0O0eqzFGcXFSajsgas58spBExqeFuDdM0LTKqZ19wc+GqbDz2VXbWb
-	 QEelVwTybcCw+ejyv7uSMUlrEfO8Ba+tLhURzVBcSVZCuQy+4ihXfcvND3W5Lcm9u
-	 NI1+PERFzjJ5dPZjeA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost ([82.135.81.162]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLR1f-1twM4x4A0x-00S3Dp; Wed, 05
- Feb 2025 13:06:33 +0100
-Date: Wed, 5 Feb 2025 13:06:29 +0100
-From: Peter Seiderer <ps.report@gmx.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan
- <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Sang
- <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny
- <mkoutny@suse.com>, Andrew Morton <akpm@linux-foundation.org>, Shakeel Butt
- <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v7 2/6] selftests/pidfd: add missing system header
- imcludes to pidfd tests
-Message-ID: <20250205130629.27f142ac@gmx.net>
-In-Reply-To: <fab8843ea8664b5089f95ccfdcfd5bd7a5a6bb0b.1738268370.git.lorenzo.stoakes@oracle.com>
-References: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
-	<fab8843ea8664b5089f95ccfdcfd5bd7a5a6bb0b.1738268370.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1738757571; c=relaxed/simple;
+	bh=zEhI8pKRp7Rru8p9R1drtIFnel3SBMPqhlIHthqnADo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rwXXrmUSygA0bd0qoyhbr6E1qFNhgEkPIzR06pB8r0VrZAY4xVkPUr7ppl/y7w7yL6m/gg6aYaiAuaLS566cQspPwOVa/MzWEut47hFU/dt8gFQUveQkrLwmwIJHB9lhEjy+Bbroe+kHUVca0o/gRyu2jg8LAUpnYUc9QmtE63s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6iZxNrx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B5FC4CEE2;
+	Wed,  5 Feb 2025 12:12:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738757570;
+	bh=zEhI8pKRp7Rru8p9R1drtIFnel3SBMPqhlIHthqnADo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y6iZxNrxPOpkDDL1NfflO7qDnxYFPAEYYN4LxbNO/XZ53Dm/pGTlLXbNLaMdv3O00
+	 C6L139b0cTHQ6LWucqp7opAfaHrDoy+LEtq4FpwYAffZxvMIuP8T79/f1xGlxr9bDA
+	 pMcSGIXoCQkZNRRsUzRRJ6mLBuyYZGOp8ExfKCQODLyKRS3ctZFReCsOCgQ+oK06ya
+	 Oc1ySGL3KWW7N1fiRMC3qovzN1bmoNd3yQZTHE8bCR6f7hobnLELkpKrA9Ka04+wHV
+	 d/QSgZ3Y4NYfouE/U/04rq5wjT686f8OD7OeIyngkfpXkudmZm7DGSbBqdfv4YZqeT
+	 NvA2YmnvvOVPA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: sanity check the length passed to inode_set_cached_link()
+Date: Wed,  5 Feb 2025 13:11:57 +0100
+Message-ID: <20250205-fangen-bibliothek-5cc2d9fc4460@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250204213207.337980-1-mjguzik@gmail.com>
+References: <20250204213207.337980-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Sst7RsRHsV3XSXWva+R9sBzRXOf+cKr29GPeVlyWflCIPr1Mv0B
- YJD3+SUEraUULxJTSSxm9qSskCuirm6fhHXIJX01Cm11EhpiiFYwf0BUG5twLqVQwv4SpdY
- 8B2JK6CN3Shty4XssSU87yCqYYVg9IcBYU54km+g8wUVNl1Af+PBVzU7FN0H7TuZ6hcCqM4
- d11y3iUu9yP2ZbiM6WOrQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OPRrfe9o8rE=;iGeCkuX/XV1RdWC6+VU8bfcYZSG
- iR9SgWnevZlOrD09jXkWNTCNhjNBsngOr6OyQpnXJiuLgGyq6Wh5kHsqg3CtXrCUp/Xhq4Cq1
- RWeJ7wFeuqyaKGdP8lqNuNzGjMjJTQRHBWXKZ3VixpoY7WMw2whKfSVKQkmTknQPVylmvZSqb
- pa7ObWcWa1fZiU/A7O3wxwQrfTF5QpYV+KP6fy8YJkUMj65N/kR9TTvi9o31BUWhoQCCAptlL
- 2xS9GCsE+PA8F1+9c3oRpa/Co6fbB3fiI7KjoDtanRJfhjQxpk04drzv1meRyzXjgJUfRKoR6
- rovaE2CBlcvl8kq4dMhLSe2xTzeYx3YcjCQ0zoeNNTehkZY58LFc2iPWlsthz2x4hFoj600yq
- wy0t+JFBfe2la7kj2WolWFL2l00C0S7NU/1fh20F0l40+6irJO1ioCApFJ8ESEGw40RkMqkek
- +KqRO2ALeMT6ij6xO4l5Zk8PA5qc4ljcbe7XpxY8H98QAM4SroN4rn9tqiD4DiBkEOUEo7fDj
- mInOnpov6LgPLX6GcTywc/Xf7A56cu72fgWKNcIT6ABo+Xnwy6prbx5vUHjuSK1PJ+tYNVbDT
- 6G2v8EzF1d2d/z76CszvSvo57EdQJ2ifQAluax3dsvJ7PfKrR+kgYFpdI4/2Wk/h4UUemevBm
- WXeeNyAzTNlj/mo+644kcLx+TvoqoqFrgrjK/xD6Swt7hG58ZmpTYy6ZuDTuO40UCtAkO8Un5
- pGzpb1r1dm5Uv2CC+7lf9K9yFUOK2Z4XYDGV9ev7FPKLpqN6CaFdfAMma38cbNutamiYLWnDo
- G146ENfAz9Ji3u/u9De0J4cbWT/PQeu9P72RnfjYekYZ5yZHeYgH4pHgOpRNyjlHxS7TlK9ej
- J72aJRfI/QRXvakm2qqaWqoRFvp15TW85heR2mxD/ROuL0fN8VoC2gVE6rFFcXBJlZ0xNy8u1
- WSAp/I7+URqGIblYZ7B3L+1cYS6JllKVOUBsvNdQMTdWYIDkm5/3D3QV+JTnBJc54cbyb8oxK
- ziGEKJ8mYaKSVqrtlZcQC+ywS/g6ffoM8zZsBb+k/OeEuFe1G0wgHu0tH+pq6tKRXAFsTYCUh
- dq9vuDHyx8uL95Wxes87OMQWtR74TYRY1DO8S7IFwyI6Fv8ihz2b32AHY21ERkOQstKZ8xIQV
- tkl5p1ywtrczf0iKItkkzCru0Toy2+CLBO2nTD3h6H4oEnKCdk7GhVkoc5HI/PRHB60ZSj+qF
- cLyWcuyAigTMOU78ikjgXYxNQL6rFJUVNNADbcdaKTtYh1Z8X3Z4ldyvpX9ShpGiY+tMl+0ep
- XhhLNV1wsz5CAu1pg6Dd8r+MbD2dd+A5q14/jGyBJEfWXvPwe8xQztmP7zdWnF6WYkTNn4SzO
- bxvpdr3suUsPTMuJSjc6QIHTLF+GcggC+vTwBMpgKzav+kHV0K5BA+zOzt
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1254; i=brauner@kernel.org; h=from:subject:message-id; bh=zEhI8pKRp7Rru8p9R1drtIFnel3SBMPqhlIHthqnADo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQvDt39dMmm7Ud3KCRWqcWyurgq20YsD5sp//++wc+wB 4qV695f7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIrb8M/4uUnKfYil01Cmp9 fDRcXu9wygLDF8dzy4ynz01XjQycdIWRofvXYtHlK36/TnjOKTclKmvnjoe3v9VpPZcv4o/7qPd vKgsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hello *,
+On Tue, 04 Feb 2025 22:32:07 +0100, Mateusz Guzik wrote:
+> This costs a strlen() call when instatianating a symlink.
+> 
+> Preferably it would be hidden behind VFS_WARN_ON (or compatible), but
+> there is no such facility at the moment. With the facility in place the
+> call can be patched out in production kernels.
+> 
+> In the meantime, since the cost is being paid unconditionally, use the
+> result to a fixup the bad caller.
+> 
+> [...]
 
-On Thu, 30 Jan 2025 20:40:27 +0000, Lorenzo Stoakes <lorenzo.stoakes@oracl=
-e.com> wrote:
+Seems ok if ugly.
 
-> The pidfd_fdinfo_test.c and pidfd_setns_test.c tests appear to be missin=
-g
-> fundamental system header imports required to execute correctly. Add the=
-se.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  tools/testing/selftests/pidfd/pidfd_fdinfo_test.c | 1 +
->  tools/testing/selftests/pidfd/pidfd_setns_test.c  | 1 +
->  2 files changed, 2 insertions(+)
->
-> diff --git a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c b/tools/t=
-esting/selftests/pidfd/pidfd_fdinfo_test.c
-> index f062a986e382..f718aac75068 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> @@ -13,6 +13,7 @@
->  #include <syscall.h>
->  #include <sys/wait.h>
->  #include <sys/mman.h>
-> +#include <sys/mount.h>
->
->  #include "pidfd.h"
->  #include "../kselftest.h"
+---
 
-Predated patch already available, see
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-	https://lore.kernel.org/linux-kselftest/20250115105211.390370-1-ps.report=
-@gmx.net/
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> diff --git a/tools/testing/selftests/pidfd/pidfd_setns_test.c b/tools/te=
-sting/selftests/pidfd/pidfd_setns_test.c
-> index 222f8131283b..a55f6641e0b6 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_setns_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-> @@ -14,6 +14,7 @@
->  #include <sys/prctl.h>
->  #include <sys/wait.h>
->  #include <unistd.h>
-> +#include <sys/ioctl.h>
->  #include <sys/socket.h>
->  #include <sys/stat.h>
->  #include <linux/ioctl.h>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-and predated patch available, see
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-	https://lore.kernel.org/linux-kselftest/20250115105211.390370-2-ps.report=
-@gmx.net/
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Regards,
-Peter
-
+[1/1] vfs: sanity check the length passed to inode_set_cached_link()
+      https://git.kernel.org/vfs/vfs/c/c1c84bb08cc7
 
