@@ -1,138 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-40939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D89FA29657
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 17:29:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6968EA29667
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 17:32:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2017A3A879D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 16:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B377116A106
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 16:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E8E1FBEAE;
-	Wed,  5 Feb 2025 16:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23091DD874;
+	Wed,  5 Feb 2025 16:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrclzxYO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0MN5YGY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1008F1DE8AF;
-	Wed,  5 Feb 2025 16:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4E217F7;
+	Wed,  5 Feb 2025 16:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738772909; cv=none; b=qrwO78evMJInZx12WpbQt8NyuO8oUFeMmTDVG8edm//M3OixOIHGanPU9sN2pNlb7mrj4Ikg/TMr886HsXSfqeKMQdTvWS0nDX3kH5bKV/JbUYTbOKuN1zsspZJafOllehvRU7oNShW+lv1Aq5adBY+M8Tk17HvPAAiiAQhirLM=
+	t=1738773072; cv=none; b=jRBsOIqqku1g7nqb+N8qM0+g6aTvuApVun1HB1ZGNKF4IV8HulHoTHvy8/SYWY1tPKg8eCptImNNH4rMYFWOke84AWRTdOupyma3s4b1JzeRGU/m48jNq94esFqNPil0ScuW3CARg6kaINerWa7Q1dsrGlJYU0EdVub7v124QFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738772909; c=relaxed/simple;
-	bh=QYYjwvMj/ytRQYQe1vphAg9qJdQFkWnYIBKIzbaJYWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SfUEEySLHvmW7aKa7FeXITy0VUFJ4QxLMuBuSvkkSP3aGeR42oVeYlyqqZbn3b7uUOly0J2/TigY/fU74vE/PbDnqeokluSnE/SxyRZOJGiTkaXcequO+oslzB1y8oM2rA4uN9fyBZgVS1EsaYhmgaUI2tMWfz/gJfQoZTuKDfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrclzxYO; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1738773072; c=relaxed/simple;
+	bh=o14HjDZwZTkbMjA1cDLGv53tXJJaET1yQGUKxvyX870=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bq3P0/TVqNs10fVd8MIsd7xZNg2wqnlZVlWjGqGULz1c8nNM+TPjZecnO3X10O/tVlbMjOk5nFy5hffeYvLgXaaQ6GAoih1+0033oqwC7sUp//pwNuwbkGw5OLOZcUzvGv+6iTDbX/jZ78++vqE8wCO2f+T5UESXla5ogYq7/a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0MN5YGY; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so397502166b.3;
-        Wed, 05 Feb 2025 08:28:27 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dc7eba78e6so13499033a12.3;
+        Wed, 05 Feb 2025 08:31:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738772906; x=1739377706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNyQmIYSea4fFxNMDMi3F3YqqMgkH8EXdnd8pj8SHOo=;
-        b=YrclzxYO/pZPg8DF9KszBR6r6laWCexDt3OY+RtXeoIIekZL9PLYlVR4h2XMUrIQIa
-         fcTF5I5yeaQBiSuAt4T90jewKlvfCQo7kmNaq8JvGeLYiTc5u2/AKm46ZL4xlPGya/fw
-         YIb/DgXB2jH+XMuR26/EDyyOQ75OouN+m+TWFxsnjgy6C2WXtTjhUCXOOKivwyis3w5r
-         IlrTtB0Cmv+Vt8L/EZiFnF+eYO7uSnvtw402CwMPSOPlZ8YAC+jW5Qwv68QlgS2Bl1uJ
-         m3hwJ6zqUcM//sNQnL2G/xlZzaryCDO/ni28t7T+ZpGpeCD+n+F+pFIx3if9BLKjwJdS
-         iaCA==
+        d=gmail.com; s=20230601; t=1738773068; x=1739377868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o14HjDZwZTkbMjA1cDLGv53tXJJaET1yQGUKxvyX870=;
+        b=N0MN5YGYbYbpdaxvPtb8g2QTLhde5Xht7Nf8neLZLd+UJL2P3o/JaCrd3taaJgP8oG
+         MpvRptsTgaqHDARFwI/wkSv87oWpDVqxO/uGb0u6WDJNej+wHaF+UXmeFlZ0kTjfJqtq
+         Osyf+hnF9DpTFUPup1vOyTpGVNI6rT3EplJtR/u+BkKjwKipJoSzT5CiY4kpg2Nnuji7
+         +tWUbQumcKTjbLb4NcGkRS607FwrIB6RzgzhLMt73HH/tF0Qgsj+U9Wwou1XpmADpA7O
+         Ni3LZqZT/1xiExe/0988jpbkoNcFDVDnuZpSy039cQWV3FeuCKEhHq9Py8plSoIMHlqn
+         d3gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738772906; x=1739377706;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eNyQmIYSea4fFxNMDMi3F3YqqMgkH8EXdnd8pj8SHOo=;
-        b=KeeIVaXpTI4RSG7/BT5odE+sdjn3nbINyxi+0cSVeFWppDL13K3CmgxcdUKb1jC4X6
-         lpGQbvEkbBNdvX3F6attwwApYkOi4zFVrKUJ39qg1/kPwCOe6ot1PvT8+UzombGdP6JQ
-         JPg5A1L/gxX64tqf2AJUTUJr0bsugQXN1ooQam2lEnzVSd3zPTamgqrEQKfwLafJhluk
-         1zMObPJ6wFdMNdr3vSiFmOkWIQikZyAJu4vzL99UX3hl7dacxq519+vJ3w6d+AmQ/MXx
-         GNC+/cl8TwG3ExVDjC7z3viV0Ig0d+ffGgp5pgZaDWQrMgXm0D2jGmtVyLQfib/wdiAj
-         Ig6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV0jmJifiM47vw2vvt1jfLaQbTM6mzHFgKGQtRTBdLByr6vZelGlLlcI46MF4OB6QTQwmJ+O/yOYhCf0Q9j@vger.kernel.org, AJvYcCXoI15nEu4Aa4gEDGNXgcJgLZPjxiWX8aGX3paSgUEKRzZwopGO7HdWlaCwjZ0Kuf7pfQROmqkQ76axCYcf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlapGw3Y4fgul8hAr8oVGR/HovtzLq0i7pGILju3J967JzyyIg
-	o4BWJI8k8rerZj35Ne2Dc4vcwXcQqWPnGmXZkN+FH7+79IXno5Ex
-X-Gm-Gg: ASbGncsDVlYjBtozxC6zxY3EFKBqZGTLt8zuLfNnbcA8ZH5Ob4wUCviNgzD0ahtUisS
-	k7G7vAwcmvxlkWMMz3kmHNmLGLkXDJXikKxm4hFJsNt8TdM3PWyV+imWS/7cPYy5kqw+gJtf9Ms
-	gWzoHlm5js+KEKtzeH1g+hkhK8bi9QL0hPsfEeebzSefthpjeLzn/46OyPM0hl52B9DVr/HtyqV
-	5sgxvHf+OmE1MtvpDnUzyp6E3pXM0OaV1YzG4U97KqG3t84x9RD9byxMoTBtxhl/iUosn+DVQiT
-	FlYofj1xw6VkOqxgChUh+pdV19hvrKs=
-X-Google-Smtp-Source: AGHT+IHDQkMe1NAtIjoj5eiMKcVRZ+YDCWESIQZjxceh8xd0z3spAhNsOJW4tTN7DtNMkVsbER0zcQ==
-X-Received: by 2002:a17:907:7294:b0:aa6:82ea:69d6 with SMTP id a640c23a62f3a-ab75e245bbcmr344039966b.18.1738772905799;
-        Wed, 05 Feb 2025 08:28:25 -0800 (PST)
-Received: from f.. (cst-prg-95-94.cust.vodafone.cz. [46.135.95.94])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7656d5d5asm91255966b.48.2025.02.05.08.28.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 08:28:25 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org,
-	tytso@mit.edu
-Cc: kees@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot+48a99e426f29859818c0@syzkaller.appspotmail.com
-Subject: [PATCH] ext4: pass strlen() of the symlink instead of i_size to inode_set_cached_link()
-Date: Wed,  5 Feb 2025 17:28:19 +0100
-Message-ID: <20250205162819.380864-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1738773068; x=1739377868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o14HjDZwZTkbMjA1cDLGv53tXJJaET1yQGUKxvyX870=;
+        b=vXxxvhlj7m4NKxeFWu+HX+zs6TwatM/9FZljl66PEVGmYTYYQS7ydvF+A8Jtufy7qg
+         8MN1mk8sIUu7vom8MWJjnHLms7xAdH0hfiqCi0tcxq+heegkEEqO/IKaj2bUA1+BgueS
+         YsYhhcC360v+rLWY/aKHGX0vARx9LsMfbPlO9HsXwICW1qrETILwloB7sIoX6Nevo6yN
+         UMWLu/BnrXkqAr8uFqbVjAvUOpjQvEzf7qJV3p923xEiOaAkJqz4c4PvtT+GqSewNGZ+
+         GFI2TMACLsEuH40h26k5jhgO9XPCbnYkJ/Imu3KRMuG8CS7oyY7g16KWF1se/NWh1/Dz
+         MGPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWbqU2qi1EjBfrH30EELejhAOyV5OOcwh+tY5V7VM7fBMGJ7Ot80zYDRWtj0mI1l7O43N85hvRAbzph6X9@vger.kernel.org, AJvYcCWSeBLcyhWKHSrD17cwAJO0TeA6Gez29ynFm3XzbMFZQWRSc0BWZEN23sbgzZ48LKk26bJchidDKA62di8n@vger.kernel.org
+X-Gm-Message-State: AOJu0YygIVjllMEWlvVJFKczeWAAJvtXtjrDvE1D4Fg23QIaW7BLn3Mz
+	0rLlERaCpm6hKoUXPjzr850kna2rlUb7T9XqcLQFA8L87gU1rXtGBX3WwSNYW9eeAc+Xr+w8Msy
+	dcoa0/xNnOFs1jTTED1PUuTarqGw=
+X-Gm-Gg: ASbGncvtgsE89OtzF3Yn7l0c2UczgoiNhOPuJDWtGEYAGNy/X7Cu2jAHKtbgC8QcdFr
+	hfCWmnR0W5rpLqE8Bh4vqL8A/hiKuOW18VUGhd3S4XozoDM9Y0BRfyT1txTg4B9ppmPOZa68=
+X-Google-Smtp-Source: AGHT+IHxG6bhcPqfA38pVpk693fXgtu/9m7JhvLkUr9xyn7wEZOi1JQxTvXhTq8e3CZx6m4JhobUmZkA2/OGpPL4wzE=
+X-Received: by 2002:a05:6402:239b:b0:5dc:ebb8:fe64 with SMTP id
+ 4fb4d7f45d1cf-5dcebb8feb1mr322780a12.14.1738773068259; Wed, 05 Feb 2025
+ 08:31:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250205162819.380864-1-mjguzik@gmail.com>
+In-Reply-To: <20250205162819.380864-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 5 Feb 2025 17:30:56 +0100
+X-Gm-Features: AWEUYZnQWZmm4yFeYCY7BSuRaqPgq8W_OxCuWdOiAIXhyvJ5BIW06XONAvnSf-0
+Message-ID: <CAGudoHFTqtO+TN+LA+ga2t8-O_QwkOSNwnBEGr1mkj0YyPUARg@mail.gmail.com>
+Subject: Re: [PATCH] ext4: pass strlen() of the symlink instead of i_size to inode_set_cached_link()
+To: brauner@kernel.org, tytso@mit.edu
+Cc: kees@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	syzbot+48a99e426f29859818c0@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The call to nd_terminate_link() clamps the size to min(i_size,
-sizeof(ei->i_data) - 1), while the subsequent call to
-inode_set_cached_link() fails the possible update.
+On Wed, Feb 5, 2025 at 5:28=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> The call to nd_terminate_link() clamps the size to min(i_size,
+> sizeof(ei->i_data) - 1), while the subsequent call to
+> inode_set_cached_link() fails the possible update.
+>
 
-The kernel used to always strlen(), so do it now as well.
+oof.. that should be:
+> inode_set_cached_link() fails to take it into account
 
-Reported-by: syzbot+48a99e426f29859818c0@syzkaller.appspotmail.com
-Fixes: bae80473f7b0 ("ext4: use inode_set_cached_link()")
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-Per my comments in:
-https://lore.kernel.org/all/CAGudoHEv+Diti3r0x9VmF5ixgRVKk4trYnX_skVJNkQoTMaDHg@mail.gmail.com/#t
-
-There is definitely a pre-existing bug in ext4 which the above happens
-to run into. I suspect the nd_terminate_link thing will disappear once
-that gets sorted out.
-
-In the meantime the appropriate fix for 6.14 is to restore the original
-behavior of issuing strlen.
-
-syzbot verified the issue is fixed:
-https://lore.kernel.org/linux-hardening/67a381a3.050a0220.50516.0077.GAE@google.com/T/#m340e6b52b9547ac85471a1da5980fe0a67c790ac
-
- fs/ext4/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 7c54ae5fcbd4..30cff983e601 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5010,7 +5010,7 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			nd_terminate_link(ei->i_data, inode->i_size,
- 				sizeof(ei->i_data) - 1);
- 			inode_set_cached_link(inode, (char *)ei->i_data,
--					      inode->i_size);
-+					      strlen((char *)ei->i_data));
- 		} else {
- 			inode->i_op = &ext4_symlink_inode_operations;
- 		}
--- 
-2.43.0
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
