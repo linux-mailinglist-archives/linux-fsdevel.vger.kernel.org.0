@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-40973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AEECA29A4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:41:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51390A29A59
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:47:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223313A4F89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:41:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB10F167A58
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B71520CCE6;
-	Wed,  5 Feb 2025 19:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAAB20B817;
+	Wed,  5 Feb 2025 19:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihLYjEE4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDe+/0jC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B051FF1B3;
-	Wed,  5 Feb 2025 19:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EF3DF5C;
+	Wed,  5 Feb 2025 19:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738784476; cv=none; b=oIkR14Q0rB29tzDD6lmMbZa0zZIagVoi/g1MI2GnqPr4JS6mk4aOl/u/Wld+x2MeO19q9PnIG7Dw8UYBIXfIL03ZIxk5CZ0j1fkNOh4DNQvYxkaNGiFNEq5uz3eIWFm2aHy1IVnHS/Hnswu5SelhxWgCMQj17bkVNP1u8DP6sio=
+	t=1738784862; cv=none; b=D1eS4sdl94YYtozYTVoTc8a2iOQUTYX42fHA2QWBzH7ElCbhzczzBz+bPX5pYpTyol8upDytEBeXikhSrJDAgFrqUUlXVJWibtTM4epsbD6+LaNXmABa3LMeuRe1nYn0yuBCbR0FRuVY6lxvab+tI3fMDJyw86X4x83uIBptH5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738784476; c=relaxed/simple;
-	bh=tcEf6pqZXHe0649V64+se/suLl6l3L1c0i+UHic/c6E=;
+	s=arc-20240116; t=1738784862; c=relaxed/simple;
+	bh=LCmbiWXNKRWpvF7Li6lKrAoivVevoEkM4AvZkVUEa6Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqHmW5n4X1A8cJXfKm+K4GTiOozF9+7NO0Ev3liJB/jLaPqs00KLtW5sEGMRhBICCtc/i5shIQC7QpAZ1APKX/OCo4OLy1LCFuVsXDq85tkdvG9rkNbSdy7DjbhskUekIBsHWcxPHEROhVz/F8aSRbdjMHrpAWOO5L+QPr9+Rvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihLYjEE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10307C4CED1;
-	Wed,  5 Feb 2025 19:41:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYRop9eace0h89Ajwe0dCN+rfH04KBMdk6J3xTSFLSxwsVWGxZwYB6SeFQLRdIQubAR5U7qtZA03ScPPa3bC3BRLNejFjyaTRwoDULB9NrI4xMD6WwBAJz4Ov+BfNdcxUEZ2xW0BAnCeONwXiGAArPbD2LRXhR5XGGwGwrriN3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDe+/0jC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6114C4CED1;
+	Wed,  5 Feb 2025 19:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738784476;
-	bh=tcEf6pqZXHe0649V64+se/suLl6l3L1c0i+UHic/c6E=;
+	s=k20201202; t=1738784860;
+	bh=LCmbiWXNKRWpvF7Li6lKrAoivVevoEkM4AvZkVUEa6Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ihLYjEE4cmMwggMUtdjZbED4XDjgEagBYqamcx6RwwTSlgSMkflxeww6LkGrVCJQJ
-	 9BJ5uM7dzJNr831EC6SNR0HtFc3zzX9/axxByrH80SkdNP6rdVuJ7qQ9fGTyd7P4Vl
-	 cbSmq0gN0zVKpk9+2D3fhCLi4/efabOINoYDkZp+uSRo0fImOM5+5gIn03Ne94RgIo
-	 ZZ34V3ui+U5WMD0SEFBwYkwAHySijqKqU4DyteAyjJFxB4D/y4E79m4Q4QZq+OVvPH
-	 3ytc8wK+aGCsdczEpYdDs0/hGhw3fP9U6AXTZTfGFSgJsuqqDSL+Hbb4gIkjPKRpyV
-	 E5AuKSBHNe3wg==
-Date: Wed, 5 Feb 2025 11:41:15 -0800
+	b=ZDe+/0jCxav64xKdhlVdFcbwqvmyxvK7fRST3GwOsVzR3a5Pt//v1i330a9x0+pWv
+	 vyzgsQU1aQM1ZtUJ+QxEdx24LMwGvIH7n2dSD/42qlomcvSnIVGleI89pAZ6C3bH+Q
+	 IbfZ4mnqnyP+tV9qHYtXDJReCqOJiXuQx0lAKixspFxl9oi2yU2OhnOxHelmoZGLGy
+	 vHt5B5wDPBGb998IsnfTmf2Lw5Qs+q/8CwsKRquCpMsASX4DW7qezcLrzFHOdzoHPz
+	 3ehCnTy1jrKVmDcXfaMl2Ckpttz/AlkoVR0R+2Hj1L5InP1eTZBfkxvfADxK+cveS3
+	 XZlmlG5SoGz+g==
+Date: Wed, 5 Feb 2025 11:47:40 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
 	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH RFC 09/10] xfs: Update atomic write max size
-Message-ID: <20250205194115.GV21808@frogsfrogsfrogs>
+Subject: Re: [PATCH RFC 08/10] xfs: Commit CoW-based atomic writes atomically
+Message-ID: <20250205194740.GW21808@frogsfrogsfrogs>
 References: <20250204120127.2396727-1-john.g.garry@oracle.com>
- <20250204120127.2396727-10-john.g.garry@oracle.com>
+ <20250204120127.2396727-9-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,133 +60,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250204120127.2396727-10-john.g.garry@oracle.com>
+In-Reply-To: <20250204120127.2396727-9-john.g.garry@oracle.com>
 
-On Tue, Feb 04, 2025 at 12:01:26PM +0000, John Garry wrote:
-> Now that CoW-based atomic writes are supported, update the max size of an
-> atomic write.
+On Tue, Feb 04, 2025 at 12:01:25PM +0000, John Garry wrote:
+> When completing a CoW-based write, each extent range mapping update is
+> covered by a separate transaction.
 > 
-> For simplicity, limit at the max of what the mounted bdev can support in
-> terms of atomic write limits. Maybe in future we will have a better way
-> to advertise this optimised limit.
+> For a CoW-based atomic write, all mappings must be changed at once, so
+> change to use a single transaction.
 > 
-> In addition, the max atomic write size needs to be aligned to the agsize.
-> Currently when attempting to use HW offload, we  just check that the
-> mapping startblock is aligned. However, that is just the startblock within
-> the AG, and the AG may not be properly aligned to the underlying block
-> device atomic write limits.
-> 
-> As such, limit atomic writes to the greatest power-of-2 which fits in an
-> AG, so that aligning to the startblock will be mean that we are also
-> aligned to the disk block.
-
-I don't understand this sentence -- what are we "aligning to the
-startblock"?  I think you're saying that you want to limit the size of
-untorn writes to the greatest power-of-two factor of the agsize so that
-allocations for an untorn write will always be aligned compatibly with
-the alignment requirements of the storage for an untorn write?
-
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  fs/xfs/xfs_iops.c  |  7 ++++++-
->  fs/xfs/xfs_mount.c | 28 ++++++++++++++++++++++++++++
->  fs/xfs/xfs_mount.h |  1 +
->  3 files changed, 35 insertions(+), 1 deletion(-)
+>  fs/xfs/xfs_file.c    |  5 ++++-
+>  fs/xfs/xfs_reflink.c | 48 ++++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_reflink.h |  3 +++
+>  3 files changed, 55 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index ea79fb246e33..95681d6c2bcd 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -606,12 +606,17 @@ xfs_get_atomic_write_attr(
->  	unsigned int		*unit_min,
->  	unsigned int		*unit_max)
->  {
-> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> +	struct xfs_mount	*mp = ip->i_mount;
-> +
->  	if (!xfs_inode_can_atomicwrite(ip)) {
->  		*unit_min = *unit_max = 0;
->  		return;
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 12af5cdc3094..170d7891f90d 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -527,7 +527,10 @@ xfs_dio_write_end_io(
+>  	nofs_flag = memalloc_nofs_save();
+>  
+>  	if (flags & IOMAP_DIO_COW) {
+> -		error = xfs_reflink_end_cow(ip, offset, size);
+> +		if (iocb->ki_flags & IOCB_ATOMIC)
+> +			error = xfs_reflink_end_atomic_cow(ip, offset, size);
+> +		else
+> +			error = xfs_reflink_end_cow(ip, offset, size);
+>  		if (error)
+>  			goto out;
 >  	}
->  
-> -	*unit_min = *unit_max = ip->i_mount->m_sb.sb_blocksize;
-> +	*unit_min = ip->i_mount->m_sb.sb_blocksize;
-> +	*unit_max =  min_t(unsigned int, XFS_FSB_TO_B(mp, mp->awu_max),
-> +					target->bt_bdev_awu_max);
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index dbce333b60eb..60c986300faa 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -990,6 +990,54 @@ xfs_reflink_end_cow(
+>  		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
+>  	return error;
 >  }
->  
->  static void
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 477c5262cf91..4e60347f6b7e 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -651,6 +651,32 @@ xfs_agbtree_compute_maxlevels(
->  	levels = max(levels, mp->m_rmap_maxlevels);
->  	mp->m_agbtree_maxlevels = max(levels, mp->m_refc_maxlevels);
->  }
-> +static inline void
-> +xfs_mp_compute_awu_max(
-
-xfs_compute_awu_max() ?
-
-> +	struct xfs_mount	*mp)
+> +int
+> +xfs_reflink_end_atomic_cow(
+> +	struct xfs_inode		*ip,
+> +	xfs_off_t			offset,
+> +	xfs_off_t			count)
 > +{
-> +	xfs_agblock_t		agsize = mp->m_sb.sb_agblocks;
-> +	xfs_agblock_t		awu_max;
+> +	xfs_fileoff_t			offset_fsb;
+> +	xfs_fileoff_t			end_fsb;
+> +	int				error = 0;
+> +	struct xfs_mount		*mp = ip->i_mount;
+> +	struct xfs_trans		*tp;
+> +	unsigned int			resblks;
+> +	bool				commit = false;
 > +
-> +	if (!xfs_has_reflink(mp)) {
-> +		mp->awu_max = 1;
-> +		return;
-> +	}
+> +	trace_xfs_reflink_end_cow(ip, offset, count);
 > +
-> +	/*
-> +	 * Find highest power-of-2 evenly divisible into agsize and which
-> +	 * also fits into an unsigned int field.
-> +	 */
-> +	awu_max = 1;
-> +	while (1) {
-> +		if (agsize % (awu_max * 2))
-> +			break;
-> +		if (XFS_FSB_TO_B(mp, awu_max * 2) > UINT_MAX)
-> +			break;
-> +		awu_max *= 2;
-> +	}
-> +	mp->awu_max = awu_max;
+> +	offset_fsb = XFS_B_TO_FSBT(ip->i_mount, offset);
+> +	end_fsb = XFS_B_TO_FSB(ip->i_mount, offset + count);
+> +
+> +	resblks = XFS_NEXTENTADD_SPACE_RES(ip->i_mount,
+> +				(unsigned int)(end_fsb - offset_fsb),
+> +				XFS_DATA_FORK);
+> +
+> +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, resblks, 0,
 
-I think you need two awu_maxes here -- one for the data device, and
-another for the realtime device.  The rt computation is probably more
-complex since I think it's the greatest power of two that fits in the rt
-extent size if it isn't a power of two; or the greatest power of two
-that fits in the rtgroup if rtgroups are enabled; or probably just no
-limit otherwise.
+xfs gained reflink support for realtime volumes in 6.14-rc1, so you now
+have to calculate for that in here too.
+
+> +			XFS_TRANS_RESERVE, &tp);
+> +	if (error)
+> +		return error;
+> +
+> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> +	xfs_trans_ijoin(tp, ip, 0);
+> +
+> +	while (end_fsb > offset_fsb && !error)
+> +		error = xfs_reflink_end_cow_extent_locked(ip, &offset_fsb,
+> +						end_fsb, tp, &commit);
+
+Hmm.  Attaching intent items to a transaction consumes space in that
+transaction, so we probably ought to limit the amount that we try to do
+here.  Do you know what that limit is?  I don't, but it's roughly
+tr_logres divided by the average size of a log intent item.
+
+This means we need to restrict the size of an untorn write to a
+double-digit number of fsblocks for safety.
+
+The logic in here looks reasonable though.
 
 --D
 
+> +
+> +	if (error || !commit)
+> +		goto out_cancel;
+> +
+> +	if (error)
+> +		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
+> +	error = xfs_trans_commit(tp);
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> +	return error;
+> +out_cancel:
+> +	xfs_trans_cancel(tp);
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> +	return error;
 > +}
 >  
->  /* Compute maximum possible height for realtime btree types for this fs. */
->  static inline void
-> @@ -736,6 +762,8 @@ xfs_mountfs(
->  	xfs_agbtree_compute_maxlevels(mp);
->  	xfs_rtbtree_compute_maxlevels(mp);
->  
-> +	xfs_mp_compute_awu_max(mp);
-> +
->  	/*
->  	 * Check if sb_agblocks is aligned at stripe boundary.  If sb_agblocks
->  	 * is NOT aligned turn off m_dalign since allocator alignment is within
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index fbed172d6770..34286c87ac4a 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -198,6 +198,7 @@ typedef struct xfs_mount {
->  	bool			m_fail_unmount;
->  	bool			m_finobt_nores; /* no per-AG finobt resv. */
->  	bool			m_update_sb;	/* sb needs update in mount */
-> +	xfs_extlen_t		awu_max;	/* max atomic write */
->  
->  	/*
->  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
+>  /*
+>   * Free all CoW staging blocks that are still referenced by the ondisk refcount
+> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
+> index ef5c8b2398d8..2c3b096c1386 100644
+> --- a/fs/xfs/xfs_reflink.h
+> +++ b/fs/xfs/xfs_reflink.h
+> @@ -45,6 +45,9 @@ extern int xfs_reflink_cancel_cow_range(struct xfs_inode *ip, xfs_off_t offset,
+>  		xfs_off_t count, bool cancel_real);
+>  extern int xfs_reflink_end_cow(struct xfs_inode *ip, xfs_off_t offset,
+>  		xfs_off_t count);
+> +		int
+> +xfs_reflink_end_atomic_cow(struct xfs_inode *ip, xfs_off_t offset,
+> +		xfs_off_t count);
+>  extern int xfs_reflink_recover_cow(struct xfs_mount *mp);
+>  extern loff_t xfs_reflink_remap_range(struct file *file_in, loff_t pos_in,
+>  		struct file *file_out, loff_t pos_out, loff_t len,
 > -- 
 > 2.31.1
 > 
