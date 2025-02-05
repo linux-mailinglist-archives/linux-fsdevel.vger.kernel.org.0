@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-40988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A39A29BEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 22:40:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AC0A29BF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 22:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2C318888E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 21:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6AA3A78E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 21:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C370E21519C;
-	Wed,  5 Feb 2025 21:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F067521505D;
+	Wed,  5 Feb 2025 21:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dn1onQR/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I91MEbMW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFCF214A96
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 21:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C375A215061
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 21:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738791617; cv=none; b=OdsTSpx1YjMBQz9iQtpSuYlz04+9FFISo7siKz/tUr2nLeTxEnPUUCe68FeAFm+NFHne9PktR2jUwdWOOlH0gj40/83Th5mG2J23J6uvNGUlRqO2LlISizmUs5gFZhVplesv9bCFQJE+ThlG/fkGAeG0KFoTnRUY1pAGmd3aFiA=
+	t=1738791618; cv=none; b=DK0bM+7HV3Ml715mBst+4KSRG12e7Fd06uC1SInMolgMWSOfV9WJRZ2NXNCRjLsJYyKSd+lzHmHTay7+O/whsEr+6zuQ5EZGHpaukY0c0uWpK6K0+GreUk0Ii8k3nPY1PP6D6RZUeJ0zbzzwEQSNpgo+V5QeJsuUGgUZtglrXDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738791617; c=relaxed/simple;
-	bh=sSrYFfOhLyhgLswpDNw4BVLeeV6aNKVWuPSzH1t+vV0=;
+	s=arc-20240116; t=1738791618; c=relaxed/simple;
+	bh=KrYVNYnNXO3e1ogblYs4fmOomKS82ZE+NgD+7BH3QIE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tyLcXwZvzM3NuOLthWwpe4oqMOmiYO4KQFeHRVC1kfGBWNqSjYolW7qJVPLH2nRImXqLNYhr6q0LN9DnsL5lZ0k0ndX6Rnzo5aY8CwP+47Yjsmy5UqJcKkskKDfMa0X1FKXChjRzDM05XRsRJRcLQfifJaAfgxKKg60fKUVfn5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dn1onQR/; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=U23h1xGSvQ3a5Vd/H0QIme2CDSNT25v/aPy10KSpBSHqHtC3VD3rG8NIMavuKiIlinNHJWBecSfz5YQ7ZZ0dh2LU5cH1ob72QTh/vtfuf65DQiTLaebB5mfK42Ejdjek3A1VnSEmxvmvbld7NLcEZVIhDYOo2hkQl3PUVqOYNC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I91MEbMW; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738791614;
+	s=mimecast20190719; t=1738791616;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2G0iVSw8SBWJ0wcY4q6/toDyxAMHsZs8PPRhCFBftE8=;
-	b=Dn1onQR/xRwcwJbsv519OUNqkho/ZgiTDhn5dFt1dDQOTZODkl7Y23kgO6C9h8StFsiHJz
-	LJNw2ivnVc0TjqN0rlSBYs6zfKNqveviXTrHTK0rbKPyLTInMwkcIOmGowrL9tQWzIOpPx
-	Igdx2FWaisqCRPia/wouz49NjzxsJG4=
+	bh=fHF88XgGidd1DCQa6ISHgfR4eudTTqNM5XPaGCskyoc=;
+	b=I91MEbMWLnk/+Xr5xjtd940ReKkMHKZV5b8rnxo2TMh62AUpyrMy0oPRBRMiFl/+Uk1WKw
+	8Kc8rV4h2nnnI4BHMPnRXprY1xyfmIkr4y9oNYe0AAwKzAPINilQr8mCaZB9kLQoNgPxvJ
+	nQ7euaiTJmXWpEdkmWrryEW41QMKaLs=
 Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
  [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-306-lCw05xhoNWaKhAaiBwVs_w-1; Wed, 05 Feb 2025 16:40:12 -0500
-X-MC-Unique: lCw05xhoNWaKhAaiBwVs_w-1
-X-Mimecast-MFC-AGG-ID: lCw05xhoNWaKhAaiBwVs_w
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-847500c9b9aso65314639f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2025 13:40:12 -0800 (PST)
+ us-mta-451-tE2WBKusN9WrDBqlsxeILg-1; Wed, 05 Feb 2025 16:40:13 -0500
+X-MC-Unique: tE2WBKusN9WrDBqlsxeILg-1
+X-Mimecast-MFC-AGG-ID: tE2WBKusN9WrDBqlsxeILg
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-844d02766f9so22522739f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2025 13:40:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738791611; x=1739396411;
+        d=1e100.net; s=20230601; t=1738791613; x=1739396413;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2G0iVSw8SBWJ0wcY4q6/toDyxAMHsZs8PPRhCFBftE8=;
-        b=Qatdr18mihaf7azJbqKt1mbOx50M0TvYVIPiKFi+8aNLHZ54u1zuXrVQgXfEPqD4pj
-         MWs2h530HNsDe+D8dk9lQDUpfT1LDgUHr+arwkwL6dE5z6fD348b1+wi6Lrb1dJpZBte
-         SsgDtxSTI9bPzlADshfdKKFvibkXcVaiaJx7wjJBkNPe5EWbhEIcMvrElPJkWl9uuHgY
-         +B9sivpoEeR+Xp5km9ari/icDx8CZ4l3arDXC03M9BNAY+k+ng+UEq/au2KTR5xkCmgF
-         vJFpO87p/4fL8LLVtD0Cn1Hswauv/ByEJzIzSGpvV7V+ICBfj533/4dfa5cZDC88yu7e
-         CZWw==
-X-Gm-Message-State: AOJu0YxuDniHmHuuCFNhr1OwEXK8X0cl6lVMJnzE76cBmPMQ2gT3ueGY
-	NRKIfQchL4mFe8r2uFbwcgN4O+eFSvWzby4p+r6IjgW98IQH/l/kDVcniXZbAyUGTHuLDD42bo0
-	OAz2kh6WDd7ceGyj7RBta8/12w1APUsanFkEF2A7gKZQAqlzTa0bFZh9fUm6raENcrhXdcRyk4D
-	jtR5o6b95KNXP61C+0PinBgclll2Sb2TEH2eUNCrSWpODDquUo
-X-Gm-Gg: ASbGnctZ6k+UPZrmkaiHwa449ySQ455qKdcgssNh4SpOSdhZ7EcOJEzaogjoyA9n2FZ
-	l6i+GtG+8ZevOWPRPqBndvYCs5hvYh55kdVv2XWKDnuNFd/93SI74dyO0vQjDE0gZimggEJSc0c
-	lLueGsrDcJTW9yXdn94GVMFZN1BW9Ms4W0s40A5KvHyKbSjUq/KR5odr/qwebZcDKf9KSeEgX/C
-	nc0QIWRq+gULAomsX2o1KGx50CWM0EiBX4Q0JjjNObLPuapzj6I2+/tTPwHaHVC+5r1HUOMutWm
-	MzezDXqowaYpfYYei9+s13Leq9+839DTLYaKAEpGBnqCRjn/90Kz1w==
-X-Received: by 2002:a05:6602:3689:b0:84f:5547:8398 with SMTP id ca18e2360f4ac-854ea50fbfdmr467507339f.11.1738791611541;
-        Wed, 05 Feb 2025 13:40:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGUHF0VDp7Qm6cVIkWkSMceysX5ZCmPtM+2EEVinjNLvwfx/Qh8+E2z1pt9VxHoO9bPWMbw3Q==
-X-Received: by 2002:a05:6602:3689:b0:84f:5547:8398 with SMTP id ca18e2360f4ac-854ea50fbfdmr467505039f.11.1738791611172;
-        Wed, 05 Feb 2025 13:40:11 -0800 (PST)
+        bh=fHF88XgGidd1DCQa6ISHgfR4eudTTqNM5XPaGCskyoc=;
+        b=QE8xC7dvw2UstgXyrGAo4ZbFuJR7flZObcJr7VzJncQkIn6Bc1kuFnSAKhMGwNzFSm
+         0FtCjilndTaE1um3DPkHr8JZEuNrTp2/qpxtm+CU75SlwBP9vFi2hODiG+15XuczuzKH
+         FJ7DUlG2urQEb/jjsTAIHkmV2zY9kYyD2m3EuOkBvK/Arg0sbN2om7EvGD/M+/h31jbw
+         9T72wKBUrNc/ApbPqx4BGZqQhZ0+rMjqjJSklJcNqraPB+T1khBOjnB2ec9KVgLTRfde
+         RCdA79AHpTdJLg6419KKKNli0AK48ZgLjTZsAK4vapDOxul9aIr2rQYFdwznx2DdFhix
+         2lPg==
+X-Gm-Message-State: AOJu0Yzr8yu4/ekgUk2I29elroCeA5VmBkgTkAXE+KrGAKlceHY+tbmU
+	sqjRXCX/VdCYvQpc8N4hLZx3o+VyIYp+NiYMbHF8ElWvIHFl+eCvpFuzZkRqwBt+9WEcOR3U+KN
+	WreF6R2EQQEGer/hac+0fGlsPvoVZ5Cn6N0R01WUKGeK19fA5XdO79Nek6LFTLIavgvNIeRY/KN
+	o2tALlT9J864EaEur2ujC2bxjOvQYkWZnrhuoqdsdgFsMFtmg0
+X-Gm-Gg: ASbGncvAQq1p4HhVjjQusvWjeemObHaGs/kow3D8Va5VqLV6Zt6RGBHbM9zVBNgPy8I
+	xqvLETDCjZA8tIdfkvlvvTIqBYcZX/Oncve45zOx8I1pg4QI7DDxzrXu/UmfmVPfYjS5313i+g3
+	qcpqVr8MbnaiTQakS+BL7TRqMpxh16rh24td/65UmnAnNkFRO0AdbgNN3jnmX3hn9ogJ7q+rMlL
+	DBpywiAQsf8sa74blKMeBZivqobsfxbC8+/4kCtWvFWcAxQVyDgn67QZmSfXgjHnCs2mlAblXM6
+	HTN1mvULhO1IrcDm2yHojkKHrHec8ruvMwH0r1mAdVRd9m8Xzs+kMg==
+X-Received: by 2002:a05:6602:7213:b0:835:4b2a:e52b with SMTP id ca18e2360f4ac-854ea4f4627mr408222439f.10.1738791612816;
+        Wed, 05 Feb 2025 13:40:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEs1ZwJR/q/FPx7PeTWWfsg1TqGg1ogBjLL1VNewgJfenIDd5EITWpWdGsjQaOGpYg3MTZdUg==
+X-Received: by 2002:a05:6602:7213:b0:835:4b2a:e52b with SMTP id ca18e2360f4ac-854ea4f4627mr408220539f.10.1738791612422;
+        Wed, 05 Feb 2025 13:40:12 -0800 (PST)
 Received: from fedora-rawhide.sandeen.net (97-116-166-216.mpls.qwest.net. [97.116.166.216])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854a1717863sm368050839f.36.2025.02.05.13.40.10
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854a1717863sm368050839f.36.2025.02.05.13.40.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 13:40:10 -0800 (PST)
+        Wed, 05 Feb 2025 13:40:11 -0800 (PST)
 From: Eric Sandeen <sandeen@redhat.com>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org
@@ -88,9 +88,9 @@ Cc: viro@zeniv.linux.org.uk,
 	kees@kernel.org,
 	tony.luck@intel.com,
 	Eric Sandeen <sandeen@redhat.com>
-Subject: [PATCH 3/4] devtmpfs: replace ->mount with ->get_tree in public instance
-Date: Wed,  5 Feb 2025 15:34:31 -0600
-Message-ID: <20250205213931.74614-4-sandeen@redhat.com>
+Subject: [PATCH 4/4] vfs: remove some unused old mount api code
+Date: Wed,  5 Feb 2025 15:34:32 -0600
+Message-ID: <20250205213931.74614-5-sandeen@redhat.com>
 X-Mailer: git-send-email 2.48.0
 In-Reply-To: <20250205213931.74614-1-sandeen@redhat.com>
 References: <20250205213931.74614-1-sandeen@redhat.com>
@@ -102,136 +102,109 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To finalize mount API conversion, remove the ->mount op from the public
-instance in favor of ->get_tree etc. Copy most ops from the underlying
-ops vector (whether it's shmem or ramfs) and substitute our own
-->get_tree which simply takes an extra reference on the existing internal
-mount as before.
+Remove reconfigure_single, mount_single, and compare_single now
+that no users remain.
 
-Thanks to Al for the fs_context_for_reconfigure() idea.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Neil Brown <neilb@suse.de>
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- drivers/base/devtmpfs.c | 81 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 64 insertions(+), 17 deletions(-)
+ fs/super.c                 | 55 --------------------------------------
+ include/linux/fs.h         |  3 ---
+ include/linux/fs_context.h |  2 --
+ 3 files changed, 60 deletions(-)
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index b848764ef018..03a7c7902fcd 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -63,22 +63,6 @@ __setup("devtmpfs.mount=", mount_param);
+diff --git a/fs/super.c b/fs/super.c
+index 5a7db4a556e3..723176dee229 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1737,61 +1737,6 @@ struct dentry *mount_nodev(struct file_system_type *fs_type,
+ }
+ EXPORT_SYMBOL(mount_nodev);
  
- static struct vfsmount *mnt;
- 
--static struct dentry *public_dev_mount(struct file_system_type *fs_type, int flags,
--		      const char *dev_name, void *data)
+-int reconfigure_single(struct super_block *s,
+-		       int flags, void *data)
 -{
--	struct super_block *s = mnt->mnt_sb;
--	int err;
+-	struct fs_context *fc;
+-	int ret;
 -
--	atomic_inc(&s->s_active);
--	down_write(&s->s_umount);
--	err = reconfigure_single(s, flags, data);
--	if (err < 0) {
+-	/* The caller really need to be passing fc down into mount_single(),
+-	 * then a chunk of this can be removed.  [Bollocks -- AV]
+-	 * Better yet, reconfiguration shouldn't happen, but rather the second
+-	 * mount should be rejected if the parameters are not compatible.
+-	 */
+-	fc = fs_context_for_reconfigure(s->s_root, flags, MS_RMT_MASK);
+-	if (IS_ERR(fc))
+-		return PTR_ERR(fc);
+-
+-	ret = parse_monolithic_mount_data(fc, data);
+-	if (ret < 0)
+-		goto out;
+-
+-	ret = reconfigure_super(fc);
+-out:
+-	put_fs_context(fc);
+-	return ret;
+-}
+-
+-static int compare_single(struct super_block *s, void *p)
+-{
+-	return 1;
+-}
+-
+-struct dentry *mount_single(struct file_system_type *fs_type,
+-	int flags, void *data,
+-	int (*fill_super)(struct super_block *, void *, int))
+-{
+-	struct super_block *s;
+-	int error;
+-
+-	s = sget(fs_type, compare_single, set_anon_super, flags, NULL);
+-	if (IS_ERR(s))
+-		return ERR_CAST(s);
+-	if (!s->s_root) {
+-		error = fill_super(s, data, flags & SB_SILENT ? 1 : 0);
+-		if (!error)
+-			s->s_flags |= SB_ACTIVE;
+-	} else {
+-		error = reconfigure_single(s, flags, data);
+-	}
+-	if (unlikely(error)) {
 -		deactivate_locked_super(s);
--		return ERR_PTR(err);
+-		return ERR_PTR(error);
 -	}
 -	return dget(s->s_root);
 -}
+-EXPORT_SYMBOL(mount_single);
 -
- static struct file_system_type internal_fs_type = {
- 	.name = "devtmpfs",
- #ifdef CONFIG_TMPFS
-@@ -89,9 +73,40 @@ static struct file_system_type internal_fs_type = {
- 	.kill_sb = kill_litter_super,
- };
+ /**
+  * vfs_get_tree - Get the mountable root
+  * @fc: The superblock configuration context.
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index be3ad155ec9f..ff5e8ab9f951 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2641,9 +2641,6 @@ static inline bool is_mgtime(const struct inode *inode)
+ extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+ 	int flags, const char *dev_name, void *data,
+ 	int (*fill_super)(struct super_block *, void *, int));
+-extern struct dentry *mount_single(struct file_system_type *fs_type,
+-	int flags, void *data,
+-	int (*fill_super)(struct super_block *, void *, int));
+ extern struct dentry *mount_nodev(struct file_system_type *fs_type,
+ 	int flags, void *data,
+ 	int (*fill_super)(struct super_block *, void *, int));
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 4b4bfef6f053..a19e4bd32e4d 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -144,8 +144,6 @@ extern void put_fs_context(struct fs_context *fc);
+ extern int vfs_parse_fs_param_source(struct fs_context *fc,
+ 				     struct fs_parameter *param);
+ extern void fc_drop_locked(struct fs_context *fc);
+-int reconfigure_single(struct super_block *s,
+-		       int flags, void *data);
  
-+/* Simply take a ref on the existing mount */
-+static int devtmpfs_get_tree(struct fs_context *fc)
-+{
-+	struct super_block *sb = mnt->mnt_sb;
-+
-+	atomic_inc(&sb->s_active);
-+	down_write(&sb->s_umount);
-+	fc->root = dget(sb->s_root);
-+	return 0;
-+}
-+
-+/* Ops are filled in during init depending on underlying shmem or ramfs type */
-+struct fs_context_operations devtmpfs_context_ops = {};
-+
-+/* Call the underlying initialization and set to our ops */
-+static int devtmpfs_init_fs_context(struct fs_context *fc)
-+{
-+	int ret;
-+#ifdef CONFIG_TMPFS
-+	ret = shmem_init_fs_context(fc);
-+#else
-+	ret = ramfs_init_fs_context(fc);
-+#endif
-+	if (ret < 0)
-+		return ret;
-+
-+	fc->ops = &devtmpfs_context_ops;
-+
-+	return 0;
-+}
-+
- static struct file_system_type dev_fs_type = {
- 	.name = "devtmpfs",
--	.mount = public_dev_mount,
-+	.init_fs_context = devtmpfs_init_fs_context,
- };
- 
- static int devtmpfs_submit_req(struct req *req, const char *tmp)
-@@ -442,6 +457,31 @@ static int __ref devtmpfsd(void *p)
- 	return 0;
- }
- 
-+/*
-+ * Get the underlying (shmem/ramfs) context ops to build ours
-+ */
-+static int devtmpfs_configure_context(void)
-+{
-+	struct fs_context *fc;
-+
-+	fc = fs_context_for_reconfigure(mnt->mnt_root, mnt->mnt_sb->s_flags,
-+					MS_RMT_MASK);
-+	if (IS_ERR(fc))
-+		return PTR_ERR(fc);
-+
-+	/* Set up devtmpfs_context_ops based on underlying type */
-+	devtmpfs_context_ops.free	      = fc->ops->free;
-+	devtmpfs_context_ops.dup	      = fc->ops->dup;
-+	devtmpfs_context_ops.parse_param      = fc->ops->parse_param;
-+	devtmpfs_context_ops.parse_monolithic = fc->ops->parse_monolithic;
-+	devtmpfs_context_ops.get_tree	      = &devtmpfs_get_tree;
-+	devtmpfs_context_ops.reconfigure      = fc->ops->reconfigure;
-+
-+	put_fs_context(fc);
-+
-+	return 0;
-+}
-+
- /*
-  * Create devtmpfs instance, driver-core devices will add their device
-  * nodes here.
-@@ -456,6 +496,13 @@ int __init devtmpfs_init(void)
- 		pr_err("unable to create devtmpfs %ld\n", PTR_ERR(mnt));
- 		return PTR_ERR(mnt);
- 	}
-+
-+	err = devtmpfs_configure_context();
-+	if (err) {
-+		pr_err("unable to configure devtmpfs type %d\n", err);
-+		return err;
-+	}
-+
- 	err = register_filesystem(&dev_fs_type);
- 	if (err) {
- 		pr_err("unable to register devtmpfs type %d\n", err);
+ extern int get_tree_nodev(struct fs_context *fc,
+ 			 int (*fill_super)(struct super_block *sb,
 -- 
 2.48.0
 
