@@ -1,103 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-40942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE4DA296BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 17:53:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A12A296C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 17:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B547A10C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 16:52:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B641881E4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 16:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE40B1DE4E1;
-	Wed,  5 Feb 2025 16:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED8B1FCF66;
+	Wed,  5 Feb 2025 16:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t8WcFU/c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6twokP9V";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t8WcFU/c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6twokP9V"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KLN1TJR7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Hu15Kiq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KLN1TJR7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Hu15Kiq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AC91DB153
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 16:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9B01FC0E9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 16:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738774340; cv=none; b=SqAb51NbwMjxYGnKK6Ul59FrYWBjaVxTtT1fTSU0+4W2KKFybEMmbLz0d7wt3avrfjk/T+9laTH1qExeQsMocwBG/cIxEephJdw9tYLTZDL1THKuufyiOTbpRXRC0fgqBI6awMCKy+7jCImBjV+XpGD63fX9QUbh2kqXKzTpySQ=
+	t=1738774349; cv=none; b=QQUe7YuOsYhmvvtWyRp6CV6QTz5xTDCpyq2xsTFOrsXUHQ0rFZerHcB6+uFMD0iJif7QgW+Lmt3ToqNW96k+40lAr5HQ2STTkRiGyliP2KWd8VLRwF84MQ0QZcZPYCfTspJpFy1RMcqigBvOc6Ke3beFIW7OJ9HVF+IBgNaGD8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738774340; c=relaxed/simple;
-	bh=Ziat+6ZYcbk6kcsiUK+kuQHfqpWgM9pTjr7gEXr6H0Q=;
+	s=arc-20240116; t=1738774349; c=relaxed/simple;
+	bh=KJwlz8O6bAhpAPlwo01efq3HFSJzAYMDZgS5mR4HToI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVEekRpnJ+JPY7de68YRAy7046lDriRIlJx7YPnlu1eZmJ2/VElFlhX9J2c+6uUCdkhO5zYIHZEdCLIzsPhQETrCLdevDL81f0P1udYg4iza19Ohq07igvarfiWtMS+C4WznWA54M2a/5QV28B8Zio4UAWqBgNHQHbpI/ILKZrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t8WcFU/c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6twokP9V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t8WcFU/c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6twokP9V; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0QYw8C11RNmvrzp8VlK+KNjpnBl2/VXL6Xn+I+rjLMW5yD+NgBaOBCkk13JFy8POTSjkp+KtBDyVWNUpEljEt+zYbEp3lZlo63UiOowBf5MhhRTK2E71CQQ4pS4RcFvakN8ILlWgTj+vtFp/23V+PK3l5JxpBup/2O1Qet33qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KLN1TJR7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Hu15Kiq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KLN1TJR7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Hu15Kiq; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DCBD1F7E0;
-	Wed,  5 Feb 2025 16:52:16 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4D6961F7E0;
+	Wed,  5 Feb 2025 16:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738774336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738774345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/xjWyn71YHhBlfXbSoCQsOM+XhxUhkt65kyfcxZcrek=;
-	b=t8WcFU/ckhaHbtSDuerYED4bVzxxSVQASJPTk3Vt/8ZRprKyXySTIABNn45IB8AMNlDw7M
-	dmb/mdkwCOWlPCcX9iYwZfY2j6aEQSYFgWo5RmQm+mD9BXY630DGEItpKjEMMTF6VzCTG/
-	rt0+HP5bCx8YdwnZHIfCHNIpEEji/gM=
+	bh=XZgEuxPbdi3STYJgtio3g9upsWzsqSzVqtT2we+YBRQ=;
+	b=KLN1TJR71IBxljor6od2NTf3r8yu+gzt66zjkc+OVzb+hCYS9kZdJnWS2t5h37HSEorOt4
+	cXvO7T8y3mCBkGwLEV7ezbndb0Dvy7A5plH0SubikdDLiprhChnfTdJGKbgiIjEY0yiiWN
+	+b9pF/BVk/4n8srmwnVHBlrUQCFCTqg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738774336;
+	s=susede2_ed25519; t=1738774345;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/xjWyn71YHhBlfXbSoCQsOM+XhxUhkt65kyfcxZcrek=;
-	b=6twokP9Vz924/660rAucXqtf1y8AH765rCkF/j3CZKKxFlnWCK5SicmPZIRoUpP+3G6s4B
-	lrL99Z25+275PGDQ==
+	bh=XZgEuxPbdi3STYJgtio3g9upsWzsqSzVqtT2we+YBRQ=;
+	b=0Hu15KiqNMlgsx56HmkgCN54ZSI+nsAn/f/BOcNOIUhOWIyauDB8zQkcixEssagdu58KTZ
+	jLCXkKTpnOWB5fAA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="t8WcFU/c";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6twokP9V
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738774336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738774345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/xjWyn71YHhBlfXbSoCQsOM+XhxUhkt65kyfcxZcrek=;
-	b=t8WcFU/ckhaHbtSDuerYED4bVzxxSVQASJPTk3Vt/8ZRprKyXySTIABNn45IB8AMNlDw7M
-	dmb/mdkwCOWlPCcX9iYwZfY2j6aEQSYFgWo5RmQm+mD9BXY630DGEItpKjEMMTF6VzCTG/
-	rt0+HP5bCx8YdwnZHIfCHNIpEEji/gM=
+	bh=XZgEuxPbdi3STYJgtio3g9upsWzsqSzVqtT2we+YBRQ=;
+	b=KLN1TJR71IBxljor6od2NTf3r8yu+gzt66zjkc+OVzb+hCYS9kZdJnWS2t5h37HSEorOt4
+	cXvO7T8y3mCBkGwLEV7ezbndb0Dvy7A5plH0SubikdDLiprhChnfTdJGKbgiIjEY0yiiWN
+	+b9pF/BVk/4n8srmwnVHBlrUQCFCTqg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738774336;
+	s=susede2_ed25519; t=1738774345;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/xjWyn71YHhBlfXbSoCQsOM+XhxUhkt65kyfcxZcrek=;
-	b=6twokP9Vz924/660rAucXqtf1y8AH765rCkF/j3CZKKxFlnWCK5SicmPZIRoUpP+3G6s4B
-	lrL99Z25+275PGDQ==
+	bh=XZgEuxPbdi3STYJgtio3g9upsWzsqSzVqtT2we+YBRQ=;
+	b=0Hu15KiqNMlgsx56HmkgCN54ZSI+nsAn/f/BOcNOIUhOWIyauDB8zQkcixEssagdu58KTZ
+	jLCXkKTpnOWB5fAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1742913694;
-	Wed,  5 Feb 2025 16:52:16 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3CFCE13694;
+	Wed,  5 Feb 2025 16:52:25 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RNFjBUCXo2fgPQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Feb 2025 16:52:16 +0000
+	id 7ZDhDkmXo2fzPQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Feb 2025 16:52:25 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AC21AA28E9; Wed,  5 Feb 2025 17:52:11 +0100 (CET)
-Date: Wed, 5 Feb 2025 17:52:11 +0100
+	id BC62AA28E9; Wed,  5 Feb 2025 17:52:24 +0100 (CET)
+Date: Wed, 5 Feb 2025 17:52:24 +0100
 From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
 	Alex Williamson <alex.williamson@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fsnotify: use accessor to set FMODE_NONOTIFY_*
-Message-ID: <er7avw4zv2oquqgcvu3gvjbvizkybkwkdlw5fxo4ncpnxvomws@vl7felvkkmlp>
+Subject: Re: [PATCH 2/3] fsnotify: disable notification by default for all
+ pseudo files
+Message-ID: <ksgym4id7zj22vz2sn6bdysx57jxsut37tipw4celi5xm2iidu@u2x5gu5uonli>
 References: <20250203223205.861346-1-amir73il@gmail.com>
- <20250203223205.861346-2-amir73il@gmail.com>
- <20250204-drehleiter-kehlkopf-ebfb51587558@brauner>
+ <20250203223205.861346-3-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,187 +105,145 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250204-drehleiter-kehlkopf-ebfb51587558@brauner>
-X-Rspamd-Queue-Id: 2DCBD1F7E0
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
+In-Reply-To: <20250203223205.861346-3-amir73il@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[3];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz,redhat.com,linux-foundation.org,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
 	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-On Tue 04-02-25 11:43:11, Christian Brauner wrote:
-> On Mon, Feb 03, 2025 at 11:32:03PM +0100, Amir Goldstein wrote:
-> > The FMODE_NONOTIFY_* bits are a 2-bits mode.  Open coding manipulation
-> > of those bits is risky.  Use an accessor file_set_fsnotify_mode() to
-> > set the mode.
-> > 
-> > Rename file_set_fsnotify_mode() => file_set_fsnotify_mode_from_watchers()
-> > to make way for the simple accessor name.
-> > 
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  drivers/tty/pty.c        |  2 +-
-> >  fs/notify/fsnotify.c     | 18 ++++++++++++------
-> >  fs/open.c                |  7 ++++---
-> >  include/linux/fs.h       |  9 ++++++++-
-> >  include/linux/fsnotify.h |  4 ++--
-> >  5 files changed, 27 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
-> > index df08f13052ff4..8bb1a01fef2a1 100644
-> > --- a/drivers/tty/pty.c
-> > +++ b/drivers/tty/pty.c
-> > @@ -798,7 +798,7 @@ static int ptmx_open(struct inode *inode, struct file *filp)
-> >  	nonseekable_open(inode, filp);
-> >  
-> >  	/* We refuse fsnotify events on ptmx, since it's a shared resource */
-> > -	filp->f_mode |= FMODE_NONOTIFY;
-> > +	file_set_fsnotify_mode(filp, FMODE_NONOTIFY);
-> >  
-> >  	retval = tty_alloc_file(filp);
-> >  	if (retval)
-> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> > index 8ee495a58d0ad..77a1521335a10 100644
-> > --- a/fs/notify/fsnotify.c
-> > +++ b/fs/notify/fsnotify.c
-> > @@ -648,7 +648,7 @@ EXPORT_SYMBOL_GPL(fsnotify);
-> >   * Later, fsnotify permission hooks do not check if there are permission event
-> >   * watches, but that there were permission event watches at open time.
-> >   */
-> > -void file_set_fsnotify_mode(struct file *file)
-> > +void file_set_fsnotify_mode_from_watchers(struct file *file)
-> >  {
-> >  	struct dentry *dentry = file->f_path.dentry, *parent;
-> >  	struct super_block *sb = dentry->d_sb;
-> > @@ -665,7 +665,7 @@ void file_set_fsnotify_mode(struct file *file)
-> >  	 */
-> >  	if (likely(!fsnotify_sb_has_priority_watchers(sb,
-> >  						FSNOTIFY_PRIO_CONTENT))) {
-> > -		file->f_mode |= FMODE_NONOTIFY_PERM;
-> > +		file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
-> >  		return;
-> >  	}
-> >  
-> > @@ -676,7 +676,7 @@ void file_set_fsnotify_mode(struct file *file)
-> >  	if ((!d_is_dir(dentry) && !d_is_reg(dentry)) ||
-> >  	    likely(!fsnotify_sb_has_priority_watchers(sb,
-> >  						FSNOTIFY_PRIO_PRE_CONTENT))) {
-> > -		file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> > +		file_set_fsnotify_mode(file, FMODE_NONOTIFY_HSM);
-> >  		return;
-> >  	}
-> >  
-> > @@ -686,19 +686,25 @@ void file_set_fsnotify_mode(struct file *file)
-> >  	 */
-> >  	mnt_mask = READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
-> >  	if (unlikely(fsnotify_object_watched(d_inode(dentry), mnt_mask,
-> > -				     FSNOTIFY_PRE_CONTENT_EVENTS)))
-> > +				     FSNOTIFY_PRE_CONTENT_EVENTS))) {
-> > +		/* Enable pre-content events */
-> > +		file_set_fsnotify_mode(file, 0);
-> >  		return;
-> > +	}
-> >  
-> >  	/* Is parent watching for pre-content events on this file? */
-> >  	if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
-> >  		parent = dget_parent(dentry);
-> >  		p_mask = fsnotify_inode_watches_children(d_inode(parent));
-> >  		dput(parent);
-> > -		if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)
-> > +		if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS) {
-> > +			/* Enable pre-content events */
-> > +			file_set_fsnotify_mode(file, 0);
-> >  			return;
-> > +		}
-> >  	}
-> >  	/* Nobody watching for pre-content events from this file */
-> > -	file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> > +	file_set_fsnotify_mode(file, FMODE_NONOTIFY_HSM);
-> >  }
-> >  #endif
-> >  
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 932e5a6de63bb..3fcbfff8aede8 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -905,7 +905,8 @@ static int do_dentry_open(struct file *f,
-> >  	f->f_sb_err = file_sample_sb_err(f);
-> >  
-> >  	if (unlikely(f->f_flags & O_PATH)) {
-> > -		f->f_mode = FMODE_PATH | FMODE_OPENED | FMODE_NONOTIFY;
-> > +		f->f_mode = FMODE_PATH | FMODE_OPENED;
-> > +		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-> >  		f->f_op = &empty_fops;
-> >  		return 0;
-> >  	}
-> > @@ -938,7 +939,7 @@ static int do_dentry_open(struct file *f,
-> >  	 * If FMODE_NONOTIFY was already set for an fanotify fd, this doesn't
-> >  	 * change anything.
-> >  	 */
-> > -	file_set_fsnotify_mode(f);
-> > +	file_set_fsnotify_mode_from_watchers(f);
-> >  	error = fsnotify_open_perm(f);
-> >  	if (error)
-> >  		goto cleanup_all;
-> > @@ -1122,7 +1123,7 @@ struct file *dentry_open_nonotify(const struct path *path, int flags,
-> >  	if (!IS_ERR(f)) {
-> >  		int error;
-> >  
-> > -		f->f_mode |= FMODE_NONOTIFY;
-> > +		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-> >  		error = vfs_open(path, f);
-> >  		if (error) {
-> >  			fput(f);
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index be3ad155ec9f7..e73d9b998780d 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -206,6 +206,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
-> >   * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) events.
-> >   * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content events.
-> >   */
-> > +#define FMODE_NONOTIFY_HSM \
-> > +	(FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
+On Mon 03-02-25 23:32:04, Amir Goldstein wrote:
+> Most pseudo files are not applicable for fsnotify events at all,
+> let alone to the new pre-content events.
 > 
-> After this patch series this define is used exactly twice and it's
-> currently identical to FMODE_FSNOTIFY_HSM. I suggest to remove it and
-> simply pass FMODE_NONOTIFY | FMODE_NONOTIFY_PERM in the two places it's
-> used. I can do this myself though so if Jan doesn't have other comments
-> don't bother resending.
+> Disable notifications to all files allocated with alloc_file_pseudo()
+> and enable legacy inotify events for the specific cases of pipe and
+> socket, which have known users of inotify events.
+> 
+> Pre-content events are also kept disabled for sockets and pipes.
+> 
+> Fixes: 20bf82a898b6 ("mm: don't allow huge faults for files with pre content watches")
+> Reported-by: Alex Williamson <alex.williamson@redhat.com>
+> Closes: https://lore.kernel.org/linux-fsdevel/20250131121703.1e4d00a7.alex.williamson@redhat.com/
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Link: https://lore.kernel.org/linux-fsdevel/CAHk-=wi2pThSVY=zhO=ZKxViBj5QCRX-=AS2+rVknQgJnHXDFg@mail.gmail.com/
+> Tested-by: Alex Williamson <alex.williamson@redhat.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-I don't care that much but overall I tend to agree that a helper for two
-very localized uses is not too helpful. Either with or without
-FMODE_NONOTIFY_HSM feel free to add:
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
+> ---
+>  fs/file_table.c | 11 +++++++++++
+>  fs/open.c       |  4 ++--
+>  fs/pipe.c       |  6 ++++++
+>  net/socket.c    |  5 +++++
+>  4 files changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index f0291a66f9db4..35b93da6c5cb1 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -375,7 +375,13 @@ struct file *alloc_file_pseudo(struct inode *inode, struct vfsmount *mnt,
+>  	if (IS_ERR(file)) {
+>  		ihold(inode);
+>  		path_put(&path);
+> +		return file;
+>  	}
+> +	/*
+> +	 * Disable all fsnotify events for pseudo files by default.
+> +	 * They may be enabled by caller with file_set_fsnotify_mode().
+> +	 */
+> +	file_set_fsnotify_mode(file, FMODE_NONOTIFY);
+>  	return file;
+>  }
+>  EXPORT_SYMBOL(alloc_file_pseudo);
+> @@ -400,6 +406,11 @@ struct file *alloc_file_pseudo_noaccount(struct inode *inode,
+>  		return file;
+>  	}
+>  	file_init_path(file, &path, fops);
+> +	/*
+> +	 * Disable all fsnotify events for pseudo files by default.
+> +	 * They may be enabled by caller with file_set_fsnotify_mode().
+> +	 */
+> +	file_set_fsnotify_mode(file, FMODE_NONOTIFY);
+>  	return file;
+>  }
+>  EXPORT_SYMBOL_GPL(alloc_file_pseudo_noaccount);
+> diff --git a/fs/open.c b/fs/open.c
+> index 3fcbfff8aede8..1be20de9f283a 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -936,8 +936,8 @@ static int do_dentry_open(struct file *f,
+>  
+>  	/*
+>  	 * Set FMODE_NONOTIFY_* bits according to existing permission watches.
+> -	 * If FMODE_NONOTIFY was already set for an fanotify fd, this doesn't
+> -	 * change anything.
+> +	 * If FMODE_NONOTIFY mode was already set for an fanotify fd or for a
+> +	 * pseudo file, this call will not change the mode.
+>  	 */
+>  	file_set_fsnotify_mode_from_watchers(f);
+>  	error = fsnotify_open_perm(f);
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 94b59045ab44b..ce1af7592780d 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -960,6 +960,12 @@ int create_pipe_files(struct file **res, int flags)
+>  	res[1] = f;
+>  	stream_open(inode, res[0]);
+>  	stream_open(inode, res[1]);
+> +	/*
+> +	 * Disable permission and pre-content events, but enable legacy
+> +	 * inotify events for legacy users.
+> +	 */
+> +	file_set_fsnotify_mode(res[0], FMODE_NONOTIFY_PERM);
+> +	file_set_fsnotify_mode(res[1], FMODE_NONOTIFY_PERM);
+>  	return 0;
+>  }
+>  
+> diff --git a/net/socket.c b/net/socket.c
+> index 262a28b59c7f0..28bae5a942341 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -479,6 +479,11 @@ struct file *sock_alloc_file(struct socket *sock, int flags, const char *dname)
+>  	sock->file = file;
+>  	file->private_data = sock;
+>  	stream_open(SOCK_INODE(sock), file);
+> +	/*
+> +	 * Disable permission and pre-content events, but enable legacy
+> +	 * inotify events for legacy users.
+> +	 */
+> +	file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
+>  	return file;
+>  }
+>  EXPORT_SYMBOL(sock_alloc_file);
+> -- 
+> 2.34.1
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
