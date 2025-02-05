@@ -1,121 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-40931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72491A295B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 17:07:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAFDA295F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 17:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0523A291F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 16:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0B73A5D86
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 16:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5DB194094;
-	Wed,  5 Feb 2025 16:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27D81D7E31;
+	Wed,  5 Feb 2025 16:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="euaXf8nh"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DkBKpdR2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGpKqCS5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DkBKpdR2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGpKqCS5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F92B17B505
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 16:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A62C19B586;
+	Wed,  5 Feb 2025 16:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738771612; cv=none; b=rQh03xq2kwNXpKe1B1/cl68QNQVmjL4ICCKPoYY2AvvpbJ3S5Kq5Q3DKJshgeWY96AD8ZqRxmt/qolJ6LDZIWUU8aoyx3yUeRIQNCJDnEbtrj98yFJMPs9OvvGrpY3iJf6XNZiChlAIdTMKjU9savF9vIbWkD4rTvURZIhmxqkQ=
+	t=1738771940; cv=none; b=MDxI9U5YYlvnkGsD/57BwvLgZo+ojcoUwG/wELKu+rq0RHNK1usT3NZB24n9QdG6WSuu66kBVSuMOBIQcrQG78JDzefWbqC8DJbdJDaYRb06kb9OdPwOEoXBJ6g8oYt8VGg+SmYCH0Gwb0O/VsG3ShldLkDgftqBb89512MQzn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738771612; c=relaxed/simple;
-	bh=RqbmmJCSs+vqeDfuEh3LyaagpG45I9aLSsrx8U8tdKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o1KWDIYC9tT8I3GoA906FfS0kvxOAqOvGudT9KiidfiEwM7fgh2Uu8elDPMNiDfcqHGKMOi1cTtuAnvpsp40Slg2l8q13TiUg1CyvJZIIjtCsBsY0wjXTbYbLmU2zG4YGvOB+ajXHmXsfngDIJ362NM5lQfssvKltDzBnWiUsnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=euaXf8nh; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so2273448a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2025 08:06:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1738771609; x=1739376409; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yuUa4gQEbOKQJW4ZYh4orIOUTVK6GAF0b47tSOHp+ks=;
-        b=euaXf8nhhjEYiOx98Eod1y0FcjzpauQ+1C/8uinx2dYl+2N6+/QqNOfOsSibE8LTnM
-         CJWzkFxRHMmkWf9vglWnwJu7c2NqDgjjeBHB76Sx8OgTuD3GbKQOJ257uzOmJGgYYa8h
-         j/vRcVDXlO7SCO14zky4VX5vBfxYIrgVkfo78=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738771609; x=1739376409;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yuUa4gQEbOKQJW4ZYh4orIOUTVK6GAF0b47tSOHp+ks=;
-        b=bf74FN4yIlu0JBqWv1Q/43eXqn3vJNvXMhZLkK+krlVHsARvGOnN7iobL4xs95lHc6
-         Ghq97S02zPBer22q+/TCt8ACE/owYmMsjor2ERcYb3Sa8mXrGHvvXlXt0xMAK3qLrY5Q
-         sEKfNA3DdATgM/742moxnrcWLO09GF1EM9rDGUTfXwwbkToMXTZvd5r6IvnaoEsjZo/M
-         VWNFaFIVOT30iq+o678JJYWk2KQKNcFnLECqIKRrPNePJIKvDTgLZzfwfUMsqbympbyn
-         aPd+N8jz103R2Ahd4fQoLCJOiFrmeEZhhRzWWYbFSclPpunmg0ETsB5sUiB0ckNx9XWL
-         du/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTvGE/5cdLQoYTmrRblTU4ic32ada2fkobLcZtMDAxyVYKd5oOknsZcSxCH9kY0s5KctgdughqeAfje4o/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0aYzAWUT41J0OKeDQ91OqrhcuSxlELSCxwuOdrigZ7NMFLmJa
-	xUhLGvXdXwRLuVnFSEjcHGf5i+JAC4h+bT5jcfFjAUfvKNjC+v93MEFV9BiAXuE+ZI2cLjYUI8/
-	pJ9Q=
-X-Gm-Gg: ASbGnctZg85TNQJ8N7kcasTVJEoExv0GwK6sDt/C0yw0QpDa0Qp6yq6CCxH0NUibHOj
-	uHTce3BDrmmCdSIlqWMbJ1y5IIrPrAIY4KiDZ+EkzVxEZzMt6JmSxJmkTZX+g0HpEZZdiSTUGk2
-	hn79zOjmk1FcedfhC0BoQOtUNDYvWGuXyZu25I7G2hE28IOo/P8+FNl3Ra2De2mZSEBHPkljwly
-	LPhWjGqsiN7nEVv7ZuNUpCGlnBdsknBbtFcUDFj+cI4CwgdkjgBMA8uqm10MBgQKi47sGzk0d84
-	girzUc+ZlL5Lyh2fAlahdcD92HUasusDl5P4kdhjfB/luRzr5UqUFVq3zKwrUF8zqg==
-X-Google-Smtp-Source: AGHT+IHmBH2QZpaEbfV3fXeoHi1UAa7OM11hVLL9hLZ+brhgRAkG7zZON3Nt9EdsPTSgrU6yQRuM2Q==
-X-Received: by 2002:a05:6402:e83:b0:5dc:db58:a1c6 with SMTP id 4fb4d7f45d1cf-5dcebee8cbfmr52163a12.1.1738771608896;
-        Wed, 05 Feb 2025 08:06:48 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc8838d5a1sm9284022a12.42.2025.02.05.08.06.46
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Feb 2025 08:06:48 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3dce16a3dso1870403a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2025 08:06:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW2E63gIdwJBMzxjwyFQiIXfp0ZnJ7ljVfBFfJOEyGabdr0rsrqxbz+q9vGvZ4CoPycWiazE5rpzVchy3tj@vger.kernel.org
-X-Received: by 2002:a05:6402:27d3:b0:5dc:dd24:a7a8 with SMTP id
- 4fb4d7f45d1cf-5dcebf087f4mr17433a12.7.1738771606125; Wed, 05 Feb 2025
- 08:06:46 -0800 (PST)
+	s=arc-20240116; t=1738771940; c=relaxed/simple;
+	bh=UPvva8UySUv3LbJvI8jOukkXOQRpra4CCHNVWdkZbgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hf/PVYbdoyMjeyhcGRe6D6SnVTKbEfE58ESCp3mwToo/mA/1iCC8x/Ler2I8Gfc+SuzrYpRILG1xxeLlBf1+qsN2RlvnICfSePJfA8clLR0j3RThJWQzYNCl/tBrArhcngA3/RmA5FCdMcIjWhEpLEV7gJd8+32X8/qWwZNMjR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DkBKpdR2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGpKqCS5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DkBKpdR2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGpKqCS5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B637211C4;
+	Wed,  5 Feb 2025 16:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738771936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xa3z4SbY0t10iOkUN4r39gpvPVCZNo5zEIDaAsO3+E=;
+	b=DkBKpdR2RYVfycypNkVqWkSOglhlmHgTIh+yO4pbzQQp4mqX0MFAHtCuOq4l1hMyjlx9/i
+	+QuT0HuPObabJkeSVfi6zkKzvRpyL9Oa6p4wZSb/rgDYbyUWcjAeOE/2MV49LKTNlrBrq1
+	aa0+nOif378ygStV/hatgFwCwfsAUig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738771936;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xa3z4SbY0t10iOkUN4r39gpvPVCZNo5zEIDaAsO3+E=;
+	b=aGpKqCS5ESnOkTkGq5WmLmL/qaUbh8+bVi7sA872UO+x3FHhLjUBVSvplqMaNmxn2CFhNZ
+	DziaJkKuG/+Zx1DA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738771936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xa3z4SbY0t10iOkUN4r39gpvPVCZNo5zEIDaAsO3+E=;
+	b=DkBKpdR2RYVfycypNkVqWkSOglhlmHgTIh+yO4pbzQQp4mqX0MFAHtCuOq4l1hMyjlx9/i
+	+QuT0HuPObabJkeSVfi6zkKzvRpyL9Oa6p4wZSb/rgDYbyUWcjAeOE/2MV49LKTNlrBrq1
+	aa0+nOif378ygStV/hatgFwCwfsAUig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738771936;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xa3z4SbY0t10iOkUN4r39gpvPVCZNo5zEIDaAsO3+E=;
+	b=aGpKqCS5ESnOkTkGq5WmLmL/qaUbh8+bVi7sA872UO+x3FHhLjUBVSvplqMaNmxn2CFhNZ
+	DziaJkKuG/+Zx1DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2EB9313694;
+	Wed,  5 Feb 2025 16:12:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M3VfC+CNo2d1MQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Feb 2025 16:12:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B39C9A28E9; Wed,  5 Feb 2025 17:12:15 +0100 (CET)
+Date: Wed, 5 Feb 2025 17:12:15 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: sanity check the length passed to
+ inode_set_cached_link()
+Message-ID: <zatx4ddmdvymae4454vrpci642gecbq4l6iuv4u64tssixeplc@h6rimv2lhicg>
+References: <20250204213207.337980-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250205153302.GA2216@redhat.com> <20250205153329.GA2255@redhat.com>
-In-Reply-To: <20250205153329.GA2255@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 5 Feb 2025 08:06:29 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiqUibNm0W-KcCb3H+aiSVr4Uz3COZq=LjqGd__6guFEg@mail.gmail.com>
-X-Gm-Features: AWEUYZl4pQ3MfEjALYySg2NdNqfiE2xSNb-ZlC7tv2BTOe4-AKTgE2QsLD76NI0
-Message-ID: <CAHk-=wiqUibNm0W-KcCb3H+aiSVr4Uz3COZq=LjqGd__6guFEg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pipe: introduce struct file_operations pipeanon_fops
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	David Howells <dhowells@redhat.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, Oliver Sang <oliver.sang@intel.com>, 
-	Swapnil Sapkal <swapnil.sapkal@amd.com>, WangYuli <wangyuli@uniontech.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250204213207.337980-1-mjguzik@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, 5 Feb 2025 at 07:34, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> So that fifos and anonymous pipes could have different f_op methods.
-> Preparation to simplify the next patch.
+On Tue 04-02-25 22:32:07, Mateusz Guzik wrote:
+> This costs a strlen() call when instatianating a symlink.
+> 
+> Preferably it would be hidden behind VFS_WARN_ON (or compatible), but
+> there is no such facility at the moment. With the facility in place the
+> call can be patched out in production kernels.
+> 
+> In the meantime, since the cost is being paid unconditionally, use the
+> result to a fixup the bad caller.
+> 
+> This is not expected to persist in the long run (tm).
+> 
+> Sample splat:
+> bad length passed for symlink [/tmp/syz-imagegen43743633/file0/file0] (got 131109, expected 37)
+> [rest of WARN blurp goes here]
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Looks good, except:
+Yeah, it looks a bit pointless to pass the length in only to compare it
+against strlen(). But as a quick fix until we figure out something more
+clever it's fine I guess.
 
-> +++ b/fs/internal.h
->  extern const struct file_operations pipefifo_fops;
-> +extern const struct file_operations pipeanon_fops;
+Feel free to add:
 
-I think this should just be 'static' to inside fs/pipe.c, no?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-The only reason pipefifo_fops is in that header is because it's used
-for named pipes outside the pipe code, in init_special_inode().
+								Honza
 
-So I don't think pipeanon_fops should be exposed anywhere outside fs/pipe.c.
-
-            Linus
+> ---
+> 
+> This has a side effect of working around the panic reported in:
+> https://lore.kernel.org/all/67a1e1f4.050a0220.163cdc.0063.GAE@google.com/
+> 
+> I'm confident this merely exposed a bug in ext4, see:
+> https://lore.kernel.org/all/CAGudoHEv+Diti3r0x9VmF5ixgRVKk4trYnX_skVJNkQoTMaDHg@mail.gmail.com/#t
+> 
+> Nonethelss, should help catch future problems.
+> 
+>  include/linux/fs.h | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index be3ad155ec9f..1437a3323731 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -791,6 +791,19 @@ struct inode {
+>  
+>  static inline void inode_set_cached_link(struct inode *inode, char *link, int linklen)
+>  {
+> +	int testlen;
+> +
+> +	/*
+> +	 * TODO: patch it into a debug-only check if relevant macros show up.
+> +	 * In the meantime, since we are suffering strlen even on production kernels
+> +	 * to find the right length, do a fixup if the wrong value got passed.
+> +	 */
+> +	testlen = strlen(link);
+> +	if (testlen != linklen) {
+> +		WARN_ONCE(1, "bad length passed for symlink [%s] (got %d, expected %d)",
+> +			  link, linklen, testlen);
+> +		linklen = testlen;
+> +	}
+>  	inode->i_link = link;
+>  	inode->i_linklen = linklen;
+>  	inode->i_opflags |= IOP_CACHED_LINK;
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
