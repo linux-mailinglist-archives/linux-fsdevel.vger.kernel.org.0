@@ -1,57 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-40978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADC3A29AF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 21:13:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD7FA29B16
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 21:22:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1EB716981A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:13:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9265E164949
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CF921E08D;
-	Wed,  5 Feb 2025 20:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86681211A0B;
+	Wed,  5 Feb 2025 20:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhUgC0eU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1oaRQbz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8361821CA1C;
-	Wed,  5 Feb 2025 20:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511AF846F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 20:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738786268; cv=none; b=kt+/OYHI5qn6hqPwFOcX3RtwWtgp/FI3zn3Y9puZJ6PtPQT4pAuFx/8gp562u/7k+fjbUfG9EvyU7hcqtlz30ORtBBsp8CeaaN6jCU5HHngY4F67CPr9h5hvkHg+EP3WqeByJDAwydTvuDyNq3cyeBeJqRGawQSdK5KK29gZm0M=
+	t=1738786971; cv=none; b=jS+Z4fn6t3DF4Ln6sVV4gj9hJYAefjMnrchjM9RwJbJJmhbtOQGI4Gu3Ck3mI4IElUbf2yPmZe93aG9nxBOExF5KUA8lIYVliQIvF5nBRSlozaHoNKvWLOSV65p0F1B0KCvZrKFZj4C2ekL6KyibuaYnQ7baRKNDN4jl+tm366w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738786268; c=relaxed/simple;
-	bh=06oElT4HZCrzpcyqk3Vc2Si6LDfhgg6xp2cCEicnK8M=;
+	s=arc-20240116; t=1738786971; c=relaxed/simple;
+	bh=Qp+t79MCWZvkpWI2Sm7YEGgWsCeuddGq6i8DQX4BsQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMhHiAOXmFrLU3McNFC4wYJpbMUJxN88c2YSaRYoY0xgw2ZJBA2pgmXFphF2G5fkraqNdI8zavO4Avnm1ZMrhMRTzv7AHcKpS1SnXC6Hfu/cEvILWo+picZeHQ++jw3b3QiTcwfqjC7h29bKWSdjfLfw0lMJiQ1LXdXZwI9o0Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhUgC0eU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F39C4CEDD;
-	Wed,  5 Feb 2025 20:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738786268;
-	bh=06oElT4HZCrzpcyqk3Vc2Si6LDfhgg6xp2cCEicnK8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZhUgC0eUVyLZrbGBiolCp9SnkGtk5rmvNaMmoAQc+u8bYFcg6GnlldNLpAe8UfL2L
-	 jBNPkauWtRNS/sPJZKsI0ra0JmgmWUsdk2fcLm6/fMQv9IJdnHHpZOUjLSyELf52DM
-	 WISRui6RkzU5WQNjqzbev+b/Wm6ZXg841dqcEgErZqgxEnHj97dUqtfUq0BLPqSOkS
-	 aC306CFBB8MDKdVdThPPJOekEDCg2ZzP8O9gkzswHcyBiFiIDqK+Xz5yj4FihpIVTQ
-	 BQksmrTftE+19R3wf2HhCFdmv8G5Cf6EiC3piC4MWGmE74Xwx+zD5E8GABClUj5Mpk
-	 3oLTqom5uXjOA==
-Date: Wed, 5 Feb 2025 12:11:07 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH RFC 03/10] iomap: Support CoW-based atomic writes
-Message-ID: <20250205201107.GA21808@frogsfrogsfrogs>
-References: <20250204120127.2396727-1-john.g.garry@oracle.com>
- <20250204120127.2396727-4-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiYiPfsuQNDsOCtF7NUlp0ostmOAsdhq0w1p7z6R8lBm5VcL0Tsoy3MaIF78bGVEp7Kt0YTR4HE5837BtwXXxzWc3CUV8tdSNCz9haTq+sPcttPf/MSGSVjA8GeQxCCx6nyivgnhEHr+OJ9KkB15bRemj3FWNZ6D3N8TsUPxg48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1oaRQbz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738786968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0a2ZPC3pMR3QJ0Ff5h2GUZm4IVrRwMvif2xyDuXNK8A=;
+	b=e1oaRQbzW3E6lSgLeTRlDRoV2zzzzdXoxiV+nL2ano5evEXe0MWfgNl0Jw6/JiSYzL8aj/
+	OT0JeM7ZHJsJcwPqyAHzbzGeAFpBM+QKLpuFNRXUzMunwo5ZiCPmtOYBXd6HCxIsXDMbfT
+	MlioQsj3AkltYJhR818Ae0uzciC1d7g=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-t5G572JLM7K9I5f4Ry4AQA-1; Wed,
+ 05 Feb 2025 15:22:45 -0500
+X-MC-Unique: t5G572JLM7K9I5f4Ry4AQA-1
+X-Mimecast-MFC-AGG-ID: t5G572JLM7K9I5f4Ry4AQA
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8AAFD1800879;
+	Wed,  5 Feb 2025 20:22:44 +0000 (UTC)
+Received: from bfoster (unknown [10.22.88.48])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75FEA1800570;
+	Wed,  5 Feb 2025 20:22:43 +0000 (UTC)
+Date: Wed, 5 Feb 2025 15:25:03 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v5 05/10] iomap: lift iter termination logic from
+ iomap_iter_advance()
+Message-ID: <Z6PJHxl5v0lRlano@bfoster>
+References: <20250205135821.178256-1-bfoster@redhat.com>
+ <20250205135821.178256-6-bfoster@redhat.com>
+ <20250205190020.GP21808@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,173 +75,91 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250204120127.2396727-4-john.g.garry@oracle.com>
+In-Reply-To: <20250205190020.GP21808@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Feb 04, 2025 at 12:01:20PM +0000, John Garry wrote:
-> Currently atomic write support requires dedicated HW support. This imposes
-> a restriction on the filesystem that disk blocks need to be aligned and
-> contiguously mapped to FS blocks to issue atomic writes.
+On Wed, Feb 05, 2025 at 11:00:20AM -0800, Darrick J. Wong wrote:
+> On Wed, Feb 05, 2025 at 08:58:16AM -0500, Brian Foster wrote:
+> > The iter termination logic in iomap_iter_advance() is only needed by
+> > iomap_iter() to determine whether to proceed with the next mapping
+> > for an ongoing operation. The old logic sets ret to 1 and then
+> > terminates if the operation is complete (iter->len == 0) or the
+> > previous iteration performed no work and the mapping has not been
+> > marked stale. The stale check exists to allow operations to
+> > retry the current mapping if an inconsistency has been detected.
+> > 
+> > To further genericize iomap_iter_advance(), lift the termination
+> > logic into iomap_iter() and update the former to return success (0)
+> > or an error code. iomap_iter() continues on successful advance and
+> > non-zero iter->len or otherwise terminates in the no progress (and
+> > not stale) or error cases.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  fs/iomap/iter.c | 21 +++++++++++++--------
+> >  1 file changed, 13 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+> > index 1db16be7b9f0..8e0746ad80bd 100644
+> > --- a/fs/iomap/iter.c
+> > +++ b/fs/iomap/iter.c
+...
+> > @@ -91,8 +86,18 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+> >  		return processed;
+> >  	}
+> >  
+> > -	/* advance and clear state from the previous iteration */
+> > +	/*
+> > +	 * Advance the iter and clear state from the previous iteration. Use
+> > +	 * iter->len to determine whether to continue onto the next mapping.
+> > +	 * Explicitly terminate in the case where the current iter has not
+> > +	 * advanced at all (i.e. no work was done for some reason) unless the
+> > +	 * mapping has been marked stale and needs to be reprocessed.
+> > +	 */
+> >  	ret = iomap_iter_advance(iter, processed);
+> > +	if (!ret && iter->len > 0)
+> > +		ret = 1;
+> > +	if (ret > 0 && !iter->processed && !stale)
+> > +		ret = 0;
 > 
-> XFS has no method to guarantee FS block alignment. As such, atomic writes
-> are currently limited to 1x FS block there.
+> I guess I'll wait to see what the rest of the conversion series looks
+> like...
 > 
-> To allow deal with the scenario that we are issuing an atomic write over
-> misaligned or discontiguous data blocks larger atomic writes - and raise
-> the atomic write limit - support a CoW-based software emulated atomic
-> write mode.
-> 
-> For this special mode, the FS will reserve blocks for that data to be
-> written and then atomically map that data in once the data has been
-> commited to disk.
-> 
-> It is the responsibility of the FS to detect discontiguous atomic writes
-> and switch to IOMAP_DIO_ATOMIC_COW mode and retry the write.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/iomap/direct-io.c  | 23 ++++++++++++++++-------
->  include/linux/iomap.h |  9 +++++++++
->  2 files changed, 25 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 3dd883dd77d2..e63b5096bcd8 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
->   * clearing the WRITE_THROUGH flag in the dio request.
->   */
->  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> -		const struct iomap *iomap, bool use_fua, bool atomic)
-> +		const struct iomap *iomap, bool use_fua, bool atomic_bio)
->  {
->  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
->  
-> @@ -283,7 +283,7 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
->  		opflags |= REQ_FUA;
->  	else
->  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
-> -	if (atomic)
-> +	if (atomic_bio)
->  		opflags |= REQ_ATOMIC;
->  
->  	return opflags;
-> @@ -301,13 +301,19 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	blk_opf_t bio_opf;
->  	struct bio *bio;
->  	bool need_zeroout = false;
-> +	bool atomic_bio = false;
->  	bool use_fua = false;
->  	int nr_pages, ret = 0;
->  	size_t copied = 0;
->  	size_t orig_count;
->  
-> -	if (atomic && length != iter->len)
-> -		return -EINVAL;
-> +	if (atomic) {
-> +		if (!(iomap->flags & IOMAP_F_ATOMIC_COW)) {
-> +			if (length != iter->len)
-> +				return -EINVAL;
-> +			atomic_bio = true;
-> +		}
-> +	}
->  
->  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
->  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> @@ -318,7 +324,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  		need_zeroout = true;
->  	}
->  
-> -	if (iomap->flags & IOMAP_F_SHARED)
-> +	if (iomap->flags & (IOMAP_F_SHARED | IOMAP_F_ATOMIC_COW))
->  		dio->flags |= IOMAP_DIO_COW;
->  
->  	if (iomap->flags & IOMAP_F_NEW) {
-> @@ -383,7 +389,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  			goto out;
->  	}
->  
-> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
-> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_bio);
->  
->  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
->  	do {
-> @@ -416,7 +422,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  		}
->  
->  		n = bio->bi_iter.bi_size;
-> -		if (WARN_ON_ONCE(atomic && n != length)) {
-> +		if (WARN_ON_ONCE(atomic_bio && n != length)) {
->  			/*
->  			 * This bio should have covered the complete length,
->  			 * which it doesn't, so error. We may need to zero out
-> @@ -639,6 +645,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		if (iocb->ki_flags & IOCB_DIO_CALLER_COMP)
->  			dio->flags |= IOMAP_DIO_CALLER_COMP;
->  
-> +		if (dio_flags & IOMAP_DIO_ATOMIC_COW)
-> +			iomi.flags |= IOMAP_ATOMIC_COW;
-> +
->  		if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
->  			ret = -EAGAIN;
->  			if (iomi.pos >= dio->i_size ||
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 75bf54e76f3b..0a0b6798f517 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -56,6 +56,8 @@ struct vm_fault;
->   *
->   * IOMAP_F_BOUNDARY indicates that I/O and I/O completions for this iomap must
->   * never be merged with the mapping before it.
-> + *
-> + * IOMAP_F_ATOMIC_COW indicates that we require atomic CoW end IO handling.
 
-It more indicates that the filesystem is using copy on write to handle
-an untorn write, and will provide the ioend support necessary to commit
-the remapping atomically, right?
+It's not fully tested yet, but FWIW here's what I currently have in
+iomap_iter() after the remaining conversions:
 
->   */
->  #define IOMAP_F_NEW		(1U << 0)
->  #define IOMAP_F_DIRTY		(1U << 1)
-> @@ -68,6 +70,7 @@ struct vm_fault;
->  #endif /* CONFIG_BUFFER_HEAD */
->  #define IOMAP_F_XATTR		(1U << 5)
->  #define IOMAP_F_BOUNDARY	(1U << 6)
-> +#define IOMAP_F_ATOMIC_COW	(1U << 7)
->  
->  /*
->   * Flags set by the core iomap code during operations:
-> @@ -183,6 +186,7 @@ struct iomap_folio_ops {
->  #define IOMAP_DAX		0
->  #endif /* CONFIG_FS_DAX */
->  #define IOMAP_ATOMIC		(1 << 9)
-> +#define IOMAP_ATOMIC_COW	(1 << 10)
+	...
+        ret = (iter->len > 0) ? 1 : 0;
+        if (iter->processed < 0)
+                ret = iter->processed;
+        else if (!advanced && !stale)
+                ret = 0;
+        iomap_iter_reset_iomap(iter);
+        if (ret <= 0)
+                return ret;
+	...
 
-What does IOMAP_ATOMIC_COW do?  There's no description for it (or for
-IOMAP_ATOMIC).  Can you have IOMAP_ATOMIC and IOMAP_ATOMIC_COW both set?
-Or are they mutually exclusive?
+Note that iter.processed should only be success (0) or error here and
+hence I was planning to subsequently rename it to iter.status.
 
-I'm guessing from the code that ATOMIC_COW requires ATOMIC to be set,
-but I wonder why because there's no documentation update in the header
-files or in Documentation/filesystems/iomap/.
-
---D
-
->  struct iomap_ops {
->  	/*
-> @@ -434,6 +438,11 @@ struct iomap_dio_ops {
->   */
->  #define IOMAP_DIO_PARTIAL		(1 << 2)
->  
-> +/*
-> + * Use CoW-based software emulated atomic write.
-> + */
-> +#define IOMAP_DIO_ATOMIC_COW		(1 << 3)
-> +
->  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
->  		unsigned int dio_flags, void *private, size_t done_before);
-> -- 
-> 2.31.1
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > 
+
+Thanks.
+
+Brian
+
+> --D
 > 
+> >  	iomap_iter_reset_iomap(iter);
+> >  	if (ret <= 0)
+> >  		return ret;
+> > -- 
+> > 2.48.1
+> > 
+> > 
+> 
+
 
