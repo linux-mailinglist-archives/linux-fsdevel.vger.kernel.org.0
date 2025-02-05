@@ -1,72 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-40911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947F3A28A6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 13:39:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F57A28B28
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 14:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73FA3A4122
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 12:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFBE18829CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 13:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192F722D4C3;
-	Wed,  5 Feb 2025 12:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ECF86337;
+	Wed,  5 Feb 2025 13:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FirndxN8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8xyOu9s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F73C151987;
-	Wed,  5 Feb 2025 12:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31F515E97
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2025 13:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738759162; cv=none; b=Rn0QqgSjcBuv4uiWjEGRXBPHzGjd2AvddbpvWAgSQ5+kNDyCyHWVKaMV5d2PQZgOFmNwC68iwXKyNhJvKjcDrQSIYDhDem46U4VwuUf3iqvep7PspHTNH/sMi8F+icKhC3i/6BnKpxOVirheDwt/DJoczGhMYUkvZbeN86PJx/k=
+	t=1738760614; cv=none; b=IA8A2MQYj8HSh02TQ2QQY4XePOzHGERO0CbX/8wSUszAbCoceEbTvtWFZlYrJQboU/gDt/brLN6mVuhCl7SCAK4XIaWz1cChBPdHOwJ3mJK0UOH5ORURj/ybPFGssC6EPQNlwavuoeU4qvKAEGtfUoJRaHg5aurQTmwJQd9pnEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738759162; c=relaxed/simple;
-	bh=gjnkul5ze2O0TEqEsn7OrVw4FMjwajJjo6S7dUZaW4o=;
+	s=arc-20240116; t=1738760614; c=relaxed/simple;
+	bh=BOSJf1U+Nbg5gigVlZ2hnJt3nIMlCZrCwGGWsGl4xAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3fW8TFv3BV+7rSqZowxaFELEDHoio5gpWYb7aq13sFMkKiH0HMWq4+MF4l7cACfXcFGfty0dYlzsqjxF3BxMWnZg3NqgYCN5IFWGRUwTr5MnqeR0CfmGq/7nbfeq4mDJyesS3VqXLNFzAE+HzQHOXRI6p1gkD1iMSdHBDk5Xkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FirndxN8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44319C4CED1;
-	Wed,  5 Feb 2025 12:39:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738759161;
-	bh=gjnkul5ze2O0TEqEsn7OrVw4FMjwajJjo6S7dUZaW4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FirndxN80c8BwhrQKHqUA3H3IyK6Z35QESZV0Q/tHAAfdtmgm96CtwtBwTpXyqLOq
-	 jXvQdKIydOOavEq6cyQBtqcRsZUt2WpPgU1W1k5TE1oGi9lz0ip7i60lA86Lo90/JL
-	 Hw77WHEsSxMVS/PKd0SV1ruEi+NsVMZBZUqXCYuQyq+ntHobO8bzuspDxpsocD2vxu
-	 R2xBOJXR7zex9YourhtUnlriMOg90vsjLVQtojJop1XXxs7dNvmKx/VSKrVgkx+aYq
-	 SJfUou2wMAcowi7UPUTr+odb0fM9fyNIET6DHzD3wl2cAYBuBp3ytpoaAkwtKQUA/8
-	 ORK2DMl1+xAGg==
-Date: Wed, 5 Feb 2025 13:39:16 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v5 -next 00/16] sysctl: move sysctls from vm_table into
- its own files
-Message-ID: <lmfy2wd6ke6pa7pfxwohmb4r5krvwcau4ybu6snkunpgod452b@24edzgbtf4ru>
-References: <20250111070751.2588654-1-yukaixiong@huawei.com>
- <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sirhOzJWrAfDsYvEleARO7sw4PjhQgBudj5Io+XVdYfLGtT/+R8UyCQND4V8o+w5tGCgunxcJ6wcedEJiXNwXchfhTZWfR4mkUcQ712MRK3vpi12HvTjCimc6UXm6QpPMepdJ7m9DhQWKkVWMnaDz6unIPNL+ZM3+vOi2TNpG2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8xyOu9s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738760610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l83Dw368hueJll8PyntCW0Nb5bpCWlX4zt8mq3uaKys=;
+	b=e8xyOu9suDOEhyW1mYGaLKcIJGBjrcqeVXECLhKDkkSK9/9WxBUmeLY8jPukXrRwHvqZUT
+	idD6vGpmfT7frs/Ir/O6HV0g1JSs8RfHN2RzPcQh65CJKBZVfWgY7/6USJxKzvuQ9EeeMS
+	5Z34rgC89sFvm/ChZyDIFZ44EbS9338=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-1l4K9GaVMGO1d3Se1A4h_Q-1; Wed,
+ 05 Feb 2025 08:03:26 -0500
+X-MC-Unique: 1l4K9GaVMGO1d3Se1A4h_Q-1
+X-Mimecast-MFC-AGG-ID: 1l4K9GaVMGO1d3Se1A4h_Q
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5FC961801A0D;
+	Wed,  5 Feb 2025 13:03:19 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.80.186])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 72B8C3000197;
+	Wed,  5 Feb 2025 13:03:15 +0000 (UTC)
+Received: by fedora.redhat.com (Postfix, from userid 1000)
+	id A724B6AA37D; Wed,  5 Feb 2025 08:03:13 -0500 (EST)
+Date: Wed, 5 Feb 2025 08:03:13 -0500
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
+	alison.schofield@intel.com, lina@asahilina.net,
+	zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+	npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	david@fromorbit.com, chenhuacai@kernel.org, kernel@xen0n.name,
+	loongarch@lists.linux.dev, Hanna Czenczek <hreitz@redhat.com>,
+	German Maglione <gmaglione@redhat.com>
+Subject: Re: [PATCH v6 01/26] fuse: Fix dax truncate/punch_hole fault path
+Message-ID: <Z6NhkR8ZEso4F-Wx@redhat.com>
+References: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
+ <bfae590045c7fc37b7ccef10b9cec318012979fd.1736488799.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,66 +90,104 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
+In-Reply-To: <bfae590045c7fc37b7ccef10b9cec318012979fd.1736488799.git-series.apopple@nvidia.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Jan 14, 2025 at 02:50:12PM +0100, Joel Granados wrote:
-> On Sat, Jan 11, 2025 at 03:07:35PM +0800, Kaixiong Yu wrote:
-> > This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> > places where they actually belong, and do some related code clean-ups.
-> > After this patch series, all sysctls in vm_table have been moved into its
-> > own files, meanwhile, delete vm_table.
-> > 
-> > All the modifications of this patch series base on
-> > linux-next(tags/next-20250110). To test this patch series, the code was
-> > compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> > x86_64 architectures. After this patch series is applied, all files
-> > under /proc/sys/vm can be read or written normally.
+On Fri, Jan 10, 2025 at 05:00:29PM +1100, Alistair Popple wrote:
+> FS DAX requires file systems to call into the DAX layout prior to unlinking
+> inodes to ensure there is no ongoing DMA or other remote access to the
+> direct mapped page. The fuse file system implements
+> fuse_dax_break_layouts() to do this which includes a comment indicating
+> that passing dmap_end == 0 leads to unmapping of the whole file.
 > 
-> It is looking good! Here is how I think we should move it upstream:
-> 
-> 1. These should queued in for 6.15 instead of the next merge window.
->    It is too late in the current cycle and if we put it in now, it will
->    not properly tested in linux-next.
-> 
-> 2. I am putting this in sysctl-testing with the expectation of pushing this
->    up for the 6.15 merge window. Please tell me if you want this to go
->    through some other tree.
-I have rebased on top of 6.14-rc1 and sent it out for sysctl-testing
-once more. I'll add it to sysctl-next by the end of the week (unless we
-see something pop-up in the testing).
+> However this is not true - passing dmap_end == 0 will not unmap anything
+> before dmap_start, and further more dax_layout_busy_page_range() will not
+> scan any of the range to see if there maybe ongoing DMA access to the
+> range. Fix this by passing -1 for dmap_end to fuse_dax_break_layouts()
+> which will invalidate the entire file range to
+> dax_layout_busy_page_range().
 
-Best
+Hi Alistair,
+
+Thanks for fixing DAX related issues for virtiofs. I am wondering how are
+you testing DAX with virtiofs. AFAIK, we don't have DAX support in Rust
+virtiofsd. C version of virtiofsd used to have out of the tree patches
+for DAX. But C version got deprecated long time ago.
+
+Do you have another implementation of virtiofsd somewhere else which
+supports DAX and allows for testing DAX related changes?
+
+Thanks
+Vivek
 
 > 
-> Thx for the contribution
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Fixes: 6ae330cad6ef ("virtiofs: serialize truncate/punch_hole and dax fault path")
+> Cc: Vivek Goyal <vgoyal@redhat.com>
 > 
-> Best
-> > 
-> > my test steps as below listed:
-> > 
-> > Step 1: Set CONFIG_SYSCTL to 'n' and compile the Linux kernel on the
-> > arm64 architecture. The kernel compiles successfully without any errors
-> > or warnings.
-> > 
-> ...
-> >  mm/swap.c                          |  16 ++-
-> >  mm/swap.h                          |   1 +
-> >  mm/util.c                          |  67 +++++++--
-> >  mm/vmscan.c                        |  23 +++
-> >  mm/vmstat.c                        |  44 +++++-
-> >  net/sunrpc/auth.c                  |   2 +-
-> >  security/min_addr.c                |  11 ++
-> >  23 files changed, 336 insertions(+), 312 deletions(-)
-> > 
-> > -- 
-> > 2.34.1
-> > 
+> ---
 > 
+> Changes for v6:
+> 
+>  - Original patch had a misplaced hunk due to a bad rebase.
+>  - Reworked fix based on Dan's comments.
+> ---
+>  fs/fuse/dax.c  | 1 -
+>  fs/fuse/dir.c  | 2 +-
+>  fs/fuse/file.c | 4 ++--
+>  3 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+> index 9abbc2f..455c4a1 100644
+> --- a/fs/fuse/dax.c
+> +++ b/fs/fuse/dax.c
+> @@ -681,7 +681,6 @@ static int __fuse_dax_break_layouts(struct inode *inode, bool *retry,
+>  			0, 0, fuse_wait_dax_page(inode));
+>  }
+>  
+> -/* dmap_end == 0 leads to unmapping of whole file */
+>  int fuse_dax_break_layouts(struct inode *inode, u64 dmap_start,
+>  				  u64 dmap_end)
+>  {
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 0b2f856..bc6c893 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -1936,7 +1936,7 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	if (FUSE_IS_DAX(inode) && is_truncate) {
+>  		filemap_invalidate_lock(mapping);
+>  		fault_blocked = true;
+> -		err = fuse_dax_break_layouts(inode, 0, 0);
+> +		err = fuse_dax_break_layouts(inode, 0, -1);
+>  		if (err) {
+>  			filemap_invalidate_unlock(mapping);
+>  			return err;
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 082ee37..cef7a8f 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -253,7 +253,7 @@ static int fuse_open(struct inode *inode, struct file *file)
+>  
+>  	if (dax_truncate) {
+>  		filemap_invalidate_lock(inode->i_mapping);
+> -		err = fuse_dax_break_layouts(inode, 0, 0);
+> +		err = fuse_dax_break_layouts(inode, 0, -1);
+>  		if (err)
+>  			goto out_inode_unlock;
+>  	}
+> @@ -2890,7 +2890,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+>  	inode_lock(inode);
+>  	if (block_faults) {
+>  		filemap_invalidate_lock(inode->i_mapping);
+> -		err = fuse_dax_break_layouts(inode, 0, 0);
+> +		err = fuse_dax_break_layouts(inode, 0, -1);
+>  		if (err)
+>  			goto out;
+>  	}
 > -- 
+> git-series 0.9.1
 > 
-> Joel Granados
 
--- 
-
-Joel Granados
 
