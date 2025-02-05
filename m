@@ -1,130 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-40958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7E0A29939
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:40:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39E6A29969
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E367167E23
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 18:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71D54169553
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 18:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F50D1FF7D1;
-	Wed,  5 Feb 2025 18:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E051FECB8;
+	Wed,  5 Feb 2025 18:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSCpjYdb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbN5Su7v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D161FF1DC;
-	Wed,  5 Feb 2025 18:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8A31FC7E7;
+	Wed,  5 Feb 2025 18:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738780777; cv=none; b=V9xh6sJlMHoCJL8ugpg5UJM3OdpZLhHMXcozdkj5pDWjnWZ+xxiltxa+s1z6Y1UJu/EiD9BQb0swlC0BBY9A4LH7ppoJMVXSZX5atF7LcZ2B/YQTsm2rGO4udZjraL9LhvRaewlf6u31HtMxWv9y8ujvWRKYqYPnTBhisVzI3kw=
+	t=1738781377; cv=none; b=ARkIb2Ou4TFzBRc59Ut5Jig+kVFomL0ZNptETXpP7Ebr/rmQv+3l2/Y/U4uIX/pF29c2h07gE57qCpagRWvAnBqT4ECniALoB0FIQ9HKmuIerSarOE5QrxPrt6SyD7xz0lyGC4zvmpQoKtlH81ehy2XUFUb4QPEYAqcZnd5jIVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738780777; c=relaxed/simple;
-	bh=61udqkcEg9wcSq/halgc8JMmMFwwfrBUY4mtNHZNt8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BfEpjyrqLUunJCPmqsNHoAexrBWFV3oc9u6oMN8nyEXIi0tAzjlVjRe51V8JIG6XKW8buoo3z7+7IzKLB4d3tHC508MkMmdVvDpEwjqrNcZ5QAodPNkG0Zral/V4JW2tXwHm1TNm26fTb2zycYKbYdVGpXgPV+c1iawvt8Z65wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSCpjYdb; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab70043cd05so30517066b.0;
-        Wed, 05 Feb 2025 10:39:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738780774; x=1739385574; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8Wgr0+Th/eZItEiexHX2VH44yFxgC7CrIHewPAPMnk=;
-        b=aSCpjYdbtM8LqP5L/JdgqIWlEKOvlcFZC7EgrLpkCUCRWiQig2BaBadOWiw31GfcsJ
-         shnJCetRpDGcPGYBWTyzDjYUSUxoRefqG4iUqnZu448qy0WjhMUjArK2F7TSNT1nCXkh
-         /Lu8OVrEK7V0As8ouya0Gbe1yiZe9sdrDAfn5b39/b4j+QmkgSlrOJ4u4oKvqJUjcOR+
-         pmNu7lz8WYOCzGYgLjpAXszlE7E/Gh1CdxibnvMNdqW2mpnhz+K09Mo8ULSztutAfBC4
-         qD8WF6F0vZhBctdc4BT0ZgSjixDDB4NqdrmvcTmM+fYKIEdRMm2GCPeZf1OBxGMjdigK
-         APfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738780774; x=1739385574;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+8Wgr0+Th/eZItEiexHX2VH44yFxgC7CrIHewPAPMnk=;
-        b=IXmEwJ8uaPX+tu+Cg+Sq6iOmqNp1YDnbASeN3WAML+dczEqcqjWZZRpI9mYMd4LvoK
-         s4hAeg51OgGK6Cd62RaqWGMjL6pyBGK4RrULWYlZNEzePuXdWtMnFPBFMXsQWeevpIU1
-         BWYRZdukAgcleQzkT1pojtOmxoG1Tnbva0+V2fx+evcskCMZhjXpKOU1BUQoSmmZgYlW
-         bJ4sjOj4kMCH6LzLo/MB11Iowj5QLCsuNlnXxVZDwVeQKr7PMz5Y4lMzL5cI3nqj5HRi
-         fV/wgYDoY5MoXPLZ+1tw8FHU43q7KgswEPcOw1QptgzeGGSnNb/0RX7UR4oBRu77HP+G
-         4Vcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcAQVgq01Aq9PJChE0zoKD6M6hLi9a/VokL4F70UdAtn2cwf6X9EnTUV2SFa+EZHBtNKF8BkuAiOsTXwdP@vger.kernel.org, AJvYcCWOZBEFK4iHxEqvl2inPcvtTvJ9LZdOnMlxax1PxGvQSA1B3OUQDc8QsslqDG6PVYLKSu6fBLbu+SA96KjY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW3Yo7DTQiE/nz2wcKq+ZMRinhfshZTkATkaorBE9vUPYm+w4E
-	tYL/EGYuAMNwFjTvU9dE9hyQ6XPPQFkj4arHD/6URYiXq4OsU6hg
-X-Gm-Gg: ASbGnctyYEKx/z2iSuHr7iUc6f2Lg+fEetvmibDvVPLZ2dtoZWHHvqfENEn+pA/DKmJ
-	qh3pVJkFs3+BKpUstdMLb1fXJkckSt3rX3DJtAA+Xn5e6rMDaHpayQNAt4a9oi7eXsbsSTx1gUJ
-	ln5RXVqUaBXcED2myGO/Mj5rFFSNFIdwvMWkbHeEAXTdvrbgouF4WKP9WiQCB/0mQoxMHwTj3RM
-	zdzzy2ShZDavdIhpfD2k52PbRW44DtadrZvSP7o0gX6+svzI2X02F3QcTCo3L/wuJUtFF1rTEuC
-	vAYGV3DqBlQ5MC2Dpu+XDAMCHPMOXg4=
-X-Google-Smtp-Source: AGHT+IE/ISlKiMGHnxVuW7IPBeeTUQHXZ8skwvGo50qqTintpOxx73+NGmUI9PGeCWkvW0zyYNFfaQ==
-X-Received: by 2002:a17:906:f5a1:b0:ab2:f5e9:9a39 with SMTP id a640c23a62f3a-ab75e2820ffmr466077866b.23.1738780773822;
-        Wed, 05 Feb 2025 10:39:33 -0800 (PST)
-Received: from f.. (cst-prg-95-94.cust.vodafone.cz. [46.135.95.94])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47d0fa3sm1134082266b.47.2025.02.05.10.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 10:39:33 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 3/3] vfs: use the new debug macros in inode_set_cached_link()
-Date: Wed,  5 Feb 2025 19:38:39 +0100
-Message-ID: <20250205183839.395081-4-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250205183839.395081-1-mjguzik@gmail.com>
-References: <20250205183839.395081-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1738781377; c=relaxed/simple;
+	bh=cdZeGk4+G7SauNEPMezV/u40YR7lktPg457PxB+uXDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcEno3NtoWedS7qwXkXhyh7NbI0DW8XRLNPrJQrpIS3eohVjXgzGo41zRD0F7fHbdOkvwzB2Kuab9rKmXYKBMiPJO2QVsZdZI6Q6i4RungCBwVYvOTBh/sHLlQ7GiG3bvfbIJ5J9YGziGTNqsN5JDaMwdU3nyr0KMYM0njLpOmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbN5Su7v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31F2C4CED1;
+	Wed,  5 Feb 2025 18:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738781377;
+	bh=cdZeGk4+G7SauNEPMezV/u40YR7lktPg457PxB+uXDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dbN5Su7vE6i4LxvcNxVQpAr+c+9tlbvuzcIRo+ghAnMHGGxNNZ/AC8jFnXmFPi2Ad
+	 rGMefHhzJbziqWuJza748++KnYYP2KILRNiy+QnQpT1yUgUUB01D37jV81wBrkcDwY
+	 rjzHtSgsuZ91abdXn0rW4VqowuWXrUzWNRH6a2B5uI4apbTD8kQwRQPnrDU1lFiAxa
+	 5xwKRZ3VuQAWyjUnSa+2mawyLleszjEgjHu/OguiAG8K20mMiWWfA3Rux/UAqpN2ft
+	 Im1mq4wSFOXEbGwWEaKs3F0Hagq/MzMjTvr2+QTHM8uPzuxzUc/Gc2SqYsglhHTP8m
+	 Z1HjAbE/lk7mQ==
+Date: Wed, 5 Feb 2025 10:49:36 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v5 01/10] iomap: factor out iomap length helper
+Message-ID: <20250205184936.GL21808@frogsfrogsfrogs>
+References: <20250205135821.178256-1-bfoster@redhat.com>
+ <20250205135821.178256-2-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205135821.178256-2-bfoster@redhat.com>
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/fs.h | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+On Wed, Feb 05, 2025 at 08:58:12AM -0500, Brian Foster wrote:
+> In preparation to support more granular iomap iter advancing, factor
+> the pos/len values as parameters to length calculation.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 034745af9702..e71d58c7f59c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -792,19 +792,8 @@ struct inode {
- 
- static inline void inode_set_cached_link(struct inode *inode, char *link, int linklen)
- {
--	int testlen;
--
--	/*
--	 * TODO: patch it into a debug-only check if relevant macros show up.
--	 * In the meantime, since we are suffering strlen even on production kernels
--	 * to find the right length, do a fixup if the wrong value got passed.
--	 */
--	testlen = strlen(link);
--	if (testlen != linklen) {
--		WARN_ONCE(1, "bad length passed for symlink [%s] (got %d, expected %d)",
--			  link, linklen, testlen);
--		linklen = testlen;
--	}
-+	VFS_WARN_ON_INODE(strlen(link) != linklen, inode);
-+	VFS_WARN_ON_INODE(inode->i_opflags & IOP_CACHED_LINK, inode);
- 	inode->i_link = link;
- 	inode->i_linklen = linklen;
- 	inode->i_opflags |= IOP_CACHED_LINK;
--- 
-2.43.0
+Looks ok,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
+--D
+
+> ---
+>  include/linux/iomap.h | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 75bf54e76f3b..f5ca71ac2fa2 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -231,18 +231,33 @@ struct iomap_iter {
+>  int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
+>  
+>  /**
+> - * iomap_length - length of the current iomap iteration
+> + * iomap_length_trim - trimmed length of the current iomap iteration
+>   * @iter: iteration structure
+> + * @pos: File position to trim from.
+> + * @len: Length of the mapping to trim to.
+>   *
+> - * Returns the length that the operation applies to for the current iteration.
+> + * Returns a trimmed length that the operation applies to for the current
+> + * iteration.
+>   */
+> -static inline u64 iomap_length(const struct iomap_iter *iter)
+> +static inline u64 iomap_length_trim(const struct iomap_iter *iter, loff_t pos,
+> +		u64 len)
+>  {
+>  	u64 end = iter->iomap.offset + iter->iomap.length;
+>  
+>  	if (iter->srcmap.type != IOMAP_HOLE)
+>  		end = min(end, iter->srcmap.offset + iter->srcmap.length);
+> -	return min(iter->len, end - iter->pos);
+> +	return min(len, end - pos);
+> +}
+> +
+> +/**
+> + * iomap_length - length of the current iomap iteration
+> + * @iter: iteration structure
+> + *
+> + * Returns the length that the operation applies to for the current iteration.
+> + */
+> +static inline u64 iomap_length(const struct iomap_iter *iter)
+> +{
+> +	return iomap_length_trim(iter, iter->pos, iter->len);
+>  }
+>  
+>  /**
+> -- 
+> 2.48.1
+> 
+> 
 
