@@ -1,111 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-40966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-40967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE5BA299B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:05:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA57A299CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 20:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DED18893C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44888161D36
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2025 19:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1C61FF5FF;
-	Wed,  5 Feb 2025 19:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5711FF1DE;
+	Wed,  5 Feb 2025 19:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9rq1awu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4HyoKcF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E565944F;
-	Wed,  5 Feb 2025 19:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1133B19884C;
+	Wed,  5 Feb 2025 19:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738782335; cv=none; b=H/jL4g8sMHQGDN+7Vuu5hptCNhtQ78u80XhECJVbFfbC3um3zeXtlDPg3ckxIaXF4bwPa/fA3tSUqAuoZdv6RAH0VSyfKvx3DSdYBSme5mHX4g8tOHbCv7BJGy5xybueFOSjujBsJJiMKAFbRcs37n1M8igVA1oJ2+GidRAsdnU=
+	t=1738782619; cv=none; b=X7UII/44MS5JPfVPyWNaDR6mbC1gv7xcxmlF138LY3+qQ6MwZEYQlTAKYfpfyBsDK+MrSvqpkuYl+63Ob4nQMZBM1/H+eYfXe4CTnjUPKNy+Ii8H5qsLgMOEF5MNmNhGp9Wn+QMBhIx/K3fRn3eahRSlV1cRNaqq5P8uWV07csc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738782335; c=relaxed/simple;
-	bh=t7CLcELsQh973O7p17cqjk2r4r5zWT8nJXohkTPsaZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J71RZY41hQWzMH9kXEZb6mpjgIFtLckVqsGOv1ExbnaBYx4VWy/K+C4pyHMEkQ9gkm3sQtvJsnXxv+uNxL+KaIxPKbuKdcdMvYzcDU4iw3x0fq2esPeNSbe/D3ZNFkyI53SB21UQBD3AL4dETKvFfjLweYVbxW67lNUnK4qVvBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9rq1awu; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so338381a12.1;
-        Wed, 05 Feb 2025 11:05:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738782332; x=1739387132; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7CLcELsQh973O7p17cqjk2r4r5zWT8nJXohkTPsaZA=;
-        b=E9rq1awukbOiLLJ1hdAPSsU8TVQpYAl2jRwEdqCG1mOKyDFcohUj/JOhNnsYBSqbYK
-         RO1/vUQP58VyR+JK2hGsiE2d8BasHxEgL1TPsMikqHiXPaJ/LAhBxZE1Vra7whk1JIpk
-         3K4JVbKxJe0CjkY1lL7FamNeRiWPSPL4NY6agLAP/xHDt1bDD9HINZsreW+x8tqeqlC6
-         Vo2+/PHdETFxHQCODMNgDpBFuSu60nluHxCxKveAVVlgFCp1TUyF/mMPSC3NZFD1awOv
-         xpD2LOJmyfKx1ZQNKAlmlC15n/a8upE3+eIgnQuDR0MqH29t3YVcG1vW5jNTBmAny7g3
-         eOsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738782332; x=1739387132;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t7CLcELsQh973O7p17cqjk2r4r5zWT8nJXohkTPsaZA=;
-        b=eb3xi3YhXtRvg3jWVPexBc2O4Dl9Lj1N5QPRh/97W2TFfJAhAZk2p4Q/tSlg1lK4g1
-         rtKZWHbph/K9SsaXqty5oJhNfmfy2Rtz1FkATtLAN53X6yIl7QGKyOlUDfUzhJGpJpRu
-         H5LPa6KSqm+RBmAprbpSAN6VNIzv9rgc1oBuUvoaAVHTyXlHSUxvOYb70cXoVDtM7eB5
-         5nQx9c0cjWwT+eUh/rgfW9NgjkVyvjYdTba5q2m0RzY8ooFKRixgh8c5ksOfeiddo0tY
-         FmlejFrE26gCKPRwlYEbxKbU6HwhajbzruBNkT9ZN/bn9qQ93VaDcijKNHFmf1QAoU1j
-         vC4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUu4PBvaYMAlJVd1WkqHEYWMjD4/i4MyZcJUkb7cBontTPvTM9x7VSoqfwmhBjtMsDhvP+toyLZlDst@vger.kernel.org, AJvYcCXtsl8CuR0xqoEDivD0DWO2HTZXH5b8XIcOoDiDqw/+TCg+/mqvmaxGrEJRFtxXCHoazF8rRPrp3rCuvWKQ2A==@vger.kernel.org, AJvYcCXucnZkDT5qAF0h1BfIQMgoWD791MnWXHAsI0p7DUx8j13gMwDCNYzYVeMY6M+mk4ddvOAXrkFYE/mMe0aY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDorLfaJtQMOskquIlXDOpzhCdxP5hFWRfZWAFPMKZZFQnns48
-	eJI7L3ME8O2QT3M9l7eGNpU3OCswzwD/xz7FH8CXKDeG4HiUqs3eV/iV6KCtYW7toDjayoldmFG
-	lT5/0Iof2/r6KLpnTXywKM5kvKZCPEockf/4=
-X-Gm-Gg: ASbGnctSgLTpRfNjE9/KzFYhSKt6X7ef2pvIr7iglyAlivW0SGwnlboIYiV7/CwNoPm
-	xa0P0T0c/xnFofD/Dm2dbae6jcqeNTfIs0B8h55qCIF0ZEhhSeNbbuTgKtUKMUHuimnRGEqg=
-X-Google-Smtp-Source: AGHT+IG3mFXOSETMuRLYoBorSgJDSpYyNUtn5qdCuV7P8c/VZ9qYcepSmEhPEERHaWTVcONUV1ur0S+LuU0YsZiDq0E=
-X-Received: by 2002:a05:6402:321e:b0:5dc:88dd:38aa with SMTP id
- 4fb4d7f45d1cf-5dcdb7329d1mr3930229a12.8.1738782332358; Wed, 05 Feb 2025
- 11:05:32 -0800 (PST)
+	s=arc-20240116; t=1738782619; c=relaxed/simple;
+	bh=Q5NpPJTWiZxxRDtrcQlp6qi1NFM2KizHLpBPnRARTAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FbvkPN7wvgajYkQqw1hA5iRgQdE5b89xRCgedLeaGYQttcOH7lIJQamcU9D3HaYkZiZ3mWtiaSP7SF+fRIpctC5NuTrMqkxIGAlS3Rm/LhyhWX3e0+viHSbyb9OdH3dPmimM6t4fU/8xM6zKY9BriQz7AWRQ+dBW8INT6RrJzmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4HyoKcF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD3AC4CED1;
+	Wed,  5 Feb 2025 19:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738782617;
+	bh=Q5NpPJTWiZxxRDtrcQlp6qi1NFM2KizHLpBPnRARTAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V4HyoKcFXPDvF9kxw1cidDOlHooXOs6Wj9auCa104IKVJO/SxUO5prxLkP3cgdyYc
+	 hgSS2Jhm/XjEM3eDIINSoOhM+Exb4h+juMltmSynIrxJTvjab3xZwt9WvXryLBqL9/
+	 LxdT3nWqeFfkjI4SdwxglsUdOqGgylpIL/+oZK4zbOVceesX4MM3h61/T68Uuh2o6w
+	 Zs5++f6udoNd6pvrUNH2izuHCbE1lRftn7oZ9Ou9DFd+bYoAh20U5sUlk5pgiC4z0a
+	 mSHrEnXQ75/GwaYkrWvnE0l0k8SlVlD21VL00AuYxDl6tBAqTF6iKpZiHkT8WD7W3l
+	 Sk9VNkhPYzE/g==
+Date: Wed, 5 Feb 2025 11:10:16 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v5 07/10] iomap: support incremental iomap_iter advances
+Message-ID: <20250205191016.GQ21808@frogsfrogsfrogs>
+References: <20250205135821.178256-1-bfoster@redhat.com>
+ <20250205135821.178256-8-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250205162819.380864-1-mjguzik@gmail.com> <20250205172946.GD21791@frogsfrogsfrogs>
- <CAGudoHENg_G7KaJT15bE0wVOT_yXw0yiPPqTf40zm9YzuaUPkw@mail.gmail.com> <vci2ejpu7eirvku6eg5ajrbsdlpztu2wgvm2n75lkiaenuxw7p@7ag5gflkjhus>
-In-Reply-To: <vci2ejpu7eirvku6eg5ajrbsdlpztu2wgvm2n75lkiaenuxw7p@7ag5gflkjhus>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 5 Feb 2025 20:05:20 +0100
-X-Gm-Features: AWEUYZlEukpyDH6KkkJOMLlhg_MSebSSFDdpkMUnF0LkYkWDJQOFg-fGvZBow5c
-Message-ID: <CAGudoHGjrS30FZAM=Qwqi1vxpdkPQyXGsW7-xONeSE9aw8H3gg@mail.gmail.com>
-Subject: Re: [PATCH] ext4: pass strlen() of the symlink instead of i_size to inode_set_cached_link()
-To: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, tytso@mit.edu, kees@kernel.org, 
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, 
-	syzbot+48a99e426f29859818c0@syzkaller.appspotmail.com, 
-	linux-ext4 <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205135821.178256-8-bfoster@redhat.com>
 
-On Wed, Feb 5, 2025 at 7:10=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 05-02-25 18:33:23, Mateusz Guzik wrote:
-> > If the ext4 folk do the right fix, I will be delighted to have this
-> > patch dropped. :)
->
-> Yeah, let me cook up proper ext4 fix for this (currently under testing).
->
+On Wed, Feb 05, 2025 at 08:58:18AM -0500, Brian Foster wrote:
+> The current iomap_iter iteration model reads the mapping from the
+> filesystem, processes the subrange of the operation associated with
+> the current mapping, and returns the number of bytes processed back
+> to the iteration code. The latter advances the position and
+> remaining length of the iter in preparation for the next iteration.
+> 
+> At the _iter() handler level, this tends to produce a processing
+> loop where the local code pulls the current position and remaining
+> length out of the iter, iterates it locally based on file offset,
+> and then breaks out when the associated range has been fully
+> processed.
+> 
+> This works well enough for current handlers, but upcoming
+> enhancements require a bit more flexibility in certain situations.
+> Enhancements for zero range will lead to a situation where the
+> processing loop is no longer a pure ascending offset walk, but
+> rather dictated by pagecache state and folio lookup. Since folio
+> lookup and write preparation occur at different levels, it is more
+> difficult to manage position and length outside of the iter.
+> 
+> To provide more flexibility to certain iomap operations, introduce
+> support for incremental iomap_iter advances from within the
+> operation itself. This allows more granular advances for operations
+> that might not use the typical file offset based walk.
+> 
+> Note that the semantics for operations that use incremental advances
+> is slightly different than traditional operations. Operations that
+> advance the iter directly are expected to return success or failure
+> (i.e. 0 or negative error code) in iter.processed rather than the
+> number of bytes processed.
 
-I see it got posted and tested:
-https://lore.kernel.org/linux-hardening/67a3b38f.050a0220.19061f.05ea.GAE@g=
-oogle.com/T/#mb782935cc6926dd5642984189d922135f023ec43
+I think this needs to be documented in the code comments for @processed
+in iomap.h:
 
-So I consider my patch self-NAKed.
+  * @processed: The iteration loop body should set this to a negative
+  *     errno if an error occurs during processing; zero if it advanced
+  *     the iter itself with iomap_iter_advance; or the number of bytes
+  *     processed if it needs iomap_iter to advance the iter.
 
-Thanks for sorting it out.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+--D
+
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/iter.c       | 32 +++++++++++++++++++++++++-------
+>  include/linux/iomap.h |  3 +++
+>  2 files changed, 28 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+> index cdba24dbbfd7..9273ef36d5ae 100644
+> --- a/fs/iomap/iter.c
+> +++ b/fs/iomap/iter.c
+> @@ -35,6 +35,8 @@ static inline void iomap_iter_done(struct iomap_iter *iter)
+>  	WARN_ON_ONCE(iter->iomap.offset + iter->iomap.length <= iter->pos);
+>  	WARN_ON_ONCE(iter->iomap.flags & IOMAP_F_STALE);
+>  
+> +	iter->iter_start_pos = iter->pos;
+> +
+>  	trace_iomap_iter_dstmap(iter->inode, &iter->iomap);
+>  	if (iter->srcmap.type != IOMAP_HOLE)
+>  		trace_iomap_iter_srcmap(iter->inode, &iter->srcmap);
+> @@ -58,6 +60,8 @@ static inline void iomap_iter_done(struct iomap_iter *iter)
+>  int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+>  {
+>  	bool stale = iter->iomap.flags & IOMAP_F_STALE;
+> +	ssize_t advanced = iter->processed > 0 ? iter->processed : 0;
+> +	u64 olen = iter->len;
+>  	s64 processed;
+>  	int ret;
+>  
+> @@ -66,11 +70,22 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+>  	if (!iter->iomap.length)
+>  		goto begin;
+>  
+> +	/*
+> +	 * If iter.processed is zero, the op may still have advanced the iter
+> +	 * itself. Calculate the advanced and original length bytes based on how
+> +	 * far pos has advanced for ->iomap_end().
+> +	 */
+> +	if (!advanced) {
+> +		advanced = iter->pos - iter->iter_start_pos;
+> +		olen += advanced;
+> +	}
+> +
+>  	if (ops->iomap_end) {
+> -		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
+> -				iter->processed > 0 ? iter->processed : 0,
+> -				iter->flags, &iter->iomap);
+> -		if (ret < 0 && !iter->processed)
+> +		ret = ops->iomap_end(iter->inode, iter->iter_start_pos,
+> +				iomap_length_trim(iter, iter->iter_start_pos,
+> +						  olen),
+> +				advanced, iter->flags, &iter->iomap);
+> +		if (ret < 0 && !advanced)
+>  			return ret;
+>  	}
+>  
+> @@ -81,8 +96,11 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+>  	}
+>  
+>  	/*
+> -	 * Advance the iter and clear state from the previous iteration. Use
+> -	 * iter->len to determine whether to continue onto the next mapping.
+> +	 * Advance the iter and clear state from the previous iteration. This
+> +	 * passes iter->processed because that reflects the bytes processed but
+> +	 * not yet advanced by the iter handler.
+> +	 *
+> +	 * Use iter->len to determine whether to continue onto the next mapping.
+>  	 * Explicitly terminate in the case where the current iter has not
+>  	 * advanced at all (i.e. no work was done for some reason) unless the
+>  	 * mapping has been marked stale and needs to be reprocessed.
+> @@ -90,7 +108,7 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+>  	ret = iomap_iter_advance(iter, &processed);
+>  	if (!ret && iter->len > 0)
+>  		ret = 1;
+> -	if (ret > 0 && !iter->processed && !stale)
+> +	if (ret > 0 && !advanced && !stale)
+>  		ret = 0;
+>  	iomap_iter_reset_iomap(iter);
+>  	if (ret <= 0)
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index f304c602e5fe..0135a7f8dd83 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -211,6 +211,8 @@ struct iomap_ops {
+>   *	calls to iomap_iter().  Treat as read-only in the body.
+>   * @len: The remaining length of the file segment we're operating on.
+>   *	It is updated at the same time as @pos.
+> + * @iter_start_pos: The original start pos for the current iomap. Used for
+> + *	incremental iter advance.
+>   * @processed: The number of bytes processed by the body in the most recent
+>   *	iteration, or a negative errno. 0 causes the iteration to stop.
+>   * @flags: Zero or more of the iomap_begin flags above.
+> @@ -221,6 +223,7 @@ struct iomap_iter {
+>  	struct inode *inode;
+>  	loff_t pos;
+>  	u64 len;
+> +	loff_t iter_start_pos;
+>  	s64 processed;
+>  	unsigned flags;
+>  	struct iomap iomap;
+> -- 
+> 2.48.1
+> 
+> 
 
