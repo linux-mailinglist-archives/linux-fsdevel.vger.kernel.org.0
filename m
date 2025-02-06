@@ -1,94 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-41018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757E8A2A05F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:49:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C216A2A061
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:50:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0287E1622B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7C1161AF5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEB7224AFF;
-	Thu,  6 Feb 2025 05:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A99F22371B;
+	Thu,  6 Feb 2025 05:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Gmvi1V8G";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k27+SP4+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A21FoqMN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5AhaRVvX"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r5C0MKQM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ceHtDF+g";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r5C0MKQM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ceHtDF+g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C20158536;
-	Thu,  6 Feb 2025 05:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEF42253E1;
+	Thu,  6 Feb 2025 05:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738820883; cv=none; b=sXNm/z93aprrppee3twodcnwz5wBOV0NSxwMk46wMDa5QDhr7CYbI0VTpcNpNs5rmu9XqdL7dOhvvvzfLmV4qg56KdkgMXwXsMBqOMdYaQ5rnc+x7bgF12EcO/AnJTgpaicUERQq3s4TdUIaPDy8dWovm40DuyFC4dsOC/kVO64=
+	t=1738820889; cv=none; b=YIT+Npc/NeYv+aF5OlCOKTgRXxrQmVs8IS5M6r2R0rVROVsGnXxIvJLwsOBHA/eSiH227OGwANfdDBZG5AA9vke9BX5nZp78x3GoJyTyjE5HRjpG+65RKPjScP7TOz7zgXuiXT+EfBocs8YCo3mSoYuxxGaRq8XqchBN0TMxPSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738820883; c=relaxed/simple;
-	bh=dcBHscAnQxKr/0nixkVMiN0m1RDGzqYV4BOPx4PsCVo=;
+	s=arc-20240116; t=1738820889; c=relaxed/simple;
+	bh=Doh1fi3lk7dyxRVk4PxHj8QN0P0CPQ4ijx82ja3lDFU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AzXjluaVm828V9nrCb7VNz5AjAMh9nkVat5cq/fVlX43HtckmKZzql/ZTdT/hGb76zykYmuXo1bdLWWXfdtFUIJoN6m97S42x9uehwuDkEtp+zK6uET5/FaL7QWM3R25Rv+Pn+m/vYnTHKJy/yMK2Iy6cawQ2grGXurNtpLDsF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Gmvi1V8G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k27+SP4+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A21FoqMN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5AhaRVvX; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=eqjkQ3etuEF/rZouxElFXJfj5TQ3Nz5IiQDl5Z2Tc8d0LAy7Ti0HlKOYOGzNdJ17USIycsNFb8j+yMjc/Cc5NI/N1vvOI1K/WAPE5WjA9cRSFnarg8hYIi1HR7A/ey+0kbG2LytV8cAUc57XJnONGre2elNcziK748z58yyoQV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r5C0MKQM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ceHtDF+g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r5C0MKQM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ceHtDF+g; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 288A01F381;
-	Thu,  6 Feb 2025 05:47:59 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 643B61F381;
+	Thu,  6 Feb 2025 05:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820880; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820885; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gp0yvQZM52mSZiy5KRCGCyZJi/VYmp29uzHrGPUicVM=;
-	b=Gmvi1V8Gi9T3VHZtuepi9KDpxKp403SrAneN/OG19Okg+UCG36YK+w3g4YVLv0HNc0uePk
-	y8yn2P6EgtuJsunDf+eH60A7U8PyWtEhbSojjV+GSyv2itXFq3cfNTvZm/ITK0AD+ISNFc
-	4IYIWTzPvWtr/ihIOwvLckujbt0sudA=
+	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
+	b=r5C0MKQMo0q15d8mBnQh4wzPZm9l7XYY+hdVZUyOWnAv+NdcuhAA8NJ8N2YLsEzmHGgJzs
+	XpEGcbqmD86LWdh7gJO6jzfi+FBWN/UDId6TED5QBk5YxU4Pk0PmEYXoj6R78XBbyPy68u
+	3TdfX/NHUEAtcQYANMsiObxoxpZCgIE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820880;
+	s=susede2_ed25519; t=1738820885;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gp0yvQZM52mSZiy5KRCGCyZJi/VYmp29uzHrGPUicVM=;
-	b=k27+SP4+IhZudppgZmpoRETTCKG7D2j12R1I7CbW4mAUUktYwpTpcKhd9r8bc0iLiz5tqF
-	0dzfFA3/1yhmOAAw==
+	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
+	b=ceHtDF+gXEs6hqVqFFr/dv1cZtqedHnRkVde8mWEgVGzOmynyQmY+O5XlOh7p4YeSb3Ybf
+	UGB7MsEp9Kig7LCg==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=A21FoqMN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5AhaRVvX
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=r5C0MKQM;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ceHtDF+g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820879; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820885; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gp0yvQZM52mSZiy5KRCGCyZJi/VYmp29uzHrGPUicVM=;
-	b=A21FoqMNvTDoUB4C4831tj2CZdF8o+cdPjV+33r/mqcS/5ro49/1QtKOkc2P8rsQNdzo+5
-	horeCsiDCLlwgLRqEivUod3l2gadZurXF5u/i0qlgLyqNjNeN5qP58l7PwNKEHMM2yO7wh
-	ArMebu6MZGpEBvfQrjesBgkcCJnwO9M=
+	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
+	b=r5C0MKQMo0q15d8mBnQh4wzPZm9l7XYY+hdVZUyOWnAv+NdcuhAA8NJ8N2YLsEzmHGgJzs
+	XpEGcbqmD86LWdh7gJO6jzfi+FBWN/UDId6TED5QBk5YxU4Pk0PmEYXoj6R78XBbyPy68u
+	3TdfX/NHUEAtcQYANMsiObxoxpZCgIE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820879;
+	s=susede2_ed25519; t=1738820885;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gp0yvQZM52mSZiy5KRCGCyZJi/VYmp29uzHrGPUicVM=;
-	b=5AhaRVvXtm1Ru0iiG2Knn3Y4HMGdUQNeDFM+ShiCfXqMdrfjZzyQCHJ3H2iJnpRuGaIF92
-	aybwwRqdQVIPItDQ==
+	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
+	b=ceHtDF+gXEs6hqVqFFr/dv1cZtqedHnRkVde8mWEgVGzOmynyQmY+O5XlOh7p4YeSb3Ybf
+	UGB7MsEp9Kig7LCg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17EDD13795;
-	Thu,  6 Feb 2025 05:47:55 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A170D13795;
+	Thu,  6 Feb 2025 05:48:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CZhPLwtNpGf5BwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:47:55 +0000
+	id DntlFRJNpGcCCAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:48:02 +0000
 From: NeilBrown <neilb@suse.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -98,9 +98,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Dave Chinner <david@fromorbit.com>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/19] VFS: add lookup_and_lock_rename()
-Date: Thu,  6 Feb 2025 16:42:53 +1100
-Message-ID: <20250206054504.2950516-17-neilb@suse.de>
+Subject: [PATCH 17/19] nfsd: use lookup_and_lock_one() and lookup_and_lock_rename_one()
+Date: Thu,  6 Feb 2025 16:42:54 +1100
+Message-ID: <20250206054504.2950516-18-neilb@suse.de>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250206054504.2950516-1-neilb@suse.de>
 References: <20250206054504.2950516-1-neilb@suse.de>
@@ -111,9 +111,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 288A01F381
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 643B61F381
+X-Spam-Level: 
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
@@ -140,355 +139,303 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-lookup_and_lock_rename() combines locking and lookup for two names.
-It uses the new lock_two_directories_shared() if that is appropriate for
-the filesystem.
-
-unlock_rename_shared() does either a shared unlock or an exclusive
-unlock depending on how the filesystem wants rename to be handled.
-
-lookup_and_lock_rename_one() and done_lookup_and_lock_rename() are
-exported for other modules to use.
-
-As a rename can continue asynchronously after the inode lock is dropped,
-lock_two_directories() and lock_two_directories_shared() must ensure
-that is not happening before looking at ->d_parent.  This requires a
-call to d_update_wait().  Note that is the dentry is locked for update
-it must be a rename.  It cannot be a create or a (successful) rmdir as
-these dentries are not empty - except possibly the target directory, but
-waiting for the rmdir there is still needed of course.
+nfsd now used lookup_and_lock_one() when creating/removing names in the
+exported filesystem.
+It uses lookup_and_lock_rename_one() when renaming.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/namei.c            | 230 +++++++++++++++++++++++++++++++++++-------
- include/linux/namei.h |   7 ++
- 2 files changed, 199 insertions(+), 38 deletions(-)
+ fs/nfsd/nfsproc.c |  12 +++---
+ fs/nfsd/vfs.c     | 107 +++++++++++++---------------------------------
+ 2 files changed, 36 insertions(+), 83 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index c7b7445c770e..771e9d7b620c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3451,8 +3451,14 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
- {
- 	struct dentry *p = p1, *q = p2, *r;
+diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
+index 6dda081eb24c..27c2b1d5e1ac 100644
+--- a/fs/nfsd/nfsproc.c
++++ b/fs/nfsd/nfsproc.c
+@@ -311,17 +311,16 @@ nfsd_proc_create(struct svc_rqst *rqstp)
+ 		goto done;
+ 	}
  
--	while ((r = p->d_parent) != p2 && r != p)
-+	/* Ensure d_update_wait() tests are safe - one barrier for all */
-+	smp_mb();
-+
-+	d_update_wait(p, I_MUTEX_NORMAL);
-+	while ((r = p->d_parent) != p2 && r != p) {
- 		p = r;
-+		d_update_wait(p, I_MUTEX_NORMAL);
-+	}
- 	if (r == p2) {
- 		// p is a child of p2 and an ancestor of p1 or p1 itself
- 		inode_lock_nested(p2->d_inode, I_MUTEX_PARENT);
-@@ -3461,8 +3467,11 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
+-	inode_lock_nested(dirfhp->fh_dentry->d_inode, I_MUTEX_PARENT);
+-	dchild = lookup_one_len(argp->name, dirfhp->fh_dentry, argp->len);
++	dchild = lookup_and_lock_one(NULL, argp->name, argp->len,
++				     dirfhp->fh_dentry, LOOKUP_CREATE);
+ 	if (IS_ERR(dchild)) {
+ 		resp->status = nfserrno(PTR_ERR(dchild));
+-		goto out_unlock;
++		goto put_write;
  	}
- 	// p is the root of connected component that contains p1
- 	// p2 does not occur on the path from p to p1
--	while ((r = q->d_parent) != p1 && r != p && r != q)
-+	d_update_wait(q, I_MUTEX_NORMAL);
-+	while ((r = q->d_parent) != p1 && r != p && r != q) {
- 		q = r;
-+		d_update_wait(q, I_MUTEX_NORMAL);
-+	}
- 	if (r == p1) {
- 		// q is a child of p1 and an ancestor of p2 or p2 itself
- 		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-@@ -3479,6 +3488,46 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
+ 	fh_init(newfhp, NFS_FHSIZE);
+ 	resp->status = fh_compose(newfhp, dirfhp->fh_export, dchild, dirfhp);
+ 	if (!resp->status && d_really_is_negative(dchild))
+ 		resp->status = nfserr_noent;
+-	dput(dchild);
+ 	if (resp->status) {
+ 		if (resp->status != nfserr_noent)
+ 			goto out_unlock;
+@@ -331,7 +330,7 @@ nfsd_proc_create(struct svc_rqst *rqstp)
+ 		 */
+ 		resp->status = nfserr_acces;
+ 		if (!newfhp->fh_dentry) {
+-			printk(KERN_WARNING 
++			printk(KERN_WARNING
+ 				"nfsd_proc_create: file handle not verified\n");
+ 			goto out_unlock;
+ 		}
+@@ -427,7 +426,8 @@ nfsd_proc_create(struct svc_rqst *rqstp)
  	}
+ 
+ out_unlock:
+-	inode_unlock(dirfhp->fh_dentry->d_inode);
++	done_lookup_and_lock(dirfhp->fh_dentry, dchild, LOOKUP_CREATE);
++put_write:
+ 	fh_drop_write(dirfhp);
+ done:
+ 	fh_put(dirfhp);
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 740332413138..af4a7f75cca0 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1551,19 +1551,13 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	if (host_err)
+ 		return nfserrno(host_err);
+ 
+-	inode_lock_nested(dentry->d_inode, I_MUTEX_PARENT);
+-	dchild = lookup_one_len(fname, dentry, flen);
++	dchild = lookup_and_lock_one(NULL, fname, flen, dentry, LOOKUP_CREATE);
+ 	host_err = PTR_ERR(dchild);
+ 	if (IS_ERR(dchild)) {
+ 		err = nfserrno(host_err);
+-		goto out_unlock;
++		goto out;
+ 	}
+ 	err = fh_compose(resfhp, fhp->fh_export, dchild, fhp);
+-	/*
+-	 * We unconditionally drop our ref to dchild as fh_compose will have
+-	 * already grabbed its own ref for it.
+-	 */
+-	dput(dchild);
+ 	if (err)
+ 		goto out_unlock;
+ 	err = fh_fill_pre_attrs(fhp);
+@@ -1572,7 +1566,8 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	err = nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
+ 	fh_fill_post_attrs(fhp);
+ out_unlock:
+-	inode_unlock(dentry->d_inode);
++	done_lookup_and_lock(dentry, dchild, LOOKUP_CREATE);
++out:
+ 	return err;
  }
  
-+static struct dentry *lock_two_directories_shared(struct dentry *p1, struct dentry *p2)
-+{
-+	struct dentry *p = p1, *q = p2, *r;
-+
-+	/* Ensure d_update_wait() tests are safe - one barrier for all */
-+	smp_mb();
-+
-+	d_update_wait(p1, I_MUTEX_NORMAL);
-+	while ((r = p->d_parent) != p2 && r != p) {
-+		p = r;
-+		d_update_wait(p, I_MUTEX_NORMAL);
-+	}
-+	if (r == p2) {
-+		// p is a child of p2 and an ancestor of p1 or p1 itself
-+		inode_lock_shared_nested(p2->d_inode, I_MUTEX_PARENT);
-+		inode_lock_shared_nested(p1->d_inode, I_MUTEX_PARENT2);
-+		return p;
-+	}
-+	// p is the root of connected component that contains p1
-+	// p2 does not occur on the path from p to p1
-+	d_update_wait(q, I_MUTEX_NORMAL);
-+	while ((r = q->d_parent) != p1 && r != p && r != q) {
-+		q = r;
-+		d_update_wait(q, I_MUTEX_NORMAL);
-+	}
-+	if (r == p1) {
-+		// q is a child of p1 and an ancestor of p2 or p2 itself
-+		inode_lock_shared_nested(p1->d_inode, I_MUTEX_PARENT);
-+		inode_lock_shared_nested(p2->d_inode, I_MUTEX_PARENT2);
-+		return q;
-+	} else if (likely(r == p)) {
-+		// both p2 and p1 are descendents of p
-+		inode_lock_shared_nested(p1->d_inode, I_MUTEX_PARENT);
-+		inode_lock_shared_nested(p2->d_inode, I_MUTEX_PARENT2);
-+		return NULL;
-+	} else { // no common ancestor at the time we'd been called
-+		return ERR_PTR(-EXDEV);
-+	}
-+}
-+
- /*
-  * p1 and p2 should be directories on the same fs.
-  */
-@@ -3494,6 +3543,134 @@ struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
+@@ -1656,8 +1651,7 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	}
+ 
+ 	dentry = fhp->fh_dentry;
+-	inode_lock_nested(dentry->d_inode, I_MUTEX_PARENT);
+-	dnew = lookup_one_len(fname, dentry, flen);
++	dnew = lookup_and_lock_one(NULL, fname, flen, dentry, LOOKUP_CREATE);
+ 	if (IS_ERR(dnew)) {
+ 		err = nfserrno(PTR_ERR(dnew));
+ 		inode_unlock(dentry->d_inode);
+@@ -1673,11 +1667,11 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
+ 	fh_fill_post_attrs(fhp);
+ out_unlock:
+-	inode_unlock(dentry->d_inode);
++	done_lookup_and_lock(dentry, dnew, LOOKUP_CREATE);
+ 	if (!err)
+ 		err = nfserrno(commit_metadata(fhp));
+-	dput(dnew);
+-	if (err==0) err = cerr;
++	if (err==0)
++		err = cerr;
+ out_drop_write:
+ 	fh_drop_write(fhp);
+ out:
+@@ -1721,43 +1715,35 @@ nfsd_link(struct svc_rqst *rqstp, struct svc_fh *ffhp,
+ 
+ 	ddir = ffhp->fh_dentry;
+ 	dirp = d_inode(ddir);
+-	inode_lock_nested(dirp, I_MUTEX_PARENT);
+-
+-	dnew = lookup_one_len(name, ddir, len);
++	dnew = lookup_and_lock_one(NULL, name, len, ddir, LOOKUP_CREATE);
+ 	if (IS_ERR(dnew)) {
+-		err = nfserrno(PTR_ERR(dnew));
+-		goto out_unlock;
++		err = PTR_ERR(dnew);
++		goto out_drop_write;
+ 	}
+ 
+ 	dold = tfhp->fh_dentry;
+ 
+ 	err = nfserr_noent;
+ 	if (d_really_is_negative(dold))
+-		goto out_dput;
++		goto out_unlock;
+ 	err = fh_fill_pre_attrs(ffhp);
+ 	if (err != nfs_ok)
+-		goto out_dput;
++		goto out_unlock;
+ 	host_err = vfs_link(dold, &nop_mnt_idmap, dirp, dnew, NULL);
+ 	fh_fill_post_attrs(ffhp);
+-	inode_unlock(dirp);
+-	if (!host_err) {
++out_unlock:
++	done_lookup_and_lock(ddir, dnew, LOOKUP_CREATE);
++	if (!err && !host_err) {
+ 		err = nfserrno(commit_metadata(ffhp));
+ 		if (!err)
+ 			err = nfserrno(commit_metadata(tfhp));
+-	} else {
++	} else if (!err) {
+ 		err = nfserrno(host_err);
+ 	}
+-	dput(dnew);
+ out_drop_write:
+ 	fh_drop_write(tfhp);
+ out:
+ 	return err;
+-
+-out_dput:
+-	dput(dnew);
+-out_unlock:
+-	inode_unlock(dirp);
+-	goto out_drop_write;
  }
- EXPORT_SYMBOL(lock_rename);
  
-+static void unlock_rename_shared(struct dentry *p1, struct dentry *p2)
-+{
-+	if (!(p1->d_inode->i_flags & S_ASYNC_RENAME))
-+		unlock_rename(p1, p2);
-+	else {
-+		inode_unlock_shared(p1->d_inode);
-+		if (p1 != p2) {
-+			inode_unlock_shared(p2->d_inode);
-+			mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
-+		}
-+	}
-+}
-+
-+static int
-+lookup_and_lock_rename(struct dentry *p1, struct dentry *p2,
-+		       struct dentry **d1p, struct dentry **d2p,
-+		       struct qstr *last1, struct qstr *last2,
-+		       unsigned int flags1, unsigned int flags2)
-+{
-+	struct dentry *p = NULL;
-+	struct dentry *d1, *d2;
-+	bool ok1, ok2;
-+
-+	if (p1->d_inode->i_flags & S_ASYNC_RENAME) {
-+		if (p1 == p2) {
-+			/* same parent - only one parent lock needed and
-+			 * no s_vfs_rename_mutex */
-+			inode_lock_shared_nested(p1->d_inode, I_MUTEX_PARENT);
-+		} else {
-+			mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
-+
-+			p = lock_two_directories_shared(p1, p2);
-+			if (IS_ERR(p)) {
-+				mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
-+				return PTR_ERR(p);
-+			}
-+		}
-+	} else
-+		lock_rename(p1, p2);
-+retry:
-+	d1 = lookup_one_qstr(last1, p1, flags1);
-+	if (IS_ERR(d1))
-+		goto out_unlock_1;
-+	d2 = lookup_one_qstr(last2, p2, flags2);
-+	if (IS_ERR(d2))
-+		goto out_unlock_2;
-+
-+	if (d1 == p) {
-+		dput(d1); dput(d2);
-+		unlock_rename_shared(p1, p2);
-+		if (flags1 & LOOKUP_CREATE)
-+			return -EINVAL;
-+		else
-+			return -ENOTEMPTY;
-+	}
-+
-+	if (d2 == p) {
-+		dput(d1); dput(d2);
-+		unlock_rename_shared(p1, p2);
-+		if (flags2 & LOOKUP_CREATE)
-+			return -EINVAL;
-+		else
-+			return -ENOTEMPTY;
-+	}
-+
-+	if (d1 < d2) {
-+		ok1 = d_update_lock(d1, p1, last1, I_MUTEX_PARENT);
-+		ok2 = d_update_lock(d2, p2, last2, I_MUTEX_PARENT2);
-+	} else if (d1 > d2) {
-+		ok2 = d_update_lock(d2, p2, last2, I_MUTEX_PARENT);
-+		ok1 = d_update_lock(d1, p1, last1, I_MUTEX_PARENT2);
-+	} else {
-+		ok1 = ok2 = d_update_lock(d1, p1, last1, I_MUTEX_PARENT);
-+	}
-+	if (!ok1 || !ok2) {
-+		if (ok1)
-+			d_update_unlock(d1);
-+		if (ok2 && d2 != d1)
-+			d_update_unlock(d2);
-+		dput(d1);
-+		dput(d2);
-+		goto retry;
-+	}
-+	*d1p = d1; *d2p = d2;
-+	return 0;
-+
-+out_unlock_2:
-+	dput(d1);
-+	d1 = d2;
-+out_unlock_1:
-+	unlock_rename_shared(p1, p2);
-+	return PTR_ERR(d1);
-+}
-+
-+int lookup_and_lock_rename_one(struct dentry *p1, struct dentry *p2,
-+			       struct dentry **d1p, struct dentry **d2p,
-+			       const char *name1, int nlen1,
-+			       const char *name2, int nlen2,
-+			       unsigned int flags1, unsigned int flags2)
-+{
-+	struct qstr this1, this2;
-+	int err;
-+
-+	err = lookup_one_common(&nop_mnt_idmap, name1, p1, nlen1, &this1);
-+	if (err)
-+		return err;
-+	err = lookup_one_common(&nop_mnt_idmap, name2, p2, nlen2, &this2);
-+	if (err)
-+		return err;
-+	return lookup_and_lock_rename(p1, p2, d1p, d2p, &this1, &this2,
-+				      flags1, flags2);
-+}
-+EXPORT_SYMBOL(lookup_and_lock_rename_one);
-+
-+void done_lookup_and_lock_rename(struct dentry *p1, struct dentry *p2,
-+				 struct dentry *d1, struct dentry *d2)
-+{
-+	d_lookup_done(d1);
-+	d_lookup_done(d2);
-+	d_update_unlock(d1);
-+	if (d2 != d1)
-+		d_update_unlock(d2);
-+	unlock_rename_shared(p1, p2);
-+	dput(d1);
-+	dput(d2);
-+}
-+EXPORT_SYMBOL(done_lookup_and_lock_rename);
-+
- /*
-  * c1 and p2 should be on the same fs.
-  */
-@@ -5497,7 +5674,6 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ static void
+@@ -1788,7 +1774,7 @@ __be32
+ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 			    struct svc_fh *tfhp, char *tname, int tlen)
  {
- 	struct renamedata rd;
- 	struct dentry *old_dentry, *new_dentry;
--	struct dentry *trap;
- 	struct path old_path, new_path;
- 	struct qstr old_last, new_last;
- 	int old_type, new_type;
-@@ -5548,51 +5724,33 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 		goto exit2;
+-	struct dentry	*fdentry, *tdentry, *odentry, *ndentry, *trap;
++	struct dentry	*fdentry, *tdentry, *odentry, *ndentry;
+ 	struct inode	*fdir, *tdir;
+ 	__be32		err;
+ 	int		host_err;
+@@ -1824,9 +1810,12 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 		goto out;
+ 	}
  
- retry_deleg:
--	trap = lock_rename(new_path.dentry, old_path.dentry);
+-	trap = lock_rename(tdentry, fdentry);
 -	if (IS_ERR(trap)) {
--		error = PTR_ERR(trap);
-+	error = lookup_and_lock_rename(old_path.dentry, new_path.dentry,
-+				       &old_dentry, &new_dentry,
-+				       &old_last, &new_last,
-+				       lookup_flags, lookup_flags | target_flags);
-+	if (error)
- 		goto exit_lock_rename;
--	}
+-		err = nfserr_xdev;
++	host_err = lookup_and_lock_rename_one(fdentry, tdentry,
++					      &odentry, &ndentry,
++					      fname, flen, tname, tlen,
++					      0, LOOKUP_CREATE|LOOKUP_RENAME_TARGET);
++	if (host_err) {
++		err = nfserrno(host_err);
+ 		goto out_want_write;
+ 	}
+ 	err = fh_fill_pre_attrs(ffhp);
+@@ -1836,30 +1825,10 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 	if (err != nfs_ok)
+ 		goto out_unlock;
  
--	old_dentry = lookup_one_qstr(&old_last, old_path.dentry,
--				     lookup_flags);
--	error = PTR_ERR(old_dentry);
--	if (IS_ERR(old_dentry))
--		goto exit3;
--	new_dentry = lookup_one_qstr(&new_last, new_path.dentry,
--				     lookup_flags | target_flags);
--	error = PTR_ERR(new_dentry);
--	if (IS_ERR(new_dentry))
--		goto exit4;
- 	if (flags & RENAME_EXCHANGE) {
- 		if (!d_is_dir(new_dentry)) {
- 			error = -ENOTDIR;
- 			if (new_last.name[new_last.len])
--				goto exit5;
-+				goto exit_unlock;
+-	odentry = lookup_one_len(fname, fdentry, flen);
+-	host_err = PTR_ERR(odentry);
+-	if (IS_ERR(odentry))
+-		goto out_nfserr;
+-
+-	host_err = -ENOENT;
+-	if (d_really_is_negative(odentry))
+-		goto out_dput_old;
+-	host_err = -EINVAL;
+-	if (odentry == trap)
+-		goto out_dput_old;
+-
+-	ndentry = lookup_one_len(tname, tdentry, tlen);
+-	host_err = PTR_ERR(ndentry);
+-	if (IS_ERR(ndentry))
+-		goto out_dput_old;
+-	host_err = -ENOTEMPTY;
+-	if (ndentry == trap)
+-		goto out_dput_new;
+-
+ 	if ((ndentry->d_sb->s_export_op->flags & EXPORT_OP_CLOSE_BEFORE_UNLINK) &&
+ 	    nfsd_has_cached_files(ndentry)) {
+ 		close_cached = true;
+-		goto out_dput_old;
++		goto out_unlock;
+ 	} else {
+ 		struct renamedata rd = {
+ 			.old_mnt_idmap	= &nop_mnt_idmap,
+@@ -1884,11 +1853,6 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 				host_err = commit_metadata(ffhp);
  		}
  	}
- 	/* unless the source is a directory trailing slashes give -ENOTDIR */
- 	if (!d_is_dir(old_dentry)) {
- 		error = -ENOTDIR;
- 		if (old_last.name[old_last.len])
--			goto exit5;
-+			goto exit_unlock;
- 		if (!(flags & RENAME_EXCHANGE) && new_last.name[new_last.len])
--			goto exit5;
+- out_dput_new:
+-	dput(ndentry);
+- out_dput_old:
+-	dput(odentry);
+- out_nfserr:
+ 	err = nfserrno(host_err);
+ 
+ 	if (!close_cached) {
+@@ -1896,7 +1860,7 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 		fh_fill_post_attrs(tfhp);
+ 	}
+ out_unlock:
+-	unlock_rename(tdentry, fdentry);
++	done_lookup_and_lock_rename(fdentry, tdentry, odentry, ndentry);
+ out_want_write:
+ 	fh_drop_write(ffhp);
+ 
+@@ -1943,18 +1907,11 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 
+ 	dentry = fhp->fh_dentry;
+ 	dirp = d_inode(dentry);
+-	inode_lock_nested(dirp, I_MUTEX_PARENT);
+-
+-	rdentry = lookup_one_len(fname, dentry, flen);
++	rdentry = lookup_and_lock_one(NULL, fname, flen, dentry, LOOKUP_REMOVE);
+ 	host_err = PTR_ERR(rdentry);
+ 	if (IS_ERR(rdentry))
+-		goto out_unlock;
++		goto out_drop_write;
+ 
+-	if (d_really_is_negative(rdentry)) {
+-		dput(rdentry);
+-		host_err = -ENOENT;
+-		goto out_unlock;
 -	}
--	/* source should not be ancestor of target */
--	error = -EINVAL;
--	if (old_dentry == trap)
--		goto exit5;
--	/* target should not be an ancestor of source */
--	if (!(flags & RENAME_EXCHANGE))
--		error = -ENOTEMPTY;
--	if (new_dentry == trap)
--		goto exit5;
-+			goto exit_unlock;
-+	}
+ 	rinode = d_inode(rdentry);
+ 	err = fh_fill_pre_attrs(fhp);
+ 	if (err != nfs_ok)
+@@ -1981,11 +1938,10 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 		host_err = vfs_rmdir(&nop_mnt_idmap, dirp, rdentry);
+ 	}
+ 	fh_fill_post_attrs(fhp);
+-
+-	inode_unlock(dirp);
++out_unlock:
++	done_lookup_and_lock(dentry, rdentry, LOOKUP_REMOVE);
+ 	if (!host_err)
+ 		host_err = commit_metadata(fhp);
+-	dput(rdentry);
+ 	iput(rinode);    /* truncate the inode here */
  
- 	error = security_path_rename(&old_path, old_dentry,
- 				     &new_path, new_dentry, flags);
- 	if (error)
--		goto exit5;
-+		goto exit_unlock;
+ out_drop_write:
+@@ -2001,9 +1957,6 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 	}
+ out:
+ 	return err;
+-out_unlock:
+-	inode_unlock(dirp);
+-	goto out_drop_write;
+ }
  
- 	rd.old_dir	   = old_path.dentry->d_inode;
- 	rd.old_dentry	   = old_dentry;
-@@ -5603,13 +5761,9 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	rd.delegated_inode = &delegated_inode;
- 	rd.flags	   = flags;
- 	error = vfs_rename(&rd);
--exit5:
--	d_lookup_done(new_dentry);
--	dput(new_dentry);
--exit4:
--	dput(old_dentry);
--exit3:
--	unlock_rename(new_path.dentry, old_path.dentry);
-+exit_unlock:
-+	done_lookup_and_lock_rename(new_path.dentry, old_path.dentry,
-+				    new_dentry, old_dentry);
- exit_lock_rename:
- 	if (delegated_inode) {
- 		error = break_deleg_wait(&delegated_inode);
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 72e351640406..8ef7aa6ed64c 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -104,6 +104,13 @@ extern int follow_up(struct path *);
- extern struct dentry *lock_rename(struct dentry *, struct dentry *);
- extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
- extern void unlock_rename(struct dentry *, struct dentry *);
-+int lookup_and_lock_rename_one(struct dentry *p1, struct dentry *p2,
-+			       struct dentry **d1p, struct dentry **d2p,
-+			       const char *name1, int nlen1,
-+			       const char *name2, int nlen2,
-+			       unsigned int flags1, unsigned int flags2);
-+void done_lookup_and_lock_rename(struct dentry *p1, struct dentry *p2,
-+				struct dentry *d1, struct dentry *d2);
- 
- /**
-  * mode_strip_umask - handle vfs umask stripping
+ /*
 -- 
 2.47.1
 
