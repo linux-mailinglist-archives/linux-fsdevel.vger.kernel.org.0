@@ -1,172 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-41037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3ADA2A1DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 08:17:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F32A2A259
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 08:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B73587A3CE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 07:16:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DCF67A13CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 07:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041D8224AF9;
-	Thu,  6 Feb 2025 07:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kf96egR0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4dIfEXf6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="x8GyPV1i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XZMOyB1D"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF6D224B0B;
+	Thu,  6 Feb 2025 07:34:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD236150997;
-	Thu,  6 Feb 2025 07:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC26513AD18;
+	Thu,  6 Feb 2025 07:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738826257; cv=none; b=LGpIjdw7kvoZTIT5XDZkjffOI5Tkw/WlEL2wCM0Z/+eKwO90syPLW7qvXWXG43f2TX2zXYTfLMMtlFo4MNB3cjkiGmtX6ylaLI31urHSBH5DTwBvMDC+B3VQvM7gDK/Z+qoI4vp/dlrpzvTmofQOpMHoVeU7c6AiFB+1wKQHJoM=
+	t=1738827274; cv=none; b=DDMFfFclHssV9tEVWcWXajWsl6qiQk1pGmwPV7Ni9Acb/0yyq1zS0mq6OUnDMHNd4dQXG0A8yIwMdo2RY5caiFHYdzLmFsP/B5bgc4Bk9X7+cbqB/nqpEQFN0HXf/0OFaQwxrdy6PveCMKz85NITV/VaWsFj6jqc907PkpucRJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738826257; c=relaxed/simple;
-	bh=LP4Xdkv4iWxcFUqvr3PgIYC8t/HTJMhbP0Mq6GMX/1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pzHN/b4BPESxevlI94f6b0ch+ek3AmK7cAd02eCh8DQdeG5aSfKyxnAppgOiBy9NS49dnO9ceq30Cp3WV2AZODnHhcun8nMWK98ZDus7dIdIwL7bbjoMtXr0GY3U3Fvkvbv6DuLMMKSsBomuRmFXWoeMIlTX0PfCsG0lFztfIro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kf96egR0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4dIfEXf6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=x8GyPV1i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XZMOyB1D; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CE32621109;
-	Thu,  6 Feb 2025 07:17:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738826254; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cEyg1Bi1rQfmvb8epL9nCJGXKFIHdCSoAsPBBawULm0=;
-	b=Kf96egR0sBf4qwcR9MOQdwGFBJmhJibX4vKv9RJ261v38xOfB4BqYukfjyEQR3p0dsgEiN
-	byi7BTq/xWF1ZlqQ+yha1zhCSLjv1wGpYoqANBhlX3ViNNSIpT2L35F5k5z5V8BF43Elaf
-	+YHmDmMdPNJfabUCw8nDgAGhsesVm68=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738826254;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cEyg1Bi1rQfmvb8epL9nCJGXKFIHdCSoAsPBBawULm0=;
-	b=4dIfEXf6x7v/LVvV48fmeOcPYh0z83viirF7vSK+z0C++B0J2VGpwyoB3ANPj3VNTiEAog
-	IP7y9K8eCCPmYqBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=x8GyPV1i;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XZMOyB1D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738826253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cEyg1Bi1rQfmvb8epL9nCJGXKFIHdCSoAsPBBawULm0=;
-	b=x8GyPV1i0pGtKnqipEZz0kHbH11Po+P7UwQ5dpc4E1ntmOjLi3DKNP+1JWdiL22UtxiKjv
-	UPajT6kIp3xEeVcgOhzBnqqOTVGBds7MjY4QWH7MEsgGnCBnZHoqi+1YIYes/YFSTSHm1L
-	d8WxlwrnXwSBSqnoF5cGe04/LdX3DV0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738826253;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cEyg1Bi1rQfmvb8epL9nCJGXKFIHdCSoAsPBBawULm0=;
-	b=XZMOyB1DdjSeLg/xFGC1Z2pTgyB/942hEuiJfd+CasqTxW1PYTH+E7q3uJqcBxKfu1iiqI
-	mKwkPdM/n+BVAsBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3513813694;
-	Thu,  6 Feb 2025 07:17:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kIAACw1ipGc/HgAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 06 Feb 2025 07:17:33 +0000
-Message-ID: <13223185-5c5e-4c52-b7ab-00155b5ebd86@suse.de>
-Date: Thu, 6 Feb 2025 08:17:32 +0100
+	s=arc-20240116; t=1738827274; c=relaxed/simple;
+	bh=ZqC215pGfYAb7flXSAc08+IrFcFj62WGS6CVa6R7k4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dRj70tATdZNtogNYh83igyOMIjqstO+CqiMwmYGLfLUkmYvPbWz7PC0/RxAVANmpS/W1V4i74gGUJFbXBVHZxFL1lg7aw6ga4DN/ds6xLtWRg6GUj6w9Iv3ZtwEjQIkYALtZ9ome381aH4UT1IIRPuhz2LGezTQIBw6wtH1v7Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-51f2830aa01so19822e0c.3;
+        Wed, 05 Feb 2025 23:34:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738827269; x=1739432069;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kYqxjen2ckyh6AMFJqNUH79gwyV2vSuAN69CefkfgXQ=;
+        b=X/f3ogkiJEQqtMGb1heI0ygtjfdNZ6as9aXYxUp9zWRI7su4sXGj44MqyYDTJ/meNf
+         iyta9+yw+76XXVS3JnNbWk7L1AZzQNpMIn1iWICfYwzK0RewyVjvejPCVH29Iq8aSHXX
+         cisYUegs+bJdW850sgv70HUp7Wjk2FOADMAxjURtHCiQuGhjygdzhVHAoj0QB6BBNO0c
+         J+bKw0XojJNIC5HXBIIHD02dqKSxH/R2wTlbNEXkZjP/o45FPKcNv1KPkN8atqIK9s2G
+         XlY455PuqaekMeSyINfv3HMrjFmzl+QxcF5QHqKmSebiC/RUdF2rX+vbwGQbsfkz56pA
+         xBxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUFAkGzmbH9WFngC5R1qWjZENsq2lMJwOewBuO8tODOpZmPnjNfkQoYFx+N8sSUa859H1t4DyIHLjn@vger.kernel.org, AJvYcCWCBJD+qcJ7oKEPvhAhB1WMaeRtIgZ95ujy1Vty5XkUw0/4dDqrLWp6TFNJw+zQn6ZuQsV54eJyFm1jnMib@vger.kernel.org, AJvYcCWJ8jYk/jTdWJdV2IMB5J/tZrq2bdQ15DFstZTiwZT38kCumKSZdI+z1nzK1TUI0g0ze4vzfL4Bv+wBq915@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKNKG3HaeATfUQQLCWp26xMOnwVaSeBAjY+h9YtXctsL4PalDZ
+	uLjDLRPAIz4qOtOLsy4sPF3v3PAHIQWhizU0GXZygDztco+sGbNb1Fw5rGDm
+X-Gm-Gg: ASbGncuVJLpGpf6RV/Ciu+qv1cMNKSEqjnRDzc0l+1NkIFxT1hkWA3EGF5yuiy6ya9H
+	2EUNdqV8tffGkUTNoBJ5JM1P/9iasMYhUiet2i9f2BKB81FkF3BkKJlFsFjG3nwA+SNPrKQiblp
+	M2LL00Wyh9rTn7S4u5IQDY6Kv/J+pROq6tyX+FA19QiLUWGSAqnU2yXYdKScvR8YPWrKYS8Ccyl
+	Yn/yoXzFcbsmN4SkR4mnuTkdn6UFb3lYJ2RdxhLHJYmnrWRMb1J1RYrZbBu9xVwsM1OhUpu7qFP
+	oD7fryKsRGLYxgqzW1DfShbsUWj2EwUR3rlO9jFgQ8tUsmfyaCjttg==
+X-Google-Smtp-Source: AGHT+IF9+B00D50HGqOy1mIN4fzg7WnjfsZJYzaZ08kFw+IQMPZ5iF1jeQ0WRxh19V9LoKjVuuxTIg==
+X-Received: by 2002:a05:6122:238c:b0:50c:9834:57b3 with SMTP id 71dfb90a1353d-51f0c383ea5mr3817133e0c.4.1738827269486;
+        Wed, 05 Feb 2025 23:34:29 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51f228dabdfsm98727e0c.33.2025.02.05.23.34.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Feb 2025 23:34:29 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-866dc3cd96eso138467241.3;
+        Wed, 05 Feb 2025 23:34:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUW8cP4sY2fjDCpyp/DEuULSHXihuVGEbVLcN1HP/3tdWRf0y16KhvbEinL9a273OYGyFJ55+gP4TNqVCNA@vger.kernel.org, AJvYcCVJ3n1AuZar6+s9gRixuQTAmnFkLbPVOVNrJcV2bcwcXRKv2lhxC4FfStyH+GZthSIi5Nkcs0Benpe0@vger.kernel.org, AJvYcCXZ/y2oqgsPeO75yxcGrDf39CWsCzbGnPCVnPRpSHWXBfK97nLK3ZYGH0ts2m+eXf4hoAtKQ6ulAT16yrOU@vger.kernel.org
+X-Received: by 2002:a05:6102:cd3:b0:4b2:5c4b:b0aa with SMTP id
+ ada2fe7eead31-4ba47a69fd7mr3852490137.17.1738827268953; Wed, 05 Feb 2025
+ 23:34:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] fs/buffer: simplify block_read_full_folio() with
- bh_offset()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, dave@stgolabs.net,
- david@fromorbit.com, djwong@kernel.org, kbusch@kernel.org,
- john.g.garry@oracle.com, hch@lst.de, ritesh.list@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, linux-block@vger.kernel.org, gost.dev@samsung.com,
- p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
-References: <20250204231209.429356-1-mcgrof@kernel.org>
- <20250204231209.429356-2-mcgrof@kernel.org>
- <1b211dd3-a45d-4a2e-aa2a-e0d3e302d4ca@suse.de>
- <Z6PgGccx6Uz-Jum6@casper.infradead.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <Z6PgGccx6Uz-Jum6@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: CE32621109
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,stgolabs.net,fromorbit.com,oracle.com,lst.de,gmail.com,vger.kernel.org,kvack.org,samsung.com,pankajraghav.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+References: <20241218154613.58754-1-shikemeng@huaweicloud.com>
+ <20241218154613.58754-3-shikemeng@huaweicloud.com> <CAMuHMdU_bfadUO=0OZ=AoQ9EAmQPA4wsLCBqohXR+QCeCKRn4A@mail.gmail.com>
+ <82014768-2ea7-2a28-cade-99d5d8ebe59e@huaweicloud.com>
+In-Reply-To: <82014768-2ea7-2a28-cade-99d5d8ebe59e@huaweicloud.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Feb 2025 08:34:17 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWT05uMjEassapuFr7podb_eH=T14SOyS4yW4Wh7DUcTQ@mail.gmail.com>
+X-Gm-Features: AWEUYZlF1WKVp8XKeZEs4N8gBdQGzZtMTGkdvJadBBpYovB0_UlZtliJmtMLsz0
+Message-ID: <CAMuHMdWT05uMjEassapuFr7podb_eH=T14SOyS4yW4Wh7DUcTQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] Xarray: move forward index correctly in xas_pause()
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/5/25 23:03, Matthew Wilcox wrote:
-> On Wed, Feb 05, 2025 at 05:18:20PM +0100, Hannes Reinecke wrote:
->> One wonders: shouldn't we use plugging here to make I/O more efficient?
-> 
-> Should we plug at a higher level?
-> 
-> Opposite question: What if getblk() needs to do a read (ie ext2 indirect
-> block)?
+Hi Kemeng,
 
-Ah, that. Yes, plugging on higher level would be a good idea.
-(And can we check for nested plugs? _Should_ we check for nested plugs?)
+On Thu, 6 Feb 2025 at 07:13, Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+> on 1/28/2025 12:21 AM, Geert Uytterhoeven wrote:
+> > On Wed, 18 Dec 2024 at 07:58, Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+> >> After xas_load(), xas->index could point to mid of found multi-index entry
+> >> and xas->index's bits under node->shift maybe non-zero. The afterward
+> >> xas_pause() will move forward xas->index with xa->node->shift with bits
+> >> under node->shift un-masked and thus skip some index unexpectedly.
+> >>
+> >> Consider following case:
+> >> Assume XA_CHUNK_SHIFT is 4.
+> >> xa_store_range(xa, 16, 31, ...)
+> >> xa_store(xa, 32, ...)
+> >> XA_STATE(xas, xa, 17);
+> >> xas_for_each(&xas,...)
+> >> xas_load(&xas)
+> >> /* xas->index = 17, xas->xa_offset = 1, xas->xa_node->xa_shift = 4 */
+> >> xas_pause()
+> >> /* xas->index = 33, xas->xa_offset = 2, xas->xa_node->xa_shift = 4 */
+> >> As we can see, index of 32 is skipped unexpectedly.
+> >>
+> >> Fix this by mask bit under node->xa_shift when move forward index in
+> >> xas_pause().
+> >>
+> >> For now, this will not cause serious problems. Only minor problem
+> >> like cachestat return less number of page status could happen.
+> >>
+> >> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> >
+> > Thanks for your patch, which is now commit c9ba5249ef8b080c ("Xarray:
+> > move forward index correctly in xas_pause()") upstream.
+> >
+> >> --- a/lib/test_xarray.c
+> >> +++ b/lib/test_xarray.c
+> >> @@ -1448,6 +1448,41 @@ static noinline void check_pause(struct xarray *xa)
+> >>         XA_BUG_ON(xa, count != order_limit);
+> >>
+> >>         xa_destroy(xa);
+> >> +
+> >> +       index = 0;
+> >> +       for (order = XA_CHUNK_SHIFT; order > 0; order--) {
+> >> +               XA_BUG_ON(xa, xa_store_order(xa, index, order,
+> >> +                                       xa_mk_index(index), GFP_KERNEL));
+> >> +               index += 1UL << order;
+> >> +       }
+> >> +
+> >> +       index = 0;
+> >> +       count = 0;
+> >> +       xas_set(&xas, 0);
+> >> +       rcu_read_lock();
+> >> +       xas_for_each(&xas, entry, ULONG_MAX) {
+> >> +               XA_BUG_ON(xa, entry != xa_mk_index(index));
+> >> +               index += 1UL << (XA_CHUNK_SHIFT - count);
+> >> +               count++;
+> >> +       }
+> >> +       rcu_read_unlock();
+> >> +       XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
+> >> +
+> >> +       index = 0;
+> >> +       count = 0;
+> >> +       xas_set(&xas, XA_CHUNK_SIZE / 2 + 1);
+> >> +       rcu_read_lock();
+> >> +       xas_for_each(&xas, entry, ULONG_MAX) {
+> >> +               XA_BUG_ON(xa, entry != xa_mk_index(index));
+> >> +               index += 1UL << (XA_CHUNK_SHIFT - count);
+> >> +               count++;
+> >> +               xas_pause(&xas);
+> >> +       }
+> >> +       rcu_read_unlock();
+> >> +       XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
+> >> +
+> >> +       xa_destroy(xa);
+> >> +
+> >>  }
+> >
+> > On m68k, the last four XA_BUG_ON() checks above are triggered when
+> > running the test.  With extra debug prints added:
+> >
+> >     entry = 00000002 xa_mk_index(index) = 000000c1
+> >     entry = 00000002 xa_mk_index(index) = 000000e1
+> >     entry = 00000002 xa_mk_index(index) = 000000f1
+> >     ...
+> >     entry = 000000e2 xa_mk_index(index) = fffff0ff
+> >     entry = 000000f9 xa_mk_index(index) = fffff8ff
+> >     entry = 000000f2 xa_mk_index(index) = fffffcff
+> >     count = 63 XA_CHUNK_SHIFT = 6
+> >     entry = 00000081 xa_mk_index(index) = 00000001
+> >     entry = 00000002 xa_mk_index(index) = 00000081
+> >     entry = 00000002 xa_mk_index(index) = 000000c1
+> >     ...
+> >     entry = 000000e2 xa_mk_index(index) = ffffe0ff
+> >     entry = 000000f9 xa_mk_index(index) = fffff0ff
+> >     entry = 000000f2 xa_mk_index(index) = fffff8ff
+> >      count = 62 XA_CHUNK_SHIFT = 6
+> >
+> > On arm32, the test succeeds, so it's probably not a 32-vs-64-bit issue.
+> > Perhaps a big-endian or alignment issue (alignof(int/long) = 2)?
+> Hi Geert,
+> Sorry for late reply. After check the debug info and the code, I think
+> the test is failed because CONFIG_XARRAY_MULTI is off. I guess
+> CONFIG_XARRAY_MULTI is on arm32 and is off on m68k so the test result
+> diffs. Luckly it's only a problem of of test code.
+> I will send patch to correct the test code soon. Thanks!
 
-Cheers,
+You are right: CONFIG_XARRAY_MULTI is enabled in my arm32 build,
+but not in my m68k build.
 
-Hannes
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
