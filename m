@@ -1,143 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-41113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FA0A2B1E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:00:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B16A2B1F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:07:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A06F3ABAF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 18:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E061887AD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 19:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE811A2557;
-	Thu,  6 Feb 2025 18:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134501A238E;
+	Thu,  6 Feb 2025 19:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zabbo.net header.i=@zabbo.net header.b="pnJ3wqXw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFiACaW1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95E21A5BA8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 18:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E725D1A08B8;
+	Thu,  6 Feb 2025 19:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738868296; cv=none; b=QpntnO0AN/E6MBZMJeT3lrDAKAC1Y5mspTd+O4DZtnTYZeBcOnGYkMfUysHYk0wTYJSa2UEUqU6pFHuTI1qdiMeLJmkYGcwIq5cYA3QNkFjzEHPw7O+NBLss7yZtM+UD5UzlE4GEkZZ9n1puqFJrFptwG8OF+Z8FUFEpNvdbH2g=
+	t=1738868845; cv=none; b=AvB8FJoZaZz49BzPMpkyDAe29gqHOrOPYe2s691/E0QE4/HM3yc/FXne0JJsY2kYyZG7wE+g7PJXPqx2D37R4GUrmqjBxh9z12AcU9Ejyc8enGN9fPgNCbrQnXGAgBB9qEy4eq+lagw3zMWPf7lmTgIjWqIjyDaJYjJjyVEy+Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738868296; c=relaxed/simple;
-	bh=S6Sfy+Ln4YYGiIj3h4hozC6VtKWMZa/nuJx3S4vsAtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8QHKOH+/Ky3r7+RYtLdEWqAQT6hWf9A1kBCgZvyqL3iiGWpwVCYtslT0huOjz2m2d40vZMuDmw7NT+M7peFRUYwkBDOO6bkIB7TjQI6DUabD/gHDbVQjdpvMaraa7J4cb5ZZP/qoOn8tDV3quk4aQhId/kRS831dQUrXmyZPjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zabbo.net; spf=pass smtp.mailfrom=zabbo.net; dkim=pass (1024-bit key) header.d=zabbo.net header.i=@zabbo.net header.b=pnJ3wqXw; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zabbo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zabbo.net
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21f2cfd821eso23996535ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 10:58:14 -0800 (PST)
+	s=arc-20240116; t=1738868845; c=relaxed/simple;
+	bh=3Y9lKJZTXxPn/bEFEPxof9cM95KTnLOaiPaLer/sG+U=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sqgt1HoJ1dLKNzxYMoxvNF3orTGM0jpkylZFpdcTsBmB7YORHbE91Q0a26E3RW7S9tuDml4XLz2KcmAVWE9DbjobEGm/i2v/CtqbMar2mgm4Kd0Omj1BYr1u7iYBE1bPhHSNe33PD0chQUirUuMsOKx6Irh/WJukoK0ZzWhhgus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFiACaW1; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab7814aa2adso67618166b.0;
+        Thu, 06 Feb 2025 11:07:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zabbo.net; s=google; t=1738868294; x=1739473094; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=103zskV8QY5MyuIberb00su1yeETuGyHM6u0tCk0U+8=;
-        b=pnJ3wqXw1ZA2Rm+rV/nwXn4tGiFQyxRaMzc2nArq0sz2Y6lp7HAlrAsM/mLj/bES7B
-         /MqhAJsdRXTrgWGBcO+QlipO9zs4N09YvSzMFQpqpmemIRmasoJuPrh5aTLsWbzGkVUt
-         N4+rVK9fUbnhClfpHvQIqhXTMO6O9bAMevPsI=
+        d=gmail.com; s=20230601; t=1738868842; x=1739473642; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=piS44ekru2Q2hy3mmivZUbYVvyIzizTuKsNZi6ZY4iE=;
+        b=TFiACaW1vrVZ779iAtJkR4eKYp4XcpSmE96MCXIcCMd+OB5v87dLzi6Ed5J0hFRo2P
+         MpS2VyZhAiHT6Hxh7GJFrICLrKE5mQzwgdh/iENyiwUsBep6QnvPbbI+Prl/GHPOcJ9Q
+         evwN5fRHCoAaQnrqf0e++pGfb7PZ7B+8FaSXSXdN6LQQioMuvliaaOkeka/DPPLSvWqc
+         VpqBX2d0H6JdWQcrc3HWprh3V0A5AyfUUh9oT0FNaRKqXwQS+2YpZcvPNmm4FLRAlmpf
+         pfSQwdwEKY+9BipCAl0ix1jFNIvVukbIlV7+i+U55Zwl3MkoQjEx9BGVi9CiyyfYvUt2
+         +W7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738868294; x=1739473094;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=103zskV8QY5MyuIberb00su1yeETuGyHM6u0tCk0U+8=;
-        b=viFkx3tuoPCZo9hb0u5WUTs5Pao6dHFcrqJSwnhZuNnRXTEO2fVqRT4tu0ln5aqZDN
-         q9QS0/8oHcy+gsXwmCtyayRnpHtJr4b8cKYGs3kt7arImr0XE4Lazdcaq0uTEH/ygmdi
-         By5kvaLsFI+ckwmm9l3W5Q3MSGjqYfDRnAU3KjVwtECL6cGnRvgbqQnN1cyQ9gufyzNZ
-         LVNwzuwAhIXZSpGLmnM6xH8ac8S9I9p0xyI/PqG8BD51SR649dmfnnoy2DGXFuhCSSpN
-         jSXXG91BsHYu/9ZZ2UfYsYXxjC+pglQf6S8Nm2GnSf4n4Q3SXg0akwF1ilTDbTT42srm
-         CRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgbZPuKVKDpTFPTPjELm9gMxdFnS+fFV+gO0Kw2S5DLtd8bNuX2zxl20MHRbycY3MMzLCEqOpsakwHRgmL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiU3GriqnTZl9aeGW/x0ksv12D1FxuXZRw7FPCYYF33/L8a10T
-	dFGfC9hhB618QbwAh2rOKOgedmgbOYkgQlQOGBs9OZYVsSHuQqsHsV+4ktK/ULE=
-X-Gm-Gg: ASbGncuDB05ipV1SRLFUX4opVc+3O0QVuYrP2I82Cway3eL47T8MPBtHlRcqFrFkxTx
-	+HrCYresPZE6W7bi+T572sg2g232EHbE4wrSIWRKnHLbEhWaciiKNf1sxCISG9kUrKFtRI340J9
-	FlgQQz1eIdPsQmLNcNkeNbiS/LiclIpNdmpHImIGm5ozxVTBC+3AcHm3dDWqiZrRrlFS3pVxZGA
-	VkMxUC/+kF5k/j0zNfJaWQ7pblfhFLvkLn+59VXljIH8jijNa8ElpNKUnfZ9l8=
-X-Google-Smtp-Source: AGHT+IESUbSC8HBGqcqJFju9vdtVi+6iPeDEbypPgahQsatRVrvCqek0RHxdgpxLveBt0+/WgLTJzQ==
-X-Received: by 2002:a17:902:e802:b0:21f:db8:262d with SMTP id d9443c01a7336-21f4e7636c0mr4630435ad.35.1738868293796;
-        Thu, 06 Feb 2025 10:58:13 -0800 (PST)
-Received: from localhost ([2603:3004:18:5e00::1c76])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f3650ce16sm16451085ad.9.2025.02.06.10.58.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2025 10:58:13 -0800 (PST)
-Date: Thu, 6 Feb 2025 10:58:12 -0800
-From: Zach Brown <zab@zabbo.net>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: RIc Wheeler <ricwheeler@gmail.com>, lsf-pc@lists.linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Design challenges for a new file system that
- needs to support multiple billions of file
-Message-ID: <20250206185812.GA413506@localhost.localdomain>
-References: <048dc2db-3d1f-4ada-ac4b-b54bf7080275@gmail.com>
- <CAOQ4uxjN5oedNhZ2kCJC2XLncdkSFMYJOWmSEC3=a-uGjd=w7Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1738868842; x=1739473642;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=piS44ekru2Q2hy3mmivZUbYVvyIzizTuKsNZi6ZY4iE=;
+        b=gBI2uChUrRnln4CK2tyagqXRzYDPj9Pwf6pLulR2GV/fp+SrK3pVJiyAamohqaYDRk
+         EMPUZaMgKS3MGPDuvYaBTblTo8/2WUEnQ7UJvy9h32+G2Vnkdi40o9LcP/6rudUIc6KV
+         y7vRR7XDYV61eC4yJVfVUxFEjoLJ98IrdK4y04szAlb+uGgW5a1OwVG2tc53CaI0VoFu
+         bG5SSM4CvmY2y7EeMp/gzMIdiMHiv/J3w9dBk3Yeglyc8PuCrEOO/JNZJyvNd4j4/KZf
+         hZOrsxiTiO6BNK+UCyaHuFqTQi/YoJ0XNDVBhuyRydR4Z3YNOsWZfvHD+3wPH1f0zyO+
+         m0Og==
+X-Forwarded-Encrypted: i=1; AJvYcCV3wwERHSdk+3R0APUtdNd0NSYx5QlrP0BPLakTKacPiIqNpgkgTbEQBgWUPmp0ZaWZVRX62AWBgVwZ183w@vger.kernel.org, AJvYcCVEn41DAgcFruDKxTTo19W1GbOiGVptLv6Tpv7ocalxHA44kilBPc/qEuyfHV8FToasLryVLQg1ftgtNv4U@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq5pYDsDPatClhMG6XTjQRIcIvfYj3pSwP/TAxQVxFzIl+Kea6
+	dtzWQ09XRh+ZdYw/AIYm9xAQB0gyDEA7Tz20yTN3upjgHNAIKh0H75Fh/Yd0OxBaLLQcDLbYIOd
+	jqtKdvuKhy6OoP3gnkaNBNsYqYIQ=
+X-Gm-Gg: ASbGncsj4Vv2fea1j126WR1ximY59ZzaiOmzCWqdmDyuzaLxZ6a6GmGN3/pnFfCch62
+	jU844//kTUP4peTdNGa4Q/HXosCC/vPCzsq1VT02bNgdA6B45EyTiqi2EH8LrTg35ZFZlFPUn
+X-Google-Smtp-Source: AGHT+IH3nxCUMU8lFe7u/yFJ06VJpdagvQubxRPShgigcGMaXy9qQT1KRxOG36kQUroJS2+DLpf/1D0xoR+VUl982lE=
+X-Received: by 2002:a05:6402:5386:b0:5dc:74fd:abf1 with SMTP id
+ 4fb4d7f45d1cf-5de45017b76mr1308453a12.15.1738868841642; Thu, 06 Feb 2025
+ 11:07:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjN5oedNhZ2kCJC2XLncdkSFMYJOWmSEC3=a-uGjd=w7Q@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 6 Feb 2025 20:07:09 +0100
+X-Gm-Features: AWEUYZkW3aoeWrfipuvTdCTz8cvkAXXkprTJUaqtWApk47UMeczz5KSjQTxbZ0g
+Message-ID: <CAGudoHFLnmp3tQHOwUAFBKxrno=ejxHmJXta=sTxVMtN9L1T9w@mail.gmail.com>
+Subject: audit_reusename in getname_flags
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+You added it in:
+commit 7ac86265dc8f665cc49d6e60a125e608cd2fca14
+Author: Jeff Layton <jlayton@kernel.org>
+Date:   Wed Oct 10 15:25:28 2012 -0400
 
-(Yay, back from travel!)
+    audit: allow audit code to satisfy getname requests from its names_list
 
-On Mon, Feb 03, 2025 at 04:22:59PM +0100, Amir Goldstein wrote:
-> On Sun, Feb 2, 2025 at 10:40 PM RIc Wheeler <ricwheeler@gmail.com> wrote:
-> >
-> > Zach Brown is leading a new project on ngnfs (FOSDEM talk this year gave
-> > a good background on this -
-> > https://www.fosdem.org/2025/schedule/speaker/zach_brown/).  We are
-> > looking at taking advantage of modern low latency NVME devices and
-> > today's networks to implement a distributed file system that provides
-> > better concurrency that high object counts need and still have the
-> > bandwidth needed to support the backend archival systems we feed.
-> >
-> 
-> I heard this talk and it was very interesting.
-> Here's a direct link to slides from people who may be too lazy to
-> follow 3 clicks:
-> https://www.fosdem.org/2025/events/attachments/fosdem-2025-5471-ngnfs-a-distributed-file-system-using-block-granular-consistency/slides/236150/zach-brow_aqVkVuI.pdf
-> 
-> I was both very impressed by the cache coherent rename example
-> and very puzzled - I do not know any filesystem where rename can be
-> synchronized on a single block io, and looking up ancestors is usually
-> done on in-memory dentries, so I may not have understood the example.
+Do I read correctly this has no user-visible impact, but merely tries
+to shave off some memory usage in case of duplicated user bufs?
 
-The meat of that talk was about how ngnfs uses its distributed block
-cache as a serializing/coherence/consistency mechanism.  That specific
-example was about how we can get concurrent rename between different
-mounts without needing some global equivelant of rename mutex.
+This is partially getting in the way of whacking atomics for filename
+ref management (but can be worked around).
 
-The core of the mechanism is that code paths that implement operations
-have a transactional object that holds on to cached block references
-which have a given access mode granted over the network.  In this rename
-case, the ancestor walk holds on to all the blocks for the duration of
-the walk.  (Can be a lot of blocks!).  If another mount somewhere else
-tried to modify those ancestor blocks, that mount would need to revoke
-the cached read access to be granted their write access.  That'd wait
-for the first rename to finish and release the read refs.  This gives us
-specific serialization of access to the blocks in question rather than
-relying on a global serializing object over all renames.
+AFAIU this change is not all *that* beneficial in its own right, so
+should not be a big deal to whack it regardless of what happens with
+refs? Note it would also remove some branches in the common case as
+normally audit either has dummy context or there is no match anyway.
 
-That's the idea, anyway.  I'm implementing the first bits of this now.
-
-It's sort of a silly example, because who puts cross-directory rename in
-the fast path?  (Historically some s3<->posix servers implemented
-CompleteMultipartUpload be renaming from tmp dirs to visible bucket
-dirs, hrmph).  But it illustrates the pattern of shrinking contention
-down to the block level.
-
-- z
+-- 
+Mateusz Guzik <mjguzik gmail.com>
 
