@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-41004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FFEA2A043
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:46:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7B7A2A045
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18D41888109
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7083E3A7E7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49D22489C;
-	Thu,  6 Feb 2025 05:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A712248B3;
+	Thu,  6 Feb 2025 05:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OXgqSIvv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CEGTME0U";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OXgqSIvv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CEGTME0U"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PElTk/1U";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jDPXUkMD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PElTk/1U";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jDPXUkMD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AA01F60A;
-	Thu,  6 Feb 2025 05:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01911223326;
+	Thu,  6 Feb 2025 05:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738820743; cv=none; b=RHYOCDLy5mROdqdOGFv0CL6xfjXh2+qFfLY5ScH2WBWaJUoi02CxFtixyzAZG4LJ3/y3HhrBvnwQm73a08NAiSuz8Vd7STfdSNLqFljxC8B4CDwpgVbdGtPpWuU7bUHQMdwOBVThS5L3Epr95MtVa8EYb3jbyHeBXYTa+lggBtU=
+	t=1738820756; cv=none; b=mAT0M0YWHC8cItP18dhGSzCOxuObVG/AE7c2zNt76A6afN4pk1P4K3DqeU37Pp5FXRI+raFfV5XbBFMLoVGMXEAjGEmAFtfP6JwORkjVSIPBRVm7wVzzryCWsWU8Pg7Y1IwI+Bx3JVFEN8EO2shczliP+6X/5IKed0qIGdbEwbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738820743; c=relaxed/simple;
-	bh=+FLiyGgdWuvivHekHFyyWG0dyFY9K1XzzQbcMA079Zw=;
+	s=arc-20240116; t=1738820756; c=relaxed/simple;
+	bh=GQsP3oUsMZBcSdxCqZVtkC71SFLhhLzFmy3z7fFKcg0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VMZi+Dl+gyOd+5LtEj+00LxAf9CBI/F1Lb+GsXMOUfIRYTmkDJWOwa6aRYZwvhY8x72B0YCThaCVQPS9UIBob4KncM4YF9J0j8oz5gr2c1JGjbsMNzyKUJrlObQ1ZgySYrB3tRVTdKxxKnRdbF2tIASVYB5vQwPws4DvPnn1JU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OXgqSIvv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CEGTME0U; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OXgqSIvv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CEGTME0U; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=W4uxcbmZhTDRq9Qh7u/uAZm7HgBjkGJY9CVjX/ROw9+QH12b984M6C+frlNUYgr+CRORsc1UId1yWOENjy8qXbqsi6vUEir6iAYOOqWboLaV2JbgmcrM0SvuSKq35gPBG++fxAdDzf31txX+qOGwqC1LcR+91S8oOUSQjPGJTrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PElTk/1U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jDPXUkMD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PElTk/1U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jDPXUkMD; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1D5621108;
-	Thu,  6 Feb 2025 05:45:38 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 01CE11F381;
+	Thu,  6 Feb 2025 05:45:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V4m+yfdJXG9Rz2h1YNdsawYoIyOXZNOniMpxRTLwcPo=;
-	b=OXgqSIvv0P8oFsnVgdjqsctj9fsFk8/8x10FLkUX2ReKhc8WgQlSDvJE8dvfOk1lbA5QK0
-	dFxG55kLaxl7eDZb7O4sPU2GJp2+p6HRBwWSkM0BhNNwnMwhHucPOpVAlscUO9fhHXXUq6
-	fyh9zicSz+izN1/NSfCCeACkX5gTm68=
+	bh=DpRrOyHext/vKwSVHPvryUafdoA8729VpIBcf15u5hs=;
+	b=PElTk/1UtEhyEl4c3urC3M3tsst2UfqiVeyxF8WArIIJthbzDknTwK9dUBJtIn9+xvFoEQ
+	UzvLorrt52p3mENGcc14wceWCCNHxbtBPNXT6/4xB5+23gv/Thqtlttv2+JRZRwnf2oPu/
+	TRfM08pIzBpHCchHP6AtkLZTvAiAU3s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820738;
+	s=susede2_ed25519; t=1738820753;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V4m+yfdJXG9Rz2h1YNdsawYoIyOXZNOniMpxRTLwcPo=;
-	b=CEGTME0Ua+aVfL5jWa3k3Qjetq81fN40m8qYWovWAzrh7tDZar2VgyujLzNOoECiqpWkGE
-	KdjrOHKhmrwbH4DQ==
-Authentication-Results: smtp-out1.suse.de;
+	bh=DpRrOyHext/vKwSVHPvryUafdoA8729VpIBcf15u5hs=;
+	b=jDPXUkMD3jqZBXgT93yBd/R5KuvaLbCi3tjG4YR/LxsOJI7Qgx+vOKGJuH0rQRXw1R3SX4
+	SrieCb4N8YPmcQAw==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V4m+yfdJXG9Rz2h1YNdsawYoIyOXZNOniMpxRTLwcPo=;
-	b=OXgqSIvv0P8oFsnVgdjqsctj9fsFk8/8x10FLkUX2ReKhc8WgQlSDvJE8dvfOk1lbA5QK0
-	dFxG55kLaxl7eDZb7O4sPU2GJp2+p6HRBwWSkM0BhNNwnMwhHucPOpVAlscUO9fhHXXUq6
-	fyh9zicSz+izN1/NSfCCeACkX5gTm68=
+	bh=DpRrOyHext/vKwSVHPvryUafdoA8729VpIBcf15u5hs=;
+	b=PElTk/1UtEhyEl4c3urC3M3tsst2UfqiVeyxF8WArIIJthbzDknTwK9dUBJtIn9+xvFoEQ
+	UzvLorrt52p3mENGcc14wceWCCNHxbtBPNXT6/4xB5+23gv/Thqtlttv2+JRZRwnf2oPu/
+	TRfM08pIzBpHCchHP6AtkLZTvAiAU3s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820738;
+	s=susede2_ed25519; t=1738820753;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V4m+yfdJXG9Rz2h1YNdsawYoIyOXZNOniMpxRTLwcPo=;
-	b=CEGTME0Ua+aVfL5jWa3k3Qjetq81fN40m8qYWovWAzrh7tDZar2VgyujLzNOoECiqpWkGE
-	KdjrOHKhmrwbH4DQ==
+	bh=DpRrOyHext/vKwSVHPvryUafdoA8729VpIBcf15u5hs=;
+	b=jDPXUkMD3jqZBXgT93yBd/R5KuvaLbCi3tjG4YR/LxsOJI7Qgx+vOKGJuH0rQRXw1R3SX4
+	SrieCb4N8YPmcQAw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A741113795;
-	Thu,  6 Feb 2025 05:45:35 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FFC613795;
+	Thu,  6 Feb 2025 05:45:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bYDTFn9MpGc7BwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:45:35 +0000
+	id 39U5OY1MpGdeBwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:45:49 +0000
 From: NeilBrown <neilb@suse.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -97,9 +97,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Dave Chinner <david@fromorbit.com>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/19] VFS: use global wait-queue table for d_alloc_parallel()
-Date: Thu,  6 Feb 2025 16:42:39 +1100
-Message-ID: <20250206054504.2950516-3-neilb@suse.de>
+Subject: [PATCH 03/19] VFS: use d_alloc_parallel() in lookup_one_qstr_excl() and rename it.
+Date: Thu,  6 Feb 2025 16:42:40 +1100
+Message-ID: <20250206054504.2950516-4-neilb@suse.de>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250206054504.2950516-1-neilb@suse.de>
 References: <20250206054504.2950516-1-neilb@suse.de>
@@ -110,7 +110,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
+X-Spam-Level: 
 X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
@@ -130,401 +130,222 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
 	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-d_alloc_parallel() currently requires a wait_queue_head to be passed in.
-This must have a life time which extends until the lookup is completed.
+lookup_one_qstr_excl() is used for lookups prior to directory
+modifications, whether create, unlink, rename, or whatever.
 
-Future proposed patches will use d_alloc_parallel() for names being
-created/unlinked etc.  Some filesystems combine lookup with create
-making a longer code path that the wq needs to live for.  If it is still
-to be allocated on-stack this can be cumbersome.
+To prepare for allowing modification to happen in parallel, change
+lookup_one_qstr_excl() to use d_alloc_parallel().
 
-This patch replaces the on-stack wqs with a global array of wqs which
-are used as needed.  A wq is NOT allocated when a dentry is first
-created but only when a second thread attempts to use the same name and
-so is forced to wait.  At this moment a wq is chosen using the
-least-significant bits on the task's pid and that wq is assigned to
-->d_wait.  The ->d_lock is then dropped and the task waits.
+To reflect this, name is changed to lookup_one_qtr() - as the directory
+may be locked shared.
 
-When the dentry is finally moved out of "in_lookup" a wake up is only
-sent if ->d_wait is not NULL.  This avoids an (uncontended) spin
-lock/unlock which saves a couple of atomic operations in a common case.
-
-The wake up passes the dentry that the wake up is for as the "key" and
-the waiter will only wake processes waiting on the same key.  This means
-that when these global waitqueues are shared (which is inevitable
-though unlikely to be frequent), a task will not be woken prematurely.
+If any for the "intent" LOOKUP flags are passed, the caller must ensure
+d_lookup_done() is called at an appropriate time.  If none are passed
+then we can be sure ->lookup() will do a real lookup and d_lookup_done()
+is called internally.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/afs/dir_silly.c      |  4 +--
- fs/dcache.c             | 69 +++++++++++++++++++++++++++++++++--------
- fs/fuse/readdir.c       |  3 +-
- fs/namei.c              |  6 ++--
- fs/nfs/dir.c            |  6 ++--
- fs/nfs/unlink.c         |  3 +-
- fs/proc/base.c          |  3 +-
- fs/proc/proc_sysctl.c   |  3 +-
- fs/smb/client/readdir.c |  3 +-
- include/linux/dcache.h  |  3 +-
- include/linux/nfs_xdr.h |  1 -
- 11 files changed, 67 insertions(+), 37 deletions(-)
+ fs/namei.c            | 47 +++++++++++++++++++++++++------------------
+ fs/smb/server/vfs.c   |  7 ++++---
+ include/linux/namei.h |  9 ++++++---
+ 3 files changed, 37 insertions(+), 26 deletions(-)
 
-diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
-index a1e581946b93..aa4363a1c6fa 100644
---- a/fs/afs/dir_silly.c
-+++ b/fs/afs/dir_silly.c
-@@ -239,13 +239,11 @@ int afs_silly_iput(struct dentry *dentry, struct inode *inode)
- 	struct dentry *alias;
- 	int ret;
- 
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
--
- 	_enter("%p{%pd},%llx", dentry, dentry, vnode->fid.vnode);
- 
- 	down_read(&dvnode->rmdir_lock);
- 
--	alias = d_alloc_parallel(dentry->d_parent, &dentry->d_name, &wq);
-+	alias = d_alloc_parallel(dentry->d_parent, &dentry->d_name);
- 	if (IS_ERR(alias)) {
- 		up_read(&dvnode->rmdir_lock);
- 		return 0;
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 96b21a47312e..e49607d00d2d 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2095,8 +2095,7 @@ struct dentry *d_add_ci(struct dentry *dentry, struct inode *inode,
- 		return found;
- 	}
- 	if (d_in_lookup(dentry)) {
--		found = d_alloc_parallel(dentry->d_parent, name,
--					dentry->d_wait);
-+		found = d_alloc_parallel(dentry->d_parent, name);
- 		if (IS_ERR(found) || !d_in_lookup(found)) {
- 			iput(inode);
- 			return found;
-@@ -2106,7 +2105,7 @@ struct dentry *d_add_ci(struct dentry *dentry, struct inode *inode,
- 		if (!found) {
- 			iput(inode);
- 			return ERR_PTR(-ENOMEM);
--		} 
-+		}
- 	}
- 	res = d_splice_alias(inode, found);
- 	if (res) {
-@@ -2476,30 +2475,70 @@ static inline unsigned start_dir_add(struct inode *dir)
- }
- 
- static inline void end_dir_add(struct inode *dir, unsigned int n,
--			       wait_queue_head_t *d_wait)
-+			       wait_queue_head_t *d_wait, struct dentry *de)
- {
- 	smp_store_release(&dir->i_dir_seq, n + 2);
- 	preempt_enable_nested();
--	wake_up_all(d_wait);
-+	if (d_wait)
-+		__wake_up(d_wait, TASK_NORMAL, 0, de);
-+}
-+
-+#define	PAR_LOOKUP_WQS	256
-+static wait_queue_head_t par_wait_table[PAR_LOOKUP_WQS] __cacheline_aligned;
-+
-+static int __init par_wait_init(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < PAR_LOOKUP_WQS; i++)
-+		init_waitqueue_head(&par_wait_table[i]);
-+	return 0;
-+}
-+fs_initcall(par_wait_init);
-+
-+struct par_wait_key {
-+	struct dentry *de;
-+	struct wait_queue_entry wqe;
-+};
-+
-+static int d_wait_wake_fn(struct wait_queue_entry *wq_entry,
-+			  unsigned mode, int sync, void *key)
-+{
-+	struct par_wait_key *pwk = container_of(wq_entry,
-+						 struct par_wait_key, wqe);
-+	if (pwk->de == key)
-+		return default_wake_function(wq_entry, mode, sync, key);
-+	return 0;
- }
- 
- static void d_wait_lookup(struct dentry *dentry)
- {
- 	if (d_in_lookup(dentry)) {
--		DECLARE_WAITQUEUE(wait, current);
--		add_wait_queue(dentry->d_wait, &wait);
-+		struct par_wait_key wk = {
-+			.de = dentry,
-+			.wqe = {
-+				.private = current,
-+				.func = d_wait_wake_fn,
-+			},
-+		};
-+		struct wait_queue_head *wq;
-+		if (!dentry->d_wait)
-+			dentry->d_wait = &par_wait_table[current->pid %
-+							 PAR_LOOKUP_WQS];
-+		wq = dentry->d_wait;
-+		add_wait_queue(wq, &wk.wqe);
- 		do {
- 			set_current_state(TASK_UNINTERRUPTIBLE);
- 			spin_unlock(&dentry->d_lock);
- 			schedule();
- 			spin_lock(&dentry->d_lock);
- 		} while (d_in_lookup(dentry));
-+		remove_wait_queue(wq, &wk.wqe);
- 	}
- }
- 
- struct dentry *d_alloc_parallel(struct dentry *parent,
--				const struct qstr *name,
--				wait_queue_head_t *wq)
-+				const struct qstr *name)
- {
- 	unsigned int hash = name->hash;
- 	struct hlist_bl_head *b = in_lookup_hash(parent, hash);
-@@ -2596,7 +2635,7 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
- 	rcu_read_unlock();
- 	/* we can't take ->d_lock here; it's OK, though. */
- 	new->d_flags |= DCACHE_PAR_LOOKUP;
--	new->d_wait = wq;
-+	new->d_wait = NULL;
- 	hlist_bl_add_head(&new->d_u.d_in_lookup_hash, b);
- 	hlist_bl_unlock(b);
- 	return new;
-@@ -2633,8 +2672,12 @@ static wait_queue_head_t *__d_lookup_unhash(struct dentry *dentry)
- 
- void __d_lookup_unhash_wake(struct dentry *dentry)
- {
-+	wait_queue_head_t *d_wait;
-+
- 	spin_lock(&dentry->d_lock);
--	wake_up_all(__d_lookup_unhash(dentry));
-+	d_wait = __d_lookup_unhash(dentry);
-+	if (d_wait)
-+		__wake_up(d_wait, TASK_NORMAL, 0, dentry);
- 	spin_unlock(&dentry->d_lock);
- }
- EXPORT_SYMBOL(__d_lookup_unhash_wake);
-@@ -2662,7 +2705,7 @@ static inline void __d_add(struct dentry *dentry, struct inode *inode)
- 	}
- 	__d_rehash(dentry);
- 	if (dir)
--		end_dir_add(dir, n, d_wait);
-+		end_dir_add(dir, n, d_wait, dentry);
- 	spin_unlock(&dentry->d_lock);
- 	if (inode)
- 		spin_unlock(&inode->i_lock);
-@@ -2874,7 +2917,7 @@ static void __d_move(struct dentry *dentry, struct dentry *target,
- 	write_seqcount_end(&dentry->d_seq);
- 
- 	if (dir)
--		end_dir_add(dir, n, d_wait);
-+		end_dir_add(dir, n, d_wait, target);
- 
- 	if (dentry->d_parent != old_parent)
- 		spin_unlock(&dentry->d_parent->d_lock);
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 17ce9636a2b1..c6b646a3f1bd 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -160,7 +160,6 @@ static int fuse_direntplus_link(struct file *file,
- 	struct inode *dir = d_inode(parent);
- 	struct fuse_conn *fc;
- 	struct inode *inode;
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
- 
- 	if (!o->nodeid) {
- 		/*
-@@ -195,7 +194,7 @@ static int fuse_direntplus_link(struct file *file,
- 	dentry = d_lookup(parent, &name);
- 	if (!dentry) {
- retry:
--		dentry = d_alloc_parallel(parent, &name, &wq);
-+		dentry = d_alloc_parallel(parent, &name);
- 		if (IS_ERR(dentry))
- 			return PTR_ERR(dentry);
- 	}
 diff --git a/fs/namei.c b/fs/namei.c
-index d98caf36e867..5cdbd2eb4056 100644
+index 5cdbd2eb4056..d684102d873d 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1769,13 +1769,12 @@ static struct dentry *__lookup_slow(const struct qstr *name,
- {
- 	struct dentry *dentry, *old;
- 	struct inode *inode = dir->d_inode;
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+@@ -1665,15 +1665,13 @@ static struct dentry *lookup_dcache(const struct qstr *name,
+ }
  
- 	/* Don't go there if it's already dead */
- 	if (unlikely(IS_DEADDIR(inode)))
+ /*
+- * Parent directory has inode locked exclusive.  This is one
+- * and only case when ->lookup() gets called on non in-lookup
+- * dentries - as the matter of fact, this only gets called
+- * when directory is guaranteed to have no in-lookup children
+- * at all.
++ * Parent directory has inode locked: exclusive or shared.
++ * If @flags contains any LOOKUP_INTENT_FLAGS then d_lookup_done()
++ * must be called after the intended operation is performed - or aborted.
+  */
+-struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+-				    struct dentry *base,
+-				    unsigned int flags)
++struct dentry *lookup_one_qstr(const struct qstr *name,
++			       struct dentry *base,
++			       unsigned int flags)
+ {
+ 	struct dentry *dentry = lookup_dcache(name, base, flags);
+ 	struct dentry *old;
+@@ -1686,18 +1684,25 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+ 	if (unlikely(IS_DEADDIR(dir)))
  		return ERR_PTR(-ENOENT);
- again:
--	dentry = d_alloc_parallel(dir, name, &wq);
-+	dentry = d_alloc_parallel(dir, name);
- 	if (IS_ERR(dentry))
- 		return dentry;
- 	if (unlikely(!d_in_lookup(dentry))) {
-@@ -3561,7 +3560,6 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	struct dentry *dentry;
- 	int error, create_error = 0;
- 	umode_t mode = op->mode;
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
  
- 	if (unlikely(IS_DEADDIR(dir_inode)))
- 		return ERR_PTR(-ENOENT);
-@@ -3570,7 +3568,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	dentry = d_lookup(dir, &nd->last);
- 	for (;;) {
- 		if (!dentry) {
--			dentry = d_alloc_parallel(dir, &nd->last, &wq);
-+			dentry = d_alloc_parallel(dir, &nd->last);
- 			if (IS_ERR(dentry))
- 				return dentry;
- 		}
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 2b04038b0e40..27c7a5c4e91b 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -725,7 +725,6 @@ void nfs_prime_dcache(struct dentry *parent, struct nfs_entry *entry,
- 		unsigned long dir_verifier)
- {
- 	struct qstr filename = QSTR_INIT(entry->name, entry->len);
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
- 	struct dentry *dentry;
- 	struct dentry *alias;
- 	struct inode *inode;
-@@ -754,7 +753,7 @@ void nfs_prime_dcache(struct dentry *parent, struct nfs_entry *entry,
- 	dentry = d_lookup(parent, &filename);
- again:
- 	if (!dentry) {
--		dentry = d_alloc_parallel(parent, &filename, &wq);
-+		dentry = d_alloc_parallel(parent, &filename);
- 		if (IS_ERR(dentry))
- 			return;
+-	dentry = d_alloc(base, name);
+-	if (unlikely(!dentry))
++	dentry = d_alloc_parallel(base, name);
++	if (unlikely(IS_ERR_OR_NULL(dentry)))
+ 		return ERR_PTR(-ENOMEM);
++	if (!d_in_lookup(dentry))
++		/* Raced with another thread which did the lookup */
++		return dentry;
+ 
+ 	old = dir->i_op->lookup(dir, dentry, flags);
+ 	if (unlikely(old)) {
++		d_lookup_done(dentry);
+ 		dput(dentry);
+ 		dentry = old;
  	}
-@@ -2059,7 +2058,6 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 		    struct file *file, unsigned open_flags,
- 		    umode_t mode)
- {
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
- 	struct nfs_open_context *ctx;
- 	struct dentry *res;
- 	struct iattr attr = { .ia_valid = ATTR_OPEN };
-@@ -2115,7 +2113,7 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 		d_drop(dentry);
- 		switched = true;
- 		dentry = d_alloc_parallel(dentry->d_parent,
--					  &dentry->d_name, &wq);
-+					  &dentry->d_name);
- 		if (IS_ERR(dentry))
- 			return PTR_ERR(dentry);
- 		if (unlikely(!d_in_lookup(dentry)))
-diff --git a/fs/nfs/unlink.c b/fs/nfs/unlink.c
-index bf77399696a7..d44162d3a8f1 100644
---- a/fs/nfs/unlink.c
-+++ b/fs/nfs/unlink.c
-@@ -124,7 +124,7 @@ static int nfs_call_unlink(struct dentry *dentry, struct inode *inode, struct nf
- 	struct dentry *alias;
++	if ((flags & LOOKUP_INTENT_FLAGS) == 0)
++		/* ->lookup must have given final answer */
++		d_lookup_done(dentry);
+ 	return dentry;
+ }
+-EXPORT_SYMBOL(lookup_one_qstr_excl);
++EXPORT_SYMBOL(lookup_one_qstr);
  
- 	down_read_non_owner(&NFS_I(dir)->rmdir_sem);
--	alias = d_alloc_parallel(dentry->d_parent, &data->args.name, &data->wq);
-+	alias = d_alloc_parallel(dentry->d_parent, &data->args.name);
- 	if (IS_ERR(alias)) {
- 		up_read_non_owner(&NFS_I(dir)->rmdir_sem);
- 		return 0;
-@@ -185,7 +185,6 @@ nfs_async_unlink(struct dentry *dentry, const struct qstr *name)
- 
- 	data->cred = get_current_cred();
- 	data->res.dir_attr = &data->dir_attr;
--	init_waitqueue_head(&data->wq);
- 
- 	status = -EBUSY;
- 	spin_lock(&dentry->d_lock);
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index cd89e956c322..c8bcbdac87d5 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2126,8 +2126,7 @@ bool proc_fill_cache(struct file *file, struct dir_context *ctx,
- 
- 	child = d_hash_and_lookup(dir, &qname);
- 	if (!child) {
--		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
--		child = d_alloc_parallel(dir, &qname, &wq);
-+		child = d_alloc_parallel(dir, &qname);
- 		if (IS_ERR(child))
- 			goto end_instantiate;
- 		if (d_in_lookup(child)) {
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index cc9d74a06ff0..9f1088f138f4 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -693,8 +693,7 @@ static bool proc_sys_fill_cache(struct file *file,
- 
- 	child = d_lookup(dir, &qname);
- 	if (!child) {
--		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
--		child = d_alloc_parallel(dir, &qname, &wq);
-+		child = d_alloc_parallel(dir, &qname);
- 		if (IS_ERR(child))
- 			return false;
- 		if (d_in_lookup(child)) {
-diff --git a/fs/smb/client/readdir.c b/fs/smb/client/readdir.c
-index 50f96259d9ad..39d8a18cd443 100644
---- a/fs/smb/client/readdir.c
-+++ b/fs/smb/client/readdir.c
-@@ -73,7 +73,6 @@ cifs_prime_dcache(struct dentry *parent, struct qstr *name,
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
- 	bool posix = cifs_sb_master_tcon(cifs_sb)->posix_extensions;
- 	bool reparse_need_reval = false;
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
- 	int rc;
- 
- 	cifs_dbg(FYI, "%s: for %s\n", __func__, name->name);
-@@ -105,7 +104,7 @@ cifs_prime_dcache(struct dentry *parent, struct qstr *name,
- 		    (fattr->cf_flags & CIFS_FATTR_NEED_REVAL))
- 			return;
- 
--		dentry = d_alloc_parallel(parent, name, &wq);
-+		dentry = d_alloc_parallel(parent, name);
+ /**
+  * lookup_fast - do fast lockless (but racy) lookup of a dentry
+@@ -2739,7 +2744,7 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
+ 		return ERR_PTR(-EINVAL);
  	}
+ 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+-	d = lookup_one_qstr_excl(&last, path->dentry, 0);
++	d = lookup_one_qstr(&last, path->dentry, 0);
+ 	if (IS_ERR(d)) {
+ 		inode_unlock(path->dentry->d_inode);
+ 		path_put(path);
+@@ -4078,8 +4083,8 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 	if (last.name[last.len] && !want_dir)
+ 		create_flags = 0;
+ 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+-	dentry = lookup_one_qstr_excl(&last, path->dentry,
+-				      reval_flag | create_flags);
++	dentry = lookup_one_qstr(&last, path->dentry,
++				 reval_flag | create_flags);
  	if (IS_ERR(dentry))
- 		return;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 4afb60365675..b03cbb0177a3 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -247,8 +247,7 @@ extern void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op
- /* allocate/de-allocate */
- extern struct dentry * d_alloc(struct dentry *, const struct qstr *);
- extern struct dentry * d_alloc_anon(struct super_block *);
--extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *,
--					wait_queue_head_t *);
-+extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *);
- extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
- extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct qstr *);
- extern bool d_same_name(const struct dentry *dentry, const struct dentry *parent,
-diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-index 9155a6ffc370..d0473e0d4aba 100644
---- a/include/linux/nfs_xdr.h
-+++ b/include/linux/nfs_xdr.h
-@@ -1731,7 +1731,6 @@ struct nfs_unlinkdata {
- 	struct nfs_removeargs args;
- 	struct nfs_removeres res;
- 	struct dentry *dentry;
--	wait_queue_head_t wq;
- 	const struct cred *cred;
- 	struct nfs_fattr dir_attr;
- 	long timeout;
+ 		goto unlock;
+ 
+@@ -4103,6 +4108,7 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 	}
+ 	return dentry;
+ fail:
++	d_lookup_done(dentry);
+ 	dput(dentry);
+ 	dentry = ERR_PTR(error);
+ unlock:
+@@ -4508,7 +4514,7 @@ int do_rmdir(int dfd, struct filename *name)
+ 		goto exit2;
+ 
+ 	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+-	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
++	dentry = lookup_one_qstr(&last, path.dentry, lookup_flags);
+ 	error = PTR_ERR(dentry);
+ 	if (IS_ERR(dentry))
+ 		goto exit3;
+@@ -4641,7 +4647,7 @@ int do_unlinkat(int dfd, struct filename *name)
+ 		goto exit2;
+ retry_deleg:
+ 	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+-	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
++	dentry = lookup_one_qstr(&last, path.dentry, lookup_flags);
+ 	error = PTR_ERR(dentry);
+ 	if (!IS_ERR(dentry)) {
+ 
+@@ -5231,8 +5237,8 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 		goto exit_lock_rename;
+ 	}
+ 
+-	old_dentry = lookup_one_qstr_excl(&old_last, old_path.dentry,
+-					  lookup_flags);
++	old_dentry = lookup_one_qstr(&old_last, old_path.dentry,
++				     lookup_flags);
+ 	error = PTR_ERR(old_dentry);
+ 	if (IS_ERR(old_dentry))
+ 		goto exit3;
+@@ -5240,8 +5246,8 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 	error = -ENOENT;
+ 	if (d_is_negative(old_dentry))
+ 		goto exit4;
+-	new_dentry = lookup_one_qstr_excl(&new_last, new_path.dentry,
+-					  lookup_flags | target_flags);
++	new_dentry = lookup_one_qstr(&new_last, new_path.dentry,
++				     lookup_flags | target_flags);
+ 	error = PTR_ERR(new_dentry);
+ 	if (IS_ERR(new_dentry))
+ 		goto exit4;
+@@ -5292,6 +5298,7 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 	rd.flags	   = flags;
+ 	error = vfs_rename(&rd);
+ exit5:
++	d_lookup_done(new_dentry);
+ 	dput(new_dentry);
+ exit4:
+ 	dput(old_dentry);
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 4e580bb7baf8..89b3823f6405 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -109,7 +109,7 @@ static int ksmbd_vfs_path_lookup_locked(struct ksmbd_share_config *share_conf,
+ 	}
+ 
+ 	inode_lock_nested(parent_path->dentry->d_inode, I_MUTEX_PARENT);
+-	d = lookup_one_qstr_excl(&last, parent_path->dentry, 0);
++	d = lookup_one_qstr(&last, parent_path->dentry, 0);
+ 	if (IS_ERR(d))
+ 		goto err_out;
+ 
+@@ -726,8 +726,8 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 		ksmbd_fd_put(work, parent_fp);
+ 	}
+ 
+-	new_dentry = lookup_one_qstr_excl(&new_last, new_path.dentry,
+-					  lookup_flags | LOOKUP_RENAME_TARGET);
++	new_dentry = lookup_one_qstr(&new_last, new_path.dentry,
++				     lookup_flags | LOOKUP_RENAME_TARGET);
+ 	if (IS_ERR(new_dentry)) {
+ 		err = PTR_ERR(new_dentry);
+ 		goto out3;
+@@ -771,6 +771,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 		ksmbd_debug(VFS, "vfs_rename failed err %d\n", err);
+ 
+ out4:
++	d_lookup_done(new_dentry);
+ 	dput(new_dentry);
+ out3:
+ 	dput(old_parent);
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 8ec8fed3bce8..06bb3ea65beb 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -34,6 +34,9 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ #define LOOKUP_EXCL		0x0400	/* ... in exclusive creation */
+ #define LOOKUP_RENAME_TARGET	0x0800	/* ... in destination of rename() */
+ 
++#define LOOKUP_INTENT_FLAGS	(LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_EXCL |	\
++				 LOOKUP_RENAME_TARGET)
++
+ /* internal use only */
+ #define LOOKUP_PARENT		0x0010
+ 
+@@ -52,9 +55,9 @@ extern int path_pts(struct path *path);
+ 
+ extern int user_path_at(int, const char __user *, unsigned, struct path *);
+ 
+-struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+-				    struct dentry *base,
+-				    unsigned int flags);
++struct dentry *lookup_one_qstr(const struct qstr *name,
++			       struct dentry *base,
++			       unsigned int flags);
+ extern int kern_path(const char *, unsigned, struct path *);
+ 
+ extern struct dentry *kern_path_create(int, const char *, struct path *, unsigned int);
 -- 
 2.47.1
 
