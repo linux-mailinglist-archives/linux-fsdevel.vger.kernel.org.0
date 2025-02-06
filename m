@@ -1,94 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-41019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C216A2A061
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:50:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A30CA2A064
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7C1161AF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3691818824CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A99F22371B;
-	Thu,  6 Feb 2025 05:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45B122540B;
+	Thu,  6 Feb 2025 05:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r5C0MKQM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ceHtDF+g";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r5C0MKQM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ceHtDF+g"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oB1aKeOZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iIqrC7xF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oB1aKeOZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iIqrC7xF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEF42253E1;
-	Thu,  6 Feb 2025 05:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3EE224B12;
+	Thu,  6 Feb 2025 05:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738820889; cv=none; b=YIT+Npc/NeYv+aF5OlCOKTgRXxrQmVs8IS5M6r2R0rVROVsGnXxIvJLwsOBHA/eSiH227OGwANfdDBZG5AA9vke9BX5nZp78x3GoJyTyjE5HRjpG+65RKPjScP7TOz7zgXuiXT+EfBocs8YCo3mSoYuxxGaRq8XqchBN0TMxPSI=
+	t=1738820899; cv=none; b=HuiGkCTSEzeco0Pr+7bMiAhzLpNL/IPFJ/uAhvDpa6696ofPEoRGFDmeIZnCAiTOUW3WZKnNGftXFtWJ3StoX3TmqrJplqdIjyobkUTpVqV7u8i1xr6xMVyvTvlfKFt3HrqA5S3sgqHQZEpSmnHIvAqxHd17rmC9hjJIWwQuCtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738820889; c=relaxed/simple;
-	bh=Doh1fi3lk7dyxRVk4PxHj8QN0P0CPQ4ijx82ja3lDFU=;
+	s=arc-20240116; t=1738820899; c=relaxed/simple;
+	bh=yqPLlIyNRSWzQcBc2rqx2rU9e/BkDUK/oLfSSTjFzek=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eqjkQ3etuEF/rZouxElFXJfj5TQ3Nz5IiQDl5Z2Tc8d0LAy7Ti0HlKOYOGzNdJ17USIycsNFb8j+yMjc/Cc5NI/N1vvOI1K/WAPE5WjA9cRSFnarg8hYIi1HR7A/ey+0kbG2LytV8cAUc57XJnONGre2elNcziK748z58yyoQV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r5C0MKQM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ceHtDF+g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r5C0MKQM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ceHtDF+g; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=JpKCOO22TwvhSZT7Euu69LmEkYuEvIm/jKsEVXOiIiN4qObV7q4stgCovZxHfyLkJG5+CnVt7PBigiFCyGactjZMNxX3SsXrhlol3FxASe+0taYw+CW+QyMHmOgDsgEs/GR/QEAhHrFawoTMXU4M2vJtnEgYmGlYz1iJUrXRUE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oB1aKeOZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iIqrC7xF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oB1aKeOZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iIqrC7xF; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 643B61F381;
-	Thu,  6 Feb 2025 05:48:05 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A9A1821108;
+	Thu,  6 Feb 2025 05:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820885; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
-	b=r5C0MKQMo0q15d8mBnQh4wzPZm9l7XYY+hdVZUyOWnAv+NdcuhAA8NJ8N2YLsEzmHGgJzs
-	XpEGcbqmD86LWdh7gJO6jzfi+FBWN/UDId6TED5QBk5YxU4Pk0PmEYXoj6R78XBbyPy68u
-	3TdfX/NHUEAtcQYANMsiObxoxpZCgIE=
+	bh=oVe7gYkowi0dGd3vy2szPeCKItpohkL7PZISomngb4A=;
+	b=oB1aKeOZ3N4SlUKIXXMCmzCYmK24kMqwPV7m7t9Impiji4KYUlOrn/HkQoJbw7irl4nwit
+	ktGdGJhTz/tsB7D9XGME+xcWM5VoFKfePKnhrvINfhPYSEZ8Wen+YnY4eQdE0rbDKniKgO
+	6cr/jJAPXeeoms3FJrsXdzOMiyhRrxQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820885;
+	s=susede2_ed25519; t=1738820895;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
-	b=ceHtDF+gXEs6hqVqFFr/dv1cZtqedHnRkVde8mWEgVGzOmynyQmY+O5XlOh7p4YeSb3Ybf
-	UGB7MsEp9Kig7LCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=r5C0MKQM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ceHtDF+g
+	bh=oVe7gYkowi0dGd3vy2szPeCKItpohkL7PZISomngb4A=;
+	b=iIqrC7xFtHajo8zueilFdg2SDw9w8MQdkt+MQ2PiahXbOg7C/S5PAXsXwNis+zFdix+XrL
+	c2A4m3xj1pwoDyCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oB1aKeOZ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=iIqrC7xF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820885; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
-	b=r5C0MKQMo0q15d8mBnQh4wzPZm9l7XYY+hdVZUyOWnAv+NdcuhAA8NJ8N2YLsEzmHGgJzs
-	XpEGcbqmD86LWdh7gJO6jzfi+FBWN/UDId6TED5QBk5YxU4Pk0PmEYXoj6R78XBbyPy68u
-	3TdfX/NHUEAtcQYANMsiObxoxpZCgIE=
+	bh=oVe7gYkowi0dGd3vy2szPeCKItpohkL7PZISomngb4A=;
+	b=oB1aKeOZ3N4SlUKIXXMCmzCYmK24kMqwPV7m7t9Impiji4KYUlOrn/HkQoJbw7irl4nwit
+	ktGdGJhTz/tsB7D9XGME+xcWM5VoFKfePKnhrvINfhPYSEZ8Wen+YnY4eQdE0rbDKniKgO
+	6cr/jJAPXeeoms3FJrsXdzOMiyhRrxQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820885;
+	s=susede2_ed25519; t=1738820895;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nzJzvVSPDZKlnRYA1D5bBmX9O8UlzUVlfs44jkMjMDU=;
-	b=ceHtDF+gXEs6hqVqFFr/dv1cZtqedHnRkVde8mWEgVGzOmynyQmY+O5XlOh7p4YeSb3Ybf
-	UGB7MsEp9Kig7LCg==
+	bh=oVe7gYkowi0dGd3vy2szPeCKItpohkL7PZISomngb4A=;
+	b=iIqrC7xFtHajo8zueilFdg2SDw9w8MQdkt+MQ2PiahXbOg7C/S5PAXsXwNis+zFdix+XrL
+	c2A4m3xj1pwoDyCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A170D13795;
-	Thu,  6 Feb 2025 05:48:02 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E59F813795;
+	Thu,  6 Feb 2025 05:48:12 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DntlFRJNpGcCCAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:48:02 +0000
+	id n1gUJhxNpGcKCAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:48:12 +0000
 From: NeilBrown <neilb@suse.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -98,9 +98,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Dave Chinner <david@fromorbit.com>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 17/19] nfsd: use lookup_and_lock_one() and lookup_and_lock_rename_one()
-Date: Thu,  6 Feb 2025 16:42:54 +1100
-Message-ID: <20250206054504.2950516-18-neilb@suse.de>
+Subject: [PATCH 18/19] nfs: change mkdir inode_operation to mkdir_async
+Date: Thu,  6 Feb 2025 16:42:55 +1100
+Message-ID: <20250206054504.2950516-19-neilb@suse.de>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250206054504.2950516-1-neilb@suse.de>
 References: <20250206054504.2950516-1-neilb@suse.de>
@@ -111,8 +111,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 643B61F381
-X-Spam-Level: 
+X-Rspamd-Queue-Id: A9A1821108
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
@@ -139,303 +140,292 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-nfsd now used lookup_and_lock_one() when creating/removing names in the
-exported filesystem.
-It uses lookup_and_lock_rename_one() when renaming.
+mkdir_async allows a different dentry to be returned which is sometimes
+relevant for nfs.
+
+This patch changes the nfs_rpc_ops mkdir op to return a dentry, and
+passes that back to the caller using mkdir_async.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/nfsd/nfsproc.c |  12 +++---
- fs/nfsd/vfs.c     | 107 +++++++++++++---------------------------------
- 2 files changed, 36 insertions(+), 83 deletions(-)
+ fs/nfs/dir.c            | 17 ++++++++--------
+ fs/nfs/internal.h       |  4 ++--
+ fs/nfs/nfs3proc.c       |  9 +++++----
+ fs/nfs/nfs4proc.c       | 45 +++++++++++++++++++++++++++++------------
+ fs/nfs/proc.c           | 14 ++++++++-----
+ include/linux/nfs_xdr.h |  2 +-
+ 6 files changed, 58 insertions(+), 33 deletions(-)
 
-diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
-index 6dda081eb24c..27c2b1d5e1ac 100644
---- a/fs/nfsd/nfsproc.c
-+++ b/fs/nfsd/nfsproc.c
-@@ -311,17 +311,16 @@ nfsd_proc_create(struct svc_rqst *rqstp)
- 		goto done;
- 	}
- 
--	inode_lock_nested(dirfhp->fh_dentry->d_inode, I_MUTEX_PARENT);
--	dchild = lookup_one_len(argp->name, dirfhp->fh_dentry, argp->len);
-+	dchild = lookup_and_lock_one(NULL, argp->name, argp->len,
-+				     dirfhp->fh_dentry, LOOKUP_CREATE);
- 	if (IS_ERR(dchild)) {
- 		resp->status = nfserrno(PTR_ERR(dchild));
--		goto out_unlock;
-+		goto put_write;
- 	}
- 	fh_init(newfhp, NFS_FHSIZE);
- 	resp->status = fh_compose(newfhp, dirfhp->fh_export, dchild, dirfhp);
- 	if (!resp->status && d_really_is_negative(dchild))
- 		resp->status = nfserr_noent;
--	dput(dchild);
- 	if (resp->status) {
- 		if (resp->status != nfserr_noent)
- 			goto out_unlock;
-@@ -331,7 +330,7 @@ nfsd_proc_create(struct svc_rqst *rqstp)
- 		 */
- 		resp->status = nfserr_acces;
- 		if (!newfhp->fh_dentry) {
--			printk(KERN_WARNING 
-+			printk(KERN_WARNING
- 				"nfsd_proc_create: file handle not verified\n");
- 			goto out_unlock;
- 		}
-@@ -427,7 +426,8 @@ nfsd_proc_create(struct svc_rqst *rqstp)
- 	}
- 
- out_unlock:
--	inode_unlock(dirfhp->fh_dentry->d_inode);
-+	done_lookup_and_lock(dirfhp->fh_dentry, dchild, LOOKUP_CREATE);
-+put_write:
- 	fh_drop_write(dirfhp);
- done:
- 	fh_put(dirfhp);
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 740332413138..af4a7f75cca0 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1551,19 +1551,13 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	if (host_err)
- 		return nfserrno(host_err);
- 
--	inode_lock_nested(dentry->d_inode, I_MUTEX_PARENT);
--	dchild = lookup_one_len(fname, dentry, flen);
-+	dchild = lookup_and_lock_one(NULL, fname, flen, dentry, LOOKUP_CREATE);
- 	host_err = PTR_ERR(dchild);
- 	if (IS_ERR(dchild)) {
- 		err = nfserrno(host_err);
--		goto out_unlock;
-+		goto out;
- 	}
- 	err = fh_compose(resfhp, fhp->fh_export, dchild, fhp);
--	/*
--	 * We unconditionally drop our ref to dchild as fh_compose will have
--	 * already grabbed its own ref for it.
--	 */
--	dput(dchild);
- 	if (err)
- 		goto out_unlock;
- 	err = fh_fill_pre_attrs(fhp);
-@@ -1572,7 +1566,8 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	err = nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
- 	fh_fill_post_attrs(fhp);
- out_unlock:
--	inode_unlock(dentry->d_inode);
-+	done_lookup_and_lock(dentry, dchild, LOOKUP_CREATE);
-+out:
- 	return err;
- }
- 
-@@ -1656,8 +1651,7 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	}
- 
- 	dentry = fhp->fh_dentry;
--	inode_lock_nested(dentry->d_inode, I_MUTEX_PARENT);
--	dnew = lookup_one_len(fname, dentry, flen);
-+	dnew = lookup_and_lock_one(NULL, fname, flen, dentry, LOOKUP_CREATE);
- 	if (IS_ERR(dnew)) {
- 		err = nfserrno(PTR_ERR(dnew));
- 		inode_unlock(dentry->d_inode);
-@@ -1673,11 +1667,11 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 		nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
- 	fh_fill_post_attrs(fhp);
- out_unlock:
--	inode_unlock(dentry->d_inode);
-+	done_lookup_and_lock(dentry, dnew, LOOKUP_CREATE);
- 	if (!err)
- 		err = nfserrno(commit_metadata(fhp));
--	dput(dnew);
--	if (err==0) err = cerr;
-+	if (err==0)
-+		err = cerr;
- out_drop_write:
- 	fh_drop_write(fhp);
- out:
-@@ -1721,43 +1715,35 @@ nfsd_link(struct svc_rqst *rqstp, struct svc_fh *ffhp,
- 
- 	ddir = ffhp->fh_dentry;
- 	dirp = d_inode(ddir);
--	inode_lock_nested(dirp, I_MUTEX_PARENT);
--
--	dnew = lookup_one_len(name, ddir, len);
-+	dnew = lookup_and_lock_one(NULL, name, len, ddir, LOOKUP_CREATE);
- 	if (IS_ERR(dnew)) {
--		err = nfserrno(PTR_ERR(dnew));
--		goto out_unlock;
-+		err = PTR_ERR(dnew);
-+		goto out_drop_write;
- 	}
- 
- 	dold = tfhp->fh_dentry;
- 
- 	err = nfserr_noent;
- 	if (d_really_is_negative(dold))
--		goto out_dput;
-+		goto out_unlock;
- 	err = fh_fill_pre_attrs(ffhp);
- 	if (err != nfs_ok)
--		goto out_dput;
-+		goto out_unlock;
- 	host_err = vfs_link(dold, &nop_mnt_idmap, dirp, dnew, NULL);
- 	fh_fill_post_attrs(ffhp);
--	inode_unlock(dirp);
--	if (!host_err) {
-+out_unlock:
-+	done_lookup_and_lock(ddir, dnew, LOOKUP_CREATE);
-+	if (!err && !host_err) {
- 		err = nfserrno(commit_metadata(ffhp));
- 		if (!err)
- 			err = nfserrno(commit_metadata(tfhp));
--	} else {
-+	} else if (!err) {
- 		err = nfserrno(host_err);
- 	}
--	dput(dnew);
- out_drop_write:
- 	fh_drop_write(tfhp);
- out:
- 	return err;
--
--out_dput:
--	dput(dnew);
--out_unlock:
--	inode_unlock(dirp);
--	goto out_drop_write;
- }
- 
- static void
-@@ -1788,7 +1774,7 @@ __be32
- nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 			    struct svc_fh *tfhp, char *tname, int tlen)
- {
--	struct dentry	*fdentry, *tdentry, *odentry, *ndentry, *trap;
-+	struct dentry	*fdentry, *tdentry, *odentry, *ndentry;
- 	struct inode	*fdir, *tdir;
- 	__be32		err;
- 	int		host_err;
-@@ -1824,9 +1810,12 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 		goto out;
- 	}
- 
--	trap = lock_rename(tdentry, fdentry);
--	if (IS_ERR(trap)) {
--		err = nfserr_xdev;
-+	host_err = lookup_and_lock_rename_one(fdentry, tdentry,
-+					      &odentry, &ndentry,
-+					      fname, flen, tname, tlen,
-+					      0, LOOKUP_CREATE|LOOKUP_RENAME_TARGET);
-+	if (host_err) {
-+		err = nfserrno(host_err);
- 		goto out_want_write;
- 	}
- 	err = fh_fill_pre_attrs(ffhp);
-@@ -1836,30 +1825,10 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 	if (err != nfs_ok)
- 		goto out_unlock;
- 
--	odentry = lookup_one_len(fname, fdentry, flen);
--	host_err = PTR_ERR(odentry);
--	if (IS_ERR(odentry))
--		goto out_nfserr;
--
--	host_err = -ENOENT;
--	if (d_really_is_negative(odentry))
--		goto out_dput_old;
--	host_err = -EINVAL;
--	if (odentry == trap)
--		goto out_dput_old;
--
--	ndentry = lookup_one_len(tname, tdentry, tlen);
--	host_err = PTR_ERR(ndentry);
--	if (IS_ERR(ndentry))
--		goto out_dput_old;
--	host_err = -ENOTEMPTY;
--	if (ndentry == trap)
--		goto out_dput_new;
--
- 	if ((ndentry->d_sb->s_export_op->flags & EXPORT_OP_CLOSE_BEFORE_UNLINK) &&
- 	    nfsd_has_cached_files(ndentry)) {
- 		close_cached = true;
--		goto out_dput_old;
-+		goto out_unlock;
- 	} else {
- 		struct renamedata rd = {
- 			.old_mnt_idmap	= &nop_mnt_idmap,
-@@ -1884,11 +1853,6 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 				host_err = commit_metadata(ffhp);
- 		}
- 	}
-- out_dput_new:
--	dput(ndentry);
-- out_dput_old:
--	dput(odentry);
-- out_nfserr:
- 	err = nfserrno(host_err);
- 
- 	if (!close_cached) {
-@@ -1896,7 +1860,7 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 		fh_fill_post_attrs(tfhp);
- 	}
- out_unlock:
--	unlock_rename(tdentry, fdentry);
-+	done_lookup_and_lock_rename(fdentry, tdentry, odentry, ndentry);
- out_want_write:
- 	fh_drop_write(ffhp);
- 
-@@ -1943,18 +1907,11 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
- 
- 	dentry = fhp->fh_dentry;
- 	dirp = d_inode(dentry);
--	inode_lock_nested(dirp, I_MUTEX_PARENT);
--
--	rdentry = lookup_one_len(fname, dentry, flen);
-+	rdentry = lookup_and_lock_one(NULL, fname, flen, dentry, LOOKUP_REMOVE);
- 	host_err = PTR_ERR(rdentry);
- 	if (IS_ERR(rdentry))
--		goto out_unlock;
-+		goto out_drop_write;
- 
--	if (d_really_is_negative(rdentry)) {
--		dput(rdentry);
--		host_err = -ENOENT;
--		goto out_unlock;
--	}
- 	rinode = d_inode(rdentry);
- 	err = fh_fill_pre_attrs(fhp);
- 	if (err != nfs_ok)
-@@ -1981,11 +1938,10 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
- 		host_err = vfs_rmdir(&nop_mnt_idmap, dirp, rdentry);
- 	}
- 	fh_fill_post_attrs(fhp);
--
--	inode_unlock(dirp);
-+out_unlock:
-+	done_lookup_and_lock(dentry, rdentry, LOOKUP_REMOVE);
- 	if (!host_err)
- 		host_err = commit_metadata(fhp);
--	dput(rdentry);
- 	iput(rinode);    /* truncate the inode here */
- 
- out_drop_write:
-@@ -2001,9 +1957,6 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
- 	}
- out:
- 	return err;
--out_unlock:
--	inode_unlock(dirp);
--	goto out_drop_write;
- }
- 
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index 8cbe63f4089a..2c69ec77d02c 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -2420,11 +2420,12 @@ EXPORT_SYMBOL_GPL(nfs_mknod);
  /*
+  * See comments for nfs_proc_create regarding failed operations.
+  */
+-int nfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+-	      struct dentry *dentry, umode_t mode)
++struct dentry *nfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
++			 struct dentry *dentry, umode_t mode,
++			 struct dirop_ret *dret)
+ {
+ 	struct iattr attr;
+-	int error;
++	struct dentry *ret;
+ 
+ 	dfprintk(VFS, "NFS: mkdir(%s/%lu), %pd\n",
+ 			dir->i_sb->s_id, dir->i_ino, dentry);
+@@ -2433,14 +2434,14 @@ int nfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	attr.ia_mode = mode | S_IFDIR;
+ 
+ 	trace_nfs_mkdir_enter(dir, dentry);
+-	error = NFS_PROTO(dir)->mkdir(dir, dentry, &attr);
+-	trace_nfs_mkdir_exit(dir, dentry, error);
+-	if (error != 0)
++	ret = NFS_PROTO(dir)->mkdir(dir, dentry, &attr);
++	trace_nfs_mkdir_exit(dir, dentry, PTR_ERR_OR_ZERO(ret));
++	if (IS_ERR(ret))
+ 		goto out_err;
+-	return 0;
++	return ret;
+ out_err:
+ 	d_drop(dentry);
+-	return error;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nfs_mkdir);
+ 
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index fae2c7ae4acc..f7dea7fe5ebc 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -400,8 +400,8 @@ struct dentry *nfs_lookup(struct inode *, struct dentry *, unsigned int);
+ void nfs_d_prune_case_insensitive_aliases(struct inode *inode);
+ int nfs_create(struct mnt_idmap *, struct inode *, struct dentry *,
+ 	       umode_t, bool);
+-int nfs_mkdir(struct mnt_idmap *, struct inode *, struct dentry *,
+-	      umode_t);
++struct dentry *nfs_mkdir(struct mnt_idmap *, struct inode *, struct dentry *,
++			 umode_t, struct dirop_ret *);
+ int nfs_rmdir(struct inode *, struct dentry *);
+ int nfs_unlink(struct inode *, struct dentry *);
+ int nfs_symlink(struct mnt_idmap *, struct inode *, struct dentry *,
+diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
+index 0c3bc98cd999..41797cbbb8dc 100644
+--- a/fs/nfs/nfs3proc.c
++++ b/fs/nfs/nfs3proc.c
+@@ -578,7 +578,7 @@ nfs3_proc_symlink(struct inode *dir, struct dentry *dentry, struct folio *folio,
+ 	return status;
+ }
+ 
+-static int
++static struct dentry *
+ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ {
+ 	struct posix_acl *default_acl, *acl;
+@@ -613,14 +613,15 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ 
+ 	status = nfs3_proc_setacls(d_inode(dentry), acl, default_acl);
+ 
+-	dput(d_alias);
+ out_release_acls:
+ 	posix_acl_release(acl);
+ 	posix_acl_release(default_acl);
+ out:
+ 	nfs3_free_createdata(data);
+ 	dprintk("NFS reply mkdir: %d\n", status);
+-	return status;
++	if (status)
++		return ERR_PTR(status);
++	return d_alias;
+ }
+ 
+ static int
+@@ -1037,7 +1038,7 @@ static const struct inode_operations nfs3_dir_inode_operations = {
+ 	.link		= nfs_link,
+ 	.unlink		= nfs_unlink,
+ 	.symlink	= nfs_symlink,
+-	.mkdir		= nfs_mkdir,
++	.mkdir_async	= nfs_mkdir,
+ 	.rmdir		= nfs_rmdir,
+ 	.mknod		= nfs_mknod,
+ 	.rename		= nfs_rename,
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index df9669d4ded7..ef219968ed22 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -5135,9 +5135,6 @@ static int nfs4_do_create(struct inode *dir, struct dentry *dentry, struct nfs4_
+ 				    &data->arg.seq_args, &data->res.seq_res, 1);
+ 	if (status == 0) {
+ 		spin_lock(&dir->i_lock);
+-		/* Creating a directory bumps nlink in the parent */
+-		if (data->arg.ftype == NF4DIR)
+-			nfs4_inc_nlink_locked(dir);
+ 		nfs4_update_changeattr_locked(dir, &data->res.dir_cinfo,
+ 					      data->res.fattr->time_start,
+ 					      NFS_INO_INVALID_DATA);
+@@ -5147,6 +5144,25 @@ static int nfs4_do_create(struct inode *dir, struct dentry *dentry, struct nfs4_
+ 	return status;
+ }
+ 
++static struct dentry *nfs4_do_mkdir(struct inode *dir, struct dentry *dentry,
++				    struct nfs4_createdata *data)
++{
++	int status = nfs4_call_sync(NFS_SERVER(dir)->client, NFS_SERVER(dir), &data->msg,
++				    &data->arg.seq_args, &data->res.seq_res, 1);
++
++	if (status)
++		return ERR_PTR(status);
++
++	spin_lock(&dir->i_lock);
++	/* Creating a directory bumps nlink in the parent */
++	nfs4_inc_nlink_locked(dir);
++	nfs4_update_changeattr_locked(dir, &data->res.dir_cinfo,
++				      data->res.fattr->time_start,
++				      NFS_INO_INVALID_DATA);
++	spin_unlock(&dir->i_lock);
++	return nfs_add_or_obtain(dentry, data->res.fh, data->res.fattr);
++}
++
+ static void nfs4_free_createdata(struct nfs4_createdata *data)
+ {
+ 	nfs4_label_free(data->fattr.label);
+@@ -5203,32 +5219,34 @@ static int nfs4_proc_symlink(struct inode *dir, struct dentry *dentry,
+ 	return err;
+ }
+ 
+-static int _nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
+-		struct iattr *sattr, struct nfs4_label *label)
++static struct dentry *_nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
++				       struct iattr *sattr,
++				       struct nfs4_label *label)
+ {
+ 	struct nfs4_createdata *data;
+-	int status = -ENOMEM;
++	struct dentry *ret = ERR_PTR(-ENOMEM);
+ 
+ 	data = nfs4_alloc_createdata(dir, &dentry->d_name, sattr, NF4DIR);
+ 	if (data == NULL)
+ 		goto out;
+ 
+ 	data->arg.label = label;
+-	status = nfs4_do_create(dir, dentry, data);
++	ret = nfs4_do_mkdir(dir, dentry, data);
+ 
+ 	nfs4_free_createdata(data);
+ out:
+-	return status;
++	return ret;
+ }
+ 
+-static int nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
+-		struct iattr *sattr)
++static struct dentry *nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
++				      struct iattr *sattr)
+ {
+ 	struct nfs_server *server = NFS_SERVER(dir);
+ 	struct nfs4_exception exception = {
+ 		.interruptible = true,
+ 	};
+ 	struct nfs4_label l, *label;
++	struct dentry *alias;
+ 	int err;
+ 
+ 	label = nfs4_label_init_security(dir, dentry, sattr, &l);
+@@ -5236,14 +5254,15 @@ static int nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
+ 	if (!(server->attr_bitmask[2] & FATTR4_WORD2_MODE_UMASK))
+ 		sattr->ia_mode &= ~current_umask();
+ 	do {
+-		err = _nfs4_proc_mkdir(dir, dentry, sattr, label);
++		alias = _nfs4_proc_mkdir(dir, dentry, sattr, label);
++		err = PTR_ERR_OR_ZERO(alias);
+ 		trace_nfs4_mkdir(dir, &dentry->d_name, err);
+ 		err = nfs4_handle_exception(NFS_SERVER(dir), err,
+ 				&exception);
+ 	} while (exception.retry);
+ 	nfs4_label_release_security(label);
+ 
+-	return err;
++	return alias;
+ }
+ 
+ static int _nfs4_proc_readdir(struct nfs_readdir_arg *nr_arg,
+@@ -10865,7 +10884,7 @@ static const struct inode_operations nfs4_dir_inode_operations = {
+ 	.link		= nfs_link,
+ 	.unlink		= nfs_unlink,
+ 	.symlink	= nfs_symlink,
+-	.mkdir		= nfs_mkdir,
++	.mkdir_async	= nfs_mkdir,
+ 	.rmdir		= nfs_rmdir,
+ 	.mknod		= nfs_mknod,
+ 	.rename		= nfs_rename,
+diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
+index 77920a2e3cef..7e8f6d8f02b4 100644
+--- a/fs/nfs/proc.c
++++ b/fs/nfs/proc.c
+@@ -446,13 +446,14 @@ nfs_proc_symlink(struct inode *dir, struct dentry *dentry, struct folio *folio,
+ 	return status;
+ }
+ 
+-static int
++static struct dentry *
+ nfs_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ {
+ 	struct nfs_createdata *data;
+ 	struct rpc_message msg = {
+ 		.rpc_proc	= &nfs_procedures[NFSPROC_MKDIR],
+ 	};
++	struct dentry *alias = NULL;
+ 	int status = -ENOMEM;
+ 
+ 	dprintk("NFS call  mkdir %pd\n", dentry);
+@@ -464,12 +465,15 @@ nfs_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ 
+ 	status = rpc_call_sync(NFS_CLIENT(dir), &msg, 0);
+ 	nfs_mark_for_revalidate(dir);
+-	if (status == 0)
+-		status = nfs_instantiate(dentry, data->res.fh, data->res.fattr);
++	if (status == 0) {
++		alias = nfs_add_or_obtain(dentry, data->res.fh, data->res.fattr);
++		status = PTR_ERR_OR_ZERO(alias);
++	} else
++		alias = ERR_PTR(status);
+ 	nfs_free_createdata(data);
+ out:
+ 	dprintk("NFS reply mkdir: %d\n", status);
+-	return status;
++	return alias;
+ }
+ 
+ static int
+@@ -706,7 +710,7 @@ static const struct inode_operations nfs_dir_inode_operations = {
+ 	.link		= nfs_link,
+ 	.unlink		= nfs_unlink,
+ 	.symlink	= nfs_symlink,
+-	.mkdir		= nfs_mkdir,
++	.mkdir_async	= nfs_mkdir,
+ 	.rmdir		= nfs_rmdir,
+ 	.mknod		= nfs_mknod,
+ 	.rename		= nfs_rename,
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index d0473e0d4aba..33d7f4c8183e 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -1801,7 +1801,7 @@ struct nfs_rpc_ops {
+ 	int	(*link)    (struct inode *, struct inode *, const struct qstr *);
+ 	int	(*symlink) (struct inode *, struct dentry *, struct folio *,
+ 			    unsigned int, struct iattr *);
+-	int	(*mkdir)   (struct inode *, struct dentry *, struct iattr *);
++	struct dentry *(*mkdir)   (struct inode *, struct dentry *, struct iattr *);
+ 	int	(*rmdir)   (struct inode *, const struct qstr *);
+ 	int	(*readdir) (struct nfs_readdir_arg *, struct nfs_readdir_res *);
+ 	int	(*mknod)   (struct inode *, struct dentry *, struct iattr *,
 -- 
 2.47.1
 
