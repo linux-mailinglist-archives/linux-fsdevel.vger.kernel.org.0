@@ -1,103 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-41114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B16A2B1F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:07:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C81A2B203
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E061887AD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 19:07:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E08318897E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 19:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134501A238E;
-	Thu,  6 Feb 2025 19:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AE11A2547;
+	Thu,  6 Feb 2025 19:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFiACaW1"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="N21evy+s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E725D1A08B8;
-	Thu,  6 Feb 2025 19:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6A723959B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 19:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738868845; cv=none; b=AvB8FJoZaZz49BzPMpkyDAe29gqHOrOPYe2s691/E0QE4/HM3yc/FXne0JJsY2kYyZG7wE+g7PJXPqx2D37R4GUrmqjBxh9z12AcU9Ejyc8enGN9fPgNCbrQnXGAgBB9qEy4eq+lagw3zMWPf7lmTgIjWqIjyDaJYjJjyVEy+Rg=
+	t=1738869097; cv=none; b=q9sM/lCXZRbeomhrW1QfrU7Au8LGPWd45C+sbFmwtls5lSM0AZqquvMW/kNk9I41IVjWdaduC7hoNBHwF2MMAx1juORIb9PMvjIh5x95uviKH2kpSU4bGl3kC/L+mb3Tcto7evo9YJTokqms5yQdFykEDHIp1sFkm3E5TExjN94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738868845; c=relaxed/simple;
-	bh=3Y9lKJZTXxPn/bEFEPxof9cM95KTnLOaiPaLer/sG+U=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sqgt1HoJ1dLKNzxYMoxvNF3orTGM0jpkylZFpdcTsBmB7YORHbE91Q0a26E3RW7S9tuDml4XLz2KcmAVWE9DbjobEGm/i2v/CtqbMar2mgm4Kd0Omj1BYr1u7iYBE1bPhHSNe33PD0chQUirUuMsOKx6Irh/WJukoK0ZzWhhgus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFiACaW1; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab7814aa2adso67618166b.0;
-        Thu, 06 Feb 2025 11:07:23 -0800 (PST)
+	s=arc-20240116; t=1738869097; c=relaxed/simple;
+	bh=9I0quCuK3ocB6TnLZEvD4/SWmOHMQKlhuRxWXICl38A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ErYY6YclBNYKriPjF4AG7n9v/dZ1R6SNK4N7J5eieYFAoBcULde/z9vXvdDWPuy7riVN5F3IU9duaQXMBBHlJ7cRc6ekYDRwJCe2Xryb4grIttMQr65dCn0D7tQ774eADAyiRyNfyCjRJTTFVZezX4/ERj49rh/dILOPw3YGoGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=N21evy+s; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21661be2c2dso25352525ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 11:11:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738868842; x=1739473642; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=piS44ekru2Q2hy3mmivZUbYVvyIzizTuKsNZi6ZY4iE=;
-        b=TFiACaW1vrVZ779iAtJkR4eKYp4XcpSmE96MCXIcCMd+OB5v87dLzi6Ed5J0hFRo2P
-         MpS2VyZhAiHT6Hxh7GJFrICLrKE5mQzwgdh/iENyiwUsBep6QnvPbbI+Prl/GHPOcJ9Q
-         evwN5fRHCoAaQnrqf0e++pGfb7PZ7B+8FaSXSXdN6LQQioMuvliaaOkeka/DPPLSvWqc
-         VpqBX2d0H6JdWQcrc3HWprh3V0A5AyfUUh9oT0FNaRKqXwQS+2YpZcvPNmm4FLRAlmpf
-         pfSQwdwEKY+9BipCAl0ix1jFNIvVukbIlV7+i+U55Zwl3MkoQjEx9BGVi9CiyyfYvUt2
-         +W7g==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1738869095; x=1739473895; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJbpg75fLLo+n0ed/sL2cOGuJyTnrmNtjTMREUR+jy0=;
+        b=N21evy+savpUHrYFOo0CdnxB1C60mmja6DGgymjePyNtHUczzUlHnL2UQiTCseEVA5
+         hGzQ1WiSPmFAEw28EGhdVpx3mU/if1SZ6cIMaGNHzVFgPNPsWJK8/7ltyTIUQaQuOGlF
+         wsU7mkyE17GpNS+crKGf51O9cEu+VSnkKbxKBuSfe/rFsYVABr/yq4taMxm5V1IRA0NE
+         ds2xwEmw36b0zZgQu7WmwCtwJKinh+S2DlPNN+ytJUC/bTkiqVj5FpYLaeW9UmGpVweG
+         13eeQOfGk2qQtBC/EprDPEydVsgNQ/RzFGKAmHxKMUSKeIqGQ3JO7jclcdKBgY4gUyT6
+         t9EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738868842; x=1739473642;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=piS44ekru2Q2hy3mmivZUbYVvyIzizTuKsNZi6ZY4iE=;
-        b=gBI2uChUrRnln4CK2tyagqXRzYDPj9Pwf6pLulR2GV/fp+SrK3pVJiyAamohqaYDRk
-         EMPUZaMgKS3MGPDuvYaBTblTo8/2WUEnQ7UJvy9h32+G2Vnkdi40o9LcP/6rudUIc6KV
-         y7vRR7XDYV61eC4yJVfVUxFEjoLJ98IrdK4y04szAlb+uGgW5a1OwVG2tc53CaI0VoFu
-         bG5SSM4CvmY2y7EeMp/gzMIdiMHiv/J3w9dBk3Yeglyc8PuCrEOO/JNZJyvNd4j4/KZf
-         hZOrsxiTiO6BNK+UCyaHuFqTQi/YoJ0XNDVBhuyRydR4Z3YNOsWZfvHD+3wPH1f0zyO+
-         m0Og==
-X-Forwarded-Encrypted: i=1; AJvYcCV3wwERHSdk+3R0APUtdNd0NSYx5QlrP0BPLakTKacPiIqNpgkgTbEQBgWUPmp0ZaWZVRX62AWBgVwZ183w@vger.kernel.org, AJvYcCVEn41DAgcFruDKxTTo19W1GbOiGVptLv6Tpv7ocalxHA44kilBPc/qEuyfHV8FToasLryVLQg1ftgtNv4U@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq5pYDsDPatClhMG6XTjQRIcIvfYj3pSwP/TAxQVxFzIl+Kea6
-	dtzWQ09XRh+ZdYw/AIYm9xAQB0gyDEA7Tz20yTN3upjgHNAIKh0H75Fh/Yd0OxBaLLQcDLbYIOd
-	jqtKdvuKhy6OoP3gnkaNBNsYqYIQ=
-X-Gm-Gg: ASbGncsj4Vv2fea1j126WR1ximY59ZzaiOmzCWqdmDyuzaLxZ6a6GmGN3/pnFfCch62
-	jU844//kTUP4peTdNGa4Q/HXosCC/vPCzsq1VT02bNgdA6B45EyTiqi2EH8LrTg35ZFZlFPUn
-X-Google-Smtp-Source: AGHT+IH3nxCUMU8lFe7u/yFJ06VJpdagvQubxRPShgigcGMaXy9qQT1KRxOG36kQUroJS2+DLpf/1D0xoR+VUl982lE=
-X-Received: by 2002:a05:6402:5386:b0:5dc:74fd:abf1 with SMTP id
- 4fb4d7f45d1cf-5de45017b76mr1308453a12.15.1738868841642; Thu, 06 Feb 2025
- 11:07:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738869095; x=1739473895;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MJbpg75fLLo+n0ed/sL2cOGuJyTnrmNtjTMREUR+jy0=;
+        b=ZUoN1/Sh59ZEF8McYMb/AXmwalj6I71oDKphVWiI91nWtj5Btbh0JBrSdXc4Xww/lQ
+         T6IrI8m/HWnBlKHeZcsaWSxJxbhLsbAIJR/b0OJdA2QIN0jKTP3LKX4CgD1ZhL+wmTfy
+         HRhwwdCjAYlDuBDhrLsR2ZtUUoVpcCT6xQsBO0Km3+wHF172P/o93HnH79ldyj0vBFD5
+         YPzg6CcE9sScwo/HLjrdREsHpYWpN9J0oPIv3whXAWNvfUKHa6xaVCWkoMdK5Zg41U0D
+         q+HBBYSziAIc4Hhoh7Aa3UfXr5zqR+tSXZPOtYPgYm0zeIJwIcYxmAII0AHOMQ+SWldH
+         hY0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXoWLX5YzJX+s7duXHajfl6EiVbiC/3vOdYm+bKHVVNbyN0kGmrimdzN3CeCiYvavC42JPnds3YLtPPEgOI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHtcp86P+ySBhuIz639z/9KhIpIwCChY1jfurwQhmpbuIdZ0MT
+	iGlbsft/nNni856IqMXAAx19aDmmiWYTOzHfXY8rwH/Bc0ssIz4Fhe63pN4y6S0=
+X-Gm-Gg: ASbGnctgk2X2CP+UEjASFS1z0A0cJaXkyjJDxaYCtWW/KBhnKIojDWASrE3MbjGO7/T
+	zggPmk0gdMEOZVOfQUBDeLGZ8Ryqruj2DJXzq3K1ba5ytWGPkKBDULepQ8dbhR4HvuYHoX83Dhq
+	0NR73rFkrDgg1qgKplSBfa1H+CiVoYEbG0yttZUBn+gvNplYJlibyLeIMvJf6+T/RTi/QAJd0NC
+	7LiS/MVh1SAFLI0gGVA0uB2WABUYfWK8DfpdD5Ix9wie8FvVbHf5XnnKc566za2JW37s7t1d45p
+	nBJCVx3S1/OVpuZmC58U76txbh4SuAG8qw==
+X-Google-Smtp-Source: AGHT+IHpR9Cnm7qEforH5SUfctVVPWqK7U1sHf/lRtPer8qEaC/amdfvhSui6GQLza8k3+7U2f6oxA==
+X-Received: by 2002:a05:6a00:1f1a:b0:725:a78c:6c31 with SMTP id d2e1a72fcca58-7305d4135demr740958b3a.3.1738869094843;
+        Thu, 06 Feb 2025 11:11:34 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:9444:201b:e311:73ea])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad51af649d2sm1674301a12.56.2025.02.06.11.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2025 11:11:34 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH] ceph: add process/thread ID into debug output
+Date: Thu,  6 Feb 2025 11:11:26 -0800
+Message-ID: <20250206191126.137262-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 6 Feb 2025 20:07:09 +0100
-X-Gm-Features: AWEUYZkW3aoeWrfipuvTdCTz8cvkAXXkprTJUaqtWApk47UMeczz5KSjQTxbZ0g
-Message-ID: <CAGudoHFLnmp3tQHOwUAFBKxrno=ejxHmJXta=sTxVMtN9L1T9w@mail.gmail.com>
-Subject: audit_reusename in getname_flags
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-You added it in:
-commit 7ac86265dc8f665cc49d6e60a125e608cd2fca14
-Author: Jeff Layton <jlayton@kernel.org>
-Date:   Wed Oct 10 15:25:28 2012 -0400
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-    audit: allow audit code to satisfy getname requests from its names_list
+Process/Thread ID (pid) is crucial and essential info
+during the debug and bug fix. It is really hard
+to analyze the debug output without these details.
+This patch addes PID info into the debug output.
 
-Do I read correctly this has no user-visible impact, but merely tries
-to shave off some memory usage in case of duplicated user bufs?
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ include/linux/ceph/ceph_debug.h | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-This is partially getting in the way of whacking atomics for filename
-ref management (but can be worked around).
-
-AFAIU this change is not all *that* beneficial in its own right, so
-should not be a big deal to whack it regardless of what happens with
-refs? Note it would also remove some branches in the common case as
-normally audit either has dummy context or there is no match anyway.
-
+diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_debug.h
+index 5f904591fa5f..6292db198f61 100644
+--- a/include/linux/ceph/ceph_debug.h
++++ b/include/linux/ceph/ceph_debug.h
+@@ -16,13 +16,15 @@
+ 
+ # if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
+ #  define dout(fmt, ...)						\
+-	pr_debug("%.*s %12.12s:%-4d : " fmt,				\
++	pr_debug("pid %d %.*s %12.12s:%-4d : " fmt,			\
++		 current->pid,						\
+ 		 8 - (int)sizeof(KBUILD_MODNAME), "    ",		\
+ 		 kbasename(__FILE__), __LINE__, ##__VA_ARGS__)
+ #  define doutc(client, fmt, ...)					\
+-	pr_debug("%.*s %12.12s:%-4d : [%pU %llu] " fmt,			\
++	pr_debug("pid %d %.*s %12.12s:%-4d %s() : [%pU %llu] " fmt,	\
++		 current->pid,						\
+ 		 8 - (int)sizeof(KBUILD_MODNAME), "    ",		\
+-		 kbasename(__FILE__), __LINE__,				\
++		 kbasename(__FILE__), __LINE__, __func__,		\
+ 		 &client->fsid, client->monc.auth->global_id,		\
+ 		 ##__VA_ARGS__)
+ # else
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+2.48.0
+
 
