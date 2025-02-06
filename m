@@ -1,118 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-41126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204C4A2B43A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 22:36:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A0AA2B43E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 22:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A7AA7A207F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 21:35:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057EE3A3642
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 21:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF8223308;
-	Thu,  6 Feb 2025 21:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BFE223300;
+	Thu,  6 Feb 2025 21:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6AULSlE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cC7V19eL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C978222257E;
-	Thu,  6 Feb 2025 21:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8862722257E;
+	Thu,  6 Feb 2025 21:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738877800; cv=none; b=foe8PF4f4b7WlFdFxaaIXY5bPMnLE7tSaS/NI73RGZPt+wkuB1v3OSvcQC7ZFghtTqWAAEg3sRLPiJJnfiFll1+B5xwstBR9EmprQldiDdW20UebtQpKeFbus9Slx6qxRRRlbo0GqbgrXvM4sR290R78i4sOvrPq9YTl2GydzYo=
+	t=1738877898; cv=none; b=Hg+BB/aDVDgvUHqa4kvht0tHZrxj9M2sPINBsqUvvrEMhBh9Vgt2YOBHJKybSrHaUiw3b9Y1XHRJxvJfKvk4jXWvgMtyc7dW+odnz6LmsnFkrbyQyoS9ucyGJ8C6IweuolzekTxkKMo7/dS8HM9pSyMmngumGlL0xWwu8qm6Bf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738877800; c=relaxed/simple;
-	bh=nCwZyzhpC0hkV2m1x93EBihOAA8Sdpu3DRgaf+2cGTM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=If1CidTVkNWzG42u7Ti9R35cM3AOmL3GrA6nLFDTx5Idh5g72TDvdmgk1A1zg2hczx6mPeV1GtnKrfXVuNVbs8IKyjEm7dmWuHks+apiMuhegluLpexkzfj6eC6fNpIV+5gnXsU8rIKSgaIc0ynoW47u4pEofXuQMKFcFlTM0RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6AULSlE; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5401ab97206so1531987e87.3;
-        Thu, 06 Feb 2025 13:36:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738877797; x=1739482597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nCwZyzhpC0hkV2m1x93EBihOAA8Sdpu3DRgaf+2cGTM=;
-        b=U6AULSlEdtwCXKL+XU+5JZ7t/Ky74yjHIXFYYLtjvixYilC2Z6/dLOfnBIO0h6k5VL
-         zO9MH2XTcpODLQkeJcVar6JVJ5mLfOy7hOzQcKiBRMiE4MqA9N1FqbwfoSF8DErKpOHe
-         ahx4QeNj2Ixa7cHOXGuyAiZF13q0mOdWTgOkfJVpKIaairsz4qrkdYC0RAlz57CNTm0N
-         VNCPMtPYEX3BYnWR40eqkqViChPmXVyPzVY0ZnQIbm+tBmMsI+MKM/4HI8WYyQ+IW1cM
-         9uLRgLywyft6M1x+2cfbf2Zg6/Jt5sAu4oyhLpGzAAOBamecBzEunUe5OddJaVzkjM2J
-         ra2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738877797; x=1739482597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nCwZyzhpC0hkV2m1x93EBihOAA8Sdpu3DRgaf+2cGTM=;
-        b=IraD7VEnxTzw11KO/MpaH5Sf4eoB3egb2rEul+ckvVbdZFguplGAzhQ3aqGnIvWJBu
-         9GY7mMuqhx43PNWx1G0TWaFy6cQ4+nDwQbUdrVZ+zT1K+uopyMtV4uWocvCcGGCKR8oM
-         wY1V5shkY7B4syTkDqBzCop8dZ1qYtfFf6gSujnmTxwbzt/HWAwEiZXH8SD01oPgTNpJ
-         11kGIQWZVh7+qkrYRz5uhWNgNuFp1yVWdFXq6D/uwxRM83wG/xRxMRuPERSQHEHOb7y8
-         kK4aZmXt7w6SIUTT3Fjv5YTQWCHAEHuYe7Kr2EERGycEfj6q3lw7oxPAre4ezo3eNezU
-         Bcjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGRT1AOnQPY+3NCz5XgTTvaJzYaa6XAkJ00nWqPv/Ml5e76Pu6Sf8DtKkjmMM9HJjMlWYKAWEEpY/B@vger.kernel.org, AJvYcCUY4KPfQ9wqbfdxQIGRZ4/CXXGnGBF3i2juzoHUgYkaadNLZKM2m/4GxjU1kraIASLqY6YjN2qVImFpz1oz@vger.kernel.org, AJvYcCWPlshqPFmjLbf14TiHqTf9sFbuqSoXWSyiJz8CcvshaTkGBvOAN5adtS34A1TyP8hEndYh/vRtfk7nS6Yd@vger.kernel.org, AJvYcCXfVjlgeASMfrrPBJRYqyIrlSjowY1glt5F7mD7Gtyq+JbXs1PNiiNMroFeRs8IepkM8GU9ef1brgsxYuIAuO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQzcV1ObW1nY+fgiQOrU/MUXJqLmSMQYPl2JDj0NpZzcwho6tj
-	uQ9SujkQ5xMkZF64bMSCxoF4e381HGHgCCxton9vXwcOygZljRn+T0xk3QmWauEjRfq7hBwIgWb
-	i3Fvmq6VsjfOMV39pCGzVbWedaWI=
-X-Gm-Gg: ASbGncsR/mSKi/naLJgT/NB8AnTCPynZ4vHa1IZaFFPU0KcDIWW0h2jcU22Z6jaa3FD
-	Uj8G9aaPMsgtiyjNhka5faaEtadH5U88p0xhVEQq1Win3z4dQa26SgvXsxswNixt8Er67S4Jh+B
-	emy5udZq//8D34OnAfxCtqxtYSG/4z
-X-Google-Smtp-Source: AGHT+IFKsZ4neZ3WNle2nn5hNbX0wbEg2tMqnTVyt1oi7sWysli/k1ZAwtqDYExTcUt41YFmoVh1a7cBIrlW1sD9mcc=
-X-Received: by 2002:a05:6512:2814:b0:544:1201:c0bb with SMTP id
- 2adb3069b0e04-54414a9649emr111216e87.2.1738877796593; Thu, 06 Feb 2025
- 13:36:36 -0800 (PST)
+	s=arc-20240116; t=1738877898; c=relaxed/simple;
+	bh=CryonJbCuF96YFIBThKO+6Qtw8wzRCDlB/WwGhs/j2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMfhfhtLs26IqP5aQO139tQ8lO65Mj4w4Jmkh6CINrWr0/4uVdbles8x8XdruErYjlHlCRU+Av+g4o1tY5tBm6OEa2j3AkT4GcMitxI54rbUFfa4BQeSrYjIFI0Er7ThzlnS4/sRpBiHjZAybHB5rw2bUM5dXCiXxGzwOpH3aoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cC7V19eL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E995CC4CEDD;
+	Thu,  6 Feb 2025 21:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738877897;
+	bh=CryonJbCuF96YFIBThKO+6Qtw8wzRCDlB/WwGhs/j2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cC7V19eLyM4Cyotrv/DepwRQkC91MWNJbBnya/DsiwB7Xt/rvhhp0a6uuJ4cf0n1I
+	 boGhtzgm+6ba46+1c7dTrk83tKv9W/dK4cfDAiGHCSiHtYd0LZofcrOxYs3JbU3NRz
+	 K2NZjBvhKVf+F+Zjc5b04w7ZLfl5ZDnxByI7uJusOkGnLsHXeWqCWwK465uwStAD0I
+	 s1NgbUKlr55RV06rWvIYMLWmKOhGuhfJQzjV8czTQ8R8KzYSpGOIv9QHpKjwTJd8+V
+	 /Z4geYpK7JruLVSm3xtLIIO7nvYj/MHmOALFsWenA4pqupjd9IPrRKYn/uIvq6DFom
+	 l7ZPq2fUxB4Qg==
+Date: Thu, 6 Feb 2025 13:38:16 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH RFC 02/10] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <20250206213816.GU21808@frogsfrogsfrogs>
+References: <20250204120127.2396727-1-john.g.garry@oracle.com>
+ <20250204120127.2396727-3-john.g.garry@oracle.com>
+ <20250205195050.GX21808@frogsfrogsfrogs>
+ <d049cabb-9535-4a1d-ab01-61512c041af8@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206-rust-xarray-bindings-v15-0-a22b5dcacab3@gmail.com>
- <20250206-rust-xarray-bindings-v15-2-a22b5dcacab3@gmail.com>
- <Z6Tu8E4r5ZEolFX1@Mac.home> <CAJ-ks9nGZCMjgTTzeRz3DUCQyLVu-xWKau4AFkMGutLtomK-fA@mail.gmail.com>
- <Z6UiNYOTUshEKNcL@boqun-archlinux>
-In-Reply-To: <Z6UiNYOTUshEKNcL@boqun-archlinux>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 6 Feb 2025 16:35:59 -0500
-X-Gm-Features: AWEUYZmUCZ0vWErylmSBmkD9QhhwDT4zy6MbR2nP6txP7jrlOwmvXIgfTGOJo9o
-Message-ID: <CAJ-ks9=urZ54L5NkoyUw5rk+kSqJ1kS6n20WbC4THACU-TFfrg@mail.gmail.com>
-Subject: Re: [PATCH v15 2/3] rust: xarray: Add an abstraction for XArray
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d049cabb-9535-4a1d-ab01-61512c041af8@oracle.com>
 
-On Thu, Feb 6, 2025 at 3:58=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> wr=
-ote:
->
-> Your call ;-) It's a nitpicking after all, and you're the maintainer.
-> However, I do want to make the point that being a bit more comprehensive
-> won't hurt when providing an API.
->
-> Regards,
-> Boqun
+On Thu, Feb 06, 2025 at 10:35:28AM +0000, John Garry wrote:
+> On 05/02/2025 19:50, Darrick J. Wong wrote:
+> > > diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> > > index 59f7fc16eb80..580469668334 100644
+> > > --- a/fs/xfs/xfs_reflink.c
+> > > +++ b/fs/xfs/xfs_reflink.c
+> > > @@ -786,35 +786,20 @@ xfs_reflink_update_quota(
+> > >    * requirements as low as possible.
+> > >    */
+> > >   STATIC int
+> > > -xfs_reflink_end_cow_extent(
+> > > +xfs_reflink_end_cow_extent_locked(
+> > >   	struct xfs_inode	*ip,
+> > >   	xfs_fileoff_t		*offset_fsb,
+> > > -	xfs_fileoff_t		end_fsb)
+> > > +	xfs_fileoff_t		end_fsb,
+> > > +	struct xfs_trans	*tp,
+> > > +	bool			*commit)
+> > Transactions usually come before the inode in the parameter list.
+> 
+> ok
+> 
+> > 
+> > You don't need to pass out a @commit flag -- if the function returns
+> > nonzero then the caller has to cancel the transaction; otherwise it will
+> > return zero and the caller should commit it.>  There's no penalty for
+> > committing a non-dirty transaction.
+> 
+> If there is no penalty, then fine. But I don't feel totally comfortable with
+> this and would prefer to keep the same behavior.
 
-Point taken, and I appreciate your feedback! I went with something a
-bit more informative without being repetitive, inspired by std again.
-Will send v16 tomorrow.
+Right now this is the only place in XFS that behaves this way, which
+means you're adding a new code idiom that isn't present anywhere else in
+the code base.
 
-Cheers.
-Tamir
+--D
+
+> Thanks,
+> John
+> 
+> 
+> 
+> 
 
