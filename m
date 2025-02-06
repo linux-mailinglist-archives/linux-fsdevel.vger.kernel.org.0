@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-41074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666BCA2A9B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:23:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19444A2A9C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:26:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA2F7A437F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444801650D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1481624E0;
-	Thu,  6 Feb 2025 13:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567741624C2;
+	Thu,  6 Feb 2025 13:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4hJZ75L"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="hw6cuxop"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45721EA7D0;
-	Thu,  6 Feb 2025 13:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BC51EA7FF;
+	Thu,  6 Feb 2025 13:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738848160; cv=none; b=bxN1lsj2yhurErjLfO8A1XJGJarIH9VyG2xLDSAUgnSyqLph6rUfX8xIno5rrAyciTWbgO2IrIxnKl9FV7vqLM8H3W56C9bP/Zhf9IphymOPKSjoGlfRO6nZ7kqdnFvoPgHMYvsn3AMUKL0YXe9l6VDnf4oKgSi8HP87lO1PqXQ=
+	t=1738848338; cv=none; b=T65cjcJz1cZrKv+YwEM/EUqUAObul+KslZ7I8z5K+9FzCnN2nLhTYmG+z9Oa3JV7zFwHlyfB5D1X5ujVeU+kHzwSr7jea5JKuTLVcZ5LIs4XXdxDaRWkNQSl2c1LzYMc7BQjsiQIzPWInS1nxOQh4qPj9ORW32S+GtUgNK+dxqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738848160; c=relaxed/simple;
-	bh=E7aGuq8KgR9pSc3ZhIWYRUQk2M25H3YKV3wDss9W8ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kfFiFHMMX9Sz3GRl+RhHLo2a5h68mbj8xVVrM7D/whkaPCs8RE1C4+l8rJgY8C6UeAiMfEszuMawzJiOCLr8SmXksmmF60NdFbpiXPOLRs6NgXSLn/Dwsdi9aXbI4mlIp8WAa4bFfCYM7uFj8LRCqR2PpJRVZqnDVPcrmsBcnKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4hJZ75L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3EFC4CEDD;
-	Thu,  6 Feb 2025 13:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738848159;
-	bh=E7aGuq8KgR9pSc3ZhIWYRUQk2M25H3YKV3wDss9W8ek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H4hJZ75LBy6QaPPDuu3LyBVDpnRRm/ePajI061nWAXZiGsFBpBU1s2t3xKD2GAxIm
-	 EyV8+So7vvzkDLh441OKVe86XjuvQowRrXxGBDMnzZEHinaLafhrZTbOer+fi4yS/h
-	 mt0NT/4oC/GPn+Cm+8myEop7DaG/SMfoBULCM96HkrIx6mJuE+lnMIgyxo5acO7EiP
-	 joF3jX1A9sEI6NPIQTxV8zvNzjkSC48yz1JD7qZo01RjFgGWWzWjZQxCr+hwynkRUZ
-	 rTM/UtoKkwF3EBWolbJoHy2a9ALyNjTMy7mxNx0T3x7O9NJ7Pip92WTDMGrLhSOicp
-	 drrX1DeVF1aKw==
-Date: Thu, 6 Feb 2025 14:22:34 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/19] VFS: introduce inode flags to report locking needs
- for directory ops
-Message-ID: <20250206-gasversorger-flugbereit-9eed46e951f9@brauner>
-References: <20250206054504.2950516-1-neilb@suse.de>
- <20250206054504.2950516-11-neilb@suse.de>
+	s=arc-20240116; t=1738848338; c=relaxed/simple;
+	bh=5NpQ4X93HhWFIWaadKzTlPn/L/mmiE35/1eMueqdciw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B4O8vhLOKtjlLgMbk34SCJI/mKp9HHfsFW2e9d6R8L/L8itFtyb79h8+XT6yofI52NdN4kmsn/8M50jtp+LdkNG/hYm0IfuXAklUDJe0Kg8ALSzJ64i9VaaRKMy8ZnmwJQ/LHvRAkXqSymgUrehfGoT9C5SmrBBBrH9zs1GMLEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=hw6cuxop; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
+	s=protonmail2; t=1738848326; x=1739107526;
+	bh=Ruke8ibh7q4d9OfDm4mTFJ0uMb4IfmsuXxLQqR6Dag0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=hw6cuxopyk6Q8KYNSARUXrVfUa2aW8/7mK3AvLCLF6j1hq7bJltQvmfCoQUwx5zRk
+	 ICg9FhiN52gLfepKxmLnc3i96cDYucmXMW+FuYA/19IM/9uTKPj2Iu352wiq9jI0bu
+	 0UGidB3fVNuO3XqmBHx7ZwVbg2DNamVBpu44MysWkqogioJ7BDxTGumyY8yirvJhRJ
+	 fdqFrFcaepMuI7txptEU8tv525XHQQOiac2PvC6Uc8cBLRuuJe1xd1f0G18UsLbQjK
+	 5Gs9mna1fStqhRqL5llCiZwB8JcwP5gJAWN2Z31CJxXYTD0sKOaw1csam4d+V/IJYw
+	 M34wXsih5cjjg==
+Date: Thu, 06 Feb 2025 13:25:19 +0000
+To: "brauner@kernel.org" <brauner@kernel.org>
+From: Mike Yuan <me@yhndnzj.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "cgzones@googlemail.com" <cgzones@googlemail.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] fs/xattr: actually support O_PATH fds in *xattrat() syscalls
+Message-ID: <cfnfHaahrrXJJOgvNjb5hFbU0qh8gVXJ62R9uP9AItBEywyNH9vNBRzJbPR8xTv-LtFaUJYTHvyuLBfkznwJPt3fEcqNBFxf_yKJeZKwL3I=@yhndnzj.com>
+In-Reply-To: <20250206-erbauen-ornament-26f338d98f13@brauner>
+References: <20250205204628.49607-1-me@yhndnzj.com> <20250206-uhrwerk-faultiere-7a308565e2d3@brauner> <Kn-2tlpxN8YNmh0j0udjQ8YIFNZMVVJYJh-LyBoYNBfpax28PNUkXuH6gnod7if2eX3NRVs3Ey8uCHRpwg_S5hPX_ADtrgMZbDTWFpHd_uU=@yhndnzj.com> <20250206-erbauen-ornament-26f338d98f13@brauner>
+Feedback-ID: 102487535:user:proton
+X-Pm-Message-ID: 11e3e903fb487a66c3ef10bdd2e7699505872930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,172 +60,151 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250206054504.2950516-11-neilb@suse.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 06, 2025 at 04:42:47PM +1100, NeilBrown wrote:
-> If a filesystem supports _async ops for some directory ops we can take a
-> "shared" lock on i_rwsem otherwise we must take an "exclusive" lock.  As
-> the filesystem may support some async ops but not others we need to
-> easily determine which.
-> 
-> With this patch we group the ops into 4 groups that are likely be
-> supported together:
-> 
-> CREATE: create, link, mkdir, mknod
-> REMOVE: rmdir, unlink
-> RENAME: rename
-> OPEN: atomic_open, create
-> 
-> and set S_ASYNC_XXX for each when the inode in initialised.
-> 
-> We also add a LOOKUP_REMOVE intent flag which will be used by locking
-> interfaces to help know which group is being used.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/dcache.c           | 24 ++++++++++++++++++++++++
->  include/linux/fs.h    |  5 +++++
->  include/linux/namei.h |  5 +++--
->  3 files changed, 32 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index e49607d00d2d..37c0f655166d 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -384,6 +384,27 @@ static inline void __d_set_inode_and_type(struct dentry *dentry,
->  	smp_store_release(&dentry->d_flags, flags);
->  }
+On 2/6/25 11:03, Christian Brauner <brauner@kernel.org> wrote:
+
+>  On Thu, Feb 06, 2025 at 09:51:33AM +0000, Mike Yuan wrote:
+>  > On 2/6/25 10:31, Christian Brauner <brauner@kernel.org> wrote:
+>  >
+>  > >  On Wed, Feb 05, 2025 at 08:47:23PM +0000, Mike Yuan wrote:
+>  > >  > Cited from commit message of original patch [1]:
+>  > >  >
+>  > >  > > One use case will be setfiles(8) setting SELinux file contexts
+>  > >  > > ("security.selinux") without race conditions and without a file
+>  > >  > > descriptor opened with read access requiring SELinux read permi=
+ssion.
+>  > >  >
+>  > >  > Also, generally all *at() syscalls operate on O_PATH fds, unlike
+>  > >  > f*() ones. Yet the O_PATH fds are rejected by *xattrat() syscalls
+>  > >  > in the final version merged into tree. Instead, let's switch thin=
+gs
+>  > >  > to CLASS(fd_raw).
+>  > >  >
+>  > >  > Note that there's one side effect: f*xattr() starts to work with
+>  > >  > O_PATH fds too. It's not clear to me whether this is desirable
+>  > >  > (e.g. fstat() accepts O_PATH fds as an outlier).
+>  > >  >
+>  > >  > [1] https://lore.kernel.org/all/20240426162042.191916-1-cgoettsch=
+e@seltendoof.de/
+>  > >  >
+>  > >  > Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
+>  > >  > Signed-off-by: Mike Yuan <me@yhndnzj.com>
+>  > >  > Cc: Al Viro <viro@zeniv.linux.org.uk>
+>  > >  > Cc: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+>  > >  > Cc: Christian Brauner <brauner@kernel.org>
+>  > >  > Cc: <stable@vger.kernel.org>
+>  > >  > ---
+>  > >
+>  > >  I expanded on this before. O_PATH is intentionally limited in scope=
+ and
+>  > >  it should not allow to perform operations that are similar to a rea=
+d or
+>  > >  write which getting and setting xattrs is.
+>  > >
+>  > >  Patches that further weaken or dilute the semantics of O_PATH are n=
+ot
+>  > >  acceptable.
+>  >
+>  > But the *at() variants really should be able to work with O_PATH fds, =
+otherwise they're basically useless? I guess I just need to keep f*() as-is=
+?
+> =20
+>  I'm confused. If you have:
+> =20
+>          filename =3D getname_maybe_null(pathname, at_flags);
+>          if (!filename) {
+>                  CLASS(fd, f)(dfd);
+>                  if (fd_empty(f))
+>                          error =3D -EBADF;
+>                  else
+>                          error =3D file_setxattr(fd_file(f), &ctx);
+> =20
+>  Then this branch ^^ cannot use fd_raw because you're allowing operations
+>  directly on the O_PATH file descriptor.
+> =20
+>  Using the O_PATH file descriptor for lookup is obviously fine which is
+>  why the other branch exists:
+> =20
+>          } else {
+>                  error =3D filename_setxattr(dfd, filename, lookup_flags,=
+ &ctx);
+>          }
+> =20
+>  IOW, your patch makes AT_EMPTY_PATH work with an O_PATH file descriptor
+>  which isn't acceptable. However, it is already perfectly fine to use an
+>  O_PATH file descriptor for lookup.
+
+Well, again, [1] clearly stated the use case:
+
+> Those can be used to operate on extended attributes,
+especially security related ones, either relative to a pinned directory
+or [on a file descriptor without read access, avoiding a
+/proc/<pid>/fd/<fd> detour, requiring a mounted procfs].
+
+And this surfaced in my PR to systemd:
+
+https://github.com/systemd/systemd/pull/36228/commits/34fe16fb177d2f917570c=
+5f71dfa8f5b9746b9a7
+
+How are *xattrat() syscalls different from e.g. fchmodat2(AT_EMPTY_PATH) in=
+ that regard? I can agree that the semantics of f*xattr() ought to be left =
+untouched, yet I fail to grok the case for _at variants.
+
+>  >
+>  > >  >  fs/xattr.c | 8 ++++----
+>  > >  >  1 file changed, 4 insertions(+), 4 deletions(-)
+>  > >  >
+>  > >  > diff --git a/fs/xattr.c b/fs/xattr.c
+>  > >  > index 02bee149ad96..15df71e56187 100644
+>  > >  > --- a/fs/xattr.c
+>  > >  > +++ b/fs/xattr.c
+>  > >  > @@ -704,7 +704,7 @@ static int path_setxattrat(int dfd, const cha=
+r __user *pathname,
+>  > >  >
+>  > >  >  =09filename =3D getname_maybe_null(pathname, at_flags);
+>  > >  >  =09if (!filename) {
+>  > >  > -=09=09CLASS(fd, f)(dfd);
+>  > >  > +=09=09CLASS(fd_raw, f)(dfd);
+>  > >  >  =09=09if (fd_empty(f))
+>  > >  >  =09=09=09error =3D -EBADF;
+>  > >  >  =09=09else
+>  > >  > @@ -848,7 +848,7 @@ static ssize_t path_getxattrat(int dfd, const=
+ char __user *pathname,
+>  > >  >
+>  > >  >  =09filename =3D getname_maybe_null(pathname, at_flags);
+>  > >  >  =09if (!filename) {
+>  > >  > -=09=09CLASS(fd, f)(dfd);
+>  > >  > +=09=09CLASS(fd_raw, f)(dfd);
+>  > >  >  =09=09if (fd_empty(f))
+>  > >  >  =09=09=09return -EBADF;
+>  > >  >  =09=09return file_getxattr(fd_file(f), &ctx);
+>  > >  > @@ -978,7 +978,7 @@ static ssize_t path_listxattrat(int dfd, cons=
+t char __user *pathname,
+>  > >  >
+>  > >  >  =09filename =3D getname_maybe_null(pathname, at_flags);
+>  > >  >  =09if (!filename) {
+>  > >  > -=09=09CLASS(fd, f)(dfd);
+>  > >  > +=09=09CLASS(fd_raw, f)(dfd);
+>  > >  >  =09=09if (fd_empty(f))
+>  > >  >  =09=09=09return -EBADF;
+>  > >  >  =09=09return file_listxattr(fd_file(f), list, size);
+>  > >  > @@ -1079,7 +1079,7 @@ static int path_removexattrat(int dfd, cons=
+t char __user *pathname,
+>  > >  >
+>  > >  >  =09filename =3D getname_maybe_null(pathname, at_flags);
+>  > >  >  =09if (!filename) {
+>  > >  > -=09=09CLASS(fd, f)(dfd);
+>  > >  > +=09=09CLASS(fd_raw, f)(dfd);
+>  > >  >  =09=09if (fd_empty(f))
+>  > >  >  =09=09=09return -EBADF;
+>  > >  >  =09=09return file_removexattr(fd_file(f), &kname);
+>  > >  >
+>  > >  > base-commit: a86bf2283d2c9769205407e2b54777c03d012939
+>  > >  > --
+>  > >  > 2.48.1
+>  > >  >
+>  > >  >
+>  > >
 >  
-> +static void set_inode_flags(struct inode *inode)
-> +{
-> +	const struct inode_operations *i_op = inode->i_op;
-> +
-> +	lockdep_assert_held(&inode->i_lock);
-> +	if ((i_op->create_async || !i_op->create) &&
-> +	    (i_op->link_async || !i_op->link) &&
-> +	    (i_op->symlink_async || !i_op->symlink) &&
-> +	    (i_op->mkdir_async || !i_op->mkdir) &&
-> +	    (i_op->mknod_async || !i_op->mknod))
-> +		inode->i_flags |= S_ASYNC_CREATE;
-> +	if ((i_op->unlink_async || !i_op->unlink) &&
-> +	    (i_op->mkdir_async || !i_op->mkdir))
-> +		inode->i_flags |= S_ASYNC_REMOVE;
-> +	if (i_op->rename_async)
-> +		inode->i_flags |= S_ASYNC_RENAME;
-> +	if (i_op->atomic_open_async ||
-> +	    (!i_op->atomic_open && i_op->create_async))
-> +		inode->i_flags |= S_ASYNC_OPEN;
-> +}
-
-I think this is unpleasant. As I said we should fold _async into the
-normal methods. Then we can add:
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index be3ad155ec9f..1d19f72448fc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2186,6 +2186,7 @@ int wrap_directory_iterator(struct file *, struct dir_context *,
-        { return wrap_directory_iterator(file, ctx, x); }
-
- struct inode_operations {
-+       iop_flags_t iop_flags;
-        struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
-        const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
-        int (*permission) (struct mnt_idmap *, struct inode *, int);
-
-which is similar to what I did for
-
-struct file_operations {
-        struct module *owner;
-        fop_flags_t fop_flags;
-
-and introduce
-
-IOP_ASYNC_CREATE
-IOP_ASYNC_OPEN
-
-etc and then filesystems can just do:
-
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index df9669d4ded7..90c7aeb49466 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -10859,6 +10859,7 @@ static void nfs4_disable_swap(struct inode *inode)
- }
-
- static const struct inode_operations nfs4_dir_inode_operations = {
-+       .iop_flags      = IOP_ASYNC_CREATE | IOP_ASYNC_OPEN,
-        .create         = nfs_create,
-        .lookup         = nfs_lookup,
-        .atomic_open    = nfs_atomic_open,
-
-and then you can raise S_ASYNC_OPEN and so on based on the flags, not
-the individual methods.
-
-> +
->  static inline void __d_clear_type_and_inode(struct dentry *dentry)
->  {
->  	unsigned flags = READ_ONCE(dentry->d_flags);
-> @@ -1893,6 +1914,7 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
->  	raw_write_seqcount_begin(&dentry->d_seq);
->  	__d_set_inode_and_type(dentry, inode, add_flags);
->  	raw_write_seqcount_end(&dentry->d_seq);
-> +	set_inode_flags(inode);
->  	fsnotify_update_flags(dentry);
->  	spin_unlock(&dentry->d_lock);
->  }
-> @@ -1999,6 +2021,7 @@ static struct dentry *__d_obtain_alias(struct inode *inode, bool disconnected)
->  
->  		spin_lock(&new->d_lock);
->  		__d_set_inode_and_type(new, inode, add_flags);
-> +		set_inode_flags(inode);
->  		hlist_add_head(&new->d_u.d_alias, &inode->i_dentry);
->  		if (!disconnected) {
->  			hlist_bl_lock(&sb->s_roots);
-> @@ -2701,6 +2724,7 @@ static inline void __d_add(struct dentry *dentry, struct inode *inode)
->  		raw_write_seqcount_begin(&dentry->d_seq);
->  		__d_set_inode_and_type(dentry, inode, add_flags);
->  		raw_write_seqcount_end(&dentry->d_seq);
-> +		set_inode_flags(inode);
->  		fsnotify_update_flags(dentry);
->  	}
->  	__d_rehash(dentry);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e414400c2487..9a9282fef347 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2361,6 +2361,11 @@ struct super_operations {
->  #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
->  #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
->  
-> +#define S_ASYNC_CREATE	BIT(18)	/* create, link, symlink, mkdir, mknod all _async */
-> +#define S_ASYNC_REMOVE	BIT(19)	/* unlink, mkdir both _async */
-> +#define S_ASYNC_RENAME	BIT(20) /* rename_async supported */
-> +#define S_ASYNC_OPEN	BIT(21) /* atomic_open_async or create_async supported */
-> +
->  /*
->   * Note that nosuid etc flags are inode-specific: setting some file-system
->   * flags just means all the inodes inherit those flags by default. It might be
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 76c587a5ec3a..72e351640406 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -40,10 +40,11 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
->  #define LOOKUP_CREATE		BIT(17)	/* ... in object creation */
->  #define LOOKUP_EXCL		BIT(18)	/* ... in target must not exist */
->  #define LOOKUP_RENAME_TARGET	BIT(19)	/* ... in destination of rename() */
-> +#define LOOKUP_REMOVE		BIT(20)	/* ... in target of object removal */
->  
->  #define LOOKUP_INTENT_FLAGS	(LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_EXCL |	\
-> -				 LOOKUP_RENAME_TARGET)
-> -/* 4 spare bits for intent */
-> +				 LOOKUP_RENAME_TARGET | LOOKUP_REMOVE)
-> +/* 3 spare bits for intent */
->  
->  /* Scoping flags for lookup. */
->  #define LOOKUP_NO_SYMLINKS	BIT(24) /* No symlink crossing. */
-> -- 
-> 2.47.1
-> 
 
