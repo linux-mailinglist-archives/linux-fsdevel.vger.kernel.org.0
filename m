@@ -1,345 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-41079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35436A2AA56
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:50:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFDAA2AA5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3891E188921E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3072188946B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A566E1C6FE8;
-	Thu,  6 Feb 2025 13:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B861624EF;
+	Thu,  6 Feb 2025 13:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQOJi6/+"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Cz1P6bFE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA0B1EA7F1;
-	Thu,  6 Feb 2025 13:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACA81A3172
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 13:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738849802; cv=none; b=mujSIrRzke9BveY7PgWcoNMnLrS5vcJ5cM30h4uky7bXVhnvUD3km7x9gzdxpbek2U1RQTTs8dH6GHMUmLbO8U2tcZCcds2MdkCFF+v6UOWAD/FK4X74TgC/0QUwkIJ179xnEUb9tYgrZfar6YRayMzYohgYlP1sMAQxtcna6dY=
+	t=1738849836; cv=none; b=Kl7/n0nJ8iFweDexG5jdEJJiQpoJJeFI6Qi0+x6kgke0j8F0Q5H1vNDIUjRRNrdYlCxW8xaHNiKjVqKy1gG7DVK7EJt3Awt1nP65kjiznZ0j2r26ICNhSUXrQa+Hrlndv/ad8OslDAm2lW3J9fNhLSWHPncCUxFLcUPUrL1ACTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738849802; c=relaxed/simple;
-	bh=U/mvtnUPLU7Tk9UJIF1UndA8CJrBix59gciTuECRuDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UgCS5mUGNz6zhsClG/ZjaNRE9KqmSfQIf4oefIUghJWBtA4viMrn/GjVTwuqU0HdCVStKdV3eTHdeeJYaPbK+6MphNEMcrmRT70idbr8KnJ7w33n0N3k/JfGRgMiZws2YjE+mYvLCAhBwmPvQjPIMvMg5UFOoLbP/MLELb2EWSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQOJi6/+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00A4FC4CEDD;
-	Thu,  6 Feb 2025 13:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738849801;
-	bh=U/mvtnUPLU7Tk9UJIF1UndA8CJrBix59gciTuECRuDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YQOJi6/+luPLqDEEHUL/+DGZfhe1V4FvE0ZmkZd0oqf50iuAPuUgaEB08M0qjAEW8
-	 ceTDq4ig4vKf9Fsb2fjNfvBkscZTG1we3+MP+fNfIihtNRsOz5kcrZT9Fe6+xodnZw
-	 TZTTYvuuQYtli/hvJIkuKw+M6w5tGh6QP3cpChEoZGm+UkPpPRl3DiFUCePx3o2ZPp
-	 EF7noGEXBwufF6QpN3bkEQISLbVdaXtUp0KlZhZ6HadKuqOmx9umcH7nwaJxbbeRMM
-	 Y5WCfleR8imimX4qknX6S9WSnik2HYH626TxWr0S75byeQ/+TS/fjVVHQOOAV8lq1G
-	 zdh+yeA6yZ4VQ==
-Date: Thu, 6 Feb 2025 14:49:56 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
-Message-ID: <20250206-herde-zunutze-2ad5be3fea78@brauner>
-References: <20250206054504.2950516-1-neilb@suse.de>
- <20250206054504.2950516-9-neilb@suse.de>
+	s=arc-20240116; t=1738849836; c=relaxed/simple;
+	bh=eQAAGwqNOl7v+M9a4ivw00ivo+95Yco+MnJBXOwIKAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kiEqA4gh674dxOi/xQgucxCXILvUorxIMe5aGXSlJz659zgFCu97VmqM8WiNBO14d6Qz3fUwiuSRb68RD7s9X0S6QYn7d2EnJgcy9MITcjZuUMisC462j4nE1wt2Fj6gsMzRFJ9aUi8g3faEZtNk9YaW0Zl9rnUBGMRw1UwqI78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Cz1P6bFE; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38dabb11eaaso463723f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 05:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1738849832; x=1739454632; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZqG9Iy11y+7j3Q1qmHPl/yKVh88xdsRebgLzRhIb/28=;
+        b=Cz1P6bFE92HuscbEUlQZ5N4TG2VoG7SA53cQMFhVWCFlDqez+Ygx2znFCkao7s9QVu
+         DHc3L1PdWy2Ivr44FzHKhLT+iAmbNX0t8ktKGQUM1A601ARdwH8WgO4R0qtwl4xHlzl3
+         yqg8QO2/dooso+d7BjaUo0sEWtb3gVZMDTIzrFGLA7ruyTYXtzvvcVi90XNrkTaTQyFA
+         9YiVM9dq/PhhZe5zUKMZEtj1qdybJk51tXi1qTz3TLGprhYLS8+UajcYL+xc6xtgkHJj
+         AnP5KbLXh2hiWyouT3jvO4gXSFG3M0QXzqYJqoi3kATURA0qf7JnvBq2RIKNUWACAdfD
+         K+jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738849832; x=1739454632;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZqG9Iy11y+7j3Q1qmHPl/yKVh88xdsRebgLzRhIb/28=;
+        b=PZ4YTNGbnjyGneu2PlLZ4t7ynAXOczNGCsFE6iqsIAH3R2gUnzc43AWawMhJf4tg/E
+         bBZ8GWX/IZHjlUbQJPi0caxBwg1kmfEw5F49Pt+9ZiGTGesJDKCswSNOgmY697xgLuaS
+         K0uUIuwPHhZxj98L9cHXOrBgueWwrGDfAZU4b6BmUeCtRKNU9NUMu0LEJaezUUwMuA6Z
+         wkfSiPdhpR36vBgQwYPK1A4nskPfa20+Oh3OyJXw4viQwS92BEoS9WhcpU/QcJ8xHNFd
+         lzGGHRGogcHWxRS/7dHNMHgvrjgMlaEy2sozp5hwhSWmv3nEoXwMf5TMK5MrecMnao/+
+         kVuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWO1Dn19OnEbJ73iUdkMX9vGDuyhkapvb9UBWGSRwrTwKyDOwVv5/XbGB5Z/LCPsKUHsu1t7zpPm/aSUYIR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9TjwI0pY37E2UlAQg7BaEiesPXKj6E/2uvA1IFbH5XDRhH4ZX
+	VqYVRjaia2wcV3nl509M2bA7HDmmLd0gvCmlXD1P7JORDSbOP23duvA+K3nFr1U=
+X-Gm-Gg: ASbGnct3YTnx9MfJj178c6BHGt7iqVw7ScaxWAT2AbF7q2b12vn2SW3sOlclxCp/LOk
+	amhusv3+Hptyx5jh8F0NytW3x3Z7r4X+dTvGBXQ8bgcD5FcGatd23LrMgAxfggk+994a+LW8iPC
+	C4sCUZPwXmbM800N4etdxX8boqk7s4dAPmL4HJ/a+f+nQhsgtqRgUbdveHjPN44/oJShj4rXPmm
+	A4coNDMnK2b8i81ycB+Qiu5xc3/awAqTxRvhQmfUUpddNwnANziPGIYLt4py75kAQycfXP24F6a
+	ftj/2vIqe4URMv7jqabP1PgfhH5MdBJI4iZjsgubiKx7Gaf/CFKOJh7Gftd5
+X-Google-Smtp-Source: AGHT+IEYIYIWW6J/hIRqm2Y0oUfYR4o1i/HreKUFQmuOWd+xJTMh9Ma+9XSSasA3LYOW3FeM7FN37Q==
+X-Received: by 2002:adf:e5cb:0:b0:385:faec:d94d with SMTP id ffacd0b85a97d-38db4910812mr5188370f8f.51.1738849831734;
+        Thu, 06 Feb 2025 05:50:31 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc17e278bsm1117573f8f.48.2025.02.06.05.50.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Feb 2025 05:50:31 -0800 (PST)
+Message-ID: <782ef14c-e7c4-435e-adc6-9559ce3cc06d@rivosinc.com>
+Date: Thu, 6 Feb 2025 14:50:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250206054504.2950516-9-neilb@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 03/26] riscv: zicfiss / zicfilp enumeration
+To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, alexghiti@rivosinc.com,
+ samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+References: <20250204-v5_user_cfi_series-v9-0-b37a49c5205c@rivosinc.com>
+ <20250204-v5_user_cfi_series-v9-3-b37a49c5205c@rivosinc.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20250204-v5_user_cfi_series-v9-3-b37a49c5205c@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 06, 2025 at 04:42:45PM +1100, NeilBrown wrote:
-> lookup_and_lock() combines locking the directory and performing a lookup
-> prior to a change to the directory.
-> Abstracting this prepares for changing the locking requirements.
+
+
+On 05/02/2025 02:21, Deepak Gupta wrote:
+> This patch adds support for detecting zicfiss and zicfilp. zicfiss and
+> zicfilp stands for unprivleged integer spec extension for shadow stack
+> and branch tracking on indirect branches, respectively.
 > 
-> done_lookup_and_lock() provides the inverse of putting the dentry and
-> unlocking.
+> This patch looks for zicfiss and zicfilp in device tree and accordinlgy
+> lights up bit in cpu feature bitmap. Furthermore this patch adds detection
+> utility functions to return whether shadow stack or landing pads are
+> supported by cpu.
 > 
-> For "silly_rename" we will need to lookup_and_lock() in a directory that
-> is already locked.  For this purpose we add LOOKUP_PARENT_LOCKED.
-> 
-> Like lookup_len_qstr(), lookup_and_lock() returns -ENOENT if
-> LOOKUP_CREATE was NOT given and the name cannot be found,, and returns
-> -EEXIST if LOOKUP_EXCL WAS given and the name CAN be found.
-> 
-> These functions replace all uses of lookup_one_qstr() in namei.c
-> except for those used for rename.
-> 
-> The name might seem backwards as the lock happens before the lookup.
-> A future patch will change this so that only a shared lock is taken
-> before the lookup, and an exclusive lock on the dentry is taken after a
-> successful lookup.  So the order "lookup" then "lock" will make sense.
-> 
-> This functionality is exported as lookup_and_lock_one() which takes a
-> name and len rather than a qstr.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.de>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 > ---
->  fs/namei.c            | 102 ++++++++++++++++++++++++++++--------------
->  include/linux/namei.h |  15 ++++++-
->  2 files changed, 83 insertions(+), 34 deletions(-)
+>  arch/riscv/include/asm/cpufeature.h | 13 +++++++++++++
+>  arch/riscv/include/asm/hwcap.h      |  2 ++
+>  arch/riscv/include/asm/processor.h  |  1 +
+>  arch/riscv/kernel/cpufeature.c      |  2 ++
+>  4 files changed, 18 insertions(+)
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 69610047f6c6..3c0feca081a2 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1715,6 +1715,41 @@ struct dentry *lookup_one_qstr(const struct qstr *name,
->  }
->  EXPORT_SYMBOL(lookup_one_qstr);
+> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+> index 569140d6e639..69007b8100ca 100644
+> --- a/arch/riscv/include/asm/cpufeature.h
+> +++ b/arch/riscv/include/asm/cpufeature.h
+> @@ -12,6 +12,7 @@
+>  #include <linux/kconfig.h>
+>  #include <linux/percpu-defs.h>
+>  #include <linux/threads.h>
+> +#include <linux/smp.h>
+>  #include <asm/hwcap.h>
+>  #include <asm/cpufeature-macros.h>
 >  
-> +static struct dentry *lookup_and_lock_nested(const struct qstr *last,
-> +					     struct dentry *base,
-> +					     unsigned int lookup_flags,
-> +					     unsigned int subclass)
+> @@ -137,4 +138,16 @@ static __always_inline bool riscv_cpu_has_extension_unlikely(int cpu, const unsi
+>  	return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
+>  }
+>  
+> +static inline bool cpu_supports_shadow_stack(void)
 > +{
-> +	struct dentry *dentry;
-> +
-> +	if (!(lookup_flags & LOOKUP_PARENT_LOCKED))
-> +		inode_lock_nested(base->d_inode, subclass);
-> +
-> +	dentry = lookup_one_qstr(last, base, lookup_flags);
-> +	if (IS_ERR(dentry) && !(lookup_flags & LOOKUP_PARENT_LOCKED)) {
-> +			inode_unlock(base->d_inode);
-
-Nit: The indentation here is wrong and the {} aren't common practice.
-
-> +	}
-> +	return dentry;
+> +	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
+> +		riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_ZICFISS));
 > +}
 > +
-> +static struct dentry *lookup_and_lock(const struct qstr *last,
-> +				      struct dentry *base,
-> +				      unsigned int lookup_flags)
+> +static inline bool cpu_supports_indirect_br_lp_instr(void)
 > +{
-> +	return lookup_and_lock_nested(last, base, lookup_flags,
-> +				      I_MUTEX_PARENT);
+> +	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
+> +		riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_ZICFILP));
 > +}
 > +
-> +void done_lookup_and_lock(struct dentry *base, struct dentry *dentry,
-> +			  unsigned int lookup_flags)
+>  #endif
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> index 869da082252a..2dc4232bdb3e 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -100,6 +100,8 @@
+>  #define RISCV_ISA_EXT_ZICCRSE		91
+>  #define RISCV_ISA_EXT_SVADE		92
+>  #define RISCV_ISA_EXT_SVADU		93
+> +#define RISCV_ISA_EXT_ZICFILP		94
+> +#define RISCV_ISA_EXT_ZICFISS		95
+>  
+>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>  
+> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+> index 5f56eb9d114a..e3aba3336e63 100644
+> --- a/arch/riscv/include/asm/processor.h
+> +++ b/arch/riscv/include/asm/processor.h
+> @@ -13,6 +13,7 @@
+>  #include <vdso/processor.h>
+>  
+>  #include <asm/ptrace.h>
+> +#include <asm/hwcap.h>
+>  
+>  #define arch_get_mmap_end(addr, len, flags)			\
+>  ({								\
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index c6ba750536c3..e72de12e5b99 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -333,6 +333,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+>  	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts,
+>  					  riscv_ext_zicboz_validate),
+>  	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
+> +	__RISCV_ISA_EXT_SUPERSET(zicfilp, RISCV_ISA_EXT_ZICFILP, riscv_xlinuxenvcfg_exts),
+> +	__RISCV_ISA_EXT_SUPERSET(zicfiss, RISCV_ISA_EXT_ZICFISS, riscv_xlinuxenvcfg_exts),
 
-Did you mean done_lookup_and_unlock()?
+Hey Deepak,
 
-> +{
-> +	d_lookup_done(dentry);
-> +	dput(dentry);
-> +	if (!(lookup_flags & LOOKUP_PARENT_LOCKED))
-> +		inode_unlock(base->d_inode);
-> +}
-> +EXPORT_SYMBOL(done_lookup_and_lock);
-> +
->  /**
->   * lookup_fast - do fast lockless (but racy) lookup of a dentry
->   * @nd: current nameidata
-> @@ -2754,12 +2789,9 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
->  		path_put(path);
->  		return ERR_PTR(-EINVAL);
->  	}
-> -	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
-> -	d = lookup_one_qstr(&last, path->dentry, 0);
-> -	if (IS_ERR(d)) {
-> -		inode_unlock(path->dentry->d_inode);
-> +	d = lookup_and_lock(&last, path->dentry, 0);
-> +	if (IS_ERR(d))
->  		path_put(path);
-> -	}
->  	return d;
->  }
->  
-> @@ -3053,6 +3085,22 @@ struct dentry *lookup_positive_unlocked(const char *name,
->  }
->  EXPORT_SYMBOL(lookup_positive_unlocked);
->  
-> +struct dentry *lookup_and_lock_one(struct mnt_idmap *idmap,
-> +				   const char *name, int len, struct dentry *base,
-> +				   unsigned int lookup_flags)
-> +{
-> +	struct qstr this;
-> +	int err;
-> +
-> +	if (!idmap)
-> +		idmap = &nop_mnt_idmap;
+I think these definitions can benefit from using a validation callback:
 
-The callers should pass nop_mnt_idmap. That's how every function that
-takes this argument works. This is a lot more explicit than magically
-fixing this up in the function.
+static int riscv_cfi_validate(const struct riscv_isa_ext_data *data,
+				  const unsigned long *isa_bitmap)
+{
+	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI)
+		return -EINVAL;
+		
+	return 0;
+}
 
-> +	err = lookup_one_common(idmap, name, base, len, &this);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +	return lookup_and_lock(&this, base, lookup_flags);
-> +}
-> +EXPORT_SYMBOL(lookup_and_lock_one);
-> +
->  #ifdef CONFIG_UNIX98_PTYS
->  int path_pts(struct path *path)
->  {
-> @@ -4071,7 +4119,6 @@ static struct dentry *filename_create(int dfd, struct filename *name,
->  	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
->  	unsigned int create_flags = LOOKUP_CREATE | LOOKUP_EXCL;
->  	int type;
-> -	int err2;
->  	int error;
->  
->  	error = filename_parentat(dfd, name, reval_flag, path, &last, &type);
-> @@ -4083,36 +4130,30 @@ static struct dentry *filename_create(int dfd, struct filename *name,
->  	 * (foo/., foo/.., /////)
->  	 */
->  	if (unlikely(type != LAST_NORM))
-> -		goto out;
-> +		goto put;
->  
->  	/* don't fail immediately if it's r/o, at least try to report other errors */
-> -	err2 = mnt_want_write(path->mnt);
-> +	error = mnt_want_write(path->mnt);
->  	/*
->  	 * Do the final lookup.  Suppress 'create' if there is a trailing
->  	 * '/', and a directory wasn't requested.
->  	 */
->  	if (last.name[last.len] && !want_dir)
->  		create_flags &= ~LOOKUP_CREATE;
-> -	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry = lookup_one_qstr(&last, path->dentry,
-> -				 reval_flag | create_flags);
-> +	dentry = lookup_and_lock(&last, path->dentry, reval_flag | create_flags);
->  	if (IS_ERR(dentry))
-> -		goto unlock;
-> +		goto drop;
->  
-> -	if (unlikely(err2)) {
-> -		error = err2;
-> +	if (unlikely(error))
->  		goto fail;
-> -	}
->  	return dentry;
->  fail:
-> -	d_lookup_done(dentry);
-> -	dput(dentry);
-> +	done_lookup_and_lock(path->dentry, dentry, reval_flag | create_flags);
->  	dentry = ERR_PTR(error);
-> -unlock:
-> -	inode_unlock(path->dentry->d_inode);
-> -	if (!err2)
-> +drop:
-> +	if (!error)
->  		mnt_drop_write(path->mnt);
-> -out:
-> +put:
->  	path_put(path);
->  	return dentry;
->  }
-> @@ -4130,14 +4171,13 @@ EXPORT_SYMBOL(kern_path_create);
->  
->  void done_path_create(struct path *path, struct dentry *dentry)
->  {
-> -	dput(dentry);
-> -	inode_unlock(path->dentry->d_inode);
-> +	done_lookup_and_lock(path->dentry, dentry, LOOKUP_CREATE);
->  	mnt_drop_write(path->mnt);
->  	path_put(path);
->  }
->  EXPORT_SYMBOL(done_path_create);
->  
-> -inline struct dentry *user_path_create(int dfd, const char __user *pathname,
-> +struct dentry *user_path_create(int dfd, const char __user *pathname,
->  				struct path *path, unsigned int lookup_flags)
->  {
->  	struct filename *filename = getname(pathname);
-> @@ -4510,19 +4550,18 @@ int do_rmdir(int dfd, struct filename *name)
->  	if (error)
->  		goto exit2;
->  
-> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry = lookup_one_qstr(&last, path.dentry, lookup_flags);
-> +	dentry = lookup_and_lock(&last, path.dentry, lookup_flags);
->  	error = PTR_ERR(dentry);
->  	if (IS_ERR(dentry))
->  		goto exit3;
-> +
->  	error = security_path_rmdir(&path, dentry);
->  	if (error)
->  		goto exit4;
->  	error = vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode, dentry);
->  exit4:
-> -	dput(dentry);
-> +	done_lookup_and_lock(path.dentry, dentry, lookup_flags);
->  exit3:
-> -	inode_unlock(path.dentry->d_inode);
->  	mnt_drop_write(path.mnt);
->  exit2:
->  	path_put(&path);
-> @@ -4639,11 +4678,9 @@ int do_unlinkat(int dfd, struct filename *name)
->  	if (error)
->  		goto exit2;
->  retry_deleg:
-> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry = lookup_one_qstr(&last, path.dentry, lookup_flags);
-> +	dentry = lookup_and_lock(&last, path.dentry, lookup_flags);
->  	error = PTR_ERR(dentry);
->  	if (!IS_ERR(dentry)) {
-> -
->  		/* Why not before? Because we want correct error value */
->  		if (last.name[last.len])
->  			goto slashes;
-> @@ -4655,9 +4692,8 @@ int do_unlinkat(int dfd, struct filename *name)
->  		error = vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
->  				   dentry, &delegated_inode);
->  exit3:
-> -		dput(dentry);
-> +		done_lookup_and_lock(path.dentry, dentry, lookup_flags);
->  	}
-> -	inode_unlock(path.dentry->d_inode);
->  	if (inode)
->  		iput(inode);	/* truncate the inode here */
->  	inode = NULL;
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 0d81e571a159..76c587a5ec3a 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -29,7 +29,11 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
->  #define LOOKUP_RCU		BIT(8)	/* RCU pathwalk mode; semi-internal */
->  #define LOOKUP_CACHED		BIT(9) /* Only do cached lookup */
->  #define LOOKUP_PARENT		BIT(10)	/* Looking up final parent in path */
-> -/* 5 spare bits for pathwalk */
-> +#define LOOKUP_PARENT_LOCKED	BIT(11)	/* filesystem sets this for nested
-> +					 * "lookup_and_lock_one" when it knows
-> +					 * parent is sufficiently locked.
-> +					 */
-> +/* 4 spare bits for pathwalk */
->  
->  /* These tell filesystem methods that we are dealing with the final component... */
->  #define LOOKUP_OPEN		BIT(16)	/* ... in open */
-> @@ -82,6 +86,15 @@ struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap,
->  struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
->  					    const char *name,
->  					    struct dentry *base, int len);
-> +struct dentry *lookup_and_lock_one(struct mnt_idmap *idmap,
-> +				   const char *name, int len, struct dentry *base,
-> +				   unsigned int lookup_flags);
-> +struct dentry *__lookup_and_lock_one(struct mnt_idmap *idmap,
-> +				     const char *name, int len, struct dentry *base,
-> +				     unsigned int lookup_flags);
-> +void done_lookup_and_lock(struct dentry *base, struct dentry *dentry,
-> +			  unsigned int lookup_flags);
-> +void __done_lookup_and_lock(struct dentry *dentry);
->  
->  extern int follow_down_one(struct path *);
->  extern int follow_down(struct path *path, unsigned int flags);
-> -- 
-> 2.47.1
+__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfilp, RISCV_ISA_EXT_ZICFILP,
+riscv_xlinuxenvcfg_exts, riscv_cfi_validate),
+__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfiss, RISCV_ISA_EXT_ZICFISS,
+riscv_xlinuxenvcfg_exts, riscv_cfi_validate),
+
+That way, ZICFISS/ZICFILP wont be enable if the kernel does not have
+builtin support for them. Additionally, this solve a bug you have with
+your hwprobe patch (19/26) that exposes ZICFILP/ZICFISS unconditionally
+(ie, even if the kernel does not have CONFIG_RISCV_USER_CFI).
+
+BTW, patch 23/26 introduce CONFIG_RISCV_USER_CFI but it is used in that
+patch.
+
+Thanks,
+
+Clément
+
+>  	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
+>  	__RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
+>  	__RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
 > 
+
 
