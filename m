@@ -1,161 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-41117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D912CA2B2C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:57:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A28A2B357
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 21:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED62188B853
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 19:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CF81642D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17CF1B4234;
-	Thu,  6 Feb 2025 19:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D21D6187;
+	Thu,  6 Feb 2025 20:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="NCRCOX62"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkSgP+XJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D661ACECD;
-	Thu,  6 Feb 2025 19:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE752188CB1;
+	Thu,  6 Feb 2025 20:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738871843; cv=none; b=RW6zNys1xaITrcp3REhdfhQQXRcbmq67TZ4YGxA2g+tWygbq/dUwVFbBGAYyL8QRBD7iHh11onlxxCcBov/7APUd/fnS/HEWZuqaqXJQhfzuRkTR7rrC3lK3UQ3tJJXNWE/derVftwNKwbO8sMfv/qKSOcwMf3r+wq/nl8DAAzg=
+	t=1738873467; cv=none; b=ot+U052XSO17nZIJLma9XNnsvXLEMzZ4IWWCDZKxyWyec5Yo2b1i8Hv+KboDBew9GGAdVEZ8fZaAgSCEre0I3ZQ/18et4W8bxjbI/FIE8HJtAX6nBUPGaL/ZPGJT5yvQupNVE7205Qw5K9D7S3EqoofYxDVRTMPBiH2SV7AwE1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738871843; c=relaxed/simple;
-	bh=E+lU6r2Gicb6SJrSYXFHxoENYWrJPQXqghLrsfBIZ0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQ2ZziU/34fyxAz04TzRxRsnXB6eLdpmGYaFncbZ7Dkf9fGrOuGG2zHWddv5bKte+ojw87xJZZWX8WpLRwRpxBdLd1FWbYeoN8ZKKUH74hiJdYgpNIOPtzxZoGciked2PKgXVLXhCssMPOWQg7N94gHKXJJFx37JVTwrUpm4H9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=NCRCOX62; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: lina@asahilina.net)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id BEC3E43A93;
-	Thu,  6 Feb 2025 19:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1738871838;
-	bh=E+lU6r2Gicb6SJrSYXFHxoENYWrJPQXqghLrsfBIZ0E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NCRCOX62cpd8AaeYgG4rxET2H1BdW5ASoApszzfwGbbwxcAi8JWEtWH7VKPS0yNrU
-	 KFiGoOBJTGUiBY398SaWyKoOkkxLQKgcKB++A5vdRnKurYaFamwfuqDeD4Li0V7/BD
-	 ZFbnXCZIVstHri09WyTDk3rsvei3iqp3Wv88gFpTjboT5hk1QReVygK8DNbS1rAE5e
-	 ZVYOfzgP+exVnyyAMksacexFZh5ai5B5OIZuRLE+1hNKKzMmVYnbjvHmFUsKLTJapX
-	 sqeFezTN1APVg2wUKlFuAfP0pLwgdEGNsgDxRLidt+apRNe3K3Tef2DzbQ48tGi6XJ
-	 h0XYECuYgyX9w==
-Message-ID: <2f4728be-3a0d-4bc3-ab11-6b1e2e3fbc6e@asahilina.net>
-Date: Fri, 7 Feb 2025 04:57:13 +0900
+	s=arc-20240116; t=1738873467; c=relaxed/simple;
+	bh=zcA6xNOvE/ojYu1SnAnCxHdd9Z//pwuz/u2uRO8ZqP0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=swDOuI1g23qHtRqO10M+2UYxpxFSJlivtbVPhmTSS0SUgJCBbTEi+O34BmMW930voqtECT8leywux7TGVBvyfhal1Xporq25+JzJjY5A5G7KNJDzUQje11OiApVZirTCp0GsDQoVNnpklOH3y+/8tfujqOgGwLbnhat3MERsV80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkSgP+XJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9383FC4CEDD;
+	Thu,  6 Feb 2025 20:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738873466;
+	bh=zcA6xNOvE/ojYu1SnAnCxHdd9Z//pwuz/u2uRO8ZqP0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=LkSgP+XJ+MjnUAtewnqllehRHprKkVwQqHUBMyZX1GSPN9uXEWLtCyh9TUeU62/qC
+	 2NfDMgYMyQuv4LyjDv4Q+mmIiDRqobBbr95Og0IGT36DkcB4Zo7ElPR94YZx0JcxpJ
+	 uhFGTKeD3JCtQ/ZH6cNUP+ULJSYFy1Zp8XUmRHoMyLVCcR8pXS7xllD6bZpRaiYbIl
+	 3iW9/6ptA3u7OQk+XLc6dFii8SEEB6tNyE431WrI1wowmOQzZUYzniIBW5cCpVcbB/
+	 7QfdeV2fLm2DeEzKcDWuuz1ku7PZaqwwBoioAaehH6mS3DwhLf/znxVPheimCBOIQW
+	 2wDyJIdjKXXmA==
+Message-ID: <956b43574bcb149579ecac7a3ab98ad29dddc275.camel@kernel.org>
+Subject: Re: audit_reusename in getname_flags
+From: Jeff Layton <jlayton@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, linux-kernel	
+ <linux-kernel@vger.kernel.org>, audit@vger.kernel.org, Paul Moore	
+ <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>
+Date: Thu, 06 Feb 2025 15:24:24 -0500
+In-Reply-To: <CAGudoHFLnmp3tQHOwUAFBKxrno=ejxHmJXta=sTxVMtN9L1T9w@mail.gmail.com>
+References: 
+	<CAGudoHFLnmp3tQHOwUAFBKxrno=ejxHmJXta=sTxVMtN9L1T9w@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/26] fuse: Fix dax truncate/punch_hole fault path
-To: Dan Williams <dan.j.williams@intel.com>, Vivek Goyal <vgoyal@redhat.com>,
- Alistair Popple <apopple@nvidia.com>, Sergio Lopez Pascual <slp@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- alison.schofield@intel.com, zhang.lyra@gmail.com,
- gerald.schaefer@linux.ibm.com, vishal.l.verma@intel.com,
- dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
- jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
- linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com, chenhuacai@kernel.org, kernel@xen0n.name,
- loongarch@lists.linux.dev, Hanna Czenczek <hreitz@redhat.com>,
- German Maglione <gmaglione@redhat.com>
-References: <cover.11189864684e31260d1408779fac9db80122047b.1736488799.git-series.apopple@nvidia.com>
- <bfae590045c7fc37b7ccef10b9cec318012979fd.1736488799.git-series.apopple@nvidia.com>
- <Z6NhkR8ZEso4F-Wx@redhat.com>
- <67a3fde7da328_2d2c2942b@dwillia2-xfh.jf.intel.com.notmuch>
- <A1E3C5B2-CCD8-41BA-BBC8-E8338C18D485@asahilina.net>
- <67a5111b2f805_2d2c29448@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: Asahi Lina <lina@asahilina.net>
-In-Reply-To: <67a5111b2f805_2d2c29448@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 2/7/25 4:44 AM, Dan Williams wrote:
-> Asahi Lina wrote:
->> Hi,
->>
->> On February 6, 2025 1:10:15 AM GMT+01:00, Dan Williams <dan.j.williams@intel.com> wrote:
->>> Vivek Goyal wrote:
->>>> On Fri, Jan 10, 2025 at 05:00:29PM +1100, Alistair Popple wrote:
->>>>> FS DAX requires file systems to call into the DAX layout prior to unlinking
->>>>> inodes to ensure there is no ongoing DMA or other remote access to the
->>>>> direct mapped page. The fuse file system implements
->>>>> fuse_dax_break_layouts() to do this which includes a comment indicating
->>>>> that passing dmap_end == 0 leads to unmapping of the whole file.
->>>>>
->>>>> However this is not true - passing dmap_end == 0 will not unmap anything
->>>>> before dmap_start, and further more dax_layout_busy_page_range() will not
->>>>> scan any of the range to see if there maybe ongoing DMA access to the
->>>>> range. Fix this by passing -1 for dmap_end to fuse_dax_break_layouts()
->>>>> which will invalidate the entire file range to
->>>>> dax_layout_busy_page_range().
->>>>
->>>> Hi Alistair,
->>>>
->>>> Thanks for fixing DAX related issues for virtiofs. I am wondering how are
->>>> you testing DAX with virtiofs. AFAIK, we don't have DAX support in Rust
->>>> virtiofsd. C version of virtiofsd used to have out of the tree patches
->>>> for DAX. But C version got deprecated long time ago.
->>>>
->>>> Do you have another implementation of virtiofsd somewhere else which
->>>> supports DAX and allows for testing DAX related changes?
->>>
->>> I have personally never seen a virtiofs-dax test. It sounds like you are
->>> saying we can deprecate that support if there are no longer any users.
->>> Or, do you expect that C-virtiofsd is alive in the ecosystem?
->>
->> I accidentally replied offlist, but I wanted to mention that libkrun
->> supports DAX and we use it in muvm. It's a critical part of x11bridge
->> functionality, since it uses DAX to share X11 shm fences between X11
->> clients in the VM and the XWayland server on the host, which only
->> works if the mmaps are coherent.
-> 
-> Ah, good to hear. It would be lovely to integrate an muvm smoketest
-> somewhere in https://github.com/pmem/ndctl/tree/main/test so that we
-> have early warning on potential breakage.
+On Thu, 2025-02-06 at 20:07 +0100, Mateusz Guzik wrote:
+> You added it in:
+> commit 7ac86265dc8f665cc49d6e60a125e608cd2fca14
+> Author: Jeff Layton <jlayton@kernel.org>
+> Date:   Wed Oct 10 15:25:28 2012 -0400
+>=20
+>     audit: allow audit code to satisfy getname requests from its names_li=
+st
+>=20
+> Do I read correctly this has no user-visible impact, but merely tries
+> to shave off some memory usage in case of duplicated user bufs?
+>=20
+> This is partially getting in the way of whacking atomics for filename
+> ref management (but can be worked around).
+>=20
+> AFAIU this change is not all *that* beneficial in its own right, so
+> should not be a big deal to whack it regardless of what happens with
+> refs? Note it would also remove some branches in the common case as
+> normally audit either has dummy context or there is no match anyway.
 
-I think you'll probably want a smoke test using libkrun directly, since
-muvm is quite application-specific. It's really easy to write a quick C
-file to call into libkrun and spin up a VM.
 
-If it's supposed to test an arbitrary kernel though, I'm not sure what
-the test setup would look like. You'd need to run it on a host (whose
-kernel is mostly irrelevant) and then use libkrun to spin up a VM with a
-guest, which then runs the test. libkrun normally uses a bundled kernel
-though (shipped as libkrunfw), we'd need to add an API to specify an
-external kernel binary I guess?
+(cc'ing audit folks and mailing list)
 
-I'm happy to help with that, but I'll need to know a bit more about the
-intended usage first. I *think* most of the scaffolding for running
-arbitrary kernels is already planned, since there was some talk of
-running the host kernel as the guest kernel, so this wouldn't add much
-work on top of that.
+IIRC, having duplicate audit_names records can cause audit to emit
+extra name records in this loop in audit_log_exit():
 
-I definitely have a few tests in mind if we do put this together, since
-I know of one or two things that are definitely broken in DAX upstream
-right now (which I *think* this series fixes but I never got around to
-testing it...).
+        list_for_each_entry(n, &context->names_list, list) {=20
+                if (n->hidden)
+                        continue;
+                audit_log_name(context, n, NULL, i++, &call_panic);
+        }
 
-Cc: slp for libkrun.
 
-~~ Lina
-
+...which is something you probably want to avoid.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
