@@ -1,169 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-41133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6188A2B4D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 23:11:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECBEA2B6A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 00:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57213A9296
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 22:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCEB11888B0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 23:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52222FF43;
-	Thu,  6 Feb 2025 22:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271B522A4E5;
+	Thu,  6 Feb 2025 23:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+WePZI6"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="1ZIHiSlG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F1A22FF37;
-	Thu,  6 Feb 2025 22:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C022417EF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 23:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738879859; cv=none; b=ObZ7YOfhbFfxemOfns3iUClK0Symy3VyV8VsYCVMO2hzlUfUc4zzEe7RDYeihFavGuUPy/OmAAi4eCu00j7XG0GV8b4y1yjnWkgwO0cVDniMCU5d3o4c/CVZtXTBVHp0mDhyjnfF3Vzs+kT2QKdzLVGWZMTayCmlA9iJfQah4Fc=
+	t=1738885019; cv=none; b=ugCIDc9hZud5i9OcYZ8zaEZjQA1zehX8fDCAbLtkxivw9HH3YCqUjQSNuWHsGhkjNZV3/sHrarDiR7oBi8BTuzrsR8EQfZTRffhQLEYHMCOSWG8Nsg5CPNjsRqX2xAIcqjN0Xqjp+7GpeHfgSRygBsNholrVrb4EZGBM8EUf7Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738879859; c=relaxed/simple;
-	bh=2Y70HzxcQTGQ8pp24im9o2oCo4aDLht1LZCb/OG3xJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bO17+d3+gQVoF7hoh/HErxnyn++Iz8wrS/IPBp3Y5wAyqPxu6lz98fCiEnsrVhQGteiqf1OPEq5xbUt8Aoeqmo97NvdSLV656NS90wKBqXpwACDBwBz/2vLSvqNViS9mXnxx8jvyr1X2US7Zh9XHAfBW/l2phpK3Sn2ktfYUhSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+WePZI6; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dc82e38c10so3075054a12.3;
-        Thu, 06 Feb 2025 14:10:57 -0800 (PST)
+	s=arc-20240116; t=1738885019; c=relaxed/simple;
+	bh=0IEzOc0ZpYSSQl5AlhdCFxa35rpWa92zPKzv7WhJFUU=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=l7swi/IohSzRa1W1qzB7bJbarUUbzadsYC1JwozanlSmVY4n7WwsBtOTUN7BLlk8fzMf0AP86Hyn4AZMWczMZegCxHmCwFwYc3UR2522de/1nV5JfffHl/TBUSe0nfOyHKRsi0ESHTO5lSl+EWSByIpBvFG9MtpiPd+fXespKgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=1ZIHiSlG; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467838e75ffso19393751cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 15:36:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738879856; x=1739484656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JW4K88ZRfCDR2jOA2UBUFxi/kKP7aoGmXehZOk8p2EA=;
-        b=f+WePZI6w8ASafkII/yohWm+YErgbqA2iHQrd54JvpYBD3VdhlZQAQqcKibG8k4IQL
-         Ai8NOcPNL7rmNS5palle1ieR9s9/2xPAolxAVvb7bWAnNAncFLYINZ6JAH4qubopKFoP
-         sFK5HLnvbigouYoS/e7Cuz9gtI42ifMpt77SN8GQH0DkB0AbZwSWYOhovny1blPCLnS3
-         G+c/7bGZw72QHaKLI10u3PocjecuW6qSnCAyh3ExqBTyVNTf315hqeKkklJyhZ5Jyo6r
-         WnQPRjCzWaPeb9tRFRvu65AH5sPLeSNLhw4DAnkNPc/OF/TOuGpH/s0faz7QTqtWhyAT
-         K7ww==
+        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1738885015; x=1739489815; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eR9xK4c4JYLjvPO27KQ++TM5d0c6hUImr7nzgJgxGXM=;
+        b=1ZIHiSlGLMKGuy7okm3rTCwsH1hhbbmBI29aICKCo9sXJRNX4OE4V+ZuJiV8iz/vni
+         NS4XynphHAIyKeABUiPBqzG5GgyeVurh3XBGf+DSu43NLoAIcPHEG9XkcGE+C8KfuBep
+         Xw1kKlOOEM8RR35/dF1VrBWVNb+Res1gPP5P2lBRk80g603huq+sBIBONBV4X8W1/R3N
+         PCKKdRx/ebw0MsOqK2/c3RMESXlFE6plQPhPQs1Miy6zUSTAkkTiJ4Ro00qqghAZzUGJ
+         gTXqCbT1A+8sQbqFO+J2DOLWhdQRD0ZS2ABClmqU4CrWdYoJcvosTnl/S1k1nr8aHPW/
+         412g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738879856; x=1739484656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1738885015; x=1739489815;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JW4K88ZRfCDR2jOA2UBUFxi/kKP7aoGmXehZOk8p2EA=;
-        b=QGEHCGRnxSEnsA0Rk6URgDdeObgD+i6BhFpcz07uQQAzT/IGGP2NmeIAIUhD2KaRpj
-         I1umMvpKAB1uHIudZc7ACZpWxTEJksW7hwr9fMQBKmk9TJMjFfcO1PV4VbHMECvHMY2z
-         Rn6jFBBj16j2zasFLSoGhwmHcKJm8eU+m0PZbwt8DfQrM75/C7XM0yuXcmfq5zO6A31a
-         DEuzB1tiZECj9Fc6n2a7BDLdYMVS4tsXwX5M9eZwILQXTceM5Y6R54gcI/+1abGeyBWx
-         SK6n0XiYKx6LmEdj4yV5AmJ/vl8CniI9V1fDng05rplHtFRD2BR5rqvHdLul+PQghFbN
-         t6LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU5sysSxJ83I8j5xglgY+T+4b9/iMZoCTKAFnyDircVohdpv6mFBrOybBhvEkN56Iuv8zhUA==@vger.kernel.org, AJvYcCWki5Nj29ALCqrCkoPWB8mYFQ/0Zs/u9RUGqkB2jqfj1gaWA/3Ygx/vrMqQxQFx371iyjUd+nIJSLCuCFyu@vger.kernel.org, AJvYcCXgJ92Qv4QRydKxnun2t+YyTiBCHoSp2fFK4/LQzUjfBgGHNm890IYt7atS2Xp56JLp+23pJa+Lqv0Lziys9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTkudiHjCZk407f+0vfci1eqGrnZloQfWIqd33wy8XFD8vIMT4
-	o2TLtt73vNdHjOeXfOrenTPtTAB1jNDkJsIqaah5GAx0QReyhhPLcJVAAtpCUzbauIUhiRD0AEm
-	kRuzz/PKpCnEZKi+HWYxUnvFQ9gM=
-X-Gm-Gg: ASbGnct1sqcEkNioMQ1x+DejEvlQw9vBS7HP1ceWW8H784RFXWp81QwSR1WIcfNk79V
-	sIFLwOoliQk+0HT2Xp3V+n2wiiFn29x9CDuIRfOjxD08wFz8xBrtUfH0TTsMK4UcTtOMpOb5v
-X-Google-Smtp-Source: AGHT+IG2oWQwkRpCjysgqfuWiM97pMeIC+nGnB0ZEcQS+BxA5ZSw1JZItpWr/Qw3z8w7GeyebbtowgqSYSm9aozev1c=
-X-Received: by 2002:a05:6402:5290:b0:5dc:74fd:ac0a with SMTP id
- 4fb4d7f45d1cf-5de45046dc3mr1016725a12.8.1738879855385; Thu, 06 Feb 2025
- 14:10:55 -0800 (PST)
+        bh=eR9xK4c4JYLjvPO27KQ++TM5d0c6hUImr7nzgJgxGXM=;
+        b=vdCnvcD3BGYs1GQW5CBuUGFrQR0nRFe1BaEWDs8iN8os7OHK3pAnnfC8iy/xoc83pp
+         QYIxzreVhmv9KexwNgDWtmBX/Bx0Kx6AiIbLpGCOGbQGs6z8iZjJQziQnVR1XLta0qV0
+         NQevL+xDImSbfBvAjChqI9PwdVrElYn7vHNUSqn5oZ/25M2zEfY1yjLvGs7jxakbd9iu
+         1VLm29oTx5PF8bWEmNlQtWel5y0KK0HUqIQxulOHJ43of2lCiPxXmUctjnmTiSfpu0+7
+         bf6mbi/84uchBDXp0GlCgOMymUoCY7opnYtLbYD/mS885hudn5zXwcm9vNjUhhb10GSF
+         Zrjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfTOyy8in0ZlOzuX9/yVV4Vl0UHKxuMl2M0Bn8hDfTCMTlO/QBPGAlEFFqRANfT30TyHQTd+PbzoULCDbh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSBMs6KtsmXbUiz98EIuYeQEUVzOjMxkKQfs67q1pmtZ7suld0
+	bWN2fWfBNnaI+ScqC3wBZEhSb1VPKmBUD1aXhF+1+OhMc6nnjfmphffuyKSvLea3SIBKxNnTXbv
+	cUbk=
+X-Gm-Gg: ASbGncuzomT5mNXDZyHG63xlyTL5pFv/KcXg0lZ7lajhn+l/9XivXzStW1f3PgN2bCh
+	DP3on3xmB4fBHlDQ/w5m0whkWYA18lEG4UIYOCQ2JEMt6GJB8REmrXUaAUgfHmqUr2ZMvc3ml/e
+	yXyYgYRHWh251BCjckHwrIlaH+dA+oL0f5O6RBqmdJUIH2OdluBbmLkrG1vvAS4Yt4NZdwycQIA
+	2CBIKTqdDWMVzN0SBEr0jRHtC0E6/LQDKH39KYOP0R8kKrYLDclZj1Uq8WG3jyDvNtI0aiJ/oyy
+	ZE8rhQNc2dNwoZNEWfSTMOiieJ7e
+X-Google-Smtp-Source: AGHT+IE9ee2Dd2Lr8ow1mxDJA9BosoTfwoBpxLs42+ZtYoUemwjBuqr4XR9chiLE8G3/d3iXQbLA1g==
+X-Received: by 2002:a05:622a:354:b0:466:b1a2:c03e with SMTP id d75a77b69052e-47167a05569mr16731741cf.17.1738885015178;
+        Thu, 06 Feb 2025 15:36:55 -0800 (PST)
+Received: from smtpclient.apple ([199.7.157.105])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47153beaacasm10227151cf.67.2025.02.06.15.36.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Feb 2025 15:36:54 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Andreas Dilger <adilger@dilger.ca>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAGudoHFLnmp3tQHOwUAFBKxrno=ejxHmJXta=sTxVMtN9L1T9w@mail.gmail.com>
- <956b43574bcb149579ecac7a3ab98ad29dddc275.camel@kernel.org> <CAGudoHGqYKTM979s13SAP7fukeAd4NHGTMsxnRWN7A5BpYaCzw@mail.gmail.com>
-In-Reply-To: <CAGudoHGqYKTM979s13SAP7fukeAd4NHGTMsxnRWN7A5BpYaCzw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 6 Feb 2025 23:10:41 +0100
-X-Gm-Features: AWEUYZknvE-HOGP2RWK6mr0JD4I7AL0JTBX-Up_kPyHMEtp0w9NL4G3eskO-d6c
-Message-ID: <CAGudoHH8Rg=UA+gSDywkVCNHDofpAQCgJuiecZxrTa_7otrx-w@mail.gmail.com>
-Subject: Re: audit_reusename in getname_flags
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	audit@vger.kernel.org, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (1.0)
+Subject: Re: [LSF/MM/BPF TOPIC] Design challenges for a new file system that needs to support multiple billions of file
+Date: Thu, 6 Feb 2025 18:36:40 -0500
+Message-Id: <1BCBC42C-668B-44AE-B6BF-74A423884FC6@dilger.ca>
+References: <20250206185812.GA413506@localhost.localdomain>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+ RIc Wheeler <ricwheeler@gmail.com>, lsf-pc@lists.linux-foundation.org,
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+In-Reply-To: <20250206185812.GA413506@localhost.localdomain>
+To: Zach Brown <zab@zabbo.net>
+X-Mailer: iPhone Mail (21G93)
 
-On Thu, Feb 6, 2025 at 9:34=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
->
-> On Thu, Feb 6, 2025 at 9:24=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> >
-> > On Thu, 2025-02-06 at 20:07 +0100, Mateusz Guzik wrote:
-> > > You added it in:
-> > > commit 7ac86265dc8f665cc49d6e60a125e608cd2fca14
-> > > Author: Jeff Layton <jlayton@kernel.org>
-> > > Date:   Wed Oct 10 15:25:28 2012 -0400
-> > >
-> > >     audit: allow audit code to satisfy getname requests from its name=
-s_list
-> > >
-> > > Do I read correctly this has no user-visible impact, but merely tries
-> > > to shave off some memory usage in case of duplicated user bufs?
-> > >
-> > > This is partially getting in the way of whacking atomics for filename
-> > > ref management (but can be worked around).
-> > >
-> > > AFAIU this change is not all *that* beneficial in its own right, so
-> > > should not be a big deal to whack it regardless of what happens with
-> > > refs? Note it would also remove some branches in the common case as
-> > > normally audit either has dummy context or there is no match anyway.
-> >
-> >
-> > (cc'ing audit folks and mailing list)
-> >
-> > IIRC, having duplicate audit_names records can cause audit to emit
-> > extra name records in this loop in audit_log_exit():
-> >
-> >         list_for_each_entry(n, &context->names_list, list) {
-> >                 if (n->hidden)
-> >                         continue;
-> >                 audit_log_name(context, n, NULL, i++, &call_panic);
-> >         }
-> >
-> >
-> > ...which is something you probably want to avoid.
->
-> Well in this case I would argue the current code is buggy, unless I'm
-> misunderstanding something.
->
-> audit_log_name in particular logs:
->   1550 =E2=94=82       if (n->ino !=3D AUDIT_INO_UNSET)
->   1551 =E2=94=82               audit_log_format(ab, " inode=3D%lu dev=3D%=
-02x:%02x
-> mode=3D%#ho ouid=3D%u ogid=3D%u rdev=3D%02x
->   1552 =E2=94=82                                n->ino,
->   1553 =E2=94=82                                MAJOR(n->dev),
->   1554 =E2=94=82                                MINOR(n->dev),
->   1555 =E2=94=82                                n->mode,
->   1556 =E2=94=82                                from_kuid(&init_user_ns, =
-n->uid),
->   1557 =E2=94=82                                from_kgid(&init_user_ns, =
-n->gid),
->   1558 =E2=94=82                                MAJOR(n->rdev),
->   1559 =E2=94=82                                MINOR(n->rdev));
->
-> As in it grabs the properties of the found inode.
->
-> Suppose the 2 lookups of the same path name found 2 different inodes
-> as someone was mucking with the filesystem at the same time.
->
-> Then this is going to *fail* to record the next inode.
->
-> So if any dedup is necessary, it should be done by audit when logging imo=
-.
->
+Lustre has production filesystems with hundreds of billions of files today, w=
+ith
+coherent renames running across dozens of servers.=20
 
-I did more digging, audit indeed *does* handle it later in
-__audit_inode(), so this does work after all.
+We've relaxed the rename locking at the server to allow concurrent rename fo=
+r regular
+files within the same server, and directories that stay within the same pare=
+nt (so cannot
+break the namespace hierarchy).  They are still subject the VFS serializatio=
+n on a single
+client node, but hopefully Neil's parallel dirops patch will eventually land=
+.=20
 
-I'm going to have to chew on it what to do here then.
+Cheers, Andreas
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> On Feb 6, 2025, at 13:59, Zach Brown <zab@zabbo.net> wrote:
+>=20
+> =EF=BB=BF
+> (Yay, back from travel!)
+>=20
+>> On Mon, Feb 03, 2025 at 04:22:59PM +0100, Amir Goldstein wrote:
+>>> On Sun, Feb 2, 2025 at 10:40=E2=80=AFPM RIc Wheeler <ricwheeler@gmail.co=
+m> wrote:
+>>>=20
+>>> Zach Brown is leading a new project on ngnfs (FOSDEM talk this year gave=
+
+>>> a good background on this -
+>>> https://www.fosdem.org/2025/schedule/speaker/zach_brown/).  We are
+>>> looking at taking advantage of modern low latency NVME devices and
+>>> today's networks to implement a distributed file system that provides
+>>> better concurrency that high object counts need and still have the
+>>> bandwidth needed to support the backend archival systems we feed.
+>>>=20
+>>=20
+>> I heard this talk and it was very interesting.
+>> Here's a direct link to slides from people who may be too lazy to
+>> follow 3 clicks:
+>> https://www.fosdem.org/2025/events/attachments/fosdem-2025-5471-ngnfs-a-d=
+istributed-file-system-using-block-granular-consistency/slides/236150/zach-b=
+row_aqVkVuI.pdf
+>>=20
+>> I was both very impressed by the cache coherent rename example
+>> and very puzzled - I do not know any filesystem where rename can be
+>> synchronized on a single block io, and looking up ancestors is usually
+>> done on in-memory dentries, so I may not have understood the example.
+>=20
+> The meat of that talk was about how ngnfs uses its distributed block
+> cache as a serializing/coherence/consistency mechanism.  That specific
+> example was about how we can get concurrent rename between different
+> mounts without needing some global equivelant of rename mutex.
+>=20
+> The core of the mechanism is that code paths that implement operations
+> have a transactional object that holds on to cached block references
+> which have a given access mode granted over the network.  In this rename
+> case, the ancestor walk holds on to all the blocks for the duration of
+> the walk.  (Can be a lot of blocks!).  If another mount somewhere else
+> tried to modify those ancestor blocks, that mount would need to revoke
+> the cached read access to be granted their write access.  That'd wait
+> for the first rename to finish and release the read refs.  This gives us
+> specific serialization of access to the blocks in question rather than
+> relying on a global serializing object over all renames.
+>=20
+> That's the idea, anyway.  I'm implementing the first bits of this now.
+>=20
+> It's sort of a silly example, because who puts cross-directory rename in
+> the fast path?  (Historically some s3<->posix servers implemented
+> CompleteMultipartUpload be renaming from tmp dirs to visible bucket
+> dirs, hrmph).  But it illustrates the pattern of shrinking contention
+> down to the block level.
+>=20
+> - z
+>=20
 
