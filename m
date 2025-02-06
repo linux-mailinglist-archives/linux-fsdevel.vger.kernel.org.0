@@ -1,183 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-41132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013CFA2B46E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 22:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6188A2B4D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 23:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FA43A57FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 21:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57213A9296
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 22:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C4B237171;
-	Thu,  6 Feb 2025 21:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52222FF43;
+	Thu,  6 Feb 2025 22:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIOEFYcM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+WePZI6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA76A23645D;
-	Thu,  6 Feb 2025 21:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F1A22FF37;
+	Thu,  6 Feb 2025 22:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738878864; cv=none; b=gmj+4FYoDvMQQgufnWAJ8plRKbiyMf0TmBiLLMui+oMOhFNM4492I6K8i+WwQo+/Fr6bs6rqDkdSokw3H1b/WC252xcO3nOq1dkmQQ7cmMwqihrk60o4USO0abmojCUDakkF56csBBxSGfe+FvB5nsksVQ6pbrWiiaKXipy3Ue0=
+	t=1738879859; cv=none; b=ObZ7YOfhbFfxemOfns3iUClK0Symy3VyV8VsYCVMO2hzlUfUc4zzEe7RDYeihFavGuUPy/OmAAi4eCu00j7XG0GV8b4y1yjnWkgwO0cVDniMCU5d3o4c/CVZtXTBVHp0mDhyjnfF3Vzs+kT2QKdzLVGWZMTayCmlA9iJfQah4Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738878864; c=relaxed/simple;
-	bh=B231tugVCPWzN9vzBk0pgA7JVKtCX4QjkKBLeDcM4uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8oXN0GeZ2MWuq91lz3DPvf0+x5GoxEMfKmLUk64Q3JaxaSLMgOZyR4VRddnmkCuPnw8A8FtkARAuBRnFXF7AZs+0ERlGEwGQs+YjhlUF+GwXSY26p5bm26QArSq9EOp6KVRUulYxDsf6IaN/6cf0Go/DhSF8xEnH8gHBNjtc7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIOEFYcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DCC5C4CEDD;
-	Thu,  6 Feb 2025 21:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738878863;
-	bh=B231tugVCPWzN9vzBk0pgA7JVKtCX4QjkKBLeDcM4uo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EIOEFYcMmj92WShJiyDBtChc5W0rHXWp/wt8PZmGMAmMKmIq3L+Tfw6Hkc5lNDVnV
-	 Qe7HfCWOTyxgfTJBCkbXgnZgDEKcaMCkOZJhlg6jUKqgvjtEWH93mCS9utpcaQ4zC5
-	 +n84jBfFHO20Rt0CaupQgqEuc6tnN9+68ZA30zd8/X+o76AK4hkLR2RaG37qNi1AEB
-	 GJDmm33ZuBwGDlFwTgfEcjYQIMQEW1CCBNImfd2gydb3TSEEqdDcD5cU5eTgYnVFrB
-	 ajGov/wCADrcA2HT/FxtbP6LGXRoMOuPyx4Zy0IlllQAgrfasiL1c3FDDjw7I/S4Rh
-	 xcCNxi7hxdR8g==
-Date: Thu, 6 Feb 2025 13:54:22 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH RFC 10/10] xfs: Allow block allocator to take an
- alignment hint
-Message-ID: <20250206215422.GZ21808@frogsfrogsfrogs>
-References: <20250204120127.2396727-1-john.g.garry@oracle.com>
- <20250204120127.2396727-11-john.g.garry@oracle.com>
- <20250205192039.GU21808@frogsfrogsfrogs>
- <0bcd5bee-132f-417b-b77c-64b80e007c72@oracle.com>
+	s=arc-20240116; t=1738879859; c=relaxed/simple;
+	bh=2Y70HzxcQTGQ8pp24im9o2oCo4aDLht1LZCb/OG3xJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bO17+d3+gQVoF7hoh/HErxnyn++Iz8wrS/IPBp3Y5wAyqPxu6lz98fCiEnsrVhQGteiqf1OPEq5xbUt8Aoeqmo97NvdSLV656NS90wKBqXpwACDBwBz/2vLSvqNViS9mXnxx8jvyr1X2US7Zh9XHAfBW/l2phpK3Sn2ktfYUhSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+WePZI6; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dc82e38c10so3075054a12.3;
+        Thu, 06 Feb 2025 14:10:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738879856; x=1739484656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JW4K88ZRfCDR2jOA2UBUFxi/kKP7aoGmXehZOk8p2EA=;
+        b=f+WePZI6w8ASafkII/yohWm+YErgbqA2iHQrd54JvpYBD3VdhlZQAQqcKibG8k4IQL
+         Ai8NOcPNL7rmNS5palle1ieR9s9/2xPAolxAVvb7bWAnNAncFLYINZ6JAH4qubopKFoP
+         sFK5HLnvbigouYoS/e7Cuz9gtI42ifMpt77SN8GQH0DkB0AbZwSWYOhovny1blPCLnS3
+         G+c/7bGZw72QHaKLI10u3PocjecuW6qSnCAyh3ExqBTyVNTf315hqeKkklJyhZ5Jyo6r
+         WnQPRjCzWaPeb9tRFRvu65AH5sPLeSNLhw4DAnkNPc/OF/TOuGpH/s0faz7QTqtWhyAT
+         K7ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738879856; x=1739484656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JW4K88ZRfCDR2jOA2UBUFxi/kKP7aoGmXehZOk8p2EA=;
+        b=QGEHCGRnxSEnsA0Rk6URgDdeObgD+i6BhFpcz07uQQAzT/IGGP2NmeIAIUhD2KaRpj
+         I1umMvpKAB1uHIudZc7ACZpWxTEJksW7hwr9fMQBKmk9TJMjFfcO1PV4VbHMECvHMY2z
+         Rn6jFBBj16j2zasFLSoGhwmHcKJm8eU+m0PZbwt8DfQrM75/C7XM0yuXcmfq5zO6A31a
+         DEuzB1tiZECj9Fc6n2a7BDLdYMVS4tsXwX5M9eZwILQXTceM5Y6R54gcI/+1abGeyBWx
+         SK6n0XiYKx6LmEdj4yV5AmJ/vl8CniI9V1fDng05rplHtFRD2BR5rqvHdLul+PQghFbN
+         t6LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU5sysSxJ83I8j5xglgY+T+4b9/iMZoCTKAFnyDircVohdpv6mFBrOybBhvEkN56Iuv8zhUA==@vger.kernel.org, AJvYcCWki5Nj29ALCqrCkoPWB8mYFQ/0Zs/u9RUGqkB2jqfj1gaWA/3Ygx/vrMqQxQFx371iyjUd+nIJSLCuCFyu@vger.kernel.org, AJvYcCXgJ92Qv4QRydKxnun2t+YyTiBCHoSp2fFK4/LQzUjfBgGHNm890IYt7atS2Xp56JLp+23pJa+Lqv0Lziys9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTkudiHjCZk407f+0vfci1eqGrnZloQfWIqd33wy8XFD8vIMT4
+	o2TLtt73vNdHjOeXfOrenTPtTAB1jNDkJsIqaah5GAx0QReyhhPLcJVAAtpCUzbauIUhiRD0AEm
+	kRuzz/PKpCnEZKi+HWYxUnvFQ9gM=
+X-Gm-Gg: ASbGnct1sqcEkNioMQ1x+DejEvlQw9vBS7HP1ceWW8H784RFXWp81QwSR1WIcfNk79V
+	sIFLwOoliQk+0HT2Xp3V+n2wiiFn29x9CDuIRfOjxD08wFz8xBrtUfH0TTsMK4UcTtOMpOb5v
+X-Google-Smtp-Source: AGHT+IG2oWQwkRpCjysgqfuWiM97pMeIC+nGnB0ZEcQS+BxA5ZSw1JZItpWr/Qw3z8w7GeyebbtowgqSYSm9aozev1c=
+X-Received: by 2002:a05:6402:5290:b0:5dc:74fd:ac0a with SMTP id
+ 4fb4d7f45d1cf-5de45046dc3mr1016725a12.8.1738879855385; Thu, 06 Feb 2025
+ 14:10:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0bcd5bee-132f-417b-b77c-64b80e007c72@oracle.com>
+References: <CAGudoHFLnmp3tQHOwUAFBKxrno=ejxHmJXta=sTxVMtN9L1T9w@mail.gmail.com>
+ <956b43574bcb149579ecac7a3ab98ad29dddc275.camel@kernel.org> <CAGudoHGqYKTM979s13SAP7fukeAd4NHGTMsxnRWN7A5BpYaCzw@mail.gmail.com>
+In-Reply-To: <CAGudoHGqYKTM979s13SAP7fukeAd4NHGTMsxnRWN7A5BpYaCzw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 6 Feb 2025 23:10:41 +0100
+X-Gm-Features: AWEUYZknvE-HOGP2RWK6mr0JD4I7AL0JTBX-Up_kPyHMEtp0w9NL4G3eskO-d6c
+Message-ID: <CAGudoHH8Rg=UA+gSDywkVCNHDofpAQCgJuiecZxrTa_7otrx-w@mail.gmail.com>
+Subject: Re: audit_reusename in getname_flags
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	audit@vger.kernel.org, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 06, 2025 at 08:10:24AM +0000, John Garry wrote:
-> On 05/02/2025 19:20, Darrick J. Wong wrote:
-> > On Tue, Feb 04, 2025 at 12:01:27PM +0000, John Garry wrote:
-> > > When issuing an atomic write by the CoW method, give the block allocator a
-> > > hint to naturally align the data blocks.
-> > > 
-> > > This means that we have a better chance to issuing the atomic write via
-> > > HW offload next time.
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/libxfs/xfs_bmap.c | 7 ++++++-
-> > >   fs/xfs/libxfs/xfs_bmap.h | 6 +++++-
-> > >   fs/xfs/xfs_reflink.c     | 8 ++++++--
-> > >   3 files changed, 17 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> > > index 40ad22fb808b..7a3910018dee 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.c
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> > > @@ -3454,6 +3454,12 @@ xfs_bmap_compute_alignments(
-> > >   		align = xfs_get_cowextsz_hint(ap->ip);
-> > >   	else if (ap->datatype & XFS_ALLOC_USERDATA)
-> > >   		align = xfs_get_extsz_hint(ap->ip);
-> > > +
-> > > +	if (align > 1 && ap->flags & XFS_BMAPI_NALIGN)
-> > > +		args->alignment = align;
-> > > +	else
-> > > +		args->alignment = 1;
-> > > +
-> > >   	if (align) {
-> > >   		if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
-> > >   					ap->eof, 0, ap->conv, &ap->offset,
-> > > @@ -3781,7 +3787,6 @@ xfs_bmap_btalloc(
-> > >   		.wasdel		= ap->wasdel,
-> > >   		.resv		= XFS_AG_RESV_NONE,
-> > >   		.datatype	= ap->datatype,
-> > > -		.alignment	= 1,
-> > >   		.minalignslop	= 0,
-> > >   	};
-> > >   	xfs_fileoff_t		orig_offset;
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
-> > > index 4b721d935994..d68b594c3fa2 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.h
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.h
-> > > @@ -87,6 +87,9 @@ struct xfs_bmalloca {
-> > >   /* Do not update the rmap btree.  Used for reconstructing bmbt from rmapbt. */
-> > >   #define XFS_BMAPI_NORMAP	(1u << 10)
-> > > +/* Try to naturally align allocations */
-> > > +#define XFS_BMAPI_NALIGN	(1u << 11)
-> > > +
-> > >   #define XFS_BMAPI_FLAGS \
-> > >   	{ XFS_BMAPI_ENTIRE,	"ENTIRE" }, \
-> > >   	{ XFS_BMAPI_METADATA,	"METADATA" }, \
-> > > @@ -98,7 +101,8 @@ struct xfs_bmalloca {
-> > >   	{ XFS_BMAPI_REMAP,	"REMAP" }, \
-> > >   	{ XFS_BMAPI_COWFORK,	"COWFORK" }, \
-> > >   	{ XFS_BMAPI_NODISCARD,	"NODISCARD" }, \
-> > > -	{ XFS_BMAPI_NORMAP,	"NORMAP" }
-> > > +	{ XFS_BMAPI_NORMAP,	"NORMAP" },\
-> > > +	{ XFS_BMAPI_NALIGN,	"NALIGN" }
-> > 
-> > Tihs isn't really "naturally" aligned, is it?  It really means "try to
-> > align allocations to the extent size hint", which isn't required to be a
-> > power of two.
-> 
-> Sure, so I would expect that the user will set extsize/cowextsize according
-> to the size what we want to do atomics for, and we can align to that. I
-> don't think that it makes a difference that either extsize isn't mandated to
-> be a power-of-2.
-> 
-> So then I should rename to XFS_BMAPI_EXTSZALIGN or something like that - ok?
+On Thu, Feb 6, 2025 at 9:34=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> On Thu, Feb 6, 2025 at 9:24=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
+rote:
+> >
+> > On Thu, 2025-02-06 at 20:07 +0100, Mateusz Guzik wrote:
+> > > You added it in:
+> > > commit 7ac86265dc8f665cc49d6e60a125e608cd2fca14
+> > > Author: Jeff Layton <jlayton@kernel.org>
+> > > Date:   Wed Oct 10 15:25:28 2012 -0400
+> > >
+> > >     audit: allow audit code to satisfy getname requests from its name=
+s_list
+> > >
+> > > Do I read correctly this has no user-visible impact, but merely tries
+> > > to shave off some memory usage in case of duplicated user bufs?
+> > >
+> > > This is partially getting in the way of whacking atomics for filename
+> > > ref management (but can be worked around).
+> > >
+> > > AFAIU this change is not all *that* beneficial in its own right, so
+> > > should not be a big deal to whack it regardless of what happens with
+> > > refs? Note it would also remove some branches in the common case as
+> > > normally audit either has dummy context or there is no match anyway.
+> >
+> >
+> > (cc'ing audit folks and mailing list)
+> >
+> > IIRC, having duplicate audit_names records can cause audit to emit
+> > extra name records in this loop in audit_log_exit():
+> >
+> >         list_for_each_entry(n, &context->names_list, list) {
+> >                 if (n->hidden)
+> >                         continue;
+> >                 audit_log_name(context, n, NULL, i++, &call_panic);
+> >         }
+> >
+> >
+> > ...which is something you probably want to avoid.
+>
+> Well in this case I would argue the current code is buggy, unless I'm
+> misunderstanding something.
+>
+> audit_log_name in particular logs:
+>   1550 =E2=94=82       if (n->ino !=3D AUDIT_INO_UNSET)
+>   1551 =E2=94=82               audit_log_format(ab, " inode=3D%lu dev=3D%=
+02x:%02x
+> mode=3D%#ho ouid=3D%u ogid=3D%u rdev=3D%02x
+>   1552 =E2=94=82                                n->ino,
+>   1553 =E2=94=82                                MAJOR(n->dev),
+>   1554 =E2=94=82                                MINOR(n->dev),
+>   1555 =E2=94=82                                n->mode,
+>   1556 =E2=94=82                                from_kuid(&init_user_ns, =
+n->uid),
+>   1557 =E2=94=82                                from_kgid(&init_user_ns, =
+n->gid),
+>   1558 =E2=94=82                                MAJOR(n->rdev),
+>   1559 =E2=94=82                                MINOR(n->rdev));
+>
+> As in it grabs the properties of the found inode.
+>
+> Suppose the 2 lookups of the same path name found 2 different inodes
+> as someone was mucking with the filesystem at the same time.
+>
+> Then this is going to *fail* to record the next inode.
+>
+> So if any dedup is necessary, it should be done by audit when logging imo=
+.
+>
 
-Yep.
+I did more digging, audit indeed *does* handle it later in
+__audit_inode(), so this does work after all.
 
---D
+I'm going to have to chew on it what to do here then.
 
-> Thanks,
-> John
-> 
-> 
-> > 
-> > --D
-> > 
-> > >   static inline int xfs_bmapi_aflag(int w)
-> > > diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> > > index 60c986300faa..198fb5372f10 100644
-> > > --- a/fs/xfs/xfs_reflink.c
-> > > +++ b/fs/xfs/xfs_reflink.c
-> > > @@ -445,6 +445,11 @@ xfs_reflink_fill_cow_hole(
-> > >   	int			nimaps;
-> > >   	int			error;
-> > >   	bool			found;
-> > > +	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
-> > > +					XFS_BMAPI_PREALLOC;
-> > > +
-> > > +	if (atomic)
-> > > +		bmapi_flags |= XFS_BMAPI_NALIGN;
-> > >   	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
-> > >   		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
-> > > @@ -478,8 +483,7 @@ xfs_reflink_fill_cow_hole(
-> > >   	/* Allocate the entire reservation as unwritten blocks. */
-> > >   	nimaps = 1;
-> > >   	error = xfs_bmapi_write(tp, ip, imap->br_startoff, imap->br_blockcount,
-> > > -			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC, 0, cmap,
-> > > -			&nimaps);
-> > > +			bmapi_flags, 0, cmap, &nimaps);
-> > >   	if (error)
-> > >   		goto out_trans_cancel;
-> > > -- 
-> > > 2.31.1
-> > > 
-> > > 
-> 
-> 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
