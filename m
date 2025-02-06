@@ -1,87 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-40999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB19A29EA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 03:19:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F47A29F4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 04:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 483C37A3CF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 02:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B662F3A79AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 03:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500417DA62;
-	Thu,  6 Feb 2025 02:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E3E14A4F0;
+	Thu,  6 Feb 2025 03:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D8q1txOq"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aNptVgs2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC862E62B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 02:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738808353; cv=none; b=DgZDcPIibx7gUeTrY8AgLzNAevJsQonWFuy/AtVaR77b/QFk8T2CXrQpTcPNhfLKg561BxAwEVJrCxqyB4MKF0Y4UEySoWzVuh/yLYDsKpTo+mb+YM9/DO8RhDgqKe3umbxQaTf2OBQGu4hexgrjVOW9FQamsYGF+OUMUE+M2Z8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738808353; c=relaxed/simple;
-	bh=k6vMTmJHFnv2WkKE/A7okgY4lHxFWQNqFyef/pZ+/bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UP6xBHEqOu9regLM6DyBtt/S0vfWhuknG0iSjH2dFRZSHT1O/75BvmH36k7MYvD5IKFPNEO3a/ICXfbnQXMZV+DddbGZEtsmM4IujUFGSMp35tQlh9XFLJe2NC2FYre1E0GJU7KKm6Uw4Li8QIHsFPsy2U7rXJGxF58eA/eMEg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D8q1txOq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738808350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2jfJVrhk9Ifzv4h+gi2hPHXFp3NAOfRW4TP/LTqPsYQ=;
-	b=D8q1txOqTPc5KHCIn1XtPVHgQ9+vdmnagkSd6LzLlP5crNxX7rnUQHRhqfBOtHKj6BfmnQ
-	QXCZKKyLsTQQoRwL4bYBYfm1/P9SqL2tgXlEGotPsY1N6dBIm9CwcVb7aiCu4rnO4TY9PD
-	0x/qIKJyTBvOENfBoBsB+sGJnJQZVmI=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-EnNTcjPdNSqFqKGArmpAnQ-1; Wed, 05 Feb 2025 21:19:09 -0500
-X-MC-Unique: EnNTcjPdNSqFqKGArmpAnQ-1
-X-Mimecast-MFC-AGG-ID: EnNTcjPdNSqFqKGArmpAnQ
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-851a991cf8bso96801639f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2025 18:19:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738808348; x=1739413148;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2jfJVrhk9Ifzv4h+gi2hPHXFp3NAOfRW4TP/LTqPsYQ=;
-        b=NFXZpoR4JPckZSdmnVMIi3PVQzUXTmOjGk9tvHVwTDiGQYD35PzgzPY1lTon0jefiM
-         9pe55BL4gZrx2YbDO/6x/kzd8+CKP0LDTl7Cg/02/mrgShfPByyF1eLwWH6hMIb3pDve
-         wCl8wuIaeKbNXgqz35rx4WqJEyOrDslv+ruLHmc5dLPWnJcJc+5QDtDd2uIpQE7hUB6b
-         VII8aO8bloqBOl1lNmI/gO/bPIOj1a5/cdUhn29dcZAEWO+Z3oI4H26ug+JxZIGcs66J
-         Sx9Kf7eI2ah1YF1oTHiP6hX2c3lJabml0K2q2tBxBqABDLG2JY6ja1igRZN6uL36OVmz
-         mTRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUMfWNCpc5lgcDkPDQkBHD0aR/Jpv+1pdIZlTOW6iIojKpfKB0r/atfHzJZhlt1ORJSvt+ANTBHFusgv6i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2llV2OG3fO5yEU+pJ7K2JzhxbIxdQvd2v1h7EA0ovcPwY/67j
-	xmM2RARjmwl45VJQWPpSRmG+EUGMlSA2ff15ORpRoeMPTis3Dq/JeOxxnp/KFH2czgCkMJvtfQF
-	1cFUR1YpMEqUPIgERN50MrHYaYYaN/FIQZ+4qNVOwIz3reVe4YwKJd5vir02PzrWA5jC4LhcwNA
-	==
-X-Gm-Gg: ASbGncviHLMiN/OfBMwFp5VmfzmTg5+mvt9F6Xs4o4N6lH6DZGUpOMxNx9O7NUawF0Q
-	s/BP2iWDHcENZVVp2MWYWXfWvHiuTE0u8OOgwCYpP+FJC7s1cKVjh8zraDMAJLDSS3iY4K6L5ii
-	QCiTASpRR10dRTFr25m3UFHX0kMbIdrcyRNxFRO0dxsEbJ2lRKyoh7ajkJFc/c0DjVobq8HZyPa
-	vPpIAZ2XUyZqyRsAfYL0OZm0DR5Q8SZDmvUj1yTKefAaqQxQdgSd0KNKqmTX7dR3t3yf7gv3KCL
-	NC0Q846ES5gYxgMO/z/pRJkKxc/oqE6pjqF34o7pKg3g
-X-Received: by 2002:a92:cd84:0:b0:3ce:3565:629 with SMTP id e9e14a558f8ab-3d05a54b0damr17080585ab.1.1738808348672;
-        Wed, 05 Feb 2025 18:19:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFXZrRSdhEGS5oeToKOTzy3aKexIWiPlOnTh2/SsV+ZRTxK+0SkEC/Bdhvv9wG52PAcgmxgGw==
-X-Received: by 2002:a92:cd84:0:b0:3ce:3565:629 with SMTP id e9e14a558f8ab-3d05a54b0damr17080435ab.1.1738808348360;
-        Wed, 05 Feb 2025 18:19:08 -0800 (PST)
-Received: from [10.0.0.48] (97-116-166-216.mpls.qwest.net. [97.116.166.216])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d05e9a32a3sm319925ab.72.2025.02.05.18.19.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Feb 2025 18:19:07 -0800 (PST)
-Message-ID: <57a9557f-c895-466f-afaa-a40bf818e250@redhat.com>
-Date: Wed, 5 Feb 2025 20:19:06 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED852BA33;
+	Thu,  6 Feb 2025 03:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738811776; cv=fail; b=TipxcZY8/zqvPfdJ9wKZC19PRBFOJaquHo5lEOPUQK12z12bSSocGYgepT3opjcBfClC0h+xk9ukR2fc1ABs0h0jkC9tcVtefB3xpPcgSco1Ac6k1bgFOiVA/oOXbPW7yKWV3bXRWqNt5uQWgK2rIQMS2pmfARcQB0/leglGusY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738811776; c=relaxed/simple;
+	bh=kD24G8G5VtsLO5NB9MQUnSX00NQp6iz4QvzDzhFQ650=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C2AVAc8Qxm60cCcpbRldiRvbsn5h8YYAz13xTW9+dCq6njcDOMNTi8qTRYzpZbMC3uQMrZe7X6sNzanRiEJP8zaiV5zbtnzXXQntru5xbWAljdlTcRlG94ySmksWu2QZBcM3mM1Hg7IouVzKYHl558zopopm0SotWcR9GeW50zE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aNptVgs2; arc=fail smtp.client-ip=40.107.92.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V29uiwa1VaKV2euY/42XjB0ptlKBqCXnL6jmFfXbc6kMci/zyaHYll+oRyfFM8KyRxEQ9VP0P9uCdO/2OCu/7SDrLrf4oIJOC0F8ut2Pj5SAInJsoqU9sIEQnvNlOExvVDX6bsNhWhW9wy9GUK4pJt1HtTv7naE0iJEwjo8A1zBuJHBfWJLAGqP7ZG2jTcuJbGpemkCiNVJ+7ivUTNA7I+ufiQvRYMw9tz0n6aK/JHgdm1KVieQdI+sfUnhxZdak25UBtXiGtbfU9IuUM03EzfIItnGSo4ZtJ+8MZ/pdTHug/1Sq2FAaD9mJBAKqL4hKUt53N3wfj/uIpMsNN1m97w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q/T1fC1oAC98z0b6PDhtI7ba6jI0t8WSKkPI0DW16YE=;
+ b=s8s4rHRubgh7QZ0TPo+Np6uA8KsIUgKwAmYNpOmBzGugxnuSEClWBezlrRPsVrYWmy42ZoscnP5xK/8EKIWhkvsZFVVyuhi7UQyfyUeRuMmx9hTyWhQjD2J6WWc5bCbEjeJY6JJ3E9yXAYWS40l+anCm+HzE3N/xZzAjnSDykXFD05eU/+TrUDaOgMMXZfQ31opvHKB7us56ZYCjfG3HpLOEjJf7A9h+YkrRbzUUFSe0GEcY3hNqe1AWcd2O1OzMe74Y2MGRHHQJ5WEQ5UQlmMHEIwLLMzveOA9edgWmh1wA5tqwBSIXDLqweYUpvtbFaS9WScBo4/5Y0SV661OFAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q/T1fC1oAC98z0b6PDhtI7ba6jI0t8WSKkPI0DW16YE=;
+ b=aNptVgs2F544ARj4z0lCrjOl83W5Ro2B3wD0rvmE065O13HDvh7aNu0g8URdNmyB/a4xFOFOqE+Ffq7dqOx+iVFv65GdyzqfITPRrOy1zlgyoZJOv17DDUnVCafO9lZzvEskCpubWVqnbLMYdccAsAUg1Wm03COwnwZV1h+iCyU=
+Received: from BN0PR04CA0187.namprd04.prod.outlook.com (2603:10b6:408:e9::12)
+ by IA1PR12MB6459.namprd12.prod.outlook.com (2603:10b6:208:3a9::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.26; Thu, 6 Feb
+ 2025 03:16:08 +0000
+Received: from BN1PEPF0000467F.namprd03.prod.outlook.com
+ (2603:10b6:408:e9:cafe::7d) by BN0PR04CA0187.outlook.office365.com
+ (2603:10b6:408:e9::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.25 via Frontend Transport; Thu,
+ 6 Feb 2025 03:16:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF0000467F.mail.protection.outlook.com (10.167.243.84) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8398.14 via Frontend Transport; Thu, 6 Feb 2025 03:16:07 +0000
+Received: from [10.136.39.79] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Feb
+ 2025 21:13:02 -0600
+Message-ID: <28ed3e72-d219-4a02-aa8a-5b3ab413bc65@amd.com>
+Date: Thu, 6 Feb 2025 08:42:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,56 +79,126 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] pstore: convert to the new mount API
-To: Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
- brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, neilb@suse.de, ebiederm@xmission.com,
- tony.luck@intel.com
-References: <20250205213931.74614-1-sandeen@redhat.com>
- <20250205213931.74614-2-sandeen@redhat.com>
- <DD66BE90-95CD-4F75-AD47-50E869460482@kernel.org>
+Subject: Re: [PATCH v3 0/2] pipe: don't update {a,c,m}time for anonymous pipes
+To: Oleg Nesterov <oleg@redhat.com>
+CC: David Howells <dhowells@redhat.com>, "Gautham R. Shenoy"
+	<gautham.shenoy@amd.com>, Mateusz Guzik <mjguzik@gmail.com>, Neeraj Upadhyay
+	<Neeraj.Upadhyay@amd.com>, Christian Brauner <brauner@kernel.org>, "Jeff
+ Layton" <jlayton@kernel.org>, Oliver Sang <oliver.sang@intel.com>, "Swapnil
+ Sapkal" <swapnil.sapkal@amd.com>, WangYuli <wangyuli@uniontech.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>
+References: <20250205181716.GA13817@redhat.com>
 Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <DD66BE90-95CD-4F75-AD47-50E869460482@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250205181716.GA13817@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000467F:EE_|IA1PR12MB6459:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba830744-5834-45fe-5149-08dd465c9956
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NVpjeVFiSjNoSHlwNHlmQ3FTeS9kT1ZkRkxkMlN5WVBJSE1YQW8zZEhROEF5?=
+ =?utf-8?B?eFJ0djdBVVFQMHJXWk9GOG14Q1lnM0Y5Q3k2SDg2Q1Y1K1FjRnF5ZU5pdE9T?=
+ =?utf-8?B?RUJjWWIzaTJYRkdJTXc0MWZWUjhrNDNmSUZiVU9sOFEzcWVqYnZFdVk3OTJi?=
+ =?utf-8?B?OGRSQnNTNGwycWhob0RBTTJVQnhiYi82Y3IvTmlkOTN5a05Ra0Z5V05sOFpV?=
+ =?utf-8?B?d29FVlk0NjllME5DS2JVK1hDVXBYQzR1dlVxZndhK1BJTlVmTjRETG42OU8z?=
+ =?utf-8?B?WjRQRWd3MDZRUEVwQ1FPc3JCSmJFT041M0pud2trSWZrNWlMMTdNSm1OQ3pW?=
+ =?utf-8?B?eENESjd6Y01mNDdGUVhjaVJaekVYdUNZb2pEOUQxV3JHd1JGdkp3cjE1cTZ1?=
+ =?utf-8?B?VkpmVkRjb291UHd1YW95bmtRSzhXbWRvaHpUZVpnYWwyeXVVNWltNUVzQnB5?=
+ =?utf-8?B?T05sYzJ2MWZkemVrR2RPNjhJZk5xZ2lyZ1I5US9lMlhQKzlwYnRJRXUxTitn?=
+ =?utf-8?B?bTJlRjVuRzhBazBaTDdRWTVPZ2E2TXQydUhNUXA5OTVHU1h4YlAyNkxrY3Vw?=
+ =?utf-8?B?UXp4WWJFZVVqa2Y3Rk03MEtrTmlTRzdQZHdjN3kwNXRnTDBSYkphYkRrRzVu?=
+ =?utf-8?B?MytSUXJQLzQwdEVOSERodm9YRWoyZnhVNTVpMXY4WDlJZlQvbitaWTB0eTZ6?=
+ =?utf-8?B?S2RreVdIRVRkTFhDNkhrWTMzaDExbVVHc1VUalhFQW9MM1V3R2NXTDZWM1ZE?=
+ =?utf-8?B?ZndLNHYxRUdCZDNSOW5uN3p0eXVncVdmMFQ2UXVveXNuVUpndThLeGtJTUpy?=
+ =?utf-8?B?MGl1RXF0cVNlQTdVMk1kTnYvL2FJYW9WRUZrZjBMUHFBUU41NHRxY3dvVFBQ?=
+ =?utf-8?B?Y21kUERjc3IzMlFXL1FCTDRJckpmN21SaFBWTmJnaUhLNDBnbFpGc0xIRnFT?=
+ =?utf-8?B?ZmdYSmg1TC9na0E0Q0wrb3pGQkpXandhY0hLTU41K29vSG5RQ3JwcnZmeVNo?=
+ =?utf-8?B?ajNlZndZby8xQUczRU9RWGNSQ0Ixc0hYWTUyc1BrRGsvcXhydWJLNVJHTUIy?=
+ =?utf-8?B?YWlsNFNsKzZKTk1tTG1aeXhrUjUrREUvQnVLdEVEcUx2MVA5WGdHQnM5bnBp?=
+ =?utf-8?B?Z0hVWURJY1YxZk5SQ2cxZENIQy9STVpwNjk3QkRVdTVjb1U0VCt0R2Jid2Js?=
+ =?utf-8?B?Q3RNM1BYbS9vRThwWWEzUGpoQm9rZEV0MHk5ZzRHOWZkZ0VkNVF0eEl6WXp3?=
+ =?utf-8?B?am0xdURkSWtWYjJ3N1NicWhBWFBzWTB4SmdSeTNIaEE1dmFvaXdMc0JRcE5E?=
+ =?utf-8?B?TWpzdTEwOEk5MVljdUlCcCtSZlVqdjFxUzVKMTVDQmpyMWFpdnlOVXIvMlFG?=
+ =?utf-8?B?OFBRcFBZOC8zak1uWHRQSWhZNVRBRGJRS0xCYkVJdWZ0MllyenZZeHdJWlFC?=
+ =?utf-8?B?Wjd4bm40U3hWanZCRStHdERnTnNOd0pabURjYVE1bTZFa0VrRGp4S1E2QmNM?=
+ =?utf-8?B?SWZ5OGlzUWFRQngwQVNsTWwvaDA3cUt1UzdzcXNSQk5UNEtCNGlncWkyY3R0?=
+ =?utf-8?B?ZWFXMzJkbUN1R3ZLV3pTdXVPMkVyUFRvWi9hdElNd3pLMUhvdDg3M1BlTjZW?=
+ =?utf-8?B?WEJFOUtQaXdjc0Z4UE5rVTVhTFBRTWthT3ZsWkMzek1jWmtnWGR2d2VDcUd4?=
+ =?utf-8?B?NVB3Z1IzbnVOa0dlVmNJbnRCcldHVVpTNVFsSkpNSmxXUkFpTGt4bTYwc0tP?=
+ =?utf-8?B?RmlJRG9GN3lmL281OFV2M2FCUDVNRWFoMHNvc29DMEEwL0Y1VDVveUczVEt0?=
+ =?utf-8?B?RFBheGpxblcxVDM4ejg4UEdBM3JRNnF5ak13bEUrYXEyWTh3RnJsdEx3MkZm?=
+ =?utf-8?B?MnB5b3lpTTFYUlJlK3pjaDhkYTJhRldZNjdQZllyV0hRTUdOTVlNTGN6RjZl?=
+ =?utf-8?B?dVVTL25lMEtKTTIzWGE2bTA5SDl3eWNEcmhJNDZsWGNYTVF5MTF2SDN1NmU4?=
+ =?utf-8?Q?mc/tcsNrnLzRdKxJF35Whmu5TOQGVI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2025 03:16:07.9359
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba830744-5834-45fe-5149-08dd465c9956
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000467F.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6459
 
-On 2/5/25 8:04 PM, Kees Cook wrote:
->> @@ -431,19 +434,33 @@ static int pstore_fill_super(struct super_block *sb, void *data, int silent)
->> 		return -ENOMEM;
->>
->> 	scoped_guard(mutex, &pstore_sb_lock)
->> -		pstore_sb = sb;
->> +	pstore_sb = sb;
-> Shouldn't scoped_guard() induce a indent?
+Hello Oleg,
 
-Whoops, not sure how that happened, sorry.
+On 2/5/2025 11:47 PM, Oleg Nesterov wrote:
+> OK, let me send v3 right now...
 
-Fix on commit or send V2?
+Tested this series with sched-messaging on my 3rd Generation EPYC
+system (2 x64c/128T, boost on, C2 disabled) and I see slight
+improvements:
 
->> 	pstore_get_records(0);
->>
->> 	return 0;
->> }
->>
->> -static struct dentry *pstore_mount(struct file_system_type *fs_type,
->> -	int flags, const char *dev_name, void *data)
->> +static int pstore_get_tree(struct fs_context *fc)
->> +{
->> +	if (fc->root)
->> +		return pstore_reconfigure(fc);
+   ==================================================================
+   Test          : sched-messaging
+   Units         : Normalized time in seconds
+   Interpretation: Lower is better
+   Statistic     : AMean
+   ==================================================================
+   Case:      upstream[pct imp](CV)    skip_{a,c,m}_time[pct imp](CV)
+    1-groups     1.00 [ -0.00]( 9.88)     1.05 [ -5.16]( 7.19) *
+    2-groups     1.00 [ -0.00]( 3.49)     0.97 [  2.70]( 3.54)
+    4-groups     1.00 [ -0.00]( 1.22)     0.97 [  2.70]( 2.78)
+    8-groups     1.00 [ -0.00]( 0.80)     0.99 [  0.94]( 1.04)
+   16-groups     1.00 [ -0.00]( 1.40)     0.98 [  2.43]( 1.02)
+   
+   * Disregard these data points due to large run to run variation
 
-> I need to double check that changing kmsg_size out from under an active pstore won't cause problems, but it's probably okay. (Honestly I've been wanting to deprecate it as a mount option -- it really should just be a module param, but that's a separate task.)
+Feel free to add:
 
-Honestly I struggled with this for a while, not quite sure what's right.
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-> Reviewed-by: Kees Cook <kees@kernel.org>
+I'll go test the pipe_{read,write}() cleanup you had posted on the
+other thread.
 
-Thanks,
--Eric
+-- 
+Thanks and Regards,
+Prateek
 
-> (Is it easier to take this via fs or via pstore?)
 > 
-> -Kees
+> Changes: make pipeanon_fops static.
+> 
+> Link to v1: https://lore.kernel.org/all/20250204132153.GA20921@redhat.com/
+> Link to v2: https://lore.kernel.org/all/20250205161636.GA1001@redhat.com/
+> 
+> Oleg.
+> ---
+> 
+>   fs/pipe.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++---------------
+>   1 file changed, 47 insertions(+), 15 deletions(-)
+> 
 
 
