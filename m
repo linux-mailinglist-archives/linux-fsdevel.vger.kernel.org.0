@@ -1,56 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-41088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE46A2AB88
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 15:37:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63B6A2ABE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 15:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291B03A611C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326C9165574
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A524236431;
-	Thu,  6 Feb 2025 14:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6E51E5B75;
+	Thu,  6 Feb 2025 14:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yaap0JMx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brGKTa+x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6417D236420;
-	Thu,  6 Feb 2025 14:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7880B23644D;
+	Thu,  6 Feb 2025 14:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738852622; cv=none; b=XfJMSoX1/xaR+ouftgRqMI9HKvje7x1wRY1YWfQ9B7c6XvUAE6viUFoCj6TPNM+/LJlDhfHWKU6PTRtqOiDSpzt+l6OlTL5w+Et0w5gPn6PDPOgU4mS6EBCapjNX/wphQric5+TS5e5adWoq8ThTVEEM6zPOZZb9WpkC0DOurWs=
+	t=1738853677; cv=none; b=MEBhQsNAnQiIhsk3VMg3RvFRAEBCf7zUUSl9aSEoPOEFJsWjN+H/e/Dtn6cX4SlUkM/OnNGciZBnMlGe/fgpw+dIoZ4kVnr8l7jk6jat+8Wm7MKhy2Uc3s1R948RDWoBr6/DLEJKhuakI6xBm3Wwk98PDL10ePetxM2iaj4K14E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738852622; c=relaxed/simple;
-	bh=7AJr7y54UdwEPLF34nyDqrZLW6GboqPkY0gsDWO6Di4=;
+	s=arc-20240116; t=1738853677; c=relaxed/simple;
+	bh=sFA6VuotKZ8bMuze2skXjLtoIDfF0Lw7P9QY9yWnNzQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2D9FDuUwBd5yPXq0+kXDaoX3q0mcHnwTQO8FEHC/UF2uz6VTo2NlFXKVGG9DK07RQGu4wng+VdVtPZ6U6k8X4ux/+WAw1tnquTirG/b5aWo0MWi4A0lqwsAgk4YETCJkmRg8Y/YQUgG317Tr493WH3ILNfQaiAEaZ92/OQmRCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yaap0JMx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD787C4CEDD;
-	Thu,  6 Feb 2025 14:36:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPVCa3gdpG5up0tAlMZWij1gvZ72FpvpmQl90eT56ywaZxZCFwl+4k9UGuaqMzllF+3WBOUCf644PSHf3b+Id4Dt9+/DWhrKukKXNyI48qgyW/oXByJYwZ0mjrtZ+yNBJKPjGnb9BrCCCY8FDbhKWIc9Nq/1jXEsAEWKanApClY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brGKTa+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 377D6C4CEDD;
+	Thu,  6 Feb 2025 14:54:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738852621;
-	bh=7AJr7y54UdwEPLF34nyDqrZLW6GboqPkY0gsDWO6Di4=;
+	s=k20201202; t=1738853676;
+	bh=sFA6VuotKZ8bMuze2skXjLtoIDfF0Lw7P9QY9yWnNzQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yaap0JMxBVh/eIte66ar9TLFP6tXbELWJEbk7EvrKwDZtOwhLMjwQbr8FcPr1cS/V
-	 e8b/kfoyOiZMELWXQHrMvT0EBF/6Ao3w/uKDoq56oJOeJ8+6ax2gpxSfNk7VOkKPPQ
-	 Zs0I39Dx0KwWAIiAIECXY6gAnFPn2w3qmbT/q3NPPRBopncWy15lID+ThHWHrYjh3e
-	 hIfEpJBGIUy80IRE1Zo4/T/AFP/oDVpc7KGbiwFUr9SdQ0gs6y41PbiTrGQnxrJz0A
-	 Gorc93VXw9Fn5MOqVrLpPSO82b/tWBlp6/ZpigGcUzQjGm/NiSx5/GBh0ckPe19O83
-	 83PhSZUUMTPSQ==
-Date: Thu, 6 Feb 2025 15:36:57 +0100
+	b=brGKTa+xsAJ61rkFSqd8P0/prXTaV9GdZoOcsAYOJKcewpvk2NPPAk5w6YdGBv+vn
+	 +yLw0oN7f0HJw9ZnNi5PgapHoYEhUIeqnUYJJA1+C4eJAPp4Rmj2AeCGXX9BhJt5q9
+	 hsWBtvEcW607nq8cJusq/CTZyfmXdRCpRxRfqXYpfJVnKEoRXa4ybARCDQzxIADpUg
+	 FJ40Nl5jcGf4jdaTL9RE2C0rkOaTP3FRxcJv+UiL8kUVdUP71KoxsKGM5/xBQ65OCM
+	 uZi0BF5X5xDwODryC95UFJE+KhhXbGmJL7goszxpLcUVvdpAXKDgf/1Ylyg0U//6co
+	 CPz4Du9IMMHZg==
+Date: Thu, 6 Feb 2025 15:54:32 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/19 v7?] RFC: Allow concurrent and async changes in a
- directory
-Message-ID: <20250206-pocken-entzwei-bd310c8d61b3@brauner>
-References: <20250206054504.2950516-1-neilb@suse.de>
+To: Mike Yuan <me@yhndnzj.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"cgzones@googlemail.com" <cgzones@googlemail.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] fs/xattr: actually support O_PATH fds in *xattrat()
+ syscalls
+Message-ID: <20250206-steril-raumplanung-733224062432@brauner>
+References: <20250205204628.49607-1-me@yhndnzj.com>
+ <20250206-uhrwerk-faultiere-7a308565e2d3@brauner>
+ <Kn-2tlpxN8YNmh0j0udjQ8YIFNZMVVJYJh-LyBoYNBfpax28PNUkXuH6gnod7if2eX3NRVs3Ey8uCHRpwg_S5hPX_ADtrgMZbDTWFpHd_uU=@yhndnzj.com>
+ <20250206-erbauen-ornament-26f338d98f13@brauner>
+ <cfnfHaahrrXJJOgvNjb5hFbU0qh8gVXJ62R9uP9AItBEywyNH9vNBRzJbPR8xTv-LtFaUJYTHvyuLBfkznwJPt3fEcqNBFxf_yKJeZKwL3I=@yhndnzj.com>
+ <20250206-wisst-rangieren-d59f7882761a@brauner>
+ <Ah2vDyFwRPpHngjgEblSFQWijS6qnrD_LSbpUrdefKpgTotaT4CyzL4RqaWM7axQamVuGi3hPdIzuXl9qBlfHZ9m4-hcUWaWuaoc35Gt8D8=@yhndnzj.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,92 +65,162 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250206054504.2950516-1-neilb@suse.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ah2vDyFwRPpHngjgEblSFQWijS6qnrD_LSbpUrdefKpgTotaT4CyzL4RqaWM7axQamVuGi3hPdIzuXl9qBlfHZ9m4-hcUWaWuaoc35Gt8D8=@yhndnzj.com>
 
-On Thu, Feb 06, 2025 at 04:42:37PM +1100, NeilBrown wrote:
-> This is my latest attempt at removing the requirement for an exclusive
-> lock on a directory which performing updates in this.  This version,
-> inspired by Dave Chinner, goes a step further and allow async updates.
+On Thu, Feb 06, 2025 at 02:26:51PM +0000, Mike Yuan wrote:
+> On 2025-02-06 at 14:35, Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > On Thu, Feb 06, 2025 at 01:25:19PM +0000, Mike Yuan wrote:
+> > 
+> > > On 2/6/25 11:03, Christian Brauner brauner@kernel.org wrote:
+> > > 
+> > > > On Thu, Feb 06, 2025 at 09:51:33AM +0000, Mike Yuan wrote:
+> > > > 
+> > > > > On 2/6/25 10:31, Christian Brauner brauner@kernel.org wrote:
+> > > > > 
+> > > > > > On Wed, Feb 05, 2025 at 08:47:23PM +0000, Mike Yuan wrote:
+> > > > > > 
+> > > > > > > Cited from commit message of original patch [1]:
+> > > > > > > 
+> > > > > > > > One use case will be setfiles(8) setting SELinux file contexts
+> > > > > > > > ("security.selinux") without race conditions and without a file
+> > > > > > > > descriptor opened with read access requiring SELinux read permission.
+> > > > > > > 
+> > > > > > > Also, generally all at() syscalls operate on O_PATH fds, unlike
+> > > > > > > f() ones. Yet the O_PATH fds are rejected by *xattrat() syscalls
+> > > > > > > in the final version merged into tree. Instead, let's switch things
+> > > > > > > to CLASS(fd_raw).
+> > > > > > > 
+> > > > > > > Note that there's one side effect: f*xattr() starts to work with
+> > > > > > > O_PATH fds too. It's not clear to me whether this is desirable
+> > > > > > > (e.g. fstat() accepts O_PATH fds as an outlier).
+> > > > > > > 
+> > > > > > > [1] https://lore.kernel.org/all/20240426162042.191916-1-cgoettsche@seltendoof.de/
+> > > > > > > 
+> > > > > > > Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
+> > > > > > > Signed-off-by: Mike Yuan me@yhndnzj.com
+> > > > > > > Cc: Al Viro viro@zeniv.linux.org.uk
+> > > > > > > Cc: Christian Göttsche cgzones@googlemail.com
+> > > > > > > Cc: Christian Brauner brauner@kernel.org
+> > > > > > > Cc: stable@vger.kernel.org
+> > > > > > > ---
+> > > > > > 
+> > > > > > I expanded on this before. O_PATH is intentionally limited in scope and
+> > > > > > it should not allow to perform operations that are similar to a read or
+> > > > > > write which getting and setting xattrs is.
+> > > > > > 
+> > > > > > Patches that further weaken or dilute the semantics of O_PATH are not
+> > > > > > acceptable.
+> > > > > 
+> > > > > But the at() variants really should be able to work with O_PATH fds, otherwise they're basically useless? I guess I just need to keep f() as-is?
+> > > > 
+> > > > I'm confused. If you have:
+> > > > 
+> > > > filename = getname_maybe_null(pathname, at_flags);
+> > > > if (!filename) {
+> > > > CLASS(fd, f)(dfd);
+> > > > if (fd_empty(f))
+> > > > error = -EBADF;
+> > > > else
+> > > > error = file_setxattr(fd_file(f), &ctx);
+> > > > 
+> > > > Then this branch ^^ cannot use fd_raw because you're allowing operations
+> > > > directly on the O_PATH file descriptor.
+> > > > 
+> > > > Using the O_PATH file descriptor for lookup is obviously fine which is
+> > > > why the other branch exists:
+> > > > 
+> > > > } else {
+> > > > error = filename_setxattr(dfd, filename, lookup_flags, &ctx);
+> > > > }
+> > > > 
+> > > > IOW, your patch makes AT_EMPTY_PATH work with an O_PATH file descriptor
+> > > > which isn't acceptable. However, it is already perfectly fine to use an
+> > > > O_PATH file descriptor for lookup.
+> > > 
+> > > Well, again, [1] clearly stated the use case:
+> > > 
+> > > > Those can be used to operate on extended attributes,
+> > > > especially security related ones, either relative to a pinned directory
+> > > > or [on a file descriptor without read access, avoiding a
+> > > > /proc/<pid>/fd/<fd> detour, requiring a mounted procfs].
+> > > 
+> > > And this surfaced in my PR to systemd:
+> > > 
+> > > https://github.com/systemd/systemd/pull/36228/commits/34fe16fb177d2f917570c5f71dfa8f5b9746b9a7
+> > > 
+> > > How are xattrat() syscalls different from e.g. fchmodat2(AT_EMPTY_PATH) in that regard? I can agree that the semantics of fxattr() ought to be left untouched, yet I fail to grok the case for _at variants.
+> > 
+> > 
+> > man openat:
+> > 
+> > O_PATH (since Linux 2.6.39)
+> > Obtain a file descriptor that can be used for two purposes: to indicate a location in the filesystem tree and to perform operations that act purely at the file descriptor level.
+> > The file itself is not opened, and other file operations (e.g., read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), ioctl(2), mmap(2)) fail with the error EBADF.
+> > 
+> > The following operations can be performed on the resulting file descriptor:
+> > 
+> > • close(2).
+> > 
+> > • fchdir(2), if the file descriptor refers to a directory (since Linux 3.5).
+> > 
+> > • fstat(2) (since Linux 3.6).
+> > 
+> > • fstatfs(2) (since Linux 3.12).
+> > 
+> > • Duplicating the file descriptor (dup(2), fcntl(2) F_DUPFD, etc.).
+> > 
+> > • Getting and setting file descriptor flags (fcntl(2) F_GETFD and F_SETFD).
+> > 
+> > • Retrieving open file status flags using the fcntl(2) F_GETFL operation: the returned flags will include the bit O_PATH.
+> > 
+> > • Passing the file descriptor as the dirfd argument of openat() and the other "*at()" system calls. This includes linkat(2) with AT_EMPTY_PATH (or via procfs using AT_SYM‐
+> > LINK_FOLLOW) even if the file is not a directory.
+> > 
+> > • Passing the file descriptor to another process via a UNIX domain socket (see SCM_RIGHTS in unix(7)).
+> > 
+> > Both fchownat() and fchmodat() variants have had this behavior which
+> > is a bug. And not a great one because it breaks O_PATH guarantees.
+> > That's no reason to now also open up further holes such as getting and
+> > setting xattrs.
 > 
-> The inode operation still requires the inode lock, at least a shared
-> lock, but may return -EINPROGRES and then continue asynchronously
-> without needing any ongoing lock on the directory.
-> 
-> An exclusive lock on the dentry is held across the entire operation.
-> 
-> This change requires various extra checks.  rmdir must ensure there is
-> no async creation still happening.  rename between directories must
-> ensure non of the relevant ancestors are undergoing async rename.  There
-> may be or checks that I need to consider - mounting?
+> AFAICS that's not really what the kernel development has been after.
+> fchmodat2(2) in particular was added fairly recently (6.6,
+> https://github.com/torvalds/linux/commit/09da082b07bbae1c11d9560c8502800039aebcea).
+> One of the highlights was to add support for O_PATH + AT_EMPTY_PATH).
 
-Mounting takes an exclusive lock on the target inode in do_lock_mount()
-and finish_automount(). As long as dont_mount() can't happen
-asynchronously in vfs_rmdir(), vfs_unlink() or vfs_rename() it should be
-fine.
+These system calls had pre-existing inconsistency. And allowing
+fchownat() but then not fchmodat2() seemd asymmetric. But given the
+discussion now I wish I hadn't even allowed that.
 
 > 
-> One other important change since my previous posting is that I've
-> dropped the idea of taking a separate exclusive lock on the directory
-> when the fs doesn't support shared locking.  This cannot work as it
-> doeesn't prevent lookups and filesystems don't expect a lookup while
-> they are changing a directory.  So instead we need to choose between
-> exclusive or shared for the inode on a case-by-case basis.
+> And to me the semantics seem reasonably OK really: O_PATH fds are a way to
+> pin the inode (i.e. still within the boundry of getting a reference to
+> a file system object (without opening it) if I shall put it). All the calls
+> mentioned above operate on the file system object metadata, not the actual data,
+> hence O_PATH is just providing a file _location_.
+> 
+> The separation of *at() and regular f*() versions have remained pretty consistent too
+> (of cource, not with this patch, which is mostly an RFC) - fchmod() and fchown()
+> refuse O_PATH fds while the at() counterparts accept them. Did all these suddenly
+> change overnight?
+> 
+> > If you want to perform read/write like operations you need a proper file
+> > descriptor for that and not continue to expand the meaning of O_PATH
+> > until it is indistinguishable from a regular file descriptor.
+> 
+> I definitely agree. But xattr is metadata, not data. listxattr() does not even
+> do any POSIX permission check...
 
-Which is possibly fine if we do it similar to what I suggested in the
-series. As it stands with the separate methods it's a no-go for me. But
-that's a solvable problem, I think.
+That it's metadata is an interesting difference but really not that
+important. Plus, the manpage also doesn't care about this distinction.
+Ownership and mode changes are bad enough, setting and getting random
+xattrs seems like a terrible idea.
 
-> To make this choice we divide all ops into four groups: create, remove,
-> rename, open/create.  If an inode has no operations in the group that
-> require an exclusive lock, then a flag is set on the inode so that
-> various code knows that a shared lock is sufficient.  If the flag is not
-> set, an exclusive lock is obtained.
-> 
-> I've also added rename handling and converted NFS to use all _async ops.
-> 
-> The motivation for this comes from the general increase in scale of
-> systems.  We can support very large directories and many-core systems
-> and applications that choose to use large directories can hit
-> unnecessary contention.
-> 
-> NFS can easily hit this when used over a high-latency link.
-> Lustre already has code to allow concurrent directory updates in the
-> back-end filesystem (ldiskfs - a slightly modified ext4).
-> Lustre developers believe this would also benefit the client-side
-> filesystem with large core counts.
-> 
-> The idea behind the async support is to eventually connect this to
-> io_uring so that one process can launch several concurrent directory
-> operations.  I have not looked deeply into io_uring and cannot be
-> certain that the interface I've provided will be able to be used.  I
-> would welcome any advice on that matter, though I hope to find time to
-> explore myself.  For now if any _async op returns -EINPROGRESS we simply
-> wait for the callback to indicate completion.
-> 
-> Test status:  only light testing.  It doesn't easily blow up, but lockdep
-> complains that repeated calls to d_update_wait() are bad, even though
-> it has balanced acquire and release calls. Weird?
-> 
-> Thanks,
-> NeilBrown
-> 
->  [PATCH 01/19] VFS: introduce vfs_mkdir_return()
->  [PATCH 02/19] VFS: use global wait-queue table for d_alloc_parallel()
->  [PATCH 03/19] VFS: use d_alloc_parallel() in lookup_one_qstr_excl()
->  [PATCH 04/19] VFS: change kern_path_locked() and
->  [PATCH 05/19] VFS: add common error checks to lookup_one_qstr()
->  [PATCH 06/19] VFS: repack DENTRY_ flags.
->  [PATCH 07/19] VFS: repack LOOKUP_ bit flags.
->  [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
->  [PATCH 09/19] VFS: add _async versions of the various directory
->  [PATCH 10/19] VFS: introduce inode flags to report locking needs for
->  [PATCH 11/19] VFS: Add ability to exclusively lock a dentry and use
->  [PATCH 12/19] VFS: enhance d_splice_alias to accommodate shared-lock
->  [PATCH 13/19] VFS: lock dentry for ->revalidate to avoid races with
->  [PATCH 14/19] VFS: Ensure no async updates happening in directory
->  [PATCH 15/19] VFS: Change lookup_and_lock() to use shared lock when
->  [PATCH 16/19] VFS: add lookup_and_lock_rename()
->  [PATCH 17/19] nfsd: use lookup_and_lock_one() and
->  [PATCH 18/19] nfs: change mkdir inode_operation to mkdir_async
->  [PATCH 19/19] nfs: switch to _async for all directory ops.
+If I sent an O_PATH file descriptor around today in a sandbox without
+procfs mounted then I know no one can suddenly set posix acls using that
+file descriptor. With this change they suddenly can.
+
+This won't be enabled.
 
