@@ -1,161 +1,350 @@
-Return-Path: <linux-fsdevel+bounces-41064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEDBA2A891
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:34:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1576A2A895
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6543B164BDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 12:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E34188A3FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 12:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D738322DF93;
-	Thu,  6 Feb 2025 12:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D397022DF90;
+	Thu,  6 Feb 2025 12:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVS49oS0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSmQMvFC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E943225A2F;
-	Thu,  6 Feb 2025 12:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2581DF24B;
+	Thu,  6 Feb 2025 12:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738845232; cv=none; b=GFYIg7T8G4Qs9IeWydu2IQeUr9lAvgAJkHCZzTmP6o49F5rXb6s6tuLJbbYHc5gN3PCFca4aWzxIr6gAJOWkOZH+0QdM7z6GyjOyjWe0kfyFIxZ13Uj4DntYVPFhI5tVSTol0pLAH0nRLd+v3DCk5JlwHlB+zh9g9G6U82ukTTI=
+	t=1738845240; cv=none; b=nbk7tJqq8s484481o2hS8N5NRaNX85gPXKWWQ6tlLDZAQxlMOXtKg9d6vAIK0ayJtOj5/hYrlbgGqfA/pj0aW0VoxXc2OcymjRXqz9OmLxfWScD1l+VfH1ynh8ZC0dv2s6ucEeTorKt4mHF8rsms6x/RcKJKSEb0xAUY1iZH+I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738845232; c=relaxed/simple;
-	bh=30X7nLLs9og8Mntm0uvpEp79xCkTtczYt2Z2skk7X0Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G6X7CnetsAb1eon582903VwUy6fYlg9q6l0dyGTkKCB8fuBxK1H5HjtR7Ljj+yizQbRJB4ITTGFjFOhSYkQVVytJaPhXmWlIfWA7ExwbGLQCs/NjALFRGPma3BiluaDn7mkZHBmlYjE6/scpf0k4guYziExM4QMUDUfgkFW32wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVS49oS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC05C4CEDF;
-	Thu,  6 Feb 2025 12:33:50 +0000 (UTC)
+	s=arc-20240116; t=1738845240; c=relaxed/simple;
+	bh=lVTIniNrcuW/HjSxfiF/Z+dIDA59xw8PxyyVsQ5DcYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfXCWZM3b5MBaJN/pmXUHW8/5bD6/UCcQDwDGtU7cxmDTFYdzhNye0plz8LeXKXgID4uDxCUiZTiHPG8WuSsPbqWHMgx2Nmno0GzRWQTzekZZ2mXlY5TAPROF2AkWGvPQ3/IWKfIdQBqw+6E1avuHUr+OiJxR6o34n6cJ1tyPjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSmQMvFC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E9EC4CEDD;
+	Thu,  6 Feb 2025 12:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738845231;
-	bh=30X7nLLs9og8Mntm0uvpEp79xCkTtczYt2Z2skk7X0Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=LVS49oS0xy6ZTsWVoL5GROP/K+g2hFhfaOHNcMgqs0xMeBa9kTWHtBfKcEMrQBRhu
-	 RHWECOGFu1CfLiOU/O0E7IT306I/X2DAw2du8P9io6xRwQtla+6jtuWC3zx12dG/0c
-	 71VSqecSY/3nL4DFmP79VOPGEYF09vGHL01HlO9bhtcxeWgj2Ner926g3RqZmLUoSE
-	 fyqMr4OssKsbqfBzy9wd5U0vHDhzFjskLX10pb+84eii2T/iUytc+1sK7PO3Vyd3vd
-	 ENjZ0Tk/jMEzksIsGKu79VtKE2WmdFvJTruQH8VpgMDspfBKjon1yrC2MhwrwJsg16
-	 vH7fx8w9SZgiA==
-Message-ID: <0babce16eeaf3bc7fb5ff28f7a769e2ce8f22abe.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] pipe: don't update {a,c,m}time for anonymous
- pipes
-From: Jeff Layton <jlayton@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>, Christian Brauner <brauner@kernel.org>,
-  Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Howells <dhowells@redhat.com>, "Gautham R. Shenoy"	
- <gautham.shenoy@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Mateusz
- Guzik <mjguzik@gmail.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Oliver Sang	 <oliver.sang@intel.com>, Swapnil Sapkal
- <swapnil.sapkal@amd.com>, WangYuli	 <wangyuli@uniontech.com>,
- linux-fsdevel@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Thu, 06 Feb 2025 07:33:49 -0500
-In-Reply-To: <20250205181716.GA13817@redhat.com>
-References: <20250205181716.GA13817@redhat.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=k20201202; t=1738845239;
+	bh=lVTIniNrcuW/HjSxfiF/Z+dIDA59xw8PxyyVsQ5DcYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FSmQMvFCilI79bWDt41sG4rtjmB77sVxfGz5eFciOlh0xJaZJvFUlK7HcR/d+GZzY
+	 Onf/HEZ7W1sJa1lpFXFptgpElAfdoHVYdSDE4TVBHv+8vjySWqzjbnxrNDeO7JBseX
+	 Akq5UuouOIoR66R5RLUigxq5VPuZvaaQgXY1buYaDHR3zoILCogrOygneChwv5fzgg
+	 0NWu6TaputCMkcxA9CGk1chfPdoaQjYCRpxCo6s94VsnKYa779uJ5C609JwQXV6mZ8
+	 LQ52hDXHbrQsEHyehZUx9xk2uS9gtX1M1GGEmiRd2WUffzl4c+J0wh5qwOtNvW9IdC
+	 B7nn/q0Iuq/8g==
+Date: Thu, 6 Feb 2025 13:33:55 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/19] VFS: add common error checks to lookup_one_qstr()
+Message-ID: <20250206-pluspunkt-drehkreuz-63a04a2f2a89@brauner>
+References: <20250206054504.2950516-1-neilb@suse.de>
+ <20250206054504.2950516-6-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250206054504.2950516-6-neilb@suse.de>
 
-On Wed, 2025-02-05 at 19:17 +0100, Oleg Nesterov wrote:
-> OK, let me send v3 right now...
->=20
-> Changes: make pipeanon_fops static.
->=20
-> Link to v1: https://lore.kernel.org/all/20250204132153.GA20921@redhat.com=
-/
-> Link to v2: https://lore.kernel.org/all/20250205161636.GA1001@redhat.com/
->=20
-> Oleg.
+On Thu, Feb 06, 2025 at 04:42:42PM +1100, NeilBrown wrote:
+> Callers of lookup_one_qstr() often check if the result is negative or
+> positive.
+> These changes can easily be moved into lookup_one_qstr() by checking the
+> lookup flags:
+> LOOKUP_CREATE means it is NOT an error if the name doesn't exist.
+> LOOKUP_EXCL means it IS an error if the name DOES exist.
+> 
+> This patch adds these checks, then removes error checks from callers,
+> and ensures that appropriate flags are passed.
+> 
+> This subtly changes the meaning of LOOKUP_EXCL.  Previously it could
+> only accompany LOOKUP_CREATE.  Now it can accompany LOOKUP_RENAME_TARGET
+> as well.  A couple of small changes are needed to accommodate this.  The
+> NFS is functionally a no-op but ensures nfs_is_exclusive_create() does
+> exactly what the name says.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->=20
->  fs/pipe.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++----------=
------
->  1 file changed, 47 insertions(+), 15 deletions(-)
->=20
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+This would be a worthwhile cleanup patch to lookup_one_qstr_excl()
+before you've modified it to be lookup_one_qstr(). So this should also
+go separately imho.
+
+>  fs/namei.c            | 61 ++++++++++++++-----------------------------
+>  fs/nfs/dir.c          |  3 ++-
+>  fs/smb/server/vfs.c   | 26 +++++++-----------
+>  include/linux/namei.h |  2 +-
+>  4 files changed, 33 insertions(+), 59 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1901120bcbb8..69610047f6c6 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1668,6 +1668,8 @@ static struct dentry *lookup_dcache(const struct qstr *name,
+>   * Parent directory has inode locked: exclusive or shared.
+>   * If @flags contains any LOOKUP_INTENT_FLAGS then d_lookup_done()
+>   * must be called after the intended operation is performed - or aborted.
+> + * Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't passed.
+> + * Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
+>   */
+>  struct dentry *lookup_one_qstr(const struct qstr *name,
+>  			       struct dentry *base,
+> @@ -1678,7 +1680,7 @@ struct dentry *lookup_one_qstr(const struct qstr *name,
+>  	struct inode *dir = base->d_inode;
+>  
+>  	if (dentry)
+> -		return dentry;
+> +		goto found;
+>  
+>  	/* Don't create child dentry for a dead directory. */
+>  	if (unlikely(IS_DEADDIR(dir)))
+> @@ -1689,7 +1691,7 @@ struct dentry *lookup_one_qstr(const struct qstr *name,
+>  		return ERR_PTR(-ENOMEM);
+>  	if (!d_in_lookup(dentry))
+>  		/* Raced with another thread which did the lookup */
+> -		return dentry;
+> +		goto found;
+>  
+>  	old = dir->i_op->lookup(dir, dentry, flags);
+>  	if (unlikely(old)) {
+> @@ -1700,6 +1702,15 @@ struct dentry *lookup_one_qstr(const struct qstr *name,
+>  	if ((flags & LOOKUP_INTENT_FLAGS) == 0)
+>  		/* ->lookup must have given final answer */
+>  		d_lookup_done(dentry);
+> +found:
+> +	if (d_is_negative(dentry) && !(flags & LOOKUP_CREATE)) {
+> +		dput(dentry);
+> +		return ERR_PTR(-ENOENT);
+> +	}
+> +	if (d_is_positive(dentry) && (flags & LOOKUP_EXCL)) {
+> +		dput(dentry);
+> +		return ERR_PTR(-EEXIST);
+> +	}
+>  	return dentry;
+>  }
+>  EXPORT_SYMBOL(lookup_one_qstr);
+> @@ -2745,10 +2756,6 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
+>  	}
+>  	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+>  	d = lookup_one_qstr(&last, path->dentry, 0);
+> -	if (!IS_ERR(d) && d_is_negative(d)) {
+> -		dput(d);
+> -		d = ERR_PTR(-ENOENT);
+> -	}
+>  	if (IS_ERR(d)) {
+>  		inode_unlock(path->dentry->d_inode);
+>  		path_put(path);
+> @@ -4085,27 +4092,13 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+>  	 * '/', and a directory wasn't requested.
+>  	 */
+>  	if (last.name[last.len] && !want_dir)
+> -		create_flags = 0;
+> +		create_flags &= ~LOOKUP_CREATE;
+>  	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+>  	dentry = lookup_one_qstr(&last, path->dentry,
+>  				 reval_flag | create_flags);
+>  	if (IS_ERR(dentry))
+>  		goto unlock;
+>  
+> -	error = -EEXIST;
+> -	if (d_is_positive(dentry))
+> -		goto fail;
+> -
+> -	/*
+> -	 * Special case - lookup gave negative, but... we had foo/bar/
+> -	 * From the vfs_mknod() POV we just have a negative dentry -
+> -	 * all is fine. Let's be bastards - you had / on the end, you've
+> -	 * been asking for (non-existent) directory. -ENOENT for you.
+> -	 */
+> -	if (unlikely(!create_flags)) {
+> -		error = -ENOENT;
+> -		goto fail;
+> -	}
+>  	if (unlikely(err2)) {
+>  		error = err2;
+>  		goto fail;
+> @@ -4522,10 +4515,6 @@ int do_rmdir(int dfd, struct filename *name)
+>  	error = PTR_ERR(dentry);
+>  	if (IS_ERR(dentry))
+>  		goto exit3;
+> -	if (!dentry->d_inode) {
+> -		error = -ENOENT;
+> -		goto exit4;
+> -	}
+>  	error = security_path_rmdir(&path, dentry);
+>  	if (error)
+>  		goto exit4;
+> @@ -4656,7 +4645,7 @@ int do_unlinkat(int dfd, struct filename *name)
+>  	if (!IS_ERR(dentry)) {
+>  
+>  		/* Why not before? Because we want correct error value */
+> -		if (last.name[last.len] || d_is_negative(dentry))
+> +		if (last.name[last.len])
+>  			goto slashes;
+>  		inode = dentry->d_inode;
+>  		ihold(inode);
+> @@ -4690,9 +4679,7 @@ int do_unlinkat(int dfd, struct filename *name)
+>  	return error;
+>  
+>  slashes:
+> -	if (d_is_negative(dentry))
+> -		error = -ENOENT;
+> -	else if (d_is_dir(dentry))
+> +	if (d_is_dir(dentry))
+>  		error = -EISDIR;
+>  	else
+>  		error = -ENOTDIR;
+> @@ -5192,7 +5179,8 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+>  	struct qstr old_last, new_last;
+>  	int old_type, new_type;
+>  	struct inode *delegated_inode = NULL;
+> -	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
+> +	unsigned int lookup_flags = 0, target_flags =
+> +		LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
+>  	bool should_retry = false;
+>  	int error = -EINVAL;
+>  
+> @@ -5205,6 +5193,8 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+>  
+>  	if (flags & RENAME_EXCHANGE)
+>  		target_flags = 0;
+> +	if (flags & RENAME_NOREPLACE)
+> +		target_flags |= LOOKUP_EXCL;
+>  
+>  retry:
+>  	error = filename_parentat(olddfd, from, lookup_flags, &old_path,
+> @@ -5246,23 +5236,12 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+>  	error = PTR_ERR(old_dentry);
+>  	if (IS_ERR(old_dentry))
+>  		goto exit3;
+> -	/* source must exist */
+> -	error = -ENOENT;
+> -	if (d_is_negative(old_dentry))
+> -		goto exit4;
+>  	new_dentry = lookup_one_qstr(&new_last, new_path.dentry,
+>  				     lookup_flags | target_flags);
+>  	error = PTR_ERR(new_dentry);
+>  	if (IS_ERR(new_dentry))
+>  		goto exit4;
+> -	error = -EEXIST;
+> -	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry))
+> -		goto exit5;
+>  	if (flags & RENAME_EXCHANGE) {
+> -		error = -ENOENT;
+> -		if (d_is_negative(new_dentry))
+> -			goto exit5;
+> -
+>  		if (!d_is_dir(new_dentry)) {
+>  			error = -ENOTDIR;
+>  			if (new_last.name[new_last.len])
+> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+> index 27c7a5c4e91b..8cbe63f4089a 100644
+> --- a/fs/nfs/dir.c
+> +++ b/fs/nfs/dir.c
+> @@ -1531,7 +1531,8 @@ static int nfs_is_exclusive_create(struct inode *dir, unsigned int flags)
+>  {
+>  	if (NFS_PROTO(dir)->version == 2)
+>  		return 0;
+> -	return flags & LOOKUP_EXCL;
+> +	return (flags & (LOOKUP_CREATE | LOOKUP_EXCL)) ==
+> +		(LOOKUP_CREATE | LOOKUP_EXCL);
+>  }
+>  
+>  /*
+> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> index 89b3823f6405..bf8ac43c39b0 100644
+> --- a/fs/smb/server/vfs.c
+> +++ b/fs/smb/server/vfs.c
+> @@ -113,11 +113,6 @@ static int ksmbd_vfs_path_lookup_locked(struct ksmbd_share_config *share_conf,
+>  	if (IS_ERR(d))
+>  		goto err_out;
+>  
+> -	if (d_is_negative(d)) {
+> -		dput(d);
+> -		goto err_out;
+> -	}
+> -
+>  	path->dentry = d;
+>  	path->mnt = mntget(parent_path->mnt);
+>  
+> @@ -677,6 +672,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+>  	struct ksmbd_file *parent_fp;
+>  	int new_type;
+>  	int err, lookup_flags = LOOKUP_NO_SYMLINKS;
+> +	int target_lookup_flags = LOOKUP_RENAME_TARGET;
+>  
+>  	if (ksmbd_override_fsids(work))
+>  		return -ENOMEM;
+> @@ -687,6 +683,14 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+>  		goto revert_fsids;
+>  	}
+>  
+> +	/*
+> +	 * explicitly handle file overwrite case, for compatibility with
+> +	 * filesystems that may not support rename flags (e.g: fuse)
+> +	 */
+> +	if (flags & RENAME_NOREPLACE)
+> +		target_lookup_flags |= LOOKUP_EXCL;
+> +	flags &= ~(RENAME_NOREPLACE);
+> +
+>  retry:
+>  	err = vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
+>  				     &new_path, &new_last, &new_type,
+> @@ -727,7 +731,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+>  	}
+>  
+>  	new_dentry = lookup_one_qstr(&new_last, new_path.dentry,
+> -				     lookup_flags | LOOKUP_RENAME_TARGET);
+> +				     lookup_flags | target_lookup_flags);
+>  	if (IS_ERR(new_dentry)) {
+>  		err = PTR_ERR(new_dentry);
+>  		goto out3;
+> @@ -738,16 +742,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+>  		goto out4;
+>  	}
+>  
+> -	/*
+> -	 * explicitly handle file overwrite case, for compatibility with
+> -	 * filesystems that may not support rename flags (e.g: fuse)
+> -	 */
+> -	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry)) {
+> -		err = -EEXIST;
+> -		goto out4;
+> -	}
+> -	flags &= ~(RENAME_NOREPLACE);
+> -
+>  	if (old_child == trap) {
+>  		err = -EINVAL;
+>  		goto out4;
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 06bb3ea65beb..839a64d07f8c 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -31,7 +31,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+>  /* These tell filesystem methods that we are dealing with the final component... */
+>  #define LOOKUP_OPEN		0x0100	/* ... in open */
+>  #define LOOKUP_CREATE		0x0200	/* ... in object creation */
+> -#define LOOKUP_EXCL		0x0400	/* ... in exclusive creation */
+> +#define LOOKUP_EXCL		0x0400	/* ... in target must not exist */
+>  #define LOOKUP_RENAME_TARGET	0x0800	/* ... in destination of rename() */
+>  
+>  #define LOOKUP_INTENT_FLAGS	(LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_EXCL |	\
+> -- 
+> 2.47.1
+> 
 
