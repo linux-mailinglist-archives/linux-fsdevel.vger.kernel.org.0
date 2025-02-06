@@ -1,116 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-41121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A98A2B38F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 21:45:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5588A2B395
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 21:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC78188AA7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:45:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107CD3A79BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 20:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1726D1DB346;
-	Thu,  6 Feb 2025 20:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC951DC184;
+	Thu,  6 Feb 2025 20:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OCq06UAU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IOPv3Nc2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77571239596
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 20:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E631D8E01
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 20:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738874735; cv=none; b=E6S7i68B1dH5Rs+HhG2pg5xvrQVutKmGVllwttdbN8nIg0jUD67f3ZWv3INv5RPtp7V2OKdwnGrzFgSbyTZY55FBcDYSqad2NGJdRkqC11L7YBcD6ytrL0nkug2UjGxWg4HhKjLP1WHdUP2MWH7enIMOZxVAvvyGwrMVzYiMhZo=
+	t=1738875011; cv=none; b=ogDf2jtFux/dXGpFMBFQ8UXgl0d9NB/1m9Rbng2EO/d/x1Ha5EfeHWC87d9rbDks7lqCeM6hrlM0HlmN3gF0ksUVdTIjhI1I3Cdz299LC82k0O6cXRUb4I0dRJSSq8XdxuAZKJDCtQCqE9KtqjZRJxh4joSnwbi7r+WhWAlz5d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738874735; c=relaxed/simple;
-	bh=pfVdOI7zeX3QZjonU0bDcxUgEVXtWcwPpFzM+WZZo8s=;
+	s=arc-20240116; t=1738875011; c=relaxed/simple;
+	bh=nQG33Huz/RJ26x/KpRSxkU5XRcQ9e/a3aCHLb7O4+fk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WSUGwP3Uw4ho+ILEahqArxrZ/FJE42E7/Yrkyf/IyhCkFxHVyZ+gOrqt/FuD0ok3uLUiyqmALD2mjjsysdd85/bJz1vPhQKeR+uv2tDmBkJJSxLp93Qi9tqOcya+l2Aq9Q2OrQSSaUy9Ce0p9nLUFSqfu0kM06d5cyN7Tb6+Suw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OCq06UAU; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaec111762bso325610866b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 12:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1738874731; x=1739479531; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=47JwpRHSzZnwFr+mlMdiSA0nMc8sUlKLRRzJ0WxNtMg=;
-        b=OCq06UAUOlIa3ZUA2PsML9QhzWuGuNJSuywDmHnMcHYO1FLRqFn150d/eI1LGgIyLI
-         7W1l4IJYNp23Im3JCK8Q4z0qaGqGSm+GzDMcXsV9EYAgJlw61wOIFfH2i7A7cBchscHt
-         yBPuPAq8weR7y9IyzqcbhHy2/xmjWju0jNE+M=
+	 To:Cc:Content-Type; b=QPMZ0E3FoMVUKVU6SioAXGAMOzKDsCig0TyR8gg2QqJiuVUINI8PVXxfYwsNleYtXVcO6F2KQG/wJDlcG163PvljlI9ENf0tykCft9+HEjuuwlhDugNySRsLicwqgOzJMgBDq1mZarbn/jcCg++7qplNdbB7ilnwqNpjfVgtrc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IOPv3Nc2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738875008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2jLFCxHLVjPyBpINbgKuvp8RyvizQvi1+ogCNwnIkE0=;
+	b=IOPv3Nc29KQ5KMoiTtoHvASarynC1WDzFeHOlAvZjNZ04ES3WxWptx6PMTwnbX6ks7QF6L
+	8qwKwVuopoDZYYg/1AH0u4jRg/TRL+se8bGMwZv0VYvHbeLhO4p7oyC8qx/bqIfc6chJcS
+	dZIeBCaVCPxRr6dF7wf5iYp0r2guYlo=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-HcHx4N_NM-Csc-GUcrfVwQ-1; Thu, 06 Feb 2025 15:50:07 -0500
+X-MC-Unique: HcHx4N_NM-Csc-GUcrfVwQ-1
+X-Mimecast-MFC-AGG-ID: HcHx4N_NM-Csc-GUcrfVwQ
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ab78afc6390so1861066b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 12:50:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738874731; x=1739479531;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=47JwpRHSzZnwFr+mlMdiSA0nMc8sUlKLRRzJ0WxNtMg=;
-        b=JIClxARQUvsJEUGky1Rnk5B4mbPGDBwrv9BBo826BG1LHMruM7SHhAWu2ks/Ksoytw
-         Wj82Npc6v3eZWS9Kb2s33USj5wY/lowFWBbCw/TF7//T6a5DTN//hR2jy+Pr57C/zF6M
-         EFuIHT6DrZT2RGerHcRBAf/DG88HHvI8OnDDxKT5oKSMk+yiOooEX9SmVfI2XVPFh9yI
-         oEi80LtyxTJQ+ROb5mlU/rUy+4mfUnDZNnaDMfXvBisEf3c2EgLm6PITsrVx5l/v8vR3
-         xErHP6CEWwGTu/DJ5hRUgwK6uJOKxtlOVPocb+Zd+y83wGVgZXXF8qkCKJYBB9sjVdoJ
-         VitQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxfi96cVUPKBNr94jWHDCz7cssi47k3LA7OXHRnHxQJ/cj53fJTqdu7ZB8vkZKchLyZsQLozs8CvlkbcFQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2PkD8qvwPFuSq4c2YR/zGOwrNhLrU6uUAVCYStL7bj3tRviAT
-	EUyNEMrAvQty/P7tKo5vblSxGIcvt7TJaOB9KWQL6S4YjvbMRNimoe1QYH3WpQyKbpvAZS2zvmf
-	wKA+tMA==
-X-Gm-Gg: ASbGnctm65ihheofrmsWgJiLivDCf9MWx6haetAjgs+yBJ17/N+Jiis24+dO5cKYkZ8
-	ncSTE5N2+uvgW99D+G0JGz65IK6cNG8sdj8lQRP6rnsOSG1v5YAj+AR/9jyyYxWmJHvgg6UCjs6
-	RDAuehVOfffyDXxK4+WQwQWVJbIaIrykA9Bh/5CZA6fn/Zl9HEU71SIQa7CdzD/iCtlL9hgl3Ms
-	KGvNhFz8nhRJvTO0tRYfBXYz2Yj3pRPDNZgKB7ZfeMEQnQgeGuZPVuRRu43AZXpWflEbp+lPIjj
-	AfLDcELd4rgNwRoLzNQ51nVQI0vW0KJINFS38mTWVvxJJqscItSPtNAe/EElo/BeEQ==
-X-Google-Smtp-Source: AGHT+IFsGcd8XdUur1oGRfWpVj33OKSSFauUIxYHi/VqjZYd1iNYKm03QVPiCAYiz5RBAHpABBOPLw==
-X-Received: by 2002:a17:907:86a8:b0:ab6:edd6:a812 with SMTP id a640c23a62f3a-ab789b3b00amr39852766b.24.1738874731557;
-        Thu, 06 Feb 2025 12:45:31 -0800 (PST)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab773335252sm148730166b.131.2025.02.06.12.45.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2025 12:45:30 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab2b29dfc65so224588866b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 12:45:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0AVviZVrD8xq8rjla0fVhzZANpJzjok2HJm7D4CSbkRfs76BihUMF/pL2h5tjp2ohgsnk+Xjh20onGhbb@vger.kernel.org
-X-Received: by 2002:a17:907:c0c:b0:ab7:5c14:d13 with SMTP id
- a640c23a62f3a-ab789ca28c4mr31209366b.53.1738874730174; Thu, 06 Feb 2025
- 12:45:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738875006; x=1739479806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2jLFCxHLVjPyBpINbgKuvp8RyvizQvi1+ogCNwnIkE0=;
+        b=vIdqs3P/r0QQRaHoMpHpsIcJdlR0+qLUYLseUBTXKVtsQdH7mbc2gJFnJTZC7vUGoE
+         afJceoQkbtM/H9wCK2phbFB768Gho6QTwKV9SHj0YCk29wDZF/DpzeubAfqv+asPAjfy
+         WYCC4pREZIh+A4trjocwurDsmrJy744jvnuk5WYf16LlxWJKFmTokYw7ADFwauaKGhCZ
+         E38VLDYc0DjHlOIw+4AqBGEyMqvKwzoi8X/eoudrTnpkW/WWOeF/4WL/oO+G+OaKBF0a
+         a8QeWczRzQUAZX1rrtQAj+zT6H7CLME8Q7t5OW46TFuLK0FcrK0rk9jQO5LDpc7OH0kq
+         H+Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUjIXRvhQc3mPbARGY2OMufbhSMpahhlx1CPmh6nsnC6sZK4TuyTaY76lgebX3HXMkTt99hgzo4fi1a5ZV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3FSWDs8iiPryhSg1VOhQHUL05VuPJ474Yg3+pPs73e3N7sAlL
+	yQduo2s4yYMWB/ZT+pI+aWKlhu0eIMxCL3SuPiUH4XgFKTci7nPqFkx0rDKzw9DBBbKCBvQksMt
+	a12yHYw41oNrgqG+zss/Pw4BggJJngGEO6IS93LWrX0xV0TJIyfMmf8eHCzFjhY2wsqkIxK0THJ
+	2qoPr3xRXcJdTjG4GH+abjMAcG7zpqky1kGrZaBQ==
+X-Gm-Gg: ASbGncuK7U0SnBbDj/Vf4cZFbmFUs8TeU4yaZONo8gfMBXGEYjd+DZOSU7d+TfyUMQq
+	YPUsNn6+dnw6E9urfN897A88tA+D/eBDGR0BPL7kj82Dddtu7A7w2XTmRP5/YQg==
+X-Received: by 2002:a17:907:3e8d:b0:ab7:63fa:e49c with SMTP id a640c23a62f3a-ab789cbe110mr33653066b.36.1738875006487;
+        Thu, 06 Feb 2025 12:50:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGmlPfqCpQklbkFCXxW+VzYDbfHTJwVxdQIqc5X3hkqM8xGSlv07PTlZr6jdUAcfaDbyMt2H4iSyZDaLtbBJZ0=
+X-Received: by 2002:a17:907:3e8d:b0:ab7:63fa:e49c with SMTP id
+ a640c23a62f3a-ab789cbe110mr33651366b.36.1738875006155; Thu, 06 Feb 2025
+ 12:50:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202502051546.fca7cd-lkp@intel.com>
-In-Reply-To: <202502051546.fca7cd-lkp@intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 6 Feb 2025 12:45:14 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whSncSTE_Q0as-d989L_niJ6=ViwaDoOK6gTcWHNPkp7w@mail.gmail.com>
-X-Gm-Features: AWEUYZniy5QwqYp4xcLufzK5aZ9Oiqagy7E0-rznZnU-hDviaSvFAI2cC75shLY
-Message-ID: <CAHk-=whSncSTE_Q0as-d989L_niJ6=ViwaDoOK6gTcWHNPkp7w@mail.gmail.com>
-Subject: Re: [linus:master] [fsnotify] a94204f4d4: stress-ng.timerfd.ops_per_sec
- 7.0% improvement
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+References: <20250206191126.137262-1-slava@dubeyko.com>
+In-Reply-To: <20250206191126.137262-1-slava@dubeyko.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 6 Feb 2025 22:49:55 +0200
+X-Gm-Features: AWEUYZmnW76Y5y4OkdtiQyLHG92zS6DklmFu7MdOwieBOCr6Eu4C9zlGMtJ3sRc
+Message-ID: <CAO8a2Sjor8_Uu-uAm9JXR2MxQXuwy3nsddDkL6exj39W1PbBkg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: add process/thread ID into debug output
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 5 Feb 2025 at 00:09, kernel test robot <oliver.sang@intel.com> wrote:
+Reviewed-by: Alex Markuze <amarkuze@redhat.com>
+
+On Thu, Feb 6, 2025 at 9:11=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.co=
+m> wrote:
 >
-> kernel test robot noticed a 7.0% improvement of stress-ng.timerfd.ops_per_sec on:
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> Process/Thread ID (pid) is crucial and essential info
+> during the debug and bug fix. It is really hard
+> to analyze the debug output without these details.
+> This patch addes PID info into the debug output.
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> ---
+>  include/linux/ceph/ceph_debug.h | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_de=
+bug.h
+> index 5f904591fa5f..6292db198f61 100644
+> --- a/include/linux/ceph/ceph_debug.h
+> +++ b/include/linux/ceph/ceph_debug.h
+> @@ -16,13 +16,15 @@
+>
+>  # if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
+>  #  define dout(fmt, ...)                                               \
+> -       pr_debug("%.*s %12.12s:%-4d : " fmt,                            \
+> +       pr_debug("pid %d %.*s %12.12s:%-4d : " fmt,                     \
+> +                current->pid,                                          \
+>                  8 - (int)sizeof(KBUILD_MODNAME), "    ",               \
+>                  kbasename(__FILE__), __LINE__, ##__VA_ARGS__)
+>  #  define doutc(client, fmt, ...)                                      \
+> -       pr_debug("%.*s %12.12s:%-4d : [%pU %llu] " fmt,                 \
+> +       pr_debug("pid %d %.*s %12.12s:%-4d %s() : [%pU %llu] " fmt,     \
+> +                current->pid,                                          \
+>                  8 - (int)sizeof(KBUILD_MODNAME), "    ",               \
+> -                kbasename(__FILE__), __LINE__,                         \
+> +                kbasename(__FILE__), __LINE__, __func__,               \
+>                  &client->fsid, client->monc.auth->global_id,           \
+>                  ##__VA_ARGS__)
+>  # else
+> --
+> 2.48.0
+>
 
-I have no idea what the heck that benchmark does, but I am happy to
-see that this whole patch series did actually end up improving on the
-whole fsnotify cost that I was ranting about in the original
-submission.
-
-Obviously this load doesn't actually do the new pre-event hooks, so it
-seems to be all just about how fsnotify_file_area_perm() (or some
-other fsnotify hook in the normal read() path) now isn't the
-unconditional pig that it used to be.
-
-I don't see how that would be worth 7%, but I'll happily take it.
-
-              Linus
 
