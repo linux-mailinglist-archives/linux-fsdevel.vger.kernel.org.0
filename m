@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-41014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F724A2A05C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:49:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2644A2A059
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 06:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51733A85FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:48:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7001418884AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 05:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBBB224AE2;
-	Thu,  6 Feb 2025 05:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F04D2253E7;
+	Thu,  6 Feb 2025 05:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aIeTf06L";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0+9lEa31";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aIeTf06L";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0+9lEa31"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kb77S9c/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TuDkQstM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PwxcEp8L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1fkhx17U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944C81B59A;
-	Thu,  6 Feb 2025 05:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B2B2236EE;
+	Thu,  6 Feb 2025 05:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738820849; cv=none; b=Hh7fOmB0pPkZRou3OYkpleOI2bo6JmnHCVGC4FxZ/x649OaPw2dNqojpoAKlH25sRT8t65qcNBxxJqBU5G/lw0FU+IkypYftM3yB/xRc73w/7NOfQ7aeQzRhyZDKzHUM97q20T1zJEwozne1ByksAeE1+Qix8KHwgf3Szy1orwE=
+	t=1738820860; cv=none; b=uMvtyKEsIGwuVbW4y1SpHXoHp3mL8V7m5AN1uZhTx0eoDBUfcKNqooOXpPc4s8FnQQn2UB4cITvG8M/85gSFrIgFdBrpuM2gMMsvzZI63HZ2TwFmLiUyTQKVD122a7upheo0seytn97ZhJgwNBi5WflIFlZaRiOoydMW8L3A+as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738820849; c=relaxed/simple;
-	bh=1stp1MuIyBM3C4v6cuOVBi2Ieq0TFzc6HI42fSPXfu4=;
+	s=arc-20240116; t=1738820860; c=relaxed/simple;
+	bh=i/oHb05z3TPZXb3xfHjmEd5RoH7nMeWAlCEX/lHyz9s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q2XmoTaNgVd5v4KwcFFbnEE6KZvWSu6ip+BzQrBWgtqLBsG4yY4fZ4yB6yAy7Kxelgu0/IHQtYtlS++8H+68MJ4qmDPyjyyutKuWlN2uYvNUEITXTZI0G+KZjoBUaS1EoE1Lb+frCHO0RxTDNKhnKAdVtcoldoIdRbfTtRK+D7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aIeTf06L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0+9lEa31; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aIeTf06L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0+9lEa31; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=CuOBn7TuSfnZ77x1oA2bYa/qLl6h5W1piBuoSK12fJeNH0tkWTlB+yj8pbdK9brdZwHfkbymX8b75xV9ExFjzNmOHNUlTBJKy/xTv/ipScsRrsrhMbTXSHuHbUw1ACBOOLtJz2q/qrYQb0HjTB8JAHs5ZyEF7olUQMtdiDfYdsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kb77S9c/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TuDkQstM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PwxcEp8L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1fkhx17U; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CD3821F381;
-	Thu,  6 Feb 2025 05:47:25 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 12D7421108;
+	Thu,  6 Feb 2025 05:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820857; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J4OKcyBzOYgr/dhyXLlvhMO4GQauunZVDnxngPVrXFM=;
-	b=aIeTf06LtedqZeC5uqSdHgS4xhkfv4UD675jOw/0Ut2LdV5pji3Xa9Q87+Y3JYIoSO60ka
-	IalXlVfBlT22RdlLMYZh+1kI6is/yLsmWDoGHwtp/8FrBaNBoLwW/fVWCcB3ae7HdKy9is
-	DNKI3TKz+yruY3dQqGuZyMhWkI9AUfo=
+	bh=NRkrNPpQOJiLW6OESPgTO2Ruu6UWEe+cDZW/FJFZUQM=;
+	b=kb77S9c/ey3iORTolnGFVLvsIDbEcoEMjSBLkL44w1NQUYUbzzqOjr3eC6rVXYm8WDQJHw
+	nDNKlLI3fTajfBXZxtBUC9V91lucrLpjbmV7SNgN/SqGH0G1wfUFWJnc/O1BZh/vm8QG3R
+	tcF+zv/6683AQXBm0jEctkGBgWHXyXU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820845;
+	s=susede2_ed25519; t=1738820857;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J4OKcyBzOYgr/dhyXLlvhMO4GQauunZVDnxngPVrXFM=;
-	b=0+9lEa31bbT6Q6MZbHVExWA70Vc7hukXpf5MZi3tMH4s6YCANeFOePXoGUdk9F1WD6UHQZ
-	185zjvp6zvhNQKDg==
-Authentication-Results: smtp-out2.suse.de;
+	bh=NRkrNPpQOJiLW6OESPgTO2Ruu6UWEe+cDZW/FJFZUQM=;
+	b=TuDkQstMXNgX55WfxYja1BAhIx3hG6QuRuAEvy6ftYcVJYuzrINX3DIRG/IpXqG8yX9QJD
+	D3h/2WAf3LQjcXBA==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738820845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738820856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J4OKcyBzOYgr/dhyXLlvhMO4GQauunZVDnxngPVrXFM=;
-	b=aIeTf06LtedqZeC5uqSdHgS4xhkfv4UD675jOw/0Ut2LdV5pji3Xa9Q87+Y3JYIoSO60ka
-	IalXlVfBlT22RdlLMYZh+1kI6is/yLsmWDoGHwtp/8FrBaNBoLwW/fVWCcB3ae7HdKy9is
-	DNKI3TKz+yruY3dQqGuZyMhWkI9AUfo=
+	bh=NRkrNPpQOJiLW6OESPgTO2Ruu6UWEe+cDZW/FJFZUQM=;
+	b=PwxcEp8LKV/ahuMPFsFdSmKd3gYWPn3gHx0dklWTs1neVgx8rlVg+r2SmUi/StFOEa0WFa
+	G0q+N5aQATE+wBYBbdptLwydE9i63W0lWvh3k1TU74jzyJFII73W3ApBgpnNhRO4rEv61I
+	/Nizl7yADTUUVmyY85cwJ2/FWgyjLwo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738820845;
+	s=susede2_ed25519; t=1738820856;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J4OKcyBzOYgr/dhyXLlvhMO4GQauunZVDnxngPVrXFM=;
-	b=0+9lEa31bbT6Q6MZbHVExWA70Vc7hukXpf5MZi3tMH4s6YCANeFOePXoGUdk9F1WD6UHQZ
-	185zjvp6zvhNQKDg==
+	bh=NRkrNPpQOJiLW6OESPgTO2Ruu6UWEe+cDZW/FJFZUQM=;
+	b=1fkhx17UrgNVS0ExTl7OpqqjH2+s/izFyrbxF4tfBEuO4/OZnmgXgjb5ISwqvRPF167KDa
+	DF5D03ROPV03fLBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 176DD13795;
-	Thu,  6 Feb 2025 05:47:22 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 514D213795;
+	Thu,  6 Feb 2025 05:47:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gp9VL+pMpGfLBwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:47:22 +0000
+	id fWPOAfVMpGfVBwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 05:47:33 +0000
 From: NeilBrown <neilb@suse.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -97,9 +97,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Dave Chinner <david@fromorbit.com>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 12/19] VFS: enhance d_splice_alias to accommodate shared-lock updates
-Date: Thu,  6 Feb 2025 16:42:49 +1100
-Message-ID: <20250206054504.2950516-13-neilb@suse.de>
+Subject: [PATCH 13/19] VFS: lock dentry for ->revalidate to avoid races with rename etc
+Date: Thu,  6 Feb 2025 16:42:50 +1100
+Message-ID: <20250206054504.2950516-14-neilb@suse.de>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250206054504.2950516-1-neilb@suse.de>
 References: <20250206054504.2950516-1-neilb@suse.de>
@@ -110,7 +110,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
+X-Spam-Level: 
 X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
@@ -130,60 +130,157 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid];
 	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-d_splice_alias() - via __d_unalias() - currently assumes that taking a
-shared lock on the parent directory locks against any change to the
-parent/name of the dentry.  This will no longer be the case with
-shared-lock updates.  We also need a DCACHE_PAR_UPDATE lock on the
-dentry.
+When we call ->revalidate we want to be sure we are revalidating the
+expected name.  As a shared lock on i_rwsem no longer prevents renames
+we need to lock the dentry and ensure it still has the expected name.
 
-This patch adds a call to d_update_trylock() to get this lock -if
-possible.  This lock ensures that the test on ->d_parent and ->d_name in
-d_update_lock() will not be invalidated by the __d_move() in __d_unalias.
+So pass parent name to d_revalidate() and be prepared to retry the
+lookup if it returns -EAGAIN.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/dcache.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/namei.c | 49 ++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index e705696ca57e..fb331596f1b1 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3036,13 +3036,17 @@ static int __d_unalias(struct dentry *dentry, struct dentry *alias)
- 		goto out_err;
- 	m2 = &alias->d_parent->d_inode->i_rwsem;
- out_unalias:
-+	if (!d_update_trylock(dentry, NULL, NULL))
-+		goto out_err;
- 	if (alias->d_op && alias->d_op->d_unalias_trylock &&
- 	    !alias->d_op->d_unalias_trylock(alias))
--		goto out_err;
-+		goto out_err2;
- 	__d_move(alias, dentry, false);
- 	if (alias->d_op && alias->d_op->d_unalias_unlock)
- 		alias->d_op->d_unalias_unlock(alias);
- 	ret = 0;
-+out_err2:
-+	d_update_unlock(dentry);
- out_err:
- 	if (m2)
- 		up_read(m2);
-@@ -3073,6 +3077,10 @@ static int __d_unalias(struct dentry *dentry, struct dentry *alias)
-  * In that case, we know that the inode will be a regular file, and also this
-  * will only occur during atomic_open. So we need to check for the dentry
-  * being already hashed only in the final case.
-+ *
-+ * @dentry must have a valid ->d_parent and that directory must be
-+ * locked (i_rwsem) either exclusively or shared.  If shared then
-+ * @dentry must have %DCACHE_PAR_LOOKUP or %DCACHE_PAR_UPDATE set.
-  */
- struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
+diff --git a/fs/namei.c b/fs/namei.c
+index 145ae07f9b8c..3a107d6098be 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -957,12 +957,24 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
+ }
+ 
+ static inline int d_revalidate(struct inode *dir, const struct qstr *name,
+-			       struct dentry *dentry, unsigned int flags)
++			       struct dentry *dentry, unsigned int flags,
++			       struct dentry *base, const struct qstr *last)
  {
+-	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
+-		return dentry->d_op->d_revalidate(dir, name, dentry, flags);
+-	else
++	int status;
++
++	if (!unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
+ 		return 1;
++
++	if (dentry->d_flags & LOOKUP_RCU) {
++		if (!d_update_trylock(dentry, base, last))
++			return -ECHILD;
++	} else {
++		if (!d_update_lock(dentry, base, last, I_MUTEX_NORMAL))
++			return -EAGAIN;
++	}
++	status = dentry->d_op->d_revalidate(dir, name, dentry, flags);
++	d_update_unlock(dentry);
++	return status;
+ }
+ 
+ /**
+@@ -1686,13 +1698,18 @@ static struct dentry *lookup_dcache(const struct qstr *name,
+ 				    struct dentry *dir,
+ 				    unsigned int flags)
+ {
+-	struct dentry *dentry = d_lookup(dir, name);
++	struct dentry *dentry;
++again:
++	dentry = d_lookup(dir, name);
+ 	if (dentry) {
+-		int error = d_revalidate(dir->d_inode, name, dentry, flags);
++		int error = d_revalidate(dir->d_inode, name, dentry, flags, dir, name);
+ 		if (unlikely(error <= 0)) {
+ 			if (!error)
+ 				d_invalidate(dentry);
+ 			dput(dentry);
++			if (error == -EAGAIN)
++				/* raced with rename etc */
++				goto again;
+ 			return ERR_PTR(error);
+ 		}
+ 	}
+@@ -1915,6 +1932,7 @@ static struct dentry *lookup_fast(struct nameidata *nd)
+ 	 * of a false negative due to a concurrent rename, the caller is
+ 	 * going to fall back to non-racy lookup.
+ 	 */
++again:
+ 	if (nd->flags & LOOKUP_RCU) {
+ 		dentry = __d_lookup_rcu(parent, &nd->last, &nd->next_seq);
+ 		if (unlikely(!dentry)) {
+@@ -1930,7 +1948,7 @@ static struct dentry *lookup_fast(struct nameidata *nd)
+ 		if (read_seqcount_retry(&parent->d_seq, nd->seq))
+ 			return ERR_PTR(-ECHILD);
+ 
+-		status = d_revalidate(nd->inode, &nd->last, dentry, nd->flags);
++		status = d_revalidate(nd->inode, &nd->last, dentry, nd->flags, parent, &nd->last);
+ 		if (likely(status > 0))
+ 			return dentry;
+ 		if (!try_to_unlazy_next(nd, dentry))
+@@ -1938,17 +1956,19 @@ static struct dentry *lookup_fast(struct nameidata *nd)
+ 		if (status == -ECHILD)
+ 			/* we'd been told to redo it in non-rcu mode */
+ 			status = d_revalidate(nd->inode, &nd->last,
+-					      dentry, nd->flags);
++					      dentry, nd->flags, parent, &nd->last);
+ 	} else {
+ 		dentry = __d_lookup(parent, &nd->last);
+ 		if (unlikely(!dentry))
+ 			return NULL;
+-		status = d_revalidate(nd->inode, &nd->last, dentry, nd->flags);
++		status = d_revalidate(nd->inode, &nd->last, dentry, nd->flags, parent, &nd->last);
+ 	}
+ 	if (unlikely(status <= 0)) {
+ 		if (!status)
+ 			d_invalidate(dentry);
+ 		dput(dentry);
++		if (status == -EAGAIN)
++			goto again;
+ 		return ERR_PTR(status);
+ 	}
+ 	return dentry;
+@@ -1970,7 +1990,7 @@ static struct dentry *__lookup_slow(const struct qstr *name,
+ 	if (IS_ERR(dentry))
+ 		return dentry;
+ 	if (unlikely(!d_in_lookup(dentry))) {
+-		int error = d_revalidate(inode, name, dentry, flags);
++		int error = d_revalidate(inode, name, dentry, flags, dir, name);
+ 		if (unlikely(error <= 0)) {
+ 			if (!error) {
+ 				d_invalidate(dentry);
+@@ -1978,6 +1998,8 @@ static struct dentry *__lookup_slow(const struct qstr *name,
+ 				goto again;
+ 			}
+ 			dput(dentry);
++			if (error == -EAGAIN)
++				goto again;
+ 			dentry = ERR_PTR(error);
+ 		}
+ 	} else {
+@@ -3777,6 +3799,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	file->f_mode &= ~FMODE_CREATED;
++again:
+ 	dentry = d_lookup(dir, &nd->last);
+ 	for (;;) {
+ 		if (!dentry) {
+@@ -3787,9 +3810,13 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		if (d_in_lookup(dentry))
+ 			break;
+ 
+-		error = d_revalidate(dir_inode, &nd->last, dentry, nd->flags);
++		error = d_revalidate(dir_inode, &nd->last, dentry, nd->flags, dir, &nd->last);
+ 		if (likely(error > 0))
+ 			break;
++		if (error == -EAGAIN) {
++			dput(dentry);
++			goto again;
++		}
+ 		if (error)
+ 			goto out_dput;
+ 		d_invalidate(dentry);
 -- 
 2.47.1
 
