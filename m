@@ -1,162 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-41082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416A8A2AAB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 15:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B62A2AAD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 15:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B253A4BF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89FE3A31F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8321C7018;
-	Thu,  6 Feb 2025 14:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721151C7017;
+	Thu,  6 Feb 2025 14:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZpztGuO"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XxUpQ+/c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ABE1C6FF9;
-	Thu,  6 Feb 2025 14:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B191EA7FD;
+	Thu,  6 Feb 2025 14:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738850802; cv=none; b=iKw8/pnyXaoVFc2p4O89HMLtPkzfRn/BT6SZwjXVzLcZZGHQ8oqcjclBsnJfTCuW457O6MPlAUNQGmknbiB0eoRwF+CLk+khem2GHs6C+JGP9KF6GOXjvZ2Xr+QzsGL5wJF1iJWGqIWTPXQAw4auuQ8+XlqGGJtTg1pFO/xmhT0=
+	t=1738851240; cv=none; b=S39htpn/Amgwk7AYzzgYUWdck/VFHI5hcu2XBL8LQRJq9Bu/phSnPSFfxpV/9CA7ZPQO9qG2/iwqxVK1fsJ+Zcs/1uKGU62iF92e4XsIWFNtg2Yd4LYo1QBEM5pm4ZW/3+WI5fL2aG5YN9VsXP/pS07ZaI5BdiGYRukEU6Y2N2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738850802; c=relaxed/simple;
-	bh=P3e3ooxpAvA2H3YjD79h2LwkU6gOYvh+dG5fz9R6zv4=;
+	s=arc-20240116; t=1738851240; c=relaxed/simple;
+	bh=tTBBelsNUMJLiUlBRo5iz08MdzfXwXbrIJIT/U3WWTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsGFBTv/TCofmZVOcNxlFFf2gWap7VK/lwn4lj3lQVMA6IMgJaVAlmvbnJ+OTR0OmK+9OTaLdkrZOqk71Oi0f/ETSduLM2KZtF//T82xsZcOXNpXLqjRZDrazXm9dssLDapuYgYpAK1ZHKE1vk1rXnjWYJ9SlKCvrqF4Zvvio2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZpztGuO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F74C4CEDD;
-	Thu,  6 Feb 2025 14:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738850800;
-	bh=P3e3ooxpAvA2H3YjD79h2LwkU6gOYvh+dG5fz9R6zv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rZpztGuOZfIk467J+34IO/LCsUbO5UO2B82SBqC6IHGG9bymrmplhBSlUX8iKstof
-	 QMXQvOopttoiOgwbSZZFVO6ovDBwGZ09k7IJjxj5dcKWwzTCuD3owBlLMq5RFypluP
-	 KWOeKdEyeSVJnT4X+fpseNZJsjKLN+Yu09sBMOgbqZO6R79eaQNRnvQf2rbr1sYTit
-	 bUQBs/zUvp4FxdtmRRZud1rdYJbV51ycsWmXT3ABVyXbKp2kdm1ecg0zTiqbsvSOey
-	 /NZ2nuSN/b4xTstCXKQHRnpb/FQFxitJTrt8D0eTbdKZnmyO3CXn8+cS9BLfvUOYL+
-	 hu78LoxvB/HJw==
-Date: Thu, 6 Feb 2025 15:06:35 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/19] VFS: Ensure no async updates happening in
- directory being removed.
-Message-ID: <20250206-ungeeignet-erhielten-1e46ff51d728@brauner>
-References: <20250206054504.2950516-1-neilb@suse.de>
- <20250206054504.2950516-15-neilb@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrEnDXudw3HA/OVJHwWrrpbamSsVvPP+TJzF8Fra3n5A6B0tITNmvGLgAjok1751ZEwUB8ZOEHwtjDngNOdvl0+o0LmZUEMzyTBFwCdQ5hTHTMv7WLBQYyw4OPWiu1pPhWx80aVa5NgMy+oQmH5FIQOtizeJ2D4uy3oycSytcJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XxUpQ+/c; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gx2rvxr9FDs6g9AxWi9cdLIxGf+1LckzyMEZQup3niQ=; b=XxUpQ+/crIIp8MBeT7WtlWu332
+	gDkDAMd+T0bYn4DLXue4hzCrx//a0QJ6XBNcMNxAWsV6LCmQOKEPD1v5ruW5boWORTd8k1YbBPGjA
+	8oB5l/pmvffotAINOjG4ggNjYJwMC2IO3pZhenA9fBy8G6nKNPdmZZrXE4OF6Xkdjo4fu0dj3PhjH
+	18TH/Pr/zdrQ0uVxSe+p5/C4mx83HblKX55qS5oTf+e4Rx9m1CqtTYdhYo2/14Mtf5rFB+hpWvOwj
+	J92I1YoEMOWXbS6c27EUSsLZ8ZNvG3ixbuA+rMHh2F4qmmtpf9sFrA26KxebHfbcBlYfm9KzuIz4i
+	AzjY885A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tg2dh-00000006XG8-35IP;
+	Thu, 06 Feb 2025 14:13:57 +0000
+Date: Thu, 6 Feb 2025 06:13:57 -0800
+From: "hch@infradead.org" <hch@infradead.org>
+To: Qu Wenruo <wqu@suse.com>
+Cc: linux-btrfs@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] btrfs: always fallback to buffered write if the inode
+ requires checksum
+Message-ID: <Z6TDpRo8ijZUt29d@infradead.org>
+References: <e9b8716e2d613cac27e59ceb141f973540f40eef.1738639778.git.wqu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206054504.2950516-15-neilb@suse.de>
+In-Reply-To: <e9b8716e2d613cac27e59ceb141f973540f40eef.1738639778.git.wqu@suse.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Feb 06, 2025 at 04:42:51PM +1100, NeilBrown wrote:
-> vfs_rmdir takes an exclusive lock on the target directory to ensure
-> nothing new is created in it while the rmdir progresses.  With the
-
-It also excludes concurrent mount operations.
-
-> possibility of async updates continuing after the inode lock is dropped
-> we now need extra protection.
+On Tue, Feb 04, 2025 at 02:00:23PM +1030, Qu Wenruo wrote:
+> [BUG]
+> It is a long known bug that VM image on btrfs can lead to data csum
+> mismatch, if the qemu is using direct-io for the image (this is commonly
+> known as cache mode none).
 > 
-> Any async updates will have DCACHE_PAR_UPDATE set on the dentry.  We
-> simply wait for that flag to be cleared on all children.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/dcache.c |  2 +-
->  fs/namei.c  | 40 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 41 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index fb331596f1b1..90dee859d138 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -53,7 +53,7 @@
->   *   - d_lru
->   *   - d_count
->   *   - d_unhashed()
-> - *   - d_parent and d_chilren
-> + *   - d_parent and d_children
->   *   - childrens' d_sib and d_parent
->   *   - d_u.d_alias, d_inode
->   *
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 3a107d6098be..e8a85c9f431c 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1839,6 +1839,27 @@ bool d_update_lock(struct dentry *dentry,
->  	return true;
->  }
->  
-> +static void d_update_wait(struct dentry *dentry, unsigned int subclass)
-> +{
-> +	/* Note this may only ever be called in a context where we have
-> +	 * a lock preventing this dentry from becoming locked, possibly
-> +	 * an update lock on the parent dentry.  The must be a smp_mb()
-> +	 * after that lock is taken and before this is called so that
-> +	 * the following test is safe. d_update_lock() provides that
-> +	 * barrier.
-> +	 */
-> +	if (!(dentry->d_flags & DCACHE_PAR_UPDATE))
-> +		return
-> +	lock_acquire_exclusive(&dentry->d_update_map, subclass,
-> +			       0, NULL, _THIS_IP_);
-> +	spin_lock(&dentry->d_lock);
-> +	wait_var_event_spinlock(&dentry->d_flags,
-> +				!check_dentry_locked(dentry),
-> +				&dentry->d_lock);
-> +	spin_unlock(&dentry->d_lock);
-> +	lock_map_release(&dentry->d_update_map);
-> +}
-> +
->  bool d_update_trylock(struct dentry *dentry,
->  		      struct dentry *base,
->  		      const struct qstr *last)
-> @@ -4688,6 +4709,7 @@ int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
->  		     struct dentry *dentry)
->  {
->  	int error = may_delete(idmap, dir, dentry, 1);
-> +	struct dentry *child;
->  
->  	if (error)
->  		return error;
-> @@ -4697,6 +4719,24 @@ int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
->  
->  	dget(dentry);
->  	inode_lock(dentry->d_inode);
-> +	/*
-> +	 * Some children of dentry might be active in an async update.
-> +	 * We need to wait for them.  New children cannot be locked
-> +	 * while the inode lock is held.
-> +	 */
-> +again:
-> +	spin_lock(&dentry->d_lock);
-> +	for (child = d_first_child(dentry); child;
-> +	     child = d_next_sibling(child)) {
-> +		if (child->d_flags & DCACHE_PAR_UPDATE) {
-> +			dget(child);
-> +			spin_unlock(&dentry->d_lock);
-> +			d_update_wait(child, I_MUTEX_CHILD);
-> +			dput(child);
-> +			goto again;
-> +		}
-> +	}
-> +	spin_unlock(&dentry->d_lock);
+> [CAUSE]
+> Inside the VM, if the fs is EXT4 or XFS, or even NTFS from Windows, the
+> fs is allowed to dirty/modify the folio even the folio is under
+> writeback (as long as the address space doesn't have AS_STABLE_WRITES
+> flag inherited from the block device).
 
-That looks like it can cause stalls when you call rmdir on a directory
-that has a lots of children and a larg-ish subset of them has pending
-async updates, no?
+Btw, can you add an xfstests that reproduces this by modifying pages
+under direct I/O?  That would be really helpful to verify the code when
+we want to turn back on real direct I/O eventually when the VM is fixed
+to prevent the modifications.
+
 
