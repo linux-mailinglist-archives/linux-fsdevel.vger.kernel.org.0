@@ -1,236 +1,488 @@
-Return-Path: <linux-fsdevel+bounces-41080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFDAA2AA5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:50:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B912BA2AA6D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 14:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3072188946B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E30F1889435
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 13:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B861624EF;
-	Thu,  6 Feb 2025 13:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813E41EA7F6;
+	Thu,  6 Feb 2025 13:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Cz1P6bFE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH8qd5Cm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACA81A3172
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Feb 2025 13:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D01EA7F9;
+	Thu,  6 Feb 2025 13:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738849836; cv=none; b=Kl7/n0nJ8iFweDexG5jdEJJiQpoJJeFI6Qi0+x6kgke0j8F0Q5H1vNDIUjRRNrdYlCxW8xaHNiKjVqKy1gG7DVK7EJt3Awt1nP65kjiznZ0j2r26ICNhSUXrQa+Hrlndv/ad8OslDAm2lW3J9fNhLSWHPncCUxFLcUPUrL1ACTs=
+	t=1738849950; cv=none; b=qu+CUGDJ5SUdfxx3yTFhmF8ICWmEteC4rRGXW6NgnB1zQxW+MHk5VZPg8nIk+IBqw5h8+lxDfLEO3ZNw9pg4Hzzcm7gn+qAI98GhvrezsgLqTv21QO9k9Qy6AoWkoj2bI8HUCoF/5bbLNa6h4kis5Jt1K+HDm7Dcemhn1aFasEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738849836; c=relaxed/simple;
-	bh=eQAAGwqNOl7v+M9a4ivw00ivo+95Yco+MnJBXOwIKAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kiEqA4gh674dxOi/xQgucxCXILvUorxIMe5aGXSlJz659zgFCu97VmqM8WiNBO14d6Qz3fUwiuSRb68RD7s9X0S6QYn7d2EnJgcy9MITcjZuUMisC462j4nE1wt2Fj6gsMzRFJ9aUi8g3faEZtNk9YaW0Zl9rnUBGMRw1UwqI78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Cz1P6bFE; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38dabb11eaaso463723f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2025 05:50:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1738849832; x=1739454632; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZqG9Iy11y+7j3Q1qmHPl/yKVh88xdsRebgLzRhIb/28=;
-        b=Cz1P6bFE92HuscbEUlQZ5N4TG2VoG7SA53cQMFhVWCFlDqez+Ygx2znFCkao7s9QVu
-         DHc3L1PdWy2Ivr44FzHKhLT+iAmbNX0t8ktKGQUM1A601ARdwH8WgO4R0qtwl4xHlzl3
-         yqg8QO2/dooso+d7BjaUo0sEWtb3gVZMDTIzrFGLA7ruyTYXtzvvcVi90XNrkTaTQyFA
-         9YiVM9dq/PhhZe5zUKMZEtj1qdybJk51tXi1qTz3TLGprhYLS8+UajcYL+xc6xtgkHJj
-         AnP5KbLXh2hiWyouT3jvO4gXSFG3M0QXzqYJqoi3kATURA0qf7JnvBq2RIKNUWACAdfD
-         K+jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738849832; x=1739454632;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZqG9Iy11y+7j3Q1qmHPl/yKVh88xdsRebgLzRhIb/28=;
-        b=PZ4YTNGbnjyGneu2PlLZ4t7ynAXOczNGCsFE6iqsIAH3R2gUnzc43AWawMhJf4tg/E
-         bBZ8GWX/IZHjlUbQJPi0caxBwg1kmfEw5F49Pt+9ZiGTGesJDKCswSNOgmY697xgLuaS
-         K0uUIuwPHhZxj98L9cHXOrBgueWwrGDfAZU4b6BmUeCtRKNU9NUMu0LEJaezUUwMuA6Z
-         wkfSiPdhpR36vBgQwYPK1A4nskPfa20+Oh3OyJXw4viQwS92BEoS9WhcpU/QcJ8xHNFd
-         lzGGHRGogcHWxRS/7dHNMHgvrjgMlaEy2sozp5hwhSWmv3nEoXwMf5TMK5MrecMnao/+
-         kVuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWO1Dn19OnEbJ73iUdkMX9vGDuyhkapvb9UBWGSRwrTwKyDOwVv5/XbGB5Z/LCPsKUHsu1t7zpPm/aSUYIR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9TjwI0pY37E2UlAQg7BaEiesPXKj6E/2uvA1IFbH5XDRhH4ZX
-	VqYVRjaia2wcV3nl509M2bA7HDmmLd0gvCmlXD1P7JORDSbOP23duvA+K3nFr1U=
-X-Gm-Gg: ASbGnct3YTnx9MfJj178c6BHGt7iqVw7ScaxWAT2AbF7q2b12vn2SW3sOlclxCp/LOk
-	amhusv3+Hptyx5jh8F0NytW3x3Z7r4X+dTvGBXQ8bgcD5FcGatd23LrMgAxfggk+994a+LW8iPC
-	C4sCUZPwXmbM800N4etdxX8boqk7s4dAPmL4HJ/a+f+nQhsgtqRgUbdveHjPN44/oJShj4rXPmm
-	A4coNDMnK2b8i81ycB+Qiu5xc3/awAqTxRvhQmfUUpddNwnANziPGIYLt4py75kAQycfXP24F6a
-	ftj/2vIqe4URMv7jqabP1PgfhH5MdBJI4iZjsgubiKx7Gaf/CFKOJh7Gftd5
-X-Google-Smtp-Source: AGHT+IEYIYIWW6J/hIRqm2Y0oUfYR4o1i/HreKUFQmuOWd+xJTMh9Ma+9XSSasA3LYOW3FeM7FN37Q==
-X-Received: by 2002:adf:e5cb:0:b0:385:faec:d94d with SMTP id ffacd0b85a97d-38db4910812mr5188370f8f.51.1738849831734;
-        Thu, 06 Feb 2025 05:50:31 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc17e278bsm1117573f8f.48.2025.02.06.05.50.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2025 05:50:31 -0800 (PST)
-Message-ID: <782ef14c-e7c4-435e-adc6-9559ce3cc06d@rivosinc.com>
-Date: Thu, 6 Feb 2025 14:50:29 +0100
+	s=arc-20240116; t=1738849950; c=relaxed/simple;
+	bh=sIxDyonZm3zn1Agpmc7P2pAIE3cQfr+Tv/NUycJ+Prk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZB2hgBTL9LjZgmmCFYsOpUq9/aqIvKGTd6lSkmqZLby1hdRA0rzCkIXHAlU5e6YME+RE9WFScW07Vvpzb0cuJ81JQIEffofMM5SoIgM5iy9JNr2lK5RGBqGi/aNpqi5hP8S2M1qfbmJuHuUbazgEGrTVAEOy2lRc5BHlUskDB1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iH8qd5Cm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4B0C4CEDD;
+	Thu,  6 Feb 2025 13:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738849949;
+	bh=sIxDyonZm3zn1Agpmc7P2pAIE3cQfr+Tv/NUycJ+Prk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=iH8qd5Cmsst60b3pFySrhN9nhzvjmyXWUqYEz2pqowW87oPbP/np3tzmB6KdubBXn
+	 Ec9GrafzlAkCsUBNsvyeEJXRZ51+vVLUwnJhe/ANdrbgxsWsX1U+m2obWxGMr1OvZw
+	 gJ0H+uhmspNoxikOilCHnIKUOgJWTqjhEOkqeSBgBDOZN6JlXdgZ2dOOUGmSCQWQXE
+	 Xa1lUi10ZFYm729ajFGdZoSKr5tYXatJMpv00X67Y+U14AziGoHswfeL1zTdQg/652
+	 1ndR14baiGOtoK6Ft89hCT40Dad9uhBAJQtEacYFlbnAKeYQS41b9QpFNH9K+WRAiz
+	 NBb1XMbt8+7hA==
+Message-ID: <6ca281d4e45052a3a23bd60a63ef20288931dae1.camel@kernel.org>
+Subject: Re: [PATCH 01/19] VFS: introduce vfs_mkdir_return()
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neilb@suse.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner
+	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Linus Torvalds
+	 <torvalds@linux-foundation.org>, Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 06 Feb 2025 08:52:27 -0500
+In-Reply-To: <20250206054504.2950516-2-neilb@suse.de>
+References: <20250206054504.2950516-1-neilb@suse.de>
+	 <20250206054504.2950516-2-neilb@suse.de>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 03/26] riscv: zicfiss / zicfilp enumeration
-To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Christian Brauner <brauner@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
- atishp@rivosinc.com, evan@rivosinc.com, alexghiti@rivosinc.com,
- samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-References: <20250204-v5_user_cfi_series-v9-0-b37a49c5205c@rivosinc.com>
- <20250204-v5_user_cfi_series-v9-3-b37a49c5205c@rivosinc.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250204-v5_user_cfi_series-v9-3-b37a49c5205c@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-
-
-On 05/02/2025 02:21, Deepak Gupta wrote:
-> This patch adds support for detecting zicfiss and zicfilp. zicfiss and
-> zicfilp stands for unprivleged integer spec extension for shadow stack
-> and branch tracking on indirect branches, respectively.
-> 
-> This patch looks for zicfiss and zicfilp in device tree and accordinlgy
-> lights up bit in cpu feature bitmap. Furthermore this patch adds detection
-> utility functions to return whether shadow stack or landing pads are
-> supported by cpu.
-> 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+On Thu, 2025-02-06 at 16:42 +1100, NeilBrown wrote:
+> vfs_mkdir() does not guarantee to make the child dentry positive on
+> success.  It may leave it negative and then the caller needs to perform a
+> lookup to find the target dentry.
+>=20
+> This patch introduced vfs_mkdir_return() which performs the lookup if
+> needed so that this code is centralised.
+>=20
+> This prepares for a new inode operation which will perform mkdir and
+> returns the correct dentry.
+>=20
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  arch/riscv/include/asm/cpufeature.h | 13 +++++++++++++
->  arch/riscv/include/asm/hwcap.h      |  2 ++
->  arch/riscv/include/asm/processor.h  |  1 +
->  arch/riscv/kernel/cpufeature.c      |  2 ++
->  4 files changed, 18 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-> index 569140d6e639..69007b8100ca 100644
-> --- a/arch/riscv/include/asm/cpufeature.h
-> +++ b/arch/riscv/include/asm/cpufeature.h
-> @@ -12,6 +12,7 @@
->  #include <linux/kconfig.h>
->  #include <linux/percpu-defs.h>
->  #include <linux/threads.h>
-> +#include <linux/smp.h>
->  #include <asm/hwcap.h>
->  #include <asm/cpufeature-macros.h>
->  
-> @@ -137,4 +138,16 @@ static __always_inline bool riscv_cpu_has_extension_unlikely(int cpu, const unsi
->  	return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
+>  fs/cachefiles/namei.c    |  7 +---
+>  fs/namei.c               | 69 ++++++++++++++++++++++++++++++++++++++++
+>  fs/nfsd/vfs.c            | 21 ++----------
+>  fs/overlayfs/dir.c       | 33 +------------------
+>  fs/overlayfs/overlayfs.h | 10 +++---
+>  fs/overlayfs/super.c     |  2 +-
+>  fs/smb/server/vfs.c      | 24 +++-----------
+>  include/linux/fs.h       |  2 ++
+>  8 files changed, 86 insertions(+), 82 deletions(-)
+>=20
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index 7cf59713f0f7..3c866c3b9534 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -95,7 +95,6 @@ struct dentry *cachefiles_get_directory(struct cachefil=
+es_cache *cache,
+>  	/* search the current directory for the element name */
+>  	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+> =20
+> -retry:
+>  	ret =3D cachefiles_inject_read_error();
+>  	if (ret =3D=3D 0)
+>  		subdir =3D lookup_one_len(dirname, dir, strlen(dirname));
+> @@ -130,7 +129,7 @@ struct dentry *cachefiles_get_directory(struct cachef=
+iles_cache *cache,
+>  			goto mkdir_error;
+>  		ret =3D cachefiles_inject_write_error();
+>  		if (ret =3D=3D 0)
+> -			ret =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> +			ret =3D vfs_mkdir_return(&nop_mnt_idmap, d_inode(dir), &subdir, 0700)=
+;
+>  		if (ret < 0) {
+>  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+>  						   cachefiles_trace_mkdir_error);
+> @@ -138,10 +137,6 @@ struct dentry *cachefiles_get_directory(struct cache=
+files_cache *cache,
+>  		}
+>  		trace_cachefiles_mkdir(dir, subdir);
+> =20
+> -		if (unlikely(d_unhashed(subdir))) {
+> -			cachefiles_put_directory(subdir);
+> -			goto retry;
+> -		}
+>  		ASSERT(d_backing_inode(subdir));
+> =20
+>  		_debug("mkdir -> %pd{ino=3D%lu}",
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 3ab9440c5b93..d98caf36e867 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4317,6 +4317,75 @@ int vfs_mkdir(struct mnt_idmap *idmap, struct inod=
+e *dir,
 >  }
->  
-> +static inline bool cpu_supports_shadow_stack(void)
+>  EXPORT_SYMBOL(vfs_mkdir);
+> =20
+> +/**
+> + * vfs_mkdir_return - create directory returning correct dentry
+> + * @idmap:	idmap of the mount the inode was found from
+> + * @dir:	inode of the parent directory
+> + * @dentryp:	pointer to dentry of the child directory
+> + * @mode:	mode of the child directory
+> + *
+> + * Create a directory.
+> + *
+> + * If the inode has been found through an idmapped mount the idmap of
+> + * the vfsmount must be passed through @idmap. This function will then t=
+ake
+> + * care to map the inode according to @idmap before checking permissions=
+.
+> + * On non-idmapped mounts or if permission checking is to be performed o=
+n the
+> + * raw inode simply pass @nop_mnt_idmap.
+> + *
+> + * The filesystem may not use the dentry that was passed in.  In that ca=
+se
+> + * the passed-in dentry is put and a new one is placed in *@dentryp;
+
+This sounds like the filesystem is not allowed to use the dentry that
+we're passing it. Maybe something like this:
+
+"In the event that the filesystem doesn't use *@dentryp, the dentry is
+put and a new one is placed in *@dentryp;"
+
+
+> + * So on successful return *@dentryp will always be positive.
+> + */
+> +int vfs_mkdir_return(struct mnt_idmap *idmap, struct inode *dir,
+> +		     struct dentry **dentryp, umode_t mode)
 > +{
-> +	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
-> +		riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_ZICFISS));
-> +}
+> +	struct dentry *dentry =3D *dentryp;
+> +	int error;
+> +	unsigned max_links =3D dir->i_sb->s_max_links;
 > +
-> +static inline bool cpu_supports_indirect_br_lp_instr(void)
-> +{
-> +	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
-> +		riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_ZICFILP));
-> +}
+> +	error =3D may_create(idmap, dir, dentry);
+> +	if (error)
+> +		return error;
 > +
->  #endif
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> index 869da082252a..2dc4232bdb3e 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -100,6 +100,8 @@
->  #define RISCV_ISA_EXT_ZICCRSE		91
->  #define RISCV_ISA_EXT_SVADE		92
->  #define RISCV_ISA_EXT_SVADU		93
-> +#define RISCV_ISA_EXT_ZICFILP		94
-> +#define RISCV_ISA_EXT_ZICFISS		95
->  
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
->  
-> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-> index 5f56eb9d114a..e3aba3336e63 100644
-> --- a/arch/riscv/include/asm/processor.h
-> +++ b/arch/riscv/include/asm/processor.h
-> @@ -13,6 +13,7 @@
->  #include <vdso/processor.h>
->  
->  #include <asm/ptrace.h>
-> +#include <asm/hwcap.h>
->  
->  #define arch_get_mmap_end(addr, len, flags)			\
->  ({								\
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> index c6ba750536c3..e72de12e5b99 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -333,6 +333,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->  	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts,
->  					  riscv_ext_zicboz_validate),
->  	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
-> +	__RISCV_ISA_EXT_SUPERSET(zicfilp, RISCV_ISA_EXT_ZICFILP, riscv_xlinuxenvcfg_exts),
-> +	__RISCV_ISA_EXT_SUPERSET(zicfiss, RISCV_ISA_EXT_ZICFISS, riscv_xlinuxenvcfg_exts),
+> +	if (!dir->i_op->mkdir)
+> +		return -EPERM;
+> +
+> +	mode =3D vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, 0);
+> +	error =3D security_inode_mkdir(dir, dentry, mode);
+> +	if (error)
+> +		return error;
+> +
+> +	if (max_links && dir->i_nlink >=3D max_links)
+> +		return -EMLINK;
+> +
+> +	error =3D dir->i_op->mkdir(idmap, dir, dentry, mode);
+> +	if (!error) {
+> +		fsnotify_mkdir(dir, dentry);
+> +		if (unlikely(d_unhashed(dentry))) {
+> +			struct dentry *d;
+> +			/* Need a "const" pointer.  We know d_name is const
+> +			 * because we hold an exclusive lock on i_rwsem
+> +			 * in d_parent.
+> +			 */
+> +			const struct qstr *d_name =3D (void*)&dentry->d_name;
+> +			d =3D lookup_dcache(d_name, dentry->d_parent, 0);
+> +			if (!d)
+> +				d =3D __lookup_slow(d_name, dentry->d_parent, 0);
+> +			if (IS_ERR(d)) {
+> +				error =3D PTR_ERR(d);
+> +			} else if (unlikely(d_is_negative(d))) {
+> +				dput(d);
+> +				error =3D -ENOENT;
+> +			} else {
+> +				dput(dentry);
+> +				*dentryp =3D d;
+> +			}
+> +		}
+> +	}
+> +	return error;
+> +}
+> +EXPORT_SYMBOL(vfs_mkdir_return);
+> +
+>  int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+>  {
+>  	struct dentry *dentry;
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 29cb7b812d71..740332413138 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1488,26 +1488,11 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct=
+ svc_fh *fhp,
+>  			nfsd_check_ignore_resizing(iap);
+>  		break;
+>  	case S_IFDIR:
+> -		host_err =3D vfs_mkdir(&nop_mnt_idmap, dirp, dchild, iap->ia_mode);
+> -		if (!host_err && unlikely(d_unhashed(dchild))) {
+> -			struct dentry *d;
+> -			d =3D lookup_one_len(dchild->d_name.name,
+> -					   dchild->d_parent,
+> -					   dchild->d_name.len);
+> -			if (IS_ERR(d)) {
+> -				host_err =3D PTR_ERR(d);
+> -				break;
+> -			}
+> -			if (unlikely(d_is_negative(d))) {
+> -				dput(d);
+> -				err =3D nfserr_serverfault;
+> -				goto out;
+> -			}
+> +		host_err =3D vfs_mkdir_return(&nop_mnt_idmap, dirp, &dchild, iap->ia_m=
+ode);
+> +		if (!host_err && unlikely(dchild !=3D resfhp->fh_dentry)) {
+>  			dput(resfhp->fh_dentry);
+> -			resfhp->fh_dentry =3D dget(d);
+> +			resfhp->fh_dentry =3D dget(dchild);
+>  			err =3D fh_update(resfhp);
+> -			dput(dchild);
+> -			dchild =3D d;
+>  			if (err)
+>  				goto out;
+>  		}
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index c9993ff66fc2..e6c54c6ef0f5 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -138,37 +138,6 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, str=
+uct inode *dir,
+>  	goto out;
+>  }
+> =20
+> -int ovl_mkdir_real(struct ovl_fs *ofs, struct inode *dir,
+> -		   struct dentry **newdentry, umode_t mode)
+> -{
+> -	int err;
+> -	struct dentry *d, *dentry =3D *newdentry;
+> -
+> -	err =3D ovl_do_mkdir(ofs, dir, dentry, mode);
+> -	if (err)
+> -		return err;
+> -
+> -	if (likely(!d_unhashed(dentry)))
+> -		return 0;
+> -
+> -	/*
+> -	 * vfs_mkdir() may succeed and leave the dentry passed
+> -	 * to it unhashed and negative. If that happens, try to
+> -	 * lookup a new hashed and positive dentry.
+> -	 */
+> -	d =3D ovl_lookup_upper(ofs, dentry->d_name.name, dentry->d_parent,
+> -			     dentry->d_name.len);
+> -	if (IS_ERR(d)) {
+> -		pr_warn("failed lookup after mkdir (%pd2, err=3D%i).\n",
+> -			dentry, err);
+> -		return PTR_ERR(d);
+> -	}
+> -	dput(dentry);
+> -	*newdentry =3D d;
+> -
+> -	return 0;
+> -}
+> -
+>  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct inode *dir,
+>  			       struct dentry *newdentry, struct ovl_cattr *attr)
+>  {
+> @@ -191,7 +160,7 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, st=
+ruct inode *dir,
+> =20
+>  		case S_IFDIR:
+>  			/* mkdir is special... */
+> -			err =3D  ovl_mkdir_real(ofs, dir, &newdentry, attr->mode);
+> +			err =3D  ovl_do_mkdir(ofs, dir, &newdentry, attr->mode);
+>  			break;
+> =20
+>  		case S_IFCHR:
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 0021e2025020..967870f12482 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -242,11 +242,11 @@ static inline int ovl_do_create(struct ovl_fs *ofs,
+>  }
+> =20
+>  static inline int ovl_do_mkdir(struct ovl_fs *ofs,
+> -			       struct inode *dir, struct dentry *dentry,
+> +			       struct inode *dir, struct dentry **dentry,
+>  			       umode_t mode)
+>  {
+> -	int err =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
+> -	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, err);
+> +	int err =3D vfs_mkdir_return(ovl_upper_mnt_idmap(ofs), dir, dentry, mod=
+e);
+> +	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", *dentry, mode, err);
+>  	return err;
+>  }
+> =20
+> @@ -838,8 +838,8 @@ struct ovl_cattr {
+> =20
+>  #define OVL_CATTR(m) (&(struct ovl_cattr) { .mode =3D (m) })
+> =20
+> -int ovl_mkdir_real(struct ovl_fs *ofs, struct inode *dir,
+> -		   struct dentry **newdentry, umode_t mode);
+> +int ovl_do_mkdir(struct ovl_fs *ofs, struct inode *dir,
+> +	      struct dentry **newdentry, umode_t mode);
+>  struct dentry *ovl_create_real(struct ovl_fs *ofs,
+>  			       struct inode *dir, struct dentry *newdentry,
+>  			       struct ovl_cattr *attr);
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 86ae6f6da36b..06ca8b01c336 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -327,7 +327,7 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
+s *ofs,
+>  			goto retry;
+>  		}
+> =20
+> -		err =3D ovl_mkdir_real(ofs, dir, &work, attr.ia_mode);
+> +		err =3D ovl_do_mkdir(ofs, dir, &work, attr.ia_mode);
+>  		if (err)
+>  			goto out_dput;
+> =20
+> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> index 6890016e1923..4e580bb7baf8 100644
+> --- a/fs/smb/server/vfs.c
+> +++ b/fs/smb/server/vfs.c
+> @@ -211,7 +211,7 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const ch=
+ar *name, umode_t mode)
+>  {
+>  	struct mnt_idmap *idmap;
+>  	struct path path;
+> -	struct dentry *dentry;
+> +	struct dentry *dentry, *d;
+>  	int err;
+> =20
+>  	dentry =3D ksmbd_vfs_kern_path_create(work, name,
+> @@ -227,27 +227,11 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const =
+char *name, umode_t mode)
+> =20
+>  	idmap =3D mnt_idmap(path.mnt);
+>  	mode |=3D S_IFDIR;
+> -	err =3D vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
+> -	if (!err && d_unhashed(dentry)) {
+> -		struct dentry *d;
+> -
+> -		d =3D lookup_one(idmap, dentry->d_name.name, dentry->d_parent,
+> -			       dentry->d_name.len);
+> -		if (IS_ERR(d)) {
+> -			err =3D PTR_ERR(d);
+> -			goto out_err;
+> -		}
+> -		if (unlikely(d_is_negative(d))) {
+> -			dput(d);
+> -			err =3D -ENOENT;
+> -			goto out_err;
+> -		}
+> -
+> +	d =3D dentry;
+> +	err =3D vfs_mkdir_return(idmap, d_inode(path.dentry), &dentry, mode);
+> +	if (!err && dentry !=3D d)
+>  		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
+> -		dput(d);
+> -	}
+> =20
+> -out_err:
+>  	done_path_create(&path, dentry);
+>  	if (err)
+>  		pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index be3ad155ec9f..f81d6bc65fe4 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1971,6 +1971,8 @@ int vfs_create(struct mnt_idmap *, struct inode *,
+>  	       struct dentry *, umode_t, bool);
+>  int vfs_mkdir(struct mnt_idmap *, struct inode *,
+>  	      struct dentry *, umode_t);
+> +int vfs_mkdir_return(struct mnt_idmap *, struct inode *,
+> +		     struct dentry **, umode_t);
+>  int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
+>                umode_t, dev_t);
+>  int vfs_symlink(struct mnt_idmap *, struct inode *,
 
-Hey Deepak,
-
-I think these definitions can benefit from using a validation callback:
-
-static int riscv_cfi_validate(const struct riscv_isa_ext_data *data,
-				  const unsigned long *isa_bitmap)
-{
-	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI)
-		return -EINVAL;
-		
-	return 0;
-}
-
-__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfilp, RISCV_ISA_EXT_ZICFILP,
-riscv_xlinuxenvcfg_exts, riscv_cfi_validate),
-__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfiss, RISCV_ISA_EXT_ZICFISS,
-riscv_xlinuxenvcfg_exts, riscv_cfi_validate),
-
-That way, ZICFISS/ZICFILP wont be enable if the kernel does not have
-builtin support for them. Additionally, this solve a bug you have with
-your hwprobe patch (19/26) that exposes ZICFILP/ZICFISS unconditionally
-(ie, even if the kernel does not have CONFIG_RISCV_USER_CFI).
-
-BTW, patch 23/26 introduce CONFIG_RISCV_USER_CFI but it is used in that
-patch.
-
-Thanks,
-
-Clément
-
->  	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
->  	__RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
->  	__RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
-> 
-
+--=20
+Jeff Layton <jlayton@kernel.org>
 
