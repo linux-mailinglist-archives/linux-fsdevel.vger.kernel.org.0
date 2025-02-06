@@ -1,157 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-41092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2AAA2ACE7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 16:44:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B49A2ADA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 17:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86FC1161BC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 15:44:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2762160625
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 16:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B8B22F161;
-	Thu,  6 Feb 2025 15:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27F223645C;
+	Thu,  6 Feb 2025 16:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gc9TE+Jh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA4E228CB7;
-	Thu,  6 Feb 2025 15:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786EE1EDA2E;
+	Thu,  6 Feb 2025 16:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738856657; cv=none; b=qwP+uyvHaqg9Y80ywaIEPoXmPI7ppmOEeZ9fx5Ni13ML9gO8E9E0y0ehI81v3Ipb0NmxzaS/kmZCxLTDM2Auq0jxJ0mtOhrBEtJ4Qx8An+0WwR64ID8ZUKovIq5nQyLKy4V8gs/EnmiTNGXqpWwGdh0WvK1AyXj40eNvcHLs5K8=
+	t=1738859093; cv=none; b=G5GbYnd2mqnBJIMr7+N1YKdQdw3i8nQLcI13SZ3y1x+sIK3Z4ieVla+YFemellwee+PZh83bhoUenQsJJwCKlEb73FoRnUYh8+mo7cu2hPtgB7mk1m468I6sYMdJ3yqq02GpMKsr8u1ETv8FA+mkmWQ3SxPvYGbRuYm2P5bIm5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738856657; c=relaxed/simple;
-	bh=e9J0ABv+nplFGc8ZnorETN2itYO3cmolAlVJ2yap9/A=;
-	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
-	 In-Reply-To:References; b=gqWO1NO+1jomo44Rj3S7ueQCFpqSae8y8+EoaIQUQQLfgWbwYpo4Ll0e2hXaxcO3LV4bZ5bWaSOe26yUKP6CZr0mWdVmr+3xdWH0amwWWfQmb0pYOjYHvrEjfoTflbVU7HpukERz6L1TIhHxbJzbXTwkDaCiE6ZCmbUKjjyWAGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
-Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.stoffel.org (Postfix) with ESMTPSA id 9782421998;
-	Thu,  6 Feb 2025 10:36:07 -0500 (EST)
-Received: by quad.stoffel.org (Postfix, from userid 1000)
-	id E1004A0DB1; Thu,  6 Feb 2025 10:36:06 -0500 (EST)
+	s=arc-20240116; t=1738859093; c=relaxed/simple;
+	bh=kju+6js0Yv4QtoktzUKTmIxCrstEL6CP7v4a5QxpKYM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ipf2CWwTXYaAZPWf4QV1iuwA1p7D+laWLy2exTJ0NhqPirt1p7dC+vJegknO+wXv7uXsxK/R+fvc8h2nAGUvXfxSJdtdyAG3G/H/2ECb59e4i1oxYnfUgKaUYgjpVadeH/uV2R9CU52mpwg9dM2i8657EqaYiotwowUBoCCsF6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gc9TE+Jh; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467918c360aso13545301cf.0;
+        Thu, 06 Feb 2025 08:24:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738859090; x=1739463890; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eJ5WAraqa0Nl8T+8raEMefsUUiCCCAdvXMSJh5q+Lx8=;
+        b=gc9TE+JhUDXhv7Z8zlndXf7vQOWHWD3ChUwwXvadn4MV9eCBrXCtBNKysBM3uxxHgc
+         /6qH4VCkFWI18XKLJPFfo4NBJcoqKq13uMDzFvTHkk1S/Newg2cFhuiULSMfoyLhMaai
+         t40BYIkWax4yMAbefko2f9bANExZgXy7NLuSdwikZbwJrLbzI6YjtjWazqllhg5f+MXR
+         Tp53Km3D/dMdU3pMvP1rhdnscME2sSg16qNwBP83P70u4FkfoaOke/UYhcGncim2zKr+
+         uX3a7T7IVrNKUdxk5R2B28o1UltpST5+dNYKgKRw2rcTEpb4VHv0u/kqaUZyilndo1Jv
+         Dy3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738859090; x=1739463890;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eJ5WAraqa0Nl8T+8raEMefsUUiCCCAdvXMSJh5q+Lx8=;
+        b=ZXAu7xKbca1osUdHz5LnmKZooV9/rdOTBiyO5lUR5YbSmxJCUWzyr78I0KEvxKppTz
+         HUEvEac8cwzHznX/Zphyee5CHcfRerhWrrELA3crFYj1GjJIX5KsAXIufej9mXRDE4ir
+         kgSvHJoHplJcCw/mF7WCv+WobkibVqTLyqRnZ8Ub+lVwtS4e44UDLEV9E6E2/HFgydSp
+         R6EJFVd/pS5bKI1bxFQqZe6J8kYbyUIYpfjL/IkGpC5B+vKssMdxgsPayGiiVIpAvC8A
+         IrsBmPcs9qdtYwT5qpst/bxdowZvihPsBk7yIhi2rQvSFJbiPIWBrcvTzl1l9q2/BIy6
+         w71w==
+X-Forwarded-Encrypted: i=1; AJvYcCUR4QyiNSmhj0aZci4HzPw7wgxJYEphXwdE45oNqHlVUnWvvi8JI9zitJsgvPCM98+A0t3/rqCEyxeG1ju4cME=@vger.kernel.org, AJvYcCUoBlaomvIrXm14NH43GII2YXR6pxi9eHF5haSXwj1Xl+Zoq4AYc+84dJwaOn4eYYiemURprSP3M4aq@vger.kernel.org, AJvYcCW7LpQL/lrmIfLTac8dqZEPJJT+tED/MGm0iK2GYSN4g9mFVYXFa1pwlq3onGeUIAg7jF92bdjXnV9l8Jz1@vger.kernel.org, AJvYcCXCju4Qt2Y2kFemi8PA7AGx9CkCGPm6Xb8Sw7bvZgoTAQvPLWDOa2IzYVd1I8xIxzzZ2k6C7fByeg2/29w6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAB5+hvu/bGKMXtoU8ccW00DvlFsennIEVNPEajLvJQEQwi3Q7
+	Q3J7Tc0BbENg1kOpibwbCoVVoMfuwyt48uGr3VHQ0PRQt+nnXS2U
+X-Gm-Gg: ASbGncu1qfty9qSI04sQqhyWF1v+OBrB1agPRarxWVTgRf3JqSxCHYaOg3WGGuJqAam
+	yCyfou6izoUWOV/wDU2DWGnojsNSVGnuKYpqaEc5vg+SES4bUxXUVWNTAkVzBfvPbLhmEZmInWG
+	C6Fn2MMsxNhrrJeuBPksvsn2SkBDwJ+uncuuvujG9TwxvRGwnox5LJbFOTDchtaHzsUu5j92Fcz
+	M25mTRLtCnmrCzahwlyctc5rzgmfuhm+gdumQfLy9VQcDK8sFAxHr2YzcrhYiAXWQsvhMaj+1z0
+	Fvgh/HYbVC1Mmsxo15tVMUZDMUV3F7gXW4Pg
+X-Google-Smtp-Source: AGHT+IFRa2BZCLdY5bYSDmAbikbdHdZnUcWOTwEJ3Uh+MykbfDWum/HFRL9Ixor8mou4qJSIrFBaRg==
+X-Received: by 2002:a05:620a:4094:b0:7b6:d736:55c1 with SMTP id af79cd13be357-7c03a02d577mr1122951885a.48.1738859090178;
+        Thu, 06 Feb 2025 08:24:50 -0800 (PST)
+Received: from tamird-mac.local ([2600:4041:5be7:7c00:fb:aded:686f:8a03])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c041eb8e09sm76440685a.102.2025.02.06.08.24.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2025 08:24:49 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v15 0/3] rust: xarray: Add a minimal abstraction for XArray
+Date: Thu, 06 Feb 2025 11:24:42 -0500
+Message-Id: <20250206-rust-xarray-bindings-v15-0-a22b5dcacab3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-ID: <26532.55014.864941.551897@quad.stoffel.home>
-Date: Thu, 6 Feb 2025 10:36:06 -0500
-From: "John Stoffel" <john@stoffel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>,
-    Jan Kara <jack@suse.cz>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    Jeff Layton <jlayton@kernel.org>,
-    Dave Chinner <david@fromorbit.com>,
-    linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-X-Clacks-Overhead: GNU Terry Pratchett
-Subject: Re: [PATCH 00/19 v7?] RFC: Allow concurrent and async changes in a directory
-In-Reply-To: <20250206054504.2950516-1-neilb@suse.de>
-References: <20250206054504.2950516-1-neilb@suse.de>
-X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEripGcC/3XP0W6DIBSA4VdpvB4N5wAWdtX3WHYBeFCSqh1a0
+ 6bpu4+6ZTVxXp4T+Pi5FwOlSEPxvrsXiaY4xL7LA6i3XeEb29XEYpUXBXKUwJGzdBlGdrUp2Rt
+ zsatiVw/MUVAgQaIpdZGvnhOFeJ3dj888h9S3bGwS2T+MC25QKIOHPZTagGLIWm87ezrG2p6i3
+ fu+/bUSfV1y2vgCmziMfbrN3ZN5bn8KAfT/hZNhnAkE4yunRKnVsW5tPM2PPMEJ+ELZ+mc+lRm
+ LyqHjLiiNKwZeDHKxxUBmlLZGVSAO5NcMLhjALQafjLHOOAiyQloxYsls1ojM6FIpKCWVKMOKk
+ UvmsMXIzJhAQXgK3klYMo/H4xubFwYTbQIAAA==
+X-Change-ID: 20241020-rust-xarray-bindings-bef514142968
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Tamir Duberstein <tamird@gmail.com>
+Cc: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org
+X-Mailer: b4 0.15-dev
 
->>>>> "NeilBrown" == NeilBrown  <neilb@suse.de> writes:
+This is a reimagining relative to earlier versions[0] by Asahi Lina and
+Maíra Canal.
 
-> This is my latest attempt at removing the requirement for an exclusive
-> lock on a directory which performing updates in this.  This version,
-> inspired by Dave Chinner, goes a step further and allow async updates.
+It is needed to support rust-binder, though this version only provides
+enough machinery to support rnull.
 
-This initial sentence reads poorly to me.  I think you maybe are
-trying to say:
+Link: https://lore.kernel.org/rust-for-linux/20240309235927.168915-2-mcanal@igalia.com/ [0]
+---
+Changes in v15:
+- Rebase on v6.14-rc1.
+- Add MAINTAINERS entry.
+- Link to v14: https://lore.kernel.org/r/20241217-rust-xarray-bindings-v14-0-9fef3cefcb41@gmail.com
 
-  This is my latest attempt to removing the requirement for writers to
-  have an exclusive lock on a directory when performing updates on
-  entries in that directory.  This allows for parallel updates by
-  multiple processes (connections? hosts? clients?) to improve scaling
-  of large filesystems. 
+Changes in v14:
+- Remove TODO made stale by Gary Guo's FFI type series.
+- Link: https://lore.kernel.org/all/20240913213041.395655-5-gary@garyguo.net/
+- Link to v13: https://lore.kernel.org/r/20241213-rust-xarray-bindings-v13-0-8655164e624f@gmail.com
 
-I get what you're trying to do here, and I applaud it!  I just
-struggled over the intro here.  
+Changes in v13:
+- Replace `bool::then` with `if`. (Miguel Ojeda)
+- Replace `match` with `let` + `if`. (Miguel Ojeda)
+- Link to v12: https://lore.kernel.org/r/20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com
 
+Changes in v12:
+- Import `core::ptr::NonNull`. (Alice Ryhl)
+- Introduce `StoreError` to allow `?` to be used with `Guard::store`.
+  (Alice Ryhl)
+- Replace `{crate,core}::ffi::c_ulong` and clarify TODO with respect to
+  `usize`. (Alice Ryhl)
+- Drop `T: Sync` bound on `impl Sync for XArray<T>`. (Alice Ryhl)
+- Reword `Send` and `Sync` safety comments to match the style used in
+  `lock.rs`. (Alice Ryhl and Andreas
+  Hindborg)
+- Link to v11: https://lore.kernel.org/r/20241203-rust-xarray-bindings-v11-0-58a95d137ec2@gmail.com
 
-> The inode operation still requires the inode lock, at least a shared
-> lock, but may return -EINPROGRES and then continue asynchronously
-> without needing any ongoing lock on the directory.
+Changes in v11:
+- Consolidate imports. (Alice Ryhl)
+- Use literal `0` rather than `MIN`. (Alice Ryhl)
+- Use bulleted list in SAFETY comment. (Alice Ryhl)
+- Document (un)locking behavior of `Guard::store`. (Alice Ryhl)
+- Document Normal API behavior WRT `XA_ZERO_ENTRY`. (Alice Ryhl)
+- Rewrite `unsafe impl Sync` SAFETY comment. (Andreas Hindborg)
+- Link to v10: https://lore.kernel.org/r/20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com
 
-> An exclusive lock on the dentry is held across the entire operation.
+Changes in v10:
+- Guard::get takes &self instead of &mut self. (Andreas Hindborg)
+- Guard is !Send. (Boqun Feng)
+- Add Inspired-by tags. (Maíra Canal and Asahi Lina)
+- Rebase on linux-next, use NotThreadSafe. (Alice Ryhl)
+- Link to v9: https://lore.kernel.org/r/20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com
 
-> This change requires various extra checks.  rmdir must ensure there is
-> no async creation still happening.  rename between directories must
-> ensure non of the relevant ancestors are undergoing async rename.  There
-> may be or checks that I need to consider - mounting?
+---
+Tamir Duberstein (3):
+      rust: types: add `ForeignOwnable::PointedTo`
+      rust: xarray: Add an abstraction for XArray
+      MAINTAINERS: add entry for Rust XArray API
 
-> One other important change since my previous posting is that I've
-> dropped the idea of taking a separate exclusive lock on the directory
-> when the fs doesn't support shared locking.  This cannot work as it
-> doeesn't prevent lookups and filesystems don't expect a lookup while
-> they are changing a directory.  So instead we need to choose between
-> exclusive or shared for the inode on a case-by-case basis.
+ MAINTAINERS                     |  11 ++
+ rust/bindings/bindings_helper.h |   6 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/xarray.c           |  28 ++++
+ rust/kernel/alloc.rs            |   5 +
+ rust/kernel/alloc/kbox.rs       |  38 +++---
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/miscdevice.rs       |   7 +-
+ rust/kernel/pci.rs              |   5 +-
+ rust/kernel/platform.rs         |   5 +-
+ rust/kernel/sync/arc.rs         |  21 +--
+ rust/kernel/types.rs            |  46 ++++---
+ rust/kernel/xarray.rs           | 279 ++++++++++++++++++++++++++++++++++++++++
+ 13 files changed, 408 insertions(+), 45 deletions(-)
+---
+base-commit: e47e7490144c9fb26590447f73d90538e0934a75
+change-id: 20241020-rust-xarray-bindings-bef514142968
 
-> To make this choice we divide all ops into four groups: create, remove,
-> rename, open/create.  If an inode has no operations in the group that
-> require an exclusive lock, then a flag is set on the inode so that
-> various code knows that a shared lock is sufficient.  If the flag is not
-> set, an exclusive lock is obtained.
-
-> I've also added rename handling and converted NFS to use all _async ops.
-
-> The motivation for this comes from the general increase in scale of
-> systems.  We can support very large directories and many-core systems
-> and applications that choose to use large directories can hit
-> unnecessary contention.
-
-> NFS can easily hit this when used over a high-latency link.
-> Lustre already has code to allow concurrent directory updates in the
-> back-end filesystem (ldiskfs - a slightly modified ext4).
-> Lustre developers believe this would also benefit the client-side
-> filesystem with large core counts.
-
-> The idea behind the async support is to eventually connect this to
-> io_uring so that one process can launch several concurrent directory
-> operations.  I have not looked deeply into io_uring and cannot be
-> certain that the interface I've provided will be able to be used.  I
-> would welcome any advice on that matter, though I hope to find time to
-> explore myself.  For now if any _async op returns -EINPROGRESS we simply
-> wait for the callback to indicate completion.
-
-> Test status:  only light testing.  It doesn't easily blow up, but lockdep
-> complains that repeated calls to d_update_wait() are bad, even though
-> it has balanced acquire and release calls. Weird?
-
-> Thanks,
-> NeilBrown
-
->  [PATCH 01/19] VFS: introduce vfs_mkdir_return()
->  [PATCH 02/19] VFS: use global wait-queue table for d_alloc_parallel()
->  [PATCH 03/19] VFS: use d_alloc_parallel() in lookup_one_qstr_excl()
->  [PATCH 04/19] VFS: change kern_path_locked() and
->  [PATCH 05/19] VFS: add common error checks to lookup_one_qstr()
->  [PATCH 06/19] VFS: repack DENTRY_ flags.
->  [PATCH 07/19] VFS: repack LOOKUP_ bit flags.
->  [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
->  [PATCH 09/19] VFS: add _async versions of the various directory
->  [PATCH 10/19] VFS: introduce inode flags to report locking needs for
->  [PATCH 11/19] VFS: Add ability to exclusively lock a dentry and use
->  [PATCH 12/19] VFS: enhance d_splice_alias to accommodate shared-lock
->  [PATCH 13/19] VFS: lock dentry for ->revalidate to avoid races with
->  [PATCH 14/19] VFS: Ensure no async updates happening in directory
->  [PATCH 15/19] VFS: Change lookup_and_lock() to use shared lock when
->  [PATCH 16/19] VFS: add lookup_and_lock_rename()
->  [PATCH 17/19] nfsd: use lookup_and_lock_one() and
->  [PATCH 18/19] nfs: change mkdir inode_operation to mkdir_async
->  [PATCH 19/19] nfs: switch to _async for all directory ops.
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
 
 
