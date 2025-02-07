@@ -1,182 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-41179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6598A2C0FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 11:52:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C4DA2C108
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 11:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A548C188CFE4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 10:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6CE188BEF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 10:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179471DE896;
-	Fri,  7 Feb 2025 10:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C7A1DED48;
+	Fri,  7 Feb 2025 10:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5J1kZmA"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RUKNtCf+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/2tW65eZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RUKNtCf+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/2tW65eZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0311917E7;
-	Fri,  7 Feb 2025 10:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759521DE4FC;
+	Fri,  7 Feb 2025 10:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738925538; cv=none; b=iD14NRylZ29YIlIjEF2diolHVTR3CSKUa+sZM7zI6mKrBKV0fVGMhM5KYh7MUarw/qRtBcLSzCo+gbHOIWjLYndpyBujbHIRti5hoOzmejIYxJ6GXMdhSKiHvT5rC171aaYRsRMcLixDYG21ZYcxalCE+WJSjNN+TkoHmRSSf0M=
+	t=1738925762; cv=none; b=bJrNCf1JTJH4NMd2q3lPMrb4CdUEXiexOI0unPYXcw0F94zkrgma36oqCjoMgJrH35N3+HPJ+itF+gcw0CXbcmzwFMO8GVzPjv7uP01JKbkHWtxy883eG8UcsZRi9Q/AY4Fd7IKuyDiMK118t+ovZEj6C6PQ3Ebbsd3TaZVSqbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738925538; c=relaxed/simple;
-	bh=owovfkvRgIM8aMv4cO8gkk9tmITsZMDX0UD/zXEAZVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gSir31HfTxUoaWQiyDeDMThfFYAqCl1AAh865p+pkgVs0hGmomXioG8H6ksx2PF5jL+EK5bxfnYcugbqYierBdepXrSQrPRJGOiEE0XW836DszxbRg5kMTkMYuhVaiSr8No+xUyz87zXk7agW2emc4x7eejREUOs843RZvpuGw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5J1kZmA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AB5C4CED1;
-	Fri,  7 Feb 2025 10:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738925537;
-	bh=owovfkvRgIM8aMv4cO8gkk9tmITsZMDX0UD/zXEAZVY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=b5J1kZmAteh7WfPywdnYLBkaPAmVBsj/GSWUo4IfrWou9++ncVJ0YJGPzW52Foshr
-	 5usn51EjSeoE//m2klscIiUMSLR0jiRW9jPslIKhPpd4/3aoUCmcn9bIdsVeElvIOR
-	 mda1S8G0CJGAoz7da/dHnVXFZBuI49yjRRAheOeOUw65kOoJ8ciyUmqEa71GwPqDiH
-	 i8OOTxottjeUXLL5Ud6AqZ3tdn9W03tasi7BhxGXVVk3Sac0xrYDgLRuOEmGPmGJ/3
-	 dP+aJydrV1LK9662cHKpC+6hwRzoYldkCO5g7zdHcSDFdYtueqoptlz0OLr1iay8sm
-	 JwVUhxTNeicfg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Fri,  7 Feb 2025 11:52:03 +0100
-Message-ID: <20250207-vfs-fixes-304444b009fc@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1738925762; c=relaxed/simple;
+	bh=pYt+xftXndusuacIlXxk2mWb9HDWRHFU3WAlQvHyqeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WkTNpoLXB34+DvvODvDdeURGrX6CsIsIGU0rqT7qWvxmUD01RXUG6+clHGzpL81NbDoo5k1y6KTU7v2L2Sz1hzwJBfmwBlDfHxx8FO/jxOIVD/yEcb3mdw6qMXHBzDgi0k6KHda59V3sg0JYiUuZNeb/eq4Lo2lqbdpPDzHlxEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RUKNtCf+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/2tW65eZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RUKNtCf+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/2tW65eZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9986F21160;
+	Fri,  7 Feb 2025 10:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738925758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fff5YP4Ec4Ar0HOYCFpKljGsZstst5SYCqA0UJvrHTA=;
+	b=RUKNtCf+36/DPgwryIMM4y87jpIXZdbMug0M812QEPrYHQzZ2iVX9Ctg5AMk31+/2e05UB
+	yTA3D5sEKLSON04m2+sjQfLqC/raNznG00et61eAKvO8UI1Se9CIXcNk9uJnM+GnFLvNxd
+	jDxeiSGm7XBH42kF82/Ua3PE7mpvrrM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738925758;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fff5YP4Ec4Ar0HOYCFpKljGsZstst5SYCqA0UJvrHTA=;
+	b=/2tW65eZsKGlKjntmZcpZJ7Pa8qyvzoJPjtQvuHkya6I2GWfWcBtbMVTHyqJgL49YxaSVf
+	lfoHns/mWBs3uFAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738925758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fff5YP4Ec4Ar0HOYCFpKljGsZstst5SYCqA0UJvrHTA=;
+	b=RUKNtCf+36/DPgwryIMM4y87jpIXZdbMug0M812QEPrYHQzZ2iVX9Ctg5AMk31+/2e05UB
+	yTA3D5sEKLSON04m2+sjQfLqC/raNznG00et61eAKvO8UI1Se9CIXcNk9uJnM+GnFLvNxd
+	jDxeiSGm7XBH42kF82/Ua3PE7mpvrrM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738925758;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fff5YP4Ec4Ar0HOYCFpKljGsZstst5SYCqA0UJvrHTA=;
+	b=/2tW65eZsKGlKjntmZcpZJ7Pa8qyvzoJPjtQvuHkya6I2GWfWcBtbMVTHyqJgL49YxaSVf
+	lfoHns/mWBs3uFAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 71FB313694;
+	Fri,  7 Feb 2025 10:55:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iCK7GL7mpWdReQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 07 Feb 2025 10:55:58 +0000
+Message-ID: <f8b08ef9-5bba-490c-9d99-9ab955e68732@suse.cz>
+Date: Fri, 7 Feb 2025 11:55:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4321; i=brauner@kernel.org; h=from:subject:message-id; bh=owovfkvRgIM8aMv4cO8gkk9tmITsZMDX0UD/zXEAZVY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQvfXq16yn/wc82l5qeHJkck9Mc8NE69FD3kfqd+hsOt Uz38fHL7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgI335Ghi/yZ2+5/2v02raq w+wls1kn7722zTue3y8q2bJ7lTDLwiCGf2qzzkZozBXYJ1qloTjpWcBcu9Tdu6oz0jNUSo+om3y 5ygEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
+ related applications since v6.13
+Content-Language: en-US
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Christian Heusel <christian@heusel.eu>, Josef Bacik <josef@toxicpanda.com>,
+ Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, linux-mm <linux-mm@kvack.org>
+References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
+ <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+ <Z6XWVU6ZTCIl3jnc@casper.infradead.org>
+ <03eb13ad-03a2-4982-9545-0a5506e043d0@suse.cz>
+ <CAJfpegtvy0N8dNK-jY1W-LX=TyGQxQTxHkgNJjFbWADUmzb6xA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAJfpegtvy0N8dNK-jY1W-LX=TyGQxQTxHkgNJjFbWADUmzb6xA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,heusel.eu,toxicpanda.com,redhat.com,lists.linux.dev,vger.kernel.org,gmail.com,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Hey Linus,
+On 2/7/25 11:43, Miklos Szeredi wrote:
+> On Fri, 7 Feb 2025 at 11:25, Vlastimil Babka <vbabka@suse.cz> wrote:
+> 
+>> Could be a use-after free of the page, which sets PG_lru again. The list
+>> corruptions in __rmqueue_pcplist also suggest some page manipulation after
+>> free. The -1 refcount suggests somebody was using the page while it was
+>> freed due to refcount dropping to 0 and then did a put_page()?
+> 
+> Can you suggest any debug options that could help pinpoint the offender?
 
-/* Summary */
+CONFIG_DEBUG_VM enables a check in put_page_testzero() that would catch the
+underflow (modulo a tiny race window where it wouldn't). Worth trying.
 
-This contains various fixes for this cycle:
+> Thanks,
+> Miklos
 
-- Fix fsnotify FMODE_NONOTIFY* handling.
-  This also disables fsnotify on all pseudo files by default apart from
-  very selection exceptions. This carries a regression risk so we need
-  to watch out and adapt accordingly. However, it is overall a
-  significant improvement over the current status quo where every rando
-  file can get fsnotify enabled.
-
-- Cleanup and simplify lockref_init() after recent lockref changes.
-
-- Fix vboxfs build with gcc-15.
-
-- Add an assert into inode_set_cached_link() to catch corrupt links.
-
-- Allow users to also use an empty string check to detect whether a
-  given mount option string was empty or not.
-
-- Fix how security options were appended to statmount()'s ->mnt_opt field.
-
-- Fix statmount() selftests to always check the returned mask.
-
-- Fix uninitialized value in vfs_statx_path().
-
-- Fix pidfs_ioctl() sanity checks to guard against ioctl() overloading
-  and preserve extensibility.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc2.fixes
-
-for you to fetch changes up to 37d11cfc63604b3886308e2111d845d148ced8bc:
-
-  vfs: sanity check the length passed to inode_set_cached_link() (2025-02-07 10:29:59 +0100)
-
-Please consider pulling these changes from the signed vfs-6.14-rc2.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.14-rc2.fixes
-
-----------------------------------------------------------------
-Amir Goldstein (3):
-      fsnotify: use accessor to set FMODE_NONOTIFY_*
-      fsnotify: disable notification by default for all pseudo files
-      fsnotify: disable pre-content and permission events by default
-
-Andreas Gruenbacher (3):
-      gfs2: use lockref_init for gl_lockref
-      gfs2: switch to lockref_init(..., 1)
-      lockref: remove count argument of lockref_init
-
-Brahmajit Das (1):
-      vboxsf: fix building with GCC 15
-
-Christian Brauner (3):
-      Merge patch series "further lockref cleanups"
-      Merge patch series "Fix for huge faults regression"
-      pidfs: improve ioctl handling
-
-Mateusz Guzik (1):
-      vfs: sanity check the length passed to inode_set_cached_link()
-
-Miklos Szeredi (3):
-      statmount: let unset strings be empty
-      fs: fix adding security options to statmount.mnt_opt
-      selftests: always check mask returned by statmount(2)
-
-Su Hui (1):
-      fs/stat.c: avoid harmless garbage value problem in vfs_statx_path()
-
- drivers/tty/pty.c                                  |  2 +-
- fs/dcache.c                                        |  2 +-
- fs/erofs/zdata.c                                   |  2 +-
- fs/file_table.c                                    | 16 +++++++
- fs/gfs2/glock.c                                    |  2 +-
- fs/gfs2/main.c                                     |  1 -
- fs/gfs2/quota.c                                    |  4 +-
- fs/namespace.c                                     | 54 ++++++++++++----------
- fs/notify/fsnotify.c                               | 18 +++++---
- fs/open.c                                          | 11 +++--
- fs/pidfs.c                                         | 12 ++++-
- fs/pipe.c                                          |  6 +++
- fs/stat.c                                          |  4 +-
- fs/vboxsf/super.c                                  |  3 +-
- include/linux/fs.h                                 | 20 +++++++-
- include/linux/fsnotify.h                           |  4 +-
- include/linux/lockref.h                            |  7 +--
- net/socket.c                                       |  5 ++
- .../filesystems/statmount/statmount_test.c         | 22 ++++++++-
- 19 files changed, 143 insertions(+), 52 deletions(-)
 
