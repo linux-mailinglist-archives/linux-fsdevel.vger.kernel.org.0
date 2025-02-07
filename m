@@ -1,94 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-41143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588B9A2B85E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 02:46:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F78A2B88F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 03:02:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BEA3A463D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 01:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458E01888F71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 02:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DD2130A7D;
-	Fri,  7 Feb 2025 01:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BEE155316;
+	Fri,  7 Feb 2025 02:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="laV0WsM7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jd/mmOe";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="laV0WsM7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jd/mmOe"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZtT9JvPm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rdxilFH/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l0i1NzVA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="603coiC/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E11D2417E9;
-	Fri,  7 Feb 2025 01:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB52A1547C0;
+	Fri,  7 Feb 2025 02:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738892780; cv=none; b=r5Uynbup0qsuzLppF94RJn1tYn3YWHxwD3JF5rG5PBTWXrBk2OYfWSydRZ1+Km2B+oMl3pHfZwq0cvSqtgA9MOqPjOsHlyq40nyR0P0vvVNBpflF9IBiTsFvQ2H8sPvgNheijL1S3RvJ5TA5x5A5s2R7KjO9X2GqG55ixgiCxB8=
+	t=1738893730; cv=none; b=evdgPt8FeoAOU/O3Pkn3ToXZoQukTkbu4JvHlsm6BVVvvpSeaW7QjTQsI7aYSaAEIwGS1+6xiAQGOIMHMBS53+KzJcV3TRTEW3g74RNQQlG7dhmyuixStETPDKDpIx7DYDJtB5Ann4KBiTCqodq8P8xYlzLTOgefNRihFVJtG18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738892780; c=relaxed/simple;
-	bh=vyN6wip6nRIJlBebL11txQIz9eMZV3O17tBpyh4CJMc=;
+	s=arc-20240116; t=1738893730; c=relaxed/simple;
+	bh=sj2MhoHkWmu0YdljeGDkoIORGViWkShGHaxlGXyTG9I=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=K2QzGWlLurMosF6IoWlFJ5X640hXEYBqj76B4lhT9DQcAo4Fy5SPRyvSvuuOrrlnlAmHCWJL36b2aQ5TdOhYUh0+D4RaYAERauG2pDxN5pR26vYrSiooAHk2bGAMAuSWIPXv0Qxb2rYGKMnEKFqPIYk44x0WQbHxCmzf2QaNx3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=laV0WsM7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jd/mmOe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=laV0WsM7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jd/mmOe; arc=none smtp.client-ip=195.135.223.131
+	 References:Date:Message-id; b=Kf+1MxsvFcO2fxEaLMC7CcQiGbgVIeIJcEJFOoSv2mlJScbUS+4w3xh9alUVMlBL42EcbeXPmgp696kn3/1CN4i2OtcOd1o4+SdX3cvWNEl46Uf8n2/0zvzA1hyhJXuYzMh5a4w+0vMz9J01i/zGBGYWQeZeauL6vFyawusGWyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZtT9JvPm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rdxilFH/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l0i1NzVA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=603coiC/; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3AD671F38D;
-	Fri,  7 Feb 2025 01:46:14 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B576E1F443;
+	Fri,  7 Feb 2025 02:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738892774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738893726; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=k6GvrIXCkvZhFMNZhMpwRWCpmsJvrlaPBg3GUv/AKQ8=;
-	b=laV0WsM7pVKFRvpFE6yLnNSPNTtLMGtwRoLVSpJIeQwYdqu8vV51zcD3ri3Dwecn9g/VTg
-	2+KSz6LF8lyhHrTMGgujKuEZUWWEnlwALIHnmnRNheL6F+Qqq9oFTIwGBVFU9LMWYTSD8v
-	cgDXRx1Jozs67kLzW3yOQX8HTPGYxeQ=
+	bh=BT2fQuUIsHJkZn3wx+62+TzEsZgShrHCdJAvMLsWpxo=;
+	b=ZtT9JvPmHsTL5JxXqP7Af2A2RJMdjruH2wyiX9M8nGWHJ53HwQszEKLc3+Qh06vaQlMtin
+	m+56KvQcO4dR1u0Lk6ppx+enHOry6jOsiSa5qyP2BKhGJTsf+UVuKHB9zlv+5QgcuhiKAg
+	zyNH2dIGZymR+IMsPQR9/2hkcz9YIGI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738892774;
+	s=susede2_ed25519; t=1738893726;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=k6GvrIXCkvZhFMNZhMpwRWCpmsJvrlaPBg3GUv/AKQ8=;
-	b=0jd/mmOeRgAZe0X6lQtbhuHqJIjMGKg8OcEuK10vOTSGUXvHBn0aj7p0QbdtlU+1mqVByh
-	HNzmAckKD9X8MyCA==
+	bh=BT2fQuUIsHJkZn3wx+62+TzEsZgShrHCdJAvMLsWpxo=;
+	b=rdxilFH/tCrMMXJkbdWscPoj0e3YTHHlMVcNErypQ/pO7u1m9cQ8Xmo7N0aRHF9IF+dlRo
+	avjLa0iuvhSFHTBA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=laV0WsM7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="0jd/mmOe"
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=l0i1NzVA;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="603coiC/"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738892774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738893725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=k6GvrIXCkvZhFMNZhMpwRWCpmsJvrlaPBg3GUv/AKQ8=;
-	b=laV0WsM7pVKFRvpFE6yLnNSPNTtLMGtwRoLVSpJIeQwYdqu8vV51zcD3ri3Dwecn9g/VTg
-	2+KSz6LF8lyhHrTMGgujKuEZUWWEnlwALIHnmnRNheL6F+Qqq9oFTIwGBVFU9LMWYTSD8v
-	cgDXRx1Jozs67kLzW3yOQX8HTPGYxeQ=
+	bh=BT2fQuUIsHJkZn3wx+62+TzEsZgShrHCdJAvMLsWpxo=;
+	b=l0i1NzVAvfiHfIKB1owSJq1paZIGOMQ0h6dH25Q3fi2Tf3MnMbXhucbnnlu8qPGFzGn5Pz
+	YdhytTIRxX3bY0DtHgCQNEfb83q84zHLA+vaPN6s9LcpCUeXlpRav8yaF5MuO0297+jqdG
+	p9jlWcBQE91QGAvXw98PhlYo3BKdWcg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738892774;
+	s=susede2_ed25519; t=1738893725;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=k6GvrIXCkvZhFMNZhMpwRWCpmsJvrlaPBg3GUv/AKQ8=;
-	b=0jd/mmOeRgAZe0X6lQtbhuHqJIjMGKg8OcEuK10vOTSGUXvHBn0aj7p0QbdtlU+1mqVByh
-	HNzmAckKD9X8MyCA==
+	bh=BT2fQuUIsHJkZn3wx+62+TzEsZgShrHCdJAvMLsWpxo=;
+	b=603coiC/fLVODMoMQcPb3gQY+ZVD/hXpbXIb+fksfSNHP30zP88SINQ8YoRWmqGp14JKwj
+	EKNY8ZLLsZKz8/DQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3059413694;
-	Fri,  7 Feb 2025 01:46:10 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F36A313806;
+	Fri,  7 Feb 2025 02:02:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uOxiNeJlpWfCYQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Fri, 07 Feb 2025 01:46:10 +0000
+	id KyheKZpppWdmZwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Fri, 07 Feb 2025 02:02:02 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -103,15 +103,14 @@ Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
  "Linus Torvalds" <torvalds@linux-foundation.org>,
  "Jeff Layton" <jlayton@kernel.org>, "Dave Chinner" <david@fromorbit.com>,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/19] VFS: add _async versions of the various directory
- modifying inode_operations
-In-reply-to: <20250206-bestochen-zulauf-34ce94cc4cbc@brauner>
-References: <>, <20250206-bestochen-zulauf-34ce94cc4cbc@brauner>
-Date: Fri, 07 Feb 2025 12:46:04 +1100
-Message-id: <173889276405.22054.14269968343821905377@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 3AD671F38D
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
+Subject: Re: [PATCH 10/19] VFS: introduce inode flags to report locking needs
+ for directory ops
+In-reply-to: <20250206-gasversorger-flugbereit-9eed46e951f9@brauner>
+References: <>, <20250206-gasversorger-flugbereit-9eed46e951f9@brauner>
+Date: Fri, 07 Feb 2025 13:01:59 +1100
+Message-id: <173889371961.22054.1232506757563289828@noble.neil.brown.name>
+X-Rspamd-Queue-Id: B576E1F443
+X-Spam-Level: 
 X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -134,417 +133,207 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 X-Spam-Flag: NO
-X-Spam-Level: 
 
 On Fri, 07 Feb 2025, Christian Brauner wrote:
-> On Thu, Feb 06, 2025 at 04:42:46PM +1100, NeilBrown wrote:
-> > These "_async" versions of various inode operations are only guaranteed
-> > a shared lock on the directory but if the directory isn't exclusively
-> > locked then they are guaranteed an exclusive lock on the dentry within
-> > the directory (which will be implemented in a later patch).
+> On Thu, Feb 06, 2025 at 04:42:47PM +1100, NeilBrown wrote:
+> > If a filesystem supports _async ops for some directory ops we can take a
+> > "shared" lock on i_rwsem otherwise we must take an "exclusive" lock.  As
+> > the filesystem may support some async ops but not others we need to
+> > easily determine which.
 > >=20
-> > This will allow a graceful transition from exclusive to shared locking
-> > for directory updates, and even to async updates which can complete with
-> > no lock on the directory - only on the dentry.
+> > With this patch we group the ops into 4 groups that are likely be
+> > supported together:
 > >=20
-> > mkdir_async is a bit different as it optionally returns a new dentry
-> > for cases when the filesystem is not able to use the original dentry.
-> > This allows vfs_mkdir_return() to avoid the need for an extra lookup.
+> > CREATE: create, link, mkdir, mknod
+> > REMOVE: rmdir, unlink
+> > RENAME: rename
+> > OPEN: atomic_open, create
+> >=20
+> > and set S_ASYNC_XXX for each when the inode in initialised.
+> >=20
+> > We also add a LOOKUP_REMOVE intent flag which will be used by locking
+> > interfaces to help know which group is being used.
 > >=20
 > > Signed-off-by: NeilBrown <neilb@suse.de>
 > > ---
-> >  Documentation/filesystems/locking.rst |  51 ++++++++-
-> >  Documentation/filesystems/porting.rst |  10 ++
-> >  Documentation/filesystems/vfs.rst     |  24 +++++
-> >  fs/namei.c                            | 142 +++++++++++++++++++++-----
-> >  include/linux/fs.h                    |  24 +++++
-> >  5 files changed, 223 insertions(+), 28 deletions(-)
+> >  fs/dcache.c           | 24 ++++++++++++++++++++++++
+> >  include/linux/fs.h    |  5 +++++
+> >  include/linux/namei.h |  5 +++--
+> >  3 files changed, 32 insertions(+), 2 deletions(-)
 > >=20
-> > diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesy=
-stems/locking.rst
-> > index d20a32b77b60..adeead366332 100644
-> > --- a/Documentation/filesystems/locking.rst
-> > +++ b/Documentation/filesystems/locking.rst
-> > @@ -62,15 +62,24 @@ inode_operations
-> >  prototypes::
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index e49607d00d2d..37c0f655166d 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -384,6 +384,27 @@ static inline void __d_set_inode_and_type(struct den=
+try *dentry,
+> >  	smp_store_release(&dentry->d_flags, flags);
+> >  }
 > > =20
-> >  	int (*create) (struct mnt_idmap *, struct inode *,struct dentry *,umode=
-_t, bool);
-> > +	int (*create_async) (struct mnt_idmap *, struct inode *,struct dentry *=
-,umode_t, bool, struct dirop_ret *);
->=20
-> If we end up doing this then imho the correct thing to do would be to
-> extend the existing operations. Yes, that's more work I know as I've
-> done that multiple times myself and it's a bit more annoying churn but
-> we shouldn't just keep adding new methods without a good reason.
->=20
-> I assume that you've done that mostly so that you wouldn't be held up by
-> menial work for the prototype. That's obviously fine. But for the final
-> thing we should just fixup everyone.
-
-I did it this way because it follows a pattern I've seen before.
- readdir -> iterate -> iterate_shared
- ioctl -> unlocked_ioctl
-
-There are three changes happening here:
-
-1/ add "struct dirop_ret *ret" to the end of each function.  That could
-  certainly be done across all filesystems in one patch
-2/ change mkdir to return a dentry.  The might be doable in a single
-  patch if NFS is the only filesystem affected.  The change is
-  sufficiently intrusive that maintainers would want to review it
-  carefully and might want to land it through their own tree.  But I
-  suspect there are other filesystems that would be affected and I think
-  it would be prohibitive to try to land this sort of change to multiple
-  filesystems in a single patch.
-3/ change these functions to work with only a shared lock on the
-   directory.  I could try to do something a bit like what Linus
-   did in
-     Commit 3e3271549670 ("vfs: get rid of old '->iterate' directory operatio=
-n")
-   but the circumstances are quite different and the excuses he used
-   there don't apply.  Also I would need to add an i_rwsem to every
-   inode which is unlikely to go down well with the maintainers.  I'm
-   sure the active ones would want to manage that change themselves.
-
-So while I hope we get to the point of discarding all the non-async
-operations in a little less than the 7 years that it took to get rid of
-->iterate, I don't see how to make the change without introducing new
-inode_operations.
-
-
->=20
-> >  	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int=
-);
-> >  	int (*link) (struct dentry *,struct inode *,struct dentry *);
-> > +	int (*link_async) (struct dentry *,struct inode *,struct dentry *, stru=
-ct dirop_ret *);
-> >  	int (*unlink) (struct inode *,struct dentry *);
-> > +	int (*unlink_async) (struct inode *,struct dentry *, struct dirop_ret *=
-);
-> >  	int (*symlink) (struct mnt_idmap *, struct inode *,struct dentry *,cons=
-t char *);
-> > +	int (*symlink_async) (struct mnt_idmap *, struct inode *,struct dentry =
-*,const char *m , struct dirop_ret *);
-> >  	int (*mkdir) (struct mnt_idmap *, struct inode *,struct dentry *,umode_=
-t);
-> > +	struct dentry * (*mkdir_async) (struct mnt_idmap *, struct inode *,stru=
-ct dentry *,umode_t, struct dirop_ret *);
-> >  	int (*rmdir) (struct inode *,struct dentry *);
-> > +	int (*rmdir_async) (struct inode *,struct dentry *, struct dirop_ret *);
-> >  	int (*mknod) (struct mnt_idmap *, struct inode *,struct dentry *,umode_=
-t,dev_t);
-> > +	int (*mknod_async) (struct mnt_idmap *, struct inode *,struct dentry *,=
-umode_t,dev_t, struct dirop_ret *);
-> >  	int (*rename) (struct mnt_idmap *, struct inode *, struct dentry *,
-> >  			struct inode *, struct dentry *, unsigned int);
-> > +	int (*rename_async) (struct mnt_idmap *, struct inode *, struct dentry =
-*,
-> > +			struct inode *, struct dentry *, unsigned int, struct dirop_ret *);
-> >  	int (*readlink) (struct dentry *, char __user *,int);
-> >  	const char *(*get_link) (struct dentry *, struct inode *, struct delaye=
-d_call *);
-> >  	void (*truncate) (struct inode *);
-> > @@ -84,6 +93,9 @@ prototypes::
-> >  	int (*atomic_open)(struct inode *, struct dentry *,
-> >  				struct file *, unsigned open_flag,
-> >  				umode_t create_mode);
-> > +	int (*atomic_open_async)(struct inode *, struct dentry *,
-> > +				struct file *, unsigned open_flag,
-> > +				umode_t create_mode, struct dirop_ret *);
-> >  	int (*tmpfile) (struct mnt_idmap *, struct inode *,
-> >  			struct file *, umode_t);
-> >  	int (*fileattr_set)(struct mnt_idmap *idmap,
-> > @@ -95,18 +107,33 @@ prototypes::
-> >  locking rules:
-> >  	all may block
-> > =20
-> > +All directory-modifying operations are called with an exclusive lock on
-> > +the target dentry or dentries using DCACHE_PAR_LOOKUP.  This allows the
-> > +shared lock on i_rwsem for the _async ops to be safe.  The lock on
-> > +i_rwsem may be dropped as soon as the op returns, though if it returns
-> > +-EINPROGRESS the lock using DCACHE_PAR_UPDATE will not be dropped until
-> > +the callback is called.
-> > +
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  ops		i_rwsem(inode)
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  lookup:		shared
-> >  create:		exclusive
-> > +create_async:	shared
-> >  link:		exclusive (both)
-> > +link_async:	exclusive on source, shared on target
-> >  mknod:		exclusive
-> > +mknod_async:	shared
-> >  symlink:	exclusive
-> > +symlink_async:	shared
-> >  mkdir:		exclusive
-> > +mkdir_async:	shared
-> >  unlink:		exclusive (both)
-> > +unlink_async:	exclusive on object, shared on directory/name
-> >  rmdir:		exclusive (both)(see below)
-> > +rmdir_async:	exclusive on object, shared on directory/name (see below)
-> >  rename:		exclusive (both parents, some children)	(see below)
-> > +rename_async:	shared (both parents) exclusive (some children)	(see below)
-> >  readlink:	no
-> >  get_link:	no
-> >  setattr:	exclusive
-> > @@ -118,6 +145,7 @@ listxattr:	no
-> >  fiemap:		no
-> >  update_time:	no
-> >  atomic_open:	shared (exclusive if O_CREAT is set in open flags)
-> > +atomic_open_async:	shared (if O_CREAT is not set, then may not have excl=
-usive lock on name)
-> >  tmpfile:	no
-> >  fileattr_get:	no or exclusive
-> >  fileattr_set:	exclusive
-> > @@ -125,8 +153,10 @@ get_offset_ctx  no
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > =20
-> > =20
-> > -	Additionally, ->rmdir(), ->unlink() and ->rename() have ->i_rwsem
-> > -	exclusive on victim.
-> > +	Additionally, ->rmdir(), ->unlink() and ->rename(), as well as _async
-> > +	versions, have ->i_rwsem exclusive on victim.  This exclusive lock
-> > +        may be dropped when the op completes even if the async operation=
- is
-> > +        continuing.
-> >  	cross-directory ->rename() has (per-superblock) ->s_vfs_rename_sem.
-> >  	->unlink() and ->rename() have ->i_rwsem exclusive on all non-directori=
-es
-> >  	involved.
-> > @@ -135,6 +165,23 @@ get_offset_ctx  no
-> >  See Documentation/filesystems/directory-locking.rst for more detailed di=
-scussion
-> >  of the locking scheme for directory operations.
-> > =20
-> > +The _async operations will be passed a (non-NULL) struct dirop_ret point=
-er::
-> > +
-> > +	struct dirop_ret {
-> > +		union {
-> > +			int err;
-> > +			struct dentry *dentry;
-> > +		};
-> > +		void (*done_cb)(struct dirop_ret*);
-> > +	};
-> > +
-> > +They may return -EINPROGRESS (or ERR_PTR(-EINPROGRESS)) in which case
-> > +the op will continue asynchronously.  When it completes the result,
-> > +which must NOT be -EINPROGRESS, is stored in err or dentry (as
-> > +appropriate) and the done_cb() function is called.  Callers can only
-> > +make use of the asynchrony when they determine that no lock need be held
-> > +on i_rwsem.
-> > +
-> >  xattr_handler operations
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > =20
-> > diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
-stems/porting.rst
-> > index 1639e78e3146..a736c9f30d9d 100644
-> > --- a/Documentation/filesystems/porting.rst
-> > +++ b/Documentation/filesystems/porting.rst
-> > @@ -1157,3 +1157,13 @@ in normal case it points into the pathname being l=
-ooked up.
-> >  NOTE: if you need something like full path from the root of filesystem,
-> >  you are still on your own - this assists with simple cases, but it's not
-> >  magic.
-> > +
-> > +---
-> > +
-> > +**recommended**
-> > +
-> > +create_async, link_async, unlink_async, rmdir_async, mknod_async,
-> > +rename_async, atomic_open_async can be provided instead of the
-> > +corresponding inode_operations with the "_async" suffix.  Multiple
-> > +_async operations can be performed in a given directory concurrently,
-> > +but never on the same name.
-> > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystem=
-s/vfs.rst
-> > index 31eea688609a..e18655054e6c 100644
-> > --- a/Documentation/filesystems/vfs.rst
-> > +++ b/Documentation/filesystems/vfs.rst
-> > @@ -491,15 +491,24 @@ As of kernel 2.6.22, the following members are defi=
-ned:
-> > =20
-> >  	struct inode_operations {
-> >  		int (*create) (struct mnt_idmap *, struct inode *,struct dentry *, umo=
-de_t, bool);
-> > +		int (*create_async) (struct mnt_idmap *, struct inode *,struct dentry =
-*, umode_t, bool, struct dirop_ret *);
-> >  		struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned in=
-t);
-> >  		int (*link) (struct dentry *,struct inode *,struct dentry *);
-> > +		int (*link_async) (struct dentry *,struct inode *,struct dentry *, str=
-uct dirop_ret *);
-> >  		int (*unlink) (struct inode *,struct dentry *);
-> > +		int (*unlink_async) (struct inode *,struct dentry *, struct dirop_ret =
-*);
-> >  		int (*symlink) (struct mnt_idmap *, struct inode *,struct dentry *,con=
-st char *);
-> > +		int (*symlink_async) (struct mnt_idmap *, struct inode *,struct dentry=
- *,const char *, struct dirop_ret *);
-> >  		int (*mkdir) (struct mnt_idmap *, struct inode *,struct dentry *,umode=
-_t);
-> > +		struct dentry * (*mkdir_async) (struct mnt_idmap *, struct inode *,str=
-uct dentry *,umode_t, struct dirop_ret *);
-> >  		int (*rmdir) (struct inode *,struct dentry *);
-> > +		int (*rmdir_async) (struct inode *,struct dentry *, struct dirop_ret *=
-);
-> >  		int (*mknod) (struct mnt_idmap *, struct inode *,struct dentry *,umode=
-_t,dev_t);
-> > +		int (*mknod_async) (struct mnt_idmap *, struct inode *,struct dentry *=
-,umode_t,dev_t, struct dirop_ret *);
-> >  		int (*rename) (struct mnt_idmap *, struct inode *, struct dentry *,
-> >  			       struct inode *, struct dentry *, unsigned int);
-> > +		int (*rename_async) (struct mnt_idmap *, struct inode *, struct dentry=
- *,
-> > +			       struct inode *, struct dentry *, unsigned int, struct dirop_re=
-t *);
-> >  		int (*readlink) (struct dentry *, char __user *,int);
-> >  		const char *(*get_link) (struct dentry *, struct inode *,
-> >  					 struct delayed_call *);
-> > @@ -511,6 +520,8 @@ As of kernel 2.6.22, the following members are define=
-d:
-> >  		void (*update_time)(struct inode *, struct timespec *, int);
-> >  		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
-> >  				   unsigned open_flag, umode_t create_mode);
-> > +		int (*atomic_open_async)(struct inode *, struct dentry *, struct file =
-*,
-> > +				   unsigned open_flag, umode_t create_mode, struct dirop_ret *);
-> >  		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umo=
-de_t);
-> >  		struct posix_acl * (*get_acl)(struct mnt_idmap *, struct dentry *, int=
-);
-> >  	        int (*set_acl)(struct mnt_idmap *, struct dentry *, struct posi=
-x_acl *, int);
-> > @@ -524,6 +535,7 @@ Again, all methods are called without any locks being=
- held, unless
-> >  otherwise noted.
-> > =20
-> >  ``create``
-> > +``create_async``
-> >  	called by the open(2) and creat(2) system calls.  Only required
-> >  	if you want to support regular files.  The dentry you get should
-> >  	not have an inode (i.e. it should be a negative dentry).  Here
-> > @@ -546,29 +558,39 @@ otherwise noted.
-> >  	directory inode semaphore held
-> > =20
-> >  ``link``
-> > +``link_async``
-> >  	called by the link(2) system call.  Only required if you want to
-> >  	support hard links.  You will probably need to call
-> >  	d_instantiate() just as you would in the create() method
-> > =20
-> >  ``unlink``
-> > +``unlink_async``
-> >  	called by the unlink(2) system call.  Only required if you want
-> >  	to support deleting inodes
-> > =20
-> >  ``symlink``
-> > +``symlink_async``
-> >  	called by the symlink(2) system call.  Only required if you want
-> >  	to support symlinks.  You will probably need to call
-> >  	d_instantiate() just as you would in the create() method
-> > =20
-> >  ``mkdir``
-> > +``mkdir_async``
-> >  	called by the mkdir(2) system call.  Only required if you want
-> >  	to support creating subdirectories.  You will probably need to
-> >  	call d_instantiate() just as you would in the create() method
-> > =20
-> > +	mkdir_async can return an alternate dentry, much like lookup.
-> > +	In this case the original dentry will still be negative and will
-> > +	be unhashed.
-> > +
-> >  ``rmdir``
-> > +``rmdir_async``
-> >  	called by the rmdir(2) system call.  Only required if you want
-> >  	to support deleting subdirectories
-> > =20
-> >  ``mknod``
-> > +``mknod_async``
-> >  	called by the mknod(2) system call to create a device (char,
-> >  	block) inode or a named pipe (FIFO) or socket.  Only required if
-> >  	you want to support creating these types of inodes.  You will
-> > @@ -576,6 +598,7 @@ otherwise noted.
-> >  	create() method
-> > =20
-> >  ``rename``
-> > +``rename_async``
-> >  	called by the rename(2) system call to rename the object to have
-> >  	the parent and name given by the second inode and dentry.
-> > =20
-> > @@ -647,6 +670,7 @@ otherwise noted.
-> >  	itself and call mark_inode_dirty_sync.
-> > =20
-> >  ``atomic_open``
-> > +``atomic_open_async``
-> >  	called on the last component of an open.  Using this optional
-> >  	method the filesystem can look up, possibly create and open the
-> >  	file in one atomic operation.  If it wants to leave actual
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 3c0feca081a2..eadde9de73bf 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -123,6 +123,41 @@
-> >   * PATH_MAX includes the nul terminator --RR.
-> >   */
-> > =20
-> > +static void dirop_done_cb(struct dirop_ret *dret)
+> > +static void set_inode_flags(struct inode *inode)
 > > +{
-> > +	wake_up_var(dret);
+> > +	const struct inode_operations *i_op =3D inode->i_op;
+> > +
+> > +	lockdep_assert_held(&inode->i_lock);
+> > +	if ((i_op->create_async || !i_op->create) &&
+> > +	    (i_op->link_async || !i_op->link) &&
+> > +	    (i_op->symlink_async || !i_op->symlink) &&
+> > +	    (i_op->mkdir_async || !i_op->mkdir) &&
+> > +	    (i_op->mknod_async || !i_op->mknod))
+> > +		inode->i_flags |=3D S_ASYNC_CREATE;
+> > +	if ((i_op->unlink_async || !i_op->unlink) &&
+> > +	    (i_op->mkdir_async || !i_op->mkdir))
+> > +		inode->i_flags |=3D S_ASYNC_REMOVE;
+> > +	if (i_op->rename_async)
+> > +		inode->i_flags |=3D S_ASYNC_RENAME;
+> > +	if (i_op->atomic_open_async ||
+> > +	    (!i_op->atomic_open && i_op->create_async))
+> > +		inode->i_flags |=3D S_ASYNC_OPEN;
 > > +}
-> > +
-> > +#define DO_DIROP(dir, op, ...)						\
-> > +	({								\
-> > +		 struct dirop_ret dret;					\
-> > +		 int ret;						\
-> > +		 dret.err =3D -EINPROGRESS;				\
-> > +		 dret.done_cb =3D dirop_done_cb;				\
-> > +		 ret =3D (dir)->i_op->op(__VA_ARGS__, &dret);		\
-> > +		 if (ret =3D=3D -EINPROGRESS) {				\
-> > +			 wait_var_event(&dret,				\
-> > +					dret.err !=3D -EINPROGRESS);	\
-> > +			 ret =3D dret.err;				\
-> > +		 }							\
-> > +		 ret;							\
-> > +	})
-> > +
-> > +#define DO_DE_DIROP(dir, op, ...)					\
-> > +	({								\
-> > +		 struct dirop_ret dret;					\
-> > +		 struct dentry *ret;					\
-> > +		 dret.dentry =3D ERR_PTR(-EINPROGRESS);			\
-> > +		 dret.done_cb =3D dirop_done_cb;				\
-> > +		 ret =3D (dir)->i_op->op(__VA_ARGS__, &dret);		\
-> > +		 if (ret =3D=3D ERR_PTR(-EINPROGRESS)) {			\
-> > +			 wait_var_event(&dret,				\
-> > +					dret.dentry !=3D ERR_PTR(-EINPROGRESS));	\
-> > +			 ret =3D dret.dentry;				\
-> > +		 }							\
-> > +		 ret;							\
-> > +	})
 >=20
-> We should also try to avoid these ugly wrappers. That'll be easier if we
-> don't have multiple methods as well.
+> I think this is unpleasant. As I said we should fold _async into the
+> normal methods. Then we can add:
+>=20
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index be3ad155ec9f..1d19f72448fc 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2186,6 +2186,7 @@ int wrap_directory_iterator(struct file *, struct dir=
+_context *,
+>         { return wrap_directory_iterator(file, ctx, x); }
+>=20
+>  struct inode_operations {
+> +       iop_flags_t iop_flags;
+>         struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned=
+ int);
+>         const char * (*get_link) (struct dentry *, struct inode *, struct d=
+elayed_call *);
+>         int (*permission) (struct mnt_idmap *, struct inode *, int);
+>=20
+> which is similar to what I did for
+>=20
+> struct file_operations {
+>         struct module *owner;
+>         fop_flags_t fop_flags;
+>=20
+> and introduce
+>=20
+> IOP_ASYNC_CREATE
+> IOP_ASYNC_OPEN
+>=20
 
-I don't think that the multiple methods make a whole lot of difference
-here.  The same code would be in the function, it is just indented one
-more level when there are multiple functions.  But if you would prefer
-all the duplication of boiler-plate I can do it that way.
+Ahh - I see where you are going.  Interesting.
+The iop_flags effectively provides versioning for the functions so we
+don't have to embed the version in the name.  That would work.
+
+I guess we would handle the mkdir change by changing every current mkdir
+to return ERR_PTR() of the current return value and the vfs_mkdir_xx
+caller checks if that is NULL and the original dentry is still negative,
+and then performs the lookup.
 
 Thanks,
 NeilBrown
+
+
+> etc and then filesystems can just do:
+>=20
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index df9669d4ded7..90c7aeb49466 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -10859,6 +10859,7 @@ static void nfs4_disable_swap(struct inode *inode)
+>  }
+>=20
+>  static const struct inode_operations nfs4_dir_inode_operations =3D {
+> +       .iop_flags      =3D IOP_ASYNC_CREATE | IOP_ASYNC_OPEN,
+>         .create         =3D nfs_create,
+>         .lookup         =3D nfs_lookup,
+>         .atomic_open    =3D nfs_atomic_open,
+>=20
+> and then you can raise S_ASYNC_OPEN and so on based on the flags, not
+> the individual methods.
+>=20
+> > +
+> >  static inline void __d_clear_type_and_inode(struct dentry *dentry)
+> >  {
+> >  	unsigned flags =3D READ_ONCE(dentry->d_flags);
+> > @@ -1893,6 +1914,7 @@ static void __d_instantiate(struct dentry *dentry, =
+struct inode *inode)
+> >  	raw_write_seqcount_begin(&dentry->d_seq);
+> >  	__d_set_inode_and_type(dentry, inode, add_flags);
+> >  	raw_write_seqcount_end(&dentry->d_seq);
+> > +	set_inode_flags(inode);
+> >  	fsnotify_update_flags(dentry);
+> >  	spin_unlock(&dentry->d_lock);
+> >  }
+> > @@ -1999,6 +2021,7 @@ static struct dentry *__d_obtain_alias(struct inode=
+ *inode, bool disconnected)
+> > =20
+> >  		spin_lock(&new->d_lock);
+> >  		__d_set_inode_and_type(new, inode, add_flags);
+> > +		set_inode_flags(inode);
+> >  		hlist_add_head(&new->d_u.d_alias, &inode->i_dentry);
+> >  		if (!disconnected) {
+> >  			hlist_bl_lock(&sb->s_roots);
+> > @@ -2701,6 +2724,7 @@ static inline void __d_add(struct dentry *dentry, s=
+truct inode *inode)
+> >  		raw_write_seqcount_begin(&dentry->d_seq);
+> >  		__d_set_inode_and_type(dentry, inode, add_flags);
+> >  		raw_write_seqcount_end(&dentry->d_seq);
+> > +		set_inode_flags(inode);
+> >  		fsnotify_update_flags(dentry);
+> >  	}
+> >  	__d_rehash(dentry);
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index e414400c2487..9a9282fef347 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2361,6 +2361,11 @@ struct super_operations {
+> >  #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
+> >  #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/=
+cachefiles) */
+> > =20
+> > +#define S_ASYNC_CREATE	BIT(18)	/* create, link, symlink, mkdir, mknod al=
+l _async */
+> > +#define S_ASYNC_REMOVE	BIT(19)	/* unlink, mkdir both _async */
+> > +#define S_ASYNC_RENAME	BIT(20) /* rename_async supported */
+> > +#define S_ASYNC_OPEN	BIT(21) /* atomic_open_async or create_async suppor=
+ted */
+> > +
+> >  /*
+> >   * Note that nosuid etc flags are inode-specific: setting some file-syst=
+em
+> >   * flags just means all the inodes inherit those flags by default. It mi=
+ght be
+> > diff --git a/include/linux/namei.h b/include/linux/namei.h
+> > index 76c587a5ec3a..72e351640406 100644
+> > --- a/include/linux/namei.h
+> > +++ b/include/linux/namei.h
+> > @@ -40,10 +40,11 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+> >  #define LOOKUP_CREATE		BIT(17)	/* ... in object creation */
+> >  #define LOOKUP_EXCL		BIT(18)	/* ... in target must not exist */
+> >  #define LOOKUP_RENAME_TARGET	BIT(19)	/* ... in destination of rename() */
+> > +#define LOOKUP_REMOVE		BIT(20)	/* ... in target of object removal */
+> > =20
+> >  #define LOOKUP_INTENT_FLAGS	(LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_EXCL |=
+	\
+> > -				 LOOKUP_RENAME_TARGET)
+> > -/* 4 spare bits for intent */
+> > +				 LOOKUP_RENAME_TARGET | LOOKUP_REMOVE)
+> > +/* 3 spare bits for intent */
+> > =20
+> >  /* Scoping flags for lookup. */
+> >  #define LOOKUP_NO_SYMLINKS	BIT(24) /* No symlink crossing. */
+> > --=20
+> > 2.47.1
+> >=20
+>=20
+
 
