@@ -1,448 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-41242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E305A2CA5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 18:37:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB40A2CA65
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 18:39:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D853AB904
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 17:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1FE5188D183
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 17:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12D019D071;
-	Fri,  7 Feb 2025 17:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2310E19992D;
+	Fri,  7 Feb 2025 17:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rX1ViygU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cm9nHzOL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244AB19CCFC
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Feb 2025 17:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7722A1D8;
+	Fri,  7 Feb 2025 17:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738949815; cv=none; b=WD0sf6E+CqyfLu25AIoav0zogYo9Jcl2iyUWTfb70MrVR8toYsx+S46Xmxlnm5Ct+g7dijAlJjut5DdawzGJ3tlyOOJZO3KzBjI0MR2/lPozAkd0qsdrrNdy1eqpyMLsfVodB1buD+88dKuxS3nQEZwAALV2Dv5maoY9s6cnpOU=
+	t=1738949964; cv=none; b=qFUWo13T0IWW3Hq+PmKwI5vhfp/39MJAXfidZqWz6bs5uaLZFCFxFn8fdwUKkYBdSz49Z/NwxetRJs2ogP7ifYDTjdZHmknBsoaswBTMu7VJonbq9NY09khYjobirl7Mnh3F1UL8MHkXCzoSD48kkGrkdSz+48QWLWwEsgzLBOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738949815; c=relaxed/simple;
-	bh=/wc5aGUcFs1HMlPcN4lPleOhlLs4Z6Y3krXMU90FQ5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nra4P84rGkDSjYzw3LjB7ifHjCEN9+X/QSZgO4/Tjb5vpjdedArTHzmF4Kqp3FrZI/e286+M87pHlPwuaj7dkkGueL3HT4a/bjuHIVZ8gHXaDYOMpZ/KSLHrL1khm6ubOtpUjG8lMOvWiL7ePoNCgPCf8EPLP4TAsvdWLrZPx1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rX1ViygU; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-844ce213af6so71537239f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2025 09:36:52 -0800 (PST)
+	s=arc-20240116; t=1738949964; c=relaxed/simple;
+	bh=fSsrW3H7Vu3OL2dcvZSUx1bgKcsMa8O8hWiJVthrgEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IkWL5OAimm5AmAKAV1Bjg4c47w+6kR0Wj6C2/Vba3Eym9CXI2sjdooZ1MVdYig9pP6QWcfMwhJlAbA1pLCtOWkdGe64bElZAMhR5fyUOWmtylL7a0WsDpqU1vrnfSBGGkcqIeR8twUDIJ8YZ9A6FOLkcnlalgPe/IcOLU1AETfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cm9nHzOL; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dcef33eeceso4245271a12.2;
+        Fri, 07 Feb 2025 09:39:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738949812; x=1739554612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1738949961; x=1739554761; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7qbvtsfwyIZePBB7edcFoY3EkzIhOm6ji2xaEWPLWTg=;
-        b=rX1ViygU+6mtbKC1K1dzq/cgWDMZ5vAXz8Kd54gsDIxnG+XCHq109PcMiUk17Eoa5A
-         urLIAne3jgQlJsLjReGsS1XD2FObXCWAwYXJlZTAcL53y8mZ8rLwAICyT29LNJEbvMv8
-         22gyZ9ff3s5G7dGaB2V/mZSHCiANIGpHzfK0bw/rBSOcL2xz9pRfdZ/zXlhHKnD3rXq4
-         beIuvDYSpYuwv/T3gYVAF0fiW1IGA+hDLq295Q4qUw7A1I+qwDYBFfViB4dNJ8ML2t+v
-         are2j05u95yoWdRu2XkYY8uQZ9miTeMyo4XKr4H8Abkqi9O2rQI4mJFleg2t/42Imckm
-         lAMw==
+        bh=AHG9z5ZzVOBTfLJT1jahvgsFI0hw4A7Oh2qiZG7sPow=;
+        b=cm9nHzOLE0ohSCQi5QR5cdNrBr9U8xS8FxCepp0ui8YSIDkeCYyuOE8LzLB3mC3U21
+         sErLe3Ycrv6K+uh0/pbwYhlGUyDUsC4IxFj4XwiFr6Fp1fEh8FJDusodgVrLUsVaGMs/
+         5ilDxNmd1+8N4IlzeRA9uDI7lgxSrBVa5DePMgbVvLbbc36dATbMI+SNj/XMn4luMake
+         rkJ8aJth/tFhoMAI69VFnYScP7rgHZJEUMzKOLWseBfwMzzbMUTh6mCFrXywO7yvvvKH
+         DHdjbw/SGcEElwtxVO43UaEGqZr/ThF3FVD1E/deExfnMcu7qOHPgUMaVi4a1eynChKd
+         ql/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738949812; x=1739554612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1738949961; x=1739554761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7qbvtsfwyIZePBB7edcFoY3EkzIhOm6ji2xaEWPLWTg=;
-        b=MKPhB+s6B08CmYoURtQo3ZpwdtbPiXNQXvtxuob5SIyOsxBHreKrxdPcCig/yP2Afg
-         1EJADuKpx/wMDqF8SVORNsmd3f1jqiCb9J/5bcqsyDtDgcxLlhkOIhKyFCSy4ndPtJvN
-         aNgSqG7JnOrwudLIk8DwI5GPsxKcUnx01MGTgFZ21XnaCdXVGv4eOq/dIKEVvhW0dUnO
-         +jg9BrKgRJQQcoCgjEoG22P74tUMnlagF/rGAfShSThF8SWXKO/vB0ZEbYNyUW5FWX+3
-         tyO1LITimlWaH6FCvXm5IC9lGOrH+iaqm2pOemfytvlG66lEYpo8KKOP+c8htD+AIs3v
-         mX8w==
-X-Gm-Message-State: AOJu0YwkYSG/on7SPaoPA2Efac6TOb2ADHER+Wn7QagvFb4Qs6KYY8lv
-	R0yfJpf3574TnINSErnrrl9yDjSXSjmFgruNRoYZo1q7p1mHKJE6IjpMNf+raGw=
-X-Gm-Gg: ASbGnct6enPgv3uNI2E6nZUVdPswrfoXGFq0+oLF8iwo6RpRaKu1vOFp98G6jkm+Otn
-	7qOVp5Yd9VB/3FxjqmfWI8RxqIPFB9oES0kyrS++r2/SBaU1JcoY6jlUS8Qx/ziT8SIYq99D6sr
-	LrVGxDcdqP/ytR3r+KFsoVHKrtHmCO1cawrFOu2IEg/zeZ0i+Pf1jc+lgKTZiLKVsK+MXTkTpUS
-	VcvGqzk8tD3cXesUaQrpUqJYmfTnHndlRSsi1oTurRN7maOnsA8dsb6angnxeDKuVT+Z2pEqxsw
-	4iq+nSWeiLhVRxNKeHY=
-X-Google-Smtp-Source: AGHT+IEhNjgBKE9AcXHRNWx2yEx4kJJe7LB6Frs7X1I9sitvExI/LF4qPxS9MDRcfcLNcaO/qNB7zQ==
-X-Received: by 2002:a05:6602:7509:b0:844:debf:24dc with SMTP id ca18e2360f4ac-854fd8a0a0cmr475959439f.5.1738949812085;
-        Fri, 07 Feb 2025 09:36:52 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ece0186151sm206241173.111.2025.02.07.09.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 09:36:51 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/7] io_uring/epoll: add support for IORING_OP_EPOLL_WAIT
-Date: Fri,  7 Feb 2025 10:32:30 -0700
-Message-ID: <20250207173639.884745-8-axboe@kernel.dk>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250207173639.884745-1-axboe@kernel.dk>
-References: <20250207173639.884745-1-axboe@kernel.dk>
+        bh=AHG9z5ZzVOBTfLJT1jahvgsFI0hw4A7Oh2qiZG7sPow=;
+        b=Il9OPQ6TiP6TeXevJEDjuEbOdsGtsafMAVMSyJRha1drqHrVFWrozDXbFpF9/TCgXV
+         BH+FJXtnMzV9g8pM6NhlcuJPGuOG/ft6T4+pW0+igJr1B1f0FOBPGHw9v2bjDfBN2ZpM
+         VEWM4AxEh7HuVJ0h3DVAV7vD35MbqhOTNPKDqfc6P7LOho4EqDjGeeMi8HDCFQMwSDOl
+         ZoihT/1az/K8AIlw/hQGUhGN71LGqoaEwp+zSx1TFj4HiMDSw4mTKmHjyVTb3b0dqU2X
+         ijdLJsyWWQRgCJdL4pdHM1DYeKrofpbycLJSTZNkwKPt+T//XAfZYhtgxw9A7mbkhG4/
+         939Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXr/Xd7AXCc3rfrwfQVEVrqAVNRxhp/MVapRxupORaO2Pulx2wnwrBZVgK2N4ItQ3uDSa5xdlGO2pELQNNU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmJk7in8s7mUM+WMZ5lH5KRvDsvY9LT5a44R55fXJ9+Zosh98k
+	1vpGJEgkGrmEGCUxtsjXqmwsxE+qWuIFmewmtCOvQo7nD6Yit4SrB48JHXGp9n93DY7t4l/8ZYr
+	fLe8PcVUxP/KhrFV1XNIH7rgtEfI=
+X-Gm-Gg: ASbGncv0j2PK3vPLE5DEtdj1ufFtmraHNGvn/qYjGzHaAdHK3pyEF5//xW6o05cWWXq
+	81bPPQH4qeFfrUr1qHshSoilkgJGNvVo6OtAMnsutld/b7G0meQ5TfkcYj16GqyvJA+x/6pN3
+X-Google-Smtp-Source: AGHT+IEdVhxCv22ighc4yGvpCgkER+K18kaOwlP0B5XuFzqahU9AuWY9scYKYx+sCpIt4+kJxvN8SK/UgsMkXgKHkjQ=
+X-Received: by 2002:a05:6402:40cb:b0:5dc:d43c:3a1b with SMTP id
+ 4fb4d7f45d1cf-5de450aa4a6mr4283442a12.20.1738949960665; Fri, 07 Feb 2025
+ 09:39:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250207-work-overlayfs-v1-0-611976e73373@kernel.org> <20250207-work-overlayfs-v1-1-611976e73373@kernel.org>
+In-Reply-To: <20250207-work-overlayfs-v1-1-611976e73373@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 7 Feb 2025 18:39:09 +0100
+X-Gm-Features: AWEUYZmj3im7s71GjsSKCJChT8TKy21vngM7RaP9uzyrb0aFc9kialfuHdUdIGk
+Message-ID: <CAOQ4uxg4pCP9EL20vO=X1rwkJ8gVXXzeSDvsxkretH_3hm_nJg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: support O_PATH fds with FSCONFIG_SET_FD
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
+	Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For existing epoll event loops that can't fully convert to io_uring,
-the used approach is usually to add the io_uring fd to the epoll
-instance and use epoll_wait() to wait on both "legacy" and io_uring
-events. While this work, it isn't optimal as:
+On Fri, Feb 7, 2025 at 4:46=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> Let FSCONFIG_SET_FD handle O_PATH file descriptors. This is particularly
+> useful in the context of overlayfs where layers can be specified via
+> file descriptors instead of paths. But userspace must currently use
+> non-O_PATH file desriptors which is often pointless especially if
+> the file descriptors have been created via open_tree(OPEN_TREE_CLONE).
+>
 
-1) epoll_wait() is pretty limited in what it can do. It does not support
-   partial reaping of events, or waiting on a batch of events.
+Shall we?
+Fixes: a08557d19ef41 ("ovl: specify layers via file descriptors")
 
-2) When an io_uring ring is added to an epoll instance, it activates the
-   io_uring "I'm being polled" logic which slows things down.
+I think that was the intention of the API and we are not far enough to fix
+it in 6.12.y.
 
-Rather than use this approach, with EPOLL_WAIT support added to io_uring,
-event loops can use the normal io_uring wait logic for everything, as
-long as an epoll wait request has been armed with io_uring.
 
-Note that IORING_OP_EPOLL_WAIT does NOT take a timeout value, as this
-is an async request. Waiting on io_uring events in general has various
-timeout parameters, and those are the ones that should be used when
-waiting on any kind of request. If events are immediately available for
-reaping, then This opcode will return those immediately. If none are
-available, then it will post an async completion when they become
-available.
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/fs_parser.c             | 12 +++++++-----
+>  fs/fsopen.c                |  7 +++++--
+>  fs/overlayfs/params.c      | 10 ++++++----
+>  include/linux/fs_context.h |  1 +
+>  include/linux/fs_parser.h  |  6 +++---
+>  5 files changed, 22 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index e635a81e17d9..35aaea224007 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -310,15 +310,17 @@ int fs_param_is_fd(struct p_log *log, const struct =
+fs_parameter_spec *p,
+>  }
+>  EXPORT_SYMBOL(fs_param_is_fd);
+>
+> -int fs_param_is_file_or_string(struct p_log *log,
+> -                              const struct fs_parameter_spec *p,
+> -                              struct fs_parameter *param,
+> -                              struct fs_parse_result *result)
+> +int fs_param_is_raw_file_or_string(struct p_log *log,
 
-cqe->res will contain either an error code (< 0 value) for a malformed
-request, invalid epoll instance, etc. It will return a positive result
-indicating how many events were reaped.
+Besides being too long of a helper name I do not think
+that it correctly reflects the spirit of the question.
 
-IORING_OP_EPOLL_WAIT requests may be canceled using the normal io_uring
-cancelation infrastructure. The poll logic for managing ownership is
-adopted to guard the epoll side too.
+The arguments for overlayfs upperdir/workdir/lowerdir+/datadir+
+need to be *a path*, either a path string, or an O_PATH fd and
+maybe later on also dirfd+name.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h |   4 +
- include/uapi/linux/io_uring.h  |   1 +
- io_uring/cancel.c              |   5 ++
- io_uring/epoll.c               | 143 +++++++++++++++++++++++++++++++++
- io_uring/epoll.h               |  22 +++++
- io_uring/io_uring.c            |   5 ++
- io_uring/opdef.c               |  14 ++++
- 7 files changed, 194 insertions(+)
+I imagine that if other filesystems would want to use this parser
+helper they would need it for the same purpose.
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index e2fef264ff8b..031ba708a81d 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -369,6 +369,10 @@ struct io_ring_ctx {
- 	struct io_alloc_cache	futex_cache;
- #endif
- 
-+#ifdef CONFIG_EPOLL
-+	struct hlist_head	epoll_list;
-+#endif
-+
- 	const struct cred	*sq_creds;	/* cred used for __io_sq_thread() */
- 	struct io_sq_data	*sq_data;	/* if using sq thread polling */
- 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index e11c82638527..a559e1e1544a 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -278,6 +278,7 @@ enum io_uring_op {
- 	IORING_OP_FTRUNCATE,
- 	IORING_OP_BIND,
- 	IORING_OP_LISTEN,
-+	IORING_OP_EPOLL_WAIT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index 0870060bac7c..d1af9496d9b3 100644
---- a/io_uring/cancel.c
-+++ b/io_uring/cancel.c
-@@ -17,6 +17,7 @@
- #include "timeout.h"
- #include "waitid.h"
- #include "futex.h"
-+#include "epoll.h"
- #include "cancel.h"
- 
- struct io_cancel {
-@@ -128,6 +129,10 @@ int io_try_cancel(struct io_uring_task *tctx, struct io_cancel_data *cd,
- 	if (ret != -ENOENT)
- 		return ret;
- 
-+	ret = io_epoll_wait_cancel(ctx, cd, issue_flags);
-+	if (ret != -ENOENT)
-+		return ret;
-+
- 	spin_lock(&ctx->completion_lock);
- 	if (!(cd->flags & IORING_ASYNC_CANCEL_FD))
- 		ret = io_timeout_cancel(ctx, cd);
-diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-index 7848d9cc073d..8f54bb1c39de 100644
---- a/io_uring/epoll.c
-+++ b/io_uring/epoll.c
-@@ -11,6 +11,7 @@
- 
- #include "io_uring.h"
- #include "epoll.h"
-+#include "poll.h"
- 
- struct io_epoll {
- 	struct file			*file;
-@@ -20,6 +21,13 @@ struct io_epoll {
- 	struct epoll_event		event;
- };
- 
-+struct io_epoll_wait {
-+	struct file			*file;
-+	int				maxevents;
-+	struct epoll_event __user	*events;
-+	struct wait_queue_entry		wait;
-+};
-+
- int io_epoll_ctl_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_epoll *epoll = io_kiocb_to_cmd(req, struct io_epoll);
-@@ -57,3 +65,138 @@ int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags)
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
-+
-+static void __io_epoll_finish(struct io_kiocb *req, int res)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+
-+	lockdep_assert_held(&req->ctx->uring_lock);
-+
-+	epoll_wait_remove(req->file, &iew->wait);
-+	hlist_del_init(&req->hash_node);
-+	io_req_set_res(req, res, 0);
-+	req->io_task_work.func = io_req_task_complete;
-+	io_req_task_work_add(req);
-+}
-+
-+static void __io_epoll_cancel(struct io_kiocb *req)
-+{
-+	__io_epoll_finish(req, -ECANCELED);
-+}
-+
-+static bool __io_epoll_wait_cancel(struct io_kiocb *req)
-+{
-+	io_poll_mark_cancelled(req);
-+	if (io_poll_get_ownership(req))
-+		__io_epoll_cancel(req);
-+	return true;
-+}
-+
-+bool io_epoll_wait_remove_all(struct io_ring_ctx *ctx, struct io_uring_task *tctx,
-+			      bool cancel_all)
-+{
-+	return io_cancel_remove_all(ctx, tctx, &ctx->epoll_list, cancel_all, __io_epoll_wait_cancel);
-+}
-+
-+int io_epoll_wait_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
-+			 unsigned int issue_flags)
-+{
-+	return io_cancel_remove(ctx, cd, issue_flags, &ctx->epoll_list, __io_epoll_wait_cancel);
-+}
-+
-+static void io_epoll_retry(struct io_kiocb *req, struct io_tw_state *ts)
-+{
-+	int v;
-+
-+	do {
-+		v = atomic_read(&req->poll_refs);
-+		if (unlikely(v != 1)) {
-+			if (WARN_ON_ONCE(!(v & IO_POLL_REF_MASK)))
-+				return;
-+			if (v & IO_POLL_CANCEL_FLAG) {
-+				__io_epoll_cancel(req);
-+				return;
-+			}
-+		}
-+		v &= IO_POLL_REF_MASK;
-+	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
-+
-+	io_req_task_submit(req, ts);
-+}
-+
-+static int io_epoll_execute(struct io_kiocb *req)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+
-+	list_del_init_careful(&iew->wait.entry);
-+	if (io_poll_get_ownership(req)) {
-+		req->io_task_work.func = io_epoll_retry;
-+		io_req_task_work_add(req);
-+	}
-+
-+	return 1;
-+}
-+
-+static __cold int io_epoll_pollfree_wake(struct io_kiocb *req)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+
-+	io_poll_mark_cancelled(req);
-+	list_del_init_careful(&iew->wait.entry);
-+	io_epoll_execute(req);
-+	return 1;
-+}
-+
-+static int io_epoll_wait_fn(struct wait_queue_entry *wait, unsigned mode,
-+			    int sync, void *key)
-+{
-+	struct io_kiocb *req = wait->private;
-+	__poll_t mask = key_to_poll(key);
-+
-+	if (unlikely(mask & POLLFREE))
-+		return io_epoll_pollfree_wake(req);
-+
-+	return io_epoll_execute(req);
-+}
-+
-+int io_epoll_wait_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+
-+	if (sqe->off || sqe->rw_flags || sqe->buf_index || sqe->splice_fd_in)
-+		return -EINVAL;
-+
-+	iew->maxevents = READ_ONCE(sqe->len);
-+	iew->events = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+
-+	iew->wait.flags = 0;
-+	iew->wait.private = req;
-+	iew->wait.func = io_epoll_wait_fn;
-+	INIT_LIST_HEAD(&iew->wait.entry);
-+	INIT_HLIST_NODE(&req->hash_node);
-+	atomic_set(&req->poll_refs, 0);
-+	return 0;
-+}
-+
-+int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+	struct io_ring_ctx *ctx = req->ctx;
-+	int ret;
-+
-+	io_ring_submit_lock(ctx, issue_flags);
-+
-+	ret = epoll_queue(req->file, iew->events, iew->maxevents, &iew->wait);
-+	if (ret == -EIOCBQUEUED) {
-+		if (hlist_unhashed(&req->hash_node))
-+			hlist_add_head(&req->hash_node, &ctx->epoll_list);
-+		io_ring_submit_unlock(ctx, issue_flags);
-+		return IOU_ISSUE_SKIP_COMPLETE;
-+	} else if (ret < 0) {
-+		req_set_fail(req);
-+	}
-+	hlist_del_init(&req->hash_node);
-+	io_ring_submit_unlock(ctx, issue_flags);
-+	io_req_set_res(req, ret, 0);
-+	return IOU_OK;
-+}
-diff --git a/io_uring/epoll.h b/io_uring/epoll.h
-index 870cce11ba98..296940d89063 100644
---- a/io_uring/epoll.h
-+++ b/io_uring/epoll.h
-@@ -1,6 +1,28 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include "cancel.h"
-+
- #if defined(CONFIG_EPOLL)
-+int io_epoll_wait_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
-+			 unsigned int issue_flags);
-+bool io_epoll_wait_remove_all(struct io_ring_ctx *ctx, struct io_uring_task *tctx,
-+			      bool cancel_all);
-+
- int io_epoll_ctl_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags);
-+int io_epoll_wait_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags);
-+#else
-+static inline bool io_epoll_wait_remove_all(struct io_ring_ctx *ctx,
-+					    struct io_uring_task *tctx,
-+					    bool cancel_all)
-+{
-+	return false;
-+}
-+static inline int io_epoll_wait_cancel(struct io_ring_ctx *ctx,
-+				       struct io_cancel_data *cd,
-+				       unsigned int issue_flags)
-+{
-+	return 0;
-+}
- #endif
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index ec98a0ec6f34..73b9246eaa50 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -93,6 +93,7 @@
- #include "notif.h"
- #include "waitid.h"
- #include "futex.h"
-+#include "epoll.h"
- #include "napi.h"
- #include "uring_cmd.h"
- #include "msg_ring.h"
-@@ -356,6 +357,9 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_HLIST_HEAD(&ctx->waitid_list);
- #ifdef CONFIG_FUTEX
- 	INIT_HLIST_HEAD(&ctx->futex_list);
-+#endif
-+#ifdef CONFIG_EPOLL
-+	INIT_HLIST_HEAD(&ctx->epoll_list);
- #endif
- 	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
- 	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
-@@ -3079,6 +3083,7 @@ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 	ret |= io_poll_remove_all(ctx, tctx, cancel_all);
- 	ret |= io_waitid_remove_all(ctx, tctx, cancel_all);
- 	ret |= io_futex_remove_all(ctx, tctx, cancel_all);
-+	ret |= io_epoll_wait_remove_all(ctx, tctx, cancel_all);
- 	ret |= io_uring_try_cancel_uring_cmd(ctx, tctx, cancel_all);
- 	mutex_unlock(&ctx->uring_lock);
- 	ret |= io_kill_timeouts(ctx, tctx, cancel_all);
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index e8baef4e5146..44553a657476 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -514,6 +514,17 @@ const struct io_issue_def io_issue_defs[] = {
- 		.async_size		= sizeof(struct io_async_msghdr),
- #else
- 		.prep			= io_eopnotsupp_prep,
-+#endif
-+	},
-+	[IORING_OP_EPOLL_WAIT] = {
-+		.needs_file		= 1,
-+		.unbound_nonreg_file	= 1,
-+		.audit_skip		= 1,
-+#if defined(CONFIG_EPOLL)
-+		.prep			= io_epoll_wait_prep,
-+		.issue			= io_epoll_wait,
-+#else
-+		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- };
-@@ -745,6 +756,9 @@ const struct io_cold_def io_cold_defs[] = {
- 	[IORING_OP_LISTEN] = {
- 		.name			= "LISTEN",
- 	},
-+	[IORING_OP_EPOLL_WAIT] = {
-+		.name			= "EPOLL_WAIT",
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
--- 
-2.47.2
+Can we maybe come up with a name that better reflects that
+intention?
 
+> +                                  const struct fs_parameter_spec *p,
+> +                                  struct fs_parameter *param,
+> +                                  struct fs_parse_result *result)
+>  {
+>         switch (param->type) {
+>         case fs_value_is_string:
+>                 return fs_param_is_string(log, p, param, result);
+>         case fs_value_is_file:
+> +               fallthrough;
+> +       case fs_value_is_raw_file:
+>                 result->uint_32 =3D param->dirfd;
+>                 if (result->uint_32 <=3D INT_MAX)
+>                         return 0;
+> @@ -328,7 +330,7 @@ int fs_param_is_file_or_string(struct p_log *log,
+>         }
+>         return fs_param_bad_value(log, param);
+>  }
+> -EXPORT_SYMBOL(fs_param_is_file_or_string);
+> +EXPORT_SYMBOL(fs_param_is_raw_file_or_string);
+>
+>  int fs_param_is_uid(struct p_log *log, const struct fs_parameter_spec *p=
+,
+>                     struct fs_parameter *param, struct fs_parse_result *r=
+esult)
+> diff --git a/fs/fsopen.c b/fs/fsopen.c
+> index 094a7f510edf..3b5fc9f1f774 100644
+> --- a/fs/fsopen.c
+> +++ b/fs/fsopen.c
+> @@ -451,11 +451,14 @@ SYSCALL_DEFINE5(fsconfig,
+>                 param.size =3D strlen(param.name->name);
+>                 break;
+>         case FSCONFIG_SET_FD:
+> -               param.type =3D fs_value_is_file;
+>                 ret =3D -EBADF;
+> -               param.file =3D fget(aux);
+> +               param.file =3D fget_raw(aux);
+>                 if (!param.file)
+>                         goto out_key;
+> +               if (param.file->f_mode & FMODE_PATH)
+> +                       param.type =3D fs_value_is_raw_file;
+> +               else
+> +                       param.type =3D fs_value_is_file;
+>                 param.dirfd =3D aux;
+
+Here it even shouts more to me that the distinction is not needed.
+
+If the parameter would be defined as
+fsparam_path_description("workdir",   Opt_workdir),
+and we set param.type =3D fs_value_is_path_fd;
+unconditional to f_mode & FMODE_PATH, because we
+do not care if fd is O_PATH or not for the purpose of this parameter
+we only care that the parameter *can* be resolved to a path
+and *how* to resolve it to a path, and the answer to those questions
+does not change depending on _mode & FMODE_PATH.
+
+I admit that that's a very long rant about a mostly meaningless nuance,
+and I was also not very involved in the development of the new mount API
+so there may be things about it that I don't understand, so feel free to
+dismiss this rant and add my Ack if you do not share my concerns.
+
+Thanks,
+Amir.
 
