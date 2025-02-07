@@ -1,79 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-41191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39798A2C2AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F905A2C2BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEDB61679EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:28:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B0C11695B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88611E1A23;
-	Fri,  7 Feb 2025 12:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDDmhUMD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE2D1E7C37;
+	Fri,  7 Feb 2025 12:31:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C24D1DE2D7;
-	Fri,  7 Feb 2025 12:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20C02417EF;
+	Fri,  7 Feb 2025 12:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738931295; cv=none; b=sRyL9jJZ23ORGm61wwSry1acLWToY2ffTY3dLcDC1jLv4ybgsDlfJCMVgaeUE1F4m/SfDhL2UiAdFjpat3GtawKt6Jmi5EbOn8VHThjenuenjR9RUAOr8WZdzR+bw6j4tl3GjWTE5LFMO0bxCfjwxAVjlT1ezHFkcSc9QNYNPMA=
+	t=1738931483; cv=none; b=E37vSV1OP2PYsdMli6iOZIgOmo1VhYHDUutrI8yM8/MwsQ05f6nMb1YUoF+X5366QZE8JiGI/hdB+SCXkNDhtcPjxUfwyAfTcD7jwX5lv6FuL/FIENWvFnusNiO7I5eAaHa5Ayj4Bz5udWUwjLy5NbleTbvFcGtDG5lJkVlgCAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738931295; c=relaxed/simple;
-	bh=C/25fu5Y3laZWIDEiUQQ5VSHuKxsDRpnd//tMK9bevE=;
+	s=arc-20240116; t=1738931483; c=relaxed/simple;
+	bh=ZSK3tTd78SFDrWY+mZUtcmMtccUuEPDk96bqa5dR+YU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=occgerfx8sqyoBzpYvCTQ8qW1HD/vTZghnZxg05RGuWFlWjrZDJQAVVCgiFCqAuSGmaUKGWL5ixtr62nzoI94JSZEgZMhQb8R5E6+b33lQ3F2HpKQxOy68jfbjmW+wK2PiZSS78BhimIqsU3t5XONURVZIOpq3QKcffZWyHYGb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDDmhUMD; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab78d9c5542so94529666b.1;
-        Fri, 07 Feb 2025 04:28:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738931291; x=1739536091; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ue8Cay3b+PMqZQNCdnsih7OpIuU+OFiiA1bevcVJOvk=;
-        b=bDDmhUMDpEQJKhkIJNsFE4r6cB6SbhYfqJ62Nq+BVo9c8+o6dJFrkHxBluxkIIx3Ji
-         iuOQOlfoDz5Jp3Kl2HjVEpGrE6bACH9XuOHk0t4qXLEzUCGZGQE0v1YWmWwBZL8yo+f2
-         xDxH4dUATmJ3I5YsHUugTWvS+u2ZKM+hnDUWorLqieEgf6T1a3HzejWro41BDxgC9/b+
-         qL6pK0ApYaWpYh5jbyrIJaMNaY57mM3NYIEvBVNlqhw/WN/tuZ5ifkkwfaHqLMYa8Wz+
-         F/PsAKeg9PabqOAZvkzQ9pjnYN1Asb7+8aZ6m7KDF7X8SC8DUJp+Kp8HeOo/LLVJAmqy
-         eILQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738931291; x=1739536091;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ue8Cay3b+PMqZQNCdnsih7OpIuU+OFiiA1bevcVJOvk=;
-        b=ftJGtL30pvk5bx7hFYmf3BGGWJ09hpIROYiuFNKSpeZL05VfP1gMWCZBR+Qt4a08qv
-         st9Tk2AHwaznNUW46ah+gAxX6P5PH+ptwoKUeX8ppPOY6pewa69LDDrhxMfAi6eYAnyH
-         1sMF5ai1HSlOpWahNUy6520kN6orNUOrY0XDRKCYEJDSeVz4I5zwFUyKTW2QcLy9LsC4
-         ZCPPwd+6XLPJFp2VRSj27+/1aKcU+/A582sxD+yCnf2tBiGE2PS6fMy8YdTzRtJszYfi
-         RNJ/NbFIekR4YzVgX4UI9Dk5JU6u4sZe+S7vRqUyQMSi7jVa3wyxYO/8xPjbGSutH2Wb
-         mhkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoXdpDVyGrR/6wf7nlC4IRhYSdzCCSjXxgPmM5XoVFD9ePHqhSqYwT0msTYs5lBIuKHLiZgCSonQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVAnsUY6hhb73JprdltAx5L8OZWl7lgGmJTP7OLMgw18NIoOMQ
-	mArAwpp9W0A1zOdYDugsqiCvs84ZIUNRalRThWIiGMcch5i3FsBK
-X-Gm-Gg: ASbGncurW9H2X0AB4AjaFYIyDthdutvppse8OFAAerFgCqMZk65Rg2fX3hAUzd2sjfR
-	R3uR3uuaOHNg8TkOdTxMtgzvzkRw+/lsfoem+M/orrD4+h8dnkN2rke0HUHgYgpJAM+CwMeibWk
-	rOVeRkav9Q4Ypy0TUNr5p8eueaFvfHcGea5QPehbHhXp9qDBqugLhcx4+MzoRyBlvg0KsVx94ps
-	Wu4SX+19gihlnN5fLOaGdKjJSGO9TiwGbGyBgSKR2enMcNSqbUlvZIM/iqsmeMwmHr9KWy4h4mM
-	NHbGgPIGbHrM9H5n1OsuSJdAu3vT8SH6M7urvj0X6uIBRzPi
-X-Google-Smtp-Source: AGHT+IHIycV3Pte0CZdLb2aiER5tBUv43VqX/z2zHizFZNE0QLcxB+cz7ftGF+AHMEdmh9iBQXop2w==
-X-Received: by 2002:a17:907:7e9b:b0:ab6:d6dd:2deb with SMTP id a640c23a62f3a-ab789a6790amr305346566b.8.1738931291415;
-        Fri, 07 Feb 2025 04:28:11 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:8e12])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7732e71e3sm256747466b.112.2025.02.07.04.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2025 04:28:10 -0800 (PST)
-Message-ID: <618af8fc-6a35-4d6e-9ac7-5e6c33514b44@gmail.com>
-Date: Fri, 7 Feb 2025 12:28:17 +0000
+	 In-Reply-To:Content-Type; b=b34d9sG/wYJZFvEdX0ypnxbjdI/k2afaFqWuWxtkxuUk1/qa6UBw3Nlr0QyagYxkNZdY8v/Ur0pOgi+jziAQA9rYAVm/pVHbfEU6ieWytczIMV+zjP7Jbv00+k4U+VPWqBHn4sgt1ti0TiUkURzDkWTYiAiNVwTWuJpXceN/LBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YqCxX6Pzbz4f3jXT;
+	Fri,  7 Feb 2025 20:30:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 12D4B1A1422;
+	Fri,  7 Feb 2025 20:31:18 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8V_aVnR2qtDA--.49471S3;
+	Fri, 07 Feb 2025 20:31:17 +0800 (CST)
+Message-ID: <5e4cfa32-83bc-4025-a5db-298b7c080037@huaweicloud.com>
+Date: Fri, 7 Feb 2025 20:31:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,61 +47,108 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] eventpoll: add ep_poll_queue() loop
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
-References: <20250204194814.393112-1-axboe@kernel.dk>
- <20250204194814.393112-6-axboe@kernel.dk>
+Subject: Re: [RFC PATCH v2 1/8] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP
+ to queue limits features
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-kernel@vger.kernel.org, hch@lst.de, tytso@mit.edu,
+ djwong@kernel.org, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com, Zhang Yi <yi.zhang@huawei.com>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
+References: <20250115114637.2705887-1-yi.zhang@huaweicloud.com>
+ <20250115114637.2705887-2-yi.zhang@huaweicloud.com>
+ <d0f8315b-e006-498a-b3e8-77542f352d40@oracle.com>
+ <dfd16793-f1fb-4ce6-8ad8-86de0818ff4e@huaweicloud.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250204194814.393112-6-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <dfd16793-f1fb-4ce6-8ad8-86de0818ff4e@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgD3Wl8V_aVnR2qtDA--.49471S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFWrKF18ZryfJryUAr4Utwb_yoW5WF4rpF
+	yvgFyDtr93tF1xAwn2vanFgFW5Zws3Aa4fGwn8tryj9rs8ZFySgFW0gFy5u347Wryfuw18
+	tFWYvr9xCa10yF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrs
+	qXDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2/4/25 19:46, Jens Axboe wrote:
-> If a wait_queue_entry is passed in to epoll_wait(), then utilize this
-> new helper for reaping events and/or adding to the epoll waitqueue
-> rather than calling the potentially sleeping ep_poll(). It works like
-> ep_poll(), except it doesn't block - it either returns the events that
-> are already available, or it adds the specified entry to the struct
-> eventpoll waitqueue to get a callback when events are triggered. It
-> returns -EIOCBQUEUED for that case.
+On 2025/2/7 20:22, Zhang Yi wrote:
+> On 2025/1/29 0:46, John Garry wrote:
+>> On 15/01/2025 11:46, Zhang Yi wrote:
+>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>
+>>> Currently, it's hard to know whether the storage device supports unmap
+>>> write zeroes. We cannot determine it only by checking if the disk
+>>> supports the write zeroes command, as for some HDDs that do submit
+>>> actual zeros to the disk media even if they claim to support the write
+>>> zeroes command, but that should be very slow.
+>>
+>> This second sentence is too long, such that your meaning is hard to understand.
+>>
+>>>
+>>> Therefor, add a new queue limit feature, BLK_FEAT_WRITE_ZEROES_UNMAP and
+>>
+>> Therefore?
+>>
+>>> the corresponding sysfs entry, to indicate whether the block device
+>>> explicitly supports the unmapped write zeroes command. Each device
+>>> driver should set this bit if it is certain that the attached disk
+>>> supports this command. 
+>>
+>> How can they be certain? You already wrote that some claim to support it, yet don't really. Well, I think that is what you meant.
+>>
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   fs/eventpoll.c | 37 ++++++++++++++++++++++++++++++++++++-
->   1 file changed, 36 insertions(+), 1 deletion(-)
+> Hi, John. thanks for your reply!
 > 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index ecaa5591f4be..a8be0c7110e4 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2032,6 +2032,39 @@ static int ep_try_send_events(struct eventpoll *ep,
->   	return res;
->   }
->   
-> +static int ep_poll_queue(struct eventpoll *ep,
-> +			 struct epoll_event __user *events, int maxevents,
-> +			 struct wait_queue_entry *wait)
-> +{
-> +	int res, eavail;
-> +
-> +	/* See ep_poll() for commentary */
-> +	eavail = ep_events_available(ep);
-> +	while (1) {
-> +		if (eavail) {
-> +			res = ep_try_send_events(ep, events, maxevents);
-> +			if (res)
-> +				return res;
-> +		}
-> +
-> +		eavail = ep_busy_loop(ep, true);
+> Sorry for the late and not make it clear enough earlier. Currently, there
+> are four situations of write zeroes command (aka REQ_OP_WRITE_ZEROES)
+> supported by various disks and backend storage devices.
+> 
+> A. Devices that do not support the write zeroes command
+>    These devices have bdev_limits(bdev)->max_write_zeroes_sectors set to
+>    zero.
+> B. Devices that support the write zeroes command
+>    These devices have bdev_limits(bdev)->max_write_zeroes_sectors set to a
+>    non-zero value. They can be further categorized into three
+>    sub-situations:
+> B.1. Devices that write physical zeroes to the media
+>      These devices perform the write zeroes operation by physically writing
+>      zeroes to the storage media, which can be very slow (e.g., HDDs).
+> B.2. Devices that support unmap write zeroes
+>      These devices can offload the write zeroes operation by unmapping the
+>      logical blocks, effectively putting them into a deallocated state
+>      (e.g., SSDs). This operation is typically very fast, allowing
+>      filesystems to use this command to quickly create zeroed files. NVMe
+>      and SCSI disk drivers already support this and can query the attached
+>      disks to determine whether they support unmap write zeroes (please see
+>      patches 2 and 3 for details).
+> B.3. The implementation of write zeroes on disks are unknown
+>      This category includes non-standard disks and some network storage
+>      devices where the exact implementation of the write zeroes command is
+>      unclear.
+> 
+> Currently, users can only distinguish A and B through querying
+> 
+>    /sys/block/<disk>/queue/write_zeroes_unmap
+                             ^^^^^^^^^^^^^^^^^^
+Oh, sorry, it should be 'write_zeroes_max_bytes'
 
-I have doubts we want to busy loop here even if it's just one iteration /
-nonblockinf. And there is already napi polling support in io_uring done
-from the right for io_uring users spot.
+     /sys/block/<disk>/queue/write_zeroes_max_bytes
 
--- 
-Pavel Begunkov
+Thanks,
+Yi.
+
 
 
