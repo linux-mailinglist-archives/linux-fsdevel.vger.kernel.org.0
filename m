@@ -1,207 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-41193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F359A2C2DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:38:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1430AA2C359
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 14:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6867F188A99B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 110D53AA09D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEA51E00BF;
-	Fri,  7 Feb 2025 12:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEFF1EEA47;
+	Fri,  7 Feb 2025 13:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkVn+wBk"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YOq4YYUS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KTXi4u2G";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YOq4YYUS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KTXi4u2G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6588A33EC;
-	Fri,  7 Feb 2025 12:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662741D6DBF;
+	Fri,  7 Feb 2025 13:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738931924; cv=none; b=rdWndBRM5HyKKa9KcYD0VFGcv9kmxzJ1GCXrISz9ZIoF7XrqD4aXJacMaPbE1rIPvD/AgfzEj+3x1w7iu25rk6Ck3/j7ICdX0styZOvJ6xxWVqU0GcQtY0wdaTVyTGsFXtCVXq6Sk96zDhVvFibDIEJCT6zrJpdjUgd7LGR5hE8=
+	t=1738934121; cv=none; b=bh1tHY5DQSudzp0iEycf54JakiXO+/M/FO5NXaKpMlS2jKiUJ8lJZmDdoVTHEYzHbwbC+sTKN3BNCSFQbtTHvAiKOwervwAYY/+lR02Pc/ml6CyGkWw5kYUghc3gU8OqnVHr9tCXxiivn0QDrLvdgr5dO3S9hDas4vazMDCRUbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738931924; c=relaxed/simple;
-	bh=MRbTbPFwH9hUAxmyGetO9VAyItOPs/KNcYoOmzm5J/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Od/12cHmNNh2VBTz/IqBELY5NX/jlYUMsJ2U26Yq5599ngFpr9AGl1ETAHjc2fJpBhL8SvO7KYP3AQ+bgy54K7R+Th3oNoshyfyWUF/FzuLDh3stW0mnTpXGUGfi0CjTLz4JinXsrBVRNtHxmaEJ1CmsTeYiYv/+1l6/R1bvtrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkVn+wBk; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa66c1345caso40280066b.3;
-        Fri, 07 Feb 2025 04:38:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738931920; x=1739536720; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NRXFECRHhAWPRIcdZAWNt7kyqy4jeSNvv2ZN6DIzB1Q=;
-        b=LkVn+wBkEk8tOqdnTeTZcvjPITaw44u4BfsaK0BKAuIfKWXoQ94Z3VFRstb7JC7W3E
-         6dIWxGOjQdDNhJU47pe5w6B1OtwC6HBzUqs1u0IIqCzyIXyVp782LtFaj8ujic32IaEm
-         sjf5pE2paLhyE4MGZ+EN5bOACQcZlylfN64h/wIgtd7qLngYtEhA2j/ghObaKWuumTnq
-         B8uYqD0ouGbAdkUGjIiLxwsEZJG476woOaWl2C2dXerDjwHgaPlBqB5kWF72Tm20vmct
-         5w3BBrMBH82RvQSYpB3bZrIGwha2e0cl+9hstVgar+xYovRjAfiEHaRLEiqobR/DpDgL
-         lPpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738931920; x=1739536720;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRXFECRHhAWPRIcdZAWNt7kyqy4jeSNvv2ZN6DIzB1Q=;
-        b=UwvSBi//C+jOuXqqX5PKutucmh7SRcyGOQiVSeTcSLO/BwcKB9ndWCmEIV8I4ZpBZT
-         LsMGlrtLX+AkGRkXOqPAvjAjRDLrUG82DwxOPSPVl0pgWeFVGWhqINl0ltc3cfZcaY4r
-         x1xObiJtzUYPJdfMok6Wvg11HNjOo43vQiUXU35oVRgdel1F9mSv/o63SWE9MZCiZXB8
-         5yXTklNhxMSlvceXbllhOj1UeJYcg7nRzQ8nzWybiTQYI/JXf9ph7hZePbcbJL75J8Z+
-         MGAcp6IwgEGjXnD6V3TeqDg3meeVB68nJLqsM56++zjgF0rlxFohZ6T0pJT6wwOwzafi
-         8agQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkObTIxPh4KYh87CgMBvpmNIETMHHaOM+sPWMTR9mJthZsbsqyBKM0+e7Vb8HlSBUXR+XibOBEzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQSigTM3A37sQkwpa6uaH6xYv3kWSeD+aY0Pfc43rVJoHV8DdR
-	riVnFHHp/FOZKMmjzm2Prxb9IV4OTZYbp0rMGBPlPe22pNGNk43s
-X-Gm-Gg: ASbGncuUfuB+Fmw8g+mcACqh8d0BMx/H85zgnIEFlz9dedwWQDM7TvG6JRrDtmwQV3d
-	AUvPYbC+8K270bA4sU39Jy1YwUwdqGrBAQp+bStHovKHlUvar2ePO1oQok0h0+/WZqTeN/LTkQp
-	2Yucdj1LBX5P5e4nbJBFXUGEQ1AhEOVek3D59O+oIPDs7vVir7O4zFjnkvDH4/fPRx7lGPAwj0U
-	Zg0f12kp0QqIRP7pcKRmW+wmh+TZwL6LnQRButuPAqfnE4OAm6TjCWq3SxJhVTwMM6zxyzItw8M
-	ZXsZWH8iqg9/FgwgLI+AQP+JAvQURImhxDAR755Pk0zQ9xO2
-X-Google-Smtp-Source: AGHT+IEvkzdc4DBthu3R+FesJexfkkHpD7pub6V0X3wRA+RwWxB26NzVoiPTLkbYv2hECl8cvWYadQ==
-X-Received: by 2002:a17:907:6d1a:b0:ab6:f68c:746e with SMTP id a640c23a62f3a-ab789c3dcafmr336079466b.41.1738931920170;
-        Fri, 07 Feb 2025 04:38:40 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:8e12])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772fdb6bcsm260418366b.86.2025.02.07.04.38.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2025 04:38:39 -0800 (PST)
-Message-ID: <a48b35ed-b509-40a3-ad00-4834872bb39c@gmail.com>
-Date: Fri, 7 Feb 2025 12:38:45 +0000
+	s=arc-20240116; t=1738934121; c=relaxed/simple;
+	bh=T6xnxMo+3E7IYT9I23sOjqoyFjnzkGTfohW3PKg5IJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oT3MvI+kLPHqyisw6ynmsa6PtSxgXE57BFiIds51tIjIof4VcCAooe7VAvL91E8GnmlD1trTADc9O8hVuBIgu/Mw9DJyvFnfNb9qEFBmMVo0XJ8y6uyErzdsn/K6x/AIfUr+HIUO4F+aD3YaVKmnbEU8vradOWVNTSv5uC9loNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YOq4YYUS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KTXi4u2G; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YOq4YYUS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KTXi4u2G; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 791DE1F443;
+	Fri,  7 Feb 2025 13:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738934117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzYpOfmS3fb9ohYmxjlyO8G3DqMjZBqdmpu1R8Sh72c=;
+	b=YOq4YYUS1cITWiZDN1ynTctOgYoBYL3f+khHUZit0NCU+vDhLJ8jwpINxVtMB0cwdAJC90
+	8YljGf/Z4S/dB/KafsFV0tYRGVv6yjf6hrdMHNeVUoU+g1ji9Q+WNtQ9/xVdvfv0Z3WM9z
+	CtPMaFiuXyTcgC5gRgdsUzlh7at3ezA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738934117;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzYpOfmS3fb9ohYmxjlyO8G3DqMjZBqdmpu1R8Sh72c=;
+	b=KTXi4u2GP1nDB0u5l2wVtq/xBi8bCbcUdxfwtiPwZUu0my6oVaHIy5AZKIdkFW8dpY8FGa
+	XL25fmE0rhbn4OCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YOq4YYUS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=KTXi4u2G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738934117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzYpOfmS3fb9ohYmxjlyO8G3DqMjZBqdmpu1R8Sh72c=;
+	b=YOq4YYUS1cITWiZDN1ynTctOgYoBYL3f+khHUZit0NCU+vDhLJ8jwpINxVtMB0cwdAJC90
+	8YljGf/Z4S/dB/KafsFV0tYRGVv6yjf6hrdMHNeVUoU+g1ji9Q+WNtQ9/xVdvfv0Z3WM9z
+	CtPMaFiuXyTcgC5gRgdsUzlh7at3ezA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738934117;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzYpOfmS3fb9ohYmxjlyO8G3DqMjZBqdmpu1R8Sh72c=;
+	b=KTXi4u2GP1nDB0u5l2wVtq/xBi8bCbcUdxfwtiPwZUu0my6oVaHIy5AZKIdkFW8dpY8FGa
+	XL25fmE0rhbn4OCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 635BA13694;
+	Fri,  7 Feb 2025 13:15:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6Gg9GGUHpmdkJQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 07 Feb 2025 13:15:17 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CA30FA28E7; Fri,  7 Feb 2025 14:15:01 +0100 (CET)
+Date: Fri, 7 Feb 2025 14:15:01 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] vfs: add initial support for CONFIG_VFS_DEBUG
+Message-ID: <k5js2kdu3yufjjbypiwoy5abvmbnmr6ffkkybjs7sdvw4nwipf@za2flx7oe35i>
+References: <20250206170307.451403-1-mjguzik@gmail.com>
+ <20250206170307.451403-2-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/11] io_uring/epoll: add support for
- IORING_OP_EPOLL_WAIT
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
-References: <20250204194814.393112-1-axboe@kernel.dk>
- <20250204194814.393112-10-axboe@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250204194814.393112-10-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206170307.451403-2-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: 791DE1F443
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On 2/4/25 19:46, Jens Axboe wrote:
-> For existing epoll event loops that can't fully convert to io_uring,
-> the used approach is usually to add the io_uring fd to the epoll
-> instance and use epoll_wait() to wait on both "legacy" and io_uring
-> events. While this work, it isn't optimal as:
+On Thu 06-02-25 18:03:05, Mateusz Guzik wrote:
+> Small collection of macros taken from mmdebug.h
 > 
-> 1) epoll_wait() is pretty limited in what it can do. It does not support
->     partial reaping of events, or waiting on a batch of events.
-> 
-> 2) When an io_uring ring is added to an epoll instance, it activates the
->     io_uring "I'm being polled" logic which slows things down.
-> 
-> Rather than use this approach, with EPOLL_WAIT support added to io_uring,
-> event loops can use the normal io_uring wait logic for everything, as
-> long as an epoll wait request has been armed with io_uring.
-> 
-> Note that IORING_OP_EPOLL_WAIT does NOT take a timeout value, as this
-> is an async request. Waiting on io_uring events in general has various
-> timeout parameters, and those are the ones that should be used when
-> waiting on any kind of request. If events are immediately available for
-> reaping, then This opcode will return those immediately. If none are
-> available, then it will post an async completion when they become
-> available.
-> 
-> cqe->res will contain either an error code (< 0 value) for a malformed
-> request, invalid epoll instance, etc. It will return a positive result
-> indicating how many events were reaped.
-> 
-> IORING_OP_EPOLL_WAIT requests may be canceled using the normal io_uring
-> cancelation infrastructure. The poll logic for managing ownership is
-> adopted to guard the epoll side too.
-...
-> diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-> index 7848d9cc073d..5a47f0cce647 100644
-> --- a/io_uring/epoll.c
-> +++ b/io_uring/epoll.c
-...
-> +static void io_epoll_retry(struct io_kiocb *req, struct io_tw_state *ts)
-> +{
-> +	int v;
-> +
-> +	do {
-> +		v = atomic_read(&req->poll_refs);
-> +		if (unlikely(v != 1)) {
-> +			if (WARN_ON_ONCE(!(v & IO_POLL_REF_MASK)))
-> +				return;
-> +			if (v & IO_POLL_CANCEL_FLAG) {
-> +				__io_epoll_cancel(req);
-> +				return;
-> +			}
-> +			if (v & IO_POLL_FINISH_FLAG)
-> +				return;
-> +		}
-> +		v &= IO_POLL_REF_MASK;
-> +	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-I haven't looked deep into the set, but this loop looks very
-suspicious. The entire purpose of the twin loop in poll.c is
-not to lose events while doing processing, which is why the
-processing happens before the decrement...
+For start this looks good! Feel free to add:
 
-> +	io_req_task_submit(req, ts);
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Maybe the issue is supposed to handle that, but this one is
-not allowed unless you fully unhash all the polling. Once you
-dropped refs the poll wait entry feels free to claim the request,
-and, for example, queue a task work, and io_req_task_submit()
-would decide to queue it as well. It's likely not the only
-race that can happen.
+BTW:
 
+> +/*
+> + * TODO: add a proper inode dumping routine, this is a stub to get debug off the ground
+> + */
+> +static inline void dump_inode(struct inode *inode, const char *reason) {
+> +	pr_crit("%s failed for inode %px", reason, inode);
 > +}
-> +
-> +static int io_epoll_execute(struct io_kiocb *req)
-> +{
-> +	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-> +
-> +	list_del_init_careful(&iew->wait.entry);
-> +	if (io_poll_get_ownership(req)) {
-> +		req->io_task_work.func = io_epoll_retry;
-> +		io_req_task_work_add(req);
-> +	}
-> +
-> +	return 1;
-> +}
-...
-> +int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +	int ret;
-> +
-> +	io_ring_submit_lock(ctx, issue_flags);
-> +
-> +	ret = epoll_wait(req->file, iew->events, iew->maxevents, NULL, &iew->wait);
-> +	if (ret == -EIOCBQUEUED) {
-> +		if (hlist_unhashed(&req->hash_node))
-> +			hlist_add_head(&req->hash_node, &ctx->epoll_list);
-> +		io_ring_submit_unlock(ctx, issue_flags);
-> +		return IOU_ISSUE_SKIP_COMPLETE;
-> +	} else if (ret < 0) {
-> +		req_set_fail(req);
-> +	}
-> +	hlist_del_init(&req->hash_node);
-> +	io_ring_submit_unlock(ctx, issue_flags);
-> +	io_req_set_res(req, ret, 0);
-> +	return IOU_OK;
-> +}
-...
+
+fs/inode.c:dump_mapping() already has quite a bit of what you'd want here
+so just refactoring dump_mapping() so it can be used in the new asserts
+would get you 90% there I'd think.
+
+								Honza
+
 -- 
-Pavel Begunkov
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
