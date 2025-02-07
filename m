@@ -1,158 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-41226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46512A2C7CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 16:50:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3AFA2C7D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 16:51:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775813ABE6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 15:49:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C45037A5083
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 15:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE282500DC;
-	Fri,  7 Feb 2025 15:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AD323C8A6;
+	Fri,  7 Feb 2025 15:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pj4WD1z1"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNdXuABb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7g3XQoA6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNdXuABb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7g3XQoA6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6F12500C5;
-	Fri,  7 Feb 2025 15:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D4D23C8A5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Feb 2025 15:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738943219; cv=none; b=ELgrY5yzNHz2NwluJ9dcYZ2yTLDV2nBxPkt5Lghg0+KRF+Jhfp9vdIdRjNvDC0SCv26vDPMRFuAJVf1EGM59F4vRIKF4UpSJQOeXeaIzG+AbTj2Rc2cxDwzm1etF6UI7I1cZRcMLdWMulR7lMxokQ4v9UFVbv/ue9mCYSOTiHXs=
+	t=1738943461; cv=none; b=aaP9/3zZIhEF/axduHe1g7T7Wy81IpYXBylNkLe+c1MzlXOeAHVwXFVUW+5VNcAvqbM1OSGBJPlmYLxbGYuhyNHgHpCoK6i9cxM0cqKVL/XKeSldn3UUGo7F0aTal809EWdWlfAf3u2Bls5rr828B5AWbaW1fU0NcDFeOaQqRwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738943219; c=relaxed/simple;
-	bh=K9c0rt0XWDv9lF7rhjy20/wBTcF2vjxT8MhbMHuq5m4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=COKskGSIEBBCn2kihuWbC6Hy3D0wNUoF/AKXSAIFoBPYBViV6OjeyQMJfC2ew6tcNAKB0UOGn4yr/0JNCtjQf1XT4qVJnMrxOX8+Cqc4VnkQTzNBU7eNUFfb1/ZOh8lVB/vgo2GjLxPYQZ/MR88z/UDGP6aQxyNK0+bQPc46e4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pj4WD1z1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F76AC4CEDF;
-	Fri,  7 Feb 2025 15:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738943218;
-	bh=K9c0rt0XWDv9lF7rhjy20/wBTcF2vjxT8MhbMHuq5m4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pj4WD1z1/6z8mdA4mWEG1h4P/B0axJvNw2WZedEeeK48QAcjNMgsFwFbP4xUACwDM
-	 0M41g4lAdQIHEjzn0DlcA8q5a7DNcx067KWePBCQ3uVsSHYKuv7U8z1XyioDupxmGi
-	 4bXm7Cj12LBF2E6gbxEYhq0fpv9q52Ua9G/5YaBjg9P5GlC6028Eb9R4+R+MJ/xbPQ
-	 xNDwxs5f2DExt97iNA7zIFUG0K4uIl8moBAvBmFNvFhNwEL7uXM+j28YpFix3x09VJ
-	 /GNGitpVwj/i2VLcITdJNpMHAxz6NkolwU4ik0+3he/r4vhV55ywfAa/XOGELCFYpd
-	 78+h9bcv2UnXA==
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 07 Feb 2025 16:46:40 +0100
-Subject: [PATCH 2/2] selftests/overlayfs: test specifying layers as O_PATH
- file descriptors
+	s=arc-20240116; t=1738943461; c=relaxed/simple;
+	bh=WB7CajrSvz+5c3QtqgJUW6zOoqGOw0YJJy8daKxqnUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HFrZqGeI2MhlKYDaJPdQv72h/gXVAQDDthlAouzwz7Ok++WHIs8HoA9n1k06tzACJAD7/hStlwIhqf8ixCbhjxI8ttjXdEM2F80sm9y4bjh4pCgK1aintBI4iz1fM1vvcHYbpjtGkV7F8YTK/lyQNeVIUIOuZcLAC0XkcxdWxis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNdXuABb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7g3XQoA6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNdXuABb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7g3XQoA6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2091D21133;
+	Fri,  7 Feb 2025 15:50:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738943457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sSB4KGjhn/L4uRWgZq/yNklplIyybujERpUfnBDMl4=;
+	b=lNdXuABb7Gf1ad+Ah7MOxjrvWTb+2bwkUGY6wrJMT993zgYdGwCs3Ox5BhC7TVdmNALHYR
+	0F/GOvi1mp+IlTcMaitQlAW+1rDub3/VNSpvepWeTbtKErKNlCrtWccgYw1Uist+s8AjTV
+	dNEBcxysZo5F2AHEIWEwxICE676LAAs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738943457;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sSB4KGjhn/L4uRWgZq/yNklplIyybujERpUfnBDMl4=;
+	b=7g3XQoA6m3aSnf1ng3UB//WWthNkhZjnZvP6rMbzvTSzy6biFTI9o6SfjzGmS+To/lI/Q9
+	zSjYzsehFEOrGvCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lNdXuABb;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7g3XQoA6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1738943457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sSB4KGjhn/L4uRWgZq/yNklplIyybujERpUfnBDMl4=;
+	b=lNdXuABb7Gf1ad+Ah7MOxjrvWTb+2bwkUGY6wrJMT993zgYdGwCs3Ox5BhC7TVdmNALHYR
+	0F/GOvi1mp+IlTcMaitQlAW+1rDub3/VNSpvepWeTbtKErKNlCrtWccgYw1Uist+s8AjTV
+	dNEBcxysZo5F2AHEIWEwxICE676LAAs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1738943457;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sSB4KGjhn/L4uRWgZq/yNklplIyybujERpUfnBDMl4=;
+	b=7g3XQoA6m3aSnf1ng3UB//WWthNkhZjnZvP6rMbzvTSzy6biFTI9o6SfjzGmS+To/lI/Q9
+	zSjYzsehFEOrGvCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10E5413694;
+	Fri,  7 Feb 2025 15:50:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YKwYBOErpmf+UwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 07 Feb 2025 15:50:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 804CFA28EB; Fri,  7 Feb 2025 16:50:52 +0100 (CET)
+Date: Fri, 7 Feb 2025 16:50:52 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Amir Goldstein <amir73il@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: don't needlessly acquire f_lock
+Message-ID: <hn5go2srp6csjkckh3sgru7moukgsa3glsvc6bwd5leabzamw6@osxrfpjw5wqq>
+References: <20250207-daten-mahlzeit-99d2079864fb@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250207-work-overlayfs-v1-2-611976e73373@kernel.org>
-References: <20250207-work-overlayfs-v1-0-611976e73373@kernel.org>
-In-Reply-To: <20250207-work-overlayfs-v1-0-611976e73373@kernel.org>
-To: linux-unionfs@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-d23a9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2978; i=brauner@kernel.org;
- h=from:subject:message-id; bh=K9c0rt0XWDv9lF7rhjy20/wBTcF2vjxT8MhbMHuq5m4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQv03rz4/mFze+u7MhMeC2i/r6hJMNfcUb87zn5bCGT5
- 8dc/vvFsaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiTaEMf2W2L9JUY92vfVni
- 8BJROefHSVf7JdlTsj4LS528kbAgToaR4V7zk2t/G3Ye391aFPGwleO+h1LBeutqrjj3Cu8ik7e
- /+AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250207-daten-mahlzeit-99d2079864fb@brauner>
+X-Rspamd-Queue-Id: 2091D21133
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,zeniv.linux.org.uk,gmail.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Verify that userspace can specify layers via O_PATH file descriptors.
+On Fri 07-02-25 15:10:33, Christian Brauner wrote:
+> Before 2011 there was no meaningful synchronization between
+> read/readdir/write/seek. Only in commit
+> ef3d0fd27e90 ("vfs: do (nearly) lockless generic_file_llseek")
+> synchronization was added for SEEK_CUR by taking f_lock around
+> vfs_setpos().
+> 
+> Then in 2014 full synchronization between read/readdir/write/seek was
+> added in commit 9c225f2655e3 ("vfs: atomic f_pos accesses as per POSIX")
+> by introducing f_pos_lock for regular files with FMODE_ATOMIC_POS and
+> for directories. At that point taking f_lock became unnecessary for such
+> files.
+> 
+> So only acquire f_lock for SEEK_CUR if this isn't a file that would have
+> acquired f_pos_lock if necessary.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../filesystems/overlayfs/set_layers_via_fds.c     | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+...
 
-diff --git a/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-index 1d0ae785a667..e693e4102d22 100644
---- a/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-+++ b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-@@ -214,4 +214,69 @@ TEST_F(set_layers_via_fds, set_500_layers_via_fds)
- 	ASSERT_EQ(close(fd_overlay), 0);
- }
- 
-+TEST_F(set_layers_via_fds, set_500_layers_via_opath_fds)
-+{
-+	int fd_context, fd_tmpfs, fd_overlay, fd_work, fd_upper, fd_lower;
-+	int layer_fds[500] = { [0 ... 499] = -EBADF };
-+
-+	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-+	ASSERT_EQ(sys_mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0);
-+
-+	fd_context = sys_fsopen("tmpfs", 0);
-+	ASSERT_GE(fd_context, 0);
-+
-+	ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NULL, 0), 0);
-+	fd_tmpfs = sys_fsmount(fd_context, 0, 0);
-+	ASSERT_GE(fd_tmpfs, 0);
-+	ASSERT_EQ(close(fd_context), 0);
-+
-+	for (int i = 0; i < ARRAY_SIZE(layer_fds); i++) {
-+		char path[100];
-+
-+		sprintf(path, "l%d", i);
-+		ASSERT_EQ(mkdirat(fd_tmpfs, path, 0755), 0);
-+		layer_fds[i] = openat(fd_tmpfs, path, O_DIRECTORY | O_PATH);
-+		ASSERT_GE(layer_fds[i], 0);
-+	}
-+
-+	ASSERT_EQ(mkdirat(fd_tmpfs, "w", 0755), 0);
-+	fd_work = openat(fd_tmpfs, "w", O_DIRECTORY | O_PATH);
-+	ASSERT_GE(fd_work, 0);
-+
-+	ASSERT_EQ(mkdirat(fd_tmpfs, "u", 0755), 0);
-+	fd_upper = openat(fd_tmpfs, "u", O_DIRECTORY | O_PATH);
-+	ASSERT_GE(fd_upper, 0);
-+
-+	ASSERT_EQ(mkdirat(fd_tmpfs, "l501", 0755), 0);
-+	fd_lower = openat(fd_tmpfs, "l501", O_DIRECTORY | O_PATH);
-+	ASSERT_GE(fd_lower, 0);
-+
-+	ASSERT_EQ(sys_move_mount(fd_tmpfs, "", -EBADF, "/tmp", MOVE_MOUNT_F_EMPTY_PATH), 0);
-+	ASSERT_EQ(close(fd_tmpfs), 0);
-+
-+	fd_context = sys_fsopen("overlay", 0);
-+	ASSERT_GE(fd_context, 0);
-+
-+	ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "workdir",   NULL, fd_work), 0);
-+	ASSERT_EQ(close(fd_work), 0);
-+
-+	ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "upperdir",  NULL, fd_upper), 0);
-+	ASSERT_EQ(close(fd_upper), 0);
-+
-+	for (int i = 0; i < ARRAY_SIZE(layer_fds); i++) {
-+		ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", NULL, layer_fds[i]), 0);
-+		ASSERT_EQ(close(layer_fds[i]), 0);
-+	}
-+
-+	ASSERT_NE(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", NULL, fd_lower), 0);
-+	ASSERT_EQ(close(fd_lower), 0);
-+
-+	ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NULL, 0), 0);
-+
-+	fd_overlay = sys_fsmount(fd_context, 0, 0);
-+	ASSERT_GE(fd_overlay, 0);
-+	ASSERT_EQ(close(fd_context), 0);
-+	ASSERT_EQ(close(fd_overlay), 0);
-+}
-+
- TEST_HARNESS_MAIN
+>  	if (whence == SEEK_CUR) {
+> +		bool locked;
+> +
+>  		/*
+> -		 * f_lock protects against read/modify/write race with
+> -		 * other SEEK_CURs. Note that parallel writes and reads
+> -		 * behave like SEEK_SET.
+> +		 * If the file requires locking via f_pos_lock we know
+> +		 * that mutual exclusion for SEEK_CUR on the same file
+> +		 * is guaranteed. If the file isn't locked, we take
+> +		 * f_lock to protect against f_pos races with other
+> +		 * SEEK_CURs.
+>  		 */
+> -		guard(spinlock)(&file->f_lock);
+> -		return vfs_setpos(file, file->f_pos + offset, maxsize);
+> +		locked = (file->f_mode & FMODE_ATOMIC_POS) ||
+> +			 file->f_op->iterate_shared;
 
+As far as I understand the rationale this should match to
+file_needs_f_pos_lock() (or it can possibly be weaker) but it isn't obvious
+to me that's the case. After thinking about possibilities, I could convince
+myself that what you suggest is indeed safe but the condition being in two
+completely independent places and leading to subtle bugs if it gets out of
+sync seems a bit fragile to me.
+
+								Honza
+
+> +		if (!locked)
+> +			spin_lock(&file->f_lock);
+> +		offset = vfs_setpos(file, file->f_pos + offset, maxsize);
+> +		if (!locked)
+> +			spin_unlock(&file->f_lock);
+> +		return offset;
+>  	}
+>  
+>  	return vfs_setpos(file, offset, maxsize);
+> -- 
+> 2.47.2
+> 
 -- 
-2.47.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
