@@ -1,179 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-41223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5148CA2C740
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 16:32:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D409A2C7C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 16:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52DF3A3970
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 15:31:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 656DE3A5462
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 15:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959BE238D50;
-	Fri,  7 Feb 2025 15:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAC9248165;
+	Fri,  7 Feb 2025 15:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="a6oVpXPr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d26Y/7h5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB235238D30;
-	Fri,  7 Feb 2025 15:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAE02475E1;
+	Fri,  7 Feb 2025 15:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738942310; cv=none; b=B6ke8GOrNyF+ggPCZp0mnuS4uteitzrXzQhe3fvi87HZaPelhiQhSolMRXSKT/lyaMCW2RjkzhYMn0sn8ALI4vKZTbyJfWERzJdGaOM94E++XCvSSZIPmpSmxniedhCrGzke1alkI8g7oq9m5kWGmwaXvGUUfdll4Qt34vCorw8=
+	t=1738943215; cv=none; b=t4QCtPThmt9yCzWzwG48KEdr7K9FonliNf1Km14ZZ0lhldSKb6mNXyQjskI6WSfhNfNkt4viUEStEI++fYBlQXWWMBIPJ3wsfHgiEqEr0+AaM+IHhNoGEXAQBQlVcTI8qcSInx9KuFOnI/G2lssClpP6Kgc7wQRZyKYrf+2Taac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738942310; c=relaxed/simple;
-	bh=ymXvOQPwdm5toj3iobwpCZe0PgIJsArx2RWLz1/0jNU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YbgHB7V56/YIf+jNZAc1WGEcGMTDUHDXd6h3eWHnemRZQEQuUEnnjYRlK5QUJ+SRT8x+GbbRKI8czFJzoJTakoQAh9bm2A+80rKr2Tc4U7uyUhvupV1jMnIJyfneVQ7W55FiVD1/tvu9RMcfzh05yiJ0LkCPnA9p7HpMRdluQpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=a6oVpXPr; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=vI3tIMBcaHOOYPCe7qgECQUuYfisDEy/4We+vIauTvw=; b=a6oVpXPrGOMCJ9UpjU7C200xwB
-	E5kBdQZIVrU3AMcGpmkcj43ggqvFiUN4SxAeI3frskLKQfQB4y324g0xDaQ3Ik1oEJOdS4j5J29c0
-	VKereIrph3NjoWoeT9NrLiWA+H1giISKWSfN4gJOWeTC+CWLHRXqOOrpR/lvf5q/jXRAsB43dfWjR
-	+sjpcfYKhCyPU4g+1lwK8aHCMB37NWq0fddfbs4HwasRWKFnfFkympQTcNlciSE/gy9+0Kmzy76rN
-	gtx5yAwjavQs5Hr5Av6YmVTCy/By7JilXD9+/aJh5LvEMQM4cIQqNxRpj/Qxa4mLflZZM27dMM2n8
-	rWZS278w==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tgQKN-005u9y-PH; Fri, 07 Feb 2025 16:31:41 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
-  Dave Chinner <david@fromorbit.com>
-Subject: Re: [RFC PATCH] fuse: add new function to invalidate cache for all
- inodes
-In-Reply-To: <d3ee362c-accf-4ad9-99a6-5834b1c0b438@bsbernd.com> (Bernd
-	Schubert's message of "Fri, 7 Feb 2025 15:29:13 +0100")
-References: <20250115163253.8402-1-luis@igalia.com>
-	<d3ee362c-accf-4ad9-99a6-5834b1c0b438@bsbernd.com>
-Date: Fri, 07 Feb 2025 15:31:34 +0000
-Message-ID: <878qqhpy95.fsf@igalia.com>
+	s=arc-20240116; t=1738943215; c=relaxed/simple;
+	bh=D6xsa/FglS4y0cvi4IgquLrXsqtSCsFowvEOW7/SjmU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CSIL1myFGOuI2wD0jaKDgDGyR5/cJxQrxbqx3/ExRgkXyvkPuQFWp8u6JD5iqxl40EdLesywVKYdh/GRO+paEpFJkcpWn+za/1WiUCJuHWWIt6meUr9sy6jxCAmgQZC9G2/uE8u+jdrFmZgUpXlzLwd0WQHBcjr0RwNP+U2i3rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d26Y/7h5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E153C4CEE2;
+	Fri,  7 Feb 2025 15:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738943214;
+	bh=D6xsa/FglS4y0cvi4IgquLrXsqtSCsFowvEOW7/SjmU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=d26Y/7h5/ZE5czBigq/TLnLOvOi53dFrkgZqOmJBAEkZJd/G8bXvsfw3nyqD/SF/q
+	 CrpYb+csl8caLryr02aRUzkFl0BHRJNK2LQKMLlr8UUqinzrIIH9yrIS6GJF7o9knf
+	 EmGYgGa//t1zNuELjSrR5lAj0pC8Qxc5zgefo8XQHNJmTGItOiMCgSOV4TcI1WhWLZ
+	 Cvm62XJ9lz1rUhkbEphB3UXmF+2JcItem1/OCYUbrubRwJFGTk3dBKET4C8+MEE4Rq
+	 AbHapjuX6lJY91TEbKKwxk5NfdX5TBH7xcZ6nYvRjpW2AHamrDRV77CGO2U5AdTZsP
+	 1oF4uTLRgzqfg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/2] ovl: allow O_PATH file descriptor when specifying
+ layers
+Date: Fri, 07 Feb 2025 16:46:38 +0100
+Message-Id: <20250207-work-overlayfs-v1-0-611976e73373@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN4qpmcC/x3MTQ7CIBBA4as0s3YaQFp/rmJcAB0sUcHMGNQ0v
+ bvo8lu8t4AQJxI4dgsw1SSp5Aa96SDMLl8I09QMRplBGbXDV+Erlkp8c58ouN1Hf9DDONlgoUU
+ Pppje/+Hp3OydEHp2Ocy/zd3Jk7ivY68tctCwrl/6T0KOgwAAAA==
+X-Change-ID: 20250207-work-overlayfs-38fb9156d4c4
+To: linux-unionfs@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-d23a9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1159; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=D6xsa/FglS4y0cvi4IgquLrXsqtSCsFowvEOW7/SjmU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQv03pT/CHsSNt0rrIgbrdVsWql/2q3vD5a22S4UvSc4
+ D/PmGunO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZy5RvDPyNmhv6X38Pebvv/
+ z+fotOVqyU35N3VMCu4deLcotXYTCzcjw82kyvdO2eckrt33eH9d/m72lectstYadxv8XNf6Zf0
+ WZAIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hi Bernd,
+Allow overlayfs to use O_PATH file descriptors when specifying layers.
+Userspace must currently use non-O_PATH file desriptors which is often
+pointless especially if the file descriptors have been created via
+open_tree(OPEN_TREE_CLONE). This has been a frequent request and came up
+again in [1].
 
-On Fri, Feb 07 2025, Bernd Schubert wrote:
+Link: https://lore.kernel.org/r/fd8f6574-f737-4743-b220-79c815ee1554@mbaynton.com [1]
 
-> On 1/15/25 17:32, Luis Henriques wrote:
->> Currently userspace is able to notify the kernel to invalidate the cache
->> for an inode.  This means that, if all the inodes in a filesystem need to
->> be invalidated, then userspace needs to iterate through all of them and =
-do
->> this kernel notification separately.
->>=20
->> This patch adds a new option that allows userspace to invalidate all the
->> inodes with a single notification operation.  In addition to invalidate =
-all
->> the inodes, it also shrinks the superblock dcache.
->>=20
->> Signed-off-by: Luis Henriques <luis@igalia.com>
->> ---
->> Just an additional note that this patch could eventually be simplified if
->> Dave Chinner patch to iterate through the superblock inodes[1] is merged.
->>=20
->> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.c=
-om
->>=20
->>  fs/fuse/inode.c           | 53 +++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/fuse.h |  3 +++
->>  2 files changed, 56 insertions(+)
->>=20
->> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> index 3ce4f4e81d09..1fd9a5f303da 100644
->> --- a/fs/fuse/inode.c
->> +++ b/fs/fuse/inode.c
->> @@ -546,6 +546,56 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u6=
-4 nodeid,
->>  	return NULL;
->>  }
->>=20=20
->> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
->> +{
->> +	struct fuse_mount *fm;
->> +	struct super_block *sb;
->> +	struct inode *inode, *old_inode =3D NULL;
->> +	struct fuse_inode *fi;
->> +
->> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, NULL);
->> +	if (!inode)
->> +		return -ENOENT;
->> +
->> +	fm =3D get_fuse_mount(inode);
->> +	iput(inode);
->> +	if (!fm)
->> +		return -ENOENT;
->> +	sb =3D fm->sb;
->> +
->> +	spin_lock(&sb->s_inode_list_lock);
->> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
->> +		spin_lock(&inode->i_lock);
->> +		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
->> +		    !atomic_read(&inode->i_count)) {
->> +			spin_unlock(&inode->i_lock);
->> +			continue;
->> +		}
->> +
->> +		__iget(inode);
->> +		spin_unlock(&inode->i_lock);
->> +		spin_unlock(&sb->s_inode_list_lock);
->> +		iput(old_inode);
->> +
->> +		fi =3D get_fuse_inode(inode);
->> +		spin_lock(&fi->lock);
->> +		fi->attr_version =3D atomic64_inc_return(&fm->fc->attr_version);
->> +		spin_unlock(&fi->lock);
->> +		fuse_invalidate_attr(inode);
->> +		forget_all_cached_acls(inode);
->> +
->> +		old_inode =3D inode;
->> +		cond_resched();
->> +		spin_lock(&sb->s_inode_list_lock);
->> +	}
->> +	spin_unlock(&sb->s_inode_list_lock);
->> +	iput(old_inode);
->> +
->> +	shrink_dcache_sb(sb);
->> +
->> +	return 0;
->> +}
->
-> Just a suggestion, assuming Daves patch gets merged, maybe you coud move
-> the actual action into into a sub function? Makes it better visible
-> what is actually does and would then make it easier to move the iteration
-> part to the generic approach?
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (2):
+      fs: support O_PATH fds with FSCONFIG_SET_FD
+      selftests/overlayfs: test specifying layers as O_PATH file descriptors
 
-Good point, I can created a helper function for that.  It may eventually
-be reused if Dave's patchset moves forward.  Thanks for the suggestion.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> Alternatively, maybe updates Daves patch and add fuse on top of it? Dave?
->
->
-> Thanks,
-> Bernd
->
->
+ fs/fs_parser.c                                     | 12 ++--
+ fs/fsopen.c                                        |  7 ++-
+ fs/overlayfs/params.c                              | 10 ++--
+ include/linux/fs_context.h                         |  1 +
+ include/linux/fs_parser.h                          |  6 +-
+ .../filesystems/overlayfs/set_layers_via_fds.c     | 65 ++++++++++++++++++++++
+ 6 files changed, 87 insertions(+), 14 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250207-work-overlayfs-38fb9156d4c4
 
 
