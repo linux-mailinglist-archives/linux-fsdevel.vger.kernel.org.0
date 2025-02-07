@@ -1,45 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-41190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEC4A2C2A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:24:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39798A2C2AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581D518858E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEDB61679EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27511E5B6C;
-	Fri,  7 Feb 2025 12:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88611E1A23;
+	Fri,  7 Feb 2025 12:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDDmhUMD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC41DE2D7;
-	Fri,  7 Feb 2025 12:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C24D1DE2D7;
+	Fri,  7 Feb 2025 12:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738931074; cv=none; b=Y08rI1uL+1EAmA8n0AM00Ioku0ouHgOWI0eqOF70ldo8zcs8vEbWXyDyQSKSFQ8dFnAfmp1SaZ0sWF6I7MgM3NHtXJIV6+9Q+kHbyJMSPamqCfh2cgx5bSXj2YouHL40IA6j8MzuisiBXa/QuIAuUl7D9K01ZytcB4JFNMo2n3o=
+	t=1738931295; cv=none; b=sRyL9jJZ23ORGm61wwSry1acLWToY2ffTY3dLcDC1jLv4ybgsDlfJCMVgaeUE1F4m/SfDhL2UiAdFjpat3GtawKt6Jmi5EbOn8VHThjenuenjR9RUAOr8WZdzR+bw6j4tl3GjWTE5LFMO0bxCfjwxAVjlT1ezHFkcSc9QNYNPMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738931074; c=relaxed/simple;
-	bh=9nrnAX7g76UWmoPEt9UrJmN4OQ1dlbCNQg8d6gBuWW4=;
+	s=arc-20240116; t=1738931295; c=relaxed/simple;
+	bh=C/25fu5Y3laZWIDEiUQQ5VSHuKxsDRpnd//tMK9bevE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mw6sB3yJkxFKlb0PjYIBUrMXxow4Mnoa4nInzV/v3e+jXXZU+Fp6rBps97JJREhLKVWcqxDFcBxTkxGch5ELRjxTzhU5tdMtxl5MO8WfwKbZi+HpeYWlb5zMEgXfPOA0yt1U1HUagCmD1Cm1WDKQ4Wvi22g/0CkCQa0jPSqirdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YqCnn0Kx0z4f3jsy;
-	Fri,  7 Feb 2025 20:24:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E8B951A06DE;
-	Fri,  7 Feb 2025 20:24:28 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP1 (Coremail) with SMTP id cCh0CgAHbHx7+6VnRtaCDA--.12125S3;
-	Fri, 07 Feb 2025 20:24:28 +0800 (CST)
-Message-ID: <7fd947c4-7939-4ccd-8868-3fa419571a78@huaweicloud.com>
-Date: Fri, 7 Feb 2025 20:24:27 +0800
+	 In-Reply-To:Content-Type; b=occgerfx8sqyoBzpYvCTQ8qW1HD/vTZghnZxg05RGuWFlWjrZDJQAVVCgiFCqAuSGmaUKGWL5ixtr62nzoI94JSZEgZMhQb8R5E6+b33lQ3F2HpKQxOy68jfbjmW+wK2PiZSS78BhimIqsU3t5XONURVZIOpq3QKcffZWyHYGb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDDmhUMD; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab78d9c5542so94529666b.1;
+        Fri, 07 Feb 2025 04:28:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738931291; x=1739536091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ue8Cay3b+PMqZQNCdnsih7OpIuU+OFiiA1bevcVJOvk=;
+        b=bDDmhUMDpEQJKhkIJNsFE4r6cB6SbhYfqJ62Nq+BVo9c8+o6dJFrkHxBluxkIIx3Ji
+         iuOQOlfoDz5Jp3Kl2HjVEpGrE6bACH9XuOHk0t4qXLEzUCGZGQE0v1YWmWwBZL8yo+f2
+         xDxH4dUATmJ3I5YsHUugTWvS+u2ZKM+hnDUWorLqieEgf6T1a3HzejWro41BDxgC9/b+
+         qL6pK0ApYaWpYh5jbyrIJaMNaY57mM3NYIEvBVNlqhw/WN/tuZ5ifkkwfaHqLMYa8Wz+
+         F/PsAKeg9PabqOAZvkzQ9pjnYN1Asb7+8aZ6m7KDF7X8SC8DUJp+Kp8HeOo/LLVJAmqy
+         eILQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738931291; x=1739536091;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ue8Cay3b+PMqZQNCdnsih7OpIuU+OFiiA1bevcVJOvk=;
+        b=ftJGtL30pvk5bx7hFYmf3BGGWJ09hpIROYiuFNKSpeZL05VfP1gMWCZBR+Qt4a08qv
+         st9Tk2AHwaznNUW46ah+gAxX6P5PH+ptwoKUeX8ppPOY6pewa69LDDrhxMfAi6eYAnyH
+         1sMF5ai1HSlOpWahNUy6520kN6orNUOrY0XDRKCYEJDSeVz4I5zwFUyKTW2QcLy9LsC4
+         ZCPPwd+6XLPJFp2VRSj27+/1aKcU+/A582sxD+yCnf2tBiGE2PS6fMy8YdTzRtJszYfi
+         RNJ/NbFIekR4YzVgX4UI9Dk5JU6u4sZe+S7vRqUyQMSi7jVa3wyxYO/8xPjbGSutH2Wb
+         mhkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoXdpDVyGrR/6wf7nlC4IRhYSdzCCSjXxgPmM5XoVFD9ePHqhSqYwT0msTYs5lBIuKHLiZgCSonQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVAnsUY6hhb73JprdltAx5L8OZWl7lgGmJTP7OLMgw18NIoOMQ
+	mArAwpp9W0A1zOdYDugsqiCvs84ZIUNRalRThWIiGMcch5i3FsBK
+X-Gm-Gg: ASbGncurW9H2X0AB4AjaFYIyDthdutvppse8OFAAerFgCqMZk65Rg2fX3hAUzd2sjfR
+	R3uR3uuaOHNg8TkOdTxMtgzvzkRw+/lsfoem+M/orrD4+h8dnkN2rke0HUHgYgpJAM+CwMeibWk
+	rOVeRkav9Q4Ypy0TUNr5p8eueaFvfHcGea5QPehbHhXp9qDBqugLhcx4+MzoRyBlvg0KsVx94ps
+	Wu4SX+19gihlnN5fLOaGdKjJSGO9TiwGbGyBgSKR2enMcNSqbUlvZIM/iqsmeMwmHr9KWy4h4mM
+	NHbGgPIGbHrM9H5n1OsuSJdAu3vT8SH6M7urvj0X6uIBRzPi
+X-Google-Smtp-Source: AGHT+IHIycV3Pte0CZdLb2aiER5tBUv43VqX/z2zHizFZNE0QLcxB+cz7ftGF+AHMEdmh9iBQXop2w==
+X-Received: by 2002:a17:907:7e9b:b0:ab6:d6dd:2deb with SMTP id a640c23a62f3a-ab789a6790amr305346566b.8.1738931291415;
+        Fri, 07 Feb 2025 04:28:11 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:8e12])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7732e71e3sm256747466b.112.2025.02.07.04.28.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Feb 2025 04:28:10 -0800 (PST)
+Message-ID: <618af8fc-6a35-4d6e-9ac7-5e6c33514b44@gmail.com>
+Date: Fri, 7 Feb 2025 12:28:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,51 +81,61 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 2/8] nvme: set BLK_FEAT_WRITE_ZEROES_UNMAP if
- device supports DEAC bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, djwong@kernel.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250115114637.2705887-1-yi.zhang@huaweicloud.com>
- <20250115114637.2705887-3-yi.zhang@huaweicloud.com>
- <20250128064623.GB21401@lst.de>
+Subject: Re: [PATCH 05/11] eventpoll: add ep_poll_queue() loop
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
+References: <20250204194814.393112-1-axboe@kernel.dk>
+ <20250204194814.393112-6-axboe@kernel.dk>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250128064623.GB21401@lst.de>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250204194814.393112-6-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAHbHx7+6VnRtaCDA--.12125S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UQzVbUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2025/1/28 14:46, Christoph Hellwig wrote:
-> I think you also need to add BLK_FEAT_WRITE_ZEROES_UNMAP to the list
-> of features supported by the nvme-mpath stacking driver in
-> nvme_mpath_alloc_disk, so that this gets propagated to multipathed
-> devices.
+On 2/4/25 19:46, Jens Axboe wrote:
+> If a wait_queue_entry is passed in to epoll_wait(), then utilize this
+> new helper for reaping events and/or adding to the epoll waitqueue
+> rather than calling the potentially sleeping ep_poll(). It works like
+> ep_poll(), except it doesn't block - it either returns the events that
+> are already available, or it adds the specified entry to the struct
+> eventpoll waitqueue to get a callback when events are triggered. It
+> returns -EIOCBQUEUED for that case.
 > 
-> Otherwise this looks good to me.
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>   fs/eventpoll.c | 37 ++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index ecaa5591f4be..a8be0c7110e4 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2032,6 +2032,39 @@ static int ep_try_send_events(struct eventpoll *ep,
+>   	return res;
+>   }
+>   
+> +static int ep_poll_queue(struct eventpoll *ep,
+> +			 struct epoll_event __user *events, int maxevents,
+> +			 struct wait_queue_entry *wait)
+> +{
+> +	int res, eavail;
+> +
+> +	/* See ep_poll() for commentary */
+> +	eavail = ep_events_available(ep);
+> +	while (1) {
+> +		if (eavail) {
+> +			res = ep_try_send_events(ep, events, maxevents);
+> +			if (res)
+> +				return res;
+> +		}
+> +
+> +		eavail = ep_busy_loop(ep, true);
 
-Ha, thanks for pointing this out, I missed this case, will add.
+I have doubts we want to busy loop here even if it's just one iteration /
+nonblockinf. And there is already napi polling support in io_uring done
+from the right for io_uring users spot.
 
-Thanks,
-Yi.
+-- 
+Pavel Begunkov
 
 
