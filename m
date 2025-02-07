@@ -1,65 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-41170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5712AA2BEBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 10:06:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019D6A2BEC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 10:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DE97A2EBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 09:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACE93AA7DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 09:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA0F234978;
-	Fri,  7 Feb 2025 09:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4121D5CE5;
+	Fri,  7 Feb 2025 09:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCXsqTKM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQIt3oj4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142931D5CFF;
-	Fri,  7 Feb 2025 09:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165CA1B4F0C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Feb 2025 09:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738919140; cv=none; b=ljCSk47oneGAD9CzBjssK26LoSKIip+4+35o1awwQ4/oXYTQKYbhoRyyBgN69ZYuZWuFZ3OnQaky2uKoOry4VBXwZotinatkRcOMNDhCKTsiOQwwRRW9We5/EGPBYfffsrF7Xx8FdJnS1A1TxIrJueBiVPxM+0/Nj614wlJch4c=
+	t=1738919228; cv=none; b=PhIn2ytgyJGtZ/ho/Bt5LAZwe3aA2D0pPUm91Fvl8zyN+VL7yTSzXpDmvfkq/7f9jMBL8ChRLPPLtgR+fXoHaRcRrHrNiewW1TBBeF/h0iNSSXwUk9pAgmVT71TifW4v9EF6Peg4yQDmL4hVA7AJ2+CUDBFM2SecAjyuvQaEP4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738919140; c=relaxed/simple;
-	bh=IgByweI1gQxM5fdrkwHJV0fnw7YYouZy18piG/OIGyg=;
+	s=arc-20240116; t=1738919228; c=relaxed/simple;
+	bh=HaTr9grLxr5ptKgxmPfwlLtW1LyAQim7m58eyLTdgWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtJ3QhQ0hAISunlLwZu7s0L0urjgf2CjIbHfFg2JWoqyeXMu3szfdOJ5OchYB0TSU7ZIMF/dUNUARUMQLppxBW2HjGO4Dp6LzyuhsKOMJ9qqoWqexp8FykYq1LLS7OhopyiFJmz15QOQIEdKUg86fNdoWstvi5vmQwgeqNdweho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCXsqTKM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B54DEC4CED1;
-	Fri,  7 Feb 2025 09:05:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTdW4EN0vcCuWOmX6q2KDY4k3qlCmG4VbLh9ba/DDecfHGUPSAkSFIZeFYUruFbTrQkvpRc4VQjcedmXtoEgRr65f5uCif1LiYqTv/pA2bqlGAjNVRZYu9k28/P007DyavLrH7O2myplaXprMIDR4u4UyFdAv5/TjzUK8wR/jAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQIt3oj4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E41C4CED1;
+	Fri,  7 Feb 2025 09:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738919139;
-	bh=IgByweI1gQxM5fdrkwHJV0fnw7YYouZy18piG/OIGyg=;
+	s=k20201202; t=1738919227;
+	bh=HaTr9grLxr5ptKgxmPfwlLtW1LyAQim7m58eyLTdgWo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RCXsqTKM1S4AYJJXtYdduHVxDWsRmEjHvgT+2HyqqsIc7I6NIAfv8+w9Qy1vf9Ryq
-	 +X3E7amyZzr72hMvlLsIuR5gwDI/w03eG6b9D52WisunAdtUY/avjwwMAbv5mIBMfQ
-	 h8EeOcJmKfHdOvYwj8j+X5NoBZqwKzEipxip6PHDsmjlKg3MFmLxFWcScTlmOAO7cI
-	 WNLPori5QmTfpMDmGKrk1/NPVqL4aGpfpXL0b7FY+zxSXBNwsz27kP43pkevmSUxOL
-	 Qi+mVRuil54nNkHUf2asNVE3Yuj+rgK81kzykyFHsoGzhfhSoOZsomztEMt5AABHzR
-	 yLGqYmiBxF0XQ==
-Date: Fri, 7 Feb 2025 10:05:34 +0100
+	b=sQIt3oj4u8bpD8CgZu7HCtPiEcvSSDlYbIcTHmkdTqHhS15iOS9kbMxz1qg+//+9x
+	 ajlvtjJJkxwoegDLTEQXl89Oa17JiWx8BxybrRH1/Ytfzaxu/cI/fOgVKV8zQ5NrtD
+	 lcaOvv4ED0bdOQhIL/tes1aMVbNP71/n6pN18WVjWL6NKXuieARUuukgogLDB6D6p9
+	 s83E5xsd4EbWVz/h579H0mXD8nHoMY4VRBoOFmKq4rMkh6F2kYhn9WemwARGhQ6EQe
+	 srd2GVeVw6szOBvMU5ChX1Pk3W1MxDK5Ksg/Si1F+VCIjejJEcgpzj3uF+9vqfPT6r
+	 WToeM1MSu8ZTA==
+Date: Fri, 7 Feb 2025 10:07:04 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Mike Yuan <me@yhndnzj.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"cgzones@googlemail.com" <cgzones@googlemail.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH] fs/xattr: actually support O_PATH fds in *xattrat()
- syscalls
-Message-ID: <20250207-bildhaft-hallen-9870a5d1f8fa@brauner>
-References: <20250205204628.49607-1-me@yhndnzj.com>
- <20250206-uhrwerk-faultiere-7a308565e2d3@brauner>
- <Kn-2tlpxN8YNmh0j0udjQ8YIFNZMVVJYJh-LyBoYNBfpax28PNUkXuH6gnod7if2eX3NRVs3Ey8uCHRpwg_S5hPX_ADtrgMZbDTWFpHd_uU=@yhndnzj.com>
- <20250206-erbauen-ornament-26f338d98f13@brauner>
- <cfnfHaahrrXJJOgvNjb5hFbU0qh8gVXJ62R9uP9AItBEywyNH9vNBRzJbPR8xTv-LtFaUJYTHvyuLBfkznwJPt3fEcqNBFxf_yKJeZKwL3I=@yhndnzj.com>
- <20250206-wisst-rangieren-d59f7882761a@brauner>
- <Ah2vDyFwRPpHngjgEblSFQWijS6qnrD_LSbpUrdefKpgTotaT4CyzL4RqaWM7axQamVuGi3hPdIzuXl9qBlfHZ9m4-hcUWaWuaoc35Gt8D8=@yhndnzj.com>
- <20250206-steril-raumplanung-733224062432@brauner>
- <xTJWqaYffvXfz-lTQmt2HHs8ryqde0VIbhIlW0DFCW3wxft7WfIDCRm03BsB4Gz4IgWHXwarpkIE880mjL63DVRfU-p1sGJGUFSQBmp_CXY=@yhndnzj.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [bug report] statmount: allow to retrieve idmappings
+Message-ID: <20250207-herben-abstrahiert-9bf48ad63a78@brauner>
+References: <a4ef5f7d-9a6c-4f24-b377-557c3af0182f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,186 +56,118 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xTJWqaYffvXfz-lTQmt2HHs8ryqde0VIbhIlW0DFCW3wxft7WfIDCRm03BsB4Gz4IgWHXwarpkIE880mjL63DVRfU-p1sGJGUFSQBmp_CXY=@yhndnzj.com>
+In-Reply-To: <a4ef5f7d-9a6c-4f24-b377-557c3af0182f@stanley.mountain>
 
-On Thu, Feb 06, 2025 at 03:19:03PM +0000, Mike Yuan wrote:
-> On 2025-02-06 at 15:54, Christian Brauner <brauner@kernel.org> wrote:
-> > 
-> > On Thu, Feb 06, 2025 at 02:26:51PM +0000, Mike Yuan wrote:
-> > 
-> > > On 2025-02-06 at 14:35, Christian Brauner brauner@kernel.org wrote:
-> > > 
-> > > > On Thu, Feb 06, 2025 at 01:25:19PM +0000, Mike Yuan wrote:
-> > > > 
-> > > > > On 2/6/25 11:03, Christian Brauner brauner@kernel.org wrote:
-> > > > > 
-> > > > > > On Thu, Feb 06, 2025 at 09:51:33AM +0000, Mike Yuan wrote:
-> > > > > > 
-> > > > > > > On 2/6/25 10:31, Christian Brauner brauner@kernel.org wrote:
-> > > > > > > 
-> > > > > > > > On Wed, Feb 05, 2025 at 08:47:23PM +0000, Mike Yuan wrote:
-> > > > > > > > 
-> > > > > > > > > Cited from commit message of original patch [1]:
-> > > > > > > > > 
-> > > > > > > > > > One use case will be setfiles(8) setting SELinux file contexts
-> > > > > > > > > > ("security.selinux") without race conditions and without a file
-> > > > > > > > > > descriptor opened with read access requiring SELinux read permission.
-> > > > > > > > > 
-> > > > > > > > > Also, generally all at() syscalls operate on O_PATH fds, unlike
-> > > > > > > > > f() ones. Yet the O_PATH fds are rejected by *xattrat() syscalls
-> > > > > > > > > in the final version merged into tree. Instead, let's switch things
-> > > > > > > > > to CLASS(fd_raw).
-> > > > > > > > > 
-> > > > > > > > > Note that there's one side effect: f*xattr() starts to work with
-> > > > > > > > > O_PATH fds too. It's not clear to me whether this is desirable
-> > > > > > > > > (e.g. fstat() accepts O_PATH fds as an outlier).
-> > > > > > > > > 
-> > > > > > > > > [1] https://lore.kernel.org/all/20240426162042.191916-1-cgoettsche@seltendoof.de/
-> > > > > > > > > 
-> > > > > > > > > Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
-> > > > > > > > > Signed-off-by: Mike Yuan me@yhndnzj.com
-> > > > > > > > > Cc: Al Viro viro@zeniv.linux.org.uk
-> > > > > > > > > Cc: Christian Göttsche cgzones@googlemail.com
-> > > > > > > > > Cc: Christian Brauner brauner@kernel.org
-> > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > > > ---
-> > > > > > > > 
-> > > > > > > > I expanded on this before. O_PATH is intentionally limited in scope and
-> > > > > > > > it should not allow to perform operations that are similar to a read or
-> > > > > > > > write which getting and setting xattrs is.
-> > > > > > > > 
-> > > > > > > > Patches that further weaken or dilute the semantics of O_PATH are not
-> > > > > > > > acceptable.
-> > > > > > > 
-> > > > > > > But the at() variants really should be able to work with O_PATH fds, otherwise they're basically useless? I guess I just need to keep f() as-is?
-> > > > > > 
-> > > > > > I'm confused. If you have:
-> > > > > > 
-> > > > > > filename = getname_maybe_null(pathname, at_flags);
-> > > > > > if (!filename) {
-> > > > > > CLASS(fd, f)(dfd);
-> > > > > > if (fd_empty(f))
-> > > > > > error = -EBADF;
-> > > > > > else
-> > > > > > error = file_setxattr(fd_file(f), &ctx);
-> > > > > > 
-> > > > > > Then this branch ^^ cannot use fd_raw because you're allowing operations
-> > > > > > directly on the O_PATH file descriptor.
-> > > > > > 
-> > > > > > Using the O_PATH file descriptor for lookup is obviously fine which is
-> > > > > > why the other branch exists:
-> > > > > > 
-> > > > > > } else {
-> > > > > > error = filename_setxattr(dfd, filename, lookup_flags, &ctx);
-> > > > > > }
-> > > > > > 
-> > > > > > IOW, your patch makes AT_EMPTY_PATH work with an O_PATH file descriptor
-> > > > > > which isn't acceptable. However, it is already perfectly fine to use an
-> > > > > > O_PATH file descriptor for lookup.
-> > > > > 
-> > > > > Well, again, [1] clearly stated the use case:
-> > > > > 
-> > > > > > Those can be used to operate on extended attributes,
-> > > > > > especially security related ones, either relative to a pinned directory
-> > > > > > or [on a file descriptor without read access, avoiding a
-> > > > > > /proc/<pid>/fd/<fd> detour, requiring a mounted procfs].
-> > > > > 
-> > > > > And this surfaced in my PR to systemd:
-> > > > > 
-> > > > > https://github.com/systemd/systemd/pull/36228/commits/34fe16fb177d2f917570c5f71dfa8f5b9746b9a7
-> > > > > 
-> > > > > How are xattrat() syscalls different from e.g. fchmodat2(AT_EMPTY_PATH) in that regard? I can agree that the semantics of fxattr() ought to be left untouched, yet I fail to grok the case for _at variants.
-> > > > 
-> > > > man openat:
-> > > > 
-> > > > O_PATH (since Linux 2.6.39)
-> > > > Obtain a file descriptor that can be used for two purposes: to indicate a location in the filesystem tree and to perform operations that act purely at the file descriptor level.
-> > > > The file itself is not opened, and other file operations (e.g., read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), ioctl(2), mmap(2)) fail with the error EBADF.
-> > > > 
-> > > > The following operations can be performed on the resulting file descriptor:
-> > > > 
-> > > > • close(2).
-> > > > 
-> > > > • fchdir(2), if the file descriptor refers to a directory (since Linux 3.5).
-> > > > 
-> > > > • fstat(2) (since Linux 3.6).
-> > > > 
-> > > > • fstatfs(2) (since Linux 3.12).
-> > > > 
-> > > > • Duplicating the file descriptor (dup(2), fcntl(2) F_DUPFD, etc.).
-> > > > 
-> > > > • Getting and setting file descriptor flags (fcntl(2) F_GETFD and F_SETFD).
-> > > > 
-> > > > • Retrieving open file status flags using the fcntl(2) F_GETFL operation: the returned flags will include the bit O_PATH.
-> > > > 
-> > > > • Passing the file descriptor as the dirfd argument of openat() and the other "*at()" system calls. This includes linkat(2) with AT_EMPTY_PATH (or via procfs using AT_SYM‐
-> > > > LINK_FOLLOW) even if the file is not a directory.
-> > > > 
-> > > > • Passing the file descriptor to another process via a UNIX domain socket (see SCM_RIGHTS in unix(7)).
-> > > > 
-> > > > Both fchownat() and fchmodat() variants have had this behavior which
-> > > > is a bug. And not a great one because it breaks O_PATH guarantees.
-> > > > That's no reason to now also open up further holes such as getting and
-> > > > setting xattrs.
-> > > 
-> > > AFAICS that's not really what the kernel development has been after.
-> > > fchmodat2(2) in particular was added fairly recently (6.6,
-> > > https://github.com/torvalds/linux/commit/09da082b07bbae1c11d9560c8502800039aebcea).
-> > > One of the highlights was to add support for O_PATH + AT_EMPTY_PATH).
-> > 
-> > 
-> > These system calls had pre-existing inconsistency. And allowing
-> > fchownat() but then not fchmodat2() seemd asymmetric. But given the
-> > discussion now I wish I hadn't even allowed that.
-> > 
-> > > And to me the semantics seem reasonably OK really: O_PATH fds are a way to
-> > > pin the inode (i.e. still within the boundry of getting a reference to
-> > > a file system object (without opening it) if I shall put it). All the calls
-> > > mentioned above operate on the file system object metadata, not the actual data,
-> > > hence O_PATH is just providing a file location.
-> > > 
-> > > The separation of at() and regular f() versions have remained pretty consistent too
-> > > (of cource, not with this patch, which is mostly an RFC) - fchmod() and fchown()
-> > > refuse O_PATH fds while the at() counterparts accept them. Did all these suddenly
-> > > change overnight?
-> > > 
-> > > > If you want to perform read/write like operations you need a proper file
-> > > > descriptor for that and not continue to expand the meaning of O_PATH
-> > > > until it is indistinguishable from a regular file descriptor.
-> > > 
-> > > I definitely agree. But xattr is metadata, not data. listxattr() does not even
-> > > do any POSIX permission check...
-> > 
-> > 
-> > That it's metadata is an interesting difference but really not that
-> > important. Plus, the manpage also doesn't care about this distinction.
-> > Ownership and mode changes are bad enough, setting and getting random
-> > xattrs seems like a terrible idea.
-> > 
-> > If I sent an O_PATH file descriptor around today in a sandbox without
-> > procfs mounted then I know no one can suddenly set posix acls using that
-> > file descriptor. With this change they suddenly can.
-> > 
-> > This won't be enabled.
+On Fri, Feb 07, 2025 at 12:03:23PM +0300, Dan Carpenter wrote:
+> Hello Christian Brauner,
 > 
-> OK, so I see the previous discussions now:
+> Commit f8c6e8bd9ad5 ("statmount: allow to retrieve idmappings") from
+> Feb 4, 2025 (linux-next), leads to the following Smatch static
+> checker warning:
 > 
-> https://lore.kernel.org/all/20220622025715.upflevvao3ttaekj@senku/
-> 
-> > Since the current functionality cannot be retroactively disabled as it
-> > is being used already through /proc/self/fd/$n, adding *xattrat(AT_EMPTY_PATH)
-> > doesn't really change what is currently possible by userspace.
-> >
-> > I would say we should add *xattrat(2) and then we can add an upgrade
-> > mask blocking it (and other operations) later.
-> 
-> I suppose some of these points shifted over the years, which is also fine.
-> It's unfortunate though that the commit message would remain misleading forever.
+> 	fs/namespace.c:5468 statmount_string()
+> 	error: uninitialized symbol 'offp'.
 
-I'm tempted to do some light-hearted trolling. I always marvel at the
-precise and detailed systemd commit and merge messages. ;)
+Oh right, that's after Miklos' changes. That is an annoying subtle
+interaction between two branches. I'll fix that once vfs.fixes lands
+upstream.
 
-On a serious note, we often have stuff in commit messages that doesn't
-age well. That's just a fact of development.
+Thanks for the report.
+
+> 
+> fs/namespace.c
+>     5388 static int statmount_string(struct kstatmount *s, u64 flag)
+>     5389 {
+>     5390         int ret = 0;
+>     5391         size_t kbufsize;
+>     5392         struct seq_file *seq = &s->seq;
+>     5393         struct statmount *sm = &s->sm;
+>     5394         u32 start, *offp;
+>     5395 
+>     5396         /* Reserve an empty string at the beginning for any unset offsets */
+>     5397         if (!seq->count)
+>     5398                 seq_putc(seq, 0);
+>     5399 
+>     5400         start = seq->count;
+>     5401 
+>     5402         switch (flag) {
+>     5403         case STATMOUNT_FS_TYPE:
+>     5404                 offp = &sm->fs_type;
+>     5405                 ret = statmount_fs_type(s, seq);
+>     5406                 break;
+>     5407         case STATMOUNT_MNT_ROOT:
+>     5408                 offp = &sm->mnt_root;
+>     5409                 ret = statmount_mnt_root(s, seq);
+>     5410                 break;
+>     5411         case STATMOUNT_MNT_POINT:
+>     5412                 offp = &sm->mnt_point;
+>     5413                 ret = statmount_mnt_point(s, seq);
+>     5414                 break;
+>     5415         case STATMOUNT_MNT_OPTS:
+>     5416                 offp = &sm->mnt_opts;
+>     5417                 ret = statmount_mnt_opts(s, seq);
+>     5418                 break;
+>     5419         case STATMOUNT_OPT_ARRAY:
+>     5420                 offp = &sm->opt_array;
+>     5421                 ret = statmount_opt_array(s, seq);
+>     5422                 break;
+>     5423         case STATMOUNT_OPT_SEC_ARRAY:
+>     5424                 offp = &sm->opt_sec_array;
+>     5425                 ret = statmount_opt_sec_array(s, seq);
+>     5426                 break;
+>     5427         case STATMOUNT_FS_SUBTYPE:
+>     5428                 offp = &sm->fs_subtype;
+>     5429                 statmount_fs_subtype(s, seq);
+>     5430                 break;
+>     5431         case STATMOUNT_SB_SOURCE:
+>     5432                 offp = &sm->sb_source;
+>     5433                 ret = statmount_sb_source(s, seq);
+>     5434                 break;
+>     5435         case STATMOUNT_MNT_UIDMAP:
+>     5436                 sm->mnt_uidmap = start;
+>     5437                 ret = statmount_mnt_uidmap(s, seq);
+> 
+> offp not initialized
+> 
+>     5438                 break;
+>     5439         case STATMOUNT_MNT_GIDMAP:
+>     5440                 sm->mnt_gidmap = start;
+>     5441                 ret = statmount_mnt_gidmap(s, seq);
+> 
+> Same here
+> 
+>     5442                 break;
+>     5443         default:
+>     5444                 WARN_ON_ONCE(true);
+>     5445                 return -EINVAL;
+>     5446         }
+>     5447 
+>     5448         /*
+>     5449          * If nothing was emitted, return to avoid setting the flag
+>     5450          * and terminating the buffer.
+>     5451          */
+>     5452         if (seq->count == start)
+>     5453                 return ret;
+>     5454         if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
+>     5455                 return -EOVERFLOW;
+>     5456         if (kbufsize >= s->bufsize)
+>     5457                 return -EOVERFLOW;
+>     5458 
+>     5459         /* signal a retry */
+>     5460         if (unlikely(seq_has_overflowed(seq)))
+>     5461                 return -EAGAIN;
+>     5462 
+>     5463         if (ret)
+>     5464                 return ret;
+>     5465 
+>     5466         seq->buf[seq->count++] = '\0';
+>     5467         sm->mask |= flag;
+> --> 5468         *offp = start;
+>                  ^^^^^^^^^^^^^^
+> 
+>     5469         return 0;
+>     5470 }
+> 
+> regards,
+> dan carpenter
 
