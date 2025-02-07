@@ -1,151 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-41182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21628A2C163
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:16:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C42A2C199
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 12:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8FC1662B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 11:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8953A46FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 11:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93FF1DE4D8;
-	Fri,  7 Feb 2025 11:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C581DE4C9;
+	Fri,  7 Feb 2025 11:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="m/PsobRW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GSaFdmRK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lK9kloha"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4CD1DE8BC;
-	Fri,  7 Feb 2025 11:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1302417ED;
+	Fri,  7 Feb 2025 11:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738926981; cv=none; b=PsLJtaS+Ac5UBPKGS6GY3hbd6GhdQiLqyfSBRrlZIJIRjYXgrnYwEqhjTrIGIOC+VkiYxW0fBMHBRpTVDoun3vBGJdEdotDlzgSgbzy8X3g89wIRwNH4lCl/tJQsz9irtMK99rE5/J5U4l73ubxMGxj1zWY4Sl5IbQ8We7ExbHY=
+	t=1738928058; cv=none; b=Zjhr6ZkOhRAppouoPZZvjvWTFtRNUBPTtu/BIuBQYkRFhoGRb0KT0fgqkP6eLYa0+GJ+VXkdQ1YlYXp6DV1xZyKEqiH87oIIHGIRZfgenrvyJTDUVReJ+RxdDoppWT9rUGbXWM9oMieGv7HGSwTifE45vV//0Qt4nkfCkx0xWxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738926981; c=relaxed/simple;
-	bh=DROL0ZXTKDjz9yzFbtNgyiI5REj61oxPGEL9qJLwF5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qmjwv0qcJlFT0YxeZ2CVwjp2xvdFrBApOA3Tw4LlSv0auqD7Qz1WJdZ6ZFT5YdlqDOf8G2pfYYEsJCgeYkgkg2k3RbwOIgwjwKFGR75CgDReRTQtrJspbqagsBjb++UjRFMGi1auzLAZAE8Ix6L81VLCxwdpNTwqiVgdnPhfH3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=m/PsobRW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GSaFdmRK; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 318931380173;
-	Fri,  7 Feb 2025 06:16:16 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Fri, 07 Feb 2025 06:16:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1738926976;
-	 x=1739013376; bh=6Aibj85N4Xec6Md8vzDUFOhcxs5xfx+jKDyQhwhdMb4=; b=
-	m/PsobRW644YOws6wEwgWIOiDRsrV3jqWbP5ZnESppbnJvawwsBs6OIPmakPwgQw
-	LNZz+wtWory4jdAZQ2go6zLjvR1qgNPL9u4h/baZCngKEuSzS65ZTZ5zNvxJIGEL
-	UjlQ2DdBAXZ7HhwNbub+2MLeELVQSAz6lxBX2E/mwtcBP4MX17nQLhFAvoWlr9+J
-	qqtuB6zb2o9b6f0E3A1LiKRjrN5iUAqfcKk90HIRq9YgSBzIi0IM+HZXVFxvEt2P
-	5cC6BaQMWxroQvO8jajcR1V1h5r6/mYjVnuIsf4peQmuav+qqMqQ5VzDtHlzj0ht
-	Nte1vBBPaNhURx7BApv3yA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738926976; x=
-	1739013376; bh=6Aibj85N4Xec6Md8vzDUFOhcxs5xfx+jKDyQhwhdMb4=; b=G
-	SaFdmRK8lPjTAepSVafaUoCjWzBBcE+1WuM9Hq/7TyHFONaXfKvAKQ02mXiJArk0
-	fF4tWhW3XqyCXyoa1rallflj4l+vI8PvSTGRNMSqMZX7u8ndU1HlxvTSmYbvA5Xc
-	fOTutlsDaeuqzsoS7zLHxoe3vBCdwiykSWYoqfFjToN+oWjF1fJ5AZ3Wajb0wdM8
-	JH5/7dYQ2XFS4h/phMJywtG7DEx1gAZXQ1Xuti3SOjuTd2I26DngBPn9fAwMqGB7
-	zd5d3ijabbE9BjBbh8Hnl4PACv8dj9Nx3NscSo8K9OArYwJTgPHYfEVBwaivud+K
-	lhTg03BXEqSF+/uZ1eX6w==
-X-ME-Sender: <xms:f-ulZ01q_VJ4rAl2wrjghhE_kZAC2tyueeWcTyuAJy-evyFmpPK8Jw>
-    <xme:f-ulZ_GMWRB74JUMU6wpfUUM2yQaZeyrZHuQ4QFNLSbOrOLGJ0Oqe190QdeO-kwMI
-    W653cX1I6Ax5Lv1>
-X-ME-Received: <xmr:f-ulZ87gTU6oVkM3kMCzpMQqA9BKLP90rQs4FD_RqDHPUjS2RYcsoi8CbiBsFRlTaAoAVdpNfYC7LohHHqYEK0_uCQi026dd5GIKEP__wND0vokYuVmy>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvledugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
-    hnugdrtghomheqnecuggftrfgrthhtvghrnhepuefgvedvgeeguedtlefggfeigfffjeeh
-    ffektdeiudffheelvdefveegjeehtdejnecuffhomhgrihhnpehgihhthhhusgdrtghomh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghr
-    nhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthhtohep
-    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopeifihhllhihsehinhhfrh
-    gruggvrggurdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnheshhgvuhhsvghlrdgv
-    uhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtth
-    hopehmshiivghrvgguihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhgvghhrvghs
-    shhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:f-ulZ9037XXRMk8nBj87nbhmleQ-1eFdpxLz4kWX-V-rP9J0WWMs2g>
-    <xmx:f-ulZ3EbMbjvJ4uNwBjcaldrup2upqo7iLml8r4KvJtMhn9PtUvPDQ>
-    <xmx:f-ulZ2_Rolb0lsFmS-2pvgBZ1AnMzw1RPcWERKe93CegqYZ6QaFhyQ>
-    <xmx:f-ulZ8l3bvJBNoLfZUk8jK5-rw-bzEES6XpAsnsVGqvPXZbuVKVj8Q>
-    <xmx:gOulZ2f8u7iE_17qld9_K2K7zPjwn0-Agw7XXHYJivHCVmunR8NtYJSr>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Feb 2025 06:16:13 -0500 (EST)
-Message-ID: <94df7323-4ded-416a-b850-41e7ba034fdc@bsbernd.com>
-Date: Fri, 7 Feb 2025 12:16:12 +0100
+	s=arc-20240116; t=1738928058; c=relaxed/simple;
+	bh=1wh2cpQUxPLEuY0IQg/F5m/jGKR7k88MMsXZiFFmCBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ry2byU886Xpav6S7AKH25ohHPuh4YHZjqMxfSXtdiW0fxCo9vGayjrjLv18188GVG1ff8w6WAQZNX/9ceSYt33/fFTq+ezBegMFs175A96x9nrZHxfu7KYEcrEjAgFrzFMnpXYlmU1d6qysoCzp2NHHUcVzeVCn13fyBeTwlEeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lK9kloha; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dcd3454922so4062212a12.1;
+        Fri, 07 Feb 2025 03:34:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738928055; x=1739532855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wh2cpQUxPLEuY0IQg/F5m/jGKR7k88MMsXZiFFmCBM=;
+        b=lK9klohaHZlwxpE4VavEtix3oVxbRRpg5zG12Ybf1/6YwbtQ2xmo3oCuu5v2xGtWD3
+         79JI7B0RZcyXsQpQvGG1dPNNu68oXIPC0/H6OyrQ1pvowZA5vYJIzy8few7VRwQKxyda
+         EyRdtiE/FNH/i3f+ftalyydPNpXMZRgUvPgUDh/LXpQJuMnja8MkOgsHBqdyEddJYvuJ
+         pCgG6Pfs4FFSIFOvxHbU6l2nHUdBTetA/xdX/o2NP81om+E/Tm2rj9aPUizFX9TqdmzC
+         n0ZxUe5Kja/i4TBadSYxXOqCH7R1ANCorD75p4b+0u3oUvztGk9jsEfDO/75fGmjAcG6
+         4XSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738928055; x=1739532855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1wh2cpQUxPLEuY0IQg/F5m/jGKR7k88MMsXZiFFmCBM=;
+        b=FPbualtZHACwcvtsqZuUuEfgH/UexFm0WDbgK7nG9OlYlNndwr2TvYsPN8acsqKjsL
+         3kmOVlhKyzPH+UijumAk+kWy1Dg6tLTSnyGAhCsdBmjsvzuxrgqGVpO559G+IOFo1Lmy
+         iR9qiV1/c7KeVhDAqy7ocu1y7RIhJVZLRLfYjR+RGEd4NSaUvgWwUvzi57ciLPWRRGD4
+         OX82K1lcTtLxRChVm5pwwQN9a9nRjZ+GMNC2Zwqe9m3Fy1hd8qLqdzSyYcGkJhIqNKlo
+         0Nr3zGOeEBE8qvsbHF7eGISTKTDKoXZrN/2318zWuMLSW/RXfmpPQfwvom+gTAfz4Tkm
+         KYHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXrT0sdDpIJobLXdP0L35oKk+PeqOiBtix9RPp9o4b0GIEDEr68i9EReIrkMnFBG4ZrOKnSlVesSGbY+lw@vger.kernel.org, AJvYcCUZYzotP2H2Ksnvw/TG4cN7mcp/zOP7jfNadDuz50JZmKcZQPlZNP8YLW9rSft6tyKwAnUQzs8hGV/uDLMX@vger.kernel.org
+X-Gm-Message-State: AOJu0YweeVPV4h1yAE1vVRHFsdHpNNWQSB1/XYAbHqB/kJvtwnKTHJ9D
+	1Ogl8oNOxluhDeX+dxfUUqv9hjE25U+uFSkzl7j4zMTNYZdsYe1Y0IyOZ5knxnVLx8qWJ+6X9il
+	v8kuGE6YU1BsqJN4FVZcyK4GhFbg=
+X-Gm-Gg: ASbGncsCoJQIih4uVC0oBOdt634qGQD6mzVmMsnrgMhGXiQyYwJV3kv+WL1iK1ZsKz6
+	+ZK78I+w3Tt3V4A////IAmVguz8fd3m5X8r2oTVRECAoRk5kNNwGNYUId/i7ygCLxfm0ONDYm
+X-Google-Smtp-Source: AGHT+IHyRv3J+H1efaMv2+jprVJQ5kvQHBMSEBpkJMRhuptG38yMhxproOUF8W1NeehsICmuMFItcl1nZXdLw/P/+DA=
+X-Received: by 2002:a05:6402:2189:b0:5dc:7fbe:72f2 with SMTP id
+ 4fb4d7f45d1cf-5de44fea964mr3336334a12.3.1738928054659; Fri, 07 Feb 2025
+ 03:34:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
- related applications since v6.13
-To: Vlastimil Babka <vbabka@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Christian Heusel <christian@heusel.eu>, Josef Bacik <josef@toxicpanda.com>,
- Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, linux-mm <linux-mm@kvack.org>,
- =?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
-References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
- <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
- <Z6XWVU6ZTCIl3jnc@casper.infradead.org>
- <03eb13ad-03a2-4982-9545-0a5506e043d0@suse.cz>
- <CAJfpegtvy0N8dNK-jY1W-LX=TyGQxQTxHkgNJjFbWADUmzb6xA@mail.gmail.com>
- <f8b08ef9-5bba-490c-9d99-9ab955e68732@suse.cz>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <f8b08ef9-5bba-490c-9d99-9ab955e68732@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <202502051546.fca7cd-lkp@intel.com> <CAHk-=whSncSTE_Q0as-d989L_niJ6=ViwaDoOK6gTcWHNPkp7w@mail.gmail.com>
+In-Reply-To: <CAHk-=whSncSTE_Q0as-d989L_niJ6=ViwaDoOK6gTcWHNPkp7w@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 7 Feb 2025 12:34:03 +0100
+X-Gm-Features: AWEUYZlfBZ7ZGHwIFt2AGR4hspLGRP5IPR0R2ajHRmpRBd1zmnHtetwWqx-EEJU
+Message-ID: <CAOQ4uxgC_Uaa2XA8vyuDvsio1ysr__9kF6RK3pKcD=Xa1ps8Mg@mail.gmail.com>
+Subject: Re: [linus:master] [fsnotify] a94204f4d4: stress-ng.timerfd.ops_per_sec
+ 7.0% improvement
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Feb 6, 2025 at 9:45=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, 5 Feb 2025 at 00:09, kernel test robot <oliver.sang@intel.com> wr=
+ote:
+> >
+> > kernel test robot noticed a 7.0% improvement of stress-ng.timerfd.ops_p=
+er_sec on:
+>
+> I have no idea what the heck that benchmark does, but I am happy to
+> see that this whole patch series did actually end up improving on the
+> whole fsnotify cost that I was ranting about in the original
+> submission.
+>
+> Obviously this load doesn't actually do the new pre-event hooks, so it
+> seems to be all just about how fsnotify_file_area_perm() (or some
+> other fsnotify hook in the normal read() path) now isn't the
+> unconditional pig that it used to be.
 
+Right.
+We got this win by slightly modifying semantics of FAN_ACCESS_PERM
+events, but I cannot imagine that anyone will care (famous last words).
 
-On 2/7/25 11:55, Vlastimil Babka wrote:
-> On 2/7/25 11:43, Miklos Szeredi wrote:
->> On Fri, 7 Feb 2025 at 11:25, Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->>> Could be a use-after free of the page, which sets PG_lru again. The list
->>> corruptions in __rmqueue_pcplist also suggest some page manipulation after
->>> free. The -1 refcount suggests somebody was using the page while it was
->>> freed due to refcount dropping to 0 and then did a put_page()?
->>
->> Can you suggest any debug options that could help pinpoint the offender?
-> 
-> CONFIG_DEBUG_VM enables a check in put_page_testzero() that would catch the
-> underflow (modulo a tiny race window where it wouldn't). Worth trying.
+It's all about the fact that
+>
+> I don't see how that would be worth 7%, but I'll happily take it.
+>
 
-I typically run all of my tests with these options enabled
-
-https://github.com/bsbernd/tiny-qemu-virtio-kernel-config
-
-
-If Christian or Mantas could tell me what I need to install and run, I
-could probably quickly give it a try.
-
-
+Yeh, I was happy to see that as well :)
 
 Thanks,
-Bernd
+Amir.
 
