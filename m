@@ -1,164 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-41196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14905A2C35E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 14:16:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7106AA2C3B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 14:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A144E7A2692
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E812216B4BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72B21EEA30;
-	Fri,  7 Feb 2025 13:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4392D1F561D;
+	Fri,  7 Feb 2025 13:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sAaW5P+r";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TbZBfjYH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sAaW5P+r";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TbZBfjYH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WX7zerXX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCE21A5BB1;
-	Fri,  7 Feb 2025 13:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8CD1DE89B;
+	Fri,  7 Feb 2025 13:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738934201; cv=none; b=Isw715xtyYqVPowKFM2KVxqnM2ev4R8Mlq1g9QOyaLvtJE6dNfpc7K1iCKEwD2uTiDXLnkNTjGCPiNmkA5ZsDqA8Guiwoz5tItcnJl1gKDzZTUnFPlsTTgaKb1TGQnL0eYWNiM6iNMpyo/2NV+ADQV8tgUSkYg766BOc9hLH8/w=
+	t=1738935314; cv=none; b=FHQVtQtCQhuCH+vvPaVUbCHuNk4QlZene1hD1r6cisRPYObn5KL+StoT81xdj7Csodurzh4nnMbWVvhjd6a9ZxmNol7LMRbKDI787d3VzG+GGhSbyIGhO3+tdL6kTRDm5i0RFdXoDmJeE+yhNRk1nkezuF1cZd6y8WXJJxCy5hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738934201; c=relaxed/simple;
-	bh=5nTaQUvFxlMWygqAXJ5NTc4zhQFO1lwOJ/HjdO/0CC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vs5MUD8Oq+dMwEhUuP4AkcLrP9pgbnlaIk2qBS4KwnokWcokKLiJ7pXc4agGBeEzZ6oAIzL/DP6qQrzbJvA1EaOBgAqSGsJDFB6VFFgqvSkrG7D1+XUbyhrrzjblxqh4PZylrEo4NFafYxyuMEEk/OATCAjhJ//k9Whwjw3++jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sAaW5P+r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TbZBfjYH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sAaW5P+r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TbZBfjYH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AFB8521167;
-	Fri,  7 Feb 2025 13:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738934197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j+G7u8G4dZW1Z7wAr5j88Hm7ApvHhPGjX6mT8B9kPE4=;
-	b=sAaW5P+rdsnMBfaocUynOEJClSpVBAZF14OCOs0p9KntgkF0/aj1Zkqx/Va2P2qbQd+yDw
-	epk3KeKijRXbDBvEz0CoZRsUiueWWKsZFfPOTa+BUObmjdRxfx1Gjq7AYGC9PEJqD4+FBw
-	B50vYSHV9gCYSMPTMZ74RIjxsh9KmLA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738934197;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j+G7u8G4dZW1Z7wAr5j88Hm7ApvHhPGjX6mT8B9kPE4=;
-	b=TbZBfjYHaUZQneyt5fRzHF7KUvHeRcABwqR7ilAMqC3kZCU8LlEuVufnObgiXzCNxvuHND
-	XyJsuE475YwBy5AA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1738934197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j+G7u8G4dZW1Z7wAr5j88Hm7ApvHhPGjX6mT8B9kPE4=;
-	b=sAaW5P+rdsnMBfaocUynOEJClSpVBAZF14OCOs0p9KntgkF0/aj1Zkqx/Va2P2qbQd+yDw
-	epk3KeKijRXbDBvEz0CoZRsUiueWWKsZFfPOTa+BUObmjdRxfx1Gjq7AYGC9PEJqD4+FBw
-	B50vYSHV9gCYSMPTMZ74RIjxsh9KmLA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1738934197;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j+G7u8G4dZW1Z7wAr5j88Hm7ApvHhPGjX6mT8B9kPE4=;
-	b=TbZBfjYHaUZQneyt5fRzHF7KUvHeRcABwqR7ilAMqC3kZCU8LlEuVufnObgiXzCNxvuHND
-	XyJsuE475YwBy5AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B00E13694;
-	Fri,  7 Feb 2025 13:16:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /0HZJbUHpmfSJQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 07 Feb 2025 13:16:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4FD89A28E7; Fri,  7 Feb 2025 14:16:37 +0100 (CET)
-Date: Fri, 7 Feb 2025 14:16:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] vfs: catch invalid modes in may_open()
-Message-ID: <wve6u2kei6lfycbg7sogkjogd76tqoixfydop4dnhisgdcueep@uipa6akqgmuh>
-References: <20250206170307.451403-1-mjguzik@gmail.com>
- <20250206170307.451403-3-mjguzik@gmail.com>
+	s=arc-20240116; t=1738935314; c=relaxed/simple;
+	bh=8d/alkOiqYWk8/dvgN22uTZykuYv49MXHiQ+Vhcxz7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1/5pt3OQ668Wjb+0kh/fr7QS8rzwE+P9mzI731bJ7BnlggwNQNdpRBrDvHo859M5KKgaSb1FvOKDTGGOaeeynMcjRIs33sL43xJ2hYMHrZY905RfQm4+pxWrBEcXf1Hax4r1sLruBojvXRpavI0y+MrGUrWCtJhogIA9oaYwqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WX7zerXX; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MLIpvZkzFFyKPI7OoY68SAR7q1uURh6tXFwNkh5kNzk=; b=WX7zerXXuFRNHCXGywTeOQEjhe
+	nQT4Ul2gzgF5+kqWw5o5jMXpjkZMIvU1mow3QgNdyMbbuYE6xSGXDJLu6QLGUoEXGutfUUNq3/qHq
+	H8kE30RP/lxQcoUAuTB8LeG56tjG9vOCvLOetQq3VsQyqx0QYIx2lBXNFz2V3DFv4DUY7P+fhcKm0
+	TxljRbORLcfUQ6LUD/Msy2pcLSCtDk+LRYCsf93hgHqvdLV7VelDcUYfWqIMmcI/6V+lDkl+7+cAv
+	oCW4JSxgqBfC/x6YGrtlSwJGqX1bn0OElTRnghF6eGqJffrLkRV5plqaHRg3o7q3/WbwfjR2+4RuD
+	uFp1Ek9Q==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tgOVY-005pd9-N9; Fri, 07 Feb 2025 14:35:06 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH] fuse: removed unused function fuse_uring_create() from header
+Date: Fri,  7 Feb 2025 13:35:02 +0000
+Message-ID: <20250207133502.24209-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250206170307.451403-3-mjguzik@gmail.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu 06-02-25 18:03:06, Mateusz Guzik wrote:
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Function fuse_uring_create() is used only from dev_uring.c and does not
+need to be exposed in the header file.  Furthermore, it has the wrong
+signature.
 
-Looks good. Feel free to add:
+While there, also remove the 'struct fuse_ring' forward declaration.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Luis Henriques <luis@igalia.com>
+---
+ fs/fuse/dev_uring_i.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-								Honza
-> ---
->  fs/namei.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 3ab9440c5b93..21630a0f8e30 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3415,6 +3415,8 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
->  		if ((acc_mode & MAY_EXEC) && path_noexec(path))
->  			return -EACCES;
->  		break;
-> +	default:
-> +		VFS_BUG_ON_INODE(1, inode);
->  	}
->  
->  	error = inode_permission(idmap, inode, MAY_OPEN | acc_mode);
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+index 2102b3d0c1ae..0d67738850c5 100644
+--- a/fs/fuse/dev_uring_i.h
++++ b/fs/fuse/dev_uring_i.h
+@@ -172,12 +172,6 @@ static inline bool fuse_uring_ready(struct fuse_conn *fc)
+ 
+ #else /* CONFIG_FUSE_IO_URING */
+ 
+-struct fuse_ring;
+-
+-static inline void fuse_uring_create(struct fuse_conn *fc)
+-{
+-}
+-
+ static inline void fuse_uring_destruct(struct fuse_conn *fc)
+ {
+ }
 
