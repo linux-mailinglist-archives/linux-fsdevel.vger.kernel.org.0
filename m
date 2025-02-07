@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-41136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF36A2B6DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 00:57:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D58A2B6E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 01:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6EF163F02
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2025 23:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A01E3A7A98
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 00:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FF5237711;
-	Thu,  6 Feb 2025 23:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3827FD;
+	Fri,  7 Feb 2025 00:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iGRxwEdG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yLjPZIyi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iGRxwEdG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yLjPZIyi"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XtUzndly";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XD8SlNfu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XtUzndly";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XD8SlNfu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948AD2417D3;
-	Thu,  6 Feb 2025 23:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222F45672;
+	Fri,  7 Feb 2025 00:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738886235; cv=none; b=P4lj9kiBDDo8JKaovIPOkEDz/8+K7+9X4aznWYeye2MKQBlBBDKMJFF4q+2fwjtcSFRnCf7G9XpNHUl9ua7VcSExUhEVXtsoCVFt/CXbqIUfNsKq4ATVQwtRKqhh9p6I0Xv3KdWscnlN2i6DlpwIRGw8+rnMR6XCGgIKYmXBAaE=
+	t=1738886684; cv=none; b=ZOTYNBqE77oonEwaDWru4KdbAhO2kdiiZ7wEjKTUQXA9gpHrIRMPxme+ENzOIDwv7b5PLBK04Wrj3qOHGcIMu6Xry1BvT727SPh+12RkY5a08kYC0m8E51bHTUCzQNOWdu5DxJmhtHqWfmd+r+gEx0BIePHIM/04WuPtydIjZGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738886235; c=relaxed/simple;
-	bh=A81b+ydZ+b1eXj5y/pSMefXQhNFwKiUO6JwqDbKVQXI=;
+	s=arc-20240116; t=1738886684; c=relaxed/simple;
+	bh=saVBqr/hJpTQY2RYoy4yrzJCkF3cmmC2CxC7nBWyr2Q=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=mjRdI82rSRn+yu2Lb+28++JdmH4WLoPO16Zpe+os44pnk+jYeksDdH9plQXu2MTFAP8dZkJzLXGyco6+qN2ALUaT2JUN79GxtCawRiMrUdrTzwxSB9cFxVv46BmVSKl3aLTyghX6afUtUP7qW1ubf9mO3GN9GEQ4y90m9ZY/0yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iGRxwEdG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yLjPZIyi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iGRxwEdG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yLjPZIyi; arc=none smtp.client-ip=195.135.223.130
+	 References:Date:Message-id; b=DiF4NtZHewNHHW4p5iyHWRP7LSylhJW32xnsM7I+IV8Y9Aqbv5ai3M9h0Z2tgX0FDP3+J7ddOvkBBi+IMfSAGxiX1cqlO96MNaTgM49IVmbOg+puUhgSJBXIJq0xseP0YqsPz3BARBEbLd8sFh0GmdT8xflKhPycAAxoC8jnJEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XtUzndly; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XD8SlNfu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XtUzndly; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XD8SlNfu; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C116F21160;
-	Thu,  6 Feb 2025 23:57:11 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 533DD21160;
+	Fri,  7 Feb 2025 00:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738886231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738886681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CrVDNLAQuLnAq4PHsrYCK4OyhN9aDEJGPCXOyutiPmo=;
-	b=iGRxwEdGlNF8xIIMoPvB31HMRMM87Oga2OVh4pjWds8RJ3QGYppFcc6ppPM64Mw6CvgydL
-	UWmPDX9GMKjSuJWh4ILgi7e0e81ZZoB6Zmy8JpWsMO3SED5gHUKqVvjKyvBzDTvD01M7A1
-	KN3QXbYn3jDffcHztVXI9T9aWd7rozY=
+	bh=1EBDJH2327sn5nnuhMv8Vs59h6qEE4J/ulDEnb+qxnI=;
+	b=XtUzndly/ljBba7iumOqINDszOhU2ubUPY0G5+P8e0TAflPZ0tlw0T888sbNRO9s5RQy5f
+	S0RDl4VldbCOBDhk/SEq5+DkSnRLQkmyLcTqxE26uNLxuLtizaD3n8nDc85d1+Fwx5Pjh/
+	VuroSsxQ4yEMv2wuxFo611tkjJsg4jk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738886231;
+	s=susede2_ed25519; t=1738886681;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CrVDNLAQuLnAq4PHsrYCK4OyhN9aDEJGPCXOyutiPmo=;
-	b=yLjPZIyiItI1dvJKz8H/Q2H3Uxb3sTqUoP9l42JML+UeacCvFg8jxNTlUCAUvIFPPKvI2t
-	sCWVeR0V+2qhfQAA==
+	bh=1EBDJH2327sn5nnuhMv8Vs59h6qEE4J/ulDEnb+qxnI=;
+	b=XD8SlNfuPYjw6WQQQkElxc2EhoDd/a2YtZDDJxVgvM1og/8Tk/c9E45NiVSlYF4k7ZnjmS
+	HNNdbBekX4kYStCw==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738886231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1738886681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CrVDNLAQuLnAq4PHsrYCK4OyhN9aDEJGPCXOyutiPmo=;
-	b=iGRxwEdGlNF8xIIMoPvB31HMRMM87Oga2OVh4pjWds8RJ3QGYppFcc6ppPM64Mw6CvgydL
-	UWmPDX9GMKjSuJWh4ILgi7e0e81ZZoB6Zmy8JpWsMO3SED5gHUKqVvjKyvBzDTvD01M7A1
-	KN3QXbYn3jDffcHztVXI9T9aWd7rozY=
+	bh=1EBDJH2327sn5nnuhMv8Vs59h6qEE4J/ulDEnb+qxnI=;
+	b=XtUzndly/ljBba7iumOqINDszOhU2ubUPY0G5+P8e0TAflPZ0tlw0T888sbNRO9s5RQy5f
+	S0RDl4VldbCOBDhk/SEq5+DkSnRLQkmyLcTqxE26uNLxuLtizaD3n8nDc85d1+Fwx5Pjh/
+	VuroSsxQ4yEMv2wuxFo611tkjJsg4jk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738886231;
+	s=susede2_ed25519; t=1738886681;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CrVDNLAQuLnAq4PHsrYCK4OyhN9aDEJGPCXOyutiPmo=;
-	b=yLjPZIyiItI1dvJKz8H/Q2H3Uxb3sTqUoP9l42JML+UeacCvFg8jxNTlUCAUvIFPPKvI2t
-	sCWVeR0V+2qhfQAA==
+	bh=1EBDJH2327sn5nnuhMv8Vs59h6qEE4J/ulDEnb+qxnI=;
+	b=XD8SlNfuPYjw6WQQQkElxc2EhoDd/a2YtZDDJxVgvM1og/8Tk/c9E45NiVSlYF4k7ZnjmS
+	HNNdbBekX4kYStCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0402A13312;
-	Thu,  6 Feb 2025 23:57:08 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 913D713796;
+	Fri,  7 Feb 2025 00:04:38 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id i3toKlRMpWcRRwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 06 Feb 2025 23:57:08 +0000
+	id lqwMERZOpWeMSQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Fri, 07 Feb 2025 00:04:38 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -103,11 +103,12 @@ Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
  "Linus Torvalds" <torvalds@linux-foundation.org>,
  "Dave Chinner" <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/19] VFS: introduce vfs_mkdir_return()
-In-reply-to: <6ca281d4e45052a3a23bd60a63ef20288931dae1.camel@kernel.org>
-References: <>, <6ca281d4e45052a3a23bd60a63ef20288931dae1.camel@kernel.org>
-Date: Fri, 07 Feb 2025 10:57:05 +1100
-Message-id: <173888622594.22054.9704903327056265554@noble.neil.brown.name>
+Subject: Re: [PATCH 03/19] VFS: use d_alloc_parallel() in
+ lookup_one_qstr_excl() and rename it.
+In-reply-to: <017ca787f3a167302281b65e60d301d9f1c0f5de.camel@kernel.org>
+References: <>, <017ca787f3a167302281b65e60d301d9f1c0f5de.camel@kernel.org>
+Date: Fri, 07 Feb 2025 11:04:20 +1100
+Message-id: <173888666051.22054.2064348642111556769@noble.neil.brown.name>
 X-Spam-Score: -4.30
 X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
@@ -127,108 +128,106 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
 X-Spam-Flag: NO
 X-Spam-Level: 
 
 On Fri, 07 Feb 2025, Jeff Layton wrote:
 > On Thu, 2025-02-06 at 16:42 +1100, NeilBrown wrote:
-> > vfs_mkdir() does not guarantee to make the child dentry positive on
-> > success.  It may leave it negative and then the caller needs to perform a
-> > lookup to find the target dentry.
+> > lookup_one_qstr_excl() is used for lookups prior to directory
+> > modifications, whether create, unlink, rename, or whatever.
 > >=20
-> > This patch introduced vfs_mkdir_return() which performs the lookup if
-> > needed so that this code is centralised.
+> > To prepare for allowing modification to happen in parallel, change
+> > lookup_one_qstr_excl() to use d_alloc_parallel().
 > >=20
-> > This prepares for a new inode operation which will perform mkdir and
-> > returns the correct dentry.
+> > To reflect this, name is changed to lookup_one_qtr() - as the directory
+> > may be locked shared.
+> >=20
+> > If any for the "intent" LOOKUP flags are passed, the caller must ensure
+> > d_lookup_done() is called at an appropriate time.  If none are passed
+> > then we can be sure ->lookup() will do a real lookup and d_lookup_done()
+> > is called internally.
 > >=20
 > > Signed-off-by: NeilBrown <neilb@suse.de>
 > > ---
-> >  fs/cachefiles/namei.c    |  7 +---
-> >  fs/namei.c               | 69 ++++++++++++++++++++++++++++++++++++++++
-> >  fs/nfsd/vfs.c            | 21 ++----------
-> >  fs/overlayfs/dir.c       | 33 +------------------
-> >  fs/overlayfs/overlayfs.h | 10 +++---
-> >  fs/overlayfs/super.c     |  2 +-
-> >  fs/smb/server/vfs.c      | 24 +++-----------
-> >  include/linux/fs.h       |  2 ++
-> >  8 files changed, 86 insertions(+), 82 deletions(-)
+> >  fs/namei.c            | 47 +++++++++++++++++++++++++------------------
+> >  fs/smb/server/vfs.c   |  7 ++++---
+> >  include/linux/namei.h |  9 ++++++---
+> >  3 files changed, 37 insertions(+), 26 deletions(-)
 > >=20
-> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> > index 7cf59713f0f7..3c866c3b9534 100644
-> > --- a/fs/cachefiles/namei.c
-> > +++ b/fs/cachefiles/namei.c
-> > @@ -95,7 +95,6 @@ struct dentry *cachefiles_get_directory(struct cachefil=
-es_cache *cache,
-> >  	/* search the current directory for the element name */
-> >  	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
-> > =20
-> > -retry:
-> >  	ret =3D cachefiles_inject_read_error();
-> >  	if (ret =3D=3D 0)
-> >  		subdir =3D lookup_one_len(dirname, dir, strlen(dirname));
-> > @@ -130,7 +129,7 @@ struct dentry *cachefiles_get_directory(struct cachef=
-iles_cache *cache,
-> >  			goto mkdir_error;
-> >  		ret =3D cachefiles_inject_write_error();
-> >  		if (ret =3D=3D 0)
-> > -			ret =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
-> > +			ret =3D vfs_mkdir_return(&nop_mnt_idmap, d_inode(dir), &subdir, 0700);
-> >  		if (ret < 0) {
-> >  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
-> >  						   cachefiles_trace_mkdir_error);
-> > @@ -138,10 +137,6 @@ struct dentry *cachefiles_get_directory(struct cache=
-files_cache *cache,
-> >  		}
-> >  		trace_cachefiles_mkdir(dir, subdir);
-> > =20
-> > -		if (unlikely(d_unhashed(subdir))) {
-> > -			cachefiles_put_directory(subdir);
-> > -			goto retry;
-> > -		}
-> >  		ASSERT(d_backing_inode(subdir));
-> > =20
-> >  		_debug("mkdir -> %pd{ino=3D%lu}",
 > > diff --git a/fs/namei.c b/fs/namei.c
-> > index 3ab9440c5b93..d98caf36e867 100644
+> > index 5cdbd2eb4056..d684102d873d 100644
 > > --- a/fs/namei.c
 > > +++ b/fs/namei.c
-> > @@ -4317,6 +4317,75 @@ int vfs_mkdir(struct mnt_idmap *idmap, struct inod=
-e *dir,
+> > @@ -1665,15 +1665,13 @@ static struct dentry *lookup_dcache(const struct =
+qstr *name,
 > >  }
-> >  EXPORT_SYMBOL(vfs_mkdir);
 > > =20
-> > +/**
-> > + * vfs_mkdir_return - create directory returning correct dentry
-> > + * @idmap:	idmap of the mount the inode was found from
-> > + * @dir:	inode of the parent directory
-> > + * @dentryp:	pointer to dentry of the child directory
-> > + * @mode:	mode of the child directory
-> > + *
-> > + * Create a directory.
-> > + *
-> > + * If the inode has been found through an idmapped mount the idmap of
-> > + * the vfsmount must be passed through @idmap. This function will then t=
-ake
-> > + * care to map the inode according to @idmap before checking permissions.
-> > + * On non-idmapped mounts or if permission checking is to be performed o=
-n the
-> > + * raw inode simply pass @nop_mnt_idmap.
-> > + *
-> > + * The filesystem may not use the dentry that was passed in.  In that ca=
-se
-> > + * the passed-in dentry is put and a new one is placed in *@dentryp;
+> >  /*
+> > - * Parent directory has inode locked exclusive.  This is one
+> > - * and only case when ->lookup() gets called on non in-lookup
+> > - * dentries - as the matter of fact, this only gets called
+> > - * when directory is guaranteed to have no in-lookup children
+> > - * at all.
+> > + * Parent directory has inode locked: exclusive or shared.
+> > + * If @flags contains any LOOKUP_INTENT_FLAGS then d_lookup_done()
+> > + * must be called after the intended operation is performed - or aborted.
+> >   */
+> > -struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+> > -				    struct dentry *base,
+> > -				    unsigned int flags)
+> > +struct dentry *lookup_one_qstr(const struct qstr *name,
+> > +			       struct dentry *base,
+> > +			       unsigned int flags)
+> >  {
+> >  	struct dentry *dentry =3D lookup_dcache(name, base, flags);
+> >  	struct dentry *old;
+> > @@ -1686,18 +1684,25 @@ struct dentry *lookup_one_qstr_excl(const struct =
+qstr *name,
+> >  	if (unlikely(IS_DEADDIR(dir)))
+> >  		return ERR_PTR(-ENOENT);
+> > =20
+> > -	dentry =3D d_alloc(base, name);
+> > -	if (unlikely(!dentry))
+> > +	dentry =3D d_alloc_parallel(base, name);
+> > +	if (unlikely(IS_ERR_OR_NULL(dentry)))
+> >  		return ERR_PTR(-ENOMEM);
+> > +	if (!d_in_lookup(dentry))
+> > +		/* Raced with another thread which did the lookup */
+> > +		return dentry;
+> > =20
+> >  	old =3D dir->i_op->lookup(dir, dentry, flags);
+> >  	if (unlikely(old)) {
+> > +		d_lookup_done(dentry);
+> >  		dput(dentry);
+> >  		dentry =3D old;
+> >  	}
+> > +	if ((flags & LOOKUP_INTENT_FLAGS) =3D=3D 0)
+> > +		/* ->lookup must have given final answer */
+> > +		d_lookup_done(dentry);
 >=20
-> This sounds like the filesystem is not allowed to use the dentry that
-> we're passing it. Maybe something like this:
->=20
-> "In the event that the filesystem doesn't use *@dentryp, the dentry is
-> put and a new one is placed in *@dentryp;"
+> This is kind of an ugly thing for the callers to get right. I think it
+> would be cleaner to just push the d_lookup_done() into all of the
+> callers that don't pass any intent flags, and do away with this.
 
-Good catch - thanks.
-I've updated my patch you use your test, except I decided on "dput()"
-rather than "put".
+I don't understand your concern.  This does not impose on callers,
+rather it relieves them of a burden.  d_lookup_done() is fully
+idempotent so if a caller does call it, there is no harm done.
+
+In the final result of my series there are 4 callers of this function.
+1/ lookup_and_lock() which must always be balanced with
+  done_lookup_and_lock(), which calls d_lookup_done()
+2/ lookup_and_lock_rename() which is similarly balance with
+  done_lookup_and_lock_rename().=20
+3/ ksmbd_vfs_path_lookup_locked() which passes zero for the flags and so
+   doesn't need d_lookup_done()
+4/ ksmbd_vfs_rename() which calls d_lookup_done() as required.
+
+So if I dropped this code it would only affect one caller which would
+need to add a call to d_lookup_done() probably immediately after the
+successful return of lookup_one_qstr().
+While that wouldn't hurt much, I don't see that it would help much
+either.
 
 Thanks,
 NeilBrown
