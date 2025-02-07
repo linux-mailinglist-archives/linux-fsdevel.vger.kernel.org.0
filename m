@@ -1,173 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-41171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019D6A2BEC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 10:07:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E42EA2BFBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 10:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACE93AA7DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 09:07:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F3867A624E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 09:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4121D5CE5;
-	Fri,  7 Feb 2025 09:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E30233D90;
+	Fri,  7 Feb 2025 09:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQIt3oj4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ZXDaVjrD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165CA1B4F0C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Feb 2025 09:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49F41DE2CD;
+	Fri,  7 Feb 2025 09:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738919228; cv=none; b=PhIn2ytgyJGtZ/ho/Bt5LAZwe3aA2D0pPUm91Fvl8zyN+VL7yTSzXpDmvfkq/7f9jMBL8ChRLPPLtgR+fXoHaRcRrHrNiewW1TBBeF/h0iNSSXwUk9pAgmVT71TifW4v9EF6Peg4yQDmL4hVA7AJ2+CUDBFM2SecAjyuvQaEP4Q=
+	t=1738921334; cv=none; b=BIRGhLVOeyjPGUS7iXKOfULlTWGCLKTeKA+HXshPh9dekyIQa3zZsmdOXAWYw9ksD1KBrmR79x4C3TfUxfQ13bDaECr5aZ4NHch9HG5k3NaArAcB+7EgfGv0U2FEFWkp8f1KqOYY9h0V49ELDMTNF3v3pFmFY0K3/+iu8rVdBzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738919228; c=relaxed/simple;
-	bh=HaTr9grLxr5ptKgxmPfwlLtW1LyAQim7m58eyLTdgWo=;
+	s=arc-20240116; t=1738921334; c=relaxed/simple;
+	bh=EewjN7nUhhtBPJOdfrZj64y7+JiFITVsxY5wBikw+WQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTdW4EN0vcCuWOmX6q2KDY4k3qlCmG4VbLh9ba/DDecfHGUPSAkSFIZeFYUruFbTrQkvpRc4VQjcedmXtoEgRr65f5uCif1LiYqTv/pA2bqlGAjNVRZYu9k28/P007DyavLrH7O2myplaXprMIDR4u4UyFdAv5/TjzUK8wR/jAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQIt3oj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E41C4CED1;
-	Fri,  7 Feb 2025 09:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738919227;
-	bh=HaTr9grLxr5ptKgxmPfwlLtW1LyAQim7m58eyLTdgWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sQIt3oj4u8bpD8CgZu7HCtPiEcvSSDlYbIcTHmkdTqHhS15iOS9kbMxz1qg+//+9x
-	 ajlvtjJJkxwoegDLTEQXl89Oa17JiWx8BxybrRH1/Ytfzaxu/cI/fOgVKV8zQ5NrtD
-	 lcaOvv4ED0bdOQhIL/tes1aMVbNP71/n6pN18WVjWL6NKXuieARUuukgogLDB6D6p9
-	 s83E5xsd4EbWVz/h579H0mXD8nHoMY4VRBoOFmKq4rMkh6F2kYhn9WemwARGhQ6EQe
-	 srd2GVeVw6szOBvMU5ChX1Pk3W1MxDK5Ksg/Si1F+VCIjejJEcgpzj3uF+9vqfPT6r
-	 WToeM1MSu8ZTA==
-Date: Fri, 7 Feb 2025 10:07:04 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [bug report] statmount: allow to retrieve idmappings
-Message-ID: <20250207-herben-abstrahiert-9bf48ad63a78@brauner>
-References: <a4ef5f7d-9a6c-4f24-b377-557c3af0182f@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YaroOi9OJkcqxJ9pYjTXQxe+jCnMiVL5EaSqPN+qPZmqjpyqzyHTLW5qPZ2Qgg6qBgPXC+8QhWtvu+1i9KvhTRsMLH+7y/KCHmDQDp0DpIduj6eMAMiROjfeh8UZwp+VotxJumfMdG+Vopzp1DpRq6TuRtRxp24wPLu+OWvjadw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ZXDaVjrD; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MhA1jDIfQ8iLGh9WfIUR3+LgFXMnqWm6EVDsj31vync=; b=ZXDaVjrDmJbS9jssNlbQ3D9Elb
+	r5Xsr+O3eH47BnThcCfwS3N8+p4zkexJmJG/747y6dDuOu7tkQkOCvKJ/GIuRunQjUD6KD25n0+X3
+	kcG1BAZ7Itvv9TbLunVGLSNIL1mtgJ3nUXgMX0L0AqAZcAaGEdBVjoDUsKQTUOzpRXN09nHvpZUNL
+	gxmLUvE2bu1GrU38+PRWbHHxCXP/OkHk9Ra1tn1ik0thv5vZatZna2CGm8jwG8HBcv9Yy+l75vUsS
+	o1ViSi5mUUyx6WHm0LR1XrsNS8UhS0DYuuJvLTJx0/gsGGdfUYRudFcqYM/d22WAdImA1rarkFFsF
+	lnfvqmgw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tgJwx-00FpRv-2r;
+	Fri, 07 Feb 2025 16:56:21 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 07 Feb 2025 16:56:20 +0800
+Date: Fri, 7 Feb 2025 16:56:20 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 03/24] crypto: Add 'krb5enc' hash and cipher AEAD
+ algorithm
+Message-ID: <Z6XKtPKryJsRfYvK@gondor.apana.org.au>
+References: <20250203142343.248839-1-dhowells@redhat.com>
+ <20250203142343.248839-4-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a4ef5f7d-9a6c-4f24-b377-557c3af0182f@stanley.mountain>
+In-Reply-To: <20250203142343.248839-4-dhowells@redhat.com>
 
-On Fri, Feb 07, 2025 at 12:03:23PM +0300, Dan Carpenter wrote:
-> Hello Christian Brauner,
-> 
-> Commit f8c6e8bd9ad5 ("statmount: allow to retrieve idmappings") from
-> Feb 4, 2025 (linux-next), leads to the following Smatch static
-> checker warning:
-> 
-> 	fs/namespace.c:5468 statmount_string()
-> 	error: uninitialized symbol 'offp'.
+On Mon, Feb 03, 2025 at 02:23:19PM +0000, David Howells wrote:
+>
+> [!] Note that the net/sunrpc/auth_gss/ implementation gets a pair of
+> ciphers, one non-CTS and one CTS, using the former to do all the aligned
+> blocks and the latter to do the last two blocks if they aren't also
+> aligned.  It may be necessary to do this here too for performance reasons -
+> but there are considerations both ways:
 
-Oh right, that's after Miklos' changes. That is an annoying subtle
-interaction between two branches. I'll fix that once vfs.fixes lands
-upstream.
+The CTS template will take any hardware accelerated CBC implementation
+and turn it into CTS.
 
-Thanks for the report.
+So there is no reason to do the CTS/CBC thing by hand at all.
 
-> 
-> fs/namespace.c
->     5388 static int statmount_string(struct kstatmount *s, u64 flag)
->     5389 {
->     5390         int ret = 0;
->     5391         size_t kbufsize;
->     5392         struct seq_file *seq = &s->seq;
->     5393         struct statmount *sm = &s->sm;
->     5394         u32 start, *offp;
->     5395 
->     5396         /* Reserve an empty string at the beginning for any unset offsets */
->     5397         if (!seq->count)
->     5398                 seq_putc(seq, 0);
->     5399 
->     5400         start = seq->count;
->     5401 
->     5402         switch (flag) {
->     5403         case STATMOUNT_FS_TYPE:
->     5404                 offp = &sm->fs_type;
->     5405                 ret = statmount_fs_type(s, seq);
->     5406                 break;
->     5407         case STATMOUNT_MNT_ROOT:
->     5408                 offp = &sm->mnt_root;
->     5409                 ret = statmount_mnt_root(s, seq);
->     5410                 break;
->     5411         case STATMOUNT_MNT_POINT:
->     5412                 offp = &sm->mnt_point;
->     5413                 ret = statmount_mnt_point(s, seq);
->     5414                 break;
->     5415         case STATMOUNT_MNT_OPTS:
->     5416                 offp = &sm->mnt_opts;
->     5417                 ret = statmount_mnt_opts(s, seq);
->     5418                 break;
->     5419         case STATMOUNT_OPT_ARRAY:
->     5420                 offp = &sm->opt_array;
->     5421                 ret = statmount_opt_array(s, seq);
->     5422                 break;
->     5423         case STATMOUNT_OPT_SEC_ARRAY:
->     5424                 offp = &sm->opt_sec_array;
->     5425                 ret = statmount_opt_sec_array(s, seq);
->     5426                 break;
->     5427         case STATMOUNT_FS_SUBTYPE:
->     5428                 offp = &sm->fs_subtype;
->     5429                 statmount_fs_subtype(s, seq);
->     5430                 break;
->     5431         case STATMOUNT_SB_SOURCE:
->     5432                 offp = &sm->sb_source;
->     5433                 ret = statmount_sb_source(s, seq);
->     5434                 break;
->     5435         case STATMOUNT_MNT_UIDMAP:
->     5436                 sm->mnt_uidmap = start;
->     5437                 ret = statmount_mnt_uidmap(s, seq);
-> 
-> offp not initialized
-> 
->     5438                 break;
->     5439         case STATMOUNT_MNT_GIDMAP:
->     5440                 sm->mnt_gidmap = start;
->     5441                 ret = statmount_mnt_gidmap(s, seq);
-> 
-> Same here
-> 
->     5442                 break;
->     5443         default:
->     5444                 WARN_ON_ONCE(true);
->     5445                 return -EINVAL;
->     5446         }
->     5447 
->     5448         /*
->     5449          * If nothing was emitted, return to avoid setting the flag
->     5450          * and terminating the buffer.
->     5451          */
->     5452         if (seq->count == start)
->     5453                 return ret;
->     5454         if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
->     5455                 return -EOVERFLOW;
->     5456         if (kbufsize >= s->bufsize)
->     5457                 return -EOVERFLOW;
->     5458 
->     5459         /* signal a retry */
->     5460         if (unlikely(seq_has_overflowed(seq)))
->     5461                 return -EAGAIN;
->     5462 
->     5463         if (ret)
->     5464                 return ret;
->     5465 
->     5466         seq->buf[seq->count++] = '\0';
->     5467         sm->mask |= flag;
-> --> 5468         *offp = start;
->                  ^^^^^^^^^^^^^^
-> 
->     5469         return 0;
->     5470 }
-> 
-> regards,
-> dan carpenter
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
