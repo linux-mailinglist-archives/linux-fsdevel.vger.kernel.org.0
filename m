@@ -1,94 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-41197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7106AA2C3B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 14:35:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAED6A2C3C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 14:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E812216B4BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9694E3ACFC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 13:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4392D1F561D;
-	Fri,  7 Feb 2025 13:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2B81F416C;
+	Fri,  7 Feb 2025 13:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WX7zerXX"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hkQCC5qa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8CD1DE89B;
-	Fri,  7 Feb 2025 13:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B74D1F4165
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Feb 2025 13:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738935314; cv=none; b=FHQVtQtCQhuCH+vvPaVUbCHuNk4QlZene1hD1r6cisRPYObn5KL+StoT81xdj7Csodurzh4nnMbWVvhjd6a9ZxmNol7LMRbKDI787d3VzG+GGhSbyIGhO3+tdL6kTRDm5i0RFdXoDmJeE+yhNRk1nkezuF1cZd6y8WXJJxCy5hQ=
+	t=1738935336; cv=none; b=OHbWR//99tFamYaQNatS1oz/MJF4zCjAhpZYx60gtoF/JIno1K/A/IJDC88kmuNSRXb3pQNKicZaPy196UTjnO8qCfmjheJitIN6Wb/FobUoAuO2U26QHHszNzGtv+xhV2mOqievTpY/oIWUvrNbMaBMSpfkrUlrhJxrXNWqOE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738935314; c=relaxed/simple;
-	bh=8d/alkOiqYWk8/dvgN22uTZykuYv49MXHiQ+Vhcxz7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1/5pt3OQ668Wjb+0kh/fr7QS8rzwE+P9mzI731bJ7BnlggwNQNdpRBrDvHo859M5KKgaSb1FvOKDTGGOaeeynMcjRIs33sL43xJ2hYMHrZY905RfQm4+pxWrBEcXf1Hax4r1sLruBojvXRpavI0y+MrGUrWCtJhogIA9oaYwqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WX7zerXX; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MLIpvZkzFFyKPI7OoY68SAR7q1uURh6tXFwNkh5kNzk=; b=WX7zerXXuFRNHCXGywTeOQEjhe
-	nQT4Ul2gzgF5+kqWw5o5jMXpjkZMIvU1mow3QgNdyMbbuYE6xSGXDJLu6QLGUoEXGutfUUNq3/qHq
-	H8kE30RP/lxQcoUAuTB8LeG56tjG9vOCvLOetQq3VsQyqx0QYIx2lBXNFz2V3DFv4DUY7P+fhcKm0
-	TxljRbORLcfUQ6LUD/Msy2pcLSCtDk+LRYCsf93hgHqvdLV7VelDcUYfWqIMmcI/6V+lDkl+7+cAv
-	oCW4JSxgqBfC/x6YGrtlSwJGqX1bn0OElTRnghF6eGqJffrLkRV5plqaHRg3o7q3/WbwfjR2+4RuD
-	uFp1Ek9Q==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tgOVY-005pd9-N9; Fri, 07 Feb 2025 14:35:06 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH] fuse: removed unused function fuse_uring_create() from header
-Date: Fri,  7 Feb 2025 13:35:02 +0000
-Message-ID: <20250207133502.24209-1-luis@igalia.com>
+	s=arc-20240116; t=1738935336; c=relaxed/simple;
+	bh=eL6f/vBW8/55ObLxdCha+pi+VuNZTgE89zN1gtxKPtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKmCnv+daocBim1JCRPscf7defC69oKwASX/ixdbfWu8Zx5rtIDRt+6oEdfjy6LUC9GSnO8WQxhNYu8FH5iLHeSCpGLuajLlkaN9WTxZmPvu7DoTHaTsjdZvWdGCb0Ja/nizWM7quCAUd0zLeAZomonecg+FqA9/M6gziCaLZBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hkQCC5qa; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 7 Feb 2025 08:35:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1738935322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KdpuzDJFe1T7WuWmEt+nbSUs+sR4PsDScVN/n3CHCBc=;
+	b=hkQCC5qazHU4H+oUsUaMV3yAASSCCKOWp6k3WD7gc+kJiWus9ZRa6hq3JAqEK8fLre0BMZ
+	VxBs6Up3SwvgeBR8nH4CGtbck3OCOTeumd1jFLXlgTfH24aOrSNScv7YaiAz+jr9Rl3fy9
+	9dBPIvnKIuC/7sEsAk/wFtVsSvjdJkU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, audit@vger.kernel.org
+Subject: Re: [PATCH 1/2] VFS: change kern_path_locked() and
+ user_path_locked_at() to never return negative dentry
+Message-ID: <4bxqnnpfau5sq2h7oexvrvazqqpn55e7vsjlj44epdcas2clzf@424354eeo6dl>
+References: <>
+ <lfzaikkzt46fatqzqjeanxx2m2cwll46mqdcbizph22cck6stw@rhdne3332qdx>
+ <173891340026.22054.12085488968187293785@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173891340026.22054.12085488968187293785@noble.neil.brown.name>
+X-Migadu-Flow: FLOW_OUT
 
-Function fuse_uring_create() is used only from dev_uring.c and does not
-need to be exposed in the header file.  Furthermore, it has the wrong
-signature.
+On Fri, Feb 07, 2025 at 06:30:00PM +1100, NeilBrown wrote:
+> On Fri, 07 Feb 2025, Kent Overstreet wrote:
+> > On Fri, Feb 07, 2025 at 05:34:23PM +1100, NeilBrown wrote:
+> > > On Fri, 07 Feb 2025, Kent Overstreet wrote:
+> > > > On Fri, Feb 07, 2025 at 03:53:52PM +1100, NeilBrown wrote:
+> > > > > Do you think there could be a problem with changing the error returned
+> > > > > in this circumstance? i.e. if you try to destroy a subvolume with a
+> > > > > non-existant name on a different filesystem could getting -ENOENT
+> > > > > instead of -EXDEV be noticed?
+> > > > 
+> > > > -EXDEV is the standard error code for "we're crossing a filesystem
+> > > > boundary and we can't or aren't supposed to be", so no, let's not change
+> > > > that.
+> > > > 
+> > > 
+> > > OK.  As bcachefs is the only user of user_path_locked_at() it shouldn't
+> > > be too hard.
+> > 
+> > Hang on, why does that require keeping user_path_locked_at()? Just
+> > compare i_sb...
+> > 
+> 
+> I changed user_path_locked_at() to not return a dentry at all when the
+> full path couldn't be found.  If there is no dentry, then there is no
+> ->d_sb.
+> (if there was an ->i_sb, there would be an inode and this all wouldn't
+> be an issue).
+> 
+> To recap: the difference happens if the path DOESN'T exist but the
+> parent DOES exist on a DIFFERENT filesystem.  It is very much a corner
+> case and the error code shouldn't matter.  But I had to ask...
 
-While there, also remove the 'struct fuse_ring' forward declaration.
+Ahh...
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
- fs/fuse/dev_uring_i.h | 6 ------
- 1 file changed, 6 deletions(-)
+Well, if I've scanned the series correctly (sorry, we're on different
+timezones and I haven't had much caffeine yet) I hope you don't have to
+keep that function just for bcachefs - but I do think the error code is
+important.
 
-diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-index 2102b3d0c1ae..0d67738850c5 100644
---- a/fs/fuse/dev_uring_i.h
-+++ b/fs/fuse/dev_uring_i.h
-@@ -172,12 +172,6 @@ static inline bool fuse_uring_ready(struct fuse_conn *fc)
- 
- #else /* CONFIG_FUSE_IO_URING */
- 
--struct fuse_ring;
--
--static inline void fuse_uring_create(struct fuse_conn *fc)
--{
--}
--
- static inline void fuse_uring_destruct(struct fuse_conn *fc)
- {
- }
+Userspace getting -ENOENT and reporting -ENOENT to the user will
+inevitably lead to head banging frustration by someone, somewhere, when
+they're trying to delete something and the system is tell them it
+doesn't exist when they can see it very much does exist, right there :)
+the more precise error code is a very helpful cue...
 
