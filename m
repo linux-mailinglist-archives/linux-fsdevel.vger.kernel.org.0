@@ -1,134 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-41294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E5BA2D803
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 19:23:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03213A2D817
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 19:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339CD3A546D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 18:23:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2EC166126
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 18:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D0B1F3B8F;
-	Sat,  8 Feb 2025 18:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D405718CBFC;
+	Sat,  8 Feb 2025 18:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EklgTIVz"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OJzbz1wl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E176241107;
-	Sat,  8 Feb 2025 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2701024112E
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Feb 2025 18:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739039027; cv=none; b=YqKV3JR3pZJPeY5siF0QblII+SHGeFl4cUklCY17u/l3jWDn/40RScmAdJAXqohVsxLRKty4cQdSeW+ddm7K9urkdQzoA7C2G/LXpajXmjPRHkWkyHKULdfousvGz3YyEudpL8uObcXZ2KBSDCd+5quXXM/chNHB4kASPzbb6RY=
+	t=1739040840; cv=none; b=EstCfHL0UYlGP6EB95T+M+4eRczKFKhuSMo25H9h7qUbVXAcKytExb7JJq9Eshqi+vs41MtRH9wcG2m8Ni0jLhnxzmqyVus9jzyMOUJoACiiJYQoWQSE6uvpy0xTyGle5CRfIeSEsrbV9Fs0MBwlIJYMr3RmdEcS3efFUMPsX1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739039027; c=relaxed/simple;
-	bh=jJ+AQLoMjO/x3Ps7vJSk3vzcKF5wiCVgIDoDTv4QQN0=;
+	s=arc-20240116; t=1739040840; c=relaxed/simple;
+	bh=Ubo4wxDjAMDx2uw+LaC/zE4ZJCENcZS8vDOY0CHooS8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpKfWvlE9UEY84UZ/xSgNWgOn8d1iN0qUsHv2vOW6VCrORg3IsfMwKHXtJ8j/o3OfkmkWPaBCf4UuFXPjPKi53yvK6DNMKHtkBt9oSXLLBbxaRBZVDgOUqFVzzlbz1mzochyzxlP5mOyo7CobLQMBnlucgfmOJ/8Tw5rlEg1v44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EklgTIVz; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5de4c7720bcso2569447a12.0;
-        Sat, 08 Feb 2025 10:23:45 -0800 (PST)
+	 To:Cc:Content-Type; b=TyNDoTYf0QJg4TqfQALySyfu+aMOq12gogWz9oZgcicHVrJVPvfI7kdc85aq9e+GjnourJLQyYG6Ev/Shi9/IVX8PlvbK6w0+6/IMXoawm9mKxSjrd8E6dAzuZ05+TF3l7IS1t2vZfu00XCl/GgyYobYKfRPYSHoRPPlc3H6NyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OJzbz1wl; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5de5a8a96abso1426029a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 10:53:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739039024; x=1739643824; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xiNvW4R/VJfrDNayC58/uDi99/+MsHLhziR2BZUzZIU=;
-        b=EklgTIVzy8lQ9XhJgkOFefUP4hIp+h6dI7LYOyc5bkFnRgohublN1+6JGFX8MAUNqq
-         POp0ByP0ucTmntxJsg6kFNqIypq0zCebnldvHvtvTopIAsDIuBM7ZM5k3nYh6nGlAkNY
-         HQRj4z7I+QBylib9FySozfD3IyhnpdkxNow04qEyjspDsw7qGH4cSBACd2eKBhMpDvZ9
-         K+6Izz+SLsOxxJ+9VowZ39meowCvRDdZ7egPdUHLm6xQKMg1cNupR3ma7ks9aK0rY1Fg
-         Uy0ksg7dpIJmrbAO1+BQ7elWdMx4JfLt9brzqxsxk928I0hi+6cqfnT+ZPJ3sYokYL/i
-         JP8w==
+        d=linux-foundation.org; s=google; t=1739040836; x=1739645636; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kmbr0H9srSRz+vgiAYrxGsuDDOFMLeKavVCcXEyEunw=;
+        b=OJzbz1wlfkKRrmL7FmW/PPixwsORpxWnBd47Q5OWGl+10TqPHtRNJM29C38j3YeDlR
+         J2FujCq8IoIksBD/68JEMBoDOYGmDGexkVDzPNBZDMamMUJBF21N2MjVS4wYQrHrUnHb
+         60ABnvNAJPorSYAyq2V4afPXDzbqZEM4ilKiw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739039024; x=1739643824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xiNvW4R/VJfrDNayC58/uDi99/+MsHLhziR2BZUzZIU=;
-        b=YT7KBalRLshiWJfikSuNZsE4g9apkuuDPSAD9zprG9IKZKwxT9gSr3csM4pWy9T1Jw
-         IR2n8sW6CiUstGLmeI5Ic1HYqrg9BN4nacxmyvDFV2L1JHYnd127a8j3+wjE6odHm4mo
-         ww/M2dxdSMTqQ01Gf9IgCgJz/CkI/X8/BqE73D/G1Q9Js4EzMq7ZU6E6D+xlK5naIAN1
-         ufK/FwCkhrOqhKk4Zu7QkUG65EsfLE+l78ShAY3oUpisLoE0x1NoVKpx7SATJGEcIGlG
-         3uDLnY9J55NZberoqhbBWetSBxjRfm+s+MFPeDm8mVfZ3VXGrtRb8pJVTqTMclutZ4lE
-         7sMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXWUSsRw4zvBRlrAiQUSvv8lARCYTfqUAAZGWnigSBti1oMbiKab7CI9xWjHkwtORriXf3jA2TbdujdsbT@vger.kernel.org, AJvYcCV90zzD3wwRvWkOIvRSjVKdlflEvuVNFCSqfBgtCVM8JxwtlvczT89x4rnGg4lyhTHNCwZI1cKy1KXQ@vger.kernel.org, AJvYcCX5faQdKkatJzcBRw1vWgmNGOBBnu+7r8pCBMbyWRnhTElgYI9tRuGeznWwpcHO52eXejCBDlAajWcwIh+5aA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrxu4H8WI6WJxcFt6EYH6WpdWxMWK5ZEERv0uEio3tg9Q30qn8
-	KnLLWb3B33M7RKiYjKVIhBMagm/uXVHOhhDLN7Zu4QsQEqWdp8GZV88Ecd00Z1ZBLoLmx4Hwj6l
-	H6KaJC4rBp1adiwvM0BCEwZpDK18=
-X-Gm-Gg: ASbGnctP7LBLz7+XGrRax8lFiDThrRM75R1hnZ+FuMnQ/WA8uDA3ivz3qGGxD0BfdUa
-	EvEY3i+uBhjwlmIW/5PUNL19UaDTPT67VTJJFsIWA1f54c3eYOlYKUb/YdQ+RD072eY3HixL1
-X-Google-Smtp-Source: AGHT+IEqNBa82X3gISKr2oPC6+cVGTAfy5ePrlgVkuS7QLpMKuQGaDC6GHpRzb1UEFKg/yyqpP6k609+ra71SKuoP+8=
-X-Received: by 2002:a05:6402:2084:b0:5de:44b1:46c with SMTP id
- 4fb4d7f45d1cf-5de44feb75cmr7781329a12.7.1739039024125; Sat, 08 Feb 2025
- 10:23:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739040836; x=1739645636;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kmbr0H9srSRz+vgiAYrxGsuDDOFMLeKavVCcXEyEunw=;
+        b=BjSxT01vmEGVqtKfEd49SZxwlJv6ZkXuymKvvCEfM7C5H10MAxfsKVcGssoeNYz27M
+         ULILvchx21XE9lSxsdoDxqYBikZisuMxAIwwj7GlzmwenouullVwPmXuK2Vdxj0rqc3I
+         L7CGgOepdQOki7WdBoObWwLnsXTOiJk2NMpgzT6twgOIwDmJDdqFg+MZOkGF+6rj2Mt0
+         fHI9Sk/IQOSxdu+1c6Mfmr7kcBJYK572pmsPBEMCDfRfnY3ooN11snjFxNPZNAfo5qpa
+         KrZFD2hD33fLum1kgkt40i+moBhk6KEgZOzJrcbrTzusiUfUuiTrG3j7CI+VjfgN2pW+
+         TkGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfYGZFTpRM7RYWLDqK/tfrcApVhmgJ9HrIxHxtwADSa/pPCpvD7ShOs+rVvUI2f0X8fjIGCJF7R6/d76qI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk3aX5pD6zblIiRNtd7rmFSJCJ7uNazy7Kcoij+4+uAX45iua6
+	+nF7GdOc5n1Aijm+liR4T+tH+vfPrdA/1A7pPSj3p4qzXvk3efMs1kAWbzAbE3+PgzibeiYiYL/
+	hVW/0gg==
+X-Gm-Gg: ASbGnctfq1V+OesPXrg8z80IJyEizb4V99DU7fQJRoWkJCoQk+3GqahOv9VyRsXo2v7
+	ymJ/NrSbhBx9yuge2ptnP9eemDacWIs+SXw2vw3pr3pHZmeG+odUm4Gl0jZZe/9rzWqvooXh6nW
+	ZbE3k2mLyOTKQJZSJ3dNVvOUJu8rtT41+d1yPkSa82Jxs1z9Y63ngBAT/T+Zd66F81fNKHRhLxg
+	tIac0joam/Na3nlTcGe+CDnzVgNQO5TFzwqiO/BRost/7iTVtmc/OZVjPo5c+VsMgjYbInYAikr
+	NG2ej7v5ULgZnkdHqijiegkHegPP3m4jUdDTISaPjTDbZvamVF8l68Mspvd061nWaA==
+X-Google-Smtp-Source: AGHT+IEKLQNFf79Mi8orSdUg5BorwXB2T5bTG129eVInmn988aM8zi6pdL3RKNyLmyXW0HcZ7OL5+g==
+X-Received: by 2002:a05:6402:194b:b0:5dc:7374:261d with SMTP id 4fb4d7f45d1cf-5de44fe941dmr21676877a12.7.1739040836060;
+        Sat, 08 Feb 2025 10:53:56 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772f89318sm521613666b.70.2025.02.08.10.53.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Feb 2025 10:53:55 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dce4a5d8a0so5145484a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 10:53:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUOo9Y2Imz7WZ/LaDDN7mimELYy0OQGVqNkDxBcVcXKQx3JbTBdOu8005cLqDugesmSgckmao2eub5xXi8D@vger.kernel.org
+X-Received: by 2002:a05:6402:358f:b0:5dc:8f03:bb5b with SMTP id
+ 4fb4d7f45d1cf-5de44fe944emr19692649a12.5.1739040834771; Sat, 08 Feb 2025
+ 10:53:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67a4eae3.050a0220.65602.0000.GAE@google.com> <67a79eb3.050a0220.3d72c.002b.GAE@google.com>
-In-Reply-To: <67a79eb3.050a0220.3d72c.002b.GAE@google.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 8 Feb 2025 19:23:32 +0100
-X-Gm-Features: AWEUYZkDy7uFTIlJQohQpCjxxZm_lZu6PPZOEeMY_q1jzs96tEGajm8SZ8cCtOo
-Message-ID: <CAGudoHGQo1Y41_91WOUJygHzrmOO4N7PY12vPpFLF=ZEFPvsBQ@mail.gmail.com>
-Subject: Re: [syzbot] [ext4?] WARNING in inode_set_cached_link
-To: syzbot <syzbot+2cca5ef7e5ed862c0799@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, brauner@kernel.org, jack@suse.cz, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	viro@zeniv.linux.org.uk
+References: <20250208151347.89708-1-david.laight.linux@gmail.com>
+In-Reply-To: <20250208151347.89708-1-david.laight.linux@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 8 Feb 2025 10:53:38 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
+X-Gm-Features: AWEUYZkQ-gaQUcuQDLlGCQM-u1tFXVw0-fJVfL4CHFsbbrdrsyXbEEev_pRAdtQ
+Message-ID: <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
+Subject: Re: [PATCH next 1/1] fs: Mark get_sigset_argpack() __always_inline
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-For posterity this is expected, the ex4 fix is here:
-https://lore.kernel.org/linux-hardening/67a3b38f.050a0220.19061f.05ea.GAE@g=
-oogle.com/T/#mb782935cc6926dd5642984189d922135f023ec43
+On Sat, 8 Feb 2025 at 07:14, David Laight <david.laight.linux@gmail.com> wrote:
+>
+> Since the function is 'hot enough' to worry about avoiding the
+> overhead of copy_from_user() it must be worth forcing it to be
+> inlined.
 
-On Sat, Feb 8, 2025 at 7:21=E2=80=AFPM syzbot
-<syzbot+2cca5ef7e5ed862c0799@syzkaller.appspotmail.com> wrote:
->
-> syzbot has bisected this issue to:
->
-> commit 6408a56623761f969537b421d99f045a4cc955b9
-> Author: Mateusz Guzik <mjguzik@gmail.com>
-> Date:   Tue Feb 4 21:32:07 2025 +0000
->
->     vfs: sanity check the length passed to inode_set_cached_link()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D152ffca458=
-0000
-> start commit:   808eb958781e Add linux-next specific files for 20250206
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D172ffca458=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D132ffca458000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D88b25e5d30d57=
-6e4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2cca5ef7e5ed862=
-c0799
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D161241b0580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16ee80e458000=
-0
->
-> Reported-by: syzbot+2cca5ef7e5ed862c0799@syzkaller.appspotmail.com
-> Fixes: 6408a5662376 ("vfs: sanity check the length passed to inode_set_ca=
-ched_link()")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+Hmm. gcc certainly inlines this one for me regardless.
 
+So it's either a gcc version issue (I have gcc-14.2.1), or it's some
+build configuration thing that makes the function big enough in your
+case that gcc decides not to inline things. Do you perhaps have some
+debugging options enabled? At that point, inlining is the least of all
+problems.
 
+> I'd guess that gcc is counting up the number of lines in the asm again.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+If that's the case, then we should probably make sure that the
+relevant inline asms are marked 'inline', which makes gcc estimate it
+to be minimal:
+
+    https://gcc.gnu.org/onlinedocs/gcc/Size-of-an-asm.html
+
+but it turns out that with the compiler bug workarounds we have that
+wrapper macro for this case:
+
+   #define asm_goto_output(x...) asm volatile goto(x)
+
+which I guess we could just add the inline to.
+
+Bah. I think we should fix those things, but in the meantime your
+patch certainly isn't wrong either. So ack.
+
+And while looking at this, I note that I made get_sigset_argpack() do
+the masked user access thing, but didn't do the same pattern for
+get_compat_sigset_argpack()
+
+          Linus
 
