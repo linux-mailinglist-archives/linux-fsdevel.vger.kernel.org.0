@@ -1,94 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-41281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32851A2D47E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 08:25:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C384FA2D56B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 11:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1873E3AB25F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 07:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF398188CF14
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 10:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C236C1AA791;
-	Sat,  8 Feb 2025 07:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB5D1B0418;
+	Sat,  8 Feb 2025 10:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NU8jo/aU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFED419DF98
-	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Feb 2025 07:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8916E7DA8C;
+	Sat,  8 Feb 2025 10:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738999508; cv=none; b=BlpF6/o3ZHHNk9drdSiPAodm85Jpt3jc9Eg1KCFXqe/wpfIwwRUBzIiiDWyBeEaCxNkP9Yh3SJYHY6oNSr3Unde9tCaX8ezm4ta0CCgrk8ee93TeXJu+WMS7B9wOsX/7w+dGrYA8VWXww2Jp12shmJhfVpyVRyV98r54h79weJE=
+	t=1739009519; cv=none; b=tlHYT40Wjz6/qxVh66/0z/DFxk7veVVLeZJnYwmgnOw+JspEeygLPPq+eBeuaSfo2RS/2+GrZrqHNNAMPOkQl7WHxETHIH3Y+HkjQf2es5uJRjbPBIK1dmlNkQQY7wx72IUvJSMEnJ/YDVK7j/C6aExf1w8Rbsi1/ULeQWTkb0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738999508; c=relaxed/simple;
-	bh=nO3hchjOsaP1RONuy97ZQXYJfj/XWV3o1xs5m2QVd2Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BBNOh1qXBzz5xnpW+hcygJfc/RfUnxuFOHn2ghdZyY/G4CpTSNXFb0cmjmJcMCtN56FYy8xRnHdJiViX+B6hZdJxfH9Rm5xWmZu8c+T5bVC52bUI8nM/g/V0vOtcxZYYnAPKd7HJHaI6CxKVN8Ae7nuchckVqBCjsNjHtZ5RulU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-84cb445557aso609677639f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2025 23:25:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738999506; x=1739604306;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bTLH3DE1scVq8ZV/C5ZLGjBap6ga1IZ5cXcRDj04E4E=;
-        b=M+P+l35uF17PmE8mXBh/nZeFdRuv4xnjLjiDLBdn3Ole0l46+9XdeTtqRib8WkvUDh
-         HqXq56so6/XkOiqgVihov+4ziGGQMSh7cldrnrOgCbJSPZuluXahWEqotPhGsx6oZOzB
-         mdEOBp5zw3l6bCRciBZBHFlJt8ypGYepRwZu6qCQQwXWibbRnsNOk5fjuG+tGLT3dztz
-         CQGJ+Mix17PAVXu6Qkh8wF3pS4ad0aaH3o+h0m42YBdIS8mOKfHwbqYFB0a22lUQIarG
-         ZRQWshlyxYxrvdjxbWsUOdbZP9z4NgTvAm4QlMWxX1iVj1hZV3OosSzmb2iTpx+QbIP6
-         m3ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTll72lTFslNkM1SaA5wL+msyOCESa5j7Wf27KUaw6b2OM8zqWHEutt3c71UXgmrVeHUTOsaOkAlqrHGoe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+08EWx7BkD4OYc5DQNY2+LRWKSVz04sT7lysUZQh9bb8arhK1
-	81OZdcNjUkwvYIRy5wu6oVoumqTRZmM35JRAkjwnZM3Ii6OxEczO9BR4v0ZGIsPYn+447mg08rQ
-	XoqqZywTaLSLg9tV9588NRW3zWVWLhdsPy89HKqm7oEF0U4mJio1FkNE=
-X-Google-Smtp-Source: AGHT+IGKkh/0FawH2W86AI8WUkzUTbydbSlAtwptxUOjYiSCq8r5MPZ/xLAa/+mPU/8D2xKFQdArsfXVcM8/oj6kp6MWTlj6YvS/
+	s=arc-20240116; t=1739009519; c=relaxed/simple;
+	bh=MkuBmQus/e8uwIsd5zQOF1zf//X1fSM4hZUt0+5WeJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouAUFQhzMCcn2D+DNOy+HDvgLMlPk0Xrbek4XHb+quzgKaJKae9mMIQpJXNLoC5yerl9/kF+LJKMxCHWU00EldAzoyb24JHjRE9pevMGjPfLkPtKh+KmrqGE2TSeNPKHBlNiaINNZqY/sFJ7RP469zLr4Bt/I64zVoozQ5TX0Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NU8jo/aU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g3Z94bETGQeiDOIJu0r91P2vvPEJCA5AYCK0Qiv6LYE=; b=NU8jo/aUuMYlL2bMSPJulrSSFS
+	Kz9EhAwK1QsnNlf8Bu5FQJoBrR+SF8RZs/jjxHDIZt/wHZIcCzSmBgQzL10ISIQV0yxh5ihCkaifg
+	stTtauwYH0SPg0QB3G4T2ld6GHKGCxdQCd7AP8ySh063u+eymiFc5gK29quNsuxT+qCremQV92JNi
+	Vlq+HmT2ihV0qN9+MEbf/uia8gjUOky9f/BpArQeF7G+oxDVl67E3TrA367gW5ZXOHRNxq67GICiW
+	/x7Jvo2Ij3xpQ5gL6tigzRr4pUDs5BJcNTUkLMhOFB8CUlAWeqWpXLtrXctqDcVXLvswVdPszNYu7
+	tfGooJQg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tghoQ-0000000A8iq-0fM5;
+	Sat, 08 Feb 2025 10:11:46 +0000
+Date: Sat, 8 Feb 2025 10:11:45 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Heusel <christian@heusel.eu>,
+	Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm <linux-mm@kvack.org>,
+	Mantas =?utf-8?Q?Mikul=C4=97nas?= <grawity@gmail.com>
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for
+ FUSE/Flatpak related applications since v6.13
+Message-ID: <Z6ct4bEdeZwmksxS@casper.infradead.org>
+References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
+ <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+ <9cd88643-daa8-4379-be0a-bd31de277658@suse.cz>
+ <20250207172917.GA2072771@perftesting>
+ <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz>
+ <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:481c:b0:3cf:b626:66c2 with SMTP id
- e9e14a558f8ab-3d13df546c4mr45042965ab.19.1738999505985; Fri, 07 Feb 2025
- 23:25:05 -0800 (PST)
-Date: Fri, 07 Feb 2025 23:25:05 -0800
-In-Reply-To: <67a4b9e8.050a0220.d6d27.0000.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67a706d1.050a0220.3d72c.0020.GAE@google.com>
-Subject: Re: [syzbot] [overlayfs?] general protection fault in clone_private_mount
-From: syzbot <syzbot+62dfea789a2cedac1298@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, lizhi.xu@windriver.com, mike@mbaynton.com, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
 
-syzbot has bisected this issue to:
+On Fri, Feb 07, 2025 at 04:22:56PM -0800, Joanne Koong wrote:
+> > Thanks, Josef. I guess we can at least try to confirm we're on the right track.
+> > Can anyone affected see if this (only compile tested) patch fixes the issue?
+> > Created on top of 6.13.1.
+> 
+> This fixes the crash for me on 6.14.0-rc1. I ran the repro using
+> Mantas's instructions for Obfuscate. I was able to trigger the crash
+> on a clean build and then with this patch, I'm not seeing the crash
+> anymore.
 
-commit ae63304102ecd597130ecea27395739a6a6371b7
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Thu Jan 23 19:19:48 2025 +0000
+Since this patch fixes the bug, we're looking for one call to folio_put()
+too many.  Is it possibly in fuse_try_move_page()?  In particular, this
+one:
 
-    fs: allow detached mounts in clone_private_mount()
+        /* Drop ref for ap->pages[] array */
+        folio_put(oldfolio);
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10cb5ca4580000
-start commit:   808eb958781e Add linux-next specific files for 20250206
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12cb5ca4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14cb5ca4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88b25e5d30d576e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=62dfea789a2cedac1298
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16346df8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117e80e4580000
-
-Reported-by: syzbot+62dfea789a2cedac1298@syzkaller.appspotmail.com
-Fixes: ae63304102ec ("fs: allow detached mounts in clone_private_mount()")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I don't know fuse very well.  Maybe this isn't it.
 
