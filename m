@@ -1,198 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-41275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A29A2D1D6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 01:02:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48ED0A2D1EF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 01:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11FEA3AA445
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 00:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458CD188E0A2
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 00:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341E72CA6;
-	Sat,  8 Feb 2025 00:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5C0C8FE;
+	Sat,  8 Feb 2025 00:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="YHRtdASt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uHGtx/8Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5VexVQR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D41383;
-	Sat,  8 Feb 2025 00:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8993C2C9D;
+	Sat,  8 Feb 2025 00:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738972967; cv=none; b=JJFnFOI26okCRy4XfJBXUQkxZhavxPW4uBfBdD9AVrGqdZ4feVOwsduMhxlZ2CTtGCPFVMZb10s6WGwzCIcxmcXVCyXbcRQUgxpoVN7DgK4pfEq0ZpFUGrMOfumiB8WqRhqHK0VJy0L6hxXBzHJ/JmneaO9x9mu8Ngw4qhJ1MTQ=
+	t=1738974190; cv=none; b=kHNsBu1jj8iG38/pM3B6fx4VT01Ss5KvY5DuYMK+wwvjbfsJja4Mt3MIgr9pZNCbLouhCYIRhA3lXIgP7hR3e4WD7oKMH/MniGmhoUAtSYxKx5JVY9hXIl+KNpFmXMQ3ETrOP1E6FMzOkySVP6mVzAm0aGX1PywJkD9BR3rgqlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738972967; c=relaxed/simple;
-	bh=TSP1JMmVi42tAOtGzn3k9oCoW5xLhTjyWksZSavSW7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i6lzNbKm5x7VAD8wBZ2rkLMICdZlFSEw0aBuG1PfVdAF0Gt0bmnRk9a6BSKhlFhS/q1p7WxHrGCIIFuR3Qe5KNK0IVCPVbCBO+wqujZHmYGu3hajNPXpw00g2VbXZQKm3JOQliS7SECNHsBVJ8tDUliX5UyLl4hRs+E0/J73nR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=YHRtdASt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uHGtx/8Y; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 688F1254010E;
-	Fri,  7 Feb 2025 19:02:42 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Fri, 07 Feb 2025 19:02:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1738972962;
-	 x=1739059362; bh=mrWw7gmE3NDMuFQEpyImkKuDcSno+4GUyYuDqXBEHeo=; b=
-	YHRtdAStvjmtGKokAa6Y2Zrfunbbxso7mlsWZdg5xGhTf/Hrs4t0+/aUd9jRggtM
-	GrsmQhmihu7FTyCsUMoTrSxMDbSTUQD+pAbzq/uOU8SCaMLlyrePd7pziEoDdHJo
-	A0mnezmOriDfzpD3HYU2GBr0h7mXgZkGr7rjCiVsNnMBVCF32jwEYBnzbLdULhb5
-	/Rx/SLZT6mayGuB3JPSOA0Z+lJrffsu/otn7p9epqj8p8+UjYCH4tst9ttRh4j0C
-	6g+5Yi16nUyPpzE2eTQnyo4XzEz3LjgTL7Z57CiQE+kA3Ngs051ByBirO62hNkzx
-	bt/xzDZ0MRk6b7gx5ZgrWg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738972962; x=
-	1739059362; bh=mrWw7gmE3NDMuFQEpyImkKuDcSno+4GUyYuDqXBEHeo=; b=u
-	HGtx/8YNzTm+lTQATs3ZEB/btMMaans8yIFigcc/Wgh5FbOPWTQopMeOIpmR8FLi
-	kOjqr6XcKhCdCPV4FlQcYBUPaCRRVfr3hCWUxXStV+OOcbsUftvklRPPCZY+EaGO
-	bSMxGBd1Ida58KYdysm0w9mCaWWEPyiAx0WYqA9h2i55Lq5SSVcrTJAFBLl/yWuY
-	jFe19sknFBsxzkzwwdgvlV0DGTTYulSVagk5Mh6/ZeV/eIuHDVW9oxMRuOdRomRk
-	VISOqjAxUSIFm6LnapII/NADXDXrn0AGLvKkt9cEI1nmsVL/tMeHLuRZyG03PEIn
-	cj5tw24PKtClVsjOk043Q==
-X-ME-Sender: <xms:IJ-mZxSC1TKDZEeOOlX0QW683tcGOf_6bHb_NBnLj6piHlDtfEYNow>
-    <xme:IJ-mZ6x2LAK606cQW2AoTstDH1aGL8honM13VHSHKTICIV0lKZjuPprpdQ5kENWrp
-    0sHID1Li3vV__jZ>
-X-ME-Received: <xmr:IJ-mZ21nfWXQiiTZ88T15QFKZeC0gzpmXf5qy_g6TiNNT7hvA7od1qS_ytu9sAqmLOane_Yh__9rKGNWR8V8OdMwmVjSeacg4QZvPgTR13Tfdf5LVxVf>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeijecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
-    hnugdrtghomheqnecuggftrfgrthhtvghrnhepjeffuddtgefhfffggfejheetjeeukeei
-    teeiheevheetueeigfeiueelkeejkeeunecuffhomhgrihhnpehgihhthhhusgdrtghomh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghr
-    nhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthhtohepmhhikhhloh
-    hssehsiigvrhgvughirdhhuhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnheshhgvuhhsvghlrdgvuhdprhgtph
-    htthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehmshii
-    vghrvgguihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhgvghhrvghsshhiohhnsh
-    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:IZ-mZ5BjsAQquoPRdCCIk9aFAJn_Kk7MSjUZZawKqQaPr_MF0xs1_w>
-    <xmx:IZ-mZ6iIkV1ZhC5dtnv_RbKcTcMqdI__c3w2hsXbxoSzO-8l15Uihg>
-    <xmx:IZ-mZ9q7hMMR1uHMmZdyR5jquTTgWWiSzatvNE0DVOHzcJ4bZmz0wg>
-    <xmx:IZ-mZ1hp3yuqJmcPghYQOezpPpVrgPEAd22-Pbb9Iod755E2MEJb_w>
-    <xmx:Ip-mZ7ZvGEVKrIRz2zwUDDXwnxXMfycBuSTmpA19O1NcILkjs1VrADvo>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Feb 2025 19:02:39 -0500 (EST)
-Message-ID: <b828162e-716a-4ccd-95bb-d51e31cea538@bsbernd.com>
-Date: Sat, 8 Feb 2025 01:02:38 +0100
+	s=arc-20240116; t=1738974190; c=relaxed/simple;
+	bh=ry6MqBL4uPyr0sqR/k4Epg3DTn1nUp6TOZStvyfvzek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CU8b1FBrEMWh+uk3sOP1Auvj/R1oUg578MNZ8vxcBVeWMhFQa2m78V2ZROKmZZaQDOrH4tMTaH8uIXrJze2Gx4A9hNHGFaF2v3bJEUGGm4DbZsB/lTOToSNg44x/OSw+l39AbAb0sIvB3Z4aPnmR+cHuI2KtGmXfC+xYxJBmNO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5VexVQR; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-467b086e0easo14214781cf.1;
+        Fri, 07 Feb 2025 16:23:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738974187; x=1739578987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wMMA64lDvybDlSuA0rt3djW23m9gTKqcOUi9JQbLAKk=;
+        b=b5VexVQRBbnv+yhB87W/EBNdpkhTGBOO0OWYTlE51jwfi3alUboUibap6+Tv0pn4DG
+         qPqFQeFBF8yDQgut5g21nY8fEtdxy4yA4dRx/VqWLZebZrHtG/vySI90f6KB1TZuEg9r
+         hW0T7ndYIGB0lQHHIoccdAL2tFnf1F6qw2exoRQzHP8eNkkZQyT20/inRW/jbIUYTt3u
+         GLRDiSwvSmS50JpGbrMZKFZaIdpI32MaWpVA9dMrel2qF231znWeEBVKDALgN/JbvXbg
+         8yXXjYDXHqpRgkwiH8qvVfea2HFRrob2ofU0GG1MRcDYZDU80OgKNxn+tfPTv8mYMNYT
+         3Ivg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738974187; x=1739578987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wMMA64lDvybDlSuA0rt3djW23m9gTKqcOUi9JQbLAKk=;
+        b=t3CUgByzTe6Kg0y85/fQatUQSwEXFhY87PyeBB+jzjoP2ZO8EOCB4SNdyz03piL2Fh
+         Z50Gk2xbZjXuZ03/WXxfYn8ORBSMGDQQvwWGoNT/kp+rCsl0Uq+MB/TE03JiHdwQ1tCu
+         Gex8b6gbvYkGXHByOyjLf0Kz/sBZxFnxGNXVr6UE52vw3a82HUtEbQ21TvvPA4XWmnQd
+         PWmCjPVk01vydsg+ucyhviyYNV+k6sl0LzH3/AFkXfML8P2KxDpmNXZgf6FdLFRBVJO2
+         npcX81a8FgOSlwz1p9fJ5l8pHjbjXiGVJ+IyoROCzBFbeAfhMjX8u2rjMSQD35wkDxQY
+         J+1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Rn1HjfIjJuAUO5tbrUOh0i8WIqj5lbT5tCbDR1oHJ35Md2MaCixUOtuuudlEanHCQ/mn9I4M93OZ/KeR@vger.kernel.org, AJvYcCUnJ4SqJ+vulrZsiZap6E+Zh4P3ULfHarZ0puzyT3a911TMtI3GrkXS+oqQXV4ZxeeiURcLxY0BctqBTiJd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPI69yGhTrnNDAVPK6MXGxXDbl22DSS0vTX3YcwNrPLhBRlMsE
+	3eQLZsH8BY3K5yW/EjLzhnT1RRXrtgJgrYgq2pSr5e9k/7ovXPybKyqjLzQ2WkAuejIp0jkuMq/
+	sWqQrEZw8AuEwUsMdC1WAgGU7lkw=
+X-Gm-Gg: ASbGncv10+0bTshMmppl4fYrvrI0AKjlJLeiqp96bLyagfWhX14m+FfitcE1F9ns9+n
+	nLdyHAvvzXFIFeIEQKIlvDiRYR0QJ91Qsfx/2KEfHPo8kIUV0AENHOZ1BthbX3ntb9a9eEH7xyg
+	==
+X-Google-Smtp-Source: AGHT+IFynXnfoPvMksQZzaLkrmUUnGS4bSe4CamOZn8jJ/vYzyH5WcI7y0Y0eR9P7OnCEJANNBRyyGlLcn/pqDWXcug=
+X-Received: by 2002:a05:622a:1802:b0:468:fb3c:5e75 with SMTP id
+ d75a77b69052e-47167b31c04mr90216311cf.38.1738974187204; Fri, 07 Feb 2025
+ 16:23:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
- related applications since v6.13
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
- Matthew Wilcox <willy@infradead.org>, Christian Heusel
- <christian@heusel.eu>, Josef Bacik <josef@toxicpanda.com>,
- Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm <linux-mm@kvack.org>, =?UTF-8?Q?Mantas_Mikul=C4=97nas?=
- <grawity@gmail.com>
 References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
  <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
- <Z6XWVU6ZTCIl3jnc@casper.infradead.org>
- <03eb13ad-03a2-4982-9545-0a5506e043d0@suse.cz>
- <CAJfpegtvy0N8dNK-jY1W-LX=TyGQxQTxHkgNJjFbWADUmzb6xA@mail.gmail.com>
- <f8b08ef9-5bba-490c-9d99-9ab955e68732@suse.cz>
- <94df7323-4ded-416a-b850-41e7ba034fdc@bsbernd.com>
- <CAJnrk1atv4N-BDWnwmESvczJhkayXyQqnLEypkmuJNKBa6gq8A@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1atv4N-BDWnwmESvczJhkayXyQqnLEypkmuJNKBa6gq8A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <9cd88643-daa8-4379-be0a-bd31de277658@suse.cz> <20250207172917.GA2072771@perftesting>
+ <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz>
+In-Reply-To: <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 7 Feb 2025 16:22:56 -0800
+X-Gm-Features: AWEUYZnFp_ULZNnOUQ3w9lhp7jHrWUkkYz1PD0CpILo4xK1xPJS4vjBA4OF3cJg
+Message-ID: <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
+ related applications since v6.13
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Heusel <christian@heusel.eu>, Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm <linux-mm@kvack.org>, 
+	=?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 7, 2025 at 10:39=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 2/7/25 18:29, Josef Bacik wrote:
+> > On Fri, Feb 07, 2025 at 05:49:34PM +0100, Vlastimil Babka wrote:
+> >> On 2/7/25 10:34, Miklos Szeredi wrote:
+> >> > [Adding Joanne, Willy and linux-mm].
+> >> >
+> >> >
+> >> > On Thu, 6 Feb 2025 at 11:54, Christian Heusel <christian@heusel.eu> =
+wrote:
+> >> >>
+> >> >> Hello everyone,
+> >> >>
+> >> >> we have recently received [a report][0] on the Arch Linux Gitlab ab=
+out
+> >> >> multiple users having system crashes when using Flatpak programs an=
+d
+> >> >> related FUSE errors in their dmesg logs.
+> >> >>
+> >> >> We have subsequently bisected the issue within the mainline kernel =
+tree
+> >> >> to the following commit:
+> >> >>
+> >> >>     3eab9d7bc2f4 ("fuse: convert readahead to use folios")
+> >>
+> >> I see that commit removes folio_put() from fuse_readpages_end(). Also =
+it now
+> >> uses readahead_folio() in fuse_readahead() which does folio_put(). So =
+that's
+> >> suspicious to me. It might be storing pointers to pages to ap->pages w=
+ithout
+> >> pinning them with a refcount.
+> >>
+> >> But I don't understand the code enough to know what's the proper fix. =
+A
+> >> probably stupid fix would be to use __readahead_folio() instead and ke=
+ep the
+> >> folio_put() in fuse_readpages_end().
+> >
+> > Agreed, I'm also confused as to what the right thing is here.  It appea=
+rs the
+> > rules are "if the folio is locked, nobody messes with it", so it's not =
+"correct"
+> > to hold a reference on the folio while it's being read.  I don't love t=
+his way
+> > of dealing with folios, but that seems to be the way it's always worked=
+.
+> >
+> > I went and looked at a few of the other file systems and we have NFS wh=
+ich holds
+> > it's own reference to the folio while the IO is outstanding, which FUSE=
+ is most
+> > similar to NFS so this would make sense to do.
+> >
+> > Btrfs however doesn't do this, BUT we do set_folio_private (or whatever=
+ it's
+> > called) so that keeps us from being reclaimed since we'll try to lock t=
+he folio
+> > before we do the reclaim.
+> >
+> > So perhaps that's the issue here?  We need to have a private on the fol=
+io + the
+> > folio locked to make sure it doesn't get reclaimed while it's out being=
+ read?
+> >
+> > I'm knee deep in other things, if we want a quick fix then I think your
+> > suggestion is correct Vlastimil.  But I definitely want to know what Wi=
+lly
+> > expects to be the proper order of operations here, and if this is exact=
+ly what
+> > we're supposed to be doing then something else is going wrong and we sh=
+ould try
+> > to reproduce locally and figure out what's happening.  Thanks,
+>
+> Thanks, Josef. I guess we can at least try to confirm we're on the right =
+track.
+> Can anyone affected see if this (only compile tested) patch fixes the iss=
+ue?
+> Created on top of 6.13.1.
 
+This fixes the crash for me on 6.14.0-rc1. I ran the repro using
+Mantas's instructions for Obfuscate. I was able to trigger the crash
+on a clean build and then with this patch, I'm not seeing the crash
+anymore.
 
-On 2/7/25 19:40, Joanne Koong wrote:
-> On Fri, Feb 7, 2025 at 3:16 AM Bernd Schubert <bernd@bsbernd.com> wrote:
->>
->>
->>
->> On 2/7/25 11:55, Vlastimil Babka wrote:
->>> On 2/7/25 11:43, Miklos Szeredi wrote:
->>>> On Fri, 7 Feb 2025 at 11:25, Vlastimil Babka <vbabka@suse.cz> wrote:
->>>>
->>>>> Could be a use-after free of the page, which sets PG_lru again. The list
->>>>> corruptions in __rmqueue_pcplist also suggest some page manipulation after
->>>>> free. The -1 refcount suggests somebody was using the page while it was
->>>>> freed due to refcount dropping to 0 and then did a put_page()?
->>>>
->>>> Can you suggest any debug options that could help pinpoint the offender?
->>>
->>> CONFIG_DEBUG_VM enables a check in put_page_testzero() that would catch the
->>> underflow (modulo a tiny race window where it wouldn't). Worth trying.
->>
->> I typically run all of my tests with these options enabled
->>
->> https://github.com/bsbernd/tiny-qemu-virtio-kernel-config
->>
->>
->> If Christian or Mantas could tell me what I need to install and run, I
->> could probably quickly give it a try.
->>
-> 
-> Copying/pasting from [1], these are the repro steps that's listed:
-> 
-> 1) Install Bottles: flatpak install flathub com.usebottles.bottles
-> 2) Open Bottles and create a bottle
-> 3) In a terminal open the kernel log using dmesg/journalctl in follow mode
-> 4) Once the bottle has been initialized, open it, select "Run
-> Executable" and point it at any Windows executable
-> Note that at that same moment a BUG: Bad page state in process fuse
-> mainloop error message will appear and the system will become
-> unresponsive (keyboard and mouse might still work but you'll be unable
-> to actually do anything, open or close any application, or even reboot
-> or shutdown; you are able to ping the device and initiate an SSH
-> connection but all it does is just display the banner)
-> 
-
-Thanks Joanne! Hmm, I found "wmplayer" in a c drive, but there doesn't
-happen much
-
-   5241 pts/0    Ss     0:00 -bash
-   5317 pts/1    S+     0:00 /home/bernd/.var/app/com.usebottles.bottles/data/bottles/runners/soda-9.0-1/bin/wi
-   5319 ?        Ss     0:01 /home/bernd/.var/app/com.usebottles.bottles/data/bottles/runners/soda-9.0-1/bin/wi
-   5321 pts/1    S+     0:01 C:\windows\system32\wineboot.exe --init
-   5345 ?        Ssl    0:01 C:\windows\system32\services.exe
-   5348 ?        Ssl    0:00 C:\windows\system32\winedevice.exe
-   5359 ?        Ssl    0:01 C:\windows\system32\winedevice.exe
-   5360 ?        I      0:00 [kworker/u130:0-rpciod]
-
-It runs it, but no system issue. I had also tried "Obfuscate", but didn't
-manage to feed it a file - it runs in the sandbox and no access to
-my $HOME.
-
-I need to see is if I can find some other files, but very late here
-and busy with something else. It also runs in x2gokdrive and wine
-then over another ssh hope to the vm guest, which has a kernel with all
-these debug options - slow.
-
-Bernd
-
-
-
-
-
+>
+> ----8<----
+> From c0fdf9174f6c17c93a709606384efe2877a3a596 Mon Sep 17 00:00:00 2001
+> From: Vlastimil Babka <vbabka@suse.cz>
+> Date: Fri, 7 Feb 2025 19:35:25 +0100
+> Subject: [PATCH] fuse: prevent folio use-after-free in readahead
+>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  fs/fuse/file.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 7d92a5479998..a40d65ffb94d 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -955,8 +955,10 @@ static void fuse_readpages_end(struct fuse_mount *fm=
+, struct fuse_args *args,
+>                 fuse_invalidate_atime(inode);
+>         }
+>
+> -       for (i =3D 0; i < ap->num_folios; i++)
+> +       for (i =3D 0; i < ap->num_folios; i++) {
+>                 folio_end_read(ap->folios[i], !err);
+> +               folio_put(ap->folios[i]);
+> +       }
+>         if (ia->ff)
+>                 fuse_file_put(ia->ff, false);
+>
+> @@ -1048,7 +1050,7 @@ static void fuse_readahead(struct readahead_control=
+ *rac)
+>                 ap =3D &ia->ap;
+>
+>                 while (ap->num_folios < cur_pages) {
+> -                       folio =3D readahead_folio(rac);
+> +                       folio =3D __readahead_folio(rac);
+>                         ap->folios[ap->num_folios] =3D folio;
+>                         ap->descs[ap->num_folios].length =3D folio_size(f=
+olio);
+>                         ap->num_folios++;
+> --
+> 2.48.1
+>
+>
 
