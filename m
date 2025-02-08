@@ -1,135 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-41295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03213A2D817
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 19:54:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A8CA2D820
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 19:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2EC166126
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 18:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407F23A723C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 18:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D405718CBFC;
-	Sat,  8 Feb 2025 18:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D981A4E77;
+	Sat,  8 Feb 2025 18:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OJzbz1wl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gATD9lyj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2701024112E
-	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Feb 2025 18:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A27F24112E;
+	Sat,  8 Feb 2025 18:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739040840; cv=none; b=EstCfHL0UYlGP6EB95T+M+4eRczKFKhuSMo25H9h7qUbVXAcKytExb7JJq9Eshqi+vs41MtRH9wcG2m8Ni0jLhnxzmqyVus9jzyMOUJoACiiJYQoWQSE6uvpy0xTyGle5CRfIeSEsrbV9Fs0MBwlIJYMr3RmdEcS3efFUMPsX1I=
+	t=1739041029; cv=none; b=OWh1BSL+6A6f9GERdjBLxw+rE7hf/6guhQmOHAYFdE2n/CcS/vJN1y6rdfDPsS9Xe1ScBnSvlG3Of4BldK4QofsW4BYRW0ZhYAJXAB45iRjA6VmDDaY+bkjcOxkWZ9oGnmXUBWz2fLloFmJBTBkrc0HMCFCK7d936fIn/TOlBbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739040840; c=relaxed/simple;
-	bh=Ubo4wxDjAMDx2uw+LaC/zE4ZJCENcZS8vDOY0CHooS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TyNDoTYf0QJg4TqfQALySyfu+aMOq12gogWz9oZgcicHVrJVPvfI7kdc85aq9e+GjnourJLQyYG6Ev/Shi9/IVX8PlvbK6w0+6/IMXoawm9mKxSjrd8E6dAzuZ05+TF3l7IS1t2vZfu00XCl/GgyYobYKfRPYSHoRPPlc3H6NyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OJzbz1wl; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5de5a8a96abso1426029a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 10:53:57 -0800 (PST)
+	s=arc-20240116; t=1739041029; c=relaxed/simple;
+	bh=doCWvBLA+TxAbIJ7ZCHQehWhJJgTPR8DjLa0lEiJKmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/w61Mn7DsogqQCjRzeNyT3KXgm03bPn6V3MTdkA723ip2QQzU+xapUdqmDKMaEyQIqrsVM26A4iOjwFv979h96KAdZV3tzeWLSDHREgUAHB+gqqSXPkhX1trxNRNqO8qgy7Na6E7ME+Ax1soIPg4+HELYsnHUAzfAsi18D9TPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gATD9lyj; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38dd14c99d3so876906f8f.3;
+        Sat, 08 Feb 2025 10:57:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1739040836; x=1739645636; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kmbr0H9srSRz+vgiAYrxGsuDDOFMLeKavVCcXEyEunw=;
-        b=OJzbz1wlfkKRrmL7FmW/PPixwsORpxWnBd47Q5OWGl+10TqPHtRNJM29C38j3YeDlR
-         J2FujCq8IoIksBD/68JEMBoDOYGmDGexkVDzPNBZDMamMUJBF21N2MjVS4wYQrHrUnHb
-         60ABnvNAJPorSYAyq2V4afPXDzbqZEM4ilKiw=
+        d=gmail.com; s=20230601; t=1739041026; x=1739645826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rdUIYEZ6OxCFGuba76Ad1pkRN9bpibysoIyhG0xc+yE=;
+        b=gATD9lyjCshLFa7PpYQQn8BX+vr3X/Z4JFRuDAnPtgShBIvJTYPoXykLSph2QhtU0c
+         cH12OFid09+Hc3OS+mvxrGlGHs7DKwRzrMLa62DMntYdV8r/nHtHlkFJMLz4JgPPdgje
+         EG03qBQmFVuft5lndRjgvShn6sRwi2FZQ1y/d5X81Br17jfNnKevgHkRlFT9BbZ0JtaU
+         T+UTmVs72G/9Y5dYhvbSnXMdGd3HZPgleMkvADyT1ds/xb4BLP18RKoSUwnykv+QOmyh
+         9cvrPNifogNGTV8sx9ajF/uFbBj34ke+3crYudbzjbdm9lNz3c6rEyeIfFG26DDn2vNz
+         8+HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739040836; x=1739645636;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kmbr0H9srSRz+vgiAYrxGsuDDOFMLeKavVCcXEyEunw=;
-        b=BjSxT01vmEGVqtKfEd49SZxwlJv6ZkXuymKvvCEfM7C5H10MAxfsKVcGssoeNYz27M
-         ULILvchx21XE9lSxsdoDxqYBikZisuMxAIwwj7GlzmwenouullVwPmXuK2Vdxj0rqc3I
-         L7CGgOepdQOki7WdBoObWwLnsXTOiJk2NMpgzT6twgOIwDmJDdqFg+MZOkGF+6rj2Mt0
-         fHI9Sk/IQOSxdu+1c6Mfmr7kcBJYK572pmsPBEMCDfRfnY3ooN11snjFxNPZNAfo5qpa
-         KrZFD2hD33fLum1kgkt40i+moBhk6KEgZOzJrcbrTzusiUfUuiTrG3j7CI+VjfgN2pW+
-         TkGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfYGZFTpRM7RYWLDqK/tfrcApVhmgJ9HrIxHxtwADSa/pPCpvD7ShOs+rVvUI2f0X8fjIGCJF7R6/d76qI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk3aX5pD6zblIiRNtd7rmFSJCJ7uNazy7Kcoij+4+uAX45iua6
-	+nF7GdOc5n1Aijm+liR4T+tH+vfPrdA/1A7pPSj3p4qzXvk3efMs1kAWbzAbE3+PgzibeiYiYL/
-	hVW/0gg==
-X-Gm-Gg: ASbGnctfq1V+OesPXrg8z80IJyEizb4V99DU7fQJRoWkJCoQk+3GqahOv9VyRsXo2v7
-	ymJ/NrSbhBx9yuge2ptnP9eemDacWIs+SXw2vw3pr3pHZmeG+odUm4Gl0jZZe/9rzWqvooXh6nW
-	ZbE3k2mLyOTKQJZSJ3dNVvOUJu8rtT41+d1yPkSa82Jxs1z9Y63ngBAT/T+Zd66F81fNKHRhLxg
-	tIac0joam/Na3nlTcGe+CDnzVgNQO5TFzwqiO/BRost/7iTVtmc/OZVjPo5c+VsMgjYbInYAikr
-	NG2ej7v5ULgZnkdHqijiegkHegPP3m4jUdDTISaPjTDbZvamVF8l68Mspvd061nWaA==
-X-Google-Smtp-Source: AGHT+IEKLQNFf79Mi8orSdUg5BorwXB2T5bTG129eVInmn988aM8zi6pdL3RKNyLmyXW0HcZ7OL5+g==
-X-Received: by 2002:a05:6402:194b:b0:5dc:7374:261d with SMTP id 4fb4d7f45d1cf-5de44fe941dmr21676877a12.7.1739040836060;
-        Sat, 08 Feb 2025 10:53:56 -0800 (PST)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772f89318sm521613666b.70.2025.02.08.10.53.55
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Feb 2025 10:53:55 -0800 (PST)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dce4a5d8a0so5145484a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 10:53:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUOo9Y2Imz7WZ/LaDDN7mimELYy0OQGVqNkDxBcVcXKQx3JbTBdOu8005cLqDugesmSgckmao2eub5xXi8D@vger.kernel.org
-X-Received: by 2002:a05:6402:358f:b0:5dc:8f03:bb5b with SMTP id
- 4fb4d7f45d1cf-5de44fe944emr19692649a12.5.1739040834771; Sat, 08 Feb 2025
- 10:53:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739041026; x=1739645826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rdUIYEZ6OxCFGuba76Ad1pkRN9bpibysoIyhG0xc+yE=;
+        b=NWuiEP+MIfDVYUJ3E6fC6Djeq6/QjjcPJiwW/nOP3WyhjvyZGiHPBSFRWaz2poutkW
+         w4iBe+BwXUUycji6prsnRbxfPDwuO1nGTSirdw/nifCv3RNGfQ25RjQEsHwNwq9cqEXM
+         ERR4pfq8oPZsuwFq6Him1WRg+1Ko39DTHGmxA76FJVoapuwQiRYB5ZmAMfX+UySh6HKQ
+         psIORdXifZgHzmdqbpuIcuIBV/cwyHIBgedhVrwPgtPEnjtYaW1afeEAQPsgsxa8Ttdz
+         TUZnqs8ZTfpy0OPIbFKPvqGP2R2h0JE0ranVBQ5cLksYqEkZRPyW9ef+RfwqLoTeAdHJ
+         Mmmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN4wBix5u/94lODzEsoTp/0pToCfbF++HMhOmi0qAyiij7TPP8P3671oCoz4LDKlF3aewigFpW386zy8cY@vger.kernel.org, AJvYcCV7eVe1lmavNE0eSVt3yCmlbkf5CHDR66J3cKepgC2FrfKTLAQUzugikSozlfXRu9sQk0Inzyk3TWQfuJbd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4MmB1IoCo/v+E3woseJEJp7wbuVWNEWUbhLvXWebTvJm7YSpw
+	bCFDrDG0TN2gWMvm+PKOckZHkn4cjlmQ+PBv1ZV24Yi+uM/N4zSa
+X-Gm-Gg: ASbGncuHSJlt8EbOfvE6lIm9Og6atQHY4KaySoykAOE2CiA3w2V4jvznfum7/TCvZ9q
+	IWv2SrTuzD+/7NqtLzCnQuglD4DdHR9dP+E6YbYBZ6IMv+uKqpkv5G/Zaz2FHd+enirZLTo26Se
+	0X9mohJ14Np2oZsOvUxur+dr+7GPRRVNEiG22m+haLKd5APLiIvGlUUz+OXikEmUeogmAqUag4B
+	frybJI4n0jTJJsG7W7mICMS33zAvIebIvbcRnSdNhd2mLW6xKFP0UrJf8Uu541y4623LzvsQR1o
+	MMSUGfypaaUe23L0Bg/8jjSD9jw/kLdUX7R2+IdqfVS5qlW2l0hxDA==
+X-Google-Smtp-Source: AGHT+IEgH57hapeWB6O35s4Jro2+v90RtJAClrbe9nhGySA9U/QR5Hj2o2se82wFLuS37dL/7ExVmg==
+X-Received: by 2002:a05:6000:2c1:b0:38d:d666:5457 with SMTP id ffacd0b85a97d-38dd66656e8mr1614779f8f.42.1739041025423;
+        Sat, 08 Feb 2025 10:57:05 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd2ef7efesm2663243f8f.52.2025.02.08.10.57.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Feb 2025 10:57:04 -0800 (PST)
+Date: Sat, 8 Feb 2025 18:57:03 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>
+Subject: Re: [PATCH next 1/1] fs: Mark get_sigset_argpack() __always_inline
+Message-ID: <20250208185703.066039ab@pumpkin>
+In-Reply-To: <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
+References: <20250208151347.89708-1-david.laight.linux@gmail.com>
+	<CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208151347.89708-1-david.laight.linux@gmail.com>
-In-Reply-To: <20250208151347.89708-1-david.laight.linux@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 8 Feb 2025 10:53:38 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
-X-Gm-Features: AWEUYZkQ-gaQUcuQDLlGCQM-u1tFXVw0-fJVfL4CHFsbbrdrsyXbEEev_pRAdtQ
-Message-ID: <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
-Subject: Re: [PATCH next 1/1] fs: Mark get_sigset_argpack() __always_inline
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 8 Feb 2025 at 07:14, David Laight <david.laight.linux@gmail.com> wrote:
->
-> Since the function is 'hot enough' to worry about avoiding the
-> overhead of copy_from_user() it must be worth forcing it to be
-> inlined.
+On Sat, 8 Feb 2025 10:53:38 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Hmm. gcc certainly inlines this one for me regardless.
+...
+> And while looking at this, I note that I made get_sigset_argpack() do
+> the masked user access thing, but didn't do the same pattern for
+> get_compat_sigset_argpack()
 
-So it's either a gcc version issue (I have gcc-14.2.1), or it's some
-build configuration thing that makes the function big enough in your
-case that gcc decides not to inline things. Do you perhaps have some
-debugging options enabled? At that point, inlining is the least of all
-problems.
+That's in the next patch.
+I noticed you'd committed my cmov code.
 
-> I'd guess that gcc is counting up the number of lines in the asm again.
-
-If that's the case, then we should probably make sure that the
-relevant inline asms are marked 'inline', which makes gcc estimate it
-to be minimal:
-
-    https://gcc.gnu.org/onlinedocs/gcc/Size-of-an-asm.html
-
-but it turns out that with the compiler bug workarounds we have that
-wrapper macro for this case:
-
-   #define asm_goto_output(x...) asm volatile goto(x)
-
-which I guess we could just add the inline to.
-
-Bah. I think we should fix those things, but in the meantime your
-patch certainly isn't wrong either. So ack.
-
-And while looking at this, I note that I made get_sigset_argpack() do
-the masked user access thing, but didn't do the same pattern for
-get_compat_sigset_argpack()
-
-          Linus
+	David
 
