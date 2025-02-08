@@ -1,122 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-41297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75315A2D83B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 20:06:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3865A2D873
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 21:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8721666C6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 19:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D42E165FAE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 20:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E8E1F3B82;
-	Sat,  8 Feb 2025 19:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8394024111A;
+	Sat,  8 Feb 2025 20:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EI7NCwu1"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="agEPuoWb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800E2241129;
-	Sat,  8 Feb 2025 19:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E224112C
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Feb 2025 20:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739041565; cv=none; b=oqbWD9pzTsGVEt/oMXYuVClBtHCDZmApQW4qImTBdyFWmuwyt5y9cn+RhqgF6OZDycc8EEgQHIe3fwTLtMZvNRM/rLs0YI2flnPV8OjRYcu6RXxwVxAwsy6QLuYiWNCcYBpXspm4YwbBKQd2py7aGRKmCry28xDuxOSCKIzzvLA=
+	t=1739045011; cv=none; b=APpQgMKt8tVLNvwptwPJlqQIrzHGfYaF8VgGRAZs7uZdh5EvgyyBgNoAluiK6qU3ce35nrhdJC1LMmkTtd2/8RasLuvtYsXiYeV+Uje/PeP9WKTONMQ0bzcEsEyFz0PbIYzpDhcEOV7oqGaKlhPEEfTEloGNbDbO3zp4dxMwIvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739041565; c=relaxed/simple;
-	bh=Qc1TkbcgBnnMnlIp9FOCRpKhwBc8BU4DABnj5Kl+BlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G2hWczqv0exJXjoX6aXj4+oFNTN6lopiJmCiG43yqCzVUS8X8Y82zw35xIDPtLQ1cgfsp5NUEXXqGZo24VcnPIsC/3QlYwJDaONPswHZ/vbnI8nbhIiNcDjjFX/GWU1ekCteE5RipToEbj6+79dhg6z34gJep0Rkzp3Rk9aA6Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EI7NCwu1; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4361f664af5so34611255e9.1;
-        Sat, 08 Feb 2025 11:06:03 -0800 (PST)
+	s=arc-20240116; t=1739045011; c=relaxed/simple;
+	bh=AJGPjA2vBe2mQhjSwTRb+LXPJOxsjjHsk16fLuvBC0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qt8Yo5aMxQVoR7RMxIFaJUdcN8+v9Js8e477Dd3oMLl/m3nfQXr6mcGW0fI8QvPMjOOtd2JUuLl5Vpd9/y5J00SatOn6rA5pr2lvXfifE+5SHSi9XZGdiiwOghDzZNcRtPLMfQbLTIn0wZN2ietgrNROxUNRxBgZ94IAeUBuciI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=agEPuoWb; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab7a5dbe96dso71646066b.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 12:03:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739041562; x=1739646362; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OYUcGbynj47h/K2MRAirCRYD25qma3qo+katu8pukWY=;
-        b=EI7NCwu1LVRGFJQj/eCJJNGMXWmw3ykt8dgPC4G788oWGZWxyvHCGULoJnh6WVEog+
-         H/bFbYfoaBDwUS0gbUtkR/yx45F6LSHrBsMpiyywE0D8t7t0hJViBWmlplEVxAXrqgRX
-         pnWwrO+6+jcZUnO6jAhSr4pyPsJSBhWetyaKz8MGseIlEUqW+5J4wtykOjjApI8UOf3q
-         MejiB8ZJDS6DNmKY+5BFQr63jKrUyQerFlXBN2OFURiJaJXL8pMe9Y0/sKucS5q14sZz
-         p88Jv6tGaWX1Okd7UNyxjG1OqVKtAGVESUl/arthQvZeQ4l65zmcnztkgvip7k7JvJsY
-         CwQg==
+        d=linux-foundation.org; s=google; t=1739045008; x=1739649808; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iYBjQ5V28Z74l1FXDnErVmTh1dw5xbuX4O4FtPTrSJI=;
+        b=agEPuoWbGC3GwpuLltaVeFfPBXQo6G2oY88/mc5f2rU9nnJZlbc8qLvzbnT9/Udq0v
+         taAnb59wBgAH4u4gtKgY3eOUzVGU9iQp6wckuKjUSemIzN0LuMBw4knx+P6n0N/dYC04
+         ZCwsgRlXvmX3XkKUQ1JK1pXSuKl2dIzYY1wI0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739041562; x=1739646362;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OYUcGbynj47h/K2MRAirCRYD25qma3qo+katu8pukWY=;
-        b=Ay6+ct8z/7g6mAJs+7q2E7zvbt+IPBDJsDNHzuullTnhPbJatI1tZMs+/AWdBwBBZw
-         VGVwMcLa/v2678P5HamtP6Nb2ZYuXZ+qh541C0H7G2MnDIlmb2d22OG81zzN7PxPMTkx
-         nbwDdPciflvhy8KcV1ACEdnd8n9Qm1fiOgwjNAT7pONzM2P7HjA+HirHxs+jBexSdvLk
-         xon+n8M+3xXK/B2kKP7tEGhj7xg6M68W5w2dgEaLkwYWk4ReqzvrZZFQFrZNa64gWBt8
-         lkp5o9V6Eo4RewUH+Lnyu81eDSRuUmYZFfpBa+G6XcqULR5S2onC7LOh6IivyWZDUavA
-         nZgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzceV7j3xSUcqCZGCUtuExsI0+UGaX1gBLoCePrczV2FM1LXyTQkAOyaLri5pb9HYDf9KKc2cg3ZZc9wGR@vger.kernel.org, AJvYcCVerfEPgQbnt/BLKQjMTMTDOTC1CEYG5S6qoSFPLIVprRJiQ0z5dj9cYjw4TtEV9zFr4PA4rmGXtXC0AFII@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWkJO5xFuzYIPSR0gEwYjRVLJhTJrHt/tK7GBcHR+G/aC4Tp6G
-	Z1eowdY06JreZ41HvFtoriupAlWlj2XFSgEaFgpmbhLYoTHpabbP
-X-Gm-Gg: ASbGncuPX7rHrJ2bRqpy4W7myyG0GE0vHxS6jWsGXlI8+KTZyedwgYJODyR6CBotBJr
-	Ro8eKhB+bO78X0WdS8lsiAkIp5U74Ug5UNUzEEgApUYsrMaG+nHL7c+a2mmRjWJI9IA6y8haDQ3
-	sN44NsAWht3P86thZWWxnkCS5Tn+DO5RN+yGin1pilIZxyd3JVPTRQB+RZ1RNX9z0fhV4++9KYk
-	AKSYWH56GMho+1Idi5wwZCOboS1QIPSKNft1vaoCETKVUZTAw2sq74nkbQFC9O7cLoU8rg5YPkm
-	F6JFDdOQMFxCH2sWObbtTyfOwfB8KA+R1VECz9L5sMseQ6Kun+DNUQ==
-X-Google-Smtp-Source: AGHT+IFNblGNxETUk8E7MRlCMTVW8TiIJo2DWkRcz/DW61BV+9yJVn7u8lFY/mMHcmdPnM8exjHv7A==
-X-Received: by 2002:a05:600c:1c0e:b0:434:f218:e1a8 with SMTP id 5b1f17b1804b1-439249a8455mr59395005e9.19.1739041561427;
-        Sat, 08 Feb 2025 11:06:01 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4391dcae841sm91787425e9.21.2025.02.08.11.06.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Feb 2025 11:06:01 -0800 (PST)
-Date: Sat, 8 Feb 2025 19:06:00 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>
-Subject: Re: [PATCH next 1/1] fs: Mark get_sigset_argpack() __always_inline
-Message-ID: <20250208190600.18075c88@pumpkin>
-In-Reply-To: <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
-References: <20250208151347.89708-1-david.laight.linux@gmail.com>
-	<CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1739045008; x=1739649808;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iYBjQ5V28Z74l1FXDnErVmTh1dw5xbuX4O4FtPTrSJI=;
+        b=bymEB5mrW9/H74FKA+Py+Q/E5Y8RJXD2dNm12yKLxmWxXRH+IvbzOZLDTbKrTlPfhZ
+         tx/vBmcFifDiaZm+ZXJgCZtESy9zUb70ASX10Q7JCCh11Y5rZEOFIRvoq25qgDegULlo
+         M3tlzrXXdZBoW20NRSyIZja6bIbhmBvKilRRzr/hfBDaKSfoCLEdWVjSu6wdW6KDTv6p
+         ra14vpwCLDV72d+NemD3p/nns5kAUahioZk28kfUHWP0mB8mF6LvjxT3VRtJIJRAGGSF
+         Ev1cp1rxjX6lu6L/PTZsVcJN5yXrAPhchqdk1GQjzjjvKnaWrwoHJWsqUkxtsoB+lcHA
+         cd1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVODxNk+15Wn9WGtlnhIE2KjHUYGpSAwNLfNAgqgT5h+ZR1R46wBBaBqMZT9MJw1SDoAKLFd3da/jvrg6Jj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhejk34YI+ECGGByn+k7uLcDSVgozCBTMckBACLYYrBMZ7zDDN
+	Tj05vZHYs41Y4akK8fzzGnXl2f//XUUqwU+iQTkoS1zjsqQshfpATYugk5idAbmNqxj5xnQu1gO
+	abId1Rw==
+X-Gm-Gg: ASbGncs9tq/ifkrmzyPn0AmZ9YqdlqudDcpBa+HRqUL5tTymIlL/qqsJhcT7pe+4AUb
+	WNjMNrcnXlKMftcxxFDtJ3pt1+y8fgcBDI5+6/ZrFEujqivaSijTVDfIDCJpGXJs4xgHs6PSAcH
+	kS7bZ7vOW4DLeQmQAD/pEW2AVT3COZZ1+3cHG6lgldcfKnHPtpo8vfe+AXHuhQcyYL+DUSP/7f3
+	1kpewM+hZU4s+b1ri7D90wdHPXASqf/PI7ojulyJguJAxVTJ1z+OkNsKmO4VtG4Apv9+xHZ4SIT
+	ANmhi73xlT9iHBMlqRh6uVXRr1BeaSBuytrrzZmgvSI0pkyIlbiOry46H6n4JHxZWg==
+X-Google-Smtp-Source: AGHT+IExdrCZ7+eleBhn+2iH6biOMsufFWk2/DuduMml97ThLg7Sfxn/U091hcyrdi9xrMFyUfrLjA==
+X-Received: by 2002:a17:907:970f:b0:ab7:85a4:faf6 with SMTP id a640c23a62f3a-ab789c66783mr912807166b.48.1739045007909;
+        Sat, 08 Feb 2025 12:03:27 -0800 (PST)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab79668f32esm270880966b.176.2025.02.08.12.03.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Feb 2025 12:03:26 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5de4d4adac9so3124911a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 12:03:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXGRK/9s+Q6RzPfa9Y9J1TRnRjRU1fBQ/rrEXAhC9vQQXceDaOwsoiox0tZTQxuySMZzIdZ3cyCgKnCgHkb@vger.kernel.org
+X-Received: by 2002:a05:6402:5252:b0:5dc:5a34:1296 with SMTP id
+ 4fb4d7f45d1cf-5de45022b20mr8922570a12.16.1739045006312; Sat, 08 Feb 2025
+ 12:03:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250208151347.89708-1-david.laight.linux@gmail.com>
+ <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com> <20250208190600.18075c88@pumpkin>
+In-Reply-To: <20250208190600.18075c88@pumpkin>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 8 Feb 2025 12:03:09 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whvmGhOzJJr1LeZ7vdSNt_CE+VJCUJ9FcLe0-Nv8UqgoA@mail.gmail.com>
+X-Gm-Features: AWEUYZl5iiB4XZzXu6gQI_yRDYLP1S23MRx2SK6qDmf7MiSIz-0VnfM7Dlycbb4
+Message-ID: <CAHk-=whvmGhOzJJr1LeZ7vdSNt_CE+VJCUJ9FcLe0-Nv8UqgoA@mail.gmail.com>
+Subject: Re: [PATCH next 1/1] fs: Mark get_sigset_argpack() __always_inline
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 8 Feb 2025 10:53:38 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Sat, 8 Feb 2025 at 11:06, David Laight <david.laight.linux@gmail.com> wrote:
+>
+> Can the 'alternatives' be flipped so the .o doesn't contain loads of nops?
 
-> On Sat, 8 Feb 2025 at 07:14, David Laight <david.laight.linux@gmail.com> wrote:
-> >
-> > Since the function is 'hot enough' to worry about avoiding the
-> > overhead of copy_from_user() it must be worth forcing it to be
-> > inlined.  
-> 
-> Hmm. gcc certainly inlines this one for me regardless.
-> 
-> So it's either a gcc version issue (I have gcc-14.2.1), or it's some
-> build configuration thing that makes the function big enough in your
-> case that gcc decides not to inline things. Do you perhaps have some
-> debugging options enabled? At that point, inlining is the least of all
-> problems.
+Sadly, no. The instructions generate #UD if the CPU doesn't support SMAP.
 
-gcc 12.2.0 (from debian) - so not THAT old.
-clang 18 does inline it.
-I've turned off pretty much everything (except page table separation).
-And there isn't much unexpected in the object code.
+Now, arguably the alternatives *should* be fixed up before the first
+user space access and thus it would be safe to switch, but honestly, I
+don't want to risk some early code doing odd things. The potential
+pain would be too damn high.
 
-Can the 'alternatives' be flipped so the .o doesn't contain loads of nops?
-It'd be nice to see the clac and lfence.
+> It'd be nice to see the clac and lfence.
 
-	David
+Heh. I agree 100%, which is why my personal tree has a patch like this:
+
+    -#define LOCK_PREFIX_HERE \
+    -           ".pushsection .smp_locks,\"a\"\n"       \
+    -           ".balign 4\n"                           \
+    -           ".long 671f - .\n" /* offset */         \
+    -           ".popsection\n"                         \
+    -           "671:"
+    +#define LOCK_PREFIX_HERE
+  ...
+    -#define barrier_nospec() alternative("", "lfence",
+X86_FEATURE_LFENCE_RDTSC)
+    +#define barrier_nospec() asm volatile("lfence":::"memory")
+  ...
+    -#define ASM_CLAC \
+    -   ALTERNATIVE "", "clac", X86_FEATURE_SMAP
+    -
+    -#define ASM_STAC \
+    -   ALTERNATIVE "", "stac", X86_FEATURE_SMAP
+    +#define ASM_CLAC   clac
+    +#define ASM_STAC   stac
+  ...
+    -   /* Note: a barrier is implicit in alternative() */
+    -   alternative("", "clac", X86_FEATURE_SMAP);
+    +   asm volatile("clac":::"memory");
+  ...
+    -   /* Note: a barrier is implicit in alternative() */
+    -   alternative("", "stac", X86_FEATURE_SMAP);
+    +   asm volatile("stac":::"memory");
+  ...
+    -#define ASM_BARRIER_NOSPEC ALTERNATIVE "", "lfence",
+X86_FEATURE_LFENCE_RDTSC
+    +#define ASM_BARRIER_NOSPEC lfence
+
+but I've never made it a real usable patch for others. It would have
+to be some "modern CPU only" config variable, and nobody else has ever
+complained about this until now.
+
+             Linus
 
