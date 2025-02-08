@@ -1,158 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-41274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2BA2D1D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 00:52:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A29A2D1D6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 01:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763EA188ED2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2025 23:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11FEA3AA445
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 00:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEF11DDA20;
-	Fri,  7 Feb 2025 23:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341E72CA6;
+	Sat,  8 Feb 2025 00:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="RoNmWspQ"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="YHRtdASt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uHGtx/8Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94811D07BA
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Feb 2025 23:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D41383;
+	Sat,  8 Feb 2025 00:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738972355; cv=none; b=QGqJ3prVHp6J3acD0u78aHc9hJFzyFxTen1J431fxox4zt3HJAbftdI9sk1we0Bst/pcuyRZzxuziEZGEGx6lH1xd1KJ9XQIRnOqJngx173hyKBGRrJGltqsL6F2hLdDS3FAGr+s2m6DGXuNe2jDQah3PfM6Xexl1BnXiULW0Kk=
+	t=1738972967; cv=none; b=JJFnFOI26okCRy4XfJBXUQkxZhavxPW4uBfBdD9AVrGqdZ4feVOwsduMhxlZ2CTtGCPFVMZb10s6WGwzCIcxmcXVCyXbcRQUgxpoVN7DgK4pfEq0ZpFUGrMOfumiB8WqRhqHK0VJy0L6hxXBzHJ/JmneaO9x9mu8Ngw4qhJ1MTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738972355; c=relaxed/simple;
-	bh=feHZLMYdw1GKKdpzxXYJZHObDJpwzN8+Y0Xx2Qps0Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Di8xks8LiL8xu5U4jaewHz1MfhE/nMufGOKNVEd8INHIS7onR4tf8bbXO8jljnXRSu9NTeMPUm5bOJEyA4qsJtc++vtjNOlKqO/K/EY1VZMcBm3D7kkBfJZ1D+/54bgs5k6IGGcCVlcoWLrksAH7xG3txBynDMCuIQ4cILC4Vm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=RoNmWspQ; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21f48ab13d5so37920575ad.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2025 15:52:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1738972353; x=1739577153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oQcVjQRwopmrHuG7wgsXbQFTOWJLCaxzXjS7jJ9aNqc=;
-        b=RoNmWspQB8vNq6Ey74DOIuMh74vAkRoq85X9+moyA0z/rBNoXhmo9jFa3Sf/M5W6DI
-         GBp2Q7gEJFvIf9el8ifnUWlfB8oLJ8CRmTJD+j7JDRz0LfGgy9n1o/FeDvJvBSO9VUTO
-         7bcGlgSTc5315bdmrf8r2FqBlk/dbZHihABSupdMjwEN71guGwrWYAL0+vpfkbDE1pga
-         WdVc0NNW5J5IP96coq3aNR/1NxrgX73rzjA2gha5b3t8rWb4VnqwfB+LR370OaHaLQb3
-         +Qx2e66rRETtAe8WMynzj9fG38J46oKSTFFlukmQb3eB9hfr3tqDgKQPlSqr1gwyMXai
-         Y1SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738972353; x=1739577153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oQcVjQRwopmrHuG7wgsXbQFTOWJLCaxzXjS7jJ9aNqc=;
-        b=kkwKgQB9qb5NvkZL6uVu70yHx2pZmxsWMED3s8Brz0ZBj8R7Uj6y3lQzeDZF0kSwoA
-         GjVLLX4UZzFBt9C65dbhDnP0CW/Mjwk+eugKfmGyrfNCoWVVCoLZYAM6gJ16tl1RFVAT
-         Htvc1zFnDzzQO3iIcchEWfb7f1QqF9t7vD3zJDz0BFp7Ei6FpL7nc61nKxr4gN98OUjY
-         bKIpW4DykfbUYQ+H0svYgmGwH9wCyrM9Rkcwu5DCmXer3uqrcRiX69RoxEpplN51XCvp
-         6gCtDH5iLxi+KSgRso+fNhG/OnHabtEq1aPfxh8ngICLJ18WmGxgVMnYd66/sWVggV16
-         XCEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmOKwYOMqaC1n2/rky3oBAcRcbnsiUuogkvFYYokiVABhhZAP62qHVbsBswQYtu7XcpCO6rRI4QTCz83lB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9OuW197YD6axSDwL43qETnQY+r0Woc25Sbp0B/dXay93LVgjy
-	8aMaLVl/9e5s/sXuy6FRfoQqsFZa5M9zWaIA+G9PhKUfyZQea8x+q9AAYx7243U=
-X-Gm-Gg: ASbGnct3kr5tKE5Exap7dpOQEYb5gZQT4Jt1xpyyKoyO6Fndw+Goh/ClCUQFOqtfqm1
-	cCuhPlQUSjVs/brcoYcaA9s4o13SMjj8WhoNkCGvQAVPz+m06bMuohy6Rjd8+xNsRWaso8f9Gfj
-	SOjupJZqMrRjUeeL6J79/H5GOhrfydHFbRmXYAGxIOYYPkhlZ+BG/yHTD4Rf7Q41CRxm1QAXGkY
-	VPXImpDRGyIhHxYdsQqeXCisHv8kizO/MdOtE3/Wyk6y5VVe1n+QlynFAHwVGWbKqyWuqmHhsBE
-	slDb1hJhi5YLCOyUKiFdAxhL2A==
-X-Google-Smtp-Source: AGHT+IH5jRZW/ovSUPH8eJRvmKh5nXw8ULDIWD5h4+evTSN5U5cvmcLVFvRfp+GmY1NLadqVCxbddQ==
-X-Received: by 2002:a17:903:94e:b0:215:9470:7e82 with SMTP id d9443c01a7336-21f4e6a035bmr94058495ad.4.1738972353039;
-        Fri, 07 Feb 2025 15:52:33 -0800 (PST)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f368da60bsm36436795ad.258.2025.02.07.15.52.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 15:52:32 -0800 (PST)
-Date: Fri, 7 Feb 2025 15:52:28 -0800
-From: Deepak Gupta <debug@rivosinc.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v9 01/26] mm: helper `is_shadow_stack_vma` to check
- shadow stack vma
-Message-ID: <Z6acvL9W4G9Y90WV@debug.ba.rivosinc.com>
-References: <20250204-v5_user_cfi_series-v9-0-b37a49c5205c@rivosinc.com>
- <20250204-v5_user_cfi_series-v9-1-b37a49c5205c@rivosinc.com>
- <6543c6b6-da86-4c10-9b8c-e5fe6f6f7da9@suse.cz>
- <Z6aa24/5M5Xdhe/A@debug.ba.rivosinc.com>
+	s=arc-20240116; t=1738972967; c=relaxed/simple;
+	bh=TSP1JMmVi42tAOtGzn3k9oCoW5xLhTjyWksZSavSW7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i6lzNbKm5x7VAD8wBZ2rkLMICdZlFSEw0aBuG1PfVdAF0Gt0bmnRk9a6BSKhlFhS/q1p7WxHrGCIIFuR3Qe5KNK0IVCPVbCBO+wqujZHmYGu3hajNPXpw00g2VbXZQKm3JOQliS7SECNHsBVJ8tDUliX5UyLl4hRs+E0/J73nR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=YHRtdASt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uHGtx/8Y; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 688F1254010E;
+	Fri,  7 Feb 2025 19:02:42 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Fri, 07 Feb 2025 19:02:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1738972962;
+	 x=1739059362; bh=mrWw7gmE3NDMuFQEpyImkKuDcSno+4GUyYuDqXBEHeo=; b=
+	YHRtdAStvjmtGKokAa6Y2Zrfunbbxso7mlsWZdg5xGhTf/Hrs4t0+/aUd9jRggtM
+	GrsmQhmihu7FTyCsUMoTrSxMDbSTUQD+pAbzq/uOU8SCaMLlyrePd7pziEoDdHJo
+	A0mnezmOriDfzpD3HYU2GBr0h7mXgZkGr7rjCiVsNnMBVCF32jwEYBnzbLdULhb5
+	/Rx/SLZT6mayGuB3JPSOA0Z+lJrffsu/otn7p9epqj8p8+UjYCH4tst9ttRh4j0C
+	6g+5Yi16nUyPpzE2eTQnyo4XzEz3LjgTL7Z57CiQE+kA3Ngs051ByBirO62hNkzx
+	bt/xzDZ0MRk6b7gx5ZgrWg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738972962; x=
+	1739059362; bh=mrWw7gmE3NDMuFQEpyImkKuDcSno+4GUyYuDqXBEHeo=; b=u
+	HGtx/8YNzTm+lTQATs3ZEB/btMMaans8yIFigcc/Wgh5FbOPWTQopMeOIpmR8FLi
+	kOjqr6XcKhCdCPV4FlQcYBUPaCRRVfr3hCWUxXStV+OOcbsUftvklRPPCZY+EaGO
+	bSMxGBd1Ida58KYdysm0w9mCaWWEPyiAx0WYqA9h2i55Lq5SSVcrTJAFBLl/yWuY
+	jFe19sknFBsxzkzwwdgvlV0DGTTYulSVagk5Mh6/ZeV/eIuHDVW9oxMRuOdRomRk
+	VISOqjAxUSIFm6LnapII/NADXDXrn0AGLvKkt9cEI1nmsVL/tMeHLuRZyG03PEIn
+	cj5tw24PKtClVsjOk043Q==
+X-ME-Sender: <xms:IJ-mZxSC1TKDZEeOOlX0QW683tcGOf_6bHb_NBnLj6piHlDtfEYNow>
+    <xme:IJ-mZ6x2LAK606cQW2AoTstDH1aGL8honM13VHSHKTICIV0lKZjuPprpdQ5kENWrp
+    0sHID1Li3vV__jZ>
+X-ME-Received: <xmr:IJ-mZ21nfWXQiiTZ88T15QFKZeC0gzpmXf5qy_g6TiNNT7hvA7od1qS_ytu9sAqmLOane_Yh__9rKGNWR8V8OdMwmVjSeacg4QZvPgTR13Tfdf5LVxVf>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeijecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhepjeffuddtgefhfffggfejheetjeeukeei
+    teeiheevheetueeigfeiueelkeejkeeunecuffhomhgrihhnpehgihhthhhusgdrtghomh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghr
+    nhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthhtohepmhhikhhloh
+    hssehsiigvrhgvughirdhhuhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggu
+    rdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnheshhgvuhhsvghlrdgvuhdprhgtph
+    htthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehmshii
+    vghrvgguihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhgvghhrvghsshhiohhnsh
+    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:IZ-mZ5BjsAQquoPRdCCIk9aFAJn_Kk7MSjUZZawKqQaPr_MF0xs1_w>
+    <xmx:IZ-mZ6iIkV1ZhC5dtnv_RbKcTcMqdI__c3w2hsXbxoSzO-8l15Uihg>
+    <xmx:IZ-mZ9q7hMMR1uHMmZdyR5jquTTgWWiSzatvNE0DVOHzcJ4bZmz0wg>
+    <xmx:IZ-mZ1hp3yuqJmcPghYQOezpPpVrgPEAd22-Pbb9Iod755E2MEJb_w>
+    <xmx:Ip-mZ7ZvGEVKrIRz2zwUDDXwnxXMfycBuSTmpA19O1NcILkjs1VrADvo>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Feb 2025 19:02:39 -0500 (EST)
+Message-ID: <b828162e-716a-4ccd-95bb-d51e31cea538@bsbernd.com>
+Date: Sat, 8 Feb 2025 01:02:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z6aa24/5M5Xdhe/A@debug.ba.rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
+ related applications since v6.13
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+ Matthew Wilcox <willy@infradead.org>, Christian Heusel
+ <christian@heusel.eu>, Josef Bacik <josef@toxicpanda.com>,
+ Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm <linux-mm@kvack.org>, =?UTF-8?Q?Mantas_Mikul=C4=97nas?=
+ <grawity@gmail.com>
+References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
+ <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+ <Z6XWVU6ZTCIl3jnc@casper.infradead.org>
+ <03eb13ad-03a2-4982-9545-0a5506e043d0@suse.cz>
+ <CAJfpegtvy0N8dNK-jY1W-LX=TyGQxQTxHkgNJjFbWADUmzb6xA@mail.gmail.com>
+ <f8b08ef9-5bba-490c-9d99-9ab955e68732@suse.cz>
+ <94df7323-4ded-416a-b850-41e7ba034fdc@bsbernd.com>
+ <CAJnrk1atv4N-BDWnwmESvczJhkayXyQqnLEypkmuJNKBa6gq8A@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1atv4N-BDWnwmESvczJhkayXyQqnLEypkmuJNKBa6gq8A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 07, 2025 at 03:44:27PM -0800, Deepak Gupta wrote:
->On Fri, Feb 07, 2025 at 10:27:10AM +0100, Vlastimil Babka wrote:
->>On 2/5/25 02:21, Deepak Gupta wrote:
->>>VM_SHADOW_STACK (alias to VM_HIGH_ARCH_5) is used to encode shadow stack
+
+
+On 2/7/25 19:40, Joanne Koong wrote:
+> On Fri, Feb 7, 2025 at 3:16 AM Bernd Schubert <bernd@bsbernd.com> wrote:
 >>
->>I see that arm GCS uses VM_HIGH_ARCH_6.
 >>
->>>VMA on three architectures (x86 shadow stack, arm GCS and RISC-V shadow
 >>
->>And RISC-V doesn't define it at all, not even in this patchset, or did I
->>miss it somewhere?
+>> On 2/7/25 11:55, Vlastimil Babka wrote:
+>>> On 2/7/25 11:43, Miklos Szeredi wrote:
+>>>> On Fri, 7 Feb 2025 at 11:25, Vlastimil Babka <vbabka@suse.cz> wrote:
+>>>>
+>>>>> Could be a use-after free of the page, which sets PG_lru again. The list
+>>>>> corruptions in __rmqueue_pcplist also suggest some page manipulation after
+>>>>> free. The -1 refcount suggests somebody was using the page while it was
+>>>>> freed due to refcount dropping to 0 and then did a put_page()?
+>>>>
+>>>> Can you suggest any debug options that could help pinpoint the offender?
+>>>
+>>> CONFIG_DEBUG_VM enables a check in put_page_testzero() that would catch the
+>>> underflow (modulo a tiny race window where it wouldn't). Worth trying.
 >>
->
->hmm...
->Something wrong in my workflow and rebasing.
->Thanks for catching this.
+>> I typically run all of my tests with these options enabled
+>>
+>> https://github.com/bsbernd/tiny-qemu-virtio-kernel-config
+>>
+>>
+>> If Christian or Mantas could tell me what I need to install and run, I
+>> could probably quickly give it a try.
+>>
+> 
+> Copying/pasting from [1], these are the repro steps that's listed:
+> 
+> 1) Install Bottles: flatpak install flathub com.usebottles.bottles
+> 2) Open Bottles and create a bottle
+> 3) In a terminal open the kernel log using dmesg/journalctl in follow mode
+> 4) Once the bottle has been initialized, open it, select "Run
+> Executable" and point it at any Windows executable
+> Note that at that same moment a BUG: Bad page state in process fuse
+> mainloop error message will appear and the system will become
+> unresponsive (keyboard and mouse might still work but you'll be unable
+> to actually do anything, open or close any application, or even reboot
+> or shutdown; you are able to ping the device and initiate an SSH
+> connection but all it does is just display the banner)
+> 
 
-I think this is the miss on my part.
+Thanks Joanne! Hmm, I found "wmplayer" in a c drive, but there doesn't
+happen much
 
-I had this patch in last series which introduces `ARCH_HAS_USER_SHADOW_STACK`
-https://lore.kernel.org/all/20241111-v5_user_cfi_series-v8-1-dce14aa30207@rivosinc.com/
+   5241 pts/0    Ss     0:00 -bash
+   5317 pts/1    S+     0:00 /home/bernd/.var/app/com.usebottles.bottles/data/bottles/runners/soda-9.0-1/bin/wi
+   5319 ?        Ss     0:01 /home/bernd/.var/app/com.usebottles.bottles/data/bottles/runners/soda-9.0-1/bin/wi
+   5321 pts/1    S+     0:01 C:\windows\system32\wineboot.exe --init
+   5345 ?        Ssl    0:01 C:\windows\system32\services.exe
+   5348 ?        Ssl    0:00 C:\windows\system32\winedevice.exe
+   5359 ?        Ssl    0:01 C:\windows\system32\winedevice.exe
+   5360 ?        I      0:00 [kworker/u130:0-rpciod]
 
-As part of above patch, `CONFIG_X86_USER_SHADOW_STACK` was replaced with
-`CONFIG_ARCH_HAS_USER_SHADOW_STACK` in `mm.h` to define VM_SHADOW_STACK
-as VM_HIGH_ARCH_5. It was all fine because all 3 arches were using VM_HIGH_ARCH_5. 
+It runs it, but no system issue. I had also tried "Obfuscate", but didn't
+manage to feed it a file - it runs in the sandbox and no access to
+my $HOME.
 
-However as things progressed on, arm64 ended up using VM_HIGH_ARCH_6. But
-arm64 gcs patches also landed the introduction of `ARCH_HAS_USER_SHADOW_STACK`.
-So I dropped this patch from my v9 and didn't pay attention and actually missed
-the definition.
+I need to see is if I can find some other files, but very late here
+and busy with something else. It also runs in x2gokdrive and wine
+then over another ssh hope to the vm guest, which has a kernel with all
+these debug options - slow.
 
->
->>>stack). In case architecture doesn't implement shadow stack, it's VM_NONE
->>>Introducing a helper `is_shadow_stack_vma` to determine shadow stack vma
->>>or not.
+Bernd
+
+
+
+
+
 
