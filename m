@@ -1,130 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-41280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCD2A2D374
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 04:13:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32851A2D47E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 08:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484AC16B4F5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 03:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1873E3AB25F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2025 07:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EFC17A5A4;
-	Sat,  8 Feb 2025 03:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C236C1AA791;
+	Sat,  8 Feb 2025 07:25:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8091547C9;
-	Sat,  8 Feb 2025 03:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFED419DF98
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Feb 2025 07:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738984387; cv=none; b=r4e94GcPY06IHBYK7HlykgWgX6XA/Mrhf7lVj+4vMUsqT4/j5S9dD8t/N80re58pHP4FaGj61ZG+jyD5blLCQ+lxxrhXIvAu0fm+SD0Cffa5ycuMkM6SkJd16sMzpD1eP8VO0RWmBuwaQP2W7lfGEw0RMfarjM+UBHUM3wuFqIc=
+	t=1738999508; cv=none; b=BlpF6/o3ZHHNk9drdSiPAodm85Jpt3jc9Eg1KCFXqe/wpfIwwRUBzIiiDWyBeEaCxNkP9Yh3SJYHY6oNSr3Unde9tCaX8ezm4ta0CCgrk8ee93TeXJu+WMS7B9wOsX/7w+dGrYA8VWXww2Jp12shmJhfVpyVRyV98r54h79weJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738984387; c=relaxed/simple;
-	bh=VX6uwaIuuHIeFUDpO1ARDCQuWM2rr0gm/U8UpfQylTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YZVc/A8D7KvYWpYpPL/xZfZYQV0x1vNHpuFCkZzrfbxTmXvIInn6svmOt8DkrB+P1JQ7WD3b0cyRpmgXWtjWLahp56OgDF92fHmakwpqdJzUVWM7+wjcGfr9DuVGxr8G2B3YMHaAaaNs7b0w/wgNheC9CKaTtaz8eZ2MbsaultE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YqbVs354vz4f3jMQ;
-	Sat,  8 Feb 2025 11:12:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F0B121A1428;
-	Sat,  8 Feb 2025 11:12:59 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBHrGC5y6ZnjDPoDA--.64325S3;
-	Sat, 08 Feb 2025 11:12:59 +0800 (CST)
-Message-ID: <3b1dcd45-efa6-4aad-9cd4-3302a29eb093@huaweicloud.com>
-Date: Sat, 8 Feb 2025 11:12:57 +0800
+	s=arc-20240116; t=1738999508; c=relaxed/simple;
+	bh=nO3hchjOsaP1RONuy97ZQXYJfj/XWV3o1xs5m2QVd2Q=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BBNOh1qXBzz5xnpW+hcygJfc/RfUnxuFOHn2ghdZyY/G4CpTSNXFb0cmjmJcMCtN56FYy8xRnHdJiViX+B6hZdJxfH9Rm5xWmZu8c+T5bVC52bUI8nM/g/V0vOtcxZYYnAPKd7HJHaI6CxKVN8Ae7nuchckVqBCjsNjHtZ5RulU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-84cb445557aso609677639f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2025 23:25:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738999506; x=1739604306;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bTLH3DE1scVq8ZV/C5ZLGjBap6ga1IZ5cXcRDj04E4E=;
+        b=M+P+l35uF17PmE8mXBh/nZeFdRuv4xnjLjiDLBdn3Ole0l46+9XdeTtqRib8WkvUDh
+         HqXq56so6/XkOiqgVihov+4ziGGQMSh7cldrnrOgCbJSPZuluXahWEqotPhGsx6oZOzB
+         mdEOBp5zw3l6bCRciBZBHFlJt8ypGYepRwZu6qCQQwXWibbRnsNOk5fjuG+tGLT3dztz
+         CQGJ+Mix17PAVXu6Qkh8wF3pS4ad0aaH3o+h0m42YBdIS8mOKfHwbqYFB0a22lUQIarG
+         ZRQWshlyxYxrvdjxbWsUOdbZP9z4NgTvAm4QlMWxX1iVj1hZV3OosSzmb2iTpx+QbIP6
+         m3ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTll72lTFslNkM1SaA5wL+msyOCESa5j7Wf27KUaw6b2OM8zqWHEutt3c71UXgmrVeHUTOsaOkAlqrHGoe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+08EWx7BkD4OYc5DQNY2+LRWKSVz04sT7lysUZQh9bb8arhK1
+	81OZdcNjUkwvYIRy5wu6oVoumqTRZmM35JRAkjwnZM3Ii6OxEczO9BR4v0ZGIsPYn+447mg08rQ
+	XoqqZywTaLSLg9tV9588NRW3zWVWLhdsPy89HKqm7oEF0U4mJio1FkNE=
+X-Google-Smtp-Source: AGHT+IGKkh/0FawH2W86AI8WUkzUTbydbSlAtwptxUOjYiSCq8r5MPZ/xLAa/+mPU/8D2xKFQdArsfXVcM8/oj6kp6MWTlj6YvS/
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/8] dm: add BLK_FEAT_WRITE_ZEROES_UNMAP support
-To: Benjamin Marzinski <bmarzins@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, hch@lst.de, tytso@mit.edu, djwong@kernel.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250115114637.2705887-1-yi.zhang@huaweicloud.com>
- <20250115114637.2705887-5-yi.zhang@huaweicloud.com>
- <Z6aFtJzGWMNhILJW@redhat.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <Z6aFtJzGWMNhILJW@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHrGC5y6ZnjDPoDA--.64325S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWxZr4kXFy8CF1xuw18uFg_yoW8AF15pF
-	n2ga4Iyry5tF47C3W0gFW2vFyYga1YyFy7Cry7C3y5ZF15Kry8KFsFyFy7Wan8Ja47Xw48
-	t3WjkF9rZw4UZ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6e02:481c:b0:3cf:b626:66c2 with SMTP id
+ e9e14a558f8ab-3d13df546c4mr45042965ab.19.1738999505985; Fri, 07 Feb 2025
+ 23:25:05 -0800 (PST)
+Date: Fri, 07 Feb 2025 23:25:05 -0800
+In-Reply-To: <67a4b9e8.050a0220.d6d27.0000.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67a706d1.050a0220.3d72c.0020.GAE@google.com>
+Subject: Re: [syzbot] [overlayfs?] general protection fault in clone_private_mount
+From: syzbot <syzbot+62dfea789a2cedac1298@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, lizhi.xu@windriver.com, mike@mbaynton.com, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/2/8 6:14, Benjamin Marzinski wrote:
-> On Wed, Jan 15, 2025 at 07:46:33PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Set the BLK_FEAT_WRITE_ZEROES_UNMAP feature on stacking queue limits by
->> default. This feature shall be disabled if any underlying device does
->> not support it.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  drivers/md/dm-table.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
->> index bd8b796ae683..58cce31bcc1e 100644
->> --- a/drivers/md/dm-table.c
->> +++ b/drivers/md/dm-table.c
->> @@ -598,7 +598,8 @@ int dm_split_args(int *argc, char ***argvp, char *input)
->>  static void dm_set_stacking_limits(struct queue_limits *limits)
->>  {
->>  	blk_set_stacking_limits(limits);
->> -	limits->features |= BLK_FEAT_IO_STAT | BLK_FEAT_NOWAIT | BLK_FEAT_POLL;
->> +	limits->features |= BLK_FEAT_IO_STAT | BLK_FEAT_NOWAIT | BLK_FEAT_POLL |
->> +			    BLK_FEAT_WRITE_ZEROES_UNMAP;
->>  }
->>  
-> 
-> dm_table_set_restrictions() can set limits->max_write_zeroes_sectors to
-> 0, and it's called after dm_calculate_queue_limits(), which calls
-> blk_stack_limits(). Just to avoid having the BLK_FEAT_WRITE_ZEROES_UNMAP
-> still set while a device's max_write_zeroes_sectors is 0, it seems like
-> you would want to clear it as well if dm_table_set_restrictions() sets
-> limits->max_write_zeroes_sectors to 0.
-> 
+syzbot has bisected this issue to:
 
-Hi, Ben!
+commit ae63304102ecd597130ecea27395739a6a6371b7
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Thu Jan 23 19:19:48 2025 +0000
 
-Yeah, right. Thanks for pointing this out, and I also checked other
-instances in dm where max_write_zeroes_sectors is set to 0, and it seems
-we should also clear BLK_FEAT_WRITE_ZEROES_UNMAP in
-disable_write_zeroes() as well.
+    fs: allow detached mounts in clone_private_mount()
 
-Thanks,
-Yi.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10cb5ca4580000
+start commit:   808eb958781e Add linux-next specific files for 20250206
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12cb5ca4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cb5ca4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=88b25e5d30d576e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=62dfea789a2cedac1298
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16346df8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117e80e4580000
 
+Reported-by: syzbot+62dfea789a2cedac1298@syzkaller.appspotmail.com
+Fixes: ae63304102ec ("fs: allow detached mounts in clone_private_mount()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
