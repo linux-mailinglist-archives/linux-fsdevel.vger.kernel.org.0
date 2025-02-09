@@ -1,130 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-41337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CD6A2E02D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 20:16:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E81BA2E04C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 20:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F4031164D17
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 19:15:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CB21649CA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 19:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34781E1A3F;
-	Sun,  9 Feb 2025 19:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F94243374;
+	Sun,  9 Feb 2025 19:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GCd0iP3b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eK0To3fJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3370807
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 19:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C648913B7B3;
+	Sun,  9 Feb 2025 19:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739128555; cv=none; b=bxKq5wtWBTKz/efdH7dWP3mt+AeKoGJ8zwtDJSkGvsH0y3gJeopuCc5zxfFcJrVCwF1LuSH+xYsacOB3bZNXt97JHRLZgFHUfdSvBU/XLQBTca3CC3ZNLCejvZNZUrB88POjEQHVQ2ivMeVZ7s7ABnsk+IeZJB2b+U/E2fPa74g=
+	t=1739130481; cv=none; b=PZw7FFnuRSUokoS7B9OGAVSjk+FWUxhfsyaWR3L2kruQz3woecSlSG4u+wVeI87nGmCNxNelrUMVoaQuyCqLxOFzoFEwfhrlbxQGayypUgpDf6WCIf+v4gwBj7Lf4p+PhmL0qqV4KcxKCUOf0igVMOwN/l8mCdvYQR3vyevxDbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739128555; c=relaxed/simple;
-	bh=sNIqBwASHZS6f8Tct2wIuBKd1+bQdUMIFK+Uqg8rsxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uPZISElkuYJITV19hyvhk5yMaGtWL43iu/KxXMqdCNf+CfopyHsMbYce8BjMk4wRZbLv313bhOUadN1cI7iWrRYzJth2gyKVvh3x2jXnM5fK/RUeFadpeIjz1i6I77q5PKJ+Sb0v4cyXH1fO+M9TKYuUOnnYXExExO2K12hXBjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GCd0iP3b; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739128552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bzx0E/Qg3IYe3K4apwPHQsXCz/GYdO9gQu3c3MuxtD0=;
-	b=GCd0iP3buWBxwHyyFyk1B0B2wxODuWxjv/TCKGgpXU+6KTMQ225VtBffG5t/LgP7J0lGde
-	RK8Gn58CAh4FduQ87YeWyT4G/cVJNprbJF5v2PDosJaRB2O73FxHkQTSWTaVHHqczo45Ub
-	awOr9ff0lXuUdZuL1Ym4XX+OHGKBG1o=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-VDxynddGMVecglnoLUczKQ-1; Sun,
- 09 Feb 2025 14:15:49 -0500
-X-MC-Unique: VDxynddGMVecglnoLUczKQ-1
-X-Mimecast-MFC-AGG-ID: VDxynddGMVecglnoLUczKQ
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A79261800872;
-	Sun,  9 Feb 2025 19:15:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.8])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8D17A19560A3;
-	Sun,  9 Feb 2025 19:15:39 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Feb 2025 20:15:17 +0100 (CET)
-Date: Sun, 9 Feb 2025 20:15:11 +0100
-From: Oleg Nesterov <oleg@redhat.com>
+	s=arc-20240116; t=1739130481; c=relaxed/simple;
+	bh=2iddprleDhyX55yjl7LmHuRBGW+otxD+SE9E258OGjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YfvFmOqkkZKYIKr2sAYT1UsQP+ua7l7co7y1hl4Saqtf+GExgqHfr+pI2p8mvu+MHxdrLoORqkZNnkE0sO6UUPbMcNEsw07wD1822N1cIa2WQGwFgp59K+Zj9zNeADs6Kg9diktmBlipGDK56vrXhLbleLF22TmxUIxpKiAvF4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eK0To3fJ; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-436a03197b2so24134875e9.2;
+        Sun, 09 Feb 2025 11:47:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739130478; x=1739735278; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=05e2nuLFvgd3qQpz1nNUA8vFtVPDYxhm+b4OpyX6msA=;
+        b=eK0To3fJJsJ/nJFeGGCcgFOzJoj+EZVX1nNKy+3zkHBmcf/IBxKJk26yvLFnsx5+vA
+         KcgVR/AliQyHwpRl2YxO1gQYIZX7plPOqHzZsOh7bU0f/KESKyUwamPo9DZ4YNakI5le
+         C0QaudM8P51L5QCPHDs6NqwUXGUutxaWkysa0wnXnmLLJSccSdldOwzQQ3yCNdJwBqF+
+         xTcZSfy6sQPvYL5IR+S9Q6Irr+lJdBM4s2Ke3AAl9k9HUCAgbELHBwslFfxf28t/PDXZ
+         4msOwVm+9dfgb2nibj9fEg7EkGVyKsmayAycQeCX5X/Ygk3NzQydwXwLhTtT6k6xtvak
+         6O3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739130478; x=1739735278;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=05e2nuLFvgd3qQpz1nNUA8vFtVPDYxhm+b4OpyX6msA=;
+        b=v459M9Cl2rNdIhriBnFcfjrj5iA4X+nGwu2/MmcEFGY2xS+4KQcHp/JdFndHAGdPOE
+         zPBXGVRUBURPu6szMpbslOstRGH2r4FnEr15s/9eekk/ttJrUsI+JJ9aaHIBb9TAwoN3
+         IhCljcqQB7q4IqXGK6NcMFyp27V2qy2vRzb/2Kx5ue1fICleLlvc82VNR/a4HCu7tuM+
+         X90OoAAibtFkNcxtTbWjiBgIeVS3BWzZADi2v77Q1YOvKlj+gyIYIc/o0Cvc3FRAXN6C
+         8x6/x504lUi/dSB616URx1OZCWwMwgwIel0JLyTnCO3unNcIVYMVcfwiaoclam23S1io
+         d5uw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+bp5OAOjJdfah1eVbd9mME0z9/J3Pq4cDN3jPrgJ7U3mDwCeH+fTfmG0dutUFRPNQjjIPPfNG2fZgCuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZqlBpJzyKcYekx1vVvXGZBrt1VFCSib5FzDBhE4fB1HUcsaS3
+	H7dXw5z/MMGt4/zjGavhLSrtjw2X5RxHbaZlXIZhTbSFtM9tz8FE
+X-Gm-Gg: ASbGncvo6GHKb6seDyaT9We/TKgcOMk9qbYFpVbWVRfIRQRwF2jh93FMuxFHDrspuFq
+	qrog9yoeXRyiJ/GyXokJtK1pLLsEhVquaiPbS5ax5W7CbydYpbM+B1Lb7xOypIpQ8FoHsBpPsWw
+	KnWYwkG8SD2PeorQFzgg9t68kYsJUH5w59osFuKZV9hsKM2gDppxMiQZbpfCEgtU1NMgrg34fjc
+	RcNWYIV/IJnrErTLWeSXUshXJGBeEx0U8XmjGTYf8Kj+u52cgHtvW9fe7tFWgmtChZkMVftGkL/
+	Iz7ukX2fn70t9K5/9G/+TkGbnFMBwMFtmlaI7y9jerhJJjZ6H4eCrQ==
+X-Google-Smtp-Source: AGHT+IEfWfkksjUPYmoMtkrUoJiZl6DZoNzSiFzFgsKp+IrxIUAEEH4Q41Xjdc1txiF9YXtlpZbNfA==
+X-Received: by 2002:a05:600c:138f:b0:436:488f:50a with SMTP id 5b1f17b1804b1-43924991f95mr82303615e9.17.1739130477669;
+        Sun, 09 Feb 2025 11:47:57 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390db10b2fsm156656485e9.33.2025.02.09.11.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Feb 2025 11:47:57 -0800 (PST)
+Date: Sun, 9 Feb 2025 19:47:56 +0000
+From: David Laight <david.laight.linux@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Oliver Sang <oliver.sang@intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] pipe: change pipe_write() to never add a zero-sized
- buffer
-Message-ID: <20250209191510.GB27435@redhat.com>
-References: <20250209150718.GA17013@redhat.com>
- <20250209150749.GA16999@redhat.com>
- <CAHk-=wgYC-iAp4dw_wN3DBWUB=NzkjT42Dpr46efpKBuF4Nxkg@mail.gmail.com>
- <20250209180214.GA23386@redhat.com>
- <CAHk-=whirZek1fZQ_gYGHZU71+UKDMa_MYWB5RzhP_owcjAopw@mail.gmail.com>
- <20250209184427.GA27435@redhat.com>
- <CAHk-=wihBAcJLiC9dxj1M8AKHpdvrRneNk3=s-Rt-Hv5ikqo4g@mail.gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Kees Cook
+ <kees@kernel.org>
+Subject: Re: [PATCH 1/2] uaccess: Simplify code pattern for masked user
+ copies
+Message-ID: <20250209194756.4cd45e12@pumpkin>
+In-Reply-To: <CAHk-=wgu0B+9ZSmXaL6EyYQyDsWRGZv48jRGKJMphpO4bNiu_A@mail.gmail.com>
+References: <20250209105600.3388-1-david.laight.linux@gmail.com>
+	<20250209105600.3388-2-david.laight.linux@gmail.com>
+	<CAHk-=wgu0B+9ZSmXaL6EyYQyDsWRGZv48jRGKJMphpO4bNiu_A@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wihBAcJLiC9dxj1M8AKHpdvrRneNk3=s-Rt-Hv5ikqo4g@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 02/09, Linus Torvalds wrote:
->
-> On Sun, 9 Feb 2025 at 10:45, Oleg Nesterov <oleg@redhat.com> wrote:
+On Sun, 9 Feb 2025 09:40:05 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Sun, 9 Feb 2025 at 02:56, David Laight <david.laight.linux@gmail.com> wrote:
 > >
-> > Again, lets look eat_empty_buffer().
-> >
-> > The comment says "maybe it's empty" but how/why can this happen ?
->
-> WHY DO YOU CARE?
+> > Code can then be changed:
+> > -               if (!user_read_access_begin(from, sizeof(*from)))
+> > +               if (!masked_user_read_access_begin(&from, sizeof(*from)))
+> >                         return -EFAULT;  
+> 
+> I really dislike the use of "pass pointer to simple variable you are
+> going to change" interfaces which is why I didn't do it this way.
 
-Because it looks unclear/confusing, and I think it can confuse other
-readers of this code. Especially after 1/2.
+I'm not sure the 'goto' model works here.
+The issue is that the calling code mustn't use the unmasked address.
+You really want to make that as hard as possible.
+So the 'function' really does need to do an in-situ update.
 
-> So here's the deal: either you
-...
->  (b) you DON'T convince yourself that that is true, and you leave
-> eat_empty_buffer() alone.
+I did do a test compile without the &, it exploded but I didn't
+check whether it always would.
+IIRC there is a sparse check for 'user' pointers that would help.
 
-Yes, I failed to convince myself that fs/splice.c can never add an
-empty bufer. Although it seems to me it should not.
+Even with the current functions, someone is bound to write:
+	if (!masked_user_access_begin(uaddr))
+		return -EFAULT;
+	unsafe_get_user(kaddr, uaddr, label);
+and it will all appear to be fine...
+(objtool might detect something because of the NULL pointer path.)
 
-> In contrast, the "eat_empty_buffer()" case just saying "if it's an
-> empty buffer, it doesn't satisfy my needs, so I'll just release the
-> empty buffer and go on".
+You almost need it to be 'void masked_user_access_begin(&uaddr)'.
 
-... without wakeup_pipe_writers().
-
-OK, nevermind, I see your point even if I do not 100% agree.
-
-I'll send v2 without WARN_ON() and without 2/2.
-
-Oleg.
-
+	David
 
