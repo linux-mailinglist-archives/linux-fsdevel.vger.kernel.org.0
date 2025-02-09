@@ -1,75 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-41331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823F8A2E00E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 19:55:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21D6A2E00F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 19:55:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58021884A72
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 18:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FEF216343E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 18:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF5F1E2312;
-	Sun,  9 Feb 2025 18:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9657B1E2838;
+	Sun,  9 Feb 2025 18:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFF9Q+4V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMuYsO5Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D8F1D47C7;
-	Sun,  9 Feb 2025 18:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5319AEAC6;
+	Sun,  9 Feb 2025 18:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739127337; cv=none; b=iQ5oBBxF8ikDeXOdX3+ES923jmFrHOVuYzt/tc2BkZj4TNoQbb4fk1/HAzlgNeQQvH3Df2oL2aM62GIyaxsIsrYqtRloUi/YG7+5W+Jrd79KT9QLpsysKBGqvLshRD8LDDtmlE0CP+eX1a1qXpPOch9BfMrrlgJIS58Mfg/6RG8=
+	t=1739127339; cv=none; b=IAOoB6adg5eVj3Do3jE27AoEchyd/0uZlXw3Bpu206OIqaRBMNqM8H/bvN8KWsbVdlk3mXQM0P9T5S8cvdh/LAbloC2ZrzEWeNWNxvAZ70vvctPjl+dvuRfi+2z92H+ybK4wIXG/rWeMoevYFQR/wMAX2ZNBAqXR6kCvS41T9cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739127337; c=relaxed/simple;
-	bh=SKfs/wAhs+mKEWUJZVn4JFPLruoQjTvv67ryjPdOJWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uJ1s8xSXiZYfEcNE2e+UZlsP9v4mz28Ci6740cw3+4+vhyZRiRWNo4j6ke/+QJasUDZevg30pKUwuqDUpszYNMCKbV9FWR1IuEI8lapH7r+zMYiBEUhQECAVNgIqDgpdrIf5Sv7TZZctYgt2/KUD5PFfHc0A0olRga4MJ+OtWek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFF9Q+4V; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1739127339; c=relaxed/simple;
+	bh=Q51XQfe56AFhuGNQTaw2YQJVCi8+KJGxjjuooUOyupA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RKCqa12tZCSujTx7qJj/B9558wmkofjSepIUkz95U0A6bt9PUXleu8VSrjWhpxCURSZ998LZypxdE6zUx3rxvNRgeTdSLwrZYM+KDi84fS5rvMwfuaRP1I6nazmqfR3pv4i2T3MgzteEcWjrTX/GBTYZJeU9kT2yqI5OgvcZ76g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMuYsO5Q; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab2b29dfc65so584723666b.1;
-        Sun, 09 Feb 2025 10:55:35 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab78e6edb99so314059466b.2;
+        Sun, 09 Feb 2025 10:55:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739127334; x=1739732134; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LHmj2+Im1CcXlK77nnFWhdrR6nUCYh5cEj6EwVR8Zmg=;
-        b=HFF9Q+4Vyw8VqSh/1iLJe8nSWZjkaYx1WNfQ0y8FOcuZFwqq5muur4slPt/sAkqZ+S
-         tpDjdvhmU313ScZGuyPexwV7PMXTV9+1vYNP2T4H4tCFlGpAbsbJzBtQI3aYqX9iOO7M
-         cSF1xo6r1GG7XvBjTx4Cso+2lxsTIM6+UO1ZxHs+2LL2GoGb0Tfc5w1Yy76rt6skq92Y
-         3OIrfD/NatTkmBwMG/3UACLYefGdutlrqRGrb1iJUW1g9rs7c8x7jxiyk0FlIeBWEqiR
-         GQiXJxQ02K6JKD+83y7xWnenn+MX0EY8e794CiUmbHQAbkwzsgpm9HUiTJNj5KZI/N7N
-         U8Jg==
+        d=gmail.com; s=20230601; t=1739127335; x=1739732135; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eFRswilTxe6On8n4prZbm2R1GRuCBxzYFss7QkKFRZw=;
+        b=RMuYsO5QRk6H9m88liL4dgiI+e66BWCXqaPNjc4cLbQx8olhAieraW5km+Jw4uOAZv
+         g6J06EXIlQEkrPXHubWd/QqZje3SQlzv6dANCxCIEyO3dRhKPlJ5r+WjTXb/c+wByRkX
+         jE4mRHoIchOArFnrjRy0289ipzSI+9x2S8OFIzfvjRE8av69gEGXD6K0glLONbbER4gE
+         YkXUoiayCCCRRbQ7x7i+QQA8kOWOmt/hL0t9JAE/37GuL9DGEj5Rlev/McUg88riwnux
+         fuqwHoe7XJEh6ze5ULu8b3zieYzmiEz/vUV1KWwsjdqNlQLBkqPhGoIiaa5vNFfunGOs
+         YkPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739127334; x=1739732134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LHmj2+Im1CcXlK77nnFWhdrR6nUCYh5cEj6EwVR8Zmg=;
-        b=jUDCBNUi3SS9ZgznM+jjqRy6d7I7RIPbH6X1y8XYZqfIcrl4JQ2jG1QFDyKzo6asaZ
-         jnb6zgyOupOOBDft0vi/TlRgoakovT/oZcVc9Wl+LTGbkBu0C1S8JXcNNCB8ExsgizpJ
-         LRK8W9P3kkfTlEqiRo5EHHvPqwEfZHlImD5WPKow2nnetp5FGDftZ8eN0bIaqqklZV2i
-         MRgAln5XYllCOf4UnSR7e4Ab2U6+rO+7KVoMszam4rxhuCfIvffIcYhRzQ6vfFbpJMnU
-         TXjwWZxkvvh7h/E3/j4qacO2QpXmZM6yCsVmMcRBTibeBUkFTGH58L8D2J7ib5i0VxA4
-         E7UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeb2hsgnsC2LwGSTuUOjN37Myv/vTryOxrlgjRcL4qXkwr2ytehGQw4aZNFAXQwke9jKcJl/D/Zdv16xx/@vger.kernel.org, AJvYcCWjkM+Bhf4EudijlTgoI47efZOIy/sWGZShsqpgZEDZbRT2PEuq3b7wbd935WwPX/eXAMzvgAl4nW1o0YU0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwRuDm+f/VrEq4lSzJR202J6VwwjQAnoMfZujFSXYQIY30Fr77
-	dHydKkqN+/BwA7IExZbxSra8nSF0NQpTb5eaC01ehGsyDT0lAFfyNsdaVQ==
-X-Gm-Gg: ASbGncuHtpDeuEIJmC3kPVFUVVaT6VCRIcPHaIcbQQBulXY4JWf+P3XgEqa3M7MhcWU
-	emtRv3kCL3WwJWNgaEpf1/4VvSFkuLrgMwPs1CP7bW4uxK/OJYdter8l7wFV6uGYpYfmonpfxdQ
-	XZDR0iSe/64eX44BYkPdMX4iCAZHM1NlzV+1k1f8WULJxkJ1LkTlsAGmCYE4ejupWkyBs0F+6Qh
-	4AAIcmpmXigbkotlMlrp1exL3acEYLw9h6MPFyn5I1D11mfszTXxeyCYwqm1TNITDcctISABKZH
-	iGjT1RZDSkc9cI90kbci0niUv6SmoS+G4w==
-X-Google-Smtp-Source: AGHT+IGGGMNEsCrKiVhPtWnbJ7/k5DLTxD4z5azU/k/eJeHUjpeq2p5u9UxUWy69/8JHiUICCf6KDA==
-X-Received: by 2002:a17:907:d8a:b0:aae:b259:ef6c with SMTP id a640c23a62f3a-ab7897dfdebmr1030036366b.0.1739127333919;
-        Sun, 09 Feb 2025 10:55:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739127335; x=1739732135;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eFRswilTxe6On8n4prZbm2R1GRuCBxzYFss7QkKFRZw=;
+        b=wIvaxCNz75Sr+nlfvVquMUrIBAWyRjNgkneCx4wPVxOnndQ6f1Lvh33nn4Aa12sCc7
+         B6c0lHs5ERQpENUzs1RJDmcf1bLfQoWmb+Upq/VWTmWzkPiYu1GIM+a0EiBRnDdpASNA
+         c0C7pAkhppEo6v8XcQ/9WgI/3XODoGEiJX0v+9+rQqHk0VL+3PO2IvcoWtSloQ4MO50D
+         R8itlHagW1UOY4nbmV3VYVsbXvK4thW5yOcnLRhUVZV6M3E0+6UFlDly5bdZp7FrTDQO
+         hvo//SidJ6SAi2FPpxJGtQF7hOoiwNoFP8gZ1HLkNpTZkxeQr6F91mPKBPhRCn+TKBZ0
+         Wjxg==
+X-Forwarded-Encrypted: i=1; AJvYcCU88YQ8wWIMJaUGW7xIZLh+Y1L8uyRlKqeomt8ZSU2uu63x3fGudKvdA+cBEBMxGnzS9zznXKWS6jRjk5lN@vger.kernel.org, AJvYcCVqq17iwH9B8z4K4NRZPOJF4Za8uDjOFuqvvf5EdcaWPQpL2FGhfr5Xfe5E46MeacEMQV0gCFSw9p8nuYgv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkeJ1m4bVEPprm6CE9ZJRrS4YpjhvA3V/rhPSc8kJGDlLXmoHJ
+	ghgw8t1XyRl3NHaxzTD5bT5z1Nl+8cUQWfPvz1ccu4zVAsRrc2In
+X-Gm-Gg: ASbGnctB/AuP5lrKVfVfwzYS0tr1TS0K+Tu29APAnNj6y/y3JazNYtDGQuxc1jbGI+V
+	/F8Ih9HsD+SsJ9PSmOX9bwJMCD705dxEjLrVxwpriUbdqoP7PD2dxFbAE4ZLYs64xII832UGbsC
+	3IXqWBNnTtq6o5oXiMf4w7xRVnOOrLglXJrszAn4azXakCp8RtzMIYcGNAtINa3WKllJaO//iet
+	ugX+SOw9F9JYSWWqHTdXZf3IH+PpU1WXe/ACFgtp7ngy9DVQezPSKrfHFSyg3t6yRInKhFiSDgB
+	3amEqA/rgdB52N/3iNzcqXw0oMGExhCovQ==
+X-Google-Smtp-Source: AGHT+IE2E6xuO4bsGmAr2vQRRwDQnOiAypsmYow6wZgZuhIkXnmSoaQozfy4BglYDKCZrwE5YFAMkw==
+X-Received: by 2002:a17:906:9c8d:b0:ab7:b93:f77d with SMTP id a640c23a62f3a-ab789a9ed18mr1248346166b.3.1739127335193;
+        Sun, 09 Feb 2025 10:55:35 -0800 (PST)
 Received: from f.. (cst-prg-84-201.cust.vodafone.cz. [46.135.84.201])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7a82dba37sm318478566b.165.2025.02.09.10.55.32
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7a82dba37sm318478566b.165.2025.02.09.10.55.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Feb 2025 10:55:32 -0800 (PST)
+        Sun, 09 Feb 2025 10:55:34 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -77,10 +79,12 @@ Cc: viro@zeniv.linux.org.uk,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v4 0/3] CONFIG_DEBUG_VFS at last
-Date: Sun,  9 Feb 2025 19:55:19 +0100
-Message-ID: <20250209185523.745956-1-mjguzik@gmail.com>
+Subject: [PATCH v4 1/3] vfs: add initial support for CONFIG_DEBUG_VFS
+Date: Sun,  9 Feb 2025 19:55:20 +0100
+Message-ID: <20250209185523.745956-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250209185523.745956-1-mjguzik@gmail.com>
+References: <20250209185523.745956-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,47 +93,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds a super basic version just to get the mechanism going, along
-with sample usage.
+Small collection of macros taken from mmdebug.h
 
-The macro set is incomplete (e.g., lack of locking macros) and
-dump_inode routine fails to dump any state yet, to be implemented(tm).
-
-I think despite the primitive state this is complete enough to start
-sprinkling asserts as necessary.
-
-v4:
-- export dump_inode, fixes building ext4 as a module
-
-v3:
-- move dump_inode to fs/inode.c
-- s/failed/encountered/
-- pr_warn instead of pr_crit, matches dump_mapping
-
-v2:
-- correct may_open
-- fixed up condition reporting:
-before:
-VFS_WARN_ON_INODE(__builtin_choose_expr((sizeof(int) ==
-sizeof(*(8 ? ((void *)((long)(__builtin_strlen(link)) * 0l)) : (int
-*)8))), __builtin_strlen(link), __fortify_strlen(link)) != linklen)
-failed for inode ff32f7c350c8aec8
-after:
-VFS_WARN_ON_INODE(strlen(link) != linklen) failed for inode ff2b81ddca13f338
-
-Mateusz Guzik (3):
-  vfs: add initial support for CONFIG_DEBUG_VFS
-  vfs: catch invalid modes in may_open()
-  vfs: use the new debug macros in inode_set_cached_link()
-
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
  fs/inode.c               | 15 ++++++++++++++
- fs/namei.c               |  2 ++
- include/linux/fs.h       | 16 +++-----------
+ include/linux/fs.h       |  1 +
  include/linux/vfsdebug.h | 45 ++++++++++++++++++++++++++++++++++++++++
  lib/Kconfig.debug        |  9 ++++++++
- 5 files changed, 74 insertions(+), 13 deletions(-)
+ 4 files changed, 70 insertions(+)
  create mode 100644 include/linux/vfsdebug.h
 
+diff --git a/fs/inode.c b/fs/inode.c
+index 5587aabdaa5e..875e66261f06 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2953,3 +2953,18 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
+ 	return mode & ~S_ISGID;
+ }
+ EXPORT_SYMBOL(mode_strip_sgid);
++
++#ifdef CONFIG_DEBUG_VFS
++/*
++ * Dump an inode.
++ *
++ * TODO: add a proper inode dumping routine, this is a stub to get debug off the
++ * ground.
++ */
++void dump_inode(struct inode *inode, const char *reason)
++{
++       pr_warn("%s encountered for inode %px", reason, inode);
++}
++
++EXPORT_SYMBOL(dump_inode);
++#endif
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1437a3323731..034745af9702 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_FS_H
+ #define _LINUX_FS_H
+ 
++#include <linux/vfsdebug.h>
+ #include <linux/linkage.h>
+ #include <linux/wait_bit.h>
+ #include <linux/kdev_t.h>
+diff --git a/include/linux/vfsdebug.h b/include/linux/vfsdebug.h
+new file mode 100644
+index 000000000000..9cf22d3eb9dd
+--- /dev/null
++++ b/include/linux/vfsdebug.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef LINUX_VFS_DEBUG_H
++#define LINUX_VFS_DEBUG_H 1
++
++#include <linux/bug.h>
++
++struct inode;
++
++#ifdef CONFIG_DEBUG_VFS
++void dump_inode(struct inode *inode, const char *reason);
++
++#define VFS_BUG_ON(cond) BUG_ON(cond)
++#define VFS_WARN_ON(cond) (void)WARN_ON(cond)
++#define VFS_WARN_ON_ONCE(cond) (void)WARN_ON_ONCE(cond)
++#define VFS_WARN_ONCE(cond, format...) (void)WARN_ONCE(cond, format)
++#define VFS_WARN(cond, format...) (void)WARN(cond, format)
++
++#define VFS_BUG_ON_INODE(cond, inode)		({			\
++	if (unlikely(!!(cond))) {					\
++		dump_inode(inode, "VFS_BUG_ON_INODE(" #cond")");\
++		BUG_ON(1);						\
++	}								\
++})
++
++#define VFS_WARN_ON_INODE(cond, inode)		({			\
++	int __ret_warn = !!(cond);					\
++									\
++	if (unlikely(__ret_warn)) {					\
++		dump_inode(inode, "VFS_WARN_ON_INODE(" #cond")");\
++		WARN_ON(1);						\
++	}								\
++	unlikely(__ret_warn);						\
++})
++#else
++#define VFS_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
++#define VFS_WARN_ON(cond) BUILD_BUG_ON_INVALID(cond)
++#define VFS_WARN_ON_ONCE(cond) BUILD_BUG_ON_INVALID(cond)
++#define VFS_WARN_ONCE(cond, format...) BUILD_BUG_ON_INVALID(cond)
++#define VFS_WARN(cond, format...) BUILD_BUG_ON_INVALID(cond)
++
++#define VFS_BUG_ON_INODE(cond, inode) VFS_BUG_ON(cond)
++#define VFS_WARN_ON_INODE(cond, inode)  BUILD_BUG_ON_INVALID(cond)
++#endif /* CONFIG_DEBUG_VFS */
++
++#endif
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 1af972a92d06..c08ce985c482 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -808,6 +808,15 @@ config ARCH_HAS_DEBUG_VM_PGTABLE
+ 	  An architecture should select this when it can successfully
+ 	  build and run DEBUG_VM_PGTABLE.
+ 
++config DEBUG_VFS
++	bool "Debug VFS"
++	depends on DEBUG_KERNEL
++	help
++	  Enable this to turn on extended checks in the VFS layer that may impact
++	  performance.
++
++	  If unsure, say N.
++
+ config DEBUG_VM_IRQSOFF
+ 	def_bool DEBUG_VM && !PREEMPT_RT
+ 
 -- 
 2.43.0
 
