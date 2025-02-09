@@ -1,150 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-41309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E0DA2DB40
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 06:48:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A68A2DB5D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 07:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA96518879C1
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 05:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE5118870B3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 06:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D3C42A87;
-	Sun,  9 Feb 2025 05:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF1C140E30;
+	Sun,  9 Feb 2025 06:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SoOGjmoT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC3B8831
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 05:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11AD4C9F;
+	Sun,  9 Feb 2025 06:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739080104; cv=none; b=LEpfyZF4aND237mqoGXb6qZbhKSsns+X5syfk9jg+q4JTXUQdmSkkpqzzclQY/Z6WWSzuoSY+dAa378VjRNGMTnY/Yw1U0lsIVp3FNmh1OLxQn14HIvNmjJOoQ+5tq2NZ7VbuvkxofqiFTCLTP6gLSB9Pwf6QMXlKtSCtACGrA8=
+	t=1739083232; cv=none; b=mOdBVsKhUk8CQq4LF3Sfxokr+1aQcuFm9HoaX+qVRynarQEalaQjqs52GEPy5JrFiNUMl9dXHegfYqjlM9832swhn6C+Zk7YP0Sdr60axgI4fpJm1oHllI4BzevUzikDufi0yQlbtrEuKt79aL8aG/GQKYu/N7bFzaKJUsRpIEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739080104; c=relaxed/simple;
-	bh=z4tA6hMPFEUrw4W8If8IRwdzbP+7LHbbAeSr7eOfrqo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ay1R3aKtO8PB5GnIYugSSF/ARk620gibHwoV363X7018INA4qp31jz+BAN5EL7WoGI82ckAGYckxKwz1xRXahYybWN+OnNC6lyNsQn56DBTThtUxR6XphmbeNEAad3Q+5PWFr+ZbM88GAB5zu9Ga+pcnhCH3vMIvpEJ+NQUU/Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d058142573so27730285ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Feb 2025 21:48:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739080101; x=1739684901;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JllO9RRFJnC6OlotxyZV0275rRnlEQ+hFYSIKClP0zo=;
-        b=gcjqzKCMxiFdfQffwDyxnloLWxhsVDOc6uhjIlOggHeKCO+e2+MNCVi9NP4lMM7FpH
-         rPFBei01Fz+NrkqwPjVKBa3HNc5gaQGy9pgBaCi6iDX+ue6ziisfZiL23/k3JrZnU6al
-         zHyIG8Cm/5L7pBBveUyqNMXhfz3GeQW7soOPFuGy/znThDmTMvqo3onoSKpdkUCSZGv9
-         Er4qiALlwBMVPuKvZwjhBATadPsnoD4Kza/gTpbfYUpHnrbx14AR43cn1D0aSBv1eIxf
-         EolzNIKJu5yPxCh6yVDpufNJeLa3MJBt1c+/N1gbUz2W5N7g2pVcoFVLJVpL0sUEH2a4
-         tQiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN/8m3/oYTQYWFgPRunjFR6ML6DSKj0eD7RT6n2SMUeVCeeOkCakEnLzuSGGG68PwzYweauPa9VJqGFwSp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8TXZgZjEHryOaJ/5Fm9gOpPfvNe3kEdtk0ZhEXNRuTRATnqUw
-	w+i85sxYjzCr6+zuMpzPV1OFL8s+oT/6VsGEFaPAZ3nBiKmpuL5Q9iROeI3waonXXfVJE/akfJC
-	ekedLHidvbb2ijU6GGurW8p9CtSnt1ewlpZUFkZrx/TaHypiVmorEs2Y=
-X-Google-Smtp-Source: AGHT+IEVlqPGn5xXlDn15cyBvhgT74wjTffnI3VeukLWL4MB4bOujt2MzbXZKZbjwvr6nkObbO3W9eamNmsdrG7983+II/w0cP8q
+	s=arc-20240116; t=1739083232; c=relaxed/simple;
+	bh=I+n6YL4BVvpvdCEXFuSfEXS7J45BosY6sb8Q2vj8/V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMfv7qwT24cSbl75pMvv+qtuJ60FQcgXBY0Fo/ZPHfBfyGPpsR6ffoa/2hOfmn6EpCRO7tYlxNxy/zX5MfAR1xGKrTnFAEkZqrYBRKzqu1HiEpOFdHd2pG7e9pYDIVnOmkkSs+p61k3xuUDeWiweKWyKLMGGLu+z9xQ83VrS2fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SoOGjmoT; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9oFpwbEwOTCngZ/mwbnn+Iorxg6hPP7eCgH77WuWom4=; b=SoOGjmoTduqo6ZxdSo1Tr+LvGe
+	rtQbnZjMosxqY6xfNh3tXrvllkPb51vCqX+jQE/6gKCnjFBM4CbKG1bXkcygZFY6KWHcb9xjTvMi5
+	9CF9+FePuAJVxvVj137XhgQQvq9zOixFOreiPk1HzAaqsLV2X+A89NnFMzuDMCmgfGYgrJF/CkvHT
+	woMEtGJTVrE9uAPBszJyFBzxUm1OZBsd8zT7IH0ejDJILUgnsHow0/C02EzgYCqzIIhRmlbajC+Ms
+	CNkhmT2KVfNwmEwd9648B/azK2XK13p9+wRA8NCvuE+MFaawBtNYJbCJdAd6gp94fN7HEf58Dc4lQ
+	62GXDvCQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1th0zT-00000008Dpp-0COW;
+	Sun, 09 Feb 2025 06:40:27 +0000
+Date: Sun, 9 Feb 2025 06:40:27 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/19] VFS: Add ability to exclusively lock a dentry and
+ use for create/remove  operations.
+Message-ID: <20250209064027.GV1977892@ZenIV>
+References: <20250206054504.2950516-1-neilb@suse.de>
+ <20250206054504.2950516-12-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ee:b0:3cd:e9a0:3c3d with SMTP id
- e9e14a558f8ab-3d13e159583mr68052515ab.2.1739080101450; Sat, 08 Feb 2025
- 21:48:21 -0800 (PST)
-Date: Sat, 08 Feb 2025 21:48:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67a841a5.050a0220.110943.0017.GAE@google.com>
-Subject: [syzbot] [isofs?] KMSAN: uninit-value in isofs_readdir
-From: syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
-To: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206054504.2950516-12-neilb@suse.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello,
+On Thu, Feb 06, 2025 at 04:42:48PM +1100, NeilBrown wrote:
 
-syzbot found the following issue on:
+> +bool d_update_lock(struct dentry *dentry,
+> +		   struct dentry *base, const struct qstr *last,
+> +		   unsigned int subclass)
+> +{
+> +	lock_acquire_exclusive(&dentry->d_update_map, subclass, 0, NULL, _THIS_IP_);
+> +again:
+> +	spin_lock(&dentry->d_lock);
+> +	wait_var_event_spinlock(&dentry->d_flags,
+> +				!check_dentry_locked(dentry),
+> +				&dentry->d_lock);
+> +	if (d_is_positive(dentry)) {
+> +		rcu_read_lock(); /* needed for d_same_name() */
 
-HEAD commit:    5c8c229261f1 Merge tag 'kthreads-fixes-2025-02-04' of git:..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13a8beb0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f20bce78db15972a
-dashboard link: https://syzkaller.appspot.com/bug?extid=812641c6c3d7586a1613
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12042df8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ff93df980000
+It isn't.  You are holding ->d_lock there.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/63aa4d99d73d/disk-5c8c2292.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/104150a76e91/vmlinux-5c8c2292.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c4622f8c58f4/bzImage-5c8c2292.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/24fb8c942e20/mount_0.gz
+> +		if (
+> +			/* Was unlinked while we waited ?*/
+> +			d_unhashed(dentry) ||
+> +			/* Or was dentry renamed ?? */
+> +			dentry->d_parent != base ||
+> +			dentry->d_name.hash != last->hash ||
+> +			!d_same_name(dentry, base, last)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com
+Negatives can't be moved, but they bloody well can be unhashed.  So skipping
+the d_unhashed() part for negatives is wrong.
 
-loop0: detected capacity change from 1764 to 1763
-=====================================================
-BUG: KMSAN: uninit-value in do_isofs_readdir fs/isofs/dir.c:150 [inline]
-BUG: KMSAN: uninit-value in isofs_readdir+0xa33/0x2610 fs/isofs/dir.c:262
- do_isofs_readdir fs/isofs/dir.c:150 [inline]
- isofs_readdir+0xa33/0x2610 fs/isofs/dir.c:262
- iterate_dir+0x740/0x930 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:403 [inline]
- __se_sys_getdents64+0x170/0x540 fs/readdir.c:389
- __x64_sys_getdents64+0x96/0xe0 fs/readdir.c:389
- x64_sys_call+0x3b0f/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:218
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> +		) {
+> +			rcu_read_unlock();
+> +			spin_unlock(&dentry->d_lock);
+> +			lock_map_release(&dentry->d_update_map);
+> +			return false;
+> +		}
+> +		rcu_read_unlock();
+> +	}
+> +	/* Must ensure DCACHE_PAR_UPDATE in child is visible before reading
+> +	 * from parent
+> +	 */
+> +	smp_store_mb(dentry->d_flags, dentry->d_flags | DCACHE_PAR_UPDATE);
 
-Uninit was created at:
- __alloc_frozen_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4762
- alloc_pages_mpol+0x4cd/0x890 mm/mempolicy.c:2270
- alloc_frozen_pages_noprof mm/mempolicy.c:2341 [inline]
- alloc_pages_noprof+0x1b5/0x250 mm/mempolicy.c:2361
- get_free_pages_noprof+0x34/0xc0 mm/page_alloc.c:4798
- isofs_readdir+0x74/0x2610 fs/isofs/dir.c:256
- iterate_dir+0x740/0x930 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:403 [inline]
- __se_sys_getdents64+0x170/0x540 fs/readdir.c:389
- __x64_sys_getdents64+0x96/0xe0 fs/readdir.c:389
- x64_sys_call+0x3b0f/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:218
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+... paired with?
 
-CPU: 0 UID: 0 PID: 5784 Comm: syz-executor207 Not tainted 6.14.0-rc1-syzkaller-00028-g5c8c229261f1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-=====================================================
+> +	if (base->d_flags & DCACHE_PAR_UPDATE) {
+> +		/* We cannot grant DCACHE_PAR_UPDATE on a dentry while
+> +		 * it is held on the parent
+> +		 */
+> +		dentry->d_flags &= ~DCACHE_PAR_UPDATE;
+> +		spin_unlock(&dentry->d_lock);
+> +		spin_lock(&base->d_lock);
+> +		wait_var_event_spinlock(&base->d_flags,
+> +					!check_dentry_locked(base),
+> +					&base->d_lock);
 
+Oh?  So you might also be waiting on the parent?  That's a deadlock fodder right
+there - caller might be holding ->i_rwsem on the same parent, so you have waiting
+on _->d_flags nested both outside and inside _->d_inode->i_rwsem.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Just in case anyone goes "->i_rwsem will only be held shared" - that wouldn't help.
+Throw fchmod() into the mix and enjoy your deadlock -
+	A: holds ->i_rwsem shared, waits for C to clear DCACHE_PAR_UPDATE.
+	B: blocked trying to grab ->i_rwsem exclusive
+	C: has DCACHE_PAR_UPDATE set, is blocked trying to grab ->i_rwsem shared
+and there you go...
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> +		spin_unlock(&base->d_lock);
+> +		goto again;
+> +	}
+> +	spin_unlock(&dentry->d_lock);
+> +	return true;
+> +}
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+The entire thing is refcount-neutral for both dentry and base.  Which makes this
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> @@ -1759,8 +1863,9 @@ static struct dentry *lookup_and_lock_nested(const struct qstr *last,
+>  
+>  	if (!(lookup_flags & LOOKUP_PARENT_LOCKED))
+>  		inode_lock_nested(base->d_inode, subclass);
+> -
+> -	dentry = lookup_one_qstr(last, base, lookup_flags);
+> +	do {
+> +		dentry = lookup_one_qstr(last, base, lookup_flags);
+> +	} while (!IS_ERR(dentry) && !d_update_lock(dentry, base, last, subclass));
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+... a refcount leak waiting to happen.
 
