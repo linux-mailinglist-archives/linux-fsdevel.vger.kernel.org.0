@@ -1,144 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-41340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35942A2E07A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 21:41:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00638A2E0CD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 22:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952F63A5F27
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 20:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA03163DDB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 21:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D8C1E32BF;
-	Sun,  9 Feb 2025 20:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC02236432;
+	Sun,  9 Feb 2025 21:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BE69vYIK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcY7fDX7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A520137775
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 20:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678D49659;
+	Sun,  9 Feb 2025 21:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739133653; cv=none; b=YZx3jbeIVStDa0Mu0F23EL1m0OQiA3Gfr8LeJ2G9th94YqrQkAsoHqgSZc84VVvl6X7QVvzNEiP+vcjAEXe+WaEMRlPl9ez9ccx8R3La6yoYEw8sVkVNeGfYZ00B24nTHr+CI5TjOaK59cysH5TkxwdERryB1sPVYB6JokZwrlA=
+	t=1739135892; cv=none; b=ts126i7pJMYfoUojvcfU9Bt9d5efnErBCa6Rk9u8MCCdWNyKFxQfv2Z3BmUCSoUhIzbXSE0TZM3nsg64wpUubSm0t+IiGJut2X5IK2ul9YcwAHcy4sE/zYotUMHHa+QINyX/hwVcChYnUoMmMMc//CbDuQ3I2V9WzWkbNYmZRkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739133653; c=relaxed/simple;
-	bh=2gU2/QcKUSQ/wiYWG3ZtCdYIXBDzhN+gWWqdMsOanrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sp7PloPQeHPtm3maKJ/uPetI9OrEgPfu/fjfXaYXSA3+EyTEStaRv34In/ZtYcfT8Ik3UM6VLAgl26GxVR9iUaxIgjH8qAXD7Z6Y0viMZ4Z3m3uoapp3sicDgOjV5YptLKwZaQ3V2pDLMMjbBBdHTdoO0G8A5v8HrvcAwLgEhao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BE69vYIK; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab7b7250256so97753966b.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Feb 2025 12:40:51 -0800 (PST)
+	s=arc-20240116; t=1739135892; c=relaxed/simple;
+	bh=bNKBfWNRKebQScua+Jos/7YyeDSQyrV7+cSkWBGdgwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iWIFDfVg5gGO3QTO5PJKCz0RXgbxg0vMq/EjkLCdDlaNnK8qrTYTuTT8WEH/yORts6rLYzWP/t7DfVsTnPkivagrPYDH60shg4JakDKS8mtkw/51HFZ/OhlYAic006NixCFcE8A79V+9D2QSrIQriPlZcxyENzXEoJD5HwwSNLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcY7fDX7; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38dc660b56cso2654233f8f.0;
+        Sun, 09 Feb 2025 13:18:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1739133650; x=1739738450; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vq74F1wFcESZ51amFrl8eHD6/YdZmXUP7VjXbw0WJkc=;
-        b=BE69vYIKgwGzL27c0YTGtHEK9QlFR/2WfeCpmTBR4ioAu5v2vbataE2ywvnnDNHsQh
-         jPtU/na/UYtvlFDHsrMHON4IMUBdv4yXl+pStD/8uriNtNARd8CFCDwrBoNtpmpXOqY0
-         I9m3KWH16kYwKIvh0MJB/aVl67I960T/cFgPk=
+        d=gmail.com; s=20230601; t=1739135888; x=1739740688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=saaUSOCD8VtQU0yd34D1cSRrbq4D1M8lc/5MSCCFPes=;
+        b=KcY7fDX71RjN3fQNZog/FmHvYuKt8Rqz8xMYueMbuw83uJg53nYiw54v18BtiTSbAC
+         x31gdTCJpCoXUs6f8xCelFJusuiPzWymGnexV4VNwm5SWht+C6yxRmQu5HX9e7Glhc7l
+         eMwyKvnYEovAaznTZdCAvgbBptfyr+P0c1WdmfhB2zZxe7eZKsu6urjVhDkiKErZB9Ci
+         Q0SIOzM5e1oTwMkJeJiJ9kPYO2g3GqPQkb57ZWblFHGId6k4BKqdB/x7ZVd+c6oLrp8Y
+         NNZCHQ4LXd4vT5F0fU2KT3zQm56MD/co1dNMcfX5lj/rKz3Q8G2FNXYouRhIIn5LSRcP
+         fHcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739133650; x=1739738450;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vq74F1wFcESZ51amFrl8eHD6/YdZmXUP7VjXbw0WJkc=;
-        b=nrUfmVYbxRw8znBsL24Qi4u3jMz/2evlsEn4U266O09Eye4MsusgnO6ZzInuNocAlu
-         TuRDtCd+QQ/iA6RKx84oav8Dwhi48I/zfu2rX0No02TDqEwAJQWBMR3jW9H4+TZwHNiA
-         Oquyxy3jo3WNoTUtc1D/JZaA2NBQOO8XVIUIu63yOncmla/CFlM82iDjcllN6u3EM2L/
-         FPvzlZfycFd1L8McdvmoU/T+J/8YpDcDmUE7Pk7Vc3RAjdPFzIBU0mEas0rL68DeSMJ+
-         QqbGd+YJ/efOFvG2rK3AwKsqss+hLlsQLW3nvmxzz3I9eds5D3AxBP2r+OtQDVpukTE7
-         J9yQ==
-X-Gm-Message-State: AOJu0YzFP76qRQulbKkko+vSl+PSpVQGWGF5dj8HvFbHaPx+OudmxAqc
-	LTLdzYoVA1m59bM/39BqLCCRKJgtgoiDmsztLopt2qqgZP4YT/NriVOi/FKMQ6WijO1pR6w4s3C
-	rOwM=
-X-Gm-Gg: ASbGncuVo3WZihuE6zM3gjHT1tKwLXKpnZaXImyHpetHTuFfD9abyzz92iNuyhhgw5I
-	xKqIphRflqAMiAE3DFLSKxLek19M5MVwOxo6a0nAUh0XuXZu1PE5XfQWq3Tvhbd+BxojZAwsCr5
-	z6RPMNNGvT3HBi7iZgGIBd2DtHm+6Jof/jWm+g3VTiaUZI9ad+pWocfqZQW2Xm6EFksdKqHR76/
-	iB61w8FuDGT0rvAORguIFbwWW0DeMpioL+ObqeEoddB8I33HrWpuw4Np6+JF+VTg8OVWSNXsU9v
-	WP3ti4tSoVj3kIJmgND2ts5XeU/CT21aQ77PtEyionDH0L0u3ASfP5fPhyOfVxBnOQ==
-X-Google-Smtp-Source: AGHT+IFe7o3FgAqN0qEna1f5oWcLT96HUYgAKg5uRuyrdEfeuu16/B7Fb7Fc/YoHyczlm4hbZldiew==
-X-Received: by 2002:a17:906:6a29:b0:aa6:b63a:4521 with SMTP id a640c23a62f3a-ab789add8b0mr938120466b.15.1739133650091;
-        Sun, 09 Feb 2025 12:40:50 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b88aa451sm162658266b.133.2025.02.09.12.40.48
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Feb 2025 12:40:49 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5de5a853090so3005147a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Feb 2025 12:40:48 -0800 (PST)
-X-Received: by 2002:a05:6402:3589:b0:5de:5d4a:9f56 with SMTP id
- 4fb4d7f45d1cf-5de5d4aa093mr7276032a12.31.1739133648266; Sun, 09 Feb 2025
- 12:40:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739135888; x=1739740688;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=saaUSOCD8VtQU0yd34D1cSRrbq4D1M8lc/5MSCCFPes=;
+        b=RV5CrRHlyY/JA1FFhv2BrxPZDw76Boeqr5P0+XTEeDAHYpTeGz8iqZpDlrBgMX3Dzo
+         hc0J1xlLo1wAg/nNQ8/6qvZOl276OrSQ7jpNAOB66gIW4Ew+7+Qiw3N9XiFh/eTUHX8J
+         TuS0EJS+TdGZWTkVzBF0BDPNkZ7ldqgjiwUqVX1jm3ON4txUU7za3GZa63b6UJqWx2Da
+         r+YkcRfiR+qocntkt17WxyCOcBJiJcJh7HmwW1SMADIpdq5T0hYRZ6x7r4+i2n0L3KAB
+         EkHJlACPaR/obKqvH1SysoYmb3NPJ+GEsakc9mlvVZ8Jd6rmmw5Oa62HNUuJ5obQgTJA
+         6KDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZabC6xZXm9DHnjXCyquXx5l5BGSBOqAWNPIb6hxHxfQDo+va/rYLbORjkSekCjxzgMGcM5ojpr6jIVlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw8S4whRk60QDOkQiCo89Wd4B+Qyyg48Gnlna3J7sLjR9tXW8G
+	GCK8z3fwIEak2Km05WK/0NfAxTwhhaBYEPOLt9W2oreEV8Sm3RStUitS0w==
+X-Gm-Gg: ASbGncvrXtWR1fSZBwbONrjUscaU1iUC5Hh83E9MxT+Dh2m8RTAR7YdGyKX6tYvGC1q
+	n4YBwcpCw6PRbPFuo4/+Ft5iQTzY5XBHQCndfNskxOV0mQk6SjCCe0yCY6cyF3sIfeTf4YDoPCQ
+	Q6oWySd9A3Ysj0lzvfO/uzF8k9KmS47onO987ZkoFQAgR/GPfiq7Wnz0EPyZarLXTlGvOd+Vhal
+	mAYgYE3Yk1/ID7P9mCsKXbJVwBTuD0lthvNllLaQSPQZZ94xrP/ba4xDhmGMfoAoDooBy7JLuRl
+	exJhJaov+gpzkMKfzfy4DCnaupQVTPYd1lePAWIU/Og8if5l9xP4HQ==
+X-Google-Smtp-Source: AGHT+IFueWBoevUvxZNF+yIvoEj1Zp72nS6QGi9WB0jNAxF2Fm+OCUS3HsJE7nBo4Bp4i/L1TAZzrQ==
+X-Received: by 2002:a05:6000:1448:b0:38b:ec34:2d62 with SMTP id ffacd0b85a97d-38dc8dddd1fmr8853062f8f.24.1739135888359;
+        Sun, 09 Feb 2025 13:18:08 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc6b89ef5sm8692402f8f.31.2025.02.09.13.18.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Feb 2025 13:18:07 -0800 (PST)
+Date: Sun, 9 Feb 2025 21:18:05 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Kees Cook
+ <kees@kernel.org>
+Subject: Re: [PATCH 1/2] uaccess: Simplify code pattern for masked user
+ copies
+Message-ID: <20250209211805.5fc2e9e4@pumpkin>
+In-Reply-To: <CAHk-=wisZo7+-xmC_o8GQJ-G0qFp4u29t_FkjgPvgq7FXaTyDg@mail.gmail.com>
+References: <20250209105600.3388-1-david.laight.linux@gmail.com>
+	<20250209105600.3388-2-david.laight.linux@gmail.com>
+	<CAHk-=wgu0B+9ZSmXaL6EyYQyDsWRGZv48jRGKJMphpO4bNiu_A@mail.gmail.com>
+	<20250209194756.4cd45e12@pumpkin>
+	<CAHk-=wisZo7+-xmC_o8GQJ-G0qFp4u29t_FkjgPvgq7FXaTyDg@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250209105600.3388-1-david.laight.linux@gmail.com>
- <20250209105600.3388-2-david.laight.linux@gmail.com> <CAHk-=wgu0B+9ZSmXaL6EyYQyDsWRGZv48jRGKJMphpO4bNiu_A@mail.gmail.com>
- <20250209194756.4cd45e12@pumpkin>
-In-Reply-To: <20250209194756.4cd45e12@pumpkin>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 9 Feb 2025 12:40:32 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wisZo7+-xmC_o8GQJ-G0qFp4u29t_FkjgPvgq7FXaTyDg@mail.gmail.com>
-X-Gm-Features: AWEUYZnm-byqLtVgoG1xZKmNlSCIlTB0Vzbhmfc7swHQWKbOulXf3f_pjqQ0pEk
-Message-ID: <CAHk-=wisZo7+-xmC_o8GQJ-G0qFp4u29t_FkjgPvgq7FXaTyDg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] uaccess: Simplify code pattern for masked user copies
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 9 Feb 2025 at 11:48, David Laight <david.laight.linux@gmail.com> wrote:
->
-> You almost need it to be 'void masked_user_access_begin(&uaddr)'.
+On Sun, 9 Feb 2025 12:40:32 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Maybe we just need to make it a two-stage thing, with
+> On Sun, 9 Feb 2025 at 11:48, David Laight <david.laight.linux@gmail.com> wrote:
+> >
+> > You almost need it to be 'void masked_user_access_begin(&uaddr)'.  
+> 
+> Maybe we just need to make it a two-stage thing, with
+> 
+>         if (!user_access_ok(uaddr, size))
+>                 return -EFAULT;
+>         user_read_access_begin(&uaddr);
+>         unsafe_get_user(val1, &uaddr->one, Efault);
+>         unsafe_get_user(val2, &uaddr->two, Efault);
+>         user_read_access_end();
+>         ... all done ..
+> 
+> Efault:
+>         user_read_access_end();
+>         return -EFAULT;
+> 
+> and that would actually simplify some things: right now we have
+> separate versions of the user address checking (for
+> read/write/either): user_read_access_begin() and friends.
+> 
+> We still need those three versions, but now we'd only need them for
+> the simpler non-conditional case that doesn't have to bother about the
+> size.
 
-        if (!user_access_ok(uaddr, size))
-                return -EFAULT;
-        user_read_access_begin(&uaddr);
-        unsafe_get_user(val1, &uaddr->one, Efault);
-        unsafe_get_user(val2, &uaddr->two, Efault);
-        user_read_access_end();
-        ... all done ..
+Except for the ppc? case which needs the size to open a bounded window.
+(I'm not sure how that handler r/w access.)
+So you either have to pass the size twice or come back to:
+	if (!user_read_access_begin(&uaddr, size))
+		return -EFAULT;
+	unsafe_get_user(...);
 
-Efault:
-        user_read_access_end();
-        return -EFAULT;
-
-and that would actually simplify some things: right now we have
-separate versions of the user address checking (for
-read/write/either): user_read_access_begin() and friends.
-
-We still need those three versions, but now we'd only need them for
-the simpler non-conditional case that doesn't have to bother about the
-size.
-
-And then if you have user address masking, user_access_ok() just
-unconditionally returns true and is a no-op, while
-user_read_access_begin() does the masking and actually enables user
-accesses.
-
-And if you *don't* have user address masking, user_read_access_begin()
-still enables user accesses and has the required speculation
-synchronization, but doesn't do any address checking, because
-user_access_ok() did that (and nothing else).
-
-That seems like it might be a reasonable compromise and fairly hard to
-get wrong (*)?
-
-            Linus
-
-(*) Obviously anybody can get anything wrong, but if you forget the
-user_access_ok() entirely you're being wilful about it, and if you
-forget the user_read_access_begin() the code won't work, so it seems
-about as safe as it can be.
+   David
 
