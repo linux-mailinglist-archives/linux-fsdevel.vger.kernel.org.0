@@ -1,69 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-41336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7EEA2E020
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 20:05:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CD6A2E02D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 20:16:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06A053A5E77
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 19:05:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F4031164D17
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 19:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E005A1E2602;
-	Sun,  9 Feb 2025 19:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34781E1A3F;
+	Sun,  9 Feb 2025 19:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJVgBgpK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GCd0iP3b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D7713B7A3;
-	Sun,  9 Feb 2025 19:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3370807
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 19:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739127928; cv=none; b=XRbPCIfAogwYxvjKAKOxnZMjh+FxYLa/GOw0sPHVOcDH0U3UKUKcsDs6hRzSz+C/mVA6bcaYBuwkdHV7jYJGJ9JA+Zxyz9p2Vt4W0RhtcfqrNaENNWiyPdL+VPvnKFl7tUQXpZOgzUXtqUFRggo4tEsRPXCaeQXBn1WVWwIy8I4=
+	t=1739128555; cv=none; b=bxKq5wtWBTKz/efdH7dWP3mt+AeKoGJ8zwtDJSkGvsH0y3gJeopuCc5zxfFcJrVCwF1LuSH+xYsacOB3bZNXt97JHRLZgFHUfdSvBU/XLQBTca3CC3ZNLCejvZNZUrB88POjEQHVQ2ivMeVZ7s7ABnsk+IeZJB2b+U/E2fPa74g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739127928; c=relaxed/simple;
-	bh=natJcidB7q3O8woW65n2ijBytWe0W+0jkr1HKsigs5s=;
+	s=arc-20240116; t=1739128555; c=relaxed/simple;
+	bh=sNIqBwASHZS6f8Tct2wIuBKd1+bQdUMIFK+Uqg8rsxE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rKY0+sTGVzcgQZ7XwNUMxyD6zd4UUNke+ajkkAU8vDh1XmTqwFLKgazVQ68BhHJ8aOnAKiR/81UIPFm+VaF5DHYrEpEsEzrR822Onio96YRdtCHxBfOLzDO/JXN8P8/nVF9AG1AojeqA7+uwhDXK51XQLyuUCtpetYWvFjzRdro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJVgBgpK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082BAC4CEDD;
-	Sun,  9 Feb 2025 19:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739127927;
-	bh=natJcidB7q3O8woW65n2ijBytWe0W+0jkr1HKsigs5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJVgBgpK/Wrib4Ot1ITnWyLr/M9lHiSwNDfQztynIRSmG/2QoUlAq3TuVHHLSNpMH
-	 17YzI74Zrp+QZm8F1qw2mzEb92pCmSPzdsegZA6Wpd2HvFm67PWAVvxSFnyKy6/++l
-	 j76BA8Y+63msoJJYEIJulprPti90jnbJ7DUhQ5q/hZR2mwSVLT9pWV8+dwMgVzcD+Y
-	 RqxYHsM207TqKSYdVd8Y/16alDEznDG2zTt8/dBFnLifjEVfvV/pKfgiSydudMC9NV
-	 qyjDtrA8NPfijmkQokMfbM7+s8GXffc4PlSVcEs3HyNnMVawIuh6EArXN5kU9BS7Xs
-	 4HBcqh+rilkJg==
-Date: Sun, 9 Feb 2025 11:05:25 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>,
-	qat-linux <qat-linux@intel.com>, linux-crypto@vger.kernel.org,
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 03/24] crypto: Add 'krb5enc' hash and cipher AEAD
- algorithm
-Message-ID: <20250209190525.GA6017@sol.localdomain>
-References: <20250207200419.GA2819332@google.com>
- <20250203142343.248839-1-dhowells@redhat.com>
- <20250203142343.248839-4-dhowells@redhat.com>
- <1934772.1739126247@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPZISElkuYJITV19hyvhk5yMaGtWL43iu/KxXMqdCNf+CfopyHsMbYce8BjMk4wRZbLv313bhOUadN1cI7iWrRYzJth2gyKVvh3x2jXnM5fK/RUeFadpeIjz1i6I77q5PKJ+Sb0v4cyXH1fO+M9TKYuUOnnYXExExO2K12hXBjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GCd0iP3b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739128552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bzx0E/Qg3IYe3K4apwPHQsXCz/GYdO9gQu3c3MuxtD0=;
+	b=GCd0iP3buWBxwHyyFyk1B0B2wxODuWxjv/TCKGgpXU+6KTMQ225VtBffG5t/LgP7J0lGde
+	RK8Gn58CAh4FduQ87YeWyT4G/cVJNprbJF5v2PDosJaRB2O73FxHkQTSWTaVHHqczo45Ub
+	awOr9ff0lXuUdZuL1Ym4XX+OHGKBG1o=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-VDxynddGMVecglnoLUczKQ-1; Sun,
+ 09 Feb 2025 14:15:49 -0500
+X-MC-Unique: VDxynddGMVecglnoLUczKQ-1
+X-Mimecast-MFC-AGG-ID: VDxynddGMVecglnoLUczKQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A79261800872;
+	Sun,  9 Feb 2025 19:15:44 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.8])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8D17A19560A3;
+	Sun,  9 Feb 2025 19:15:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  9 Feb 2025 20:15:17 +0100 (CET)
+Date: Sun, 9 Feb 2025 20:15:11 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Oliver Sang <oliver.sang@intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] pipe: change pipe_write() to never add a zero-sized
+ buffer
+Message-ID: <20250209191510.GB27435@redhat.com>
+References: <20250209150718.GA17013@redhat.com>
+ <20250209150749.GA16999@redhat.com>
+ <CAHk-=wgYC-iAp4dw_wN3DBWUB=NzkjT42Dpr46efpKBuF4Nxkg@mail.gmail.com>
+ <20250209180214.GA23386@redhat.com>
+ <CAHk-=whirZek1fZQ_gYGHZU71+UKDMa_MYWB5RzhP_owcjAopw@mail.gmail.com>
+ <20250209184427.GA27435@redhat.com>
+ <CAHk-=wihBAcJLiC9dxj1M8AKHpdvrRneNk3=s-Rt-Hv5ikqo4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,48 +90,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1934772.1739126247@warthog.procyon.org.uk>
+In-Reply-To: <CAHk-=wihBAcJLiC9dxj1M8AKHpdvrRneNk3=s-Rt-Hv5ikqo4g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Sun, Feb 09, 2025 at 06:37:27PM +0000, David Howells wrote:
-> One of the issues I have with doing it on the CPU is that you have to do two
-> operations and, currently, they're done synchronously and serially.
-> 
-> Can you implement "auth5enc(hmac(sha256),cts(cbc(aes)))" in assembly and
-> actually make the assembly do both the AES and SHA at the same time?  It looks
-> like it *might* be possible - but that you might be an XMM register short of
-> being able to do it:-/
+On 02/09, Linus Torvalds wrote:
+>
+> On Sun, 9 Feb 2025 at 10:45, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > Again, lets look eat_empty_buffer().
+> >
+> > The comment says "maybe it's empty" but how/why can this happen ?
+>
+> WHY DO YOU CARE?
 
-Yes, that would be the proper way to optimize that algorithm.  Someone just
-needs to do it.  (And presumably you want this one and not Camellia which you
-are also pushing for some reason?)
+Because it looks unclear/confusing, and I think it can confuse other
+readers of this code. Especially after 1/2.
 
-> > I don't see why off-CPU hardware offload support should deserve much
-> > attention here, given the extremely high speed of on-CPU crypto these days
-> > and the great difficulty of integrating off-CPU acceleration efficiently.
-> > In particular it seems weird to consider Intel QAT a reasonable thing to use
-> > over VAES.
-> 
-> Because some modern CPUs come with on-die crypto offload - and that can do
-> hash+encrypt or encrypt+hash in parallel.  Now, there are a couple of issues
-> with using the QAT here:
-> 
->  (1) It doesn't support CTS.  This means we'd have to impose the CTS from
->      above - and that may well make it unusable in doing hash + encrypt
->      simultaneously.
-> 
->  (2) It really needs batching to make it cheap enough to use.  This might
->      actually be less of a problem - at least for rxgk.  The data is split up
->      into fixed-size packets, but for a large amount of data we can end up
->      filling packets faster than we can transmit them.  This offers the
->      opportunity to batch them - up to ~8192 packets in a single batch.
-> 
-> For NFS, things are a bit different.  Because that mostly uses a streaming
-> transport these days, it wants to prepare a single huge message in one go -
-> and being able to parallellise the encrypt and the hash could be a benefit.
+> So here's the deal: either you
+...
+>  (b) you DON'T convince yourself that that is true, and you leave
+> eat_empty_buffer() alone.
 
-Right, the batching is always a huge issue for those types of accelerators.  A
-much more promising approach is to just fully take advantage of the CPU
-instructions that already accelerate the same algorithms very well.
+Yes, I failed to convince myself that fs/splice.c can never add an
+empty bufer. Although it seems to me it should not.
 
-- Eric
+> In contrast, the "eat_empty_buffer()" case just saying "if it's an
+> empty buffer, it doesn't satisfy my needs, so I'll just release the
+> empty buffer and go on".
+
+... without wakeup_pipe_writers().
+
+OK, nevermind, I see your point even if I do not 100% agree.
+
+I'll send v2 without WARN_ON() and without 2/2.
+
+Oleg.
+
 
