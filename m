@@ -1,136 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-41321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588C0A2DF7E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 18:40:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8B1A2DFA0
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 18:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6D63A52F2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 17:40:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33C73A2732
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 17:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC491DFE06;
-	Sun,  9 Feb 2025 17:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A841E0DBA;
+	Sun,  9 Feb 2025 17:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JZ07SReS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XEKD6kur"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75CC1119A
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 17:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D92243374
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 17:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739122827; cv=none; b=qlRAZXwGPitdMg3rUVYooNMhVfrZRVYE/FDdtG7A1AT6lwPzE7BhwALw+BqF0xm88AuWBZtgX0upX/iZFZionFhRVcWkGpyO7NXVqxQbY5wLROI0h91YnDm0Zq60kZXR8zcBynA1Xnd3y2lxTSVlVJIcpOmuCzH+yejSz/k6aMc=
+	t=1739123648; cv=none; b=YuN1hDXHPDGmuATCguciyr5CEdBFJH3/tpzUw/R0MJ6FPfic4UMIceQ7xlHA2WjwWbw2JfGFscTOmibuMX3iig4otlJXdOAx0cf7YaQKFsyACRNsWI0C6xRMQznJcRvXRVaSXgnJaEosthlScTI5Sg5AezohTknlsqyB+3CVyv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739122827; c=relaxed/simple;
-	bh=awNkYa3Md5bUo8i8zsV7pVKF5MYaBSWMYBPHO3M15Qc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l9lTNJfKY+ofEyjmsKIiRZdf1ZS4z1k2M3Mmd0SVDit3zDhjT5s/pg5vRkOR66jDFNjftgf0UfFuY8yLiunzdLxJhiD2ynmWLwDOT9+030TgtxEAu9mIHF9tCZEBjEUB9/32TaDSAkWOkfDHNQ+WpLC+HCFFZ/Kx633U7M+Qd8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JZ07SReS; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5de56ff9851so3235073a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Feb 2025 09:40:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1739122824; x=1739727624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8f+USY5i1jojbJGeDtJw0r2JSIdnbcI05exT8JPCLJM=;
-        b=JZ07SReS03dRJ71pZDmP45P1HxaEqPNFVFfwjvGOcv2RO/VSscxjB5qRT1zLxJyHxC
-         WW0WmIyxFuaWyTIarZf5zoGfMPC/al2s/WH5O0RbvJ8FZXUe/+h7xKhTo9L5HWyvfg0A
-         U30EIrxQeoQjxAHhKAwoMzoLX+naC+gtUq9DQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739122824; x=1739727624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8f+USY5i1jojbJGeDtJw0r2JSIdnbcI05exT8JPCLJM=;
-        b=jDSepmQCOy56cwSTjQ39d9PdIfCGb1HgxYTUdUOh4JhdWRAiBrJSIYeJ6+DjUd0v7W
-         8bCQISsqoCot/KI9tt0CYwwuqxw2tCsxnQ7SPXS8B80cZBLPcdcDnJv+9eerEHaJg4iT
-         Ri2MwSgHA+hjuNDmbgPAJaw8JcBc4OjSWzema9/C6pso58oX0Ob4yxJrt/NZ1EyULr0g
-         DO6B0NpgaQVS+d4lhQqNUZHs7qdlILfA58DENamRIt6byAMl1zBLgosHr/yWxWrHglUJ
-         AI4rw55Eq5amwtv5z3wnnXQsfVbjfgGRYN4iwDvr2GFDjET5FP8GV3+M4/jXhbPEibEs
-         IaqA==
-X-Gm-Message-State: AOJu0YwmwvhlX3E8ifB3hpBH29SIXXMrEzzRZad4RlkSDS5AJ7xJXYic
-	MUbko+YuuVrKjxhgeHssx9yxy2yLBkL2xW7VlSXaZG5i5C491jRSj0cXEGjUgLjPnPoZPAfoPNL
-	ImtA=
-X-Gm-Gg: ASbGncvn07wLw6Rdk7xduzGy6jBJzaLquxZtPjNoxjJAS0s5xgn8epO+0Kaw4mEYQkK
-	4ex4Qjh3LSsxG+cEmhUik68QcHVioxWnIlnqKgtLUuvOmR4nXjQ3TeYrFlX620g4/IBW5IruLVw
-	tdYwX/1wgFSuS4+DpCzqFkaaCyD8maGPTXht2XC6gCwKn6mR/QzWCwSwzFAi3/5xoC+tZms0lHq
-	IerRM9l9Tu0kn7OAvch7pJ+OQ9kqcyF434nqhoNiM1jSm06jnpjmIWoiowc/T5kQ6rxwi0ZYJHV
-	k1BVwn8NMlAqx47hwAMX/bomG14c9oOaeO8CtBfPuSM6uW2Wc5EajyfZlD7m+O845w==
-X-Google-Smtp-Source: AGHT+IEoBObsDr7WjDbLGAsxq94+cwpfYmZXzMfEB6HBIcmOSyzNAibrgsAmA7cf+GGaUxLdduI5sQ==
-X-Received: by 2002:a05:6402:40c9:b0:5de:4acc:8a99 with SMTP id 4fb4d7f45d1cf-5de4acc8d50mr11333666a12.18.1739122823849;
-        Sun, 09 Feb 2025 09:40:23 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de62512da4sm2749554a12.81.2025.02.09.09.40.21
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Feb 2025 09:40:22 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5de63846e56so1790947a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Feb 2025 09:40:21 -0800 (PST)
-X-Received: by 2002:a05:6402:13c8:b0:5d0:ed71:3ce4 with SMTP id
- 4fb4d7f45d1cf-5de44feaa0bmr13224043a12.6.1739122821546; Sun, 09 Feb 2025
- 09:40:21 -0800 (PST)
+	s=arc-20240116; t=1739123648; c=relaxed/simple;
+	bh=k99UAQAdKzxoqi1fK05SSQ9xO4q/5wpfZNfxu+vdzsc=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=t+H4CagYNnrPCoI3xe3jpnikv/AwvdFx8mOqkNIHAKFchJUFRGy/oEb1NA33NnFTcnMx0X+p1ZAy9jyhAMU5YYlN1n1noxPZmaOV5+cQCg9d6LgHVabnFN9wvvG0F7vL5idHEDMk/3wIfy+Oc5bzL+5I+pPiiFe76e0eMitdXgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XEKD6kur; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739123646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HZy+2KXL+332PNbEE4REP74hQEw249CGirMqJVtIdAE=;
+	b=XEKD6kurxWhD6P7+l6j0I+APihIJG8X9KQY2D5jzZUmkPJV0zYVax291TqrQzNGwp7MX1Z
+	hnR0O+DEwLMqQrXCsaeaacXSN2jMROitnOxOl54WJM/R4cepRjUU1TRG2LFrgUYAt342QM
+	3Kgt4WJHAc1QK+4Wd39Bqsw4hFzfF1o=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-fiKubr2EN-OLiH49vN8dyQ-1; Sun,
+ 09 Feb 2025 12:54:03 -0500
+X-MC-Unique: fiKubr2EN-OLiH49vN8dyQ-1
+X-Mimecast-MFC-AGG-ID: fiKubr2EN-OLiH49vN8dyQ
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 72BCF180036F;
+	Sun,  9 Feb 2025 17:54:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 794E51800360;
+	Sun,  9 Feb 2025 17:53:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Z6XKtPKryJsRfYvK@gondor.apana.org.au>
+References: <Z6XKtPKryJsRfYvK@gondor.apana.org.au> <20250203142343.248839-1-dhowells@redhat.com> <20250203142343.248839-4-dhowells@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: dhowells@redhat.com, netdev@vger.kernel.org,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
+    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 03/24] crypto: Add 'krb5enc' hash and cipher AEAD algorithm
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250209105600.3388-1-david.laight.linux@gmail.com> <20250209105600.3388-2-david.laight.linux@gmail.com>
-In-Reply-To: <20250209105600.3388-2-david.laight.linux@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 9 Feb 2025 09:40:05 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgu0B+9ZSmXaL6EyYQyDsWRGZv48jRGKJMphpO4bNiu_A@mail.gmail.com>
-X-Gm-Features: AWEUYZnVB4u0CE8_NqktnRI7jAQu96wYzkqcCCQdZkJ0CHx-FvrH7mTME3sNsc4
-Message-ID: <CAHk-=wgu0B+9ZSmXaL6EyYQyDsWRGZv48jRGKJMphpO4bNiu_A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] uaccess: Simplify code pattern for masked user copies
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1934017.1739123634.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 09 Feb 2025 17:53:54 +0000
+Message-ID: <1934018.1739123634@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sun, 9 Feb 2025 at 02:56, David Laight <david.laight.linux@gmail.com> wrote:
->
-> Code can then be changed:
-> -               if (!user_read_access_begin(from, sizeof(*from)))
-> +               if (!masked_user_read_access_begin(&from, sizeof(*from)))
->                         return -EFAULT;
+Herbert Xu <herbert@gondor.apana.org.au> wrote:
 
-I really dislike the use of "pass pointer to simple variable you are
-going to change" interfaces which is why I didn't do it this way.
+> > [!] Note that the net/sunrpc/auth_gss/ implementation gets a pair of
+> > ciphers, one non-CTS and one CTS, using the former to do all the align=
+ed
+> > blocks and the latter to do the last two blocks if they aren't also
+> > aligned.  It may be necessary to do this here too for performance reas=
+ons -
+> > but there are considerations both ways:
+> =
 
-It's actually one of my least favorite parts of C - and one of the
-things that Rust got right - because the whole "error separate from
-return value" is such an important thing for graceful error handling.
+> The CTS template will take any hardware accelerated CBC implementation
+> and turn it into CTS.
+> =
 
-And it's also why we use error pointers in the kernel: because I
-really *hated* all the cases where people were returning separate
-errors and results. The kernel error pointer thing may seem obvious
-and natural to people now, but it was a fairly big change at the time.
+> So there is no reason to do the CTS/CBC thing by hand at all.
 
-I'd actually much prefer the "goto efault" model that
-"unsafe_get/put_user()" uses than passing in the other return value
-with a pointer.
+Glad to hear it.  I'm just reporting what net/sunrpc/ does now.  My suspic=
+ion
+is that this is from before a lot of cpu crypto-based optimisations were m=
+ade
+available in the crypto layer.
 
-I wish we had a good error handling model.
+David
 
-Not the async crap that is exceptions with try/catch (or
-setjmp/longjmp - the horror). Just nice synchronous error handling
-that doesn't require the whole "hide return value as a in-out
-argument".
-
-I know people think 'goto' and labels are bad. But I seriously think
-they are better and more legible constructs than the 'return value in
-arguments'.
-
-Yes, you can make spaghetti code with goto and labels. But 'return
-value in arguments' is worse, because it makes the *data flow* harder
-to see.
-
-          Linus
 
